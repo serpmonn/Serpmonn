@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="description" content="Посмотрите, кто лидирует в игре! Узнайте, кто набрал наибольшее количество очков и сравните свои результаты с другими игроками. Сможете ли вы попасть в топ?">
+    <link rel="canonical" href="https://www.serpmonn.ru"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="../../images/Serpmonn.ico" type="image/x-icon">
+    <title>Leaderboard</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        table {
+            border-collapse: collapse;
+            width: 50%;
+        }
+        th, td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Rank</th>
+                <th>Nickname</th>
+                <th>Score</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboardBody">
+            <!-- Leaderboard data will be inserted here -->
+        </tbody>
+    </table>
+    <script>
+        fetch('https://www.serpmonn.ru/leaderboard')
+            .then(response => response.json())
+            .then(data => {
+                const leaderboardBody = document.getElementById('leaderboardBody');
+                data.forEach((entry, index) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `<td>${index + 1}</td><td>${entry.nickname}</td><td>${entry.score}</td>`;
+                    leaderboardBody.appendChild(row);
+                });
+            });
+    </script>
+</body>
+</html>
+

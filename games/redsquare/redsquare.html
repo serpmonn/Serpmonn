@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <link rel="canonical" href="https://www.serpmonn.ru"/>
+    <link rel="icon" href="../../images/Serpmonn.ico" type="image/x-icon">
+    <meta name="description" content="Играйте в 'Квадратное бегство'! Управляйте персонажем и избегайте столкновений с другими объектами. Проверьте свои рефлексы и стратегическое мышление в этой захватывающей игре!">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Красный квадрат</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+            overflow: hidden; /* Добавляем скрытие прокрутки */
+        }
+        .game-area {
+            position: relative;
+            width: 90vw;
+            height: 90vw;
+            max-width: 500px; /* Увеличиваем размер поля */
+            max-height: 500px; /* Увеличиваем размер поля */
+            background-color: #fff;
+            border: 2px solid #000;
+            overflow: hidden;
+        }
+        .player {
+            position: absolute;
+            width: 10%;
+            height: 10%;
+            background-color: red;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .enemy {
+            position: absolute;
+            width: 10%;
+            height: 10%;
+            background-color: blue;
+            animation: move 3s infinite linear;
+        }
+        @keyframes move {
+            0% { top: 0; left: 0; }
+            25% { top: 50%; left: 90%; }
+            50% { top: 90%; left: 50%; }
+            75% { top: 50%; left: 0; }
+            100% { top: 0; left: 0; }
+        }
+        .obstacle {
+            position: absolute;
+            width: 10%;
+            height: 10%;
+            background-color: green;
+        }
+        .controls {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 10px;
+        }
+        .button {
+            width: 50px;
+            height: 50px;
+            background-color: #ccc;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            border: 1px solid #000;
+            border-radius: 5px;
+            user-select: none;
+        }
+        
+	.score {
+	    position: absolute;
+	    top: 10px; /* Перемещаем надпись выше игрового поля */
+	    left: 10px;
+	    font-size: 24px;
+	    font-weight: bold;
+	    z-index: 10; /* Устанавливаем z-index выше, чем у игрового поля */
+	}
+
+	.start {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: red; /* Цвет кнопки "Начать игру" */
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .restart, .home {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .home {
+            background-color: red;
+        }
+
+	#pauseBtn {
+	    margin-top: 10px; /* Добавляем отступ сверху */
+	    padding: 10px 20px;
+	    font-size: 16px;
+	    cursor: pointer;
+	    background-color: orange;
+	    color: white;
+	    border: none;
+	    border-radius: 5px;
+	}
+    </style>
+</head>
+<body>
+    <div class="score" id="score">Очки: 0</div>
+
+    <div class="game-area">
+        <div class="player" id="player"></div>
+        <div class="obstacle" style="top: 20%; left: 20%;"></div>
+        <div class="obstacle" style="top: 80%; left: 80%;"></div>
+    </div>
+    <div class="controls">
+        <div class="button" id="up">↑</div>
+        <div class="button" id="left">←</div>
+        <div class="button" id="down">↓</div>
+        <div class="button" id="right">→</div>
+    </div>
+    <button class="start" id="start">Начать игру</button>
+    <button class="restart" id="restart">Заново</button>
+    <button class="home" id="home">Домой</button>
+    <button id="pauseBtn">Пауза</button>
+
+    <script>
+
+        const player = document.getElementById('player');
+        const scoreDisplay = document.getElementById('score');
+        const restartButton = document.getElementById('restart');
+        const homeButton = document.getElementById('home');
+	const startButton = document.getElementById('start');
+	const moveInterval = 100; // Интервал движения в миллисекундах
+	const pauseButton = document.getElementById('pauseBtn');
+	let isPaused = true;
+        let playerXPercent = 50; // Начальные координаты в процентах (по горизонтали)
+	let playerYPercent = 50; // Начальные координаты в процентах (по вертикали)
+        let score = 0;
+        let speed = 3;
+        let level = 1;
+        let enemies = [];
+        let gameInterval;
+        let scoreInterval;
+	let moveDirection = null;
+
+        const levels = [
+            { speed: 3, enemies: 1, points: 20 },
+            { speed: 2.5, enemies: 2, points: 40 },
+            { speed: 2, enemies: 3, points: 60 }
+        ];
+
+        const createEnemies = (num) => {
+            const gameArea = document.querySelector('.game-area');
+            for (let i = 1; i <= num; i++) {
+                const enemy = document.createElement('div');
+                enemy.classList.add('enemy');
+                enemy.id = `enemy${i}`;
+                enemy.style.animationDuration = `${speed}s`;
+                enemy.style.animationName = `move${i}`;
+                gameArea.appendChild(enemy);
+                enemies.push(enemy);
+            }
+        };
+
+        const generateRandomKeyframes = () => {
+            const styleSheet = document.styleSheets[0];
+            for (let i = 1; i <= 3; i++) {
+                const keyframes = `
+                    @keyframes move${i} {
+                        0% { top: ${Math.random() * 90}%; left: ${Math.random() * 90}%; }
+                        25% { top: ${Math.random() * 90}%; left: ${Math.random() * 90}%; }
+                        50% { top: ${Math.random() * 90}%; left: ${Math.random() * 90}%; }
+                        75% { top: ${Math.random() * 90}%; left: ${Math.random() * 90}%; }
+                        100% { top: ${Math.random() * 90}%; left: ${Math.random() * 90}%; }
+                    }
+                `;
+                styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
+            }
+        };
+
+	const updatePlayerPosition = () => {
+	    const gameArea = document.querySelector('.game-area');
+	    const gameAreaRect = gameArea.getBoundingClientRect();
+
+	    playerX = (gameAreaRect.width * playerXPercent) / 100;
+	    playerY = (gameAreaRect.height * playerYPercent) / 100;
+
+	    player.style.top = playerY + 'px';
+	    player.style.left = playerX + 'px';
+	};
+
+        const movePlayer = (direction) => {
+	    if (isPaused) return; // Проверяем, не стоит ли игра на паузе
+
+	    const stepPercent = 2; // Шаг в процентах
+	    const playerSize = player.getBoundingClientRect().width; // Получаем размер игрока
+	    const gameArea = document.querySelector('.game-area');
+	    const gameAreaRect = gameArea.getBoundingClientRect();
+
+	    switch(direction) {
+	        case 'up':
+	            playerYPercent = Math.max(0, playerYPercent - stepPercent);
+	            break;
+	        case 'down':
+	            playerYPercent = Math.min(100 - (playerSize / gameAreaRect.height) * 100, playerYPercent + stepPercent);
+	            break;
+	        case 'left':
+	            playerXPercent = Math.max(0, playerXPercent - stepPercent);
+	            break;
+	        case 'right':
+	            playerXPercent = Math.min(100 - (playerSize / gameAreaRect.width) * 100, playerXPercent + stepPercent);
+	            break;
+	    }
+	    updatePlayerPosition(); // Обновляем положение игрока
+	    checkCollision();
+	};
+
+        const checkCollision = () => {
+            const playerRect = player.getBoundingClientRect();
+            for (const enemy of enemies) {
+                const enemyRect = enemy.getBoundingClientRect();
+                if (
+                    playerRect.left < enemyRect.right &&
+                    playerRect.right > enemyRect.left &&
+                    playerRect.top < enemyRect.bottom &&
+                    playerRect.bottom > enemyRect.top
+                ) {
+                    endGame();
+                }
+            }
+            const obstacles = document.querySelectorAll('.obstacle');
+            for (const obstacle of obstacles) {
+                const obstacleRect = obstacle.getBoundingClientRect();
+                if (
+                    playerRect.left < obstacleRect.right &&
+                    playerRect.right > obstacleRect.left &&
+                    playerRect.top < obstacleRect.bottom &&
+                    playerRect.bottom > obstacleRect.top
+                ) {
+                    endGame();
+                }
+            }
+        };
+
+        const updateScore = () => {
+            score++;
+            scoreDisplay.textContent = 'Очки: ' + score;
+            if (score >= levels[level - 1].points) {
+                nextLevel();
+            }
+            saveProgress();
+        };
+
+        const nextLevel = () => {
+            level++;
+            if (level <= levels.length) {
+                speed = levels[level - 1].speed;
+                enemies.forEach(enemy => enemy.remove());
+                enemies = [];
+                createEnemies(levels[level - 1].enemies);
+            } else {
+                alert('Ты прошёл все уровни! Поздравляем!');
+                endGame();
+            }
+        };
+
+        const saveProgress = () => {
+            const gameState = {
+                playerX,
+                playerY,
+                score,
+                speed,
+                level
+            };
+            localStorage.setItem('gameState', JSON.stringify(gameState));
+        };
+
+        const loadProgress = () => {
+            const savedState = localStorage.getItem('gameState');
+            if (savedState) {
+                const gameState = JSON.parse(savedState);
+                playerX = gameState.playerX;
+                playerY = gameState.playerY;
+                score = gameState.score;
+                speed = gameState.speed;
+                level = gameState.level;
+                player.style.top = playerY + 'px';
+                player.style.left = playerX + 'px';
+                scoreDisplay.textContent = 'Очки: ' + score;
+                createEnemies(levels[level - 1].enemies);
+            } else {
+                createEnemies(levels[0].enemies);
+            }
+	};
+
+        const endGame = () => {
+	    clearInterval(gameInterval);
+	    clearInterval(scoreInterval);
+	    isPaused = true; // Устанавливаем паузу после проигрыша
+	    alert('Твои очки: ' + score);
+	    localStorage.removeItem('gameState');
+	};
+
+	const startGame = () => {
+            gameInterval = setInterval(checkCollision, 50);
+            scoreInterval = setInterval(updateScore, 1000);
+            generateRandomKeyframes();
+            loadProgress();
+            ensurePlayerSafePosition();
+        };
+
+        const restartGame = () => {
+	    clearInterval(gameInterval);
+	    clearInterval(scoreInterval);
+	    playerXPercent = 50; // Обновляем начальные координаты в процентах
+	    playerYPercent = 50; // Обновляем начальные координаты в процентах
+	    score = 0;
+	    speed = 3;
+	    level = 1;
+	    enemies.forEach(enemy => enemy.remove());
+	    enemies = [];
+	    scoreDisplay.textContent = 'Очки: ' + score; // Обновляем текст счётчика
+	    isPaused = false; // Снимаем паузу при перезапуске игры
+	    generateRandomKeyframes(); // Генерируем новые случайные траектории движения
+	    createEnemies(levels[0].enemies);
+	    updatePlayerPosition(); // Устанавливаем начальное положение игрока
+	    gameInterval = setInterval(checkCollision, 50);
+	    scoreInterval = setInterval(updateScore, 1000);
+	    ensurePlayerSafePosition();
+	};
+
+        const ensurePlayerSafePosition = () => {
+	    const obstacles = document.querySelectorAll('.obstacle');
+	    let isSafe = false;
+	    while (!isSafe) {
+	        isSafe = true;
+	        for (const obstacle of obstacles) {
+	            const obstacleRect = obstacle.getBoundingClientRect();
+	            const playerRect = player.getBoundingClientRect();
+	            if (
+	                playerRect.left < obstacleRect.right &&
+	                playerRect.right > obstacleRect.left &&
+	                playerRect.top < obstacleRect.bottom &&
+	                playerRect.bottom > obstacleRect.top
+	            ) {
+	                playerXPercent = Math.random() * 90; // Используем проценты для координат
+	                playerYPercent = Math.random() * 90; // Используем проценты для координат
+	                updatePlayerPosition(); // Обновляем положение игрока
+	                isSafe = false;
+	                break;
+	            }
+	        }
+	    }
+	};
+
+	const startMoving = (direction) => {
+	    moveDirection = direction;
+	    requestAnimationFrame(move);
+	};
+
+	const stopMoving = () => {
+	    moveDirection = null;
+	};
+	
+	const move = () => {
+	    if (moveDirection) {
+	        movePlayer(moveDirection);
+	        requestAnimationFrame(move);
+	    }
+	};
+
+	startButton.addEventListener('click', () => {
+	    startButton.style.display = 'none'; // Скрываем кнопку
+	    isPaused = false; // Снимаем паузу при старте игры
+	    startGame();
+	});
+
+	pauseButton.addEventListener('click', () => {
+	    const enemies = document.querySelectorAll('.enemy');
+	    if (isPaused) {
+	        gameInterval = setInterval(checkCollision, 50);
+	        scoreInterval = setInterval(updateScore, 1000);
+	        enemies.forEach(enemy => enemy.style.animationPlayState = 'running');
+	        pauseButton.textContent = 'Пауза';
+	    } else {
+	        clearInterval(gameInterval);
+	        clearInterval(scoreInterval);
+	        enemies.forEach(enemy => enemy.style.animationPlayState = 'paused');
+	        pauseButton.textContent = 'Продолжить';
+	    }
+	    isPaused = !isPaused;
+	});
+
+        document.addEventListener('keydown', (event) => {
+            switch(event.key) {
+                case 'ArrowUp':
+                    movePlayer('up');
+                    break;
+                case 'ArrowDown':
+                    movePlayer('down');
+                    break;
+                case 'ArrowLeft':
+                    movePlayer('left');
+                    break;
+                case 'ArrowRight':
+                    movePlayer('right');
+                    break;
+            }
+        });
+
+	document.getElementById('up').addEventListener('mousedown', () => startMoving('up'));
+	document.getElementById('up').addEventListener('mouseup', stopMoving);
+	document.getElementById('up').addEventListener('touchstart', () => startMoving('up'));
+	document.getElementById('up').addEventListener('touchend', stopMoving);
+
+	document.getElementById('down').addEventListener('mousedown', () => startMoving('down'));
+	document.getElementById('down').addEventListener('mouseup', stopMoving);
+	document.getElementById('down').addEventListener('touchstart', () => startMoving('down'));
+	document.getElementById('down').addEventListener('touchend', stopMoving);
+
+	document.getElementById('left').addEventListener('mousedown', () => startMoving('left'));
+	document.getElementById('left').addEventListener('mouseup', stopMoving);
+	document.getElementById('left').addEventListener('touchstart', () => startMoving('left'));
+	document.getElementById('left').addEventListener('touchend', stopMoving);
+
+	document.getElementById('right').addEventListener('mousedown', () => startMoving('right'));
+	document.getElementById('right').addEventListener('mouseup', stopMoving);
+	document.getElementById('right').addEventListener('touchstart', () => startMoving('right'));
+	document.getElementById('right').addEventListener('touchend', stopMoving);
+
+        restartButton.addEventListener('click', restartGame);
+        homeButton.addEventListener('click', () => {
+            window.location.href = 'https://www.serpmonn.ru';
+        });
+
+    </script>
+</body>
+</html>
