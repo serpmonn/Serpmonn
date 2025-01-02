@@ -1,3 +1,4 @@
+
 		console.log('JavaScript файл подключен и работает.');
 		let pieces = [];
                 let showAds = false; // Установи в true, чтобы показывать рекламу

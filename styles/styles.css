@@ -100,7 +100,7 @@
                     height: 24px;
                     margin-right: 10px;
                     vertical-align: middle;
-                    border-radius: 50%; 						/* Делает изображения круглымы */
+                    border-radius: 50%; 						/* Делает изображения круглыми */
                 }
 
                 h1 {
@@ -109,12 +109,25 @@
                     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
                 }
 
+		a {									/* Стиль для всех ссылок на странице */
+		  color: inherit; 							/* Наследуем цвет от родительского элемента */
+		}
+
+		a:hover {								/* Cтиль для наведения  */
+		  color: #888888; 							/* Светло-серый при наведении */
+		  text-decoration: underline; 						/* Подчеркивание при наведении */
+		}
+
+		a:active, a:visited {							/* Cтиль для активных и посещённых ссылок */
+		  color: red; 								/* Сохраняем цвет текста, как у обычного текста */
+		}
+
 		.news-container {
                     margin-top: 1%; 							/* Отступ сверху */
-                    width: 90%;
-                    min-height: 33%;
-                    max-height: 50%;
-                    height: auto;
+                    width: 90%;								/* Ширина */
+                    min-height: 33%;							/* Минимальная высота */
+                    max-height: 50%;							/* Максимальная высота*/
+                    height: auto;							/* Высота */
                     text-align: justify;
                     overflow-y: auto; 							/* Вертикальная прокрутка */
                     position: relative;
@@ -172,7 +185,7 @@
 
                 .container {
                     text-align: center;
-                    background-color: rgba(255, 255, 255, 0.6); 			/* Полупрозрачный фон для читаемо> */                    
+                    background-color: rgba(255, 255, 255, 0.6); 			/* Полупрозрачный фон для читаемости */                    
 		    border-radius: 10px; 						/* Радиус границы */
                     padding: 3%; 							/* Отступы внутри контейнера */
                     position: relative; 						/* Относительное позиционирование */
@@ -202,22 +215,22 @@
 		}
 
                 .gsc-search-button.gsc-search-button-v2 {
-                    transition: transform 0.3s ease, color 0.3s ease; 			/* Плавный переход */
+                    transition: transform 0.3s ease, color 0.3s ease; 			/* Плавный переход при наведении на кнопку (плавное изменение цвета и размера кнопки) */
                 }
 
                 .gsc-search-button.gsc-search-button-v2:hover {
                     transform: scale(1.2); 						/* Увеличение кнопки при наведении */
+		    background-color: #666666;		    				/* Цвет фона */
                 }
 
 		.ad-container {
-                    display: flex;
+                    display: flex;							/* Отображение баннеров внутри контейнера */
                     justify-content: center; 						/* Выравнивание по горизонтали */
                     align-items: center; 						/* Выравнивание по вертикали */
-                    flex-wrap: wrap; 							/* Чтобы элементы переносились на новую строку при необходим> */                    
+                    flex-wrap: wrap; 							/* Чтобы элементы переносились на новую строку при необходимости */                    
 		    position: relative; 						/* Относительное позиционирование */
-                    width: 90%;
-                    height: auto;
-                    max-height: 20%;
+                    width: 90%;								/* Ширина контейнера */
+                    height: auto;							/* Высота контейнера */
                     text-align: center;
                     background-color: rgba(255, 255, 255, 0.0); 			/* Полупрозрачный фон для читаемо> */                    
 		    border-radius: 10px; 						/* Радиус границы */
@@ -227,117 +240,12 @@
                     gap: 10px; 								/* Расстояние между баннерами */
                 }
 
-               .ad-banner {
-                    width: 350px;
-                    height: 350px;
-                    border: 1px solid #ccc;
-                    overflow: hidden;
-                    position: relative;
-                    background-color: #f9f9f9; 						/* Фон баннера */
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 				/* Тень баннера */
-                    border-radius: 8px; 						/* Скругленные углы */
-                    transition: transform 0.3s; 					/* Анимация при наведении */
-                }
-
-                .ad-banner:hover {
-                    transform: scale(1.1); 						/* Увеличение при наведении */
-                }
-
-                .ad-banner iframe {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 300%;
-                    height: 300%;
-                    transform: scale(0.33); 						/* Масштабирование содержимого */
-                    transform-origin: 0 0; 						/* Точка начала масштабирования */
-                    border: none;
-                    z-index: 1; 							/* Убедитесь, что iframe находится ниже кнопок */
-                }
-
-		.ad-banner a {
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    text-decoration: none;
-                }
-
-                .ad-banner img {
-                    z-index: 1;
-                }
-
-                .ad-button {
-                    padding: 5px 10px;
-                    font-size: 14px;
-                    color: white;
-                    background-color: #000;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    position: absolute;
-                    bottom: 10px;
-                    transform: translateX(-50%);
-                    pointer-events: auto;
-                    z-index: 10;
-                }
-
-                .ad-button:hover {
-                    background-color: #555; 						/* Более светлый цвет при наведении */
-                }
-
-                .close-banner-ad-button {
-                    padding: 2px 5px;
-                    font-size: 12px;
-                    color: white;
-                    background-color: #000;
-                    border: none;
-                    border-radius: 5px;
-                    cursor: pointer;
-                    position: absolute;
-                    top: 10px;
-                    right: 10px;
-                    width: 20px;
-                    height: 20px;
-                    text-align: center;
-                    line-height: 16px;
-                    z-index: 10;
-                    pointer-events: auto;
-                }
-		
-		.close-banner-ad-button:hover {
-                    background-color: #555; 						/* Более светлый цвет при наведении */
-                }
-
-                .full-version-link {
-                    position: absolute;
-                    bottom: 5px;
-                    right: 5px;
-                    background-color: rgba(0, 0, 0, 0.5);
-                    color: white;
-                    padding: 2px 5px;
-                    border-radius: 3px;
-                    text-decoration: none;
-                    font-size: 10px;
-                    z-index: 10; 							/* Убедимся, что кнопка находится выше iframe */
-                    width: 80px; 							/* Фиксированная ширина */
-                    height: 20px; 							/* Фиксированная высота */
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                }
-
-                .full-version-link:hover {
-                    background-color: rgba(0, 0, 0, 0.7); 				/* Изменение фона при наведении */
-                }
-
 		.cookie-consent {							/* Стили кук */
 		    display: none; 							/* Скрываем элемент по умолчанию */
-		    position: fixed;
+		    position: fixed;							/* Позиция */
 		    bottom: 0;
 		    left: 0;
-		    width: 100%;
+		    width: 100%;							/* Ширина */
 		    background-color: rgba(0, 0, 0, 0.7);				/* Полупрозрачный черный фон */
 		    color: white;
 		    text-align: center;
@@ -349,9 +257,8 @@
 		    font-size: 12px; 							/* Увеличенный размер шрифта */
 		}
 
-
 		.cookie-button {							/* Стили кнопки кук */
-		    background-color: #4CAF50;
+		    background-color: black;						/* Фон кнопки */
 		    color: white;
 		    border: none;
 		    font-size: 12px; 							/* Увеличиваем размер шрифта до 18 пикселей */
@@ -361,77 +268,16 @@
 		    border-radius: 8px; 						/* Скругленные углы */
 		}
 
+		.cookie-button:hover {							/* Эффект при наведении на кнопку */
+		    background-color: #333333; 						/* Немного светлее чёрного */
+		    transform: scale(1.05); 						/* Легкое увеличение кнопки при наведении */
+		}
 
-                .donation-button {
-                    display: flex;
-                    justify-content: center;
-                    align-items: center;
-                    background: linear-gradient(145deg, #ff0000, #333333);
-                    border: none;
-                    color: white;
-                    padding: 3px 7px;
-                    font-size: 6px;
-                    font-weight: bold;
-                    border-radius: 50%;
-                    cursor: pointer;
-                    transition: all 0.5s ease;
-                    position: fixed;
-                    bottom: 20px;
-                    right: 20px;
-                    overflow: hidden;
-                    box-shadow: inset 5px 5px 15px rgba(139, 0, 0, 0.7), inset -5px -5px 15px rgb>                    width: 30px;
-                    height: 30px;
-                    text-align: center;
-                    text-decoration: none;
-                    opacity: 0.7;
-                    animation: pulse 1s infinite;
-                }
-
-		.donation-button:hover {
-                    width: 130px;
-                    height: 50px;
-                    padding: 10px 20px;
-                    font-size: 14px;
-                    border-radius: 25px;
-                    opacity: 1;
-                    background: linear-gradient(145deg, #ff0000, #333333);
-                    box-shadow: inset 5px 5px 15px rgba(139, 0, 0, 0.7), inset -5px -5px 15px rgb>                    color: #ffffff;
-                }
-
-                .donation-button::before {
-                    content: '';
-                    position: absolute;
-                    top: 50%;
-                    left: 50%;
-                    width: 300%;
-                    height: 300%;
-                    background: rgba(255, 255, 255, 0.15);
-                    transition: all 0.5s ease;
-                    border-radius: 50%;
-                    transform: translate(-50%, -50%) scale(0);
-                }
-
-                .donation-button:hover::before {
-                    transform: translate(-50%, -50%) scale(1);
-                }
-
-                .donation-button:active {
-                    transform: scale(0.95);
-                    box-shadow: inset 5px 5px 15px rgba(139, 0, 0, 0.7), inset -5px -5px 15px rgb>                }
-
-                .donation-button::after {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    border-radius: 50%;
-                    border: 2px solid rgba(255, 255, 255, 0.5);
-                    box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
-                    animation: glow 1s infinite;
-                }
-
+		.cookie-button:active {							/* Эффект при нажатии на кнопку */
+		    background-color: #111111; 						/* Более тёмный цвет при нажатии */
+		    transform: scale(0.95); 						/* Легкое уменьшение кнопки при нажатии */
+		}
+									
 		.install-instructions {
                   display: none; 							/* Скрываем инструкцию установки pwa-приложения по умолчанию */
                   position: fixed;
@@ -456,36 +302,8 @@
                   margin: 0;
                 }
 
-                @keyframes pulse {
-                    0% {
-                        transform: scale(1);
-                        opacity: 1;
-                    }
-                    50% {
-                        transform: scale(1.2);
-                        opacity: 0.7;
-                    }
-                    100% {
-                        transform: scale(1);
-                        opacity: 1;
-                    }
-                }
-
-                @keyframes glow {
-                    0% {
-                        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-                    }
-                    50% {
-                        box-shadow: 0 0 20px rgba(255, 255, 255, 1);
-                    }
-                    100% {
-                        box-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
-                    }
-                }
-
-		/* Медиазапрос для мобильных устройств */
-                @media (max-width: 600px) {
-                    .news-container {
-                        margin-top: 16%; /* Отступ сверху */
+                @media (max-width: 600px) {						/* Медиазапрос для мобильных устройств */
+                    .news-container {							/* Новостной контейнер */
+                        margin-top: 16%; 						/* Отступ сверху */
                     }
                 }
