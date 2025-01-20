@@ -1,7 +1,7 @@
 import { setCookie, getCookie } from './cookies.js';
 import { handleInstallApp, setupInstallEvent, setupInstallAppButton } from './install.js';
 import { loadNews } from './news.js';
-import { loadBackgroundImage, createPuzzlePieces, updatePuzzlePieces } from './background.js';
+import { generateCombinedBackground } from './backgroundGenerator.js';
 import { toggleMenu, toggleSubmenu } from './menu.js';
 
 console.log('JavaScript файл подключен и работает.');
@@ -11,7 +11,16 @@ var menuContainer = document.getElementById('menuContainer');
 var menuButton = document.getElementById('menuButton');
 
 document.addEventListener('DOMContentLoaded', () => {
-    Promise.all([loadNews(), loadBackgroundImage()]);
+    Promise.allSettled([loadNews(), generateCombinedBackground()])
+        .then(results => {
+            results.forEach(result => {
+                if (result.status === 'fulfilled') {
+                    console.log('Задача выполнена успешно', result.value);
+                } else {
+                    console.error('Задача завершена с ошибкой', result.reason);
+                }
+            });
+        });
 });
 
 document.getElementById('menuButton').addEventListener('click', function(event) {
