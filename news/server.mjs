@@ -42,21 +42,6 @@ app.get('/news', async (req, res) => {
     }
 });
 
-app.get('/background', async (req, res) => {
-    const url = `https://api.unsplash.com/photos/random?client_id=${unsplashApiKey}&query=background`;
-    try {
-        const response = await fetch(url);
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        const data = await response.json();
-        res.json(data);
-    } catch (error) {
-        console.error('Ошибка загрузки фонового изображения:', error);
-        res.status(500).send('Ошибка загрузки фонового изображения');
-    }
-});
-
 app.listen(port, () => {
     console.log(`Сервер запущен на http://localhost:${port}`);
 });
