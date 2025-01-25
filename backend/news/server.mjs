@@ -11,7 +11,6 @@ dotenv.config();
 const app = express();
 const parser = new RSSParser();
 const port = process.env.PORT || 4000;
-const apiKey = process.env.API_KEY;
 
 // Используем только встроенную настройку CORS
 app.use(cors({
