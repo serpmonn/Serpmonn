@@ -1,12 +1,17 @@
 	import { generateCombinedBackground } from '../../../scripts/backgroundGenerator.js';
 
 	const player = document.getElementById('player');
+	const playerSize = player.getBoundingClientRect().width; // Получаем размер игрока
         const scoreDisplay = document.getElementById('score');
         const restartButton = document.getElementById('restart');
         const homeButton = document.getElementById('home');
         const startButton = document.getElementById('start');
-        const moveInterval = 100; 										// Интервал движения в миллисекундах
+        const stepPercent = 2; 											// Шаг в процентах
+	const moveInterval = 100; 										// Интервал движения в миллисекундах
         const pauseButton = document.getElementById('pauseBtn');
+	const gameArea = document.querySelector('.game-area');
+	const gameAreaRect = gameArea.getBoundingClientRect();
+
         let isPaused = true;
         let playerXPercent = 50; 										// Начальные координаты в процентах (по горизонтали)
         let playerYPercent = 50; 										// Начальные координаты в процентах (по вертикали)
@@ -25,7 +30,6 @@
         ];
 
         const createEnemies = (num) => {
-            const gameArea = document.querySelector('.game-area');
             for (let i = 1; i <= num; i++) {
                 const enemy = document.createElement('div');
                 enemy.classList.add('enemy');
@@ -54,8 +58,6 @@
         };
 
         const updatePlayerPosition = () => {
-	    const gameArea = document.querySelector('.game-area');
-	    const gameAreaRect = gameArea.getBoundingClientRect();
 
 	    const playerX = (gameAreaRect.width * playerXPercent) / 100; // Используем playerXPercent
 	    const playerY = (gameAreaRect.height * playerYPercent) / 100; // Используем playerYPercent
@@ -67,11 +69,6 @@
 
         const movePlayer = (direction) => {
             if (isPaused) return; // Проверяем, не стоит ли игра на паузе
-
-            const stepPercent = 2; // Шаг в процентах
-            const playerSize = player.getBoundingClientRect().width; // Получаем размер игрока
-            const gameArea = document.querySelector('.game-area');
-            const gameAreaRect = gameArea.getBoundingClientRect();
 
             switch(direction) {
                 case 'up':
@@ -186,40 +183,6 @@
 	    `;
 
 	    document.body.appendChild(modal);								// Добавляем модальное окно на страницу
-
-	    const modalStyles = document.createElement('style');					// Добавляем стили для модального окна
-	    modalStyles.innerHTML = `
-	        .modal {
-	            position: fixed;
-	            top: 0;
-	            left: 0;
-	            width: 100%;
-	            height: 100%;
-	            background-color: rgba(0, 0, 0, 0.5);
-	            display: flex;
-	            justify-content: center;
-	            align-items: center;
-	            z-index: 9999;
-	        }
-	        .modal-content {
-	            background-color: white;
-	            padding: 20px;
-	            border-radius: 10px;
-	            text-align: center;
-	        }
-	        #okButton {
-	            padding: 10px 20px;
-	            background-color: #4CAF50;
-	            color: white;
-	            border: none;
-	            cursor: pointer;
-	            border-radius: 5px;
-	        }
-	        #okButton:hover {
-	            background-color: #45a049;
-	        }
-	    `;
-	    document.head.appendChild(modalStyles);
 
 	    document.getElementById('okButton').addEventListener('click', () => {			// Когда пользователь нажмёт на кнопку "Окей", скрыть модальное окно и показать рекламу
 	        modal.remove();										// Удаляем модальное окно
