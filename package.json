@@ -3,20 +3,23 @@
   "version": "1.0.0",
   "description": "Проект Serpmonn",
   "scripts": {
-    "start-news": "node backend/news/server.mjs",
-    "start-leaderboard": "node games/redsquare2/server.js"
+    "start-news": "pm2 start backend/news/server.mjs --name 'news-server'",
+    "start-leaderboard": "pm2 start games/redsquare2/server.js --name 'leaderboard-server'",
+    "start-auth": "pm2 start backend/server.js --name 'auth-server'"
   },
   "dependencies": {
     "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
+    "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "express": "^4.21.2",
-    "node-fetch": "^3.3.2",
-    "rss-parser": "^3.13.0",
+    "express-validator": "^7.2.1",
+    "jsdom": "^24.1.1",
     "mysql2": "^3.12.0",
-    "date-fns": "^3.6.0",
-    "jsdom": "^24.1.1"
+    "node-fetch": "^3.3.2",
+    "paseto": "^3.1.4",
+    "rss-parser": "^3.13.0"
   },
   "license": "Proprietary"
 }
-
