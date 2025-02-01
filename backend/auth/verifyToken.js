@@ -1,13 +1,12 @@
-require('dotenv').config();
+require('dotenv').config({ path: '/var/www/serpmonn.ru/.env' });
 
 const paseto = require('paseto');
 const { V2 } = paseto;
 
 const verifyToken = async (req, res, next) => {
 
-  const token = req.headers['authorization'] && req.headers['authorization'].split(' ')[1];	// Получаем токен из заголовка Authorization
+  const token = req.cookies.token; 								// Теперь токен в куки
   console.log("Token from header:", token);  							// Добавьте это для диагностики
-
 
   if (!token) {
     return res.status(403).json({ message: 'Токен не предоставлен' });

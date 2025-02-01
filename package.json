@@ -3,16 +3,18 @@
   "version": "1.0.0",
   "description": "Проект Serpmonn",
   "scripts": {
+    "start-auth": "pm2 start backend/server.js --name 'auth-server'",
     "start-news": "pm2 start backend/news/server.mjs --name 'news-server'",
     "start-leaderboard": "pm2 start games/redsquare2/server.js --name 'leaderboard-server'",
-    "start-auth": "pm2 start backend/server.js --name 'auth-server'"
+    "start-openai": "pm2 start backend/openai.js --name 'openai-server'"
   },
   "dependencies": {
     "axios": "^1.7.9",
     "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "date-fns": "^3.6.0",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "express-validator": "^7.2.1",
     "jsdom": "^24.1.1",
