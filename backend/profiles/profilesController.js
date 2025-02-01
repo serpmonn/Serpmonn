@@ -1,6 +1,7 @@
 require('dotenv').config({ path: '/var/www/serpmonn.ru/.env' });                                        // Подключаем dotenv для работы с переменными окружения
 
 const db = require('../database/config');                                                               // Подключение к базе данных
+const paseto = require('paseto');                                    					// Подключение PASETO для работы с токенами
 const secretKey = process.env.SECRET_KEY;                                                               // Берём секретный ключ для генерации токена из переменных окружения
 
 // Получение данных профиля
