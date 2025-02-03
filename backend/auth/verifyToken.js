@@ -1,6 +1,6 @@
 require('dotenv').config({ path: '/var/www/serpmonn.ru/.env' });
 
-const paseto = require('paseto');
+import paseto from 'paseto';
 const { V2 } = paseto;
 
 const verifyToken = async (req, res, next) => {
@@ -23,5 +23,5 @@ const verifyToken = async (req, res, next) => {
   }
 };
 
-module.exports = verifyToken;
+export default verifyToken;
 

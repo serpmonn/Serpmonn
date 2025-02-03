@@ -1,34 +1,34 @@
-require('dotenv').config({ path: '/var/www/serpmonn.ru/.env' }); 					// Подключаем dotenv для работы с переменными окружения
+require('dotenv').config({ path: '/var/www/serpmonn.ru/.env' }); 					                    // Подключаем dotenv для работы с переменными окружения
 
-const bcrypt = require('bcryptjs'); 									// Для хеширования паролей
-const paseto = require('paseto'); 									// Для работы с PASETO (токены)
-const { V2 } = paseto; 											// Используем версию 2 PASETO для создания токенов
-const db = require('../database/config'); 								// Подключение к базе данных
-const { validationResult } = require('express-validator'); 						// Для валидации данных, отправленных пользователем
+import { hash, compare } from 'bcryptjs'; 									                                  // Для хеширования паролей
+import paseto from 'paseto'; 									                                                // Для работы с PASETO (токены)
+const { V2 } = paseto; 											                                                  // Используем версию 2 PASETO для создания токенов
+import { query as _query } from '../database/config'; 								                        // Подключение к базе данных
+import { validationResult } from 'express-validator'; 						                            // Для валидации данных, отправленных пользователем
 
 // Функция для регистрации пользователя
 const registerUser = async (req, res) => {
   // Проверяем, есть ли ошибки в данных, которые прислал пользователь
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() }); 						// Если есть ошибки, отправляем их в ответ
+    return res.status(400).json({ errors: errors.array() }); 						                      // Если есть ошибки, отправляем их в ответ
   }
 
   // Извлекаем данные из тела запроса (пользователь, email, пароль)
   const { username, email, password } = req.body;
 
   // Хешируем пароль перед его сохранением в базе данных
-  const hashedPassword = await bcrypt.hash(password, 10);
+  const hashedPassword = await hash(password, 10);
 
   // Строим SQL-запрос для добавления нового пользователя
   const query = 'INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)';
-  db.query(query, [username, email, hashedPassword], async (err, result) => {
+  _query(query, [username, email, hashedPassword], async (err, result) => {
     if (err) {
       return res.status(500).json({ message: 'Ошибка при сохранении пользователя', err }); 		// В случае ошибки возвращаем сообщение
     }
 
-    const secretKey = process.env.SECRET_KEY;								// Берём секретный ключ для генерации токена из переменных окружения
-    const payload = { username, email }; 								// Данные, которые будем передавать в токен
+    const secretKey = process.env.SECRET_KEY;								                                  // Берём секретный ключ для генерации токена из переменных окружения
+    const payload = { username, email }; 								                                       // Данные, которые будем передавать в токен
 
     try {
       // Генерируем PASETO токен с данными пользователя
@@ -57,7 +57,7 @@ const loginUser = async (req, res) => {
 
   // Запрос к базе данных для поиска пользователя по email
   const query = 'SELECT * FROM users WHERE email = ?';
-  db.query(query, [email], async (err, results) => {
+  _query(query, [email], async (err, results) => {
     if (err || results.length === 0) {
       return res.status(401).json({ message: 'Неверный email или пароль' }); 				// Если ошибка или пользователь не найден
     }
@@ -66,7 +66,7 @@ const loginUser = async (req, res) => {
     const user = results[0];
 
     // Сравниваем введённый пароль с хешированным паролем в базе данных
-    const isMatch = await bcrypt.compare(password, user.password_hash);
+    const isMatch = await compare(password, user.password_hash);
 
     if (!isMatch) {
       return res.status(401).json({ message: 'Неверный email или пароль' }); 				// Если пароли не совпадают
@@ -111,7 +111,7 @@ const logoutUser = (req, res) => {
 };
 
 // Экспортируем функции для использования в других частях приложения
-module.exports = {
+export default {
   registerUser,
   loginUser,
   logoutUser,

@@ -1,13 +1,13 @@
 require('dotenv').config();
 
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const authRoutes = require('./auth/authRoutes');
-const profilesRoutes = require('./profiles/profilesRoutes');
+import express, { json } from 'express';
+import cookieParser from 'cookie-parser';
+import authRoutes from './auth/authRoutes';
+import profilesRoutes from './profiles/profilesRoutes';
 
 const app = express();
 
-app.use(express.json());									// Для обработки JSON данных
+app.use(json());									// Для обработки JSON данных
 app.use(cookieParser());  									// Для работы cookie
 
 app.use('/auth', authRoutes);  									// Подключение маршрутов

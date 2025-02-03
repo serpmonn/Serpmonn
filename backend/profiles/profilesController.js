@@ -1,6 +1,6 @@
 require('dotenv').config({ path: '/var/www/serpmonn.ru/.env' });                                        // Подключаем dotenv для работы с переменными окружения
 
-const db = require('../database/config');                                                               // Подключение к базе данных
+const db = require('../database/config').default;                                                               // Подключение к базе данных
 const paseto = require('paseto');                                    					// Подключение PASETO для работы с токенами
 const secretKey = process.env.SECRET_KEY;                                                               // Берём секретный ключ для генерации токена из переменных окружения
 
@@ -23,25 +23,32 @@ const getUserProfile = (req, res) => {
 
 // Обновление данных профиля
 const updateUserProfile = async (req, res) => {
-  const { email } = req.user; 										// Извлекаем email из токена пользователя
-  const { username, newEmail } = req.body; 								// Получаем данные для обновления из запроса
+  const { email: oldEmail, username: oldUsername } = req.user; 						// Получаем email и username из токена
+  const { username, email } = req.body; 								// Получаем данные для обновления из запроса
+
+ 	console.log('Полученные данные:', req.body);  							// Логируем тело запроса
+  	console.log('Email пользователя из токена:', email);
+	console.log('Username пользователя из токена:', oldUsername);
 
   try {
     // Запрос для обновления данных пользователя
     const query = 'UPDATE users SET username = ?, email = ? WHERE email = ?';
     await new Promise((resolve, reject) => {
-      db.query(query, [username, newEmail, email], (err, result) => {
+      db.query(query, [username, email, oldEmail], (err, result) => {
         if (err) {
-          reject(err);  // Отклоняем промис при ошибке
+          reject(err);  										// Отклоняем промис при ошибке
         }
-        resolve(result);  // Разрешаем промис при успешном выполнении запроса
+        resolve(result);  										// Разрешаем промис при успешном выполнении запроса
       });
     });
 
-    // Проверяем, изменился ли email или username, и если изменились, выдаём новый токен
-    if (email !== newEmail || req.user.username !== username) {
+	console.log('Результат обновления:', result);
+
+	// Если изменился username или email → создаём новый токен
+    if (oldEmail !== email || oldUsername !== username) {
+      res.clearCookie('token'); 									// Очистка старого токена перед выдачей нового
       // Генерируем новый токен, если изменился email или username
-      const newToken = await paseto.sign({ username, email: newEmail }, secretKey);
+      const newToken = await paseto.sign({ username, email }, secretKey);
       res.cookie('token', newToken, { httpOnly: true, secure: true });
       return res.json({ message: 'Профиль обновлен, новый токен создан', token: newToken });
     }

@@ -1,9 +1,6 @@
 import express from 'express';
-import axios from 'axios';
-import fetch from 'node-fetch';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import crypto from 'crypto';
 import RSSParser from 'rss-parser';
 
 dotenv.config();

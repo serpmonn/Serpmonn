@@ -1,7 +1,7 @@
 const express = require('express');
 const { body } = require('express-validator');
-const { registerUser, loginUser, logoutUser } = require('./authController'); // Импортируем обработчики из контроллера
-const verifyToken = require('./verifyToken');
+const { registerUser, loginUser, logoutUser } = require('./authController').default; // Импортируем обработчики из контроллера
+const verifyToken = require('./verifyToken').default;
 const router = express.Router();
 
 // Маршрут для регистрации с валидацией данных

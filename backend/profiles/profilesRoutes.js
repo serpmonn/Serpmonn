@@ -1,5 +1,5 @@
 const express = require('express');
-const verifyToken = require('../auth/verifyToken');
+const verifyToken = require('../auth/verifyToken').default;
 const { getUserProfile, updateUserProfile } = require('./profilesController');
 const router = express.Router();
 

@@ -35,8 +35,8 @@ document.addEventListener('DOMContentLoaded', () => {
 	                },
 	                credentials: "include", 									// Важно для куки
 	                body: JSON.stringify({
-	                    newUsername: newUsername,
-	                    newEmail: newEmail,
+	                    username: newUsername,
+	                    email: newEmail,
 	                }),
 	            });
 
