@@ -3,7 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import RSSParser from 'rss-parser';
 
-dotenv.config();
+dotenv.config({ path: '/var/www/serpmonn.ru/.env' });
 
 const app = express();
 const parser = new RSSParser();

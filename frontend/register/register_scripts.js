@@ -45,11 +45,10 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         messageElement.textContent = data.message;
         messageElement.style.color = response.ok ? "green" : "red";
 
-        // Если регистрация успешна, перенаправляем на страницу логина
-        if (response.ok) {
+        if (response.ok) {                                                                      // Если регистрация успешна, перенаправляем на страницу логина
             setTimeout(() => {
-                window.location.href = "../login/login.html"; // Переход на страницу логина
-            }, 2000); // Ожидание 2 секунды перед редиректом
+                window.location.href = "../login/login.html";                                   // Переход на страницу логина
+            }, 2000);                                                                           // Ожидание 2 секунды перед редиректом
         }
     } catch (error) {
         messageElement.textContent = "Ошибка соединения с сервером.";

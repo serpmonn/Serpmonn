@@ -31,9 +31,8 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         messageElement.textContent = data.message;
         messageElement.style.color = response.ok ? "green" : "red";
 
-        // После успешного входа (если сервер вернул успешный ответ)
-        if (response.ok) {
-            window.location.href = "../profile/profile.html"; // Переход на страницу профиля или главную
+        if (response.ok) {                                                                                  // После успешного входа (если сервер вернул успешный ответ)
+            window.location.href = "../profile/profile.html";                                               // Переход на страницу профиля или главную
         }
     } catch (error) {
         messageElement.textContent = "Ошибка соединения с сервером.";
