@@ -1,21 +1,39 @@
-import dotenv from 'dotenv';                                                                  // Подключаем dotenv для работы с переменными окружени
+import dotenv from 'dotenv';                                                                              // Подключаем dotenv для работы с переменными окружени
 dotenv.config({ path: '/var/www/serpmonn.ru/.env' });
 
-import bcrypt from 'bcryptjs';                                                                // Для CommonJS модуля
-import paseto from 'paseto'; 									                                                // Для работы с PASETO (токены)
-import { query } from '../database/config.mjs';                                                // Импортируем функцию query
-import { validationResult } from 'express-validator'; 						                            // Для валидации данных, отправленных пользователем
+import bcrypt from 'bcryptjs';                                                                            // Для CommonJS модуля
+import paseto from 'paseto'; 									                                                            // Для работы с PASETO (токены)
+import { query } from '../database/config.mjs';                                                           // Импортируем функцию query
+import { validationResult } from 'express-validator'; 						                                        // Для валидации данных, отправленных пользователем
 
-const { V2 } = paseto; 											                                                  // Используем версию 2 PASETO для создания токенов
+const { V2 } = paseto; 											                                                              // Используем версию 2 PASETO для создания токенов
 const { hash, compare } = bcrypt;
 
-export const registerUser = async (req, res) => {                                             // Функция для регистрации пользователя
-  const errors = validationResult(req);                                                       // Проверяем, есть ли ошибки в данных, которые прислал пользователь
+export const registerUser = async (req, res) => {                                                         // Функция для регистрации пользователя
+  const errors = validationResult(req);                                                                   // Проверяем, есть ли ошибки в данных, которые прислал пользователь
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() }); 						                      // Если есть ошибки, отправляем их в ответ
+    return res.status(400).json({ errors: errors.array() }); 						                                  // Если есть ошибки, отправляем их в ответ
   }
 
-  const { username, email, password } = req.body;                                             // Извлекаем данные из тела запроса (пользователь, email, пароль)
+  const { username, email, password } = req.body;                                                         // Извлекаем данные из тела запроса (пользователь, email, пароль)
+
+  try {                                                                                                   // Проверка на наличие пользователя с таким email
+    const [existingUser] = await query('SELECT * FROM users WHERE email = ?', [email]);                   // Выполняем SQL-запрос для поиска пользователя с указанным email
+    if (existingUser) {                                                                                   // Если пользователь с таким email уже существует
+      return res.status(400).json({ message: 'Email уже используется' });                                 // Отправляем ответ с ошибкой 400 и сообщением, что email уже используется
+    }
+  } catch (err) {                                                                                         // Обрабатываем ошибки, возникшие при выполнении запроса
+    return res.status(500).json({ message: 'Ошибка при проверке существующего пользователя', err });      // Отправляем ответ с ошибкой 500 и сообщением об ошибке
+  }
+
+  try {                                                                                                   // Проверка на наличие пользователя с таким username
+    const [existingUserByUsername] = await query('SELECT * FROM users WHERE username = ?', [username]);   // Выполняем SQL-запрос для поиска пользователя с указанным username
+    if (existingUserByUsername) {                                                                         // Если пользователь с таким username уже существует
+      return res.status(400).json({ message: 'Username уже используется' });                              // Отправляем ответ с ошибкой 400 и сообщением, что username уже используется
+    }
+  } catch (err) {                                                                                         // Обрабатываем ошибки, возникшие при выполнении запроса
+    return res.status(500).json({ message: 'Ошибка при проверке существующего пользователя по username', err });  // Отправляем ответ с ошибкой 500 и сообщением об ошибке
+  }
 
   const hashedPassword = await hash(password, 10);                                            // Хешируем пароль перед его сохранением в базе данных
 
