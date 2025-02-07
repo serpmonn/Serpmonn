@@ -1,3 +1,5 @@
+import { generateCombinedBackground } from '../../scripts/backgroundGenerator.js';
+
 document.getElementById("loginForm").addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -38,5 +40,20 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         messageElement.textContent = "Ошибка соединения с сервером.";
         messageElement.style.color = "red";
     }
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    generateCombinedBackground();                                                                           // Запускаем генерацию фона
+    
+    const passwordField = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
+
+    togglePassword.addEventListener("click", () => {
+        const isPasswordVisible = passwordField.type === "text";
+        passwordField.type = isPasswordVisible ? "password" : "text";
+        togglePassword.textContent = isPasswordVisible ? "👁" : "🙈";
+    });
+
 });
 

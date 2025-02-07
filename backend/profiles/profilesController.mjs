@@ -3,20 +3,30 @@ dotenv.config({ path: '/var/www/serpmonn.ru/.env' });
 
 import { query } from '../database/config.mjs';                                                      // Импортируем функцию query
 import paseto from 'paseto';                                                                        // Импортируем библиотеку для работы с PASETO
-const { sign } = paseto;
+const { V2 } = paseto;                                                                              // Обратите внимание, что используется V2
 const secretKey = process.env.SECRET_KEY;                                                           // Берём секретный ключ для генерации токена из переменных окружения
 
-const getUserProfile = (req, res) => {                                                              // Получение данных профиля
-  const { email } = req.user;                                                                       // Извлекаем email из токена пользователя
+const getUserProfile = async (req, res) => {
+  try {
+    const { email } = req.user;                                                                     // Извлекаем email пользователя из объекта req.user (данные из токена)
+    console.log('Email пользователя из токена:', email);
 
-  const queryText = 'SELECT username, email FROM users WHERE email = ?';                            // Запрос в базу данных для получения данных пользователя по email
-  query(queryText, [email], (err, result) => {
-    if (err || result.length === 0) {
-      return res.status(404).json({ message: 'Пользователь не найден' });                           // Если произошла ошибка или пользователь не найден, возвращаем 404
+    const queryText = 'SELECT username, email FROM users WHERE email = ?';                          // SQL-запрос для поиска пользователя в базе данных по email
+
+    const result = await query(queryText, [email]);                                                 // Выполняем запрос к базе данных, ожидая результат (асинхронный вызов)
+
+    console.log('Результат запроса к БД:', result);                                                 // Логируем результат запроса в консоль для диагностики
+
+    if (!result || result.length === 0) {                                                           // Если пользователь не найден или результат пустой — отправляем 404
+      return res.status(404).json({ message: 'Пользователь не найден' });
     }
 
-    res.json(result[0]);                                                                            // Если данные найдены, отправляем их в ответе
-  });
+    res.json(result[0]);                                                                            // Если данные найдены, отправляем их в JSON-ответе
+  } catch (err) {
+    console.error('Ошибка при получении данных профиля:', err);                                     // Логируем ошибку на сервере
+
+    res.status(500).json({ message: 'Ошибка при получении данных профиля', error: err });           // Отправляем пользователю статус 500 и описание ошибки
+  }
 };
 
 const updateUserProfile = async (req, res) => {                                                     // Обновление данных профиля
@@ -27,30 +37,29 @@ const updateUserProfile = async (req, res) => {                                 
   console.log('Email пользователя из токена:', email);
   console.log('Username пользователя из токена:', oldUsername);
 
+  if (!email || !username) {                                                                        // Проверка валидности данных
+    return res.status(400).json({ message: 'Email и username обязательны' });
+  }
+
   try {
-    const queryText = 'UPDATE users SET username = ?, email = ? WHERE email = ?';                   // Запрос для обновления данных пользователя
-    const result = await new Promise((resolve, reject) => {
-      query(queryText, [username, email, oldEmail], (err, result) => {
-        if (err) {
-          reject(err);                                                                              // Отклоняем промис при ошибке
-        }
-        resolve(result);                                                                            // Разрешаем промис при успешном выполнении запроса
-      });
-    });
+    const queryText = 'UPDATE users SET username = ?, email = ? WHERE email = ?';                   // Обновляем данные пользователя в базе данных
+    const result = await query(queryText, [username, email, oldEmail]);                             // Ожидаем результат
 
     console.log('Результат обновления:', result);
 
-    if (oldEmail !== email || oldUsername !== username) {                                           // Если изменился username или email → создаём новый токен
-      res.clearCookie('token');                                                                     // Очистка старого токена перед выдачей нового
-      const newToken = await sign({ username, email }, secretKey);                                  // Генерируем новый токен, если изменился email или username
+    if (oldEmail !== email || oldUsername !== username) {                                           // Если обновился email или username — генерируем новый токен
+      res.clearCookie('token');                                                                     // Очистка старого токена
+      const newToken = await V2.sign({ username, email }, secretKey);                               // Используйте V2.sign
       res.cookie('token', newToken, { httpOnly: true, secure: true });
       return res.json({ message: 'Профиль обновлен, новый токен создан', token: newToken });
     }
 
-    res.json({ message: 'Профиль обновлен успешно' });                                              // Если обновление прошло успешно и токен не требуется, отправляем сообщение об успехе
+    res.json({ message: 'Профиль обновлен успешно' });                                              // Если изменения не было — просто возвращаем сообщение об успешном обновлении
   } catch (err) {
-    res.status(500).json({ message: 'Ошибка при обновлении профиля', error: err });                 // Если произошла ошибка, возвращаем её в ответ
+    console.error('Ошибка при обновлении профиля:', err);
+    res.status(500).json({ message: 'Ошибка при обновлении профиля', error: err });
   }
 };
+
 
 export { getUserProfile, updateUserProfile };                                                       // Экспортируем функции для использования в других частях приложения

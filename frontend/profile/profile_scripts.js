@@ -1,4 +1,9 @@
+import { generateCombinedBackground } from '../../scripts/backgroundGenerator.js';
+
 document.addEventListener('DOMContentLoaded', () => {
+
+	generateCombinedBackground();                                                                           				// Запускаем генерацию фона
+	
 	async function getProfile() {
 	    try {
 	        const response = await fetch("https://serpmonn.ru/profile/get", {

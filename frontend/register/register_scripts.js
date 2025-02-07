@@ -1,3 +1,5 @@
+import { generateCombinedBackground } from '../../scripts/backgroundGenerator.js';
+
 document.getElementById("registerForm").addEventListener("submit", async function(event) {
     event.preventDefault();
 
@@ -55,4 +57,19 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         messageElement.style.color = "red";
     }
 });
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    generateCombinedBackground();                                                               // Запускаем генерацию фона
+
+    const passwordField = document.getElementById("password");
+    const togglePassword = document.getElementById("togglePassword");
+
+    togglePassword.addEventListener("click", () => {
+        const isPasswordVisible = passwordField.type === "text";
+        passwordField.type = isPasswordVisible ? "password" : "text";
+        togglePassword.textContent = isPasswordVisible ? "👁" : "🙈";
+    });
+});
+
 
