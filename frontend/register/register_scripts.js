@@ -1,66 +1,48 @@
 import { generateCombinedBackground } from '../../scripts/backgroundGenerator.js';
 
-document.getElementById("registerForm").addEventListener("submit", async function(event) {
+document.getElementById("registerForm").addEventListener("submit", async function (event) {
     event.preventDefault();
 
     const username = document.getElementById("username").value;
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
-    const messageElement = document.getElementById("message");
-
-    // Валидация полей
-    if (username.length < 1) {
-        messageElement.textContent = "Имя пользователя должно содержать минимум 1 символ.";
-        messageElement.style.color = "red";
-        return;
-    }
-
-    if (username.length > 255) {
-        messageElement.textContent = "Имя пользователя не может превышать 255 символов.";
-        messageElement.style.color = "red";
-        return;
-    }
-
-    if (password.length < 8) {
-        messageElement.textContent = "Пароль должен содержать минимум 8 символов.";
-        messageElement.style.color = "red";
-        return;
-    }
-
-    if (password.length > 255) {
-        messageElement.textContent = "Пароль не может превышать 255 символов.";
-        messageElement.style.color = "red";
-        return;
-    }
 
     try {
-        const response = await fetch("https://serpmonn.ru/auth/register", {
+        const response = await fetch("/auth/register", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password }),
-	    credentials: "include"
         });
 
         const data = await response.json();
-        messageElement.textContent = data.message;
-        messageElement.style.color = response.ok ? "green" : "red";
 
-        if (response.ok) {                                                                      // Если регистрация успешна, перенаправляем на страницу логина
-            setTimeout(() => {
-                window.location.href = "../login/login.html";                                   // Переход на страницу логина
-            }, 2000);                                                                           // Ожидание 2 секунды перед редиректом
+        if (response.ok) {
+            // Устанавливаем ссылку на Telegram-бота
+            const telegramConfirmLink = data.confirmLink;
+
+	    // Логируем ссылку в консоль для проверки
+            console.log("Ссылка для подтверждения через Telegram:", telegramConfirmLink);
+            document.getElementById("telegramConfirmLink").href = telegramConfirmLink; 						// присваиваем ссылку
+
+            // Показываем pop-up
+            document.getElementById("telegramPopup").style.display = "block";
+        } else {
+            document.getElementById("message").textContent = data.message;
         }
     } catch (error) {
-        messageElement.textContent = "Ошибка соединения с сервером.";
-        messageElement.style.color = "red";
+        console.error("Ошибка регистрации:", error);
+        document.getElementById("message").textContent = "Ошибка сервера.";
     }
+});
+
+// Закрытие pop-up
+document.getElementById("closePopup").addEventListener("click", function () {
+    document.getElementById("telegramPopup").style.display = "none";
 });
 
 document.addEventListener("DOMContentLoaded", () => {
 
-    generateCombinedBackground();                                                               // Запускаем генерацию фона
+    generateCombinedBackground();                                                               					// Запускаем генерацию фона
 
     const passwordField = document.getElementById("password");
     const togglePassword = document.getElementById("togglePassword");
@@ -71,5 +53,3 @@ document.addEventListener("DOMContentLoaded", () => {
         togglePassword.textContent = isPasswordVisible ? "👁" : "🙈";
     });
 });
-
-
