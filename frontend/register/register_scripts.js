@@ -17,17 +17,16 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const data = await response.json();
 
         if (response.ok) {
-            // Устанавливаем ссылку на Telegram-бота
-            const telegramConfirmLink = data.confirmLink;
 
-	    // Логируем ссылку в консоль для проверки
-            console.log("Ссылка для подтверждения через Telegram:", telegramConfirmLink);
-            document.getElementById("telegramConfirmLink").href = telegramConfirmLink; 						// присваиваем ссылку
+            const telegramConfirmLink = data.confirmLink;										// Устанавливаем ссылку на Telegram-бота
 
-            // Показываем pop-up
-            document.getElementById("telegramPopup").style.display = "block";
+            console.log("Ссылка для подтверждения через Telegram:", telegramConfirmLink);						// Логируем ссылку в консоль для проверки
+            document.getElementById("telegramConfirmLink").href = telegramConfirmLink; 							// присваиваем ссылку
+
+            document.getElementById("telegramPopup").style.display = "block";								// Показываем pop-up
         } else {
             document.getElementById("message").textContent = data.message;
+		return;
         }
     } catch (error) {
         console.error("Ошибка регистрации:", error);
@@ -35,8 +34,7 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 });
 
-// Закрытие pop-up
-document.getElementById("closePopup").addEventListener("click", function () {
+document.getElementById("closePopup").addEventListener("click", function () {								// Закрытие pop-up
     document.getElementById("telegramPopup").style.display = "none";
 });
 

@@ -43,18 +43,24 @@ router.post(
     }
 
     try {
-        const [userExists] = await query("SELECT id FROM users WHERE username = ? OR email = ?", [username, email]);
+        const [usernameExists] = await query("SELECT id FROM users WHERE username = ?", [username]);
 
-	    // Проверяем, что userExists — это массив и в нем есть элементы
-	    if (Array.isArray(userExists) && userExists.length > 0) {
-	        return res.status(400).json({ message: "Имя пользователя или email уже используются!" });
+	    if (usernameExists && usernameExists.id) {
+	        return res.status(400).json({ message: "Имя пользователя уже используется!" });
 	    }
 
+	const [emailExists] = await query("SELECT id FROM users WHERE email = ?", [email]);
+
+	    if (emailExists && emailExists.id) {
+	        return res.status(400).json({ message: "Email уже используется!" });
+	    }
+
+
         const passwordHash = await bcrypt.hash(password, 10);
-        const userId = uuidv4(); // Уникальный идентификатор пользователя
+        const userId = uuidv4(); 								// Уникальный идентификатор пользователя
 
 	// Сохраняем временные данные
-    saveTempRegistrationData(userId, { username, email, passwordHash });
+    	saveTempRegistrationData(userId, { username, email, passwordHash });
 	
 	// Отправляем пользователю ссылку на подтверждение
         const telegramConfirmLink = `https://t.me/SerpmonnConfirmBot?start=${userId}`;
@@ -81,7 +87,7 @@ router.get('/protected', verifyToken, (req, res) => {                           
 
 router.post('/logout', logoutUser);                                                                 // Маршрут для выхода
 
-router.get("/check-confirmation", async (req, res) => { // Маршрут для проверки подтверждения регистрации
+router.get("/check-confirmation", async (req, res) => { 					    // Маршрут для проверки подтверждения регистрации
     const { username } = req.query;
 
     if (!username) {
