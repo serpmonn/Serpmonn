@@ -4,11 +4,13 @@
   "description": "Проект Serpmonn",
   "type": "module",
   "scripts": {
-    "start": "npm run start-auth && npm run start-news && npm run start-leaderboard && npm run start-openai",
+    "start": "npm run start-auth && npm run start-news && npm run start-leaderboard && npm run start-openai && npm run start-serpmonngames && npm run start-serpmonnconfirm",
     "start-auth": "pm2 start backend/server.mjs --name 'auth-server'",
     "start-news": "pm2 start backend/news/server.mjs --name 'news-server'",
     "start-leaderboard": "pm2 start games/redsquare2/server.mjs --name 'leaderboard-server'",
-    "start-openai": "pm2 start backend/openai.mjs --name 'openai-server'"
+    "start-openai": "pm2 start backend/openai.mjs --name 'openai-server'",
+    "start-serpmonngames": "pm2 start telegram_bots/Serpmonn_games/Serpmonn_games.cjs --name 'serpmonngamesbot'",
+    "start-serpmonnconfirm": "pm2 start telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs --name 'serpmonnconfirmbot'"
   },
   "dependencies": {
     "axios": "^1.7.9",

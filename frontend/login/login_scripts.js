@@ -14,8 +14,8 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         return;
     }
 
-    if (password.length < 8) {
-        messageElement.textContent = "Пароль должен содержать минимум 8 символов.";
+    if (password.length < 6) {
+        messageElement.textContent = "Пароль должен содержать минимум 6 символов.";
         messageElement.style.color = "red";
         return;
     }
