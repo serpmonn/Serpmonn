@@ -27,59 +27,118 @@
             let lastTime = 0;
 
             function drawPlayer() {
-                ctx.fillStyle = player.color;
+                const playerColor = level % 2 === 0 ? 'green' : 'red'; // Меняем цвет на зелёный на чётных уровнях
+                ctx.fillStyle = playerColor;
                 ctx.fillRect(player.x, player.y, player.width, player.height);
             }
 
             function createObject() {
-                const size = 20 + Math.random() * 40; // Случайный размер от 10 до 40 пикселей
+                const size = 20 + Math.random() * 40; // Случайный размер от 20 до 60 пикселей
                 const x = Math.random() * (canvas.width - size);
-                const shape = Math.random() < 0.5 ? 'square' : 'circle'; // Случайная форма: квадрат или круг
-                objects.push({ x, y: 0, size, shape, color: 'blue' });
+                const shapeTypes = ['square', 'circle', 'triangle', 'star']; // Новый список форм
+                const shape = shapeTypes[Math.floor(Math.random() * shapeTypes.length)]; // Случайная форма
+                const dx = (Math.random() - 0.5) * 4; // Случайное отклонение по оси X
+                objects.push({ x, y: 0, size, shape, color: 'blue', dx });
             }
 
-            function drawObjects() {
-                    objects.forEach(obj => {
-                        ctx.fillStyle = obj.color;
-                        if (obj.shape === 'square') {
-                            ctx.fillRect(obj.x, obj.y, obj.size, obj.size);
-                        } else if (obj.shape === 'circle') {
-                            ctx.beginPath();
-                            ctx.arc(obj.x + obj.size / 2, obj.y + obj.size / 2, obj.size / 2, 0, Math.PI * 2);
-                            ctx.fill();
+            // Изменим цвет объектов в зависимости от уровня
+            function drawObject(obj) {
+                ctx.beginPath();
+                let objectColor;
+
+                // Добавим динамические цвета для объектов
+                if (level < 5) {
+                    objectColor = 'blue';
+                } else if (level < 10) {
+                    objectColor = 'orange';
+                } else {
+                    objectColor = 'purple';
+                }
+
+                ctx.fillStyle = objectColor;
+
+                switch (obj.shape) {
+                    case 'square':
+                        ctx.fillRect(obj.x, obj.y, obj.size, obj.size);
+                        break;
+                    case 'circle':
+                        ctx.arc(obj.x + obj.size / 2, obj.y + obj.size / 2, obj.size / 2, 0, Math.PI * 2);
+                        ctx.fill();
+                        break;
+                    case 'triangle':
+                        ctx.moveTo(obj.x + obj.size / 2, obj.y); // Вершина
+                        ctx.lineTo(obj.x, obj.y + obj.size); // Левая сторона
+                        ctx.lineTo(obj.x + obj.size, obj.y + obj.size); // Правая сторона
+                        ctx.closePath();
+                        ctx.fill();
+                        break;
+                    case 'star':
+                        const centerX = obj.x + obj.size / 2;
+                        const centerY = obj.y + obj.size / 2;
+                        const spikes = 5;
+                        const outerRadius = obj.size / 2;
+                        const innerRadius = obj.size / 4;
+                        let rot = (Math.PI / 2) * 3;
+                        let step = Math.PI / spikes;
+
+                        ctx.moveTo(centerX, centerY - outerRadius);
+                        for (let i = 0; i < spikes; i++) {
+                            ctx.lineTo(centerX + Math.cos(rot) * outerRadius, centerY + Math.sin(rot) * outerRadius);
+                            rot += step;
+                            ctx.lineTo(centerX + Math.cos(rot) * innerRadius, centerY + Math.sin(rot) * innerRadius);
+                            rot += step;
                         }
-                    });
+                        ctx.closePath();
+                        ctx.fill();
+                        break;
+                    default:
+                        break;
+                }
+
+                ctx.fillStyle = 'black'; // Возвращаем цвет по умолчанию для других объектов
             }
 
             function updateObjects(deltaTime) {
-		    objects.forEach(obj => {
-		        obj.y += objectSpeed * (deltaTime / 16); // Используем deltaTime для обновления позиции
-		        if (obj.y + objectSize > canvas.height) {
-		            // Если объект достиг нижней границы экрана и не был задет игроком
-		            objects.splice(objects.indexOf(obj), 1);
-		            score++; // Увеличиваем очки за пропуск объекта
-		            document.getElementById('score').innerText = `Очки: ${score}`;
-		            if (score % 10 === 0) {
-		                level++;
-		                objectSpeed += 1; // Увеличиваем сложность
-		            }
-		        }
-		        if (
-		            obj.x < player.x + player.width &&
-		            obj.x + objectSize > player.x &&
-		            obj.y < player.y + player.height &&
-		            obj.y + objectSize > player.y
-		        ) {
-		            // Если объект касается игрока
-		            objects.splice(objects.indexOf(obj), 1);
-		            missedObjects++; // Увеличиваем счётчик пропусков при касании
-		            document.getElementById('missed').innerText = `Пропуски: ${missedObjects}`;
-		            if (missedObjects >= 10) {
-		                endGame(); // Завершаем игру при достижении лимита пропусков
-		            }
-		        }
-		    });
-	    }
+                objects.forEach(obj => {
+                    obj.y += objectSpeed * (deltaTime / 16); // Обновляем положение по оси Y
+            
+                    obj.x += obj.dx * (deltaTime / 16); // Обновляем положение по оси X с учетом отклонения
+            
+                    // Ограничиваем движение по оси X, чтобы объекты не выходили за границы экрана
+                    if (obj.x < 0) obj.x = 0;
+                    if (obj.x + obj.size > canvas.width) obj.x = canvas.width - obj.size;
+            
+                    if (obj.y + obj.size > canvas.height) {
+                        // Если объект достиг нижней границы экрана и не был задет игроком
+                        objects.splice(objects.indexOf(obj), 1);
+                        score++; // Увеличиваем очки за пропуск объекта
+                        document.getElementById('score').innerText = `Очки: ${score}`;
+                        if (score % 10 === 0) {
+                            level++;
+                            objectSpeed += 1; // Увеличиваем скорость падения объектов
+                        }
+                    }
+            
+                    if (
+                        obj.x < player.x + player.width &&
+                        obj.x + obj.size > player.x &&
+                        obj.y < player.y + player.height &&
+                        obj.y + obj.size > player.y
+                    ) {
+                        // Если объект касается игрока
+                        objects.splice(objects.indexOf(obj), 1);
+                        missedObjects++; // Увеличиваем счётчик пропусков при касании
+                        document.getElementById('missed').innerText = `Пропуски: ${missedObjects}`;
+                        if (missedObjects >= 10) {
+                            endGame(); // Завершаем игру при достижении лимита пропусков
+                        }
+                    }
+                });
+            }
+
+            function drawObjects() {
+                objects.forEach(drawObject); // Добавлено: отрисовка каждого объекта
+            }
 
             function clear() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
