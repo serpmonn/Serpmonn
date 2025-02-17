@@ -23,31 +23,24 @@ export function getCookie(name) {
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    if (cookieConsent && acceptCookiesButton && declineCookiesButton) {
-        // Проверяем, было ли ранее принято использование куки
+    if (cookieConsent && acceptCookiesButton && declineCookiesButton) {                             // Проверяем, было ли ранее принято использование куки
         const cookiesAccepted = getCookie('cookies_accepted');
         console.log("Проверка куки 'cookies_accepted':", cookiesAccepted);
 
-        if (!cookiesAccepted) {
-            // Если куки не было принято, отображаем уведомление
+        if (!cookiesAccepted) {                                                                     // Если куки не было принято, отображаем уведомление
             cookieConsent.style.display = 'block';
         }
 
-        // Обрабатываем событие клика по кнопке "Принять куки"
-        acceptCookiesButton.addEventListener('click', () => {
-            // Устанавливаем куки с флагом принятия на 365 дней
-            setCookie('cookies_accepted', 'true', 365);
+        acceptCookiesButton.addEventListener('click', () => {                                       // Обрабатываем событие клика по кнопке "Принять куки"
+            setCookie('cookies_accepted', 'true', 365);                                             // Устанавливаем куки с флагом принятия на 365 дней
             console.log("Куки 'cookies_accepted' установлено");
 
-            // Скрываем уведомление
-            cookieConsent.style.display = 'none';
+            cookieConsent.style.display = 'none';                                                   // Скрываем уведомление
             console.log("Политика принята, уведомление скрыто.");
         });
 
-        // Обрабатываем событие клика по кнопке "Отклонить куки"
-        declineCookiesButton.addEventListener('click', () => {
-            // Скрываем уведомление
-            cookieConsent.style.display = 'none';
+        declineCookiesButton.addEventListener('click', () => {                                      // Обрабатываем событие клика по кнопке "Отклонить куки"
+            cookieConsent.style.display = 'none';                                                   // Скрываем уведомление
             console.log("Политика отклонена, уведомление скрыто.");
         });
     }
