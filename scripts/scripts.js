@@ -3,6 +3,7 @@ import { handleInstallApp, setupInstallEvent, setupInstallAppButton } from './in
 import { loadNews } from './news.js';
 import { generateCombinedBackground } from './backgroundGenerator.js';
 import { toggleMenu, toggleSubmenu } from './menu.js';
+import '../pwa/app.js';  
 
 console.log('JavaScript файл подключен и работает.');
 
