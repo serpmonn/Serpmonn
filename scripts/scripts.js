@@ -14,13 +14,15 @@ document.addEventListener('DOMContentLoaded', () => {
     Promise.allSettled([loadNews(), generateCombinedBackground()])
         .then(results => {
             results.forEach(result => {
-                if (result.status === 'fulfilled') {
-                    console.log('Задача выполнена успешно', result.value);
-                } else {
-                    console.error('Задача завершена с ошибкой', result.reason);
+                if (result.status === 'rejected') {
+                    console.error('Ошибка:', result.reason);
                 }
             });
         });
+});
+
+document.getElementById("news-container").addEventListener("click", function () {
+    this.classList.toggle("expanded");
 });
 
 document.getElementById('menuButton').addEventListener('click', function(event) {
@@ -41,8 +43,7 @@ document.querySelectorAll('.menu-item').forEach(function(item) {
     });
 });
 
-// Закрытие меню при клике вне его области
-document.addEventListener('click', function(event) {
+document.addEventListener('click', function(event) {                                                                    // Закрытие меню при клике вне его области
     if (!menuContainer.contains(event.target) && !menuButton.contains(event.target)) {
         menuContainer.style.display = 'none';
         menuButton.innerHTML = '<span class="s">S</span><span class="n">n</span>';
@@ -50,16 +51,14 @@ document.addEventListener('click', function(event) {
     }
 });
 
-// Закрытие инструкций при клике вне области
-    document.addEventListener('click', (event) => {
-        if (!installInstructions.contains(event.target) && event.target !== installAppButton) {
-            installInstructions.style.display = 'none';
-        }
-    });
+document.addEventListener('click', (event) => {                                                                     // Закрытие инструкций при клике вне области
+    if (!installInstructions.contains(event.target) && event.target !== installAppButton) {
+        installInstructions.style.display = 'none';
+    }
+});
 
 window.addEventListener('beforeinstallprompt', (e) => {
-    // Сохраняем событие
-    deferredPrompt = e;
+    deferredPrompt = e;                                                                                                 // Сохраняем событие
     e.prompt();
 });
 

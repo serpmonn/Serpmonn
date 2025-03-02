@@ -6,14 +6,13 @@ import fetch from "node-fetch";
 import { body } from 'express-validator';
 import { registerUser, loginUser, logoutUser } from './authController.mjs';                         // Контроллеры (сделано через деструктуризацию)
 import verifyToken from './verifyToken.mjs';
-import { query } from '../database/config.mjs';  // Импортируем query
+import { query } from '../database/config.mjs';                                                     // Импортируем query
 
 const router = express.Router();                                                                    // Создаём новый экземпляр маршрутизатора
 
 const TEMP_FILE = '/var/www/serpmonn.ru/backend/auth/tempUserData.json';
 
-// Функция для сохранения временных данных в файл
-function saveTempRegistrationData(userId, data) {
+function saveTempRegistrationData(userId, data) {                                                   // Функция для сохранения временных данных в файл
     try {
         const tempData = JSON.parse(fs.readFileSync(TEMP_FILE, 'utf-8') || '{}');
         tempData[userId] = data;
@@ -23,8 +22,7 @@ function saveTempRegistrationData(userId, data) {
     }
 }
 
-// Регистрация пользователя с проверкой данных
-router.post(
+router.post(                                                                                        // Регистрация пользователя с проверкой данных
   "/register",
   [
     body('username')
@@ -57,19 +55,17 @@ router.post(
 
 
         const passwordHash = await bcrypt.hash(password, 10);
-        const userId = uuidv4(); 								// Уникальный идентификатор пользователя
+        const userId = uuidv4(); 								                                    // Уникальный идентификатор пользователя
 
-	// Сохраняем временные данные
-    	saveTempRegistrationData(userId, { username, email, passwordHash });
+    	saveTempRegistrationData(userId, { username, email, passwordHash });                        // Сохраняем временные данные
 	
-	// Отправляем пользователю ссылку на подтверждение
-        const telegramConfirmLink = `https://t.me/SerpmonnConfirmBot?start=${userId}`;
+        const telegramConfirmLink = `https://t.me/SerpmonnConfirmBot?start=${userId}`;              // Отправляем пользователю ссылку на подтверждение
 
          res.status(200).json({ 
             success: true,
             message: "Регистрация успешна! Подтвердите аккаунт через Telegram.",
             userId: userId,
-            confirmLink: telegramConfirmLink // Отправляем ссылку на фронт
+            confirmLink: telegramConfirmLink                                                        // Отправляем ссылку на фронт
         });
 
     } catch (error) {
@@ -87,7 +83,7 @@ router.get('/protected', verifyToken, (req, res) => {                           
 
 router.post('/logout', logoutUser);                                                                 // Маршрут для выхода
 
-router.get("/check-confirmation", async (req, res) => { 					    // Маршрут для проверки подтверждения регистрации
+router.get("/check-confirmation", async (req, res) => { 					                        // Маршрут для проверки подтверждения регистрации
     const { username } = req.query;
 
     if (!username) {

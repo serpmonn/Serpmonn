@@ -33,15 +33,13 @@ export async function loadNews() {
                 const newsContent = document.createElement('div');
                 newsContent.className = 'news-content';
 
-		// Если описание есть, отображаем его, если нет - скрываем элемент
-                if (article.description) {
+                if (article.description) {                                                                      // Если описание есть, отображаем его, если нет - скрываем элемент
                     newsContent.textContent = article.description;
                 } else {
                     newsContent.style.display = 'none';
                 }
 
-                // Добавляем изображение, если оно есть
-                if (article.enclosure && article.enclosure.url) {
+                if (article.enclosure && article.enclosure.url) {                                               // Добавляем изображение, если оно есть
                     const newsImage = document.createElement('img');
                     newsImage.className = 'news-image';
                     newsImage.src = article.enclosure.url;
@@ -51,7 +49,6 @@ export async function loadNews() {
                 newsLink.appendChild(newsTitle);
                 newsLink.appendChild(newsDate);
                 newsLink.appendChild(newsContent);
-
                 newsItem.appendChild(newsLink);
                 newsContainer.appendChild(newsItem);
             });
@@ -62,4 +59,3 @@ export async function loadNews() {
         console.error('Ошибка загрузки новостей:', error);
     }
 }
-

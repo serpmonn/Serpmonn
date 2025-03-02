@@ -17,10 +17,10 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-app.use(express.json()); 								  // Для обработки JSON данных
-app.use(cookieParser());  								  // Для работы cookie
+app.use(express.json()); 								                                                  // Для обработки JSON данных
+app.use(cookieParser());  								                                                // Для работы cookie
 
-app.use('/auth', authRoutes);  								  // Подключение маршрутов
+app.use('/auth', authRoutes);  								                                            // Подключение маршрутов
 app.use('/profile', profilesRoutes);
 
 app.listen(5000, () => {                                                                  // Запуск сервера
