@@ -41,12 +41,12 @@
                 objects.push({ x, y: 0, size, shape, color: 'blue', dx });
             }
 
-            // Изменим цвет объектов в зависимости от уровня
+            // Цвет объектов в зависимости от уровня
             function drawObject(obj) {
                 ctx.beginPath();
                 let objectColor;
 
-                // Добавим динамические цвета для объектов
+                // Динамические цвета для объектов
                 if (level < 5) {
                     objectColor = 'blue';
                 } else if (level < 10) {
@@ -219,7 +219,7 @@
 
 		    isPaused = true;                                                                            // Ставим игру на паузу, чтобы не было других действий в момент завершения игры
 
-		    fetch('https://www.serpmonn.ru/add-score', {						// Отправляем результат игрока на сервер
+		    fetch('https://www.serpmonn.ru/add-score', {						                        // Отправляем результат игрока на сервер
 		        method: 'POST',
 		        headers: {
 		            'Content-Type': 'application/json'
@@ -229,15 +229,15 @@
 
 		        updateLeaderboard();
 
-		        const adScript = document.createElement('script');                                      // Создаём элемент для скрипта рекламы
+		        const adScript = document.createElement('script');                                          // Создаём элемент для скрипта рекламы
 	                adScript.src = "https://ad.mail.ru/static/ads-async.js";                                // Путь к рекламному скрипту
 	                adScript.async = true;                                                                  // Делаем его асинхронным
 	                document.body.appendChild(adScript);                                                    // Добавляем скрипт на страницу
 
 	                const adContainer = document.createElement('ins');                                      // Создаём контейнер для рекламного блока
 	                adContainer.className = "mrg-tag";                                                      // Класс для рекламного блока
-	                adContainer.setAttribute('data-ad-client', "ad-1764986");                               // ID клиента для рекламы
-	                adContainer.setAttribute('data-ad-slot', "1764986");                                    // ID слота для показа рекламы
+	                adContainer.setAttribute('data-ad-client', "ad-1844883");                               // ID клиента для рекламы
+	                adContainer.setAttribute('data-ad-slot', "1844883");                                    // ID слота для показа рекламы
 
 	                document.body.appendChild(adContainer);                                                 // Добавляем рекламный контейнер на страницу
 
@@ -245,17 +245,33 @@
 	                adInitScript.innerHTML = "(MRGtag = window.MRGtag || []).push({})";                     // Инициализация
 	                document.body.appendChild(adInitScript);                                                // Добавляем на страницу
 
-		        setTimeout(() => {									// Ждём некоторое время перед перенаправлением
+		        setTimeout(() => {									                                        // Ждём некоторое время перед перенаправлением
 		            window.location.href = 'score_table.html';
-		        }, 10000); 										// 3 секунды на просмотр рекламы
+		        }, 10000); 										                                            // 3 секунды на просмотр рекламы
 		    });
 		}
+
+        function restartGame() {
+            score = 0;                                                                                      // Сброс игровых параметров
+            level = 1;
+            missedObjects = 0;
+            objectSpeed = 2;
+            objects.length = 0;                                                                             // Очистка массива объектов
+            player.x = canvas.width / 2 - 25;                                                               // Сброс позиции игрока
+            player.dx = 0;
+            isPaused = false;
+            document.getElementById('score').innerText = `Очки: ${score}`;
+            document.getElementById('missed').innerText = `Пропуски: ${missedObjects}`;
+            document.getElementById('pauseBtn').innerText = 'Пауза';
+            if (gameInterval) clearInterval(gameInterval);                                                  // Перезапуск интервала создания объектов
+            gameInterval = setInterval(createObject, 1000);
+        }
 
            fetch('https://www.serpmonn.ru/proxy/bannedWords')
             .then(response => response.json())
             .then(data => {
-                // Функция для проверки никнейма на наличие запрещенных слов
-                function containsBannedWords(nickname) {
+
+                function containsBannedWords(nickname) {                                                    // Функция для проверки никнейма на наличие запрещенных слов
                     for (let item of data) {
                         if (nickname.toLowerCase().includes(item.word)) {
                             return true;
@@ -264,8 +280,7 @@
                     return false;
            	}
 
-                // Обработчик отправки формы никнейма
-           document.getElementById('nicknameForm').addEventListener('submit', function(e) {
+           document.getElementById('nicknameForm').addEventListener('submit', function(e) {                 // Обработчик отправки формы никнейма
                     e.preventDefault();
                     const nickname = document.getElementById('nickname').value;
                     if (containsBannedWords(nickname)) {
@@ -274,7 +289,7 @@
                         player.nickname = nickname;
                         document.getElementById('nicknameForm').style.display = 'none';
                         setInterval(createObject, 1000);
-                        requestAnimationFrame(update); // Запуск функции обновления
+                        requestAnimationFrame(update);                                                      // Запуск функции обновления
                     }
                 });
            });
@@ -299,11 +314,14 @@
                 document.getElementById('pauseBtn').innerText = isPaused ? 'Продолжить' : 'Пауза';
             });
 
+            document.getElementById('restartBtn').addEventListener('click', function() {
+                restartGame();
+            });
+
             window.addEventListener('pageshow', () => {
                 requestAnimationFrame(() => {
-                    document.body.style.paddingBottom = 'env(safe-area-inset-bottom)';
-                    // Принудительное обновление макета
-                    document.body.offsetHeight; // Триггер обновления макета
+                    document.body.style.paddingBottom = 'env(safe-area-inset-bottom)';                      // Принудительное обновление макета
+                    document.body.offsetHeight;                                                             // Триггер обновления макета
                 });
             });
 

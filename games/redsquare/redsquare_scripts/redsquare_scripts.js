@@ -216,8 +216,8 @@
 
                 const adContainer = document.createElement('ins');                                      // Создаём контейнер для рекламного блока
                 adContainer.className = "mrg-tag";                                                      // Класс для рекламного блока
-                adContainer.setAttribute('data-ad-client', "ad-1752235");                               // ID клиента для рекламы
-                adContainer.setAttribute('data-ad-slot', "1752235");                                    // ID слота для показа рекламы
+                adContainer.setAttribute('data-ad-client', "ad-1844881");                               // ID клиента для рекламы
+                adContainer.setAttribute('data-ad-slot', "1844881");                                    // ID слота для показа рекламы
 
                 document.body.appendChild(adContainer);                                                 // Добавляем рекламный контейнер на страницу
 
