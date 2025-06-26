@@ -27,103 +27,15 @@
 		<!-- Yandex.RTB -->
 		<script>window.yaContextCb=window.yaContextCb||[]</script>
 		<script src="https://yandex.ru/ads/system/context.js" async></script>
+		<script type="module" src="scripts/menu-loader.js" defer></script>
     	<script type="module" src="scripts/scripts.js" defer></script>
-		<script async src="https://cse.google.com/cse.js?cx=97e62541ff5274a28"></script>
 		<script async src="https://ad.mail.ru/static/ads-async.js"></script>
 		
  	   </head>
     <body>
-	
-		<!-- Кнопка меню -->
-	<button class="menu-button" id="menuButton">
-		<span class="s">S</span><span class="n">n</span>
-	</button>
-
-		<!-- Контейнер меню -->
-		<div class="menu-container" id="menuContainer">
-
-			<!-- Регистрация и вход -->
-			<a href="https://serpmonn.ru/frontend/register/register.html" id="login-register-btn"> 
-				<img src="images/login.ico" alt="Authentication" class="icon"> Регистрация и Вход
-			</a>
-
-			<!-- Раздел "Игры" -->
-			<a href="#" class="menu-item" data-submenu="gamesSubmenu">
-				<img src="images/Games.ico" alt="Игры" class="icon"> Игры
-			</a>
-
-			<div class="submenu-container" id="gamesSubmenu">
-				<!-- Веб-игры -->
-				<a href="#" class="menu-item" data-submenu="webGamesSubmenu">
-					<img src="images/WebGames.ico" alt="Веб-игры" class="icon"> Веб-игры
-				</a>
-
-				<div class="submenu-container" id="webGamesSubmenu">
-					<a href="https://serpmonn.ru/games/2048/index.html" target="_blank">
-						<img src="images/2048.ico" alt="2048" class="icon"> 2048
-					</a>
-					<a href="https://www.serpmonn.ru/games/redsquare/redsquare.html" target="_blank">
-						<img src="images/SquareEscape.ico" alt="Квадратное бегство" class="icon"> Квадратное бегство
-					</a>
-					<a href="https://www.serpmonn.ru/games/redsquare2/redsquare2.html" target="_blank">
-						<img src="images/RedSquare2.ico" alt="Падающие фигуры" class="icon"> Падающие фигуры
-					</a>
-				</div>
-
-				<!-- Android-игры -->
-				<a href="#" class="menu-item" data-submenu="androidGamesSubmenu">
-					<img src="images/AndroidGames.ico" alt="Android-игры" class="icon"> Android-игры
-				</a>
-
-				<div class="submenu-container" id="androidGamesSubmenu">
-					<a href="#" target="_blank">
-						<img src="images/placeholder.ico" alt="Игра 1" class="icon"> (Тут будет Android-игра)
-					</a>
-				</div>
-			</div>
-
-			<!-- Раздел "Приложения" -->
-			<a href="#" class="menu-item" data-submenu="appsSubmenu">
-				<img src="images/Apps.ico" alt="Приложения" class="icon"> Приложения
-			</a>
-
-			<div class="submenu-container" id="appsSubmenu">
-				<a href="#" class="menu-item" id="installAppButton">
-					<img src="images/Serpmonn.ico" alt="Скачать веб-приложение" class="icon"> Скачать веб-приложение
-				</a>
-			</div>
-
-			<!-- Раздел "Наши партнёры" -->
-			<a href="#" class="menu-item" data-submenu="partnersSubmenu">
-				<img src="images/OurPartners.ico" alt="Наши партнёры" class="icon"> Наши партнёры
-			</a>
-
-			<div class="submenu-container" id="partnersSubmenu">
-				<a href="https://www.serpmonn.ru/Partners/X-Car.html" target="_blank">
-					<img src="images/Logo_X-Car.ico" alt="X-Car" class="icon"> X-Car
-				</a>
-				<a href="https://www.adventure36.ru" target="_blank">
-					<img src="images/Adventure36.ico" alt="Adventure36" class="icon"> Adventure36
-				</a>
-				<a href="https://www.vrnhoney.ru" target="_blank">
-					<img src="images/VRNHoney.ico" alt="VRNHoney" class="icon"> VRNHoney
-				</a>
-				<a href="https://www.onehouseboat.ru" target="_blank">
-					<img src="images/OneHouseBoat.ico" alt="OneHouseBoat" class="icon"> OneHouseBoat
-				</a>
-			</div>
-
-			<!-- Политика конфиденциальности -->
-			<a href="/privacy-policy/privacy-policy.html" id="privacy-policy-btn">
-				<img src="images/privacy-policy.ico" alt="privacy-policy" class="icon"> Политика конфиденциальности
-			</a>
-
-			<!-- О проекте (закомментировано) -->
-			<a href="/about-project/about-project.html" id="about-project-btn">
-				<img src="images/about-project.ico" alt="О проекте" class="icon"> О проекте
-			</a> 
-		</div>
-
+		<!-- Добавляем кнопку установки PWA -->
+		<button id="installAppButton" style="display:none">Установить приложение</button>
+		
 	    <div class="install-instructions" id="installInstructions">
 		 <p>Чтобы скачать приложение:</p>
 		  <ol>
@@ -139,8 +51,8 @@
         </div>
 
         <div class="container">
-            <div class="search-container">
-                <img src="images/Serpmonn.ico" alt="Serpmonn Logo" class="logo" title="Serpmonn">
+            <div class="main-search-container">
+                <img src="/images/Serpmonn.ico" alt="Serpmonn Logo" class="logo" title="Serpmonn">
                 <div class="gcse-searchbox-only"></div>
             </div>
 		</div>
@@ -162,6 +74,5 @@
 	    <button id="accept-cookies" class="cookie-button">Принять</button>
 	    <button id="decline-cookies" class="cookie-button">Отклонить</button>
 	</div>
-     
     </body>
 </html>

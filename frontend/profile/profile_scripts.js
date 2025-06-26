@@ -3,18 +3,6 @@ import { generateCombinedBackground } from '../../scripts/backgroundGenerator.js
 document.addEventListener('DOMContentLoaded', () => {
 
 	generateCombinedBackground();                                                                           				// Запускаем генерацию фона
-
-	// Проверяем, есть ли у пользователя почта
-	checkMailboxStatus();
-	
-	document.getElementById('create-mail-btn').addEventListener('click', function() {
-		document.getElementById('mail-form').style.display = 'block';
-		this.style.display = 'none';
-	});
-	
-	document.getElementById('submit-mail').addEventListener('click', function() {
-		createMailbox();
-	});
 	
 	async function getProfile() {
 	    try {
@@ -79,52 +67,3 @@ document.addEventListener('DOMContentLoaded', () => {
 	    window.location.href = "https://serpmonn.ru"; 																		// Перенаправление на главную страницу
 	});
 });
-
-function checkMailboxStatus() {
-	// Здесь запрос к вашему API для проверки наличия почты
-	fetch('/api/check-mailbox')
-		.then(response => response.json())
-		.then(data => {
-			if (data.hasMailbox) {
-				document.getElementById('mail-status').innerHTML = `
-					<p>Ваш почтовый ящик: ${data.email} 
-						<a href="https://mail.serpmonn.ru/SOGo" target="_blank">Открыть</a>
-					</p>`;
-				document.getElementById('create-mail-btn').style.display = 'none';
-			}
-		});
-}
-
-function createMailbox() {
-	const password = document.getElementById('mail-password').value;
-	const recaptchaResponse = grecaptcha.getResponse();
-	
-	if (!recaptchaResponse) {
-		document.getElementById('mail-message').textContent = 'Пройдите проверку reCAPTCHA';
-		return;
-	}
-
-	fetch('/api/create-mailbox', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-		body: JSON.stringify({
-			password: password,
-			recaptcha: recaptchaResponse
-		})
-	})
-	.then(response => response.json())
-	.then(data => {
-		if (data.success) {
-			document.getElementById('mail-message').textContent = 'Почтовый ящик успешно создан!';
-			document.getElementById('mail-form').style.display = 'none';
-			checkMailboxStatus(); // Обновляем статус
-		} else {
-			document.getElementById('mail-message').textContent = 'Ошибка: ' + data.error;
-		}
-	})
-	.catch((error) => {
-		document.getElementById('mail-message').textContent = 'Ошибка сети';
-	});
-}
