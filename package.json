@@ -5,14 +5,15 @@
   "type": "module",
   "main": "backend/server.mjs",
   "scripts": {
-    "start": "npm run start-auth & npm run start-news & npm run start-leaderboard & npm run start-serpmonngames & npm run start-serpmonnconfirm & npm run start-X-Car & npm run start-onnmail",
+    "start": "npm run start-auth & npm run start-news & npm run start-leaderboard & npm run start-serpmonngames & npm run start-serpmonnconfirm & npm run start-X-Car & npm run start-onnmail & npm run start-password-reset",
     "start-auth": "pm2 start backend/server.mjs --name 'auth-server'",
     "start-news": "pm2 start backend/news/server.mjs --name 'news-server'",
     "start-leaderboard": "pm2 start games/redsquare2/server.mjs --name 'leaderboard-server'",
     "start-serpmonngames": "pm2 start telegram_bots/Serpmonn_games/Serpmonn_games.cjs --name 'serpmonngamesbot'",
     "start-serpmonnconfirm": "pm2 start telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs --name 'serpmonnconfirmbot'",
     "start-X-Car": "pm2 start backend/X-Car/server.mjs --name 'X-Car'",
-    "start-onnmail": "pm2 start backend/auth/onnmail_server.mjs --name 'onnmail'"
+    "start-onnmail": "pm2 start backend/auth/onnmail_server.mjs --name 'onnmail'",
+    "start-password-reset": "pm2 start backend/auth/password-reset.mjs --name 'password-reset'"
   },
   "author": "Sergei Popov",
   "repository": {
@@ -42,6 +43,7 @@
     "mysql2": "^3.12.0",
     "node-fetch": "^3.3.2",
     "node-telegram-bot-api": "^0.66.0",
+    "nodemailer": "^7.0.4",
     "paseto": "^3.1.4",
     "rss-parser": "^3.13.0",
     "uuid": "^11.0.5"
