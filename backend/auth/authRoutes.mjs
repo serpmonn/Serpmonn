@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from "uuid";
 import fs from 'fs';
 import fetch from "node-fetch";
 import { body } from 'express-validator';
-import { registerUser, loginUser, logoutUser } from './authController.mjs';                         // Контроллеры (сделано через деструктуризацию)
+import { loginUser, logoutUser } from './authController.mjs';                         // Контроллеры (сделано через деструктуризацию)
 import verifyToken from './verifyToken.mjs';
 import { query } from '../database/config.mjs';                                                     // Импортируем query
 

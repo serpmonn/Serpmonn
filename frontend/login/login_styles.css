@@ -1,65 +1,92 @@
-/* Основные стили страницы */
+/* Базовые стили */
 body {
-    font-family: Arial, sans-serif;
-    background-color: #f4f4f4;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #e1bee7);
     margin: 0;
     padding: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .container {
-    max-width: 400px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: #fff;
+    max-width: 420px;
+    padding: 30px 25px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.6s ease;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 h2 {
     text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
+    font-size: 28px;
     color: #333;
+    margin-bottom: 25px;
 }
 
+/* Стили для формы */
 form {
     display: flex;
     flex-direction: column;
 }
 
 label {
-    display: block;
-    margin: 10px 0 5px;
-    font-size: 16px;
-    color: #555;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #444;
 }
 
 input {
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 12px;
+    margin-bottom: 18px;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 16px;
-    width: 100%;
-    box-sizing: border-box;
+    transition: border 0.2s;
+}
+
+input:focus {
+    border-color: #ff4d4d;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);
 }
 
 input[type="password"] {
     font-family: Arial, sans-serif;
 }
 
-button {
-    padding: 10px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
+button:hover {
+    background-color: #f0f0f0;
 }
 
-button:hover {
-    background-color: #0056b3;
+/* Кнопка входа */
+.submit-btn {
+    padding: 12px;
+    background: linear-gradient(90deg, #ff5252, #ff1717);
+    color: #fff;
+    font-size: 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.submit-btn:hover {
+    background: linear-gradient(90deg, #e53935, #d32f2f);
+    transform: translateY(-1px);
 }
 
 p {
@@ -72,10 +99,17 @@ p.success {
     color: green;
 }
 
+/* Пароль и глазик */
 .password-container {
     position: relative;
     display: flex;
     align-items: center;
+}
+
+.password-container input {
+    width: 100%;
+    box-sizing: border-box;
+    padding-right: 40px;
 }
 
 #togglePassword {
@@ -93,4 +127,27 @@ p.success {
 
 #togglePassword:hover {
     color: #333; /* Затемнение при наведении */
+}
+
+/* Ссылка на регистрацию */
+.register-link {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 14px;
+}
+
+.register-link p {
+    color: #444; /* такой же цвет, как у label */
+}
+
+.register-link a {
+    color: #ff1717;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.2s ease-in-out;
+}
+
+.register-link a:hover {
+    text-decoration: underline;
+    color: #fd0909;
 }

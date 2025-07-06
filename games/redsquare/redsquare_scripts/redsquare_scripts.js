@@ -60,6 +60,17 @@
         ensurePlayerSafePosition();
     };
 
+    // Скрипт для закрытия инструкции
+    document.getElementById('understandBtn').addEventListener('click', function() {
+        document.getElementById('instructionOverlay').style.display = 'none';
+    });
+    
+    // Показываем кнопку "Начать игру" только после прочтения инструкции
+    document.getElementById('start').style.display = 'none';
+    document.getElementById('understandBtn').addEventListener('click', function() {
+        document.getElementById('start').style.display = 'block';
+    });
+
 	const ensurePlayerSafePosition = () => {
         const obstacles = document.querySelectorAll('.obstacle');
         let isSafe = false;

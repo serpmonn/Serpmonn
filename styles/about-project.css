@@ -91,3 +91,102 @@ footer a:hover {
         max-width: 75%;
     }
 }
+
+/* Стили для счётчика */
+.user-counter {
+    margin: 40px auto;
+    max-width: 500px;
+}
+
+.counter-card {
+    background: white;
+    border-radius: 16px;
+    padding: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.counter-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.counter-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.counter-icon {
+    width: 28px;
+    height: 28px;
+    color: #e54646;
+}
+
+.counter-content {
+    text-align: center;
+}
+
+.counter-value {
+    font-size: 3.5rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, #ff1717, #ff1b1b);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 10px 0;
+    line-height: 1.2;
+}
+
+.counter-progress {
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 100%;
+    width: 75%;
+    background: linear-gradient(90deg, #e54646, #d40606);
+    border-radius: 3px;
+    animation: progress-animation 2s ease-in-out infinite alternate;
+}
+
+/* Анимации */
+@keyframes progress-animation {
+    0% { width: 75%; }
+    100% { width: 85%; }
+}
+
+@keyframes count-up {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .counter-card {
+        padding: 25px;
+    }
+    
+    .counter-value {
+        font-size: 2.8rem;
+    }
+    
+    .counter-label {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .user-counter {
+        margin: 30px 15px;
+    }
+    
+    .counter-value {
+        font-size: 2.5rem;
+    }
+}

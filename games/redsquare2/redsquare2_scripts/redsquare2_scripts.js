@@ -294,6 +294,16 @@
                 });
            });
 
+           // Скрипт для закрытия инструкции
+        document.getElementById('understandBtn').addEventListener('click', function() {
+            document.getElementById('instructionOverlay').style.display = 'none';
+            // Показываем форму ввода имени после прочтения инструкции
+            document.getElementById('nicknameForm').style.display = 'block';
+        });
+        
+        // Скрываем форму ввода имени до прочтения инструкции
+        document.getElementById('nicknameForm').style.display = 'none';
+
 	   document.addEventListener('DOMContentLoaded', () => {
 	        generateCombinedBackground()
 	            .catch(error => {

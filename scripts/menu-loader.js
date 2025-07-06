@@ -2,7 +2,7 @@
 import { initMenu } from './menu.js';
 
 // Загружаем меню ПЕРВЫМ делом
-fetch('/menu.html')  // Путь из папки about-project
+fetch('/menu.html')                                                                     // Путь из папки about-project
     .then(response => {
         if (!response.ok) throw new Error('Меню не найдено');
         return response.text();

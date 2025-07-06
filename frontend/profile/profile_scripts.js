@@ -66,4 +66,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 	    window.location.href = "https://serpmonn.ru"; 																		// Перенаправление на главную страницу
 	});
+
+	document.getElementById("createOnnmailButton").addEventListener("click", () => {
+		window.location.href = "https://serpmonn.ru/frontend/onnmail/auth.html";
+	});
+	
+	document.getElementById("loginOnnmailButton").addEventListener("click", () => {
+		window.location.href = "https://mail.serpmonn.ru";
+	});
 });

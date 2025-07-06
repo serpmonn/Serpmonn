@@ -6,6 +6,7 @@ import express from 'express';                                                  
 import cookieParser from 'cookie-parser';                                                 // Для работы с cookies
 import authRoutes from './auth/authRoutes.mjs';                                           // Импорт маршрутов аутентификации
 import profilesRoutes from './profiles/profilesRoutes.mjs';                               // Импорт маршрутов профилей
+import counterRoutes from './Counter/CounterRoutes.mjs';                                  // Импортируем новый роут
 
 const app = express();                                                                    // Создаем экземпляр express
 
@@ -20,8 +21,9 @@ app.use(cors(corsOptions));
 app.use(express.json()); 								                                                  // Для обработки JSON данных
 app.use(cookieParser());  								                                                // Для работы cookie
 
-app.use('/auth', authRoutes);  								                                            // Подключение маршрутов
-app.use('/profile', profilesRoutes);
+app.use('/auth', authRoutes);  								                                            // Подключение маршрутов для авторизации пользователей на страницах register и login
+app.use('/profile', profilesRoutes);                                                      // Подключение маршрутов для профилей пользователей
+app.use('/counter', counterRoutes);                                                       // Подключаем счётчик
 
 app.listen(5000, () => {                                                                  // Запуск сервера
   console.log('Сервер работает на порту 5000');
