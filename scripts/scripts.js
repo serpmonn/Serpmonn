@@ -2,7 +2,7 @@
 import { setCookie, getCookie } from './cookies.js';
 import { loadNews } from './news.js';
 import { generateCombinedBackground } from './backgroundGenerator.js';
-import '../pwa/app.js';
+import '/pwa/app.js';
 
 // Главная функция инициализации
 function initPage() {

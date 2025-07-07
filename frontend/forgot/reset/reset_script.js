@@ -1,4 +1,4 @@
-import { generateCombinedBackground } from '../../scripts/backgroundGenerator.js';
+import { generateCombinedBackground } from '../../../../scripts/backgroundGenerator.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     generateCombinedBackground();
