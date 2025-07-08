@@ -1,9 +1,9 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
-import { sendResetEmail } from '../utils/mailer.js';
-import { saveToken, getTokenData, removeToken } from '../utils/tokenStore.js';
-import { query } from '../database/config.mjs';
+import { sendResetEmail } from '../../utils/mailer.js';
+import { saveToken, getTokenData, removeToken, canSendToken } from '../../utils/tokenStore.js';
+import { query } from '../../database/config.mjs';
 
 const router = express.Router();
 
@@ -14,14 +14,19 @@ router.post('/forgot', async (req, res) => {
     try {
         const users = await query('SELECT id FROM users WHERE email = ?', [email]);
         if (users.length === 0) {
-            return res.status(200).json({ message: 'Если почта найдена, ссылка отправлена.' });
+            return res.status(200).json({ message: 'Проверьте почту — если адрес зарегистрирован, вы получите письмо со ссылкой.' });                                                   // Чтобы не выдать, есть ли email в базе
         }
 
         const user = users[0];
+
+        if (!canSendToken(user.id)) {
+            return res.status(429).json({ message: 'Слишком частые запросы. Попробуйте через несколько минут.' });
+        }
+
         const token = crypto.randomBytes(32).toString('hex');
         saveToken(token, user.id);
 
-        const resetLink = `https://serpmonn.ru/frontend/reset/reset.html?token=${token}`;
+        const resetLink = `https://serpmonn.ru/frontend/login/forgot/reset/reset.html?token=${token}`;
         await sendResetEmail(email, resetLink);
 
         res.status(200).json({ message: 'Ссылка для сброса пароля отправлена на почту.' });

@@ -1,6 +1,6 @@
 import express from 'express';
 import bodyParser from 'body-parser';
-import authRoutes from '../routes/auth.mjs';  // импорт роутов
+import authRoutes from './password-reset-routes/forgot-reset-routes.mjs';  // импорт роутов
 
 const app = express();
 const PORT = 6500;

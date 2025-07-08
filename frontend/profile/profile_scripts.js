@@ -1,4 +1,4 @@
-import { generateCombinedBackground } from '../../scripts/backgroundGenerator.js';
+import { generateCombinedBackground } from '/scripts/backgroundGenerator.js';
 
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -68,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
 	});
 
 	document.getElementById("createOnnmailButton").addEventListener("click", () => {
-		window.location.href = "https://serpmonn.ru/frontend/onnmail/auth.html";
+		window.location.href = "https://serpmonn.ru/frontend/profile/onnmail/onnmail.html";
 	});
 	
 	document.getElementById("loginOnnmailButton").addEventListener("click", () => {
