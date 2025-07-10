@@ -1,4 +1,4 @@
-import { generateCombinedBackground } from '../../scripts/backgroundGenerator.js';
+import { generateCombinedBackground } from '/scripts/backgroundGenerator.js';
 
 document.getElementById("loginForm").addEventListener("submit", async function(event) {
     event.preventDefault();
@@ -26,26 +26,28 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
             headers: {
                 "Content-Type": "application/json"
             },
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify({ email, password }),
+            credentials: 'include' // Добавляем credentials: 'include' для отправки и получения куки
         });
 
         const data = await response.json();
         messageElement.textContent = data.message;
         messageElement.style.color = response.ok ? "green" : "red";
 
-        if (response.ok) {                                                                                  // После успешного входа (если сервер вернул успешный ответ)
-            window.location.href = "../profile/profile.html";                                               // Переход на страницу профиля или главную
+        if (response.ok) {
+            console.log('Логин успешен, редирект на: ../profile/profile.html');
+            window.location.href = "../profile/profile.html";
         }
     } catch (error) {
+        console.error('Ошибка при логине:', error);
         messageElement.textContent = "Ошибка соединения с сервером.";
         messageElement.style.color = "red";
     }
 });
 
 document.addEventListener("DOMContentLoaded", () => {
+    generateCombinedBackground();
 
-    generateCombinedBackground();                                                                           // Запускаем генерацию фона
-    
     const passwordField = document.getElementById("password");
     const togglePassword = document.getElementById("togglePassword");
 
@@ -54,5 +56,4 @@ document.addEventListener("DOMContentLoaded", () => {
         passwordField.type = isPasswordVisible ? "password" : "text";
         togglePassword.textContent = isPasswordVisible ? "👁" : "🙈";
     });
-
 });

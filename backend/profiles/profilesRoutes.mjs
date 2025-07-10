@@ -1,18 +1,11 @@
-import { Router } from 'express';
-import verifyToken from '../auth/verifyToken.mjs';
-import { getUserProfile, updateUserProfile } from './profilesController.mjs';
-const router = Router();
-
-router.get('/', verifyToken, (req, res) => {
-  res.json({
-    username: req.user.username,
-    email: req.user.email
-  });
-});
-
-router.get('/get', verifyToken, getUserProfile);                                                      // Маршрут для получения данных профиля (с использованием verifyToken для авторизации)
-
-router.put('/put', verifyToken, updateUserProfile);                                                   // Маршрут для обновления данных профиля (с использованием verifyToken для авторизации)
-
+import express from 'express';                                                                            // Импортируем express для создания маршрутов
+import { getUserProfile, getUserInfo, updateUserProfile } from '../profiles/profilesController.mjs';      // Импортируем функции профиля
+import verifyToken from '../auth/verifyToken.mjs';                                                        // Импортируем middleware для проверки токена
+                                                                             
+const router = express.Router();                                                                          // Создаем экземпляр маршрутизатора
+                                                                             
+router.get('/get', verifyToken, getUserProfile);                                                          // Определяем GET маршрут для профиля
+router.get('/info', verifyToken, getUserInfo);                                                            // Определяем GET маршрут для информации
+router.post('/update', verifyToken, updateUserProfile);                                                   // Определяем POST маршрут для обновления
+                                                                             
 export default router;
-

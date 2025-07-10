@@ -1,7 +1,7 @@
 import dotenv from 'dotenv';
 dotenv.config({ path: '/var/www/serpmonn.ru/.env' });
 
-import { query } from '/backend/database/config.mjs';                                                      		                // Импортируем функцию query для выполнения SQL-запросов
+import { query } from '../../database/config.mjs';                                                      		                // Импортируем функцию query для выполнения SQL-запросов
 import TelegramBot from 'node-telegram-bot-api';
 import fs from 'fs/promises';
 

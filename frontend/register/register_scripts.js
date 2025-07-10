@@ -17,16 +17,19 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const data = await response.json();
 
         if (response.ok) {
+            // Сохраняем userId для email-подтверждения
+            const userId = data.userId;
+            sessionStorage.setItem('pendingUserId', userId); // Сохраняем userId для последующего использования
+            // Сохраняем Telegram-ссылку
+            const telegramConfirmLink = data.confirmLink;
+            console.log("Ссылка для подтверждения через Telegram:", telegramConfirmLink);
+            document.getElementById("telegramConfirmLink").href = telegramConfirmLink;
 
-            const telegramConfirmLink = data.confirmLink;										// Устанавливаем ссылку на Telegram-бота
-
-            console.log("Ссылка для подтверждения через Telegram:", telegramConfirmLink);						// Логируем ссылку в консоль для проверки
-            document.getElementById("telegramConfirmLink").href = telegramConfirmLink; 							// присваиваем ссылку
-
-            document.getElementById("telegramPopup").style.display = "block";								// Показываем pop-up
+            // Показываем поп-ап с выбором метода
+            document.getElementById("confirmPopup").style.display = "block";
         } else {
             document.getElementById("message").textContent = data.message;
-		return;
+            return;
         }
     } catch (error) {
         console.error("Ошибка регистрации:", error);
@@ -34,13 +37,40 @@ document.getElementById("registerForm").addEventListener("submit", async functio
     }
 });
 
-document.getElementById("closePopup").addEventListener("click", function () {								// Закрытие pop-up
-    document.getElementById("telegramPopup").style.display = "none";
+// Обработка подтверждения через Email
+document.getElementById("emailConfirmButton").addEventListener("click", async () => {
+    const email = document.getElementById("email").value;
+    const userId = sessionStorage.getItem('pendingUserId');
+
+    try {
+        const response = await fetch("/auth/confirm-email", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, userId }),
+        });
+
+        const data = await response.json();
+
+        if (response.ok) {
+            document.getElementById("message").textContent = "Письмо с подтверждением отправлено на ваш email!";
+            document.getElementById("confirmPopup").style.display = "none";
+            sessionStorage.removeItem('pendingUserId');
+        } else {
+            document.getElementById("message").textContent = data.message || "Ошибка при отправке письма.";
+        }
+    } catch (error) {
+        console.error("Ошибка отправки email:", error);
+        document.getElementById("message").textContent = "Ошибка сервера.";
+    }
+});
+
+// Закрытие поп-апа
+document.getElementById("closePopup").addEventListener("click", function () {
+    document.getElementById("confirmPopup").style.display = "none";
 });
 
 document.addEventListener("DOMContentLoaded", () => {
-
-    generateCombinedBackground();                                                               					// Запускаем генерацию фона
+    generateCombinedBackground();
 
     const passwordField = document.getElementById("password");
     const togglePassword = document.getElementById("togglePassword");

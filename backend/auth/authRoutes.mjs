@@ -1,108 +1,53 @@
-import express from 'express';
-import bcrypt from "bcryptjs";
-import { v4 as uuidv4 } from "uuid";
-import fs from 'fs';
-import fetch from "node-fetch";
-import { body } from 'express-validator';
-import { loginUser, logoutUser } from './authController.mjs';                         // Контроллеры (сделано через деструктуризацию)
-import verifyToken from './verifyToken.mjs';
-import { query } from '../database/config.mjs';                                                     // Импортируем query
-
-const router = express.Router();                                                                    // Создаём новый экземпляр маршрутизатора
-
-const TEMP_FILE = '/var/www/serpmonn.ru/backend/auth/tempUserData.json';
-
-function saveTempRegistrationData(userId, data) {                                                   // Функция для сохранения временных данных в файл
-    try {
-        const tempData = JSON.parse(fs.readFileSync(TEMP_FILE, 'utf-8') || '{}');
-        tempData[userId] = data;
-        fs.writeFileSync(TEMP_FILE, JSON.stringify(tempData));
-    } catch (error) {
-        console.error('Ошибка при сохранении временных данных:', error);
-    }
-}
-
-router.post(                                                                                        // Регистрация пользователя с проверкой данных
-  "/register",
-  [
-    body('username')
-      .isLength({ min: 3 }).withMessage('Username должен быть длиной от 3 символов.')
-      .isAlphanumeric().withMessage('Username должен содержать только буквы и цифры.'),
-    body('email')
-      .isEmail().withMessage('Неверный формат email.').normalizeEmail(),
-    body('password')
-      .isLength({ min: 6 }).withMessage('Пароль должен быть длиной от 6 символов.')
-  ],
-  async (req, res) => {
-    const { username, email, password } = req.body;
-
-    if (!username || !email || !password) {
-        return res.status(400).json({ message: "Заполните все поля!" });
-    }
-
-    try {
-        const [usernameExists] = await query("SELECT id FROM users WHERE username = ?", [username]);
-
-	    if (usernameExists && usernameExists.id) {
-	        return res.status(400).json({ message: "Имя пользователя уже используется!" });
-	    }
-
-	const [emailExists] = await query("SELECT id FROM users WHERE email = ?", [email]);
-
-	    if (emailExists && emailExists.id) {
-	        return res.status(400).json({ message: "Email уже используется!" });
-	    }
-
-
-        const passwordHash = await bcrypt.hash(password, 10);
-        const userId = uuidv4(); 								                                    // Уникальный идентификатор пользователя
-
-    	saveTempRegistrationData(userId, { username, email, passwordHash });                        // Сохраняем временные данные
-	
-        const telegramConfirmLink = `https://t.me/SerpmonnConfirmBot?start=${userId}`;              // Отправляем пользователю ссылку на подтверждение
-
-         res.status(200).json({ 
-            success: true,
-            message: "Регистрация успешна! Подтвердите аккаунт через Telegram.",
-            userId: userId,
-            confirmLink: telegramConfirmLink                                                        // Отправляем ссылку на фронт
-        });
-
-    } catch (error) {
-        console.error("Ошибка регистрации:", error);
-        res.status(500).json({ message: "Ошибка сервера." });
-    }
-  }
-);
-
-router.post('/login', loginUser);                                                                   // Маршрут для логина
-
-router.get('/protected', verifyToken, (req, res) => {                                               //Зашишённый маршрут
-  res.json({ message: 'Вы получили доступ к защищённому маршруту', user: req.user });
-});
-
-router.post('/logout', logoutUser);                                                                 // Маршрут для выхода
-
-router.get("/check-confirmation", async (req, res) => { 					                        // Маршрут для проверки подтверждения регистрации
-    const { username } = req.query;
-
-    if (!username) {
-        return res.status(400).json({ message: "Имя пользователя не указано." });
-    }
-
-    try {
-        const results = await query("SELECT confirmed FROM users WHERE username = ?", [username]);
-
-        if (results.length === 0) {
-            return res.status(404).json({ message: "Пользователь не найден." });
-        }
-
-        res.json({ confirmed: results[0].confirmed });
-
-    } catch (error) {
-        console.error("Ошибка проверки подтверждения:", error);
-        res.status(500).json({ message: "Ошибка сервера." });
-    }
-});
-
-export default router;
+import express from 'express';                                                               // Импортируем express для создания маршрутов
+import { body } from 'express-validator';                                                    // Импортируем body для валидации данных
+import { registerUser, confirmEmail, confirmToken, loginUser, logoutUser } from './authController.mjs'; // Импортируем функции контроллера
+import verifyToken from './verifyToken.mjs';                                                 // Импортируем middleware для проверки токена
+import { query } from '../database/config.mjs';                                              // Импортируем функцию query для работы с БД
+                                                                                              
+const router = express.Router();                                                             // Создаем экземпляр маршрутизатора
+                                                                                              
+router.post(                                                                                 // Определяем POST маршрут для регистрации
+  '/register',                                                                               // Указываем путь маршрута
+  [                                                                                          // Начинаем массив middleware валидации
+    body('username')                                                                         // Валидируем поле username
+      .isLength({ min: 3 }).withMessage('Username должен быть длиной от 3 символов.')        // Устанавливаем минимальную длину
+      .isAlphanumeric().withMessage('Username должен содержать только буквы и цифры.'),      // Требуем только буквы и цифры
+    body('email')                                                                            // Валидируем поле email
+      .isEmail().withMessage('Неверный формат email.').normalizeEmail(),                     // Проверяем формат и нормализуем email
+    body('password')                                                                         // Валидируем поле password
+      .isLength({ min: 6 }).withMessage('Пароль должен быть длиной от 6 символов.')          // Устанавливаем минимальную длину
+  ],                                                                                         // Завершаем массив middleware валидации
+  registerUser                                                                               // Указываем функцию обработки маршрута
+);                                                                                           
+                                                                                              
+router.post('/confirm-email', confirmEmail);                                                 // Определяем POST маршрут для подтверждения
+                                                                                              
+router.get('/confirm', confirmToken);                                                        // Определяем GET маршрут для проверки токена
+                                                                                              
+router.post('/login', loginUser);                                                            // Определяем POST маршрут для входа пользователя
+                                                                                              
+router.post('/logout', logoutUser);                                                          // Определяем POST маршрут для выхода пользователя
+                                                                                              
+router.get('/protected', verifyToken, (req, res) => {                                        // Определяем защищённый GET маршрут
+  res.json({ message: 'Вы получили доступ к защищённому маршруту', user: req.user });        // Отправляем ответ клиенту
+});                                                                                          
+                                                                                              
+router.get('/check-confirmation', async (req, res) => {                                      // Определяем GET маршрут для проверки статуса
+  const { username } = req.query;                                                            // Извлекаем username из параметров запроса
+  if (!username) {                                                                           // Проверяем, указан ли username
+    return res.status(400).json({ message: "Имя пользователя не указано." });                // Возвращаем ошибку
+  }                                                                                         
+                                                                                              
+  try {                                                                                      // Начинаем блок обработки ошибок
+    const results = await query("SELECT confirmed FROM users WHERE username = ?", [username]); // Выполняем запрос к БД
+    if (results.length === 0) {                                                              // Проверяем, найден ли пользователь
+      return res.status(404).json({ message: "Пользователь не найден." });                   // Возвращаем ошибку
+    }                                                                                       
+    res.json({ confirmed: results[0].confirmed });                                           // Отправляем статус подтверждения клиенту
+  } catch (error) {                                                                          // Обрабатываем возможные ошибки
+    console.error("Ошибка проверки подтверждения:", error);                                  // Логируем ошибку в консоль
+    res.status(500).json({ message: "Ошибка сервера." });                                    // Возвращаем ошибку сервера клиенту
+  }                                                                                         
+});                                                                                          
+                                                                                              
+export default router;                                                                       // Экспортируем маршрутизатор
