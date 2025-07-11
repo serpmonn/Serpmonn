@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             console.log('Отправка запроса /profile/info с credentials: include');
-            const response = await fetch('https://www.serpmonn.ru/profile/info', {
+            const response = await fetch('https://serpmonn.ru/profile/info', {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageField = document.getElementById('message');
         try {
             console.log('Отправка запроса /profile/get для проверки статуса');
-            const response = await fetch('https://www.serpmonn.ru/profile/get', {
+            const response = await fetch('https://serpmonn.ru/profile/get', {
                 method: 'GET',
                 credentials: 'include'
             });
@@ -50,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await response.json();
             if (response.ok) {
                 // Пользователь подтверждён и без ящика, можно перенаправить
-                window.location.href = 'https://www.serpmonn.ru/frontend/profile/onnmail/onnmail.html';
+                window.location.href = 'https://serpmonn.ru/frontend/profile/onnmail/onnmail.html';
             } else {
                 messageField.textContent = data.message || 'Ошибка доступа';
                 if (response.status === 401) {
@@ -73,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             console.log('Отправка запроса /profile/update');
-            const response = await fetch('https://www.serpmonn.ru/profile/update', {
+            const response = await fetch('https://serpmonn.ru/profile/update', {
                 method: 'POST', // Исправлено с PUT на POST, так как сервер ожидает POST
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('logoutButton').addEventListener('click', async () => {
         try {
-            await fetch('https://www.serpmonn.ru/auth/logout', {
+            await fetch('https://serpmonn.ru/auth/logout', {
                 method: 'POST',
                 credentials: 'include'
             });

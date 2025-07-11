@@ -16,7 +16,8 @@ app.use(cors({                                                                  
     origin: [                                                                                                                   // Указываем разрешенные источники
         'https://serpmonn.ru',                                                                                                  // Разрешаем домен serpmonn.ru
         'https://www.serpmonn.ru',                                                                                              // Разрешаем домен www.serpmonn.ru
-        'http://localhost:6000'                                                                                                 // Разрешаем локальный домен для разработки
+        'http://localhost:6000',                                                                                                // Разрешаем локальный домен для разработки
+        'http://localhost:5000'                                                                                                 // Разрешаем локальный домен для auth-сервера
     ],                                                                                                                         
     credentials: true                                                                                                            // Разрешаем отправку cookies
 }));                                                                                                                           

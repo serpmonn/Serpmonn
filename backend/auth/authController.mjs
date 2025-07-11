@@ -69,7 +69,7 @@ export const confirmEmail = async (req, res) => {                               
       [confirmationToken, tokenExpires, userId]                                               // Передаем данные в запрос
     );                                                                                        
                                                                                               
-    const confirmLink = `https://www.serpmonn.ru/auth/confirm?token=${confirmationToken}`;    // Формируем ссылку подтверждения
+    const confirmLink = `https://serpmonn.ru/auth/confirm?token=${confirmationToken}`;    // Формируем ссылку подтверждения
     await sendConfirmationEmail(email, confirmLink);                                          // Отправляем письмо с подтверждением
                                                                                               
     res.json({ success: true, message: "Письмо с подтверждением отправлено." });              // Отправляем успешный ответ клиенту
@@ -104,11 +104,12 @@ export const confirmToken = async (req, res) => {                               
       httpOnly: true,                                                                        // Защищаем cookie от доступа через JS
       secure: true,                                                                          // Устанавливаем только для HTTPS
       sameSite: 'Lax',                                                                       // Устанавливаем политику SameSite
-      maxAge: 30 * 24 * 60 * 60 * 1000                                                      // Устанавливаем срок действия (30 дней)
+      maxAge: 30 * 24 * 60 * 60 * 1000,                                                      // Устанавливаем срок действия (30 дней)
+      domain: '.serpmonn.ru'                                                                 // Ведущая точка для работы на всех поддоменах
     });                                                                                       
                                                                                               
     console.log('Подтверждение: пользователь', user.email, 'confirmed = 1, токен создан');    // Логируем подтверждение
-    res.redirect('https://www.serpmonn.ru/frontend/profile/profile.html');                    // Переадресуем на страницу профиля
+    res.redirect('https://serpmonn.ru/frontend/profile/profile.html');                    // Переадресуем на страницу профиля
   } catch (error) {                                                                           // Обрабатываем возможные ошибки
     console.error("Ошибка подтверждения:", error);                                             // Логируем ошибку в консоль
     res.status(500).json({ message: "Ошибка сервера." });                                    // Возвращаем ошибку сервера клиенту
@@ -138,7 +139,8 @@ export const loginUser = async (req, res) => {                                  
       httpOnly: true,                                                                        // Защищаем cookie от доступа через JS
       secure: true,                                                                          // Устанавливаем только для HTTPS
       sameSite: 'Strict',                                                                    // Устанавливаем строгую политику SameSite
-      maxAge: 24 * 60 * 60 * 1000                                                           // Устанавливаем срок действия (1 день)
+      maxAge: 24 * 60 * 60 * 1000,                                                           // Устанавливаем срок действия (1 день)
+      domain: '.serpmonn.ru'                                                                 // Ведущая точка для работы на всех поддоменах
     });                                                                                       
                                                                                               
     res.json({ message: 'Вход выполнен успешно' });                                           // Отправляем успешный ответ клиенту
