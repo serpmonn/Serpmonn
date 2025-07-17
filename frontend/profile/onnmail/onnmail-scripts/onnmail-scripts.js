@@ -46,8 +46,8 @@ const checkUserStatus = async () => {                                           
 // Инициализация CSRF-токена
 const initCSRFToken = async () => {                                                                                          // Определяем функцию получения CSRF-токена
     try {                                                                                                                    // Начинаем блок обработки ошибок
-        console.log('Запрос CSRF-токена на https://serpmonn.ru/api/csrf-token');                                             // Логируем начало запроса
-        const response = await fetch('https://serpmonn.ru/api/csrf-token', {                                                 // Отправляем запрос на CSRF-токен
+        console.log('Запрос CSRF-токена на https://serpmonn.ru/mail-api/csrf-token');                                             // Логируем начало запроса
+        const response = await fetch('https://serpmonn.ru/mail-api/csrf-token', {                                                 // Отправляем запрос на CSRF-токен
             credentials: 'include'                                                                                           // Включаем cookies в запрос
         });                                                                                                                 
 

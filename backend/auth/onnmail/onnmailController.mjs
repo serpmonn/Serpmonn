@@ -56,7 +56,7 @@ export const createMailbox = async (req, res) => {                              
             name: username,                                                                                                     // Указываем имя пользователя
             password: password,                                                                                                 // Указываем пароль
             password2: password,                                                                                                // Подтверждаем пароль
-            quota: "1024"                                                                                                       // Устанавливаем квоту в 1024 МБ
+            quota: "300"                                                                                                        // Устанавливаем квоту в 300 МБ
         };                                                                                                                     
 
         const mailcowResponse = await fetch('https://mail.serpmonn.ru/api/v1/add/mailbox', {                                    // Отправляем запрос к API Mailcow
