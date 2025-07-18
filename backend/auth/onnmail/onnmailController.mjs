@@ -14,7 +14,7 @@ export const getCsrfToken = (req, res) => {                                     
 };
 
 // Контроллер для регистрации почтового ящика
-export const createMailbox = async (req, res) => {                                                                            // Определяем функцию для регистрации почтового ящика
+export const createMailbox = async (req, res) => {                                                                              // Определяем функцию для регистрации почтового ящика
     try {                                                                                                                       // Начинаем блок обработки ошибок
         const { username, emailLocalPart, password } = req.body;                                                                // Извлекаем данные из тела запроса
         const userEmail = req.user.email;                                                                                       // Получаем email пользователя из токена
