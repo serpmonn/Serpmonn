@@ -3,19 +3,40 @@ export function toggleMenu(event) {
     const menuButton = document.getElementById('menuButton');
     const menuContainer = document.getElementById('menuContainer');
     
-    if (menuContainer.style.display === 'block') {
-        menuContainer.style.display = 'none';
+    if (menuContainer.classList.contains('active')) {
+        menuContainer.classList.remove('active');
         menuButton.innerHTML = '<span class="s">S</span><span class="n">n</span>';
+        // Закрываем все подменю при закрытии главного меню
+        document.querySelectorAll('.submenu-container').forEach(sub => {
+            sub.classList.remove('active');
+            const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
+            if (parent) parent.setAttribute('aria-expanded', 'false');
+        });
     } else {
-        menuContainer.style.display = 'block';
+        menuContainer.classList.add('active');
         menuButton.innerHTML = '<span class="s">Serp</span><span class="n">monn</span>';
     }
 }
 
 export function toggleSubmenu(event, submenuId) {
     const submenu = document.getElementById(submenuId);
+    const menuItem = event.currentTarget;
     if (submenu) {
-        submenu.style.display = submenu.style.display === 'block' ? 'none' : 'block';
+        const parentSubmenu = menuItem.closest('.submenu-container');
+        const isOpen = submenu.classList.contains('active') ? false : true;
+        
+        // Закрываем все подменю, кроме текущего и его родительских
+        document.querySelectorAll('.submenu-container').forEach(sub => {
+            if (sub !== submenu && (!parentSubmenu || !parentSubmenu.contains(sub))) {
+                sub.classList.remove('active');
+                const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
+                if (parent) parent.setAttribute('aria-expanded', 'false');
+            }
+        });
+        
+        // Переключаем текущее подменю
+        submenu.classList.toggle('active');
+        menuItem.setAttribute('aria-expanded', isOpen);
     }
 }
 
@@ -72,12 +93,11 @@ export function initPWA() {
 }
 
 export function initMenu() {
-    // Скрываем поиск в меню, если на странице уже есть основной поиск
     const menuSearch = document.getElementById('menuSearchContainer');
     if (menuSearch && document.querySelector('.main-search-container')) {
         menuSearch.classList.add('hidden');
     }
-    // Остальная логика меню...
+
     const menuButton = document.getElementById('menuButton');
     if (menuButton) {
         menuButton.addEventListener('click', (e) => {
@@ -97,8 +117,13 @@ export function initMenu() {
     document.addEventListener('click', (e) => {
         const menuContainer = document.getElementById('menuContainer');
         if (menuContainer && !menuContainer.contains(e.target) && e.target !== menuButton) {
-            menuContainer.style.display = 'none';
+            menuContainer.classList.remove('active');
             menuButton.innerHTML = '<span class="s">S</span><span class="n">n</span>';
+            document.querySelectorAll('.submenu-container').forEach(sub => {
+                sub.classList.remove('active');
+                const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
+                if (parent) parent.setAttribute('aria-expanded', 'false');
+            });
         }
     });
 
