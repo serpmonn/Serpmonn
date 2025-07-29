@@ -1,6 +1,7 @@
 const registerForm = document.getElementById('registerForm');                                                                // Получаем форму регистрации
 const statusMessage = document.getElementById('statusMessage');                                                              // Получаем элемент для статуса
 let csrfToken = '';                                                                                                         // Инициализируем переменную для CSRF-токена
+(MRGtag = window.MRGtag || []).push({});
 
 // Проверка статуса пользователя
 const checkUserStatus = async () => {                                                                                        // Определяем функцию проверки статуса

@@ -1,16 +1,18 @@
 require('dotenv').config({ path: '/var/www/serpmonn.ru/.env' });
-
 const TelegramBot = require("node-telegram-bot-api");
 
 const TOKEN = process.env.TELEGRAM_TOKEN;
-
 const bot = new TelegramBot(TOKEN, { polling: true });
 
-// Обрабатываем команду /start
+// Обработчик ошибок polling
+bot.on('polling_error', (error) => {
+    console.error('Ошибка подключения:', error.message);
+});
+
+// Команда /start
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
-
-    // Клавиатура с кнопками для открытия Web Apps
+    
     const keyboard = {
         inline_keyboard: [
             [
@@ -34,12 +36,31 @@ bot.onText(/\/start/, (msg) => {
         ]
     };
 
-    // Отправляем сообщение с клавиатурой
-    bot.sendMessage(chatId, "Выберите игру:", {
+    bot.sendMessage(chatId, "🎮 Выберите игру из списка ниже:", {
         reply_markup: keyboard
     }).catch(error => {
-        console.error("Ошибка при отправке сообщения:", error);
+        console.error("Ошибка отправки сообщения:", error);
     });
 });
 
-console.log("Бот запущен...");
+// Команда /help
+bot.onText(/\/help/, (msg) => {
+    const chatId = msg.chat.id;
+    
+    const helpText = `
+🤖 <b>Помощь по боту</b>
+
+▫️ <b>/start</b> - показать меню игр
+▫️ <b>/help</b> - эта справка
+
+Просто выберите игру из меню, чтобы начать играть прямо в Telegram!
+    `;
+
+    bot.sendMessage(chatId, helpText, {
+        parse_mode: 'HTML'
+    }).catch(error => {
+        console.error("Ошибка отправки help-сообщения:", error);
+    });
+});
+
+console.log("Бот запущен и ожидает команд...");
