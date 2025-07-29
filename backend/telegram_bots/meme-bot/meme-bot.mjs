@@ -30,11 +30,144 @@ const ADMIN_CHAT_ID = 5726590332;
 let errorCount = 0;
 const MAX_ERRORS = 10;
 
-// Глобальная переменная для хранения токена
+// Глобальная переменная для хранения токена reddit
 let redditToken = {
-  access_token: null,
+  reddit_access_token: null,
   expires_at: 0
 };
+
+// Глобальная переменная для хранения токена VK Ads
+let vkAdsToken = {
+  vk_access_token: null, // Переименовано для ясности
+  refresh_token: null, // Добавлено для хранения refresh_token
+  expires_at: 0
+};
+
+// Счетчик для рекламы
+let memeCount = 0;
+const AD_FREQUENCY = 5; // Показывать рекламу после каждых 5 мемов
+
+// Функция для получения access_token для VK Ads
+async function getVkAccessToken() {
+  try {
+    // Используем существующий токен, если он еще действителен
+    if (vkAdsToken.vk_access_token && Date.now() < vkAdsToken.expires_at - 300000) {
+      console.log('[INFO] Используется существующий VK Ads access_token');
+      return vkAdsToken.vk_access_token;
+    }
+
+    const response = await axios.post(
+      'https://ads.vk.com/api/v2/oauth2/token.json', // Обновленный эндпоинт
+      {
+        client_id: process.env.VK_ADS_CLIENT_ID,
+        client_secret: process.env.VK_ADS_CLIENT_SECRET,
+        grant_type: 'client_credentials'
+      },
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'MemeBot/1.0 (by /u/Serpmonn)'
+        },
+        timeout: REQUEST_TIMEOUT
+      }
+    );
+
+    vkAdsToken = {
+      vk_access_token: response.data.access_token,
+      refresh_token: response.data.refresh_token, // Сохраняем refresh_token
+      expires_at: Date.now() + (response.data.expires_in * 1000)
+    };
+
+    console.log(`[INFO] Получен новый VK Ads access_token, истекает через ${response.data.expires_in} секунд`);
+    return vkAdsToken.vk_access_token;
+  } catch (error) {
+    console.error('[VK ADS TOKEN ERROR]', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data
+    });
+    throw new Error('Не удалось получить access_token от VK Ads');
+  }
+}
+
+// Функция для обновления access_token
+async function refreshVkAccessToken() {
+  try {
+    const response = await axios.post(
+      'https://ads.vk.com/api/v2/oauth2/token.json',
+      {
+        grant_type: 'refresh_token',
+        refresh_token: vkAdsToken.refresh_token,
+        client_id: process.env.VK_ADS_CLIENT_ID,
+        client_secret: process.env.VK_ADS_CLIENT_SECRET
+      },
+      {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+          'User-Agent': 'MemeBot/1.0 (by /u/Serpmonn)'
+        },
+        timeout: REQUEST_TIMEOUT
+      }
+    );
+
+    vkAdsToken = {
+      vk_access_token: response.data.access_token,
+      refresh_token: response.data.refresh_token,
+      expires_at: Date.now() + (response.data.expires_in * 1000)
+    };
+
+    console.log(`[INFO] VK Ads access_token успешно обновлен`);
+    return vkAdsToken.vk_access_token;
+  } catch (error) {
+    console.error('[VK ADS REFRESH TOKEN ERROR]', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data
+    });
+    // Если refresh_token недействителен, пробуем получить новый токен
+    if (error.response?.data?.code === 'invalid_token') {
+      return getVkAccessToken();
+    }
+    throw new Error('Не удалось обновить access_token от VK Ads');
+  }
+}
+
+// Функция для получения рекламы из VK Ad Network
+async function getVkAd() {
+  try {
+    const token = await getVkAccessToken();
+    const response = await axios.get('https://ads.vk.com/api/v2/ad_plans.json', {
+      params: {
+        client_id: process.env.VK_ADS_CLIENT_ID,
+        ad_slot: '1873118'
+      },
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'User-Agent': 'MemeBot/1.0 (by /u/Serpmonn)'
+      },
+      timeout: REQUEST_TIMEOUT
+    });
+
+    const ad = response.data.items?.[0] || response.data.ads?.[0]; // Гибкая обработка ответа
+    if (!ad) throw new Error('Нет доступных объявлений');
+    return {
+      text: ad.description || ad.title || 'Посмотрите это крутое предложение!',
+      url: ad.link || ad.url || 'https://t.me/serpmonn_life',
+      image: ad.image || ad.image_url || null
+    };
+  } catch (error) {
+    console.error('[VK ADS ERROR]', {
+      message: error.message,
+      status: error.response?.status,
+      data: error.response?.data
+    });
+    return {
+      text: '🔥 Крутые истории ждут на <a href="https://t.me/serpmonn_life">@serpmonn_life</a>! Подпишись! 😎',
+      url: 'https://t.me/serpmonn_life',
+      image: null
+    };
+  }
+}
 
 bot.on('polling_error', (error) => {
   console.error(`[POLLING ERROR] ${new Date().toISOString()}:`, error.message);
@@ -61,25 +194,68 @@ bot.onText(/\/start/, (msg) => {
     chatId,
     `Привет, ${msg.from.first_name}! 😊\n` +
     `Я - бот, который приносит свежие мемы прямо из Reddit.\n\n` +
-    `Просто отправь мне команду /meme и получи порцию смеха!`,
-    { parse_mode: 'HTML' }
+    `Отправь /meme и получи порцию смеха! 🔥\n` +
+    `Кстати, канал <a href="https://t.me/serpmonn_life">@serpmonn_life</a> разработчика! 😎`,
+    {
+      parse_mode: 'HTML',
+      reply_markup: {
+        inline_keyboard: [[
+          { text: 'Посмотреть канал', url: 'https://t.me/serpmonn_life' }
+        ]]
+      }
+    }
   ).catch(err => console.error('Ошибка отправки /start:', err));
 });
 
-// Команда /meme
+// Обновление команды /meme
 bot.onText(/\/meme/, async (msg) => {
   const chatId = msg.chat.id;
-  
+
   try {
     await limiter.removeTokens(1);
     await bot.sendChatAction(chatId, 'upload_photo');
-    
+
     const memeUrl = await getRedditMeme();
     await sendPhotoWithRetry(chatId, memeUrl, {
       caption: 'Держи горячий мем! 🔥',
       parse_mode: 'HTML'
     });
-    
+
+    // Увеличиваем счетчик мемов
+    memeCount++;
+
+    // Отправка рекламы после каждых AD_FREQUENCY мемов
+    if (memeCount >= AD_FREQUENCY) {
+      const ad = await getVkAd();
+      const adUrl = `${ad.url}?utm_source=telegram&utm_medium=bot&utm_campaign=meme_ad_${chatId}`;
+      if (ad.image) {
+        await sendPhotoWithRetry(chatId, ad.image, {
+          caption: ad.text,
+          parse_mode: 'HTML',
+          reply_markup: {
+            inline_keyboard: [[
+              { text: 'Подробнее', url: adUrl }
+            ]]
+          }
+        });
+      } else {
+        await bot.sendMessage(
+          chatId,
+          ad.text,
+          {
+            parse_mode: 'HTML',
+            reply_markup: {
+              inline_keyboard: [[
+                { text: 'Подробнее', url: adUrl }
+              ]]
+            }
+          }
+        );
+      }
+      console.log(`[РЕКЛАМА] Отправлено в чат ${chatId}: ${ad.text} (${adUrl})`);
+      memeCount = 0;
+    }
+
   } catch (error) {
     console.error(`[ОШИБКА] ${new Date().toISOString()}:`, error.message);
     await bot.sendMessage(
@@ -87,7 +263,7 @@ bot.onText(/\/meme/, async (msg) => {
       `⚠️ <b>Ошибка при загрузке мема</b>\n` +
       `Попробуйте снова через минуту или напишите /meme`,
       { parse_mode: 'HTML', disable_notification: true }
-    ).catch(err => console.error('Ошибка отправки сообщения об ошибке:', err));
+    );
   }
 });
 
