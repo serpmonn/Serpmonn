@@ -41,6 +41,10 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 document.getElementById("emailConfirmButton").addEventListener("click", async () => {
     const email = document.getElementById("email").value;
     const userId = sessionStorage.getItem('pendingUserId');
+    const button = document.getElementById("emailConfirmButton");
+
+    // Отключаем кнопку, чтобы предотвратить повторные клики
+    button.disabled = true;
 
     try {
         const response = await fetch("/auth/confirm-email", {
@@ -61,6 +65,9 @@ document.getElementById("emailConfirmButton").addEventListener("click", async ()
     } catch (error) {
         console.error("Ошибка отправки email:", error);
         document.getElementById("message").textContent = "Ошибка сервера.";
+    } finally {
+        // Включаем кнопку обратно после завершения запроса
+        button.disabled = false;
     }
 });
 
