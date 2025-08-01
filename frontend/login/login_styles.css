@@ -1,3 +1,4 @@
+@import url('../../styles/ad.css');                                                  /* Рекламный контейнер */
 /* Базовые стили */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -6,6 +7,7 @@ body {
     padding: 0;
     min-height: 100vh;
     display: flex;
+    flex-direction: column; /* Элементы выстраиваются вертикально */
     align-items: center;
     justify-content: center;
 }
@@ -17,6 +19,7 @@ body {
     border-radius: 16px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     animation: slideUp 0.6s ease;
+    margin-bottom: 5%;
 }
 
 @keyframes slideUp {
@@ -150,4 +153,17 @@ p.success {
 .register-link a:hover {
     text-decoration: underline;
     color: #fd0909;
+}
+
+.mrg-tag {
+    display: inline-block;
+    width: auto;
+    height: 500px;
+}
+@media (max-width: 767px) {
+    .mrg-tag {
+        height: 300px; /* Уменьшаем высоту для мобильных */
+        width: 100%;
+        max-width: 320px;
+    }
 }
