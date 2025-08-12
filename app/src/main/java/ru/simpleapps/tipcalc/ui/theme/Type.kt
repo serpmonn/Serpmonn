@@ -1,4 +1,4 @@
-package com.example.tipcalc.ui.theme
+package ru.simpleapps.tipcalc.ui.theme
 
 import androidx.compose.material3.Typography
 

@@ -13,7 +13,7 @@
 
 1. Build → Generate Signed App Bundle / APK…
 2. Выберите Android App Bundle (AAB).
-3. Создайте или подключите keystore, заполните поля (applicationId: `com.example.tipcalc`, versionName/Code в `app/build.gradle.kts`).
+3. Создайте или подключите keystore, заполните поля (applicationId: `ru.simpleapps.tipcalc`, versionName/Code в `app/build.gradle.kts`).
 4. Соберите `release` AAB.
 5. Загрузите AAB в магазин (RuStore), добавьте скриншоты и описание.
 

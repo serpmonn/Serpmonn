@@ -1,4 +1,4 @@
-package com.example.tipcalc
+package ru.simpleapps.tipcalc
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import com.example.tipcalc.ui.theme.TipCalculatorTheme
+import ru.simpleapps.tipcalc.ui.theme.TipCalculatorTheme
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -200,6 +200,5 @@ private fun safeDivide(amount: BigDecimal, peopleCount: Int): BigDecimal {
 }
 
 private fun formatCurrency(amount: BigDecimal): String {
-    // Simple fixed 2-decimal format with ₽ symbol without locale complexity
     return "${amount.setScale(2, RoundingMode.HALF_UP)} ₽"
 }

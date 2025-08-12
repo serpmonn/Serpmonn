@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.tipcalc"
+    namespace = "ru.simpleapps.tipcalc"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.tipcalc"
+        applicationId = "ru.simpleapps.tipcalc"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
