@@ -6,7 +6,8 @@ const { V2 } = paseto;                                                          
 
 const verifyToken = async (req, res, next) => {                                                                                 // Определяем middleware для проверки токена
     const token = req.cookies.token;                                                                                            // Извлекаем токен из cookies запроса
-    console.log("Token from cookies:", token);                                                                                  // Логируем токен для отладки
+    console.log('[auth] token present:', Boolean(token), 'path:', req.path, 'ip:', req.ip);
+                     // Безопасное логирование: не выводим сам токен
 
     if (!token) {                                                                                                               // Проверяем, присутствует ли токен
         return res.status(401).json({ message: 'Токен отсутствует' });                                                          // Возвращаем ошибку, если токен отсутствует
@@ -21,6 +22,9 @@ const verifyToken = async (req, res, next) => {                                 
     try {                                                                                                                       // Начинаем блок обработки ошибок
         const payload = await V2.verify(token, secretKey);                                                                      // Проверяем токен с использованием секретного ключа
         req.user = payload;                                                                                                     // Сохраняем данные пользователя в объект запроса
+        const subjectHint = payload?.sub || payload?.userId || payload?.username || 'unknown';
+        console.log('[auth] verified user:', subjectHint);
+                     // Короткий безопасный лог
         next();                                                                                                                 // Переходим к следующему middleware или маршруту
     } catch (error) {                                                                                                           // Обрабатываем возможные ошибки
         console.error('Ошибка верификации токена:', error);                                                                     // Логируем ошибку верификации токена
