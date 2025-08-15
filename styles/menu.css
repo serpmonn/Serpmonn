@@ -1,0 +1,132 @@
+.menu-button {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #fff;
+    padding: 10px;
+    cursor: pointer;
+    border: none;
+    font-size: 24px;
+    font-weight: bold;                                                  /* Толстый текст */
+    border-radius: 10px;
+    transition: width 0.3s;
+    z-index: 1;                                                     /* Высокий z-index для отображения поверх всех элементов */
+}
+
+.menu-button span.s {
+    color: red;
+}
+
+.menu-button span.n {
+    color: black;
+}
+
+.menu-container {
+    position: fixed;
+    top: 50px;
+    right: 10px;
+    max-width: 25%;
+    background-color: rgba(255, 255, 255, 0.8);
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    z-index: 10;
+    border-radius: 10px;
+    opacity: 0;
+    transform: translateY(-20px);
+    visibility: hidden;
+    transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
+}
+
+.menu-container.active {
+    opacity: 1;
+    transform: translateY(0);
+    visibility: visible;
+}
+
+.menu-container a {
+    display: block;
+    padding: 10px;
+    color: #333;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;                                                  /* Толстый текст */
+}
+
+.menu-container a:hover {
+    background-color: #f0f0f0;						/* Цвет кнопки при наведении (светло-серый) */
+}
+
+.submenu-container {
+    display: none; /* Скрываем неактивные подменю */
+    padding-left: 20px;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.submenu-container.active {
+    display: block; /* Показываем активное подменю */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Стили для логотипа */
+.menu-logo {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    object-fit: contain;
+}
+
+/* Горизонтальное расположение */
+.menu-search-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.icon {
+    display: inline-block;                                              /* Устанавливает элемент как встроенный блок */
+    width: 24px;                                                        /* Задает ширину элемента 24 пикселя */
+    height: 24px;                                                       /* Задает высоту элемента 24 пикселя */
+    margin-right: 10px;                                                 /* Добавляет отступ справа от элемента, 10 пикселей */
+    vertical-align: middle;                                             /* Выравнивает элемент по вертикали по середине относительно соседних строковых элементов */
+    border-radius: 50%;                                                 /* Делает изображения круглыми */
+}
+
+/* Стили для поиска в меню */
+.menu-search-container {
+    padding: 5px;
+    border-radius: 8px;
+    margin: 0;
+}
+
+/* Адаптация поля поиска */
+.menu-search-row .gcse-searchbox-only {
+    flex-grow: 1;
+    min-width: 0; /* Важно для корректного сжатия */
+}
+
+.menu-search-container .gcse-searchbox-only {
+    width: 100%;
+}
+
+.menu-search-container input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
+}
+
+.menu-search-container.hidden {
+    display: none;
+}
+
+@media (max-width: 600px) {
+    .menu-container {
+        max-width: 75%;
+    }
+}

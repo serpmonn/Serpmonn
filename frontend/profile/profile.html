@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Профиль</title>
+    <link rel="icon" href="/images/Serpmonn.ico" type="image/x-icon">
+    <link rel="canonical" href="https://www.serpmonn.ru/main.html">
+    <link rel="stylesheet" href="profile_styles.css">
+    <script type="module" src="profile_scripts.js" defer></script>
+    <script type="module" src="/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h2>👤 Профиль пользователя</h2>
+
+        <div id="profileInfo" class="card">
+            <p><strong>Имя пользователя:</strong> <span id="username"></span></p>
+            <p><strong>Email:</strong> <span id="email"></span></p>
+        </div>
+
+        <h3>✏️ Редактировать профиль</h3>
+        <form id="profileForm" class="form-card">
+            <label for="newUsername">Новое имя пользователя</label>
+            <input type="text" id="newUsername" name="newUsername" maxlength="255">
+
+            <label for="newEmail">Новый email</label>
+            <input type="email" id="newEmail" name="newEmail">
+
+            <button type="submit" class="primary-button">Сохранить изменения</button>
+        </form>
+
+        <p id="message" class="message"></p>
+
+        <div class="onnmail-buttons">
+            <button id="createOnnmailButton" class="secondary-button">@onnmail: Создать почту</button>
+            <button id="loginOnnmailButton" class="secondary-button">@onnmail: Войти</button>
+        </div>
+
+        <button id="logoutButton" class="danger-button">🚪 Выйти из аккаунта</button>
+    </div>
+</body>
+</html>

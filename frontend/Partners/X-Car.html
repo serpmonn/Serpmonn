@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+    <title>Подключение водителей X-Car</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+    <meta name="description" content="Подключение водителей X-Car!">
+	<meta name="keywords" content="serpmonn, серпмон, серпмонн, поисковик, новости, мини-игры, браузерные игры, поиск без рекламы, поисковая оптимизация, мониторинг позиций, анализ конкурентов, аналитика, анализ трафика, поисковая аналитика, поисковый маркетинг, анализ ссылок, seo, games, игры">
+	<meta property="og:title" content="Подключение водителей X-Car!" />
+	<meta property="og:description" content="Подключение водителей к X-Car!" />
+	<meta property="og:image" content="https://serpmonn.ru/images/Logo_X-Car.png" />
+	<meta property="og:url" content="https://serpmonn.ru" />
+	<meta property="og:type" content="website" />
+	<link rel="icon" href="/images/Logo_X-Car.png" type="image/x-icon">
+    <link rel="canonical" href="https://www.serpmonn.ru/main.html">
+	<link rel="manifest" href="/pwa/manifest.json">
+		<!-- Стили -->
+    <link rel="stylesheet" href="/styles/X-Car.css">
+		<!-- Скрипты -->
+    <script type="module" src="/scripts/menu-loader.js"></script>
+    <script type="module" src="/scripts/X-Car.js" defer></script>
+        </head>
+        <body>
+          <div class="x-car-page">
+            <header>
+                <img src="/images/Logo_X-Car.png" alt="X-Car Partner Logo" class="logo">
+                <h1>Начните зарабатывать с X-Car сегодня!</h1>
+                <p>Официальное партнерское подключение!</p>
+            </header>
+        
+            <div class="benefits">
+                <h2>✨ Почему водители выбирают X-Car?</h2>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">💰</div>
+                    <div>
+                        <h3>Доход до 120 000₽ в месяц</h3>
+                        <p>Самый высокий процент с поездки среди конкурентов - до 85%</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">⏱️</div>
+                    <div>
+                        <h3>Гибкий график работы</h3>
+                        <p>Работайте когда удобно - хоть 2 часа в день, хоть полный день</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-item">
+                    <div class="benefit-icon">🚗</div>
+                    <div>
+                        <h3>Любой автомобиль</h3>
+                        <p>Машины от 2005 года выпуска (включая газовые)</p>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="stats">
+                <div class="stat-item">
+                    <div class="stat-number">43 000+</div>
+                    <div>водителей в системе</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">94%</div>
+                    <div>положительных отзывов</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <div>поддержка водителей</div>
+                </div>
+            </div>
+        
+            <div class="form-container">
+                <h2>🚀 Подключитесь к системе прямо сейчас</h2>
+                
+                <form id="driverForm">
+                    <input type="text" name="name" placeholder="Ваше имя" required>
+
+                    <!-- Поле телефона с умной маской ввода -->
+                    <input type="tel" 
+                    name="phone" 
+                    id="phoneInput"
+                    placeholder="+7 (___) ___-__-__" 
+                    required
+                    data-pattern="^(\+7|8)[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$">
+                    <small>Формат: +7/8 и 10 цифр. Допустимы: пробелы, скобки, дефисы</small>
+                    
+                    <!-- Выбор города с возможностью ввода своего -->
+                    <select name="city" id="citySelect" required>
+                        <option value="">Выберите город</option>
+                        <option value="Москва">Москва</option>
+                        <option value="Санкт-Петербург">Санкт-Петербург</option>
+                        <option value="Новосибирск">Новосибирск</option>
+                        <option value="Екатеринбург">Екатеринбург</option>
+                        <option value="Казань">Казань</option>
+                        <option value="Нижний Новгород">Нижний Новгород</option>
+                        <option value="Челябинск">Челябинск</option>
+                        <option value="Самара">Самара</option>
+                        <option value="Омск">Омск</option>
+                        <option value="Ростов-на-Дону">Ростов-на-Дону</option>
+                        <option value="Уфа">Уфа</option>
+                        <option value="Красноярск">Красноярск</option>
+                        <option value="other">Другой город</option>
+                    </select>
+                    
+                    <!-- Поле для ввода своего города (появляется только при выборе "Другой город") -->
+                    <input type="text" name="custom_city" id="customCityInput" placeholder="Укажите ваш город" style="display: none;">
+                    
+                    <input type="text" name="car_brand" placeholder="Марка автомобиля (например: Kia)" required>
+                    <input type="text" name="car_model" placeholder="Модель автомобиля (например: Rio)" required>
+                    <input type="number" name="car_year" placeholder="Год выпуска" min="2005" max="2025" required>
+                    
+                    <div class="checkbox-container">
+                        <input type="checkbox" name="agreement" id="agreement" required>
+                        <label for="agreement">Я согласен на обработку персональных данных</label>
+                    </div>
+                    
+                    <button type="submit">ПОДКЛЮЧИТЬСЯ СЕЙЧАС</button>
+                </form>
+                
+                <div class="success-message" id="successMessage">
+                    <h3>Спасибо за заявку!</h3>
+                </div>
+            </div>
+          </div>
+        </body>
+</html>

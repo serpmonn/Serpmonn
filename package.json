@@ -1,0 +1,54 @@
+{
+  "name": "serpmonn",
+  "version": "1.0.0",
+  "description": "Проект Serpmonn",
+  "type": "module",
+  "main": "backend/server.mjs",
+  "scripts": {
+    "start": "npm run start-auth & npm run start-news & npm run start-leaderboard & npm run start-serpmonngames & npm run start-serpmonnconfirm & npm run start-X-Car & npm run start-onnmail & npm run start-password-reset & npm run start-memebot",
+    "start-auth": "pm2 start backend/server.mjs --name 'auth-server'",
+    "start-news": "pm2 start backend/news/news-server.mjs --name 'news-server'",
+    "start-leaderboard": "pm2 start games/redsquare2/leaderboard-server.mjs --name 'leaderboard-server'",
+    "start-serpmonngames": "pm2 start backend/telegram_bots/Serpmonn_games/Serpmonn_games.cjs --name 'serpmonngamesbot'",
+    "start-serpmonnconfirm": "pm2 start backend/telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs --name 'serpmonnconfirmbot'",
+    "start-X-Car": "pm2 start backend/X-Car/x-car-server.mjs --name 'X-Car'",
+    "start-onnmail": "pm2 start backend/auth/onnmail-server.mjs --name 'onnmail'",
+    "start-password-reset": "pm2 start backend/auth/password-reset-server.mjs --name 'password-reset'",
+    "start-memebot": "pm2 start backend/telegram_bots/meme-bot/meme-bot.mjs --name 'memebot'"
+  },
+  "author": "Sergei Popov",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@gitverse.ru:2222/Serpmonn/Serpmonn_project.git"
+  },
+  "keywords": [
+    "Serpmonn",
+    "поиск",
+    "боты",
+    "автоматизация"
+  ],
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "csurf": "^1.11.0",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.1",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsdom": "^26.0.0",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.12.0",
+    "node-fetch": "^3.3.2",
+    "node-telegram-bot-api": "^0.66.0",
+    "nodemailer": "^7.0.4",
+    "paseto": "^3.1.4",
+    "rss-parser": "^3.13.0",
+    "uuid": "^11.0.5"
+  },
+  "license": "Proprietary"
+}
