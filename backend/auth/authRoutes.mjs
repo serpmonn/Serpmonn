@@ -3,8 +3,17 @@ import { body } from 'express-validator';                                       
 import { registerUser, confirmEmail, confirmToken, loginUser, logoutUser } from './authController.mjs'; // Импортируем функции контроллера
 import verifyToken from './verifyToken.mjs';                                                 // Импортируем middleware для проверки токена
 import { query } from '../database/config.mjs';                                              // Импортируем функцию query для работы с БД
+import rateLimit from 'express-rate-limit';                                                 // Ограничитель запросов для auth
                                                                                               
 const router = express.Router();                                                             // Создаем экземпляр маршрутизатора
+                                                                                              
+// Лимитеры для auth-операций
+const authWriteLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  standardHeaders: true,
+  legacyHeaders: false
+});
                                                                                               
 router.post(                                                                                 // Определяем POST маршрут для регистрации
   '/register',                                                                               // Указываем путь маршрута
@@ -17,16 +26,17 @@ router.post(                                                                    
     body('password')                                                                         // Валидируем поле password
       .isLength({ min: 6 }).withMessage('Пароль должен быть длиной от 6 символов.')          // Устанавливаем минимальную длину
   ],                                                                                         // Завершаем массив middleware валидации
+  authWriteLimiter,                                                                         // Указываем функцию обработки маршрута
   registerUser                                                                               // Указываем функцию обработки маршрута
 );                                                                                           
                                                                                               
-router.post('/confirm-email', confirmEmail);                                                 // Определяем POST маршрут для подтверждения
+router.post('/confirm-email', authWriteLimiter, confirmEmail);                                                 // Определяем POST маршрут для подтверждения
                                                                                               
 router.get('/confirm', confirmToken);                                                        // Определяем GET маршрут для проверки токена
                                                                                               
-router.post('/login', loginUser);                                                            // Определяем POST маршрут для входа пользователя
+router.post('/login', authWriteLimiter, loginUser);                                                            // Определяем POST маршрут для входа пользователя
                                                                                               
-router.post('/logout', logoutUser);                                                          // Определяем POST маршрут для выхода пользователя
+router.post('/logout', authWriteLimiter, logoutUser);                                                          // Определяем POST маршрут для выхода пользователя
                                                                                               
 router.get('/protected', verifyToken, (req, res) => {                                        // Определяем защищённый GET маршрут
   res.json({ message: 'Вы получили доступ к защищённому маршруту', user: req.user });        // Отправляем ответ клиенту
