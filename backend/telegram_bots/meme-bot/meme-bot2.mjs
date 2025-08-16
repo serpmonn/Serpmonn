@@ -227,7 +227,7 @@ async function getRedditMeme(language = 'en') {
 function formatMemeUrl(url) {
   return url
     .replace('.gifv', '.gif')
-    .replace(/&/g, '&');
+    .replace(/&amp;/g, '&');
 }
 
 // =====================

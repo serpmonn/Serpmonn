@@ -7,6 +7,12 @@ import helmet from 'helmet';                                                    
 import cookieParser from 'cookie-parser';                                                                                              // Импортируем cookie-parser для работы с cookies
 import onnmailRoutes from './onnmail/onnmailRoutes.mjs';                                                                              // Импортируем маршруты для почтового API
 
+import rateLimit from 'express-rate-limit';
+                                                      // Ограничитель запросов
+
+import csrf from 'csurf';
+                                                      // CSRF защита
+
 const app = express();                                                                                                          // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);                                                                                                      // Доверяем первому прокси (Nginx)
 
@@ -24,8 +30,42 @@ app.use(cors({                                                                  
 app.use(express.json());                                                                                                        // Включаем парсинг JSON в запросах
 app.use(cookieParser());                                                                                                        // Включаем парсинг cookies
 
+// Rate limiting
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 300,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+app.use(apiLimiter);
+
+// CSRF protection
+const csrfProtection = csrf({
+  cookie: {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: process.env.NODE_ENV === 'production'
+  },
+  ignoreMethods: ['GET', 'HEAD', 'OPTIONS']
+});
+
+// Эндпоинт для получения CSRF-токена почтового API
+app.get('/mail-api/csrf-token', csrfProtection, (req, res) => {
+  res.json({ csrfToken: req.csrfToken() });
+});
+
 // Подключаем маршруты
-app.use('/mail-api', onnmailRoutes);                                                                                            // Подключаем маршруты с префиксом /mail-api
+app.use('/mail-api', onnmailRoutes);
+                                                // Подключаем маршруты с префиксом /mail-api
+
+// Обработчик ошибок CSRF
+app.use((err, req, res, next) => {
+  if (err && err.code === 'EBADCSRFTOKEN') {
+    return res.status(403).json({ status: 'error', message: 'Invalid CSRF token' });
+
+  }
+  return next(err);
+});
 
 // Запуск сервера
 const PORT = 6000;                                                                                                              // Указываем порт для сервера

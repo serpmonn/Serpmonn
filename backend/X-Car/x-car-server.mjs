@@ -3,6 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
+import rateLimit from 'express-rate-limit';
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -10,6 +11,15 @@ const DATA_FILE = path.join(__dirname, 'leads.json');
 
 app.use(cors());
 app.use(express.json());
+
+// Глобальный лимитер запросов (защита от частых запросов)
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 600,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+app.use(apiLimiter);
 
 // Функция для инициализации файла
 const initDataFile = () => {
@@ -33,7 +43,15 @@ const initDataFile = () => {
 // Инициализируем файл при запуске
 initDataFile();
 
-app.post('/xcar-drivers', (req, res) => {
+// Более строгий лимитер для приема заявок
+const leadsLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 120,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+app.post('/xcar-drivers', leadsLimiter, (req, res) => {
   try {
     const newLead = {
       ...req.body,
