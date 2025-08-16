@@ -12,7 +12,7 @@ const DATA_FILE = path.join(__dirname, 'leads.json');
 app.use(cors());
 app.use(express.json());
 
-// Глобальный лимитер запросов
+// Глобальный лимитер запросов (защита от частых запросов)
 const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 600,

@@ -16,6 +16,7 @@ import csrf from 'csurf';
                                                                                  
 const app = express();                                                            // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);
+  // Доверяем первому прокси (например, Nginx)
                                                                                  
 const corsOptions = {                                                             // Определяем настройки CORS
     origin: ['https://serpmonn.ru', 'https://www.serpmonn.ru'],                   // Указываем разрешенные домены
@@ -55,6 +56,7 @@ const csrfProtection = csrf({
   ignoreMethods: ['GET', 'HEAD', 'OPTIONS']
 });
 
+// Эндпоинт для получения CSRF-токена
 app.get('/csrf-token', csrfProtection, (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
@@ -65,6 +67,7 @@ app.use('/counter', counterRoutes);                                             
 app.use(subscribeRouter);
 
 app.use((err, req, res, next) => {                                                // Обработчик ошибок (после всех роутов)
+    // Обработчик ошибок CSRF
     if (err && err.code === 'EBADCSRFTOKEN') {
       return res.status(403).json({ status: 'error', message: 'Invalid CSRF token' });
     }

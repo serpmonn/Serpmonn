@@ -49,18 +49,20 @@ const csrfProtection = csrf({
   ignoreMethods: ['GET', 'HEAD', 'OPTIONS']
 });
 
-// Token endpoint
+// Эндпоинт для получения CSRF-токена почтового API
 app.get('/mail-api/csrf-token', csrfProtection, (req, res) => {
   res.json({ csrfToken: req.csrfToken() });
 });
 
 // Подключаем маршруты
-app.use('/mail-api', onnmailRoutes);                                                                                            // Подключаем маршруты с префиксом /mail-api
+app.use('/mail-api', onnmailRoutes);
+                                                // Подключаем маршруты с префиксом /mail-api
 
-// Error handler for CSRF
+// Обработчик ошибок CSRF
 app.use((err, req, res, next) => {
   if (err && err.code === 'EBADCSRFTOKEN') {
     return res.status(403).json({ status: 'error', message: 'Invalid CSRF token' });
+
   }
   return next(err);
 });
