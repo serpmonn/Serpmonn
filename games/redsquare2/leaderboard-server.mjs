@@ -3,6 +3,7 @@ import cors from 'cors';                                                        
 import { readFile, writeFile } from 'fs/promises';                                                      // Используем промисы для файловой системы
 import { join, dirname } from 'path';                                                                   // Модуль path для работы с путями
 import { fileURLToPath } from 'url';                                                                    // Для получения __dirname в ESM
+import rateLimit from 'express-rate-limit';                                                            // Лимитер запросов
 
 const __filename = fileURLToPath(import.meta.url);                                                      // Получаем __dirname для ESM
 const __dirname = dirname(__filename);
@@ -15,6 +16,15 @@ const corsOptions = {
     origin: ['https://serpmonn.ru', 'https://www.serpmonn.ru'],                                         // Разрешенные домены
     optionsSuccessStatus: 200
 };
+
+// Глобальный лимитер (защита от частых запросов)
+const apiLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 600,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+app.use(apiLimiter);
 
 let leaderboard = [];                                                                                   // Массив для хранения таблицы лидеров
 
@@ -43,7 +53,15 @@ const saveLeaderboards = async () => {                                          
     }
   };
 
-app.post('/add-score', (req, res) => {                                                                  // Маршрут для добавления данных в таблицу лидеров
+// Боле строгий лимитер для записи очков
+const writeLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 60,
+  standardHeaders: true,
+  legacyHeaders: false
+});
+
+app.post('/add-score', writeLimiter, (req, res) => {                                                                  // Маршрут для добавления данных в таблицу лидеров
     const { nickname, score } = req.body;
     leaderboard.push({ nickname, score });
     leaderboard.sort((a, b) => b.score - a.score);
