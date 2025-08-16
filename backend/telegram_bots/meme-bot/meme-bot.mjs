@@ -352,9 +352,16 @@ async function getRedditMeme() {
     let memeUrl = post.data.url;
 
     // Обработка Imgur ссылок
-    if (memeUrl.includes('imgur.com') && !memeUrl.includes('i.imgur.com')) {
-      memeUrl = memeUrl.replace('imgur.com', 'i.imgur.com') + '.jpg';
-    }
+    try {
+      const parsed = new URL(memeUrl);
+      if (parsed.hostname === 'imgur.com') {
+        parsed.hostname = 'i.imgur.com';
+        if (!/\.(jpe?g|png|gif|webp)$/i.test(parsed.pathname)) {
+          parsed.pathname = parsed.pathname.replace(/\/$/, '') + '.jpg';
+        }
+        memeUrl = parsed.toString().split('?')[0];
+      }
+    } catch {}
 
     // Преобразование preview.redd.it в i.redd.it
     if (memeUrl.includes('preview.redd.it')) {
@@ -389,19 +396,22 @@ function isValidImageUrl(url) {
   if (!url || typeof url !== 'string') return false;
   
   try {
-    new URL(url);
+    const parsed = new URL(url);
+    const hostname = parsed.hostname.toLowerCase();
+
+    const allowedDomains = [
+      'i.redd.it',
+      'i.imgur.com',
+      'imgur.com'
+    ];
+    
+    const isAllowedHost = allowedDomains.some(domain => hostname === domain || hostname.endsWith('.' + domain));
+    const hasAllowedExt = /\.(jpe?g|png|gif|webp)(\?.*)?$/i.test(parsed.pathname);
+    
+    return isAllowedHost || hasAllowedExt;
   } catch (e) {
     return false;
   }
-
-  const allowedDomains = [
-    'i.redd.it',
-    'i.imgur.com',
-    'imgur.com'
-  ];
-  
-  return allowedDomains.some(domain => url.includes(domain)) || 
-         /\.(jpe?g|png|gif|webp)(\?.*)?$/i.test(url);
 }
 
 // Форматирование URL мема
@@ -409,8 +419,8 @@ function formatMemeUrl(url) {
   if (!url) return '';
   
   try {
-    // Убираем параметры из URL
-    url = url.split('?')[0];
+    // Убираем фрагмент и параметры из URL
+    url = url.split('#')[0].split('?')[0];
     
     // Декодируем URL только если он содержит %-символы
     if (url.includes('%')) {
