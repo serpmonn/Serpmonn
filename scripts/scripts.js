@@ -2,6 +2,9 @@
 import { setCookie, getCookie } from './cookies.js';
 import { loadNews } from './news.js';
 import { generateCombinedBackground } from './backgroundGenerator.js';
+import enhancedNewsManager from './enhanced-news.js';
+import { personalizationManager } from './personalization.js';
+import layoutManager from './layout-manager.js';
 import '/pwa/app.js';
 
 // Главная функция инициализации
@@ -29,7 +32,7 @@ function initPage() {
     async function loadPageData() {
         try {
             await Promise.allSettled([
-                loadNews(),
+                enhancedNewsManager.loadPersonalizedNews(),
                 generateCombinedBackground()
             ]);
         } catch (error) {
@@ -40,6 +43,14 @@ function initPage() {
     // Инициализация
     setupEventListeners();
     loadPageData();
+    
+    // Инициализация менеджера макета
+    layoutManager.init();
+    
+    // Адаптация под размер экрана
+    window.addEventListener('resize', () => {
+        layoutManager.adaptToScreenSize();
+    });
 }
 
 // Запуск после полной загрузки DOM
