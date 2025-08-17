@@ -12,13 +12,24 @@ body {
 
 .container {
     background: #fff;
-    max-width: 500px;
+    max-width: 600px;
     width: 100%;
     padding: 30px 25px;
     border-radius: 16px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     animation: slideUp 0.6s ease;
     box-sizing: border-box;
+}
+
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
 }
 
 h2, h3 {
@@ -28,19 +39,26 @@ h2, h3 {
     text-align: center;
 }
 
+h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #374151;
+}
+
 /* Инфо о профиле */
 #profileInfo {
     background-color: #f9f9fb;
     padding: 20px;
     border-radius: 12px;
     box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
-    margin-bottom: 30px;
+    margin-bottom: 25px;
 }
 
 #profileInfo p {
     font-size: 16px;
     color: #444;
     margin: 8px 0;
+    padding: 8px 0;
 }
 
 /* Форма редактирования профиля */
@@ -55,6 +73,7 @@ h2, h3 {
     color: #444;
     margin-bottom: 6px;
     text-align: left;
+    font-weight: 600;
 }
 
 #profileForm input {
@@ -66,12 +85,18 @@ h2, h3 {
     border: 1px solid #ccc;
     border-radius: 8px;
     transition: border-color 0.3s;
+    margin-bottom: 15px;
 }
 
 #profileForm input:focus {
-    border-color: #ff4d4d;
+    border-color: #1e11b5;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(30, 17, 181, 0.1);
+}
+
+#profileForm input::placeholder {
+    color: #9ca3af;
+    font-style: italic;
 }
 
 /* Кнопки */
@@ -82,21 +107,26 @@ h2, h3 {
     font-size: 16px;
     border-radius: 8px;
     border: none;
-    padding: 12px;
+    padding: 12px 20px;
     font-weight: 600;
-    transition: background 0.3s, transform 0.2s;
+    transition: all 0.3s ease;
     width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 /* Основной стиль кнопок */
 .primary-button {
-    background: linear-gradient(90deg, #ff5252, #ff1717);
+    background: linear-gradient(90deg, #1e11b5, #3627c5);
     color: #fff;
+    margin-top: 10px;
 }
 
 .primary-button:hover {
-    background: linear-gradient(90deg, #e53935, #d32f2f);
+    background: linear-gradient(90deg, #3627c5, #4f3fd8);
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(30, 17, 181, 0.3);
 }
 
 .secondary-button {
@@ -106,43 +136,45 @@ h2, h3 {
 }
 
 .secondary-button:hover {
-    background: #ddd;
+    background: #e5e7eb;
     transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .danger-button {
     background-color: #dc3545;
     color: white;
     margin-top: 20px;
+    max-width: 300px;
 }
 
 .danger-button:hover {
     background-color: #c82333;
     transform: translateY(-1px);
-}
-
-#logoutButton {
-    background-color: #dc3545;
-}
-
-#logoutButton:hover {
-    background-color: #c82333;
+    box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
 }
 
 /* Сообщения */
 .message {
-    margin-top: 10px;
+    margin-top: 15px;
     font-weight: bold;
     min-height: 20px;
     color: #333;
+    text-align: center;
+    padding: 10px;
+    border-radius: 6px;
 }
 
 .message.success {
-    color: green;
+    color: #059669;
+    background-color: #d1fae5;
+    border: 1px solid #a7f3d0;
 }
 
 .message.error {
-    color: red;
+    color: #dc2626;
+    background-color: #fee2e2;
+    border: 1px solid #fecaca;
 }
 
 /* Контейнер кнопок почты @onnmail */
@@ -150,77 +182,192 @@ h2, h3 {
     display: flex;
     flex-direction: column;
     gap: 12px;
-    margin-top: 20px;
+    margin-top: 15px;
 }
 
 /* Карточки */
 .card, .form-card {
     background-color: #f9f9fb;
-    padding: 20px;
-    border-radius: 10px;
+    padding: 25px;
+    border-radius: 12px;
     margin-bottom: 25px;
     box-shadow: inset 0 0 5px rgba(0,0,0,0.05);
     text-align: left;
+    border: 1px solid #e5e7eb;
 }
 
-/* Метки и поля ввода */
-label {
+/* Сетка инструментов */
+.tools-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+    gap: 12px; 
+    margin-bottom: 20px;
+}
+
+.tool-link { 
+    display: flex;
+    align-items: center;
+    padding: 16px 20px; 
+    border: 1px solid #e5e7eb; 
+    border-radius: 12px; 
+    text-decoration: none; 
+    color: #111827; 
+    background: #fff;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.tool-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    border-color: #1e11b5;
+    background-color: #f8fafc;
+}
+
+.tool-icon {
+    font-size: 20px;
+    margin-right: 12px;
+}
+
+.tool-text {
+    font-weight: 500;
+}
+
+/* Недавно использованные инструменты */
+.recent-tools {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.recent-tools strong {
     display: block;
-    margin-top: 10px;
-    margin-bottom: 6px;
-    font-weight: bold;
-    color: #333;
+    margin-bottom: 12px;
+    color: #374151;
+    font-size: 14px;
+    font-weight: 600;
 }
 
-input {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
+.recent-tools ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.recent-tools li {
+    margin-bottom: 8px;
+}
+
+.recent-tools a {
+    color: #1e11b5;
+    text-decoration: none;
+    padding: 8px 12px;
     border-radius: 6px;
-    font-size: 16px;
-    background-color: #fdfdfd;
-    transition: border 0.3s;
+    background: #f3f4f6;
+    display: inline-block;
+    transition: all 0.3s ease;
+    font-size: 14px;
 }
 
+.recent-tools a:hover {
+    background: #e5e7eb;
+    color: #1e40af;
+    transform: translateX(2px);
+}
+
+/* Секция выхода */
+.logout-section {
+    text-align: center;
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.button-icon {
+    margin-right: 8px;
+    font-size: 16px;
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+    body {
+        padding: 20px 10px;
+    }
+    
+    .container {
+        padding: 20px 15px;
+        max-width: 100%;
+    }
+    
+    .tools-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .tool-link {
+        padding: 14px 16px;
+    }
+    
+    .card, .form-card {
+        padding: 20px;
+    }
+    
+    h2 {
+        font-size: 22px;
+    }
+    
+    h3 {
+        font-size: 18px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 15px 10px;
+    }
+    
+    .card, .form-card {
+        padding: 15px;
+    }
+    
+    .primary-button,
+    .secondary-button,
+    .danger-button {
+        padding: 14px 16px;
+        font-size: 15px;
+    }
+}
+
+/* Анимации для плавности */
+.card, .form-card {
+    animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Улучшенные эффекты наведения */
+.card:hover {
+    box-shadow: inset 0 0 8px rgba(0,0,0,0.08);
+}
+
+/* Стили для полей ввода */
 input:focus {
     border-color: #1e11b5;
     outline: none;
+    box-shadow: 0 0 0 3px rgba(30, 17, 181, 0.1);
 }
 
-/* Кнопки в стиле @onnmail */
-.primary-button {
-    background-color: #1e11b5;
-    color: #fff;
-}
-
-.primary-button:hover {
-    background-color: #3627c5;
-    transform: scale(1.02);
-}
-
-.secondary-button {
-    background-color: #f1f1f1;
-    color: #333;
-    margin-top: 10px;
-}
-
-.secondary-button:hover {
-    background-color: #ddd;
-    transform: scale(1.02);
-}
-
-.danger-button {
-    background-color: #e74c3c;
-    color: white;
-    margin-top: 20px;
-}
-
-.danger-button:hover {
-    background-color: #c0392b;
-    transform: scale(1.02);
-}
-
-.onnmail-buttons {
-    gap: 10px;
+/* Улучшенные кнопки */
+.primary-button:active,
+.secondary-button:active,
+.danger-button:active {
+    transform: scale(0.98);
 }
