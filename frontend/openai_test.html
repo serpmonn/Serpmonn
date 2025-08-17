@@ -4,6 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SerpmonnAI</title>
+    <!-- Open Graph -->
+    <meta property="og:title" content="SerpmonnAI — демо">
+    <meta property="og:description" content="Задайте вопрос и получите ответ в демо SerpmonnAI.">
+    <meta property="og:image" content="https://serpmonn.ru/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/openai_test.html">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SerpmonnAI — демо">
+    <meta name="twitter:description" content="Задайте вопрос и получите ответ.">
+    <meta name="twitter:image" content="https://serpmonn.ru/images/Banner_Serpmonn.png">
 </head>
 <body>
     <h1>Задайте вопрос</h1>
@@ -21,23 +32,13 @@
         // Функция для отправки данных на сервер и получения ответа
         document.getElementById("qa-form").addEventListener("submit", async function(event) {
             event.preventDefault(); // предотвращаем отправку формы
-
-            // Получаем данные из формы
             const question = document.getElementById("question").value;
-
             try {
-                // Отправляем запрос на сервер
                 const response = await fetch('https://serpmonn.ru/openai', {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        question: question,
-                    }),
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
                 });
-
-                // Если запрос успешен, выводим ответ
                 if (response.ok) {
                     const data = await response.json();
                     document.getElementById("answer").textContent = `Ответ: ${data.answer}`;
