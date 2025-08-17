@@ -72,6 +72,76 @@
     transform: translateY(0);
 }
 
+/* Улучшенные стили для категорий инструментов */
+.submenu-container a {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    margin: 2px 0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+}
+
+.submenu-container a:hover {
+    background-color: #e3f2fd;
+    color: #1976d2;
+    transform: translateX(3px);
+}
+
+/* Стили для заголовков категорий */
+.menu-item[data-submenu] {
+    position: relative;
+    font-weight: 600;
+}
+
+.menu-item[data-submenu]:after {
+    content: '▶';
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.8rem;
+    color: #666;
+    transition: transform 0.2s ease;
+}
+
+.menu-item[data-submenu][aria-expanded="true"]:after {
+    transform: translateY(-50%) rotate(90deg);
+}
+
+/* Стили для плейсхолдеров инструментов */
+.tool-placeholder {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.tool-placeholder:hover {
+    background-color: #f5f5f5 !important;
+    color: #999 !important;
+}
+
+/* Анимации для подменю */
+.submenu-container {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Улучшенные стили для иконок в категориях */
+.submenu-container .icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 8px;
+}
+
 /* Стили для логотипа */
 .menu-logo {
     width: 42px;
@@ -125,8 +195,18 @@
     display: none;
 }
 
+/* Адаптивность для мобильных устройств */
 @media (max-width: 600px) {
     .menu-container {
         max-width: 75%;
+    }
+    
+    .submenu-container {
+        padding-left: 15px;
+    }
+    
+    .submenu-container a {
+        font-size: 0.85rem;
+        padding: 6px 10px;
     }
 }
