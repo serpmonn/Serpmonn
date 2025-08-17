@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Генератор UTM‑меток — Serpmonn</title>
+    <link rel="icon" href="/images/Serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/styles/base.css">
+    <style>
+      body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+      h1 { margin: 16px 0; }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      label { font-size: 14px; color: #374151; }
+      input { width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; }
+      .box { border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; margin: 12px 0; }
+      .actions { display: flex; gap: 8px; }
+      button { padding: 10px 12px; border-radius: 8px; border: 1px solid #111827; background: #111827; color: #fff; }
+      .muted { color: #6b7280; font-size: 13px; }
+      .output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; word-break: break-all; }
+    </style>
+  </head>
+  <body>
+    <h1>Генератор UTM‑меток</h1>
+    <div class="box">
+      <div class="row">
+        <div>
+          <label>Базовый URL</label>
+          <input id="base" placeholder="https://example.com/landing" />
+        </div>
+        <div>
+          <label>utm_source</label>
+          <input id="source" placeholder="telegram" />
+        </div>
+        <div>
+          <label>utm_medium</label>
+          <input id="medium" placeholder="bot" />
+        </div>
+        <div>
+          <label>utm_campaign</label>
+          <input id="campaign" placeholder="spring_sale" />
+        </div>
+        <div>
+          <label>utm_content</label>
+          <input id="content" placeholder="banner_a" />
+        </div>
+        <div>
+          <label>utm_term</label>
+          <input id="term" placeholder="keyword" />
+        </div>
+      </div>
+    </div>
+    <div class="box">
+      <div class="actions">
+        <button id="build">Сгенерировать</button>
+        <button id="copy" type="button">Копировать</button>
+      </div>
+      <p class="muted">Сгенерированная ссылка:</p>
+      <div id="result" class="output"></div>
+    </div>
+
+    <script>
+      const qs = (s)=>document.querySelector(s);
+      function buildUrl() {
+        const base = qs('#base').value.trim();
+        const params = new URLSearchParams();
+        const add = (k,v)=>{ if (v && v.trim()) params.set(k, v.trim()); };
+        add('utm_source', qs('#source').value);
+        add('utm_medium', qs('#medium').value);
+        add('utm_campaign', qs('#campaign').value);
+        add('utm_content', qs('#content').value);
+        add('utm_term', qs('#term').value);
+        if (!base) return '';
+        const hasQuery = base.includes('?');
+        return base + (hasQuery ? '&' : '?') + params.toString();
+      }
+      qs('#build').addEventListener('click', ()=>{
+        qs('#result').textContent = buildUrl();
+      });
+      qs('#copy').addEventListener('click', async ()=>{
+        const str = qs('#result').textContent;
+        if (!str) return;
+        try { await navigator.clipboard.writeText(str); } catch {}
+      });
+    </script>
+  </body>
+</html>
