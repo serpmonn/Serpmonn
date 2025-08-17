@@ -21,6 +21,7 @@
   </head>
   <body>
     <h1>Генератор UTM‑меток</h1>
+    <!-- Форма параметров UTM -->
     <div class="box">
       <div class="row">
         <div>
@@ -49,6 +50,7 @@
         </div>
       </div>
     </div>
+    <!-- Действия и вывод результата -->
     <div class="box">
       <div class="actions">
         <button id="build">Сгенерировать</button>
@@ -59,7 +61,9 @@
     </div>
 
     <script>
+      // Вспомогательный селектор
       const qs = (s)=>document.querySelector(s);
+      // Формирование ссылки с UTM‑параметрами
       function buildUrl() {
         const base = qs('#base').value.trim();
         const params = new URLSearchParams();
@@ -73,9 +77,11 @@
         const hasQuery = base.includes('?');
         return base + (hasQuery ? '&' : '?') + params.toString();
       }
+      // Кнопка генерации
       qs('#build').addEventListener('click', ()=>{
         qs('#result').textContent = buildUrl();
       });
+      // Копирование результата в буфер обмена
       qs('#copy').addEventListener('click', async ()=>{
         const str = qs('#result').textContent;
         if (!str) return;

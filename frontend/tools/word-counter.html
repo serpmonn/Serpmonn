@@ -27,7 +27,9 @@
     </div>
 
     <script>
+      // Вспомогательный селектор
       const qs = (s)=>document.querySelector(s);
+      // Пересчёт статистики текста
       function recalc() {
         const t = qs('#text').value;
         qs('#chars').textContent = t.length;
@@ -38,6 +40,7 @@
         const spaces = (t.match(/\s/g) || []).length;
         qs('#spaces').textContent = spaces;
       }
+      // Обновляем счётчики при вводе
       qs('#text').addEventListener('input', recalc);
       recalc();
     </script>
