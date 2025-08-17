@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Счётчик слов и символов — Serpmonn</title>
+    <link rel="icon" href="/images/Serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/styles/base.css">
+    <style>
+      body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+      h1 { margin: 16px 0; }
+      textarea { width: 100%; min-height: 240px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; }
+      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+      .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fff; }
+      .num { font-size: 24px; font-weight: 700; }
+      .label { color: #6b7280; }
+    </style>
+  </head>
+  <body>
+    <h1>Счётчик слов и символов</h1>
+    <textarea id="text" placeholder="Вставьте или введите текст..."></textarea>
+    <div class="stats">
+      <div class="card"><div class="num" id="chars">0</div><div class="label">Символы</div></div>
+      <div class="card"><div class="num" id="words">0</div><div class="label">Слова</div></div>
+      <div class="card"><div class="num" id="lines">0</div><div class="label">Строки</div></div>
+      <div class="card"><div class="num" id="spaces">0</div><div class="label">Пробелы</div></div>
+    </div>
+
+    <script>
+      // Вспомогательный селектор
+      const qs = (s)=>document.querySelector(s);
+      // Пересчёт статистики текста
+      function recalc() {
+        const t = qs('#text').value;
+        qs('#chars').textContent = t.length;
+        const words = t.trim() ? t.trim().split(/\s+/).length : 0;
+        qs('#words').textContent = words;
+        const lines = t ? t.split(/\n/).length : 0;
+        qs('#lines').textContent = lines;
+        const spaces = (t.match(/\s/g) || []).length;
+        qs('#spaces').textContent = spaces;
+      }
+      // Обновляем счётчики при вводе
+      qs('#text').addEventListener('input', recalc);
+      recalc();
+    </script>
+  </body>
+</html>
