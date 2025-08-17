@@ -17,6 +17,7 @@
     <meta name="twitter:image" content="https://serpmonn.ru/images/Banner_Serpmonn.png">
     <link rel="icon" href="/images/Serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/styles/base.css">
+    <link rel="stylesheet" href="/styles/menu.css">
     <style>
       body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
       h1 { margin: 16px 0; }
@@ -28,10 +29,19 @@
       button { padding: 10px 12px; border-radius: 8px; border: 1px solid #111827; background: #111827; color: #fff; }
       .muted { color: #6b7280; font-size: 13px; }
       .output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; word-break: break-all; }
+
+      /* Адаптивность для мобильных устройств */
+      @media (max-width: 768px) {
+        .row { grid-template-columns: 1fr; }
+        body { padding: 12px; }
+      }
     </style>
   </head>
   <body>
-    <h1>Генератор UTM‑меток</h1>
+    <!-- Меню -->
+    <div id="menuContainer"></div>
+    
+    <h1>🔗 Генератор UTM‑меток</h1>
     <!-- Форма параметров UTM -->
     <div class="box">
       <div class="row">
@@ -99,5 +109,8 @@
         try { await navigator.clipboard.writeText(str); } catch {}
       });
     </script>
+    
+    <!-- Загрузка меню -->
+    <script type="module" src="/scripts/menu-loader.js"></script>
   </body>
 </html>
