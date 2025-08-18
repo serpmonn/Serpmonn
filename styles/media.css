@@ -25,16 +25,17 @@
         justify-content: center;                                            /* Выравнивание по горизонтали */
         align-items: center;                                                /* Выравнивание по вертикали */
         flex-wrap: wrap;                                                    /* Чтобы элементы переносились на новую строку при необходимости */
-        position: relative;                                                 /* Относительное позиционирование */
+        position: static;                                                   /* Статическое позиционирование */
         width: 80%;                                                         /* Ширина контейнера */
         height: auto;                                                       /* Высота контейнера */
-        text-align: center;						                            /* Выравнивает текст или строчные элементы по центру внутри родительского блока*/
+        text-align: center;                                                 /* Выравнивает текст по центру */
         background-color: rgba(255, 255, 255, 0.0);                       /* Полупрозрачный фон для читаемости */
         border-radius: 10px;                                                /* Радиус границы */
         padding: 3%;                                                        /* Отступы внутри контейнера */
         margin-bottom: 1%;                                                  /* Отступ снизу */
-        overflow: visible;						                            /* Позволяет содержимому элемента выходить за его пределы и быть видимым, не скрывая лишнее */
+        overflow: hidden;                                                   /* Предотвращает выход рекламы за границы */
         gap: 10px;                                                          /* Расстояние между баннерами */
+        z-index: 1;                                                         /* Низкий z-index */
     }
 }
 
@@ -42,29 +43,29 @@
 @media (max-width: 768px) {
     .ad-container {
         padding: 15px;                                                      /* Меньше внутренних отступов */
-        margin: 20px 15px;                                                  /* Меньше внешних отступов */
+        margin: 60px 15px 20px 15px;                                       /* Увеличенные отступы сверху на мобильных */
         width: 95%;                                                         /* Больше ширины на мобильных */
     }
     
     .ad-container.main-page {
-        margin: 25px 15px;
+        margin: 40px 15px 25px 15px;                                       /* Отступы для главной страницы */
     }
     
     .ad-container.auth-page {
-        margin: 20px 15px;
+        margin: 60px 15px 20px 15px;                                       /* Увеличенные отступы сверху для авторизации */
     }
     
     .ad-container.content-page {
-        margin: 22px 15px;
+        margin: 60px 15px 22px 15px;                                       /* Увеличенные отступы сверху для контента */
     }
     
     .ad-container.tools-page {
-        margin: 20px 15px;
+        margin: 30px 15px 20px 15px;                                       /* Отступы для инструментов */
     }
     
     .ad-footer {
         padding: 15px;
-        margin: 20px 15px;
+        margin: 60px 15px 20px 15px;                                       /* Увеличенные отступы сверху */
         width: 95%;
     }
 }
@@ -73,23 +74,23 @@
 @media (min-width: 769px) and (max-width: 1024px) {
     .ad-container {
         padding: 18px;
-        margin: 25px auto;
+        margin: 50px auto 25px auto;                                       /* Увеличенные отступы сверху */
         width: 90%;
     }
     
     .ad-container.main-page {
-        margin: 35px auto;
+        margin: 45px auto 35px auto;                                       /* Отступы для главной страницы */
     }
     
     .ad-container.auth-page {
-        margin: 22px auto;
+        margin: 70px auto 22px auto;                                       /* Увеличенные отступы сверху для авторизации */
     }
     
     .ad-container.content-page {
-        margin: 30px auto;
+        margin: 70px auto 30px auto;                                       /* Увеличенные отступы сверху для контента */
     }
     
     .ad-container.tools-page {
-        margin: 25px auto;
+        margin: 35px auto 25px auto;                                       /* Отступы для инструментов */
     }
 }
