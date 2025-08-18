@@ -8,12 +8,24 @@
     const ctx = canvas.getContext('2d', { alpha: true });
     canvas.id = 'serpmonn-letters-bg';
     Object.assign(canvas.style, {
-      position: 'fixed', inset: '0', width: '100%', height: '100%',
-      zIndex: '0', pointerEvents: 'none'
+      position: 'absolute', width: '100%', height: '100%',
+      zIndex: '1', pointerEvents: 'none', top: '0', left: '0'
     });
 
     const bodyEl = document.body;
-    if (bodyEl.firstChild) bodyEl.insertBefore(canvas, bodyEl.firstChild); else bodyEl.appendChild(canvas);
+    
+    // Вставляем canvas между новостным и поисковым контейнерами
+    const newsContainer = document.querySelector('.news-container');
+    const searchCard = document.querySelector('.search-card');
+    
+    if (newsContainer && searchCard) {
+      // Вставляем canvas после новостного контейнера
+      newsContainer.parentNode.insertBefore(canvas, newsContainer.nextSibling);
+    } else {
+      // Fallback: вставляем в начало body если контейнеры не найдены
+      if (bodyEl.firstChild) bodyEl.insertBefore(canvas, bodyEl.firstChild); 
+      else bodyEl.appendChild(canvas);
+    }
 
     let width = 0, height = 0, dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     const text = 'Serpmonn'; // Заглавная S, остальное строчные
@@ -29,6 +41,31 @@
     function resize(){
       width = Math.floor(window.innerWidth);
       height = Math.floor(window.innerHeight);
+      
+      // Находим размеры для canvas между контейнерами
+      try {
+        const newsContainer = document.querySelector('.news-container');
+        const searchCard = document.querySelector('.search-card');
+        
+        if (newsContainer && searchCard) {
+          const newsRect = newsContainer.getBoundingClientRect();
+          const searchRect = searchCard.getBoundingClientRect();
+          
+          // Canvas занимает пространство между контейнерами
+          const canvasTop = newsRect.bottom;
+          const canvasBottom = searchRect.top;
+          const canvasHeight = canvasBottom - canvasTop;
+          
+          // Обновляем стили canvas
+          canvas.style.top = canvasTop + 'px';
+          canvas.style.height = canvasHeight + 'px';
+          
+          // Обновляем размеры для отрисовки
+          width = Math.floor(window.innerWidth);
+          height = Math.floor(canvasHeight);
+        }
+      } catch(_) {}
+      
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -52,28 +89,8 @@
 
       let x = Math.floor((width - totalTextWidth) / 2);
       
-      // Размещаем между новостным и поисковым контейнерами
-      let y = Math.floor(height * 0.35); // Начальная позиция по центру
-      
-      try {
-        // Проверяем новостной контейнер
-        const newsEl = document.querySelector('.news-container');
-        if (newsEl) {
-          const newsRect = newsEl.getBoundingClientRect();
-          const newsBottom = newsRect.bottom;
-          // Размещаем ниже новостей с отступом
-          y = Math.max(y, Math.floor(newsBottom + 30));
-        }
-        
-        // Проверяем поисковый контейнер
-        const searchEl = document.querySelector('.search-card');
-        if (searchEl) {
-          const rect = searchEl.getBoundingClientRect();
-          const searchTop = rect.top;
-          // Размещаем выше поиска с отступом
-          y = Math.min(y, Math.floor(searchTop - 25));
-        }
-      } catch(_) {}
+      // Размещаем буквы по центру canvas (который находится между контейнерами)
+      let y = Math.floor(height * 0.5);
       
       for (let i = 0; i < text.length; i++){
         const ch = text[i];
