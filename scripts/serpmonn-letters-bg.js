@@ -8,8 +8,8 @@
     const ctx = canvas.getContext('2d', { alpha: true });
     canvas.id = 'serpmonn-letters-bg';
     Object.assign(canvas.style, {
-      position: 'absolute', width: '100%', height: '100%',
-      zIndex: '1', pointerEvents: 'none', top: '0', left: '0'
+      position: 'static', width: '100%', height: 'auto',
+      zIndex: '1', pointerEvents: 'none', display: 'block'
     });
 
     const bodyEl = document.body;
@@ -40,31 +40,9 @@
 
     function resize(){
       width = Math.floor(window.innerWidth);
-      height = Math.floor(window.innerHeight);
       
-      // Находим размеры для canvas между контейнерами
-      try {
-        const newsContainer = document.querySelector('.news-container');
-        const searchCard = document.querySelector('.search-card');
-        
-        if (newsContainer && searchCard) {
-          const newsRect = newsContainer.getBoundingClientRect();
-          const searchRect = searchCard.getBoundingClientRect();
-          
-          // Canvas занимает пространство между контейнерами
-          const canvasTop = newsRect.bottom;
-          const canvasBottom = searchRect.top;
-          const canvasHeight = canvasBottom - canvasTop;
-          
-          // Обновляем стили canvas
-          canvas.style.top = canvasTop + 'px';
-          canvas.style.height = canvasHeight + 'px';
-          
-          // Обновляем размеры для отрисовки
-          width = Math.floor(window.innerWidth);
-          height = Math.floor(canvasHeight);
-        }
-      } catch(_) {}
+      // Фиксированная высота для canvas между контейнерами
+      height = 120; // Высота в пикселях для букв
       
       canvas.width = Math.floor(width * dpr);
       canvas.height = Math.floor(height * dpr);
@@ -89,8 +67,8 @@
 
       let x = Math.floor((width - totalTextWidth) / 2);
       
-      // Размещаем буквы по центру canvas (который находится между контейнерами)
-      let y = Math.floor(height * 0.5);
+      // Размещаем буквы по центру canvas
+      let y = Math.floor(height / 2);
       
       for (let i = 0; i < text.length; i++){
         const ch = text[i];
