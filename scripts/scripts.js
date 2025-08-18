@@ -1,7 +1,7 @@
 // Импорты модулей
 import { setCookie, getCookie } from './cookies.js';
 import { loadNews } from './news.js';
-import { generateCombinedBackground } from './backgroundGenerator.js';
+// import { generateCombinedBackground } from './backgroundGenerator.js';
 import '/pwa/app.js';
 
 // Главная функция инициализации
@@ -29,8 +29,8 @@ function initPage() {
     async function loadPageData() {
         try {
             await Promise.allSettled([
-                loadNews(),
-                generateCombinedBackground()
+                loadNews()
+                // , generateCombinedBackground()
             ]);
         } catch (error) {
             console.error('Ошибка загрузки данных:', error);
