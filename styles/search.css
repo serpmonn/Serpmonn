@@ -1,12 +1,12 @@
 .container {
 	text-align: center;                                                     /* Центрирование содержимого внутри контейнера */
-	background-color: rgba(255, 255, 255, 0.6);                             /* Полупрозрачный фон для читаемости */
+	background-color: rgba(255, 255, 255, 0.4);                             /* Полупрозрачный фон для читаемости */
 	border-radius: 10px;                                                    /* Радиус границы (округление углов) */
-	padding: 3%;                                                            /* Отступы внутри контейнера */
+	padding: 1.5%;                                                            /* Отступы внутри контейнера */
 	position: relative;                                                     /* Относительное позиционирование для дальнейшего использования */
 	align-self: center;                                                     /* Центрирование контейнера по вертикали, если он находится в flex-контейнере */
-	margin-top: 3%;                                                         /* Добавляем отступ сверху */
-	margin-bottom: 3%;                                                      /* Отступ снизу */
+	margin-top: 1.5%;                                                         /* Добавляем отступ сверху */
+	margin-bottom: 1.5%;                                                      /* Отступ снизу */
 	width: auto;                                                            /* Ширина автоматически определяется содержимым */
 	height: auto;                                                           /* Высота автоматически определяется содержимым */
 }
@@ -33,6 +33,11 @@
 	transition: transform 0.3s ease, color 0.3s ease;                        /* Плавный переход при наведении на кнопку (плавное изменение цвета и размера кнопки) */
 }
 
+a:hover {
+	color: #007bff;
+	text-decoration: underline;
+}
+
 .gsc-search-button.gsc-search-button-v2:hover {
 	transform: scale(1.2);                                                  /* Увеличение кнопки при наведении */
 	background-color: #666666;                                              /* Цвет фона при наведении */
@@ -40,4 +45,98 @@
 
 input, textarea, select, button {                                          /* Стили для полей ввода и текстовых областей */
 	margin-bottom: 0px;                                                    /* Убираем отступ снизу у всех элементов ввода */
+}
+
+/* Герой-блок */
+.search-hero {
+        text-align: center;
+        margin: 16px auto 8px;
+        padding: 0 12px;
+}
+.search-title {
+        font-size: 28px;
+        font-weight: 800;
+        color: #111;
+        letter-spacing: 0.2px;
+}
+.search-subtitle {
+        font-size: 16px;
+        color: #555;
+        margin-top: 6px;
+}
+
+/* Стеклянная карточка вокруг поиска */
+.search-card {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        background: rgba(255, 255, 255, 0.35);
+        border: 1px solid rgba(220, 53, 69, 0.15);
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-top: 10px;
+}
+
+/* Фокус/hover у поля поиска */
+.gcse-searchbox-only:focus-within {
+        outline: 2px solid #dc3545;
+        outline-offset: 3px;
+        border-radius: 10px;
+}
+
+/* CTA-кнопки */
+.cta-buttons {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        align-items: center;
+        margin: 10px 0 16px;
+}
+.cta-button {
+        display: inline-block;
+        padding: 10px 16px;
+        border-radius: 10px;
+        background: linear-gradient(90deg, #dc3545, #c82333);
+        color: #fff;
+        font-weight: 700;
+        letter-spacing: 0.2px;
+        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 6px 16px rgba(220, 53, 69, 0.25);
+        transition: transform .2s ease, box-shadow .2s ease, filter .2s ease;
+}
+.cta-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 24px rgba(220, 53, 69, 0.35);
+        filter: brightness(1.02);
+}
+.cta-button:active::after {
+        content: '';
+        position: absolute;
+        left: 50%; top: 50%;
+        transform: translate(-50%, -50%);
+        width: 0; height: 0;
+        background: rgba(255,255,255,0.4);
+        border-radius: 9999px;
+        animation: ripple .6s ease-out forwards;
+}
+@keyframes ripple {
+        0% { width: 0; height: 0; opacity: .6; }
+        100% { width: 250%; height: 250%; opacity: 0; }
+}
+
+/* Микро-анимация поднятия карточек (общий класс на всякий случай) */
+.card, .counter-card {
+        transition: transform .2s ease, box-shadow .2s ease;
+}
+.card:hover, .counter-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+
+@media (max-width: 600px) {
+        .search-title { font-size: 22px; }
+        .search-subtitle { font-size: 14px; }
+        .cta-buttons { gap: 10px; }
+        .cta-button { padding: 9px 14px; }
 }
