@@ -54,11 +54,13 @@
       glyphs.length = 0;
       const margin = Math.min(40, width * 0.05);
       const availableWidth = Math.max(0, width - margin * 2);
-      const spacing = 10;
-      // Подбираем размер шрифта так, чтобы слово поместилось
-      let fontSize = Math.min(60, Math.max(18, Math.floor(availableWidth / (text.length * 1.2))));
+      const spacing = 8; // Уменьшаем расстояние между буквами
+      // Подбираем размер шрифта - уменьшаем для ПК
+      let fontSize = Math.min(40, Math.max(16, Math.floor(availableWidth / (text.length * 1.4))));
 
-      if (width < 480) fontSize = Math.max(28, Math.floor(fontSize * 0.8));
+      if (width < 480) fontSize = Math.max(24, Math.floor(fontSize * 0.9)); // Мобильные
+      else if (width > 1024) fontSize = Math.max(20, Math.floor(fontSize * 0.8)); // ПК
+      
       ctx.font = `800 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
 
       ctx.textBaseline = 'middle';
@@ -97,6 +99,13 @@
       ctx.fillRect(0,0,width,height);
 
       const mx = mouse.x, my = mouse.y;
+      
+      // Получаем позицию canvas относительно viewport для правильного расчета координат
+      let canvasRect = null;
+      try {
+        canvasRect = canvas.getBoundingClientRect();
+      } catch(_) {}
+      
       for (const g of glyphs){
         // Сила возврата к базовой позиции (пружина)
         const dxBase = g.baseX - g.x;
@@ -104,10 +113,13 @@
         g.vx += dxBase * springK;
         g.vy += dyBase * springK;
 
-        // Отталкивание от курсора
-        if (mx != null && my != null){
-          const dx = g.x + g.w/2 - mx; // от центра буквы
-          const dy = g.y - my;
+        // Отталкивание от курсора - используем координаты относительно canvas
+        if (mx != null && my != null && canvasRect){
+          const canvasX = mx - canvasRect.left;
+          const canvasY = my - canvasRect.top;
+          
+          const dx = g.x + g.w/2 - canvasX; // от центра буквы
+          const dy = g.y - canvasY;
           const dist2 = dx*dx + dy*dy;
           if (dist2 < repelRadius * repelRadius){
             const dist = Math.sqrt(dist2) || 1;
@@ -139,6 +151,7 @@
 
         // Рисуем букву
         ctx.shadowColor = g.color === RED ? 'rgba(220,53,69,0.35)' : 'rgba(0,0,0,0.15)';
+
         ctx.shadowBlur = g.color === RED ? 16 : 8;
         ctx.fillStyle = g.color;
         ctx.fillText(g.ch, g.x, g.y);
