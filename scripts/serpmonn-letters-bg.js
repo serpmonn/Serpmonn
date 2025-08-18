@@ -42,38 +42,46 @@
       const spacing = 10;
       // Подбираем размер шрифта так, чтобы слово поместилось
       let fontSize = Math.min(60, Math.max(18, Math.floor(availableWidth / (text.length * 1.2))));
+
       if (width < 480) fontSize = Math.max(28, Math.floor(fontSize * 0.8));
       ctx.font = `800 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
+
       ctx.textBaseline = 'middle';
       const widths = [...text].map(ch => ctx.measureText(ch).width);
       const totalTextWidth = widths.reduce((a,b)=>a+b,0) + spacing * (text.length - 1);
+
       let x = Math.floor((width - totalTextWidth) / 2);
-      // Принудительно размещаем ниже новостного контейнера
-      let y = Math.floor(height * 0.25); // Начинаем ниже
+      
+      // Размещаем между новостным и поисковым контейнерами
+      let y = Math.floor(height * 0.35); // Начальная позиция по центру
+      
       try {
         // Проверяем новостной контейнер
         const newsEl = document.querySelector('.news-container');
         if (newsEl) {
           const newsRect = newsEl.getBoundingClientRect();
           const newsBottom = newsRect.bottom;
-          // Размещаем ниже новостей с большим отступом
-          y = Math.max(y, Math.floor(newsBottom + 40));
+          // Размещаем ниже новостей с отступом
+          y = Math.max(y, Math.floor(newsBottom + 30));
         }
+        
         // Проверяем поисковый контейнер
-        const searchEl = document.querySelector('.main-search-container');
+        const searchEl = document.querySelector('.search-card');
         if (searchEl) {
           const rect = searchEl.getBoundingClientRect();
-          const top = rect.top; // в viewport координатах
-          // Под буквами оставляем отступ 15px
-          y = Math.max(y, Math.floor(top - 15));
+          const searchTop = rect.top;
+          // Размещаем выше поиска с отступом
+          y = Math.min(y, Math.floor(searchTop - 25));
         }
       } catch(_) {}
+      
       for (let i = 0; i < text.length; i++){
         const ch = text[i];
         const w = widths[i];
         const baseX = x, baseY = y;
         const color = i < 4 ? RED : DARK; // первые 4 буквы красные
         glyphs.push({ ch, baseX, baseY, x: baseX, y: baseY, vx: 0, vy: 0, w, h: fontSize, color });
+
         x += w + spacing;
       }
     }
