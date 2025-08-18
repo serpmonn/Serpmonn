@@ -41,22 +41,31 @@
       const availableWidth = Math.max(0, width - margin * 2);
       const spacing = 10;
       // Подбираем размер шрифта так, чтобы слово поместилось
-      let fontSize = Math.min(120, Math.max(30, Math.floor(availableWidth / (text.length * 0.78))));
+      let fontSize = Math.min(90, Math.max(24, Math.floor(availableWidth / (text.length * 0.85))));
       if (width < 480) fontSize = Math.max(28, Math.floor(fontSize * 0.8));
       ctx.font = `800 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
       ctx.textBaseline = 'middle';
       const widths = [...text].map(ch => ctx.measureText(ch).width);
       const totalTextWidth = widths.reduce((a,b)=>a+b,0) + spacing * (text.length - 1);
       let x = Math.floor((width - totalTextWidth) / 2);
-      // Размещаем над поисковой строкой: ориентируемся на контейнер .main-search-container
+      // Размещаем над поисковой строкой, но ниже новостного контейнера
       let y = Math.floor(height * 0.16);
       try {
+        // Проверяем новостной контейнер
+        const newsEl = document.querySelector('.news-container');
+        if (newsEl) {
+          const newsRect = newsEl.getBoundingClientRect();
+          const newsBottom = newsRect.bottom;
+          // Размещаем ниже новостей с отступом
+          y = Math.max(y, Math.floor(newsBottom + 20));
+        }
+        // Проверяем поисковый контейнер
         const searchEl = document.querySelector('.main-search-container');
         if (searchEl) {
           const rect = searchEl.getBoundingClientRect();
           const top = rect.top; // в viewport координатах
-          // Под буквами оставляем небольшой отступ 12px
-          y = Math.max(40, Math.floor(top - 12));
+          // Под буквами оставляем небольшой отступ 8px
+          y = Math.max(y, Math.floor(top - 8));
         }
       } catch(_) {}
       for (let i = 0; i < text.length; i++){
