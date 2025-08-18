@@ -13,33 +13,36 @@
     <link rel="stylesheet" href="/styles/base.css">
     <link rel="stylesheet" href="/styles/menu.css">
     <style>
+      html, body { width: 100%; overflow-x: hidden; }
       body {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 20px;
+        max-width: none;
+        margin: 0;
+        padding: 0;
         font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
         background: #f5f5f5;
         min-height: 100vh;
         position: relative;
         z-index: 1;
       }
+      .page { max-width: 1200px; margin: 0 auto; padding: 20px; }
       h1 { margin: 20px 0; text-align: center; color: #333; font-size: 2.2rem; }
       .subtitle { text-align: center; color: #666; margin-bottom: 30px; }
       .category-title { font-size: 1.4rem; color: #333; margin: 30px 0 15px; padding-bottom: 8px; border-bottom: 2px solid #ddd; display: flex; align-items: center; gap: 10px; }
-      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
+      .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; overflow: visible; }
       .card { border: 1px solid #ddd; border-radius: 8px; padding: 18px; background: #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.08); transition: transform .2s ease, box-shadow .2s ease; }
       .card:hover { transform: translateY(-3px); box-shadow: 0 8px 18px rgba(0,0,0,0.12); border-color: #ddd; }
       .card h2 { font-size: 1.05rem; margin: 0 0 10px; color: #333; display: flex; align-items: center; gap: 8px; }
       .card p { margin: 0 0 14px; color: #666; line-height: 1.55; }
       .card a.btn { display: inline-block; padding: 10px 16px; background: linear-gradient(90deg, #dc3545, #c82333); color: #fff; border-radius: 8px; text-decoration: none; font-weight: 600; transition: all .2s ease; }
       .card a.btn:hover { background: linear-gradient(90deg, #c82333, #a00d25); box-shadow: 0 4px 12px rgba(220,53,69,.35); transform: translateY(-1px); }
-      @media (max-width: 768px) { body{padding:15px;} h1{font-size:1.8rem;} .card{padding:16px;} }
+      @media (max-width: 768px) { .page{padding:15px;} h1{font-size:1.8rem;} .card{padding:16px;} }
     </style>
   </head>
   <body>
     <div id="menuContainer"></div>
-    <h1>🎮 Игры Serpmonn</h1>
-    <p class="subtitle">Подборка веб‑игр и ПК‑игр</p>
+    <div class="page">
+      <h1>🎮 Игры Serpmonn</h1>
+      <p class="subtitle">Подборка веб‑игр и ПК‑игр</p>
 
     <section>
       <h2 class="category-title">🕹️ Веб‑игры</h2>
@@ -113,7 +116,7 @@
         </div>
       </div>
     </section>
-
+    </div>
     <script type="module" src="/scripts/menu-loader.js"></script>
     <script src="/scripts/interactive-bg.js" defer></script>
   </body>
