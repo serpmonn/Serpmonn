@@ -48,7 +48,8 @@
       const widths = [...text].map(ch => ctx.measureText(ch).width);
       const totalTextWidth = widths.reduce((a,b)=>a+b,0) + spacing * (text.length - 1);
       let x = Math.floor((width - totalTextWidth) / 2);
-      const y = Math.floor(height * 0.22);
+      // Размещаем над поисковой строкой: ориентир ~ верхняя треть
+      const y = Math.floor(height * 0.16);
       for (let i = 0; i < text.length; i++){
         const ch = text[i];
         const w = widths[i];
@@ -61,9 +62,9 @@
 
     const friction = 0.86;        // трение
     const springK = 0.08;          // сила возврата к базе
-    const repelRadius = 160;       // радиус отталкивания курсором
-    const repelStrength = 1.2;     // сила отталкивания
-    const maxOffset = 42;          // предел смещения от базы
+    const repelRadius = 220;       // увеличенный радиус отталкивания курсором
+    const repelStrength = 1.6;     // увеличенная сила отталкивания
+    const maxOffset = 72;          // больший предел смещения от базы
 
     function step(){
       // фон
