@@ -38,41 +38,58 @@
     function layout(){
       glyphs.length = 0;
       const margin = Math.min(40, width * 0.05);
-      const availableWidth = Math.max(0, width - margin * 2);
-      const spacing = 10;
-      // Подбираем размер шрифта так, чтобы слово поместилось
-      let fontSize = Math.min(60, Math.max(18, Math.floor(availableWidth / (text.length * 1.2))));
-      if (width < 480) fontSize = Math.max(28, Math.floor(fontSize * 0.8));
+      
+      // Получаем ширину поискового контейнера для ограничения
+      let searchContainerWidth = width * 0.8; // fallback
+      try {
+        const searchEl = document.querySelector('.search-card');
+        if (searchEl) {
+          const rect = searchEl.getBoundingClientRect();
+          searchContainerWidth = rect.width * 0.85; // слово должно быть меньше контейнера
+        }
+      } catch(_) {}
+      
+      const availableWidth = Math.min(searchContainerWidth, width - margin * 2);
+      const spacing = 6; // уменьшаем расстояние между буквами
+      
+      // Подбираем размер шрифта так, чтобы слово поместилось в поисковый контейнер
+      let fontSize = Math.min(50, Math.max(16, Math.floor(availableWidth / (text.length * 1.4))));
+      if (width < 480) fontSize = Math.max(20, Math.floor(fontSize * 0.8));
+      
       ctx.font = `800 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
       ctx.textBaseline = 'middle';
       const widths = [...text].map(ch => ctx.measureText(ch).width);
       const totalTextWidth = widths.reduce((a,b)=>a+b,0) + spacing * (text.length - 1);
       let x = Math.floor((width - totalTextWidth) / 2);
-      // Принудительно размещаем ниже новостного контейнера
-      let y = Math.floor(height * 0.25); // Начинаем ниже
+      
+      // Начальная позиция - между новостями и поиском
+      let y = Math.floor(height * 0.3);
+      
       try {
-        // Проверяем новостной контейнер
+        // Проверяем новостной контейнер и отталкиваемся от него
         const newsEl = document.querySelector('.news-container');
         if (newsEl) {
           const newsRect = newsEl.getBoundingClientRect();
           const newsBottom = newsRect.bottom;
-          // Размещаем ниже новостей с большим отступом
-          y = Math.max(y, Math.floor(newsBottom + 40));
+          // Размещаем ниже новостей с отступом, но не слишком близко
+          y = Math.max(y, Math.floor(newsBottom + 25));
         }
-        // Проверяем поисковый контейнер
-        const searchEl = document.querySelector('.main-search-container');
+        
+        // Проверяем поисковый контейнер и отталкиваемся от него
+        const searchEl = document.querySelector('.search-card');
         if (searchEl) {
           const rect = searchEl.getBoundingClientRect();
-          const top = rect.top; // в viewport координатах
-          // Под буквами оставляем отступ 15px
-          y = Math.max(y, Math.floor(top - 15));
+          const searchTop = rect.top;
+          // Размещаем выше поиска с отступом
+          y = Math.min(y, Math.floor(searchTop - 20));
         }
       } catch(_) {}
+      
       for (let i = 0; i < text.length; i++){
         const ch = text[i];
         const w = widths[i];
         const baseX = x, baseY = y;
-        const color = i < 4 ? RED : DARK; // первые 4 буквы красные
+        const color = i < 4 ? RED : DARK;
         glyphs.push({ ch, baseX, baseY, x: baseX, y: baseY, vx: 0, vy: 0, w, h: fontSize, color });
         x += w + spacing;
       }
