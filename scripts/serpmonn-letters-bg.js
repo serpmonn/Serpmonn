@@ -41,31 +41,31 @@
       const availableWidth = Math.max(0, width - margin * 2);
       const spacing = 10;
       // Подбираем размер шрифта так, чтобы слово поместилось
-      let fontSize = Math.min(90, Math.max(24, Math.floor(availableWidth / (text.length * 0.85))));
+      let fontSize = Math.min(60, Math.max(18, Math.floor(availableWidth / (text.length * 1.2))));
       if (width < 480) fontSize = Math.max(28, Math.floor(fontSize * 0.8));
       ctx.font = `800 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
       ctx.textBaseline = 'middle';
       const widths = [...text].map(ch => ctx.measureText(ch).width);
       const totalTextWidth = widths.reduce((a,b)=>a+b,0) + spacing * (text.length - 1);
       let x = Math.floor((width - totalTextWidth) / 2);
-      // Размещаем над поисковой строкой, но ниже новостного контейнера
-      let y = Math.floor(height * 0.16);
+      // Принудительно размещаем ниже новостного контейнера
+      let y = Math.floor(height * 0.25); // Начинаем ниже
       try {
         // Проверяем новостной контейнер
         const newsEl = document.querySelector('.news-container');
         if (newsEl) {
           const newsRect = newsEl.getBoundingClientRect();
           const newsBottom = newsRect.bottom;
-          // Размещаем ниже новостей с отступом
-          y = Math.max(y, Math.floor(newsBottom + 20));
+          // Размещаем ниже новостей с большим отступом
+          y = Math.max(y, Math.floor(newsBottom + 40));
         }
         // Проверяем поисковый контейнер
         const searchEl = document.querySelector('.main-search-container');
         if (searchEl) {
           const rect = searchEl.getBoundingClientRect();
           const top = rect.top; // в viewport координатах
-          // Под буквами оставляем небольшой отступ 8px
-          y = Math.max(y, Math.floor(top - 8));
+          // Под буквами оставляем отступ 15px
+          y = Math.max(y, Math.floor(top - 15));
         }
       } catch(_) {}
       for (let i = 0; i < text.length; i++){
