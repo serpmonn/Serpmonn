@@ -9,7 +9,7 @@
     canvas.id = 'serpmonn-letters-bg';
     Object.assign(canvas.style, {
       position: 'fixed', inset: '0', width: '100%', height: '100%',
-      zIndex: '0', pointerEvents: 'none'
+      zIndex: '10', pointerEvents: 'none' // Увеличиваем z-index чтобы буквы были поверх новостей
     });
 
     const bodyEl = document.body;
@@ -52,8 +52,8 @@
 
       let x = Math.floor((width - totalTextWidth) / 2);
       
-      // Размещаем между новостным и поисковым контейнерами
-      let y = Math.floor(height * 0.35); // Начальная позиция по центру
+      // Начальная позиция - по центру экрана
+      let y = Math.floor(height * 0.4);
       
       try {
         // Проверяем новостной контейнер
@@ -61,8 +61,8 @@
         if (newsEl) {
           const newsRect = newsEl.getBoundingClientRect();
           const newsBottom = newsRect.bottom;
-          // Размещаем ниже новостей с отступом
-          y = Math.max(y, Math.floor(newsBottom + 30));
+          // Размещаем ниже новостей с отступом 20px
+          y = Math.max(y, Math.floor(newsBottom + 20));
         }
         
         // Проверяем поисковый контейнер
@@ -70,8 +70,8 @@
         if (searchEl) {
           const rect = searchEl.getBoundingClientRect();
           const searchTop = rect.top;
-          // Размещаем выше поиска с отступом
-          y = Math.min(y, Math.floor(searchTop - 25));
+          // Размещаем выше поиска с отступом 30px
+          y = Math.min(y, Math.floor(searchTop - 30));
         }
       } catch(_) {}
       
