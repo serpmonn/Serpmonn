@@ -3,17 +3,18 @@
     justify-content: center;                                            /* Выравнивание по горизонтали */
     align-items: center;                                                /* Выравнивание по вертикали */
     flex-wrap: wrap;                                                    /* Чтобы элементы переносились на новую строку при необходимости */
-    position: relative;                                                 /* Относительное позиционирование */
+    position: static;                                                   /* Статическое позиционирование для избежания z-index конфликтов */
     width: auto;                                                        /* Ширина контейнера */
     height: auto;                                                       /* Высота контейнера */
-    text-align: center;							                        /* Выравнивает текст (или другие строчные элементы) по центру горизонтально внутри родительского элемента. */
+    text-align: center;                                                 /* Выравнивает текст по центру */
     background-color: rgba(255, 255, 255, 0.0);                       /* Полупрозрачный фон для читаемости */
     border-radius: 10px;                                                /* Радиус границы */
     /* Улучшенные отступы */
     padding: 20px;                                                      /* Фиксированные отступы вместо 3% */
     margin: 30px auto;                                                  /* Внешние отступы для лучшего позиционирования */
-    overflow: visible;							                        /* Позволяет содержимому элемента выходить за его пределы и быть видимым */
+    overflow: hidden;                                                   /* Предотвращает выход рекламы за границы */
     gap: 10px;                                                          /* Расстояние между баннерами */
+    z-index: 1;                                                         /* Низкий z-index для избежания конфликтов */
 }
 
 /* Специальные стили для разных типов страниц */
@@ -22,11 +23,11 @@
 }
 
 .ad-container.auth-page {
-    margin: 25px auto;                                                  /* Средние отступы на страницах авторизации */
+    margin: 80px auto 30px auto;                                       /* Увеличенные отступы сверху для страниц авторизации */
 }
 
 .ad-container.content-page {
-    margin: 35px auto;                                                  /* Отступы для контентных страниц */
+    margin: 80px auto 35px auto;                                       /* Увеличенные отступы сверху для контентных страниц */
 }
 
 .ad-container.tools-page {
@@ -39,14 +40,32 @@
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
-    position: relative;
+    position: static;                                                   /* Статическое позиционирование */
     width: auto;
     height: auto;
     text-align: center;
     background-color: rgba(255, 255, 255, 0.0);
     border-radius: 10px;
     padding: 20px;
-    margin: 25px auto;
-    overflow: visible;
+    margin: 80px auto 25px auto;                                       /* Увеличенные отступы сверху */
+    overflow: hidden;                                                   /* Предотвращает выход рекламы за границы */
     gap: 10px;
+    z-index: 1;                                                         /* Низкий z-index */
+}
+
+/* Дополнительные стили для предотвращения перекрытий */
+.ad-container::before,
+.ad-footer::before {
+    content: '';
+    display: block;
+    height: 20px;                                                       /* Дополнительный отступ сверху */
+    clear: both;
+}
+
+/* Стили для mrg-tag (VK Ads) */
+.mrg-tag {
+    position: relative !important;                                      /* Принудительно относительное позиционирование для VK Ads */
+    z-index: 1 !important;                                             /* Низкий z-index */
+    max-width: 100% !important;                                        /* Максимальная ширина */
+    box-sizing: border-box !important;                                 /* Правильный расчет размеров */
 }
