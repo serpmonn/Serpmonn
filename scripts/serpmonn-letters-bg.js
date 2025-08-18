@@ -41,7 +41,7 @@
       const availableWidth = Math.max(0, width - margin * 2);
       const spacing = 10;
       // Подбираем размер шрифта так, чтобы слово поместилось
-      let fontSize = Math.min(140, Math.max(36, Math.floor(availableWidth / (text.length * 0.7))));
+      let fontSize = Math.min(120, Math.max(30, Math.floor(availableWidth / (text.length * 0.78))));
       if (width < 480) fontSize = Math.max(28, Math.floor(fontSize * 0.8));
       ctx.font = `800 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
       ctx.textBaseline = 'middle';
