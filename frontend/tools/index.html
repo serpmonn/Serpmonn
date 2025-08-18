@@ -219,8 +219,15 @@
           <div class="stat-number">8+</div>
           <div class="stat-label">Планируется</div>
         </div>
+        <div class="stat-item">
+          <div class="stat-number" id="projectAgeValue">—</div>
+          <div class="stat-label">Возраст проекта</div>
+        </div>
       </div>
     </div>
+
+    <!-- Дата запуска проекта для расчета возраста (измените при необходимости) -->
+    <div id="projectAgeData" data-start="2024-08-15T00:00:00+03:00" style="display:none"></div>
 
     <!-- Категория: Маркетинг и аналитика -->
     <div class="category-section">
@@ -297,5 +304,36 @@
     
     <!-- Загрузка меню -->
     <script type="module" src="/scripts/menu-loader.js"></script>
+
+    <!-- Скрипт расчета возраста проекта -->
+    <script>
+      (function calculateProjectAge() {
+        try {
+          const dataEl = document.getElementById('projectAgeData');
+          const outEl = document.getElementById('projectAgeValue');
+          if (!dataEl || !outEl) return;
+          const startIso = dataEl.getAttribute('data-start');
+          const startDate = new Date(startIso);
+          const now = new Date();
+
+          const ms = now - startDate;
+          if (ms < 0) { outEl.textContent = '—'; return; }
+
+          const daysTotal = Math.floor(ms / (1000 * 60 * 60 * 24));
+          const years = Math.floor(daysTotal / 365);
+          const months = Math.floor((daysTotal % 365) / 30);
+          const days = daysTotal - years * 365 - months * 30;
+
+          const parts = [];
+          if (years > 0) parts.push(years + ' ' + (years % 10 === 1 && years % 100 !== 11 ? 'год' : (years % 10 >= 2 && years % 10 <= 4 && (years % 100 < 10 || years % 100 >= 20) ? 'года' : 'лет')));
+          if (months > 0) parts.push(months + ' ' + (months === 1 ? 'месяц' : (months >= 2 && months <= 4 ? 'месяца' : 'месяцев')));
+          if (parts.length === 0) parts.push(days + ' ' + (days % 10 === 1 && days % 100 !== 11 ? 'день' : (days % 10 >= 2 && days % 10 <= 4 && (days % 100 < 10 || days % 100 >= 20) ? 'дня' : 'дней')));
+
+          outEl.textContent = parts.join(' ');
+        } catch (e) {
+          /* no-op */
+        }
+      })();
+    </script>
   </body>
 </html>
