@@ -294,6 +294,27 @@
             <option value="humid">Влажная</option>
           </select>
         </div>
+        
+        <div class="input-group">
+          <label for="currentNewPrice">Текущая цена новых аналогов (₽)</label>
+          <input type="number" id="currentNewPrice" placeholder="900000" min="100000">
+          <small style="color: #6c757d; font-size: 12px;">Цена аналогичного нового автомобиля сейчас</small>
+        </div>
+        
+        <div class="input-group">
+          <label for="marketGrowth">Рыночный рост цен (%)</label>
+          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40">
+          <small style="color: #6c757d; font-size: 12px;">Рост цен на новые авто с момента покупки</small>
+        </div>
+        
+        <div class="input-group">
+          <label for="demandLevel">Спрос на модель</label>
+          <select id="demandLevel">
+            <option value="high">Высокий спрос</option>
+            <option value="medium" selected>Средний спрос</option>
+            <option value="low">Низкий спрос</option>
+          </select>
+        </div>
       </div>
 
       <button class="calculate-btn" onclick="calculateDepreciation()">Рассчитать амортизацию</button>
@@ -333,6 +354,9 @@
       <div class="tip-item">Регулярное ТО и качественное обслуживание замедляют амортизацию</div>
       <div class="tip-item">Климатические условия влияют на износ кузова и электроники</div>
       <div class="tip-item">Гибридные и электромобили имеют меньшую амортизацию двигателя</div>
+      <div class="tip-item"><strong>Рыночные факторы:</strong> Учитывайте рост цен на новые автомобили и спрос на вашу модель</div>
+      <div class="tip-item"><strong>Санкции и дефицит:</strong> Могут значительно увеличить стоимость подержанных автомобилей</div>
+      <div class="tip-item"><strong>Региональные особенности:</strong> Цены могут сильно отличаться в разных городах</div>
     </div>
 
     <script>
@@ -345,6 +369,9 @@
         const fuelType = document.getElementById('fuelType').value;
         const maintenanceLevel = document.getElementById('maintenanceLevel').value;
         const climateZone = document.getElementById('climateZone').value;
+        const currentNewPrice = parseFloat(document.getElementById('currentNewPrice').value);
+        const marketGrowth = parseFloat(document.getElementById('marketGrowth').value);
+        const demandLevel = document.getElementById('demandLevel').value;
 
         if (!initialPrice || !currentMileage) {
           alert('Пожалуйста, заполните все обязательные поля');
@@ -411,18 +438,37 @@
           'humid': 1.25
         };
 
-        // Расчёт общей амортизации
+        // Коэффициенты по спросу на модель
+        const demandMultipliers = {
+          'high': 1.2,    // Высокий спрос увеличивает стоимость
+          'medium': 1.0,  // Средний спрос - без изменений
+          'low': 0.8      // Низкий спрос снижает стоимость
+        };
+
+        // Расчёт рыночной корректировки
+        let marketAdjustedPrice = initialPrice;
+        if (currentNewPrice && marketGrowth) {
+          // Если указана текущая цена новых аналогов, используем её
+          marketAdjustedPrice = currentNewPrice;
+        } else if (marketGrowth) {
+          // Иначе применяем процент роста
+          marketAdjustedPrice = initialPrice * (1 + marketGrowth / 100);
+        }
+
+        // Расчёт общей амортизации с учётом рыночных факторов
         const totalDepreciationRate = Math.min(
           (baseDepreciation + mileageDepreciation) * 
           usageMultipliers[usageType] * 
           fuelMultipliers[fuelType] * 
           maintenanceMultipliers[maintenanceLevel] * 
-          climateMultipliers[climateZone],
+          climateMultipliers[climateZone] * 
+          demandMultipliers[demandLevel],
           0.95 // Максимум 95% износа
         );
 
-        const totalDepreciation = initialPrice * totalDepreciationRate;
-        const currentValue = initialPrice - totalDepreciation;
+        // Расчёт стоимости с учётом рыночных факторов
+        const totalDepreciation = marketAdjustedPrice * totalDepreciationRate;
+        const currentValue = marketAdjustedPrice - totalDepreciation;
         const depreciationPercent = (totalDepreciationRate * 100).toFixed(1);
         const monthlyDepreciation = totalDepreciation / (ageInYears * 12);
 
@@ -436,10 +482,10 @@
         document.getElementById('results').style.display = 'block';
 
         // Детализация
-        showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone);
+        showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone, marketAdjustedPrice, marketGrowth, demandLevel);
       }
 
-      function showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone) {
+      function showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone, marketAdjustedPrice, marketGrowth, demandLevel) {
         const breakdownList = document.getElementById('breakdownList');
         
         const usageNames = {
@@ -470,7 +516,21 @@
           'humid': 'Влажная'
         };
 
+        const demandNames = {
+          'high': 'Высокий спрос',
+          'medium': 'Средний спрос',
+          'low': 'Низкий спрос'
+        };
+
         breakdownList.innerHTML = `
+          <div class="breakdown-item">
+            <span>Начальная стоимость</span>
+            <span>${Math.round(initialPrice).toLocaleString()} ₽</span>
+          </div>
+          <div class="breakdown-item">
+            <span>Рыночная корректировка</span>
+            <span>${Math.round(marketAdjustedPrice).toLocaleString()} ₽</span>
+          </div>
           <div class="breakdown-item">
             <span>Амортизация по времени</span>
             <span>${(baseDepreciation * 100).toFixed(1)}%</span>
@@ -489,11 +549,15 @@
           </div>
           <div class="breakdown-item">
             <span>Коэффициент обслуживания (${maintenanceNames[maintenanceLevel]})</span>
-            <span>${maintenanceLevel === 'excellent' ? '0.7x' : maintenanceLevel === 'good' ? '0.85x' : maintenanceLevel === 'poor' ? '1.3x' : '1.0x'}</span>
+            <span>${maintenanceNames[maintenanceLevel] === 'excellent' ? '0.7x' : maintenanceNames[maintenanceLevel] === 'good' ? '0.85x' : maintenanceNames[maintenanceLevel] === 'poor' ? '1.3x' : '1.0x'}</span>
           </div>
           <div class="breakdown-item">
             <span>Коэффициент климата (${climateNames[climateZone]})</span>
             <span>${climateZone === 'cold' ? '1.2x' : climateZone === 'hot' ? '1.15x' : climateZone === 'humid' ? '1.25x' : '1.0x'}</span>
+          </div>
+          <div class="breakdown-item">
+            <span>Коэффициент спроса (${demandNames[demandLevel]})</span>
+            <span>${demandLevel === 'high' ? '1.2x' : demandLevel === 'low' ? '0.8x' : '1.0x'}</span>
           </div>
           <div class="breakdown-item">
             <span>Итого амортизация</span>
