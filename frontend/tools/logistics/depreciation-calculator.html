@@ -524,11 +524,12 @@
         document.getElementById('results').style.display = 'block';
 
         // Детализация
-        showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone, marketAdjustedPrice, marketGrowth, demandLevel);
+        showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone, currentNewPrice, marketGrowth, demandLevel, totalDepreciationRate, totalDepreciation, currentValue);
       }
 
-      function showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone, marketAdjustedPrice, marketGrowth, demandLevel) {
+      function showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone, currentNewPrice, marketGrowth, demandLevel, totalDepreciationRate, totalDepreciation, currentValue) {
         const breakdownList = document.getElementById('breakdownList');
+        const depreciationPercent = (totalDepreciationRate * 100).toFixed(1);
         
         const usageNames = {
           'personal': 'Личное использование',
@@ -565,11 +566,11 @@
         };
 
         // Расчёт рыночной корректировки для отображения
-        let marketAdjustedPrice = initialPrice;
+        let displayMarketPrice = initialPrice;
         if (currentNewPrice) {
-          marketAdjustedPrice = currentNewPrice;
+          displayMarketPrice = currentNewPrice;
         } else if (marketGrowth) {
-          marketAdjustedPrice = initialPrice * (1 + marketGrowth / 100);
+          displayMarketPrice = initialPrice * (1 + marketGrowth / 100);
         }
 
         breakdownList.innerHTML = `
@@ -579,7 +580,7 @@
           </div>
           <div class="breakdown-item">
             <span>Рыночная корректировка</span>
-            <span>${Math.round(marketAdjustedPrice).toLocaleString()} ₽</span>
+            <span>${Math.round(displayMarketPrice).toLocaleString()} ₽</span>
           </div>
           <div class="breakdown-item">
             <span>Амортизация по времени</span>
