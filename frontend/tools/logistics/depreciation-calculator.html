@@ -315,6 +315,17 @@
             <option value="low">Низкий спрос</option>
           </select>
         </div>
+
+        <div class="input-group">
+          <label for="technicalCondition">Техническое состояние</label>
+          <select id="technicalCondition">
+            <option value="excellent" selected>Отличное (оригинал)</option>
+            <option value="good">Хорошее (небольшие дефекты)</option>
+            <option value="average">Среднее (ремонтировался)</option>
+            <option value="poor">Плохое (аварийный)</option>
+          </select>
+          <small style="color: #6c757d; font-size: 12px;">Учитывает аварии, ремонты, перекраску</small>
+        </div>
       </div>
 
       <button class="calculate-btn" onclick="calculateDepreciation()">Рассчитать амортизацию</button>
@@ -372,6 +383,7 @@
         const currentNewPrice = parseFloat(document.getElementById('currentNewPrice').value);
         const marketGrowth = parseFloat(document.getElementById('marketGrowth').value);
         const demandLevel = document.getElementById('demandLevel').value;
+        const technicalCondition = document.getElementById('technicalCondition').value;
 
         if (!initialPrice || !currentMileage) {
           alert('Пожалуйста, заполните все обязательные поля');
@@ -445,6 +457,14 @@
           'low': 0.8      // Низкий спрос снижает стоимость
         };
 
+        // Коэффициенты по техническому состоянию
+        const technicalConditionMultipliers = {
+          'excellent': 1.0,   // Отличное - без изменений
+          'good': 0.9,        // Хорошее - немного снижает стоимость
+          'average': 0.75,    // Среднее - значительно снижает стоимость
+          'poor': 0.5         // Плохое - сильно снижает стоимость
+        };
+
         // Сначала ограничиваем базовую амортизацию до разумных пределов
         const baseDepreciationRate = Math.min(baseDepreciation + mileageDepreciation, 0.6); // Максимум 60%
         
@@ -455,7 +475,8 @@
           fuelMultipliers[fuelType] * 
           maintenanceMultipliers[maintenanceLevel] * 
           climateMultipliers[climateZone] * 
-          demandMultipliers[demandLevel],
+          demandMultipliers[demandLevel] * 
+          technicalConditionMultipliers[technicalCondition],
           0.85 // Максимум 85% износа (более реалистично)
         );
 
@@ -463,14 +484,17 @@
         const totalDepreciation = initialPrice * totalDepreciationRate;
         let currentValue = initialPrice - totalDepreciation;
 
-        // Применяем рыночную корректировку к результату
+        // Применяем рыночную корректировку к результату с учётом возраста
         if (currentNewPrice) {
-          // Если указана текущая цена новых аналогов, корректируем пропорционально
+          // Если указана текущая цена новых аналогов, корректируем с учётом возраста
           const marketRatio = currentNewPrice / initialPrice;
-          currentValue = currentValue * marketRatio;
+          // Чем старше автомобиль, тем меньше влияет рыночная корректировка
+          const ageFactor = Math.max(0.3, 1 - (ageInYears * 0.05)); // Минимум 30% влияния
+          currentValue = currentValue * (1 + (marketRatio - 1) * ageFactor);
         } else if (marketGrowth) {
-          // Иначе применяем процент роста к результату
-          currentValue = currentValue * (1 + marketGrowth / 100);
+          // Иначе применяем процент роста к результату с учётом возраста
+          const ageFactor = Math.max(0.3, 1 - (ageInYears * 0.05)); // Минимум 30% влияния
+          currentValue = currentValue * (1 + (marketGrowth / 100) * ageFactor);
         }
 
         const depreciationPercent = (totalDepreciationRate * 100).toFixed(1);
@@ -488,18 +512,22 @@
           explanation.style.cssText = 'background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 8px; padding: 15px; margin-top: 20px; color: #155724;';
           
           if (currentNewPrice) {
+            const ageFactor = Math.max(0.3, 1 - (ageInYears * 0.05));
             explanation.innerHTML = `
               <strong>💡 Рыночная корректировка применена:</strong><br>
               • Начальная цена: ${Math.round(initialPrice).toLocaleString()} ₽<br>
               • Текущая цена новых аналогов: ${Math.round(currentNewPrice).toLocaleString()} ₽<br>
               • Коэффициент роста: ${(currentNewPrice / initialPrice).toFixed(2)}x<br>
+              • Возрастной фактор: ${(ageFactor * 100).toFixed(0)}% (возраст ${ageInYears} лет)<br>
               • Итоговая стоимость с учётом рынка: ${Math.round(currentValue).toLocaleString()} ₽
             `;
           } else {
+            const ageFactor = Math.max(0.3, 1 - (ageInYears * 0.05));
             explanation.innerHTML = `
               <strong>💡 Рыночная корректировка применена:</strong><br>
               • Начальная цена: ${Math.round(initialPrice).toLocaleString()} ₽<br>
               • Рост цен: +${marketGrowth}%<br>
+              • Возрастной фактор: ${(ageFactor * 100).toFixed(0)}% (возраст ${ageInYears} лет)<br>
               • Итоговая стоимость с учётом рынка: ${Math.round(currentValue).toLocaleString()} ₽
             `;
           }
@@ -524,10 +552,10 @@
         document.getElementById('results').style.display = 'block';
 
         // Детализация
-        showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone, currentNewPrice, marketGrowth, demandLevel, baseDepreciationRate, totalDepreciationRate, totalDepreciation, currentValue, usageMultipliers, fuelMultipliers, maintenanceMultipliers, climateMultipliers, demandMultipliers);
+        showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone, currentNewPrice, marketGrowth, demandLevel, technicalCondition, baseDepreciationRate, totalDepreciationRate, totalDepreciation, currentValue, usageMultipliers, fuelMultipliers, maintenanceMultipliers, climateMultipliers, demandMultipliers, technicalConditionMultipliers);
       }
 
-      function showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone, currentNewPrice, marketGrowth, demandLevel, baseDepreciationRate, totalDepreciationRate, totalDepreciation, currentValue, usageMultipliers, fuelMultipliers, maintenanceMultipliers, climateMultipliers, demandMultipliers) {
+      function showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, usageType, fuelType, maintenanceLevel, climateZone, currentNewPrice, marketGrowth, demandLevel, technicalCondition, baseDepreciationRate, totalDepreciationRate, totalDepreciation, currentValue, usageMultipliers, fuelMultipliers, maintenanceMultipliers, climateMultipliers, demandMultipliers, technicalConditionMultipliers) {
         const breakdownList = document.getElementById('breakdownList');
         const depreciationPercent = (totalDepreciationRate * 100).toFixed(1);
         
@@ -563,6 +591,13 @@
           'high': 'Высокий спрос',
           'medium': 'Средний спрос',
           'low': 'Низкий спрос'
+        };
+
+        const technicalConditionNames = {
+          'excellent': 'Отличное',
+          'good': 'Хорошее',
+          'average': 'Среднее',
+          'poor': 'Плохое'
         };
 
         // Расчёт рыночной корректировки для отображения
@@ -613,6 +648,10 @@
           <div class="breakdown-item">
             <span>Коэффициент спроса (${demandNames[demandLevel]})</span>
             <span>${demandMultipliers[demandLevel]}x</span>
+          </div>
+          <div class="breakdown-item">
+            <span>Коэффициент технического состояния (${technicalConditionNames[technicalCondition]})</span>
+            <span>${technicalConditionMultipliers[technicalCondition]}x</span>
           </div>
           <div class="breakdown-item">
             <span>Итоговая амортизация</span>
