@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Новости и статьи — Serpmonn</title>
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Новости и статьи — Serpmonn">
+    <meta property="og:description" content="Последние обновления, обучающие статьи и полезные материалы">
+    <meta property="og:image" content="https://serpmonn.ru/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/news/">
+    <meta property="og:type" content="website">
+    
+    <!-- RSS -->
+    <link rel="alternate" type="application/rss+xml" title="RSS новостей Serpmonn" href="/frontend/news/rss.xml">
+    
+    <link rel="icon" href="/images/Serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/styles/base.css">
+    <link rel="stylesheet" href="/styles/menu.css">
+    
+    <style>
+      body { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        padding: 16px; 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background: #f5f5f5;
+        line-height: 1.6;
+      }
+
+      .news-header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 12px;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .news-title {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        font-weight: 700;
+      }
+
+      .news-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 20px;
+      }
+
+      .news-stats {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        flex-wrap: wrap;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        display: block;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.8;
+      }
+
+      .news-categories {
+        display: flex;
+        gap: 15px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .category-btn {
+        padding: 10px 20px;
+        background: #fff;
+        border: 2px solid #e9ecef;
+        border-radius: 25px;
+        text-decoration: none;
+        color: #333;
+        font-weight: 500;
+        transition: all 0.3s ease;
+        cursor: pointer;
+      }
+
+      .category-btn:hover,
+      .category-btn.active {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+      }
+
+      .search-box {
+        max-width: 500px;
+        margin: 0 auto 30px;
+        position: relative;
+      }
+
+      .search-input {
+        width: 100%;
+        padding: 15px 20px;
+        border: 2px solid #e9ecef;
+        border-radius: 25px;
+        font-size: 1rem;
+        outline: none;
+        transition: border-color 0.3s ease;
+      }
+
+      .search-input:focus {
+        border-color: #007bff;
+      }
+
+      .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 25px;
+        margin-bottom: 40px;
+      }
+
+      .news-card {
+        background: white;
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        cursor: pointer;
+      }
+
+      .news-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      }
+
+      .news-card-image {
+        height: 200px;
+        background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 3rem;
+      }
+
+      .news-card-content {
+        padding: 25px;
+      }
+
+      .news-card-category {
+        display: inline-block;
+        padding: 5px 12px;
+        background: #e9ecef;
+        color: #495057;
+        border-radius: 15px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        margin-bottom: 15px;
+      }
+
+      .news-card-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+        line-height: 1.4;
+      }
+
+      .news-card-excerpt {
+        color: #6c757d;
+        margin-bottom: 15px;
+        line-height: 1.6;
+      }
+
+      .news-card-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        font-size: 0.9rem;
+        color: #6c757d;
+      }
+
+      .news-card-date {
+        font-weight: 500;
+      }
+
+      .news-card-read-time {
+        background: #f8f9fa;
+        padding: 3px 8px;
+        border-radius: 10px;
+      }
+
+      .rss-section {
+        background: #fff;
+        border-radius: 12px;
+        padding: 30px;
+        text-align: center;
+        margin-bottom: 30px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      .rss-title {
+        font-size: 1.5rem;
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .rss-description {
+        color: #6c757d;
+        margin-bottom: 20px;
+      }
+
+      .rss-btn {
+        display: inline-block;
+        padding: 12px 30px;
+        background: #ff6b35;
+        color: white;
+        text-decoration: none;
+        border-radius: 25px;
+        font-weight: 500;
+        transition: background 0.3s ease;
+      }
+
+      .rss-btn:hover {
+        background: #e55a2b;
+      }
+
+      .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        margin-top: 40px;
+      }
+
+      .page-btn {
+        padding: 10px 15px;
+        border: 1px solid #dee2e6;
+        background: white;
+        color: #007bff;
+        text-decoration: none;
+        border-radius: 6px;
+        transition: all 0.3s ease;
+      }
+
+      .page-btn:hover,
+      .page-btn.active {
+        background: #007bff;
+        color: white;
+        border-color: #007bff;
+      }
+
+      .no-results {
+        text-align: center;
+        padding: 60px 20px;
+        color: #6c757d;
+      }
+
+      .no-results h3 {
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      @media (max-width: 768px) {
+        .news-title {
+          font-size: 2rem;
+        }
+        
+        .news-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .news-categories {
+          justify-content: flex-start;
+          overflow-x: auto;
+          padding-bottom: 10px;
+        }
+        
+        .category-btn {
+          white-space: nowrap;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/">Главная</a> → 
+      <span>Новости и статьи</span>
+    </div>
+
+    <!-- Заголовок раздела -->
+    <div class="news-header">
+      <h1 class="news-title">📰 Новости и статьи</h1>
+      <p class="news-subtitle">Будьте в курсе последних обновлений и изучайте полезные материалы</p>
+      
+      <div class="news-stats">
+        <div class="stat-item">
+          <span class="stat-number">3</span>
+          <span class="stat-label">Новых инструмента</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">15+</span>
+          <span class="stat-label">Исправлений</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">2</span>
+          <span class="stat-label">Новые категории</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- RSS секция -->
+    <div class="rss-section">
+      <h2 class="rss-title">📡 RSS лента</h2>
+      <p class="rss-description">Подпишитесь на RSS, чтобы получать уведомления о новых публикациях</p>
+      <a href="/frontend/news/rss.xml" class="rss-btn">Подписаться на RSS</a>
+    </div>
+
+    <!-- Категории -->
+    <div class="news-categories">
+      <button class="category-btn active" data-category="all">Все</button>
+      <button class="category-btn" data-category="updates">Обновления</button>
+      <button class="category-btn" data-category="articles">Статьи</button>
+      <button class="category-btn" data-category="tutorials">Обучение</button>
+      <button class="category-btn" data-category="engineering">Инженерия</button>
+      <button class="category-btn" data-category="logistics">Логистика</button>
+    </div>
+
+    <!-- Поиск -->
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="🔍 Поиск по новостям и статьям..." id="searchInput">
+    </div>
+
+    <!-- Сетка новостей -->
+    <div class="news-grid" id="newsGrid">
+      <!-- Новость об обновлениях -->
+      <div class="news-card" data-category="updates" data-tags="обновления,инструменты,логистика,инженерия">
+        <div class="news-card-image">🚀</div>
+        <div class="news-card-content">
+          <span class="news-card-category">Обновления</span>
+          <h3 class="news-card-title">Обновления Serpmonn — 17 августа 2024</h3>
+          <p class="news-card-excerpt">Добавлены новые инструменты для логистики, улучшен калькулятор амортизации и исправлены ошибки. Обновление направлено на улучшение пользовательского опыта.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">17 августа 2024</span>
+            <span class="news-card-read-time">5 мин</span>
+          </div>
+        </div>
+        <a href="/frontend/news/updates-august-17.html" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;"></a>
+      </div>
+
+      <!-- Статья об амортизации -->
+      <div class="news-card" data-category="tutorials" data-tags="обучение,калькулятор,амортизация,автомобиль">
+        <div class="news-card-image">📚</div>
+        <div class="news-card-content">
+          <span class="news-card-category">Обучение</span>
+          <h3 class="news-card-title">Как правильно рассчитать амортизацию автомобиля</h3>
+          <p class="news-card-excerpt">Подробное руководство по использованию калькулятора амортизации. Узнайте, как учесть все факторы и получить точный результат.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">19 августа 2024</span>
+            <span class="news-card-read-time">8 мин</span>
+          </div>
+        </div>
+        <a href="/frontend/news/articles/how-to-calculate-depreciation.html" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;"></a>
+      </div>
+
+      <div class="news-card" data-category="articles" data-tags="статья,топливо,экономия,водитель">
+        <div class="news-card-image">⛽</div>
+        <div class="news-card-content">
+          <span class="news-card-category">Статьи</span>
+          <h3 class="news-card-title">10 способов сэкономить на топливе</h3>
+          <p class="news-card-excerpt">Практические советы по снижению расхода топлива. От стиля вождения до технического обслуживания автомобиля.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">Скоро</span>
+            <span class="news-card-read-time">6 мин</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="news-card" data-category="engineering" data-tags="инженерия,инструменты,ремонт,техника">
+        <div class="news-card-image">🔧</div>
+        <div class="news-card-content">
+          <span class="news-card-category">Инженерия</span>
+          <h3 class="news-card-title">Незаменимые инструменты для инженера-ремонтника</h3>
+          <p class="news-card-excerpt">Обзор полезных инструментов и калькуляторов, которые помогут в работе с бытовой техникой и электроникой.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">Скоро</span>
+            <span class="news-card-read-time">7 мин</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="news-card" data-category="logistics" data-tags="логистика,транспорт,расчеты,оптимизация">
+        <div class="news-card-image">🚛</div>
+        <div class="news-card-content">
+          <span class="news-card-category">Логистика</span>
+          <h3 class="news-card-title">Оптимизация логистических процессов с помощью калькуляторов</h3>
+          <p class="news-card-excerpt">Как использовать наши инструменты для оптимизации транспортных расходов и планирования маршрутов.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">Скоро</span>
+            <span class="news-card-read-time">10 мин</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="news-card" data-category="tutorials" data-tags="обучение,конвертер,единицы,измерения">
+        <div class="news-card-image">📏</div>
+        <div class="news-card-content">
+          <span class="news-card-category">Обучение</span>
+          <h3 class="news-card-title">Конвертер единиц измерения: полное руководство</h3>
+          <p class="news-card-excerpt">Изучите все возможности конвертера единиц. От простых преобразований до сложных инженерных расчётов.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">Скоро</span>
+            <span class="news-card-read-time">9 мин</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Пагинация -->
+    <div class="pagination">
+      <span class="page-btn active">1</span>
+      <span class="page-btn">2</span>
+      <span class="page-btn">3</span>
+      <span class="page-btn">→</span>
+    </div>
+
+    <!-- Загрузка меню -->
+    <script type="module" src="/scripts/menu-loader.js"></script>
+
+    <script>
+      // Фильтрация по категориям
+      const categoryBtns = document.querySelectorAll('.category-btn');
+      const newsCards = document.querySelectorAll('.news-card');
+      const searchInput = document.getElementById('searchInput');
+
+      // Обработчик категорий
+      categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          // Убираем активный класс у всех кнопок
+          categoryBtns.forEach(b => b.classList.remove('active'));
+          // Добавляем активный класс к нажатой кнопке
+          btn.classList.add('active');
+          
+          const category = btn.dataset.category;
+          filterNews(category, searchInput.value);
+        });
+      });
+
+      // Обработчик поиска
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const activeCategory = document.querySelector('.category-btn.active').dataset.category;
+        filterNews(activeCategory, searchTerm);
+      });
+
+      // Функция фильтрации
+      function filterNews(category, searchTerm) {
+        newsCards.forEach(card => {
+          const cardCategory = card.dataset.category;
+          const cardTags = card.dataset.tags.toLowerCase();
+          const matchesCategory = category === 'all' || cardCategory === category;
+          const matchesSearch = searchTerm === '' || cardTags.includes(searchTerm) || 
+                               card.querySelector('.news-card-title').textContent.toLowerCase().includes(searchTerm) ||
+                               card.querySelector('.news-card-excerpt').textContent.toLowerCase().includes(searchTerm);
+          
+          if (matchesCategory && matchesSearch) {
+            card.style.display = 'block';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        // Проверяем, есть ли результаты
+        const visibleCards = Array.from(newsCards).filter(card => card.style.display !== 'none');
+        if (visibleCards.length === 0) {
+          showNoResults();
+        } else {
+          hideNoResults();
+        }
+      }
+
+      // Показать сообщение "нет результатов"
+      function showNoResults() {
+        let noResults = document.querySelector('.no-results');
+        if (!noResults) {
+          noResults = document.createElement('div');
+          noResults.className = 'no-results';
+          noResults.innerHTML = `
+            <h3>🔍 Ничего не найдено</h3>
+            <p>Попробуйте изменить критерии поиска или выбрать другую категорию</p>
+          `;
+          document.getElementById('newsGrid').after(noResults);
+        }
+      }
+
+      // Скрыть сообщение "нет результатов"
+      function hideNoResults() {
+        const noResults = document.querySelector('.no-results');
+        if (noResults) {
+          noResults.remove();
+        }
+      }
+    </script>
+  </body>
+</html>
