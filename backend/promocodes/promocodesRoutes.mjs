@@ -225,28 +225,40 @@ router.get('/', promocodesLimiter, async (req, res) => {
     };
 
     const filtered = filterPromocodes(filters);
+    res.set('Cache-Control', 'no-store');
     res.json({ status: 'success', data: filtered, stats: getPromocodesStats(), filters });
   } catch (error) {
     console.error('[PROMOCODES] Ошибка при получении промокодов:', error);
+    res.set('Cache-Control', 'no-store');
     res.status(500).json({ status: 'error', message: 'Ошибка при получении промокодов' });
   }
 });
 
 router.get('/stats', promocodesLimiter, (req, res) => {
   try {
+    res.set('Cache-Control', 'no-store');
     res.json({ status: 'success', data: getPromocodesStats() });
   } catch (error) {
     console.error('[PROMOCODES] Ошибка при получении статистики:', error);
+    res.set('Cache-Control', 'no-store');
     res.status(500).json({ status: 'error', message: 'Ошибка при получении статистики' });
   }
+});
+
+router.get('/version', (req, res) => {
+  const version = process.env.PROMOS_VERSION || (promocodesCache.lastUpdate ? promocodesCache.lastUpdate.toISOString() : null);
+  res.set('Cache-Control', 'no-store');
+  res.json({ status: 'success', version, lastUpdate: promocodesCache.lastUpdate });
 });
 
 router.post('/refresh', promocodesLimiter, async (req, res) => {
   try {
     if (promocodesCache.isUpdating) {
+      res.set('Cache-Control', 'no-store');
       return res.json({ status: 'info', message: 'Обновление уже выполняется' });
     }
     const success = await loadPromocodesFromAPI();
+    res.set('Cache-Control', 'no-store');
     if (success) {
       res.json({ status: 'success', message: 'Промокоды успешно обновлены', stats: getPromocodesStats() });
     } else {
@@ -254,6 +266,7 @@ router.post('/refresh', promocodesLimiter, async (req, res) => {
     }
   } catch (error) {
     console.error('[PROMOCODES] Ошибка при принудительном обновлении:', error);
+    res.set('Cache-Control', 'no-store');
     res.status(500).json({ status: 'error', message: 'Ошибка при обновлении промокодов' });
   }
 });
@@ -261,9 +274,11 @@ router.post('/refresh', promocodesLimiter, async (req, res) => {
 router.get('/categories', promocodesLimiter, (req, res) => {
   try {
     const categories = [...new Set(promocodesCache.data.map(p => p.category))];
+    res.set('Cache-Control', 'no-store');
     res.json({ status: 'success', data: categories });
   } catch (error) {
     console.error('[PROMOCODES] Ошибка при получении категорий:', error);
+    res.set('Cache-Control', 'no-store');
     res.status(500).json({ status: 'error', message: 'Ошибка при получении категорий' });
   }
 });
