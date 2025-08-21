@@ -4,6 +4,9 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Промокоды и скидки 2025 | Serpmonn.ru</title>
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
         <!-- Open Graph -->
         <meta property="og:title" content="Промокоды и скидки — Serpmonn">
         <meta property="og:description" content="Актуальные промокоды от партнёров: скидки на сервисы, продукты и развлечения.">
@@ -17,9 +20,32 @@
         <meta name="twitter:image" content="https://serpmonn.ru/images/Banner_Serpmonn.png">
         <meta name="description" content="Актуальные промокоды от партнёров: скидки на игры, гаджеты, сервисы, рестораны, продукты, моду и здоровье. Проверенные купоны для пользователей Serpmonn.">
         <!-- Стили -->
-        <link rel="stylesheet" href="promokody-skidki.css">
+        <link rel="stylesheet" href="promokody-skidki.css?v=1">
         <!-- Скрипты -->
-        <script src="promokody-skidki.js" defer></script>
+        <script>
+          (function() {
+            const KEY = 'serpmonn_promos_version';
+            async function checkVersion() {
+              try {
+                const res = await fetch('/api/promocodes/version', { cache: 'no-store' });
+                if (!res.ok) return;
+                const data = await res.json();
+                const current = data && data.version ? data.version : null;
+                const stored = localStorage.getItem(KEY);
+                if (current && stored && stored !== current) {
+                  // Версия изменилась — принудительно перезагрузим страницу
+                  localStorage.setItem(KEY, current);
+                  location.reload();
+                } else if (current && !stored) {
+                  localStorage.setItem(KEY, current);
+                }
+              } catch (_) {}
+            }
+            checkVersion();
+            setInterval(checkVersion, 60 * 1000);
+          })();
+        </script>
+        <script src="promokody-skidki.js?v=1" defer></script>
         <!-- Реклама Яндекс -->
         <script>window.yaContextCb=window.yaContextCb||[]</script>
         <script src="https://yandex.ru/ads/system/context.js" async></script>
@@ -69,519 +95,6 @@
             "priceCurrency": "RUB",
             "validThrough": "2025-08-31",
             "url": "https://tanuki.prfl.me/sites/tihthv?erid=2VtzquX6XeH"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Важная Рыба: Скидки и подарки",
-            "description": "Промокоды BEST669 (20% от 2999 ₽), PFL3384 и FRESH1738 (роллы в подарок от 2999 ₽), PFILA1802 (30% на Филадельфию от 1499 ₽)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-12-31",
-            "url": "https://vipfish1.prfl.me/sites/1hll3h?erid=2VtzqvsfsaZ"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Ашан: Скидка 20%",
-            "description": "Промокод PFRKAOT0 на скидку 20% на первый заказ от 3000 ₽, не более 650 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-09-30",
-            "url": "https://auchan.prfl.me/sites/yx1q02?erid=2Vtzqxb13Tf"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Яндекс Лавка: Скидки до 51%",
-            "description": "Промокоды newreg2 (51% от 700 ₽ в регионах), 40URA2 (40% от 800 ₽ в Москве и СПб), 40REGION30 (40% от 700 ₽ в других городах) на первый заказ",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-09-30",
-            "url": "https://yalavka.prfl.me/sites/iddxop?erid=2VtzqveLKXP"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "ВкусВилл Доставка: Скидки до 350 ₽",
-            "description": "Промокоды VSCE28D (10% на рационы), 30V2C32 (300 ₽ от 1500 ₽), VS65896 (250 ₽ от 1250 ₽), 35V6C1A (350 ₽ от 2500 ₽) на первую покупку",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://vkusvill.prfl.me/sites/412w2j?erid=2Vtzqv1Gxxh"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "USmall: Скидка 25%",
-            "description": "Промокод t5b3ec на скидку 25% на каждый заказ от 3000 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://usmall.prfl.me/sites/x8xujg?erid=2Vtzqw44TWq"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Ёрш: Скидки и подарки",
-            "description": "Промокоды 20HS1294 (20% на первый заказ от 990 ₽), 15HS1294 (15% на повторные от 1190 ₽), HS1299 (шашлык в подарок от 2000 ₽)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://ersh.prfl.me/sites/6a79lu?erid=2Vtzqug4V7X"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Zotman: Скидки и подарки",
-            "description": "Промокоды FB16M (15% от 3199 ₽), NPQC2, RRM2G, PIFV7, SVZ47 (пиццы в подарок от 2299–3499 ₽)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://zotman1.prfl.me/sites/vz760u?erid=2VtzqvGACbT"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "TVOЯ Pizza: Скидки и подарки",
-            "description": "Промокоды 20RR1483 (20% на первый заказ от 990 ₽), 15RR1486 (15% на повторные от 1190 ₽), RR1483 (пицца в подарок от 2000 ₽)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://tanuki.prfl.me/sites/xi8lsw?erid=2VtzqvvhsvR"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Elementaree: Скидка до 40%",
-            "description": "Промокод leaf41 на скидку 40% на первый заказ или 12% на повторные от 3000 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://elementareenw.prfl.me/sites/iwvqpq?erid=2VtzqwpbSnV"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Сберздоровье: Скидка 20% на анализы",
-            "description": "Промокод SH6D9A577 на скидку 20% на анализы от 1000 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://sberanalizy.prfl.me/sites/1oins5?erid=2VtzquXAtuP"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Polza: Скидки до 200 ₽",
-            "description": "Промокоды 6MFCKP (200 ₽ на первый заказ от 2700 ₽), 0X0XARP (3% на повторный от 2700 ₽)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://polza.prfl.me/sites/yg2a9w?erid=2VtzqvZxPTX"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Ортека: Скидка 1000 ₽",
-            "description": "Промокод ORT-7m8jr на скидку 1000 ₽ (не более 10%) на все заказы",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-12-31",
-            "url": "https://orteka.prfl.me/sites/4oco87?erid=2VtzqwbFtjK"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Делимобиль: Бонусы на поездки",
-            "description": "Промокоды p9nj3x (1000 бонусов для новых пользователей на первую поездку), rndh3a (500 бонусов для неактивных пользователей, не совершавших аренды более 60 дней)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://delimobil.prfl.me/sites/vz6nom?erid=2VtzqxWdSsj"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Ситидрайв: Скидка на поездки",
-            "description": "Промокод SUN1415 на скидку 750 ₽ на первые 3 поездки",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-09-30",
-            "url": "https://citydrive.prfl.me/sites/dhb34t?erid=2VtzqvVWm6R"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Яндекс Афиша: Скидки на билеты",
-            "description": "Промокоды C13317 (500 ₽ от 3000 ₽), D10250 (300 ₽ от 2000 ₽), B73514 (400 ₽ от 3000 ₽), C15176 (10% от 5000 ₽), C53375 (100 ₽ от 1000 ₽)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://yandafisha.prfl.me/sites/if71iv?erid=2VtzqwckDVb"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Улыбка радуги: Скидки на заказы",
-            "description": "Промокоды УЛЫБКИ426 (40% на 3 первых заказа), NEW863 (30% на заказы), УР489 (25% на заказы), ЗАХОДИ296 (400 ₽ от 1500 ₽)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-12-31",
-            "url": "https://r-ulybka.prfl.me/sites/pr4tap?erid=2VtzquYfZ9b"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Авито Доставка: Скидка на доставку",
-            "description": "Скидка на доставку при оформлении заказа",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-12-31",
-            "url": "https://avito.prfl.me/sites/3ktmrm?erid=2Vtzqwrsnbj"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Befree: Скидки до 20%",
-            "description": "Промокоды 79TUBF (20% на новинки), 7VEPBF (15% на заказы)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://befree1.prfl.me/sites/endgwz?erid=2Vtzqw1yCk9"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "DDX Fitness: Триал период",
-            "description": "Триал период на 1 месяц в Ставрополе за 500 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://ddx.prfl.me/sites/cuwjfw?erid=2VtzqwWAK2R"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Кинопоиск: 45 дней бесплатно",
-            "description": "Промокод ABEYT2B5TW на 45 дней бесплатно или 30 дней за 1 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://kp45.prfl.me/sites/era2ev?erid=2VtzqvTQVsw"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "PREMIER: Бесплатный период",
-            "description": "40 дней доступа к PREMIER и RUTUBE",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://premier1.prfl.me/sites/lhrqa8?erid=2VtzqxKeGQy"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "PREMIER: Бесплатный период",
-            "description": "45 дней доступа к сервису",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://premier1.prfl.me/sites/dgebhi?erid=2VtzqvjihTf"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Okko: Доступ 30 дней",
-            "description": "Промокод 21711192 на доступ к подписке Окко на 30 дней за 199 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://okko1.prfl.me/sites/c6qt8j?erid=2VtzquzkjhK"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Яндекс Музыка: 45 дней бесплатно",
-            "description": "Промокод 6CGQYGFF3N на 45 дней доступа к Яндекс Книгам бесплатно",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://yabooks45.prfl.me/sites/nohwrp?erid=2Vtzquwo6cZ"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Смотрешка: Доступ 30 дней",
-            "description": "Промокод pfvutjm на 30 дней доступа ко всему контенту",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://smotreshka1.prfl.me/sites/55ecfb?erid=2VtzqwZCKNH"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Яндекс Плюс: 30 дней + Детские Сервисы",
-            "description": "Промокод MF2JURDJMN на 30 дней Яндекс Плюса + 30 дней подписки на Детские Сервисы",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://plschild.prfl.me/sites/mxkx67?erid=2VtzqwXhzc1"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Start.ru: 45 дней за 1 ₽",
-            "description": "Промокод pf452lx7 на 45 дней подписки за 1 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://start.prfl.me/sites/hbfuvy?erid=2VtzqugyZH3"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Яндекс Путешествия: Скидки до 8000 ₽",
-            "description": "Промокоды PF-ZABOTA8OOO-F46AY (8000 ₽), PF-SELLOFF-N7P2I (4000 ₽), PF-MORE-LYMQK (5000 ₽), PF-WEEKEND2O-D39VB (20%), PF-NEW-D7Q5M (15%), PF-OLD-47SXY (12%)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-09-30",
-            "url": "https://travelyandex.prfl.me/sites/zp3r5l?erid=2VtzqujxYHX"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Хваловские воды: Скидки и стартовый пакет",
-            "description": "Промокоды HKDAY2 (10%), HKDAY (стартовый пакет за 459 ₽/259 ₽)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://hwalwatersru.prfl.me/sites/p8hpq1?erid=2VtzqvMYF3o"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Альфа-Банк: Кредитная карта",
-            "description": "Кредитная карта с суперкэшбэком",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://alfa365.prfl.me/sites/9xgms0?erid=2VtzqwzRT5s"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Альфа-Банк: Детская карта",
-            "description": "Детская карта с кэшбэком 1000 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://kids1251.prfl.me/sites/zi9kn5?erid=2Vtzqvgq6A5"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Альфа-Банк: Дебетовая карта",
-            "description": "Дебетовая карта с сертификатом на выбор",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://dkmulti.prfl.me/sites/mbqk71?erid=2VtzqwCUWK3"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Альфа-Банк: Дебетовая карта",
-            "description": "Дебетовая карта с кэшбэком 1000 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://1000kb3000.prfl.me/sites/h467sy?erid=2VtzqxXaCSu"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Газпромбанк: Дебетовая карта МИР",
-            "description": "Дебетовая карта МИР с кэшбэком 1000 баллов и сертификатом на 1 800 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://gpb1800.prfl.me/sites/l9hhau?erid=2VtzqwUo3Nh"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Газпромбанк: Дебетовая карта МИР",
-            "description": "Дебетовая карта МИР с кэшбэком 1000 баллов",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://gpb.prfl.me/sites/6wfdzo?erid=2VtzqvWTWfb"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Альфа-Банк: Инвестиции",
-            "description": "Брокерский счёт с подарком до 10000 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://alfa10k.prfl.me/sites/u8gwnk?erid=2VtzqxDogzV"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Сберздоровье: Скидка 35% на консультацию",
-            "description": "Скидка 35% на онлайн-консультацию ветеринара",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://sberanalizy.prfl.me/sites/q632el?erid=2VtzqwCYY6D"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Монетка: Скидки до 400 ₽",
-            "description": "Промокоды 30MPRF1516 (30%), PRFLMN0590 (400 ₽)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://monetka.prfl.me/sites/4aipk0?erid=2Vtzqws6DRB"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Холодильник.ру: Скидки до 6000 ₽",
-            "description": "Промокоды JUN31R4XK (3100 ₽), SUM4Q2MX (4000 ₽), SUM251KJ (2500 ₽), SUM6MNT9 (6000 ₽), PVENUUDZ7 (3200 ₽)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://hldlink.prfl.me/sites/1sq30p?erid=2VtzqxkynHF"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Четыре лапы: Скидка 15%",
-            "description": "Промокод LET0532 на скидку 15%",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://4lapy1.prfl.me/sites/q5k8n0?erid=2Vtzqv9mP21"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Авито Путешествия: Скидка до 15%",
-            "description": "Скидка до 15% на бронирование жилья",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-12-31",
-            "url": "https://avt.prfl.me/sites/wfa9cs?erid=2VtzqvV3ZAR"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Додо пицца юг: Скидки и подарки",
-            "description": "Промокоды MAKGL (подарок), TUKPT (30%), KDENM (25%), O1C6A (25%), S2AK6 (25%)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://dodo1.prfl.me/sites/wocgxt?erid=2Vtzqx6Smv9"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Ёбидоёби: Скидка 20%",
-            "description": "Промокод PR3594PF на скидку 20%",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-12-31",
-            "url": "https://yobidoyobi1.prfl.me/sites/kf4klx?erid=2VtzqxRicad"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Росгосстрах онлайн: Скидка 25%",
-            "description": "Промокод PF299J на скидку 25% на страховку квартиры",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-12-31",
-            "url": "https://pulseinsure.prfl.me/sites/l79dgt?erid=2VtzqufcHdK"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Детская СберКарта: Дизайн на выбор",
-            "description": "Детская СберКарта с ярким дизайном",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://sberbank1.prfl.me/sites/3v4q5n?erid=2Vtzquiabfw"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Банки.ру: Мастер подбора карт",
-            "description": "Мастер подбора дебетовых карт с кэшбэком 2000 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://bankiru.prfl.me/sites/gkrrgn?erid=2VtzqvzhymB"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Дебетовая СберКарта",
-            "description": "Оформление дебетовой СберКарты",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://sberbank1.prfl.me/sites/avn2w5?erid=2VtzqwzXVkd"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "FARFOR: Скидка 400 ₽",
-            "description": "Промокод MPM61944 на скидку 400 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://farfor2.prfl.me/sites/ekcohg?erid=2VtzqxRjHYV"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Яндекс Еда Цветы: Скидка 1050 ₽",
-            "description": "Промокод ASTRACE1N на скидку 1050 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://yaflowers.prfl.me/sites/ryjtuq?erid=2VtzqxZ9DxD"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Детская СберКарта: Сертификат",
-            "description": "Детская СберКарта с сертификатом на 500 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://sberkarta1.prfl.me/sites/vvraoi?erid=2VtzqwMU9Bw"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Сбердевайсы: Скидка 10%",
-            "description": "Промокод SBERDEAL1 на скидку 10% на Яндекс Маркете",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-11-01",
-            "url": "https://sberdevaysy1.prfl.me/sites/nbj01i?erid=2Vtzqwy3qxD"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Сбердевайсы: Скидка 10%",
-            "description": "Промокод SBRDV6702550 на скидку 10% на Озоне",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-11-01",
-            "url": "https://sberdevaysy1.prfl.me/sites/s2tugt?erid=2VtzqwiDy8m"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Совкомбанк: Карта Халва",
-            "description": "Карта рассрочки Халва с 1000 бонусами и шансом на поездку в Турцию",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://sovcombankxalva.prfl.me/sites/j54n05?erid=2VtzqxXfa9o"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Т-Банк: Black Дебетовая карта",
-            "description": "Светящаяся дебетовая карта Black с кэшбэком 1000 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://tinkoff.prfl.me/sites/geigy0?erid=2VtzqvHaAnM"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Т-Банк: Black Дебетовая карта",
-            "description": "Дебетовая карта Black с кэшбэком 1000 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://tnkff.prfl.me/sites/19e224?erid=2VtzqvimHcM"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Т-Банк: Джуниор Дебетовая карта",
-            "description": "Дебетовая карта Джуниор c 500 баллами",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://tnkff.prfl.me/sites/gh28y6?erid=2Vtzqvikx8R"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Т-Банк: Джуниор Дебетовая карта",
-            "description": "Дебетовая карта Джуниор с кэшбэком 500 ₽",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://tnkff.prfl.me/sites/xvtcrh?erid=2VtzqxayNjj"
         }]
         </script>
     </head>
@@ -1270,7 +783,7 @@
                         <img src="/images/gazprombank.png" alt="Газпромбанк" width="50" height="50">
                         <div class="tag">Кэшбэк 1000 баллов</div>
                         <h3>Газпромбанк: Дебетовая карта МИР</h3>
-                        <p>Оформить дебетовую карту МИР с кэшбэком 1000 баллов и сертификатом на 1 800 ₽ за траты от 1 000 ₽</p>
+                        <p>Оформить дебетовую карту МИР с кэшбэком 1000 баллов и сертификатом на 1 800 ₽</p>
                         <p class="expiry">Действует до: 31.08.2025 23:59</p>
                     </div>
                     <div class="promo-card-footer">
