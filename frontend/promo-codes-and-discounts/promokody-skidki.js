@@ -227,14 +227,13 @@ function formatDate(date) {
 function updateStats(stats) {
     if (!stats) return;
     
-    // Обновляем элементы статистики, если они существуют
     const totalElement = document.getElementById('totalPromos');
     const activeElement = document.getElementById('activePromos');
     const expiredElement = document.getElementById('expiredPromos');
     
-    if (totalElement) totalElement.textContent = stats.total || 0;
-    if (activeElement) activeElement.textContent = stats.active || 0;
-    if (expiredElement) expiredElement.textContent = stats.expired || 0;
+    if (totalElement) totalElement.textContent = stats.total ?? 0;
+    if (activeElement) activeElement.textContent = stats.active ?? stats.total ?? 0;
+    if (expiredElement) expiredElement.closest('.stat-item')?.remove();
 }
 
 // Функция для показа уведомлений

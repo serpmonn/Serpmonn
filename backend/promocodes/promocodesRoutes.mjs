@@ -224,7 +224,7 @@ function getPromocodesStats() {
   const now = new Date();
   const total = promocodesCache.data.length;
   const active = promocodesCache.data.filter(p => !p.valid_until || new Date(p.valid_until) > now).length;
-  return { total, active, expired: total - active, lastUpdate: promocodesCache.lastUpdate };
+  return { total, active, lastUpdate: promocodesCache.lastUpdate };
 }
 
 // Маршруты API
