@@ -38,6 +38,14 @@ function stripHtml(html) {
   return String(html).replace(/<[^>]*>/g, '').trim();
 }
 
+function normalizeAdvertiserText(text) {
+  const raw = stripHtml(text || '');
+  // Убираем ведущие префиксы «Реклама.» и пробелы
+  const withoutAd = raw.replace(/^\s*Реклама\.?\s*/i, '');
+  // Нормализуем двойные пробелы
+  return withoutAd.replace(/\s{2,}/g, ' ').trim();
+}
+
 function parsePercentFromString(value) {
   if (typeof value !== 'string') return null;
   const match = value.replace(',', '.').match(/(\d{1,3})\s*%/);
@@ -68,13 +76,24 @@ function normalizeDate(dateStr) {
   return dateStr;
 }
 
-function determineCategoryFromText(...texts) {
-  const joined = texts.filter(Boolean).join(' ').toLowerCase();
-  if (/(еда|ресторан|доставка)/.test(joined)) return 'еда';
-  if (/(продукт|лавка|магазин)/.test(joined)) return 'продукты';
-  if (/(билет|афиша|кино|кинотеатр|онлайн кино)/.test(joined)) return 'развлечения';
-  if (/(товар|покупка|магазин|одежда|обув)/.test(joined)) return 'товары';
-  if (/(услуга|сервис|подписка|банк|здоровье)/.test(joined)) return 'услуги';
+function determineCategoryFromText(categoryName, title, description) {
+  const cat = (categoryName || '').toLowerCase();
+  const text = [title, description].filter(Boolean).join(' ').toLowerCase();
+
+  // Приоритет по category_name от Perfluence
+  if (/кино|афиша|онлайн\s*кино|видео/.test(cat)) return 'развлечения';
+  if (/одежд|обув|мода|fashion/.test(cat)) return 'товары';
+  if (/супермаркет|гипермаркет|продукт|лавка|магазин/.test(cat)) return 'продукты';
+  if (/еда|рестора|пицц|суши|доставк/.test(cat)) return 'еда';
+  if (/банк|страх|медицин|здоров|каршеринг|такси|сервис|услуг/.test(cat)) return 'услуги';
+
+  // Резервные эвристики по текстам
+  if (/пицц|суши|ресторан|еда|доставк/.test(text)) return 'еда';
+  if (/лавка|вкусвилл|ашан|продукт|продовольств/.test(text)) return 'продукты';
+  if (/кино|афиша|подписк.*видео|музык|онлайн\s*кино/.test(text)) return 'развлечения';
+  if (/одежд|обув|товар|покупк|market|магазин/.test(text)) return 'товары';
+  if (/банк|страх|здоров|медицин|каршеринг|такси|сервис|услуг/.test(text)) return 'услуги';
+
   return 'другие';
 }
 
@@ -89,7 +108,8 @@ function flattenPerfluenceData(perfArray) {
       const landing = group?.landing || {};
       const linksForSubs = Array.isArray(group?.links_for_subscribers) ? group.links_for_subscribers : [];
       const landingUrl = firstDefined(linksForSubs[0]?.link, landing.link, project.site);
-      const advertiserText = firstDefined(landing.ord_custom_text, project.name);
+      const advertiserTextRaw = firstDefined(landing.ord_custom_text, project.name);
+      const advertiserText = normalizeAdvertiserText(advertiserTextRaw);
       const logo = firstDefined(landing.logo, project.logo, project.img);
       const promos = Array.isArray(group?.promocodes) ? group.promocodes : [];
 
