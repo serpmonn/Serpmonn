@@ -5,31 +5,27 @@ const router = express.Router();
 
 // Конфигурация API Perfluence (хранится на сервере)
 const PERFLUENCE_API_CONFIG = {
-    url: 'https://dash.perfluence.net/blogger/promocode-api/json',
-    key: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ODk4OTg3LCJhdXRoX2tleSI6Iml1Tl9fVk5WdTdOY0RqT1RKZW1EbUpUV1JjeUxqNFp4IiwiZGF0YSI6W119.k8vSFrvEtc75g7Gu-YdIcvhu6nB60V2CTOjti0IPfhQ',
-
-    updateInterval: 30 * 60 * 1000, // 30 минут
-    cacheKey: 'perfluence_promocodes_cache'
+  url: 'https://dash.perfluence.net/blogger/promocode-api/json',
+  key: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ODk4OTg3LCJhdXRoX2tleSI6Iml1Tl9fVk5WdTdOY0RqT1RKZW1EbUpUV1JjeUxqNFp4IiwiZGF0YSI6W119.k8vSFrvEtc75g7Gu-YdIcvhu6nB60V2CTOjti0IPfhQ',
+  updateInterval: 30 * 60 * 1000, // 30 минут
+  cacheKey: 'perfluence_promocodes_cache'
 };
 
 // Кэш для промокодов
 let promocodesCache = {
-    data: [],
-    lastUpdate: null,
-    isUpdating: false
+  data: [],
+  lastUpdate: null,
+  isUpdating: false
 };
 
 // Лимитер для API запросов
 const promocodesLimiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 минут
-    max: 100, // максимум 100 запросов
-    message: {
-        status: 'error',
-        message: 'Слишком много запросов к API промокодов'
-    }
+  windowMs: 15 * 60 * 1000,
+  max: 100,
+  message: { status: 'error', message: 'Слишком много запросов к API промокодов' }
 });
 
-// Утилиты извлечения полей из разных схем
+// Утилиты извлечения полей
 function firstDefined(...values) {
   for (const v of values) {
     if (v !== undefined && v !== null && v !== '') return v;
@@ -37,9 +33,14 @@ function firstDefined(...values) {
   return undefined;
 }
 
+function stripHtml(html) {
+  if (!html) return '';
+  return String(html).replace(/<[^>]*>/g, '').trim();
+}
+
 function parsePercentFromString(value) {
   if (typeof value !== 'string') return null;
-  const match = value.replace(',', '.').match(/(\d{1,3})(?:\s*%)/);
+  const match = value.replace(',', '.').match(/(\d{1,3})\s*%/);
   return match ? Number(match[1]) : null;
 }
 
@@ -49,388 +50,234 @@ function parseAmountFromString(value) {
   return match ? Number(match[1]) : null;
 }
 
-function extractDiscount(item) {
-  const percent = firstDefined(
-    item.discount_percent,
-    item.percent,
-    typeof item.discount === 'number' && item.discount <= 100 ? item.discount : undefined,
-    parsePercentFromString(item.discount_text),
-    parsePercentFromString(item.title),
-    parsePercentFromString(item.name)
-  );
-
-  const amount = firstDefined(
-    item.discount_amount,
-    item.amount,
-    typeof item.discount === 'number' && item.discount > 100 ? item.discount : undefined,
-    parseAmountFromString(item.discount_text),
-    parseAmountFromString(item.title),
-    parseAmountFromString(item.name)
-  );
-
+function extractDiscountFromTexts(...texts) {
+  let percent = null;
+  let amount = null;
+  for (const t of texts) {
+    if (percent == null) percent = parsePercentFromString(t);
+    if (amount == null) amount = parseAmountFromString(t);
+  }
   return { percent: percent ?? null, amount: amount ?? null };
 }
 
-function extractDate(item) {
-  const raw = firstDefined(
-    item.valid_until,
-    item.expiry_date,
-    item.valid_to,
-    item.expires_at,
-    item.expire_at,
-    item.end_date,
-    item.date_to,
-    item.date_end
-  );
-  return raw || null;
+function normalizeDate(dateStr) {
+  if (!dateStr) return null;
+  // dd.mm.yyyy -> yyyy-mm-dd
+  const m = String(dateStr).match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
+  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
+  return dateStr;
 }
 
-function extractPromocode(item) {
-  return firstDefined(
-    item.promocode,
-    item.promo_code,
-    item.code,
-    item.coupon_code,
-    item.coupon,
-    item.token
-  ) || null;
+function determineCategoryFromText(...texts) {
+  const joined = texts.filter(Boolean).join(' ').toLowerCase();
+  if (/(еда|ресторан|доставка)/.test(joined)) return 'еда';
+  if (/(продукт|лавка|магазин)/.test(joined)) return 'продукты';
+  if (/(билет|афиша|кино|кинотеатр|онлайн кино)/.test(joined)) return 'развлечения';
+  if (/(товар|покупка|магазин|одежда|обув)/.test(joined)) return 'товары';
+  if (/(услуга|сервис|подписка|банк|здоровье)/.test(joined)) return 'услуги';
+  return 'другие';
 }
 
-function extractLandingUrl(item) {
-  return firstDefined(
-    item.landing_url,
-    item.url,
-    item.link,
-    item.tracking_link,
-    item.landing
-  ) || null;
+// Преобразуем Perfluence: project -> groups[] -> promocodes[]
+function flattenPerfluenceData(perfArray) {
+  const result = [];
+  for (const item of perfArray) {
+    const project = item?.project || {};
+    const groups = Array.isArray(item?.groups) ? item.groups : [];
+
+    for (const group of groups) {
+      const landing = group?.landing || {};
+      const linksForSubs = Array.isArray(group?.links_for_subscribers) ? group.links_for_subscribers : [];
+      const landingUrl = firstDefined(linksForSubs[0]?.link, landing.link, project.site);
+      const advertiserText = firstDefined(landing.ord_custom_text, project.name);
+      const logo = firstDefined(landing.logo, project.logo, project.img);
+      const promos = Array.isArray(group?.promocodes) ? group.promocodes : [];
+
+      for (const promo of promos) {
+        const title = firstDefined(promo.name, project.name) || 'Промокод';
+        const description = firstDefined(promo.comment, stripHtml(project.product_info)) || 'Описание недоступно';
+        const code = firstDefined(promo.code);
+        const when = normalizeDate(firstDefined(promo.date));
+        const { percent, amount } = extractDiscountFromTexts(promo.name, promo.comment, landing.name, project.name);
+        const category = determineCategoryFromText(project.category_name, title, description);
+        const imageUrl = firstDefined(promo.image, logo) || '/images/skidki-i-akcii.png';
+        const isTop = Boolean(promo.is_hit || landing.is_hiting || (percent && percent >= 50) || (amount && amount >= 1000));
+
+        result.push({
+          id: promo.id || Math.random().toString(36).substr(2, 9),
+          title,
+          description,
+          promocode: code || null,
+          discount_percent: percent,
+          discount_amount: amount,
+          valid_until: when,
+          landing_url: landingUrl || null,
+          image_url: imageUrl,
+          conditions: firstDefined(promo.promo_terms, item.conditions, null),
+          advertiser_info: advertiserText || null,
+          category,
+          is_top: isTop,
+          created_at: new Date().toISOString()
+        });
+      }
+    }
+  }
+  return result;
 }
 
-function extractImageUrl(item) {
-  return firstDefined(
-    item.image_url,
-    item.image,
-    item.logo,
-    item.icon
-  ) || '/images/default-promo.png';
-}
-
-function extractTitle(item) {
-  return firstDefined(
-    item.title,
-    item.name,
-    item.offer,
-    item.brand,
-    item.advertiser
-  ) || 'Промокод';
-}
-
-function extractDescription(item) {
-  return firstDefined(
-    item.description,
-    item.details,
-    item.text,
-    item.subtitle,
-    item.note
-  ) || 'Описание недоступно';
-}
-
-function extractAdvertiser(item) {
-  return firstDefined(
-    item.advertiser_info,
-    item.brand,
-    item.advertiser,
-    item.partner
-  ) || null;
-}
-
-// Функция для загрузки промокодов из API Perfluence
+// Загрузка промокодов из API Perfluence
 async function loadPromocodesFromAPI() {
-    try {
-        console.log('[PROMOCODES] Загружаю промокоды из API Perfluence...');
-        
-        const response = await fetch(`${PERFLUENCE_API_CONFIG.url}?key=${PERFLUENCE_API_CONFIG.key}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ошибка! Статус: ${response.status}`);
-        }
-        
-        const raw = await response.json();
-        // Поддержка разных форматов ответа: массив или обёртка { data: [...] }
-        const data = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
-        console.log(`[PROMOCODES] Получено ${Array.isArray(data) ? data.length : 'unknown'} промокодов от API`);
-        
-        if (data && Array.isArray(data)) {
-            // Обрабатываем и валидируем данные
-            const processedData = processPromocodesData(data);
-            
-            // Обновляем кэш
-            promocodesCache = {
-                data: processedData,
-                lastUpdate: new Date(),
-                isUpdating: false
-            };
-            
-            console.log(`[PROMOCODES] Кэш обновлен: ${processedData.length} промокодов`);
-
-            return true;
-        } else {
-            throw new Error('Неверный формат данных от API');
-        }
-    } catch (error) {
-        console.error('[PROMOCODES] Ошибка при загрузке промокодов:', error);
-        promocodesCache.isUpdating = false;
-        return false;
+  try {
+    console.log('[PROMOCODES] Загружаю промокоды из API Perfluence...');
+    const response = await fetch(`${PERFLUENCE_API_CONFIG.url}?key=${PERFLUENCE_API_CONFIG.key}`);
+    if (!response.ok) {
+      throw new Error(`HTTP ошибка! Статус: ${response.status}`);
     }
-}
+    const raw = await response.json();
+    const perfArray = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
 
-// Функция для обработки данных промокодов
-function processPromocodesData(rawData) {
-  return rawData.map(item => {
-    const { percent, amount } = extractDiscount(item);
-    return {
-      id: item.id || Math.random().toString(36).substr(2, 9),
-      title: extractTitle(item),
-      description: extractDescription(item),
-      promocode: extractPromocode(item),
-      discount_percent: percent,
-      discount_amount: amount,
-      valid_until: extractDate(item),
-      landing_url: extractLandingUrl(item),
-      image_url: extractImageUrl(item),
-      conditions: item.conditions || item.terms || null,
-      advertiser_info: extractAdvertiser(item),
-      category: determineCategory(item),
-      is_top: determineIfTop({ discount_percent: percent, discount_amount: amount, is_top: item.is_top }),
-      created_at: new Date().toISOString()
-    };
-  });
-}
+    // Переводим структуру Perfluence к плоскому списку промокодов
+    const data = flattenPerfluenceData(perfArray);
+    console.log(`[PROMOCODES] Получено ${Array.isArray(data) ? data.length : 'unknown'} промокодов после преобразования`);
 
-// Функция для определения категории промокода
-function determineCategory(item) {
-    const title = (item.title || item.name || item.brand || '').toLowerCase();
-    const description = (item.description || item.details || '').toLowerCase();
-    
-    if (title.includes('еда') || title.includes('ресторан') || title.includes('доставка') ||
-        description.includes('еда') || description.includes('ресторан') || description.includes('доставка')) {
-        return 'еда';
-    } else if (title.includes('продукт') || title.includes('лавка') || title.includes('магазин') ||
-               description.includes('продукт') || description.includes('лавка') || description.includes('магазин')) {
-        return 'продукты';
-    } else if (title.includes('билет') || title.includes('афиша') || title.includes('кино') ||
-               description.includes('билет') || description.includes('афиша') || description.includes('кино')) {
-        return 'развлечения';
-    } else if (title.includes('товар') || title.includes('покупка') || title.includes('магазин') ||
-               description.includes('товар') || description.includes('покупка') || description.includes('магазин')) {
-        return 'товары';
-    } else if (title.includes('услуга') || title.includes('сервис') || title.includes('подписка') ||
-               description.includes('услуга') || description.includes('сервис') || description.includes('подписка')) {
-        return 'услуги';
+    if (Array.isArray(data)) {
+      promocodesCache = {
+        data,
+        lastUpdate: new Date(),
+        isUpdating: false
+      };
+      console.log(`[PROMOCODES] Кэш обновлен: ${data.length} промокодов`);
+      return true;
+    } else {
+      throw new Error('Неверный формат данных после преобразования');
     }
-    
-    return 'другие';
+  } catch (error) {
+    console.error('[PROMOCODES] Ошибка при загрузке промокодов:', error);
+    promocodesCache.isUpdating = false;
+    return false;
+  }
 }
 
-// Функция для определения топ-оффера
-function determineIfTop(item) {
-    return item.is_top || 
-           (item.discount_percent && item.discount_percent >= 50) ||
-           (item.discount_amount && item.discount_amount >= 1000);
-}
-
-// Функция для получения статистики
-function getPromocodesStats() {
-    const now = new Date();
-    const total = promocodesCache.data.length;
-    
-    const active = promocodesCache.data.filter(promo => {
-        if (!promo.valid_until) return true;
-        return new Date(promo.valid_until) > now;
-    }).length;
-    
-    const expired = total - active;
-    
-    return {
-        total,
-        active,
-        expired,
-        lastUpdate: promocodesCache.lastUpdate
-    };
-}
-
-// Функция для фильтрации промокодов
+// Фильтрация промокодов по параметрам
 function filterPromocodes(filters = {}) {
-    let filtered = [...promocodesCache.data];
-    
-    // Фильтр по поиску
-    if (filters.search) {
-        const searchLower = filters.search.toLowerCase();
-        filtered = filtered.filter(promo => 
-            (promo.title && promo.title.toLowerCase().includes(searchLower)) ||
-            (promo.description && promo.description.toLowerCase().includes(searchLower))
-        );
+  let filtered = [...promocodesCache.data];
+
+  if (filters.search) {
+    const q = filters.search.toLowerCase();
+    filtered = filtered.filter(p =>
+      (p.title && p.title.toLowerCase().includes(q)) ||
+      (p.description && p.description.toLowerCase().includes(q))
+    );
+  }
+
+  if (filters.category && filters.category !== 'all') {
+    filtered = filtered.filter(p => p.category === filters.category);
+  }
+
+  if (filters.status) {
+    const now = new Date();
+    if (filters.status === 'active') {
+      filtered = filtered.filter(p => !p.valid_until || new Date(p.valid_until) > now);
+    } else if (filters.status === 'expired') {
+      filtered = filtered.filter(p => p.valid_until && new Date(p.valid_until) <= now);
     }
-    
-    // Фильтр по категории
-    if (filters.category && filters.category !== 'all') {
-        filtered = filtered.filter(promo => promo.category === filters.category);
-    }
-    
-    // Фильтр по статусу (активные/истекшие)
-    if (filters.status) {
-        const now = new Date();
-        if (filters.status === 'active') {
-            filtered = filtered.filter(promo => {
-                if (!promo.valid_until) return true;
-                return new Date(promo.valid_until) > now;
-            });
-        } else if (filters.status === 'expired') {
-            filtered = filtered.filter(promo => {
-                if (!promo.valid_until) return false;
-                return new Date(promo.valid_until) <= now;
-            });
-        }
-    }
-    
-    // Сортировка
-    if (filters.sortBy === 'expiry') {
-        filtered.sort((a, b) => {
-            const dateA = new Date(a.valid_until || '9999-12-31');
-            const dateB = new Date(b.valid_until || '9999-12-31');
-            return filters.sortOrder === 'desc' ? dateB - dateA : dateA - dateB;
-        });
-    } else if (filters.sortBy === 'discount') {
-        filtered.sort((a, b) => {
-            const discountA = a.discount_percent || a.discount_amount || 0;
-            const discountB = b.discount_percent || b.discount_amount || 0;
-            return filters.sortOrder === 'desc' ? discountB - discountA : discountA - discountB;
-        });
-    }
-    
-    return filtered;
+  }
+
+  if (filters.sortBy === 'expiry') {
+    filtered.sort((a, b) => {
+      const aDate = new Date(a.valid_until || '9999-12-31');
+      const bDate = new Date(b.valid_until || '9999-12-31');
+      return filters.sortOrder === 'desc' ? bDate - aDate : aDate - bDate;
+    });
+  } else if (filters.sortBy === 'discount') {
+    filtered.sort((a, b) => {
+      const aVal = a.discount_percent || a.discount_amount || 0;
+      const bVal = b.discount_percent || b.discount_amount || 0;
+      return filters.sortOrder === 'desc' ? bVal - aVal : aVal - bVal;
+    });
+  }
+
+  return filtered;
 }
 
-// Маршрут для получения всех промокодов
+function getPromocodesStats() {
+  const now = new Date();
+  const total = promocodesCache.data.length;
+  const active = promocodesCache.data.filter(p => !p.valid_until || new Date(p.valid_until) > now).length;
+  return { total, active, expired: total - active, lastUpdate: promocodesCache.lastUpdate };
+}
+
+// Маршруты API
 router.get('/', promocodesLimiter, async (req, res) => {
-    try {
-        // Проверяем, нужно ли обновить кэш
-        const shouldUpdate = !promocodesCache.lastUpdate || 
-            (Date.now() - promocodesCache.lastUpdate.getTime()) > PERFLUENCE_API_CONFIG.updateInterval;
-        
-        if (shouldUpdate && !promocodesCache.isUpdating) {
-            promocodesCache.isUpdating = true;
-            // Запускаем обновление в фоне
-            loadPromocodesFromAPI().catch(console.error);
-        }
-        
-        // Применяем фильтры
-        const filters = {
-            search: req.query.search,
-            category: req.query.category,
-            status: req.query.status,
-            sortBy: req.query.sortBy,
-            sortOrder: req.query.sortOrder
-        };
-        
-        const filteredPromocodes = filterPromocodes(filters);
-        
-        res.json({
-            status: 'success',
-            data: filteredPromocodes,
-            stats: getPromocodesStats(),
-            filters: filters
-        });
-        
-    } catch (error) {
-        console.error('[PROMOCODES] Ошибка при получении промокодов:', error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Ошибка при получении промокодов'
-        });
+  try {
+    const shouldUpdate = !promocodesCache.lastUpdate || (Date.now() - promocodesCache.lastUpdate.getTime()) > PERFLUENCE_API_CONFIG.updateInterval;
+    if (shouldUpdate && !promocodesCache.isUpdating) {
+      promocodesCache.isUpdating = true;
+      loadPromocodesFromAPI().catch(console.error);
     }
+
+    const filters = {
+      search: req.query.search,
+      category: req.query.category,
+      status: req.query.status,
+      sortBy: req.query.sortBy,
+      sortOrder: req.query.sortOrder
+    };
+
+    const filtered = filterPromocodes(filters);
+    res.json({ status: 'success', data: filtered, stats: getPromocodesStats(), filters });
+  } catch (error) {
+    console.error('[PROMOCODES] Ошибка при получении промокодов:', error);
+    res.status(500).json({ status: 'error', message: 'Ошибка при получении промокодов' });
+  }
 });
 
-// Маршрут для получения статистики
 router.get('/stats', promocodesLimiter, (req, res) => {
-    try {
-        res.json({
-            status: 'success',
-            data: getPromocodesStats()
-        });
-    } catch (error) {
-        console.error('[PROMOCODES] Ошибка при получении статистики:', error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Ошибка при получении статистики'
-        });
-    }
+  try {
+    res.json({ status: 'success', data: getPromocodesStats() });
+  } catch (error) {
+    console.error('[PROMOCODES] Ошибка при получении статистики:', error);
+    res.status(500).json({ status: 'error', message: 'Ошибка при получении статистики' });
+  }
 });
 
-// Маршрут для принудительного обновления
 router.post('/refresh', promocodesLimiter, async (req, res) => {
-    try {
-        if (promocodesCache.isUpdating) {
-            return res.json({
-                status: 'info',
-                message: 'Обновление уже выполняется'
-            });
-        }
-        
-        const success = await loadPromocodesFromAPI();
-        
-        if (success) {
-            res.json({
-                status: 'success',
-                message: 'Промокоды успешно обновлены',
-                stats: getPromocodesStats()
-            });
-        } else {
-            res.status(500).json({
-                status: 'error',
-                message: 'Ошибка при обновлении промокодов'
-            });
-        }
-        
-    } catch (error) {
-        console.error('[PROMOCODES] Ошибка при принудительном обновлении:', error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Ошибка при обновлении промокодов'
-        });
+  try {
+    if (promocodesCache.isUpdating) {
+      return res.json({ status: 'info', message: 'Обновление уже выполняется' });
     }
+    const success = await loadPromocodesFromAPI();
+    if (success) {
+      res.json({ status: 'success', message: 'Промокоды успешно обновлены', stats: getPromocodesStats() });
+    } else {
+      res.status(500).json({ status: 'error', message: 'Ошибка при обновлении промокодов' });
+    }
+  } catch (error) {
+    console.error('[PROMOCODES] Ошибка при принудительном обновлении:', error);
+    res.status(500).json({ status: 'error', message: 'Ошибка при обновлении промокодов' });
+  }
 });
 
-// Маршрут для получения категорий
 router.get('/categories', promocodesLimiter, (req, res) => {
-    try {
-        const categories = [...new Set(promocodesCache.data.map(promo => promo.category))];
-        res.json({
-            status: 'success',
-            data: categories
-        });
-    } catch (error) {
-        console.error('[PROMOCODES] Ошибка при получении категорий:', error);
-        res.status(500).json({
-            status: 'error',
-            message: 'Ошибка при получении категорий'
-        });
-    }
+  try {
+    const categories = [...new Set(promocodesCache.data.map(p => p.category))];
+    res.json({ status: 'success', data: categories });
+  } catch (error) {
+    console.error('[PROMOCODES] Ошибка при получении категорий:', error);
+    res.status(500).json({ status: 'error', message: 'Ошибка при получении категорий' });
+  }
 });
 
 // Инициализация при загрузке модуля
 (async () => {
-    console.log('[PROMOCODES] Инициализация модуля промокодов...');
-    await loadPromocodesFromAPI();
-    
-    // Запускаем автоматическое обновление
-    setInterval(async () => {
-        if (!promocodesCache.isUpdating) {
-            await loadPromocodesFromAPI();
-        }
-    }, PERFLUENCE_API_CONFIG.updateInterval);
-    
-    console.log('[PROMOCODES] Модуль промокодов инициализирован');
+  console.log('[PROMOCODES] Инициализация модуля промокодов...');
+  await loadPromocodesFromAPI();
+  setInterval(async () => {
+    if (!promocodesCache.isUpdating) {
+      await loadPromocodesFromAPI();
+    }
+  }, PERFLUENCE_API_CONFIG.updateInterval);
+  console.log('[PROMOCODES] Модуль промокодов инициализирован');
 })();
 
 export default router;
