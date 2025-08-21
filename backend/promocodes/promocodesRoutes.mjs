@@ -29,6 +29,121 @@ const promocodesLimiter = rateLimit({
     }
 });
 
+// Утилиты извлечения полей из разных схем
+function firstDefined(...values) {
+  for (const v of values) {
+    if (v !== undefined && v !== null && v !== '') return v;
+  }
+  return undefined;
+}
+
+function parsePercentFromString(value) {
+  if (typeof value !== 'string') return null;
+  const match = value.replace(',', '.').match(/(\d{1,3})(?:\s*%)/);
+  return match ? Number(match[1]) : null;
+}
+
+function parseAmountFromString(value) {
+  if (typeof value !== 'string') return null;
+  const match = value.replace(/\s/g, '').match(/(\d{2,})(?:₽|rub|руб)/i);
+  return match ? Number(match[1]) : null;
+}
+
+function extractDiscount(item) {
+  const percent = firstDefined(
+    item.discount_percent,
+    item.percent,
+    typeof item.discount === 'number' && item.discount <= 100 ? item.discount : undefined,
+    parsePercentFromString(item.discount_text),
+    parsePercentFromString(item.title),
+    parsePercentFromString(item.name)
+  );
+
+  const amount = firstDefined(
+    item.discount_amount,
+    item.amount,
+    typeof item.discount === 'number' && item.discount > 100 ? item.discount : undefined,
+    parseAmountFromString(item.discount_text),
+    parseAmountFromString(item.title),
+    parseAmountFromString(item.name)
+  );
+
+  return { percent: percent ?? null, amount: amount ?? null };
+}
+
+function extractDate(item) {
+  const raw = firstDefined(
+    item.valid_until,
+    item.expiry_date,
+    item.valid_to,
+    item.expires_at,
+    item.expire_at,
+    item.end_date,
+    item.date_to,
+    item.date_end
+  );
+  return raw || null;
+}
+
+function extractPromocode(item) {
+  return firstDefined(
+    item.promocode,
+    item.promo_code,
+    item.code,
+    item.coupon_code,
+    item.coupon,
+    item.token
+  ) || null;
+}
+
+function extractLandingUrl(item) {
+  return firstDefined(
+    item.landing_url,
+    item.url,
+    item.link,
+    item.tracking_link,
+    item.landing
+  ) || null;
+}
+
+function extractImageUrl(item) {
+  return firstDefined(
+    item.image_url,
+    item.image,
+    item.logo,
+    item.icon
+  ) || '/images/default-promo.png';
+}
+
+function extractTitle(item) {
+  return firstDefined(
+    item.title,
+    item.name,
+    item.offer,
+    item.brand,
+    item.advertiser
+  ) || 'Промокод';
+}
+
+function extractDescription(item) {
+  return firstDefined(
+    item.description,
+    item.details,
+    item.text,
+    item.subtitle,
+    item.note
+  ) || 'Описание недоступно';
+}
+
+function extractAdvertiser(item) {
+  return firstDefined(
+    item.advertiser_info,
+    item.brand,
+    item.advertiser,
+    item.partner
+  ) || null;
+}
+
 // Функция для загрузки промокодов из API Perfluence
 async function loadPromocodesFromAPI() {
     try {
@@ -71,28 +186,31 @@ async function loadPromocodesFromAPI() {
 
 // Функция для обработки данных промокодов
 function processPromocodesData(rawData) {
-    return rawData.map(item => ({
-        id: item.id || Math.random().toString(36).substr(2, 9),
-        title: item.title || item.name || 'Промокод',
-        description: item.description || 'Описание недоступно',
-        promocode: item.promocode || null,
-        discount_percent: item.discount_percent || null,
-        discount_amount: item.discount_amount || null,
-        valid_until: item.valid_until || item.expiry_date || null,
-        landing_url: item.landing_url || null,
-        image_url: item.image_url || '/images/default-promo.png',
-        conditions: item.conditions || null,
-        advertiser_info: item.advertiser_info || null,
-        category: determineCategory(item),
-        is_top: determineIfTop(item),
-        created_at: new Date().toISOString()
-    }));
+  return rawData.map(item => {
+    const { percent, amount } = extractDiscount(item);
+    return {
+      id: item.id || Math.random().toString(36).substr(2, 9),
+      title: extractTitle(item),
+      description: extractDescription(item),
+      promocode: extractPromocode(item),
+      discount_percent: percent,
+      discount_amount: amount,
+      valid_until: extractDate(item),
+      landing_url: extractLandingUrl(item),
+      image_url: extractImageUrl(item),
+      conditions: item.conditions || item.terms || null,
+      advertiser_info: extractAdvertiser(item),
+      category: determineCategory(item),
+      is_top: determineIfTop({ discount_percent: percent, discount_amount: amount, is_top: item.is_top }),
+      created_at: new Date().toISOString()
+    };
+  });
 }
 
 // Функция для определения категории промокода
 function determineCategory(item) {
-    const title = (item.title || item.name || '').toLowerCase();
-    const description = (item.description || '').toLowerCase();
+    const title = (item.title || item.name || item.brand || '').toLowerCase();
+    const description = (item.description || item.details || '').toLowerCase();
     
     if (title.includes('еда') || title.includes('ресторан') || title.includes('доставка') ||
         description.includes('еда') || description.includes('ресторан') || description.includes('доставка')) {
