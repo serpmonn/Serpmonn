@@ -38,46 +38,22 @@
         text-align: center;
       }
 
-      .news-title {
-        font-size: 3rem;
-        margin-bottom: 15px;
-        font-weight: 700;
-      }
+      .news-title { font-size: 3rem; margin-bottom: 15px; font-weight: 700; }
+      .news-subtitle { font-size: 1.2rem; opacity: 0.9; margin-bottom: 20px; }
 
-      .news-subtitle {
-        font-size: 1.2rem;
-        opacity: 0.9;
-        margin-bottom: 20px;
-      }
-
-      .news-stats {
-        display: flex;
-        justify-content: center;
-        gap: 30px;
-        flex-wrap: wrap;
-      }
-
-      .stat-item {
-        text-align: center;
-      }
-
-      .stat-number {
-        font-size: 2rem;
-        font-weight: bold;
-        display: block;
-      }
-
-      .stat-label {
-        font-size: 0.9rem;
-        opacity: 0.8;
-      }
+      .news-stats { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+      .stat-item { text-align: center; }
+      .stat-number { font-size: 2rem; font-weight: bold; display: block; }
+      .stat-label { font-size: 0.9rem; opacity: 0.8; }
 
       .news-categories {
         display: flex;
         gap: 15px;
         margin-bottom: 30px;
-        flex-wrap: wrap;
-        justify-content: center;
+        flex-wrap: nowrap;
+        justify-content: flex-end; /* выравнивание к правому краю */
+        overflow-x: auto; /* горизонтальный скролл по кнопкам */
+        -webkit-overflow-scrolling: touch;
       }
 
       .category-btn {
@@ -90,43 +66,19 @@
         font-weight: 500;
         transition: all 0.3s ease;
         cursor: pointer;
+        white-space: nowrap;
       }
 
-      .category-btn:hover,
-      .category-btn.active {
-        background: #007bff;
-        color: white;
-        border-color: #007bff;
-      }
+      .category-btn:hover, .category-btn.active { background: #007bff; color: white; border-color: #007bff; }
 
-      .search-box {
-        max-width: 500px;
-        margin: 0 auto 30px;
-        position: relative;
-      }
+      .search-box { max-width: 500px; margin: 0 auto 30px; position: relative; }
+      .search-input { width: 100%; padding: 15px 20px; border: 2px solid #e9ecef; border-radius: 25px; font-size: 1rem; outline: none; transition: border-color 0.3s ease; }
+      .search-input:focus { border-color: #007bff; }
 
-      .search-input {
-        width: 100%;
-        padding: 15px 20px;
-        border: 2px solid #e9ecef;
-        border-radius: 25px;
-        font-size: 1rem;
-        outline: none;
-        transition: border-color 0.3s ease;
-      }
-
-      .search-input:focus {
-        border-color: #007bff;
-      }
-
-      .news-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-        gap: 25px;
-        margin-bottom: 40px;
-      }
+      .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 40px; }
 
       .news-card {
+        position: relative; /* ограничиваем кликабельную область ссылкой внутри карточки */
         background: white;
         border-radius: 12px;
         overflow: hidden;
@@ -134,157 +86,35 @@
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         cursor: pointer;
       }
+      .news-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+      .news-card-image { height: 200px; background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; }
+      .news-card-content { padding: 25px; }
+      .news-card-category { display: inline-block; padding: 5px 12px; background: #e9ecef; color: #495057; border-radius: 15px; font-size: 0.8rem; font-weight: 500; margin-bottom: 15px; }
+      .news-card-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 10px; color: #333; line-height: 1.4; }
+      .news-card-excerpt { color: #6c757d; margin-bottom: 15px; line-height: 1.6; }
+      .news-card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: #6c757d; }
 
-      .news-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-      }
+      /* Ссылка-оверлей только внутри карточки */
+      .news-card-link { position: absolute; inset: 0; z-index: 1; }
 
-      .news-card-image {
-        height: 200px;
-        background: linear-gradient(45deg, #f093fb 0%, #f5576c 100%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        color: white;
-        font-size: 3rem;
-      }
+      .rss-section { background: #fff; border-radius: 12px; padding: 30px; text-align: center; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+      .rss-title { font-size: 1.5rem; margin-bottom: 15px; color: #333; }
+      .rss-description { color: #6c757d; margin-bottom: 20px; }
+      .rss-btn { display: inline-block; padding: 12px 30px; background: #ff6b35; color: white; text-decoration: none; border-radius: 25px; font-weight: 500; transition: background 0.3s ease; }
+      .rss-btn:hover { background: #e55a2b; }
 
-      .news-card-content {
-        padding: 25px;
-      }
+      .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 40px; }
+      .page-btn { padding: 10px 15px; border: 1px solid #dee2e6; background: white; color: #007bff; text-decoration: none; border-radius: 6px; transition: all 0.3s ease; }
+      .page-btn:hover, .page-btn.active { background: #007bff; color: white; border-color: #007bff; }
 
-      .news-card-category {
-        display: inline-block;
-        padding: 5px 12px;
-        background: #e9ecef;
-        color: #495057;
-        border-radius: 15px;
-        font-size: 0.8rem;
-        font-weight: 500;
-        margin-bottom: 15px;
-      }
-
-      .news-card-title {
-        font-size: 1.3rem;
-        font-weight: 600;
-        margin-bottom: 10px;
-        color: #333;
-        line-height: 1.4;
-      }
-
-      .news-card-excerpt {
-        color: #6c757d;
-        margin-bottom: 15px;
-        line-height: 1.6;
-      }
-
-      .news-card-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        font-size: 0.9rem;
-        color: #6c757d;
-      }
-
-      .news-card-date {
-        font-weight: 500;
-      }
-
-      .news-card-read-time {
-        background: #f8f9fa;
-        padding: 3px 8px;
-        border-radius: 10px;
-      }
-
-      .rss-section {
-        background: #fff;
-        border-radius: 12px;
-        padding: 30px;
-        text-align: center;
-        margin-bottom: 30px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      }
-
-      .rss-title {
-        font-size: 1.5rem;
-        margin-bottom: 15px;
-        color: #333;
-      }
-
-      .rss-description {
-        color: #6c757d;
-        margin-bottom: 20px;
-      }
-
-      .rss-btn {
-        display: inline-block;
-        padding: 12px 30px;
-        background: #ff6b35;
-        color: white;
-        text-decoration: none;
-        border-radius: 25px;
-        font-weight: 500;
-        transition: background 0.3s ease;
-      }
-
-      .rss-btn:hover {
-        background: #e55a2b;
-      }
-
-      .pagination {
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-        margin-top: 40px;
-      }
-
-      .page-btn {
-        padding: 10px 15px;
-        border: 1px solid #dee2e6;
-        background: white;
-        color: #007bff;
-        text-decoration: none;
-        border-radius: 6px;
-        transition: all 0.3s ease;
-      }
-
-      .page-btn:hover,
-      .page-btn.active {
-        background: #007bff;
-        color: white;
-        border-color: #007bff;
-      }
-
-      .no-results {
-        text-align: center;
-        padding: 60px 20px;
-        color: #6c757d;
-      }
-
-      .no-results h3 {
-        margin-bottom: 15px;
-        color: #333;
-      }
+      .no-results { text-align: center; padding: 60px 20px; color: #6c757d; }
+      .no-results h3 { margin-bottom: 15px; color: #333; }
 
       @media (max-width: 768px) {
-        .news-title {
-          font-size: 2rem;
-        }
-        
-        .news-grid {
-          grid-template-columns: 1fr;
-        }
-        
-        .news-categories {
-          justify-content: flex-start;
-          overflow-x: auto;
-          padding-bottom: 10px;
-        }
-        
-        .category-btn {
-          white-space: nowrap;
-        }
+        .news-title { font-size: 2rem; }
+        .news-grid { grid-template-columns: 1fr; }
+        .news-categories { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; }
+        .category-btn { white-space: nowrap; }
       }
     </style>
   </head>
@@ -352,7 +182,7 @@
             <span class="news-card-read-time">5 мин</span>
           </div>
         </div>
-        <a href="/frontend/news/updates-august-17.html" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;"></a>
+        <a class="news-card-link" href="/frontend/news/updates-august-17.html" aria-label="Читать"></a>
       </div>
 
       <!-- IT-статья про веб-разработку -->
@@ -367,22 +197,7 @@
             <span class="news-card-read-time">12 мин</span>
           </div>
         </div>
-        <a href="/frontend/news/articles/web-development-guide.html" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;"></a>
-      </div>
-
-      <!-- IT-статья про технологии -->
-      <div class="news-card" data-category="articles" data-tags="статья,технологии,тренды,веб-разработка">
-        <div class="news-card-image">🚀</div>
-        <div class="news-card-content">
-          <span class="news-card-category">IT</span>
-          <h3 class="news-card-title">Тренды веб-технологий 2025 года</h3>
-          <p class="news-card-excerpt">Обзор самых важных технологических трендов в веб-разработке 2024 года. AI, WebAssembly, новые фреймворки и инструменты.</p>
-          <div class="news-card-meta">
-            <span class="news-card-date">20 августа 2024</span>
-            <span class="news-card-read-time">10 мин</span>
-          </div>
-        </div>
-        <a href="/frontend/news/articles/web-tech-trends-2024.html" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;"></a>
+        <a class="news-card-link" href="/frontend/news/articles/web-development-guide.html" aria-label="Читать"></a>
       </div>
 
       <!-- Статья об амортизации -->
@@ -397,59 +212,7 @@
             <span class="news-card-read-time">8 мин</span>
           </div>
         </div>
-        <a href="/frontend/news/articles/how-to-calculate-depreciation.html" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 1;"></a>
-      </div>
-
-      <div class="news-card" data-category="articles" data-tags="статья,топливо,экономия,водитель">
-        <div class="news-card-image">⛽</div>
-        <div class="news-card-content">
-          <span class="news-card-category">Статьи</span>
-          <h3 class="news-card-title">10 способов сэкономить на топливе</h3>
-          <p class="news-card-excerpt">Практические советы по снижению расхода топлива. От стиля вождения до технического обслуживания автомобиля.</p>
-          <div class="news-card-meta">
-            <span class="news-card-date">Скоро</span>
-            <span class="news-card-read-time">6 мин</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" data-category="engineering" data-tags="инженерия,инструменты,ремонт,техника">
-        <div class="news-card-image">🔧</div>
-        <div class="news-card-content">
-          <span class="news-card-category">Инженерия</span>
-          <h3 class="news-card-title">Незаменимые инструменты для инженера-ремонтника</h3>
-          <p class="news-card-excerpt">Обзор полезных инструментов и калькуляторов, которые помогут в работе с бытовой техникой и электроникой.</p>
-          <div class="news-card-meta">
-            <span class="news-card-date">Скоро</span>
-            <span class="news-card-read-time">7 мин</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" data-category="logistics" data-tags="логистика,транспорт,расчеты,оптимизация">
-        <div class="news-card-image">🚛</div>
-        <div class="news-card-content">
-          <span class="news-card-category">Логистика</span>
-          <h3 class="news-card-title">Оптимизация логистических процессов с помощью калькуляторов</h3>
-          <p class="news-card-excerpt">Как использовать наши инструменты для оптимизации транспортных расходов и планирования маршрутов.</p>
-          <div class="news-card-meta">
-            <span class="news-card-date">Скоро</span>
-            <span class="news-card-read-time">10 мин</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="news-card" data-category="tutorials" data-tags="обучение,конвертер,единицы,измерения">
-        <div class="news-card-image">📏</div>
-        <div class="news-card-content">
-          <span class="news-card-category">Обучение</span>
-          <h3 class="news-card-title">Конвертер единиц измерения: полное руководство</h3>
-          <p class="news-card-excerpt">Изучите все возможности конвертера единиц. От простых преобразований до сложных инженерных расчётов.</p>
-          <div class="news-card-meta">
-            <span class="news-card-date">Скоро</span>
-            <span class="news-card-read-time">9 мин</span>
-          </div>
-        </div>
+        <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-depreciation.html" aria-label="Читать"></a>
       </div>
     </div>
 
@@ -473,11 +236,8 @@
       // Обработчик категорий
       categoryBtns.forEach(btn => {
         btn.addEventListener('click', () => {
-          // Убираем активный класс у всех кнопок
           categoryBtns.forEach(b => b.classList.remove('active'));
-          // Добавляем активный класс к нажатой кнопке
           btn.classList.add('active');
-          
           const category = btn.dataset.category;
           filterNews(category, searchInput.value);
         });
@@ -490,53 +250,31 @@
         filterNews(activeCategory, searchTerm);
       });
 
-      // Функция фильтрации
+      // Фильтрация
       function filterNews(category, searchTerm) {
         newsCards.forEach(card => {
           const cardCategory = card.dataset.category;
-          const cardTags = card.dataset.tags.toLowerCase();
+          const cardTags = (card.dataset.tags || '').toLowerCase();
           const matchesCategory = category === 'all' || cardCategory === category;
-          const matchesSearch = searchTerm === '' || cardTags.includes(searchTerm) || 
-                               card.querySelector('.news-card-title').textContent.toLowerCase().includes(searchTerm) ||
-                               card.querySelector('.news-card-excerpt').textContent.toLowerCase().includes(searchTerm);
-          
-          if (matchesCategory && matchesSearch) {
-            card.style.display = 'block';
-          } else {
-            card.style.display = 'none';
-          }
+          const title = card.querySelector('.news-card-title')?.textContent.toLowerCase() || '';
+          const excerpt = card.querySelector('.news-card-excerpt')?.textContent.toLowerCase() || '';
+          const matchesSearch = !searchTerm || cardTags.includes(searchTerm) || title.includes(searchTerm) || excerpt.includes(searchTerm);
+          card.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
         });
-
-        // Проверяем, есть ли результаты
-        const visibleCards = Array.from(newsCards).filter(card => card.style.display !== 'none');
-        if (visibleCards.length === 0) {
-          showNoResults();
-        } else {
-          hideNoResults();
-        }
+        const visible = Array.from(newsCards).some(card => card.style.display !== 'none');
+        if (!visible) showNoResults(); else hideNoResults();
       }
 
-      // Показать сообщение "нет результатов"
       function showNoResults() {
-        let noResults = document.querySelector('.no-results');
-        if (!noResults) {
-          noResults = document.createElement('div');
-          noResults.className = 'no-results';
-          noResults.innerHTML = `
-            <h3>🔍 Ничего не найдено</h3>
-            <p>Попробуйте изменить критерии поиска или выбрать другую категорию</p>
-          `;
-          document.getElementById('newsGrid').after(noResults);
+        let el = document.querySelector('.no-results');
+        if (!el) {
+          el = document.createElement('div');
+          el.className = 'no-results';
+          el.innerHTML = `<h3>🔍 Ничего не найдено</h3><p>Попробуйте изменить критерии поиска или выбрать другую категорию</p>`;
+          document.getElementById('newsGrid')?.after(el);
         }
       }
-
-      // Скрыть сообщение "нет результатов"
-      function hideNoResults() {
-        const noResults = document.querySelector('.no-results');
-        if (noResults) {
-          noResults.remove();
-        }
-      }
+      function hideNoResults() { document.querySelector('.no-results')?.remove(); }
     </script>
   </body>
 </html>
