@@ -123,6 +123,9 @@ app.use(subscribeRouter);
 app.use('/promocodes', promocodesRoutes);
   // Подключаем маршруты для /promocodes
 
+app.use('/api/promocodes', promocodesRoutes);
+  // Дублируем маршруты под /api/promocodes для фронтенда
+
 app.use((err, req, res, next) => {
   // Обработчик ошибок (после всех роутов)
 
