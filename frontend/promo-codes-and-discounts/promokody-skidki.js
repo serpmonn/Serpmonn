@@ -11,51 +11,19 @@ let allPromocodes = []; // Все промокоды из API
 let filteredPromocodes = []; // Отфильтрованные промокоды
 let updateTimer = null;
 
-// Унифицированный выбор названия промо
+// Упрощённый выбор названия: используем только name из API (Perfluence)
 function getPromoTitle(promo) {
-    const pickName = (v) => {
-        if (!v) return undefined;
-        if (typeof v === 'string') return v.trim();
-        if (typeof v === 'object') {
-            // Популярные вложенные поля названия
-            const nested = v.title || v.name || v.text || v.label || v.value;
-            if (typeof nested === 'string') return nested.trim();
-        }
-        return undefined;
-    };
-
-    const containers = [promo, promo?.fields, promo?.data, promo?.attributes, promo?.meta];
-    for (const c of containers) {
-        const candidatesRaw = [
-            c?.title,
-            c?.name,
-            c?.brand,
-            c?.merchant,
-            c?.advertiser,
-            c?.brand_name,
-            c?.offer_name,
-            c?.campaign,
-            c?.program,
-            c?.title_text,
-            c?.project,
-            c?.group,
-            c?.partner,
-            c?.company,
-            c?.shop
-        ];
-        const candidates = candidatesRaw.map(pickName).filter(Boolean);
-        if (candidates.length > 0) return candidates[0];
+    if (promo && typeof promo.name === 'string' && promo.name.trim() !== '') {
+        return promo.name.trim();
     }
-
+    // Фолбэк: домен из landing_url, если есть
     try {
-        const url = promo?.landing_url || promo?.link || promo?.url || promo?.fields?.link || promo?.data?.url;
+        const url = promo?.landing_url || promo?.link || promo?.url;
         if (url) {
             const u = new URL(url, location.origin);
-            const host = u.hostname.replace(/^www\./, '');
-            return host;
+            return u.hostname.replace(/^www\./, '');
         }
     } catch (_) {}
-
     return 'Предложение партнёра';
 }
 
@@ -135,8 +103,8 @@ async function loadPromocodesFromAPI() {
         console.log('Получены данные от API:', result);
         
         if (result.status === 'success' && Array.isArray(result.data)) {
-            // Нормализуем названия и ключевые поля сразу после загрузки
-            allPromocodes = result.data.map(p => normalizePromo(p));
+            // Используем данные как есть, без нормализации
+            allPromocodes = result.data;
             filteredPromocodes = [...allPromocodes];
             
             // Сохраняем время последнего обновления
@@ -297,8 +265,8 @@ function createPromoCard(promo, isTopOffer = false) {
         </div>
         
         <div class="promo-card-footer">
-            ${promo.landing_url ? `
-                <a href="${promo.landing_url}" target="_blank" class="register-link">Перейти к партнёру</a>
+            ${promo.landing_url || promo.link || promo.url ? `
+                <a href="${promo.landing_url || promo.link || promo.url}" target="_blank" class="register-link">Перейти к партнёру</a>
             ` : ''}
             
             ${promo.advertiser_info ? `
@@ -389,8 +357,8 @@ function filterPromos() {
     const category = document.getElementById('categorySelect')?.value || '';
     
     filteredPromocodes = allPromocodes.filter(promo => {
-        const title = (getPromoTitle(promo) || '').toLowerCase();
-        const description = (promo.description || '').toLowerCase();
+        const title = (promo && typeof promo.name === 'string' ? promo.name : '').toLowerCase();
+        const description = (promo.description || promo.subtitle || '').toLowerCase();
         const promoCategory = promo.category || 'другие';
         
         const matchesSearch = title.includes(search) || description.includes(search) || search === '';
