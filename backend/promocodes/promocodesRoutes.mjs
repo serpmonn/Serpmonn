@@ -114,7 +114,7 @@ function flattenPerfluenceData(perfArray) {
       const promos = Array.isArray(group?.promocodes) ? group.promocodes : [];
 
       for (const promo of promos) {
-        const title = firstDefined(promo.name, project.name) || 'Промокод';
+        const title = firstDefined(project.name, promo.name) || 'Промокод';
         const description = firstDefined(promo.comment, stripHtml(project.product_info)) || 'Описание недоступно';
         const code = firstDefined(promo.code);
         const when = normalizeDate(firstDefined(promo.date));
