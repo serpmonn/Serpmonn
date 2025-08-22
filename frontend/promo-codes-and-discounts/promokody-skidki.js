@@ -58,6 +58,55 @@ function getPromoTitle(promo) {
     return 'Предложение партнёра';
 }
 
+// Нормализация полей промокода из разных источников API в единый формат
+function normalizePromo(raw) {
+    const pick = (...keys) => {
+        for (const k of keys) {
+            const v = raw?.[k];
+            if (v !== undefined && v !== null && String(v).trim() !== '') return v;
+        }
+        return undefined;
+    };
+
+    const norm = { ...raw };
+
+    // Название
+    norm.title = pick('title', 'name', 'brand', 'merchant', 'brand_name', 'offer_name', 'program', 'campaign', 'title_text', 'project', 'group', 'partner', 'company', 'shop');
+
+    // Описание
+    norm.description = pick('description', 'subtitle', 'details', 'text');
+
+    // Промокод
+    norm.promocode = pick('promocode', 'promo_code', 'code', 'coupon', 'coupon_code');
+
+    // Ссылка посадочная
+    norm.landing_url = pick('landing_url', 'link', 'url', 'landing', 'target_url');
+
+    // Изображение
+    norm.image_url = pick('image_url', 'image', 'picture', 'logo', 'logo_url', 'icon');
+
+    // Категория
+    norm.category = pick('category', 'group', 'project', 'type', 'segment') || 'другие';
+
+    // Скидки
+    const percent = pick('discount_percent', 'percent', 'percentage', 'discountPercentage');
+    const amount = pick('discount_amount', 'amount', 'value', 'discountValue');
+    norm.discount_percent = percent ? Number(String(percent).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
+    norm.discount_amount = amount ? Number(String(amount).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
+
+    // Срок действия
+    const expiry = pick('valid_until', 'expiry_date', 'date_end', 'valid_to', 'end_date', 'expires_at');
+    norm.expiry_date = expiry || norm.expiry_date;
+
+    // Рекламодатель / юридическая информация
+    const advertiser = pick('advertiser_info', 'advertiser', 'merchant', 'brand');
+    if (!norm.advertiser_info && advertiser) {
+        norm.advertiser_info = typeof advertiser === 'string' ? advertiser : JSON.stringify(advertiser);
+    }
+
+    return norm;
+}
+
 // Функция для загрузки промокодов из нашего API
 async function loadPromocodesFromAPI() {
     try {
@@ -73,11 +122,8 @@ async function loadPromocodesFromAPI() {
         console.log('Получены данные от API:', result);
         
         if (result.status === 'success' && Array.isArray(result.data)) {
-            // Нормализуем названия сразу после загрузки
-            allPromocodes = result.data.map(p => ({
-                ...p,
-                title: (p && (p.title || p.name || (typeof p.brand === 'string' ? p.brand : undefined) || (typeof p.merchant === 'string' ? p.merchant : undefined))) || undefined
-            }));
+            // Нормализуем названия и ключевые поля сразу после загрузки
+            allPromocodes = result.data.map(p => normalizePromo(p));
             filteredPromocodes = [...allPromocodes];
             
             // Сохраняем время последнего обновления
