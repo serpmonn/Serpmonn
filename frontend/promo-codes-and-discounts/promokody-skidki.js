@@ -11,10 +11,10 @@ let allPromocodes = []; // Все промокоды из API
 let filteredPromocodes = []; // Отфильтрованные промокоды
 let updateTimer = null;
 
-// Упрощённый выбор названия: используем только name из API (Perfluence)
+// Упрощённый выбор названия: используем title из API (Perfluence)
 function getPromoTitle(promo) {
-    if (promo && typeof promo.name === 'string' && promo.name.trim() !== '') {
-        return promo.name.trim();
+    if (promo && typeof promo.title === 'string' && promo.title.trim() !== '') {
+        return promo.title.trim();
     }
     // Фолбэк: домен из landing_url, если есть
     try {
@@ -356,14 +356,14 @@ function filterPromos() {
     const search = document.getElementById('searchInput').value.toLowerCase();
     const category = document.getElementById('categorySelect')?.value || '';
     
-    filteredPromocodes = allPromocodes.filter(promo => {
-        const title = (promo && typeof promo.name === 'string' ? promo.name : '').toLowerCase();
+        filteredPromocodes = allPromocodes.filter(promo => {
+        const title = (promo && typeof promo.title === 'string' ? promo.title : '').toLowerCase();
         const description = (promo.description || promo.subtitle || '').toLowerCase();
         const promoCategory = promo.category || 'другие';
-        
+
         const matchesSearch = title.includes(search) || description.includes(search) || search === '';
         const matchesCategory = category === '' || promoCategory === category;
-        
+
         return matchesSearch && matchesCategory;
     });
     
