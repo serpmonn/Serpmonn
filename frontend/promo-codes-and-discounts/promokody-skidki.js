@@ -237,7 +237,19 @@ function createPromoCard(promo, isTopOffer = false) {
         `Скидка ${promo.discount_percent}%` : 
         promo.discount_amount ? `Скидка ${promo.discount_amount} ₽` : 'Скидка';
 
-    const expiryDate = new Date(promo.valid_until || promo.expiry_date || '9999-12-31');
+    // Обрабатываем дату окончания действия промокода
+    let expiryDate;
+    if (promo.valid_until || promo.expiry_date) {
+        const dateStr = promo.valid_until || promo.expiry_date;
+        // Если дата в формате YYYY-MM-DD (без времени), добавляем 23:59
+        if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
+            expiryDate = new Date(dateStr + 'T23:59:59');
+        } else {
+            expiryDate = new Date(dateStr);
+        }
+    } else {
+        expiryDate = new Date('9999-12-31');
+    }
 
     const isExpired = expiryDate < new Date();
 
