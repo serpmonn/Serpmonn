@@ -111,9 +111,11 @@ function renderPromocodes() {
     const groupedPromocodes = groupPromocodesByCategory(sortedPromocodes);
     
     // Отображаем топ-офферы
+    let shownCount = 0;
     if (groupedPromocodes.top && groupedPromocodes.top.length > 0) {
         groupedPromocodes.top.forEach(promo => {
             catalog.appendChild(createPromoCard(promo, true));
+            shownCount++;
         });
     }
     
@@ -124,10 +126,24 @@ function renderPromocodes() {
             if (promos && promos.length > 0) {
                 promos.forEach(promo => {
                     catalog.appendChild(createPromoCard(promo, false));
+                    shownCount++;
                 });
             }
         }
     });
+
+    // Обновляем счетчик "Показано на странице"
+    const shownEl = document.getElementById('shownPromos');
+    if (shownEl) shownEl.textContent = shownCount;
+
+    // Диагностика расхождения
+    try {
+        const totalFromApi = allPromocodes?.length ?? 0;
+        if (totalFromApi && shownCount < totalFromApi) {
+            console.warn(`[promocodes] Показано ${shownCount} из ${totalFromApi}. Возможно, часть отфильтрована/скрыта.`);
+        }
+    } catch (_) {}
+
 }
 
 // Функция для группировки промокодов по категориям
