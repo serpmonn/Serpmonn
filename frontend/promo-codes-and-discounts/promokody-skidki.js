@@ -24,30 +24,31 @@ function getPromoTitle(promo) {
         return undefined;
     };
 
-    const candidatesRaw = [
-        promo?.title,
-        promo?.name,
-        promo?.brand,
-        promo?.merchant,
-        promo?.advertiser,
-        promo?.brand_name,
-        promo?.offer_name,
-        promo?.campaign,
-        promo?.program,
-        promo?.title_text,
-        promo?.project,
-        promo?.group,
-        promo?.partner,
-        promo?.company,
-        promo?.shop
-    ];
-
-    const candidates = candidatesRaw.map(pickName).filter(Boolean);
-
-    if (candidates.length > 0) return candidates[0];
+    const containers = [promo, promo?.fields, promo?.data, promo?.attributes, promo?.meta];
+    for (const c of containers) {
+        const candidatesRaw = [
+            c?.title,
+            c?.name,
+            c?.brand,
+            c?.merchant,
+            c?.advertiser,
+            c?.brand_name,
+            c?.offer_name,
+            c?.campaign,
+            c?.program,
+            c?.title_text,
+            c?.project,
+            c?.group,
+            c?.partner,
+            c?.company,
+            c?.shop
+        ];
+        const candidates = candidatesRaw.map(pickName).filter(Boolean);
+        if (candidates.length > 0) return candidates[0];
+    }
 
     try {
-        const url = promo?.landing_url || promo?.link || promo?.url;
+        const url = promo?.landing_url || promo?.link || promo?.url || promo?.fields?.link || promo?.data?.url;
         if (url) {
             const u = new URL(url, location.origin);
             const host = u.hostname.replace(/^www\./, '');
@@ -60,48 +61,60 @@ function getPromoTitle(promo) {
 
 // Нормализация полей промокода из разных источников API в единый формат
 function normalizePromo(raw) {
-    const pick = (...keys) => {
-        for (const k of keys) {
-            const v = raw?.[k];
-            if (v !== undefined && v !== null && String(v).trim() !== '') return v;
+    const pickString = (val) => {
+        if (typeof val === 'string') return val.trim();
+        if (val && typeof val === 'object') {
+            const nested = val.title || val.name || val.text || val.label || val.value;
+            if (typeof nested === 'string') return nested.trim();
+        }
+        return undefined;
+    };
+
+    const pickFromContainers = (keys) => {
+        const containers = [raw, raw?.fields, raw?.data, raw?.attributes, raw?.meta];
+        for (const c of containers) {
+            for (const k of keys) {
+                const s = pickString(c?.[k]);
+                if (s) return s;
+            }
         }
         return undefined;
     };
 
     const norm = { ...raw };
 
-    // Название
-    norm.title = pick('title', 'name', 'brand', 'merchant', 'brand_name', 'offer_name', 'program', 'campaign', 'title_text', 'project', 'group', 'partner', 'company', 'shop');
+    // Название (через универсальный резолвер поверх нормализации)
+    norm.title = getPromoTitle(raw);
 
     // Описание
-    norm.description = pick('description', 'subtitle', 'details', 'text');
+    norm.description = pickFromContainers(['description', 'subtitle', 'details', 'text']);
 
     // Промокод
-    norm.promocode = pick('promocode', 'promo_code', 'code', 'coupon', 'coupon_code');
+    norm.promocode = pickFromContainers(['promocode', 'promo_code', 'code', 'coupon', 'coupon_code']);
 
     // Ссылка посадочная
-    norm.landing_url = pick('landing_url', 'link', 'url', 'landing', 'target_url');
+    norm.landing_url = pickFromContainers(['landing_url', 'link', 'url', 'landing', 'target_url']);
 
     // Изображение
-    norm.image_url = pick('image_url', 'image', 'picture', 'logo', 'logo_url', 'icon');
+    norm.image_url = pickFromContainers(['image_url', 'image', 'picture', 'logo', 'logo_url', 'icon']);
 
     // Категория
-    norm.category = pick('category', 'group', 'project', 'type', 'segment') || 'другие';
+    norm.category = pickFromContainers(['category', 'group', 'project', 'type', 'segment']) || 'другие';
 
     // Скидки
-    const percent = pick('discount_percent', 'percent', 'percentage', 'discountPercentage');
-    const amount = pick('discount_amount', 'amount', 'value', 'discountValue');
-    norm.discount_percent = percent ? Number(String(percent).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
-    norm.discount_amount = amount ? Number(String(amount).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
+    const percentRaw = pickFromContainers(['discount_percent', 'percent', 'percentage', 'discountPercentage']);
+    const amountRaw = pickFromContainers(['discount_amount', 'amount', 'value', 'discountValue']);
+    norm.discount_percent = percentRaw ? Number(String(percentRaw).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
+    norm.discount_amount = amountRaw ? Number(String(amountRaw).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
 
     // Срок действия
-    const expiry = pick('valid_until', 'expiry_date', 'date_end', 'valid_to', 'end_date', 'expires_at');
+    const expiry = pickFromContainers(['valid_until', 'expiry_date', 'date_end', 'valid_to', 'end_date', 'expires_at']);
     norm.expiry_date = expiry || norm.expiry_date;
 
     // Рекламодатель / юридическая информация
-    const advertiser = pick('advertiser_info', 'advertiser', 'merchant', 'brand');
-    if (!norm.advertiser_info && advertiser) {
-        norm.advertiser_info = typeof advertiser === 'string' ? advertiser : JSON.stringify(advertiser);
+    const adv = pickFromContainers(['advertiser_info', 'advertiser', 'merchant', 'brand']);
+    if (!norm.advertiser_info && adv) {
+        norm.advertiser_info = adv;
     }
 
     return norm;
@@ -376,7 +389,7 @@ function filterPromos() {
     const category = document.getElementById('categorySelect')?.value || '';
     
     filteredPromocodes = allPromocodes.filter(promo => {
-        const title = (promo.title || promo.name || '').toLowerCase();
+        const title = (getPromoTitle(promo) || '').toLowerCase();
         const description = (promo.description || '').toLowerCase();
         const promoCategory = promo.category || 'другие';
         
