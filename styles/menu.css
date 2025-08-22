@@ -250,17 +250,102 @@
 /* Адаптивность для мобильных устройств */
 @media (max-width: 600px) {
     .menu-container {
-        max-width: 75%;
+        max-width: 85%;
+        max-height: 80vh; /* Ограничиваем высоту меню */
+        overflow-y: auto; /* Добавляем вертикальный скроллинг */
+        overflow-x: hidden; /* Скрываем горизонтальный скроллинг */
+        top: 10px; /* Уменьшаем отступ сверху */
+        right: 5px; /* Уменьшаем отступ справа */
+        padding: 8px; /* Уменьшаем внутренние отступы */
+        /* Стили для скроллбара */
+        scrollbar-width: thin;
+        scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
+    }
+    
+    /* Стили для скроллбара в WebKit браузерах */
+    .menu-container::-webkit-scrollbar {
+        width: 4px;
+    }
+    
+    .menu-container::-webkit-scrollbar-track {
+        background: transparent;
+    }
+    
+    .menu-container::-webkit-scrollbar-thumb {
+        background-color: rgba(0, 0, 0, 0.3);
+        border-radius: 2px;
+    }
+    
+    .menu-container::-webkit-scrollbar-thumb:hover {
+        background-color: rgba(0, 0, 0, 0.5);
+    }
+    
+    .menu-container a {
+        padding: 8px; /* Уменьшаем отступы для элементов меню */
+        font-size: 0.9rem; /* Немного уменьшаем размер шрифта */
     }
     
     .submenu-container {
-        padding-left: 15px;
+        padding-left: 12px; /* Уменьшаем отступ подменю */
     }
     
     .submenu-container a {
-        font-size: 0.85rem;
-        padding: 6px 10px;
-        font-weight: bold; /* Добавляем жирный шрифт для мобильной версии */
+        font-size: 0.8rem; /* Уменьшаем размер шрифта в подменю */
+        padding: 5px 8px; /* Уменьшаем отступы в подменю */
+        font-weight: bold;
+    }
+    
+    /* Уменьшаем размер иконок на мобильных */
+    .menu-container .icon {
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+    }
+    
+    /* Делаем кнопки более компактными */
+    .menu-button {
+        top: 5px;
+        right: 5px;
+        padding: 8px;
+        font-size: 20px;
+    }
+}
+
+/* Дополнительные стили для очень маленьких экранов */
+@media (max-width: 480px) {
+    .menu-container {
+        max-width: 90%;
+        max-height: 75vh; /* Еще меньше высота */
+        padding: 6px; /* Еще меньше отступы */
+    }
+    
+    .menu-container a {
+        padding: 6px; /* Еще меньше отступы */
+        font-size: 0.85rem; /* Еще меньше шрифт */
+    }
+    
+    .submenu-container {
+        padding-left: 10px; /* Еще меньше отступ подменю */
+    }
+    
+    .submenu-container a {
+        font-size: 0.75rem; /* Еще меньше шрифт в подменю */
+        padding: 4px 6px; /* Еще меньше отступы в подменю */
+    }
+    
+    /* Еще меньше иконки */
+    .menu-container .icon {
+        width: 14px;
+        height: 14px;
+        margin-right: 6px;
+    }
+    
+    /* Еще компактнее кнопка */
+    .menu-button {
+        top: 3px;
+        right: 3px;
+        padding: 6px;
+        font-size: 18px;
     }
 }
 
