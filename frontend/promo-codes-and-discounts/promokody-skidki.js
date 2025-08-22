@@ -73,8 +73,12 @@ async function loadPromocodesFromAPI() {
         console.log('Получены данные от API:', result);
         
         if (result.status === 'success' && Array.isArray(result.data)) {
-            allPromocodes = result.data;
-            filteredPromocodes = [...result.data];
+            // Нормализуем названия сразу после загрузки
+            allPromocodes = result.data.map(p => ({
+                ...p,
+                title: (p && (p.title || p.name || (typeof p.brand === 'string' ? p.brand : undefined) || (typeof p.merchant === 'string' ? p.merchant : undefined))) || undefined
+            }));
+            filteredPromocodes = [...allPromocodes];
             
             // Сохраняем время последнего обновления
             localStorage.setItem(API_CONFIG.lastUpdateKey, new Date().toISOString());
