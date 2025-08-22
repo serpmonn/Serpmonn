@@ -11,6 +11,37 @@ let allPromocodes = []; // Все промокоды из API
 let filteredPromocodes = []; // Отфильтрованные промокоды
 let updateTimer = null;
 
+// Унифицированный выбор названия промо
+function getPromoTitle(promo) {
+    const candidates = [
+        promo?.title,
+        promo?.name,
+        promo?.brand,
+        promo?.merchant,
+        promo?.advertiser,
+        promo?.brand_name,
+        promo?.offer_name,
+        promo?.campaign,
+        promo?.program,
+        promo?.title_text,
+        promo?.project,
+        promo?.group
+    ].map(v => (typeof v === 'string' ? v.trim() : v)).filter(Boolean);
+
+    if (candidates.length > 0) return candidates[0];
+
+    try {
+        const url = promo?.landing_url || promo?.link || promo?.url;
+        if (url) {
+            const u = new URL(url, location.origin);
+            const host = u.hostname.replace(/^www\./, '');
+            return host;
+        }
+    } catch (_) {}
+
+    return 'Предложение партнёра';
+}
+
 // Функция для загрузки промокодов из нашего API
 async function loadPromocodesFromAPI() {
     try {
@@ -152,21 +183,24 @@ function createPromoCard(promo, isTopOffer = false) {
     card.className = `promo-card ${isTopOffer ? 'top-offer' : ''}`;
     card.dataset.category = promo.category || 'другие';
     card.dataset.expiry = promo.valid_until || promo.expiry_date || '9999-12-31';
-    
+
+    const titleText = getPromoTitle(promo);
+
     const discountText = promo.discount_percent ? 
         `Скидка ${promo.discount_percent}%` : 
         promo.discount_amount ? `Скидка ${promo.discount_amount} ₽` : 'Скидка';
-    
+
     const expiryDate = new Date(promo.valid_until || promo.expiry_date || '9999-12-31');
+
     const isExpired = expiryDate < new Date();
-    
+
     card.innerHTML = `
         <div class="promo-card-content">
-            <img src="${promo.image_url || '/images/skidki-i-akcii.png'}" alt="${promo.title || promo.name || promo.brand || 'Промо‑предложение'}" width="50" height="50">
-            
+            <img src="${promo.image_url || '/images/skidki-i-akcii.png'}" alt="${titleText}" width="50" height="50">
+
             <div class="tag">${discountText}</div>
-            <h3>${promo.title || promo.name || promo.brand || promo.merchant || 'Предложение партнёра'}</h3>
-            
+            <h3>${titleText}</h3>
+
             ${promo.promocode ? `
                 <p class="code">${promo.promocode} 
                     <button class="submit-btn" onclick="copyToClipboard('${promo.promocode}')">Копировать</button>
@@ -174,9 +208,9 @@ function createPromoCard(promo, isTopOffer = false) {
             ` : ''}
             
             <p>${promo.description || promo.subtitle || 'Описание будет доступно позже'}</p>
-            
+
             ${promo.conditions ? `<p><strong>Условия:</strong> ${promo.conditions}</p>` : ''}
-            
+
             <p class="expiry ${isExpired ? 'expired' : ''}">
                 Действует до: ${formatDate(expiryDate)}
                 ${isExpired ? ' (Истёк)' : ''}
