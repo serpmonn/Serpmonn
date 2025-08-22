@@ -177,10 +177,10 @@ function createPromoCard(promo, isTopOffer = false) {
     
     card.innerHTML = `
         <div class="promo-card-content">
-            <img src="${promo.image_url || '/images/skidki-i-akcii.png'}" alt="${promo.title || promo.name}" width="50" height="50">
+            <img src="${promo.image_url || '/images/skidki-i-akcii.png'}" alt="${promo.title || promo.name || promo.brand || 'Промо‑предложение'}" width="50" height="50">
             
             <div class="tag">${discountText}</div>
-            <h3>${promo.title || promo.name}</h3>
+            <h3>${promo.title || promo.name || promo.brand || promo.merchant || 'Предложение партнёра'}</h3>
             
             ${promo.promocode ? `
                 <p class="code">${promo.promocode} 
@@ -188,7 +188,7 @@ function createPromoCard(promo, isTopOffer = false) {
                 </p>
             ` : ''}
             
-            <p>${promo.description || 'Описание недоступно'}</p>
+            <p>${promo.description || promo.subtitle || 'Описание будет доступно позже'}</p>
             
             ${promo.conditions ? `<p><strong>Условия:</strong> ${promo.conditions}</p>` : ''}
             
