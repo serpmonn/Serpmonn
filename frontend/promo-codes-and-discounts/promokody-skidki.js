@@ -13,7 +13,9 @@ let updateTimer = null;
 
 // Упрощённый выбор названия: используем title из API (Perfluence)
 function getPromoTitle(promo) {
+    console.log('getPromoTitle called with:', promo);
     if (promo && typeof promo.title === 'string' && promo.title.trim() !== '') {
+        console.log('Using promo.title:', promo.title);
         return promo.title.trim();
     }
     // Фолбэк: домен из landing_url, если есть
@@ -21,9 +23,12 @@ function getPromoTitle(promo) {
         const url = promo?.landing_url || promo?.link || promo?.url;
         if (url) {
             const u = new URL(url, location.origin);
-            return u.hostname.replace(/^www\./, '');
+            const domain = u.hostname.replace(/^www\./, '');
+            console.log('Using domain fallback:', domain);
+            return domain;
         }
     } catch (_) {}
+    console.log('Using default fallback');
     return 'Предложение партнёра';
 }
 
