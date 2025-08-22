@@ -251,7 +251,19 @@ function createPromoCard(promo, isTopOffer = false) {
         expiryDate = new Date('9999-12-31');
     }
 
-    const isExpired = expiryDate < new Date();
+    // Проверяем, истёк ли промокод (сравниваем с текущим временем)
+    const now = new Date();
+    const isExpired = expiryDate < now;
+    
+    // Отладочная информация для Сберздоровье
+    if (promo.title && promo.title.includes('Сберздоровье')) {
+        console.log('Сберздоровье отладка:');
+        console.log('  Название:', promo.title);
+        console.log('  valid_until из API:', promo.valid_until);
+        console.log('  expiryDate:', expiryDate);
+        console.log('  Сейчас:', now);
+        console.log('  Истёкший:', isExpired);
+    }
 
     card.innerHTML = `
         <div class="promo-card-content">
