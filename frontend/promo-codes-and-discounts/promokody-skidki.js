@@ -107,27 +107,12 @@ function renderPromocodes() {
         return dateA - dateB;
     });
     
-    // Группируем промокоды по категориям
-    const groupedPromocodes = groupPromocodesByCategory(sortedPromocodes);
-    
-    // Отображаем топ-офферы
-    if (groupedPromocodes.top && groupedPromocodes.top.length > 0) {
-        groupedPromocodes.top.forEach(promo => {
-            catalog.appendChild(createPromoCard(promo, true));
-        });
-    }
-    
-    // Отображаем остальные промокоды по категориям
-    Object.keys(groupedPromocodes).forEach(category => {
-        if (category !== 'top') {
-            const promos = groupedPromocodes[category];
-            if (promos && promos.length > 0) {
-                promos.forEach(promo => {
-                    catalog.appendChild(createPromoCard(promo, false));
-                });
-            }
-        }
+    // Показываем ВСЕ промокоды один-в-один (без группировки и фильтров)
+    sortedPromocodes.forEach(promo => {
+        const isTop = Boolean(promo.is_top);
+        catalog.appendChild(createPromoCard(promo, isTop));
     });
+
 }
 
 // Функция для группировки промокодов по категориям
@@ -177,10 +162,10 @@ function createPromoCard(promo, isTopOffer = false) {
     
     card.innerHTML = `
         <div class="promo-card-content">
-            <img src="${promo.image_url || '/images/skidki-i-akcii.png'}" alt="${promo.title || promo.name}" width="50" height="50">
+            <img src="${promo.image_url || '/images/skidki-i-akcii.png'}" alt="${promo.title || promo.name || promo.brand || 'Промо‑предложение'}" width="50" height="50">
             
             <div class="tag">${discountText}</div>
-            <h3>${promo.title || promo.name}</h3>
+            <h3>${promo.title || promo.name || promo.brand || promo.merchant || 'Предложение партнёра'}</h3>
             
             ${promo.promocode ? `
                 <p class="code">${promo.promocode} 
@@ -188,7 +173,7 @@ function createPromoCard(promo, isTopOffer = false) {
                 </p>
             ` : ''}
             
-            <p>${promo.description || 'Описание недоступно'}</p>
+            <p>${promo.description || promo.subtitle || 'Описание будет доступно позже'}</p>
             
             ${promo.conditions ? `<p><strong>Условия:</strong> ${promo.conditions}</p>` : ''}
             
