@@ -24,30 +24,31 @@ function getPromoTitle(promo) {
         return undefined;
     };
 
-    const candidatesRaw = [
-        promo?.title,
-        promo?.name,
-        promo?.brand,
-        promo?.merchant,
-        promo?.advertiser,
-        promo?.brand_name,
-        promo?.offer_name,
-        promo?.campaign,
-        promo?.program,
-        promo?.title_text,
-        promo?.project,
-        promo?.group,
-        promo?.partner,
-        promo?.company,
-        promo?.shop
-    ];
-
-    const candidates = candidatesRaw.map(pickName).filter(Boolean);
-
-    if (candidates.length > 0) return candidates[0];
+    const containers = [promo, promo?.fields, promo?.data, promo?.attributes, promo?.meta];
+    for (const c of containers) {
+        const candidatesRaw = [
+            c?.title,
+            c?.name,
+            c?.brand,
+            c?.merchant,
+            c?.advertiser,
+            c?.brand_name,
+            c?.offer_name,
+            c?.campaign,
+            c?.program,
+            c?.title_text,
+            c?.project,
+            c?.group,
+            c?.partner,
+            c?.company,
+            c?.shop
+        ];
+        const candidates = candidatesRaw.map(pickName).filter(Boolean);
+        if (candidates.length > 0) return candidates[0];
+    }
 
     try {
-        const url = promo?.landing_url || promo?.link || promo?.url;
+        const url = promo?.landing_url || promo?.link || promo?.url || promo?.fields?.link || promo?.data?.url;
         if (url) {
             const u = new URL(url, location.origin);
             const host = u.hostname.replace(/^www\./, '');
@@ -69,11 +70,13 @@ function normalizePromo(raw) {
         return undefined;
     };
 
-    const pick = (...keys) => {
-        for (const k of keys) {
-            const v = raw?.[k];
-            const s = pickString(v);
-            if (s) return s;
+    const pickFromContainers = (keys) => {
+        const containers = [raw, raw?.fields, raw?.data, raw?.attributes, raw?.meta];
+        for (const c of containers) {
+            for (const k of keys) {
+                const s = pickString(c?.[k]);
+                if (s) return s;
+            }
         }
         return undefined;
     };
@@ -84,32 +87,32 @@ function normalizePromo(raw) {
     norm.title = getPromoTitle(raw);
 
     // Описание
-    norm.description = pick('description', 'subtitle', 'details', 'text');
+    norm.description = pickFromContainers(['description', 'subtitle', 'details', 'text']);
 
     // Промокод
-    norm.promocode = pick('promocode', 'promo_code', 'code', 'coupon', 'coupon_code');
+    norm.promocode = pickFromContainers(['promocode', 'promo_code', 'code', 'coupon', 'coupon_code']);
 
     // Ссылка посадочная
-    norm.landing_url = pick('landing_url', 'link', 'url', 'landing', 'target_url');
+    norm.landing_url = pickFromContainers(['landing_url', 'link', 'url', 'landing', 'target_url']);
 
     // Изображение
-    norm.image_url = pick('image_url', 'image', 'picture', 'logo', 'logo_url', 'icon');
+    norm.image_url = pickFromContainers(['image_url', 'image', 'picture', 'logo', 'logo_url', 'icon']);
 
     // Категория
-    norm.category = pick('category', 'group', 'project', 'type', 'segment') || 'другие';
+    norm.category = pickFromContainers(['category', 'group', 'project', 'type', 'segment']) || 'другие';
 
     // Скидки
-    const percentRaw = pick('discount_percent', 'percent', 'percentage', 'discountPercentage');
-    const amountRaw = pick('discount_amount', 'amount', 'value', 'discountValue');
+    const percentRaw = pickFromContainers(['discount_percent', 'percent', 'percentage', 'discountPercentage']);
+    const amountRaw = pickFromContainers(['discount_amount', 'amount', 'value', 'discountValue']);
     norm.discount_percent = percentRaw ? Number(String(percentRaw).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
     norm.discount_amount = amountRaw ? Number(String(amountRaw).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
 
     // Срок действия
-    const expiry = pick('valid_until', 'expiry_date', 'date_end', 'valid_to', 'end_date', 'expires_at');
+    const expiry = pickFromContainers(['valid_until', 'expiry_date', 'date_end', 'valid_to', 'end_date', 'expires_at']);
     norm.expiry_date = expiry || norm.expiry_date;
 
     // Рекламодатель / юридическая информация
-    const adv = pick('advertiser_info', 'advertiser', 'merchant', 'brand');
+    const adv = pickFromContainers(['advertiser_info', 'advertiser', 'merchant', 'brand']);
     if (!norm.advertiser_info && adv) {
         norm.advertiser_info = adv;
     }
