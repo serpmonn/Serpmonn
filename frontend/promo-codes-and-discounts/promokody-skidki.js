@@ -60,18 +60,28 @@ function getPromoTitle(promo) {
 
 // Нормализация полей промокода из разных источников API в единый формат
 function normalizePromo(raw) {
+    const pickString = (val) => {
+        if (typeof val === 'string') return val.trim();
+        if (val && typeof val === 'object') {
+            const nested = val.title || val.name || val.text || val.label || val.value;
+            if (typeof nested === 'string') return nested.trim();
+        }
+        return undefined;
+    };
+
     const pick = (...keys) => {
         for (const k of keys) {
             const v = raw?.[k];
-            if (v !== undefined && v !== null && String(v).trim() !== '') return v;
+            const s = pickString(v);
+            if (s) return s;
         }
         return undefined;
     };
 
     const norm = { ...raw };
 
-    // Название
-    norm.title = pick('title', 'name', 'brand', 'merchant', 'brand_name', 'offer_name', 'program', 'campaign', 'title_text', 'project', 'group', 'partner', 'company', 'shop');
+    // Название (через универсальный резолвер поверх нормализации)
+    norm.title = getPromoTitle(raw);
 
     // Описание
     norm.description = pick('description', 'subtitle', 'details', 'text');
@@ -89,19 +99,19 @@ function normalizePromo(raw) {
     norm.category = pick('category', 'group', 'project', 'type', 'segment') || 'другие';
 
     // Скидки
-    const percent = pick('discount_percent', 'percent', 'percentage', 'discountPercentage');
-    const amount = pick('discount_amount', 'amount', 'value', 'discountValue');
-    norm.discount_percent = percent ? Number(String(percent).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
-    norm.discount_amount = amount ? Number(String(amount).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
+    const percentRaw = pick('discount_percent', 'percent', 'percentage', 'discountPercentage');
+    const amountRaw = pick('discount_amount', 'amount', 'value', 'discountValue');
+    norm.discount_percent = percentRaw ? Number(String(percentRaw).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
+    norm.discount_amount = amountRaw ? Number(String(amountRaw).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
 
     // Срок действия
     const expiry = pick('valid_until', 'expiry_date', 'date_end', 'valid_to', 'end_date', 'expires_at');
     norm.expiry_date = expiry || norm.expiry_date;
 
     // Рекламодатель / юридическая информация
-    const advertiser = pick('advertiser_info', 'advertiser', 'merchant', 'brand');
-    if (!norm.advertiser_info && advertiser) {
-        norm.advertiser_info = typeof advertiser === 'string' ? advertiser : JSON.stringify(advertiser);
+    const adv = pick('advertiser_info', 'advertiser', 'merchant', 'brand');
+    if (!norm.advertiser_info && adv) {
+        norm.advertiser_info = adv;
     }
 
     return norm;
@@ -376,7 +386,7 @@ function filterPromos() {
     const category = document.getElementById('categorySelect')?.value || '';
     
     filteredPromocodes = allPromocodes.filter(promo => {
-        const title = (promo.title || promo.name || '').toLowerCase();
+        const title = (getPromoTitle(promo) || '').toLowerCase();
         const description = (promo.description || '').toLowerCase();
         const promoCategory = promo.category || 'другие';
         
