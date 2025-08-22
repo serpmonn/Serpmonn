@@ -13,9 +13,7 @@ let updateTimer = null;
 
 // Упрощённый выбор названия: используем title из API (Perfluence)
 function getPromoTitle(promo) {
-    console.log('getPromoTitle called with:', promo);
     if (promo && typeof promo.title === 'string' && promo.title.trim() !== '') {
-        console.log('Using promo.title:', promo.title);
         return promo.title.trim();
     }
     // Фолбэк: домен из landing_url, если есть
@@ -23,12 +21,9 @@ function getPromoTitle(promo) {
         const url = promo?.landing_url || promo?.link || promo?.url;
         if (url) {
             const u = new URL(url, location.origin);
-            const domain = u.hostname.replace(/^www\./, '');
-            console.log('Using domain fallback:', domain);
-            return domain;
+            return u.hostname.replace(/^www\./, '');
         }
     } catch (_) {}
-    console.log('Using default fallback');
     return 'Предложение партнёра';
 }
 
@@ -248,10 +243,11 @@ function createPromoCard(promo, isTopOffer = false) {
 
     card.innerHTML = `
         <div class="promo-card-content">
-            <img src="${promo.image_url || '/images/skidki-i-akcii.png'}" alt="${titleText}" width="50" height="50">
-
+            <div class="promo-header">
+                <img src="${promo.image_url || '/images/skidki-i-akcii.png'}" alt="${titleText}" width="50" height="50">
+                <h3>${titleText}</h3>
+            </div>
             <div class="tag">${discountText}</div>
-            <h3>${titleText}</h3>
 
             ${promo.promocode ? `
                 <p class="code">${promo.promocode} 
