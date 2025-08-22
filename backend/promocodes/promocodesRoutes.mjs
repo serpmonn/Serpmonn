@@ -100,9 +100,16 @@ function determineCategoryFromText(categoryName, title, description) {
 // Преобразуем Perfluence: project -> groups[] -> promocodes[]
 function flattenPerfluenceData(perfArray) {
   const result = [];
+  let totalPromos = 0;
+  let processedPromos = 0;
+  
+  console.log(`[PROMOCODES] Начинаем обработку ${perfArray.length} проектов`);
+  
   for (const item of perfArray) {
     const project = item?.project || {};
     const groups = Array.isArray(item?.groups) ? item.groups : [];
+    
+    console.log(`[PROMOCODES] Проект "${project.name}" имеет ${groups.length} групп`);
 
     for (const group of groups) {
       const landing = group?.landing || {};
@@ -112,6 +119,9 @@ function flattenPerfluenceData(perfArray) {
       const advertiserText = normalizeAdvertiserText(advertiserTextRaw);
       const logo = firstDefined(landing.logo, project.logo, project.img);
       const promos = Array.isArray(group?.promocodes) ? group.promocodes : [];
+      
+      totalPromos += promos.length;
+      console.log(`[PROMOCODES] Группа "${group.name || 'Без названия'}" имеет ${promos.length} промокодов`);
 
       for (const promo of promos) {
         const title = firstDefined(project.name, promo.name) || 'Промокод';
@@ -139,9 +149,12 @@ function flattenPerfluenceData(perfArray) {
           is_top: isTop,
           created_at: new Date().toISOString()
         });
+        processedPromos++;
       }
     }
   }
+  
+  console.log(`[PROMOCODES] Итого: найдено ${totalPromos} промокодов, обработано ${processedPromos}`);
   return result;
 }
 
@@ -155,6 +168,7 @@ async function loadPromocodesFromAPI() {
     }
     const raw = await response.json();
     const perfArray = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
+    console.log(`[PROMOCODES] Получено ${perfArray.length} проектов из API Perfluence`);
 
     // Переводим структуру Perfluence к плоскому списку промокодов
     const data = flattenPerfluenceData(perfArray);
