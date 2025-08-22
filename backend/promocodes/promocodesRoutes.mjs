@@ -128,13 +128,26 @@ function flattenPerfluenceData(perfArray) {
         const description = firstDefined(promo.comment, stripHtml(project.product_info)) || 'Описание недоступно';
         const code = firstDefined(promo.code);
         const when = normalizeDate(firstDefined(promo.date));
+        
+        // Пропускаем промокоды без кода и без даты
+        if (!code && !when) {
+          console.log(`[PROMOCODES] Пропускаем промокод "${title}" - нет кода и даты`);
+          continue;
+        }
         const { percent, amount } = extractDiscountFromTexts(promo.name, promo.comment, landing.name, project.name);
         const category = determineCategoryFromText(project.category_name, title, description);
         const imageUrl = firstDefined(promo.image, logo) || '/images/skidki-i-akcii.png';
         const isTop = Boolean(promo.is_hit || landing.is_hiting || (percent && percent >= 50) || (amount && amount >= 1000));
 
+        // Проверяем на дубликаты по ID
+        const promoId = promo.id || Math.random().toString(36).substr(2, 9);
+        if (result.some(existing => existing.id === promoId)) {
+          console.log(`[PROMOCODES] Пропускаем дубликат промокода с ID: ${promoId}`);
+          continue;
+        }
+        
         result.push({
-          id: promo.id || Math.random().toString(36).substr(2, 9),
+          id: promoId,
           title,
           description,
           promocode: code || null,
