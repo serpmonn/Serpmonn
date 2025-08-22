@@ -13,7 +13,18 @@ let updateTimer = null;
 
 // Унифицированный выбор названия промо
 function getPromoTitle(promo) {
-    const candidates = [
+    const pickName = (v) => {
+        if (!v) return undefined;
+        if (typeof v === 'string') return v.trim();
+        if (typeof v === 'object') {
+            // Популярные вложенные поля названия
+            const nested = v.title || v.name || v.text || v.label || v.value;
+            if (typeof nested === 'string') return nested.trim();
+        }
+        return undefined;
+    };
+
+    const candidatesRaw = [
         promo?.title,
         promo?.name,
         promo?.brand,
@@ -25,8 +36,13 @@ function getPromoTitle(promo) {
         promo?.program,
         promo?.title_text,
         promo?.project,
-        promo?.group
-    ].map(v => (typeof v === 'string' ? v.trim() : v)).filter(Boolean);
+        promo?.group,
+        promo?.partner,
+        promo?.company,
+        promo?.shop
+    ];
+
+    const candidates = candidatesRaw.map(pickName).filter(Boolean);
 
     if (candidates.length > 0) return candidates[0];
 
