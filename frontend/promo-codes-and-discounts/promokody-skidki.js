@@ -13,11 +13,12 @@ let updateTimer = null;
 
 // Упрощённый выбор названия: используем title из API (Perfluence)
 function getPromoTitle(promo) {
-    if (promo && typeof promo.title === 'string' && promo.title.trim() !== '') {
-        return promo.title.trim();
-    }
+    const strip = (s) => typeof s === 'string' ? s.replace(/<[^>]*>/g, '').trim() : '';
     if (promo && typeof promo.name === 'string' && promo.name.trim() !== '') {
-        return promo.name.trim();
+        return strip(promo.name);
+    }
+    if (promo && typeof promo.title === 'string' && promo.title.trim() !== '') {
+        return strip(promo.title);
     }
     // Фолбэк: домен из landing_url, если есть
     try {

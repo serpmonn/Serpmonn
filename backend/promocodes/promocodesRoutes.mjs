@@ -214,7 +214,7 @@ function flattenPerfluenceData(perfArray) {
       }
 
       // Добавляем оффер уровня группы (акция) для каждой группы, даже если есть промокоды
-        const offerTitle = firstDefined(landing.name, project.name) || 'Предложение партнёра';
+        const offerTitle = firstDefined(project.name, landing.name) || 'Предложение партнёра';
         const offerDescription = stripHtml(project.product_info) || 'Описание недоступно';
         const { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name);
         const offerCategory = determineCategoryFromText(project.category_name, offerTitle, offerDescription);
@@ -228,6 +228,7 @@ function flattenPerfluenceData(perfArray) {
         if (!result.some(existing => existing.id === offerId)) {
           result.push({
             id: offerId,
+            name: offerTitle,
             title: offerTitle,
             description: offerDescription,
             promocode: null,
