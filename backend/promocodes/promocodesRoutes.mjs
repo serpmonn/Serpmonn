@@ -147,11 +147,15 @@ function flattenPerfluenceData(perfArray) {
     
     console.log(`[PROMOCODES] Проект "${project.name}" имеет ${groups.length} групп`);
 
+
     for (const group of groups) {
       const landing = group?.landing || {};
       const linksForSubs = Array.isArray(group?.links_for_subscribers) ? group.links_for_subscribers : [];
+
       const landingUrl = firstDefined(linksForSubs[0]?.link, landing.link, project.site);
+
       const advertiserTextRaw = firstDefined(landing.ord_custom_text, project.name);
+
       const advertiserText = normalizeAdvertiserText(advertiserTextRaw);
       const logo = firstDefined(landing.logo, project.logo, project.img);
       const promos = Array.isArray(group?.promocodes) ? group.promocodes : [];
@@ -159,26 +163,34 @@ function flattenPerfluenceData(perfArray) {
       totalPromos += promos.length;
       console.log(`[PROMOCODES] Группа "${group.name || 'Без названия'}" имеет ${promos.length} промокодов`);
 
+
       for (const promo of promos) {
         const title = firstDefined(project.name, promo.name) || 'Промокод';
         const description = firstDefined(promo.comment, stripHtml(project.product_info)) || 'Описание недоступно';
+
         const code = firstDefined(promo.code);
         const when = normalizeDate(firstDefined(promo.date));
         
         // Пропускаем промокоды без кода и без даты
         if (!code && !when) {
           console.log(`[PROMOCODES] Пропускаем промокод "${title}" - нет кода и даты`);
+
           continue;
         }
         const { percent, amount } = extractDiscountFromTexts(promo.name, promo.comment, landing.name, project.name);
+
         const category = determineCategoryFromText(project.category_name, title, description);
+
         const imageUrl = firstDefined(promo.image, logo) || '/images/skidki-i-akcii.png';
+
         const isTop = Boolean(promo.is_hit || landing.is_hiting || (percent && percent >= 50) || (amount && amount >= 1000));
+
 
         // Проверяем на дубликаты по ID
         const promoId = promo.id || Math.random().toString(36).substr(2, 9);
         if (result.some(existing => existing.id === promoId)) {
           console.log(`[PROMOCODES] Пропускаем дубликат промокода с ID: ${promoId}`);
+
           continue;
         }
         
@@ -200,10 +212,43 @@ function flattenPerfluenceData(perfArray) {
         });
         processedPromos++;
       }
+
+      // Добавляем оффер уровня группы (акция) для каждой группы, даже если есть промокоды
+        const offerTitle = firstDefined(landing.name, project.name) || 'Предложение партнёра';
+        const offerDescription = stripHtml(project.product_info) || 'Описание недоступно';
+        const { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name);
+        const offerCategory = determineCategoryFromText(project.category_name, offerTitle, offerDescription);
+        const offerImageUrl = firstDefined(logo) || '/images/skidki-i-akcii.png';
+        const offerIsTop = Boolean(landing.is_hiting || (offerPercent && offerPercent >= 50) || (offerAmount && offerAmount >= 1000));
+
+        // Стабильный ID для оффера на основе landing.id или project.id
+        const offerIdBase = firstDefined(landing.id, project.id);
+        const offerSuffix = (group && (group.name || 'group')) || 'group';
+        const offerId = offerIdBase ? `offer-${offerIdBase}-${offerSuffix}` : `offer-${Math.random().toString(36).substr(2, 9)}`;
+        if (!result.some(existing => existing.id === offerId)) {
+          result.push({
+            id: offerId,
+            title: offerTitle,
+            description: offerDescription,
+            promocode: null,
+            discount_percent: offerPercent,
+            discount_amount: offerAmount,
+            valid_until: null, // бессрочно, если не указано
+            landing_url: landingUrl || null,
+            image_url: offerImageUrl,
+            conditions: firstDefined(item.conditions, null),
+            advertiser_info: advertiserText || null,
+            category: offerCategory,
+            is_top: offerIsTop,
+            created_at: new Date().toISOString()
+          });
+        }
+      
     }
   }
   
   console.log(`[PROMOCODES] Итого: найдено ${totalPromos} промокодов, обработано ${processedPromos}`);
+
   return result;
 }
 
