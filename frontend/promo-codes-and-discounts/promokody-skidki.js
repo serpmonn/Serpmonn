@@ -1,7 +1,7 @@
 // Конфигурация API (теперь используем наш бэкенд)
 const API_CONFIG = {
     baseUrl: '/api/promocodes',
-    updateInterval: 30 * 60 * 1000, // 30 минут
+    updateInterval: 24 * 60 * 60 * 1000, // 24 часа
     lastUpdateKey: 'serpmonn_promocodes_last_update'
 };
 
