@@ -70,10 +70,46 @@ function extractDiscountFromTexts(...texts) {
 
 function normalizeDate(dateStr) {
   if (!dateStr) return null;
-  // dd.mm.yyyy -> yyyy-mm-dd
-  const m = String(dateStr).match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
-  return dateStr;
+  const raw = String(dateStr).trim();
+
+  // Вырезаем лишние слова типа "до 31.08.2025" или "действует до 31.08.2025"
+  const cleaned = raw
+    .replace(/^до\s+/i, '')
+    .replace(/^действует\s+до\s+/i, '')
+    .replace(/^valid\s+until\s+/i, '')
+    .trim();
+
+  // Формат dd.mm.yyyy или dd.mm.yy, с опциональным временем HH:MM[:SS]
+  const m = cleaned.match(
+    /^(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/
+  );
+  if (m) {
+    let [_, dd, mm, yyyy, HH, MM, SS] = m;
+    // Приводим год к yyyy
+    if (yyyy.length === 2) {
+      const yy = parseInt(yyyy, 10);
+      yyyy = String(yy >= 70 ? 1900 + yy : 2000 + yy);
+    }
+    // Устанавливаем время по умолчанию 23:59:59, если не задано
+    const hh = HH !== undefined ? String(HH).padStart(2, '0') : '23';
+    const min = MM !== undefined ? String(MM).padStart(2, '0') : '59';
+    const ss = SS !== undefined ? String(SS).padStart(2, '0') : '59';
+
+    return `${yyyy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}T${hh}:${min}:${ss}`;
+  }
+
+  // Если пришёл уже ISO-подобный формат yyyy-mm-dd или yyyy-mm-ddTHH:MM:SS - оставляем
+  const isoLike = cleaned.match(/^\d{4}-\d{2}-\d{2}(?:[T\s]\d{2}:\d{2}(?::\d{2})?)?$/);
+  if (isoLike) {
+    // Если только дата без времени — добавим 23:59:59
+    if (/^\d{4}-\d{2}-\d{2}$/.test(cleaned)) {
+      return `${cleaned}T23:59:59`;
+    }
+    return cleaned;
+  }
+
+  // Иначе вернуть null, чтобы трактовать как бессрочный (активный)
+  return null;
 }
 
 function determineCategoryFromText(categoryName, title, description) {
@@ -250,7 +286,14 @@ function filterPromocodes(filters = {}) {
 function getPromocodesStats() {
   const now = new Date();
   const total = promocodesCache.data.length;
-  const active = promocodesCache.data.filter(p => !p.valid_until || new Date(p.valid_until) > now).length;
+  const active = promocodesCache.data.filter(p => {
+    // Бессрочный или некорректный срок — считаем активным
+    if (!p.valid_until) return true;
+    const dt = new Date(p.valid_until);
+    if (isNaN(dt.getTime())) return true;
+    return dt > now;
+  }).length;
+
   return { total, active, lastUpdate: promocodesCache.lastUpdate };
 }
 
