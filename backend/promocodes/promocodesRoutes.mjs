@@ -7,7 +7,7 @@ const router = express.Router();
 const PERFLUENCE_API_CONFIG = {
   url: 'https://dash.perfluence.net/blogger/promocode-api/json',
   key: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ODk4OTg3LCJhdXRoX2tleSI6Iml1Tl9fVk5WdTdOY0RqT1RKZW1EbUpUV1JjeUxqNFp4IiwiZGF0YSI6W119.k8vSFrvEtc75g7Gu-YdIcvhu6nB60V2CTOjti0IPfhQ',
-  updateInterval: 30 * 60 * 1000, // 30 минут
+  updateInterval: 24 * 60 * 60 * 1000, // 24 часа
   cacheKey: 'perfluence_promocodes_cache'
 };
 
