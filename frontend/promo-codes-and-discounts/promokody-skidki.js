@@ -16,6 +16,9 @@ function getPromoTitle(promo) {
     if (promo && typeof promo.title === 'string' && promo.title.trim() !== '') {
         return promo.title.trim();
     }
+    if (promo && typeof promo.name === 'string' && promo.name.trim() !== '') {
+        return promo.name.trim();
+    }
     // Фолбэк: домен из landing_url, если есть
     try {
         const url = promo?.landing_url || promo?.link || promo?.url;
@@ -231,8 +234,8 @@ function createPromoCard(promo, isTopOffer = false) {
     card.dataset.category = promo.category || 'другие';
     card.dataset.expiry = promo.valid_until || promo.expiry_date || '9999-12-31';
 
-    // Заголовок: если нет промокода, показываем рекламодателя (advertiser_info) или эвристику
-    const titleText = promo.promocode ? getPromoTitle(promo) : (promo.advertiser_info || getPromoTitle(promo));
+    // Заголовок: используем title/name, при их отсутствии — домен ссылки
+    const titleText = getPromoTitle(promo);
 
     const discountText = promo.discount_percent ? 
         `Скидка ${promo.discount_percent}%` : 
