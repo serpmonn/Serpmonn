@@ -243,6 +243,7 @@ async function loadPromocodesFromAPI() {
 
 // Фильтрация промокодов по параметрам
 function filterPromocodes(filters = {}) {
+  const beforeCount = promocodesCache.data.length;
   let filtered = [...promocodesCache.data];
 
   if (filters.search) {
@@ -260,16 +261,26 @@ function filterPromocodes(filters = {}) {
   if (filters.status) {
     const now = new Date();
     if (filters.status === 'active') {
-      filtered = filtered.filter(p => !p.valid_until || new Date(p.valid_until) > now);
+      filtered = filtered.filter(p => {
+        if (!p.valid_until) return true;
+        const dt = new Date(p.valid_until);
+        if (isNaN(dt.getTime())) return true;
+        return dt > now;
+      });
     } else if (filters.status === 'expired') {
-      filtered = filtered.filter(p => p.valid_until && new Date(p.valid_until) <= now);
+      filtered = filtered.filter(p => {
+        if (!p.valid_until) return false;
+        const dt = new Date(p.valid_until);
+        if (isNaN(dt.getTime())) return false;
+        return dt <= now;
+      });
     }
   }
 
   if (filters.sortBy === 'expiry') {
     filtered.sort((a, b) => {
-      const aDate = new Date(a.valid_until || '9999-12-31');
-      const bDate = new Date(b.valid_until || '9999-12-31');
+      const aDate = new Date(a.valid_until || '9999-12-31T23:59:59');
+      const bDate = new Date(b.valid_until || '9999-12-31T23:59:59');
       return filters.sortOrder === 'desc' ? bDate - aDate : aDate - bDate;
     });
   } else if (filters.sortBy === 'discount') {
@@ -280,6 +291,7 @@ function filterPromocodes(filters = {}) {
     });
   }
 
+  console.log(`[PROMOCODES] Фильтрация: было ${beforeCount}, после ${filtered.length}`, filters);
   return filtered;
 }
 
@@ -371,6 +383,19 @@ router.get('/categories', promocodesLimiter, (req, res) => {
     res.set('Cache-Control', 'no-store');
     res.status(500).json({ status: 'error', message: 'Ошибка при получении категорий' });
   }
+});
+
+// Вспомогательный отладочный маршрут: возвращает «сырое» количество и первые 5 элементов
+router.get('/_debug', (req, res) => {
+  const stats = getPromocodesStats();
+  res.set('Cache-Control', 'no-store');
+  res.json({
+    status: 'success',
+    message: 'Отладочная информация',
+    stats,
+    count: promocodesCache.data.length,
+    sample: promocodesCache.data.slice(0, 5)
+  });
 });
 
 // Инициализация при загрузке модуля
