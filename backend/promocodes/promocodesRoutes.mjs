@@ -213,8 +213,7 @@ function flattenPerfluenceData(perfArray) {
         processedPromos++;
       }
 
-      // Добавляем оффер без промокода (акцию), если промокодов нет
-      if (promos.length === 0) {
+      // Добавляем оффер уровня группы (акция) для каждой группы, даже если есть промокоды
         const offerTitle = firstDefined(landing.name, project.name) || 'Предложение партнёра';
         const offerDescription = stripHtml(project.product_info) || 'Описание недоступно';
         const { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name);
@@ -223,8 +222,9 @@ function flattenPerfluenceData(perfArray) {
         const offerIsTop = Boolean(landing.is_hiting || (offerPercent && offerPercent >= 50) || (offerAmount && offerAmount >= 1000));
 
         // Стабильный ID для оффера на основе landing.id или project.id
-        const offerIdBase = firstDefined(landing.id, project.id, Math.random().toString(36).substr(2, 9));
-        const offerId = `offer-${offerIdBase}`;
+        const offerIdBase = firstDefined(landing.id, project.id);
+        const offerSuffix = (group && (group.name || 'group')) || 'group';
+        const offerId = offerIdBase ? `offer-${offerIdBase}-${offerSuffix}` : `offer-${Math.random().toString(36).substr(2, 9)}`;
         if (!result.some(existing => existing.id === offerId)) {
           result.push({
             id: offerId,
@@ -243,7 +243,7 @@ function flattenPerfluenceData(perfArray) {
             created_at: new Date().toISOString()
           });
         }
-      }
+      
     }
   }
   
