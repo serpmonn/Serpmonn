@@ -70,10 +70,46 @@ function extractDiscountFromTexts(...texts) {
 
 function normalizeDate(dateStr) {
   if (!dateStr) return null;
-  // dd.mm.yyyy -> yyyy-mm-dd
-  const m = String(dateStr).match(/^(\d{2})\.(\d{2})\.(\d{4})$/);
-  if (m) return `${m[3]}-${m[2]}-${m[1]}`;
-  return dateStr;
+  const raw = String(dateStr).trim();
+
+  // Вырезаем лишние слова типа "до 31.08.2025" или "действует до 31.08.2025"
+  const cleaned = raw
+    .replace(/^до\s+/i, '')
+    .replace(/^действует\s+до\s+/i, '')
+    .replace(/^valid\s+until\s+/i, '')
+    .trim();
+
+  // Формат dd.mm.yyyy или dd.mm.yy, с опциональным временем HH:MM[:SS]
+  const m = cleaned.match(
+    /^(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/
+  );
+  if (m) {
+    let [_, dd, mm, yyyy, HH, MM, SS] = m;
+    // Приводим год к yyyy
+    if (yyyy.length === 2) {
+      const yy = parseInt(yyyy, 10);
+      yyyy = String(yy >= 70 ? 1900 + yy : 2000 + yy);
+    }
+    // Устанавливаем время по умолчанию 23:59:59, если не задано
+    const hh = HH !== undefined ? String(HH).padStart(2, '0') : '23';
+    const min = MM !== undefined ? String(MM).padStart(2, '0') : '59';
+    const ss = SS !== undefined ? String(SS).padStart(2, '0') : '59';
+
+    return `${yyyy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}T${hh}:${min}:${ss}`;
+  }
+
+  // Если пришёл уже ISO-подобный формат yyyy-mm-dd или yyyy-mm-ddTHH:MM:SS - оставляем
+  const isoLike = cleaned.match(/^\d{4}-\d{2}-\d{2}(?:[T\s]\d{2}:\d{2}(?::\d{2})?)?$/);
+  if (isoLike) {
+    // Если только дата без времени — добавим 23:59:59
+    if (/^\d{4}-\d{2}-\d{2}$/.test(cleaned)) {
+      return `${cleaned}T23:59:59`;
+    }
+    return cleaned;
+  }
+
+  // Иначе вернуть null, чтобы трактовать как бессрочный (активный)
+  return null;
 }
 
 function determineCategoryFromText(categoryName, title, description) {
@@ -207,6 +243,7 @@ async function loadPromocodesFromAPI() {
 
 // Фильтрация промокодов по параметрам
 function filterPromocodes(filters = {}) {
+  const beforeCount = promocodesCache.data.length;
   let filtered = [...promocodesCache.data];
 
   if (filters.search) {
@@ -224,16 +261,26 @@ function filterPromocodes(filters = {}) {
   if (filters.status) {
     const now = new Date();
     if (filters.status === 'active') {
-      filtered = filtered.filter(p => !p.valid_until || new Date(p.valid_until) > now);
+      filtered = filtered.filter(p => {
+        if (!p.valid_until) return true;
+        const dt = new Date(p.valid_until);
+        if (isNaN(dt.getTime())) return true;
+        return dt > now;
+      });
     } else if (filters.status === 'expired') {
-      filtered = filtered.filter(p => p.valid_until && new Date(p.valid_until) <= now);
+      filtered = filtered.filter(p => {
+        if (!p.valid_until) return false;
+        const dt = new Date(p.valid_until);
+        if (isNaN(dt.getTime())) return false;
+        return dt <= now;
+      });
     }
   }
 
   if (filters.sortBy === 'expiry') {
     filtered.sort((a, b) => {
-      const aDate = new Date(a.valid_until || '9999-12-31');
-      const bDate = new Date(b.valid_until || '9999-12-31');
+      const aDate = new Date(a.valid_until || '9999-12-31T23:59:59');
+      const bDate = new Date(b.valid_until || '9999-12-31T23:59:59');
       return filters.sortOrder === 'desc' ? bDate - aDate : aDate - bDate;
     });
   } else if (filters.sortBy === 'discount') {
@@ -244,13 +291,21 @@ function filterPromocodes(filters = {}) {
     });
   }
 
+  console.log(`[PROMOCODES] Фильтрация: было ${beforeCount}, после ${filtered.length}`, filters);
   return filtered;
 }
 
 function getPromocodesStats() {
   const now = new Date();
   const total = promocodesCache.data.length;
-  const active = promocodesCache.data.filter(p => !p.valid_until || new Date(p.valid_until) > now).length;
+  const active = promocodesCache.data.filter(p => {
+    // Бессрочный или некорректный срок — считаем активным
+    if (!p.valid_until) return true;
+    const dt = new Date(p.valid_until);
+    if (isNaN(dt.getTime())) return true;
+    return dt > now;
+  }).length;
+
   return { total, active, lastUpdate: promocodesCache.lastUpdate };
 }
 
@@ -328,6 +383,19 @@ router.get('/categories', promocodesLimiter, (req, res) => {
     res.set('Cache-Control', 'no-store');
     res.status(500).json({ status: 'error', message: 'Ошибка при получении категорий' });
   }
+});
+
+// Вспомогательный отладочный маршрут: возвращает «сырое» количество и первые 5 элементов
+router.get('/_debug', (req, res) => {
+  const stats = getPromocodesStats();
+  res.set('Cache-Control', 'no-store');
+  res.json({
+    status: 'success',
+    message: 'Отладочная информация',
+    stats,
+    count: promocodesCache.data.length,
+    sample: promocodesCache.data.slice(0, 5)
+  });
 });
 
 // Инициализация при загрузке модуля
