@@ -139,14 +139,10 @@ function flattenPerfluenceData(perfArray) {
   let totalPromos = 0;
   let processedPromos = 0;
   
-  console.log(`[PROMOCODES] Начинаем обработку ${perfArray.length} проектов`);
-  
   for (const item of perfArray) {
     const project = item?.project || {};
     const groups = Array.isArray(item?.groups) ? item.groups : [];
     
-    console.log(`[PROMOCODES] Проект "${project.name}" имеет ${groups.length} групп`);
-
 
     for (const group of groups) {
       const landing = group?.landing || {};
@@ -161,7 +157,6 @@ function flattenPerfluenceData(perfArray) {
       const promos = Array.isArray(group?.promocodes) ? group.promocodes : [];
       
       totalPromos += promos.length;
-      console.log(`[PROMOCODES] Группа "${group.name || 'Без названия'}" имеет ${promos.length} промокодов`);
 
 
       for (const promo of promos) {
@@ -173,8 +168,6 @@ function flattenPerfluenceData(perfArray) {
         
         // Пропускаем промокоды без кода и без даты
         if (!code && !when) {
-          console.log(`[PROMOCODES] Пропускаем промокод "${title}" - нет кода и даты`);
-
           continue;
         }
         const { percent, amount } = extractDiscountFromTexts(promo.name, promo.comment, landing.name, project.name);
@@ -189,8 +182,6 @@ function flattenPerfluenceData(perfArray) {
         // Проверяем на дубликаты по ID
         const promoId = promo.id || Math.random().toString(36).substr(2, 9);
         if (result.some(existing => existing.id === promoId)) {
-          console.log(`[PROMOCODES] Пропускаем дубликат промокода с ID: ${promoId}`);
-
           continue;
         }
         
@@ -248,26 +239,22 @@ function flattenPerfluenceData(perfArray) {
     }
   }
   
-  console.log(`[PROMOCODES] Итого: найдено ${totalPromos} промокодов, обработано ${processedPromos}`);
-
   return result;
 }
 
 // Загрузка промокодов из API Perfluence
 async function loadPromocodesFromAPI() {
   try {
-    console.log('[PROMOCODES] Загружаю промокоды из API Perfluence...');
     const response = await fetch(`${PERFLUENCE_API_CONFIG.url}?key=${PERFLUENCE_API_CONFIG.key}`);
+
     if (!response.ok) {
       throw new Error(`HTTP ошибка! Статус: ${response.status}`);
     }
     const raw = await response.json();
     const perfArray = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
-    console.log(`[PROMOCODES] Получено ${perfArray.length} проектов из API Perfluence`);
 
     // Переводим структуру Perfluence к плоскому списку промокодов
     const data = flattenPerfluenceData(perfArray);
-    console.log(`[PROMOCODES] Получено ${Array.isArray(data) ? data.length : 'unknown'} промокодов после преобразования`);
 
     if (Array.isArray(data)) {
       promocodesCache = {
@@ -275,7 +262,7 @@ async function loadPromocodesFromAPI() {
         lastUpdate: new Date(),
         isUpdating: false
       };
-      console.log(`[PROMOCODES] Кэш обновлен: ${data.length} промокодов`);
+      console.log(`[PROMOCODES] Промокодов получено: ${data.length}`);
       return true;
     } else {
       throw new Error('Неверный формат данных после преобразования');
@@ -289,7 +276,6 @@ async function loadPromocodesFromAPI() {
 
 // Фильтрация промокодов по параметрам
 function filterPromocodes(filters = {}) {
-  const beforeCount = promocodesCache.data.length;
   let filtered = [...promocodesCache.data];
 
   if (filters.search) {
@@ -337,7 +323,6 @@ function filterPromocodes(filters = {}) {
     });
   }
 
-  console.log(`[PROMOCODES] Фильтрация: было ${beforeCount}, после ${filtered.length}`, filters);
   return filtered;
 }
 
@@ -440,18 +425,7 @@ router.get('/categories', promocodesLimiter, (req, res) => {
   }
 });
 
-// Вспомогательный отладочный маршрут: возвращает «сырое» количество и первые 5 элементов
-router.get('/_debug', (req, res) => {
-  const stats = getPromocodesStats();
-  res.set('Cache-Control', 'no-store');
-  res.json({
-    status: 'success',
-    message: 'Отладочная информация',
-    stats,
-    count: promocodesCache.data.length,
-    sample: promocodesCache.data.slice(0, 5)
-  });
-});
+// удалён отладочный маршрут
 
 // Инициализация при загрузке модуля
 (async () => {
