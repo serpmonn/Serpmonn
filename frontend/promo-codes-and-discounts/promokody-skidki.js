@@ -231,11 +231,12 @@ function createPromoCard(promo, isTopOffer = false) {
     card.dataset.category = promo.category || 'другие';
     card.dataset.expiry = promo.valid_until || promo.expiry_date || '9999-12-31';
 
-    const titleText = getPromoTitle(promo);
+    // Заголовок: если нет промокода, показываем рекламодателя (advertiser_info) или эвристику
+    const titleText = promo.promocode ? getPromoTitle(promo) : (promo.advertiser_info || getPromoTitle(promo));
 
     const discountText = promo.discount_percent ? 
         `Скидка ${promo.discount_percent}%` : 
-        promo.discount_amount ? `Скидка ${promo.discount_amount} ₽` : 'Скидка';
+        promo.discount_amount ? `Скидка ${promo.discount_amount} ₽` : (promo.promocode ? 'Скидка' : 'Предложение');
 
     // Обрабатываем дату окончания действия промокода
     let expiryDate;
@@ -324,7 +325,7 @@ function updateStats(stats) {
     
     if (totalElement) totalElement.textContent = stats.total ?? 0;
     if (activeElement) activeElement.textContent = stats.active ?? stats.total ?? 0;
-    if (expiredElement) expiredElement.closest('.stat-item')?.remove();
+    if (expiredElement) expiredElement.textContent = stats.totalPromocodes ?? 0;
 }
 
 // Функция для показа уведомлений
