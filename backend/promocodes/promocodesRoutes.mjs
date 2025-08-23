@@ -351,7 +351,16 @@ function getPromocodesStats() {
     return dt > now;
   }).length;
 
-  return { total, active, lastUpdate: promocodesCache.lastUpdate };
+  const totalPromocodes = promocodesCache.data.filter(p => Boolean(p.promocode)).length;
+  const activePromocodes = promocodesCache.data.filter(p => {
+    if (!p.promocode) return false;
+    if (!p.valid_until) return true;
+    const dt = new Date(p.valid_until);
+    if (isNaN(dt.getTime())) return true;
+    return dt > now;
+  }).length;
+
+  return { total, active, totalPromocodes, activePromocodes, lastUpdate: promocodesCache.lastUpdate };
 }
 
 // Маршруты API
