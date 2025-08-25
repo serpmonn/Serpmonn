@@ -11,25 +11,7 @@ let allPromocodes = []; // Все промокоды из API
 let filteredPromocodes = []; // Отфильтрованные промокоды
 let updateTimer = null;
 
-// Бренды, чьи все карточки должны быть ТОП (по заголовку)
-const TOP_BRANDS_PATTERNS = [
-    /Яндекс\s*Лавка/i,
-    /Яндекс\s*Афиша/i,
-    /\bТануки\b/i,
-    /Авито\s*Доставка/i,
-    /Яндекс\s*Плюс/i,
-    /DDX\s*Fitness/i,
-    /\bPremier\b|Премьер/i,
-    /Делимобиль/i,
-    /Яндекс\s*Музык/i,
-    /Кинопоиск/i,
-    /Яндекс\s*Еда.*Ресторан/i
-];
-
-function isWhitelistedTop(titleText) {
-    if (typeof titleText !== 'string' || titleText.length === 0) return false;
-    return TOP_BRANDS_PATTERNS.some((re) => re.test(titleText));
-}
+// Клиентский whitelist удалён; топ-логика на бэкенде
 
 // Упрощённый выбор названия: используем title из API (Perfluence)
 function getPromoTitle(promo) {
@@ -209,8 +191,7 @@ function renderPromocodes() {
     
     // Показываем ВСЕ промокоды один-в-один (без группировки и фильтров)
     sortedPromocodes.forEach(promo => {
-        const titleText = getPromoTitle(promo);
-        const isTop = Boolean(promo.is_top) || isWhitelistedTop(titleText);
+        const isTop = Boolean(promo.is_top);
         catalog.appendChild(createPromoCard(promo, isTop));
     });
 
@@ -233,7 +214,7 @@ function groupPromocodesByCategory(promocodes) {
         const category = promo.category || 'другие';
         
         // Определяем топ-офферы
-        if (promo.is_top || isWhitelistedTop(getPromoTitle(promo))) {
+        if (promo.is_top) {
             groups.top.push(promo);
         } else {
             if (groups[category]) {
