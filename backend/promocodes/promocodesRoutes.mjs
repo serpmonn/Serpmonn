@@ -21,7 +21,7 @@ let promocodesCache = {
 // Белый список брендов: для них все офферы считаются ТОП
 const TOP_BRANDS_PATTERNS = [
   /Яндекс\s*Лавка/i,
-  /Яндекс\s*Афиша/i,
+  /(?:Яндекс\s*)?Афиша/i,
   /\bТануки\b/i,
   /Авито\s*Доставка/i,
   /Яндекс\s*Плюс/i,
@@ -36,6 +36,13 @@ const TOP_BRANDS_PATTERNS = [
 function isWhitelistedTopByText(text) {
   if (!text) return false;
   return TOP_BRANDS_PATTERNS.some((re) => re.test(String(text)));
+}
+
+function isWhitelistedTopAny(...texts) {
+  for (const t of texts) {
+    if (isWhitelistedTopByText(t)) return true;
+  }
+  return false;
 }
 
 // Лимитер для API запросов
@@ -192,9 +199,7 @@ function flattenPerfluenceData(perfArray) {
         const isTop = Boolean(
           promo.is_hit ||
           landing.is_hiting ||
-          (percent && percent >= 50) ||
-          (amount && amount >= 1000) ||
-          isWhitelistedTopByText(title)
+          isWhitelistedTopAny(title, project.name, landing.name, advertiserText)
         );
 
         // Проверяем на дубликаты по ID
@@ -231,9 +236,7 @@ function flattenPerfluenceData(perfArray) {
 
       const offerIsTop = Boolean(
         landing.is_hiting ||
-        (offerPercent && offerPercent >= 50) ||
-        (offerAmount && offerAmount >= 1000) ||
-        isWhitelistedTopByText(offerTitle)
+        isWhitelistedTopAny(offerTitle, project.name, landing.name, advertiserText)
       );
 
       // Стабильный ID для оффера на основе landing.id или project.id
