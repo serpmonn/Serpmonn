@@ -11,6 +11,26 @@ let allPromocodes = []; // Все промокоды из API
 let filteredPromocodes = []; // Отфильтрованные промокоды
 let updateTimer = null;
 
+// Бренды, чьи все карточки должны быть ТОП (по заголовку)
+const TOP_BRANDS_PATTERNS = [
+    /Яндекс\s*Лавка/i,
+    /Яндекс\s*Афиша/i,
+    /\bТануки\b/i,
+    /Авито\s*Доставка/i,
+    /Яндекс\s*Плюс/i,
+    /DDX\s*Fitness/i,
+    /\bPremier\b|Премьер/i,
+    /Делимобиль/i,
+    /Яндекс\s*Музык/i,
+    /Кинопоиск/i,
+    /Яндекс\s*Еда.*Ресторан/i
+];
+
+function isWhitelistedTop(titleText) {
+    if (typeof titleText !== 'string' || titleText.length === 0) return false;
+    return TOP_BRANDS_PATTERNS.some((re) => re.test(titleText));
+}
+
 // Упрощённый выбор названия: используем title из API (Perfluence)
 function getPromoTitle(promo) {
     const strip = (s) => typeof s === 'string' ? s.replace(/<[^>]*>/g, '').trim() : '';
@@ -95,7 +115,6 @@ function normalizePromo(raw) {
 // Функция для загрузки промокодов из нашего API
 async function loadPromocodesFromAPI() {
     try {
-        console.log('Загружаю промокоды из API Serpmonn...');
         
         const response = await fetch(API_CONFIG.baseUrl);
         
@@ -104,7 +123,6 @@ async function loadPromocodesFromAPI() {
         }
         
         const result = await response.json();
-        console.log('Получены данные от API:', result);
         
         if (result.status === 'success' && Array.isArray(result.data)) {
             // Используем данные как есть, без нормализации
@@ -191,7 +209,8 @@ function renderPromocodes() {
     
     // Показываем ВСЕ промокоды один-в-один (без группировки и фильтров)
     sortedPromocodes.forEach(promo => {
-        const isTop = Boolean(promo.is_top);
+        const titleText = getPromoTitle(promo);
+        const isTop = Boolean(promo.is_top) || isWhitelistedTop(titleText);
         catalog.appendChild(createPromoCard(promo, isTop));
     });
 
@@ -214,7 +233,7 @@ function groupPromocodesByCategory(promocodes) {
         const category = promo.category || 'другие';
         
         // Определяем топ-офферы
-        if (promo.is_top) {
+        if (promo.is_top || isWhitelistedTop(getPromoTitle(promo))) {
             groups.top.push(promo);
         } else {
             if (groups[category]) {
@@ -260,15 +279,7 @@ function createPromoCard(promo, isTopOffer = false) {
     const now = new Date();
     const isExpired = expiryDate < now;
     
-    // Отладочная информация для Сберздоровье
-    if (promo.title && promo.title.includes('Сберздоровье')) {
-        console.log('Сберздоровье отладка:');
-        console.log('  Название:', promo.title);
-        console.log('  valid_until из API:', promo.valid_until);
-        console.log('  expiryDate:', expiryDate);
-        console.log('  Сейчас:', now);
-        console.log('  Истёкший:', isExpired);
-    }
+    // Отладочные логи удалены
 
     card.innerHTML = `
         <div class="promo-card-content">
@@ -368,7 +379,7 @@ function startAutoUpdate() {
     }
     
     updateTimer = setInterval(async () => {
-        console.log('Автоматическое обновление промокодов...');
+        // лог убран
         await loadPromocodesFromAPI();
     }, API_CONFIG.updateInterval);
 }
