@@ -18,6 +18,26 @@ let promocodesCache = {
   isUpdating: false
 };
 
+// Белый список брендов: для них все офферы считаются ТОП
+const TOP_BRANDS_PATTERNS = [
+  /Яндекс\s*Лавка/i,
+  /Яндекс\s*Афиша/i,
+  /\bТануки\b/i,
+  /Авито\s*Доставка/i,
+  /Яндекс\s*Плюс/i,
+  /DDX\s*Fitness/i,
+  /\bPremier\b|\bПремьер\b/i,
+  /Делимобиль/i,
+  /Яндекс\s*Музык/i,
+  /Кинопоиск/i,
+  /Яндекс\s*Еда.*Ресторан/i
+];
+
+function isWhitelistedTopByText(text) {
+  if (!text) return false;
+  return TOP_BRANDS_PATTERNS.some((re) => re.test(String(text)));
+}
+
 // Лимитер для API запросов
 const promocodesLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
@@ -80,9 +100,7 @@ function normalizeDate(dateStr) {
     .trim();
 
   // Формат dd.mm.yyyy или dd.mm.yy, с опциональным временем HH:MM[:SS]
-  const m = cleaned.match(
-    /^(\d{1,2})\.(\d{1,2})\.(\d{2}|\d{4})(?:\s+(\d{1,2}):(\d{2})(?::(\d{2}))?)?$/
-  );
+  const m = cleaned.match(/^([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2}|[0-9]{4})(?:\s+([0-9]{1,2}):([0-9]{2})(?::([0-9]{2}))?)?$/);
   if (m) {
     let [_, dd, mm, yyyy, HH, MM, SS] = m;
     // Приводим год к yyyy
@@ -143,21 +161,17 @@ function flattenPerfluenceData(perfArray) {
     const project = item?.project || {};
     const groups = Array.isArray(item?.groups) ? item.groups : [];
     
-
     for (const group of groups) {
       const landing = group?.landing || {};
       const linksForSubs = Array.isArray(group?.links_for_subscribers) ? group.links_for_subscribers : [];
-
       const landingUrl = firstDefined(linksForSubs[0]?.link, landing.link, project.site);
 
       const advertiserTextRaw = firstDefined(landing.ord_custom_text, project.name);
-
       const advertiserText = normalizeAdvertiserText(advertiserTextRaw);
       const logo = firstDefined(landing.logo, project.logo, project.img);
       const promos = Array.isArray(group?.promocodes) ? group.promocodes : [];
       
       totalPromos += promos.length;
-
 
       for (const promo of promos) {
         const title = firstDefined(project.name, promo.name) || 'Промокод';
@@ -173,11 +187,15 @@ function flattenPerfluenceData(perfArray) {
         const { percent, amount } = extractDiscountFromTexts(promo.name, promo.comment, landing.name, project.name);
 
         const category = determineCategoryFromText(project.category_name, title, description);
-
         const imageUrl = firstDefined(promo.image, logo) || '/images/skidki-i-akcii.png';
 
-        const isTop = Boolean(promo.is_hit || landing.is_hiting || (percent && percent >= 50) || (amount && amount >= 1000));
-
+        const isTop = Boolean(
+          promo.is_hit ||
+          landing.is_hiting ||
+          (percent && percent >= 50) ||
+          (amount && amount >= 1000) ||
+          isWhitelistedTopByText(title)
+        );
 
         // Проверяем на дубликаты по ID
         const promoId = promo.id || Math.random().toString(36).substr(2, 9);
@@ -205,37 +223,42 @@ function flattenPerfluenceData(perfArray) {
       }
 
       // Добавляем оффер уровня группы (акция) для каждой группы, даже если есть промокоды
-        const offerTitle = firstDefined(project.name, landing.name) || 'Предложение партнёра';
-        const offerDescription = stripHtml(project.product_info) || 'Описание недоступно';
-        const { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name);
-        const offerCategory = determineCategoryFromText(project.category_name, offerTitle, offerDescription);
-        const offerImageUrl = firstDefined(logo) || '/images/skidki-i-akcii.png';
-        const offerIsTop = Boolean(landing.is_hiting || (offerPercent && offerPercent >= 50) || (offerAmount && offerAmount >= 1000));
+      const offerTitle = firstDefined(project.name, landing.name) || 'Предложение партнёра';
+      const offerDescription = stripHtml(project.product_info) || 'Описание недоступно';
+      const { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name);
+      const offerCategory = determineCategoryFromText(project.category_name, offerTitle, offerDescription);
+      const offerImageUrl = firstDefined(logo) || '/images/skidki-i-akcii.png';
 
-        // Стабильный ID для оффера на основе landing.id или project.id
-        const offerIdBase = firstDefined(landing.id, project.id);
-        const offerSuffix = (group && (group.name || 'group')) || 'group';
-        const offerId = offerIdBase ? `offer-${offerIdBase}-${offerSuffix}` : `offer-${Math.random().toString(36).substr(2, 9)}`;
-        if (!result.some(existing => existing.id === offerId)) {
-          result.push({
-            id: offerId,
-            name: offerTitle,
-            title: offerTitle,
-            description: offerDescription,
-            promocode: null,
-            discount_percent: offerPercent,
-            discount_amount: offerAmount,
-            valid_until: null, // бессрочно, если не указано
-            landing_url: landingUrl || null,
-            image_url: offerImageUrl,
-            conditions: firstDefined(item.conditions, null),
-            advertiser_info: advertiserText || null,
-            category: offerCategory,
-            is_top: offerIsTop,
-            created_at: new Date().toISOString()
-          });
-        }
-      
+      const offerIsTop = Boolean(
+        landing.is_hiting ||
+        (offerPercent && offerPercent >= 50) ||
+        (offerAmount && offerAmount >= 1000) ||
+        isWhitelistedTopByText(offerTitle)
+      );
+
+      // Стабильный ID для оффера на основе landing.id или project.id
+      const offerIdBase = firstDefined(landing.id, project.id);
+      const offerSuffix = (group && (group.name || 'group')) || 'group';
+      const offerId = offerIdBase ? `offer-${offerIdBase}-${offerSuffix}` : `offer-${Math.random().toString(36).substr(2, 9)}`;
+      if (!result.some(existing => existing.id === offerId)) {
+        result.push({
+          id: offerId,
+          name: offerTitle,
+          title: offerTitle,
+          description: offerDescription,
+          promocode: null,
+          discount_percent: offerPercent,
+          discount_amount: offerAmount,
+          valid_until: null, // бессрочно, если не указано
+          landing_url: landingUrl || null,
+          image_url: offerImageUrl,
+          conditions: firstDefined(item.conditions, null),
+          advertiser_info: advertiserText || null,
+          category: offerCategory,
+          is_top: offerIsTop,
+          created_at: new Date().toISOString()
+        });
+      }
     }
   }
   
