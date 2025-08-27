@@ -85,13 +85,17 @@
     panel.appendChild(row("Подчёркивать ссылки", "underlineLinks"));
     panel.appendChild(row("Меньше анимаций", "reduceMotion"));
 
-    const menuBtn = document.getElementById("spn-a11y-open");
-    if (menuBtn) {
-      menuBtn.addEventListener("click", (e)=>{
-        e.preventDefault();
-        panel.style.display = panel.style.display === "none" ? "block" : "none";
-      });
+    function togglePanel(e){
+      e.preventDefault();
+      panel.style.display = panel.style.display === "none" ? "block" : "none";
     }
+    const menuBtn = document.getElementById("spn-a11y-open");
+    if (menuBtn) menuBtn.addEventListener("click", togglePanel);
+    // Делаем надёжным: делегирование, если элемент появится позже
+    document.addEventListener("click", (e)=>{
+      const t = e.target.closest && e.target.closest('#spn-a11y-open');
+      if (t) togglePanel(e);
+    });
 
     document.body.appendChild(panel);
   }
