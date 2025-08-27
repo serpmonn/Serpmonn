@@ -45,6 +45,19 @@
 
       /* Меньше анимаций */
       .a11y-reduce-motion *, .a11y-reduce-motion *::before, .a11y-reduce-motion *::after { transition: none !important; animation: none !important; }
+
+      /* Панель внутри меню */
+      #spn-a11y-panel.menu-embedded {
+        position: static !important;
+        display: none;
+        background: rgba(0,0,0,0.85);
+        color: #fff;
+        padding: 10px 12px;
+        border-radius: 10px;
+        margin-top: 8px;
+        font-size: 14px;
+      }
+      #spn-a11y-panel.menu-embedded label { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:6px 0; }
     `;
     document.head.appendChild(style);
   }
@@ -53,17 +66,25 @@
     if (document.getElementById("spn-a11y-panel")) return;
     const panel = document.createElement("div");
     panel.id = "spn-a11y-panel";
-    panel.style.position = "fixed";
-    panel.style.bottom = "16px";
-    panel.style.right = "16px";
-    panel.style.zIndex = "100000";
-    panel.style.background = "rgba(0,0,0,0.9)";
-    panel.style.color = "#fff";
-    panel.style.padding = "10px 12px";
-    panel.style.borderRadius = "10px";
-    panel.style.minWidth = "220px";
-    panel.style.fontSize = "14px";
-    panel.style.display = "none";
+    // Попытка встроить в меню рядом с пунктом "Настройки"
+    const settingsSubmenu = document.getElementById("settingsSubmenu");
+    const container = document.getElementById("menuContainer");
+    if (settingsSubmenu) {
+      panel.classList.add('menu-embedded');
+    } else {
+      // Фолбэк: плавающая панель
+      panel.style.position = "fixed";
+      panel.style.bottom = "16px";
+      panel.style.right = "16px";
+      panel.style.zIndex = "100000";
+      panel.style.background = "rgba(0,0,0,0.9)";
+      panel.style.color = "#fff";
+      panel.style.padding = "10px 12px";
+      panel.style.borderRadius = "10px";
+      panel.style.minWidth = "220px";
+      panel.style.fontSize = "14px";
+      panel.style.display = "none";
+    }
 
     function row(label, key){
       const id = `spn-a11y-${key}`;
@@ -91,13 +112,19 @@
     }
     const menuBtn = document.getElementById("spn-a11y-open");
     if (menuBtn) menuBtn.addEventListener("click", togglePanel);
-    // Делаем надёжным: делегирование, если элемент появится позже
+    // Делегирование, если элемент появится позже
     document.addEventListener("click", (e)=>{
       const t = e.target.closest && e.target.closest('#spn-a11y-open');
       if (t) togglePanel(e);
     });
 
-    document.body.appendChild(panel);
+    if (settingsSubmenu) {
+      settingsSubmenu.appendChild(panel);
+    } else if (container) {
+      container.appendChild(panel);
+    } else {
+      document.body.appendChild(panel);
+    }
   }
 
   function init(){
