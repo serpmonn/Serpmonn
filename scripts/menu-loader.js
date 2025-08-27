@@ -17,6 +17,17 @@ fetch('/menu.html')                                                             
             script.async = true;
             document.body.appendChild(script);
         }
+        // Глобально подключаем доступность, чтобы пункт "Доступность" работал везде
+        (function ensureA11y(){
+            const id = 'spn-a11y-loader';
+            if (!document.getElementById(id)) {
+                const s = document.createElement('script');
+                s.id = id;
+                s.src = '/scripts/accessibility.js';
+                s.defer = true;
+                document.body.appendChild(s);
+            }
+        })();
         
         initMenu();
     })
