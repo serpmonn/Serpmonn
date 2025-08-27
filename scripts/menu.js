@@ -129,4 +129,19 @@ export function initMenu() {
 
     // Инициализация PWA
     initPWA();
+
+    // Размещение пункта "Доступность" в правом нижнем углу и открытие панели
+    const a11yItem = document.getElementById('spn-a11y-open');
+    if (a11yItem) {
+        a11yItem.style.position = 'fixed';
+        a11yItem.style.right = '16px';
+        a11yItem.style.bottom = '16px';
+        a11yItem.style.zIndex = '100001';
+        a11yItem.style.background = 'rgba(0,0,0,0.85)';
+        a11yItem.style.color = '#fff';
+        a11yItem.style.borderRadius = '999px';
+        a11yItem.style.padding = '10px 14px';
+        a11yItem.style.minWidth = '44px';
+        a11yItem.style.minHeight = '44px';
+    }
 }
