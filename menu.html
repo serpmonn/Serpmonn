@@ -296,8 +296,31 @@
         <img src="/images/settings.png" alt="Настройки" class="icon"> Настройки
     </a>
     <div class="submenu-container" id="settingsSubmenu">
-        <a href="#" id="spn-a11y-open"><img src="/images/availability.png" alt="Доступность" class="icon"> Доступность</a>
+        <a href="#" class="menu-item" data-submenu="a11ySubmenu">
+            <img src="/images/availability.png" alt="Доступность" class="icon"> Доступность
+        </a>
+        
+        <div class="submenu-container" id="a11ySubmenu">
+            <a href="#" class="a11y-toggle" data-setting="large-text">
+                <span class="a11y-icon">🔤</span> Крупный шрифт
+                <span class="a11y-status" data-status="large-text">⚪</span>
+            </a>
+            <a href="#" class="a11y-toggle" data-setting="high-contrast">
+                <span class="a11y-icon">🌓</span> Высокий контраст
+                <span class="a11y-status" data-status="high-contrast">⚪</span>
+            </a>
+            <a href="#" class="a11y-toggle" data-setting="underline-links">
+                <span class="a11y-icon">🔗</span> Подчёркивать ссылки
+                <span class="a11y-status" data-status="underline-links">⚪</span>
+            </a>
+            <a href="#" class="a11y-toggle" data-setting="reduce-motion">
+                <span class="a11y-icon">🎬</span> Меньше анимаций
+                <span class="a11y-status" data-status="reduce-motion">⚪</span>
+            </a>
+        </div>
+
         <a href="#" class="menu-item" data-submenu="langSubmenu"><span class="tool-icon">🌐</span> Язык</a>
+
         <div class="submenu-container" id="langSubmenu">
             <a href="#" data-lang="ru">Русский</a>
             <a href="#" data-lang="en">English</a>

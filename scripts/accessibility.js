@@ -1,31 +1,71 @@
-// Доступность: быстрые настройки для слабовидящих пользователей
-// Режимы: крупный шрифт, высокий контраст, подчёркнутые ссылки, меньше анимаций
-// Сохраняются в localStorage и применяются на всех страницах
-
+// Скрипт доступности - настройки прямо в меню
 (function(){
   "use strict";
+  
+  // Настройки доступности
+  const settings = {
+    'large-text': { class: 'a11y-large-text', icon: '🔤' },
+    'high-contrast': { class: 'a11y-high-contrast', icon: '🌓' },
+    'underline-links': { class: 'a11y-underline-links', icon: '🔗' },
+    'reduce-motion': { class: 'a11y-reduce-motion', icon: '🎬' }
+  };
 
-  const STORAGE_KEY = "spn_a11y_prefs";
-  const PREFS_DEFAULT = { largeText:false, highContrast:false, underlineLinks:false, reduceMotion:false };
-
-  function loadPrefs(){
-    try { return Object.assign({}, PREFS_DEFAULT, JSON.parse(localStorage.getItem(STORAGE_KEY)||"{}")); } catch(_){ return {...PREFS_DEFAULT}; }
+  // Загружаем сохранённые настройки
+  function loadSettings(){
+    const saved = localStorage.getItem('spn_a11y_settings');
+    return saved ? JSON.parse(saved) : {};
   }
 
-  function savePrefs(p){ try { localStorage.setItem(STORAGE_KEY, JSON.stringify(p)); } catch(_){} }
-
-  function applyPrefs(p){
-    const root = document.documentElement;
-    root.classList.toggle("a11y-large-text", !!p.largeText);
-    root.classList.toggle("a11y-high-contrast", !!p.highContrast);
-    root.classList.toggle("a11y-underline-links", !!p.underlineLinks);
-    root.classList.toggle("a11y-reduce-motion", !!p.reduceMotion);
+  // Сохраняем настройки
+  function saveSettings(settings){
+    localStorage.setItem('spn_a11y_settings', JSON.stringify(settings));
   }
 
+  // Применяем настройки к странице
+  function applySettings(savedSettings){
+    Object.keys(settings).forEach(key => {
+      if (savedSettings[key]) {
+        document.body.classList.add(settings[key].class);
+      }
+    });
+  }
+
+  // Обновляем визуальное состояние кнопок
+  function updateButtonStates(savedSettings){
+    Object.keys(settings).forEach(key => {
+      const statusEl = document.querySelector(`[data-status="${key}"]`);
+      if (statusEl) {
+        statusEl.textContent = savedSettings[key] ? '🟢' : '⚪';
+      }
+    });
+  }
+
+  // Переключаем настройку
+  function toggleSetting(settingKey){
+    const savedSettings = loadSettings();
+    savedSettings[settingKey] = !savedSettings[settingKey];
+    
+    if (savedSettings[settingKey]) {
+      document.body.classList.add(settings[settingKey].class);
+    } else {
+      document.body.classList.remove(settings[settingKey].class);
+    }
+    
+    saveSettings(savedSettings);
+    updateButtonStates(savedSettings);
+    
+    // Вибрация на мобильных
+    if (navigator.vibrate) {
+      navigator.vibrate(50);
+    }
+  }
+
+  // Добавляем стили
   function injectStyles(){
-    if (document.getElementById("spn-a11y-styles")) return;
-    const style = document.createElement("style");
-    style.id = "spn-a11y-styles";
+    if (document.getElementById('spn-a11y-styles')) return;
+    
+    const style = document.createElement('style');
+    style.id = 'spn-a11y-styles';
     style.textContent = `
       /* Крупный текст */
       .a11y-large-text body { font-size: 18px; }
@@ -46,96 +86,63 @@
       /* Меньше анимаций */
       .a11y-reduce-motion *, .a11y-reduce-motion *::before, .a11y-reduce-motion *::after { transition: none !important; animation: none !important; }
 
-      /* Панель внутри меню */
-      #spn-a11y-panel.menu-embedded {
-        position: static !important;
-        display: none;
-        background: rgba(0,0,0,0.85);
-        color: #fff;
-        padding: 10px 12px;
-        border-radius: 10px;
-        margin-top: 8px;
-        font-size: 14px;
+      /* Стили для кнопок доступности в меню */
+      .a11y-toggle {
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 12px !important;
+        text-decoration: none !important;
+        color: inherit !important;
+        border-radius: 6px;
+        transition: background-color 0.2s;
       }
-      #spn-a11y-panel.menu-embedded label { display:flex; align-items:center; justify-content:space-between; gap:10px; margin:6px 0; }
+      
+      .a11y-toggle:hover {
+        background-color: rgba(255,255,255,0.1) !important;
+      }
+      
+      .a11y-icon {
+        margin-right: 8px;
+        font-size: 16px;
+      }
+      
+      .a11y-status {
+        font-size: 14px;
+        margin-left: auto;
+      }
     `;
     document.head.appendChild(style);
   }
 
-  function buildUi(p){
-    if (document.getElementById("spn-a11y-panel")) return;
-    const panel = document.createElement("div");
-    panel.id = "spn-a11y-panel";
-    // Попытка встроить в меню рядом с пунктом "Настройки"
-    const settingsSubmenu = document.getElementById("settingsSubmenu");
-    const container = document.getElementById("menuContainer");
-    if (settingsSubmenu) {
-      panel.classList.add('menu-embedded');
-    } else {
-      // Фолбэк: плавающая панель
-      panel.style.position = "fixed";
-      panel.style.bottom = "16px";
-      panel.style.right = "16px";
-      panel.style.zIndex = "100000";
-      panel.style.background = "rgba(0,0,0,0.9)";
-      panel.style.color = "#fff";
-      panel.style.padding = "10px 12px";
-      panel.style.borderRadius = "10px";
-      panel.style.minWidth = "220px";
-      panel.style.fontSize = "14px";
-      panel.style.display = "none";
-    }
-
-    function row(label, key){
-      const id = `spn-a11y-${key}`;
-      const wrap = document.createElement("label");
-      wrap.style.display = "flex";
-      wrap.style.alignItems = "center";
-      wrap.style.justifyContent = "space-between";
-      wrap.style.gap = "10px";
-      wrap.style.margin = "6px 0";
-      const span = document.createElement("span"); span.textContent = label;
-      const input = document.createElement("input"); input.type = "checkbox"; input.id = id; input.checked = !!p[key];
-      input.addEventListener("change", ()=>{ p[key]=input.checked; savePrefs(p); applyPrefs(p); });
-      wrap.appendChild(span); wrap.appendChild(input);
-      return wrap;
-    }
-
-    panel.appendChild(row("Крупный шрифт", "largeText"));
-    panel.appendChild(row("Высокий контраст", "highContrast"));
-    panel.appendChild(row("Подчёркивать ссылки", "underlineLinks"));
-    panel.appendChild(row("Меньше анимаций", "reduceMotion"));
-
-    function togglePanel(e){
-      e.preventDefault();
-      panel.style.display = panel.style.display === "none" ? "block" : "none";
-    }
-    const menuBtn = document.getElementById("spn-a11y-open");
-    if (menuBtn) menuBtn.addEventListener("click", togglePanel);
-    // Делегирование, если элемент появится позже
-    document.addEventListener("click", (e)=>{
-      const t = e.target.closest && e.target.closest('#spn-a11y-open');
-      if (t) togglePanel(e);
-    });
-
-    if (settingsSubmenu) {
-      settingsSubmenu.appendChild(panel);
-    } else if (container) {
-      container.appendChild(panel);
-    } else {
-      document.body.appendChild(panel);
-    }
-  }
-
+  // Инициализация
   function init(){
     injectStyles();
-    const prefs = loadPrefs();
-    applyPrefs(prefs);
-    buildUi(prefs);
+    
+    const savedSettings = loadSettings();
+    applySettings(savedSettings);
+    
+    // Обработчики для кнопок доступности
+    document.addEventListener('click', (e) => {
+      const toggle = e.target.closest('.a11y-toggle');
+      if (toggle) {
+        e.preventDefault();
+        const setting = toggle.dataset.setting;
+        if (setting && settings[setting]) {
+          toggleSetting(setting);
+        }
+      }
+    });
+    
+    // Обновляем состояние кнопок после загрузки меню
+    setTimeout(() => {
+      updateButtonStates(savedSettings);
+    }, 100);
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init, { once:true });
+  // Запускаем после загрузки DOM
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
