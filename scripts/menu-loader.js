@@ -1,8 +1,11 @@
 // Исправленный импорт
 import { initMenu } from './menu.js';
+import '/scripts/accessibility.js';
 
 // Загружаем меню ПЕРВЫМ делом
-fetch('/menu.html')                                                                     // Путь из папки about-project
+fetch('/menu.html')
+        // Путь из папки about-project
+
     .then(response => {
         if (!response.ok) throw new Error('Меню не найдено');
         return response.text();
@@ -17,18 +20,14 @@ fetch('/menu.html')                                                             
             script.async = true;
             document.body.appendChild(script);
         }
-        // Глобально подключаем доступность, чтобы пункт "Доступность" работал везде
-        (function ensureA11y(){
-            const id = 'spn-a11y-loader';
-            if (!document.getElementById(id)) {
-                const s = document.createElement('script');
-                s.id = id;
-                s.src = '/scripts/accessibility.js';
-                s.defer = true;
-                document.body.appendChild(s);
-            }
-        })();
         
         initMenu();
+        
+        // Инициализируем доступность ПОСЛЕ загрузки меню
+        setTimeout(() => {
+            if (window.initAccessibility) {
+                window.initAccessibility();
+            }
+        }, 100);
     })
     .catch(err => console.error('Ошибка загрузки меню:', err));
