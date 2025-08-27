@@ -50,30 +50,12 @@
   }
 
   function buildUi(p){
-    if (document.getElementById("spn-a11y-toggle")) return;
-    const btn = document.createElement("button");
-    btn.id = "spn-a11y-toggle";
-    btn.setAttribute("aria-label", "Настройки доступности");
-    btn.style.position = "fixed";
-    btn.style.bottom = "12px";
-    btn.style.right = "12px";
-    btn.style.zIndex = "100000";
-    btn.style.borderRadius = "999px";
-    btn.style.background = "#000";
-    btn.style.color = "#fff";
-    btn.style.border = "1px solid #444";
-    btn.style.padding = "10px 12px";
-    btn.style.cursor = "pointer";
-    btn.style.opacity = "0.85";
-    btn.style.minWidth = "44px";
-    btn.style.minHeight = "44px";
-    btn.textContent = "Aa";
-
+    if (document.getElementById("spn-a11y-panel")) return;
     const panel = document.createElement("div");
     panel.id = "spn-a11y-panel";
     panel.style.position = "fixed";
-    panel.style.bottom = "64px";
-    panel.style.right = "12px";
+    panel.style.bottom = "16px";
+    panel.style.right = "16px";
     panel.style.zIndex = "100000";
     panel.style.background = "rgba(0,0,0,0.9)";
     panel.style.color = "#fff";
@@ -103,11 +85,14 @@
     panel.appendChild(row("Подчёркивать ссылки", "underlineLinks"));
     panel.appendChild(row("Меньше анимаций", "reduceMotion"));
 
-    btn.addEventListener("click", ()=>{
-      panel.style.display = panel.style.display === "none" ? "block" : "none";
-    });
+    const menuBtn = document.getElementById("spn-a11y-open");
+    if (menuBtn) {
+      menuBtn.addEventListener("click", (e)=>{
+        e.preventDefault();
+        panel.style.display = panel.style.display === "none" ? "block" : "none";
+      });
+    }
 
-    document.body.appendChild(btn);
     document.body.appendChild(panel);
   }
 
