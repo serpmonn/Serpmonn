@@ -1,14 +1,16 @@
-const CACHE_NAME = 'serpmonn-static-v2';
+const CACHE_NAME = 'serpmonn-v4';
 const urlsToCache = [
-    '/',
-    '/pwa/app.js',
-    '/styles/styles.css',
-    '/styles/base.css',
-    '/styles/media.css',
-    '/scripts/menu-loader.js',
-    '/scripts/scripts.js',
-    '/scripts/mobile-enhancements.js',
-    '/images/Serpmonn.ico'
+  '/',
+  '/main.html',
+  '/menu.html',
+  '/styles/menu.css',
+  '/styles/styles.css',
+  '/styles/base.css',
+  '/scripts/menu.js',
+  '/scripts/menu-loader.js',
+  '/scripts/accessibility.js',
+  '/images/settings.png',
+  '/images/availability.png'
 ];
 
 self.addEventListener('install', event => {
