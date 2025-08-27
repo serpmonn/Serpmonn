@@ -285,25 +285,34 @@
             }
         });
 
-        document.getElementById('up').addEventListener('mousedown', () => startMoving('up'));
-        document.getElementById('up').addEventListener('mouseup', stopMoving);
-        document.getElementById('up').addEventListener('touchstart', () => startMoving('up'));
-        document.getElementById('up').addEventListener('touchend', stopMoving);
+        document.getElementById('up').addEventListener('mousedown', () => { startMoving('up'); try{navigator.vibrate&&navigator.vibrate(10)}catch(_){} });
 
-        document.getElementById('down').addEventListener('mousedown', () => startMoving('down'));
-        document.getElementById('down').addEventListener('mouseup', stopMoving);
-        document.getElementById('down').addEventListener('touchstart', () => startMoving('down'));
-        document.getElementById('down').addEventListener('touchend', stopMoving);
+        document.getElementById('up').addEventListener('mouseup', stopMoving, { passive: true });
+        document.getElementById('up').addEventListener('touchstart', () => { startMoving('up'); try{navigator.vibrate&&navigator.vibrate(10)}catch(_){} }, { passive: true });
 
-        document.getElementById('left').addEventListener('mousedown', () => startMoving('left'));
-        document.getElementById('left').addEventListener('mouseup', stopMoving);
-        document.getElementById('left').addEventListener('touchstart', () => startMoving('left'));
-        document.getElementById('left').addEventListener('touchend', stopMoving);
+        document.getElementById('up').addEventListener('touchend', stopMoving, { passive: true });
 
-        document.getElementById('right').addEventListener('mousedown', () => startMoving('right'));
-        document.getElementById('right').addEventListener('mouseup', stopMoving);
-        document.getElementById('right').addEventListener('touchstart', () => startMoving('right'));
-        document.getElementById('right').addEventListener('touchend', stopMoving);
+        document.getElementById('down').addEventListener('mousedown', () => { startMoving('down'); try{navigator.vibrate&&navigator.vibrate(10)}catch(_){} });
+
+        document.getElementById('down').addEventListener('mouseup', stopMoving, { passive: true });
+        document.getElementById('down').addEventListener('touchstart', () => { startMoving('down'); try{navigator.vibrate&&navigator.vibrate(10)}catch(_){} }, { passive: true });
+
+        document.getElementById('down').addEventListener('touchend', stopMoving, { passive: true });
+
+        document.getElementById('left').addEventListener('mousedown', () => { startMoving('left'); try{navigator.vibrate&&navigator.vibrate(10)}catch(_){} });
+
+        document.getElementById('left').addEventListener('mouseup', stopMoving, { passive: true });
+        document.getElementById('left').addEventListener('touchstart', () => { startMoving('left'); try{navigator.vibrate&&navigator.vibrate(10)}catch(_){} }, { passive: true });
+
+        document.getElementById('left').addEventListener('touchend', stopMoving, { passive: true });
+
+        document.getElementById('right').addEventListener('mousedown', () => { startMoving('right'); try{navigator.vibrate&&navigator.vibrate(10)}catch(_){} });
+
+        document.getElementById('right').addEventListener('mouseup', stopMoving, { passive: true });
+
+        document.getElementById('right').addEventListener('touchstart', () => { startMoving('right'); try{navigator.vibrate&&navigator.vibrate(10)}catch(_){} }, { passive: true });
+
+        document.getElementById('right').addEventListener('touchend', stopMoving, { passive: true });
 
         restartButton.addEventListener('click', restartGame);
         homeButton.addEventListener('click', () => {

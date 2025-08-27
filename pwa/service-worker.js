@@ -1,24 +1,61 @@
-const CACHE_NAME = 'my-pwa-cache-v1';
+const CACHE_NAME = 'serpmonn-static-v2';
 const urlsToCache = [
     '/',
     '/pwa/app.js',
-    '../images/Serpmonn.ico'
+    '/styles/styles.css',
+    '/styles/base.css',
+    '/styles/media.css',
+    '/scripts/menu-loader.js',
+    '/scripts/scripts.js',
+    '/scripts/mobile-enhancements.js',
+    '/images/Serpmonn.ico'
 ];
 
 self.addEventListener('install', event => {
     event.waitUntil(
-        caches.open(CACHE_NAME)
-            .then(cache => {
-                return cache.addAll(urlsToCache);
-            })
+        caches.open(CACHE_NAME).then(cache => cache.addAll(urlsToCache))
     );
+    self.skipWaiting();
 });
 
+self.addEventListener('activate', event => {
+    event.waitUntil(
+        caches.keys().then(keys => Promise.all(
+            keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+        ))
+    );
+    self.clients.claim();
+});
+
+// Stale-while-revalidate for images and static assets
 self.addEventListener('fetch', event => {
+    const req = event.request;
+    const url = new URL(req.url);
+
+    // Only handle GET
+    if (req.method !== 'GET') return;
+
+    // Runtime cache for images and CSS/JS
+    if (url.origin === location.origin && (/\.(?:png|jpg|jpeg|gif|webp|svg)$/i.test(url.pathname) || /\.(?:css|js)$/i.test(url.pathname))) {
+        event.respondWith(
+            caches.open(CACHE_NAME).then(cache =>
+                cache.match(req).then(cached => {
+                    const fetchPromise = fetch(req).then(networkResp => {
+                        // Only cache successful responses
+                        if (networkResp && networkResp.status === 200) {
+                            cache.put(req, networkResp.clone());
+                        }
+                        return networkResp;
+                    }).catch(() => cached);
+                    return cached || fetchPromise;
+                })
+            )
+        );
+        return;
+    }
+
+    // Default: cache-first for precached, fallback to network
     event.respondWith(
-        caches.match(event.request)
-            .then(response => {
-                return response || fetch(event.request);
-            })
+        caches.match(req).then(cached => cached || fetch(req))
     );
 });
