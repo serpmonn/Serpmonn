@@ -137,19 +137,67 @@ class Game2048 {
     }
 
     moveLeft() {
-        return this.move(row => row);
+        return this.moveRows(row => row);
     }
 
     moveRight() {
-        return this.move(row => row.reverse());
+        return this.moveRows(row => row.reverse());
     }
 
     moveUp() {
-        return this.move(this.getColumn.bind(this));
+        return this.moveColumns(col => col);
     }
 
     moveDown() {
-        return this.move(col => this.getColumn(col).reverse());
+        return this.moveColumns(col => col.reverse());
+    }
+
+    moveRows(getRow) {
+        let moved = false;
+        
+        for (let i = 0; i < 4; i++) {
+            const row = this.getRow(i);
+            const originalRow = [...row];
+            const mergedRow = this.mergeLine(getRow(row));
+            
+            if (JSON.stringify(originalRow) !== JSON.stringify(mergedRow)) {
+                moved = true;
+                this.setRow(i, mergedRow);
+            }
+        }
+        
+        return moved;
+    }
+
+    moveColumns(getColumn) {
+        let moved = false;
+        
+        for (let i = 0; i < 4; i++) {
+            const column = this.getColumn(i);
+            const originalColumn = [...column];
+            const mergedColumn = this.mergeLine(getColumn(column));
+            
+            if (JSON.stringify(originalColumn) !== JSON.stringify(mergedColumn)) {
+                moved = true;
+                this.setColumn(i, mergedColumn);
+            }
+        }
+        
+        return moved;
+    }
+
+    getRow(rowIndex) {
+        const row = [];
+        for (let j = 0; j < 4; j++) {
+            row.push(this.board[rowIndex * 4 + j]);
+        }
+        return row;
+    }
+
+    setRow(rowIndex, values) {
+        for (let j = 0; j < 4; j++) {
+            this.board[rowIndex * 4 + j] = values[j];
+        }
     }
 
     getColumn(colIndex) {
@@ -164,30 +212,6 @@ class Game2048 {
         for (let i = 0; i < 4; i++) {
             this.board[i * 4 + colIndex] = values[i];
         }
-    }
-
-    move(getLine) {
-        let moved = false;
-        
-        for (let i = 0; i < 4; i++) {
-            const line = getLine(i);
-            const originalLine = [...line];
-            const mergedLine = this.mergeLine(line);
-            
-            if (JSON.stringify(originalLine) !== JSON.stringify(mergedLine)) {
-                moved = true;
-                
-                if (getLine === this.getColumn) {
-                    this.setColumn(i, mergedLine);
-                } else {
-                    for (let j = 0; j < 4; j++) {
-                        this.board[i * 4 + j] = mergedLine[j];
-                    }
-                }
-            }
-        }
-        
-        return moved;
     }
 
     mergeLine(line) {
