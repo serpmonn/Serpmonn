@@ -1,5 +1,5 @@
 	export function loadLeaderboard() {							// Загружаем данные с сервера и обновляем таблицу
-	    fetch('https://www.serpmonn.ru/leaderboard')
+	    fetch('https://www.serpmonn.ru/backend/games/leaderboard')
 	        .then(response => response.json())
 	        .then(data => {
 	            const leaderboardBody = document.getElementById('leaderboardBody');
