@@ -207,7 +207,7 @@
             });
 
             function updateLeaderboard() {
-                fetch('https://www.serpmonn.ru/leaderboard')
+                fetch('https://www.serpmonn.ru/backend/games/leaderboard')
                     .then(response => response.json())
                     .then(data => {
                         const leaderboardDiv = document.getElementById('leaderboard');
