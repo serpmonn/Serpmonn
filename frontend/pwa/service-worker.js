@@ -9,8 +9,8 @@ const urlsToCache = [
   '/scripts/menu.js',
   '/scripts/menu-loader.js',
   '/scripts/accessibility.js',
-  '/images/settings.png',
-  '/images/availability.png'
+  '/frontend/images/settings.png',
+  '/frontend/images/availability.png'
 ];
 
 self.addEventListener('install', event => {
