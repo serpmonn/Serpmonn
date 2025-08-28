@@ -12,6 +12,10 @@ const app = express();
 const port = process.env.PORT || 3000;
 const leaderboardFilePath = join(__dirname, 'leaderboards.json');
 const bannedWordsFilePath = join(__dirname, 'bannedWords.json');                                        // Путь к bannedWords.json
+
+// Настройка доверия к прокси (nginx)
+app.set('trust proxy', 1);
+
 const corsOptions = {
     origin: ['https://serpmonn.ru', 'https://www.serpmonn.ru'],                                         // Разрешенные домены
     optionsSuccessStatus: 200
@@ -22,7 +26,11 @@ const apiLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
   max: 600,
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    // Используем X-Forwarded-For если доступен, иначе обычный IP
+    return req.headers['x-forwarded-for'] || req.ip || req.connection.remoteAddress;
+  }
 });
 app.use(apiLimiter);
 
@@ -58,7 +66,11 @@ const writeLimiter = rateLimit({
   windowMs: 60 * 1000,
   max: 60,
   standardHeaders: true,
-  legacyHeaders: false
+  legacyHeaders: false,
+  keyGenerator: (req) => {
+    // Используем X-Forwarded-For если доступен, иначе обычный IP
+    return req.headers['x-forwarded-for'] || req.ip || req.connection.remoteAddress;
+  }
 });
 
 app.post('/add-score', writeLimiter, (req, res) => {                                                                  // Маршрут для добавления данных в таблицу лидеров
