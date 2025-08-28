@@ -194,7 +194,7 @@ function flattenPerfluenceData(perfArray) {
         const { percent, amount } = extractDiscountFromTexts(promo.name, promo.comment, landing.name, project.name);
 
         const category = determineCategoryFromText(project.category_name, title, description);
-        const imageUrl = firstDefined(promo.image, logo) || '/images/skidki-i-akcii.png';
+        const imageUrl = firstDefined(promo.image, logo) || '/frontend/images/skidki-i-akcii.png';
 
         const isTop = Boolean(
           promo.is_hit ||
@@ -232,7 +232,7 @@ function flattenPerfluenceData(perfArray) {
       const offerDescription = stripHtml(project.product_info) || 'Описание недоступно';
       const { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name);
       const offerCategory = determineCategoryFromText(project.category_name, offerTitle, offerDescription);
-      const offerImageUrl = firstDefined(logo) || '/images/skidki-i-akcii.png';
+      const offerImageUrl = firstDefined(logo) || '/frontend/images/skidki-i-akcii.png';
 
       const offerIsTop = Boolean(
         landing.is_hiting ||

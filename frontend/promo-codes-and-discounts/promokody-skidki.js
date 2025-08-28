@@ -265,7 +265,7 @@ function createPromoCard(promo, isTopOffer = false) {
     card.innerHTML = `
         <div class="promo-card-content">
             <div class="promo-header">
-                <img src="${promo.image_url || '/images/skidki-i-akcii.png'}" alt="${titleText}" width="50" height="50">
+                <img src="${promo.image_url || '/frontend/images/skidki-i-akcii.png'}" alt="${titleText}" width="50" height="50">
                 <h3>${titleText}</h3>
             </div>
             <div class="tag">${discountText}</div>
