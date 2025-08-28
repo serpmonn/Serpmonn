@@ -110,7 +110,7 @@ Serpmonn/
 │       └── redsquare2_styles/            # Стили игры
 ├── 🤖 serpmonn-ai/                       # AI компоненты
 │   └── self-developing-system.mjs        # Саморазвивающаяся система
-├── 📱 pwa/                               # PWA компоненты
+├── 📱 frontend/pwa/                      # PWA компоненты
 │   ├── app.js                            # Главный скрипт PWA
 │   ├── manifest.json                     # Манифест веб-приложения
 │   └── service-worker.js                 # Сервисный воркер
