@@ -152,11 +152,41 @@
   // Делаем функцию доступной глобально
   window.initAccessibility = init;
 
-  // Запускаем после загрузки DOM
+  // Автоматическая инициализация при загрузке DOM
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }
+
+  // Дополнительная инициализация через MutationObserver для динамически загруженного контента
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
+        // Проверяем, добавились ли элементы меню
+        const hasMenuElements = Array.from(mutation.addedNodes).some(node => {
+          if (node.nodeType === Node.ELEMENT_NODE) {
+            return node.querySelector('.a11y-toggle') || node.classList.contains('a11y-toggle');
+          }
+          return false;
+        });
+        
+        if (hasMenuElements) {
+          console.log('🔄 Menu elements detected, updating accessibility...');
+          setTimeout(() => {
+            const savedSettings = loadSettings();
+            updateButtonStates(savedSettings);
+          }, 100);
+        }
+      }
+    });
+  });
+
+  // Начинаем наблюдение за изменениями в DOM
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
 })();
 
