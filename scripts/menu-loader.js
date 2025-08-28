@@ -2,6 +2,23 @@
 import { initMenu } from './menu.js';
 import '/scripts/accessibility.js';
 
+// Немедленно применяем сохранённые настройки доступности
+(function applySavedAccessibility() {
+  const saved = localStorage.getItem('spn_a11y_settings');
+  if (saved) {
+    try {
+      const settings = JSON.parse(saved);
+      Object.keys(settings).forEach(key => {
+        if (settings[key]) {
+          document.documentElement.classList.add(`a11y-${key.replace('-', '-')}`);
+        }
+      });
+    } catch (e) {
+      console.warn('Failed to apply saved accessibility settings:', e);
+    }
+  }
+})();
+
 // Загружаем меню ПЕРВЫМ делом
 fetch('/menu.html')
         // Путь из папки about-project
