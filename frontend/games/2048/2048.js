@@ -1,0 +1,280 @@
+class Game2048 {
+    constructor() {
+        this.board = Array(16).fill(0);
+        this.score = 0;
+        this.best = parseInt(localStorage.getItem('2048-best')) || 0;
+        this.history = [];
+        this.init();
+    }
+
+    init() {
+        this.createBoard();
+        this.addRandomTile();
+        this.addRandomTile();
+        this.updateDisplay();
+        this.setupEventListeners();
+    }
+
+    createBoard() {
+        const boardElement = document.getElementById('board');
+        boardElement.innerHTML = '';
+        
+        for (let i = 0; i < 16; i++) {
+            const tile = document.createElement('div');
+            tile.className = 'tile';
+            tile.dataset.index = i;
+            boardElement.appendChild(tile);
+        }
+    }
+
+    addRandomTile() {
+        const emptyCells = this.board.reduce((acc, cell, index) => {
+            if (cell === 0) acc.push(index);
+            return acc;
+        }, []);
+
+        if (emptyCells.length > 0) {
+            const randomIndex = emptyCells[Math.floor(Math.random() * emptyCells.length)];
+            this.board[randomIndex] = Math.random() < 0.9 ? 2 : 4;
+        }
+    }
+
+    updateDisplay() {
+        const tiles = document.querySelectorAll('.tile');
+        
+        tiles.forEach((tile, index) => {
+            const value = this.board[index];
+            tile.textContent = value || '';
+            tile.className = `tile${value ? ` tile-${value}` : ''}`;
+        });
+
+        document.getElementById('score').textContent = this.score;
+        document.getElementById('best').textContent = this.best;
+    }
+
+    setupEventListeners() {
+        document.addEventListener('keydown', (e) => {
+            if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                e.preventDefault();
+                this.handleKeyPress(e.key);
+            }
+        });
+
+        // Свайпы для мобильных устройств
+        let startX, startY;
+        const board = document.getElementById('board');
+
+        board.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].clientX;
+            startY = e.touches[0].clientY;
+        });
+
+        board.addEventListener('touchend', (e) => {
+            if (!startX || !startY) return;
+
+            const endX = e.changedTouches[0].clientX;
+            const endY = e.changedTouches[0].clientY;
+            
+            const deltaX = endX - startX;
+            const deltaY = endY - startY;
+            
+            if (Math.abs(deltaX) > Math.abs(deltaY)) {
+                if (deltaX > 0) this.handleKeyPress('ArrowRight');
+                else this.handleKeyPress('ArrowLeft');
+            } else {
+                if (deltaY > 0) this.handleKeyPress('ArrowDown');
+                else this.handleKeyPress('ArrowUp');
+            }
+            
+            startX = startY = null;
+        });
+
+        // Кнопки управления
+        document.getElementById('new-game').addEventListener('click', () => {
+            this.newGame();
+        });
+
+        document.getElementById('undo').addEventListener('click', () => {
+            this.undo();
+        });
+    }
+
+    handleKeyPress(key) {
+        this.saveState();
+        
+        let moved = false;
+        
+        switch (key) {
+            case 'ArrowUp':
+                moved = this.moveUp();
+                break;
+            case 'ArrowDown':
+                moved = this.moveDown();
+                break;
+            case 'ArrowLeft':
+                moved = this.moveLeft();
+                break;
+            case 'ArrowRight':
+                moved = this.moveRight();
+                break;
+        }
+
+        if (moved) {
+            this.addRandomTile();
+            this.updateDisplay();
+            
+            // Вибрация на мобильных
+            if (navigator.vibrate) {
+                navigator.vibrate(50);
+            }
+
+            if (this.isGameOver()) {
+                setTimeout(() => {
+                    alert('Игра окончена! Ваш счёт: ' + this.score);
+                }, 100);
+            }
+        }
+    }
+
+    moveLeft() {
+        return this.move(row => row);
+    }
+
+    moveRight() {
+        return this.move(row => row.reverse());
+    }
+
+    moveUp() {
+        return this.move(this.getColumn.bind(this));
+    }
+
+    moveDown() {
+        return this.move(col => this.getColumn(col).reverse());
+    }
+
+    getColumn(colIndex) {
+        const column = [];
+        for (let i = 0; i < 4; i++) {
+            column.push(this.board[i * 4 + colIndex]);
+        }
+        return column;
+    }
+
+    setColumn(colIndex, values) {
+        for (let i = 0; i < 4; i++) {
+            this.board[i * 4 + colIndex] = values[i];
+        }
+    }
+
+    move(getLine) {
+        let moved = false;
+        
+        for (let i = 0; i < 4; i++) {
+            const line = getLine(i);
+            const originalLine = [...line];
+            const mergedLine = this.mergeLine(line);
+            
+            if (JSON.stringify(originalLine) !== JSON.stringify(mergedLine)) {
+                moved = true;
+                
+                if (getLine === this.getColumn) {
+                    this.setColumn(i, mergedLine);
+                } else {
+                    for (let j = 0; j < 4; j++) {
+                        this.board[i * 4 + j] = mergedLine[j];
+                    }
+                }
+            }
+        }
+        
+        return moved;
+    }
+
+    mergeLine(line) {
+        // Удаляем нули
+        let filtered = line.filter(cell => cell !== 0);
+        
+        // Объединяем одинаковые числа
+        for (let i = 0; i < filtered.length - 1; i++) {
+            if (filtered[i] === filtered[i + 1]) {
+                filtered[i] *= 2;
+                this.score += filtered[i];
+                filtered.splice(i + 1, 1);
+            }
+        }
+        
+        // Добавляем нули в конец
+        while (filtered.length < 4) {
+            filtered.push(0);
+        }
+        
+        return filtered;
+    }
+
+    saveState() {
+        this.history.push({
+            board: [...this.board],
+            score: this.score
+        });
+        
+        if (this.history.length > 10) {
+            this.history.shift();
+        }
+    }
+
+    undo() {
+        if (this.history.length > 0) {
+            const previousState = this.history.pop();
+            this.board = previousState.board;
+            this.score = previousState.score;
+            this.updateDisplay();
+        }
+    }
+
+    newGame() {
+        this.board = Array(16).fill(0);
+        this.score = 0;
+        this.history = [];
+        this.addRandomTile();
+        this.addRandomTile();
+        this.updateDisplay();
+    }
+
+    isGameOver() {
+        // Проверяем, есть ли пустые клетки
+        if (this.board.includes(0)) return false;
+        
+        // Проверяем возможность объединения по горизонтали
+        for (let i = 0; i < 4; i++) {
+            for (let j = 0; j < 3; j++) {
+                if (this.board[i * 4 + j] === this.board[i * 4 + j + 1]) {
+                    return false;
+                }
+            }
+        }
+        
+        // Проверяем возможность объединения по вертикали
+        for (let i = 0; i < 3; i++) {
+            for (let j = 0; j < 4; j++) {
+                if (this.board[i * 4 + j] === this.board[(i + 1) * 4 + j]) {
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+}
+
+// Инициализация игры
+document.addEventListener('DOMContentLoaded', () => {
+    new Game2048();
+});
+
+// Сохранение лучшего счёта
+window.addEventListener('beforeunload', () => {
+    const game = window.game2048;
+    if (game && game.score > game.best) {
+        localStorage.setItem('2048-best', game.score);
+    }
+});

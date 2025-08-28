@@ -1,7 +1,12 @@
 	export function loadLeaderboard() {							// Загружаем данные с сервера и обновляем таблицу
+	    console.log('🔄 Загружаем таблицу лидеров...');
 	    fetch('https://www.serpmonn.ru/backend/games/leaderboard')
-	        .then(response => response.json())
+	        .then(response => {
+	            console.log('📡 Ответ сервера:', response.status);
+	            return response.json();
+	        })
 	        .then(data => {
+	            console.log('📊 Получены данные:', data);
 	            const leaderboardBody = document.getElementById('leaderboardBody');
 	            leaderboardBody.innerHTML = ''; 						// Очистка таблицы перед обновлением
 	            data.forEach((entry, index) => {

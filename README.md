@@ -34,7 +34,7 @@ Serpmonn/
 │   │       └── password-reset-server.mjs # Сервер сброса пароля
 │   ├── 🗄️ database/                      # Конфигурация БД
 │   │   └── db.mjs                        # Подключение к MySQL
-│   ├── 🎮 games/                         # Игровая платформа (серверная часть)
+│   ├── 🎮 backend/games/                 # Игровая платформа (серверная часть)
 │   │   ├── leaderboard-server.mjs        # API таблицы лидеров
 │   │   ├── leaderboards.json             # Данные лидеров
 │   │   └── bannedWords.json              # Запрещённые слова
@@ -110,7 +110,7 @@ Serpmonn/
 │       └── redsquare2_styles/            # Стили игры
 ├── 🤖 serpmonn-ai/                       # AI компоненты
 │   └── self-developing-system.mjs        # Саморазвивающаяся система
-├── 📱 pwa/                               # PWA компоненты
+├── 📱 frontend/pwa/                      # PWA компоненты
 │   ├── app.js                            # Главный скрипт PWA
 │   ├── manifest.json                     # Манифест веб-приложения
 │   └── service-worker.js                 # Сервисный воркер
