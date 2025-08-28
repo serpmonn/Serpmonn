@@ -143,4 +143,7 @@ export function initMenu() {
             }
         }
     });
+
+    // Инициализация PWA
+    initPWA();
 }
