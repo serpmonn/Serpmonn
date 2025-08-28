@@ -137,16 +137,14 @@
       }
     });
     
-    // Обновляем состояние кнопок после загрузки меню
-    setTimeout(() => {
-      console.log('🔍 Looking for toggle buttons...');
-      const toggles = document.querySelectorAll('.a11y-toggle');
-      console.log('📱 Found toggle buttons:', toggles.length);
-      toggles.forEach(toggle => {
-        console.log('  -', toggle.dataset.setting, toggle.textContent.trim());
-      });
-      updateButtonStates(savedSettings);
-    }, 500); // Увеличил время ожидания
+    // Обновляем состояние кнопок (меню уже загружено)
+    console.log('🔍 Looking for toggle buttons...');
+    const toggles = document.querySelectorAll('.a11y-toggle');
+    console.log('📱 Found toggle buttons:', toggles.length);
+    toggles.forEach(toggle => {
+      console.log('  -', toggle.dataset.setting, toggle.textContent.trim());
+    });
+    updateButtonStates(savedSettings);
   }
 
   // Делаем функцию доступной глобально
@@ -158,35 +156,6 @@
   } else {
     init();
   }
-
-  // Дополнительная инициализация через MutationObserver для динамически загруженного контента
-  const observer = new MutationObserver((mutations) => {
-    mutations.forEach((mutation) => {
-      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-        // Проверяем, добавились ли элементы меню
-        const hasMenuElements = Array.from(mutation.addedNodes).some(node => {
-          if (node.nodeType === Node.ELEMENT_NODE) {
-            return node.querySelector('.a11y-toggle') || node.classList.contains('a11y-toggle');
-          }
-          return false;
-        });
-        
-        if (hasMenuElements) {
-          console.log('🔄 Menu elements detected, updating accessibility...');
-          setTimeout(() => {
-            const savedSettings = loadSettings();
-            updateButtonStates(savedSettings);
-          }, 100);
-        }
-      }
-    });
-  });
-
-  // Начинаем наблюдение за изменениями в DOM
-  observer.observe(document.body, {
-    childList: true,
-    subtree: true
-  });
 
 })();
 
