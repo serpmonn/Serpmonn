@@ -124,4 +124,23 @@ export function initMenu() {
             window.location.reload();
         }
     });
+
+    // Закрытие меню при клике вне его области
+    document.addEventListener('click', (e) => {
+        const menuContainer = document.getElementById('menuContainer');
+        if (menuContainer && menuContainer.classList.contains('active')) {
+            // Проверяем, что клик не внутри меню и не на кнопку меню
+            if (!menuContainer.contains(e.target) && e.target !== menuButton) {
+                menuContainer.classList.remove('active');
+                menuButton.innerHTML = '<span class="s">S</span><span class="n">n</span>';
+                
+                // Закрываем все подменю
+                document.querySelectorAll('.submenu-container').forEach(sub => {
+                    sub.classList.remove('active');
+                    const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
+                    if (parent) parent.setAttribute('aria-expanded', 'false');
+                });
+            }
+        }
+    });
 }
