@@ -25,7 +25,7 @@
   function applySettings(savedSettings){
     Object.keys(settings).forEach(key => {
       if (savedSettings[key]) {
-        document.body.classList.add(settings[key].class);
+        document.documentElement.classList.add(settings[key].class);
       }
     });
   }
@@ -46,9 +46,9 @@
     savedSettings[settingKey] = !savedSettings[settingKey];
     
     if (savedSettings[settingKey]) {
-      document.body.classList.add(settings[settingKey].class);
+      document.documentElement.classList.add(settings[settingKey].class);
     } else {
-      document.body.classList.remove(settings[settingKey].class);
+      document.documentElement.classList.remove(settings[settingKey].class);
     }
     
     saveSettings(savedSettings);
@@ -68,13 +68,14 @@
     style.id = 'spn-a11y-styles';
     style.textContent = `
       /* Крупный текст */
-      .a11y-large-text body { font-size: 18px; }
+      .a11y-large-text { font-size: 18px; }
       .a11y-large-text h1 { font-size: 2.2em; }
       .a11y-large-text h2 { font-size: 1.8em; }
       .a11y-large-text h3 { font-size: 1.4em; }
       .a11y-large-text button, .a11y-large-text input, .a11y-large-text select { font-size: 1.05em; }
 
       /* Высокий контраст */
+      .a11y-high-contrast { background: #000 !important; color: #fff !important; }
       .a11y-high-contrast body { background: #000 !important; color: #fff !important; }
       .a11y-high-contrast a { color: #00e5ff !important; }
       .a11y-high-contrast .card, .a11y-high-contrast .container, .a11y-high-contrast .menu-container { background: #111 !important; color:#fff !important; border-color:#555 !important; }
