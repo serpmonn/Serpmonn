@@ -117,15 +117,18 @@
 
   // Инициализация
   function init(){
+    console.log('🔧 Accessibility script initialized');
     injectStyles();
     
     const savedSettings = loadSettings();
+    console.log('📋 Loaded settings:', savedSettings);
     applySettings(savedSettings);
     
     // Обработчики для кнопок доступности
     document.addEventListener('click', (e) => {
       const toggle = e.target.closest('.a11y-toggle');
       if (toggle) {
+        console.log('🎯 Toggle clicked:', toggle.dataset.setting);
         e.preventDefault();
         const setting = toggle.dataset.setting;
         if (setting && settings[setting]) {
@@ -136,9 +139,18 @@
     
     // Обновляем состояние кнопок после загрузки меню
     setTimeout(() => {
+      console.log('🔍 Looking for toggle buttons...');
+      const toggles = document.querySelectorAll('.a11y-toggle');
+      console.log('📱 Found toggle buttons:', toggles.length);
+      toggles.forEach(toggle => {
+        console.log('  -', toggle.dataset.setting, toggle.textContent.trim());
+      });
       updateButtonStates(savedSettings);
-    }, 100);
+    }, 500); // Увеличил время ожидания
   }
+
+  // Делаем функцию доступной глобально
+  window.initAccessibility = init;
 
   // Запускаем после загрузки DOM
   if (document.readyState === 'loading') {
