@@ -114,30 +114,36 @@ export function initMenu() {
         });
     });
 
+    // Обработчик переключения языка
+    document.addEventListener('click', (e) => {
+        const langLink = e.target.closest('[data-lang]');
+        if (langLink) {
+            e.preventDefault();
+            const lang = langLink.dataset.lang;
+            localStorage.setItem('spn_lang', lang);
+            window.location.reload();
+        }
+    });
+
+    // Закрытие меню при клике вне его области
     document.addEventListener('click', (e) => {
         const menuContainer = document.getElementById('menuContainer');
-        if (menuContainer && !menuContainer.contains(e.target) && e.target !== menuButton) {
-            menuContainer.classList.remove('active');
-            menuButton.innerHTML = '<span class="s">S</span><span class="n">n</span>';
-            document.querySelectorAll('.submenu-container').forEach(sub => {
-                sub.classList.remove('active');
-                const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
-                if (parent) parent.setAttribute('aria-expanded', 'false');
-            });
+        if (menuContainer && menuContainer.classList.contains('active')) {
+            // Проверяем, что клик не внутри меню и не на кнопку меню
+            if (!menuContainer.contains(e.target) && e.target !== menuButton) {
+                menuContainer.classList.remove('active');
+                menuButton.innerHTML = '<span class="s">S</span><span class="n">n</span>';
+                
+                // Закрываем все подменю
+                document.querySelectorAll('.submenu-container').forEach(sub => {
+                    sub.classList.remove('active');
+                    const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
+                    if (parent) parent.setAttribute('aria-expanded', 'false');
+                });
+            }
         }
     });
 
     // Инициализация PWA
     initPWA();
-
-    // Обработчики выбора языка: сохраняем в localStorage и перезагружаем при необходимости
-    document.querySelectorAll('#langSubmenu a[data-lang]').forEach(a => {
-        a.addEventListener('click', (e) => {
-            e.preventDefault();
-            const lang = a.getAttribute('data-lang');
-            try { localStorage.setItem('spn_lang', lang); } catch(_) {}
-            // Здесь можно добавить динамическую загрузку локализаций; пока оставим перезагрузку
-            location.reload();
-        });
-    });
 }

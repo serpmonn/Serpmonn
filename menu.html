@@ -1,4 +1,5 @@
 <!-- Стили -->
+<link rel="stylesheet" href="/styles/accessibility.css">
 <link rel="stylesheet" href="/styles/menu.css">
 <link rel="stylesheet" href="/styles/pwa.css">
 <!-- Кнопка меню -->
@@ -42,13 +43,13 @@
             <a href="https://dhwnh.com/g/c4c9d791007c9ceea344f94d791968/?erid=5jtCeReLm1S3Xx3Lf3cMPoe" target="_blank">
                 <img src="/images/technomagic.ico" alt="Техномагия" class="icon"> Техномагия
             </a>
-            <a href="/games/2048/index.html" target="_blank">
+            <a href="/frontend/games/2048/index.html" target="_blank">
                 <img src="/images/2048.ico" alt="2048" class="icon"> 2048
             </a>
-            <a href="/games/redsquare/redsquare.html" target="_blank">
+            <a href="/frontend/games/redsquare/redsquare.html" target="_blank">
                 <img src="/images/SquareEscape.ico" alt="Квадратное бегство" class="icon"> Квадратное бегство
             </a>
-            <a href="/games/redsquare2/redsquare2.html" target="_blank">
+            <a href="/frontend/games/redsquare2/redsquare2.html" target="_blank">
                 <img src="/images/RedSquare2.ico" alt="Падающие фигуры" class="icon"> Падающие фигуры
             </a>
         </div>
@@ -147,7 +148,10 @@
         <!-- Блок поиска -->
         <div class="menu-search-container" id="menuSearchContainer">
             <div class="menu-search-row">
-                <img src="/images/Serpmonn.ico" alt="Serpmonn" class="menu-logo">
+                <a href="/main.html" class="menu-logo-link">
+                    <img src="/images/Serpmonn.ico" alt="Serpmonn" class="menu-logo">
+                </a>
+
                 <div class="gcse-searchbox-only"></div>
             </div>
         </div>
@@ -296,8 +300,31 @@
         <img src="/images/settings.png" alt="Настройки" class="icon"> Настройки
     </a>
     <div class="submenu-container" id="settingsSubmenu">
-        <a href="#" id="spn-a11y-open"><img src="/images/availability.png" alt="Доступность" class="icon"> Доступность</a>
+        <a href="#" class="menu-item" data-submenu="a11ySubmenu">
+            <img src="/images/availability.png" alt="Доступность" class="icon"> Доступность
+        </a>
+        
+        <div class="submenu-container" id="a11ySubmenu">
+            <a href="#" class="a11y-toggle" data-setting="large-text">
+                <span class="a11y-icon">🔤</span> Крупный шрифт
+                <span class="a11y-status" data-status="large-text">⚪</span>
+            </a>
+            <a href="#" class="a11y-toggle" data-setting="high-contrast">
+                <span class="a11y-icon">🌓</span> Высокий контраст
+                <span class="a11y-status" data-status="high-contrast">⚪</span>
+            </a>
+            <a href="#" class="a11y-toggle" data-setting="underline-links">
+                <span class="a11y-icon">🔗</span> Подчёркивать ссылки
+                <span class="a11y-status" data-status="underline-links">⚪</span>
+            </a>
+            <a href="#" class="a11y-toggle" data-setting="reduce-motion">
+                <span class="a11y-icon">🎬</span> Меньше анимаций
+                <span class="a11y-status" data-status="reduce-motion">⚪</span>
+            </a>
+        </div>
+
         <a href="#" class="menu-item" data-submenu="langSubmenu"><span class="tool-icon">🌐</span> Язык</a>
+
         <div class="submenu-container" id="langSubmenu">
             <a href="#" data-lang="ru">Русский</a>
             <a href="#" data-lang="en">English</a>
@@ -320,5 +347,4 @@
     </div>
 </div>
 
-<script src="/js/menu.js"></script>
-<script src="/js/install.js"></script>
+<script src="/scripts/menu.js"></script>

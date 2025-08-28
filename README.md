@@ -33,7 +33,11 @@ Serpmonn/
 │   │   └── password-reset/               # Восстановление пароля
 │   │       └── password-reset-server.mjs # Сервер сброса пароля
 │   ├── 🗄️ database/                      # Конфигурация БД
-│   │   └── config.js                     # Настройки базы данных
+│   │   └── db.mjs                        # Подключение к MySQL
+│   ├── 🎮 backend/games/                 # Игровая платформа (серверная часть)
+│   │   ├── leaderboard-server.mjs        # API таблицы лидеров
+│   │   ├── leaderboards.json             # Данные лидеров
+│   │   └── bannedWords.json              # Запрещённые слова
 │   ├── 📰 news/                          # RSS новостной сервер
 │   │   └── news-server.mjs               # Сервер новостей
 │   ├── 👤 profiles/                      # Профили пользователей
@@ -85,7 +89,7 @@ Serpmonn/
 │   ├── 🎫 promo-codes-and-discounts/     # Промокоды и скидки
 │   │   └── promo-codes.html              # Страница промокодов
 │   └── 🤖 openai_test.html               # Тест OpenAI
-├── 🎮 games/                             # Игровая платформа
+├── 🎮 frontend/games/                    # Игровая платформа (клиентская часть)
 │   ├── 🔢 2048/                          # Игра 2048
 │   │   ├── 2048.html                     # Страница игры 2048
 │   │   ├── 2048_scripts/                 # Скрипты игры 2048
@@ -106,7 +110,7 @@ Serpmonn/
 │       └── redsquare2_styles/            # Стили игры
 ├── 🤖 serpmonn-ai/                       # AI компоненты
 │   └── self-developing-system.mjs        # Саморазвивающаяся система
-├── 📱 pwa/                               # PWA компоненты
+├── 📱 frontend/pwa/                      # PWA компоненты
 │   ├── app.js                            # Главный скрипт PWA
 │   ├── manifest.json                     # Манифест веб-приложения
 │   └── service-worker.js                 # Сервисный воркер
