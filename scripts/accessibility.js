@@ -123,6 +123,8 @@
     
     const savedSettings = loadSettings();
     console.log('📋 Loaded settings:', savedSettings);
+    
+    // Применяем сохранённые настройки сразу при инициализации
     applySettings(savedSettings);
     
     // Обработчики для кнопок доступности
@@ -157,6 +159,15 @@
   } else {
     init();
   }
+
+  // Дополнительная инициализация для случаев, когда скрипт загружается после DOM
+  setTimeout(() => {
+    const savedSettings = loadSettings();
+    if (Object.keys(savedSettings).length > 0) {
+      console.log('🔄 Re-applying saved settings...');
+      applySettings(savedSettings);
+    }
+  }, 100);
 
 })();
 
