@@ -1,7 +1,7 @@
 const CACHE_NAME = 'serpmonn-v4';
 const urlsToCache = [
   '/',
-  '/main.html',
+  '/frontend/main.html',
   '/menu.html',
   '/frontend/styles/menu.css',
   '/frontend/styles/styles.css',
