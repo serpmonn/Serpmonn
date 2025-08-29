@@ -293,15 +293,15 @@
     </a>
 
     <!-- Настройки -->
-    <a href="#" class="menu-item" data-submenu="settingsSubmenu">
+    <a href="#" class="menu-item" data-submenu="settingsSubmenu" aria-expanded="false" aria-haspopup="true">
         <img src="/frontend/images/settings.png" alt="Настройки" class="icon"> Настройки
     </a>
-    <div class="submenu-container" id="settingsSubmenu">
-        <a href="#" class="menu-item" data-submenu="a11ySubmenu">
+    <div class="submenu-container" id="settingsSubmenu" aria-hidden="true">
+        <a href="#" class="menu-item" data-submenu="a11ySubmenu" aria-expanded="false" aria-haspopup="true">
             <img src="/frontend/images/availability.png" alt="Доступность" class="icon"> Доступность
         </a>
         
-        <div class="submenu-container" id="a11ySubmenu">
+        <div class="submenu-container" id="a11ySubmenu" aria-hidden="true">
             <a href="#" class="a11y-toggle" data-setting="large-text">
                 <span class="a11y-icon">🔤</span> Крупный шрифт
                 <span class="a11y-status" data-status="large-text">⚪</span>
@@ -320,9 +320,9 @@
             </a>
         </div>
 
-        <a href="#" class="menu-item" data-submenu="langSubmenu"><span class="tool-icon">🌐</span> Язык</a>
+        <a href="#" class="menu-item" data-submenu="langSubmenu" aria-expanded="false" aria-haspopup="true"><span class="tool-icon">🌐</span> Язык</a>
 
-        <div class="submenu-container" id="langSubmenu">
+        <div class="submenu-container" id="langSubmenu" aria-hidden="true">
             <a href="#" data-lang="ru">Русский</a>
             <a href="#" data-lang="en">English</a>
         </div>
@@ -343,5 +343,8 @@
         <button id="closePWAInstructions" class="pwa-close-btn">Закрыть</button>
     </div>
 </div>
+
+<!-- Добавляем подключение доступности-->
+<script src="/frontend/scripts/accessibility.js"></script>
 
 <script src="/frontend/scripts/menu.js"></script>

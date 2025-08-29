@@ -1,4 +1,3 @@
-// menu.js
 export function toggleMenu(event) {
     const menuButton = document.getElementById('menuButton');
     const menuContainer = document.getElementById('menuContainer');
@@ -6,15 +5,24 @@ export function toggleMenu(event) {
     if (menuContainer.classList.contains('active')) {
         menuContainer.classList.remove('active');
         menuButton.innerHTML = '<span class="s">S</span><span class="n">n</span>';
+        menuContainer.setAttribute('aria-hidden', 'true');
+        menuButton.setAttribute('aria-expanded', 'false');
+        
         // Закрываем все подменю при закрытии главного меню
         document.querySelectorAll('.submenu-container').forEach(sub => {
             sub.classList.remove('active');
+            sub.setAttribute('aria-hidden', 'true');
             const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
-            if (parent) parent.setAttribute('aria-expanded', 'false');
+            if (parent) {
+                parent.setAttribute('aria-expanded', 'false');
+                parent.setAttribute('aria-hidden', 'true');
+            }
         });
     } else {
         menuContainer.classList.add('active');
         menuButton.innerHTML = '<span class="s">Serp</span><span class="n">monn</span>';
+        menuContainer.setAttribute('aria-hidden', 'false');
+        menuButton.setAttribute('aria-expanded', 'true');
     }
 }
 
@@ -29,14 +37,20 @@ export function toggleSubmenu(event, submenuId) {
         document.querySelectorAll('.submenu-container').forEach(sub => {
             if (sub !== submenu && (!parentSubmenu || !parentSubmenu.contains(sub))) {
                 sub.classList.remove('active');
+                sub.setAttribute('aria-hidden', 'true');
                 const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
-                if (parent) parent.setAttribute('aria-expanded', 'false');
+                if (parent) {
+                    parent.setAttribute('aria-expanded', 'false');
+                    parent.setAttribute('aria-hidden', 'true');
+                }
             }
         });
         
         // Переключаем текущее подменю
         submenu.classList.toggle('active');
+        submenu.setAttribute('aria-hidden', submenu.classList.contains('active') ? 'false' : 'true');
         menuItem.setAttribute('aria-expanded', isOpen);
+        menuItem.setAttribute('aria-hidden', 'false');
     }
 }
 
@@ -52,12 +66,14 @@ export function initPWA() {
             e.preventDefault();
             e.stopPropagation();
             pwaInstructions.style.display = 'flex';
+            pwaInstructions.setAttribute('aria-hidden', 'false');
         });
     }
 
     if (closeInstructionsBtn) {
         closeInstructionsBtn.addEventListener('click', () => {
             pwaInstructions.style.display = 'none';
+            pwaInstructions.setAttribute('aria-hidden', 'true');
         });
     }
 
@@ -76,6 +92,7 @@ export function initPWA() {
                 const { outcome } = await deferredPrompt.userChoice;
                 if (outcome === 'accepted') {
                     pwaInstructions.style.display = 'none';
+                    pwaInstructions.setAttribute('aria-hidden', 'true');
                 }
             }
         });
@@ -96,6 +113,7 @@ export function initMenu() {
     const menuSearch = document.getElementById('menuSearchContainer');
     if (menuSearch && document.querySelector('.main-search-container')) {
         menuSearch.classList.add('hidden');
+        menuSearch.setAttribute('aria-hidden', 'true');
     }
 
     const menuButton = document.getElementById('menuButton');
@@ -125,6 +143,18 @@ export function initMenu() {
         }
     });
 
+    // Обработчики для кнопок доступности
+    document.addEventListener('click', (e) => {
+        const toggle = e.target.closest('.a11y-toggle');
+        if (toggle) {
+            e.preventDefault();
+            const setting = toggle.dataset.setting;
+            if (setting && window.toggleA11ySetting) {
+                window.toggleA11ySetting(setting);
+            }
+        }
+    });
+
     // Закрытие меню при клике вне его области
     document.addEventListener('click', (e) => {
         const menuContainer = document.getElementById('menuContainer');
@@ -132,13 +162,19 @@ export function initMenu() {
             // Проверяем, что клик не внутри меню и не на кнопку меню
             if (!menuContainer.contains(e.target) && e.target !== menuButton) {
                 menuContainer.classList.remove('active');
+                menuContainer.setAttribute('aria-hidden', 'true');
                 menuButton.innerHTML = '<span class="s">S</span><span class="n">n</span>';
+                menuButton.setAttribute('aria-expanded', 'false');
                 
                 // Закрываем все подменю
                 document.querySelectorAll('.submenu-container').forEach(sub => {
                     sub.classList.remove('active');
+                    sub.setAttribute('aria-hidden', 'true');
                     const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
-                    if (parent) parent.setAttribute('aria-expanded', 'false');
+                    if (parent) {
+                        parent.setAttribute('aria-expanded', 'false');
+                        parent.setAttribute('aria-hidden', 'true');
+                    }
                 });
             }
         }
@@ -146,4 +182,9 @@ export function initMenu() {
 
     // Инициализация PWA
     initPWA();
+    
+    // Инициализация доступности
+    if (window.initA11y) {
+        window.initA11y();
+    }
 }
