@@ -20,7 +20,7 @@ import '/frontend/scripts/accessibility.js';
 })();
 
 // Загружаем меню ПЕРВЫМ делом
-fetch('/menu.html')
+fetch('/frontend/menu.html')
         // Путь из папки about-project
 
     .then(response => {
