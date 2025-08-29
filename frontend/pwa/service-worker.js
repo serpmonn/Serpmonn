@@ -6,9 +6,9 @@ const urlsToCache = [
   '/styles/menu.css',
   '/styles/styles.css',
   '/styles/base.css',
-  '/scripts/menu.js',
-  '/scripts/menu-loader.js',
-  '/scripts/accessibility.js',
+  '/frontend/scripts/menu.js',
+  '/frontend/scripts/menu-loader.js',
+  '/frontend/scripts/accessibility.js',
   '/frontend/images/settings.png',
   '/frontend/images/availability.png'
 ];

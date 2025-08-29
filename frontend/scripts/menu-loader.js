@@ -1,6 +1,6 @@
 // Исправленный импорт
 import { initMenu } from './menu.js';
-import '/scripts/accessibility.js';
+import '/frontend/scripts/accessibility.js';
 
 // Немедленно применяем сохранённые настройки доступности
 (function applySavedAccessibility() {

@@ -1,4 +1,4 @@
-import { generateCombinedBackground } from '/scripts/backgroundGenerator.js';
+import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
 
 document.getElementById("registerForm").addEventListener("submit", async function (event) {
     event.preventDefault();
