@@ -1,4 +1,4 @@
-	import { generateCombinedBackground } from '/scripts/backgroundGenerator.js';
+	import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
 	import { createEnemies } from './createEnemies.js';
 	import { generateRandomKeyframes } from './generateRandomKeyframes.js';
 	import { updatePlayerPosition } from './updatePlayerPosition.js';

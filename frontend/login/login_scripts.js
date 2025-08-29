@@ -1,4 +1,4 @@
-import { generateCombinedBackground } from '/scripts/backgroundGenerator.js';                                                // Импортируем функцию для генерации фона
+import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';                                                // Импортируем функцию для генерации фона
 
 document.getElementById("loginForm").addEventListener("submit", async function(event) {                                      // Добавляем обработчик события submit формы
     event.preventDefault();                                                                                                  // Предотвращаем стандартное поведение формы
