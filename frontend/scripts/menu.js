@@ -152,7 +152,7 @@ export function initMenu() {
             const inEn = current.pathname.startsWith('/frontend/en');
             if (lang === 'en') {
                 if (!inEn) {
-                    const target = current.pathname === '/frontend/main.html' || current.pathname === '/' ? '/frontend/en/' : '/frontend/en/';
+                    const target = '/frontend/en/index.html';
                     window.location.href = target;
                 } else {
                     window.location.reload();
