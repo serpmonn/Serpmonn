@@ -167,6 +167,26 @@ export function initMenu() {
                 window.location.href = '/frontend/ar/index.html';
             } else if (lang === 'id') {
                 window.location.href = '/frontend/id/index.html';
+            } else if (lang === 'zh-cn') {
+                window.location.href = '/frontend/zh-cn/index.html';
+            } else if (lang === 'ja') {
+                window.location.href = '/frontend/ja/index.html';
+            } else if (lang === 'ko') {
+                window.location.href = '/frontend/ko/index.html';
+            } else if (lang === 'vi') {
+                window.location.href = '/frontend/vi/index.html';
+            } else if (lang === 'tr') {
+                window.location.href = '/frontend/tr/index.html';
+            } else if (lang === 'de') {
+                window.location.href = '/frontend/de/index.html';
+            } else if (lang === 'fr') {
+                window.location.href = '/frontend/fr/index.html';
+            } else if (lang === 'it') {
+                window.location.href = '/frontend/it/index.html';
+            } else if (lang === 'pl') {
+                window.location.href = '/frontend/pl/index.html';
+            } else if (lang === 'nl') {
+                window.location.href = '/frontend/nl/index.html';
             } else {
                 // default RU
                 window.location.href = '/';
