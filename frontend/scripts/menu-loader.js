@@ -21,7 +21,11 @@ import '/frontend/scripts/accessibility.js';
 
 // Загружаем меню ПЕРВЫМ делом (с учётом языка)
 const spnLang = (localStorage.getItem('spn_lang') || (document.documentElement.lang || 'ru')).toLowerCase();
-const langToDir = { 'en': 'en', 'es': 'es', 'pt-br': 'pt-br', 'hi': 'hi', 'ar': 'ar', 'id': 'id' };
+const langToDir = {
+  'en': 'en', 'es': 'es', 'pt-br': 'pt-br', 'hi': 'hi', 'ar': 'ar', 'id': 'id',
+  'zh-cn': 'zh-cn', 'ja': 'ja', 'ko': 'ko', 'vi': 'vi', 'tr': 'tr',
+  'de': 'de', 'fr': 'fr', 'it': 'it', 'pl': 'pl', 'nl': 'nl'
+};
 const resolvedDir = langToDir[spnLang];
 const primaryMenuPath = resolvedDir ? `/frontend/${resolvedDir}/menu.html` : '/frontend/menu.html';
 fetch(primaryMenuPath)

@@ -157,12 +157,39 @@ export function initMenu() {
                 } else {
                     window.location.reload();
                 }
+            } else if (lang === 'es') {
+                window.location.href = '/frontend/es/index.html';
+            } else if (lang === 'pt-br') {
+                window.location.href = '/frontend/pt-br/index.html';
+            } else if (lang === 'hi') {
+                window.location.href = '/frontend/hi/index.html';
+            } else if (lang === 'ar') {
+                window.location.href = '/frontend/ar/index.html';
+            } else if (lang === 'id') {
+                window.location.href = '/frontend/id/index.html';
+            } else if (lang === 'zh-cn') {
+                window.location.href = '/frontend/zh-cn/index.html';
+            } else if (lang === 'ja') {
+                window.location.href = '/frontend/ja/index.html';
+            } else if (lang === 'ko') {
+                window.location.href = '/frontend/ko/index.html';
+            } else if (lang === 'vi') {
+                window.location.href = '/frontend/vi/index.html';
+            } else if (lang === 'tr') {
+                window.location.href = '/frontend/tr/index.html';
+            } else if (lang === 'de') {
+                window.location.href = '/frontend/de/index.html';
+            } else if (lang === 'fr') {
+                window.location.href = '/frontend/fr/index.html';
+            } else if (lang === 'it') {
+                window.location.href = '/frontend/it/index.html';
+            } else if (lang === 'pl') {
+                window.location.href = '/frontend/pl/index.html';
+            } else if (lang === 'nl') {
+                window.location.href = '/frontend/nl/index.html';
             } else {
-                if (inEn) {
-                    window.location.href = '/';
-                } else {
-                    window.location.reload();
-                }
+                // default RU
+                window.location.href = '/';
             }
         }
     });
