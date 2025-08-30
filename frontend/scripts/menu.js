@@ -147,7 +147,23 @@ export function initMenu() {
             e.preventDefault();
             const lang = langLink.dataset.lang;
             localStorage.setItem('spn_lang', lang);
-            window.location.reload();
+            // Навигация на языкозависимый URL для SEO
+            const current = new URL(window.location.href);
+            const inEn = current.pathname.startsWith('/frontend/en');
+            if (lang === 'en') {
+                if (!inEn) {
+                    const target = current.pathname === '/frontend/main.html' || current.pathname === '/' ? '/frontend/en/' : '/frontend/en/';
+                    window.location.href = target;
+                } else {
+                    window.location.reload();
+                }
+            } else {
+                if (inEn) {
+                    window.location.href = '/';
+                } else {
+                    window.location.reload();
+                }
+            }
         }
     });
 

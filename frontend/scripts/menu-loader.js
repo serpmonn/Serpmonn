@@ -19,8 +19,10 @@ import '/frontend/scripts/accessibility.js';
   }
 })();
 
-// Загружаем меню ПЕРВЫМ делом
-fetch('/frontend/menu.html')
+// Загружаем меню ПЕРВЫМ делом (с учётом языка)
+const spnLang = localStorage.getItem('spn_lang') || (document.documentElement.lang || 'ru');
+const menuPath = spnLang === 'en' ? '/frontend/en/menu.html' : '/frontend/menu.html';
+fetch(menuPath)
         // Путь из папки about-project
 
     .then(response => {

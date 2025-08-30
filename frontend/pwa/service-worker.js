@@ -3,6 +3,8 @@ const urlsToCache = [
   '/',
   '/frontend/main.html',
   '/frontend/menu.html',
+  '/frontend/en/index.html',
+  '/frontend/en/menu.html',
   '/frontend/styles/menu.css',
   '/frontend/styles/styles.css',
   '/frontend/styles/base.css',
