@@ -30,7 +30,11 @@
 }
 
 .gsc-search-button.gsc-search-button-v2 {
-	transition: transform 0.3s ease, color 0.3s ease;                        /* Плавный переход при наведении на кнопку (плавное изменение цвета и размера кнопки) */
+	transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;                        /* Плавный переход */
+	height: 36px; /* ниже по вертикали */
+	min-height: 36px;
+	padding: 0 12px; /* компактнее по горизонтали */
+	border-radius: 8px;
 }
 
 a:hover {
@@ -39,8 +43,8 @@ a:hover {
 }
 
 .gsc-search-button.gsc-search-button-v2:hover {
-	transform: scale(1.2);                                                  /* Увеличение кнопки при наведении */
-	background-color: #666666;                                              /* Цвет фона при наведении */
+	transform: translateY(-1px);                                                  /* Увеличение кнопки при наведении */
+	background-color: #555555;                                              /* Цвет фона при наведении */
 }
 
 input, textarea, select, button {                                          /* Стили для полей ввода и текстовых областей */
@@ -72,6 +76,21 @@ input, textarea, select, button {                                          /* С
 .card:hover, .counter-card:hover {
         transform: translateY(-3px);
         box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+
+/* Выравнивание высоты поля и кнопки */
+.gsc-input-box, .gsc-search-button, .gsc-search-button-v2 {
+        line-height: 36px !important;
+}
+
+/* Состояния нажатия и фокуса для кнопки */
+.gsc-search-button.gsc-search-button-v2:active {
+        transform: translateY(0);
+        background-color: #444444;
+}
+.gsc-search-button.gsc-search-button-v2:focus {
+        outline: 2px solid #1e11b5;
+        outline-offset: 2px;
 }
 
 @media (max-width: 600px) {
