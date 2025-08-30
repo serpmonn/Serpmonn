@@ -187,6 +187,56 @@ export function initMenu() {
                 window.location.href = '/frontend/pl/index.html';
             } else if (lang === 'nl') {
                 window.location.href = '/frontend/nl/index.html';
+            } else if (lang === 'kk') {
+                window.location.href = '/frontend/kk/index.html';
+            } else if (lang === 'he') {
+                window.location.href = '/frontend/he/index.html';
+            } else if (lang === 'fa') {
+                window.location.href = '/frontend/fa/index.html';
+            } else if (lang === 'bn') {
+                window.location.href = '/frontend/bn/index.html';
+            } else if (lang === 'ur') {
+                window.location.href = '/frontend/ur/index.html';
+            } else if (lang === 'ms') {
+                window.location.href = '/frontend/ms/index.html';
+            } else if (lang === 'fil') {
+                window.location.href = '/frontend/fil/index.html';
+            } else if (lang === 'th') {
+                window.location.href = '/frontend/th/index.html';
+            } else if (lang === 'ro') {
+                window.location.href = '/frontend/ro/index.html';
+            } else if (lang === 'cs') {
+                window.location.href = '/frontend/cs/index.html';
+            } else if (lang === 'hu') {
+                window.location.href = '/frontend/hu/index.html';
+            } else if (lang === 'bg') {
+                window.location.href = '/frontend/bg/index.html';
+            } else if (lang === 'el') {
+                window.location.href = '/frontend/el/index.html';
+            } else if (lang === 'sr') {
+                window.location.href = '/frontend/sr/index.html';
+            } else if (lang === 'ka') {
+                window.location.href = '/frontend/ka/index.html';
+            } else if (lang === 'hy') {
+                window.location.href = '/frontend/hy/index.html';
+            } else if (lang === 'be') {
+                window.location.href = '/frontend/be/index.html';
+            } else if (lang === 'uz') {
+                window.location.href = '/frontend/uz/index.html';
+            } else if (lang === 'az') {
+                window.location.href = '/frontend/az/index.html';
+            } else if (lang === 'sv') {
+                window.location.href = '/frontend/sv/index.html';
+            } else if (lang === 'da') {
+                window.location.href = '/frontend/da/index.html';
+            } else if (lang === 'nb') {
+                window.location.href = '/frontend/nb/index.html';
+            } else if (lang === 'fi') {
+                window.location.href = '/frontend/fi/index.html';
+            } else if (lang === 'pt-pt') {
+                window.location.href = '/frontend/pt-pt/index.html';
+            } else if (lang === 'es-419') {
+                window.location.href = '/frontend/es-419/index.html';
             } else {
                 // default RU
                 window.location.href = '/';
