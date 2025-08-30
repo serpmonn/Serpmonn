@@ -157,12 +157,19 @@ export function initMenu() {
                 } else {
                     window.location.reload();
                 }
+            } else if (lang === 'es') {
+                window.location.href = '/frontend/es/index.html';
+            } else if (lang === 'pt-br') {
+                window.location.href = '/frontend/pt-br/index.html';
+            } else if (lang === 'hi') {
+                window.location.href = '/frontend/hi/index.html';
+            } else if (lang === 'ar') {
+                window.location.href = '/frontend/ar/index.html';
+            } else if (lang === 'id') {
+                window.location.href = '/frontend/id/index.html';
             } else {
-                if (inEn) {
-                    window.location.href = '/';
-                } else {
-                    window.location.reload();
-                }
+                // default RU
+                window.location.href = '/';
             }
         }
     });
