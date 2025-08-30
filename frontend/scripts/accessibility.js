@@ -84,18 +84,18 @@
     style.id = 'spn-a11y-styles';
     style.textContent = `
       /* Крупный текст */
-      .a11y-large-text { font-size: 18px; }
-      .a11y-large-text h1 { font-size: 2.2em; }
-      .a11y-large-text h2 { font-size: 1.8em; }
-      .a11y-large-text h3 { font-size: 1.4em; }
-      .a11y-large-text button, .a11y-large-text input, .a11y-large-text select { font-size: 1.05em; }
+      .a11y-large-text { font-size: 20px; }
+      .a11y-large-text h1 { font-size: 2.5em; }
+      .a11y-large-text h2 { font-size: 2.0em; }
+      .a11y-large-text h3 { font-size: 1.6em; }
+      .a11y-large-text button, .a11y-large-text input, .a11y-large-text select { font-size: 1.15em; }
 
       /* Высокий контраст */
       .a11y-high-contrast { 
         --text-color: #fff !important;
         --bg-color: #000 !important;
-        --accent-color: #ffff00 !important;
-        --border-color: #555 !important;
+        --accent-color: #ffd700 !important; /* золотистый для ссылок */
+        --border-color: #777 !important;
       }
       
       .a11y-high-contrast body { 
@@ -105,6 +105,7 @@
       
       .a11y-high-contrast a { 
         color: var(--accent-color) !important; 
+        text-decoration: underline !important; 
       }
       
       .a11y-high-contrast .card, 
@@ -120,6 +121,8 @@
         color: var(--bg-color) !important; 
         border: 2px solid var(--text-color) !important; 
       }
+      .a11y-high-contrast :focus { outline: 3px solid #ffff00 !important; outline-offset: 2px; }
+      .a11y-high-contrast .badge { background: #222 !important; color: #fff !important; border: 1px solid #fff !important; }
 
       /* Подчёркивание ссылок */
       .a11y-underline-links a { 
