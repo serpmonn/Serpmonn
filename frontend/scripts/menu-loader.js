@@ -20,9 +20,12 @@ import '/frontend/scripts/accessibility.js';
 })();
 
 // Загружаем меню ПЕРВЫМ делом (с учётом языка)
-const spnLang = localStorage.getItem('spn_lang') || (document.documentElement.lang || 'ru');
-const menuPath = spnLang === 'en' ? '/frontend/en/menu.html' : '/frontend/menu.html';
-fetch(menuPath)
+const spnLang = (localStorage.getItem('spn_lang') || (document.documentElement.lang || 'ru')).toLowerCase();
+const langToDir = { 'en': 'en', 'es': 'es', 'pt-br': 'pt-br', 'hi': 'hi', 'ar': 'ar', 'id': 'id' };
+const resolvedDir = langToDir[spnLang];
+const primaryMenuPath = resolvedDir ? `/frontend/${resolvedDir}/menu.html` : '/frontend/menu.html';
+fetch(primaryMenuPath)
+    .then(r => r.ok ? r : fetch('/frontend/menu.html'))
         // Путь из папки about-project
 
     .then(response => {
