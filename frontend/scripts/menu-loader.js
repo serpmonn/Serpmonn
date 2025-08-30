@@ -42,8 +42,8 @@ fetch('/frontend/menu.html')
         
         // Инициализируем доступность ПОСЛЕ загрузки меню
         setTimeout(() => {
-            if (window.initAccessibility) {
-                window.initAccessibility();
+            if (window.initA11y) {
+                window.initA11y();
             }
         }, 100);
     })

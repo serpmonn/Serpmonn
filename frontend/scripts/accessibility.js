@@ -47,6 +47,10 @@
       if (statusEl) {
         statusEl.textContent = savedSettings[key] ? '🟢' : '⚪';
       }
+      const toggleEl = document.querySelector(`.a11y-toggle[data-setting="${key}"]`);
+      if (toggleEl) {
+        toggleEl.setAttribute('aria-checked', savedSettings[key] ? 'true' : 'false');
+      }
     });
   }
 
@@ -169,6 +173,19 @@
     const savedSettings = loadSettings();
     console.log('📋 Loaded settings:', savedSettings);
     
+    // Автоприменение reduce-motion, если пользователь не задавал настройку
+    if (savedSettings['reduce-motion'] === undefined) {
+      try {
+        const mql = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)');
+        if (mql && mql.matches) {
+          savedSettings['reduce-motion'] = true;
+          saveSettings(savedSettings);
+        }
+      } catch (e) {
+        // безопасно игнорируем
+      }
+    }
+
     // Применяем сохранённые настройки сразу при инициализации
     applySettings(savedSettings);
     
