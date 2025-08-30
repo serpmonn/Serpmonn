@@ -47,6 +47,10 @@
       if (statusEl) {
         statusEl.textContent = savedSettings[key] ? '🟢' : '⚪';
       }
+      const toggleEl = document.querySelector(`.a11y-toggle[data-setting="${key}"]`);
+      if (toggleEl) {
+        toggleEl.setAttribute('aria-checked', savedSettings[key] ? 'true' : 'false');
+      }
     });
   }
 

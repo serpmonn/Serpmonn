@@ -130,6 +130,14 @@ export function initMenu() {
             e.stopPropagation();
             toggleSubmenu(e, item.getAttribute('data-submenu'));
         });
+        item.setAttribute('role', 'button');
+        item.setAttribute('tabindex', '0');
+        item.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleSubmenu({ currentTarget: item }, item.getAttribute('data-submenu'));
+            }
+        });
     });
 
     // Обработчик переключения языка
@@ -147,6 +155,16 @@ export function initMenu() {
     document.addEventListener('click', (e) => {
         const toggle = e.target.closest('.a11y-toggle');
         if (toggle) {
+            e.preventDefault();
+            const setting = toggle.dataset.setting;
+            if (setting && window.toggleA11ySetting) {
+                window.toggleA11ySetting(setting);
+            }
+        }
+    });
+    document.addEventListener('keydown', (e) => {
+        const toggle = e.target.closest && e.target.closest('.a11y-toggle');
+        if (toggle && (e.key === 'Enter' || e.key === ' ')) {
             e.preventDefault();
             const setting = toggle.dataset.setting;
             if (setting && window.toggleA11ySetting) {
