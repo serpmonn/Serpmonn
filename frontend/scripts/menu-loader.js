@@ -24,7 +24,14 @@ const spnLang = (localStorage.getItem('spn_lang') || (document.documentElement.l
 const langToDir = {
   'en': 'en', 'es': 'es', 'pt-br': 'pt-br', 'hi': 'hi', 'ar': 'ar', 'id': 'id',
   'zh-cn': 'zh-cn', 'ja': 'ja', 'ko': 'ko', 'vi': 'vi', 'tr': 'tr',
-  'de': 'de', 'fr': 'fr', 'it': 'it', 'pl': 'pl', 'nl': 'nl'
+  'de': 'de', 'fr': 'fr', 'it': 'it', 'pl': 'pl', 'nl': 'nl',
+  // new
+  'kk': 'kk', 'he': 'he', 'fa': 'fa', 'bn': 'bn', 'ur': 'ur',
+  'ms': 'ms', 'fil': 'fil', 'th': 'th',
+  'ro': 'ro', 'cs': 'cs', 'hu': 'hu', 'bg': 'bg', 'el': 'el', 'sr': 'sr',
+  'ka': 'ka', 'hy': 'hy', 'be': 'be', 'uz': 'uz', 'az': 'az',
+  'sv': 'sv', 'da': 'da', 'nb': 'nb', 'fi': 'fi',
+  'pt-pt': 'pt-pt', 'es-419': 'es-419'
 };
 const resolvedDir = langToDir[spnLang];
 const primaryMenuPath = resolvedDir ? `/frontend/${resolvedDir}/menu.html` : '/frontend/menu.html';
