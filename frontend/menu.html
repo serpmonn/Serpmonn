@@ -293,36 +293,40 @@
     </a>
 
     <!-- Настройки -->
-    <a href="#" class="menu-item" data-submenu="settingsSubmenu">
+    <a href="#" class="menu-item" data-submenu="settingsSubmenu" aria-expanded="false" aria-haspopup="true">
         <img src="/frontend/images/settings.png" alt="Настройки" class="icon"> Настройки
     </a>
-    <div class="submenu-container" id="settingsSubmenu">
-        <a href="#" class="menu-item" data-submenu="a11ySubmenu">
+    <div class="submenu-container" id="settingsSubmenu" aria-hidden="true">
+        <a href="#" class="menu-item" data-submenu="a11ySubmenu" aria-expanded="false" aria-haspopup="true">
             <img src="/frontend/images/availability.png" alt="Доступность" class="icon"> Доступность
         </a>
         
-        <div class="submenu-container" id="a11ySubmenu">
+        <div class="submenu-container" id="a11ySubmenu" aria-hidden="true">
             <a href="#" class="a11y-toggle" data-setting="large-text">
-                <span class="a11y-icon">🔤</span> Крупный шрифт
+                <img src="/frontend/images/large-font.png" alt="Крупный шрифт" class="icon a11y-icon">
+                Крупный шрифт
                 <span class="a11y-status" data-status="large-text">⚪</span>
             </a>
             <a href="#" class="a11y-toggle" data-setting="high-contrast">
-                <span class="a11y-icon">🌓</span> Высокий контраст
+                <img src="/frontend/images/high-contrast.png" alt="Высокий контраст" class="icon a11y-icon">
+                Высокий контраст
                 <span class="a11y-status" data-status="high-contrast">⚪</span>
             </a>
             <a href="#" class="a11y-toggle" data-setting="underline-links">
-                <span class="a11y-icon">🔗</span> Подчёркивать ссылки
+                <img src="/frontend/images/underline-links.jpg" alt="Подчёркивать ссылки" class="icon a11y-icon">
+                Подчёркивать ссылки
                 <span class="a11y-status" data-status="underline-links">⚪</span>
             </a>
             <a href="#" class="a11y-toggle" data-setting="reduce-motion">
-                <span class="a11y-icon">🎬</span> Меньше анимаций
+                <img src="/frontend/images/accessibility/reduce-motion.png" alt="Меньше анимаций" class="icon a11y-icon">
+                Меньше анимаций
                 <span class="a11y-status" data-status="reduce-motion">⚪</span>
             </a>
         </div>
 
-        <a href="#" class="menu-item" data-submenu="langSubmenu"><span class="tool-icon">🌐</span> Язык</a>
+        <a href="#" class="menu-item" data-submenu="langSubmenu" aria-expanded="false" aria-haspopup="true"><span class="tool-icon">🌐</span> Язык</a>
 
-        <div class="submenu-container" id="langSubmenu">
+        <div class="submenu-container" id="langSubmenu" aria-hidden="true">
             <a href="#" data-lang="ru">Русский</a>
             <a href="#" data-lang="en">English</a>
         </div>
@@ -343,5 +347,8 @@
         <button id="closePWAInstructions" class="pwa-close-btn">Закрыть</button>
     </div>
 </div>
+
+<!-- Добавляем подключение доступности-->
+<script src="/frontend/scripts/accessibility.js"></script>
 
 <script src="/frontend/scripts/menu.js"></script>

@@ -1,4 +1,3 @@
-// Скрипт доступности - настройки прямо в меню
 (function(){
   "use strict";
   
@@ -12,13 +11,22 @@
 
   // Загружаем сохранённые настройки
   function loadSettings(){
-    const saved = localStorage.getItem('spn_a11y_settings');
-    return saved ? JSON.parse(saved) : {};
+    try {
+      const saved = localStorage.getItem('spn_a11y_settings');
+      return saved ? JSON.parse(saved) : {};
+    } catch (e) {
+      console.error('Ошибка загрузки настроек доступности:', e);
+      return {};
+    }
   }
 
   // Сохраняем настройки
   function saveSettings(settings){
-    localStorage.setItem('spn_a11y_settings', JSON.stringify(settings));
+    try {
+      localStorage.setItem('spn_a11y_settings', JSON.stringify(settings));
+    } catch (e) {
+      console.error('Ошибка сохранения настроек доступности:', e);
+    }
   }
 
   // Применяем настройки к странице
@@ -26,6 +34,8 @@
     Object.keys(settings).forEach(key => {
       if (savedSettings[key]) {
         document.documentElement.classList.add(settings[key].class);
+      } else {
+        document.documentElement.classList.remove(settings[key].class);
       }
     });
   }
@@ -58,6 +68,8 @@
     if (navigator.vibrate) {
       navigator.vibrate(50);
     }
+    
+    return savedSettings[settingKey];
   }
 
   // Добавляем стили
@@ -75,17 +87,50 @@
       .a11y-large-text button, .a11y-large-text input, .a11y-large-text select { font-size: 1.05em; }
 
       /* Высокий контраст */
-      .a11y-high-contrast { background: #000 !important; color: #fff !important; }
-      .a11y-high-contrast body { background: #000 !important; color: #fff !important; }
-      .a11y-high-contrast a { color: #00e5ff !important; }
-      .a11y-high-contrast .card, .a11y-high-contrast .container, .a11y-high-contrast .menu-container { background: #111 !important; color:#fff !important; border-color:#555 !important; }
-      .a11y-high-contrast button { background:#fff !important; color:#000 !important; border:2px solid #fff !important; }
+      .a11y-high-contrast { 
+        --text-color: #fff !important;
+        --bg-color: #000 !important;
+        --accent-color: #ffff00 !important;
+        --border-color: #555 !important;
+      }
+      
+      .a11y-high-contrast body { 
+        background: var(--bg-color) !important; 
+        color: var(--text-color) !important; 
+      }
+      
+      .a11y-high-contrast a { 
+        color: var(--accent-color) !important; 
+      }
+      
+      .a11y-high-contrast .card, 
+      .a11y-high-contrast .container, 
+      .a11y-high-contrast .menu-container { 
+        background: #111 !important; 
+        color: var(--text-color) !important; 
+        border-color: var(--border-color) !important; 
+      }
+      
+      .a11y-high-contrast button { 
+        background: var(--text-color) !important; 
+        color: var(--bg-color) !important; 
+        border: 2px solid var(--text-color) !important; 
+      }
 
       /* Подчёркивание ссылок */
-      .a11y-underline-links a { text-decoration: underline !important; text-underline-offset: 0.15em; }
+      .a11y-underline-links a { 
+        text-decoration: underline !important; 
+        text-underline-offset: 0.15em; 
+      }
 
       /* Меньше анимаций */
-      .a11y-reduce-motion *, .a11y-reduce-motion *::before, .a11y-reduce-motion *::after { transition: none !important; animation: none !important; }
+      .a11y-reduce-motion *, 
+      .a11y-reduce-motion *::before, 
+      .a11y-reduce-motion *::after { 
+        transition: none !important; 
+        animation: none !important; 
+        scroll-behavior: auto !important;
+      }
 
       /* Стили для кнопок доступности в меню */
       .a11y-toggle {
@@ -127,31 +172,13 @@
     // Применяем сохранённые настройки сразу при инициализации
     applySettings(savedSettings);
     
-    // Обработчики для кнопок доступности
-    document.addEventListener('click', (e) => {
-      const toggle = e.target.closest('.a11y-toggle');
-      if (toggle) {
-        console.log('🎯 Toggle clicked:', toggle.dataset.setting);
-        e.preventDefault();
-        const setting = toggle.dataset.setting;
-        if (setting && settings[setting]) {
-          toggleSetting(setting);
-        }
-      }
-    });
-    
-    // Обновляем состояние кнопок (меню уже загружено)
-    console.log('🔍 Looking for toggle buttons...');
-    const toggles = document.querySelectorAll('.a11y-toggle');
-    console.log('📱 Found toggle buttons:', toggles.length);
-    toggles.forEach(toggle => {
-      console.log('  -', toggle.dataset.setting, toggle.textContent.trim());
-    });
+    // Обновляем состояние кнопок
     updateButtonStates(savedSettings);
+    
+    // Делаем функции доступными глобально для menu.js
+    window.initA11y = init;
+    window.toggleA11ySetting = toggleSetting;
   }
-
-  // Делаем функцию доступной глобально
-  window.initAccessibility = init;
 
   // Автоматическая инициализация при загрузке DOM
   if (document.readyState === 'loading') {
@@ -160,14 +187,4 @@
     init();
   }
 
-  // Дополнительная инициализация для случаев, когда скрипт загружается после DOM
-  setTimeout(() => {
-    const savedSettings = loadSettings();
-    if (Object.keys(savedSettings).length > 0) {
-      console.log('🔄 Re-applying saved settings...');
-      applySettings(savedSettings);
-    }
-  }, 100);
-
 })();
-
