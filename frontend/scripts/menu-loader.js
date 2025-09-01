@@ -1,6 +1,7 @@
 // Исправленный импорт
 import { initMenu } from './menu.js';
 import '/frontend/scripts/accessibility.js';
+import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
 
 // Немедленно применяем сохранённые настройки доступности
 (function applySavedAccessibility() {
@@ -55,6 +56,8 @@ fetch(primaryMenuPath)
         }
         
         initMenu();
+        // Apply GEO filtering after menu init
+        try { applyGeoFilter(); } catch {}
         
         // Инициализируем доступность ПОСЛЕ загрузки меню
         setTimeout(() => {
