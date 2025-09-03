@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Unit Converter — Engineering Serpmonn</title>
+    <!-- Open Graph -->
+    <meta property="og:title" content="Unit Converter — Engineering Serpmonn">
+    <meta property="og:description" content="Fast conversion between units for engineers">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/tools/engineering/unit-converter.html">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Unit Converter — Engineering Serpmonn">
+    <meta name="twitter:description" content="Unit converter for engineers">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <style>
+      body { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        padding: 16px; 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+        background: #f5f5f5;
+      }
+
+      .breadcrumb {
+        margin-bottom: 20px;
+        padding: 10px 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .breadcrumb a {
+        color: #007bff;
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      h1 { 
+        margin: 16px 0; 
+        text-align: center;
+        color: #333;
+      }
+
+      .converter-container {
+        background: #fff;
+        border-radius: 12px;
+        padding: 24px;
+        margin: 20px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      .category-selector {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+      }
+
+      .category-btn {
+        padding: 10px 16px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        background: #fff;
+        color: #495057;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-weight: 500;
+      }
+
+      .category-btn.active {
+        border-color: #007bff;
+        background: #007bff;
+        color: #fff;
+      }
+
+      .category-btn:hover:not(.active) {
+        border-color: #007bff;
+        color: #007bff;
+      }
+
+      .converter-form {
+        display: grid;
+        grid-template-columns: 1fr auto 1fr;
+        gap: 20px;
+        align-items: end;
+        margin-bottom: 20px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      label { 
+        font-size: 14px; 
+        color: #495057; 
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+
+      input, select { 
+        width: 100%; 
+        padding: 12px; 
+        border: 2px solid #e9ecef; 
+        border-radius: 8px; 
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+      }
+
+      input:focus, select:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+
+      .swap-btn {
+        padding: 12px;
+        border: 2px solid #007bff;
+        background: #007bff;
+        color: #fff;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 18px;
+      }
+
+      .swap-btn:hover {
+        background: #0056b3;
+        border-color: #0056b3;
+        transform: scale(1.05);
+      }
+
+      .result {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 16px;
+        text-align: center;
+        font-size: 18px;
+        color: #495057;
+        font-weight: 500;
+      }
+
+      .conversion-history {
+        margin-top: 30px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      .history-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px 0;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .history-item:last-child {
+        border-bottom: none;
+      }
+
+      .history-text {
+        color: #495057;
+      }
+
+      .history-time {
+        color: #6c757d;
+        font-size: 0.9rem;
+      }
+
+      .clear-history {
+        background: #dc3545;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        margin-top: 15px;
+        transition: background 0.3s ease;
+      }
+
+      .clear-history:hover {
+        background: #c82333;
+      }
+
+      @media (max-width: 768px) {
+        .converter-form {
+          grid-template-columns: 1fr;
+          gap: 15px;
+        }
+        
+        .category-selector {
+          justify-content: center;
+        }
+        
+        body {
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Меню -->
+    <div id="menuContainer"></div>
+
+          <!-- Хлебные крошки -->
+      <div class="breadcrumb">
+        <a href="/frontend/zh-cn/tools/index.html">🧰 Tools</a> → 
+        <span>🔄 Unit converter</span>
+      </div>
+
+    <h1>🔄 Unit converter</h1>
+
+    <div class="converter-container">
+      <!-- Выбор категории -->
+      <div class="category-selector">
+        <button class="category-btn active" data-category="length">📏 Length</button>
+        <button class="category-btn" data-category="area">📐 Area</button>
+        <button class="category-btn" data-category="volume">📦 Volume</button>
+        <button class="category-btn" data-category="temperature">🌡️ Temperature</button>
+        <button class="category-btn" data-category="power">⚡ Power</button>
+        <button class="category-btn" data-category="pressure">💨 Pressure</button>
+        <button class="category-btn" data-category="mass">⚖️ Mass</button>
+        <button class="category-btn" data-category="speed">🏃 Speed</button>
+      </div>
+
+      <!-- Форма конвертера -->
+      <div class="converter-form">
+        <div class="input-group">
+          <label for="fromValue">Value</label>
+          <input type="number" id="fromValue" placeholder="Enter value" step="any">
+        </div>
+
+        <button class="swap-btn" id="swapBtn" title="Swap">⇄</button>
+
+        <div class="input-group">
+          <label for="toValue">Result</label>
+          <input type="number" id="toValue" placeholder="Result" readonly>
+        </div>
+      </div>
+
+      <!-- Выбор единиц -->
+      <div class="converter-form">
+        <div class="input-group">
+          <label for="fromUnit">From unit</label>
+          <select id="fromUnit"></select>
+        </div>
+
+        <div></div>
+
+        <div class="input-group">
+          <label for="toUnit">To unit</label>
+          <select id="toUnit"></select>
+        </div>
+      </div>
+
+      <!-- Result -->
+      <div class="result" id="result">
+        Enter a value to convert
+      </div>
+    </div>
+
+    <!-- Conversion history -->
+    <div class="conversion-history">
+      <h3>📋 Conversion history</h3>
+      <div id="historyList"></div>
+      <button class="clear-history" id="clearHistory">Clear history</button>
+    </div>
+
+    <script>
+      // Конвертер единиц измерения
+      class UnitConverter {
+        constructor() {
+          this.categories = {
+            length: {
+              name: 'Length',
+              units: {
+                'mm': { name: 'Millimeter (mm)', factor: 0.001 },
+                'cm': { name: 'Centimeter (cm)', factor: 0.01 },
+                'm': { name: 'Meter (m)', factor: 1 },
+                'km': { name: 'Kilometer (km)', factor: 1000 },
+                'in': { name: 'Inch (in)', factor: 0.0254 },
+                'ft': { name: 'Foot (ft)', factor: 0.3048 },
+                'yd': { name: 'Yard (yd)', factor: 0.9144 },
+                'mi': { name: 'Mile (mi)', factor: 1609.344 }
+              }
+            },
+            area: {
+              name: 'Area',
+              units: {
+                'mm2': { name: 'Square millimeter (mm²)', factor: 0.000001 },
+                'cm2': { name: 'Square centimeter (cm²)', factor: 0.0001 },
+                'm2': { name: 'Square meter (m²)', factor: 1 },
+                'km2': { name: 'Square kilometer (km²)', factor: 1000000 },
+                'in2': { name: 'Square inch (in²)', factor: 0.00064516 },
+                'ft2': { name: 'Square foot (ft²)', factor: 0.092903 },
+                'yd2': { name: 'Square yard (yd²)', factor: 0.836127 },
+                'ac': { name: 'Acre (ac)', factor: 4046.86 }
+              }
+            },
+            volume: {
+              name: 'Volume',
+              units: {
+                'ml': { name: 'Milliliter (ml)', factor: 0.001 },
+                'l': { name: 'Liter (l)', factor: 1 },
+                'm3': { name: 'Cubic meter (m³)', factor: 1000 },
+                'cm3': { name: 'Cubic centimeter (cm³)', factor: 0.001 },
+                'in3': { name: 'Cubic inch (in³)', factor: 0.0163871 },
+                'ft3': { name: 'Cubic foot (ft³)', factor: 28.3168 },
+                'gal': { name: 'Gallon (gal)', factor: 3.78541 }
+              }
+            },
+            temperature: {
+              name: 'Temperature',
+              units: {
+                'c': { name: 'Celsius (°C)', factor: 1, offset: 0 },
+                'f': { name: 'Fahrenheit (°F)', factor: 1.8, offset: 32 },
+                'k': { name: 'Kelvin (K)', factor: 1, offset: 273.15 },
+                'r': { name: 'Rankine (°R)', factor: 1.8, offset: 491.67 }
+              }
+            },
+            power: {
+              name: 'Power',
+              units: {
+                'w': { name: 'Watt (W)', factor: 1 },
+                'kw': { name: 'Kilowatt (kW)', factor: 1000 },
+                'mw': { name: 'Megawatt (MW)', factor: 1000000 },
+                'hp': { name: 'Horsepower (hp)', factor: 745.7 },
+                'btu': { name: 'BTU/h', factor: 0.293071 }
+              }
+            },
+            pressure: {
+              name: 'Pressure',
+              units: {
+                'pa': { name: 'Pascal (Pa)', factor: 1 },
+                'kpa': { name: 'Kilopascal (kPa)', factor: 1000 },
+                'mpa': { name: 'Megapascal (MPa)', factor: 1000000 },
+                'bar': { name: 'Bar (bar)', factor: 100000 },
+                'atm': { name: 'Atmosphere (atm)', factor: 101325 },
+                'psi': { name: 'PSI (lbf/in²)', factor: 6894.76 }
+              }
+            },
+            mass: {
+              name: 'Mass',
+              units: {
+                'mg': { name: 'Milligram (mg)', factor: 0.001 },
+                'g': { name: 'Gram (g)', factor: 1 },
+                'kg': { name: 'Kilogram (kg)', factor: 1000 },
+                't': { name: 'Tonne (t)', factor: 1000000 },
+                'lb': { name: 'Pound (lb)', factor: 453.592 },
+                'oz': { name: 'Ounce (oz)', factor: 28.3495 }
+              }
+            },
+            speed: {
+              name: 'Speed',
+              units: {
+                'mps': { name: 'm/s', factor: 1 },
+                'kmh': { name: 'km/h', factor: 0.277778 },
+                'mph': { name: 'mph', factor: 0.44704 },
+                'knot': { name: 'knot', factor: 0.514444 },
+                'fps': { name: 'ft/s', factor: 0.3048 }
+              }
+            }
+          };
+
+          this.currentCategory = 'length';
+          this.history = JSON.parse(localStorage.getItem('conversionHistory') || '[]');
+          
+          this.init();
+        }
+
+        init() {
+          this.setupEventListeners();
+          this.populateUnits();
+          this.updateHistory();
+        }
+
+        setupEventListeners() {
+          // Кнопки категорий
+          document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+              this.setCategory(e.target.dataset.category);
+            });
+          });
+
+          // Поля ввода
+          document.getElementById('fromValue').addEventListener('input', () => {
+            this.convert();
+          });
+
+          // Выбор единиц
+          document.getElementById('fromUnit').addEventListener('change', () => {
+            this.convert();
+          });
+
+          document.getElementById('toUnit').addEventListener('change', () => {
+            this.convert();
+          });
+
+          // Кнопка смены местами
+          document.getElementById('swapBtn').addEventListener('click', () => {
+            this.swapUnits();
+          });
+
+          // Очистка истории
+          document.getElementById('clearHistory').addEventListener('click', () => {
+            this.clearHistory();
+          });
+        }
+
+        setCategory(category) {
+          this.currentCategory = category;
+          
+          // Обновляем активную кнопку
+          document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.classList.remove('active');
+          });
+          document.querySelector(`[data-category="${category}"]`).classList.add('active');
+          
+          this.populateUnits();
+          this.convert();
+        }
+
+        populateUnits() {
+          const fromSelect = document.getElementById('fromUnit');
+          const toSelect = document.getElementById('toUnit');
+          const units = this.categories[this.currentCategory].units;
+          
+          // Очищаем селекты
+          fromSelect.innerHTML = '';
+          toSelect.innerHTML = '';
+          
+          // Заполняем опциями
+          Object.entries(units).forEach(([key, unit]) => {
+            const fromOption = document.createElement('option');
+            const toOption = document.createElement('option');
+            
+            fromOption.value = key;
+            fromOption.textContent = unit.name;
+            toOption.value = key;
+            toOption.textContent = unit.name;
+            
+            fromSelect.appendChild(fromOption);
+            toSelect.appendChild(toOption);
+          });
+          
+          // Устанавливаем разные единицы по умолчанию
+          const unitKeys = Object.keys(units);
+          if (unitKeys.length >= 2) {
+            fromSelect.value = unitKeys[0];
+            toSelect.value = unitKeys[1];
+          }
+        }
+
+        convert() {
+          const fromValue = parseFloat(document.getElementById('fromValue').value);
+          const fromUnit = document.getElementById('fromUnit').value;
+          const toUnit = document.getElementById('toUnit').value;
+          
+          if (isNaN(fromValue)) {
+            document.getElementById('result').textContent = 'Enter a value to convert';
+            return;
+          }
+          
+          let result;
+          
+          if (this.currentCategory === 'temperature') {
+            result = this.convertTemperature(fromValue, fromUnit, toUnit);
+          } else {
+            result = this.convertStandard(fromValue, fromUnit, toUnit);
+          }
+          
+          document.getElementById('toValue').value = result.toFixed(6);
+          document.getElementById('result').textContent = 
+            `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          
+          // Добавляем в историю
+          this.addToHistory(fromValue, fromUnit, toUnit, result);
+        }
+
+        convertStandard(value, fromUnit, toUnit) {
+          const fromFactor = this.categories[this.currentCategory].units[fromUnit].factor;
+          const toFactor = this.categories[this.currentCategory].units[toUnit].factor;
+          
+          // Сначала конвертируем в базовую единицу, потом в целевую
+          const baseValue = value * fromFactor;
+          return baseValue / toFactor;
+        }
+
+        convertTemperature(value, fromUnit, toUnit) {
+          // Сначала конвертируем в Цельсий
+          let celsius;
+          
+          switch (fromUnit) {
+            case 'c':
+              celsius = value;
+              break;
+            case 'f':
+              celsius = (value - 32) / 1.8;
+              break;
+            case 'k':
+              celsius = value - 273.15;
+              break;
+            case 'r':
+              celsius = (value - 491.67) / 1.8;
+              break;
+          }
+          
+          // Теперь конвертируем из Цельсия в целевую единицу
+          switch (toUnit) {
+            case 'c':
+              return celsius;
+            case 'f':
+              return celsius * 1.8 + 32;
+            case 'k':
+              return celsius + 273.15;
+            case 'r':
+              return celsius * 1.8 + 491.67;
+          }
+        }
+
+        swapUnits() {
+          const fromUnit = document.getElementById('fromUnit');
+          const toUnit = document.getElementById('toUnit');
+          const temp = fromUnit.value;
+          
+          fromUnit.value = toUnit.value;
+          toUnit.value = temp;
+          
+          this.convert();
+        }
+
+        addToHistory(fromValue, fromUnit, toUnit, result) {
+          const historyItem = {
+            from: `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name}`,
+            to: `${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`,
+            category: this.categories[this.currentCategory].name,
+            timestamp: new Date().toLocaleString('ru-RU')
+          };
+          
+          this.history.unshift(historyItem);
+          
+          // Ограничиваем историю 20 элементами
+          if (this.history.length > 20) {
+            this.history = this.history.slice(0, 20);
+          }
+          
+          localStorage.setItem('conversionHistory', JSON.stringify(this.history));
+          this.updateHistory();
+        }
+
+        updateHistory() {
+          const historyList = document.getElementById('historyList');
+          historyList.innerHTML = '';
+          
+          if (this.history.length === 0) {
+            historyList.innerHTML = '<p style="color: #6c757d; text-align: center;">История пуста</p>';
+            return;
+          }
+          
+          this.history.forEach(item => {
+            const historyItem = document.createElement('div');
+            historyItem.className = 'history-item';
+            historyItem.innerHTML = `
+              <div class="history-text">
+                <strong>${item.category}:</strong> ${item.from} → ${item.to}
+              </div>
+              <div class="history-time">${item.timestamp}</div>
+            `;
+            historyList.appendChild(historyItem);
+          });
+        }
+
+        clearHistory() {
+          this.history = [];
+          localStorage.removeItem('conversionHistory');
+          this.updateHistory();
+        }
+      }
+
+      // Инициализация конвертера
+      document.addEventListener('DOMContentLoaded', () => {
+        new UnitConverter();
+      });
+    </script>
+
+    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  </body>
+</html>

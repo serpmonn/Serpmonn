@@ -1,0 +1,747 @@
+<!DOCTYPE html>
+<html lang="nb">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>🚀 Web technology trends 2025 — What developers should know</title>
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="🚀 Web technology trends 2025 — What developers should know">
+    <meta property="og:description" content="Overview of key web development trends in 2025: AI, WebAssembly, new frameworks and tools.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/nb/news/articles/web-tech-trends-2024.html">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Web technology trends 2024">
+    <meta name="twitter:description" content="Overview of important tech trends for developers">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    
+    <style>
+      body { 
+        max-width: 800px; 
+        margin: 0 auto; 
+        padding: 16px; 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background: #f5f5f5;
+        line-height: 1.7;
+      }
+
+      .article-container {
+        background: #fff;
+        border-radius: 12px;
+        padding: 40px;
+        margin: 20px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      .article-header {
+        text-align: center;
+        margin-bottom: 40px;
+        padding-bottom: 30px;
+        border-bottom: 2px solid #e9ecef;
+      }
+
+      .article-title {
+        font-size: 2.5rem;
+        color: #333;
+        margin-bottom: 15px;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      .article-meta {
+        color: #6c757d;
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+      }
+
+      .article-category {
+        display: inline-block;
+        padding: 8px 16px;
+        background: #6f42c1;
+        color: white;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+
+      .article-content {
+        font-size: 1.1rem;
+        color: #333;
+      }
+
+      .article-content h2 {
+        color: #6f42c1;
+        margin-top: 40px;
+        margin-bottom: 20px;
+        font-size: 1.8rem;
+        font-weight: 600;
+      }
+
+      .article-content h3 {
+        color: #495057;
+        margin-top: 30px;
+        margin-bottom: 15px;
+        font-size: 1.4rem;
+        font-weight: 600;
+      }
+
+      .article-content p {
+        margin-bottom: 20px;
+      }
+
+      .article-content ul, .article-content ol {
+        margin-bottom: 20px;
+        padding-left: 25px;
+      }
+
+      .article-content li {
+        margin-bottom: 10px;
+      }
+
+      .trend-card {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border-radius: 12px;
+        padding: 25px;
+        margin: 25px 0;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .trend-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(255, 255, 255, 0.1);
+        z-index: 1;
+      }
+
+      .trend-card h4 {
+        color: white;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.3rem;
+        position: relative;
+        z-index: 2;
+      }
+
+      .trend-card p {
+        color: rgba(255, 255, 255, 0.9);
+        margin-bottom: 0;
+        position: relative;
+        z-index: 2;
+      }
+
+      .trend-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        font-size: 3rem;
+        opacity: 0.3;
+        z-index: 1;
+      }
+
+      .highlight-box {
+        background: #e8f4fd;
+        border: 1px solid #bee5eb;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        color: #0c5460;
+        border-left: 4px solid #17a2b8;
+      }
+
+      .highlight-box h4 {
+        color: #0c5460;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+      }
+
+      .warning-box {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 20px;
+        margin: 25px 0;
+        border-left: 4px solid #ffc107;
+      }
+
+      .warning-box h4 {
+        color: #856404;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+      }
+
+      .code-example {
+        background: #f8f9fa;
+        border: 1px solid #dee2e6;
+        border-radius: 6px;
+        padding: 20px;
+        margin: 25px 0;
+        font-family: 'Courier New', monospace;
+        font-size: 0.9rem;
+        overflow-x: auto;
+        border-left: 4px solid #6c757d;
+      }
+
+      .code-example h4 {
+        color: #495057;
+        margin-top: 0;
+        margin-bottom: 15px;
+        font-size: 1.2rem;
+      }
+
+      .tech-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .tech-card {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .tech-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      }
+
+      .tech-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .tech-name {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .tech-description {
+        color: #6c757d;
+        font-size: 0.9rem;
+        line-height: 1.5;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin: 30px 0;
+      }
+
+      .stat-card {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #6f42c1;
+        margin-bottom: 10px;
+      }
+
+      .stat-label {
+        color: #6c757d;
+        font-size: 0.9rem;
+      }
+
+      .table-container {
+        overflow-x: auto;
+        margin: 25px 0;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+
+      th, td {
+        padding: 12px 15px;
+        text-align: left;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      tr:hover {
+        background: #f8f9fa;
+      }
+
+      .related-articles {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 25px;
+        margin-top: 40px;
+      }
+
+      .related-articles h3 {
+        color: #495057;
+        margin-top: 0;
+        margin-bottom: 20px;
+      }
+
+      .related-links {
+        list-style: none;
+        padding: 0;
+      }
+
+      .related-links li {
+        margin-bottom: 10px;
+      }
+
+      .related-links a {
+        color: #007bff;
+        text-decoration: none;
+        padding: 8px 0;
+        display: block;
+        transition: color 0.3s ease;
+      }
+
+      .related-links a:hover {
+        color: #0056b3;
+      }
+
+      @media (max-width: 768px) {
+        .article-title {
+          font-size: 2rem;
+        }
+        
+        .article-container {
+          padding: 25px;
+        }
+        
+        .tech-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .stats-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/frontend/nb/index.html">Home</a> → 
+      <a href="/frontend/nb/news/">News & Articles</a> → 
+      <span>Web technology trends 2024</span>
+    </div>
+
+    <div class="article-container">
+      <!-- Заголовок статьи -->
+      <div class="article-header">
+        <h1 class="article-title">🚀 Web technology trends 2025</h1>
+        <div class="article-meta">
+          <span>📅 August 20, 2024</span> • 
+          <span>⏱️ 10 min read</span> • 
+          <span class="article-category">IT</span>
+        </div>
+      </div>
+
+      <!-- Содержание статьи -->
+      <div class="article-content">
+        <p>2025 год brought many innovations to the world of web development. От artificial intelligence до новых стандартов веб-платформы — technologies are evolving rapidly. В этой статье мы рассмотрим самые важные тренды, которые определяют будущее веб-разработки.</p>
+
+        <div class="highlight-box">
+          <h4>💡 Why trends matter</h4>
+          <p>Understanding modern technologies helps developers build better products, stay competitive and choose the right tools.</p>
+        </div>
+
+        <h2>🤖 AI in web development</h2>
+
+        <div class="trend-card">
+          <span class="trend-icon">🤖</span>
+          <h4>AI assistants for developers</h4>
+          <p>GitHub Copilot, Amazon CodeWhisperer и другие AI-tools have become indispensable assistants offering code completion, explaining complex algorithms and helping with debugging.</p>
+        </div>
+
+        <h3>Practical use of AI:</h3>
+        <ul>
+          <li><strong>Автогенерация кода</strong> — AI может создавать базовые функции и компоненты</li>
+          <li><strong>Умная отладка</strong> — автоматическое выявление и исправление ошибок</li>
+          <li><strong>Оптимизация производительности</strong> — AI анализирует код и предлагает улучшения</li>
+          <li><strong>Тестирование</strong> — автоматическое создание тестов на основе кода</li>
+        </ul>
+
+        <div class="code-example">
+          <h4>🔧 Пример использования AI для генерации кода</h4>
+<pre><code>// AI может предложить такую функцию на основе комментария:
+// "Создать функцию для валидации email"
+
+function validateEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+// Или автоматически исправить ошибку:
+// Было: if (user.age >= 18) { ... }
+// Стало: if (user && user.age >= 18) { ... }</code></pre>
+        </div>
+
+        <h2>⚡ WebAssembly (WASM) — новая эра веб-производительности</h2>
+
+        <div class="trend-card">
+          <span class="trend-icon">⚡</span>
+          <h4>Near‑native performance</h4>
+          <p>WebAssembly позволяет запускать код, написанный на C++, Rust, Go и других языках, в браузере с производительностью, близкой к нативным приложениям.</p>
+        </div>
+
+        <h3>WebAssembly use cases:</h3>
+        <ul>
+          <li><strong>Games</strong> — Unity и Unreal Engine теперь работают в браузере</li>
+          <li><strong>Обработка видео</strong> — профессиональные редакторы в вебе</li>
+          <li><strong>Научные вычисления</strong> — сложные математические операции</li>
+          <li><strong>3D-графика</strong> — высококачественная визуализация</li>
+        </ul>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">10-20x</div>
+            <div class="stat-label">Faster than JavaScript</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">95%</div>
+            <div class="stat-label">Browsers support</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">50+</div>
+            <div class="stat-label">Programming languages</div>
+          </div>
+        </div>
+
+        <h2>🎨 Modern CSS technologies</h2>
+
+        <h3>1. CSS Container Queries</h3>
+        <p>A new CSS capability that allows styling elements based on the container size rather than the screen size — a revolution in responsive design!</p>
+
+        <div class="code-example">
+          <h4>🎨 Пример использования Container Queries</h4>
+<pre><code>.card {
+    container-type: inline-size;
+}
+
+@container (max-width: 400px) {
+    .card h2 {
+        font-size: 1.2rem;
+    }
+    
+    .card p {
+        font-size: 0.9rem;
+    }
+}
+
+@container (min-width: 401px) {
+    .card {
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+    }
+}</code></pre>
+        </div>
+
+        <h3>2. CSS Grid Level 2</h3>
+        <p>New CSS Grid features include subgrid for complex nested layouts.</p>
+
+        <h3>3. CSS Houdini</h3>
+        <p>A set of APIs giving direct access to the CSS engine to create custom properties and animations.</p>
+
+        <h2>🚀 New JavaScript features</h2>
+
+        <div class="trend-card">
+          <span class="trend-icon">🚀</span>
+          <h4>ES2024 and future standards</h4>
+          <p>JavaScript continues to evolve, adding features that simplify development and improve performance.</p>
+        </div>
+
+        <h3>Key additions:</h3>
+        <ul>
+          <li><strong>Array Grouping</strong> — группировка элементов массива</li>
+          <li><strong>Pipeline Operator</strong> — функциональный стиль программирования</li>
+          <li><strong>Record & Tuple</strong> — иммутабельные структуры данных</li>
+          <li><strong>Pattern Matching</strong> — продвинутые условные конструкции</li>
+        </ul>
+
+        <div class="code-example">
+          <h4>🔧 Новые возможности JavaScript</h4>
+<pre><code>// Array Grouping (ES2024)
+const users = [
+    { name: 'Alice', age: 25, city: 'Moscow' },
+    { name: 'Bob', age: 30, city: 'SPb' },
+    { name: 'Charlie', age: 25, city: 'Moscow' }
+];
+
+const groupedByAge = users.groupBy(user => user.age);
+// Результат: { 25: [...], 30: [...] }
+
+// Pipeline Operator (предложение)
+const result = users
+    |> filter(user => user.age > 25)
+    |> map(user => user.name)
+    |> join(', ');
+
+// Pattern Matching (предложение)
+const response = match(fetch('/api/user')) {
+    { status: 200, data } => data,
+    { status: 404 } => 'User not found',
+    { status: 500 } => 'Server error',
+    _ => 'Unknown error'
+};</code></pre>
+        </div>
+
+        <h2>📱 Прогрессивные веб-приложения (PWA)</h2>
+
+        <p>PWA продолжают набирать популярность, предлагая нативный пользовательский опыт в браузере.</p>
+
+        <div class="tech-grid">
+          <div class="tech-card">
+            <span class="tech-icon">📱</span>
+            <div class="tech-name">Service Workers</div>
+            <div class="tech-description">Кэширование и офлайн-функциональность</div>
+          </div>
+          <div class="tech-card">
+            <span class="tech-icon">🏠</span>
+            <div class="tech-name">Web App Manifest</div>
+            <div class="tech-description">Установка на домашний экран</div>
+          </div>
+          <div class="tech-card">
+            <span class="tech-icon">🔔</span>
+            <div class="tech-name">Push Notifications</div>
+            <div class="tech-description">Уведомления как в нативных приложениях</div>
+          </div>
+        </div>
+
+        <h2>🌐 Новые веб-стандарты</h2>
+
+        <h3>1. Web Components</h3>
+        <p>Стандарт для создания переиспользуемых компонентов, которые работают во всех современных браузерах.</p>
+
+        <div class="code-example">
+          <h4>🔧 Пример Web Component</h4>
+<pre><code>class UserCard extends HTMLElement {
+    constructor() {
+        super();
+        this.attachShadow({ mode: 'open' });
+    }
+    
+    connectedCallback() {
+        const name = this.getAttribute('name');
+        const email = this.getAttribute('email');
+        
+        this.shadowRoot.innerHTML = `
+            &lt;style&gt;
+                .card {
+                    border: 1px solid #ccc;
+                    padding: 1rem;
+                    border-radius: 8px;
+                }
+            &lt;/style&gt;
+            &lt;div class="card"&gt;
+                &lt;h3&gt;${name}&lt;/h3&gt;
+                &lt;p&gt;${email}&lt;/p&gt;
+            &lt;/div&gt;
+        `;
+    }
+}
+
+customElements.define('user-card', UserCard);
+
+// Использование:
+// &lt;user-card name="John Doe" email="john@example.com"&gt;&lt;/user-card&gt;</code></pre>
+        </div>
+
+        <h3>2. Web APIs</h3>
+        <ul>
+          <li><strong>WebRTC</strong> — video calls and P2P connections</li>
+          <li><strong>WebGL 2.0</strong> — advanced 3D graphics</li>
+          <li><strong>Web Audio API</strong> — professional audio processing</li>
+          <li><strong>Web Bluetooth</strong> — connecting to Bluetooth devices</li>
+        </ul>
+
+        <h2>🔄 Modern frameworks and tools</h2>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Technology</th>
+                <th>Status 2024</th>
+                <th>Key advantages</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>React 18+</strong></td>
+                <td>🟢 Стабильный</td>
+                <td>Concurrent Features, Suspense, Server Components</td>
+              </tr>
+              <tr>
+                <td><strong>Vue 3</strong></td>
+                <td>🟢 Стабильный</td>
+                <td>Composition API, TypeScript, лучшая производительность</td>
+              </tr>
+              <tr>
+                <td><strong>Svelte 5</strong></td>
+                <td>🟡 Бета</td>
+                <td>Runes, меньше JavaScript, быстрая компиляция</td>
+              </tr>
+              <tr>
+                <td><strong>Solid.js</strong></td>
+                <td>🟡 Растущий</td>
+                <td>React-подобный API, отличная производительность</td>
+              </tr>
+              <tr>
+                <td><strong>Astro</strong></td>
+                <td>🟢 Популярный</td>
+                <td>Мультифреймворк, статическая генерация</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h2>🔒 Security and privacy</h2>
+
+        <div class="warning-box">
+          <h4>🛡️ New threats and protection</h4>
+          <ul>
+            <li><strong>Spectre и Meltdown</strong> — уязвимости процессоров требуют новых подходов</li>
+            <li><strong>CSRF-атаки</strong> — SameSite cookies и другие меры защиты</li>
+            <li><strong>XSS-атаки</strong> — Content Security Policy (CSP)</li>
+            <li><strong>Приватность</strong> — GDPR, CCPA и другие регуляции</li>
+          </ul>
+        </div>
+
+        <h3>Modern security measures:</h3>
+        <ul>
+          <li><strong>HTTPS Everywhere</strong> — обязательное шифрование</li>
+          <li><strong>HSTS</strong> — принудительное использование HTTPS</li>
+          <li><strong>Subresource Integrity</strong> — проверка целостности ресурсов</li>
+          <li><strong>Feature Policy</strong> — контроль над API браузера</li>
+        </ul>
+
+        <h2>📊 Performance and optimization</h2>
+
+        <p>В 2024 году производительность веб-приложений стала критически важной:</p>
+
+        <div class="highlight-box">
+          <h4>🎯 Core Web Vitals</h4>
+          <p>Google продолжает фокусироваться на метриках user experience: Largest Contentful Paint (LCP), First Input Delay (FID) и Cumulative Layout Shift (CLS).</p>
+        </div>
+
+        <h3>Modern optimization techniques:</h3>
+        <ul>
+          <li><strong>Code Splitting</strong> — code splitting</li>
+          <li><strong>Tree Shaking</strong> — tree shaking</li>
+          <li><strong>Lazy Loading</strong> — lazy loading</li>
+          <li><strong>Resource Hints</strong> — preload, prefetch, preconnect</li>
+          <li><strong>Image Optimization</strong> — WebP, AVIF, responsive images</li>
+        </ul>
+
+        <h2>🌍 Sustainability</h2>
+
+        <p>A growing trend — building “green” web apps with minimal carbon footprint:</p>
+
+        <ul>
+          <li><strong>Оптимизация изображений</strong> — меньше данных = меньше энергии</li>
+          <li><strong>Эффективные алгоритмы</strong> — снижение нагрузки на процессор</li>
+          <li><strong>Кэширование</strong> — reducing the number of requests к серверу</li>
+          <li><strong>Локальные вычисления</strong> — использование возможностей клиента</li>
+        </ul>
+
+        <h2>🔮 What’s next</h2>
+
+        <h3>2026-2027 годы:</h3>
+        <ul>
+          <li><strong>WebGPU</strong> — новый стандарт для GPU-вычислений</li>
+          <li><strong>Web Neural Network API</strong> — машинное обучение в браузере</li>
+          <li><strong>WebAssembly 2.0</strong> — новые возможности и производительность</li>
+          <li><strong>Quantum Web</strong> — квантовые вычисления в вебе</li>
+        </ul>
+
+        <h2>💡 Рекомендации для разработчиков</h2>
+
+        <div class="highlight-box">
+          <h4>🎯 Strategy</h4>
+          <ol>
+            <li><strong>Изучите основы</strong> — HTML, CSS, JavaScript остаются фундаментом</li>
+            <li><strong>Освойте один фреймворк</strong> — React, Vue или Svelte</li>
+            <li><strong>Изучите WebAssembly</strong> — будущее веб-производительности</li>
+            <li><strong>Следите за трендами</strong> — читайте блоги и документацию</li>
+            <li><strong>Практикуйтесь</strong> — создавайте проекты с новыми технологиями</li>
+          </ol>
+        </div>
+
+        <h2>📚 Useful resources</h2>
+
+        <h3>Official documentation:</h3>
+        <ul>
+          <li><strong>MDN Web Docs</strong> — полная документация по веб-технологиям</li>
+          <li><strong>Web.dev</strong> — руководства от Google</li>
+          <li><strong>Can I Use</strong> — поддержка функций в браузерах</li>
+          <li><strong>Web Platform Tests</strong> — тесты совместимости</li>
+        </ul>
+
+        <h3>Communities and blogs:</h3>
+        <ul>
+          <li><strong>CSS-Tricks</strong> — новости CSS и веб-дизайна</li>
+          <li><strong>Smashing Magazine</strong> — качественные статьи по веб-разработке</li>
+          <li><strong>Dev.to</strong> — сообщество разработчиков</li>
+          <li><strong>Reddit r/webdev</strong> — обсуждения и новости</li>
+        </ul>
+
+        <h2>🎉 Conclusion</h2>
+
+        <p>2024 год — это время больших возможностей для веб-разработчиков. AI-инструменты, WebAssembly, новые CSS-возможности и JavaScript-функции открывают новые горизонты. Главное — не пытаться изучить всё сразу, а выбрать несколько технологий и глубоко их освоить.</p>
+
+        <p>Помните: технологии меняются быстро, но фундаментальные принципы веб-разработки остаются неизменными. Фокусируйтесь на создании качественных, быстрых и удобных пользовательских интерфейсов.</p>
+
+        <div class="related-articles">
+          <h3>📖 Related articles</h3>
+          <ul class="related-links">
+            <li><a href="/frontend/nb/news/articles/web-development-guide.html">💻 How to build your first website from scratch</a></li>
+            <li><a href="/frontend/nb/news/articles/how-to-calculate-depreciation.html">📚 How to correctly calculate car depreciation</a></li>
+            <li><a href="#">🔧 Незаменимые инструменты для инженера-ремонтника</a></li>
+            <li><a href="#">📏 Конвертер единиц измерения: полное руководство</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  </body>
+</html>
