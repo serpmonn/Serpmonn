@@ -206,6 +206,38 @@
     align-items: center;                                                    /* Вертикальное выравнивание по центру */
     gap: 5px;                                                               /* Расстояние между элементами */
 }
+/* Google CSE searchbox alignment fix: ensure input and button share the same baseline */
+.menu-search-row .gsc-control-cse,
+.menu-search-row .gsc-control-searchbox-only,
+.menu-search-row .gsc-search-box,
+.menu-search-row .gsc-search-box-tools,
+.menu-search-row .gsc-search-button,
+.menu-search-row .gsc-input-box,
+.menu-search-row .gsc-input,
+.menu-search-row .gsc-search-button-v2 {
+    display: flex;
+    align-items: center;
+}
+
+/* Normalize intrinsic heights so the button doesn't sit higher than the input */
+.menu-search-row .gsc-input-box,
+.menu-search-row .gsc-input {
+    height: 34px;
+}
+
+.menu-search-row .gsc-search-button.gsc-search-button-v2 {
+    height: 34px;
+    min-height: 34px;
+    line-height: 34px;
+}
+
+/* Remove extra vertical margins that can push elements off-baseline */
+.menu-search-row .gsc-search-button.gsc-search-button-v2,
+.menu-search-row input,
+.menu-search-row button {
+    margin-top: 0;
+    margin-bottom: 0;
+}
 
 .icon {                                                                     /* Базовые стили для иконок */
     display: inline-block;                                                  /* Блочно-строчное отображение */
