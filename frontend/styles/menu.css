@@ -244,6 +244,28 @@
     margin-bottom: 0;
 }
 
+/* Layout: keep the search button to the right of the input (no wrapping) */
+.menu-search-row .gsc-search-box-tools {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 6px;
+}
+
+.menu-search-row .gsc-search-box-tools .gsc-input-box {
+    flex: 1 1 auto;
+    min-width: 0; /* allow shrinking to prevent wrapping */
+}
+
+.menu-search-row .gsc-search-box-tools .gsc-search-button {
+    flex: 0 0 auto;
+}
+
+/* Reset overly broad flex on inner input wrapper to avoid stacking issues */
+.menu-search-row .gsc-input {
+    display: block;
+}
+
 .icon {
     display: inline-block;                                              /* Устанавливает элемент как встроенный блок */
     width: 24px;                                                        /* Задает ширину элемента 24 пикселя */
