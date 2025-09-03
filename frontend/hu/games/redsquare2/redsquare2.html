@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="hu">
+	<head>
+	    <title>Falling blocks</title>
+	    <meta charset="UTF-8">
+	    <meta name="description" content="Test your reflexes in a game where you dodge falling blocks! Can you last as long as possible and avoid collisions? Test your skills and reflexes in this fast‑paced game!">
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+	    <meta property="og:title" content="Test your reflexes in a game where you dodge falling blocks!" />
+        <meta property="og:description" content="Can you last as long as possible and avoid collisions? Test your skills and reflexes in this fast‑paced game!" />            
+	    <meta property="og:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico" />
+        <meta property="og:url" content="https://www.serpmonn.ru/frontend/hu/games/redsquare2/redsquare2.html" />
+        <meta property="og:type" content="game" />
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Falling blocks — Serpmonn">
+        <meta name="twitter:description" content="Play the browser mini‑game 'Falling blocks' on Serpmonn.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
+	    <link rel="canonical" href="https://www.serpmonn.ru/frontend/hu/"/>
+	    <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
+	    <!-- Стили -->
+	    <link rel="stylesheet" href="redsquare2_styles/redsquare2_styles.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+	    <!-- Скрипты -->
+        <!-- Yandex.RTB -->
+        <script>window.yaContextCb=window.yaContextCb||[]</script>
+        <script src="https://yandex.ru/ads/system/context.js" async></script>
+        <script type="module" src="redsquare2_scripts/redsquare2_scripts.js" defer></script>
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+	</head>
+<body>
+    <!-- Оверлей с инструкцией -->
+    <div class="instruction-overlay" id="instructionOverlay">
+        <div class="instruction-content">
+            <h2 class="instruction-title">How to play "Falling blocks"?</h2>
+            <ul class="instruction-list">
+                <li><strong>Controls:</strong> Use arrow keys or touch to move the red square left and right</li>
+                <li><strong>Goal:</strong> Dodge the falling objects</li>
+                <li><strong>Scoring:</strong> You receive 1 point for each avoided object</li>
+                <li><strong>Misses:</strong> If an object hits you it counts as a miss</li>
+                <li><strong>Game over:</strong> The game ends after 10 hits</li>
+                <li><strong>Leaderboard:</strong> After the game you can view your results on the leaderboard</li>
+                <li><strong>Pause:</strong> Use the "Pause" button to temporarily stop the game</li>
+            </ul>
+            <button class="instruction-button" id="understandBtn">Got it, let’s start!</button>
+        </div>
+    </div>
+
+    <div id="score">Score: 0</div>
+    <div id="missed">Misses: 0</div>
+    <div class="button-container">
+        <button id="leaderboardBtn">Leaderboard</button>
+        <button id="pauseBtn">Pause</button>
+        <button id="restartBtn">Restart</button>
+    </div>
+    <form id="nicknameForm">
+        <input type="text" id="nickname" placeholder="Enter your name" required>
+        <button type="submit">Start game</button>
+    </form>
+    <canvas id="gameCanvas"></canvas>
+
+    <script>
+    </script>
+</body>
+</html>

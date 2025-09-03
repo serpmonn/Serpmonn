@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fuel Calculator — Logistics Serpmonn</title>
+    <!-- Open Graph -->
+    <meta property="og:title" content="Fuel Calculator — Logistics Serpmonn">
+    <meta property="og:description" content="Calculate fuel consumption, trip cost and savings">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/hu/tools/logistics/fuel-calculator.html">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Fuel Calculator — Logistics Serpmonn">
+    <meta name="twitter:description" content="Fuel consumption calculation for drivers">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <style>
+      body { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        padding: 16px; 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+        background: #f5f5f5;
+      }
+
+      .breadcrumb {
+        margin-bottom: 20px;
+        padding: 10px 0;
+        color: #666;
+        font-size: 0.9rem;
+      }
+
+      .breadcrumb a {
+        color: #007bff;
+        text-decoration: none;
+      }
+
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+
+      h1 { 
+        margin: 16px 0; 
+        text-align: center;
+        color: #333;
+      }
+
+      .calculator-container {
+        background: #fff;
+        border-radius: 12px;
+        padding: 24px;
+        margin: 20px 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      .input-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .input-group {
+        display: flex;
+        flex-direction: column;
+      }
+
+      label { 
+        font-size: 14px; 
+        color: #495057; 
+        margin-bottom: 8px;
+        font-weight: 500;
+      }
+
+      input, select { 
+        width: 100%; 
+        padding: 12px; 
+        border: 2px solid #e9ecef; 
+        border-radius: 8px; 
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+      }
+
+      input:focus, select:focus {
+        outline: none;
+        border-color: #007bff;
+      }
+
+      .calculate-btn {
+        background: linear-gradient(90deg, #28a745, #20c997);
+        color: #fff;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-size: 18px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 20px 0;
+      }
+
+      .calculate-btn:hover {
+        background: linear-gradient(90deg, #20c997, #17a2b8);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+      }
+
+      .results {
+        background: #f8f9fa;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 20px;
+      }
+
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .result-item {
+        text-align: center;
+        padding: 15px;
+        background: #fff;
+        border-radius: 8px;
+        border: 1px solid #dee2e6;
+      }
+
+      .result-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #28a745;
+        margin-bottom: 5px;
+      }
+
+      .result-label {
+        color: #6c757d;
+        font-size: 14px;
+      }
+
+      .comparison {
+        margin-top: 30px;
+        background: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      }
+
+      .comparison h3 {
+        color: #333;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .comparison-table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+      }
+
+      .comparison-table th,
+      .comparison-table td {
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #dee2e6;
+      }
+
+      .comparison-table th {
+        background: #f8f9fa;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .comparison-table tr:hover {
+        background: #f8f9fa;
+      }
+
+      .fuel-efficiency {
+        margin-top: 30px;
+        background: #e8f5e8;
+        border: 1px solid #c3e6c3;
+        border-radius: 8px;
+        padding: 20px;
+      }
+
+      .fuel-efficiency h3 {
+        color: #155724;
+        margin-bottom: 15px;
+      }
+
+      .efficiency-item {
+        margin-bottom: 10px;
+        padding-left: 20px;
+        position: relative;
+      }
+
+      .efficiency-item:before {
+        content: "🌱";
+        position: absolute;
+        left: 0;
+      }
+
+      .tips {
+        background: #fff3cd;
+        border: 1px solid #ffeaa7;
+        border-radius: 8px;
+        padding: 20px;
+        margin-top: 30px;
+      }
+
+      .tips h3 {
+        color: #856404;
+        margin-bottom: 15px;
+      }
+
+      .tip-item {
+        margin-bottom: 10px;
+        padding-left: 20px;
+        position: relative;
+      }
+
+      .tip-item:before {
+        content: "💡";
+        position: absolute;
+        left: 0;
+      }
+
+      @media (max-width: 768px) {
+        .input-section {
+          grid-template-columns: 1fr;
+        }
+        
+        .result-grid {
+          grid-template-columns: 1fr;
+        }
+        
+        .comparison-table {
+          font-size: 14px;
+        }
+        
+        body {
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Меню -->
+    <div id="menuContainer"></div>
+
+    <!-- Breadcrumbs -->
+    <div class="breadcrumb">
+      <a href="/frontend/hu/tools/index.html">🧰 Tools</a> → 
+      <span>⛽ Fuel calculator</span>
+    </div>
+
+    <h1>⛽ Fuel calculator</h1>
+
+    <div class="calculator-container">
+      <h2>Введите параметры поездки</h2>
+      
+      <div class="input-section">
+        <div class="input-group">
+          <label for="distance">Расстояние (км)</label>
+          <input type="number" id="distance" placeholder="100" min="1" step="0.1">
+        </div>
+        
+        <div class="input-group">
+          <label for="fuelConsumption">Расход топLива (L/100km)</label>
+          <input type="number" id="fuelConsumption" placeholder="8.5" min="1" step="0.1">
+        </div>
+        
+        <div class="input-group">
+          <label for="fuelPrice">Цена топLива (₽/L)</label>
+          <input type="number" id="fuelPrice" placeholder="55.50" min="1" step="0.01">
+        </div>
+        
+        <div class="input-group">
+          <label for="fuelType">Тип топLива</label>
+          <select id="fuelType">
+            <option value="petrol">Бензин АИ-92</option>
+            <option value="petrol95">Бензин АИ-95</option>
+            <option value="petrol98">Бензин АИ-98</option>
+            <option value="diesel">ДизеLьное топLиво</option>
+            <option value="lpg">Газ (пропан-бутан)</option>
+            <option value="cng">Газ (метан)</option>
+          </select>
+        </div>
+        
+        <div class="input-group">
+          <label for="drivingStyle">Driving style</label>
+          <select id="drivingStyle">
+            <option value="economical">Eco</option>
+            <option value="normal">Normal</option>
+            <option value="sport">Sport</option>
+            <option value="aggressive">Aggressive</option>
+          </select>
+        </div>
+        
+        <div class="input-group">
+          <label for="roadConditions">Дорожные усLовия</label>
+          <select id="roadConditions">
+            <option value="highway">Шоссе</option>
+            <option value="city">Город</option>
+            <option value="mixed">Смешанный цикL</option>
+            <option value="offroad">Бездорожье</option>
+          </select>
+        </div>
+        
+        <div class="input-group">
+          <label for="load">Загрузка автомобиLя</label>
+          <select id="load">
+            <option value="empty">Пустой</option>
+            <option value="light">Лёгкая загрузка</option>
+            <option value="medium">Средняя загрузка</option>
+            <option value="heavy">ПоLная загрузка</option>
+          </select>
+        </div>
+        
+        <div class="input-group">
+          <label for="climate">Climate conditions</label>
+          <select id="climate">
+            <option value="normal">Normal</option>
+            <option value="hot">Hot (+30°C and above)</option>
+            <option value="cold">Cold (-10°C and below)</option>
+            <option value="rainy">Rain/Snow</option>
+          </select>
+        </div>
+      </div>
+
+      <button class="calculate-btn" onclick="calculateFuel()">Calculate fuel consumption</button>
+
+      <div id="results" class="results" style="display: none;">
+        <h3>Results</h3>
+        <div class="result-grid">
+          <div class="result-item">
+            <div class="result-value" id="totalFuel">0 L</div>
+            <div class="result-label">Total fuel</div>
+          </div>
+          <div class="result-item">
+            <div class="result-value" id="totalCost">0 ₽</div>
+            <div class="result-label">Fuel cost</div>
+          </div>
+          <div class="result-item">
+            <div class="result-value" id="costPerKm">0 ₽/km</div>
+            <div class="result-label">Cost per 1 km</div>
+          </div>
+          <div class="result-item">
+            <div class="result-value" id="adjustedConsumption">0 L/100km</div>
+            <div class="result-label">Adjusted consumption</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="comparison" class="comparison" style="display: none;">
+      <h3>Comparison with other driving styles</h3>
+      <table class="comparison-table">
+        <thead>
+          <tr>
+            <th>Driving style</th>
+            <th>Consumption (L/100km)</th>
+            <th>Cost (₽)</th>
+            <th>Saving/overspending</th>
+          </tr>
+        </thead>
+        <tbody id="comparisonBody">
+        </tbody>
+      </table>
+    </div>
+
+    <div class="fuel-efficiency">
+      <h3>🌱 Fuel efficiency</h3>
+      <div class="efficiency-item">Smooth acceleration and braking saves 10-15% of fuel</div>
+      <div class="efficiency-item">Maintain optimal speed 80-90 km/h on highway</div>
+      <div class="efficiency-item">Timely gear shifting (2000-2500 rpm)</div>
+      <div class="efficiency-item">Check tire pressure every 2 weeks</div>
+      <div class="efficiency-item">Remove unnecessary weight from trunk</div>
+    </div>
+
+    <div class="tips">
+      <h3>💡 Tips</h3>
+      <div class="tip-item">Use cruise control on flat roads</div>
+      <div class="tip-item">Close windows at high speeds</div>
+      <div class="tip-item">Plan route avoiding traffic jams</div>
+      <div class="tip-item">Service engine and fuel system regularly</div>
+      <div class="tip-item">Use quality fuel of recommended octane</div>
+    </div>
+
+    <script>
+      function calculateFuel() {
+        // ПоLучаем значения из формы
+        const distance = parseFloat(document.getElementById('distance').value);
+        const fuelConsumption = parseFloat(document.getElementById('fuelConsumption').value);
+        const fuelPrice = parseFloat(document.getElementById('fuelPrice').value);
+        const fuelType = document.getElementById('fuelType').value;
+        const drivingStyle = document.getElementById('drivingStyle').value;
+        const roadConditions = document.getElementById('roadConditions').value;
+        const load = document.getElementById('load').value;
+        const climate = document.getElementById('climate').value;
+
+        if (!distance || !fuelConsumption || !fuelPrice) {
+          alert('Please fill in all required fields');
+          return;
+        }
+
+        // Коэффициенты по стиLю вождения
+        const drivingStyleMultipliers = {
+          'economical': 0.8,
+          'normal': 1.0,
+          'sport': 1.3,
+          'aggressive': 1.6
+        };
+
+        // Коэффициенты по дорожным усLовиям
+        const roadConditionsMultipliers = {
+          'highway': 0.9,
+          'city': 1.2,
+          'mixed': 1.0,
+          'offroad': 1.5
+        };
+
+        // Коэффициенты по загрузке
+        const loadMultipliers = {
+          'empty': 1.0,
+          'light': 1.05,
+          'medium': 1.15,
+          'heavy': 1.3
+        };
+
+        // Коэффициенты по кLимату
+        const climateMultipliers = {
+          'normal': 1.0,
+          'hot': 1.1,
+          'cold': 1.15,
+          'rainy': 1.08
+        };
+
+        // Коэффициенты по типу топLива
+        const fuelTypeMultipliers = {
+          'petrol': 1.0,
+          'petrol95': 1.02,
+          'petrol98': 1.05,
+          'diesel': 0.9,
+          'lpg': 1.2,
+          'cng': 1.1
+        };
+
+        // Расчёт скорректированного расхода
+        const adjustedConsumption = fuelConsumption * 
+          drivingStyleMultipliers[drivingStyle] * 
+          roadConditionsMultipliers[roadConditions] * 
+          loadMultipliers[load] * 
+          climateMultipliers[climate] * 
+          fuelTypeMultipliers[fuelType];
+
+        // Расчёт общего расхода и стоимости
+        const totalFuel = (adjustedConsumption * distance) / 100;
+        const totalCost = totalFuel * fuelPrice;
+        const costPerKm = totalCost / distance;
+
+        // Отображаем резуLьтаты
+        document.getElementById('totalFuel').textContent = totalFuel.toFixed(2) + ' L';
+        document.getElementById('totalCost').textContent = Math.round(totalCost).toLocaleString() + ' ₽';
+        document.getElementById('costPerKm').textContent = costPerKm.toFixed(2) + ' ₽/km';
+        document.getElementById('adjustedConsumption').textContent = adjustedConsumption.toFixed(1) + ' L/100km';
+
+        // Показываем резуLьтаты
+        document.getElementById('results').style.display = 'block';
+
+        // Показываем сравнение
+        showComparison(distance, fuelConsumption, fuelPrice, fuelType, roadConditions, load, climate);
+      }
+
+      function showComparison(distance, baseConsumption, fuelPrice, fuelType, roadConditions, load, climate) {
+        const comparisonBody = document.getElementById('comparisonBody');
+        
+        const styles = [
+          { name: 'Eco', multiplier: 0.8, color: '#28a745' },
+          { name: 'Normal', multiplier: 1.0, color: '#007bff' },
+          { name: 'Sport', multiplier: 1.3, color: '#ffc107' },
+          { name: 'Aggressive', multiplier: 1.6, color: '#dc3545' }
+        ];
+
+        let html = '';
+        const baseCost = (baseConsumption * distance / 100) * fuelPrice;
+
+        styles.forEach(style => {
+          const adjustedConsumption = baseConsumption * style.multiplier * 
+            getRoadMultiplier(roadConditions) * 
+            getLoadMultiplier(load) * 
+            getClimateMultiplier(climate) * 
+            getFuelTypeMultiplier(fuelType);
+          
+          const totalFuel = (adjustedConsumption * distance) / 100;
+          const totalCost = totalFuel * fuelPrice;
+          const savings = baseCost - totalCost;
+          const savingsText = savings > 0 ? 
+            `+${Math.round(savings).toLocaleString()} ₽` : 
+            `${Math.round(savings).toLocaleString()} ₽`;
+
+          html += `
+            <tr>
+              <td style="color: ${style.color}; font-weight: 600;">${style.name}</td>
+              <td>${adjustedConsumption.toFixed(1)} L/100km</td>
+              <td>${Math.round(totalCost).toLocaleString()} ₽</td>
+              <td style="color: ${savings > 0 ? '#28a745' : '#dc3545'}; font-weight: 600;">${savingsText}</td>
+            </tr>
+          `;
+        });
+
+        comparisonBody.innerHTML = html;
+        document.getElementById('comparison').style.display = 'block';
+      }
+
+      function getRoadMultiplier(roadConditions) {
+        const multipliers = {
+          'highway': 0.9,
+          'city': 1.2,
+          'mixed': 1.0,
+          'offroad': 1.5
+        };
+        return multipliers[roadConditions] || 1.0;
+      }
+
+      function getLoadMultiplier(load) {
+        const multipliers = {
+          'empty': 1.0,
+          'light': 1.05,
+          'medium': 1.15,
+          'heavy': 1.3
+        };
+        return multipliers[load] || 1.0;
+      }
+
+      function getClimateMultiplier(climate) {
+        const multipliers = {
+          'normal': 1.0,
+          'hot': 1.1,
+          'cold': 1.15,
+          'rainy': 1.08
+        };
+        return multipliers[climate] || 1.0;
+      }
+
+      function getFuelTypeMultiplier(fuelType) {
+        const multipliers = {
+          'petrol': 1.0,
+          'petrol95': 1.02,
+          'petrol98': 1.05,
+          'diesel': 0.9,
+          'lpg': 1.2,
+          'cng': 1.1
+        };
+        return multipliers[fuelType] || 1.0;
+      }
+    </script>
+
+    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="hi">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Games — Serpmonn</title>
+    <meta property="og:title" content="Games — Serpmonn">
+    <meta property="og:description" content="Web and PC games: Not‑Chess, Technomagic, 2048, Square Escape, Falling blocks, Rememento and more.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/hi/games/index.html">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <style>
+      html, body { 
+        width: 100%; 
+        overflow-x: hidden; 
+      }
+      body {
+        max-width: none;
+        margin: 0;
+        padding: 0;
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background: #f5f5f5;
+        min-height: 100vh;
+        position: relative;
+        z-index: 1;
+      }
+      .page { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        padding: 20px; 
+      }
+      h1 { 
+        margin: 20px 0; 
+        text-align: center; 
+        color: #333; 
+        font-size: 2.2rem; 
+      }
+      .subtitle { 
+        text-align: center; 
+        color: #666; 
+        margin-bottom: 30px; 
+      }
+      .category-title { 
+        font-size: 1.4rem; 
+        color: #333; 
+        margin: 30px 0 15px; 
+        padding-bottom: 8px; 
+        border-bottom: 2px solid #ddd; 
+        display: flex; 
+        align-items: center; 
+        gap: 10px; 
+      }
+      .grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+        gap: 20px; 
+        overflow: visible; 
+      }
+      .card { 
+        border: 1px solid #ddd; 
+        border-radius: 8px; 
+        padding: 20px; 
+        background: #fff; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.08); 
+        transition: transform .2s ease, box-shadow .2s ease;
+        display: flex;
+        flex-direction: column;
+        min-height: 160px;
+      }
+      .card:hover { 
+        transform: translateY(-3px); 
+        box-shadow: 0 8px 18px rgba(0,0,0,0.12); 
+        border-color: #ddd; 
+      }
+      .card h2 { 
+        font-size: 1.1rem; 
+        margin: 0 0 12px; 
+        color: #333; 
+        display: flex; 
+        align-items: center; 
+        gap: 8px; 
+      }
+      .card p { 
+        margin: 0 0 16px; 
+        color: #666; 
+        line-height: 1.55; 
+        flex-grow: 1;
+      }
+      .card a.btn { 
+        display: inline-block; 
+        padding: 10px 16px; 
+        background: linear-gradient(90deg, #dc3545, #c82333); 
+        color: #fff; 
+        border-radius: 8px; 
+        text-decoration: none; 
+        font-weight: 600; 
+        transition: all .2s ease;
+        text-align: center;
+        align-self: flex-start;
+      }
+      .card a.btn:hover { 
+        background: linear-gradient(90deg, #c82333, #a00d25);
+        box-shadow: 0 4px 12px rgba(220,53,69,.35); 
+        transform: translateY(-1px); 
+      }
+      .game-logo {
+        width: 64px;
+        height: 64px;
+        border-radius: 8px;
+        object-fit: cover;
+        margin-bottom: 10px;
+      }
+
+      .game-logo-inline {
+        width: 22px;
+        height: 22px;
+        border-radius: 4px;
+        object-fit: cover;
+        vertical-align: -3px;
+        margin-right: 8px;
+      }
+
+      .section-logo-inline {
+        width: 28px;
+        height: 28px;
+        border-radius: 6px;
+        object-fit: cover;
+        vertical-align: -4px;
+        margin-right: 10px;
+      }
+
+      @media (max-width: 768px) { 
+        .page{padding:15px;} 
+        h1{font-size:1.8rem;} 
+        .card{padding:16px; min-height: 140px;} 
+        .grid { grid-template-columns: 1fr; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="menuContainer"></div>
+    <div class="page">
+      <h1><img class="section-logo-inline" src="/frontend/images/Games.ico" alt="Serpmonn"> Serpmonn Games</h1>
+      <p class="subtitle">A selection of web and PC games</p>
+
+      <section>
+        <h2 class="category-title"><img class="section-logo-inline" src="/frontend/images/WebGames.ico" alt="Web games"> Web games</h2>
+        <div class="grid">
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/not-chess.ico" alt="Not‑Chess"> Not‑Chess</h2>
+            <p>Tactical 10×10 battles with unique characters.</p>
+            <a class="btn" href="https://dbnua.com/g/7wq93kdtn47c9ceea344676c539f4c/?erid=2bL9aMPo2e49hMef4piUjZ2XwT" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/technomagic.ico" alt="Technomagic"> Technomagic</h2>
+            <p>Fantasy RPG with quests and battles.</p>
+            <a class="btn" href="https://dhwnh.com/g/c4c9d791007c9ceea344f94d791968/?erid=5jtCeReLm1S3Xx3Lf3cMPoe" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/2048.ico" alt="2048"> 2048</h2>
+            <p>Classic number merging puzzle.</p>
+            <a class="btn" href="/frontend/games/2048/index.html" target="_blank">Open</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/SquareEscape.ico" alt="Square Escape"> Square Escape</h2>
+            <p>Reaction arcade. Dodge and survive.</p>
+            <a class="btn" href="/frontend/games/redsquare/redsquare.html" target="_blank">Open</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/RedSquare2.ico" alt="Falling blocks"> Falling blocks</h2>
+            <p>Fast‑paced arcade with falling obstacles.</p>
+            <a class="btn" href="/frontend/games/redsquare2/redsquare2.html" target="_blank">Open</a>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="category-title"><img class="section-logo-inline" src="/frontend/images/pc-games.png" alt="PC games"> PC games</h2>
+        <div class="grid">
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/rememento.jpg" alt="Rememento: White Shadow"> Rememento: White Shadow</h2>
+            <p>Online RPG on UE5 with open world and a mystical story. Bonuses for pre‑registration.</p>
+            <a class="btn" href="https://rcpsj.com/g/tpl7lgn0ew7c9ceea34496e55b95f7/?erid=2bL9aMPo2e49hMef4rqUKncZwv" target="_blank">Pre‑register</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/amazing-online.jpg" alt="AMAZING ONLINE"> AMAZING ONLINE</h2>
+            <p>Online GTA‑style game with voice chat.</p>
+            <a class="btn" href="https://rzekl.com/g/txwwmat2wx7c9ceea344c065b8a873/?erid=2bL9aMPo2e49hMef4pfym3SuLK" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/evolve-rp.png" alt="Evolve RP"> Evolve RP</h2>
+            <p>RolePlay server based on GTA San Andreas.</p>
+            <a class="btn" href="https://xmknb.com/g/ilvfzhs26x7c9ceea34461e800f2bd/?erid=2bL9aMPo2e49hMef4piV5BfNfR" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/nextrp.png" alt="NEXTRP"> NEXTRP</h2>
+            <p>RP game on a Russian map with PvP and many vehicles.</p>
+            <a class="btn" href="https://zmgig.com/g/yog728vijm7c9ceea344f0d389d68d/?erid=MvGzQC98w3Z1gMq1oSV73txX" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/malinovka.png" alt="Malinovka"> Malinovka</h2>
+            <p>RP online game with voice chat and Malinovka+ subscription.</p>
+            <a class="btn" href="https://xcdus.com/g/c5e9n6r3ew7c9ceea344c5c964748a/?erid=MvGzQC98w3Z1gMq1pRgkzi9д" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/lineage-2-essence.png" alt="Lineage 2 Essence"> Lineage 2 Essence</h2>
+            <p>Legendary MMORPG by NCSOFT with classic chronicles: 34 classes and 6 races. Ruby and Sapphire servers are open — start from scratch and reach the top!</p>
+            <a class="btn" href="https://rzekl.com/g/7lgnbu225t7c9ceea3444cb8738d24/?erid=MvGzQC98w3З1gMq1oSV73uLi" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/lineage-2.png" alt="Lineage 2"> Lineage 2</h2>
+            <p>Classic legendary MMORPG with large‑scale PvP battles and 36 classes. The most popular servers — up to 5500 online.</p>
+            <a class="btn" href="https://twnfz.com/g/f15f0db8437c9ceea344d8792ef979/?erid=5jtCeReLm1S3Xx3Lf3au61G" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/gran-saga.png" alt="Gran Saga (PC)"> Gran Saga (PC)</h2>
+            <p>Anime MMORPG on Unreal Engine 4 with cross‑platform and a squad of three heroes. Explore the world and fight with friends.</p>
+            <a class="btn" href="https://ypetp.com/g/oy6u3hx9ag7c9ceea3449bb9277de5/?erid=2bL9aMPo2e49hMef4piUcxXPpw" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/aion.png" alt="Aion Classic"> Aion Classic</h2>
+            <p>Classic version of the legendary MMORPG with flights over Atreia, PvP/PvE, sieges and dungeons. Update 4.0 "Luminance".</p>
+            <a class="btn" href="https://qbzdl.com/g/rbktk0m87n7c9ceea344a3582dc4ab/?erid=2bL9aMPo2e49hMef4pgUymfaow" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/black-desert.png" alt="Black Desert"> Black Desert</h2>
+            <p>Medieval MMORPG with a seamless world, non‑target combat and large‑scale battles. 10+ million players worldwide.</p>
+            <a class="btn" href="https://rzekl.com/g/fy90i94aoa7c9ceea3443fcec4d4a3/?erid=MvGzQC98w3З1gMq1oS2xNYhq" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/blade-and-soul.png" alt="Blade & Soul"> Blade & Soul</h2>
+            <p>MMORPG in the style of East Asian martial arts. Updated to Unreal Engine 4. Raids, PvP and large‑scale events.</p>
+            <a class="btn" href="https://yynbx.com/g/bu9xyk63aw7c9ceea344b6495a8325/?erid=MvGzQC98w3З1gMq1kwjXdKXb" target="_blank">Play</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/sword-whispers.png" alt="Sword Whispers"> Sword Whispers</h2>
+            <p>Isometric RPG in a world of magic and technology: auto‑battler with deep strategy, hub locations, PvP arenas and guilds.</p>
+            <a class="btn" href="https://bjpql.com/g/yb1b9nkupm7c9ceea3447ee0c80998/?erid=2bL9aMPo2e49hMef4rqUDRVKxN" target="_blank">Play</a>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="category-title"><img class="section-logo-inline" src="/frontend/images/AndroidGames.ico" alt="Mobile games"> Mobile games</h2>
+        <div class="grid">
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/sky-codex.png" alt="Sky Codex"> Sky Codex</h2>
+            <p>RPG with 8 classes, PvP/PvE and customization.</p>
+            <a class="btn" href="https://ogsib.com/g/rfkhf950zq7c9ceea3448f0ddd3fd3/?erid=2bL9aMPo2e49hMef4rqUKtЗBtD" target="_blank">Open</a>
+          </div>
+          <div class="card">
+            <h2><img class="game-logo-inline" src="/frontend/images/gran-saga.png" alt="Gran Saga (Mobile)"> Gran Saga (Mobile)</h2>
+            <p>Cross‑platform anime MMORPG: play on your phone, build a squad and combine abilities.</p>
+            <a class="btn" href="https://yjfca.com/g/2dmg0i5qi37c9ceea344afc64b2e0f/?erid=2bL9aMPo2e49hMef4piUHJVwXV" target="_blank">Play</a>
+          </div>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script src="/frontend/scripts/interactive-bg.js" defer></script>
+  </body>
+</html>

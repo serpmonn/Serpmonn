@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ms">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UTM Builder — Serpmonn</title>
+    <!-- Open Graph -->
+    <meta property="og:title" content="UTM Builder — Serpmonn">
+    <meta property="og:description" content="Build UTM links for campaigns in seconds.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/ms/tools/utm-builder.html">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UTM Builder — Serpmonn">
+    <meta name="twitter:description" content="Build UTM links fast.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <style>
+      body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+      h1 { margin: 16px 0; }
+      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+      label { font-size: 14px; color: #374151; }
+      input { width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; }
+      .box { border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; margin: 12px 0; }
+      .actions { display: flex; gap: 8px; }
+      button { padding: 10px 12px; border-radius: 8px; border: 1px solid #111827; background: #111827; color: #fff; }
+      .muted { color: #6b7280; font-size: 13px; }
+      .output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; word-break: break-all; }
+
+      /* Адаптивность для мобильных устройств */
+      @media (max-width: 768px) {
+        .row { grid-template-columns: 1fr; }
+        body { padding: 12px; }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Меню -->
+    <div id="menuContainer"></div>
+    
+    <h1>🔗 UTM Builder</h1>
+    <!-- Форма параметров UTM -->
+    <div class="box">
+      <div class="row">
+        <div>
+          <label>Base URL</label>
+          <input id="base" placeholder="https://example.com/landing" />
+        </div>
+        <div>
+          <label>utm_source</label>
+          <input id="source" placeholder="telegram" />
+        </div>
+        <div>
+          <label>utm_medium</label>
+          <input id="medium" placeholder="bot" />
+        </div>
+        <div>
+          <label>utm_campaign</label>
+          <input id="campaign" placeholder="spring_sale" />
+        </div>
+        <div>
+          <label>utm_content</label>
+          <input id="content" placeholder="banner_a" />
+        </div>
+        <div>
+          <label>utm_term</label>
+          <input id="term" placeholder="keyword" />
+        </div>
+      </div>
+    </div>
+    <!-- Действия и вывод результата -->
+    <div class="box">
+      <div class="actions">
+        <button id="build">Generate</button>
+        <button id="copy" type="button">Copy</button>
+      </div>
+      <p class="muted">Generated link:</p>
+      <div id="result" class="output"></div>
+    </div>
+
+    <script>
+      // Вспомогательный селектор
+      const qs = (s)=>document.querySelector(s);
+      // Формирование ссылки с UTM‑параметрами
+      function buildUrl() {
+        const base = qs('#base').value.trim();
+        const params = new URLSearchParams();
+        const add = (k,v)=>{ if (v && v.trim()) params.set(k, v.trim()); };
+        add('utm_source', qs('#source').value);
+        add('utm_medium', qs('#medium').value);
+        add('utm_campaign', qs('#campaign').value);
+        add('utm_content', qs('#content').value);
+        add('utm_term', qs('#term').value);
+        if (!base) return '';
+        const hasQuery = base.includes('?');
+        return base + (hasQuery ? '&' : '?') + params.toString();
+      }
+      // Кнопка генерации
+      qs('#build').addEventListener('click', ()=>{
+        qs('#result').textContent = buildUrl();
+      });
+      // Копирование результата в буфер обмена
+      qs('#copy').addEventListener('click', async ()=>{
+        const str = qs('#result').textContent;
+        if (!str) return;
+        try { await navigator.clipboard.writeText(str); } catch {}
+      });
+    </script>
+    
+    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  </body>
+</html>

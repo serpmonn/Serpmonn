@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="hu">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>News and Articles — Serpmonn</title>
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="News and Articles — Serpmonn">
+    <meta property="og:description" content="Latest updates, tutorials and useful materials">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/hu/news/index.html">
+    <meta property="og:type" content="website">
+    
+    <!-- RSS -->
+    <link rel="alternate" type="application/rss+xml" title="Serpmonn news RSS" href="/frontend/hu/news/rss.xml">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    
+    <style>
+      html, body { width: 100%; overflow-x: hidden; }
+      body { margin: 0; padding: 0; background: #f5f5f5; min-height: 100vh; }
+      .page { max-width: 1200px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.6; box-sizing: border-box; }
+
+      .news-header { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white; padding: 40px; border-radius: 12px; margin-bottom: 30px; text-align: center; }
+      .news-title { font-size: 3rem; margin-bottom: 15px; font-weight: 700; }
+      .news-subtitle { font-size: 1.2rem; opacity: 0.9; margin-bottom: 20px; }
+
+      .news-stats { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+      .stat-item { text-align: center; }
+      .stat-number { font-size: 2rem; font-weight: bold; display: block; }
+      .stat-label { font-size: 0.9rem; opacity: 0.8; }
+
+      .news-categories { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: nowrap; justify-content: center; overflow-x: auto; -webkit-overflow-scrolling: touch; }
+      .category-btn { padding: 10px 20px; background: #fff; border: 2px solid #e9ecef; border-radius: 25px; text-decoration: none; color: #333; font-weight: 500; transition: all 0.3s ease; cursor: pointer; white-space: nowrap; }
+      .category-btn:hover, .category-btn.active { background: #dc3545; color: white; border-color: #dc3545; }
+
+      .search-box { max-width: 500px; margin: 0 auto 30px; position: relative; }
+      .search-input { width: 100%; padding: 15px 20px; border: 2px solid #e9ecef; border-radius: 25px; font-size: 1rem; outline: none; transition: border-color 0.3s ease; }
+      .search-input:focus { border-color: #dc3545; }
+
+      .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 40px; }
+
+      .news-card { position: relative; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
+      .news-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
+      .news-card-image { height: 200px; background: linear-gradient(45deg, #dc3545 0%, #f47059 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; }
+      .news-card-content { padding: 25px; }
+      .news-card-category { display: inline-block; padding: 5px 12px; background: #e9ecef; color: #495057; border-radius: 15px; font-size: 0.8rem; font-weight: 500; margin-bottom: 15px; }
+      .news-card-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 10px; color: #333; line-height: 1.4; }
+      .news-card-excerpt { color: #6c757d; margin-bottom: 15px; line-height: 1.6; }
+      .news-card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: #6c757d; }
+      .news-card-link { position: absolute; inset: 0; z-index: 1; }
+
+      .rss-section { background: #fff; border-radius: 12px; padding: 30px; text-align: center; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+      .rss-title { font-size: 1.5rem; margin-bottom: 15px; color: #333; }
+      .rss-description { color: #6c757d; margin-bottom: 20px; }
+      .rss-btn { display: inline-block; padding: 12px 30px; background: #dc3545; color: white; text-decoration: none; border-radius: 25px; font-weight: 500; transition: background 0.3s ease; }
+      .rss-btn:hover { background: #c82333; }
+
+      .social-subscribe { display: flex; justify-content: center; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
+      .tg-btn, .vk-btn { display: inline-block; padding: 10px 20px; border-radius: 25px; color: #fff; font-weight: 600; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+      .tg-btn { background: #229ED9; }
+      .vk-btn { background: #2787F5; }
+      .tg-btn:hover, .vk-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.15); }
+
+      .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 40px; }
+      .page-btn { padding: 10px 15px; border: 1px solid #dee2e6; background: white; color: #dc3545; text-decoration: none; border-radius: 6px; transition: all 0.3s ease; }
+      .page-btn:hover, .page-btn.active { background: #dc3545; color: white; border-color: #dc3545; }
+
+      .no-results { text-align: center; padding: 60px 20px; color: #6c757d; }
+      .no-results h3 { margin-bottom: 15px; color: #333; }
+
+      @media (max-width: 768px) {
+        html, body { overflow-x: auto; }
+        .page { padding: 8px; max-width: 100%; box-sizing: border-box; }
+        .news-title { font-size: 2rem; }
+        .news-subtitle { font-size: 1rem; }
+        .news-header { padding: 20px; margin-bottom: 20px; }
+        .news-grid { grid-template-columns: 1fr; gap: 15px; }
+        .news-categories { justify-content: center; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; }
+        .category-btn { white-space: nowrap; font-size: 0.9rem; padding: 8px 16px; }
+        .news-stats { gap: 15px; }
+        .stat-number { font-size: 1.5rem; }
+        .stat-label { font-size: 0.8rem; }
+        .news-card-content { padding: 15px; }
+        .news-card-title { font-size: 1.1rem; }
+        .search-box { margin-bottom: 20px; }
+        .search-input { padding: 12px 16px; font-size: 0.9rem; }
+        .news-card-image { height: 150px; font-size: 2rem; }
+        .rss-section { padding: 20px; }
+        .rss-title { font-size: 1.3rem; }
+        .social-subscribe { flex-direction: column; gap: 8px; }
+        .tg-btn, .vk-btn { width: 100%; text-align: center; }
+      }
+
+      @media (max-width: 480px) {
+        html, body { overflow-x: auto; }
+        .page { padding: 4px; max-width: 100%; box-sizing: border-box; }
+        .news-title { font-size: 1.5rem; }
+        .news-header { padding: 15px; }
+        .news-card-content { padding: 12px; }
+        .news-card-title { font-size: 1rem; }
+        .news-card-excerpt { font-size: 0.9rem; }
+        .news-stats { flex-direction: column; gap: 10px; }
+        .stat-item { margin-bottom: 10px; }
+        .news-categories { gap: 8px; }
+        .category-btn { padding: 6px 12px; font-size: 0.8rem; }
+        .search-input { padding: 10px 12px; font-size: 0.8rem; }
+        .news-card-image { height: 120px; font-size: 1.5rem; }
+        .rss-section { padding: 15px; }
+        .rss-title { font-size: 1.1rem; }
+        .rss-description { font-size: 0.9rem; }
+        .rss-btn { padding: 10px 20px; font-size: 0.9rem; }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="menuContainer"></div>
+    <div class="page">
+      <!-- Хлебные крошки -->
+      <div class="breadcrumb">
+        <a href="/frontend/hu/index.html">Home</a> → 
+        <span>News & Articles</span>
+      </div>
+
+      <!-- Заголовок раздела -->
+      <div class="news-header">
+        <h1 class="news-title">📰 News & Articles</h1>
+        <p class="news-subtitle">Stay up to date and explore useful materials</p>
+
+        <div class="news-stats">
+          <div class="stat-item">
+            <span class="stat-number">3</span>
+            <span class="stat-label">New tools</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">15+</span>
+            <span class="stat-label">Fixes</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-number">2</span>
+            <span class="stat-label">New categories</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RSS секция -->
+      <div class="rss-section">
+        <h2 class="rss-title">📡 RSS feed</h2>
+        <p class="rss-description">Subscribe to RSS to get notifications about new posts</p>
+        <a href="/frontend/hu/news/rss.xml" class="rss-btn" target="_blank" rel="noopener">Subscribe to RSS</a>
+        <div class="social-subscribe">
+          <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Subscribe on Telegram</a>
+
+          <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Subscribe on VK</a>
+
+        </div>
+      </div>
+
+      <!-- Категории -->
+      <div class="news-categories">
+        <button class="category-btn active" data-category="all">All</button>
+        <button class="category-btn" data-category="updates">Updates</button>
+        <button class="category-btn" data-category="articles">Articles</button>
+        <button class="category-btn" data-category="tutorials">Tutorials</button>
+        <button class="category-btn" data-category="engineering">Engineering</button>
+        <button class="category-btn" data-category="logistics">Logistics</button>
+      </div>
+
+      <!-- Поиск -->
+      <div class="search-box">
+        <input type="text" class="search-input" placeholder="🔍 Search news and articles..." id="searchInput">
+      </div>
+
+      <!-- Сетка новостей -->
+      <div class="news-grid" id="newsGrid">
+        <!-- Новость об обновлениях -->
+        <div class="news-card" data-category="updates" data-tags="updates,tools,logistics,engineering">
+          <div class="news-card-image">🚀</div>
+          <div class="news-card-content">
+            <span class="news-card-category">Updates</span>
+            <h3 class="news-card-title">Updates Serpmonn — August 17, 2025</h3>
+            <p class="news-card-excerpt">Added new tools for logistics, improved the depreciation calculator and fixed issues. The update focuses on improving user experience.</p>
+            <div class="news-card-meta">
+                              <span class="news-card-date">August 17, 2025</span>
+              <span class="news-card-read-time">5 min</span>
+            </div>
+          </div>
+          <a class="news-card-link" href="/frontend/hu/news/updates-august-17.html" aria-label="Read"></a>
+        </div>
+
+        <!-- IT-статья про веб-разработку -->
+        <div class="news-card" data-category="tutorials" data-tags="tutorials,web-development,html,css,javascript">
+          <div class="news-card-image">💻</div>
+          <div class="news-card-content">
+            <span class="news-card-category">Development</span>
+            <h3 class="news-card-title">How to build your first website from scratch</h3>
+            <p class="news-card-excerpt">A step-by-step guide to building a website from scratch. HTML, CSS, JavaScript and modern tools.</p>
+            <div class="news-card-meta">
+              <span class="news-card-date">August 18, 2024</span>
+              <span class="news-card-read-time">12 min</span>
+            </div>
+          </div>
+          <a class="news-card-link" href="/frontend/hu/news/articles/web-development-guide.html" aria-label="Read"></a>
+        </div>
+
+        <!-- Статья об амортизации -->
+        <div class="news-card" data-category="tutorials" data-tags="tutorials,calculator,depreciation,car">
+          <div class="news-card-image">📚</div>
+          <div class="news-card-content">
+            <span class="news-card-category">Tutorials</span>
+            <h3 class="news-card-title">How to correctly calculate car depreciation</h3>
+            <p class="news-card-excerpt">A detailed guide to using the depreciation calculator. Learn how to account for all factors and get an accurate result.</p>
+            <div class="news-card-meta">
+              <span class="news-card-date">August 19, 2024</span>
+              <span class="news-card-read-time">8 min</span>
+            </div>
+          </div>
+          <a class="news-card-link" href="/frontend/hu/news/articles/how-to-calculate-depreciation.html" aria-label="Read"></a>
+        </div>
+      </div>
+
+      <!-- Пагинация -->
+      <div class="pagination" id="pagination" style="display: none;">
+        <!-- Пагинация будет генерироваться динамически -->
+      </div>
+    </div>
+
+    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+
+    <script>
+      // Фильтрация по категориям
+      const categoryBtns = document.querySelectorAll('.category-btn');
+      const newsCards = document.querySelectorAll('.news-card');
+      const searchInput = document.getElementById('searchInput');
+
+      categoryBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          categoryBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const category = btn.dataset.category;
+          filterNews(category, searchInput.value);
+        });
+      });
+
+      searchInput.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        const activeCategory = document.querySelector('.category-btn.active').dataset.category;
+        filterNews(activeCategory, searchTerm);
+      });
+
+      function filterNews(category, searchTerm) {
+        newsCards.forEach(card => {
+          const cardCategory = card.dataset.category;
+          const cardTags = (card.dataset.tags || '').toLowerCase();
+          const matchesCategory = category === 'all' || cardCategory === category;
+          const title = card.querySelector('.news-card-title')?.textContent.toLowerCase() || '';
+          const excerpt = card.querySelector('.news-card-excerpt')?.textContent.toLowerCase() || '';
+          const matchesSearch = !searchTerm || cardTags.includes(searchTerm) || title.includes(searchTerm) || excerpt.includes(searchTerm);
+          card.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
+        });
+        const visible = Array.from(newsCards).some(card => card.style.display !== 'none');
+        if (!visible) showNoResults(); else hideNoResults();
+      }
+
+      function showNoResults() {
+        let el = document.querySelector('.no-results');
+        if (!el) {
+          el = document.createElement('div');
+          el.className = 'no-results';
+          el.innerHTML = `<h3>🔍 Nothing found</h3><p>Try changing the search criteria or choose another category</p>`;
+          document.getElementById('newsGrid')?.after(el);
+        }
+      }
+      function hideNoResults() { document.querySelector('.no-results')?.remove(); }
+      
+      // Управление пагинацией
+      function updatePagination() {
+        const newsCards = document.querySelectorAll(".news-card");
+        const itemsPerPage = 6; // Items per page
+        const totalPages = Math.ceil(newsCards.length / itemsPerPage);
+        const pagination = document.getElementById("pagination");
+        
+        // Если страниц меньше 2, скрываем пагинацию
+        if (totalPages < 2) {
+          pagination.style.display = "none";
+          return;
+        }
+        
+        // Показываем пагинацию
+        pagination.style.display = "flex";
+        
+        // Генерируем кнопки страниц
+        let paginationHTML = "";
+        
+        // Кнопка "Назад"
+        if (currentPage > 1) {
+          paginationHTML += "<span class=\"page-btn\" onclick=\"goToPage(" + (currentPage - 1) + ")\">←</span>";
+        }
+        
+        // Номера страниц
+        for (let i = 1; i <= totalPages; i++) {
+          if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
+            const activeClass = i === currentPage ? " active" : "";
+            paginationHTML += "<span class=\"page-btn" + activeClass + "\" onclick=\"goToPage(" + i + ")\">" + i + "</span>";
+          } else if (i === currentPage - 2 || i === currentPage + 2) {
+            paginationHTML += "<span class=\"page-btn\">...</span>";
+          }
+        }
+        
+        // Кнопка "Вперед"
+        if (currentPage < totalPages) {
+          paginationHTML += "<span class=\"page-btn\" onclick=\"goToPage(" + (currentPage + 1) + ")\">→</span>";
+        }
+        
+        pagination.innerHTML = paginationHTML;
+      }
+      
+      let currentPage = 1;
+      
+      function goToPage(page) {
+        const newsCards = document.querySelectorAll(".news-card");
+        const itemsPerPage = 6;
+        const totalPages = Math.ceil(newsCards.length / itemsPerPage);
+        
+        if (page < 1 || page > totalPages) return;
+        
+        currentPage = page;
+        
+        // Показываем/скрываем карточки в зависимости от страницы
+        newsCards.forEach((card, index) => {
+          const startIndex = (page - 1) * itemsPerPage;
+          const endIndex = startIndex + itemsPerPage;
+          
+          if (index >= startIndex && index < endIndex) {
+            card.style.display = "block";
+          } else {
+            card.style.display = "none";
+          }
+        });
+        
+        updatePagination();
+      }
+      
+      // Инициализация пагинации при загрузке страницы
+      document.addEventListener("DOMContentLoaded", function() {
+        updatePagination();
+      });
+    </script>
+  </body>
+</html>
