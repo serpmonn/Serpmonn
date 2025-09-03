@@ -8,7 +8,7 @@
     <meta property="og:title" content="Unit Converter — Engineering Serpmonn">
     <meta property="og:description" content="Fast conversion between units for engineers">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/engineering/unit-converter.html">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/en/tools/engineering/unit-converter.html">
     <meta property="og:type" content="website">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
@@ -217,11 +217,11 @@
 
           <!-- Хлебные крошки -->
       <div class="breadcrumb">
-        <a href="/frontend/tools/index.html">🧰 Tools</a> → 
+        <a href="/frontend/en/tools/index.html">🧰 Tools</a> → 
         <span>🔄 Unit converter</span>
       </div>
 
-    <h1>🔄 Unit converter измерения</h1>
+    <h1>🔄 Unit converter</h1>
 
     <div class="converter-container">
       <!-- Выбор категории -->
@@ -240,7 +240,7 @@
       <div class="converter-form">
         <div class="input-group">
           <label for="fromValue">Value</label>
-          <input type="number" id="fromValue" placeholder="Введите значение" step="any">
+          <input type="number" id="fromValue" placeholder="Enter value" step="any">
         </div>
 
         <button class="swap-btn" id="swapBtn" title="Swap">⇄</button>
@@ -268,15 +268,15 @@
 
       <!-- Result -->
       <div class="result" id="result">
-        Введите значение для конвертации
+        Enter a value to convert
       </div>
     </div>
 
-    <!-- История конвертаций -->
+    <!-- Conversion history -->
     <div class="conversion-history">
-      <h3>📋 История конвертаций</h3>
+      <h3>📋 Conversion history</h3>
       <div id="historyList"></div>
-      <button class="clear-history" id="clearHistory">Очистить историю</button>
+      <button class="clear-history" id="clearHistory">Clear history</button>
     </div>
 
     <script>
@@ -287,90 +287,90 @@
             length: {
               name: 'Length',
               units: {
-                'mm': { name: 'Миллиметр (мм)', factor: 0.001 },
-                'cm': { name: 'Сантиметр (см)', factor: 0.01 },
-                'm': { name: 'Метр (м)', factor: 1 },
-                'km': { name: 'Километр (км)', factor: 1000 },
-                'in': { name: 'Дюйм (дюйм)', factor: 0.0254 },
-                'ft': { name: 'Фут (фут)', factor: 0.3048 },
-                'yd': { name: 'Ярд (ярд)', factor: 0.9144 },
-                'mi': { name: 'Миля (миля)', factor: 1609.344 }
+                'mm': { name: 'Millimeter (mm)', factor: 0.001 },
+                'cm': { name: 'Centimeter (cm)', factor: 0.01 },
+                'm': { name: 'Meter (m)', factor: 1 },
+                'km': { name: 'Kilometer (km)', factor: 1000 },
+                'in': { name: 'Inch (in)', factor: 0.0254 },
+                'ft': { name: 'Foot (ft)', factor: 0.3048 },
+                'yd': { name: 'Yard (yd)', factor: 0.9144 },
+                'mi': { name: 'Mile (mi)', factor: 1609.344 }
               }
             },
             area: {
               name: 'Area',
               units: {
-                'mm2': { name: 'Кв. миллиметр (мм²)', factor: 0.000001 },
-                'cm2': { name: 'Кв. сантиметр (см²)', factor: 0.0001 },
-                'm2': { name: 'Кв. метр (м²)', factor: 1 },
-                'km2': { name: 'Кв. километр (км²)', factor: 1000000 },
-                'in2': { name: 'Кв. дюйм (дюйм²)', factor: 0.00064516 },
-                'ft2': { name: 'Кв. фут (фут²)', factor: 0.092903 },
-                'yd2': { name: 'Кв. ярд (ярд²)', factor: 0.836127 },
-                'ac': { name: 'Акр (акр)', factor: 4046.86 }
+                'mm2': { name: 'Square millimeter (mm²)', factor: 0.000001 },
+                'cm2': { name: 'Square centimeter (cm²)', factor: 0.0001 },
+                'm2': { name: 'Square meter (m²)', factor: 1 },
+                'km2': { name: 'Square kilometer (km²)', factor: 1000000 },
+                'in2': { name: 'Square inch (in²)', factor: 0.00064516 },
+                'ft2': { name: 'Square foot (ft²)', factor: 0.092903 },
+                'yd2': { name: 'Square yard (yd²)', factor: 0.836127 },
+                'ac': { name: 'Acre (ac)', factor: 4046.86 }
               }
             },
             volume: {
               name: 'Volume',
               units: {
-                'ml': { name: 'Миллилитр (мл)', factor: 0.001 },
-                'l': { name: 'Литр (л)', factor: 1 },
-                'm3': { name: 'Куб. метр (м³)', factor: 1000 },
-                'cm3': { name: 'Куб. сантиметр (см³)', factor: 0.001 },
-                'in3': { name: 'Куб. дюйм (дюйм³)', factor: 0.0163871 },
-                'ft3': { name: 'Куб. фут (фут³)', factor: 28.3168 },
-                'gal': { name: 'Галлон (галлон)', factor: 3.78541 }
+                'ml': { name: 'Milliliter (ml)', factor: 0.001 },
+                'l': { name: 'Liter (l)', factor: 1 },
+                'm3': { name: 'Cubic meter (m³)', factor: 1000 },
+                'cm3': { name: 'Cubic centimeter (cm³)', factor: 0.001 },
+                'in3': { name: 'Cubic inch (in³)', factor: 0.0163871 },
+                'ft3': { name: 'Cubic foot (ft³)', factor: 28.3168 },
+                'gal': { name: 'Gallon (gal)', factor: 3.78541 }
               }
             },
             temperature: {
               name: 'Temperature',
               units: {
-                'c': { name: 'Цельсий (°C)', factor: 1, offset: 0 },
-                'f': { name: 'Фаренгейт (°F)', factor: 1.8, offset: 32 },
-                'k': { name: 'Кельвин (K)', factor: 1, offset: 273.15 },
-                'r': { name: 'Ранкин (°R)', factor: 1.8, offset: 491.67 }
+                'c': { name: 'Celsius (°C)', factor: 1, offset: 0 },
+                'f': { name: 'Fahrenheit (°F)', factor: 1.8, offset: 32 },
+                'k': { name: 'Kelvin (K)', factor: 1, offset: 273.15 },
+                'r': { name: 'Rankine (°R)', factor: 1.8, offset: 491.67 }
               }
             },
             power: {
               name: 'Power',
               units: {
-                'w': { name: 'Ватт (Вт)', factor: 1 },
-                'kw': { name: 'Киловатт (кВт)', factor: 1000 },
-                'mw': { name: 'Мегаватт (МВт)', factor: 1000000 },
-                'hp': { name: 'Лошадиная сила (л.с.)', factor: 745.7 },
-                'btu': { name: 'BTU/час', factor: 0.293071 }
+                'w': { name: 'Watt (W)', factor: 1 },
+                'kw': { name: 'Kilowatt (kW)', factor: 1000 },
+                'mw': { name: 'Megawatt (MW)', factor: 1000000 },
+                'hp': { name: 'Horsepower (hp)', factor: 745.7 },
+                'btu': { name: 'BTU/h', factor: 0.293071 }
               }
             },
             pressure: {
               name: 'Pressure',
               units: {
-                'pa': { name: 'Паскаль (Па)', factor: 1 },
-                'kpa': { name: 'Килопаскаль (кПа)', factor: 1000 },
-                'mpa': { name: 'Мегапаскаль (МПа)', factor: 1000000 },
-                'bar': { name: 'Бар (бар)', factor: 100000 },
-                'atm': { name: 'Атмосфера (атм)', factor: 101325 },
-                'psi': { name: 'PSI (фунт/дюйм²)', factor: 6894.76 }
+                'pa': { name: 'Pascal (Pa)', factor: 1 },
+                'kpa': { name: 'Kilopascal (kPa)', factor: 1000 },
+                'mpa': { name: 'Megapascal (MPa)', factor: 1000000 },
+                'bar': { name: 'Bar (bar)', factor: 100000 },
+                'atm': { name: 'Atmosphere (atm)', factor: 101325 },
+                'psi': { name: 'PSI (lbf/in²)', factor: 6894.76 }
               }
             },
             mass: {
               name: 'Mass',
               units: {
-                'mg': { name: 'Миллиграмм (мг)', factor: 0.001 },
-                'g': { name: 'Грамм (г)', factor: 1 },
-                'kg': { name: 'Килограмм (кг)', factor: 1000 },
-                't': { name: 'Тонна (т)', factor: 1000000 },
-                'lb': { name: 'Фунт (фунт)', factor: 453.592 },
-                'oz': { name: 'Унция (унция)', factor: 28.3495 }
+                'mg': { name: 'Milligram (mg)', factor: 0.001 },
+                'g': { name: 'Gram (g)', factor: 1 },
+                'kg': { name: 'Kilogram (kg)', factor: 1000 },
+                't': { name: 'Tonne (t)', factor: 1000000 },
+                'lb': { name: 'Pound (lb)', factor: 453.592 },
+                'oz': { name: 'Ounce (oz)', factor: 28.3495 }
               }
             },
             speed: {
               name: 'Speed',
               units: {
-                'mps': { name: 'М/с (м/с)', factor: 1 },
-                'kmh': { name: 'Км/ч (км/ч)', factor: 0.277778 },
-                'mph': { name: 'М/ч (миль/ч)', factor: 0.44704 },
-                'knot': { name: 'Узел (узел)', factor: 0.514444 },
-                'fps': { name: 'Ф/с (фут/с)', factor: 0.3048 }
+                'mps': { name: 'm/s', factor: 1 },
+                'kmh': { name: 'km/h', factor: 0.277778 },
+                'mph': { name: 'mph', factor: 0.44704 },
+                'knot': { name: 'knot', factor: 0.514444 },
+                'fps': { name: 'ft/s', factor: 0.3048 }
               }
             }
           };
@@ -470,7 +470,7 @@
           const toUnit = document.getElementById('toUnit').value;
           
           if (isNaN(fromValue)) {
-            document.getElementById('result').textContent = 'Введите значение для конвертации';
+            document.getElementById('result').textContent = 'Enter a value to convert';
             return;
           }
           

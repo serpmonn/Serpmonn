@@ -132,7 +132,7 @@
 
         const updateScore = () => {
             score++;
-            scoreDisplay.textContent = 'Очки: ' + score;
+            scoreDisplay.textContent = 'Score: ' + score;
             if (score >= levels[level - 1].points) {
                 nextLevel();
             }
@@ -147,7 +147,7 @@
                 enemies = [];
                 createEnemies(levels[level - 1].enemies, { speed, gameArea, enemies });
             } else {
-                alert('Ты прошёл все уровни! Поздравляем!');
+                alert('You completed all levels! Congrats!');
                 endGame();
             }
         };
@@ -173,7 +173,7 @@
             level = 1;
             enemies.forEach(enemy => enemy.remove());
             enemies = [];
-            scoreDisplay.textContent = 'Очки: ' + score; 						                        // Обновляем текст счётчика
+            scoreDisplay.textContent = 'Score: ' + score; 						                        // Обновляем текст счётчика
             isPaused = false; 										                                    // Снимаем паузу при перезапуске игры
             generateRandomKeyframes({ styleSheet }); 							                        // Генерируем новые случайные траектории движения
             createEnemies(levels[0].enemies, { speed, gameArea, enemies }); 				            // Передаём параметры
@@ -210,16 +210,16 @@
             modal.innerHTML = `
                 <div class="modal-content">
                     <h2>Твои очки: ${score}</h2>
-                    <button id="okButton">Окей</button>
+                    <button id="okButton">OK</button>
                 </div>
             `;
 
             document.body.appendChild(modal);                                                           // Добавляем модальное окно на страницу
 
-            document.getElementById('okButton').addEventListener('click', () => {                       // Когда пользователь нажмёт на кнопку "Окей", скрыть модальное окно и показать рекламу
+            document.getElementById('okButton').addEventListener('click', () => {                       // Когда пользователь нажмёт на кнопку "OK", скрыть модальное окно и показать рекламу
                 modal.remove();                                                                         // Удаляем модальное окно
 
-            setTimeout(() => {                                                                          // Пауза перед показом рекламы (например, 3 секунды)
+            setTimeout(() => {                                                                          // Pause перед показом рекламы (например, 3 секунды)
                 const adScript = document.createElement('script');                                      // Создаём элемент для скрипта рекламы
                 adScript.src = "https://ad.mail.ru/static/ads-async.js";                                // Путь к рекламному скрипту
                 adScript.async = true;                                                                  // Делаем его асинхронным
@@ -251,12 +251,12 @@
                 gameInterval = setInterval(checkCollision, 50);
                 scoreInterval = setInterval(updateScore, 1000);
                 enemies.forEach(enemy => enemy.style.animationPlayState = 'running');
-                pauseButton.textContent = 'Пауза';
+                pauseButton.textContent = 'Pause';
             } else {
                 clearInterval(gameInterval);
                 clearInterval(scoreInterval);
                 enemies.forEach(enemy => enemy.style.animationPlayState = 'paused');
-                pauseButton.textContent = 'Продолжить';
+                pauseButton.textContent = 'Resume';
             }
             isPaused = !isPaused;
         });
