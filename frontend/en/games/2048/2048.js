@@ -60,7 +60,7 @@ class Game2048 {
             }
         });
 
-        // Свайпы для мобильных устройств
+        // Swipes for mobile devices
         let startX, startY;
         const board = document.getElementById('board');
 
@@ -89,7 +89,7 @@ class Game2048 {
             startX = startY = null;
         });
 
-        // Кнопки управления
+        // Control buttons
         document.getElementById('new-game').addEventListener('click', () => {
             this.newGame();
         });
@@ -123,14 +123,14 @@ class Game2048 {
             this.addRandomTile();
             this.updateDisplay();
             
-            // Вибрация на мобильных
+            // Vibration on mobile
             if (navigator.vibrate) {
                 navigator.vibrate(50);
             }
 
             if (this.isGameOver()) {
                 setTimeout(() => {
-                    alert('Игра окончена! Ваш счёт: ' + this.score);
+                    alert('Game over! Your score: ' + this.score);
                 }, 100);
             }
         }
@@ -215,10 +215,10 @@ class Game2048 {
     }
 
     mergeLine(line) {
-        // Удаляем нули
+        // Remove zeros
         let filtered = line.filter(cell => cell !== 0);
         
-        // Объединяем одинаковые числа
+        // Merge equal numbers
         for (let i = 0; i < filtered.length - 1; i++) {
             if (filtered[i] === filtered[i + 1]) {
                 filtered[i] *= 2;
@@ -227,7 +227,7 @@ class Game2048 {
             }
         }
         
-        // Добавляем нули в конец
+        // Pad with zeros to the end
         while (filtered.length < 4) {
             filtered.push(0);
         }
@@ -265,10 +265,10 @@ class Game2048 {
     }
 
     isGameOver() {
-        // Проверяем, есть ли пустые клетки
+        // Check if there are empty cells
         if (this.board.includes(0)) return false;
         
-        // Проверяем возможность объединения по горизонтали
+        // Check merge possibility horizontally
         for (let i = 0; i < 4; i++) {
             for (let j = 0; j < 3; j++) {
                 if (this.board[i * 4 + j] === this.board[i * 4 + j + 1]) {
@@ -277,7 +277,7 @@ class Game2048 {
             }
         }
         
-        // Проверяем возможность объединения по вертикали
+        // Check merge possibility vertically
         for (let i = 0; i < 3; i++) {
             for (let j = 0; j < 4; j++) {
                 if (this.board[i * 4 + j] === this.board[(i + 1) * 4 + j]) {
@@ -290,12 +290,12 @@ class Game2048 {
     }
 }
 
-// Инициализация игры
+// Game initialization
 document.addEventListener('DOMContentLoaded', () => {
     new Game2048();
 });
 
-// Сохранение лучшего счёта
+// Save best score
 window.addEventListener('beforeunload', () => {
     const game = window.game2048;
     if (game && game.score > game.best) {
