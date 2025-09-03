@@ -11,7 +11,7 @@
     font-weight: bold;                                                  /* Толстый текст */
     border-radius: 10px;
     transition: width 0.3s;
-    z-index: 1;                                                         /* Высокий z-index для отображения поверх всех элементов */
+    z-index: 1;                                                     /* Высокий z-index для отображения поверх всех элементов */
 }
 
 .menu-button span.s {
@@ -37,9 +37,9 @@
     transform: translateY(-20px);
     visibility: hidden;
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
-    max-height: 80vh;                                                  /* Ограничение высоты меню на ПК */
-    overflow-y: auto;                                                  /* Добавление вертикальной прокрутку на ПК */
-    overflow-x: hidden;                                                /* Скрытие горизонтальной прокрутки */
+    max-height: 80vh; /* Ограничиваем высоту меню на ПК */
+    overflow-y: auto; /* Добавляем вертикальную прокрутку на ПК */
+    overflow-x: hidden; /* Скрываем горизонтальную прокрутку */
 }
 
 .menu-container.active {
@@ -58,11 +58,11 @@
 }
 
 .menu-container a:hover {
-    background-color: #f0f0f0;						                   /* Цвет кнопки при наведении (светло-серый) */
+    background-color: #f0f0f0;						/* Цвет кнопки при наведении (светло-серый) */
 }
 
 .submenu-container {
-    display: none;                                                      /* Скрытие неактивного подменю */
+    display: none; /* Скрываем неактивные подменю */
     padding-left: 20px;
     opacity: 0;
     transform: translateY(-10px);
@@ -70,18 +70,19 @@
 }
 
 .submenu-container.active {
-    display: block;                                                     /* Показываем активное подменю */
+    display: block; /* Показываем активное подменю */
     opacity: 1;
     transform: translateY(0);
 }
 
-.submenu-container a {                                                  /* Улучшенные стили для категорий инструментов */
+/* Улучшенные стили для категорий инструментов */
+.submenu-container a {
     font-size: 0.9rem;
     padding: 8px 12px;
     margin: 2px 0;
     border-radius: 6px;
     transition: all 0.2s ease;
-    font-weight: bold;                                                  /* Добавляем жирный шрифт для всех пунктов подменю */
+    font-weight: bold; /* Добавляем жирный шрифт для всех пунктов подменю */
 }
 
 .submenu-container a:hover {
@@ -90,7 +91,8 @@
     transform: translateX(3px);
 }
 
-.menu-item[data-submenu]{                                               /* Стили для заголовков категорий */
+/* Стили для заголовков категорий */
+.menu-item[data-submenu]{
     position: relative;
     font-weight: bold;
 }
@@ -188,23 +190,26 @@
     }
 }
 
-.submenu-container .icon {                                                  /* Улучшенные стили для иконок в категориях */
+/* Улучшенные стили для иконок в категориях */
+.submenu-container .icon {
     width: 20px;
     height: 20px;
     margin-right: 8px;
 }
 
-.menu-logo {                                                                /* Стили для логотипа в меню */
-    width: 42px;                                                            /* Ширина логотипа */
-    height: 42px;                                                           /* Высота логотипа */
-    flex-shrink: 0;                                                         /* Запрет уменьшения размера в flex-контейнере */
-    object-fit: contain;                                                    /* Сохранение пропорций изображения */
+/* Стили для логотипа */
+.menu-logo {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    object-fit: contain;
 }
 
-.menu-search-row {                                                          /* Контейнер для горизонтального расположения элементов поиска */
-    display: flex;                                                          /* Flex-распределение элементов */
-    align-items: center;                                                    /* Вертикальное выравнивание по центру */
-    gap: 5px;                                                               /* Расстояние между элементами */
+/* Горизонтальное расположение */
+.menu-search-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 /* Google CSE searchbox alignment fix: ensure input and button share the same baseline */
 .menu-search-row .gsc-control-cse,
@@ -239,48 +244,64 @@
     margin-bottom: 0;
 }
 
-.icon {                                                                     /* Базовые стили для иконок */
-    display: inline-block;                                                  /* Блочно-строчное отображение */
-    width: 24px;                                                            /* Ширина иконки */
-    height: 24px;                                                           /* Высота иконки */
-    margin-right: 10px;                                                     /* Отступ справа */
-    vertical-align: middle;                                                 /* Вертикальное выравнивание по середине */
-    border-radius: 50%;                                                     /* Скругление углов для создания круга */
+/* Layout: keep the search button to the right of the input (no wrapping) */
+.menu-search-row .gsc-search-box-tools {
+    display: flex;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: 6px;
 }
 
-.menu-search-container {                                                    /* Контейнер для поисковой системы */
-    padding: 5px;                                                           /* Внутренние отступы */
-    border-radius: 8px;                                                     /* Скругление углов контейнера */
-    margin: 0;                                                              /* Обнуление внешних отступов */
+.menu-search-row .gsc-search-box-tools .gsc-input-box {
+    flex: 1 1 auto;
+    min-width: 0; /* allow shrinking to prevent wrapping */
 }
 
+.menu-search-row .gsc-search-box-tools .gsc-search-button {
+    flex: 0 0 auto;
+}
+
+/* Reset overly broad flex on inner input wrapper to avoid stacking issues */
+.menu-search-row .gsc-input {
+    display: block;
+}
+
+.icon {
+    display: inline-block;                                              /* Устанавливает элемент как встроенный блок */
+    width: 24px;                                                        /* Задает ширину элемента 24 пикселя */
+    height: 24px;                                                       /* Задает высоту элемента 24 пикселя */
+    margin-right: 10px;                                                 /* Добавляет отступ справа от элемента, 10 пикселей */
+    vertical-align: middle;                                             /* Выравнивает элемент по вертикали по середине относительно соседних строковых элементов */
+    border-radius: 50%;                                                 /* Делает изображения круглыми */
+}
+
+/* Стили для поиска в меню */
+.menu-search-container {
+    padding: 5px;
+    border-radius: 8px;
+    margin: 0;
+}
+
+/* Адаптация поля поиска */
 .menu-search-row .gcse-searchbox-only {
-    flex-grow: 1;                                                           /* Растягивание на доступное пространство */
-    min-width: 0;                                                           /* Разрешение сжатия в flex-контейнере */
+    flex-grow: 1;
+    min-width: 0; /* Важно для корректного сжатия */
 }
 
-.menu-search-container .gcse-searchbox-only {                               /* Полноразмерное отображение поискового контейнера */
-    width: 100%;                                                            /* Ширина на весь контейнер */
+.menu-search-container .gcse-searchbox-only {
+    width: 100%;
 }
 
-.gsc-search-button.gsc-search-button-v2 {
-	transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;                        /* Плавный переход */
-	height: 34px; 															/* меньше по вертикали */
-	min-height: 34px;
-	padding: 0 12px; 														/* компактно по горизонтали */
-	border-radius: 8px;
+.menu-search-container input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
 }
 
-.menu-search-container input {                                              /* Стилизация поля ввода поиска */
-    width: 100%;                                                            /* Ширина на весь контейнер */
-    padding: 8px 12px;                                                      /* Внутренние отступы */
-    border: 1px solid #ddd;                                               /* Граница серого цвета */
-    border-radius: 20px;                                                    /* Сильное скругление для овальной формы */
-    font-size: 14px;                                                        /* Размер шрифта */
-}
-
-.menu-search-container.hidden {                                             /* Скрытие поискового контейнера */
-    display: none;                                                          /* Скрытие элемента */
+.menu-search-container.hidden {
+    display: none;
 }
 
 /* Адаптивность для мобильных устройств */
