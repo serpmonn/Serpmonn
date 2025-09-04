@@ -3,17 +3,17 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Fuel Calculator — Logistics Serpmonn</title>
+    <title>燃油计算器 — 物流 Serpmonn</title>
     <!-- Open Graph -->
-    <meta property="og:title" content="Fuel Calculator — Logistics Serpmonn">
-    <meta property="og:description" content="Calculate fuel consumption, trip cost and savings">
+    <meta property="og:title" content="燃油计算器 — 物流 Serpmonn">
+    <meta property="og:description" content="计算油耗、行程费用与节省">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/tools/logistics/fuel-calculator.html">
     <meta property="og:type" content="website">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Fuel Calculator — Logistics Serpmonn">
-    <meta name="twitter:description" content="Fuel consumption calculation for drivers">
+    <meta name="twitter:title" content="燃油计算器 — 物流 Serpmonn">
+    <meta name="twitter:description" content="驾驶油耗计算">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
@@ -259,45 +259,45 @@
 
     <!-- Breadcrumbs -->
     <div class="breadcrumb">
-      <a href="/frontend/zh-cn/tools/index.html">🧰 Tools</a> → 
-      <span>⛽ Fuel calculator</span>
+      <a href="/frontend/zh-cn/tools/index.html">🧰 工具</a> → 
+      <span>⛽ 燃油计算器</span>
     </div>
 
-    <h1>⛽ Fuel calculator</h1>
+    <h1>⛽ 燃油计算器</h1>
 
     <div class="calculator-container">
-      <h2>Введите параметры поездки</h2>
+      <h2>输入行程参数</h2>
       
       <div class="input-section">
         <div class="input-group">
-          <label for="distance">Расстояние (км)</label>
+          <label for="distance">距离（公里）</label>
           <input type="number" id="distance" placeholder="100" min="1" step="0.1">
         </div>
         
         <div class="input-group">
-          <label for="fuelConsumption">Расход топLива (L/100km)</label>
+          <label for="fuelConsumption">油耗（升/百公里）</label>
           <input type="number" id="fuelConsumption" placeholder="8.5" min="1" step="0.1">
         </div>
         
         <div class="input-group">
-          <label for="fuelPrice">Цена топLива (₽/L)</label>
+          <label for="fuelPrice">燃油价格（₽/升）</label>
           <input type="number" id="fuelPrice" placeholder="55.50" min="1" step="0.01">
         </div>
         
         <div class="input-group">
-          <label for="fuelType">Тип топLива</label>
+          <label for="fuelType">燃油类型</label>
           <select id="fuelType">
             <option value="petrol">Бензин АИ-92</option>
             <option value="petrol95">Бензин АИ-95</option>
             <option value="petrol98">Бензин АИ-98</option>
-            <option value="diesel">ДизеLьное топLиво</option>
+            <option value="diesel">柴油</option>
             <option value="lpg">Газ (пропан-бутан)</option>
             <option value="cng">Газ (метан)</option>
           </select>
         </div>
         
         <div class="input-group">
-          <label for="drivingStyle">Driving style</label>
+          <label for="drivingStyle">驾驶风格</label>
           <select id="drivingStyle">
             <option value="economical">Eco</option>
             <option value="normal">Normal</option>
@@ -307,22 +307,22 @@
         </div>
         
         <div class="input-group">
-          <label for="roadConditions">Дорожные усLовия</label>
+          <label for="roadConditions">道路状况</label>
           <select id="roadConditions">
             <option value="highway">Шоссе</option>
             <option value="city">Город</option>
-            <option value="mixed">Смешанный цикL</option>
+            <option value="mixed">综合路况</option>
             <option value="offroad">Бездорожье</option>
           </select>
         </div>
         
         <div class="input-group">
-          <label for="load">Загрузка автомобиLя</label>
+          <label for="load">车辆载重</label>
           <select id="load">
             <option value="empty">Пустой</option>
             <option value="light">Лёгкая загрузка</option>
             <option value="medium">Средняя загрузка</option>
-            <option value="heavy">ПоLная загрузка</option>
+            <option value="heavy">满载</option>
           </select>
         </div>
         
@@ -337,40 +337,40 @@
         </div>
       </div>
 
-      <button class="calculate-btn" onclick="calculateFuel()">Calculate fuel consumption</button>
+      <button class="calculate-btn" onclick="calculateFuel()">计算油耗</button>
 
       <div id="results" class="results" style="display: none;">
-        <h3>Results</h3>
+        <h3>结果</h3>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="totalFuel">0 L</div>
-            <div class="result-label">Total fuel</div>
+            <div class="result-label">总油量</div>
           </div>
           <div class="result-item">
             <div class="result-value" id="totalCost">0 ₽</div>
-            <div class="result-label">Fuel cost</div>
+            <div class="result-label">燃油费用</div>
           </div>
           <div class="result-item">
             <div class="result-value" id="costPerKm">0 ₽/km</div>
-            <div class="result-label">Cost per 1 km</div>
+            <div class="result-label">每公里费用</div>
           </div>
           <div class="result-item">
             <div class="result-value" id="adjustedConsumption">0 L/100km</div>
-            <div class="result-label">Adjusted consumption</div>
+            <div class="result-label">修正油耗</div>
           </div>
         </div>
       </div>
     </div>
 
     <div id="comparison" class="comparison" style="display: none;">
-      <h3>Comparison with other driving styles</h3>
+      <h3>不同驾驶风格比较</h3>
       <table class="comparison-table">
         <thead>
           <tr>
             <th>Driving style</th>
-            <th>Consumption (L/100km)</th>
-            <th>Cost (₽)</th>
-            <th>Saving/overspending</th>
+            <th>油耗（升/百公里）</th>
+            <th>费用（₽）</th>
+            <th>节省/超支</th>
           </tr>
         </thead>
         <tbody id="comparisonBody">
@@ -379,21 +379,21 @@
     </div>
 
     <div class="fuel-efficiency">
-      <h3>🌱 Fuel efficiency</h3>
+      <h3>🌱 燃油效率</h3>
       <div class="efficiency-item">Smooth acceleration and braking saves 10-15% of fuel</div>
-      <div class="efficiency-item">Maintain optimal speed 80-90 km/h on highway</div>
-      <div class="efficiency-item">Timely gear shifting (2000-2500 rpm)</div>
-      <div class="efficiency-item">Check tire pressure every 2 weeks</div>
-      <div class="efficiency-item">Remove unnecessary weight from trunk</div>
+      <div class="efficiency-item">高速保持 80–90 km/h 最佳</div>
+      <div class="efficiency-item">及时换挡（2000–2500 rpm）</div>
+      <div class="efficiency-item">每两周检查胎压</div>
+      <div class="efficiency-item">减轻后备箱不必要负载</div>
     </div>
 
     <div class="tips">
-      <h3>💡 Tips</h3>
-      <div class="tip-item">Use cruise control on flat roads</div>
-      <div class="tip-item">Close windows at high speeds</div>
-      <div class="tip-item">Plan route avoiding traffic jams</div>
-      <div class="tip-item">Service engine and fuel system regularly</div>
-      <div class="tip-item">Use quality fuel of recommended octane</div>
+      <h3>💡 建议</h3>
+      <div class="tip-item">平路使用巡航</div>
+      <div class="tip-item">高速关闭车窗</div>
+      <div class="tip-item">规划路线避开拥堵</div>
+      <div class="tip-item">定期保养发动机与燃油系统</div>
+      <div class="tip-item">使用推荐辛烷值的优质燃油</div>
     </div>
 
     <script>
@@ -409,7 +409,7 @@
         const climate = document.getElementById('climate').value;
 
         if (!distance || !fuelConsumption || !fuelPrice) {
-          alert('Please fill in all required fields');
+          alert('请填写所有必填项');
           return;
         }
 
