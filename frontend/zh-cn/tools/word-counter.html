@@ -27,7 +27,12 @@
     <link rel="stylesheet" href="/frontend/styles/menu.css">
         <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <style>
-      body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+            /* ad top adaptive start */
+      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
+      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
+      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
+      /* ad top adaptive end */
+body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
 
       h1 { margin: 16px 0; }
       textarea { width: 100%; min-height: 240px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; }
@@ -47,6 +52,17 @@
     <!-- Меню -->
     <div id="menuContainer"></div>
     
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" 
+          style="display:inline-block;"
+          data-ad-client="ad-1897960" 
+          data-ad-slot="1897960">
+      </ins>
+    </div>
+    <script>
+      (MRGtag = window.MRGtag || []).push({});
+    </script>
     <h1>📝 字词统计</h1>
     <textarea id="text" placeholder="粘贴或输入文本..."></textarea>
     <div class="stats">
