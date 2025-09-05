@@ -425,17 +425,19 @@ function copyToClipboard(text) {
 let sortAscending = true;
 function sortByExpiry() {
     const grid = document.getElementById('catalog');
-    const cards = Array.from(grid.children);
-    
+    if (!grid) return;
+    // Remove ad blocks before sorting
+    grid.querySelectorAll('.promo-ad-inline').forEach(el => el.remove());
+    const cards = Array.from(grid.querySelectorAll('.promo-card'));
     cards.sort((a, b) => {
         const dateA = new Date(a.dataset.expiry);
         const dateB = new Date(b.dataset.expiry);
         return sortAscending ? dateA - dateB : dateB - dateA;
     });
-    
     cards.forEach(card => grid.appendChild(card));
+    insertInfeedAdsIntoCatalog(grid, 10);
     sortAscending = !sortAscending;
-}
+ }
 
 // Обработчик формы подписки
 document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
@@ -488,6 +490,39 @@ document.getElementById('searchInput')?.addEventListener('input', () => {
 document.getElementById('categorySelect')?.addEventListener('change', filterPromos);
 
 // Инициализация при загрузке страницы
+
+
+// In-feed ad helpers
+function createInlineAd() {
+    const wrap = document.createElement('div');
+    wrap.className = "promo-ad-inline";
+    wrap.style.textAlign = "center";
+    wrap.style.margin = "16px 0";
+    wrap.innerHTML = `
+        <ins class="mrg-tag"
+             style="display:inline-block;width:300px;height:250px"
+             data-ad-client="ad-1898023"
+             data-ad-slot="1898023">
+        </ins>`;
+    (window.MRGtag = window.MRGtag || []).push({});
+    return wrap;
+}
+
+function insertInfeedAdsIntoCatalog(catalog, interval) {
+    if (!catalog) return;
+    // Remove existing ad blocks to avoid duplicates
+    catalog.querySelectorAll('.promo-ad-inline').forEach(el => el.remove());
+    const cards = Array.from(catalog.querySelectorAll('.promo-card'));
+    if (!cards.length) return;
+    const step = interval || 10;
+    for (let i = step; i <= cards.length; i += step) {
+        const afterCard = cards[i - 1];
+        if (afterCard && afterCard.parentNode) {
+            afterCard.parentNode.insertBefore(createInlineAd(), afterCard.nextSibling);
+        }
+    }
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Инициализация страницы промокодов...');
     
