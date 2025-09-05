@@ -3,10 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile</title>
+    <meta name="description" content="管理 Serpmonn 个人资料、工具与设置。">
+
+    <title>个人资料</title>
     <!-- Open Graph -->
-    <meta property="og:title" content="Profile — Serpmonn">
-    <meta property="og:description" content="Manage your profile, tools and settings on Serpmonn.">
+    <meta property="og:title" content="个人资料 — Serpmonn">
+    <meta property="og:description" content="在 Serpmonn 管理你的个人资料、工具与设置。">
 
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
@@ -15,13 +17,13 @@
     <meta property="og:type" content="profile">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Profile — Serpmonn">
-    <meta name="twitter:description" content="Manage your profile, tools and settings.">
+    <meta name="twitter:title" content="个人资料 — Serpmonn">
+    <meta name="twitter:description" content="在 Serpmonn 管理你的个人资料、工具与设置。">
 
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
-    <link rel="canonical" href="https://www.serpmonn.ru/">
+    <link rel="canonical" href="https://www.serpmonn.ru/frontend/zh-cn/profile/profile.html">
     <link rel="stylesheet" href="/frontend/profile/profile_styles.css">
         <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script type="module" src="/frontend/profile/profile_scripts.js" defer></script>
@@ -29,42 +31,42 @@
 </head>
 <body>
     <div class="container">
-        <h2>👤 User profile</h2>
+        <h2>👤 用户资料</h2>
 
         <!-- Information о профиле -->
         <div id="profileInfo" class="card">
-            <h3>📋 Information</h3>
-            <p><strong>Username:</strong> <span id="username"></span></p>
-            <p><strong>Email:</strong> <span id="email"></span></p>
+            <h3>📋 信息</h3>
+            <p><strong>用户名：</strong> <span id="username"></span></p>
+            <p><strong>邮箱：</strong> <span id="email"></span></p>
         </div>
 
         <!-- Раздел инструментов: быстрые ссылки и список недавно использованных -->
         <div class="card">
-            <h3>🧰 Tools</h3>
+            <h3>🧰 工具</h3>
             <div class="tools-grid">
                 <a class="tool-link" href="/frontend/zh-cn/tools/utm-builder.html">
                     <span class="tool-icon">🔗</span>
-                    <span class="tool-text">UTM builder</span>
+                    <span class="tool-text">UTM 构建器</span>
                 </a>
                 <a class="tool-link" href="/frontend/zh-cn/tools/password-generator.html">
                     <span class="tool-icon">🔐</span>
-                    <span class="tool-text">Password generator</span>
+                    <span class="tool-text">密码生成器</span>
                 </a>
                 <a class="tool-link" href="/frontend/zh-cn/tools/word-counter.html">
                     <span class="tool-icon">📊</span>
-                    <span class="tool-text">Word/char counter</span>
+                    <span class="tool-text">字词统计</span>
                 </a>
                 <a class="tool-link" href="/frontend/zh-cn/tools/engineering/unit-converter.html">
                     <span class="tool-icon">🔄</span>
-                    <span class="tool-text">Unit converter</span>
+                    <span class="tool-text">单位转换</span>
                 </a>
                 <a class="tool-link" href="/frontend/zh-cn/tools/logistics/depreciation-calculator.html">
                     <span class="tool-icon">🔧</span>
-                    <span class="tool-text">Depreciation calculator</span>
+                    <span class="tool-text">折旧计算器</span>
                 </a>
                 <a class="tool-link" href="/frontend/zh-cn/tools/logistics/fuel-calculator.html">
                     <span class="tool-icon">⛽</span>
-                    <span class="tool-text">Fuel calculator</span>
+                    <span class="tool-text">燃油计算器</span>
                 </a>
             </div>
             <div id="recentTools" class="recent-tools"></div>
@@ -72,39 +74,39 @@
 
         <!-- Редактирование профиля -->
         <div class="card">
-            <h3>✏️ Edit profile</h3>
+            <h3>✏️ 编辑资料</h3>
             <form id="profileForm" class="form-card">
-                <label for="newUsername">New username</label>
-                <input type="text" id="newUsername" name="newUsername" maxlength="255" placeholder="Enter new username">
+                <label for="newUsername">新用户名</label>
+                <input type="text" id="newUsername" name="newUsername" maxlength="255" placeholder="输入新用户名">
 
-                <label for="newEmail">New email</label>
-                <input type="email" id="newEmail" name="newEmail" placeholder="Enter new email">
+                <label for="newEmail">新邮箱</label>
+                <input type="email" id="newEmail" name="newEmail" placeholder="输入新邮箱">
 
-                <button type="submit" class="primary-button">💾 Save changes</button>
+                <button type="submit" class="primary-button">💾 保存更改</button>
             </form>
             <p id="message" class="message"></p>
         </div>
 
         <!-- Additional features -->
         <div class="card">
-            <h3>📧 Additional features</h3>
+            <h3>�� 其他功能</h3>
             <div class="onnmail-buttons">
                 <button id="createOnnmailButton" class="secondary-button">
                     <span class="button-icon">➕</span>
-                    @onnmail: Create mailbox
+                    @onnmail：创建邮箱
                 </button>
                 <button id="loginOnnmailButton" class="secondary-button">
                     <span class="button-icon">🔑</span>
-                    @onnmail: Sign in
+                    @onnmail：登录
                 </button>
             </div>
         </div>
 
-        <!-- Sign out -->
+        <!-- 退出登录 -->
         <div class="logout-section">
             <button id="logoutButton" class="danger-button">
                 <span class="button-icon">🚪</span>
-                Sign out
+                退出登录
             </button>
         </div>
 

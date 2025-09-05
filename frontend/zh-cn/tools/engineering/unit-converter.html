@@ -3,17 +3,19 @@
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Unit Converter — Engineering Serpmonn</title>
+    <meta name="description" content="单位转换：长度、面积、体积、温度等。">
+
+    <title>单位转换 — 工程 Serpmonn</title>
     <!-- Open Graph -->
-    <meta property="og:title" content="Unit Converter — Engineering Serpmonn">
-    <meta property="og:description" content="Fast conversion between units for engineers">
+    <meta property="og:title" content="单位转换 — 工程 Serpmonn">
+    <meta property="og:description" content="快速进行工程单位换算">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/tools/engineering/unit-converter.html">
     <meta property="og:type" content="website">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Unit Converter — Engineering Serpmonn">
-    <meta name="twitter:description" content="Unit converter for engineers">
+    <meta name="twitter:title" content="单位转换 — 工程 Serpmonn">
+    <meta name="twitter:description" content="工程师的单位转换器">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
@@ -217,36 +219,36 @@
 
           <!-- Хлебные крошки -->
       <div class="breadcrumb">
-        <a href="/frontend/zh-cn/tools/index.html">🧰 Tools</a> → 
-        <span>🔄 Unit converter</span>
+        <a href="/frontend/zh-cn/tools/index.html">🧰 工具</a> → 
+        <span>🔄 单位转换</span>
       </div>
 
-    <h1>🔄 Unit converter</h1>
+    <h1>🔄 单位转换</h1>
 
     <div class="converter-container">
       <!-- Выбор категории -->
       <div class="category-selector">
         <button class="category-btn active" data-category="length">📏 Length</button>
-        <button class="category-btn" data-category="area">📐 Area</button>
-        <button class="category-btn" data-category="volume">📦 Volume</button>
-        <button class="category-btn" data-category="temperature">🌡️ Temperature</button>
-        <button class="category-btn" data-category="power">⚡ Power</button>
-        <button class="category-btn" data-category="pressure">💨 Pressure</button>
-        <button class="category-btn" data-category="mass">⚖️ Mass</button>
-        <button class="category-btn" data-category="speed">🏃 Speed</button>
+        <button class="category-btn" data-category="area">📐 面积</button>
+        <button class="category-btn" data-category="volume">📦 体积</button>
+        <button class="category-btn" data-category="temperature">🌡️ 温度</button>
+        <button class="category-btn" data-category="power">⚡ 功率</button>
+        <button class="category-btn" data-category="pressure">💨 压力</button>
+        <button class="category-btn" data-category="mass">⚖️ 质量</button>
+        <button class="category-btn" data-category="speed">🏃 速度</button>
       </div>
 
       <!-- Форма конвертера -->
       <div class="converter-form">
         <div class="input-group">
-          <label for="fromValue">Value</label>
-          <input type="number" id="fromValue" placeholder="Enter value" step="any">
+          <label for="fromValue">数值/label>
+          <input type="number" id="fromValue" placeholder="输入数值" step="any">
         </div>
 
-        <button class="swap-btn" id="swapBtn" title="Swap">⇄</button>
+        <button class="swap-btn" id="swapBtn" title="交换">⇄</button>
 
         <div class="input-group">
-          <label for="toValue">Result</label>
+          <label for="toValue">结果</label>
           <input type="number" id="toValue" placeholder="Result" readonly>
         </div>
       </div>
@@ -254,29 +256,29 @@
       <!-- Выбор единиц -->
       <div class="converter-form">
         <div class="input-group">
-          <label for="fromUnit">From unit</label>
+          <label for="fromUnit">原单位</label>
           <select id="fromUnit"></select>
         </div>
 
         <div></div>
 
         <div class="input-group">
-          <label for="toUnit">To unit</label>
+          <label for="toUnit">目标单位</label>
           <select id="toUnit"></select>
         </div>
       </div>
 
       <!-- Result -->
       <div class="result" id="result">
-        Enter a value to convert
+        输入数值进行转换
       </div>
     </div>
 
-    <!-- Conversion history -->
+    <!-- 转换历史 -->
     <div class="conversion-history">
-      <h3>📋 Conversion history</h3>
+      <h3>📋 转换历史</h3>
       <div id="historyList"></div>
-      <button class="clear-history" id="clearHistory">Clear history</button>
+      <button class="clear-history" id="clearHistory">清空历史</button>
     </div>
 
     <script>
@@ -470,7 +472,7 @@
           const toUnit = document.getElementById('toUnit').value;
           
           if (isNaN(fromValue)) {
-            document.getElementById('result').textContent = 'Enter a value to convert';
+            document.getElementById('result').textContent = '输入数值进行转换';
             return;
           }
           
@@ -547,7 +549,7 @@
             from: `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name}`,
             to: `${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`,
             category: this.categories[this.currentCategory].name,
-            timestamp: new Date().toLocaleString('ru-RU')
+            timestamp: new Date().toLocaleString('zh-CN')
           };
           
           this.history.unshift(historyItem);
