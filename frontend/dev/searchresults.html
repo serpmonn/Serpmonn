@@ -7,7 +7,16 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-    <script async src="https://cse.google.com/cse.js?cx=97e62541ff5274a28"></script>
+    <script>
+      // Защита от двойной загрузки CSE: если уже загружен скрипт — не грузим повторно
+      (function(){
+        if (!document.querySelector('script[src*="cse.google.com/cse.js"]')) {
+          var s=document.createElement('script');
+          s.async=true; s.src='https://cse.google.com/cse.js?cx=97e62541ff5274a28';
+          document.head.appendChild(s);
+        }
+      })();
+    </script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script type="module" src="/frontend/scripts/search-likes-dev.js" defer></script>
     <style>
