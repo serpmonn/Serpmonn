@@ -523,6 +523,19 @@ function insertInfeedAdsIntoCatalog(catalog, interval) {
     }
 }
 
+
+
+// Сворачивание рекламного блока при no-fill
+function collapseAdIfNoFill(container, timeoutMs){
+  try {
+    var t = timeoutMs || 2500;
+    setTimeout(function(){
+      if (!container) return;
+      var hasIframe = !!container.querySelector('ins.mrg-tag iframe');
+      if (!hasIframe) { container.style.display = "none"; }
+    }, t);
+  } catch(_){}
+}
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Инициализация страницы промокодов...');
     
