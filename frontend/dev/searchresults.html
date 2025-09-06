@@ -8,8 +8,28 @@
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script>
-      // Защита от двойной загрузки CSE: если уже загружен скрипт — не грузим повторно
+      // Явная инициализация CSE (dev): гарантируем стабильный рендер бокса и результатов
       (function(){
+        window.__gcse = { parsetags: 'explicit', callback: function() {
+          try {
+            google.search.cse.element.render({
+              div: 'dev-searchbox',
+              tag: 'searchbox-only',
+              attributes: { resultsUrl: '/frontend/dev/searchresults.html', newWindow: false, gname: 'dev' }
+            });
+            google.search.cse.element.render({
+              div: 'dev-searchresults',
+              tag: 'searchresults-only',
+              attributes: { gname: 'dev', linkTarget: '_self' }
+            });
+            // Если пришли с параметром в URL — выполняем запрос явно
+            var sp = new URLSearchParams(location.search);
+            var q = sp.get('gsc.q') || sp.get('q');
+            if (q) {
+              try { google.search.cse.element.getElement('dev').execute(q); } catch(e) {}
+            }
+          } catch (e) {}
+        }};
         if (!document.querySelector('script[src*="cse.google.com/cse.js"]')) {
           var s=document.createElement('script');
           s.async=true; s.src='https://cse.google.com/cse.js?cx=97e62541ff5274a28';
@@ -37,11 +57,11 @@
     <div class="container">
       <div class="main-search-container">
         <img src="/frontend/images/serpmonn.ico" alt="Serpmonn Logo" class="logo" title="Serpmonn">
-        <div class="gcse-searchbox-only" data-resultsUrl="/frontend/dev/searchresults.html" data-newWindow="false" data-gname="dev"></div>
+        <div id="dev-searchbox"></div>
       </div>
     </div>
     <div class="container">
-      <div class="gcse-searchresults-only" data-gname="dev"></div>
+      <div id="dev-searchresults"></div>
     </div>
   </body>
   </html>
