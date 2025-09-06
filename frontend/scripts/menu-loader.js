@@ -47,13 +47,24 @@ fetch(primaryMenuPath)
     .then(html => {
         document.body.insertAdjacentHTML('afterbegin', html);
         
-        // Только после вставки меню проверяем поиск
-        if (document.querySelector('.gcse-searchbox-only') && !window.__gcse) {
-            const script = document.createElement('script');
-            script.src = 'https://cse.google.com/cse.js?cx=97e62541ff5274a28';
-            script.async = true;
-            document.body.appendChild(script);
-        }
+        // Только после вставки меню инициализируем поиск (надёжно)
+        try {
+            const hasSearchBox = !!document.querySelector('.gcse-searchbox-only');
+            if (hasSearchBox) {
+                window.__gcse = window.__gcse || {};
+                window.__gcse.parsetags = 'explicit';
+                const hasCseScript = !!document.querySelector('script[src*="cse.google.com/cse.js"]');
+                if (!hasCseScript) {
+                    const s = document.createElement('script');
+                    s.src = 'https://cse.google.com/cse.js?cx=97e62541ff5274a28';
+                    s.async = true;
+                    s.onload = function () { if (window.__gcse && window.__gcse.parse) window.__gcse.parse(); };
+                    document.body.appendChild(s);
+                } else {
+                    setTimeout(() => { if (window.__gcse && window.__gcse.parse) window.__gcse.parse(); }, 0);
+                }
+            }
+        } catch (_) {}
         
         initMenu();
         // Apply GEO filtering after menu init
