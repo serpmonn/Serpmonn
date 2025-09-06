@@ -47,12 +47,33 @@ fetch(primaryMenuPath)
     .then(html => {
         document.body.insertAdjacentHTML('afterbegin', html);
         
-        // Только после вставки меню проверяем поиск
-        if (document.querySelector('.gcse-searchbox-only') && !window.__gcse) {
-            const script = document.createElement('script');
-            script.src = 'https://cse.google.com/cse.js?cx=97e62541ff5274a28';
-            script.async = true;
-            document.body.appendChild(script);
+        // Применяем новые правила только на dev-страницах
+        const isDevPage = location.pathname.startsWith('/frontend/dev/');
+        if (isDevPage) {
+            // Синхронизируем поисковую форму в меню с основной формой на странице
+            try {
+                const primaryBox = document.querySelector('.main-search-container .gcse-searchbox-only')
+                    || document.querySelector('.gcse-searchbox-only[data-resultsUrl]');
+                const menuBox = document.querySelector('#menuSearchContainer .gcse-searchbox-only');
+                if (primaryBox && menuBox) {
+                    const gname = primaryBox.getAttribute('data-gname');
+                    const resultsUrl = primaryBox.getAttribute('data-resultsUrl');
+                    if (gname) menuBox.setAttribute('data-gname', gname);
+                    if (resultsUrl) menuBox.setAttribute('data-resultsUrl', resultsUrl);
+                    menuBox.setAttribute('data-newWindow', 'false');
+                }
+            } catch {}
+
+            // Подключаем Google CSE, если он ещё не подключен и нет тега со скриптом
+            const hasCseScript = !!document.querySelector('script[src*="cse.google.com/cse.js"]');
+            if (document.querySelector('.gcse-searchbox-only') && !window.__gcse && !hasCseScript && !window.__SPN_CSE_LOADING) {
+                window.__SPN_CSE_LOADING = true;
+                const script = document.createElement('script');
+                script.src = 'https://cse.google.com/cse.js?cx=97e62541ff5274a28';
+                script.async = true;
+                script.onload = () => { window.__SPN_CSE_LOADING = false; };
+                document.body.appendChild(script);
+            }
         }
         
         initMenu();
