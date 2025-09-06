@@ -22,6 +22,12 @@
               tag: 'searchresults-only',
               attributes: { gname: 'dev', linkTarget: '_self' }
             });
+            // Если пришли с параметром в URL — выполняем запрос явно
+            var sp = new URLSearchParams(location.search);
+            var q = sp.get('gsc.q') || sp.get('q');
+            if (q) {
+              try { google.search.cse.element.getElement('dev').execute(q); } catch(e) {}
+            }
           } catch (e) {}
         }};
         if (!document.querySelector('script[src*="cse.google.com/cse.js"]')) {
