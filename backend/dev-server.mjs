@@ -18,8 +18,9 @@ const frontendDir = path.join(__dirname, '..', 'frontend');
 // Serve static frontend assets at /frontend
 app.use('/frontend', express.static(frontendDir, { extensions: ['html', 'htm'] }));
 
-// Simple in-memory likes storage: url -> count
+// Simple in-memory likes storage: url -> { guest: number, auth: number, authUsers: Set<string> }
 const likesByUrl = new Map();
+const AUTH_WEIGHT = Number(process.env.DEV_AUTH_LIKE_WEIGHT || 3);
 
 function normalizeUrl(raw) {
   if (!raw) return null;
@@ -40,24 +41,66 @@ function normalizeUrl(raw) {
   }
 }
 
-function getCount(url) {
-  return likesByUrl.get(url) || 0;
+function getRecord(url) {
+  if (!likesByUrl.has(url)) {
+    likesByUrl.set(url, { guest: 0, auth: 0, authUsers: new Set() });
+  }
+  return likesByUrl.get(url);
 }
 
 // GET /dev/likes?url=...
 app.get('/dev/likes', (req, res) => {
   const norm = normalizeUrl(req.query.url);
   if (!norm) return res.status(400).json({ error: 'Missing url' });
-  return res.json({ count: getCount(norm) });
+  const rec = getRecord(norm);
+  const total = rec.guest + rec.auth;
+  return res.json({ counts: { guest: rec.guest, auth: rec.auth, total }, weight_auth: AUTH_WEIGHT });
 });
 
 // POST /dev/likes  body: url=...
 app.post('/dev/likes', (req, res) => {
   const norm = normalizeUrl(req.body.url || req.query.url);
   if (!norm) return res.status(400).json({ error: 'Missing url' });
-  const next = getCount(norm) + 1;
-  likesByUrl.set(norm, next);
-  return res.json({ count: next });
+  const userKey = String(req.headers['x-dev-user-id'] || req.query.user || '').trim();
+  const isAuth = Boolean(userKey);
+  const rec = getRecord(norm);
+
+  if (isAuth) {
+    if (rec.authUsers.has(userKey)) {
+      const total = rec.guest + rec.auth;
+      return res.json({ accepted: false, type: 'auth', counts: { guest: rec.guest, auth: rec.auth, total }, liked_by_you: true });
+    }
+    rec.authUsers.add(userKey);
+    rec.auth += 1;
+    const total = rec.guest + rec.auth;
+    return res.json({ accepted: true, type: 'auth', counts: { guest: rec.guest, auth: rec.auth, total }, liked_by_you: true });
+  } else {
+    // Guest like: no strong server dedup in dev; client prevents double-like via localStorage
+    rec.guest += 1;
+    const total = rec.guest + rec.auth;
+    return res.json({ accepted: true, type: 'guest', counts: { guest: rec.guest, auth: rec.auth, total }, liked_by_you: true });
+  }
+});
+
+// Dev-only migration endpoint: convert one guest like to auth for a given user
+app.post('/dev/likes/migrate', (req, res) => {
+  const norm = normalizeUrl(req.body.url || req.query.url);
+  const userKey = String(req.body.user || req.query.user || '').trim();
+  if (!norm || !userKey) return res.status(400).json({ error: 'Missing url or user' });
+  const rec = getRecord(norm);
+  if (rec.authUsers.has(userKey)) {
+    const total = rec.guest + rec.auth;
+    return res.json({ accepted: false, reason: 'already_auth', counts: { guest: rec.guest, auth: rec.auth, total } });
+  }
+  if (rec.guest <= 0) {
+    const total = rec.guest + rec.auth;
+    return res.json({ accepted: false, reason: 'no_guest_likes', counts: { guest: rec.guest, auth: rec.auth, total } });
+  }
+  rec.guest -= 1;
+  rec.auth += 1;
+  rec.authUsers.add(userKey);
+  const total = rec.guest + rec.auth;
+  return res.json({ accepted: true, counts: { guest: rec.guest, auth: rec.auth, total } });
 });
 
 // Convenience: redirect root to dev main page

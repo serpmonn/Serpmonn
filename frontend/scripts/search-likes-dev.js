@@ -18,16 +18,19 @@ function stableUrlFromResultNode(node) {
   }
 }
 
-async function fetchCount(url) {
+async function fetchCounts(url) {
   const qs = new URLSearchParams({ url: encodeURIComponent(url) }).toString();
   const r = await fetch(`${DEV_LIKES_ENDPOINT}?${qs}`, { credentials: 'omit' });
-  if (!r.ok) return 0;
+  if (!r.ok) return { guest: 0, auth: 0, total: 0, weight_auth: 3 };
   const j = await r.json().catch(() => ({}));
-  return Number(j.count || 0);
+  const c = (j && j.counts) || { guest: 0, auth: 0, total: 0 };
+  return { guest: Number(c.guest||0), auth: Number(c.auth||0), total: Number(c.total||0), weight_auth: Number(j.weight_auth||3) };
 }
 
-async function sendLike(url) {
-  const body = new URLSearchParams({ url: url }).toString();
+async function sendLike(url, userId) {
+  const params = new URLSearchParams({ url: url });
+  if (userId) params.set('user', userId);
+  const body = params.toString();
   const r = await fetch(DEV_LIKES_ENDPOINT, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -36,14 +39,15 @@ async function sendLike(url) {
   });
   if (!r.ok) throw new Error('like failed');
   const j = await r.json().catch(() => ({}));
-  return Number(j.count || 0);
+  const c = (j && j.counts) || { guest: 0, auth: 0, total: 0 };
+  return { guest: Number(c.guest||0), auth: Number(c.auth||0), total: Number(c.total||0), type: j.type };
 }
 
-function createLikeBadge(initialCount, liked) {
+function createLikeBadge(initial, liked) {
   const btn = document.createElement('button');
   btn.type = 'button';
   btn.className = `like-badge${liked ? ' liked' : ''}`;
-  btn.innerHTML = `❤ <span class="count">${initialCount}</span>`;
+  btn.innerHTML = `❤ <span class="count">${initial.total}</span> <span class="subcount" title="подтверждённых">(✓ ${initial.auth})</span>`;
   return btn;
 }
 
@@ -75,8 +79,8 @@ async function enhanceResult(node) {
   node.appendChild(container);
 
   const liked = isLiked(url);
-  const current = await fetchCount(url).catch(() => 0);
-  const btn = createLikeBadge(current, liked);
+  const counts = await fetchCounts(url).catch(() => ({ guest:0, auth:0, total:0, weight_auth:3 }));
+  const btn = createLikeBadge(counts, liked);
   container.appendChild(btn);
 
   let busy = false;
@@ -85,8 +89,11 @@ async function enhanceResult(node) {
     if (isLiked(url)) return; // one-like per browser in dev
     busy = true;
     try {
-      const next = await sendLike(url);
-      btn.querySelector('.count').textContent = String(next);
+      const userId = (window.__spnAuthUserId || '').trim();
+      const next = await sendLike(url, userId);
+      btn.querySelector('.count').textContent = String(next.total);
+      const sub = btn.querySelector('.subcount');
+      if (sub) sub.textContent = `(✓ ${next.auth})`;
       btn.classList.add('liked');
       markLiked(url);
     } catch (e) {
