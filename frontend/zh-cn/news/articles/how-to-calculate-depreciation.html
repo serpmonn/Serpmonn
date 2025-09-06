@@ -22,17 +22,17 @@
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
-        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     
     <style>
-            /* ad top adaptive start */
+      /* ad top adaptive start */
       .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
       @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
       @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
       /* ad top adaptive end */
-body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.7; }
+      
+      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.7; }
       .article-container { background: #fff; border-radius: 12px; padding: 40px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
       .article-header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #e9ecef; }
       .article-title { font-size: 2.5rem; color: #333; margin-bottom: 15px; font-weight: 700; line-height: 1.2; }
@@ -59,9 +59,23 @@ body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, 
       .tg-btn { background: #229ED9; }
       .vk-btn { background: #2787F5; }
       .tg-btn:hover, .vk-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.15); }
+      
+      .breadcrumb { margin-bottom: 20px; font-size: 0.9rem; color: #6c757d; }
+      .breadcrumb a { color: #007bff; text-decoration: none; }
+      .breadcrumb a:hover { text-decoration: underline; }
+      .breadcrumb span { color: #6c757d; }
     </style>
   </head>
   <body>
+    <div id="menuContainer"></div>
+    
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/frontend/zh-cn/index.html">首页</a> → 
+      <a href="/frontend/zh-cn/news/index.html">新闻与文章</a> → 
+      <span>如何计算折旧</span>
+    </div>
+
     <div class="article-container">
       <div class="article-header">
         <span class="article-category">教程</span>
@@ -77,22 +91,22 @@ body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, 
           (MRGtag = window.MRGtag || []).push({});
         </script>
         <h1 class="article-title">如何正确计算车辆折旧</h1>
-        <div class="article-meta">2024 年 8 月 19 日 • 8 分钟</div>
+        <div class="article-meta">2024 年 8 月 19 日 • 8 分钟阅读</div>
       </div>
 
       <div class="article-content">
-        <p>Correctly calculating car depreciation is an important skill for any driver. It helps you make informed decisions about buying, selling and maintaining your vehicle.</p>
+        <p>正确计算汽车折旧是每位车主都应掌握的重要技能。它能帮助您在购买、出售和维护车辆时做出明智的决策。</p>
 
         <h2>🎯 什么是车辆折旧</h2>
-        <p>Depreciation is the gradual reduction in a car’s value over time. It is influenced by many factors that are important to consider when calculating.</p>
+        <p>折旧是指汽车价值随时间逐渐减少的过程。它受到许多因素的影响，在计算时需要考虑这些因素。</p>
 
         <h2>📊 折旧关键因素</h2>
         <ul>
-          <li><strong>Mileage:</strong> The more miles the car has traveled, the greater the wear</li>
-          <li><strong>Age:</strong> Time in use affects the technical condition</li>
-          <li><strong>Usage conditions:</strong> City driving wears more than highway</li>
-          <li><strong>Service quality:</strong> Regular maintenance extends the car's life</li>
-          <li><strong>Make and model:</strong> Some brands are more reliable</li>
+          <li><strong>行驶里程：</strong> 汽车行驶的里程越多，磨损越大</li>
+          <li><strong>使用年限：</strong> 使用时间影响技术状况</li>
+          <li><strong>使用条件：</strong> 城市驾驶比高速公路磨损更大</li>
+          <li><strong>保养质量：</strong> 定期维护可延长汽车寿命</li>
+          <li><strong>品牌和型号：</strong> 某些品牌更可靠</li>
         </ul>
 
         <h2>🔧 如何使用折旧计算器</h2>
@@ -100,73 +114,73 @@ body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, 
         <ol class="step-list">
           <li>
             <h3>准备数据</h3>
-            <p>Collect all necessary information about the car: year, mileage, make, model, usage conditions.</p>
+            <p>收集所有必要的车辆信息：年份、行驶里程、品牌、型号、使用条件。</p>
           </li>
           
           <li>
             <h3>输入参数</h3>
-            <p>Enter the data in the corresponding fields of the calculator. Be as accurate as possible to get a reliable result.</p>
+            <p>在计算器的相应字段中输入数据。尽可能准确以获得可靠结果。</p>
           </li>
           
           <li>
             <h3>分析结果</h3>
-            <p>Review the obtained data: residual value, wear percentage, service recommendations.</p>
+            <p>查看获得的数据：残值、磨损百分比、维护建议。</p>
           </li>
         </ol>
 
         <div class="example-box">
           <h4>📝 示例</h4>
-          <p><strong>Car:</strong> Toyota Camry 2018 года<br>
-          <strong>Mileage:</strong> 150,000 км<br>
-          <strong>Conditions:</strong> 70% city, 30% highway<br>
-          <strong>Service:</strong> Regular maintenance<br>
-          <strong>Result:</strong> Residual value ~65% of initial</p>
+          <p><strong>车辆：</strong> 2018年丰田凯美瑞<br>
+          <strong>行驶里程：</strong> 150,000 公里<br>
+          <strong>使用条件：</strong> 70% 城市, 30% 高速公路<br>
+          <strong>保养：</strong> 定期维护<br>
+          <strong>结果：</strong> 残值约为初始价值的65%</p>
         </div>
 
         <h2>💡 降低折旧的小贴士</h2>
         <ul>
-          <li><strong>Regular maintenance:</strong> Timely oil and filter changes</li>
-          <li><strong>Careful driving:</strong> Avoid hard starts and braking</li>
-          <li><strong>Quality fuel:</strong> Use recommended grades</li>
-          <li><strong>Anti‑corrosion protection:</strong> Treat the body with anti‑corrosion compounds</li>
-          <li><strong>Proper storage:</strong> Use a garage if possible</li>
+          <li><strong>定期保养：</strong> 及时更换机油和滤清器</li>
+          <li><strong>谨慎驾驶：</strong> 避免急加速和急刹车</li>
+          <li><strong>优质燃油：</strong> 使用推荐标号的燃油</li>
+          <li><strong>防腐蚀保护：</strong> 对车身进行防锈处理</li>
+          <li><strong>妥善存放：</strong> 尽可能使用车库</li>
         </ul>
 
         <div class="highlight-box">
           <h4>💡 重要提示</h4>
-          <p>Regularly check the car's condition and keep a maintenance log. This helps better assess real wear and plan repair costs.</p>
+          <p>定期检查车况并保持维护记录。这有助于更好地评估实际磨损并计划维修成本。</p>
         </div>
 
-        <h2>⚠️ Что влияет на точность расчётов</h2>
+        <h2>⚠️ 影响计算准确性的因素</h2>
         <ul>
-          <li><strong>Market fluctuations:</strong> Цены на автомобили могут меняться</li>
-          <li><strong>Technical condition:</strong> Качество предыдущего обслуживания</li>
-          <li><strong>Accidents and repairs:</strong> Серьёзные повреждения снижают стоимость</li>
-          <li><strong>Modifications:</strong> Внедорожные и спортивные доработки</li>
+          <li><strong>市场波动：</strong> 汽车价格可能会变化</li>
+          <li><strong>技术状况：</strong> 先前维护的质量</li>
+          <li><strong>事故和维修：</strong> 严重损坏会降低价值</li>
+          <li><strong>改装：</strong> 越野和运动改装</li>
         </ul>
 
         <div class="warning-box">
-          <h4>⚠️ Ограничения калькулятора</h4>
+          <h4>⚠️ 计算器限制</h4>
           <p>该计算器提供近似估算。要获得准确估值，请咨询专业评估师或专门服务机构。</p>
         </div>
 
-        <h2>📈 Когда пересчитывать амортизацию</h2>
+        <h2>📈 何时重新计算折旧</h2>
         <ul>
-          <li>After each maintenance (to adjust condition)</li>
-          <li>When usage conditions change</li>
-          <li>Before buying or selling a car</li>
-          <li>When planning major repair costs</li>
+          <li>每次保养后（调整车况）</li>
+          <li>当使用条件发生变化时</li>
+          <li>购买或出售汽车前</li>
+          <li>计划大修费用时</li>
         </ul>
 
-        <h2>🔗 Полезные ссылки</h2>
+        <h2>🔗 有用链接</h2>
         <ul>
-          <li><a href="/frontend/zh-cn/tools/logistics/depreciation-calculator.html">折旧计算器</a> — наш инструмент для расчётов</li>
-          <li><a href="/frontend/zh-cn/tools/logistics/fuel-calculator.html">油耗计算器</a> — для планирования расходов</li>
-          <li><a href="https://www.avtovzglyad.ru/" target="_blank">Avtovzglyad</a> — новости автомобильного рынка</li>
-          <li><a href="https://www.drom.ru/" target="_blank">Drom.ru</a> — каталог автомобилей and reviews</li>
+          <li><a href="/frontend/zh-cn/tools/logistics/depreciation-calculator.html">折旧计算器</a> — 我们的计算工具</li>
+          <li><a href="/frontend/zh-cn/tools/logistics/fuel-calculator.html">油耗计算器</a> — 用于计划费用</li>
+          <li><a href="https://www.avtovzglyad.ru/" target="_blank">汽车观察</a> — 汽车市场新闻</li>
+          <li><a href="https://www.drom.ru/" target="_blank">Drom.ru</a> — 汽车目录和评论</li>
         </ul>
 
-        <p>Правильный расчёт амортизации поможет вам принимать взвешенные решения и планировать бюджет на автомобиль. Используйте наш калькулятор регулярно для отслеживания изменений стоимости вашего транспортного средства.</p>
+        <p>正确计算折旧将帮助您做出明智的决策并规划汽车预算。定期使用我们的计算器来跟踪您车辆价值的变化。</p>
       </div>
 
       <div class="social-subscribe">
@@ -177,55 +191,61 @@ body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, 
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
-  <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
-    <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-      <button type="button" aria-label="Закрыть рекламу" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
-      <ins class="mrg-tag" 
-          style="display:inline-block;width:320px;height:50px" 
-          data-ad-client="ad-1898031"
-          data-ad-slot="1898031">
-      </ins>
+    <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+      <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+        <button type="button" aria-label="关闭广告" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+        <ins class="mrg-tag" 
+            style="display:inline-block;width:320px;height:50px" 
+            data-ad-client="ad-1898031"
+            data-ad-slot="1898031">
+        </ins>
+      </div>
     </div>
-  </div>
-  <script>
-    (function(){
-      if (localStorage.getItem('anchor_closed')==='1') return;
-      var w = window.innerWidth || document.documentElement.clientWidth;
-      var a = document.getElementById('mobile-anchor-ad');
-      if (!a) return;
-      if (w <= 768) { a.style.display = "flex"; }
-      (window.MRGtag = window.MRGtag || []).push({});
-      if (window.visualViewport) {
-        visualViewport.addEventListener('resize', function(){
-          var h = visualViewport.height;
-          a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+    <script>
+      (function(){
+        if (localStorage.getItem('anchor_closed')==='1') return;
+        var w = window.innerWidth || document.documentElement.clientWidth;
+        var a = document.getElementById('mobile-anchor-ad');
+        if (!a) return;
+        if (w <= 768) { a.style.display = "flex"; }
+        (window.MRGtag = window.MRGtag || []).push({});
+        if (window.visualViewport) {
+          visualViewport.addEventListener('resize', function(){
+            var h = visualViewport.height;
+            a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+          });
+        }
+      })();
+    </script>
+
+    <script>
+      /*ANCHOR_COLLAPSE*/
+      (function(){
+        var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
+        setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
+          (window.MRGtag=window.MRGtag||[]).push({});
+          setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
+        } }, 2000);
+      })();
+    </script>
+
+    <script>
+      /*GLOBAL_AD_HOOK*/
+      (function(){
+        function handleIns(ins){
+          if (!ins || ins.__handled) return; ins.__handled = true;
+          setTimeout(function(){
+            var has = !!ins.querySelector("iframe");
+            if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
+            setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
+          }, 2000);
+        }
+        document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
+        var mo = new MutationObserver(function(muts){
+          muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
         });
-      }
-    })();
-  </script>
-
-<script>/*ANCHOR_COLLAPSE*/(function(){
-  var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
-  setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
-    (window.MRGtag=window.MRGtag||[]).push({});
-    setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
-  } }, 2000);
-})();</script>
-
-<script>/*GLOBAL_AD_HOOK*/(function(){
-  function handleIns(ins){
-    if (!ins || ins.__handled) return; ins.__handled = true;
-    setTimeout(function(){
-      var has = !!ins.querySelector("iframe");
-      if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
-      setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
-    }, 2000);
-  }
-  document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
-  var mo = new MutationObserver(function(muts){
-    muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
-  });
-  mo.observe(document.documentElement,{childList:true,subtree:true});
-})();</script>
-</body>
+        mo.observe(document.documentElement,{childList:true,subtree:true});
+      })();
+    </script>
+  </body>
 </html>

@@ -9,7 +9,7 @@
     
     <!-- Open Graph -->
     <meta property="og:title" content="从零搭建你的第一个网站 — 新手完整指南">
-    <meta property="og:description" content="A step-by-step guide to building a website from scratch. HTML, CSS, JavaScript and modern tooling.">
+    <meta property="og:description" content="从零开始构建网站的分步指南。HTML、CSS、JavaScript 和现代工具。">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/news/articles/web-development-guide.html">
     <meta property="og:type" content="article">
@@ -22,17 +22,17 @@
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
-        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     
     <style>
-            /* ad top adaptive start */
+      /* ad top adaptive start */
       .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
       @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
       @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
       /* ad top adaptive end */
-body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.7; }
+      
+      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.7; }
       .article-container { background: #fff; border-radius: 12px; padding: 40px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
       .article-header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #e9ecef; }
       .article-title { font-size: 2.5rem; color: #333; margin-bottom: 15px; font-weight: 700; line-height: 1.2; }
@@ -64,9 +64,23 @@ body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, 
       .tg-btn { background: #229ED9; }
       .vk-btn { background: #2787F5; }
       .tg-btn:hover, .vk-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.15); }
+      
+      .breadcrumb { margin-bottom: 20px; font-size: 0.9rem; color: #6c757d; }
+      .breadcrumb a { color: #007bff; text-decoration: none; }
+      .breadcrumb a:hover { text-decoration: underline; }
+      .breadcrumb span { color: #6c757d; }
     </style>
   </head>
   <body>
+    <div id="menuContainer"></div>
+    
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/frontend/zh-cn/index.html">首页</a> → 
+      <a href="/frontend/zh-cn/news/index.html">新闻与文章</a> → 
+      <span>网站开发指南</span>
+    </div>
+
     <div class="article-container">
       <div class="article-header">
         <span class="article-category">开发</span>
@@ -82,36 +96,36 @@ body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, 
           (MRGtag = window.MRGtag || []).push({});
         </script>
         <h1 class="article-title">从零搭建你的第一个网站</h1>
-        <div class="article-meta">2024 年 8 月 18 日 • 12 分钟</div>
+        <div class="article-meta">2024 年 8 月 18 日 • 12 分钟阅读</div>
       </div>
 
       <div class="article-content">
-        <p>Building a website may seem challenging for a beginner, but it's an exciting process accessible to everyone. In this guide, we'll go from idea to a working site.</p>
+        <p>对于初学者来说，搭建网站可能看起来很有挑战性，但这是一个令人兴奋且每个人都可以掌握的过程。在本指南中，我们将从想法到一个可运行的网站。</p>
 
         <h2>🎯 你将学到什么</h2>
         <ul>
-          <li>Basics of HTML, CSS and JavaScript</li>
-          <li>How to choose hosting and domain</li>
-          <li>Modern development tools</li>
-          <li>发布 the site on the internet</li>
+          <li>HTML、CSS 和 JavaScript 的基础知识</li>
+          <li>如何选择主机和域名</li>
+          <li>现代开发工具</li>
+          <li>将网站发布到互联网上</li>
         </ul>
 
         <h2>📋 所需工具</h2>
         <div class="tech-grid">
           <div class="tech-card">
             <span class="tech-icon">💻</span>
-            <h4>Text editor</h4>
-            <p>VS Code, Sublime Text or Notepad++</p>
+            <h4>文本编辑器</h4>
+            <p>VS Code、Sublime Text 或 Notepad++</p>
           </div>
           <div class="tech-card">
             <span class="tech-icon">🌐</span>
-            <h4>Browser</h4>
-            <p>Chrome, Firefox или Safari</p>
+            <h4>浏览器</h4>
+            <p>Chrome、Firefox 或 Safari</p>
           </div>
           <div class="tech-card">
             <span class="tech-icon">📁</span>
-            <h4>File manager</h4>
-            <p>For organizing the project</p>
+            <h4>文件管理器</h4>
+            <p>用于组织项目</p>
           </div>
         </div>
 
@@ -120,24 +134,24 @@ body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, 
         <ol class="step-list">
           <li>
             <h3>规划与设计</h3>
-            <p>Define the site’s goal, target audience и key features. Создайте простой макет на бумаге или в графическом редакторе.</p>
+            <p>确定网站的目标、目标受众和关键功能。在纸上或图形编辑器中创建一个简单的布局。</p>
           </li>
           
           <li>
             <h3>构建 HTML 结构</h3>
-            <p>Начните с базовой HTML structure. HTML — это скелет вашего сайта.</p>
+            <p>从基本的 HTML 结构开始。HTML 是您网站的骨架。</p>
             <div class="code-example">
-              <h4>Basic HTML template:</h4>
+              <h4>基本 HTML 模板：</h4>
               <pre><code>&lt;!DOCTYPE html&gt;
-&lt;html lang="en"&gt;
+&lt;html lang="zh-CN"&gt;
 &lt;head&gt;
     &lt;meta charset="UTF-8"&gt;
     &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
-    &lt;title&gt;My first website&lt;/title&gt;
+    &lt;title&gt;我的第一个网站&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;h1&gt;Welcome!&lt;/h1&gt;
-    &lt;p&gt;This is my first website.&lt;/p&gt;
+    &lt;h1&gt;欢迎！&lt;/h1&gt;
+    &lt;p&gt;这是我的第一个网站。&lt;/p&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
             </div>
@@ -145,9 +159,9 @@ body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, 
           
           <li>
             <h3>使用 CSS 美化</h3>
-            <p>CSS is responsible for the site appearance. Start with simple styles and gradually complicate.</p>
+            <p>CSS 负责网站的外观。从简单的样式开始，逐渐复杂化。</p>
             <div class="code-example">
-              <h4>Basic CSS styles:</h4>
+              <h4>基本 CSS 样式：</h4>
               <pre><code>body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -169,55 +183,55 @@ p {
           
           <li>
             <h3>添加交互</h3>
-            <p>JavaScript делает сайт интерактивным. Начните с простых функций.</p>
+            <p>JavaScript 使网站具有交互性。从简单的功能开始。</p>
             <div class="code-example">
-              <h4>Simple JavaScript:</h4>
-              <pre><code>// Button click handler
+              <h4>简单的 JavaScript：</h4>
+              <pre><code>// 按钮点击处理程序
 document.getElementById('myButton').addEventListener('click', function() {
-    alert('Hello, world!');
+    alert('你好，世界！');
 });</code></pre>
             </div>
           </li>
           
           <li>
             <h3>测试</h3>
-            <p>Open the site in different browsers and devices. Ensure everything works correctly.</p>
+            <p>在不同的浏览器和设备中打开网站。确保一切正常工作。</p>
           </li>
           
           <li>
             <h3>发布</h3>
-            <p>Choose hosting (e.g., GitHub Pages, Netlify or Vercel) and upload site files.</p>
+            <p>选择主机（例如 GitHub Pages、Netlify 或 Vercel）并上传网站文件。</p>
           </li>
         </ol>
 
         <div class="highlight-box">
           <h4>💡 新手提示</h4>
-          <p>Не пытайтесь создать сложный сайт сразу. Начните с простой одностраничной страницы и постепенно добавляйте новые функции.</p>
+          <p>不要试图立即创建一个复杂的网站。从一个简单的单页开始，逐渐添加新功能。</p>
         </div>
 
         <h2>🔧 现代工具</h2>
-        <p>Для более продвинутой разработки рассмотрите:</p>
+        <p>对于更高级的开发，请考虑：</p>
         <ul>
-          <li><strong>Фреймворки:</strong> React, Vue.js, Angular</li>
-          <li><strong>CSS-фреймворки:</strong> Bootstrap, Tailwind CSS</li>
-          <li><strong>Сборщики:</strong> Webpack, Vite, Parcel</li>
-          <li><strong>Системы контроля версий:</strong> Git</li>
+          <li><strong>框架：</strong> React、Vue.js、Angular</li>
+          <li><strong>CSS 框架：</strong> Bootstrap、Tailwind CSS</li>
+          <li><strong>构建工具：</strong> Webpack、Vite、Parcel</li>
+          <li><strong>版本控制系统：</strong> Git</li>
         </ul>
 
         <div class="warning-box">
-          <h4>⚠️ Important to remember</h4>
-          <p>Web development is constantly evolving. Be ready to learn new technologies and follow industry trends.</p>
+          <h4>⚠️ 重要提醒</h4>
+          <p>Web 开发在不断发展。准备好学习新技术并关注行业趋势。</p>
         </div>
 
         <h2>📚 实用资源</h2>
         <ul>
-          <li><a href="https://developer.mozilla.org/ru/" target="_blank">MDN Web Docs</a> — excellent documentation</li>
-          <li><a href="https://www.w3schools.com/" target="_blank">W3Schools</a> — interactive lessons</li>
-          <li><a href="https://css-tricks.com/" target="_blank">CSS-Tricks</a> — tips on CSS</li>
-          <li><a href="https://github.com/" target="_blank">GitHub</a> — for hosting and learning code</li>
+          <li><a href="https://developer.mozilla.org/zh-CN/" target="_blank">MDN Web 文档</a> — 优秀的文档</li>
+          <li><a href="https://www.w3schools.com/" target="_blank">W3Schools</a> — 互动课程</li>
+          <li><a href="https://css-tricks.com/" target="_blank">CSS-Tricks</a> — CSS 技巧</li>
+          <li><a href="https://github.com/" target="_blank">GitHub</a> — 用于托管和学习代码</li>
         </ul>
 
-        <p>Building a website — is a creative process that can bring a lot of joy and opportunities. Don't be afraid to experiment and learn from mistakes!</p>
+        <p>构建网站是一个创造性的过程，可以带来很多乐趣和机会。不要害怕尝试并从错误中学习！</p>
       </div>
 
       <div class="social-subscribe">
@@ -228,55 +242,61 @@ document.getElementById('myButton').addEventListener('click', function() {
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
-  <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
-    <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-      <button type="button" aria-label="Закрыть рекламу" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
-      <ins class="mrg-tag" 
-          style="display:inline-block;width:320px;height:50px" 
-          data-ad-client="ad-1898031"
-          data-ad-slot="1898031">
-      </ins>
+    <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+      <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+        <button type="button" aria-label="关闭广告" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+        <ins class="mrg-tag" 
+            style="display:inline-block;width:320px;height:50px" 
+            data-ad-client="ad-1898031"
+            data-ad-slot="1898031">
+        </ins>
+      </div>
     </div>
-  </div>
-  <script>
-    (function(){
-      if (localStorage.getItem('anchor_closed')==='1') return;
-      var w = window.innerWidth || document.documentElement.clientWidth;
-      var a = document.getElementById('mobile-anchor-ad');
-      if (!a) return;
-      if (w <= 768) { a.style.display = "flex"; }
-      (window.MRGtag = window.MRGtag || []).push({});
-      if (window.visualViewport) {
-        visualViewport.addEventListener('resize', function(){
-          var h = visualViewport.height;
-          a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+    <script>
+      (function(){
+        if (localStorage.getItem('anchor_closed')==='1') return;
+        var w = window.innerWidth || document.documentElement.clientWidth;
+        var a = document.getElementById('mobile-anchor-ad');
+        if (!a) return;
+        if (w <= 768) { a.style.display = "flex"; }
+        (window.MRGtag = window.MRGtag || []).push({});
+        if (window.visualViewport) {
+          visualViewport.addEventListener('resize', function(){
+            var h = visualViewport.height;
+            a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+          });
+        }
+      })();
+    </script>
+
+    <script>
+      /*ANCHOR_COLLAPSE*/
+      (function(){
+        var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
+        setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
+          (window.MRGtag=window.MRGtag||[]).push({});
+          setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
+        } }, 2000);
+      })();
+    </script>
+
+    <script>
+      /*GLOBAL_AD_HOOK*/
+      (function(){
+        function handleIns(ins){
+          if (!ins || ins.__handled) return; ins.__handled = true;
+          setTimeout(function(){
+            var has = !!ins.querySelector("iframe");
+            if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
+            setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
+          }, 2000);
+        }
+        document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
+        var mo = new MutationObserver(function(muts){
+          muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
         });
-      }
-    })();
-  </script>
-
-<script>/*ANCHOR_COLLAPSE*/(function(){
-  var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
-  setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
-    (window.MRGtag=window.MRGtag||[]).push({});
-    setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
-  } }, 2000);
-})();</script>
-
-<script>/*GLOBAL_AD_HOOK*/(function(){
-  function handleIns(ins){
-    if (!ins || ins.__handled) return; ins.__handled = true;
-    setTimeout(function(){
-      var has = !!ins.querySelector("iframe");
-      if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
-      setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
-    }, 2000);
-  }
-  document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
-  var mo = new MutationObserver(function(muts){
-    muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
-  });
-  mo.observe(document.documentElement,{childList:true,subtree:true});
-})();</script>
-</body>
+        mo.observe(document.documentElement,{childList:true,subtree:true});
+      })();
+    </script>
+  </body>
 </html>
