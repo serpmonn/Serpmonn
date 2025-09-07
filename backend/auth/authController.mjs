@@ -138,7 +138,7 @@ export const loginUser = async (req, res) => {                                  
     res.cookie('token', token, {                                                              // Устанавливаем cookie с токеном
       httpOnly: true,                                                                        // Защищаем cookie от доступа через JS
       secure: true,                                                                          // Устанавливаем только для HTTPS
-      sameSite: 'Strict',                                                                    // Устанавливаем строгую политику SameSite
+      sameSite: 'Lax',                                                                    // Устанавливаем политику SameSite для работы между страницами
       maxAge: 24 * 60 * 60 * 1000,                                                           // Устанавливаем срок действия (1 день)
       domain: '.serpmonn.ru'                                                                 // Ведущая точка для работы на всех поддоменах
     });                                                                                       
@@ -153,7 +153,7 @@ export const logoutUser = (req, res) => {                                       
   res.clearCookie('token', {                                                                 // Удаляем cookie с токеном
     httpOnly: true,                                                                          // Защищаем cookie от доступа через JS
     secure: true,                                                                            // Устанавливаем только для HTTPS
-    sameSite: 'Strict'                                                                       // Устанавливаем строгую политику SameSite
+    sameSite: 'Lax'                                                                       // Устанавливаем политику SameSite для работы между страницами
   });                                                                                       
   res.json({ message: 'Выход выполнен успешно' });                                           // Отправляем успешный ответ клиенту
 };                                                                                           
