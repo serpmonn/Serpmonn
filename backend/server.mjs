@@ -128,7 +128,7 @@ app.use('/promocodes', promocodesRoutes);
 app.use('/api/promocodes', promocodesRoutes);
   // Дублируем маршруты под /api/promocodes для фронтенда
 
-// Лайки API (минимально, без CSRF для GET; POST защищён глобальным лимитером)
+// Лайки API с аутентификацией (GET без токена, POST с токеном)
 app.use('/api/likes', likesRoutes);
 
 app.use((err, req, res, next) => {

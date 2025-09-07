@@ -1,11 +1,40 @@
 import express from 'express';
 import { query } from '../database/config.mjs';
 import verifyToken from '../auth/verifyToken.mjs';
+import paseto from 'paseto';
+
+const { V2 } = paseto;
 
 // Продовые эндпоинты лайков с MySQL хранилищем и реальной аутентификацией
 const router = express.Router();
 
 const AUTH_WEIGHT = Number(process.env.AUTH_LIKE_WEIGHT || process.env.DEV_AUTH_LIKE_WEIGHT || 3);
+
+// Опциональная проверка JWT токена (не блокирует запрос, если токена нет)
+async function optionalVerifyToken(req, res, next) {
+  const token = req.cookies.token;
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+
+  const secretKey = process.env.SECRET_KEY;
+  if (!secretKey) {
+    req.user = null;
+    return next();
+  }
+
+  try {
+    const payload = await V2.verify(token, secretKey);
+    req.user = payload;
+    console.log('[likes] verified user:', payload?.sub || payload?.userId || payload?.username || 'unknown');
+  } catch (error) {
+    console.log('[likes] invalid token:', error.message);
+    req.user = null;
+  }
+  
+  next();
+}
 
 function normalizeUrl(raw) {
   if (!raw) return null;
@@ -68,7 +97,7 @@ router.get('/', async (req, res) => {
 });
 
 // POST /api/likes  accepts url; user from JWT token (optional for guest likes)
-router.post('/', async (req, res) => {
+router.post('/', optionalVerifyToken, async (req, res) => {
   try {
     const norm = normalizeUrl(req.body.url || req.query.url);
     if (!norm) return res.status(400).json({ status: 'error', message: 'Missing url' });
