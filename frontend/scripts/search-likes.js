@@ -80,14 +80,16 @@ function createLikeBadge(initial, liked) {
   
   // Стили для кнопки лайка
   btn.style.cssText = `
-    border: 1px solid #ddd;
+    border: 1px solid #e1e5e9;
     border-radius: 20px;
     padding: 4px 10px;
-    background: #fff;
+    background: #f8f9fa;
     cursor: pointer;
     font-size: 12px;
     margin-top: 4px;
     transition: all 0.2s ease;
+    color: #495057;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
   `;
   
   if (liked) {
@@ -164,6 +166,7 @@ async function enhanceResult(node) {
       btn.classList.add('liked');
       btn.style.background = '#ffecef';
       btn.style.borderColor = '#ffc2cb';
+      btn.style.color = '#dc3545';
       
       markLiked(url);
       
