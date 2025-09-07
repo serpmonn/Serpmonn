@@ -1,7 +1,8 @@
 import express from 'express';
 import { query } from '../database/config.mjs';
+import verifyToken from '../auth/verifyToken.mjs';
 
-// Продовые эндпоинты лайков с MySQL хранилищем
+// Продовые эндпоинты лайков с MySQL хранилищем и реальной аутентификацией
 const router = express.Router();
 
 const AUTH_WEIGHT = Number(process.env.AUTH_LIKE_WEIGHT || process.env.DEV_AUTH_LIKE_WEIGHT || 3);
@@ -66,16 +67,22 @@ router.get('/', async (req, res) => {
   }
 });
 
-// POST /api/likes  accepts url; optional user via header x-user-id, x-dev-user-id, body.user, or query.user
+// POST /api/likes  accepts url; user from JWT token (optional for guest likes)
 router.post('/', async (req, res) => {
   try {
     const norm = normalizeUrl(req.body.url || req.query.url);
     if (!norm) return res.status(400).json({ status: 'error', message: 'Missing url' });
 
-    // Временная идентификация пользователя: заголовок/тело/квери
-    const userKey = String(
-      req.headers['x-user-id'] || req.headers['x-dev-user-id'] || req.body.user || req.query.user || ''
-    ).trim();
+    // Получаем user_id из JWT токена (если пользователь авторизован)
+    let userKey = '';
+    if (req.user && req.user.id) {
+      userKey = req.user.id;
+    } else {
+      // Fallback для dev-тестирования через заголовки
+      userKey = String(
+        req.headers['x-user-id'] || req.headers['x-dev-user-id'] || req.body.user || req.query.user || ''
+      ).trim();
+    }
 
     if (userKey) {
       // Проверяем, не лайкал ли уже этот пользователь

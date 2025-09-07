@@ -39,10 +39,10 @@ async function fetchCounts(url) {
   }
 }
 
-async function sendLike(url, userId) {
+async function sendLike(url) {
   try {
     const params = new URLSearchParams({ url: url });
-    if (userId) params.set('user', userId);
+    // user_id автоматически определяется сервером из JWT токена
     
     const r = await fetch(LIKES_ENDPOINT, {
       method: 'POST',
@@ -119,10 +119,11 @@ function isLiked(url) {
   }
 }
 
-// Получение ID пользователя (временно через глобальную переменную, позже через реальную аутентификацию)
+// Получение ID пользователя из JWT токена (автоматически через cookies)
 function getCurrentUserId() {
-  // TODO: заменить на реальную аутентификацию
-  return window.__spnAuthUserId || '';
+  // Пользователь авторизован автоматически через JWT токен в cookies
+  // Сервер сам определит user_id из токена, нам не нужно передавать его явно
+  return null; // Пусть сервер сам определяет из JWT
 }
 
 async function enhanceResult(node) {
@@ -153,8 +154,7 @@ async function enhanceResult(node) {
     btn.style.opacity = '0.6';
     
     try {
-      const userId = getCurrentUserId();
-      const result = await sendLike(url, userId);
+      const result = await sendLike(url);
       
       // Обновляем счётчики
       btn.querySelector('.count').textContent = String(result.total);
