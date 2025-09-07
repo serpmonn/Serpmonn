@@ -117,22 +117,72 @@ router.post('/', optionalVerifyToken, async (req, res) => {
       ).trim();
     }
 
+    const sessionId = req.body.session_id || req.query.session_id;
+
     if (userKey) {
-      // Проверяем, не лайкал ли уже этот пользователь
+      // Авторизованный пользователь
+      
+      // 1. Сначала пытаемся мигрировать гостевой лайк с этим session_id
+      if (sessionId) {
+        const guestLike = await query(
+          "SELECT id FROM likes WHERE url = ? AND user_id IS NULL AND like_type = "guest" AND session_id = ? LIMIT 1",
+          [norm, sessionId]
+        );
+        
+        if (guestLike.length > 0) {
+          // Мигрируем гостевой лайк в авторизованный
+          await query(
+            "UPDATE likes SET user_id = ?, like_type = "auth" WHERE id = ?",
+            [userKey, guestLike[0].id]
+          );
+          
+          console.log(`[migration] Migrated guest like to auth for user ${userKey}, session ${sessionId}`);
+          
+          const counts = await getCounts(norm);
+          return res.json({ status: "ok", accepted: true, type: "auth", counts, liked_by_you: true, migrated: true });
+        }
+      }
+      
+      // 2. Если не мигрировали, проверяем, есть ли уже авторизованный лайк
       const alreadyLiked = await hasUserLiked(norm, userKey);
       if (alreadyLiked) {
         const counts = await getCounts(norm);
-        return res.json({ status: 'ok', accepted: false, type: 'auth', counts, liked_by_you: true });
+        return res.json({ status: "ok", accepted: false, type: "auth", counts, liked_by_you: true });
       }
 
-      // Добавляем авторизованный лайк
+      // 3. Создаём новый авторизованный лайк
       await query(
-        'INSERT INTO likes (url, user_id, like_type) VALUES (?, ?, "auth")',
-        [norm, userKey]
+        "INSERT INTO likes (url, user_id, like_type, session_id) VALUES (?, ?, "auth", ?)",
+        [norm, userKey, sessionId]
       );
       
       const counts = await getCounts(norm);
-      return res.json({ status: 'ok', accepted: true, type: 'auth', counts, liked_by_you: true });
+      return res.json({ status: "ok", accepted: true, type: "auth", counts, liked_by_you: true });
+
+    } else {
+      // Гостевой пользователь
+      
+      // Проверяем дедупликацию по session_id
+      if (sessionId) {
+        const alreadyLiked = await query(
+          "SELECT 1 FROM likes WHERE url = ? AND user_id IS NULL AND like_type = "guest" AND session_id = ? LIMIT 1",
+          [norm, sessionId]
+        );
+        
+        if (alreadyLiked.length > 0) {
+          const counts = await getCounts(norm);
+          return res.json({ status: "ok", accepted: false, type: "guest", counts, liked_by_you: true });
+        }
+      }
+      
+      // Создаём гостевой лайк
+      await query(
+        "INSERT INTO likes (url, user_id, like_type, session_id) VALUES (?, NULL, "guest", ?)",
+        [norm, sessionId]
+      );
+      
+      const counts = await getCounts(norm);
+      return res.json({ status: "ok", accepted: true, type: "guest", counts, liked_by_you: true });
     }
 
     // Гостевой лайк (без user_id)

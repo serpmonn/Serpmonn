@@ -3,6 +3,16 @@
 
 const LIKES_ENDPOINT = '/api/likes';
 
+// Генерируем уникальный session_id для связи гостевых и авторизованных лайков
+function getOrCreateSessionId() {
+  let sessionId = localStorage.getItem('likes_session_id');
+  if (!sessionId) {
+    sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    localStorage.setItem('likes_session_id', sessionId);
+  }
+  return sessionId;
+}
+
 function stableUrlFromResultNode(node) {
   try {
     const link = node.querySelector('.gs-title a, a.gs-title');
@@ -41,7 +51,11 @@ async function fetchCounts(url) {
 
 async function sendLike(url) {
   try {
-    const params = new URLSearchParams({ url: url });
+    const sessionId = getOrCreateSessionId();
+    const params = new URLSearchParams({ 
+      url: url,
+      session_id: sessionId
+    });
     // user_id автоматически определяется сервером из JWT токена
     
     const r = await fetch(LIKES_ENDPOINT, {
