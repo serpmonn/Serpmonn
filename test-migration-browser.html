@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест миграции лайков</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ddd; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .result { margin: 10px 0; padding: 10px; background: #f5f5f5; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Тест миграции лайков</h1>
+    
+    <div class="test-section">
+        <h3>1. Информация о сессии</h3>
+        <button onclick="showSessionInfo()">Показать информацию</button>
+        <div id="session-info" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>2. Гостевой лайк</h3>
+        <button onclick="testGuestLike()">Поставить гостевой лайк</button>
+        <div id="guest-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>3. Авторизованный лайк (миграция)</h3>
+        <button onclick="testAuthLike()">Поставить авторизованный лайк</button>
+        <div id="auth-result" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h3>4. Проверка состояния</h3>
+        <button onclick="checkStatus()">Проверить состояние</button>
+        <div id="status-result" class="result"></div>
+    </div>
+
+    <script>
+        const TEST_URL = 'https://example.com/browser-test';
+        
+        function getOrCreateSessionId() {
+            let sessionId = localStorage.getItem('likes_session_id');
+            if (!sessionId) {
+                sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('likes_session_id', sessionId);
+            }
+            return sessionId;
+        }
+        
+        function showSessionInfo() {
+            const result = document.getElementById('session-info');
+            const sessionId = getOrCreateSessionId();
+            const cookies = document.cookie;
+            const hasToken = cookies.includes('token=');
+            
+            result.innerHTML = `
+                <strong>Session ID:</strong> ${sessionId}<br>
+                <strong>Cookies:</strong> ${cookies || 'Нет cookies'}<br>
+                <strong>Есть токен:</strong> ${hasToken ? '✅ Да' : '❌ Нет'}
+            `;
+        }
+        
+        async function testGuestLike() {
+            const result = document.getElementById('guest-result');
+            result.innerHTML = '⏳ Отправка гостевого лайка...';
+            
+            try {
+                const sessionId = getOrCreateSessionId();
+                const response = await fetch('/api/likes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `url=${encodeURIComponent(TEST_URL)}&session_id=${sessionId}`,
+                    credentials: 'same-origin'
+                });
+                
+                const data = await response.json();
+                result.innerHTML = `
+                    <strong>Статус:</strong> ${response.status}<br>
+                    <strong>Ответ:</strong> <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                result.className = data.status === 'ok' ? 'result success' : 'result error';
+            } catch (error) {
+                result.innerHTML = `<strong>Ошибка:</strong> ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+        
+        async function testAuthLike() {
+            const result = document.getElementById('auth-result');
+            result.innerHTML = '⏳ Отправка авторизованного лайка...';
+            
+            try {
+                const sessionId = getOrCreateSessionId();
+                const response = await fetch('/api/likes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `url=${encodeURIComponent(TEST_URL)}&session_id=${sessionId}`,
+                    credentials: 'same-origin'
+                });
+                
+                const data = await response.json();
+                let status = data.status === 'ok' ? 'success' : 'error';
+                if (data.migrated) {
+                    status = 'success';
+                    result.innerHTML += '<br><strong>✅ Миграция произошла!</strong>';
+                }
+                
+                result.innerHTML = `
+                    <strong>Статус:</strong> ${response.status}<br>
+                    <strong>Ответ:</strong> <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                result.className = `result ${status}`;
+            } catch (error) {
+                result.innerHTML = `<strong>Ошибка:</strong> ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+        
+        async function checkStatus() {
+            const result = document.getElementById('status-result');
+            result.innerHTML = '⏳ Проверка состояния...';
+            
+            try {
+                const response = await fetch(`/api/likes?url=${encodeURIComponent(TEST_URL)}`);
+                const data = await response.json();
+                
+                result.innerHTML = `
+                    <strong>Статус:</strong> ${response.status}<br>
+                    <strong>Ответ:</strong> <pre>${JSON.stringify(data, null, 2)}</pre>
+                `;
+                result.className = 'result success';
+            } catch (error) {
+                result.innerHTML = `<strong>Ошибка:</strong> ${error.message}`;
+                result.className = 'result error';
+            }
+        }
+        
+        // Автоматически показать информацию о сессии при загрузке
+        window.onload = showSessionInfo;
+    </script>
+</body>
+</html>
