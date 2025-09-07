@@ -1,12 +1,9 @@
 import express from 'express';
+import { query } from '../database/config.mjs';
 
-// Простые продовые эндпоинты лайков. Пока in-memory для быстрых экспериментов.
-// В дальнейшем перенесём в постоянное хранилище и привяжем к реальной аутентификации.
-
+// Продовые эндпоинты лайков с MySQL хранилищем
 const router = express.Router();
 
-// url -> { guest: number, auth: number, authUsers: Set<string> }
-const likesByUrl = new Map();
 const AUTH_WEIGHT = Number(process.env.AUTH_LIKE_WEIGHT || process.env.DEV_AUTH_LIKE_WEIGHT || 3);
 
 function normalizeUrl(raw) {
@@ -21,49 +18,95 @@ function normalizeUrl(raw) {
   }
 }
 
-function getRecord(url) {
-  if (!likesByUrl.has(url)) {
-    likesByUrl.set(url, { guest: 0, auth: 0, authUsers: new Set() });
+async function getCounts(url) {
+  try {
+    const results = await query(
+      'SELECT like_type, COUNT(*) as count FROM likes WHERE url = ? GROUP BY like_type',
+      [url]
+    );
+    
+    let guest = 0, auth = 0;
+    results.forEach(row => {
+      if (row.like_type === 'guest') guest = row.count;
+      if (row.like_type === 'auth') auth = row.count;
+    });
+    
+    return { guest, auth, total: guest + auth };
+  } catch (error) {
+    console.error('Ошибка получения счётчиков лайков:', error);
+    return { guest: 0, auth: 0, total: 0 };
   }
-  return likesByUrl.get(url);
+}
+
+async function hasUserLiked(url, userId) {
+  if (!userId) return false;
+  try {
+    const results = await query(
+      'SELECT 1 FROM likes WHERE url = ? AND user_id = ? AND like_type = "auth" LIMIT 1',
+      [url, userId]
+    );
+    return results.length > 0;
+  } catch (error) {
+    console.error('Ошибка проверки лайка пользователя:', error);
+    return false;
+  }
 }
 
 // GET /api/likes?url=...
-router.get('/', (req, res) => {
-  const norm = normalizeUrl(req.query.url);
-  if (!norm) return res.status(400).json({ status: 'error', message: 'Missing url' });
-  const rec = getRecord(norm);
-  const total = rec.guest + rec.auth;
-  res.json({ status: 'ok', counts: { guest: rec.guest, auth: rec.auth, total }, weight_auth: AUTH_WEIGHT });
+router.get('/', async (req, res) => {
+  try {
+    const norm = normalizeUrl(req.query.url);
+    if (!norm) return res.status(400).json({ status: 'error', message: 'Missing url' });
+    
+    const counts = await getCounts(norm);
+    res.json({ status: 'ok', counts, weight_auth: AUTH_WEIGHT });
+  } catch (error) {
+    console.error('Ошибка GET /api/likes:', error);
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
+  }
 });
 
 // POST /api/likes  accepts url; optional user via header x-user-id, x-dev-user-id, body.user, or query.user
-router.post('/', (req, res) => {
-  const norm = normalizeUrl(req.body.url || req.query.url);
-  if (!norm) return res.status(400).json({ status: 'error', message: 'Missing url' });
+router.post('/', async (req, res) => {
+  try {
+    const norm = normalizeUrl(req.body.url || req.query.url);
+    if (!norm) return res.status(400).json({ status: 'error', message: 'Missing url' });
 
-  // Временная идентификация пользователя: заголовок/тело/квери
-  const userKey = String(
-    req.headers['x-user-id'] || req.headers['x-dev-user-id'] || req.body.user || req.query.user || ''
-  ).trim();
+    // Временная идентификация пользователя: заголовок/тело/квери
+    const userKey = String(
+      req.headers['x-user-id'] || req.headers['x-dev-user-id'] || req.body.user || req.query.user || ''
+    ).trim();
 
-  const rec = getRecord(norm);
+    if (userKey) {
+      // Проверяем, не лайкал ли уже этот пользователь
+      const alreadyLiked = await hasUserLiked(norm, userKey);
+      if (alreadyLiked) {
+        const counts = await getCounts(norm);
+        return res.json({ status: 'ok', accepted: false, type: 'auth', counts, liked_by_you: true });
+      }
 
-  if (userKey) {
-    if (rec.authUsers.has(userKey)) {
-      const total = rec.guest + rec.auth;
-      return res.json({ status: 'ok', accepted: false, type: 'auth', counts: { guest: rec.guest, auth: rec.auth, total }, liked_by_you: true });
+      // Добавляем авторизованный лайк
+      await query(
+        'INSERT INTO likes (url, user_id, like_type) VALUES (?, ?, "auth")',
+        [norm, userKey]
+      );
+      
+      const counts = await getCounts(norm);
+      return res.json({ status: 'ok', accepted: true, type: 'auth', counts, liked_by_you: true });
     }
-    rec.authUsers.add(userKey);
-    rec.auth += 1;
-    const total = rec.guest + rec.auth;
-    return res.json({ status: 'ok', accepted: true, type: 'auth', counts: { guest: rec.guest, auth: rec.auth, total }, liked_by_you: true });
-  }
 
-  // Гостевой лайк
-  rec.guest += 1;
-  const total = rec.guest + rec.auth;
-  return res.json({ status: 'ok', accepted: true, type: 'guest', counts: { guest: rec.guest, auth: rec.auth, total }, liked_by_you: true });
+    // Гостевой лайк (без user_id)
+    await query(
+      'INSERT INTO likes (url, user_id, like_type) VALUES (?, NULL, "guest")',
+      [norm]
+    );
+    
+    const counts = await getCounts(norm);
+    return res.json({ status: 'ok', accepted: true, type: 'guest', counts, liked_by_you: true });
+  } catch (error) {
+    console.error('Ошибка POST /api/likes:', error);
+    res.status(500).json({ status: 'error', message: 'Internal server error' });
+  }
 });
 
 export default router;
