@@ -175,12 +175,18 @@ async function enhanceResult(node) {
   let busy = false;
   btn.addEventListener('click', async () => {
     if (busy) return;
-    if (isLiked(url)) {
-      // Показываем уведомление, что уже лайкнуто
+    
+    // Проверяем, авторизован ли пользователь
+    const isAuthenticated = document.cookie.includes('token=');
+    
+    if (isLiked(url) && !isAuthenticated) {
+      // Блокируем только для неавторизованных пользователей
       btn.style.opacity = '0.6';
       setTimeout(() => btn.style.opacity = '1', 1000);
       return;
     }
+    
+    // Для авторизованных пользователей разрешаем повторные лайки (для миграции)
     
     busy = true;
     btn.style.opacity = '0.6';
@@ -198,13 +204,16 @@ async function enhanceResult(node) {
       btn.style.borderColor = '#ffc2cb';
       btn.style.color = '#dc3545';
       
-      markLiked(url);
-      
-      // Показываем уведомление об успехе
-      if (result.type === 'auth') {
-        console.log('✅ Подтверждённый лайк добавлен');
-      } else {
+      // Сохраняем в localStorage только гостевые лайки
+      if (result.type === 'guest') {
+        markLiked(url);
         console.log('👍 Гостевой лайк добавлен');
+      } else if (result.type === 'auth') {
+        if (result.migrated) {
+          console.log('🎉 Миграция произошла! Гостевой лайк превратился в авторизованный');
+        } else {
+          console.log('✅ Авторизованный лайк добавлен');
+        }
       }
     } catch (error) {
       console.error('Ошибка при добавлении лайка:', error);
