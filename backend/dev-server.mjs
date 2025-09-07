@@ -61,7 +61,7 @@ app.get('/dev/likes', (req, res) => {
 app.post('/dev/likes', (req, res) => {
   const norm = normalizeUrl(req.body.url || req.query.url);
   if (!norm) return res.status(400).json({ error: 'Missing url' });
-  const userKey = String(req.headers['x-dev-user-id'] || req.query.user || '').trim();
+  const userKey = String(req.headers['x-dev-user-id'] || req.body.user || req.query.user || '').trim();
   const isAuth = Boolean(userKey);
   const rec = getRecord(norm);
 
