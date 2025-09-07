@@ -35,6 +35,8 @@ import csrf from 'csurf';
 
 import promocodesRoutes from './promocodes/promocodesRoutes.mjs';
   // Импорт маршрутов промокодов
+import likesRoutes from './likes/likesRoutes.mjs';
+  // Импорт маршрутов лайков
 
 
 const app = express();
@@ -125,6 +127,9 @@ app.use('/promocodes', promocodesRoutes);
 
 app.use('/api/promocodes', promocodesRoutes);
   // Дублируем маршруты под /api/promocodes для фронтенда
+
+// Лайки API (минимально, без CSRF для GET; POST защищён глобальным лимитером)
+app.use('/api/likes', likesRoutes);
 
 app.use((err, req, res, next) => {
   // Обработчик ошибок (после всех роутов)
