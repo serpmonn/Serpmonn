@@ -31,7 +31,7 @@ async function optionalVerifyToken(req, res, next) {
   try {
     const payload = await V2.verify(token, secretKey);
     req.user = payload;
-    console.log('[likes] DEBUG: verified user:', payload?.sub || payload?.userId || payload?.username || 'unknown');
+    console.log('[likes] DEBUG: verified user:', payload?.id || payload?.sub || payload?.userId || payload?.username || 'unknown');
   } catch (error) {
     console.log('[likes] DEBUG: invalid token:', error.message);
     req.user = null;

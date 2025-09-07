@@ -97,7 +97,7 @@ export const confirmToken = async (req, res) => {                               
       [true, user.id]                                                                         // Устанавливаем confirmed и сбрасываем токен
     );                                                                                        
                                                                                               
-    const payload = { email: user.email, username: user.username || user.email };             // Формируем данные для токена
+    const payload = { id: user.id, email: user.email, username: user.username || user.email };             // Формируем данные для токена
     const authToken = await V2.sign(payload, secretKey);                                      // Создаем авторизационный токен
                                                                                               
     res.cookie('token', authToken, {                                                         // Устанавливаем cookie с токеном
@@ -132,7 +132,7 @@ export const loginUser = async (req, res) => {                                  
       return res.status(401).json({ message: 'Неверный email или пароль' });                  // Возвращаем ошибку
     }                                                                                         
                                                                                               
-    const payload = { username: user.username, email: user.email };                           // Формируем данные для токена
+    const payload = { id: user.id, username: user.username, email: user.email };                           // Формируем данные для токена
     const token = await V2.sign(payload, secretKey);                                          // Создаем авторизационный токен
                                                                                               
     res.cookie('token', token, {                                                              // Устанавливаем cookie с токеном
