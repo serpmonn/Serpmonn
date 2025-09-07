@@ -180,9 +180,29 @@ async function enhanceResult(node) {
     const isAuthenticated = document.cookie.includes('token=');
     
     if (isLiked(url) && !isAuthenticated) {
-      // Блокируем только для неавторизованных пользователей
+      // Для гостевых пользователей: показываем уведомление, но не блокируем
+      // Они могут кликать много раз, но только один лайк засчитывается на сервере
       btn.style.opacity = '0.6';
       setTimeout(() => btn.style.opacity = '1', 1000);
+      
+      // Отправляем запрос на сервер (для дедупликации)
+      busy = true;
+      try {
+        const result = await sendLike(url);
+        if (result.accepted) {
+          // Обновляем интерфейс только если лайк принят
+          btn.querySelector('.count').textContent = String(result.total);
+          const sub = btn.querySelector('.subcount');
+          if (sub) sub.textContent = `(✓ ${result.auth})`;
+          console.log('👍 Гостевой лайк (повторный клик) - принят');
+        } else {
+          console.log('👍 Гостевой лайк (повторный клик) - отклонён сервером');
+        }
+      } catch (error) {
+        console.error('Ошибка при повторном гостевом лайке:', error);
+      } finally {
+        busy = false;
+      }
       return;
     }
     
@@ -204,10 +224,12 @@ async function enhanceResult(node) {
       btn.style.borderColor = '#ffc2cb';
       btn.style.color = '#dc3545';
       
-      // Сохраняем в localStorage только гостевые лайки
-      if (result.type === 'guest') {
+      // Сохраняем в localStorage только при первом успешном гостевом лайке
+      if (result.type === 'guest' && result.accepted) {
         markLiked(url);
         console.log('👍 Гостевой лайк добавлен');
+      } else if (result.type === 'guest' && !result.accepted) {
+        console.log('👍 Гостевой лайк (повторный клик) - отклонён сервером');
       } else if (result.type === 'auth') {
         if (result.migrated) {
           console.log('🎉 Миграция произошла! Гостевой лайк превратился в авторизованный');
