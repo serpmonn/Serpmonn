@@ -13,13 +13,17 @@ const AUTH_WEIGHT = Number(process.env.AUTH_LIKE_WEIGHT || process.env.DEV_AUTH_
 // Опциональная проверка JWT токена (не блокирует запрос, если токена нет)
 async function optionalVerifyToken(req, res, next) {
   const token = req.cookies.token;
+  console.log('[likes] DEBUG: token present:', Boolean(token), 'cookies:', Object.keys(req.cookies || {}));
+  
   if (!token) {
+    console.log('[likes] DEBUG: no token, setting req.user = null');
     req.user = null;
     return next();
   }
 
   const secretKey = process.env.SECRET_KEY;
   if (!secretKey) {
+    console.log('[likes] DEBUG: no secret key');
     req.user = null;
     return next();
   }
@@ -27,9 +31,9 @@ async function optionalVerifyToken(req, res, next) {
   try {
     const payload = await V2.verify(token, secretKey);
     req.user = payload;
-    console.log('[likes] verified user:', payload?.sub || payload?.userId || payload?.username || 'unknown');
+    console.log('[likes] DEBUG: verified user:', payload?.sub || payload?.userId || payload?.username || 'unknown');
   } catch (error) {
-    console.log('[likes] invalid token:', error.message);
+    console.log('[likes] DEBUG: invalid token:', error.message);
     req.user = null;
   }
   
