@@ -125,14 +125,14 @@ router.post('/', optionalVerifyToken, async (req, res) => {
       // 1. Сначала пытаемся мигрировать гостевой лайк с этим session_id
       if (sessionId) {
         const guestLike = await query(
-          "SELECT id FROM likes WHERE url = ? AND user_id IS NULL AND like_type = "guest" AND session_id = ? LIMIT 1",
+          "SELECT id FROM likes WHERE url = ? AND user_id IS NULL AND like_type = 'guest' AND session_id = ? LIMIT 1",
           [norm, sessionId]
         );
         
         if (guestLike.length > 0) {
           // Умная миграция: превращаем гостевой лайк в авторизованный с сохранением истории
           await query(
-            "UPDATE likes SET user_id = ?, like_type = "auth", was_guest = TRUE, migrated_at = NOW() WHERE id = ?",
+            "UPDATE likes SET user_id = ?, like_type = 'auth', was_guest = TRUE, migrated_at = NOW() WHERE id = ?",
             [userKey, guestLike[0].id]
           );
           
@@ -152,7 +152,7 @@ router.post('/', optionalVerifyToken, async (req, res) => {
 
       // 3. Создаём новый авторизованный лайк (was_guest = FALSE по умолчанию)
       await query(
-        "INSERT INTO likes (url, user_id, like_type, session_id, was_guest) VALUES (?, ?, "auth", ?, FALSE)",
+        "INSERT INTO likes (url, user_id, like_type, session_id, was_guest) VALUES (?, ?, 'auth', ?, FALSE)",
         [norm, userKey, sessionId]
       );
       
@@ -165,7 +165,7 @@ router.post('/', optionalVerifyToken, async (req, res) => {
       // Проверяем дедупликацию по session_id
       if (sessionId) {
         const alreadyLiked = await query(
-          "SELECT 1 FROM likes WHERE url = ? AND user_id IS NULL AND like_type = "guest" AND session_id = ? LIMIT 1",
+          "SELECT 1 FROM likes WHERE url = ? AND user_id IS NULL AND like_type = 'guest' AND session_id = ? LIMIT 1",
           [norm, sessionId]
         );
         
@@ -177,7 +177,7 @@ router.post('/', optionalVerifyToken, async (req, res) => {
       
       // Создаём гостевой лайк с пометкой was_guest = TRUE
       await query(
-        "INSERT INTO likes (url, user_id, like_type, session_id, was_guest) VALUES (?, NULL, "guest", ?, TRUE)",
+        "INSERT INTO likes (url, user_id, like_type, session_id, was_guest) VALUES (?, NULL, 'guest', ?, TRUE)",
         [norm, sessionId]
       );
       
