@@ -5,12 +5,24 @@ const LIKES_ENDPOINT = '/api/likes';
 
 // Генерируем уникальный session_id для связи гостевых и авторизованных лайков
 function getOrCreateSessionId() {
-  let sessionId = localStorage.getItem('likes_session_id');
-  if (!sessionId) {
-    sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    localStorage.setItem('likes_session_id', sessionId);
+  try {
+    let sessionId = localStorage.getItem('likes_session_id');
+    console.log('[likes] Current session ID:', sessionId);
+    
+    if (!sessionId) {
+      sessionId = 'sess_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('likes_session_id', sessionId);
+      console.log('[likes] Created new session ID:', sessionId);
+    }
+    
+    return sessionId;
+  } catch (error) {
+    console.error('[likes] Error with localStorage:', error);
+    // Fallback: генерируем session_id без localStorage
+    const fallbackId = 'fallback_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    console.log('[likes] Using fallback session ID:', fallbackId);
+    return fallbackId;
   }
-  return sessionId;
 }
 
 function stableUrlFromResultNode(node) {
@@ -52,6 +64,8 @@ async function fetchCounts(url) {
 async function sendLike(url) {
   try {
     const sessionId = getOrCreateSessionId();
+    console.log('[likes] Sending like for URL:', url, 'with session ID:', sessionId);
+    
     const params = new URLSearchParams({ 
       url: url,
       session_id: sessionId
@@ -70,6 +84,8 @@ async function sendLike(url) {
     
     if (!r.ok) throw new Error(`HTTP ${r.status}`);
     const j = await r.json();
+    console.log('[likes] Server response:', j);
+    
     if (j.status !== 'ok') throw new Error(j.message || 'Ошибка API');
     
     const c = j.counts || { guest: 0, auth: 0, total: 0 };
