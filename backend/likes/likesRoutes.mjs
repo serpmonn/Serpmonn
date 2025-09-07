@@ -130,9 +130,9 @@ router.post('/', optionalVerifyToken, async (req, res) => {
         );
         
         if (guestLike.length > 0) {
-          // Мигрируем гостевой лайк в авторизованный
+          // Умная миграция: превращаем гостевой лайк в авторизованный с сохранением истории
           await query(
-            "UPDATE likes SET user_id = ?, like_type = "auth" WHERE id = ?",
+            "UPDATE likes SET user_id = ?, like_type = "auth", was_guest = TRUE, migrated_at = NOW() WHERE id = ?",
             [userKey, guestLike[0].id]
           );
           
@@ -150,9 +150,9 @@ router.post('/', optionalVerifyToken, async (req, res) => {
         return res.json({ status: "ok", accepted: false, type: "auth", counts, liked_by_you: true });
       }
 
-      // 3. Создаём новый авторизованный лайк
+      // 3. Создаём новый авторизованный лайк (was_guest = FALSE по умолчанию)
       await query(
-        "INSERT INTO likes (url, user_id, like_type, session_id) VALUES (?, ?, "auth", ?)",
+        "INSERT INTO likes (url, user_id, like_type, session_id, was_guest) VALUES (?, ?, "auth", ?, FALSE)",
         [norm, userKey, sessionId]
       );
       
@@ -175,9 +175,9 @@ router.post('/', optionalVerifyToken, async (req, res) => {
         }
       }
       
-      // Создаём гостевой лайк
+      // Создаём гостевой лайк с пометкой was_guest = TRUE
       await query(
-        "INSERT INTO likes (url, user_id, like_type, session_id) VALUES (?, NULL, "guest", ?)",
+        "INSERT INTO likes (url, user_id, like_type, session_id, was_guest) VALUES (?, NULL, "guest", ?, TRUE)",
         [norm, sessionId]
       );
       

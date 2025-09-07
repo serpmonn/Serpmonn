@@ -37,6 +37,8 @@ import promocodesRoutes from './promocodes/promocodesRoutes.mjs';
   // Импорт маршрутов промокодов
 import likesRoutes from './likes/likesRoutes.mjs';
   // Импорт маршрутов лайков
+import analyticsRoutes from './analytics/analyticsRoutes.mjs';
+  // Импорт маршрутов аналитики
 
 
 const app = express();
@@ -130,6 +132,9 @@ app.use('/api/promocodes', promocodesRoutes);
 
 // Лайки API с аутентификацией (GET без токена, POST с токеном)
 app.use('/api/likes', likesRoutes);
+
+// Аналитика лайков (статистика конверсии гостевых в авторизованные)
+app.use('/api/analytics/likes', analyticsRoutes);
 
 app.use((err, req, res, next) => {
   // Обработчик ошибок (после всех роутов)
