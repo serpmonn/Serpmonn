@@ -463,6 +463,53 @@ const ECO_DATABASE = {
     }
 };
 
+// Дополнения: распространенная продуктовая корзина РФ
+Object.assign(ECO_DATABASE, {
+    // Выпечка и крупы
+    bread_white: { name: "Хлеб белый", carbonFootprint: 0.8, waterFootprint: 1600, landFootprint: 1.0, category: "grains", ecoRating: 8, alternatives: ["хлеб ржаной", "цельнозерновой"], description: "Обычный пшеничный хлеб" },
+    bread_rye: { name: "Хлеб ржаной", carbonFootprint: 0.7, waterFootprint: 1400, landFootprint: 0.9, category: "grains", ecoRating: 8, alternatives: ["цельнозерновой"], description: "Более экологичен за счет ржи" },
+    buckwheat: { name: "Гречка", carbonFootprint: 1.0, waterFootprint: 1200, landFootprint: 1.2, category: "grains", ecoRating: 8, alternatives: ["перловка", "овсянка"], description: "Популярная крупа в РФ" },
+    oats: { name: "Овсянка", carbonFootprint: 0.9, waterFootprint: 1000, landFootprint: 1.0, category: "grains", ecoRating: 8, alternatives: ["гречка", "пшено"], description: "Цельные овсяные хлопья" },
+    pasta: { name: "Макароны", carbonFootprint: 1.4, waterFootprint: 1300, landFootprint: 1.2, category: "grains", ecoRating: 8, alternatives: ["цельнозерновые макароны"], description: "Пшеничные изделия" },
+    barley: { name: "Перловка", carbonFootprint: 0.9, waterFootprint: 900, landFootprint: 1.0, category: "grains", ecoRating: 8, alternatives: ["гречка", "овсянка"], description: "Ячменная крупа" },
+    rye: { name: "Рожь (зерно)", carbonFootprint: 0.8, waterFootprint: 900, landFootprint: 1.0, category: "grains", ecoRating: 8, alternatives: ["пшеница"], description: "Зерновая культура" },
+
+    // Масла
+    sunflower_oil: { name: "Масло подсолнечное", carbonFootprint: 3.5, waterFootprint: 1800, landFootprint: 2.0, category: "beverages", ecoRating: 6, alternatives: ["оливковое масло", "уменьшить количество"], description: "Жир, использовать умеренно" },
+    olive_oil: { name: "Масло оливковое", carbonFootprint: 5.2, waterFootprint: 1400, landFootprint: 3.0, category: "beverages", ecoRating: 6, alternatives: ["подсолнечное", "уменьшить количество"], description: "Импорт, более высокий углеродный след" },
+
+    // Молочные продукты дополнительные
+    kefir: { name: "Кефир", carbonFootprint: 3.0, waterFootprint: 950, landFootprint: 8.0, category: "dairy", ecoRating: 6, alternatives: ["йогурт натуральный", "растительные напитки"], description: "Кисломолочный продукт" },
+    yogurt_plain: { name: "Йогурт натуральный", carbonFootprint: 2.8, waterFootprint: 900, landFootprint: 7.5, category: "dairy", ecoRating: 6, alternatives: ["кефир", "растительные йогурты"], description: "Без добавок" },
+    cottage_cheese: { name: "Творог", carbonFootprint: 6.0, waterFootprint: 2500, landFootprint: 12.0, category: "dairy", ecoRating: 5, alternatives: ["йогурт", "тофу"], description: "Белковый молочный продукт" },
+    sour_cream: { name: "Сметана", carbonFootprint: 4.0, waterFootprint: 1500, landFootprint: 9.0, category: "dairy", ecoRating: 6, alternatives: ["йогурт", "уменьшить жирность"], description: "Кисломолочный продукт" },
+    butter: { name: "Масло сливочное", carbonFootprint: 12.0, waterFootprint: 5000, landFootprint: 40.0, category: "dairy", ecoRating: 4, alternatives: ["растительные масла", "уменьшить количество"], description: "Высокий углеродный след" },
+
+    // Овощи повседневные
+    cucumbers: { name: "Огурцы", carbonFootprint: 1.5, waterFootprint: 240, landFootprint: 0.2, category: "vegetables", ecoRating: 8, alternatives: ["сезонные овощи"], description: "Лучше сезонные, не тепличные" },
+    cabbage: { name: "Капуста", carbonFootprint: 0.3, waterFootprint: 280, landFootprint: 0.2, category: "vegetables", ecoRating: 9, alternatives: ["другие сезонные овощи"], description: "Очень экологична" },
+    carrots: { name: "Морковь", carbonFootprint: 0.4, waterFootprint: 130, landFootprint: 0.2, category: "vegetables", ecoRating: 9, alternatives: ["сезонные овощи"], description: "Низкий след" },
+    onions: { name: "Лук", carbonFootprint: 0.5, waterFootprint: 120, landFootprint: 0.2, category: "vegetables", ecoRating: 9, alternatives: ["сезонные овощи"], description: "Низкий след" },
+    garlic: { name: "Чеснок", carbonFootprint: 1.3, waterFootprint: 150, landFootprint: 0.2, category: "vegetables", ecoRating: 8, alternatives: ["лук"], description: "Низкий след, импорт повышает CO₂" },
+    beets: { name: "Свекла", carbonFootprint: 0.4, waterFootprint: 110, landFootprint: 0.2, category: "vegetables", ecoRating: 9, alternatives: ["сезонные овощи"], description: "Низкий след" },
+
+    // Фрукты повседневные
+    oranges: { name: "Апельсины", carbonFootprint: 0.8, waterFootprint: 560, landFootprint: 0.3, category: "fruits", ecoRating: 7, alternatives: ["яблоки местные"], description: "Импорт повышает след" },
+    pears: { name: "Груши", carbonFootprint: 0.5, waterFootprint: 600, landFootprint: 0.3, category: "fruits", ecoRating: 8, alternatives: ["яблоки местные"], description: "Низкий след" },
+    grapes: { name: "Виноград", carbonFootprint: 1.1, waterFootprint: 610, landFootprint: 0.5, category: "fruits", ecoRating: 7, alternatives: ["яблоки"], description: "Импорт повышает след" },
+
+    // Бобовые
+    lentils: { name: "Чечевица", carbonFootprint: 0.9, waterFootprint: 1600, landFootprint: 1.0, category: "legumes", ecoRating: 9, alternatives: ["фасоль", "горох"], description: "Экологичный белок" },
+    peas: { name: "Горох", carbonFootprint: 0.8, waterFootprint: 1200, landFootprint: 0.9, category: "legumes", ecoRating: 9, alternatives: ["чечевица"], description: "Экологичный белок" },
+    beans: { name: "Фасоль", carbonFootprint: 1.0, waterFootprint: 1800, landFootprint: 1.2, category: "legumes", ecoRating: 8, alternatives: ["чечевица"], description: "Экологичный белок" },
+
+    // Напитки повседневные
+    tea: { name: "Чай", carbonFootprint: 1.2, waterFootprint: 8700, landFootprint: 0.2, category: "beverages", ecoRating: 6, alternatives: ["травяные чаи"], description: "Ниже кофе по следу" },
+    kvass: { name: "Квас", carbonFootprint: 0.7, waterFootprint: 400, landFootprint: 0.2, category: "beverages", ecoRating: 7, alternatives: ["вода", "компот"], description: "Низкий след напитка" },
+    soda: { name: "Газировка", carbonFootprint: 0.9, waterFootprint: 600, landFootprint: 0.2, category: "beverages", ecoRating: 6, alternatives: ["вода", "морс"], description: "Производство и тара повышают след" },
+    beer: { name: "Пиво", carbonFootprint: 2.0, waterFootprint: 300, landFootprint: 0.3, category: "beverages", ecoRating: 6, alternatives: ["квас", "вода"], description: "Алкогольный напиток" }
+});
+
 // Коэффициенты для разных единиц измерения
 const UNIT_CONVERSIONS = {
     kg: 1,
