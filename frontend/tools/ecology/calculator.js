@@ -302,10 +302,10 @@ class EcoFootprintCalculator {
         const landEl = document.getElementById('land-footprint');
         const ecoEl = document.getElementById('eco-score');
         
-        if (carbonEl) carbonEl.textContent = this.results.totalCarbon;
+        if (carbonEl) carbonEl.textContent = this.results.totalCarbon.toFixed(2);
         if (waterEl) waterEl.textContent = this.results.totalWater.toLocaleString();
-        if (landEl) landEl.textContent = this.results.totalLand;
-        if (ecoEl) ecoEl.textContent = this.results.ecoRating;
+        if (landEl) landEl.textContent = this.results.totalLand.toFixed(2);
+        if (ecoEl) ecoEl.textContent = this.results.ecoRating.toFixed(1);
 
         // Отображаем сравнения
         this.displayComparisons();
@@ -321,7 +321,7 @@ class EcoFootprintCalculator {
      * Отобразить сравнения с альтернативами
      */
     displayComparisons() {
-        const comparisonContainer = document.getElementById('comparison-results');
+        let comparisonContainer = document.getElementById('comparison-results');
         
         if (!comparisonContainer) {
             // Создаем элемент если его нет
@@ -361,7 +361,7 @@ class EcoFootprintCalculator {
      * Отобразить рекомендации
      */
     displayRecommendations() {
-        const recommendationsContainer = document.getElementById('recommendations-list');
+        let recommendationsContainer = document.getElementById('recommendations-list');
         
         if (!recommendationsContainer) {
             // Создаем элемент если его нет
@@ -492,25 +492,30 @@ class EcoFootprintCalculator {
 let calculator;
 
 function addProduct() {
-    calculator.addProduct();
+    if (window.ecoCalculator) {
+        window.ecoCalculator.addProduct();
+    }
 }
 
 function removeProduct(button) {
-    calculator.removeProduct(button);
+    if (window.ecoCalculator) {
+        window.ecoCalculator.removeProduct(button);
+    }
 }
 
 function calculateFootprint() {
-    calculator.calculateFootprint();
+    if (window.ecoCalculator) {
+        window.ecoCalculator.calculateFootprint();
+    }
 }
 
 function shareResults(platform) {
-    calculator.shareResults(platform);
+    if (window.ecoCalculator) {
+        window.ecoCalculator.shareResults(platform);
+    }
 }
 
-// Инициализация при загрузке страницы
-document.addEventListener('DOMContentLoaded', () => {
-    calculator = new EcoFootprintCalculator();
-});
+// Инициализация при загрузке страницы (удалено - дублирует код ниже)
 
 // Дополнительные утилиты
 
