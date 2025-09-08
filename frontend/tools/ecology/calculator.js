@@ -414,6 +414,62 @@ function getEcoRatingDescription(rating) {
     return 'Высокое воздействие на экологию';
 }
 
+// Глобальные функции для HTML
+window.calculateFootprint = function() {
+    if (window.ecoCalculator) {
+        window.ecoCalculator.calculateFootprint();
+    } else {
+        console.error('Калькулятор не инициализирован');
+    }
+};
+
+window.addProduct = function() {
+    if (window.ecoCalculator) {
+        window.ecoCalculator.addProduct();
+    } else {
+        console.error('Калькулятор не инициализирован');
+    }
+};
+
+window.removeProduct = function(button) {
+    if (window.ecoCalculator) {
+        window.ecoCalculator.removeProduct(button);
+    } else {
+        console.error('Калькулятор не инициализирован');
+    }
+};
+
+window.shareResults = function(platform) {
+    if (window.ecoCalculator) {
+        window.ecoCalculator.shareResults(platform);
+    } else {
+        console.error('Калькулятор не инициализирован');
+    }
+};
+
+// Инициализация после загрузки DOM
+document.addEventListener('DOMContentLoaded', function() {
+    // Проверяем, что все необходимые элементы существуют
+    const requiredElements = [
+        'carbon-footprint',
+        'water-footprint', 
+        'land-footprint',
+        'eco-score',
+        'results-section'
+    ];
+    
+    const missingElements = requiredElements.filter(id => !document.getElementById(id));
+    
+    if (missingElements.length > 0) {
+        console.error('Отсутствуют элементы:', missingElements);
+        return;
+    }
+    
+    // Инициализируем калькулятор только если все элементы найдены
+    window.ecoCalculator = new EcoFootprintCalculator();
+    console.log('Калькулятор инициализирован успешно');
+});
+
 // Экспорт для тестирования
 if (typeof module !== 'undefined' && module.exports) {
     module.exports = EcoFootprintCalculator;
