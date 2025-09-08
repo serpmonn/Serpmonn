@@ -287,6 +287,8 @@ class EcoFootprintCalculator {
         } catch (error) {
             console.error('Ошибка расчета:', error);
             this.showError('Произошла ошибка при расчете. Попробуйте еще раз.');
+        } finally {
+            this.hideLoading();
         }
     }
 
@@ -295,7 +297,12 @@ class EcoFootprintCalculator {
      */
     displayResults() {
         const resultsSection = document.getElementById('results-section');
-        resultsSection.style.display = 'block';
+        if (resultsSection) {
+            resultsSection.style.display = 'block';
+        }
+
+        // Скрываем индикатор загрузки, если он есть
+        this.hideLoading();
 
         // Обновляем основные показатели
         const carbonEl = document.getElementById('carbon-footprint');
@@ -401,13 +408,28 @@ class EcoFootprintCalculator {
      */
     showLoading() {
         const resultsSection = document.getElementById('results-section');
+        if (!resultsSection) return;
         resultsSection.style.display = 'block';
-        resultsSection.innerHTML = `
-            <div class="loading">
+
+        let loading = document.getElementById('results-loading');
+        if (!loading) {
+            loading = document.createElement('div');
+            loading.id = 'results-loading';
+            loading.className = 'loading';
+            loading.innerHTML = `
                 <div class="spinner"></div>
                 <p>Рассчитываем экологический след...</p>
-            </div>
-        `;
+            `;
+            resultsSection.appendChild(loading);
+        }
+        loading.style.display = 'flex';
+    }
+
+    hideLoading() {
+        const loading = document.getElementById('results-loading');
+        if (loading) {
+            loading.style.display = 'none';
+        }
     }
 
     /**
