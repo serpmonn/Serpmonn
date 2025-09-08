@@ -64,6 +64,31 @@ function writeFileEnsured(filePath, content) {
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
+const EXCLUDE_DIRS = new Set(['search', 'scripts', 'styles', 'images', 'dev']);
+
+function listHtmlFilesFiltered(rootDir) {
+  const results = [];
+  const stack = [rootDir];
+  while (stack.length) {
+    const current = stack.pop();
+    let entries = [];
+    try {
+      entries = fs.readdirSync(current, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const ent of entries) {
+      const p = path.join(current, ent.name);
+      if (ent.isDirectory()) {
+        if (!EXCLUDE_DIRS.has(ent.name)) stack.push(p);
+      } else if (ent.isFile() && ent.name.toLowerCase().endsWith('.html')) {
+        results.push(p);
+      }
+    }
+  }
+  return results;
+}
+
 function generateSitemapForLang(langDirName) {
   const today = formatDateYYYYMMDD(new Date());
   const parts = [];
@@ -79,29 +104,64 @@ function generateSitemapForLang(langDirName) {
     );
   }
 
-  // ad-info/ad-info.html
-  const adInfoFile = path.join(FRONTEND_DIR, langDirName, 'ad-info', 'ad-info.html');
-  if (fileExists(adInfoFile)) {
-    const url = toUrl(adInfoFile);
+  // Include all other HTML pages in this language (filtered)
+  const langRoot = path.join(FRONTEND_DIR, langDirName);
+  const files = listHtmlFilesFiltered(langRoot)
+    .filter((p) => path.resolve(p) !== path.resolve(indexFile))
+    .sort();
+  for (const f of files) {
+    const url = toUrl(f);
+    const isAdInfo = /\/ad-info\//.test(f);
+    const changefreq = isAdInfo ? 'monthly' : 'weekly';
+    const priority = isAdInfo ? '0.60' : '0.55';
     parts.push(
-      `  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>monthly</changefreq>\n    <priority>0.60</priority>\n  </url>`
+      `  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>${changefreq}</changefreq>\n    <priority>${priority}</priority>\n  </url>`
     );
-  }
-
-  // tools/*.html recursively
-  const toolsDir = path.join(FRONTEND_DIR, langDirName, 'tools');
-  if (fileExists(toolsDir)) {
-    const files = listHtmlFilesRecursive(toolsDir).sort();
-    for (const f of files) {
-      const url = toUrl(f);
-      parts.push(
-        `  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.55</priority>\n  </url>`
-      );
-    }
   }
 
   parts.push('</urlset>');
   const outPath = path.join(OUTPUT_DIR, `sitemap-${langDirName}.xml`);
+  writeFileEnsured(outPath, parts.join('\n'));
+  return outPath;
+}
+
+function generateSitemapForRU() {
+  const today = formatDateYYYYMMDD(new Date());
+  const parts = [];
+  parts.push('<?xml version="1.0" encoding="UTF-8"?>');
+  parts.push('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+
+  // Root homepage
+  parts.push(
+    `  <url>\n    <loc>${SITE_BASE}/</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.90</priority>\n  </url>`
+  );
+
+  // Other RU pages: top-level frontend HTMLs not inside language dirs
+  const entries = fs.readdirSync(FRONTEND_DIR, { withFileTypes: true });
+  const langNames = new Set(entries.filter(e => e.isDirectory() && isLanguageDirName(e.name)).map(e => e.name));
+
+  const ruFiles = [];
+  for (const ent of entries) {
+    const p = path.join(FRONTEND_DIR, ent.name);
+    if (ent.isDirectory()) {
+      if (!langNames.has(ent.name) && !EXCLUDE_DIRS.has(ent.name)) {
+        ruFiles.push(...listHtmlFilesFiltered(p));
+      }
+    } else if (ent.isFile() && ent.name.toLowerCase().endsWith('.html')) {
+      ruFiles.push(p);
+    }
+  }
+  // Exclude searchresults explicitly for RU
+  const filtered = ruFiles.filter((p) => !/\/search\//.test(p)).sort();
+  for (const f of filtered) {
+    const url = toUrl(f);
+    parts.push(
+      `  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.60</priority>\n  </url>`
+    );
+  }
+
+  parts.push('</urlset>');
+  const outPath = path.join(OUTPUT_DIR, `sitemap-ru.xml`);
   writeFileEnsured(outPath, parts.join('\n'));
   return outPath;
 }
@@ -111,6 +171,10 @@ function generateIndex(langs) {
   const parts = [];
   parts.push('<?xml version="1.0" encoding="UTF-8"?>');
   parts.push('<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
+  // RU first
+  parts.push(
+    `  <sitemap>\n    <loc>${SITE_BASE}/sitemaps/sitemap-ru.xml</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>`
+  );
   for (const l of langs) {
     const loc = `${SITE_BASE}/sitemaps/sitemap-${l}.xml`;
     parts.push(
@@ -147,6 +211,8 @@ function main() {
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
   const generated = [];
+  // RU sitemap
+  generated.push(generateSitemapForRU());
   for (const l of langs) {
     const p = generateSitemapForLang(l);
     generated.push(p);
