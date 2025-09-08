@@ -23,18 +23,27 @@ INDEXNOW_KEY=<KEY> INDEXNOW_HOST=www.serpmonn.ru INDEXNOW_KEY_LOCATION=https://w
 node scripts/indexnow-ping.mjs \
   https://www.serpmonn.ru/frontend/en/index.html \
   https://www.serpmonn.ru/frontend/de/index.html
+
+# Ping only changed files (since last run)
+INDEXNOW_KEY=<KEY> INDEXNOW_HOST=www.serpmonn.ru INDEXNOW_KEY_LOCATION=https://www.serpmonn.ru/<KEY>.txt \
+node scripts/indexnow-ping.mjs --changed-only
 ```
 
 ## 3) Automate
 - On deploy: ping the changed URLs
 - Or nightly cron for the latest pages, e.g. last modified from sitemaps
 
-Cron example (daily at 01:10):
+Cron example (daily at 00:05, after sitemap generation):
 ```bash
-10 1 * * * cd /var/www/serpmonn.ru && \
+5 0 * * * cd /var/www/serpmonn.ru && \
 INDEXNOW_KEY=<KEY> INDEXNOW_HOST=www.serpmonn.ru INDEXNOW_KEY_LOCATION=https://www.serpmonn.ru/<KEY>.txt \
-node scripts/indexnow-ping.mjs https://www.serpmonn.ru/sitemaps/sitemap-index.xml >> /var/log/indexnow.log 2>&1
+node scripts/indexnow-ping.mjs --changed-only https://www.serpmonn.ru/sitemaps/sitemap-index.xml >> /var/log/indexnow.log 2>&1
 ```
+
+This will:
+1. Scan `frontend/` for HTML files modified since last run
+2. Ping only those changed URLs + sitemap index
+3. Save timestamp for next run
 
 Note: IndexNow is complementary to sitemaps/robots; it speeds up discovery and recrawl.
 
