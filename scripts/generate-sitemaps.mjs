@@ -130,7 +130,13 @@ function main() {
   }
   const entries = fs.readdirSync(FRONTEND_DIR, { withFileTypes: true });
   const langs = entries
-    .filter((e) => e.isDirectory() && isLanguageDirName(e.name))
+    .filter((e) => {
+      if (!e.isDirectory()) return false;
+      if (!isLanguageDirName(e.name)) return false;
+      // Treat as a true language only if it has its own index.html
+      const langIndex = path.join(FRONTEND_DIR, e.name, 'index.html');
+      return fileExists(langIndex);
+    })
     .map((e) => e.name)
     .sort();
 
