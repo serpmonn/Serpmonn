@@ -200,10 +200,15 @@ class EcoFootprintCalculator {
         resultsSection.style.display = 'block';
 
         // Обновляем основные показатели
-        document.getElementById('carbon-footprint').textContent = this.results.totalCarbon;
-        document.getElementById('water-footprint').textContent = this.results.totalWater.toLocaleString();
-        document.getElementById('land-footprint').textContent = this.results.totalLand;
-        document.getElementById('eco-score').textContent = this.results.ecoRating;
+        const carbonEl = document.getElementById('carbon-footprint');
+        const waterEl = document.getElementById('water-footprint');
+        const landEl = document.getElementById('land-footprint');
+        const ecoEl = document.getElementById('eco-score');
+        
+        if (carbonEl) carbonEl.textContent = this.results.totalCarbon;
+        if (waterEl) waterEl.textContent = this.results.totalWater.toLocaleString();
+        if (landEl) landEl.textContent = this.results.totalLand;
+        if (ecoEl) ecoEl.textContent = this.results.ecoRating;
 
         // Отображаем сравнения
         this.displayComparisons();
