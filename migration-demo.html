@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Serpmonn - Демо миграции лайков</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+        
+        .demo-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .step {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+        
+        .step-number {
+            background: #007bff;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+        
+        .step-content {
+            flex: 1;
+        }
+        
+        .step-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        
+        .step-description {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .like-badge {
+            border: 1px solid #e1e5e9 !important;
+            border-radius: 20px !important;
+            padding: 4px 10px !important;
+            background: #f8f9fa !important;
+            cursor: pointer !important;
+            font-size: 12px !important;
+            margin-top: 8px !important;
+            transition: all 0.2s ease !important;
+            color: #495057 !important;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+            display: inline-block !important;
+        }
+        
+        .like-badge.liked {
+            background: #ffecef !important;
+            border-color: #ffc2cb !important;
+            color: #dc3545 !important;
+        }
+        
+        .like-badge .subcount {
+            color: #28a745 !important;
+            margin-left: 6px !important;
+            font-size: 11px !important;
+        }
+        
+        .result-item {
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            background: white;
+        }
+        
+        .result-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1a0dab;
+            margin-bottom: 8px;
+        }
+        
+        .result-description {
+            color: #545454;
+            font-size: 14px;
+            line-height: 1.4;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+        
+        .status-guest {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .status-auth {
+            background: #e8f5e8;
+            color: #2e7d32;
+        }
+        
+        .migration-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        .migration-success .title {
+            font-weight: 600;
+            color: #155724;
+            margin-bottom: 8px;
+        }
+        
+        .migration-success .text {
+            color: #155724;
+            font-size: 14px;
+        }
+        
+        .arrow {
+            text-align: center;
+            font-size: 24px;
+            color: #007bff;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <h1 style="text-align: center; color: #333; margin-bottom: 30px;">🔄 Умная миграция лайков</h1>
+        
+        <div class="step">
+            <div class="step-number">1</div>
+            <div class="step-content">
+                <div class="step-title">Гостевой пользователь ставит лайк</div>
+                <div class="step-description">Без регистрации, просто кликнув на сердечко</div>
+            </div>
+        </div>
+        
+        <div class="result-item">
+            <div class="result-title">Топ-10 лучших ресторанов Москвы 2024</div>
+            <div class="result-description">
+                Полный гид по лучшим ресторанам столицы. Рейтинг составлен на основе отзывов посетителей.
+            </div>
+            <div class="like-badge liked">
+                ❤ 1 <span class="subcount">(✓ 0)</span>
+            </div>
+            <span class="status-badge status-guest">Гостевой лайк</span>
+        </div>
+        
+        <div class="arrow">⬇️</div>
+        
+        <div class="step">
+            <div class="step-number">2</div>
+            <div class="step-content">
+                <div class="step-title">Пользователь регистрируется</div>
+                <div class="step-description">Создаёт аккаунт на Serpmonn</div>
+            </div>
+        </div>
+        
+        <div class="arrow">⬇️</div>
+        
+        <div class="step">
+            <div class="step-number">3</div>
+            <div class="step-content">
+                <div class="step-title">Автоматическая миграция</div>
+                <div class="step-description">Гостевой лайк превращается в авторизованный</div>
+            </div>
+        </div>
+        
+        <div class="result-item">
+            <div class="result-title">Топ-10 лучших ресторанов Москвы 2024</div>
+            <div class="result-description">
+                Полный гид по лучшим ресторанам столицы. Рейтинг составлен на основе отзывов посетителей.
+            </div>
+            <div class="like-badge liked">
+                ❤ 1 <span class="subcount">(✓ 1)</span>
+            </div>
+            <span class="status-badge status-auth">Авторизованный лайк</span>
+        </div>
+        
+        <div class="migration-success">
+            <div class="title">🎉 Миграция успешна!</div>
+            <div class="text">
+                Ваш гостевой лайк автоматически превратился в авторизованный. 
+                Теперь он имеет больший вес в системе и отображается как "подтверждённый".
+            </div>
+        </div>
+    </div>
+    
+    <div class="demo-container">
+        <h2 style="color: #333; margin-bottom: 20px;">💡 Преимущества авторизованных лайков</h2>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+            <div style="text-align: center; padding: 15px; background: #e3f2fd; border-radius: 8px;">
+                <div style="font-size: 20px; margin-bottom: 8px;">⚖️</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">Больший вес</div>
+                <div style="font-size: 12px; color: #666;">Авторизованные лайки влияют на ранжирование сильнее</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: #e8f5e8; border-radius: 8px;">
+                <div style="font-size: 20px; margin-bottom: 8px;">🔒</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">Надёжность</div>
+                <div style="font-size: 12px; color: #666;">Защита от спама и накрутки</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: #fff3e0; border-radius: 8px;">
+                <div style="font-size: 20px; margin-bottom: 8px;">📊</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">Аналитика</div>
+                <div style="font-size: 12px; color: #666;">Отслеживание ваших предпочтений</div>
+            </div>
+            <div style="text-align: center; padding: 15px; background: #fce4ec; border-radius: 8px;">
+                <div style="font-size: 20px; margin-bottom: 8px;">🎯</div>
+                <div style="font-weight: 600; margin-bottom: 5px;">Персонализация</div>
+                <div style="font-size: 12px; color: #666;">Улучшенные рекомендации</div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
