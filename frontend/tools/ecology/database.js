@@ -204,6 +204,262 @@ const ECO_DATABASE = {
         ecoRating: 6,
         alternatives: ["семена", "бобовые"],
         description: "Хороший источник белка, но высокий водный след"
+    },
+    
+    // Дополнительные мясные продукты
+    turkey: {
+        name: "Индейка",
+        carbonFootprint: 10.9,
+        waterFootprint: 4325,
+        landFootprint: 45.2,
+        category: "meat",
+        ecoRating: 4,
+        alternatives: ["курица", "растительные белки"],
+        description: "Более экологичная альтернатива говядине"
+    },
+    duck: {
+        name: "Утка",
+        carbonFootprint: 12.1,
+        waterFootprint: 3847,
+        landFootprint: 38.9,
+        category: "meat",
+        ecoRating: 4,
+        alternatives: ["курица", "индейка"],
+        description: "Средний экологический след среди мяса птицы"
+    },
+    
+    // Молочные продукты
+    cheese: {
+        name: "Сыр",
+        carbonFootprint: 13.5,
+        waterFootprint: 3178,
+        landFootprint: 41.5,
+        category: "dairy",
+        ecoRating: 4,
+        alternatives: ["растительные сыры", "орехи"],
+        description: "Высокий углеродный след из-за производства"
+    },
+    butter: {
+        name: "Масло сливочное",
+        carbonFootprint: 12.1,
+        waterFootprint: 5553,
+        landFootprint: 35.2,
+        category: "dairy",
+        ecoRating: 4,
+        alternatives: ["растительные масла", "авокадо"],
+        description: "Концентрированный молочный продукт"
+    },
+    yogurt: {
+        name: "Йогурт",
+        carbonFootprint: 3.2,
+        waterFootprint: 1335,
+        landFootprint: 8.9,
+        category: "dairy",
+        ecoRating: 6,
+        alternatives: ["растительные йогурты", "кефир"],
+        description: "Относительно низкий экологический след"
+    },
+    
+    // Рыба и морепродукты
+    salmon: {
+        name: "Лосось",
+        carbonFootprint: 11.9,
+        waterFootprint: 0,
+        landFootprint: 0,
+        category: "fish",
+        ecoRating: 5,
+        alternatives: ["растительные омега-3", "льняное семя"],
+        description: "Хороший источник белка, но проблемы с переловом"
+    },
+    tuna: {
+        name: "Тунец",
+        carbonFootprint: 6.1,
+        waterFootprint: 0,
+        landFootprint: 0,
+        category: "fish",
+        ecoRating: 6,
+        alternatives: ["другие виды рыбы", "растительные белки"],
+        description: "Популярная рыба, но проблемы с устойчивостью"
+    },
+    shrimp: {
+        name: "Креветки",
+        carbonFootprint: 18.2,
+        waterFootprint: 0,
+        landFootprint: 0,
+        category: "seafood",
+        ecoRating: 3,
+        alternatives: ["растительные белки", "другие морепродукты"],
+        description: "Очень высокий углеродный след из-за аквакультуры"
+    },
+    
+    // Овощи
+    tomatoes: {
+        name: "Помидоры",
+        carbonFootprint: 2.2,
+        waterFootprint: 214,
+        landFootprint: 1.4,
+        category: "vegetables",
+        ecoRating: 8,
+        alternatives: ["сезонные овощи", "консервированные помидоры"],
+        description: "Низкий экологический след, особенно сезонные"
+    },
+    cucumbers: {
+        name: "Огурцы",
+        carbonFootprint: 0.3,
+        waterFootprint: 353,
+        landFootprint: 0.3,
+        category: "vegetables",
+        ecoRating: 9,
+        alternatives: ["сезонные овощи", "кабачки"],
+        description: "Очень низкий экологический след"
+    },
+    carrots: {
+        name: "Морковь",
+        carbonFootprint: 0.4,
+        waterFootprint: 131,
+        landFootprint: 0.3,
+        category: "vegetables",
+        ecoRating: 9,
+        alternatives: ["сезонные корнеплоды", "свекла"],
+        description: "Отличный выбор для экологии"
+    },
+    potatoes: {
+        name: "Картофель",
+        carbonFootprint: 0.2,
+        waterFootprint: 287,
+        landFootprint: 0.3,
+        category: "vegetables",
+        ecoRating: 9,
+        alternatives: ["сладкий картофель", "другие корнеплоды"],
+        description: "Один из самых экологичных продуктов"
+    },
+    
+    // Фрукты
+    oranges: {
+        name: "Апельсины",
+        carbonFootprint: 0.9,
+        waterFootprint: 560,
+        landFootprint: 0.3,
+        category: "fruits",
+        ecoRating: 8,
+        alternatives: ["местные фрукты", "сезонные цитрусовые"],
+        description: "Хороший выбор, особенно местные сорта"
+    },
+    grapes: {
+        name: "Виноград",
+        carbonFootprint: 0.3,
+        waterFootprint: 590,
+        landFootprint: 0.2,
+        category: "fruits",
+        ecoRating: 8,
+        alternatives: ["сезонные ягоды", "местные фрукты"],
+        description: "Низкий экологический след"
+    },
+    strawberries: {
+        name: "Клубника",
+        carbonFootprint: 0.4,
+        waterFootprint: 280,
+        landFootprint: 0.2,
+        category: "fruits",
+        ecoRating: 8,
+        alternatives: ["сезонные ягоды", "местные фрукты"],
+        description: "Хороший выбор в сезон"
+    },
+    
+    // Зерновые и бобовые
+    rice: {
+        name: "Рис",
+        carbonFootprint: 4.0,
+        waterFootprint: 2497,
+        landFootprint: 2.8,
+        category: "grains",
+        ecoRating: 6,
+        alternatives: ["киноа", "булгур", "другие зерновые"],
+        description: "Высокий водный след, но важный продукт"
+    },
+    quinoa: {
+        name: "Киноа",
+        carbonFootprint: 1.8,
+        waterFootprint: 562,
+        landFootprint: 1.1,
+        category: "grains",
+        ecoRating: 8,
+        alternatives: ["булгур", "гречка", "другие псевдозерновые"],
+        description: "Отличный экологический профиль"
+    },
+    lentils: {
+        name: "Чечевица",
+        carbonFootprint: 0.9,
+        waterFootprint: 5874,
+        landFootprint: 3.4,
+        category: "legumes",
+        ecoRating: 8,
+        alternatives: ["фасоль", "горох", "нут"],
+        description: "Отличный источник белка с низким углеродным следом"
+    },
+    chickpeas: {
+        name: "Нут",
+        carbonFootprint: 2.0,
+        waterFootprint: 4335,
+        landFootprint: 2.9,
+        category: "legumes",
+        ecoRating: 8,
+        alternatives: ["фасоль", "чечевица", "горох"],
+        description: "Питательный и экологичный продукт"
+    },
+    
+    // Напитки
+    coffee: {
+        name: "Кофе",
+        carbonFootprint: 16.5,
+        waterFootprint: 18900,
+        landFootprint: 12.5,
+        category: "beverages",
+        ecoRating: 4,
+        alternatives: ["чай", "цикорий", "растительные напитки"],
+        description: "Высокий экологический след, особенно при транспортировке"
+    },
+    tea: {
+        name: "Чай",
+        carbonFootprint: 5.0,
+        waterFootprint: 8860,
+        landFootprint: 3.3,
+        category: "beverages",
+        ecoRating: 6,
+        alternatives: ["местные травы", "цикорий"],
+        description: "Лучше кофе по экологическим показателям"
+    },
+    wine: {
+        name: "Вино",
+        carbonFootprint: 1.8,
+        waterFootprint: 1090,
+        landFootprint: 0.3,
+        category: "beverages",
+        ecoRating: 7,
+        alternatives: ["местные напитки", "безалкогольные варианты"],
+        description: "Относительно низкий экологический след"
+    },
+    
+    // Сладости и закуски
+    chocolate: {
+        name: "Шоколад",
+        carbonFootprint: 19.0,
+        waterFootprint: 17196,
+        landFootprint: 15.0,
+        category: "sweets",
+        ecoRating: 3,
+        alternatives: ["фрукты", "орехи", "растительные десерты"],
+        description: "Очень высокий экологический след"
+    },
+    sugar: {
+        name: "Сахар",
+        carbonFootprint: 3.0,
+        waterFootprint: 1789,
+        landFootprint: 0.3,
+        category: "sweets",
+        ecoRating: 6,
+        alternatives: ["мед", "стевия", "фрукты"],
+        description: "Умеренный экологический след"
     }
 };
 
