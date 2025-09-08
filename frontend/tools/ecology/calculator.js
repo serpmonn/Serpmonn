@@ -141,9 +141,10 @@ class EcoFootprintCalculator {
         productSelect.value = '';
         quantityInput.value = '';
         
-        // Пересчитываем
-        this.calculateFootprint();
+        // Обновляем отображение выбранных продуктов (расчет по кнопке)
         this.displaySelectedProducts();
+        // Обновляем подсказку единиц после очистки формы
+        this.updateUnitDisplay();
         
         console.log('Добавлен продукт:', product.name, quantity, unit);
     }
