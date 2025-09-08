@@ -60,12 +60,6 @@ class EcoFootprintCalculator {
         
         html += `</select>
             <input type="number" class="quantity-input" placeholder="Количество" min="0" step="0.1">
-            <select class="unit-select">
-                <option value="kg">кг</option>
-                <option value="g">г</option>
-                <option value="l">л</option>
-                <option value="ml">мл</option>
-            </select>
             <button class="add-btn" onclick="addProduct()">Добавить</button>
         </div>`;
 
@@ -94,49 +88,90 @@ class EcoFootprintCalculator {
 
 
     /**
-     * Добавить новый продукт в корзину
+     * Добавить продукт в расчет
      */
     addProduct() {
-        const container = document.getElementById('products-container');
-        const productRow = document.createElement('div');
-        productRow.className = 'product-row';
+        const productSelect = document.querySelector('.product-select');
+        const quantityInput = document.querySelector('.quantity-input');
         
-        productRow.innerHTML = `
-            <select class="product-select" data-product="">
-                <option value="">Выберите продукт...</option>
-                <option value="beef">Говядина</option>
-                <option value="lamb">Баранина</option>
-                <option value="pork">Свинина</option>
-                <option value="chicken">Курица</option>
-                <option value="fish">Рыба</option>
-                <option value="eggs">Яйца</option>
-                <option value="milk">Молоко</option>
-                <option value="cheese">Сыр</option>
-                <option value="rice">Рис</option>
-                <option value="wheat">Пшеница</option>
-                <option value="potatoes">Картофель</option>
-                <option value="tomatoes">Помидоры</option>
-                <option value="apples">Яблоки</option>
-                <option value="bananas">Бананы</option>
-                <option value="coffee">Кофе</option>
-                <option value="chocolate">Шоколад</option>
-                <option value="nuts">Орехи</option>
-                <option value="vegetables">Овощи (смешанные)</option>
-                <option value="fruits">Фрукты (смешанные)</option>
-            </select>
-            <input type="number" class="quantity-input" placeholder="Количество" min="0" step="0.1" value="1">
-            <select class="unit-select">
-                <option value="kg">кг</option>
-                <option value="g">г</option>
-                <option value="l">л</option>
-                <option value="ml">мл</option>
-                <option value="pieces">шт</option>
-            </select>
-            <button class="remove-btn" onclick="removeProduct(this)">🗑️</button>
-        `;
+        if (!productSelect || !quantityInput) {
+            console.error('Элементы формы не найдены');
+            return;
+        }
+        
+        const productId = productSelect.value;
+        const quantity = parseFloat(quantityInput.value);
+        
+        if (!productId || !quantity || quantity <= 0) {
+            alert('Пожалуйста, выберите продукт и введите количество');
+            return;
+        }
+        
+        const product = ECO_DATABASE[productId];
+        if (!product) {
+            console.error('Продукт не найден:', productId);
+            return;
+        }
+        
+        // Автоматически определяем единицы измерения
+        let unit = 'kg'; // по умолчанию килограммы
+        
+        // Для жидкостей используем литры
+        if (product.category === 'beverages' || productId === 'milk') {
+            unit = 'l';
+        }
+        // Для мелких продуктов используем граммы
+        else if (productId === 'eggs' || productId === 'chocolate' || productId === 'sugar') {
+            unit = 'g';
+        }
+        
+        // Добавляем продукт в список
+        this.products.push({
+            id: productId,
+            name: product.name,
+            quantity: quantity,
+            unit: unit
+        });
+        
+        // Очищаем форму
+        productSelect.value = '';
+        quantityInput.value = '';
+        
+        // Пересчитываем
+        this.calculateFootprint();
+        this.displaySelectedProducts();
+        
+        console.log('Добавлен продукт:', product.name, quantity, unit);
+    }
 
-        container.appendChild(productRow);
-        this.updateRemoveButtons();
+    /**
+     * Отобразить выбранные продукты
+     */
+    displaySelectedProducts() {
+        const container = document.getElementById('products-container');
+        
+        if (this.products.length === 0) {
+            return;
+        }
+        
+        // Создаем HTML для отображения выбранных продуктов
+        let selectedHtml = '<div class="selected-products"><h3>Выбранные продукты:</h3>';
+        
+        this.products.forEach((product, index) => {
+            selectedHtml += `<div class="selected-product">
+                <span>${product.name} - ${product.quantity} ${product.unit}</span>
+                <button onclick="removeSelectedProduct(${index})">Удалить</button>
+            </div>`;
+        });
+        
+        selectedHtml += '</div>';
+        
+        // Добавляем после основной формы
+        const existingSelected = container.querySelector('.selected-products');
+        if (existingSelected) {
+            existingSelected.remove();
+        }
+        container.insertAdjacentHTML('beforeend', selectedHtml);
     }
 
     /**
@@ -534,6 +569,14 @@ window.shareResults = function(platform) {
         window.ecoCalculator.shareResults(platform);
     } else {
         console.error('Калькулятор не инициализирован');
+    }
+};
+
+window.removeSelectedProduct = function(index) {
+    if (window.ecoCalculator) {
+        window.ecoCalculator.products.splice(index, 1);
+        window.ecoCalculator.displaySelectedProducts();
+        window.ecoCalculator.calculateFootprint();
     }
 };
 
