@@ -35,24 +35,24 @@ const seoData = {
       description: "Opdag Serpmonn - din gratis søgemaskine med seneste nyheder, mini-spil og nyttige værktøjer. Hurtig, enkel og reklamefri."
     },
     de: {
-      title: "Serpmonn - Kostenlose Suchmaschine, Nachrichten & Mini-Spiele",
-      description: "Entdecken Sie Serpmonn - Ihre kostenlose Suchmaschine mit aktuellen Nachrichten, Mini-Spielen und nützlichen Tools. Schnell, einfach und werbefrei."
+      title: "Serpmonn - Intelligente Suchmaschine, Nachrichten & Mini-Spiele",
+      description: "Entdecken Sie Serpmonn - Ihre intelligente Suchmaschine mit aktuellen Nachrichten, Mini-Spielen und nützlichen Tools. Schnell, einfach und werbefrei."
     },
     el: {
       title: "Serpmonn - Δωρεάν μηχανή αναζήτησης, ειδήσεις και μίνι παιχνίδια",
       description: "Ανακαλύψτε το Serpmonn - τη δωρεάν μηχανή αναζήτησής σας με τις τελευταίες ειδήσεις, μίνι παιχνίδια και χρήσιμα εργαλεία. Γρήγορο, απλό και χωρίς διαφημίσεις."
     },
     en: {
-      title: "Serpmonn - Free Search Engine, News & Mini Games Platform",
-      description: "Discover Serpmonn - your free search engine with latest news, mini-games, and useful tools. Fast, simple, and ad-free search experience for everyone."
+      title: "Serpmonn - Smart Search Engine, News & Mini Games Platform",
+      description: "Discover Serpmonn - your smart search engine with latest news, mini-games, and useful tools. Fast, simple, and ad-free search experience for everyone."
     },
     es: {
-      title: "Serpmonn - Motor de Búsqueda Gratuito, Noticias & Mini-Juegos",
-      description: "Descubre Serpmonn - tu motor de búsqueda gratuito con noticias, mini-juegos y herramientas útiles. Rápido, simple y sin publicidad."
+      title: "Serpmonn - Motor de Búsqueda Inteligente, Noticias & Mini-Juegos",
+      description: "Descubre Serpmonn - tu motor de búsqueda inteligente con noticias, mini-juegos y herramientas útiles. Rápido, simple y sin publicidad."
     },
     'es-419': {
-      title: "Serpmonn - Motor de Búsqueda Gratuito, Noticias & Mini-Juegos",
-      description: "Descubre Serpmonn - tu motor de búsqueda gratuito con noticias, mini-juegos y herramientas útiles. Rápido, simple y sin publicidad."
+      title: "Serpmonn - Motor de Búsqueda Inteligente, Noticias & Mini-Juegos",
+      description: "Descubre Serpmonn - tu motor de búsqueda inteligente con noticias, mini-juegos y herramientas útiles. Rápido, simple y sin publicidad."
     },
     fa: {
       title: "Serpmonn - موتور جستجوی رایگان، اخبار و بازی‌های کوچک",
@@ -63,8 +63,8 @@ const seoData = {
       description: "Löydä Serpmonn - ilmainen hakukoneesi uusimmilla uutisilla, mini-peleillä ja hyödyllisillä työkaluilla. Nopea, yksinkertainen ja mainokseton."
     },
     fr: {
-      title: "Serpmonn - Moteur de Recherche Gratuit, Actualités & Mini-Jeux",
-      description: "Découvrez Serpmonn - votre moteur de recherche gratuit avec actualités, mini-jeux et outils utiles. Rapide, simple et sans publicité."
+      title: "Serpmonn - Moteur de Recherche Intelligent, Actualités & Mini-Jeux",
+      description: "Découvrez Serpmonn - votre moteur de recherche intelligent avec actualités, mini-jeux et outils utiles. Rapide, simple et sans publicité."
     },
     he: {
       title: "Serpmonn - מנוע חיפוש חינמי, חדשות ומשחקים קטנים",
@@ -135,8 +135,8 @@ const seoData = {
       description: "Descoperă Serpmonn - motorul tău de căutare gratuit cu ultimele știri, mini jocuri și instrumente utile. Rapid, simplu și fără reclame."
     },
     ru: {
-      title: "Serpmonn - Бесплатная поисковая система, новости и мини-игры",
-      description: "Откройте Serpmonn - вашу бесплатную поисковую систему с последними новостями, мини-играми и полезными инструментами. Быстро, просто и без рекламы."
+      title: "Serpmonn - Умная поисковая система, новости и мини-игры",
+      description: "Откройте Serpmonn - вашу умную поисковую систему с последними новостями, мини-играми и полезными инструментами. Быстро, просто и без рекламы."
     },
     sr: {
       title: "Serpmonn - Besplatna pretraživačka, vesti i mini igre",
