@@ -21,9 +21,9 @@ class EcoFootprintCalculator {
         // Обработчики для динамически добавляемых элементов
         document.addEventListener('change', (e) => {
             if (e.target.classList.contains('product-select') || 
-                e.target.classList.contains('quantity-input') || 
-                e.target.classList.contains('unit-select')) {
-                this.updateProductData();
+                e.target.classList.contains('quantity-input')) {
+                // Автоматически показываем единицы измерения при выборе продукта
+                this.updateUnitDisplay();
             }
         });
 
@@ -60,8 +60,12 @@ class EcoFootprintCalculator {
         
         html += `</select>
             <input type="number" class="quantity-input" placeholder="Количество" min="0" step="0.1">
+            <span class="unit-display"></span>
             <button class="add-btn" onclick="addProduct()">Добавить</button>
-        </div>`;
+        </div>
+        <button class="calculate-btn" onclick="calculateFootprint()">
+            🌍 Рассчитать экологический след
+        </button>`;
 
         container.innerHTML = html;
     }
@@ -181,7 +185,6 @@ class EcoFootprintCalculator {
         const productRow = button.closest('.product-row');
         productRow.remove();
         this.updateRemoveButtons();
-        this.updateProductData();
     }
 
     /**
@@ -200,39 +203,38 @@ class EcoFootprintCalculator {
     }
 
     /**
-     * Обновить данные о продуктах
+     * Обновить отображение единиц измерения
      */
-    updateProductData() {
-        this.products = [];
-        const productRows = document.querySelectorAll('.product-row');
+    updateUnitDisplay() {
+        const productSelect = document.querySelector('.product-select');
+        const unitDisplay = document.querySelector('.unit-display');
         
-        productRows.forEach(row => {
-            const productSelect = row.querySelector('.product-select');
-            const quantityInput = row.querySelector('.quantity-input');
-            const unitSelect = row.querySelector('.unit-select');
-            
-            if (productSelect.value && quantityInput.value) {
-                const quantity = parseFloat(quantityInput.value);
-                const unit = unitSelect.value;
-                const productId = productSelect.value;
-                
-                if (quantity > 0) {
-                    this.products.push({
-                        id: productId,
-                        quantity: quantity,
-                        unit: unit
-                    });
-                }
-            }
-        });
+        if (!productSelect || !unitDisplay) return;
+        
+        const productId = productSelect.value;
+        if (!productId) {
+            unitDisplay.textContent = '';
+            return;
+        }
+        
+        const product = ECO_DATABASE[productId];
+        if (!product) return;
+        
+        // Определяем единицы измерения
+        let unit = 'кг';
+        if (product.category === 'beverages' || productId === 'milk') {
+            unit = 'л';
+        } else if (productId === 'eggs' || productId === 'chocolate' || productId === 'sugar') {
+            unit = 'г';
+        }
+        
+        unitDisplay.textContent = `Единица: ${unit}`;
     }
 
     /**
      * Рассчитать экологический след
      */
     async calculateFootprint() {
-        this.updateProductData();
-        
         if (this.products.length === 0) {
             this.showError('Пожалуйста, добавьте хотя бы один продукт');
             return;
