@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Персонализированная Вселенная - SerpMonn</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: white;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .ai-universe-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .ai-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .ai-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .ai-card h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+        }
+
+        .ai-card p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .search-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .search-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .search-button:hover {
+            transform: scale(1.05);
+        }
+
+        .results-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+            display: none;
+        }
+
+        .result-item {
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 15px;
+            background: #f8f9ff;
+            border-radius: 0 10px 10px 0;
+        }
+
+        .result-title {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .result-description {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .personalization-info {
+            background: #e8f2ff;
+            border: 1px solid #b3d9ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+
+        .personalization-info h4 {
+            color: #0066cc;
+            margin-bottom: 10px;
+        }
+
+        .recommendations-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .recommendation-item {
+            background: #f0f8ff;
+            border: 1px solid #d0e7ff;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .recommendation-item:hover {
+            background: #e0f0ff;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .stats-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: #f8f9ff;
+            border-radius: 10px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .error {
+            background: #ffe6e6;
+            border: 1px solid #ff9999;
+            color: #cc0000;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .success {
+            background: #e6ffe6;
+            border: 1px solid #99ff99;
+            color: #006600;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .ai-universe-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🧠 AI-Персонализированная Вселенная</h1>
+            <p>Ваш персональный AI-помощник, который изучает и адаптируется под вас</p>
+        </div>
+
+        <div class="ai-universe-grid">
+            <div class="ai-card">
+                <h3>🔍 Персональный Поиск</h3>
+                <p>AI анализирует ваши запросы и предоставляет результаты, адаптированные под ваши интересы и предпочтения.</p>
+            </div>
+            
+            <div class="ai-card">
+                <h3>📊 Анализ Поведения</h3>
+                <p>Система изучает ваши действия, интересы и паттерны поведения для создания уникального профиля.</p>
+            </div>
+            
+            <div class="ai-card">
+                <h3>🎯 Умные Рекомендации</h3>
+                <p>Получайте персональные рекомендации контента, игр и функций на основе вашего профиля.</p>
+            </div>
+            
+            <div class="ai-card">
+                <h3>🎮 Адаптивные Игры</h3>
+                <p>Игры, которые меняют сложность и механики в зависимости от вашего стиля игры.</p>
+            </div>
+        </div>
+
+        <div class="search-section">
+            <h3>🔍 Персонализированный Поиск</h3>
+            <input type="text" id="searchInput" class="search-input" placeholder="Введите ваш поисковый запрос...">
+            <button onclick="performPersonalizedSearch()" class="search-button">Найти с AI-персонализацией</button>
+        </div>
+
+        <div id="resultsSection" class="results-section">
+            <h3>🎯 Персонализированные Результаты</h3>
+            <div id="searchResults"></div>
+        </div>
+
+        <div class="recommendations-section">
+            <h3>💡 Персональные Рекомендации</h3>
+            <button onclick="loadRecommendations()" class="search-button">Загрузить рекомендации</button>
+            <div id="recommendationsList"></div>
+        </div>
+
+        <div class="stats-section">
+            <h3>📈 Ваша AI-Статистика</h3>
+            <button onclick="loadUserStats()" class="search-button">Обновить статистику</button>
+            <div id="userStats" class="stats-grid"></div>
+        </div>
+    </div>
+
+    <script>
+        const AI_UNIVERSE_API = 'http://localhost:3600/api/ai-universe';
+        const USER_ID = 1; // В реальном приложении получать из сессии
+
+        // Функция для выполнения персонализированного поиска
+        async function performPersonalizedSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            if (!query) {
+                showError('Пожалуйста, введите поисковый запрос');
+                return;
+            }
+
+            showLoading('resultsSection');
+            
+            try {
+                // Сначала анализируем поведение пользователя
+                await analyzeUserBehavior('search_query', { query });
+                
+                // Выполняем персонализированный поиск
+                const response = await fetch(`${AI_UNIVERSE_API}/personalized-search`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        userId: USER_ID,
+                        query: query,
+                        searchResults: [] // В реальном приложении здесь будут результаты от поисковика
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayPersonalizedResults(data);
+                } else {
+                    showError('Ошибка при выполнении поиска: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Ошибка поиска:', error);
+                showError('Произошла ошибка при выполнении поиска');
+            }
+        }
+
+        // Функция для анализа поведения пользователя
+        async function analyzeUserBehavior(actionType, data) {
+            try {
+                await fetch(`${AI_UNIVERSE_API}/analyze-behavior`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        userId: USER_ID,
+                        actionType: actionType,
+                        data: data
+                    })
+                });
+            } catch (error) {
+                console.error('Ошибка анализа поведения:', error);
+            }
+        }
+
+        // Функция для отображения персонализированных результатов
+        function displayPersonalizedResults(data) {
+            const resultsSection = document.getElementById('resultsSection');
+            const resultsContainer = document.getElementById('searchResults');
+            
+            resultsSection.style.display = 'block';
+            
+            let html = '';
+            
+            if (data.personalizedResults && data.personalizedResults.length > 0) {
+                data.personalizedResults.forEach((result, index) => {
+                    html += `
+                        <div class="result-item">
+                            <div class="result-title">Результат ${index + 1} (Оценка: ${result.personalized_score}/10)</div>
+                            <div class="result-description">${result.personalized_description}</div>
+                            <div class="personalization-info">
+                                <h4>🤖 Почему это подходит вам:</h4>
+                                <p>${result.personal_reason}</p>
+                                <p><strong>Теги:</strong> ${result.personal_tags ? result.personal_tags.join(', ') : 'Нет тегов'}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+            } else {
+                html = '<p>Результаты не найдены. Попробуйте другой запрос.</p>';
+            }
+            
+            if (data.recommendations && data.recommendations.length > 0) {
+                html += '<h4>💡 Рекомендации по вашему запросу:</h4>';
+                data.recommendations.forEach(rec => {
+                    html += `
+                        <div class="recommendation-item">
+                            <strong>${rec.title}</strong><br>
+                            <small>${rec.description}</small>
+                        </div>
+                    `;
+                });
+            }
+            
+            resultsContainer.innerHTML = html;
+        }
+
+        // Функция для загрузки рекомендаций
+        async function loadRecommendations() {
+            showLoading('recommendationsList');
+            
+            try {
+                const response = await fetch(`${AI_UNIVERSE_API}/recommendations/${USER_ID}?context=general`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayRecommendations(data.recommendations);
+                } else {
+                    showError('Ошибка загрузки рекомендаций: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки рекомендаций:', error);
+                showError('Произошла ошибка при загрузке рекомендаций');
+            }
+        }
+
+        // Функция для отображения рекомендаций
+        function displayRecommendations(recommendations) {
+            const container = document.getElementById('recommendationsList');
+            
+            if (recommendations && recommendations.length > 0) {
+                let html = '';
+                recommendations.forEach(rec => {
+                    html += `
+                        <div class="recommendation-item">
+                            <h4>${rec.title}</h4>
+                            <p>${rec.description}</p>
+                            <small><strong>Тип:</strong> ${rec.type} | <strong>Релевантность:</strong> ${rec.personal_relevance}</small>
+                        </div>
+                    `;
+                });
+                container.innerHTML = html;
+            } else {
+                container.innerHTML = '<p>Рекомендации не найдены. Попробуйте позже.</p>';
+            }
+        }
+
+        // Функция для загрузки статистики пользователя
+        async function loadUserStats() {
+            showLoading('userStats');
+            
+            try {
+                const response = await fetch(`${AI_UNIVERSE_API}/user-profile/${USER_ID}`);
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayUserStats(data.profile);
+                } else {
+                    showError('Ошибка загрузки статистики: ' + data.error);
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки статистики:', error);
+                showError('Произошла ошибка при загрузке статистики');
+            }
+        }
+
+        // Функция для отображения статистики пользователя
+        function displayUserStats(profile) {
+            const container = document.getElementById('userStats');
+            
+            let html = '';
+            
+            if (profile.personality_traits) {
+                html += `
+                    <div class="stat-item">
+                        <div class="stat-number">${Object.keys(profile.personality_traits).length}</div>
+                        <div class="stat-label">Черты личности</div>
+                    </div>
+                `;
+            }
+            
+            if (profile.interests) {
+                html += `
+                    <div class="stat-item">
+                        <div class="stat-number">${profile.interests.length}</div>
+                        <div class="stat-label">Интересы</div>
+                    </div>
+                `;
+            }
+            
+            html += `
+                <div class="stat-item">
+                    <div class="stat-number">${profile.emotional_state || 'Нейтральное'}</div>
+                    <div class="stat-label">Эмоциональное состояние</div>
+                </div>
+            `;
+            
+            html += `
+                <div class="stat-item">
+                    <div class="stat-number">${profile.learning_style || 'Визуальный'}</div>
+                    <div class="stat-label">Стиль обучения</div>
+                </div>
+            `;
+            
+            container.innerHTML = html;
+        }
+
+        // Вспомогательные функции
+        function showLoading(containerId) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>AI анализирует данные...</p>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            const container = document.getElementById('resultsSection');
+            container.style.display = 'block';
+            container.innerHTML = `
+                <div class="error">
+                    <strong>Ошибка:</strong> ${message}
+                </div>
+            `;
+        }
+
+        function showSuccess(message) {
+            const container = document.getElementById('resultsSection');
+            container.style.display = 'block';
+            container.innerHTML = `
+                <div class="success">
+                    <strong>Успех:</strong> ${message}
+                </div>
+            `;
+        }
+
+        // Обработка нажатия Enter в поле поиска
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performPersonalizedSearch();
+            }
+        });
+
+        // Загрузка начальных данных при загрузке страницы
+        window.addEventListener('load', function() {
+            loadRecommendations();
+            loadUserStats();
+        });
+    </script>
+</body>
+</html>
