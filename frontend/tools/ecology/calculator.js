@@ -321,7 +321,7 @@ class EcoFootprintCalculator {
      * Отобразить сравнения с альтернативами
      */
     displayComparisons() {
-        const comparisonContainer = document.getElementById('comparison-results');
+        let comparisonContainer = document.getElementById('comparison-results');
         
         if (!comparisonContainer) {
             // Создаем элемент если его нет
@@ -361,7 +361,7 @@ class EcoFootprintCalculator {
      * Отобразить рекомендации
      */
     displayRecommendations() {
-        const recommendationsContainer = document.getElementById('recommendations-list');
+        let recommendationsContainer = document.getElementById('recommendations-list');
         
         if (!recommendationsContainer) {
             // Создаем элемент если его нет
