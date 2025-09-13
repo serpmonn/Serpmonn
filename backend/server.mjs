@@ -39,6 +39,8 @@ import likesRoutes from './likes/likesRoutes.mjs';
   // Импорт маршрутов лайков
 import analyticsRoutes from './analytics/analyticsRoutes.mjs';
   // Импорт маршрутов аналитики
+import gameAnalyticsRoutes from './analytics/gameAnalytics.mjs';
+  // Импорт маршрутов аналитики игр
 
 
 const app = express();
@@ -135,6 +137,9 @@ app.use('/api/likes', likesRoutes);
 
 // Аналитика лайков (статистика конверсии гостевых в авторизованные)
 app.use('/api/analytics/likes', analyticsRoutes);
+
+// Аналитика игр
+app.use('/api/analytics/game', gameAnalyticsRoutes);
 
 app.use((err, req, res, next) => {
   // Обработчик ошибок (после всех роутов)
