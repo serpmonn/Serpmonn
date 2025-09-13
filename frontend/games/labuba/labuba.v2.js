@@ -4,12 +4,12 @@
 */
 
 (() => {
-  const API_BASE = 'https://serpmonn.ru:3000';
+  const API_BASE = '';
   const ANALYTICS_BASE = '/api/analytics/game';
 
   function postScore(nickname, score) {
     try {
-      return fetch(`${API_BASE}/add-score`, {
+      return fetch(`/add-score`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nickname, score, gameId: 'labuba' })
