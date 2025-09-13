@@ -162,7 +162,9 @@
 
       // Spawner
       const baseDelay = 900 / MOODS[this.moodIndex].hazardMul;
-      this.spawnTimer = this.time.addEvent({ delay: baseDelay, loop: true, callback: () => this.spawnObstacle() });
+      this.spawnTimer = this.time.addEvent({ delay: baseDelay, loop: true, callback: this.spawnObstacle, callbackScope: this });
+      // ensure immediate first obstacle
+      this.spawnObstacle();
 
       // Keys handlers
       this.input.keyboard.on('keydown-M', () => this.changeMood());
@@ -179,7 +181,7 @@
       this.moodText.setText(`Mood: ${mood.label}`);
       if (this.spawnTimer) this.spawnTimer.remove(false);
       const newDelay = 900 / mood.hazardMul;
-      this.spawnTimer = this.time.addEvent({ delay: newDelay, loop: true, callback: () => this.spawnObstacle() });
+      this.spawnTimer = this.time.addEvent({ delay: newDelay, loop: true, callback: this.spawnObstacle, callbackScope: this });
     }
 
     spawnObstacle() {
