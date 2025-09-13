@@ -4,14 +4,25 @@
 */
 
 (() => {
-  const API_BASE = 'https://serpmonn.ru:3000';
+  const API_BASE = '';
+  const ANALYTICS_BASE = '/api/analytics/game';
 
   function postScore(nickname, score) {
     try {
-      return fetch(`${API_BASE}/add-score`, {
+      return fetch(`/add-score`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nickname, score })
+        body: JSON.stringify({ nickname, score, gameId: 'labuba' })
+      }).catch(() => {});
+    } catch {}
+  }
+
+  function sendEvent(type, payload) {
+    try {
+      fetch(`${ANALYTICS_BASE}/event`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ gameId: 'labuba', type, ...payload })
       }).catch(() => {});
     } catch {}
   }
@@ -65,6 +76,7 @@
       this.moodIndex = 0; // start with fun
 
       this.physics.world.setBounds(0, 0, width, height);
+      sendEvent('game_start', { seed: DAILY_SEED });
 
       // player
       const playerSize = 22;
@@ -119,6 +131,7 @@
       if (this.isGameOver) return;
       this.moodIndex = (this.moodIndex + 1) % MOODS.length;
       const mood = MOODS[this.moodIndex];
+      sendEvent('mood_switch', { mood: mood.key });
       this.player.fillColor = mood.color;
       this.moodText.setText(`Mood: ${mood.label}`);
       // adjust spawn rate
@@ -204,6 +217,7 @@
 
       const nickname = `Labuba#${(Math.random()*1e6|0).toString(36)}`;
       postScore(nickname, this.score);
+      sendEvent('session_end', { score: this.score, seed: DAILY_SEED });
     }
   }
 
