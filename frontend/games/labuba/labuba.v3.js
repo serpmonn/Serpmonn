@@ -197,21 +197,22 @@
       if (type === 'basic') {
         const s = Math.floor(14 + rand() * 14);
         sizeW = s; sizeH = s;
-        rect = this.add.rectangle(width + s, height - 40 - s/2, sizeW, sizeH, 0xf43f5e);
+        rect = this.add.rectangle(width - s/2 - 1, height - 40 - s/2, sizeW, sizeH, 0xf43f5e);
         speed = 180 + Math.floor(rand() * 140);
       } else if (type === 'tall') {
         sizeW = 18; sizeH = 40 + Math.floor(rand() * 30);
-        rect = this.add.rectangle(width + sizeW, height - 40 - sizeH/2, sizeW, sizeH, 0xef4444);
+        rect = this.add.rectangle(width - sizeW/2 - 1, height - 40 - sizeH/2, sizeW, sizeH, 0xef4444);
         speed = 200 + Math.floor(rand() * 120);
       } else { // mover vertical
         sizeW = 22; sizeH = 22;
         const baseY = height - 70 - Math.floor(rand() * 80);
-        rect = this.add.rectangle(width + sizeW, baseY, sizeW, sizeH, 0xf97316);
+        rect = this.add.rectangle(width - sizeW/2 - 1, baseY, sizeW, sizeH, 0xf97316);
         rect.__vyAmp = 32 + Math.floor(rand() * 24);
         rect.__vyPhase = rand() * Math.PI * 2;
         speed = 200 + Math.floor(rand() * 120);
       }
       this.physics.add.existing(rect);
+      rect.setDepth(5);
       rect.body.setVelocityX(-Math.floor(speed * MOODS[this.moodIndex].hazardMul));
       rect.body.setAllowGravity(false);
       rect.__kind = type;
