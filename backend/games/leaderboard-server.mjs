@@ -115,6 +115,6 @@ app.get('/proxy/bannedWords', (req, res) => {                                   
     res.sendFile(bannedWordsFilePath);
 });
 
-app.listen(port, '0.0.0.0', () => {                                                                     // Запуск сервера
+app.listen(port, '127.0.0.1', () => {                                                                     // Запуск сервера
     console.log(`Server running at http://serpmonn.ru:${port}`);
 });
