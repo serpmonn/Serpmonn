@@ -186,6 +186,7 @@
 
     spawnObstacle() {
       if (this.isGameOver) return;
+      this.__sinceLastSpawn = 0;
       const r = rand();
       const type = r < 0.5 ? 'basic' : (r < 0.8 ? 'tall' : 'mover');
       let rect, sizeW, sizeH, speed;
@@ -297,7 +298,7 @@
 
       // Fallback spawner: if no obstacles exist for >2s, force a spawn
       this.__sinceLastSpawn = (this.__sinceLastSpawn || 0) + delta;
-      if (this.obstacles.getLength() === 0 && this.__sinceLastSpawn > 2000) {
+      if (this.obstacles.getChildren().length === 0 && this.__sinceLastSpawn > 2000) {
         this.__sinceLastSpawn = 0;
         this.spawnObstacle();
       }
