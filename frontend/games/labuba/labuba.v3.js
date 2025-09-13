@@ -294,6 +294,13 @@
 
       this.obstacles.getChildren().forEach(o => o.update && o.update());
       this.bossGroup.getChildren().forEach(o => o.update && o.update());
+
+      // Fallback spawner: if no obstacles exist for >2s, force a spawn
+      this.__sinceLastSpawn = (this.__sinceLastSpawn || 0) + delta;
+      if (this.obstacles.getLength() === 0 && this.__sinceLastSpawn > 2000) {
+        this.__sinceLastSpawn = 0;
+        this.spawnObstacle();
+      }
     }
 
     share() {
