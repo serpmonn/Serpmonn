@@ -159,6 +159,7 @@
       this.comboText = this.add.text(12, 34, 'Combo x1', { fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif', fontSize: '14px', color: '#93c5fd' }).setDepth(10);
       this.moodText = this.add.text(12, 54, 'Mood: Весёлый', { fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif', fontSize: '14px', color: '#d1fae5' }).setDepth(10);
       this.seedText = this.add.text(width - 12, 12, `Seed: ${DAILY_SEED}` , { fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif', fontSize: '12px', color: '#9ca3af' }).setOrigin(1,0).setDepth(10);
+      this.debugText = this.add.text(width - 12, 28, '', { fontFamily: 'system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif', fontSize: '12px', color: '#94a3b8' }).setOrigin(1,0).setDepth(10);
 
       // Spawner
       const baseDelay = 900 / MOODS[this.moodIndex].hazardMul;
@@ -186,6 +187,9 @@
 
     spawnObstacle() {
       if (this.isGameOver) return;
+      this.__sinceLastSpawn = 0;
+      this.__spawnCount = (this.__spawnCount || 0) + 1;
+      try { console.log('[Labuba] spawn', this.__spawnCount); } catch {}
       this.__sinceLastSpawn = 0;
       const r = rand();
       const type = r < 0.5 ? 'basic' : (r < 0.8 ? 'tall' : 'mover');
@@ -295,6 +299,11 @@
 
       this.obstacles.getChildren().forEach(o => o.update && o.update());
       this.bossGroup.getChildren().forEach(o => o.update && o.update());
+      if (this.debugText) {
+        const nObs = this.obstacles.getChildren().length;
+        const nBoss = this.bossGroup.getChildren().length;
+        this.debugText.setText(`Obs:${nObs} Boss:${nBoss}`);
+      }
 
       // Fallback spawner: if no obstacles exist for >2s, force a spawn
       this.__sinceLastSpawn = (this.__sinceLastSpawn || 0) + delta;
