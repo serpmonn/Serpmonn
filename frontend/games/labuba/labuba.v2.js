@@ -11,7 +11,7 @@
       return fetch(`${API_BASE}/add-score`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nickname, score })
+        body: JSON.stringify({ nickname, score, gameId: 'labuba' })
       }).catch(() => {});
     } catch {}
   }
