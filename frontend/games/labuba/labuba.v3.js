@@ -223,17 +223,17 @@
       }
       rect.setDepth(5);
       rect.body.setAllowGravity(false);
-      rect.body.setImmovable(true);
+      rect.body.setImmovable(false);
       rect.body.setSize(sizeW, sizeH, true);
-      rect.body.setVelocityX(-Math.floor(speed * MOODS[this.moodIndex].hazardMul));
+      rect.setVelocityX(-Math.floor(speed * MOODS[this.moodIndex].hazardMul));
       rect.__kind = type;
       rect.update = () => {
         if (!rect.body) return;
         if (rect.__kind === 'mover') {
           rect.__vyPhase += 0.06;
-          rect.body.setVelocityY(60 * Math.sin(rect.__vyPhase));
+          rect.setVelocityY(60 * Math.sin(rect.__vyPhase));
         } else {
-          rect.body.setVelocityY(0);
+          rect.setVelocityY(0);
         }
         if (rect.x < -60) rect.destroy();
       };
