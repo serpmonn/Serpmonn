@@ -216,13 +216,20 @@
       rect.body.setImmovable(false);
       rect.body.moves = true;
       rect.body.setCollideWorldBounds(false);
+      rect.body.setSize(sizeW, sizeH, true);
       rect.body.setVelocity(-Math.floor(speed * MOODS[this.moodIndex].hazardMul), 0);
       rect.__kind = type;
       rect.update = () => {
+        if (!rect.body) return;
         if (rect.__kind === 'mover') {
           rect.__vyPhase += 0.06;
-          rect.y += Math.sin(rect.__vyPhase) * 1.8;
+          rect.body.setVelocityY(60 * Math.sin(rect.__vyPhase));
+        } else {
+          rect.body.setVelocityY(0);
         }
+        // sync display with body (Rectangle doesn't auto-follow Arcade body)
+        rect.x = rect.body.position.x + rect.body.halfWidth;
+        rect.y = rect.body.position.y + rect.body.halfHeight;
         if (rect.x < -60) rect.destroy();
       };
       this.obstacles.add(rect);
