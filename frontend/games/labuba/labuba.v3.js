@@ -211,7 +211,7 @@
       rect.body.setImmovable(false);
       rect.body.setSize(sizeW, sizeH, true);
       rect.setVelocityX(-240);
-      rect.__kind = type;
+      rect.__kind = 'basic';
       rect.update = () => {
         if (!rect.body) return;
         rect.setVelocityY(0);
