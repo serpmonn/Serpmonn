@@ -115,13 +115,11 @@
         g.destroy();
       }
 
-      // Player
+      // Player (use physics image for correct body-sync)
       const playerSize = 22;
-      this.player = this.add.rectangle(80, height - 80, playerSize, playerSize, MOODS[this.moodIndex].color);
-      this.physics.add.existing(this.player);
-      this.player.body.setSize(playerSize, playerSize, true);
-      this.player.body.setCollideWorldBounds(true);
-      this.player.body.setBounce(0.0);
+      this.player = this.physics.add.image(80, height - 80, 'lbpx').setDisplaySize(playerSize, playerSize).setTint(MOODS[this.moodIndex].color);
+      this.player.setCollideWorldBounds(true);
+      this.player.setBounce(0.0);
       this.player.body.setGravityY(800);
 
       // Ground
@@ -131,7 +129,8 @@
 
       // Obstacles
       this.obstacles = this.physics.add.group();
-      // Use Arcade collider boxes precisely matching visuals
+      // Slightly shrink player's body for fair collisions
+      this.player.body.setSize(Math.max(4, playerSize - 4), Math.max(4, playerSize - 4), true);
       this.physics.add.overlap(this.player, this.obstacles, () => this.gameOver(), undefined, this);
 
       // Boss group
@@ -189,7 +188,7 @@
       this.moodIndex = (this.moodIndex + 1) % MOODS.length;
       const mood = MOODS[this.moodIndex];
       sendEvent('mood_switch', { mood: mood.key });
-      this.player.fillColor = mood.color;
+      this.player.setTint(mood.color);
       this.moodText.setText(`Mood: ${mood.label}`);
       if (this.spawnTimer) this.spawnTimer.remove(false);
       const newDelay = 900 / mood.hazardMul;
@@ -210,7 +209,7 @@
       rect.setDepth(5);
       rect.body.setAllowGravity(false);
       rect.body.setImmovable(false);
-      rect.body.setSize(sizeW, sizeH, true);
+      rect.body.setSize(Math.max(4, sizeW - 4), Math.max(4, sizeH - 4), true);
       rect.setVelocityX(0);
       rect.__vx = -240;
       rect.__kind = 'basic';
