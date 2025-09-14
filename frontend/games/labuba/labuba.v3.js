@@ -196,11 +196,11 @@
       if (type === 'basic') {
         const s = Math.floor(14 + rand() * 14);
         sizeW = s; sizeH = s;
-        rect = this.add.rectangle(width - s/2 - 1, height - 40 - s/2, sizeW, sizeH, 0xf43f5e);
+        rect = this.add.rectangle(width - s/2 - 1, height - 46 - s/2, sizeW, sizeH, 0xf43f5e);
         speed = 180 + Math.floor(rand() * 140);
       } else if (type === 'tall') {
         sizeW = 18; sizeH = 40 + Math.floor(rand() * 30);
-        rect = this.add.rectangle(width - sizeW/2 - 1, height - 40 - sizeH/2, sizeW, sizeH, 0xef4444);
+        rect = this.add.rectangle(width - sizeW/2 - 1, height - 46 - sizeH/2, sizeW, sizeH, 0xef4444);
         speed = 200 + Math.floor(rand() * 120);
       } else { // mover vertical
         sizeW = 22; sizeH = 22;
