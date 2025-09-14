@@ -91,8 +91,45 @@
     	<script type="module" src="/frontend/scripts/scripts.js" defer></script>
 		<!-- Реклама VK -->
 		<script async src="https://ad.mail.ru/static/ads-async.js"></script>
-		
- 	   </head>
+
+
+                <!-- Twitter Cards -->
+                <meta name="twitter:card" content="summary_large_image">
+                <meta name="twitter:title" content="Serpmonn — поиск, новости и мини-игры в одном месте!">
+                <meta name="twitter:description" content="Ищите информацию, читайте новости и играйте в мини-игры на Serpmonn. Просто, быстро, без лишнего.">
+                <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+                <!-- Hreflang x-default -->
+                <link rel="alternate" href="https://www.serpmonn.ru/" hreflang="x-default" />
+
+                <!-- JSON-LD: Organization -->
+                <script type="application/ld+json">
+                {
+                  "@context": "https://schema.org",
+                  "@type": "Organization",
+                  "name": "Serpmonn",
+                  "url": "https://www.serpmonn.ru/",
+                  "logo": "https://www.serpmonn.ru/frontend/images/serpmonn.ico"
+                }
+                </script>
+
+                <!-- JSON-LD: WebSite + SearchAction -->
+                <script type="application/ld+json">
+                {
+                  "@context": "https://schema.org",
+                  "@type": "WebSite",
+                  "name": "Serpmonn",
+                  "url": "https://www.serpmonn.ru/",
+                  "potentialAction": {
+                    "@type": "SearchAction",
+                    "target": "https://www.serpmonn.ru/frontend/search/searchresults.html?q={search_term_string}",
+                    "query-input": "required name=search_term_string"
+                  }
+                }
+                </script>
+
+
+           </head>
     <body>
 
         <script src="/frontend/scripts/serpmonn-letters-bg.js" defer></script>
