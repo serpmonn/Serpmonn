@@ -210,13 +210,10 @@
       rect.body.setAllowGravity(false);
       rect.body.setImmovable(false);
       rect.body.setSize(sizeW, sizeH, true);
-      rect.setVelocityX(-240);
+      rect.setVelocityX(0);
+      rect.__vx = -240;
       rect.__kind = 'basic';
-      rect.update = () => {
-        if (!rect.body) return;
-        rect.setVelocityY(0);
-        if (rect.x < -60) rect.destroy();
-      };
+      rect.update = () => {};
       this.obstacles.add(rect);
     }
 
@@ -292,12 +289,19 @@
       this.scoreText.setText(`Score: ${this.score}`);
       this.comboText.setText(`Combo x${this.combo.toFixed(1)}`);
 
-      this.obstacles.getChildren().forEach(o => o.update && o.update());
+      // Manual step movement to avoid any Arcade quirks
+      this.obstacles.getChildren().forEach(o => {
+        if (o.__vx) {
+          o.x += (o.__vx * delta) / 1000;
+        }
+      });
       this.bossGroup.getChildren().forEach(o => o.update && o.update());
       if (this.debugText) {
         const nObs = this.obstacles.getChildren().length;
         const nBoss = this.bossGroup.getChildren().length;
-        this.debugText.setText(`Obs:${nObs} Boss:${nBoss}`);
+        const sample = this.obstacles.getChildren()[0];
+        const sx = sample ? Math.round(sample.x) : '-';
+        this.debugText.setText(`Obs:${nObs} Boss:${nBoss} x:${sx}`);
       }
 
       // Fallback spawner: if no obstacles exist for >2s, force a spawn
