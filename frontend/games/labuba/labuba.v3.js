@@ -118,7 +118,6 @@
       // Ground
       const ground = this.add.rectangle(width/2, height - 20, width, 40, 0x1f2937);
       this.physics.add.existing(ground, true);
-      ground.body.setOffset(-width/2, -20);
       this.physics.add.collider(this.player, ground);
 
       // Obstacles
