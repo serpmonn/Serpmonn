@@ -106,6 +106,15 @@
       this.physics.world.setBounds(0, 0, width, height);
       sendEvent('game_start', { seed: DAILY_SEED });
 
+      // Create 1x1 texture for physics images (so Arcade auto-syncs display<->body)
+      if (!this.textures.exists('lbpx')) {
+        const g = this.add.graphics();
+        g.fillStyle(0xffffff, 1);
+        g.fillRect(0, 0, 1, 1);
+        g.generateTexture('lbpx', 1, 1);
+        g.destroy();
+      }
+
       // Player
       const playerSize = 22;
       this.player = this.add.rectangle(80, height - 80, playerSize, playerSize, MOODS[this.moodIndex].color);
@@ -198,44 +207,34 @@
       if (type === 'basic') {
         const s = Math.floor(14 + rand() * 14);
         sizeW = s; sizeH = s;
-        rect = this.add.rectangle(width - s/2 - 1, height - 46 - s/2, sizeW, sizeH, 0xf43f5e);
+        rect = this.physics.add.image(width - s/2 - 1, height - 46 - s/2, 'lbpx').setDisplaySize(sizeW, sizeH).setTint(0xf43f5e);
         speed = 180 + Math.floor(rand() * 140);
       } else if (type === 'tall') {
         sizeW = 18; sizeH = 40 + Math.floor(rand() * 30);
-        rect = this.add.rectangle(width - sizeW/2 - 1, height - 46 - sizeH/2, sizeW, sizeH, 0xef4444);
+        rect = this.physics.add.image(width - sizeW/2 - 1, height - 46 - sizeH/2, 'lbpx').setDisplaySize(sizeW, sizeH).setTint(0xef4444);
         speed = 200 + Math.floor(rand() * 120);
       } else { // mover vertical
         sizeW = 22; sizeH = 22;
         const baseY = height - 70 - Math.floor(rand() * 80);
-        rect = this.add.rectangle(width - sizeW/2 - 1, baseY, sizeW, sizeH, 0xf97316);
+        rect = this.physics.add.image(width - sizeW/2 - 1, baseY, 'lbpx').setDisplaySize(sizeW, sizeH).setTint(0xf97316);
         rect.__vyAmp = 32 + Math.floor(rand() * 24);
         rect.__vyPhase = rand() * Math.PI * 2;
         speed = 200 + Math.floor(rand() * 120);
       }
-      this.physics.add.existing(rect);
       rect.setDepth(5);
-      const body = rect.body;
-      body.setAllowGravity(false);
-      body.setImmovable(true);
-      body.moves = true;
-      body.setCollideWorldBounds(false);
-      body.setSize(sizeW, sizeH, true);
-      body.setOffset(-sizeW/2, -sizeH/2);
-      body.setVelocity(-Math.floor(speed * MOODS[this.moodIndex].hazardMul), 0);
+      rect.body.setAllowGravity(false);
+      rect.body.setImmovable(true);
+      rect.body.setSize(sizeW, sizeH, true);
+      rect.body.setVelocityX(-Math.floor(speed * MOODS[this.moodIndex].hazardMul));
       rect.__kind = type;
       rect.update = () => {
         if (!rect.body) return;
-        const body = rect.body;
-        if (!body) return;
         if (rect.__kind === 'mover') {
           rect.__vyPhase += 0.06;
-          body.setVelocityY(60 * Math.sin(rect.__vyPhase));
+          rect.body.setVelocityY(60 * Math.sin(rect.__vyPhase));
         } else {
-          body.setVelocityY(0);
+          rect.body.setVelocityY(0);
         }
-        // sync display with body (Rectangle doesn't auto-follow Arcade body)
-        rect.x = body.position.x + body.halfWidth;
-        rect.y = body.position.y + body.halfHeight;
         if (rect.x < -60) rect.destroy();
       };
       this.obstacles.add(rect);
