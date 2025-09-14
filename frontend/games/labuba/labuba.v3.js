@@ -201,40 +201,20 @@
       this.__spawnCount = (this.__spawnCount || 0) + 1;
       try { console.log('[Labuba] spawn', this.__spawnCount); } catch {}
       this.__sinceLastSpawn = 0;
-      const r = rand();
-      const type = r < 0.5 ? 'basic' : (r < 0.8 ? 'tall' : 'mover');
-      let rect, sizeW, sizeH, speed;
-      if (type === 'basic') {
-        const s = Math.floor(14 + rand() * 14);
-        sizeW = s; sizeH = s;
-        rect = this.physics.add.image(width - s/2 - 1, height - 46 - s/2, 'lbpx').setDisplaySize(sizeW, sizeH).setTint(0xf43f5e);
-        speed = 180 + Math.floor(rand() * 140);
-      } else if (type === 'tall') {
-        sizeW = 18; sizeH = 40 + Math.floor(rand() * 30);
-        rect = this.physics.add.image(width - sizeW/2 - 1, height - 46 - sizeH/2, 'lbpx').setDisplaySize(sizeW, sizeH).setTint(0xef4444);
-        speed = 200 + Math.floor(rand() * 120);
-      } else { // mover vertical
-        sizeW = 22; sizeH = 22;
-        const baseY = height - 70 - Math.floor(rand() * 80);
-        rect = this.physics.add.image(width - sizeW/2 - 1, baseY, 'lbpx').setDisplaySize(sizeW, sizeH).setTint(0xf97316);
-        rect.__vyAmp = 32 + Math.floor(rand() * 24);
-        rect.__vyPhase = rand() * Math.PI * 2;
-        speed = 200 + Math.floor(rand() * 120);
-      }
+      // Stable basic obstacle only (leftward constant motion)
+      const s = Math.floor(18 + rand() * 10);
+      const sizeW = s, sizeH = s;
+      const y = height - 46 - s/2;
+      const rect = this.physics.add.image(width - s/2 - 1, y, 'lbpx').setDisplaySize(sizeW, sizeH).setTint(0xf43f5e);
       rect.setDepth(5);
       rect.body.setAllowGravity(false);
-      rect.body.setImmovable(true);
+      rect.body.setImmovable(false);
       rect.body.setSize(sizeW, sizeH, true);
-      rect.body.setVelocityX(-Math.floor(speed * MOODS[this.moodIndex].hazardMul));
+      rect.setVelocityX(-240);
       rect.__kind = type;
       rect.update = () => {
         if (!rect.body) return;
-        if (rect.__kind === 'mover') {
-          rect.__vyPhase += 0.06;
-          rect.body.setVelocityY(60 * Math.sin(rect.__vyPhase));
-        } else {
-          rect.body.setVelocityY(0);
-        }
+        rect.setVelocityY(0);
         if (rect.x < -60) rect.destroy();
       };
       this.obstacles.add(rect);
