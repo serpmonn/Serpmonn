@@ -131,6 +131,7 @@
 
       // Obstacles
       this.obstacles = this.physics.add.group();
+      // Use Arcade collider boxes precisely matching visuals
       this.physics.add.overlap(this.player, this.obstacles, () => this.gameOver(), undefined, this);
 
       // Boss group
@@ -289,10 +290,10 @@
       this.scoreText.setText(`Score: ${this.score}`);
       this.comboText.setText(`Combo x${this.combo.toFixed(1)}`);
 
-      // Manual step movement to avoid any Arcade quirks
+      // Physics-driven movement
       this.obstacles.getChildren().forEach(o => {
-        if (o.__vx) {
-          o.x += (o.__vx * delta) / 1000;
+        if (o.body && o.__vx) {
+          o.setVelocityX(o.__vx);
         }
       });
       this.bossGroup.getChildren().forEach(o => o.update && o.update());
