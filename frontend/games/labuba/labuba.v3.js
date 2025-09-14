@@ -67,15 +67,16 @@
   // Geometry helpers
   function getRectBounds(obj) {
     const b = obj.body;
-    if (!b) return { left: obj.x, right: obj.x, top: obj.y, bottom: obj.y };
-    const w = obj.width || (b.width ?? 0);
-    const h = obj.height || (b.height ?? 0);
-    return {
-      left: obj.x - w/2,
-      right: obj.x + w/2,
-      top: obj.y - h/2,
-      bottom: obj.y + h/2
-    };
+    if (b) {
+      // body.position is top-left in Arcade
+      return {
+        left: b.position.x,
+        right: b.position.x + b.width,
+        top: b.position.y,
+        bottom: b.position.y + b.height
+      };
+    }
+    return { left: obj.x, right: obj.x, top: obj.y, bottom: obj.y };
   }
   function rectsOverlap(a, b) {
     return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
@@ -109,6 +110,7 @@
       const playerSize = 22;
       this.player = this.add.rectangle(80, height - 80, playerSize, playerSize, MOODS[this.moodIndex].color);
       this.physics.add.existing(this.player);
+      this.player.body.setSize(playerSize, playerSize, true);
       this.player.body.setCollideWorldBounds(true);
       this.player.body.setBounce(0.0);
       this.player.body.setGravityY(800);
@@ -212,24 +214,28 @@
       }
       this.physics.add.existing(rect);
       rect.setDepth(5);
-      rect.body.setAllowGravity(false);
-      rect.body.setImmovable(false);
-      rect.body.moves = true;
-      rect.body.setCollideWorldBounds(false);
-      rect.body.setSize(sizeW, sizeH, true);
-      rect.body.setVelocity(-Math.floor(speed * MOODS[this.moodIndex].hazardMul), 0);
+      const body = rect.body;
+      body.setAllowGravity(false);
+      body.setImmovable(true);
+      body.moves = true;
+      body.setCollideWorldBounds(false);
+      body.setSize(sizeW, sizeH, true);
+      body.setOffset(-sizeW/2, -sizeH/2);
+      body.setVelocity(-Math.floor(speed * MOODS[this.moodIndex].hazardMul), 0);
       rect.__kind = type;
       rect.update = () => {
         if (!rect.body) return;
+        const body = rect.body;
+        if (!body) return;
         if (rect.__kind === 'mover') {
           rect.__vyPhase += 0.06;
-          rect.body.setVelocityY(60 * Math.sin(rect.__vyPhase));
+          body.setVelocityY(60 * Math.sin(rect.__vyPhase));
         } else {
-          rect.body.setVelocityY(0);
+          body.setVelocityY(0);
         }
         // sync display with body (Rectangle doesn't auto-follow Arcade body)
-        rect.x = rect.body.position.x + rect.body.halfWidth;
-        rect.y = rect.body.position.y + rect.body.halfHeight;
+        rect.x = body.position.x + body.halfWidth;
+        rect.y = body.position.y + body.halfHeight;
         if (rect.x < -60) rect.destroy();
       };
       this.obstacles.add(rect);
