@@ -68,7 +68,6 @@
   function getRectBounds(obj) {
     const b = obj.body;
     if (b) {
-      // body.position is top-left in Arcade
       return {
         left: b.position.x,
         right: b.position.x + b.width,
@@ -76,7 +75,12 @@
         bottom: b.position.y + b.height
       };
     }
-    return { left: obj.x, right: obj.x, top: obj.y, bottom: obj.y };
+    if (obj.getBounds) {
+      const gb = obj.getBounds();
+      return { left: gb.x, right: gb.x + gb.width, top: gb.y, bottom: gb.y + gb.height };
+    }
+    const w = obj.width || 0, h = obj.height || 0;
+    return { left: obj.x - w/2, right: obj.x + w/2, top: obj.y - h/2, bottom: obj.y + h/2 };
   }
   function rectsOverlap(a, b) {
     return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
@@ -103,7 +107,9 @@
       this.moodIndex = 0;
       this.bossSpawned = false;
 
+      // Physics world and camera bounds
       this.physics.world.setBounds(0, 0, width, height);
+      this.cameras.main.setBounds(0, 0, width, height);
       sendEvent('game_start', { seed: DAILY_SEED });
 
       // Create 1x1 texture for physics images (so Arcade auto-syncs display<->body)
@@ -115,10 +121,11 @@
         g.destroy();
       }
 
-      // Player (use physics image for correct body-sync)
+      // Player — spawn at left bottom platform edge
       const playerSize = 22;
-      this.player = this.physics.add.image(80, height - 80, 'lbpx').setDisplaySize(playerSize, playerSize).setTint(MOODS[this.moodIndex].color);
+      this.player = this.physics.add.image(40 + playerSize/2, height - 40 - playerSize/2, 'lbpx').setDisplaySize(playerSize, playerSize).setTint(MOODS[this.moodIndex].color);
       this.player.setCollideWorldBounds(true);
+      this.player.body.setBoundsRectangle(new Phaser.Geom.Rectangle(0, 0, width, height));
       this.player.setBounce(0.0);
       this.player.body.setGravityY(800);
 
@@ -203,7 +210,7 @@
       // Stable basic obstacle only (leftward constant motion)
       const s = Math.floor(18 + rand() * 10);
       const sizeW = s, sizeH = s;
-      const y = height - 46 - s/2;
+      const y = height - 46 - s/2; // 6px gap above ground
       const rect = this.add.rectangle(width - s/2 - 1, y, sizeW, sizeH, 0xf43f5e);
       rect.setDepth(5);
       rect.__vx = -240; // px/s
