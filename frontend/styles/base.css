@@ -132,3 +132,46 @@ input:focus, textarea:focus, select:focus { /* Стили для фокуса н
 .a11y-underline-links a { text-decoration: underline !important; text-underline-offset: 0.15em; }
 
 .a11y-reduce-motion *, .a11y-reduce-motion *::before, .a11y-reduce-motion *::after { transition: none !important; animation: none !important; }
+
+/* Кнопки подписки и RSS — глобальные переопределения для ссылок-кнопок */
+.tg-btn, .vk-btn, .rss-btn {
+        color: #fff !important;
+        text-decoration: none !important;
+}
+.tg-btn:hover, .vk-btn:hover, .rss-btn:hover {
+        color: #fff !important;
+        text-decoration: none !important;
+}
+.tg-btn:visited, .vk-btn:visited, .rss-btn:visited,
+.tg-btn:active, .vk-btn:active, .rss-btn:active,
+.tg-btn:focus, .vk-btn:focus, .rss-btn:focus {
+        color: #fff !important;
+        text-decoration: none !important;
+        outline: none;
+}
+
+/* Кнопки шаринга в статьях */
+.share-btn,
+.share-btn:hover,
+.share-btn:visited,
+.share-btn:active,
+.share-btn:focus {
+        color: #fff !important;
+        text-decoration: none !important;
+        outline: none;
+}
+
+/* Стабильный желобок полосы прокрутки, чтобы контент не прилипал к скроллу */
+html, body { scrollbar-gutter: stable; overflow-y: auto; }
+
+/* Отключаем ограничение ширины у body во всех статьях */
+body { max-width: none !important; margin: 0 !important; }
+
+/* Центруем и ограничиваем ширину основных контейнеров статей/новостей */
+.article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
+
+/* Небольшой внутренний отступ справа для статей/новостей */
+.article-container, .news-container { padding-right: 12px; }
+
+/* Центрирование хлебных крошек на страницах статей */
+.breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
