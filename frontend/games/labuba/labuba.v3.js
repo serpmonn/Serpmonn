@@ -127,11 +127,10 @@
       this.physics.add.existing(ground, true);
       this.physics.add.collider(this.player, ground);
 
-      // Obstacles
-      this.obstacles = this.physics.add.group();
+      // Obstacles (non-physics; manual movement and AABB collisions)
+      this.obstacles = this.add.group();
       // Slightly shrink player's body for fair collisions
       this.player.body.setSize(Math.max(4, playerSize - 4), Math.max(4, playerSize - 4), true);
-      this.physics.add.overlap(this.player, this.obstacles, () => this.gameOver(), undefined, this);
 
       // Boss group
       this.bossGroup = this.physics.add.group();
@@ -205,15 +204,10 @@
       const s = Math.floor(18 + rand() * 10);
       const sizeW = s, sizeH = s;
       const y = height - 46 - s/2;
-      const rect = this.physics.add.image(width - s/2 - 1, y, 'lbpx').setDisplaySize(sizeW, sizeH).setTint(0xf43f5e);
+      const rect = this.add.rectangle(width - s/2 - 1, y, sizeW, sizeH, 0xf43f5e);
       rect.setDepth(5);
-      rect.body.setAllowGravity(false);
-      rect.body.setImmovable(false);
-      rect.body.setSize(Math.max(4, sizeW - 4), Math.max(4, sizeH - 4), true);
-      rect.setVelocityX(0);
-      rect.__vx = -240;
+      rect.__vx = -240; // px/s
       rect.__kind = 'basic';
-      rect.update = () => {};
       this.obstacles.add(rect);
     }
 
@@ -289,11 +283,9 @@
       this.scoreText.setText(`Score: ${this.score}`);
       this.comboText.setText(`Combo x${this.combo.toFixed(1)}`);
 
-      // Physics-driven movement
+      // Manual movement for non-physics obstacles
       this.obstacles.getChildren().forEach(o => {
-        if (o.body && o.__vx) {
-          o.setVelocityX(o.__vx);
-        }
+        if (o.__vx) o.x += (o.__vx * delta) / 1000;
       });
       this.bossGroup.getChildren().forEach(o => o.update && o.update());
       if (this.debugText) {
@@ -302,6 +294,15 @@
         const sample = this.obstacles.getChildren()[0];
         const sx = sample ? Math.round(sample.x) : '-';
         this.debugText.setText(`Obs:${nObs} Boss:${nBoss} x:${sx}`);
+      }
+
+      // AABB collisions between player display bounds and obstacles rectangles
+      const pb = this.player.getBounds();
+      pb.x += 2; pb.y += 2; pb.width -= 4; pb.height -= 4;
+      for (const o of this.obstacles.getChildren()) {
+        const ob = { x: o.x - o.width/2 + 2, y: o.y - o.height/2 + 2, width: o.width - 4, height: o.height - 4 };
+        const overlap = !(pb.x + pb.width < ob.x || pb.x > ob.x + ob.width || pb.y + pb.height < ob.y || pb.y > ob.y + ob.height);
+        if (overlap) { this.gameOver(); break; }
       }
 
       // Fallback spawner: if no obstacles exist for >2s, force a spawn
