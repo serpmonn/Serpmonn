@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Labubu Runner на Serpmonn.ru</title>
+    <style>
+        body { margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; background: #f0f0f0; }
+        canvas { border: 1px solid #ccc; background: #87CEEB; } /* Небо как фон */
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="400"></canvas>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // Параметры игры
+        let player = { x: 50, y: 300, width: 40, height: 40, velocityY: 0, jumping: false };
+        let gravity = 0.8;
+        let jumpPower = -15;
+        let obstacles = [];
+        let score = 0;
+        let gameOver = false;
+        let groundY = 300;
+        
+        // Функция рисования Labubu (простой: круг с ушками и зубками)
+        function drawPlayer() {
+            ctx.fillStyle = '#FF69B4'; // Розовый цвет Labubu
+            ctx.beginPath();
+            ctx.arc(player.x + 20, player.y + 20, 20, 0, Math.PI * 2); // Тело
+            ctx.fill();
+            // Ушки
+            ctx.fillStyle = '#FF69B4';
+            ctx.beginPath();
+            ctx.moveTo(player.x + 10, player.y);
+            ctx.lineTo(player.x + 20, player.y - 20);
+            ctx.lineTo(player.x + 30, player.y);
+            ctx.fill();
+            // Глаза
+            ctx.fillStyle = '#000';
+            ctx.beginPath();
+            ctx.arc(player.x + 15, player.y + 15, 3, 0, Math.PI * 2);
+            ctx.arc(player.x + 25, player.y + 15, 3, 0, Math.PI * 2);
+            ctx.fill();
+            // Зубки
+            ctx.fillStyle = '#FFF';
+            ctx.fillRect(player.x + 15, player.y + 25, 5, 5);
+            ctx.fillRect(player.x + 25, player.y + 25, 5, 5);
+        }
+        
+        // Препятствия (деревья)
+        function drawObstacles() {
+            ctx.fillStyle = '#8B4513';
+            obstacles.forEach(obs => {
+                ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+            });
+        }
+        
+        // Обновление игры
+        function update() {
+            if (gameOver) return;
+            
+            // Гравитация и прыжок
+            player.velocityY += gravity;
+            player.y += player.velocityY;
+            if (player.y > groundY) {
+                player.y = groundY;
+                player.jumping = false;
+            }
+            
+            // Генерация препятствий
+            if (Math.random() < 0.02) {
+                obstacles.push({ x: 800, y: groundY, width: 20, height: 40 });
+            }
+            
+            // Движение препятствий
+            obstacles.forEach(obs => obs.x -= 5);
+            obstacles = obstacles.filter(obs => obs.x > -obs.width);
+            
+            // Проверка столкновений
+            obstacles.forEach(obs => {
+                if (player.x + player.width > obs.x && player.x < obs.x + obs.width &&
+                    player.y + player.height > obs.y && player.y < obs.y + obs.height) {
+                    gameOver = true;
+                }
+            });
+            
+            score++;
+        }
+        
+        // Рендеринг
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            // Земля
+            ctx.fillStyle = '#228B22';
+            ctx.fillRect(0, groundY + 40, canvas.width, canvas.height - groundY - 40);
+            drawPlayer();
+            drawObstacles();
+            // Счёт
+            ctx.fillStyle = '#000';
+            ctx.font = '20px Arial';
+            ctx.fillText(`Счёт: ${score}`, 10, 30);
+            if (gameOver) {
+                ctx.fillText('Game Over! Нажми R для рестарта', 300, 200);
+            }
+        }
+        
+        // Основной цикл
+        function gameLoop() {
+            update();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // Управление
+        document.addEventListener('keydown', e => {
+            if (e.code === 'Space' && !player.jumping) {
+                player.velocityY = jumpPower;
+                player.jumping = true;
+            }
+            if (e.code === 'KeyR' && gameOver) {
+                player.y = groundY;
+                player.velocityY = 0;
+                obstacles = [];
+                score = 0;
+                gameOver = false;
+            }
+        });
+        
+        gameLoop();
+    </script>
+</body>
+</html>
