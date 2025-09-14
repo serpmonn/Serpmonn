@@ -120,7 +120,6 @@
 
       // Obstacles
       this.obstacles = this.physics.add.group();
-      this.physics.add.collider(this.obstacles, ground);
       this.physics.add.overlap(this.player, this.obstacles, () => this.gameOver(), undefined, this);
 
       // Boss group
@@ -213,8 +212,11 @@
       }
       this.physics.add.existing(rect);
       rect.setDepth(5);
-      rect.body.setVelocityX(-Math.floor(speed * MOODS[this.moodIndex].hazardMul));
       rect.body.setAllowGravity(false);
+      rect.body.setImmovable(false);
+      rect.body.moves = true;
+      rect.body.setCollideWorldBounds(false);
+      rect.body.setVelocity(-Math.floor(speed * MOODS[this.moodIndex].hazardMul), 0);
       rect.__kind = type;
       rect.update = () => {
         if (rect.__kind === 'mover') {
