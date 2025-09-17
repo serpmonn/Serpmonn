@@ -134,13 +134,14 @@
               }
             }
           }
+          // Перерисовываем все клетки, чтобы отобразить массовое открытие
+          render();
           if(checkWin()){
             alive=false; clearInterval(timer);
             const t = Math.floor((Date.now()-startTime)/1000);
             if(bestSaved===0 || t < bestSaved){ localStorage.setItem(bestKey, String(t)); bestEl.textContent = String(t)+'с'; }
             overlayMsg('Победа!');
           }
-          renderCell(x,y);
         }
 
         function toggleFlag(x,y){
