@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UTM: Complete Guide — 2025</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="UTM: Complete Guide — 2025">
+    <meta property="og:description" content="What UTM tags are, how to use them correctly, GA4 taxonomy, channel templates for Google/Meta/VK/Telegram/Email, and common mistakes.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/en/news/articles/utm-complete-guide.html">
+    <meta property="og:type" content="article">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UTM: Complete Guide — 2025">
+    <meta name="twitter:description" content="UTM parameters, GA4, channel templates, examples, and a checklist.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+
+    <style>
+      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.6; }
+      .news-container { background: #fff; border-radius: 12px; padding: 32px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+      .news-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e9ecef; }
+      .news-title { font-size: 2.2rem; color: #333; margin-bottom: 10px; font-weight: 700; }
+      .news-date { color: #6c757d; font-size: 1.05rem; font-weight: 500; }
+      .summary { background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 8px; padding: 16px; margin: 20px 0; color: #155724; }
+      .toc { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin: 20px 0; }
+      .toc a { text-decoration: none; }
+      h2 { margin-top: 28px; }
+      .code { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: .95rem; overflow-x: auto; }
+      .note { background: #fff3cd; border: 1px solid #ffe08a; border-radius: 8px; padding: 12px; margin: 16px 0; color: #7a5b00; }
+      .faq { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; }
+      .faq h3 { margin: 0 0 10px; }
+      .btn { display:inline-block; padding:10px 16px; background:#dc3545; color:#fff; text-decoration:none; border-radius:8px; font-weight:600; }
+      .muted { color:#6c757d; }
+    </style>
+  </head>
+  <body>
+    <style>
+      .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
+      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
+    </style>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+      <a href="/frontend/en/index.html">Home</a> →
+      <a href="/frontend/en/news/index.html">News</a> →
+      <span>UTM: Complete Guide</span>
+    </div>
+
+    <div class="news-container">
+      <div class="news-header">
+        <h1 class="news-title">UTM: Complete Guide</h1>
+        <div class="news-date">September 15, 2025</div>
+      </div>
+
+      <div class="summary">
+        <strong>Why this matters:</strong> learn to tag links consistently across channels, avoid common mistakes, and use ready‑to‑go templates. FAQ and a checklist at the end.
+      </div>
+
+      <div class="toc">
+        <strong>Contents</strong>
+        <ol>
+          <li><a href="#what">What UTM is and why it matters</a></li>
+          <li><a href="#params">UTM parameters: source/medium/campaign/term/content</a></li>
+          <li><a href="#ga4">GA4 linkage: attribution & reports</a></li>
+          <li><a href="#naming">Taxonomy & naming</a></li>
+          <li><a href="#platforms">Channel templates (Google/Meta/VK/Telegram/Email)</a></li>
+          <li><a href="#examples">Examples & ready links</a></li>
+          <li><a href="#mistakes">Common mistakes</a></li>
+          <li><a href="#faq">FAQ & checklist</a></li>
+        </ol>
+      </div>
+
+      <h2 id="what">1) What UTM is and why it matters</h2>
+      <p>UTM parameters in a URL help analytics tools (GA4 and others) identify where traffic comes from, what channel type it is, and which campaign/creative was used. This enables correct attribution and channel comparison.</p>
+
+      <h2 id="params">2) Core UTM parameters</h2>
+      <ul>
+        <li><code>utm_source</code> — the source (e.g., <code>google</code>, <code>facebook</code>, <code>vk</code>, <code>telegram</code>).</li>
+        <li><code>utm_medium</code> — channel type (<code>cpc</code>, <code>paid_social</code>, <code>display</code>, <code>email</code>, <code>referral</code>, etc.).</li>
+        <li><code>utm_campaign</code> — campaign identifier (e.g., <code>y2025q3_launch_widget</code>).</li>
+        <li><code>utm_term</code> — keyword (commonly in search ads).</li>
+        <li><code>utm_content</code> — creative variant/button (<code>banner_a_red</code>, <code>cta_top</code>).</li>
+      </ul>
+      <div class="note">Optional: <code>utm_id</code>, <code>utm_source_platform</code>, <code>utm_creative_format</code>, <code>utm_marketing_tactic</code> — GA4 supports them in extended reports.</div>
+
+      <h2 id="ga4">3) GA4 linkage</h2>
+      <p>GA4 maps UTM into <em>session_source/medium</em>, <em>first_user_source/medium</em>, <em>campaign</em>, etc. Auto‑tagging (<code>gclid</code>) still plays nicely with UTM for cross‑platform consistency and BI.</p>
+      <ul>
+        <li>Stick to lowercase and ASCII to avoid channel duplicates.</li>
+        <li>Do not mix channel types in <code>utm_medium</code> (<code>cpc</code> vs <code>paid_social</code>).</li>
+        <li>Ensure redirects do not strip parameters.</li>
+      </ul>
+
+      <h2 id="naming">4) Taxonomy & naming</h2>
+      <ul>
+        <li><strong>Campaign:</strong> <code>y2025q3_{product|offer}_{goal|event}</code></li>
+        <li><strong>Case:</strong> lowercase only; <code>-</code> as a separator.</li>
+        <li><strong>No spaces</strong>; transliterate non‑ASCII if needed.</li>
+        <li><strong>Medium dictionary:</strong> <code>cpc</code>, <code>paid_social</code>, <code>display</code>, <code>email</code>, <code>referral</code>, <code>organic</code>.</li>
+      </ul>
+
+      <h2 id="platforms">5) Channel templates</h2>
+      <ul>
+        <li><strong>Google Ads (Search/Display):</strong> <code>utm_source=google</code>, <code>utm_medium=cpc</code>, <code>utm_campaign=...</code>, <code>utm_term={keyword}</code>, <code>utm_content={adgroup}</code>. Keep <code>gclid</code> on.</li>
+        <li><strong>Facebook/Meta:</strong> <code>utm_source=facebook</code>, <code>utm_medium=paid_social</code>, <code>utm_campaign=...</code>, <code>utm_content={placement}_{creative}</code>.</li>
+        <li><strong>VK:</strong> <code>utm_source=vk</code>, <code>utm_medium=paid_social</code>, <code>utm_campaign=...</code>, <code>utm_content={ad_id}</code>.</li>
+        <li><strong>Telegram:</strong> <code>utm_source=telegram</code>, <code>utm_medium=social</code> (or <code>paid_social</code>), <code>utm_campaign=...</code>, <code>utm_content=post_{n}|story</code>.</li>
+        <li><strong>Email:</strong> <code>utm_source=newsletter</code> (or ESP), <code>utm_medium=email</code>, <code>utm_campaign=...</code>, <code>utm_content=btn_{variant}</code>.</li>
+      </ul>
+
+      <h2 id="examples">6) Examples</h2>
+      <div class="code">
+GET https://example.com/landing?
+  utm_source=google&
+  utm_medium=cpc&
+  utm_campaign=y2025q3_launch_widget&
+  utm_term=buy+widget&
+  utm_content=banner_a
+      </div>
+      <div class="code" style="margin-top:10px;">
+GET https://example.com/landing?
+  utm_source=facebook&
+  utm_medium=paid_social&
+  utm_campaign=y2025q3_launch_widget&
+  utm_content=feed_video_a
+      </div>
+      <p>
+        Use our UTM Builder to assemble links:
+        <a class="btn" href="https://serpmonn.ru/frontend/tools/marketing/utm-builder.html" target="_blank" rel="noopener">Open UTM Builder</a>
+      </p>
+
+      <h2 id="mistakes">7) Common mistakes</h2>
+      <ul>
+        <li>Mixing <code>utm_medium</code> values and casings (<code>CPC</code> vs <code>cpc</code>).</li>
+        <li>Spaces/non‑ASCII in values, missing URL encoding.</li>
+        <li>Different campaign names across platforms.</li>
+        <li>UTM lost on redirects (opaque shorteners, misconfigured intermediates).</li>
+      </ul>
+
+      <h2 id="faq">8) FAQ & checklist</h2>
+      <div class="faq">
+        <h3>What is the minimum set?</h3>
+        <p><strong>source, medium, campaign</strong> — enough to start; add <strong>term/content</strong> when needed.</p>
+        <h3>Do I need UTM with gclid on?</h3>
+        <p>Yes — for cross‑channel consistency and BI. <em>gclid</em> does not conflict with UTM.</p>
+        <h3>How to validate?</h3>
+        <p>Click the link and verify in GA4 Realtime/DebugView; check redirects keep parameters.</p>
+        <h3>Where to store taxonomy?</h3>
+        <p>In a shared registry (Notion/Sheet/Git) with <code>medium</code> dictionary, naming rules and campaign archive.</p>
+        <h3>Pre‑launch checklist</h3>
+        <ul>
+          <li>Lowercase/encoding, unified dictionaries.</li>
+          <li>Identical <code>utm_campaign</code> across all creatives.</li>
+          <li>Redirects verified and a final click test.</li>
+        </ul>
+      </div>
+
+      <p class="muted" style="margin-top:16px;">Updated: 15 Sep 2025 • Category: Tutorials</p>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  </body>
+</html>

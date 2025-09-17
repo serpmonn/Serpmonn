@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UTM：完整指南 — 2025</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="UTM：完整指南 — 2025">
+    <meta property="og:description" content="什么是 UTM 参数、如何正确使用、GA4 映射、Google/Meta/VK/Telegram/Email 模板，以及常见错误与清单。">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/news/articles/utm-complete-guide.html">
+    <meta property="og:type" content="article">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UTM：完整指南 — 2025">
+    <meta name="twitter:description" content="UTM 参数、GA4、各渠道模板、示例与检查清单。">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+
+    <style>
+      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.6; }
+      .news-container { background: #fff; border-radius: 12px; padding: 32px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+      .news-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e9ecef; }
+      .news-title { font-size: 2.2rem; color: #333; margin-bottom: 10px; font-weight: 700; }
+      .news-date { color: #6c757d; font-size: 1.05rem; font-weight: 500; }
+      .summary { background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 8px; padding: 16px; margin: 20px 0; color: #155724; }
+      .toc { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin: 20px 0; }
+      .toc a { text-decoration: none; }
+      h2 { margin-top: 28px; }
+      .code { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: .95rem; overflow-x: auto; }
+      .note { background: #fff3cd; border: 1px solid #ffe08a; border-radius: 8px; padding: 12px; margin: 16px 0; color: #7a5b00; }
+      .faq { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; }
+      .faq h3 { margin: 0 0 10px; }
+      .btn { display:inline-block; padding:10px 16px; background:#dc3545; color:#fff; text-decoration:none; border-radius:8px; font-weight:600; }
+      .muted { color:#6c757d; }
+    </style>
+  </head>
+  <body>
+    <style>
+      .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
+      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
+    </style>
+
+    <!-- 面包屑导航 -->
+    <div class="breadcrumb">
+      <a href="/frontend/zh-cn/index.html">首页</a> →
+      <a href="/frontend/zh-cn/news/index.html">新闻</a> →
+      <span>UTM：完整指南</span>
+    </div>
+
+    <div class="news-container">
+      <div class="news-header">
+        <h1 class="news-title">UTM：完整指南</h1>
+        <div class="news-date">2025年9月15日</div>
+      </div>
+
+      <div class="summary">
+        <strong>为什么重要：</strong> 学会在各渠道统一、正确地添加 UTM 参数，避免常见错误，并直接使用可套用的模板。文末提供 FAQ 与检查清单。
+      </div>
+
+      <div class="toc">
+        <strong>目录</strong>
+        <ol>
+          <li><a href="#what">什么是 UTM，为什么需要</a></li>
+          <li><a href="#params">UTM 参数：source/medium/campaign/term/content</a></li>
+          <li><a href="#ga4">GA4 映射与归因</a></li>
+          <li><a href="#naming">命名规范与分类</a></li>
+          <li><a href="#platforms">渠道模板（Google/Meta/VK/Telegram/Email）</a></li>
+          <li><a href="#examples">示例与可用链接</a></li>
+          <li><a href="#mistakes">常见错误</a></li>
+          <li><a href="#faq">FAQ 与检查清单</a></li>
+        </ol>
+      </div>
+
+      <h2 id="what">1) 什么是 UTM，为什么需要</h2>
+      <p>URL 中的 UTM 参数帮助分析工具（如 GA4）识别来源、渠道类型、活动与创意，从而实现正确归因与跨渠道对比。</p>
+
+      <h2 id="params">2) 核心 UTM 参数</h2>
+      <ul>
+        <li><code>utm_source</code> — 流量来源（如 <code>google</code>、<code>facebook</code>、<code>vk</code>、<code>telegram</code>）。</li>
+        <li><code>utm_medium</code> — 渠道类型（<code>cpc</code>、<code>paid_social</code>、<code>display</code>、<code>email</code>、<code>referral</code> 等）。</li>
+        <li><code>utm_campaign</code> — 活动标识（如 <code>y2025q3_launch_widget</code>）。</li>
+        <li><code>utm_term</code> — 关键词（多用于搜索广告）。</li>
+        <li><code>utm_content</code> — 创意/按钮变体（如 <code>banner_a_red</code>、<code>cta_top</code>）。</li>
+      </ul>
+      <div class="note">可选项：<code>utm_id</code>、<code>utm_source_platform</code>、<code>utm_creative_format</code>、<code>utm_marketing_tactic</code>（GA4 支持扩展报表）。</div>
+
+      <h2 id="ga4">3) GA4 映射与归因</h2>
+      <p>GA4 会将 UTM 映射到 <em>session_source/medium</em>、<em>first_user_source/medium</em>、<em>campaign</em> 等字段。即使启用 <code>gclid</code> 自动标记，UTM 仍有助于跨平台一致性和 BI 分析。</p>
+      <ul>
+        <li>统一使用小写与 ASCII，避免渠道重复。</li>
+        <li>不要混用 <code>utm_medium</code>（如 <code>cpc</code> 与 <code>paid_social</code>）。</li>
+        <li>确保跳转不会丢失参数。</li>
+      </ul>
+
+      <h2 id="naming">4) 命名规范与分类</h2>
+      <ul>
+        <li><strong>活动命名：</strong> <code>y2025q3_{product|offer}_{goal|event}</code></li>
+        <li><strong>大小写：</strong> 统一小写，使用连字符 <code>-</code> 分隔。</li>
+        <li><strong>避免空格</strong>，非 ASCII 可转写。</li>
+        <li><strong>Medium 词典：</strong> <code>cpc</code>、<code>paid_social</code>、<code>display</code>、<code>email</code>、<code>referral</code>、<code>organic</code>。</li>
+      </ul>
+
+      <h2 id="platforms">5) 渠道模板</h2>
+      <ul>
+        <li><strong>Google Ads（搜索/展示）：</strong> <code>utm_source=google</code>、<code>utm_medium=cpc</code>、<code>utm_campaign=...</code>、<code>utm_term={keyword}</code>、<code>utm_content={adgroup}</code>；保留 <code>gclid</code>。</li>
+        <li><strong>Facebook/Meta：</strong> <code>utm_source=facebook</code>、<code>utm_medium=paid_social</code>、<code>utm_campaign=...</code>、<code>utm_content={placement}_{creative}</code>。</li>
+        <li><strong>VK：</strong> <code>utm_source=vk</code>、<code>utm_medium=paid_social</code>、<code>utm_campaign=...</code>、<code>utm_content={ad_id}</code>。</li>
+        <li><strong>Telegram：</strong> <code>utm_source=telegram</code>、<code>utm_medium=social</code>（付费用 <code>paid_social</code>）、<code>utm_campaign=...</code>、<code>utm_content=post_{n}|story</code>。</li>
+        <li><strong>Email：</strong> <code>utm_source=newsletter</code>（或 ESP）、<code>utm_medium=email</code>、<code>utm_campaign=...</code>、<code>utm_content=btn_{variant}</code>。</li>
+      </ul>
+
+      <h2 id="examples">6) 示例</h2>
+      <div class="code">
+GET https://example.com/landing?
+  utm_source=google&
+  utm_medium=cpc&
+  utm_campaign=y2025q3_launch_widget&
+  utm_term=buy+widget&
+  utm_content=banner_a
+      </div>
+      <div class="code" style="margin-top:10px;">
+GET https://example.com/landing?
+  utm_source=facebook&
+  utm_medium=paid_social&
+  utm_campaign=y2025q3_launch_widget&
+  utm_content=feed_video_a
+      </div>
+      <p>
+        使用我们的 UTM 生成器：
+        <a class="btn" href="https://serpmonn.ru/frontend/tools/marketing/utm-builder.html" target="_blank" rel="noopener">打开 UTM Builder</a>
+      </p>
+
+      <h2 id="mistakes">7) 常见错误</h2>
+      <ul>
+        <li>混用 <code>utm_medium</code> 与大小写（<code>CPC</code> vs <code>cpc</code>）。</li>
+        <li>值中包含空格/非 ASCII，或缺少 URL 编码。</li>
+        <li>同一活动在不同平台使用不同名称。</li>
+        <li>跳转导致 UTM 丢失（短链或中间页未传递参数）。</li>
+      </ul>
+
+      <h2 id="faq">8) FAQ 与检查清单</h2>
+      <div class="faq">
+        <h3>最少需要哪些参数？</h3>
+        <p><strong>source, medium, campaign</strong> 已足够起步；<strong>term/content</strong> 视需要补充。</p>
+        <h3>开启 gclid 还需要 UTM 吗？</h3>
+        <p>需要。UTM 有助于跨渠道一致性与 BI；<em>gclid</em> 与 UTM 并不冲突。</p>
+        <h3>如何校验？</h3>
+        <p>点击测试链接，在 GA4 Realtime/DebugView 中查看；检查跳转是否保留参数。</p>
+        <h3>命名规范放哪儿？</h3>
+        <p>使用共享表（Notion/Sheet/Git）维护 <code>medium</code> 词典、命名规则与活动归档。</p>
+        <h3>发布前清单</h3>
+        <ul>
+          <li>统一小写/编码，使用标准词典。</li>
+          <li>所有创意使用相同的 <code>utm_campaign</code>。</li>
+          <li>验证跳转与最终点击测试。</li>
+        </ul>
+      </div>
+
+      <p class="muted" style="margin-top:16px;">更新：2025‑09‑15 • 分类：教程</p>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  </body>
+</html>
