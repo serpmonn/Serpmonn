@@ -231,7 +231,19 @@ function groupPromocodesByCategory(promocodes) {
 // Функция для создания карточки промокода
 function createPromoCard(promo, isTopOffer = false) {
     const card = document.createElement('div');
-    card.className = `promo-card ${isTopOffer ? 'top-offer' : ''}`;
+    // Подсветка для Яндекс Путешествий (всегда, независимо от ТОП)
+    const combined = [
+        promo?.title,
+        promo?.name,
+        promo?.description,
+        promo?.advertiser_info,
+        promo?.category,
+        promo?.landing_url,
+        promo?.link,
+        promo?.url
+    ].filter(Boolean).join(' ');
+    const isYandexTravel = /(Яндекс\s*Путешеств|Yandex\s*Travel|travelyandex|yandex\.travel)/i.test(combined);
+    card.className = `promo-card ${isTopOffer ? 'top-offer' : ''} ${isYandexTravel ? 'travel-highlight' : ''}`;
     card.dataset.category = promo.category || 'другие';
     card.dataset.expiry = promo.valid_until || promo.expiry_date || '9999-12-31';
 
