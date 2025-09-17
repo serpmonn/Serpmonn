@@ -33,6 +33,8 @@ const TOP_BRANDS_PATTERNS = [
   /Яндекс\s*Музык/i,
   /Кинопоиск/i,
   /\bВинлаб\b/i,
+  /\bWinelab\b/i,
+  /Wine\s*Lab/i,
   /Яндекс\s*Еда.*Ресторан/i
 ];
 
@@ -200,8 +202,6 @@ function flattenPerfluenceData(perfArray) {
         const imageUrl = firstDefined(promo.image, logo) || '/frontend/images/skidki-i-akcii.png';
 
         const isTop = Boolean(
-          promo.is_hit ||
-          landing.is_hiting ||
           isWhitelistedTopAny(title, project.name, landing.name, advertiserText)
         );
 
@@ -238,7 +238,6 @@ function flattenPerfluenceData(perfArray) {
       const offerImageUrl = firstDefined(logo) || '/frontend/images/skidki-i-akcii.png';
 
       const offerIsTop = Boolean(
-        landing.is_hiting ||
         isWhitelistedTopAny(offerTitle, project.name, landing.name, advertiserText)
       );
 
