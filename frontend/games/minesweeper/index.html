@@ -73,7 +73,7 @@
         const btnStart = document.getElementById('btnStart');
         const btnReset = document.getElementById('btnReset');
 
-        let grid, revealed, flagged, mineMap, started, alive, startTime, timer;
+        let grid, revealed, flagged, mineMap, minesPlaced, timerOn, alive, startTime, timer;
         const bestSaved = parseInt(localStorage.getItem(bestKey)||'0',10);
         bestEl.textContent = bestSaved>0 ? String(bestSaved)+'с' : '—';
 
@@ -82,7 +82,7 @@
           revealed = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
           flagged = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
           mineMap = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
-          started = false; alive = true; startTime = 0; clearInterval(timer); timeEl.textContent='0';
+          minesPlaced = false; timerOn = false; alive = true; startTime = 0; clearInterval(timer); timeEl.textContent='0';
           minesLeftEl.textContent = String(MINES);
           render();
         }
@@ -116,11 +116,12 @@
           timer = setInterval(()=>{
             timeEl.textContent = String(Math.floor((Date.now()-startTime)/1000));
           }, 1000);
+          timerOn = true;
         }
 
         function reveal(x,y){
           if(!alive || flagged[x][y] || revealed[x][y]) return;
-          if(!started){ placeMines(x,y); started = true; startTimer(); }
+          if(!minesPlaced){ placeMines(x,y); minesPlaced = true; if(!timerOn) startTimer(); }
           revealed[x][y] = true;
           if(grid[x][y] === -1){ // мина
             alive = false; clearInterval(timer);
@@ -236,7 +237,7 @@
         }
 
         // Controls
-        btnStart.addEventListener('click', ()=>{ if(!started){ started=true; startTimer(); } });
+        btnStart.addEventListener('click', ()=>{ if(!timerOn){ startTimer(); } });
         btnReset.addEventListener('click', reset);
         window.addEventListener('keydown',(e)=>{ if(e.key.toLowerCase()==='r') reset(); });
 
