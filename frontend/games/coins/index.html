@@ -61,7 +61,7 @@
         const canvas = document.getElementById('game');
         const ctx = canvas.getContext('2d');
         const size = 24; // клетка
-        const cells = 20; // 20x20
+        const cells = 20; // поле 20x20
         canvas.width = canvas.height = size * cells;
 
         const scoreEl = document.getElementById('score');
@@ -71,37 +71,30 @@
         const btnReset = document.getElementById('btnReset');
 
         const bestKey = 'coins_best_score_v1';
-        let best = parseInt(localStorage.getItem(bestKey)||'0',10); bestEl.textContent=String(best);
+        let best = parseInt(localStorage.getItem(bestKey)||'0',10); bestEl.textContent = String(best);
 
-        let player, coins, bads, score, timeLeft, timer, loopId, started, alive;
+        let player, coins, bads, score, timeLeft, secTimer, tickTimer, tickMs, tickCount, started, alive;
 
         function reset(){
           player = { x: Math.floor(cells/2), y: Math.floor(cells/2), vx:0, vy:0 };
           coins = []; bads = [];
           score = 0; scoreEl.textContent = '0';
           timeLeft = 60; timeEl.textContent = String(timeLeft);
+          tickMs = 300; // замедление игры
+          tickCount = 0;
           started = false; alive = true;
           spawnCoins(5);
           spawnBads(2);
           draw();
         }
 
-        function spawnCoins(n){
-          for(let i=0;i<n;i++){
-            coins.push(randEmptyCell());
-          }
-        }
-
-        function spawnBads(n){
-          for(let i=0;i<n;i++){
-            bads.push(randEmptyCell());
-          }
-        }
+        function spawnCoins(n){ for(let i=0;i<n;i++) coins.push(randEmptyCell()); }
+        function spawnBads(n){ for(let i=0;i<n;i++) bads.push(randEmptyCell()); }
 
         function randEmptyCell(){
           while(true){
             const p = {x: Math.floor(Math.random()*cells), y: Math.floor(Math.random()*cells)};
-            if ((p.x===player.x && p.y===player.y)) continue;
+            if (p.x===player.x && p.y===player.y) continue;
             if (coins.some(c=>c.x===p.x && c.y===p.y)) continue;
             if (bads.some(b=>b.x===p.x && b.y===p.y)) continue;
             return p;
@@ -110,22 +103,17 @@
 
         function start(){
           if (started) return; started = true;
-          timer = setInterval(()=>{
+          secTimer = setInterval(()=>{
             timeLeft -= 1; timeEl.textContent = String(timeLeft);
             if(timeLeft<=0){ alive=false; stop(); gameOver(); }
           }, 1000);
-          loop();
+          tickTimer = setInterval(()=>{ tickCount++; step(); draw(); }, tickMs);
         }
 
-        function stop(){ if(timer){ clearInterval(timer); timer=null; } cancelAnimationFrame(loopId); }
-
-        function loop(){
-          step(); draw();
-          if(alive){ loopId = requestAnimationFrame(loop); }
-        }
+        function stop(){ if(secTimer){ clearInterval(secTimer); secTimer=null; } if(tickTimer){ clearInterval(tickTimer); tickTimer=null; } }
 
         function step(){
-          // движение
+          // движение игрока по сетке (1 клетка за тик)
           player.x = (player.x + player.vx + cells) % cells;
           player.y = (player.y + player.vy + cells) % cells;
 
@@ -138,20 +126,20 @@
           }
           if(coins.length<5) spawnCoins(1);
 
-          // вредные клетки (ловушки)
-          for(const b of bads){
-            if(b.x===player.x && b.y===player.y){ alive=false; stop(); gameOver(); return; }
+          // столкновение с ловушками
+          for(const b of bads){ if(b.x===player.x && b.y===player.y){ alive=false; stop(); gameOver(); return; } }
+
+          // движение ловушек — реже (каждые 3 тика)
+          if ((tickCount % 3) === 0) {
+            bads = bads.map(b=>({ x: (b.x + (Math.random()<.5?-1:1) + cells)%cells, y: (b.y + (Math.random()<.5?-1:1) + cells)%cells }));
           }
-          // динамика ловушек: случайный сдвиг раз в тик
-          bads = bads.map(b=>({ x: (b.x + (Math.random()<.5?-1:1) + cells)%cells, y: (b.y + (Math.random()<.5?-1:1) + cells)%cells }));
         }
 
         function draw(){
-          // фон
           ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--board') || '#14171b';
           ctx.fillRect(0,0,canvas.width,canvas.height);
 
-          // сетка (лёгкая)
+          // сетка
           ctx.strokeStyle = 'rgba(255,255,255,.05)';
           ctx.lineWidth = 1;
           for(let i=0;i<=cells;i++){
@@ -161,15 +149,11 @@
 
           // монеты
           ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--coin') || '#ffd54f';
-          for(const c of coins){
-            roundRect(ctx, c.x*size+6, c.y*size+6, size-12, size-12, 6, true);
-          }
+          for(const c of coins){ roundRect(ctx, c.x*size+6, c.y*size+6, size-12, size-12, 6, true); }
 
           // ловушки
           ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bad') || '#e74c3c';
-          for(const b of bads){
-            roundRect(ctx, b.x*size+4, b.y*size+4, size-8, size-8, 4, true);
-          }
+          for(const b of bads){ roundRect(ctx, b.x*size+4, b.y*size+4, size-8, size-8, 4, true); }
 
           // игрок
           ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--player') || '#ffcc00';
@@ -206,8 +190,8 @@
           else if(k==='r') reset();
         });
 
-        document.getElementById('btnStart').addEventListener('click', start);
-        document.getElementById('btnReset').addEventListener('click', reset);
+        btnStart.addEventListener('click', start);
+        btnReset.addEventListener('click', reset);
 
         reset();
       })();
