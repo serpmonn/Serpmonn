@@ -110,7 +110,13 @@
           }
         }
 
-        function startTimer(){ startTime = Date.now(); timer = setInterval(()=>{ timeEl.textContent = String(Math.floor((Date.now()-startTime)/1000)); }, 1000); }
+        function startTimer(){
+          startTime = Date.now();
+          clearInterval(timer);
+          timer = setInterval(()=>{
+            timeEl.textContent = String(Math.floor((Date.now()-startTime)/1000));
+          }, 1000);
+        }
 
         function reveal(x,y){
           if(!alive || flagged[x][y] || revealed[x][y]) return;
@@ -145,7 +151,9 @@
         }
 
         function toggleFlag(x,y){
-          if(!alive || revealed[x][y]) return;
+          if(!alive) return;
+          // не позволяем ставить флажок на уже открытой клетке
+          if(revealed[x][y]) return;
           flagged[x][y] = !flagged[x][y];
           const flags = flagged.flat().filter(Boolean).length;
           minesLeftEl.textContent = String(Math.max(MINES - flags, 0));
@@ -192,6 +200,24 @@
               div.addEventListener('click', (e)=>{ e.preventDefault(); reveal(x,y); });
               div.addEventListener('contextmenu', (e)=>{ e.preventDefault(); toggleFlag(x,y); });
               div.addEventListener('mousedown', (e)=>{ if(e.shiftKey) { e.preventDefault(); toggleFlag(x,y); }});
+
+              // Применяем текущее состояние клетки
+              if (flagged[x][y]) {
+                div.classList.add('flag');
+                div.textContent = '⚑';
+              } else if (revealed[x][y]) {
+                div.classList.add('open');
+                const val = grid[x][y];
+                if (val === -1) {
+                  // Мины обычно показываются при поражении, но на всякий случай
+                  div.classList.add('mine');
+                  div.textContent = '💣';
+                } else if (val > 0) {
+                  div.textContent = String(val);
+                  div.classList.add('n'+val);
+                } // 0 остаётся пустым
+              }
+
               boardEl.appendChild(div);
             }
           }
