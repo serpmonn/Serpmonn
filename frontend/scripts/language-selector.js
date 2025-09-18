@@ -25,10 +25,13 @@
 		if (document.querySelector('link[href="'+href+'"]')) return;
 		const l = document.createElement('link'); l.rel='stylesheet'; l.href=href; document.head.appendChild(l);
 	}
-	function createSelector(list){
-		const container = document.createElement('div');
-		container.className = 'lang-selector-container';
-		const select = document.createElement('select');
+    function createSelector(list){
+        const container = document.createElement('div');
+        container.className = 'menu-item lang-selector-item lang-selector-container';
+        const icon = document.createElement('span');
+        icon.className = 'tool-icon';
+        icon.textContent = '🌐';
+        const select = document.createElement('select');
 		select.className = 'lang-selector';
 		const current = getCurrentLang();
 		list.forEach(l=>{
@@ -44,7 +47,8 @@
 			redirectToLang(lang, list);
 			injectHreflang(list, lang);
 		});
-		container.appendChild(select);
+        container.appendChild(icon);
+        container.appendChild(select);
 		return container;
 	}
     function redirectToLang(lang, list){
@@ -55,11 +59,8 @@
             const supported = new Set((list||[]).map(l=>l.code));
             if (idx === -1) {
                 // no /frontend in path: go to localized home
-                if (lang === 'ru') {
-                    location.href = '/';
-                } else {
-                    location.href = `/frontend/${lang}/`;
-                }
+                if (lang === 'ru') { location.href = '/'; }
+                else { location.href = `/frontend/${lang}/index.html`; }
                 return;
             }
 			const next = parts[idx+1];
