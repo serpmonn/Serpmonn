@@ -70,8 +70,8 @@
             var box=document.createElement('div'); box.style.cssText='max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
             var h=document.createElement('h3'); h.textContent='Как играть — Арканоид'; h.style.margin='0 0 8px';
             var p=document.createElement('div'); p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
-            p.textContent = isMobile() ? 'Мобильная версия:\n• Двигайте платформу пальцем по экрану\n• Старт — кнопка «Старт», Пауза — «Старт», Заново — «R» (если доступно)'
-                                     : 'ПК версия:\n• ← → или A/D — платформа\n• Пробел — старт/пауза\n• R — заново';
+            p.textContent = isMobile() ? '• Двигайте платформу пальцем по экрану\n• Старт — кнопка «Старт», Пауза — «Старт», Заново — «R» (если доступно)'
+                                     : '• ← → или A/D — платформа\n• Пробел — старт/пауза\n• R — заново';
             var btn=document.createElement('button'); btn.className='btn'; btn.textContent='Понятно'; btn.style.marginTop='10px';
             btn.onclick=function(){ ov.remove(); localStorage.setItem('game_instructions_breakout_shown','1'); };
             box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
