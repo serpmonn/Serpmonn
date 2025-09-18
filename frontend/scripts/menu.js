@@ -140,34 +140,7 @@ export function initMenu() {
         });
     });
 
-    // Обработчик переключения языка
-    document.addEventListener('click', (e) => {
-        const langLink = e.target.closest('[data-lang]');
-        if (langLink) {
-            e.preventDefault();
-            const lang = langLink.dataset.lang;
-            // Allow only RU, EN, ZH-CN for now
-            const allowed = new Set(['ru','en','zh-cn']);
-            if (!allowed.has(lang)) return;
-            localStorage.setItem('spn_lang', lang);
-            // Навигация на языкозависимый URL для SEO
-            const current = new URL(window.location.href);
-            const inEn = current.pathname.startsWith('/frontend/en');
-            if (lang === 'en') {
-                if (!inEn) {
-                    const target = '/frontend/en/index.html';
-                    window.location.href = target;
-                } else {
-                    window.location.reload();
-                }
-            } else if (lang === 'zh-cn') {
-                window.location.href = '/frontend/zh-cn/index.html';
-            } else {
-                // default RU
-                window.location.href = '/';
-            }
-        }
-    });
+    // Убран старый обработчик переключения языка. Выбор языка теперь через селектор в меню.
 
     // Обработчики для кнопок доступности
     document.addEventListener('click', (e) => {

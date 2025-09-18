@@ -47,13 +47,21 @@
 		container.appendChild(select);
 		return container;
 	}
-	function redirectToLang(lang, list){
+    function redirectToLang(lang, list){
 		try {
 			const url = new URL(location.href);
-			const parts = url.pathname.split('/').filter(Boolean); // remove empties
-			const idx = parts.indexOf('frontend');
-			if (idx === -1) return;
-			const supported = new Set((list||[]).map(l=>l.code));
+            const parts = url.pathname.split('/').filter(Boolean);
+            const idx = parts.indexOf('frontend');
+            const supported = new Set((list||[]).map(l=>l.code));
+            if (idx === -1) {
+                // no /frontend in path: go to localized home
+                if (lang === 'ru') {
+                    location.href = '/';
+                } else {
+                    location.href = `/frontend/${lang}/`;
+                }
+                return;
+            }
 			const next = parts[idx+1];
 			const hasLangSeg = next && supported.has(next);
 			if (hasLangSeg) {
