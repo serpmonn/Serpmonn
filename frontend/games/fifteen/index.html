@@ -85,6 +85,7 @@
             div.className = 'tile' + (val===0 ? ' empty' : '');
             if(val!==0) div.textContent = String(val);
             div.addEventListener('click', ()=> tryMove(x,y));
+            // улучшение тач: предотвращаем скролл и двойной тап
             div.addEventListener('touchstart', (e)=>{ e.preventDefault(); tryMove(x,y); }, {passive:false});
             board.appendChild(div);
           });

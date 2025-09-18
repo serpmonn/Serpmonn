@@ -190,6 +190,17 @@
           else if(k==='r') reset();
         });
 
+        // мобильное управление: свайпы
+        (function(){
+          let sx=0, sy=0;
+          const el = canvas;
+          el.addEventListener('touchstart', (e)=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; }, {passive:true});
+          el.addEventListener('touchend', (e)=>{
+            const t=e.changedTouches[0]; const dx=t.clientX-sx, dy=t.clientY-sy; if(Math.abs(dx)>Math.abs(dy)){ if(dx>10) setDir(1,0); else if(dx<-10) setDir(-1,0); } else { if(dy>10) setDir(0,1); else if(dy<-10) setDir(0,-1); }
+            sx=sy=0;
+          }, {passive:true});
+        })();
+
         btnStart.addEventListener('click', start);
         btnReset.addEventListener('click', reset);
 

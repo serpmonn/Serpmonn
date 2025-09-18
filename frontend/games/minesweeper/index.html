@@ -199,6 +199,12 @@
               div.setAttribute('data-x', String(x));
               div.setAttribute('data-y', String(y));
               div.addEventListener('click', (e)=>{ e.preventDefault(); reveal(x,y); });
+              // тач: короткий тап — открыть, долгий (>=400мс) — флаг
+              (function(){
+                let tId;
+                div.addEventListener('touchstart', (te)=>{ te.preventDefault(); tId = setTimeout(()=>{ toggleFlag(x,y); tId=null; }, 400); }, {passive:false});
+                div.addEventListener('touchend', (te)=>{ te.preventDefault(); if(tId){ clearTimeout(tId); tId=null; reveal(x,y); } }, {passive:false});
+              })();
               div.addEventListener('contextmenu', (e)=>{ e.preventDefault(); toggleFlag(x,y); });
               div.addEventListener('mousedown', (e)=>{ if(e.shiftKey) { e.preventDefault(); toggleFlag(x,y); }});
 

@@ -171,6 +171,8 @@
 
         // управление
         canvas.addEventListener('mousedown', flap);
+        // мобильный тап
+        canvas.addEventListener('touchstart', (e)=>{ e.preventDefault(); flap(); }, {passive:false});
         window.addEventListener('keydown', (e)=>{
           const k=e.key.toLowerCase();
           if(k===' '){ flap(); }

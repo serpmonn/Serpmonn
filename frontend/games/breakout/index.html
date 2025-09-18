@@ -220,6 +220,13 @@
           if(k==='arrowleft'||k==='a' || k==='arrowright'||k==='d') setPaddle(0);
         });
         document.getElementById('btnStart').addEventListener('click', ()=> running? pause(): start());
+        // тач-управление: перетаскивание платформы по X
+        (function(){
+          let touching = false;
+          canvas.addEventListener('touchstart', (e)=>{ touching = true; e.preventDefault(); const x = e.touches[0].clientX - canvas.getBoundingClientRect().left; paddle.x = Math.max(4, Math.min(x/ (canvas.clientWidth / (W)), W - paddle.w - 4)); }, {passive:false});
+          canvas.addEventListener('touchmove', (e)=>{ if(!touching) return; e.preventDefault(); const x = e.touches[0].clientX - canvas.getBoundingClientRect().left; paddle.x = Math.max(4, Math.min(x/ (canvas.clientWidth / (W)), W - paddle.w - 4)); }, {passive:false});
+          canvas.addEventListener('touchend', ()=>{ touching=false; });
+        })();
         document.getElementById('btnReset').addEventListener('click', reset);
 
         reset(); draw(); loop();
