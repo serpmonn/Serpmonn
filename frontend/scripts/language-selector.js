@@ -58,27 +58,24 @@
             const idx = parts.indexOf('frontend');
             const supported = new Set((list||[]).map(l=>l.code));
             if (idx === -1) {
-                // no /frontend in path: go to localized home
-                if (lang === 'ru') { location.href = '/'; }
-                else { location.href = `/frontend/${lang}/index.html`; }
+                // Нет /frontend в пути: переходим на домашнюю для локали
+                location.href = (lang === 'ru') ? '/' : `/frontend/${lang}/index.html`;
                 return;
             }
-			const next = parts[idx+1];
-			const hasLangSeg = next && supported.has(next);
-			if (hasLangSeg) {
-				if (lang === 'ru') {
-					// remove locale segment for ru default
-					parts.splice(idx+1, 1);
-				} else {
-					parts[idx+1] = lang;
-				}
-			} else {
-				if (lang !== 'ru') {
-					parts.splice(idx+1, 0, lang);
-				}
-			}
-			let newPath = '/' + parts.join('/');
-			if (newPath !== url.pathname) location.href = newPath + url.search + url.hash;
+            const afterFrontend = parts.slice(idx + 1);
+            const hasLangSeg = afterFrontend[0] && supported.has(afterFrontend[0]);
+            const rest = hasLangSeg ? afterFrontend.slice(1) : afterFrontend;
+            let targetParts;
+            if (lang === 'ru') {
+                // RU — без языкового сегмента
+                targetParts = rest.length ? ['frontend', ...rest] : [];
+            } else {
+                targetParts = ['frontend', lang, ...rest];
+            }
+            let newPath = targetParts.length ? '/' + targetParts.join('/') : '/';
+            // Если попали на каталог локали без файла — добавим index.html
+            if (newPath.endsWith(`/frontend/${lang}`)) newPath += '/index.html';
+            if (newPath !== url.pathname) location.href = newPath + url.search + url.hash;
 		} catch(_) {}
 	}
 	function injectHreflang(list, currentLang){
