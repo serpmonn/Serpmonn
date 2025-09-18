@@ -35,6 +35,24 @@
   </head>
   <body>
     <div id="menuContainer"></div>
+    <script>
+      (function(){
+        function isMobile(){ return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768); }
+        function showInstructions(){
+          if (localStorage.getItem('game_instructions_snake_shown') === '1') return;
+          var ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9998;';
+          var box=document.createElement('div'); box.style.cssText='max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
+          var h=document.createElement('h3'); h.textContent='Как играть — Змейка'; h.style.margin='0 0 8px';
+          var p=document.createElement('div'); p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
+          p.textContent = isMobile() ? 'Мобильная версия:\n• Кнопки ◀ ▲ ▼ ▶ — управление\n• Старт/Пауза — кнопки\n• R — перезапуск (если есть клавиатура)'
+                                   : 'ПК версия:\n• Стрелки или WASD — управление\n• Пробел — пауза\n• R — перезапуск';
+          var btn=document.createElement('button'); btn.className='btn'; btn.textContent='Понятно'; btn.style.marginTop='10px';
+          btn.onclick=function(){ ov.remove(); localStorage.setItem('game_instructions_snake_shown','1'); };
+          box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
+        }
+        document.addEventListener('DOMContentLoaded', showInstructions);
+      })();
+    </script>
     <div class="page">
       <header>
         <img src="/frontend/images/WebGames.ico" width="28" height="28" alt="Игры" style="border-radius:6px;">
