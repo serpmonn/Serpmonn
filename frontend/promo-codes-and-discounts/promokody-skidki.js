@@ -1,19 +1,51 @@
-// Конфигурация API (теперь используем наш бэкенд)
 const API_CONFIG = {
     baseUrl: '/api/promocodes',
-    updateInterval: 24 * 60 * 60 * 1000, // 24 часа
+    updateInterval: 24 * 60 * 60 * 1000,
     lastUpdateKey: 'serpmonn_promocodes_last_update'
 };
 
-// Глобальные переменные
 let debounceTimeout;
-let allPromocodes = []; // Все промокоды из API
-let filteredPromocodes = []; // Отфильтрованные промокоды
+let allPromocodes = [];
+let filteredPromocodes = [];
 let updateTimer = null;
+let isSortedByExpiry = false;
+let sortAscending = true;
+const topBrands = [
+    'Яндекс Лавка', 'Самокат', 'Сберпрайм', 'Яндекс Афиша', 'Тануки',
+    'Ёбидоёби', 'Яндекс плюс', 'Монетка', 'Premier', 'Авито доставка',
+    'Яндекс музыка', 'Кинопоиск', 'Винлаб', 'Яндекс еда рестораны'
+];
+const categoryLabels = {
+    'еда': 'Еда и рестораны',
+    'продукты': 'Продукты',
+    'развлечения': 'Развлечения',
+    'товары': 'Товары',
+    'услуги': 'Услуги',
+    'другие': 'Другие',
+    'игры': 'Игры',
+    'гаджеты': 'Гаджеты',
+    'сервисы': 'Сервисы',
+    'мода': 'Мода',
+    'здоровье': 'Здоровье',
+    'транспорт': 'Транспорт',
+    'путешествия': 'Путешествия',
+    'финансы': 'Финансы',
+    'страхование': 'Страхование',
+    'фитнес': 'Фитнес'
+};
 
-// Клиентский whitelist удалён; топ-логика на бэкенде
+const elements = {
+    searchInput: document.getElementById('searchInput'),
+    categorySelect: document.getElementById('categorySelect'),
+    statusSelect: document.getElementById('statusSelect'),
+    catalog: document.getElementById('catalog'),
+    totalPromos: document.getElementById('totalPromos'),
+    activePromos: document.getElementById('activePromos'),
+    lastUpdate: document.getElementById('lastUpdate'),
+    refreshBtn: document.getElementById('refreshBtn'),
+    sortButton: document.querySelector('button[onclick="sortByExpiry()"]')
+};
 
-// Упрощённый выбор названия: используем title из API (Perfluence)
 function getPromoTitle(promo) {
     const strip = (s) => typeof s === 'string' ? s.replace(/<[^>]*>/g, '').trim() : '';
     if (promo && typeof promo.name === 'string' && promo.name.trim() !== '') {
@@ -22,7 +54,6 @@ function getPromoTitle(promo) {
     if (promo && typeof promo.title === 'string' && promo.title.trim() !== '') {
         return strip(promo.title);
     }
-    // Фолбэк: домен из landing_url, если есть
     try {
         const url = promo?.landing_url || promo?.link || promo?.url;
         if (url) {
@@ -33,7 +64,6 @@ function getPromoTitle(promo) {
     return 'Предложение партнёра';
 }
 
-// Нормализация полей промокода из разных источников API в единый формат
 function normalizePromo(raw) {
     const pickString = (val) => {
         if (typeof val === 'string') return val.trim();
@@ -56,122 +86,161 @@ function normalizePromo(raw) {
     };
 
     const norm = { ...raw };
-
-    // Название (через универсальный резолвер поверх нормализации)
     norm.title = getPromoTitle(raw);
-
-    // Описание
     norm.description = pickFromContainers(['description', 'subtitle', 'details', 'text']);
-
-    // Промокод
     norm.promocode = pickFromContainers(['promocode', 'promo_code', 'code', 'coupon', 'coupon_code']);
-
-    // Ссылка посадочная
     norm.landing_url = pickFromContainers(['landing_url', 'link', 'url', 'landing', 'target_url']);
-
-    // Изображение
     norm.image_url = pickFromContainers(['image_url', 'image', 'picture', 'logo', 'logo_url', 'icon']);
-
-    // Категория
     norm.category = pickFromContainers(['category', 'group', 'project', 'type', 'segment']) || 'другие';
-
-    // Скидки
     const percentRaw = pickFromContainers(['discount_percent', 'percent', 'percentage', 'discountPercentage']);
     const amountRaw = pickFromContainers(['discount_amount', 'amount', 'value', 'discountValue']);
     norm.discount_percent = percentRaw ? Number(String(percentRaw).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
     norm.discount_amount = amountRaw ? Number(String(amountRaw).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
-
-    // Срок действия
     const expiry = pickFromContainers(['valid_until', 'expiry_date', 'date_end', 'valid_to', 'end_date', 'expires_at']);
-    norm.expiry_date = expiry || norm.expiry_date;
-
-    // Рекламодатель / юридическая информация
+    if (expiry) {
+        const parsedDate = new Date(expiry);
+        norm.expiry_date = isNaN(parsedDate.getTime()) ? undefined : parsedDate.toISOString();
+    }
     const adv = pickFromContainers(['advertiser_info', 'advertiser', 'merchant', 'brand']);
     if (!norm.advertiser_info && adv) {
         norm.advertiser_info = adv;
     }
-
     return norm;
 }
 
-// Функция для загрузки промокодов из нашего API
+async function logError(message, error) {
+    try {
+        await fetch('/api/log-error', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message, error: error.message, stack: error.stack, userAgent: navigator.userAgent })
+        });
+    } catch (_) {}
+}
+
 async function loadPromocodesFromAPI() {
     try {
-        
-        const response = await fetch(API_CONFIG.baseUrl);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ошибка! Статус: ${response.status}`);
+        const cachedData = localStorage.getItem('promo_cache');
+        if (cachedData) {
+            const { data, timestamp } = JSON.parse(cachedData);
+            if (Date.now() - timestamp < API_CONFIG.updateInterval) {
+                allPromocodes = data.map(normalizePromo);
+                filteredPromocodes = [...allPromocodes];
+                renderPromocodes();
+                return true;
+            }
         }
-        
+        const response = await fetch(API_CONFIG.baseUrl, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`HTTP ошибка! Статус: ${response.status}`);
         const result = await response.json();
-        
-        if (result.status === 'success' && Array.isArray(result.data)) {
-            // Используем данные как есть, без нормализации
-            allPromocodes = result.data;
-            filteredPromocodes = [...allPromocodes];
-            
-            // Сохраняем время последнего обновления
-            localStorage.setItem(API_CONFIG.lastUpdateKey, new Date().toISOString());
-            
-            // Обновляем статистику
-            updateStats(result.stats);
-            
-            // Обновляем отображение
-            renderPromocodes();
-            
-            // Показываем уведомление об успешном обновлении
-            showToast('Промокоды успешно обновлены!', 'success');
-            
-            return true;
-        } else {
-            throw new Error('Неверный формат данных от API');
+        if (result.status !== 'success' || !Array.isArray(result.data)) {
+            throw new Error(`Неверный формат данных: ${result.message || 'нет данных'}`);
         }
+        allPromocodes = result.data.map(normalizePromo);
+        filteredPromocodes = [...allPromocodes];
+        localStorage.setItem('promo_cache', JSON.stringify({ data: result.data, timestamp: Date.now() }));
+        localStorage.setItem(API_CONFIG.lastUpdateKey, new Date().toISOString());
+        updateStats(result.stats || { total: 0, active: 0 });
+
+        const catResponse = await fetch(`${API_CONFIG.baseUrl}/categories`, { cache: 'no-store' });
+        if (catResponse.ok) {
+            const catResult = await catResponse.json();
+            if (catResult.status === 'success' && Array.isArray(catResult.data)) {
+                updateCategorySelect(catResult.data);
+            } else {
+                console.warn('Категории не загружены:', catResult.message);
+            }
+        } else {
+            console.warn('Ошибка загрузки категорий:', catResponse.status);
+        }
+
+        renderPromocodes();
+        showToast('Промокоды обновлены!', 'success');
+        return true;
     } catch (error) {
         console.error('Ошибка при загрузке промокодов:', error);
+        logError('Ошибка загрузки промокодов', error);
         showToast(`Ошибка загрузки: ${error.message}`, 'error');
         return false;
     }
 }
 
-// Функция для принудительного обновления промокодов
 async function refreshPromocodes() {
     try {
         const response = await fetch(`${API_CONFIG.baseUrl}/refresh`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            headers: { 'Content-Type': 'application/json' }
         });
-        
-        if (!response.ok) {
-            throw new Error(`HTTP ошибка! Статус: ${response.status}`);
-        }
-        
+        if (!response.ok) throw new Error(`HTTP ошибка! Статус: ${response.status}`);
         const result = await response.json();
-        
         if (result.status === 'success') {
-            // Перезагружаем промокоды
             await loadPromocodesFromAPI();
             showToast(result.message, 'success');
         } else {
             showToast(result.message || 'Ошибка при обновлении', 'error');
         }
-        
     } catch (error) {
         console.error('Ошибка при принудительном обновлении:', error);
+        logError('Ошибка принудительного обновления', error);
         showToast(`Ошибка обновления: ${error.message}`, 'error');
     }
 }
 
-// Функция для отображения промокодов
+function addOfferSchema(promo) {
+    const schema = {
+        "@context": "https://schema.org",
+        "@type": "Offer",
+        "name": getPromoTitle(promo),
+        "description": promo.description || promo.subtitle || "Описание будет доступно позже",
+        "url": promo.landing_url || promo.link || promo.url || "",
+        "category": promo.category || "другие",
+        "priceCurrency": promo.discount_amount ? "RUB" : undefined,
+        "discount": promo.discount_percent ? `${promo.discount_percent}%` : promo.discount_amount ? `${promo.discount_amount} RUB` : undefined,
+        "validThrough": promo.valid_until || promo.expiry_date || undefined,
+        "offeredBy": {
+            "@type": "Organization",
+            "name": promo.advertiser_info || "Партнёр Serpmonn"
+        },
+        "image": promo.image_url || "https://serpmonn.ru/frontend/images/skidki-i-akcii.png",
+        "availability": (promo.valid_until || promo.expiry_date) && new Date(promo.valid_until || promo.expiry_date) < new Date() ? "http://schema.org/OutOfStock" : "http://schema.org/InStock",
+        "couponCode": promo.promocode || undefined
+    };
+    const script = document.createElement('script');
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(schema, (key, value) => value === undefined ? null : value, 2);
+    document.body.appendChild(script);
+}
+
+function updateCategorySelect(categories) {
+    const select = elements.categorySelect;
+    if (!select) return;
+    select.innerHTML = '<option value="">Все категории</option>';
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = categoryLabels[category] || category.charAt(0).toUpperCase() + category.slice(1);
+        select.appendChild(option);
+    });
+}
+
+function resetFilters() {
+    elements.searchInput.value = '';
+    elements.categorySelect.value = '';
+    elements.statusSelect.value = '';
+    isSortedByExpiry = false;
+    sortAscending = true;
+    localStorage.setItem('promo_search', '');
+    localStorage.setItem('promo_category', '');
+    localStorage.setItem('promo_status', '');
+    filterPromos();
+}
+
 function renderPromocodes() {
-    const catalog = document.getElementById('catalog');
+    const catalog = elements.catalog;
     if (!catalog) return;
-    
-    // Очищаем каталог
+
     catalog.innerHTML = '';
-    
+
     if (filteredPromocodes.length === 0) {
         catalog.innerHTML = `
             <div class="no-results">
@@ -181,39 +250,55 @@ function renderPromocodes() {
         `;
         return;
     }
-    
-    // Сортируем промокоды по дате истечения
-    const sortedPromocodes = [...filteredPromocodes].sort((a, b) => {
-        const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
-        const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
-        return dateA - dateB;
-    });
-    
-    // Показываем ВСЕ промокоды один-в-один (без группировки и фильтров)
+
+    let sortedPromocodes;
+    if (!isSortedByExpiry) {
+        const topPromos = filteredPromocodes.filter(promo =>
+            topBrands.some(brand => promo.title.toLowerCase().includes(brand.toLowerCase()))
+        );
+        const otherPromos = filteredPromocodes.filter(promo =>
+            !topBrands.some(brand => promo.title.toLowerCase().includes(brand.toLowerCase()))
+        );
+
+        topPromos.sort((a, b) => {
+            const indexA = topBrands.findIndex(brand => a.title.toLowerCase().includes(brand.toLowerCase()));
+            const indexB = topBrands.findIndex(brand => b.title.toLowerCase().includes(brand.toLowerCase()));
+            return indexA - indexB;
+        });
+
+        otherPromos.sort((a, b) => {
+            const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
+            const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
+            return dateA - dateB;
+        });
+
+        sortedPromocodes = [...topPromos, ...otherPromos];
+    } else {
+        sortedPromocodes = [...filteredPromocodes].sort((a, b) => {
+            const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
+            const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
+            return sortAscending ? dateA - dateB : dateB - dateA;
+        });
+    }
+
     sortedPromocodes.forEach(promo => {
         const isTop = Boolean(promo.is_top);
         catalog.appendChild(createPromoCard(promo, isTop));
+        addOfferSchema(promo);
     });
 
+    insertInfeedAdsIntoCatalog(catalog, window.innerWidth < 768 ? 10 : 5);
+    lazyLoadImages();
+    lazyLoadAds();
 }
 
-// Функция для группировки промокодов по категориям
 function groupPromocodesByCategory(promocodes) {
     const groups = {
-        top: [],
-        еда: [],
-        продукты: [],
-        развлечения: [],
-        товары: [],
-        услуги: [],
-        другие: []
+        top: [], еда: [], продукты: [], развлечения: [], товары: [], услуги: [], другие: []
     };
-    
+
     promocodes.forEach(promo => {
-        // Используем категорию, определенную на бэкенде
         const category = promo.category || 'другие';
-        
-        // Определяем топ-офферы
         if (promo.is_top) {
             groups.top.push(promo);
         } else {
@@ -224,14 +309,12 @@ function groupPromocodesByCategory(promocodes) {
             }
         }
     });
-    
+
     return groups;
 }
 
-// Функция для создания карточки промокода
 function createPromoCard(promo, isTopOffer = false) {
     const card = document.createElement('div');
-    // Подсветка для Яндекс Путешествий (всегда, независимо от ТОП)
     const combined = [
         promo?.title,
         promo?.name,
@@ -247,18 +330,11 @@ function createPromoCard(promo, isTopOffer = false) {
     card.dataset.category = promo.category || 'другие';
     card.dataset.expiry = promo.valid_until || promo.expiry_date || '9999-12-31';
 
-    // Заголовок: используем title/name, при их отсутствии — домен ссылки
     const titleText = getPromoTitle(promo);
 
-    const discountText = promo.discount_percent ? 
-        `Скидка ${promo.discount_percent}%` : 
-        promo.discount_amount ? `Скидка ${promo.discount_amount} ₽` : (promo.promocode ? 'Скидка' : 'Предложение');
-
-    // Обрабатываем дату окончания действия промокода
     let expiryDate;
     if (promo.valid_until || promo.expiry_date) {
         const dateStr = promo.valid_until || promo.expiry_date;
-        // Если дата в формате YYYY-MM-DD (без времени), добавляем 23:59
         if (dateStr.match(/^\d{4}-\d{2}-\d{2}$/)) {
             expiryDate = new Date(dateStr + 'T23:59:59');
         } else {
@@ -268,116 +344,106 @@ function createPromoCard(promo, isTopOffer = false) {
         expiryDate = new Date('9999-12-31');
     }
 
-    // Проверяем, истёк ли промокод (сравниваем с текущим временем)
     const now = new Date();
     const isExpired = expiryDate < now;
-    
-    // Отладочные логи удалены
+    const detailsId = `details-${promo.id || Math.random().toString(36).substr(2, 9)}`;
 
     card.innerHTML = `
         <div class="promo-card-content">
             <div class="promo-header">
-                <img src="${promo.image_url || '/frontend/images/skidki-i-akcii.png'}" alt="${titleText}" width="50" height="50">
+                <img src="${promo.image_url || '/frontend/images/skidki-i-akcii.png'}" 
+                     data-src="${promo.image_url || '/frontend/images/skidki-i-akcii.png'}" 
+                     alt="${titleText}" width="50" height="50" loading="lazy" class="lazy-load">
                 <h3>${titleText}</h3>
             </div>
-            <div class="tag">${discountText}</div>
-
             ${promo.promocode ? `
                 <p class="code">${promo.promocode} 
-                    <button class="submit-btn" onclick="copyToClipboard('${promo.promocode}')">Копировать</button>
+                    <button class="submit-btn" onclick="copyToClipboard('${promo.promocode}')" aria-label="Скопировать промокод ${promo.promocode}">Копировать</button>
                 </p>
+            ` : '<p class="code">Без промокода</p>'}
+            <p class="description">${promo.description || promo.subtitle || 'Описание будет доступно позже'}</p>
+            ${promo.description && promo.description.length > 100 ? `
+                <button type="button" class="details-btn" aria-expanded="false" aria-controls="${detailsId}">
+                    <span class="details-icon">▼</span>
+                    <span class="details-text">Подробнее</span>
+                </button>
+                <div class="details-content" id="${detailsId}" style="display: none; margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
+                    ${promo.description}
+                </div>
+            ` : promo.groupDescription ? `
+                <button type="button" class="details-btn" aria-expanded="false" aria-controls="${detailsId}">
+                    <span class="details-icon">▼</span>
+                    <span class="details-text">Подробнее</span>
+                </button>
+                <div class="details-content" id="${detailsId}" style="display: none; margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
+                    ${promo.groupDescription}
+                </div>
             ` : ''}
-            
-            <p>${promo.description || promo.subtitle || 'Описание будет доступно позже'}</p>
-
             ${promo.conditions ? `<p><strong>Условия:</strong> ${promo.conditions}</p>` : ''}
-
             <p class="expiry ${isExpired ? 'expired' : ''}">
                 Действует до: ${formatDate(expiryDate)}
                 ${isExpired ? ' (Истёк)' : ''}
             </p>
         </div>
-        
         <div class="promo-card-footer">
             ${promo.landing_url || promo.link || promo.url ? `
                 <a href="${promo.landing_url || promo.link || promo.url}" target="_blank" class="register-link">Перейти к партнёру</a>
             ` : ''}
-            
             ${promo.advertiser_info ? `
                 <p class="ad">Реклама. ${promo.advertiser_info}</p>
             ` : ''}
         </div>
     `;
-    
+
+    const detailsBtn = card.querySelector('.details-btn');
+    if (detailsBtn) {
+        detailsBtn.addEventListener('click', () => toggleDetails(detailsBtn));
+    }
+
     return card;
 }
 
-// Функция для форматирования даты
 function formatDate(date) {
     return date.toLocaleDateString('ru-RU', {
         day: '2-digit',
         month: '2-digit',
-        year: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
+        year: 'numeric'
     });
 }
 
-// Функция для обновления статистики
 function updateStats(stats) {
     if (!stats) return;
-    
-    const totalElement = document.getElementById('totalPromos');
-    const activeElement = document.getElementById('activePromos');
-    const expiredElement = document.getElementById('expiredPromos');
-    
-    if (totalElement) totalElement.textContent = stats.total ?? 0;
-    if (activeElement) activeElement.textContent = stats.active ?? stats.total ?? 0;
-    if (expiredElement) expiredElement.textContent = stats.totalPromocodes ?? 0;
+    if (elements.totalPromos) elements.totalPromos.textContent = stats.total ?? 0;
+    if (elements.activePromos) elements.activePromos.textContent = stats.active ?? stats.total ?? 0;
 }
 
-// Функция для показа уведомлений
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
     toast.textContent = message;
-    
     document.body.appendChild(toast);
-    
-    // Показываем уведомление
     setTimeout(() => toast.classList.add('show'), 100);
-    
-    // Скрываем через 3 секунды
     setTimeout(() => {
         toast.classList.remove('show');
         setTimeout(() => toast.remove(), 300);
     }, 3000);
 }
 
-// Функция для обновления времени последнего обновления
 function updateLastUpdateTime() {
     const lastUpdate = localStorage.getItem(API_CONFIG.lastUpdateKey);
-    const lastUpdateElement = document.getElementById('lastUpdate');
-    
-    if (lastUpdateElement && lastUpdate) {
+    if (elements.lastUpdate && lastUpdate) {
         const date = new Date(lastUpdate);
-        lastUpdateElement.textContent = date.toLocaleString('ru-RU');
+        elements.lastUpdate.textContent = date.toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' });
     }
 }
 
-// Функция для запуска автоматического обновления
 function startAutoUpdate() {
-    if (updateTimer) {
-        clearInterval(updateTimer);
-    }
-    
+    if (updateTimer) clearInterval(updateTimer);
     updateTimer = setInterval(async () => {
-        // лог убран
         await loadPromocodesFromAPI();
     }, API_CONFIG.updateInterval);
 }
 
-// Функция для остановки автоматического обновления
 function stopAutoUpdate() {
     if (updateTimer) {
         clearInterval(updateTimer);
@@ -385,44 +451,44 @@ function stopAutoUpdate() {
     }
 }
 
-// Модифицированная функция фильтрации для работы с API данными
 function filterPromos() {
-    const search = document.getElementById('searchInput').value.toLowerCase();
-    const category = document.getElementById('categorySelect')?.value || '';
-    
-        filteredPromocodes = allPromocodes.filter(promo => {
+    const search = elements.searchInput.value.toLowerCase();
+    const category = elements.categorySelect?.value || '';
+    const status = elements.statusSelect?.value || '';
+    localStorage.setItem('promo_search', search);
+    localStorage.setItem('promo_category', category);
+    localStorage.setItem('promo_status', status);
+    filteredPromocodes = allPromocodes.filter(promo => {
         const title = (promo && typeof promo.title === 'string' ? promo.title : '').toLowerCase();
         const description = (promo.description || promo.subtitle || '').toLowerCase();
         const promoCategory = promo.category || 'другие';
-
         const matchesSearch = title.includes(search) || description.includes(search) || search === '';
         const matchesCategory = category === '' || promoCategory === category;
-
-        return matchesSearch && matchesCategory;
+        const now = new Date();
+        const expiry = new Date(promo.valid_until || promo.expiry_date || '9999-12-31');
+        const matchesStatus = status === '' ||
+            (status === 'active' && expiry >= now) ||
+            (status === 'expired' && expiry < now && promo.valid_until);
+        return matchesSearch && matchesCategory && matchesStatus;
     });
-    
     renderPromocodes();
-    
-    // Показываем сообщение, если ничего не найдено
     const noResultsMessage = document.querySelector('.no-results');
-    if (filteredPromocodes.length === 0 && search !== '') {
+    if (filteredPromocodes.length === 0 && (search !== '' || category !== '' || status !== '')) {
         if (!noResultsMessage) {
-            const message = document.createElement('p');
+            const message = document.createElement('div');
             message.className = 'no-results';
-            message.textContent = 'Ничего не найдено';
-            document.getElementById('catalog').prepend(message);
+            message.innerHTML = '<h3>Промокоды не найдены</h3><p>Попробуйте изменить параметры поиска</p>';
+            elements.catalog.prepend(message);
         }
     } else if (noResultsMessage) {
         noResultsMessage.remove();
     }
 }
 
-// Функция для копирования в буфер обмена
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
         showToast('Код скопирован!', 'success');
     }).catch(() => {
-        // Fallback для старых браузеров
         const textArea = document.createElement('textarea');
         textArea.value = text;
         document.body.appendChild(textArea);
@@ -433,12 +499,12 @@ function copyToClipboard(text) {
     });
 }
 
-// Функция для сортировки по дате истечения
-let sortAscending = true;
 function sortByExpiry() {
-    const grid = document.getElementById('catalog');
+    isSortedByExpiry = true;
+    localStorage.setItem('promo_sort_by_expiry', 'true');
+    localStorage.setItem('promo_sort_ascending', sortAscending ? 'true' : 'false');
+    const grid = elements.catalog;
     if (!grid) return;
-    // Remove ad blocks before sorting
     grid.querySelectorAll('.promo-ad-inline').forEach(el => el.remove());
     const cards = Array.from(grid.querySelectorAll('.promo-card'));
     cards.sort((a, b) => {
@@ -447,35 +513,67 @@ function sortByExpiry() {
         return sortAscending ? dateA - dateB : dateB - dateA;
     });
     cards.forEach(card => grid.appendChild(card));
-    insertInfeedAdsIntoCatalog(grid, 10);
+    insertInfeedAdsIntoCatalog(grid, window.innerWidth < 768 ? 10 : 5);
     sortAscending = !sortAscending;
- }
+    if (elements.sortButton) {
+        elements.sortButton.setAttribute('aria-label', `Сортировать по сроку действия, текущий порядок: ${sortAscending ? 'восходящий' : 'нисходящий'}`);
+    }
+}
 
-// Обработчик формы подписки
+function lazyLoadImages() {
+    const images = document.querySelectorAll('img.lazy-load');
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                img.classList.remove('lazy-load');
+                observer.unobserve(img);
+            }
+        });
+    }, { rootMargin: '100px' });
+    images.forEach(img => observer.observe(img));
+}
+
+function lazyLoadAds() {
+    const ads = document.querySelectorAll('.promo-ad-inline');
+    const observer = new IntersectionObserver((entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const ad = entry.target;
+                const ins = ad.querySelector('ins.mrg-tag');
+                if (ins && !ins.dataset.loaded) {
+                    ins.dataset.loaded = 'true';
+                    (window.MRGtag = window.MRGtag || []).push({});
+                    collapseAdIfNoFill(ad, 1500);
+                }
+                observer.unobserve(ad);
+            }
+        });
+    }, { rootMargin: '200px' });
+    ads.forEach(ad => observer.observe(ad));
+}
+
 document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = e.target.querySelector('input[name="email"]').value;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const messageEl = document.createElement('p');
     messageEl.className = 'message';
-    
     if (!emailRegex.test(email)) {
-        messageEl.textContent = 'Пожалуйста, введите корректный email';
+        messageEl.textContent = 'Введите корректный email';
         messageEl.style.color = '#ff5252';
         e.target.appendChild(messageEl);
         setTimeout(() => messageEl.remove(), 3000);
         return;
     }
-
     try {
         const response = await fetch('/subscribe', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
             body: `email=${encodeURIComponent(email)}`
         });
-        if (!response.ok) {
-            throw new Error(`HTTP error! Status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const result = await response.json();
         messageEl.textContent = result.message || 'Спасибо за подписку!';
         messageEl.style.color = '#28a745';
@@ -483,8 +581,10 @@ document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
         e.target.reset();
         setTimeout(() => messageEl.remove(), 3000);
     } catch (error) {
-        messageEl.textContent = error.message.includes('HTTP error') 
-            ? `Ошибка сервера: ${error.message}` 
+        console.error('Ошибка при подписке:', error);
+        logError('Ошибка подписки', error);
+        messageEl.textContent = error.message.includes('HTTP error')
+            ? `Ошибка сервера: ${error.message}`
             : 'Ошибка при подписке. Попробуйте позже.';
         messageEl.style.color = '#ff5252';
         e.target.appendChild(messageEl);
@@ -492,92 +592,113 @@ document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
     }
 });
 
-// Обработчик поиска
-document.getElementById('searchInput')?.addEventListener('input', () => {
+elements.searchInput?.addEventListener('input', () => {
     clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(filterPromos, 300);
+    debounceTimeout = setTimeout(filterPromos, 200);
 });
 
-// Обработчик изменения категории
-document.getElementById('categorySelect')?.addEventListener('change', filterPromos);
+elements.categorySelect?.addEventListener('change', filterPromos);
+elements.statusSelect?.addEventListener('change', filterPromos);
 
-// Инициализация при загрузке страницы
+document.addEventListener('DOMContentLoaded', async () => {
+    console.log('Инициализация страницы промокодов...');
+    isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';
+    sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
+    const savedSearch = localStorage.getItem('promo_search') || '';
+    const savedCategory = localStorage.getItem('promo_category') || '';
+    const savedStatus = localStorage.getItem('promo_status') || '';
+    elements.searchInput.value = savedSearch;
+    elements.categorySelect.value = savedCategory;
+    elements.statusSelect.value = savedStatus;
+    await loadPromocodesFromAPI();
+    updateLastUpdateTime();
+    startAutoUpdate();
+    filterPromos();
+    if (elements.refreshBtn) {
+        elements.refreshBtn.addEventListener('click', async () => {
+            elements.refreshBtn.disabled = true;
+            elements.refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновление...';
+            await refreshPromocodes();
+            elements.refreshBtn.disabled = false;
+            elements.refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновить';
+        });
+    }
+    console.log('Страница промокодов инициализирована');
+});
 
+function toggleDetails(button) {
+    const content = button.nextElementSibling;
+    if (content && content.classList.contains('details-content')) {
+        const isExpanded = content.style.display === 'block';
+        content.style.display = isExpanded ? 'none' : 'block';
+        button.setAttribute('aria-expanded', !isExpanded);
+        const textSpan = button.querySelector('.details-text');
+        if (textSpan) textSpan.textContent = isExpanded ? 'Подробнее' : 'Скрыть';
+        button.querySelector('.details-icon').textContent = isExpanded ? '▼' : '▲';
+    }
+}
 
-// In-feed ad helpers
+window.addEventListener('beforeunload', () => {
+    stopAutoUpdate();
+});
+
+// Реклама
+const adCache = new Map();
 function createInlineAd() {
+    const adId = `ad-${Math.random().toString(36).substr(2, 9)}`;
+    if (adCache.has(adId)) return adCache.get(adId).cloneNode(true);
     const wrap = document.createElement('div');
     wrap.className = "promo-ad-inline";
     wrap.style.textAlign = "center";
-    wrap.style.margin = "16px 0";
+    wrap.style.margin = "12px 0";
     wrap.innerHTML = `
         <ins class="mrg-tag"
              style="display:inline-block;width:300px;height:250px"
              data-ad-client="ad-1898023"
              data-ad-slot="1898023">
         </ins>`;
-    (window.MRGtag = window.MRGtag || []).push({});
-    return wrap;
+    adCache.set(adId, wrap);
+    return wrap.cloneNode(true);
 }
 
 function insertInfeedAdsIntoCatalog(catalog, interval) {
     if (!catalog) return;
-    // Remove existing ad blocks to avoid duplicates
     catalog.querySelectorAll('.promo-ad-inline').forEach(el => el.remove());
     const cards = Array.from(catalog.querySelectorAll('.promo-card'));
     if (!cards.length) return;
-    const step = interval || 10;
-    for (let i = step; i <= cards.length; i += step) {
+    const step = interval || 5;
+    for (let i = step; i < cards.length; i += step) {
         const afterCard = cards[i - 1];
         if (afterCard && afterCard.parentNode) {
-            afterCard.parentNode.insertBefore(createInlineAd(), afterCard.nextSibling);
+            const ad = createInlineAd();
+            afterCard.parentNode.insertBefore(ad, afterCard.nextSibling);
         }
     }
 }
 
-
-
-// Сворачивание рекламного блока при no-fill
-function collapseAdIfNoFill(container, timeoutMs){
-  try {
-    var t = timeoutMs || 2500;
-    setTimeout(function(){
-      if (!container) return;
-      var hasIframe = !!container.querySelector('ins.mrg-tag iframe');
-      if (!hasIframe) { container.style.display = "none"; }
-    }, t);
-  } catch(_){}
-}
-document.addEventListener('DOMContentLoaded', async () => {
-    console.log('Инициализация страницы промокодов...');
-    
-    // Загружаем промокоды из API
-    await loadPromocodesFromAPI();
-    
-    // Обновляем время последнего обновления
-    updateLastUpdateTime();
-    
-    // Запускаем автоматическое обновление
-    startAutoUpdate();
-    
-    // Добавляем обработчик для кнопки обновления
-    const refreshBtn = document.getElementById('refreshBtn');
-    if (refreshBtn) {
-        refreshBtn.addEventListener('click', async () => {
-            refreshBtn.disabled = true;
-            refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновление...';
-            
-            await refreshPromocodes();
-            
-            refreshBtn.disabled = false;
-            refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновить';
-        });
+function collapseAdIfNoFill(container, timeoutMs) {
+    try {
+        const t = timeoutMs || 1500;
+        setTimeout(() => {
+            if (!container) return;
+            const ins = container.querySelector('ins.mrg-tag');
+            const hasContent = ins && (
+                ins.querySelector('iframe') ||
+                ins.innerHTML.trim().length > 0 ||
+                ins.offsetHeight > 10
+            );
+            if (hasContent) {
+                container.classList.add('ad-loaded');
+                console.log('Реклама загружена:', container);
+            } else {
+                container.style.display = 'none';
+                console.warn('Реклама не загрузилась:', container, { client: ins.dataset.adClient, slot: ins.dataset.adSlot });
+                logError('Реклама не загрузилась', new Error(`Ad failed to load: client=${ins.dataset.adClient}, slot=${ins.dataset.adSlot}`));
+            }
+        }, t);
+    } catch (error) {
+        console.error('Ошибка при проверке рекламы:', error);
+        logError('Ошибка проверки рекламы', error);
+        container.style.display = 'none';
     }
-    
-    console.log('Страница промокодов инициализирована');
-});
-
-// Очистка при выгрузке страницы
-window.addEventListener('beforeunload', () => {
-    stopAutoUpdate();
-});
+}

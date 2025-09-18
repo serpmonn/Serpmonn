@@ -183,8 +183,17 @@ function flattenPerfluenceData(perfArray) {
       const logo = firstDefined(landing.logo, project.logo, project.img);
       const promos = Array.isArray(group?.promocodes) ? group.promocodes : [];
       
+      // Собираем общее описание группы один раз
+      const offerTitle = firstDefined(project.name, landing.name) || 'Предложение партнёра';
+      const groupDescription = stripHtml(project.product_info) || 'Описание недоступно';
+      const { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name);
+      const offerCategory = determineCategoryFromText(project.category_name, offerTitle, groupDescription);
+      const offerImageUrl = firstDefined(logo) || '/frontend/images/skidki-i-akcii.png';
+      const offerIsTop = Boolean(isWhitelistedTopAny(offerTitle, project.name, landing.name, advertiserText));
+      
       totalPromos += promos.length;
 
+      // Обработка промокодов (если есть)
       for (const promo of promos) {
         const title = firstDefined(project.name, promo.name) || 'Промокод';
         const description = firstDefined(promo.comment, stripHtml(project.product_info)) || 'Описание недоступно';
@@ -192,7 +201,6 @@ function flattenPerfluenceData(perfArray) {
         const code = firstDefined(promo.code);
         const when = normalizeDate(firstDefined(promo.date));
         
-        // Пропускаем промокоды без кода и без даты
         if (!code && !when) {
           continue;
         }
@@ -201,11 +209,8 @@ function flattenPerfluenceData(perfArray) {
         const category = determineCategoryFromText(project.category_name, title, description);
         const imageUrl = firstDefined(promo.image, logo) || '/frontend/images/skidki-i-akcii.png';
 
-        const isTop = Boolean(
-          isWhitelistedTopAny(title, project.name, landing.name, advertiserText)
-        );
+        const isTop = Boolean(isWhitelistedTopAny(title, project.name, landing.name, advertiserText));
 
-        // Проверяем на дубликаты по ID
         const promoId = promo.id || Math.random().toString(36).substr(2, 9);
         if (result.some(existing => existing.id === promoId)) {
           continue;
@@ -225,44 +230,36 @@ function flattenPerfluenceData(perfArray) {
           advertiser_info: advertiserText || null,
           category,
           is_top: isTop,
-          created_at: new Date().toISOString()
+          created_at: new Date().toISOString(),
+          groupDescription: groupDescription
         });
         processedPromos++;
       }
 
-      // Добавляем оффер уровня группы (акция) для каждой группы, даже если есть промокоды
-      const offerTitle = firstDefined(project.name, landing.name) || 'Предложение партнёра';
-      const offerDescription = stripHtml(project.product_info) || 'Описание недоступно';
-      const { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name);
-      const offerCategory = determineCategoryFromText(project.category_name, offerTitle, offerDescription);
-      const offerImageUrl = firstDefined(logo) || '/frontend/images/skidki-i-akcii.png';
-
-      const offerIsTop = Boolean(
-        isWhitelistedTopAny(offerTitle, project.name, landing.name, advertiserText)
-      );
-
-      // Стабильный ID для оффера на основе landing.id или project.id
-      const offerIdBase = firstDefined(landing.id, project.id);
-      const offerSuffix = (group && (group.name || 'group')) || 'group';
-      const offerId = offerIdBase ? `offer-${offerIdBase}-${offerSuffix}` : `offer-${Math.random().toString(36).substr(2, 9)}`;
-      if (!result.some(existing => existing.id === offerId)) {
-        result.push({
-          id: offerId,
-          name: offerTitle,
-          title: offerTitle,
-          description: offerDescription,
-          promocode: null,
-          discount_percent: offerPercent,
-          discount_amount: offerAmount,
-          valid_until: null, // бессрочно, если не указано
-          landing_url: landingUrl || null,
-          image_url: offerImageUrl,
-          conditions: firstDefined(item.conditions, null),
-          advertiser_info: advertiserText || null,
-          category: offerCategory,
-          is_top: offerIsTop,
-          created_at: new Date().toISOString()
-        });
+      // ФИКС: Добавляем оффер группы только если нет промокодов и есть landing_url
+      if (promos.length === 0 && landingUrl) {
+        const offerIdBase = firstDefined(landing.id, project.id);
+        const offerSuffix = (group && (group.name || 'group')) || 'group';
+        const offerId = offerIdBase ? `offer-${offerIdBase}-${offerSuffix}` : `offer-${Math.random().toString(36).substr(2, 9)}`;
+        if (!result.some(existing => existing.id === offerId)) {
+          result.push({
+            id: offerId,
+            title: offerTitle,
+            description: groupDescription,
+            promocode: null,
+            discount_percent: offerPercent,
+            discount_amount: offerAmount,
+            valid_until: null, // Бессрочно, если не указано
+            landing_url: landingUrl,
+            image_url: offerImageUrl,
+            conditions: firstDefined(item.conditions, null),
+            advertiser_info: advertiserText || null,
+            category: offerCategory,
+            is_top: offerIsTop,
+            created_at: new Date().toISOString(),
+            groupDescription: groupDescription
+          });
+        }
       }
     }
   }
@@ -358,13 +355,13 @@ function getPromocodesStats() {
   const now = new Date();
   const total = promocodesCache.data.length;
   const active = promocodesCache.data.filter(p => {
-    // Бессрочный или некорректный срок — считаем активным
     if (!p.valid_until) return true;
     const dt = new Date(p.valid_until);
     if (isNaN(dt.getTime())) return true;
     return dt > now;
   }).length;
 
+  // Считаем только с промокодами
   const totalPromocodes = promocodesCache.data.filter(p => Boolean(p.promocode)).length;
   const activePromocodes = promocodesCache.data.filter(p => {
     if (!p.promocode) return false;
@@ -452,8 +449,6 @@ router.get('/categories', promocodesLimiter, (req, res) => {
     res.status(500).json({ status: 'error', message: 'Ошибка при получении категорий' });
   }
 });
-
-// удалён отладочный маршрут
 
 // Инициализация при загрузке модуля
 (async () => {
