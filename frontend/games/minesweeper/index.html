@@ -76,8 +76,8 @@
             var box=document.createElement('div'); box.style.cssText='max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
             var h=document.createElement('h3'); h.textContent='Как играть — Сапёр'; h.style.margin='0 0 8px';
             var p=document.createElement('div'); p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
-            p.textContent = isMobile() ? 'Мобильная версия:\n• Короткий тап — открыть\n• Долгий тап (≥0.4с) — флаг'
-                                     : 'ПК версия:\n• ЛКМ — открыть\n• ПКМ или Shift — флаг\n• Первый клик безопасный';
+            p.textContent = isMobile() ? '• Короткий тап — открыть\n• Долгий тап (≥0.4с) — флаг'
+                                     : '• ЛКМ — открыть\n• ПКМ или Shift — флаг\n• Первый клик безопасный';
             var btn=document.createElement('button'); btn.className='btn'; btn.textContent='Понятно'; btn.style.marginTop='10px';
             btn.onclick=function(){ ov.remove(); localStorage.setItem('game_instructions_mines_shown','1'); };
             box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
