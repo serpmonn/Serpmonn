@@ -181,3 +181,9 @@ body { max-width: none !important; margin: 0 !important; }
 .article-content table { width: 100%; display: block; overflow-x: auto; }
 .article-title { font-size: clamp(1.6rem, 6vw, 2.5rem); }
 .tech-grid { grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+
+/* Гарантируем, что контейнеры статей не выходят за экран */
+.article-container, .news-container { width: 100%; box-sizing: border-box; }
+
+/* Разрешаем горизонтальную прокрутку на случай редких переполнений */
+html, body { overflow-x: auto !important; }
