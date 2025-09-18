@@ -41,22 +41,35 @@
 		select.addEventListener('change', (e)=>{
 			const lang = e.target.value;
 			setLang(lang);
-			redirectToLang(lang);
+			redirectToLang(lang, list);
 			injectHreflang(list, lang);
 		});
 		container.appendChild(select);
 		return container;
 	}
-	function redirectToLang(lang){
+	function redirectToLang(lang, list){
 		try {
 			const url = new URL(location.href);
-			const parts = url.pathname.split('/');
+			const parts = url.pathname.split('/').filter(Boolean); // remove empties
 			const idx = parts.indexOf('frontend');
-			if (idx >= 0 && parts[idx+1]) {
-				parts[idx+1] = lang;
-				const newPath = parts.join('/');
-				if (newPath !== url.pathname) location.href = newPath + url.search + url.hash;
+			if (idx === -1) return;
+			const supported = new Set((list||[]).map(l=>l.code));
+			const next = parts[idx+1];
+			const hasLangSeg = next && supported.has(next);
+			if (hasLangSeg) {
+				if (lang === 'ru') {
+					// remove locale segment for ru default
+					parts.splice(idx+1, 1);
+				} else {
+					parts[idx+1] = lang;
+				}
+			} else {
+				if (lang !== 'ru') {
+					parts.splice(idx+1, 0, lang);
+				}
 			}
+			let newPath = '/' + parts.join('/');
+			if (newPath !== url.pathname) location.href = newPath + url.search + url.hash;
 		} catch(_) {}
 	}
 	function injectHreflang(list, currentLang){
@@ -66,7 +79,8 @@
 			const l = document.createElement('link');
 			l.rel = 'alternate';
 			l.hreflang = item.code;
-			l.href = base + item.code + '/';
+			l.href = base + (item.code === 'ru' ? '' : item.code + '/')
+				+ (location.pathname.split('/').slice(3).join('/') || '');
 			document.head.appendChild(l);
 		});
 		const xd = document.createElement('link');
@@ -87,6 +101,8 @@
 		} catch(_) {}
 	}
 	function mountSelector(){
+		// ensure styles
+		loadCSS('/frontend/styles/language-selector.css?v=1');
 		fetch(LANGS_URL, { cache: 'no-store' }).then(r=>r.json()).then(list=>{
 			const sel = createSelector(list);
 			const attach = () => {
