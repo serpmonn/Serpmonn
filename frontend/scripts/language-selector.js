@@ -89,12 +89,23 @@
 	function mountSelector(){
 		fetch(LANGS_URL, { cache: 'no-store' }).then(r=>r.json()).then(list=>{
 			const sel = createSelector(list);
-			const menu = document.getElementById('menuContainer');
-			if (menu) { menu.insertBefore(sel, menu.firstChild); }
-			else { document.body.insertAdjacentElement('afterbegin', sel); }
-			injectHreflang(list, getCurrentLang());
-			suggestByAcceptLanguage(list);
-			applyDirForLang(getCurrentLang());
+			const attach = () => {
+				const menu = document.getElementById('menuContainer');
+				if (menu) {
+					if (!menu.querySelector('.lang-selector-container')) {
+						menu.insertBefore(sel, menu.firstChild);
+					}
+					injectHreflang(list, getCurrentLang());
+					suggestByAcceptLanguage(list);
+					applyDirForLang(getCurrentLang());
+					return true;
+				}
+				return false;
+			};
+			if (!attach()) {
+				const mo = new MutationObserver(() => { if (attach()) mo.disconnect(); });
+				mo.observe(document.documentElement, { childList: true, subtree: true });
+			}
 		}).catch(()=>{});
 	}
 	document.addEventListener('DOMContentLoaded', mountSelector);
