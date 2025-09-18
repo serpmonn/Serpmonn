@@ -1,7 +1,7 @@
 .lang-selector-container {
     position: relative;
     background: transparent;
-    padding: 0 6px 0 4px;
+    padding: 0;
     border-radius: 6px;
     margin: 0;
     border: none;
@@ -17,9 +17,23 @@
     background: #fff;
     font-size: 13px;
     max-width: 100%;
+    vertical-align: middle;
 }
 /* Уменьшить иконку и общую ширину блока */
 .lang-selector-item .tool-icon { margin-right: 4px; font-size: 14px; width: 18px; }
+
+/* Выровнять и придать вид пункта меню */
+.lang-selector-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px;
+    border-radius: 5px;
+}
+.lang-selector-item:hover,
+.lang-selector-item:focus-within {
+    background-color: #f0f0f0;
+}
 
 @media (max-width: 768px) {
 	.lang-selector-container {
