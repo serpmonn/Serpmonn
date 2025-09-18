@@ -131,6 +131,7 @@ class Game2048 {
             if (this.isGameOver()) {
                 setTimeout(() => {
                     alert('Игра окончена! Ваш счёт: ' + this.score);
+                    if (window.showFullScreenAd) { window.showFullScreenAd(); }
                 }, 100);
             }
         }
