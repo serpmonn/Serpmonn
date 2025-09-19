@@ -1,6 +1,7 @@
 (function(){
 	const LS_KEY = 'spn_lang';
 	const LANGS_URL = '/frontend/i18n/languages.json';
+	const RU_DEFAULT = '/frontend/news/index.html';
 
 	function getCurrentLang(){
 		return (localStorage.getItem(LS_KEY) || document.documentElement.lang || 'ru').toLowerCase();
@@ -57,9 +58,9 @@
             const parts = url.pathname.split('/').filter(Boolean);
             const idx = parts.indexOf('frontend');
             const supported = new Set((list||[]).map(l=>l.code));
-            if (idx === -1) {
+			if (idx === -1) {
                 // Нет /frontend в пути: переходим на домашнюю для локали
-                location.href = (lang === 'ru') ? '/' : `/frontend/${lang}/index.html`;
+				location.href = (lang === 'ru') ? RU_DEFAULT : `/frontend/${lang}/index.html`;
                 return;
             }
             const afterFrontend = parts.slice(idx + 1);
@@ -81,7 +82,7 @@
                     targetParts = ['frontend', lang, ...rest];
                 }
             }
-            let newPath = targetParts.length ? '/' + targetParts.join('/') : '/';
+			let newPath = targetParts.length ? '/' + targetParts.join('/') : RU_DEFAULT;
             // Если попали на каталог локали без файла — добавим index.html
             if (newPath === `/frontend/${lang}`) newPath += '/index.html';
             if (newPath !== url.pathname) location.href = newPath + url.search + url.hash;
