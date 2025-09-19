@@ -1,6 +1,7 @@
 // Исправленный импорт
 import { initMenu } from './menu.js';
 import '/frontend/scripts/language-selector.js';
+import '/frontend/scripts/i18n-overlay.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
 
