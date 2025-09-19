@@ -1,7 +1,7 @@
 (function(){
 	const LS_KEY = 'spn_lang';
 	const LANGS_URL = '/frontend/i18n/languages.json';
-	const RU_DEFAULT = '/frontend/news/index.html';
+	const RU_DEFAULT = '/frontend/main.html';
 
 	function getCurrentLang(){
 		return (localStorage.getItem(LS_KEY) || document.documentElement.lang || 'ru').toLowerCase();
