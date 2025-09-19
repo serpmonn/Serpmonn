@@ -48,6 +48,39 @@ fetch(primaryMenuPath)
     })
     .then(html => {
         document.body.insertAdjacentHTML('afterbegin', html);
+        try {
+            const currentLang = spnLang;
+            const supported = new Set(Object.keys(langToDir));
+            const container = document.getElementById('menuContainer');
+            const anchors = container ? Array.from(container.querySelectorAll('a[href]')) : [];
+            anchors.forEach(a => {
+                const href = a.getAttribute('href');
+                if (!href || href.startsWith('#') || /^https?:\/\//i.test(href) || href.startsWith('mailto:') || href.startsWith('javascript:')) return;
+                if (!href.startsWith('/frontend/')) return;
+                const url = new URL(href, location.origin);
+                const parts = url.pathname.split('/').filter(Boolean);
+                const idx = parts.indexOf('frontend');
+                if (idx === -1) return;
+                const after = parts.slice(idx + 1);
+                const hasLang = after[0] && supported.has(after[0]);
+                const rest = hasLang ? after.slice(1) : after;
+                let newParts;
+                if (currentLang === 'ru') {
+                    if (rest.length === 0 || (rest.length === 1 && /^(index\.html)?$/.test(rest[0]))) {
+                        a.setAttribute('href', '/frontend/main.html');
+                        return;
+                    }
+                    newParts = ['frontend', ...rest];
+                } else {
+                    if (rest.length === 0 || (rest.length === 1 && /^(index\.html)?$/.test(rest[0]))) {
+                        newParts = ['frontend', currentLang, 'index.html'];
+                    } else {
+                        newParts = ['frontend', currentLang, ...rest];
+                    }
+                }
+                a.setAttribute('href', '/' + newParts.join('/'));
+            });
+        } catch {}
         
         // Синхронизируем поисковую форму в меню с основной формой на странице
         try {
