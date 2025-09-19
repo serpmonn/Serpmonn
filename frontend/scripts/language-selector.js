@@ -68,13 +68,22 @@
             let targetParts;
             if (lang === 'ru') {
                 // RU — без языкового сегмента
-                targetParts = rest.length ? ['frontend', ...rest] : [];
+                if (rest.length === 0 || (rest.length === 1 && rest[0] === 'index.html')) {
+                    targetParts = [];
+                } else {
+                    targetParts = ['frontend', ...rest];
+                }
             } else {
-                targetParts = ['frontend', lang, ...rest];
+                // Нелокальные: добавляем сегмент языка
+                if (rest.length === 0 || (rest.length === 1 && rest[0] === 'index.html')) {
+                    targetParts = ['frontend', lang];
+                } else {
+                    targetParts = ['frontend', lang, ...rest];
+                }
             }
             let newPath = targetParts.length ? '/' + targetParts.join('/') : '/';
             // Если попали на каталог локали без файла — добавим index.html
-            if (newPath.endsWith(`/frontend/${lang}`)) newPath += '/index.html';
+            if (newPath === `/frontend/${lang}`) newPath += '/index.html';
             if (newPath !== url.pathname) location.href = newPath + url.search + url.hash;
 		} catch(_) {}
 	}
