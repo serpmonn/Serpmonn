@@ -136,6 +136,24 @@ body {
     transform: translateY(-1px);
 }
 
+.bonus-info {
+    font-size: 14px;
+    color: #28a745;
+    font-weight: bold;
+    margin: 5px 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2; /* Ограничиваем до 2 строк */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.bonus-info::before {
+    content: '🎁 ';
+    font-size: 14px;
+}
+
 .expiry {
     font-size: 13px;
     color: #666;
@@ -317,11 +335,6 @@ a.register-link:hover {
 .submit-btn:active {
     transform: translateY(1px);
     box-shadow: 0 2px 5px rgba(255, 107, 0, 0.2);
-}
-
-.submit-btn:focus {
-    outline: 2px solid #ff6b00;
-    outline-offset: 2px;
 }
 
 .stats-controls {

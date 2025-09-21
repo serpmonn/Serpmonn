@@ -96,6 +96,7 @@ function normalizePromo(raw) {
     const amountRaw = pickFromContainers(['discount_amount', 'amount', 'value', 'discountValue']);
     norm.discount_percent = percentRaw ? Number(String(percentRaw).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
     norm.discount_amount = amountRaw ? Number(String(amountRaw).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
+    norm.bonus_description = pickFromContainers(['bonus_description', 'name', 'comment', 'description']) || undefined;
     const expiry = pickFromContainers(['valid_until', 'expiry_date', 'date_end', 'valid_to', 'end_date', 'expires_at']);
     if (expiry) {
         const parsedDate = new Date(expiry);
@@ -348,6 +349,23 @@ function createPromoCard(promo, isTopOffer = false) {
     const isExpired = expiryDate < now;
     const detailsId = `details-${promo.id || Math.random().toString(36).substr(2, 9)}`;
 
+    // Формируем текст бонуса
+    let bonusText = '';
+    const isSberCard = /Детская\s*Сбер\s*Карта|СберКарта\s*Детская/i.test(titleText);
+    if (promo.discount_percent) {
+        bonusText = `Скидка ${promo.discount_percent}%`;
+    } else if (promo.discount_amount) {
+        bonusText = isSberCard ? `Сертификат на ${promo.discount_amount}₽` : `Скидка ${promo.discount_amount}₽`;
+    } else if (promo.bonus_description) {
+        bonusText = promo.bonus_description;
+    } else {
+        bonusText = 'Без промокода';
+    }
+
+    // Определяем содержимое для details-content
+    const detailsContent = promo.description || promo.groupDescription || 'Описание будет доступно позже';
+    const showDetails = (promo.description && promo.description.length > 100) || promo.groupDescription;
+
     card.innerHTML = `
         <div class="promo-card-content">
             <div class="promo-header">
@@ -360,23 +378,15 @@ function createPromoCard(promo, isTopOffer = false) {
                 <p class="code">${promo.promocode} 
                     <button class="submit-btn" onclick="copyToClipboard('${promo.promocode}')" aria-label="Скопировать промокод ${promo.promocode}">Копировать</button>
                 </p>
-            ` : '<p class="code">Без промокода</p>'}
-            <p class="description">${promo.description || promo.subtitle || 'Описание будет доступно позже'}</p>
-            ${promo.description && promo.description.length > 100 ? `
+            ` : ''}
+            <p class="bonus-info">${bonusText}</p>
+            ${showDetails ? `
                 <button type="button" class="details-btn" aria-expanded="false" aria-controls="${detailsId}">
                     <span class="details-icon">▼</span>
                     <span class="details-text">Подробнее</span>
                 </button>
                 <div class="details-content" id="${detailsId}" style="display: none; margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
-                    ${promo.description}
-                </div>
-            ` : promo.groupDescription ? `
-                <button type="button" class="details-btn" aria-expanded="false" aria-controls="${detailsId}">
-                    <span class="details-icon">▼</span>
-                    <span class="details-text">Подробнее</span>
-                </button>
-                <div class="details-content" id="${detailsId}" style="display: none; margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
-                    ${promo.groupDescription}
+                    ${detailsContent}
                 </div>
             ` : ''}
             ${promo.conditions ? `<p><strong>Условия:</strong> ${promo.conditions}</p>` : ''}

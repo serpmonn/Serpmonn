@@ -3,7 +3,7 @@ import rateLimit from 'express-rate-limit';
 
 const router = express.Router();
 
-// Конфигурация API Perfluence (хранится на сервере)
+// Конфигурация API Perfluence
 const PERFLUENCE_API_CONFIG = {
   url: 'https://dash.perfluence.net/blogger/promocode-api/json',
   key: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ODk4OTg3LCJhdXRoX2tleSI6Iml1Tl9fVk5WdTdOY0RqT1RKZW1EbUpUV1JjeUxqNFp4IiwiZGF0YSI6W119.k8vSFrvEtc75g7Gu-YdIcvhu6nB60V2CTOjti0IPfhQ',
@@ -18,7 +18,7 @@ let promocodesCache = {
   isUpdating: false
 };
 
-// Белый список брендов: для них все офферы считаются ТОП (актуализирован)
+// Белый список брендов: для них все офферы считаются ТОП
 const TOP_BRANDS_PATTERNS = [
   /Яндекс\s*Лавка/i,
   /\bСамокат\b/i,
@@ -72,21 +72,23 @@ function stripHtml(html) {
 
 function normalizeAdvertiserText(text) {
   const raw = stripHtml(text || '');
-  // Убираем ведущие префиксы «Реклама.» и пробелы
   const withoutAd = raw.replace(/^\s*Реклама\.?\s*/i, '');
-  // Нормализуем двойные пробелы
   return withoutAd.replace(/\s{2,}/g, ' ').trim();
 }
 
 function parsePercentFromString(value) {
   if (typeof value !== 'string') return null;
-  const match = value.replace(',', '.').match(/(\d{1,3})\s*%/);
-  return match ? Number(match[1]) : null;
+  const match = value.replace(',', '.').match(/(\d{1,3})\s*%|\bскидка\s*(\d{1,3})\s*%/i);
+  return match ? Number(match[1] || match[2]) : null;
 }
 
 function parseAmountFromString(value) {
   if (typeof value !== 'string') return null;
-  const match = value.replace(/\s/g, '').match(/(\d{2,})(?:₽|rub|руб)/i);
+  const match = value.replace(/\s/g, '').match(/(\d{2,})(?:₽|rub|руб|рублей|р\.)/i) ||
+                value.match(/бонус\s*(\d{2,})\s*(?:₽|руб|рублей|р\.)?/i) ||
+                value.match(/сертификат\s*(?:на\s*)?(\d{2,})\s*(?:₽|руб|рублей|р\.)?/i) ||
+                value.match(/(\d{2,})\s*(?:сертификат|ваучер|подарок)\s*(?:₽|руб|рублей|р\.)?/i) ||
+                value.match(/(\d{2,})\s*р\s*(?:сертификат|ваучер|подарок)?/i);
   return match ? Number(match[1]) : null;
 }
 
@@ -104,41 +106,33 @@ function normalizeDate(dateStr) {
   if (!dateStr) return null;
   const raw = String(dateStr).trim();
 
-  // Вырезаем лишние слова типа "до 31.08.2025" или "действует до 31.08.2025"
   const cleaned = raw
     .replace(/^до\s+/i, '')
     .replace(/^действует\s+до\s+/i, '')
     .replace(/^valid\s+until\s+/i, '')
     .trim();
 
-  // Формат dd.mm.yyyy или dd.mm.yy, с опциональным временем HH:MM[:SS]
   const m = cleaned.match(/^([0-9]{1,2})\.([0-9]{1,2})\.([0-9]{2}|[0-9]{4})(?:\s+([0-9]{1,2}):([0-9]{2})(?::([0-9]{2}))?)?$/);
   if (m) {
     let [_, dd, mm, yyyy, HH, MM, SS] = m;
-    // Приводим год к yyyy
     if (yyyy.length === 2) {
       const yy = parseInt(yyyy, 10);
       yyyy = String(yy >= 70 ? 1900 + yy : 2000 + yy);
     }
-    // Устанавливаем время по умолчанию 23:59:59, если не задано
     const hh = HH !== undefined ? String(HH).padStart(2, '0') : '23';
     const min = MM !== undefined ? String(MM).padStart(2, '0') : '59';
     const ss = SS !== undefined ? String(SS).padStart(2, '0') : '59';
-
     return `${yyyy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}T${hh}:${min}:${ss}`;
   }
 
-  // Если пришёл уже ISO-подобный формат yyyy-mm-dd или yyyy-mm-ddTHH:MM:SS - оставляем
   const isoLike = cleaned.match(/^\d{4}-\d{2}-\d{2}(?:[T\s]\d{2}:\d{2}(?::\d{2})?)?$/);
   if (isoLike) {
-    // Если только дата без времени — добавим 23:59:59
     if (/^\d{4}-\d{2}-\d{2}$/.test(cleaned)) {
       return `${cleaned}T23:59:59`;
     }
     return cleaned;
   }
 
-  // Иначе вернуть null, чтобы трактовать как бессрочный (активный)
   return null;
 }
 
@@ -146,33 +140,31 @@ function determineCategoryFromText(categoryName, title, description) {
   const cat = (categoryName || '').toLowerCase();
   const text = [title, description].filter(Boolean).join(' ').toLowerCase();
 
-  // Приоритет по category_name от Perfluence
   if (/кино|афиша|онлайн\s*кино|видео/.test(cat)) return 'развлечения';
   if (/одежд|обув|мода|fashion/.test(cat)) return 'товары';
   if (/супермаркет|гипермаркет|продукт|лавка|магазин/.test(cat)) return 'продукты';
   if (/еда|рестора|пицц|суши|доставк/.test(cat)) return 'еда';
   if (/банк|страх|медицин|здоров|каршеринг|такси|сервис|услуг/.test(cat)) return 'услуги';
+  if (/сбер\s*карта|детская\s*сбер\s*карта/i.test(cat)) return 'услуги';
 
-  // Резервные эвристики по текстам
   if (/пицц|суши|ресторан|еда|доставк/.test(text)) return 'еда';
   if (/лавка|вкусвилл|ашан|продукт|продовольств/.test(text)) return 'продукты';
   if (/кино|афиша|подписк.*видео|музык|онлайн\s*кино/.test(text)) return 'развлечения';
   if (/одежд|обув|товар|покупк|market|магазин/.test(text)) return 'товары';
-  if (/банк|страх|здоров|медицин|каршеринг|такси|сервис|услуг/.test(text)) return 'услуги';
+  if (/банк|страх|здоров|медицин|каршеринг|такси|сервис|услуг|сбер\s*карта|детская\s*сбер\s*карта/.test(text)) return 'услуги';
 
   return 'другие';
 }
 
-// Преобразуем Perfluence: project -> groups[] -> promocodes[]
 function flattenPerfluenceData(perfArray) {
   const result = [];
   let totalPromos = 0;
   let processedPromos = 0;
-  
+
   for (const item of perfArray) {
     const project = item?.project || {};
     const groups = Array.isArray(item?.groups) ? item.groups : [];
-    
+
     for (const group of groups) {
       const landing = group?.landing || {};
       const linksForSubs = Array.isArray(group?.links_for_subscribers) ? group.links_for_subscribers : [];
@@ -182,29 +174,57 @@ function flattenPerfluenceData(perfArray) {
       const advertiserText = normalizeAdvertiserText(advertiserTextRaw);
       const logo = firstDefined(landing.logo, project.logo, project.img);
       const promos = Array.isArray(group?.promocodes) ? group.promocodes : [];
-      
-      // Собираем общее описание группы один раз
+
       const offerTitle = firstDefined(project.name, landing.name) || 'Предложение партнёра';
       const groupDescription = stripHtml(project.product_info) || 'Описание недоступно';
-      const { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name);
+      let { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name, project.product_info, offerTitle);
+      
+      // Извлекаем текстовое описание бонуса, если числовые значения отсутствуют
+      let bonusDescription = null;
+      const keywords = /скидка|подарок|бонус|сертификат/i;
+      const candidate = firstDefined(landing.name, project.name, stripHtml(project.product_info));
+      if (candidate && keywords.test(candidate)) {
+        bonusDescription = candidate;
+      }
+
       const offerCategory = determineCategoryFromText(project.category_name, offerTitle, groupDescription);
       const offerImageUrl = firstDefined(logo) || '/frontend/images/skidki-i-akcii.png';
       const offerIsTop = Boolean(isWhitelistedTopAny(offerTitle, project.name, landing.name, advertiserText));
-      
+
       totalPromos += promos.length;
 
-      // Обработка промокодов (если есть)
+      // Логирование, если бонус не удалось извлечь
+      if (!offerPercent && !offerAmount && !bonusDescription && landing.name) {
+        console.warn(`Не удалось извлечь бонус или описание из landing.name: ${landing.name}, project.name: ${project.name}, product_info: ${project.product_info}, title: ${offerTitle}`);
+        fetch('/api/log-error', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: 'Не удалось извлечь бонус или описание',
+            error: `landing.name=${landing.name}, project.name=${project.name}, product_info=${project.product_info}, title=${offerTitle}`,
+            userAgent: 'Server'
+          })
+        }).catch(() => {});
+      }
+
       for (const promo of promos) {
         const title = firstDefined(project.name, promo.name) || 'Промокод';
         const description = firstDefined(promo.comment, stripHtml(project.product_info)) || 'Описание недоступно';
 
         const code = firstDefined(promo.code);
         const when = normalizeDate(firstDefined(promo.date));
-        
+
         if (!code && !when) {
           continue;
         }
-        const { percent, amount } = extractDiscountFromTexts(promo.name, promo.comment, landing.name, project.name);
+        const { percent, amount } = extractDiscountFromTexts(promo.name, promo.comment, landing.name, project.name, project.product_info, title);
+        
+        // Извлекаем bonus_description для промокодов
+        let promoBonusDescription = null;
+        const promoCandidate = firstDefined(promo.name, promo.comment, landing.name, project.name);
+        if (promoCandidate && keywords.test(promoCandidate)) {
+          promoBonusDescription = promoCandidate;
+        }
 
         const category = determineCategoryFromText(project.category_name, title, description);
         const imageUrl = firstDefined(promo.image, logo) || '/frontend/images/skidki-i-akcii.png';
@@ -215,7 +235,7 @@ function flattenPerfluenceData(perfArray) {
         if (result.some(existing => existing.id === promoId)) {
           continue;
         }
-        
+
         result.push({
           id: promoId,
           title,
@@ -223,6 +243,7 @@ function flattenPerfluenceData(perfArray) {
           promocode: code || null,
           discount_percent: percent,
           discount_amount: amount,
+          bonus_description: promoBonusDescription, // Добавляем описание бонуса
           valid_until: when,
           landing_url: landingUrl || null,
           image_url: imageUrl,
@@ -236,7 +257,6 @@ function flattenPerfluenceData(perfArray) {
         processedPromos++;
       }
 
-      // ФИКС: Добавляем оффер группы только если нет промокодов и есть landing_url
       if (promos.length === 0 && landingUrl) {
         const offerIdBase = firstDefined(landing.id, project.id);
         const offerSuffix = (group && (group.name || 'group')) || 'group';
@@ -249,7 +269,8 @@ function flattenPerfluenceData(perfArray) {
             promocode: null,
             discount_percent: offerPercent,
             discount_amount: offerAmount,
-            valid_until: null, // Бессрочно, если не указано
+            bonus_description: bonusDescription, // Добавляем описание бонуса
+            valid_until: null,
             landing_url: landingUrl,
             image_url: offerImageUrl,
             conditions: firstDefined(item.conditions, null),
@@ -263,11 +284,10 @@ function flattenPerfluenceData(perfArray) {
       }
     }
   }
-  
+
   return result;
 }
 
-// Загрузка промокодов из API Perfluence
 async function loadPromocodesFromAPI() {
   try {
     const response = await fetch(`${PERFLUENCE_API_CONFIG.url}?key=${PERFLUENCE_API_CONFIG.key}`);
@@ -278,7 +298,6 @@ async function loadPromocodesFromAPI() {
     const raw = await response.json();
     const perfArray = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
 
-    // Переводим структуру Perfluence к плоскому списку промокодов
     const data = flattenPerfluenceData(perfArray);
 
     if (Array.isArray(data)) {
@@ -299,7 +318,6 @@ async function loadPromocodesFromAPI() {
   }
 }
 
-// Фильтрация промокодов по параметрам
 function filterPromocodes(filters = {}) {
   let filtered = [...promocodesCache.data];
 
@@ -361,7 +379,6 @@ function getPromocodesStats() {
     return dt > now;
   }).length;
 
-  // Считаем только с промокодами
   const totalPromocodes = promocodesCache.data.filter(p => Boolean(p.promocode)).length;
   const activePromocodes = promocodesCache.data.filter(p => {
     if (!p.promocode) return false;
@@ -374,7 +391,6 @@ function getPromocodesStats() {
   return { total, active, totalPromocodes, activePromocodes, lastUpdate: promocodesCache.lastUpdate };
 }
 
-// Маршруты API
 router.get('/', promocodesLimiter, async (req, res) => {
   try {
     const shouldUpdate = !promocodesCache.lastUpdate || (Date.now() - promocodesCache.lastUpdate.getTime()) > PERFLUENCE_API_CONFIG.updateInterval;
@@ -450,7 +466,6 @@ router.get('/categories', promocodesLimiter, (req, res) => {
   }
 });
 
-// Инициализация при загрузке модуля
 (async () => {
   console.log('[PROMOCODES] Инициализация модуля промокодов...');
   await loadPromocodesFromAPI();
