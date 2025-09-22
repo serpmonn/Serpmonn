@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="vi" dir="ltr">
+  <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/vi/games/coins/index.html">
+<meta property="og:url" content="https://www.serpmonn.ru/frontend/vi/games/coins/index.html" />
+<meta http-equiv="Content-Language" content="vi">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Монетки — Serpmonn</title>
+    <meta name="description" content="Собирай монетки за отведённое время, уклоняясь от препятствий. Простая аркада.">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <style>
+      :root { --bg:#0e0f12; --board:#14171b; --player:#ffcc00; --coin:#ffd54f; --bad:#e74c3c; --text:#f2f2f2; }
+      html, body { width:100%; height:100%; background: var(--bg); overflow:hidden; }
+      body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); }
+      .page { max-width: 1000px; margin: 0 auto; padding: 16px; }
+      header { display:flex; align-items:center; gap:12px; margin: 10px 0 16px; }
+      header h1 { font-size: 1.6rem; margin: 0; }
+      .wrap { display:grid; grid-template-columns: 1fr 320px; gap: 16px; align-items:start; }
+      .panel { background:#121417; border:1px solid #23262a; border-radius:10px; padding:12px 14px; }
+      canvas { background: var(--board); width:100%; max-width:640px; height:auto; border-radius: 10px; border:1px solid #23262a; box-shadow: 0 8px 30px rgba(0,0,0,.25); display:block; margin:0 auto; }
+      .stats { display:grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+      .stat { background:#15181c; border:1px solid #232a33; border-radius:8px; padding:8px 10px; text-align:center; }
+      .controls { display:flex; gap:8px; justify-content:center; margin-top:10px; }
+      .btn { background:#16202a; border:1px solid #243241; color:#eee; border-radius:8px; padding:8px 10px; cursor:pointer; }
+      .btn.primary { background: linear-gradient(90deg, #dc3545, #c82333); border:none; }
+      .hint { color:#cfcfcf; font-size:.95rem; text-align:center; margin-top:10px; }
+      @media (max-width: 960px) { .wrap{grid-template-columns:1fr;} }
+    </style>
+  </head>
+  <body>
+    <div id="menuContainer"></div>
+    <script>
+      window.showFullScreenAd = window.showFullScreenAd || function(){
+        try {
+          var ov = document.getElementById('game-ad-overlay');
+          if(!ov){
+            ov = document.createElement('div');
+            ov.id = 'game-ad-overlay';
+            ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:9999;';
+            var box = document.createElement('div');
+            box.style.cssText = 'background:#111;border:1px solid #222;border-radius:12px;padding:12px;text-align:center;max-width:90vw;max-height:90vh;';
+            var ins = document.createElement('ins');
+            ins.className = 'mrg-tag';
+            ins.setAttribute('data-ad-client','ad-1844883');
+            ins.setAttribute('data-ad-slot','1844883');
+            var btn = document.createElement('button');
+            btn.className='btn'; btn.textContent='Продолжить'; btn.style.marginTop='10px';
+            btn.onclick=function(){ ov.remove(); };
+            box.appendChild(ins); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
+            (window.MRGtag = window.MRGtag || []).push({});
+          } else {
+            ov.style.display='flex'; (window.MRGtag = window.MRGtag || []).push({});
+          }
+        } catch(_){}
+      };
+    </script>
+    <div class="page">
+      <header>
+        <img src="/frontend/images/WebGames.ico" width="28" height="28" alt="Игры" style="border-radius:6px;">
+        <h1>Монетки</h1>
+      </header>
+      <script>
+        (function(){
+          function isMobile(){ return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768); }
+          function showInstructions(){
+            if (localStorage.getItem('game_instructions_coins_shown')==='1') return;
+            var ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9998;';
+            var box=document.createElement('div'); box.style.cssText='max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
+            var h=document.createElement('h3'); h.textContent='Как играть — Монетки'; h.style.margin='0 0 8px';
+            var p=document.createElement('div'); p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
+            p.textContent = isMobile() ? '• Свайпы — направление движения\n• Старт/Заново — кнопки'
+                                     : '• Стрелки или WASD — движение\n• R — заново';
+            var btn=document.createElement('button'); btn.className='btn'; btn.textContent='Понятно'; btn.style.marginTop='10px';
+            btn.onclick=function(){ ov.remove(); localStorage.setItem('game_instructions_coins_shown','1'); };
+            box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
+          }
+          document.addEventListener('DOMContentLoaded', showInstructions);
+        })();
+      </script>
+      <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+        <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+      </div>
+      <script>(window.MRGtag = window.MRGtag || []).push({});</script>
+
+      <div class="wrap">
+        <div class="panel">
+          <canvas id="game" width="480" height="480" aria-label="Игровое поле"></canvas>
+          <div class="hint" style="display:none;">Управление: стрелки или WASD. Соберите как можно больше монет за время. Перезапуск — R.</div>
+        </div>
+        <div class="panel">
+          <div class="stats">
+            <div class="stat">Монеты<br><b id="score">0</b></div>
+            <div class="stat">Время<br><b id="time">60</b>с</div>
+            <div class="stat">Рекорд<br><b id="best">0</b></div>
+          </div>
+          <div class="controls">
+            <button class="btn primary" id="btnStart">Старт</button>
+            <button class="btn" id="btnReset">Заново</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script>
+      (function(){
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        const size = 24; // клетка
+        const cells = 20; // поле 20x20
+        canvas.width = canvas.height = size * cells;
+
+        const scoreEl = document.getElementById('score');
+        const timeEl = document.getElementById('time');
+        const bestEl = document.getElementById('best');
+        const btnStart = document.getElementById('btnStart');
+        const btnReset = document.getElementById('btnReset');
+
+        const bestKey = 'coins_best_score_v1';
+        let best = parseInt(localStorage.getItem(bestKey)||'0',10); bestEl.textContent = String(best);
+
+        let player, coins, bads, score, timeLeft, secTimer, tickTimer, tickMs, tickCount, started, alive;
+
+        function reset(){
+          player = { x: Math.floor(cells/2), y: Math.floor(cells/2), vx:0, vy:0 };
+          coins = []; bads = [];
+          score = 0; scoreEl.textContent = '0';
+          timeLeft = 60; timeEl.textContent = String(timeLeft);
+          tickMs = 300; // замедление игры
+          tickCount = 0;
+          started = false; alive = true;
+          spawnCoins(5);
+          spawnBads(2);
+          draw();
+        }
+
+        function spawnCoins(n){ for(let i=0;i<n;i++) coins.push(randEmptyCell()); }
+        function spawnBads(n){ for(let i=0;i<n;i++) bads.push(randEmptyCell()); }
+
+        function randEmptyCell(){
+          while(true){
+            const p = {x: Math.floor(Math.random()*cells), y: Math.floor(Math.random()*cells)};
+            if (p.x===player.x && p.y===player.y) continue;
+            if (coins.some(c=>c.x===p.x && c.y===p.y)) continue;
+            if (bads.some(b=>b.x===p.x && b.y===p.y)) continue;
+            return p;
+          }
+        }
+
+        function start(){
+          if (started) return; started = true;
+          secTimer = setInterval(()=>{
+            timeLeft -= 1; timeEl.textContent = String(timeLeft);
+            if(timeLeft<=0){ alive=false; stop(); gameOver(); }
+          }, 1000);
+          tickTimer = setInterval(()=>{ tickCount++; step(); draw(); }, tickMs);
+        }
+
+        function stop(){ if(secTimer){ clearInterval(secTimer); secTimer=null; } if(tickTimer){ clearInterval(tickTimer); tickTimer=null; } }
+
+        function step(){
+          // движение игрока по сетке (1 клетка за тик)
+          player.x = (player.x + player.vx + cells) % cells;
+          player.y = (player.y + player.vy + cells) % cells;
+
+          // сбор монет
+          for(let i=coins.length-1;i>=0;i--){
+            if(coins[i].x===player.x && coins[i].y===player.y){
+              coins.splice(i,1); score+=1; scoreEl.textContent=String(score);
+              if(score>best){ best=score; localStorage.setItem(bestKey,String(best)); bestEl.textContent=String(best); }
+            }
+          }
+          if(coins.length<5) spawnCoins(1);
+
+          // столкновение с ловушками
+          for(const b of bads){ if(b.x===player.x && b.y===player.y){ alive=false; stop(); gameOver(); return; } }
+
+          // движение ловушек — реже (каждые 3 тика)
+          if ((tickCount % 3) === 0) {
+            bads = bads.map(b=>({ x: (b.x + (Math.random()<.5?-1:1) + cells)%cells, y: (b.y + (Math.random()<.5?-1:1) + cells)%cells }));
+          }
+        }
+
+        function draw(){
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--board') || '#14171b';
+          ctx.fillRect(0,0,canvas.width,canvas.height);
+
+          // сетка
+          ctx.strokeStyle = 'rgba(255,255,255,.05)';
+          ctx.lineWidth = 1;
+          for(let i=0;i<=cells;i++){
+            ctx.beginPath(); ctx.moveTo(i*size,0); ctx.lineTo(i*size, canvas.height); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0,i*size); ctx.lineTo(canvas.width, i*size); ctx.stroke();
+          }
+
+          // монеты
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--coin') || '#ffd54f';
+          for(const c of coins){ roundRect(ctx, c.x*size+6, c.y*size+6, size-12, size-12, 6, true); }
+
+          // ловушки
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--bad') || '#e74c3c';
+          for(const b of bads){ roundRect(ctx, b.x*size+4, b.y*size+4, size-8, size-8, 4, true); }
+
+          // игрок
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--player') || '#ffcc00';
+          roundRect(ctx, player.x*size+3, player.y*size+3, size-6, size-6, 6, true);
+        }
+
+        function roundRect(ctx, x, y, w, h, r, fill){
+          ctx.beginPath();
+          ctx.moveTo(x+r, y);
+          ctx.arcTo(x+w, y, x+w, y+h, r);
+          ctx.arcTo(x+w, y+h, x, y+h, r);
+          ctx.arcTo(x, y+h, x, y, r);
+          ctx.arcTo(x, y, x+w, y, r);
+          ctx.closePath(); if(fill) ctx.fill();
+        }
+
+        function gameOver(){
+          ctx.fillStyle = 'rgba(0,0,0,.55)';
+          ctx.fillRect(0,0,canvas.width,canvas.height);
+          ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+          ctx.font = 'bold 28px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+
+          ctx.fillText('Игра окончена', canvas.width/2, canvas.height/2 - 10);
+          ctx.font = '16px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+          ctx.fillText('Нажмите R — заново', canvas.width/2, canvas.height/2 + 18);
+          try { if (window.showFullScreenAd) window.showFullScreenAd(); } catch(_){}
+
+        }
+
+        function setDir(vx, vy){ player.vx=vx; player.vy=vy; }
+        window.addEventListener('keydown', (e)=>{
+          const k=e.key.toLowerCase();
+          if(k==='arrowup'||k==='w') setDir(0,-1);
+          else if(k==='arrowdown'||k==='s') setDir(0,1);
+          else if(k==='arrowleft'||k==='a') setDir(-1,0);
+          else if(k==='arrowright'||k==='d') setDir(1,0);
+          else if(k==='r') reset();
+        });
+
+        // мобильное управление: свайпы
+        (function(){
+          let sx=0, sy=0;
+          const el = canvas;
+          el.addEventListener('touchstart', (e)=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; }, {passive:true});
+          el.addEventListener('touchend', (e)=>{
+            const t=e.changedTouches[0]; const dx=t.clientX-sx, dy=t.clientY-sy; if(Math.abs(dx)>Math.abs(dy)){ if(dx>10) setDir(1,0); else if(dx<-10) setDir(-1,0); } else { if(dy>10) setDir(0,1); else if(dy<-10) setDir(0,-1); }
+            sx=sy=0;
+          }, {passive:true});
+        })();
+
+        btnStart.addEventListener('click', start);
+        btnReset.addEventListener('click', reset);
+
+        reset();
+      })();
+    </script>
+  </body>
+</html>

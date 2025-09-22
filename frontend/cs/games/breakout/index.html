@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="cs" dir="ltr">
+  <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/cs/games/breakout/index.html">
+<meta property="og:url" content="https://www.serpmonn.ru/frontend/cs/games/breakout/index.html" />
+<meta http-equiv="Content-Language" content="cs">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Арканоид — Serpmonn</title>
+    <meta name="description" content="Арканоид (Breakout): отбивай мяч платформой и разбивай блоки, набирая очки.">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <style>
+      :root { --bg:#0f1115; --panel:#141820; --text:#eaeaea; --ball:#f1c40f; --paddle:#dc3545; --brick1:#2ecc71; --brick2:#3498db; --brick3:#9b59b6; }
+      html, body { width:100%; height:100%; background: var(--bg); overflow:hidden; }
+      body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); }
+      .page { max-width: 1000px; margin: 0 auto; padding: 16px; }
+      header { display:flex; align-items:center; gap:12px; margin: 10px 0 16px; }
+      header h1 { font-size: 1.6rem; margin: 0; }
+      .wrap { display:grid; grid-template-columns: 1fr 320px; gap: 16px; align-items:start; }
+      .panel { background: var(--panel); border:1px solid #1f2632; border-radius:10px; padding:12px 14px; }
+      canvas { background: #0d1016; width:100%; max-width:640px; height:auto; border-radius:10px; border:1px solid #1f2632; box-shadow: 0 8px 30px rgba(0,0,0,.25); display:block; margin:0 auto; }
+      .stats { display:grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+      .stat { background:#10141b; border:1px solid #1c2531; border-radius:8px; padding:8px 10px; text-align:center; }
+      .controls { display:flex; gap:8px; justify-content:center; margin-top:10px; }
+      .btn { background:#16202a; border:1px solid #243241; color:#eee; border-radius:8px; padding:8px 10px; cursor:pointer; }
+      .btn.primary { background: linear-gradient(90deg, #dc3545, #c82333); border:none; }
+      .hint { color:#cfcfcf; font-size:.95rem; text-align:center; margin-top:10px; }
+      @media (max-width: 960px) { .wrap{grid-template-columns:1fr;} }
+    </style>
+  </head>
+  <body>
+    <div id="menuContainer"></div>
+    <script>
+      window.showFullScreenAd = window.showFullScreenAd || function(){
+        try {
+          var ov = document.getElementById('game-ad-overlay');
+          if(!ov){
+            ov = document.createElement('div');
+            ov.id = 'game-ad-overlay';
+            ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:9999;';
+            var box = document.createElement('div');
+            box.style.cssText = 'background:#111;border:1px solid #222;border-radius:12px;padding:12px;text-align:center;max-width:90vw;max-height:90vh;';
+            var ins = document.createElement('ins');
+            ins.className = 'mrg-tag';
+            ins.setAttribute('data-ad-client','ad-1844883');
+            ins.setAttribute('data-ad-slot','1844883');
+            var btn = document.createElement('button');
+            btn.className='btn'; btn.textContent='Продолжить'; btn.style.marginTop='10px';
+            btn.onclick=function(){ ov.remove(); };
+            box.appendChild(ins); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
+            (window.MRGtag = window.MRGtag || []).push({});
+          } else {
+            ov.style.display='flex'; (window.MRGtag = window.MRGtag || []).push({});
+          }
+        } catch(_){}
+      };
+    </script>
+    <div class="page">
+      <header>
+        <img src="/frontend/images/WebGames.ico" width="28" height="28" alt="Игры" style="border-radius:6px;">
+        <h1>Арканоид</h1>
+      </header>
+      <script>
+        (function(){
+          function isMobile(){ return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768); }
+          function showInstructions(){
+            if (localStorage.getItem('game_instructions_breakout_shown')==='1') return;
+            var ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9998;';
+            var box=document.createElement('div'); box.style.cssText='max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
+            var h=document.createElement('h3'); h.textContent='Как играть — Арканоид'; h.style.margin='0 0 8px';
+            var p=document.createElement('div'); p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
+            p.textContent = isMobile() ? '• Двигайте платформу пальцем по экрану\n• Старт — кнопка «Старт», Пауза — «Старт», Заново — «R» (если доступно)'
+                                     : '• ← → или A/D — платформа\n• Пробел — старт/пауза\n• R — заново';
+            var btn=document.createElement('button'); btn.className='btn'; btn.textContent='Понятно'; btn.style.marginTop='10px';
+            btn.onclick=function(){ ov.remove(); localStorage.setItem('game_instructions_breakout_shown','1'); };
+            box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
+          }
+          document.addEventListener('DOMContentLoaded', showInstructions);
+        })();
+      </script>
+      <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+        <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+      </div>
+      <script>(window.MRGtag = window.MRGtag || []).push({});</script>
+
+      <div class="wrap">
+        <div class="panel">
+          <canvas id="game" width="480" height="640" aria-label="Игровое поле"></canvas>
+          <div class="hint" style="display:none;">Управление: ← → или A/D. Старт/пауза — пробел. Заново — R.</div>
+        </div>
+        <div class="panel">
+          <div class="stats">
+            <div class="stat">Очки<br><b id="score">0</b></div>
+            <div class="stat">Жизни<br><b id="lives">3</b></div>
+            <div class="stat">Рекорд<br><b id="best">0</b></div>
+          </div>
+          <div class="controls">
+            <button class="btn primary" id="btnStart">Старт</button>
+            <button class="btn" id="btnReset">Заново</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script>
+      (function(){
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        const W = 240, H = 320, SCALE = 2;
+        canvas.width = W*SCALE; canvas.height = H*SCALE; ctx.scale(SCALE,SCALE);
+
+        const paddle = { w: 48, h: 8, x: (W-48)/2, y: H-20, speed: 4, vx: 0 };
+        const ballInit = { x: W/2, y: H/2, r: 4, vx: 2.6, vy: -2.4 };
+        let ball = { ...ballInit };
+
+        const rows = 5, cols = 8, brickW = 24, brickH = 10, gap = 4;
+        const offsetX = (W - (cols*brickW + (cols-1)*gap)) / 2;
+        const offsetY = 30;
+        let bricks = [];
+
+        const bestKey = 'breakout_best_v1';
+        let best = parseInt(localStorage.getItem(bestKey)||'0',10);
+        const scoreEl = document.getElementById('score');
+        const livesEl = document.getElementById('lives');
+        const bestEl = document.getElementById('best');
+        bestEl.textContent = String(best);
+        let score = 0, lives = 3, running = false;
+
+        function resetBricks(){
+          bricks = [];
+          for(let r=0;r<rows;r++){
+            for(let c=0;c<cols;c++){
+              bricks.push({
+                x: offsetX + c*(brickW+gap),
+                y: offsetY + r*(brickH+gap),
+                w: brickW, h: brickH, alive: true, v: rows-r // ценность
+              });
+            }
+          }
+        }
+
+        function reset(all=true){
+          if(all){ score = 0; lives = 3; }
+          ball = { ...ballInit };
+          paddle.x = (W - paddle.w)/2; paddle.vx = 0;
+          resetBricks();
+          scoreEl.textContent = String(score);
+          livesEl.textContent = String(lives);
+          running = false; draw();
+        }
+
+        function start(){ running = true; }
+        function pause(){ running = false; }
+
+        function update(){
+          if(!running) return;
+          // платформа
+          paddle.x += paddle.vx;
+          if(paddle.x < 4) paddle.x = 4;
+          if(paddle.x + paddle.w > W-4) paddle.x = W-4 - paddle.w;
+
+          // мяч
+          ball.x += ball.vx; ball.y += ball.vy;
+          // стены
+          if(ball.x - ball.r < 0){ ball.x = ball.r; ball.vx *= -1; }
+          if(ball.x + ball.r > W){ ball.x = W - ball.r; ball.vx *= -1; }
+          if(ball.y - ball.r < 0){ ball.y = ball.r; ball.vy *= -1; }
+
+          // падение
+          if(ball.y - ball.r > H){
+            lives -= 1; livesEl.textContent = String(lives);
+            running = false;
+            if(lives <= 0){ gameOver(); return; }
+            ball = { ...ballInit };
+          }
+
+          // платформа коллизия
+          if(ball.y + ball.r >= paddle.y && ball.y - ball.r <= paddle.y + paddle.h && ball.x >= paddle.x && ball.x <= paddle.x + paddle.w){
+            ball.y = paddle.y - ball.r;
+            ball.vy *= -1;
+            // эффект от места удара
+            const hit = (ball.x - (paddle.x + paddle.w/2)) / (paddle.w/2);
+            ball.vx = 3.2 * hit;
+          }
+
+          // блоки
+          for(const b of bricks){
+            if(!b.alive) continue;
+            if(ball.x + ball.r > b.x && ball.x - ball.r < b.x + b.w && ball.y + ball.r > b.y && ball.y - ball.r < b.y + b.h){
+              b.alive = false;
+              score += b.v; scoreEl.textContent = String(score);
+              if(score>best){ best=score; localStorage.setItem(bestKey,String(best)); bestEl.textContent=String(best); }
+              // простой отскок по вертикали
+              ball.vy *= -1;
+              break;
+            }
+          }
+
+          // победа
+          if(bricks.every(b=>!b.alive)){
+            running = false;
+            win();
+          }
+        }
+
+        function draw(){
+          // фон
+          const grad = ctx.createLinearGradient(0,0,0,H);
+          grad.addColorStop(0,'#1d2735'); grad.addColorStop(1,'#0e131b');
+          ctx.fillStyle = grad; ctx.fillRect(0,0,W,H);
+
+          // блоки
+          for(const b of bricks){
+            if(!b.alive) continue;
+            ctx.fillStyle = b.v>=3 ? getComputedStyle(document.documentElement).getPropertyValue('--brick1')||'#2ecc71' : (b.v===2 ? (getComputedStyle(document.documentElement).getPropertyValue('--brick2')||'#3498db') : (getComputedStyle(document.documentElement).getPropertyValue('--brick3')||'#9b59b6'));
+            ctx.fillRect(b.x, b.y, b.w, b.h);
+          }
+
+          // платформа
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--paddle') || '#dc3545';
+          ctx.fillRect(paddle.x, paddle.y, paddle.w, paddle.h);
+
+          // мяч
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--ball') || '#f1c40f';
+          ctx.beginPath(); ctx.arc(ball.x, ball.y, ball.r, 0, Math.PI*2); ctx.fill();
+
+          // HUD
+          ctx.fillStyle = '#fff'; ctx.font = 'bold 16px system-ui, -apple-system, Segoe UI, Roboto, Arial'; ctx.textAlign='left';
+          ctx.fillText(String(score), 8, 20);
+        }
+
+        function gameOver(){
+          draw();
+          ctx.fillStyle = 'rgba(0,0,0,.55)'; ctx.fillRect(0,0,W,H);
+          ctx.fillStyle = '#fff'; ctx.textAlign='center';
+          ctx.font = 'bold 22px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+
+          ctx.fillText('Игра окончена', W/2, H/2 - 10);
+          ctx.font = '16px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+          ctx.fillText('Нажмите R — заново', W/2, H/2 + 18);
+          try { if (window.showFullScreenAd) window.showFullScreenAd(); } catch(_){}
+        }
+
+        function win(){
+          draw();
+          ctx.fillStyle = 'rgba(0,0,0,.45)'; ctx.fillRect(0,0,W,H);
+          ctx.fillStyle = '#fff'; ctx.textAlign='center';
+          ctx.font = 'bold 22px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+
+          ctx.fillText('Победа!', W/2, H/2 - 10);
+          ctx.font = '16px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+          ctx.fillText('Нажмите R — заново', W/2, H/2 + 18);
+          try { if (window.showFullScreenAd) window.showFullScreenAd(); } catch(_){}
+        }
+
+        // цикл
+        let raf; function loop(){ update(); draw(); raf = requestAnimationFrame(loop); }
+
+        // ввод
+        function setPaddle(vx){ paddle.vx = vx; }
+        window.addEventListener('keydown', (e)=>{
+          const k = e.key.toLowerCase();
+          if(k==='arrowleft'||k==='a') setPaddle(-paddle.speed);
+          else if(k==='arrowright'||k==='d') setPaddle(paddle.speed);
+          else if(k===' ') { running ? pause() : start(); }
+          else if(k==='r') reset();
+        });
+        window.addEventListener('keyup', (e)=>{
+          const k = e.key.toLowerCase();
+          if(k==='arrowleft'||k==='a' || k==='arrowright'||k==='d') setPaddle(0);
+        });
+        document.getElementById('btnStart').addEventListener('click', ()=> running? pause(): start());
+        // тач-управление: перетаскивание платформы по X
+        (function(){
+          let touching = false;
+          canvas.addEventListener('touchstart', (e)=>{ touching = true; e.preventDefault(); const x = e.touches[0].clientX - canvas.getBoundingClientRect().left; paddle.x = Math.max(4, Math.min(x/ (canvas.clientWidth / (W)), W - paddle.w - 4)); }, {passive:false});
+          canvas.addEventListener('touchmove', (e)=>{ if(!touching) return; e.preventDefault(); const x = e.touches[0].clientX - canvas.getBoundingClientRect().left; paddle.x = Math.max(4, Math.min(x/ (canvas.clientWidth / (W)), W - paddle.w - 4)); }, {passive:false});
+          canvas.addEventListener('touchend', ()=>{ touching=false; });
+        })();
+        document.getElementById('btnReset').addEventListener('click', reset);
+
+        reset(); draw(); loop();
+      })();
+    </script>
+  </body>
+</html>
