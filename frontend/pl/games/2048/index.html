@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="pl" dir="ltr">
 <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/pl/games/2048/index.html">
+<script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="pl">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,48 +11,82 @@
     
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
-    <meta property="og:url" content="https://www.serpmonn.ru/frontend/pl/games/2048/">
-    <meta property="og:title" content="2048 — Classic puzzle">
-    <meta property="og:description" content="Merge equal tiles to reach 2048! A classic logic and strategy puzzle.">
+    <meta property="og:url" content="https://www.serpmonn.ru/frontend/pl/games/2048/index.html">
+    <meta property="og:title" content="2048 - Классическая головоломка">
+    <meta property="og:description" content="Соединяйте одинаковые числа для получения 2048! Классическая головоломка на логику и стратегию.">
     <meta property="og:image" content="https://www.serpmonn.ru/frontend/images/2048.ico">
     
     <!-- Twitter -->
     <meta property="twitter:card" content="summary_large_image">
-    <meta property="twitter:url" content="https://www.serpmonn.ru/frontend/pl/games/2048/">
-    <meta property="twitter:title" content="2048 — Classic puzzle">
-    <meta property="twitter:description" content="Merge equal tiles to reach 2048! A classic logic and strategy puzzle.">
+    <meta property="twitter:url" content="https://www.serpmonn.ru/frontend/games/2048/">
+    <meta property="twitter:title" content="2048 - Классическая головоломка">
+    <meta property="twitter:description" content="Соединяйте одинаковые числа для получения 2048! Классическая головоломка на логику и стратегию.">
     <meta property="twitter:image" content="https://www.serpmonn.ru/frontend/images/2048.ico">
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="2048.css">
-    <script src="/frontend/scripts/menu-loader.js" type="module" defer></script>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    
 </head>
 <body>
+    <script>
+      (function(){
+        function isMobile(){ return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768); }
+        function showInstructions(){
+          try{
+            var old = document.querySelector('.instructions'); if(old) old.style.display='none';
+            if (localStorage.getItem('game_instructions_2048_shown') === '1') return;
+            var ov = document.createElement('div');
+            ov.id = 'game-instructions-overlay';
+            ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9998;';
+            var box = document.createElement('div');
+            box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.4);text-align:left;';
+            var h = document.createElement('h3'); h.textContent = 'Как играть — 2048'; h.style.margin='0 0 8px';
+            var p = document.createElement('div');
+            p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
+            if (isMobile()) {
+              p.textContent = '• Свайпы влево/вправо/вверх/вниз — движение плиток\n• Кнопки: «Новая игра», «Отменить»';
+            } else {
+              p.textContent = '• Стрелки ← ↑ → ↓ — движение плиток\n• Кнопки под полем: «Новая игра», «Отменить»';
+            }
+            var btn = document.createElement('button'); btn.textContent='Понятно';
+            btn.className='btn'; btn.style.marginTop='10px'; btn.onclick=function(){ ov.remove(); localStorage.setItem('game_instructions_2048_shown','1'); };
+            box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
+          }catch(_){}
+        }
+        document.addEventListener('DOMContentLoaded', showInstructions);
+      })();
+    </script>
     <div class="container">
+        <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+            <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+        </div>
+        <script>(window.MRGtag = window.MRGtag || []).push({});</script>
         <header>
             <h1>🎮 2048</h1>
             <div class="score-container">
-                <div class="score">Score: <span id="score">0</span></div>
-                <div class="best">Best: <span id="best">0</span></div>
+                <div class="score">Счёт: <span id="score">0</span></div>
+                <div class="best">Лучший: <span id="best">0</span></div>
             </div>
         </header>
         
         <div class="game-container">
             <div class="game-board" id="board"></div>
             <div class="controls">
-                <button id="new-game" class="btn">New game</button>
-                <button id="undo" class="btn">Undo</button>
+                <button id="new-game" class="btn">Новая игра</button>
+                <button id="undo" class="btn">Отменить</button>
             </div>
         </div>
         
-        <div class="instructions">
-            <h3>How to play:</h3>
-            <p>Use arrow keys or swipes to move tiles. Merge equal numbers to reach 2048!</p>
+        <div class="instructions" style="display:none;">
+            <h3>Как играть:</h3>
+            <p>Используйте стрелки или свайпы для перемещения плиток. Соединяйте одинаковые числа для получения 2048!</p>
         </div>
     </div>
     
     <script src="2048.js"></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
 </html>

@@ -1,94 +1,74 @@
 <!DOCTYPE html>
 <html lang="be" dir="ltr">
-	<head>
+<head>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="be">
-	    <title>Square Escape — Serpmonn</title>
-	    <meta charset="UTF-8">
-	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	    <meta name="description" content="Play 'Square Escape'! Control the character and avoid obstacles. Test your reflexes and strategic thinking in this exciting game!">
-	    <!-- Open Graph -->
-	    <meta property="og:title" content="Square Escape — mini‑game on Serpmonn">
-	    <meta property="og:description" content="Play the browser mini‑game 'Square Escape' right on Serpmonn.">
-	    <meta property="og:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
-	    <meta property="og:url" content="https://serpmonn.ru/frontend/be/games/redsquare/redsquare.html">
-	    <meta property="og:type" content="game">
-	    <!-- Twitter -->
-	    <meta name="twitter:card" content="summary_large_image">
-	    <meta name="twitter:title" content="Square Escape — Serpmonn">
-	    <meta name="twitter:description" content="Play the browser mini‑game 'Square Escape' on Serpmonn.">
-	    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
-	    <meta property="og:title" content="Play 'Square Escape'!" />
-	    <meta property="og:description" content="Control the character and avoid collisions with other objects. Test your reflexes and strategic thinking in this exciting game!" />
-	    <meta property="og:image" content="https://serpmonn.ru/frontend/images/SquareEscape.ico" />
-	    <meta property="og:url" content="https://www.serpmonn.ru/frontend/be/games/redsquare/redsquare.html" />
-	    <meta property="og:type" content="website" />
-	    <link rel="canonical" href="https://www.serpmonn.ru/frontend/be/"/>
-	    <link rel="icon" href="/frontend/images/SquareEscape.ico" type="image/x-icon">
-	    <!-- Стили -->
-	    <link rel="stylesheet" href="redsquare_styles/redsquare_styles.css">
-        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-	    <!-- Скрипты -->
-		<!-- Yandex.RTB -->
-		<script>window.yaContextCb=window.yaContextCb||[]</script>
-		<script src="https://yandex.ru/ads/system/context.js" async></script>
-	    <script type="module" src="redsquare_scripts/redsquare_scripts.js" defer></script>
-		<script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <!-- Mail.ru Advertising -->
+    <title>Square Escape — Serpmonn</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Play ">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Квадратное бегство — мини‑игра на Serpmonn">
+    <meta property="og:description" content="Играй в браузерную мини‑игру 'Квадратное бегство' на Serpmonn.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
+    <meta property="og:url" content="https://www.serpmonn.ru/frontend/be/games/redsquare/redsquare.html">
+    <meta property="og:type" content="game">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Квадратное бегство — Serpmonn">
+    <meta name="twitter:description" content="Играй в браузерную мини‑игру 'Квадратное бегство' на Serpmonn.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
+    <link rel="canonical" href="https://www.serpmonn.ru/frontend/be/games/redsquare/redsquare.html">
+    <link rel="icon" href="/frontend/images/SquareEscape.ico" type="image/x-icon">
+    <!-- Стили -->
+    <link rel="stylesheet" href="/frontend/games/redsquare/redsquare_styles/redsquare_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <!-- Скрипты -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
-	</head>
-
-	<body>
-		<!-- Оверлей с инструкцией -->
-	    <div class="instruction-overlay" id="instructionOverlay">
-	        <div class="instruction-content">
-	            <h2>How to play "Square Escape"?</h2>
-	            <div class="instruction-list">
-	                <p>1. Control the red square using on‑screen buttons or arrow keys</p>
-	                <p>2. Avoid blue squares</p>
-	                <p>3. The longer you survive, the more points you earn</p>
-	                <p>4. The game ends on collision</p>
-	                <p>5. Use the "Pause" button to take a break</p>
-	            </div>
-	            <button class="instruction-button" id="understandBtn">Got it!</button>
-	        </div>
-	    </div>
-	    <div class="score" id="score">Score: 0</div>
-
-	    <div class="game-area">
-
-            <!-- Рекламный блок - мобильный -->
-            <div class="ad-container" style="margin: 10px 0; text-align: center;">
-                <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
-                     data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
+    <script type="module" src="redsquare_scripts/redsquare_scripts.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    <div class="instruction-overlay" id="instructionOverlay">
+        <div class="instruction-content">
+            <h2>Как играть в "Квадратное бегство"?</h2>
+            <div class="instruction-list">
+                <p>1. Управляйте красным квадратом с помощью кнопок, клавиш стрелок или свайпов на мобильных устройствах</p>
+                <p>2. Избегайте столкновений с синими квадратами и зелеными препятствиями</p>
+                <p>3. Собирайте золотые бонусы для дополнительных очков</p>
+                <p>4. Чем дольше вы продержитесь, тем больше очков получите</p>
+                <p>5. Используйте кнопку "Пауза" (или пробел) для перерыва</p>
             </div>
-	        <div class="player" id="player"></div>
-	        <div class="obstacle" style="top: 20%; left: 20%;"></div>
-	        <div class="obstacle" style="top: 80%; left: 80%;"></div>
-	    </div>
-
-	    <div class="controls">
-	        <div class="button" id="up">↑</div>
-	        <div class="button" id="left">←</div>
-	        <div class="button" id="down">↓</div>
-	        <div class="button" id="right">→</div>
-	    </div>
-
-	    <button class="start" id="start">Start</button>
-	    <button class="restart" id="restart">Restart</button>
-	    <button id="pauseBtn">Pause</button>
-
-	    <script>
-	    </script>
-
-    <!-- Рекламный блок - квадрат -->
+            <button class="instruction-button" id="understandBtn">Всё понятно!</button>
+        </div>
+    </div>
+    <div class="score" id="score">Очки: 0</div>
+    <div class="game-area">
+        <div class="ad-container" style="margin: 10px 0; text-align: center;">
+            <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
+                 data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
+        </div>
+        <div class="player" id="player"></div>
+        <div class="obstacle" style="top: 20%; left: 20%;"></div>
+        <div class="obstacle" style="top: 80%; left: 80%;"></div>
+    </div>
+    <div class="controls">
+        <div class="button" id="up">↑</div>
+        <div class="button" id="left">←</div>
+        <div class="button" id="down">↓</div>
+        <div class="button" id="right">→</div>
+    </div>
+    <button class="start" id="start">Начать игру</button>
+    <button class="restart" id="restart">Заново</button>
+    <button class="home" id="home">Домой</button>
+    <button id="pauseBtn">Пауза</button>
     <div class="ad-container" style="margin: 20px 0; text-align: center;">
         <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
              data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
     </div>
-
-    <!-- Mail.ru Advertising Script -->
     <script>
         (MRGtag = window.MRGtag || []).push({});
     </script>
-	</body>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
 </html>

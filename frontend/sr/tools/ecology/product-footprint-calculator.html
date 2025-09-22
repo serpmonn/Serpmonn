@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="sr" dir="ltr">
 <head>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="sr">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,17 +15,19 @@
     <meta property="og:title" content="Калькулятор экологического следа продуктов — SerpMonn">
     <meta property="og:description" content="Рассчитайте экологический след ваших продуктов питания. Узнайте углеродный след, водный след и влияние на окружающую среду.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
-    <meta property="og:url" content="https://serpmonn.ru/eco-calculators/product-footprint/">
+    <meta property="og:url" content="https://www.serpmonn.ru/frontend/sr/tools/ecology/product-footprint-calculator.html">
     <meta property="og:type" content="website">
     
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Калькулятор экологического следа продуктов">
-    <meta name="twitter:description" content="Рассчитайте экологический след ваших продуктов питания">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
+    <!-- VKontakte -->
+    <meta property="vk:title" content="Калькулятор экологического следа продуктов">
+    <meta property="vk:description" content="Рассчитайте экологический след ваших продуктов питания">
+    <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
-    <link rel="canonical" href="https://serpmonn.ru/eco-calculators/product-footprint/">
+    <link rel="canonical" href="https://www.serpmonn.ru/frontend/sr/tools/ecology/product-footprint-calculator.html">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
     
     <style>
         * {
@@ -34,8 +37,8 @@
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #2E8B57 0%, #228B22 50%, #32CD32 100%);
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: #f5f5f5;
             min-height: 100vh;
             color: #333;
             line-height: 1.6;
@@ -50,13 +53,12 @@
         .header {
             text-align: center;
             margin-bottom: 40px;
-            color: white;
+            color: #333;
         }
 
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
         }
 
         .header p {
@@ -91,6 +93,15 @@
             margin-bottom: 15px;
             align-items: center;
             flex-wrap: wrap;
+        }
+
+        .unit-display {
+            font-weight: bold;
+            color: #2c5530;
+            background: #e8f5e8;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 0.9rem;
         }
 
         .product-select {
@@ -327,12 +338,12 @@
             background: #365899;
         }
 
-        .share-btn.twitter {
-            background: #1DA1F2;
+        .share-btn.vk {
+            background: #4680C2;
         }
 
-        .share-btn.twitter:hover {
-            background: #0d8bd9;
+        .share-btn.vk:hover {
+            background: #3a6ba5;
         }
 
         .share-btn.telegram {
@@ -386,48 +397,8 @@
             </h2>
             
             <div id="products-container">
-                <div class="product-row">
-                    <select class="product-select" data-product="beef">
-                        <option value="">Выберите продукт...</option>
-                        <option value="beef">Говядина</option>
-                        <option value="lamb">Баранина</option>
-                        <option value="pork">Свинина</option>
-                        <option value="chicken">Курица</option>
-                        <option value="fish">Рыба</option>
-                        <option value="eggs">Яйца</option>
-                        <option value="milk">Молоко</option>
-                        <option value="cheese">Сыр</option>
-                        <option value="rice">Рис</option>
-                        <option value="wheat">Пшеница</option>
-                        <option value="potatoes">Картофель</option>
-                        <option value="tomatoes">Помидоры</option>
-                        <option value="apples">Яблоки</option>
-                        <option value="bananas">Бананы</option>
-                        <option value="coffee">Кофе</option>
-                        <option value="chocolate">Шоколад</option>
-                        <option value="nuts">Орехи</option>
-                        <option value="vegetables">Овощи (смешанные)</option>
-                        <option value="fruits">Фрукты (смешанные)</option>
-                    </select>
-                    <input type="number" class="quantity-input" placeholder="Количество" min="0" step="0.1" value="1">
-                    <select class="unit-select">
-                        <option value="kg">кг</option>
-                        <option value="g">г</option>
-                        <option value="l">л</option>
-                        <option value="ml">мл</option>
-                        <option value="pieces">шт</option>
-                    </select>
-                    <button class="remove-btn" onclick="removeProduct(this)" style="display: none;">🗑️</button>
-                </div>
+                <!-- Продукты будут загружены JavaScript -->
             </div>
-
-            <button class="add-product-btn" onclick="addProduct()">
-                ➕ Добавить продукт
-            </button>
-
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🌍 Рассчитать экологический след
-            </button>
         </div>
 
         <div id="results-section" class="results-section">
@@ -477,11 +448,8 @@
             </div>
 
             <div class="share-buttons">
-                <button class="share-btn" onclick="shareResults('facebook')">
-                    📘 Поделиться в Facebook
-                </button>
-                <button class="share-btn twitter" onclick="shareResults('twitter')">
-                    🐦 Поделиться в Twitter
+                <button class="share-btn vk" onclick="shareResults('vk')">
+                    📘 Поделиться ВКонтакте
                 </button>
                 <button class="share-btn telegram" onclick="shareResults('telegram')">
                     📱 Поделиться в Telegram
@@ -492,10 +460,12 @@
 
     <script src="database.js"></script>
     <script src="calculator.js"></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
     <script>
         (MRGtag = window.MRGtag || []).push({});
     </script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
 </html>
