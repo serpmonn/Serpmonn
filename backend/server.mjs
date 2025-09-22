@@ -74,6 +74,24 @@ const corsOptions = {
 app.use(cors(corsOptions));
   // Применяем CORS с заданными настройками
 
+// Middleware: установка заголовка Content-Language по <html lang> страницы/пути
+app.use((req, res, next) => {
+  try {
+    // Простая эвристика: если путь /frontend/<lang>/..., используем <lang>
+    const parts = req.path.split('/').filter(Boolean);
+    const idx = parts.indexOf('frontend');
+    let lang = 'ru';
+    if (idx !== -1 && parts[idx + 1]) {
+      lang = parts[idx + 1].toLowerCase();
+    }
+    // Нормализуем некоторые коды под стандартные 
+    if (lang === 'pt-br') lang = 'pt-BR';
+    if (lang === 'pt-pt') lang = 'pt-PT';
+    res.setHeader('Content-Language', lang);
+  } catch {}
+  next();
+});
+
 app.use(express.json({
   // Парсинг JSON в запросах с защитой от атаки с огромными телами запросов
 
