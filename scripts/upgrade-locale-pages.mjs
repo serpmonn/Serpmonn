@@ -6,7 +6,7 @@ import path from 'node:path';
 const FRONTEND_DIR = path.join(process.cwd(), 'frontend');
 const LANGS_FILE = path.join(FRONTEND_DIR, 'i18n', 'languages.json');
 // По умолчанию обновляем функциональные разделы
-const SECTIONS = ['tools', 'games'];
+const SECTIONS = ['tools', 'games', 'news'];
 const BASE = 'https://www.serpmonn.ru';
 
 function read(file){ try { return fs.readFileSync(file, 'utf8'); } catch { return null; } }

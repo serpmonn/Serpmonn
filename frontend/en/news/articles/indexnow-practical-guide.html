@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/en/news/articles/indexnow-practical-guide.html">
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="en">
     <meta charset="UTF-8">
@@ -8,16 +9,16 @@
     <title>IndexNow: Practical Implementation & Tips</title>
 
     <!-- Open Graph -->
-    <meta property="og:title" content="IndexNow: Practical Implementation & Tips">
-    <meta property="og:description" content="Fast search updates: setup, changed‑only mode, common mistakes, comparison with sitemap ping, and a rollout checklist.">
+    <meta property="og:title" content="IndexNow: практическое внедрение и трюки">
+    <meta property="og:description" content="Быстрый апдейт поисковых систем: setup, changed‑only, частые ошибки, сравнение с sitemap‑пингом и чек‑лист внедрения.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru/frontend/en/news/articles/indexnow-practical-guide.html">
+    <meta property="og:url" content="https://www.serpmonn.ru/frontend/en/news/articles/indexnow-practical-guide.html">
     <meta property="og:type" content="article">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="IndexNow: Practical Implementation & Tips">
-    <meta name="twitter:description" content="Setup, changed‑only, pitfalls, and sitemap ping comparison.">
+    <meta name="twitter:title" content="IndexNow: практическое внедрение и трюки">
+    <meta name="twitter:description" content="Setup, changed‑only режим, ошибки и сравнение с sitemap‑пингом.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
@@ -48,11 +49,11 @@
       .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
     </style>
 
-    <!-- Breadcrumb -->
+    <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/frontend/en/index.html">Home</a> →
-      <a href="/frontend/en/news/index.html">News</a> →
-      <span>IndexNow: Practical Implementation & Tips</span>
+      <a href="/">Главная</a> →
+      <a href="/frontend/news/index.html">Новости</a> →
+      <span>IndexNow: практическое внедрение и трюки</span>
     </div>
 
     <div class="news-container">
@@ -69,32 +70,32 @@
           (MRGtag = window.MRGtag || []).push({});
         </script>
         <h1 class="news-title">IndexNow: Practical Implementation & Tips</h1>
-        <div class="news-date">September 15, 2025</div>
+        <div class="news-date">15 сентября 2025</div>
       </div>
 
       <div class="summary">
-        <strong>Why this matters:</strong> deliver updates to search engines instantly, use changed‑only effectively, understand how IndexNow compares to sitemap ping, and avoid common mistakes.
+        <strong>Зачем читать:</strong> как быстро доставлять апдейты в поисковые системы, когда использовать changed‑only, чем IndexNow отличается от sitemap‑пинга, и как избежать частых ошибок.
       </div>
 
       <div class="toc">
-        <strong>Contents</strong>
+        <strong>Оглавление</strong>
         <ol>
-          <li><a href="#what">What IndexNow is</a></li>
-          <li><a href="#setup">Key verification & basic ping</a></li>
-          <li><a href="#changed">Changed‑only mode</a></li>
-          <li><a href="#compare">IndexNow vs sitemap ping</a></li>
-          <li><a href="#errors">Common mistakes</a></li>
-          <li><a href="#faq">FAQ & checklist</a></li>
+          <li><a href="#what">Что такое IndexNow</a></li>
+          <li><a href="#setup">Установка ключа и базовый пинг</a></li>
+          <li><a href="#changed">Режим changed‑only: когда и как</a></li>
+          <li><a href="#compare">IndexNow vs sitemap‑пинг</a></li>
+          <li><a href="#errors">Частые ошибки</a></li>
+          <li><a href="#faq">FAQ и чек‑лист</a></li>
         </ol>
       </div>
 
-      <h2 id="what">1) What IndexNow is</h2>
-      <p>IndexNow is a protocol to notify search engines about URL changes (create/update/delete). Supported by Bing, Yandex, Seznam and others. Benefits: lower latency to index and reduced crawl noise.</p>
+      <h2 id="what">1) Что такое IndexNow</h2>
+      <p>IndexNow — протокол, позволяющий мгновенно сообщать поисковым системам об изменениях URL (создание, обновление, удаление). Поддерживается Bing, Yandex, Seznam и рядом сервисов. Преимущество — минимальная задержка индексации и меньше crawl‑шума.</p>
 
-      <h2 id="setup">2) Key verification & basic ping</h2>
+      <h2 id="setup">2) Установка ключа и базовый пинг</h2>
       <ol>
-        <li>Generate a key (GUID) and host <code>YOUR_KEY.txt</code> at the site root (<code>/.well-known/</code> or domain root) containing the key string.</li>
-        <li>Ping the endpoint with URLs and the key. Single URL example:</li>
+        <li>Сгенерируйте ключ (GUID) и разместите файл <code>YOUR_KEY.txt</code> в корне сайта (<code>/.well-known/</code> или корень домена) со строкой ключа.</li>
+        <li>Пингуйте endpoint с URL и ключом. Пример (одиночный URL):</li>
       </ol>
       <div class="code">
 POST https://api.indexnow.org/indexnow
@@ -104,54 +105,54 @@ Content-Type: application/json
   "host": "www.serpmonn.ru",
   "key": "YOUR_KEY",
   "urlList": [
-    "https://www.serpmonn.ru/frontend/en/news/articles/utm-complete-guide.html"
+    "https://www.serpmonn.ru/frontend/news/articles/utm-complete-guide.html"
   ]
 }
       </div>
-      <p>For batches, send up to 10,000 URLs per request or use a file feed with a URL of the changes list.</p>
+      <p>Для батчей укажите до 10 000 URL в одном запросе или используйте файл‑канал с URL файла изменений.</p>
 
-      <h2 id="changed">3) Changed‑only mode</h2>
-      <p>Only ping URLs that actually changed since the last commit/deploy to reduce noise and quota usage.</p>
+      <h2 id="changed">3) Режим changed‑only</h2>
+      <p>Смысл — пинговать только реально изменённые файлы за последний коммит/деплой. Это снижает шум и расход квот.</p>
       <ul>
-        <li>Collect changed paths from VCS (git diff) or build artifacts.</li>
-        <li>Filter to public routes (exclude <code>node_modules</code>, <code>.git</code>, private dirs).</li>
-        <li>Group by domain/language to avoid irrelevant URLs.</li>
+        <li>Снимайте список изменённых путей из VCS (git diff) или билд‑артефактов.</li>
+        <li>Фильтруйте по публичным маршрутам (исключая <code>node_modules</code>, <code>.git</code>, приватные папки).</li>
+        <li>Группируйте по доменам/языкам, чтобы не отправлять нерелевантные URL.</li>
       </ul>
-      <div class="note">Have a fallback: if changed‑only is empty (e.g., config hotfix), ping key sitemaps.</div>
+      <div class="note">На продакшене полезно иметь fallback: если changed‑only дал пусто (например, горячий фикс конфигов), пингануть важные карты сайта.</div>
 
-      <h2 id="compare">4) IndexNow vs sitemap ping</h2>
+      <h2 id="compare">4) IndexNow vs sitemap‑пинг</h2>
       <ul>
-        <li><strong>Speed:</strong> IndexNow pushes specific URLs immediately; sitemap ping only signals a sitemap change.</li>
-        <li><strong>Noise:</strong> IndexNow is precise; sitemaps may trigger broader crawls.</li>
-        <li><strong>Reliability:</strong> Use both — sitemaps for coverage, IndexNow for immediacy.</li>
-      </ul>
-
-      <h2 id="errors">5) Common mistakes</h2>
-      <ul>
-        <li>Key not publicly accessible or mismatch with the <code>key</code> value.</li>
-        <li>Pinging private/404 pages, non‑canonical URLs with parameters.</li>
-        <li>Excessive repeats of the same URLs (throttle/dedupe).</li>
-        <li>Ignoring multilingual pages (ping each localized variant).</li>
+        <li><strong>Скорость:</strong> IndexNow быстрее доставляет апдейты, не ждёт crawl цикла; sitemap‑пинг сигналит о наличии карты, но не об изменении конкретного URL.</li>
+        <li><strong>Шум:</strong> IndexNow — точечно по изменённым URL; sitemap — скан всей карты (дороже по crawl бюджету).</li>
+        <li><strong>Надёжность:</strong> sitemaps остаются базой; IndexNow дополняет и ускоряет. Лучше использовать оба.</li>
       </ul>
 
-      <h2 id="faq">6) FAQ & checklist</h2>
+      <h2 id="errors">5) Частые ошибки</h2>
+      <ul>
+        <li>Ключ не доступен по публичному URL или не совпадает с параметром <code>key</code>.</li>
+        <li>Пингуют приватные/404 страницы, параметры без каноникализации.</li>
+        <li>Слишком частые повторы одних и тех же URL (дросселируйте повторы).</li>
+        <li>Игнорируют мультиязычность (нужно пинговать соответствующую локализованную версию).</li>
+      </ul>
+
+      <h2 id="faq">6) FAQ и чек‑лист</h2>
       <div class="faq">
-        <h3>How many URLs per batch?</h3>
-        <p>Up to 10,000 — group by type/language.</p>
-        <h3>Should deletions be pinged?</h3>
-        <p>Yes — to speed up deindexing.</p>
-        <h3>How to verify it works?</h3>
-        <p>Check API responses (200/202), crawl spikes in server logs, and faster appearance of new URLs.</p>
-        <h3>Rollout checklist</h3>
+        <h3>Сколько URL отправлять за раз?</h3>
+        <p>До 10 000 в батче — оптимально группировать по типу/языку.</p>
+        <h3>Нужно ли пинговать удаление?</h3>
+        <p>Да — передавайте URL удалённых страниц, чтобы ускорить деиндексацию.</p>
+        <h3>Чем подтвердить, что работает?</h3>
+        <p>Логи ответов API (200/202), всплески crawl в логах сервера, ускорение появления новых URL.</p>
+        <h3>Чек‑лист внедрения</h3>
         <ul>
-          <li>Key hosted and reachable via HTTPS.</li>
-          <li>Changed‑only path collector wired into CI/CD.</li>
-          <li>Deduping and throttling repeats.</li>
-          <li>Fallback to sitemap ping when batch is empty.</li>
+          <li>Ключ размещён и доступен по HTTPS.</li>
+          <li>Сбор changed‑only путей из CI/CD.</li>
+          <li>Дедупликация и дросселирование повторов.</li>
+          <li>Fallback на пинг sitemap при пустом батче.</li>
         </ul>
       </div>
 
-      <p class="muted" style="margin-top:16px;">Updated: 15 Sep 2025 • Category: SEO</p>
+      <p class="muted" style="margin-top:16px;">Обновлено: 15.09.2025 • Категория: SEO</p>
     </div>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>

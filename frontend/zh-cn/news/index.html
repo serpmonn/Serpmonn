@@ -1,36 +1,57 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
   <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/zh-cn/news/index.html">
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="zh-cn">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Serpmonn 新闻与文章：最新动态、教程与实用材料。">
-
     <title>新闻与文章 — Serpmonn</title>
-    
+    <meta name="description" content="Serpmonn 新闻与文章：最新动态、教程与实用材料。">
+    <meta name="keywords" content="новости технологий, промокоды 2025, мини-игры онлайн, SEO советы, калькулятор амортизации, экологический след, поиск без рекламы">
+
     <!-- Open Graph -->
-    <meta property="og:title" content="新闻与文章 — Serpmonn">
-    <meta property="og:description" content="最新动态、教程与实用材料">
+    <meta property="og:title" content="Новости и статьи — Serpmonn">
+    <meta property="og:description" content="Последние новости технологий, промокоды, гайды по играм и SEO на Serpmonn.ru">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/news/index.html">
+    <meta property="og:url" content="https://www.serpmonn.ru/frontend/zh-cn/news/index.html">
     <meta property="og:type" content="website">
-    
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Новости и статьи — Serpmonn">
+    <meta name="twitter:description" content="Новости технологий, промокоды, гайды по играм и SEO на Serpmonn.ru">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <!-- Schema.org -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "CollectionPage",
+      "name": "Новости и статьи Serpmonn",
+      "description": "Последние новости технологий, промокоды, гайды по мини-играм и SEO на Serpmonn.ru",
+      "publisher": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "logo": {"@type": "ImageObject", "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"}
+      }
+    }
+    </script>
+
     <!-- RSS -->
-    <link rel="alternate" type="application/rss+xml" title="Serpmonn news RSS" href="/frontend/zh-cn/news/rss.xml">
+    <link rel="alternate" type="application/rss+xml" title="RSS новостей Serpmonn" href="/frontend/news/rss.xml">
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
-    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+
     <style>
       /* ad top adaptive start */
       .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
       @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
       @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
       /* ad top adaptive end */
-      
       html, body { width: 100%; overflow-x: hidden; }
       body { margin: 0; padding: 0; background: #f5f5f5; min-height: 100vh; }
       .page { max-width: 1200px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; line-height: 1.6; box-sizing: border-box; }
@@ -45,24 +66,32 @@
       .stat-label { font-size: 0.9rem; opacity: 0.8; }
 
       .news-categories { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: nowrap; justify-content: center; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-      .category-btn { padding: 10px 20px; background: #fff; border: 2px solid #e9ecef; border-radius: 25px; text-decoration: none; color: #333; font-weight: 500; transition: all 0.3s ease; cursor: pointer; white-space: nowrap; }
-      .category-btn:hover, .category-btn.active { background: #dc3545; color: white; border-color: #dc3545; }
+      .category-link { padding: 10px 20px; background: #fff; border: 2px solid #e9ecef; border-radius: 25px; text-decoration: none; color: #333; font-weight: 500; transition: all 0.3s ease; cursor: pointer; white-space: nowrap; }
+      .category-link:hover, .category-link.active { background: #dc3545; color: white; border-color: #dc3545; }
 
       .search-box { max-width: 500px; margin: 0 auto 30px; position: relative; }
       .search-input { width: 100%; padding: 15px 20px; border: 2px solid #e9ecef; border-radius: 25px; font-size: 1rem; outline: none; transition: border-color 0.3s ease; }
       .search-input:focus { border-color: #dc3545; }
+      .search-suggestions { position: absolute; top: 100%; left: 0; right: 0; background: #fff; border: 1px solid #e9ecef; border-radius: 8px; max-height: 200px; overflow-y: auto; z-index: 10; display: none; }
+      .search-suggestion { padding: 10px; cursor: pointer; }
+      .search-suggestion:hover { background: #f8f9fa; }
 
       .news-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 25px; margin-bottom: 40px; }
-
       .news-card { position: relative; background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.3s ease, box-shadow 0.3s ease; cursor: pointer; }
       .news-card:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(0,0,0,0.15); }
-      .news-card-image { height: 200px; background: linear-gradient(45deg, #dc3545 0%, #f47059 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 3rem; }
       .news-card-content { padding: 25px; }
       .news-card-category { display: inline-block; padding: 5px 12px; background: #e9ecef; color: #495057; border-radius: 15px; font-size: 0.8rem; font-weight: 500; margin-bottom: 15px; }
       .news-card-title { font-size: 1.3rem; font-weight: 600; margin-bottom: 10px; color: #333; line-height: 1.4; }
       .news-card-excerpt { color: #6c757d; margin-bottom: 15px; line-height: 1.6; }
       .news-card-meta { display: flex; justify-content: space-between; align-items: center; font-size: 0.9rem; color: #6c757d; }
       .news-card-link { position: absolute; inset: 0; z-index: 1; }
+      .news-card-share { display: flex; gap: 10px; margin-top: 10px; }
+      .share-btn { padding: 8px; background: #f8f9fa; border-radius: 50%; text-decoration: none; color: #333; }
+      .share-btn:hover { background: #dc3545; color: white; }
+
+      .promo-banner { background: linear-gradient(135deg, #dc3545 0%, #f47059 100%); color: white; padding: 20px; border-radius: 12px; text-align: center; margin-bottom: 30px; }
+      .promo-banner a { color: white; text-decoration: underline; }
+      .promo-banner a:hover { text-decoration: none; }
 
       .rss-section { background: #fff; border-radius: 12px; padding: 30px; text-align: center; margin-bottom: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
       .rss-title { font-size: 1.5rem; margin-bottom: 15px; color: #333; }
@@ -74,14 +103,16 @@
       .tg-btn, .vk-btn { display: inline-block; padding: 10px 20px; border-radius: 25px; color: #fff; font-weight: 600; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
       .tg-btn { background: #229ED9; }
       .vk-btn { background: #2787F5; }
-      .tg-btn:hover, .vk-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.15); }
+      .tg-btn:hover, .vk-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.15); color: #fff; text-decoration: none; }
 
-      .pagination { display: flex; justify-content: center; gap: 10px; margin-top: 40px; }
-      .page-btn { padding: 10px 15px; border: 1px solid #dee2e6; background: white; color: #dc3545; text-decoration: none; border-radius: 6px; transition: all 0.3s ease; }
-      .page-btn:hover, .page-btn.active { background: #dc3545; color: white; border-color: #dc3545; }
+      .load-more { display: flex; justify-content: center; margin-top: 40px; }
+      .load-more-btn { padding: 12px 30px; background: #dc3545; color: white; border: none; border-radius: 25px; font-size: 1rem; cursor: pointer; transition: background 0.3s ease; }
+      .load-more-btn:hover { background: #c82333; }
 
       .no-results { text-align: center; padding: 60px 20px; color: #6c757d; }
       .no-results h3 { margin-bottom: 15px; color: #333; }
+      .no-results a { color: #dc3545; text-decoration: none; }
+      .no-results a:hover { text-decoration: underline; }
 
       @media (max-width: 768px) {
         html, body { overflow-x: auto; }
@@ -90,16 +121,16 @@
         .news-subtitle { font-size: 1rem; }
         .news-header { padding: 20px; margin-bottom: 20px; }
         .news-grid { grid-template-columns: 1fr; gap: 15px; }
-        .news-categories { justify-content: center; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; }
-        .category-btn { white-space: nowrap; font-size: 0.9rem; padding: 8px 16px; }
+        .news-categories { justify-content: flex-start; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; }
+        .category-link { font-size: 0.9rem; padding: 8px 16px; }
         .news-stats { gap: 15px; }
         .stat-number { font-size: 1.5rem; }
         .stat-label { font-size: 0.8rem; }
         .news-card-content { padding: 15px; }
-        .news-card-title { font-size: 1.1rem; }
+        .news-card-title { font-size: 1.2rem; }
+        .news-card-excerpt { font-size: 0.9rem; }
         .search-box { margin-bottom: 20px; }
         .search-input { padding: 12px 16px; font-size: 0.9rem; }
-        .news-card-image { height: 150px; font-size: 2rem; }
         .rss-section { padding: 20px; }
         .rss-title { font-size: 1.3rem; }
         .social-subscribe { flex-direction: column; gap: 8px; }
@@ -112,14 +143,13 @@
         .news-title { font-size: 1.5rem; }
         .news-header { padding: 15px; }
         .news-card-content { padding: 12px; }
-        .news-card-title { font-size: 1rem; }
-        .news-card-excerpt { font-size: 0.9rem; }
+        .news-card-title { font-size: 1.1rem; }
+        .news-card-excerpt { font-size: 0.85rem; }
         .news-stats { flex-direction: column; gap: 10px; }
         .stat-item { margin-bottom: 10px; }
         .news-categories { gap: 8px; }
-        .category-btn { padding: 6px 12px; font-size: 0.8rem; }
+        .category-link { padding: 6px 12px; font-size: 0.8rem; }
         .search-input { padding: 10px 12px; font-size: 0.8rem; }
-        .news-card-image { height: 120px; font-size: 1.5rem; }
         .rss-section { padding: 15px; }
         .rss-title { font-size: 1.1rem; }
         .rss-description { font-size: 0.9rem; }
@@ -132,13 +162,13 @@
     <div class="page">
       <!-- Хлебные крошки -->
       <div class="breadcrumb">
-        <a href="/frontend/zh-cn/index.html">首页</a> → 
-        <span>新闻与文章</span>
+        <a href="/">Главная</a> → 
+        <span>Новости и статьи</span>
       </div>
 
       <!-- Заголовок раздела -->
       <div class="news-header">
-        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+        <script async src="https://ad.mail.ru/static/ads-async.js" defer></script>
         <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
           <ins class="mrg-tag" 
               style="display:inline-block;"
@@ -150,169 +180,192 @@
           (MRGtag = window.MRGtag || []).push({});
         </script>
         <h1 class="news-title">📰 新闻与文章</h1>
-        <p class="news-subtitle">获取最新动态并探索实用材料</p>
+        <p class="news-subtitle">Будьте в курсе технологий, промокодов и гайдов по мини-играм</p>
 
         <div class="news-stats">
           <div class="stat-item">
             <span class="stat-number">3</span>
-            <span class="stat-label">新工具</span>
+            <span class="stat-label">Новых инструмента</span>
           </div>
           <div class="stat-item">
             <span class="stat-number">15+</span>
-            <span class="stat-label">修复</span>
+            <span class="stat-label">Исправлений</span>
           </div>
           <div class="stat-item">
             <span class="stat-number">2</span>
-            <span class="stat-label">新分类</span>
+            <span class="stat-label">Новые категории</span>
           </div>
         </div>
       </div>
 
+      <!-- Промо-баннер -->
+      <div class="promo-banner">
+        <p>Играйте в <a href="/frontend/games/index.html">мини-игры</a> или попробуйте <a href="/frontend/main.html">поиск без рекламы</a> прямо сейчас!</p>
+      </div>
+
       <!-- RSS секция -->
       <div class="rss-section">
-        <h2 class="rss-title">📡 RSS 订阅</h2>
-        <p class="rss-description">订阅 RSS 获取新文章通知</p>
-        <a href="/frontend/zh-cn/news/rss.xml" class="rss-btn" target="_blank" rel="noopener">订阅 RSS</a>
+        <h2 class="rss-title">📡 RSS лента</h2>
+        <p class="rss-description">Подпишитесь на RSS или соцсети, чтобы не пропустить новые статьи</p>
+        <a href="/frontend/news/rss.xml" class="rss-btn" target="_blank" rel="noopener">Подписаться на RSS</a>
         <div class="social-subscribe">
-          <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">订阅 Telegram</a>
-          <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">订阅 VK</a>
+          <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Подписаться в Telegram</a>
+          <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Подписаться на ВК</a>
         </div>
       </div>
 
       <!-- Категории -->
       <div class="news-categories">
-        <button class="category-btn active" data-category="all">全部</button>
-        <button class="category-btn" data-category="updates">更新</button>
-        <button class="category-btn" data-category="articles">文章</button>
-        <button class="category-btn" data-category="tutorials">教程</button>
-        <button class="category-btn" data-category="engineering">工程</button>
-        <button class="category-btn" data-category="logistics">物流</button>
+        <a class="category-link active" href="/frontend/news/?category=all" data-category="all">Все</a>
+        <a class="category-link" href="/frontend/news/?category=updates" data-category="updates">Обновления</a>
+        <a class="category-link" href="/frontend/news/?category=articles" data-category="articles">Статьи</a>
+        <a class="category-link" href="/frontend/news/?category=tutorials" data-category="tutorials">Обучение</a>
+        <a class="category-link" href="/frontend/news/?category=engineering" data-category="engineering">Инженерия</a>
+        <a class="category-link" href="/frontend/news/?category=logistics" data-category="logistics">Логистика</a>
+        <a class="category-link" href="/frontend/news/?category=ecology" data-category="ecology">Экология</a>
       </div>
 
       <!-- Поиск -->
       <div class="search-box">
-        <input type="text" class="search-input" placeholder="🔍 搜索新闻和文章..." id="searchInput">
+        <input type="text" class="search-input" placeholder="🔍 Поиск по новостям и статьям..." id="searchInput">
+        <div class="search-suggestions" id="searchSuggestions"></div>
       </div>
 
       <!-- Сетка новостей -->
       <div class="news-grid" id="newsGrid">
         <div class="news-card" data-category="articles" data-tags="smm,snippets,vk,telegram,youtube,tiktok,seo">
-
-          <div class="news-card-image">✂️</div>
           <div class="news-card-content">
-            <span class="news-card-category">文章</span>
-            <h3 class="news-card-title">字符上限与摘要截断（VK/Telegram/YouTube/TikTok）</h3>
-
-            <p class="news-card-excerpt">平台推荐长度速查表 + 前后对比示例，避免预览被截断。</p>
-
+            <span class="news-card-category">Статьи</span>
+            <h3 class="news-card-title">Лимиты символов и обрезка сниппетов (VK/Telegram/YouTube/TikTok)</h3>
+            <p class="news-card-excerpt">Сводная таблица лимитов и примеры «до/после» для идеальных заголовков и описаний. Узнайте, как повысить CTR!</p>
             <div class="news-card-meta">
-              <span class="news-card-date">2025年9月15日</span>
-              <span class="news-card-read-time">6–9 分钟</span>
+              <span class="news-card-date">15 сентября 2025</span>
+              <span class="news-card-read-time">6–9 мин</span>
+            </div>
+            <div class="news-card-share">
+              <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" target="_blank" rel="noopener">📤</a>
+              <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" target="_blank" rel="noopener">📷</a>
             </div>
           </div>
-          <a class="news-card-link" href="/frontend/zh-cn/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" aria-label="阅读"></a>
-
+          <a class="news-card-link" href="/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" aria-label="Читать"></a>
         </div>
         <div class="news-card" data-category="articles" data-tags="indexnow,seo,sitemap,bing,yandex">
-
-          <div class="news-card-image">⚡</div>
           <div class="news-card-content">
-            <span class="news-card-category">文章</span>
-            <h3 class="news-card-title">IndexNow：实用指南与技巧</h3>
-
-            <p class="news-card-excerpt">接入、changed‑only、常见错误与 sitemap ping 对比，上线检查清单。</p>
-
+            <span class="news-card-category">Статьи</span>
+            <h3 class="news-card-title">IndexNow: практическое внедрение и трюки</h3>
+            <p class="news-card-excerpt">Setup, changed-only, частые ошибки и сравнение с sitemap-пингом. Ускорьте индексацию с нашим чек-листом!</p>
             <div class="news-card-meta">
-              <span class="news-card-date">2025年9月15日</span>
-              <span class="news-card-read-time">7–10 分钟</span>
+              <span class="news-card-date">15 сентября 2025</span>
+              <span class="news-card-read-time">7–10 мин</span>
+            </div>
+            <div class="news-card-share">
+              <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html" target="_blank" rel="noopener">📤</a>
+              <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html" target="_blank" rel="noopener">📷</a>
             </div>
           </div>
-          <a class="news-card-link" href="/frontend/zh-cn/news/articles/indexnow-practical-guide.html" aria-label="阅读"></a>
-
+          <a class="news-card-link" href="/frontend/news/articles/indexnow-practical-guide.html" aria-label="Читать"></a>
         </div>
         <div class="news-card" data-category="articles" data-tags="utm,seo,analytics,ga4,marketing">
-
-          <div class="news-card-image">🔖</div>
           <div class="news-card-content">
-            <span class="news-card-category">文章</span>
-            <h3 class="news-card-title">UTM：完整指南 — 2025</h3>
-
-            <p class="news-card-excerpt">什么是 UTM、如何正确使用、GA4 映射、渠道模板、示例与检查清单。</p>
-
+            <span class="news-card-category">Статьи</span>
+            <h3 class="news-card-title">UTM: Полное руководство — 2025</h3>
+            <p class="news-card-excerpt">Как ставить UTM-метки, шаблоны для Google, Meta, VK и Telegram. Избегайте ошибок с нашим руководством!</p>
             <div class="news-card-meta">
-              <span class="news-card-date">2025年9月15日</span>
-              <span class="news-card-read-time">10–15 分钟</span>
+              <span class="news-card-date">15 сентября 2025</span>
+              <span class="news-card-read-time">10–15 мин</span>
+            </div>
+            <div class="news-card-share">
+              <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html" target="_blank" rel="noopener">📤</a>
+              <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html" target="_blank" rel="noopener">📷</a>
             </div>
           </div>
-          <a class="news-card-link" href="/frontend/zh-cn/news/articles/utm-complete-guide.html" aria-label="阅读"></a>
-
+          <a class="news-card-link" href="/frontend/news/articles/utm-complete-guide.html" aria-label="Читать"></a>
         </div>
-        <div class="news-card" data-category="updates" data-tags="更新,游戏,点赞,SEO,本地化,广告">
-
-          <div class="news-card-image">🚀</div>
+        <div class="news-card" data-category="updates" data-tags="обновления,игры,генератор статей,fastapi,openai,ollama">
           <div class="news-card-content">
-            <span class="news-card-category">更新</span>
-            <h3 class="news-card-title">Serpmonn 更新 — 2025年8月25日 — 9月15日</h3>
-
-            <p class="news-card-excerpt">新小游戏（贪吃蛇、Flappy、Monetki、打砖块、扫雷、华容道），点赞系统，SEO 与本地化，广告与体验优化。</p>
-
+            <span class="news-card-category">Обновления</span>
+            <h3 class="news-card-title">Обновления Serpmonn — 25 августа — 15 сентября 2025</h3>
+            <p class="news-card-excerpt">Новые мини-игры (Змейка, Flappy, Арканоид) и генератор статей. Узнайте, что нового на Serpmonn!</p>
             <div class="news-card-meta">
-              <span class="news-card-date">2025年9月15日</span>
-              <span class="news-card-read-time">6–8 分钟</span>
+              <span class="news-card-date">15 сентября 2025</span>
+              <span class="news-card-read-time">6–8 мин</span>
+            </div>
+            <div class="news-card-share">
+              <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html" target="_blank" rel="noopener">📤</a>
+              <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html" target="_blank" rel="noopener">📷</a>
             </div>
           </div>
-          <a class="news-card-link" href="/frontend/zh-cn/news/articles/updates-aug-25-sep-15.html" aria-label="阅读"></a>
-
+          <a class="news-card-link" href="/frontend/news/articles/updates-aug-25-sep-15.html" aria-label="Читать"></a>
         </div>
-        <!-- Новость об обновлениях -->
-        <div class="news-card" data-category="updates" data-tags="updates,tools,logistics,engineering">
-          <div class="news-card-image">🚀</div>
+        <div class="news-card" data-category="updates" data-tags="обновления,инструменты,логистика,инженерия">
           <div class="news-card-content">
-            <span class="news-card-category">更新</span>
-            <h3 class="news-card-title">更新 Serpmonn — 2025 年 8 月 17 日</h3>
-            <p class="news-card-excerpt">增加了新的物流工具，改进了折旧计算器并修复了一些问题。本次更新着重于提升用户体验。</p>
+            <span class="news-card-category">Обновления</span>
+            <h3 class="news-card-title">Обновления Serpmonn — 17 августа 2025</h3>
+            <p class="news-card-excerpt">Новые инструменты для логистики и улучшенный калькулятор амортизации. Читайте, как мы улучшили UX!</p>
             <div class="news-card-meta">
-              <span class="news-card-date">2025 年 8 月 17 日</span>
-              <span class="news-card-read-time">5 分钟</span>
+              <span class="news-card-date">17 августа 2025</span>
+              <span class="news-card-read-time">5 мин</span>
+            </div>
+            <div class="news-card-share">
+              <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html" target="_blank" rel="noopener">📤</a>
+              <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html" target="_blank" rel="noopener">📷</a>
             </div>
           </div>
-          <a class="news-card-link" href="/frontend/zh-cn/news/updates-august-17.html" aria-label="阅读更多"></a>
+          <a class="news-card-link" href="/frontend/news/articles/updates-august-17.html" aria-label="Читать"></a>
         </div>
-
-        <!-- IT-статья про веб-разработку -->
-        <div class="news-card" data-category="tutorials" data-tags="tutorials,web-development,html,css,javascript">
-          <div class="news-card-image">💻</div>
+        <div class="news-card" data-category="tutorials" data-tags="обучение,веб-разработка,html,css,javascript">
           <div class="news-card-content">
-            <span class="news-card-category">开发</span>
-            <h3 class="news-card-title">如何从零开始构建您的第一个网站</h3>
-            <p class="news-card-excerpt">从零开始构建网站的分步指南。HTML、CSS、JavaScript 和现代工具。</p>
+            <span class="news-card-category">Разработка</span>
+            <h3 class="news-card-title">Как создать свой первый веб-сайт с нуля</h3>
+            <p class="news-card-excerpt">Пошаговый гайд по созданию сайта с HTML, CSS и JavaScript. Начните свой путь в веб-разработке!</p>
             <div class="news-card-meta">
-              <span class="news-card-date">2024 年 8 月 18 日</span>
-              <span class="news-card-read-time">12 分钟</span>
+              <span class="news-card-date">18 августа 2024</span>
+              <span class="news-card-read-time">12 мин</span>
+            </div>
+            <div class="news-card-share">
+              <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html" target="_blank" rel="noopener">📤</a>
+              <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html" target="_blank" rel="noopener">📷</a>
             </div>
           </div>
-          <a class="news-card-link" href="/frontend/zh-cn/news/articles/web-development-guide.html" aria-label="阅读更多"></a>
+          <a class="news-card-link" href="/frontend/news/articles/web-development-guide.html" aria-label="Читать"></a>
         </div>
-
-        <!-- Статья об амортизации -->
-        <div class="news-card" data-category="tutorials" data-tags="tutorials,calculator,depreciation,car">
-          <div class="news-card-image">📚</div>
+        <div class="news-card" data-category="tutorials" data-tags="обучение,калькулятор,амортизация,автомобиль">
           <div class="news-card-content">
-            <span class="news-card-category">教程</span>
-            <h3 class="news-card-title">如何正确计算汽车折旧</h3>
-            <p class="news-card-excerpt">使用折旧计算器的详细指南。了解如何考虑所有因素并获得准确结果。</p>
+            <span class="news-card-category">Обучение</span>
+            <h3 class="news-card-title">Как правильно рассчитать амортизацию автомобиля</h3>
+            <p class="news-card-excerpt">Руководство по использованию калькулятора амортизации. Узнайте, как точно оценить износ авто!</p>
             <div class="news-card-meta">
-              <span class="news-card-date">2024 年 8 月 19 日</span>
-              <span class="news-card-read-time">8 分钟</span>
+              <span class="news-card-date">19 августа 2024</span>
+              <span class="news-card-read-time">8 мин</span>
+            </div>
+            <div class="news-card-share">
+              <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html" target="_blank" rel="noopener">📤</a>
+              <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html" target="_blank" rel="noopener">📷</a>
             </div>
           </div>
-          <a class="news-card-link" href="/frontend/zh-cn/news/articles/how-to-calculate-depreciation.html" aria-label="阅读更多"></a>
+          <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-depreciation.html" aria-label="Читать"></a>
+        </div>
+        <div class="news-card" data-category="ecology" data-tags="обучение,калькулятор,след,экология">
+          <div class="news-card-content">
+            <span class="news-card-category">Экология</span>
+            <h3 class="news-card-title">Как правильно рассчитать экологический след продуктов</h3>
+            <p class="news-card-excerpt">Гайд по использованию калькулятора экоследа. Снизьте влияние вашего рациона на планету!</p>
+            <div class="news-card-meta">
+              <span class="news-card-date">15 сентября 2025</span>
+              <span class="news-card-read-time">5 мин</span>
+            </div>
+            <div class="news-card-share">
+              <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html" target="_blank" rel="noopener">📤</a>
+              <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html" target="_blank" rel="noopener">📷</a>
+            </div>
+          </div>
+          <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html" aria-label="Читать"></a>
         </div>
       </div>
 
-      <!-- Пагинация -->
-      <div class="pagination" id="pagination" style="display: none;">
-        <!-- Пагинация будет генерироваться динамически -->
+      <!-- Кнопка загрузки -->
+      <div class="load-more" id="loadMore">
+        <button class="load-more-btn">Загрузить еще</button>
       </div>
     </div>
 
@@ -320,48 +373,70 @@
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 
     <script>
-      // Глобальные переменные для пагинации
-      let currentPage = 1;
-      const itemsPerPage = 6;
-      
-      // Фильтрация по категориям
-      const categoryBtns = document.querySelectorAll('.category-btn');
+      // Фильтрация и поиск
+      const categoryLinks = document.querySelectorAll('.category-link');
       const newsCards = document.querySelectorAll('.news-card');
       const searchInput = document.getElementById('searchInput');
+      const searchSuggestions = document.getElementById('searchSuggestions');
+      const tags = Array.from(newsCards).flatMap(card => card.dataset.tags.split(','));
+      const uniqueTags = [...new Set(tags)];
 
-      categoryBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-          categoryBtns.forEach(b => b.classList.remove('active'));
-          btn.classList.add('active');
-          const category = btn.dataset.category;
+      categoryLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+          e.preventDefault();
+          categoryLinks.forEach(l => l.classList.remove('active'));
+          link.classList.add('active');
+          const category = link.dataset.category;
           filterNews(category, searchInput.value);
+          history.pushState(null, '', link.href);
         });
       });
 
       searchInput.addEventListener('input', (e) => {
         const searchTerm = e.target.value.toLowerCase();
-        const activeCategory = document.querySelector('.category-btn.active').dataset.category;
+        const activeCategory = document.querySelector('.category-link.active').dataset.category;
         filterNews(activeCategory, searchTerm);
+        showSuggestions(searchTerm);
       });
 
       function filterNews(category, searchTerm) {
         newsCards.forEach(card => {
           const cardCategory = card.dataset.category;
           const cardTags = (card.dataset.tags || '').toLowerCase();
-          const matchesCategory = category === 'all' || cardCategory === category;
           const title = card.querySelector('.news-card-title')?.textContent.toLowerCase() || '';
           const excerpt = card.querySelector('.news-card-excerpt')?.textContent.toLowerCase() || '';
+          const matchesCategory = category === 'all' || cardCategory === category;
           const matchesSearch = !searchTerm || cardTags.includes(searchTerm) || title.includes(searchTerm) || excerpt.includes(searchTerm);
           card.style.display = (matchesCategory && matchesSearch) ? 'block' : 'none';
         });
-        
         const visible = Array.from(newsCards).some(card => card.style.display !== 'none');
         if (!visible) showNoResults(); else hideNoResults();
-        
-        // Обновляем пагинацию после фильтрации
-        currentPage = 1;
-        updatePagination();
-        goToPage(1);
+        updateLoadMore();
+      }
+
+      function showSuggestions(searchTerm) {
+        searchSuggestions.innerHTML = '';
+        if (searchTerm.length < 2) {
+          searchSuggestions.style.display = 'none';
+          return;
+        }
+        const matches = uniqueTags.filter(tag => tag.includes(searchTerm)).slice(0, 5);
+        if (matches.length) {
+          matches.forEach(tag => {
+            const div = document.createElement('div');
+            div.className = 'search-suggestion';
+            div.textContent = tag;
+            div.addEventListener('click', () => {
+              searchInput.value = tag;
+              filterNews(document.querySelector('.category-link.active').dataset.category, tag);
+              searchSuggestions.style.display = 'none';
+            });
+            searchSuggestions.appendChild(div);
+          });
+          searchSuggestions.style.display = 'block';
+        } else {
+          searchSuggestions.style.display = 'none';
+        }
       }
 
       function showNoResults() {
@@ -369,89 +444,43 @@
         if (!el) {
           el = document.createElement('div');
           el.className = 'no-results';
-          el.innerHTML = `<h3>🔍 没有找到结果</h3><p>尝试更改搜索条件或选择其他类别</p>`;
+          el.innerHTML = `<h3>🔍 Ничего не найдено</h3><p>Попробуйте изменить запрос или выбрать другую категорию. <a href="/frontend/news/?category=all">Смотреть все статьи</a></p>`;
           document.getElementById('newsGrid')?.after(el);
         }
       }
-      
-      function hideNoResults() { 
-        document.querySelector('.no-results')?.remove(); 
+
+      function hideNoResults() {
+        document.querySelector('.no-results')?.remove();
       }
-      
-      // Управление пагинацией
-      function updatePagination() {
+
+      // Управление загрузкой
+      const itemsPerPage = 6;
+      let visibleItems = itemsPerPage;
+
+      function updateLoadMore() {
         const visibleCards = Array.from(newsCards).filter(card => card.style.display !== 'none');
-        const totalPages = Math.ceil(visibleCards.length / itemsPerPage);
-        const pagination = document.getElementById("pagination");
-        
-        // Если страниц меньше 2, скрываем пагинацию
-        if (totalPages < 2) {
-          pagination.style.display = "none";
-          return;
-        }
-        
-        // Показываем пагинацию
-        pagination.style.display = "flex";
-        
-        // Генерируем кнопки страниц
-        let paginationHTML = "";
-        
-        // Кнопка "Назад"
-        if (currentPage > 1) {
-          paginationHTML += "<span class=\"page-btn\" onclick=\"goToPage(" + (currentPage - 1) + ")\">←</span>";
-        }
-        
-        // Номера страниц
-        for (let i = 1; i <= totalPages; i++) {
-          if (i === 1 || i === totalPages || (i >= currentPage - 1 && i <= currentPage + 1)) {
-            const activeClass = i === currentPage ? " active" : "";
-            paginationHTML += "<span class=\"page-btn" + activeClass + "\" onclick=\"goToPage(" + i + ")\">" + i + "</span>";
-          } else if (i === currentPage - 2 || i === currentPage + 2) {
-            paginationHTML += "<span class=\"page-btn\">...</span>";
-          }
-        }
-        
-        // Кнопка "Вперед"
-        if (currentPage < totalPages) {
-          paginationHTML += "<span class=\"page-btn\" onclick=\"goToPage(" + (currentPage + 1) + ")\">→</span>";
-        }
-        
-        pagination.innerHTML = paginationHTML;
-      }
-      
-      function goToPage(page) {
-        const visibleCards = Array.from(newsCards).filter(card => card.style.display !== 'none');
-        const totalPages = Math.ceil(visibleCards.length / itemsPerPage);
-        
-        if (page < 1 || page > totalPages) return;
-        
-        currentPage = page;
-        
-        // Показываем/скрываем карточки в зависимости от страницы
-        visibleCards.forEach((card, index) => {
-          const startIndex = (page - 1) * itemsPerPage;
-          const endIndex = startIndex + itemsPerPage;
-          
-          if (index >= startIndex && index < endIndex) {
-            card.style.display = "block";
-          } else {
-            card.style.display = "none";
-          }
+        const loadMore = document.getElementById('loadMore');
+        loadMore.style.display = visibleCards.length > visibleItems ? 'flex' : 'none';
+        newsCards.forEach((card, index) => {
+          card.style.display = (index < visibleItems && card.style.display !== 'none') ? 'block' : 'none';
         });
-        
-        updatePagination();
       }
-      
-      // Инициализация пагинации при загрузке страницы
-      document.addEventListener("DOMContentLoaded", function() {
-        updatePagination();
-        goToPage(1);
+
+      document.getElementById('loadMore')?.addEventListener('click', () => {
+        visibleItems += itemsPerPage;
+        updateLoadMore();
+      });
+
+      // Инициализация
+      document.addEventListener("DOMContentLoaded", () => {
+        updateLoadMore();
       });
     </script>
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+
+    <!-- Мобильная реклама -->
     <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
       <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-        <button type="button" aria-label="关闭广告" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+        <button type="button" aria-label="Закрыть рекламу" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
         <ins class="mrg-tag" 
             style="display:inline-block;width:320px;height:50px" 
             data-ad-client="ad-1898031"
@@ -473,36 +502,6 @@
             a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
           });
         }
-      })();
-    </script>
-
-    <script>
-      /*ANCHOR_COLLAPSE*/
-      (function(){
-        var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
-        setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
-          (window.MRGtag=window.MRGtag||[]).push({});
-          setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
-        } }, 2000);
-      })();
-    </script>
-
-    <script>
-      /*GLOBAL_AD_HOOK*/
-      (function(){
-        function handleIns(ins){
-          if (!ins || ins.__handled) return; ins.__handled = true;
-          setTimeout(function(){
-            var has = !!ins.querySelector("iframe");
-            if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
-            setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
-          }, 2000);
-        }
-        document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
-        var mo = new MutationObserver(function(muts){
-          muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
-        });
-        mo.observe(document.documentElement,{childList:true,subtree:true});
       })();
     </script>
       <script src="/frontend/scripts/mobile-enhancements.js" defer></script>

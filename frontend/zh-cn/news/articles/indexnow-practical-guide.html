@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
   <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/zh-cn/news/articles/indexnow-practical-guide.html">
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="zh-cn">
     <meta charset="UTF-8">
@@ -8,16 +9,16 @@
     <title>IndexNow：实用指南与技巧</title>
 
     <!-- Open Graph -->
-    <meta property="og:title" content="IndexNow：实用指南与技巧">
-    <meta property="og:description" content="快速向搜索引擎推送更新：接入步骤、changed‑only 模式、常见错误、与 sitemap ping 的对比，以及上线清单。">
+    <meta property="og:title" content="IndexNow: практическое внедрение и трюки">
+    <meta property="og:description" content="Быстрый апдейт поисковых систем: setup, changed‑only, частые ошибки, сравнение с sitemap‑пингом и чек‑лист внедрения.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/news/articles/indexnow-practical-guide.html">
+    <meta property="og:url" content="https://www.serpmonn.ru/frontend/zh-cn/news/articles/indexnow-practical-guide.html">
     <meta property="og:type" content="article">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="IndexNow：实用指南与技巧">
-    <meta name="twitter:description" content="接入、changed‑only、常见问题与 sitemap ping 对比。">
+    <meta name="twitter:title" content="IndexNow: практическое внедрение и трюки">
+    <meta name="twitter:description" content="Setup, changed‑only режим, ошибки и сравнение с sitemap‑пингом.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
@@ -48,11 +49,11 @@
       .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
     </style>
 
-    <!-- 面包屑导航 -->
+    <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/frontend/zh-cn/index.html">首页</a> →
-      <a href="/frontend/zh-cn/news/index.html">新闻</a> →
-      <span>IndexNow：实用指南与技巧</span>
+      <a href="/">Главная</a> →
+      <a href="/frontend/news/index.html">Новости</a> →
+      <span>IndexNow: практическое внедрение и трюки</span>
     </div>
 
     <div class="news-container">
@@ -69,32 +70,32 @@
           (MRGtag = window.MRGtag || []).push({});
         </script>
         <h1 class="news-title">IndexNow：实用指南与技巧</h1>
-        <div class="news-date">2025年9月15日</div>
+        <div class="news-date">15 сентября 2025</div>
       </div>
 
       <div class="summary">
-        <strong>为什么重要：</strong> 通过 IndexNow 将 URL 变更（新增/更新/删除）即时推送给搜索引擎，显著降低索引延迟与抓取噪声。
+        <strong>Зачем читать:</strong> как быстро доставлять апдейты в поисковые системы, когда использовать changed‑only, чем IndexNow отличается от sitemap‑пинга, и как избежать частых ошибок.
       </div>
 
       <div class="toc">
-        <strong>目录</strong>
+        <strong>Оглавление</strong>
         <ol>
-          <li><a href="#what">什么是 IndexNow</a></li>
-          <li><a href="#setup">密钥验证与基础 ping</a></li>
-          <li><a href="#changed">changed‑only 模式</a></li>
-          <li><a href="#compare">与 sitemap ping 的对比</a></li>
-          <li><a href="#errors">常见错误</a></li>
-          <li><a href="#faq">FAQ 与上线清单</a></li>
+          <li><a href="#what">Что такое IndexNow</a></li>
+          <li><a href="#setup">Установка ключа и базовый пинг</a></li>
+          <li><a href="#changed">Режим changed‑only: когда и как</a></li>
+          <li><a href="#compare">IndexNow vs sitemap‑пинг</a></li>
+          <li><a href="#errors">Частые ошибки</a></li>
+          <li><a href="#faq">FAQ и чек‑лист</a></li>
         </ol>
       </div>
 
-      <h2 id="what">1) 什么是 IndexNow</h2>
-      <p>IndexNow 是一种协议，可向搜索引擎主动告知 URL 的新增/更新/删除。目前由 Bing、Yandex、Seznam 等支持。它的优势是更快曝光变更，同时减少无效抓取。</p>
+      <h2 id="what">1) Что такое IndexNow</h2>
+      <p>IndexNow — протокол, позволяющий мгновенно сообщать поисковым системам об изменениях URL (создание, обновление, удаление). Поддерживается Bing, Yandex, Seznam и рядом сервисов. Преимущество — минимальная задержка индексации и меньше crawl‑шума.</p>
 
-      <h2 id="setup">2) 密钥验证与基础 ping</h2>
+      <h2 id="setup">2) Установка ключа и базовый пинг</h2>
       <ol>
-        <li>生成密钥（GUID），将 <code>YOUR_KEY.txt</code> 放置在站点根目录（<code>/.well-known/</code> 或域名根）并写入密钥字符串。</li>
-        <li>向 endpoint 发送包含 URL 与密钥的请求。单 URL 示例：</li>
+        <li>Сгенерируйте ключ (GUID) и разместите файл <code>YOUR_KEY.txt</code> в корне сайта (<code>/.well-known/</code> или корень домена) со строкой ключа.</li>
+        <li>Пингуйте endpoint с URL и ключом. Пример (одиночный URL):</li>
       </ol>
       <div class="code">
 POST https://api.indexnow.org/indexnow
@@ -104,54 +105,54 @@ Content-Type: application/json
   "host": "www.serpmonn.ru",
   "key": "YOUR_KEY",
   "urlList": [
-    "https://www.serpmonn.ru/frontend/zh-cn/news/articles/utm-complete-guide.html"
+    "https://www.serpmonn.ru/frontend/news/articles/utm-complete-guide.html"
   ]
 }
       </div>
-      <p>批量发送时，可在单次请求中包含最多 10,000 个 URL，或提供一个变更文件的 URL。</p>
+      <p>Для батчей укажите до 10 000 URL в одном запросе или используйте файл‑канал с URL файла изменений.</p>
 
-      <h2 id="changed">3) changed‑only 模式</h2>
-      <p>仅推送自上次提交/部署以来真正变动的 URL，以降低噪声与配额消耗。</p>
+      <h2 id="changed">3) Режим changed‑only</h2>
+      <p>Смысл — пинговать только реально изменённые файлы за последний коммит/деплой. Это снижает шум и расход квот.</p>
       <ul>
-        <li>从 VCS（git diff）或构建产物中收集变更路径。</li>
-        <li>仅保留公共路由（过滤 <code>node_modules</code>、<code>.git</code>、私有目录）。</li>
-        <li>按域名/语言分组，避免推送不相关的 URL。</li>
+        <li>Снимайте список изменённых путей из VCS (git diff) или билд‑артефактов.</li>
+        <li>Фильтруйте по публичным маршрутам (исключая <code>node_modules</code>, <code>.git</code>, приватные папки).</li>
+        <li>Группируйте по доменам/языкам, чтобы не отправлять нерелевантные URL.</li>
       </ul>
-      <div class="note">建议准备 fallback：当 changed‑only 为空（如仅改配置）时，回退到关键 sitemap 的 ping。</div>
+      <div class="note">На продакшене полезно иметь fallback: если changed‑only дал пусто (например, горячий фикс конфигов), пингануть важные карты сайта.</div>
 
-      <h2 id="compare">4) 与 sitemap ping 的对比</h2>
+      <h2 id="compare">4) IndexNow vs sitemap‑пинг</h2>
       <ul>
-        <li><strong>速度：</strong> IndexNow 立即推送具体 URL；sitemap ping 仅提示地图有更新。</li>
-        <li><strong>噪声：</strong> IndexNow 精准；sitemap 可能触发更广泛抓取。</li>
-        <li><strong>可靠性：</strong> 二者结合最佳 —— sitemap 保覆盖，IndexNow 提即时性。</li>
-      </ul>
-
-      <h2 id="errors">5) 常见错误</h2>
-      <ul>
-        <li>密钥文件无法公开访问，或与请求中的 <code>key</code> 不一致。</li>
-        <li>推送私有/404 页面，或使用未规范化的带参数 URL。</li>
-        <li>同一 URL 重复推送频率过高（需要去重与限流）。</li>
-        <li>忽略多语言页面（应分别推送本地化版本）。</li>
+        <li><strong>Скорость:</strong> IndexNow быстрее доставляет апдейты, не ждёт crawl цикла; sitemap‑пинг сигналит о наличии карты, но не об изменении конкретного URL.</li>
+        <li><strong>Шум:</strong> IndexNow — точечно по изменённым URL; sitemap — скан всей карты (дороже по crawl бюджету).</li>
+        <li><strong>Надёжность:</strong> sitemaps остаются базой; IndexNow дополняет и ускоряет. Лучше использовать оба.</li>
       </ul>
 
-      <h2 id="faq">6) FAQ 与上线清单</h2>
+      <h2 id="errors">5) Частые ошибки</h2>
+      <ul>
+        <li>Ключ не доступен по публичному URL или не совпадает с параметром <code>key</code>.</li>
+        <li>Пингуют приватные/404 страницы, параметры без каноникализации.</li>
+        <li>Слишком частые повторы одних и тех же URL (дросселируйте повторы).</li>
+        <li>Игнорируют мультиязычность (нужно пинговать соответствующую локализованную версию).</li>
+      </ul>
+
+      <h2 id="faq">6) FAQ и чек‑лист</h2>
       <div class="faq">
-        <h3>单批次可推送多少 URL？</h3>
-        <p>最多 10,000 个，建议按类型/语言分组。</p>
-        <h3>删除是否需要推送？</h3>
-        <p>需要，可加速去索引。</p>
-        <h3>如何验证生效？</h3>
-        <p>查看 API 返回（200/202）、服务器抓取日志的波动，以及新 URL 的出现速度。</p>
-        <h3>上线清单</h3>
+        <h3>Сколько URL отправлять за раз?</h3>
+        <p>До 10 000 в батче — оптимально группировать по типу/языку.</p>
+        <h3>Нужно ли пинговать удаление?</h3>
+        <p>Да — передавайте URL удалённых страниц, чтобы ускорить деиндексацию.</p>
+        <h3>Чем подтвердить, что работает?</h3>
+        <p>Логи ответов API (200/202), всплески crawl в логах сервера, ускорение появления новых URL.</p>
+        <h3>Чек‑лист внедрения</h3>
         <ul>
-          <li>密钥已托管且可通过 HTTPS 访问。</li>
-          <li>CI/CD 集成 changed‑only 路径收集。</li>
-          <li>重复去重与推送限流。</li>
-          <li>当批次为空时回退到 sitemap ping。</li>
+          <li>Ключ размещён и доступен по HTTPS.</li>
+          <li>Сбор changed‑only путей из CI/CD.</li>
+          <li>Дедупликация и дросселирование повторов.</li>
+          <li>Fallback на пинг sitemap при пустом батче.</li>
         </ul>
       </div>
 
-      <p class="muted" style="margin-top:16px;">更新：2025‑09‑15 • 分类：SEO</p>
+      <p class="muted" style="margin-top:16px;">Обновлено: 15.09.2025 • Категория: SEO</p>
     </div>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>

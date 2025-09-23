@@ -1,21 +1,24 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
   <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/en/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html">
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="en">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Snippet Length Limits: VK / Telegram / YouTube / TikTok</title>
 
-    <meta property="og:title" content="Snippet Length Limits: VK / Telegram / YouTube / TikTok">
-    <meta property="og:description" content="Cheat‑sheet with practical limits and before/after examples to avoid truncation and boost CTR.">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Лимиты символов и обрезка сниппетов: VK / Telegram / YouTube / TikTok">
+    <meta property="og:description" content="Сводная таблица лимитов, рекомендации по длине, и примеры «до/после», чтобы ваши заголовки и описания не обрезались.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru/frontend/en/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html">
+    <meta property="og:url" content="https://www.serpmonn.ru/frontend/en/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html">
     <meta property="og:type" content="article">
 
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Snippet Length Limits: VK / Telegram / YouTube / TikTok">
-    <meta name="twitter:description" content="Table + before/after examples, recommended title/description lengths.">
+    <meta name="twitter:title" content="Лимиты символов и обрезка сниппетов: VK / Telegram / YouTube / TikTok">
+    <meta name="twitter:description" content="Таблица лимитов и наглядные примеры оптимизации сниппетов.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
@@ -30,13 +33,19 @@
       .news-title { font-size: 2.2rem; color: #333; margin-bottom: 10px; font-weight: 700; }
       .news-date { color: #6c757d; font-size: 1.05rem; font-weight: 500; }
       .summary { background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 8px; padding: 16px; margin: 20px 0; color: #155724; }
+      .toc { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin: 20px 0; }
+      .toc a { text-decoration: none; }
+      h2 { margin-top: 28px; }
       table { width: 100%; border-collapse: collapse; margin: 16px 0; }
       th, td { border: 1px solid #e9ecef; padding: 10px; text-align: left; vertical-align: top; }
       th { background: #f8f9fa; font-weight: 700; }
+      .ok { color: #2e7d32; font-weight: 600; }
+      .warn { color: #ef6c00; font-weight: 600; }
+      .bad { color: #c62828; font-weight: 600; }
+      .example { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 12px; margin: 12px 0; }
       .label { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 12px; font-weight: 700; }
       .before { background: #ffeaea; color: #b71c1c; border: 1px solid #ffcdd2; }
       .after { background: #e8f5e9; color: #1b5e20; border: 1px solid #c8e6c9; }
-      .example { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 12px; margin: 12px 0; }
       .muted { color:#6c757d; }
     </style>
   </head>
@@ -46,10 +55,11 @@
       .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
     </style>
 
+    <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/frontend/en/index.html">Home</a> →
-      <a href="/frontend/en/news/index.html">News</a> →
-      <span>Snippet Length Limits</span>
+      <a href="/">Главная</a> →
+      <a href="/frontend/news/index.html">Новости</a> →
+      <span>Лимиты символов и обрезка сниппетов</span>
     </div>
 
     <div class="news-container">
@@ -66,92 +76,105 @@
           (MRGtag = window.MRGtag || []).push({});
         </script>
         <h1 class="news-title">Snippet Length Limits (VK / Telegram / YouTube / TikTok)</h1>
-        <div class="news-date">September 15, 2025</div>
+        <div class="news-date">15 сентября 2025</div>
       </div>
 
       <div class="summary">
-        <strong>Goal:</strong> avoid truncation and maximize CTR. Below — a cheat‑sheet of recommended lengths and before/after examples.
+        <strong>Зачем читать:</strong> чтобы заголовки и описания не обрезались и давали максимум CTR. Ниже — сводная таблица лимитов и наглядные «до/после» для исправления.
       </div>
 
-      <h2>1) Summary table</h2>
+      <div class="toc">
+        <strong>Оглавление</strong>
+        <ol>
+          <li><a href="#table">Сводная таблица лимитов и рекомендаций</a></li>
+          <li><a href="#vk">VK: «до/после»</a></li>
+          <li><a href="#tg">Telegram: «до/после»</a></li>
+          <li><a href="#yt">YouTube: «до/после»</a></li>
+          <li><a href="#tt">TikTok: «до/после»</a></li>
+          <li><a href="#tips">Советы по превью и метаданным</a></li>
+        </ol>
+      </div>
+
+      <h2 id="table">1) Сводная таблица</h2>
+      <p class="muted">Примечание: платформы часто меняют UI и обрезку. Мы даём проверенные <em>рекомендованные</em> длины и известные жёсткие лимиты.</p>
       <table>
         <thead>
           <tr>
-            <th>Platform</th>
-            <th>Title (reco./limit)</th>
-            <th>Description/Text (reco./limit)</th>
-            <th>Preview/Truncation</th>
+            <th>Платформа</th>
+            <th>Заголовок (реком./лимит)</th>
+            <th>Описание/текст (реком./лимит)</th>
+            <th>Превью/обрезка</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><strong>VK</strong></td>
             <td>≤ 60–70 / —</td>
-            <td>≤ 140–160 / up to 4096 post chars</td>
-            <td>Link preview trims title ~70, desc ~140+</td>
+            <td>≤ 140–160 / до 4096 символов поста</td>
+            <td>Линк‑сниппет обрезает заголовок ~70, описание ~140+</td>
           </tr>
           <tr>
             <td><strong>Telegram</strong></td>
-            <td>≤ 70 / — (from OG)</td>
-            <td>≤ 120–160 / 4096 message</td>
-            <td>Preview from OG: title ~70, desc ~120–140</td>
+            <td>≤ 70 / — (берётся из OG)</td>
+            <td>≤ 120–160 / 4096 в сообщении</td>
+            <td>Превью по OG: заголовок ~70, описание ~120–140</td>
           </tr>
           <tr>
             <td><strong>YouTube</strong></td>
-            <td>≤ 60 / limit 100</td>
-            <td>≤ 150–200 (above‑the‑fold) / limit 5000</td>
-            <td>2–3 lines visible initially</td>
+            <td>≤ 60 / лимит 100</td>
+            <td>≤ 150–200 (первые строки) / лимит 5000</td>
+            <td>Above‑the‑fold показывается ~2–3 строки</td>
           </tr>
           <tr>
             <td><strong>TikTok</strong></td>
             <td>≤ 60–80 / —</td>
-            <td>≤ 80–150 (visible) / up to ~2200</td>
-            <td>Caption collapses after ~80–150 chars</td>
+            <td>≤ 80–150 (видимая часть) / лимит до ~2200</td>
+            <td>Капшен обрезается, «Ещё» после ~80–150</td>
           </tr>
         </tbody>
       </table>
 
-      <h2>2) VK: before/after</h2>
+      <h2 id="vk">2) VK: примеры «до/после»</h2>
       <div class="example">
-        <span class="label before">BEFORE</span>
-        <p>“An extremely long headline about our new feature that will be truncated in every preview and reduce CTR…”</p>
-        <span class="label after">AFTER</span>
-        <p><strong>“New feature: faster and simpler”</strong> — short and clear. Subheader: “Key benefits and examples” (≤ 140).</p>
+        <span class="label before">ДО</span>
+        <p>«Невероятно подробный и очень длинный заголовок о нашей новой функции, который неизбежно будет обрезан во всех превью и снизит CTR…»</p>
+        <span class="label after">ПОСЛЕ</span>
+        <p><strong>«Новая функция: быстрее и проще»</strong> — коротко и понятно. Подзаголовок/описание: «Собрали ключевые возможности и примеры использования» (≤ 140).</p>
       </div>
 
-      <h2>3) Telegram: before/after</h2>
+      <h2 id="tg">3) Telegram: примеры «до/после»</h2>
       <div class="example">
-        <span class="label before">BEFORE</span>
-        <p>“[New article] The complete UTM guide for all marketing channels with checklists and examples”</p>
-        <span class="label after">AFTER</span>
-        <p><strong>“UTM: complete guide”</strong> — “GA4, templates for Google/Meta/VK, common mistakes”. Title ≤ 70, desc ≤ 120–140.</p>
+        <span class="label before">ДО</span>
+        <p>«[Новая статья] Полное руководство по UTM‑меткам для всех каналов маркетинга, со списками, примерами, чек‑листом и оглавлением»</p>
+        <span class="label after">ПОСЛЕ</span>
+        <p><strong>«UTM: полное руководство»</strong> — «GA4, шаблоны для Google/Meta/VK, частые ошибки». Заголовок ≤ 70, описание ≤ 120–140.</p>
       </div>
 
-      <h2>4) YouTube: before/after</h2>
+      <h2 id="yt">4) YouTube: примеры «до/после»</h2>
       <div class="example">
-        <span class="label before">BEFORE</span>
-        <p>“How we built SEO in 30 days: a full breakdown from audit to rollout, analytics and reporting [2025]” (105 chars)</p>
-        <span class="label after">AFTER</span>
-        <p><strong>“SEO in 30 days: step‑by‑step plan”</strong> — “Audit, rollout, reporting. Pitfalls & tips (2025)”. Title ≤ 60, first 150–200 chars carry value and CTA.</p>
+        <span class="label before">ДО</span>
+        <p>«Как мы выстроили SEO за 30 дней: полный разбор всех шагов от аудита до внедрения, аналитики и отчётности [2025]» (105 символов)</p>
+        <span class="label after">ПОСЛЕ</span>
+        <p><strong>«SEO за 30 дней: пошаговый план»</strong> — «Аудит, внедрение, отчётность. Ошибки и лайфхаки (2025)». Заголовок ≤ 60, первые 150–200 символов описания — ключевая польза и CTA.</p>
       </div>
 
-      <h2>5) TikTok: before/after</h2>
+      <h2 id="tt">5) TikTok: примеры «до/после»</h2>
       <div class="example">
-        <span class="label before">BEFORE</span>
-        <p>“Check our long explanation with lots of details and links — read till the end!”</p>
-        <span class="label after">AFTER</span>
-        <p><strong>“3 UTM mistakes that waste traffic”</strong> — “Check source/medium, encoding and redirects. Full guide via link”.</p>
+        <span class="label before">ДО</span>
+        <p>«Посмотрите наше новое длинное объяснение с кучей деталей и ссылок — обязательно дочитайте до конца!»</p>
+        <span class="label after">ПОСЛЕ</span>
+        <p><strong>«3 ошибки в UTM, которые съедают трафик»</strong> — «Проверь source/medium, кодировку и редиректы. Полное руководство — по ссылке».</p>
       </div>
 
-      <h2>6) Tips for previews & metadata</h2>
+      <h2 id="tips">6) Советы по превью и метаданным</h2>
       <ul>
-        <li>Set proper <strong>OG meta</strong> (title/description/image) for VK/Telegram previews.</li>
-        <li>Keep <strong>title ≤ 60–70</strong>, <strong>description ≤ 140–160</strong> for cross‑platform safety.</li>
-        <li>Put <strong>value in the first 1–2 lines</strong> of description.</li>
-        <li>Validate previews before publishing (drafts, bots, share tools).</li>
+        <li>Ставьте <strong>OG‑мета</strong> (title/description/image) для корректных превью в VK/Telegram.</li>
+        <li>Держите <strong>title ≤ 60–70</strong>, <strong>description ≤ 140–160</strong> для универсальной видимости.</li>
+        <li>Выносите <strong>ключевую пользу в первые 1–2 строки</strong> описания.</li>
+        <li>Проверяйте превью перед публикацией (через черновики/превью‑ботов/шэринг).</li>
       </ul>
 
-      <p class="muted" style="margin-top:16px;">Updated: 15 Sep 2025 • Category: SMM/SEO</p>
+      <p class="muted" style="margin-top:16px;">Обновлено: 15.09.2025 • Категория: SMM/SEO</p>
     </div>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>

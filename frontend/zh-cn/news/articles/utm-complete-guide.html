@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
   <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/zh-cn/news/articles/utm-complete-guide.html">
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="zh-cn">
     <meta charset="UTF-8">
@@ -8,16 +9,16 @@
     <title>UTM：完整指南 — 2025</title>
 
     <!-- Open Graph -->
-    <meta property="og:title" content="UTM：完整指南 — 2025">
-    <meta property="og:description" content="什么是 UTM 参数、如何正确使用、GA4 映射、Google/Meta/VK/Telegram/Email 模板，以及常见错误与清单。">
+    <meta property="og:title" content="UTM: Полное руководство — 2025">
+    <meta property="og:description" content="Что такое UTM‑метки, как их правильно ставить, таксономия для GA4, шаблоны для Google/Meta/VK/Telegram/Email и частые ошибки.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/news/articles/utm-complete-guide.html">
+    <meta property="og:url" content="https://www.serpmonn.ru/frontend/zh-cn/news/articles/utm-complete-guide.html">
     <meta property="og:type" content="article">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="UTM：完整指南 — 2025">
-    <meta name="twitter:description" content="UTM 参数、GA4、各渠道模板、示例与检查清单。">
+    <meta name="twitter:title" content="UTM: Полное руководство — 2025">
+    <meta name="twitter:description" content="Что такое UTM, параметры, GA4, шаблоны для разных каналов, ошибки и чек‑лист.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
@@ -49,11 +50,11 @@
       .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
     </style>
 
-    <!-- 面包屑导航 -->
+    <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/frontend/zh-cn/index.html">首页</a> →
-      <a href="/frontend/zh-cn/news/index.html">新闻</a> →
-      <span>UTM：完整指南</span>
+      <a href="/">Главная</a> →
+      <a href="/frontend/news/index.html">Новости</a> →
+      <span>UTM: Полное руководство</span>
     </div>
 
     <div class="news-container">
@@ -70,66 +71,67 @@
           (MRGtag = window.MRGtag || []).push({});
         </script>
         <h1 class="news-title">UTM：完整指南</h1>
-        <div class="news-date">2025年9月15日</div>
+        <div class="news-date">15 сентября 2025</div>
       </div>
 
       <div class="summary">
-        <strong>为什么重要：</strong> 学会在各渠道统一、正确地添加 UTM 参数，避免常见错误，并直接使用可套用的模板。文末提供 FAQ 与检查清单。
+        <strong>Зачем читать:</strong> вы научитесь правильно ставить UTM‑метки для любой кампании, избежите типичных ошибок и получите готовые шаблоны под основные каналы. В конце — FAQ и чек‑лист.
       </div>
 
       <div class="toc">
-        <strong>目录</strong>
+        <strong>Оглавление</strong>
         <ol>
-          <li><a href="#what">什么是 UTM，为什么需要</a></li>
-          <li><a href="#params">UTM 参数：source/medium/campaign/term/content</a></li>
-          <li><a href="#ga4">GA4 映射与归因</a></li>
-          <li><a href="#naming">命名规范与分类</a></li>
-          <li><a href="#platforms">渠道模板（Google/Meta/VK/Telegram/Email）</a></li>
-          <li><a href="#examples">示例与可用链接</a></li>
-          <li><a href="#mistakes">常见错误</a></li>
-          <li><a href="#faq">FAQ 与检查清单</a></li>
+          <li><a href="#what">Что такое UTM и зачем</a></li>
+          <li><a href="#params">Параметры UTM: source/medium/campaign/term/content</a></li>
+          <li><a href="#ga4">Связка с GA4: атрибуция и отчёты</a></li>
+          <li><a href="#naming">Таксономия и нейминг</a></li>
+          <li><a href="#platforms">Шаблоны под каналы (Google/Meta/VK/Telegram/Email)</a></li>
+          <li><a href="#examples">Примеры и готовые ссылки</a></li>
+          <li><a href="#mistakes">Типичные ошибки</a></li>
+          <li><a href="#faq">FAQ и чек‑лист</a></li>
         </ol>
       </div>
 
-      <h2 id="what">1) 什么是 UTM，为什么需要</h2>
-      <p>URL 中的 UTM 参数帮助分析工具（如 GA4）识别来源、渠道类型、活动与创意，从而实现正确归因与跨渠道对比。</p>
+      <h2 id="what">1) Что такое UTM и зачем</h2>
+      <p>UTM‑метки — это параметры в URL, которые помогают системам аналитики (GA4 и др.) понимать источник перехода, тип канала, кампанию и креатив. Это основа корректной атрибуции и сравнения эффективности каналов.</p>
 
-      <h2 id="params">2) 核心 UTM 参数</h2>
+      <h2 id="params">2) Базовые параметры UTM</h2>
       <ul>
-        <li><code>utm_source</code> — 流量来源（如 <code>google</code>、<code>facebook</code>、<code>vk</code>、<code>telegram</code>）。</li>
-        <li><code>utm_medium</code> — 渠道类型（<code>cpc</code>、<code>paid_social</code>、<code>display</code>、<code>email</code>、<code>referral</code> 等）。</li>
-        <li><code>utm_campaign</code> — 活动标识（如 <code>y2025q3_launch_widget</code>）。</li>
-        <li><code>utm_term</code> — 关键词（多用于搜索广告）。</li>
-        <li><code>utm_content</code> — 创意/按钮变体（如 <code>banner_a_red</code>、<code>cta_top</code>）。</li>
+        <li><code>utm_source</code> — источник (например, <code>google</code>, <code>facebook</code>, <code>vk</code>, <code>telegram</code>).</li>
+        <li><code>utm_medium</code> — тип канала (<code>cpc</code>, <code>paid_social</code>, <code>display</code>, <code>email</code>, <code>referral</code> и др.).</li>
+        <li><code>utm_campaign</code> — кампания (название акции/продукта/периода: <code>y2025q3_launch_widget</code>).</li>
+        <li><code>utm_term</code> — ключевое слово (чаще в поисковой рекламе).</li>
+        <li><code>utm_content</code> — вариант креатива/баннера/кнопки (<code>banner_a_red</code>, <code>cta_top</code>).</li>
       </ul>
-      <div class="note">可选项：<code>utm_id</code>、<code>utm_source_platform</code>、<code>utm_creative_format</code>、<code>utm_marketing_tactic</code>（GA4 支持扩展报表）。</div>
+      <div class="note">Дополнительные поля (необязательно): <code>utm_id</code>, <code>utm_source_platform</code>, <code>utm_creative_format</code>, <code>utm_marketing_tactic</code> — GA4 умеет их читать в расширенных отчётах.</div>
 
-      <h2 id="ga4">3) GA4 映射与归因</h2>
-      <p>GA4 会将 UTM 映射到 <em>session_source/medium</em>、<em>first_user_source/medium</em>、<em>campaign</em> 等字段。即使启用 <code>gclid</code> 自动标记，UTM 仍有助于跨平台一致性和 BI 分析。</p>
+      <h2 id="ga4">3) GA4: как это читается</h2>
+      <p>GA4 использует UTM для полей <em>session_source/medium</em>, <em>first_user_source/medium</em>, <em>campaign</em> и др. Если включено авто‑тегирование Google Ads (<code>gclid</code>), оно имеет приоритет, но UTM всё равно полезны для кроссплатформенной консистентности и BI.</p>
       <ul>
-        <li>统一使用小写与 ASCII，避免渠道重复。</li>
-        <li>不要混用 <code>utm_medium</code>（如 <code>cpc</code> 与 <code>paid_social</code>）。</li>
-        <li>确保跳转不会丢失参数。</li>
-      </ul>
-
-      <h2 id="naming">4) 命名规范与分类</h2>
-      <ul>
-        <li><strong>活动命名：</strong> <code>y2025q3_{product|offer}_{goal|event}</code></li>
-        <li><strong>大小写：</strong> 统一小写，使用连字符 <code>-</code> 分隔。</li>
-        <li><strong>避免空格</strong>，非 ASCII 可转写。</li>
-        <li><strong>Medium 词典：</strong> <code>cpc</code>、<code>paid_social</code>、<code>display</code>、<code>email</code>、<code>referral</code>、<code>organic</code>。</li>
+        <li>Соблюдайте единый регистр (нижний, латиница), чтобы не плодить дубликаты каналов.</li>
+        <li>Не смешивайте каналы в <code>utm_medium</code> (например, <code>cpc</code> ≠ <code>paid_social</code>).</li>
+        <li>Проверяйте, что редиректы не срезают параметры (особенно в m‑линках/прокладках).</li>
       </ul>
 
-      <h2 id="platforms">5) 渠道模板</h2>
+      <h2 id="naming">4) Таксономия и нейминг</h2>
       <ul>
-        <li><strong>Google Ads（搜索/展示）：</strong> <code>utm_source=google</code>、<code>utm_medium=cpc</code>、<code>utm_campaign=...</code>、<code>utm_term={keyword}</code>、<code>utm_content={adgroup}</code>；保留 <code>gclid</code>。</li>
-        <li><strong>Facebook/Meta：</strong> <code>utm_source=facebook</code>、<code>utm_medium=paid_social</code>、<code>utm_campaign=...</code>、<code>utm_content={placement}_{creative}</code>。</li>
-        <li><strong>VK：</strong> <code>utm_source=vk</code>、<code>utm_medium=paid_social</code>、<code>utm_campaign=...</code>、<code>utm_content={ad_id}</code>。</li>
-        <li><strong>Telegram：</strong> <code>utm_source=telegram</code>、<code>utm_medium=social</code>（付费用 <code>paid_social</code>）、<code>utm_campaign=...</code>、<code>utm_content=post_{n}|story</code>。</li>
-        <li><strong>Email：</strong> <code>utm_source=newsletter</code>（或 ESP）、<code>utm_medium=email</code>、<code>utm_campaign=...</code>、<code>utm_content=btn_{variant}</code>。</li>
+        <li><strong>Шаблон кампании:</strong> <code>y2025q3_{продукт|оффер}_{цель|событие}</code></li>
+        <li><strong>Регистр:</strong> только нижний (<code>lowercase</code>), разделитель — дефис (<code>-</code>).</li>
+        <li><strong>Без пробелов</strong>, кириллицу транслитерировать: <code>осень‑распродажа → osen-rasprodazha</code>.</li>
+        <li><strong>Medium словарь:</strong> <code>cpc</code>, <code>paid_social</code>, <code>display</code>, <code>email</code>, <code>referral</code>, <code>organic</code>.</li>
       </ul>
 
-      <h2 id="examples">6) 示例</h2>
+      <h2 id="platforms">5) Шаблоны под каналы</h2>
+      <p>Быстрые рекомендации для популярных источников:</p>
+      <ul>
+        <li><strong>Google Ads (поиск/КМС):</strong> <code>utm_source=google</code>, <code>utm_medium=cpc</code>, <code>utm_campaign=...</code>, <code>utm_term={keyword}</code>, <code>utm_content={adgroup}</code>. Автотег <code>gclid</code> оставляем включённым.</li>
+        <li><strong>Facebook/Meta:</strong> <code>utm_source=facebook</code>, <code>utm_medium=paid_social</code>, <code>utm_campaign=...</code>, <code>utm_content={placement}_{creative}</code>.</li>
+        <li><strong>VK:</strong> <code>utm_source=vk</code>, <code>utm_medium=paid_social</code>, <code>utm_campaign=...</code>, <code>utm_content={ad_id}</code>.</li>
+        <li><strong>Telegram:</strong> <code>utm_source=telegram</code>, <code>utm_medium=social</code> (или <code>paid_social</code> для рекламы), <code>utm_campaign=...</code>, <code>utm_content=post_{n}|story</code>.</li>
+        <li><strong>Email:</strong> <code>utm_source=newsletter</code> (или ESP), <code>utm_medium=email</code>, <code>utm_campaign=...</code>, <code>utm_content=btn_{variant}</code>.</li>
+      </ul>
+
+      <h2 id="examples">6) Примеры</h2>
       <div class="code">
 GET https://example.com/landing?
   utm_source=google&
@@ -146,37 +148,37 @@ GET https://example.com/landing?
   utm_content=feed_video_a
       </div>
       <p>
-        使用我们的 UTM 生成器：
-        <a class="btn" href="https://serpmonn.ru/frontend/tools/marketing/utm-builder.html" target="_blank" rel="noopener">打开 UTM Builder</a>
+        Удобнее всего собирать ссылки в нашем конструкторе:
+        <a class="btn" href="https://serpmonn.ru/frontend/tools/marketing/utm-builder.html" target="_blank" rel="noopener">Открыть UTM Builder</a>
       </p>
 
-      <h2 id="mistakes">7) 常见错误</h2>
+      <h2 id="mistakes">7) Типичные ошибки</h2>
       <ul>
-        <li>混用 <code>utm_medium</code> 与大小写（<code>CPC</code> vs <code>cpc</code>）。</li>
-        <li>值中包含空格/非 ASCII，或缺少 URL 编码。</li>
-        <li>同一活动在不同平台使用不同名称。</li>
-        <li>跳转导致 UTM 丢失（短链或中间页未传递参数）。</li>
+        <li>Смешение <code>utm_medium</code> (<code>cpc</code> vs <code>paid_social</code>), разные регистры (<code>CPC</code> vs <code>cpc</code>).</li>
+        <li>Пробелы/кириллица в значениях, отсутствие URL‑кодирования.</li>
+        <li>Разные названия одной кампании в нескольких системах.</li>
+        <li>Потеря UTM на редиректах (непрозрачные прокладки, короткие ссылки без переноса параметров).</li>
       </ul>
 
-      <h2 id="faq">8) FAQ 与检查清单</h2>
+      <h2 id="faq">8) FAQ и чек‑лист</h2>
       <div class="faq">
-        <h3>最少需要哪些参数？</h3>
-        <p><strong>source, medium, campaign</strong> 已足够起步；<strong>term/content</strong> 视需要补充。</p>
-        <h3>开启 gclid 还需要 UTM 吗？</h3>
-        <p>需要。UTM 有助于跨渠道一致性与 BI；<em>gclid</em> 与 UTM 并不冲突。</p>
-        <h3>如何校验？</h3>
-        <p>点击测试链接，在 GA4 Realtime/DebugView 中查看；检查跳转是否保留参数。</p>
-        <h3>命名规范放哪儿？</h3>
-        <p>使用共享表（Notion/Sheet/Git）维护 <code>medium</code> 词典、命名规则与活动归档。</p>
-        <h3>发布前清单</h3>
+        <h3>Какой минимум параметров ставить?</h3>
+        <p><strong>source, medium, campaign</strong> — достаточно для базовой атрибуции; <strong>term/content</strong> — по необходимости.</p>
+        <h3>Нужны ли UTM при включённом gclid?</h3>
+        <p>Да, для консистентности между каналами и в сторонних отчётах/BI. <em>gclid</em> не мешает UTM.</p>
+        <h3>Как проверять корректность?</h3>
+        <p>Клик по ссылке → в реальном времени смотрим трафик/метки в GA4 DebugView/Realtime. Проверяем редиректы.</p>
+        <h3>Где хранить таксономию?</h3>
+        <p>В общем справочнике (Notion/Sheet/Git), где зафиксированы словари <code>medium</code>, правила нейминга и архива кампаниям.</p>
+        <h3>Чек‑лист перед запуском</h3>
         <ul>
-          <li>统一小写/编码，使用标准词典。</li>
-          <li>所有创意使用相同的 <code>utm_campaign</code>。</li>
-          <li>验证跳转与最终点击测试。</li>
+          <li>Регистр/кодировка, единые словари.</li>
+          <li>Одинаковый <code>utm_campaign</code> во всех объявлениях кампании.</li>
+          <li>Проверка редиректов, финальный клик‑тест.</li>
         </ul>
       </div>
 
-      <p class="muted" style="margin-top:16px;">更新：2025‑09‑15 • 分类：教程</p>
+      <p class="muted" style="margin-top:16px;">Обновлено: 15.09.2025 • Категория: Обучение</p>
     </div>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
