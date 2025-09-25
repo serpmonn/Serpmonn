@@ -34,10 +34,17 @@ const categoryLabels = {
     'фитнес': 'Фитнес'
 };
 
+const countryLabels = {
+    'Россия': 'Россия',
+    'Казахстан': 'Казахстан',
+    'Узбекистан': 'Узбекистан'
+};
+
 const elements = {
     searchInput: document.getElementById('searchInput'),
     categorySelect: document.getElementById('categorySelect'),
     statusSelect: document.getElementById('statusSelect'),
+    countrySelect: document.getElementById('countrySelect'),
     catalog: document.getElementById('catalog'),
     totalPromos: document.getElementById('totalPromos'),
     activePromos: document.getElementById('activePromos'),
@@ -45,6 +52,15 @@ const elements = {
     refreshBtn: document.getElementById('refreshBtn'),
     sortButton: document.querySelector('button[onclick="sortByExpiry()"]')
 };
+
+function escapeHtml(unsafe) {
+    return unsafe
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
 
 function getPromoTitle(promo) {
     const strip = (s) => typeof s === 'string' ? s.replace(/<[^>]*>/g, '').trim() : '';
@@ -92,6 +108,7 @@ function normalizePromo(raw) {
     norm.landing_url = pickFromContainers(['landing_url', 'link', 'url', 'landing', 'target_url']);
     norm.image_url = pickFromContainers(['image_url', 'image', 'picture', 'logo', 'logo_url', 'icon']);
     norm.category = pickFromContainers(['category', 'group', 'project', 'type', 'segment']) || 'другие';
+    norm.country = raw.country || pickFromContainers(['country', 'region', 'location']) || 'Россия';
     const percentRaw = pickFromContainers(['discount_percent', 'percent', 'percentage', 'discountPercentage']);
     const amountRaw = pickFromContainers(['discount_amount', 'amount', 'value', 'discountValue']);
     norm.discount_percent = percentRaw ? Number(String(percentRaw).replace(/[^0-9.,]/g, '').replace(',', '.')) : undefined;
@@ -123,11 +140,14 @@ async function loadPromocodesFromAPI() {
     try {
         const cachedData = localStorage.getItem('promo_cache');
         if (cachedData) {
-            const { data, timestamp } = JSON.parse(cachedData);
+            const { data, stats, timestamp } = JSON.parse(cachedData);
             if (Date.now() - timestamp < API_CONFIG.updateInterval) {
                 allPromocodes = data.map(normalizePromo);
                 filteredPromocodes = [...allPromocodes];
+                updateStats(stats || { total: 0, active: 0 });
                 renderPromocodes();
+                updateLastUpdateTime();
+                updateCountrySelect(Object.keys(countryLabels));
                 return true;
             }
         }
@@ -139,27 +159,27 @@ async function loadPromocodesFromAPI() {
         }
         allPromocodes = result.data.map(normalizePromo);
         filteredPromocodes = [...allPromocodes];
-        localStorage.setItem('promo_cache', JSON.stringify({ data: result.data, timestamp: Date.now() }));
-        localStorage.setItem(API_CONFIG.lastUpdateKey, new Date().toISOString());
+        const newDate = new Date().toISOString();
+        localStorage.setItem('promo_cache', JSON.stringify({ 
+            data: result.data, 
+            stats: result.stats, 
+            timestamp: Date.now() 
+        }));
+        localStorage.setItem(API_CONFIG.lastUpdateKey, newDate);
         updateStats(result.stats || { total: 0, active: 0 });
-
         const catResponse = await fetch(`${API_CONFIG.baseUrl}/categories`, { cache: 'no-store' });
         if (catResponse.ok) {
             const catResult = await catResponse.json();
             if (catResult.status === 'success' && Array.isArray(catResult.data)) {
                 updateCategorySelect(catResult.data);
-            } else {
-                console.warn('Категории не загружены:', catResult.message);
             }
-        } else {
-            console.warn('Ошибка загрузки категорий:', catResponse.status);
         }
-
+        updateCountrySelect(Object.keys(countryLabels));
         renderPromocodes();
+        updateLastUpdateTime();
         showToast('Промокоды обновлены!', 'success');
         return true;
     } catch (error) {
-        console.error('Ошибка при загрузке промокодов:', error);
         logError('Ошибка загрузки промокодов', error);
         showToast(`Ошибка загрузки: ${error.message}`, 'error');
         return false;
@@ -175,15 +195,17 @@ async function refreshPromocodes() {
         if (!response.ok) throw new Error(`HTTP ошибка! Статус: ${response.status}`);
         const result = await response.json();
         if (result.status === 'success') {
+            localStorage.removeItem('promo_cache');
             await loadPromocodesFromAPI();
+            updateLastUpdateTime();
             showToast(result.message, 'success');
         } else {
             showToast(result.message || 'Ошибка при обновлении', 'error');
         }
     } catch (error) {
-        console.error('Ошибка при принудительном обновлении:', error);
         logError('Ошибка принудительного обновления', error);
         showToast(`Ошибка обновления: ${error.message}`, 'error');
+        updateLastUpdateTime();
     }
 }
 
@@ -204,7 +226,8 @@ function addOfferSchema(promo) {
         },
         "image": promo.image_url || "https://serpmonn.ru/frontend/images/skidki-i-akcii.png",
         "availability": (promo.valid_until || promo.expiry_date) && new Date(promo.valid_until || promo.expiry_date) < new Date() ? "http://schema.org/OutOfStock" : "http://schema.org/InStock",
-        "couponCode": promo.promocode || undefined
+        "couponCode": promo.promocode || undefined,
+        "areaServed": promo.country || "Россия"
     };
     const script = document.createElement('script');
     script.type = 'application/ld+json';
@@ -224,15 +247,32 @@ function updateCategorySelect(categories) {
     });
 }
 
+function updateCountrySelect(countries) {
+    const select = elements.countrySelect;
+    if (!select) return;
+    select.innerHTML = '<option value="">Все страны</option>';
+    countries.forEach(country => {
+        if (countryLabels[country]) {
+            const option = document.createElement('option');
+            option.value = country;
+            option.textContent = countryLabels[country];
+            if (country === 'Россия') option.selected = true;
+            select.appendChild(option);
+        }
+    });
+}
+
 function resetFilters() {
     elements.searchInput.value = '';
     elements.categorySelect.value = '';
     elements.statusSelect.value = '';
+    elements.countrySelect.value = 'Россия';
     isSortedByExpiry = false;
     sortAscending = true;
     localStorage.setItem('promo_search', '');
     localStorage.setItem('promo_category', '');
     localStorage.setItem('promo_status', '');
+    localStorage.setItem('promo_country', 'Россия');
     filterPromos();
 }
 
@@ -330,8 +370,9 @@ function createPromoCard(promo, isTopOffer = false) {
     card.className = `promo-card ${isTopOffer ? 'top-offer' : ''} ${isYandexTravel ? 'travel-highlight' : ''}`;
     card.dataset.category = promo.category || 'другие';
     card.dataset.expiry = promo.valid_until || promo.expiry_date || '9999-12-31';
+    card.dataset.country = promo.country || 'Россия';
 
-    const titleText = getPromoTitle(promo);
+    const titleText = escapeHtml(getPromoTitle(promo).slice(0, 60) + (getPromoTitle(promo).length > 60 ? '...' : ''));
 
     let expiryDate;
     if (promo.valid_until || promo.expiry_date) {
@@ -349,7 +390,6 @@ function createPromoCard(promo, isTopOffer = false) {
     const isExpired = expiryDate < now;
     const detailsId = `details-${promo.id || Math.random().toString(36).substr(2, 9)}`;
 
-    // Формируем текст бонуса
     let bonusText = '';
     const isSberCard = /Детская\s*Сбер\s*Карта|СберКарта\s*Детская/i.test(titleText);
     if (promo.discount_percent) {
@@ -362,8 +402,7 @@ function createPromoCard(promo, isTopOffer = false) {
         bonusText = 'Без промокода';
     }
 
-    // Определяем содержимое для details-content
-    const detailsContent = promo.description || promo.groupDescription || 'Описание будет доступно позже';
+    const detailsContent = escapeHtml(promo.description || promo.groupDescription || 'Описание будет доступно позже').slice(0, 100) + '...';
     const showDetails = (promo.description && promo.description.length > 100) || promo.groupDescription;
 
     card.innerHTML = `
@@ -371,17 +410,17 @@ function createPromoCard(promo, isTopOffer = false) {
             <div class="promo-header">
                 <img src="${promo.image_url || '/frontend/images/skidki-i-akcii.png'}" 
                      data-src="${promo.image_url || '/frontend/images/skidki-i-akcii.png'}" 
-                     alt="${titleText}" width="50" height="50" loading="lazy" class="lazy-load">
-                <h3>${titleText}</h3>
+                     alt="${titleText}" width="80" height="80" loading="lazy" class="lazy-load">
+                <h3 title="${escapeHtml(getPromoTitle(promo))}">${titleText}</h3>
             </div>
             ${promo.promocode ? `
-                <p class="code">${promo.promocode} 
-                    <button class="submit-btn" onclick="copyToClipboard('${promo.promocode}')" aria-label="Скопировать промокод ${promo.promocode}">Копировать</button>
+                <p class="code">${escapeHtml(promo.promocode)} 
+                    <button class="submit-btn" onclick="copyToClipboard('${escapeHtml(promo.promocode)}')" aria-label="Скопировать промокод ${escapeHtml(promo.promocode)}">Копировать</button>
                 </p>
             ` : ''}
-            <p class="bonus-info">${bonusText}</p>
+            <p class="bonus-info">${escapeHtml(bonusText)}</p>
             ${showDetails ? `
-                <button type="button" class="details-btn" aria-expanded="false" aria-controls="${detailsId}">
+                <button type="button" class="details-btn" aria-expanded="false" aria-controls="${detailsId}" tabindex="0">
                     <span class="details-icon">▼</span>
                     <span class="details-text">Подробнее</span>
                 </button>
@@ -389,7 +428,8 @@ function createPromoCard(promo, isTopOffer = false) {
                     ${detailsContent}
                 </div>
             ` : ''}
-            ${promo.conditions ? `<p><strong>Условия:</strong> ${promo.conditions}</p>` : ''}
+            ${promo.conditions ? `<p><strong>Условия:</strong> ${escapeHtml(promo.conditions)}</p>` : ''}
+            <p class="country">Страна: ${escapeHtml(promo.country || 'Россия')}</p>
             <p class="expiry ${isExpired ? 'expired' : ''}">
                 Действует до: ${formatDate(expiryDate)}
                 ${isExpired ? ' (Истёк)' : ''}
@@ -397,10 +437,10 @@ function createPromoCard(promo, isTopOffer = false) {
         </div>
         <div class="promo-card-footer">
             ${promo.landing_url || promo.link || promo.url ? `
-                <a href="${promo.landing_url || promo.link || promo.url}" target="_blank" class="register-link">Перейти к партнёру</a>
+                <a href="${escapeHtml(promo.landing_url || promo.link || promo.url)}" target="_blank" class="register-link">Перейти к партнёру</a>
             ` : ''}
             ${promo.advertiser_info ? `
-                <p class="ad">Реклама. ${promo.advertiser_info}</p>
+                <p class="ad">Реклама. ${escapeHtml(promo.advertiser_info)}</p>
             ` : ''}
         </div>
     `;
@@ -408,6 +448,22 @@ function createPromoCard(promo, isTopOffer = false) {
     const detailsBtn = card.querySelector('.details-btn');
     if (detailsBtn) {
         detailsBtn.addEventListener('click', () => toggleDetails(detailsBtn));
+        detailsBtn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                toggleDetails(detailsBtn);
+            }
+        });
+    }
+
+    const copyBtn = card.querySelector('.submit-btn');
+    if (copyBtn) {
+        copyBtn.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                copyToClipboard(promo.promocode);
+            }
+        });
     }
 
     return card;
@@ -430,6 +486,7 @@ function updateStats(stats) {
 function showToast(message, type = 'success') {
     const toast = document.createElement('div');
     toast.className = `toast ${type}`;
+    toast.setAttribute('aria-live', 'polite');
     toast.textContent = message;
     document.body.appendChild(toast);
     setTimeout(() => toast.classList.add('show'), 100);
@@ -441,10 +498,35 @@ function showToast(message, type = 'success') {
 
 function updateLastUpdateTime() {
     const lastUpdate = localStorage.getItem(API_CONFIG.lastUpdateKey);
-    if (elements.lastUpdate && lastUpdate) {
-        const date = new Date(lastUpdate);
-        elements.lastUpdate.textContent = date.toLocaleString('ru-RU', { dateStyle: 'short', timeStyle: 'short' });
+    if (!elements.lastUpdate) {
+        return;
     }
+    if (!lastUpdate) {
+        const newDate = new Date().toISOString();
+        localStorage.setItem(API_CONFIG.lastUpdateKey, newDate);
+        elements.lastUpdate.textContent = new Date(newDate).toLocaleString('ru-RU', { 
+            dateStyle: 'short', 
+            timeStyle: 'medium'
+        });
+        return;
+    }
+    const date = new Date(lastUpdate);
+    if (isNaN(date.getTime())) {
+        const newDate = new Date().toISOString();
+        localStorage.setItem(API_CONFIG.lastUpdateKey, newDate);
+        elements.lastUpdate.textContent = new Date(newDate).toLocaleString('ru-RU', { 
+            dateStyle: 'short', 
+            timeStyle: 'medium'
+        });
+        return;
+    }
+    elements.lastUpdate.classList.add('updating');
+    elements.lastUpdate.textContent = '';
+    elements.lastUpdate.textContent = date.toLocaleString('ru-RU', { 
+        dateStyle: 'short', 
+        timeStyle: 'medium'
+    });
+    setTimeout(() => elements.lastUpdate.classList.remove('updating'), 300);
 }
 
 function startAutoUpdate() {
@@ -465,25 +547,29 @@ function filterPromos() {
     const search = elements.searchInput.value.toLowerCase();
     const category = elements.categorySelect?.value || '';
     const status = elements.statusSelect?.value || '';
+    const country = elements.countrySelect?.value || '';
     localStorage.setItem('promo_search', search);
     localStorage.setItem('promo_category', category);
     localStorage.setItem('promo_status', status);
+    localStorage.setItem('promo_country', country);
     filteredPromocodes = allPromocodes.filter(promo => {
         const title = (promo && typeof promo.title === 'string' ? promo.title : '').toLowerCase();
         const description = (promo.description || promo.subtitle || '').toLowerCase();
         const promoCategory = promo.category || 'другие';
+        const promoCountry = promo.country || 'Россия';
         const matchesSearch = title.includes(search) || description.includes(search) || search === '';
         const matchesCategory = category === '' || promoCategory === category;
+        const matchesCountry = country === '' || promoCountry === country;
         const now = new Date();
         const expiry = new Date(promo.valid_until || promo.expiry_date || '9999-12-31');
         const matchesStatus = status === '' ||
             (status === 'active' && expiry >= now) ||
             (status === 'expired' && expiry < now && promo.valid_until);
-        return matchesSearch && matchesCategory && matchesStatus;
+        return matchesSearch && matchesCategory && matchesCountry && matchesStatus;
     });
     renderPromocodes();
     const noResultsMessage = document.querySelector('.no-results');
-    if (filteredPromocodes.length === 0 && (search !== '' || category !== '' || status !== '')) {
+    if (filteredPromocodes.length === 0 && (search !== '' || category !== '' || status !== '' || country !== '')) {
         if (!noResultsMessage) {
             const message = document.createElement('div');
             message.className = 'no-results';
@@ -493,11 +579,44 @@ function filterPromos() {
     } else if (noResultsMessage) {
         noResultsMessage.remove();
     }
+    const resultCountContainer = document.getElementById('promocodes-result-count');
+    resultCountContainer.innerHTML = '';
+    const resultCount = document.createElement('p');
+    resultCount.textContent = `Найдено промокодов: ${filteredPromocodes.length}`;
+    resultCount.className = 'result-count';
+    resultCountContainer.appendChild(resultCount);
+
+    if (country) {
+        fetch('/track-filter', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ filter: 'country', value: country })
+        }).then(response => {
+            if (!response.ok) {
+                throw new Error(`Ошибка трекинга фильтра: ${response.status} ${response.statusText}`);
+            }
+            return response.json();
+        }).then(data => {
+            console.log('[Client] Трекинг фильтра успешен:', data);
+        }).catch(error => {
+            console.error('[Client] Ошибка трекинга фильтра:', error);
+            logError('Ошибка трекинга фильтра', error);
+        });
+    }
 }
 
 function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
+    navigator.clipboard.writeText(text).then(async () => {
         showToast('Код скопирован!', 'success');
+        try {
+            await fetch('/api/track-copy', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ promocode: text, timestamp: new Date().toISOString() })
+            });
+        } catch (error) {
+            logError('Ошибка трекинга копирования', error);
+        }
     }).catch(() => {
         const textArea = document.createElement('textarea');
         textArea.value = text;
@@ -526,6 +645,7 @@ function sortByExpiry() {
     insertInfeedAdsIntoCatalog(grid, window.innerWidth < 768 ? 10 : 5);
     sortAscending = !sortAscending;
     if (elements.sortButton) {
+        elements.sortButton.innerHTML = `Сортировка ${sortAscending ? '↑' : '↓'}`;
         elements.sortButton.setAttribute('aria-label', `Сортировать по сроку действия, текущий порядок: ${sortAscending ? 'восходящий' : 'нисходящий'}`);
     }
 }
@@ -591,7 +711,6 @@ document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
         e.target.reset();
         setTimeout(() => messageEl.remove(), 3000);
     } catch (error) {
-        console.error('Ошибка при подписке:', error);
         logError('Ошибка подписки', error);
         messageEl.textContent = error.message.includes('HTTP error')
             ? `Ошибка сервера: ${error.message}`
@@ -609,17 +728,19 @@ elements.searchInput?.addEventListener('input', () => {
 
 elements.categorySelect?.addEventListener('change', filterPromos);
 elements.statusSelect?.addEventListener('change', filterPromos);
+elements.countrySelect?.addEventListener('change', filterPromos);
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('Инициализация страницы промокодов...');
     isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';
     sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
     const savedSearch = localStorage.getItem('promo_search') || '';
     const savedCategory = localStorage.getItem('promo_category') || '';
     const savedStatus = localStorage.getItem('promo_status') || '';
+    const savedCountry = localStorage.getItem('promo_country') || 'Россия';
     elements.searchInput.value = savedSearch;
     elements.categorySelect.value = savedCategory;
     elements.statusSelect.value = savedStatus;
+    elements.countrySelect.value = savedCountry;
     await loadPromocodesFromAPI();
     updateLastUpdateTime();
     startAutoUpdate();
@@ -633,7 +754,6 @@ document.addEventListener('DOMContentLoaded', async () => {
             elements.refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновить';
         });
     }
-    console.log('Страница промокодов инициализирована');
 });
 
 function toggleDetails(button) {
@@ -652,7 +772,6 @@ window.addEventListener('beforeunload', () => {
     stopAutoUpdate();
 });
 
-// Реклама
 const adCache = new Map();
 function createInlineAd() {
     const adId = `ad-${Math.random().toString(36).substr(2, 9)}`;
@@ -663,9 +782,10 @@ function createInlineAd() {
     wrap.style.margin = "12px 0";
     wrap.innerHTML = `
         <ins class="mrg-tag"
-             style="display:inline-block;width:300px;height:250px"
+             style="display:inline-block;width:100%;max-width:300px;height:250px"
              data-ad-client="ad-1898023"
-             data-ad-slot="1898023">
+             data-ad-slot="1898023"
+             data-adaptive="true">
         </ins>`;
     adCache.set(adId, wrap);
     return wrap.cloneNode(true);
@@ -699,15 +819,12 @@ function collapseAdIfNoFill(container, timeoutMs) {
             );
             if (hasContent) {
                 container.classList.add('ad-loaded');
-                console.log('Реклама загружена:', container);
             } else {
                 container.style.display = 'none';
-                console.warn('Реклама не загрузилась:', container, { client: ins.dataset.adClient, slot: ins.dataset.adSlot });
                 logError('Реклама не загрузилась', new Error(`Ad failed to load: client=${ins.dataset.adClient}, slot=${ins.dataset.adSlot}`));
             }
         }, t);
     } catch (error) {
-        console.error('Ошибка при проверке рекламы:', error);
         logError('Ошибка проверки рекламы', error);
         container.style.display = 'none';
     }

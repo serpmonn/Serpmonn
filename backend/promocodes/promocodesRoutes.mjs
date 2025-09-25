@@ -1,13 +1,14 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
+import { createHash } from 'crypto'; // Добавляем импорт crypto
 
 const router = express.Router();
 
 // Конфигурация API Perfluence
 const PERFLUENCE_API_CONFIG = {
   url: 'https://dash.perfluence.net/blogger/promocode-api/json',
-  key: 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ODk4OTg3LCJhdXRoX2tleSI6Iml1Tl9fVk5WdTdOY0RqT1RKZW1EbUpUV1JjeUxqNFp4IiwiZGF0YSI6W119.k8vSFrvEtc75g7Gu-YdIcvhu6nB60V2CTOjti0IPfhQ',
-  updateInterval: 24 * 60 * 60 * 1000, // 24 часа
+  key: process.env.PERFLUENCE_API_KEY || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ODk4OTg3LCJhdXRoX2tleSI6Iml1Tl9fVk5WdTdOY0RqT1RKZW1EbUpUV1JjeUxqNFp4IiwiZGF0YSI6W119.k8vSFrvEtc75g7Gu-YdIcvhu6nB60V2CTOjti0IPfhQ',
+  updateInterval: 24 * 60 * 60 * 1000,
   cacheKey: 'perfluence_promocodes_cache'
 };
 
@@ -18,7 +19,7 @@ let promocodesCache = {
   isUpdating: false
 };
 
-// Белый список брендов: для них все офферы считаются ТОП
+// Белый список брендов
 const TOP_BRANDS_PATTERNS = [
   /Яндекс\s*Лавка/i,
   /\bСамокат\b/i,
@@ -53,8 +54,8 @@ function isWhitelistedTopAny(...texts) {
 // Лимитер для API запросов
 const promocodesLimiter = rateLimit({
   windowMs: 15 * 60 * 1000,
-  max: 100,
-  message: { status: 'error', message: 'Слишком много запросов к API промокодов' }
+  max: 50,
+  message: { status: 'error', message: 'Слишком много запросов, попробуйте позже' }
 });
 
 // Утилиты извлечения полей
@@ -156,6 +157,39 @@ function determineCategoryFromText(categoryName, title, description) {
   return 'другие';
 }
 
+// Обновлённая функция для определения страны
+function determineCountryFromText(advertiserInfo, landingUrl) {
+  const text = [advertiserInfo, landingUrl].filter(Boolean).join(' ').toLowerCase();
+  
+  // Проверка по ключевым словам и доменам
+  if (/russia|россия|ru|yandex|sber|avito|kinopoisk/.test(text)) return 'Россия';
+  if (/kazakhstan|казахстан|kz/.test(text)) return 'Казахстан';
+  if (/uzbekistan|узбекистан|uz/.test(text)) return 'Узбекистан';
+  if (/usa|us|america/.test(text)) return 'США';
+  if (/china|cn/.test(text)) return 'Китай';
+  if (/germany|deutschland|de/.test(text)) return 'Германия';
+  if (/france|fr/.test(text)) return 'Франция';
+
+  // Проверка домена верхнего уровня
+  if (landingUrl) {
+    try {
+      const url = new URL(landingUrl);
+      const tld = url.hostname.split('.').pop().toLowerCase();
+      const tldToCountry = {
+        'ru': 'Россия',
+        'kz': 'Казахстан',
+        'uz': 'Узбекистан',
+        'us': 'США',
+        'cn': 'Китай',
+        'de': 'Германия',
+        'fr': 'Франция'
+      };
+      return tldToCountry[tld] || 'Россия';
+    } catch (_) {}
+  }
+  return 'Россия';
+}
+
 function flattenPerfluenceData(perfArray) {
   const result = [];
   let totalPromos = 0;
@@ -179,7 +213,6 @@ function flattenPerfluenceData(perfArray) {
       const groupDescription = stripHtml(project.product_info) || 'Описание недоступно';
       let { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name, project.product_info, offerTitle);
       
-      // Извлекаем текстовое описание бонуса, если числовые значения отсутствуют
       let bonusDescription = null;
       const keywords = /скидка|подарок|бонус|сертификат/i;
       const candidate = firstDefined(landing.name, project.name, stripHtml(project.product_info));
@@ -190,10 +223,10 @@ function flattenPerfluenceData(perfArray) {
       const offerCategory = determineCategoryFromText(project.category_name, offerTitle, groupDescription);
       const offerImageUrl = firstDefined(logo) || '/frontend/images/skidki-i-akcii.png';
       const offerIsTop = Boolean(isWhitelistedTopAny(offerTitle, project.name, landing.name, advertiserText));
+      const offerCountry = determineCountryFromText(advertiserText, landingUrl);
 
       totalPromos += promos.length;
 
-      // Логирование, если бонус не удалось извлечь
       if (!offerPercent && !offerAmount && !bonusDescription && landing.name) {
         console.warn(`Не удалось извлечь бонус или описание из landing.name: ${landing.name}, project.name: ${project.name}, product_info: ${project.product_info}, title: ${offerTitle}`);
         fetch('/api/log-error', {
@@ -219,7 +252,6 @@ function flattenPerfluenceData(perfArray) {
         }
         const { percent, amount } = extractDiscountFromTexts(promo.name, promo.comment, landing.name, project.name, project.product_info, title);
         
-        // Извлекаем bonus_description для промокодов
         let promoBonusDescription = null;
         const promoCandidate = firstDefined(promo.name, promo.comment, landing.name, project.name);
         if (promoCandidate && keywords.test(promoCandidate)) {
@@ -228,6 +260,7 @@ function flattenPerfluenceData(perfArray) {
 
         const category = determineCategoryFromText(project.category_name, title, description);
         const imageUrl = firstDefined(promo.image, logo) || '/frontend/images/skidki-i-akcii.png';
+        const country = determineCountryFromText(advertiserText, landingUrl);
 
         const isTop = Boolean(isWhitelistedTopAny(title, project.name, landing.name, advertiserText));
 
@@ -243,13 +276,14 @@ function flattenPerfluenceData(perfArray) {
           promocode: code || null,
           discount_percent: percent,
           discount_amount: amount,
-          bonus_description: promoBonusDescription, // Добавляем описание бонуса
+          bonus_description: promoBonusDescription,
           valid_until: when,
           landing_url: landingUrl || null,
           image_url: imageUrl,
           conditions: firstDefined(promo.promo_terms, item.conditions, null),
           advertiser_info: advertiserText || null,
           category,
+          country,
           is_top: isTop,
           created_at: new Date().toISOString(),
           groupDescription: groupDescription
@@ -269,13 +303,14 @@ function flattenPerfluenceData(perfArray) {
             promocode: null,
             discount_percent: offerPercent,
             discount_amount: offerAmount,
-            bonus_description: bonusDescription, // Добавляем описание бонуса
+            bonus_description: bonusDescription,
             valid_until: null,
             landing_url: landingUrl,
             image_url: offerImageUrl,
             conditions: firstDefined(item.conditions, null),
             advertiser_info: advertiserText || null,
             category: offerCategory,
+            country: offerCountry,
             is_top: offerIsTop,
             created_at: new Date().toISOString(),
             groupDescription: groupDescription
@@ -290,8 +325,7 @@ function flattenPerfluenceData(perfArray) {
 
 async function loadPromocodesFromAPI() {
   try {
-    const response = await fetch(`${PERFLUENCE_API_CONFIG.url}?key=${PERFLUENCE_API_CONFIG.key}`);
-
+    const response = await fetch(`${PERFLUENCE_API_CONFIG.url}?key=${PERFLUENCE_API_CONFIG.key}`, { timeout: 10000 });
     if (!response.ok) {
       throw new Error(`HTTP ошибка! Статус: ${response.status}`);
     }
@@ -352,6 +386,10 @@ function filterPromocodes(filters = {}) {
     }
   }
 
+  if (filters.country && filters.country !== 'all') {
+    filtered = filtered.filter(p => p.country === filters.country);
+  }
+
   if (filters.sortBy === 'expiry') {
     filtered.sort((a, b) => {
       const aDate = new Date(a.valid_until || '9999-12-31T23:59:59');
@@ -388,7 +426,9 @@ function getPromocodesStats() {
     return dt > now;
   }).length;
 
-  return { total, active, totalPromocodes, activePromocodes, lastUpdate: promocodesCache.lastUpdate };
+  const countries = [...new Set(promocodesCache.data.map(p => p.country))];
+
+  return { total, active, totalPromocodes, activePromocodes, lastUpdate: promocodesCache.lastUpdate, countries };
 }
 
 router.get('/', promocodesLimiter, async (req, res) => {
@@ -403,12 +443,18 @@ router.get('/', promocodesLimiter, async (req, res) => {
       search: req.query.search,
       category: req.query.category,
       status: req.query.status,
+      country: req.query.country,
       sortBy: req.query.sortBy,
       sortOrder: req.query.sortOrder
     };
 
     const filtered = filterPromocodes(filters);
-    res.set('Cache-Control', 'no-store');
+    const etag = createHash('md5').update(JSON.stringify(filtered)).digest('hex'); // Используем createHash вместо require
+    res.set('ETag', etag);
+    if (req.get('If-None-Match') === etag) {
+      return res.status(304).end();
+    }
+    res.set('Cache-Control', 'public, max-age=300');
     res.json({ status: 'success', data: filtered, stats: getPromocodesStats(), filters });
   } catch (error) {
     console.error('[PROMOCODES] Ошибка при получении промокодов:', error);
@@ -457,12 +503,41 @@ router.post('/refresh', promocodesLimiter, async (req, res) => {
 router.get('/categories', promocodesLimiter, (req, res) => {
   try {
     const categories = [...new Set(promocodesCache.data.map(p => p.category))];
-    res.set('Cache-Control', 'no-store');
+    res.set('Cache-Control', 'public, max-age=3600');
     res.json({ status: 'success', data: categories });
   } catch (error) {
     console.error('[PROMOCODES] Ошибка при получении категорий:', error);
     res.set('Cache-Control', 'no-store');
     res.status(500).json({ status: 'error', message: 'Ошибка при получении категорий' });
+  }
+});
+
+router.get('/countries', promocodesLimiter, (req, res) => {
+  try {
+    const countries = [...new Set(promocodesCache.data.map(p => p.country))];
+    res.set('Cache-Control', 'public, max-age=3600');
+    res.json({ status: 'success', data: countries });
+  } catch (error) {
+    console.error('[PROMOCODES] Ошибка при получении стран:', error);
+    res.set('Cache-Control', 'no-store');
+    res.status(500).json({ status: 'error', message: 'Ошибка при получении стран' });
+  }
+});
+
+// Новый маршрут для трекинга использования фильтров
+router.post('/api/track-filter', promocodesLimiter, async (req, res) => {
+  try {
+      const { filter, value } = req.body;
+      if (!filter || !value) {
+          return res.status(400).json({ status: 'error', message: 'Отсутствуют обязательные параметры filter или value' });
+      }
+      console.log(`[PROMOCODES] Трекинг фильтра: ${filter} = ${value}`);
+      res.set('Cache-Control', 'no-store');
+      res.json({ status: 'success', message: 'Фильтр успешно зарегистрирован' });
+  } catch (error) {
+      console.error('[PROMOCODES] Ошибка при трекинге фильтра:', error);
+      res.set('Cache-Control', 'no-store');
+      res.status(500).json({ status: 'error', message: 'Ошибка при трекинге фильтра' });
   }
 });
 
