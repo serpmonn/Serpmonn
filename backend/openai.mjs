@@ -1,15 +1,18 @@
 import express from 'express';
 import axios from 'axios';
 
-import dotenv from 'dotenv';
-dotenv.config({ path: '/var/www/serpmonn.ru/.env' });                                           // Загружаем переменные из .env
+import { getRequiredEnv } from './config/env.mjs';
+                // Централизованная загрузка переменных
+import compression from 'compression';
+                // Сжатие ответов
 
 const app = express();
 const port = 3500;
 
-const HF_TOKEN = process.env.HF_TOKEN;                                                          // Используем токен из .env
+const HF_TOKEN = getRequiredEnv('HF_TOKEN');                                                          // Используем токен из .env
 
-app.use(express.json());                                                                        // Middleware для обработки JSON
+app.use(compression({ threshold: '1kb' }));
+app.use(express.json({ limit: '64kb' }));                                                                        // Middleware для обработки JSON
 
 app.post('/openai', async (req, res) => {                                                       // Маршрут для получения данных с Hugging Face (используем модель BART)
   try {
@@ -25,7 +28,11 @@ app.post('/openai', async (req, res) => {                                       
       {
         headers: {
           Authorization: `Bearer ${HF_TOKEN}`,
+          'User-Agent': 'Serpmonn-Backend/1.0',
         },
+        timeout: 15000,
+        maxContentLength: 5 * 1024 * 1024,
+        maxBodyLength: 512 * 1024,
       }
     );
     console.log("Ответ от Hugging Face:", response.data);                                       // Выводим ответ от Hugging Face API

@@ -1,10 +1,7 @@
-import dotenv from 'dotenv';
-  // Импортируем dotenv для работы с .env файлом
-
-dotenv.config({ path: '/var/www/serpmonn.ru/.env' });
-  // Настраиваем путь к файлу .env
-
-
+import { isProduction } from './config/env.mjs';
+  // Централизованная загрузка окружения
+import compression from 'compression';
+  // Сжатие ответов для повышения производительности
 
 import cors from 'cors';
   // Импортируем cors для обработки CORS
@@ -42,6 +39,9 @@ import analyticsRoutes from './analytics/analyticsRoutes.mjs';
 import gameAnalyticsRoutes from './analytics/gameAnalytics.mjs';
   // Импорт маршрутов аналитики игр
 
+import { notFoundHandler, errorHandler } from './middleware/errorHandler.mjs';
+  // Централизованные обработчики ошибок
+
 
 const app = express();
   // Создаем экземпляр Express приложения
@@ -49,6 +49,8 @@ const app = express();
 app.set('trust proxy', 1);
   // Доверяем первому прокси (например, Nginx)
 
+app.use(compression({ threshold: '1kb' }));
+  // Включаем сжатие ответов
 
 
 const corsOptions = {
@@ -123,7 +125,7 @@ const csrfProtection = csrf({
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production'
+    secure: isProduction
   },
   ignoreMethods: ['GET', 'HEAD', 'OPTIONS']
 });
@@ -160,20 +162,15 @@ app.use('/api/analytics/likes', analyticsRoutes);
 app.use('/api/analytics/game', gameAnalyticsRoutes);
 
 app.use((err, req, res, next) => {
-  // Обработчик ошибок (после всех роутов)
+  // Обработчик ошибок CSRF
+  if (err && err.code === 'EBADCSRFTOKEN') {
+    return res.status(403).json({ status: 'error', message: 'Invalid CSRF token' });
+  }
+  return next(err);
+});
 
-    // Обработчик ошибок CSRF
-    if (err && err.code === 'EBADCSRFTOKEN') {
-      return res.status(403).json({ status: 'error', message: 'Invalid CSRF token' });
-
-    }
-    console.error('[ERROR]', err.stack);
-    res.status(500).json({ 
-      status: 'error',
-      message: 'Internal Server Error'
-    });
-  });
-
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 
 app.listen(5000, () => {
