@@ -1,3 +1,5 @@
+// Улучшенный фронтенд (JavaScript) - с default все страны
+
 const API_CONFIG = {
     baseUrl: '/api/promocodes',
     updateInterval: 24 * 60 * 60 * 1000,
@@ -37,7 +39,8 @@ const categoryLabels = {
 const countryLabels = {
     'Россия': 'Россия',
     'Казахстан': 'Казахстан',
-    'Узбекистан': 'Узбекистан'
+    'Узбекистан': 'Узбекистан',
+    'Грузия': 'Грузия'
 };
 
 const elements = {
@@ -50,8 +53,15 @@ const elements = {
     activePromos: document.getElementById('activePromos'),
     lastUpdate: document.getElementById('lastUpdate'),
     refreshBtn: document.getElementById('refreshBtn'),
-    sortButton: document.querySelector('button[onclick="sortByExpiry()"]')
+    sortButton: document.querySelector('button[onclick="sortByExpiry()"]'),
+    loadingSpinner: document.getElementById('loadingSpinner')
 };
+
+let currentPage = 1;
+const perPage = 20;
+let isLoadingMore = false;
+let hasMore = true;
+let observer;
 
 function escapeHtml(unsafe) {
     return unsafe
@@ -137,6 +147,7 @@ async function logError(message, error) {
 }
 
 async function loadPromocodesFromAPI() {
+    elements.loadingSpinner.style.display = 'block';
     try {
         const cachedData = localStorage.getItem('promo_cache');
         if (cachedData) {
@@ -183,11 +194,15 @@ async function loadPromocodesFromAPI() {
         logError('Ошибка загрузки промокодов', error);
         showToast(`Ошибка загрузки: ${error.message}`, 'error');
         return false;
+    } finally {
+        elements.loadingSpinner.style.display = 'none';
     }
 }
 
 async function refreshPromocodes() {
     try {
+        elements.refreshBtn.disabled = true;
+        elements.refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновление...';
         const response = await fetch(`${API_CONFIG.baseUrl}/refresh`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
@@ -206,11 +221,14 @@ async function refreshPromocodes() {
         logError('Ошибка принудительного обновления', error);
         showToast(`Ошибка обновления: ${error.message}`, 'error');
         updateLastUpdateTime();
+    } finally {
+        elements.refreshBtn.disabled = false;
+        elements.refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновить';
     }
 }
 
-function addOfferSchema(promo) {
-    const schema = {
+function addOfferSchema(promos) {
+    const schemas = promos.map(promo => ({
         "@context": "https://schema.org",
         "@type": "Offer",
         "name": getPromoTitle(promo),
@@ -228,11 +246,15 @@ function addOfferSchema(promo) {
         "availability": (promo.valid_until || promo.expiry_date) && new Date(promo.valid_until || promo.expiry_date) < new Date() ? "http://schema.org/OutOfStock" : "http://schema.org/InStock",
         "couponCode": promo.promocode || undefined,
         "areaServed": promo.country || "Россия"
-    };
+    }));
+    const existingScripts = document.querySelectorAll('script[type="application/ld+json"]');
+    existingScripts.forEach(script => {
+        if (script.textContent.includes('"Offer"')) script.remove();
+    });
     const script = document.createElement('script');
     script.type = 'application/ld+json';
-    script.textContent = JSON.stringify(schema, (key, value) => value === undefined ? null : value, 2);
-    document.body.appendChild(script);
+    script.textContent = JSON.stringify(schemas, (key, value) => value === undefined ? null : value);
+    document.head.appendChild(script);
 }
 
 function updateCategorySelect(categories) {
@@ -256,7 +278,6 @@ function updateCountrySelect(countries) {
             const option = document.createElement('option');
             option.value = country;
             option.textContent = countryLabels[country];
-            if (country === 'Россия') option.selected = true;
             select.appendChild(option);
         }
     });
@@ -266,13 +287,13 @@ function resetFilters() {
     elements.searchInput.value = '';
     elements.categorySelect.value = '';
     elements.statusSelect.value = '';
-    elements.countrySelect.value = 'Россия';
+    elements.countrySelect.value = '';
     isSortedByExpiry = false;
     sortAscending = true;
     localStorage.setItem('promo_search', '');
     localStorage.setItem('promo_category', '');
     localStorage.setItem('promo_status', '');
-    localStorage.setItem('promo_country', 'Россия');
+    localStorage.setItem('promo_country', '');
     filterPromos();
 }
 
@@ -281,6 +302,10 @@ function renderPromocodes() {
     if (!catalog) return;
 
     catalog.innerHTML = '';
+
+    currentPage = 1;
+    isLoadingMore = false;
+    hasMore = true;
 
     if (filteredPromocodes.length === 0) {
         catalog.innerHTML = `
@@ -292,12 +317,27 @@ function renderPromocodes() {
         return;
     }
 
-    let sortedPromocodes;
+    initInfiniteScroll();
+    renderPage(1);
+    addOfferSchema(filteredPromocodes);
+}
+
+function renderPage(page) {
+    const start = (page - 1) * perPage;
+    const end = start + perPage;
+    let paginatedPromos = filteredPromocodes.slice(start, end);
+
+    if (paginatedPromos.length === 0) {
+        hasMore = false;
+        return;
+    }
+
+    let sortedPromos;
     if (!isSortedByExpiry) {
-        const topPromos = filteredPromocodes.filter(promo =>
+        const topPromos = paginatedPromos.filter(promo =>
             topBrands.some(brand => promo.title.toLowerCase().includes(brand.toLowerCase()))
         );
-        const otherPromos = filteredPromocodes.filter(promo =>
+        const otherPromos = paginatedPromos.filter(promo =>
             !topBrands.some(brand => promo.title.toLowerCase().includes(brand.toLowerCase()))
         );
 
@@ -313,45 +353,47 @@ function renderPromocodes() {
             return dateA - dateB;
         });
 
-        sortedPromocodes = [...topPromos, ...otherPromos];
+        sortedPromos = [...topPromos, ...otherPromos];
     } else {
-        sortedPromocodes = [...filteredPromocodes].sort((a, b) => {
+        sortedPromos = [...paginatedPromos].sort((a, b) => {
             const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
             const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
             return sortAscending ? dateA - dateB : dateB - dateA;
         });
     }
 
-    sortedPromocodes.forEach(promo => {
-        const isTop = Boolean(promo.is_top);
-        catalog.appendChild(createPromoCard(promo, isTop));
-        addOfferSchema(promo);
+    const catalog = elements.catalog;
+    sortedPromos.forEach(promo => {
+        const card = createPromoCard(promo, Boolean(promo.is_top));
+        catalog.appendChild(card);
     });
 
     insertInfeedAdsIntoCatalog(catalog, window.innerWidth < 768 ? 10 : 5);
     lazyLoadImages();
     lazyLoadAds();
+
+    const lastCard = catalog.lastElementChild;
+    if (lastCard && observer) {
+        observer.observe(lastCard);
+    }
 }
 
-function groupPromocodesByCategory(promocodes) {
-    const groups = {
-        top: [], еда: [], продукты: [], развлечения: [], товары: [], услуги: [], другие: []
-    };
+function initInfiniteScroll() {
+    if (observer) observer.disconnect();
 
-    promocodes.forEach(promo => {
-        const category = promo.category || 'другие';
-        if (promo.is_top) {
-            groups.top.push(promo);
-        } else {
-            if (groups[category]) {
-                groups[category].push(promo);
-            } else {
-                groups.другие.push(promo);
-            }
+    observer = new IntersectionObserver(entries => {
+        const lastEntry = entries[0];
+        if (lastEntry.isIntersecting && !isLoadingMore && hasMore) {
+            isLoadingMore = true;
+            currentPage++;
+            renderPage(currentPage);
+            isLoadingMore = false;
         }
+    }, {
+        root: null,
+        rootMargin: '0px',
+        threshold: 0.1
     });
-
-    return groups;
 }
 
 function createPromoCard(promo, isTopOffer = false) {
@@ -402,8 +444,7 @@ function createPromoCard(promo, isTopOffer = false) {
         bonusText = 'Без промокода';
     }
 
-    const detailsContent = escapeHtml(promo.description || promo.groupDescription || 'Описание будет доступно позже').slice(0, 100) + '...';
-    const showDetails = (promo.description && promo.description.length > 100) || promo.groupDescription;
+    const detailsContent = escapeHtml(promo.description || promo.groupDescription || 'Описание будет доступно позже');
 
     card.innerHTML = `
         <div class="promo-card-content">
@@ -419,7 +460,6 @@ function createPromoCard(promo, isTopOffer = false) {
                 </p>
             ` : ''}
             <p class="bonus-info">${escapeHtml(bonusText)}</p>
-            ${showDetails ? `
                 <button type="button" class="details-btn" aria-expanded="false" aria-controls="${detailsId}" tabindex="0">
                     <span class="details-icon">▼</span>
                     <span class="details-text">Подробнее</span>
@@ -427,7 +467,6 @@ function createPromoCard(promo, isTopOffer = false) {
                 <div class="details-content" id="${detailsId}" style="display: none; margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
                     ${detailsContent}
                 </div>
-            ` : ''}
             ${promo.conditions ? `<p><strong>Условия:</strong> ${escapeHtml(promo.conditions)}</p>` : ''}
             <p class="country">Страна: ${escapeHtml(promo.country || 'Россия')}</p>
             <p class="expiry ${isExpired ? 'expired' : ''}">
@@ -462,6 +501,21 @@ function createPromoCard(promo, isTopOffer = false) {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
                 copyToClipboard(promo.promocode);
+            }
+        });
+    }
+
+    const link = card.querySelector('.register-link');
+    if (link) {
+        link.addEventListener('click', async () => {
+            try {
+                await fetch('/api/track-click', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ promocode: promo.promocode, url: promo.landing_url })
+                });
+            } catch (error) {
+                logError('Ошибка трекинга клика', error);
             }
         });
     }
@@ -723,7 +777,7 @@ document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
 
 elements.searchInput?.addEventListener('input', () => {
     clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(filterPromos, 200);
+    debounceTimeout = setTimeout(filterPromos, 300);
 });
 
 elements.categorySelect?.addEventListener('change', filterPromos);
@@ -736,7 +790,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const savedSearch = localStorage.getItem('promo_search') || '';
     const savedCategory = localStorage.getItem('promo_category') || '';
     const savedStatus = localStorage.getItem('promo_status') || '';
-    const savedCountry = localStorage.getItem('promo_country') || 'Россия';
+    const savedCountry = localStorage.getItem('promo_country') || '';
     elements.searchInput.value = savedSearch;
     elements.categorySelect.value = savedCategory;
     elements.statusSelect.value = savedStatus;
@@ -747,11 +801,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     filterPromos();
     if (elements.refreshBtn) {
         elements.refreshBtn.addEventListener('click', async () => {
-            elements.refreshBtn.disabled = true;
-            elements.refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновление...';
             await refreshPromocodes();
-            elements.refreshBtn.disabled = false;
-            elements.refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновить';
         });
     }
 });
