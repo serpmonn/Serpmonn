@@ -24,7 +24,10 @@ router.post(                                                                    
     body('email')                                                                            // Валидируем поле email
       .isEmail().withMessage('Неверный формат email.').normalizeEmail(),                     // Проверяем формат и нормализуем email
     body('password')                                                                         // Валидируем поле password
-      .isLength({ min: 6 }).withMessage('Пароль должен быть длиной от 6 символов.')          // Устанавливаем минимальную длину
+      .isLength({ min: 8 }).withMessage('Пароль должен быть длиной от 8 символов.')          // Устанавливаем минимальную длину
+      .matches(/[A-ZА-Я]/).withMessage('Пароль должен содержать заглавную букву')
+      .matches(/[a-zа-я]/).withMessage('Пароль должен содержать строчную букву')
+      .matches(/[0-9]/).withMessage('Пароль должен содержать цифру')
   ],                                                                                         // Завершаем массив middleware валидации
   authWriteLimiter,                                                                         // Указываем функцию обработки маршрута
   registerUser                                                                               // Указываем функцию обработки маршрута

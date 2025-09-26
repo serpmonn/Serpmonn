@@ -13,6 +13,9 @@ import rateLimit from 'express-rate-limit';
 import csrf from 'csurf';
                                                       // CSRF защита
 
+import { notFoundHandler, errorHandler } from '../middleware/errorHandler.mjs';
+                                                       // Централизованные обработчики ошибок
+
 const app = express();                                                                                                          // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);                                                                                                      // Доверяем первому прокси (Nginx)
 
@@ -66,6 +69,10 @@ app.use((err, req, res, next) => {
   }
   return next(err);
 });
+
+// 404 и общий обработчик ошибок
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 // Запуск сервера
 const PORT = 6000;                                                                                                              // Указываем порт для сервера
