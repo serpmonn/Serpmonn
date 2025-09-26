@@ -1,5 +1,5 @@
-import dotenv from 'dotenv';                                                                                                         // Импортируем dotenv для работы с .env файлом
-dotenv.config({ path: '/var/www/serpmonn.ru/.env' });                                                                            // Настраиваем путь к файлу .env
+import { isProduction } from '../config/env.mjs';
+                                                     // Централизованная загрузка окружения
 
 import express from 'express';                                                                                                         // Импортируем Express для создания сервера
 import cors from 'cors';                                                                                                               // Импортируем cors для обработки CORS
@@ -44,7 +44,7 @@ const csrfProtection = csrf({
   cookie: {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production'
+    secure: isProduction
   },
   ignoreMethods: ['GET', 'HEAD', 'OPTIONS']
 });

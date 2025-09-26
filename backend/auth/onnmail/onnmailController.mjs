@@ -1,5 +1,4 @@
-import dotenv from 'dotenv';                                                                                                    // Импортируем dotenv для работы с .env файлом
-dotenv.config({ path: '/var/www/serpmonn.ru/.env' });                                                                           // Настраиваем путь к файлу .env
+import { getRequiredEnv } from '../../config/env.mjs';                                                                              // Централизованная загрузка окружения
 
 import fetch from 'node-fetch';                                                                                                 // Импортируем fetch для HTTP-запросов
 import Tokens from 'csrf';                                                                                                      // Импортируем библиотеку для работы с CSRF-токенами
@@ -9,7 +8,7 @@ const csrf = new Tokens();                                                      
 
 // Контроллер для получения CSRF-токена
 export const getCsrfToken = (req, res) => {                                                                                     // Определяем функцию для получения CSRF-токена
-    const csrfToken = csrf.create(process.env.CSRF_SECRET || 'default-secret');                                                 // Генерируем CSRF-токен
+    const csrfToken = csrf.create(getRequiredEnv('CSRF_SECRET'));                                                 // Генерируем CSRF-токен
     res.json({ csrfToken });                                                                                                    // Возвращаем CSRF-токен клиенту
 };
 
@@ -21,7 +20,7 @@ export const createMailbox = async (req, res) => {                              
 
         // Проверка CSRF-токена
         const csrfToken = req.headers['x-csrf-token'];                                                                          // Извлекаем CSRF-токен из заголовков
-        if (!csrfToken || !csrf.verify(process.env.CSRF_SECRET || 'default-secret', csrfToken)) {                               // Проверяем валидность CSRF-токена
+        if (!csrfToken || !csrf.verify(getRequiredEnv('CSRF_SECRET'), csrfToken)) {                               // Проверяем валидность CSRF-токена
             return res.status(403).json({ message: 'Недействительный CSRF-токен' });                                            // Возвращаем ошибку при недействительном CSRF-токене
         }                                                                                                                      
 

@@ -8,9 +8,13 @@ import { validationResult } from 'express-validator';                           
 import { v4 as uuidv4 } from 'uuid';                                                         // Импортируем uuidv4 для генерации уникальных ID
 import { sendConfirmationEmail } from '../utils/mailer.mjs';                                 // Импортируем функцию для отправки email
                                                                                               
+import { getRequiredEnv } from '../config/env.mjs';
+            // Централизованная загрузка переменных окружения
+
+
 const { V2 } = paseto;                                                                         // Извлекаем V2 из paseto для работы с токенами
 const { hash, compare } = bcrypt;                                                              // Извлекаем hash и compare из bcrypt
-const secretKey = process.env.SECRET_KEY;                                                     // Получаем секретный ключ из переменных окружения
+const secretKey = getRequiredEnv('SECRET_KEY');                                                     // Получаем секретный ключ из переменных окружения
                                                                                               
 export const registerUser = async (req, res) => {                                             // Определяем функцию для регистрации пользователя
   const errors = validationResult(req);                                                        // Проверяем данные запроса на ошибки
