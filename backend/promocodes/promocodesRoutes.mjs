@@ -1,6 +1,6 @@
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import { createHash } from 'crypto'; // Добавляем импорт crypto
+import { createHash } from 'crypto';
 
 const router = express.Router();
 
@@ -157,20 +157,22 @@ function determineCategoryFromText(categoryName, title, description) {
   return 'другие';
 }
 
-// Обновлённая функция для определения страны
-function determineCountryFromText(advertiserInfo, landingUrl) {
-  const text = [advertiserInfo, landingUrl].filter(Boolean).join(' ').toLowerCase();
+function determineCountryFromText(...texts) {
+  const text = texts.filter(Boolean).join(' ').toLowerCase();
   
-  // Проверка по ключевым словам и доменам
-  if (/russia|россия|ru|yandex|sber|avito|kinopoisk/.test(text)) return 'Россия';
-  if (/kazakhstan|казахстан|kz/.test(text)) return 'Казахстан';
-  if (/uzbekistan|узбекистан|uz/.test(text)) return 'Узбекистан';
-  if (/usa|us|america/.test(text)) return 'США';
-  if (/china|cn/.test(text)) return 'Китай';
-  if (/germany|deutschland|de/.test(text)) return 'Германия';
-  if (/france|fr/.test(text)) return 'Франция';
+  // Явное определение России для российских брендов без KZ/UZ/казахстан/узбекистан
+  if (/okko|elementaree|yandex\s*music\s*$|яндекс\s*музык\s*$|yandex\s*plus\s*$|яндекс\s*плюс\s*$|лэтуаль|letual|альфа-карта|alfa-karta|газпромбанк|gazprombank|мир\s*дебетовая/i.test(text) && !/kz|uz|казахстан|узбекистан|georgia|грузия/i.test(text)) return 'Россия';
+  // Явное определение Казахстана по валюте ₸, KZ или упоминаниям в названиях, исключая российские бренды
+  if (/\₸|kz|казахстан|kazakhstan|яндекс.*казахстан|yandex.*kazakhstan|еда.*казахстан|go.*казахстан|плюс.*kz|музык.*kz|choco.*рядом/i.test(text) && !/okko|elementaree|лэтуаль|letual|альфа-карта|alfa-karta|газпромбанк|gazprombank|мир\s*дебетовая/i.test(text)) return 'Казахстан';
+  // Явное определение Узбекистана по UZ или упоминаниям в названиях, исключая российские бренды
+  if (/uz|узбекистан|uzbekistan|яндекс.*узбекистан|yandex.*uzbekistan|еда.*узбекистан|go.*узбекистан|плюс.*uz/i.test(text) && !/okko|elementaree|лэтуаль|letual|альфа-карта|alfa-karta|газпромбанк|gazprombank|мир\s*дебетовая/i.test(text)) return 'Узбекистан';
+  // Явное определение Грузии, исключая российские бренды
+  if (/georgia|грузия|ge|georgia cpa/i.test(text) && !/okko|elementaree|лэтуаль|letual|альфа-карта|alfa-karta|газпромбанк|gazprombank|мир\s*дебетовая/i.test(text)) return 'Грузия';
+  // Остальные случаи по ключевым словам для России
+  if (/russia|россия|ru|sber|avito|kinopoisk/i.test(text)) return 'Россия';
 
-  // Проверка домена верхнего уровня
+  // Проверка по TLD из URL
+  const landingUrl = texts.find(t => t && t.startsWith('http'));
   if (landingUrl) {
     try {
       const url = new URL(landingUrl);
@@ -179,10 +181,7 @@ function determineCountryFromText(advertiserInfo, landingUrl) {
         'ru': 'Россия',
         'kz': 'Казахстан',
         'uz': 'Узбекистан',
-        'us': 'США',
-        'cn': 'Китай',
-        'de': 'Германия',
-        'fr': 'Франция'
+        'ge': 'Грузия'
       };
       return tldToCountry[tld] || 'Россия';
     } catch (_) {}
@@ -223,7 +222,7 @@ function flattenPerfluenceData(perfArray) {
       const offerCategory = determineCategoryFromText(project.category_name, offerTitle, groupDescription);
       const offerImageUrl = firstDefined(logo) || '/frontend/images/skidki-i-akcii.png';
       const offerIsTop = Boolean(isWhitelistedTopAny(offerTitle, project.name, landing.name, advertiserText));
-      const offerCountry = determineCountryFromText(advertiserText, landingUrl);
+      const offerCountry = determineCountryFromText(advertiserText, landingUrl, offerTitle, groupDescription, project.category_name, project.name, landing.name, project.product_info);
 
       totalPromos += promos.length;
 
@@ -260,7 +259,7 @@ function flattenPerfluenceData(perfArray) {
 
         const category = determineCategoryFromText(project.category_name, title, description);
         const imageUrl = firstDefined(promo.image, logo) || '/frontend/images/skidki-i-akcii.png';
-        const country = determineCountryFromText(advertiserText, landingUrl);
+        const country = determineCountryFromText(advertiserText, landingUrl, title, description, promo.name, promo.comment, project.category_name, project.name, landing.name, project.product_info);
 
         const isTop = Boolean(isWhitelistedTopAny(title, project.name, landing.name, advertiserText));
 
@@ -268,6 +267,10 @@ function flattenPerfluenceData(perfArray) {
         if (result.some(existing => existing.id === promoId)) {
           continue;
         }
+
+        // Очистка HTML из поля conditions
+        const conditions = firstDefined(promo.promo_terms, item.conditions, null);
+        const cleanedConditions = conditions ? stripHtml(conditions) : null;
 
         result.push({
           id: promoId,
@@ -280,7 +283,7 @@ function flattenPerfluenceData(perfArray) {
           valid_until: when,
           landing_url: landingUrl || null,
           image_url: imageUrl,
-          conditions: firstDefined(promo.promo_terms, item.conditions, null),
+          conditions: cleanedConditions,
           advertiser_info: advertiserText || null,
           category,
           country,
@@ -296,6 +299,10 @@ function flattenPerfluenceData(perfArray) {
         const offerSuffix = (group && (group.name || 'group')) || 'group';
         const offerId = offerIdBase ? `offer-${offerIdBase}-${offerSuffix}` : `offer-${Math.random().toString(36).substr(2, 9)}`;
         if (!result.some(existing => existing.id === offerId)) {
+          // Очистка HTML из поля conditions для офферов без промокодов
+          const conditions = firstDefined(item.conditions, null);
+          const cleanedConditions = conditions ? stripHtml(conditions) : null;
+
           result.push({
             id: offerId,
             title: offerTitle,
@@ -307,7 +314,7 @@ function flattenPerfluenceData(perfArray) {
             valid_until: null,
             landing_url: landingUrl,
             image_url: offerImageUrl,
-            conditions: firstDefined(item.conditions, null),
+            conditions: cleanedConditions,
             advertiser_info: advertiserText || null,
             category: offerCategory,
             country: offerCountry,
@@ -449,7 +456,7 @@ router.get('/', promocodesLimiter, async (req, res) => {
     };
 
     const filtered = filterPromocodes(filters);
-    const etag = createHash('md5').update(JSON.stringify(filtered)).digest('hex'); // Используем createHash вместо require
+    const etag = createHash('md5').update(JSON.stringify(filtered)).digest('hex');
     res.set('ETag', etag);
     if (req.get('If-None-Match') === etag) {
       return res.status(304).end();
@@ -524,7 +531,6 @@ router.get('/countries', promocodesLimiter, (req, res) => {
   }
 });
 
-// Новый маршрут для трекинга использования фильтров
 router.post('/api/track-filter', promocodesLimiter, async (req, res) => {
   try {
       const { filter, value } = req.body;

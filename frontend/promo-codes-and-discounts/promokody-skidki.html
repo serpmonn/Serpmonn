@@ -1,3 +1,5 @@
+<!-- Улучшенный HTML - с default все страны -->
+
 <!DOCTYPE html>
 <html lang="ru" dir="ltr">
 <head>
@@ -27,12 +29,10 @@
     <meta name="description" content="Актуальные промокоды и скидки 2025 от партнёров Serpmonn: игры, гаджеты, сервисы, рестораны, продукты, мода, здоровье и путешествия. Экономьте с проверенными купонами!">
     <meta name="keywords" content="промокоды, скидки, купоны, акции, Serpmonn, игры, гаджеты, сервисы, рестораны, путешествия">
 
+    <!-- Favicon -->
+    <link rel="icon" href="/frontend/images/favicon.ico" type="image/x-icon">
+
     <!-- Стили -->
-    <style>
-        .ad-top-banner { display: none; }
-        @media (min-width: 1200px) { .ad-top-banner { display: block; } .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; } }
-        @media (min-width: 1200px) and (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
-    </style>
     <link rel="preload" href="promokody-skidki.css?v=7" as="style" onload="this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="promokody-skidki.css?v=7"></noscript>
     <link rel="preload" href="/frontend/styles/accessibility.css" as="style" onload="this.rel='stylesheet'">
@@ -107,7 +107,8 @@
         <section class="filters" aria-labelledby="filters-title">
             <h2 id="filters-title" class="visually-hidden">Фильтры промокодов</h2>
             <label for="searchInput" class="visually-hidden">Поиск промокодов</label>
-            <input type="text" id="searchInput" placeholder="Поиск (компания, товар...)" aria-label="Поиск промокодов">
+            <p id="search-hint" class="visually-hidden">Введите название компании или товара для поиска промокодов</p>
+            <input type="text" id="searchInput" placeholder="Поиск (компания, товар...)" aria-label="Поиск промокодов" aria-describedby="search-hint">
             <label for="categorySelect" class="visually-hidden">Выбор категории</label>
             <select id="categorySelect" aria-label="Выбор категории">
                 <option value="">Все категории</option>
@@ -120,8 +121,8 @@
             </select>
             <label for="countrySelect" class="visually-hidden">Выбор страны</label>
             <select id="countrySelect" aria-label="Выбор страны">
-                <option value="">Все страны</option>
-                <option value="Россия" selected>Россия</option>
+                <option value="" selected>Все страны</option>
+                <option value="Россия">Россия</option>
                 <option value="Казахстан">Казахстан</option>
                 <option value="Узбекистан">Узбекистан</option>
             </select>
@@ -134,7 +135,6 @@
             <p>Загрузка...</p>
         </div>
 
-        <!-- Новый контейнер для сообщения о количестве промокодов -->
         <div id="promocodes-result-count"></div>
 
         <section id="catalog" class="promo-grid" aria-labelledby="catalog-title" role="region">

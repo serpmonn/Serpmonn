@@ -1,3 +1,5 @@
+/* Улучшенный CSS - раздел 2.4 */
+
 body {
     font-family: Arial, sans-serif;
     background: linear-gradient(135deg, #e0f7fa, #e1bee7);
@@ -143,10 +145,15 @@ body {
     margin: 5px 0;
     line-height: 1.4;
     display: -webkit-box;
-    -webkit-line-clamp: 2; /* Ограничиваем до 2 строк */
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.bonus-info.expanded {
+    -webkit-line-clamp: unset;
+    overflow: visible;
 }
 
 .bonus-info::before {
@@ -467,55 +474,6 @@ a.register-link:hover {
     display: block; /* Показываем только после загрузки */
 }
 
-@media (max-width: 767px) {
-    .container {
-        max-width: 95%;
-        padding: 15px;
-    }
-    .filters {
-        flex-direction: column;
-    }
-    .promo-grid {
-        grid-template-columns: 1fr;
-    }
-    .submit-btn {
-        padding: 10px 18px;
-        font-size: 14px;
-    }
-    .stats-controls {
-        flex-direction: column;
-        text-align: center;
-    }
-    .stats {
-        justify-content: center;
-    }
-    .controls {
-        align-items: center;
-    }
-    .stat-item {
-        min-width: 80px;
-    }
-    .top-offer::before {
-        right: 8px;
-        top: 8px;
-        font-size: 0.7rem;
-        padding: 3px 8px;
-    }
-}
-
-@media (max-width: 400px) {
-    .promo-card {
-        padding: 12px;
-        min-height: 260px;
-    }
-    .promo-header img {
-        max-width: 70px;
-    }
-    .promo-header h3 {
-        font-size: 15px;
-    }
-}
-
 .icon-refresh::before {
     content: "🔄";
 }
@@ -622,4 +580,62 @@ a.register-link:hover {
 }
 #lastUpdate.updating {
     opacity: 0.5;
+}
+
+@media (max-width: 767px) {
+    .container {
+        max-width: 95%;
+        padding: 15px;
+    }
+    .filters {
+        flex-direction: column;
+    }
+    .promo-grid {
+        grid-template-columns: 1fr;
+    }
+    .submit-btn {
+        padding: 10px 18px;
+        font-size: 14px;
+    }
+    .stats-controls {
+        flex-direction: column;
+        text-align: center;
+    }
+    .stats {
+        justify-content: center;
+    }
+    .controls {
+        align-items: center;
+    }
+    .stat-item {
+        min-width: 80px;
+    }
+    .top-offer::before {
+        right: 8px;
+        top: 8px;
+        font-size: 0.7rem;
+        padding: 3px 8px;
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .promo-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    .promo-card {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 400px) {
+    .promo-card {
+        padding: 12px;
+        min-height: 260px;
+    }
+    .promo-header img {
+        max-width: 70px;
+    }
+    .promo-header h3 {
+        font-size: 15px;
+    }
 }
