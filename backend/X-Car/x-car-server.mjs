@@ -4,13 +4,17 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import cors from 'cors';
 import rateLimit from 'express-rate-limit';
+import helmet from 'helmet';
+import compression from 'compression';
 
 const app = express();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA_FILE = path.join(__dirname, 'leads.json');
 
 app.use(cors());
-app.use(express.json());
+app.use(helmet());
+app.use(compression({ threshold: '1kb' }));
+app.use(express.json({ limit: '64kb' }));
 
 // Глобальный лимитер запросов (защита от частых запросов)
 const apiLimiter = rateLimit({
@@ -82,6 +86,12 @@ app.post('/xcar-drivers', leadsLimiter, (req, res) => {
 
 app.get('/', (req, res) => {
   res.send('Сервер для сбора заявок X-Car работает!');
+});
+
+// Общий обработчик ошибок
+app.use((err, req, res, next) => {
+  console.error('X-Car server error:', err);
+  res.status(500).json({ success: false, error: 'Internal server error' });
 });
 
 const PORT = 5500;
