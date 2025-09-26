@@ -1,12 +1,17 @@
 import express from 'express';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import helmet from 'helmet';
+import compression from 'compression';
 
 // Dev-only server. Binds to 127.0.0.1 and serves static frontend plus a simple
 // in-memory likes API for local testing. Not intended for production use.
 
 const app = express();
 app.disable('x-powered-by');
+
+app.use(helmet());
+app.use(compression({ threshold: '1kb' }));
 
 app.use(express.json({ limit: '32kb' }));
 app.use(express.urlencoded({ extended: true, limit: '32kb' }));
@@ -16,7 +21,17 @@ const __dirname = path.dirname(__filename);
 const frontendDir = path.join(__dirname, '..', 'frontend');
 
 // Serve static frontend assets at /frontend
-app.use('/frontend', express.static(frontendDir, { extensions: ['html', 'htm'] }));
+app.use('/frontend', express.static(frontendDir, {
+  extensions: ['html', 'htm'],
+  setHeaders: (res, filePath) => {
+    // Cache policy: HTML short, static long
+    if (filePath.endsWith('.html') || filePath.endsWith('.htm')) {
+      res.setHeader('Cache-Control', 'no-cache');
+    } else if (/(\.css|\.js|\.png|\.jpg|\.jpeg|\.gif|\.svg|\.webp|\.ico|\.ttf|\.woff2?)$/i.test(filePath)) {
+      res.setHeader('Cache-Control', 'public, max-age=31536000, immutable');
+    }
+  }
+}));
 
 // Simple in-memory likes storage: url -> { guest: number, auth: number, authUsers: Set<string> }
 const likesByUrl = new Map();
