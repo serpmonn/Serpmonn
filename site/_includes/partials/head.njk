@@ -6,14 +6,25 @@
 <title>{{ title }}</title>
 <meta name="description" content="{{ description }}">
 
-{% if alternates %}
-  {% for alt in alternates %}
-    <link rel="alternate" href="{{ alt.url }}" hreflang="{{ alt.lang }}" />
+{# Auto hreflang for homepage across locales #}
+{% if page.url and (page.url == '/' or '/index.html' in page.url) %}
+  {% for loc in locales %}
+    {% if loc == 'ru' %}
+      <link rel="alternate" href="{{ site.baseUrl }}/" hreflang="ru" />
+    {% else %}
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/" hreflang="{{ loc }}" />
+    {% endif %}
   {% endfor %}
+  <link rel="alternate" href="{{ site.baseUrl }}/" hreflang="x-default" />
 {% endif %}
-{% if xdefault %}<link rel="alternate" href="{{ xdefault }}" hreflang="x-default" />{% endif %}
 
-{% if canonical %}<link rel="canonical" href="{{ canonical }}">{% endif %}
+{% if canonical %}<link rel="canonical" href="{{ canonical }}">{% else %}
+  {% if locale == 'ru' %}
+    <link rel="canonical" href="{{ site.baseUrl }}/">
+  {% else %}
+    <link rel="canonical" href="{{ site.baseUrl }}/frontend/{{ locale }}/">
+  {% endif %}
+{% endif %}
 
 <meta property="og:title" content="{{ ogTitle or title }}" />
 <meta property="og:description" content="{{ ogDescription or description }}" />
