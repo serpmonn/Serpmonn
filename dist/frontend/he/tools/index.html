@@ -1,0 +1,891 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl">
+  <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/he/tools/index.html">
+<script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="he">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Free Online Tools - UTM Builder, Password Generator & More | Serpmonn</title>
+    <meta name="description" content="Access free online tools on Serpmonn: UTM builder for marketing campaigns, secure password generator, word counter, and ecological footprint calculator. All tools are free to use.">
+    <meta name="keywords" content="UTM-генератор, генератор паролей, калькулятор экологического следа, счётчик слов, инструменты для маркетинга, Serpmonn">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Инструменты — Serpmonn">
+    <meta property="og:description" content="Набор микро‑инструментов: UTM‑генератор, генератор паролей, счётчик слов, калькулятор экологического следа продуктов.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://www.serpmonn.ru/frontend/he/tools/index.html">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Инструменты — Serpmonn">
+    <meta name="twitter:description" content="UTM‑генератор, генератор паролей, счётчик слов, калькулятор экологического следа продуктов.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <style>
+      /* ad adaptive start */
+      .ad-banner {
+        text-align: center;
+        margin: 16px 0;
+        position: relative;
+        transition: opacity 0.3s ease, height 0.3s ease;
+      }
+      .ad-banner .mrg-tag {
+        width: 100% !important;
+        max-width: 970px;
+        height: auto;
+        aspect-ratio: 970 / 250;
+        display: inline-block;
+      }
+      .ad-banner.loading::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+      }
+      @keyframes skeleton-loading {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+      }
+      @media (max-width: 1199px) {
+        .ad-banner .mrg-tag {
+          max-width: 728px;
+          aspect-ratio: 728 / 90;
+        }
+      }
+      @media (max-width: 768px) {
+        .ad-banner .mrg-tag {
+          max-width: 320px;
+          aspect-ratio: 320 / 50;
+        }
+      }
+      .ad-banner.hidden {
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+      }
+      .ad-fallback {
+        display: none;
+        padding: 16px;
+        background: #f8f9fa;
+        border-radius: 8px;
+        text-align: center;
+      }
+      .ad-fallback a {
+        color: #dc3545;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .ad-banner.hidden .ad-fallback {
+        display: block;
+      }
+      .skip-ad {
+        display: none;
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background: #dc3545;
+        color: #fff;
+        padding: 8px 12px;
+        border-radius: 4px;
+        text-decoration: none;
+        z-index: 10;
+      }
+      .skip-ad:focus {
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+      }
+      @media (max-width: 768px) {
+        .skip-ad {
+          display: block;
+        }
+      }
+      /* ad adaptive end */
+      #menuContainer.loading::before {
+        content: '';
+        display: block;
+        height: 50px;
+        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.5s infinite;
+      }
+      html, body { 
+        width: 100%; 
+        overflow-x: hidden; 
+      }
+      body { 
+        max-width: none; 
+        margin: 0; 
+        padding: 0; 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+        background: #f5f5f5;
+        min-height: 100vh;
+      }
+      .page { 
+        max-width: 1200px; 
+        margin: 0 auto; 
+        padding: 20px; 
+      }
+      h1 { 
+        margin: 20px 0; 
+        text-align: center;
+        color: #333;
+        font-size: 2.5rem;
+      }
+      .subtitle {
+        text-align: center;
+        color: #555;
+        font-size: 1.2rem;
+        margin-bottom: 40px;
+      }
+      .category-section {
+        margin-bottom: 60px;
+      }
+      .category-title {
+        font-size: 1.5rem;
+        color: #333;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid #ddd;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .tools-grid { 
+        display: grid; 
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); 
+        gap: 20px; 
+        margin-bottom: 30px;
+      }
+      @media (max-width: 768px) {
+        .tools-grid {
+          display: flex;
+          overflow-x: auto;
+          scroll-snap-type: x mandatory;
+          padding-bottom: 10px;
+          scroll-behavior: smooth;
+          -webkit-overflow-scrolling: touch;
+          box-shadow: inset 0 0 10px rgba(0,0,0,0.1);
+        }
+        .tools-grid::-webkit-scrollbar {
+          height: 8px;
+        }
+        .tools-grid::-webkit-scrollbar-thumb {
+          background: #ccc;
+          border-radius: 4px;
+        }
+        .card {
+          min-width: 300px;
+          max-width: 90vw;
+          flex: 0 0 auto;
+          scroll-snap-align: start;
+          margin-right: 15px;
+        }
+      }
+      @media (max-width: 480px) {
+        .card {
+          min-width: 280px;
+        }
+      }
+      .card { 
+        border: 1px solid #ddd; 
+        border-radius: 8px; 
+        padding: 24px; 
+        background: #fff; 
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+        opacity: 0;
+        animation: fadeIn 0.5s ease forwards;
+        animation-delay: calc(var(--i) * 0.1s);
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        border-color: #007bff;
+      }
+      .card h2 { 
+        font-size: 1.25rem; 
+        margin: 0 0 12px; 
+        color: #333;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+      .card p { 
+        margin: 0 0 20px; 
+        color: #555; 
+        line-height: 1.6;
+      }
+      .card a { 
+        display: inline-block; 
+        padding: 12px 20px; 
+        background: linear-gradient(90deg, #dc3545, #c82333); 
+        color: #fff; 
+        border-radius: 8px; 
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+      .card a:hover {
+        background: linear-gradient(90deg, #c82333, #a00d25);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(220, 53, 69, 0.4);
+      }
+      .card a:focus {
+        outline: 2px solid #007bff;
+        outline-offset: 2px;
+      }
+      .tool-placeholder {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+      .tool-placeholder a {
+        background: #6c757d !important;
+        cursor: not-allowed;
+      }
+      .tool-placeholder a:hover {
+        transform: none !important;
+        box-shadow: none !important;
+      }
+      .tool-placeholder .favorite-btn {
+        display: none;
+      }
+      .coming-soon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: #f8f9fa;
+        color: #6c757d;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        border: 1px solid #dee2e6;
+        z-index: 5;
+      }
+      .stats {
+        text-align: center;
+        margin: 40px 0;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      }
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+      .stat-item {
+        text-align: center;
+      }
+      .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        color: #dc3545;
+      }
+      .stat-label {
+        color: #555;
+        font-size: 0.9rem;
+      }
+      .filter-bar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .filter-bar input,
+      .filter-bar select,
+      .filter-bar button {
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 1rem;
+        flex: 1;
+        min-width: 120px;
+      }
+      .filter-bar button {
+        background: linear-gradient(90deg, #dc3545, #c82333);
+        color: #fff;
+        border: none;
+        cursor: pointer;
+        transition: background 0.3s ease, transform 0.2s ease;
+      }
+      .filter-bar button:hover {
+        background: linear-gradient(90deg, #c82333, #a00d25);
+      }
+      .filter-bar button:active {
+        transform: scale(0.95);
+      }
+      #sort-favorites.active {
+        background: linear-gradient(90deg, #28a745, #218838);
+      }
+      .filter-message {
+        display: none;
+        color: #dc3545;
+        font-size: 0.9rem;
+        margin-top: 10px;
+      }
+      .filter-message:not(.hidden) {
+        display: block;
+      }
+      @media (max-width: 480px) {
+        .filter-bar input,
+        .filter-bar select,
+        .filter-bar button {
+          font-size: 0.9rem;
+          padding: 10px;
+        }
+      }
+      .cta {
+        text-align: center;
+        margin: 40px 0;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+      }
+      .cta .btn {
+        display: inline-block;
+        padding: 12px 20px;
+        background: linear-gradient(90deg, #dc3545, #c82333);
+        color: #fff;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .cta .btn:hover {
+        background: linear-gradient(90deg, #c82333, #a00d25);
+      }
+      .favorite-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: none;
+        border: none;
+        font-size: 1.4rem;
+        color: #555 !important;
+        cursor: pointer;
+        z-index: 10;
+        transition: transform 0.2s ease, color 0.2s ease, border 0.2s ease;
+        padding: 10px;
+      }
+      .favorite-btn.favorite {
+        color: #ffd700 !important;
+        border: 1px solid #ffd700 !important;
+      }
+      .favorite-btn:active {
+        animation: rotateStar 0.3s ease;
+      }
+      @keyframes rotateStar {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      .favorite-btn:hover {
+        transform: scale(1.2);
+      }
+      @media (max-width: 768px) {
+        .favorite-btn {
+          font-size: 1.6rem;
+          padding: 12px;
+        }
+      }
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+      }
+      @media (max-width: 768px) {
+        body {
+          padding: 15px;
+        }
+        h1 {
+          font-size: 2rem;
+        }
+        .subtitle {
+          font-size: 1rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+    <div class="page">
+      <div class="ad-banner loading">
+        <a href="#tools" class="skip-ad">К инструментам</a>
+        <ins class="mrg-tag" 
+            style="display:inline-block;" 
+            data-ad-client="ad-1897960" 
+            data-ad-slot="1897960" 
+            data-ad-id="top-banner"
+            loading="lazy"
+            aria-label="Рекламный баннер">
+        </ins>
+        <div class="ad-fallback hidden">
+          <p>Узнайте больше о наших инструментах! <a href="#tools">Перейти</a></p>
+        </div>
+      </div>
+      <h1>🧰 Serpmonn Tools</h1>
+      <p class="subtitle">Набор микро‑инструментов для работы, маркетинга и разработки</p>
+
+      <!-- Фильтры -->
+      <div class="filter-bar">
+        <input type="text" placeholder="Поиск инструментов..." aria-label="Поиск инструментов">
+        <select aria-label="Фильтр по категории">
+          <option value="">Все категории</option>
+          <option value="marketing">Маркетинг</option>
+          <option value="security">Безопасность</option>
+          <option value="development">Разработка</option>
+          <option value="design">Дизайн</option>
+          <option value="engineering">Инженерия</option>
+          <option value="logistics">Логистика</option>
+          <option value="ecology">Экология</option>
+        </select>
+        <button aria-label="Очистить фильтры">Очистить фильтры</button>
+        <button id="clear-favorites" aria-label="Очистить избранное">Очистить избранное</button>
+        <button id="sort-favorites" aria-label="Показать избранное сверху">Избранное сверху</button>
+        <div class="filter-message hidden" role="alert">Инструменты не найдены. Попробуйте изменить запрос.</div>
+      </div>
+
+      <!-- Статистика -->
+      <div class="stats">
+        <h3>📊 Статистика инструментов</h3>
+        <div class="stats-grid" aria-live="polite">
+          <div class="stat-item">
+            <div class="stat-number" id="tools-count">7</div>
+            <div class="stat-label">Активных инструмента</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">7</div>
+            <div class="stat-label">Категории</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">10+</div>
+            <div class="stat-label">Планируется</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Категория: Маркетинг и аналитика -->
+      <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+        <h2 class="category-title" id="marketing-title">📊 Инструменты для маркетинга и аналитики</h2>
+        <div class="tools-grid" aria-live="polite">
+          <div class="card" style="--i: 1;">
+            <h2>🔗 Генератор UTM‑меток</h2>
+            <p>Быстро создавайте UTM‑ссылки для отслеживания эффективности маркетинговых кампаний. Поддерживает все популярные параметры.</p>
+            <a href="/frontend/tools/marketing/utm-builder.html" aria-label="Открыть генератор UTM-меток">Открыть инструмент</a>
+            <button class="favorite-btn" data-tool-name="Генератор UTM-меток" aria-label="Добавить в избранное" aria-pressed="false">⭐</button>
+          </div>
+          <div class="card" style="--i: 2;">
+            <h2>📝 Счётчик слов/символов</h2>
+            <p>Подсчёт слов, строк и символов в тексте. Идеально для SEO‑оптимизации, написания статей и анализа контента.</p>
+            <a href="/frontend/tools/marketing/word-counter.html" aria-label="Открыть счётчик слов">Открыть инструмент</a>
+            <button class="favorite-btn" data-tool-name="Счётчик слов/символов" aria-label="Добавить в избранное" aria-pressed="false">⭐</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Реклама между категориями -->
+      <div class="ad-banner loading">
+        <ins class="mrg-tag" 
+            style="display:inline-block;" 
+            data-ad-client="ad-1897960" 
+            data-ad-slot="1897960" 
+            data-ad-id="mid-banner"
+            loading="lazy"
+            aria-label="Рекламный баннер">
+        </ins>
+        <div class="ad-fallback hidden">
+          <p>Узнайте больше о наших инструментах! <a href="#tools">Перейти</a></p>
+        </div>
+      </div>
+
+      <!-- Категория: Безопасность -->
+      <div class="category-section category-security" role="region" aria-labelledby="security-title">
+        <h2 class="category-title" id="security-title">🔐 Инструменты для безопасности</h2>
+        <div class="tools-grid" aria-live="polite">
+          <div class="card" style="--i: 3;">
+            <h2>🔑 Генератор паролей</h2>
+            <p>Создавайте надёжные пароли с кастомными параметрами: длина, символы, исключения. Безопасность ваших аккаунтов.</p>
+            <a href="/frontend/tools/security/password-generator.html" aria-label="Открыть генератор паролей">Открыть инструмент</a>
+            <button class="favorite-btn" data-tool-name="Генератор паролей" aria-label="Добавить в избранное" aria-pressed="false">⭐</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Категория: Разработка -->
+      <div class="category-section category-development" role="region" aria-labelledby="development-title">
+        <h2 class="category-title" id="development-title">💻 Инструменты для разработки</h2>
+        <div class="tools-grid" aria-live="polite">
+          <div class="card tool-placeholder" style="--i: 4;">
+            <div class="coming-soon">Скоро</div>
+            <h2>📄 JSON форматтер</h2>
+            <p>Красивое форматирование и валидация JSON‑данных. Подсветка синтаксиса и исправление ошибок.</p>
+            <a href="#" rel="nofollow" aria-label="JSON форматтер скоро будет доступен">Скоро будет доступен</a>
+          </div>
+          <div class="card tool-placeholder" style="--i: 5;">
+            <div class="coming-soon">Скоро</div>
+            <h2>🔄 Base64 конвертер</h2>
+            <p>Кодирование и декодирование Base64. Работа с изображениями, файлами и текстовыми данными.</p>
+            <a href="#" rel="nofollow" aria-label="Base64 конвертер скоро будет доступен">Скоро будет доступен</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Категория: Дизайн -->
+      <div class="category-section category-design" role="region" aria-labelledby="design-title">
+        <h2 class="category-title" id="design-title">🎨 Инструменты для дизайна</h2>
+        <div class="tools-grid" aria-live="polite">
+          <div class="card tool-placeholder" style="--i: 6;">
+            <div class="coming-soon">Скоро</div>
+            <h2>🎨 Цветовые палитры</h2>
+            <p>Создание и подбор цветовых схем для дизайна. Гармоничные сочетания и контрастные комбинации.</p>
+            <a href="#" rel="nofollow" aria-label="Цветовые палитры скоро будут доступны">Скоро будет доступен</a>
+          </div>
+          <div class="card tool-placeholder" style="--i: 7;">
+            <div class="coming-soon">Скоро</div>
+            <h2>📐 Конвертер форматов</h2>
+            <p>Конвертация между различными форматами изображений, документов и медиафайлов.</p>
+            <a href="#" rel="nofollow" aria-label="Конвертер форматов скоро будет доступен">Скоро будет доступен</a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Категория: Инженерия -->
+      <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+        <h2 class="category-title" id="engineering-title">🔧 Инструменты для инженерии</h2>
+        <div class="tools-grid" aria-live="polite">
+          <div class="card" style="--i: 8;">
+            <h2>🔄 Конвертер единиц измерения</h2>
+            <p>Быстрое преобразование между различными единицами измерения: длина, площадь, объём, температура, мощность, давление и многое другое.</p>
+            <a href="/frontend/tools/engineering/unit-converter.html" aria-label="Открыть конвертер единиц измерения">Открыть инструмент</a>
+            <button class="favorite-btn" data-tool-name="Конвертер единиц измерения" aria-label="Добавить в избранное" aria-pressed="false">⭐</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Категория: Логистика -->
+      <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+        <h2 class="category-title" id="logistics-title">⚡ Инструменты для логистики</h2>
+        <div class="tools-grid" aria-live="polite">
+          <div class="card" style="--i: 9;">
+            <h2>🔧 Калькулятор амортизации автомобиля</h2>
+            <p>Расчёт износа автомобиля по пробегу, времени эксплуатации, типу использования и условиям эксплуатации.</p>
+            <a href="/frontend/tools/logistics/depreciation-calculator.html" aria-label="Открыть калькулятор амортизации">Открыть инструмент</a>
+            <button class="favorite-btn" data-tool-name="Калькулятор амортизации автомобиля" aria-label="Добавить в избранное" aria-pressed="false">⭐</button>
+          </div>
+          <div class="card" style="--i: 10;">
+            <h2>⛽ Калькулятор топлива</h2>
+            <p>Расчёт расхода топлива, стоимости поездки и экономии с учётом стиля вождения, дорожных условий и загрузки.</p>
+            <a href="/frontend/tools/logistics/fuel-calculator.html" aria-label="Открыть калькулятор топлива">Открыть инструмент</a>
+            <button class="favorite-btn" data-tool-name="Калькулятор топлива" aria-label="Добавить в избранное" aria-pressed="false">⭐</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Категория: Экология -->
+      <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+        <h2 class="category-title" id="ecology-title">🌱 Инструменты для экологии</h2>
+        <div class="tools-grid" aria-live="polite">
+          <div class="card" style="--i: 11;">
+            <h2>🌍 Калькулятор экологического следа продуктов</h2>
+            <p>Рассчитайте углеродный, водный и земельный след ваших продуктов. Узнайте, как сделать ваш рацион более экологичным.</p>
+            <a href="/frontend/tools/ecology/product-footprint-calculator.html" aria-label="Открыть калькулятор экологического следа">Открыть инструмент</a>
+            <button class="favorite-btn" data-tool-name="Калькулятор экологического следа продуктов" aria-label="Добавить в избранное" aria-pressed="false">⭐</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Информация о развитии -->
+      <div class="stats">
+        <h3>🚀 Развитие инструментов</h3>
+        <p>Если есть идеи для новых инструментов - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">напишите на support@serpmonn.ru</a>!</p>
+      </div>
+
+      <!-- CTA -->
+      <section class="cta">
+        <h2>Готовы попробовать?</h2>
+        <p>Выберите инструмент и начните оптимизировать свою работу уже сегодня!</p>
+        <a href="#tools" class="btn">Перейти к инструментам</a>
+      </section>
+
+      <!-- Загрузка меню -->
+      
+      <script>
+        document.addEventListener('DOMContentLoaded', () => {
+          // Кэширование DOM-элементов
+          const adBanners = document.querySelectorAll('.ad-banner');
+          const searchInput = document.querySelector('.filter-bar input[type="text"]');
+          const categorySelect = document.querySelector('.filter-bar select');
+          const clearButton = document.querySelector('.filter-bar button[aria-label="Очистить фильтры"]');
+          const clearFavoritesButton = document.getElementById('clear-favorites');
+          const sortFavoritesButton = document.getElementById('sort-favorites');
+          const toolsCountElement = document.getElementById('tools-count');
+          const cards = document.querySelectorAll('.card');
+          const filterMessage = document.querySelector('.filter-message');
+          const menuContainer = document.getElementById('menuContainer');
+          let adScriptLoaded = false;
+
+          // Функция debounce
+          function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+              const later = () => {
+                clearTimeout(timeout);
+                func(...args);
+              };
+              clearTimeout(timeout);
+              timeout = setTimeout(later, wait);
+            };
+          }
+
+          // Ленивая загрузка скрипта рекламы
+          function loadAdScript() {
+            if (!adScriptLoaded) {
+              const script = document.createElement('script');
+              script.src = 'https://ad.mail.ru/static/ads-async.js';
+              script.async = true;
+              script.onload = () => { adScriptLoaded = true; };
+              document.head.appendChild(script);
+            }
+          }
+
+          // Инициализация рекламы
+          const observerOptions = { threshold: 0.1 };
+          const adObserver = new IntersectionObserver(
+            debounce((entries, observer) => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                  loadAdScript();
+                  (MRGtag = window.MRGtag || []).push({});
+                  observer.unobserve(entry.target);
+                }
+              });
+            }, 100),
+            observerOptions
+          );
+
+          // Один MutationObserver для всех баннеров
+          const mutationObserver = new MutationObserver(() => {
+            adBanners.forEach(banner => {
+              const ad = banner.querySelector('.mrg-tag');
+              let attempts = 0;
+              const maxAttempts = 5;
+              const interval = setInterval(() => {
+                if (!ad.hasChildNodes() || ad.innerHTML.trim() === '') {
+                  if (attempts >= maxAttempts) {
+                    banner.classList.add('hidden');
+                    banner.classList.remove('loading');
+                    clearInterval(interval);
+                    setTimeout(() => {
+                      if (!ad.hasChildNodes() || ad.innerHTML.trim() === '') {
+                        (MRGtag = window.MRGtag || []).push({});
+                      }
+                    }, 5000);
+                  }
+                } else {
+                  banner.classList.remove('loading');
+                  clearInterval(interval);
+                }
+                attempts++;
+              }, 1000);
+            });
+          });
+
+          adBanners.forEach(banner => {
+            const ad = banner.querySelector('.mrg-tag');
+            adObserver.observe(ad);
+            mutationObserver.observe(ad, { childList: true, subtree: true });
+          });
+
+          // Удаление индикатора загрузки меню
+          menuContainer.addEventListener('load', () => {
+            menuContainer.classList.remove('loading');
+          }, { once: true });
+
+          // Инициализация избранного
+          let favorites = [];
+          const storedFavorites = localStorage.getItem('favorites');
+          if (storedFavorites && typeof storedFavorites === 'string') {
+            try {
+              favorites = JSON.parse(storedFavorites);
+              if (!Array.isArray(favorites)) throw new Error('Invalid favorites format');
+            } catch (e) {
+              favorites = [];
+              localStorage.setItem('favorites', JSON.stringify(favorites));
+            }
+          }
+
+          toolsCountElement.textContent = document.querySelectorAll('.card:not(.tool-placeholder)').length;
+
+          // Обработчик для избранного
+          document.querySelectorAll('.favorite-btn').forEach(btn => {
+            const toolName = btn.getAttribute('data-tool-name') || btn.parentElement.querySelector('h2').textContent.trim();
+            if (favorites.includes(toolName)) {
+              btn.classList.add('favorite');
+              btn.setAttribute('aria-pressed', 'true');
+            } else {
+              btn.classList.remove('favorite');
+              btn.setAttribute('aria-pressed', 'false');
+            }
+            btn.addEventListener('click', () => {
+              if (!toolName) return;
+              if (!favorites.includes(toolName)) {
+                favorites.push(toolName);
+                btn.classList.add('favorite');
+                btn.setAttribute('aria-pressed', 'true');
+              } else {
+                favorites = favorites.filter(name => name !== toolName);
+                btn.classList.remove('favorite');
+                btn.setAttribute('aria-pressed', 'false');
+              }
+              try {
+                localStorage.setItem('favorites', JSON.stringify(favorites));
+              } catch (e) {}
+              if (sortFavoritesButton.classList.contains('active')) {
+                filterTools(searchInput.value.replace(/[<>]/g, '').toLowerCase().trim(), categorySelect.value, true);
+              }
+            });
+          });
+
+          // Очистка избранного
+          clearFavoritesButton.addEventListener('click', () => {
+            favorites = [];
+            try {
+              localStorage.removeItem('favorites');
+            } catch (e) {}
+            document.querySelectorAll('.favorite-btn').forEach(btn => {
+              btn.classList.remove('favorite');
+              btn.setAttribute('aria-pressed', 'false');
+            });
+            filterTools(searchInput.value.replace(/[<>]/g, '').toLowerCase().trim(), categorySelect.value, sortFavoritesButton.classList.contains('active'));
+          });
+
+          // Сортировка по избранному
+          sortFavoritesButton.addEventListener('click', () => {
+            sortFavoritesButton.classList.toggle('active');
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('sort', sortFavoritesButton.classList.contains('active') ? 'favorites' : '');
+            window.history.replaceState({}, '', `${window.location.pathname}?${urlParams}`);
+            filterTools(searchInput.value.replace(/[<>]/g, '').toLowerCase().trim(), categorySelect.value, sortFavoritesButton.classList.contains('active'));
+          });
+
+          // Кэш для фильтрации
+          const filterCache = new Map();
+
+          // Функция фильтрации
+          function filterCards(searchTerm = '', category = '') {
+            const cacheKey = `${searchTerm}|${category}`;
+            if (filterCache.has(cacheKey)) {
+              return filterCache.get(cacheKey);
+            }
+
+            const filteredCards = Array.from(cards).filter(card => {
+              const title = card.querySelector('h2').textContent.toLowerCase();
+              const description = card.querySelector('p').textContent.toLowerCase();
+              const cardCategory = card.closest('.category-section').classList;
+
+              const matchesSearch = !searchTerm || title.includes(searchTerm) || description.includes(searchTerm);
+              const matchesCategory = !category || cardCategory.contains(`category-${category}`);
+              return matchesSearch && matchesCategory;
+            });
+
+            filterCache.set(cacheKey, filteredCards);
+            return filteredCards;
+          }
+
+          // Функция сортировки
+          function sortCards(cards, sortByFavorites = false) {
+            return sortByFavorites
+              ? cards.sort((a, b) => {
+                  const aIsFavorite = favorites.includes(a.querySelector('.favorite-btn')?.getAttribute('data-tool-name') || a.querySelector('h2').textContent.trim());
+                  const bIsFavorite = favorites.includes(b.querySelector('.favorite-btn')?.getAttribute('data-tool-name') || b.querySelector('h2').textContent.trim());
+                  return bIsFavorite - aIsFavorite;
+                })
+              : cards;
+          }
+
+          // Функция фильтрации и сортировки
+          function filterTools(searchTerm = '', category = '', sortByFavorites = false) {
+            const filteredCards = filterCards(searchTerm, category);
+            const sortedCards = sortCards(filteredCards, sortByFavorites);
+
+            cards.forEach(card => {
+              card.style.display = sortedCards.includes(card) ? '' : 'none';
+              if (sortedCards.includes(card)) {
+                card.parentElement.appendChild(card);
+              }
+            });
+
+            const activeCount = document.querySelectorAll('.card:not(.tool-placeholder):not([style*="display: none"])').length;
+            toolsCountElement.textContent = activeCount;
+            filterMessage.classList.toggle('hidden', activeCount > 0);
+
+            // Обновление мета-описания
+            document.querySelector('meta[name="description"]').content = `Инструменты Serpmonn для ${category || 'всех категорий'}: UTM-генератор, пароли, калькуляторы и др.`;
+          }
+
+          // Инициализация из URL
+          const urlParams = new URLSearchParams(window.location.search);
+          const initialCategory = urlParams.get('category') || '';
+          const initialSort = urlParams.get('sort') === 'favorites';
+          categorySelect.value = initialCategory;
+          if (initialSort) sortFavoritesButton.classList.add('active');
+          filterTools('', initialCategory, initialSort);
+
+          // Обработчик поиска
+          let searchTimeout = null;
+          searchInput.addEventListener('input', (e) => {
+            if (searchTimeout) clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+              const searchTerm = e.target.value.replace(/[<>]/g, '').toLowerCase().trim();
+              const urlParams = new URLSearchParams(window.location.search);
+              urlParams.set('search', searchTerm);
+              window.history.replaceState({}, '', `${window.location.pathname}?${urlParams}`);
+              filterTools(searchTerm, categorySelect.value, sortFavoritesButton.classList.contains('active'));
+            }, 300);
+          });
+
+          // Обработчик фильтра категорий
+          categorySelect.addEventListener('change', (e) => {
+            const urlParams = new URLSearchParams(window.location.search);
+            urlParams.set('category', e.target.value);
+            window.history.replaceState({}, '', `${window.location.pathname}?${urlParams}`);
+            filterTools(searchInput.value.replace(/[<>]/g, '').toLowerCase().trim(), e.target.value, sortFavoritesButton.classList.contains('active'));
+          });
+
+          // Обработчик кнопки "Очистить фильтры"
+          clearButton.addEventListener('click', () => {
+            searchInput.value = '';
+            categorySelect.value = '';
+            sortFavoritesButton.classList.remove('active');
+            window.history.replaceState({}, '', window.location.pathname);
+            filterTools('', '', false);
+          });
+        });
+      </script>
+    </div>
+      <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

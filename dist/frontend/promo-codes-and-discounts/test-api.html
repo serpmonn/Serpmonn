@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+<script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="ru">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест API Промокодов Serpmonn</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .btn:hover {
+            background: #5a6fd8;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            white-space: pre-wrap;
+            font-family: monospace;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .error {
+            background: #ffe6e6;
+            color: #c92a2a;
+        }
+        .success {
+            background: #d3f9d8;
+            color: #2b8a3e;
+        }
+        .loading {
+            color: #666;
+            font-style: italic;
+        }
+        .info {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Тест API Промокодов Serpmonn</h1>
+        <p>Эта страница предназначена для тестирования интеграции с нашим бэкенд API промокодов.</p>
+        
+        <div class="test-section">
+            <h3>1. Тест подключения к API</h3>
+            <button class="btn" onclick="testAPIConnection()">Проверить подключение</button>
+            <div id="connectionResult" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. Загрузка промокодов</h3>
+            <button class="btn" onclick="loadPromocodes()">Загрузить промокоды</button>
+            <div id="promocodesResult" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. Анализ структуры данных</h3>
+            <button class="btn" onclick="analyzeDataStructure()">Анализировать структуру</button>
+            <div id="structureResult" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. Тест фильтрации</h3>
+            <button class="btn" onclick="testFiltering()">Тестировать фильтры</button>
+            <div id="filterResult" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>5. Статистика</h3>
+            <div id="statsResult" class="result">Нажмите "Загрузить промокоды" для получения статистики</div>
+        </div>
+        
+        <div class="test-section">
+            <h3>6. Принудительное обновление</h3>
+            <button class="btn" onclick="forceRefresh()">Принудительно обновить</button>
+            <div id="refreshResult" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>7. Получение категорий</h3>
+            <button class="btn" onclick="getCategories()">Получить категории</button>
+            <div id="categoriesResult" class="result"></div>
+        </div>
+    </div>
+
+    <script>
+        // Конфигурация API (наш бэкенд)
+        const API_CONFIG = {
+            baseUrl: '/api/promocodes'
+        };
+
+        let cachedPromocodes = [];
+        let cachedStats = null;
+
+        // Тест подключения к API
+        async function testAPIConnection() {
+            const resultDiv = document.getElementById('connectionResult');
+            resultDiv.innerHTML = '<span class="loading">Проверяю подключение...</span>';
+            
+            try {
+                const startTime = Date.now();
+                const response = await fetch(API_CONFIG.baseUrl);
+                const endTime = Date.now();
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `✅ Подключение успешно!\n\n` +
+                        `Статус: ${response.status} ${response.statusText}\n` +
+                        `Время ответа: ${endTime - startTime}ms\n` +
+                        `API статус: ${data.status}\n` +
+                        `Количество промокодов: ${data.data ? data.data.length : 'N/A'}\n` +
+                        `Статистика: ${data.stats ? 'Доступна' : 'Недоступна'}`;
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Ошибка подключения:\n\n${error.message}`;
+            }
+        }
+
+        // Загрузка промокодов
+        async function loadPromocodes() {
+            const resultDiv = document.getElementById('promocodesResult');
+            resultDiv.innerHTML = '<span class="loading">Загружаю промокоды...</span>';
+            
+            try {
+                const response = await fetch(API_CONFIG.baseUrl);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    cachedPromocodes = data.data || [];
+                    cachedStats = data.stats;
+                    
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `✅ Промокоды загружены!\n\n` +
+                        `Статус API: ${data.status}\n` +
+                        `Количество: ${cachedPromocodes.length}\n` +
+                        `Первые 3 элемента:\n${JSON.stringify(cachedPromocodes.slice(0, 3), null, 2)}`;
+                    
+                    // Обновляем статистику
+                    updateStats();
+                    
+                } else {
+                    throw new Error(`API вернул ошибку: ${data.message || 'Неизвестная ошибка'}`);
+                }
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Ошибка загрузки:\n\n${error.message}`;
+            }
+        }
+
+        // Анализ структуры данных
+        function analyzeDataStructure() {
+            const resultDiv = document.getElementById('structureResult');
+            
+            if (cachedPromocodes.length === 0) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = '❌ Сначала загрузите промокоды!';
+                return;
+            }
+            
+            const sample = cachedPromocodes[0];
+            const fields = Object.keys(sample);
+            const fieldTypes = {};
+            
+            fields.forEach(field => {
+                const value = sample[field];
+                fieldTypes[field] = {
+                    type: typeof value,
+                    example: value,
+                    length: typeof value === 'string' ? value.length : 'N/A'
+                };
+            });
+            
+            resultDiv.className = 'result success';
+            resultDiv.innerHTML = `📊 Анализ структуры данных:\n\n` +
+                `Всего полей: ${fields.length}\n\n` +
+                `Детализация полей:\n${JSON.stringify(fieldTypes, null, 2)}`;
+        }
+
+        // Тест фильтрации
+        function testFiltering() {
+            const resultDiv = document.getElementById('filterResult');
+            
+            if (cachedPromocodes.length === 0) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = '❌ Сначала загрузите промокоды!';
+                return;
+            }
+            
+            // Тестируем различные фильтры
+            const results = {
+                total: cachedPromocodes.length,
+                withPromocode: cachedPromocodes.filter(p => p.promocode).length,
+                withDiscount: cachedPromocodes.filter(p => p.discount_percent || p.discount_amount).length,
+                withImage: cachedPromocodes.filter(p => p.image_url).length,
+                withUrl: cachedPromocodes.filter(p => p.landing_url).length,
+                withExpiry: cachedPromocodes.filter(p => p.valid_until || p.expiry_date).length,
+                topOffers: cachedPromocodes.filter(p => p.is_top).length
+            };
+            
+            // Тест поиска
+            const searchTest = cachedPromocodes.filter(p => 
+                (p.title && p.title.toLowerCase().includes('скид')) ||
+                (p.description && p.description.toLowerCase().includes('скид'))
+            ).length;
+            
+            results.searchTest = searchTest;
+            
+            resultDiv.className = 'result success';
+            resultDiv.innerHTML = `🔍 Результаты тестирования фильтров:\n\n` +
+                `Всего промокодов: ${results.total}\n` +
+                `С промокодом: ${results.withPromocode}\n` +
+                `Со скидкой: ${results.withDiscount}\n` +
+                `С изображением: ${results.withImage}\n` +
+                `С ссылкой: ${results.withUrl}\n` +
+                `С датой истечения: ${results.withExpiry}\n` +
+                `Топ-офферы: ${results.topOffers}\n` +
+                `Поиск "скидка": ${results.searchTest}`;
+        }
+
+        // Обновление статистики
+        function updateStats() {
+            const statsDiv = document.getElementById('statsResult');
+            
+            if (!cachedStats) {
+                statsDiv.innerHTML = 'Нажмите "Загрузить промокоды" для получения статистики';
+                return;
+            }
+            
+            statsDiv.className = 'result success';
+            statsDiv.innerHTML = `📈 Статистика:\n\n` +
+                `Всего промокодов: ${cachedStats.total}\n` +
+                `Активных: ${cachedStats.active}\n` +
+                `Истекших: ${cachedStats.expired}\n` +
+                `Последнее обновление: ${cachedStats.lastUpdate ? new Date(cachedStats.lastUpdate).toLocaleString('ru-RU') : 'Неизвестно'}`;
+        }
+
+        // Принудительное обновление
+        async function forceRefresh() {
+            const resultDiv = document.getElementById('refreshResult');
+            resultDiv.innerHTML = '<span class="loading">Принудительно обновляю промокоды...</span>';
+            
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}/refresh`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `✅ Принудительное обновление успешно!\n\n` +
+                        `Сообщение: ${data.message}\n` +
+                        `Новая статистика:\n${JSON.stringify(data.stats, null, 2)}`;
+                    
+                    // Обновляем кэш
+                    cachedStats = data.stats;
+                    updateStats();
+                    
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `❌ Ошибка при обновлении:\n\n${data.message}`;
+                }
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Ошибка при принудительном обновлении:\n\n${error.message}`;
+            }
+        }
+
+        // Получение категорий
+        async function getCategories() {
+            const resultDiv = document.getElementById('categoriesResult');
+            resultDiv.innerHTML = '<span class="loading">Получаю категории...</span>';
+            
+            try {
+                const response = await fetch(`${API_CONFIG.baseUrl}/categories`);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `✅ Категории получены!\n\n` +
+                        `Количество категорий: ${data.data.length}\n` +
+                        `Список категорий:\n${JSON.stringify(data.data, null, 2)}`;
+                } else {
+                    throw new Error(`API вернул ошибку: ${data.message || 'Неизвестная ошибка'}`);
+                }
+                
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `❌ Ошибка при получении категорий:\n\n${error.message}`;
+            }
+        }
+
+        // Автоматическая загрузка при открытии страницы
+        window.addEventListener('load', () => {
+            console.log('Тестовая страница API промокодов Serpmonn загружена');
+        });
+    </script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

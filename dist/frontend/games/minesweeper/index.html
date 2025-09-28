@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+  <head>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="ru">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Сапёр — Serpmonn</title>
+    <meta name="description" content="Сапёр: открой все клетки без мин. 10×10, 15 мин, первый клик безопасный, флаги правой кнопкой.">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <style>
+      :root { --bg:#0e1014; --panel:#121821; --text:#e8e8e8; --accent:#dc3545; --cell:#16202a; --cell-open:#0f151d; --cell-flag:#e67e22; --cell-mine:#e74c3c; }
+      html, body { width:100%; height:100%; background: var(--bg); overflow:hidden; }
+      body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); }
+      .page { max-width: 1000px; margin: 0 auto; padding: 16px; }
+      header { display:flex; align-items:center; gap:12px; margin: 10px 0 16px; }
+      header h1 { font-size: 1.6rem; margin: 0; }
+      .wrap { display:grid; grid-template-columns: 1fr 320px; gap: 16px; align-items:start; }
+      .panel { background: var(--panel); border:1px solid #1d2633; border-radius:10px; padding:12px 14px; }
+      .board { display:grid; grid-template-columns: repeat(10, 36px); grid-template-rows: repeat(10, 36px); gap:6px; justify-content:center; padding: 10px 0; }
+      .cell { width:36px; height:36px; display:flex; align-items:center; justify-content:center; background:#16202a; border:1px solid #243241; border-radius:8px; cursor:pointer; user-select:none; font-weight:700; }
+      .cell:hover { filter: brightness(1.05); }
+      .cell.open { background:#0f151d; border-color:#1e2a3b; cursor:default; }
+      .cell.flag { color:#fff; background: linear-gradient(180deg, #ff9f43, #e67e22); border-color:#cf711f; }
+      .cell.mine { background: #2a0f12; border-color:#5a1d23; }
+      .stats { display:grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+      .stat { background:#0f151d; border:1px solid #1b2633; border-radius:8px; padding:8px 10px; text-align:center; }
+      .controls { display:flex; gap:8px; justify-content:center; margin-top:10px; }
+      .btn { background:#16202a; border:1px solid #243241; color:#eee; border-radius:8px; padding:8px 10px; cursor:pointer; }
+      .btn.primary { background: linear-gradient(90deg, #dc3545, #c82333); border:none; }
+      .hint { color:#cfcfcf; font-size:.95rem; text-align:center; margin-top:10px; }
+      @media (max-width: 960px) { .wrap{grid-template-columns:1fr;} .board{grid-template-columns: repeat(10, 32px); grid-template-rows: repeat(10, 32px);} .cell{width:32px;height:32px;} }
+      .n1{color:#3498db}.n2{color:#2ecc71}.n3{color:#e67e22}.n4{color:#9b59b6}.n5{color:#e74c3c}.n6{color:#1abc9c}.n7{color:#f1c40f}.n8{color:#95a5a6}
+    </style>
+  </head>
+  <body>
+    <div id="menuContainer"></div>
+    <script>
+      window.showFullScreenAd = window.showFullScreenAd || function(){
+        try {
+          var ov = document.getElementById('game-ad-overlay');
+          if(!ov){
+            ov = document.createElement('div');
+            ov.id = 'game-ad-overlay';
+            ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.8);display:flex;align-items:center;justify-content:center;z-index:9999;';
+            var box = document.createElement('div');
+            box.style.cssText = 'background:#111;border:1px solid #222;border-radius:12px;padding:12px;text-align:center;max-width:90vw;max-height:90vh;';
+            var ins = document.createElement('ins');
+            ins.className = 'mrg-tag';
+            ins.setAttribute('data-ad-client','ad-1844883');
+            ins.setAttribute('data-ad-slot','1844883');
+            var btn = document.createElement('button');
+            btn.className='btn'; btn.textContent='Продолжить'; btn.style.marginTop='10px';
+            btn.onclick=function(){ ov.remove(); };
+            box.appendChild(ins); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
+            (window.MRGtag = window.MRGtag || []).push({});
+          } else {
+            ov.style.display='flex'; (window.MRGtag = window.MRGtag || []).push({});
+          }
+        } catch(_){}
+      };
+    </script>
+    <div class="page">
+      <header>
+        <img src="/frontend/images/WebGames.ico" width="28" height="28" alt="Игры" style="border-radius:6px;">
+        <h1>Сапёр</h1>
+      </header>
+      <script>
+        (function(){
+          function isMobile(){ return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768); }
+          function showInstructions(){
+            if (localStorage.getItem('game_instructions_mines_shown')==='1') return;
+            var ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9998;';
+            var box=document.createElement('div'); box.style.cssText='max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
+            var h=document.createElement('h3'); h.textContent='Как играть — Сапёр'; h.style.margin='0 0 8px';
+            var p=document.createElement('div'); p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
+            p.textContent = isMobile() ? '• Короткий тап — открыть\n• Долгий тап (≥0.4с) — флаг'
+                                     : '• ЛКМ — открыть\n• ПКМ или Shift — флаг\n• Первый клик безопасный';
+            var btn=document.createElement('button'); btn.className='btn'; btn.textContent='Понятно'; btn.style.marginTop='10px';
+            btn.onclick=function(){ ov.remove(); localStorage.setItem('game_instructions_mines_shown','1'); };
+            box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
+          }
+          document.addEventListener('DOMContentLoaded', showInstructions);
+        })();
+      </script>
+      <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+        <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+      </div>
+      <script>(window.MRGtag = window.MRGtag || []).push({});</script>
+
+      <div class="wrap">
+        <div class="panel">
+          <div id="board" class="board" aria-label="Игровое поле"></div>
+          <div class="hint" style="display:none;">ЛКМ — открыть, ПКМ/Shift — флаг. Первый клик всегда безопасен. Заново — R.</div>
+        </div>
+        <div class="panel">
+          <div class="stats">
+            <div class="stat">Мины<br><b id="minesLeft">15</b></div>
+            <div class="stat">Время<br><b id="time">0</b>с</div>
+            <div class="stat">Лучшее<br><b id="best">—</b></div>
+          </div>
+          <div class="controls">
+            <button class="btn primary" id="btnStart">Старт</button>
+            <button class="btn" id="btnReset">Заново</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script>
+      (function(){
+        const SIZE = 10, MINES = 15;
+        const boardEl = document.getElementById('board');
+        const minesLeftEl = document.getElementById('minesLeft');
+        const timeEl = document.getElementById('time');
+        const bestEl = document.getElementById('best');
+        const bestKey = 'mines_best_time_v1';
+        const btnStart = document.getElementById('btnStart');
+        const btnReset = document.getElementById('btnReset');
+
+        let grid, revealed, flagged, mineMap, minesPlaced, timerOn, alive, startTime, timer;
+        const bestSaved = parseInt(localStorage.getItem(bestKey)||'0',10);
+        bestEl.textContent = bestSaved>0 ? String(bestSaved)+'с' : '—';
+
+        function reset(){
+          grid = Array.from({length: SIZE}, () => Array(SIZE).fill(0));
+          revealed = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
+          flagged = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
+          mineMap = Array.from({length: SIZE}, () => Array(SIZE).fill(false));
+          minesPlaced = false; timerOn = false; alive = true; startTime = 0; clearInterval(timer); timeEl.textContent='0';
+          minesLeftEl.textContent = String(MINES);
+          render();
+        }
+
+        function inb(x,y){ return x>=0 && y>=0 && x<SIZE && y<SIZE; }
+        function neighbors(x,y){
+          const deltas=[-1,0,1]; const res=[]; for(const dx of deltas){ for(const dy of deltas){ if(dx===0&&dy===0) continue; const nx=x+dx, ny=y+dy; if(inb(nx,ny)) res.push([nx,ny]); }} return res;
+        }
+
+        function placeMines(sx, sy){
+          let placed = 0;
+          while(placed < MINES){
+            const x = Math.floor(Math.random()*SIZE);
+            const y = Math.floor(Math.random()*SIZE);
+            if ((x===sx && y===sy) || mineMap[x][y]) continue;
+            mineMap[x][y] = true; placed++;
+          }
+          // заполнить числа
+          for(let x=0;x<SIZE;x++){
+            for(let y=0;y<SIZE;y++){
+              if(mineMap[x][y]){ grid[x][y] = -1; continue; }
+              const count = neighbors(x,y).reduce((a,[nx,ny])=> a + (mineMap[nx][ny]?1:0), 0);
+              grid[x][y] = count; // 0..8
+            }
+          }
+        }
+
+        function startTimer(){
+          startTime = Date.now();
+          clearInterval(timer);
+          timer = setInterval(()=>{
+            timeEl.textContent = String(Math.floor((Date.now()-startTime)/1000));
+          }, 1000);
+          timerOn = true;
+        }
+
+        function reveal(x,y){
+          if(!alive || flagged[x][y] || revealed[x][y]) return;
+          if(!minesPlaced){ placeMines(x,y); minesPlaced = true; if(!timerOn) startTimer(); }
+          revealed[x][y] = true;
+          if(grid[x][y] === -1){ // мина
+            alive = false; clearInterval(timer);
+            showMines();
+            overlayMsg('Подорвались');
+            return;
+          }
+          if(grid[x][y] === 0){ // flood fill
+            const q=[[x,y]]; const seen=new Set([x+','+y]);
+            while(q.length){
+              const [cx,cy] = q.shift();
+              for(const [nx,ny] of neighbors(cx,cy)){
+                if(seen.has(nx+','+ny)) continue;
+                if(flagged[nx][ny]) continue;
+                revealed[nx][ny] = true; seen.add(nx+','+ny);
+                if(grid[nx][ny]===0) q.push([nx,ny]);
+              }
+            }
+          }
+          // Перерисовываем все клетки, чтобы отобразить массовое открытие
+          render();
+          if(checkWin()){
+            alive=false; clearInterval(timer);
+            const t = Math.floor((Date.now()-startTime)/1000);
+            if(bestSaved===0 || t < bestSaved){ localStorage.setItem(bestKey, String(t)); bestEl.textContent = String(t)+'с'; }
+            overlayMsg('Победа!');
+          }
+        }
+
+        function toggleFlag(x,y){
+          if(!alive) return;
+          // не позволяем ставить флажок на уже открытой клетке
+          if(revealed[x][y]) return;
+          flagged[x][y] = !flagged[x][y];
+          const flags = flagged.flat().filter(Boolean).length;
+          minesLeftEl.textContent = String(Math.max(MINES - flags, 0));
+          renderCell(x,y);
+        }
+
+        function checkWin(){
+          for(let x=0;x<SIZE;x++) for(let y=0;y<SIZE;y++){
+            if(grid[x][y]!==-1 && !revealed[x][y]) return false;
+          }
+          return true;
+        }
+
+        function showMines(){
+          for(let x=0;x<SIZE;x++) for(let y=0;y<SIZE;y++){
+            if(mineMap[x][y]){
+              const el = cellEl(x,y); el.classList.add('mine'); el.textContent='💣';
+            }
+          }
+        }
+
+        function overlayMsg(text){
+          const mask = document.createElement('div');
+          mask.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);border-radius:10px;';
+          const msg = document.createElement('div');
+          msg.style.cssText = 'background:#141821;border:1px solid #1f2632;color:#fff;padding:12px 16px;border-radius:8px;font-weight:700;';
+          msg.textContent = text;
+          const container = boardEl.parentElement;
+          container.style.position='relative';
+          mask.appendChild(msg); container.appendChild(mask);
+          setTimeout(()=>{ mask.remove(); }, 1500);
+        }
+
+        function cellEl(x,y){ return document.querySelector(`[data-x="${x}"][data-y="${y}"]`); }
+
+        function render(){
+          boardEl.innerHTML = '';
+          for(let y=0;y<SIZE;y++){
+            for(let x=0;x<SIZE;x++){
+              const div = document.createElement('div');
+              div.className = 'cell';
+              div.setAttribute('data-x', String(x));
+              div.setAttribute('data-y', String(y));
+              div.addEventListener('click', (e)=>{ e.preventDefault(); reveal(x,y); });
+              // тач: короткий тап — открыть, долгий (>=400мс) — флаг
+              (function(){
+                let tId;
+                div.addEventListener('touchstart', (te)=>{ te.preventDefault(); tId = setTimeout(()=>{ toggleFlag(x,y); tId=null; }, 400); }, {passive:false});
+                div.addEventListener('touchend', (te)=>{ te.preventDefault(); if(tId){ clearTimeout(tId); tId=null; reveal(x,y); } }, {passive:false});
+              })();
+              div.addEventListener('contextmenu', (e)=>{ e.preventDefault(); toggleFlag(x,y); });
+              div.addEventListener('mousedown', (e)=>{ if(e.shiftKey) { e.preventDefault(); toggleFlag(x,y); }});
+
+              // Применяем текущее состояние клетки
+              if (flagged[x][y]) {
+                div.classList.add('flag');
+                div.textContent = '⚑';
+              } else if (revealed[x][y]) {
+                div.classList.add('open');
+                const val = grid[x][y];
+                if (val === -1) {
+                  // Мины обычно показываются при поражении, но на всякий случай
+                  div.classList.add('mine');
+                  div.textContent = '💣';
+                } else if (val > 0) {
+                  div.textContent = String(val);
+                  div.classList.add('n'+val);
+                } // 0 остаётся пустым
+              }
+
+              boardEl.appendChild(div);
+            }
+          }
+        }
+
+        function renderCell(x,y){
+          const el = cellEl(x,y);
+          el.classList.toggle('open', revealed[x][y]);
+          el.classList.toggle('flag', flagged[x][y]);
+          if(flagged[x][y]){ el.textContent='⚑'; return; }
+          if(!revealed[x][y]){ el.textContent=''; return; }
+          const val = grid[x][y];
+          if(val === -1){ el.classList.add('mine'); el.textContent='💣'; return; }
+          if(val === 0){ el.textContent=''; return; }
+          el.textContent = String(val); el.classList.add('n'+val);
+        }
+
+        // Controls
+        btnStart.addEventListener('click', ()=>{ if(!timerOn){ startTimer(); } });
+        btnReset.addEventListener('click', reset);
+        window.addEventListener('keydown',(e)=>{ if(e.key.toLowerCase()==='r') reset(); });
+
+        reset();
+      })();
+    </script>
+      <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>
