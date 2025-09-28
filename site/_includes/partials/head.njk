@@ -1,0 +1,38 @@
+{% set currentUrl = canonical or (site.baseUrl + page.url) %}
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+<title>{{ title }}</title>
+<meta name="description" content="{{ description }}">
+
+{# Auto hreflang for homepage across locales #}
+{% if page.url and (page.url == '/' or '/index.html' in page.url) %}
+  {% for loc in locales %}
+    {% if loc == 'ru' %}
+      <link rel="alternate" href="{{ site.baseUrl }}/" hreflang="ru" />
+    {% else %}
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/" hreflang="{{ loc }}" />
+    {% endif %}
+  {% endfor %}
+  <link rel="alternate" href="{{ site.baseUrl }}/" hreflang="x-default" />
+{% endif %}
+
+{% if canonical %}<link rel="canonical" href="{{ canonical }}">{% else %}
+  {% if locale == 'ru' %}
+    <link rel="canonical" href="{{ site.baseUrl }}/">
+  {% else %}
+    <link rel="canonical" href="{{ site.baseUrl }}/frontend/{{ locale }}/">
+  {% endif %}
+{% endif %}
+
+<meta property="og:title" content="{{ ogTitle or title }}" />
+<meta property="og:description" content="{{ ogDescription or description }}" />
+<meta property="og:image" content="{{ ogImage or (site.baseUrl + '/frontend/images/Banner_Serpmonn.png') }}" />
+<meta property="og:url" content="{{ currentUrl }}" />
+<meta property="og:type" content="website" />
+
+<link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+<link rel="manifest" href="/frontend/pwa/manifest.json">
+
+<link rel="stylesheet" href="/frontend/styles/styles.css">

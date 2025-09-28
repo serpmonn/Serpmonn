@@ -1,0 +1,30 @@
+---
+layout: layouts/base.njk
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/index.html{% else %}/frontend/{{ locale }}/index.html{% endif %}"
+eleventyComputed:
+  title: "{{ i18n[locale].title }}"
+  description: "{{ i18n[locale].description }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+---
+
+{% set heading = i18n[locale].heading %}
+{% set subheading = i18n[locale].subheading %}
+{% set cookieNotice = i18n[locale].cookie.text %}
+{% set acceptLabel = i18n[locale].cookie.accept %}
+{% set declineLabel = i18n[locale].cookie.decline %}
+
+<div class="container search-card">
+  <div class="main-search-container">
+    <img src="/frontend/images/serpmonn.ico" alt="Serpmonn Logo" class="logo" title="Serpmonn">
+    <div class="gcse-searchbox-only"></div>
+  </div>
+</div>
+
+<div class="ad-container main-page">
+  <ins class="mrg-tag" style="display:inline-block;width:auto;height:250px" data-ad-client="ad-1844119" data-ad-slot="1844119"></ins>
+  <script>(MRGtag = window.MRGtag || []).push({});</script>
+</div>

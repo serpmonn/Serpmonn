@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+<script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="ru">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SerpmonnAI</title>
+    <!-- Open Graph -->
+    <meta property="og:title" content="SerpmonnAI — демо">
+    <meta property="og:description" content="Задайте вопрос и получите ответ в демо SerpmonnAI.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/openai_test.html">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SerpmonnAI — демо">
+    <meta name="twitter:description" content="Задайте вопрос и получите ответ.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+</head>
+<body>
+    <h1>Задайте вопрос</h1>
+    <form id="qa-form">
+        <label for="question">Ваш вопрос:</label>
+        <input type="text" id="question" name="question" required><br><br>
+
+        <button type="submit">Получить ответ</button>
+    </form>
+
+    <h2>Ответ:</h2>
+    <p id="answer"></p>
+
+    <script>
+        // Функция для отправки данных на сервер и получения ответа
+        document.getElementById("qa-form").addEventListener("submit", async function(event) {
+            event.preventDefault(); // предотвращаем отправку формы
+            const question = document.getElementById("question").value;
+            try {
+                const response = await fetch('https://serpmonn.ru/openai', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ question })
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById("answer").textContent = `Ответ: ${data.answer}`;
+                } else {
+                    document.getElementById("answer").textContent = 'Ошибка при получении ответа.';
+                }
+            } catch (error) {
+                console.error("Ошибка:", error);
+                document.getElementById("answer").textContent = 'Ошибка при отправке запроса.';
+            }
+        });
+    </script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>
+
