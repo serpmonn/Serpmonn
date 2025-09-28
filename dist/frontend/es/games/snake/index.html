@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es" dir="ltr">
+  <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/es/games/snake/index.html">
+<meta property="og:url" content="https://www.serpmonn.ru/frontend/es/games/snake/index.html" />
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="es">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Змейка — Serpmonn</title>
+    <meta name="description" content="Классическая игра Змейка: собери как можно больше яблок, избегай столкновений.">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+
+    <style>
+      :root { --bg:#0f0f10; --grid:#1b1b1d; --snake:#2ecc71; --food:#e74c3c; --text:#e6e6e6; --accent:#dc3545; }
+      html, body { width: 100%; height: 100%; overflow: hidden; background: var(--bg); }
+      body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; color: var(--text); }
+      .page { max-width: 1000px; margin: 0 auto; padding: 16px; }
+      header { display: flex; align-items: center; gap: 12px; margin: 10px 0 16px; }
+      header h1 { font-size: 1.6rem; margin: 0; }
+      .wrap { display: grid; grid-template-columns: 1fr 320px; gap: 16px; align-items: start; }
+      .panel { background: #141416; border: 1px solid #242428; border-radius: 10px; padding: 12px 14px; }
+      .panel h2 { font-size: 1rem; margin: 0 0 10px; color: #ddd; }
+      .stats { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin-bottom: 10px; }
+      .stat { background: #16181b; border: 1px solid #23262a; border-radius: 8px; padding: 8px 10px; text-align: center; }
+      .stat b { font-size: 1.1rem; }
+      .controls { display: grid; grid-template-columns: repeat(3,64px); gap: 8px; justify-content: center; margin-top: 8px; }
+      @media (max-width: 960px) { .controls { display: none; } }
+      .btn { background: #1a1c20; border: 1px solid #2a2e33; color: #eee; border-radius: 8px; padding: 8px; cursor: pointer; user-select: none; text-align: center; }
+      .btn:active { transform: translateY(1px); }
+      .primary { background: linear-gradient(90deg, #dc3545, #c82333); border: none; }
+      canvas { background: var(--grid); width: 100%; max-width: 640px; height: auto; border-radius: 10px; border: 1px solid #242428; box-shadow: 0 8px 30px rgba(0,0,0,.25); display:block; margin:0 auto; }
+      .hint { color: #bbb; font-size: .95rem; text-align: center; margin-top: 10px; }
+      @media (max-width: 960px) { .wrap { grid-template-columns: 1fr; } }
+    </style>
+  </head>
+  <body>
+    <div id="menuContainer"></div>
+    <script>
+      (function(){
+        function isMobile(){ return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768); }
+        function showInstructions(){
+          if (localStorage.getItem('game_instructions_snake_shown') === '1') return;
+          var ov=document.createElement('div'); ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9998;';
+          var box=document.createElement('div'); box.style.cssText='max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
+          var h=document.createElement('h3'); h.textContent='Как играть — Змейка'; h.style.margin='0 0 8px';
+          var p=document.createElement('div'); p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
+          p.textContent = isMobile() ? '• Свайпы — управление\n• Старт/Пауза — кнопки'
+                                   : '• Стрелки или WASD — управление\n• Пробел — пауза\n• R — перезапуск';
+          var btn=document.createElement('button'); btn.className='btn'; btn.textContent='Понятно'; btn.style.marginTop='10px';
+          btn.onclick=function(){ ov.remove(); localStorage.setItem('game_instructions_snake_shown','1'); };
+          box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
+        }
+        document.addEventListener('DOMContentLoaded', showInstructions);
+      })();
+    </script>
+    <div class="page">
+      <header>
+        <img src="/frontend/images/WebGames.ico" width="28" height="28" alt="Игры" style="border-radius:6px;">
+        <h1>Змейка</h1>
+      </header>
+
+      <div class="wrap">
+        <div class="panel">
+          <canvas id="game" width="480" height="480" aria-label="Игровое поле"></canvas>
+          <div class="hint">Управление: стрелки или WASD. Пауза — пробел. Перезапуск — R.</div>
+        </div>
+
+        <div class="panel">
+          <h2>Статистика</h2>
+          <div class="stats">
+            <div class="stat">Счёт<br><b id="score">0</b></div>
+            <div class="stat">Рекорд<br><b id="best">0</b></div>
+          </div>
+          <div class="stats">
+            <div class="stat">Скорость<br><b id="speed">1x</b></div>
+            <div class="stat">Размер поля<br><b>24×24</b></div>
+          </div>
+          <div style="display:flex; gap:8px; justify-content:center; margin-top:8px;">
+            <button class="btn primary" id="btnStart">Старт</button>
+            <button class="btn" id="btnPause">Пауза</button>
+            <button class="btn" id="btnReset">Заново</button>
+          </div>
+
+          <div class="controls" aria-label="Мобильное управление">
+            <div></div>
+            <button class="btn" data-dir="up">▲</button>
+            <div></div>
+            <button class="btn" data-dir="left">◀</button>
+            <button class="btn" data-dir="down">▼</button>
+            <button class="btn" data-dir="right">▶</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script>
+      (function(){
+        const canvas = document.getElementById('game');
+        const ctx = canvas.getContext('2d');
+        const size = 20; // размер клетки
+        const cells = 24; // количество клеток (поле 24x24)
+        canvas.width = canvas.height = cells * size;
+
+        const scoreEl = document.getElementById('score');
+        const bestEl = document.getElementById('best');
+        const speedEl = document.getElementById('speed');
+        const btnStart = document.getElementById('btnStart');
+        const btnPause = document.getElementById('btnPause');
+        const btnReset = document.getElementById('btnReset');
+
+        const bestKey = 'snake_best_score_v1';
+        let best = parseInt(localStorage.getItem(bestKey)||'0',10); bestEl.textContent = String(best);
+
+        let snake, dir, nextDir, food, score, tickMs, timer, paused, alive;
+
+        function reset(){
+          snake = [{x:12,y:12},{x:11,y:12},{x:10,y:12}];
+          dir = {x:1,y:0};
+          nextDir = {x:1,y:0};
+          food = spawnFood();
+          score = 0; scoreEl.textContent = '0';
+          tickMs = 140; updateSpeed();
+          paused = false; alive = true;
+          startLoop();
+        }
+
+        function updateSpeed(){
+          const mult = (160 - tickMs) / 20 + 1; // 140ms -> 1x; 60ms -> 5x
+          speedEl.textContent = Math.max(1, Math.round(mult)) + 'x';
+        }
+
+        function spawnFood(){
+          while(true){
+            const f = {x:Math.floor(Math.random()*cells), y:Math.floor(Math.random()*cells)};
+            if(!snake.some(s=>s.x===f.x && s.y===f.y)) return f;
+          }
+        }
+
+        function startLoop(){
+          stopLoop();
+          timer = setInterval(step, tickMs);
+        }
+        function stopLoop(){ if(timer){ clearInterval(timer); timer=null; } }
+
+        function step(){
+          if(paused || !alive) return;
+          dir = nextDir; // фикс доворота не чаще одного тика
+          const head = {x: snake[0].x + dir.x, y: snake[0].y + dir.y};
+
+          // стены (зацикливание по тору)
+          head.x = (head.x + cells) % cells;
+          head.y = (head.y + cells) % cells;
+
+          // самоукус
+          if(snake.some(p => p.x===head.x && p.y===head.y)){
+            gameOver(); return;
+          }
+
+          snake.unshift(head);
+          if(head.x===food.x && head.y===food.y){
+            score += 1; scoreEl.textContent = String(score);
+            if(score>best){ best=score; localStorage.setItem(bestKey,String(best)); bestEl.textContent=String(best); }
+            food = spawnFood();
+            if(tickMs>70){ tickMs -= 5; updateSpeed(); startLoop(); }
+          } else {
+            snake.pop();
+          }
+
+          draw();
+        }
+
+        function draw(){
+          // фон сетки
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--grid') || '#1b1b1d';
+          ctx.fillRect(0,0,canvas.width,canvas.height);
+
+          // еда
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--food') || '#e74c3c';
+          roundRect(ctx, food.x*size, food.y*size, size, size, 4, true);
+
+          // змейка
+          ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--snake') || '#2ecc71';
+          snake.forEach((p,i)=>{
+            roundRect(ctx, p.x*size+1, p.y*size+1, size-2, size-2, i===0?5:3, true);
+          });
+        }
+
+        function roundRect(ctx, x, y, w, h, r, fill){
+          ctx.beginPath();
+          ctx.moveTo(x+r, y);
+          ctx.arcTo(x+w, y, x+w, y+h, r);
+          ctx.arcTo(x+w, y+h, x, y+h, r);
+          ctx.arcTo(x, y+h, x, y, r);
+          ctx.arcTo(x, y, x+w, y, r);
+          ctx.closePath();
+          if(fill) ctx.fill();
+        }
+
+        function gameOver(){
+          alive = false; stopLoop();
+          ctx.fillStyle = 'rgba(0,0,0,.55)';
+          ctx.fillRect(0,0,canvas.width,canvas.height);
+          ctx.fillStyle = '#fff'; ctx.textAlign = 'center';
+          ctx.font = 'bold 28px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+          ctx.fillText('Игра окончена', canvas.width/2, canvas.height/2 - 10);
+          ctx.font = '16px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+          ctx.fillText('Нажмите R — заново', canvas.width/2, canvas.height/2 + 18);
+        }
+
+        function setDir(nx, ny){
+          if((-nx===dir.x && ny===dir.y) || (nx===dir.x && -ny===dir.y)) return; // запрет разворота на 180°
+          nextDir = {x:nx, y:ny};
+        }
+
+        window.addEventListener('keydown', (e)=>{
+          const k = e.key.toLowerCase();
+          if(k==='arrowup' || k==='w') setDir(0,-1);
+          else if(k==='arrowdown' || k==='s') setDir(0,1);
+          else if(k==='arrowleft' || k==='a') setDir(-1,0);
+          else if(k==='arrowright' || k==='d') setDir(1,0);
+          else if(k===' ') { paused = !paused; if(!paused && alive) startLoop(); }
+
+          else if(k==='r') reset();
+        });
+
+        // Свайпы для мобильных
+        (function(){
+          let sx=0, sy=0;
+          canvas.addEventListener('touchstart', (e)=>{ const t=e.touches[0]; sx=t.clientX; sy=t.clientY; }, {passive:true});
+          canvas.addEventListener('touchend', (e)=>{
+            const t=e.changedTouches[0]; const dx=t.clientX-sx, dy=t.clientY-sy;
+            if(Math.abs(dx) > Math.abs(dy)){
+              if(dx>15) setDir(1,0); else if(dx<-15) setDir(-1,0);
+            } else {
+              if(dy>15) setDir(0,1); else if(dy<-15) setDir(0,-1);
+            }
+            sx=sy=0;
+          }, {passive:true});
+        })();
+
+        document.querySelectorAll('[data-dir]').forEach(btn=>{
+          btn.addEventListener('click',()=>{
+            const d = btn.getAttribute('data-dir');
+            if(d==='up') setDir(0,-1);
+            if(d==='down') setDir(0,1);
+            if(d==='left') setDir(-1,0);
+            if(d==='right') setDir(1,0);
+          });
+        });
+
+        btnStart.addEventListener('click', ()=>{ if(!alive) reset(); else paused=false; startLoop(); });
+        btnPause.addEventListener('click', ()=>{ paused = !paused; if(!paused) startLoop(); else stopLoop(); });
+        btnReset.addEventListener('click', ()=> reset());
+
+        // старт
+        reset(); draw();
+      })();
+    </script>
+      <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="kk" dir="ltr">
+  <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/kk/news/articles/utm-complete-guide.html">
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="kk">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>UTM: Полное руководство — 2025</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="UTM: Полное руководство — 2025">
+    <meta property="og:description" content="Что такое UTM‑метки, как их правильно ставить, таксономия для GA4, шаблоны для Google/Meta/VK/Telegram/Email и частые ошибки.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://www.serpmonn.ru/frontend/kk/news/articles/utm-complete-guide.html">
+    <meta property="og:type" content="article">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="UTM: Полное руководство — 2025">
+    <meta name="twitter:description" content="Что такое UTM, параметры, GA4, шаблоны для разных каналов, ошибки и чек‑лист.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+
+    <style>
+      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.6; }
+      .news-container { background: #fff; border-radius: 12px; padding: 32px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+      .news-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e9ecef; }
+      .news-title { font-size: 2.2rem; color: #333; margin-bottom: 10px; font-weight: 700; }
+      .news-date { color: #6c757d; font-size: 1.05rem; font-weight: 500; }
+      .summary { background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 8px; padding: 16px; margin: 20px 0; color: #155724; }
+      .toc { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin: 20px 0; }
+      .toc a { text-decoration: none; }
+      h2 { margin-top: 28px; }
+      .code { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: .95rem; overflow-x: auto; }
+      .note { background: #fff3cd; border: 1px solid #ffe08a; border-radius: 8px; padding: 12px; margin: 16px 0; color: #7a5b00; }
+      .faq { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; }
+      .faq h3 { margin: 0 0 10px; }
+      .btn { display:inline-block; padding:10px 16px; background:#dc3545; color:#fff; text-decoration:none; border-radius:8px; font-weight:600; }
+      .muted { color:#6c757d; }
+    </style>
+  </head>
+  <body>
+    <style>
+      .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
+      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
+    </style>
+
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/">Главная</a> →
+      <a href="/frontend/news/index.html">Новости</a> →
+      <span>UTM: Полное руководство</span>
+    </div>
+
+    <div class="news-container">
+      <div class="news-header">
+        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+        <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+          <ins class="mrg-tag" 
+              style="display:inline-block;"
+              data-ad-client="ad-1897960" 
+              data-ad-slot="1897960">
+          </ins>
+        </div>
+        <script>
+          (MRGtag = window.MRGtag || []).push({});
+        </script>
+        <h1 class="news-title">UTM: Полное руководство</h1>
+        <div class="news-date">15 сентября 2025</div>
+      </div>
+
+      <div class="summary">
+        <strong>Зачем читать:</strong> вы научитесь правильно ставить UTM‑метки для любой кампании, избежите типичных ошибок и получите готовые шаблоны под основные каналы. В конце — FAQ и чек‑лист.
+      </div>
+
+      <div class="toc">
+        <strong>Оглавление</strong>
+        <ol>
+          <li><a href="#what">Что такое UTM и зачем</a></li>
+          <li><a href="#params">Параметры UTM: source/medium/campaign/term/content</a></li>
+          <li><a href="#ga4">Связка с GA4: атрибуция и отчёты</a></li>
+          <li><a href="#naming">Таксономия и нейминг</a></li>
+          <li><a href="#platforms">Шаблоны под каналы (Google/Meta/VK/Telegram/Email)</a></li>
+          <li><a href="#examples">Примеры и готовые ссылки</a></li>
+          <li><a href="#mistakes">Типичные ошибки</a></li>
+          <li><a href="#faq">FAQ и чек‑лист</a></li>
+        </ol>
+      </div>
+
+      <h2 id="what">1) Что такое UTM и зачем</h2>
+      <p>UTM‑метки — это параметры в URL, которые помогают системам аналитики (GA4 и др.) понимать источник перехода, тип канала, кампанию и креатив. Это основа корректной атрибуции и сравнения эффективности каналов.</p>
+
+      <h2 id="params">2) Базовые параметры UTM</h2>
+      <ul>
+        <li><code>utm_source</code> — источник (например, <code>google</code>, <code>facebook</code>, <code>vk</code>, <code>telegram</code>).</li>
+        <li><code>utm_medium</code> — тип канала (<code>cpc</code>, <code>paid_social</code>, <code>display</code>, <code>email</code>, <code>referral</code> и др.).</li>
+        <li><code>utm_campaign</code> — кампания (название акции/продукта/периода: <code>y2025q3_launch_widget</code>).</li>
+        <li><code>utm_term</code> — ключевое слово (чаще в поисковой рекламе).</li>
+        <li><code>utm_content</code> — вариант креатива/баннера/кнопки (<code>banner_a_red</code>, <code>cta_top</code>).</li>
+      </ul>
+      <div class="note">Дополнительные поля (необязательно): <code>utm_id</code>, <code>utm_source_platform</code>, <code>utm_creative_format</code>, <code>utm_marketing_tactic</code> — GA4 умеет их читать в расширенных отчётах.</div>
+
+      <h2 id="ga4">3) GA4: как это читается</h2>
+      <p>GA4 использует UTM для полей <em>session_source/medium</em>, <em>first_user_source/medium</em>, <em>campaign</em> и др. Если включено авто‑тегирование Google Ads (<code>gclid</code>), оно имеет приоритет, но UTM всё равно полезны для кроссплатформенной консистентности и BI.</p>
+      <ul>
+        <li>Соблюдайте единый регистр (нижний, латиница), чтобы не плодить дубликаты каналов.</li>
+        <li>Не смешивайте каналы в <code>utm_medium</code> (например, <code>cpc</code> ≠ <code>paid_social</code>).</li>
+        <li>Проверяйте, что редиректы не срезают параметры (особенно в m‑линках/прокладках).</li>
+      </ul>
+
+      <h2 id="naming">4) Таксономия и нейминг</h2>
+      <ul>
+        <li><strong>Шаблон кампании:</strong> <code>y2025q3_{продукт|оффер}_{цель|событие}</code></li>
+        <li><strong>Регистр:</strong> только нижний (<code>lowercase</code>), разделитель — дефис (<code>-</code>).</li>
+        <li><strong>Без пробелов</strong>, кириллицу транслитерировать: <code>осень‑распродажа → osen-rasprodazha</code>.</li>
+        <li><strong>Medium словарь:</strong> <code>cpc</code>, <code>paid_social</code>, <code>display</code>, <code>email</code>, <code>referral</code>, <code>organic</code>.</li>
+      </ul>
+
+      <h2 id="platforms">5) Шаблоны под каналы</h2>
+      <p>Быстрые рекомендации для популярных источников:</p>
+      <ul>
+        <li><strong>Google Ads (поиск/КМС):</strong> <code>utm_source=google</code>, <code>utm_medium=cpc</code>, <code>utm_campaign=...</code>, <code>utm_term={keyword}</code>, <code>utm_content={adgroup}</code>. Автотег <code>gclid</code> оставляем включённым.</li>
+        <li><strong>Facebook/Meta:</strong> <code>utm_source=facebook</code>, <code>utm_medium=paid_social</code>, <code>utm_campaign=...</code>, <code>utm_content={placement}_{creative}</code>.</li>
+        <li><strong>VK:</strong> <code>utm_source=vk</code>, <code>utm_medium=paid_social</code>, <code>utm_campaign=...</code>, <code>utm_content={ad_id}</code>.</li>
+        <li><strong>Telegram:</strong> <code>utm_source=telegram</code>, <code>utm_medium=social</code> (или <code>paid_social</code> для рекламы), <code>utm_campaign=...</code>, <code>utm_content=post_{n}|story</code>.</li>
+        <li><strong>Email:</strong> <code>utm_source=newsletter</code> (или ESP), <code>utm_medium=email</code>, <code>utm_campaign=...</code>, <code>utm_content=btn_{variant}</code>.</li>
+      </ul>
+
+      <h2 id="examples">6) Примеры</h2>
+      <div class="code">
+GET https://example.com/landing?
+  utm_source=google&
+  utm_medium=cpc&
+  utm_campaign=y2025q3_launch_widget&
+  utm_term=buy+widget&
+  utm_content=banner_a
+      </div>
+      <div class="code" style="margin-top:10px;">
+GET https://example.com/landing?
+  utm_source=facebook&
+  utm_medium=paid_social&
+  utm_campaign=y2025q3_launch_widget&
+  utm_content=feed_video_a
+      </div>
+      <p>
+        Удобнее всего собирать ссылки в нашем конструкторе:
+        <a class="btn" href="https://serpmonn.ru/frontend/tools/marketing/utm-builder.html" target="_blank" rel="noopener">Открыть UTM Builder</a>
+      </p>
+
+      <h2 id="mistakes">7) Типичные ошибки</h2>
+      <ul>
+        <li>Смешение <code>utm_medium</code> (<code>cpc</code> vs <code>paid_social</code>), разные регистры (<code>CPC</code> vs <code>cpc</code>).</li>
+        <li>Пробелы/кириллица в значениях, отсутствие URL‑кодирования.</li>
+        <li>Разные названия одной кампании в нескольких системах.</li>
+        <li>Потеря UTM на редиректах (непрозрачные прокладки, короткие ссылки без переноса параметров).</li>
+      </ul>
+
+      <h2 id="faq">8) FAQ и чек‑лист</h2>
+      <div class="faq">
+        <h3>Какой минимум параметров ставить?</h3>
+        <p><strong>source, medium, campaign</strong> — достаточно для базовой атрибуции; <strong>term/content</strong> — по необходимости.</p>
+        <h3>Нужны ли UTM при включённом gclid?</h3>
+        <p>Да, для консистентности между каналами и в сторонних отчётах/BI. <em>gclid</em> не мешает UTM.</p>
+        <h3>Как проверять корректность?</h3>
+        <p>Клик по ссылке → в реальном времени смотрим трафик/метки в GA4 DebugView/Realtime. Проверяем редиректы.</p>
+        <h3>Где хранить таксономию?</h3>
+        <p>В общем справочнике (Notion/Sheet/Git), где зафиксированы словари <code>medium</code>, правила нейминга и архива кампаниям.</p>
+        <h3>Чек‑лист перед запуском</h3>
+        <ul>
+          <li>Регистр/кодировка, единые словари.</li>
+          <li>Одинаковый <code>utm_campaign</code> во всех объявлениях кампании.</li>
+          <li>Проверка редиректов, финальный клик‑тест.</li>
+        </ul>
+      </div>
+
+      <p class="muted" style="margin-top:16px;">Обновлено: 15.09.2025 • Категория: Обучение</p>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+      <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>
