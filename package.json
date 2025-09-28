@@ -5,10 +5,23 @@
   "scripts": {
     "build": "eleventy",
     "dev": "eleventy --serve",
-    "clean": "rm -rf dist"
+    "clean": "rm -rf dist",
+    "start:dev": "node backend/dev-server.mjs",
+    "start:api": "node backend/server.mjs"
   },
   "devDependencies": {
     "@11ty/eleventy": "^3.1.2",
     "nunjucks": "^3.2.4"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "csurf": "^1.11.0",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0"
   }
 }
