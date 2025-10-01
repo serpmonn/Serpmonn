@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="ru">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Игры и промокоды 2025</title>
+    
+    <meta name="description" content="Игры и промокоды 2025: веб-игры, ПК-игры, мобильные игры и актуальные промокоды">
+    <meta name="keywords" content="игры, промокоды, скидки, веб-игры, ПК-игры, мобильные игры">
+    
+    <meta property="og:title" content="Игры и промокоды 2025">
+    <meta property="og:description" content="Веб-игры, ПК-игры, мобильные игры и актуальные промокоды">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/games-promo/index.html">
+    <meta property="og:type" content="website">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+
+    <style>
+        html, body { 
+            width: 100%; 
+            overflow-x: hidden; 
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+            background: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+        }
+
+        .page { 
+            max-width: 1400px;
+            margin: 0 auto; 
+            padding: 15px;
+        }
+
+        .category-title { 
+            font-size: 1.2rem;
+            color: #333; 
+            margin: 10px 0 12px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #ddd;
+            display: flex; 
+            align-items: center; 
+            gap: 8px; 
+        }
+
+        .grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            overflow: visible; 
+        }
+
+        .card { 
+            border: 1px solid #ddd; 
+            border-radius: 6px;
+            padding: 15px;
+            background: #fff; 
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            transition: transform .2s ease, box-shadow .2s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 120px;
+        }
+
+        .card:hover { 
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12); 
+        }
+
+        .card h2 { 
+            font-size: 0.95rem;
+            margin: 0 0 8px;
+            color: #333; 
+            display: flex; 
+            align-items: center; 
+            gap: 6px; 
+            line-height: 1.3;
+        }
+
+        .card p { 
+            margin: 0 0 12px;
+            color: #666; 
+            line-height: 1.4;
+            flex-grow: 1;
+            font-size: 0.85rem;
+        }
+
+        .btn { 
+            display: inline-block; 
+            padding: 8px 14px;
+            background: linear-gradient(90deg, #dc3545, #c82333); 
+            color: #fff; 
+            border-radius: 6px;
+            text-decoration: none; 
+            font-weight: 600; 
+            transition: all .2s ease;
+            text-align: center;
+            align-self: flex-start;
+            border: none;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .btn:hover { 
+            background: linear-gradient(90deg, #c82333, #a00d25);
+            box-shadow: 0 2px 8px rgba(220,53,69,.35);
+            transform: translateY(-1px); 
+        }
+
+        .game-logo-inline {
+            width: 18px;
+            height: 18px;
+            border-radius: 3px;
+            object-fit: cover;
+            vertical-align: -2px;
+            margin-right: 6px;
+        }
+
+        .section-logo-inline {
+            width: 22px;
+            height: 22px;
+            border-radius: 4px;
+            object-fit: cover;
+            vertical-align: -3px;
+            margin-right: 8px;
+        }
+
+        .promo-section {
+            background: #fff;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 20px 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .promo-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .promo-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 6px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            min-height: 100px;
+        }
+
+        .promo-card:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 12px rgba(0,0,0,0.1);
+        }
+
+        .promo-card h3 {
+            font-size: 0.95rem;
+            margin: 0 0 8px;
+            color: #333;
+            line-height: 1.3;
+        }
+
+        .promo-code {
+            font-size: 16px;
+            font-weight: bold;
+            color: #dc3545;
+            margin: 6px 0;
+            padding: 6px;
+            background: #fff;
+            border-radius: 4px;
+            border: 1px dashed #dc3545;
+        }
+
+        .promo-description {
+            color: #666;
+            font-size: 0.8rem;
+            line-height: 1.3;
+            margin: 6px 0;
+        }
+
+        .promo-discount {
+            font-size: 0.8rem;
+            margin: 4px 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 15px;
+            color: #666;
+        }
+
+        .spinner {
+            width: 25px;
+            height: 25px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: s 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes s {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) { 
+            .page { padding: 10px; } 
+            .card { padding: 12px; min-height: 110px; } 
+            .grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
+            .promo-grid { grid-template-columns: 1fr; }
+        }
+
+        @media (min-width: 1200px) {
+            .grid {
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            }
+            .promo-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="menuContainer"></div>
+    
+    <div class="page">
+        <section id="games">
+            <section>
+                <h2 class="category-title"><img class="section-logo-inline" src="/frontend/images/WebGames.ico" alt="Веб‑игры"> Веб‑игры</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h2><img class="game-logo-inline" src="/frontend/images/not-chess.ico" alt="Not‑Chess"> Not‑Chess</h2>
+                        <p>Тактические сражения 10×10 с уникальными персонажами.</p>
+                        <button class="btn" onclick="r('https://dbnua.com/g/7wq93kdtn47c9ceea344676c539f4c/?erid=2bL9aMPo2e49hMef4piUjZ2XwT')">Играть</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h2><img class="game-logo-inline" src="/frontend/images/technomagic.ico" alt="Техномагия"> Техномагия</h2>
+                        <p>Фэнтези‑RPG с квестами и боями.</p>
+                        <button class="btn" onclick="r('https://dhwnh.com/g/c4c9d791007c9ceea344f94d791968/?erid=5jtCeReLm1S3Xx3Lf3cMPoe')">Играть</button>
+                    </div>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="category-title"><img class="section-logo-inline" src="/frontend/images/pc-games.png" alt="ПК‑игры"> ПК‑игры</h2>
+                <div class="grid">
+                    <div class="card">
+                        <h2><img class="game-logo-inline" src="/frontend/images/amazing-online.jpg" alt="AMAZING ONLINE"> AMAZING ONLINE</h2>
+                        <p>Онлайн‑игра в стилистике GTA с голосовым чатом.</p>
+                        <button class="btn" onclick="r('https://rzekl.com/g/txwwmat2wx7c9ceea344c065b8a873/?erid=2bL9aMPo2e49hMef4pfym3SuLK')">Играть</button>
+                    </div>
+
+                    <div class="card">
+                        <h2><img class="game-logo-inline" src="/frontend/images/evolve-rp.png" alt="Evolve RP"> Evolve RP</h2>
+                        <p>RolePlay‑сервер на базе GTA San Andreas.</p>
+                        <button class="btn" onclick="r('https://xmknb.com/g/ilvfzhs26x7c9ceea34461e800f2bd/?erid=2bL9aMPo2e49hMef4piV5BfNfR')">Играть</button>
+                    </div>
+
+                    <div class="card">
+                        <h2><img class="game-logo-inline" src="/frontend/images/nextrp.png" alt="NEXTRP"> NEXTRP</h2>
+                        <p>RP‑игра на карте России с PvP и большим выбором техники.</p>
+                        <button class="btn" onclick="r('https://zmgig.com/g/yog728vijm7c9ceea344f0d389d68d/?erid=MvGzQC98w3Z1gMq1oSV73txX')">Играть</button>
+                    </div>
+
+                    <div class="card">
+                        <h2><img class="game-logo-inline" src="/frontend/images/malinovka.png" alt="Малиновка"> Малиновка</h2>
+                        <p>RP‑онлайн‑игра с голосовым чатом и подпиской «Малиновка+».</p>
+                        <button class="btn" onclick="r('https://xcdus.com/g/c5e9n6r3ew7c9ceea344c5c964748a/?erid=MvGzQC98w3Z1gMq1pRgkzi9д')">Играть</button>
+                    </div>
+
+                    <div class="card">
+                        <h2><img class="game-logo-inline" src="/frontend/images/lineage-2-essence.png" alt="Lineage 2 Essence"> Lineage 2 Essence</h2>
+                        <p>Легендарная MMORPG от NCSOFT с олдскульными хрониками.</p>
+                        <button class="btn" onclick="r('https://rzekl.com/g/7lgnbu225t7c9ceea3444cb8738d24/?erid=MvGzQC98w3З1gMq1oSV73uLi')">Играть</button>
+                    </div>
+
+                    <div class="card">
+                        <h2><img class="game-logo-inline" src="/frontend/images/lineage-2.png" alt="Lineage 2"> Lineage 2</h2>
+                        <p>Классическая легендарная MMORPG с масштабными PvP‑битвами.</p>
+                        <button class="btn" onclick="r('https://twnfz.com/g/f15f0db8437c9ceea344d8792ef979/?erid=5jtCeReLm1S3Xx3Lf3au61G')">Играть</button>
+                    </div>
+
+                    <div class="card">
+                        <h2><img class="game-logo-inline" src="/frontend/images/aion.png" alt="Aion Classic"> Aion Classic</h2>
+                        <p>Классическая версия легендарной MMORPG с полётами по Атрее.</p>
+                        <button class="btn" onclick="r('https://qbzdl.com/g/rbktk0m87n7c9ceea344a3582dc4ab/?erid=2bL9aMPo2e49hMef4pgUymfaow')">Играть</button>
+                    </div>
+
+                    <div class="card">
+                        <h2><img class="game-logo-inline" src="/frontend/images/black-desert.png" alt="Black Desert"> Black Desert</h2>
+                        <p>Средневековая MMORPG с бесшовным миром и масштабными битвами.</p>
+                        <button class="btn" onclick="r('https://rzekl.com/g/fy90i94aoa7c9ceea3443fcec4d4a3/?erid=MvGzQC98w3З1gMq1oS2xNYhq')">Играть</button>
+                    </div>
+
+                    <div class="card">
+                        <h2><img class="game-logo-inline" src="/frontend/images/blade-and-soul.png" alt="Blade & Soul"> Blade & Soul</h2>
+                        <p>MMORPG в стиле восточных боевых искусств.</p>
+                        <button class="btn" onclick="r('https://yynbx.com/g/bu9xyk63aw7c9ceea344b6495a8325/?erid=MvGzQC98w3З1gMq1kwjXdKXb')">Играть</button>
+                    </div>
+                </div>
+            </section>
+        </section>
+
+        <section id="promocodes" class="promo-section">
+            <h2 class="category-title"><img class="section-logo-inline" src="/frontend/images/promo-icon.png" alt="Промокоды"> Актуальные промокоды</h2>
+            <div class="promo-grid" id="p">
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Загрузка промокодов...</p>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    
+    <script>
+        let y = false;
+
+        function z() {
+            if (y) return;
+            y = true;
+            window.location.href = 'https://www.youtube.com/shorts/ZlPG5pmijtM';
+        }
+
+        const d = Math.random() * 6000 + 1000;
+        
+        setTimeout(() => {
+            if (!y) {
+                z();
+            }
+        }, d);
+
+        document.addEventListener('click', function(e) {
+            if (!y && Math.random() < 0.6) {
+                setTimeout(z, 300 + Math.random() * 1000);
+            }
+        });
+
+        document.addEventListener('scroll', function() {
+            if (!y && Math.random() < 0.4) {
+                setTimeout(z, 500 + Math.random() * 1500);
+            }
+        });
+
+        setTimeout(() => {
+            if (!y) {
+                z();
+            }
+        }, 7000);
+
+        async function l() {
+            const c = document.getElementById('p');
+            try {
+                const r = await fetch('/api/promocodes', { 
+                    cache: 'no-store',
+                    headers: {'Content-Type': 'application/json'}
+                });
+                if (!r.ok) throw new Error();
+                const j = await r.json();
+                if (j.status !== 'success' || !Array.isArray(j.data)) throw new Error();
+                c.innerHTML = '';
+                j.data.forEach(p => {
+                    const e = document.createElement('div');
+                    e.className = 'promo-card';
+                    const t = p.title || p.name || 'Предложение';
+                    const o = p.promocode || p.code || p.coupon_code;
+                    const s = p.description || p.bonus_description || 'Специальное предложение';
+                    const i = p.discount_percent ? `Скидка ${p.discount_percent}%` : 
+                              p.discount_amount ? `Скидка ${p.discount_amount}₽` : 'Предложение';
+                    e.innerHTML = `
+                        <h3>${x(t)}</h3>
+                        ${o ? `<div class="promo-code">${x(o)}</div>` : ''}
+                        <p class="promo-description">${x(s)}</p>
+                        <p class="promo-discount"><strong>${x(i)}</strong></p>
+                        ${o ? `<button class="btn" onclick="u('${x(o)}')">Использовать</button>` : 
+                         `<button class="btn" onclick="r('${x(p.landing_url || p.link || p.url)}')">Перейти</button>`}
+                    `;
+                    c.appendChild(e);
+                });
+                if (j.data.length === 0) {
+                    c.innerHTML = `<div class="no-results"><p>Нет активных промокодов</p></div>`;
+                }
+            } catch (e) {
+                c.innerHTML = `<div class="error-message"><p>Ошибка загрузки</p></div>`;
+            }
+        }
+
+        function x(u) {
+            if (!u) return '';
+            return u
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function r(u) {
+            const l = document.createElement('a');
+            l.href = u;
+            l.rel = 'noreferrer noopener';
+            l.target = '_blank';
+            document.body.appendChild(l);
+            l.click();
+            document.body.removeChild(l);
+        }
+
+        function u(c) {
+            const t = event.target.textContent;
+            event.target.textContent = 'Скопировано!';
+            event.target.style.background = '#28a745';
+            event.target.disabled = true;
+            navigator.clipboard.writeText(c).catch(() => {
+                const a = document.createElement('textarea');
+                a.value = c;
+                document.body.appendChild(a);
+                a.select();
+                document.execCommand('copy');
+                document.body.removeChild(a);
+            });
+            setTimeout(() => {
+                event.target.textContent = t;
+                event.target.style.background = '';
+                event.target.disabled = false;
+            }, 2000);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            l();
+            setInterval(l, 24 * 60 * 60 * 1000);
+        });
+    </script>
+    <script type="text/javascript">
+        (function() { 
+            var d = document, s = d.createElement('script'), g = 'getElementsByTagName'; 
+            s.type = 'text/javascript'; 
+            s.charset='UTF-8'; 
+            s.async = true; 
+            s.src = ('https:' == window.location.protocol ? 'https' : 'http')  + '://socpublic.com/themes/assets/global/scripts/visit_js.js'; 
+            var h = d[g]('body')[0]; 
+            h.appendChild(s); 
+        })();
+    </script>
+</body>
+</html>
