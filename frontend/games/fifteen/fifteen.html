@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <!-- Подключение основных стилей проекта -->
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="ru">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- SEO мета-теги -->
+    <title>Пятнашки — Serpmonn</title>
+    <meta name="description" content="Классическая головоломка 15 Puzzle: собери плитки 1–15 по порядку. Тренируйте память и логику.">
+    
+    <!-- Иконка сайта -->
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    
+    <!-- Подключение стилей проекта -->
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    
+    <!-- Подключение стилей конкретно для игры Пятнашки -->
+    <link rel="stylesheet" href="/frontend/games/fifteen/fifteen.css">
+
+    <!-- Подключение рекламного скрипта -->
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+</head>
+<body>
+    <!-- Контейнер для меню (загружается через JavaScript) -->
+    <div id="menuContainer"></div>
+    
+    <!-- Скрипт для показа полноэкранной рекламы -->
+    <script src="/frontend/games/fifteen/fifteen-ads.js"></script>
+    
+    <!-- Основной контент страницы -->
+    <div class="page">
+        <!-- Шапка страницы с логотипом и названием игры -->
+        <header>
+            <img src="/frontend/images/fifteen.png" width="28" height="28" alt="Игры" style="border-radius:6px;">
+            <h1>Пятнашки</h1>
+        </header>
+        
+        <!-- Скрипт показа инструкций к игре -->
+        <script src="/frontend/games/fifteen/fifteen-instructions.js"></script>
+        
+        <!-- Рекламный баннер -->
+        <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+            <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+        </div>
+        <script>(window.MRGtag = window.MRGtag || []).push({});</script>
+
+        <!-- Основной игровой интерфейс -->
+        <div class="wrap">
+            <!-- Левая панель с игровым полем -->
+            <div class="panel">
+                <!-- Контейнер для игрового поля -->
+                <div id="game" class="game-board" aria-label="Игровое поле пятнашки"></div>
+                <!-- Подсказка по управлению (скрыта по умолчанию) -->
+                <div class="hint" style="display:none;">Перемещайте плитки, чтобы расставить числа по порядку от 1 до 15. Используйте стрелки или WASD.</div>
+            </div>
+            
+            <!-- Правая панель со статистикой и управлением -->
+            <div class="panel">
+                <!-- Блок статистики игры -->
+                <div class="stats">
+                    <div class="stat">Ходы<br><b id="moves">0</b></div>
+                    <div class="stat">Время<br><b id="time">0</b>с</div>
+                    <div class="stat">Рекорд<br><b id="best">0</b></div>
+                </div>
+                
+                <!-- Блок кнопок управления -->
+                <div class="controls">
+                    <button class="btn primary" id="btnNewGame">Новая игра</button>
+                    <button class="btn" id="btnReset">Сбросить</button>
+                </div>
+                
+                <!-- Индикатор решения -->
+                <div class="solved-message" id="solvedMessage" style="display:none;">
+                    <h3>Поздравляем!</h3>
+                    <p>Вы собрали головоломку!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключение основных скриптов проекта -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    
+    <!-- Подключение основной игровой логики -->
+    <script src="/frontend/games/fifteen/fifteen.js" defer></script>
+    
+    <!-- Подключение скриптов для мобильных устройств -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

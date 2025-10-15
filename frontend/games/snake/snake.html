@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <!-- Подключение основных стилей проекта -->
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="ru">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    <!-- SEO мета-теги -->
+    <title>Змейка — Serpmonn</title>
+    <meta name="description" content="Классическая игра Змейка: собери как можно больше яблок, избегай столкновений.">
+    
+    <!-- Иконка сайта -->
+    <link rel="icon" href="/frontend/images/snake.png" type="image/x-icon">
+    
+    <!-- Подключение стилей проекта -->
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    
+    <!-- Подключение стилей конкретно для игры Змейка -->
+    <link rel="stylesheet" href="/frontend/games/snake/snake.css">
+
+    <!-- Яндекс.Метрика -->
+    <script type="text/javascript">
+      (function(m,e,t,r,i,k,a){
+          m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+          m[i].l=1*new Date();
+          for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+          k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+      })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=104305746', 'ym');
+
+      ym(104305746, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/104305746" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+</head>
+<body>
+    <!-- Контейнер для меню (загружается через JavaScript) -->
+    <div id="menuContainer"></div>
+    
+    <!-- Основной контент страницы -->
+    <div class="page">
+        <!-- Шапка страницы с логотипом и названием игры -->
+        <header>
+            <img src="/frontend/images/snake.png" width="28" height="28" alt="Игры" style="border-radius:6px;">
+            <h1>Змейка</h1>
+        </header>
+
+        <!-- Основной игровой интерфейс -->
+        <div class="wrap">
+            <!-- Левая панель с игровым полем -->
+            <div class="panel">
+                <!-- Холст для отрисовки игры -->
+                <canvas id="game" width="480" height="480" aria-label="Игровое поле"></canvas>
+                <!-- Подсказка по управлению -->
+                <div class="hint">Управление: стрелки или WASD. Пауза — пробел. Перезапуск — R.</div>
+            </div>
+
+            <!-- Правая панель со статистикой и управлением -->
+            <div class="panel">
+                <h2>Статистика</h2>
+                
+                <!-- Блок основной статистики -->
+                <div class="stats">
+                    <div class="stat">Счёт<br><b id="score">0</b></div>
+                    <div class="stat">Рекорд<br><b id="best">0</b></div>
+                </div>
+                
+                <!-- Блок дополнительной статистики -->
+                <div class="stats">
+                    <div class="stat">Скорость<br><b id="speed">1x</b></div>
+                    <div class="stat">Размер поля<br><b>24×24</b></div>
+                </div>
+                
+                <!-- Основные кнопки управления -->
+                <div style="display:flex; gap:8px; justify-content:center; margin-top:8px;">
+                    <button class="btn primary" id="btnStart">Старт</button>
+                    <button class="btn" id="btnPause">Пауза</button>
+                    <button class="btn" id="btnReset">Заново</button>
+                </div>
+
+                <!-- Кнопки управления для мобильных устройств -->
+                <div class="controls" aria-label="Мобильное управление">
+                    <div></div>
+                    <button class="btn" data-dir="up">▲</button>
+                    <div></div>
+                    <button class="btn" data-dir="left">◀</button>
+                    <button class="btn" data-dir="down">▼</button>
+                    <button class="btn" data-dir="right">▶</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Подключение основных скриптов проекта -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    
+    <!-- Подключение игровой логики Змейки -->
+    <script src="/frontend/games/snake/snake.js" defer></script>
+    <script src="/frontend/games/snake/snake-instructions.js" defer></script>
+    
+    <!-- Подключение скриптов для мобильных устройств -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    
+    <!-- Внешний счетчик посещений -->
+    <script type="text/javascript">
+        (function() { 
+            var d = document, s = d.createElement('script'), g = 'getElementsByTagName'; 
+            s.type = 'text/javascript'; s.charset='UTF-8'; s.async = true; 
+            s.src = ('https:' == window.location.protocol ? 'https' : 'http')  + '://socpublic.com/themes/assets/global/scripts/visit_js.js'; 
+            var h=d[g]('body')[0]; h.appendChild(s); 
+        })();
+    </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="ru">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Арканоид — Serpmonn</title>
+    <meta name="description" content="Арканоид (Breakout): отбивай мяч платформой и разбивай блоки, набирая очки.">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <link rel="stylesheet" href="/frontend/styles/breakout.css">
+</head>
+<body>
+    <div id="menuContainer"></div>
+    
+    <!-- Рекламный скрипт -->
+    <script src="/frontend/games/breakout/breakout-ads.js"></script>
+    
+    <div class="page">
+        <header>
+            <img src="/frontend/images/breakout.png" width="28" height="28" alt="Игры" style="border-radius:6px;">
+            <h1>Арканоид</h1>
+        </header>
+        
+        <!-- Инструкции -->
+        <script src="/frontend/games/breakout/breakout-instructions.js"></script>
+        
+        <!-- Рекламный баннер -->
+        <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+            <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+        </div>
+        <script>(window.MRGtag = window.MRGtag || []).push({});</script>
+
+        <div class="wrap">
+            <div class="panel">
+                <canvas id="game" width="480" height="640" aria-label="Игровое поле"></canvas>
+                <div class="hint" style="display:none;">Управление: ← → или A/D. Старт/пауза — пробел. Заново — R.</div>
+            </div>
+            <div class="panel">
+                <div class="stats">
+                    <div class="stat">Очки<br><b id="score">0</b></div>
+                    <div class="stat">Жизни<br><b id="lives">3</b></div>
+                    <div class="stat">Рекорд<br><b id="best">0</b></div>
+                </div>
+                <div class="controls">
+                    <button class="btn primary" id="btnStart">Старт</button>
+                    <button class="btn" id="btnReset">Заново</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    
+    <!-- Основная игровая логика -->
+    <script src="/frontend/games/breakout/breakout.js"></script>
+    
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

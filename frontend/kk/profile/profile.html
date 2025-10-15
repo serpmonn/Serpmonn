@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="kk" dir="ltr">
+<head>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="kk">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <!-- Open Graph -->
+    <meta property="og:title" content="Profile — Serpmonn">
+    <meta property="og:description" content="Manage your profile, tools and settings on Serpmonn.">
+
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <meta property="og:url" content="https://serpmonn.ru/frontend/kk/profile/profile.html">
+
+    <meta property="og:type" content="profile">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Profile — Serpmonn">
+    <meta name="twitter:description" content="Manage your profile, tools and settings.">
+
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="canonical" href="https://www.serpmonn.ru/">
+    <link rel="stylesheet" href="/frontend/profile/profile_styles.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <script type="module" src="/frontend/profile/profile_scripts.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h2>👤 User profile</h2>
+
+        <!-- Information о профиле -->
+        <div id="profileInfo" class="card">
+            <h3>📋 Information</h3>
+            <p><strong>Username:</strong> <span id="username"></span></p>
+            <p><strong>Email:</strong> <span id="email"></span></p>
+        </div>
+
+        <!-- Раздел инструментов: быстрые ссылки и список недавно использованных -->
+        <div class="card">
+            <h3>🧰 Tools</h3>
+            <div class="tools-grid">
+                <a class="tool-link" href="/frontend/kk/tools/utm-builder.html">
+                    <span class="tool-icon">🔗</span>
+                    <span class="tool-text">UTM builder</span>
+                </a>
+                <a class="tool-link" href="/frontend/kk/tools/password-generator.html">
+                    <span class="tool-icon">🔐</span>
+                    <span class="tool-text">Password generator</span>
+                </a>
+                <a class="tool-link" href="/frontend/kk/tools/word-counter.html">
+                    <span class="tool-icon">📊</span>
+                    <span class="tool-text">Word/char counter</span>
+                </a>
+                <a class="tool-link" href="/frontend/kk/tools/engineering/unit-converter.html">
+                    <span class="tool-icon">🔄</span>
+                    <span class="tool-text">Unit converter</span>
+                </a>
+                <a class="tool-link" href="/frontend/kk/tools/logistics/depreciation-calculator.html">
+                    <span class="tool-icon">🔧</span>
+                    <span class="tool-text">Depreciation calculator</span>
+                </a>
+                <a class="tool-link" href="/frontend/kk/tools/logistics/fuel-calculator.html">
+                    <span class="tool-icon">⛽</span>
+                    <span class="tool-text">Fuel calculator</span>
+                </a>
+            </div>
+            <div id="recentTools" class="recent-tools"></div>
+        </div>
+
+        <!-- Редактирование профиля -->
+        <div class="card">
+            <h3>✏️ Edit profile</h3>
+            <form id="profileForm" class="form-card">
+                <label for="newUsername">New username</label>
+                <input type="text" id="newUsername" name="newUsername" maxlength="255" placeholder="Enter new username">
+
+                <label for="newEmail">New email</label>
+                <input type="email" id="newEmail" name="newEmail" placeholder="Enter new email">
+
+                <button type="submit" class="primary-button">💾 Save changes</button>
+            </form>
+            <p id="message" class="message"></p>
+        </div>
+
+        <!-- Additional features -->
+        <div class="card">
+            <h3>📧 Additional features</h3>
+            <div class="onnmail-buttons">
+                <button id="createOnnmailButton" class="secondary-button">
+                    <span class="button-icon">➕</span>
+                    @onnmail: Create mailbox
+                </button>
+                <button id="loginOnnmailButton" class="secondary-button">
+                    <span class="button-icon">🔑</span>
+                    @onnmail: Sign in
+                </button>
+            </div>
+        </div>
+
+        <!-- Sign out -->
+        <div class="logout-section">
+            <button id="logoutButton" class="danger-button">
+                <span class="button-icon">🚪</span>
+                Sign out
+            </button>
+        </div>
+
+        <style>
+            /* Сетка ссылок инструментов в профиле */
+            .tools-grid { 
+                display: grid; 
+                grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); 
+                gap: 12px; 
+                margin-bottom: 20px;
+            }
+
+            .tool-link { 
+                display: flex;
+                align-items: center;
+                padding: 16px 20px; 
+                border: 1px solid #e5e7eb; 
+                border-radius: 12px; 
+                text-decoration: none; 
+                color: #111827; 
+                background: #fff;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            }
+
+            .tool-link:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                border-color: #1e11b5;
+            }
+
+            .tool-icon {
+                font-size: 20px;
+                margin-right: 12px;
+            }
+
+            .tool-text {
+                font-weight: 500;
+            }
+
+            .recent-tools {
+                margin-top: 20px;
+                padding-top: 20px;
+                border-top: 1px solid #e5e7eb;
+            }
+
+            .recent-tools strong {
+                display: block;
+                margin-bottom: 12px;
+                color: #374151;
+                font-size: 14px;
+            }
+
+            .recent-tools ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+
+            .recent-tools li {
+                margin-bottom: 8px;
+            }
+
+            .recent-tools a {
+                color: #1e11b5;
+                text-decoration: none;
+                padding: 8px 12px;
+                border-radius: 6px;
+                background: #f3f4f6;
+                display: inline-block;
+                transition: background 0.3s ease;
+            }
+
+            .recent-tools a:hover {
+                background: #e5e7eb;
+            }
+
+            .logout-section {
+                text-align: center;
+                margin-top: 30px;
+                padding-top: 20px;
+                border-top: 1px solid #e5e7eb;
+            }
+
+            .button-icon {
+                margin-right: 8px;
+                font-size: 16px;
+            }
+
+            /* Адаптивность для мобильных устройств */
+            @media (max-width: 768px) {
+                .tools-grid {
+                    grid-template-columns: 1fr;
+                }
+                
+                .tool-link {
+                    padding: 14px 16px;
+                }
+            }
+        </style>
+        <script>
+            // Отслеживание недавно использованных инструментов (localStorage)
+            (function(){
+                const recent = JSON.parse(localStorage.getItem('serp_tools_recent')||'[]');
+
+                const cont = document.getElementById('recentTools');
+                // Выводим список последних 5 инструментов
+                if (recent.length) {
+                    const wrap = document.createElement('div');
+                    wrap.innerHTML = '<strong>Recently used:</strong>';
+                    const ul = document.createElement('ul');
+                    recent.slice(0,5).forEach(item=>{
+                        const li=document.createElement('li');
+                        const a=document.createElement('a'); 
+                        a.href=item.href; 
+                        a.textContent=item.title; 
+                        li.appendChild(a); 
+                        ul.appendChild(li);
+                    });
+                    wrap.appendChild(ul); 
+                    cont.appendChild(wrap);
+                }
+                // Записываем клики по ссылкам инструментов
+                function trackClicks(sel){
+                    document.querySelectorAll(sel).forEach(a=>{
+                        a.addEventListener('click', ()=>{
+                            const arr = JSON.parse(localStorage.getItem('serp_tools_recent')||'[]');
+
+                            arr.unshift({ title:a.textContent.trim(), href:a.getAttribute('href') });
+
+                            // Удаляем дубликаты и ограничиваем до 10 записей
+                            localStorage.setItem('serp_tools_recent', JSON.stringify(arr.filter((v,i,self)=>self.findIndex(x=>x.href===v.href)===i).slice(0,10)));
+                        });
+                    });
+                }
+                trackClicks('.tools-grid a');
+            })();
+        </script>
+    </div>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

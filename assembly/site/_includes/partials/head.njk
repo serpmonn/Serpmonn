@@ -1,0 +1,38 @@
+{% set currentUrl = canonical or (site.baseUrl + page.url) %}                                                                                                                               {# Текущий URL для OG/каноникала #}
+<meta charset="UTF-8">                                                                                                                                                                      {# Кодировка #}
+<meta http-equiv="X-UA-Compatible" content="IE=edge">                                                                                                                                     {# Режим совместимости #}
+<meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">                                      {# Масштаб/адаптив #}
+
+<title>{{ title }}</title>                                                                                                                                                                   {# Заголовок страницы #}
+<meta name="description" content="{{ description }}">                                                                                                                                     {# Описание страницы #}
+
+{# Auto hreflang для главной по всем локалям #}
+{% if page.url and (page.url == '/' or '/index.html' in page.url) %}                                                                                                                         {# На главной выводим все hreflang #}
+  {% for loc in locales %}                                                                                                                                                                   {# Перебираем локали #}
+    {% if loc == 'ru' %}                                                                                                                                                                     {# Русская — корень сайта #}
+      <link rel="alternate" href="{{ site.baseUrl }}/" hreflang="ru" />                                                                                                                 {# Альтернатива RU #}
+    {% else %}                                                                                                                                                                               {# Иные локали — под /frontend/<loc>/ #}
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/" hreflang="{{ loc }}" />                                                                                      {# Альтернативный язык #}
+    {% endif %}
+  {% endfor %}                                                                                                                                                                               {# Конец списка локалей #}
+  <link rel="alternate" href="{{ site.baseUrl }}/" hreflang="x-default" />                                                                                                              {# Язык по умолчанию #}
+{% endif %}
+
+{% if canonical %}<link rel="canonical" href="{{ canonical }}">{% else %}                                                                                                                 {# Канонический URL #}
+  {% if locale == 'ru' %}                                                                                                                                                                    {# Для RU — корень #}
+    <link rel="canonical" href="{{ site.baseUrl }}/">                                                                                                                                    {# Каноникал RU #}
+  {% else %}                                                                                                                                                                                {# Для остальных — путь локали #}
+    <link rel="canonical" href="{{ site.baseUrl }}/frontend/{{ locale }}/">                                                                                                              {# Каноникал локали #}
+  {% endif %}
+{% endif %}
+
+<meta property="og:title" content="{{ ogTitle or title }}" />                                                                                                                            {# OG заголовок #}
+<meta property="og:description" content="{{ ogDescription or description }}" />                                                                                                            {# OG описание #}
+<meta property="og:image" content="{{ ogImage or (site.baseUrl + '/frontend/images/Banner_Serpmonn.png') }}" />                                                                          {# OG картинка #}
+<meta property="og:url" content="{{ currentUrl }}" />                                                                                                                                    {# OG URL #}
+<meta property="og:type" content="website" />                                                                                                                                            {# Тип ресурса #}
+
+<link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">                                                                                                              {# Иконка сайта #}
+<link rel="manifest" href="/frontend/pwa/manifest.json">                                                                                                                                 {# Манифест PWA #}
+
+<link rel="stylesheet" href="/frontend/styles/styles.css">                                                                                                                               {# Общие стили #}

@@ -1,0 +1,89 @@
+{
+  "name": "serpmonn",
+  "version": "1.0.0",
+  "description": "Проект Serpmonn",
+  "type": "module",
+  "main": "backend/server.mjs",
+  "scripts": {
+    "dev:backend": "concurrently \"npm run start-auth\" \"npm run start-news\" \"npm run start-leaderboard\" \"npm run start-X-Car\" \"npm run start-onnmail\" \"npm run start-password-reset\" \"npm run dev-serpmonngames\" \"npm run dev-serpmonnconfirm\" \"npm run dev-memebot\"",
+    "dev:fullstack": "concurrently \"npm run dev:backend\" \"npm run dev:vite\"",
+    "dev:vite": "vite",
+    "dev:eleventy": "eleventy --serve",
+    "start-auth": "node backend/server.mjs",
+    "start-news": "node backend/news/news-server.mjs",
+    "start-leaderboard": "node backend/games/leaderboard-server.mjs",
+    "start-X-Car": "node backend/X-Car/x-car-server.mjs",
+    "start-onnmail": "node backend/auth/onnmail-server.mjs",
+    "start-password-reset": "node backend/auth/password-reset-server.mjs",
+    "dev-serpmonngames": "node backend/telegram_bots/Serpmonn_games/Serpmonn_games.mjs",
+    "dev-serpmonnconfirm": "node backend/telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs",
+    "dev-memebot": "node backend/telegram_bots/meme-bot/meme-bot.mjs",
+    "build:vite": "vite build",
+    "preview": "vite preview",
+    "start": "npm run start-auth & npm run start-news & npm run start-leaderboard & npm run start-serpmonngames & npm run start-serpmonnconfirm & npm run start-X-Car & npm run start-onnmail & npm run start-password-reset & npm run start-memebot",
+    "start-serpmonngames": "pm2 start backend/telegram_bots/Serpmonn_games/Serpmonn_games.mjs --name 'serpmonngamesbot'",
+    "start-serpmonnconfirm": "pm2 start backend/telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs --name 'serpmonnconfirmbot'",
+    "start-memebot": "pm2 start backend/telegram_bots/meme-bot/meme-bot.mjs --name 'memebot'",
+    "site:build": "eleventy",
+    "site:clean": "rm -rf dist"
+  },
+  "author": "Sergei Popov",
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@gitverse.ru:2222/Serpmonn/Serpmonn_project.git"
+  },
+  "keywords": [
+    "Serpmonn",
+    "поиск",
+    "боты",
+    "автоматизация"
+  ],
+  "dependencies": {
+    "@google/generative-ai": "^0.24.1",
+    "axios": "^1.7.9",
+    "bcryptjs": "^2.4.3",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.5",
+    "csurf": "^1.11.0",
+    "date-fns": "^4.1.0",
+    "dotenv": "^16.6.1",
+    "express": "^4.21.2",
+    "express-rate-limit": "^7.5.1",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsdom": "^26.0.0",
+    "limiter": "^3.0.0",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.12.0",
+    "node-fetch": "^3.3.2",
+    "node-telegram-bot-api": "^0.66.0",
+    "nodemailer": "^7.0.4",
+    "paseto": "^3.1.4",
+    "rss-parser": "^3.13.0",
+    "uuid": "^11.0.5"
+  },
+  "license": "Proprietary",
+  "devDependencies": {
+    "@11ty/eleventy": "^3.1.2",
+    "concurrently": "^9.2.1",
+    "nunjucks": "^3.2.4",
+    "pm2": "^6.0.8",
+    "vite": "^7.1.7"
+  },
+  "overrides": {
+    "form-data": "^4.0.4",
+    "tough-cookie": "^5.1.2",
+    "on-headers": "^1.0.2",
+    "request": "npm:@cypress/request@^3.0.8",
+    "cookie": "^0.7.2",
+    "express": {
+      "cookie": "^0.7.2"
+    },
+    "csurf": {
+      "cookie": "^0.7.2"
+    }
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

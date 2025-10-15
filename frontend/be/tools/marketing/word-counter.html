@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="be" dir="ltr">
+  <head>
+<link rel="canonical" href="https://www.serpmonn.ru/frontend/be/tools/marketing/word-counter.html">
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="be">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Счётчик слов/символов — Serpmonn</title>
+    <!-- Open Graph -->
+    <meta property="og:title" content="Счётчик слов/символов — Serpmonn">
+    <meta property="og:description" content="Подсчёт слов, строк и символов в тексте.">
+
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <meta property="og:url" content="https://www.serpmonn.ru/frontend/be/tools/marketing/word-counter.html">
+
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Счётчик слов/символов — Serpmonn">
+    <meta name="twitter:description" content="Анализ текста и подсчёт элементов.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <style>
+            /* ad top adaptive start */
+      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
+      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
+      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
+      /* ad top adaptive end */
+body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+
+      h1 { margin: 16px 0; }
+      textarea { width: 100%; min-height: 240px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; }
+      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
+      .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fff; }
+      .num { font-size: 24px; font-weight: 700; }
+      .label { color: #6b7280; }
+
+      /* Адаптивность для мобильных устройств */
+      @media (max-width: 768px) {
+        body { padding: 12px; }
+        .stats { grid-template-columns: repeat(2, 1fr); }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Меню -->
+    <div id="menuContainer"></div>
+    
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" 
+          style="display:inline-block;"
+          data-ad-client="ad-1897960" 
+          data-ad-slot="1897960">
+      </ins>
+    </div>
+    <script>
+      (MRGtag = window.MRGtag || []).push({});
+    </script>
+    <h1>📝 Счётчик слов/символов</h1>
+    <textarea id="text" placeholder="Вставьте или введите текст..."></textarea>
+    <div class="stats">
+      <div class="card"><div class="num" id="chars">0</div><div class="label">Символы</div></div>
+      <div class="card"><div class="num" id="words">0</div><div class="label">Слова</div></div>
+      <div class="card"><div class="num" id="lines">0</div><div class="label">Строки</div></div>
+      <div class="card"><div class="num" id="spaces">0</div><div class="label">Пробелы</div></div>
+    </div>
+
+    <script>
+      // Вспомогательный селектор
+      const qs = (s)=>document.querySelector(s);
+      // Пересчёт статистики текста
+      function recalc() {
+        const t = qs('#text').value;
+        qs('#chars').textContent = t.length;
+        const words = t.trim() ? t.trim().split(/\s+/).length : 0;
+        qs('#words').textContent = words;
+        const lines = t ? t.split(/\n/).length : 0;
+        qs('#lines').textContent = lines;
+        const spaces = (t.match(/\s/g) || []).length;
+        qs('#spaces').textContent = spaces;
+      }
+      // Обновляем счётчики при вводе
+      qs('#text').addEventListener('input', recalc);
+      recalc();
+    </script>
+    
+    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+  <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+    <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+      <button type="button" aria-label="Закрыть рекламу" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+      <ins class="mrg-tag" 
+          style="display:inline-block;width:320px;height:50px" 
+          data-ad-client="ad-1898031"
+          data-ad-slot="1898031">
+      </ins>
+    </div>
+  </div>
+  <script>
+    (function(){
+      if (localStorage.getItem('anchor_closed')==='1') return;
+      var w = window.innerWidth || document.documentElement.clientWidth;
+      var a = document.getElementById('mobile-anchor-ad');
+      if (!a) return;
+      if (w <= 768) { a.style.display = "flex"; }
+      (window.MRGtag = window.MRGtag || []).push({});
+      if (window.visualViewport) {
+        visualViewport.addEventListener('resize', function(){
+          var h = visualViewport.height;
+          a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+        });
+      }
+    })();
+  </script>
+
+<script>/*ANCHOR_COLLAPSE*/(function(){
+  var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
+  setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
+    (window.MRGtag=window.MRGtag||[]).push({});
+    setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
+  } }, 2000);
+})();</script>
+
+<script>/*GLOBAL_AD_HOOK*/(function(){
+  function handleIns(ins){
+    if (!ins || ins.__handled) return; ins.__handled = true;
+    setTimeout(function(){
+      var has = !!ins.querySelector("iframe");
+      if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
+      setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
+    }, 2000);
+  }
+  document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
+  var mo = new MutationObserver(function(muts){
+    muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
+  });
+  mo.observe(document.documentElement,{childList:true,subtree:true});
+})();</script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>
