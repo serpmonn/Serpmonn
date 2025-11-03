@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';           // Добавили импорт
 
 const isProduction = process.env.NODE_ENV === 'production';
 const envPath = isProduction 
-    ? '/var/www/serpmonn.ru/.env'
+    ? '/var/www/serpmonn.ru/backend/.env'
     : resolve(process.cwd(), 'backend/.env');
 
 dotenv.config({ path: envPath });

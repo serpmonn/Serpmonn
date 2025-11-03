@@ -1,164 +1,172 @@
-/* games.css - Стили для страницы со списком игр Serpmonn */
+/* games.css - Стили для страницы игр Serpmonn */
 
-/* Базовые стили для всей страницы */
-html, body { 
-    width: 100%; 
-    overflow-x: hidden; /* Скрываем горизонтальную прокрутку */
+:root {
+    --max-width: 1200px;
+    --gap: 20px;
+    --radius: 8px;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,.08);
+    --shadow-lg: 0 8px 18px rgba(0,0,0,.12);
+    --color-primary: #dc3545;
+    --color-primary-dark: #c82333;
+    --transition: .2s ease;
+    --font-main: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
 }
 
-/* Основные стили body */
-body {
-    max-width: none; /* Убираем ограничение максимальной ширины */
-    margin: 0; /* Сбрасываем внешние отступы */
-    padding: 0; /* Сбрасываем внутренние отступы */
-    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; /* Системный шрифт */
-    background: #f5f5f5; /* Светло-серый фон для всей страницы */
-    min-height: 100vh; /* Минимальная высота - весь экран */
-    position: relative; /* Относительное позиционирование для z-index */
-    z-index: 1; /* Уровень слоя */
-}
-
-/* Основной контейнер контента */
 .page { 
-    max-width: 1200px; /* Максимальная ширина контента */
-    margin: 0 auto; /* Центрирование по горизонтали */
-    padding: 20px; /* Внутренние отступы */
+    max-width: var(--max-width); 
+    margin: 0 auto; 
+    padding: var(--gap); 
 }
 
-/* Главный заголовок страницы */
 h1 { 
-    margin: 20px 0; /* Вертикальные отступы */
-    text-align: center; /* Выравнивание по центру */
-    color: #333; /* Темно-серый цвет текста */
-    font-size: 2.2rem; /* Крупный размер шрифта */
+    margin: 15px 0 10px;
+    text-align: center; 
+    color: #333; 
+    font-size: 2rem; 
+    font-family: var(--font-main); 
 }
 
-/* Подзаголовок под главным заголовком */
-.subtitle { 
-    text-align: center; /* Выравнивание по центру */
-    color: #666; /* Серый цвет текста */
-    margin-bottom: 30px; /* Отступ снизу */
-}
-
-/* Заголовки категорий игр (Веб-игры, ПК-игры) */
 .category-title { 
-    font-size: 1.4rem; /* Размер шрифта */
-    color: #333; /* Темно-серый цвет */
-    margin: 30px 0 15px; /* Отступы: сверху 30px, снизу 15px */
-    padding-bottom: 8px; /* Отступ снизу для линии */
-    border-bottom: 2px solid #ddd; /* Серая линия под заголовком */
-    display: flex; /* Flexbox для выравнивания иконки и текста */
-    align-items: center; /* Вертикальное выравнивание по центру */
-    gap: 10px; /* Расстояние между иконкой и текстом */
+    font-size: 1.4rem; 
+    color: #333; 
+    margin: 25px 0 12px; 
+    padding-bottom: 8px; 
+    border-bottom: 2px solid #ddd; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
 }
 
-/* Сетка для карточек игр */
 .grid { 
-    display: grid; /* CSS Grid для раскладки */
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Адаптивные колонки */
-    gap: 20px; /* Расстояние между карточками */
-    overflow: visible; /* Показываем переполнение */
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: var(--gap); 
+    transition: opacity .3s ease;
 }
 
-/* Стили карточки игры */
+.grid.hidden {
+    display: none !important;
+}
+
 .card { 
-    border: 1px solid #ddd; /* Серая рамка */
-    border-radius: 8px; /* Скругленные углы */
-    padding: 20px; /* Внутренние отступы */
-    background: #fff; /* Белый фон */
-    box-shadow: 0 2px 4px rgba(0,0,0,0.08); /* Тень для глубины */
-    transition: transform .2s ease, box-shadow .2s ease; /* Плавные анимации */
-    display: flex; /* Flexbox для внутренней структуры */
-    flex-direction: column; /* Вертикальное направление */
-    min-height: 160px; /* Минимальная высота карточки */
+    border: 1px solid #ddd; 
+    border-radius: var(--radius); 
+    padding: var(--gap); 
+    background: #fff; 
+    box-shadow: var(--shadow-sm); 
+    transition: transform var(--transition), box-shadow var(--transition); 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    min-height: 160px; 
+    cursor: pointer; 
 }
 
-/* Эффекты при наведении на карточку */
-.card:hover { 
-    transform: translateY(-3px); /* Поднимаем карточку */
-    box-shadow: 0 8px 18px rgba(0,0,0,0.12); /* Увеличиваем тень */
-    border-color: #ddd; /* Цвет рамки при наведении */
+.card:hover, .card:focus-visible { 
+    transform: translateY(-3px); 
+    box-shadow: var(--shadow-lg); 
 }
 
-/* Заголовок внутри карточки игры */
 .card h2 { 
-    font-size: 1.1rem; /* Размер шрифта */
-    margin: 0 0 12px; /* Отступы: сверху/снизу 0, снизу 12px */
-    color: #333; /* Темно-серый цвет */
-    display: flex; /* Flexbox для иконки и текста */
-    align-items: center; /* Вертикальное выравнивание */
-    gap: 8px; /* Расстояние между иконкой и текстом */
+    font-size: 1.1rem; 
+    margin: 0; 
+    color: #333; 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
 }
 
-/* Текст описания игры в карточке */
 .card p { 
-    margin: 0 0 16px; /* Отступы: сверху/снизу 0, снизу 16px */
-    color: #666; /* Серый цвет текста */
-    line-height: 1.55; /* Межстрочный интервал */
-    flex-grow: 1; /* Растягиваем на доступное пространство */
+    margin: 0; 
+    color: #666; 
+    line-height: 1.55; 
+    flex-grow: 1; 
 }
 
-/* Кнопка "Играть"/"Открыть" в карточке */
 .card a.btn { 
-    display: inline-block; /* Блочно-строчный элемент */
-    padding: 10px 16px; /* Внутренние отступы */
-    background: linear-gradient(90deg, #dc3545, #c82333); /* Градиентный фон от красного к темно-красному */
-    color: #fff; /* Белый цвет текста */
-    border-radius: 8px; /* Скругленные углы */
-    text-decoration: none; /* Убираем подчеркивание */
-    font-weight: 600; /* Полужирный шрифт */
-    transition: all .2s ease; /* Плавные анимации для всех свойств */
-    text-align: center; /* Выравнивание текста по центру */
-    align-self: flex-start; /* Выравнивание по левому краю */
+    padding: 10px 16px; 
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark)); 
+    color: #fff; 
+    border-radius: var(--radius); 
+    text-decoration: none; 
+    font-weight: 600; 
+    transition: all var(--transition); 
+    text-align: center; 
+    align-self: flex-start; 
 }
 
-/* Эффекты при наведении на кнопку */
 .card a.btn:hover { 
-    background: linear-gradient(90deg, #c82333, #a00d25); /* Темнее градиент */
-    box-shadow: 0 4px 12px rgba(220,53,69,.35); /* Красная тень */
-    transform: translateY(-1px); /* Легкий подъем */
+    background: linear-gradient(90deg, var(--color-primary-dark), #a00d25); 
+    box-shadow: 0 4px 12px rgba(220,53,69,.35); 
+    transform: translateY(-1px); 
 }
 
-/* Стили для больших логотипов игр */
-.game-logo {
-    width: 64px; /* Ширина логотипа */
-    height: 64px; /* Высота логотипа */
-    border-radius: 8px; /* Скругленные углы */
-    object-fit: cover; /* Обрезка изображения по размеру */
-    margin-bottom: 10px; /* Отступ снизу */
+.card a.btn:focus-visible { 
+    outline: 2px solid #fff; 
+    outline-offset: 2px; 
 }
 
-/* Стили для маленьких логотипов в заголовках карточек */
 .game-logo-inline {
-    width: 22px; /* Ширина маленького логотипа */
-    height: 22px; /* Высота маленького логотипа */
-    border-radius: 4px; /* Скругленные углы */
-    object-fit: cover; /* Обрезка изображения по размеру */
-    vertical-align: -3px; /* Вертикальное выравнивание */
-    margin-right: 8px; /* Отступ справа */
+    width: 22px; 
+    height: 22px; 
+    border-radius: 4px; 
+    object-fit: cover; 
+    vertical-align: -3px; 
 }
 
-/* Стили для логотипов в заголовках секций */
 .section-logo-inline {
-    width: 28px; /* Ширина логотипа секции */
-    height: 28px; /* Высота логотипа секции */
-    border-radius: 6px; /* Скругленные углы */
-    object-fit: cover; /* Обрезка изображения по размеру */
-    vertical-align: -4px; /* Вертикальное выравнивание */
-    margin-right: 10px; /* Отступ справа */
+    width: 28px; 
+    height: 28px; 
+    border-radius: 6px; 
+    object-fit: cover; 
+    vertical-align: -4px; 
 }
 
-/* Стили для рекламного блока */
 .ad-leaderboard {
-    display: flex; /* Flexbox для центрирования */
-    justify-content: center; /* Горизонтальное центрирование */
-    margin: 16px 0; /* Вертикальные отступы */
+    display: flex; 
+    justify-content: center; 
+    margin: 16px 0; 
 }
 
-/* Адаптивные стили для мобильных устройств */
+/* ФИЛЬТР */
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 10px 0 15px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    color: #333;
+}
+
+.filter-btn:hover {
+    background: #e0e0e0;
+    border-color: #ccc;
+}
+
+.filter-btn.active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+
+.filter-btn[aria-selected="true"] {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+}
+
 @media (max-width: 768px) { 
-    .page { padding: 15px; } /* Уменьшаем отступы на мобильных */
-    h1 { font-size: 1.8rem; } /* Уменьшаем размер заголовка */
-    .card { padding: 16px; min-height: 140px; } /* Уменьшаем отступы и высоту карточек */
-    .grid { grid-template-columns: 1fr; } /* Одна колонка на мобильных */
+    .page { padding: 15px; } 
+    h1 { font-size: 1.8rem; margin: 12px 0 8px; } 
+    .card { padding: 16px; min-height: 140px; } 
 }

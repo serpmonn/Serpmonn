@@ -1,4 +1,4 @@
-import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';                                                // Импортируем функцию генерации фона из внешнего модуля
+import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';                                       // Импортируем функцию генерации фона из внешнего модуля
 
 // ОБРАБОТЧИК ОТПРАВКИ ФОРМЫ ВХОДА
 document.getElementById("loginForm").addEventListener("submit", async function(event) {                                      // Добавляем асинхронный обработчик события отправки формы
@@ -13,32 +13,30 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         messageElement.textContent = "Email не может быть пустым.";                                                          // Устанавливаем текст сообщения об ошибке
         messageElement.style.color = "red";                                                                                  // Устанавливаем красный цвет текста для ошибки
         return;                                                                                                              // Прерываем выполнение функции если валидация не пройдена
-    }                                                                                                                       
+    }
 
     if (password.length < 6) {                                                                                               // Проверяем что пароль содержит минимум 6 символов
         messageElement.textContent = "Пароль должен содержать минимум 6 символов.";                                          // Устанавливаем текст сообщения об ошибке
         messageElement.style.color = "red";                                                                                  // Устанавливаем красный цвет текста для ошибки
         return;                                                                                                              // Прерываем выполнение функции если валидация не пройдена
-    }                                                                                                                       
+    }
 
     try {                                                                                                                    // Начало блока try для обработки возможных ошибок
-        console.log('Отправка запроса на /auth/login');                                                                     // Логируем начало отправки запроса
-                                                                                                                             
+        console.log('Отправка запроса на /auth/login');                                                                      // Логируем начало отправки запроса
         // ОТПРАВКА ЗАПРОСА НА СЕРВЕР
         const response = await fetch("/auth/login", {                                                                        // Отправляем асинхронный POST запрос на endpoint логина
             method: "POST",                                                                                                  // Указываем метод HTTP запроса - POST
             headers: {                                                                                                       // Устанавливаем заголовки запроса
                 "Content-Type": "application/json"                                                                           // Указываем что отправляем данные в формате JSON
-            },                                                                                                              
+            },
             body: JSON.stringify({ email, password }),                                                                       // Преобразуем объект с данными в JSON строку
             credentials: 'include'                                                                                           // Включаем отправку cookies (для аутентификации)
-        });                                                                                                                 
+        });
 
         console.log('Ответ /auth/login:', response.status, response.statusText);                                             // Логируем статус ответа от сервера
-        
         // ОБРАБОТКА ОТВЕТА ОТ СЕРВЕРА
         const text = await response.text();                                                                                  // Получаем текст ответа от сервера
-        const data = text ? JSON.parse(text) : {};                                                                          // Парсим JSON только если ответ не пустой
+        const data = text ? JSON.parse(text) : {};                                                                           // Парсим JSON только если ответ не пустой
         
         console.log('Данные ответа:', data);                                                                                 // Логируем данные ответа для отладки
         

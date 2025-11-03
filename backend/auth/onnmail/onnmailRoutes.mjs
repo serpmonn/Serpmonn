@@ -1,7 +1,7 @@
 import express from 'express';                                                                                                  // Импортируем Express для создания маршрутов
 import rateLimit from 'express-rate-limit';                                                                                     // Импортируем express-rate-limit для ограничения запросов
 import verifyToken from '../verifyToken.mjs';                                                                                   // Импортируем middleware для проверки токена
-import { getCsrfToken, createMailbox } from './onnmailController.mjs';                                                        // Импортируем функции контроллеров
+import { createMailbox } from './onnmailController.mjs';                                                          // Импортируем функции контроллеров
 
 const router = express.Router();                                                                                                // Создаем экземпляр маршрутизатора Express
 
@@ -12,7 +12,6 @@ const apiLimiter = rateLimit({                                                  
     message: 'Слишком много запросов, попробуйте позже'                                                                         // Указываем сообщение при превышении лимита
 });
 
-router.get('/csrf-token', getCsrfToken);                                                                                        // Определяем GET маршрут для получения CSRF-токена
-router.post('/create-mailbox', apiLimiter, verifyToken, createMailbox);                                                       // Определяем POST маршрут для регистрации почтового ящика
+router.post('/create-mailbox', apiLimiter, verifyToken, createMailbox);                                                         // Определяем POST маршрут для регистрации почтового ящика
 
-export default router;                                                                                                           // Экспортируем маршрутизатор для использования в приложении
+export default router;                                                                                                          // Экспортируем маршрутизатор для использования в приложении

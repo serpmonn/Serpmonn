@@ -3,7 +3,7 @@ import { resolve } from 'path';
 
 const isProduction = process.env.NODE_ENV === 'production';
 const envPath = isProduction 
-    ? '/var/www/serpmonn.ru/.env'
+    ? '/var/www/serpmonn.ru/backend/.env'
     : resolve(process.cwd(), 'backend/.env');
 
 dotenv.config({ path: envPath });
@@ -13,7 +13,7 @@ import bodyParser from 'body-parser';                                           
 import resetRoutes from './password-reset/password-resetRoutes.mjs';                                                             // Импортируем маршруты для функционала сброса пароля
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
-const PORT = process.env.PASSWORD_RESET_PORT;                                                                                   // Берем порт только из переменной окружения .env
+const PORT = process.env.PASSWORD_RESET_PORT;                                                                                    // Берем порт только из переменной окружения .env
 
 // Миддлвары - промежуточное программное обеспечение
 app.use(bodyParser.json());                                                                                                      // Включаем парсинг JSON данных в теле входящих запросов

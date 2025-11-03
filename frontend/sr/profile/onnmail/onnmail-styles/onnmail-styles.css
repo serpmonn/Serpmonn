@@ -1,0 +1,135 @@
+@import url('../../../../frontend/styles/ad.css');                                                  /* Рекламный контейнер */
+
+/* Основные стили */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #e0f7fa, #e1bee7);
+    margin: 0;
+    padding: 40px 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column; /* Элементы выстраиваются вертикально */
+    justify-content: flex-start; /* Начинаем с верха */
+    align-items: center; /* Центрируем по горизонтали */
+}
+
+.auth-box {
+    background: #fff;
+    max-width: 400px;
+    width: 100%;
+    padding: 30px 25px;
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+    animation: slideUp 0.6s ease;
+    box-sizing: border-box;
+    margin-bottom: 5%;
+}
+
+/* Заголовок формы */
+.auth-form h3 {
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 24px;
+    text-align: center;
+}
+
+/* Форма регистрации */
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Поля ввода */
+.auth-form input {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #fdfdfd;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+.auth-form input:focus {
+    border-color: #ff4d4d;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);
+}
+
+/* Блок для email с суффиксом */
+.email-suffix {
+    display: flex;
+    align-items: center;
+    gap: 0;
+}
+
+.email-suffix input {
+    flex: 1;
+    border-radius: 8px 0 0 8px;
+    border-right: none;
+}
+
+.email-suffix span {
+    padding: 12px 15px;
+    background: #eee;
+    border: 1px solid #ccc;
+    border-left: none;
+    border-radius: 0 8px 8px 0;
+    color: #333;
+    font-size: 16px;
+    user-select: none;
+}
+
+/* Кнопка */
+.auth-form button {
+    width: 100%;
+    padding: 12px;
+    background: linear-gradient(90deg, #ff5252, #ff1717);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background 0.3s, transform 0.2s;
+}
+
+.auth-form button:hover {
+    background: linear-gradient(90deg, #e53935, #d32f2f);
+    transform: translateY(-1px);
+}
+
+/* Сообщение */
+.message {
+    margin-top: 10px;
+    font-weight: bold;
+    min-height: 20px;
+    color: red;
+}
+
+/* Анимация появления */
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.mrg-tag {
+    display: inline-block;
+    width: auto;
+    height: 600px;
+}
+@media (max-width: 767px) {
+    .mrg-tag {
+        height: 300px; /* Уменьшаем высоту для мобильных */
+        width: 100%;
+        max-width: 320px;
+    }
+}

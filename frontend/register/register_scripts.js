@@ -121,14 +121,14 @@ document.getElementById("emailConfirmButton").addEventListener("click", async ()
 
         if (response.ok) {                                                                              // Если ответ успешный
             document.getElementById("message").textContent = "Письмо с подтверждением отправлено на ваш email!"; // Сообщение об успешной отправке
-            document.getElementById("confirmPopup").style.display = "none";                            // Скрываем попап подтверждения
+            document.getElementById("confirmPopup").style.display = "none";                             // Скрываем попап подтверждения
             sessionStorage.removeItem('pendingUserId');                                                 // Удаляем сохраненный ID пользователя
         } else {                                                                                        // Если ответ с ошибкой
             document.getElementById("message").textContent = data.message || "Ошибка при отправке письма."; // Показываем сообщение об ошибке
         }
     } catch (error) {                                                                                   // Обработка ошибок при выполнении запроса
         console.error("Ошибка отправки email:", error);                                                 // Логируем ошибку в консоль
-        document.getElementById("message").textContent = "Ошибка сервера.";                            // Показываем общее сообщение об ошибке
+        document.getElementById("message").textContent = "Ошибка сервера.";                             // Показываем общее сообщение об ошибке
     } finally {                                                                                         // Блок выполняется всегда, независимо от результата
         // Включаем кнопку обратно после завершения запроса
         button.disabled = false;                                                                        // Разблокируем кнопку после завершения операции

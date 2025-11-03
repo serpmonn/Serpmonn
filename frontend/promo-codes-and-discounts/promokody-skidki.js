@@ -11,9 +11,19 @@ let updateTimer = null;
 let isSortedByExpiry = false;
 let sortAscending = true;
 const topBrands = [
-    'Яндекс Лавка', 'Самокат', 'Сберпрайм', 'Яндекс Афиша', 'Тануки',
-    'Ёбидоёби', 'Яндекс плюс', 'Монетка', 'Premier', 'Авито доставка',
-    'Яндекс музыка', 'Кинопоиск', 'Винлаб', 'Яндекс еда рестораны', 'Шерри'
+    'яндекс лавка', 'yandex lavka',
+    'яндекс афиша', 'yandex afisha',
+    'сберпрайм', 'sberprime',
+    'тануки', 'tanuki',
+    'яндекс плюс', 'yandex plus',
+    'befree', 'be free',
+    'монетка', 'monetka',
+    'premier', 'премьер',
+    'авито доставка', 'avito delivery',
+    'яндекс музыка', 'yandex music',
+    'кинопоиск', 'kinopoisk',
+    'винлаб', 'winelab', 'wine lab',
+    'яндекс еда', 'yandex food', 'yandex eda'
 ];
 const categoryLabels = {
     'еда': 'Еда и рестораны',
@@ -203,7 +213,7 @@ async function loadPromocodesFromAPI() {
             advertiser_info: 'Реклама ООО «Перфлюенс» ИНН: 7725380313, 6+ erid: 2VtzqwuxWPn',
             category: 'сервисы',
             country: 'Россия',
-            is_top: true,
+            is_top: false,
             created_at: new Date().toISOString(),
             groupDescription: 'Экономия, скидки, популярные бренды в одном приложении! Совершай покупки с промокодами и получай реальные деньги.'
         });
@@ -355,6 +365,22 @@ function renderPromocodes() {
         return;
     }
 
+    filteredPromocodes.sort((a, b) => {
+        const aIsTop = topBrands.some(brand =>
+            a.title.toLowerCase().includes(brand.toLowerCase())
+        );
+        const bIsTop = topBrands.some(brand =>
+            b.title.toLowerCase().includes(brand.toLowerCase())
+        );
+
+        // Топ бренды сначала
+        if (aIsTop && !bIsTop) return -1;
+        if (!aIsTop && bIsTop) return 1;
+
+        // Затем по алфавиту (А → Я)
+        return a.title.localeCompare(b.title);
+    });
+
     initInfiniteScroll();
     renderPage(1);
     addOfferSchema(filteredPromocodes);
@@ -447,7 +473,8 @@ function createPromoCard(promo, isTopOffer = false) {
         promo?.url
     ].filter(Boolean).join(' ');
     const isYandexTravel = /(Яндекс\s*Путешеств|Yandex\s*Travel|travelyandex|yandex\.travel)/i.test(combined);
-    card.className = `promo-card ${isTopOffer ? 'top-offer' : ''} ${isYandexTravel ? 'travel-highlight' : ''}`;
+    
+    card.className = `promo-card ${isTopOffer ? 'top-offer' : ''} ${isYandexTravel ? 'travel-highlight' : ''} clickable-card`;
     card.dataset.category = promo.category || 'другие';
     card.dataset.expiry = promo.valid_until || promo.expiry_date || '9999-12-31';
     card.dataset.country = promo.country || 'Россия';
@@ -483,6 +510,8 @@ function createPromoCard(promo, isTopOffer = false) {
     }
 
     const detailsContent = escapeHtml(promo.description || promo.groupDescription || 'Описание будет доступно позже');
+    
+    const landingUrl = promo.landing_url || promo.link || promo.url;
 
     card.innerHTML = `
         <div class="promo-card-content">
@@ -494,17 +523,17 @@ function createPromoCard(promo, isTopOffer = false) {
             </div>
             ${promo.promocode ? `
                 <p class="code">${escapeHtml(promo.promocode)} 
-                    <button class="submit-btn" onclick="copyToClipboard('${escapeHtml(promo.promocode)}')" aria-label="Скопировать промокод ${escapeHtml(promo.promocode)}">Копировать</button>
+                    <button class="submit-btn copy-btn" onclick="copyToClipboard('${escapeHtml(promo.promocode)}')" aria-label="Скопировать промокод ${escapeHtml(promo.promocode)}">Копировать</button>
                 </p>
             ` : ''}
             <p class="bonus-info">${escapeHtml(bonusText)}</p>
-                <button type="button" class="details-btn" aria-expanded="false" aria-controls="${detailsId}" tabindex="0">
-                    <span class="details-icon">▼</span>
-                    <span class="details-text">Подробнее</span>
-                </button>
-                <div class="details-content" id="${detailsId}" style="display: none; margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
-                    ${detailsContent}
-                </div>
+            <button type="button" class="details-btn" aria-expanded="false" aria-controls="${detailsId}" tabindex="0">
+                <span class="details-icon">▼</span>
+                <span class="details-text">Подробнее</span>
+            </button>
+            <div class="details-content" id="${detailsId}" style="display: none; margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
+                ${detailsContent}
+            </div>
             ${promo.conditions ? `<p><strong>Условия:</strong> ${escapeHtml(promo.conditions)}</p>` : ''}
             <p class="country">Страна: ${escapeHtml(promo.country || 'Россия')}</p>
             <p class="expiry ${isExpired ? 'expired' : ''}">
@@ -513,8 +542,8 @@ function createPromoCard(promo, isTopOffer = false) {
             </p>
         </div>
         <div class="promo-card-footer">
-            ${promo.landing_url || promo.link || promo.url ? `
-                <a href="${escapeHtml(promo.landing_url || promo.link || promo.url)}" target="_blank" class="register-link">Использовать</a>
+            ${landingUrl ? `
+                <a href="${escapeHtml(landingUrl)}" target="_blank" class="register-link use-btn">Использовать</a>
             ` : ''}
             ${promo.advertiser_info ? `
                 <p class="ad">Реклама. ${escapeHtml(promo.advertiser_info)}</p>
@@ -522,35 +551,77 @@ function createPromoCard(promo, isTopOffer = false) {
         </div>
     `;
 
+    // Сохраняем URL в data-атрибут для обработки клика по карточке
+    if (landingUrl) {
+        card.dataset.landingUrl = landingUrl;
+    }
+
+    // Обработчик для клика по карточке
+    if (landingUrl) {
+        card.addEventListener('click', (e) => {
+            // Проверяем, что клик был не по интерактивным элементам
+            const interactiveElements = ['BUTTON', 'A', 'INPUT', 'SELECT', 'TEXTAREA'];
+            const isInteractive = e.target.closest('button') || 
+                                 e.target.closest('a') || 
+                                 e.target.closest('.details-content') ||
+                                 interactiveElements.includes(e.target.tagName);
+            
+            if (!isInteractive) {
+                window.open(landingUrl, '_blank');
+                
+                // Трекинг клика
+                try {
+                    fetch('/api/track-click', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ 
+                            promocode: promo.promocode, 
+                            url: landingUrl,
+                            source: 'card_click'
+                        })
+                    });
+                } catch (error) {
+                    logError('Ошибка трекинга клика по карточке', error);
+                }
+            }
+        });
+    }
+
     const detailsBtn = card.querySelector('.details-btn');
     if (detailsBtn) {
-        detailsBtn.addEventListener('click', () => toggleDetails(detailsBtn));
+        detailsBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Предотвращаем срабатывание клика по карточке
+            toggleDetails(detailsBtn);
+        });
         detailsBtn.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
                 e.preventDefault();
+                e.stopPropagation();
                 toggleDetails(detailsBtn);
             }
         });
     }
 
-    const copyBtn = card.querySelector('.submit-btn');
+    const copyBtn = card.querySelector('.copy-btn');
     if (copyBtn) {
-        copyBtn.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                copyToClipboard(promo.promocode);
-            }
+        copyBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // Предотвращаем срабатывание клика по карточке
         });
     }
 
-    const link = card.querySelector('.register-link');
-    if (link) {
-        link.addEventListener('click', async () => {
+    const useBtn = card.querySelector('.use-btn');
+    if (useBtn) {
+        useBtn.addEventListener('click', async (e) => {
+            e.stopPropagation(); // Предотвращаем срабатывание клика по карточке
             try {
                 await fetch('/api/track-click', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ promocode: promo.promocode, url: promo.landing_url })
+                    body: JSON.stringify({ 
+                        promocode: promo.promocode, 
+                        url: landingUrl,
+                        source: 'button_click'
+                    })
                 });
             } catch (error) {
                 logError('Ошибка трекинга клика', error);

@@ -3,7 +3,7 @@ import { resolve } from 'path';                                                 
 
 const isProduction = process.env.NODE_ENV === 'production';                                                                      // Определяем режим работы: production или development
 const envPath = isProduction                                                                                                     // Выбираем путь к .env файлу в зависимости от окружения
-    ? '/var/www/serpmonn.ru/.env'                                                                                                // Продакшен путь на сервере
+    ? '/var/www/serpmonn.ru/backend/.env'                                                                                        // Продакшен путь на сервере
     : resolve(process.cwd(), 'backend/.env');                                                                                    // Разработка - абсолютный путь к .env в папке backend
 
 dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути

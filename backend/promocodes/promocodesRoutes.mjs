@@ -21,22 +21,19 @@ let promocodesCache = {
 
 // Белый список брендов
 const TOP_BRANDS_PATTERNS = [
-  /Яндекс\s*Лавка/i,
-  /\bСамокат\b/i,
-  /Сбер\s*Прайм|СберПрайм|Sber\s*Prime/i,
-  /(?:Яндекс\s*)?Афиша/i,
-  /\bТануки\b/i,
-  /Ёбидоёби|Ебидоеби/i,
-  /Яндекс\s*Плюс/i,
-  /\bМонетка\b/i,
-  /\bPremier\b|\bПремьер\b/i,
-  /Авито\s*Доставка/i,
-  /Яндекс\s*Музык/i,
-  /Кинопоиск/i,
-  /\bВинлаб\b/i,
-  /\bWinelab\b/i,
-  /Wine\s*Lab/i,
-  /Яндекс\s*Еда.*Ресторан/i
+  /Яндекс\s*Лавка|Yandex\s*Lavka/i,
+  /(?:Яндекс\s*)?Афиша|(?:Yandex\s*)?Afisha/i,
+  /Сбер\s*Прайм|СберПрайм|Sber\s*Prime|SberPrime/i,
+  /Тануки|Tanuki/i,  // ← убрал \b
+  /Яндекс\s*Плюс|Yandex\s*Plus/i,
+  /befree|be\s*free/i,  // ← убрал \b
+  /Монетка|Monetka/i,  // ← убрал МОНЕТКА
+  /Premier|Премьер/i,  // ← убрал \b
+  /Авито\s*Доставка|Avito\s*Delivery|Avito\s*Dostavka/i,
+  /Яндекс\s*Музык|Yandex\s*Music|Yandex\s*Muzyka/i,
+  /Кинопоиск|Kinopoisk/i,
+  /ВинЛаб|Винлаб|Wine\s*Lab|Winelab/i,
+  /Яндекс\s*Еда|Yandex\s*Eda|Yandex\s*Food/i,  // ← упростил
 ];
 
 function isWhitelistedTopByText(text) {

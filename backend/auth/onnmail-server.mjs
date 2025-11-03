@@ -3,7 +3,7 @@ import { resolve } from 'path';                                                 
 
 const isProduction = process.env.NODE_ENV === 'production';                                                                      // Определяем режим работы: production или development
 const envPath = isProduction                                                                                                     // Выбираем путь к .env файлу в зависимости от окружения
-    ? '/var/www/serpmonn.ru/.env'                                                                                                // Продакшен путь на сервере
+    ? '/var/www/serpmonn.ru/backend/.env'                                                                                        // Продакшен путь на сервере
     : resolve(process.cwd(), 'backend/.env');                                                                                    // Разработка - абсолютный путь к .env в папке backend
 
 dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути
@@ -12,7 +12,7 @@ import express from 'express';                                                  
 import cors from 'cors';                                                                                                         // Импортируем cors для обработки междоменных HTTP запросов
 import helmet from 'helmet';                                                                                                     // Импортируем helmet для автоматической защиты HTTP заголовков
 import cookieParser from 'cookie-parser';                                                                                        // Импортируем cookie-parser для работы с cookies
-import onnmailRoutes from './onnmail/onnmailRoutes.mjs';                                                                        // Импортируем маршруты для почтового API и рассылок
+import onnmailRoutes from './onnmail/onnmailRoutes.mjs';                                                                         // Импортируем маршруты для почтового API и рассылок
 
 import rateLimit from 'express-rate-limit';                                                                                      // Импортируем ограничитель частоты запросов для защиты от спама
 import csrf from 'csurf';                                                                                                        // Импортируем CSRF middleware для защиты от межсайтовых запросов
@@ -21,9 +21,9 @@ const app = express();                                                          
 app.set('trust proxy', 1);                                                                                                       // Доверяем первому прокси (например, Nginx) для корректного IP
 
 // Получаем порты из переменных окружения
-const ONNMAIL_PORT = process.env.ONNMAIL_PORT;                                                                                  // Порт для почтового сервера (только из .env)
-const AUTH_PORT = process.env.AUTH_PORT;                                                                                        // Порт для auth сервера (только из .env)
-const VITE_PORT = process.env.VITE_PORT;                                                                                        // Порт Vite dev сервера (из .env или 5173 по умолчанию)
+const ONNMAIL_PORT = process.env.ONNMAIL_PORT;                                                                                   // Порт для почтового сервера (только из .env)
+const AUTH_PORT = process.env.AUTH_PORT;                                                                                         // Порт для auth сервера (только из .env)
+const VITE_PORT = process.env.VITE_PORT;                                                                                         // Порт Vite dev сервера (из .env или 5173 по умолчанию)
 
 // Middleware - промежуточное программное обеспечение
 app.use(helmet());                                                                                                               // Применяем helmet для автоматической защиты HTTP заголовков безопасности
@@ -60,11 +60,6 @@ const csrfProtection = csrf({
     ignoreMethods: ['GET', 'HEAD', 'OPTIONS']                                                                                    // Игнорировать безопасные HTTP методы для CSRF проверки
 });
 
-// Эндпоинт для получения CSRF-токена почтового API
-app.get('/mail-api/csrf-token', csrfProtection, (req, res) => {
-    res.json({ csrfToken: req.csrfToken() });                                                                                    // Возвращаем CSRF токен клиенту в JSON формате для почтовых операций
-});
-
 // Подключаем маршруты почтового API
 app.use('/mail-api', onnmailRoutes);                                                                                             // Подключаем маршруты с префиксом /mail-api для изоляции API
 
@@ -77,6 +72,6 @@ app.use((err, req, res, next) => {
 });
 
 // Запуск сервера почтового API
-app.listen(ONNMAIL_PORT, () => {                                                                                                // Запускаем сервер на порту из переменной окружения
+app.listen(ONNMAIL_PORT, () => {                                                                                                 // Запускаем сервер на порту из переменной окружения
     console.log(`Mail API запущен на порту ${ONNMAIL_PORT}`);                                                                    // Логируем успешный запуск почтового сервера с указанием порта
 });

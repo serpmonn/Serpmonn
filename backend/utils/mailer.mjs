@@ -4,18 +4,16 @@ import { resolve } from 'path';                                                 
 
 const isProduction = process.env.NODE_ENV === 'production';                                                                      // Определяем режим работы: production или development
 const envPath = isProduction                                                                                                     // Выбираем путь к .env файлу в зависимости от окружения
-    ? '/var/www/serpmonn.ru/.env'                                                                                                // Продакшен путь на сервере
+    ? '/var/www/serpmonn.ru/backend/.env'                                                                                        // Продакшен путь на сервере
     : resolve(process.cwd(), 'backend/.env');                                                                                    // Разработка - абсолютный путь к .env в папке backend
 
 dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути
 
-// В разработке используем тестовый транспортер
-const createTransporter = () => {
+const createTransporter = () => {												                                                                         // В разработке используем тестовый транспортер
   if (process.env.NODE_ENV === 'development' || !process.env.SMTP_PASS) {
     console.log('📧 DEVELOPMENT MODE: Emails are logged to console instead of sending');
     
-    // Тестовый транспортер который логирует вместо отправки
-    return {
+    return {															                                                                                        // Тестовый транспортер который логирует вместо отправки
       sendMail: (mailOptions) => {
         console.log('════════════════════════════════════════');
         console.log('📧 DEVELOPMENT EMAIL (NOT SENT):');
@@ -25,8 +23,7 @@ const createTransporter = () => {
         console.log('   HTML:', mailOptions.html ? '📄 [HTML content]' : '❌ No HTML');
         console.log('════════════════════════════════════════');
         
-        // Имитируем успешную отправку
-        return Promise.resolve({ 
+        return Promise.resolve({												                                                                           // Имитируем успешную отправку 
           messageId: 'dev-' + Date.now(),
           response: '250 Email logged in development mode'
         });
@@ -38,18 +35,19 @@ const createTransporter = () => {
     };
   }
   
-  // Продакшен - реальный SMTP
-  console.log('📧 PRODUCTION MODE: Using real SMTP server');
+  console.log('📧 PRODUCTION MODE: Using real SMTP server');									                                                     // Продакшен - реальный SMTP
   return nodemailer.createTransport({
-    host: process.env.SMTP_HOST || '90.156.150.124',
+    host: 'localhost',
     port: process.env.SMTP_PORT || 587,
     secure: false,
     auth: {
-      user: process.env.SMTP_USER || 'support@serpmonn.ru',
+      user: process.env.SMTP_USER || 'noreply@serpmonn.ru',
       pass: process.env.SMTP_PASS
     },
-    // Таймауты для избежания долгого ожидания
-    connectionTimeout: 10000,
+    tls: {
+      rejectUnauthorized: false													                                                                            // для самоподписанных сертификатов
+    },
+    connectionTimeout: 10000,													                                                                              // Таймауты для избежания долгого ожидания
     greetingTimeout: 10000,
     socketTimeout: 10000
   });
@@ -57,21 +55,20 @@ const createTransporter = () => {
 
 export const transporter = createTransporter();
 
-// Функции для отправки писем
-export async function sendResetEmail(to, resetLink) {
+export async function sendResetEmail(to, resetLink) {										                                                            // Функции для отправки писем
   console.log(`🔐 Password reset for: ${to}`);
   console.log(`   Reset link: ${resetLink}`);
   
   const mailOptions = {
-    from: '"Serpmonn" <support@serpmonn.ru>',
+    from: '"Serpmonn" <noreply@serpmonn.ru>',
     to: to,
     subject: 'Сброс пароля Serpmonn',
     text: `Для сброса пароля перейдите по ссылке: ${resetLink}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #007acc;">Сброс пароля Serpmonn</h2>
+        <h2 style="color: #dc3545;">Сброс пароля Serpmonn</h2>
         <p>Для сброса пароля перейдите по ссылке:</p>
-        <a href="${resetLink}" style="background: #007acc; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+        <a href="${resetLink}" style="background: #dc3545; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
           Сбросить пароль
         </a>
         <p style="margin-top: 20px; color: #666; font-size: 12px;">
@@ -100,15 +97,15 @@ export async function sendConfirmationEmail(to, confirmLink) {
   console.log(`   Confirm link: ${confirmLink}`);
   
   const mailOptions = {
-    from: '"Serpmonn" <support@serpmonn.ru>',
+    from: '"Serpmonn" <noreply@serpmonn.ru>',
     to: to,
     subject: 'Подтверждение email Serpmonn',
     text: `Для подтверждения email перейдите по ссылке: ${confirmLink}`,
     html: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-        <h2 style="color: #007acc;">Подтверждение email</h2>
+        <h2 style="color: #dc3545;">Подтверждение email</h2>
         <p>Для завершения регистрации подтвердите ваш email:</p>
-        <a href="${confirmLink}" style="background: #007acc; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
+        <a href="${confirmLink}" style="background: #dc3545; color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; display: inline-block;">
           Подтвердить email
         </a>
         <p style="margin-top: 20px; color: #666; font-size: 12px;">

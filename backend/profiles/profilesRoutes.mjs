@@ -1,6 +1,4 @@
-import express from 'express';
-                          // Импортируем express для создания маршрутов
-
+import express from 'express';										  // Импортируем express для создания маршрутов
 import { getUserProfile, getUserInfo, updateUserProfile } from '../profiles/profilesController.mjs';      // Импортируем функции профиля
 
 import verifyToken from '../auth/verifyToken.mjs';

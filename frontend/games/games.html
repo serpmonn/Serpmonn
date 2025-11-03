@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="ru" dir="ltr">
 <head>
-    <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <meta http-equiv="Content-Language" content="ru">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Все игры — Serpmonn | Веб-игры, ПК-игры и мобильные игры</title>
@@ -12,17 +10,35 @@
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/games/games.html">
     <meta property="og:type" content="website">
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <link rel="stylesheet" href="/frontend/games/games.css">
+    
+    <!-- Yandex.Metrika -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();for(var j=0;j<document.scripts.length;j++){if(document.scripts[j].src===r){return;}}k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,'script','https://mc.yandex.ru/metrika/tag.js?id=104905836','ym');ym(104905836,'init',{ssr:true,webvisor:true,clickmap:true,ecommerce:"dataLayer",accurateTrackBounce:true,trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/104905836" style="position:absolute;left:-9999px;" alt=""/></div></noscript>
 </head>
 <body>
-    <div id="menuContainer"></div>
-    <div class="page">
-        <h1><img class="section-logo-inline" src="/frontend/images/Games.ico" alt="Serpmonn"> Игры Serpmonn</h1>
-        <p class="subtitle">Подборка веб и ПК‑игр</p>
+    <nav id="menuContainer" aria-label="Меню"></nav>
+    
+    <main class="page" itemscope itemtype="https://schema.org/ItemList">
+        <meta itemprop="name" content="Игры Serpmonn">
+        <meta itemprop="numberOfItems" content="23">
+        <meta itemprop="publisher" content="Serpmonn">
+        
+        <h1><img class="section-logo-inline" src="/frontend/images/Games.ico" alt="Serpmonn" loading="lazy"> Игры Serpmonn</h1>
+
+        <!-- ФИЛЬТР -->
+        <div class="filter-buttons" role="tablist" aria-label="Фильтр по типу игр">
+            <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">Все</button>
+            <button class="filter-btn" data-filter="pc" role="tab">ПК‑игры</button>
+            <button class="filter-btn" data-filter="web" role="tab">Веб‑игры</button>
+        </div>
         
         <script async src="https://ad.mail.ru/static/ads-async.js"></script>
         <div class="ad-leaderboard">
@@ -30,118 +46,229 @@
         </div>
         <script>(MRGtag = window.MRGtag || []).push({});</script>
 
-        <section>
-            <h2 class="category-title"><img class="section-logo-inline" src="/frontend/images/WebGames.ico" alt="Веб‑игры"> Веб‑игры</h2>
-            <div class="grid">
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/not-chess.ico" alt="Not‑Chess"> Not‑Chess</h2>
-                    <p>Тактические сражения 10×10 с уникальными персонажами.</p>
-                    <a class="btn" href="https://dbnua.com/g/7wq93kdtn47c9ceea344676c539f4c/?erid=2bL9aMPo2e49hMef4piUjZ2XwT" target="_blank">Играть</a>
+        <!-- ПК-ИГРЫ -->
+        <section itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <meta itemprop="position" content="1">
+            <h2 class="category-title"><img class="section-logo-inline" src="/frontend/images/pc-games.png" alt="ПК‑игры" loading="lazy"> ПК‑игры</h2>
+            <div class="grid" role="grid" aria-label="Список ПК-игр" data-category="pc">
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="1">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/amazing-online.jpg" alt="AMAZING ONLINE" loading="lazy" itemprop="image">
+                        <span itemprop="name">AMAZING ONLINE</span>
+                    </h2>
+                    <p itemprop="description">Онлайн‑игра в стилистике GTA с голосовым чатом.</p>
+                    <a class="btn" href="https://rzekl.com/g/txwwmat2wx7c9ceea344c065b8a873cafad31500/?erid=2bL9aMPo2e49hMef4pfym3SuLK" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/technomagic.ico" alt="Техномагия"> Техномагия</h2>
-                    <p>Фэнтези‑RPG с квестами и боями.</p>
-                    <a class="btn" href="https://dhwnh.com/g/c4c9d791007c9ceea344f94d791968/?erid=5jtCeReLm1S3Xx3Lf3cMPoe" target="_blank">Играть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="2">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/evolve-rp.png" alt="Evolve RP" loading="lazy" itemprop="image">
+                        <span itemprop="name">Evolve RP</span>
+                    </h2>
+                    <p itemprop="description">RolePlay‑сервер на базе GTA San Andreas.</p>
+                    <a class="btn" href="https://xmknb.com/g/ilvfzhs26x7c9ceea34461e800f2bd/?erid=2bL9aMPo2e49hMef4piV5BfNfR" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/2048.ico" alt="2048"> 2048</h2>
-                    <p>Классическая головоломка на сложение чисел.</p>
-                    <a class="btn" href="/frontend/games/2048/2048.html" target="_blank">Открыть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="3">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/nextrp.png" alt="NEXTRP" loading="lazy" itemprop="image">
+                        <span itemprop="name">NEXTRP</span>
+                    </h2>
+                    <p itemprop="description">RP‑игра на карте России с PvP и большим выбором техники.</p>
+                    <a class="btn" href="https://zmgig.com/g/yog728vijm7c9ceea344f0d389d68db1cf1bbd51/?erid=MvGzQC98w3Z1gMq1oSV73txX" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/flappy.png" alt="Flappy Bird"> Flappy Bird</h2>
-                    <p>Аркада на реакцию: поддерживай полёт, пролетай сквозь трубы.</p>
-                    <a class="btn" href="/frontend/games/flappy/flappy.html" target="_blank">Открыть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="4">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/malinovka.png" alt="Малиновка" loading="lazy" itemprop="image">
+                        <span itemprop="name">Малиновка</span>
+                    </h2>
+                    <p itemprop="description">RP‑онлайн‑игра с голосовым чатом и подпиской «Малиновка+».</p>
+                    <a class="btn" href="https://xcdus.com/g/c5e9n6r3ew7c9ceea344c5c964748a/?erid=MvGzQC98w3Z1gMq1pRgkzi9d" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/coins.png" alt="Монетки"> Монетки</h2>
-                    <p>Собирайте монеты на поле 20×20, избегая ловушек. Таймер 60с.</p>
-                    <a class="btn" href="/frontend/games/coins/coins.html" target="_blank">Открыть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="5">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/lineage-2-essence.png" alt="Lineage 2 Essence" loading="lazy" itemprop="image">
+                        <span itemprop="name">Lineage 2 Essence</span>
+                    </h2>
+                    <p itemprop="description">Легендарная MMORPG от NCSOFT с олдскульными хрониками: 34 класса и 6 рас. Серверы Ruby и Sapphire открыты — начни путь с нуля и покори вершины!</p>
+                    <a class="btn" href="https://rzekl.com/g/7lgnbu225t7c9ceea3444cb8738d24/?erid=MvGzQC98w3Z1gMq1oSV73uLi" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/breakout.png" alt="Арканоид"> Арканоид</h2>
-                    <p>Классический Breakout: разбивай блоки, отбивай мяч платформой.</p>
-                    <a class="btn" href="/frontend/games/breakout/breakout.html" target="_blank">Открыть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="6">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/lineage-2.png" alt="Lineage 2" loading="lazy" itemprop="image">
+                        <span itemprop="name">Lineage 2</span>
+                    </h2>
+                    <p itemprop="description">Классическая легендарная MMORPG с масштабными PvP‑битвами и 36 классами. Самые посещаемые серверы — до 5500 онлайна.</p>
+                    <a class="btn" href="https://twnfz.com/g/f15f0db8437c9ceea344d8792ef979/?erid=5jtCeReLm1S3Xx3Lf3au61G" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/minesweeper.png" alt="Сапёр"> Сапёр</h2>
-                    <p>Классический Minesweeper: 10×10, 15 мин, флаги ПКМ/Shift.</p>
-                    <a class="btn" href="/frontend/games/minesweeper/minesweeper.html" target="_blank">Открыть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="7">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/aion.png" alt="Aion Classic" loading="lazy" itemprop="image">
+                        <span itemprop="name">Aion Classic</span>
+                    </h2>
+                    <p itemprop="description">Классическая версия легендарной MMORPG с полётами по Атрее, PvP/PvE, осадами и подземельями. Обновление 4.0 «Люминес».</p>
+                    <a class="btn" href="https://qbzdl.com/g/rbktk0m87n7c9ceea344a3582dc4ab/?erid=2bL9aMPo2e49hMef4pgUymfaow" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/fifteen.png" alt="Пятнашки"> Пятнашки</h2>
-                    <p>Классическая головоломка 15 Puzzle: собери плитки 1–15 по порядку.</p>
-                    <a class="btn" href="/frontend/games/fifteen/fifteen.html" target="_blank">Открыть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="8">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/black-desert.png" alt="Black Desert" loading="lazy" itemprop="image">
+                        <span itemprop="name">Black Desert</span>
+                    </h2>
+                    <p itemprop="description">Средневековая MMORPG с бесшовным миром, нон‑таргет комбо и масштабными битвами. 10+ млн игроков по миру.</p>
+                    <a class="btn" href="https://rzekl.com/g/fy90i94aoa7c9ceea3443fcec4d4a3/?erid=MvGzQC98w3Z1gMq1oS2xNYhq" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/snake.png" alt="Змейка"> Змейка</h2>
-                    <p>Классическая аркада: собери яблоки и не врежься в себя.</p>
-                    <a class="btn" href="/frontend/games/snake/snake.html" target="_blank">Открыть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="9">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/blade-and-soul.png" alt="Blade & Soul" loading="lazy" itemprop="image">
+                        <span itemprop="name">Blade & Soul</span>
+                    </h2>
+                    <p itemprop="description">MMORPG в стиле восточных боевых искусств. Обновлено на Unreal Engine 4. Рейды, PvP и масштабные ивенты.</p>
+                    <a class="btn" href="https://yynbx.com/g/bu9xyk63aw7c9ceea344b6495a8325/?erid=MvGzQC98w3Z1gMq1kwjXdKXb" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/SquareEscape.ico" alt="Квадратное бегство"> Квадратное бегство</h2>
-                    <p>Аркада на реакцию. Уклоняйтесь и выживайте.</p>
-                    <a class="btn" href="/frontend/games/redsquare/redsquare.html" target="_blank">Открыть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="10">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/warface.png" alt="Warface" loading="lazy" itemprop="image">
+                        <span itemprop="name">Warface</span>
+                    </h2>
+                    <p itemprop="description">Бесплатный онлайн-шутер с отличной графикой! Тактические PvP-режимы, сюжетные спецоперации, 5 уникальных классов и огромный арсенал оружия. Присоединяйся к битве!</p>
+                    <a class="btn" href="https://dorinebeaumont.com/g/jmyq21wgw87c9ceea344a78ad6f5e61bedefe48e/?erid=5jtCeReNwxHpfQTEujFRZrz" target="_blank" rel="noopener" itemprop="url">В бой!</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/RedSquare2.ico" alt="Падающие фигуры"> Падающие фигуры</h2>
-                    <p>Динамичная аркада с падающими препятствиями.</p>
-                    <a class="btn" href="/frontend/games/redsquare2/redsquare2.html" target="_blank">Открыть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="11">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/battle-teams-2.png" alt="Battle Teams 2" loading="lazy" itemprop="image">
+                        <span itemprop="name">Battle Teams 2</span>
+                    </h2>
+                    <p itemprop="description">Постапокалиптический экшен! Динамичные PvP-сражения, режим "Королевская битва", полная кастомизация оружия. Выживай и побеждай в мире будущего!</p>
+                    <a class="btn" href="https://naiawork.com/g/rijgiy1zbj7c9ceea34486b029c2de/?erid=5jtCeReNwxHpfQTFuq9i4uP" target="_blank" rel="noopener" itemprop="url">Войти в бой</a>
+                </div>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="12">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/gta5rp.webp" alt="GTA5RP" loading="lazy" itemprop="image">
+                        <span itemprop="name">GTA5RP</span>
+                    </h2>
+                    <p itemprop="description">Первая и крупнейшая ролевая платформа GTA 5! Погрузись в живую вселенную, где каждое действие имеет значение. Играй с топовыми блогерами, участвуй в уникальных событиях и создай свою легенду!</p>
+                    <a class="btn" href="https://tywhh.com/g/q10rxle26a7c9ceea34443269ad76debd4fd1b95/?erid=2bL9aMPo2e49hMef4piUr6ZhiU" target="_blank" rel="noopener" itemprop="url">Войти в мир</a>
                 </div>
             </div>
         </section>
 
-        <section>
-            <h2 class="category-title"><img class="section-logo-inline" src="/frontend/images/pc-games.png" alt="ПК‑игры"> ПК‑игры</h2>
-            <div class="grid">
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/amazing-online.jpg" alt="AMAZING ONLINE"> AMAZING ONLINE</h2>
-                    <p>Онлайн‑игра в стилистике GTA с голосовым чатом.</p>
-                    <a class="btn" href="https://rzekl.com/g/txwwmat2wx7c9ceea344c065b8a873/?erid=2bL9aMPo2e49hMef4pfym3SuLK" target="_blank">Играть</a>
+        <!-- ВЕБ-ИГРЫ -->
+        <section itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <meta itemprop="position" content="2">
+            <h2 class="category-title"><img class="section-logo-inline" src="/frontend/images/WebGames.ico" alt="Веб‑игры" loading="lazy"> Веб‑игры</h2>
+            <div class="grid" role="grid" aria-label="Список веб-игр" data-category="web">
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="1">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/not-chess.ico" alt="Not‑Chess" loading="lazy" itemprop="image">
+                        <span itemprop="name">Not‑Chess</span>
+                    </h2>
+                    <p itemprop="description">Тактические сражения 10×10 с уникальными персонажами.</p>
+                    <a class="btn" href="https://dbnua.com/g/7wq93kdtn47c9ceea344676c539f4c/?erid=2bL9aMPo2e49hMef4piUjZ2XwT" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/evolve-rp.png" alt="Evolve RP"> Evolve RP</h2>
-                    <p>RolePlay‑сервер на базе GTA San Andreas.</p>
-                    <a class="btn" href="https://xmknb.com/g/ilvfzhs26x7c9ceea34461e800f2bd/?erid=2bL9aMPo2e49hMef4piV5BfNfR" target="_blank">Играть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="2">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/technomagic.ico" alt="Техномагия" loading="lazy" itemprop="image">
+                        <span itemprop="name">Техномагия</span>
+                    </h2>
+                    <p itemprop="description">Фэнтези‑RPG с квестами и боями.</p>
+                    <a class="btn" href="https://dhwnh.com/g/c4c9d791007c9ceea344f94d791968/?erid=5jtCeReLm1S3Xx3Lf3cMPoe" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/nextrp.png" alt="NEXTRP"> NEXTRP</h2>
-                    <p>RP‑игра на карте России с PvP и большим выбором техники.</p>
-                    <a class="btn" href="https://zmgig.com/g/yog728vijm7c9ceea344f0d389d68d/?erid=MvGzQC98w3Z1gMq1oSV73txX" target="_blank">Играть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="3">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/2048.ico" alt="2048" loading="lazy" itemprop="image">
+                        <span itemprop="name">2048</span>
+                    </h2>
+                    <p itemprop="description">Классическая головоломка на сложение чисел.</p>
+                    <a class="btn" href="/frontend/games/2048/2048.html" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/malinovka.png" alt="Малиновка"> Малиновка</h2>
-                    <p>RP‑онлайн‑игра с голосовым чатом и подпиской «Малиновка+».</p>
-                    <a class="btn" href="https://xcdus.com/g/c5e9n6r3ew7c9ceea344c5c964748a/?erid=MvGzQC98w3Z1gMq1pRgkzi9d" target="_blank">Играть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="4">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/flappy.png" alt="Flappy Bird" loading="lazy" itemprop="image">
+                        <span itemprop="name">Flappy Bird</span>
+                    </h2>
+                    <p itemprop="description">Аркада на реакцию: поддерживай полёт, пролетай сквозь трубы.</p>
+                    <a class="btn" href="/frontend/games/flappy/flappy.html" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/lineage-2-essence.png" alt="Lineage 2 Essence"> Lineage 2 Essence</h2>
-                    <p>Легендарная MMORPG от NCSOFT с олдскульными хрониками: 34 класса и 6 рас. Серверы Ruby и Sapphire открыты — начни путь с нуля и покори вершины!</p>
-                    <a class="btn" href="https://rzekl.com/g/7lgnbu225t7c9ceea3444cb8738d24/?erid=MvGzQC98w3Z1gMq1oSV73uLi" target="_blank">Играть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="5">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/coins.png" alt="Монетки" loading="lazy" itemprop="image">
+                        <span itemprop="name">Монетки</span>
+                    </h2>
+                    <p itemprop="description">Собирайте монеты на поле 20×20, избегая ловушек. Таймер 60с.</p>
+                    <a class="btn" href="/frontend/games/coins/coins.html" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/lineage-2.png" alt="Lineage 2"> Lineage 2</h2>
-                    <p>Классическая легендарная MMORPG с масштабными PvP‑битвами и 36 классами. Самые посещаемые серверы — до 5500 онлайна.</p>
-                    <a class="btn" href="https://twnfz.com/g/f15f0db8437c9ceea344d8792ef979/?erid=5jtCeReLm1S3Xx3Lf3au61G" target="_blank">Играть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="6">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/breakout.png" alt="Арканоид" loading="lazy" itemprop="image">
+                        <span itemprop="name">Арканоид</span>
+                    </h2>
+                    <p itemprop="description">Классический Breakout: разбивай блоки, отбивай мяч платформой.</p>
+                    <a class="btn" href="/frontend/games/breakout/breakout.html" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/aion.png" alt="Aion Classic"> Aion Classic</h2>
-                    <p>Классическая версия легендарной MMORPG с полётами по Атрее, PvP/PvE, осадами и подземельями. Обновление 4.0 «Люминес».</p>
-                    <a class="btn" href="https://qbzdl.com/g/rbktk0m87n7c9ceea344a3582dc4ab/?erid=2bL9aMPo2e49hMef4pgUymfaow" target="_blank">Играть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="7">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/minesweeper.png" alt="Сапёр" loading="lazy" itemprop="image">
+                        <span itemprop="name">Сапёр</span>
+                    </h2>
+                    <p itemprop="description">Классический Minesweeper: 10×10, 15 мин, флаги ПКМ/Shift.</p>
+                    <a class="btn" href="/frontend/games/minesweeper/minesweeper.html" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/black-desert.png" alt="Black Desert"> Black Desert</h2>
-                    <p>Средневековая MMORPG с бесшовным миром, нон‑таргет комбо и масштабными битвами. 10+ млн игроков по миру.</p>
-                    <a class="btn" href="https://rzekl.com/g/fy90i94aoa7c9ceea3443fcec4d4a3/?erid=MvGzQC98w3Z1gMq1oS2xNYhq" target="_blank">Играть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="8">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/fifteen.png" alt="Пятнашки" loading="lazy" itemprop="image">
+                        <span itemprop="name">Пятнашки</span>
+                    </h2>
+                    <p itemprop="description">Классическая головоломка 15 Puzzle: собери плитки 1–15 по порядку.</p>
+                    <a class="btn" href="/frontend/games/fifteen/fifteen.html" target="_blank" rel="noopener" itemprop="url">Играть</a>
                 </div>
-                <div class="card">
-                    <h2><img class="game-logo-inline" src="/frontend/images/blade-and-soul.png" alt="Blade & Soul"> Blade & Soul</h2>
-                    <p>MMORPG в стиле восточных боевых искусств. Обновлено на Unreal Engine 4. Рейды, PvP и масштабные ивенты.</p>
-                    <a class="btn" href="https://yynbx.com/g/bu9xyk63aw7c9ceea344b6495a8325/?erid=MvGzQC98w3Z1gMq1kwjXdKXb" target="_blank">Играть</a>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="9">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/snake.png" alt="Змейка" loading="lazy" itemprop="image">
+                        <span itemprop="name">Змейка</span>
+                    </h2>
+                    <p itemprop="description">Классическая аркада: собери яблоки и не врежься в себя.</p>
+                    <a class="btn" href="/frontend/games/snake/snake.html" target="_blank" rel="noopener" itemprop="url">Играть</a>
+                </div>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="10">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/SquareEscape.ico" alt="Квадратное бегство" loading="lazy" itemprop="image">
+                        <span itemprop="name">Квадратное бегство</span>
+                    </h2>
+                    <p itemprop="description">Аркада на реакцию. Уклоняйтесь и выживайте.</p>
+                    <a class="btn" href="/frontend/games/redsquare/redsquare.html" target="_blank" rel="noopener" itemprop="url">Играть</a>
+                </div>
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="11">
+                    <h2>
+                        <img class="game-logo-inline" src="/frontend/images/RedSquare2.ico" alt="Падающие фигуры" loading="lazy" itemprop="image">
+                        <span itemprop="name">Падающие фигуры</span>
+                    </h2>
+                    <p itemprop="description">Динамичная аркада с падающими препятствиями.</p>
+                    <a class="btn" href="/frontend/games/redsquare2/redsquare2.html" target="_blank" rel="noopener" itemprop="url">Открыть</a>
                 </div>
             </div>
         </section>
-    </div>
+    </main>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script src="/frontend/games/games.js" defer></script>

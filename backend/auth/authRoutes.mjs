@@ -3,7 +3,7 @@ import { body } from 'express-validator';                                       
 import { registerUser, confirmTelegram, confirmEmail, confirmToken, loginUser, logoutUser } from './authController.mjs'; // Импортируем функции контроллера (ДОБАВЬТЕ confirmTelegram)
 import verifyToken from './verifyToken.mjs';                                                 // Импортируем middleware для проверки токена
 import { query } from '../database/config.mjs';                                              // Импортируем функцию query для работы с БД
-import rateLimit from 'express-rate-limit';                                                 // Ограничитель запросов для auth
+import rateLimit from 'express-rate-limit';                                                  // Ограничитель запросов для auth
                                                                                               
 const router = express.Router();                                                             // Создаем экземпляр маршрутизатора
                                                                                               
@@ -36,9 +36,9 @@ router.post('/confirm-telegram', authWriteLimiter, confirmTelegram);            
                                                                                               
 router.get('/confirm', confirmToken);                                                        // Определяем GET маршрут для проверки токена
                                                                                               
-router.post('/login', authWriteLimiter, loginUser);                                                            // Определяем POST маршрут для входа пользователя
+router.post('/login', authWriteLimiter, loginUser);                                          // Определяем POST маршрут для входа пользователя
                                                                                               
-router.post('/logout', authWriteLimiter, logoutUser);                                                          // Определяем POST маршрут для выхода пользователя
+router.post('/logout', authWriteLimiter, logoutUser);                                        // Определяем POST маршрут для выхода пользователя
                                                                                               
 router.get('/protected', verifyToken, (req, res) => {                                        // Определяем защищённый GET маршрут
   res.json({ message: 'Вы получили доступ к защищённому маршруту', user: req.user });        // Отправляем ответ клиенту

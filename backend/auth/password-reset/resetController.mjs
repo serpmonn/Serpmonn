@@ -5,8 +5,8 @@ import { saveToken, getTokenData, removeToken, canSendToken } from '../../utils/
 import { query } from '../../database/config.mjs';                                                                                     // Импортируем функцию для выполнения запросов к базе данных
 
 // Контроллер для обработки запроса сброса пароля
-export const forgotPassword = async (req, res) => {                                                                             // Определяем функцию для запроса сброса пароля
-    const { email } = req.body;                                                                                                 // Извлекаем email из тела запроса
+export const forgotPassword = async (req, res) => {											// Определяем функцию для запроса сброса пароля
+    const { email } = req.body;														// Извлекаем email из тела запроса
 
     try {                                                                                                                       // Начинаем блок обработки ошибок
         const users = await query('SELECT id FROM users WHERE email = ?', [email]);                                             // Выполняем запрос к БД для поиска пользователя по email

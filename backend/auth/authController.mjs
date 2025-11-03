@@ -3,59 +3,59 @@ import { resolve } from 'path';                                                 
 
 const isProduction = process.env.NODE_ENV === 'production';                                                                      // Определяем режим работы: production или development
 const envPath = isProduction                                                                                                     // Выбираем путь к .env файлу в зависимости от окружения
-    ? '/var/www/serpmonn.ru/.env'                                                                                                // Продакшен путь на сервере
+    ? '/var/www/serpmonn.ru/backend/.env'                                                                                        // Продакшен путь на сервере
     : resolve(process.cwd(), 'backend/.env');                                                                                    // Разработка - абсолютный путь к .env в папке backend
 
 dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути
                                                                                               
-import bcrypt from 'bcryptjs';                                                                // Импортируем bcrypt для хеширования паролей
-import paseto from 'paseto';                                                                  // Импортируем paseto для создания токенов
-import { query } from '../database/config.mjs';                                               // Импортируем функцию query для работы с БД
-import { validationResult } from 'express-validator';                                         // Импортируем validationResult для проверки данных
-import { v4 as uuidv4 } from 'uuid';                                                         // Импортируем uuidv4 для генерации уникальных ID
-import { sendConfirmationEmail } from '../utils/mailer.mjs';                                 // Импортируем функцию для отправки email
+import bcrypt from 'bcryptjs';													 // Импортируем bcrypt для хеширования паролей
+import paseto from 'paseto';													 // Импортируем paseto для создания токенов
+import { query } from '../database/config.mjs';											 // Импортируем функцию query для работы с БД
+import { validationResult } from 'express-validator';										 // Импортируем validationResult для проверки данных
+import { v4 as uuidv4 } from 'uuid';												 // Импортируем uuidv4 для генерации уникальных ID
+import { sendConfirmationEmail } from '../utils/mailer.mjs';									 // Импортируем функцию для отправки email
                                                                                               
-const { V2 } = paseto;                                                                         // Извлекаем V2 из paseto для работы с токенами
-const { hash, compare } = bcrypt;                                                              // Извлекаем hash и compare из bcrypt
-const secretKey = process.env.SECRET_KEY;                                                     // Получаем секретный ключ из переменных окружения
+const { V2 } = paseto;                                                                         					 // Извлекаем V2 из paseto для работы с токенами
+const { hash, compare } = bcrypt;                                                              					 // Извлекаем hash и compare из bcrypt
+const secretKey = process.env.SECRET_KEY;                                                     					 // Получаем секретный ключ из переменных окружения
                                                                                               
-export const registerUser = async (req, res) => {                                             // Определяем функцию для регистрации пользователя
-  const errors = validationResult(req);                                                        // Проверяем данные запроса на ошибки
-  if (!errors.isEmpty()) {                                                                     // Проверяем, есть ли ошибки валидации
-    return res.status(400).json({ errors: errors.array() });                                    // Возвращаем ошибки в формате JSON
+export const registerUser = async (req, res) => {                                             					 // Определяем функцию для регистрации пользователя
+  const errors = validationResult(req);                                                        					 // Проверяем данные запроса на ошибки
+  if (!errors.isEmpty()) {                                                                     					 // Проверяем, есть ли ошибки валидации
+    return res.status(400).json({ errors: errors.array() });                                    				 // Возвращаем ошибки в формате JSON
   }                                                                                            
                                                                                               
-  const { username, email, password } = req.body;                                              // Извлекаем данные из тела запроса
+  const { username, email, password } = req.body;                                              					 // Извлекаем данные из тела запроса
                                                                                               
-  try {                                                                                        // Начинаем блок обработки ошибок
-    const [usernameExists] = await query("SELECT id FROM users WHERE username = ?", [username]); // Проверяем, занят ли username
-    if (usernameExists && usernameExists.id) {                                                 // Проверяем, существует ли пользователь
-      return res.status(400).json({ message: "Имя пользователя уже используется!" });          // Возвращаем ошибку
+  try {                                                                                        					 // Начинаем блок обработки ошибок
+    const [usernameExists] = await query("SELECT id FROM users WHERE username = ?", [username]); 				 // Проверяем, занят ли username
+    if (usernameExists && usernameExists.id) {                                                 					 // Проверяем, существует ли пользователь
+      return res.status(400).json({ message: "Имя пользователя уже используется!" });          					 // Возвращаем ошибку
     }                                                                                         
                                                                                               
-    const [emailExists] = await query("SELECT id FROM users WHERE email = ?", [email]);       // Проверяем, занят ли email
-    if (emailExists && emailExists.id) {                                                      // Проверяем, существует ли email
-      return res.status(400).json({ message: "Email уже используется!" });                    // Возвращаем ошибку
+    const [emailExists] = await query("SELECT id FROM users WHERE email = ?", [email]);       					 // Проверяем, занят ли email
+    if (emailExists && emailExists.id) {                                                      					 // Проверяем, существует ли email
+      return res.status(400).json({ message: "Email уже используется!" });                    					 // Возвращаем ошибку
     }                                                                                         
                                                                                               
-    const passwordHash = await hash(password, 10);                                            // Хешируем пароль с солью (10 раундов)
-    const userId = uuidv4();                                                                  // Генерируем уникальный ID пользователя
-    const telegramConfirmLink = `https://t.me/SerpmonnConfirmBot?startapp=${userId}`;            // Формируем ссылку для подтверждения
+    const passwordHash = await hash(password, 10);                                            					 // Хешируем пароль с солью (10 раундов)
+    const userId = uuidv4();                                                                  					 // Генерируем уникальный ID пользователя
+    const telegramConfirmLink = `https://t.me/SerpmonnConfirmBot?startapp=${userId}`;            				 // Формируем ссылку для подтверждения
                                                                                               
-    await query(                                                                              // Выполняем запрос на вставку пользователя
-      "INSERT INTO users (id, username, email, password_hash, confirmed) VALUES (?, ?, ?, ?, ?)", // SQL-запрос для вставки
-      [userId, username, email, passwordHash, false]                                           // Передаем данные в запрос
+    await query(                                                                              					 // Выполняем запрос на вставку пользователя
+      "INSERT INTO users (id, username, email, password_hash, confirmed) VALUES (?, ?, ?, ?, ?)", 				 // SQL-запрос для вставки
+      [userId, username, email, passwordHash, false]                                           					 // Передаем данные в запрос
     );                                                                                        
                                                                                               
-    res.status(200).json({                                                                    // Отправляем успешный ответ клиенту
-      success: true,                                                                          // Указываем успешность операции
-      message: "Регистрация успешна! Выберите способ подтверждения.",                         // Сообщение для пользователя
-      userId: userId,                                                                         // Передаем ID пользователя
-      confirmLink: telegramConfirmLink                                                        // Передаем ссылку для подтверждения
+    res.status(200).json({                                                                    					 // Отправляем успешный ответ клиенту
+      success: true,                                                                          					 // Указываем успешность операции
+      message: "Регистрация успешна! Выберите способ подтверждения.",                         					 // Сообщение для пользователя
+      userId: userId,                                                                         					 // Передаем ID пользователя
+      confirmLink: telegramConfirmLink                                                        					 // Передаем ссылку для подтверждения
     });                                                                                       
-  } catch (error) {                                                                           // Обрабатываем возможные ошибки
-    console.error("Ошибка регистрации:", error);                                              // Логируем ошибку в консоль
-    res.status(500).json({ message: "Ошибка сервера." });                                    // Возвращаем ошибку сервера клиенту
+  } catch (error) {                                                                           					 // Обрабатываем возможные ошибки
+    console.error("Ошибка регистрации:", error);                                              					 // Логируем ошибку в консоль
+    res.status(500).json({ message: "Ошибка сервера." });                                    					 // Возвращаем ошибку сервера клиенту
   }                                                                                         
 };
 
@@ -111,30 +111,30 @@ export const confirmTelegram = async (req, res) => {
   }
 };
                                                                                               
-export const confirmEmail = async (req, res) => {                                             // Определяем функцию для подтверждения email
-  const { email, userId } = req.body;                                                        // Извлекаем email и userId из тела запроса
+export const confirmEmail = async (req, res) => {                                             					 // Определяем функцию для подтверждения email
+  const { email, userId } = req.body;                                                        					 // Извлекаем email и userId из тела запроса
                                                                                               
-  try {                                                                                       // Начинаем блок обработки ошибок
-    const [user] = await query("SELECT id FROM users WHERE id = ? AND email = ?", [userId, email]); // Проверяем пользователя
-    if (!user) {                                                                              // Проверяем, найден ли пользователь
-      return res.status(404).json({ message: "Пользователь не найден." });                     // Возвращаем ошибку
+  try {                                                                                       					 // Начинаем блок обработки ошибок
+    const [user] = await query("SELECT id FROM users WHERE id = ? AND email = ?", [userId, email]); 				 // Проверяем пользователя
+    if (!user) {                                                                              					 // Проверяем, найден ли пользователь
+      return res.status(404).json({ message: "Пользователь не найден." });							 // Возвращаем ошибку
     }                                                                                         
                                                                                               
-    const confirmationToken = uuidv4();                                                       // Генерируем токен подтверждения
-    const tokenExpires = new Date(Date.now() + 3600000);                                      // Устанавливаем срок действия токена (1 час)
+    const confirmationToken = uuidv4();												 // Генерируем токен подтверждения
+    const tokenExpires = new Date(Date.now() + 3600000);									 // Устанавливаем срок действия токена (1 час)
                                                                                               
-    await query(                                                                              // Выполняем запрос на обновление пользователя
-      "UPDATE users SET confirmation_token = ?, confirmation_token_expires = ? WHERE id = ?", // SQL-запрос для обновления
-      [confirmationToken, tokenExpires, userId]                                               // Передаем данные в запрос
+    await query(														 // Выполняем запрос на обновление пользователя
+      "UPDATE users SET confirmation_token = ?, confirmation_token_expires = ? WHERE id = ?",					 // SQL-запрос для обновления
+      [confirmationToken, tokenExpires, userId]											 // Передаем данные в запрос
     );                                                                                        
                                                                                               
-    const confirmLink = `https://serpmonn.ru/auth/confirm?token=${confirmationToken}`;    // Формируем ссылку подтверждения
-    await sendConfirmationEmail(email, confirmLink);                                          // Отправляем письмо с подтверждением
+    const confirmLink = `https://serpmonn.ru/auth/confirm?token=${confirmationToken}`;						 // Формируем ссылку подтверждения
+    await sendConfirmationEmail(email, confirmLink);										 // Отправляем письмо с подтверждением
                                                                                               
-    res.json({ success: true, message: "Письмо с подтверждением отправлено." });              // Отправляем успешный ответ клиенту
-  } catch (error) {                                                                           // Обрабатываем возможные ошибки
-    console.error("Ошибка отправки email:", error);                                            // Логируем ошибку в консоль
-    res.status(500).json({ message: "Ошибка сервера." });                                    // Возвращаем ошибку сервера клиенту
+    res.json({ success: true, message: "Письмо с подтверждением отправлено." });						 // Отправляем успешный ответ клиенту
+  } catch (error) {														 // Обрабатываем возможные ошибки
+    console.error("Ошибка отправки email:", error);										 // Логируем ошибку в консоль
+    res.status(500).json({ message: "Ошибка сервера." });									 // Возвращаем ошибку сервера клиенту
   }                                                                                         
 };                                                                                           
                                                                                               

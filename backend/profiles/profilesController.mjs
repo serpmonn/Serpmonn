@@ -3,77 +3,77 @@ import { resolve } from 'path';                                                 
 
 const isProduction = process.env.NODE_ENV === 'production';                                                                      // Определяем режим работы: production или development
 const envPath = isProduction                                                                                                     // Выбираем путь к .env файлу в зависимости от окружения
-    ? '/var/www/serpmonn.ru/.env'                                                                                                // Продакшен путь на сервере
+    ? '/var/www/serpmonn.ru/backend/.env'                                                                                        // Продакшен путь на сервере
     : resolve(process.cwd(), 'backend/.env');                                                                                    // Разработка - абсолютный путь к .env в папке backend
 
 dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути
 
-import { query } from '../database/config.mjs';                                                                                 // Импортируем функцию для выполнения запросов к БД
-import paseto from 'paseto';                                                                                                    // Импортируем библиотеку paseto для работы с токенами
-const { V2 } = paseto;                                                                                                          // Извлекаем модуль V2 из paseto
-const secretKey = process.env.SECRET_KEY;                                                                                       // Получаем секретный ключ из переменной окружения
+import { query } from '../database/config.mjs';                                                                                  // Импортируем функцию для выполнения запросов к БД
+import paseto from 'paseto';                                                                                                     // Импортируем библиотеку paseto для работы с токенами
+const { V2 } = paseto;                                                                                                           // Извлекаем модуль V2 из paseto
+const secretKey = process.env.SECRET_KEY;                                                                                        // Получаем секретный ключ из переменной окружения
 
 // Контроллер для получения профиля пользователя
-const getUserProfile = async (req, res) => {                                                                                    // Определяем функцию для получения профиля
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');                                                   // Устанавливаем заголовки для отключения кэширования
-    try {                                                                                                                       // Начинаем блок обработки ошибок
-        const { email } = req.user;                                                                                             // Извлекаем email из объекта пользователя в запросе
-        console.log('Email пользователя из токена (getUserProfile):', email);                                                   // Логируем email пользователя для отладки
-        const queryText = 'SELECT username, email, confirmed, mailbox_created FROM users WHERE email = ?';                      // Определяем SQL-запрос для получения данных пользователя
-        const result = await query(queryText, [email]);                                                                         // Выполняем запрос к БД с email
-        console.log('Результат запроса к БД (getUserProfile):', result);                                                        // Логируем результат запроса для отладки
+const getUserProfile = async (req, res) => {                                                                                     // Определяем функцию для получения профиля
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');                                                    // Устанавливаем заголовки для отключения кэширования
+    try {                                                                                                                        // Начинаем блок обработки ошибок
+        const { email } = req.user;                                                                                              // Извлекаем email из объекта пользователя в запросе
+        console.log('Email пользователя из токена (getUserProfile):', email);                                                    // Логируем email пользователя для отладки
+        const queryText = 'SELECT username, email, confirmed, mailbox_created FROM users WHERE email = ?';                       // Определяем SQL-запрос для получения данных пользователя
+        const result = await query(queryText, [email]);                                                                          // Выполняем запрос к БД с email
+        console.log('Результат запроса к БД (getUserProfile):', result);                                                         // Логируем результат запроса для отладки
 
-        if (!result || result.length === 0) {                                                                                   // Проверяем, получены ли данные пользователя
-            return res.status(404).json({ message: 'Пользователь не найден' });                                                 // Возвращаем ошибку, если пользователь не найден
+        if (!result || result.length === 0) {                                                                                    // Проверяем, получены ли данные пользователя
+            return res.status(404).json({ message: 'Пользователь не найден' });                                                  // Возвращаем ошибку, если пользователь не найден
         }                                                                                                                      
 
-        const user = result[0];                                                                                                 // Извлекаем данные первого пользователя из результата
-        if (!user.confirmed) {                                                                                                  // Проверяем, подтвержден ли аккаунт
-            return res.status(403).json({ message: 'Подтвердите ваш аккаунт перед регистрацией почтового ящика' });             // Возвращаем ошибку, если аккаунт не подтвержден
+        const user = result[0];                                                                                                  // Извлекаем данные первого пользователя из результата
+        if (!user.confirmed) {                                                                                                   // Проверяем, подтвержден ли аккаунт
+            return res.status(403).json({ message: 'Подтвердите ваш аккаунт перед регистрацией почтового ящика' });              // Возвращаем ошибку, если аккаунт не подтвержден
         }                                                                                                                      
-        if (user.mailbox_created) {                                                                                             // Проверяем, создан ли почтовый ящик
-            return res.status(403).json({ message: 'Вы уже создали почтовый ящик' });                                           // Возвращаем ошибку, если ящик уже создан
+        if (user.mailbox_created) {                                                                                              // Проверяем, создан ли почтовый ящик
+            return res.status(403).json({ message: 'Вы уже создали почтовый ящик' });                                            // Возвращаем ошибку, если ящик уже создан
         }                                                                                                                      
 
-        res.json(user);                                                                                                         // Возвращаем данные пользователя клиенту
-    } catch (err) {                                                                                                             // Обрабатываем возможные ошибки
-        console.error('Ошибка при получении данных профиля:', err);                                                             // Логируем ошибку в консоль
-        res.status(401).json({ message: 'Недействительный токен или ошибка авторизации' });                                     // Возвращаем ошибку авторизации клиенту
+        res.json(user);                                                                                                          // Возвращаем данные пользователя клиенту
+    } catch (err) {                                                                                                              // Обрабатываем возможные ошибки
+        console.error('Ошибка при получении данных профиля:', err);                                                              // Логируем ошибку в консоль
+        res.status(401).json({ message: 'Недействительный токен или ошибка авторизации' });                                      // Возвращаем ошибку авторизации клиенту
     }                                                                                                                      
 };
 
 // Контроллер для получения информации о пользователе
-const getUserInfo = async (req, res) => {                                                                                       // Определяем функцию для получения информации
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');                                                   // Устанавливаем заголовки для отключения кэширования
-    try {                                                                                                                       // Начинаем блок обработки ошибок
-        const { email } = req.user;                                                                                             // Извлекаем email из объекта пользователя в запросе
-        console.log('Email пользователя из токена (getUserInfo):', email);                                                      // Логируем email пользователя для отладки
-        const queryText = 'SELECT username, email, confirmed, mailbox_created FROM users WHERE email = ?';                      // Определяем SQL-запрос для получения данных пользователя
-        const result = await query(queryText, [email]);                                                                         // Выполняем запрос к БД с email
-        console.log('Результат запроса к БД (getUserInfo):', result);                                                           // Логируем результат запроса для отладки
+const getUserInfo = async (req, res) => {                                                                                        // Определяем функцию для получения информации
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');                                                    // Устанавливаем заголовки для отключения кэширования
+    try {                                                                                                                        // Начинаем блок обработки ошибок
+        const { email } = req.user;                                                                                              // Извлекаем email из объекта пользователя в запросе
+        console.log('Email пользователя из токена (getUserInfo):', email);                                                       // Логируем email пользователя для отладки
+        const queryText = 'SELECT username, email, confirmed, mailbox_created FROM users WHERE email = ?';                       // Определяем SQL-запрос для получения данных пользователя
+        const result = await query(queryText, [email]);                                                                          // Выполняем запрос к БД с email
+        console.log('Результат запроса к БД (getUserInfo):', result);                                                            // Логируем результат запроса для отладки
 
-        if (!result || result.length === 0) {                                                                                   // Проверяем, получены ли данные пользователя
-            return res.status(404).json({ message: 'Пользователь не найден' });                                                 // Возвращаем ошибку, если пользователь не найден
+        if (!result || result.length === 0) {                                                                                    // Проверяем, получены ли данные пользователя
+            return res.status(404).json({ message: 'Пользователь не найден' });                                                  // Возвращаем ошибку, если пользователь не найден
         }                                                                                                                      
 
-        const user = result[0];                                                                                                 // Извлекаем данные первого пользователя из результата
+        const user = result[0];                                                                                                  // Извлекаем данные первого пользователя из результата
         res.json({ username: user.username, email: user.email, confirmed: user.confirmed, mailbox_created: user.mailbox_created }); // Возвращаем данные пользователя в структурированном виде
-    } catch (err) {                                                                                                             // Обрабатываем возможные ошибки
-        console.error('Ошибка при получении данных профиля:', err);                                                             // Логируем ошибку в консоль
-        res.status(401).json({ message: 'Недействительный токен или ошибка авторизации' });                                     // Возвращаем ошибку авторизации клиенту
+    } catch (err) {                                                                                                              // Обрабатываем возможные ошибки
+        console.error('Ошибка при получении данных профиля:', err);                                                              // Логируем ошибку в консоль
+        res.status(401).json({ message: 'Недействительный токен или ошибка авторизации' });                                      // Возвращаем ошибку авторизации клиенту
     }                                                                                                                      
 };
 
 // Контроллер для обновления профиля пользователя
-const updateUserProfile = async (req, res) => {                                                                                 // Определяем функцию для обновления профиля
-    const { email: oldEmail, username: oldUsername } = req.user;                                                                // Извлекаем старый email и username из токена
-    const { username, email } = req.body;                                                                                       // Извлекаем новые username и email из тела запроса
-    console.log('Полученные данные:', req.body);                                                                                // Логируем тело запроса для отладки
-    console.log('Email пользователя из токена:', email);                                                                        // Логируем email из токена для отладки
-    console.log('Username пользователя из токена:', oldUsername);                                                               // Логируем username из токена для отладки
+const updateUserProfile = async (req, res) => {                                                                                  // Определяем функцию для обновления профиля
+    const { email: oldEmail, username: oldUsername } = req.user;                                                                 // Извлекаем старый email и username из токена
+    const { username, email } = req.body;                                                                                        // Извлекаем новые username и email из тела запроса
+    console.log('Полученные данные:', req.body);                                                                                 // Логируем тело запроса для отладки
+    console.log('Email пользователя из токена:', email);                                                                         // Логируем email из токена для отладки
+    console.log('Username пользователя из токена:', oldUsername);                                                                // Логируем username из токена для отладки
 
-    if (!email || !username) {                                                                                                  // Проверяем, предоставлены ли email и username
-        return res.status(400).json({ message: 'Email и username обязательны' });                                               // Возвращаем ошибку, если данные отсутствуют
+    if (!email || !username) {                                                                                                   // Проверяем, предоставлены ли email и username
+        return res.status(400).json({ message: 'Email и username обязательны' });                                                // Возвращаем ошибку, если данные отсутствуют
     }                                                                                                                      
 
     try {                                                                                                                       // Начинаем блок обработки ошибок
