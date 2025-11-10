@@ -207,7 +207,7 @@ async function loadPromocodesFromAPI() {
             discount_amount: 100,
             bonus_description: 'Бонус 100 ₽ при регистрации',
             valid_until: '2035-12-31T23:59:59',
-            landing_url: 'https://sharry.prfl.me/sites/7wg34u?erid=2VtzqwuxWPn',
+            landing_url: 'https://sharry.prfl.me/sites/f4jzit?erid=2VtzqvJaEWT',
             image_url: '/frontend/images/sherry-promo.png',
             conditions: 'Зарегистрируйтесь в приложении Шерри и введите промокод при регистрации.',
             advertiser_info: 'Реклама ООО «Перфлюенс» ИНН: 7725380313, 6+ erid: 2VtzqwuxWPn',
