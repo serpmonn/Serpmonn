@@ -1,38 +1,87 @@
-{% set currentUrl = canonical or (site.baseUrl + page.url) %}                                                                                                                               {# Текущий URL для OG/каноникала #}
-<meta charset="UTF-8">                                                                                                                                                                      {# Кодировка #}
-<meta http-equiv="X-UA-Compatible" content="IE=edge">                                                                                                                                     {# Режим совместимости #}
-<meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">                                      {# Масштаб/адаптив #}
+{% set currentUrl = canonical or (site.baseUrl + page.url) %}
 
-<title>{{ title }}</title>                                                                                                                                                                   {# Заголовок страницы #}
-<meta name="description" content="{{ description }}">                                                                                                                                     {# Описание страницы #}
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
 
-{# Auto hreflang для главной по всем локалям #}
-{% if page.url and (page.url == '/' or '/index.html' in page.url) %}                                                                                                                         {# На главной выводим все hreflang #}
-  {% for loc in locales %}                                                                                                                                                                   {# Перебираем локали #}
-    {% if loc == 'ru' %}                                                                                                                                                                     {# Русская — корень сайта #}
-      <link rel="alternate" href="{{ site.baseUrl }}/" hreflang="ru" />                                                                                                                 {# Альтернатива RU #}
-    {% else %}                                                                                                                                                                               {# Иные локали — под /frontend/<loc>/ #}
-      <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/" hreflang="{{ loc }}" />                                                                                      {# Альтернативный язык #}
-    {% endif %}
-  {% endfor %}                                                                                                                                                                               {# Конец списка локалей #}
-  <link rel="alternate" href="{{ site.baseUrl }}/" hreflang="x-default" />                                                                                                              {# Язык по умолчанию #}
-{% endif %}
+<title>{{ title }}</title>
+<meta name="description" content="{{ description }}">
+<meta name="keywords" content="serpmonn, серпмон, серпмонн, поисковик, новости, мини-игры, браузерные игры, поиск без рекламы">
 
-{% if canonical %}<link rel="canonical" href="{{ canonical }}">{% else %}                                                                                                                 {# Канонический URL #}
-  {% if locale == 'ru' %}                                                                                                                                                                    {# Для RU — корень #}
-    <link rel="canonical" href="{{ site.baseUrl }}/">                                                                                                                                    {# Каноникал RU #}
-  {% else %}                                                                                                                                                                                {# Для остальных — путь локали #}
-    <link rel="canonical" href="{{ site.baseUrl }}/frontend/{{ locale }}/">                                                                                                              {# Каноникал локали #}
-  {% endif %}
-{% endif %}
+{# Все верификационные мета-теги #}
+<meta name="verify-admitad" content="7c9ceea344">
+<meta name="p:domain_verify" content="922f48dff0f0851f5a18bc66a200f1dc">
+<meta name="perfluence-verification" content="f5bac7474a74">
+<meta name="zen-verification" content="glc4g1kjobilzMvgmeVy1kFcaniRmlGPCcjdsZ8zZTMyvqOpLqQm54MpPqePPtNa">
+<meta name="yandex-verification" content="58431a51239a10f0">
+<meta name="takprodam-verification" content="92cbb7f9-5700-4b8b-9ce9-0a47af791b34">
+<meta name="Affilead-verification" content="3349e707-bab4-49d4-b20c-82b9ac98b669">
+<meta name="kadam-verification" content="kadam0340f16a561e3de4d4b2d1ba64630da4">
 
-<meta property="og:title" content="{{ ogTitle or title }}" />                                                                                                                            {# OG заголовок #}
-<meta property="og:description" content="{{ ogDescription or description }}" />                                                                                                            {# OG описание #}
-<meta property="og:image" content="{{ ogImage or (site.baseUrl + '/frontend/images/Banner_Serpmonn.png') }}" />                                                                          {# OG картинка #}
-<meta property="og:url" content="{{ currentUrl }}" />                                                                                                                                    {# OG URL #}
-<meta property="og:type" content="website" />                                                                                                                                            {# Тип ресурса #}
+{# Hreflang для всех языков #}
+{% for loc in locales %}
+  <link rel="alternate" href="{{ site.baseUrl }}/{{ loc }}/" hreflang="{{ loc }}" />
+{% endfor %}
+<link rel="alternate" href="{{ site.baseUrl }}/ru/" hreflang="x-default" />
 
-<link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">                                                                                                              {# Иконка сайта #}
-<link rel="manifest" href="/frontend/pwa/manifest.json">                                                                                                                                 {# Манифест PWA #}
+<link rel="canonical" href="{{ currentUrl }}" />
 
-<link rel="stylesheet" href="/frontend/styles/styles.css">                                                                                                                               {# Общие стили #}
+{# Open Graph #}
+<meta property="og:title" content="{{ title }}" />
+<meta property="og:description" content="{{ description }}" />
+<meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png" />
+<meta property="og:url" content="{{ currentUrl }}" />
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Serpmonn" />
+
+{# Twitter Cards #}
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="{{ title }}">
+<meta name="twitter:description" content="{{ description }}">
+<meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+
+<link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+<link rel="manifest" href="/frontend/pwa/manifest.json">
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+
+{# Яндекс.Метрика и другие скрипты #}
+<script>window.yaContextCb=window.yaContextCb||[]</script>
+<script src="https://yandex.ru/ads/system/context.js" async></script>
+
+<script type="text/javascript">
+    (function(m,e,t,r,i,k,a){
+        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+        m[i].l=1*new Date();
+        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
+    ym(98158791, 'init', {webvisor:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});
+</script>
+
+{# JSON-LD разметка #}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "Serpmonn",
+  "url": "{{ site.baseUrl }}/",
+  "logo": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"
+}
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "WebSite", 
+  "name": "Serpmonn",
+  "url": "{{ site.baseUrl }}/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "{{ site.baseUrl }}/frontend/search/searchresults.html?q={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
