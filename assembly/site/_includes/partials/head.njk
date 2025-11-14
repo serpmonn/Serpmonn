@@ -1,4 +1,4 @@
-{% set currentUrl = canonical or (site.baseUrl + page.url) %}
+{% set currentUrl = canonical or (site.baseUrl + (page.url | replace('/frontend/main.html', '/') | replace('/frontend/', '/'))) %}
 
 <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -27,7 +27,7 @@
 {% endfor %}
 <link rel="alternate" href="{{ site.baseUrl }}/ru/" hreflang="x-default" />
 
-<link rel="canonical" href="{{ currentUrl }}" />
+<link rel="canonical" href="{% if locale == 'ru' %}{{ site.baseUrl }}/{% else %}{{ site.baseUrl }}/{{ locale }}/{% endif %}" />
 
 {# Open Graph #}
 <meta property="og:title" content="{{ title }}" />
@@ -51,6 +51,7 @@
 <script>window.yaContextCb=window.yaContextCb||[]</script>
 <script src="https://yandex.ru/ads/system/context.js" async></script>
 
+{% raw %}
 <script type="text/javascript">
     (function(m,e,t,r,i,k,a){
         m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
@@ -60,8 +61,9 @@
     })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
     ym(98158791, 'init', {webvisor:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});
 </script>
+{% endraw %}
 
-{# JSON-LD разметка #}
+{% raw %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -71,7 +73,9 @@
   "logo": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"
 }
 </script>
+{% endraw %}
 
+{% raw %}
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -85,3 +89,4 @@
   }
 }
 </script>
+{% endraw %}

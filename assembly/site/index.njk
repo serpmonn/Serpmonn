@@ -14,7 +14,9 @@ eleventyComputed:
   cookieNotice: "{{ i18n[locale].cookie.text }}"
   acceptLabel: "{{ i18n[locale].cookie.accept }}"
   declineLabel: "{{ i18n[locale].cookie.decline }}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/main.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/{% endif %}"
+  privacyLink: "{{ i18n[locale].cookie.privacyLink }}"
+  privacyLinkText: "{{ i18n[locale].cookie.privacyLinkText }}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/{% else %}{{ site.baseUrl }}/{{ locale }}/{% endif %}"
 ---
 
 <div class="container search-card">

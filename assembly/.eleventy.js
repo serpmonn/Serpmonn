@@ -1,42 +1,125 @@
-export default function(eleventyConfig) {                                                                                                                                                   // Точка входа конфигурации Eleventy (экспорт по умолчанию)
-  eleventyConfig.addPassthroughCopy({ "site/src": "frontend" });                                                                                                                           // Копировать каталог frontend в dist без изменений
+export default function(eleventyConfig) {
 
-  eleventyConfig.addFilter("t", function(key, dict, locale) {                                                                                                                               // Фильтр t: получить перевод по ключу и локали
-    if (!dict || !locale) return key;                                                                                                                                                       // Нет словаря или локали — вернуть ключ как есть
-    const parts = key.split('.')                                                                                                                                                            // Разбиваем ключ на сегменты через точку
-    let cur = dict[locale];                                                                                                                                                                 // Берём словарь нужной локали
-    for (const p of parts) {                                                                                                                                                                // Идём по сегментам ключа
-      if (cur && Object.prototype.hasOwnProperty.call(cur, p)) {                                                                                                                            // Есть вложенный ключ
-        cur = cur[p];                                                                                                                                                                       // Спускаемся глубже
-      } else {                                                                                                                                                                              // Перевод по ключу отсутствует
-        cur = null;                                                                                                                                                                         // Помечаем отсутствие
-        break;                                                                                                                                                                              // Прерываем цикл
+  /**
+   * Пассивное копирование файлов без обработки
+   * Копирует содержимое папки site/src в dist/frontend
+   * Используется для статических: CSS, JS, изображений
+   */
+  eleventyConfig.addPassthroughCopy({ "site/src": "frontend" });
+
+  // ==========================================================================
+  // КОНФИГУРАЦИЯ ПАРСЕРА NUNJUCKS
+  // ==========================================================================
+
+  /**
+   * Кастомный тег {% raw %} для Nunjucks
+   * Защищает содержимое от обработки шаблонизатором
+   * Используется для JavaScript кода, который не должен обрабатываться
+   */
+  eleventyConfig.addNunjucksTag("raw", function(nunjucks) {
+    return new function() {
+      this.tags = ["raw"];
+      
+      this.parse = function(parser, nodes, lexer) {
+        var tok = parser.nextToken();
+        var args = parser.parseSignature(null, true);
+        parser.advanceAfterBlockEnd(tok.value);
+        var body = parser.parseUntilBlocks("endraw");
+        parser.advanceAfterBlockEnd();
+        return new nodes.CallExtension(this, "run", args, [body]);
+      };
+      
+      this.run = function(context, body) {
+        return new nunjucks.runtime.SafeString(body());
+      };
+    }();
+  });
+
+  // ==========================================================================
+  // КОНФИГУРАЦИЯ ФИЛЬТРОВ
+  // ==========================================================================
+
+  /**
+   * Фильтр перевода "t"
+   * Получает перевод по ключу из словаря для указанной локали
+   * 
+   * @param {string} key - Ключ перевода (например: "header.title")
+   * @param {object} dict - Словарь переводов
+   * @param {string} locale - Языковая локаль (например: "en", "ru")
+   * @returns {string} Переведенная строка или исходный ключ, если перевод не найден
+   */
+  eleventyConfig.addFilter("t", function(key, dict, locale) {
+    // Если нет словаря или локали, возвращаем ключ как есть
+    if (!dict || !locale) return key;
+    
+    // Разбиваем ключ на сегменты по точкам
+    const parts = key.split('.');
+    // Берем словарь для указанной локали
+    let cur = dict[locale];
+    
+    // Рекурсивно ищем перевод по сегментам ключа
+    for (const p of parts) {
+      if (cur && Object.prototype.hasOwnProperty.call(cur, p)) {
+        // Спускаемся на уровень глубже в объекте
+        cur = cur[p];
+      } else {
+        // Если ключ не найден, прерываем поиск
+        cur = null;
+        break;
       }
     }
-    if (cur == null) {                                                                                                                                                                      // Фолбэк на русский, если в локали не найдено
-      cur = dict.ru;                                                                                                                                                                        // Берём словарь ru
-      for (const p of parts) {                                                                                                                                                              // Повторяем обход ключа
-        if (cur && Object.prototype.hasOwnProperty.call(cur, p)) {                                                                                                                          // Проверяем наличие во фолбэке
-          cur = cur[p];                                                                                                                                                                     // Спускаемся глубже
-        } else {                                                                                                                                                                            // Нет и во фолбэке
-          cur = null;                                                                                                                                                                       // Помечаем отсутствие
-          break;                                                                                                                                                                            // Прерываем цикл
+    
+    // Фолбэк на русскую локаль, если перевод не найден
+    if (cur == null) {
+      cur = dict.ru; // Берем русскую версию как фолбэк
+      
+      // Повторяем поиск для русской локали
+      for (const p of parts) {
+        if (cur && Object.prototype.hasOwnProperty.call(cur, p)) {
+          cur = cur[p];
+        } else {
+          cur = null;
+          break;
         }
       }
     }
-    return cur != null ? cur : key;                                                                                                                                                         // Возвращаем перевод или ключ
-  });                                                                                                                                                                                       // Конец регистрации фильтра t
+    
+    // Возвращаем найденный перевод или исходный ключ
+    return cur != null ? cur : key;
+  });
 
-  return {                                                                                                                                                                                  // Возвращаем объект конфигурации Eleventy
-    dir: {                                                                                                                                                                                  // Настройка директорий
-      input: "site",                                                                                                                                                                        // Папка исходников
-      includes: "_includes",                                                                                                                                                                // Папка include‑шаблонов
-      data: "_data",                                                                                                                                                                        // Папка данных
-      output: "dist"                                                                                                                                                                        // Папка сборки
-    },                                                                                                                                                                                      // Конец секции dir
-    templateFormats: ["njk", "md", "html"],                                                                                                                                                 // Разрешённые форматы шаблонов
-    markdownTemplateEngine: "njk",                                                                                                                                                          // Движок для Markdown
-    htmlTemplateEngine: "njk",                                                                                                                                                              // Движок для HTML
-    dataTemplateEngine: "njk"                                                                                                                                                               // Движок для data‑шаблонов
-  };                                                                                                                                                                                        // Конец объекта конфигурации
+  // ==========================================================================
+  // ОСНОВНАЯ КОНФИГУРАЦИЯ ELEVENTY
+  // ==========================================================================
+
+  return {
+    /**
+     * Настройка структуры директорий
+     */
+    dir: {
+      // Директория с исходными файлами шаблонов
+      input: "site",
+      // Директория с включаемыми шаблонами (partials)
+      includes: "_includes",
+      // Директория с глобальными данными
+      data: "_data",
+      // Директория для собранного сайта
+      output: "dist"
+    },
+    
+    /**
+     * Поддерживаемые форматы шаблонов
+     */
+    templateFormats: ["njk", "md", "html"],
+    
+    /**
+     * Движки шаблонов для разных типов файлов
+     */
+    // Движок для Markdown файлов
+    markdownTemplateEngine: "njk",
+    // Движок для HTML файлов
+    htmlTemplateEngine: "njk",
+    // Движок для шаблонов данных
+    dataTemplateEngine: "njk"
+  };
 }
