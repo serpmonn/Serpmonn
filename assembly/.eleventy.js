@@ -1,125 +1,81 @@
-export default function(eleventyConfig) {
+// .eleventy.js
+const fs = require('fs');
+const path = require('path');
 
+module.exports = function(eleventyConfig) {
   /**
    * Пассивное копирование файлов без обработки
-   * Копирует содержимое папки site/src в dist/frontend
-   * Используется для статических: CSS, JS, изображений
    */
   eleventyConfig.addPassthroughCopy({ "site/src": "frontend" });
 
-  // ==========================================================================
-  // КОНФИГУРАЦИЯ ПАРСЕРА NUNJUCKS
-  // ==========================================================================
-
   /**
-   * Кастомный тег {% raw %} для Nunjucks
-   * Защищает содержимое от обработки шаблонизатором
-   * Используется для JavaScript кода, который не должен обрабатываться
+   * ДОПОЛНИТЕЛЬНОЕ КОПИРОВАНИЕ В ЛОКАЛИ (после сборки)
    */
-  eleventyConfig.addNunjucksTag("raw", function(nunjucks) {
-    return new function() {
-      this.tags = ["raw"];
-      
-      this.parse = function(parser, nodes, lexer) {
-        var tok = parser.nextToken();
-        var args = parser.parseSignature(null, true);
-        parser.advanceAfterBlockEnd(tok.value);
-        var body = parser.parseUntilBlocks("endraw");
-        parser.advanceAfterBlockEnd();
-        return new nodes.CallExtension(this, "run", args, [body]);
-      };
-      
-      this.run = function(context, body) {
-        return new nunjucks.runtime.SafeString(body());
-      };
-    }();
-  });
-
-  // ==========================================================================
-  // КОНФИГУРАЦИЯ ФИЛЬТРОВ
-  // ==========================================================================
-
-  /**
-   * Фильтр перевода "t"
-   * Получает перевод по ключу из словаря для указанной локали
-   * 
-   * @param {string} key - Ключ перевода (например: "header.title")
-   * @param {object} dict - Словарь переводов
-   * @param {string} locale - Языковая локаль (например: "en", "ru")
-   * @returns {string} Переведенная строка или исходный ключ, если перевод не найден
-   */
-  eleventyConfig.addFilter("t", function(key, dict, locale) {
-    // Если нет словаря или локали, возвращаем ключ как есть
-    if (!dict || !locale) return key;
+  eleventyConfig.on('eleventy.after', async () => {
+    console.log('📁 Копируем статические файлы в локали...');
     
-    // Разбиваем ключ на сегменты по точкам
-    const parts = key.split('.');
-    // Берем словарь для указанной локали
-    let cur = dict[locale];
+    const srcPath = path.join(__dirname, 'site/src');
+    const distPath = path.join(__dirname, 'dist/frontend');
     
-    // Рекурсивно ищем перевод по сегментам ключа
-    for (const p of parts) {
-      if (cur && Object.prototype.hasOwnProperty.call(cur, p)) {
-        // Спускаемся на уровень глубже в объекте
-        cur = cur[p];
-      } else {
-        // Если ключ не найден, прерываем поиск
-        cur = null;
-        break;
-      }
+    // Загружаем локали для копирования
+    let copyLocales = [];
+    try {
+      const localesPath = path.join(__dirname, 'site/_data/locales.json');
+      const localesData = JSON.parse(fs.readFileSync(localesPath, 'utf8'));
+      copyLocales = localesData.filter(locale => locale !== 'ru');
+      console.log(`📁 Найдено ${copyLocales.length} локалей для копирования`);
+    } catch (error) {
+      console.log('❌ Ошибка чтения locales.json для копирования');
+      copyLocales = ['en', 'ar'];
     }
     
-    // Фолбэк на русскую локаль, если перевод не найден
-    if (cur == null) {
-      cur = dict.ru; // Берем русскую версию как фолбэк
+    function copyWithoutTemplates(source, target) {
+      if (!fs.existsSync(source)) return;
       
-      // Повторяем поиск для русской локали
-      for (const p of parts) {
-        if (cur && Object.prototype.hasOwnProperty.call(cur, p)) {
-          cur = cur[p];
-        } else {
-          cur = null;
-          break;
+      const stats = fs.statSync(source);
+      
+      if (stats.isDirectory()) {
+        if (!fs.existsSync(target)) {
+          fs.mkdirSync(target, { recursive: true });
         }
+        
+        const items = fs.readdirSync(source);
+        for (const item of items) {
+          const sourceItem = path.join(source, item);
+          const targetItem = path.join(target, item);
+          
+          if (item === '_includes' || item === '_data') continue;
+          copyWithoutTemplates(sourceItem, targetItem);
+        }
+      } else {
+        const ext = path.extname(source).toLowerCase();
+        const excludePatterns = ['.html', '.njk', '.md'];
+        if (excludePatterns.includes(ext)) return;
+        
+        fs.copyFileSync(source, target);
       }
     }
     
-    // Возвращаем найденный перевод или исходный ключ
-    return cur != null ? cur : key;
+    let localeCount = 0;
+    for (const locale of copyLocales) {
+      const localeTargetPath = path.join(distPath, locale);
+      copyWithoutTemplates(srcPath, localeTargetPath);
+      localeCount++;
+    }
+    
+    console.log(`✅ Скопировано статических файлов в ${localeCount} локалей`);
   });
-
-  // ==========================================================================
-  // ОСНОВНАЯ КОНФИГУРАЦИЯ ELEVENTY
-  // ==========================================================================
 
   return {
-    /**
-     * Настройка структуры директорий
-     */
     dir: {
-      // Директория с исходными файлами шаблонов
       input: "site",
-      // Директория с включаемыми шаблонами (partials)
-      includes: "_includes",
-      // Директория с глобальными данными
+      includes: "_includes", 
       data: "_data",
-      // Директория для собранного сайта
       output: "dist"
     },
-    
-    /**
-     * Поддерживаемые форматы шаблонов
-     */
     templateFormats: ["njk", "md", "html"],
-    
-    /**
-     * Движки шаблонов для разных типов файлов
-     */
-    // Движок для Markdown файлов
     markdownTemplateEngine: "njk",
-    // Движок для HTML файлов
-    htmlTemplateEngine: "njk",
-    // Движок для шаблонов данных
+    htmlTemplateEngine: "njk", 
     dataTemplateEngine: "njk"
   };
-}
+};

@@ -1,0 +1,431 @@
+
+<!-- Подключение стилей для меню -->
+<!-- Стили доступности (улучшения для пользователей с ограниченными возможностями) -->
+<link rel="stylesheet" href="/frontend/styles/accessibility.css">
+<!-- Основные стили меню -->
+<link rel="stylesheet" href="/frontend/styles/menu.css">
+<!-- Стили для Progressive Web App (PWA) -->
+<link rel="stylesheet" href="/frontend/styles/pwa.css">
+
+<!-- Кнопка открытия/закрытия меню -->
+<button class="menu-button" id="menuButton" 
+        aria-controls="menuContainer"
+        aria-haspopup="menu"
+        aria-expanded="false">
+    <span class="s">S</span><span class="n">n</span>
+</button>
+
+<!-- Основной контейнер меню -->
+<div class="menu-container" id="menuContainer">
+
+    <!-- ========== РАЗДЕЛ АУТЕНТИФИКАЦИИ ========== -->
+    <a href="/frontend/ks/register/register.html" id="login-register-btn">
+        <img src="/frontend/images/login.ico" alt="Authentication" class="icon">
+        رِجِسٹریشن تہٕ لاگ اِن
+    </a>
+
+    <!-- ========== РАЗДЕЛ НОВОСТЕЙ ========== -->
+    <a href="/frontend/ks/news/news.html" class="menu-item">
+        <img src="/frontend/images/news.png" alt="Новости" class="icon">
+        خَبَر
+    </a>
+
+    <!-- ========== РАЗДЕЛ ИГР ========== -->
+    <a href="#" class="menu-item" data-submenu="gamesSubmenu">
+        <img src="/frontend/images/Games.ico" alt="Игры" class="icon">
+        گیم
+    </a>
+
+    <!-- Подменю игр -->
+    <div class="submenu-container" id="gamesSubmenu">
+        <!-- Ссылка на страницу со всеми играми -->
+        <a href="/frontend/ks/games/games.html">
+            <img src="/frontend/images/Games.ico" alt="Все игры" class="icon">
+            سٲری گیم
+        </a>
+
+        <!-- Подраздел: Веб-игры -->
+        <a href="#" class="menu-item" data-submenu="webGamesSubmenu">
+            <img src="/frontend/images/WebGames.ico" alt="Веб-игры" class="icon">
+            ویب گیم
+        </a>
+
+        <!-- Подменю веб-игр -->
+        <div class="submenu-container" id="webGamesSubmenu">
+            <!-- Внешние игры с партнерскими ссылками -->
+            <a href="https://dbnua.com/g/7wq93kdtn47c9ceea344676c539f4c/?erid=2bL9aMPo2e49hMef4piUjZ2XwT" target="_blank">
+                <img src="/frontend/images/not-chess.ico" alt="Не шахматы" class="icon">
+                Не шахматы
+            </a>
+
+            <!-- Внутренние веб-игры -->
+            <a href="/frontend/games/fifteen/fifteen.html" target="_blank">
+                <img src="/frontend/images/fifteen.png" alt="Пятнашки" class="icon">
+                Пятнашки
+            </a>
+            <a href="/frontend/games/minesweeper/minesweeper.html" target="_blank">
+                <img src="/frontend/images/minesweeper.png" alt="Сапёр" class="icon">
+                Сапёр
+            </a>
+            <a href="/frontend/games/breakout/breakout.html" target="_blank">
+                <img src="/frontend/images/breakout.png" alt="Арканоид" class="icon">
+                Арканоид
+            </a>
+            <a href="/frontend/games/coins/coins.html" target="_blank">
+                <img src="/frontend/images/coins.png" alt="Монетки" class="icon">
+                Монетки
+            </a>
+            <a href="/frontend/games/flappy/flappy.html" target="_blank">
+                <img src="/frontend/images/flappy.png" alt="Flappy Bird" class="icon">
+                Flappy Bird
+            </a>
+            <a href="/frontend/games/snake/snake.html" target="_blank">
+                <img src="/frontend/images/snake.png" alt="Змейка" class="icon">
+                Змейка
+            </a>
+            <a href="/frontend/games/2048/2048.html" target="_blank">
+                <img src="/frontend/images/2048.ico" alt="2048" class="icon">
+                2048
+            </a>
+            <a href="/frontend/games/redsquare/redsquare.html" target="_blank">
+                <img src="/frontend/images/SquareEscape.ico" alt="Квадратное бегство" class="icon">
+                Квадратное бегство
+            </a>
+            <a href="/frontend/games/redsquare2/redsquare2.html" target="_blank">
+                <img src="/frontend/images/RedSquare2.ico" alt="Падающие фигуры" class="icon">
+                Падающие фигуры
+            </a>
+        </div>
+
+        <!-- Подраздел: Мобильные игры -->
+        <a href="#" class="menu-item" data-submenu="androidGamesSubmenu">
+            <img src="/frontend/images/AndroidGames.ico" alt="Мобильные игры" class="icon">
+            موبایل گیم
+        </a>
+
+        <!-- Подменю мобильных игр -->
+        <div class="submenu-container" id="androidGamesSubmenu">
+            <!-- Внешние мобильные игры -->
+            <a href="https://yjfca.com/g/2dmg0i5qi37c9ceea344afc64b2e0f/?erid=2bL9aMPo2e49hMef4piUHJVwXV" target="_blank">
+                <img src="/frontend/images/gran-saga.png" alt="Gran Saga (Мобайл)" class="icon">
+                Gran Saga (Мобайл)
+            </a>
+            <!-- Заглушки для будущих игр -->
+            <a href="#" class="game-placeholder">
+                <span class="game-icon">📱</span> Мобильная стратегия (جَلد)
+            </a>
+            <a href="#" class="game-placeholder">
+                <span class="game-icon">🏆</span> Аркадная игра (جَلد)
+            </a>
+        </div>
+
+        <!-- Подраздел: ПК-игры -->
+        <a href="#" class="menu-item" data-submenu="pcGamesSubmenu">
+            <img src="/frontend/images/pc-games.png" alt="ПК-игры" class="icon">
+            پی سی گیم
+        </a>
+
+        <!-- Подменю ПК-игр -->
+        <div class="submenu-container" id="pcGamesSubmenu">
+            <a href="https://rzekl.com/g/txwwmat2wx7c9ceea344c065b8a873/?erid=2bL9aMPo2e49hMef4pfym3SuLK" target="_blank">
+                <img src="/frontend/images/amazing-online.jpg" alt="AMAZING ONLINE" class="icon"> AMAZING ONLINE
+            </a>
+            <a href="https://xmknb.com/g/ilvfzhs26x7c9ceea34461e800f2bd/?erid=2bL9aMPo2e49hMef4piV5BfNfR" target="_blank">
+                <img src="/frontend/images/evolve-rp.png" alt="Evolve RP" class="icon"> Evolve RP
+            </a>
+            <a href="https://zmgig.com/g/yog728vijm7c9ceea344f0d389d68d/?erid=MvGzQC98w3З1gMq1oSV73txX" target="_blank">
+                <img src="/frontend/images/nextrp.png" alt="NEXTRP" class="icon"> NEXTRP
+            </a>
+            <a href="https://xcdus.com/g/c5e9n6r3ew7c9ceea344c5c964748a/?erid=MvGzQC98w3З1gMq1pRgkzi9d" target="_blank">
+                <img src="/frontend/images/malinovka.png" alt="Малиновка" class="icon"> Малиновка
+            </a>
+            <a href="https://rzekl.com/g/7lgnbu225t7c9ceea3444cb8738d24/?erid=MvGzQC98w3З1gMq1oSV73uLi" target="_blank">
+                <img src="/frontend/images/lineage-2-essence.png" alt="Lineage 2 Essence" class="icon"> Lineage 2 Essence
+            </a>
+            <a href="https://twnfz.com/g/f15f0db8437c9ceea344d8792ef979/?erid=5jtCeReLm1S3Xx3Lf3au61G" target="_blank">
+                <img src="/frontend/images/lineage-2.png" alt="Lineage 2" class="icon"> Lineage 2
+            </a>
+            <a href="https://qbzdl.com/g/rbktk0m87n7c9ceea344a3582dc4ab/?erid=2bL9aMPo2e49hMef4pgUymfaow" target="_blank">
+                <img src="/frontend/images/aion.png" alt="Aion Classic" class="icon"> Aion Classic
+            </a>
+            <a href="https://rzekl.com/g/fy90i94aoa7c9ceea3443fcec4d4a3/?erid=MvGzQC98w3З1gMq1oS2xNYhq" target="_blank">
+                <img src="/frontend/images/black-desert.png" alt="Black Desert" class="icon"> Black Desert
+            </a>
+            <a href="https://yynbx.com/g/bu9xyk63aw7c9ceea344b6495a8325/?erid=MvGzQC98w3З1gMq1kwjXdKXb" target="_blank">
+                <img src="/frontend/images/blade-and-soul.png" alt="Blade &amp; Soul" class="icon"> Blade &amp; Soul
+            </a>
+        </div>
+    </div>
+
+    <!-- ========== РАЗДЕЛ ПРИЛОЖЕНИЙ ========== -->
+    <a href="#" class="menu-item" data-submenu="appsSubmenu">
+        <img src="/frontend/images/Apps.ico" alt="Приложения" class="icon">
+        ایپس
+    </a>
+
+    <!-- Подменю приложений -->
+    <div class="submenu-container" id="appsSubmenu">
+        <!-- Кнопка установки PWA -->
+        <a href="#" class="menu-item" id="installAppButton">
+            <img src="/frontend/images/serpmonn.ico" alt="Скачать веб-приложение" class="icon">
+            ویب ایپ ڈاؤن لوڈ
+        </a>
+
+        <!-- Подраздел: Мобильные приложения -->
+        <a href="#" class="menu-item" data-submenu="mobileAppsSubmenu">
+            <img src="/frontend/images/mobile-apps.ico" alt="Мобильные приложения" class="icon">
+            موبایل ایپس
+        </a>
+        <div class="submenu-container" id="mobileAppsSubmenu">
+            <!-- Заглушка для будущего мобильного приложения -->
+            <a href="#" class="app-placeholder">
+                <span class="app-icon">📱</span> Android приложение (جَلد)
+            </a>
+        </div>
+    </div>
+
+    <!-- ========== БЛОК ПОИСКА ========== -->
+    <div class="menu-search-container" id="menuSearchContainer">
+        <div class="menu-search-row">
+            <!-- Логотип сайта -->
+            <a href="/frontend/ks/index.html" class="menu-logo-link">
+                <img src="/frontend/images/serpmonn.ico" alt="Serpmonn" class="menu-logo">
+            </a>
+
+            <!-- Поисковая строка Google -->
+            <div class="gcse-searchbox-only"></div>
+        </div>
+    </div>
+
+    <!-- ========== ПРОМОКОДЫ И СКИДКИ ========== -->
+    <a href="/frontend/ks/promo-codes-and-discounts/promokody-skidki.html" id="privacy-policy-btn">
+        <img src="/frontend/images/skidki-i-akcii.png" alt="Промокоды и скидки" class="icon">
+        پرومو کوڈ تہٕ ڈِسکاؤنٹ
+    </a>
+
+    <!-- ========== РАЗДЕЛ ИНСТРУМЕНТОВ ========== -->
+    <a href="#" class="menu-item" data-submenu="toolsSubmenu">
+        <img src="/frontend/images/instruments.jpg" alt="Инструменты" class="icon">
+        اوزار
+    </a>
+
+    <!-- Подменю инструментов -->
+    <div class="submenu-container" id="toolsSubmenu">
+        <!-- Общий раздел инструментов -->
+        <a href="/frontend/ks/tools/tools.html">
+            <span class="tool-icon">🧰</span> سٲری اوزار
+        </a>
+        
+        <!-- Категория: Маркетинг и аналитика -->
+        <a href="#" class="menu-item" data-submenu="marketingToolsSubmenu">
+            <span class="tool-icon">📊</span> مارکیٹنگ
+        </a>
+        <div class="submenu-container" id="marketingToolsSubmenu">
+            <a href="/frontend/ks/tools/marketing/utm-builder.html">
+                <span class="tool-icon">🔗</span> Генератор UTM‑меток
+            </a>
+            <a href="/frontend/ks/tools/marketing/word-counter.html">
+                <span class="tool-icon">📝</span> Счётчик слов/символов
+            </a>
+        </div>
+        
+        <!-- Категория: Безопасность -->
+        <a href="#" class="menu-item" data-submenu="securityToolsSubmenu">
+            <span class="tool-icon">🔐</span> سیکیورٹی
+        </a>
+        <div class="submenu-container" id="securityToolsSubmenu">
+            <a href="/frontend/ks/tools/security/password-generator.html">
+                <span class="tool-icon">🔑</span> Генератор паролей
+            </a>
+        </div>
+        
+        <!-- Категория: Разработка -->
+        <a href="#" class="menu-item" data-submenu="devToolsSubmenu">
+            <span class="tool-icon">💻</span> ڈویلپمنٹ
+        </a>
+        <div class="submenu-container" id="devToolsSubmenu">
+            <!-- Заглушки для будущих инструментов -->
+            <a href="#" class="tool-placeholder">
+                <span class="tool-icon">📄</span> JSON форматтер
+            </a>
+            <a href="#" class="tool-placeholder">
+                <span class="tool-icon">🔄</span> Base64 конвертер
+            </a>
+        </div>
+        
+        <!-- Категория: Дизайн -->
+        <a href="#" class="menu-item" data-submenu="designToolsSubmenu">
+            <span class="tool-icon">🎨</span> ڈیزائن
+        </a>
+        <div class="submenu-container" id="designToolsSubmenu">
+            <!-- Заглушки для будущих инструментов -->
+            <a href="#" class="tool-placeholder">
+                <span class="tool-icon">🎨</span> Цветовые палитры
+            </a>
+            <a href="#" class="tool-placeholder">
+                <span class="tool-icon">📐</span> Конвертер форматов
+            </a>
+        </div>
+        
+        <!-- Категория: Инженерия -->
+        <a href="#" class="menu-item" data-submenu="engineeringToolsSubmenu">
+            <span class="tool-icon">🔧</span> انجینئرنگ
+        </a>
+        <div class="submenu-container" id="engineeringToolsSubmenu">
+            <a href="/frontend/ks/tools/engineering/unit-converter.html">
+                <span class="tool-icon">🔄</span> Конвертер единиц
+            </a>
+        </div>
+        
+        <!-- Категория: Логистика -->
+        <a href="#" class="menu-item" data-submenu="logisticsToolsSubmenu">
+            <span class="tool-icon">⚡</span> لاجسٹکس
+        </a>
+        <div class="submenu-container" id="logisticsToolsSubmenu">
+            <a href="/frontend/ks/tools/logistics/depreciation-calculator.html">
+                <span class="tool-icon">🔧</span> Калькулятор амортизации
+            </a>
+            <a href="/frontend/ks/tools/logistics/fuel-calculator.html">
+                <span class="tool-icon">⛽</span> Калькулятор топлива
+            </a>
+        </div>
+        
+        <!-- Категория: Экология -->
+        <a href="#" class="menu-item" data-submenu="ecologyToolsSubmenu">
+            <span class="tool-icon">🌱</span> ایکالوجی
+        </a>
+        <div class="submenu-container" id="ecologyToolsSubmenu">
+            <a href="/frontend/ks/tools/ecology/product-footprint-calculator.html">
+                <span class="tool-icon">🌍</span> Экологический след продуктов
+            </a>
+        </div>
+    </div>
+
+    <!-- ========== РАЗДЕЛ ПАРТНЁРОВ ========== -->
+    <a href="#" class="menu-item" data-submenu="partnersSubmenu">
+        <img src="/frontend/images/OurPartners.ico" alt="Наши партнёры" class="icon">
+        پارٹنر
+    </a>
+
+    <!-- Подменю партнеров -->
+    <div class="submenu-container" id="partnersSubmenu">
+        <!-- Партнеры с реферальными ссылками -->
+        <a href="https://dhwnh.com/g/vv3q4oey1v7c9ceea344b6d1781017/?erid=2bL9aMPo2e49hMef4pdzo6JkYp" target="_blank">
+            <img src="/frontend/images/aliexpress.png" alt="Aliexpress" class="icon">
+            Aliexpress
+        </a>
+        <a href="https://aflink.ru/g/18vhi6r5cv7c9ceea34479deb39b46/?erid=5jtCeReNwxHpfQTFuc3CS5J" target="_blank">
+            <img src="/frontend/images/joom.ico" alt="Joom" class="icon">
+            Joom 
+        </a>
+        <a href="https://www.admitad.com/affiliate-publishers/?ref=2noim3jtxb" target="_blank">
+            <img src="/frontend/images/admitad.ico" alt="Admitad" class="icon">
+            Admitad
+        </a>
+        <!-- Локальные партнеры -->
+        <a href="/frontend/ks/Partners/X-Car.html" target="_blank">
+            <img src="/frontend/images/Logo_X-Car.ico" alt="X-Car" class="icon">
+            X-Car
+        </a>
+        <!-- ... остальные партнеры ... -->
+    </div>
+
+    <!-- ========== ЮРИДИЧЕСКИЕ РАЗДЕЛЫ ========== -->
+    <!-- Политика конфиденциальности -->
+    <a href="/frontend/ks/privacy-policy/privacy-policy.html" id="privacy-policy-btn">
+        <img src="/frontend/images/privacy-policy.ico" alt="Политика конфиденциальности" class="icon">
+        پرائیویسی پالیسی
+    </a>
+
+    <!-- Информация о рекламе -->
+    <a href="/frontend/ks/ad-info/ad-info.html" id="ad-info-btn">
+        <img src="/frontend/images/ad-info.ico" alt="О рекламе" class="icon">
+        ایڈورٹائزنگ بارے
+    </a>
+    
+    <!-- О проекте -->
+    <a href="/frontend/ks/about-project/about-project.html" id="about-project-btn">
+        <img src="/frontend/images/about-project.ico" alt="О проекте" class="icon">
+        پراجیکٹ بارے
+    </a>
+
+    <!-- ========== НАСТРОЙКИ ========== -->
+    <a href="#" class="menu-item" data-submenu="settingsSubmenu" 
+       aria-expanded="false" aria-haspopup="true">
+        <img src="/frontend/images/settings.png" alt="Настройки" class="icon">
+        سیٹنگز
+    </a>
+    
+    <!-- Подменю настроек -->
+    <div class="submenu-container" id="settingsSubmenu" aria-hidden="true">
+        <!-- Настройки доступности -->
+        <a href="#" class="menu-item" data-submenu="a11ySubmenu" 
+           aria-expanded="false" aria-haspopup="true">
+            <img src="/frontend/images/availability.png" alt="Доступность" class="icon">
+            ایکسسیبیلٹی
+        </a>
+        
+        <!-- Подменю доступности -->
+        <div class="submenu-container" id="a11ySubmenu" aria-hidden="true">
+            <!-- Переключатели доступности с ARIA-ролями -->
+            <a href="#" class="a11y-toggle" data-setting="large-text" 
+               role="switch" aria-checked="false">
+                <img src="/frontend/images/large-font.png" alt="Крупный шрифт" class="icon a11y-icon">
+                وَڈ فونٹ
+                <span class="a11y-status" data-status="large-text">⚪</span>
+            </a>
+            <a href="#" class="a11y-toggle" data-setting="high-contrast" 
+               role="switch" aria-checked="false">
+                <img src="/frontend/images/high-contrast.png" alt="Высокий контраст" class="icon a11y-icon">
+                ہائی کونٹراسٹ
+                <span class="a11y-status" data-status="high-contrast">⚪</span>
+            </a>
+            <a href="#" class="a11y-toggle" data-setting="underline-links" 
+               role="switch" aria-checked="false">
+                <img src="/frontend/images/underline-links.jpg" alt="Подчёркивать ссылки" class="icon a11y-icon">
+                لنکس انڈرلائن
+                <span class="a11y-status" data-status="underline-links">⚪</span>
+            </a>
+            <a href="#" class="a11y-toggle" data-setting="reduce-motion" 
+               role="switch" aria-checked="false">
+                <span class="a11y-icon" aria-hidden="true">🎬</span>
+                اینیمیشن گَٹ
+                <span class="a11y-status" data-status="reduce-motion">⚪</span>
+            </a>
+        </div>
+
+        <!-- Настройки языка -->
+        <a href="#" class="menu-item" data-submenu="langSubmenu" 
+           aria-expanded="false" aria-haspopup="true">
+           <span class="tool-icon">🌐</span> زبان
+        </a>
+
+        <!-- Подменю выбора языка -->
+        <div class="submenu-container" id="langSubmenu" aria-hidden="true">
+            <!-- Языки будут добавлены динамически через JavaScript -->
+        </div>
+    </div>
+</div>
+
+<!-- ========== PWA-ИНСТРУКЦИИ ========== -->
+<!-- Оверлей для инструкций по установке PWA -->
+<div class="pwa-instructions-overlay" id="pwaInstructions" style="display:none;">
+    <div class="pwa-instructions-container">
+        <h3>Serpmonn ایپ انسٹالیشن</h3>
+        <p>تیز ایکسس خاطرہ ایپ ہوم سکرین پؠٹھ شامل کریو:</p>
+        <ol>
+            <li>Нажмите "Установить" ниже</li>
+            <li>Подтвердите в диалоговом окне браузера</li>
+            <li>Или используйте меню браузера (⋮) → "Установить страницу/Добавить на главный экран"</li>
+        </ol>
+        <!-- Кнопки управления установкой PWA -->
+        <button id="confirmPWAInstall" class="pwa-install-btn">Установить</button>
+        <button id="closePWAInstructions" class="pwa-close-btn">Закрыть</button>
+    </div>
+</div>
+
+<!-- 
+    Подключение скрипта загрузки меню
+    Обрабатывает открытие/закрытие меню, подменю, настройки доступности и PWA
+-->
+<!-- Подключение доступности выполняется через menu-loader.js -->

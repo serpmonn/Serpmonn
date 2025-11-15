@@ -1,7 +1,6 @@
 // Исправленный импорт
 import { initMenu } from './menu.js';
 import '/frontend/scripts/language-selector.js';
-import '/frontend/scripts/i18n-overlay.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
 
@@ -28,13 +27,14 @@ const langToDir = {
   'en': 'en', 'es': 'es', 'pt-br': 'pt-br', 'hi': 'hi', 'ar': 'ar', 'id': 'id',
   'zh-cn': 'zh-cn', 'ja': 'ja', 'ko': 'ko', 'vi': 'vi', 'tr': 'tr',
   'de': 'de', 'fr': 'fr', 'it': 'it', 'pl': 'pl', 'nl': 'nl',
-  // new
   'kk': 'kk', 'he': 'he', 'fa': 'fa', 'bn': 'bn', 'ur': 'ur',
   'ms': 'ms', 'fil': 'fil', 'th': 'th',
   'ro': 'ro', 'cs': 'cs', 'hu': 'hu', 'bg': 'bg', 'el': 'el', 'sr': 'sr',
   'ka': 'ka', 'hy': 'hy', 'be': 'be', 'uz': 'uz', 'az': 'az',
   'sv': 'sv', 'da': 'da', 'nb': 'nb', 'fi': 'fi',
-  'pt-pt': 'pt-pt', 'es-419': 'es-419'
+  'pt-pt': 'pt-pt', 'es-419': 'es-419',
+  'ps': 'ps', 'sd': 'sd', 'ug': 'ug', 'dv': 'dv', 'ks': 'ks', 
+  'ku-Arab': 'ku-Arab', 'yi': 'yi'
 };
 const resolvedDir = langToDir[spnLang];
 const primaryMenuPath = resolvedDir ? `/frontend/${resolvedDir}/menu.html` : '/frontend/menu.html';

@@ -1,11 +1,10 @@
 {
   "name": "serpmonn-site",
   "private": true,
-  "type": "module",
   "scripts": {
     "build": "eleventy",
-    "deploy": "npm run build && node assemble/deploy-locales.js",
-    "assemble": "node assemble/deploy-locales.js",
+    "deploy": "npm run build && node deploy-locales.js",
+    "assemble": "node deploy-locales.js",
     "dev": "eleventy --serve",
     "clean": "rm -rf dist"
   },
@@ -18,5 +17,8 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": ""
+  "description": "",
+  "dependencies": {
+    "fs-extra": "^11.3.2"
+  }
 }

@@ -1,41 +1,59 @@
-const fs = require('fs-extra');
+// deploy-locales.js
+const fs = require('fs');
 const path = require('path');
 
 console.log('🔧 Скрипт замены локалей запущен...');
 
-// Пути относительно расположения скрипта
-const ROOT_PATH = path.join(__dirname, '..');
-const DIST_PATH = path.join(ROOT_PATH, 'dist/frontend');
-const TARGET_PATH = path.join(ROOT_PATH, 'site/frontend');
+// ПРАВИЛЬНЫЕ ПУТИ!
+const DIST_PATH = path.join(__dirname, 'dist/frontend');              // assembly/dist/frontend/
+const TARGET_PATH = '/var/www/serpmonn.ru/frontend';                // рабочие файлы
 
 console.log('📁 Пути:');
-console.log('   Исходники:', DIST_PATH);
-console.log('   Цель:', TARGET_PATH);
+console.log('   Исходники (новые):', DIST_PATH);
+console.log('   Цель (рабочие):', TARGET_PATH);
 
 // Проверяем существование путей
 if (!fs.existsSync(DIST_PATH)) {
-    console.log('❌ Папка с собранными файлами не найдена!');
+    console.log('❌ Папка dist/frontend/ не найдена!');
     console.log('   Сначала запустите: npm run build');
     process.exit(1);
 }
 
 if (!fs.existsSync(TARGET_PATH)) {
     console.log('❌ Целевая папка не найдена!');
+    console.log('   Проверьте путь:', TARGET_PATH);
     process.exit(1);
 }
 
 console.log('🚀 Начинаем замену файлов локалей...');
 
-// Русский язык
+// Функция для создания директорий
+function ensureDirSync(dir) {
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+}
+
+// Функция для копирования файлов
+function copySync(source, target) {
+    ensureDirSync(path.dirname(target));
+    fs.copyFileSync(source, target);
+}
+
+// Русский язык - основные файлы
 try {
-    const ruSource = path.join(DIST_PATH, 'main.html');
-    const ruTarget = path.join(TARGET_PATH, 'main.html');
+    const ruFiles = [
+        { source: path.join(DIST_PATH, 'main.html'), target: path.join(TARGET_PATH, 'main.html') },
+        { source: path.join(DIST_PATH, 'menu.html'), target: path.join(TARGET_PATH, 'menu.html') }
+    ];
     
-    if (fs.existsSync(ruSource)) {
-        fs.copySync(ruSource, ruTarget, { overwrite: true });
-        console.log('✓ Заменен русский (main.html)');
-    } else {
-        console.log('✗ Файл не найден: русский (main.html)');
+    for (const file of ruFiles) {
+        if (fs.existsSync(file.source)) {
+            copySync(file.source, file.target);
+            console.log(`✓ Заменен русский (${path.basename(file.source)})`);
+        } else {
+            console.log(`✗ Файл не найден: русский (${path.basename(file.source)})`);
+        }
     }
 } catch (error) {
     console.log('❌ Ошибка при замене русского:', error.message);
@@ -47,30 +65,40 @@ const locales = ['en', 'ar', 'az', 'be', 'bg', 'bn', 'cs', 'da', 'de', 'el', 'es
 let successCount = 0;
 let errorCount = 0;
 
-locales.forEach(locale => {
+for (const locale of locales) {
     try {
-        const source = path.join(DIST_PATH, locale, 'index.html');
-        const target = path.join(TARGET_PATH, locale, 'index.html');
+        const filesToCopy = [
+            { source: path.join(DIST_PATH, locale, 'index.html'), target: path.join(TARGET_PATH, locale, 'index.html') },
+            { source: path.join(DIST_PATH, locale, 'menu.html'), target: path.join(TARGET_PATH, locale, 'menu.html') }
+        ];
         
-        if (fs.existsSync(source)) {
-            // Создаем директорию если не существует
-            fs.ensureDirSync(path.dirname(target));
-            // Заменяем файл
-            fs.copySync(source, target, { overwrite: true });
-            console.log(`✓ Заменен ${locale}`);
+        let localeSuccess = 0;
+        
+        for (const file of filesToCopy) {
+            if (fs.existsSync(file.source)) {
+                copySync(file.source, file.target);
+                console.log(`✓ Заменен ${locale} (${path.basename(file.source)})`);
+                localeSuccess++;
+            } else {
+                console.log(`✗ Файл не найден для ${locale}: ${path.basename(file.source)}`);
+            }
+        }
+        
+        if (localeSuccess > 0) {
             successCount++;
         } else {
-            console.log(`✗ Файл не найден для ${locale}`);
             errorCount++;
         }
+        
     } catch (error) {
         console.log(`❌ Ошибка при замене ${locale}:`, error.message);
         errorCount++;
     }
-});
+}
 
 console.log('\n📊 Итоги замены:');
-console.log(`   ✅ Успешно: ${successCount}`);
+console.log(`   ✅ Успешно обработано языков: ${successCount + 1}`);
 console.log(`   ❌ Ошибки: ${errorCount}`);
 console.log(`   📁 Всего языков: ${locales.length + 1}`);
+console.log(`   📄 Файлов на язык: 2 (index.html + menu.html)`);
 console.log('🎉 Замена файлов завершена!');
