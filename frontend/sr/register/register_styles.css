@@ -1,0 +1,274 @@
+/* Базовые стили для всей страницы */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;                                        /* Основной шрифт страницы */
+    background: linear-gradient(135deg, #e0f7fa, #e1bee7);                                              /* Градиентный фон страницы */
+    margin: 0;                                                                                          /* Убираем внешние отступы */
+    padding: 0;                                                                                         /* Убираем внутренние отступы */
+    min-height: 100vh;                                                                                  /* Минимальная высота на весь экран */
+    display: flex;                                                                                      /* Flexbox для центрирования */
+    flex-direction: column;                                                                             /* Вертикальное расположение элементов */
+    align-items: center;                                                                                /* Центрирование по горизонтали */
+    justify-content: center;                                                                            /* Центрирование по вертикали */
+}
+
+/* Основной контейнер формы */
+.container {
+    background: #fff;                                                                                   /* Белый фон контейнера */
+    max-width: 420px;                                                                                   /* Максимальная ширина контейнера */
+    padding: 30px 25px;                                                                                 /* Внутренние отступы */
+    border-radius: 16px;                                                                                /* Закругленные углы */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);                                                        /* Тень контейнера */
+    animation: slideUp 0.6s ease;                                                                       /* Анимация появления */
+}
+
+/* Анимация появления контейнера */
+@keyframes slideUp {
+    from {
+        transform: translateY(30px);                                                                    /* Начальная позиция - смещена вниз */
+        opacity: 0;                                                                                     /* Начальная прозрачность - невидима */
+    }
+    to {
+        transform: translateY(0);                                                                       /* Конечная позиция - на месте */
+        opacity: 1;                                                                                     /* Конечная прозрачность - полностью видима */
+    }
+}
+
+/* Заголовок формы */
+h2 {
+    text-align: center;                                                                                 /* Выравнивание по центру */
+    font-size: 28px;                                                                                    /* Размер шрифта */
+    color: #333;                                                                                        /* Цвет текста */
+    margin-bottom: 25px;                                                                                /* Отступ снизу */
+}
+
+/* Стили для формы */
+form {
+    display: flex;                                                                                      /* Flexbox для элементов формы */
+    flex-direction: column;                                                                             /* Вертикальное расположение */
+}
+
+/* Стили для лейблов */
+label {
+    margin-bottom: 6px;                                                                                 /* Отступ снизу */
+    font-size: 14px;                                                                                    /* Размер шрифта */
+    color: #444;                                                                                        /* Цвет текста */
+}
+
+/* Стили для полей ввода */
+input {
+    padding: 12px;                                                                                      /* Внутренние отступы */
+    margin-bottom: 18px;                                                                                /* Отступ снизу */
+    border: 1px solid #ccc;                                                                             /* Граница поля */
+    border-radius: 8px;                                                                                 /* Закругленные углы */
+    font-size: 16px;                                                                                    /* Размер шрифта */
+    transition: border 0.2s;                                                                            /* Плавный переход для границы */
+}
+
+/* Стили для активного поля ввода */
+input:focus {
+    border-color: #ff4d4d;                                                                              /* Цвет границы при фокусе */
+    outline: none;                                                                                      /* Убираем стандартный outline */
+    box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);                                                     /* Тень при фокусе */
+}
+
+/* Контейнер для поля пароля с кнопкой */
+.password-container {
+    position: relative;                                                                                 /* Относительное позиционирование */
+    display: flex;                                                                                      /* Flexbox для выравнивания */
+    align-items: center;                                                                                /* Выравнивание по центру */
+    margin-bottom: 18px;                                                                                /* Отступ снизу */
+}
+
+/* Поле ввода пароля */
+.password-container input {
+    width: 100%;                                                                                        /* Ширина на весь контейнер */
+    box-sizing: border-box;                                                                             /* Учитываем padding в ширине */
+    padding: 12px 45px 12px 12px;                                                                       /* Отступы: сверху, справа(для кнопки), снизу, слева */
+    border: 1px solid #ccc;                                                                           /* Граница поля */
+    border-radius: 8px;                                                                                 /* Закругленные углы */
+    font-size: 16px;                                                                                    /* Размер шрифта */
+    transition: border 0.2s;                                                                            /* Плавный переход для границы */
+    margin-bottom: 0;                                                                                   /* Убираем отступ снизу, т.к. уже есть у контейнера */
+}
+
+/* Стили для активного поля пароля */
+.password-container input:focus {
+    border-color: #ff4d4d;                                                                              /* Цвет границы при фокусе */
+    outline: none;                                                                                      /* Убираем стандартный outline */
+    box-shadow: 0 0 0 3px rgba(124, 77, 255, 0.1);                                                     /* Тень при фокусе */
+}
+
+/* Кнопка показа/скрытия пароля */
+#togglePassword {
+    position: absolute;                                                                                 /* Абсолютное позиционирование */
+    right: 8px;                                                                                         /* Отступ справа */
+    top: 50%;                                                                                           /* Позиционирование по центру */
+    transform: translateY(-50%);                                                                        /* Смещение для точного центрирования */
+    background: none;                                                                                   /* Прозрачный фон */
+    border: none;                                                                                       /* Без границы */
+    font-size: 20px;                                                                                    /* Увеличиваем размер иконки */
+    cursor: pointer;                                                                                    /* Курсор-указатель */
+    color: #888;                                                                                        /* Цвет иконки */
+    transition: all 0.2s ease;                                                                          /* Плавный переход всех свойств */
+    width: 32px;                                                                                        /* Фиксированная ширина */
+    height: 32px;                                                                                       /* Фиксированная высота */
+    display: flex;                                                                                      /* Flexbox для центрирования */
+    align-items: center;                                                                                /* Выравнивание по вертикали */
+    justify-content: center;                                                                            /* Выравнивание по горизонтали */
+    border-radius: 4px;                                                                                 /* Закругленные углы кнопки */
+    z-index: 2;                                                                                         /* Поверх поля ввода */
+}
+
+/* Стили кнопки при наведении */
+#togglePassword:hover {
+    color: #333;                                                                                        /* Темный цвет иконки */
+    background-color: rgba(0, 0, 0, 0.05);                                                             /* Легкий фон при наведении */
+}
+
+/* Стили кнопки при активном состоянии */
+#togglePassword:active {
+    transform: translateY(-50%) scale(0.95);                                                            /* Легкое уменьшение при нажатии */
+}
+
+/* Кнопка отправки формы */
+.submit-btn {
+    padding: 12px;                                                                                      /* Внутренние отступы */
+    background: linear-gradient(90deg, #ff5252, #ff1717);                                              /* Градиентный фон */
+    color: #fff;                                                                                        /* Белый текст */
+    font-size: 16px;                                                                                    /* Размер шрифта */
+    border: none;                                                                                       /* Без границы */
+    border-radius: 8px;                                                                                 /* Закругленные углы */
+    cursor: pointer;                                                                                    /* Курсор-указатель */
+    transition: background 0.3s, transform 0.2s;                                                       /* Плавные переходы */
+}
+
+/* Стили кнопки при наведении */
+.submit-btn:hover {
+    background: linear-gradient(90deg, #e53935, #d32f2f);                                              /* Темный градиент при наведении */
+    transform: translateY(-1px);                                                                        /* Легкое поднятие кнопки */
+}
+
+/* Чекбокс политики конфиденциальности */
+.policy-checkbox {
+    margin-bottom: 18px;                                                                                /* Отступ снизу */
+    font-size: 14px;                                                                                    /* Размер шрифта */
+    color: #444;                                                                                        /* Цвет текста */
+}
+
+/* Ссылка в чекбоксе политики */
+.policy-checkbox a {
+    color: #ff1717;                                                                                     /* Красный цвет ссылки */
+    text-decoration: none;                                                                              /* Без подчеркивания */
+}
+
+/* Ссылка при наведении */
+.policy-checkbox a:hover {
+    text-decoration: underline;                                                                         /* Подчеркивание при наведении */
+}
+
+/* Блок для сообщений */
+#message {
+    text-align: center;                                                                                 /* Выравнивание по центру */
+    color: green;                                                                                       /* Зеленый цвет для успешных сообщений */
+    font-size: 14px;                                                                                    /* Размер шрифта */
+    margin-top: 10px;                                                                                   /* Отступ сверху */
+}
+
+/* Ссылка на страницу входа */
+.login-link {
+    text-align: center;                                                                                 /* Выравнивание по центру */
+    margin-top: 20px;                                                                                   /* Отступ сверху */
+    font-size: 14px;                                                                                    /* Размер шрифта */
+}
+
+/* Ссылка в блоке входа */
+.login-link a {
+    color: #ff1717;                                                                                     /* Красный цвет ссылки */
+    text-decoration: none;                                                                              /* Без подчеркивания */
+    font-weight: bold;                                                                                  /* Жирный шрифт */
+}
+
+/* Ссылка при наведении */
+.login-link a:hover {
+    text-decoration: underline;                                                                         /* Подчеркивание при наведении */
+}
+
+/* Попап подтверждения */
+.popup {
+    display: none;                                                                                      /* Скрыт по умолчанию */
+    position: fixed;                                                                                    /* Фиксированное позиционирование */
+    top: 50%;                                                                                           /* Позиционирование по вертикали */
+    left: 50%;                                                                                          /* Позиционирование по горизонтали */
+    transform: translate(-50%, -50%);                                                                   /* Центрирование попапа */
+    background: white;                                                                                  /* Белый фон */
+    padding: 25px;                                                                                      /* Внутренние отступы */
+    border-radius: 12px;                                                                                /* Закругленные углы */
+    box-shadow: 0px 12px 24px rgba(0, 0, 0, 0.2);                                                      /* Тень попапа */
+    z-index: 1000;                                                                                      /* Поверх других элементов */
+    text-align: center;                                                                                 /* Выравнивание по центру */
+}
+
+/* Контент попапа */
+.popup-content {
+    display: flex;                                                                                      /* Flexbox для элементов */
+    flex-direction: column;                                                                             /* Вертикальное расположение */
+    gap: 12px;                                                                                          /* Расстояние между элементами */
+    align-items: center;                                                                                /* Выравнивание по центру */
+}
+
+/* Кнопка Telegram в попапе */
+.popup .telegram-btn {
+    background: #0088cc;                                                                                /* Цвет Telegram */
+    color: white;                                                                                       /* Белый текст */
+    padding: 10px 20px;                                                                                 /* Внутренние отступы */
+    border-radius: 8px;                                                                                 /* Закругленные углы */
+    text-decoration: none;                                                                              /* Без подчеркивания */
+    font-weight: bold;                                                                                  /* Жирный шрифт */
+    transition: background 0.3s;                                                                        /* Плавный переход фона */
+}
+
+/* Кнопка Telegram при наведении */
+.popup .telegram-btn:hover {
+    background: #007ab8;                                                                                /* Темный цвет при наведении */
+}
+
+/* Кнопка Email в попапе */
+.popup .email-btn {
+    background: linear-gradient(90deg, #ff5252, #ff1717);                                              /* Градиентный фон */
+    color: white;                                                                                       /* Белый текст */
+    padding: 10px 20px;                                                                                 /* Внутренние отступы */
+    border-radius: 8px;                                                                                 /* Закругленные углы */
+    border: none;                                                                                       /* Без границы */
+    font-weight: bold;                                                                                  /* Жирный шрифт */
+    cursor: pointer;                                                                                    /* Курсор-указатель */
+    transition: background 0.3s;                                                                        /* Плавный переход фона */
+}
+
+/* Кнопка Email при наведении */
+.popup .email-btn:hover {
+    background: linear-gradient(90deg, #e53935, #d32f2f);                                              /* Темный градиент при наведении */
+}
+
+/* Кнопка закрытия попапа */
+.popup .close-btn {
+    background: #666;                                                                                   /* Серый фон */
+    color: white;                                                                                       /* Белый текст */
+    padding: 8px 16px;                                                                                  /* Внутренние отступы */
+    border: none;                                                                                       /* Без границы */
+    border-radius: 8px;                                                                                 /* Закругленные углы */
+    font-size: 14px;                                                                                    /* Размер шрифта */
+    cursor: pointer;                                                                                    /* Курсор-указатель */
+    transition: background 0.3s;                                                                        /* Плавный переход фона */
+}
+
+/* Кнопка закрытия при наведении */
+.popup .close-btn:hover {
+    background: #555;                                                                                   /* Темный серый при наведении */
+}
+
+/* Контейнер для рекламы */
+.ad-container {
+    text-align: center;                                                                                 /* Выравнивание по центру */
+    margin: 20px auto;                                                                                  /* Отступы и центрирование */
+    max-width: 600px;                                                                                   /* Максимальная ширина */
+}

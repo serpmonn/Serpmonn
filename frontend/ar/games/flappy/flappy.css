@@ -1,0 +1,146 @@
+/* flappy.css - Стили для игры "Flappy Bird" */
+
+/* CSS переменные для цветовой схемы игры */
+:root { 
+    --bg: #0f141b;           /* Основной фон страницы */
+    --fg: #0b0f14;           /* Вторичный фон */
+    --pipe: #2ecc71;         /* Цвет труб */
+    --bird: #f1c40f;         /* Цвет птицы */
+    --text: #eaeaea;         /* Цвет текста */
+}
+
+/* Базовые стили для html и body */
+html, body { 
+    width: 100%;             /* Полная ширина */
+    height: 100%;            /* Полная высота */
+    background: var(--bg);   /* Фон из CSS переменной */
+    overflow: hidden;        /* Скрываем прокрутку */
+}
+
+/* Стили основного body */
+body { 
+    margin: 0;               /* Убираем внешние отступы */
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; /* Системные шрифты */
+    color: var(--text);      /* Цвет текста из переменной */
+}
+
+/* Основной контейнер контента */
+.page { 
+    max-width: 1000px;       /* Максимальная ширина контента */
+    margin: 0 auto;          /* Центрирование по горизонтали */
+    padding: 16px;           /* Внутренние отступы */
+}
+
+/* Стили шапки страницы */
+header { 
+    display: flex;           /* Flexbox для выравнивания */
+    align-items: center;     /* Вертикальное выравнивание по центру */
+    gap: 12px;               /* Расстояние между элементами */
+    margin: 10px 0 16px;     /* Внешние отступы */
+}
+
+/* Заголовок в шапке */
+header h1 { 
+    font-size: 1.6rem;       /* Размер шрифта */
+    margin: 0;               /* Убираем отступы */
+}
+
+/* Основная сетка страницы */
+.wrap { 
+    display: grid;           /* CSS Grid для раскладки */
+    grid-template-columns: 1fr 320px; /* Две колонки: игровое поле и панель управления */
+    gap: 16px;               /* Расстояние между колонками */
+    align-items: start;      /* Выравнивание по верху */
+}
+
+/* Стили панелей (игровое поле и управление) */
+.panel { 
+    background: #121821;     /* Темный фон панели */
+    border: 1px solid #1a2230; /* Граница панели */
+    border-radius: 10px;     /* Скругленные углы */
+    padding: 12px 14px;      /* Внутренние отступы */
+}
+
+/* Стили игрового холста */
+canvas { 
+    background: linear-gradient(#6dd5fa, #2980b9); /* Градиентный фон неба */
+    width: 100%;             /* Адаптивная ширина */
+    max-width: 640px;        /* Максимальная ширина */
+    height: auto;            /* Автоматическая высота */
+    border-radius: 10px;     /* Скругленные углы */
+    border: 1px solid #1a2230; /* Граница */
+    box-shadow: 0 8px 30px rgba(0,0,0,.25); /* Тень для глубины */
+    display: block;          /* Блочный элемент */
+    margin: 0 auto;          /* Центрирование */
+}
+
+/* Сетка для блока статистики */
+.stats { 
+    display: grid;           /* CSS Grid */
+    grid-template-columns: repeat(2, 1fr); /* Две колонки одинаковой ширины */
+    gap: 10px;               /* Расстояние между элементами */
+}
+
+/* Стили отдельного элемента статистики */
+.stat { 
+    background: #0f1520;     /* Темный фон */
+    border: 1px solid #182233; /* Граница */
+    border-radius: 8px;      /* Скругленные углы */
+    padding: 8px 10px;       /* Внутренние отступы */
+    text-align: center;      /* Выравнивание текста по центру */
+}
+
+/* Контейнер для кнопок управления */
+.controls { 
+    display: flex;           /* Flexbox для кнопок */
+    gap: 8px;                /* Расстояние между кнопками */
+    justify-content: center; /* Центрирование по горизонтали */
+    margin-top: 10px;        /* Отступ сверху */
+}
+
+/* Базовые стили кнопок */
+.btn { 
+    background: #162030;     /* Темный фон кнопки */
+    border: 1px solid #24344b; /* Граница кнопки */
+    color: #eee;             /* Цвет текста */
+    border-radius: 8px;      /* Скругленные углы */
+    padding: 8px 10px;       /* Внутренние отступы */
+    cursor: pointer;         /* Курсор-указатель */
+}
+
+/* Стили основной кнопки */
+.btn.primary { 
+    background: linear-gradient(90deg, #dc3545, #c82333); /* Градиентный фон */
+    border: none;            /* Убираем границу */
+}
+
+/* Стили подсказки */
+.hint { 
+    color: #cfcfcf;          /* Серый цвет текста */
+    font-size: .95rem;       /* Размер шрифта */
+    text-align: center;      /* Выравнивание по центру */
+    margin-top: 10px;        /* Отступ сверху */
+}
+
+/* Адаптивность для мобильных устройств */
+@media (max-width: 960px) { 
+    .wrap {
+        grid-template-columns: 1fr; /* Одна колонка на мобильных */
+    }
+}
+
+/* Стили для компактных инструкций */
+#compact-instructions {
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
+    to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Улучшенные стили для уведомлений */
+#flappy-notification, #flappy-record-notification {
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}

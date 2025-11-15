@@ -1,0 +1,139 @@
+/* breakout.css - Стили для игры Арканоид */
+
+:root {
+    --bg: #0f1115;
+    --panel: #141820;
+    --text: #eaeaea;
+    --ball: #f1c40f;
+    --paddle: #dc3545;
+    --brick1: #2ecc71;
+    --brick2: #3498db;
+    --brick3: #9b59b6;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    background: var(--bg);
+    overflow: hidden;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--text);
+}
+
+.page {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: 16px;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 10px 0 16px;
+}
+
+header h1 {
+    font-size: 1.6rem;
+    margin: 0;
+}
+
+.wrap {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 16px;
+    align-items: start;
+}
+
+.panel {
+    background: var(--panel);
+    border: 1px solid #1f2632;
+    border-radius: 10px;
+    padding: 12px 14px;
+}
+
+canvas {
+    background: #0d1016;
+    width: 100%;
+    max-width: 640px;
+    height: auto;
+    border-radius: 10px;
+    border: 1px solid #1f2632;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, .25);
+    display: block;
+    margin: 0 auto;
+}
+
+.stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
+
+.stat {
+    background: #10141b;
+    border: 1px solid #1c2531;
+    border-radius: 8px;
+    padding: 8px 10px;
+    text-align: center;
+}
+
+.controls {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 10px;
+}
+
+.btn {
+    background: #16202a;
+    border: 1px solid #243241;
+    color: #eee;
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+}
+
+.btn.primary {
+    background: linear-gradient(90deg, #dc3545, #c82333);
+    border: none;
+}
+
+.hint {
+    color: #cfcfcf;
+    font-size: .95rem;
+    text-align: center;
+    margin-top: 10px;
+}
+
+/* Адаптивность */
+@media (max-width: 960px) {
+    .wrap {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Стили для оверлеев инструкций и рекламы */
+#game-ad-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+}
+
+.instructions-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, .75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9998;
+}

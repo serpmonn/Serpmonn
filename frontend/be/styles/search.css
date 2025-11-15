@@ -1,0 +1,113 @@
+﻿.container {
+	text-align: center;                                                     /* Центрирование содержимого внутри контейнера */
+	background-color: rgba(255, 255, 255, 0.4);                             /* Полупрозрачный фон для читаемости */
+	border-radius: 10px;                                                    /* Радиус границы (округление углов) */
+	padding: 1.5%;                                                            /* Отступы внутри контейнера */
+	position: relative;                                                     /* Относительное позиционирование для дальнейшего использования */
+	align-self: center;                                                     /* Центрирование контейнера по вертикали, если он находится в flex-контейнере */
+	margin-top: 1.5%;                                                         /* Добавляем отступ сверху */
+	margin-bottom: 1.5%;                                                      /* Отступ снизу */
+	width: auto;                                                            /* Ширина автоматически определяется содержимым */
+	height: auto;                                                           /* Высота автоматически определяется содержимым */
+}
+
+.logo {
+	width: 65px;                                                            /* Задаем фиксированную ширину логотипа */
+	height: auto;                                                           /* Высота автоматически пропорциональна ширине */
+	vertical-align: middle;                                                 /* Выравнивание по вертикали с учетом строки */
+}
+
+.main-search-container {
+	display: flex;                                                          /* Используем flexbox для выравнивания элементов внутри контейнера */
+	align-items: center;                                                    /* Вертикальное выравнивание элементов по центру */
+	justify-content: center;                                                /* Горизонтальное выравнивание элементов по центру */
+}
+
+.gcse-searchbox-only {
+	display: inline-block;                                                  /* Отображение как инлайн-блока */
+	vertical-align: middle;                                                 /* Выравнивание по вертикали */
+	position: relative;                                                     /* Относительное позиционирование для дальнейшего использования */
+}
+
+.gsc-search-button.gsc-search-button-v2 {
+	transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;                        /* Плавный переход */
+	height: 34px; 															/* меньше по вертикали */
+	min-height: 34px;
+	padding: 0 12px; 														/* компактно по горизонтали */
+	border-radius: 8px;
+}
+
+a:hover {
+	color: #007bff;
+	text-decoration: underline;
+}
+
+.gsc-search-button.gsc-search-button-v2:hover {
+	transform: translateY(-1px);                                           /* Увеличение кнопки при наведении */
+	background-color: #555555;                                           /* Цвет фона при наведении */
+}
+
+input, textarea, select, button {                                          /* Стили для полей ввода и текстовых областей */
+	margin-bottom: 0px;                                                    /* Убираем отступ снизу у всех элементов ввода */
+}
+
+/* Стеклянная карточка вокруг поиска */
+.search-card {
+        backdrop-filter: blur(8px);
+        -webkit-backdrop-filter: blur(8px);
+        background: rgba(255, 255, 255, 0.35);
+        border: 1px solid rgba(220, 53, 69, 0.15);
+        border-radius: 14px;
+        padding: 14px 16px;
+        margin-top: 10px;
+}
+
+/* Фокус/hover у поля поиска */
+.gcse-searchbox-only:focus-within {
+        outline: 2px solid #dc3545;
+        outline-offset: 3px;
+        border-radius: 10px;
+}
+
+/* Микро-анимация поднятия карточек (общий класс на всякий случай) */
+.card, .counter-card {
+        transition: transform .2s ease, box-shadow .2s ease;
+}
+.card:hover, .counter-card:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+}
+
+/* Состояния нажатия и фокуса для кнопки */
+.gsc-search-button.gsc-search-button-v2:active {
+        transform: translateY(0);
+        background-color: #444444;
+}
+.gsc-search-button.gsc-search-button-v2:focus {
+        outline: 2px solid #1e11b5;
+        outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+        /* Стили для кнопки поиска на главной странице в мобильной версии */
+        .main-search-container .gsc-search-button.gsc-search-button-v2,
+        .main-search-container button.gsc-search-button {
+                min-height: 41px;
+                height: 41px !important;
+                padding: 0px 12px;
+                border-radius: 0 8px 8px 0;
+        }
+
+        .search-title { font-size: 22px; }
+        .search-subtitle { font-size: 14px; }
+        .cta-buttons { gap: 10px; }
+        .cta-button { padding: 9px 14px; }
+
+		.menu-search-row .gsc-search-button.gsc-search-button-v2,
+		.menu-search-row button.gsc-search-button {
+			min-height: 41px;
+			height: 41px !important;
+			padding: 0px 12px;                                                              /* Добавляем горизонтальные отступы */
+			border-radius: 0 8px 8px 0;
+		}
+}

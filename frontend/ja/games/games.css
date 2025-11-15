@@ -1,0 +1,172 @@
+/* games.css - Стили для страницы игр Serpmonn */
+
+:root {
+    --max-width: 1200px;
+    --gap: 20px;
+    --radius: 8px;
+    --shadow-sm: 0 2px 4px rgba(0,0,0,.08);
+    --shadow-lg: 0 8px 18px rgba(0,0,0,.12);
+    --color-primary: #dc3545;
+    --color-primary-dark: #c82333;
+    --transition: .2s ease;
+    --font-main: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+}
+
+.page { 
+    max-width: var(--max-width); 
+    margin: 0 auto; 
+    padding: var(--gap); 
+}
+
+h1 { 
+    margin: 15px 0 10px;
+    text-align: center; 
+    color: #333; 
+    font-size: 2rem; 
+    font-family: var(--font-main); 
+}
+
+.category-title { 
+    font-size: 1.4rem; 
+    color: #333; 
+    margin: 25px 0 12px; 
+    padding-bottom: 8px; 
+    border-bottom: 2px solid #ddd; 
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+}
+
+.grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); 
+    gap: var(--gap); 
+    transition: opacity .3s ease;
+}
+
+.grid.hidden {
+    display: none !important;
+}
+
+.card { 
+    border: 1px solid #ddd; 
+    border-radius: var(--radius); 
+    padding: var(--gap); 
+    background: #fff; 
+    box-shadow: var(--shadow-sm); 
+    transition: transform var(--transition), box-shadow var(--transition); 
+    display: flex; 
+    flex-direction: column; 
+    gap: 12px; 
+    min-height: 160px; 
+    cursor: pointer; 
+}
+
+.card:hover, .card:focus-visible { 
+    transform: translateY(-3px); 
+    box-shadow: var(--shadow-lg); 
+}
+
+.card h2 { 
+    font-size: 1.1rem; 
+    margin: 0; 
+    color: #333; 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+}
+
+.card p { 
+    margin: 0; 
+    color: #666; 
+    line-height: 1.55; 
+    flex-grow: 1; 
+}
+
+.card a.btn { 
+    padding: 10px 16px; 
+    background: linear-gradient(90deg, var(--color-primary), var(--color-primary-dark)); 
+    color: #fff; 
+    border-radius: var(--radius); 
+    text-decoration: none; 
+    font-weight: 600; 
+    transition: all var(--transition); 
+    text-align: center; 
+    align-self: flex-start; 
+}
+
+.card a.btn:hover { 
+    background: linear-gradient(90deg, var(--color-primary-dark), #a00d25); 
+    box-shadow: 0 4px 12px rgba(220,53,69,.35); 
+    transform: translateY(-1px); 
+}
+
+.card a.btn:focus-visible { 
+    outline: 2px solid #fff; 
+    outline-offset: 2px; 
+}
+
+.game-logo-inline {
+    width: 22px; 
+    height: 22px; 
+    border-radius: 4px; 
+    object-fit: cover; 
+    vertical-align: -3px; 
+}
+
+.section-logo-inline {
+    width: 28px; 
+    height: 28px; 
+    border-radius: 6px; 
+    object-fit: cover; 
+    vertical-align: -4px; 
+}
+
+.ad-leaderboard {
+    display: flex; 
+    justify-content: center; 
+    margin: 16px 0; 
+}
+
+/* ФИЛЬТР */
+.filter-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin: 10px 0 15px;
+    flex-wrap: wrap;
+}
+
+.filter-btn {
+    padding: 8px 16px;
+    background: #f0f0f0;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition);
+    color: #333;
+}
+
+.filter-btn:hover {
+    background: #e0e0e0;
+    border-color: #ccc;
+}
+
+.filter-btn.active {
+    background: var(--color-primary);
+    color: #fff;
+    border-color: var(--color-primary);
+}
+
+.filter-btn[aria-selected="true"] {
+    outline: 2px solid #000;
+    outline-offset: 2px;
+}
+
+@media (max-width: 768px) { 
+    .page { padding: 15px; } 
+    h1 { font-size: 1.8rem; margin: 12px 0 8px; } 
+    .card { padding: 16px; min-height: 140px; } 
+}
