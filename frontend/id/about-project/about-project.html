@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="id" dir="ltr">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="id">
+        <title>Tentang Proyek - Serpmonn.ru</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Serpmonn: autentikasi dan profil, berita, game, dan bot. Pelajari lebih lanjut tentang proyek dan rencana pengembangan.">
+        <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="Tentang Proyek — Serpmonn.ru">
+        <meta property="og:description" content="Serpmonn: autentikasi dan profil, berita, game, dan bot. Pelajari lebih lanjut tentang proyek dan rencana pengembangan.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/id/about-project/about-project.html">
+        <meta property="og:type" content="article">
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Tentang Proyek — Serpmonn.ru">
+        <meta name="twitter:description" content="Serpmonn: autentikasi dan profil, berita, game, dan bot.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Стили -->
+        <link rel="stylesheet" href="/frontend/styles/about-project.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+        <!-- Скрипты -->
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+        <script type="module" src="/frontend/scripts/counter.js"></script>
+    </head>
+    <body>
+
+        <main class="about-section">
+            <section class="intro">
+                <h1>Apa itu Serpmonn.ru?</h1>
+                <p>Serpmonn adalah platform komprehensif yang berfokus pada alat praktis: autentikasi dan profil, berita RSS, game browser dengan papan peringkat, dan bot Telegram (permainan, verifikasi, meme). Perhatian khusus diberikan pada keamanan: endpoint CSRF dan pembatasan kecepatan (rate limiting) telah ditambahkan ke layanan inti. Tujuan Serpmonn.ru adalah menggabungkan ini dalam antarmuka yang nyaman untuk tugas sehari-hari.</p>
+                <p>Proyek dikembangkan secara terbuka: UX di ponsel dan desktop secara bertahap ditingkatkan, alat ditambahkan, aksesibilitas diperluas (font besar, kontras tinggi, lebih sedikit animasi). Rencana termasuk lebih banyak game HTML5, pencarian yang ditingkatkan, integrasi, dan sistem profil yang lengkap.</p>
+            </section>
+
+            <!-- Счетчик пользователей -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21M22 21V19C22 17.4087 21.3679 15.8826 20.2426 14.7574C19.1174 13.6321 17.5913 13 16 13M15 8C15 10.2091 13.2091 12 11 12C8.79086 12 7 10.2091 7 8C7 5.79086 8.79086 4 11 4C13.2091 4 15 5.79086 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Pengguna Platform</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="userCounter">0</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Возраст проекта -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10h10M7 14h7M7 6h10M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Usia Proyek</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="projectAgeValue">—</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="projectAgeData" data-start="2024-08-21T05:05:23+03:00" style="display:none"></div>
+            </section>
+
+            <section class="features">
+                <h2>Fitur Proyek</h2>
+                <ul>
+                    
+                    <li><strong>Autentikasi dan Profil</strong> — Otorisasi aman (PASETO), manajemen profil.</li>
+                    
+                    <li><strong>Alat Analisis Informasi</strong> — 7 layanan untuk pengumpulan dan pemrosesan data, berita RSS.</li>
+                    
+                    <li><strong>Game di Platform</strong> — 19 game browser dan PC dengan papan peringkat.</li>
+                    
+                    <li><strong>Bot Telegram</strong> — Bot permainan, bot verifikasi, dan bot meme.</li>
+                    
+                    <li><strong>PWA</strong> — Dukungan aplikasi web progresif.</li>
+                    
+                    <li><strong>Keamanan</strong> — Endpoint CSRF dan pembatasan kecepatan di layanan inti.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="audience">
+                <h2>Siapa yang Dapat Diuntungkan</h2>
+                <ul>
+                    
+                    <li><strong>Pengguna</strong> — akses nyaman ke berita, game, dan layanan di satu tempat.</li>
+                    
+                    <li><strong>Pengembang</strong> — repositori terbuka dengan struktur jelas, kemungkinan berkontribusi.</li>
+                    
+                    <li><strong>Pembuat Bot dan Layanan Mini</strong> — platform untuk integrasi dan pengujian ide.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="status">
+                <h2>Apa yang Sudah Berfungsi</h2>
+                <ul>
+                    
+                    <li>Sistem autentikasi dan profil.</li>
+                    
+                    <li>Berita dari sumber RSS (9 artikel).</li>
+                    
+                    <li>Game (19 game, termasuk papan peringkat).</li>
+                    
+                    <li>Bot Telegram (game, verifikasi, meme).</li>
+                    
+                    <li>Endpoint CSRF dan pembatasan kecepatan.</li>
+                    
+                    <li>7 alat untuk pekerjaan dan pemasaran.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="security">
+                <h2>Keamanan</h2>
+                <p>Proyek secara bertahap diperkuat: token PASETO digunakan, endpoint CSRF diimplementasikan, pembatasan kecepatan ditambahkan, dependensi transitif diperbarui. Analisis statis (CodeQL) dan pembaruan dependensi rutin dilakukan.</p>
+            </section>
+
+            <section class="tech">
+                <h2>Teknologi</h2>
+                <ul>
+                    
+                    <li>Backend: Node.js, Express, MySQL, PASETO, PM2.</li>
+                    
+                    <li>Frontend: HTML, CSS, JavaScript, PWA.</li>
+                    
+                    <li>Infrastruktur: Nginx, CI/CD, CodeQL.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="roadmap">
+                <h2>Rencana</h2>
+                <ul>
+                    
+                    <li>Peningkatan halaman utama dan UX.</li>
+                    
+                    <li>Perluasan set game dan fitur profil.</li>
+                    
+                    <li>Pengembangan bot dan integrasi, optimasi kinerja.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="faq">
+                <h2>Pertanyaan yang Sering Diajukan</h2>
+                <p><strong>Bisakah saya menyarankan ide atau membuat perubahan?</strong> Ya, repositori terbuka - lihat bagian di bawah. Cara tercepat adalah mengirimkan saran atau Pull Request.</p>
+                <p><strong>Di mana saya bisa melihat kode sumber?</strong> Tautan ke repositori di blok di bawah.</p>
+            </section>
+
+            <section class="get-started">
+                <h2>Cara Memulai</h2>
+                <ol>
+                    
+                    <li>Buka repositori proyek.</li>
+                    
+                    <li>Baca README dan CONTRIBUTING.</li>
+                    
+                    <li>Jalankan secara lokal sesuai instruksi dan pilih tugas yang menarik.</li>
+                    
+                </ol>
+            </section>
+
+            <section class="repository">
+                <h2>Repositori Proyek</h2>
+                <p>Kode sumber tersedia di dua repositori:</p>
+                <ul>
+                    <li><a href="https://gitverse.ru/Serpmonn/Serpmonn_project" target="_blank" style="color: #000000;">Serpmonn di GitVerse</a></li>
+                    <li><a href="https://github.com/serpmonn/Serpmonn" target="_blank" style="color: #000000;">Serpmonn di GitHub</a></li>
+                </ul>
+            </section>
+
+            <section class="mission">
+                <h2>Misi dan Nilai</h2>
+                <p>Alat web &#39;di satu tempat&#39;, memperhatikan kecepatan, aksesibilitas, dan privasi. Serpmonn menuju kesederhanaan antarmuka, keterbukaan terhadap saran, dan peningkatan kualitas layanan secara bertahap.</p>
+            </section>
+
+            <section class="technical-info">
+                <h2>Informasi Teknis</h2>
+                <div class="tech-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1944</span>
+                        <span class="stat-label">halaman</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">alat</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">game</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">9</span>
+                        <span class="stat-label">berita</span>
+                    </div>
+                </div>
+                <p class="tech-description">
+                    Proyek mencakup 1944 halaman aktif yang mencakup berbagai area: alat untuk pengembang dan pemasar, game browser, bagian berita, sistem autentikasi dan profil.
+                </p>
+            </section>
+
+            <section class="legal">
+                <h2>Informasi Hukum</h2>
+                <p><strong>Pemegang Hak</strong>: Sergey Popov</p>
+                <p><strong>Status</strong>: Wiraswasta</p>
+                <p><strong>INN</strong>: 366230412849</p>
+                <p><strong>Hak Cipta</strong>: Semua hak atas proyek Serpmonn.ru, termasuk kode, desain, dan konten, milik penulis.</p>
+                <p><strong>Lisensi</strong>: Proyek adalah pengembangan pribadi dan tidak dapat digunakan, disalin, atau dimodifikasi tanpa izin pemegang hak.</p>
+            </section>
+
+            <section class="disclaimer">
+                <h2>Penafian</h2>
+                <p>Proyek Serpmonn.ru disediakan &#39;sebagaimana adanya&#39;. Administrasi tidak bertanggung jawab atas kegagalan teknis, kesalahan dalam layanan, atau kerugian tidak langsung pengguna.</p>
+                <p>Pengguna bertanggung jawab sendiri atas semua tindakan yang dilakukan menggunakan layanan. Khususnya, tetapi tidak terbatas pada, administrasi tidak bertanggung jawab atas:
+                    <ul>
+                        
+                        <li>pengiriman spam atau pesan iklan tanpa izin</li>
+                        
+                        <li>distribusi perangkat lunak berbahaya</li>
+                        
+                        <li>akses tidak sah ke akun dan data orang lain</li>
+                        
+                        <li>pelanggaran hak cipta dan kekayaan intelektual</li>
+                        
+                        <li>distribusi informasi terlarang (ekstremis, pornografi, dll.)</li>
+                        
+                        <li>aktivitas penipuan dan penipuan pengguna lain</li>
+                        
+                        <li>pelanggaran undang-undang data pribadi</li>
+                        
+                        <li>tindakan ilegal lainnya</li>
+                        
+                    </ul>
+                </p>
+                <p>Administrasi berhak memblokir akses ke layanan untuk pengguna yang melanggar aturan ini tanpa pemberitahuan sebelumnya.</p>
+                <p>Pemrosesan data pribadi diatur oleh Kebijakan Privasi.</p>
+            </section>
+
+            <section class="contacts">
+                <h2>Kontak</h2>
+                <p>Gunakan saluran berikut untuk komunikasi:</p>
+                
+                <div class="contact-block">
+                    <h3>Dukungan Teknis</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a></p>
+                </div>
+            
+                <div class="contact-block">
+                    <h3>Pertanyaan Lain</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:info@serpmonn.ru">info@serpmonn.ru</a></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>Hak Cipta Dilindungi. Baca <a href="https://gitverse.ru/Serpmonn/Serpmonn_project/content/master/LICENSE" target="_blank">lisensi proyek</a>.</p>
+        </footer>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>

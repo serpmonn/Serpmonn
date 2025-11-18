@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="fi" dir="ltr">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="fi">
+        <title>Tietoa projektista - Serpmonn.ru</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Serpmonn: todentaminen ja profiilit, uutiset, pelit ja botit. Lisätietoja projektista ja kehityssuunnitelmista.">
+        <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="Tietoa projektista — Serpmonn.ru">
+        <meta property="og:description" content="Serpmonn: todentaminen ja profiilit, uutiset, pelit ja botit. Lisätietoja projektista ja kehityssuunnitelmista.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/fi/about-project/about-project.html">
+        <meta property="og:type" content="article">
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Tietoa projektista — Serpmonn.ru">
+        <meta name="twitter:description" content="Serpmonn: todentaminen ja profiilit, uutiset, pelit ja botit.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Стили -->
+        <link rel="stylesheet" href="/frontend/styles/about-project.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+        <!-- Скрипты -->
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+        <script type="module" src="/frontend/scripts/counter.js"></script>
+    </head>
+    <body>
+
+        <main class="about-section">
+            <section class="intro">
+                <h1>Mikä on Serpmonn.ru?</h1>
+                <p>Serpmonn on kattava alusta, joka keskittyy käytännön työkaluihin: todentaminen ja profiilit, RSS-uutiset, selainpelit tulostauluineen ja Telegram-botit (pelit, vahvistus, meemit). Erityistä huomiota kiinnitetään turvallisuuteen: CSRF-päätepisteet ja nopeudenrajoitus on lisätty pääpalveluihin. Serpmonn.ru:n tavoitteena on yhdistää nämä kätevässä käyttöliittymässä päivittäisiin tehtäviin.</p>
+                <p>Projektia kehitetään avoimesti: UX mobiilissa ja työpöydässä paranee vähitellen, työkaluja lisätään, saavutettavuutta laajennetaan (iso fontti, korkea kontrasti, vähemmän animaatioita). Suunnitelmiin kuuluu enemmän HTML5-pelejä, parannettu haku, integraatiot ja täysimittainen profiilijärjestelmä.</p>
+            </section>
+
+            <!-- Счетчик пользователей -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21M22 21V19C22 17.4087 21.3679 15.8826 20.2426 14.7574C19.1174 13.6321 17.5913 13 16 13M15 8C15 10.2091 13.2091 12 11 12C8.79086 12 7 10.2091 7 8C7 5.79086 8.79086 4 11 4C13.2091 4 15 5.79086 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Alustan käyttäjät</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="userCounter">0</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Возраст проекта -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10h10M7 14h7M7 6h10M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Projektin ikä</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="projectAgeValue">—</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="projectAgeData" data-start="2024-08-21T05:05:23+03:00" style="display:none"></div>
+            </section>
+
+            <section class="features">
+                <h2>Projektin ominaisuudet</h2>
+                <ul>
+                    
+                    <li><strong>Todentaminen ja profiilit</strong> — Turvallinen valtuutus (PASETO), profiilin hallinta.</li>
+                    
+                    <li><strong>Tietojen analysointityökalut</strong> — 7 palvelua tietojen keräämiseen ja käsittelyyn, RSS-uutiset.</li>
+                    
+                    <li><strong>Alustan pelit</strong> — 19 selain- ja PC-peliä tulostauluineen.</li>
+                    
+                    <li><strong>Telegram-botit</strong> — Pelibotti, vahvistusbotti ja meemibotti.</li>
+                    
+                    <li><strong>PWA</strong> — Progressiivisen verkkosovelluksen tuki.</li>
+                    
+                    <li><strong>Turvallisuus</strong> — CSRF-päätepisteet ja nopeudenrajoitus pääpalveluissa.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="audience">
+                <h2>Kenelle tämä voi olla hyödyllistä</h2>
+                <ul>
+                    
+                    <li><strong>Käyttäjille</strong> — kätevä pääsy uutisiin, peleihin ja palveluihin yhdessä paikassa.</li>
+                    
+                    <li><strong>Kehittäjille</strong> — avoin repository selkeällä rakenteella, mahdollisuus osallistua muutoksiin.</li>
+                    
+                    <li><strong>Bottien ja minipalveluiden tekijöille</strong> — alusta integraatioille ja ideoiden testaamiselle.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="status">
+                <h2>Mikä toimii jo</h2>
+                <ul>
+                    
+                    <li>Todentamis- ja profiilijärjestelmä.</li>
+                    
+                    <li>Uutiset RSS-lähteistä (9 artikkelia).</li>
+                    
+                    <li>Pelit (19 peliä, mukaan lukien tulostaulut).</li>
+                    
+                    <li>Telegram-botit (pelit, vahvistus, meemit).</li>
+                    
+                    <li>CSRF-päätepisteet ja nopeudenrajoitus.</li>
+                    
+                    <li>7 työkalua työhön ja markkinointiin.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="security">
+                <h2>Turvallisuus</h2>
+                <p>Projektia vahvistetaan vähitellen: käytetään PASETO-tunnisteita, CSRF-päätepisteet toteutettu, nopeudenrajoitus lisätty, transitiiviset riippuvuudet päivitetty. Suoritetaan staattista analyysiä (CodeQL) ja säännöllisiä riippuvuuspaivityksiä.</p>
+            </section>
+
+            <section class="tech">
+                <h2>Teknologiat</h2>
+                <ul>
+                    
+                    <li>Backend: Node.js, Express, MySQL, PASETO, PM2.</li>
+                    
+                    <li>Frontend: HTML, CSS, JavaScript, PWA.</li>
+                    
+                    <li>Infrastruktuuri: Nginx, CI/CD, CodeQL.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="roadmap">
+                <h2>Suunnitelmat</h2>
+                <ul>
+                    
+                    <li>Pääsivun ja UX:n parantaminen.</li>
+                    
+                    <li>Pelivalikoiman ja profiiliominaisuuksien laajentaminen.</li>
+                    
+                    <li>Bottien ja integraatioiden kehittäminen, suorituskyvyn optimointi.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="faq">
+                <h2>Usein kysytyt kysymykset</h2>
+                <p><strong>Voinko ehdottaa ideaa tai tehdä muutoksia?</strong> Kyllä, repository on avoin - katso alla oleva osio. Nopein tapa on lähettää ehdotus tai Pull Request.</p>
+                <p><strong>Mistä voin nähdä lähdekoodin?</strong> Linkki repositoryyn alla olevassa lohkossa.</p>
+            </section>
+
+            <section class="get-started">
+                <h2>Kuinka aloittaa</h2>
+                <ol>
+                    
+                    <li>Avaa projektin repository.</li>
+                    
+                    <li>Lue README ja CONTRIBUTING.</li>
+                    
+                    <li>Suorita paikallisesti ohjeiden mukaan ja valitse mielenkiintoinen tehtävä.</li>
+                    
+                </ol>
+            </section>
+
+            <section class="repository">
+                <h2>Projektin repository</h2>
+                <p>Lähdekoodi on saatavilla kahdessa repositoryssa:</p>
+                <ul>
+                    <li><a href="https://gitverse.ru/Serpmonn/Serpmonn_project" target="_blank" style="color: #000000;">Serpmonn GitVersessä</a></li>
+                    <li><a href="https://github.com/serpmonn/Serpmonn" target="_blank" style="color: #000000;">Serpmonn GitHubissa</a></li>
+                </ul>
+            </section>
+
+            <section class="mission">
+                <h2>Missio ja arvot</h2>
+                <p>Verkkotyökalut &#39;yhdessä paikassa&#39;, kiinnittäen huomiota nopeuteen, saavutettavuuteen ja yksityisyyteen. Serpmonn tähtää käyttöliittymän yksinkertaisuuteen, avoimuuteen ehdotuksia kohtaan ja palvelun laadun asteittaiseen parantamiseen.</p>
+            </section>
+
+            <section class="technical-info">
+                <h2>Tekninen tieto</h2>
+                <div class="tech-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1944</span>
+                        <span class="stat-label">sivua</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">työkalua</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">peliä</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">9</span>
+                        <span class="stat-label">uutista</span>
+                    </div>
+                </div>
+                <p class="tech-description">
+                    Projekti sisältää 1944 aktiivista sivua, jotka kattavat eri alueita: työkalut kehittäjille ja markkinoijille, selainpelit, uutisosio, todentamis- ja profiilijärjestelmä.
+                </p>
+            </section>
+
+            <section class="legal">
+                <h2>Oikeudellinen tieto</h2>
+                <p><strong>Oikeudenhaltija</strong>: Sergey Popov</p>
+                <p><strong>Tila</strong>: Yksinyrittäjä</p>
+                <p><strong>INN</strong>: 366230412849</p>
+                <p><strong>Tekijänoikeus</strong>: Kaikki oikeudet Serpmonn.ru-projektiin, mukaan lukien koodi, suunnittelu ja sisältö, kuuluvat tekijälle.</p>
+                <p><strong>Lisenssi</strong>: Projekti on yksityinen kehitys eikä sitä voi käyttää, kopioida tai muokata ilman oikeudenhaltijan lupaa.</p>
+            </section>
+
+            <section class="disclaimer">
+                <h2>Vastuuvapaus</h2>
+                <p>Serpmonn.ru-projekti tarjotaan &#39;sellaisenaan&#39;. Hallinto ei ole vastuussa teknisistä vioista, palvelun toiminnan virheistä tai käyttäjien välillisistä tappioista.</p>
+                <p>Käyttäjät ovat yksin vastuussa kaikista palvelua käyttäen suoritetuista toiminnoista. Erityisesti, mutta ei rajoittuen, hallinto ei ole vastuussa:
+                    <ul>
+                        
+                        <li>roskapostin tai luvattomien mainosviestien lähettämisestä</li>
+                        
+                        <li>haittaohjelmien levittämisestä</li>
+                        
+                        <li>luvattomasta pääsystä muihin tileihin ja tietoihin</li>
+                        
+                        <li>tekijänoikeus- ja henkinen omaisuusrikkomuksista</li>
+                        
+                        <li>kielletyn tiedon (ekstremistisen, pornografisen jne.) levittämisestä</li>
+                        
+                        <li>petollisista toiminnoista ja muiden käyttäjien huijaamisesta</li>
+                        
+                        <li>henkilötietolainsäädännön rikkomisesta</li>
+                        
+                        <li>muista laittomista toimista</li>
+                        
+                    </ul>
+                </p>
+                <p>Hallinto pidättää oikeuden estää pääsyn palveluun käyttäjille, jotka rikkovat näitä sääntöjä ilman ennakkoilmoitusta.</p>
+                <p>Henkilötietojen käsittelyä säätelee Tietosuojakäytäntö.</p>
+            </section>
+
+            <section class="contacts">
+                <h2>Yhteystiedot</h2>
+                <p>Käytä seuraavia kanavia viestintään:</p>
+                
+                <div class="contact-block">
+                    <h3>Tekninen tuki</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a></p>
+                </div>
+            
+                <div class="contact-block">
+                    <h3>Muut kysymykset</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:info@serpmonn.ru">info@serpmonn.ru</a></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>Kaikki oikeudet pidätetään. Lue <a href="https://gitverse.ru/Serpmonn/Serpmonn_project/content/master/LICENSE" target="_blank">projektin lisenssi</a>.</p>
+        </footer>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>

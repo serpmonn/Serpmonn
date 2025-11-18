@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="tr">
+        <title>Proje Hakkında - Serpmonn.ru</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Serpmonn: kimlik doğrulama ve profiller, haberler, oyunlar ve botlar. Proje ve geliştirme planları hakkında daha fazla bilgi edinin.">
+        <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="Proje Hakkında — Serpmonn.ru">
+        <meta property="og:description" content="Serpmonn: kimlik doğrulama ve profiller, haberler, oyunlar ve botlar. Proje ve geliştirme planları hakkında daha fazla bilgi edinin.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/tr/about-project/about-project.html">
+        <meta property="og:type" content="article">
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Proje Hakkında — Serpmonn.ru">
+        <meta name="twitter:description" content="Serpmonn: kimlik doğrulama ve profiller, haberler, oyunlar ve botlar.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Стили -->
+        <link rel="stylesheet" href="/frontend/styles/about-project.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+        <!-- Скрипты -->
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+        <script type="module" src="/frontend/scripts/counter.js"></script>
+    </head>
+    <body>
+
+        <main class="about-section">
+            <section class="intro">
+                <h1>Serpmonn.ru nedir?</h1>
+                <p>Serpmonn, pratik araçlara odaklanan kapsamlı bir platformdur: kimlik doğrulama ve profiller, RSS haberleri, liderlik tablolu tarayıcı oyunları ve Telegram botları (oyun, doğrulama, memler). Güvenliğe özel önem verilmiştir: temel hizmetlere CSRF uç noktaları ve hız sınırlama eklenmiştir. Serpmonn.ru&#39;nun amacı, bunları günlük görevler için uygun bir arayüzde birleştirmektir.</p>
+                <p>Proje açık şekilde geliştirilmektedir: mobil ve masaüstünde UX kademeli olarak iyileştirilir, araçlar eklenir, erişilebilirlik genişletilir (büyük yazı tipi, yüksek kontrast, daha az animasyon). Planlar arasında daha fazla HTML5 oyunu, gelişmiş arama, entegrasyonlar ve tam teşekküllü profil sistemi bulunur.</p>
+            </section>
+
+            <!-- Счетчик пользователей -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21M22 21V19C22 17.4087 21.3679 15.8826 20.2426 14.7574C19.1174 13.6321 17.5913 13 16 13M15 8C15 10.2091 13.2091 12 11 12C8.79086 12 7 10.2091 7 8C7 5.79086 8.79086 4 11 4C13.2091 4 15 5.79086 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Platform Kullanıcıları</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="userCounter">0</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Возраст проекта -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10h10M7 14h7M7 6h10M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Proje Yaşı</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="projectAgeValue">—</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="projectAgeData" data-start="2024-08-21T05:05:23+03:00" style="display:none"></div>
+            </section>
+
+            <section class="features">
+                <h2>Proje Özellikleri</h2>
+                <ul>
+                    
+                    <li><strong>Kimlik Doğrulama ve Profiller</strong> — Güvenli yetkilendirme (PASETO), profil yönetimi.</li>
+                    
+                    <li><strong>Bilgi Analiz Araçları</strong> — Veri toplama ve işleme için 7 hizmet, RSS haberleri.</li>
+                    
+                    <li><strong>Platform Oyunları</strong> — Liderlik tablolu 19 tarayıcı ve PC oyunu.</li>
+                    
+                    <li><strong>Telegram Botları</strong> — Oyun botu, doğrulama botu ve meme botu.</li>
+                    
+                    <li><strong>PWA</strong> — İlerici web uygulaması desteği.</li>
+                    
+                    <li><strong>Güvenlik</strong> — Temel hizmetlerde CSRF uç noktaları ve hız sınırlama.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="audience">
+                <h2>Kimler Yararlanabilir</h2>
+                <ul>
+                    
+                    <li><strong>Kullanıcılar</strong> — haberlere, oyunlara ve hizmetlere tek bir yerde kolay erişim.</li>
+                    
+                    <li><strong>Geliştiriciler</strong> — açık depo, net yapı, katkıda bulunma imkanı.</li>
+                    
+                    <li><strong>Bot ve Mini-Hizmet Yazarları</strong> — entegrasyon ve fikir testi için platform.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="status">
+                <h2>Zaten Çalışanlar</h2>
+                <ul>
+                    
+                    <li>Kimlik doğrulama ve profil sistemi.</li>
+                    
+                    <li>RSS kaynaklarından haberler (9 makale).</li>
+                    
+                    <li>Oyunlar (19 oyun, liderlik tabloları dahil).</li>
+                    
+                    <li>Telegram botları (oyunlar, doğrulama, memler).</li>
+                    
+                    <li>CSRF uç noktaları ve hız sınırlama.</li>
+                    
+                    <li>İş ve pazarlama için 7 araç.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="security">
+                <h2>Güvenlik</h2>
+                <p>Proje kademeli olarak güçlendiriliyor: PASETO token&#39;ları kullanılıyor, CSRF uç noktaları uygulandı, hız sınırlama eklendi, geçişli bağımlılıklar güncellendi. Statik analiz (CodeQL) ve düzenli bağımlılık güncellemeleri yapılıyor.</p>
+            </section>
+
+            <section class="tech">
+                <h2>Teknolojiler</h2>
+                <ul>
+                    
+                    <li>Backend: Node.js, Express, MySQL, PASETO, PM2.</li>
+                    
+                    <li>Frontend: HTML, CSS, JavaScript, PWA.</li>
+                    
+                    <li>Altyapı: Nginx, CI/CD, CodeQL.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="roadmap">
+                <h2>Planlar</h2>
+                <ul>
+                    
+                    <li>Ana sayfa ve UX iyileştirmesi.</li>
+                    
+                    <li>Oyun seti ve profil özelliklerinin genişletilmesi.</li>
+                    
+                    <li>Botlar ve entegrasyonların geliştirilmesi, performans optimizasyonu.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="faq">
+                <h2>Sıkça Sorulan Sorular</h2>
+                <p><strong>Bir fikir önerebilir veya değişiklik yapabilir miyim?</strong> Evet, depo açık - aşağıdaki bölüme bakın. En hızlı yol bir öneri veya Pull Request göndermektir.</p>
+                <p><strong>Kaynak kodunu nerede görebilirim?</strong> Aşağıdaki blokta depo bağlantısı.</p>
+            </section>
+
+            <section class="get-started">
+                <h2>Nasıl Başlanır</h2>
+                <ol>
+                    
+                    <li>Proje deposunu açın.</li>
+                    
+                    <li>README ve CONTRIBUTING&#39;ı okuyun.</li>
+                    
+                    <li>Talimatlara göre yerel olarak çalıştırın ve ilginç bir görev seçin.</li>
+                    
+                </ol>
+            </section>
+
+            <section class="repository">
+                <h2>Proje Deposu</h2>
+                <p>Kaynak kodu iki depoda mevcut:</p>
+                <ul>
+                    <li><a href="https://gitverse.ru/Serpmonn/Serpmonn_project" target="_blank" style="color: #000000;">GitVerse&#39;te Serpmonn</a></li>
+                    <li><a href="https://github.com/serpmonn/Serpmonn" target="_blank" style="color: #000000;">GitHub&#39;da Serpmonn</a></li>
+                </ul>
+            </section>
+
+            <section class="mission">
+                <h2>Misyon ve Değerler</h2>
+                <p>Web araçları &#39;tek bir yerde&#39;, hız, erişilebilirlik ve gizliliğe dikkat ederek. Serpmonn arayüz basitliği, önerilere açıklık ve hizmet kalitesinin kademeli iyileştirilmesine doğru ilerliyor.</p>
+            </section>
+
+            <section class="technical-info">
+                <h2>Teknik Bilgi</h2>
+                <div class="tech-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1944</span>
+                        <span class="stat-label">sayfa</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">araç</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">oyun</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">9</span>
+                        <span class="stat-label">haber</span>
+                    </div>
+                </div>
+                <p class="tech-description">
+                    Proje, çeşitli alanları kapsayan 1944 aktif sayfa içerir: geliştiriciler ve pazarlamacılar için araçlar, tarayıcı oyunları, haber bölümü, kimlik doğrulama ve profil sistemi.
+                </p>
+            </section>
+
+            <section class="legal">
+                <h2>Yasal Bilgi</h2>
+                <p><strong>Hak Sahibi</strong>: Sergey Popov</p>
+                <p><strong>Durum</strong>: Serbest Meslek Sahibi</p>
+                <p><strong>Vergi No</strong>: 366230412849</p>
+                <p><strong>Telif Hakkı</strong>: Serpmonn.ru projesinin tüm hakları, kod, tasarım ve içerik dahil olmak üzere yazara aittir.</p>
+                <p><strong>Lisans</strong>: Proje özel bir geliştirmedir ve hak sahibinin izni olmadan kullanılamaz, kopyalanamaz veya değiştirilemez.</p>
+            </section>
+
+            <section class="disclaimer">
+                <h2>Sorumluluk Reddi</h2>
+                <p>Serpmonn.ru projesi &#39;olduğu gibi&#39; sağlanmaktadır. Yönetim teknik arızalar, hizmet çalışmasındaki hatalar veya kullanıcıların herhangi bir dolaylı kaybından sorumlu değildir.</p>
+                <p>Kullanıcılar, hizmet kullanılarak gerçekleştirilen tüm eylemlerden tek başına sorumludur. Özellikle, ancak bununla sınırlı olmamak üzere, yönetim şunlardan sorumlu değildir:
+                    <ul>
+                        
+                        <li>spam veya yetkisiz reklam mesajları gönderme</li>
+                        
+                        <li>kötü amaçlı yazılım dağıtımı</li>
+                        
+                        <li>başka hesaplara ve verilere yetkisiz erişim</li>
+                        
+                        <li>telif hakkı ve fikri mülkiyet ihlalleri</li>
+                        
+                        <li>yasaklı bilgi dağıtımı (aşırılık yanlısı, pornografik vb.)</li>
+                        
+                        <li>dolandırıcılık faaliyetleri ve diğer kullanıcıları kandırma</li>
+                        
+                        <li>kişisel veri mevzuatı ihlalleri</li>
+                        
+                        <li>diğer yasadışı eylemler</li>
+                        
+                    </ul>
+                </p>
+                <p>Yönetim, bu kuralları ihlal eden kullanıcıların hizmete erişimini önceden bildirimde bulunmadan engelleme hakkını saklı tutar.</p>
+                <p>Kişisel verilerin işlenmesi Gizlilik Politikası&#39;na tabidir.</p>
+            </section>
+
+            <section class="contacts">
+                <h2>İletişim</h2>
+                <p>İletişim için aşağıdaki kanalları kullanın:</p>
+                
+                <div class="contact-block">
+                    <h3>Teknik Destek</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a></p>
+                </div>
+            
+                <div class="contact-block">
+                    <h3>Diğer Sorular</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:info@serpmonn.ru">info@serpmonn.ru</a></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>Tüm hakları saklıdır. Okuyun <a href="https://gitverse.ru/Serpmonn/Serpmonn_project/content/master/LICENSE" target="_blank">proje lisansı</a>.</p>
+        </footer>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>

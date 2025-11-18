@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="zh-cn">
+        <title>关于项目 - Serpmonn.ru</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Serpmonn：身份验证和个人资料、新闻、游戏和机器人。了解更多关于项目和开发计划的信息。">
+        <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="关于项目 — Serpmonn.ru">
+        <meta property="og:description" content="Serpmonn：身份验证和个人资料、新闻、游戏和机器人。了解更多关于项目和开发计划的信息。">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/about-project/about-project.html">
+        <meta property="og:type" content="article">
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="关于项目 — Serpmonn.ru">
+        <meta name="twitter:description" content="Serpmonn：身份验证和个人资料、新闻、游戏和机器人。">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Стили -->
+        <link rel="stylesheet" href="/frontend/styles/about-project.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+        <!-- Скрипты -->
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+        <script type="module" src="/frontend/scripts/counter.js"></script>
+    </head>
+    <body>
+
+        <main class="about-section">
+            <section class="intro">
+                <h1>Serpmonn.ru 是什么？</h1>
+                <p>Serpmonn 是一个综合性平台，专注于实用工具：身份验证和个人资料、RSS 新闻、带有排行榜的浏览器游戏和 Telegram 机器人（游戏、验证、表情包）。特别关注安全性：核心服务中添加了 CSRF 端点和速率限制。Serpmonn.ru 的目标是将这些功能结合在一个方便的界面中，用于日常任务。</p>
+                <p>项目公开开发：移动端和桌面端的用户体验逐渐改善，工具不断添加，可访问性得到扩展（大字体、高对比度、更少动画）。计划包括更多 HTML5 游戏、改进的搜索、集成和完整的个人资料系统。</p>
+            </section>
+
+            <!-- Счетчик пользователей -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21M22 21V19C22 17.4087 21.3679 15.8826 20.2426 14.7574C19.1174 13.6321 17.5913 13 16 13M15 8C15 10.2091 13.2091 12 11 12C8.79086 12 7 10.2091 7 8C7 5.79086 8.79086 4 11 4C13.2091 4 15 5.79086 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>平台用户</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="userCounter">0</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Возраст проекта -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10h10M7 14h7M7 6h10M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>项目年龄</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="projectAgeValue">—</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="projectAgeData" data-start="2024-08-21T05:05:23+03:00" style="display:none"></div>
+            </section>
+
+            <section class="features">
+                <h2>项目功能</h2>
+                <ul>
+                    
+                    <li><strong>身份验证和个人资料</strong> — 安全授权（PASETO），个人资料管理。</li>
+                    
+                    <li><strong>信息分析工具</strong> — 7个数据收集和处理服务，RSS 新闻。</li>
+                    
+                    <li><strong>平台游戏</strong> — 19个带有排行榜的浏览器和 PC 游戏。</li>
+                    
+                    <li><strong>Telegram 机器人</strong> — 游戏机器人、验证机器人和表情包机器人。</li>
+                    
+                    <li><strong>PWA</strong> — 支持渐进式 Web 应用。</li>
+                    
+                    <li><strong>安全</strong> — 核心服务中的 CSRF 端点和速率限制。</li>
+                    
+                </ul>
+            </section>
+
+            <section class="audience">
+                <h2>谁可以受益</h2>
+                <ul>
+                    
+                    <li><strong>用户</strong> — 在一个地方方便地访问新闻、游戏和服务。</li>
+                    
+                    <li><strong>开发者</strong> — 具有清晰结构的开放仓库，可以贡献。</li>
+                    
+                    <li><strong>机器人和迷你服务作者</strong> — 用于集成和测试想法的平台。</li>
+                    
+                </ul>
+            </section>
+
+            <section class="status">
+                <h2>已经运行的功能</h2>
+                <ul>
+                    
+                    <li>身份验证和个人资料系统。</li>
+                    
+                    <li>来自 RSS 源的新闻（9篇文章）。</li>
+                    
+                    <li>游戏（19个游戏，包括排行榜）。</li>
+                    
+                    <li>Telegram 机器人（游戏、验证、表情包）。</li>
+                    
+                    <li>CSRF 端点和速率限制。</li>
+                    
+                    <li>7个工作和营销工具。</li>
+                    
+                </ul>
+            </section>
+
+            <section class="security">
+                <h2>安全</h2>
+                <p>项目正在逐步加强：使用 PASETO 令牌，实施 CSRF 端点，添加速率限制，更新传递依赖项。执行静态分析（CodeQL）和定期依赖项更新。</p>
+            </section>
+
+            <section class="tech">
+                <h2>技术</h2>
+                <ul>
+                    
+                    <li>后端：Node.js, Express, MySQL, PASETO, PM2.</li>
+                    
+                    <li>前端：HTML, CSS, JavaScript, PWA.</li>
+                    
+                    <li>基础设施：Nginx, CI/CD, CodeQL.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="roadmap">
+                <h2>计划</h2>
+                <ul>
+                    
+                    <li>改进主页和用户体验。</li>
+                    
+                    <li>扩展游戏集和个人资料功能。</li>
+                    
+                    <li>开发机器人和集成，优化性能。</li>
+                    
+                </ul>
+            </section>
+
+            <section class="faq">
+                <h2>常见问题</h2>
+                <p><strong>我可以建议想法或进行更改吗？</strong> 是的，仓库是开放的 - 请参阅下面的部分。最快的方式是提交建议或 Pull Request。</p>
+                <p><strong>我在哪里可以查看源代码？</strong> 下面块中的仓库链接。</p>
+            </section>
+
+            <section class="get-started">
+                <h2>如何开始</h2>
+                <ol>
+                    
+                    <li>打开项目仓库。</li>
+                    
+                    <li>阅读 README 和 CONTRIBUTING。</li>
+                    
+                    <li>按照说明在本地运行并选择一个有趣的任务。</li>
+                    
+                </ol>
+            </section>
+
+            <section class="repository">
+                <h2>项目仓库</h2>
+                <p>源代码在两个仓库中可用：</p>
+                <ul>
+                    <li><a href="https://gitverse.ru/Serpmonn/Serpmonn_project" target="_blank" style="color: #000000;">GitVerse 上的 Serpmonn</a></li>
+                    <li><a href="https://github.com/serpmonn/Serpmonn" target="_blank" style="color: #000000;">GitHub 上的 Serpmonn</a></li>
+                </ul>
+            </section>
+
+            <section class="mission">
+                <h2>使命和价值观</h2>
+                <p>网络工具&#39;在一个地方&#39;，关注速度、可访问性和隐私。Serpmonn 致力于界面简单、对建议开放并逐步提高服务质量。</p>
+            </section>
+
+            <section class="technical-info">
+                <h2>技术信息</h2>
+                <div class="tech-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1944</span>
+                        <span class="stat-label">页</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">工具</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">游戏</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">9</span>
+                        <span class="stat-label">新闻</span>
+                    </div>
+                </div>
+                <p class="tech-description">
+                    项目包括 1944 个活跃页面，涵盖各个领域：开发人员和营销人员的工具、浏览器游戏、新闻部分、身份验证和个人资料系统。
+                </p>
+            </section>
+
+            <section class="legal">
+                <h2>法律信息</h2>
+                <p><strong>权利持有人</strong>: Sergey Popov</p>
+                <p><strong>状态</strong>: 自雇人士</p>
+                <p><strong>INN</strong>: 366230412849</p>
+                <p><strong>版权</strong>: Serpmonn.ru 项目的所有权利，包括代码、设计和内容，属于作者。</p>
+                <p><strong>许可证</strong>: 项目是私人开发，未经权利持有人许可不得使用、复制或修改。</p>
+            </section>
+
+            <section class="disclaimer">
+                <h2>免责声明</h2>
+                <p>Serpmonn.ru 项目按&#39;原样&#39;提供。管理员不对技术故障、服务工作中的错误或用户的任何间接损失负责。</p>
+                <p>用户对使用服务执行的所有操作自行负责。特别是，但不限于，管理员不对以下情况负责：
+                    <ul>
+                        
+                        <li>发送垃圾邮件或未经授权的广告消息</li>
+                        
+                        <li>分发恶意软件</li>
+                        
+                        <li>未经授权访问他人账户和数据</li>
+                        
+                        <li>侵犯版权和知识产权</li>
+                        
+                        <li>分发禁止信息（极端主义、色情等）</li>
+                        
+                        <li>欺诈活动和欺骗其他用户</li>
+                        
+                        <li>违反个人数据法规</li>
+                        
+                        <li>任何其他非法行为</li>
+                        
+                    </ul>
+                </p>
+                <p>管理员保留在不事先通知的情况下阻止违反这些规则的访问服务的权利。</p>
+                <p>个人数据处理受隐私政策约束。</p>
+            </section>
+
+            <section class="contacts">
+                <h2>联系方式</h2>
+                <p>使用以下渠道进行沟通：</p>
+                
+                <div class="contact-block">
+                    <h3>技术支持</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a></p>
+                </div>
+            
+                <div class="contact-block">
+                    <h3>其他问题</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:info@serpmonn.ru">info@serpmonn.ru</a></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>保留所有权利。阅读 <a href="https://gitverse.ru/Serpmonn/Serpmonn_project/content/master/LICENSE" target="_blank">项目许可证</a>.</p>
+        </footer>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>

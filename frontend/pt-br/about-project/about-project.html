@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="pt-br" dir="ltr">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="pt-br">
+        <title>Sobre o Projeto - Serpmonn.ru</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Serpmonn: autenticação e perfis, notícias, jogos e bots. Saiba mais sobre o projeto e planos de desenvolvimento.">
+        <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="Sobre o Projeto — Serpmonn.ru">
+        <meta property="og:description" content="Serpmonn: autenticação e perfis, notícias, jogos e bots. Saiba mais sobre o projeto e planos de desenvolvimento.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/pt-br/about-project/about-project.html">
+        <meta property="og:type" content="article">
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Sobre o Projeto — Serpmonn.ru">
+        <meta name="twitter:description" content="Serpmonn: autenticação e perfis, notícias, jogos e bots.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Стили -->
+        <link rel="stylesheet" href="/frontend/styles/about-project.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+        <!-- Скрипты -->
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+        <script type="module" src="/frontend/scripts/counter.js"></script>
+    </head>
+    <body>
+
+        <main class="about-section">
+            <section class="intro">
+                <h1>O que é Serpmonn.ru?</h1>
+                <p>Serpmonn é uma plataforma abrangente focada em ferramentas práticas: autenticação e perfis, notícias RSS, jogos de navegador com placares de líderes e bots do Telegram (jogos, verificação, memes). Atenção especial é dada à segurança: endpoints CSRF e limitação de taxa foram adicionados aos serviços principais. O objetivo do Serpmonn.ru é combinar isso em uma interface conveniente para tarefas diárias.</p>
+                <p>O projeto é desenvolvido abertamente: a UX em dispositivos móveis e desktop é gradualmente melhorada, ferramentas são adicionadas, a acessibilidade é expandida (fonte grande, alto contraste, menos animações). Os planos incluem mais jogos HTML5, pesquisa aprimorada, integrações e um sistema de perfil completo.</p>
+            </section>
+
+            <!-- Счетчик пользователей -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21M22 21V19C22 17.4087 21.3679 15.8826 20.2426 14.7574C19.1174 13.6321 17.5913 13 16 13M15 8C15 10.2091 13.2091 12 11 12C8.79086 12 7 10.2091 7 8C7 5.79086 8.79086 4 11 4C13.2091 4 15 5.79086 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Usuários da Plataforma</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="userCounter">0</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Возраст проекта -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10h10M7 14h7M7 6h10M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Idade do Projeto</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="projectAgeValue">—</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="projectAgeData" data-start="2024-08-21T05:05:23+03:00" style="display:none"></div>
+            </section>
+
+            <section class="features">
+                <h2>Recursos do Projeto</h2>
+                <ul>
+                    
+                    <li><strong>Autenticação e Perfis</strong> — Autorização segura (PASETO), gerenciamento de perfil.</li>
+                    
+                    <li><strong>Ferramentas de Análise de Informação</strong> — 7 serviços para coleta e processamento de dados, notícias RSS.</li>
+                    
+                    <li><strong>Jogos na Plataforma</strong> — 19 jogos de navegador e PC com placares de líderes.</li>
+                    
+                    <li><strong>Bots do Telegram</strong> — Bot de jogos, bot de verificação e bot de memes.</li>
+                    
+                    <li><strong>PWA</strong> — Suporte a aplicativos web progressivos.</li>
+                    
+                    <li><strong>Segurança</strong> — Endpoints CSRF e limitação de taxa nos serviços principais.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="audience">
+                <h2>Quem Pode se Beneficiar</h2>
+                <ul>
+                    
+                    <li><strong>Usuários</strong> — acesso conveniente a notícias, jogos e serviços em um só lugar.</li>
+                    
+                    <li><strong>Desenvolvedores</strong> — repositório aberto com estrutura clara, possibilidade de contribuir.</li>
+                    
+                    <li><strong>Autores de Bots e Mini-serviços</strong> — plataforma para integração e teste de ideias.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="status">
+                <h2>O que Já Funciona</h2>
+                <ul>
+                    
+                    <li>Sistema de autenticação e perfis.</li>
+                    
+                    <li>Notícias de fontes RSS (9 artigos).</li>
+                    
+                    <li>Jogos (19 jogos, incluindo placares de líderes).</li>
+                    
+                    <li>Bots do Telegram (jogos, verificação, memes).</li>
+                    
+                    <li>Endpoints CSRF e limitação de taxa.</li>
+                    
+                    <li>7 ferramentas para trabalho e marketing.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="security">
+                <h2>Segurança</h2>
+                <p>O projeto está sendo gradualmente fortalecido: tokens PASETO são usados, endpoints CSRF são implementados, limitação de taxa é adicionada, dependências transitivas são atualizadas. Análise estática (CodeQL) e atualizações regulares de dependências são realizadas.</p>
+            </section>
+
+            <section class="tech">
+                <h2>Tecnologias</h2>
+                <ul>
+                    
+                    <li>Backend: Node.js, Express, MySQL, PASETO, PM2.</li>
+                    
+                    <li>Frontend: HTML, CSS, JavaScript, PWA.</li>
+                    
+                    <li>Infraestrutura: Nginx, CI/CD, CodeQL.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="roadmap">
+                <h2>Planos</h2>
+                <ul>
+                    
+                    <li>Melhoria da página principal e UX.</li>
+                    
+                    <li>Expansão do conjunto de jogos e recursos de perfil.</li>
+                    
+                    <li>Desenvolvimento de bots e integrações, otimização de desempenho.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="faq">
+                <h2>Perguntas Frequentes</h2>
+                <p><strong>Posso sugerir uma ideia ou fazer alterações?</strong> Sim, o repositório está aberto - veja a seção abaixo. A maneira mais rápida é enviar uma sugestão ou Pull Request.</p>
+                <p><strong>Onde posso visualizar o código-fonte?</strong> Link para o repositório no bloco abaixo.</p>
+            </section>
+
+            <section class="get-started">
+                <h2>Como Começar</h2>
+                <ol>
+                    
+                    <li>Abra o repositório do projeto.</li>
+                    
+                    <li>Leia README e CONTRIBUTING.</li>
+                    
+                    <li>Execute localmente de acordo com as instruções e escolha uma tarefa interessante.</li>
+                    
+                </ol>
+            </section>
+
+            <section class="repository">
+                <h2>Repositório do Projeto</h2>
+                <p>O código-fonte está disponível em dois repositórios:</p>
+                <ul>
+                    <li><a href="https://gitverse.ru/Serpmonn/Serpmonn_project" target="_blank" style="color: #000000;">Serpmonn no GitVerse</a></li>
+                    <li><a href="https://github.com/serpmonn/Serpmonn" target="_blank" style="color: #000000;">Serpmonn no GitHub</a></li>
+                </ul>
+            </section>
+
+            <section class="mission">
+                <h2>Missão e Valores</h2>
+                <p>Ferramentas web &#39;em um só lugar&#39;, prestando atenção à velocidade, acessibilidade e privacidade. O Serpmonn está se direcionando para a simplicidade da interface, abertura a sugestões e melhoria gradual da qualidade do serviço.</p>
+            </section>
+
+            <section class="technical-info">
+                <h2>Informações Técnicas</h2>
+                <div class="tech-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1944</span>
+                        <span class="stat-label">páginas</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">ferramentas</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">jogos</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">9</span>
+                        <span class="stat-label">notícias</span>
+                    </div>
+                </div>
+                <p class="tech-description">
+                    O projeto inclui 1944 páginas ativas cobrindo várias áreas: ferramentas para desenvolvedores e profissionais de marketing, jogos de navegador, seção de notícias, sistema de autenticação e perfis.
+                </p>
+            </section>
+
+            <section class="legal">
+                <h2>Informações Legais</h2>
+                <p><strong>Detentor de Direitos</strong>: Sergey Popov</p>
+                <p><strong>Status</strong>: Trabalhador autônomo</p>
+                <p><strong>INN</strong>: 366230412849</p>
+                <p><strong>Direitos Autorais</strong>: Todos os direitos do projeto Serpmonn.ru, incluindo código, design e conteúdo, pertencem ao autor.</p>
+                <p><strong>Licença</strong>: O projeto é um desenvolvimento privado e não pode ser usado, copiado ou modificado sem a permissão do detentor dos direitos.</p>
+            </section>
+
+            <section class="disclaimer">
+                <h2>Aviso Legal</h2>
+                <p>O projeto Serpmonn.ru é fornecido &#39;como está&#39;. A administração não é responsável por falhas técnicas, erros no serviço ou quaisquer perdas indiretas dos usuários.</p>
+                <p>Os usuários são os únicos responsáveis por todas as ações realizadas usando o serviço. Em particular, mas não se limitando a, a administração não é responsável por:
+                    <ul>
+                        
+                        <li>envio de spam ou mensagens publicitárias não autorizadas</li>
+                        
+                        <li>distribuição de software malicioso</li>
+                        
+                        <li>acesso não autorizado a contas e dados de terceiros</li>
+                        
+                        <li>violações de direitos autorais e propriedade intelectual</li>
+                        
+                        <li>distribuição de informações proibidas (extremistas, pornográficas, etc.)</li>
+                        
+                        <li>atividades fraudulentas e engano de outros usuários</li>
+                        
+                        <li>violações da legislação de dados pessoais</li>
+                        
+                        <li>quaisquer outras ações ilegais</li>
+                        
+                    </ul>
+                </p>
+                <p>A administração reserva-se o direito de bloquear o acesso ao serviço para usuários que violarem estas regras sem aviso prévio.</p>
+                <p>O processamento de dados pessoais é regido pela Política de Privacidade.</p>
+            </section>
+
+            <section class="contacts">
+                <h2>Contatos</h2>
+                <p>Use os seguintes canais para comunicação:</p>
+                
+                <div class="contact-block">
+                    <h3>Suporte Técnico</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a></p>
+                </div>
+            
+                <div class="contact-block">
+                    <h3>Outras Perguntas</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:info@serpmonn.ru">info@serpmonn.ru</a></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>Todos os direitos reservados. Leia a <a href="https://gitverse.ru/Serpmonn/Serpmonn_project/content/master/LICENSE" target="_blank">licença do projeto</a>.</p>
+        </footer>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>

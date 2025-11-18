@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="hu" dir="ltr">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="hu">
+        <title>A projektől - Serpmonn.ru</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Serpmonn: hitelesítés és profilok, hírek, játékok és botok. Tudjon meg többet a projektől és fejlesztési tervekről.">
+        <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="A projektől — Serpmonn.ru">
+        <meta property="og:description" content="Serpmonn: hitelesítés és profilok, hírek, játékok és botok. Tudjon meg többet a projektől és fejlesztési tervekről.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/hu/about-project/about-project.html">
+        <meta property="og:type" content="article">
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="A projektől — Serpmonn.ru">
+        <meta name="twitter:description" content="Serpmonn: hitelesítés és profilok, hírek, játékok és botok.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Стили -->
+        <link rel="stylesheet" href="/frontend/styles/about-project.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+        <!-- Скрипты -->
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+        <script type="module" src="/frontend/scripts/counter.js"></script>
+    </head>
+    <body>
+
+        <main class="about-section">
+            <section class="intro">
+                <h1>Mi az a Serpmonn.ru?</h1>
+                <p>A Serpmonn egy átfogó platform, amely a gyakorlati eszközökre összpontosít: hitelesítés és profilok, RSS hírek, böngészős játékok ranglistákkal és Telegram botok (játék, ellenőrzés, mémek). Különös figyelmet kap a biztonság: CSRF végpontok és kérésszám-korlátozás került hozzáadásra az alapvető szolgáltatásokhoz. A Serpmonn.ru célja, hogy ezt egy kényelmes felületben egyesítse a mindennapi feladatokhoz.</p>
+                <p>A projekt nyíltan fejlődik: fokozatosan javul az UX mobilon és asztalon, eszközök kerülnek hozzáadásra, a hozzáférhetőség bővül (nagy betűméret, magas kontraszt, kevesebb animáció). A tervek között több HTML5 játék, továbbfejlesztett keresés, integrációk és egy teljes értékű profilrendszer szerepel.</p>
+            </section>
+
+            <!-- Счетчик пользователей -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21M22 21V19C22 17.4087 21.3679 15.8826 20.2426 14.7574C19.1174 13.6321 17.5913 13 16 13M15 8C15 10.2091 13.2091 12 11 12C8.79086 12 7 10.2091 7 8C7 5.79086 8.79086 4 11 4C13.2091 4 15 5.79086 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Platform felhasználók</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="userCounter">0</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Возраст проекта -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10h10M7 14h7M7 6h10M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Projekt kora</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="projectAgeValue">—</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="projectAgeData" data-start="2024-08-21T05:05:23+03:00" style="display:none"></div>
+            </section>
+
+            <section class="features">
+                <h2>Projekt lehetőségei</h2>
+                <ul>
+                    
+                    <li><strong>Hitelesítés és profilok</strong> — Biztonságos hitelesítés (PASETO), profil kezelés.</li>
+                    
+                    <li><strong>Információelemző eszközök</strong> — 7 szolgáltatás adatgyűjtésre és feldolgozásra, RSS hírek.</li>
+                    
+                    <li><strong>Játékok a platformon</strong> — 19 böngészős és PC játék ranglistákkal.</li>
+                    
+                    <li><strong>Telegram botok</strong> — Játék bot, ellenőrző bot és mém bot.</li>
+                    
+                    <li><strong>PWA</strong> — Progresszív webalkalmazás támogatás.</li>
+                    
+                    <li><strong>Biztonság</strong> — CSRF végpontok és kérésszám-korlátozás az alapvető szolgáltatásokban.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="audience">
+                <h2>Kik használhatják</h2>
+                <ul>
+                    
+                    <li><strong>Felhasználók</strong> — kényelmes hozzáférés a hírekhez, játékokhoz és szolgáltatásokhoz egy helyen.</li>
+                    
+                    <li><strong>Fejlesztők</strong> — nyílt repository egyértelmű szerkezettel, lehetőség változtatások közreműködésére.</li>
+                    
+                    <li><strong>Bot és mini-szolgáltatás szerzők</strong> — platform integrációra és ötletek tesztelésére.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="status">
+                <h2>Működik jelenleg</h2>
+                <ul>
+                    
+                    <li>Hitelesítési és profil rendszer.</li>
+                    
+                    <li>Hírek RSS forrásokból (9 cikk).</li>
+                    
+                    <li>Játékok (19 játék, beleértve a ranglistákat).</li>
+                    
+                    <li>Telegram botok (játékok, ellenőrzés, mémek).</li>
+                    
+                    <li>CSRF végpontok és kérésszám-korlátozás.</li>
+                    
+                    <li>7 eszköz munka és marketing számára.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="security">
+                <h2>Biztonság</h2>
+                <p>A projekt fokozatosan megerősödik: PASETO tokenek használata, CSRF végpontok implementálva, kérésszám-korlátozás hozzáadva, tranzitív függőségek frissítve. Statikus elemzés (CodeQL) és rendszeres függőség frissítések történnek.</p>
+            </section>
+
+            <section class="tech">
+                <h2>Technológiák</h2>
+                <ul>
+                    
+                    <li>Backend: Node.js, Express, MySQL, PASETO, PM2.</li>
+                    
+                    <li>Frontend: HTML, CSS, JavaScript, PWA.</li>
+                    
+                    <li>Infrastruktúra: Nginx, CI/CD, CodeQL.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="roadmap">
+                <h2>Tervek</h2>
+                <ul>
+                    
+                    <li>Főoldal és UX fejlesztése.</li>
+                    
+                    <li>Játékkészlet és profil funkciók bővítése.</li>
+                    
+                    <li>Botok és integrációk fejlesztése, teljesítmény optimalizálás.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="faq">
+                <h2>Gyakran Ismételt Kérdések</h2>
+                <p><strong>Javasolhatok ötletet vagy módosításokat?</strong> Igen, a repository nyitott - lásd az alábbi részt. A leggyorsabb mód egy javaslat vagy Pull Request beküldése.</p>
+                <p><strong>Hol tekinthetem meg a forráskódot?</strong> Link a repositoryhoz az alábbi blokkban.</p>
+            </section>
+
+            <section class="get-started">
+                <h2>Hogyan kezdjem</h2>
+                <ol>
+                    
+                    <li>Nyisd meg a projekt repositoryját.</li>
+                    
+                    <li>Olvasd el a README és CONTRIBUTING fájlokat.</li>
+                    
+                    <li>Futtasd helyileg az utasítások szerint és válassz egy érdekes feladatot.</li>
+                    
+                </ol>
+            </section>
+
+            <section class="repository">
+                <h2>Projekt repository</h2>
+                <p>A forráskód két repositoryban érhető el:</p>
+                <ul>
+                    <li><a href="https://gitverse.ru/Serpmonn/Serpmonn_project" target="_blank" style="color: #000000;">Serpmonn a GitVerse-en</a></li>
+                    <li><a href="https://github.com/serpmonn/Serpmonn" target="_blank" style="color: #000000;">Serpmonn a GitHub-on</a></li>
+                </ul>
+            </section>
+
+            <section class="mission">
+                <h2>Küldetés és értékek</h2>
+                <p>Webes eszközök &#39;egy helyen&#39;, figyelemmel a sebességre, hozzáférhetőségre és adatvédelemre. A Serpmonn a felület egyszerűsége, javaslatokra való nyitottság és a szolgáltatás minőségének fokozatos javítása felé halad.</p>
+            </section>
+
+            <section class="technical-info">
+                <h2>Technikai információ</h2>
+                <div class="tech-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1944</span>
+                        <span class="stat-label">oldal</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">eszköz</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">játék</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">9</span>
+                        <span class="stat-label">hír</span>
+                    </div>
+                </div>
+                <p class="tech-description">
+                    A projekt 1944 aktív oldalt tartalmaz, amelyek különböző területeket fednek le: eszközök fejlesztők és marketingesek számára, böngészős játékok, hír részleg, hitelesítési és profil rendszer.
+                </p>
+            </section>
+
+            <section class="legal">
+                <h2>Jogi információ</h2>
+                <p><strong>Jogtulajdonos</strong>: Sergey Popov</p>
+                <p><strong>Állapot</strong>: Egyéni vállalkozó</p>
+                <p><strong>INN</strong>: 366230412849</p>
+                <p><strong>Szerzői jog</strong>: A Serpmonn.ru projekt összes jogai, beleértve a kódot, dizájnt és tartalmat, a szerző tulajdonát képezik.</p>
+                <p><strong>Licenc</strong>: A projekt egy privát fejlesztés és nem használható, másolható vagy módosítható a jogtulajdonos engedélye nélkül.</p>
+            </section>
+
+            <section class="disclaimer">
+                <h2>Felelősségi nyilatkozat</h2>
+                <p>A Serpmonn.ru projekt &#39;jelenlegi állapotában&#39; kerül biztosításra. Az adminisztráció nem felelős technikai hibákért, a szolgáltatás működésében előforduló hibákért vagy a felhasználók bármilyen közvetett veszteségéért.</p>
+                <p>A felhasználók kizárólagos felelősséget viselnek a szolgáltatás használatával végrehajtott összes műveletért. Különösen, de nem kizárólagosan, az adminisztráció nem felelős:
+                    <ul>
+                        
+                        <li>spam vagy jogosulatlan reklámüzenetek küldéséért</li>
+                        
+                        <li>kártevő szoftverek terjesztéséért</li>
+                        
+                        <li>jogosulatlan hozzáférésért mások fiókjaihoz és adataihoz</li>
+                        
+                        <li>szerzői jogok és szellemi tulajdon megsértéséért</li>
+                        
+                        <li>tiltott információk (extremista, pornográf stb.) terjesztéséért</li>
+                        
+                        <li>csalásos tevékenységekért és más felhasználók megtévesztéséért</li>
+                        
+                        <li>a személyes adatokra vonatkozó jogszabályok megsértéséért</li>
+                        
+                        <li>bármely egyéb illegális cselekményért</li>
+                        
+                    </ul>
+                </p>
+                <p>Az adminisztráció fenntartja a jogot, hogy a szabályokat megsértő felhasználók számára a szolgáltatáshoz való hozzáférést előzetes értesítés nélkül blokkolja.</p>
+                <p>A személyes adatok feldolgozását az Adatvédelmi Irányelvek szabályozzák.</p>
+            </section>
+
+            <section class="contacts">
+                <h2>Kapcsolatok</h2>
+                <p>A kommunikációhoz használja a következő csatornákat:</p>
+                
+                <div class="contact-block">
+                    <h3>Technikai támogatás</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a></p>
+                </div>
+            
+                <div class="contact-block">
+                    <h3>Egyéb kérdések</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:info@serpmonn.ru">info@serpmonn.ru</a></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>Minden jog fenntartva. Olvassa el a <a href="https://gitverse.ru/Serpmonn/Serpmonn_project/content/master/LICENSE" target="_blank">projekt licencet</a>.</p>
+        </footer>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>

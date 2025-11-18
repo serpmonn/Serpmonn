@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="he">
+        <title>אודות הפרויקט - Serpmonn.ru</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Serpmonn: אימות ופרופילים, חדשות, משחקים ובוטים. למד עוד על הפרויקט ותוכניות הפיתוח.">
+        <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="אודות הפרויקט — Serpmonn.ru">
+        <meta property="og:description" content="Serpmonn: אימות ופרופילים, חדשות, משחקים ובוטים. למד עוד על הפרויקט ותוכניות הפיתוח.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/he/about-project/about-project.html">
+        <meta property="og:type" content="article">
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="אודות הפרויקט — Serpmonn.ru">
+        <meta name="twitter:description" content="Serpmonn: אימות ופרופילים, חדשות, משחקים ובוטים.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Стили -->
+        <link rel="stylesheet" href="/frontend/styles/about-project.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+        <!-- Скрипты -->
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+        <script type="module" src="/frontend/scripts/counter.js"></script>
+    </head>
+    <body>
+
+        <main class="about-section">
+            <section class="intro">
+                <h1>מהו Serpmonn.ru?</h1>
+                <p>Serpmonn היא פלטפורמה מקיפה המתמקדת בכלים מעשיים: אימות ופרופילים, חדשות RSS, משחקי דפדפן עם טבלאות לוח תוצאות ובוטי Telegram (משחקים, אימות, ממים). תשומת לב מיוחדת מוקדשת לאבטחה: נוספו endpoints CSGV והגבלת קצב (rate limiting) בשירותים הראשיים. המטרה של Serpmonn.ru היא לשלב זאת בממשק נוח למשימות יומיומיות.</p>
+                <p>הפרויקט מפותח באופן פתוח: UX במובייל ומחשב שולחני משתפר בהדרגה, מתווספים כלים, הנגישות מורחבת (גופן גדול, ניגודיות גבוהה, פחות אנימציות). התוכניות כוללות יותר משחקי HTML5, חיפוש משופר, אינטגרציות ומערכת פרופילים מלאה.</p>
+            </section>
+
+            <!-- Счетчик пользователей -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21M22 21V19C22 17.4087 21.3679 15.8826 20.2426 14.7574C19.1174 13.6321 17.5913 13 16 13M15 8C15 10.2091 13.2091 12 11 12C8.79086 12 7 10.2091 7 8C7 5.79086 8.79086 4 11 4C13.2091 4 15 5.79086 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>משתמשי הפלטפורמה</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="userCounter">0</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Возраст проекта -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10h10M7 14h7M7 6h10M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>גיל הפרויקט</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="projectAgeValue">—</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="projectAgeData" data-start="2024-08-21T05:05:23+03:00" style="display:none"></div>
+            </section>
+
+            <section class="features">
+                <h2>תכונות הפרויקט</h2>
+                <ul>
+                    
+                    <li><strong>אימות ופרופילים</strong> — הרשאה מאובטחת (PASETO), ניהול פרופיל.</li>
+                    
+                    <li><strong>כלים לניתוח מידע</strong> — 7 שירותים לאיסוף ועיבוד נתונים, חדשות RSS.</li>
+                    
+                    <li><strong>משחקים בפלטפורמה</strong> — 19 משחקי דפדפן ומחשב עם טבלאות לוח תוצאות.</li>
+                    
+                    <li><strong>בוטי Telegram</strong> — בוט משחקים, בוט אימות ובוט ממים.</li>
+                    
+                    <li><strong>PWA</strong> — תמיכה ביישומי אינטרנט מתקדמים.</li>
+                    
+                    <li><strong>אבטחה</strong> — Endpoints CSRF והגבלת קצב בשירותים הראשיים.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="audience">
+                <h2>למי זה יכול להיות שימושי</h2>
+                <ul>
+                    
+                    <li><strong>משתמשים</strong> — גישה נוחה לחדשות, משחקים ושירותים במקום אחד.</li>
+                    
+                    <li><strong>מפתחים</strong> — מאגר פתוח עם מבנה ברור, אפשרות לתרום.</li>
+                    
+                    <li><strong>מחברי בוטים ומיני-שירותים</strong> — פלטפורמה לאינטגרציה ובדיקת רעיונות.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="status">
+                <h2>מה כבר עובד</h2>
+                <ul>
+                    
+                    <li>מערכת אימות ופרופילים.</li>
+                    
+                    <li>חדשות ממקורות RSS (9 מאמרים).</li>
+                    
+                    <li>משחקים (19 משחקים, כולל טבלאות לוח תוצאות).</li>
+                    
+                    <li>בוטי Telegram (משחקים, אימות, ממים).</li>
+                    
+                    <li>Endpoints CSRF והגבלת קצב.</li>
+                    
+                    <li>7 כלים לעבודה ושיווק.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="security">
+                <h2>אבטחה</h2>
+                <p>הפרויקט מתחזק בהדרגה: נעשה שימוש באסימוני PASETO, מיושמים endpoints CSRF, נוספה הגבלת קצב, עדכון תלויות טרנזיטיביות. מתבצעת ניתוח סטטי (CodeQL) ועדכונים סדירים של תלויות.</p>
+            </section>
+
+            <section class="tech">
+                <h2>טכנולוגיות</h2>
+                <ul>
+                    
+                    <li>Backend: Node.js, Express, MySQL, PASETO, PM2.</li>
+                    
+                    <li>Frontend: HTML, CSS, JavaScript, PWA.</li>
+                    
+                    <li>תשתית: Nginx, CI/CD, CodeQL.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="roadmap">
+                <h2>תוכניות</h2>
+                <ul>
+                    
+                    <li>שיפור הדף הראשי ו-UX.</li>
+                    
+                    <li>הרחבת קבוצת המשחקים ותכונות הפרופיל.</li>
+                    
+                    <li>פיתוח בוטים ואינטגרציות, אופטימיזציה של ביצועים.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="faq">
+                <h2>שאלות נפוצות</h2>
+                <p><strong>האם ניתן להציע רעיון או לבצע שינויים?</strong> כן, המאגר פתוח - ראה להלן. הדרך המהירה ביותר היא להגיש הצעה או Pull Request.</p>
+                <p><strong>היכן ניתן לצפות בקוד המקור?</strong> קישור למאגר בבלוק למטה.</p>
+            </section>
+
+            <section class="get-started">
+                <h2>איך להתחיל</h2>
+                <ol>
+                    
+                    <li>פתח את מאגר הפרויקט.</li>
+                    
+                    <li>קרא את README ו-CONTRIBUTING.</li>
+                    
+                    <li>הפעל מקומית לפי ההוראות ובחר משימה מעניינת.</li>
+                    
+                </ol>
+            </section>
+
+            <section class="repository">
+                <h2>מאגר הפרויקט</h2>
+                <p>קוד המקור זמין בשני מאגרים:</p>
+                <ul>
+                    <li><a href="https://gitverse.ru/Serpmonn/Serpmonn_project" target="_blank" style="color: #000000;">Serpmonn ב-GitVerse</a></li>
+                    <li><a href="https://github.com/serpmonn/Serpmonn" target="_blank" style="color: #000000;">Serpmonn ב-GitHub</a></li>
+                </ul>
+            </section>
+
+            <section class="mission">
+                <h2>משימה וערכים</h2>
+                <p>כלי אינטרנט &#39;במקום אחד&#39;, תוך תשומת לב למהירות, נגישות ופרטיות. Serpmonn שואף לפשטות הממשק, פתיחות להצעות ושיפור הדרגתי של איכות השירות.</p>
+            </section>
+
+            <section class="technical-info">
+                <h2>מידע טכני</h2>
+                <div class="tech-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1944</span>
+                        <span class="stat-label">דפים</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">כלים</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">משחקים</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">9</span>
+                        <span class="stat-label">חדשות</span>
+                    </div>
+                </div>
+                <p class="tech-description">
+                    הפרויקט כולל 1944 דפים פעילים המכסים תחומים שונים: כלים למפתחים ומומחי שיווק, משחקי דפדפן, מדור חדשות, מערכת אימות ופרופילים.
+                </p>
+            </section>
+
+            <section class="legal">
+                <h2>מידע משפטי</h2>
+                <p><strong>בעל הזכויות</strong>: סרגיי פופוב</p>
+                <p><strong>סטטוס</strong>: עצמאי</p>
+                <p><strong>INN</strong>: 366230412849</p>
+                <p><strong>זכויות יוצרים</strong>: כל הזכויות בפרויקט Serpmonn.ru, כולל קוד, עיצוב ותוכן, שייכות למחבר.</p>
+                <p><strong>רישיון</strong>: הפרויקט הוא פיתוח פרטי ולא ניתן להשתמש בו, להעתיקו או לשנותו ללא רשות בעל הזכויות.</p>
+            </section>
+
+            <section class="disclaimer">
+                <h2>הצהרת אחריות</h2>
+                <p>פרויקט Serpmonn.ru מסופק &#39;כפי שהוא&#39;. ההנהלה אינה אחראית לתקלות טכניות, שגיאות בפעילות השירות או כל נזק עקיף למשתמשים.</p>
+                <p>משתמשים נושאים באחריות בלעדית לכל הפעולות המבוצעות באמצעות השירות. בפרט, אך לא רק, ההנהלה אינה אחראית ל:
+                    <ul>
+                        
+                        <li>שליחת ספאם או הודעות פרסום לא מורשות</li>
+                        
+                        <li>הפצת תוכנות זדוניות</li>
+                        
+                        <li>גישה לא מורשית לחשבונות ונתונים של אחרים</li>
+                        
+                        <li>הפרות של זכויות יוצרים וקניין רוחני</li>
+                        
+                        <li>הפצת מידע אסור (קיצוני, פורנוגרפי וכו&#39;)</li>
+                        
+                        <li>פעילות הונאה והטעיית משתמשים אחרים</li>
+                        
+                        <li>הפרות של חקיקת נתונים אישיים</li>
+                        
+                        <li>כל פעולה בלתי חוקית אחרת</li>
+                        
+                    </ul>
+                </p>
+                <p>ההנהלה שומרת לעצמה את הזכות לחסום גישה לשירות למשתמשים המפרים כללים אלה ללא הודעה מוקדמת.</p>
+                <p>עיבוד נתונים אישיים כפוף למדיניות הפרטיות.</p>
+            </section>
+
+            <section class="contacts">
+                <h2>אנשי קשר</h2>
+                <p>השתמש בערוצים הבאים לתקשורת:</p>
+                
+                <div class="contact-block">
+                    <h3>תמיכה טכנית</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a></p>
+                </div>
+            
+                <div class="contact-block">
+                    <h3>שאלות אחרות</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:info@serpmonn.ru">info@serpmonn.ru</a></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>כל הזכויות שמורות. קרא את <a href="https://gitverse.ru/Serpmonn/Serpmonn_project/content/master/LICENSE" target="_blank">רישיון הפרויקט</a>.</p>
+        </footer>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>

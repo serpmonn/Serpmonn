@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="cs" dir="ltr">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="cs">
+        <title>O projektu - Serpmonn.ru</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Serpmonn: ověřování a profily, novinky, hry a boty. Zjistěte více o projektu a plánech rozvoje.">
+        <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="O projektu — Serpmonn.ru">
+        <meta property="og:description" content="Serpmonn: ověřování a profily, novinky, hry a boty. Zjistěte více o projektu a plánech rozvoje.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/cs/about-project/about-project.html">
+        <meta property="og:type" content="article">
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="O projektu — Serpmonn.ru">
+        <meta name="twitter:description" content="Serpmonn: ověřování a profily, novinky, hry a boty.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Стили -->
+        <link rel="stylesheet" href="/frontend/styles/about-project.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+        <!-- Скрипты -->
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+        <script type="module" src="/frontend/scripts/counter.js"></script>
+    </head>
+    <body>
+
+        <main class="about-section">
+            <section class="intro">
+                <h1>Co je Serpmonn.ru?</h1>
+                <p>Serpmonn je komplexní platforma se zaměřením na praktické nástroje: ověřování a profily, RSS novinky, prohlížečové hry s žebříčky a Telegram boty (herní, ověřovací, memy). Zvláštní pozornost je věnována bezpečnosti: byly přidány CSRF koncové body a omezení rychlosti požadavků (rate limiting) v hlavních službách. Cílem Serpmonn.ru je spojit toto ve vhodném rozhraní pro každodenní úkoly.</p>
+                <p>Projekt se vyvíjí otevřeně: postupně se zlepšuje UX na mobilních zařízeních a počítačích, přidávají se nástroje, rozšiřuje se dostupnost (velké písmo, vysoký kontrast, méně animací). V plánech je více HTML5 her, vylepšené vyhledávání, integrace a plnohodnotný systém profilů.</p>
+            </section>
+
+            <!-- Счетчик пользователей -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21M22 21V19C22 17.4087 21.3679 15.8826 20.2426 14.7574C19.1174 13.6321 17.5913 13 16 13M15 8C15 10.2091 13.2091 12 11 12C8.79086 12 7 10.2091 7 8C7 5.79086 8.79086 4 11 4C13.2091 4 15 5.79086 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Uživatelé platformy</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="userCounter">0</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Возраст проекта -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10h10M7 14h7M7 6h10M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Stáří projektu</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="projectAgeValue">—</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="projectAgeData" data-start="2024-08-21T05:05:23+03:00" style="display:none"></div>
+            </section>
+
+            <section class="features">
+                <h2>Možnosti projektu</h2>
+                <ul>
+                    
+                    <li><strong>Ověřování a profily</strong> — Bezpečná autorizace (PASETO), správa profilu.</li>
+                    
+                    <li><strong>Nástroje pro analýzu informací</strong> — 7 služeb pro sběr a zpracování dat, RSS novinky.</li>
+                    
+                    <li><strong>Hry na platformě</strong> — 19 prohlížečových a PC her s žebříčky.</li>
+                    
+                    <li><strong>Telegram boty</strong> — Herní bot, ověřovací bot a mem bot.</li>
+                    
+                    <li><strong>PWA</strong> — Podpora progresivních webových aplikací.</li>
+                    
+                    <li><strong>Bezpečnost</strong> — CSRF koncové body a rate limiting v hlavních službách.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="audience">
+                <h2>Komu to může být užitečné</h2>
+                <ul>
+                    
+                    <li><strong>Uživatelům</strong> — pohodlný přístup k novinkám, hrám a službám na jednom místě.</li>
+                    
+                    <li><strong>Vývojářům</strong> — otevřené úložiště s jasnou strukturou, možnost přispívat změnami.</li>
+                    
+                    <li><strong>Autorům botů a mini-služeb</strong> — platforma pro integraci a testování nápadů.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="status">
+                <h2>Co již funguje</h2>
+                <ul>
+                    
+                    <li>Systém ověřování a profilů.</li>
+                    
+                    <li>Novinky z RSS zdrojů (9 článků).</li>
+                    
+                    <li>Hry (19 her, včetně žebříčků).</li>
+                    
+                    <li>Telegram boty (hry, ověřování, memy).</li>
+                    
+                    <li>CSRF koncové body a omezení rychlosti požadavků.</li>
+                    
+                    <li>7 nástrojů pro práci a marketing.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="security">
+                <h2>Bezpečnost</h2>
+                <p>Projekt se postupně posiluje: používají se PASETO tokeny, jsou implementovány CSRF koncové body, je přidáno rate limiting, aktualizovány tranzitivní závislosti. Provádí se statická analýza (CodeQL) a pravidelné aktualizace závislostí.</p>
+            </section>
+
+            <section class="tech">
+                <h2>Technologie</h2>
+                <ul>
+                    
+                    <li>Backend: Node.js, Express, MySQL, PASETO, PM2.</li>
+                    
+                    <li>Frontend: HTML, CSS, JavaScript, PWA.</li>
+                    
+                    <li>Infrastruktura: Nginx, CI/CD, CodeQL.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="roadmap">
+                <h2>Plány</h2>
+                <ul>
+                    
+                    <li>Zlepšení hlavní stránky a UX.</li>
+                    
+                    <li>Rozšíření sady her a možností profilu.</li>
+                    
+                    <li>Vývoj botů a integrací, optimalizace výkonu.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="faq">
+                <h2>Často kladené otázky</h2>
+                <p><strong>Mohu navrhnout nápad nebo provést změny?</strong> Ano, úložiště je otevřené - viz níže uvedená sekce. Nejrychlejší je odeslat návrh nebo Pull Request.</p>
+                <p><strong>Kde lze zobrazit zdrojový kód?</strong> Odkaz na úložiště v bloku níže.</p>
+            </section>
+
+            <section class="get-started">
+                <h2>Jak začít</h2>
+                <ol>
+                    
+                    <li>Otevřete úložiště projektu.</li>
+                    
+                    <li>Seznamte se s README a CONTRIBUTING.</li>
+                    
+                    <li>Spusťte lokálně podle pokynů a vyberte zajímavý úkol.</li>
+                    
+                </ol>
+            </section>
+
+            <section class="repository">
+                <h2>Úložiště projektu</h2>
+                <p>Zdrojový kód je k dispozici ve dvou úložištích:</p>
+                <ul>
+                    <li><a href="https://gitverse.ru/Serpmonn/Serpmonn_project" target="_blank" style="color: #000000;">Serpmonn na GitVerse</a></li>
+                    <li><a href="https://github.com/serpmonn/Serpmonn" target="_blank" style="color: #000000;">Serpmonn na GitHub</a></li>
+                </ul>
+            </section>
+
+            <section class="mission">
+                <h2>Mise a hodnoty</h2>
+                <p>Webové nástroje „na jednom místě“ s důrazem na rychlost, dostupnost a soukromí. Serpmonn směřuje k jednoduchosti rozhraní, otevřenosti návrhům a postupnému zlepšování kvality služby.</p>
+            </section>
+
+            <section class="technical-info">
+                <h2>Technické informace</h2>
+                <div class="tech-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1944</span>
+                        <span class="stat-label">stránek</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">nástrojů</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">her</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">9</span>
+                        <span class="stat-label">novinek</span>
+                    </div>
+                </div>
+                <p class="tech-description">
+                    Projekt zahrnuje 1944 aktivních stránek pokrývajících různé oblasti: nástroje pro vývojáře a marketingové specialisty, prohlížečové hry, novinkovou sekci, systém ověřování a profilů.
+                </p>
+            </section>
+
+            <section class="legal">
+                <h2>Právní informace</h2>
+                <p><strong>Držitel práv</strong>: Sergej Popov</p>
+                <p><strong>Stav</strong>: OSVČ</p>
+                <p><strong>INN</strong>: 366230412849</p>
+                <p><strong>Autorská práva</strong>: Všechna práva k projektu Serpmonn.ru, včetně kódu, designu a obsahu, patří autorovi.</p>
+                <p><strong>Licence</strong>: Projekt je soukromým vývojem a nemůže být použit, kopírován nebo modifikován bez povolení držitele práv.</p>
+            </section>
+
+            <section class="disclaimer">
+                <h2>Odmítnutí odpovědnosti</h2>
+                <p>Projekt Serpmonn.ru je poskytován „tak jak je“. Správa nenese odpovědnost za technické poruchy, chyby v činnosti služby nebo jakékoli nepřímé ztráty uživatelů.</p>
+                <p>Uživatelé nesou samostatnou odpovědnost za všechny akce prováděné pomocí služby. Konkrétně, ale neomezeně, správa neodpovídá za:
+                    <ul>
+                        
+                        <li>rozesílání spamu nebo neoprávněných reklamních zpráv</li>
+                        
+                        <li>šíření škodlivého softwaru</li>
+                        
+                        <li>neoprávněný přístup k cizím účtům a datům</li>
+                        
+                        <li>porušování autorských práv a duševního vlastnictví</li>
+                        
+                        <li>šíření zakázaných informací (extremistických, pornografických atd.)</li>
+                        
+                        <li>podvodné činnosti a klamání jiných uživatelů</li>
+                        
+                        <li>porušování legislativy o osobních údajích</li>
+                        
+                        <li>jakékoli jiné protiprávní činy</li>
+                        
+                    </ul>
+                </p>
+                <p>Správa si vyhrazuje právo blokovat přístup ke službě pro uživatele, kteří porušují tato pravidla, bez předchozího upozornění.</p>
+                <p>Zpracování osobních údajů se řídí Zásadami ochrany osobních údajů.</p>
+            </section>
+
+            <section class="contacts">
+                <h2>Kontakty</h2>
+                <p>Pro komunikaci použijte následující kanály:</p>
+                
+                <div class="contact-block">
+                    <h3>Technická podpora</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a></p>
+                </div>
+            
+                <div class="contact-block">
+                    <h3>Další otázky</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:info@serpmonn.ru">info@serpmonn.ru</a></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>Všechna práva vyhrazena. Seznamte se s <a href="https://gitverse.ru/Serpmonn/Serpmonn_project/content/master/LICENSE" target="_blank">licencí projektu</a>.</p>
+        </footer>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>

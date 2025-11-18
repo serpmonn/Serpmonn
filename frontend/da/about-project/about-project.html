@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="da" dir="ltr">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="da">
+        <title>Om projektet - Serpmonn.ru</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Serpmonn: godkendelse og profiler, nyheder, spil og bots. Lær mere om projektet og udviklingsplaner.">
+        <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="Om projektet — Serpmonn.ru">
+        <meta property="og:description" content="Serpmonn: godkendelse og profiler, nyheder, spil og bots. Lær mere om projektet og udviklingsplaner.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/da/about-project/about-project.html">
+        <meta property="og:type" content="article">
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Om projektet — Serpmonn.ru">
+        <meta name="twitter:description" content="Serpmonn: godkendelse og profiler, nyheder, spil og bots.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Стили -->
+        <link rel="stylesheet" href="/frontend/styles/about-project.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+        <!-- Скрипты -->
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+        <script type="module" src="/frontend/scripts/counter.js"></script>
+    </head>
+    <body>
+
+        <main class="about-section">
+            <section class="intro">
+                <h1>Hvad er Serpmonn.ru?</h1>
+                <p>Serpmonn er en omfattende platform med fokus på praktiske værktøjer: godkendelse og profiler, RSS-nyheder, browser-spil med leaderboards og Telegram-bots (spil, verifikation, memes). Der lægges særlig vægt på sikkerhed: CSRF-endepunkter og hastighedsbegrænsning (rate limiting) er tilføjet til kernetjenester. Målet med Serpmonn.ru er at kombinere dette i et bekvemt interface til daglige opgaver.</p>
+                <p>Projektet udvikles åbent: UX på mobil og desktop forbedres gradvist, værktøjer tilføjes, tilgængelighed udvides (stor skrifttype, høj kontrast, færre animationer). Planerne omfatter flere HTML5-spil, forbedret søgning, integrationer og et fuldt udbygget profilsystem.</p>
+            </section>
+
+            <!-- Счетчик пользователей -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21M22 21V19C22 17.4087 21.3679 15.8826 20.2426 14.7574C19.1174 13.6321 17.5913 13 16 13M15 8C15 10.2091 13.2091 12 11 12C8.79086 12 7 10.2091 7 8C7 5.79086 8.79086 4 11 4C13.2091 4 15 5.79086 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Platformbrugere</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="userCounter">0</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Возраст проекта -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10h10M7 14h7M7 6h10M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>Projektets alder</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="projectAgeValue">—</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="projectAgeData" data-start="2024-08-21T05:05:23+03:00" style="display:none"></div>
+            </section>
+
+            <section class="features">
+                <h2>Projektets funktioner</h2>
+                <ul>
+                    
+                    <li><strong>Godkendelse og profiler</strong> — Sikker godkendelse (PASETO), profiladministration.</li>
+                    
+                    <li><strong>Værktøjer til informationsanalyse</strong> — 7 tjenester til indsamling og behandling af data, RSS-nyheder.</li>
+                    
+                    <li><strong>Spil på platformen</strong> — 19 browser- og PC-spil med leaderboards.</li>
+                    
+                    <li><strong>Telegram-bots</strong> — Spilbot, verifikationsbot og memebot.</li>
+                    
+                    <li><strong>PWA</strong> — Understøttelse af progressive webapps.</li>
+                    
+                    <li><strong>Sikkerhed</strong> — CSRF-endepunkter og hastighedsbegrænsning i kernetjenester.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="audience">
+                <h2>Hvem kan drage fordel</h2>
+                <ul>
+                    
+                    <li><strong>Brugere</strong> — bekvem adgang til nyheder, spil og tjenester på ét sted.</li>
+                    
+                    <li><strong>Udviklere</strong> — åben kodelager med klar struktur, mulighed for at bidrage med ændringer.</li>
+                    
+                    <li><strong>Forfattere af bots og minitjenester</strong> — platform til integration og test af ideer.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="status">
+                <h2>Hvad allerede fungerer</h2>
+                <ul>
+                    
+                    <li>Godkendelses- og profilsystem.</li>
+                    
+                    <li>Nyheder fra RSS-kilder (9 artikler).</li>
+                    
+                    <li>Spil (19 spil, inklusive leaderboards).</li>
+                    
+                    <li>Telegram-bots (spil, verifikation, memes).</li>
+                    
+                    <li>CSRF-endepunkter og hastighedsbegrænsning.</li>
+                    
+                    <li>7 værktøjer til arbejde og marketing.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="security">
+                <h2>Sikkerhed</h2>
+                <p>Projektet styrkes gradvist: PASETO-tokens bruges, CSRF-endepunkter er implementeret, hastighedsbegrænsning er tilføjet, transitive afhængigheder er opdateret. Statisk analyse (CodeQL) og regelmæssige opdateringer af afhængigheder udføres.</p>
+            </section>
+
+            <section class="tech">
+                <h2>Teknologier</h2>
+                <ul>
+                    
+                    <li>Backend: Node.js, Express, MySQL, PASETO, PM2.</li>
+                    
+                    <li>Frontend: HTML, CSS, JavaScript, PWA.</li>
+                    
+                    <li>Infrastruktur: Nginx, CI/CD, CodeQL.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="roadmap">
+                <h2>Planer</h2>
+                <ul>
+                    
+                    <li>Forbedring af hovedsiden og UX.</li>
+                    
+                    <li>Udvidelse af spiludvalg og profilfunktioner.</li>
+                    
+                    <li>Udvikling af bots og integrationer, optimering af ydeevne.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="faq">
+                <h2>Ofte stillede spørgsmål</h2>
+                <p><strong>Kan jeg foreslå en ide eller foretage ændringer?</strong> Ja, kodelageret er åbent - se afsnittet nedenfor. Den hurtigste måde er at indsende et forslag eller en Pull Request.</p>
+                <p><strong>Hvor kan jeg se kildekoden?</strong> Link til kodelageret i blokken nedenfor.</p>
+            </section>
+
+            <section class="get-started">
+                <h2>Sådan kommer du i gang</h2>
+                <ol>
+                    
+                    <li>Åbn projektets kodelager.</li>
+                    
+                    <li>Læs README og CONTRIBUTING.</li>
+                    
+                    <li>Kør lokalt efter vejledningen og vælg en interessant opgave.</li>
+                    
+                </ol>
+            </section>
+
+            <section class="repository">
+                <h2>Projektets kodelager</h2>
+                <p>Kildekoden er tilgængelig i to kodelagre:</p>
+                <ul>
+                    <li><a href="https://gitverse.ru/Serpmonn/Serpmonn_project" target="_blank" style="color: #000000;">Serpmonn på GitVerse</a></li>
+                    <li><a href="https://github.com/serpmonn/Serpmonn" target="_blank" style="color: #000000;">Serpmonn på GitHub</a></li>
+                </ul>
+            </section>
+
+            <section class="mission">
+                <h2>Mission og værdier</h2>
+                <p>Webværktøjer &#39;på ét sted&#39; med fokus på hastighed, tilgængelighed og privatliv. Serpmonn sigter mod enkelhed i interfacet, åbenhed over for forslag og gradvis forbedring af servicens kvalitet.</p>
+            </section>
+
+            <section class="technical-info">
+                <h2>Teknisk information</h2>
+                <div class="tech-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1944</span>
+                        <span class="stat-label">sider</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">værktøjer</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">spil</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">9</span>
+                        <span class="stat-label">nyheder</span>
+                    </div>
+                </div>
+                <p class="tech-description">
+                    Projektet inkluderer 1944 aktive sider, der dækker forskellige områder: værktøjer til udviklere og marketingfolk, browserspil, nyhedsafsnit, godkendelses- og profilsystem.
+                </p>
+            </section>
+
+            <section class="legal">
+                <h2>Juridisk information</h2>
+                <p><strong>Rettighedshaver</strong>: Sergey Popov</p>
+                <p><strong>Status</strong>: Selvstændig</p>
+                <p><strong>INN</strong>: 366230412849</p>
+                <p><strong>Ophavsret</strong>: Alle rettigheder til Serpmonn.ru-projektet, inklusive kode, design og indhold, tilhører forfatteren.</p>
+                <p><strong>Licens</strong>: Projektet er en privat udvikling og kan ikke bruges, kopieres eller modificeres uden rettighedshaverens tilladelse.</p>
+            </section>
+
+            <section class="disclaimer">
+                <h2>Ansvarsfraskrivelse</h2>
+                <p>Serpmonn.ru-projektet leveres &#39;som det er&#39;. Administrationen er ikke ansvarlig for tekniske fejl, fejl i tjenestens funktion eller eventuelle indirekte tab for brugere.</p>
+                <p>Brugerne er alene ansvarlige for alle handlinger udført ved hjælp af tjenesten. Især, men ikke begrænset til, er administrationen ikke ansvarlig for:
+                    <ul>
+                        
+                        <li>udsendelse af spam eller uautoriserede reklamebeskeder</li>
+                        
+                        <li>distribution af ondsindet software</li>
+                        
+                        <li>uautoriseret adgang til andre konti og data</li>
+                        
+                        <li>krænkelser af ophavsret og intellektuel ejendom</li>
+                        
+                        <li>distribution af forbudt information (ekstremistisk, pornografisk osv.)</li>
+                        
+                        <li>svigagtige handlinger og bedrag af andre brugere</li>
+                        
+                        <li>overtrædelser af lovgivning om personlige data</li>
+                        
+                        <li>enhver anden ulovlig handling</li>
+                        
+                    </ul>
+                </p>
+                <p>Administrationen forbeholder sig retten til at blokere adgangen til tjenesten for brugere, der overtræder disse regler, uden forudgående varsel.</p>
+                <p>Behandling af personlige data er omfattet af fortrolighedspolitikken.</p>
+            </section>
+
+            <section class="contacts">
+                <h2>Kontakter</h2>
+                <p>Brug følgende kanaler til kommunikation:</p>
+                
+                <div class="contact-block">
+                    <h3>Teknisk support</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a></p>
+                </div>
+            
+                <div class="contact-block">
+                    <h3>Andre spørgsmål</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:info@serpmonn.ru">info@serpmonn.ru</a></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>Alle rettigheder forbeholdes. Læs <a href="https://gitverse.ru/Serpmonn/Serpmonn_project/content/master/LICENSE" target="_blank">projektets licens</a>.</p>
+        </footer>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>

@@ -1,0 +1,275 @@
+
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="ko">
+        <title>프로젝트 정보 - Serpmonn.ru</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="Serpmonn: 인증 및 프로필, 뉴스, 게임 및 봇. 프로젝트 및 개발 계획에 대해 자세히 알아보세요.">
+        <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="프로젝트 정보 — Serpmonn.ru">
+        <meta property="og:description" content="Serpmonn: 인증 및 프로필, 뉴스, 게임 및 봇. 프로젝트 및 개발 계획에 대해 자세히 알아보세요.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/ko/about-project/about-project.html">
+        <meta property="og:type" content="article">
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="프로젝트 정보 — Serpmonn.ru">
+        <meta name="twitter:description" content="Serpmonn: 인증 및 프로필, 뉴스, 게임 및 봇.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Стили -->
+        <link rel="stylesheet" href="/frontend/styles/about-project.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+        <!-- Скрипты -->
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+        <script type="module" src="/frontend/scripts/counter.js"></script>
+    </head>
+    <body>
+
+        <main class="about-section">
+            <section class="intro">
+                <h1>Serpmonn.ru란 무엇인가요?</h1>
+                <p>Serpmonn은 실용적인 도구에 중점을 둔 포괄적인 플랫폼입니다: 인증 및 프로필, RSS 뉴스, 리더보드가 있는 브라우저 게임 및 Telegram 봇(게임, 인증, 밈). 보안에 특별한 주의를 기울입니다: 핵심 서비스에 CSRF 엔드포인트와 속도 제한이 추가되었습니다. Serpmonn.ru의 목표는 이를 일상적인 작업을 위한 편리한 인터페이스로 결합하는 것입니다.</p>
+                <p>프로젝트는 공개적으로 개발됩니다: 모바일 및 데스크톱에서 UX가 점진적으로 개선되고, 도구가 추가되며, 접근성이 확대됩니다(큰 글꼴, 높은 대비, 적은 애니메이션). 계획에는 더 많은 HTML5 게임, 향상된 검색, 통합 및 완전한 프로필 시스템이 포함됩니다.</p>
+            </section>
+
+            <!-- Счетчик пользователей -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21M22 21V19C22 17.4087 21.3679 15.8826 20.2426 14.7574C19.1174 13.6321 17.5913 13 16 13M15 8C15 10.2091 13.2091 12 11 12C8.79086 12 7 10.2091 7 8C7 5.79086 8.79086 4 11 4C13.2091 4 15 5.79086 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>플랫폼 사용자</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="userCounter">0</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Возраст проекта -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10h10M7 14h7M7 6h10M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>프로젝트 연령</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="projectAgeValue">—</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="projectAgeData" data-start="2024-08-21T05:05:23+03:00" style="display:none"></div>
+            </section>
+
+            <section class="features">
+                <h2>프로젝트 기능</h2>
+                <ul>
+                    
+                    <li><strong>인증 및 프로필</strong> — 안전한 인증(PASETO), 프로필 관리.</li>
+                    
+                    <li><strong>정보 분석 도구</strong> — 데이터 수집 및 처리를 위한 7개 서비스, RSS 뉴스.</li>
+                    
+                    <li><strong>플랫폼 게임</strong> — 리더보드가 있는 19개의 브라우저 및 PC 게임.</li>
+                    
+                    <li><strong>Telegram 봇</strong> — 게임 봇, 인증 봇 및 밈 봇.</li>
+                    
+                    <li><strong>PWA</strong> — 프로그레시브 웹 앱 지원.</li>
+                    
+                    <li><strong>보안</strong> — 핵심 서비스에서의 CSRF 엔드포인트 및 속도 제한.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="audience">
+                <h2>누가 혜택을 받을 수 있나요</h2>
+                <ul>
+                    
+                    <li><strong>사용자</strong> — 한 곳에서 뉴스, 게임 및 서비스에 편리하게 접근.</li>
+                    
+                    <li><strong>개발자</strong> — 명확한 구조를 가진 오픈 저장소, 기여 가능성.</li>
+                    
+                    <li><strong>봇 및 미니 서비스 작성자</strong> — 통합 및 아이디어 테스트를 위한 플랫폼.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="status">
+                <h2>이미 작동 중인 기능</h2>
+                <ul>
+                    
+                    <li>인증 및 프로필 시스템.</li>
+                    
+                    <li>RSS 소스의 뉴스(9개 기사).</li>
+                    
+                    <li>게임(19개 게임, 리더보드 포함).</li>
+                    
+                    <li>Telegram 봇(게임, 인증, 밈).</li>
+                    
+                    <li>CSRF 엔드포인트 및 속도 제한.</li>
+                    
+                    <li>작업 및 마케팅을 위한 7개 도구.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="security">
+                <h2>보안</h2>
+                <p>프로젝트는 점진적으로 강화됩니다: PASETO 토큰 사용, CSRF 엔드포인트 구현, 속도 제한 추가, 전이적 종속성 업데이트. 정적 분석(CodeQL) 및 정기적인 종속성 업데이트가 수행됩니다.</p>
+            </section>
+
+            <section class="tech">
+                <h2>기술</h2>
+                <ul>
+                    
+                    <li>백엔드: Node.js, Express, MySQL, PASETO, PM2.</li>
+                    
+                    <li>프론트엔드: HTML, CSS, JavaScript, PWA.</li>
+                    
+                    <li>인프라: Nginx, CI/CD, CodeQL.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="roadmap">
+                <h2>계획</h2>
+                <ul>
+                    
+                    <li>메인 페이지 및 UX 개선.</li>
+                    
+                    <li>게임 세트 및 프로필 기능 확장.</li>
+                    
+                    <li>봇 및 통합 개발, 성능 최적화.</li>
+                    
+                </ul>
+            </section>
+
+            <section class="faq">
+                <h2>자주 묻는 질문</h2>
+                <p><strong>아이디어를 제안하거나 변경할 수 있나요?</strong> 예, 저장소는 공개되어 있습니다 - 아래 섹션을 참조하세요. 가장 빠른 방법은 제안 또는 Pull Request를 제출하는 것입니다.</p>
+                <p><strong>소스 코드는 어디에서 볼 수 있나요?</strong> 아래 블록의 저장소 링크.</p>
+            </section>
+
+            <section class="get-started">
+                <h2>시작 방법</h2>
+                <ol>
+                    
+                    <li>프로젝트 저장소를 엽니다.</li>
+                    
+                    <li>README 및 CONTRIBUTING을 읽습니다.</li>
+                    
+                    <li>지침에 따라 로컬에서 실행하고 흥미로운 작업을 선택합니다.</li>
+                    
+                </ol>
+            </section>
+
+            <section class="repository">
+                <h2>프로젝트 저장소</h2>
+                <p>소스 코드는 두 개의 저장소에서 사용 가능합니다:</p>
+                <ul>
+                    <li><a href="https://gitverse.ru/Serpmonn/Serpmonn_project" target="_blank" style="color: #000000;">GitVerse의 Serpmonn</a></li>
+                    <li><a href="https://github.com/serpmonn/Serpmonn" target="_blank" style="color: #000000;">GitHub의 Serpmonn</a></li>
+                </ul>
+            </section>
+
+            <section class="mission">
+                <h2>미션 및 가치</h2>
+                <p>웹 도구 &#39;한 곳에서&#39;, 속도, 접근성 및 개인 정보 보호에 주의를 기울입니다. Serpmonn은 인터페이스 단순성, 제안에 대한 개방성 및 서비스 품질의 점진적인 개선을 향해 나아가고 있습니다.</p>
+            </section>
+
+            <section class="technical-info">
+                <h2>기술 정보</h2>
+                <div class="tech-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1944</span>
+                        <span class="stat-label">페이지</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">도구</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">게임</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">9</span>
+                        <span class="stat-label">뉴스</span>
+                    </div>
+                </div>
+                <p class="tech-description">
+                    프로젝트는 다양한 영역을 포괄하는 1944개의 활성 페이지를 포함합니다: 개발자 및 마케터를 위한 도구, 브라우저 게임, 뉴스 섹션, 인증 및 프로필 시스템.
+                </p>
+            </section>
+
+            <section class="legal">
+                <h2>법적 정보</h2>
+                <p><strong>권리 소유자</strong>: Sergey Popov</p>
+                <p><strong>상태</strong>: 자영업자</p>
+                <p><strong>INN</strong>: 366230412849</p>
+                <p><strong>저작권</strong>: Serpmonn.ru 프로젝트의 모든 권리, 코드, 디자인 및 콘텐츠를 포함하여 저자에게 속합니다.</p>
+                <p><strong>라이선스</strong>: 프로젝트는 개인 개발이며 권리 소유자의 허가 없이 사용, 복사 또는 수정할 수 없습니다.</p>
+            </section>
+
+            <section class="disclaimer">
+                <h2>면책 조항</h2>
+                <p>Serpmonn.ru 프로젝트는 &#39;있는 그대로&#39; 제공됩니다. 관리자는 기술적 고장, 서비스 작업 오류 또는 사용자의 간접적 손실에 대해 책임지지 않습니다.</p>
+                <p>사용자는 서비스를 사용하여 수행된 모든 작업에 대해 단독으로 책임집니다. 특히, 이에 국한되지 않으며, 관리자는 다음에 대해 책임지지 않습니다:
+                    <ul>
+                        
+                        <li>스팸 또는 무단 광고 메시지 전송</li>
+                        
+                        <li>악성 소프트웨어 배포</li>
+                        
+                        <li>타인의 계정 및 데이터에 대한 무단 접근</li>
+                        
+                        <li>저작권 및 지적 재산권 위반</li>
+                        
+                        <li>금지된 정보(극단주의, 포르노 등) 배포</li>
+                        
+                        <li>사기 활동 및 다른 사용자 기만</li>
+                        
+                        <li>개인 데이터 법률 위반</li>
+                        
+                        <li>기타 불법 행위</li>
+                        
+                    </ul>
+                </p>
+                <p>관리자는 이러한 규칙을 위반하는 사용자에 대해 사전 통지 없이 서비스 접근을 차단할 권리를 보유합니다.</p>
+                <p>개인 데이터 처리에는 개인정보 보호정책이 적용됩니다.</p>
+            </section>
+
+            <section class="contacts">
+                <h2>연락처</h2>
+                <p>연락을 위해 다음 채널을 사용하세요:</p>
+                
+                <div class="contact-block">
+                    <h3>기술 지원</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a></p>
+                </div>
+            
+                <div class="contact-block">
+                    <h3>기타 질문</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:info@serpmonn.ru">info@serpmonn.ru</a></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>모든 권리 보유. <a href="https://gitverse.ru/Serpmonn/Serpmonn_project/content/master/LICENSE" target="_blank">프로젝트 라이선스 읽기</a>.</p>
+        </footer>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>
