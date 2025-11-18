@@ -1,0 +1,237 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/about-project/about-project.html{% else %}/frontend/{{ locale }}/about-project/about-project.html{% endif %}"
+eleventyComputed:
+  title: "{{ aboutProjectTranslations[locale].title }}"
+  description: "{{ aboutProjectTranslations[locale].description }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/about-project/about-project.html{% else %}{{ site.baseUrl }}/{{ locale }}/about-project/about-project.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="{{ locale }}">
+        <title>{{ title }}</title>
+        <meta charset="UTF-8">
+        <meta name="description" content="{{ description }}">
+        <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+        <!-- Open Graph -->
+        <meta property="og:title" content="{{ aboutProjectTranslations[locale].ogTitle }}">
+        <meta property="og:description" content="{{ aboutProjectTranslations[locale].ogDescription }}">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="{{ site.baseUrl }}{{ page.url }}">
+        <meta property="og:type" content="article">
+        <!-- Twitter -->
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="{{ aboutProjectTranslations[locale].ogTitle }}">
+        <meta name="twitter:description" content="{{ aboutProjectTranslations[locale].twitterDescription }}">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Стили -->
+        <link rel="stylesheet" href="/frontend/styles/about-project.css">
+        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+        <!-- Скрипты -->
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+        <script type="module" src="/frontend/scripts/counter.js"></script>
+    </head>
+    <body>
+
+        <main class="about-section">
+            <section class="intro">
+                <h1>{{ aboutProjectTranslations[locale].whatIsSerpmonn }}</h1>
+                <p>{{ aboutProjectTranslations[locale].introText1 }}</p>
+                <p>{{ aboutProjectTranslations[locale].introText2 }}</p>
+            </section>
+
+            <!-- Счетчик пользователей -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M16 21V19C16 17.9391 15.5786 16.9217 14.8284 16.1716C14.0783 15.4214 13.0609 15 12 15H6C4.93913 15 3.92172 15.4214 3.17157 16.1716C2.42143 16.9217 2 17.9391 2 19V21M22 21V19C22 17.4087 21.3679 15.8826 20.2426 14.7574C19.1174 13.6321 17.5913 13 16 13M15 8C15 10.2091 13.2091 12 11 12C8.79086 12 7 10.2091 7 8C7 5.79086 8.79086 4 11 4C13.2091 4 15 5.79086 15 8Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>{{ aboutProjectTranslations[locale].usersCounter }}</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="userCounter">0</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Возраст проекта -->
+            <section class="user-counter">
+                <div class="counter-card">
+                    <div class="counter-header">
+                        <svg class="counter-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M7 10h10M7 14h7M7 6h10M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <h2>{{ aboutProjectTranslations[locale].projectAge }}</h2>
+                    </div>
+                    <div class="counter-content">
+                        <div class="counter-value" id="projectAgeValue">—</div>
+                    </div>
+                    <div class="counter-progress">
+                        <div class="progress-bar"></div>
+                    </div>
+                </div>
+                <div id="projectAgeData" data-start="2024-08-21T05:05:23+03:00" style="display:none"></div>
+            </section>
+
+            <section class="features">
+                <h2>{{ aboutProjectTranslations[locale].featuresTitle }}</h2>
+                <ul>
+                    {% for feature in aboutProjectTranslations[locale].featuresList %}
+                    <li><strong>{{ feature.title }}</strong> — {{ feature.description }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="audience">
+                <h2>{{ aboutProjectTranslations[locale].audienceTitle }}</h2>
+                <ul>
+                    {% for audience in aboutProjectTranslations[locale].audienceList %}
+                    <li><strong>{{ audience.title }}</strong> — {{ audience.description }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="status">
+                <h2>{{ aboutProjectTranslations[locale].statusTitle }}</h2>
+                <ul>
+                    {% for item in aboutProjectTranslations[locale].statusList %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="security">
+                <h2>{{ aboutProjectTranslations[locale].securityTitle }}</h2>
+                <p>{{ aboutProjectTranslations[locale].securityText }}</p>
+            </section>
+
+            <section class="tech">
+                <h2>{{ aboutProjectTranslations[locale].techTitle }}</h2>
+                <ul>
+                    {% for item in aboutProjectTranslations[locale].techList %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="roadmap">
+                <h2>{{ aboutProjectTranslations[locale].roadmapTitle }}</h2>
+                <ul>
+                    {% for item in aboutProjectTranslations[locale].roadmapList %}
+                    <li>{{ item }}</li>
+                    {% endfor %}
+                </ul>
+            </section>
+
+            <section class="faq">
+                <h2>{{ aboutProjectTranslations[locale].faqTitle }}</h2>
+                <p><strong>{{ aboutProjectTranslations[locale].faqQuestion1 }}</strong> {{ aboutProjectTranslations[locale].faqAnswer1 }}</p>
+                <p><strong>{{ aboutProjectTranslations[locale].faqQuestion2 }}</strong> {{ aboutProjectTranslations[locale].faqAnswer2 }}</p>
+            </section>
+
+            <section class="get-started">
+                <h2>{{ aboutProjectTranslations[locale].getStartedTitle }}</h2>
+                <ol>
+                    {% for step in aboutProjectTranslations[locale].getStartedSteps %}
+                    <li>{{ step }}</li>
+                    {% endfor %}
+                </ol>
+            </section>
+
+            <section class="repository">
+                <h2>{{ aboutProjectTranslations[locale].repositoryTitle }}</h2>
+                <p>{{ aboutProjectTranslations[locale].repositoryText }}</p>
+                <ul>
+                    <li><a href="https://gitverse.ru/Serpmonn/Serpmonn_project" target="_blank" style="color: #000000;">{{ aboutProjectTranslations[locale].gitverseLink }}</a></li>
+                    <li><a href="https://github.com/serpmonn/Serpmonn" target="_blank" style="color: #000000;">{{ aboutProjectTranslations[locale].githubLink }}</a></li>
+                </ul>
+            </section>
+
+            <section class="mission">
+                <h2>{{ aboutProjectTranslations[locale].missionTitle }}</h2>
+                <p>{{ aboutProjectTranslations[locale].missionText }}</p>
+            </section>
+
+            <section class="technical-info">
+                <h2>{{ aboutProjectTranslations[locale].techInfoTitle }}</h2>
+                <div class="tech-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">1944</span>
+                        <span class="stat-label">{{ aboutProjectTranslations[locale].pagesLabel }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">7</span>
+                        <span class="stat-label">{{ aboutProjectTranslations[locale].toolsLabel }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">{{ aboutProjectTranslations[locale].gamesLabel }}</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">9</span>
+                        <span class="stat-label">{{ aboutProjectTranslations[locale].newsLabel }}</span>
+                    </div>
+                </div>
+                <p class="tech-description">
+                    {{ aboutProjectTranslations[locale].techDescription }}
+                </p>
+            </section>
+
+            <section class="legal">
+                <h2>{{ aboutProjectTranslations[locale].legalTitle }}</h2>
+                <p><strong>{{ aboutProjectTranslations[locale].rightsHolder }}</strong>: {{ aboutProjectTranslations[locale].rightsHolderName }}</p>
+                <p><strong>{{ aboutProjectTranslations[locale].statusLabel }}</strong>: {{ aboutProjectTranslations[locale].statusValue }}</p>
+                <p><strong>{{ aboutProjectTranslations[locale].innLabel }}</strong>: {{ aboutProjectTranslations[locale].innValue }}</p>
+                <p><strong>{{ aboutProjectTranslations[locale].copyright }}</strong>: {{ aboutProjectTranslations[locale].copyrightText }}</p>
+                <p><strong>{{ aboutProjectTranslations[locale].license }}</strong>: {{ aboutProjectTranslations[locale].licenseText }}</p>
+            </section>
+
+            <section class="disclaimer">
+                <h2>{{ aboutProjectTranslations[locale].disclaimerTitle }}</h2>
+                <p>{{ aboutProjectTranslations[locale].disclaimerText1 }}</p>
+                <p>{{ aboutProjectTranslations[locale].disclaimerText2 }}
+                    <ul>
+                        {% for item in aboutProjectTranslations[locale].disclaimerList %}
+                        <li>{{ item }}</li>
+                        {% endfor %}
+                    </ul>
+                </p>
+                <p>{{ aboutProjectTranslations[locale].disclaimerText3 }}</p>
+                <p>{{ aboutProjectTranslations[locale].disclaimerText4 }}</p>
+            </section>
+
+            <section class="contacts">
+                <h2>{{ aboutProjectTranslations[locale].contactsTitle }}</h2>
+                <p>{{ aboutProjectTranslations[locale].contactsText }}</p>
+                
+                <div class="contact-block">
+                    <h3>{{ aboutProjectTranslations[locale].supportTitle }}</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:support@serpmonn.ru">support@serpmonn.ru</a></p>
+                </div>
+            
+                <div class="contact-block">
+                    <h3>{{ aboutProjectTranslations[locale].otherQuestionsTitle }}</h3>
+                    <p><strong style="color: #EA4335;">Email:</strong> <a href="mailto:info@serpmonn.ru">info@serpmonn.ru</a></p>
+                </div>
+            </section>
+        </main>
+        <footer>
+            <p>{{ aboutProjectTranslations[locale].footerText }} <a href="https://gitverse.ru/Serpmonn/Serpmonn_project/content/master/LICENSE" target="_blank">{{ aboutProjectTranslations[locale].licenseLink }}</a>.</p>
+        </footer>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>
