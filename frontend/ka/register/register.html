@@ -1,121 +1,94 @@
+
 <!DOCTYPE html>
 <html lang="ka" dir="ltr">
-	<head>
-<link rel="stylesheet" href="/frontend/styles/styles.css">
-<meta http-equiv="Content-Language" content="ka">
-	    <meta charset="UTF-8">
-	    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-	    <title>Register</title>
-	    <!-- Open Graph -->
-	    <meta property="og:title" content="Register — Serpmonn">
-	    <meta property="og:description" content="Create a Serpmonn account to save progress and use services.">
-	    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-	    <meta property="og:url" content="https://serpmonn.ru/frontend/ka/register/register.html">
-	    <meta property="og:type" content="website">
-	    <!-- Twitter -->
-	    <meta name="twitter:card" content="summary_large_image">
-	    <meta name="twitter:title" content="Register — Serpmonn">
-	    <meta name="twitter:description" content="Create a Serpmonn account to save progress and use services.">
-	    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-		<link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
-        <link rel="canonical" href="https://www.serpmonn.ru/">
-	    <!-- Стили -->
-	    <link rel="stylesheet" href="/frontend/register/register_styles.css">
-        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-	    <!-- Скрипты -->
-		<!-- Реклама Яндекс -->
-		<script>window.yaContextCb=window.yaContextCb||[]</script>
-		<script src="https://yandex.ru/ads/system/context.js" async></script>
-		<!-- Yandex.Metrika counter -->
-		<script type="text/javascript">
-			(function(m,e,t,r,i,k,a){
-				m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-				m[i].l=1*new Date();
-				for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-				k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-			})(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=103554515', 'ym');
-
-			ym(103554515, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
-		</script>
-		<noscript><div><img src="https://mc.yandex.ru/watch/103554515" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-		<!-- /Yandex.Metrika counter -->
-        <!-- Реклама VK -->
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="ka">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>რეგისტრაცია</title>
+        <meta property="og:title" content="რეგისტრაცია — Serpmonn">
+        <meta property="og:description" content="შექმენით Serpmonn ანგარიში, რომ შეინახოთ თამაშის პროგრესი და ისარგებლოთ სერვისებით.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/ka/register/register.html">
+        <meta property="og:type" content="website">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="რეგისტრაცია — Serpmonn">
+        <meta name="twitter:description" content="შექმენით Serpmonn ანგარიში, რომ შეინახოთ თამაშის პროგრესი და ისარგებლოთ სერვისებით.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <link rel="canonical" href="https://serpmonn.ru/frontend/ka/register/register.html">
+        <link rel="stylesheet" href="register_styles.css">
+        
+        <!-- Яндекс.Метрика -->
+        <script type="text/javascript">
+            (function(m,e,t,r,i,k,a){
+                m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+                m[i].l=1*new Date();
+                for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+                k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+            })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=103554515', 'ym');
+            ym(103554515, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+        </script>
+        
         <script async src="https://ad.mail.ru/static/ads-async.js"></script>
-	    <script type="module" src="/frontend/register/register_scripts.js"defer></script>
+        <script type="module" src="register_scripts.js" defer></script>
         <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-	</head>
-	<body>
-	    <div class="container fade-in">
-			<h2>Create an account</h2>
-	        <form id="registerForm">
+    </head>
+    
+    <body>
+        <noscript><img src="https://mc.yandex.ru/watch/103554515" style="position:absolute; left:-9999px;" alt=""></noscript>
+        
+        <div class="container fade-in">
+            <h2>ანგარიშის შექმნა</h2>
+            <form id="registerForm">
+                <label for="username">მომხმარებლის სახელი:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="email">ელ. ფოსტა:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">პაროლი:</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" id="togglePassword">👁</button>
+                </div>
+                
+                <label class="policy-checkbox">
+                    <input type="checkbox" required>
+                    ვეთანხმები <a href="/frontend/ka/privacy-policy/privacy-policy.html" target="_blank">კონფიდენციალურობის პოლიტიკას</a>
+                </label>
+                
+                <button type="submit" class="submit-btn">რეგისტრაცია</button>
+            </form>
+            
+            <p id="message"></p>
+            
+            <div class="login-link">
+                <p>უკვე დარეგისტრირებული ხართ? <a href="/frontend/ka/login/login.html" class="button-style">შესვლა</a></p>
+            </div>
+        </div>
 
-		    <label for="username">Username:</label>
-    		    <input type="text" id="username" name="username" required>
-		    
-	            <label for="email">Email:</label>
-	            <input type="email" id="email" name="email" required>
-	            
-	            <label for="password">Password:</label>
-	            <div class="password-container">
-					<input type="password" id="password" name="password" required>
-					<button type="button" id="togglePassword">👁</button>
-				</div>
+        <!-- Рекламный блок -->
+        <div class="ad-container" style="text-align: center; margin: 20px auto; max-width: 600px;">
+            <ins class="mrg-tag" 
+                style="display:inline-block;width:300px;height:250px"
+                data-ad-client="ad-1874025"
+                data-ad-slot="1874025">
+            </ins>
+            <script>(MRGtag = window.MRGtag || []).push({});</script>
+        </div>
 
-				<label class="policy-checkbox">
-					<input type="checkbox" required>
-					I agree with the <a href="/frontend/ka/privacy-policy.html" target="_blank">Privacy Policy</a>
-				</label>
-	            
-	            <button type="submit" class="submit-btn">Sign up</button>
-	        </form>
+        <!-- Попап подтверждения -->
+        <div id="confirmPopup" class="popup">
+            <div class="popup-content">
+                <p>აირჩიეთ რეგისტრაციის დადასტურების მეთოდი</p>
+                <a id="telegramConfirmLink" class="btn telegram-btn" target="_blank">დადასტურება Telegram-ის მეშვეობით</a>
+                <button id="emailConfirmButton" class="btn email-btn">დადასტურება ელ. ფოსტის მეშვეობით</button>
+                <button id="closePopup" class="btn close-btn">დახურვა</button>
+            </div>
+        </div>
 
-	        <p id="message"></p>
-
-	            <div class="login-link">																							<!-- Кнопка или ссылка для перехода на страницу входа -->
-	                <p>Already have an account? <a href="/frontend/ka/login/login.html" class="button-style">Sign in</a></p>
-	            </div>
-	    </div>
-
-	    <div id="confirmPopup" class="popup">
-	        <div class="popup-content">
-	            <p>Choose a confirmation method</p>
-	            <a id="telegramConfirmLink" class="btn telegram-btn" target="_blank">Confirm via Telegram</a>
-	            <button id="emailConfirmButton" class="btn email-btn">Confirm via Email</button>
-	            <button id="closePopup" class="btn close-btn">Close</button>
-	        </div>
-	    </div>
-
-    <!-- Разделитель между формой и рекламой для соблюдения правил Яндекс.РСЯ -->
-    <div style="height: 60px; clear: both; background: transparent;"></div>
-
-    <div class="ad-footer auth-page">
-	        <ins 
-				class="mrg-tag"
-				style="display:inline-block;width:auto;height:500px"
-				data-ad-client="ad-1874025"
-				data-ad-slot="1874025">
-			</ins>
-			<script>
-				(MRGtag = window.MRGtag || []).push({});
-			</script>
-	    </div>
-
-	
-<script>/*GLOBAL_AD_HOOK*/(function(){
-  function handleIns(ins){
-    if (!ins || ins.__handled) return; ins.__handled = true;
-    setTimeout(function(){
-      var has = !!ins.querySelector("iframe");
-      if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
-      setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
-    }, 2000);
-  }
-  document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
-  var mo = new MutationObserver(function(muts){
-    muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
-  });
-  mo.observe(document.documentElement,{childList:true,subtree:true});
-})();</script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-</body>
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
 </html>

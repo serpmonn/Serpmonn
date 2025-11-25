@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="ks" dir="rtl">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="ks">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>رَجِسٹریشن</title>
+        <meta property="og:title" content="رَجِسٹریشن — Serpmonn">
+        <meta property="og:description" content="کھیل کی ترقی محفوظ کرنے اور خدمات استعمال کرنے کے لیے Serpmonn اکاؤنٹ بنائیں۔">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/ks/register/register.html">
+        <meta property="og:type" content="website">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="رَجِسٹریشن — Serpmonn">
+        <meta name="twitter:description" content="کھیل کی ترقی محفوظ کرنے اور خدمات استعمال کرنے کے لیے Serpmonn اکاؤنٹ بنائیں۔">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <link rel="canonical" href="https://serpmonn.ru/frontend/ks/register/register.html">
+        <link rel="stylesheet" href="register_styles.css">
+        
+        <!-- Яндекс.Метрика -->
+        <script type="text/javascript">
+            (function(m,e,t,r,i,k,a){
+                m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+                m[i].l=1*new Date();
+                for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+                k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+            })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=103554515', 'ym');
+            ym(103554515, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+        </script>
+        
+        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+        <script type="module" src="register_scripts.js" defer></script>
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    </head>
+    
+    <body>
+        <noscript><img src="https://mc.yandex.ru/watch/103554515" style="position:absolute; left:-9999px;" alt=""></noscript>
+        
+        <div class="container fade-in">
+            <h2>اکاؤنٹ بنائیں</h2>
+            <form id="registerForm">
+                <label for="username">صارف نام:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="email">ای میل:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">پاس ورڈ:</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" id="togglePassword">👁</button>
+                </div>
+                
+                <label class="policy-checkbox">
+                    <input type="checkbox" required>
+                    میں <a href="/frontend/ks/privacy-policy/privacy-policy.html" target="_blank">پرائیویسی پالیسی</a> سے متفق ہوں
+                </label>
+                
+                <button type="submit" class="submit-btn">رَجِسٹر کریں</button>
+            </form>
+            
+            <p id="message"></p>
+            
+            <div class="login-link">
+                <p>پہلے سے رَجِسٹرڈ ہیں؟ <a href="/frontend/ks/login/login.html" class="button-style">سائن ان</a></p>
+            </div>
+        </div>
+
+        <!-- Рекламный блок -->
+        <div class="ad-container" style="text-align: center; margin: 20px auto; max-width: 600px;">
+            <ins class="mrg-tag" 
+                style="display:inline-block;width:300px;height:250px"
+                data-ad-client="ad-1874025"
+                data-ad-slot="1874025">
+            </ins>
+            <script>(MRGtag = window.MRGtag || []).push({});</script>
+        </div>
+
+        <!-- Попап подтверждения -->
+        <div id="confirmPopup" class="popup">
+            <div class="popup-content">
+                <p>رَجِسٹریشن تصدیق کا طریقہ منتخب کریں</p>
+                <a id="telegramConfirmLink" class="btn telegram-btn" target="_blank">Telegram کے ذریعے تصدیق کریں</a>
+                <button id="emailConfirmButton" class="btn email-btn">ای میل کے ذریعے تصدیق کریں</button>
+                <button id="closePopup" class="btn close-btn">بند کریں</button>
+            </div>
+        </div>
+
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>

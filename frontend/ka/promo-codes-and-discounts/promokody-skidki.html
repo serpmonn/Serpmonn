@@ -1,1309 +1,224 @@
+
 <!DOCTYPE html>
 <html lang="ka" dir="ltr">
-    <head>
-<link rel="stylesheet" href="/frontend/styles/styles.css">
-<meta http-equiv="Content-Language" content="ka">
-        
-    <style>
-      /* ad top adaptive start */
-      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
-      /* ad top adaptive end */
-    </style>
-<meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Promo codes and discounts 2025 | Serpmonn</title>
-        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-        <meta http-equiv="Pragma" content="no-cache" />
-        <meta http-equiv="Expires" content="0" />
-        <!-- Open Graph -->
-        <meta property="og:title" content="Promo codes & discounts — Serpmonn">
-        <meta property="og:description" content="Current partner promo codes: discounts on services, groceries and entertainment.">
-        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-        <meta property="https://serpmonn.ru/frontend/ka/promo-codes-and-discounts/promokody-skidki.html">
-        <meta property="og:type" content="website">
-        <!-- Twitter -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Promo codes & discounts — Serpmonn">
-        <meta name="twitter:description" content="Verified coupons and deals.">
-        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-        <meta name="description" content="Current partner promo codes: discounts on games, gadgets, services, restaurants, groceries, fashion and health. Verified coupons for Serpmonn users.">
-        <!-- Стили -->
-        <link rel="stylesheet" href="/frontend/promo-codes-and-discounts/promokody-skidki.css?v=1">
-        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-        <!-- Скрипты -->
-        <script>
-          (function() {
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="ka">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>პრომო კოდები და ფასდაკლებები 2025 | Serpmonn.ru</title>
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="პრომო კოდები და ფასდაკლებები — Serpmonn">
+    <meta property="og:description" content="მიმდინარე პრომო კოდები და ფასდაკლებები პარტნიორებისგან თამაშებისთვის, გაჯეტებისთვის, სერვისებისთვის, რესტორნებისთვის და სხვა.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/ka/promo-codes-and-discounts/promokody-skidki.html">
+    <meta property="og:type" content="website">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="პრომო კოდები და ფასდაკლებები — Serpmonn">
+    <meta name="twitter:description" content="დამოწმებული კუპონები და აქციები დაზოგვისთვის.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <!-- Мета-описание для SEO -->
+    <meta name="description" content="მიმდინარე პრომო კოდები და ფასდაკლებები 2025 Serpmonn პარტნიორებისგან: თამაშები, გაჯეტები, სერვისები, რესტორნები, პროდუქტები, მოდა, ჯანმრთელობა და მოგზაურობა. დაზოგეთ დამოწმებული კუპონებით!">
+    <meta name="keywords" content="პრომო კოდები, ფასდაკლებები, კუპონები, აქციები, Serpmonn, თამაშები, გაჯეტები, სერვისები, რესტორნები, მოგზაურობა">
+
+    <!-- Favicon -->
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+
+    <!-- Стили -->
+    <link rel="preload" href="promokody-skidki.css?v=12" as="style" onload="this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="promokody-skidki.css?v=12"></noscript>
+    <link rel="preload" href="/frontend/styles/accessibility.css" as="style" onload="this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/frontend/styles/accessibility.css"></noscript>
+
+    <!-- Скрипты -->
+    <script>
+        (function() {
             const KEY = 'serpmonn_promos_version';
             async function checkVersion() {
-              try {
-                const res = await fetch('/api/promocodes/version', { cache: 'no-store' });
-                if (!res.ok) return;
-                const data = await res.json();
-                const current = data && data.version ? data.version : null;
-                const stored = localStorage.getItem(KEY);
-                if (current && stored && stored !== current) {
-                  // Версия изменилась — принудительно перезагрузим страницу
-                  localStorage.setItem(KEY, current);
-                  location.reload();
-                } else if (current && !stored) {
-                  localStorage.setItem(KEY, current);
+                try {
+                    const res = await fetch('/api/promocodes/version', { cache: 'no-store' });
+                    if (!res.ok) return;
+                    const data = await res.json();
+                    const current = data?.version || null;
+                    const stored = localStorage.getItem(KEY);
+                    if (current && stored && stored !== current) {
+                        localStorage.setItem(KEY, current);
+                        window.location.reload();
+                    } else if (current && !stored) {
+                        localStorage.setItem(KEY, current);
+                    }
+                } catch (error) {
+                    console.error('Error checking version:', error);
                 }
-              } catch (_) {}
             }
             checkVersion();
             setInterval(checkVersion, 24 * 60 * 60 * 1000);
-          })();
-        </script>
-        <script src="/frontend/promo-codes-and-discounts/promokody-skidki.js?v=13" defer></script>
-        <!-- Реклама Яндекс -->
-        <script>window.yaContextCb=window.yaContextCb||[]</script>
-        <script src="https://yandex.ru/ads/system/context.js" async></script>
-        <!-- Реклама VK -->
-        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
-        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-        <!-- SEO: Schema.org для купонов -->
-        <script type="application/ld+json">
-        [{
-            "@context": "https://schema.org",
-            "@type": "WebPage",
-            "name": "Promo codes & discounts",
-            "description": "Partner discounts from Serpmonn"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Yandex Plus: 45 days free or 30 days for 1 ₽",
-            "description": "Promo code 5AT84ZU3G4 for new users or with Yandex Pay card",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://yaplpay.prfl.me/sites/f6t82b?erid=2VtzqvQtMx5"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Yandex Plus: 45 days free or 30 days for 1 ₽",
-            "description": "Promo code 9HPVPTSMHM for new or existing users",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://yaplus45.prfl.me/sites/5nwi2e?erid=2VtzqvEZ8q7"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Yandex Food Restaurants: 450 ₽ or 25% off",
-            "description": "Promo codes KS9NZRTI (450 ₽ from 800 ₽) and KM406ITQ (25% from 800 ₽, up to 1000 ₽) for the first order",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-09-05",
-            "url": "https://edayandex.prfl.me/sites/vw2e4h?erid=2VtzqwHPLc9"
-        },
-        {
-            "@context": "https://schema.org",
-            "@type": "Offer",
-            "name": "Тануки: Скидки и подарки",
-            "description": "Промокоды 20SU1845 (20% от 1090 ₽), 15SU1845 (15% от 1490 ₽), SU1845 (ролл в подарок от 1490 ₽)",
-            "priceCurrency": "RUB",
-            "validThrough": "2025-08-31",
-            "url": "https://tanuki.prfl.me/sites/tihthv?erid=2VtzquX6XeH"
-        }]
-        </script>
-    </head>
-    <body>
-        <div class="container">
-            <!-- Hero-баннер -->
-            <div class="hero">
-                <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
-                  <ins class="mrg-tag" 
-                      style="display:inline-block;"
-                      data-ad-client="ad-1897960" 
-                      data-ad-slot="1897960">
-                  </ins>
+        })();
+    </script>
+    
+    <!-- Яндекс.Метрика counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=104300276', 'ym');
+        ym(104300276, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><img src="https://mc.yandex.ru/watch/104300276" style="position:absolute; left:-9999px;" alt="" /></noscript>
+    
+    <script>var time_s = 30;</script>
+    <script src="https://seo-fast.ru/site_external/test_view.js"></script>
+    <script src="promokody-skidki.js?v=25" defer></script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
+    <script defer src="https://top-fwz1.mail.ru/js/code.js"></script>
+    <noscript><img src="https://top-fwz1.mail.ru/counter?id=3694679;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru"></noscript>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    <header>
+        <nav id="main-nav" aria-label="Main navigation"></nav>
+    </header>
+    
+    <main class="container">
+        <section class="hero" aria-labelledby="hero-title">
+            <h1 id="hero-title">პრომო კოდები და ფასდაკლებები</h1>
+        </section>
+
+        <section class="stats-controls" aria-labelledby="overview-title">
+            <h2 id="overview-title">აქციები</h2>
+            <div class="stats">
+                <div class="stat-item">
+                    <span class="stat-number" id="totalPromos" aria-label="სულ">0</span>
+                    <span class="stat-label">სულ</span>
                 </div>
-                <script>
-                  (MRGtag = window.MRGtag || []).push({});
-                </script>
-                <h1>Current promo codes and discounts from partners</h1>
-                <p>Discounts on games, gadgets, services, restaurants, groceries, fashion and health. All for Serpmonn users!</p>
-                <button class="submit-btn" onclick="document.getElementById('catalog').scrollIntoView()">See offers</button>
+                <div class="stat-item">
+                    <span class="stat-number" id="activePromos" aria-label="აქტიური">0</span>
+                    <span class="stat-label">აქტიური</span>
+                </div>
             </div>
-
-            <!-- Статистика и управление -->
-            <div class="stats-controls">
-                <div class="stats">
-                    <div class="stat-item">
-                        <span class="stat-number" id="totalPromos">0</span>
-                        <span class="stat-label">Total offers</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="activePromos">0</span>
-                        <span class="stat-label">Active</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-number" id="expiredPromos">0</span>
-                        <span class="stat-label">Promo codes</span>
-                    </div>
-
+            <div class="controls">
+                <button id="refreshBtn" class="refresh-btn" aria-label="განახლება">
+                    <i class="icon-refresh"></i> განახლება
+                </button>
+                <div class="last-update">
+                    განახლებულია: <span id="lastUpdate" aria-label="განახლებულია:">-</span>
                 </div>
+            </div>
+        </section>
+
+        <section class="filters" aria-labelledby="filters-title">
+            <h2 id="filters-title" class="visually-hidden">პრომო კოდების ფილტრები</h2>
+            <button id="toggleFilters" class="submit-btn toggle-filters" aria-label="ფილტრები">ფილტრები</button>
+            <div id="filtersContent" style="display: none;">
+                <label for="searchInput" class="visually-hidden">ძიება (კომპანია, პროდუქტი...)</label>
+                <p id="search-hint" class="visually-hidden">შეიყვანეთ კომპანიის ან პროდუქტის სახელი პრომო კოდების მოსაძებნად</p>
+                <input type="text" id="searchInput" placeholder="ძიება (კომპანია, პროდუქტი...)" aria-label="ძიება (კომპანია, პროდუქტი...)" aria-describedby="search-hint">
                 
-                <div class="controls">
-                    <button id="refreshBtn" class="refresh-btn">
-                        <i class="icon-refresh"></i> Refresh
-                    </button>
-                    <div class="last-update">
-                        Last update: <span id="lastUpdate">-</span>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Фильтры -->
-            <div class="filters">
-                <input type="text" id="searchInput" placeholder="Find promo code (company, product...)">
-                <select id="categorySelect" onchange="filterPromos()">
-                    <option value="">All categories</option>
-                    <option value="Games">Игры</option>
-                    <option value="Gadgets">Гаджеты</option>
-                    <option value="Services">Сервисы</option>
-                    <option value="Restaurants">Рестораны</option>
-                    <option value="Groceries">Продукты</option>
-                    <option value="Fashion">Мода</option>
-                    <option value="Health">Здоровье</option>
-                    <option value="Transport">Транспорт</option>
-                    <option value="Entertainment">Развлечения</option>
-                    <option value="Goods">Товары</option>
-                    <option value="Travel">Путешествия</option>
-                    <option value="Finance">Финансы</option>
-                    <option value="Insurance">Страхование</option>
-                    <option value="Fitness">Фитнес</option>
+                <label for="categorySelect" class="visually-hidden">ყველა კატეგორია</label>
+                <select id="categorySelect" aria-label="ყველა კატეგორია">
+                    <option value="">ყველა კატეგორია</option>
                 </select>
-                <button class="submit-btn" onclick="sortByExpiry()">Sort by expiry ↑↓</button>
+                
+                <label for="statusSelect" class="visually-hidden">ყველა სტატუსი</label>
+                <select id="statusSelect" aria-label="ყველა სტატუსი">
+                    <option value="">ყველა სტატუსი</option>
+                    <option value="active">აქტიური</option>
+                    <option value="expired">ვადაგასული</option>
+                </select>
+                
+                <label for="countrySelect" class="visually-hidden">ყველა ქვეყანა</label>
+                <select id="countrySelect" aria-label="ყველა ქვეყანა">
+                    <option value="" selected>ყველა ქვეყანა</option>
+                    <option value="Россия">რუსეთი</option>
+                    <option value="Казахстан">ყაზახეთი</option>
+                    <option value="Узбекистан">უზბეკეთი</option>
+                </select>
+                
+                <button class="submit-btn" onclick="sortByExpiry()" aria-label="დალაგება ვადის მიხედვით ↑↓">დალაგება ვადის მიხედვით ↑↓</button>
+                <button class="submit-btn" onclick="resetFilters()" aria-label="გადატვირთვა">გადატვირთვა</button>
             </div>
+        </section>
 
-            <!-- Сетка промокодов -->
-            <div id="catalog" class="promo-grid">
-                <!-- Топ-офферы подняты вверх и выделены -->
-                <!-- 1. Яндекс Лавка (Карточка 7) -->
-                <div class="promo-card top-offer" data-category="Groceries" data-expiry="2025-09-30">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/lavka.png" alt="Yandex Lavka" width="50" height="50">
-                        <div class="tag">Discount up to 51%</div>
-                        <h3>Yandex Lavka: Discounts up to 51%</h3>
-                        <p class="code">newreg2 <button class="submit-btn" onclick="copyToClipboard('newreg2')">Копировать</button></p>
-                        <p>Скидка 51% от 700 ₽ на первый заказ в Тюмени, Челябинске, Туле, Твери, Перми, Ярославле, Сочи, Рязани, Воронеже</p>
-                        <p class="code">40URA2 <button class="submit-btn" onclick="copyToClipboard('40URA2')">Копировать</button></p>
-                        <p>Скидка 40% от 800 ₽ на первый заказ в Москве и Санкт-Петербурге</p>
-                        <p class="code">40REGION30 <button class="submit-btn" onclick="copyToClipboard('40REGION30')">Копировать</button></p>
-                        <p>Скидка 40% от 700 ₽ на первый заказ в Екатеринбурге, Новосибирске, Нижнем Новгороде, Ростове-на-Дону, Краснодаре, Казани</p>
-                        <p class="expiry">Valid until: 30.09.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://yalavka.prfl.me/sites/iddxop?erid=2VtzqveLKXP" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "Яндекс.Лавка", ИНН 9718101499. erid: 2VtzqveLKXP</p>
-                    </div>
-                </div>
-
-                <!-- 2. Яндекс Афиша (Карточка 19) -->
-                <div class="promo-card top-offer" data-category="Entertainment" data-expiry="2025-08-31">
-                    <!-- Promo in-feed ad (after card 4) -->
-                    <div class="promo-ad-inline" style="text-align:center;margin:16px 0;">
-                      <ins class="mrg-tag"
-                        style="display:inline-block;"
-                        data-ad-client="ad-1898023"
-                        data-ad-slot="1898023">
-                      </ins>
-                    </div>
-                    <script>
-                      (MRGtag = window.MRGtag || []).push({});
-                    </script>
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/yandex-afisha.png" alt="Yandex Afisha" width="50" height="50">
-                        <div class="tag">Скидки до 500 ₽</div>
-                        <h3>Yandex Afisha: Ticket discounts</h3>
-                        <p class="code">C13317 <button class="submit-btn" onclick="copyToClipboard('C13317')">Копировать</button></p>
-                        <p>Скидка 500 ₽ на первую и все повторные покупки билетов от 3000 ₽</p>
-                        <p class="code">D10250 <button class="submit-btn" onclick="copyToClipboard('D10250')">Копировать</button></p>
-                        <p>Скидка 300 ₽ на первую покупку билетов от 2000 ₽</p>
-                        <p class="code">B73514 <button class="submit-btn" onclick="copyToClipboard('B73514')">Копировать</button></p>
-                        <p>Скидка 400 ₽ на первую покупку билетов от 3000 ₽</p>
-                        <p class="code">C15176 <button class="submit-btn" onclick="copyToClipboard('C15176')">Копировать</button></p>
-                        <p>Скидка 10% на первую и все повторные покупки от 5000 ₽</p>
-                        <p class="code">C53375 <button class="submit-btn" onclick="copyToClipboard('C53375')">Копировать</button></p>
-                        <p>Скидка 100 ₽ на все повторные покупки билетов от 1000 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://yandafisha.prfl.me/sites/if71iv?erid=2VtzqwckDVb" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "ЯНДЕКС МУЗЫКА", ИНН 9705121040. erid: 2VtzqwckDVb</p>
-                    </div>
-                </div>
-
-                <!-- 3. Тануки (Карточка 4) -->
-                <div class="promo-card top-offer" data-category="еда" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/tanuki.png" alt="Tanuki" width="50" height="50">
-                        <div class="tag">Скидка / Подарок</div>
-                        <h3>Tanuki: Скидки и бонусы на заказы</h3>
-                        <p class="code">20SU1845 <button class="submit-btn" onclick="copyToClipboard('20SU1845')">Копировать</button></p>
-                        <p>20% на первый заказ от 1090 ₽</p>
-                        <p class="code">15SU1845 <button class="submit-btn" onclick="copyToClipboard('15SU1845')">Копировать</button></p>
-                        <p>15% на все повторные заказы от 1490 ₽</p>
-                        <p class="code">SU1845 <button class="submit-btn" onclick="copyToClipboard('SU1845')">Копировать</button></p>
-                        <p>Ролл Мексиканский в подарок при каждом заказе от 1490 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59 (SU1845 до 17.08.2025 23:59)</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://tanuki.prfl.me/sites/tihthv?erid=2VtzquX6XeH" target="_blank" class="register-link">Go to partner (20SU1845, 15SU1845)</a>
-                        <a href="https://tanuki.prfl.me/sites/32t2aj?erid=2VtzqvU39t5" target="_blank" class="register-link">Go to partner (SU1845)</a>
-                        <p class="ad">Ad. ООО "Корсика", ИНН 7730290633. erid: 2VtzquX6XeH, 2VtzqvU39t5</p>
-                    </div>
-                </div>
-
-                <!-- 4. Авито Доставка (Карточка 21) -->
-                <div class="promo-card top-offer" data-category="Goods" data-expiry="2025-12-31">
-                    <!-- Promo in-feed ad (after card 10) -->
-                    <div class="promo-ad-inline" style="text-align:center;margin:16px 0;">
-                      <ins class="mrg-tag"
-                        style="display:inline-block;"
-                        data-ad-client="ad-1898023"
-                        data-ad-slot="1898023">
-                      </ins>
-                    </div>
-                    <script>
-                      (MRGtag = window.MRGtag || []).push({});
-                    </script>
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/avito.jpg" alt="Avito Delivery" width="50" height="50">
-                        <div class="tag">Скидка на доставку</div>
-                        <h3>Avito Delivery: Delivery discount</h3>
-                        <p>Оформить заказ со скидкой на доставку на Авито</p>
-                        <p class="expiry">Valid until: 31.12.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://avito.prfl.me/sites/3ktmrm?erid=2Vtzqwrsnbj" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "КЕХ еКоммерц", ИНН 7710668349, ОГРН 5077746422859 erid: 2Vtzqwrsnbj</p>
-                    </div>
-                </div>
-
-                <!-- Карточка: Яндекс Плюс с тремя промокодами -->
-                <div class="promo-card top-offer" data-category="Services" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/yandex-plus.png" alt="Яндекс Плюс" width="50" height="50">
-                        <div class="tag">Бесплатно / 1 ₽</div>
-                        <h3>45 дней Яндекс Плюс бесплатно или 60 дней за 1 ₽ + Детские Сервисы</h3>
-                        <p class="code">6CGQYGFF3N <button class="submit-btn" onclick="copyToClipboard('6CGQYGFF3N')">Копировать</button></p>
-                        <p>30 дней Яндекс Плюс + Детские Сервисы бесплатно для новых пользователей</p>
-                        <p class="code">5AT84ZU3G4 <button class="submit-btn" onclick="copyToClipboard('5AT84ZU3G4')">Копировать</button></p>
-                        <p>45 дней Яндекс Плюс бесплатно или 60 дней за 1 ₽ с картой Яндекс Пэй</p>
-                        <p class="code">9HPVPTSMHM <button class="submit-btn" onclick="copyToClipboard('9HPVPTSMHM')">Копировать</button></p>
-                        <p>45 дней Яндекс Плюс бесплатно для новых или действующих пользователей или 60 дней за 1 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://yaplpay.prfl.me/sites/f6t82b?erid=2VtzqvQtMx5" target="_blank" class="register-link">Go to partner (5AT84ZU3G4)</a>
-                        <a href="https://yaplus45.prfl.me/sites/5nwi2e?erid=2VtzqvEZ8q7" target="_blank" class="register-link">Go to partner (9HPVPTSMHM)</a>
-                        <a href="https://yaplus.prfl.me/yaplus30/6CGQYGFF3N?erid=2Vtzqw4AxqK" target="_blank" class="register-link">Go to partner (6CGQYGFF3N)</a>
-                        <p class="ad">Ad. ООО "Яндекс Плюс", ИНН 9705177420. erid: 2VtzqvQtMx5, 2VtzqvEZ8q7, 2Vtzqw4AxqK</p>
-                    </div>
-                </div>
-
-                <!-- 6. DDX Fitness (Карточка 23) -->
-                <div class="promo-card top-offer" data-category="Fitness" data-expiry="2025-08-31">
-                    <!-- Promo in-feed ad (after card 16) -->
-                    <div class="promo-ad-inline" style="text-align:center;margin:16px 0;">
-                      <ins class="mrg-tag"
-                        style="display:inline-block;"
-                        data-ad-client="ad-1898023"
-                        data-ad-slot="1898023">
-                      </ins>
-                    </div>
-                    <script>
-                      (MRGtag = window.MRGtag || []).push({});
-                    </script>
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/ddx-fitness.jpg" alt="DDX Fitness" width="50" height="50">
-                        <div class="tag">Триал период за 500 ₽</div>
-                        <h3>DDX Fitness: Триал период</h3>
-                        <p>Оформить триал период на 1 месяц в Ставрополе: вступительный платеж+фитнес+спа-зона за 500 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://ddx.prfl.me/sites/cuwjfw?erid=2VtzqwWAK2R" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "Илон", ИНН 7734418612. erid: 2VtzqwWAK2R</p>
-                    </div>
-                </div>
-
-                <!-- 8. Делимобиль (Карточка 17) -->
-                <div class="promo-card top-offer" data-category="Transport" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/delimobil.png" alt="Делимобиль" width="50" height="50">
-                        <div class="tag">Бонусы 1000 ₽ / 500 ₽</div>
-                        <h3>Делимобиль: Бонусы на поездки</h3>
-                        <p class="code">p9nj3x <button class="submit-btn" onclick="copyToClipboard('p9nj3x')">Копировать</button></p>
-                        <p>1000 бонусов для новых пользователей</p>
-                        <p class="code">rndh3a <button class="submit-btn" onclick="copyToClipboard('rndh3a')">Копировать</button></p>
-                        <p>500 бонусов для пользователей, не совершавших поездки более 60 дней</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://delimobil.prfl.me/sites/vz6nom?erid=2VtzqxWdSsj" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ПАО "Каршеринг Руссия" 107023, г. Москва, ул. Электрозаводская, дом 27, строение 1А. ИНН 9718236471 ОГРН 1237700701534 erid: 2VtzqxWdSsj</p>
-                    </div>
-                </div>
-
-                <!-- 9. Яндекс Музыка (Карточка 28) -->
-                <div class="promo-card top-offer" data-category="Services" data-expiry="2025-08-31">
-                    <!-- Promo in-feed ad (after card 22) -->
-                    <div class="promo-ad-inline" style="text-align:center;margin:16px 0;">
-                      <ins class="mrg-tag"
-                        style="display:inline-block;"
-                        data-ad-client="ad-1898023"
-                        data-ad-slot="1898023">
-                      </ins>
-                    </div>
-                    <script>
-                      (MRGtag = window.MRGtag || []).push({});
-                    </script>
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/yandex-music.png" alt="Яндекс Музыка" width="50" height="50">
-                        <div class="tag">45 дней бесплатно</div>
-                        <h3>Яндекс Музыка: 45 дней бесплатно</h3>
-                        <p class="code">6CGQYGFF3N <button class="submit-btn" onclick="copyToClipboard('6CGQYGFF3N')">Копировать</button></p>
-                        <p>45 дней доступа к Яндекс Книгам бесплатно для новых пользователей или 60 дней за 1 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://yabooks45.prfl.me/sites/nohwrp?erid=2Vtzquwo6cZ" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "ЯНДЕКС МУЗЫКА", ИНН 9705121040. erid: 2Vtzquwo6cZ</p>
-                    </div>
-                </div>
-
-                <!-- 10. Кинопоиск (Карточка 24) -->
-                <div class="promo-card top-offer" data-category="Entertainment" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/kinopoisk.png" alt="Кинопоиск" width="50" height="50">
-                        <div class="tag">45 дней бесплатно</div>
-                        <h3>Кинопоиск: 45 дней бесплатно</h3>
-                        <p class="code">ABEYT2B5TW <button class="submit-btn" onclick="copyToClipboard('ABEYT2B5TW')">Копировать</button></p>
-                        <p>45 дней доступа к Кинопоиску бесплатно для новых пользователей или 60 дней за 1 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://kp45.prfl.me/sites/era2ev?erid=2VtzqvTQVsw" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "Кинопоиск", ИНН 7710688352. erid: 2VtzqvTQVsw</p>
-                    </div>
-                </div>
-
-                <!-- 11. Яндекс Еда Рестораны (Карточка 3) -->
-                <div class="promo-card top-offer" data-category="Services" data-expiry="2025-09-05">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/yandex-eda.png" alt="Яндекс Еда" width="50" height="50">
-                        <div class="tag">Скидка 450 ₽ / 25%</div>
-                        <h3>Яндекс Еда Рестораны: Скидка 450 ₽ или 25%</h3>
-                        <p class="code">KS9NZRTI <button class="submit-btn" onclick="copyToClipboard('KS9NZRTI')">Копировать</button></p>
-                        <p>Скидка 450 ₽ от 800 ₽ на первый заказ</p>
-                        <p class="code">KM406ITQ <button class="submit-btn" onclick="copyToClipboard('KM406ITQ')">Копировать</button></p>
-                        <p>Скидка 25% от 800 ₽ на первый заказ, до 1000 ₽</p>
-                        <p class="expiry">Valid until: 05.09.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://edayandex.prfl.me/sites/vw2e4h?erid=2VtzqwHPLc9" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "ЯНДЕКС.ЕДА", ИНН 9705114405. erid: 2VtzqwHPLc9</p>
-                    </div>
-                </div>
-
-                <!-- Остальные карточки (без топа) -->
-                <!-- Карточка 5: Важная Рыба -->
-                <div class="promo-card" data-category="Restaurants" data-expiry="2025-12-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/vipfish.png" alt="Важная Рыба" width="50" height="50">
-                        <div class="tag">Скидка 20% / 30% / Подарки</div>
-                        <h3>Важная Рыба: Скидки и подарки</h3>
-                        <p class="code">BEST669 <button class="submit-btn" onclick="copyToClipboard('BEST669')">Копировать</button></p>
-                        <p>Скидка 20% при заказе от 2999 ₽</p>
-                        <p class="code">PFL3384 <button class="submit-btn" onclick="copyToClipboard('PFL3384')">Копировать</button></p>
-                        <p>Запеченный ролл с креветкой и горгонзолой в подарок от 2999 ₽</p>
-                        <p class="code">FRESH1738 <button class="submit-btn" onclick="copyToClipboard('FRESH1738')">Копировать</button></p>
-                        <p>Фреш ролл с креветкой и авокадо в подарок от 2999 ₽</p>
-                        <p class="code">PFILA1802 <button class="submit-btn" onclick="copyToClipboard('PFILA1802')">Копировать</button></p>
-                        <p>Скидка 30% на ролл Филадельфия при заказе от 1499 ₽</p>
-                        <p class="expiry">Valid until: 31.12.2025 00:59 (BEST669, FRESH1738 до 31.08.2025)</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://vipfish1.prfl.me/sites/1hll3h?erid=2VtzqvsfsaZ" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО «КЕЙТЕРИНГ-РЕНТ», ИНН 7804597213. erid: 2VtzqvsfsaZ</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 6: Ашан -->
-                <div class="promo-card" data-category="Groceries" data-expiry="2025-09-30">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/auchan.png" alt="Ашан" width="50" height="50">
-                        <div class="tag">Скидка 20%</div>
-                        <h3>Ашан: Скидка 20%</h3>
-                        <p class="code">PFRKAOT0 <button class="submit-btn" onclick="copyToClipboard('PFRKAOT0')">Копировать</button></p>
-                        <p>Скидка 20% на первый заказ от 3000 ₽, не более 650 ₽</p>
-                        <p class="expiry">Valid until: 30.09.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://auchan.prfl.me/sites/yx1q02?erid=2Vtzqxb13Tf" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "Ашан", ИНН 7703270067. erid: 2Vtzqxb13Tf</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 8: ВкусВилл Доставка -->
-                <div class="promo-card" data-category="Groceries" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/vkusvill.png" alt="ВкусВилл Доставка" width="50" height="50">
-                        <div class="tag">Скидки до 350 ₽</div>
-                        <h3>ВкусВилл Доставка: Скидки до 350 ₽</h3>
-                        <p class="code">VSCE28D <button class="submit-btn" onclick="copyToClipboard('VSCE28D')">Копировать</button></p>
-                        <p>Скидка 10% на рационы ВкусМил на первую покупку</p>
-                        <p class="code">30V2C32 <button class="submit-btn" onclick="copyToClipboard('30V2C32')">Копировать</button></p>
-                        <p>Скидка 300 ₽ от 1500 ₽ на первую покупку</p>
-                        <p class="code">VS65896 <button class="submit-btn" onclick="copyToClipboard('VS65896')">Копировать</button></p>
-                        <p>Скидка 250 ₽ от 1250 ₽ на первую покупку</p>
-                        <p class="code">35V6C1A <button class="submit-btn" onclick="copyToClipboard('35V6C1A')">Копировать</button></p>
-                        <p>Скидка 350 ₽ от 2500 ₽ на первую покупку</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://vkusvill.prfl.me/sites/412w2j?erid=2Vtzqv1Gxxh" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. АО ВкусВилл, ОГРН 1217700253671. Подробности на сайте vkusvill.ru erid: 2Vtzqv1Gxxh</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 9: USmall -->
-                <div class="promo-card" data-category="Fashion" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/usmall.png" alt="USmall" width="50" height="50">
-                        <div class="tag">Скидка 25%</div>
-                        <h3>USmall: Скидка 25%</h3>
-                        <p class="code">t5b3ec <button class="submit-btn" onclick="copyToClipboard('t5b3ec')">Копировать</button></p>
-                        <p>Скидка 25% на каждый заказ от 3000 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://usmall.prfl.me/sites/x8xujg?erid=2Vtzqw44TWq" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "Фейшн Кьют", ИНН 7730674414. erid: 2Vtzqw44TWq</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 10: Ёрш -->
-                <div class="promo-card top-offer" data-category="еда" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <div class="tag">Скидка / Подарок</div>
-                        <h3>Ёрш: Скидки и бонусы на заказы</h3>
-                        <p class="code">20HS1294 <button class="submit-btn" onclick="copyToClipboard('20HS1294')">Копировать</button></p>
-                        <p>20% на первый заказ от 1390 ₽</p>
-                        <p class="code">15HS1294 <button class="submit-btn" onclick="copyToClipboard('15HS1294')">Копировать</button></p>
-                        <p>15% на все повторные заказы от 1990 ₽</p>
-                        <p class="code">HS1299 <button class="submit-btn" onclick="copyToClipboard('HS1299')">Копировать</button></p>
-                        <p>Шашлык из курицы при каждом заказе от 2000 ₽</p>
-                        <p class="code">AW1165 <button class="submit-btn" onclick="copyToClipboard('AW1165')">Копировать</button></p>
-                        <p>Цезарь с курицей при каждом заказе от 2000 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59 (HS1299 до 17.08.2025 23:59)</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://ersh.prfl.me/sites/6a79lu?erid=2Vtzqug4V7X" target="_blank" class="register-link">Go to partner (20HS1294, 15HS1294, HS1299)</a>
-                        <a href="https://ersh.prfl.me/sites/1v8jxc?erid=2VtzqxKaHDs" target="_blank" class="register-link">Go to partner (AW1165)</a>
-                        <p class="ad">Ad. ООО "Корсика", ИНН 7730290633. erid: 2Vtzqug4V7X, 2VtzqxKaHDs</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 11: Zotman -->
-                <div class="promo-card" data-category="Restaurants" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/zotman.jpg" alt="Zotman" width="50" height="50">
-                        <div class="tag">Скидка 15% / Подарки</div>
-                        <h3>Zotman: Скидки и подарки</h3>
-                        <p class="code">FB16M <button class="submit-btn" onclick="copyToClipboard('FB16M')">Копировать</button></p>
-                        <p>Скидка 15% на первый заказ от 3199 ₽ для тех, кто не заказывал 90 дней и более</p>
-                        <p class="code">NPQC2 <button class="submit-btn" onclick="copyToClipboard('NPQC2')">Копировать</button></p>
-                        <p>Пицца "Супермясная" в подарок при заказе от 3499 ₽</p>
-                        <p class="code">RRM2G <button class="submit-btn" onclick="copyToClipboard('RRM2G')">Копировать</button></p>
-                        <p>Пицца "Цыпленок ранч" в подарок при заказе от 2699 ₽</p>
-                        <p class="code">PIFV7 <button class="submit-btn" onclick="copyToClipboard('PIFV7')">Копировать</button></p>
-                        <p>Пицца "Пепперони" в подарок при заказе от 2499 ₽</p>
-                        <p class="code">SVZ47 <button class="submit-btn" onclick="copyToClipboard('SVZ47')">Копировать</button></p>
-                        <p>Пицца "Маргарита" в подарок при заказе от 2299 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://zotman1.prfl.me/sites/vz760u?erid=2VtzqvGACbT" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО «Зотман Партнерс», ИНН 9703012937. erid: 2VtzqvGACbT</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 12: TVOЯ Pizza -->
-                <div class="promo-card top-offer" data-category="еда" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <div class="tag">Скидка / Подарок</div>
-                        <h3>TVOЯ Pizza: Скидки и бонусы на заказы</h3>
-                        <p class="code">20RR1483 <button class="submit-btn" onclick="copyToClipboard('20RR1483')">Копировать</button></p>
-                        <p>20% на первый заказ от 990 ₽</p>
-                        <p class="code">15RR1486 <button class="submit-btn" onclick="copyToClipboard('15RR1486')">Копировать</button></p>
-                        <p>15% на все повторные заказы от 1190 ₽</p>
-                        <p class="code">RR1483 <button class="submit-btn" onclick="copyToClipboard('RR1483')">Копировать</button></p>
-                        <p>Пицца Барбекю (рим) в подарок при каждом заказе от 2000 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59 (RR1483 до 17.08.2025 23:59)</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://tanuki.prfl.me/sites/xi8lsw?erid=2VtzqvvhsvR" target="_blank" class="register-link">Go to partner (20RR1483, 15RR1486)</a>
-                        <a href="https://tanuki.prfl.me/sites/09uc0h?erid=2VtzqxM4bz9" target="_blank" class="register-link">Go to partner (RR1483)</a>
-                        <p class="ad">Ad. ООО "Корсика", ИНН 7730290633. erid: 2VtzqvvhsvR, 2VtzqxM4bz9</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 13: Elementaree -->
-                <div class="promo-card" data-category="Groceries" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/elementaree.jpg" alt="Elementaree" width="50" height="50">
-                        <div class="tag">Discount up to 40%</div>
-                        <h3>Elementaree: Discount up to 40%</h3>
-                        <p class="code">leaf41 <button class="submit-btn" onclick="copyToClipboard('leaf41')">Копировать</button></p>
-                        <p>Скидка 40% на первый заказ или 12% на повторные от 3000 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://elementareenw.prfl.me/sites/iwvqpq?erid=2VtzqwpbSnV" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "ОЛИМП", ИНН 7724417578. erid: 2VtzqwpbSnV</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 14: Сберздоровье -->
-                <div class="promo-card" data-category="Health" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/sberzdrav.ico" alt="Сберздоровье" width="50" height="50">
-                        <div class="tag">Скидка 20%</div>
-                        <h3>Сберздоровье: Скидка 20% на анализы</h3>
-                        <p class="code">SH6D9A577 <button class="submit-btn" onclick="copyToClipboard('SH6D9A577')">Копировать</button></p>
-                        <p>Скидка 20% на анализы от 1000 ₽ на первый и повторные заказы</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://sberanalizy.prfl.me/sites/1oins5?erid=2VtzquXAtuP" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО Инновационная медицина, 105203, г. Москва, ул. Нижняя Первомайская, д.44, эт.цоколь, пом/ком XII/8,9, ОГРН 1197746310618. erid: 2VtzquXAtuP</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 15: Polza -->
-                <div class="promo-card" data-category="Groceries" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/polzaru.png" alt="Polza" width="50" height="50">
-                        <div class="tag">Скидки до 200 ₽</div>
-                        <h3>Polza: Скидки до 200 ₽</h3>
-                        <p class="code">6MFCKP <button class="submit-btn" onclick="copyToClipboard('6MFCKP')">Копировать</button></p>
-                        <p>Скидка 200 ₽ на первый заказ от 2700 ₽</p>
-                        <p class="code">0X0XARP <button class="submit-btn" onclick="copyToClipboard('0X0XARP')">Копировать</button></p>
-                        <p>Скидка 3% на повторный заказ от 2700 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://polza.prfl.me/sites/yg2a9w?erid=2VtzqvZxPTX" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "ФК ПУЛЬС", ИНН 5047045359. erid: 2VtzqvZxPTX</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 16: Ортека -->
-                <div class="promo-card" data-category="Health" data-expiry="2025-12-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/orteka.png" alt="Ортека" width="50" height="50">
-                        <div class="tag">Скидка 1000 ₽</div>
-                        <h3>Ортека: Скидка 1000 ₽</h3>
-                        <p class="code">ORT-7m8jr <button class="submit-btn" onclick="copyToClipboard('ORT-7m8jr')">Копировать</button></p>
-                        <p>Скидка 1000 ₽ (не более 10%) на первый и все повторные заказы</p>
-                        <p class="expiry">Valid until: 31.12.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://orteka.prfl.me/sites/4oco87?erid=2VtzqwbFtjK" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "Никамед", ИНН 7713046956. erid: 2VtzqwbFtjK</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 18: Ситидрайв -->
-                <div class="promo-card" data-category="Transport" data-expiry="2025-09-30">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/citydrive.png" alt="Ситидрайв" width="50" height="50">
-                        <div class="tag">Скидка 750 ₽</div>
-                        <h3>Ситидрайв: Скидка на поездки</h3>
-                        <p class="code">SUN1415 <button class="submit-btn" onclick="copyToClipboard('SUN1415')">Копировать</button></p>
-                        <p>Скидка 750 ₽ на первые 3 поездки</p>
-                        <p class="expiry">Valid until: 30.09.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://citydrive.prfl.me/sites/dhb34t?erid=2VtzqvVWm6R" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "НТС", Москва, пр-д Береговой, д. 5А, к. 1, помещ. 1/13, ОГРН: 1157746368999 citydrive.ru 0+ erid: 2VtzqvVWm6R</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 20: Улыбка радуги -->
-                <div class="promo-card" data-category="Goods" data-expiry="2025-12-31">
-                    <div class="promo-card-content">
-                        <div class="tag">Скидки до 40%</div>
-                        <h3>Улыбка радуги: Скидки на заказы</h3>
-                        <p class="code">УЛЫБКИ426 <button class="submit-btn" onclick="copyToClipboard('УЛЫБКИ426')">Копировать</button></p>
-                        <p>Скидка 40% на 3 первых заказа онлайн от 1000 ₽ без суммирования</p>
-                        <p class="code">NEW863 <button class="submit-btn" onclick="copyToClipboard('NEW863')">Копировать</button></p>
-                        <p>Скидка 30% на первый и все повторные заказы от 2000 ₽ онлайн</p>
-                        <p class="code">УР489 <button class="submit-btn" onclick="copyToClipboard('УР489')">Копировать</button></p>
-                        <p>Скидка 25% на первый и все повторные заказы онлайн</p>
-                        <p class="code">ЗАХОДИ296 <button class="submit-btn" onclick="copyToClipboard('ЗАХОДИ296')">Копировать</button></p>
-                        <p>Скидка 400 ₽ на первый и все повторные заказы онлайн от 1500 ₽</p>
-                        <p class="expiry">Valid until: 31.12.2025 23:59 (ЗАХОДИ296 до 14.08.2025)</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://r-ulybka.prfl.me/sites/pr4tap?erid=2VtzquYfZ9b" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "Дрогери Ритейл", ИНН 7810495210. erid: 2VtzquYfZ9b</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 22: Befree -->
-                <div class="promo-card" data-category="Fashion" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/befree.png" alt="Befree" width="50" height="50">
-                        <div class="tag">Скидки до 20%</div>
-                        <h3>Befree: Скидки до 20%</h3>
-                        <p class="code">79TUBF <button class="submit-btn" onclick="copyToClipboard('79TUBF')">Копировать</button></p>
-                        <p>Скидка 20% на новинки на первый и повторные заказы</p>
-                        <p class="code">7VEPBF <button class="submit-btn" onclick="copyToClipboard('7VEPBF')">Копировать</button></p>
-                        <p>Скидка 15% на первый и повторные заказы</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://befree1.prfl.me/sites/endgwz?erid=2Vtzqw1yCk9" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. АО "МЭЛОН ФЭШН ГРУП", ИНН 7839326623. erid: 2Vtzqw1yCk9</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 27: Okko -->
-                <div class="promo-card" data-category="Entertainment" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/okko.png" alt="Okko" width="50" height="50">
-                        <div class="tag">Доступ 30 дней</div>
-                        <h3>Okko: Доступ 30 дней</h3>
-                        <p class="code">21711192 <button class="submit-btn" onclick="copyToClipboard('21711192')">Копировать</button></p>
-                        <p>Доступ к подписке Окко на 30 дней за 199 ₽, далее 299 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://okko1.prfl.me/sites/c6qt8j?erid=2VtzquzkjhK" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО «Окко», г. Санкт-Петербург, ОГРН 1167847381130. Сервис Okko 18+ erid: 2VtzquzkjhK</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 29: Смотрешка -->
-                <div class="promo-card" data-category="Entertainment" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/smotreshka.png" alt="Смотрешка" width="50" height="50">
-                        <div class="tag">Доступ 30 дней</div>
-                        <h3>Смотрешка: Доступ 30 дней</h3>
-                        <p class="code">pfvutjm <button class="submit-btn" onclick="copyToClipboard('pfvutjm')">Копировать</button></p>
-                        <p>Доступ 30 дней ко всему контенту Смотрешки для новых пользователей</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://smotreshka1.prfl.me/sites/55ecfb?erid=2VtzqwZCKNH" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "ЛайфСтрим", ИНН 7710918800. erid: 2VtzqwZCKNH</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 30: Яндекс Плюс Детские Сервисы -->
-                <div class="promo-card top-offer" data-category="Services" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/yandex-plus.png" alt="Яндекс Плюс" width="50" height="50">
-                        <div class="tag">30 дней + Детские Сервисы</div>
-                        <h3>Яндекс Плюс: 30 дней + Детские Сервисы</h3>
-                        <p class="code">MF2JURDJMN <button class="submit-btn" onclick="copyToClipboard('MF2JURDJMN')">Копировать</button></p>
-                        <p>30 дней Яндекс Плюса бесплатно + 30 дней подписки на Детские Сервисы</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://plschild.prfl.me/sites/mxkx67?erid=2VtzqwXhzc1" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "ЯНДЕКС МУЗЫКА", ИНН 9705121040. erid: 2VtzqwXhzc1</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 31: Start.ru -->
-                <div class="promo-card" data-category="Entertainment" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/start.png" alt="Start.ru" width="50" height="50">
-                        <div class="tag">45 дней за 1 ₽</div>
-                        <h3>Start.ru: 45 дней за 1 ₽</h3>
-                        <p class="code">pf452lx7 <button class="submit-btn" onclick="copyToClipboard('pf452lx7')">Копировать</button></p>
-                        <p>45 дней подписки за 1 ₽ для новых пользователей</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://start.prfl.me/sites/hbfuvy?erid=2VtzqugyZH3" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "СТАРТ.РУ", ИНН 7728374780. erid: 2VtzqugyZH3</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 32: Яндекс Путешествия -->
-                <div class="promo-card" data-category="Travel" data-expiry="2025-09-30">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/yandex-travel.png" alt="Яндекс Путешествия" width="50" height="50">
-                        <div class="tag">Скидки до 8000 ₽</div>
-                        <h3>Яндекс Путешествия: Скидки до 8000 ₽</h3>
-                        <p class="code">PF-ZABOTA8OOO-F46AY <button class="submit-btn" onclick="copyToClipboard('PF-ZABOTA8OOO-F46AY')">Копировать</button></p>
-                        <p>Скидка 8000 ₽ от 60000 ₽ на бронирование санаториев по России</p>
-                        <p class="code">PF-SELLOFF-N7P2I <button class="submit-btn" onclick="copyToClipboard('PF-SELLOFF-N7P2I')">Копировать</button></p>
-                        <p>Скидка 4000 ₽ от 40000 ₽ на зарубежные направления (до 14.08.2025)</p>
-                        <p class="code">PF-MORE-LYMQK <button class="submit-btn" onclick="copyToClipboard('PF-MORE-LYMQK')">Копировать</button></p>
-                        <p>Скидка 5000 ₽ от 60000 ₽ на бронирование отелей</p>
-                        <p class="code">PF-WEEKEND2O-D39VB <button class="submit-btn" onclick="copyToClipboard('PF-WEEKEND2O-D39VB')">Копировать</button></p>
-                        <p>Скидка 20% на бронирование в разделе "Выходные"</p>
-                        <p class="code">PF-NEW-D7Q5M <button class="submit-btn" onclick="copyToClipboard('PF-NEW-D7Q5M')">Копировать</button></p>
-                        <p>Скидка 15% для новых пользователей</p>
-                        <p class="code">PF-OLD-47SXY <button class="submit-btn" onclick="copyToClipboard('PF-OLD-47SXY')">Копировать</button></p>
-                        <p>Скидка 12% для постоянных пользователей</p>
-                        <p class="expiry">Valid until: 30.09.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://travelyandex.prfl.me/sites/zp3r5l?erid=2VtzqujxYHX" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "ЯНДЕКС.ВЕРТИКАЛИ", ИНН 7704340327. erid: 2VtzqujxYHX</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 33: Хваловские воды -->
-                <div class="promo-card" data-category="Groceries" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/hvalovskiye-vody.png" alt="Хваловские воды" width="50" height="50">
-                        <div class="tag">Скидки и стартовый пакет</div>
-                        <h3>Хваловские воды: Скидки и стартовый пакет</h3>
-                        <p class="code">HKDAY2 <button class="submit-btn" onclick="copyToClipboard('HKDAY2')">Копировать</button></p>
-                        <p>Скидка 10% на второй заказ</p>
-                        <p class="code">HKDAY <button class="submit-btn" onclick="copyToClipboard('HKDAY')">Копировать</button></p>
-                        <p>Стартовый пакет за 459 ₽ в Москве или 259 ₽ в Санкт-Петербурге для новых клиентов</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://hwalwatersru.prfl.me/sites/p8hpq1?erid=2VtzqvMYF3o" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ИП Николаева Екатерина Александровна, ИНН 780529124303 erid: 2VtzqvMYF3o</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 34: Альфа-Банк Кредитная карта -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/alfa-bank.png" alt="Альфа-Банк" width="50" height="50">
-                        <div class="tag">Суперкэшбэк</div>
-                        <h3>Альфа-Банк: Кредитная карта</h3>
-                        <p>Оформить кредитную карту с суперкэшбэком</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://alfa365.prfl.me/sites/9xgms0?erid=2VtzqwzRT5s" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. АО "АЛЬФА-БАНК", ИНН 7728168971. erid: 2VtzqwzRT5s</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 35: Альфа-Банк Детская карта -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/alfa-bank.png" alt="Альфа-Банк" width="50" height="50">
-                        <div class="tag">Кэшбэк 1000 ₽</div>
-                        <h3>Альфа-Банк: Детская карта</h3>
-                        <p>Оформить детскую карту с кэшбэком 1000 ₽ при покупке от 1000 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://kids1251.prfl.me/sites/zi9kn5?erid=2Vtzqvgq6A5" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. АО "АЛЬФА-БАНК", ИНН 7728168971. erid: 2Vtzqvgq6A5</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 36: Альфа-Банк Дебетовая карта -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/alfa-bank.png" alt="Альфа-Банк" width="50" height="50">
-                        <div class="tag">Сертификат на выбор</div>
-                        <h3>Альфа-Банк: Дебетовая карта</h3>
-                        <p>Оформить дебетовую карту Альфа-Банк с сертификатом на выбор</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://dkmulti.prfl.me/sites/mbqk71?erid=2VtzqwCUWK3" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. АО "АЛЬФА-БАНК", ИНН 7728168971. erid: 2VtzqwCUWK3</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 37: Альфа-Банк Дебетовая карта -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/alfa-bank.png" alt="Альфа-Банк" width="50" height="50">
-                        <div class="tag">Кэшбэк 1000 ₽</div>
-                        <h3>Альфа-Банк: Дебетовая карта</h3>
-                        <p>Оформить дебетовую карту Альфа-Банк с кэшбэком 1000 ₽ при покупке от 3000 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://1000kb3000.prfl.me/sites/h467sy?erid=2VtzqxXaCSu" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. АО "АЛЬФА-БАНК", ИНН 7728168971. erid: 2VtzqxXaCSu</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 38: Газпромбанк Дебетовая карта -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/gazprombank.png" alt="Газпромбанк" width="50" height="50">
-                        <div class="tag">Кэшбэк 1000 баллов</div>
-                        <h3>Газпромбанк: Дебетовая карта МИР</h3>
-                        <p>Оформить дебетовую карту МИР с кэшбэком 1000 баллов и сертификатом на 1 800 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://gpb1800.prfl.me/sites/l9hhau?erid=2VtzqwUo3Nh" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Банк ГПБ (АО). Лицензия Банка России №354. Ad. ИНН 7744001497 erid: 2VtzqwUo3Nh</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 39: Газпромбанк Дебетовая карта -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/gazprombank.png" alt="Газпромбанк" width="50" height="50">
-                        <div class="tag">Кэшбэк 1000 баллов</div>
-                        <h3>Газпромбанк: Дебетовая карта МИР</h3>
-                        <p>Оформить дебетовую карту МИР с кэшбэком 1000 баллов от 1000 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://gpb.prfl.me/sites/6wfdzo?erid=2VtzqvWTWfb" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Банк ГПБ (АО). Лицензия Банка России №354. Ad. ИНН 7744001497 erid: 2VtzqvWTWfb</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 40: Альфа-Банк Инвестиции -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/alfa-bank.png" alt="Альфа-Банк" width="50" height="50">
-                        <div class="tag">До 10000 ₽ в подарок</div>
-                        <h3>Альфа-Банк: Инвестиции</h3>
-                        <p>Открыть брокерский счёт и получить до 10000 ₽ в подарок</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://alfa10k.prfl.me/sites/u8gwnk?erid=2VtzqxDogzV" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. АО "АЛЬФА-БАНК", ИНН 7728168971. erid: 2VtzqxDogzV</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 41: Сберздоровье Телемедицина -->
-                <div class="promo-card" data-category="Health" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/sberzdrav.ico" alt="Сберздоровье" width="50" height="50">
-                        <div class="tag">Скидка 35%</div>
-                        <h3>Сберздоровье: Скидка 35% на консультацию</h3>
-                        <p>Скидка 35% на онлайн-консультацию ветеринара в СберЗдоровье</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://sberanalizy.prfl.me/sites/q632el?erid=2VtzqwCYY6D" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "Инновационная медицина", 105203, г. Москва, ул. Нижняя Первомайская, д.44, эт.цоколь, пом/ком XII/8,9, ОГРН 1197746310618 erid: 2VtzqwCYY6D</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 42: Монетка -->
-                <div class="promo-card" data-category="Groceries" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <div class="tag">Скидки до 400 ₽</div>
-                        <h3>Монетка: Скидки до 400 ₽</h3>
-                        <p class="code">30MPRF1516 <button class="submit-btn" onclick="copyToClipboard('30MPRF1516')">Копировать</button></p>
-                        <p>Скидка 30% на первые два заказа от 1200 ₽</p>
-                        <p class="code">PRFLMN0590 <button class="submit-btn" onclick="copyToClipboard('PRFLMN0590')">Копировать</button></p>
-                        <p>Скидка 400 ₽ на первый заказ от 1400 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://monetka.prfl.me/sites/4aipk0?erid=2Vtzqws6DRB" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "ЭЛЕМЕНТ-ТРЕЙД", ИНН 6674121179. erid: 2Vtzqws6DRB</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 43: Холодильник.ру -->
-                <div class="promo-card" data-category="Gadgets" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/holodilnik-ru.jpg" alt="Холодильник.ру" width="50" height="50">
-                        <div class="tag">Скидки до 6000 ₽</div>
-                        <h3>Холодильник.ру: Скидки до 6000 ₽</h3>
-                        <p class="code">JUN31R4XK <button class="submit-btn" onclick="copyToClipboard('JUN31R4XK')">Копировать</button></p>
-                        <p>Скидка 3100 ₽ от 38000 ₽ на первый и все повторные заказы</p>
-                        <p class="code">SUM4Q2MX <button class="submit-btn" onclick="copyToClipboard('SUM4Q2MX')">Копировать</button></p>
-                        <p>Скидка 4000 ₽ от 60000 ₽ на первый и все повторные заказы</p>
-                        <p class="code">SUM251KJ <button class="submit-btn" onclick="copyToClipboard('SUM251KJ')">Копировать</button></p>
-                        <p>Скидка 2500 ₽ от 40000 ₽ на первый и все повторные заказы</p>
-                        <p class="code">SUM6MNT9 <button class="submit-btn" onclick="copyToClipboard('SUM6MNT9')">Копировать</button></p>
-                        <p>Скидка 6000 ₽ от 120000 ₽ на первый и все повторные заказы</p>
-                        <p class="code">PVENUUDZ7 <button class="submit-btn" onclick="copyToClipboard('PVENUUDZ7')">Копировать</button></p>
-                        <p>Скидка 3200 ₽ от 38000 ₽ на технику Midea на первый и все повторные заказы</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://hldlink.prfl.me/sites/1sq30p?erid=2VtzqxkynHF" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "Эдил-Импорт", ИНН 7733510051. erid: 2VtzqxkynHF</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 44: Четыре лапы -->
-                <div class="promo-card" data-category="Goods" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/4lapy.png" alt="Четыре лапы" width="50" height="50">
-                        <div class="tag">Скидка 15%</div>
-                        <h3>Четыре лапы: Скидка 15%</h3>
-                        <p class="code">LET0532 <button class="submit-btn" onclick="copyToClipboard('LET0532')">Копировать</button></p>
-                        <p>Скидка 15% для новых клиентов сети по промокоду. Не суммируется с акциями.</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://4lapy1.prfl.me/sites/q5k8n0?erid=2Vtzqv9mP21" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "ЧЕТЫРЕ ЛАПЫ-ИМ", 140186, МОСКОВСКАЯ ОБЛ., Г.ЖУКОВСКИЙ, ДУГИНА УЛ., Д.28/12, ПОМЕЩ.7, ОФИС 17, ИНН 5040172478 erid: 2Vtzqv9mP21</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 45: Авито Путешествия -->
-                <div class="promo-card" data-category="Travel" data-expiry="2025-12-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/avito.jpg" alt="Авито Путешествия" width="50" height="50">
-                        <div class="tag">Discount up to 15%</div>
-                        <h3>Авито Путешествия: Discount up to 15%</h3>
-                        <p>Забронировать жилье на сайте или в приложении со скидкой до 15%</p>
-                        <p class="expiry">Valid until: 31.12.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://avt.prfl.me/sites/wfa9cs?erid=2VtzqvV3ZAR" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "КЕХ еКоммерц", ИНН 7710668349, ОГРН 5077746422859 erid: 2VtzqvV3ZAR</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 46: Додо пицца юг -->
-                <div class="promo-card" data-category="Restaurants" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/dodo-pizza.png" alt="Додо пицца" width="50" height="50">
-                        <div class="tag">Скидки и подарки</div>
-                        <h3>Додо пицца юг: Скидки и подарки</h3>
-                        <p class="code">MAKGL <button class="submit-btn" onclick="copyToClipboard('MAKGL')">Копировать</button></p>
-                        <p>Пицца "Бургер пицца" 25 см в подарок на все заказы от 1299 ₽ (Ростов-на-Дону, Воронеж)</p>
-                        <p class="code">TUKPT <button class="submit-btn" onclick="copyToClipboard('TUKPT')">Копировать</button></p>
-                        <p>Скидка 30% на первый заказ (Воронеж, Ростов-на-Дону, Таганрог)</p>
-                        <p class="code">KDENM <button class="submit-btn" onclick="copyToClipboard('KDENM')">Копировать</button></p>
-                        <p>Скидка 25% на весь заказ в Красной Поляне (г. Сочи)</p>
-                        <p class="code">O1C6A <button class="submit-btn" onclick="copyToClipboard('O1C6A')">Копировать</button></p>
-                        <p>Скидка 25% на все заказы от 1399 ₽ (Воронеж, Ростов-на-Дону) и от 1599 ₽ (Сочи, Адлер, Лазаревское)</p>
-                        <p class="code">S2AK6 <button class="submit-btn" onclick="copyToClipboard('S2AK6')">Копировать</button></p>
-                        <p>Скидка 25% на первый заказ (Сочи, Адлер, Лазаревское)</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://dodo1.prfl.me/sites/wocgxt?erid=2Vtzqx6Smv9" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. Индивидуальный предприниматель Гринев Денис Петрович, ИНН 615400951595. erid: 2Vtzqx6Smv9</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 47: Ёбидоёби -->
-                <div class="promo-card" data-category="Restaurants" data-expiry="2025-12-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/yobidoyobi.png" alt="Ёбидоёби" width="50" height="50">
-                        <div class="tag">Скидка 20%</div>
-                        <h3>Ёбидоёби: Скидка 20%</h3>
-                        <p class="code">PR3594PF <button class="submit-btn" onclick="copyToClipboard('PR3594PF')">Копировать</button></p>
-                        <p>Скидка 20% от 1800 ₽ на первый заказ</p>
-                        <p class="expiry">Valid until: 31.12.2025 00:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://yobidoyobi1.prfl.me/sites/kf4klx?erid=2VtzqxRicad" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "Вкусные технологии". ИНН 2465359759 erid: 2VtzqxRicad</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 48: Росгосстрах онлайн -->
-                <div class="promo-card" data-category="Insurance" data-expiry="2025-12-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/rosgosstrah.png" alt="Росгосстрах" width="50" height="50">
-                        <div class="tag">Скидка 25%</div>
-                        <h3>Росгосстрах онлайн: Скидка 25%</h3>
-                        <p class="code">PF299J <button class="submit-btn" onclick="copyToClipboard('PF299J')">Копировать</button></p>
-                        <p>Скидка 25% на покупку страховки квартиры на год для новых пользователей</p>
-                        <p class="expiry">Valid until: 31.12.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://pulseinsure.prfl.me/sites/l79dgt?erid=2VtzqufcHdK" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ПАО СК «Росгосстрах», ИНН 7707067683. erid: 2VtzqufcHdK</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 49: Детская СберКарта Дизайн -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/sberbank.png" alt="СберБанк" width="50" height="50">
-                        <div class="tag">Дизайн на выбор</div>
-                        <h3>Детская СберКарта: Дизайн на выбор</h3>
-                        <p>Детская СберКарта с ярким дизайном для пользователей, у которых ранее не было детских карт банка</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://sberbank1.prfl.me/sites/3v4q5n?erid=2Vtzquiabfw" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. Публичное акционерное общество «Сбербанк России». Россия, Москва, 117312, ул. Вавилова, д. 19. ОГРН: 1027700132195. Генеральная лицензия Банка России на осуществление банковских операций № 1481 от 11.08.2015 erid: 2Vtzquiabfw</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 50: Банки.ру Мастер подбора карт -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/banki-ru.png" alt="Банки.ру" width="50" height="50">
-                        <div class="tag">Кэшбэк 2000 ₽</div>
-                        <h3>Банки.ру: Мастер подбора карт</h3>
-                        <p>Мастер подбора дебетовых карт, кэшбэк 2000 ₽ при покупках от 1000 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://bankiru.prfl.me/sites/gkrrgn?erid=2VtzqvzhymB" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО «Информационное агентство «Банки.ру», ИНН 7723527345. erid: 2VtzqvzhymB</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 51: Дебетовая СберКарта -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/sberbank.png" alt="СберБанк" width="50" height="50">
-                        <div class="tag">Дебетовая карта</div>
-                        <h3>Дебетовая СберКарта</h3>
-                        <p>Оформить Дебетовую СберКарту</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://sberbank1.prfl.me/sites/avn2w5?erid=2VtzqwzXVkd" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. Публичное акционерное общество «Сбербанк России». Россия, Москва, 117312, ул. Вавилова, д. 19. ОГРН: 1027700132195. Генеральная лицензия Банка России на осуществление банковских операций № 1481 от 11.08.2015 erid: 2VtzqwzXVkd</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 52: FARFOR -->
-                <div class="promo-card" data-category="Restaurants" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/farfor.png" alt="FARFOR" width="50" height="50">
-                        <div class="tag">Скидка 400 ₽</div>
-                        <h3>FARFOR: Скидка 400 ₽</h3>
-                        <p class="code">MPM61944 <button class="submit-btn" onclick="copyToClipboard('MPM61944')">Копировать</button></p>
-                        <p>Скидка 400 ₽ на любой заказ от 2290 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://farfor2.prfl.me/sites/ekcohg?erid=2VtzqxRjHYV" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "Фарфор Франчайзинг", ИНН 0276147339. erid: 2VtzqxRjHYV</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 53: Яндекс Еда Цветы -->
-                <div class="promo-card top-offer" data-category="Services" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/yandex-eda.png" alt="Яндекс Еда Цветы" width="50" height="50">
-                        <div class="tag">Скидка 1050 ₽</div>
-                        <h3>Яндекс Еда Цветы: Скидка 1050 ₽</h3>
-                        <p class="code">ASTRACE1N <button class="submit-btn" onclick="copyToClipboard('ASTRACE1N')">Копировать</button></p>
-                        <p>Скидка 1050 ₽ на первый заказ от 4000 ₽ в разделе Цветы</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://yaflowers.prfl.me/sites/ryjtuq?erid=2VtzqxZ9DxD" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "ЯНДЕКС.ЕДА", ИНН 9705114405. erid: 2VtzqxZ9DxD</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 54: Детская СберКарта Сертификат -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/sberbank.png" alt="СберБанк" width="50" height="50">
-                        <div class="tag">Сертификат 500 ₽</div>
-                        <h3>Детская СберКарта: Сертификат</h3>
-                        <p>Оформить Детскую СберКарту с сертификатом на выбор на 500 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://sberkarta1.prfl.me/sites/vvraoi?erid=2VtzqwMU9Bw" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. Публичное акционерное общество «Сбербанк России». Россия, Москва, 117312, ул. Вавилова, д. 19. ОГРН: 1027700132195. Генеральная лицензия Банка России на осуществление банковских операций № 1481 от 11.08.2015 erid: 2VtzqwMU9Bw</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 55: Сбердевайсы -->
-                <div class="promo-card" data-category="Gadgets" data-expiry="2025-11-01">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/sberdevices.png" alt="Сбердевайсы" width="50" height="50">
-                        <div class="tag">Скидка 10%</div>
-                        <h3>Сбердевайсы: Скидка 10%</h3>
-                        <p class="code">SBERDEAL1 <button class="submit-btn" onclick="copyToClipboard('SBERDEAL1')">Копировать</button></p>
-                        <p>10% скидка по промокоду на первый и каждый повторный заказ на Яндекс Маркете</p>
-                        <p class="expiry">Valid until: 01.11.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://sberdevaysy1.prfl.me/sites/nbj01i?erid=2Vtzqwy3qxD" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "САЛЮТДЕВАЙСЫ". ИНН: 7730253720 erid: 2Vtzqwy3qxD</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 56: Сбердевайсы -->
-                <div class="promo-card" data-category="Gadgets" data-expiry="2025-11-01">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/sberdevices.png" alt="Сбердевайсы" width="50" height="50">
-                        <div class="tag">Скидка 10%</div>
-                        <h3>Сбердевайсы: Скидка 10%</h3>
-                        <p class="code">SBRDV6702550 <button class="submit-btn" onclick="copyToClipboard('SBRDV6702550')">Копировать</button></p>
-                        <p>10% скидка по промокоду на первый и каждый повторный заказ на Озоне</p>
-                        <p class="expiry">Valid until: 01.11.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://sberdevaysy1.prfl.me/sites/s2tugt?erid=2VtzqwiDy8m" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ООО "САЛЮТДЕВАЙСЫ". ИНН: 7730253720 erid: 2VtzqwiDy8m</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 57: Совкомбанк карта Халва -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/sovcombank.png" alt="Совкомбанк" width="50" height="50">
-                        <div class="tag">1000 бонусов + шанс на поездку</div>
-                        <h3>Совкомбанк: Карта Халва</h3>
-                        <p>Оформить карту рассрочки Халва и получить 1000 бонусов Халвы и шанс поехать в Турцию</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://sovcombankxalva.prfl.me/sites/j54n05?erid=2VtzqxXfa9o" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. ПАО "Совкомбанк", ИНН 4401116480. erid: 2VtzqxXfa9o</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 58: Т-Банк Black Дебетовая карта -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/t-bank.png" alt="Т-Банк" width="50" height="50">
-                        <div class="tag">Кэшбэк 1000 ₽</div>
-                        <h3>Т-Банк: Black Дебетовая карта</h3>
-                        <p>Оформить светящуюся дебетовую карту Black с кэшбэком 1000 ₽ от 3000 ₽</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://tinkoff.prfl.me/sites/geigy0?erid=2VtzqvHaAnM" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. АО «ТБанк», лицензия 2673. Подробнее на tbank.ru. erid: 2VtzqvHaAnM</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 59: Т-Банк Black Дебетовая карта -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/t-bank.png" alt="Т-Банк" width="50" height="50">
-                        <div class="tag">Кэшбэк 1000 ₽</div>
-                        <h3>Т-Банк: Black Дебетовая карта</h3>
-                        <p>Оформить дебетовую карту Black с кэшбэком 1000 ₽ за траты от 3000 ₽ в первый месяц</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://tnkff.prfl.me/sites/19e224?erid=2VtzqvimHcM" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. АО «ТБанк», лицензия 2673. Подробнее на tbank.ru. erid: 2VtzqvimHcM</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 60: Т-Банк Джуниор Дебетовая карта -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/t-bank.png" alt="Т-Банк" width="50" height="50">
-                        <div class="tag">500 баллов</div>
-                        <h3>Т-Банк: Джуниор Дебетовая карта</h3>
-                        <p>Дебетовая карта Джуниор c начислением 500 баллов за первую покупку</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://tnkff.prfl.me/sites/gh28y6?erid=2Vtzqvikx8R" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. АО «ТБанк», лицензия 2673. Подробнее на tbank.ru. erid: 2Vtzqvikx8R</p>
-                    </div>
-                </div>
-
-                <!-- Карточка 61: Т-Банк Джуниор Дебетовая карта -->
-                <div class="promo-card" data-category="Finance" data-expiry="2025-08-31">
-                    <div class="promo-card-content">
-                        <img src="/frontend/images/t-bank.png" alt="Т-Банк" width="50" height="50">
-                        <div class="tag">Кэшбэк 500 ₽</div>
-                        <h3>Т-Банк: Джуниор Дебетовая карта</h3>
-                        <p>Дебетовая карта Джуниор с кэшбэком 500 ₽ за траты от 1000 ₽ два месяца подряд на карту родителю</p>
-                        <p class="expiry">Valid until: 31.08.2025 23:59</p>
-                    </div>
-                    <div class="promo-card-footer">
-                        <a href="https://tnkff.prfl.me/sites/xvtcrh?erid=2VtzqxayNjj" target="_blank" class="register-link">Go to partner</a>
-                        <p class="ad">Ad. АО «ТБанк», лицензия 2673. Подробнее на tbank.ru. erid: 2VtzqxayNjj</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- FAQ -->
-            <div class="faq">
-                <h2>Частые вопросы</h2>
-                <details>
-                    <summary>Как использовать промокод?</summary>
-                    <p>1. Скопируйте код. 2. Перейдите на сайт партнёра. 3. Введите код в корзине.</p>
-                </details>
-                <details>
-                    <summary>Почему код не работает?</summary>
-                    <p>Проверьте срок действия или условия (например, минимальную сумму заказа). Если проблема присутствует, напишите в поддержку.</p>
-                </details>
-            </div>
-
-            <!-- Бонус-блок -->
-            <div class="bonus">
-                <h2>Эксклюзив для подписчиков</h2>
-                <p>Получайте свежие промокоды первыми!</p>
-                <form action="/subscribe" method="post">
-                    <input type="email" name="email" placeholder="Ваш email" required>
-                    <button type="submit" class="submit-btn">Подписаться</button>
-                </form>
-            </div>
+        <div id="loadingSpinner" class="loading" style="display: none;">
+            <div class="spinner"></div>
+            <p>იტვირთება...</p>
         </div>
-        <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
-      <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-        <button type="button" aria-label="Закрыть рекламу" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
-        <ins class="mrg-tag" 
-            style="display:inline-block;width:320px;height:50px" 
-            data-ad-client="ad-1898031"
-            data-ad-slot="1898031">
-        </ins>
-      </div>
-    </div>
-    <script>
-      (function(){
-        if (localStorage.getItem('anchor_closed')==='1') return;
-        var w = window.innerWidth || document.documentElement.clientWidth;
-        var a = document.getElementById('mobile-anchor-ad');
-        if (!a) return;
-        if (w <= 768) { a.style.display = "flex"; }
-        (window.MRGtag = window.MRGtag || []).push({});
-        if (window.visualViewport) {
-          visualViewport.addEventListener('resize', function(){
-            var h = visualViewport.height;
-            a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
-          });
-        }
-      })();
+
+        <div id="promocodes-result-count"></div>
+
+        <section id="catalog" class="promo-grid" aria-labelledby="catalog-title" role="region">
+            <h2 id="catalog-title" class="visually-hidden">Promo codes catalog</h2>
+        </section>
+
+        <section class="faq" aria-labelledby="faq-title">
+            <h2 id="faq-title">ხშირად დასმული კითხვები</h2>
+            <details>
+                <summary lang="ka">როგორ გამოვიყენოთ პრომო კოდი?</summary>
+                <p>1. დააკოპირეთ კოდი.<br>2. გადადით პარტნიორის ვებსაიტზე.<br>3. შეიყვანეთ კოდი კალათაში.</p>
+            </details>
+            <details>
+                <summary lang="ka">რატომ არ მუშაობს კოდი?</summary>
+                <p>შეამოწმეთ ვადის გასვლის თარიღი ან პირობები. თუ პრობლემა გრძელდება, დაუკავშირდით <a href="/support">მხარდაჭერას</a>.</p>
+            </details>
+        </section>
+
+        <section class="bonus" aria-labelledby="bonus-title">
+            <h2 id="bonus-title">გამოიწერეთ აქციები</h2>
+            <p>მიიღეთ ახალი პრომო კოდები პირველებმა!</p>
+            <form action="/subscribe" method="post" aria-label="გამოიწერეთ აქციები">
+                <input type="email" name="email" placeholder="თქვენი ელ. ფოსტა" required aria-label="თქვენი ელ. ფოსტა">
+                <button type="submit" class="submit-btn">გამოწერა</button>
+            </form>
+        </section>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 Serpmonn.ru. ყველა უფლება დაცულია.</p>
+    </footer>
+
+    <!-- Structured Data -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+            {
+                "@type": "ListItem",
+                "position": 1,
+                "name": "მთავარი",
+                "item": "https://serpmonn.ru"
+            },
+            {
+                "@type": "ListItem",
+                "position": 2,
+                "name": "პრომო კოდები და ფასდაკლებები",
+                "item": "https://serpmonn.ru/frontend/ka/promo-codes-and-discounts/promokody-skidki.html"
+            }
+        ]
+    }
+    </script>
+    
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "name": "პრომო კოდები და ფასდაკლებები 2025 | Serpmonn.ru",
+        "description": "მიმდინარე პრომო კოდები და ფასდაკლებები 2025 Serpmonn პარტნიორებისგან: თამაშები, გაჯეტები, სერვისები, რესტორნები, პროდუქტები, მოდა, ჯანმრთელობა და მოგზაურობა. დაზოგეთ დამოწმებული კუპონებით!",
+        "url": "https://serpmonn.ru/frontend/ka/promo-codes-and-discounts/promokody-skidki.html"
+    }
     </script>
 
-<script>/*ANCHOR_COLLAPSE*/(function(){
-  var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
-  setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
-    (window.MRGtag=window.MRGtag||[]).push({});
-    setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
-  } }, 2000);
-})();</script>
-
-<script>/*GLOBAL_AD_HOOK*/(function(){
-  function handleIns(ins){
-    if (!ins || ins.__handled) return; ins.__handled = true;
-    setTimeout(function(){
-      var has = !!ins.querySelector("iframe");
-      if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
-      setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
-    }, 2000);
-  }
-  document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
-  var mo = new MutationObserver(function(muts){
-    muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
-  });
-  mo.observe(document.documentElement,{childList:true,subtree:true});
-})();</script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script type="text/javascript">(function() { var d = document, s = d.createElement('script'), g = 'getElementsByTagName'; s.type = 'text/javascript'; s.charset='UTF-8'; s.async = true; s.src = ('https:' == window.location.protocol ? 'https' : 'http')  + '://socpublic.com/themes/assets/global/scripts/visit_js.js'; var h=d[g]('body')[0]; h.appendChild(s); })();</script>
 </body>
 </html>

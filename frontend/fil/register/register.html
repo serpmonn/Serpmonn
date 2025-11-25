@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="fil" dir="ltr">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="fil">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Pagpaparehistro</title>
+        <meta property="og:title" content="Pagpaparehistro — Serpmonn">
+        <meta property="og:description" content="Gumawa ng Serpmonn account para i-save ang game progress at gamitin ang mga serbisyo.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/fil/register/register.html">
+        <meta property="og:type" content="website">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Pagpaparehistro — Serpmonn">
+        <meta name="twitter:description" content="Gumawa ng Serpmonn account para i-save ang game progress at gamitin ang mga serbisyo.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <link rel="canonical" href="https://serpmonn.ru/frontend/fil/register/register.html">
+        <link rel="stylesheet" href="register_styles.css">
+        
+        <!-- Яндекс.Метрика -->
+        <script type="text/javascript">
+            (function(m,e,t,r,i,k,a){
+                m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+                m[i].l=1*new Date();
+                for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+                k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+            })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=103554515', 'ym');
+            ym(103554515, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+        </script>
+        
+        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+        <script type="module" src="register_scripts.js" defer></script>
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    </head>
+    
+    <body>
+        <noscript><img src="https://mc.yandex.ru/watch/103554515" style="position:absolute; left:-9999px;" alt=""></noscript>
+        
+        <div class="container fade-in">
+            <h2>Gumawa ng Account</h2>
+            <form id="registerForm">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="email">Email:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">Password:</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" id="togglePassword">👁</button>
+                </div>
+                
+                <label class="policy-checkbox">
+                    <input type="checkbox" required>
+                    Sumasang-ayon ako sa <a href="/frontend/fil/privacy-policy/privacy-policy.html" target="_blank">Patakaran sa Privacy</a>
+                </label>
+                
+                <button type="submit" class="submit-btn">Magrehistro</button>
+            </form>
+            
+            <p id="message"></p>
+            
+            <div class="login-link">
+                <p>Nakarehistro na? <a href="/frontend/fil/login/login.html" class="button-style">Mag-sign In</a></p>
+            </div>
+        </div>
+
+        <!-- Рекламный блок -->
+        <div class="ad-container" style="text-align: center; margin: 20px auto; max-width: 600px;">
+            <ins class="mrg-tag" 
+                style="display:inline-block;width:300px;height:250px"
+                data-ad-client="ad-1874025"
+                data-ad-slot="1874025">
+            </ins>
+            <script>(MRGtag = window.MRGtag || []).push({});</script>
+        </div>
+
+        <!-- Попап подтверждения -->
+        <div id="confirmPopup" class="popup">
+            <div class="popup-content">
+                <p>Pumili ng paraan ng kumpirmasyon ng pagpaparehistro</p>
+                <a id="telegramConfirmLink" class="btn telegram-btn" target="_blank">Kumpirmahin sa pamamagitan ng Telegram</a>
+                <button id="emailConfirmButton" class="btn email-btn">Kumpirmahin sa pamamagitan ng Email</button>
+                <button id="closePopup" class="btn close-btn">Isara</button>
+            </div>
+        </div>
+
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>

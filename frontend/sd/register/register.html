@@ -1,0 +1,94 @@
+
+<!DOCTYPE html>
+<html lang="sd" dir="rtl">
+    <head>
+        <link rel="stylesheet" href="/frontend/styles/styles.css">
+        <meta http-equiv="Content-Language" content="sd">
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>رجسٽريشن</title>
+        <meta property="og:title" content="رجسٽريشن — Serpmonn">
+        <meta property="og:description" content="راند جي ترقي محفوظ ڪرڻ ۽ خدمتون استعمال ڪرڻ لاءِ هڪ Serpmonn کاتو ٺاهيو.">
+        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="https://serpmonn.ru/frontend/sd/register/register.html">
+        <meta property="og:type" content="website">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="رجسٽريشن — Serpmonn">
+        <meta name="twitter:description" content="راند جي ترقي محفوظ ڪرڻ ۽ خدمتون استعمال ڪرڻ لاءِ هڪ Serpmonn کاتو ٺاهيو.">
+        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <link rel="canonical" href="https://serpmonn.ru/frontend/sd/register/register.html">
+        <link rel="stylesheet" href="register_styles.css">
+        
+        <!-- Яндекс.Метрика -->
+        <script type="text/javascript">
+            (function(m,e,t,r,i,k,a){
+                m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+                m[i].l=1*new Date();
+                for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+                k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+            })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=103554515', 'ym');
+            ym(103554515, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+        </script>
+        
+        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+        <script type="module" src="register_scripts.js" defer></script>
+        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    </head>
+    
+    <body>
+        <noscript><img src="https://mc.yandex.ru/watch/103554515" style="position:absolute; left:-9999px;" alt=""></noscript>
+        
+        <div class="container fade-in">
+            <h2>هڪ کاتو ٺاهيو</h2>
+            <form id="registerForm">
+                <label for="username">واپرائيندڙ جو نالو:</label>
+                <input type="text" id="username" name="username" required>
+                
+                <label for="email">اي ميل:</label>
+                <input type="email" id="email" name="email" required>
+                
+                <label for="password">پاسورڊ:</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <button type="button" id="togglePassword">👁</button>
+                </div>
+                
+                <label class="policy-checkbox">
+                    <input type="checkbox" required>
+                    مان <a href="/frontend/sd/privacy-policy/privacy-policy.html" target="_blank">رازداري جي پاليسي</a> سان متفق آهيان
+                </label>
+                
+                <button type="submit" class="submit-btn">رجسٽر ڪريو</button>
+            </form>
+            
+            <p id="message"></p>
+            
+            <div class="login-link">
+                <p>پهرين ئي رجسٽر ٿيل؟ <a href="/frontend/sd/login/login.html" class="button-style">سائن ان</a></p>
+            </div>
+        </div>
+
+        <!-- Рекламный блок -->
+        <div class="ad-container" style="text-align: center; margin: 20px auto; max-width: 600px;">
+            <ins class="mrg-tag" 
+                style="display:inline-block;width:300px;height:250px"
+                data-ad-client="ad-1874025"
+                data-ad-slot="1874025">
+            </ins>
+            <script>(MRGtag = window.MRGtag || []).push({});</script>
+        </div>
+
+        <!-- Попап подтверждения -->
+        <div id="confirmPopup" class="popup">
+            <div class="popup-content">
+                <p>رجسٽريشن تصديق جو طريقو چونڊيو</p>
+                <a id="telegramConfirmLink" class="btn telegram-btn" target="_blank">Telegram ذريعي تصديق ڪريو</a>
+                <button id="emailConfirmButton" class="btn email-btn">اي ميل ذريعي تصديق ڪريو</button>
+                <button id="closePopup" class="btn close-btn">بند ڪريو</button>
+            </div>
+        </div>
+
+        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </body>
+</html>
