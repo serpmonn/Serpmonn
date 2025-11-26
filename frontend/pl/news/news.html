@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html lang="pl" dir="ltr">
+<head>
+  <!-- Подключение стилей -->
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/news/news.css">
+  
+  <!-- Мета-теги для SEO и социальных сетей -->
+  <meta http-equiv="Content-Language" content="pl">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serpmonn Aktualności i Artykuły — Technologie, Kody Promocyjne, Gry</title>
+  <meta name="description" content="Najnowsze wiadomości technologiczne, kody promocyjne 2025, poradniki mini-gier i SEO. Czytaj przydatne artykuły na Serpmonn.ru!">
+  <meta name="keywords" content="wiadomości technologiczne, kody promocyjne 2025, mini-gry online, porady SEO, kalkulator amortyzacji, ślad ekologiczny, wyszukiwanie bez reklam">
+
+  <!-- Open Graph для соцсетей -->
+  <meta property="og:title" content="Aktualności i Artykuły — Serpmonn">
+  <meta property="og:description" content="Najnowsze wiadomości technologiczne, kody promocyjne, poradniki gier i SEO na Serpmonn.ru">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+  <meta property="og:url" content="https://serpmonn.ru/frontend/pl/news/">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Aktualności i Artykuły — Serpmonn">
+  <meta name="twitter:description" content="Wiadomości technologiczne, kody promocyjne, poradniki gier i SEO na Serpmonn.ru">
+  <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+  <!-- Schema.org разметка -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "📰 Aktualności i Artykuły",
+    "description": "Najnowsze wiadomości technologiczne, kody promocyjne 2025, poradniki mini-gier i SEO. Czytaj przydatne artykuły na Serpmonn.ru!",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Serpmonn",
+      "logo": {"@type": "ImageObject", "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"}
+    }
+  }
+  </script>
+
+  <!-- RSS лента -->
+  <link rel="alternate" type="application/rss+xml" title="RSS новостей Serpmonn" href="/frontend/news/rss.xml">
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+</head>
+<body>
+  <!-- Контейнер для меню -->
+  <div id="menuContainer"></div>
+  
+  <!-- Основной контент страницы -->
+  <div class="page">
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/">Strona główna</a> → 
+      <span>Aktualności i Artykuły</span>
+    </div>
+
+    <!-- Заголовок раздела с рекламным баннером -->
+    <div class="news-header">
+      <div class="ad-top-banner" style="text-align:center;margin:16px 0;min-height:50px;">
+        <script async src="https://ad.mail.ru/static/ads-async.js" defer></script>
+        <ins class="mrg-tag" 
+            style="display:inline-block;"
+            data-ad-client="ad-1897960" 
+            data-ad-slot="1897960">
+        </ins>
+      </div>
+      <script>
+        (MRGtag = window.MRGtag || []).push({});
+      </script>
+      
+      <!-- Основной заголовок и подзаголовок -->
+      <h1 class="news-title">📰 Aktualności i Artykuły</h1>
+      <p class="news-subtitle">Bądź na bieżąco z technologią, kodami promocyjnymi i poradnikami mini-gier</p>
+
+      <!-- Статистика -->
+      <div class="news-stats">
+        <div class="stat-item">
+          <span class="stat-number">11</span>
+          <span class="stat-label">Artykuły</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">5+</span>
+          <span class="stat-label">Kategorie</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">15+</span>
+          <span class="stat-label">Tematy</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Промо-баннер с ссылками на другие разделы -->
+    <div class="promo-banner">
+      <p>Graj w <a href="/frontend/games/games.html">mini-gry</a> lub wypróbuj <a href="/frontend/main.html">wyszukiwanie bez reklam</a> teraz!</p>
+    </div>
+
+    <!-- Секция RSS и социальных сетей -->
+    <div class="rss-section">
+      <h2 class="rss-title">📡 Kanał RSS</h2>
+      <p class="rss-description">Subskrybuj RSS lub media społecznościowe, aby nie przegapić nowych artykułów</p>
+      <a href="/frontend/news/rss.xml" class="rss-btn" target="_blank" rel="noopener">Subskrybuj RSS</a>
+      <div class="social-subscribe">
+        <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Subskrybuj na Telegramie</a>
+        <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Subskrybuj na VK</a>
+      </div>
+    </div>
+
+    <!-- Навигация по категориям -->
+    <div class="news-categories">
+      
+      <a class="category-link active" 
+         href="/frontend/pl/news/?category=all" 
+         data-category="all">
+        Wszystkie
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/pl/news/?category=updates" 
+         data-category="updates">
+        Aktualizacje
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/pl/news/?category=articles" 
+         data-category="articles">
+        Artykuły
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/pl/news/?category=tutorials" 
+         data-category="tutorials">
+        Poradniki
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/pl/news/?category=engineering" 
+         data-category="engineering">
+        Inżynieria
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/pl/news/?category=logistics" 
+         data-category="logistics">
+        Logistyka
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/pl/news/?category=ecology" 
+         data-category="ecology">
+        Ekologia
+      </a>
+      
+    </div>
+
+    <!-- Поиск по новостям -->
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="🔍 Szukaj w aktualnościach i artykułach..." id="searchInput">
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
+
+    <!-- Индикатор загрузки -->
+    <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+      <p>Ładowanie artykułów...</p>
+    </div>
+
+    <!-- Сетка карточек новостей -->
+    <div class="news-grid" id="newsGrid">
+      
+      <div class="news-card" data-category="tutorials" data-tags="ciasteczka,bezpieczeństwo,prywatność,przeglądarka,czyszczenie,zarządzanie,internet,trackery,GDPR,ochrona danych">
+        <div class="news-card-content">
+          <span class="news-card-category">Bezpieczeństwo</span>
+          <h3 class="news-card-title">Ciasteczka - co to jest: Kompleksowy przewodnik po zarządzaniu i bezpieczeństwie</h3>
+          <p class="news-card-excerpt">Wszystko o plikach cookie: typy, cel, zarządzanie i czyszczenie. Jak chronić swoją prywatność online i dlaczego czyścić ciasteczka.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">29 października 2025</span>
+            <span class="news-card-read-time">12 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html&text=Ciasteczka%20-%20co%20to%20jest%3A%20Kompleksowy%20przewodnik%20po%20zarz%C4%85dzaniu%20i%20bezpiecze%C5%84stwie" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html&title=Ciasteczka%20-%20co%20to%20jest%3A%20Kompleksowy%20przewodnik%20po%20zarz%C4%85dzaniu%20i%20bezpiecze%C5%84stwie" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/cookies-complete-guide.html" aria-label="Przeczytaj przewodnik o ciasteczkach"></a>
+      </div>
+      
+      <div class="news-card" data-category="tutorials" data-tags="sieci,router,przekierowanie portów,konfiguracja,internet,gry,serwery,dostęp zdalny,technologie,ustawienia sieciowe">
+        <div class="news-card-content">
+          <span class="news-card-category">Poradnik</span>
+          <h3 class="news-card-title">Przekierowanie portów na routerze: Kompleksowy przewodnik 2025</h3>
+          <p class="news-card-excerpt">Przewodnik krok po kroku konfiguracji przekierowania portów dla gier, serwerów i dostępu zdalnego. Instrukcje dla wszystkich popularnych routerów.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">29 października 2025</span>
+            <span class="news-card-read-time">15 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html&text=Przekierowanie%20port%C3%B3w%20na%20routerze%3A%20Kompleksowy%20przewodnik%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html&title=Przekierowanie%20port%C3%B3w%20na%20routerze%3A%20Kompleksowy%20przewodnik%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/port-forwarding-guide.html" aria-label="Przeczytaj przewodnik przekierowania portów"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="smm,snippet,vk,telegram,youtube,tiktok,seo,marketing">
+        <div class="news-card-content">
+          <span class="news-card-category">Artykuły</span>
+          <h3 class="news-card-title">Ograniczenia znaków i przycinanie snippetów (VK/Telegram/YouTube/TikTok)</h3>
+          <p class="news-card-excerpt">Tabela podsumowująca ograniczenia i przykłady przed/po dla idealnych nagłówków i opisów. Dowiedz się, jak zwiększyć CTR!</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">15 września 2025</span>
+            <span class="news-card-read-time">6–9 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html&text=Ograniczenia%20znak%C3%B3w%20i%20przycinanie%20snippet%C3%B3w%20(VK%2FTelegram%2FYouTube%2FTikTok)" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html&title=Ograniczenia%20znak%C3%B3w%20i%20przycinanie%20snippet%C3%B3w%20(VK%2FTelegram%2FYouTube%2FTikTok)" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" aria-label="Przeczytaj o ograniczeniach znaków"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="indexnow,seo,mapa witryny,bing,yandex,indeksowanie,szukanie">
+        <div class="news-card-content">
+          <span class="news-card-category">Artykuły</span>
+          <h3 class="news-card-title">IndexNow: Praktyczna implementacja i triki</h3>
+          <p class="news-card-excerpt">Konfiguracja, changed-only, częste błędy i porównanie z pingowaniem mapy witryny. Przyspiesz indeksowanie z naszą checklistą!</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">15 września 2025</span>
+            <span class="news-card-read-time">7–10 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html&text=IndexNow%3A%20Praktyczna%20implementacja%20i%20triki" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html&title=IndexNow%3A%20Praktyczna%20implementacja%20i%20triki" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/indexnow-practical-guide.html" aria-label="Przeczytaj o IndexNow"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="utm,analityka,marketing,śledzenie,analiza">
+        <div class="news-card-content">
+          <span class="news-card-category">Artykuły</span>
+          <h3 class="news-card-title">Tagi UTM: Kompleksowy przewodnik użycia</h3>
+          <p class="news-card-excerpt">Wszechstronny przewodnik tworzenia i używania tagów UTM do precyzyjnego śledzenia ruchu i kampanii reklamowych.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">14 września 2025</span>
+            <span class="news-card-read-time">8–12 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html&text=Tagi%20UTM%3A%20Kompleksowy%20przewodnik%20u%C5%BCycia" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html&title=Tagi%20UTM%3A%20Kompleksowy%20przewodnik%20u%C5%BCycia" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/utm-complete-guide.html" aria-label="Przeczytaj przewodnik tagów UTM"></a>
+      </div>
+      
+      <div class="news-card" data-category="tutorials" data-tags="www,rozwój,programowanie,frontend,backend,html,css,javascript">
+        <div class="news-card-content">
+          <span class="news-card-category">Poradnik</span>
+          <h3 class="news-card-title">Kompleksowy przewodnik rozwoju stron WWW 2025</h3>
+          <p class="news-card-excerpt">Od podstaw HTML po zaawansowane frameworki. Kompleksowy przewodnik dla początkujących i doświadczonych deweloperów.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">12 września 2025</span>
+            <span class="news-card-read-time">25–35 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html&text=Kompleksowy%20przewodnik%20rozwoju%20stron%20WWW%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html&title=Kompleksowy%20przewodnik%20rozwoju%20stron%20WWW%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/web-development-guide.html" aria-label="Przeczytaj przewodnik rozwoju WWW"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="www,technologie,trendy,2024">
+        <div class="news-card-content">
+          <span class="news-card-category">Artykuły</span>
+          <h3 class="news-card-title">Trendy technologii webowych 2025: Co używać teraz</h3>
+          <p class="news-card-excerpt">Aktualne trendy w rozwoju stron WWW, nowe frameworki i najlepsze praktyki dla nowoczesnych projektów.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">10 września 2025</span>
+            <span class="news-card-read-time">12–16 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/web-tech-trends-2024.html&text=Trendy%20technologii%20webowych%202025%3A%20Co%20u%C5%BCywa%C4%87%20teraz" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/web-tech-trends-2024.html&title=Trendy%20technologii%20webowych%202025%3A%20Co%20u%C5%BCywa%C4%87%20teraz" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/web-tech-trends-2024.html" aria-label="Przeczytaj o trendach technologii webowych"></a>
+      </div>
+      
+      <div class="news-card" data-category="engineering" data-tags="amortyzacja,obliczenia,inżynieria,finanse,sprzęt">
+        <div class="news-card-content">
+          <span class="news-card-category">Inżynieria</span>
+          <h3 class="news-card-title">Jak obliczyć amortyzację sprzętu</h3>
+          <p class="news-card-excerpt">Praktyczny przewodnik obliczania amortyzacji z przykładami i wzorami. Liniowe i nieliniowe metody amortyzacji.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">8 września 2025</span>
+            <span class="news-card-read-time">10–14 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html&text=Jak%20obliczy%C4%87%20amortyzacj%C4%99%20sprz%C4%99tu" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html&title=Jak%20obliczy%C4%87%20amortyzacj%C4%99%20sprz%C4%99tu" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-depreciation.html" aria-label="Przeczytaj o obliczaniu amortyzacji"></a>
+      </div>
+      
+      <div class="news-card" data-category="ecology" data-tags="ekologia,obliczenia,ślad,produkty,zrównoważony rozwój">
+        <div class="news-card-content">
+          <span class="news-card-category">Ekologia</span>
+          <h3 class="news-card-title">Jak obliczyć ślad ekologiczny produktów</h3>
+          <p class="news-card-excerpt">Metodologie obliczania śladu ekologicznego towarów i usług. Praktyczne przykłady i narzędzia do oceny wpływu na środowisko.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">5 września 2025</span>
+            <span class="news-card-read-time">15–20 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html&text=Jak%20obliczy%C4%87%20%C5%9Blad%20ekologiczny%20produkt%C3%B3w" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html&title=Jak%20obliczy%C4%87%20%C5%9Blad%20ekologiczny%20produkt%C3%B3w" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html" aria-label="Przeczytaj o obliczaniu śladu ekologicznego"></a>
+      </div>
+      
+      <div class="news-card" data-category="updates" data-tags="aktualizacje,wiadomości,funkcje,ulepszenia,serpmonn">
+        <div class="news-card-content">
+          <span class="news-card-category">Aktualizacje</span>
+          <h3 class="news-card-title">Aktualizacje Serpmonn: Sierpień-wrzesień 2025</h3>
+          <p class="news-card-excerpt">Wszystkie nowe funkcje i ulepszenia w Serpmonn w ciągu ostatniego miesiąca. Nowe narzędzia, poprawki i plany na przyszłość.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">3 września 2025</span>
+            <span class="news-card-read-time">8–11 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html&text=Aktualizacje%20Serpmonn%3A%20Sierpie%C5%84-wrzesie%C5%84%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html&title=Aktualizacje%20Serpmonn%3A%20Sierpie%C5%84-wrzesie%C5%84%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/updates-aug-25-sep-15.html" aria-label="Przeczytaj o aktualizacjach Serpmonn"></a>
+      </div>
+      
+      <div class="news-card" data-category="updates" data-tags="aktualizacje,sierpień,nowe funkcje,poprawki">
+        <div class="news-card-content">
+          <span class="news-card-category">Aktualizacje</span>
+          <h3 class="news-card-title">Aktualizacje Serpmonn: Sierpień 2025</h3>
+          <p class="news-card-excerpt">Kluczowe aktualizacje i ulepszenia wdrożone w sierpniu. Nowe możliwości wyszukiwania i narzędzia dla deweloperów.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">17 sierpnia 2025</span>
+            <span class="news-card-read-time">6–9 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html&text=Aktualizacje%20Serpmonn%3A%20Sierpie%C5%84%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html&title=Aktualizacje%20Serpmonn%3A%20Sierpie%C5%84%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/updates-august-17.html" aria-label="Przeczytaj o aktualizacjach sierpnia"></a>
+      </div>
+      
+    </div>
+
+    <!-- Кнопка загрузки дополнительных новостей -->
+    <div class="load-more" id="loadMore">
+      <button class="load-more-btn">Załaduj więcej</button>
+    </div>
+  </div>
+
+  <!-- Мобильная реклама внизу экрана -->
+  <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+    <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+      <button type="button" aria-label="Zamknij reklamę" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+      <ins class="mrg-tag" 
+          style="display:inline-block;width:320px;height:50px" 
+          data-ad-client="ad-1898031"
+          data-ad-slot="1898031">
+      </ins>
+    </div>
+  </div>
+
+  <!-- Подключение JavaScript файлов -->
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <script src="/frontend/news/news.js" defer></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  
+  <!-- Скрипт для мобильной рекламы -->
+  <script>
+    (function(){
+      if (localStorage.getItem('anchor_closed')==='1') return;
+      var w = window.innerWidth || document.documentElement.clientWidth;
+      var a = document.getElementById('mobile-anchor-ad');
+      if (!a) return;
+      if (w <= 768) { a.style.display = "flex"; }
+      (window.MRGtag = window.MRGtag || []).push({});
+      if (window.visualViewport) {
+        visualViewport.addEventListener('resize', function(){
+          var h = visualViewport.height;
+          a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

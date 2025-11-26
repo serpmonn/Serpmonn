@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+<head>
+  <!-- Подключение стилей -->
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/news/news.css">
+  
+  <!-- Мета-теги для SEO и социальных сетей -->
+  <meta http-equiv="Content-Language" content="zh-cn">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serpmonn 新闻与文章 — 技术、优惠码、游戏</title>
+  <meta name="description" content="最新技术新闻、2025优惠码、迷你游戏指南和SEO。在Serpmonn.ru阅读有用文章！">
+  <meta name="keywords" content="技术新闻、2025优惠码、在线迷你游戏、SEO技巧、折旧计算器、生态足迹、无广告搜索">
+
+  <!-- Open Graph для соцсетей -->
+  <meta property="og:title" content="新闻与文章 — Serpmonn">
+  <meta property="og:description" content="Serpmonn.ru上的最新技术新闻、优惠码、游戏指南和SEO">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+  <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/news/">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="新闻与文章 — Serpmonn">
+  <meta name="twitter:description" content="Serpmonn.ru上的技术新闻、优惠码、游戏指南和SEO">
+  <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+  <!-- Schema.org разметка -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "📰 新闻与文章",
+    "description": "最新技术新闻、2025优惠码、迷你游戏指南和SEO。在Serpmonn.ru阅读有用文章！",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Serpmonn",
+      "logo": {"@type": "ImageObject", "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"}
+    }
+  }
+  </script>
+
+  <!-- RSS лента -->
+  <link rel="alternate" type="application/rss+xml" title="RSS новостей Serpmonn" href="/frontend/news/rss.xml">
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+</head>
+<body>
+  <!-- Контейнер для меню -->
+  <div id="menuContainer"></div>
+  
+  <!-- Основной контент страницы -->
+  <div class="page">
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/">首页</a> → 
+      <span>新闻与文章</span>
+    </div>
+
+    <!-- Заголовок раздела с рекламным баннером -->
+    <div class="news-header">
+      <div class="ad-top-banner" style="text-align:center;margin:16px 0;min-height:50px;">
+        <script async src="https://ad.mail.ru/static/ads-async.js" defer></script>
+        <ins class="mrg-tag" 
+            style="display:inline-block;"
+            data-ad-client="ad-1897960" 
+            data-ad-slot="1897960">
+        </ins>
+      </div>
+      <script>
+        (MRGtag = window.MRGtag || []).push({});
+      </script>
+      
+      <!-- Основной заголовок и подзаголовок -->
+      <h1 class="news-title">📰 新闻与文章</h1>
+      <p class="news-subtitle">了解技术、优惠码和迷你游戏指南的最新动态</p>
+
+      <!-- Статистика -->
+      <div class="news-stats">
+        <div class="stat-item">
+          <span class="stat-number">11</span>
+          <span class="stat-label">篇文章</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">5+</span>
+          <span class="stat-label">个类别</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">15+</span>
+          <span class="stat-label">个主题</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Промо-баннер с ссылками на другие разделы -->
+    <div class="promo-banner">
+      <p>立即玩<a href="/frontend/games/games.html">迷你游戏</a>或尝试<a href="/frontend/main.html">无广告搜索</a>！</p>
+    </div>
+
+    <!-- Секция RSS и социальных сетей -->
+    <div class="rss-section">
+      <h2 class="rss-title">📡 RSS订阅</h2>
+      <p class="rss-description">订阅RSS或社交媒体，不错过新文章</p>
+      <a href="/frontend/news/rss.xml" class="rss-btn" target="_blank" rel="noopener">订阅RSS</a>
+      <div class="social-subscribe">
+        <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">在Telegram订阅</a>
+        <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">在VK订阅</a>
+      </div>
+    </div>
+
+    <!-- Навигация по категориям -->
+    <div class="news-categories">
+      
+      <a class="category-link active" 
+         href="/frontend/zh-cn/news/?category=all" 
+         data-category="all">
+        全部
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/zh-cn/news/?category=updates" 
+         data-category="updates">
+        更新
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/zh-cn/news/?category=articles" 
+         data-category="articles">
+        文章
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/zh-cn/news/?category=tutorials" 
+         data-category="tutorials">
+        教程
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/zh-cn/news/?category=engineering" 
+         data-category="engineering">
+        工程
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/zh-cn/news/?category=logistics" 
+         data-category="logistics">
+        物流
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/zh-cn/news/?category=ecology" 
+         data-category="ecology">
+        生态
+      </a>
+      
+    </div>
+
+    <!-- Поиск по новостям -->
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="🔍 搜索新闻和文章..." id="searchInput">
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
+
+    <!-- Индикатор загрузки -->
+    <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+      <p>正在加载文章...</p>
+    </div>
+
+    <!-- Сетка карточек новостей -->
+    <div class="news-grid" id="newsGrid">
+      
+      <div class="news-card" data-category="tutorials" data-tags="cookie,安全,隐私,浏览器,清理,管理,互联网,跟踪器,GDPR,数据保护">
+        <div class="news-card-content">
+          <span class="news-card-category">安全</span>
+          <h3 class="news-card-title">什么是Cookie：完整的管理与安全指南</h3>
+          <p class="news-card-excerpt">关于Cookie文件的一切：类型、用途、管理和清理。如何在线保护您的隐私以及为什么清理Cookie。</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">2025年10月29日</span>
+            <span class="news-card-read-time">12分钟</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html&text=%E4%BB%80%E4%B9%88%E6%98%AFCookie%EF%BC%9A%E5%AE%8C%E6%95%B4%E7%9A%84%E7%AE%A1%E7%90%86%E4%B8%8E%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html&title=%E4%BB%80%E4%B9%88%E6%98%AFCookie%EF%BC%9A%E5%AE%8C%E6%95%B4%E7%9A%84%E7%AE%A1%E7%90%86%E4%B8%8E%E5%AE%89%E5%85%A8%E6%8C%87%E5%8D%97" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/cookies-complete-guide.html" aria-label="阅读Cookie指南"></a>
+      </div>
+      
+      <div class="news-card" data-category="tutorials" data-tags="网络,路由器,端口转发,设置,互联网,游戏,服务器,远程访问,技术,网络设置">
+        <div class="news-card-content">
+          <span class="news-card-category">教程</span>
+          <h3 class="news-card-title">路由器端口转发：2025完整指南</h3>
+          <p class="news-card-excerpt">为游戏、服务器和远程访问设置端口转发的分步指南。所有流行路由器的说明。</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">2025年10月29日</span>
+            <span class="news-card-read-time">15分钟</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html&text=%E8%B7%AF%E7%94%B1%E5%99%A8%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%EF%BC%9A2025%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html&title=%E8%B7%AF%E7%94%B1%E5%99%A8%E7%AB%AF%E5%8F%A3%E8%BD%AC%E5%8F%91%EF%BC%9A2025%E5%AE%8C%E6%95%B4%E6%8C%87%E5%8D%97" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/port-forwarding-guide.html" aria-label="阅读端口转发指南"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="smm,摘要,vk,telegram,youtube,tiktok,seo,营销">
+        <div class="news-card-content">
+          <span class="news-card-category">文章</span>
+          <h3 class="news-card-title">字符限制和摘要截断（VK/Telegram/YouTube/TikTok）</h3>
+          <p class="news-card-excerpt">完美标题和描述的限值汇总表及前后示例。了解如何提高CTR！</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">2025年9月15日</span>
+            <span class="news-card-read-time">6–9分钟</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html&text=%E5%AD%97%E7%AC%A6%E9%99%90%E5%88%B6%E5%92%8C%E6%91%98%E8%A6%81%E6%88%AA%E6%96%AD%EF%BC%88VK%2FTelegram%2FYouTube%2FTikTok%EF%BC%89" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html&title=%E5%AD%97%E7%AC%A6%E9%99%90%E5%88%B6%E5%92%8C%E6%91%98%E8%A6%81%E6%88%AA%E6%96%AD%EF%BC%88VK%2FTelegram%2FYouTube%2FTikTok%EF%BC%89" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" aria-label="阅读关于字符限制"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="indexnow,seo,站点地图,bing,yandex,索引,搜索">
+        <div class="news-card-content">
+          <span class="news-card-category">文章</span>
+          <h3 class="news-card-title">IndexNow：实践实施与技巧</h3>
+          <p class="news-card-excerpt">设置、仅更改、常见错误以及与站点地图ping的比较。使用我们的检查表加速索引！</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">2025年9月15日</span>
+            <span class="news-card-read-time">7–10分钟</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html&text=IndexNow%EF%BC%9A%E5%AE%9E%E8%B7%B5%E5%AE%9E%E6%96%BD%E4%B8%8E%E6%8A%80%E5%B7%A7" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html&title=IndexNow%EF%BC%9A%E5%AE%9E%E8%B7%B5%E5%AE%9E%E6%96%BD%E4%B8%8E%E6%8A%80%E5%B7%A7" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/indexnow-practical-guide.html" aria-label="阅读关于IndexNow"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="utm,分析,营销,跟踪,分析">
+        <div class="news-card-content">
+          <span class="news-card-category">文章</span>
+          <h3 class="news-card-title">UTM标签：完整使用指南</h3>
+          <p class="news-card-excerpt">创建和使用UTM标签进行精确流量跟踪和广告活动的综合指南。</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">2025年9月14日</span>
+            <span class="news-card-read-time">8–12分钟</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html&text=UTM%E6%A0%87%E7%AD%BE%EF%BC%9A%E5%AE%8C%E6%95%B4%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html&title=UTM%E6%A0%87%E7%AD%BE%EF%BC%9A%E5%AE%8C%E6%95%B4%E4%BD%BF%E7%94%A8%E6%8C%87%E5%8D%97" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/utm-complete-guide.html" aria-label="阅读UTM标签指南"></a>
+      </div>
+      
+      <div class="news-card" data-category="tutorials" data-tags="web,开发,编程,前端,后端,html,css,javascript">
+        <div class="news-card-content">
+          <span class="news-card-category">教程</span>
+          <h3 class="news-card-title">完整Web开发指南2025</h3>
+          <p class="news-card-excerpt">从HTML基础到高级框架。面向初学者和经验丰富的开发人员的综合指南。</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">2025年9月12日</span>
+            <span class="news-card-read-time">25–35分钟</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html&text=%E5%AE%8C%E6%95%B4Web%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%972025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html&title=%E5%AE%8C%E6%95%B4Web%E5%BC%80%E5%8F%91%E6%8C%87%E5%8D%972025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/web-development-guide.html" aria-label="阅读Web开发指南"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="web,技术,趋势,2024">
+        <div class="news-card-content">
+          <span class="news-card-category">文章</span>
+          <h3 class="news-card-title">Web技术趋势2025：现在使用什么</h3>
+          <p class="news-card-excerpt">Web开发的当前趋势、新框架和现代项目的最佳实践。</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">2025年9月10日</span>
+            <span class="news-card-read-time">12–16分钟</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/web-tech-trends-2024.html&text=Web%E6%8A%80%E6%9C%AF%E8%B6%8B%E5%8A%BF2025%EF%BC%9A%E7%8E%B0%E5%9C%A8%E4%BD%BF%E7%94%A8%E4%BB%80%E4%B9%88" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/web-tech-trends-2024.html&title=Web%E6%8A%80%E6%9C%AF%E8%B6%8B%E5%8A%BF2025%EF%BC%9A%E7%8E%B0%E5%9C%A8%E4%BD%BF%E7%94%A8%E4%BB%80%E4%B9%88" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/web-tech-trends-2024.html" aria-label="阅读关于Web技术趋势"></a>
+      </div>
+      
+      <div class="news-card" data-category="engineering" data-tags="折旧,计算,工程,财务,设备">
+        <div class="news-card-content">
+          <span class="news-card-category">工程</span>
+          <h3 class="news-card-title">如何计算设备折旧</h3>
+          <p class="news-card-excerpt">使用示例和公式计算折旧的实用指南。线性和非线性折旧方法。</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">2025年9月8日</span>
+            <span class="news-card-read-time">10–14分钟</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html&text=%E5%A6%82%E4%BD%95%E8%AE%A1%E7%AE%97%E8%AE%BE%E5%A4%87%E6%8A%98%E6%97%A7" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html&title=%E5%A6%82%E4%BD%95%E8%AE%A1%E7%AE%97%E8%AE%BE%E5%A4%87%E6%8A%98%E6%97%A7" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-depreciation.html" aria-label="阅读关于折旧计算"></a>
+      </div>
+      
+      <div class="news-card" data-category="ecology" data-tags="生态,计算,足迹,产品,可持续性">
+        <div class="news-card-content">
+          <span class="news-card-category">生态</span>
+          <h3 class="news-card-title">如何计算产品生态足迹</h3>
+          <p class="news-card-excerpt">计算商品和服务生态足迹的方法。环境影响评估的实用示例和工具。</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">2025年9月5日</span>
+            <span class="news-card-read-time">15–20分钟</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html&text=%E5%A6%82%E4%BD%95%E8%AE%A1%E7%AE%97%E4%BA%A7%E5%93%81%E7%94%9F%E6%80%81%E8%B6%B3%E8%BF%B9" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html&title=%E5%A6%82%E4%BD%95%E8%AE%A1%E7%AE%97%E4%BA%A7%E5%93%81%E7%94%9F%E6%80%81%E8%B6%B3%E8%BF%B9" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html" aria-label="阅读关于生态足迹计算"></a>
+      </div>
+      
+      <div class="news-card" data-category="updates" data-tags="更新,新闻,功能,改进,serpmonn">
+        <div class="news-card-content">
+          <span class="news-card-category">更新</span>
+          <h3 class="news-card-title">Serpmonn更新：2025年8月-9月</h3>
+          <p class="news-card-excerpt">过去一个月Serpmonn的所有新功能和改进。新工具、修复和未来计划。</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">2025年9月3日</span>
+            <span class="news-card-read-time">8–11分钟</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html&text=Serpmonn%E6%9B%B4%E6%96%B0%EF%BC%9A2025%E5%B9%B48%E6%9C%88-9%E6%9C%88" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html&title=Serpmonn%E6%9B%B4%E6%96%B0%EF%BC%9A2025%E5%B9%B48%E6%9C%88-9%E6%9C%88" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/updates-aug-25-sep-15.html" aria-label="阅读关于Serpmonn更新"></a>
+      </div>
+      
+      <div class="news-card" data-category="updates" data-tags="更新,八月,新功能,修复">
+        <div class="news-card-content">
+          <span class="news-card-category">更新</span>
+          <h3 class="news-card-title">Serpmonn更新：2025年8月</h3>
+          <p class="news-card-excerpt">8月实施的关键更新和改进。新的搜索功能和开发人员工具。</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">2025年8月17日</span>
+            <span class="news-card-read-time">6–9分钟</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html&text=Serpmonn%E6%9B%B4%E6%96%B0%EF%BC%9A2025%E5%B9%B48%E6%9C%88" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html&title=Serpmonn%E6%9B%B4%E6%96%B0%EF%BC%9A2025%E5%B9%B48%E6%9C%88" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/updates-august-17.html" aria-label="阅读关于8月更新"></a>
+      </div>
+      
+    </div>
+
+    <!-- Кнопка загрузки дополнительных новостей -->
+    <div class="load-more" id="loadMore">
+      <button class="load-more-btn">加载更多</button>
+    </div>
+  </div>
+
+  <!-- Мобильная реклама внизу экрана -->
+  <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+    <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+      <button type="button" aria-label="关闭广告" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+      <ins class="mrg-tag" 
+          style="display:inline-block;width:320px;height:50px" 
+          data-ad-client="ad-1898031"
+          data-ad-slot="1898031">
+      </ins>
+    </div>
+  </div>
+
+  <!-- Подключение JavaScript файлов -->
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <script src="/frontend/news/news.js" defer></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  
+  <!-- Скрипт для мобильной рекламы -->
+  <script>
+    (function(){
+      if (localStorage.getItem('anchor_closed')==='1') return;
+      var w = window.innerWidth || document.documentElement.clientWidth;
+      var a = document.getElementById('mobile-anchor-ad');
+      if (!a) return;
+      if (w <= 768) { a.style.display = "flex"; }
+      (window.MRGtag = window.MRGtag || []).push({});
+      if (window.visualViewport) {
+        visualViewport.addEventListener('resize', function(){
+          var h = visualViewport.height;
+          a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html lang="fi" dir="ltr">
+<head>
+  <!-- Подключение стилей -->
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/news/news.css">
+  
+  <!-- Мета-теги для SEO и социальных сетей -->
+  <meta http-equiv="Content-Language" content="fi">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serpmonn Uutiset ja Artikkelit — Teknologiat, Promo-koodit, Pelit</title>
+  <meta name="description" content="Uusimmat teknologiauutiset, promo-koodit 2025, mini-pelioppaat ja SEO. Lue hyödyllisiä artikkeleita Serpmonn.ru-sivustolla!">
+  <meta name="keywords" content="teknologiauutiset, promo-koodit 2025, online mini-pelit, SEO-vinkit, poistolaskuri, ekologinen jalanjälki, mainokseton haku">
+
+  <!-- Open Graph для соцсетей -->
+  <meta property="og:title" content="Uutiset ja Artikkelit — Serpmonn">
+  <meta property="og:description" content="Uusimmat teknologiauutiset, promo-koodit, pelioppaat ja SEO Serpmonn.ru-sivustolla">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+  <meta property="og:url" content="https://serpmonn.ru/frontend/fi/news/">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Uutiset ja Artikkelit — Serpmonn">
+  <meta name="twitter:description" content="Teknologiauutiset, promo-koodit, pelioppaat ja SEO Serpmonn.ru-sivustolla">
+  <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+  <!-- Schema.org разметка -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "📰 Uutiset ja Artikkelit",
+    "description": "Uusimmat teknologiauutiset, promo-koodit 2025, mini-pelioppaat ja SEO. Lue hyödyllisiä artikkeleita Serpmonn.ru-sivustolla!",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Serpmonn",
+      "logo": {"@type": "ImageObject", "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"}
+    }
+  }
+  </script>
+
+  <!-- RSS лента -->
+  <link rel="alternate" type="application/rss+xml" title="RSS новостей Serpmonn" href="/frontend/news/rss.xml">
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+</head>
+<body>
+  <!-- Контейнер для меню -->
+  <div id="menuContainer"></div>
+  
+  <!-- Основной контент страницы -->
+  <div class="page">
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/">Koti</a> → 
+      <span>Uutiset ja Artikkelit</span>
+    </div>
+
+    <!-- Заголовок раздела с рекламным баннером -->
+    <div class="news-header">
+      <div class="ad-top-banner" style="text-align:center;margin:16px 0;min-height:50px;">
+        <script async src="https://ad.mail.ru/static/ads-async.js" defer></script>
+        <ins class="mrg-tag" 
+            style="display:inline-block;"
+            data-ad-client="ad-1897960" 
+            data-ad-slot="1897960">
+        </ins>
+      </div>
+      <script>
+        (MRGtag = window.MRGtag || []).push({});
+      </script>
+      
+      <!-- Основной заголовок и подзаголовок -->
+      <h1 class="news-title">📰 Uutiset ja Artikkelit</h1>
+      <p class="news-subtitle">Pysy ajan tasalla teknologioista, promo-koodeista ja mini-pelioppaista</p>
+
+      <!-- Статистика -->
+      <div class="news-stats">
+        <div class="stat-item">
+          <span class="stat-number">11</span>
+          <span class="stat-label">Artikkelia</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">5+</span>
+          <span class="stat-label">Kategoriaa</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">15+</span>
+          <span class="stat-label">Teemaa</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Промо-баннер с ссылками на другие разделы -->
+    <div class="promo-banner">
+      <p>Pelaa <a href="/frontend/games/games.html">mini-pelejä</a> tai kokeile <a href="/frontend/main.html">mainostonta hakua</a> heti!</p>
+    </div>
+
+    <!-- Секция RSS и социальных сетей -->
+    <div class="rss-section">
+      <h2 class="rss-title">📡 RSS-syöte</h2>
+      <p class="rss-description">Tilaa RSS tai sosiaaliset verkostot, jotta et missaa uusia artikkeleita</p>
+      <a href="/frontend/news/rss.xml" class="rss-btn" target="_blank" rel="noopener">Tilaa RSS</a>
+      <div class="social-subscribe">
+        <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Tilaa Telegramissa</a>
+        <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Tilaa VK:ssa</a>
+      </div>
+    </div>
+
+    <!-- Навигация по категориям -->
+    <div class="news-categories">
+      
+      <a class="category-link active" 
+         href="/frontend/fi/news/?category=all" 
+         data-category="all">
+        Kaikki
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/fi/news/?category=updates" 
+         data-category="updates">
+        Päivitykset
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/fi/news/?category=articles" 
+         data-category="articles">
+        Artikkelit
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/fi/news/?category=tutorials" 
+         data-category="tutorials">
+        Oppaat
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/fi/news/?category=engineering" 
+         data-category="engineering">
+        Insinööritiede
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/fi/news/?category=logistics" 
+         data-category="logistics">
+        Logistiikka
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/fi/news/?category=ecology" 
+         data-category="ecology">
+        Ekologia
+      </a>
+      
+    </div>
+
+    <!-- Поиск по новостям -->
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="🔍 Hae uutisista ja artikkeleista..." id="searchInput">
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
+
+    <!-- Индикатор загрузки -->
+    <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+      <p>Ladataan artikkeleita...</p>
+    </div>
+
+    <!-- Сетка карточек новостей -->
+    <div class="news-grid" id="newsGrid">
+      
+      <div class="news-card" data-category="tutorials" data-tags="evästeet,cookies,turvallisuus,yksityisyys,selain,puhdistus,hallinta,internet,seuraajat,GDPR,tietosuoja">
+        <div class="news-card-content">
+          <span class="news-card-category">Turvallisuus</span>
+          <h3 class="news-card-title">Mitä evästeet ovat: Täydellinen opas hallintaan ja turvallisuuteen</h3>
+          <p class="news-card-excerpt">Kaikki evästetiedostoista: tyypit, tarkoitus, hallinta ja puhdistus. Kuinka suojata yksityisyyttäsi verkossa ja miksi puhdistaa evästeet.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">29. lokakuuta 2025</span>
+            <span class="news-card-read-time">12 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html&text=Mit%C3%A4%20ev%C3%A4steet%20ovat%3A%20T%C3%A4ydellinen%20opas%20hallintaan%20ja%20turvallisuuteen" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html&title=Mit%C3%A4%20ev%C3%A4steet%20ovat%3A%20T%C3%A4ydellinen%20opas%20hallintaan%20ja%20turvallisuuteen" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/cookies-complete-guide.html" aria-label="Lue evästeopas"></a>
+      </div>
+      
+      <div class="news-card" data-category="tutorials" data-tags="verkot,reititin,porttien edelleenlähetys,asennus,internet,pelit,palvelimet,etäkäyttö,teknologiat,verkon asetukset">
+        <div class="news-card-content">
+          <span class="news-card-category">Oppaat</span>
+          <h3 class="news-card-title">Porttien edelleenlähetys reitittimessä: Täydellinen opas 2025</h3>
+          <p class="news-card-excerpt">Vaiheittainen opas porttien edelleenlähetyksen asettamiseen peleille, palvelimille ja etäkäyttöön. Ohjeet kaikille suosituille reitittimille.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">29. lokakuuta 2025</span>
+            <span class="news-card-read-time">15 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html&text=Porttien%20edelleenl%C3%A4hetys%20reitittimess%C3%A4%3A%20T%C3%A4ydellinen%20opas%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html&title=Porttien%20edelleenl%C3%A4hetys%20reitittimess%C3%A4%3A%20T%C3%A4ydellinen%20opas%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/port-forwarding-guide.html" aria-label="Lue porttien edelleenlähetysopas"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="smm,snippetit,vk,telegram,youtube,tiktok,seo,markkinointi">
+        <div class="news-card-content">
+          <span class="news-card-category">Artikkelit</span>
+          <h3 class="news-card-title">Merkkirajoitukset ja snippetien leikkaus (VK/Telegram/YouTube/TikTok)</h3>
+          <p class="news-card-excerpt">Yhteenvetotaulukko rajoituksista ja ennen/jälkeen esimerkkejä täydellisistä otsikoista ja kuvauksista. Opi lisäämään CTR:ää!</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">15. syyskuuta 2025</span>
+            <span class="news-card-read-time">6–9 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html&text=Merkkirajoitukset%20ja%20snippetien%20leikkaus%20(VK%2FTelegram%2FYouTube%2FTikTok)" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html&title=Merkkirajoitukset%20ja%20snippetien%20leikkaus%20(VK%2FTelegram%2FYouTube%2FTikTok)" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" aria-label="Lue merkkirajoituksista"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="indexnow,seo,sivustokartta,bing,yandex,indeksointi,haku">
+        <div class="news-card-content">
+          <span class="news-card-category">Artikkelit</span>
+          <h3 class="news-card-title">IndexNow: Käytännön toteutus ja temput</h3>
+          <p class="news-card-excerpt">Asennus, changed-only, yleiset virheet ja vertailu sivustokartan pingiin. Nopeuta indeksointia tarkistuslistallamme!</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">15. syyskuuta 2025</span>
+            <span class="news-card-read-time">7–10 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html&text=IndexNow%3A%20K%C3%A4yt%C3%A4nn%C3%B6n%20toteutus%20ja%20temput" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html&title=IndexNow%3A%20K%C3%A4yt%C3%A4nn%C3%B6n%20toteutus%20ja%20temput" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/indexnow-practical-guide.html" aria-label="Lue IndexNow:sta"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="utm,analytiikka,markkinointi,seuranta,analyysi">
+        <div class="news-card-content">
+          <span class="news-card-category">Artikkelit</span>
+          <h3 class="news-card-title">UTM-tagit: Täydellinen käyttöopas</h3>
+          <p class="news-card-excerpt">Kattava opas UTM-tagien luomiseen ja käyttämiseen tarkkaan liikenteen seurantaan ja mainoskampanjoihin.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">14. syyskuuta 2025</span>
+            <span class="news-card-read-time">8–12 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html&text=UTM-tagit%3A%20T%C3%A4ydellinen%20k%C3%A4ytt%C3%B6opas" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html&title=UTM-tagit%3A%20T%C3%A4ydellinen%20k%C3%A4ytt%C3%B6opas" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/utm-complete-guide.html" aria-label="Lue UTM-tagien opas"></a>
+      </div>
+      
+      <div class="news-card" data-category="tutorials" data-tags="web,kehitys,ohjelmointi,frontend,backend,html,css,javascript">
+        <div class="news-card-content">
+          <span class="news-card-category">Oppaat</span>
+          <h3 class="news-card-title">Täydellinen verkkokehityksen opas 2025</h3>
+          <p class="news-card-excerpt">HTML-perusteista kehittyneisiin kehyksiin. Kattava opas aloittelijoille ja kokeneille kehittäjille.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">12. syyskuuta 2025</span>
+            <span class="news-card-read-time">25–35 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html&text=T%C3%A4ydellinen%20verkkokehityksen%20opas%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html&title=T%C3%A4ydellinen%20verkkokehityksen%20opas%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/web-development-guide.html" aria-label="Lue verkkokehityksen opas"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="web,teknologiat,trendit,2024">
+        <div class="news-card-content">
+          <span class="news-card-category">Artikkelit</span>
+          <h3 class="news-card-title">Verkkoteknologioiden trendit 2025: Mitä käyttää nyt</h3>
+          <p class="news-card-excerpt">Ajankohtaiset trendit verkkokehityksessä, uudet kehykset ja parhaat käytännöt moderneihin projekteihin.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">10. syyskuuta 2025</span>
+            <span class="news-card-read-time">12–16 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/web-tech-trends-2024.html&text=Verkkoteknologioiden%20trendit%202025%3A%20Mit%C3%A4%20k%C3%A4ytt%C3%A4%C3%A4%20nyt" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/web-tech-trends-2024.html&title=Verkkoteknologioiden%20trendit%202025%3A%20Mit%C3%A4%20k%C3%A4ytt%C3%A4%C3%A4%20nyt" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/web-tech-trends-2024.html" aria-label="Lue verkkoteknologioiden trendeistä"></a>
+      </div>
+      
+      <div class="news-card" data-category="engineering" data-tags="poistot,laskenta,insinööritiede,rahoitus,laitteet">
+        <div class="news-card-content">
+          <span class="news-card-category">Insinööritiede</span>
+          <h3 class="news-card-title">Kuinka laskea laitteiden poistot</h3>
+          <p class="news-card-excerpt">Käytännön opas poistojen laskentaan esimerkkien ja kaavojen kanssa. Lineaariset ja epälineaariset poistomenetelmät.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">8. syyskuuta 2025</span>
+            <span class="news-card-read-time">10–14 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html&text=Kuinka%20laskea%20laitteiden%20poistot" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html&title=Kuinka%20laskea%20laitteiden%20poistot" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-depreciation.html" aria-label="Lue poistolaskennasta"></a>
+      </div>
+      
+      <div class="news-card" data-category="ecology" data-tags="ekologia,laskenta,jalanjälki,tuotteet,kestävyys">
+        <div class="news-card-content">
+          <span class="news-card-category">Ekologia</span>
+          <h3 class="news-card-title">Kuinka laskea tuotteiden ekologinen jalanjälki</h3>
+          <p class="news-card-excerpt">Menetelmät tavaroiden ja palveluiden ekologisen jalanjäljen laskemiseen. Käytännön esimerkkejä ja työkaluja ympäristövaikutusten arviointiin.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">5. syyskuuta 2025</span>
+            <span class="news-card-read-time">15–20 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html&text=Kuinka%20laskea%20tuotteiden%20ekologinen%20jalanj%C3%A4lki" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html&title=Kuinka%20laskea%20tuotteiden%20ekologinen%20jalanj%C3%A4lki" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html" aria-label="Lue ekologisen jalanjäljen laskennasta"></a>
+      </div>
+      
+      <div class="news-card" data-category="updates" data-tags="päivitykset,uutiset,toiminnot,parannukset,serpmonn">
+        <div class="news-card-content">
+          <span class="news-card-category">Päivitykset</span>
+          <h3 class="news-card-title">Serpmonn-päivitykset: Elo-syyskuu 2025</h3>
+          <p class="news-card-excerpt">Kaikki uudet toiminnot ja parannukset Serpmonnissa viime kuussa. Uudet työkalut, korjaukset ja tulevat suunnitelmat.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">3. syyskuuta 2025</span>
+            <span class="news-card-read-time">8–11 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html&text=Serpmonn-p%C3%A4ivitykset%3A%20Elo-syyskuu%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html&title=Serpmonn-p%C3%A4ivitykset%3A%20Elo-syyskuu%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/updates-aug-25-sep-15.html" aria-label="Lue Serpmonn-päivityksistä"></a>
+      </div>
+      
+      <div class="news-card" data-category="updates" data-tags="päivitykset,elokuu,uudet toiminnot,korjaukset">
+        <div class="news-card-content">
+          <span class="news-card-category">Päivitykset</span>
+          <h3 class="news-card-title">Serpmonn-päivitykset: Elokuu 2025</h3>
+          <p class="news-card-excerpt">Tärkeimmät päivitykset ja parannukset, jotka toteutettiin elokuussa. Uudet hakumahdollisuudet ja työkalut kehittäjille.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">17. elokuuta 2025</span>
+            <span class="news-card-read-time">6–9 min</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html&text=Serpmonn-p%C3%A4ivitykset%3A%20Elokuu%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html&title=Serpmonn-p%C3%A4ivitykset%3A%20Elokuu%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/updates-august-17.html" aria-label="Lue elokuun päivityksistä"></a>
+      </div>
+      
+    </div>
+
+    <!-- Кнопка загрузки дополнительных новостей -->
+    <div class="load-more" id="loadMore">
+      <button class="load-more-btn">Lataa lisää</button>
+    </div>
+  </div>
+
+  <!-- Мобильная реклама внизу экрана -->
+  <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+    <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+      <button type="button" aria-label="Sulje mainos" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+      <ins class="mrg-tag" 
+          style="display:inline-block;width:320px;height:50px" 
+          data-ad-client="ad-1898031"
+          data-ad-slot="1898031">
+      </ins>
+    </div>
+  </div>
+
+  <!-- Подключение JavaScript файлов -->
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <script src="/frontend/news/news.js" defer></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  
+  <!-- Скрипт для мобильной рекламы -->
+  <script>
+    (function(){
+      if (localStorage.getItem('anchor_closed')==='1') return;
+      var w = window.innerWidth || document.documentElement.clientWidth;
+      var a = document.getElementById('mobile-anchor-ad');
+      if (!a) return;
+      if (w <= 768) { a.style.display = "flex"; }
+      (window.MRGtag = window.MRGtag || []).push({});
+      if (window.visualViewport) {
+        visualViewport.addEventListener('resize', function(){
+          var h = visualViewport.height;
+          a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

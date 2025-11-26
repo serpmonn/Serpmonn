@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <!-- Подключение стилей -->
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/news/news.css">
+  
+  <!-- Мета-теги для SEO и социальных сетей -->
+  <meta http-equiv="Content-Language" content="he">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serpmonn חדשות ומאמרים — טכנולוגיות, קודי קידום, משחקים</title>
+  <meta name="description" content="חדשות טכנולוגיה אחרונות, קודי קידום 2025, מדריכי מיני-משחקים ו-SEO. קרא מאמרים שימושיים ב-Serpmonn.ru!">
+  <meta name="keywords" content="חדשות טכנולוגיה, קודי קידום 2025, מיני-משחקים מקוונים, טיפים ל-SEO, מחשבון פחת, טביעת רגל אקולוגית, חיפוש ללא פרסומות">
+
+  <!-- Open Graph для соцсетей -->
+  <meta property="og:title" content="חדשות ומאמרים — Serpmonn">
+  <meta property="og:description" content="חדשות טכנולוגיה אחרונות, קודי קידום, מדריכי משחקים ו-SEO ב-Serpmonn.ru">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+  <meta property="og:url" content="https://serpmonn.ru/frontend/he/news/">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="חדשות ומאמרים — Serpmonn">
+  <meta name="twitter:description" content="חדשות טכנולוגיה, קודי קידום, מדריכי משחקים ו-SEO ב-Serpmonn.ru">
+  <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+  <!-- Schema.org разметка -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "📰 חדשות ומאמרים",
+    "description": "חדשות טכנולוגיה אחרונות, קודי קידום 2025, מדריכי מיני-משחקים ו-SEO. קרא מאמרים שימושיים ב-Serpmonn.ru!",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Serpmonn",
+      "logo": {"@type": "ImageObject", "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"}
+    }
+  }
+  </script>
+
+  <!-- RSS лента -->
+  <link rel="alternate" type="application/rss+xml" title="RSS новостей Serpmonn" href="/frontend/news/rss.xml">
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+</head>
+<body>
+  <!-- Контейнер для меню -->
+  <div id="menuContainer"></div>
+  
+  <!-- Основной контент страницы -->
+  <div class="page">
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/">בית</a> → 
+      <span>חדשות ומאמרים</span>
+    </div>
+
+    <!-- Заголовок раздела с рекламным баннером -->
+    <div class="news-header">
+      <div class="ad-top-banner" style="text-align:center;margin:16px 0;min-height:50px;">
+        <script async src="https://ad.mail.ru/static/ads-async.js" defer></script>
+        <ins class="mrg-tag" 
+            style="display:inline-block;"
+            data-ad-client="ad-1897960" 
+            data-ad-slot="1897960">
+        </ins>
+      </div>
+      <script>
+        (MRGtag = window.MRGtag || []).push({});
+      </script>
+      
+      <!-- Основной заголовок и подзаголовок -->
+      <h1 class="news-title">📰 חדשות ומאמרים</h1>
+      <p class="news-subtitle">הישאר מעודכן עם טכנולוגיות, קודי קידום ומדריכי מיני-משחקים</p>
+
+      <!-- Статистика -->
+      <div class="news-stats">
+        <div class="stat-item">
+          <span class="stat-number">11</span>
+          <span class="stat-label">מאמרים</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">5+</span>
+          <span class="stat-label">קטגוריות</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">15+</span>
+          <span class="stat-label">נושאים</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Промо-баннер с ссылками на другие разделы -->
+    <div class="promo-banner">
+      <p>שחק <a href="/frontend/games/games.html">מיני-משחקים</a> או נסה <a href="/frontend/main.html">חיפוש ללא פרסומות</a> עכשיו!</p>
+    </div>
+
+    <!-- Секция RSS и социальных сетей -->
+    <div class="rss-section">
+      <h2 class="rss-title">📡 הזנת RSS</h2>
+      <p class="rss-description">הירשם ל-RSS או לרשתות חברתיות כדי לא לפספס מאמרים חדשים</p>
+      <a href="/frontend/news/rss.xml" class="rss-btn" target="_blank" rel="noopener">הירשם ל-RSS</a>
+      <div class="social-subscribe">
+        <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">הירשם ב-Telegram</a>
+        <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">הירשם ב-VK</a>
+      </div>
+    </div>
+
+    <!-- Навигация по категориям -->
+    <div class="news-categories">
+      
+      <a class="category-link active" 
+         href="/frontend/he/news/?category=all" 
+         data-category="all">
+        הכל
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/he/news/?category=updates" 
+         data-category="updates">
+        עדכונים
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/he/news/?category=articles" 
+         data-category="articles">
+        מאמרים
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/he/news/?category=tutorials" 
+         data-category="tutorials">
+        מדריכים
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/he/news/?category=engineering" 
+         data-category="engineering">
+        הנדסה
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/he/news/?category=logistics" 
+         data-category="logistics">
+        לוגיסטיקה
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/he/news/?category=ecology" 
+         data-category="ecology">
+        אקולוגיה
+      </a>
+      
+    </div>
+
+    <!-- Поиск по новостям -->
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="🔍 חיפוש בחדשות ומאמרים..." id="searchInput">
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
+
+    <!-- Индикатор загрузки -->
+    <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+      <p>טוען מאמרים...</p>
+    </div>
+
+    <!-- Сетка карточек новостей -->
+    <div class="news-grid" id="newsGrid">
+      
+      <div class="news-card" data-category="tutorials" data-tags="cookies,אבטחה,פרטיות,דפדפן,ניקוי,ניהול,אינטרנט,מעקב,GDPR,הגנת נתונים">
+        <div class="news-card-content">
+          <span class="news-card-category">אבטחה</span>
+          <h3 class="news-card-title">מה הם cookies: מדריך מלא לניהול ואבטחה</h3>
+          <p class="news-card-excerpt">הכל על קבצי cookie: סוגים, מטרה, ניהול וניקוי. כיצד להגן על הפרטיות שלך באינטרנט ולמה לנקות cookies.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">29 באוקטובר 2025</span>
+            <span class="news-card-read-time">12 דקות</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html&text=%D7%9E%D7%94%20%D7%94%D7%9D%20cookies%3A%20%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%9E%D7%9C%D7%90%20%D7%9C%D7%A0%D7%99%D7%94%D7%95%D7%9C%20%D7%95%D7%90%D7%91%D7%98%D7%97%D7%94" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html&title=%D7%9E%D7%94%20%D7%94%D7%9D%20cookies%3A%20%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%9E%D7%9C%D7%90%20%D7%9C%D7%A0%D7%99%D7%94%D7%95%D7%9C%20%D7%95%D7%90%D7%91%D7%98%D7%97%D7%94" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/cookies-complete-guide.html" aria-label="קרא מדריך cookies"></a>
+      </div>
+      
+      <div class="news-card" data-category="tutorials" data-tags="רשתות,נתב,הפנית פורטים,הגדרה,אינטרנט,משחקים,שרתים,גישה מרחוק,טכנולוגיות,הגדרות רשת">
+        <div class="news-card-content">
+          <span class="news-card-category">מדריכים</span>
+          <h3 class="news-card-title">הפנית פורטים בנתב: מדריך מלא 2025</h3>
+          <p class="news-card-excerpt">מדריך שלב אחר שלב להגדרת הפנית פורטים עבור משחקים, שרתים וגישה מרחוק. הוראות לכל הנתבים הפופולריים.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">29 באוקטובר 2025</span>
+            <span class="news-card-read-time">15 דקות</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html&text=%D7%94%D7%A4%D7%A0%D7%99%D7%AA%20%D7%A4%D7%95%D7%A8%D7%98%D7%99%D7%9D%20%D7%91%D7%A0%D7%AA%D7%91%3A%20%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%9E%D7%9C%D7%90%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html&title=%D7%94%D7%A4%D7%A0%D7%99%D7%AA%20%D7%A4%D7%95%D7%A8%D7%98%D7%99%D7%9D%20%D7%91%D7%A0%D7%AA%D7%91%3A%20%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%9E%D7%9C%D7%90%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/port-forwarding-guide.html" aria-label="קרא מדריך הפנית פורטים"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="smm,snippets,vk,telegram,youtube,tiktok,seo,שיווק">
+        <div class="news-card-content">
+          <span class="news-card-category">מאמרים</span>
+          <h3 class="news-card-title">מגבלות תווים וגיזום snippets (VK/Telegram/YouTube/TikTok)</h3>
+          <p class="news-card-excerpt">טבלת סיכום של מגבלות ודוגמאות לפני/אחרי לכותרות ותיאורים מושלמים. למד כיצד להגדיל CTR!</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">15 בספטמבר 2025</span>
+            <span class="news-card-read-time">6–9 דקות</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html&text=%D7%9E%D7%92%D7%91%D7%9C%D7%95%D7%AA%20%D7%AA%D7%95%D7%95%D7%99%D7%9D%20%D7%95%D7%92%D7%99%D7%96%D7%95%D7%9D%20snippets%20(VK%2FTelegram%2FYouTube%2FTikTok)" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html&title=%D7%9E%D7%92%D7%91%D7%9C%D7%95%D7%AA%20%D7%AA%D7%95%D7%95%D7%99%D7%9D%20%D7%95%D7%92%D7%99%D7%96%D7%95%D7%9D%20snippets%20(VK%2FTelegram%2FYouTube%2FTikTok)" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" aria-label="קרא על מגבלות תווים"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="indexnow,seo,sitemap,bing,yandex,אינדוקס,חיפוש">
+        <div class="news-card-content">
+          <span class="news-card-category">מאמרים</span>
+          <h3 class="news-card-title">IndexNow: יישום מעשי וטריקים</h3>
+          <p class="news-card-excerpt">הגדרה, changed-only, שגיאות נפוצות והשוואה ל-ping של sitemap. האיץ אינדוקס עם רשימת הבדיקה שלנו!</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">15 בספטמבר 2025</span>
+            <span class="news-card-read-time">7–10 דקות</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html&text=IndexNow%3A%20%D7%99%D7%99%D7%A9%D7%95%D7%9D%20%D7%9E%D7%A2%D7%A9%D7%99%20%D7%95%D7%98%D7%A8%D7%99%D7%A7%D7%99%D7%9D" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html&title=IndexNow%3A%20%D7%99%D7%99%D7%A9%D7%95%D7%9D%20%D7%9E%D7%A2%D7%A9%D7%99%20%D7%95%D7%98%D7%A8%D7%99%D7%A7%D7%99%D7%9D" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/indexnow-practical-guide.html" aria-label="קרא על IndexNow"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="utm,אנליטיקה,שיווק,מעקב,ניתוח">
+        <div class="news-card-content">
+          <span class="news-card-category">מאמרים</span>
+          <h3 class="news-card-title">תגי UTM: מדריך שימוש מלא</h3>
+          <p class="news-card-excerpt">מדריך מקיף ליצירה ושימוש בתגי UTM למעקב תעבורה מדויק וקמפיינים פרסומיים.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">14 בספטמבר 2025</span>
+            <span class="news-card-read-time">8–12 דקות</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html&text=%D7%AA%D7%92%D7%99%20UTM%3A%20%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%9E%D7%9C%D7%90" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html&title=%D7%AA%D7%92%D7%99%20UTM%3A%20%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%A9%D7%99%D7%9E%D7%95%D7%A9%20%D7%9E%D7%9C%D7%90" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/utm-complete-guide.html" aria-label="קרא מדריך תגי UTM"></a>
+      </div>
+      
+      <div class="news-card" data-category="tutorials" data-tags="web,פיתוח,תכנות,frontend,backend,html,css,javascript">
+        <div class="news-card-content">
+          <span class="news-card-category">מדריכים</span>
+          <h3 class="news-card-title">מדריך פיתוח ווב מלא 2025</h3>
+          <p class="news-card-excerpt">מבסיסי HTML למסגרות מתקדמות. מדריך מקיף למתחילים ומפתחים מנוסים.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">12 בספטמבר 2025</span>
+            <span class="news-card-read-time">25–35 דקות</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html&text=%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%A4%D7%99%D7%AA%D7%95%D7%97%20%D7%95%D7%95%D7%91%20%D7%9E%D7%9C%D7%90%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html&title=%D7%9E%D7%93%D7%A8%D7%99%D7%9A%20%D7%A4%D7%99%D7%AA%D7%95%D7%97%20%D7%95%D7%95%D7%91%20%D7%9E%D7%9C%D7%90%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/web-development-guide.html" aria-label="קרא מדריך פיתוח ווב"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="web,טכנולוגיות,מגמות,2024">
+        <div class="news-card-content">
+          <span class="news-card-category">מאמרים</span>
+          <h3 class="news-card-title">מגמות טכנולוגיות ווב 2025: מה להשתמש עכשיו</h3>
+          <p class="news-card-excerpt">מגמות נוכחיות בפיתוח ווב, מסגרות חדשות ושיטות עבודה מומלצות לפרויקטים מודרניים.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">10 בספטמבר 2025</span>
+            <span class="news-card-read-time">12–16 דקות</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/web-tech-trends-2024.html&text=%D7%9E%D7%92%D7%9E%D7%95%D7%AA%20%D7%98%D7%9B%D7%A0%D7%95%D7%9C%D7%95%D7%92%D7%99%D7%95%D7%AA%20%D7%95%D7%95%D7%91%202025%3A%20%D7%9E%D7%94%20%D7%9C%D7%94%D7%A9%D7%AA%D7%9E%D7%A9%20%D7%A2%D7%9B%D7%A9%D7%99%D7%95" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/web-tech-trends-2024.html&title=%D7%9E%D7%92%D7%9E%D7%95%D7%AA%20%D7%98%D7%9B%D7%A0%D7%95%D7%9C%D7%95%D7%92%D7%99%D7%95%D7%AA%20%D7%95%D7%95%D7%91%202025%3A%20%D7%9E%D7%94%20%D7%9C%D7%94%D7%A9%D7%AA%D7%9E%D7%A9%20%D7%A2%D7%9B%D7%A9%D7%99%D7%95" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/web-tech-trends-2024.html" aria-label="קרא על מגמות טכנולוגיות ווב"></a>
+      </div>
+      
+      <div class="news-card" data-category="engineering" data-tags="פחת,חישוב,הנדסה,פיננסים,ציוד">
+        <div class="news-card-content">
+          <span class="news-card-category">הנדסה</span>
+          <h3 class="news-card-title">כיצד לחשב פחת ציוד</h3>
+          <p class="news-card-excerpt">מדריך מעשי לחישוב פחת עם דוגמאות ונוסחאות. שיטות פחת לינאריות ולא לינאריות.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">8 בספטמבר 2025</span>
+            <span class="news-card-read-time">10–14 דקות</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html&text=%D7%9B%D7%99%D7%A6%D7%93%20%D7%9C%D7%97%D7%A9%D7%91%20%D7%A4%D7%97%D7%AA%20%D7%A6%D7%99%D7%95%D7%93" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html&title=%D7%9B%D7%99%D7%A6%D7%93%20%D7%9C%D7%97%D7%A9%D7%91%20%D7%A4%D7%97%D7%AA%20%D7%A6%D7%99%D7%95%D7%93" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-depreciation.html" aria-label="קרא על חישוב פחת"></a>
+      </div>
+      
+      <div class="news-card" data-category="ecology" data-tags="אקולוגיה,חישוב,טביעת רגל,מוצרים,קיימות">
+        <div class="news-card-content">
+          <span class="news-card-category">אקולוגיה</span>
+          <h3 class="news-card-title">כיצד לחשב טביעת רגל אקולוגית של מוצרים</h3>
+          <p class="news-card-excerpt">מתודולוגיות לחישוב טביעת הרגל האקולוגית של סחורות ושירותים. דוגמאות מעשיות וכלים להערכת השפעה סביבתית.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">5 בספטמבר 2025</span>
+            <span class="news-card-read-time">15–20 דקות</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html&text=%D7%9B%D7%99%D7%A6%D7%93%20%D7%9C%D7%97%D7%A9%D7%91%20%D7%98%D7%91%D7%99%D7%A2%D7%AA%20%D7%A8%D7%92%D7%9C%20%D7%90%D7%A7%D7%95%D7%9C%D7%95%D7%92%D7%99%D7%AA%20%D7%A9%D7%9C%20%D7%9E%D7%95%D7%A6%D7%A8%D7%99%D7%9D" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html&title=%D7%9B%D7%99%D7%A6%D7%93%20%D7%9C%D7%97%D7%A9%D7%91%20%D7%98%D7%91%D7%99%D7%A2%D7%AA%20%D7%A8%D7%92%D7%9C%20%D7%90%D7%A7%D7%95%D7%9C%D7%95%D7%92%D7%99%D7%AA%20%D7%A9%D7%9C%20%D7%9E%D7%95%D7%A6%D7%A8%D7%99%D7%9D" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html" aria-label="קרא על חישוב טביעת רגל אקולוגית"></a>
+      </div>
+      
+      <div class="news-card" data-category="updates" data-tags="עדכונים,חדשות,תכונות,שיפורים,serpmonn">
+        <div class="news-card-content">
+          <span class="news-card-category">עדכונים</span>
+          <h3 class="news-card-title">עדכוני Serpmonn: אוגוסט-ספטמבר 2025</h3>
+          <p class="news-card-excerpt">כל התכונות והשיפורים החדשים ב-Serpmonn בחודש האחרון. כלים חדשים, תיקונים ותוכניות עתידיות.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">3 בספטמבר 2025</span>
+            <span class="news-card-read-time">8–11 דקות</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html&text=%D7%A2%D7%93%D7%9B%D7%95%D7%A0%D7%99%20Serpmonn%3A%20%D7%90%D7%95%D7%92%D7%95%D7%A1%D7%98-%D7%A1%D7%A4%D7%98%D7%9E%D7%91%D7%A8%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html&title=%D7%A2%D7%93%D7%9B%D7%95%D7%A0%D7%99%20Serpmonn%3A%20%D7%90%D7%95%D7%92%D7%95%D7%A1%D7%98-%D7%A1%D7%A4%D7%98%D7%9E%D7%91%D7%A8%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/updates-aug-25-sep-15.html" aria-label="קרא על עדכוני Serpmonn"></a>
+      </div>
+      
+      <div class="news-card" data-category="updates" data-tags="עדכונים,אוגוסט,תכונות חדשות,תיקונים">
+        <div class="news-card-content">
+          <span class="news-card-category">עדכונים</span>
+          <h3 class="news-card-title">עדכוני Serpmonn: אוגוסט 2025</h3>
+          <p class="news-card-excerpt">עדכונים ושיפורים מרכזיים שהוטמעו באוגוסט. יכולות חיפוש חדשות וכלים למפתחים.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">17 באוגוסט 2025</span>
+            <span class="news-card-read-time">6–9 דקות</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html&text=%D7%A2%D7%93%D7%9B%D7%95%D7%A0%D7%99%20Serpmonn%3A%20%D7%90%D7%95%D7%92%D7%95%D7%A1%D7%98%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html&title=%D7%A2%D7%93%D7%9B%D7%95%D7%A0%D7%99%20Serpmonn%3A%20%D7%90%D7%95%D7%92%D7%95%D7%A1%D7%98%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/updates-august-17.html" aria-label="קרא על עדכוני אוגוסט"></a>
+      </div>
+      
+    </div>
+
+    <!-- Кнопка загрузки дополнительных новостей -->
+    <div class="load-more" id="loadMore">
+      <button class="load-more-btn">טען עוד</button>
+    </div>
+  </div>
+
+  <!-- Мобильная реклама внизу экрана -->
+  <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+    <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+      <button type="button" aria-label="סגור פרסומת" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+      <ins class="mrg-tag" 
+          style="display:inline-block;width:320px;height:50px" 
+          data-ad-client="ad-1898031"
+          data-ad-slot="1898031">
+      </ins>
+    </div>
+  </div>
+
+  <!-- Подключение JavaScript файлов -->
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <script src="/frontend/news/news.js" defer></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  
+  <!-- Скрипт для мобильной рекламы -->
+  <script>
+    (function(){
+      if (localStorage.getItem('anchor_closed')==='1') return;
+      var w = window.innerWidth || document.documentElement.clientWidth;
+      var a = document.getElementById('mobile-anchor-ad');
+      if (!a) return;
+      if (w <= 768) { a.style.display = "flex"; }
+      (window.MRGtag = window.MRGtag || []).push({});
+      if (window.visualViewport) {
+        visualViewport.addEventListener('resize', function(){
+          var h = visualViewport.height;
+          a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

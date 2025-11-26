@@ -1,0 +1,406 @@
+
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+  <!-- Подключение стилей -->
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/news/news.css">
+  
+  <!-- Мета-теги для SEO и социальных сетей -->
+  <meta http-equiv="Content-Language" content="uz">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Serpmonn Yangiliklar va Maqolalar — Texnologiya, Promo Kodlar, Oʻyinlar</title>
+  <meta name="description" content="Soʻnggi texnologiya yangiliklari, 2025 promo kodlari, mini-oʻyin qoʻllanmalari va SEO. Serpmonn.ru saytida foydali maqolalar oʻqing!">
+  <meta name="keywords" content="texnologiya yangiliklari, 2025 promo kodlari, onlayn mini-oʻyinlar, SEO maslahatlari, amortizatsiya kalkulyatori, ekologik iz, reklamasiz qidiruv">
+
+  <!-- Open Graph для соцсетей -->
+  <meta property="og:title" content="Yangiliklar va Maqolalar — Serpmonn">
+  <meta property="og:description" content="Soʻnggi texnologiya yangiliklari, promo kodlar, oʻyin qoʻllanmalari va SEO Serpmonn.ru saytida">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+  <meta property="og:url" content="https://serpmonn.ru/frontend/uz/news/">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Yangiliklar va Maqolalar — Serpmonn">
+  <meta name="twitter:description" content="Texnologiya yangiliklari, promo kodlar, oʻyin qoʻllanmalari va SEO Serpmonn.ru saytida">
+  <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+  <!-- Schema.org разметка -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "📰 Yangiliklar va Maqolalar",
+    "description": "Soʻnggi texnologiya yangiliklari, 2025 promo kodlari, mini-oʻyin qoʻllanmalari va SEO. Serpmonn.ru saytida foydali maqolalar oʻqing!",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Serpmonn",
+      "logo": {"@type": "ImageObject", "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"}
+    }
+  }
+  </script>
+
+  <!-- RSS лента -->
+  <link rel="alternate" type="application/rss+xml" title="RSS новостей Serpmonn" href="/frontend/news/rss.xml">
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+</head>
+<body>
+  <!-- Контейнер для меню -->
+  <div id="menuContainer"></div>
+  
+  <!-- Основной контент страницы -->
+  <div class="page">
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/">Bosh sahifa</a> → 
+      <span>Yangiliklar va Maqolalar</span>
+    </div>
+
+    <!-- Заголовок раздела с рекламным баннером -->
+    <div class="news-header">
+      <div class="ad-top-banner" style="text-align:center;margin:16px 0;min-height:50px;">
+        <script async src="https://ad.mail.ru/static/ads-async.js" defer></script>
+        <ins class="mrg-tag" 
+            style="display:inline-block;"
+            data-ad-client="ad-1897960" 
+            data-ad-slot="1897960">
+        </ins>
+      </div>
+      <script>
+        (MRGtag = window.MRGtag || []).push({});
+      </script>
+      
+      <!-- Основной заголовок и подзаголовок -->
+      <h1 class="news-title">📰 Yangiliklar va Maqolalar</h1>
+      <p class="news-subtitle">Texnologiya, promo kodlar va mini-oʻyin qoʻllanmalari bilan yangilanishlardan xabardor boʻling</p>
+
+      <!-- Статистика -->
+      <div class="news-stats">
+        <div class="stat-item">
+          <span class="stat-number">11</span>
+          <span class="stat-label">Maqolalar</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">5+</span>
+          <span class="stat-label">Kategoriyalar</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">15+</span>
+          <span class="stat-label">Mavzular</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Промо-баннер с ссылками на другие разделы -->
+    <div class="promo-banner">
+      <p><a href="/frontend/games/games.html">Mini-oʻyinlar</a> oʻynang yoki <a href="/frontend/main.html">reklamasiz qidiruv</a>ni hozir sinab koʻring!</p>
+    </div>
+
+    <!-- Секция RSS и социальных сетей -->
+    <div class="rss-section">
+      <h2 class="rss-title">📡 RSS Oqimi</h2>
+      <p class="rss-description">Yangi maqolalarni qoʻldan boy bermaslik uchun RSS yoki ijtimoiy tarmoqlarga obuna boʻling</p>
+      <a href="/frontend/news/rss.xml" class="rss-btn" target="_blank" rel="noopener">RSS ga Obuna Boʻlish</a>
+      <div class="social-subscribe">
+        <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Telegramda Obuna Boʻlish</a>
+        <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">VK da Obuna Boʻlish</a>
+      </div>
+    </div>
+
+    <!-- Навигация по категориям -->
+    <div class="news-categories">
+      
+      <a class="category-link active" 
+         href="/frontend/uz/news/?category=all" 
+         data-category="all">
+        Hammasi
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/uz/news/?category=updates" 
+         data-category="updates">
+        Yangilanishlar
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/uz/news/?category=articles" 
+         data-category="articles">
+        Maqolalar
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/uz/news/?category=tutorials" 
+         data-category="tutorials">
+        Qoʻllanmalar
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/uz/news/?category=engineering" 
+         data-category="engineering">
+        Muhandislik
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/uz/news/?category=logistics" 
+         data-category="logistics">
+        Logistika
+      </a>
+      
+      <a class="category-link " 
+         href="/frontend/uz/news/?category=ecology" 
+         data-category="ecology">
+        Ekologiya
+      </a>
+      
+    </div>
+
+    <!-- Поиск по новостям -->
+    <div class="search-box">
+      <input type="text" class="search-input" placeholder="🔍 Yangiliklar va maqolalarda qidirish..." id="searchInput">
+      <div class="search-suggestions" id="searchSuggestions"></div>
+    </div>
+
+    <!-- Индикатор загрузки -->
+    <div class="loading-indicator" id="loadingIndicator" style="display: none;">
+      <p>Maqolalar yuklanmoqda...</p>
+    </div>
+
+    <!-- Сетка карточек новостей -->
+    <div class="news-grid" id="newsGrid">
+      
+      <div class="news-card" data-category="tutorials" data-tags="kukilar,xavfsizlik,maxfiylik,brauzer,tozalash,boshqarish,internet,trackerlar,GDPR,maʼlumotlarni himoya qilish">
+        <div class="news-card-content">
+          <span class="news-card-category">Xavfsizlik</span>
+          <h3 class="news-card-title">Kukilar nima: Boshqarish va xavfsizlik boʻyicha toʻliq qoʻllanma</h3>
+          <p class="news-card-excerpt">Kuki fayllari haqida hamma narsa: turlari, maqsadi, boshqarish va tozalash. Onlayn maxfiylikni qanday himoya qilish kerak va nima uchun kukilarni tozalash kerak.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">29 Oktyabr 2025</span>
+            <span class="news-card-read-time">12 daq</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html&text=Kukilar%20nima%3A%20Boshqarish%20va%20xavfsizlik%20bo%CA%BByicha%20to%CA%BBliq%20qo%CA%BBllanma" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html&title=Kukilar%20nima%3A%20Boshqarish%20va%20xavfsizlik%20bo%CA%BByicha%20to%CA%BBliq%20qo%CA%BBllanma" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/cookies-complete-guide.html" aria-label="Kuki qoʻllanmasini oʻqing"></a>
+      </div>
+      
+      <div class="news-card" data-category="tutorials" data-tags="tarmoqlar,router,port yoʻnaltirish,sozlash,internet,oʻyinlar,serverlar,masofaviy kirish,texnologiya,tarmoq sozlamalari">
+        <div class="news-card-content">
+          <span class="news-card-category">Qoʻllanma</span>
+          <h3 class="news-card-title">Routerda port yoʻnaltirish: Toʻliq qoʻllanma 2025</h3>
+          <p class="news-card-excerpt">Oʻyinlar, serverlar va masofaviy kirish uchun port yoʻnaltirishni sozlash boʻyicha bosqichma-bosqich qoʻllanma. Barcha mashhur routerlar uchun koʻrsatmalar.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">29 Oktyabr 2025</span>
+            <span class="news-card-read-time">15 daq</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html&text=Routerda%20port%20yo%CA%BBnaltirish%3A%20To%CA%BBliq%20qo%CA%BBllanma%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html&title=Routerda%20port%20yo%CA%BBnaltirish%3A%20To%CA%BBliq%20qo%CA%BBllanma%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/port-forwarding-guide.html" aria-label="Port yoʻnaltirish qoʻllanmasini oʻqing"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="smm,snippet,vk,telegram,youtube,tiktok,seo,marketing">
+        <div class="news-card-content">
+          <span class="news-card-category">Maqolalar</span>
+          <h3 class="news-card-title">Belgilar cheklovi va snippet kesish (VK/Telegram/YouTube/TikTok)</h3>
+          <p class="news-card-excerpt">Mukammal sarlavhalar va tavsiflar uchun cheklovlar jadvali va oldin/keyin misollari. CTR ni qanday oshirishni oʻrganing!</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">15 Sentabr 2025</span>
+            <span class="news-card-read-time">6–9 daq</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html&text=Belgilar%20cheklovi%20va%20snippet%20kesish%20(VK%2FTelegram%2FYouTube%2FTikTok)" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html&title=Belgilar%20cheklovi%20va%20snippet%20kesish%20(VK%2FTelegram%2FYouTube%2FTikTok)" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" aria-label="Belgilar cheklovi haqida oʻqing"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="indexnow,seo,sayt xaritasi,bing,yandex,indekslash,qidiruv">
+        <div class="news-card-content">
+          <span class="news-card-category">Maqolalar</span>
+          <h3 class="news-card-title">IndexNow: Amaliy amalga oshirish va fokuslar</h3>
+          <p class="news-card-excerpt">Sozlash, faqat oʻzgartirilgan, keng tarqalgan xatolar va sayt xaritasi ping bilan solishtirish. Bizning tekshiruv roʻyxatimiz bilan indekslashni tezlashtiring!</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">15 Sentabr 2025</span>
+            <span class="news-card-read-time">7–10 daq</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html&text=IndexNow%3A%20Amaliy%20amalga%20oshirish%20va%20fokuslar" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/indexnow-practical-guide.html&title=IndexNow%3A%20Amaliy%20amalga%20oshirish%20va%20fokuslar" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/indexnow-practical-guide.html" aria-label="IndexNow haqida oʻqing"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="utm,analitika,marketing,kuzatish,tahlil">
+        <div class="news-card-content">
+          <span class="news-card-category">Maqolalar</span>
+          <h3 class="news-card-title">UTM teglari: Toʻliq foydalanish qoʻllanmasi</h3>
+          <p class="news-card-excerpt">Aniq trafik kuzatish va reklama kampaniyalari uchun UTM teglarini yaratish va foydalanish boʻyicha keng qamrovli qoʻllanma.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">14 Sentabr 2025</span>
+            <span class="news-card-read-time">8–12 daq</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html&text=UTM%20teglari%3A%20To%CA%BBliq%20foydalanish%20qo%CA%BBllanmasi" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/utm-complete-guide.html&title=UTM%20teglari%3A%20To%CA%BBliq%20foydalanish%20qo%CA%BBllanmasi" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/utm-complete-guide.html" aria-label="UTM teglari qoʻllanmasini oʻqing"></a>
+      </div>
+      
+      <div class="news-card" data-category="tutorials" data-tags="veb,dasturlash,dasturlash,frontend,backend,html,css,javascript">
+        <div class="news-card-content">
+          <span class="news-card-category">Qoʻllanma</span>
+          <h3 class="news-card-title">Toʻliq veb dasturlash qoʻllanmasi 2025</h3>
+          <p class="news-card-excerpt">HTML asoslaridan tortib ilgʻor freymvorklargacha. Yangi boshlanuvchilar va tajribali dasturchilar uchun keng qamrovli qoʻllanma.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">12 Sentabr 2025</span>
+            <span class="news-card-read-time">25–35 daq</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html&text=To%CA%BBliq%20veb%20dasturlash%20qo%CA%BBllanmasi%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/web-development-guide.html&title=To%CA%BBliq%20veb%20dasturlash%20qo%CA%BBllanmasi%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/web-development-guide.html" aria-label="Veb dasturlash qoʻllanmasini oʻqing"></a>
+      </div>
+      
+      <div class="news-card" data-category="articles" data-tags="veb,texnologiyalar,trendlar,2024">
+        <div class="news-card-content">
+          <span class="news-card-category">Maqolalar</span>
+          <h3 class="news-card-title">Veb texnologiya trendlari 2025: Hozir nima ishlatish kerak</h3>
+          <p class="news-card-excerpt">Veb dasturlashdagi joriy trendlar, yangi freymvorklar va zamonaviy loyihalar uchun eng yaxshi amaliyotlar.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">10 Sentabr 2025</span>
+            <span class="news-card-read-time">12–16 daq</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/web-tech-trends-2024.html&text=Veb%20texnologiya%20trendlari%202025%3A%20Hozir%20nima%20ishlatish%20kerak" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/web-tech-trends-2024.html&title=Veb%20texnologiya%20trendlari%202025%3A%20Hozir%20nima%20ishlatish%20kerak" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/web-tech-trends-2024.html" aria-label="Veb texnologiya trendlari haqida oʻqing"></a>
+      </div>
+      
+      <div class="news-card" data-category="engineering" data-tags="amortizatsiya,hisob,muhandislik,moliya,uskunalar">
+        <div class="news-card-content">
+          <span class="news-card-category">Muhandislik</span>
+          <h3 class="news-card-title">Uskunalarning amortizatsiyasini qanday hisoblash kerak</h3>
+          <p class="news-card-excerpt">Misollar va formulalar yordamida amortizatsiyani hisoblash boʻyicha amaliy qoʻllanma. Chiziqli va no-chiziqli amortizatsiya usullari.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">8 Sentabr 2025</span>
+            <span class="news-card-read-time">10–14 daq</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html&text=Uskunalarning%20amortizatsiyasini%20qanday%20hisoblash%20kerak" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-depreciation.html&title=Uskunalarning%20amortizatsiyasini%20qanday%20hisoblash%20kerak" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-depreciation.html" aria-label="Amortizatsiya hisobi haqida oʻqing"></a>
+      </div>
+      
+      <div class="news-card" data-category="ecology" data-tags="ekologiya,hisob,iz,mahsulotlar,bardoshli rivojlanish">
+        <div class="news-card-content">
+          <span class="news-card-category">Ekologiya</span>
+          <h3 class="news-card-title">Mahsulotlarning ekologik izini qanday hisoblash kerak</h3>
+          <p class="news-card-excerpt">Tovarlar va xizmatlarning ekologik izini hisoblash metodologiyalari. Atrof-muhit taʼsirini baholash uchun amaliy misollar va vositalar.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">5 Sentabr 2025</span>
+            <span class="news-card-read-time">15–20 daq</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html&text=Mahsulotlarning%20ekologik%20izini%20qanday%20hisoblash%20kerak" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html&title=Mahsulotlarning%20ekologik%20izini%20qanday%20hisoblash%20kerak" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html" aria-label="Ekologik iz hisobi haqida oʻqing"></a>
+      </div>
+      
+      <div class="news-card" data-category="updates" data-tags="yangilanishlar,yangiliklar,funksiyalar,yaxshilanishlar,serpmonn">
+        <div class="news-card-content">
+          <span class="news-card-category">Yangilanishlar</span>
+          <h3 class="news-card-title">Serpmonn yangilanishlari: Avgust-Sentabr 2025</h3>
+          <p class="news-card-excerpt">Oʻtgan oyda Serpmonn da barcha yangi funksiyalar va yaxshilanishlar. Yangi vositalar, tuzatishlar va kelajak rejalari.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">3 Sentabr 2025</span>
+            <span class="news-card-read-time">8–11 daq</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html&text=Serpmonn%20yangilanishlari%3A%20Avgust-Sentabr%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html&title=Serpmonn%20yangilanishlari%3A%20Avgust-Sentabr%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/updates-aug-25-sep-15.html" aria-label="Serpmonn yangilanishlari haqida oʻqing"></a>
+      </div>
+      
+      <div class="news-card" data-category="updates" data-tags="yangilanishlar,avgust,yangi funksiyalar,tuzatishlar">
+        <div class="news-card-content">
+          <span class="news-card-category">Yangilanishlar</span>
+          <h3 class="news-card-title">Serpmonn yangilanishlari: Avgust 2025</h3>
+          <p class="news-card-excerpt">Avgust oyida joriy qilingan asosiy yangilanishlar va yaxshilanishlar. Yangi qidiruv imkoniyatlari va dasturchilar uchun vositalar.</p>
+          <div class="news-card-meta">
+            <span class="news-card-date">17 Avgust 2025</span>
+            <span class="news-card-read-time">6–9 daq</span>
+          </div>
+          <div class="news-card-share">
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html&text=Serpmonn%20yangilanishlari%3A%20Avgust%202025" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru/frontend/news/articles/updates-august-17.html&title=Serpmonn%20yangilanishlari%3A%20Avgust%202025" target="_blank" rel="noopener">📷</a>
+          </div>
+        </div>
+        <a class="news-card-link" href="/frontend/news/articles/updates-august-17.html" aria-label="Avgust yangilanishlari haqida oʻqing"></a>
+      </div>
+      
+    </div>
+
+    <!-- Кнопка загрузки дополнительных новостей -->
+    <div class="load-more" id="loadMore">
+      <button class="load-more-btn">Koʻproq Yuklash</button>
+    </div>
+  </div>
+
+  <!-- Мобильная реклама внизу экрана -->
+  <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+    <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+      <button type="button" aria-label="Reklamani Yopish" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+      <ins class="mrg-tag" 
+          style="display:inline-block;width:320px;height:50px" 
+          data-ad-client="ad-1898031"
+          data-ad-slot="1898031">
+      </ins>
+    </div>
+  </div>
+
+  <!-- Подключение JavaScript файлов -->
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <script src="/frontend/news/news.js" defer></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  
+  <!-- Скрипт для мобильной рекламы -->
+  <script>
+    (function(){
+      if (localStorage.getItem('anchor_closed')==='1') return;
+      var w = window.innerWidth || document.documentElement.clientWidth;
+      var a = document.getElementById('mobile-anchor-ad');
+      if (!a) return;
+      if (w <= 768) { a.style.display = "flex"; }
+      (window.MRGtag = window.MRGtag || []).push({});
+      if (window.visualViewport) {
+        visualViewport.addEventListener('resize', function(){
+          var h = visualViewport.height;
+          a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
