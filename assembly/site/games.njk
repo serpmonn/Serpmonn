@@ -1,0 +1,130 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: lang
+permalink: "{% if lang == 'ru' %}/frontend/games/games.html{% else %}/frontend/{{ lang }}/games/games.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{% if lang in ['ar', 'he', 'ug', 'fa'] %}rtl{% else %}ltr{% endif %}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ localesGames[lang].games.pageTitle }}</title>
+    <meta name="description" content="{{ localesGames[lang].games.metaDescription }}">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ localesGames[lang].games.ogTitle }}">
+    <meta property="og:description" content="{{ localesGames[lang].games.ogDescription }}">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru{% if lang == 'ru' %}/frontend/games/games.html{% else %}/frontend/{{ lang }}/games/games.html{% endif %}">
+    <meta property="og:type" content="website">
+
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <link rel="stylesheet" href="/frontend/games/games.css">
+</head>
+<body>
+    <nav id="menuContainer" aria-label="{{ localesGames[lang].games.menuLabel }}"></nav>
+    
+    <main class="page" itemscope itemtype="https://schema.org/ItemList">
+        <meta itemprop="name" content="{{ localesGames[lang].games.schemaName }}">
+        <meta itemprop="numberOfItems" content="{{ localesGames[lang].games.totalGames }}">
+        <meta itemprop="publisher" content="Serpmonn">
+        
+        <h1>
+            <img class="section-logo-inline" src="/frontend/images/Games.ico" alt="Serpmonn" loading="lazy">
+            {{ localesGames[lang].games.mainTitle }}
+        </h1>
+
+        <!-- ФИЛЬТР -->
+        <div class="filter-buttons" role="tablist" aria-label="{{ localesGames[lang].games.filterLabel }}">
+            <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                {{ localesGames[lang].games.filters.all }}
+            </button>
+            <button class="filter-btn" data-filter="pc" role="tab">
+                {{ localesGames[lang].games.filters.pc }}
+            </button>
+            <button class="filter-btn" data-filter="web" role="tab">
+                {{ localesGames[lang].games.filters.web }}
+            </button>
+            <button class="filter-btn" data-filter="mobile" role="tab">
+                {{ localesGames[lang].games.filters.mobile }}
+            </button>
+        </div>
+        
+        <!-- РЕКЛАМНЫЙ БАННЕР -->
+        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+        <div class="ad-leaderboard">
+            <ins class="mrg-tag" style="display:inline-block" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+        </div>
+        <script>(MRGtag = window.MRGtag || []).push({});</script>
+
+        {% for category in localesGames[lang].games.categories %}
+        <!-- СЕКЦИЯ КАТЕГОРИИ -->
+        <section itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+            <meta itemprop="position" content="{{ loop.index }}">
+            <h2 class="category-title">
+                <img class="section-logo-inline" src="{{ category.icon }}" alt="{{ category.title }}" loading="lazy">
+                {{ category.title }}
+            </h2>
+            <div class="grid" role="grid" aria-label="{{ category.ariaLabel }}" data-category="{{ category.key }}">
+                {% for game in category.games %}
+                <!-- КАРТОЧКА ИГРЫ -->
+                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <meta itemprop="position" content="{{ game.position }}">
+                    <h2>
+                        <img class="game-logo-inline" src="{{ game.image }}" alt="{{ game.name }}" loading="lazy" itemprop="image">
+                        <span itemprop="name">{{ game.name }}</span>
+                    </h2>
+                    <p itemprop="description">{{ game.description }}</p>
+                    
+                    <!-- БЕЙДЖИ ПЛАТФОРМ (для мобильных игр) -->
+                    {% if game.badges %}
+                    <div class="platform-badges">
+                        {% for badge in game.badges %}
+                        <span class="badge {{ badge.type }}">{{ badge.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- КНОПКА ИГРАТЬ/СКАЧАТЬ -->
+                    <a class="btn" 
+                       href="{{ game.link }}" 
+                       {% if game.external %}target="_blank" rel="noopener"{% endif %}
+                       itemprop="url">
+                        {{ game.buttonText }}
+                    </a>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endfor %}
+    </main>
+
+    <!-- ПОДКЛЮЧЕНИЕ СКРИПТОВ -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script src="/frontend/games/games.js" defer></script>
+    <script src="/frontend/scripts/interactive-bg.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=104905836', 'ym');
+
+        ym(104905836, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/104905836" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+</body>
+</html>
