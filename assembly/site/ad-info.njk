@@ -1,0 +1,167 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: lang
+permalink: "{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ lang }}/ad-info/ad-info.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{% if lang in ['ar', 'he', 'ug', 'fa'] %}rtl{% else %}ltr{% endif %}"> 
+<head> 
+    <meta charset="UTF-8"> 
+    <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes"> 
+    <meta http-equiv="Content-Language" content="{{ lang }}">
+    <title>{{ adInfo[lang].adInfo.pageTitle }}</title>
+    <meta name="description" content="{{ adInfo[lang].adInfo.metaDescription }}">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ adInfo[lang].adInfo.ogTitle }}">
+    <meta property="og:description" content="{{ adInfo[lang].adInfo.ogDescription }}">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ lang }}/ad-info/ad-info.html{% endif %}">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ adInfo[lang].adInfo.ogTitle }}">
+    <meta name="twitter:description" content="{{ adInfo[lang].adInfo.twitterDescription }}">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/ad-info/ad-info-styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    
+    <!-- Скрипты -->
+    <script type="module" src="/frontend/ad-info/ad-info-scripts.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    <nav id="menuContainer" aria-label="{{ adInfo[lang].adInfo.menuLabel }}"></nav>
+    
+    <main class="ad-info-page">
+        <section>
+            <h1>{{ adInfo[lang].adInfo.mainTitle }}</h1>
+            <p>{{ adInfo[lang].adInfo.introText }}</p>
+        </section>
+
+        <section>
+            <h2>{{ adInfo[lang].adInfo.partnersTitle }}</h2>
+            
+            <!-- Проверяем, есть ли категории и группировка -->
+            {% set showCategories = false %}
+            {% if adInfo[lang].adInfo.partnerCategories is defined and adInfo[lang].adInfo.partnerCategories|length > 0 %}
+                {% set showCategories = true %}
+                {% for partnerKey, partner in adInfo[lang].adInfo.partnersList %}
+                    {% if partner.category is defined and partner.category and adInfo[lang].adInfo.partnerCategories[partner.category] is defined %}
+                        {% set showCategories = true %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+            {% if showCategories %}
+                <!-- Выводим сгруппированно по категориям -->
+                {% for categoryKey, categoryName in adInfo[lang].adInfo.partnerCategories %}
+                    {% set partnersInCategory = [] %}
+                    {% for partnerKey, partner in adInfo[lang].adInfo.partnersList %}
+                        {% if partner.category is defined and partner.category == categoryKey %}
+                            <!-- Используем метод push и игнорируем результат (возвращает новую длину массива) -->
+                            {% set _dummy = partnersInCategory.push({key: partnerKey, data: partner}) %}
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if partnersInCategory|length > 0 %}
+                        <h3>{{ categoryName }}</h3>
+                        <div class="partners-grid">
+                            {% for partner in partnersInCategory %}
+                                <div class="partner" data-partner="{{ partner.key }}">
+                                    {% if partner.data.adLabel is defined and partner.data.adLabel %}
+                                        <p class="ad-label">{{ partner.data.adLabel | safe }}</p>
+                                    {% endif %}
+                                    
+                                    <p><strong>{{ partner.data.name }}</strong> — 
+                                        {% if partner.data.detailedDescription is defined and partner.data.detailedDescription %}
+                                            {{ partner.data.detailedDescription | safe }}
+                                        {% elseif partner.data.shortDescription is defined and partner.data.shortDescription %}
+                                            {{ partner.data.shortDescription }}
+                                        {% endif %}
+                                    </p>
+                                    
+                                    {% if partner.data.url is defined and partner.data.url %}
+                                        <a href="{{ partner.data.url }}" class="donate-button" target="_blank" rel="noopener">
+                                            {{ partner.data.buttonText }}
+                                        </a>
+                                    {% else %}
+                                        <button class="donate-button" disabled>{{ partner.data.buttonText }}</button>
+                                    {% endif %}
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <!-- Простой список всех партнеров без категорий -->
+                <div class="partners-grid">
+                    {% for partnerKey, partner in adInfo[lang].adInfo.partnersList %}
+                        <div class="partner" data-partner="{{ partnerKey }}">
+                            {% if partner.adLabel is defined and partner.adLabel %}
+                                <p class="ad-label">{{ partner.adLabel | safe }}</p>
+                            {% endif %}
+                            
+                            <p><strong>{{ partner.name }}</strong> — 
+                                {% if partner.detailedDescription is defined and partner.detailedDescription %}
+                                    {{ partner.detailedDescription | safe }}
+                                {% elseif partner.shortDescription is defined and partner.shortDescription %}
+                                    {{ partner.shortDescription }}
+                                {% endif %}
+                            </p>
+                            
+                            {% if partner.url is defined and partner.url %}
+                                <a href="{{ partner.url }}" class="donate-button" target="_blank" rel="noopener">
+                                    {{ partner.buttonText }}
+                                </a>
+                            {% else %}
+                                <button class="donate-button" disabled>{{ partner.buttonText }}</button>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </section>
+
+        <section>
+            <p>{{ adInfo[lang].adInfo.contactText | safe }}</p>
+        </section>
+
+        <footer>
+            <p class="footer-link">
+                <a href="{% if lang == 'ru' %}/frontend/privacy-policy/privacy-policy.html{% else %}/frontend/{{ lang }}/privacy-policy/privacy-policy.html{% endif %}">
+                    {{ adInfo[lang].footer.privacyPolicy }}
+                </a> |
+                <a href="{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ lang }}/ad-info/ad-info.html{% endif %}">
+                    {{ adInfo[lang].footer.adInfo }}
+                </a>
+            </p>
+        </footer>
+    </main>
+    
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=104905836', 'ym');
+
+        ym(104905836, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/104905836" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Yandex.Metrika counter -->
+</body>
+</html>
