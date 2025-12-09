@@ -65,22 +65,54 @@
     
     <!-- Яндекс.Метрика counter -->
     <script type="text/javascript">
+      var ip = {ip_address: "<? echo $_SERVER['REMOTE_ADDR']; ?>"};
         (function(m,e,t,r,i,k,a){
             m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
             m[i].l=1*new Date();
             for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
             k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
         })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=104300276', 'ym');
-        ym(104300276, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
+        ym(104300276, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true, params:window.ip});
     </script>
     <noscript><img src="https://mc.yandex.ru/watch/104300276" style="position:absolute; left:-9999px;" alt="" /></noscript>
+    
+    <!-- Top.Mail.Ru counter -->
+    <script type="text/javascript">
+        var _tmr = window._tmr || (window._tmr = []);
+        _tmr.push({id: "3552905", type: "pageView", start: (new Date()).getTime()});
+        
+        // Получаем USER_ID из dataLayer если он существует
+        var userId = '';
+        if (window.dataLayer && window.dataLayer.length > 0) {
+            // Ищем userId в последних элементах dataLayer
+            for (var i = window.dataLayer.length - 1; i >= 0; i--) {
+                if (window.dataLayer[i].userId) {
+                    userId = window.dataLayer[i].userId;
+                    break;
+                }
+            }
+        }
+        
+        // Добавляем пользовательские параметры если userId найден
+        if (userId) {
+            _tmr.push({id: "3552905", type: "pageView", pid: userId});
+        }
+        
+        (function (d, w, id) {
+          if (d.getElementById(id)) return;
+          var ts = d.createElement("script"); ts.type = "text/javascript"; ts.async = true; ts.id = id;
+          ts.src = "https://top-fwz1.mail.ru/js/code.js";
+          var f = function () {var s = d.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ts, s);};
+          if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+        })(document, window, "tmr-code");
+    </script>
+    <noscript><div><img src="https://top-fwz1.mail.ru/counter?id=3552905;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
+    <!-- /Top.Mail.Ru counter -->
     
     <script>var time_s = 30;</script>
     <script src="https://seo-fast.ru/site_external/test_view.js"></script>
     <script src="promokody-skidki.js?v=25" defer></script>
     <script src="https://yandex.ru/ads/system/context.js" async></script>
-    <script defer src="https://top-fwz1.mail.ru/js/code.js"></script>
-    <noscript><img src="https://top-fwz1.mail.ru/counter?id=3694679;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru"></noscript>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>

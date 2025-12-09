@@ -1,16 +1,16 @@
 export function loadLeaderboard() {
     // Загружаем данные с сервера и обновляем таблицу
-    console.log('🔄 Loading leaderboard...');
+    console.log('🔄 Загружаем таблицу лидеров...');
     fetch('https://www.serpmonn.ru/backend/games/redsquare2/leaderboard')
         .then(response => {
-            console.log('📡 Server response:', response.status);
+            console.log('📡 Ответ сервера:', response.status);
             return response.json();
         })
         .then(data => {
-            console.log('📊 Data received:', data);
+            console.log('📊 Получены данные:', data);
             const leaderboardBody = document.getElementById('leaderboardBody');
 
-            leaderboardBody.innerHTML = ''; // Clear table before update
+            leaderboardBody.innerHTML = ''; // Очистка таблицы перед обновлением
 
             data.forEach((entry, index) => {
                 const row = document.createElement('tr');
@@ -20,7 +20,7 @@ export function loadLeaderboard() {
             });
         })
         .catch(error => {
-            console.error('Error loading data:', error);
+            console.error('Ошибка при загрузке данных:', error);
         });
 }
 

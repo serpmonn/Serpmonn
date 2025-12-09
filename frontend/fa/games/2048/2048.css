@@ -1,159 +1,161 @@
-.container {
-    max-width: 600px;
-    margin: 0 auto;
-    padding: 20px;
-    text-align: center;
+/* CSS для игры 2048 */
+.container {                                                                                                                /* Основной контейнер страницы */
+    max-width: 600px;                                                                                                       /* Максимальная ширина 600px */
+    margin: 0 auto;                                                                                                         /* Центрирование по горизонтали */
+    padding: 20px;                                                                                                          /* Внутренние отступы */
+    text-align: center;                                                                                                     /* Центрирование текста */
 }
 
-header {
-    margin-bottom: 30px;
+header {                                                                                                                    /* Шапка с заголовком и счетом */
+    margin-bottom: 30px;                                                                                                    /* Отступ снизу */
 }
 
-h1 {
-    color: #776e65;
-    font-size: 3em;
-    margin-bottom: 10px;
+h1 {                                                                                                                        /* Заголовок игры */
+    color: #776e65;                                                                                                         /* Цвет текста */
+    font-size: 3em;                                                                                                         /* Размер шрифта */
+    margin-bottom: 10px;                                                                                                    /* Отступ снизу */
 }
 
-.score-container {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    margin-bottom: 20px;
+.score-container {                                                                                                          /* Контейнер для счетов */
+    display: flex;                                                                                                          /* Flexbox для расположения */
+    justify-content: center;                                                                                                /* Центрирование по горизонтали */
+    gap: 30px;                                                                                                              /* Расстояние между элементами */
+    margin-bottom: 20px;                                                                                                    /* Отступ снизу */
 }
 
-.score, .best {
-    background: #bbada0;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 6px;
-    font-weight: bold;
-    min-width: 100px;
+.score, .best {                                                                                                             /* Стили для текущего и лучшего счета */
+    background: #bbada0;                                                                                                    /* Фон счетов */
+    color: white;                                                                                                           /* Цвет текста */
+    padding: 10px 20px;                                                                                                     /* Внутренние отступы */
+    border-radius: 6px;                                                                                                     /* Скругленные углы */
+    font-weight: bold;                                                                                                      /* Жирный шрифт */
+    min-width: 100px;                                                                                                       /* Минимальная ширина */
 }
 
-.game-container {
-    margin-bottom: 30px;
+.game-container {                                                                                                           /* Контейнер игровых элементов */
+    margin-bottom: 30px;                                                                                                    /* Отступ снизу */
 }
 
-.game-board {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
-    background: #bbada0;
-    padding: 10px;
-    border-radius: 6px;
-    margin: 0 auto;
-    width: 300px;
-    height: 300px;
+.game-board {                                                                                                               /* Игровое поле */
+    display: grid;                                                                                                          /* CSS Grid для сетки 4x4 */
+    grid-template-columns: repeat(4, 1fr);                                                                                 /* 4 колонки равной ширины */
+    gap: 10px;                                                                                                              /* Расстояние между плитками */
+    background: #bbada0;                                                                                                    /* Фон игрового поля */
+    padding: 10px;                                                                                                          /* Внутренние отступы */
+    border-radius: 6px;                                                                                                     /* Скругленные углы */
+    margin: 0 auto;                                                                                                         /* Центрирование */
+    width: 300px;                                                                                                           /* Ширина поля */
+    height: 300px;                                                                                                          /* Высота поля */
 }
 
-.tile {
-    background: #cdc1b4;
-    border-radius: 3px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 2em;
-    font-weight: bold;
-    color: #776e65;
-    transition: all 0.15s ease;
+.tile {                                                                                                                     /* Базовая плитка */
+    background: #cdc1b4;                                                                                                    /* Фон пустой плитки */
+    border-radius: 3px;                                                                                                     /* Скругленные углы */
+    display: flex;                                                                                                          /* Flexbox для центрирования */
+    align-items: center;                                                                                                    /* Вертикальное центрирование */
+    justify-content: center;                                                                                                /* Горизонтальное центрирование */
+    font-size: 2em;                                                                                                         /* Размер шрифта */
+    font-weight: bold;                                                                                                      /* Жирный шрифт */
+    color: #776e65;                                                                                                         /* Цвет текста */
+    transition: all 0.15s ease;                                                                                             /* Плавные переходы */
 }
 
-.tile-2 { background: #eee4da; }
-.tile-4 { background: #ede0c8; }
-.tile-8 { background: #f2b179; color: #f9f6f2; }
-.tile-16 { background: #f59563; color: #f9f6f2; }
-.tile-32 { background: #f67c5f; color: #f9f6f2; }
-.tile-64 { background: #f65e3b; color: #f9f6f2; }
-.tile-128 { background: #edcf72; color: #f9f6f2; font-size: 1.5em; }
-.tile-256 { background: #edcc61; color: #f9f6f2; font-size: 1.5em; }
-.tile-512 { background: #edc850; color: #f9f6f2; font-size: 1.5em; }
-.tile-1024 { background: #edc53f; color: #f9f6f2; font-size: 1.2em; }
-.tile-2048 { background: #edc22e; color: #f9f6f2; font-size: 1.2em; }
+/* Стили для плиток с разными значениями */
+.tile-2 { background: #eee4da; }                                                                                            /* Плитка 2 */
+.tile-4 { background: #ede0c8; }                                                                                            /* Плитка 4 */
+.tile-8 { background: #f2b179; color: #f9f6f2; }                                                                            /* Плитка 8 */
+.tile-16 { background: #f59563; color: #f9f6f2; }                                                                           /* Плитка 16 */
+.tile-32 { background: #f67c5f; color: #f9f6f2; }                                                                           /* Плитка 32 */
+.tile-64 { background: #f65e3b; color: #f9f6f2; }                                                                           /* Плитка 64 */
+.tile-128 { background: #edcf72; color: #f9f6f2; font-size: 1.5em; }                                                        /* Плитка 128 */
+.tile-256 { background: #edcc61; color: #f9f6f2; font-size: 1.5em; }                                                        /* Плитка 256 */
+.tile-512 { background: #edc850; color: #f9f6f2; font-size: 1.5em; }                                                        /* Плитка 512 */
+.tile-1024 { background: #edc53f; color: #f9f6f2; font-size: 1.2em; }                                                       /* Плитка 1024 */
+.tile-2048 { background: #edc22e; color: #f9f6f2; font-size: 1.2em; }                                                       /* Плитка 2048 */
 
-.controls {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-    gap: 15px;
+.controls {                                                                                                                 /* Панель управления */
+    margin-top: 20px;                                                                                                       /* Отступ сверху */
+    display: flex;                                                                                                          /* Flexbox для кнопок */
+    justify-content: center;                                                                                                /* Центрирование кнопок */
+    gap: 15px;                                                                                                              /* Расстояние между кнопками */
 }
 
-.btn {
-    background: #8f7a66;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 6px;
-    font-size: 1em;
-    cursor: pointer;
-    transition: background 0.3s;
-    min-width: 44px;
-    min-height: 44px;
+.btn {                                                                                                                      /* Стили кнопок */
+    background: #8f7a66;                                                                                                    /* Фон кнопки */
+    color: white;                                                                                                           /* Цвет текста */
+    border: none;                                                                                                           /* Без границы */
+    padding: 12px 24px;                                                                                                     /* Внутренние отступы */
+    border-radius: 6px;                                                                                                     /* Скругленные углы */
+    font-size: 1em;                                                                                                         /* Размер шрифта */
+    cursor: pointer;                                                                                                        /* Курсор-указатель */
+    transition: background 0.3s;                                                                                            /* Плавный переход фона */
+    min-width: 44px;                                                                                                        /* Минимальная ширина для доступности */
+    min-height: 44px;                                                                                                       /* Минимальная высота для доступности */
 }
 
-.btn:hover {
-    background: #7f6a56;
+.btn:hover {                                                                                                                /* Эффект при наведении */
+    background: #7f6a56;                                                                                                    /* Темнее фон */
 }
 
-.instructions {
-    background: #faf8ef;
-    padding: 20px;
-    border-radius: 6px;
-    text-align: left;
+.instructions {                                                                                                             /* Блок инструкций */
+    background: #faf8ef;                                                                                                    /* Фон инструкций */
+    padding: 20px;                                                                                                          /* Внутренние отступы */
+    border-radius: 6px;                                                                                                     /* Скругленные углы */
+    text-align: left;                                                                                                       /* Выравнивание текста слева */
 }
 
-.instructions h3 {
-    color: #776e65;
-    margin-bottom: 10px;
+.instructions h3 {                                                                                                          /* Заголовок инструкций */
+    color: #776e65;                                                                                                         /* Цвет текста */
+    margin-bottom: 10px;                                                                                                    /* Отступ снизу */
 }
 
-.instructions p {
-    color: #776e65;
-    line-height: 1.5;
+.instructions p {                                                                                                           /* Текст инструкций */
+    color: #776e65;                                                                                                         /* Цвет текста */
+    line-height: 1.5;                                                                                                       /* Межстрочный интервал */
 }
 
 /* Мобильная адаптация */
-@media (max-width: 768px) {
-    .container {
-        padding: 10px;
+@media (max-width: 768px) {                                                                                                 /* Медиа-запрос для мобильных */
+    .container {                                                                                                            /* Контейнер на мобильных */
+        padding: 10px;                                                                                                      /* Уменьшенные отступы */
     }
     
-    h1 {
-        font-size: 2em;
+    h1 {                                                                                                                    /* Заголовок на мобильных */
+        font-size: 2em;                                                                                                     /* Уменьшенный размер */
     }
     
-    .game-board {
-        width: 280px;
-        height: 280px;
+    .game-board {                                                                                                           /* Игровое поле на мобильных */
+        width: 280px;                                                                                                       /* Уменьшенная ширина */
+        height: 280px;                                                                                                      /* Уменьшенная высота */
     }
     
-    .tile {
-        font-size: 1.5em;
+    .tile {                                                                                                                 /* Плитки на мобильных */
+        font-size: 1.5em;                                                                                                   /* Уменьшенный размер шрифта */
     }
     
-    .tile-128, .tile-256, .tile-512 {
-        font-size: 1.2em;
+    .tile-128, .tile-256, .tile-512 {                                                                                      /* Большие плитки на мобильных */
+        font-size: 1.2em;                                                                                                   /* Уменьшенный размер */
     }
     
-    .tile-1024, .tile-2048 {
-        font-size: 1em;
+    .tile-1024, .tile-2048 {                                                                                               /* Очень большие плитки */
+        font-size: 1em;                                                                                                     /* Еще меньше размер */
     }
     
-    .score-container {
-        flex-direction: column;
-        gap: 10px;
+    .score-container {                                                                                                      /* Контейнер счетов на мобильных */
+        flex-direction: column;                                                                                             /* Вертикальное расположение */
+        gap: 10px;                                                                                                          /* Уменьшенное расстояние */
     }
 }
 
 /* Доступность */
-.a11y-large-text .tile {
-    font-size: 2.5em;
+.a11y-large-text .tile {                                                                                                    /* Увеличенный текст для слабовидящих */
+    font-size: 2.5em;                                                                                                       /* Большой размер шрифта */
 }
 
-.a11y-high-contrast .tile {
-    border: 2px solid #000;
+.a11y-high-contrast .tile {                                                                                                 /* Высокая контрастность */
+    border: 2px solid #000;                                                                                                 /* Черная граница */
 }
 
-.a11y-high-contrast .game-board {
-    border: 3px solid #000;
+.a11y-high-contrast .game-board {                                                                                           /* Игровое поле с высокой контрастностью */
+    border: 3px solid #000;                                                                                                 /* Черная граница */
 }

@@ -1,11 +1,41 @@
-	@import url('./instruction.css');
-	
-	@import url('./body.css');
+@import url('./instruction.css');
+@import url('./body.css');
+@import url('./game-area.css');
+@import url('./controls.css');
+@import url('./animations.css');
+@import url('./modal.css');
 
-	@import url('./game-area.css');
-
-	@import url('./controls.css');
-
-	@import url('./animations.css');
-
-	@import url('./modal.css');
+.player-collision {
+    animation: blink 0.5s 3;
+}
+@keyframes blink {
+    50% { opacity: 0; }
+}
+.enemy-fast {
+    position: absolute;
+    width: 8%;
+    height: 8%;
+    background-color: purple;
+    animation: move linear infinite;
+}
+.enemy-slow {
+    position: absolute;
+    width: 12%;
+    height: 12%;
+    background-color: cyan;
+    animation: move linear infinite;
+}
+.bonus {
+    position: absolute;
+    width: 5%;
+    height: 5%;
+    background-color: gold;
+    border-radius: 50%;
+}
+@media (max-width: 600px) {
+    .button {
+        width: 60px;
+        height: 60px;
+        font-size: 28px;
+    }
+}

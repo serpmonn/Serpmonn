@@ -33,11 +33,11 @@
             }
 
             function createObject() {
-                const size = 20 + Math.random() * 40; // Random size from 20 до 60 пикселей
+                const size = 20 + Math.random() * 40; // Случайный размер от 20 до 60 пикселей
                 const x = Math.random() * (canvas.width - size);
-                const shapeTypes = ['square', 'circle', 'triangle', 'star']; // New list of shapes
+                const shapeTypes = ['square', 'circle', 'triangle', 'star']; // Новый список форм
                 const shape = shapeTypes[Math.floor(Math.random() * shapeTypes.length)]; // Случайная форма
-                const dx = (Math.random() - 0.5) * 4; // Random deviation по оси X
+                const dx = (Math.random() - 0.5) * 4; // Случайное отклонение по оси X
                 objects.push({ x, y: 0, size, shape, color: 'blue', dx });
             }
 
@@ -66,9 +66,9 @@
                         ctx.fill();
                         break;
                     case 'triangle':
-                        ctx.moveTo(obj.x + obj.size / 2, obj.y); // Top vertex
-                        ctx.lineTo(obj.x, obj.y + obj.size); // Left side
-                        ctx.lineTo(obj.x + obj.size, obj.y + obj.size); // Right side
+                        ctx.moveTo(obj.x + obj.size / 2, obj.y); // Вершина
+                        ctx.lineTo(obj.x, obj.y + obj.size); // Левая сторона
+                        ctx.lineTo(obj.x + obj.size, obj.y + obj.size); // Правая сторона
                         ctx.closePath();
                         ctx.fill();
                         break;
@@ -95,24 +95,24 @@
                         break;
                 }
 
-                ctx.fillStyle = 'black'; // Default color for other objects
+                ctx.fillStyle = 'black'; // Возвращаем цвет по умолчанию для других объектов
             }
 
             function updateObjects(deltaTime) {
                 objects.forEach(obj => {
-                    obj.y += objectSpeed * (deltaTime / 16); // Update Y position
+                    obj.y += objectSpeed * (deltaTime / 16); // Обновляем положение по оси Y
             
-                    obj.x += obj.dx * (deltaTime / 16); // Update X position with deviation
+                    obj.x += obj.dx * (deltaTime / 16); // Обновляем положение по оси X с учетом отклонения
             
-                    // Limit X movement to keep objects within bounds
+                    // Ограничиваем движение по оси X, чтобы объекты не выходили за границы экрана
                     if (obj.x < 0) obj.x = 0;
                     if (obj.x + obj.size > canvas.width) obj.x = canvas.width - obj.size;
             
                     if (obj.y + obj.size > canvas.height) {
-                        // If object reaches bottom and does not hit the player
+                        // Если объект достиг нижней границы экрана и не был задет игроком
                         objects.splice(objects.indexOf(obj), 1);
-                        score++; // Increase score for passing object
-                        document.getElementById('score').innerText = `Score: ${score}`;
+                        score++; // Увеличиваем очки за пропуск объекта
+                        document.getElementById('score').innerText = `Очки: ${score}`;
                         if (score % 10 === 0) {
                             level++;
                             objectSpeed += 1; // Увеличиваем скорость падения объектов
@@ -128,7 +128,7 @@
                         // Если объект касается игрока
                         objects.splice(objects.indexOf(obj), 1);
                         missedObjects++; // Увеличиваем счётчик пропусков при касании
-                        document.getElementById('missed').innerText = `Misses: ${missedObjects}`;
+                        document.getElementById('missed').innerText = `Пропуски: ${missedObjects}`;
                         if (missedObjects >= 10) {
                             endGame(); // Завершаем игру при достижении лимита пропусков
                         }
@@ -229,40 +229,40 @@
 
 		        updateLeaderboard();
 
-		        const adScript = document.createElement('script');                                          // Create script element for ads
-	                adScript.src = "https://ad.mail.ru/static/ads-async.js";                                // Ad script path
-	                adScript.async = true;                                                                  // Make it async
-	                document.body.appendChild(adScript);                                                    // Append script to page
+		        const adScript = document.createElement('script');                                          // Создаём элемент для скрипта рекламы
+	                adScript.src = "https://ad.mail.ru/static/ads-async.js";                                // Путь к рекламному скрипту
+	                adScript.async = true;                                                                  // Делаем его асинхронным
+	                document.body.appendChild(adScript);                                                    // Добавляем скрипт на страницу
 
-	                const adContainer = document.createElement('ins');                                      // Create ad container
-	                adContainer.className = "mrg-tag";                                                      // Class for ad block
+	                const adContainer = document.createElement('ins');                                      // Создаём контейнер для рекламного блока
+	                adContainer.className = "mrg-tag";                                                      // Класс для рекламного блока
 	                adContainer.setAttribute('data-ad-client', "ad-1844883");                               // ID клиента для рекламы
 	                adContainer.setAttribute('data-ad-slot', "1844883");                                    // ID слота для показа рекламы
 
-	                document.body.appendChild(adContainer);                                                 // Append ad container to page
+	                document.body.appendChild(adContainer);                                                 // Добавляем рекламный контейнер на страницу
 
-	                const adInitScript = document.createElement('script');                                  // Init ad script to load ads
+	                const adInitScript = document.createElement('script');                                  // Инициализируем рекламный скрипт для загрузки рекламы
 	                adInitScript.innerHTML = "(MRGtag = window.MRGtag || []).push({})";                     // Инициализация
 	                document.body.appendChild(adInitScript);                                                // Добавляем на страницу
 
-		        setTimeout(() => {									                                        // Wait before redirect
+		        setTimeout(() => {									                                        // Ждём некоторое время перед перенаправлением
 		            window.location.href = 'score_table.html';
-		        }, 10000); 										                                            // 3 seconds for ad view
+		        }, 10000); 										                                            // 3 секунды на просмотр рекламы
 		    });
 		}
 
         function restartGame() {
-            score = 0;                                                                                      // Reset game parameters
+            score = 0;                                                                                      // Сброс игровых параметров
             level = 1;
             missedObjects = 0;
             objectSpeed = 2;
-            objects.length = 0;                                                                             // Clear objects array
-            player.x = canvas.width / 2 - 25;                                                               // Reset player position
+            objects.length = 0;                                                                             // Очистка массива объектов
+            player.x = canvas.width / 2 - 25;                                                               // Сброс позиции игрока
             player.dx = 0;
             isPaused = false;
-            document.getElementById('score').innerText = `Score: ${score}`;
-            document.getElementById('missed').innerText = `Misses: ${missedObjects}`;
-            document.getElementById('pauseBtn').innerText = 'Pause';
+            document.getElementById('score').innerText = `Очки: ${score}`;
+            document.getElementById('missed').innerText = `Пропуски: ${missedObjects}`;
+            document.getElementById('pauseBtn').innerText = 'Пауза';
             if (gameInterval) clearInterval(gameInterval);                                                  // Перезапуск интервала создания объектов
             gameInterval = setInterval(createObject, 1000);
         }
@@ -280,11 +280,11 @@
                     return false;
            	}
 
-           document.getElementById('nicknameForm').addEventListener('submit', function(e) {                 // Nickname form submit handler
+           document.getElementById('nicknameForm').addEventListener('submit', function(e) {                 // Обработчик отправки формы никнейма
                     e.preventDefault();
                     const nickname = document.getElementById('nickname').value;
                     if (containsBannedWords(nickname)) {
-                        alert('Nickname contains banned words. Please choose another.');
+                        alert('Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм.');
                     } else {
                         player.nickname = nickname;
                         document.getElementById('nicknameForm').style.display = 'none';
@@ -294,20 +294,20 @@
                 });
            });
 
-           // Script to close instruction
+           // Скрипт для закрытия инструкции
         document.getElementById('understandBtn').addEventListener('click', function() {
             document.getElementById('instructionOverlay').style.display = 'none';
-            // Show name form after reading instruction
+            // Показываем форму ввода имени после прочтения инструкции
             document.getElementById('nicknameForm').style.display = 'block';
         });
         
-        // Hide name form until instruction is read
+        // Скрываем форму ввода имени до прочтения инструкции
         document.getElementById('nicknameForm').style.display = 'none';
 
 	   document.addEventListener('DOMContentLoaded', () => {
 	        generateCombinedBackground()
 	            .catch(error => {
-	                console.error('Task finished with error', error);
+	                console.error('Задача завершена с ошибкой', error);
 	            });
 	    });
 
@@ -321,7 +321,7 @@
 
             document.getElementById('pauseBtn').addEventListener('click', function() {
                 isPaused = !isPaused;
-                document.getElementById('pauseBtn').innerText = isPaused ? 'Resume' : 'Pause';
+                document.getElementById('pauseBtn').innerText = isPaused ? 'Продолжить' : 'Пауза';
             });
 
             document.getElementById('restartBtn').addEventListener('click', function() {
@@ -330,8 +330,8 @@
 
             window.addEventListener('pageshow', () => {
                 requestAnimationFrame(() => {
-                    document.body.style.paddingBottom = 'env(safe-area-inset-bottom)';                      // Force layout update
-                    document.body.offsetHeight;                                                             // Trigger layout update
+                    document.body.style.paddingBottom = 'env(safe-area-inset-bottom)';                      // Принудительное обновление макета
+                    document.body.offsetHeight;                                                             // Триггер обновления макета
                 });
             });
 
