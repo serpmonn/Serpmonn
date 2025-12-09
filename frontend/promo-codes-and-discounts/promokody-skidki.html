@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ru" dir="ltr">
 <head>
@@ -74,6 +73,39 @@
         ym(104300276, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
     </script>
     <noscript><img src="https://mc.yandex.ru/watch/104300276" style="position:absolute; left:-9999px;" alt="" /></noscript>
+    
+    <!-- Top.Mail.Ru counter -->
+    <script type="text/javascript">
+        var _tmr = window._tmr || (window._tmr = []);
+        _tmr.push({id: "3552905", type: "pageView", start: (new Date()).getTime()});
+        
+        // Получаем USER_ID из dataLayer если он существует
+        var userId = '';
+        if (window.dataLayer && window.dataLayer.length > 0) {
+            // Ищем userId в последних элементах dataLayer
+            for (var i = window.dataLayer.length - 1; i >= 0; i--) {
+                if (window.dataLayer[i].userId) {
+                    userId = window.dataLayer[i].userId;
+                    break;
+                }
+            }
+        }
+        
+        // Добавляем пользовательские параметры если userId найден
+        if (userId) {
+            _tmr.push({id: "3552905", type: "pageView", pid: userId});
+        }
+        
+        (function (d, w, id) {
+          if (d.getElementById(id)) return;
+          var ts = d.createElement("script"); ts.type = "text/javascript"; ts.async = true; ts.id = id;
+          ts.src = "https://top-fwz1.mail.ru/js/code.js";
+          var f = function () {var s = d.getElementsByTagName("script")[0]; s.parentNode.insertBefore(ts, s);};
+          if (w.opera == "[object Opera]") { d.addEventListener("DOMContentLoaded", f, false); } else { f(); }
+        })(document, window, "tmr-code");
+    </script>
+    <noscript><div><img src="https://top-fwz1.mail.ru/counter?id=3552905;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
+    <!-- /Top.Mail.Ru counter -->
     
     <script>var time_s = 30;</script>
     <script src="https://seo-fast.ru/site_external/test_view.js"></script>

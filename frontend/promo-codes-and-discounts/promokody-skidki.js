@@ -11,19 +11,19 @@ let updateTimer = null;
 let isSortedByExpiry = false;
 let sortAscending = true;
 const topBrands = [
+    'яндекс афиша', 'yandex afisha', 'афиша', 'afisha',
     'яндекс лавка', 'yandex lavka',
-    'яндекс афиша', 'yandex afisha',
-    'сберпрайм', 'sberprime',
     'тануки', 'tanuki',
     'яндекс плюс', 'yandex plus',
+    'сберпрайм', 'sberprime', 'сбер прайм', 'sber prime',
     'befree', 'be free',
-    'монетка', 'monetka',
+    'ашан', 'ashan',
     'premier', 'премьер',
-    'авито доставка', 'avito delivery',
-    'яндекс музыка', 'yandex music',
+    'ёбидоёби', 'yobidoyobi',
+    'яндекс музыка', 'yandex music', 'yandex muzyka',
     'кинопоиск', 'kinopoisk',
     'винлаб', 'winelab', 'wine lab',
-    'яндекс еда', 'yandex food', 'yandex eda'
+    'okko', 'окко'
 ];
 const categoryLabels = {
     'еда': 'Еда и рестораны',
@@ -342,6 +342,14 @@ function resetFilters() {
     localStorage.setItem('promo_category', '');
     localStorage.setItem('promo_status', '');
     localStorage.setItem('promo_country', '');
+    localStorage.setItem('promo_sort_by_expiry', 'false');
+    localStorage.setItem('promo_sort_ascending', 'true');
+    
+    if (elements.sortButton) {
+        elements.sortButton.innerHTML = 'Сортировка по сроку';
+        elements.sortButton.setAttribute('aria-label', 'Сортировать по сроку действия');
+    }
+    
     filterPromos();
 }
 
@@ -365,22 +373,6 @@ function renderPromocodes() {
         return;
     }
 
-    filteredPromocodes.sort((a, b) => {
-        const aIsTop = topBrands.some(brand =>
-            a.title.toLowerCase().includes(brand.toLowerCase())
-        );
-        const bIsTop = topBrands.some(brand =>
-            b.title.toLowerCase().includes(brand.toLowerCase())
-        );
-
-        // Топ бренды сначала
-        if (aIsTop && !bIsTop) return -1;
-        if (!aIsTop && bIsTop) return 1;
-
-        // Затем по алфавиту (А → Я)
-        return a.title.localeCompare(b.title);
-    });
-
     initInfiniteScroll();
     renderPage(1);
     addOfferSchema(filteredPromocodes);
@@ -396,38 +388,8 @@ function renderPage(page) {
         return;
     }
 
-    let sortedPromos;
-    if (!isSortedByExpiry) {
-        const topPromos = paginatedPromos.filter(promo =>
-            topBrands.some(brand => promo.title.toLowerCase().includes(brand.toLowerCase()))
-        );
-        const otherPromos = paginatedPromos.filter(promo =>
-            !topBrands.some(brand => promo.title.toLowerCase().includes(brand.toLowerCase()))
-        );
-
-        topPromos.sort((a, b) => {
-            const indexA = topBrands.findIndex(brand => a.title.toLowerCase().includes(brand.toLowerCase()));
-            const indexB = topBrands.findIndex(brand => b.title.toLowerCase().includes(brand.toLowerCase()));
-            return indexA - indexB;
-        });
-
-        otherPromos.sort((a, b) => {
-            const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
-            const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
-            return dateA - dateB;
-        });
-
-        sortedPromos = [...topPromos, ...otherPromos];
-    } else {
-        sortedPromos = [...paginatedPromos].sort((a, b) => {
-            const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
-            const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
-            return sortAscending ? dateA - dateB : dateB - dateA;
-        });
-    }
-
     const catalog = elements.catalog;
-    sortedPromos.forEach(promo => {
+    paginatedPromos.forEach(promo => {
         const card = createPromoCard(promo, Boolean(promo.is_top));
         catalog.appendChild(card);
     });
@@ -715,6 +677,7 @@ function filterPromos() {
     localStorage.setItem('promo_category', category);
     localStorage.setItem('promo_status', status);
     localStorage.setItem('promo_country', country);
+    
     filteredPromocodes = allPromocodes.filter(promo => {
         const title = (promo && typeof promo.title === 'string' ? promo.title : '').toLowerCase();
         const description = (promo.description || promo.subtitle || '').toLowerCase();
@@ -730,7 +693,49 @@ function filterPromos() {
             (status === 'expired' && expiry < now && promo.valid_until);
         return matchesSearch && matchesCategory && matchesCountry && matchesStatus;
     });
+
+    // ЕДИНАЯ СОРТИРОВКА
+    if (!isSortedByExpiry) {
+        // Сортировка по умолчанию: сначала топ-бренды по порядку в массиве, затем остальные по дате
+        filteredPromocodes.sort((a, b) => {
+            const aIsTop = topBrands.some(brand => 
+                a.title.toLowerCase().includes(brand.toLowerCase())
+            );
+            const bIsTop = topBrands.some(brand => 
+                b.title.toLowerCase().includes(brand.toLowerCase())
+            );
+
+            // Топ бренды сначала
+            if (aIsTop && !bIsTop) return -1;
+            if (!aIsTop && bIsTop) return 1;
+
+            // Если оба топ - сортируем по порядку в массиве topBrands
+            if (aIsTop && bIsTop) {
+                const indexA = topBrands.findIndex(brand => 
+                    a.title.toLowerCase().includes(brand.toLowerCase())
+                );
+                const indexB = topBrands.findIndex(brand => 
+                    b.title.toLowerCase().includes(brand.toLowerCase())
+                );
+                return indexA - indexB;
+            }
+
+            // Если оба не топ - сортируем по дате (от ближайшей к дальнейшей)
+            const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
+            const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
+            return dateA - dateB;
+        });
+    } else {
+        // Сортировка по сроку действия
+        filteredPromocodes.sort((a, b) => {
+            const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
+            const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
+            return sortAscending ? dateA - dateB : dateB - dateA;
+        });
+    }
+
     renderPromocodes();
+    
     const noResultsMessage = document.querySelector('.no-results');
     if (filteredPromocodes.length === 0 && (search !== '' || category !== '' || status !== '' || country !== '')) {
         if (!noResultsMessage) {
@@ -793,20 +798,13 @@ function copyToClipboard(text) {
 
 function sortByExpiry() {
     isSortedByExpiry = true;
+    sortAscending = !sortAscending;
     localStorage.setItem('promo_sort_by_expiry', 'true');
     localStorage.setItem('promo_sort_ascending', sortAscending ? 'true' : 'false');
-    const grid = elements.catalog;
-    if (!grid) return;
-    grid.querySelectorAll('.promo-ad-inline').forEach(el => el.remove());
-    const cards = Array.from(grid.querySelectorAll('.promo-card'));
-    cards.sort((a, b) => {
-        const dateA = new Date(a.dataset.expiry);
-        const dateB = new Date(b.dataset.expiry);
-        return sortAscending ? dateA - dateB : dateB - dateA;
-    });
-    cards.forEach(card => grid.appendChild(card));
-    insertInfeedAdsIntoCatalog(grid, window.innerWidth < 768 ? 10 : 5);
-    sortAscending = !sortAscending;
+    
+    // Применить новую сортировку
+    filterPromos();
+    
     if (elements.sortButton) {
         elements.sortButton.innerHTML = `Сортировка ${sortAscending ? '↑' : '↓'}`;
         elements.sortButton.setAttribute('aria-label', `Сортировать по сроку действия, текущий порядок: ${sortAscending ? 'восходящий' : 'нисходящий'}`);

@@ -60,9 +60,18 @@ function smartCopy(source, target, overwrite = false) {
         fs.copyFileSync(source, target);
         return 'added';
     } else if (overwrite) {
-        // Файл есть, но разрешено перезаписывать (для HTML)
-        fs.copyFileSync(source, target);
-        return 'updated';
+        // Файл есть и разрешено перезаписывать
+        // Сравниваем даты модификации, чтобы не обновлять без изменений
+        const sourceStats = fs.statSync(source);
+        const targetStats = fs.statSync(target);
+        
+        // Если исходный файл новее - обновляем
+        if (sourceStats.mtimeMs > targetStats.mtimeMs) {
+            fs.copyFileSync(source, target);
+            return 'updated';
+        } else {
+            return 'skipped'; // Файл не изменился
+        }
     } else {
         // Файл есть и перезаписывать нельзя - пропускаем
         return 'skipped';
@@ -83,6 +92,13 @@ function syncFolder(sourceFolder, targetFolder, overwriteRules = {}) {
         // Пропускаем служебные папки
         if (item === '_includes' || item === '_data') continue;
         
+        // Пропускаем пользовательские папки (если они есть)
+        const userFolders = ['uploads', 'user-content', 'cache', 'temp'];
+        if (userFolders.includes(item)) {
+            console.log(`   ⏭️  Пропущена пользовательская папка: ${item}`);
+            continue;
+        }
+        
         const stat = fs.statSync(sourcePath);
         
         if (stat.isDirectory()) {
@@ -94,7 +110,7 @@ function syncFolder(sourceFolder, targetFolder, overwriteRules = {}) {
         } else {
             // Определяем правило перезаписи для файла
             const ext = path.extname(item).toLowerCase();
-            const overwrite = overwriteRules[ext] || false;
+            const overwrite = overwriteRules[ext] || overwriteRules['*'] || false;
             
             const result = smartCopy(sourcePath, targetPath, overwrite);
             stats[result]++;
@@ -102,7 +118,7 @@ function syncFolder(sourceFolder, targetFolder, overwriteRules = {}) {
             if (result === 'added') {
                 console.log(`   ➕ Добавлен: ${path.relative(TARGET_PATH, targetPath)}`);
             } else if (result === 'updated') {
-                console.log(`   🔄 Обновлен: ${path.relative(TARGET_PATH, targetPath)}`);
+                console.log(`   🔄 Обновлен: ${path.relative(TARGET_PATH, targetPath)} (изменен ${new Date(stat.mtime).toLocaleString()})`);
             }
         }
     }
@@ -110,11 +126,58 @@ function syncFolder(sourceFolder, targetFolder, overwriteRules = {}) {
     return stats;
 }
 
-// Правила перезаписи: какие файлы можно перезаписывать
+// Расширенные правила перезаписи для файлов сборки
 const OVERWRITE_RULES = {
-    '.html': true,    // HTML файлы всегда обновляем
-    '.htm': true
-    // Остальные файлы (.css, .js, .png и т.д.) - только добавляем если их нет
+    // Веб-файлы (основной контент)
+    '.html': true,
+    '.htm': true,
+    
+    // Скрипты и стили (важно обновлять!)
+    '.js': true,
+    '.css': true,
+    '.scss': true,
+    '.sass': true,
+    '.less': true,
+    
+    // Конфигурации и данные
+    '.json': true,
+    '.xml': true,
+    '.yaml': true,
+    '.yml': true,
+    
+    // Source maps для отладки
+    '.map': true,
+    
+    // Изображения (обычно часть сборки)
+    '.png': true,
+    '.jpg': true,
+    '.jpeg': true,
+    '.gif': true,
+    '.svg': true,
+    '.ico': true,
+    '.webp': true,
+    '.avif': true,
+    
+    // Шрифты
+    '.woff': true,
+    '.woff2': true,
+    '.ttf': true,
+    '.eot': true,
+    
+    // Текстовые файлы
+    '.txt': true,
+    '.md': true,
+    
+    // Иконки
+    '.ico': true,
+    
+    // Другие веб-файлы
+    '.webmanifest': true,
+    
+    // Бинарные файлы (по желанию, обычно не меняются)
+    // '.pdf': false,
+    // '.zip': false,
+    // '.rar': false,
 };
 
 let totalStats = { added: 0, updated: 0, skipped: 0 };
@@ -144,7 +207,16 @@ for (const locale of locales) {
 
 console.log('\n📊 Итоги синхронизации:');
 console.log(`   ➕ Добавлено файлов: ${totalStats.added}`);
-console.log(`   🔄 Обновлено HTML: ${totalStats.updated}`);
-console.log(`   ⏭️  Пропущено (уже есть): ${totalStats.skipped}`);
+console.log(`   🔄 Обновлено файлов: ${totalStats.updated}`);
+console.log(`   ⏭️  Пропущено (без изменений): ${totalStats.skipped}`);
 console.log(`   🌍 Всего языков: ${locales.length + 1} (из locales.json)`);
+
+// Проверяем, были ли реальные обновления
+const totalChanged = totalStats.added + totalStats.updated;
+if (totalChanged === 0) {
+    console.log('\n💡 Нет изменений для развертывания.');
+} else {
+    console.log(`\n✅ Развернуто ${totalChanged} измененных файлов.`);
+}
+
 console.log('🎉 Умная синхронизация завершена!');
