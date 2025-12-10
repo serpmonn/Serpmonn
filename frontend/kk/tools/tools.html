@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="kk" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="kk">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Ақылды іздеу жүйесі, Жаңалықтар және Мини ойындар платформасы</title>
+    <meta name="description" content="Serpmonn: маркетинг, қауіпсіздік, дамыту және экология үшін күшті құралдар">
+    <meta name="keywords" content="UTM генераторы, құпия сөз генераторы, экологиялық із есептегіш, сөз санағыш">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Құралдар — Serpmonn">
+    <meta property="og:description" content="Микро-құралдар жиынтығы: UTM генераторы, құпия сөз генераторы">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=kk">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Құралдар — Serpmonn">
+    <meta name="twitter:description" content="UTM генераторы, құпия сөз генераторы, сөз санағыш">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Құралдарға</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Жарнамалық баннер">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Біздің құралдар туралы көбірек біліңіз! <a href="#tools">Өту</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn Құралдары</h1>
+        <p class="subtitle">Жұмыс, маркетинг және дамыту үшін микро-құралдар жиынтығы</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Құралдарды іздеу..." 
+                   aria-label="Құралдарды іздеу">
+            <select aria-label="Санат бойынша сүзу">
+                <option value="">Барлық санаттар</option>
+                
+                    <option value="marketing">Маркетинг</option>
+                
+                    <option value="security">Қауіпсіздік</option>
+                
+                    <option value="development">Дамыту</option>
+                
+                    <option value="design">Дизайн</option>
+                
+                    <option value="engineering">Инженерия</option>
+                
+                    <option value="logistics">Логистика</option>
+                
+                    <option value="ecology">Экология</option>
+                
+            </select>
+            <button aria-label="Сүзгілерді тазалау">Сүзгілерді тазалау</button>
+            <button id="clear-favorites" aria-label="Таңдаулыларды тазалау">Таңдаулыларды тазалау</button>
+            <button id="sort-favorites" aria-label="Таңдаулыларды үстінде көрсету">Таңдаулыларды үстіне</button>
+            <div class="filter-message hidden" role="alert">Құралдар табылмады. Сұранысты өзгертуді сәлдеңіз.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Құралдар статистикасы</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Белсенді құралдар</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Санаттар</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Жоспарланған</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Маркетинг және талдау құралдары</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM тегтер генераторы</h2>
+                    <p>Маркетингтік кампаниялардың тиімділігін бақылау үшін UTM сілтемелерін жылдам құрыңыз.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=kk" 
+                       aria-label="Құралды ашу: 🔗 UTM тегтер генераторы">
+                        Құралды ашу
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM тегтер генераторы" 
+                            aria-label="Таңдаулыларға қосу: 🔗 UTM тегтер генераторы">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Сөз/Таңба санағыш</h2>
+                    <p>Мәтіндегі сөздерді, жолдарды және таңбаларды санаңыз. SEO оңтайландыру үшін тамаша.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=kk" 
+                       aria-label="Құралды ашу: 📝 Сөз/Таңба санағыш">
+                        Құралды ашу
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Сөз/Таңба санағыш" 
+                            aria-label="Таңдаулыларға қосу: 📝 Сөз/Таңба санағыш">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Жарнамалық баннер">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Біздің құралдар туралы көбірек біліңіз! <a href="#tools">Өту</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Қауіпсіздік құралдары</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Құпия сөз генераторы</h2>
+                    <p>Теңшелетін параметрлермен қауіпсіз құпия сөздерді құрыңыз. Тіркелгілеріңіздің қауіпсіздігі.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=kk" 
+                       aria-label="Құралды ашу: 🔑 Құпия сөз генераторы">
+                        Құралды ашу
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Құпия сөз генераторы" 
+                            aria-label="Таңдаулыларға қосу: 🔑 Құпия сөз генераторы">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Дамыту құралдары</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Жақында</div>
+                    <h2>📄 JSON пішімдеуіш</h2>
+                    <p>JSON деректерін әдемі пішімдеу және тексеру. Синтаксисті бөлектеу.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON пішімдеуіш Жақында қолжетімді болады">
+                        Жақында қолжетімді болады
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Жақында</div>
+                    <h2>🔄 Base64 түрлендіргіш</h2>
+                    <p>Base64 кодтау және кодсыздандыру. Суреттермен және файлдармен жұмыс.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 түрлендіргіш Жақында қолжетімді болады">
+                        Жақында қолжетімді болады
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Дизайн құралдары</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Жақында</div>
+                    <h2>🎨 Түстер палитрасы</h2>
+                    <p>Дизайн үшін түс схемаларын құрыңыз және таңдаңыз. Үйлесімді комбинациялар.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Түстер палитрасы Жақында қолжетімді болады">
+                        Жақында қолжетімді болады
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Жақында</div>
+                    <h2>📐 Пішім түрлендіргіш</h2>
+                    <p>Әртүрлі сурет және құжат пішімдері арасында түрлендіру.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Пішім түрлендіргіш Жақында қолжетімді болады">
+                        Жақында қолжетімді болады
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Инженерия құралдары</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Өлшем бірліктерін түрлендіргіш</h2>
+                    <p>Әртүрлі өлшем бірліктері арасында жылдам түрлендіру.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=kk" 
+                       aria-label="Құралды ашу: 🔄 Өлшем бірліктерін түрлендіргіш">
+                        Құралды ашу
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Өлшем бірліктерін түрлендіргіш" 
+                            aria-label="Таңдаулыларға қосу: 🔄 Өлшем бірліктерін түрлендіргіш">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Логистика құралдары</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Көлік тозуын есептегіш</h2>
+                    <p>Жүріс қашықтығы, жұмыс уақыты және жағдайларына сүйене отырып, көліктің тозуын есептеңіз.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=kk" 
+                       aria-label="Құралды ашу: 🔧 Көлік тозуын есептегіш">
+                        Құралды ашу
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Көлік тозуын есептегіш" 
+                            aria-label="Таңдаулыларға қосу: 🔧 Көлік тозуын есептегіш">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Отын есептегіш</h2>
+                    <p>Отын шығынын, саяхат құнын және үнемдеуді есептеңіз.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=kk" 
+                       aria-label="Құралды ашу: ⛽ Отын есептегіш">
+                        Құралды ашу
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Отын есептегіш" 
+                            aria-label="Таңдаулыларға қосу: ⛽ Отын есептегіш">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Экология құралдары</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Өнімнің экологиялық ізін есептегіш</h2>
+                    <p>Өнімдеріңіздің көміртегі, су және жер ізін есептеңіз.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=kk" 
+                       aria-label="Құралды ашу: 🌍 Өнімнің экологиялық ізін есептегіш">
+                        Құралды ашу
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Өнімнің экологиялық ізін есептегіш" 
+                            aria-label="Таңдаулыларға қосу: 🌍 Өнімнің экологиялық ізін есептегіш">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚚 Құралдарды дамыту</h3>
+            <p>Егер сізде жаңа құралдар туралы идеялар болса - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">support@serpmonn.ru-ға жазыңыз</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

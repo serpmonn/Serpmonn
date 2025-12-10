@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="he">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - מנוע חיפוש חכם, חדשות ופלטפורמת משחקים מיני</title>
+    <meta name="description" content="Serpmonn: כלים חזקים לשיווק, אבטחה, פיתוח ואקולוגיה.">
+    <meta name="keywords" content="מחולל UTM, מחולל סיסמאות, מחשבון טביעת רגל אקולוגית, מונה מילים">
+    <!-- Open Graph -->
+    <meta property="og:title" content="כלים — Serpmonn">
+    <meta property="og:description" content="סדרת כלים מיקרו: מחולל UTM, מחולל סיסמאות">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=he">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="כלים — Serpmonn">
+    <meta name="twitter:description" content="מחולל UTM, מחולל סיסמאות, מונה מילים">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">לכלים</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="באנר פרסומי">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>למד עוד על הכלים שלנו! <a href="#tools">עבור</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>כלי Serpmonn</h1>
+        <p class="subtitle">סדרת כלים מיקרו לעבודה, שיווק ופיתוח</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="חיפוש כלים..." 
+                   aria-label="חיפוש כלים">
+            <select aria-label="סינון לפי קטגוריה">
+                <option value="">כל הקטגוריות</option>
+                
+                    <option value="marketing">שיווק</option>
+                
+                    <option value="security">אבטחה</option>
+                
+                    <option value="development">פיתוח</option>
+                
+                    <option value="design">עיצוב</option>
+                
+                    <option value="engineering">הנדסה</option>
+                
+                    <option value="logistics">לוגיסטיקה</option>
+                
+                    <option value="ecology">אקולוגיה</option>
+                
+            </select>
+            <button aria-label="נקה מסננים">נקה מסננים</button>
+            <button id="clear-favorites" aria-label="נקה מועדפים">נקה מועדפים</button>
+            <button id="sort-favorites" aria-label="הצג מועדפים למעלה">מועדפים למעלה</button>
+            <div class="filter-message hidden" role="alert">לא נמצאו כלים. נסה לשנות את השאילתה.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 סטטיסטיקות כלים</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">כלים פעילים</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">קטגוריות</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">מתוכנן</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 כלים לשיווק ואנליטיקה</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 מחולל תגי UTM</h2>
+                    <p>צור במהירות קישורי UTM למעקב אחר יעילות קמפיינים שיווקיים.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=he" 
+                       aria-label="פתח כלי: 🔗 מחולל תגי UTM">
+                        פתח כלי
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 מחולל תגי UTM" 
+                            aria-label="הוסף למועדפים: 🔗 מחולל תגי UTM">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 מונה מילים/תוים</h2>
+                    <p>ספירת מילים, שורות ותווים בטקסט. מושלם לאופטימיזציית SEO.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=he" 
+                       aria-label="פתח כלי: 📝 מונה מילים/תוים">
+                        פתח כלי
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 מונה מילים/תוים" 
+                            aria-label="הוסף למועדפים: 📝 מונה מילים/תוים">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="באנר פרסומי">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>למד עוד על הכלים שלנו! <a href="#tools">עבור</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 כלים לאבטחה</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 מחולל סיסמאות</h2>
+                    <p>צור סיסמאות מאובטחות עם פרמטרים מותאמים אישית. אבטחת החשבונות שלך.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=he" 
+                       aria-label="פתח כלי: 🔑 מחולל סיסמאות">
+                        פתח כלי
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 מחולל סיסמאות" 
+                            aria-label="הוסף למועדפים: 🔑 מחולל סיסמאות">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 כלים לפיתוח</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">בקרוב</div>
+                    <h2>📄 מעצב JSON</h2>
+                    <p>עיצוב יפה ואימות נתוני JSON. הדגשת תחביר.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 מעצב JSON בקרוב זמין">
+                        בקרוב זמין
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">בקרוב</div>
+                    <h2>🔄 ממיר Base64</h2>
+                    <p>קידוד ופענוח Base64. עבודה עם תמונות וקבצים.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 ממיר Base64 בקרוב זמין">
+                        בקרוב זמין
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 כלים לעיצוב</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">בקרוב</div>
+                    <h2>🎨 פלטות צבעים</h2>
+                    <p>צור ובחר סכימות צבעים לעיצוב. שילובים הרמוניים.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 פלטות צבעים בקרוב זמין">
+                        בקרוב זמין
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">בקרוב</div>
+                    <h2>📐 ממיר פורמטים</h2>
+                    <p>המרה בין פורמטים שונים של תמונות ומסמכים.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 ממיר פורמטים בקרוב זמין">
+                        בקרוב זמין
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 כלים להנדסה</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 ממיר יחידות</h2>
+                    <p>המרה מהירה בין יחידות מדידה שונות.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=he" 
+                       aria-label="פתח כלי: 🔄 ממיר יחידות">
+                        פתח כלי
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 ממיר יחידות" 
+                            aria-label="הוסף למועדפים: 🔄 ממיר יחידות">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ כלים ללוגיסטיקה</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 מחשבון פחת רכב</h2>
+                    <p>חישוב בלאי רכב על בסיס קילומטראז&#39;, זמן תפעול ותנאים.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=he" 
+                       aria-label="פתח כלי: 🔧 מחשבון פחת רכב">
+                        פתח כלי
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 מחשבון פחת רכב" 
+                            aria-label="הוסף למועדפים: 🔧 מחשבון פחת רכב">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ מחשבון דלק</h2>
+                    <p>חישוב צריכת דלק, עלות נסיעה וחיסכון.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=he" 
+                       aria-label="פתח כלי: ⛽ מחשבון דלק">
+                        פתח כלי
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ מחשבון דלק" 
+                            aria-label="הוסף למועדפים: ⛽ מחשבון דלק">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 כלים לאקולוגיה</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 מחשבון טביעת רגל אקולוגית של מוצרים</h2>
+                    <p>חשב את טביעת הרגל הפחמנית, המימית והקרקעית של המוצרים שלך.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=he" 
+                       aria-label="פתח כלי: 🌍 מחשבון טביעת רגל אקולוגית של מוצרים">
+                        פתח כלי
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 מחשבון טביעת רגל אקולוגית של מוצרים" 
+                            aria-label="הוסף למועדפים: 🌍 מחשבון טביעת רגל אקולוגית של מוצרים">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 פיתוח כלים</h3>
+            <p>אם יש לך רעיונות לכלים חדשים - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">כתוב ל‑support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

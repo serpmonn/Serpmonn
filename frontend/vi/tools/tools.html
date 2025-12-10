@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="vi" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="vi">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Công cụ Tìm kiếm Thông minh, Tin tức &amp; Nền tảng Trò chơi Mini</title>
+    <meta name="description" content="Serpmonn: công cụ mạnh mẽ cho tiếp thị, bảo mật, phát triển và sinh thái.">
+    <meta name="keywords" content="trình tạo UTM, trình tạo mật khẩu, máy tính dấu chân sinh thái, bộ đếm từ">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Công cụ — Serpmonn">
+    <meta property="og:description" content="Một bộ công cụ vi mô: trình tạo UTM, trình tạo mật khẩu">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=vi">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Công cụ — Serpmonn">
+    <meta name="twitter:description" content="trình tạo UTM, trình tạo mật khẩu, bộ đếm từ">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Đến công cụ</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Biểu ngữ quảng cáo">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Tìm hiểu thêm về công cụ của chúng tôi! <a href="#tools">Đi</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Công cụ Serpmonn</h1>
+        <p class="subtitle">Một bộ công cụ vi mô cho công việc, tiếp thị và phát triển</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Tìm kiếm công cụ..." 
+                   aria-label="Tìm kiếm công cụ">
+            <select aria-label="Lọc theo danh mục">
+                <option value="">Tất cả danh mục</option>
+                
+                    <option value="marketing">Tiếp thị</option>
+                
+                    <option value="security">Bảo mật</option>
+                
+                    <option value="development">Phát triển</option>
+                
+                    <option value="design">Thiết kế</option>
+                
+                    <option value="engineering">Kỹ thuật</option>
+                
+                    <option value="logistics">Hậu cần</option>
+                
+                    <option value="ecology">Sinh thái</option>
+                
+            </select>
+            <button aria-label="Xóa bộ lọc">Xóa bộ lọc</button>
+            <button id="clear-favorites" aria-label="Xóa mục yêu thích">Xóa mục yêu thích</button>
+            <button id="sort-favorites" aria-label="Hiển thị mục yêu thích lên trên">Mục yêu thích lên trên</button>
+            <div class="filter-message hidden" role="alert">Không tìm thấy công cụ. Thử thay đổi truy vấn của bạn.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Thống kê Công cụ</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Công cụ hoạt động</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Danh mục</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Đã lên kế hoạch</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Công cụ Tiếp thị và Phân tích</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 Trình tạo Thẻ UTM</h2>
+                    <p>Tạo nhanh liên kết UTM để theo dõi hiệu quả của chiến dịch tiếp thị.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=vi" 
+                       aria-label="Mở công cụ: 🔗 Trình tạo Thẻ UTM">
+                        Mở công cụ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 Trình tạo Thẻ UTM" 
+                            aria-label="Thêm vào mục yêu thích: 🔗 Trình tạo Thẻ UTM">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Bộ đếm Từ/Ký tự</h2>
+                    <p>Đếm từ, dòng và ký tự trong văn bản. Hoàn hảo cho tối ưu hóa SEO.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=vi" 
+                       aria-label="Mở công cụ: 📝 Bộ đếm Từ/Ký tự">
+                        Mở công cụ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Bộ đếm Từ/Ký tự" 
+                            aria-label="Thêm vào mục yêu thích: 📝 Bộ đếm Từ/Ký tự">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Biểu ngữ quảng cáo">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Tìm hiểu thêm về công cụ của chúng tôi! <a href="#tools">Đi</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Công cụ Bảo mật</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Trình tạo Mật khẩu</h2>
+                    <p>Tạo mật khẩu an toàn với tham số tùy chỉnh. Bảo mật tài khoản của bạn.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=vi" 
+                       aria-label="Mở công cụ: 🔑 Trình tạo Mật khẩu">
+                        Mở công cụ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Trình tạo Mật khẩu" 
+                            aria-label="Thêm vào mục yêu thích: 🔑 Trình tạo Mật khẩu">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Công cụ Phát triển</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Sắp có</div>
+                    <h2>📄 Trình định dạng JSON</h2>
+                    <p>Định dạng đẹp và xác thực dữ liệu JSON. Tô sáng cú pháp.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 Trình định dạng JSON Sắp có sẵn">
+                        Sắp có sẵn
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Sắp có</div>
+                    <h2>🔄 Bộ chuyển đổi Base64</h2>
+                    <p>Mã hóa và giải mã Base64. Làm việc với hình ảnh và tệp.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Bộ chuyển đổi Base64 Sắp có sẵn">
+                        Sắp có sẵn
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Công cụ Thiết kế</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Sắp có</div>
+                    <h2>🎨 Bảng màu</h2>
+                    <p>Tạo và chọn lược đồ màu cho thiết kế. Kết hợp hài hòa.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Bảng màu Sắp có sẵn">
+                        Sắp có sẵn
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Sắp có</div>
+                    <h2>📐 Bộ chuyển đổi Định dạng</h2>
+                    <p>Chuyển đổi giữa các định dạng hình ảnh và tài liệu khác nhau.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Bộ chuyển đổi Định dạng Sắp có sẵn">
+                        Sắp có sẵn
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Công cụ Kỹ thuật</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Bộ chuyển đổi Đơn vị</h2>
+                    <p>Chuyển đổi nhanh giữa các đơn vị đo lường khác nhau.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=vi" 
+                       aria-label="Mở công cụ: 🔄 Bộ chuyển đổi Đơn vị">
+                        Mở công cụ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Bộ chuyển đổi Đơn vị" 
+                            aria-label="Thêm vào mục yêu thích: 🔄 Bộ chuyển đổi Đơn vị">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Công cụ Hậu cần</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Máy tính Khấu hao Ô tô</h2>
+                    <p>Tính toán hao mòn xe dựa trên số dặm, thời gian vận hành và điều kiện.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=vi" 
+                       aria-label="Mở công cụ: 🔧 Máy tính Khấu hao Ô tô">
+                        Mở công cụ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Máy tính Khấu hao Ô tô" 
+                            aria-label="Thêm vào mục yêu thích: 🔧 Máy tính Khấu hao Ô tô">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Máy tính Nhiên liệu</h2>
+                    <p>Tính toán mức tiêu thụ nhiên liệu, chi phí chuyến đi và tiết kiệm.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=vi" 
+                       aria-label="Mở công cụ: ⛽ Máy tính Nhiên liệu">
+                        Mở công cụ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Máy tính Nhiên liệu" 
+                            aria-label="Thêm vào mục yêu thích: ⛽ Máy tính Nhiên liệu">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Công cụ Sinh thái</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Máy tính Dấu chân Sinh thái Sản phẩm</h2>
+                    <p>Tính toán dấu chân carbon, nước và đất của sản phẩm của bạn.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=vi" 
+                       aria-label="Mở công cụ: 🌍 Máy tính Dấu chân Sinh thái Sản phẩm">
+                        Mở công cụ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Máy tính Dấu chân Sinh thái Sản phẩm" 
+                            aria-label="Thêm vào mục yêu thích: 🌍 Máy tính Dấu chân Sinh thái Sản phẩm">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Phát triển Công cụ</h3>
+            <p>Nếu bạn có ý tưởng cho công cụ mới - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">viết cho support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

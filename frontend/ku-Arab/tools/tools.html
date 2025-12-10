@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="ku-Arab" dir="rtl">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="ku-Arab">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - مەکینەی گەڕانی زیرەک، هەواڵەکان و پلاتفۆرمی یاری بچووکەکان</title>
+    <meta name="description" content="Serpmonn: ئامرازێکی بەهێز بۆ بازرگانی، پاراستن، گەشەپێدان و ژینگە">
+    <meta name="keywords" content="UTM دروستکەر، دروستکەری تێپەڕەوشە، ژمێریاری شوێنپێی ژینگەیی، ژمێریاری وشە">
+    <!-- Open Graph -->
+    <meta property="og:title" content="ئامرازەکان — Serpmonn">
+    <meta property="og:description" content="کۆمەڵێک ئامرازی ورد: UTM دروستکەر، دروستکەری تێپەڕەوشە">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=ku-Arab">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ئامرازەکان — Serpmonn">
+    <meta name="twitter:description" content="UTM دروستکەر، دروستکەری تێپەڕەوشە، ژمێریاری وشە">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">بۆ ئامرازەکان</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="بانەری ڕیکلام">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>زیاتر دەربارەی ئامرازەکانی ئێمە بزانە! <a href="#tools">بڕۆ</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>ئامرازەکانی Serpmonn</h1>
+        <p class="subtitle">کۆمەڵێک ئامرازی ورد بۆ کار، بازرگانی و گەشەپێدان</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="گەڕان بۆ ئامراز..." 
+                   aria-label="گەڕان بۆ ئامراز">
+            <select aria-label="پاڵێوراو بەپێی پۆل">
+                <option value="">هەموو پۆلەکان</option>
+                
+                    <option value="marketing">بازرگانی</option>
+                
+                    <option value="security">پاراستن</option>
+                
+                    <option value="development">گەشەپێدان</option>
+                
+                    <option value="design">دی자인</option>
+                
+                    <option value="engineering">ئەندازیاری</option>
+                
+                    <option value="logistics">لۆجستیك</option>
+                
+                    <option value="ecology">ژینگە</option>
+                
+            </select>
+            <button aria-label="پاڵێوراوەکان پاک بکەوە">پاڵێوراوەکان پاک بکەوە</button>
+            <button id="clear-favorites" aria-label="دڵخوازەکان پاک بکەوە">دڵخوازەکان پاک بکەوە</button>
+            <button id="sort-favorites" aria-label="دڵخوازەکان لە سەرەوە پیشان بدە">دڵخوازەکان لە سەرەوە</button>
+            <div class="filter-message hidden" role="alert">هیچ ئامرازێک نەدۆزرایەوە. هەوڵ بدە داواکارییەکەت بگۆڕیت.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 ئامارەکانی ئامراز</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">ئامرازە چالاکەکان</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">پۆلەکان</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">پلانی دانراو</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 ئامرازەکانی بازرگانی و شیکاری</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 دروستکەری نیشانەی UTM</h2>
+                    <p>بە خێرایی لینکی UTM دروست بکە بۆ شوێنکەوتنی کاریگەری هەوڵە بازرگانییەکان.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=ku-Arab" 
+                       aria-label="ئامراز بکەرەوە: 🔗 دروستکەری نیشانەی UTM">
+                        ئامراز بکەرەوە
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 دروستکەری نیشانەی UTM" 
+                            aria-label="زیاد بکە بۆ دڵخوازەکان: 🔗 دروستکەری نیشانەی UTM">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 ژمێریاری وشە/نووسە</h2>
+                    <p>ژمێریاری وشە، هێڵ و نووسە لە دەقدا. گونجاو بۆ باشترکردنی SEO.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=ku-Arab" 
+                       aria-label="ئامراز بکەرەوە: 📝 ژمێریاری وشە/نووسە">
+                        ئامراز بکەرەوە
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 ژمێریاری وشە/نووسە" 
+                            aria-label="زیاد بکە بۆ دڵخوازەکان: 📝 ژمێریاری وشە/نووسە">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="بانەری ڕیکلام">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>زیاتر دەربارەی ئامرازەکانی ئێمە بزانە! <a href="#tools">بڕۆ</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 ئامرازەکانی پاراستن</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 دروستکەری تێپەڕەوشە</h2>
+                    <p>تێپەڕەوشەی پارێزراو دروست بکە بە پارامێتەرە تایبەتەکان. پاراستنی هەژمارەکانت.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=ku-Arab" 
+                       aria-label="ئامراز بکەرەوە: 🔑 دروستکەری تێپەڕەوشە">
+                        ئامراز بکەرەوە
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 دروستکەری تێپەڕەوشە" 
+                            aria-label="زیاد بکە بۆ دڵخوازەکان: 🔑 دروستکەری تێپەڕەوشە">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 ئامرازەکانی گەشەپێدان</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">بەم زووانە</div>
+                    <h2>📄 ڕێکخەری JSON</h2>
+                    <p>ڕێکخستن و پشکنینی جوانی زانیاریی JSON. ڕوونکردنەوەی ڕستەسازی.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 ڕێکخەری JSON بەم زووانە بەردەست دەبێت">
+                        بەم زووانە بەردەست دەبێت
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">بەم زووانە</div>
+                    <h2>🔄 گۆڕەری Base64</h2>
+                    <p>کۆدکردن و کۆدکرتنی Base64. کارکردن لەگەڵ وێنە و فایل.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 گۆڕەری Base64 بەم زووانە بەردەست دەبێت">
+                        بەم زووانە بەردەست دەبێت
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 ئامرازەکانی دی자인</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">بەم زووانە</div>
+                    <h2>🎨 پەلتای ڕەنگ</h2>
+                    <p>پلانی ڕەنگی بۆ دی자인 دروست بکە و هەڵبژێرە. تێکەڵەی هاوئاهەنگ.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 پەلتای ڕەنگ بەم زووانە بەردەست دەبێت">
+                        بەم زووانە بەردەست دەبێت
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">بەم زووانە</div>
+                    <h2>📐 گۆڕەری فۆرمات</h2>
+                    <p>گۆڕین لە نێوان فۆرماتە جیاوازەکانی وێنە و بەڵگەنامە.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 گۆڕەری فۆرمات بەم زووانە بەردەست دەبێت">
+                        بەم زووانە بەردەست دەبێت
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 ئامرازەکانی ئەندازیاری</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 گۆڕەری یەکە</h2>
+                    <p>گۆڕینی خێرا لە نێوان یەکە جیاوازەکانی پێوانە.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=ku-Arab" 
+                       aria-label="ئامراز بکەرەوە: 🔄 گۆڕەری یەکە">
+                        ئامراز بکەرەوە
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 گۆڕەری یەکە" 
+                            aria-label="زیاد بکە بۆ دڵخوازەکان: 🔄 گۆڕەری یەکە">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ ئامرازەکانی لۆجستیك</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 ژمێریاری کەمبونەوەی ئۆتۆمبێل</h2>
+                    <p>کەمبونەوەی سەیارە لەسەر بنەمایی ڕێژە، کاتی کارکردن و دۆخەکان حساب بکە.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=ku-Arab" 
+                       aria-label="ئامراز بکەرەوە: 🔧 ژمێریاری کەمبونەوەی ئۆتۆمبێل">
+                        ئامراز بکەرەوە
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 ژمێریاری کەمبونەوەی ئۆتۆمبێل" 
+                            aria-label="زیاد بکە بۆ دڵخوازەکان: 🔧 ژمێریاری کەمبونەوەی ئۆتۆمبێل">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ ژمێریاری سوتەمەنی</h2>
+                    <p>بەکارهێنانی سوتەمەنی، تێچوونی گەشت و پارەدانەوە حساب بکە.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=ku-Arab" 
+                       aria-label="ئامراز بکەرەوە: ⛽ ژمێریاری سوتەمەنی">
+                        ئامراز بکەرەوە
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ ژمێریاری سوتەمەنی" 
+                            aria-label="زیاد بکە بۆ دڵخوازەکان: ⛽ ژمێریاری سوتەمەنی">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 ئامرازەکانی ژینگە</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 ژمێریاری شوێنپێی ژینگەیی بەرهەم</h2>
+                    <p>شوێنپێی کاربۆن، ئاو و زەوی بەرهەمەکانت حساب بکە.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=ku-Arab" 
+                       aria-label="ئامراز بکەرەوە: 🌍 ژمێریاری شوێنپێی ژینگەیی بەرهەم">
+                        ئامراز بکەرەوە
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 ژمێریاری شوێنپێی ژینگەیی بەرهەم" 
+                            aria-label="زیاد بکە بۆ دڵخوازەکان: 🌍 ژمێریاری شوێنپێی ژینگەیی بەرهەم">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 گەشەپێدانی ئامراز</h3>
+            <p>ئەگەر بیرۆکەت هەبێت بۆ ئامرازێکی نوێ - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">بۆ support@serpmonn.ru بنووسە</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

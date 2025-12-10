@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="dv" dir="rtl">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="dv">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - ފުޅާވަޅުގައިސް ހޯއްދަވާ އެންޖިން، ޚަބަރުތައް އަދި މިނި ކީތޯން ޕްލެޓްފޯމް</title>
+    <meta name="description" content="Serpmonn: މާކެޓިންގ، ސިއްރަތް، އިތުރުވުން އަދި އެކޮލޮޖީއަށް ބާރުވަން އޮންނަނީ އެޑްގެއް">
+    <meta name="keywords" content="UTM ޖެނެރެޓަރ، ޕާސްވާޑް ޖެނެރެޓަރ، އެކޮލޮޖީކަލް ފުޓްޕްރިންޓް ކެލްކިއުލޭޓަރ، ލަފްޒު ކައުންޓަރ">
+    <!-- Open Graph -->
+    <meta property="og:title" content="އޮންނަނީ އެޑްތައް — Serpmonn">
+    <meta property="og:description" content="މައިކްރޯ-އޮންނަނީ އެޑް ސެޓް: UTM ޖެނެރެޓަރ، ޕާސްވާޑް ޖެނެރެޓަރ">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=dv">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="އޮންނަނީ އެޑްތައް — Serpmonn">
+    <meta name="twitter:description" content="UTM ޖެނެރެޓަރ، ޕާސްވާޑް ޖެނެރެޓަރ، ލަފްޒު ކައުންޓަރ">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">އޮންނަނީ އެޑްތަކަށް</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="އެޑް ބެނަރ">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>އަހަރެމެންގ އޮންނަނީ އެޑްތަކާ ބެހޭ އިތުރު ދަސްކޮށްލާ! <a href="#tools">ދުވަހުގެ ތެރޭގައި</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn އޮންނަނީ އެޑްތައް</h1>
+        <p class="subtitle">މައިކްރޯ-އޮންނަނީ އެޑް ސެޓް ކަމަށް، މާކެޓިންގ އަދި އިތުރުވުންތަކަށް</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="އޮންނަނީ އެޑްތައް ހޯދާ..." 
+                   aria-label="އޮންނަނީ އެޑްތައް ހޯދާ">
+            <select aria-label="ކެޓަގަރީ އަށް ފިލްޓަރ ކުރައްވާ">
+                <option value="">ހުރިހާ ކެޓަގަރީތައް</option>
+                
+                    <option value="marketing">މާކެޓިންގ</option>
+                
+                    <option value="security">ސިއްރަތް</option>
+                
+                    <option value="development">އިތުރުވުން</option>
+                
+                    <option value="design">ޑިޒައިން</option>
+                
+                    <option value="engineering">އިންޖިނިއަރިންގ</option>
+                
+                    <option value="logistics">ލޮޖިސްޓިކްސް</option>
+                
+                    <option value="ecology">އެކޮލޮޖީ</option>
+                
+            </select>
+            <button aria-label="ފިލްޓަރތައް ސަފާ ކުރައްވާ">ފިލްޓަރތައް ސަފާ ކުރައްވާ</button>
+            <button id="clear-favorites" aria-label="ފެވަރިޓްތައް ސަފާ ކުރައްވާ">ފެވަރިޓްތައް ސަފާ ކުރައްވާ</button>
+            <button id="sort-favorites" aria-label="ފެވަރިޓްތައް މަތީގައި ދައްކަވާ">ފެވަރިޓްތައް މަތީގައި</button>
+            <div class="filter-message hidden" role="alert">އޮންނަނީ އެޑް ނުފެނުނު. ތިޔަބޭފުޅުންގ ޤައުމު ބަދަލުކުރުމަށް މަސައްކަތް ކުރާ.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 އޮންނަނީ އެޑް ސްޓެޓިސްޓިކްސް</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">އެކްޓިވް އޮންނަނީ އެޑްތައް</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">ކެޓަގަރީތައް</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">ޕްލޭންކުރެވުނު</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 މާކެޓިންގ އަދި އެނާލިސްސް އޮންނަނީ އެޑްތައް</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM ޓެގް ޖެނެރެޓަރ</h2>
+                    <p>މާކެޓިންގ ކެމްޕެއިންތަކުގެ ފުއްދާރު ތަކެތި ހެދުމަށް އުތުރުން UTM ލިންކް އުފެއްދުމެއް.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=dv" 
+                       aria-label="އޮންނަނީ އެޑް ހުޅުވާ: 🔗 UTM ޓެގް ޖެނެރެޓަރ">
+                        އޮންނަނީ އެޑް ހުޅުވާ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM ޓެގް ޖެނެރެޓަރ" 
+                            aria-label="ފެވަރިޓްތަކަށް އިތުރު ކުރައްވާ: 🔗 UTM ޓެގް ޖެނެރެޓަރ">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 ލަފްޒު/އަކަރު ކައުންޓަރ</h2>
+                    <p>ލިހިގެ ތެރެއިން ލަފްޒުތައް، ލައިންތައް އަދި އަކަރުތައް ކައުންޓް ކުރުމެއް. SEO އޮޕްޓިމައިޒޭޝަން އަށް ރަނގަޅު.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=dv" 
+                       aria-label="އޮންނަނީ އެޑް ހުޅުވާ: 📝 ލަފްޒު/އަކަރު ކައުންޓަރ">
+                        އޮންނަނީ އެޑް ހުޅުވާ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 ލަފްޒު/އަކަރު ކައުންޓަރ" 
+                            aria-label="ފެވަރިޓްތަކަށް އިތުރު ކުރައްވާ: 📝 ލަފްޒު/އަކަރު ކައުންޓަރ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="އެޑް ބެނަރ">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>އަހަރެމެންގ އޮންނަނީ އެޑްތަކާ ބެހޭ އިތުރު ދަސްކޮށްލާ! <a href="#tools">ދުވަހުގެ ތެރޭގައި</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 ސިއްރަތް އޮންނަނީ އެޑްތައް</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 ޕާސްވާޑް ޖެނެރެޓަރ</h2>
+                    <p>ކަސްޓަމް ޕަރަމިޓަރސް އެއް ބޭނުން ކޮންމެ ސެފް ޕާސްވާޑް އެއް އުފެއްދުމެއް. ތިޔަބޭފުޅުންގ އެކައުންޓްތަކުގެ ސިއްރަތް.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=dv" 
+                       aria-label="އޮންނަނީ އެޑް ހުޅުވާ: 🔑 ޕާސްވާޑް ޖެނެރެޓަރ">
+                        އޮންނަނީ އެޑް ހުޅުވާ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 ޕާސްވާޑް ޖެނެރެޓަރ" 
+                            aria-label="ފެވަރިޓްތަކަށް އިތުރު ކުރައްވާ: 🔑 ޕާސްވާޑް ޖެނެރެޓަރ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 އިތުރުވުން އޮންނަނީ އެޑްތައް</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">ވަގުތުގައި</div>
+                    <h2>📄 JSON ފޯމެޓަރ</h2>
+                    <p>JSON ޑޭޓާގެ ރަނގަޅު ފޯމެޓިންގ އަދި ވެލިޑޭޝަން. ސިންޓެކްސް ހައިލައިޓިންގ.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON ފޯމެޓަރ ވަގުތުގައި ހުންނަވާނެ">
+                        ވަގުތުގައި ހުންނަވާނެ
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">ވަގުތުގައި</div>
+                    <h2>🔄 Base64 ކޮންވާޓަރ</h2>
+                    <p>Base64 އިންކޯޑިންގ އަދި ޑިކޯޑިންގ. އިމޭޖްތައް އަދި ފައިލްތައް އެއް ކުރުމެއް.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 ކޮންވާޓަރ ވަގުތުގައި ހުންނަވާނެ">
+                        ވަގުތުގައި ހުންނަވާނެ
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 ޑިޒައިން އޮންނަނީ އެޑްތައް</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">ވަގުތުގައި</div>
+                    <h2>🎨 ކަލަ ޕެލެޓްތައް</h2>
+                    <p>ޑިޒައިން އަށް ކަލަ ސްކީމް އުފެއްދުމެއް އަދި އިޚްތިޔާރު ކުރުމެއް. ހާމޯނިއަށް އެއްބައްޓަން ހޯދުމެއް.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 ކަލަ ޕެލެޓްތައް ވަގުތުގައި ހުންނަވާނެ">
+                        ވަގުތުގައި ހުންނަވާނެ
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">ވަގުތުގައި</div>
+                    <h2>📐 ފޯމެޓް ކޮންވާޓަރ</h2>
+                    <p>ތަފާތު އިމޭޖް އަދި ޑޮކިއުމަންޓް ފޯމެޓްތަކަށް އެންމެ ފަހަރު ބަދަލުކުރުމެއް.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 ފޯމެޓް ކޮންވާޓަރ ވަގުތުގައި ހުންނަވާނެ">
+                        ވަގުތުގައި ހުންނަވާނެ
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 އިންޖިނިއަރިންގ އޮންނަނީ އެޑްތައް</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 ޔުނިޓް ކޮންވާޓަރ</h2>
+                    <p>ތަފާތު މޭޒަރމަންޓް ޔުނިޓްތަކަށް އެންމެ ފަހަރު ބަދަލުކުރުމެއް.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=dv" 
+                       aria-label="އޮންނަނީ އެޑް ހުޅުވާ: 🔄 ޔުނިޓް ކޮންވާޓަރ">
+                        އޮންނަނީ އެޑް ހުޅުވާ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 ޔުނިޓް ކޮންވާޓަރ" 
+                            aria-label="ފެވަރިޓްތަކަށް އިތުރު ކުރައްވާ: 🔄 ޔުނިޓް ކޮންވާޓަރ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ ލޮޖިސްޓިކްސް އޮންނަނީ އެޑްތައް</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 ކާރު ޑިޕްރިޝިއޭޝަން ކެލްކިއުލޭޓަރ</h2>
+                    <p>މައިލެޖް، އޮޕެރޭޝަން ޓައިމް އަދި ޝަރަތްތަކަށް އަށްޓަކައި ވިހިކްލުގެ ވޭރުކުރުމެއް ހިސާބުކުރުމެއް.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=dv" 
+                       aria-label="އޮންނަނީ އެޑް ހުޅުވާ: 🔧 ކާރު ޑިޕްރިޝިއޭޝަން ކެލްކިއުލޭޓަރ">
+                        އޮންނަނީ އެޑް ހުޅުވާ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 ކާރު ޑިޕްރިޝިއޭޝަން ކެލްކިއުލޭޓަރ" 
+                            aria-label="ފެވަރިޓްތަކަށް އިތުރު ކުރައްވާ: 🔧 ކާރު ޑިޕްރިޝިއޭޝަން ކެލްކިއުލޭޓަރ">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ ފިއުލް ކެލްކިއުލޭޓަރ</h2>
+                    <p>ފިއުލް ކޮންސަމްޕްޝަން، ޓްރެވަލް ކޮސްޓް އަދި ސޭވިންސް ހިސާބުކުރުމެއް.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=dv" 
+                       aria-label="އޮންނަނީ އެޑް ހުޅުވާ: ⛽ ފިއުލް ކެލްކިއުލޭޓަރ">
+                        އޮންނަނީ އެޑް ހުޅުވާ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ ފިއުލް ކެލްކިއުލޭޓަރ" 
+                            aria-label="ފެވަރިޓްތަކަށް އިތުރު ކުރައްވާ: ⛽ ފިއުލް ކެލްކިއުލޭޓަރ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 އެކޮލޮޖީ އޮންނަނީ އެޑްތައް</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 ޕްރޮޑަކްޓް އެކޮލޮޖީކަލް ފުޓްޕްރިންޓް ކެލްކިއުލޭޓަރ</h2>
+                    <p>ތިޔަބޭފުޅުންގ ޕްރޮޑަކްޓްތަކުގެ ކާބަން، ފަރާތްތަކުގެ އަދި ބިމުގެ ފުޓްޕްރިންޓް ހިސާބުކުރުމެއް.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=dv" 
+                       aria-label="އޮންނަނީ އެޑް ހުޅުވާ: 🌍 ޕްރޮޑަކްޓް އެކޮލޮޖީކަލް ފުޓްޕްރިންޓް ކެލްކިއުލޭޓަރ">
+                        އޮންނަނީ އެޑް ހުޅުވާ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 ޕްރޮޑަކްޓް އެކޮލޮޖީކަލް ފުޓްޕްރިންޓް ކެލްކިއުލޭޓަރ" 
+                            aria-label="ފެވަރިޓްތަކަށް އިތުރު ކުރައްވާ: 🌍 ޕްރޮޑަކްޓް އެކޮލޮޖީކަލް ފުޓްޕްރިންޓް ކެލްކިއުލޭޓަރ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 އޮންނަނީ އެޑް އިތުރުވުން</h3>
+            <p>ތިޔަބޭފުޅުންނަށް އައިޑިއާ ހުރިނަމަ، އެ އޮންނަނީ އެޑްތަކާ ބެހޭގޮތުން - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">support@serpmonn.ru އަށް ލިޔެވުން</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

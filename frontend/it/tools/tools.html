@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="it" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="it">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Motore di Ricerca Intelligente, Notizie e Piattaforma Mini Giochi</title>
+    <meta name="description" content="Serpmonn: potenti strumenti per marketing, sicurezza, sviluppo ed ecologia.">
+    <meta name="keywords" content="generatore UTM, generatore password, calcolatore impronta ecologica, contatore parole">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Strumenti — Serpmonn">
+    <meta property="og:description" content="Un set di micro‑strumenti: generatore UTM, generatore password">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=it">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Strumenti — Serpmonn">
+    <meta name="twitter:description" content="generatore UTM, generatore password, contatore parole">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Agli strumenti</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Banner pubblicitario">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Scopri di più sui nostri strumenti! <a href="#tools">Vai</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Strumenti Serpmonn</h1>
+        <p class="subtitle">Un set di micro‑strumenti per lavoro, marketing e sviluppo</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Cerca strumenti..." 
+                   aria-label="Cerca strumenti">
+            <select aria-label="Filtra per categoria">
+                <option value="">Tutte le categorie</option>
+                
+                    <option value="marketing">Marketing</option>
+                
+                    <option value="security">Sicurezza</option>
+                
+                    <option value="development">Sviluppo</option>
+                
+                    <option value="design">Design</option>
+                
+                    <option value="engineering">Ingegneria</option>
+                
+                    <option value="logistics">Logistica</option>
+                
+                    <option value="ecology">Ecologia</option>
+                
+            </select>
+            <button aria-label="Cancella filtri">Cancella filtri</button>
+            <button id="clear-favorites" aria-label="Cancella preferiti">Cancella preferiti</button>
+            <button id="sort-favorites" aria-label="Mostra preferiti in alto">Preferiti in alto</button>
+            <div class="filter-message hidden" role="alert">Nessuno strumento trovato. Prova a modificare la tua query.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Statistiche Strumenti</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Strumenti attivi</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Categorie</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Pianificato</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Strumenti per Marketing e Analisi</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 Generatore Tag UTM</h2>
+                    <p>Crea rapidamente link UTM per tracciare l&#39;efficacia delle campagne di marketing.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=it" 
+                       aria-label="Apri strumento: 🔗 Generatore Tag UTM">
+                        Apri strumento
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 Generatore Tag UTM" 
+                            aria-label="Aggiungi ai preferiti: 🔗 Generatore Tag UTM">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Contatore Parole/Caratteri</h2>
+                    <p>Conta parole, righe e caratteri nel testo. Perfetto per l&#39;ottimizzazione SEO.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=it" 
+                       aria-label="Apri strumento: 📝 Contatore Parole/Caratteri">
+                        Apri strumento
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Contatore Parole/Caratteri" 
+                            aria-label="Aggiungi ai preferiti: 📝 Contatore Parole/Caratteri">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Banner pubblicitario">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Scopri di più sui nostri strumenti! <a href="#tools">Vai</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Strumenti per Sicurezza</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Generatore Password</h2>
+                    <p>Crea password sicure con parametri personalizzati. Sicurezza dei tuoi account.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=it" 
+                       aria-label="Apri strumento: 🔑 Generatore Password">
+                        Apri strumento
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Generatore Password" 
+                            aria-label="Aggiungi ai preferiti: 🔑 Generatore Password">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Strumenti per Sviluppo</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Presto</div>
+                    <h2>📄 Formattatore JSON</h2>
+                    <p>Bella formattazione e validazione dei dati JSON. Evidenziazione della sintassi.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 Formattatore JSON Presto disponibile">
+                        Presto disponibile
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Presto</div>
+                    <h2>🔄 Convertitore Base64</h2>
+                    <p>Codifica e decodifica Base64. Lavora con immagini e file.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Convertitore Base64 Presto disponibile">
+                        Presto disponibile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Strumenti per Design</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Presto</div>
+                    <h2>🎨 Palette di Colori</h2>
+                    <p>Crea e seleziona schemi di colori per il design. Combinazioni armoniose.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Palette di Colori Presto disponibile">
+                        Presto disponibile
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Presto</div>
+                    <h2>📐 Convertitore di Formati</h2>
+                    <p>Conversione tra diversi formati di immagine e documenti.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Convertitore di Formati Presto disponibile">
+                        Presto disponibile
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Strumenti per Ingegneria</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Convertitore di Unità</h2>
+                    <p>Conversione rapida tra diverse unità di misura.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=it" 
+                       aria-label="Apri strumento: 🔄 Convertitore di Unità">
+                        Apri strumento
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Convertitore di Unità" 
+                            aria-label="Aggiungi ai preferiti: 🔄 Convertitore di Unità">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Strumenti per Logistica</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Calcolatore di Ammortamento Auto</h2>
+                    <p>Calcola l&#39;usura del veicolo in base al chilometraggio, tempo di esercizio e condizioni.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=it" 
+                       aria-label="Apri strumento: 🔧 Calcolatore di Ammortamento Auto">
+                        Apri strumento
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Calcolatore di Ammortamento Auto" 
+                            aria-label="Aggiungi ai preferiti: 🔧 Calcolatore di Ammortamento Auto">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Calcolatore di Carburante</h2>
+                    <p>Calcola il consumo di carburante, il costo del viaggio e i risparmi.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=it" 
+                       aria-label="Apri strumento: ⛽ Calcolatore di Carburante">
+                        Apri strumento
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Calcolatore di Carburante" 
+                            aria-label="Aggiungi ai preferiti: ⛽ Calcolatore di Carburante">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Strumenti per Ecologia</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Calcolatore di Impronta Ecologica dei Prodotti</h2>
+                    <p>Calcola l&#39;impronta di carbonio, acqua e terra dei tuoi prodotti.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=it" 
+                       aria-label="Apri strumento: 🌍 Calcolatore di Impronta Ecologica dei Prodotti">
+                        Apri strumento
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Calcolatore di Impronta Ecologica dei Prodotti" 
+                            aria-label="Aggiungi ai preferiti: 🌍 Calcolatore di Impronta Ecologica dei Prodotti">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Sviluppo Strumenti</h3>
+            <p>Se hai idee per nuovi strumenti - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">scrivi a support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="hi" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="hi">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - स्मार्ट सर्च इंजन, समाचार और मिनी गेम्स प्लेटफॉर्म</title>
+    <meta name="description" content="Serpmonn: मार्केटिंग, सुरक्षा, विकास और पारिस्थितिकी के लिए शक्तिशाली उपकरण।">
+    <meta name="keywords" content="UTM जनरेटर, पासवर्ड जनरेटर, पारिस्थितिक पदचिह्न कैलकुलेटर, शब्द गणक">
+    <!-- Open Graph -->
+    <meta property="og:title" content="उपकरण — Serpmonn">
+    <meta property="og:description" content="सूक्ष्म उपकरणों का एक सेट: UTM जनरेटर, पासवर्ड जनरेटर">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=hi">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="उपकरण — Serpmonn">
+    <meta name="twitter:description" content="UTM जनरेटर, पासवर्ड जनरेटर, शब्द गणक">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">उपकरणों पर</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="विज्ञापन बैनर">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>हमारे उपकरणों के बारे में अधिक जानें! <a href="#tools">जाएं</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn उपकरण</h1>
+        <p class="subtitle">काम, मार्केटिंग और विकास के लिए सूक्ष्म उपकरणों का एक सेट</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="उपकरण खोजें..." 
+                   aria-label="उपकरण खोजें">
+            <select aria-label="श्रेणी द्वारा फ़िल्टर करें">
+                <option value="">सभी श्रेणियां</option>
+                
+                    <option value="marketing">मार्केटिंग</option>
+                
+                    <option value="security">सुरक्षा</option>
+                
+                    <option value="development">विकास</option>
+                
+                    <option value="design">डिजाइन</option>
+                
+                    <option value="engineering">इंजीनियरिंग</option>
+                
+                    <option value="logistics">लॉजिस्टिक्स</option>
+                
+                    <option value="ecology">पारिस्थितिकी</option>
+                
+            </select>
+            <button aria-label="फ़िल्टर साफ करें">फ़िल्टर साफ करें</button>
+            <button id="clear-favorites" aria-label="पसंदीदा साफ करें">पसंदीदा साफ करें</button>
+            <button id="sort-favorites" aria-label="पसंदीदा शीर्ष पर दिखाएं">पसंदीदा शीर्ष पर</button>
+            <div class="filter-message hidden" role="alert">कोई उपकरण नहीं मिला। अपना क्वेरी बदलने का प्रयास करें।</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 उपकरण सांख्यिकी</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">सक्रिय उपकरण</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">श्रेणियां</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">नियोजित</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 मार्केटिंग और एनालिटिक्स उपकरण</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM टैग जनरेटर</h2>
+                    <p>मार्केटिंग अभियानों की प्रभावशीलता को ट्रैक करने के लिए शीघ्र UTM लिंक बनाएं।</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=hi" 
+                       aria-label="उपकरण खोलें: 🔗 UTM टैग जनरेटर">
+                        उपकरण खोलें
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM टैग जनरेटर" 
+                            aria-label="पसंदीदा में जोड़ें: 🔗 UTM टैग जनरेटर">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 शब्द/वर्ण गणक</h2>
+                    <p>पाठ में शब्दों, पंक्तियों और वर्णों की गिनती करें। SEO अनुकूलन के लिए आदर्श।</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=hi" 
+                       aria-label="उपकरण खोलें: 📝 शब्द/वर्ण गणक">
+                        उपकरण खोलें
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 शब्द/वर्ण गणक" 
+                            aria-label="पसंदीदा में जोड़ें: 📝 शब्द/वर्ण गणक">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="विज्ञापन बैनर">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>हमारे उपकरणों के बारे में अधिक जानें! <a href="#tools">जाएं</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 सुरक्षा उपकरण</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 पासवर्ड जनरेटर</h2>
+                    <p>कस्टम पैरामीटर के साथ सुरक्षित पासवर्ड बनाएं। आपके खातों की सुरक्षा।</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=hi" 
+                       aria-label="उपकरण खोलें: 🔑 पासवर्ड जनरेटर">
+                        उपकरण खोलें
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 पासवर्ड जनरेटर" 
+                            aria-label="पसंदीदा में जोड़ें: 🔑 पासवर्ड जनरेटर">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 विकास उपकरण</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">जल्द ही</div>
+                    <h2>📄 JSON फॉर्मेटर</h2>
+                    <p>JSON डेटा का सुंदर फॉर्मेटिंग और सत्यापन। सिंटैक्स हाइलाइटिंग।</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON फॉर्मेटर जल्द ही उपलब्ध">
+                        जल्द ही उपलब्ध
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">जल्द ही</div>
+                    <h2>🔄 Base64 कनवर्टर</h2>
+                    <p>Base64 एन्कोडिंग और डिकोडिंग। छवियों और फ़ाइलों के साथ कार्य।</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 कनवर्टर जल्द ही उपलब्ध">
+                        जल्द ही उपलब्ध
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 डिजाइन उपकरण</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">जल्द ही</div>
+                    <h2>🎨 रंग पैलेट</h2>
+                    <p>डिजाइन के लिए रंग योजनाएं बनाएं और चुनें। सामंजस्यपूर्ण संयोजन।</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 रंग पैलेट जल्द ही उपलब्ध">
+                        जल्द ही उपलब्ध
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">जल्द ही</div>
+                    <h2>📐 फॉर्मेट कनवर्टर</h2>
+                    <p>विभिन्न छवि और दस्तावेज़ प्रारूपों के बीच रूपांतरण।</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 फॉर्मेट कनवर्टर जल्द ही उपलब्ध">
+                        जल्द ही उपलब्ध
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 इंजीनियरिंग उपकरण</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 यूनिट कनवर्टर</h2>
+                    <p>विभिन्न माप इकाइयों के बीच त्वरित रूपांतरण।</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=hi" 
+                       aria-label="उपकरण खोलें: 🔄 यूनिट कनवर्टर">
+                        उपकरण खोलें
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 यूनिट कनवर्टर" 
+                            aria-label="पसंदीदा में जोड़ें: 🔄 यूनिट कनवर्टर">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ लॉजिस्टिक्स उपकरण</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 कार मूल्यह्रास कैलकुलेटर</h2>
+                    <p>माइलेज, समय और स्थितियों के आधार पर वाहन की घिसावट की गणना करें।</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=hi" 
+                       aria-label="उपकरण खोलें: 🔧 कार मूल्यह्रास कैलकुलेटर">
+                        उपकरण खोलें
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 कार मूल्यह्रास कैलकुलेटर" 
+                            aria-label="पसंदीदा में जोड़ें: 🔧 कार मूल्यह्रास कैलकुलेटर">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ ईंधन कैलकुलेटर</h2>
+                    <p>ईंधन खपत, यात्रा लागत और बचत की गणना करें।</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=hi" 
+                       aria-label="उपकरण खोलें: ⛽ ईंधन कैलकुलेटर">
+                        उपकरण खोलें
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ ईंधन कैलकुलेटर" 
+                            aria-label="पसंदीदा में जोड़ें: ⛽ ईंधन कैलकुलेटर">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 पारिस्थितिकी उपकरण</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर</h2>
+                    <p>अपने उत्पादों के कार्बन, जल और भूमि पदचिह्न की गणना करें।</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=hi" 
+                       aria-label="उपकरण खोलें: 🌍 उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर">
+                        उपकरण खोलें
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर" 
+                            aria-label="पसंदीदा में जोड़ें: 🌍 उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 उपकरण विकास</h3>
+            <p>यदि नए उपकरणों के लिए विचार हैं - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">support@serpmonn.ru पर लिखें</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

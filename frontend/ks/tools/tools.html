@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="ks" dir="rtl">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="ks">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - ذہین سرچ انجن، خبراں تے منی گیمز پلیٹ فارم</title>
+    <meta name="description" content="Serpmonn: مارکیٹنگ، حفاظت، ترقی تے ماحولیات کیتے طاقتور اوزار">
+    <meta name="keywords" content="UTM جنریٹر، پاس ورڈ جنریٹر، ماحولیاتی پئے پرنٹ کیلکولیٹر، لفظ گݨتڑ">
+    <!-- Open Graph -->
+    <meta property="og:title" content="اوزار — Serpmonn">
+    <meta property="og:description" content="مائیکرو اوزاراں دا سیٹ: UTM جنریٹر، پاس ورڈ جنریٹر">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=ks">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="اوزار — Serpmonn">
+    <meta name="twitter:description" content="UTM جنریٹر، پاس ورڈ جنریٹر، لفظ گݨتڑ">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">اوزاراں ول</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="اشتہاری بینر">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>ساݙے اوزاراں بارے ٻیا سِکھو! <a href="#tools">ونڄو</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn اوزار</h1>
+        <p class="subtitle">کم، مارکیٹنگ تے ترقی کیتے مائیکرو اوزاراں دا سیٹ</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="اوزار ڳولو..." 
+                   aria-label="اوزار ڳولو">
+            <select aria-label="زمرے دے حساب نال فلٹر">
+                <option value="">سارے زمرے</option>
+                
+                    <option value="marketing">مارکیٹنگ</option>
+                
+                    <option value="security">حفاظت</option>
+                
+                    <option value="development">ترقی</option>
+                
+                    <option value="design">ڈیزائن</option>
+                
+                    <option value="engineering">انجینئری</option>
+                
+                    <option value="logistics">لاجسٹکس</option>
+                
+                    <option value="ecology">ماحولیات</option>
+                
+            </select>
+            <button aria-label="فلٹر صاف کرو">فلٹر صاف کرو</button>
+            <button id="clear-favorites" aria-label="منتخب صاف کرو">منتخب صاف کرو</button>
+            <button id="sort-favorites" aria-label="منتخب اتے ݙکھاؤ">منتخب اتے</button>
+            <div class="filter-message hidden" role="alert">کوئی اوزار نہ ملیا۔ اپݨی ڳولا تبدیل کرݨ دی کوشش کرو۔</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 اوزاراں دی اعداد و شمار</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">فعال اوزار</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">زمرے</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">منصوبہ بندی</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 مارکیٹنگ تے تجزیے دے اوزار</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM ٹیگ جنریٹر</h2>
+                    <p>مارکیٹنگ مہماں دی تاثیر کوں ٹریک کرݨ کیتے جلدی نال UTM لنک بݨاؤ۔</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=ks" 
+                       aria-label="اوزار کھولو: 🔗 UTM ٹیگ جنریٹر">
+                        اوزار کھولو
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM ٹیگ جنریٹر" 
+                            aria-label="منتخب وچ شامل کرو: 🔗 UTM ٹیگ جنریٹر">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 لفظ/حرف گݨتڑ</h2>
+                    <p>متن وچوں لفظاں، سطراں تے حرفاں دی گݨتی کرو۔ SEO بہترین کیتے مثالی۔</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=ks" 
+                       aria-label="اوزار کھولو: 📝 لفظ/حرف گݨتڑ">
+                        اوزار کھولو
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 لفظ/حرف گݨتڑ" 
+                            aria-label="منتخب وچ شامل کرو: 📝 لفظ/حرف گݨتڑ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="اشتہاری بینر">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>ساݙے اوزاراں بارے ٻیا سِکھو! <a href="#tools">ونڄو</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 حفاظت دے اوزار</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 پاس ورڈ جنریٹر</h2>
+                    <p>اپݨے مرضی دے پیرامیٹرز نال محفوظ پاس ورڈ بݨاؤ۔ تہاݙے اکاؤنٹاں دی حفاظت۔</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=ks" 
+                       aria-label="اوزار کھولو: 🔑 پاس ورڈ جنریٹر">
+                        اوزار کھولو
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 پاس ورڈ جنریٹر" 
+                            aria-label="منتخب وچ شامل کرو: 🔑 پاس ورڈ جنریٹر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 ترقی دے اوزار</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">جلد</div>
+                    <h2>📄 JSON فارمیٹر</h2>
+                    <p>JSON ڈیٹا دی خوبصورت فارمیٹنگ تے تصدیق۔ نحوی روشنی۔</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON فارمیٹر جلد دستیاب تھیسی">
+                        جلد دستیاب تھیسی
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">جلد</div>
+                    <h2>🔄 Base64 کنورٹر</h2>
+                    <p>Base64 کوڈنگ تے ڈی کوڈنگ۔ تصویراں تے فائلاں نال کم۔</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 کنورٹر جلد دستیاب تھیسی">
+                        جلد دستیاب تھیسی
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 ڈیزائن دے اوزار</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">جلد</div>
+                    <h2>🎨 رنگ پلیٹس</h2>
+                    <p>ڈیزائن کیتے رنگ اسکیم بݨاؤ تے چݨو۔ ہم آہنگ مجموعے۔</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 رنگ پلیٹس جلد دستیاب تھیسی">
+                        جلد دستیاب تھیسی
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">جلد</div>
+                    <h2>📐 فارمیٹ کنورٹر</h2>
+                    <p>مختلف تصویر تے دستاویز فارمیٹاں دے وچکار تبدیلی۔</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 فارمیٹ کنورٹر جلد دستیاب تھیسی">
+                        جلد دستیاب تھیسی
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 انجینئری دے اوزار</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 یونٹ کنورٹر</h2>
+                    <p>مختلف پیمائشی یونٹاں دے وچکار جلدی تبدیلی۔</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=ks" 
+                       aria-label="اوزار کھولو: 🔄 یونٹ کنورٹر">
+                        اوزار کھولو
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 یونٹ کنورٹر" 
+                            aria-label="منتخب وچ شامل کرو: 🔄 یونٹ کنورٹر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ لاجسٹکس دے اوزار</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 گاڑی دے استعمال دی قیمت دا کیلکولیٹر</h2>
+                    <p>میلے، آپریشن وقت تے حالات دی بنیاد تے گاڑی دے استعمال دا حساب لاؤ۔</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=ks" 
+                       aria-label="اوزار کھولو: 🔧 گاڑی دے استعمال دی قیمت دا کیلکولیٹر">
+                        اوزار کھولو
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 گاڑی دے استعمال دی قیمت دا کیلکولیٹر" 
+                            aria-label="منتخب وچ شامل کرو: 🔧 گاڑی دے استعمال دی قیمت دا کیلکولیٹر">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ ایندھن کیلکولیٹر</h2>
+                    <p>ایندھن دی کھپت، سفر دی قیمت تے بچت دا حساب لاؤ۔</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=ks" 
+                       aria-label="اوزار کھولو: ⛽ ایندھن کیلکولیٹر">
+                        اوزار کھولو
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ ایندھن کیلکولیٹر" 
+                            aria-label="منتخب وچ شامل کرو: ⛽ ایندھن کیلکولیٹر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 ماحولیاتی اوزار</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 مصنوعات دے ماحولیاتی پئے پرنٹ دا کیلکولیٹر</h2>
+                    <p>تہاݙیاں مصنوعات دے کاربن، پاݨی تے زمین دے پئے پرنٹ دا حساب لاؤ۔</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=ks" 
+                       aria-label="اوزار کھولو: 🌍 مصنوعات دے ماحولیاتی پئے پرنٹ دا کیلکولیٹر">
+                        اوزار کھولو
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 مصنوعات دے ماحولیاتی پئے پرنٹ دا کیلکولیٹر" 
+                            aria-label="منتخب وچ شامل کرو: 🌍 مصنوعات دے ماحولیاتی پئے پرنٹ دا کیلکولیٹر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚚 اوزاراں دی ترقی</h3>
+            <p>جے تہاݙے کول نویں اوزاراں کیتے آئیڈیا ہن - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">support@serpmonn.ru کوں لکھو</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="fa">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - موتور جستجوی هوشمند، اخبار و پلتفرم بازی‌های مینی</title>
+    <meta name="description" content="Serpmonn: ابزارهای قدرتمند برای بازاریابی، امنیت، توسعه و اکولوژی.">
+    <meta name="keywords" content="تولیدکننده UTM، تولیدکننده رمز عبور، ماشین حساب ردپای زیست‌محیطی، شمارنده کلمات">
+    <!-- Open Graph -->
+    <meta property="og:title" content="ابزارها — Serpmonn">
+    <meta property="og:description" content="مجموعه‌ای از ابزارهای میکرو: تولیدکننده UTM، تولیدکننده رمز عبور">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=fa">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ابزارها — Serpmonn">
+    <meta name="twitter:description" content="تولیدکننده UTM، تولیدکننده رمز عبور، شمارنده کلمات">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">به ابزارها</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="بنر تبلیغاتی">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>بیشتر درباره ابزارهای ما بدانید! <a href="#tools">بروید</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>ابزارهای Serpmonn</h1>
+        <p class="subtitle">مجموعه‌ای از ابزارهای میکرو برای کار، بازاریابی و توسعه</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="جستجوی ابزارها..." 
+                   aria-label="جستجوی ابزارها">
+            <select aria-label="فیلتر بر اساس دسته‌بندی">
+                <option value="">همه دسته‌بندی‌ها</option>
+                
+                    <option value="marketing">بازاریابی</option>
+                
+                    <option value="security">امنیت</option>
+                
+                    <option value="development">توسعه</option>
+                
+                    <option value="design">طراحی</option>
+                
+                    <option value="engineering">مهندسی</option>
+                
+                    <option value="logistics">لجستیک</option>
+                
+                    <option value="ecology">اکولوژی</option>
+                
+            </select>
+            <button aria-label="پاک کردن فیلترها">پاک کردن فیلترها</button>
+            <button id="clear-favorites" aria-label="پاک کردن موردهای دلخواه">پاک کردن موردهای دلخواه</button>
+            <button id="sort-favorites" aria-label="نمایش موردهای دلخواه بالا">موردهای دلخواه بالا</button>
+            <div class="filter-message hidden" role="alert">ابزاری یافت نشد. سعی کنید عبارت جستجو را تغییر دهید.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 آمار ابزارها</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">ابزارهای فعال</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">دسته‌بندی‌ها</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">برنامه‌ریزی شده</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 ابزارهای بازاریابی و تحلیل</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 تولیدکننده تگ UTM</h2>
+                    <p>به سرعت لینک‌های UTM برای ردیابی اثربخشی کمپین‌های بازاریابی ایجاد کنید.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=fa" 
+                       aria-label="باز کردن ابزار: 🔗 تولیدکننده تگ UTM">
+                        باز کردن ابزار
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 تولیدکننده تگ UTM" 
+                            aria-label="افزودن به موردهای دلخواه: 🔗 تولیدکننده تگ UTM">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 شمارنده کلمات/کاراکترها</h2>
+                    <p>شمارش کلمات، خطوط و کاراکترها در متن. ایده‌آل برای بهینه‌سازی SEO.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=fa" 
+                       aria-label="باز کردن ابزار: 📝 شمارنده کلمات/کاراکترها">
+                        باز کردن ابزار
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 شمارنده کلمات/کاراکترها" 
+                            aria-label="افزودن به موردهای دلخواه: 📝 شمارنده کلمات/کاراکترها">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="بنر تبلیغاتی">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>بیشتر درباره ابزارهای ما بدانید! <a href="#tools">بروید</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 ابزارهای امنیت</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 تولیدکننده رمز عبور</h2>
+                    <p>رمزهای عبور ایمن با پارامترهای سفارشی ایجاد کنید. امنیت حساب‌های شما.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=fa" 
+                       aria-label="باز کردن ابزار: 🔑 تولیدکننده رمز عبور">
+                        باز کردن ابزار
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 تولیدکننده رمز عبور" 
+                            aria-label="افزودن به موردهای دلخواه: 🔑 تولیدکننده رمز عبور">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 ابزارهای توسعه</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">به زودی</div>
+                    <h2>📄 فرمت‌دهنده JSON</h2>
+                    <p>فرمت‌بندی زیبا و اعتبارسنجی داده‌های JSON. برجسته سازی نحو.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 فرمت‌دهنده JSON به زودی در دسترس خواهد بود">
+                        به زودی در دسترس خواهد بود
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">به زودی</div>
+                    <h2>🔄 مبدل Base64</h2>
+                    <p>کدگذاری و دیکد کردن Base64. کار با تصاویر و فایل‌ها.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 مبدل Base64 به زودی در دسترس خواهد بود">
+                        به زودی در دسترس خواهد بود
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 ابزارهای طراحی</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">به زودی</div>
+                    <h2>🎨 پالت‌های رنگ</h2>
+                    <p>ایجاد و انتخاب طرح‌های رنگی برای طراحی. ترکیبات هماهنگ.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 پالت‌های رنگ به زودی در دسترس خواهد بود">
+                        به زودی در دسترس خواهد بود
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">به زودی</div>
+                    <h2>📐 مبدل فرمت</h2>
+                    <p>تبدیل بین فرمت‌های مختلف تصویر و اسناد.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 مبدل فرمت به زودی در دسترس خواهد بود">
+                        به زودی در دسترس خواهد بود
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 ابزارهای مهندسی</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 مبدل واحد</h2>
+                    <p>تبدیل سریع بین واحدهای اندازه‌گیری مختلف.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=fa" 
+                       aria-label="باز کردن ابزار: 🔄 مبدل واحد">
+                        باز کردن ابزار
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 مبدل واحد" 
+                            aria-label="افزودن به موردهای دلخواه: 🔄 مبدل واحد">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ ابزارهای لجستیک</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 ماشین حساب استهلاک خودرو</h2>
+                    <p>محاسبه فرسودگی خودرو بر اساس مسافت پیموده شده، زمان بهره‌برداری و شرایط.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=fa" 
+                       aria-label="باز کردن ابزار: 🔧 ماشین حساب استهلاک خودرو">
+                        باز کردن ابزار
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 ماشین حساب استهلاک خودرو" 
+                            aria-label="افزودن به موردهای دلخواه: 🔧 ماشین حساب استهلاک خودرو">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ ماشین حساب سوخت</h2>
+                    <p>محاسبه مصرف سوخت، هزینه سفر و پس‌انداز.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=fa" 
+                       aria-label="باز کردن ابزار: ⛽ ماشین حساب سوخت">
+                        باز کردن ابزار
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ ماشین حساب سوخت" 
+                            aria-label="افزودن به موردهای دلخواه: ⛽ ماشین حساب سوخت">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 ابزارهای اکولوژی</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 ماشین حساب ردپای زیست‌محیطی محصولات</h2>
+                    <p>ردپای کربن، آب و زمین محصولات خود را محاسبه کنید.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=fa" 
+                       aria-label="باز کردن ابزار: 🌍 ماشین حساب ردپای زیست‌محیطی محصولات">
+                        باز کردن ابزار
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 ماشین حساب ردپای زیست‌محیطی محصولات" 
+                            aria-label="افزودن به موردهای دلخواه: 🌍 ماشین حساب ردپای زیست‌محیطی محصولات">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 توسعه ابزارها</h3>
+            <p>اگر ایده‌ای برای ابزارهای جدید دارید - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">به support@serpmonn.ru بنویسید</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

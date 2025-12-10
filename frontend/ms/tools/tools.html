@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="ms" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="ms">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Enjin Carian Pintar, Berita &amp; Platform Permainan Mini</title>
+    <meta name="description" content="Serpmonn: alat berkuasa untuk pemasaran, keselamatan, pembangunan dan ekologi.">
+    <meta name="keywords" content="penjana UTM, penjana kata laluan, kalkulator jejak ekologi, pembilang perkataan">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Alat — Serpmonn">
+    <meta property="og:description" content="Satu set alat mikro: penjana UTM, penjana kata laluan">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=ms">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Alat — Serpmonn">
+    <meta name="twitter:description" content="penjana UTM, penjana kata laluan, pembilang perkataan">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Ke alat</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Papan iklan">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Ketahui lebih lanjut tentang alat kami! <a href="#tools">Pergi</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Alat Serpmonn</h1>
+        <p class="subtitle">Satu set alat mikro untuk kerja, pemasaran dan pembangunan</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Cari alat..." 
+                   aria-label="Cari alat">
+            <select aria-label="Tapis mengikut kategori">
+                <option value="">Semua kategori</option>
+                
+                    <option value="marketing">Pemasaran</option>
+                
+                    <option value="security">Keselamatan</option>
+                
+                    <option value="development">Pembangunan</option>
+                
+                    <option value="design">Reka bentuk</option>
+                
+                    <option value="engineering">Kejuruteraan</option>
+                
+                    <option value="logistics">Logistik</option>
+                
+                    <option value="ecology">Ekologi</option>
+                
+            </select>
+            <button aria-label="Kosongkan penapis">Kosongkan penapis</button>
+            <button id="clear-favorites" aria-label="Kosongkan kegemaran">Kosongkan kegemaran</button>
+            <button id="sort-favorites" aria-label="Tunjukkan kegemaran di atas">Kegemaran di atas</button>
+            <div class="filter-message hidden" role="alert">Tiada alat ditemui. Cuba ubah pertanyaan anda.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Statistik Alat</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Alat aktif</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Kategori</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Dirancang</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Alat untuk Pemasaran dan Analisis</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 Penjana Tag UTM</h2>
+                    <p>Cipta pautan UTM dengan cepat untuk mengesan keberkesanan kempen pemasaran.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=ms" 
+                       aria-label="Buka alat: 🔗 Penjana Tag UTM">
+                        Buka alat
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 Penjana Tag UTM" 
+                            aria-label="Tambah ke kegemaran: 🔗 Penjana Tag UTM">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Pembilang Perkataan/Aksara</h2>
+                    <p>Kira perkataan, baris dan aksara dalam teks. Sesuai untuk pengoptimuman SEO.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=ms" 
+                       aria-label="Buka alat: 📝 Pembilang Perkataan/Aksara">
+                        Buka alat
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Pembilang Perkataan/Aksara" 
+                            aria-label="Tambah ke kegemaran: 📝 Pembilang Perkataan/Aksara">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Papan iklan">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Ketahui lebih lanjut tentang alat kami! <a href="#tools">Pergi</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Alat untuk Keselamatan</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Penjana Kata Laluan</h2>
+                    <p>Buat kata laluan selamat dengan parameter tersuai. Keselamatan akaun anda.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=ms" 
+                       aria-label="Buka alat: 🔑 Penjana Kata Laluan">
+                        Buka alat
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Penjana Kata Laluan" 
+                            aria-label="Tambah ke kegemaran: 🔑 Penjana Kata Laluan">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Alat untuk Pembangunan</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Akan datang</div>
+                    <h2>📄 Pemformat JSON</h2>
+                    <p>Pemformatan dan pengesahan data JSON yang cantik. Penyerlahan sintaks.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 Pemformat JSON Akan datang tidak lama lagi">
+                        Akan datang tidak lama lagi
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Akan datang</div>
+                    <h2>🔄 Penukar Base64</h2>
+                    <p>Pengekodan dan penyahkodan Base64. Bekerja dengan imej dan fail.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Penukar Base64 Akan datang tidak lama lagi">
+                        Akan datang tidak lama lagi
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Alat untuk Reka bentuk</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Akan datang</div>
+                    <h2>🎨 Palet Warna</h2>
+                    <p>Cipta dan pilih skema warna untuk reka bentuk. Gabungan harmoni.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Palet Warna Akan datang tidak lama lagi">
+                        Akan datang tidak lama lagi
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Akan datang</div>
+                    <h2>📐 Penukar Format</h2>
+                    <p>Penukaran antara pelbagai format imej dan dokumen.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Penukar Format Akan datang tidak lama lagi">
+                        Akan datang tidak lama lagi
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Alat untuk Kejuruteraan</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Penukar Unit</h2>
+                    <p>Penukaran pantas antara pelbagai unit ukuran.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=ms" 
+                       aria-label="Buka alat: 🔄 Penukar Unit">
+                        Buka alat
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Penukar Unit" 
+                            aria-label="Tambah ke kegemaran: 🔄 Penukar Unit">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Alat untuk Logistik</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Kalkulator Susut Nilai Kereta</h2>
+                    <p>Kira haus kereta berdasarkan jarak perjalanan, masa operasi dan keadaan.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=ms" 
+                       aria-label="Buka alat: 🔧 Kalkulator Susut Nilai Kereta">
+                        Buka alat
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Kalkulator Susut Nilai Kereta" 
+                            aria-label="Tambah ke kegemaran: 🔧 Kalkulator Susut Nilai Kereta">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Kalkulator Bahan Bakar</h2>
+                    <p>Kira penggunaan bahan bakar, kos perjalanan dan penjimatan.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=ms" 
+                       aria-label="Buka alat: ⛽ Kalkulator Bahan Bakar">
+                        Buka alat
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Kalkulator Bahan Bakar" 
+                            aria-label="Tambah ke kegemaran: ⛽ Kalkulator Bahan Bakar">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Alat untuk Ekologi</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Kalkulator Jejak Ekologi Produk</h2>
+                    <p>Kira jejak karbon, air dan tanah produk anda.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=ms" 
+                       aria-label="Buka alat: 🌍 Kalkulator Jejak Ekologi Produk">
+                        Buka alat
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Kalkulator Jejak Ekologi Produk" 
+                            aria-label="Tambah ke kegemaran: 🌍 Kalkulator Jejak Ekologi Produk">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Pembangunan Alat</h3>
+            <p>Jika anda mempunyai idea untuk alat baru - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">tulis kepada support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

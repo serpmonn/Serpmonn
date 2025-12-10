@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="ug" dir="rtl">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="ug">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - ئاقىل ئىزدەش ماشىنىسى، خەۋەرلەر ۋە مىنى ئويۇن پىلاتفورمىسى</title>
+    <meta name="description" content="Serpmonn: ماركېتىڭ، بىخەتەرلىك، تەرەققىيات ۋە ئېكولوگىيە ئۈچۈن كۈچلۈك قوراللار">
+    <meta name="keywords" content="UTM گېنېراتورى، پارول گېنېراتورى، ئېكولوگىيەلىك ئىز ھېسابلاش، سۆز ساناق">
+    <!-- Open Graph -->
+    <meta property="og:title" content="قوراللار — Serpmonn">
+    <meta property="og:description" content="مىكرو قوراللار توپلىمى: UTM گېنېراتورى، پارول گېنېراتورى">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=ug">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="قوراللار — Serpmonn">
+    <meta name="twitter:description" content="UTM گېنېراتورى، پارول گېنېراتورى، سۆز ساناق">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">قوراللارغا</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="ئېلان بانېرى">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>بىزنىڭ قوراللىرىمىز ھەققىدە تېخىمۇ كۆپ بىلىڭ! <a href="#tools">يۆلەڭ</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn قوراللىرى</h1>
+        <p class="subtitle">ئىش، ماركېتىڭ ۋە تەرەققىيات ئۈچۈن مىكرو قوراللار توپلىمى</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="قوراللارنى ئىزدەش..." 
+                   aria-label="قوراللارنى ئىزدەش">
+            <select aria-label="تۈر بويىچە سۈزۈش">
+                <option value="">ھەممە تۈرلەر</option>
+                
+                    <option value="marketing">ماركېتىڭ</option>
+                
+                    <option value="security">بىخەتەرلىك</option>
+                
+                    <option value="development">تەرەققىيات</option>
+                
+                    <option value="design">دىزايىن</option>
+                
+                    <option value="engineering">ئىنژېنېرلىك</option>
+                
+                    <option value="logistics">لوجىستىكا</option>
+                
+                    <option value="ecology">ئېكولوگىيە</option>
+                
+            </select>
+            <button aria-label="سۈزگۈچلەرنى تازىلاش">سۈزگۈچلەرنى تازىلاش</button>
+            <button id="clear-favorites" aria-label="تاللانغانلارنى تازىلاش">تاللانغانلارنى تازىلاش</button>
+            <button id="sort-favorites" aria-label="تاللانغانلارنى ئۈستىدە كۆرسەت">تاللانغانلار ئۈستىدە</button>
+            <div class="filter-message hidden" role="alert">ھېچقانداق قورال تېپىلمىدى. سورىنىڭىزنى ئۆزگەرتىشكە تىرىشىڭ.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 قوراللار ستاتىستىكىسى</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">ئاكتىپ قوراللار</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">تۈرلەر</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">پىلانلانغان</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 ماركېتىڭ ۋە تەھلىل قوراللىرى</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM بەلگە گېنېراتورى</h2>
+                    <p>ماركېتىڭ پائالىيەتلىرىنىڭ ئۈنۈمىنى كۆزىتىش ئۈچۈن تېز ھالدا UTM ئۇلانمىلىرىنى قۇرۇڭ.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=ug" 
+                       aria-label="قورالنى ئاچ: 🔗 UTM بەلگە گېنېراتورى">
+                        قورالنى ئاچ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM بەلگە گېنېراتورى" 
+                            aria-label="تاللانغانلارغا قوش: 🔗 UTM بەلگە گېنېراتورى">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 سۆز/بەلگە ساناق</h2>
+                    <p>تېكىستتىكى سۆزلەرنى، قۇرلارنى ۋە بەلگىلەرنى ساناڭ. SEO ئۆپتىمىللاشتۇرۇش ئۈچۈن ئىدېئال.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=ug" 
+                       aria-label="قورالنى ئاچ: 📝 سۆز/بەلگە ساناق">
+                        قورالنى ئاچ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 سۆز/بەلگە ساناق" 
+                            aria-label="تاللانغانلارغا قوش: 📝 سۆز/بەلگە ساناق">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="ئېلان بانېرى">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>بىزنىڭ قوراللىرىمىز ھەققىدە تېخىمۇ كۆپ بىلىڭ! <a href="#tools">يۆلەڭ</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 بىخەتەرلىك قوراللىرى</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 پارول گېنېراتورى</h2>
+                    <p>تەڭشەلمىلىك پارامېترلار بىلەن بىخەتەر پاروللار قۇرۇڭ. ھېساباتلىرىڭىزنىڭ بىخەتەرلىكى.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=ug" 
+                       aria-label="قورالنى ئاچ: 🔑 پارول گېنېراتورى">
+                        قورالنى ئاچ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 پارول گېنېراتورى" 
+                            aria-label="تاللانغانلارغا قوش: 🔑 پارول گېنېراتورى">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 تەرەققىيات قوراللىرى</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">يېقىندا</div>
+                    <h2>📄 JSON فورماتلىغۇچ</h2>
+                    <p>JSON سانلىق-مەلۇماتلىرىنى گۈزەل فورماتلاش ۋە دەلىللەش. سىنتاكسىسنى يورۇتۇش.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON فورماتلىغۇچ يېقىندا تەمىنلىنىدۇ">
+                        يېقىندا تەمىنلىنىدۇ
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">يېقىندا</div>
+                    <h2>🔄 Base64 ئايلاندۇرغۇچ</h2>
+                    <p>Base64 كودلاش ۋە كودسىزلاشتۇرۇش. رەسىملەر ۋە ھۆججەتلەر بىلەن ئىشلەش.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 ئايلاندۇرغۇچ يېقىندا تەمىنلىنىدۇ">
+                        يېقىندا تەمىنلىنىدۇ
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 دىزايىن قوراللىرى</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">يېقىندا</div>
+                    <h2>🎨 رەڭ پالىترىلىرى</h2>
+                    <p>دىزايىن ئۈچۈن رەڭ سىستېمىلىرىنى قۇرۇڭ ۋە تاللاڭ. ئىناق بىرلەشمىلەر.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 رەڭ پالىترىلىرى يېقىندا تەمىنلىنىدۇ">
+                        يېقىندا تەمىنلىنىدۇ
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">يېقىندا</div>
+                    <h2>📐 فورمات ئايلاندۇرغۇچ</h2>
+                    <p>تۈرلۈك رەسىم ۋە ھۆججەت فورماتلىرى ئارىسىدا ئايلاندۇرۇش.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 فورمات ئايلاندۇرغۇچ يېقىندا تەمىنلىنىدۇ">
+                        يېقىندا تەمىنلىنىدۇ
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 ئىنژېنېرلىك قوراللىرى</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 بىرلىك ئايلاندۇرغۇچ</h2>
+                    <p>تۈرلۈك ئۆلچەم بىرلىكلىرى ئارىسىدا تېز ئايلاندۇرۇش.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=ug" 
+                       aria-label="قورالنى ئاچ: 🔄 بىرلىك ئايلاندۇرغۇچ">
+                        قورالنى ئاچ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 بىرلىك ئايلاندۇرغۇچ" 
+                            aria-label="تاللانغانلارغا قوش: 🔄 بىرلىك ئايلاندۇرغۇچ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ لوجىستىكا قوراللىرى</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 ماشىنا تۆۋەنلىشى ھېسابلاش</h2>
+                    <p>يۈرۈش ماسىسى، ئىشلەتۈش ۋاقتى ۋە شارائىتىغا ئاساسەن ماشىنىنىڭ تۆۋەنلىشىنى ھېسابلاڭ.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=ug" 
+                       aria-label="قورالنى ئاچ: 🔧 ماشىنا تۆۋەنلىشى ھېسابلاش">
+                        قورالنى ئاچ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 ماشىنا تۆۋەنلىشى ھېسابلاش" 
+                            aria-label="تاللانغانلارغا قوش: 🔧 ماشىنا تۆۋەنلىشى ھېسابلاش">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ ياقىلاش مەدەنى ھېسابلاش</h2>
+                    <p>ياقىلاش مەدەنى سەرپىياتى، سەپەر خىراجىتى ۋە تېجەشنى ھېسابلاڭ.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=ug" 
+                       aria-label="قورالنى ئاچ: ⛽ ياقىلاش مەدەنى ھېسابلاش">
+                        قورالنى ئاچ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ ياقىلاش مەدەنى ھېسابلاش" 
+                            aria-label="تاللانغانلارغا قوش: ⛽ ياقىلاش مەدەنى ھېسابلاش">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 ئېكولوگىيە قوراللىرى</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 مەھسۇلات ئېكولوگىيەلىك ئىز ھېسابلاش</h2>
+                    <p>مەھسۇلاتلىرىڭىزنىڭ كاربون، سۇ ۋە يەر ئىزىنى ھېسابلاڭ.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=ug" 
+                       aria-label="قورالنى ئاچ: 🌍 مەھسۇلات ئېكولوگىيەلىك ئىز ھېسابلاش">
+                        قورالنى ئاچ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 مەھسۇلات ئېكولوگىيەلىك ئىز ھېسابلاش" 
+                            aria-label="تاللانغانلارغا قوش: 🌍 مەھسۇلات ئېكولوگىيەلىك ئىز ھېسابلاش">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚚 قوراللارنى تەرەققىي قىلدۇرۇش</h3>
+            <p>ئەگەر سىزدە يېڭى قوراللار ھەققىدە ئىدىيىلەر بولسا - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">support@serpmonn.ru غا يېزىڭ</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="tr">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Akıllı Arama Motoru, Haberler ve Mini Oyunlar Platformu</title>
+    <meta name="description" content="Serpmonn: pazarlama, güvenlik, geliştirme ve ekoloji için güçlü araçlar.">
+    <meta name="keywords" content="UTM oluşturucu, şifre oluşturucu, ekolojik ayak izi hesaplayıcı, kelime sayacı">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Araçlar — Serpmonn">
+    <meta property="og:description" content="Bir dizi mikro‑araç: UTM oluşturucu, şifre oluşturucu">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=tr">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Araçlar — Serpmonn">
+    <meta name="twitter:description" content="UTM oluşturucu, şifre oluşturucu, kelime sayacı">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Araçlara</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Reklam banner&#39;ı">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Araçlarımız hakkında daha fazla bilgi edinin! <a href="#tools">Git</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn Araçları</h1>
+        <p class="subtitle">İş, pazarlama ve geliştirme için bir dizi mikro‑araç</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Araç ara..." 
+                   aria-label="Araç ara">
+            <select aria-label="Kategoriye göre filtrele">
+                <option value="">Tüm kategoriler</option>
+                
+                    <option value="marketing">Pazarlama</option>
+                
+                    <option value="security">Güvenlik</option>
+                
+                    <option value="development">Geliştirme</option>
+                
+                    <option value="design">Tasarım</option>
+                
+                    <option value="engineering">Mühendislik</option>
+                
+                    <option value="logistics">Lojistik</option>
+                
+                    <option value="ecology">Ekoloji</option>
+                
+            </select>
+            <button aria-label="Filtreleri temizle">Filtreleri temizle</button>
+            <button id="clear-favorites" aria-label="Favorileri temizle">Favorileri temizle</button>
+            <button id="sort-favorites" aria-label="Favorileri üstte göster">Favoriler üstte</button>
+            <div class="filter-message hidden" role="alert">Hiç araç bulunamadı. Sorgunuzu değiştirmeyi deneyin.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Araç İstatistikleri</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Aktif araçlar</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Kategoriler</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Planlanan</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Pazarlama ve Analitik Araçları</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM Etiket Oluşturucu</h2>
+                    <p>Pazarlama kampanyalarının etkinliğini izlemek için hızlıca UTM bağlantıları oluşturun.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=tr" 
+                       aria-label="Aracı aç: 🔗 UTM Etiket Oluşturucu">
+                        Aracı aç
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM Etiket Oluşturucu" 
+                            aria-label="Favorilere ekle: 🔗 UTM Etiket Oluşturucu">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Kelime/Karakter Sayacı</h2>
+                    <p>Metindeki kelimeleri, satırları ve karakterleri sayın. SEO optimizasyonu için ideal.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=tr" 
+                       aria-label="Aracı aç: 📝 Kelime/Karakter Sayacı">
+                        Aracı aç
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Kelime/Karakter Sayacı" 
+                            aria-label="Favorilere ekle: 📝 Kelime/Karakter Sayacı">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Reklam banner&#39;ı">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Araçlarımız hakkında daha fazla bilgi edinin! <a href="#tools">Git</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Güvenlik Araçları</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Şifre Oluşturucu</h2>
+                    <p>Özel parametrelerle güvenli şifreler oluşturun. Hesaplarınızın güvenliği.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=tr" 
+                       aria-label="Aracı aç: 🔑 Şifre Oluşturucu">
+                        Aracı aç
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Şifre Oluşturucu" 
+                            aria-label="Favorilere ekle: 🔑 Şifre Oluşturucu">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Geliştirme Araçları</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Yakında</div>
+                    <h2>📄 JSON Biçimlendirici</h2>
+                    <p>JSON verilerinin güzel biçimlendirilmesi ve doğrulanması. Sözdizimi vurgulama.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON Biçimlendirici Yakında kullanılabilir">
+                        Yakında kullanılabilir
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Yakında</div>
+                    <h2>🔄 Base64 Dönüştürücü</h2>
+                    <p>Base64 kodlama ve kod çözme. Görüntüler ve dosyalarla çalışma.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 Dönüştürücü Yakında kullanılabilir">
+                        Yakında kullanılabilir
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Tasarım Araçları</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Yakında</div>
+                    <h2>🎨 Renk Paletleri</h2>
+                    <p>Tasarım için renk şemaları oluşturun ve seçin. Uyumlu kombinasyonlar.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Renk Paletleri Yakında kullanılabilir">
+                        Yakında kullanılabilir
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Yakında</div>
+                    <h2>📐 Biçim Dönüştürücü</h2>
+                    <p>Farklı görüntü ve belge formatları arasında dönüşüm.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Biçim Dönüştürücü Yakında kullanılabilir">
+                        Yakında kullanılabilir
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Mühendislik Araçları</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Birim Dönüştürücü</h2>
+                    <p>Farklı ölçü birimleri arasında hızlı dönüşüm.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=tr" 
+                       aria-label="Aracı aç: 🔄 Birim Dönüştürücü">
+                        Aracı aç
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Birim Dönüştürücü" 
+                            aria-label="Favorilere ekle: 🔄 Birim Dönüştürücü">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Lojistik Araçları</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Araba Amortisman Hesaplayıcı</h2>
+                    <p>Kilometre, çalışma süresi ve koşullara dayalı olarak araç aşınmasını hesaplayın.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=tr" 
+                       aria-label="Aracı aç: 🔧 Araba Amortisman Hesaplayıcı">
+                        Aracı aç
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Araba Amortisman Hesaplayıcı" 
+                            aria-label="Favorilere ekle: 🔧 Araba Amortisman Hesaplayıcı">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Yakıt Hesaplayıcı</h2>
+                    <p>Yakıt tüketimini, yolculuk maliyetini ve tasarrufları hesaplayın.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=tr" 
+                       aria-label="Aracı aç: ⛽ Yakıt Hesaplayıcı">
+                        Aracı aç
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Yakıt Hesaplayıcı" 
+                            aria-label="Favorilere ekle: ⛽ Yakıt Hesaplayıcı">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Ekoloji Araçları</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Ürün Ekolojik Ayak İzi Hesaplayıcı</h2>
+                    <p>Ürünlerinizin karbon, su ve toprak ayak izini hesaplayın.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=tr" 
+                       aria-label="Aracı aç: 🌍 Ürün Ekolojik Ayak İzi Hesaplayıcı">
+                        Aracı aç
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Ürün Ekolojik Ayak İzi Hesaplayıcı" 
+                            aria-label="Favorilere ekle: 🌍 Ürün Ekolojik Ayak İzi Hesaplayıcı">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Araç Geliştirme</h3>
+            <p>Yeni araçlar için fikirleriniz varsa - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">support@serpmonn.ru'a yazın</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

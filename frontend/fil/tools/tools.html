@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="fil" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="fil">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Smart Search Engine, Balita at Mini Games Platform</title>
+    <meta name="description" content="Serpmonn: malakas na mga tool para sa marketing, seguridad, pag-unlad at ekolohiya.">
+    <meta name="keywords" content="UTM generator, password generator, ecological footprint calculator, word counter">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Mga Tool — Serpmonn">
+    <meta property="og:description" content="Isang set ng micro‑tools: UTM generator, password generator">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=fil">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mga Tool — Serpmonn">
+    <meta name="twitter:description" content="UTM generator, password generator, word counter">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Sa mga tool</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Advertisement banner">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Matuto pa tungkol sa aming mga tool! <a href="#tools">Pumunta</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Mga Tool ng Serpmonn</h1>
+        <p class="subtitle">Isang set ng micro‑tools para sa trabaho, marketing at pag-unlad</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Maghanap ng mga tool..." 
+                   aria-label="Maghanap ng mga tool">
+            <select aria-label="Filter ayon sa kategorya">
+                <option value="">Lahat ng kategorya</option>
+                
+                    <option value="marketing">Marketing</option>
+                
+                    <option value="security">Seguridad</option>
+                
+                    <option value="development">Pag-unlad</option>
+                
+                    <option value="design">Disenyo</option>
+                
+                    <option value="engineering">Inhinyeriya</option>
+                
+                    <option value="logistics">Logistics</option>
+                
+                    <option value="ecology">Ekolohiya</option>
+                
+            </select>
+            <button aria-label="I-clear ang mga filter">I-clear ang mga filter</button>
+            <button id="clear-favorites" aria-label="I-clear ang mga paborito">I-clear ang mga paborito</button>
+            <button id="sort-favorites" aria-label="Ipakita ang mga paborito sa itaas">Mga paborito sa itaas</button>
+            <div class="filter-message hidden" role="alert">Walang nakitang tool. Subukang baguhin ang iyong query.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Mga Estadistika ng Tool</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Mga aktibong tool</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Mga kategorya</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Plano</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Mga Tool para sa Marketing at Analytics</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM Tag Generator</h2>
+                    <p>Mabilis na gumawa ng mga UTM link para subaybayan ang pagiging epektibo ng mga kampanya sa marketing.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=fil" 
+                       aria-label="Buksan ang tool: 🔗 UTM Tag Generator">
+                        Buksan ang tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM Tag Generator" 
+                            aria-label="Idagdag sa mga paborito: 🔗 UTM Tag Generator">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Word/Character Counter</h2>
+                    <p>Bilangin ang mga salita, linya at karakter sa teksto. Perpekto para sa SEO optimization.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=fil" 
+                       aria-label="Buksan ang tool: 📝 Word/Character Counter">
+                        Buksan ang tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Word/Character Counter" 
+                            aria-label="Idagdag sa mga paborito: 📝 Word/Character Counter">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Advertisement banner">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Matuto pa tungkol sa aming mga tool! <a href="#tools">Pumunta</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Mga Tool para sa Seguridad</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Password Generator</h2>
+                    <p>Lumikha ng mga secure na password na may pasadyang mga parameter. Seguridad ng iyong mga account.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=fil" 
+                       aria-label="Buksan ang tool: 🔑 Password Generator">
+                        Buksan ang tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Password Generator" 
+                            aria-label="Idagdag sa mga paborito: 🔑 Password Generator">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Mga Tool para sa Pag-unlad</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Malapit na</div>
+                    <h2>📄 JSON Formatter</h2>
+                    <p>Magandang pag-format at pagpapatunay ng JSON data. Syntax highlighting.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON Formatter Malapit nang magagamit">
+                        Malapit nang magagamit
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Malapit na</div>
+                    <h2>🔄 Base64 Converter</h2>
+                    <p>Pag-encode at pag-decode ng Base64. Trabaho sa mga imahe at file.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 Converter Malapit nang magagamit">
+                        Malapit nang magagamit
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Mga Tool para sa Disenyo</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Malapit na</div>
+                    <h2>🎨 Mga Palette ng Kulay</h2>
+                    <p>Lumikha at pumili ng mga color scheme para sa disenyo. Mga magkakatugmang kombinasyon.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Mga Palette ng Kulay Malapit nang magagamit">
+                        Malapit nang magagamit
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Malapit na</div>
+                    <h2>📐 Format Converter</h2>
+                    <p>Pag-convert sa pagitan ng iba&#39;t ibang format ng imahe at dokumento.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Format Converter Malapit nang magagamit">
+                        Malapit nang magagamit
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Mga Tool para sa Inhinyeriya</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Unit Converter</h2>
+                    <p>Mabilis na conversion sa pagitan ng iba&#39;t ibang unit ng pagsukat.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=fil" 
+                       aria-label="Buksan ang tool: 🔄 Unit Converter">
+                        Buksan ang tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Unit Converter" 
+                            aria-label="Idagdag sa mga paborito: 🔄 Unit Converter">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Mga Tool para sa Logistics</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Car Depreciation Calculator</h2>
+                    <p>Kalkulahin ang pagkasira ng sasakyan batay sa mileage, oras at kondisyon.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=fil" 
+                       aria-label="Buksan ang tool: 🔧 Car Depreciation Calculator">
+                        Buksan ang tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Car Depreciation Calculator" 
+                            aria-label="Idagdag sa mga paborito: 🔧 Car Depreciation Calculator">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Fuel Calculator</h2>
+                    <p>Kalkulahin ang pagkonsumo ng gasolina, gastos ng biyahe at pagtitipid.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=fil" 
+                       aria-label="Buksan ang tool: ⛽ Fuel Calculator">
+                        Buksan ang tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Fuel Calculator" 
+                            aria-label="Idagdag sa mga paborito: ⛽ Fuel Calculator">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Mga Tool para sa Ekolohiya</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Product Ecological Footprint Calculator</h2>
+                    <p>Kalkulahin ang carbon, water at land footprint ng iyong mga produkto.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=fil" 
+                       aria-label="Buksan ang tool: 🌍 Product Ecological Footprint Calculator">
+                        Buksan ang tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Product Ecological Footprint Calculator" 
+                            aria-label="Idagdag sa mga paborito: 🌍 Product Ecological Footprint Calculator">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Pag-unlad ng Tool</h3>
+            <p>Kung may mga ideya para sa mga bagong tool - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">sumulat sa support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="hy" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="hy">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Խելացի Որոնիչ, Լուրեր և Մինի Խաղերի Հարթակ</title>
+    <meta name="description" content="Serpmonn: հզոր գործիքներ մարքեթինգի, անվտանգության, զարգացման և էկոլոգիայի համար։">
+    <meta name="keywords" content="UTM գեներատոր, գաղտնաբառի գեներատոր, էկոլոգիական հետքի հաշվիչ, բառերի հաշվիչ">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Գործիքներ — Serpmonn">
+    <meta property="og:description" content="Միկրո գործիքների հավաքածու: UTM գեներատոր, գաղտնաբառի գեներատոր">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=hy">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Գործիքներ — Serpmonn">
+    <meta name="twitter:description" content="UTM գեներատոր, գաղտնաբառի գեներատոր, բառերի հաշվիչ">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Գործիքներին</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Գովազդային բաներ">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Իմացեք ավելին մեր գործիքների մասին! <a href="#tools">Անցնել</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn Գործիքներ</h1>
+        <p class="subtitle">Աշխատանքի, մարքեթինգի և զարգացման համար միկրո գործիքների հավաքածու</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Որոնել գործիքներ..." 
+                   aria-label="Որոնել գործիքներ">
+            <select aria-label="Ֆիլտրել ըստ կատեգորիայի">
+                <option value="">Բոլոր կատեգորիաները</option>
+                
+                    <option value="marketing">Մարքեթինգ</option>
+                
+                    <option value="security">Անվտանգություն</option>
+                
+                    <option value="development">Զարգացում</option>
+                
+                    <option value="design">Դիզայն</option>
+                
+                    <option value="engineering">Ինժեներություն</option>
+                
+                    <option value="logistics">Լոգիստիկա</option>
+                
+                    <option value="ecology">Էկոլոգիա</option>
+                
+            </select>
+            <button aria-label="Մաքրել ֆիլտրերը">Մաքրել ֆիլտրերը</button>
+            <button id="clear-favorites" aria-label="Մաքրել ընտրյալները">Մաքրել ընտրյալները</button>
+            <button id="sort-favorites" aria-label="Ցույց տալ ընտրյալները վերևում">Ընտրյալները վերևում</button>
+            <div class="filter-message hidden" role="alert">Գործիքներ չեն գտնվել։ Փորձեք փոխել հարցումը։</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Գործիքների Վիճակագրություն</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Ակտիվ գործիքներ</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Կատեգորիաներ</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Պլանավորված</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Մարքեթինգի և Վերլուծության Գործիքներ</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM Պիտակների Գեներատոր</h2>
+                    <p>Արագ ստեղծեք UTM հղումներ մարքեթինգային արշավների արդյունավետությունը հետևելու համար։</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=hy" 
+                       aria-label="Բացել գործիքը: 🔗 UTM Պիտակների Գեներատոր">
+                        Բացել գործիքը
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM Պիտակների Գեներատոր" 
+                            aria-label="Ավելացնել ընտրյալներին: 🔗 UTM Պիտակների Գեներատոր">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Բառերի/Նիշերի Հաշվիչ</h2>
+                    <p>Հաշվեք բառերը, տողերը և նիշերը տեքստում։ Կատարյալ է SEO օպտիմալացման համար։</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=hy" 
+                       aria-label="Բացել գործիքը: 📝 Բառերի/Նիշերի Հաշվիչ">
+                        Բացել գործիքը
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Բառերի/Նիշերի Հաշվիչ" 
+                            aria-label="Ավելացնել ընտրյալներին: 📝 Բառերի/Նիշերի Հաշվիչ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Գովազդային բաներ">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Իմացեք ավելին մեր գործիքների մասին! <a href="#tools">Անցնել</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Անվտանգության Գործիքներ</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Գաղտնաբառի Գեներատոր</h2>
+                    <p>Ստեղծեք ապահով գաղտնաբառեր հատկացված պարամետրերով։ Ձեր հաշիվների անվտանգությունը։</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=hy" 
+                       aria-label="Բացել գործիքը: 🔑 Գաղտնաբառի Գեներատոր">
+                        Բացել գործիքը
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Գաղտնաբառի Գեներատոր" 
+                            aria-label="Ավելացնել ընտրյալներին: 🔑 Գաղտնաբառի Գեներատոր">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Զարգացման Գործիքներ</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Շուտով</div>
+                    <h2>📄 JSON Ֆորմատավորիչ</h2>
+                    <p>JSON տվյալների գեղեցիկ ֆորմատավորում և վավերացում։ Շարահյուսության ընդգծում։</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON Ֆորմատավորիչ Շուտով հասանելի կլինի">
+                        Շուտով հասանելի կլինի
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Շուտով</div>
+                    <h2>🔄 Base64 Փոխարկիչ</h2>
+                    <p>Base64 կոդավորում և ապակոդավորում։ Աշխատանք պատկերների և ֆայլերի հետ։</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 Փոխարկիչ Շուտով հասանելի կլինի">
+                        Շուտով հասանելի կլինի
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Դիզայնի Գործիքներ</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Շուտով</div>
+                    <h2>🎨 Գույների Պալիտրներ</h2>
+                    <p>Ստեղծեք և ընտրեք գույների սխեմաներ դիզայնի համար։ Հարմոնիկ համադրություններ։</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Գույների Պալիտրներ Շուտով հասանելի կլինի">
+                        Շուտով հասանելի կլինի
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Շուտով</div>
+                    <h2>📐 Ֆորմատների Փոխարկիչ</h2>
+                    <p>Փոխակերպում տարբեր պատկերների և փաստաթղթերի ֆորմատների միջև։</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Ֆորմատների Փոխարկիչ Շուտով հասանելի կլինի">
+                        Շուտով հասանելի կլինի
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Ինժեներական Գործիքներ</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Միավորների Փոխարկիչ</h2>
+                    <p>Արագ փոխակերպում տարբեր չափման միավորների միջև։</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=hy" 
+                       aria-label="Բացել գործիքը: 🔄 Միավորների Փոխարկիչ">
+                        Բացել գործիքը
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Միավորների Փոխարկիչ" 
+                            aria-label="Ավելացնել ընտրյալներին: 🔄 Միավորների Փոխարկիչ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Լոգիստիկայի Գործիքներ</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Ավտոմեքենայի Մաշվածության Հաշվիչ</h2>
+                    <p>Հաշվեք մեքենայի մաշվածությունը վազքի, շահագործման ժամանակի և պայմանների հիման վրա։</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=hy" 
+                       aria-label="Բացել գործիքը: 🔧 Ավտոմեքենայի Մաշվածության Հաշվիչ">
+                        Բացել գործիքը
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Ավտոմեքենայի Մաշվածության Հաշվիչ" 
+                            aria-label="Ավելացնել ընտրյալներին: 🔧 Ավտոմեքենայի Մաշվածության Հաշվիչ">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Վառելիքի Հաշվիչ</h2>
+                    <p>Հաշվեք վառելիքի սպառումը, ճանապարհորդության արժեքը և խնայողությունները։</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=hy" 
+                       aria-label="Բացել գործիքը: ⛽ Վառելիքի Հաշվիչ">
+                        Բացել գործիքը
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Վառելիքի Հաշվիչ" 
+                            aria-label="Ավելացնել ընտրյալներին: ⛽ Վառելիքի Հաշվիչ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Էկոլոգիայի Գործիքներ</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Ապրանքների Էկոլոգիական Հետքի Հաշվիչ</h2>
+                    <p>Հաշվեք ձեր ապրանքների ածխածնային, ջրային և հողային հետքը։</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=hy" 
+                       aria-label="Բացել գործիքը: 🌍 Ապրանքների Էկոլոգիական Հետքի Հաշվիչ">
+                        Բացել գործիքը
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Ապրանքների Էկոլոգիական Հետքի Հաշվիչ" 
+                            aria-label="Ավելացնել ընտրյալներին: 🌍 Ապրանքների Էկոլոգիական Հետքի Հաշվիչ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Գործիքների Զարգացում</h3>
+            <p>Եթե ունեք գաղափարներ նոր գործիքների համար - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">գրեք support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

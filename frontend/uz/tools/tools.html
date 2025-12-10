@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="uz" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="uz">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Aqlli qidiruv tizimi, Yangiliklar va Mini Oʻyinlar Platformasi</title>
+    <meta name="description" content="Serpmonn: marketing, xavfsizlik, rivojlanish va ekologiya uchun kuchli vositalar">
+    <meta name="keywords" content="UTM generatori, parol generatori, ekologik iz kalkulyatori, soʻz sanagich">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Vositalar — Serpmonn">
+    <meta property="og:description" content="Mikro-vositalar toʻplami: UTM generatori, parol generatori">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=uz">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Vositalar — Serpmonn">
+    <meta name="twitter:description" content="UTM generatori, parol generatori, soʻz sanagich">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Vositalarga</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Reklama banneri">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Bizning vositalarimiz haqida koʻproq biling! <a href="#tools">Oʻtish</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn Vositalari</h1>
+        <p class="subtitle">Ish, marketing va rivojlanish uchun mikro-vositalar toʻplami</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Vositalarni qidirish..." 
+                   aria-label="Vositalarni qidirish">
+            <select aria-label="Toifaga qarab filtr">
+                <option value="">Barcha toifalar</option>
+                
+                    <option value="marketing">Marketing</option>
+                
+                    <option value="security">Xavfsizlik</option>
+                
+                    <option value="development">Rivojlanish</option>
+                
+                    <option value="design">Dizayn</option>
+                
+                    <option value="engineering">Muhandislik</option>
+                
+                    <option value="logistics">Logistika</option>
+                
+                    <option value="ecology">Ekologiya</option>
+                
+            </select>
+            <button aria-label="Filtrlarni tozalash">Filtrlarni tozalash</button>
+            <button id="clear-favorites" aria-label="Sevimlilarni tozalash">Sevimlilarni tozalash</button>
+            <button id="sort-favorites" aria-label="Sevimlilarni yuqorida koʻrsatish">Sevimlilar yuqorida</button>
+            <div class="filter-message hidden" role="alert">Vositalar topilmadi. Soʻrovingizni oʻzgartirishga harakat qiling.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Vositalar statistikasi</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Faol vositalar</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Toifalar</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Rejalashtirilgan</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Marketing va tahlil vositalari</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM teglari generatori</h2>
+                    <p>Marketing kampaniyalari samaradorligini kuzatish uchun tezda UTM havolalarini yarating.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=uz" 
+                       aria-label="Vositani ochish: 🔗 UTM teglari generatori">
+                        Vositani ochish
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM teglari generatori" 
+                            aria-label="Sevimlilarga qoʻshish: 🔗 UTM teglari generatori">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Soʻz/Belgi sanagich</h2>
+                    <p>Matndagi soʻzlar, qatorlar va belgilarni sanang. SEO optimallashtirish uchun ideal.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=uz" 
+                       aria-label="Vositani ochish: 📝 Soʻz/Belgi sanagich">
+                        Vositani ochish
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Soʻz/Belgi sanagich" 
+                            aria-label="Sevimlilarga qoʻshish: 📝 Soʻz/Belgi sanagich">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Reklama banneri">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Bizning vositalarimiz haqida koʻproq biling! <a href="#tools">Oʻtish</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Xavfsizlik vositalari</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Parol generatori</h2>
+                    <p>Maxsus parametrlar bilan xavfsiz parollar yarating. Hisoblaringizning xavfsizligi.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=uz" 
+                       aria-label="Vositani ochish: 🔑 Parol generatori">
+                        Vositani ochish
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Parol generatori" 
+                            aria-label="Sevimlilarga qoʻshish: 🔑 Parol generatori">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Rivojlanish vositalari</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Tez orada</div>
+                    <h2>📄 JSON formatlovchi</h2>
+                    <p>JSON ma&#39;lumotlarini chiroyli formatlash va tekshirish. Sintaksisni ajratib koʻrsatish.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON formatlovchi Tez orada mavjud boʻladi">
+                        Tez orada mavjud boʻladi
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Tez orada</div>
+                    <h2>🔄 Base64 konvertori</h2>
+                    <p>Base64 kodlash va dekodlash. Rasmlar va fayllar bilan ishlash.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 konvertori Tez orada mavjud boʻladi">
+                        Tez orada mavjud boʻladi
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Dizayn vositalari</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Tez orada</div>
+                    <h2>🎨 Rang palitralari</h2>
+                    <p>Dizayn uchun rang sxemalarini yarating va tanlang. Uygʻun kombinatsiyalar.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Rang palitralari Tez orada mavjud boʻladi">
+                        Tez orada mavjud boʻladi
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Tez orada</div>
+                    <h2>📐 Format konvertori</h2>
+                    <p>Turli xil rasm va hujjat formatlari oʻrtasida konvertatsiya.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Format konvertori Tez orada mavjud boʻladi">
+                        Tez orada mavjud boʻladi
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Muhandislik vositalari</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Birlik konvertori</h2>
+                    <p>Turli xil oʻlchov birliklari oʻrtasida tez konvertatsiya.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=uz" 
+                       aria-label="Vositani ochish: 🔄 Birlik konvertori">
+                        Vositani ochish
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Birlik konvertori" 
+                            aria-label="Sevimlilarga qoʻshish: 🔄 Birlik konvertori">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Logistika vositalari</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Avtomobil amortizatsiyasi kalkulyatori</h2>
+                    <p>Yurgan masofa, ish vaqti va sharoitlarga asoslangan transport vositasining eskirishini hisoblang.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=uz" 
+                       aria-label="Vositani ochish: 🔧 Avtomobil amortizatsiyasi kalkulyatori">
+                        Vositani ochish
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Avtomobil amortizatsiyasi kalkulyatori" 
+                            aria-label="Sevimlilarga qoʻshish: 🔧 Avtomobil amortizatsiyasi kalkulyatori">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Yoqilgʻi kalkulyatori</h2>
+                    <p>Yoqilgʻi sarfini, sayohat xarajatini va tejashni hisoblang.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=uz" 
+                       aria-label="Vositani ochish: ⛽ Yoqilgʻi kalkulyatori">
+                        Vositani ochish
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Yoqilgʻi kalkulyatori" 
+                            aria-label="Sevimlilarga qoʻshish: ⛽ Yoqilgʻi kalkulyatori">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Ekologiya vositalari</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Mahsulot ekologik izi kalkulyatori</h2>
+                    <p>Mahsulotlaringizning uglerod, suv va yer izini hisoblang.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=uz" 
+                       aria-label="Vositani ochish: 🌍 Mahsulot ekologik izi kalkulyatori">
+                        Vositani ochish
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Mahsulot ekologik izi kalkulyatori" 
+                            aria-label="Sevimlilarga qoʻshish: 🌍 Mahsulot ekologik izi kalkulyatori">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Vositalarni rivojlantirish</h3>
+            <p>Agar sizda yangi vositalar uchun gʻoyalar boʻlsa - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">support@serpmonn.ru ga yozing</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

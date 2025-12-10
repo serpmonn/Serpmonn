@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="nl" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="nl">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Slimme Zoekmachine, Nieuws &amp; Mini Games Platform</title>
+    <meta name="description" content="Serpmonn: krachtige tools voor marketing, beveiliging, ontwikkeling en ecologie.">
+    <meta name="keywords" content="UTM-generator, wachtwoordgenerator, ecologische voetafdruk calculator, woorden teller">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Tools — Serpmonn">
+    <meta property="og:description" content="Een set micro‑tools: UTM‑generator, wachtwoordgenerator">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=nl">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Tools — Serpmonn">
+    <meta name="twitter:description" content="UTM‑generator, wachtwoordgenerator, woorden teller">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Naar tools</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Advertentie banner">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Leer meer over onze tools! <a href="#tools">Ga</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn Tools</h1>
+        <p class="subtitle">Een set micro‑tools voor werk, marketing en ontwikkeling</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Zoek tools..." 
+                   aria-label="Zoek tools">
+            <select aria-label="Filter op categorie">
+                <option value="">Alle categorieën</option>
+                
+                    <option value="marketing">Marketing</option>
+                
+                    <option value="security">Beveiliging</option>
+                
+                    <option value="development">Ontwikkeling</option>
+                
+                    <option value="design">Ontwerp</option>
+                
+                    <option value="engineering">Techniek</option>
+                
+                    <option value="logistics">Logistiek</option>
+                
+                    <option value="ecology">Ecologie</option>
+                
+            </select>
+            <button aria-label="Filters wissen">Filters wissen</button>
+            <button id="clear-favorites" aria-label="Favorieten wissen">Favorieten wissen</button>
+            <button id="sort-favorites" aria-label="Toon favorieten bovenaan">Favorieten bovenaan</button>
+            <div class="filter-message hidden" role="alert">Geen tools gevonden. Probeer uw zoekopdracht te wijzigen.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Tool Statistieken</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Actieve tools</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Categorieën</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Gepland</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Tools voor Marketing en Analyse</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM Tag Generator</h2>
+                    <p>Snel UTM‑links maken om de effectiviteit van marketingcampagnes te volgen.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=nl" 
+                       aria-label="Open tool: 🔗 UTM Tag Generator">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM Tag Generator" 
+                            aria-label="Toevoegen aan favorieten: 🔗 UTM Tag Generator">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Woord/Teken Teller</h2>
+                    <p>Tel woorden, regels en tekens in tekst. Perfect voor SEO‑optimalisatie.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=nl" 
+                       aria-label="Open tool: 📝 Woord/Teken Teller">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Woord/Teken Teller" 
+                            aria-label="Toevoegen aan favorieten: 📝 Woord/Teken Teller">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Advertentie banner">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Leer meer over onze tools! <a href="#tools">Ga</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Tools voor Beveiliging</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Wachtwoord Generator</h2>
+                    <p>Maak veilige wachtwoorden met aangepaste parameters. Beveiliging van uw accounts.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=nl" 
+                       aria-label="Open tool: 🔑 Wachtwoord Generator">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Wachtwoord Generator" 
+                            aria-label="Toevoegen aan favorieten: 🔑 Wachtwoord Generator">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Tools voor Ontwikkeling</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Binnenkort</div>
+                    <h2>📄 JSON Formatter</h2>
+                    <p>Mooie opmaak en validatie van JSON‑gegevens. Syntax highlighting.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON Formatter Binnenkort beschikbaar">
+                        Binnenkort beschikbaar
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Binnenkort</div>
+                    <h2>🔄 Base64 Converter</h2>
+                    <p>Codering en decodering van Base64. Werken met afbeeldingen en bestanden.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 Converter Binnenkort beschikbaar">
+                        Binnenkort beschikbaar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Tools voor Ontwerp</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Binnenkort</div>
+                    <h2>🎨 Kleurenpaletten</h2>
+                    <p>Maak en selecteer kleurenschema&#39;s voor ontwerp. Harmonieuze combinaties.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Kleurenpaletten Binnenkort beschikbaar">
+                        Binnenkort beschikbaar
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Binnenkort</div>
+                    <h2>📐 Formaat Converter</h2>
+                    <p>Conversie tussen verschillende afbeeldings‑ en documentformaten.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Formaat Converter Binnenkort beschikbaar">
+                        Binnenkort beschikbaar
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Tools voor Techniek</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Eenheden Converter</h2>
+                    <p>Snelle conversie tussen verschillende meeteenheden.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=nl" 
+                       aria-label="Open tool: 🔄 Eenheden Converter">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Eenheden Converter" 
+                            aria-label="Toevoegen aan favorieten: 🔄 Eenheden Converter">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Tools voor Logistiek</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Auto Afschrijving Calculator</h2>
+                    <p>Bereken voertuigslijtage op basis van kilometrage, bedrijfstijd en omstandigheden.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=nl" 
+                       aria-label="Open tool: 🔧 Auto Afschrijving Calculator">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Auto Afschrijving Calculator" 
+                            aria-label="Toevoegen aan favorieten: 🔧 Auto Afschrijving Calculator">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Brandstof Calculator</h2>
+                    <p>Bereken brandstofverbruik, reiskosten en besparingen.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=nl" 
+                       aria-label="Open tool: ⛽ Brandstof Calculator">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Brandstof Calculator" 
+                            aria-label="Toevoegen aan favorieten: ⛽ Brandstof Calculator">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Tools voor Ecologie</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Product Ecologische Voetafdruk Calculator</h2>
+                    <p>Bereken de koolstof‑, water‑ en landvoetafdruk van uw producten.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=nl" 
+                       aria-label="Open tool: 🌍 Product Ecologische Voetafdruk Calculator">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Product Ecologische Voetafdruk Calculator" 
+                            aria-label="Toevoegen aan favorieten: 🌍 Product Ecologische Voetafdruk Calculator">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Tool Ontwikkeling</h3>
+            <p>Als je ideeën hebt voor nieuwe tools - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">schrijf dan naar support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

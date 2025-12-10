@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="bn" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="bn">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - স্মার্ট সার্চ ইঞ্জিন, নিউজ ও মিনি গেমস প্ল্যাটফর্ম</title>
+    <meta name="description" content="Serpmonn: বিপণন, নিরাপত্তা, উন্নয়ন এবং পরিবেশের জন্য শক্তিশালী সরঞ্জাম।">
+    <meta name="keywords" content="UTM জেনারেটর, পাসওয়ার্ড জেনারেটর, পরিবেশগত পদচিহ্ন ক্যালকুলেটর, শব্দ গণনা">
+    <!-- Open Graph -->
+    <meta property="og:title" content="সরঞ্জাম — Serpmonn">
+    <meta property="og:description" content="মাইক্রো-সরঞ্জামের সেট: UTM জেনারেটর, পাসওয়ার্ড জেনারেটর">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=bn">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="সরঞ্জাম — Serpmonn">
+    <meta name="twitter:description" content="UTM জেনারেটর, পাসওয়ার্ড জেনারেটর, শব্দ গণনা">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">সরঞ্জামে যান</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="বিজ্ঞাপন ব্যানার">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>আমাদের সরঞ্জাম সম্পর্কে আরও জানুন! <a href="#tools">যান</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn সরঞ্জাম</h1>
+        <p class="subtitle">কাজ, বিপণন এবং উন্নয়নের জন্য মাইক্রো-সরঞ্জামের সেট</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="সরঞ্জাম অনুসন্ধান..." 
+                   aria-label="সরঞ্জাম অনুসন্ধান">
+            <select aria-label="বিভাগ দ্বারা ফিল্টার">
+                <option value="">সমস্ত বিভাগ</option>
+                
+                    <option value="marketing">বিপণন</option>
+                
+                    <option value="security">নিরাপত্তা</option>
+                
+                    <option value="development">উন্নয়ন</option>
+                
+                    <option value="design">নকশা</option>
+                
+                    <option value="engineering">প্রকৌশল</option>
+                
+                    <option value="logistics">সরবরাহ</option>
+                
+                    <option value="ecology">পারিবেশিক</option>
+                
+            </select>
+            <button aria-label="ফিল্টার সাফ করুন">ফিল্টার সাফ করুন</button>
+            <button id="clear-favorites" aria-label="প্রিয়গুলি সাফ করুন">প্রিয়গুলি সাফ করুন</button>
+            <button id="sort-favorites" aria-label="প্রিয়গুলি উপরে দেখান">প্রিয়গুলি উপরে</button>
+            <div class="filter-message hidden" role="alert">সরঞ্জাম পাওয়া যায়নি। অনুসন্ধান পরিবর্তন করুন।</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 সরঞ্জাম পরিসংখ্যান</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">সক্রিয় সরঞ্জাম</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">বিভাগ</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">পরিকল্পিত</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 বিপণন ও বিশ্লেষণ সরঞ্জাম</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM ট্যাগ জেনারেটর</h2>
+                    <p>মার্কেটিং প্রচারণার কার্যকারিতা ট্র্যাক করতে দ্রুত UTM লিঙ্ক তৈরি করুন।</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=bn" 
+                       aria-label="সরঞ্জাম খুলুন: 🔗 UTM ট্যাগ জেনারেটর">
+                        সরঞ্জাম খুলুন
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM ট্যাগ জেনারেটর" 
+                            aria-label="প্রিয়গুলিতে যোগ করুন: 🔗 UTM ট্যাগ জেনারেটর">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 শব্দ/অক্ষর গণনা</h2>
+                    <p>টেক্সটে শব্দ, লাইন এবং অক্ষর গণনা করুন। SEO অপ্টিমাইজেশনের জন্য আদর্শ।</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=bn" 
+                       aria-label="সরঞ্জাম খুলুন: 📝 শব্দ/অক্ষর গণনা">
+                        সরঞ্জাম খুলুন
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 শব্দ/অক্ষর গণনা" 
+                            aria-label="প্রিয়গুলিতে যোগ করুন: 📝 শব্দ/অক্ষর গণনা">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="বিজ্ঞাপন ব্যানার">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>আমাদের সরঞ্জাম সম্পর্কে আরও জানুন! <a href="#tools">যান</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 নিরাপত্তা সরঞ্জাম</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 পাসওয়ার্ড জেনারেটর</h2>
+                    <p>কাস্টম প্যারামিটার সহ নিরাপদ পাসওয়ার্ড তৈরি করুন। আপনার অ্যাকাউন্ট সুরক্ষিত করুন।</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=bn" 
+                       aria-label="সরঞ্জাম খুলুন: 🔑 পাসওয়ার্ড জেনারেটর">
+                        সরঞ্জাম খুলুন
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 পাসওয়ার্ড জেনারেটর" 
+                            aria-label="প্রিয়গুলিতে যোগ করুন: 🔑 পাসওয়ার্ড জেনারেটর">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 উন্নয়ন সরঞ্জাম</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">শীঘ্রই</div>
+                    <h2>📄 JSON ফরম্যাটার</h2>
+                    <p>JSON ডেটার সুন্দর ফরম্যাটিং এবং ভ্যালিডেশন। সিনট্যাক্স হাইলাইটিং।</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON ফরম্যাটার শীঘ্রই উপলব্ধ হবে">
+                        শীঘ্রই উপলব্ধ হবে
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">শীঘ্রই</div>
+                    <h2>🔄 Base64 কনভার্টার</h2>
+                    <p>Base64 এনকোডিং এবং ডিকোডিং। ছবি এবং ফাইল নিয়ে কাজ।</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 কনভার্টার শীঘ্রই উপলব্ধ হবে">
+                        শীঘ্রই উপলব্ধ হবে
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 নকশা সরঞ্জাম</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">শীঘ্রই</div>
+                    <h2>🎨 রঙের প্যালেট</h2>
+                    <p>ডিজাইনের জন্য রঙের স্কিম তৈরি করুন এবং নির্বাচন করুন। সুরেলা সংমিশ্রণ।</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 রঙের প্যালেট শীঘ্রই উপলব্ধ হবে">
+                        শীঘ্রই উপলব্ধ হবে
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">শীঘ্রই</div>
+                    <h2>📐 ফরম্যাট কনভার্টার</h2>
+                    <p>বিভিন্ন ছবি এবং নথি ফরম্যাটের মধ্যে রূপান্তর।</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 ফরম্যাট কনভার্টার শীঘ্রই উপলব্ধ হবে">
+                        শীঘ্রই উপলব্ধ হবে
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 প্রকৌশল সরঞ্জাম</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 ইউনিট কনভার্টার</h2>
+                    <p>বিভিন্ন পরিমাপের এককের মধ্যে দ্রুত রূপান্তর।</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=bn" 
+                       aria-label="সরঞ্জাম খুলুন: 🔄 ইউনিট কনভার্টার">
+                        সরঞ্জাম খুলুন
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 ইউনিট কনভার্টার" 
+                            aria-label="প্রিয়গুলিতে যোগ করুন: 🔄 ইউনিট কনভার্টার">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ সরবরাহ সরঞ্জাম</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 গাড়ির অবচয় ক্যালকুলেটর</h2>
+                    <p>মাইলেজ, সময় এবং শর্তের উপর ভিত্তি করে যানবাহনের ক্ষয় গণনা করুন।</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=bn" 
+                       aria-label="সরঞ্জাম খুলুন: 🔧 গাড়ির অবচয় ক্যালকুলেটর">
+                        সরঞ্জাম খুলুন
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 গাড়ির অবচয় ক্যালকুলেটর" 
+                            aria-label="প্রিয়গুলিতে যোগ করুন: 🔧 গাড়ির অবচয় ক্যালকুলেটর">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ জ্বালানি ক্যালকুলেটর</h2>
+                    <p>জ্বালানি খরচ, ভ্রমণের খরচ এবং সাশ্রয় গণনা করুন।</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=bn" 
+                       aria-label="সরঞ্জাম খুলুন: ⛽ জ্বালানি ক্যালকুলেটর">
+                        সরঞ্জাম খুলুন
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ জ্বালানি ক্যালকুলেটর" 
+                            aria-label="প্রিয়গুলিতে যোগ করুন: ⛽ জ্বালানি ক্যালকুলেটর">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 পারিবেশিক সরঞ্জাম</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 পণ্যের পরিবেশগত পদচিহ্ন ক্যালকুলেটর</h2>
+                    <p>আপনার পণ্যের কার্বন, জল এবং ভূমির পদচিহ্ন গণনা করুন।</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=bn" 
+                       aria-label="সরঞ্জাম খুলুন: 🌍 পণ্যের পরিবেশগত পদচিহ্ন ক্যালকুলেটর">
+                        সরঞ্জাম খুলুন
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 পণ্যের পরিবেশগত পদচিহ্ন ক্যালকুলেটর" 
+                            aria-label="প্রিয়গুলিতে যোগ করুন: 🌍 পণ্যের পরিবেশগত পদচিহ্ন ক্যালকুলেটর">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 সরঞ্জাম উন্নয়ন</h3>
+            <p>নতুন সরঞ্জামের জন্য ধারণা থাকলে - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">support@serpmonn.ru-এ লিখুন</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="ja" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="ja">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - スマート検索エンジン、ニュース、ミニゲームプラットフォーム</title>
+    <meta name="description" content="Serpmonn: マーケティング、セキュリティ、開発、エコロジーのための強力なツール">
+    <meta name="keywords" content="UTMジェネレーター, パスワードジェネレーター, エコロジカルフットプリント計算機, 文字数カウンター">
+    <!-- Open Graph -->
+    <meta property="og:title" content="ツール — Serpmonn">
+    <meta property="og:description" content="マイクロツールのセット: UTMジェネレーター, パスワードジェネレーター">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=ja">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ツール — Serpmonn">
+    <meta name="twitter:description" content="UTMジェネレーター, パスワードジェネレーター, 文字数カウンター">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">ツールへ</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="広告バナー">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>私たちのツールについてもっと学びましょう！ <a href="#tools">移動</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn ツール</h1>
+        <p class="subtitle">仕事、マーケティング、開発のためのマイクロツールセット</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="ツールを検索..." 
+                   aria-label="ツールを検索">
+            <select aria-label="カテゴリーでフィルター">
+                <option value="">すべてのカテゴリー</option>
+                
+                    <option value="marketing">マーケティング</option>
+                
+                    <option value="security">セキュリティ</option>
+                
+                    <option value="development">開発</option>
+                
+                    <option value="design">デザイン</option>
+                
+                    <option value="engineering">エンジニアリング</option>
+                
+                    <option value="logistics">ロジスティクス</option>
+                
+                    <option value="ecology">エコロジー</option>
+                
+            </select>
+            <button aria-label="フィルターをクリア">フィルターをクリア</button>
+            <button id="clear-favorites" aria-label="お気に入りをクリア">お気に入りをクリア</button>
+            <button id="sort-favorites" aria-label="お気に入りを上に表示">お気に入りを上に</button>
+            <div class="filter-message hidden" role="alert">ツールが見つかりませんでした。検索条件を変更してみてください。</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 ツール統計</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">アクティブなツール</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">カテゴリー</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">計画中</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 マーケティングと分析ツール</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTMタグジェネレーター</h2>
+                    <p>マーケティングキャンペーンの効果を追跡するためのUTMリンクを素早く作成します。</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=ja" 
+                       aria-label="ツールを開く: 🔗 UTMタグジェネレーター">
+                        ツールを開く
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTMタグジェネレーター" 
+                            aria-label="お気に入りに追加: 🔗 UTMタグジェネレーター">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 文字数/単語数カウンター</h2>
+                    <p>テキスト内の単語、行、文字をカウントします。SEO最適化に最適です。</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=ja" 
+                       aria-label="ツールを開く: 📝 文字数/単語数カウンター">
+                        ツールを開く
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 文字数/単語数カウンター" 
+                            aria-label="お気に入りに追加: 📝 文字数/単語数カウンター">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="広告バナー">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>私たちのツールについてもっと学びましょう！ <a href="#tools">移動</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 セキュリティツール</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 パスワードジェネレーター</h2>
+                    <p>カスタムパラメータで安全なパスワードを作成します。アカウントのセキュリティを確保します。</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=ja" 
+                       aria-label="ツールを開く: 🔑 パスワードジェネレーター">
+                        ツールを開く
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 パスワードジェネレーター" 
+                            aria-label="お気に入りに追加: 🔑 パスワードジェネレーター">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 開発ツール</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">近日</div>
+                    <h2>📄 JSONフォーマッター</h2>
+                    <p>JSONデータの美しいフォーマットと検証。シンタックスハイライト。</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSONフォーマッター 近日公開">
+                        近日公開
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">近日</div>
+                    <h2>🔄 Base64コンバーター</h2>
+                    <p>Base64のエンコードとデコード。画像やファイルとの連携。</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64コンバーター 近日公開">
+                        近日公開
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 デザインツール</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">近日</div>
+                    <h2>🎨 カラーパレット</h2>
+                    <p>デザインのための配色を作成・選択します。調和のとれた組み合わせ。</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 カラーパレット 近日公開">
+                        近日公開
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">近日</div>
+                    <h2>📐 フォーマットコンバーター</h2>
+                    <p>さまざまな画像形式や文書形式間の変換。</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 フォーマットコンバーター 近日公開">
+                        近日公開
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 エンジニアリングツール</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 単位コンバーター</h2>
+                    <p>さまざまな測定単位間の迅速な変換。</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=ja" 
+                       aria-label="ツールを開く: 🔄 単位コンバーター">
+                        ツールを開く
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 単位コンバーター" 
+                            aria-label="お気に入りに追加: 🔄 単位コンバーター">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ ロジスティクスツール</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 車両減価償却計算機</h2>
+                    <p>走行距離、使用時間、条件に基づいて車両の減価を計算します。</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=ja" 
+                       aria-label="ツールを開く: 🔧 車両減価償却計算機">
+                        ツールを開く
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 車両減価償却計算機" 
+                            aria-label="お気に入りに追加: 🔧 車両減価償却計算機">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ 燃料計算機</h2>
+                    <p>燃料消費量、旅行費用、節約額を計算します。</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=ja" 
+                       aria-label="ツールを開く: ⛽ 燃料計算機">
+                        ツールを開く
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ 燃料計算機" 
+                            aria-label="お気に入りに追加: ⛽ 燃料計算機">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 エコロジーツール</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 製品エコロジカルフットプリント計算機</h2>
+                    <p>製品のカーボン、ウォーター、ランドフットプリントを計算します。</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=ja" 
+                       aria-label="ツールを開く: 🌍 製品エコロジカルフットプリント計算機">
+                        ツールを開く
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 製品エコロジカルフットプリント計算機" 
+                            aria-label="お気に入りに追加: 🌍 製品エコロジカルフットプリント計算機">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 ツール開発</h3>
+            <p>新しいツールのアイデアがあれば - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">support@serpmonn.ru までご連絡ください</a>！</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

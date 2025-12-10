@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="ps" dir="rtl">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="ps">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - هوښیاره لټون انجن، خبرونه او کوچنۍ لوبې پلیټ فارم</title>
+    <meta name="description" content="Serpmonn: د بازار موندنې، امنیت، پراختیا او چاپېریال لپاره ځواکمن اوزارونه">
+    <meta name="keywords" content="UTM جنریټر، پاسورډ جنریټر، چاپېریالي پلټنې کیلکولیټر، د کلمو شمېرنې">
+    <!-- Open Graph -->
+    <meta property="og:title" content="اوزارونه — Serpmonn">
+    <meta property="og:description" content="د مایکرو اوزارونو مجموعه: UTM جنریټر، پاسورډ جنریټر">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=ps">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="اوزارونه — Serpmonn">
+    <meta name="twitter:description" content="UTM جنریټر، پاسورډ جنریټر، د کلمو شمېرنې">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">اوزارونو ته</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="د اعلاناتو بانر">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>زموږ د اوزارونو په اړه نور معلومات ترلاسه کړئ! <a href="#tools">ورځه</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>د Serpmonn اوزارونه</h1>
+        <p class="subtitle">د کار، بازار موندنې او پراختیا لپاره د مایکرو اوزارونو مجموعه</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="اوزارونه ولټوئ..." 
+                   aria-label="اوزارونه ولټوئ">
+            <select aria-label="د کټګورۍ له مخې فیلټر">
+                <option value="">ټولې کټګورۍ</option>
+                
+                    <option value="marketing">بازار موندنه</option>
+                
+                    <option value="security">امنیت</option>
+                
+                    <option value="development">پراختیا</option>
+                
+                    <option value="design">ډیزاین</option>
+                
+                    <option value="engineering">انجینري</option>
+                
+                    <option value="logistics">لوژستیک</option>
+                
+                    <option value="ecology">چاپېریال پالنه</option>
+                
+            </select>
+            <button aria-label="فیلټرونه پاک کړئ">فیلټرونه پاک کړئ</button>
+            <button id="clear-favorites" aria-label="په زړه پورې پاک کړئ">په زړه پورې پاک کړئ</button>
+            <button id="sort-favorites" aria-label="په زړه پورې پورته وښایاست">په زړه پورې پورته</button>
+            <div class="filter-message hidden" role="alert">هیڅ اوزار ونه موندل شول. خپله پوښتنه بدله کړئ.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 د اوزارونو احصایې</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">فعاله اوزارونه</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">کټګورۍ</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">پلان شوي</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 د بازار موندنې او تحلیل اوزارونه</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 د UTM نښه جنریټر</h2>
+                    <p>د بازار موندنې کمپاینونو د اثراتو د تعقیب لپاره په چټکۍ سره UTM لینکونه جوړ کړئ.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=ps" 
+                       aria-label="اوزار پرانیزئ: 🔗 د UTM نښه جنریټر">
+                        اوزار پرانیزئ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 د UTM نښه جنریټر" 
+                            aria-label="په زړه پورې کې اضافه کړئ: 🔗 د UTM نښه جنریټر">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 د کلمو/حروفو شمېرنې</h2>
+                    <p>په متن کې کلمې، کرښې او حروف شمېرئ. د SEO اصلاح لپاره مناسب.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=ps" 
+                       aria-label="اوزار پرانیزئ: 📝 د کلمو/حروفو شمېرنې">
+                        اوزار پرانیزئ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 د کلمو/حروفو شمېرنې" 
+                            aria-label="په زړه پورې کې اضافه کړئ: 📝 د کلمو/حروفو شمېرنې">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="د اعلاناتو بانر">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>زموږ د اوزارونو په اړه نور معلومات ترلاسه کړئ! <a href="#tools">ورځه</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 د امنیت اوزارونه</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 د پاسورډ جنریټر</h2>
+                    <p>د دودیزو پارامیټرونو سره خوندي پاسورډونه جوړ کړئ. ستاسو د حسابونو خوندیتوب.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=ps" 
+                       aria-label="اوزار پرانیزئ: 🔑 د پاسورډ جنریټر">
+                        اوزار پرانیزئ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 د پاسورډ جنریټر" 
+                            aria-label="په زړه پورې کې اضافه کړئ: 🔑 د پاسورډ جنریټر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 د پراختیا اوزارونه</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">ډیر ژر</div>
+                    <h2>📄 JSON فورمټر</h2>
+                    <p>د JSON ډېټا ښکلې فورمټ کول او تایید کول. د نحوي ځانګړتیا.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON فورمټر ډیر ژر په لاسرسي کې">
+                        ډیر ژر په لاسرسي کې
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">ډیر ژر</div>
+                    <h2>🔄 د Base64 کنورټر</h2>
+                    <p>د Base64 کوډ کول او کوډ ماتول. د انځورونو او فایلونو سره کار کول.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 د Base64 کنورټر ډیر ژر په لاسرسي کې">
+                        ډیر ژر په لاسرسي کې
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 د ډیزاین اوزارونه</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">ډیر ژر</div>
+                    <h2>🎨 د رنګ پلیټونه</h2>
+                    <p>د ډیزاین لپاره د رنګ سکیمونه جوړ کړئ او غوره کړئ. متناسب ترکیبونه.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 د رنګ پلیټونه ډیر ژر په لاسرسي کې">
+                        ډیر ژر په لاسرسي کې
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">ډیر ژر</div>
+                    <h2>📐 د فورمټ کنورټر</h2>
+                    <p>د مختلفو انځور او اسناد فورمټونو ترمنځ بدلول.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 د فورمټ کنورټر ډیر ژر په لاسرسي کې">
+                        ډیر ژر په لاسرسي کې
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 د انجینري اوزارونه</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 د واحد کنورټر</h2>
+                    <p>د مختلفو اندازه کولو واحدونو ترمنځ ګړندي بدلول.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=ps" 
+                       aria-label="اوزار پرانیزئ: 🔄 د واحد کنورټر">
+                        اوزار پرانیزئ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 د واحد کنورټر" 
+                            aria-label="په زړه پورې کې اضافه کړئ: 🔄 د واحد کنورټر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ د لوژستیک اوزارونه</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 د موټر کمښت کیلکولیټر</h2>
+                    <p>د میلې، کار وخت او شرایطو پر اساس د موټر کمښت محاسبه کړئ.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=ps" 
+                       aria-label="اوزار پرانیزئ: 🔧 د موټر کمښت کیلکولیټر">
+                        اوزار پرانیزئ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 د موټر کمښت کیلکولیټر" 
+                            aria-label="په زړه پورې کې اضافه کړئ: 🔧 د موټر کمښت کیلکولیټر">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ د سون توکو کیلکولیټر</h2>
+                    <p>د سون توکي مصرف، سفر لګښت او سپما محاسبه کړئ.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=ps" 
+                       aria-label="اوزار پرانیزئ: ⛽ د سون توکو کیلکولیټر">
+                        اوزار پرانیزئ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ د سون توکو کیلکولیټر" 
+                            aria-label="په زړه پورې کې اضافه کړئ: ⛽ د سون توکو کیلکولیټر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 د چاپېریال اوزارونه</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 د تولیداتو چاپېریالي پلټنې کیلکولیټر</h2>
+                    <p>ستاسو د تولیداتو د کاربن، اوبو او ځمکې پلټنې محاسبه کړئ.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=ps" 
+                       aria-label="اوزار پرانیزئ: 🌍 د تولیداتو چاپېریالي پلټنې کیلکولیټر">
+                        اوزار پرانیزئ
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 د تولیداتو چاپېریالي پلټنې کیلکولیټر" 
+                            aria-label="په زړه پورې کې اضافه کړئ: 🌍 د تولیداتو چاپېریالي پلټنې کیلکولیټر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 د اوزارونو پراختیا</h3>
+            <p>که تاسو د نوي اوزارونو لپاره اندونه لرئ - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">support@serpmonn.ru ته ولیکئ</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

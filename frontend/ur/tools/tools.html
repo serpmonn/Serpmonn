@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="ur" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="ur">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - ذہین سرچ انجن، خبریں اور منی گیمز پلیٹ فارم</title>
+    <meta name="description" content="Serpmonn: مارکیٹنگ، سیکیورٹی، ترقی اور ماحولیات کے لیے طاقتور ٹولز">
+    <meta name="keywords" content="UTM جنریٹر، پاس ورڈ جنریٹر، ماحولیاتی فوٹ پرنٹ کیلکولیٹر، لفظ شمار کنندہ">
+    <!-- Open Graph -->
+    <meta property="og:title" content="ٹولز — Serpmonn">
+    <meta property="og:description" content="مائیکرو ٹولز کا سیٹ: UTM جنریٹر، پاس ورڈ جنریٹر">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=ur">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="ٹولز — Serpmonn">
+    <meta name="twitter:description" content="UTM جنریٹر، پاس ورڈ جنریٹر، لفظ شمار کنندہ">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">ٹولز پر جائیں</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="اشتہاری بینر">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>ہمارے ٹولز کے بارے میں مزید جانیں! <a href="#tools">جائیں</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn ٹولز</h1>
+        <p class="subtitle">کام، مارکیٹنگ اور ترقی کے لیے مائیکرو ٹولز کا سیٹ</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="ٹولز تلاش کریں..." 
+                   aria-label="ٹولز تلاش کریں">
+            <select aria-label="زمرے کے لحاظ سے فلٹر کریں">
+                <option value="">تمام زمرے</option>
+                
+                    <option value="marketing">مارکیٹنگ</option>
+                
+                    <option value="security">سیکیورٹی</option>
+                
+                    <option value="development">ترقی</option>
+                
+                    <option value="design">ڈیزائن</option>
+                
+                    <option value="engineering">انجینئرنگ</option>
+                
+                    <option value="logistics">لاجسٹکس</option>
+                
+                    <option value="ecology">ماحولیات</option>
+                
+            </select>
+            <button aria-label="فلٹرز صاف کریں">فلٹرز صاف کریں</button>
+            <button id="clear-favorites" aria-label="پسندیدہ صاف کریں">پسندیدہ صاف کریں</button>
+            <button id="sort-favorites" aria-label="پسندیدہ اوپر دکھائیں">پسندیدہ اوپر</button>
+            <div class="filter-message hidden" role="alert">کوئی ٹولز نہیں ملے۔ اپنا سوال تبدیل کرنے کی کوشش کریں۔</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 ٹولز کے اعداد و شمار</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">فعال ٹولز</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">زمرے</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">منصوبہ بندی</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 مارکیٹنگ اور تجزیہ کے ٹولز</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM ٹیگ جنریٹر</h2>
+                    <p>مارکیٹنگ مہمات کی تاثیر کو ٹریک کرنے کے لیے جلدی سے UTM لنکس بنائیں۔</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=ur" 
+                       aria-label="ٹول کھولیں: 🔗 UTM ٹیگ جنریٹر">
+                        ٹول کھولیں
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM ٹیگ جنریٹر" 
+                            aria-label="پسندیدہ میں شامل کریں: 🔗 UTM ٹیگ جنریٹر">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 لفظ/حرف شمار کنندہ</h2>
+                    <p>متن میں الفاظ، لائنیں اور حروف گنیں۔ SEO کی اصلاح کے لیے مثالی۔</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=ur" 
+                       aria-label="ٹول کھولیں: 📝 لفظ/حرف شمار کنندہ">
+                        ٹول کھولیں
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 لفظ/حرف شمار کنندہ" 
+                            aria-label="پسندیدہ میں شامل کریں: 📝 لفظ/حرف شمار کنندہ">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="اشتہاری بینر">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>ہمارے ٹولز کے بارے میں مزید جانیں! <a href="#tools">جائیں</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 سیکیورٹی ٹولز</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 پاس ورڈ جنریٹر</h2>
+                    <p>اپنی مرضی کے پیرامیٹرز کے ساتھ محفوظ پاس ورڈز بنائیں۔ آپ کے اکاؤنٹس کی سیکورٹی۔</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=ur" 
+                       aria-label="ٹول کھولیں: 🔑 پاس ورڈ جنریٹر">
+                        ٹول کھولیں
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 پاس ورڈ جنریٹر" 
+                            aria-label="پسندیدہ میں شامل کریں: 🔑 پاس ورڈ جنریٹر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 ترقی کے ٹولز</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">جلد ہی</div>
+                    <h2>📄 JSON فارمیٹر</h2>
+                    <p>JSON ڈیٹا کی خوبصورت فارمیٹنگ اور توثیق۔ نحو کی روشنی۔</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON فارمیٹر جلد دستیاب ہوگا">
+                        جلد دستیاب ہوگا
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">جلد ہی</div>
+                    <h2>🔄 Base64 کنورٹر</h2>
+                    <p>Base64 کوڈنگ اور ڈی کوڈنگ۔ تصاویر اور فائلوں کے ساتھ کام۔</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 کنورٹر جلد دستیاب ہوگا">
+                        جلد دستیاب ہوگا
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 ڈیزائن ٹولز</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">جلد ہی</div>
+                    <h2>🎨 رنگ پلیٹس</h2>
+                    <p>ڈیزائن کے لیے رنگ اسکیم بنائیں اور منتخب کریں۔ ہم آہنگ مجموعے۔</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 رنگ پلیٹس جلد دستیاب ہوگا">
+                        جلد دستیاب ہوگا
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">جلد ہی</div>
+                    <h2>📐 فارمیٹ کنورٹر</h2>
+                    <p>مختلف امیج اور دستاویز فارمیٹس کے درمیان تبدیلی۔</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 فارمیٹ کنورٹر جلد دستیاب ہوگا">
+                        جلد دستیاب ہوگا
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 انجینئرنگ ٹولز</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 یونٹ کنورٹر</h2>
+                    <p>مختلف پیمائشی اکائیوں کے درمیان فوری تبدیلی۔</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=ur" 
+                       aria-label="ٹول کھولیں: 🔄 یونٹ کنورٹر">
+                        ٹول کھولیں
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 یونٹ کنورٹر" 
+                            aria-label="پسندیدہ میں شامل کریں: 🔄 یونٹ کنورٹر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ لاجسٹکس ٹولز</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 گاڑی کے استعمال کی قیمت کا کیلکولیٹر</h2>
+                    <p>میلج، آپریشن وقت اور حالات کی بنیاد پر گاڑی کے استعمال کا حساب لگائیں۔</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=ur" 
+                       aria-label="ٹول کھولیں: 🔧 گاڑی کے استعمال کی قیمت کا کیلکولیٹر">
+                        ٹول کھولیں
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 گاڑی کے استعمال کی قیمت کا کیلکولیٹر" 
+                            aria-label="پسندیدہ میں شامل کریں: 🔧 گاڑی کے استعمال کی قیمت کا کیلکولیٹر">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ ایندھن کیلکولیٹر</h2>
+                    <p>ایندھن کی کھپت، سفر کی لاگت اور بچت کا حساب لگائیں۔</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=ur" 
+                       aria-label="ٹول کھولیں: ⛽ ایندھن کیلکولیٹر">
+                        ٹول کھولیں
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ ایندھن کیلکولیٹر" 
+                            aria-label="پسندیدہ میں شامل کریں: ⛽ ایندھن کیلکولیٹر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 ماحولیاتی ٹولز</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 مصنوعات کے ماحولیاتی فوٹ پرنٹ کا کیلکولیٹر</h2>
+                    <p>آپ کی مصنوعات کے کاربن، پانی اور زمین کے فوٹ پرنٹ کا حساب لگائیں۔</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=ur" 
+                       aria-label="ٹول کھولیں: 🌍 مصنوعات کے ماحولیاتی فوٹ پرنٹ کا کیلکولیٹر">
+                        ٹول کھولیں
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 مصنوعات کے ماحولیاتی فوٹ پرنٹ کا کیلکولیٹر" 
+                            aria-label="پسندیدہ میں شامل کریں: 🌍 مصنوعات کے ماحولیاتی فوٹ پرنٹ کا کیلکولیٹر">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 ٹول ترقی</h3>
+            <p>اگر آپ کے پاس نئے ٹولز کے لیے خیالات ہیں - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">support@serpmonn.ru کو لکھیں</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

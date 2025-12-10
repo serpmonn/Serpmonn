@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="el" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="el">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Έξυπνη Μηχανή Αναζήτησης, Ειδήσεις και Πλατφόρμα Μίνι Παιχνιδιών</title>
+    <meta name="description" content="Serpmonn: ισχυρά εργαλεία για μάρκετινγκ, ασφάλεια, ανάπτυξη και οικολογία.">
+    <meta name="keywords" content="UTM γεννήτρια, γεννήτρια κωδικών πρόσβασης, αριθμομηχανή οικολογικού αποτυπώματος, μετρητής λέξεων">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Εργαλεία — Serpmonn">
+    <meta property="og:description" content="Σετ μικρο‑εργαλείων: UTM γεννήτρια, γεννήτρια κωδικών πρόσβασης">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=el">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Εργαλεία — Serpmonn">
+    <meta name="twitter:description" content="UTM γεννήτρια, γεννήτρια κωδικών πρόσβασης, μετρητής λέξεων">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Στα εργαλεία</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Διαφημιστικό banner">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Μάθετε περισσότερα για τα εργαλεία μας! <a href="#tools">Μεταβείτε</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Εργαλεία Serpmonn</h1>
+        <p class="subtitle">Σετ μικρο‑εργαλείων για εργασία, μάρκετινγκ και ανάπτυξη</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Αναζήτηση εργαλείων..." 
+                   aria-label="Αναζήτηση εργαλείων">
+            <select aria-label="Φίλτρο ανά κατηγορία">
+                <option value="">Όλες οι κατηγορίες</option>
+                
+                    <option value="marketing">Μάρκετινγκ</option>
+                
+                    <option value="security">Ασφάλεια</option>
+                
+                    <option value="development">Ανάπτυξη</option>
+                
+                    <option value="design">Σχεδίαση</option>
+                
+                    <option value="engineering">Μηχανική</option>
+                
+                    <option value="logistics">Εφοδιαστική</option>
+                
+                    <option value="ecology">Οικολογία</option>
+                
+            </select>
+            <button aria-label="Καθαρισμός φίλτρων">Καθαρισμός φίλτρων</button>
+            <button id="clear-favorites" aria-label="Καθαρισμός αγαπημένων">Καθαρισμός αγαπημένων</button>
+            <button id="sort-favorites" aria-label="Εμφάνιση αγαπημένων πάνω">Αγαπημένα πάνω</button>
+            <div class="filter-message hidden" role="alert">Δεν βρέθηκαν εργαλεία. Δοκιμάστε να αλλάξετε το ερώτημα.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Στατιστικά Εργαλείων</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Ενεργά εργαλεία</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Κατηγορίες</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Σχεδιασμένα</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Εργαλεία για Μάρκετινγκ και Ανάλυση</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 Γεννήτρια Ετικετών UTM</h2>
+                    <p>Δημιουργήστε γρήγορα συνδέσμους UTM για παρακολούθηση της αποτελεσματικότητας των εκστρατειών μάρκετινγκ.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=el" 
+                       aria-label="Άνοιγμα εργαλείου: 🔗 Γεννήτρια Ετικετών UTM">
+                        Άνοιγμα εργαλείου
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 Γεννήτρια Ετικετών UTM" 
+                            aria-label="Προσθήκη στα αγαπημένα: 🔗 Γεννήτρια Ετικετών UTM">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Μετρητής Λέξεων/Χαρακτήρων</h2>
+                    <p>Μετρήστε λέξεις, γραμμές και χαρακτήρες σε κείμενο. Ιδανικό για βελτιστοποίηση SEO.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=el" 
+                       aria-label="Άνοιγμα εργαλείου: 📝 Μετρητής Λέξεων/Χαρακτήρων">
+                        Άνοιγμα εργαλείου
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Μετρητής Λέξεων/Χαρακτήρων" 
+                            aria-label="Προσθήκη στα αγαπημένα: 📝 Μετρητής Λέξεων/Χαρακτήρων">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Διαφημιστικό banner">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Μάθετε περισσότερα για τα εργαλεία μας! <a href="#tools">Μεταβείτε</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Εργαλεία για Ασφάλεια</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Γεννήτρια Κωδικών Πρόσβασης</h2>
+                    <p>Δημιουργήστε ασφαλείς κωδικούς πρόσβασης με προσαρμοσμένες παραμέτρους. Ασφάλεια των λογαριασμών σας.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=el" 
+                       aria-label="Άνοιγμα εργαλείου: 🔑 Γεννήτρια Κωδικών Πρόσβασης">
+                        Άνοιγμα εργαλείου
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Γεννήτρια Κωδικών Πρόσβασης" 
+                            aria-label="Προσθήκη στα αγαπημένα: 🔑 Γεννήτρια Κωδικών Πρόσβασης">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Εργαλεία για Ανάπτυξη</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Σύντομα</div>
+                    <h2>📄 Μορφοποιητής JSON</h2>
+                    <p>Όμορφη μορφοποίηση και επικύρωση δεδομένων JSON. Επισήμανση σύνταξης.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 Μορφοποιητής JSON Σύντομα διαθέσιμο">
+                        Σύντομα διαθέσιμο
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Σύντομα</div>
+                    <h2>🔄 Μετατροπέας Base64</h2>
+                    <p>Κωδικοποίηση και αποκωδικοποίηση Base64. Εργασία με εικόνες και αρχεία.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Μετατροπέας Base64 Σύντομα διαθέσιμο">
+                        Σύντομα διαθέσιμο
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Εργαλεία για Σχεδίαση</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Σύντομα</div>
+                    <h2>🎨 Παλέτες Χρωμάτων</h2>
+                    <p>Δημιουργία και επιλογή χρωματικών σχεδίων για σχεδίαση. Αρμονικοί συνδυασμοί.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Παλέτες Χρωμάτων Σύντομα διαθέσιμο">
+                        Σύντομα διαθέσιμο
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Σύντομα</div>
+                    <h2>📐 Μετατροπέας Μορφών</h2>
+                    <p>Μετατροπή μεταξύ διαφορετικών μορφών εικόνων και εγγράφων.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Μετατροπέας Μορφών Σύντομα διαθέσιμο">
+                        Σύντομα διαθέσιμο
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Εργαλεία για Μηχανική</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Μετατροπέας Μονάδων</h2>
+                    <p>Γρήγορη μετατροπή μεταξύ διαφορετικών μονάδων μέτρησης.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=el" 
+                       aria-label="Άνοιγμα εργαλείου: 🔄 Μετατροπέας Μονάδων">
+                        Άνοιγμα εργαλείου
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Μετατροπέας Μονάδων" 
+                            aria-label="Προσθήκη στα αγαπημένα: 🔄 Μετατροπέας Μονάδων">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Εργαλεία για Εφοδιαστική</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Αριθμομηχανή Αποσβέσεων Αυτοκινήτου</h2>
+                    <p>Υπολογισμός φθοράς οχήματος βάσει χιλιομέτρων, χρόνου λειτουργίας και συνθηκών.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=el" 
+                       aria-label="Άνοιγμα εργαλείου: 🔧 Αριθμομηχανή Αποσβέσεων Αυτοκινήτου">
+                        Άνοιγμα εργαλείου
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Αριθμομηχανή Αποσβέσεων Αυτοκινήτου" 
+                            aria-label="Προσθήκη στα αγαπημένα: 🔧 Αριθμομηχανή Αποσβέσεων Αυτοκινήτου">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Αριθμομηχανή Καυσίμου</h2>
+                    <p>Υπολογισμός κατανάλωσης καυσίμου, κόστους διαδρομής και εξοικονόμησης.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=el" 
+                       aria-label="Άνοιγμα εργαλείου: ⛽ Αριθμομηχανή Καυσίμου">
+                        Άνοιγμα εργαλείου
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Αριθμομηχανή Καυσίμου" 
+                            aria-label="Προσθήκη στα αγαπημένα: ⛽ Αριθμομηχανή Καυσίμου">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Εργαλεία για Οικολογία</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων</h2>
+                    <p>Υπολογίστε το ανθρακικό, υδατικό και χερσαίο αποτύπωμα των προϊόντων σας.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=el" 
+                       aria-label="Άνοιγμα εργαλείου: 🌍 Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων">
+                        Άνοιγμα εργαλείου
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων" 
+                            aria-label="Προσθήκη στα αγαπημένα: 🌍 Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Ανάπτυξη Εργαλείων</h3>
+            <p>Εάν έχετε ιδέες για νέα εργαλεία - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">γράψτε στο support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

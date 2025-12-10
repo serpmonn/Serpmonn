@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="da" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="da">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Smart Search Engine, Nyheder &amp; Mini Games Platform</title>
+    <meta name="description" content="Serpmonn: kraftfulde værktøjer til marketing, sikkerhed, udvikling og økologi.">
+    <meta name="keywords" content="UTM-generator, adgangskodegenerator, økologisk fodaftryk beregner, ordtæller">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Værktøjer — Serpmonn">
+    <meta property="og:description" content="Et sæt mikro‑værktøjer: UTM‑generator, adgangskodegenerator">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=da">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Værktøjer — Serpmonn">
+    <meta name="twitter:description" content="UTM‑generator, adgangskodegenerator, ordtæller">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Til værktøjer</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Reklamebanner">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Lær mere om vores værktøjer! <a href="#tools">Gå til</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn Værktøjer</h1>
+        <p class="subtitle">Et sæt mikro‑værktøjer til arbejde, marketing og udvikling</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Søg efter værktøjer..." 
+                   aria-label="Søg efter værktøjer">
+            <select aria-label="Filtrer efter kategori">
+                <option value="">Alle kategorier</option>
+                
+                    <option value="marketing">Marketing</option>
+                
+                    <option value="security">Sikkerhed</option>
+                
+                    <option value="development">Udvikling</option>
+                
+                    <option value="design">Design</option>
+                
+                    <option value="engineering">Ingeniørarbejde</option>
+                
+                    <option value="logistics">Logistik</option>
+                
+                    <option value="ecology">Økologi</option>
+                
+            </select>
+            <button aria-label="Ryd filtre">Ryd filtre</button>
+            <button id="clear-favorites" aria-label="Ryd favoritter">Ryd favoritter</button>
+            <button id="sort-favorites" aria-label="Vis favoritter øverst">Favoritter øverst</button>
+            <div class="filter-message hidden" role="alert">Ingen værktøjer fundet. Prøv at ændre din forespørgsel.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Værktøjsstatistik</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Aktive værktøjer</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Kategorier</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Planlagt</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Værktøjer til marketing og analyse</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM Tag Generator</h2>
+                    <p>Opret hurtigt UTM‑links for at spore effektiviteten af marketingkampagner.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=da" 
+                       aria-label="Åbn værktøj: 🔗 UTM Tag Generator">
+                        Åbn værktøj
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM Tag Generator" 
+                            aria-label="Tilføj til favoritter: 🔗 UTM Tag Generator">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Ord/Tegn Tæller</h2>
+                    <p>Tæl ord, linjer og tegn i tekst. Perfekt til SEO‑optimering.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=da" 
+                       aria-label="Åbn værktøj: 📝 Ord/Tegn Tæller">
+                        Åbn værktøj
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Ord/Tegn Tæller" 
+                            aria-label="Tilføj til favoritter: 📝 Ord/Tegn Tæller">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Reklamebanner">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Lær mere om vores værktøjer! <a href="#tools">Gå til</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Værktøjer til sikkerhed</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Adgangskodegenerator</h2>
+                    <p>Opret sikre adgangskoder med brugerdefinerede parametre. Beskyt dine konti.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=da" 
+                       aria-label="Åbn værktøj: 🔑 Adgangskodegenerator">
+                        Åbn værktøj
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Adgangskodegenerator" 
+                            aria-label="Tilføj til favoritter: 🔑 Adgangskodegenerator">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Værktøjer til udvikling</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Snart</div>
+                    <h2>📄 JSON Formatter</h2>
+                    <p>Smuk formatering og validering af JSON‑data. Syntaksfremhævning.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON Formatter Snart tilgængelig">
+                        Snart tilgængelig
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Snart</div>
+                    <h2>🔄 Base64 Konverter</h2>
+                    <p>Kodning og afkodning af Base64. Arbejde med billeder og filer.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 Konverter Snart tilgængelig">
+                        Snart tilgængelig
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Værktøjer til design</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Snart</div>
+                    <h2>🎨 Farvepaletter</h2>
+                    <p>Opret og vælg farveskemaer til design. Harmoniske kombinationer.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Farvepaletter Snart tilgængelig">
+                        Snart tilgængelig
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Snart</div>
+                    <h2>📐 Format Konverter</h2>
+                    <p>Konvertering mellem forskellige billed‑ og dokumentformater.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Format Konverter Snart tilgængelig">
+                        Snart tilgængelig
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Værktøjer til ingeniørarbejde</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Enhedskonverter</h2>
+                    <p>Hurtig konvertering mellem forskellige måleenheder.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=da" 
+                       aria-label="Åbn værktøj: 🔄 Enhedskonverter">
+                        Åbn værktøj
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Enhedskonverter" 
+                            aria-label="Tilføj til favoritter: 🔄 Enhedskonverter">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Værktøjer til logistik</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Bilafskrivningsberegner</h2>
+                    <p>Beregning af bilslid baseret på kørsel, driftstid og forhold.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=da" 
+                       aria-label="Åbn værktøj: 🔧 Bilafskrivningsberegner">
+                        Åbn værktøj
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Bilafskrivningsberegner" 
+                            aria-label="Tilføj til favoritter: 🔧 Bilafskrivningsberegner">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Brændstofberegner</h2>
+                    <p>Beregning af brændstofforbrug, rejseudgifter og besparelser.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=da" 
+                       aria-label="Åbn værktøj: ⛽ Brændstofberegner">
+                        Åbn værktøj
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Brændstofberegner" 
+                            aria-label="Tilføj til favoritter: ⛽ Brændstofberegner">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Værktøjer til økologi</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Produkt Økologisk Fodaftryk Beregner</h2>
+                    <p>Beregn kulstof‑, vand‑ og jordfodaftryk for dine produkter.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=da" 
+                       aria-label="Åbn værktøj: 🌍 Produkt Økologisk Fodaftryk Beregner">
+                        Åbn værktøj
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Produkt Økologisk Fodaftryk Beregner" 
+                            aria-label="Tilføj til favoritter: 🌍 Produkt Økologisk Fodaftryk Beregner">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Værktøjsudvikling</h3>
+            <p>Hvis du har idéer til nye værktøjer - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">skriv til support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

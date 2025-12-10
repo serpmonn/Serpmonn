@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="fi" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="fi">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Älykäs Hakukone, Uutiset &amp; Mini-pelit Alusta</title>
+    <meta name="description" content="Serpmonn: tehokkaat työkalut markkinointiin, turvallisuuteen, kehitykseen ja ekologiaan.">
+    <meta name="keywords" content="UTM-generaattori, salasanageneraattori, ekologinen jalanjälki laskin, sanalaskuri">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Työkalut — Serpmonn">
+    <meta property="og:description" content="Kokoelma mikro‑työkaluja: UTM‑generaattori, salasanageneraattori">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=fi">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Työkalut — Serpmonn">
+    <meta name="twitter:description" content="UTM‑generaattori, salasanageneraattori, sanalaskuri">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Työkaluihin</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Mainosbanneri">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Opi lisää työkaluistamme! <a href="#tools">Siirry</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn Työkalut</h1>
+        <p class="subtitle">Kokoelma mikro‑työkaluja työhön, markkinointiin ja kehitykseen</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Etsi työkaluja..." 
+                   aria-label="Etsi työkaluja">
+            <select aria-label="Suodata kategorian mukaan">
+                <option value="">Kaikki kategoriat</option>
+                
+                    <option value="marketing">Markkinointi</option>
+                
+                    <option value="security">Turvallisuus</option>
+                
+                    <option value="development">Kehitys</option>
+                
+                    <option value="design">Design</option>
+                
+                    <option value="engineering">Insinööritoiminta</option>
+                
+                    <option value="logistics">Logistiikka</option>
+                
+                    <option value="ecology">Ekologia</option>
+                
+            </select>
+            <button aria-label="Tyhjennä suodattimet">Tyhjennä suodattimet</button>
+            <button id="clear-favorites" aria-label="Tyhjennä suosikit">Tyhjennä suosikit</button>
+            <button id="sort-favorites" aria-label="Näytä suosikit ylhäällä">Suosikit ylhäällä</button>
+            <div class="filter-message hidden" role="alert">Työkaluja ei löytynyt. Kokeile muuttaa hakua.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Työkalujen tilastot</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Aktiivisia työkaluja</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Kategorioita</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Suunniteltu</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Markkinoinnin ja analyysin työkalut</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM-tunnisteiden generaattori</h2>
+                    <p>Luo nopeasti UTM-linkkejä markkinointikampanjoiden tehokkuuden seuraamiseen.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=fi" 
+                       aria-label="Avaa työkalu: 🔗 UTM-tunnisteiden generaattori">
+                        Avaa työkalu
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM-tunnisteiden generaattori" 
+                            aria-label="Lisää suosikkeihin: 🔗 UTM-tunnisteiden generaattori">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Sanojen/Merkkien laskuri</h2>
+                    <p>Laske sanoja, rivejä ja merkkejä tekstissä. Täydellinen SEO-optimointiin.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=fi" 
+                       aria-label="Avaa työkalu: 📝 Sanojen/Merkkien laskuri">
+                        Avaa työkalu
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Sanojen/Merkkien laskuri" 
+                            aria-label="Lisää suosikkeihin: 📝 Sanojen/Merkkien laskuri">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Mainosbanneri">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Opi lisää työkaluistamme! <a href="#tools">Siirry</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Turvallisuuden työkalut</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Salasanageneraattori</h2>
+                    <p>Luo turvallisia salasanoja mukautetuilla parametreilla. Tiliturvallisuutesi.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=fi" 
+                       aria-label="Avaa työkalu: 🔑 Salasanageneraattori">
+                        Avaa työkalu
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Salasanageneraattori" 
+                            aria-label="Lisää suosikkeihin: 🔑 Salasanageneraattori">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Kehitystyökalut</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Pian</div>
+                    <h2>📄 JSON-muotoilija</h2>
+                    <p>Kaunis JSON-tietojen muotoilu ja validointi. Syntaksin korostus.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON-muotoilija Tulossa pian">
+                        Tulossa pian
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Pian</div>
+                    <h2>🔄 Base64-muunnin</h2>
+                    <p>Base64-koodaus ja dekoodaus. Työskentely kuvien ja tiedostojen kanssa.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64-muunnin Tulossa pian">
+                        Tulossa pian
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Suunnittelun työkalut</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Pian</div>
+                    <h2>🎨 Väripaletit</h2>
+                    <p>Luo ja valitse värimalleja suunnitteluun. Harmoniset yhdistelmät.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Väripaletit Tulossa pian">
+                        Tulossa pian
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Pian</div>
+                    <h2>📐 Muotojen muunnin</h2>
+                    <p>Muuntaminen eri kuvan ja asiakirjamuotojen välillä.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Muotojen muunnin Tulossa pian">
+                        Tulossa pian
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Insinööritoiminnan työkalut</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Yksiköiden muunnin</h2>
+                    <p>Nopea muuntaminen eri mittayksiköiden välillä.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=fi" 
+                       aria-label="Avaa työkalu: 🔄 Yksiköiden muunnin">
+                        Avaa työkalu
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Yksiköiden muunnin" 
+                            aria-label="Lisää suosikkeihin: 🔄 Yksiköiden muunnin">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Logistiikan työkalut</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Auton poistolaskuri</h2>
+                    <p>Laske ajoneuvon kulumaa ajokilometrien, käyttöajan ja olosuhteiden perusteella.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=fi" 
+                       aria-label="Avaa työkalu: 🔧 Auton poistolaskuri">
+                        Avaa työkalu
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Auton poistolaskuri" 
+                            aria-label="Lisää suosikkeihin: 🔧 Auton poistolaskuri">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Polttoainelaskuri</h2>
+                    <p>Laske polttoaineen kulutus, matkan hinta ja säästöt.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=fi" 
+                       aria-label="Avaa työkalu: ⛽ Polttoainelaskuri">
+                        Avaa työkalu
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Polttoainelaskuri" 
+                            aria-label="Lisää suosikkeihin: ⛽ Polttoainelaskuri">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Ekologian työkalut</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Tuotteiden ekologisen jalanjäljen laskuri</h2>
+                    <p>Laske tuotteidesi hiili-, vesi- ja maajalanjälki.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=fi" 
+                       aria-label="Avaa työkalu: 🌍 Tuotteiden ekologisen jalanjäljen laskuri">
+                        Avaa työkalu
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Tuotteiden ekologisen jalanjäljen laskuri" 
+                            aria-label="Lisää suosikkeihin: 🌍 Tuotteiden ekologisen jalanjäljen laskuri">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Työkalujen Kehitys</h3>
+            <p>Jos sinulla on ideoita uusista työkaluista - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">kirjoita support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Smart Search Engine, News &amp; Mini Games Platform</title>
+    <meta name="description" content="Serpmonn: powerful tools for marketing, security, development and ecology.">
+    <meta name="keywords" content="UTM generator, password generator, ecological footprint calculator, word counter">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Tools — Serpmonn">
+    <meta property="og:description" content="A set of micro-tools: UTM generator, password generator">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=en">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Tools — Serpmonn">
+    <meta name="twitter:description" content="UTM generator, password generator, word counter">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">To tools</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Advertisement banner">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Learn more about our tools! <a href="#tools">Go</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn Tools</h1>
+        <p class="subtitle">A set of micro-tools for work, marketing and development</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Search tools..." 
+                   aria-label="Search tools">
+            <select aria-label="Filter by category">
+                <option value="">All categories</option>
+                
+                    <option value="marketing">Marketing</option>
+                
+                    <option value="security">Security</option>
+                
+                    <option value="development">Development</option>
+                
+                    <option value="design">Design</option>
+                
+                    <option value="engineering">Engineering</option>
+                
+                    <option value="logistics">Logistics</option>
+                
+                    <option value="ecology">Ecology</option>
+                
+            </select>
+            <button aria-label="Clear filters">Clear filters</button>
+            <button id="clear-favorites" aria-label="Clear favorites">Clear favorites</button>
+            <button id="sort-favorites" aria-label="Show favorites on top">Favorites on top</button>
+            <div class="filter-message hidden" role="alert">No tools found. Try changing your query.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Tools Statistics</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Active tools</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Categories</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Planned</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Marketing and Analytics Tools</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM Tag Generator</h2>
+                    <p>Quickly create UTM links to track marketing campaign effectiveness.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=en" 
+                       aria-label="Open tool: 🔗 UTM Tag Generator">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM Tag Generator" 
+                            aria-label="Add to favorites: 🔗 UTM Tag Generator">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Word/Character Counter</h2>
+                    <p>Count words, lines and characters in text. Perfect for SEO optimization.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=en" 
+                       aria-label="Open tool: 📝 Word/Character Counter">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Word/Character Counter" 
+                            aria-label="Add to favorites: 📝 Word/Character Counter">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Advertisement banner">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Learn more about our tools! <a href="#tools">Go</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Security Tools</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Password Generator</h2>
+                    <p>Create secure passwords with custom parameters. Protect your accounts.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=en" 
+                       aria-label="Open tool: 🔑 Password Generator">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Password Generator" 
+                            aria-label="Add to favorites: 🔑 Password Generator">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Development Tools</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Soon</div>
+                    <h2>📄 JSON Formatter</h2>
+                    <p>Beautiful formatting and validation of JSON data. Syntax highlighting.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON Formatter Coming soon">
+                        Coming soon
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Soon</div>
+                    <h2>🔄 Base64 Converter</h2>
+                    <p>Encoding and decoding Base64. Work with images and files.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 Converter Coming soon">
+                        Coming soon
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Design Tools</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Soon</div>
+                    <h2>🎨 Color Palettes</h2>
+                    <p>Create and select color schemes for design. Harmonious combinations.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Color Palettes Coming soon">
+                        Coming soon
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Soon</div>
+                    <h2>📐 Format Converter</h2>
+                    <p>Convert between different image and document formats.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Format Converter Coming soon">
+                        Coming soon
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Engineering Tools</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Unit Converter</h2>
+                    <p>Quick conversion between different units of measurement.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=en" 
+                       aria-label="Open tool: 🔄 Unit Converter">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Unit Converter" 
+                            aria-label="Add to favorites: 🔄 Unit Converter">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Logistics Tools</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Car Depreciation Calculator</h2>
+                    <p>Calculate vehicle wear based on mileage, time and conditions.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=en" 
+                       aria-label="Open tool: 🔧 Car Depreciation Calculator">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Car Depreciation Calculator" 
+                            aria-label="Add to favorites: 🔧 Car Depreciation Calculator">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Fuel Calculator</h2>
+                    <p>Calculate fuel consumption, trip cost and savings.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=en" 
+                       aria-label="Open tool: ⛽ Fuel Calculator">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Fuel Calculator" 
+                            aria-label="Add to favorites: ⛽ Fuel Calculator">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Ecology Tools</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Product Ecological Footprint Calculator</h2>
+                    <p>Calculate carbon, water and land footprint of your products.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=en" 
+                       aria-label="Open tool: 🌍 Product Ecological Footprint Calculator">
+                        Open tool
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Product Ecological Footprint Calculator" 
+                            aria-label="Add to favorites: 🌍 Product Ecological Footprint Calculator">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Tools Development</h3>
+            <p>If you have ideas for new tools - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">write to support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

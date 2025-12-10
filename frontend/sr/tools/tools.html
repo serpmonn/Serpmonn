@@ -1,0 +1,305 @@
+
+<!DOCTYPE html>
+<html lang="sr" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="sr">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - Паметна претраживачка, Вести и Платформа мини игара</title>
+    <meta name="description" content="Serpmonn: моћни алати за маркетинг, безбедност, развој и екологију.">
+    <meta name="keywords" content="UTM генератор, генератор лозинки, калкулатор еколошког отписа, бројач речи">
+    <!-- Open Graph -->
+    <meta property="og:title" content="Алати — Serpmonn">
+    <meta property="og:description" content="Сет микро‑алата: UTM генератор, генератор лозинки">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=sr">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Алати — Serpmonn">
+    <meta name="twitter:description" content="UTM генератор, генератор лозинки, бројач речи">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">Ка алатима</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="Рекламни банер">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Сазнајте више о нашим алатима! <a href="#tools">Иди</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Алати Serpmonn</h1>
+        <p class="subtitle">Сет микро‑алата за рад, маркетинг и развој</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="Претражите алате..." 
+                   aria-label="Претражите алате">
+            <select aria-label="Филтрирај по категорији">
+                <option value="">Све категорије</option>
+                
+                    <option value="marketing">Маркетинг</option>
+                
+                    <option value="security">Безбедност</option>
+                
+                    <option value="development">Развој</option>
+                
+                    <option value="design">Дизајн</option>
+                
+                    <option value="engineering">Инжењеринг</option>
+                
+                    <option value="logistics">Логистика</option>
+                
+                    <option value="ecology">Екологија</option>
+                
+            </select>
+            <button aria-label="Очисти филтере">Очисти филтере</button>
+            <button id="clear-favorites" aria-label="Очисти омиљене">Очисти омиљене</button>
+            <button id="sort-favorites" aria-label="Прикажи омиљене на врху">Омиљени на врху</button>
+            <div class="filter-message hidden" role="alert">Нема пронађених алата. Покушајте да промените упит.</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 Статистике алата</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">Активни алати</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">Категорије</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">Планирано</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 Алати за маркетинг и анализу</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 Генератор UTM ознака</h2>
+                    <p>Брзо креирајте UTM везе за праћење ефикасности маркетиншких кампања.</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=sr" 
+                       aria-label="Отвори алат: 🔗 Генератор UTM ознака">
+                        Отвори алат
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 Генератор UTM ознака" 
+                            aria-label="Додај у омиљене: 🔗 Генератор UTM ознака">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 Бројач речи/знакова</h2>
+                    <p>Бројање речи, редова и знакова у тексту. Идеално за SEO оптимизацију.</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=sr" 
+                       aria-label="Отвори алат: 📝 Бројач речи/знакова">
+                        Отвори алат
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 Бројач речи/знакова" 
+                            aria-label="Додај у омиљене: 📝 Бројач речи/знакова">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="Рекламни банер">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>Сазнајте више о нашим алатима! <a href="#tools">Иди</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 Алати за безбедност</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 Генератор лозинки</h2>
+                    <p>Креирајте сигурне лозинке са прилагођеним параметрима. Безбедност ваших налога.</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=sr" 
+                       aria-label="Отвори алат: 🔑 Генератор лозинки">
+                        Отвори алат
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 Генератор лозинки" 
+                            aria-label="Додај у омиљене: 🔑 Генератор лозинки">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 Алати за развој</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">Ускоро</div>
+                    <h2>📄 JSON форматтер</h2>
+                    <p>Лепо форматирање и валидација JSON података. Истицање синтаксе.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON форматтер Ускоро доступно">
+                        Ускоро доступно
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">Ускоро</div>
+                    <h2>🔄 Base64 конвертор</h2>
+                    <p>Кодирање и декодирање Base64. Рад са сликама и датотекама.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64 конвертор Ускоро доступно">
+                        Ускоро доступно
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 Алати за дизајн</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">Ускоро</div>
+                    <h2>🎨 Палете боја</h2>
+                    <p>Креирајте и изаберите шеме боја за дизајн. Хармоничне комбинације.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 Палете боја Ускоро доступно">
+                        Ускоро доступно
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">Ускоро</div>
+                    <h2>📐 Конвертор формата</h2>
+                    <p>Конверзија између различитих формата слика и докумената.</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 Конвертор формата Ускоро доступно">
+                        Ускоро доступно
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 Алати за инжењеринг</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 Конвертор јединица</h2>
+                    <p>Брза конверзија између различитих мерних јединица.</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=sr" 
+                       aria-label="Отвори алат: 🔄 Конвертор јединица">
+                        Отвори алат
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 Конвертор јединица" 
+                            aria-label="Додај у омиљене: 🔄 Конвертор јединица">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ Алати за логистику</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 Калкулатор амортизације аутомобила</h2>
+                    <p>Израчунајте хабање возила на основу километраже, времена рада и услова.</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=sr" 
+                       aria-label="Отвори алат: 🔧 Калкулатор амортизације аутомобила">
+                        Отвори алат
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 Калкулатор амортизације аутомобила" 
+                            aria-label="Додај у омиљене: 🔧 Калкулатор амортизације аутомобила">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ Калкулатор горива</h2>
+                    <p>Израчунајте потрошњу горива, цену путовања и уштеде.</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=sr" 
+                       aria-label="Отвори алат: ⛽ Калкулатор горива">
+                        Отвори алат
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ Калкулатор горива" 
+                            aria-label="Додај у омиљене: ⛽ Калкулатор горива">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 Алати за екологију</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 Калкулатор еколошког отписа производа</h2>
+                    <p>Израчунајте угљенични, водени и земљишни отпис ваших производа.</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=sr" 
+                       aria-label="Отвори алат: 🌍 Калкулатор еколошког отписа производа">
+                        Отвори алат
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 Калкулатор еколошког отписа производа" 
+                            aria-label="Додај у омиљене: 🌍 Калкулатор еколошког отписа производа">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 Развој алата</h3>
+            <p>Ако имате идеје за нове алатке - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">пишите на support@serpmonn.ru</a>!</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>
