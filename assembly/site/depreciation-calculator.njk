@@ -1,24 +1,37 @@
+---
+# Используем глобальный список языков
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/tools/logistics/depreciation-calculator.html{% else %}/frontend/{{ locale }}/tools/logistics/depreciation-calculator.html{% endif %}"
+eleventyComputed:
+  title: "{{ depreciationCalculator[locale].meta.title }}"
+  description: "{{ depreciationCalculator[locale].meta.description }}"
+  dir: "{% if ['ar', 'fa', 'he', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'].indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/tools/logistics/depreciation-calculator.html{% else %}{{ site.baseUrl }}/{{ locale }}/tools/logistics/depreciation-calculator.html{% endif %}"
+---
 
 <!DOCTYPE html>
-<html lang="ja" dir="ltr">
+<html lang="{{ locale }}" dir="{{ dir }}">
   <head>
     <meta name="i18n-scope" content="tools.depreciation">
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <meta http-equiv="Content-Language" content="ja">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>車両減価償却計算機 — ロジスティクス Serpmonn</title>
-    <meta name="description" content="走行距離、時間、使用条件に基づく車両の減価償却計算">
+    <title>{{ depreciationCalculator[locale].meta.title }}</title>
+    <meta name="description" content="{{ depreciationCalculator[locale].meta.description }}">
     <!-- Open Graph -->
-    <meta property="og:title" content="車両減価償却計算機 — ロジスティクス Serpmonn">
-    <meta property="og:description" content="ドライバーのための車両減価償却計算">
+    <meta property="og:title" content="{{ depreciationCalculator[locale].meta.ogTitle }}">
+    <meta property="og:description" content="{{ depreciationCalculator[locale].meta.ogDescription }}">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru/frontend/ja/tools/logistics/depreciation-calculator.html">
+    <meta property="og:url" content="https://serpmonn.ru{{ page.url | safe }}">
     <meta property="og:type" content="website">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="車両減価償却計算機 — ロジスティクス Serpmonn">
-    <meta name="twitter:description" content="ドライバーのための車両減価償却計算">
+    <meta name="twitter:title" content="{{ depreciationCalculator[locale].meta.twitterTitle }}">
+    <meta name="twitter:description" content="{{ depreciationCalculator[locale].meta.twitterDescription }}">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -259,8 +272,8 @@
 
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/frontend/ja/tools/index.html">ツール</a> → 
-      <span>減価償却計算機</span>
+      <a href="{% if locale == 'ru' %}/frontend/tools/index.html{% else %}/frontend/{{ locale }}/tools/index.html{% endif %}">{{ depreciationCalculator[locale].breadcrumbs.tools }}</a> → 
+      <span>{{ depreciationCalculator[locale].breadcrumbs.current }}</span>
     </div>
     <script type="application/ld+json">
     {
@@ -270,14 +283,14 @@
         {
           "@type": "ListItem",
           "position": 1,
-          "name": "ツール",
-          "item": "https://serpmonn.ru/frontend/ja/tools/index.html"
+          "name": "{{ depreciationCalculator[locale].breadcrumbs.tools }}",
+          "item": "{% if locale == 'ru' %}https://serpmonn.ru/frontend/tools/index.html{% else %}https://serpmonn.ru/frontend/{{ locale }}/tools/index.html{% endif %}"
         },
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "減価償却計算機",
-          "item": "https://serpmonn.ru/frontend/ja/tools/logistics/depreciation-calculator.html"
+          "name": "{{ depreciationCalculator[locale].breadcrumbs.current }}",
+          "item": "https://serpmonn.ru{{ page.url | safe }}"
         }
       ]
     }
@@ -291,218 +304,156 @@
       </ins>
     </div>
 
-    <h1>車両減価償却計算機</h1>
+    <h1>{{ depreciationCalculator[locale].page.title }}</h1>
     <div class="calculator-container">
-      <h2>車両パラメータを入力</h2>
+      <h2>{{ depreciationCalculator[locale].form.sectionTitle }}</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">車両ブランド</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="例：Toyota" title="車両ブランドを入力、例：Toyota または BMW">
+          <label for="carBrand">{{ depreciationCalculator[locale].form.labels.carBrand }}</label>
+          <input type="text" id="carBrand" list="carBrands" placeholder="{{ depreciationCalculator[locale].form.placeholders.carBrand }}" title="{{ depreciationCalculator[locale].form.titles.carBrand }}">
           <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
+            {% for brand in depreciationCalculator[locale].form.brandOptions %}
+            <option value="{{ brand }}">
+            {% endfor %}
           </datalist>
         </div>
         <div class="input-group">
-          <label for="carModel">モデル</label>
-          <input type="text" id="carModel" placeholder="例：Camry" title="車両モデルを入力、例：Camry または X5">
+          <label for="carModel">{{ depreciationCalculator[locale].form.labels.carModel }}</label>
+          <input type="text" id="carModel" placeholder="{{ depreciationCalculator[locale].form.placeholders.carModel }}" title="{{ depreciationCalculator[locale].form.titles.carModel }}">
         </div>
         <div class="input-group">
-          <label for="carYear">製造年</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="製造年を入力 (1990–2025)">
+          <label for="carYear">{{ depreciationCalculator[locale].form.labels.carYear }}</label>
+          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="{{ depreciationCalculator[locale].form.titles.carYear }}">
         </div>
         <div class="input-group">
-          <label for="initialPrice">初期コスト (¥)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="円での車両初期コストを入力">
+          <label for="initialPrice">{{ depreciationCalculator[locale].form.labels.initialPrice }}</label>
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="{{ depreciationCalculator[locale].form.titles.initialPrice }}">
         </div>
         <div class="input-group">
-          <label for="currentMileage">現在の走行距離 (km)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="キロメートルでの現在走行距離を入力">
+          <label for="currentMileage">{{ depreciationCalculator[locale].form.labels.currentMileage }}</label>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" title="{{ depreciationCalculator[locale].form.titles.currentMileage }}">
         </div>
         <div class="input-group">
-          <label for="usageType">使用タイプ</label>
-          <select id="usageType" title="車両使用タイプを選択">
-            
-            <option value="personal">個人使用</option>
-            
-            <option value="taxi">タクシー</option>
-            
-            <option value="commercial">商業輸送</option>
-            
-            <option value="delivery">配送</option>
-            
+          <label for="usageType">{{ depreciationCalculator[locale].form.labels.usageType }}</label>
+          <select id="usageType" title="{{ depreciationCalculator[locale].form.titles.usageType }}">
+            {% for option in depreciationCalculator[locale].form.usageTypeOptions %}
+            <option value="{{ option.value }}">{{ option.label }}</option>
+            {% endfor %}
           </select>
         </div>
         <div class="input-group">
-          <label for="fuelType">燃料タイプ</label>
-          <select id="fuelType" title="車両燃料タイプを選択">
-            
-            <option value="petrol">ガソリン</option>
-            
-            <option value="diesel">ディーゼル</option>
-            
-            <option value="hybrid">ハイブリッド</option>
-            
-            <option value="electric">電気</option>
-            
+          <label for="fuelType">{{ depreciationCalculator[locale].form.labels.fuelType }}</label>
+          <select id="fuelType" title="{{ depreciationCalculator[locale].form.titles.fuelType }}">
+            {% for option in depreciationCalculator[locale].form.fuelTypeOptions %}
+            <option value="{{ option.value }}">{{ option.label }}</option>
+            {% endfor %}
           </select>
         </div>
         <div class="input-group">
-          <label for="maintenanceLevel">メンテナンスレベル</label>
-          <select id="maintenanceLevel" title="車両メンテナンスレベルを選択">
-            
-            <option value="excellent">優れている</option>
-            
-            <option value="good">良い</option>
-            
-            <option value="average">普通</option>
-            
-            <option value="poor">悪い</option>
-            
+          <label for="maintenanceLevel">{{ depreciationCalculator[locale].form.labels.maintenanceLevel }}</label>
+          <select id="maintenanceLevel" title="{{ depreciationCalculator[locale].form.titles.maintenanceLevel }}">
+            {% for option in depreciationCalculator[locale].form.maintenanceOptions %}
+            <option value="{{ option.value }}">{{ option.label }}</option>
+            {% endfor %}
           </select>
         </div>
         <div class="input-group">
-          <label for="climateZone">気候ゾーン</label>
-          <select id="climateZone" title="運転気候ゾーンを選択">
-            
-            <option value="mild">温和</option>
-            
-            <option value="cold">寒冷</option>
-            
-            <option value="hot">暑熱</option>
-            
-            <option value="humid">湿潤</option>
-            
+          <label for="climateZone">{{ depreciationCalculator[locale].form.labels.climateZone }}</label>
+          <select id="climateZone" title="{{ depreciationCalculator[locale].form.titles.climateZone }}">
+            {% for option in depreciationCalculator[locale].form.climateOptions %}
+            <option value="{{ option.value }}">{{ option.label }}</option>
+            {% endfor %}
           </select>
         </div>
         <div class="input-group">
-          <label for="region">地域</label>
-          <select id="region" title="車両運転地域を選択">
-            
-            <option value="central">中央 (モスクワ)</option>
-            
-            <option value="north">北部 (サンクトペテルブルク)</option>
-            
-            <option value="siberia">シベリア</option>
-            
-            <option value="south">南部</option>
-            
+          <label for="region">{{ depreciationCalculator[locale].form.labels.region }}</label>
+          <select id="region" title="{{ depreciationCalculator[locale].form.titles.region }}">
+            {% for option in depreciationCalculator[locale].form.regionOptions %}
+            <option value="{{ option.value }}">{{ option.label }}</option>
+            {% endfor %}
           </select>
         </div>
         <div class="input-group">
-          <label for="currentNewPrice">新しい類似車両の現在価格 (¥)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="円での類似新車現在価格を入力">
-          <small style="color: #6c757d; font-size: 12px;">現在の類似新車価格</small>
+          <label for="currentNewPrice">{{ depreciationCalculator[locale].form.labels.currentNewPrice }}</label>
+          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="{{ depreciationCalculator[locale].form.titles.currentNewPrice }}">
+          <small style="color: #6c757d; font-size: 12px;">{{ depreciationCalculator[locale].form.hints.currentNewPrice }}</small>
         </div>
         <div class="input-group">
-          <label for="marketGrowth">市場価格上昇 (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="購入後の新車価格上昇をパーセントで指定">
-          <small style="color: #6c757d; font-size: 12px;">購入後の新車価格上昇</small>
+          <label for="marketGrowth">{{ depreciationCalculator[locale].form.labels.marketGrowth }}</label>
+          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="{{ depreciationCalculator[locale].form.titles.marketGrowth }}">
+          <small style="color: #6c757d; font-size: 12px;">{{ depreciationCalculator[locale].form.hints.marketGrowth }}</small>
         </div>
         <div class="input-group">
-          <label for="inflationRate">年間インフレ率 (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="所有期間中の平均年間インフレ率を指定">
-          <small style="color: #6c757d; font-size: 12px;">所有年ごとの平均インフレ率</small>
+          <label for="inflationRate">{{ depreciationCalculator[locale].form.labels.inflationRate }}</label>
+          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="{{ depreciationCalculator[locale].form.titles.inflationRate }}">
+          <small style="color: #6c757d; font-size: 12px;">{{ depreciationCalculator[locale].form.hints.inflationRate }}</small>
         </div>
         <div class="input-group">
-          <label for="demandLevel">モデル需要</label>
-          <select id="demandLevel" title="モデル需要レベルを選択">
-            
-            <option value="high" >需要高い</option>
-            
-            <option value="medium" selected>需要中程度</option>
-            
-            <option value="low" >需要低い</option>
-            
+          <label for="demandLevel">{{ depreciationCalculator[locale].form.labels.demandLevel }}</label>
+          <select id="demandLevel" title="{{ depreciationCalculator[locale].form.titles.demandLevel }}">
+            {% for option in depreciationCalculator[locale].form.demandOptions %}
+            <option value="{{ option.value }}" {% if option.selected %}selected{% endif %}>{{ option.label }}</option>
+            {% endfor %}
           </select>
         </div>
         <div class="input-group">
-          <label for="technicalCondition">技術的状態</label>
-          <select id="technicalCondition" title="車両技術的状態を選択">
-            
-            <option value="excellent" selected>優れている (オリジナル)</option>
-            
-            <option value="good" >良い (小さな欠陥)</option>
-            
-            <option value="average" >普通 (修理済み)</option>
-            
-            <option value="poor" >悪い (事故車)</option>
-            
+          <label for="technicalCondition">{{ depreciationCalculator[locale].form.labels.technicalCondition }}</label>
+          <select id="technicalCondition" title="{{ depreciationCalculator[locale].form.titles.technicalCondition }}">
+            {% for option in depreciationCalculator[locale].form.conditionOptions %}
+            <option value="{{ option.value }}" {% if option.selected %}selected{% endif %}>{{ option.label }}</option>
+            {% endfor %}
           </select>
-          <small style="color: #6c757d; font-size: 12px;">事故、修理、塗装替えを考慮</small>
+          <small style="color: #6c757d; font-size: 12px;">{{ depreciationCalculator[locale].form.hints.technicalCondition }}</small>
         </div>
       </div>
       <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="車両減価償却を計算">減価償却計算</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="フォームをリセット">リセット</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="計算リンクをコピー">共有</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="結果をPDFにエクスポート">PDFにエクスポート</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="結果をCSVにエクスポート">CSVにエクスポート</button>
+        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="{{ depreciationCalculator[locale].aria.calculate }}">{{ depreciationCalculator[locale].buttons.calculate }}</button>
+        <button class="reset-btn" onclick="resetForm()" aria-label="{{ depreciationCalculator[locale].aria.reset }}">{{ depreciationCalculator[locale].buttons.reset }}</button>
+        <button class="share-btn" onclick="copyShareLink()" aria-label="{{ depreciationCalculator[locale].aria.share }}">{{ depreciationCalculator[locale].buttons.share }}</button>
+        <button class="export-btn" onclick="exportToPDF()" aria-label="{{ depreciationCalculator[locale].aria.export_pdf }}">{{ depreciationCalculator[locale].buttons.export_pdf }}</button>
+        <button class="csv-btn" onclick="exportToCSV()" aria-label="{{ depreciationCalculator[locale].aria.export_csv }}">{{ depreciationCalculator[locale].buttons.export_csv }}</button>
       </div>
       <div id="results" class="results hidden" aria-live="polite">
-        <h3>計算結果</h3>
+        <h3>{{ depreciationCalculator[locale].results.title }}</h3>
         <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
         <div class="result-grid">
           <div class="result-item">
-            <div class="result-value" id="currentValue">0 ¥</div>
-            <div class="result-label">現在価値</div>
+            <div class="result-value" id="currentValue">0 {{ depreciationCalculator[locale].common.currency }}</div>
+            <div class="result-label">{{ depreciationCalculator[locale].results.currentValue }}</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="totalDepreciation">0 ¥</div>
-            <div class="result-label">総減価償却</div>
+            <div class="result-value" id="totalDepreciation">0 {{ depreciationCalculator[locale].common.currency }}</div>
+            <div class="result-label">{{ depreciationCalculator[locale].results.totalDepreciation }}</div>
           </div>
           <div class="result-item">
             <div class="result-value" id="depreciationPercent">0%</div>
-            <div class="result-label">減価償却率</div>
+            <div class="result-label">{{ depreciationCalculator[locale].results.depreciationPercent }}</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="monthlyDepreciation">0 ¥/月</div>
-            <div class="result-label">月次減価償却</div>
+            <div class="result-value" id="monthlyDepreciation">0 {{ depreciationCalculator[locale].common.currency }}/{{ depreciationCalculator[locale].common.month }}</div>
+            <div class="result-label">{{ depreciationCalculator[locale].results.monthlyDepreciation }}</div>
           </div>
         </div>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
-      <h3>減価償却内訳</h3>
+      <h3>{{ depreciationCalculator[locale].breakdown.title }}</h3>
       <div id="breakdownList"></div>
     </div>
     <div id="history" class="history hidden" aria-live="polite">
-      <h3>計算履歴</h3>
+      <h3>{{ depreciationCalculator[locale].history.title }}</h3>
       <ul id="historyList"></ul>
     </div>
     <div class="info-tips">
-      <h3>💡 有用な情報</h3>
-      
-      <div class="tip-item">減価償却は走行距離、使用時間、使用条件に依存</div>
-      
-      <div class="tip-item">商業使用は摩耗を1.5-2倍増加</div>
-      
-      <div class="tip-item">定期的なメンテナンスと品質サービスは減価償却を遅らせる</div>
-      
-      <div class="tip-item">気候条件はボディと電子機器の摩耗に影響</div>
-      
-      <div class="tip-item">ハイブリッドおよび電気自動車はエンジン減価償却が少ないが、バッテリーは走行距離で劣化</div>
-      
-      <div class="tip-item"><strong>市場要因:</strong> 新車価格上昇とモデル需要を考慮</div>
-      
-      <div class="tip-item"><strong>地域特性:</strong> 価格は都市によって大きく異なる可能性</div>
-      
-      <div class="tip-item"><strong>インフレ:</strong> 初期コスト調整には年間インフレ率を考慮</div>
-      
+      <h3>💡 {{ depreciationCalculator[locale].tips.title }}</h3>
+      {% for tip in depreciationCalculator[locale].tips.items %}
+      <div class="tip-item">{{ tip | safe }}</div>
+      {% endfor %}
     </div>
     <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
       <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-        <button type="button" aria-label="広告を閉じる">閉じる</button>
+        <button type="button" aria-label="{{ depreciationCalculator[locale].aria.closeAd }}">{{ depreciationCalculator[locale].buttons.closeAd }}</button>
         <ins class="mrg-tag" 
             style="display:inline-block;width:320px;height:50px" 
             data-ad-client="ad-1898031"

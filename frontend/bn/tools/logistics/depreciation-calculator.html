@@ -1,25 +1,24 @@
+
 <!DOCTYPE html>
 <html lang="bn" dir="ltr">
   <head>
-<link rel="canonical" href="https://www.serpmonn.ru/frontend/bn/tools/logistics/depreciation-calculator.html">
-<meta name="i18n-scope" content="tools.depreciation">
-<script type="module" src="/frontend/scripts/i18n-overlay-2.js" defer></script>
-<link rel="stylesheet" href="/frontend/styles/styles.css">
-<meta http-equiv="Content-Language" content="bn">
+    <meta name="i18n-scope" content="tools.depreciation">
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="bn">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title data-i18n="title">Калькулятор амортизации автомобиля — Логистика Serpmonn</title>
-    <meta name="description" content="Расчёт износа автомобиля по пробегу, времени и условиям эксплуатации">
+    <title>গাড়ি অবচয় ক্যালকুলেটর — লজিস্টিক্স Serpmonn</title>
+    <meta name="description" content="মাইলেজ, সময় এবং ব্যবহারের শর্তের উপর ভিত্তি করে গাড়ির অবচয় গণনা">
     <!-- Open Graph -->
-    <meta property="og:title" content="Калькулятор амортизации автомобиля — Логистика Serpmonn">
-    <meta property="og:description" content="Расчёт износа автомобиля для водителей">
+    <meta property="og:title" content="গাড়ি অবচয় ক্যালকুলেটর — লজিস্টিক্স Serpmonn">
+    <meta property="og:description" content="ড্রাইভারদের জন্য গাড়ির অবচয় গণনা">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://www.serpmonn.ru/frontend/bn/tools/logistics/depreciation-calculator.html">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/bn/tools/logistics/depreciation-calculator.html">
     <meta property="og:type" content="website">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Калькулятор амортизации автомобиля — Логистика Serpmonn">
-    <meta name="twitter:description" content="Расчёт износа автомобиля для водителей">
+    <meta name="twitter:title" content="গাড়ি অবচয় ক্যালকুলেটর — লজিস্টিক্স Serpmonn">
+    <meta name="twitter:description" content="ড্রাইভারদের জন্য গাড়ির অবচয় গণনা">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -170,7 +169,7 @@
         margin-bottom: 5px;
       }
       .result-label {
-        color: #495057; /* Улучшена контрастность */
+        color: #495057;
         font-size: 14px;
       }
       .breakdown h3, .history h3 {
@@ -214,7 +213,7 @@
         margin-bottom: 10px;
         padding-left: 20px;
         position: relative;
-        color: #343a40; /* Улучшена контрастность */
+        color: #343a40;
       }
       .tip-item:before {
         content: "💡";
@@ -223,7 +222,7 @@
       }
       .disclaimer {
         margin-top: 20px;
-        color: #495057; /* Улучшена контрастность */
+        color: #495057;
         font-size: 0.9rem;
         text-align: center;
       }
@@ -260,8 +259,8 @@
 
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/frontend/tools/index.html">Инструменты</a> → 
-      <span>Калькулятор амортизации</span>
+      <a href="/frontend/bn/tools/index.html">সরঞ্জাম</a> → 
+      <span>অবচয় ক্যালকুলেটর</span>
     </div>
     <script type="application/ld+json">
     {
@@ -271,14 +270,14 @@
         {
           "@type": "ListItem",
           "position": 1,
-          "name": "Инструменты",
-          "item": "https://serpmonn.ru/frontend/tools/index.html"
+          "name": "সরঞ্জাম",
+          "item": "https://serpmonn.ru/frontend/bn/tools/index.html"
         },
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "Калькулятор амортизации",
-          "item": "https://serpmonn.ru/frontend/tools/logistics/depreciation-calculator.html"
+          "name": "অবচয় ক্যালকুলেটর",
+          "item": "https://serpmonn.ru/frontend/bn/tools/logistics/depreciation-calculator.html"
         }
       ]
     }
@@ -292,169 +291,218 @@
       </ins>
     </div>
 
-    <h1 data-i18n="h1">🔧 Depreciation calculator автомобиля</h1>
+    <h1>গাড়ি অবচয় ক্যালকুলেটর</h1>
     <div class="calculator-container">
-      <h2>Введите параметры автомобиля</h2>
+      <h2>গাড়ির প্যারামিটার লিখুন</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">Марка автомобиля</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="Например: Toyota" title="Введите марку автомобиля, например, Toyota или BMW">
+          <label for="carBrand">গাড়ির ব্র্যান্ড</label>
+          <input type="text" id="carBrand" list="carBrands" placeholder="উদাহরণ: Toyota" title="গাড়ির ব্র্যান্ড লিখুন, উদাহরণস্বরূপ Toyota বা BMW">
           <datalist id="carBrands">
+            
             <option value="Toyota">
+            
             <option value="Lada">
+            
             <option value="Hyundai">
+            
             <option value="BMW">
+            
             <option value="Mercedes">
+            
           </datalist>
         </div>
         <div class="input-group">
-          <label for="carModel">Модель</label>
-          <input type="text" id="carModel" placeholder="Например: Camry" title="Введите модель автомобиля, например, Camry или X5">
+          <label for="carModel">মডেল</label>
+          <input type="text" id="carModel" placeholder="উদাহরণ: Camry" title="গাড়ির মডেল লিখুন, উদাহরণস্বরূপ Camry বা X5">
         </div>
         <div class="input-group">
-          <label for="carYear">Год выпуска</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Введите год выпуска автомобиля (1990–2025)">
+          <label for="carYear">উত্পাদনের বছর</label>
+          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="উত্পাদনের বছর লিখুন (1990–2025)">
         </div>
         <div class="input-group">
-          <label for="initialPrice">Начальная стоимость (₽)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Введите начальную стоимость автомобиля в рублях">
+          <label for="initialPrice">প্রাথমিক মূল্য (৳)</label>
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="টাকায় গাড়ির প্রাথমিক মূল্য লিখুন">
         </div>
         <div class="input-group">
-          <label for="currentMileage">Текущий пробег (км)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Введите текущий пробег автомобиля в километрах">
+          <label for="currentMileage">বর্তমান মাইলেজ (কিমি)</label>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" title="কিলোমিটারে বর্তমান মাইলেজ লিখুন">
         </div>
         <div class="input-group">
-          <label for="usageType">Тип использования</label>
-          <select id="usageType" title="Выберите тип использования автомобиля">
-            <option value="personal">Личное использование</option>
-            <option value="taxi">Такси</option>
-            <option value="commercial">Коммерческие перевозки</option>
-            <option value="delivery">Доставка</option>
+          <label for="usageType">ব্যবহারের ধরন</label>
+          <select id="usageType" title="গাড়ির ব্যবহারের ধরন নির্বাচন করুন">
+            
+            <option value="personal">ব্যক্তিগত ব্যবহার</option>
+            
+            <option value="taxi">ট্যাক্সি</option>
+            
+            <option value="commercial">বাণিজ্যিক পরিবহন</option>
+            
+            <option value="delivery">ডেলিভারি</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="fuelType">Тип топлива</label>
-          <select id="fuelType" title="Выберите тип топлива автомобиля">
-            <option value="petrol">Бензин</option>
-            <option value="diesel">Дизель</option>
-            <option value="hybrid">Гибрид</option>
-            <option value="electric">Электро</option>
+          <label for="fuelType">জ্বালানির ধরন</label>
+          <select id="fuelType" title="গাড়ির জ্বালানির ধরন নির্বাচন করুন">
+            
+            <option value="petrol">পেট্রোল</option>
+            
+            <option value="diesel">ডিজেল</option>
+            
+            <option value="hybrid">হাইব্রিড</option>
+            
+            <option value="electric">বৈদ্যুতিক</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="maintenanceLevel">Уровень обслуживания</label>
-          <select id="maintenanceLevel" title="Выберите уровень обслуживания автомобиля">
-            <option value="excellent">Отличный</option>
-            <option value="good">Хороший</option>
-            <option value="average">Средний</option>
-            <option value="poor">Плохой</option>
+          <label for="maintenanceLevel">রক্ষণাবেক্ষণের স্তর</label>
+          <select id="maintenanceLevel" title="গাড়ির রক্ষণাবেক্ষণের স্তর নির্বাচন করুন">
+            
+            <option value="excellent">চমৎকার</option>
+            
+            <option value="good">ভাল</option>
+            
+            <option value="average">গড়</option>
+            
+            <option value="poor">খারাপ</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="climateZone">Климатическая зона</label>
-          <select id="climateZone" title="Выберите климатическую зону эксплуатации">
-            <option value="mild">Умеренная</option>
-            <option value="cold">Холодная</option>
-            <option value="hot">Жаркая</option>
-            <option value="humid">Влажная</option>
+          <label for="climateZone">জলবায়ু অঞ্চল</label>
+          <select id="climateZone" title="অপারেশন জলবায়ু অঞ্চল নির্বাচন করুন">
+            
+            <option value="mild">মৃদু</option>
+            
+            <option value="cold">ঠান্ডা</option>
+            
+            <option value="hot">গরম</option>
+            
+            <option value="humid">আর্দ্র</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="region">Регион</label>
-          <select id="region" title="Выберите регион эксплуатации автомобиля">
-            <option value="central">Центральный (Москва)</option>
-            <option value="north">Север (СПб)</option>
-            <option value="siberia">Сибирь</option>
-            <option value="south">Юг</option>
+          <label for="region">অঞ্চল</label>
+          <select id="region" title="গাড়ির অপারেশন অঞ্চল নির্বাচন করুন">
+            
+            <option value="central">কেন্দ্রীয় (মস্কো)</option>
+            
+            <option value="north">উত্তর (সেন্ট পিটার্সবার্গ)</option>
+            
+            <option value="siberia">সাইবেরিয়া</option>
+            
+            <option value="south">দক্ষিণ</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="currentNewPrice">Текущая цена новых аналогов (₽)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="Введите текущую цену аналогичного нового автомобиля в рублях">
-          <small style="color: #6c757d; font-size: 12px;">Цена аналогичного нового автомобиля сейчас</small>
+          <label for="currentNewPrice">নতুন অ্যানালগের বর্তমান মূল্য (৳)</label>
+          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="টাকায় অনুরূপ নতুন গাড়ির বর্তমান মূল্য লিখুন">
+          <small style="color: #6c757d; font-size: 12px;">এখন অনুরূপ নতুন গাড়ির মূল্য</small>
         </div>
         <div class="input-group">
-          <label for="marketGrowth">Рыночный рост цен (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Укажите рост цен на новые автомобили с момента покупки в процентах">
-          <small style="color: #6c757d; font-size: 12px;">Рост цен на новые авто с момента покупки</small>
+          <label for="marketGrowth">বাজার মূল্য বৃদ্ধি (%)</label>
+          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="ক্রয়ের সময় থেকে নতুন গাড়ির মূল্য বৃদ্ধি শতাংশে নির্দিষ্ট করুন">
+          <small style="color: #6c757d; font-size: 12px;">ক্রয়ের সময় থেকে নতুন গাড়ির মূল্য বৃদ্ধি</small>
         </div>
         <div class="input-group">
-          <label for="inflationRate">Годовая инфляция (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="Укажите среднюю годовую инфляцию за период владения">
-          <small style="color: #6c757d; font-size: 12px;">Средняя инфляция за год владения</small>
+          <label for="inflationRate">বাৎসরিক মুদ্রাস্ফীতি (%)</label>
+          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="মালিকানাধীন সময়কালে গড় বার্ষিক মুদ্রাস্ফীতি নির্দিষ্ট করুন">
+          <small style="color: #6c757d; font-size: 12px;">মালিকানাধীন প্রতিবছরের গড় মুদ্রাস্ফীতি</small>
         </div>
         <div class="input-group">
-          <label for="demandLevel">Спрос на модель</label>
-          <select id="demandLevel" title="Выберите уровень спроса на модель">
-            <option value="high">Высокий спрос</option>
-            <option value="medium" selected>Средний спрос</option>
-            <option value="low">Низкий спрос</option>
+          <label for="demandLevel">মডেলের চাহিদা</label>
+          <select id="demandLevel" title="মডেলের চাহিদার স্তর নির্বাচন করুন">
+            
+            <option value="high" >উচ্চ চাহিদা</option>
+            
+            <option value="medium" selected>মধ্যম চাহিদা</option>
+            
+            <option value="low" >নিম্ন চাহিদা</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="technicalCondition">Техническое состояние</label>
-          <select id="technicalCondition" title="Выберите техническое состояние автомобиля">
-            <option value="excellent" selected>Отличное (оригинал)</option>
-            <option value="good">Хорошее (небольшие дефекты)</option>
-            <option value="average">Среднее (ремонтировался)</option>
-            <option value="poor">Плохое (аварийный)</option>
+          <label for="technicalCondition">প্রযুক্তিগত অবস্থা</label>
+          <select id="technicalCondition" title="গাড়ির প্রযুক্তিগত অবস্থা নির্বাচন করুন">
+            
+            <option value="excellent" selected>চমৎকার (মূল)</option>
+            
+            <option value="good" >ভাল (ছোটখাটো ত্রুটি)</option>
+            
+            <option value="average" >গড় (মেরামত করা হয়েছে)</option>
+            
+            <option value="poor" >খারাপ (দুর্ঘটনায় ক্ষতিগ্রস্ত)</option>
+            
           </select>
-          <small style="color: #6c757d; font-size: 12px;">Учитывает аварии, ремонты, перекраску</small>
+          <small style="color: #6c757d; font-size: 12px;">দুর্ঘটনা, মেরামত, রঙ করার বিষয়টি বিবেচনা করে</small>
         </div>
       </div>
       <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Рассчитать амортизацию автомобиля" data-i18n="cta.calculate">Рассчитать амортизацию</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="Сбросить форму" data-i18n="cta.reset">Сбросить</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="Скопировать ссылку на расчёт" data-i18n="cta.share">Поделиться</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="Экспортировать результаты в PDF" data-i18n="cta.export_pdf">Экспорт в PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="Экспортировать результаты в CSV" data-i18n="cta.export_csv">Экспорт в CSV</button>
+        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="গাড়ির অবচয় গণনা করুন">অবচয় গণনা করুন</button>
+        <button class="reset-btn" onclick="resetForm()" aria-label="ফর্ম রিসেট করুন">রিসেট</button>
+        <button class="share-btn" onclick="copyShareLink()" aria-label="গণনা লিঙ্ক কপি করুন">শেয়ার করুন</button>
+        <button class="export-btn" onclick="exportToPDF()" aria-label="ফলাফল PDF এ রপ্তানি করুন">PDF এ রপ্তানি</button>
+        <button class="csv-btn" onclick="exportToCSV()" aria-label="ফলাফল CSV এ রপ্তানি করুন">CSV এ রপ্তানি</button>
       </div>
       <div id="results" class="results hidden" aria-live="polite">
-        <h3>Результаты расчёта</h3>
+        <h3>গণনার ফলাফল</h3>
         <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
         <div class="result-grid">
           <div class="result-item">
-            <div class="result-value" id="currentValue">0 ₽</div>
-            <div class="result-label">Текущая стоимость</div>
+            <div class="result-value" id="currentValue">0 ৳</div>
+            <div class="result-label">বর্তমান মূল্য</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="totalDepreciation">0 ₽</div>
-            <div class="result-label">Общая амортизация</div>
+            <div class="result-value" id="totalDepreciation">0 ৳</div>
+            <div class="result-label">মোট অবচয়</div>
           </div>
           <div class="result-item">
             <div class="result-value" id="depreciationPercent">0%</div>
-            <div class="result-label">Процент износа</div>
+            <div class="result-label">অবচয় শতাংশ</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="monthlyDepreciation">0 ₽/мес</div>
-            <div class="result-label">Месячная амортизация</div>
+            <div class="result-value" id="monthlyDepreciation">0 ৳/মাস</div>
+            <div class="result-label">মাসিক অবচয়</div>
           </div>
         </div>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
-      <h3>Детализация амортизации</h3>
+      <h3>অবচয় বিস্তারিত</h3>
       <div id="breakdownList"></div>
     </div>
     <div id="history" class="history hidden" aria-live="polite">
-      <h3>История расчётов</h3>
+      <h3>গণনার ইতিহাস</h3>
       <ul id="historyList"></ul>
     </div>
     <div class="info-tips">
-      <h3>💡 Полезная информация</h3>
-      <div class="tip-item">Амортизация зависит от пробега, времени эксплуатации и условий использования</div>
-      <div class="tip-item">Коммерческое использование увеличивает износ в 1.5-2 раза</div>
-      <div class="tip-item">Регулярное ТО и качественное обслуживание замедляют амортизацию</div>
-      <div class="tip-item">Климатические условия влияют на износ кузова и электроники</div>
-      <div class="tip-item">Гибридные и электромобили имеют меньшую амортизацию двигателя, но батарея изнашивается от пробега</div>
-      <div class="tip-item"><strong>Рыночные факторы:</strong> Учитывайте рост цен на новые автомобили и спрос на вашу модель</div>
-      <div class="tip-item"><strong>Региональные особенности:</strong> Цены могут сильно отличаться в разных городах</div>
-      <div class="tip-item"><strong>Инфляция:</strong> Учитывайте годовую инфляцию для корректировки начальной стоимости</div>
+      <h3>💡 দরকারী তথ্য</h3>
+      
+      <div class="tip-item">অবচয় মাইলেজ, পরিষেবার সময় এবং ব্যবহারের শর্তের উপর নির্ভর করে</div>
+      
+      <div class="tip-item">বাণিজ্যিক ব্যবহার পরিধান 1.5-2 গুণ বাড়ায়</div>
+      
+      <div class="tip-item">নিয়মিত রক্ষণাবেক্ষণ এবং মানসম্পন্ন পরিষেবা অবচয় ধীর করে</div>
+      
+      <div class="tip-item">জলবায়ু অবস্থা বডি এবং ইলেকট্রনিক্স পরিধানকে প্রভাবিত করে</div>
+      
+      <div class="tip-item">হাইব্রিড এবং বৈদ্যুতিক যানবাহনে ইঞ্জিন অবচয় কম, তবে ব্যাটারি মাইলেজ থেকে ক্ষয়প্রাপ্ত হয়</div>
+      
+      <div class="tip-item"><strong>বাজার ফ্যাক্টর:</strong> নতুন গাড়ির মূল্য বৃদ্ধি এবং আপনার মডেলের চাহিদা বিবেচনা করুন</div>
+      
+      <div class="tip-item"><strong>আঞ্চলিক বৈশিষ্ট্য:</strong> বিভিন্ন শহরে দাম উল্লেখযোগ্যভাবে পরিবর্তিত হতে পারে</div>
+      
+      <div class="tip-item"><strong>মুদ্রাস্ফীতি:</strong> প্রাথমিক খরচ সমন্বয় করতে বার্ষিক মুদ্রাস্ফীতি বিবেচনা করুন</div>
+      
     </div>
     <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
       <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-        <button type="button" aria-label="Закрыть рекламу">Закрыть</button>
+        <button type="button" aria-label="বিজ্ঞাপন বন্ধ করুন">বন্ধ করুন</button>
         <ins class="mrg-tag" 
             style="display:inline-block;width:320px;height:50px" 
             data-ad-client="ad-1898031"
@@ -464,6 +512,6 @@
     </div>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js" defer></script>
-      <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-</body>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  </body>
 </html>

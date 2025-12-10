@@ -1,25 +1,24 @@
+
 <!DOCTYPE html>
 <html lang="el" dir="ltr">
   <head>
-<link rel="canonical" href="https://www.serpmonn.ru/frontend/el/tools/logistics/depreciation-calculator.html">
-<meta name="i18n-scope" content="tools.depreciation">
-<script type="module" src="/frontend/scripts/i18n-overlay-2.js" defer></script>
-<link rel="stylesheet" href="/frontend/styles/styles.css">
-<meta http-equiv="Content-Language" content="el">
+    <meta name="i18n-scope" content="tools.depreciation">
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="el">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title data-i18n="title">Калькулятор амортизации автомобиля — Логистика Serpmonn</title>
-    <meta name="description" content="Расчёт износа автомобиля по пробегу, времени и условиям эксплуатации">
+    <title>Αποσβέσεων Αυτοκινήτου Αριθμομηχανή — Logistics Serpmonn</title>
+    <meta name="description" content="Υπολογισμός φθοράς αυτοκινήτου βάσει χιλιομέτρων, χρόνου και συνθηκών χρήσης">
     <!-- Open Graph -->
-    <meta property="og:title" content="Калькулятор амортизации автомобиля — Логистика Serpmonn">
-    <meta property="og:description" content="Расчёт износа автомобиля для водителей">
+    <meta property="og:title" content="Αποσβέσεων Αυτοκινήτου Αριθμομηχανή — Logistics Serpmonn">
+    <meta property="og:description" content="Υπολογισμός αποσβέσεων αυτοκινήτου για οδηγούς">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://www.serpmonn.ru/frontend/el/tools/logistics/depreciation-calculator.html">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/el/tools/logistics/depreciation-calculator.html">
     <meta property="og:type" content="website">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Калькулятор амортизации автомобиля — Логистика Serpmonn">
-    <meta name="twitter:description" content="Расчёт износа автомобиля для водителей">
+    <meta name="twitter:title" content="Αποσβέσεων Αυτοκινήτου Αριθμομηχανή — Logistics Serpmonn">
+    <meta name="twitter:description" content="Υπολογισμός αποσβέσεων αυτοκινήτου για οδηγούς">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -170,7 +169,7 @@
         margin-bottom: 5px;
       }
       .result-label {
-        color: #495057; /* Улучшена контрастность */
+        color: #495057;
         font-size: 14px;
       }
       .breakdown h3, .history h3 {
@@ -214,7 +213,7 @@
         margin-bottom: 10px;
         padding-left: 20px;
         position: relative;
-        color: #343a40; /* Улучшена контрастность */
+        color: #343a40;
       }
       .tip-item:before {
         content: "💡";
@@ -223,7 +222,7 @@
       }
       .disclaimer {
         margin-top: 20px;
-        color: #495057; /* Улучшена контрастность */
+        color: #495057;
         font-size: 0.9rem;
         text-align: center;
       }
@@ -260,8 +259,8 @@
 
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/frontend/tools/index.html">Инструменты</a> → 
-      <span>Калькулятор амортизации</span>
+      <a href="/frontend/el/tools/index.html">Εργαλεία</a> → 
+      <span>Αριθμομηχανή Αποσβέσεων</span>
     </div>
     <script type="application/ld+json">
     {
@@ -271,14 +270,14 @@
         {
           "@type": "ListItem",
           "position": 1,
-          "name": "Инструменты",
-          "item": "https://serpmonn.ru/frontend/tools/index.html"
+          "name": "Εργαλεία",
+          "item": "https://serpmonn.ru/frontend/el/tools/index.html"
         },
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "Калькулятор амортизации",
-          "item": "https://serpmonn.ru/frontend/tools/logistics/depreciation-calculator.html"
+          "name": "Αριθμομηχανή Αποσβέσεων",
+          "item": "https://serpmonn.ru/frontend/el/tools/logistics/depreciation-calculator.html"
         }
       ]
     }
@@ -292,169 +291,218 @@
       </ins>
     </div>
 
-    <h1 data-i18n="h1">🔧 Depreciation calculator автомобиля</h1>
+    <h1>Αποσβέσεων Αυτοκινήτου Αριθμομηχανή</h1>
     <div class="calculator-container">
-      <h2>Введите параметры автомобиля</h2>
+      <h2>Εισάγετε παραμέτρους αυτοκινήτου</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">Марка автомобиля</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="Например: Toyota" title="Введите марку автомобиля, например, Toyota или BMW">
+          <label for="carBrand">Μάρκα αυτοκινήτου</label>
+          <input type="text" id="carBrand" list="carBrands" placeholder="Π.χ.: Toyota" title="Εισάγετε μάρκα αυτοκινήτου, π.χ. Toyota ή BMW">
           <datalist id="carBrands">
+            
             <option value="Toyota">
+            
             <option value="Lada">
+            
             <option value="Hyundai">
+            
             <option value="BMW">
+            
             <option value="Mercedes">
+            
           </datalist>
         </div>
         <div class="input-group">
-          <label for="carModel">Модель</label>
-          <input type="text" id="carModel" placeholder="Например: Camry" title="Введите модель автомобиля, например, Camry или X5">
+          <label for="carModel">Μοντέλο</label>
+          <input type="text" id="carModel" placeholder="Π.χ.: Camry" title="Εισάγετε μοντέλο αυτοκινήτου, π.χ. Camry ή X5">
         </div>
         <div class="input-group">
-          <label for="carYear">Год выпуска</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Введите год выпуска автомобиля (1990–2025)">
+          <label for="carYear">Έτος κατασκευής</label>
+          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Εισάγετε έτος κατασκευής (1990–2025)">
         </div>
         <div class="input-group">
-          <label for="initialPrice">Начальная стоимость (₽)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Введите начальную стоимость автомобиля в рублях">
+          <label for="initialPrice">Αρχική τιμή (€)</label>
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Εισάγετε αρχική τιμή αυτοκινήτου σε ευρώ">
         </div>
         <div class="input-group">
-          <label for="currentMileage">Текущий пробег (км)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Введите текущий пробег автомобиля в километрах">
+          <label for="currentMileage">Τρέχουσα χιλιομετρική (χλμ)</label>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Εισάγετε τρέχουσα χιλιομετρική σε χιλιόμετρα">
         </div>
         <div class="input-group">
-          <label for="usageType">Тип использования</label>
-          <select id="usageType" title="Выберите тип использования автомобиля">
-            <option value="personal">Личное использование</option>
-            <option value="taxi">Такси</option>
-            <option value="commercial">Коммерческие перевозки</option>
-            <option value="delivery">Доставка</option>
+          <label for="usageType">Τύπος χρήσης</label>
+          <select id="usageType" title="Επιλέξτε τύπο χρήσης αυτοκινήτου">
+            
+            <option value="personal">Προσωπική χρήση</option>
+            
+            <option value="taxi">Ταξί</option>
+            
+            <option value="commercial">Επαγγελματικές μεταφορές</option>
+            
+            <option value="delivery">Παράδοση</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="fuelType">Тип топлива</label>
-          <select id="fuelType" title="Выберите тип топлива автомобиля">
-            <option value="petrol">Бензин</option>
-            <option value="diesel">Дизель</option>
-            <option value="hybrid">Гибрид</option>
-            <option value="electric">Электро</option>
+          <label for="fuelType">Τύπος καυσίμου</label>
+          <select id="fuelType" title="Επιλέξτε τύπο καυσίμου αυτοκινήτου">
+            
+            <option value="petrol">Βενζίνη</option>
+            
+            <option value="diesel">Ντίζελ</option>
+            
+            <option value="hybrid">Υβριδικό</option>
+            
+            <option value="electric">Ηλεκτρικό</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="maintenanceLevel">Уровень обслуживания</label>
-          <select id="maintenanceLevel" title="Выберите уровень обслуживания автомобиля">
-            <option value="excellent">Отличный</option>
-            <option value="good">Хороший</option>
-            <option value="average">Средний</option>
-            <option value="poor">Плохой</option>
+          <label for="maintenanceLevel">Επίπεδο συντήρησης</label>
+          <select id="maintenanceLevel" title="Επιλέξτε επίπεδο συντήρησης αυτοκινήτου">
+            
+            <option value="excellent">Εξαιρετικό</option>
+            
+            <option value="good">Καλό</option>
+            
+            <option value="average">Μέτριο</option>
+            
+            <option value="poor">Κακό</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="climateZone">Климатическая зона</label>
-          <select id="climateZone" title="Выберите климатическую зону эксплуатации">
-            <option value="mild">Умеренная</option>
-            <option value="cold">Холодная</option>
-            <option value="hot">Жаркая</option>
-            <option value="humid">Влажная</option>
+          <label for="climateZone">Κλιματική ζώνη</label>
+          <select id="climateZone" title="Επιλέξτε κλιματική ζώνη λειτουργίας">
+            
+            <option value="mild">Μέτριο</option>
+            
+            <option value="cold">Κρύο</option>
+            
+            <option value="hot">Ζεστό</option>
+            
+            <option value="humid">Υγρό</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="region">Регион</label>
-          <select id="region" title="Выберите регион эксплуатации автомобиля">
-            <option value="central">Центральный (Москва)</option>
-            <option value="north">Север (СПб)</option>
-            <option value="siberia">Сибирь</option>
-            <option value="south">Юг</option>
+          <label for="region">Περιοχή</label>
+          <select id="region" title="Επιλέξτε περιοχή λειτουργίας αυτοκινήτου">
+            
+            <option value="central">Κεντρικό (Μόσχα)</option>
+            
+            <option value="north">Βόρειο (Αγία Πετρούπολη)</option>
+            
+            <option value="siberia">Σιβηρία</option>
+            
+            <option value="south">Νότιο</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="currentNewPrice">Текущая цена новых аналогов (₽)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="Введите текущую цену аналогичного нового автомобиля в рублях">
-          <small style="color: #6c757d; font-size: 12px;">Цена аналогичного нового автомобиля сейчас</small>
+          <label for="currentNewPrice">Τρέχουσα τιμή νέων ανάλογων (€)</label>
+          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="Εισάγετε τρέχουσα τιμή παρόμοιου νέου αυτοκινήτου σε ευρώ">
+          <small style="color: #6c757d; font-size: 12px;">Τιμή παρόμοιου νέου αυτοκινήτου τώρα</small>
         </div>
         <div class="input-group">
-          <label for="marketGrowth">Рыночный рост цен (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Укажите рост цен на новые автомобили с момента покупки в процентах">
-          <small style="color: #6c757d; font-size: 12px;">Рост цен на новые авто с момента покупки</small>
+          <label for="marketGrowth">Αύξηση τιμών αγοράς (%)</label>
+          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Καθορίστε αύξηση τιμών νέων αυτοκινήτων από την αγορά σε ποσοστό">
+          <small style="color: #6c757d; font-size: 12px;">Αύξηση τιμών νέων αυτοκινήτων από την αγορά</small>
         </div>
         <div class="input-group">
-          <label for="inflationRate">Годовая инфляция (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="Укажите среднюю годовую инфляцию за период владения">
-          <small style="color: #6c757d; font-size: 12px;">Средняя инфляция за год владения</small>
+          <label for="inflationRate">Ετήσια πληθωρισμός (%)</label>
+          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="Καθορίστε μέσο ετήσιο πληθωρισμό κατά την περίοδο ιδιοκτησίας">
+          <small style="color: #6c757d; font-size: 12px;">Μέσος πληθωρισμός ανά έτος ιδιοκτησίας</small>
         </div>
         <div class="input-group">
-          <label for="demandLevel">Спрос на модель</label>
-          <select id="demandLevel" title="Выберите уровень спроса на модель">
-            <option value="high">Высокий спрос</option>
-            <option value="medium" selected>Средний спрос</option>
-            <option value="low">Низкий спрос</option>
+          <label for="demandLevel">Ζήτηση για μοντέλο</label>
+          <select id="demandLevel" title="Επιλέξτε επίπεδο ζήτησης για το μοντέλο">
+            
+            <option value="high" >Υψηλή ζήτηση</option>
+            
+            <option value="medium" selected>Μέτρια ζήτηση</option>
+            
+            <option value="low" >Χαμηλή ζήτηση</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="technicalCondition">Техническое состояние</label>
-          <select id="technicalCondition" title="Выберите техническое состояние автомобиля">
-            <option value="excellent" selected>Отличное (оригинал)</option>
-            <option value="good">Хорошее (небольшие дефекты)</option>
-            <option value="average">Среднее (ремонтировался)</option>
-            <option value="poor">Плохое (аварийный)</option>
+          <label for="technicalCondition">Τεχνική κατάσταση</label>
+          <select id="technicalCondition" title="Επιλέξτε τεχνική κατάσταση αυτοκινήτου">
+            
+            <option value="excellent" selected>Εξαιρετικό (πρωτότυπο)</option>
+            
+            <option value="good" >Καλό (μικρά ελαττώματα)</option>
+            
+            <option value="average" >Μέτριο (επισκευασμένο)</option>
+            
+            <option value="poor" >Κακό (ατυχηματικό)</option>
+            
           </select>
-          <small style="color: #6c757d; font-size: 12px;">Учитывает аварии, ремонты, перекраску</small>
+          <small style="color: #6c757d; font-size: 12px;">Λαμβάνει υπόψη ατυχήματα, επισκευές, επαναβάψιμο</small>
         </div>
       </div>
       <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Рассчитать амортизацию автомобиля" data-i18n="cta.calculate">Рассчитать амортизацию</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="Сбросить форму" data-i18n="cta.reset">Сбросить</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="Скопировать ссылку на расчёт" data-i18n="cta.share">Поделиться</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="Экспортировать результаты в PDF" data-i18n="cta.export_pdf">Экспорт в PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="Экспортировать результаты в CSV" data-i18n="cta.export_csv">Экспорт в CSV</button>
+        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Υπολογισμός αποσβέσεων αυτοκινήτου">Υπολογισμός αποσβέσεων</button>
+        <button class="reset-btn" onclick="resetForm()" aria-label="Επαναφορά φόρμας">Επαναφορά</button>
+        <button class="share-btn" onclick="copyShareLink()" aria-label="Αντιγραφή συνδέσμου υπολογισμού">Κοινοποίηση</button>
+        <button class="export-btn" onclick="exportToPDF()" aria-label="Εξαγωγή αποτελεσμάτων σε PDF">Εξαγωγή σε PDF</button>
+        <button class="csv-btn" onclick="exportToCSV()" aria-label="Εξαγωγή αποτελεσμάτων σε CSV">Εξαγωγή σε CSV</button>
       </div>
       <div id="results" class="results hidden" aria-live="polite">
-        <h3>Результаты расчёта</h3>
+        <h3>Αποτελέσματα υπολογισμού</h3>
         <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
         <div class="result-grid">
           <div class="result-item">
-            <div class="result-value" id="currentValue">0 ₽</div>
-            <div class="result-label">Текущая стоимость</div>
+            <div class="result-value" id="currentValue">0 €</div>
+            <div class="result-label">Τρέχουσα αξία</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="totalDepreciation">0 ₽</div>
-            <div class="result-label">Общая амортизация</div>
+            <div class="result-value" id="totalDepreciation">0 €</div>
+            <div class="result-label">Συνολικές αποσβέσεις</div>
           </div>
           <div class="result-item">
             <div class="result-value" id="depreciationPercent">0%</div>
-            <div class="result-label">Процент износа</div>
+            <div class="result-label">Ποσοστό φθοράς</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="monthlyDepreciation">0 ₽/мес</div>
-            <div class="result-label">Месячная амортизация</div>
+            <div class="result-value" id="monthlyDepreciation">0 €/μήν</div>
+            <div class="result-label">Μηνιαίες αποσβέσεις</div>
           </div>
         </div>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
-      <h3>Детализация амортизации</h3>
+      <h3>Λεπτομέρειες αποσβέσεων</h3>
       <div id="breakdownList"></div>
     </div>
     <div id="history" class="history hidden" aria-live="polite">
-      <h3>История расчётов</h3>
+      <h3>Ιστορικό υπολογισμών</h3>
       <ul id="historyList"></ul>
     </div>
     <div class="info-tips">
-      <h3>💡 Полезная информация</h3>
-      <div class="tip-item">Амортизация зависит от пробега, времени эксплуатации и условий использования</div>
-      <div class="tip-item">Коммерческое использование увеличивает износ в 1.5-2 раза</div>
-      <div class="tip-item">Регулярное ТО и качественное обслуживание замедляют амортизацию</div>
-      <div class="tip-item">Климатические условия влияют на износ кузова и электроники</div>
-      <div class="tip-item">Гибридные и электромобили имеют меньшую амортизацию двигателя, но батарея изнашивается от пробега</div>
-      <div class="tip-item"><strong>Рыночные факторы:</strong> Учитывайте рост цен на новые автомобили и спрос на вашу модель</div>
-      <div class="tip-item"><strong>Региональные особенности:</strong> Цены могут сильно отличаться в разных городах</div>
-      <div class="tip-item"><strong>Инфляция:</strong> Учитывайте годовую инфляцию для корректировки начальной стоимости</div>
+      <h3>💡 Χρήσιμες πληροφορίες</h3>
+      
+      <div class="tip-item">Οι αποσβέσεις εξαρτώνται από χιλιομετρική, διάρκεια λειτουργίας και συνθήκες χρήσης</div>
+      
+      <div class="tip-item">Η επαγγελματική χρήση αυξάνει τη φθορά 1,5-2 φορές</div>
+      
+      <div class="tip-item">Η τακτική συντήρηση και ποιοτική εξυπηρέτηση επιβραδύνουν τις αποσβέσεις</div>
+      
+      <div class="tip-item">Οι κλιματικές συνθήκες επηρεάζουν τη φθορά του αμαξώματος και της ηλεκτρονικής</div>
+      
+      <div class="tip-item">Τα υβριδικά και ηλεκτρικά οχήματα έχουν λιγότερες αποσβέσεις κινητήρα, αλλά η μπαταρία φθείρεται από τη χιλιομετρική</div>
+      
+      <div class="tip-item"><strong>Παράγοντες αγοράς:</strong> Λάβετε υπόψη την αύξηση τιμών νέων αυτοκινήτων και τη ζήτηση για το μοντέλο σας</div>
+      
+      <div class="tip-item"><strong>Περιφερειακά χαρακτηριστικά:</strong> Οι τιμές μπορεί να διαφέρουν σημαντικά σε διαφορετικές πόλεις</div>
+      
+      <div class="tip-item"><strong>Πληθωρισμός:</strong> Λάβετε υπόψη τον ετήσιο πληθωρισμό για προσαρμογή της αρχικής τιμής</div>
+      
     </div>
     <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
       <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-        <button type="button" aria-label="Закрыть рекламу">Закрыть</button>
+        <button type="button" aria-label="Κλείσιμο διαφήμισης">Κλείσιμο</button>
         <ins class="mrg-tag" 
             style="display:inline-block;width:320px;height:50px" 
             data-ad-client="ad-1898031"
@@ -464,6 +512,6 @@
     </div>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js" defer></script>
-      <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-</body>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  </body>
 </html>

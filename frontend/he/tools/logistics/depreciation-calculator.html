@@ -1,25 +1,24 @@
+
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
   <head>
-<link rel="canonical" href="https://www.serpmonn.ru/frontend/he/tools/logistics/depreciation-calculator.html">
-<meta name="i18n-scope" content="tools.depreciation">
-<script type="module" src="/frontend/scripts/i18n-overlay-2.js" defer></script>
-<link rel="stylesheet" href="/frontend/styles/styles.css">
-<meta http-equiv="Content-Language" content="he">
+    <meta name="i18n-scope" content="tools.depreciation">
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="he">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title data-i18n="title">Калькулятор амортизации автомобиля — Логистика Serpmonn</title>
-    <meta name="description" content="Расчёт износа автомобиля по пробегу, времени и условиям эксплуатации">
+    <title>מחשבון פחת רכב — לוגיסטיקה Serpmonn</title>
+    <meta name="description" content="חישוב בלאי רכב לפי קילומטראז&#39;, זמן ותנאי שימוש">
     <!-- Open Graph -->
-    <meta property="og:title" content="Калькулятор амортизации автомобиля — Логистика Serpmonn">
-    <meta property="og:description" content="Расчёт износа автомобиля для водителей">
+    <meta property="og:title" content="מחשבון פחת רכב — לוגיסטיקה Serpmonn">
+    <meta property="og:description" content="חישוב פחת רכב לנהגים">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://www.serpmonn.ru/frontend/he/tools/logistics/depreciation-calculator.html">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/he/tools/logistics/depreciation-calculator.html">
     <meta property="og:type" content="website">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Калькулятор амортизации автомобиля — Логистика Serpmonn">
-    <meta name="twitter:description" content="Расчёт износа автомобиля для водителей">
+    <meta name="twitter:title" content="מחשבון פחת רכב — לוגיסטיקה Serpmonn">
+    <meta name="twitter:description" content="חישוב פחת רכב לנהגים">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -170,7 +169,7 @@
         margin-bottom: 5px;
       }
       .result-label {
-        color: #495057; /* Улучшена контрастность */
+        color: #495057;
         font-size: 14px;
       }
       .breakdown h3, .history h3 {
@@ -214,7 +213,7 @@
         margin-bottom: 10px;
         padding-left: 20px;
         position: relative;
-        color: #343a40; /* Улучшена контрастность */
+        color: #343a40;
       }
       .tip-item:before {
         content: "💡";
@@ -223,7 +222,7 @@
       }
       .disclaimer {
         margin-top: 20px;
-        color: #495057; /* Улучшена контрастность */
+        color: #495057;
         font-size: 0.9rem;
         text-align: center;
       }
@@ -260,8 +259,8 @@
 
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/frontend/tools/index.html">Инструменты</a> → 
-      <span>Калькулятор амортизации</span>
+      <a href="/frontend/he/tools/index.html">כלים</a> → 
+      <span>מחשבון פחת</span>
     </div>
     <script type="application/ld+json">
     {
@@ -271,14 +270,14 @@
         {
           "@type": "ListItem",
           "position": 1,
-          "name": "Инструменты",
-          "item": "https://serpmonn.ru/frontend/tools/index.html"
+          "name": "כלים",
+          "item": "https://serpmonn.ru/frontend/he/tools/index.html"
         },
         {
           "@type": "ListItem",
           "position": 2,
-          "name": "Калькулятор амортизации",
-          "item": "https://serpmonn.ru/frontend/tools/logistics/depreciation-calculator.html"
+          "name": "מחשבון פחת",
+          "item": "https://serpmonn.ru/frontend/he/tools/logistics/depreciation-calculator.html"
         }
       ]
     }
@@ -292,169 +291,218 @@
       </ins>
     </div>
 
-    <h1 data-i18n="h1">🔧 Depreciation calculator автомобиля</h1>
+    <h1>מחשבון פחת רכב</h1>
     <div class="calculator-container">
-      <h2>Введите параметры автомобиля</h2>
+      <h2>הזן פרמטרים של רכב</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">Марка автомобиля</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="Например: Toyota" title="Введите марку автомобиля, например, Toyota или BMW">
+          <label for="carBrand">מותג רכב</label>
+          <input type="text" id="carBrand" list="carBrands" placeholder="לדוגמה: Toyota" title="הזן מותג רכב, לדוגמה Toyota או BMW">
           <datalist id="carBrands">
+            
             <option value="Toyota">
+            
             <option value="Lada">
+            
             <option value="Hyundai">
+            
             <option value="BMW">
+            
             <option value="Mercedes">
+            
           </datalist>
         </div>
         <div class="input-group">
-          <label for="carModel">Модель</label>
-          <input type="text" id="carModel" placeholder="Например: Camry" title="Введите модель автомобиля, например, Camry или X5">
+          <label for="carModel">דגם</label>
+          <input type="text" id="carModel" placeholder="לדוגמה: Camry" title="הזן דגם רכב, לדוגמה Camry או X5">
         </div>
         <div class="input-group">
-          <label for="carYear">Год выпуска</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Введите год выпуска автомобиля (1990–2025)">
+          <label for="carYear">שנת ייצור</label>
+          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="הזן שנת ייצור (1990–2025)">
         </div>
         <div class="input-group">
-          <label for="initialPrice">Начальная стоимость (₽)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Введите начальную стоимость автомобиля в рублях">
+          <label for="initialPrice">מחיר התחלתי (₪)</label>
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="הזן מחיר התחלתי של הרכב בשקלים">
         </div>
         <div class="input-group">
-          <label for="currentMileage">Текущий пробег (км)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Введите текущий пробег автомобиля в километрах">
+          <label for="currentMileage">קילומטראז&#39; נוכחי (ק&quot;מ)</label>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" title="הזן קילומטראז&#39; נוכחי בקילומטרים">
         </div>
         <div class="input-group">
-          <label for="usageType">Тип использования</label>
-          <select id="usageType" title="Выберите тип использования автомобиля">
-            <option value="personal">Личное использование</option>
-            <option value="taxi">Такси</option>
-            <option value="commercial">Коммерческие перевозки</option>
-            <option value="delivery">Доставка</option>
+          <label for="usageType">סוג שימוש</label>
+          <select id="usageType" title="בחר סוג שימוש של הרכב">
+            
+            <option value="personal">שימוש אישי</option>
+            
+            <option value="taxi">מונית</option>
+            
+            <option value="commercial">הובלה מסחרית</option>
+            
+            <option value="delivery">משלוח</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="fuelType">Тип топлива</label>
-          <select id="fuelType" title="Выберите тип топлива автомобиля">
-            <option value="petrol">Бензин</option>
-            <option value="diesel">Дизель</option>
-            <option value="hybrid">Гибрид</option>
-            <option value="electric">Электро</option>
+          <label for="fuelType">סוג דלק</label>
+          <select id="fuelType" title="בחר סוג דלק של הרכב">
+            
+            <option value="petrol">בנזין</option>
+            
+            <option value="diesel">דיזל</option>
+            
+            <option value="hybrid">היברידי</option>
+            
+            <option value="electric">חשמלי</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="maintenanceLevel">Уровень обслуживания</label>
-          <select id="maintenanceLevel" title="Выберите уровень обслуживания автомобиля">
-            <option value="excellent">Отличный</option>
-            <option value="good">Хороший</option>
-            <option value="average">Средний</option>
-            <option value="poor">Плохой</option>
+          <label for="maintenanceLevel">רמת תחזוקה</label>
+          <select id="maintenanceLevel" title="בחר רמת תחזוקה של הרכב">
+            
+            <option value="excellent">מצוין</option>
+            
+            <option value="good">טוב</option>
+            
+            <option value="average">בינוני</option>
+            
+            <option value="poor">גרוע</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="climateZone">Климатическая зона</label>
-          <select id="climateZone" title="Выберите климатическую зону эксплуатации">
-            <option value="mild">Умеренная</option>
-            <option value="cold">Холодная</option>
-            <option value="hot">Жаркая</option>
-            <option value="humid">Влажная</option>
+          <label for="climateZone">אזור אקלים</label>
+          <select id="climateZone" title="בחר אזור אקלים של הפעלה">
+            
+            <option value="mild">ממוזג</option>
+            
+            <option value="cold">קר</option>
+            
+            <option value="hot">חם</option>
+            
+            <option value="humid">לח</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="region">Регион</label>
-          <select id="region" title="Выберите регион эксплуатации автомобиля">
-            <option value="central">Центральный (Москва)</option>
-            <option value="north">Север (СПб)</option>
-            <option value="siberia">Сибирь</option>
-            <option value="south">Юг</option>
+          <label for="region">אזור</label>
+          <select id="region" title="בחר אזור הפעלה של הרכב">
+            
+            <option value="central">מרכז (מוסקבה)</option>
+            
+            <option value="north">צפון (סנט פטרסבורג)</option>
+            
+            <option value="siberia">סיביר</option>
+            
+            <option value="south">דרום</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="currentNewPrice">Текущая цена новых аналогов (₽)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="Введите текущую цену аналогичного нового автомобиля в рублях">
-          <small style="color: #6c757d; font-size: 12px;">Цена аналогичного нового автомобиля сейчас</small>
+          <label for="currentNewPrice">מחיר נוכחי של אנלוגים חדשים (₪)</label>
+          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="הזן מחיר נוכחי של רכב חדש דומה בשקלים">
+          <small style="color: #6c757d; font-size: 12px;">מחיר רכב חדש דומה עכשיו</small>
         </div>
         <div class="input-group">
-          <label for="marketGrowth">Рыночный рост цен (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Укажите рост цен на новые автомобили с момента покупки в процентах">
-          <small style="color: #6c757d; font-size: 12px;">Рост цен на новые авто с момента покупки</small>
+          <label for="marketGrowth">גידול מחירי שוק (%)</label>
+          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="ציין גידול מחירי רכבים חדשים מאז הרכישה באחוזים">
+          <small style="color: #6c757d; font-size: 12px;">גידול מחירי רכבים חדשים מאז הרכישה</small>
         </div>
         <div class="input-group">
-          <label for="inflationRate">Годовая инфляция (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="Укажите среднюю годовую инфляцию за период владения">
-          <small style="color: #6c757d; font-size: 12px;">Средняя инфляция за год владения</small>
+          <label for="inflationRate">אינפלציה שנתית (%)</label>
+          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="ציין אינפלציה שנתית ממוצעת בתקופת הבעלות">
+          <small style="color: #6c757d; font-size: 12px;">אינפלציה ממוצעת לכל שנת בעלות</small>
         </div>
         <div class="input-group">
-          <label for="demandLevel">Спрос на модель</label>
-          <select id="demandLevel" title="Выберите уровень спроса на модель">
-            <option value="high">Высокий спрос</option>
-            <option value="medium" selected>Средний спрос</option>
-            <option value="low">Низкий спрос</option>
+          <label for="demandLevel">ביקוש לדגם</label>
+          <select id="demandLevel" title="בחר רמת ביקוש לדגם">
+            
+            <option value="high" >ביקוש גבוה</option>
+            
+            <option value="medium" selected>ביקוש בינוני</option>
+            
+            <option value="low" >ביקוש נמוך</option>
+            
           </select>
         </div>
         <div class="input-group">
-          <label for="technicalCondition">Техническое состояние</label>
-          <select id="technicalCondition" title="Выберите техническое состояние автомобиля">
-            <option value="excellent" selected>Отличное (оригинал)</option>
-            <option value="good">Хорошее (небольшие дефекты)</option>
-            <option value="average">Среднее (ремонтировался)</option>
-            <option value="poor">Плохое (аварийный)</option>
+          <label for="technicalCondition">מצב טכני</label>
+          <select id="technicalCondition" title="בחר מצב טכני של הרכב">
+            
+            <option value="excellent" selected>מצוין (מקורי)</option>
+            
+            <option value="good" >טוב (פגמים קטנים)</option>
+            
+            <option value="average" >בינוני (מתוקן)</option>
+            
+            <option value="poor" >גרוע (תאונה)</option>
+            
           </select>
-          <small style="color: #6c757d; font-size: 12px;">Учитывает аварии, ремонты, перекраску</small>
+          <small style="color: #6c757d; font-size: 12px;">לוקח בחשבון תאונות, תיקונים, צביעה מחדש</small>
         </div>
       </div>
       <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Рассчитать амортизацию автомобиля" data-i18n="cta.calculate">Рассчитать амортизацию</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="Сбросить форму" data-i18n="cta.reset">Сбросить</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="Скопировать ссылку на расчёт" data-i18n="cta.share">Поделиться</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="Экспортировать результаты в PDF" data-i18n="cta.export_pdf">Экспорт в PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="Экспортировать результаты в CSV" data-i18n="cta.export_csv">Экспорт в CSV</button>
+        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="חשב פחת רכב">חשב פחת</button>
+        <button class="reset-btn" onclick="resetForm()" aria-label="אפס טופס">איפוס</button>
+        <button class="share-btn" onclick="copyShareLink()" aria-label="העתק קישור חישוב">שתף</button>
+        <button class="export-btn" onclick="exportToPDF()" aria-label="ייצא תוצאות ל-PDF">ייצא ל-PDF</button>
+        <button class="csv-btn" onclick="exportToCSV()" aria-label="ייצא תוצאות ל-CSV">ייצא ל-CSV</button>
       </div>
       <div id="results" class="results hidden" aria-live="polite">
-        <h3>Результаты расчёта</h3>
+        <h3>תוצאות חישוב</h3>
         <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
         <div class="result-grid">
           <div class="result-item">
-            <div class="result-value" id="currentValue">0 ₽</div>
-            <div class="result-label">Текущая стоимость</div>
+            <div class="result-value" id="currentValue">0 ₪</div>
+            <div class="result-label">ערך נוכחי</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="totalDepreciation">0 ₽</div>
-            <div class="result-label">Общая амортизация</div>
+            <div class="result-value" id="totalDepreciation">0 ₪</div>
+            <div class="result-label">סך הפחת</div>
           </div>
           <div class="result-item">
             <div class="result-value" id="depreciationPercent">0%</div>
-            <div class="result-label">Процент износа</div>
+            <div class="result-label">אחוז פחת</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="monthlyDepreciation">0 ₽/мес</div>
-            <div class="result-label">Месячная амортизация</div>
+            <div class="result-value" id="monthlyDepreciation">0 ₪/חודש</div>
+            <div class="result-label">פחת חודשי</div>
           </div>
         </div>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
-      <h3>Детализация амортизации</h3>
+      <h3>פירוט פחת</h3>
       <div id="breakdownList"></div>
     </div>
     <div id="history" class="history hidden" aria-live="polite">
-      <h3>История расчётов</h3>
+      <h3>היסטוריית חישובים</h3>
       <ul id="historyList"></ul>
     </div>
     <div class="info-tips">
-      <h3>💡 Полезная информация</h3>
-      <div class="tip-item">Амортизация зависит от пробега, времени эксплуатации и условий использования</div>
-      <div class="tip-item">Коммерческое использование увеличивает износ в 1.5-2 раза</div>
-      <div class="tip-item">Регулярное ТО и качественное обслуживание замедляют амортизацию</div>
-      <div class="tip-item">Климатические условия влияют на износ кузова и электроники</div>
-      <div class="tip-item">Гибридные и электромобили имеют меньшую амортизацию двигателя, но батарея изнашивается от пробега</div>
-      <div class="tip-item"><strong>Рыночные факторы:</strong> Учитывайте рост цен на новые автомобили и спрос на вашу модель</div>
-      <div class="tip-item"><strong>Региональные особенности:</strong> Цены могут сильно отличаться в разных городах</div>
-      <div class="tip-item"><strong>Инфляция:</strong> Учитывайте годовую инфляцию для корректировки начальной стоимости</div>
+      <h3>💡 מידע שימושי</h3>
+      
+      <div class="tip-item">פחת תלוי בקילומטראז', זמן שימוש ותנאי הפעלה</div>
+      
+      <div class="tip-item">שימוש מסחרי מגביר בלאי פי 1.5-2</div>
+      
+      <div class="tip-item">תחזוקה סדירה ושירות איכותי מאטים פחת</div>
+      
+      <div class="tip-item">תנאי אקלים משפיעים על בלאי גוף ורכיבים אלקטרוניים</div>
+      
+      <div class="tip-item">רכבים היברידיים וחשמליים יש פחות פחת מנוע, אך הסוללה נשחקת מקילומטראז'</div>
+      
+      <div class="tip-item"><strong>גורמי שוק:</strong> קחו בחשבון עליית מחירי רכבים חדשים וביקוש לדגם שלכם</div>
+      
+      <div class="tip-item"><strong>מאפיינים אזוריים:</strong> מחירים עשויים להשתנות משמעותית בערים שונות</div>
+      
+      <div class="tip-item"><strong>אינפלציה:</strong> קחו בחשבון אינפלציה שנתית להתאמת מחיר התחלתי</div>
+      
     </div>
     <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
       <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-        <button type="button" aria-label="Закрыть рекламу">Закрыть</button>
+        <button type="button" aria-label="סגור פרסומת">סגור</button>
         <ins class="mrg-tag" 
             style="display:inline-block;width:320px;height:50px" 
             data-ad-client="ad-1898031"
@@ -464,6 +512,6 @@
     </div>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js" defer></script>
-      <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-</body>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  </body>
 </html>
