@@ -1,0 +1,307 @@
+---
+# Используем глобальный список языков
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/tools/tools.html{% else %}/frontend/{{ locale }}/tools/tools.html{% endif %}"
+eleventyComputed:
+  title: "{{ tools[locale].meta.title }}"
+  description: "{{ tools[locale].meta.description }}"
+  dir: "{% if ['ar', 'fa', 'he', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'].indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/tools/tools.html{% else %}{{ site.baseUrl }}/{{ locale }}/tools/tools.html{% endif %}"
+  # Убрал translations, так как будем использовать tools[locale] напрямую
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ tools[locale].meta.title }}</title>
+    <meta name="description" content="{{ tools[locale].meta.description }}">
+    <meta name="keywords" content="{{ tools[locale].meta.keywords }}">
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ tools[locale].meta.ogTitle }}">
+    <meta property="og:description" content="{{ tools[locale].meta.ogDescription }}">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang={{ locale }}">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ tools[locale].meta.twitterTitle }}">
+    <meta name="twitter:description" content="{{ tools[locale].meta.twitterDescription }}">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">{{ tools[locale].page.skipAd }}</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="{{ tools[locale].aria.adBanner }}">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>{{ tools[locale].page.adFallback | safe }}</p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>{{ tools[locale].page.title }}</h1>
+        <p class="subtitle">{{ tools[locale].page.subtitle }}</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="{{ tools[locale].filters.searchPlaceholder }}" 
+                   aria-label="{{ tools[locale].aria.searchTools }}">
+            <select aria-label="{{ tools[locale].aria.filterCategory }}">
+                <option value="">{{ tools[locale].filters.allCategories }}</option>
+                {% for category in tools[locale].categoriesList %}
+                    <option value="{{ category.key }}">{{ category.name }}</option>
+                {% endfor %}
+            </select>
+            <button aria-label="{{ tools[locale].aria.clearFilters }}">{{ tools[locale].filters.clearFilters }}</button>
+            <button id="clear-favorites" aria-label="{{ tools[locale].aria.clearFavorites }}">{{ tools[locale].filters.clearFavorites }}</button>
+            <button id="sort-favorites" aria-label="{{ tools[locale].aria.showFavoritesTop }}">{{ tools[locale].filters.sortFavorites }}</button>
+            <div class="filter-message hidden" role="alert">{{ tools[locale].filters.noResults }}</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>{{ tools[locale].stats.title }}</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">{{ tools[locale].stats.activeTools }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">{{ tools[locale].stats.categories }}</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">{{ tools[locale].stats.planned }}</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">{{ tools[locale].categories.marketing.title }}</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>{{ tools[locale].tools.utmBuilder.title }}</h2>
+                    <p>{{ tools[locale].tools.utmBuilder.description }}</p>
+                    <a href="{% if locale == 'ru' %}/frontend/tools/marketing/utm-builder.html{% else %}/frontend/tools/marketing/utm-builder.html?lang={{ locale }}{% endif %}" 
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.utmBuilder.title }}">
+                        {{ tools[locale].buttons.openTool }}
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="{{ tools[locale].tools.utmBuilder.title }}" 
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].tools.utmBuilder.title }}">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>{{ tools[locale].tools.wordCounter.title }}</h2>
+                    <p>{{ tools[locale].tools.wordCounter.description }}</p>
+                    <a href="{% if locale == 'ru' %}/frontend/tools/marketing/word-counter.html{% else %}/frontend/tools/marketing/word-counter.html?lang={{ locale }}{% endif %}" 
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.wordCounter.title }}">
+                        {{ tools[locale].buttons.openTool }}
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="{{ tools[locale].tools.wordCounter.title }}" 
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].tools.wordCounter.title }}">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="{{ tools[locale].aria.adBanner }}">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>{{ tools[locale].page.adFallback | safe }}</p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">{{ tools[locale].categories.security.title }}</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>{{ tools[locale].tools.passwordGenerator.title }}</h2>
+                    <p>{{ tools[locale].tools.passwordGenerator.description }}</p>
+                    <a href="{% if locale == 'ru' %}/frontend/tools/security/password-generator.html{% else %}/frontend/tools/security/password-generator.html?lang={{ locale }}{% endif %}" 
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.passwordGenerator.title }}">
+                        {{ tools[locale].buttons.openTool }}
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="{{ tools[locale].tools.passwordGenerator.title }}" 
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].tools.passwordGenerator.title }}">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">{{ tools[locale].categories.development.title }}</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">{{ tools[locale].labels.soon }}</div>
+                    <h2>{{ tools[locale].tools.jsonFormatter.title }}</h2>
+                    <p>{{ tools[locale].tools.jsonFormatter.description }}</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="{{ tools[locale].tools.jsonFormatter.title }} {{ tools[locale].labels.soonAvailable }}">
+                        {{ tools[locale].labels.soonAvailable }}
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">{{ tools[locale].labels.soon }}</div>
+                    <h2>{{ tools[locale].tools.base64Converter.title }}</h2>
+                    <p>{{ tools[locale].tools.base64Converter.description }}</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="{{ tools[locale].tools.base64Converter.title }} {{ tools[locale].labels.soonAvailable }}">
+                        {{ tools[locale].labels.soonAvailable }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">{{ tools[locale].categories.design.title }}</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">{{ tools[locale].labels.soon }}</div>
+                    <h2>{{ tools[locale].tools.colorPalettes.title }}</h2>
+                    <p>{{ tools[locale].tools.colorPalettes.description }}</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="{{ tools[locale].tools.colorPalettes.title }} {{ tools[locale].labels.soonAvailable }}">
+                        {{ tools[locale].labels.soonAvailable }}
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">{{ tools[locale].labels.soon }}</div>
+                    <h2>{{ tools[locale].tools.formatConverter.title }}</h2>
+                    <p>{{ tools[locale].tools.formatConverter.description }}</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="{{ tools[locale].tools.formatConverter.title }} {{ tools[locale].labels.soonAvailable }}">
+                        {{ tools[locale].labels.soonAvailable }}
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">{{ tools[locale].categories.engineering.title }}</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>{{ tools[locale].tools.unitConverter.title }}</h2>
+                    <p>{{ tools[locale].tools.unitConverter.description }}</p>
+                    <a href="{% if locale == 'ru' %}/frontend/tools/engineering/unit-converter.html{% else %}/frontend/tools/engineering/unit-converter.html?lang={{ locale }}{% endif %}" 
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.unitConverter.title }}">
+                        {{ tools[locale].buttons.openTool }}
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="{{ tools[locale].tools.unitConverter.title }}" 
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].tools.unitConverter.title }}">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">{{ tools[locale].categories.logistics.title }}</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>{{ tools[locale].tools.depreciationCalculator.title }}</h2>
+                    <p>{{ tools[locale].tools.depreciationCalculator.description }}</p>
+                    <a href="{% if locale == 'ru' %}/frontend/tools/logistics/depreciation-calculator.html{% else %}/frontend/tools/logistics/depreciation-calculator.html?lang={{ locale }}{% endif %}" 
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.depreciationCalculator.title }}">
+                        {{ tools[locale].buttons.openTool }}
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="{{ tools[locale].tools.depreciationCalculator.title }}" 
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].tools.depreciationCalculator.title }}">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>{{ tools[locale].tools.fuelCalculator.title }}</h2>
+                    <p>{{ tools[locale].tools.fuelCalculator.description }}</p>
+                    <a href="{% if locale == 'ru' %}/frontend/tools/logistics/fuel-calculator.html{% else %}/frontend/tools/logistics/fuel-calculator.html?lang={{ locale }}{% endif %}" 
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.fuelCalculator.title }}">
+                        {{ tools[locale].buttons.openTool }}
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="{{ tools[locale].tools.fuelCalculator.title }}" 
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].tools.fuelCalculator.title }}">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">{{ tools[locale].categories.ecology.title }}</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>{{ tools[locale].tools.footprintCalculator.title }}</h2>
+                    <p>{{ tools[locale].tools.footprintCalculator.description }}</p>
+                    <a href="{% if locale == 'ru' %}/frontend/tools/ecology/product-footprint-calculator.html{% else %}/frontend/tools/ecology/product-footprint-calculator.html?lang={{ locale }}{% endif %}" 
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.footprintCalculator.title }}">
+                        {{ tools[locale].buttons.openTool }}
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="{{ tools[locale].tools.footprintCalculator.title }}" 
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].tools.footprintCalculator.title }}">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>{{ tools[locale].page.developmentTitle }}</h3>
+            <p>{{ tools[locale].page.developmentText | safe }}</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>

@@ -164,6 +164,8 @@ async function loadPromocodesFromAPI() {
             const { data, stats, timestamp } = JSON.parse(cachedData);
             if (Date.now() - timestamp < API_CONFIG.updateInterval) {
                 allPromocodes = data.map(normalizePromo);
+                // КОММЕНТАРИЙ: Промокод Шерри был закомментирован по требованию
+                /*
                 allPromocodes.unshift({
                     id: 'manual-sherry-001',
                     title: 'Шерри - Промокоды и бонусы',
@@ -183,6 +185,7 @@ async function loadPromocodesFromAPI() {
                     created_at: new Date().toISOString(),
                     groupDescription: 'Экономия, скидки, популярные бренды в одном приложении! Совершай покупки с промокодами и получай реальные деньги.'
                 });
+                */
                 filteredPromocodes = [...allPromocodes];
                 updateStats(stats || { total: 0, active: 0 });
                 renderPromocodes();
@@ -198,6 +201,8 @@ async function loadPromocodesFromAPI() {
             throw new Error(`Неверный формат данных: ${result.message || 'нет данных'}`);
         }
         allPromocodes = result.data.map(normalizePromo);
+        // КОММЕНТАРИЙ: Промокод Шерри был закомментирован по требованию
+        /*
         allPromocodes.unshift({
             id: 'manual-sherry-001',
             title: 'Шерри - Промокоды и бонусы',
@@ -217,6 +222,7 @@ async function loadPromocodesFromAPI() {
             created_at: new Date().toISOString(),
             groupDescription: 'Экономия, скидки, популярные бренды в одном приложении! Совершай покупки с промокодами и получай реальные деньги.'
         });
+        */
         filteredPromocodes = [...allPromocodes];
         const newDate = new Date().toISOString();
         localStorage.setItem('promo_cache', JSON.stringify({ 

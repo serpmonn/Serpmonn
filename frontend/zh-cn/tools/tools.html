@@ -1,0 +1,305 @@
+﻿
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="/frontend/tools/tools.css">
+    <meta http-equiv="Content-Language" content="zh-cn">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Serpmonn - 智能搜索引擎、新闻和迷你游戏平台</title>
+    <meta name="description" content="Serpmonn：用于营销、安全、开发和生态的强大工具。">
+    <meta name="keywords" content="UTM生成器, 密码生成器, 生态足迹计算器, 字数统计器">
+    <!-- Open Graph -->
+    <meta property="og:title" content="工具 — Serpmonn">
+    <meta property="og:description" content="一套微工具：UTM生成器, 密码生成器">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang=zh-cn">
+    <meta property="og:type" content="website">
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="工具 — Serpmonn">
+    <meta name="twitter:description" content="UTM生成器, 密码生成器, 字数统计器">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+</head>
+<body>
+    <!-- Меню -->
+    <div id="menuContainer" class="loading"></div>
+
+    <div class="page">
+        <!-- Рекламный баннер -->
+        <div class="ad-banner loading">
+            <a href="#tools" class="skip-ad">前往工具</a>
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="top-banner"
+                loading="lazy"
+                aria-label="广告横幅">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>了解更多关于我们的工具！<a href="#tools">前往</a></p>
+            </div>
+        </div>
+
+        <!-- Заголовок страницы -->
+        <h1>Serpmonn 工具</h1>
+        <p class="subtitle">一套用于工作、营销和开发的微工具</p>
+
+        <!-- Панель фильтров -->
+        <div class="filter-bar">
+            <input type="text" 
+                   placeholder="搜索工具..." 
+                   aria-label="搜索工具">
+            <select aria-label="按类别筛选">
+                <option value="">所有类别</option>
+                
+                    <option value="marketing">营销</option>
+                
+                    <option value="security">安全</option>
+                
+                    <option value="development">开发</option>
+                
+                    <option value="design">设计</option>
+                
+                    <option value="engineering">工程</option>
+                
+                    <option value="logistics">物流</option>
+                
+                    <option value="ecology">生态</option>
+                
+            </select>
+            <button aria-label="清除过滤器">清除过滤器</button>
+            <button id="clear-favorites" aria-label="清除收藏夹">清除收藏夹</button>
+            <button id="sort-favorites" aria-label="显示收藏置顶">收藏置顶</button>
+            <div class="filter-message hidden" role="alert">未找到工具。请尝试更改查询。</div>
+        </div>
+
+        <!-- Статистика -->
+        <div class="stats">
+            <h3>📊 工具统计</h3>
+            <div class="stats-grid" aria-live="polite">
+                <div class="stat-item">
+                    <div class="stat-number" id="tools-count">7</div>
+                    <div class="stat-label">活跃工具</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">7</div>
+                    <div class="stat-label">类别</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">10+</div>
+                    <div class="stat-label">计划中</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Маркетинг и аналитика -->
+        <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
+            <h2 class="category-title" id="marketing-title">📊 营销和分析工具</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 1;">
+                    <h2>🔗 UTM标签生成器</h2>
+                    <p>快速创建UTM链接以跟踪营销活动的有效性。</p>
+                    <a href="/frontend/tools/marketing/utm-builder.html?lang=zh-cn" 
+                       aria-label="打开工具: 🔗 UTM标签生成器">
+                        打开工具
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔗 UTM标签生成器" 
+                            aria-label="添加到收藏夹: 🔗 UTM标签生成器">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 2;">
+                    <h2>📝 字数/字符计数器</h2>
+                    <p>计算文本中的单词、行和字符。非常适合SEO优化。</p>
+                    <a href="/frontend/tools/marketing/word-counter.html?lang=zh-cn" 
+                       aria-label="打开工具: 📝 字数/字符计数器">
+                        打开工具
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="📝 字数/字符计数器" 
+                            aria-label="添加到收藏夹: 📝 字数/字符计数器">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Реклама между категориями -->
+        <div class="ad-banner loading">
+            <ins class="mrg-tag" 
+                style="display:inline-block;" 
+                data-ad-client="ad-1897960" 
+                data-ad-slot="1897960" 
+                data-ad-id="mid-banner"
+                loading="lazy"
+                aria-label="广告横幅">
+            </ins>
+            <div class="ad-fallback hidden">
+                <p>了解更多关于我们的工具！<a href="#tools">前往</a></p>
+            </div>
+        </div>
+
+        <!-- Категория: Безопасность -->
+        <div class="category-section category-security" role="region" aria-labelledby="security-title">
+            <h2 class="category-title" id="security-title">🔐 安全工具</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 3;">
+                    <h2>🔑 密码生成器</h2>
+                    <p>使用自定义参数创建安全密码。保护您的帐户安全。</p>
+                    <a href="/frontend/tools/security/password-generator.html?lang=zh-cn" 
+                       aria-label="打开工具: 🔑 密码生成器">
+                        打开工具
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔑 密码生成器" 
+                            aria-label="添加到收藏夹: 🔑 密码生成器">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Разработка -->
+        <div class="category-section category-development" role="region" aria-labelledby="development-title">
+            <h2 class="category-title" id="development-title">💻 开发工具</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 4;">
+                    <div class="coming-soon">即将推出</div>
+                    <h2>📄 JSON格式化器</h2>
+                    <p>漂亮的JSON数据格式化和验证。语法高亮。</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📄 JSON格式化器 即将推出">
+                        即将推出
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 5;">
+                    <div class="coming-soon">即将推出</div>
+                    <h2>🔄 Base64转换器</h2>
+                    <p>Base64编码和解码。处理图像和文件。</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🔄 Base64转换器 即将推出">
+                        即将推出
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Дизайн -->
+        <div class="category-section category-design" role="region" aria-labelledby="design-title">
+            <h2 class="category-title" id="design-title">🎨 设计工具</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card tool-placeholder" style="--i: 6;">
+                    <div class="coming-soon">即将推出</div>
+                    <h2>🎨 调色板</h2>
+                    <p>为设计创建和选择配色方案。和谐的组合。</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="🎨 调色板 即将推出">
+                        即将推出
+                    </a>
+                </div>
+                <div class="card tool-placeholder" style="--i: 7;">
+                    <div class="coming-soon">即将推出</div>
+                    <h2>📐 格式转换器</h2>
+                    <p>在不同图像和文档格式之间转换。</p>
+                    <a href="#" rel="nofollow" 
+                       aria-label="📐 格式转换器 即将推出">
+                        即将推出
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Инженерия -->
+        <div class="category-section category-engineering" role="region" aria-labelledby="engineering-title">
+            <h2 class="category-title" id="engineering-title">🔧 工程工具</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 8;">
+                    <h2>🔄 单位转换器</h2>
+                    <p>在不同测量单位之间快速转换。</p>
+                    <a href="/frontend/tools/engineering/unit-converter.html?lang=zh-cn" 
+                       aria-label="打开工具: 🔄 单位转换器">
+                        打开工具
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔄 单位转换器" 
+                            aria-label="添加到收藏夹: 🔄 单位转换器">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Логистика -->
+        <div class="category-section category-logistics" role="region" aria-labelledby="logistics-title">
+            <h2 class="category-title" id="logistics-title">⚡ 物流工具</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 9;">
+                    <h2>🔧 汽车折旧计算器</h2>
+                    <p>根据里程、运行时间和条件计算车辆磨损。</p>
+                    <a href="/frontend/tools/logistics/depreciation-calculator.html?lang=zh-cn" 
+                       aria-label="打开工具: 🔧 汽车折旧计算器">
+                        打开工具
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🔧 汽车折旧计算器" 
+                            aria-label="添加到收藏夹: 🔧 汽车折旧计算器">
+                        ⭐
+                    </button>
+                </div>
+                <div class="card" style="--i: 10;">
+                    <h2>⛽ 燃料计算器</h2>
+                    <p>计算燃料消耗、旅行成本和节省。</p>
+                    <a href="/frontend/tools/logistics/fuel-calculator.html?lang=zh-cn" 
+                       aria-label="打开工具: ⛽ 燃料计算器">
+                        打开工具
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="⛽ 燃料计算器" 
+                            aria-label="添加到收藏夹: ⛽ 燃料计算器">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Категория: Экология -->
+        <div class="category-section category-ecology" role="region" aria-labelledby="ecology-title">
+            <h2 class="category-title" id="ecology-title">🌱 生态工具</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 11;">
+                    <h2>🌍 产品生态足迹计算器</h2>
+                    <p>计算您产品的碳、水和土地足迹。</p>
+                    <a href="/frontend/tools/ecology/product-footprint-calculator.html?lang=zh-cn" 
+                       aria-label="打开工具: 🌍 产品生态足迹计算器">
+                        打开工具
+                    </a>
+                    <button class="favorite-btn" 
+                            data-tool-name="🌍 产品生态足迹计算器" 
+                            aria-label="添加到收藏夹: 🌍 产品生态足迹计算器">
+                        ⭐
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Информация о развитии -->
+        <div class="stats">
+            <h3>🚀 工具开发</h3>
+            <p>如果您有新工具的想法 - <a href="mailto:support@serpmonn.ru" style="color: #dc3545;">请写信给 support@serpmonn.ru</a>！</p>
+        </div>
+    </div>
+
+    <!-- Подключение скриптов -->
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/tools/tools.js" defer></script>
+</body>
+</html>
