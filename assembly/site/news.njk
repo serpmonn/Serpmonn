@@ -28,7 +28,11 @@ permalink: "{% if lang == 'ru' %}/frontend/news/news.html{% else %}/frontend/{{ 
   <meta property="og:title" content="{{ localesNews[lang].news.ogTitle }}">
   <meta property="og:description" content="{{ localesNews[lang].news.ogDescription }}">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-  <meta property="og:url" content="https://serpmonn.ru{% if lang == 'ru' %}/frontend/news/{% else %}/frontend/{{ lang }}/news/{% endif %}">
+  {% if lang == 'ru' %}
+    <meta property="og:url" content="https://serpmonn.ru/frontend/news/news.html">
+  {% else %}
+    <meta property="og:url" content="https://serpmonn.ru/frontend/{{ lang }}/news/news.html">
+  {% endif %}
   <meta property="og:type" content="website">
 
   <!-- Twitter Card -->
@@ -37,6 +41,23 @@ permalink: "{% if lang == 'ru' %}/frontend/news/news.html{% else %}/frontend/{{ 
   <meta name="twitter:description" content="{{ localesNews[lang].news.twitterDescription }}">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
+  <!-- Каноническая ссылка -->
+  {% if lang == 'ru' %}
+    <link rel="canonical" href="https://serpmonn.ru/frontend/news/news.html" />
+  {% else %}
+    <link rel="canonical" href="https://serpmonn.ru/frontend/{{ lang }}/news/news.html" />
+  {% endif %}
+
+  <!-- Hreflang для всех языков -->
+  {% for loc in locales %}
+    {% if loc == 'ru' %}
+      <link rel="alternate" href="https://serpmonn.ru/frontend/news/news.html" hreflang="{{ loc }}" />
+    {% else %}
+      <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/news/news.html" hreflang="{{ loc }}" />
+    {% endif %}
+  {% endfor %}
+  <link rel="alternate" href="https://serpmonn.ru/frontend/news/news.html" hreflang="x-default" />
+
   <!-- Schema.org разметка -->
   <script type="application/ld+json">
   {
@@ -44,10 +65,30 @@ permalink: "{% if lang == 'ru' %}/frontend/news/news.html{% else %}/frontend/{{ 
     "@type": "CollectionPage",
     "name": "{{ localesNews[lang].news.heroTitle }}",
     "description": "{{ localesNews[lang].news.metaDescription }}",
+    "inLanguage": "{{ lang }}",
     "publisher": {
       "@type": "Organization",
       "name": "Serpmonn",
       "logo": {"@type": "ImageObject", "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"}
+    },
+    "mainEntity": {
+      "@type": "ItemList",
+      "itemListElement": [
+        {% for article in localesNews[lang].news.articles %}
+        {
+          "@type": "ListItem",
+          "position": {{ loop.index }},
+          "item": {
+            "@type": "Article",
+            "headline": "{{ article.title }}",
+            "description": "{{ article.excerpt }}",
+            "datePublished": "{{ article.date }}",
+            "inLanguage": "{{ lang }}",
+            "url": "https://serpmonn.ru{% if lang == 'ru' %}{{ article.link }}{% else %}/{{ lang }}{{ article.link }}{% endif %}"
+          }
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]
     }
   }
   </script>
@@ -154,7 +195,7 @@ permalink: "{% if lang == 'ru' %}/frontend/news/news.html{% else %}/frontend/{{ 
             <span class="news-card-read-time">{{ article.readTime }}</span>
           </div>
           <div class="news-card-share">
-            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru{{ article.link }}&text={{ article.title | urlencode }}" target="_blank" rel="noopener">📤</a>
+            <a class="share-btn" href="https://t.me/share/url?url=https://serpmonn.ru{% if lang == 'ru' %}{{ article.link }}{% else %}/{{ lang }}{{ article.link }}{% endif %}&text={{ article.title | urlencode }}" target="_blank" rel="noopener">📤</a>
             <a class="share-btn" href="https://vk.com/share.php?url=https://serpmonn.ru{{ article.link }}&title={{ article.title | urlencode }}" target="_blank" rel="noopener">📷</a>
           </div>
         </div>

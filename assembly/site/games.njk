@@ -21,6 +21,19 @@ permalink: "{% if lang == 'ru' %}/frontend/games/games.html{% else %}/frontend/{
     <meta property="og:url" content="https://serpmonn.ru{% if lang == 'ru' %}/frontend/games/games.html{% else %}/frontend/{{ lang }}/games/games.html{% endif %}">
     <meta property="og:type" content="website">
 
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="https://serpmonn.ru{% if lang == 'ru' %}/frontend/games/games.html{% else %}/frontend/{{ lang }}/games/games.html{% endif %}" />
+
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/games/games.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/games/games.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="https://serpmonn.ru/frontend/games/games.html" hreflang="x-default" />
+
     <!-- Подключение стилей -->
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">

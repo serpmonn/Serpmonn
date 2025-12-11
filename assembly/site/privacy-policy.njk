@@ -47,6 +47,19 @@ eleventyComputed:
     <meta name="twitter:description" content="{{ privacyPolicyTranslations[locale].privacyPolicy.twitterDescription }}">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     
+    <!-- Каноническая ссылка для SEO -->
+    <link rel="canonical" href="{{ site.baseUrl }}{{ page.url }}" />
+    
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/privacy-policy/privacy-policy.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/privacy-policy/privacy-policy.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="https://serpmonn.ru/frontend/privacy-policy/privacy-policy.html" hreflang="x-default" />
+    
     <!-- Favicon и иконки для разных устройств -->
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="icon" type="image/png" sizes="32x32" href="/frontend/images/favicon-32x32.png">
@@ -57,9 +70,6 @@ eleventyComputed:
     
     <!-- Стили для доступности -->
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-    
-    <!-- Каноническая ссылка для SEO -->
-    <link rel="canonical" href="{{ site.baseUrl }}{{ page.url }}">
 </head>
 <body>
     <!-- Основной контент страницы -->

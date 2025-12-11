@@ -33,6 +33,20 @@ eleventyComputed:
     <meta name="twitter:title" content="{{ depreciationCalculator[locale].meta.twitterTitle }}">
     <meta name="twitter:description" content="{{ depreciationCalculator[locale].meta.twitterDescription }}">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="https://serpmonn.ru{{ page.url | safe }}" />
+    
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/tools/logistics/depreciation-calculator.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/tools/logistics/depreciation-calculator.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="https://serpmonn.ru/frontend/tools/logistics/depreciation-calculator.html" hreflang="x-default" />
+    
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">

@@ -1,5 +1,5 @@
 ---
-# Используем глобальный список языков
+# Используем глобальный список языков из _data/locales.json
 pagination:
   data: locales
   size: 1
@@ -9,8 +9,6 @@ eleventyComputed:
   title: "{{ tools[locale].meta.title }}"
   description: "{{ tools[locale].meta.description }}"
   dir: "{% if ['ar', 'fa', 'he', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'].indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/tools/tools.html{% else %}{{ site.baseUrl }}/{{ locale }}/tools/tools.html{% endif %}"
-  # Убрал translations, так как будем использовать tools[locale] напрямую
 ---
 
 <!DOCTYPE html>
@@ -25,17 +23,41 @@ eleventyComputed:
     <title>{{ tools[locale].meta.title }}</title>
     <meta name="description" content="{{ tools[locale].meta.description }}">
     <meta name="keywords" content="{{ tools[locale].meta.keywords }}">
+    
     <!-- Open Graph -->
     <meta property="og:title" content="{{ tools[locale].meta.ogTitle }}">
     <meta property="og:description" content="{{ tools[locale].meta.ogDescription }}">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
-    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html?lang={{ locale }}">
+    {% if locale == 'ru' %}
+    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html">
+    {% else %}
+    <meta property="og:url" content="https://serpmonn.ru/frontend/{{ locale }}/tools/tools.html">
+    {% endif %}
     <meta property="og:type" content="website">
+    
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ tools[locale].meta.twitterTitle }}">
     <meta name="twitter:description" content="{{ tools[locale].meta.twitterDescription }}">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    
+    <!-- Каноническая ссылка -->
+    {% if locale == 'ru' %}
+    <link rel="canonical" href="https://serpmonn.ru/frontend/tools/tools.html" />
+    {% else %}
+    <link rel="canonical" href="https://serpmonn.ru/frontend/{{ locale }}/tools/tools.html" />
+    {% endif %}
+    
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+      {% if loc == 'ru' %}
+        <link rel="alternate" href="https://serpmonn.ru/frontend/tools/tools.html" hreflang="{{ loc }}" />
+      {% else %}
+        <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/tools/tools.html" hreflang="{{ loc }}" />
+      {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="https://serpmonn.ru/frontend/tools/tools.html" hreflang="x-default" />
+    
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">

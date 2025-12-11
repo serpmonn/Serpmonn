@@ -8,7 +8,7 @@ eleventyComputed:
   title: "{{ aboutProjectTranslations[locale].aboutProject.title }}"
   description: "{{ aboutProjectTranslations[locale].aboutProject.description }}"
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/about-project/about-project.html{% else %}{{ site.baseUrl }}/{{ locale }}/about-project/about-project.html{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/about-project/about-project.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/about-project/about-project.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -25,13 +25,27 @@ eleventyComputed:
         <meta property="og:title" content="{{ aboutProjectTranslations[locale].aboutProject.ogTitle }}">
         <meta property="og:description" content="{{ aboutProjectTranslations[locale].aboutProject.ogDescription }}">
         <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-        <meta property="og:url" content="{{ site.baseUrl }}{{ page.url }}">
+        <meta property="og:url" content="{{ canonical }}">
         <meta property="og:type" content="article">
+        
         <!-- Twitter -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="{{ aboutProjectTranslations[locale].aboutProject.ogTitle }}">
         <meta name="twitter:description" content="{{ aboutProjectTranslations[locale].aboutProject.twitterDescription }}">
         <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+        <!-- Каноническая ссылка -->
+        <link rel="canonical" href="{{ canonical }}" />
+
+        <!-- Hreflang для всех языков -->
+        {% for loc in locales %}
+            {% if loc == 'ru' %}
+                <link rel="alternate" href="{{ site.baseUrl }}/frontend/about-project/about-project.html" hreflang="{{ loc }}" />
+            {% else %}
+                <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/about-project/about-project.html" hreflang="{{ loc }}" />
+            {% endif %}
+        {% endfor %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/about-project/about-project.html" hreflang="x-default" />
 
         <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
         <!-- Стили -->

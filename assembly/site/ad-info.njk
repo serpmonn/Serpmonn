@@ -28,6 +28,19 @@ permalink: "{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/fronte
     <meta name="twitter:description" content="{{ adInfo[lang].adInfo.twitterDescription }}">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="https://serpmonn.ru{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ lang }}/ad-info/ad-info.html{% endif %}" />
+
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ad-info/ad-info.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/ad-info/ad-info.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ad-info/ad-info.html" hreflang="x-default" />
+
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     
     <!-- Стили -->
