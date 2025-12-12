@@ -1,0 +1,73 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/login/forgot/forgot.html{% else %}/frontend/{{ locale }}/login/forgot/forgot.html{% endif %}"
+eleventyComputed:
+  title: "{{ forgot[locale].forgot.pageTitle }}"
+  description: "{{ forgot[locale].forgot.ogDescription }}"
+  dir: "{% if ['ar', 'fa', 'he', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'].indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/login/forgot/forgot.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/login/forgot/forgot.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ forgot[locale].forgot.pageTitle }}</title>
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ forgot[locale].forgot.ogTitle }}">
+    <meta property="og:description" content="{{ forgot[locale].forgot.ogDescription }}">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru{{ page.url | safe }}">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ forgot[locale].forgot.twitterTitle }}">
+    <meta name="twitter:description" content="{{ forgot[locale].forgot.twitterDescription }}">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="canonical" href="https://www.serpmonn.ru{{ page.url | safe }}">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="forgot_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/login/forgot/forgot.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/login/forgot/forgot.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="https://serpmonn.ru/frontend/login/forgot/forgot.html" hreflang="x-default" />
+    
+    <!-- Скрипты -->
+    <script type="module" src="forgot_script.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h2>{{ forgot[locale].forgot.mainTitle }}</h2>
+        <form id="forgotForm">
+            <label for="email">{{ forgot[locale].forgot.form.emailLabel }}</label>
+            <input type="email" id="email" name="email" required />
+
+            <button class="submit-btn" type="submit">{{ forgot[locale].forgot.form.submitButton }}</button>
+        </form>
+        <p id="message"></p>
+        <div class="register-link">
+            <p><a href="{% if locale == 'ru' %}/frontend/login/login.html{% else %}/frontend/{{ locale }}/login/login.html{% endif %}">{{ forgot[locale].forgot.backToLogin }}</a></p>
+        </div>
+    </div>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

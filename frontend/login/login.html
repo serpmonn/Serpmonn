@@ -1,114 +1,313 @@
-<!DOCTYPE html>                                                                                             <!-- Объявление типа документа HTML5 -->
-<html lang="ru" dir="ltr">                                                                                 <!-- Открытие HTML документа с указанием языка (русский) и направления текста (слева направо) -->
-<head>                                                                                                      <!-- Начало секции заголовка документа -->
-    <meta http-equiv="Content-Language" content="ru">                                                      <!-- Указание языка контента для браузеров и поисковых систем -->
-    <meta charset="UTF-8">                                                                                  <!-- Установка кодировки UTF-8 для поддержки русских и специальных символов -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">                                 <!-- Настройка адаптивного viewport для корректного отображения на мобильных устройствах -->
-    <title>Вход</title>                                                                                    <!-- Заголовок страницы, отображаемый в браузере -->
+
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta http-equiv="Content-Language" content="ru">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход</title>
     
-    <!-- Open Graph мета-теги для социальных сетей -->
-    <meta property="og:title" content="Вход — Serpmonn">                                                   <!-- Заголовок для соцсетей при расшаривании страницы -->
-    <meta property="og:description" content="Войдите в аккаунт Serpmonn, чтобы пользоваться профилем, играми и сервисами."> <!-- Описание для соцсетей -->
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">           <!-- Изображение для превью в соцсетях -->
-    <meta property="og:url" content="https://serpmonn.ru/frontend/login/login.html">                        <!-- Канонический URL страницы для соцсетей -->
-    <meta property="og:type" content="website">                                                            <!-- Тип контента для Open Graph -->
+    <!-- Open Graph -->
+    <meta property="og:title" content="Вход — Serpmonn">
+    <meta property="og:description" content="Войдите в аккаунт Serpmonn, чтобы пользоваться профилем, играми и сервисами.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/login/login.html">
+    <meta property="og:type" content="website">
     
-    <!-- Twitter Card мета-теги -->
-    <meta name="twitter:card" content="summary_large_image">                                               <!-- Тип карточки Twitter (с большим изображением) -->
-    <meta name="twitter:title" content="Вход — Serpmonn">                                                  <!-- Заголовок для Twitter -->
-    <meta name="twitter:description" content="Войдите в аккаунт Serpmonn, чтобы пользоваться профилем, играми и сервисами."> <!-- Описание для Twitter -->
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">          <!-- Изображение для Twitter карточки -->
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Вход — Serpmonn">
+    <meta name="twitter:description" content="Войдите в аккаунт Serpmonn, чтобы пользоваться профилем, играми и сервисами.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">                             <!-- Иконка сайта (фавикон) -->
-    <link rel="canonical" href="https://www.serpmonn.ru/">                                                 <!-- Канонический URL для SEO -->
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="canonical" href="https://www.serpmonn.ru/frontend/login/login.html">
     
     <!-- Подключение CSS стилей -->
-    <link rel="stylesheet" href="/frontend/styles/styles.css">                                             <!-- Основные стили сайта -->
-    <link rel="stylesheet" href="login_styles.css">                                                        <!-- Специфичные стили для страницы логина -->
-    <link rel="stylesheet" href="/frontend/styles/accessibility.css">                                      <!-- Стили для доступности (accessibility) -->
-</head>                                                                                                     <!-- Конец секции заголовка -->
-<body>                                                                                                      <!-- Начало тела документа -->
-    <div class="container">                                                                                <!-- Основной контейнер для содержимого формы -->
-        <h2>Вход в аккаунт</h2>                                                                            <!-- Заголовок страницы -->
-        <form id="loginForm">                                                                              <!-- Форма входа с идентификатором для JavaScript -->
-            <label for="email">Email:</label>                                                              <!-- Метка для поля ввода email -->
-            <input type="email" id="email" name="email" required>                                          <!-- Поле ввода email с валидацией и обязательным заполнением -->
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="login_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    
+    <!-- Hreflang для всех языков -->
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/login/login.html" hreflang="ru" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ar/login/login.html" hreflang="ar" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/az/login/login.html" hreflang="az" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/be/login/login.html" hreflang="be" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/bg/login/login.html" hreflang="bg" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/bn/login/login.html" hreflang="bn" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/cs/login/login.html" hreflang="cs" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/da/login/login.html" hreflang="da" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/de/login/login.html" hreflang="de" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/el/login/login.html" hreflang="el" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/en/login/login.html" hreflang="en" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/es/login/login.html" hreflang="es" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/es-419/login/login.html" hreflang="es-419" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/fa/login/login.html" hreflang="fa" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/fi/login/login.html" hreflang="fi" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/fil/login/login.html" hreflang="fil" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/fr/login/login.html" hreflang="fr" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/he/login/login.html" hreflang="he" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/hi/login/login.html" hreflang="hi" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/hu/login/login.html" hreflang="hu" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/hy/login/login.html" hreflang="hy" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/id/login/login.html" hreflang="id" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/it/login/login.html" hreflang="it" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ja/login/login.html" hreflang="ja" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ka/login/login.html" hreflang="ka" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/kk/login/login.html" hreflang="kk" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ko/login/login.html" hreflang="ko" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ms/login/login.html" hreflang="ms" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/nb/login/login.html" hreflang="nb" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/nl/login/login.html" hreflang="nl" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/pl/login/login.html" hreflang="pl" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/pt-br/login/login.html" hreflang="pt-br" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/pt-pt/login/login.html" hreflang="pt-pt" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ro/login/login.html" hreflang="ro" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/sr/login/login.html" hreflang="sr" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/sv/login/login.html" hreflang="sv" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/th/login/login.html" hreflang="th" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/tr/login/login.html" hreflang="tr" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ur/login/login.html" hreflang="ur" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/uz/login/login.html" hreflang="uz" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/vi/login/login.html" hreflang="vi" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/zh-cn/login/login.html" hreflang="zh-cn" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ps/login/login.html" hreflang="ps" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/sd/login/login.html" hreflang="sd" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ug/login/login.html" hreflang="ug" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/dv/login/login.html" hreflang="dv" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ks/login/login.html" hreflang="ks" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ku-Arab/login/login.html" hreflang="ku-Arab" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/yi/login/login.html" hreflang="yi" />
+        
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/login/login.html" hreflang="x-default" />
+</head>
+<body>
+    <div class="container">
+        <h2>Вход в аккаунт</h2>
+        <form id="loginForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
 
-            <label for="password">Пароль:</label>                                                          <!-- Метка для поля ввода пароля -->
-            <div class="password-container">                                                               <!-- Контейнер для поля пароля и кнопки показа/скрытия -->
-                <input type="password" id="password" name="password" required>                             <!-- Поле ввода пароля (изначально скрыто) -->
-                <button type="button" id="togglePassword">👁</button>                                      <!-- Кнопка для переключения видимости пароля -->
+            <label for="password">Пароль:</label>
+            <div class="password-container">
+                <input type="password" id="password" name="password" required>
+                <button type="button" id="togglePassword" aria-label="Показать/скрыть пароль">👁</button>
             </div>
 
-            <button class="submit-btn" type="submit">Войти</button>                                        <!-- Кнопка отправки формы -->
+            <button class="submit-btn" type="submit">Войти</button>
         </form>
-        <p id="message"></p>                                                                               <!-- Параграф для отображения сообщений (ошибок, успеха) -->
+        <p id="message"></p>
 
-        <div class="register-link">                                                                        <!-- Блок со ссылками для регистрации и восстановления пароля -->
-            <p>Нет аккаунта? <a href="/frontend/register/register.html">Зарегистрируйтесь</a></p>          <!-- Ссылка на страницу регистрации -->
-            <p><a href="/frontend/login/forgot/forgot.html">Забыли пароль?</a></p>                         <!-- Ссылка на страницу восстановления пароля -->
+        <div class="register-link">
+            <p>Нет аккаунта? <a href="/frontend/register/register.html">Зарегистрируйтесь</a></p>
+            <p><a href="/frontend/login/forgot/forgot.html">Забыли пароль?</a></p>
         </div>
     </div>
     
-    <!-- Разделитель между формой и рекламой для соблюдения правил размещения контента -->
-    <div style="height: 60px; clear: both; background: transparent;"></div>                                <!-- Пустой разделитель высотой 60px -->
+    <!-- Разделитель между формой и рекламой -->
+    <div style="height: 60px; clear: both; background: transparent;"></div>
     
     <!-- Рекламный контейнер -->
-    <div class="ad-container auth-page">                                                                   <!-- Контейнер для рекламного блока -->
-        <ins                                                                                               
-            class="mrg-tag"                                                                                
-            style="display:inline-block;width:auto;height:500px"                                           
-            data-ad-client="ad-1874023"                                                                    
-            data-ad-slot="1874023">                                                                        
+    <div class="ad-container auth-page">
+        <ins
+            class="mrg-tag"
+            style="display:inline-block;width:auto;height:500px"
+            data-ad-client="ad-1874023"
+            data-ad-slot="1874023">
         </ins>
     </div>
 
     <!-- Подключение рекламного скрипта Mail.ru -->
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>                                   <!-- Асинхронная загрузка скрипта рекламы Mail.ru -->
-    <script>                                                                                               
-        (MRGtag = window.MRGtag || []).push({});                                                           
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <script>
+        (MRGtag = window.MRGtag || []).push({});
     </script>
 
     <!-- Подключение основных JavaScript модулей -->
-    <script type="module" src="login_scripts.js" defer></script>                                           <!-- Модуль с логикой страницы логина (загружается отложенно) -->
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>                           <!-- Модуль загрузки меню (загружается отложенно) -->
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>                                 <!-- Скрипт улучшений для мобильных устройств (загружается отложенно) -->
+    <script type="module" src="login_scripts.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
     <!-- Fallback скрипт для обработки рекламных блоков -->
-    <script>                                                                                               
-        (function(){                                                                                       // Самовызывающаяся функция для изоляции scope
-            function handleIns(ins){                                                                       // Функция обработки рекламных блоков
-                if (!ins || ins.__handled) return;                                                         // Проверка если блок уже обработан или не существует
-                ins.__handled = true;                                                                      // Помечаем блок как обработанный
-                setTimeout(function(){                                                                     // Устанавливаем таймаут для проверки загрузки рекламы
-                    var has = !!ins.querySelector("iframe");                                               // Проверяем загрузился ли рекламный iframe
-                    if (!has) {                                                                            // Если реклама не загрузилась
-                        (window.MRGtag = window.MRGtag || []).push({});                                    // Пытаемся повторно инициализировать рекламу
+    <script>
+        (function(){
+            function handleIns(ins){
+                if (!ins || ins.__handled) return;
+                ins.__handled = true;
+                setTimeout(function(){
+                    var has = !!ins.querySelector("iframe");
+                    if (!has) {
+                        (window.MRGtag = window.MRGtag || []).push({});
                     }
-                    setTimeout(function(){                                                                 // Второй таймаут для окончательной проверки
-                        if (!ins.querySelector("iframe")) {                                                // Если реклама так и не загрузилась
-                            var p = ins.closest(".ad-container");                                          // Находим родительский рекламный контейнер
-                            if(p) p.style.display = 'none';                                                // Скрываем контейнер если реклама не загрузилась
+                    setTimeout(function(){
+                        if (!ins.querySelector("iframe")) {
+                            var p = ins.closest(".ad-container");
+                            if(p) p.style.display = 'none';
                         } 
-                    }, 2000);                                                                              // Ждем 2 секунды перед окончательной проверкой
-                }, 2000);                                                                                  // Ждем 2 секунды перед первой проверкой
+                    }, 2000);
+                }, 2000);
             }
             
-            // Обрабатываем все существующие рекламные блоки
-            document.querySelectorAll("ins.mrg-tag").forEach(handleIns);                                   // Применяем функцию ко всем рекламным блокам на странице
+            document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
             
-            // Настройка MutationObserver для отслеживания динамически добавленных рекламных блоков
-            var mo = new MutationObserver(function(muts){                                                  // Создаем наблюдатель за изменениями DOM
-                muts.forEach(function(m){                                                                  // Перебираем все мутации
-                    m.addedNodes && m.addedNodes.forEach(function(n){                                      // Перебираем добавленные узлы
-                        if(n.querySelectorAll){                                                            // Проверяем что узел поддерживает querySelectorAll
-                            n.querySelectorAll("ins.mrg-tag").forEach(handleIns);                          // Обрабатываем рекламные блоки в добавленных узлах
+            var mo = new MutationObserver(function(muts){
+                muts.forEach(function(m){
+                    m.addedNodes && m.addedNodes.forEach(function(n){
+                        if(n.querySelectorAll){
+                            n.querySelectorAll("ins.mrg-tag").forEach(handleIns);
                         } 
                     }); 
                 });
             });
-            mo.observe(document.documentElement, {childList: true, subtree: true});                        // Запускаем наблюдение за всем документом
-        })();                                                                                              // Немедленный вызов самовызывающейся функции
+            mo.observe(document.documentElement, {childList: true, subtree: true});
+        })();
     </script>
-</body>                                                                                                     <!-- Конец тела документа -->
-</html>                                                                                                     <!-- Конец HTML документа -->
+</body>
+</html>

@@ -1,0 +1,81 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/login/forgot/reset/reset.html{% else %}/frontend/{{ locale }}/login/forgot/reset/reset.html{% endif %}"
+eleventyComputed:
+  title: "{{ reset[locale].reset.pageTitle }}"
+  description: "{{ reset[locale].reset.ogDescription }}"
+  dir: "{% if ['ar', 'fa', 'he', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'].indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/login/forgot/reset/reset.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/login/forgot/reset/reset.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>{{ reset[locale].reset.pageTitle }}</title>
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ reset[locale].reset.ogTitle }}">
+    <meta property="og:description" content="{{ reset[locale].reset.ogDescription }}">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru{{ page.url | safe }}">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ reset[locale].reset.twitterTitle }}">
+    <meta name="twitter:description" content="{{ reset[locale].reset.twitterDescription }}">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon" />
+    <link rel="canonical" href="https://www.serpmonn.ru{{ page.url | safe }}">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="reset_styles.css" />
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/login/forgot/reset/reset.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/login/forgot/reset/reset.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="https://serpmonn.ru/frontend/login/forgot/reset/reset.html" hreflang="x-default" />
+    
+    <!-- Скрипты -->
+    <script type="module" src="reset_script.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h2>{{ reset[locale].reset.mainTitle }}</h2>
+        <form id="resetForm">
+            <label for="password">{{ reset[locale].reset.form.passwordLabel }}</label>
+            <div class="password-container">
+                <input type="password" id="password" name="password" required minlength="6" />
+                <button type="button" id="togglePassword" title="{{ reset[locale].reset.form.togglePasswordTitle }}" aria-label="{{ reset[locale].reset.form.togglePasswordAria }}">👁️</button>
+            </div>
+
+            <label for="confirm">{{ reset[locale].reset.form.confirmLabel }}</label>
+            <div class="password-container">
+                <input type="password" id="confirm" name="confirm" required minlength="6" />
+            </div>
+
+            <button type="submit" class="submit-btn">{{ reset[locale].reset.form.submitButton }}</button>
+        </form>
+        <p id="message"></p>
+        <div class="register-link">
+            <p><a href="{% if locale == 'ru' %}/frontend/login/login.html{% else %}/frontend/{{ locale }}/login/login.html{% endif %}">{{ reset[locale].reset.backToLogin }}</a></p>
+        </div>
+    </div>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

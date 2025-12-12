@@ -1,45 +1,251 @@
+
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
-    <head>
-<link rel="stylesheet" href="/frontend/styles/styles.css">
-<meta http-equiv="Content-Language" content="en">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Password recovery</title>
-        <!-- Open Graph -->
-        <meta property="og:title" content="Password recovery — Serpmonn">
-        <meta property="og:description" content="Get a password reset link for Serpmonn.">
-        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-        <meta property="og:url" content="https://serpmonn.ru/frontend/en/login/forgot/forgot.html">
-        <meta property="og:type" content="website">
-        <!-- Twitter -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Password recovery — Serpmonn">
-        <meta name="twitter:description" content="Get a password reset link.">
-        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
-        <link rel="canonical" href="https://www.serpmonn.ru/">
-        <!-- Стили -->
-        <link rel="stylesheet" href="/frontend/login/forgot/forgot_styles.css">
-        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-        <!-- Скрипты -->
-        <script type="module" src="/frontend/login/forgot/forgot_script.js" defer></script>
-        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    </head>
-    <body>
-        <div class="container">
-            <h2>Password recovery</h2>
-            <form id="forgotForm">
-                <label for="email">Email:</label>
-                <input type="email" id="email" name="email" required />
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Recovery</title>
     
-                <button class="submit-btn" type="submit">Send link</button>
-            </form>
-            <p id="message"></p>
-            <div class="register-link">
-                <p><a href="/frontend/en/login/login.html">Back to login</a></p>
-            </div>
+    <!-- Open Graph -->
+    <meta property="og:title" content="Password Recovery — Serpmonn">
+    <meta property="og:description" content="Get a password reset link on Serpmonn.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/en/login/forgot/forgot.html">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Password Recovery — Serpmonn">
+    <meta name="twitter:description" content="Get a password reset link.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="canonical" href="https://www.serpmonn.ru/frontend/en/login/forgot/forgot.html">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="forgot_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    
+    <!-- Hreflang для всех языков -->
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/login/forgot/forgot.html" hreflang="ru" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ar/login/forgot/forgot.html" hreflang="ar" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/az/login/forgot/forgot.html" hreflang="az" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/be/login/forgot/forgot.html" hreflang="be" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/bg/login/forgot/forgot.html" hreflang="bg" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/bn/login/forgot/forgot.html" hreflang="bn" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/cs/login/forgot/forgot.html" hreflang="cs" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/da/login/forgot/forgot.html" hreflang="da" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/de/login/forgot/forgot.html" hreflang="de" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/el/login/forgot/forgot.html" hreflang="el" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/en/login/forgot/forgot.html" hreflang="en" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/es/login/forgot/forgot.html" hreflang="es" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/es-419/login/forgot/forgot.html" hreflang="es-419" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/fa/login/forgot/forgot.html" hreflang="fa" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/fi/login/forgot/forgot.html" hreflang="fi" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/fil/login/forgot/forgot.html" hreflang="fil" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/fr/login/forgot/forgot.html" hreflang="fr" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/he/login/forgot/forgot.html" hreflang="he" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/hi/login/forgot/forgot.html" hreflang="hi" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/hu/login/forgot/forgot.html" hreflang="hu" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/hy/login/forgot/forgot.html" hreflang="hy" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/id/login/forgot/forgot.html" hreflang="id" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/it/login/forgot/forgot.html" hreflang="it" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ja/login/forgot/forgot.html" hreflang="ja" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ka/login/forgot/forgot.html" hreflang="ka" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/kk/login/forgot/forgot.html" hreflang="kk" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ko/login/forgot/forgot.html" hreflang="ko" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ms/login/forgot/forgot.html" hreflang="ms" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/nb/login/forgot/forgot.html" hreflang="nb" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/nl/login/forgot/forgot.html" hreflang="nl" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/pl/login/forgot/forgot.html" hreflang="pl" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/pt-br/login/forgot/forgot.html" hreflang="pt-br" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/pt-pt/login/forgot/forgot.html" hreflang="pt-pt" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ro/login/forgot/forgot.html" hreflang="ro" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/sr/login/forgot/forgot.html" hreflang="sr" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/sv/login/forgot/forgot.html" hreflang="sv" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/th/login/forgot/forgot.html" hreflang="th" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/tr/login/forgot/forgot.html" hreflang="tr" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ur/login/forgot/forgot.html" hreflang="ur" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/uz/login/forgot/forgot.html" hreflang="uz" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/vi/login/forgot/forgot.html" hreflang="vi" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/zh-cn/login/forgot/forgot.html" hreflang="zh-cn" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ps/login/forgot/forgot.html" hreflang="ps" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/sd/login/forgot/forgot.html" hreflang="sd" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ug/login/forgot/forgot.html" hreflang="ug" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/dv/login/forgot/forgot.html" hreflang="dv" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ks/login/forgot/forgot.html" hreflang="ks" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/ku-Arab/login/forgot/forgot.html" hreflang="ku-Arab" />
+        
+    
+        
+            <link rel="alternate" href="https://serpmonn.ru/frontend/yi/login/forgot/forgot.html" hreflang="yi" />
+        
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/login/forgot/forgot.html" hreflang="x-default" />
+    
+    <!-- Скрипты -->
+    <script type="module" src="forgot_script.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h2>Password Recovery</h2>
+        <form id="forgotForm">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required />
+
+            <button class="submit-btn" type="submit">Send reset link</button>
+        </form>
+        <p id="message"></p>
+        <div class="register-link">
+            <p><a href="/frontend/en/login/login.html">Back to login</a></p>
         </div>
-        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    </div>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
-    </html>
+</html>
