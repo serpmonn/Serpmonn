@@ -150,45 +150,67 @@
 <script>window.yaContextCb=window.yaContextCb||[]</script>
 <script src="https://yandex.ru/ads/system/context.js" async></script>
 
-
+<!-- Яндекс.Метрика -->
 <script type="text/javascript">
-    (function(m,e,t,r,i,k,a){
-        m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-    })(window, document,'script','https://mc.yandex.ru/metrika/tag.js', 'ym');
-    ym(98158791, 'init', {webvisor:true, clickmap:true, accurateTrackBounce:true, trackLinks:true});
+    (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+    m[i].l=1*new Date();
+    for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+    k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
+    (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+    ym(98158791, "init", {
+        clickmap:true,
+        trackLinks:true,
+        accurateTrackBounce:true,
+        webvisor:true,
+        ecommerce:"dataLayer"
+    });
+    
+    window.addEventListener('load', function() {
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                if (typeof ym !== 'undefined') {
+                    ym(98158791, 'params', { 
+                        ip_address: data.ip,
+                        user_ip: data.ip
+                    });
+                    ym(98158791, 'hit', window.location.href, {
+                        params: { ip_address: data.ip }
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error getting IP:', error);
+            });
+    });
 </script>
-
-
+<noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+<!-- /Яндекс.Метрика -->
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "Organization",
   "name": "Serpmonn",
-  "url": "{{ site.baseUrl }}/",
-  "logo": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"
+  "url": "https://serpmonn.ru/",
+  "logo": "https://serpmonn.ru/frontend/images/serpmonn.ico"
 }
 </script>
-
-
 
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "WebSite", 
   "name": "Serpmonn",
-  "url": "{{ site.baseUrl }}/",
+  "url": "https://serpmonn.ru/",
   "potentialAction": {
     "@type": "SearchAction",
-    "target": "{{ site.baseUrl }}/frontend/search/searchresults.html?q={search_term_string}",
+    "target": "https://serpmonn.ru/frontend/search/searchresults.html?q={search_term_string}",
     "query-input": "required name=search_term_string"
   }
 }
-</script>
-                                                                                                                                                      
+</script>                                                                                                                                                      
   </head>                                                                                                                                                                                   
   <body>                                                                                                                                                                                    
     <div class="news-container" id="news-container">                                                                                                                                         
@@ -257,13 +279,6 @@
     mo.observe(document.documentElement, { childList: true, subtree: true });
   });
 </script>
-
-
-<!-- Яндекс.Метрика noscript -->
-<noscript>
-    <div>
-        <img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="">
-    </div>
-</noscript>                                                                                                                                                   
+                                                                                                                                                   
   </body>                                                                                                                                                                                   
 </html>                                                                                                                                                                                     
