@@ -1,0 +1,143 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/profile/profile.html{% else %}/frontend/{{ locale }}/profile/profile.html{% endif %}"
+eleventyComputed:
+  title: "{{ profile[locale].profile.pageTitle }}"
+  description: "{{ profile[locale].profile.metaDescription }}"
+  dir: "{% if ['ar', 'fa', 'he', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'].indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/profile/profile.html{% else %}{{ site.baseUrl }}/{{ locale }}/profile/profile.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ profile[locale].profile.pageTitle }}</title>
+    <meta name="description" content="{{ profile[locale].profile.metaDescription }}">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ profile[locale].profile.ogTitle }}">
+    <meta property="og:description" content="{{ profile[locale].profile.ogDescription }}">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru{{ page.url | safe }}">
+    <meta property="og:type" content="profile">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ profile[locale].profile.ogTitle }}">
+    <meta name="twitter:description" content="{{ profile[locale].profile.twitterDescription }}">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="https://serpmonn.ru{{ page.url | safe }}" />
+    
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/profile/profile.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/profile/profile.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="https://serpmonn.ru/frontend/profile/profile.html" hreflang="x-default" />
+    
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="profile_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <script type="module" src="profile_scripts.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    <div class="container">
+        <h2>{{ profile[locale].profile.mainTitle }}</h2>
+
+        <!-- Информация о профиле -->
+        <div id="profileInfo" class="card">
+            <h3>{{ profile[locale].profile.infoSection.title }}</h3>
+            <p><strong>{{ profile[locale].profile.infoSection.username }}</strong> <span id="username"></span></p>
+            <p><strong>{{ profile[locale].profile.infoSection.email }}</strong> <span id="email"></span></p>
+        </div>
+
+        <!-- Раздел инструментов -->
+        <div class="card">
+            <h3>{{ profile[locale].profile.toolsSection.title }}</h3>
+            <div class="tools-grid">
+                <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/marketing/utm-builder.html{% else %}/frontend/{{ locale }}/tools/marketing/utm-builder.html{% endif %}">
+                    <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.utm.icon }}</span>
+                    <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.utm.text }}</span>
+                </a>
+                <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/security/password-generator.html{% else %}/frontend/{{ locale }}/tools/security/password-generator.html{% endif %}">
+                    <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.password.icon }}</span>
+                    <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.password.text }}</span>
+                </a>
+                <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/marketing/word-counter.html{% else %}/frontend/{{ locale }}/tools/marketing/word-counter.html{% endif %}">
+                    <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.wordCounter.icon }}</span>
+                    <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.wordCounter.text }}</span>
+                </a>
+                <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/engineering/unit-converter.html{% else %}/frontend/{{ locale }}/tools/engineering/unit-converter.html{% endif %}">
+                    <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.unitConverter.icon }}</span>
+                    <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.unitConverter.text }}</span>
+                </a>
+                <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/logistics/depreciation-calculator.html{% else %}/frontend/{{ locale }}/tools/logistics/depreciation-calculator.html{% endif %}">
+                    <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.depreciation.icon }}</span>
+                    <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.depreciation.text }}</span>
+                </a>
+                <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/logistics/fuel-calculator.html{% else %}/frontend/{{ locale }}/tools/logistics/fuel-calculator.html{% endif %}">
+                    <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.fuel.icon }}</span>
+                    <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.fuel.text }}</span>
+                </a>
+                <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/ecology/product-footprint-calculator.html{% else %}/frontend/{{ locale }}/tools/ecology/product-footprint-calculator.html{% endif %}">
+                    <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.footprint.icon }}</span>
+                    <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.footprint.text }}</span>
+                </a>
+            </div>
+            <div id="recentTools" class="recent-tools"></div>
+        </div>
+
+        <!-- Редактирование профиля -->
+        <div class="card">
+            <h3>{{ profile[locale].profile.editSection.title }}</h3>
+            <form id="profileForm" class="form-card">
+                <label for="newUsername">{{ profile[locale].profile.editSection.newUsername }}</label>
+                <input type="text" id="newUsername" name="newUsername" maxlength="255" placeholder="{{ profile[locale].profile.editSection.newUsernamePlaceholder }}">
+
+                <label for="newEmail">{{ profile[locale].profile.editSection.newEmail }}</label>
+                <input type="email" id="newEmail" name="newEmail" placeholder="{{ profile[locale].profile.editSection.newEmailPlaceholder }}">
+
+                <button type="submit" class="primary-button">{{ profile[locale].profile.editSection.saveButton }}</button>
+            </form>
+            <p id="message" class="message"></p>
+        </div>
+
+        <!-- Дополнительные функции -->
+        <div class="card">
+            <h3>{{ profile[locale].profile.extraSection.title }}</h3>
+            <div class="onnmail-buttons">
+                <button id="createOnnmailButton" class="secondary-button">
+                    <span class="button-icon">{{ profile[locale].profile.extraSection.createOnnmailIcon }}</span>
+                    {{ profile[locale].profile.extraSection.createOnnmail }}
+                </button>
+                <button id="loginOnnmailButton" class="secondary-button">
+                    <span class="button-icon">{{ profile[locale].profile.extraSection.loginOnnmailIcon }}</span>
+                    {{ profile[locale].profile.extraSection.loginOnnmail }}
+                </button>
+            </div>
+        </div>
+
+        <!-- Выход из аккаунта -->
+        <div class="logout-section">
+            <button id="logoutButton" class="danger-button">
+                <span class="button-icon">{{ profile[locale].profile.logoutSection.buttonIcon }}</span>
+                {{ profile[locale].profile.logoutSection.buttonText }}
+            </button>
+        </div>
+    </div>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>
