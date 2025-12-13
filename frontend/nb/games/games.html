@@ -7,6 +7,45 @@
     <title>Alle Spill — Serpmonn | Netspill, PC-spill og Mobilspill</title>
     <meta name="description" content="Fullstendig samling av Serpmonn-spill: netspill, PC-spill og mobilspill. Not-Chess, Technomagic, 2048, Slange, Minesveiper, Arkanoid og mange flere.">
     
+    <!-- Яндекс.Метрика - ДОБАВЛЕН fetch для IP -->
+    <script type="text/javascript">
+        (function(m,e,t,r,i,k,a){
+            m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
+            m[i].l=1*new Date();
+            for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
+            k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
+        })(window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
+
+        ym(104905836, "init", {
+            clickmap:true,
+            trackLinks:true,
+            accurateTrackBounce:true,
+            webvisor:true,
+            ecommerce:"dataLayer"
+        });
+        
+        window.addEventListener('load', function() {
+            fetch('https://api.ipify.org?format=json')
+                .then(response => response.json())
+                .then(data => {
+                    if (typeof ym !== 'undefined') {
+                        ym(104905836, 'params', { 
+                            ip_address: data.ip,
+                            user_ip: data.ip
+                        });
+                        ym(104905836, 'hit', window.location.href, {
+                            params: { ip_address: data.ip }
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.error('Error getting IP:', error);
+                });
+        });
+    </script>
+    <noscript><div><img src="https://mc.yandex.ru/watch/104905836" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
+    <!-- /Яндекс.Метрика -->
+    
     <!-- Open Graph -->
     <meta property="og:title" content="Alle Spill — Serpmonn">
     <meta property="og:description" content="Netspill, PC-spill og mobilspill: Not-Chess, Technomagic, 2048, Square Escape, Falling Figures og andre.">
@@ -880,44 +919,5 @@
     <script src="/frontend/games/games.js" defer></script>
     <script src="/frontend/scripts/interactive-bg.js" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-
-    <!-- Яндекс.Метрика -->
-    <script type="text/javascript">
-        (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-        m[i].l=1*new Date();
-        for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-        k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-        (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-
-        ym(104905836, "init", {
-            clickmap:true,
-            trackLinks:true,
-            accurateTrackBounce:true,
-            webvisor:true,
-            ecommerce:"dataLayer",
-            ssr:true
-        });
-        
-        window.addEventListener('load', function() {
-            fetch('https://api.ipify.org?format=json')
-                .then(response => response.json())
-                .then(data => {
-                    if (typeof ym !== 'undefined') {
-                        ym(104905836, 'params', { 
-                            ip_address: data.ip,
-                            user_ip: data.ip
-                        });
-                        ym(104905836, 'hit', window.location.href, {
-                            params: { ip_address: data.ip }
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error getting IP:', error);
-                });
-        });
-    </script>
-    <noscript><div><img src="https://mc.yandex.ru/watch/104905836" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Яндекс.Метрика -->
 </body>
 </html>
