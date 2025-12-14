@@ -1,0 +1,277 @@
+
+<!DOCTYPE html>
+<html lang="ks" dir="ltr">
+  <head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="ks">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    
+    
+    <title>گاڑی کے امالہ کو صحیح طرح حساب کرنا - مکمل رہنمائی</title>
+    <meta name="description" content="کم ہونی کیلکولیٹر کے استعمال کے بارے میں تفصیلی رہنمائی۔ سیکھیں کہ کیسے تمام عوامل کو مدنظر رکھیں اور درست نتائج حاصل کریں۔">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="گاڑی کے امالہ کو صحیح طرح حساب کرنا - مکمل رہنمائی">
+    <meta property="og:description" content="کم ہونی کیلکولیٹر کے استعمال کے بارے میں تفصیلی رہنمائی۔ سیکھیں کہ کیسے تمام عوامل کو مدنظر رکھیں اور درست نتائج حاصل کریں۔">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/ks/news/articles/how-to-calculate-depreciation.html">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="گاڑی کا امالہ کیسے حساب کریں">
+    <meta name="twitter:description" content="تمام عوامل کو مدنظر رکھتے ہوئے امالہ حساب کرنے کے لیے مکمل رہنمائی">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    
+    <style>
+      /* ad top adaptive start */
+      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
+      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
+      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
+      /* ad top adaptive end */
+      
+      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.7; }
+      .article-container { background: #fff; border-radius: 12px; padding: 40px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+      .article-header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #e9ecef; }
+      .article-title { font-size: 2.5rem; color: #333; margin-bottom: 15px; font-weight: 700; line-height: 1.2; }
+      .article-meta { color: #6c757d; font-size: 1.1rem; margin-bottom: 20px; }
+      .article-category { display: inline-block; padding: 8px 16px; background: #dc3545; color: #fff; border-radius: 20px; font-size: 0.9rem; font-weight: 500; }
+      .article-content { font-size: 1.1rem; color: #333; }
+      .article-content h2 { color: #dc3545; margin-top: 40px; margin-bottom: 20px; font-size: 1.8rem; font-weight: 600; }
+      .article-content h3 { color: #495057; margin-top: 30px; margin-bottom: 15px; font-size: 1.4rem; font-weight: 600; }
+      .article-content p { margin-bottom: 20px; }
+      .article-content ul, .article-content ol { margin-bottom: 20px; padding-left: 25px; }
+      .article-content li { margin-bottom: 10px; }
+      .highlight-box { background: #fdecea; border: 1px solid #f5c6cb; border-radius: 8px; padding: 20px; margin: 25px 0; color: #721c24; }
+      .highlight-box h4 { color: #721c24; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
+      .warning-box { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px; margin: 25px 0; border-left: 4px solid #ffc107; }
+      .warning-box h4 { color: #856404; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
+      .example-box { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin: 25px 0; border-left: 4px solid #6c757d; }
+      .example-box h4 { color: #495057; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
+      .step-list { counter-reset: step-counter; list-style: none; padding: 0; }
+      .step-list li { counter-increment: step-counter; margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #dc3545; position: relative; }
+      .step-list li::before { content: counter(step-counter); position: absolute; left: -15px; top: 20px; background: #dc3545; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; }
+
+      .social-subscribe { display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+      .tg-btn, .vk-btn { display: inline-block; padding: 10px 20px; border-radius: 25px; color: #fff; font-weight: 600; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+      .tg-btn { background: #229ED9; }
+      .vk-btn { background: #2787F5; }
+      .tg-btn:hover, .vk-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.15); }
+    </style>
+  </head>
+  <body>
+    <style>
+      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
+      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
+    </style>
+    
+    <!-- Исправленная строка: заменили тернарный оператор на конструкцию if-else -->
+    <nav id="menuContainer" aria-label="Menu"></nav>
+    
+    <div class="article-container">
+      <div class="article-header">
+        <span class="article-category">سبق</span>
+        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+        <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+          <ins class="mrg-tag" 
+              style="display:inline-block;"
+              data-ad-client="ad-1897960" 
+              data-ad-slot="1897960">
+          </ins>
+        </div>
+        <script>
+          (MRGtag = window.MRGtag || []).push({});
+        </script>
+        <h1 class="article-title">گاڑی کے امالہ کو صحیح طرح حساب کرنا</h1>
+        <div class="article-meta">19 اگست 2024 • 8 منٹ پڑھنا</div>
+      </div>
+
+      <div class="article-content">
+        <p>گاڑی کے امالہ کو صحیح طور پر حساب کرنا ہر ڈرائیور کے لیے ایک اہم مہارت ہے۔ یہ آپ کو اپنے گاڑی کی خریداری، فروخت اور دیکھ بھال کے بارے میں معلوماتی فیصلے کرنے میں مدد دے گا۔</p>
+
+        <h2>🎯 گاڑی کا امالہ کیا ہے</h2>
+        <p>امالہ وقت کے ساتھ گاڑی کی قدر میں بتدریج کمی کا عمل ہے۔ یہ کئی عوامل سے متاثر ہوتا ہے جن کا حساب میں لینا ضروری ہے۔</p>
+
+        <h2>📊 امالہ کے اہم عوامل</h2>
+        <ul>
+          
+          <li><strong>میلاج:</strong>  گاڑی جتنا زیادہ کلومیٹر چلتی ہے، اتنی ہی زیادہ گھسائی</li>
+          
+          <li><strong>عمر:</strong>  آپریشن کا وقت تکنیکی حالت پر اثر انداز ہوتا ہے</li>
+          
+          <li><strong>آپریٹنگ حالات:</strong>  شہر میں ڈرائیونگ ہائی وے سے زیادہ گھسائی کا باعث بنتی ہے</li>
+          
+          <li><strong>دیکھ بھال کی معیار:</strong>  باقاعدہ دیکھ بھال گاڑی کی عمر بڑھاتی ہے</li>
+          
+          <li><strong>برانڈ اور ماڈل:</strong>  کچھ برانڈ زیادہ قابل اعتماد ہوتے ہیں</li>
+          
+        </ul>
+
+        <h2>🔧 امالہ کیلکولیٹر کیسے استعمال کریں</h2>
+        
+        <ol class="step-list">
+          
+          <li>
+            <h3>ڈیٹا تیاری</h3>
+            <p>گاڑی کے بارے میں تمام ضروری معلومات اکٹھی کریں: پیدائش کا سال، میلاج، برانڈ، ماڈل، آپریٹنگ حالات۔</p>
+          </li>
+          
+          <li>
+            <h3>پیرامیٹر ان پٹ</h3>
+            <p>ڈیٹا کو کیلکولیٹر کے متعلقہ فیلڈز میں درج کریں۔ قابل اعتماد نتائج حاصل کرنے کے لیے جتنا ممکن ہو درست رہیں۔</p>
+          </li>
+          
+          <li>
+            <h3>نتائج کا تجزیہ</h3>
+            <p>حاصل کردہ ڈیٹا کا مطالعہ کریں: باقی قدر، گھسائی فیصد، دیکھ بھال کی سفارشات۔</p>
+          </li>
+          
+        </ol>
+
+        <div class="example-box">
+          <h4>📝 حساب کی مثال</h4>
+          <p>
+            <!-- Исправленные строки: заменили тернарные операторы на конструкции if-else -->
+            <strong>Car:</strong> ٹویوٹا کیمری 2018<br>
+            <strong>Mileage:</strong> 150,000 کلومیٹر<br>
+            <strong>Conditions:</strong> 70% شہر، 30% ہائی وے<br>
+            <strong>Maintenance:</strong> باقاعدہ دیکھ بھال<br>
+            <strong>Result:</strong> باقی قدر ~اصل کا 65%
+          </p>
+        </div>
+
+        <h2>💡 امالہ کم کرنے کے لیے تجاویز</h2>
+        <ul>
+          
+          <li><strong>باقاعدہ دیکھ بھال:</strong>  وقت پر تیل اور فلٹرز کی تبدیلی</li>
+          
+          <li><strong>احتیاط سے ڈرائیونگ:</strong>  اچانک اسٹارٹ اور بریک سے بچیں</li>
+          
+          <li><strong>معیاری ایندھن:</strong>  تجویز کردہ برانڈز استعمال کریں</li>
+          
+          <li><strong>زنگ سے تحفظ:</strong>  باڈی کو اینٹی-کورروژن کمپاؤنڈز سے ٹریٹ کریں</li>
+          
+          <li><strong>صحیح ذخیرہ:</strong>  جب ممکن ہو گیراج استعمال کریں</li>
+          
+        </ul>
+
+        <div class="highlight-box">
+          <h4>💡 اہم تجویز</h4>
+          <p>اپنی گاڑی کی حالت کو باقاعدگی سے چیک کریں اور ایک دیکھ بھال لاگ رکھیں۔ یہ اصل گھسائی کو زیادہ درست انداز میں جانچنے اور مرمت کے اخراجات کی منصوبہ بندی میں مدد دے گا۔</p>
+        </div>
+
+        <h2>⚠️ حساب کی درستگی پر کیا اثر انداز ہوتا ہے</h2>
+        <ul>
+          
+          <li><strong>مارکیٹ میں اتار چڑھاؤ:</strong>  گاڑیوں کی قیمتیں بدل سکتی ہیں</li>
+          
+          <li><strong>تکنیکی حالت:</strong>  پچھلی دیکھ بھال کی معیار</li>
+          
+          <li><strong>حادثات اور مرمت:</strong>  شدید نقصان قدر کو کم کرتے ہیں</li>
+          
+          <li><strong>ترمیمات:</strong>  آف روڈ اور کھیلوں کی اپ گریڈز</li>
+          
+        </ul>
+
+        <div class="warning-box">
+          <h4>⚠️ کیلکولیٹر کی حدود</h4>
+          <p>کیلکولیٹر ایک تخمینی اندازہ فراہم کرتا ہے۔ گاڑی کی درست تشخیص کے لیے، پیشہ ور تشخیص کنندہ یا خصوصی خدمت سے رابطہ کرنے کی سفارش کی جاتی ہے۔</p>
+        </div>
+
+        <h2>📈 امالہ دوبارہ کب حساب کریں</h2>
+        <ul>
+          
+          <li>ہر دیکھ بھال کے بعد (حالت کو ایڈجسٹ کرنے کے لیے)</li>
+          
+          <li>جب آپریٹنگ حالات بدلیں</li>
+          
+          <li>گاڑی خریدنے یا بیچنے سے پہلے</li>
+          
+          <li>بڑی مرمت کے اخراجات کی منصوبہ بندی کرتے وقت</li>
+          
+        </ul>
+
+        <h2>🔗 مفید لنکس</h2>
+        <ul>
+          
+          <!-- Исправленная строка: заменили тернарный оператор на конструкцию if-else -->
+          <li><a href="/frontend/tools/logistics/depreciation-calculator.html">امالہ کیلکولیٹر</a> — our tool for calculations</li>
+          
+          <!-- Исправленная строка: заменили тернарный оператор на конструкцию if-else -->
+          <li><a href="/frontend/tools/logistics/fuel-calculator.html">ایندھن کے استعمال کا کیلکولیٹر</a> — our tool for calculations</li>
+          
+        </ul>
+
+        <p>امالہ کا صحیح حساب آپ کو معلوماتی فیصلے کرنے اور اپنے گاڑی کے بجٹ کی منصوبہ بندی کرنے میں مدد دے گا۔ اپنے گاڑی کی قدر میں تبدیلیوں کو ٹریک کرنے کے لیے ہمارے کیلکولیٹر کو باقاعدگی سے استعمال کریں۔</p>
+      </div>
+
+      <div class="social-subscribe">
+        <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">ٹیلیگرام پر سبسکرائب کریں</a>
+        <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">VK پر سبسکرائب کریں</a>
+      </div>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+      <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+        <!-- Исправленная строка: оставляем как есть, так как это JavaScript -->
+        <button type="button" aria-label="اشتہار بند کریں" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+        <ins class="mrg-tag" 
+            style="display:inline-block;width:320px;height:50px" 
+            data-ad-client="ad-1898031"
+            data-ad-slot="1898031">
+        </ins>
+      </div>
+    </div>
+    <script>
+      (function(){
+        if (localStorage.getItem('anchor_closed')==='1') return;
+        var w = window.innerWidth || document.documentElement.clientWidth;
+        var a = document.getElementById('mobile-anchor-ad');
+        if (!a) return;
+        if (w <= 768) { a.style.display = "flex"; }
+        (window.MRGtag = window.MRGtag || []).push({});
+        if (window.visualViewport) {
+          visualViewport.addEventListener('resize', function(){
+            var h = visualViewport.height;
+            a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+          });
+        }
+      })();
+    </script>
+
+    <script>/*ANCHOR_COLLAPSE*/(function(){
+      var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
+      setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
+        (window.MRGtag=window.MRGtag||[]).push({});
+        setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
+      } }, 2000);
+    })();</script>
+
+    <script>/*GLOBAL_AD_HOOK*/(function(){
+      function handleIns(ins){
+        if (!ins || ins.__handled) return; ins.__handled = true;
+        setTimeout(function(){
+          var has = !!ins.querySelector("iframe");
+          if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
+          setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
+        }, 2000);
+      }
+      document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
+      var mo = new MutationObserver(function(muts){
+        muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
+      });
+      mo.observe(document.documentElement,{childList:true,subtree:true});
+    })();</script>
+    
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  </body>
+</html>

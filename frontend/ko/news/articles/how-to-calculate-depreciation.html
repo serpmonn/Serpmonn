@@ -1,38 +1,43 @@
+
 <!DOCTYPE html>
 <html lang="ko" dir="ltr">
   <head>
-<link rel="canonical" href="https://www.serpmonn.ru/frontend/ko/news/articles/how-to-calculate-depreciation.html">
-<link rel="stylesheet" href="/frontend/styles/styles.css">
-<meta http-equiv="Content-Language" content="ko">
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="ko">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>How to correctly calculate car depreciation — Complete guide</title>
+    
+    
+    
+    <title>자동차 감가상각을 올바르게 계산하는 방법 - 완전 가이드</title>
+    <meta name="description" content="감가상각 계산기 사용에 대한 자세한 가이드. 모든 요소를 고려하고 정확한 결과를 얻는 방법을 배웁니다.">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="Как правильно рассчитать амортизацию автомобиля — Полное руководство">
-    <meta property="og:description" content="Подробное руководство по использованию калькулятора амортизации. Узнайте, как учесть все факторы и получить точный результат.">
+    <meta property="og:title" content="자동차 감가상각을 올바르게 계산하는 방법 - 완전 가이드">
+    <meta property="og:description" content="감가상각 계산기 사용에 대한 자세한 가이드. 모든 요소를 고려하고 정확한 결과를 얻는 방법을 배웁니다.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://www.serpmonn.ru/frontend/ko/news/articles/how-to-calculate-depreciation.html">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/ko/news/articles/how-to-calculate-depreciation.html">
     <meta property="og:type" content="article">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Как правильно рассчитать амортизацию автомобиля">
-    <meta name="twitter:description" content="Полное руководство по расчёту амортизации с учётом всех факторов">
+    <meta name="twitter:title" content="자동차 감가상각을 계산하는 방법">
+    <meta name="twitter:description" content="모든 요소를 고려한 감가상각 계산을 위한 완전 가이드">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
-        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     
     <style>
-            /* ad top adaptive start */
+      /* ad top adaptive start */
       .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
       @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
       @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
       /* ad top adaptive end */
-body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.7; }
+      
+      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.7; }
       .article-container { background: #fff; border-radius: 12px; padding: 40px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
       .article-header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #e9ecef; }
       .article-title { font-size: 2.5rem; color: #333; margin-bottom: 15px; font-weight: 700; line-height: 1.2; }
@@ -66,9 +71,13 @@ body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, 
       .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
       .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
     </style>
+    
+    <!-- Исправленная строка: заменили тернарный оператор на конструкцию if-else -->
+    <nav id="menuContainer" aria-label="Menu"></nav>
+    
     <div class="article-container">
       <div class="article-header">
-        <span class="article-category">Обучение</span>
+        <span class="article-category">튜토리얼</span>
         <script async src="https://ad.mail.ru/static/ads-async.js"></script>
         <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
           <ins class="mrg-tag" 
@@ -80,155 +89,189 @@ body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, 
         <script>
           (MRGtag = window.MRGtag || []).push({});
         </script>
-        <h1 class="article-title">How to correctly calculate car depreciation</h1>
-        <div class="article-meta">19 августа 2024 • 8 минут чтения</div>
+        <h1 class="article-title">자동차 감가상각을 올바르게 계산하는 방법</h1>
+        <div class="article-meta">2024년 8월 19일 • 8분 독서</div>
       </div>
 
       <div class="article-content">
-        <p>Правильный расчёт амортизации автомобиля — важный навык для любого водителя. Это поможет вам принимать обоснованные решения о покупке, продаже и обслуживании транспортного средства.</p>
+        <p>자동차 감가상각을 올바르게 계산하는 것은 모든 운전자에게 중요한 기술입니다. 이를 통해 차량 구매, 판매 및 유지 관리에 관한 정보에 입각한 결정을 내리는 데 도움이 됩니다.</p>
 
-        <h2>🎯 Что такое амортизация автомобиля</h2>
-        <p>Амортизация — это процесс постепенного снижения стоимости автомобиля с течением времени. На неё влияют множество факторов, которые важно учитывать при расчётах.</p>
+        <h2>🎯 자동차 감가상각이란 무엇인가</h2>
+        <p>감가상각은 시간이 지남에 따라 자동차 가치가 점진적으로 감소하는 과정입니다. 계산 시 고려해야 할 많은 요소의 영향을 받습니다.</p>
 
-        <h2>📊 Основные факторы амортизации</h2>
+        <h2>📫 주요 감가상각 요인</h2>
         <ul>
-          <li><strong>Пробег:</strong> Чем больше километров проехал автомобиль, тем сильнее износ</li>
-          <li><strong>Возраст:</strong> Время эксплуатации влияет на техническое состояние</li>
-          <li><strong>Условия эксплуатации:</strong> Городская езда изнашивает больше, чем трасса</li>
-          <li><strong>Качество обслуживания:</strong> Регулярное ТО продлевает жизнь автомобиля</li>
-          <li><strong>Марка и модель:</strong> Некоторые бренды более надёжны</li>
+          
+          <li><strong>주행 거리:</strong>  차가 주행한 거리가 더 많을수록 마모가 더 큽니다</li>
+          
+          <li><strong>나이:</strong>  운행 시간은 기술적 상태에 영향을 미칩니다</li>
+          
+          <li><strong>운영 조건:</strong>  도시 운전은 고속도로보다 더 많은 마모를 유발합니다</li>
+          
+          <li><strong>유지 관리 품질:</strong>  정기적인 유지 관리는 차량 수명을 연장합니다</li>
+          
+          <li><strong>브랜드 및 모델:</strong>  일부 브랜드는 더 안정적입니다</li>
+          
         </ul>
 
-        <h2>🔧 Как использовать калькулятор амортизации</h2>
+        <h2>🔧 감가상각 계산기 사용 방법</h2>
         
         <ol class="step-list">
+          
           <li>
-            <h3>Подготовка данных</h3>
-            <p>Соберите всю необходимую информацию об автомобиле: год выпуска, пробег, марку, модель, условия эксплуатации.</p>
+            <h3>데이터 준비</h3>
+            <p>차량에 대한 모든 필요한 정보를 수집합니다: 제조 연도, 주행 거리, 브랜드, 모델, 운영 조건.</p>
           </li>
           
           <li>
-            <h3>Ввод параметров</h3>
-            <p>Введите данные в соответствующие поля калькулятора. Будьте максимально точны для получения достоверного результата.</p>
+            <h3>매개변수 입력</h3>
+            <p>데이터를 계산기의 해당 필드에 입력합니다. 신뢰할 수 있는 결과를 얻기 위해 가능한 한 정확하게 입력하십시오.</p>
           </li>
           
           <li>
-            <h3>Анализ результатов</h3>
-            <p>Изучите полученные данные: остаточную стоимость, процент износа, рекомендации по обслуживанию.</p>
+            <h3>결과 분석</h3>
+            <p>얻은 데이터를 연구합니다: 잔존 가치, 마모율, 유지 관리 권장 사항.</p>
           </li>
+          
         </ol>
 
         <div class="example-box">
-          <h4>📝 Пример расчёта</h4>
-          <p><strong>Автомобиль:</strong> Toyota Camry 2018 года<br>
-          <strong>Пробег:</strong> 150,000 км<br>
-          <strong>Условия:</strong> 70% город, 30% трасса<br>
-          <strong>Обслуживание:</strong> Регулярное ТО<br>
-          <strong>Результат:</strong> Остаточная стоимость ~65% от первоначальной</p>
+          <h4>📝 계산 예</h4>
+          <p>
+            <!-- Исправленные строки: заменили тернарные операторы на конструкции if-else -->
+            <strong>Car:</strong> 토요타 캐머리 2018<br>
+            <strong>Mileage:</strong> 150,000 km<br>
+            <strong>Conditions:</strong> 70% 도시, 30% 고속도로<br>
+            <strong>Maintenance:</strong> 정기적인 유지 관리<br>
+            <strong>Result:</strong> 잔존 가치 ~원래 가치의 65%
+          </p>
         </div>
 
-        <h2>💡 Советы по снижению амортизации</h2>
+        <h2>💡 감가상각을 줄이는 팁</h2>
         <ul>
-          <li><strong>Регулярное обслуживание:</strong> Своевременная замена масла и фильтров</li>
-          <li><strong>Аккуратная езда:</strong> Избегайте резких стартов и торможений</li>
-          <li><strong>Качественное топливо:</strong> Используйте рекомендованные марки</li>
-          <li><strong>Защита от коррозии:</strong> Обрабатывайте кузов антикоррозийными составами</li>
-          <li><strong>Правильное хранение:</strong> По возможности используйте гараж</li>
+          
+          <li><strong>정기적인 유지 관리:</strong>  적시에 오일과 필터 교체</li>
+          
+          <li><strong>조심스러운 운전:</strong>  갑작스러운 시동과 제동을 피하십시오</li>
+          
+          <li><strong>고품질 연료:</strong>  권장 브랜드를 사용하십시오</li>
+          
+          <li><strong>부식 방지:</strong>  차체를 방청 화합물로 처리하십시오</li>
+          
+          <li><strong>적절한 보관:</strong>  가능할 때 차고를 사용하십시오</li>
+          
         </ul>
 
         <div class="highlight-box">
-          <h4>💡 Важный совет</h4>
-          <p>Регулярно проверяйте состояние автомобиля и ведите журнал обслуживания. Это поможет точнее оценить реальный износ и планировать расходы на ремонт.</p>
+          <h4>💡 중요한 팁</h4>
+          <p>정기적으로 차량 상태를 확인하고 유지 관리 기록을 유지하십시오. 이는 실제 마모를 더 정확하게 평가하고 수리 비용을 계획하는 데 도움이 될 것입니다.</p>
         </div>
 
-        <h2>⚠️ Что влияет на точность расчётов</h2>
+        <h2>⚠️ 계산 정확도에 영향을 미치는 요인</h2>
         <ul>
-          <li><strong>Рыночные колебания:</strong> Цены на автомобили могут меняться</li>
-          <li><strong>Техническое состояние:</strong> Качество предыдущего обслуживания</li>
-          <li><strong>Аварии и ремонты:</strong> Серьёзные повреждения снижают стоимость</li>
-          <li><strong>Модификации:</strong> Внедорожные и спортивные доработки</li>
+          
+          <li><strong>시장 변동:</strong>  자동차 가격은 변경될 수 있습니다</li>
+          
+          <li><strong>기술적 상태:</strong>  이전 유지 관리 품질</li>
+          
+          <li><strong>사고 및 수리:</strong>  심각한 손상은 가치를 감소시킵니다</li>
+          
+          <li><strong>수정:</strong>  오프로드 및 스포츠 업그레이드</li>
+          
         </ul>
 
         <div class="warning-box">
-          <h4>⚠️ Ограничения калькулятора</h4>
-          <p>Калькулятор даёт приблизительную оценку. Для точной оценки стоимости автомобиля рекомендуется обратиться к профессиональному оценщику или в специализированный сервис.</p>
+          <h4>⚠️ 계산기 제한 사항</h4>
+          <p>계산기는 대략적인 추정치를 제공합니다. 정확한 차량 평가를 위해서는 전문 평가사나 전문 서비스에 문의하는 것이 좋습니다.</p>
         </div>
 
-        <h2>📈 Когда пересчитывать амортизацию</h2>
+        <h2>📫 감가상각을 재계산해야 할 때</h2>
         <ul>
-          <li>После каждого ТО (для корректировки состояния)</li>
-          <li>При изменении условий эксплуатации</li>
-          <li>Перед покупкой или продажей автомобиля</li>
-          <li>При планировании крупных расходов на ремонт</li>
+          
+          <li>각 유지 관리 후 (상태 조정을 위해)</li>
+          
+          <li>운영 조건이 변경될 때</li>
+          
+          <li>자동차를 구매하거나 판매하기 전에</li>
+          
+          <li>대규모 수리 비용을 계획할 때</li>
+          
         </ul>
 
-        <h2>🔗 Полезные ссылки</h2>
+        <h2>🔗 유용한 링크</h2>
         <ul>
-          <li><a href="/frontend/tools/logistics/depreciation-calculator.html">Калькулятор амортизации</a> — наш инструмент для расчётов</li>
-          <li><a href="/frontend/tools/logistics/fuel-calculator.html">Калькулятор расхода топлива</a> — для планирования расходов</li>
+          
+          <!-- Исправленная строка: заменили тернарный оператор на конструкцию if-else -->
+          <li><a href="/frontend/tools/logistics/depreciation-calculator.html">감가상각 계산기</a> — our tool for calculations</li>
+          
+          <!-- Исправленная строка: заменили тернарный оператор на конструкцию if-else -->
+          <li><a href="/frontend/tools/logistics/fuel-calculator.html">연료 소비 계산기</a> — our tool for calculations</li>
+          
         </ul>
 
-        <p>Правильный расчёт амортизации поможет вам принимать взвешенные решения и планировать бюджет на автомобиль. Используйте наш калькулятор регулярно для отслеживания изменений стоимости вашего транспортного средства.</p>
+        <p>올바른 감가상각 계산은 정보에 입각한 결정을 내리고 자동차 예산을 계획하는 데 도움이 됩니다. 차량 가치 변화를 추적하기 위해 정기적으로 우리 계산기를 사용하십시오.</p>
       </div>
 
       <div class="social-subscribe">
-        <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Подписаться в Telegram</a>
-        <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Подписаться во ВК</a>
+        <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Telegram에서 구독하기</a>
+        <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">VK에서 구독하기</a>
       </div>
     </div>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
-  <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
-    <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-      <button type="button" aria-label="Закрыть рекламу" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
-      <ins class="mrg-tag" 
-          style="display:inline-block;width:320px;height:50px" 
-          data-ad-client="ad-1898031"
-          data-ad-slot="1898031">
-      </ins>
+    <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+      <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+        <!-- Исправленная строка: оставляем как есть, так как это JavaScript -->
+        <button type="button" aria-label="광고 닫기" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+        <ins class="mrg-tag" 
+            style="display:inline-block;width:320px;height:50px" 
+            data-ad-client="ad-1898031"
+            data-ad-slot="1898031">
+        </ins>
+      </div>
     </div>
-  </div>
-  <script>
-    (function(){
-      if (localStorage.getItem('anchor_closed')==='1') return;
-      var w = window.innerWidth || document.documentElement.clientWidth;
-      var a = document.getElementById('mobile-anchor-ad');
-      if (!a) return;
-      if (w <= 768) { a.style.display = "flex"; }
-      (window.MRGtag = window.MRGtag || []).push({});
-      if (window.visualViewport) {
-        visualViewport.addEventListener('resize', function(){
-          var h = visualViewport.height;
-          a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
-        });
+    <script>
+      (function(){
+        if (localStorage.getItem('anchor_closed')==='1') return;
+        var w = window.innerWidth || document.documentElement.clientWidth;
+        var a = document.getElementById('mobile-anchor-ad');
+        if (!a) return;
+        if (w <= 768) { a.style.display = "flex"; }
+        (window.MRGtag = window.MRGtag || []).push({});
+        if (window.visualViewport) {
+          visualViewport.addEventListener('resize', function(){
+            var h = visualViewport.height;
+            a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+          });
+        }
+      })();
+    </script>
+
+    <script>/*ANCHOR_COLLAPSE*/(function(){
+      var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
+      setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
+        (window.MRGtag=window.MRGtag||[]).push({});
+        setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
+      } }, 2000);
+    })();</script>
+
+    <script>/*GLOBAL_AD_HOOK*/(function(){
+      function handleIns(ins){
+        if (!ins || ins.__handled) return; ins.__handled = true;
+        setTimeout(function(){
+          var has = !!ins.querySelector("iframe");
+          if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
+          setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
+        }, 2000);
       }
-    })();
-  </script>
-
-<script>/*ANCHOR_COLLAPSE*/(function(){
-  var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
-  setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
-    (window.MRGtag=window.MRGtag||[]).push({});
-    setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
-  } }, 2000);
-})();</script>
-
-<script>/*GLOBAL_AD_HOOK*/(function(){
-  function handleIns(ins){
-    if (!ins || ins.__handled) return; ins.__handled = true;
-    setTimeout(function(){
-      var has = !!ins.querySelector("iframe");
-      if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
-      setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
-    }, 2000);
-  }
-  document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
-  var mo = new MutationObserver(function(muts){
-    muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
-  });
-  mo.observe(document.documentElement,{childList:true,subtree:true});
-})();</script>
+      document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
+      var mo = new MutationObserver(function(muts){
+        muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
+      });
+      mo.observe(document.documentElement,{childList:true,subtree:true});
+    })();</script>
+    
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-</body>
+  </body>
 </html>
