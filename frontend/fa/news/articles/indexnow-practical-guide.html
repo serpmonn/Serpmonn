@@ -1,24 +1,29 @@
+
 <!DOCTYPE html>
 <html lang="fa" dir="rtl">
-  <head>
-<link rel="canonical" href="https://www.serpmonn.ru/frontend/fa/news/articles/indexnow-practical-guide.html">
-<link rel="stylesheet" href="/frontend/styles/styles.css">
-<meta http-equiv="Content-Language" content="fa">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="fa">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>IndexNow: практическое внедрение и трюки</title>
-
+    
+    
+    
+    <title>IndexNow: پیاده‌سازی عملی و نکات</title>
+    <meta name="description" content="به‌روزرسانی‌های سریع موتورهای جستجو: راه‌اندازی، فقط-تغییر‌یافته، خطاهای رایج، مقایسه با sitemap ping و چک‌لیست پیاده‌سازی.">
+    <meta name="keywords" content="IndexNow, سئو, ایندکس کردن, موتورهای جستجو, بینگ, یاندکس, به‌روزرسانی وب‌سایت">
+    
     <!-- Open Graph -->
-    <meta property="og:title" content="IndexNow: практическое внедрение и трюки">
-    <meta property="og:description" content="Быстрый апдейт поисковых систем: setup, changed‑only, частые ошибки, сравнение с sitemap‑пингом и чек‑лист внедрения.">
+    <meta property="og:title" content="IndexNow: پیاده‌سازی عملی و نکات">
+    <meta property="og:description" content="راه‌اندازی، حالت فقط-تغییر‌یافته، خطاها و مقایسه با sitemap ping.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://www.serpmonn.ru/frontend/fa/news/articles/indexnow-practical-guide.html">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/fa/news/articles/indexnow-practical-guide.html">
     <meta property="og:type" content="article">
-
+    
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="IndexNow: практическое внедрение и трюки">
-    <meta name="twitter:description" content="Setup, changed‑only режим, ошибки и сравнение с sitemap‑пингом.">
+    <meta name="twitter:title" content="IndexNow: پیاده‌سازی عملی و نکات">
+    <meta name="twitter:description" content="راه‌اندازی، حالت فقط-تغییر‌یافته، خطاها و مقایسه با sitemap ping.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
@@ -27,78 +32,265 @@
     <link rel="stylesheet" href="/frontend/styles/menu.css">
 
     <style>
-      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.6; }
-      .news-container { background: #fff; border-radius: 12px; padding: 32px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-      .news-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e9ecef; }
-      .news-title { font-size: 2.2rem; color: #333; margin-bottom: 10px; font-weight: 700; }
-      .news-date { color: #6c757d; font-size: 1.05rem; font-weight: 500; }
-      .summary { background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 8px; padding: 16px; margin: 20px 0; color: #155724; }
-      .toc { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; margin: 20px 0; }
-      .toc a { text-decoration: none; }
-      h2 { margin-top: 28px; }
-      .code { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 12px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; font-size: .95rem; overflow-x: auto; }
-      .note { background: #fff3cd; border: 1px solid #ffe08a; border-radius: 8px; padding: 12px; margin: 16px 0; color: #7a5b00; }
-      .faq { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 16px; }
-      .faq h3 { margin: 0 0 10px; }
-      .muted { color:#6c757d; }
+      body { 
+        max-width: 800px; 
+        margin: 0 auto; 
+        padding: 16px; 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+        background: #f5f5f5; 
+        line-height: 1.7; 
+      }
+      article { 
+        background: #fff; 
+        border-radius: 12px; 
+        padding: 40px; 
+        margin: 20px auto; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        max-width: 800px; 
+      }
+      .article-header { 
+        text-align: center; 
+        margin-bottom: 30px; 
+        padding-bottom: 20px; 
+        border-bottom: 2px solid #e9ecef; 
+      }
+      .article-title { 
+        font-size: 2.2rem; 
+        color: #333; 
+        margin-bottom: 10px; 
+        font-weight: 700; 
+      }
+      .article-date { 
+        color: #6c757d; 
+        font-size: 1.05rem; 
+        font-weight: 500; 
+      }
+      .summary { 
+        background: #e8f5e8; 
+        border: 1px solid #c3e6c3; 
+        border-radius: 8px; 
+        padding: 16px; 
+        margin: 20px 0; 
+        color: #155724; 
+      }
+      .toc { 
+        background: #f8f9fa; 
+        border: 1px solid #e9ecef; 
+        border-radius: 8px; 
+        padding: 16px; 
+        margin: 20px 0; 
+      }
+      .toc a { 
+        text-decoration: none; 
+      }
+      h2 { 
+        margin-top: 28px; 
+        color: #dc3545;
+      }
+      .code { 
+        background: #f8f9fa; 
+        border: 1px solid #dee2e6; 
+        border-radius: 6px; 
+        padding: 12px; 
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; 
+        font-size: .95rem; 
+        overflow-x: auto; 
+        white-space: pre-wrap;
+      }
+      .note { 
+        background: #fff3cd; 
+        border: 1px solid #ffe08a; 
+        border-radius: 8px; 
+        padding: 12px; 
+        margin: 16px 0; 
+        color: #7a5b00; 
+      }
+      .faq { 
+        background: #f8f9fa; 
+        border: 1px solid #e9ecef; 
+        border-radius: 8px; 
+        padding: 16px; 
+      }
+      .faq h3 { 
+        margin: 0 0 10px; 
+      }
+      .muted { 
+        color:#6c757d; 
+      }
+      .breadcrumb { 
+        margin-bottom: 16px; 
+        padding: 8px 0; 
+      }
+      .breadcrumb a {
+        text-decoration: none;
+        color: #007bff;
+      }
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+      .ad-top-banner {
+        text-align: center;
+        margin: 16px 0;
+        position: relative;
+        transition: opacity 0.3s ease, height 0.3s ease;
+      }
+      .ad-top-banner.hidden {
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+        margin: 0;
+      }
+      .ad-top-banner .mrg-tag {
+        width: 100% !important;
+        max-width: 970px;
+        height: auto;
+        aspect-ratio: 970 / 250;
+        display: inline-block;
+      }
+      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { max-width: 728px; aspect-ratio: 728 / 90; } }
+      @media (max-width: 768px) { .ad-top-banner .mrg-tag { max-width: 320px; aspect-ratio: 320 / 50; } }
+      .cta-button { 
+        display: block; 
+        text-align: center; 
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+        color: white; 
+        border: none; 
+        padding: 15px 30px; 
+        border-radius: 10px; 
+        font-size: 1.1rem; 
+        cursor: pointer; 
+        transition: transform 0.3s ease; 
+        margin: 30px 0; 
+        text-decoration: none; 
+      }
+      .cta-button:hover { 
+        transform: scale(1.02); 
+        text-decoration: none; 
+        color: #fff; 
+      }
+      .section-item {
+        margin-bottom: 10px;
+      }
+      .section-item-title {
+        font-weight: bold;
+      }
+      .social-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+      }
+      .tg-btn, .vk-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 25px;
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform .2s ease, box-shadow .2s ease;
+      }
+      .tg-btn {
+        background: #229ED9;
+      }
+      .vk-btn {
+        background: #2787F5;
+      }
+      .tg-btn:hover, .vk-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(0,0,0,.15);
+      }
     </style>
-  </head>
-  <body>
+</head>
+<body>
     <style>
-      .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
+      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
       .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
     </style>
-
+    
+    <nav id="menuContainer" aria-label=""></nav>
+    
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/">Главная</a> →
-      <a href="/frontend/news/index.html">Новости</a> →
-      <span>IndexNow: практическое внедрение и трюки</span>
+      <a href="">
+        
+      </a> →
+      <a href="">
+        
+      </a> →
+      <span>IndexNow: پیاده‌سازی عملی و نکات</span>
     </div>
 
-    <div class="news-container">
-      <div class="news-header">
-        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
-        <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+    <article>
+      <header class="article-header">
+        <div class="ad-top-banner ad-banner">
           <ins class="mrg-tag" 
               style="display:inline-block;"
               data-ad-client="ad-1897960" 
               data-ad-slot="1897960">
           </ins>
         </div>
-        <script>
-          (MRGtag = window.MRGtag || []).push({});
-        </script>
-        <h1 class="news-title">IndexNow: практическое внедрение и трюки</h1>
-        <div class="news-date">15 сентября 2025</div>
-      </div>
+        <h1 class="article-title">IndexNow: پیاده‌سازی عملی و نکات</h1>
+        <div class="article-date">۲۴ شهریور ۱۴۰۴ • ۵ دقیقه خواندن</div>
+      </header>
 
       <div class="summary">
-        <strong>Зачем читать:</strong> как быстро доставлять апдейты в поисковые системы, когда использовать changed‑only, чем IndexNow отличается от sitemap‑пинга, и как избежать частых ошибок.
+        <strong>چرا بخوانید:</strong> چگونه به سرعت به‌روزرسانی‌ها را به موتورهای جستجو تحویل دهید، چه زمانی از فقط-تغییر‌یافته استفاده کنید، IndexNow چگونه با sitemap ping متفاوت است و چگونه از خطاهای رایج اجتناب کنید.
       </div>
 
       <div class="toc">
-        <strong>Оглавление</strong>
+        <strong>فهرست مطالب</strong>
         <ol>
-          <li><a href="#what">Что такое IndexNow</a></li>
-          <li><a href="#setup">Установка ключа и базовый пинг</a></li>
-          <li><a href="#changed">Режим changed‑only: когда и как</a></li>
-          <li><a href="#compare">IndexNow vs sitemap‑пинг</a></li>
-          <li><a href="#errors">Частые ошибки</a></li>
-          <li><a href="#faq">FAQ и чек‑лист</a></li>
+          
+          <li><a href="#what">IndexNow چیست</a></li>
+          
+          <li><a href="#setup">تنظیم کلید و پینگ پایه</a></li>
+          
+          <li><a href="#changed">حالت فقط-تغییر‌یافته: چه زمانی و چگونه</a></li>
+          
+          <li><a href="#compare">IndexNow در مقابل sitemap ping</a></li>
+          
+          <li><a href="#errors">خطاهای رایج</a></li>
+          
+          <li><a href="#faq">سوالات متداول و چک‌لیست</a></li>
+          
         </ol>
       </div>
 
-      <h2 id="what">1) Что такое IndexNow</h2>
-      <p>IndexNow — протокол, позволяющий мгновенно сообщать поисковым системам об изменениях URL (создание, обновление, удаление). Поддерживается Bing, Yandex, Seznam и рядом сервисов. Преимущество — минимальная задержка индексации и меньше crawl‑шума.</p>
-
-      <h2 id="setup">2) Установка ключа и базовый пинг</h2>
+      
+      <h2 id="what">۱) IndexNow چیست</h2>
+      
+      
+      <p>IndexNow یک پروتکل است که به شما امکان می‌دهد موتورهای جستجو را به طور لحظه‌ای از تغییرات URL (ایجاد، به‌روزرسانی، حذف) مطلع کنید. توسط Bing، Yandex، Seznam و سایر سرویس‌ها پشتیبانی می‌شود. مزیت آن تأخیر حداقلی در ایندکس کردن و نویز کمتر کراول است.</p>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <h2 id="setup">۲) تنظیم کلید و پینگ پایه</h2>
+      
+      
+      
+      
       <ol>
-        <li>Сгенерируйте ключ (GUID) и разместите файл <code>YOUR_KEY.txt</code> в корне сайта (<code>/.well-known/</code> или корень домена) со строкой ключа.</li>
-        <li>Пингуйте endpoint с URL и ключом. Пример (одиночный URL):</li>
+        
+        <li>یک کلید (GUID) ایجاد کنید و فایل <code>YOUR_KEY.txt</code> را در ریشه سایت (<code>/.well-known/</code> یا ریشه دامنه) با رشته کلید قرار دهید.</li>
+        
+        <li>به اندپوینت با URL و کلید پینگ بزنید. مثال (تک URL):</li>
+        
       </ol>
-      <div class="code">
-POST https://api.indexnow.org/indexnow
+      
+      
+      
+      <div class="code">POST https://api.indexnow.org/indexnow
 Content-Type: application/json
 
 {
@@ -107,55 +299,293 @@ Content-Type: application/json
   "urlList": [
     "https://www.serpmonn.ru/frontend/news/articles/utm-complete-guide.html"
   ]
-}
-      </div>
-      <p>Для батчей укажите до 10 000 URL в одном запросе или используйте файл‑канал с URL файла изменений.</p>
-
-      <h2 id="changed">3) Режим changed‑only</h2>
-      <p>Смысл — пинговать только реально изменённые файлы за последний коммит/деплой. Это снижает шум и расход квот.</p>
-      <ul>
-        <li>Снимайте список изменённых путей из VCS (git diff) или билд‑артефактов.</li>
-        <li>Фильтруйте по публичным маршрутам (исключая <code>node_modules</code>, <code>.git</code>, приватные папки).</li>
-        <li>Группируйте по доменам/языкам, чтобы не отправлять нерелевантные URL.</li>
-      </ul>
-      <div class="note">На продакшене полезно иметь fallback: если changed‑only дал пусто (например, горячий фикс конфигов), пингануть важные карты сайта.</div>
-
-      <h2 id="compare">4) IndexNow vs sitemap‑пинг</h2>
-      <ul>
-        <li><strong>Скорость:</strong> IndexNow быстрее доставляет апдейты, не ждёт crawl цикла; sitemap‑пинг сигналит о наличии карты, но не об изменении конкретного URL.</li>
-        <li><strong>Шум:</strong> IndexNow — точечно по изменённым URL; sitemap — скан всей карты (дороже по crawl бюджету).</li>
-        <li><strong>Надёжность:</strong> sitemaps остаются базой; IndexNow дополняет и ускоряет. Лучше использовать оба.</li>
-      </ul>
-
-      <h2 id="errors">5) Частые ошибки</h2>
-      <ul>
-        <li>Ключ не доступен по публичному URL или не совпадает с параметром <code>key</code>.</li>
-        <li>Пингуют приватные/404 страницы, параметры без каноникализации.</li>
-        <li>Слишком частые повторы одних и тех же URL (дросселируйте повторы).</li>
-        <li>Игнорируют мультиязычность (нужно пинговать соответствующую локализованную версию).</li>
-      </ul>
-
-      <h2 id="faq">6) FAQ и чек‑лист</h2>
-      <div class="faq">
-        <h3>Сколько URL отправлять за раз?</h3>
-        <p>До 10 000 в батче — оптимально группировать по типу/языку.</p>
-        <h3>Нужно ли пинговать удаление?</h3>
-        <p>Да — передавайте URL удалённых страниц, чтобы ускорить деиндексацию.</p>
-        <h3>Чем подтвердить, что работает?</h3>
-        <p>Логи ответов API (200/202), всплески crawl в логах сервера, ускорение появления новых URL.</p>
-        <h3>Чек‑лист внедрения</h3>
+}</div>
+      
+      
+      
+      
+      
+      <div class="note">برای دسته‌ها، تا ۱۰٬۰۰۰ URL را در یک درخواست مشخص کنید یا از فید فایل با URL فایل گزارش تغییرات استفاده کنید.</div>
+      
+      
+      
+      
+      
+      <h2 id="changed">۳) حالت فقط-تغییر‌یافته</h2>
+      
+      
+      <p>ایده این است که فقط به فایل‌هایی پینگ بزنید که در آخرین commit/استقرار واقعاً تغییر کرده‌اند. این نویز و استفاده از سهمیه را کاهش می‌دهد.</p>
+      
+      
+      
+      
+      
+      
+      
+        
         <ul>
-          <li>Ключ размещён и доступен по HTTPS.</li>
-          <li>Сбор changed‑only путей из CI/CD.</li>
-          <li>Дедупликация и дросселирование повторов.</li>
-          <li>Fallback на пинг sitemap при пустом батче.</li>
+          
+          <li>لیست مسیرهای تغییر یافته را از VCS (git diff) یا مصنوعات ساخت دریافت کنید.</li>
+          
+          <li>با مسیرهای عمومی فیلتر کنید (به جز <code>node_modules</code>، <code>.git</code>، پوشه‌های خصوصی).</li>
+          
+          <li>بر اساس دامنه/زبان گروه‌بندی کنید تا از ارسال URL نامربوط جلوگیری کنید.</li>
+          
         </ul>
+        
+      
+      
+      
+      <div class="note">در تولید، داشتن fallback مفید است: اگر فقط-تغییر‌یافته خالی باشد (مثلاً تعمیر سریع برای پیکربندی‌ها)، به نقشه‌های سایت مهم پینگ بزنید.</div>
+      
+      
+      
+      
+      
+      <h2 id="compare">۴) IndexNow در مقابل sitemap ping</h2>
+      
+      
+      
+      
+      
+      
+      
+      
+        
+        <ul>
+          
+          <li class="section-item">
+            <span class="section-item-title">سرعت:</span> IndexNow به‌روزرسانی‌ها را سریع‌تر تحویل می‌دهد، منتظر چرخه کراول نمی‌ماند؛ sitemap ping حضور یک نقشه سایت را نشان می‌دهد اما تغییرات در URL خاص را نه.
+          </li>
+          
+          <li class="section-item">
+            <span class="section-item-title">نویز:</span> IndexNow - هدفمند روی URLهای تغییر یافته؛ sitemap - اسکن کل نقشه (گران‌تر برای بودجه کراول).
+          </li>
+          
+          <li class="section-item">
+            <span class="section-item-title">قابلیت اطمینان:</span> نقشه‌های سایت پایه باقی می‌مانند؛ IndexNow تکمیل و تسریع می‌کند. بهتر است از هر دو استفاده کنید.
+          </li>
+          
+        </ul>
+        
+      
+      
+      
+      
+      
+      
+      
+      <h2 id="errors">۵) خطاهای رایج</h2>
+      
+      
+      
+      
+      
+      
+      
+      
+        
+        <ul>
+          
+          <li>کلید از طریق URL عمومی قابل دسترسی نیست یا با پارامتر <code>key</code> مطابقت ندارد.</li>
+          
+          <li>پینگ به صفحات خصوصی/404، پارامترها بدون متعارف‌سازی.</li>
+          
+          <li>تکرارهای بیش از حد مکرر همان URLها (تکرارها را محدود کنید).</li>
+          
+          <li>نادیده گرفتن چندزبانه بودن (نیاز به پینگ نسخه محلی شده مربوطه دارید).</li>
+          
+        </ul>
+        
+      
+      
+      
+      
+      
+      
+      
+      <h2 id="faq">۶) سوالات متداول و چک‌لیست</h2>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="faq">
+        
+        <h3>چند URL را همزمان ارسال کنم؟</h3>
+        <p>تا ۱۰٬۰۰۰ در یک دسته - بهینه گروه‌بندی شده بر اساس نوع/زبان.</p>
+        
+        <h3>آیا باید حذف‌ها را پینگ کنم؟</h3>
+        <p>بله - URL صفحات حذف شده را برای تسریع در حذف از ایندکس منتقل کنید.</p>
+        
+        <h3>چگونه تأیید کنم که کار می‌کند؟</h3>
+        <p>لاگ‌های پاسخ API (200/202)، اسپایک‌های کراول در لاگ‌های سرور، ظهور سریع‌تر URLهای جدید.</p>
+        
+        
+        
+        <h3></h3>
+        <ul>
+          
+          <li>کلید قرار داده شده و از طریق HTTPS قابل دسترسی است.</li>
+          
+          <li>جمع‌آوری مسیرهای فقط-تغییر‌یافته از CI/CD.</li>
+          
+          <li>حذف تکراری‌ها و محدود کردن تکرارها.</li>
+          
+          <li>Fallback به sitemap ping در دسته خالی.</li>
+          
+        </ul>
+        
       </div>
+      
+      
+      
 
-      <p class="muted" style="margin-top:16px;">Обновлено: 15.09.2025 • Категория: SEO</p>
+      
+      <div class="note" style="margin-top: 30px;">
+        <strong>:</strong> IndexNow به طور قابل توجهی ایندکس کردن صفحات جدید و تغییر یافته را تسریع می‌کند. در ترکیب با نقشه‌های سایت سنتی، ابزار قدرتمندی برای بهینه‌سازی سئو است.
+      </div>
+      
+
+      <a href="/frontend/tools/seo/index.html" class="cta-button">📊 بررسی سئو</a>
+
+      <p class="muted">به‌روز شده: ۲۴ شهریور ۱۴۰۴ • دسته: SEO</p>
+    </article>
+
+    <div class="social-buttons">
+      <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">عضویت در تلگرام</a>
+      <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">عضویت در VK</a>
     </div>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-      <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    
+    <!-- Мобильная реклама -->
+    <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+      <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+        <button type="button" aria-label="" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+        <ins class="mrg-tag" 
+            style="display:inline-block;width:320px;height:50px" 
+            data-ad-client="ad-1898031"
+            data-ad-slot="1898031">
+        </ins>
+      </div>
+    </div>
+    
+    <!-- Скрипты -->
+    <script>
+      (function(){
+        if (localStorage.getItem('anchor_closed')==='1') return;
+        var w = window.innerWidth || document.documentElement.clientWidth;
+        var a = document.getElementById('mobile-anchor-ad');
+        if (!a) return;
+        if (w <= 768) { a.style.display = "flex"; }
+        (window.MRGtag = window.MRGtag || []).push({});
+        if (window.visualViewport) {
+          visualViewport.addEventListener('resize', function(){
+            var h = visualViewport.height;
+            a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+          });
+        }
+      })();
+    </script>
+
+    <script>/*ANCHOR_COLLAPSE*/(function(){
+      var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
+      setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
+        (window.MRGtag=window.MRGtag||[]).push({});
+        setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
+      } }, 2000);
+    })();</script>
+
+    <script>/*GLOBAL_AD_HOOK*/(function(){
+      function handleIns(ins){
+        if (!ins || ins.__handled) return; ins.__handled = true;
+        setTimeout(function(){
+          var has = !!ins.querySelector("iframe");
+          if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
+          setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
+        }, 2000);
+      }
+      document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
+      var mo = new MutationObserver(function(muts){
+        muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
+      });
+      mo.observe(document.documentElement,{childList:true,subtree:true});
+    })();</script>
+    
+    <!-- Скрипт для управления рекламным баннером -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация рекламы
+            const adTag = document.querySelector('.mrg-tag');
+            const adBanner = document.querySelector('.ad-top-banner');
+            
+            if (adTag) {
+                const script = document.createElement('script');
+                script.src = 'https://ad.mail.ru/static/ads-async.js';
+                script.async = true;
+                document.head.appendChild(script);
+                (window.MRGtag = window.MRGtag || []).push({});
+
+                // Проверка загрузки рекламы
+                function checkAdVisibility() {
+                    const adContent = adTag;
+                    
+                    // Проверяем различные условия невидимости рекламы
+                    const isAdVisible = adContent && 
+                                       adContent.offsetHeight > 0 && 
+                                       adContent.innerHTML.trim() !== '' &&
+                                       window.getComputedStyle(adContent).display !== 'none' &&
+                                       window.getComputedStyle(adContent).visibility !== 'hidden' &&
+                                       adContent.getBoundingClientRect().height > 0;
+                    
+                    if (!isAdVisible) {
+                        adBanner.classList.add('hidden');
+                    } else {
+                        adBanner.classList.remove('hidden');
+                    }
+                }
+
+                // Проверяем рекламу несколько раз с интервалами
+                setTimeout(checkAdVisibility, 2000);
+                setTimeout(checkAdVisibility, 5000);
+                setTimeout(checkAdVisibility, 10000);
+
+                // Также проверяем при изменении размера окна
+                window.addEventListener('resize', function() {
+                    setTimeout(checkAdVisibility, 500);
+                });
+
+                // Наблюдатель за изменениями в DOM для рекламы
+                const mutationObserver = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                            setTimeout(checkAdVisibility, 1000);
+                        }
+                    });
+                });
+
+                mutationObserver.observe(adTag, {
+                    childList: true,
+                    attributes: true,
+                    subtree: true
+                });
+            } else {
+                // Если рекламный тег не найден, скрываем баннер сразу
+                if (adBanner) {
+                    adBanner.classList.add('hidden');
+                }
+            }
+        });
+    </script>
 </body>
 </html>
