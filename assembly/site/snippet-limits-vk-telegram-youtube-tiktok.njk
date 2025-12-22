@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+<head>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="{{ lang }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ i18n.meta.title }}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ i18n.meta.title }}">
+    <meta property="og:description" content="{{ i18n.meta.og_description }}">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html">
+    <meta property="og:type" content="article">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ i18n.meta.title }}">
+    <meta name="twitter:description" content="{{ i18n.meta.twitter_description }}">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+
+    <style>
+      body { 
+        max-width: 800px; 
+        margin: 0 auto; 
+        padding: 16px; 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+        background: #f5f5f5; 
+        line-height: 1.7; 
+      }
+      article { 
+        background: #fff; 
+        border-radius: 12px; 
+        padding: 40px; 
+        margin: 20px auto; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        max-width: 800px; 
+      }
+      .article-header { 
+        text-align: center; 
+        margin-bottom: 30px; 
+        padding-bottom: 20px; 
+        border-bottom: 2px solid #e9ecef; 
+      }
+      .article-title { 
+        font-size: 2.2rem; 
+        color: #333; 
+        margin-bottom: 10px; 
+        font-weight: 700; 
+      }
+      .article-date { 
+        color: #6c757d; 
+        font-size: 1.05rem; 
+        font-weight: 500; 
+      }
+      .summary { 
+        background: #e8f5e8; 
+        border: 1px solid #c3e6c3; 
+        border-radius: 8px; 
+        padding: 16px; 
+        margin: 20px 0; 
+        color: #155724; 
+      }
+      .toc { 
+        background: #f8f9fa; 
+        border: 1px solid #e9ecef; 
+        border-radius: 8px; 
+        padding: 16px; 
+        margin: 20px 0; 
+      }
+      .toc a { 
+        text-decoration: none; 
+      }
+      h2 { 
+        margin-top: 28px; 
+      }
+      table { 
+        width: 100%; 
+        border-collapse: collapse; 
+        margin: 16px 0; 
+      }
+      th, td { 
+        border: 1px solid #e9ecef; 
+        padding: 10px; 
+        text-align: left; 
+        vertical-align: top; 
+      }
+      th { 
+        background: #f8f9fa; 
+        font-weight: 700; 
+      }
+      .ok { 
+        color: #2e7d32; 
+        font-weight: 600; 
+      }
+      .warn { 
+        color: #ef6c00; 
+        font-weight: 600; 
+      }
+      .bad { 
+        color: #c62828; 
+        font-weight: 600; 
+      }
+      .example { 
+        background: #f8f9fa; 
+        border: 1px solid #e9ecef; 
+        border-radius: 8px; 
+        padding: 12px; 
+        margin: 12px 0; 
+      }
+      .label { 
+        display: inline-block; 
+        padding: 2px 8px; 
+        border-radius: 6px; 
+        font-size: 12px; 
+        font-weight: 700; 
+      }
+      .before { 
+        background: #ffeaea; 
+        color: #b71c1c; 
+        border: 1px solid #ffcdd2; 
+      }
+      .after { 
+        background: #e8f5e9; 
+        color: #1b5e20; 
+        border: 1px solid #c8e6c9; 
+      }
+      .muted { 
+        color:#6c757d; 
+      }
+      .breadcrumb { 
+        margin-bottom: 16px; 
+        padding: 8px 0; 
+      }
+      .ad-top-banner {
+        text-align: center;
+        margin: 16px 0;
+        position: relative;
+        transition: opacity 0.3s ease, height 0.3s ease;
+      }
+      .ad-top-banner.hidden {
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+        margin: 0;
+      }
+      .ad-top-banner .mrg-tag {
+        width: 100% !important;
+        max-width: 970px;
+        height: auto;
+        aspect-ratio: 970 / 250;
+        display: inline-block;
+      }
+      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { max-width: 728px; aspect-ratio: 728 / 90; } }
+      @media (max-width: 768px) { .ad-top-banner .mrg-tag { max-width: 320px; aspect-ratio: 320 / 50; } }
+    </style>
+</head>
+<body>
+    <div id="menuContainer"></div>
+
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/">{{ i18n.breadcrumb.home }}</a> →
+      <a href="/frontend/news/index.html">{{ i18n.breadcrumb.news }}</a> →
+      <span>{{ i18n.breadcrumb.current }}</span>
+    </div>
+
+    <article>
+      <header class="article-header">
+        <div class="ad-top-banner ad-banner">
+          <ins class="mrg-tag" 
+              style="display:inline-block;"
+              data-ad-client="ad-1897960" 
+              data-ad-slot="1897960">
+          </ins>
+        </div>
+        <h1 class="article-title">{{ i18n.article.title }}</h1>
+        <div class="article-date">{{ i18n.article.date }}</div>
+      </header>
+
+      <div class="summary">
+        {{ i18n.article.summary | safe }}
+      </div>
+
+      <div class="toc">
+        <strong>{{ i18n.article.toc_title }}</strong>
+        <ol>
+          <li><a href="#table">{{ i18n.article.toc_items[0] }}</a></li>
+          <li><a href="#vk">{{ i18n.article.toc_items[1] }}</a></li>
+          <li><a href="#tg">{{ i18n.article.toc_items[2] }}</a></li>
+          <li><a href="#yt">{{ i18n.article.toc_items[3] }}</a></li>
+          <li><a href="#tt">{{ i18n.article.toc_items[4] }}</a></li>
+          <li><a href="#tips">{{ i18n.article.toc_items[5] }}</a></li>
+        </ol>
+      </div>
+
+      <h2 id="table">1) {{ i18n.article.toc_items[0] | replace('«', '').replace('»', '') }}</h2>
+      <p class="muted">{{ i18n.article.table_note | safe }}</p>
+      <table>
+        <thead>
+          <tr>
+            <th>{{ i18n.article.table_headers.platform }}</th>
+            <th>{{ i18n.article.table_headers.title }}</th>
+            <th>{{ i18n.article.table_headers.description }}</th>
+            <th>{{ i18n.article.table_headers.preview }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>VK</strong></td>
+            <td>{{ i18n.article.platforms.vk.title }}</td>
+            <td>{{ i18n.article.platforms.vk.description }}</td>
+            <td>{{ i18n.article.platforms.vk.preview }}</td>
+          </tr>
+          <tr>
+            <td><strong>Telegram</strong></td>
+            <td>{{ i18n.article.platforms.telegram.title }}</td>
+            <td>{{ i18n.article.platforms.telegram.description }}</td>
+            <td>{{ i18n.article.platforms.telegram.preview }}</td>
+          </tr>
+          <tr>
+            <td><strong>YouTube</strong></td>
+            <td>{{ i18n.article.platforms.youtube.title }}</td>
+            <td>{{ i18n.article.platforms.youtube.description }}</td>
+            <td>{{ i18n.article.platforms.youtube.preview }}</td>
+          </tr>
+          <tr>
+            <td><strong>TikTok</strong></td>
+            <td>{{ i18n.article.platforms.tiktok.title }}</td>
+            <td>{{ i18n.article.platforms.tiktok.description }}</td>
+            <td>{{ i18n.article.platforms.tiktok.preview }}</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h2 id="vk">2) {{ i18n.article.toc_items[1] }}</h2>
+      <div class="example">
+        <span class="label before">{{ i18n.article.examples.before }}</span>
+        <p>{{ i18n.article.examples.vk.before }}</p>
+        <span class="label after">{{ i18n.article.examples.after }}</span>
+        <p>{{ i18n.article.examples.vk.after | safe }}</p>
+      </div>
+
+      <h2 id="tg">3) {{ i18n.article.toc_items[2] }}</h2>
+      <div class="example">
+        <span class="label before">{{ i18n.article.examples.before }}</span>
+        <p>{{ i18n.article.examples.telegram.before }}</p>
+        <span class="label after">{{ i18n.article.examples.after }}</span>
+        <p>{{ i18n.article.examples.telegram.after | safe }}</p>
+      </div>
+
+      <h2 id="yt">4) {{ i18n.article.toc_items[3] }}</h2>
+      <div class="example">
+        <span class="label before">{{ i18n.article.examples.before }}</span>
+        <p>{{ i18n.article.examples.youtube.before }}</p>
+        <span class="label after">{{ i18n.article.examples.after }}</span>
+        <p>{{ i18n.article.examples.youtube.after | safe }}</p>
+      </div>
+
+      <h2 id="tt">5) {{ i18n.article.toc_items[4] }}</h2>
+      <div class="example">
+        <span class="label before">{{ i18n.article.examples.before }}</span>
+        <p>{{ i18n.article.examples.tiktok.before }}</p>
+        <span class="label after">{{ i18n.article.examples.after }}</span>
+        <p>{{ i18n.article.examples.tiktok.after | safe }}</p>
+      </div>
+
+      <h2 id="tips">6) {{ i18n.article.toc_items[5] | replace('«', '').replace('»', '') }}</h2>
+      <ul>
+        {% for item in i18n.article.tips.items %}
+        <li>{{ item | safe }}</li>
+        {% endfor %}
+      </ul>
+
+      <p class="muted" style="margin-top:16px;">{{ i18n.article.footer }}</p>
+    </article>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация рекламы
+            const adTag = document.querySelector('.mrg-tag');
+            const adBanner = document.querySelector('.ad-top-banner');
+            
+            if (adTag) {
+                const script = document.createElement('script');
+                script.src = 'https://ad.mail.ru/static/ads-async.js';
+                script.async = true;
+                document.head.appendChild(script);
+                (window.MRGtag = window.MRGtag || []).push({});
+
+                // Проверка загрузки рекламы
+                function checkAdVisibility() {
+                    const adContent = adTag;
+                    
+                    // Проверяем различные условия невидимости рекламы
+                    const isAdVisible = adContent && 
+                                       adContent.offsetHeight > 0 && 
+                                       adContent.innerHTML.trim() !== '' &&
+                                       window.getComputedStyle(adContent).display !== 'none' &&
+                                       window.getComputedStyle(adContent).visibility !== 'hidden' &&
+                                       adContent.getBoundingClientRect().height > 0;
+                    
+                    if (!isAdVisible) {
+                        adBanner.classList.add('hidden');
+                    } else {
+                        adBanner.classList.remove('hidden');
+                    }
+                }
+
+                // Проверяем рекламу несколько раз с интервалами
+                setTimeout(checkAdVisibility, 2000);
+                setTimeout(checkAdVisibility, 5000);
+                setTimeout(checkAdVisibility, 10000);
+
+                // Также проверяем при изменении размера окна
+                window.addEventListener('resize', function() {
+                    setTimeout(checkAdVisibility, 500);
+                });
+
+                // Наблюдатель за изменениями в DOM для рекламы
+                const mutationObserver = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                            setTimeout(checkAdVisibility, 1000);
+                        }
+                    });
+                });
+
+                mutationObserver.observe(adTag, {
+                    childList: true,
+                    attributes: true,
+                    subtree: true
+                });
+            } else {
+                // Если рекламный тег не найден, скрываем баннер сразу
+                if (adBanner) {
+                    adBanner.classList.add('hidden');
+                }
+            }
+        });
+    </script>
+</body>
+</html>
