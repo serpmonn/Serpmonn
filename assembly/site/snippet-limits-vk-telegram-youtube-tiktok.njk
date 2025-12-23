@@ -1,25 +1,48 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: lang
+permalink: "{% if lang == 'ru' %}/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% else %}/frontend/{{ lang }}/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% endif %}"
+---
+
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="{{ dir }}">
+<html lang="{{ lang }}" dir="{% if lang in ['ar', 'he', 'ug', 'fa', 'ps', 'ur', 'sd', 'dv', 'ks', 'ku-Arab', 'yi'] %}rtl{% else %}ltr{% endif %}">
 <head>
-<link rel="stylesheet" href="/frontend/styles/styles.css">
-<meta http-equiv="Content-Language" content="{{ lang }}">
+    <meta http-equiv="Content-Language" content="{{ lang }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ i18n.meta.title }}</title>
+    <title>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].meta.title }}</title>
+    <meta name="description" content="{{ snippetLimitsVkTelegramYoutubeTiktok[lang].meta.description }}">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="{{ i18n.meta.title }}">
-    <meta property="og:description" content="{{ i18n.meta.og_description }}">
+    <meta property="og:title" content="{{ snippetLimitsVkTelegramYoutubeTiktok[lang].meta.title }}">
+    <meta property="og:description" content="{{ snippetLimitsVkTelegramYoutubeTiktok[lang].meta.og_description }}">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html">
+    <meta property="og:url" content="https://serpmonn.ru{% if lang == 'ru' %}/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% else %}/frontend/{{ lang }}/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% endif %}">
     <meta property="og:type" content="article">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ i18n.meta.title }}">
-    <meta name="twitter:description" content="{{ i18n.meta.twitter_description }}">
+    <meta name="twitter:title" content="{{ snippetLimitsVkTelegramYoutubeTiktok[lang].meta.title }}">
+    <meta name="twitter:description" content="{{ snippetLimitsVkTelegramYoutubeTiktok[lang].meta.twitter_description }}">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="https://serpmonn.ru{% if lang == 'ru' %}/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% else %}/frontend/{{ lang }}/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% endif %}" />
+
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="https://serpmonn.ru/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" hreflang="x-default" />
+
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
@@ -159,19 +182,30 @@
       }
       @media (max-width: 1199px) { .ad-top-banner .mrg-tag { max-width: 728px; aspect-ratio: 728 / 90; } }
       @media (max-width: 768px) { .ad-top-banner .mrg-tag { max-width: 320px; aspect-ratio: 320 / 50; } }
+      
+      /* RTL поддержка */
+      [dir="rtl"] .breadcrumb { text-align: right; }
+      [dir="rtl"] table th,
+      [dir="rtl"] table td { text-align: right; }
+      [dir="rtl"] .ad-top-banner { text-align: center; }
     </style>
 </head>
 <body>
-    <div id="menuContainer"></div>
+    <nav id="menuContainer" aria-label="Main navigation"></nav>
 
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/">{{ i18n.breadcrumb.home }}</a> →
-      <a href="/frontend/news/index.html">{{ i18n.breadcrumb.news }}</a> →
-      <span>{{ i18n.breadcrumb.current }}</span>
+      <a href="/{% if lang != 'ru' %}{{ lang }}/{% endif %}">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].breadcrumb.home }}</a> →
+      <a href="/{% if lang != 'ru' %}{{ lang }}/{% endif %}frontend/news/index.html">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].breadcrumb.news }}</a> →
+      <span>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].breadcrumb.current }}</span>
     </div>
 
-    <article>
+    <article itemscope itemtype="http://schema.org/Article">
+      <meta itemprop="datePublished" content="2025-09-15">
+      <meta itemprop="dateModified" content="2025-09-15">
+      <meta itemprop="author" content="Serpmonn">
+      <meta itemprop="publisher" content="Serpmonn">
+      
       <header class="article-header">
         <div class="ad-top-banner ad-banner">
           <ins class="mrg-tag" 
@@ -180,105 +214,107 @@
               data-ad-slot="1897960">
           </ins>
         </div>
-        <h1 class="article-title">{{ i18n.article.title }}</h1>
-        <div class="article-date">{{ i18n.article.date }}</div>
+        <h1 class="article-title" itemprop="headline">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.title }}</h1>
+        <div class="article-date" itemprop="datePublished">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.date }}</div>
       </header>
 
-      <div class="summary">
-        {{ i18n.article.summary | safe }}
+      <div class="summary" itemprop="abstract">
+        {{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.summary | safe }}
       </div>
 
       <div class="toc">
-        <strong>{{ i18n.article.toc_title }}</strong>
+        <strong>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_title }}</strong>
         <ol>
-          <li><a href="#table">{{ i18n.article.toc_items[0] }}</a></li>
-          <li><a href="#vk">{{ i18n.article.toc_items[1] }}</a></li>
-          <li><a href="#tg">{{ i18n.article.toc_items[2] }}</a></li>
-          <li><a href="#yt">{{ i18n.article.toc_items[3] }}</a></li>
-          <li><a href="#tt">{{ i18n.article.toc_items[4] }}</a></li>
-          <li><a href="#tips">{{ i18n.article.toc_items[5] }}</a></li>
+          <li><a href="#table">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[0] }}</a></li>
+          <li><a href="#vk">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[1] }}</a></li>
+          <li><a href="#tg">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[2] }}</a></li>
+          <li><a href="#yt">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[3] }}</a></li>
+          <li><a href="#tt">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[4] }}</a></li>
+          <li><a href="#tips">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[5] }}</a></li>
         </ol>
       </div>
 
-      <h2 id="table">1) {{ i18n.article.toc_items[0] | replace('«', '').replace('»', '') }}</h2>
-      <p class="muted">{{ i18n.article.table_note | safe }}</p>
-      <table>
-        <thead>
-          <tr>
-            <th>{{ i18n.article.table_headers.platform }}</th>
-            <th>{{ i18n.article.table_headers.title }}</th>
-            <th>{{ i18n.article.table_headers.description }}</th>
-            <th>{{ i18n.article.table_headers.preview }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>VK</strong></td>
-            <td>{{ i18n.article.platforms.vk.title }}</td>
-            <td>{{ i18n.article.platforms.vk.description }}</td>
-            <td>{{ i18n.article.platforms.vk.preview }}</td>
-          </tr>
-          <tr>
-            <td><strong>Telegram</strong></td>
-            <td>{{ i18n.article.platforms.telegram.title }}</td>
-            <td>{{ i18n.article.platforms.telegram.description }}</td>
-            <td>{{ i18n.article.platforms.telegram.preview }}</td>
-          </tr>
-          <tr>
-            <td><strong>YouTube</strong></td>
-            <td>{{ i18n.article.platforms.youtube.title }}</td>
-            <td>{{ i18n.article.platforms.youtube.description }}</td>
-            <td>{{ i18n.article.platforms.youtube.preview }}</td>
-          </tr>
-          <tr>
-            <td><strong>TikTok</strong></td>
-            <td>{{ i18n.article.platforms.tiktok.title }}</td>
-            <td>{{ i18n.article.platforms.tiktok.description }}</td>
-            <td>{{ i18n.article.platforms.tiktok.preview }}</td>
-          </tr>
-        </tbody>
-      </table>
+      <section itemprop="articleBody">
+        <h2 id="table">1) {{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[0] }}</h2>
+        <p class="muted">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.table_note | safe }}</p>
+        <table>
+          <thead>
+            <tr>
+              <th>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.table_headers.platform }}</th>
+              <th>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.table_headers.title }}</th>
+              <th>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.table_headers.description }}</th>
+              <th>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.table_headers.preview }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>VK</strong></td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.vk.title }}</td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.vk.description }}</td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.vk.preview }}</td>
+            </tr>
+            <tr>
+              <td><strong>Telegram</strong></td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.telegram.title }}</td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.telegram.description }}</td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.telegram.preview }}</td>
+            </tr>
+            <tr>
+              <td><strong>YouTube</strong></td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.youtube.title }}</td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.youtube.description }}</td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.youtube.preview }}</td>
+            </tr>
+            <tr>
+              <td><strong>TikTok</strong></td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.tiktok.title }}</td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.tiktok.description }}</td>
+              <td>{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.platforms.tiktok.preview }}</td>
+            </tr>
+          </tbody>
+        </table>
 
-      <h2 id="vk">2) {{ i18n.article.toc_items[1] }}</h2>
-      <div class="example">
-        <span class="label before">{{ i18n.article.examples.before }}</span>
-        <p>{{ i18n.article.examples.vk.before }}</p>
-        <span class="label after">{{ i18n.article.examples.after }}</span>
-        <p>{{ i18n.article.examples.vk.after | safe }}</p>
-      </div>
+        <h2 id="vk">2) {{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[1] }}</h2>
+        <div class="example" itemscope itemtype="http://schema.org/HowToTip">
+          <span class="label before">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.before }}</span>
+          <p itemprop="text">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.vk.before }}</p>
+          <span class="label after">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.after }}</span>
+          <p itemprop="text">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.vk.after | safe }}</p>
+        </div>
 
-      <h2 id="tg">3) {{ i18n.article.toc_items[2] }}</h2>
-      <div class="example">
-        <span class="label before">{{ i18n.article.examples.before }}</span>
-        <p>{{ i18n.article.examples.telegram.before }}</p>
-        <span class="label after">{{ i18n.article.examples.after }}</span>
-        <p>{{ i18n.article.examples.telegram.after | safe }}</p>
-      </div>
+        <h2 id="tg">3) {{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[2] }}</h2>
+        <div class="example" itemscope itemtype="http://schema.org/HowToTip">
+          <span class="label before">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.before }}</span>
+          <p itemprop="text">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.telegram.before }}</p>
+          <span class="label after">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.after }}</span>
+          <p itemprop="text">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.telegram.after | safe }}</p>
+        </div>
 
-      <h2 id="yt">4) {{ i18n.article.toc_items[3] }}</h2>
-      <div class="example">
-        <span class="label before">{{ i18n.article.examples.before }}</span>
-        <p>{{ i18n.article.examples.youtube.before }}</p>
-        <span class="label after">{{ i18n.article.examples.after }}</span>
-        <p>{{ i18n.article.examples.youtube.after | safe }}</p>
-      </div>
+        <h2 id="yt">4) {{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[3] }}</h2>
+        <div class="example" itemscope itemtype="http://schema.org/HowToTip">
+          <span class="label before">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.before }}</span>
+          <p itemprop="text">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.youtube.before }}</p>
+          <span class="label after">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.after }}</span>
+          <p itemprop="text">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.youtube.after | safe }}</p>
+        </div>
 
-      <h2 id="tt">5) {{ i18n.article.toc_items[4] }}</h2>
-      <div class="example">
-        <span class="label before">{{ i18n.article.examples.before }}</span>
-        <p>{{ i18n.article.examples.tiktok.before }}</p>
-        <span class="label after">{{ i18n.article.examples.after }}</span>
-        <p>{{ i18n.article.examples.tiktok.after | safe }}</p>
-      </div>
+        <h2 id="tt">5) {{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[4] }}</h2>
+        <div class="example" itemscope itemtype="http://schema.org/HowToTip">
+          <span class="label before">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.before }}</span>
+          <p itemprop="text">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.tiktok.before }}</p>
+          <span class="label after">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.after }}</span>
+          <p itemprop="text">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.examples.tiktok.after | safe }}</p>
+        </div>
 
-      <h2 id="tips">6) {{ i18n.article.toc_items[5] | replace('«', '').replace('»', '') }}</h2>
-      <ul>
-        {% for item in i18n.article.tips.items %}
-        <li>{{ item | safe }}</li>
-        {% endfor %}
-      </ul>
+        <h2 id="tips">6) {{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.toc_items[5] }}</h2>
+        <ul>
+          {% for item in snippetLimitsVkTelegramYoutubeTiktok[lang].article.tips.items %}
+          <li itemscope itemtype="http://schema.org/HowToTip">{{ item | safe }}</li>
+          {% endfor %}
+        </ul>
+      </section>
 
-      <p class="muted" style="margin-top:16px;">{{ i18n.article.footer }}</p>
+      <p class="muted" style="margin-top:16px;" itemprop="copyrightYear">{{ snippetLimitsVkTelegramYoutubeTiktok[lang].article.footer }}</p>
     </article>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
