@@ -1,0 +1,359 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/news/articles/utm-complete-guide.html{% else %}/frontend/{{ locale }}/news/articles/utm-complete-guide.html{% endif %}"
+eleventyComputed:
+  title: "{{ utmCompleteGuide[locale].title }}"
+  description: "{{ utmCompleteGuide[locale].description }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/utm-complete-guide.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/utm-complete-guide.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <title>{{ title }}</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="{{ description }}">
+    <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ utmCompleteGuide[locale].title }}">
+    <meta property="og:description" content="{{ utmCompleteGuide[locale].ogDescription }}">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ utmCompleteGuide[locale].title }}">
+    <meta name="twitter:description" content="{{ utmCompleteGuide[locale].twitterDescription }}">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="{{ canonical }}" />
+
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/utm-complete-guide.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/news/articles/utm-complete-guide.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/utm-complete-guide.html" hreflang="x-default" />
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+
+    <style>
+        body { 
+            max-width: 800px; 
+            margin: 0 auto; 
+            padding: 16px; 
+            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+            background: #f5f5f5; 
+            line-height: 1.7; 
+        }
+        article { 
+            background: #fff; 
+            border-radius: 12px; 
+            padding: 40px; 
+            margin: 20px auto; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+            max-width: 800px; 
+        }
+        .article-header { 
+            text-align: center; 
+            margin-bottom: 30px; 
+            padding-bottom: 20px; 
+            border-bottom: 2px solid #e9ecef; 
+        }
+        .article-title { 
+            font-size: 2.2rem; 
+            color: #333; 
+            margin-bottom: 10px; 
+            font-weight: 700; 
+        }
+        .article-date { 
+            color: #6c757d; 
+            font-size: 1.05rem; 
+            font-weight: 500; 
+        }
+        .summary { 
+            background: #e8f5e8; 
+            border: 1px solid #c3e6c3; 
+            border-radius: 8px; 
+            padding: 16px; 
+            margin: 20px 0; 
+            color: #155724; 
+        }
+        .toc { 
+            background: #f8f9fa; 
+            border: 1px solid #e9ecef; 
+            border-radius: 8px; 
+            padding: 16px; 
+            margin: 20px 0; 
+        }
+        .toc a { 
+            text-decoration: none; 
+        }
+        h2 { 
+            margin-top: 28px; 
+        }
+        .code { 
+            background: #f8f9fa; 
+            border: 1px solid #dee2e6; 
+            border-radius: 6px; 
+            padding: 12px; 
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; 
+            font-size: .95rem; 
+            overflow-x: auto; 
+            white-space: pre-wrap; 
+        }
+        .note { 
+            background: #fff3cd; 
+            border: 1px solid #ffe08a; 
+            border-radius: 8px; 
+            padding: 12px; 
+            margin: 16px 0; 
+            color: #7a5b00; 
+        }
+        .faq { 
+            background: #f8f9fa; 
+            border: 1px solid #e9ecef; 
+            border-radius: 8px; 
+            padding: 16px; 
+        }
+        .faq h3 { 
+            margin: 0 0 10px; 
+        }
+        .btn { 
+            display:inline-block; 
+            padding:10px 16px; 
+            background:#dc3545; 
+            color:#fff; 
+            text-decoration:none; 
+            border-radius:8px; 
+            font-weight:600; 
+        }
+        .muted { 
+            color:#6c757d; 
+        }
+        .breadcrumb { 
+            margin-bottom: 16px; 
+            padding: 8px 0; 
+        }
+        .ad-top-banner {
+            text-align: center;
+            margin: 16px 0;
+            position: relative;
+            transition: opacity 0.3s ease, height 0.3s ease;
+        }
+        .ad-top-banner.hidden {
+            opacity: 0;
+            height: 0;
+            overflow: hidden;
+            margin: 0;
+        }
+        .ad-top-banner .mrg-tag {
+            width: 100% !important;
+            max-width: 970px;
+            height: auto;
+            aspect-ratio: 970 / 250;
+            display: inline-block;
+        }
+        @media (max-width: 1199px) { .ad-top-banner .mrg-tag { max-width: 728px; aspect-ratio: 728 / 90; } }
+        @media (max-width: 768px) { .ad-top-banner .mrg-tag { max-width: 320px; aspect-ratio: 320 / 50; } }
+    </style>
+</head>
+<body>
+    <div id="menuContainer"></div>
+
+    <!-- Хлебные крошки - ИСПРАВЛЕННЫЕ ССЫЛКИ -->
+    <div class="breadcrumb">
+        <a href="{% if locale != 'ru' %}/{{ locale }}{% else %}/{% endif %}">{{ utmCompleteGuide[locale].breadcrumbHome }}</a> →
+        <a href="{% if locale != 'ru' %}/{{ locale }}{% endif %}/frontend/news">{{ utmCompleteGuide[locale].breadcrumbNews }}</a> →
+        <span>{{ utmCompleteGuide[locale].breadcrumbCurrent }}</span>
+    </div>
+
+    <article>
+        <header class="article-header">
+            <div class="ad-top-banner ad-banner">
+                <ins class="mrg-tag" 
+                    style="display:inline-block;"
+                    data-ad-client="ad-1897960" 
+                    data-ad-slot="1897960">
+                </ins>
+            </div>
+            <h1 class="article-title">{{ utmCompleteGuide[locale].articleTitle }}</h1>
+            <div class="article-date">{{ utmCompleteGuide[locale].articleDate }}</div>
+        </header>
+
+        <div class="summary">
+            <strong>{{ utmCompleteGuide[locale].summaryTitle }}</strong> {{ utmCompleteGuide[locale].summaryContent }}
+        </div>
+
+        <!-- TOC - ИСПРАВЛЕННЫЙ БЕЗ ПРОБЕЛОВ -->
+        <div class="toc">
+            <strong>{{ utmCompleteGuide[locale].tocTitle }}</strong>
+            <ol>{%- set anchors = ['what', 'params', 'ga4', 'naming', 'platforms', 'examples', 'mistakes', 'faq'] -%}
+                {%- for item in utmCompleteGuide[locale].tocItems -%}
+                <li><a href="#{{ anchors[loop.index0] }}">{{ item }}</a></li>
+                {%- endfor -%}
+            </ol>
+        </div>
+
+        <h2 id="what">{{ utmCompleteGuide[locale].section1Title }}</h2>
+        <p>{{ utmCompleteGuide[locale].section1Content | safe }}</p>
+
+        <h2 id="params">{{ utmCompleteGuide[locale].section2Title }}</h2>
+        <ul>
+            {%- for item in utmCompleteGuide[locale].section2List -%}
+            <li>{{ item | safe }}</li>
+            {%- endfor -%}
+        </ul>
+        <div class="note">{{ utmCompleteGuide[locale].section2Note | safe }}</div>
+
+        <h2 id="ga4">{{ utmCompleteGuide[locale].section3Title }}</h2>
+        <p>{{ utmCompleteGuide[locale].section3Content | safe }}</p>
+        <ul>
+            {%- for item in utmCompleteGuide[locale].section3List -%}
+            <li>{{ item | safe }}</li>
+            {%- endfor -%}
+        </ul>
+
+        <h2 id="naming">{{ utmCompleteGuide[locale].section4Title }}</h2>
+        <ul>
+            {%- for item in utmCompleteGuide[locale].section4List -%}
+            <li>{{ item | safe }}</li>
+            {%- endfor -%}
+        </ul>
+
+        <h2 id="platforms">{{ utmCompleteGuide[locale].section5Title }}</h2>
+        <p>{{ utmCompleteGuide[locale].section5Subtitle }}</p>
+        <ul>
+            {%- for item in utmCompleteGuide[locale].section5List -%}
+            <li>{{ item | safe }}</li>
+            {%- endfor -%}
+        </ul>
+
+        <h2 id="examples">{{ utmCompleteGuide[locale].section6Title }}</h2>
+        <div class="code">{{ utmCompleteGuide[locale].section6Example1 }}</div>
+        <div class="code" style="margin-top:10px;">{{ utmCompleteGuide[locale].section6Example2 }}</div>
+        <p>
+            {{ utmCompleteGuide[locale].section6BuilderText }}
+            <a class="btn" href="https://serpmonn.ru{% if locale != 'ru' %}/{{ locale }}{% endif %}/frontend/tools/marketing/utm-builder.html" target="_blank" rel="noopener">
+                {{ utmCompleteGuide[locale].section6BuilderButton }}
+            </a>
+        </p>
+
+        <h2 id="mistakes">{{ utmCompleteGuide[locale].section7Title }}</h2>
+        <ul>
+            {%- for item in utmCompleteGuide[locale].section7List -%}
+            <li>{{ item | safe }}</li>
+            {%- endfor -%}
+        </ul>
+
+        <h2 id="faq">{{ utmCompleteGuide[locale].section8Title }}</h2>
+        <div class="faq">
+            {%- for faq in utmCompleteGuide[locale].faqItems -%}
+            <h3>{{ faq.question }}</h3>
+            <p>{{ faq.answer | safe }}</p>
+            {%- endfor -%}
+            
+            <h3>{{ utmCompleteGuide[locale].checklistTitle }}</h3>
+            <ul>
+                {%- for item in utmCompleteGuide[locale].checklistItems -%}
+                <li>{{ item | safe }}</li>
+                {%- endfor -%}
+            </ul>
+        </div>
+
+        <p class="muted" style="margin-top:16px;">
+            {{ utmCompleteGuide[locale].updated }} 15.09.2025 • {{ utmCompleteGuide[locale].category }}
+        </p>
+    </article>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация рекламы
+            const adTag = document.querySelector('.mrg-tag');
+            const adBanner = document.querySelector('.ad-top-banner');
+            
+            if (adTag) {
+                const script = document.createElement('script');
+                script.src = 'https://ad.mail.ru/static/ads-async.js';
+                script.async = true;
+                document.head.appendChild(script);
+                (window.MRGtag = window.MRGtag || []).push({});
+
+                // Проверка загрузки рекламы
+                function checkAdVisibility() {
+                    const adContent = adTag;
+                    
+                    // Проверяем различные условия невидимости рекламы
+                    const isAdVisible = adContent && 
+                                       adContent.offsetHeight > 0 && 
+                                       adContent.innerHTML.trim() !== '' &&
+                                       window.getComputedStyle(adContent).display !== 'none' &&
+                                       window.getComputedStyle(adContent).visibility !== 'hidden' &&
+                                       adContent.getBoundingClientRect().height > 0;
+                    
+                    if (!isAdVisible) {
+                        adBanner.classList.add('hidden');
+                    } else {
+                        adBanner.classList.remove('hidden');
+                    }
+                }
+
+                // Проверяем рекламу несколько раз с интервалами
+                setTimeout(checkAdVisibility, 2000);
+                setTimeout(checkAdVisibility, 5000);
+                setTimeout(checkAdVisibility, 10000);
+
+                // Также проверяем при изменении размера окна
+                window.addEventListener('resize', function() {
+                    setTimeout(checkAdVisibility, 500);
+                });
+
+                // Наблюдатель за изменениями в DOM для рекламы
+                const mutationObserver = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                            setTimeout(checkAdVisibility, 1000);
+                        }
+                    });
+                });
+
+                mutationObserver.observe(adTag, {
+                    childList: true,
+                    attributes: true,
+                    subtree: true
+                });
+            } else {
+                // Если рекламный тег не найден, скрываем баннер сразу
+                if (adBanner) {
+                    adBanner.classList.add('hidden');
+                }
+            }
+            
+            // Локализация меню (если нужно)
+            const currentLocale = document.documentElement.lang || 'ru';
+            if (typeof initMenu === 'function') {
+                initMenu(currentLocale);
+            }
+        });
+    </script>
+</body>
+</html>

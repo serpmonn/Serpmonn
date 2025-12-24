@@ -1,6 +1,5 @@
 // flappy.js - Основная игровая логика для игры "Flappy Bird"
 
-// Основная функция игры, обернутая в IIFE для изоляции scope
 (function() {
     'use strict';
     
@@ -16,13 +15,14 @@
     canvas.height = H * SCALE;
     ctx.scale(SCALE, SCALE);
 
-    // Параметры игры
-    const gap = 60;
+    // Параметры игры (БАЗОВЫЕ значения)
+    const BASE_GAP = 60;          // Базовый зазор между трубами
+    const BASE_PIPE_SPEED = 1.8;  // Базовая скорость труб
+    const BASE_PIPE_SPACING = 180; // Увеличенное базовое расстояние между трубами (было 110)
     const pipeWidth = 26;
     const floorY = H - 20;
     const gravity = 0.35;
     const flapVel = -5.2;
-    const pipeSpeed = 1.8;
 
     // DOM элементы
     const scoreEl = document.getElementById('score');
@@ -37,7 +37,45 @@
 
     // Переменные состояния игры
     let bird, pipes, score, alive, started, gameActive;
-    let resetButtonClicked = false; // Флаг для отслеживания нажатия кнопки "Заново"
+    let gameTime = 0;             // Время игры в кадрах
+    let startDelay = 90;          // Увеличенная задержка перед появлением первой трубы (90 кадров = ~1.5 секунд)
+    let difficultyLevel = 0;      // Уровень сложности
+
+    /**
+     * Рассчитывает текущую сложность на основе счета и времени
+     */
+    function calculateDifficulty() {
+        // Сложность увеличивается медленнее: каждые 8 очков (было 5)
+        const scoreDifficulty = Math.floor(score / 8);
+        
+        // Сложность увеличивается медленнее со временем: каждые 30 секунд (было 20)
+        const timeDifficulty = Math.floor(gameTime / 1800); // 1800 кадров = 30 секунд
+        
+        return scoreDifficulty + timeDifficulty;
+    }
+
+    /**
+     * Получает текущие параметры игры с учетом сложности
+     */
+    function getGameParameters() {
+        difficultyLevel = calculateDifficulty();
+        
+        // Уменьшаем зазор между трубами медленнее (минимально 45)
+        const currentGap = Math.max(BASE_GAP - difficultyLevel * 1.5, 45);
+        
+        // Увеличиваем скорость труб медленнее (максимально 3.2)
+        const currentPipeSpeed = Math.min(BASE_PIPE_SPEED + difficultyLevel * 0.08, 3.2);
+        
+        // Уменьшаем расстояние между трубами, но начинаем с большего значения
+        // На уровне 0: 180, на высоких уровнях: минимально 95
+        const currentPipeSpacing = Math.max(BASE_PIPE_SPACING - difficultyLevel * 5, 95);
+        
+        return {
+            gap: currentGap,
+            pipeSpeed: currentPipeSpeed,
+            pipeSpacing: currentPipeSpacing
+        };
+    }
 
     /**
      * Сбрасывает состояние игры к начальным значениям
@@ -55,8 +93,9 @@
         alive = true;
         started = false;
         gameActive = false;
+        gameTime = 0;
+        difficultyLevel = 0;
         
-        spawnPipe();
         updateScore();
     }
 
@@ -67,6 +106,7 @@
         started = true;
         gameActive = true;
         alive = true;
+        startDelay = 90; // Сбрасываем задержку при новом старте
     }
 
     /**
@@ -89,11 +129,12 @@
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, W, H);
 
-        // Отрисовываем трубы
+        // Отрисовываем трубы (если они есть)
+        const params = getGameParameters();
         ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--pipe') || '#2ecc71';
         for (const p of pipes) {
             ctx.fillRect(p.x, 0, pipeWidth, p.top);
-            ctx.fillRect(p.x, p.top + gap, pipeWidth, H - (p.top + gap));
+            ctx.fillRect(p.x, p.top + params.gap, pipeWidth, H - (p.top + params.gap));
         }
 
         // Отрисовываем землю
@@ -132,7 +173,8 @@
      * Создает новую трубу
      */
     function spawnPipe() {
-        const topH = 30 + Math.floor(Math.random() * (H - gap - 80));
+        const params = getGameParameters();
+        const topH = 30 + Math.floor(Math.random() * (H - params.gap - 80));
         pipes.push({
             x: W + 20,
             top: topH,
@@ -145,6 +187,9 @@
      */
     function step() {
         if (!gameActive || !alive) return;
+        
+        // Увеличиваем счетчик времени
+        gameTime++;
         
         // Физика птицы
         bird.vy += gravity;
@@ -162,10 +207,13 @@
             bird.vy = 0;
         }
 
+        // Получаем текущие параметры игры
+        const params = getGameParameters();
+        
         // Обработка труб
         for (let i = 0; i < pipes.length; i++) {
             const p = pipes[i];
-            p.x -= pipeSpeed;
+            p.x -= params.pipeSpeed;
             
             if (!p.passed && p.x + pipeWidth < bird.x) {
                 p.passed = true;
@@ -190,14 +238,20 @@
         }
         
         // Создаем новую трубу
-        if (pipes.length === 0 || pipes[pipes.length - 1].x < W - 110) {
+        if (pipes.length === 0) {
+            // Первая труба появляется с увеличенной задержкой
+            if (gameTime > startDelay) {
+                spawnPipe();
+            }
+        } else if (pipes[pipes.length - 1].x < W - params.pipeSpacing) {
+            // Последующие трубы с учетом увеличенного расстояния
             spawnPipe();
         }
 
         // Проверка столкновений с трубами
         for (const p of pipes) {
             const topRect = { x: p.x, y: 0, w: pipeWidth, h: p.top };
-            const botRect = { x: p.x, y: p.top + gap, w: pipeWidth, h: H - (p.top + gap) };
+            const botRect = { x: p.x, y: p.top + params.gap, w: pipeWidth, h: H - (p.top + params.gap) };
             
             if (circleRectCollide(bird.x, bird.y, bird.r, topRect) || 
                 circleRectCollide(bird.x, bird.y, bird.r, botRect)) {
@@ -225,6 +279,8 @@
      * Отрисовывает игровой процесс
      */
     function drawGame() {
+        const params = getGameParameters();
+        
         const grad = ctx.createLinearGradient(0, 0, 0, H);
         grad.addColorStop(0, '#6dd5fa');
         grad.addColorStop(1, '#2980b9');
@@ -234,7 +290,7 @@
         ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--pipe') || '#2ecc71';
         for (const p of pipes) {
             ctx.fillRect(p.x, 0, pipeWidth, p.top);
-            ctx.fillRect(p.x, p.top + gap, pipeWidth, H - (p.top + gap));
+            ctx.fillRect(p.x, p.top + params.gap, pipeWidth, H - (p.top + params.gap));
         }
 
         ctx.fillStyle = '#1f2a38';
@@ -245,10 +301,19 @@
         ctx.arc(bird.x, bird.y, bird.r, 0, Math.PI * 2);
         ctx.fill();
 
+        // Отображение счета и уровня сложности
         ctx.fillStyle = '#fff';
         ctx.font = 'bold 14px system-ui, -apple-system, Segoe UI, Roboto, Arial';
         ctx.textAlign = 'left';
         ctx.fillText(String(score), 8, 18);
+        
+        // Показываем уровень сложности (только если он > 0)
+        if (difficultyLevel > 0) {
+            ctx.fillStyle = '#f1c40f';
+            ctx.font = '10px system-ui, -apple-system, Segoe UI, Roboto, Arial';
+            ctx.textAlign = 'right';
+            ctx.fillText(`Ур. ${difficultyLevel}`, W - 8, 18);
+        }
     }
 
     /**
@@ -284,18 +349,24 @@
 
         ctx.font = '14px system-ui, -apple-system, Segoe UI, Roboto, Arial';
         ctx.fillText(`Ваш счёт: ${score}`, W / 2, H / 2 - 20);
+        
+        // Показываем достигнутый уровень сложности
+        if (difficultyLevel > 0) {
+            ctx.fillText(`Уровень сложности: ${difficultyLevel}`, W / 2, H / 2 + 5);
+        }
 
         if (score === best && score > 0) {
             ctx.fillStyle = '#f1c40f';
             ctx.font = '14px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-            ctx.fillText('🎉 Новый рекорд! 🎉', W / 2, H / 2 + 5);
+            ctx.fillText('🎉 Новый рекорд! 🎉', W / 2, H / 2 + (difficultyLevel > 0 ? 25 : 5));
             ctx.fillStyle = '#fff';
         }
 
         ctx.font = '11px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Нажмите ПРОБЕЛ, R/К', W / 2, H / 2 + 35);
-        ctx.fillText('или кнопку ЗАНОВО', W / 2, H / 2 + 50);
-        ctx.fillText('чтобы играть снова', W / 2, H / 2 + 65);
+        const yOffset = difficultyLevel > 0 ? 10 : 0;
+        ctx.fillText('Нажмите ПРОБЕЛ, R/К', W / 2, H / 2 + 35 + yOffset);
+        ctx.fillText('или кнопку ЗАНОВО', W / 2, H / 2 + 50 + yOffset);
+        ctx.fillText('чтобы играть снова', W / 2, H / 2 + 65 + yOffset);
 
         // Умный показ рекламы
         try {
@@ -325,9 +396,6 @@
      */
     function handleGameStart() {
         closeAdIfOpen();
-        
-        // Сбрасываем флаг нажатия кнопки "Заново"
-        resetButtonClicked = false;
         
         if (!started) {
             startGame();
