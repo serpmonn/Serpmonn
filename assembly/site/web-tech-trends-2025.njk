@@ -1,0 +1,389 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: lang
+permalink: "{% if lang == 'ru' %}/frontend/news/articles/web-tech-trends-2025.html{% else %}/frontend/{{ lang }}/news/articles/web-tech-trends-2025.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ lang }}" dir="{% if lang in ['ar', 'he', 'ug', 'fa'] %}rtl{% else %}ltr{% endif %}">
+  <head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ lang }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ webTechTrends2025[lang].meta.title }}</title>
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ webTechTrends2025[lang].meta.ogTitle }}">
+    <meta property="og:description" content="{{ webTechTrends2025[lang].meta.ogDescription }}">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru{{ page.url }}">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ webTechTrends2025[lang].meta.twitterTitle }}">
+    <meta name="twitter:description" content="{{ webTechTrends2025[lang].meta.twitterDescription }}">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <!-- JSON-LD: Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "{{ webTechTrends2025[lang].jsonld.headline }}",
+      "description": "{{ webTechTrends2025[lang].jsonld.description }}",
+      "image": ["https://www.serpmonn.ru/frontend/images/Banner_Serpmonn.png"],
+      "author": {"@type": "Organization", "name": "Serpmonn"},
+      "publisher": {"@type": "Organization", "name": "Serpmonn", "logo": {"@type": "ImageObject", "url": "https://www.serpmonn.ru/frontend/images/serpmonn.ico"}},
+      "mainEntityOfPage": {"@type": "WebPage", "@id": "https://www.serpmonn.ru{{ page.url }}"}
+    }
+    </script>
+
+    <!-- JSON-LD: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "{{ webTechTrends2025[lang].breadcrumbs.home }}", "item": "https://www.serpmonn.ru/"},
+        {"@type": "ListItem", "position": 2, "name": "{{ webTechTrends2025[lang].breadcrumbs.news }}", "item": "https://www.serpmonn.ru/frontend/news/"},
+        {"@type": "ListItem", "position": 3, "name": "{{ webTechTrends2025[lang].breadcrumbs.current }}"}
+      ]
+    }
+    </script>
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <!-- Подключаем стили для статьи "Тренды веб-технологий 2025 года" -->
+    <link rel="stylesheet" href="/frontend/styles/articles/web-tech-trends-2025.css">
+  </head>
+  <body>
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/">{{ webTechTrends2025[lang].breadcrumbs.home }}</a> → 
+      <a href="/frontend/news/">{{ webTechTrends2025[lang].breadcrumbs.news }}</a> → 
+      <span>{{ webTechTrends2025[lang].breadcrumbs.current }}</span>
+    </div>
+
+    <div class="article-container">
+      <!-- Заголовок статьи -->
+      <div class="article-header">
+        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+        <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+          <ins class="mrg-tag" 
+              style="display:inline-block;"
+              data-ad-client="ad-1897960" 
+              data-ad-slot="1897960">
+          </ins>
+        </div>
+        <script>
+          (MRGtag = window.MRGtag || []).push({});
+        </script>
+        <h1 class="article-title">{{ webTechTrends2025[lang].article.title }}</h1>
+        <div class="article-meta">
+          <span>{{ webTechTrends2025[lang].article.date }}</span> • 
+          <span>{{ webTechTrends2025[lang].article.readTime }}</span> • 
+          <span class="article-category">{{ webTechTrends2025[lang].article.category }}</span>
+        </div>
+      </div>
+
+      <!-- Содержание статьи -->
+      <div class="article-content">
+        <p>{{ webTechTrends2025[lang].article.intro }}</p>
+
+        <div class="highlight-box">
+          <h4>{{ webTechTrends2025[lang].sections.whyImportant.title }}</h4>
+          <p>{{ webTechTrends2025[lang].sections.whyImportant.description }}</p>
+        </div>
+
+        <h2>{{ webTechTrends2025[lang].sections.ai.title }}</h2>
+
+        <div class="trend-card">
+          <span class="trend-icon">🤖</span>
+          <h4>{{ webTechTrends2025[lang].sections.ai.assistants.title }}</h4>
+          <p>{{ webTechTrends2025[lang].sections.ai.assistants.description }}</p>
+        </div>
+
+        <h3>{{ webTechTrends2025[lang].sections.ai.practicalUses.title }}:</h3>
+        <ul>
+          {% for use in webTechTrends2025[lang].sections.ai.practicalUses.items %}
+          <li><strong>{{ use.title }}</strong> — {{ use.description }}</li>
+          {% endfor %}
+        </ul>
+
+        <div class="code-example">
+          <h4>{{ webTechTrends2025[lang].sections.ai.codeExample.title }}</h4>
+<pre><code>{{ webTechTrends2025[lang].sections.ai.codeExample.code }}</code></pre>
+        </div>
+
+        <h2>{{ webTechTrends2025[lang].sections.wasm.title }}</h2>
+
+        <div class="trend-card">
+          <span class="trend-icon">⚡</span>
+          <h4>{{ webTechTrends2025[lang].sections.wasm.performance.title }}</h4>
+          <p>{{ webTechTrends2025[lang].sections.wasm.performance.description }}</p>
+        </div>
+
+        <h3>{{ webTechTrends2025[lang].sections.wasm.applications.title }}:</h3>
+        <ul>
+          {% for app in webTechTrends2025[lang].sections.wasm.applications.items %}
+          <li><strong>{{ app.title }}</strong> — {{ app.description }}</li>
+          {% endfor %}
+        </ul>
+
+        <div class="stats-grid">
+          {% for stat in webTechTrends2025[lang].sections.wasm.stats %}
+          <div class="stat-card">
+            <div class="stat-number">{{ stat.number }}</div>
+            <div class="stat-label">{{ stat.label }}</div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <h2>{{ webTechTrends2025[lang].sections.css.title }}</h2>
+
+        <h3>1. {{ webTechTrends2025[lang].sections.css.containerQueries.title }}</h3>
+        <p>{{ webTechTrends2025[lang].sections.css.containerQueries.description }}</p>
+
+        <div class="code-example">
+          <h4>{{ webTechTrends2025[lang].sections.css.containerQueries.codeExample.title }}</h4>
+<pre><code>{{ webTechTrends2025[lang].sections.css.containerQueries.codeExample.code }}</code></pre>
+        </div>
+
+        <h3>2. {{ webTechTrends2025[lang].sections.css.grid2.title }}</h3>
+        <p>{{ webTechTrends2025[lang].sections.css.grid2.description }}</p>
+
+        <h3>3. {{ webTechTrends2025[lang].sections.css.houdini.title }}</h3>
+        <p>{{ webTechTrends2025[lang].sections.css.houdini.description }}</p>
+
+        <h2>{{ webTechTrends2025[lang].sections.js.title }}</h2>
+
+        <div class="trend-card">
+          <span class="trend-icon">🚀</span>
+          <h4>{{ webTechTrends2025[lang].sections.js.standards.title }}</h4>
+          <p>{{ webTechTrends2025[lang].sections.js.standards.description }}</p>
+        </div>
+
+        <h3>{{ webTechTrends2025[lang].sections.js.features.title }}:</h3>
+        <ul>
+          {% for feature in webTechTrends2025[lang].sections.js.features.items %}
+          <li><strong>{{ feature.title }}</strong> — {{ feature.description }}</li>
+          {% endfor %}
+        </ul>
+
+        <div class="code-example">
+          <h4>{{ webTechTrends2025[lang].sections.js.codeExample.title }}</h4>
+<pre><code>{{ webTechTrends2025[lang].sections.js.codeExample.code }}</code></pre>
+        </div>
+
+        <h2>{{ webTechTrends2025[lang].sections.pwa.title }}</h2>
+
+        <p>{{ webTechTrends2025[lang].sections.pwa.description }}</p>
+
+        <div class="tech-grid">
+          {% for tech in webTechTrends2025[lang].sections.pwa.technologies %}
+          <div class="tech-card">
+            <span class="tech-icon">{{ tech.icon }}</span>
+            <div class="tech-name">{{ tech.name }}</div>
+            <div class="tech-description">{{ tech.description }}</div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <h2>{{ webTechTrends2025[lang].sections.webStandards.title }}</h2>
+
+        <h3>1. {{ webTechTrends2025[lang].sections.webStandards.components.title }}</h3>
+        <p>{{ webTechTrends2025[lang].sections.webStandards.components.description }}</p>
+
+        <div class="code-example">
+          <h4>{{ webTechTrends2025[lang].sections.webStandards.components.codeExample.title }}</h4>
+<pre><code>{{ webTechTrends2025[lang].sections.webStandards.components.codeExample.code }}</code></pre>
+        </div>
+
+        <h3>2. {{ webTechTrends2025[lang].sections.webStandards.apis.title }}</h3>
+        <ul>
+          {% for api in webTechTrends2025[lang].sections.webStandards.apis.items %}
+          <li><strong>{{ api.name }}</strong> — {{ api.description }}</li>
+          {% endfor %}
+        </ul>
+
+        <h2>{{ webTechTrends2025[lang].sections.frameworks.title }}</h2>
+
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                {% for header in webTechTrends2025[lang].sections.frameworks.table.headers %}
+                <th>{{ header }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for row in webTechTrends2025[lang].sections.frameworks.table.rows %}
+              <tr>
+                <td><strong>{{ row.technology }}</strong></td>
+                <td>{{ row.status }}</td>
+                <td>{{ row.advantages }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+        <h2>{{ webTechTrends2025[lang].sections.security.title }}</h2>
+
+        <div class="warning-box">
+          <h4>{{ webTechTrends2025[lang].sections.security.threats.title }}</h4>
+          <ul>
+            {% for threat in webTechTrends2025[lang].sections.security.threats.items %}
+            <li><strong>{{ threat.name }}</strong> — {{ threat.description }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <h3>{{ webTechTrends2025[lang].sections.security.measures.title }}:</h3>
+        <ul>
+          {% for measure in webTechTrends2025[lang].sections.security.measures.items %}
+          <li><strong>{{ measure.title }}</strong> — {{ measure.description }}</li>
+          {% endfor %}
+        </ul>
+
+        <h2>{{ webTechTrends2025[lang].sections.performance.title }}</h2>
+
+        <p>{{ webTechTrends2025[lang].sections.performance.intro }}</p>
+
+        <div class="highlight-box">
+          <h4>{{ webTechTrends2025[lang].sections.performance.coreWebVitals.title }}</h4>
+          <p>{{ webTechTrends2025[lang].sections.performance.coreWebVitals.description }}</p>
+        </div>
+
+        <h3>{{ webTechTrends2025[lang].sections.performance.optimizations.title }}:</h3>
+        <ul>
+          {% for optimization in webTechTrends2025[lang].sections.performance.optimizations.items %}
+          <li><strong>{{ optimization.title }}</strong> — {{ optimization.description }}</li>
+          {% endfor %}
+        </ul>
+
+        <h2>{{ webTechTrends2025[lang].sections.ecology.title }}</h2>
+
+        <p>{{ webTechTrends2025[lang].sections.ecology.intro }}</p>
+
+        <ul>
+          {% for point in webTechTrends2025[lang].sections.ecology.points %}
+          <li><strong>{{ point.title }}</strong> — {{ point.description }}</li>
+          {% endfor %}
+        </ul>
+
+        <h2>{{ webTechTrends2025[lang].sections.future.title }}</h2>
+
+        <h3>{{ webTechTrends2025[lang].sections.future.years }}:</h3>
+        <ul>
+          {% for tech in webTechTrends2025[lang].sections.future.technologies %}
+          <li><strong>{{ tech.name }}</strong> — {{ tech.description }}</li>
+          {% endfor %}
+        </ul>
+
+        <h2>{{ webTechTrends2025[lang].sections.recommendations.title }}</h2>
+
+        <div class="highlight-box">
+          <h4>{{ webTechTrends2025[lang].sections.recommendations.strategy.title }}</h4>
+          <ol>
+            {% for tip in webTechTrends2025[lang].sections.recommendations.strategy.tips %}
+            <li><strong>{{ tip.title }}</strong> — {{ tip.description }}</li>
+            {% endfor %}
+          </ol>
+        </div>
+
+        <h2>{{ webTechTrends2025[lang].sections.resources.title }}</h2>
+
+        <h3>{{ webTechTrends2025[lang].sections.resources.docs.title }}:</h3>
+        <ul>
+          {% for doc in webTechTrends2025[lang].sections.resources.docs.items %}
+          <li><strong>{{ doc.name }}</strong> — {{ doc.description }}</li>
+          {% endfor %}
+        </ul>
+
+        <h3>{{ webTechTrends2025[lang].sections.resources.communities.title }}:</h3>
+        <ul>
+          {% for community in webTechTrends2025[lang].sections.resources.communities.items %}
+          <li><strong>{{ community.name }}</strong> — {{ community.description }}</li>
+          {% endfor %}
+        </ul>
+
+        <h2>{{ webTechTrends2025[lang].sections.conclusion.title }}</h2>
+
+        <p>{{ webTechTrends2025[lang].sections.conclusion.paragraph1 }}</p>
+        <p>{{ webTechTrends2025[lang].sections.conclusion.paragraph2 }}</p>
+
+        <div class="related-articles">
+          <h3>{{ webTechTrends2025[lang].sections.related.title }}</h3>
+          <ul class="related-links">
+            {% for article in webTechTrends2025[lang].sections.related.articles %}
+            <li><a href="{{ article.url }}">{{ article.title }}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+      <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+        <button type="button" aria-label="{{ webTechTrends2025[lang].ads.closeAria }}" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+        <ins class="mrg-tag" 
+            style="display:inline-block;width:320px;height:50px" 
+            data-ad-client="ad-1898031"
+            data-ad-slot="1898031">
+        </ins>
+      </div>
+    </div>
+    <script>
+      (function(){
+        if (localStorage.getItem('anchor_closed')==='1') return;
+        var w = window.innerWidth || document.documentElement.clientWidth;
+        var a = document.getElementById('mobile-anchor-ad');
+        if (!a) return;
+        if (w <= 768) { a.style.display = "flex"; }
+        (window.MRGtag = window.MRGtag || []).push({});
+        if (window.visualViewport) {
+          visualViewport.addEventListener('resize', function(){
+            var h = visualViewport.height;
+            a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+          });
+        }
+      })();
+    </script>
+
+    <script>/*ANCHOR_COLLAPSE*/(function(){
+      var a=document.getElementById('mobile-anchor-ad'); if(!a) return;
+      setTimeout(function(){ var ins=a.querySelector('ins.mrg-tag'); var has=ins && ins.querySelector('iframe'); if(!has){
+        (window.MRGtag=window.MRGtag||[]).push({});
+        setTimeout(function(){ var ins2=a.querySelector('ins.mrg-tag'); var has2=ins2 && ins2.querySelector('iframe'); if(!has2){ a.style.display='none'; } }, 2000);
+      } }, 2000);
+    })();</script>
+
+    <script>/*GLOBAL_AD_HOOK*/(function(){
+      function handleIns(ins){
+        if (!ins || ins.__handled) return; ins.__handled = true;
+        setTimeout(function(){
+          var has = !!ins.querySelector("iframe");
+          if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
+          setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
+      });
+      }
+      document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
+      var mo = new MutationObserver(function(muts){
+        muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
+      });
+      mo.observe(document.documentElement,{childList:true,subtree:true});
+    })();</script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  </body>
+</html>
