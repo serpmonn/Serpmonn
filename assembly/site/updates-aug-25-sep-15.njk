@@ -1,0 +1,298 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/news/articles/updates-aug-25-sep-15.html{% else %}/frontend/{{ locale }}/news/articles/updates-aug-25-sep-15.html{% endif %}"
+eleventyComputed:
+  title: "{{ updatesAug25Sep15[locale].meta.title }}"
+  description: "{{ updatesAug25Sep15[locale].meta.ogDescription }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ updatesAug25Sep15[locale].meta.ogTitle }}">
+    <meta property="og:description" content="{{ updatesAug25Sep15[locale].meta.ogDescription }}">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru{{ page.url }}">
+    <meta property="og:type" content="article">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ updatesAug25Sep15[locale].meta.twitterTitle }}">
+    <meta name="twitter:description" content="{{ updatesAug25Sep15[locale].meta.twitterDescription }}">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <!-- Каноническая ссылка -->
+    {% if locale == 'ru' %}
+    <link rel="canonical" href="https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html" />
+    {% else %}
+    <link rel="canonical" href="https://serpmonn.ru/frontend/{{ locale }}/news/articles/updates-aug-25-sep-15.html" />
+    {% endif %}
+    
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+      {% if loc == 'ru' %}
+        <link rel="alternate" href="https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html" hreflang="{{ loc }}" />
+      {% else %}
+        <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/news/articles/updates-aug-25-sep-15.html" hreflang="{{ loc }}" />
+      {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html" hreflang="x-default" />
+
+    <!-- JSON-LD: Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "{{ updatesAug25Sep15[locale].jsonld.headline }}",
+      "description": "{{ updatesAug25Sep15[locale].jsonld.description }}",
+      "image": ["https://www.serpmonn.ru/frontend/images/Banner_Serpmonn.png"],
+      "author": {"@type": "Organization", "name": "Serpmonn"},
+      "publisher": {"@type": "Organization", "name": "Serpmonn", "logo": {"@type": "ImageObject", "url": "https://www.serpmonn.ru/frontend/images/serpmonn.ico"}},
+      "mainEntityOfPage": {"@type": "WebPage", "@id": "https://www.serpmonn.ru{{ page.url }}"}
+    }
+    </script>
+
+    <!-- JSON-LD: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.home }}", "item": "https://www.serpmonn.ru/"},
+        {"@type": "ListItem", "position": 2, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.news }}", "item": "https://www.serpmonn.ru/frontend/news/"},
+        {"@type": "ListItem", "position": 3, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.current }}"}
+      ]
+    }
+    </script>
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <!-- Стиль статьи -->
+    <link rel="stylesheet" href="/frontend/styles/articles/updates-aug-25-sep-15.css">
+</head>
+<body class="article-page">
+    <div id="menuContainer"></div>
+
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/">{{ updatesAug25Sep15[locale].breadcrumbs.home }}</a> →
+      <a href="/frontend/news/">{{ updatesAug25Sep15[locale].breadcrumbs.news }}</a> →
+      <span>{{ updatesAug25Sep15[locale].breadcrumbs.current }}</span>
+    </div>
+
+    <article>
+      <header class="article-header">
+        <div class="ad-top-banner ad-banner">
+          <ins class="mrg-tag" 
+              style="display:inline-block;"
+              data-ad-client="ad-1897960" 
+              data-ad-slot="1897960">
+          </ins>
+        </div>
+        <h1 class="article-title">{{ updatesAug25Sep15[locale].article.title }}</h1>
+        <div class="article-date">{{ updatesAug25Sep15[locale].article.date }}</div>
+      </header>
+
+      <div class="summary">
+        <h3>{{ updatesAug25Sep15[locale].summary.title }}</h3>
+        <ul>
+          {% for item in updatesAug25Sep15[locale].summary.items %}
+          <li>{{ item | safe }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card"><div class="stat-number">6</div><div class="stat-label">{{ updatesAug25Sep15[locale].stats.newGames }}</div></div>
+        <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">{{ updatesAug25Sep15[locale].stats.likeSystem }}</div></div>
+        <div class="stat-card"><div class="stat-number">20+</div><div class="stat-label">{{ updatesAug25Sep15[locale].stats.seoLocalization }}</div></div>
+      </div>
+
+      {% for section in updatesAug25Sep15[locale].sections %}
+      <div class="update-section">
+        <h3>{{ section.title }}</h3>
+        <ul class="feature-list">
+          {% for item in section.items %}
+          <li>{{ item | safe }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+
+      <div class="bug-fix">
+        <h4>{{ updatesAug25Sep15[locale].bugfixes.title }}</h4>
+        <ul class="feature-list">
+          {% for item in updatesAug25Sep15[locale].bugfixes.items %}
+          <li>{{ item | safe }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <div class="social-share">
+        <a class="share-btn vk" href="https://vk.com/share.php?url=https%3A%2F%2Fserpmonn.ru{{ page.url | urlencode }}" target="_blank" rel="noopener">{{ updatesAug25Sep15[locale].share.vk }}</a>
+        <a class="share-btn telegram" href="https://t.me/share/url?url=https%3A%2F%2Fserpmonn.ru{{ page.url | urlencode }}&text={{ updatesAug25Sep15[locale].article.title | urlencode }}" target="_blank" rel="noopener">{{ updatesAug25Sep15[locale].share.telegram }}</a>
+      </div>
+    </article>
+
+    <!-- Мобильная якорная реклама -->
+    <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+      <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+        <button type="button" aria-label="{{ updatesAug25Sep15[locale].ads.closeAria }}" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+        <ins class="mrg-tag" 
+            style="display:inline-block;width:320px;height:50px" 
+            data-ad-client="ad-1898031"
+            data-ad-slot="1898031">
+        </ins>
+      </div>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    
+    <!-- Скрипты для рекламы -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация рекламы в шапке
+            const adTag = document.querySelector('.mrg-tag');
+            const adBanner = document.querySelector('.ad-top-banner');
+            
+            if (adTag) {
+                const script = document.createElement('script');
+                script.src = 'https://ad.mail.ru/static/ads-async.js';
+                script.async = true;
+                document.head.appendChild(script);
+                (window.MRGtag = window.MRGtag || []).push({});
+
+                // Проверка загрузки рекламы
+                function checkAdVisibility() {
+                    const adContent = adTag;
+                    
+                    // Проверяем различные условия невидимости рекламы
+                    const isAdVisible = adContent && 
+                                       adContent.offsetHeight > 0 && 
+                                       adContent.innerHTML.trim() !== '' &&
+                                       window.getComputedStyle(adContent).display !== 'none' &&
+                                       window.getComputedStyle(adContent).visibility !== 'hidden' &&
+                                       adContent.getBoundingClientRect().height > 0;
+                    
+                    if (!isAdVisible) {
+                        adBanner.classList.add('hidden');
+                    } else {
+                        adBanner.classList.remove('hidden');
+                    }
+                }
+
+                // Проверяем рекламу несколько раз с интервалами
+                setTimeout(checkAdVisibility, 2000);
+                setTimeout(checkAdVisibility, 5000);
+                setTimeout(checkAdVisibility, 10000);
+
+                // Также проверяем при изменении размера окна
+                window.addEventListener('resize', function() {
+                    setTimeout(checkAdVisibility, 500);
+                });
+
+                // Наблюдатель за изменениями в DOM для рекламы
+                const mutationObserver = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                            setTimeout(checkAdVisibility, 1000);
+                        }
+                    });
+                });
+
+                mutationObserver.observe(adTag, {
+                    childList: true,
+                    attributes: true,
+                    subtree: true
+                });
+            } else {
+                // Если рекламный тег не найден, скрываем баннер сразу
+                if (adBanner) {
+                    adBanner.classList.add('hidden');
+                }
+            }
+
+            // Мобильная якорная реклама
+            (function(){
+                if (localStorage.getItem('anchor_closed')==='1') return;
+                var w = window.innerWidth || document.documentElement.clientWidth;
+                var a = document.getElementById('mobile-anchor-ad');
+                if (!a) return;
+                if (w <= 768) { a.style.display = "flex"; }
+                (window.MRGtag = window.MRGtag || []).push({});
+                if (window.visualViewport) {
+                    visualViewport.addEventListener('resize', function(){
+                        var h = visualViewport.height;
+                        a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+                    });
+                }
+            })();
+
+            /*ANCHOR_COLLAPSE*/
+            (function(){
+                var a=document.getElementById('mobile-anchor-ad'); 
+                if(!a) return;
+                setTimeout(function(){ 
+                    var ins=a.querySelector('ins.mrg-tag'); 
+                    var has=ins && ins.querySelector('iframe'); 
+                    if(!has){
+                        (window.MRGtag=window.MRGtag||[]).push({});
+                        setTimeout(function(){ 
+                            var ins2=a.querySelector('ins.mrg-tag'); 
+                            var has2=ins2 && ins2.querySelector('iframe'); 
+                            if(!has2){ 
+                                a.style.display='none'; 
+                            } 
+                        }, 2000);
+                    } 
+                }, 2000);
+            })();
+
+            /*GLOBAL_AD_HOOK*/
+            (function(){
+                function handleIns(ins){
+                    if (!ins || ins.__handled) return; 
+                    ins.__handled = true;
+                    setTimeout(function(){
+                        var has = !!ins.querySelector("iframe");
+                        if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
+                        setTimeout(function(){ 
+                            if (!ins.querySelector("iframe")) { 
+                                var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); 
+                                if(p) p.style.display='none'; 
+                            } 
+                        }, 2000);
+                    });
+                }
+                document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
+                var mo = new MutationObserver(function(muts){
+                    muts.forEach(function(m){ 
+                        m.addedNodes && m.addedNodes.forEach(function(n){ 
+                            if(n.querySelectorAll){ 
+                                n.querySelectorAll("ins.mrg-tag").forEach(handleIns); 
+                            } 
+                        }); 
+                    });
+                });
+                mo.observe(document.documentElement,{childList:true,subtree:true});
+            })();
+        });
+    </script>
+    
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

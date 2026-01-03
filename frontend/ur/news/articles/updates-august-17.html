@@ -1,169 +1,324 @@
+
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
-  <head>
-<link rel="canonical" href="https://www.serpmonn.ru/frontend/ur/news/articles/updates-august-17.html">
-<link rel="stylesheet" href="/frontend/styles/styles.css">
-<meta http-equiv="Content-Language" content="ur">
+<html lang="ur" dir="ltr">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="ur">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Обновления Serpmonn — 17 августа 2025 — Новые инструменты и улучшения</title>
+    <title>Serpmonn اپڈیٹس — 17 اگست 2025 — نئے اوزار اور بہتری</title>
     
     <!-- Open Graph -->
-    <meta property="og:title" content="Обновления Serpmonn — 17 августа 2025 — Новые инструменты и улучшения">
-    <meta property="og:description" content="Добавлены полезные инструменты для водителей, улучшен калькулятор амортизации и исправлены ошибки">
+    <meta property="og:title" content="Serpmonn اپڈیٹس — 17 اگست 2025 — نئے اوزار اور بہتری">
+    <meta property="og:description" content="ڈرائیوروں کے لیے مفید اوزار شامل کیے، ڈپریسی ایشن کیلکولیٹر کو بہتر کیا اور خرابیاں دور کیں">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://www.serpmonn.ru/frontend/ur/news/articles/updates-august-17.html">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/ur/news/articles/updates-august-17.html">
     <meta property="og:type" content="article">
     
-    <!-- Twitter -->
+    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Обновления Serpmonn — 17 августа 2025">
-    <meta name="twitter:description" content="Новые инструменты для водителей и улучшения">
+    <meta name="twitter:title" content="Serpmonn اپڈیٹس — 17 اگست 2025">
+    <meta name="twitter:description" content="ڈرائیوروں کے لیے نئے اوزار اور بہتری">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <!-- JSON-LD: Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "Serpmonn اپڈیٹس — 17 اگست 2025",
+      "description": "ڈرائیوروں کے لیے مفید اوزار شامل کیے، ڈپریسی ایشن کیلکولیٹر کو بہتر کیا اور خرابیاں دور کیں",
+      "image": ["https://www.serpmonn.ru/frontend/images/Banner_Serpmonn.png"],
+      "author": {"@type": "Organization", "name": "Serpmonn"},
+      "publisher": {"@type": "Organization", "name": "Serpmonn", "logo": {"@type": "ImageObject", "url": "https://www.serpmonn.ru/frontend/images/serpmonn.ico"}},
+      "mainEntityOfPage": {"@type": "WebPage", "@id": "https://www.serpmonn.ru/frontend/ur/news/articles/updates-august-17.html"}
+    }
+    </script>
+
+    <!-- JSON-LD: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "ہوم", "item": "https://www.serpmonn.ru/"},
+        {"@type": "ListItem", "position": 2, "name": "خبریں", "item": "https://www.serpmonn.ru/frontend/news/"},
+        {"@type": "ListItem", "position": 3, "name": "17 اگست اپڈیٹس"}
+      ]
+    }
+    </script>
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
-        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    
-    <style>
-      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.6; }
-      .news-container { background: #fff; border-radius: 12px; padding: 32px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-      .news-header { text-align: center; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 2px solid #e9ecef; }
-      .news-title { font-size: 2.5rem; color: #333; margin-bottom: 10px; font-weight: 700; }
-      .news-date { color: #6c757d; font-size: 1.1rem; font-weight: 500; }
-      .news-summary { background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 8px; padding: 20px; margin: 25px 0; color: #155724; }
-      .news-summary h3 { color: #155724; margin: 0 0 15px; }
-      .update-section { margin: 30px 0; padding: 20px; border-left: 4px solid #007bff; background: #f8f9fa; border-radius: 0 8px 8px 0; }
-      .update-section h3 { color: #007bff; margin: 0 0 15px; font-size: 1.4rem; }
-      .feature-list { list-style: none; padding: 0; }
-      .feature-list li { padding: 8px 0 8px 25px; position: relative; }
-      .feature-list li:before { content: "✅"; position: absolute; left: 0; color: #28a745; }
-      .bug-fix { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin: 15px 0; color: #856404; }
-      .bug-fix h4 { color: #856404; margin: 0 0 10px; }
-      .tech-details { background: #e3f2fd; border: 1px solid #bbdefb; border-radius: 8px; padding: 20px; margin: 20px 0; color: #1976d2; }
-      .tech-details h4 { color: #1976d2; margin: 0 0 15px; }
-      .code-example { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 6px; padding: 15px; margin: 15px 0; font-family: 'Courier New', monospace; font-size: 0.9rem; overflow-x: auto; }
-      .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
-      .stat-card { background: #fff; border: 2px solid #e9ecef; border-radius: 8px; padding: 20px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-      .stat-number { font-size: 2.5rem; font-weight: bold; color: #007bff; margin-bottom: 10px; }
-      .stat-label { color: #6c757d; font-size: 0.9rem; }
-      .social-share { text-align: center; margin: 40px 0; padding: 20px; background: #f8f9fa; border-radius: 8px; }
-      .share-btn { display: inline-block; margin: 0 10px; padding: 12px 24px; background: #007bff; color: #fff; text-decoration: none; border-radius: 6px; font-weight: 500; transition: all 0.3s ease; }
-      .share-btn:hover { background: #0056b3; transform: translateY(-2px); }
-      .share-btn.vk { background: #4C75A3; } .share-btn.vk:hover { background: #3a5a7a; }
-      .share-btn.telegram { background: #0088cc; } .share-btn.telegram:hover { background: #006699; }
-      @media (max-width: 768px) { .news-title { font-size: 2rem; } .stats-grid { grid-template-columns: 1fr; } .share-btn { display: block; margin: 10px auto; max-width: 200px; } }
-    </style>
-  </head>
-  <body>
-    <style>
-      .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
-      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
-    </style>
+    <!-- Подключаем стили для статьи -->
+    <link rel="stylesheet" href="/frontend/styles/articles/updates-august-17.css">
+</head>
+<body class="article-page">
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/">Главная</a> → 
-      <a href="/frontend/news/index.html">Новости</a> → 
-      <span>Обновления 17 августа</span>
+      <a href="/">ہوم</a> → 
+      <a href="/frontend/news/">خبریں</a> → 
+      <span>17 اگست اپڈیٹس</span>
     </div>
 
-    <div class="news-container">
+    <article>
       <!-- Заголовок новости -->
-      <div class="news-header">
-        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
-        <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <header class="article-header">
+        <div class="ad-top-banner ad-banner">
           <ins class="mrg-tag" 
               style="display:inline-block;"
               data-ad-client="ad-1897960" 
               data-ad-slot="1897960">
           </ins>
         </div>
-        <script>
-          (MRGtag = window.MRGtag || []).push({});
-        </script>
-        <h1 class="news-title">🚀 Обновления Serpmonn</h1>
-        <div class="news-date">17 августа 2025 года</div>
-      </div>
+        <h1 class="article-title">🚀 Serpmonn اپڈیٹس</h1>
+        <div class="article-date">17 اگست 2025</div>
+      </header>
 
       <!-- Краткое резюме -->
-      <div class="news-summary">
-        <h3>📋 Что нового</h3>
-        <p>Добавлены полезные инструменты для водителей, улучшен калькулятор амортизации автомобиля, исправлены критические ошибки и оптимизирована производительность.</p>
+      <div class="summary">
+        <h3>📋 نیا کیا ہے</h3>
+        <p>ڈرائیوروں کے لیے مفید اوزار شامل کیے، گاڑی ڈپریسی ایشن کیلکولیٹر کو بہتر کیا، اہم خرابیاں دور کیں اور کارکردگی کو بہتر بنایا۔</p>
       </div>
 
       <!-- Статистика обновления -->
       <div class="stats-grid">
         <div class="stat-card">
           <div class="stat-number">3</div>
-          <div class="stat-label">Новых инструмента</div>
+          <div class="stat-label">نئے اوزار</div>
         </div>
         <div class="stat-card">
           <div class="stat-number">15+</div>
-          <div class="stat-label">Исправленных ошибок</div>
+          <div class="stat-label">خرابیاں دور</div>
         </div>
         <div class="stat-card">
           <div class="stat-number">8</div>
-          <div class="stat-label">Улучшений UX</div>
+          <div class="stat-label">UX بہتری</div>
         </div>
       </div>
 
       <!-- Раздел для водителей -->
       <div class="update-section">
-        <h3>🚗 Для водителей</h3>
+        <h3>🚗 ڈرائیوروں کے لیے</h3>
         <ul class="feature-list">
-          <li>Точнее учтены коэффициенты в калькуляторе амортизации.</li>
-          <li>Улучшено отображение данных на мобильных устройствах.</li>
-          <li>Мелкие правки интерфейса для удобства использования.</li>
+          
+          <li>ڈپریسی ایشن کیلکولیٹر میں کوفیشینٹس کو زیادہ درستی سے شامل کیا گیا۔</li>
+          
+          <li>موبائل آلات پر ڈیٹا ڈسپلے کو بہتر بنایا گیا۔</li>
+          
+          <li>استعمال میں آسانی کے لیے انٹرفیس میں چھوٹی موٹی تبدیلیاں۔</li>
+          
         </ul>
       </div>
 
       <!-- Раздел для инженеров -->
       <div class="update-section">
+        <h3>🔧 انجینئرز کے لیے</h3>
+        <ul class="feature-list">
+          
+          <li>اوزار اور یونٹ کنورٹرز کے بارے میں مواد تیار کیا گیا (جلد آرہا ہے)۔</li>
+          
+          <li>کیلکولیشن پیرامیٹرز اور حد کی ویلیوز کو واضح کیا گیا۔</li>
+          
+        </ul>
+      </div>
+
       <!-- Новые функции платформы -->
       <div class="update-section">
-        <h3>🌟 Новые функции платформы</h3>
+        <h3>🌟 پلیٹ فارم کی نئی خصوصیات</h3>
         <ul class="feature-list">
-          <li><strong>Улучшенная система поиска:</strong> Добавлен интеллектуальный поиск с автодополнением и фильтрацией результатов.</li>
-          <li><strong>Персонализированные рекомендации:</strong> Алгоритм теперь анализирует ваши предпочтения и предлагает релевантные инструменты.</li>
-          <li><strong>Мобильная оптимизация:</strong> Все инструменты теперь идеально работают на мобильных устройствах с адаптивным дизайном.</li>
-          <li><strong>Система уведомлений:</strong> Получайте уведомления о новых функциях и обновлениях интересующих вас инструментов.</li>
+          
+          <li><strong>بہتر سرچ سسٹم:</strong> آٹو کمپلیٹ اور رزلٹ فلٹرنگ کے ساتھ انٹیلیجنٹ سرچ شامل کی گئی۔</li>
+          
+          <li><strong>ذاتی سفارشات:</strong> الگورتھم اب آپ کی ترجیحات کا تجزیہ کرتا ہے اور متعلقہ اوزار تجویز کرتا ہے۔</li>
+          
+          <li><strong>موبائل آپٹیمائزیشن:</strong> تمام اوزار اب موبائل آلات پر بہترین کام کرتے ہیں ریسپانسیو ڈیزائن کے ساتھ۔</li>
+          
+          <li><strong>نوٹیفیکیشن سسٹم:</strong> آپ کی دلچسپی کے اوزار کے نئے فیچرز اور اپڈیٹس کے بارے میں اطلاع حاصل کریں۔</li>
+          
         </ul>
       </div>
 
       <!-- Улучшения производительности -->
       <div class="update-section">
-        <h3>⚡ Улучшения производительности</h3>
+        <h3>⚡ کارکردگی کی بہتری</h3>
         <ul class="feature-list">
-          <li><strong>Ускоренная загрузка:</strong> Время загрузки страниц сокращено на 40% благодаря оптимизации кода и кэшированию.</li>
-          <li><strong>Оптимизированные вычисления:</strong> Математические операции теперь выполняются в 2 раза быстрее.</li>
-          <li><strong>Улучшенная стабильность:</strong> Снижено количество ошибок на 60% благодаря улучшенной обработке исключений.</li>
-        </ul>
-      </div>
-        <h3>🔧 Для инженеров</h3>
-        <ul class="feature-list">
-          <li>Подготовлен материал по инструментам и конвертерам единиц (скоро).</li>
-          <li>Уточнены параметры расчётов и предельные значения.</li>
+          
+          <li><strong>تیز لوڈنگ:</strong> کوڈ آپٹیمائزیشن اور کیشنگ کی بدولت صفحہ لوڈنگ ٹائم 40% کم ہوا۔</li>
+          
+          <li><strong>آپٹیمائزڈ کیلکولیشن:</strong> ریاضی کے آپریشن اب 2 گنا تیز ہیں۔</li>
+          
+          <li><strong>بہتر استحکام:</strong> بہتر ایکسپشن ہینڈلنگ کی بدولت خرابیوں کی تعداد 60% کم ہوئی۔</li>
+          
         </ul>
       </div>
 
       <!-- Исправления ошибок -->
       <div class="bug-fix">
-        <h4>🛠 Исправления</h4>
+        <h4>🛠 خرابیوں کی اصلاح</h4>
         <ul class="feature-list">
-          <li>Исправлены ошибки верстки в карточках новостей.</li>
-          <li>Повышена стабильность работы переключателей категорий.</li>
+          
+          <li>خبروں کے کارڈز میں لی آؤٹ کی خرابیاں دور کی گئیں۔</li>
+          
+          <li>کیٹیگری سوئچرز کے کام کرنے کی استحکام میں اضافہ کیا گیا۔</li>
+          
         </ul>
       </div>
 
       <!-- Поделиться -->
       <div class="social-share">
-        <a class="share-btn vk" href="https://vk.com/share.php?url=https%3A%2F%2Fserpmonn.ru%2Ffrontend%2Fnews%2Fupdates-august-17.html" target="_blank" rel="noopener">Поделиться VK</a>
-        <a class="share-btn telegram" href="https://t.me/share/url?url=https%3A%2F%2Fserpmonn.ru%2Ffrontend%2Fnews%2Fupdates-august-17.html&text=%F0%9F%9A%80%20Обновления%20Serpmonn" target="_blank" rel="noopener">Поделиться Telegram</a>
+        <a class="share-btn vk" href="https://vk.com/share.php?url=https%3A%2F%2Fserpmonn.ru%2Ffrontend%2Fur%2Fnews%2Farticles%2Fupdates-august-17.html" target="_blank" rel="noopener">VK پر شیئر کریں</a>
+        <a class="share-btn telegram" href="https://t.me/share/url?url=https%3A%2F%2Fserpmonn.ru%2Ffrontend%2Fur%2Fnews%2Farticles%2Fupdates-august-17.html&text=%F0%9F%9A%80%20Serpmonn%20%D8%A7%D9%BE%DA%88%DB%8C%D9%B9%D8%B3" target="_blank" rel="noopener">Telegram پر شیئر کریں</a>
+      </div>
+    </article>
+
+    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    
+    <!-- Мобильная реклама -->
+    <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+      <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+        <button type="button" aria-label="اشتہار بند کریں" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+        <ins class="mrg-tag" 
+            style="display:inline-block;width:320px;height:50px" 
+            data-ad-client="ad-1898031"
+            data-ad-slot="1898031">
+        </ins>
       </div>
     </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация рекламы в шапке
+            const adTag = document.querySelector('.mrg-tag');
+            const adBanner = document.querySelector('.ad-top-banner');
+            
+            if (adTag) {
+                const script = document.createElement('script');
+                script.src = 'https://ad.mail.ru/static/ads-async.js';
+                script.async = true;
+                document.head.appendChild(script);
+                (window.MRGtag = window.MRGtag || []).push({});
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-      <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+                // Проверка загрузки рекламы
+                function checkAdVisibility() {
+                    const adContent = adTag;
+                    
+                    // Проверяем различные условия невидимости рекламы
+                    const isAdVisible = adContent && 
+                                       adContent.offsetHeight > 0 && 
+                                       adContent.innerHTML.trim() !== '' &&
+                                       window.getComputedStyle(adContent).display !== 'none' &&
+                                       window.getComputedStyle(adContent).visibility !== 'hidden' &&
+                                       adContent.getBoundingClientRect().height > 0;
+                    
+                    if (!isAdVisible) {
+                        adBanner.classList.add('hidden');
+                    } else {
+                        adBanner.classList.remove('hidden');
+                    }
+                }
+
+                // Проверяем рекламу несколько раз с интервалами
+                setTimeout(checkAdVisibility, 2000);
+                setTimeout(checkAdVisibility, 5000);
+                setTimeout(checkAdVisibility, 10000);
+
+                // Также проверяем при изменении размера окна
+                window.addEventListener('resize', function() {
+                    setTimeout(checkAdVisibility, 500);
+                });
+
+                // Наблюдатель за изменениями в DOM для рекламы
+                const mutationObserver = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                            setTimeout(checkAdVisibility, 1000);
+                        }
+                    });
+                });
+
+                mutationObserver.observe(adTag, {
+                    childList: true,
+                    attributes: true,
+                    subtree: true
+                });
+            } else {
+                // Если рекламный тег не найден, скрываем баннер сразу
+                if (adBanner) {
+                    adBanner.classList.add('hidden');
+                }
+            }
+
+            // Мобильная якорная реклама
+            (function(){
+                if (localStorage.getItem('anchor_closed')==='1') return;
+                var w = window.innerWidth || document.documentElement.clientWidth;
+                var a = document.getElementById('mobile-anchor-ad');
+                if (!a) return;
+                if (w <= 768) { a.style.display = "flex"; }
+                (window.MRGtag = window.MRGtag || []).push({});
+                if (window.visualViewport) {
+                    visualViewport.addEventListener('resize', function(){
+                        var h = visualViewport.height;
+                        a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+                    });
+                }
+            })();
+
+            /*ANCHOR_COLLAPSE*/
+            (function(){
+                var a=document.getElementById('mobile-anchor-ad'); 
+                if(!a) return;
+                setTimeout(function(){ 
+                    var ins=a.querySelector('ins.mrg-tag'); 
+                    var has=ins && ins.querySelector('iframe'); 
+                    if(!has){
+                        (window.MRGtag=window.MRGtag||[]).push({});
+                        setTimeout(function(){ 
+                            var ins2=a.querySelector('ins.mrg-tag'); 
+                            var has2=ins2 && ins2.querySelector('iframe'); 
+                            if(!has2){ 
+                                a.style.display='none'; 
+                            } 
+                        }, 2000);
+                    } 
+                }, 2000);
+            })();
+
+            /*GLOBAL_AD_HOOK*/
+            (function(){
+                function handleIns(ins){
+                    if (!ins || ins.__handled) return; 
+                    ins.__handled = true;
+                    setTimeout(function(){
+                        var has = !!ins.querySelector("iframe");
+                        if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
+                        setTimeout(function(){ 
+                            if (!ins.querySelector("iframe")) { 
+                                var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); 
+                                if(p) p.style.display='none'; 
+                            } 
+                        }, 2000);
+                    });
+                }
+                document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
+                var mo = new MutationObserver(function(muts){
+                    muts.forEach(function(m){ 
+                        m.addedNodes && m.addedNodes.forEach(function(n){ 
+                            if(n.querySelectorAll){ 
+                                n.querySelectorAll("ins.mrg-tag").forEach(handleIns); 
+                            } 
+                        }); 
+                    });
+                });
+                mo.observe(document.documentElement,{childList:true,subtree:true});
+            })();
+        });
+    </script>
+    
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
 </html>

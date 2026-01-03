@@ -1,0 +1,373 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/tools/ecology/product-footprint-calculator.html{% else %}/frontend/{{ locale }}/tools/ecology/product-footprint-calculator.html{% endif %}"
+eleventyComputed:
+  title: "{{ productFootprintCalculator[locale].title }}"
+  description: "{{ productFootprintCalculator[locale].meta_description }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+    <meta name="keywords" content="{{ productFootprintCalculator[locale].meta_keywords }}">
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ productFootprintCalculator[locale].og_title }}">
+    <meta property="og:description" content="{{ productFootprintCalculator[locale].og_description }}">
+    <meta property="og:image" content="{{ productFootprintCalculator[locale].og_image }}">
+    <meta property="og:url" content="https://serpmonn.ru{{ page.url }}">
+    <meta property="og:type" content="website">
+
+    <!-- VKontakte -->
+    <meta property="vk:title" content="{{ productFootprintCalculator[locale].vk_title }}">
+    <meta property="vk:description" content="{{ productFootprintCalculator[locale].vk_description }}">
+    <meta property="vk:image" content="{{ productFootprintCalculator[locale].vk_image }}">
+    
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    
+    <!-- Каноническая ссылка -->
+    {% if locale == 'ru' %}
+    <link rel="canonical" href="https://serpmonn.ru/frontend/tools/ecology/product-footprint-calculator.html" />
+    {% else %}
+    <link rel="canonical" href="https://serpmonn.ru/frontend/{{ locale }}/tools/ecology/product-footprint-calculator.html" />
+    {% endif %}
+    
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+      {% if loc == 'ru' %}
+        <link rel="alternate" href="https://serpmonn.ru/frontend/tools/ecology/product-footprint-calculator.html" hreflang="{{ loc }}" />
+      {% else %}
+        <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/tools/ecology/product-footprint-calculator.html" hreflang="{{ loc }}" />
+      {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="https://serpmonn.ru/frontend/tools/ecology/product-footprint-calculator.html" hreflang="x-default" />
+
+    <!-- JSON-LD: WebApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "{{ productFootprintCalculator[locale].header.title }}",
+      "description": "{{ productFootprintCalculator[locale].meta_description }}",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Any",
+      "url": "https://www.serpmonn.ru{{ page.url }}",
+      "author": {
+        "@type": "Organization",
+        "name": "Serpmonn"
+      },
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
+
+    <!-- JSON-LD: BreadcrumbList -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {
+          "@type": "ListItem",
+          "position": 1,
+          "name": "{{ productFootprintCalculator[locale].breadcrumbs.home }}",
+          "item": "https://www.serpmonn.ru/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 2,
+          "name": "{{ productFootprintCalculator[locale].breadcrumbs.tools }}",
+          "item": "https://www.serpmonn.ru/frontend/tools/"
+        },
+        {
+          "@type": "ListItem",
+          "position": 3,
+          "name": "{{ productFootprintCalculator[locale].breadcrumbs.current }}"
+        }
+      ]
+    }
+    </script>
+
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    
+    <!-- Mail.ru Advertising -->
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+</head>
+<body class="product-calculator">
+    <div id="menuContainer"></div>
+    
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      <a href="/">{{ productFootprintCalculator[locale].breadcrumbs.home }}</a> →
+      <a href="/frontend/tools/">{{ productFootprintCalculator[locale].breadcrumbs.tools }}</a> →
+      <span>{{ productFootprintCalculator[locale].breadcrumbs.current }}</span>
+    </div>
+
+    <div class="container">
+        <div class="header">
+            <h1>{{ productFootprintCalculator[locale].header.title }}</h1>
+            <p>{{ productFootprintCalculator[locale].header.subtitle }}</p>
+        </div>
+
+        <div class="calculator-card">
+            <h2 class="section-title">
+                {{ productFootprintCalculator[locale].calculator.section_title }}
+            </h2>
+            
+            <div id="products-container">
+                <!-- Продукты будут загружены JavaScript -->
+            </div>
+            
+            <button class="add-product-btn" onclick="addProductRow()">
+                {{ productFootprintCalculator[locale].buttons.add_product }}
+            </button>
+            
+            <button class="calculate-btn" onclick="calculateFootprint()">
+                {{ productFootprintCalculator[locale].buttons.calculate }}
+            </button>
+        </div>
+
+        <div id="results-section" class="results-section">
+            <h2 class="section-title">
+                {{ productFootprintCalculator[locale].results.title }}
+            </h2>
+            
+            <div class="results-grid">
+                <div class="result-card">
+                    <div class="result-value" id="carbon-footprint">0</div>
+                    <div class="result-label">{{ productFootprintCalculator[locale].results.carbon_label }}</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-value" id="water-footprint">0</div>
+                    <div class="result-label">{{ productFootprintCalculator[locale].results.water_label }}</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-value" id="land-footprint">0</div>
+                    <div class="result-label">{{ productFootprintCalculator[locale].results.land_label }}</div>
+                </div>
+                <div class="result-card">
+                    <div class="result-value" id="eco-score">0</div>
+                    <div class="result-label">{{ productFootprintCalculator[locale].results.eco_score_label }}</div>
+                </div>
+            </div>
+            
+            <!-- Рекламный блок - баннер -->
+            <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
+                <ins class="mrg-tag" 
+                    style="display:inline-block;width:728px;height:90px" 
+                    data-ad-client="ad-1898031" 
+                    data-ad-slot="1898031">
+                </ins>
+            </div>
+
+            <div class="comparison-section">
+                <h3 class="comparison-title">{{ productFootprintCalculator[locale].comparison.title }}</h3>
+                <div id="comparison-results"></div>
+            </div>
+
+            <div class="recommendations">
+                <h3>{{ productFootprintCalculator[locale].recommendations.title }}</h3>
+                <div id="recommendations-list"></div>
+            </div>
+            
+            <!-- Рекламный блок - квадрат -->
+            <div class="ad-container" style="margin: 20px 0; text-align: center;">
+                <ins class="mrg-tag" 
+                    style="display:inline-block;width:300px;height:250px" 
+                    data-ad-client="ad-1897960" 
+                    data-ad-slot="1897960">
+                </ins>
+            </div>
+
+            <div class="share-buttons">
+                <a class="share-btn vk" href="https://vk.com/share.php?url=https%3A%2F%2Fserpmonn.ru{{ page.url | urlencode }}" target="_blank" rel="noopener">
+                    {{ productFootprintCalculator[locale].buttons.share_vk }}
+                </a>
+                <a class="share-btn telegram" href="https://t.me/share/url?url=https%3A%2F%2Fserpmonn.ru{{ page.url | urlencode }}&text={{ productFootprintCalculator[locale].header.title | urlencode }}" target="_blank" rel="noopener">
+                    {{ productFootprintCalculator[locale].buttons.share_telegram }}
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Мобильная якорная реклама -->
+    <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
+      <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+        <button type="button" aria-label="{{ productFootprintCalculator[locale].ads.closeAria }}" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+        <ins class="mrg-tag" 
+            style="display:inline-block;width:320px;height:50px" 
+            data-ad-client="ad-1898031"
+            data-ad-slot="1898031">
+        </ins>
+      </div>
+    </div>
+
+    <script src="/frontend/tools/ecology/database.js"></script>
+    <script src="/frontend/tools/ecology/calculator.js"></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    
+    <!-- Mail.ru Advertising Script -->
+    <script>
+        (MRGtag = window.MRGtag || []).push({});
+    </script>
+    
+    <!-- Инициализация переводов для JS -->
+    <script>
+        // Экспортируем переводы для использования в JavaScript
+        window.i18n = {{ productFootprintCalculator[locale] | dump | safe }};
+        
+        // Инициализация калькулятора после загрузки переводов
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof initProductCalculator === 'function') {
+                initProductCalculator();
+            }
+        });
+    </script>
+    
+    <!-- Скрипты для рекламы -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Инициализация рекламы
+            const adTags = document.querySelectorAll('.mrg-tag');
+            
+            if (adTags.length > 0) {
+                // Проверка загрузки рекламы
+                function checkAdVisibility(adTag) {
+                    const adContainer = adTag.closest('.ad-container');
+                    if (!adContainer) return;
+                    
+                    // Проверяем различные условия невидимости рекламы
+                    const isAdVisible = adTag && 
+                                       adTag.offsetHeight > 0 && 
+                                       adTag.innerHTML.trim() !== '' &&
+                                       window.getComputedStyle(adTag).display !== 'none' &&
+                                       window.getComputedStyle(adTag).visibility !== 'hidden' &&
+                                       adTag.getBoundingClientRect().height > 0;
+                    
+                    if (!isAdVisible) {
+                        adContainer.classList.add('hidden');
+                    } else {
+                        adContainer.classList.remove('hidden');
+                    }
+                }
+
+                // Проверяем рекламу несколько раз с интервалами
+                adTags.forEach(tag => {
+                    setTimeout(() => checkAdVisibility(tag), 2000);
+                    setTimeout(() => checkAdVisibility(tag), 5000);
+                    setTimeout(() => checkAdVisibility(tag), 10000);
+                });
+
+                // Также проверяем при изменении размера окна
+                window.addEventListener('resize', function() {
+                    setTimeout(() => {
+                        adTags.forEach(tag => checkAdVisibility(tag));
+                    }, 500);
+                });
+
+                // Наблюдатель за изменениями в DOM для рекламы
+                const mutationObserver = new MutationObserver(function(mutations) {
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList' || mutation.type === 'attributes') {
+                            setTimeout(() => {
+                                adTags.forEach(tag => checkAdVisibility(tag));
+                            }, 1000);
+                        }
+                    });
+                });
+
+                adTags.forEach(tag => {
+                    mutationObserver.observe(tag, {
+                        childList: true,
+                        attributes: true,
+                        subtree: true
+                    });
+                });
+            }
+
+            // Мобильная якорная реклама
+            (function(){
+                if (localStorage.getItem('anchor_closed')==='1') return;
+                var w = window.innerWidth || document.documentElement.clientWidth;
+                var a = document.getElementById('mobile-anchor-ad');
+                if (!a) return;
+                if (w <= 768) { a.style.display = "flex"; }
+                (window.MRGtag = window.MRGtag || []).push({});
+                if (window.visualViewport) {
+                    visualViewport.addEventListener('resize', function(){
+                        var h = visualViewport.height;
+                        a.style.display = (h < window.innerHeight * 0.8) ? "none" : ( (w <= 768) ? "flex" : "none" );
+                    });
+                }
+            })();
+
+            /*ANCHOR_COLLAPSE*/
+            (function(){
+                var a=document.getElementById('mobile-anchor-ad'); 
+                if(!a) return;
+                setTimeout(function(){ 
+                    var ins=a.querySelector('ins.mrg-tag'); 
+                    var has=ins && ins.querySelector('iframe'); 
+                    if(!has){
+                        (window.MRGtag=window.MRGtag||[]).push({});
+                        setTimeout(function(){ 
+                            var ins2=a.querySelector('ins.mrg-tag'); 
+                            var has2=ins2 && ins2.querySelector('iframe'); 
+                            if(!has2){ 
+                                a.style.display='none'; 
+                            } 
+                        }, 2000);
+                    } 
+                }, 2000);
+            })();
+
+            /*GLOBAL_AD_HOOK*/
+            (function(){
+                function handleIns(ins){
+                    if (!ins || ins.__handled) return; 
+                    ins.__handled = true;
+                    setTimeout(function(){
+                        var has = !!ins.querySelector("iframe");
+                        if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
+                        setTimeout(function(){ 
+                            if (!ins.querySelector("iframe")) { 
+                                var p=ins.closest(".ad-container,.mobile-anchor-ad"); 
+                                if(p) p.style.display='none'; 
+                            } 
+                        }, 2000);
+                    });
+                }
+                document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
+                var mo = new MutationObserver(function(muts){
+                    muts.forEach(function(m){ 
+                        m.addedNodes && m.addedNodes.forEach(function(n){ 
+                            if(n.querySelectorAll){ 
+                                n.querySelectorAll("ins.mrg-tag").forEach(handleIns); 
+                            } 
+                        }); 
+                    });
+                });
+                mo.observe(document.documentElement,{childList:true,subtree:true});
+            })();
+        });
+    </script>
+    
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>
