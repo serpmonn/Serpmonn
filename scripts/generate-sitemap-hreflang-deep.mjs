@@ -1,132 +1,191 @@
 #!/usr/bin/env node
-// Генерация sitemap-hreflang.xml (глубинные страницы news/tools/games + главные/индексы)
+// Генерация sitemap-hreflang.xml - ПРОСТОЙ ВАРИАНТ
 import fs from 'node:fs';
 import path from 'node:path';
 
-const FRONTEND_DIR = path.join(process.cwd(), 'frontend');
-const SITEMAPS_DIR = path.join(process.cwd(), 'sitemaps');
-const LANGS_FILE = path.join(FRONTEND_DIR, 'i18n', 'languages.json');
+const PROJECT_ROOT = process.cwd();
+const FRONTEND_DIR = path.join(PROJECT_ROOT, '..', 'frontend');
+const SITEMAPS_DIR = path.join(PROJECT_ROOT, '..', 'sitemaps');
+const LANGS_FILE = path.join(PROJECT_ROOT, '..', 'assembly', 'site', '_data', 'locales.json');
 const BASE = 'https://www.serpmonn.ru';
 
-function read(file){ try { return fs.readFileSync(file,'utf8'); } catch { return null; } }
-function write(file, txt){ fs.writeFileSync(file, txt, 'utf8'); }
-
-function loadLangs(){
-  const raw = read(LANGS_FILE);
-  if (!raw) throw new Error('languages.json не найден');
-  const arr = JSON.parse(raw);
-  return arr.map(x=>x.code);
+// 1. Загружаем языки
+function loadLangs() {
+  const raw = fs.readFileSync(LANGS_FILE, 'utf8');
+  const data = JSON.parse(raw);
+  return Array.isArray(data) && typeof data[0] === 'string' 
+    ? data 
+    : data.map(x => x.code);
 }
 
-function walk(dir){
-  const out = [];
-  const stack = [dir];
-  while (stack.length){
-    const cur = stack.pop();
-    let st; try { st = fs.statSync(cur); } catch { continue; }
-    if (st.isDirectory()){
-      for (const e of fs.readdirSync(cur)){
-        if (e.startsWith('.')) continue;
-        stack.push(path.join(cur, e));
-      }
-    } else if (st.isFile() && cur.toLowerCase().endsWith('.html')){
-      out.push(cur);
-    }
-  }
-  return out;
-}
-
-function collectHomeAndSectionIndexes(langCodes){
-  const clusters = new Map(); // key -> Map(lang -> url)
-  // home
-  clusters.set('home', new Map([['ru', `${BASE}/`]]));
-  for (const code of langCodes){
-    const p = path.join(FRONTEND_DIR, code, 'index.html');
-    if (fs.existsSync(p)) clusters.get('home').set(code, `${BASE}/frontend/${code}/`);
-  }
-  // section indexes
-  for (const section of ['news','tools','games']){
-    const ruIndex = path.join(FRONTEND_DIR, section, 'index.html');
-    if (fs.existsSync(ruIndex)){
-      const key = `${section}/index.html`;
-      clusters.set(key, new Map([['ru', `${BASE}/frontend/${section}/index.html`]]));
-    }
-    for (const code of langCodes){
-      const p = path.join(FRONTEND_DIR, code, section, 'index.html');
-      if (fs.existsSync(p)){
-        const key = `${section}/index.html`;
-        if (!clusters.has(key)) clusters.set(key, new Map());
-        clusters.get(key).set(code, `${BASE}/frontend/${code}/${section}/index.html`);
-      }
-    }
-  }
-  return clusters;
-}
-
-function collectDeepSections(langCodes){
-  const clusters = new Map(); // key (section/relPath) -> Map(lang -> url)
-  const sections = ['news','tools','games'];
-  for (const section of sections){
-    const ruDir = path.join(FRONTEND_DIR, section);
-    if (!fs.existsSync(ruDir)) continue;
-    const ruFiles = walk(ruDir).filter(f => !/\/index\.html$/i.test(f));
-    for (const ruFile of ruFiles){
-      const relFromSection = path.relative(ruDir, ruFile).replace(/\\/g,'/');
-      const key = `${section}/${relFromSection}`;
-      const ruUrl = `${BASE}/frontend/${section}/${relFromSection}`;
-      const map = new Map();
-      map.set('ru', ruUrl);
-      for (const code of langCodes){
-        const localizedFile = path.join(FRONTEND_DIR, code, section, relFromSection);
-        if (fs.existsSync(localizedFile)){
-          map.set(code, `${BASE}/frontend/${code}/${section}/${relFromSection}`);
+// 2. Ищем ВСЕ HTML файлы в frontend
+function findAllHtmlFiles(rootDir) {
+  const files = [];
+  const stack = [rootDir];
+  
+  while (stack.length) {
+    const current = stack.pop();
+    
+    try {
+      const stat = fs.statSync(current);
+      
+      if (stat.isDirectory()) {
+        const entries = fs.readdirSync(current);
+        for (const entry of entries) {
+          if (entry.startsWith('.')) continue; // Пропускаем скрытые файлы
+          stack.push(path.join(current, entry));
         }
+      } else if (stat.isFile() && current.toLowerCase().endsWith('.html')) {
+        files.push(current);
       }
-      clusters.set(key, map);
+    } catch (err) {
+      // Игнорируем ошибки доступа
+      continue;
     }
   }
-  return clusters;
+  
+  return files;
 }
 
-function toHreflangCode(lang){
-  if (lang === 'pt-br') return 'pt-BR';
-  if (lang === 'pt-pt') return 'pt-PT';
-  return lang;
+// 3. Группируем файлы по "логическим" страницам
+function groupPagesByBaseName(allFiles, langs) {
+  const pageGroups = new Map(); // baseName -> Map(lang -> url)
+  
+  for (const file of allFiles) {
+    // Относительный путь от FRONTEND_DIR
+    const relPath = path.relative(FRONTEND_DIR, file).replace(/\\/g, '/');
+    
+    // Определяем язык и базовое имя
+    const parts = relPath.split('/');
+    let lang = 'ru'; // По умолчанию русский
+    let basePath = relPath;
+    
+    // Если первый элемент - код языка
+    if (langs.includes(parts[0]) && parts.length > 1) {
+      lang = parts[0];
+      basePath = parts.slice(1).join('/'); // Убираем язык из пути
+    }
+    
+    // Группируем по базовому пути
+    if (!pageGroups.has(basePath)) {
+      pageGroups.set(basePath, new Map());
+    }
+    
+    const url = `${BASE}/frontend/${relPath}`;
+    pageGroups.get(basePath).set(lang, url);
+  }
+  
+  return pageGroups;
 }
 
-function clustersToXml(clusters){
+// 4. Генерируем XML
+function generateXml(pageGroups) {
   const urls = [];
-  for (const [, byLang] of clusters){
-    const entries = Array.from(byLang.entries());
-    const ruEntry = entries.find(([l]) => l === 'ru');
-    const ruUrl = ruEntry ? ruEntry[1] : null;
-    const loc = ruUrl || (entries[0] ? entries[0][1] : null);
+  
+  for (const [basePath, langMap] of pageGroups) {
+    const entries = Array.from(langMap.entries());
+    
+    // Русская версия как основная (если есть)
+    const ruEntry = entries.find(([lang]) => lang === 'ru');
+    const ruUrl = ruEntry ? ruEntry[1] : entries[0][1]; // Или первая попавшаяся
+    const loc = ruUrl;
+    
     if (!loc) continue;
+    
     const links = [];
-    if (ruUrl) links.push(`<xhtml:link rel="alternate" hreflang="ru" href="${ruUrl}"/>`);
-    for (const [lang, href] of entries){
-      if (lang === 'ru') continue;
-      links.push(`<xhtml:link rel="alternate" hreflang="${toHreflangCode(lang)}" href="${href}"/>`);
+    
+    // Добавляем все языковые версии
+    for (const [lang, href] of entries) {
+      const hreflang = lang === 'pt-br' ? 'pt-BR' : 
+                      lang === 'pt-pt' ? 'pt-PT' : 
+                      lang === 'zh-cn' ? 'zh-CN' : 
+                      lang;
+      links.push(`<xhtml:link rel="alternate" hreflang="${hreflang}" href="${href}"/>`);
     }
-    if (ruUrl) links.push(`<xhtml:link rel="alternate" hreflang="x-default" href="${ruUrl}"/>`);
-    urls.push(`  <url>\n    <loc>${loc}</loc>\n${links.map(l=>'    '+l).join('\n')}\n  </url>`);
+    
+    // Если есть русская версия - добавляем x-default
+    if (ruEntry) {
+      links.push(`<xhtml:link rel="alternate" hreflang="x-default" href="${ruUrl}"/>`);
+    }
+    
+    urls.push(`  <url>\n    <loc>${loc}</loc>\n${links.map(l => '    ' + l).join('\n')}\n  </url>`);
   }
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n${urls.join('\n')}\n</urlset>\n`;
+  
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" 
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+${urls.join('\n')}
+</urlset>`;
 }
 
-function main(){
-  if (!fs.existsSync(SITEMAPS_DIR)) fs.mkdirSync(SITEMAPS_DIR, { recursive: true });
-  const langs = loadLangs();
-  const clusters = new Map();
-  // home + section indexes
-  for (const [k,v] of collectHomeAndSectionIndexes(langs)) clusters.set(k,v);
-  // deep pages
-  for (const [k,v] of collectDeepSections(langs)) clusters.set(k,v);
-  const xml = clustersToXml(clusters);
-  const out = path.join(SITEMAPS_DIR, 'sitemap-hreflang.xml');
-  write(out, xml);
-  console.log(`Создан ${out}; кластеров: ${clusters.size}`);
+// 5. Главная функция
+function main() {
+  console.log('=== Простой генератор hreflang sitemap ===');
+  console.log(`Ищем HTML файлы в: ${FRONTEND_DIR}`);
+  
+  // Создаем папку если нужно
+  if (!fs.existsSync(SITEMAPS_DIR)) {
+    fs.mkdirSync(SITEMAPS_DIR, { recursive: true });
+  }
+  
+  try {
+    // Загружаем языки
+    const langs = loadLangs();
+    console.log(`Загружено языков: ${langs.length}`);
+    
+    // Ищем ВСЕ HTML файлы
+    console.log('Поиск всех HTML файлов...');
+    const allHtmlFiles = findAllHtmlFiles(FRONTEND_DIR);
+    console.log(`Найдено HTML файлов: ${allHtmlFiles.length}`);
+    
+    // Группируем по страницам
+    console.log('Группировка файлов по страницам...');
+    const pageGroups = groupPagesByBaseName(allHtmlFiles, langs);
+    console.log(`Сгруппировано страниц: ${pageGroups.size}`);
+    
+    // Генерируем XML
+    const xml = generateXml(pageGroups);
+    const outPath = path.join(SITEMAPS_DIR, 'sitemap-hreflang.xml');
+    
+    fs.writeFileSync(outPath, xml, 'utf8');
+    
+    // Статистика
+    let totalLinks = 0;
+    let maxLangs = 0;
+    let minLangs = Infinity;
+    
+    for (const [, langMap] of pageGroups) {
+      const count = langMap.size;
+      totalLinks += count;
+      if (count > maxLangs) maxLangs = count;
+      if (count < minLangs) minLangs = count;
+    }
+    
+    console.log('\n✅ ГОТОВО!');
+    console.log(`📊 Статистика:`);
+    console.log(`   Файл: ${outPath}`);
+    console.log(`   Всего HTML файлов: ${allHtmlFiles.length}`);
+    console.log(`   Уникальных страниц: ${pageGroups.size}`);
+    console.log(`   Всего языковых ссылок: ${totalLinks}`);
+    console.log(`   Макс языков на страницу: ${maxLangs}`);
+    console.log(`   Мин языков на страницу: ${minLangs}`);
+    
+    // Примеры для проверки
+    console.log(`\n📋 Примеры найденных страниц (первые 10):`);
+    let count = 0;
+    for (const [basePath, langMap] of pageGroups) {
+      if (count++ < 10) {
+        const langs = Array.from(langMap.keys()).join(', ');
+        console.log(`   ${basePath} [${langs}]`);
+      }
+    }
+    
+  } catch (error) {
+    console.error('❌ Ошибка:', error.message);
+    console.error(error.stack);
+    process.exit(1);
+  }
 }
 
-try { main(); } catch (e) { console.error('Ошибка:', e.message); process.exit(1); }
-
+// Запуск
+main();
