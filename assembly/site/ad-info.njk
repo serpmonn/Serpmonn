@@ -2,7 +2,7 @@
 pagination:
   data: locales
   size: 1
-  alias: locale  # ← меняем на locale
+  alias: locale
 permalink: "{% if locale == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ locale }}/ad-info/ad-info.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"

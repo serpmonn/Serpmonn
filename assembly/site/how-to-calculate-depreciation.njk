@@ -2,21 +2,22 @@
 pagination:
   data: locales
   size: 1
-  alias: lang
-permalink: "{% if lang == 'ru' %}/frontend/news/articles/how-to-calculate-depreciation.html{% else %}/frontend/{{ lang }}/news/articles/how-to-calculate-depreciation.html{% endif %}"
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/news/articles/how-to-calculate-depreciation.html{% else %}/frontend/{{ locale }}/news/articles/how-to-calculate-depreciation.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/how-to-calculate-depreciation.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/how-to-calculate-depreciation.html{% endif %}"
 ---
 
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="{% if lang in ['ar', 'he', 'ug', 'fa'] %}rtl{% else %}ltr{% endif %}">
+<html lang="{{ locale }}" dir="{{ dir }}">  <!-- ИЗМЕНЕНО: lang → locale -->
   <head>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <meta http-equiv="Content-Language" content="{{ lang }}">
+    <meta http-equiv="Content-Language" content="{{ locale }}">  <!-- ИЗМЕНЕНО: lang → locale -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    {% set article = howToCalculateDepreciation[lang] or howToCalculateDepreciation['ru'] %}
+    {% set article = howToCalculateDepreciation[locale] or howToCalculateDepreciation['ru'] %}  <!-- ИЗМЕНЕНО: lang → locale -->
     
     <title>{{ article.pageTitle }}</title>
     <meta name="description" content="{{ article.metaDescription }}">
@@ -24,15 +25,18 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ article.ogTitle }}">
     <meta property="og:description" content="{{ article.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{% if lang == 'ru' %}/frontend/news/articles/how-to-calculate-depreciation.html{% else %}/frontend/{{ lang }}/news/articles/how-to-calculate-depreciation.html{% endif %}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ article.twitterTitle }}">
     <meta name="twitter:description" content="{{ article.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="{{ canonical }}" />
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -81,8 +85,8 @@ eleventyComputed:
       .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
     </style>
     
-    <!-- Исправленная строка: заменили тернарный оператор на конструкцию if-else -->
-    <nav id="menuContainer" aria-label="{% if lang == 'ru' %}Меню{% elif lang == 'en' %}Menu{% elif lang == 'ar' or lang == 'he' or lang == 'ug' or lang == 'fa' %}القائمة{% else %}Menu{% endif %}"></nav>
+    <!-- ИЗМЕНЕНО: все lang → locale -->
+    <nav id="menuContainer" aria-label="{% if locale == 'ru' %}Меню{% elif locale == 'en' %}Menu{% elif locale == 'ar' or locale == 'he' or locale == 'ug' or locale == 'fa' %}القائمة{% else %}Menu{% endif %}"></nav>
     
     <div class="article-container">
       <div class="article-header">
@@ -129,12 +133,12 @@ eleventyComputed:
         <div class="example-box">
           <h4>{{ article.exampleTitle }}</h4>
           <p>
-            <!-- Исправленные строки: заменили тернарные операторы на конструкции if-else -->
-            <strong>{% if lang == 'ru' %}Автомобиль{% elif lang == 'en' %}Car{% elif lang == 'es' %}Automóvil{% elif lang == 'ug' %}ماشىنا{% else %}Car{% endif %}:</strong> {{ article.example.car }}<br>
-            <strong>{% if lang == 'ru' %}Пробег{% elif lang == 'en' %}Mileage{% elif lang == 'es' %}Kilometraje{% elif lang == 'ug' %}يۈرگەن ماسىفا{% else %}Mileage{% endif %}:</strong> {{ article.example.mileage }}<br>
-            <strong>{% if lang == 'ru' %}Условия{% elif lang == 'en' %}Conditions{% elif lang == 'es' %}Condiciones{% elif lang == 'ug' %}ئىشلەش شارائىتى{% else %}Conditions{% endif %}:</strong> {{ article.example.conditions }}<br>
-            <strong>{% if lang == 'ru' %}Обслуживание{% elif lang == 'en' %}Maintenance{% elif lang == 'es' %}Mantenimiento{% elif lang == 'ug' %}ساقلىش{% else %}Maintenance{% endif %}:</strong> {{ article.example.maintenance }}<br>
-            <strong>{% if lang == 'ru' %}Результат{% elif lang == 'en' %}Result{% elif lang == 'es' %}Resultado{% elif lang == 'ug' %}نەتىجە{% else %}Result{% endif %}:</strong> {{ article.example.result }}
+            <!-- ИЗМЕНЕНО: все lang → locale -->
+            <strong>{% if locale == 'ru' %}Автомобиль{% elif locale == 'en' %}Car{% elif locale == 'es' %}Automóvil{% elif locale == 'ug' %}ماشىنا{% else %}Car{% endif %}:</strong> {{ article.example.car }}<br>
+            <strong>{% if locale == 'ru' %}Пробег{% elif locale == 'en' %}Mileage{% elif locale == 'es' %}Kilometraje{% elif locale == 'ug' %}يۈرگەن ماسىفا{% else %}Mileage{% endif %}:</strong> {{ article.example.mileage }}<br>
+            <strong>{% if locale == 'ru' %}Условия{% elif locale == 'en' %}Conditions{% elif locale == 'es' %}Condiciones{% elif locale == 'ug' %}ئىشلەش شارائىتى{% else %}Conditions{% endif %}:</strong> {{ article.example.conditions }}<br>
+            <strong>{% if locale == 'ru' %}Обслуживание{% elif locale == 'en' %}Maintenance{% elif locale == 'es' %}Mantenimiento{% elif locale == 'ug' %}ساقلىش{% else %}Maintenance{% endif %}:</strong> {{ article.example.maintenance }}<br>
+            <strong>{% if locale == 'ru' %}Результат{% elif locale == 'en' %}Result{% elif locale == 'es' %}Resultado{% elif locale == 'ug' %}نەتىجە{% else %}Result{% endif %}:</strong> {{ article.example.result }}
           </p>
         </div>
 
@@ -172,8 +176,8 @@ eleventyComputed:
         <h2>{{ article.linksTitle }}</h2>
         <ul>
           {% for link in article.links %}
-          <!-- Исправленная строка: заменили тернарный оператор на конструкцию if-else -->
-          <li><a href="{{ link.href }}">{{ link.text }}</a> — {% if lang == 'ru' %}наш инструмент для расчётов{% elif lang == 'en' %}our tool for calculations{% elif lang == 'es' %}nuestra herramienta para cálculos{% elif lang == 'ug' %}ھېسابلاش قورالىمىز{% else %}our tool for calculations{% endif %}</li>
+          <!-- ИЗМЕНЕНО: все lang → locale -->
+          <li><a href="{{ link.href }}">{{ link.text }}</a> — {% if locale == 'ru' %}наш инструмент для расчётов{% elif locale == 'en' %}our tool for calculations{% elif locale == 'es' %}nuestra herramienta para cálculos{% elif locale == 'ug' %}ھېسابلاش قورالىمىز{% else %}our tool for calculations{% endif %}</li>
           {% endfor %}
         </ul>
 
@@ -190,7 +194,7 @@ eleventyComputed:
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
       <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-        <!-- Исправленная строка: оставляем как есть, так как это JavaScript -->
+        <!-- ОСТАВЛЯЕМ без изменений -->
         <button type="button" aria-label="{{ article.closeAd }}" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
         <ins class="mrg-tag" 
             style="display:inline-block;width:320px;height:50px" 
@@ -231,7 +235,6 @@ eleventyComputed:
           var has = !!ins.querySelector("iframe");
           if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
           setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
-        }, 2000);
       }
       document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
       var mo = new MutationObserver(function(muts){

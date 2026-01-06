@@ -2,21 +2,22 @@
 pagination:
   data: locales
   size: 1
-  alias: lang
-permalink: "{% if lang == 'ru' %}/frontend/news/articles/indexnow-practical-guide.html{% else %}/frontend/{{ lang }}/news/articles/indexnow-practical-guide.html{% endif %}"
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/news/articles/indexnow-practical-guide.html{% else %}/frontend/{{ locale }}/news/articles/indexnow-practical-guide.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/indexnow-practical-guide.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/indexnow-practical-guide.html{% endif %}"
 ---
 
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="{% if lang in ['ar', 'he', 'ug', 'fa', 'yi', 'dv', 'ku-Arab', 'ur', 'ps', 'sd'] %}rtl{% else %}ltr{% endif %}">
+<html lang="{{ locale }}" dir="{{ dir }}">
 <head>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <meta http-equiv="Content-Language" content="{{ lang }}">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    {% set article = indexnowPracticalGuide[lang] or indexnowPracticalGuide['ru'] %}
+    {% set article = indexnowPracticalGuide[locale] or indexnowPracticalGuide['ru'] %}
     
     <title>{{ article.meta.title }}</title>
     <meta name="description" content="{{ article.meta.description }}">
@@ -25,15 +26,18 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ article.meta.og.title }}">
     <meta property="og:description" content="{{ article.meta.og.description }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{{ page.url }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ article.meta.twitter.title }}">
     <meta name="twitter:description" content="{{ article.meta.twitter.description }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="{{ canonical }}" />
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -221,12 +225,13 @@ eleventyComputed:
     
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="{{ article.common.homeUrl }}">
-        {{ article.common.home }}
-      </a> →
-      <a href="{{ article.common.newsUrl }}">
-        {{ article.common.news }}
-      </a> →
+      {% if locale == 'ru' %}
+        <a href="/">Главная</a> →
+        <a href="/frontend/news/news.html">Новости</a> →
+      {% else %}
+        <a href="/{{ locale }}/">Home</a> →
+        <a href="/frontend/{{ locale }}/news/news.html">News</a> →
+      {% endif %}
       <span>{{ article.article.title }}</span>
     </div>
 
@@ -323,7 +328,8 @@ eleventyComputed:
       </div>
       {% endif %}
 
-      <a href="/frontend/tools/seo/index.html" class="cta-button">{{ article.buttons.calculatorCTA }}</a>
+      <!-- ИСПРАВЛЕНО: ссылка на инструмент SEO с учетом языка -->
+      <a href="{% if locale == 'ru' %}/frontend/tools/seo/index.html{% else %}/frontend/{{ locale }}/tools/seo/index.html{% endif %}" class="cta-button">{{ article.buttons.calculatorCTA }}</a>
 
       <p class="muted">{{ article.content.updated }}</p>
     </article>

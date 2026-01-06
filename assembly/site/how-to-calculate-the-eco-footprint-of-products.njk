@@ -2,21 +2,22 @@
 pagination:
   data: locales
   size: 1
-  alias: lang
-permalink: "{% if lang == 'ru' %}/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html{% else %}/frontend/{{ lang }}/news/articles/how-to-calculate-the-eco-footprint-of-products.html{% endif %}"
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html{% else %}/frontend/{{ locale }}/news/articles/how-to-calculate-the-eco-footprint-of-products.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/how-to-calculate-the-eco-footprint-of-products.html{% endif %}"
 ---
 
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="{% if lang in ['ar', 'he', 'ug', 'fa', 'yi'] %}rtl{% else %}ltr{% endif %}">
+<html lang="{{ locale }}" dir="{{ dir }}">
   <head>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <meta http-equiv="Content-Language" content="{{ lang }}">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
-    {% set article = ecoFootprintTranslations[lang] %}
+    {% set article = ecoFootprintTranslations[locale] %}
     
     <title>{{ article.meta.title }}</title>
     <meta name="description" content="{{ article.meta.description }}">
@@ -25,15 +26,18 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ article.meta.og.title }}">
     <meta property="og:description" content="{{ article.meta.og.description }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{{ page.url }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ article.meta.twitter.title }}">
     <meta name="twitter:description" content="{{ article.meta.twitter.description }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="{{ canonical }}" />
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -84,7 +88,7 @@ eleventyComputed:
       .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
     </style>
     
-    <nav id="menuContainer" aria-label="{% if lang == 'ru' %}Меню{% elif lang == 'en' %}Menu{% elif lang == 'es' %}Menú{% else %}Menu{% endif %}"></nav>
+    <nav id="menuContainer" aria-label="{% if locale == 'ru' %}Меню{% elif locale == 'en' %}Menu{% elif locale == 'es' %}Menú{% else %}Menu{% endif %}"></nav>
     
     <div class="article-container">
       <div class="article-header">
@@ -200,7 +204,7 @@ eleventyComputed:
     <!-- Мобильная реклама -->
     <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
       <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-        <button type="button" aria-label="{% if lang == 'ru' %}Закрыть рекламу{% elif lang == 'en' %}Close ad{% else %}Close ad{% endif %}" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+        <button type="button" aria-label="{% if locale == 'ru' %}Закрыть рекламу{% elif locale == 'en' %}Close ad{% else %}Close ad{% endif %}" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
         <ins class="mrg-tag" 
             style="display:inline-block;width:320px;height:50px" 
             data-ad-client="ad-1898031"

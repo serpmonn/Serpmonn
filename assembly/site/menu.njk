@@ -5,6 +5,8 @@ pagination:
   alias: locale
 permalink: "{% if locale == 'ru' %}/frontend/menu.html{% else %}/frontend/{{ locale }}/menu.html{% endif %}"
 eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/menu.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/menu.html{% endif %}"
   menu_auth: "{{ menuTranslations[locale].auth }}"
   menu_news: "{{ menuTranslations[locale].news }}"
   menu_games: "{{ menuTranslations[locale].games }}"
@@ -253,7 +255,7 @@ eleventyComputed:
         </div>
     </div>
 
-    <!-- ========== БЛОК ПОИСКА ========== -->
+    <!-- =========- БЛОК ПОИСКА ========== -->
     <div class="menu-search-container" id="menuSearchContainer">
         <div class="menu-search-row">
             <!-- Логотип сайта -->

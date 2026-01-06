@@ -22,33 +22,33 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ login[locale].login.ogTitle }}">
     <meta property="og:description" content="{{ login[locale].login.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{{ page.url | safe }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ login[locale].login.twitterTitle }}">
     <meta name="twitter:description" content="{{ login[locale].login.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
-    <link rel="canonical" href="https://www.serpmonn.ru{{ page.url | safe }}">
+    <link rel="canonical" href="{{ canonical }}">
+    
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/login/login.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/login/login.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/login/login.html" hreflang="x-default" />
     
     <!-- Подключение CSS стилей -->
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <link rel="stylesheet" href="login_styles.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-    
-    <!-- Hreflang для всех языков -->
-    {% for loc in locales %}
-        {% if loc == 'ru' %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/login/login.html" hreflang="{{ loc }}" />
-        {% else %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/login/login.html" hreflang="{{ loc }}" />
-        {% endif %}
-    {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/login/login.html" hreflang="x-default" />
 </head>
 <body>
     <div class="container">

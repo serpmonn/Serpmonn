@@ -2,18 +2,19 @@
 pagination:
   data: locales
   size: 1
-  alias: lang
-permalink: "{% if lang == 'ru' %}/frontend/games/games.html{% else %}/frontend/{{ lang }}/games/games.html{% endif %}"
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/games/games.html{% else %}/frontend/{{ locale }}/games/games.html{% endif %}"
 eleventyComputed:
-  dir: "{% if rtlLocales.indexOf(lang) != -1 %}rtl{% else %}ltr{% endif %}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/games/games.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/games/games.html{% endif %}"
 ---
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="{{ dir }}">
+<html lang="{{ locale }}" dir="{{ dir }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ localesGames[lang].games.pageTitle }}</title>
-    <meta name="description" content="{{ localesGames[lang].games.metaDescription }}">
+    <title>{{ localesGames[locale].games.pageTitle }}</title>  <!-- ← меняем на locale -->
+    <meta name="description" content="{{ localesGames[locale].games.metaDescription }}">
    
     <!-- Яндекс.Метрика -->
     <script type="text/javascript">
@@ -54,22 +55,22 @@ eleventyComputed:
     <!-- /Яндекс.Метрика -->
    
     <!-- Open Graph -->
-    <meta property="og:title" content="{{ localesGames[lang].games.ogTitle }}">
-    <meta property="og:description" content="{{ localesGames[lang].games.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{% if lang == 'ru' %}/frontend/games/games.html{% else %}/frontend/{{ lang }}/games/games.html{% endif %}">
+    <meta property="og:title" content="{{ localesGames[locale].games.ogTitle }}">
+    <meta property="og:description" content="{{ localesGames[locale].games.ogDescription }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
     <!-- Каноническая ссылка -->
-    <link rel="canonical" href="https://serpmonn.ru{% if lang == 'ru' %}/frontend/games/games.html{% else %}/frontend/{{ lang }}/games/games.html{% endif %}" />
+    <link rel="canonical" href="{{ canonical }}" />
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/games/games.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/games/games.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/games/games.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/games/games.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/games/games.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/games/games.html" hreflang="x-default" />
     <!-- Подключение стилей -->
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
@@ -79,30 +80,30 @@ eleventyComputed:
     <link rel="stylesheet" href="/frontend/games/games.css">
 </head>
 <body>
-    <nav id="menuContainer" aria-label="{{ localesGames[lang].games.menuLabel }}"></nav>
+    <nav id="menuContainer" aria-label="{{ localesGames[locale].games.menuLabel }}"></nav>
    
     <main class="page" itemscope itemtype="https://schema.org/ItemList">
-        <meta itemprop="name" content="{{ localesGames[lang].games.schemaName }}">
-        <meta itemprop="numberOfItems" content="{{ localesGames[lang].games.totalGames }}">
+        <meta itemprop="name" content="{{ localesGames[locale].games.schemaName }}">
+        <meta itemprop="numberOfItems" content="{{ localesGames[locale].games.totalGames }}">
         <meta itemprop="publisher" content="Serpmonn">
        
         <h1>
             <img class="section-logo-inline" src="/frontend/images/Games.ico" alt="Serpmonn" loading="lazy">
-            {{ localesGames[lang].games.mainTitle }}
+            {{ localesGames[locale].games.mainTitle }}
         </h1>
         <!-- ФИЛЬТР -->
-        <div class="filter-buttons" role="tablist" aria-label="{{ localesGames[lang].games.filterLabel }}">
+        <div class="filter-buttons" role="tablist" aria-label="{{ localesGames[locale].games.filterLabel }}">
             <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                {{ localesGames[lang].games.filters.all }}
+                {{ localesGames[locale].games.filters.all }}
             </button>
             <button class="filter-btn" data-filter="pc" role="tab">
-                {{ localesGames[lang].games.filters.pc }}
+                {{ localesGames[locale].games.filters.pc }}
             </button>
             <button class="filter-btn" data-filter="web" role="tab">
-                {{ localesGames[lang].games.filters.web }}
+                {{ localesGames[locale].games.filters.web }}
             </button>
             <button class="filter-btn" data-filter="mobile" role="tab">
-                {{ localesGames[lang].games.filters.mobile }}
+                {{ localesGames[locale].games.filters.mobile }}
             </button>
         </div>
        
@@ -112,7 +113,7 @@ eleventyComputed:
             <ins class="mrg-tag" style="display:inline-block" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
         </div>
         <script>(MRGtag = window.MRGtag || []).push({});</script>
-        {% for category in localesGames[lang].games.categories %}
+        {% for category in localesGames[locale].games.categories %}
         <!-- СЕКЦИЯ КАТЕГОРИИ -->
         <section itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <meta itemprop="position" content="{{ loop.index }}">
