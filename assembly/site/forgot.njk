@@ -5,9 +5,9 @@ pagination:
   alias: locale
 permalink: "{% if locale == 'ru' %}/frontend/login/forgot/forgot.html{% else %}/frontend/{{ locale }}/login/forgot/forgot.html{% endif %}"
 eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   title: "{{ forgot[locale].forgot.pageTitle }}"
   description: "{{ forgot[locale].forgot.ogDescription }}"
-  dir: "{% if ['ar', 'fa', 'he', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'].indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/login/forgot/forgot.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/login/forgot/forgot.html{% endif %}"
 ---
 
@@ -23,35 +23,35 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ forgot[locale].forgot.ogTitle }}">
     <meta property="og:description" content="{{ forgot[locale].forgot.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{{ page.url | safe }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ forgot[locale].forgot.twitterTitle }}">
     <meta name="twitter:description" content="{{ forgot[locale].forgot.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
-    <link rel="canonical" href="https://www.serpmonn.ru{{ page.url | safe }}">
+    <link rel="canonical" href="{{ canonical }}">
     
     <!-- Стили -->
-    <link rel="stylesheet" href="forgot_styles.css">
+    <link rel="stylesheet" href="/frontend/login/forgot/forgot_styles.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/login/forgot/forgot.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/login/forgot/forgot.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/login/forgot/forgot.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/login/forgot/forgot.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/login/forgot/forgot.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/login/forgot/forgot.html" hreflang="x-default" />
     
     <!-- Скрипты -->
-    <script type="module" src="forgot_script.js" defer></script>
+    <script type="module" src="/frontend/login/forgot/forgot_script.js" defer></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>

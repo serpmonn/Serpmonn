@@ -4,6 +4,8 @@ pagination:
   size: 1
   alias: lang
 permalink: "{% if lang == 'ru' %}/frontend/news/news.html{% else %}/frontend/{{ lang }}/news/news.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
 ---
 
 <!DOCTYPE html>

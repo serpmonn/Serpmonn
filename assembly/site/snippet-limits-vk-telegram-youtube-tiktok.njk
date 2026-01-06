@@ -4,6 +4,8 @@ pagination:
   size: 1
   alias: lang
 permalink: "{% if lang == 'ru' %}/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% else %}/frontend/{{ lang }}/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
 ---
 
 <!DOCTYPE html>

@@ -4,6 +4,8 @@ pagination:
   size: 1
   alias: lang
 permalink: "{% if lang == 'ru' %}/frontend/promo-codes-and-discounts/promokody-skidki.html{% else %}/frontend/{{ lang }}/promo-codes-and-discounts/promokody-skidki.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
 ---
 
 <!DOCTYPE html>

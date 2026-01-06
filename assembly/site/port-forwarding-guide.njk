@@ -4,6 +4,8 @@ pagination:
   size: 1
   alias: lang
 permalink: "{% if lang == 'ru' %}/frontend/news/articles/port-forwarding-guide.html{% else %}/frontend/{{ lang }}/news/articles/port-forwarding-guide.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
 ---
 
 <!DOCTYPE html>

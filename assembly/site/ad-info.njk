@@ -2,44 +2,46 @@
 pagination:
   data: locales
   size: 1
-  alias: lang
-permalink: "{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ lang }}/ad-info/ad-info.html{% endif %}"
+  alias: locale  # ← меняем на locale
+permalink: "{% if locale == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ locale }}/ad-info/ad-info.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
 ---
 
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="{% if lang in ['ar', 'he', 'ug', 'fa'] %}rtl{% else %}ltr{% endif %}"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes"> 
-    <meta http-equiv="Content-Language" content="{{ lang }}">
-    <title>{{ adInfo[lang].adInfo.pageTitle }}</title>
-    <meta name="description" content="{{ adInfo[lang].adInfo.metaDescription }}">
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <title>{{ adInfo[locale].adInfo.pageTitle }}</title>
+    <meta name="description" content="{{ adInfo[locale].adInfo.metaDescription }}">
     
     <!-- Open Graph -->
-    <meta property="og:title" content="{{ adInfo[lang].adInfo.ogTitle }}">
-    <meta property="og:description" content="{{ adInfo[lang].adInfo.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ lang }}/ad-info/ad-info.html{% endif %}">
+    <meta property="og:title" content="{{ adInfo[locale].adInfo.ogTitle }}">
+    <meta property="og:description" content="{{ adInfo[locale].adInfo.ogDescription }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ site.baseUrl }}{% if locale == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ locale }}/ad-info/ad-info.html{% endif %}">
     <meta property="og:type" content="article">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ adInfo[lang].adInfo.ogTitle }}">
-    <meta name="twitter:description" content="{{ adInfo[lang].adInfo.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:title" content="{{ adInfo[locale].adInfo.ogTitle }}">
+    <meta name="twitter:description" content="{{ adInfo[locale].adInfo.twitterDescription }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
     <!-- Каноническая ссылка -->
-    <link rel="canonical" href="https://serpmonn.ru{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ lang }}/ad-info/ad-info.html{% endif %}" />
+    <link rel="canonical" href="{{ site.baseUrl }}{% if locale == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ locale }}/ad-info/ad-info.html{% endif %}" />
 
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/ad-info/ad-info.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/ad-info/ad-info.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/ad-info/ad-info.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/ad-info/ad-info.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/ad-info/ad-info.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/ad-info/ad-info.html" hreflang="x-default" />
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     
@@ -53,23 +55,23 @@ permalink: "{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/fronte
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>
-    <nav id="menuContainer" aria-label="{{ adInfo[lang].adInfo.menuLabel }}"></nav>
+    <nav id="menuContainer" aria-label="{{ adInfo[locale].adInfo.menuLabel }}"></nav>
     
     <main class="ad-info-page">
         <section>
-            <h1>{{ adInfo[lang].adInfo.mainTitle }}</h1>
-            <p>{{ adInfo[lang].adInfo.introText }}</p>
+            <h1>{{ adInfo[locale].adInfo.mainTitle }}</h1>
+            <p>{{ adInfo[locale].adInfo.introText }}</p>
         </section>
 
         <section>
-            <h2>{{ adInfo[lang].adInfo.partnersTitle }}</h2>
+            <h2>{{ adInfo[locale].adInfo.partnersTitle }}</h2>
             
             <!-- Проверяем, есть ли категории и группировка -->
             {% set showCategories = false %}
-            {% if adInfo[lang].adInfo.partnerCategories is defined and adInfo[lang].adInfo.partnerCategories|length > 0 %}
+            {% if adInfo[locale].adInfo.partnerCategories is defined and adInfo[locale].adInfo.partnerCategories|length > 0 %}
                 {% set showCategories = true %}
-                {% for partnerKey, partner in adInfo[lang].adInfo.partnersList %}
-                    {% if partner.category is defined and partner.category and adInfo[lang].adInfo.partnerCategories[partner.category] is defined %}
+                {% for partnerKey, partner in adInfo[locale].adInfo.partnersList %}
+                    {% if partner.category is defined and partner.category and adInfo[locale].adInfo.partnerCategories[partner.category] is defined %}
                         {% set showCategories = true %}
                     {% endif %}
                 {% endfor %}
@@ -77,11 +79,10 @@ permalink: "{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/fronte
             
             {% if showCategories %}
                 <!-- Выводим сгруппированно по категориям -->
-                {% for categoryKey, categoryName in adInfo[lang].adInfo.partnerCategories %}
+                {% for categoryKey, categoryName in adInfo[locale].adInfo.partnerCategories %}
                     {% set partnersInCategory = [] %}
-                    {% for partnerKey, partner in adInfo[lang].adInfo.partnersList %}
+                    {% for partnerKey, partner in adInfo[locale].adInfo.partnersList %}
                         {% if partner.category is defined and partner.category == categoryKey %}
-                            <!-- Используем метод push и игнорируем результат (возвращает новую длину массива) -->
                             {% set _dummy = partnersInCategory.push({key: partnerKey, data: partner}) %}
                         {% endif %}
                     {% endfor %}
@@ -118,7 +119,7 @@ permalink: "{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/fronte
             {% else %}
                 <!-- Простой список всех партнеров без категорий -->
                 <div class="partners-grid">
-                    {% for partnerKey, partner in adInfo[lang].adInfo.partnersList %}
+                    {% for partnerKey, partner in adInfo[locale].adInfo.partnersList %}
                         <div class="partner" data-partner="{{ partnerKey }}">
                             {% if partner.adLabel is defined and partner.adLabel %}
                                 <p class="ad-label">{{ partner.adLabel | safe }}</p>
@@ -146,16 +147,16 @@ permalink: "{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/fronte
         </section>
 
         <section>
-            <p>{{ adInfo[lang].adInfo.contactText | safe }}</p>
+            <p>{{ adInfo[locale].adInfo.contactText | safe }}</p>
         </section>
 
         <footer>
             <p class="footer-link">
-                <a href="{% if lang == 'ru' %}/frontend/privacy-policy/privacy-policy.html{% else %}/frontend/{{ lang }}/privacy-policy/privacy-policy.html{% endif %}">
-                    {{ adInfo[lang].footer.privacyPolicy }}
+                <a href="{% if locale == 'ru' %}/frontend/privacy-policy/privacy-policy.html{% else %}/frontend/{{ locale }}/privacy-policy/privacy-policy.html{% endif %}">
+                    {{ adInfo[locale].footer.privacyPolicy }}
                 </a> |
-                <a href="{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ lang }}/ad-info/ad-info.html{% endif %}">
-                    {{ adInfo[lang].footer.adInfo }}
+                <a href="{% if locale == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ locale }}/ad-info/ad-info.html{% endif %}">
+                    {{ adInfo[locale].footer.adInfo }}
                 </a>
             </p>
         </footer>
@@ -175,6 +176,5 @@ permalink: "{% if lang == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/fronte
         ym(104905836, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
     </script>
     <noscript><div><img src="https://mc.yandex.ru/watch/104905836" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-    <!-- /Yandex.Metrika counter -->
 </body>
 </html>

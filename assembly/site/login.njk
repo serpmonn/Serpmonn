@@ -5,9 +5,9 @@ pagination:
   alias: locale
 permalink: "{% if locale == 'ru' %}/frontend/login/login.html{% else %}/frontend/{{ locale }}/login/login.html{% endif %}"
 eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   title: "{{ login[locale].login.pageTitle }}"
   description: "{{ login[locale].login.ogDescription }}"
-  dir: "{% if ['ar', 'fa', 'he', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'].indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/login/login.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/login/login.html{% endif %}"
 ---
 

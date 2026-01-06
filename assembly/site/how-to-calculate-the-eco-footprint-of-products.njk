@@ -4,6 +4,8 @@ pagination:
   size: 1
   alias: lang
 permalink: "{% if lang == 'ru' %}/frontend/news/articles/how-to-calculate-the-eco-footprint-of-products.html{% else %}/frontend/{{ lang }}/news/articles/how-to-calculate-the-eco-footprint-of-products.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
 ---
 
 <!DOCTYPE html>

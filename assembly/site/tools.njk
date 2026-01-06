@@ -6,9 +6,9 @@ pagination:
   alias: locale
 permalink: "{% if locale == 'ru' %}/frontend/tools/tools.html{% else %}/frontend/{{ locale }}/tools/tools.html{% endif %}"
 eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   title: "{{ tools[locale].meta.title }}"
   description: "{{ tools[locale].meta.description }}"
-  dir: "{% if ['ar', 'fa', 'he', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'].indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
 ---
 
 <!DOCTYPE html>

@@ -6,10 +6,10 @@ pagination:
   alias: locale
 permalink: "{% if locale == 'ru' %}/frontend/tools/logistics/depreciation-calculator.html{% else %}/frontend/{{ locale }}/tools/logistics/depreciation-calculator.html{% endif %}"
 eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   title: "{{ depreciationCalculator[locale].meta.title }}"
   description: "{{ depreciationCalculator[locale].meta.description }}"
-  dir: "{% if ['ar', 'fa', 'he', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'].indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/tools/logistics/depreciation-calculator.html{% else %}{{ site.baseUrl }}/{{ locale }}/tools/logistics/depreciation-calculator.html{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/tools/logistics/depreciation-calculator.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/tools/logistics/depreciation-calculator.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -25,27 +25,27 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ depreciationCalculator[locale].meta.ogTitle }}">
     <meta property="og:description" content="{{ depreciationCalculator[locale].meta.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{{ page.url | safe }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ depreciationCalculator[locale].meta.twitterTitle }}">
     <meta name="twitter:description" content="{{ depreciationCalculator[locale].meta.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     
     <!-- Каноническая ссылка -->
-    <link rel="canonical" href="https://serpmonn.ru{{ page.url | safe }}" />
+    <link rel="canonical" href="{{ canonical }}" />
     
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/tools/logistics/depreciation-calculator.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/logistics/depreciation-calculator.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/tools/logistics/depreciation-calculator.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/logistics/depreciation-calculator.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/tools/logistics/depreciation-calculator.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/logistics/depreciation-calculator.html" hreflang="x-default" />
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -298,13 +298,13 @@ eleventyComputed:
           "@type": "ListItem",
           "position": 1,
           "name": "{{ depreciationCalculator[locale].breadcrumbs.tools }}",
-          "item": "{% if locale == 'ru' %}https://serpmonn.ru/frontend/tools/index.html{% else %}https://serpmonn.ru/frontend/{{ locale }}/tools/index.html{% endif %}"
+          "item": "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/tools/index.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/tools/index.html{% endif %}"
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "{{ depreciationCalculator[locale].breadcrumbs.current }}",
-          "item": "https://serpmonn.ru{{ page.url | safe }}"
+          "item": "{{ canonical }}"
         }
       ]
     }

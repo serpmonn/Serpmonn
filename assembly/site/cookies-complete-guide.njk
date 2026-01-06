@@ -5,15 +5,16 @@ pagination:
   alias: locale
 permalink: "{% if locale == 'ru' %}/frontend/news/articles/cookies-complete-guide.html{% else %}/frontend/{{ locale }}/news/articles/cookies-complete-guide.html{% endif %}"
 eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   title: "{{ cookiesCompleteGuide[locale].meta.title }}"
   description: "{{ cookiesCompleteGuide[locale].meta.description }}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/news/articles/cookies-complete-guide.html{% else %}{{ site.baseUrl }}/{{ locale }}/news/articles/cookies-complete-guide.html{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/cookies-complete-guide.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/cookies-complete-guide.html{% endif %}"
 ---
 
 {% set t = cookiesCompleteGuide[locale] %}
 
 <!DOCTYPE html>
-<html lang="{{ locale }}" dir="ltr">
+<html lang="{{ locale }}" dir="{{ dir }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -23,15 +24,15 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ t.meta.og_title }}">
     <meta property="og:description" content="{{ t.meta.og_description }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{{ page.url | safe }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ t.meta.twitter_title }}">
     <meta name="twitter:description" content="{{ t.meta.twitter_description }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -45,30 +46,30 @@ eleventyComputed:
         "name": "Serpmonn"
       },
       "description": "{{ t.meta.description }}",
-      "image": "https://serpmonn.ru/frontend/images/Banner_Serpmonn.png",
+      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
       "publisher": {
         "@type": "Organization",
         "name": "Serpmonn",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"
+          "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"
         }
       }
     }
     </script>
 
     <!-- Каноническая ссылка -->
-    <link rel="canonical" href="https://serpmonn.ru{{ page.url | safe }}" />
+    <link rel="canonical" href="{{ canonical }}" />
     
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/cookies-complete-guide.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/news/articles/cookies-complete-guide.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/news/articles/cookies-complete-guide.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/news/articles/cookies-complete-guide.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/cookies-complete-guide.html" hreflang="x-default" />
 
     <!-- Иконка -->
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">

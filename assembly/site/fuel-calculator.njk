@@ -8,6 +8,7 @@ eleventyComputed:
   title: "{{ fuelCalculator[locale].meta.title }}"
   description: "{{ fuelCalculator[locale].meta.description }}"
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/tools/logistics/fuel-calculator.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/tools/logistics/fuel-calculator.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -23,36 +24,28 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ fuelCalculator[locale].meta.title }}">
     <meta property="og:description" content="{{ fuelCalculator[locale].meta.description }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    {% if locale == 'ru' %}
-    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/logistics/fuel-calculator.html">
-    {% else %}
-    <meta property="og:url" content="https://serpmonn.ru/frontend/{{ locale }}/tools/logistics/fuel-calculator.html">
-    {% endif %}
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ fuelCalculator[locale].meta.title }}">
     <meta name="twitter:description" content="{{ fuelCalculator[locale].meta.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     
     <!-- Каноническая ссылка -->
-    {% if locale == 'ru' %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/tools/logistics/fuel-calculator.html" />
-    {% else %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/{{ locale }}/tools/logistics/fuel-calculator.html" />
-    {% endif %}
+    <link rel="canonical" href="{{ canonical }}" />
     
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
       {% if loc == 'ru' %}
-        <link rel="alternate" href="https://serpmonn.ru/frontend/tools/logistics/fuel-calculator.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/logistics/fuel-calculator.html" hreflang="{{ loc }}" />
       {% else %}
-        <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/tools/logistics/fuel-calculator.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/logistics/fuel-calculator.html" hreflang="{{ loc }}" />
       {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/tools/logistics/fuel-calculator.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/logistics/fuel-calculator.html" hreflang="x-default" />
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
