@@ -24,34 +24,6 @@ function fileExists(p) {
   }
 }
 
-function listHtmlFilesRecursive(dir) {
-  const results = [];
-  const stack = [dir];
-  while (stack.length) {
-    const current = stack.pop();
-    let entries = [];
-    try {
-      entries = fs.readdirSync(current, { withFileTypes: true });
-    } catch {
-      continue;
-    }
-    for (const ent of entries) {
-      const p = path.join(current, ent.name);
-      if (ent.isDirectory()) {
-        stack.push(p);
-      } else if (ent.isFile() && ent.name.toLowerCase().endsWith('.html')) {
-        results.push(p);
-      }
-    }
-  }
-  return results;
-}
-
-function toUrl(filePath) {
-  const rel = path.relative(PROJECT_ROOT, filePath).replace(/\\/g, '/');
-  return `${SITE_BASE}/${rel}`;
-}
-
 function formatDateYYYYMMDD(date) {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -64,7 +36,7 @@ function writeFileEnsured(filePath, content) {
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
-const EXCLUDE_DIRS = new Set(['search', 'scripts', 'styles', 'images', 'dev']);
+const EXCLUDE_DIRS = new Set(['search', 'scripts', 'styles', 'images', 'dev', 'i18n', 'pwa', 'telegram-app']);
 
 function listHtmlFilesFiltered(rootDir) {
   const results = [];
@@ -89,13 +61,20 @@ function listHtmlFilesFiltered(rootDir) {
   return results;
 }
 
+function toUrl(filePath) {
+  // Получаем относительный путь от PROJECT_ROOT
+  let rel = path.relative(PROJECT_ROOT, filePath).replace(/\\/g, '/');
+  
+  return rel ? `${SITE_BASE}/${rel}` : `${SITE_BASE}/`;
+}
+
 function generateSitemapForLang(langDirName) {
   const today = formatDateYYYYMMDD(new Date());
   const parts = [];
   parts.push('<?xml version="1.0" encoding="UTF-8"?>');
   parts.push('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
 
-  // index.html
+  // index.html для языка
   const indexFile = path.join(FRONTEND_DIR, langDirName, 'index.html');
   if (fileExists(indexFile)) {
     const url = toUrl(indexFile);
@@ -104,11 +83,12 @@ function generateSitemapForLang(langDirName) {
     );
   }
 
-  // Include all other HTML pages in this language (filtered)
+  // Все остальные HTML-страницы в этом языке (фильтрованные)
   const langRoot = path.join(FRONTEND_DIR, langDirName);
   const files = listHtmlFilesFiltered(langRoot)
     .filter((p) => path.resolve(p) !== path.resolve(indexFile))
     .sort();
+  
   for (const f of files) {
     const url = toUrl(f);
     const isAdInfo = /\/ad-info\//.test(f);
@@ -131,12 +111,16 @@ function generateSitemapForRU() {
   parts.push('<?xml version="1.0" encoding="UTF-8"?>');
   parts.push('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
 
-  // Root homepage
-  parts.push(
-    `  <url>\n    <loc>${SITE_BASE}/</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.90</priority>\n  </url>`
-  );
+  // Главная русская страница (frontend/main.html)
+  const mainFile = path.join(FRONTEND_DIR, 'main.html');
+  if (fileExists(mainFile)) {
+    const url = toUrl(mainFile);
+    parts.push(
+      `  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.90</priority>\n  </url>`
+    );
+  }
 
-  // Other RU pages: top-level frontend HTMLs not inside language dirs
+  // Другие русские страницы (не в языковых папках)
   const entries = fs.readdirSync(FRONTEND_DIR, { withFileTypes: true });
   const langNames = new Set(entries.filter(e => e.isDirectory() && isLanguageDirName(e.name)).map(e => e.name));
 
@@ -147,13 +131,15 @@ function generateSitemapForRU() {
       if (!langNames.has(ent.name) && !EXCLUDE_DIRS.has(ent.name)) {
         ruFiles.push(...listHtmlFilesFiltered(p));
       }
-    } else if (ent.isFile() && ent.name.toLowerCase().endsWith('.html')) {
+    } else if (ent.isFile() && ent.name.toLowerCase().endsWith('.html') && ent.name !== 'main.html') {
       ruFiles.push(p);
     }
   }
-  // Exclude searchresults explicitly for RU
-  const filtered = ruFiles.filter((p) => !/\/search\//.test(p)).sort();
-  for (const f of filtered) {
+  
+  // Исключаем файлы из папки search для русского
+  const filteredRuFiles = ruFiles.filter((p) => !/\/search\//.test(p)).sort();
+  
+  for (const f of filteredRuFiles) {
     const url = toUrl(f);
     parts.push(
       `  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.60</priority>\n  </url>`
@@ -171,16 +157,20 @@ function generateIndex(langs) {
   const parts = [];
   parts.push('<?xml version="1.0" encoding="UTF-8"?>');
   parts.push('<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
-  // RU first
+  
+  // RU sitemap
   parts.push(
     `  <sitemap>\n    <loc>${SITE_BASE}/sitemaps/sitemap-ru.xml</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>`
   );
+  
+  // Sitemaps для других языков
   for (const l of langs) {
     const loc = `${SITE_BASE}/sitemaps/sitemap-${l}.xml`;
     parts.push(
       `  <sitemap>\n    <loc>${loc}</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>`
     );
   }
+  
   parts.push('</sitemapindex>');
   const outPath = path.join(OUTPUT_DIR, 'sitemap-index.xml');
   writeFileEnsured(outPath, parts.join('\n'));
@@ -192,12 +182,13 @@ function main() {
     console.error(`Not found: ${FRONTEND_DIR}`);
     process.exit(1);
   }
+  
   const entries = fs.readdirSync(FRONTEND_DIR, { withFileTypes: true });
   const langs = entries
     .filter((e) => {
       if (!e.isDirectory()) return false;
       if (!isLanguageDirName(e.name)) return false;
-      // Treat as a true language only if it has its own index.html
+      // Язык считается действительным, если у него есть свой index.html
       const langIndex = path.join(FRONTEND_DIR, e.name, 'index.html');
       return fileExists(langIndex);
     })
@@ -208,18 +199,29 @@ function main() {
     console.warn('No language directories found to generate sitemaps.');
   }
 
-  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  // Создаем папку для sitemaps, если её нет
+  if (!fileExists(OUTPUT_DIR)) {
+    fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+  }
 
   const generated = [];
-  // RU sitemap
+  
+  // Создаем sitemap для русского языка
   generated.push(generateSitemapForRU());
+  
+  // Создаем sitemaps для всех других языков
   for (const l of langs) {
     const p = generateSitemapForLang(l);
     generated.push(p);
   }
+  
+  // Создаем индексный файл
   const idx = generateIndex(langs);
-  console.log('Generated:', [...generated, idx].map((p) => path.relative(PROJECT_ROOT, p)).join('\n'));
+  
+  console.log('Generated sitemaps:');
+  [...generated, idx].forEach((p) => {
+    console.log('  ', path.relative(PROJECT_ROOT, p));
+  });
 }
 
 main();
-
