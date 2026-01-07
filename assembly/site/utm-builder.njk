@@ -24,7 +24,7 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ utmBuilder[locale].meta.ogTitle }}">
     <meta property="og:description" content="{{ utmBuilder[locale].meta.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
     
@@ -32,7 +32,7 @@ eleventyComputed:
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ utmBuilder[locale].meta.twitterTitle }}">
     <meta name="twitter:description" content="{{ utmBuilder[locale].meta.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="{{ canonical }}" />
@@ -40,12 +40,12 @@ eleventyComputed:
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/utm-builder.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/marketing/utm-builder.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/utm-builder.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/marketing/utm-builder.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/utm-builder.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/marketing/utm-builder.html" hreflang="x-default" />
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -187,7 +187,6 @@ eleventyComputed:
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Мобильная реклама -->
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
       <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
         <button type="button" aria-label="{{ utmBuilder[locale].ads.closeAria }}" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>

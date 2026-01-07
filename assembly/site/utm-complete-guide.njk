@@ -24,7 +24,7 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ utmCompleteGuide[locale].title }}">
     <meta property="og:description" content="{{ utmCompleteGuide[locale].ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
     
@@ -32,7 +32,7 @@ eleventyComputed:
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ utmCompleteGuide[locale].title }}">
     <meta name="twitter:description" content="{{ utmCompleteGuide[locale].twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="{{ canonical }}" />
@@ -178,10 +178,10 @@ eleventyComputed:
 <body>
     <div id="menuContainer"></div>
 
-    <!-- Хлебные крошки - ИСПРАВЛЕННЫЕ ССЫЛКИ -->
+    <!-- Хлебные крошки -->
     <div class="breadcrumb">
-        <a href="{% if locale != 'ru' %}/{{ locale }}{% else %}/{% endif %}">{{ utmCompleteGuide[locale].breadcrumbHome }}</a> →
-        <a href="{% if locale != 'ru' %}/{{ locale }}{% endif %}/frontend/news">{{ utmCompleteGuide[locale].breadcrumbNews }}</a> →
+        <a href="{{ site.baseUrl }}/{% if locale != 'ru' %}{{ locale }}/{% endif %}">{{ utmCompleteGuide[locale].breadcrumbHome }}</a> →
+        <a href="{{ site.baseUrl }}/{% if locale != 'ru' %}{{ locale }}{% endif %}/frontend/news">{{ utmCompleteGuide[locale].breadcrumbNews }}</a> →
         <span>{{ utmCompleteGuide[locale].breadcrumbCurrent }}</span>
     </div>
 
@@ -202,7 +202,7 @@ eleventyComputed:
             <strong>{{ utmCompleteGuide[locale].summaryTitle }}</strong> {{ utmCompleteGuide[locale].summaryContent }}
         </div>
 
-        <!-- TOC - ИСПРАВЛЕННЫЙ БЕЗ ПРОБЕЛОВ -->
+        <!-- TOC -->
         <div class="toc">
             <strong>{{ utmCompleteGuide[locale].tocTitle }}</strong>
             <ol>{%- set anchors = ['what', 'params', 'ga4', 'naming', 'platforms', 'examples', 'mistakes', 'faq'] -%}
@@ -251,7 +251,7 @@ eleventyComputed:
         <div class="code" style="margin-top:10px;">{{ utmCompleteGuide[locale].section6Example2 }}</div>
         <p>
             {{ utmCompleteGuide[locale].section6BuilderText }}
-            <a class="btn" href="https://serpmonn.ru{% if locale != 'ru' %}/{{ locale }}{% endif %}/frontend/tools/marketing/utm-builder.html" target="_blank" rel="noopener">
+            <a class="btn" href="{{ site.baseUrl }}{% if locale != 'ru' %}/{{ locale }}{% endif %}/frontend/tools/marketing/utm-builder.html" target="_blank" rel="noopener">
                 {{ utmCompleteGuide[locale].section6BuilderButton }}
             </a>
         </p>
@@ -346,12 +346,6 @@ eleventyComputed:
                 if (adBanner) {
                     adBanner.classList.add('hidden');
                 }
-            }
-            
-            // Локализация меню (если нужно)
-            const currentLocale = document.documentElement.lang || 'ru';
-            if (typeof initMenu === 'function') {
-                initMenu(currentLocale);
             }
         });
     </script>

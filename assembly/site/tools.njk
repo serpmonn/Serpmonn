@@ -9,6 +9,7 @@ eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   title: "{{ tools[locale].meta.title }}"
   description: "{{ tools[locale].meta.description }}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/tools/tools.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/tools/tools.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -20,43 +21,35 @@ eleventyComputed:
     <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ tools[locale].meta.title }}</title>
-    <meta name="description" content="{{ tools[locale].meta.description }}">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
     <meta name="keywords" content="{{ tools[locale].meta.keywords }}">
     
     <!-- Open Graph -->
     <meta property="og:title" content="{{ tools[locale].meta.ogTitle }}">
     <meta property="og:description" content="{{ tools[locale].meta.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
-    {% if locale == 'ru' %}
-    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/tools.html">
-    {% else %}
-    <meta property="og:url" content="https://serpmonn.ru/frontend/{{ locale }}/tools/tools.html">
-    {% endif %}
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ tools[locale].meta.twitterTitle }}">
     <meta name="twitter:description" content="{{ tools[locale].meta.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.webp">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     
     <!-- Каноническая ссылка -->
-    {% if locale == 'ru' %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/tools/tools.html" />
-    {% else %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/{{ locale }}/tools/tools.html" />
-    {% endif %}
+    <link rel="canonical" href="{{ canonical }}" />
     
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
       {% if loc == 'ru' %}
-        <link rel="alternate" href="https://serpmonn.ru/frontend/tools/tools.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/tools.html" hreflang="{{ loc }}" />
       {% else %}
-        <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/tools/tools.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/tools.html" hreflang="{{ loc }}" />
       {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/tools/tools.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/tools.html" hreflang="x-default" />
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -131,7 +124,7 @@ eleventyComputed:
                 <div class="card" style="--i: 1;">
                     <h2>{{ tools[locale].tools.utmBuilder.title }}</h2>
                     <p>{{ tools[locale].tools.utmBuilder.description }}</p>
-                    <a href="{% if locale == 'ru' %}/frontend/tools/marketing/utm-builder.html{% else %}/frontend/tools/marketing/utm-builder.html?lang={{ locale }}{% endif %}" 
+                    <a href="{% if locale == 'ru' %}/frontend/tools/marketing/utm-builder.html{% else %}/frontend/{{ locale }}/tools/marketing/utm-builder.html{% endif %}" 
                        aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.utmBuilder.title }}">
                         {{ tools[locale].buttons.openTool }}
                     </a>
@@ -144,7 +137,7 @@ eleventyComputed:
                 <div class="card" style="--i: 2;">
                     <h2>{{ tools[locale].tools.wordCounter.title }}</h2>
                     <p>{{ tools[locale].tools.wordCounter.description }}</p>
-                    <a href="{% if locale == 'ru' %}/frontend/tools/marketing/word-counter.html{% else %}/frontend/tools/marketing/word-counter.html?lang={{ locale }}{% endif %}" 
+                    <a href="{% if locale == 'ru' %}/frontend/tools/marketing/word-counter.html{% else %}/frontend/{{ locale }}/tools/marketing/word-counter.html{% endif %}" 
                        aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.wordCounter.title }}">
                         {{ tools[locale].buttons.openTool }}
                     </a>
@@ -179,7 +172,7 @@ eleventyComputed:
                 <div class="card" style="--i: 3;">
                     <h2>{{ tools[locale].tools.passwordGenerator.title }}</h2>
                     <p>{{ tools[locale].tools.passwordGenerator.description }}</p>
-                    <a href="{% if locale == 'ru' %}/frontend/tools/security/password-generator.html{% else %}/frontend/tools/security/password-generator.html?lang={{ locale }}{% endif %}" 
+                    <a href="{% if locale == 'ru' %}/frontend/tools/security/password-generator.html{% else %}/frontend/{{ locale }}/tools/security/password-generator.html{% endif %}" 
                        aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.passwordGenerator.title }}">
                         {{ tools[locale].buttons.openTool }}
                     </a>
@@ -249,7 +242,7 @@ eleventyComputed:
                 <div class="card" style="--i: 8;">
                     <h2>{{ tools[locale].tools.unitConverter.title }}</h2>
                     <p>{{ tools[locale].tools.unitConverter.description }}</p>
-                    <a href="{% if locale == 'ru' %}/frontend/tools/engineering/unit-converter.html{% else %}/frontend/tools/engineering/unit-converter.html?lang={{ locale }}{% endif %}" 
+                    <a href="{% if locale == 'ru' %}/frontend/tools/engineering/unit-converter.html{% else %}/frontend/{{ locale }}/tools/engineering/unit-converter.html{% endif %}" 
                        aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.unitConverter.title }}">
                         {{ tools[locale].buttons.openTool }}
                     </a>
@@ -269,7 +262,7 @@ eleventyComputed:
                 <div class="card" style="--i: 9;">
                     <h2>{{ tools[locale].tools.depreciationCalculator.title }}</h2>
                     <p>{{ tools[locale].tools.depreciationCalculator.description }}</p>
-                    <a href="{% if locale == 'ru' %}/frontend/tools/logistics/depreciation-calculator.html{% else %}/frontend/tools/logistics/depreciation-calculator.html?lang={{ locale }}{% endif %}" 
+                    <a href="{% if locale == 'ru' %}/frontend/tools/logistics/depreciation-calculator.html{% else %}/frontend/{{ locale }}/tools/logistics/depreciation-calculator.html{% endif %}" 
                        aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.depreciationCalculator.title }}">
                         {{ tools[locale].buttons.openTool }}
                     </a>
@@ -282,7 +275,7 @@ eleventyComputed:
                 <div class="card" style="--i: 10;">
                     <h2>{{ tools[locale].tools.fuelCalculator.title }}</h2>
                     <p>{{ tools[locale].tools.fuelCalculator.description }}</p>
-                    <a href="{% if locale == 'ru' %}/frontend/tools/logistics/fuel-calculator.html{% else %}/frontend/tools/logistics/fuel-calculator.html?lang={{ locale }}{% endif %}" 
+                    <a href="{% if locale == 'ru' %}/frontend/tools/logistics/fuel-calculator.html{% else %}/frontend/{{ locale }}/tools/logistics/fuel-calculator.html{% endif %}" 
                        aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.fuelCalculator.title }}">
                         {{ tools[locale].buttons.openTool }}
                     </a>
@@ -302,7 +295,7 @@ eleventyComputed:
                 <div class="card" style="--i: 11;">
                     <h2>{{ tools[locale].tools.footprintCalculator.title }}</h2>
                     <p>{{ tools[locale].tools.footprintCalculator.description }}</p>
-                    <a href="{% if locale == 'ru' %}/frontend/tools/ecology/product-footprint-calculator.html{% else %}/frontend/tools/ecology/product-footprint-calculator.html?lang={{ locale }}{% endif %}" 
+                    <a href="{% if locale == 'ru' %}/frontend/tools/ecology/product-footprint-calculator.html{% else %}/frontend/{{ locale }}/tools/ecology/product-footprint-calculator.html{% endif %}" 
                        aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.footprintCalculator.title }}">
                         {{ tools[locale].buttons.openTool }}
                     </a>

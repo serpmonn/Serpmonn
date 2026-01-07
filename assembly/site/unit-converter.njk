@@ -8,6 +8,7 @@ eleventyComputed:
   title: "{{ unitConverter[locale].meta.title }}"
   description: "{{ unitConverter[locale].meta.description }}"
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/tools/engineering/unit-converter.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/tools/engineering/unit-converter.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -17,42 +18,34 @@ eleventyComputed:
     <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>{{ unitConverter[locale].meta.title }}</title>
-    <meta name="description" content="{{ unitConverter[locale].meta.description }}">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
     
     <!-- Open Graph -->
     <meta property="og:title" content="{{ unitConverter[locale].meta.title }}">
     <meta property="og:description" content="{{ unitConverter[locale].meta.description }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    {% if locale == 'ru' %}
-    <meta property="og:url" content="https://serpmonn.ru/frontend/tools/engineering/unit-converter.html">
-    {% else %}
-    <meta property="og:url" content="https://serpmonn.ru/frontend/{{ locale }}/tools/engineering/unit-converter.html">
-    {% endif %}
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ unitConverter[locale].meta.title }}">
     <meta name="twitter:description" content="{{ unitConverter[locale].meta.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     
     <!-- Каноническая ссылка -->
-    {% if locale == 'ru' %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/tools/engineering/unit-converter.html" />
-    {% else %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/{{ locale }}/tools/engineering/unit-converter.html" />
-    {% endif %}
+    <link rel="canonical" href="{{ canonical }}" />
     
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
       {% if loc == 'ru' %}
-        <link rel="alternate" href="https://serpmonn.ru/frontend/tools/engineering/unit-converter.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/engineering/unit-converter.html" hreflang="{{ loc }}" />
       {% else %}
-        <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/tools/engineering/unit-converter.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/engineering/unit-converter.html" hreflang="{{ loc }}" />
       {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/tools/engineering/unit-converter.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/engineering/unit-converter.html" hreflang="x-default" />
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -66,11 +59,7 @@ eleventyComputed:
 
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      {% if locale == 'ru' %}
-      <a href="/frontend/tools/index.html">🧰 {{ unitConverter[locale].breadcrumb.tools }}</a> → 
-      {% else %}
-      <a href="/frontend/{{ locale }}/tools/index.html">🧰 {{ unitConverter[locale].breadcrumb.tools }}</a> → 
-      {% endif %}
+      <a href="{{ site.baseUrl }}/{% if locale == 'ru' %}frontend/tools/index.html{% else %}frontend/{{ locale }}/tools/index.html{% endif %}">🧰 {{ unitConverter[locale].breadcrumb.tools }}</a> → 
       <span>🔄 {{ unitConverter[locale].breadcrumb.unitConverter }}</span>
     </div>
 
@@ -481,7 +470,6 @@ eleventyComputed:
 
     <!-- Загрузка меню -->
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom: env(safe-area-inset-bottom);pointer-events:none;">
       <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
         <button type="button" aria-label="{{ unitConverter[locale].page.labels.closeAd }}" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>

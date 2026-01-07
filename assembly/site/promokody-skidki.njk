@@ -2,53 +2,54 @@
 pagination:
   data: locales
   size: 1
-  alias: lang
-permalink: "{% if lang == 'ru' %}/frontend/promo-codes-and-discounts/promokody-skidki.html{% else %}/frontend/{{ lang }}/promo-codes-and-discounts/promokody-skidki.html{% endif %}"
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/promo-codes-and-discounts/promokody-skidki.html{% else %}/frontend/{{ locale }}/promo-codes-and-discounts/promokody-skidki.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/promo-codes-and-discounts/promokody-skidki.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/promo-codes-and-discounts/promokody-skidki.html{% endif %}"
 ---
 
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="{% if lang in ['ar', 'he', 'ug', 'fa'] %}rtl{% else %}ltr{% endif %}">
+<html lang="{{ locale }}" dir="{{ dir }}">
 <head>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <meta http-equiv="Content-Language" content="{{ lang }}">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ localesPromocodes[lang].promoCodes.title }}</title>
+    <title>{{ localesPromocodes[locale].promoCodes.title }}</title>
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
 
     <!-- Open Graph -->
-    <meta property="og:title" content="{{ localesPromocodes[lang].promoCodes.ogTitle }}">
-    <meta property="og:description" content="{{ localesPromocodes[lang].promoCodes.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{% if lang == 'ru' %}/frontend/promo-codes-and-discounts/promokody-skidki.html{% else %}/frontend/{{ lang }}/promo-codes-and-discounts/promokody-skidki.html{% endif %}">
+    <meta property="og:title" content="{{ localesPromocodes[locale].promoCodes.ogTitle }}">
+    <meta property="og:description" content="{{ localesPromocodes[locale].promoCodes.ogDescription }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ localesPromocodes[lang].promoCodes.ogTitle }}">
-    <meta name="twitter:description" content="{{ localesPromocodes[lang].promoCodes.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:title" content="{{ localesPromocodes[locale].promoCodes.ogTitle }}">
+    <meta name="twitter:description" content="{{ localesPromocodes[locale].promoCodes.twitterDescription }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
     <!-- Каноническая ссылка -->
-    <link rel="canonical" href="https://serpmonn.ru{% if lang == 'ru' %}/frontend/promo-codes-and-discounts/promokody-skidki.html{% else %}/frontend/{{ lang }}/promo-codes-and-discounts/promokody-skidki.html{% endif %}" />
+    <link rel="canonical" href="{{ canonical }}" />
 
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/promo-codes-and-discounts/promokody-skidki.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/promo-codes-and-discounts/promokody-skidki.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/promo-codes-and-discounts/promokody-skidki.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/promo-codes-and-discounts/promokody-skidki.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/promo-codes-and-discounts/promokody-skidki.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/promo-codes-and-discounts/promokody-skidki.html" hreflang="x-default" />
 
     <!-- Мета-описание для SEO -->
-    <meta name="description" content="{{ localesPromocodes[lang].promoCodes.metaDescription }}">
-    <meta name="keywords" content="{{ localesPromocodes[lang].promoCodes.keywords }}">
+    <meta name="description" content="{{ localesPromocodes[locale].promoCodes.metaDescription }}">
+    <meta name="keywords" content="{{ localesPromocodes[locale].promoCodes.keywords }}">
 
     <!-- Favicon -->
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
@@ -77,7 +78,7 @@ eleventyComputed:
                         localStorage.setItem(KEY, current);
                     }
                 } catch (error) {
-                    console.error('{% if lang == "ru" %}Ошибка проверки версии{% else %}Error checking version{% endif %}:', error);
+                    console.error('{% if locale == "ru" %}Ошибка проверки версии{% else %}Error checking version{% endif %}:', error);
                 }
             }
             checkVersion();
@@ -165,104 +166,104 @@ eleventyComputed:
 </head>
 <body>
     <header>
-        <nav id="main-nav" aria-label="{% if lang == 'ru' %}Основная навигация{% else %}Main navigation{% endif %}"></nav>
+        <nav id="main-nav" aria-label="{% if locale == 'ru' %}Основная навигация{% else %}Main navigation{% endif %}"></nav>
     </header>
     
     <main class="container">
         <section class="hero" aria-labelledby="hero-title">
-            <h1 id="hero-title">{{ localesPromocodes[lang].promoCodes.heroTitle }}</h1>
+            <h1 id="hero-title">{{ localesPromocodes[locale].promoCodes.heroTitle }}</h1>
         </section>
 
         <section class="stats-controls" aria-labelledby="overview-title">
-            <h2 id="overview-title">{{ localesPromocodes[lang].promoCodes.overviewTitle }}</h2>
+            <h2 id="overview-title">{{ localesPromocodes[locale].promoCodes.overviewTitle }}</h2>
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-number" id="totalPromos" aria-label="{{ localesPromocodes[lang].promoCodes.totalPromos }}">0</span>
-                    <span class="stat-label">{{ localesPromocodes[lang].promoCodes.totalPromos }}</span>
+                    <span class="stat-number" id="totalPromos" aria-label="{{ localesPromocodes[locale].promoCodes.totalPromos }}">0</span>
+                    <span class="stat-label">{{ localesPromocodes[locale].promoCodes.totalPromos }}</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number" id="activePromos" aria-label="{{ localesPromocodes[lang].promoCodes.activePromos }}">0</span>
-                    <span class="stat-label">{{ localesPromocodes[lang].promoCodes.activePromos }}</span>
+                    <span class="stat-number" id="activePromos" aria-label="{{ localesPromocodes[locale].promoCodes.activePromos }}">0</span>
+                    <span class="stat-label">{{ localesPromocodes[locale].promoCodes.activePromos }}</span>
                 </div>
             </div>
             <div class="controls">
-                <button id="refreshBtn" class="refresh-btn" aria-label="{{ localesPromocodes[lang].promoCodes.refreshButton }}">
-                    <i class="icon-refresh"></i> {{ localesPromocodes[lang].promoCodes.refreshButton }}
+                <button id="refreshBtn" class="refresh-btn" aria-label="{{ localesPromocodes[locale].promoCodes.refreshButton }}">
+                    <i class="icon-refresh"></i> {{ localesPromocodes[locale].promoCodes.refreshButton }}
                 </button>
                 <div class="last-update">
-                    {{ localesPromocodes[lang].promoCodes.lastUpdated }} <span id="lastUpdate" aria-label="{{ localesPromocodes[lang].promoCodes.lastUpdated }}">-</span>
+                    {{ localesPromocodes[locale].promoCodes.lastUpdated }} <span id="lastUpdate" aria-label="{{ localesPromocodes[locale].promoCodes.lastUpdated }}">-</span>
                 </div>
             </div>
         </section>
 
         <section class="filters" aria-labelledby="filters-title">
-            <h2 id="filters-title" class="visually-hidden">{{ localesPromocodes[lang].promoCodes.filtersTitle }}</h2>
-            <button id="toggleFilters" class="submit-btn toggle-filters" aria-label="{{ localesPromocodes[lang].promoCodes.toggleFilters }}">{{ localesPromocodes[lang].promoCodes.toggleFilters }}</button>
+            <h2 id="filters-title" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.filtersTitle }}</h2>
+            <button id="toggleFilters" class="submit-btn toggle-filters" aria-label="{{ localesPromocodes[locale].promoCodes.toggleFilters }}">{{ localesPromocodes[locale].promoCodes.toggleFilters }}</button>
             <div id="filtersContent" style="display: none;">
-                <label for="searchInput" class="visually-hidden">{{ localesPromocodes[lang].promoCodes.searchPlaceholder }}</label>
-                <p id="search-hint" class="visually-hidden">{{ localesPromocodes[lang].promoCodes.searchHint }}</p>
-                <input type="text" id="searchInput" placeholder="{{ localesPromocodes[lang].promoCodes.searchPlaceholder }}" aria-label="{{ localesPromocodes[lang].promoCodes.searchPlaceholder }}" aria-describedby="search-hint">
+                <label for="searchInput" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.searchPlaceholder }}</label>
+                <p id="search-hint" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.searchHint }}</p>
+                <input type="text" id="searchInput" placeholder="{{ localesPromocodes[locale].promoCodes.searchPlaceholder }}" aria-label="{{ localesPromocodes[locale].promoCodes.searchPlaceholder }}" aria-describedby="search-hint">
                 
-                <label for="categorySelect" class="visually-hidden">{{ localesPromocodes[lang].promoCodes.allCategories }}</label>
-                <select id="categorySelect" aria-label="{{ localesPromocodes[lang].promoCodes.allCategories }}">
-                    <option value="">{{ localesPromocodes[lang].promoCodes.allCategories }}</option>
+                <label for="categorySelect" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.allCategories }}</label>
+                <select id="categorySelect" aria-label="{{ localesPromocodes[locale].promoCodes.allCategories }}">
+                    <option value="">{{ localesPromocodes[locale].promoCodes.allCategories }}</option>
                 </select>
                 
-                <label for="statusSelect" class="visually-hidden">{{ localesPromocodes[lang].promoCodes.allStatuses }}</label>
-                <select id="statusSelect" aria-label="{{ localesPromocodes[lang].promoCodes.allStatuses }}">
-                    <option value="">{{ localesPromocodes[lang].promoCodes.allStatuses }}</option>
-                    <option value="active">{{ localesPromocodes[lang].promoCodes.activeStatus }}</option>
-                    <option value="expired">{{ localesPromocodes[lang].promoCodes.expiredStatus }}</option>
+                <label for="statusSelect" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.allStatuses }}</label>
+                <select id="statusSelect" aria-label="{{ localesPromocodes[locale].promoCodes.allStatuses }}">
+                    <option value="">{{ localesPromocodes[locale].promoCodes.allStatuses }}</option>
+                    <option value="active">{{ localesPromocodes[locale].promoCodes.activeStatus }}</option>
+                    <option value="expired">{{ localesPromocodes[locale].promoCodes.expiredStatus }}</option>
                 </select>
                 
-                <label for="countrySelect" class="visually-hidden">{{ localesPromocodes[lang].promoCodes.allCountries }}</label>
-                <select id="countrySelect" aria-label="{{ localesPromocodes[lang].promoCodes.allCountries }}">
-                    <option value="" selected>{{ localesPromocodes[lang].promoCodes.allCountries }}</option>
-                    <option value="Россия">{{ localesPromocodes[lang].promoCodes.russia }}</option>
-                    <option value="Казахстан">{{ localesPromocodes[lang].promoCodes.kazakhstan }}</option>
-                    <option value="Узбекистан">{{ localesPromocodes[lang].promoCodes.uzbekistan }}</option>
+                <label for="countrySelect" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.allCountries }}</label>
+                <select id="countrySelect" aria-label="{{ localesPromocodes[locale].promoCodes.allCountries }}">
+                    <option value="" selected>{{ localesPromocodes[locale].promoCodes.allCountries }}</option>
+                    <option value="Россия">{{ localesPromocodes[locale].promoCodes.russia }}</option>
+                    <option value="Казахстан">{{ localesPromocodes[locale].promoCodes.kazakhstan }}</option>
+                    <option value="Узбекистан">{{ localesPromocodes[locale].promoCodes.uzbekistan }}</option>
                 </select>
                 
-                <button class="submit-btn" onclick="sortByExpiry()" aria-label="{{ localesPromocodes[lang].promoCodes.sortByExpiry }}">{{ localesPromocodes[lang].promoCodes.sortByExpiry }}</button>
-                <button class="submit-btn" onclick="resetFilters()" aria-label="{{ localesPromocodes[lang].promoCodes.resetFilters }}">{{ localesPromocodes[lang].promoCodes.resetFilters }}</button>
+                <button class="submit-btn" onclick="sortByExpiry()" aria-label="{{ localesPromocodes[locale].promoCodes.sortByExpiry }}">{{ localesPromocodes[locale].promoCodes.sortByExpiry }}</button>
+                <button class="submit-btn" onclick="resetFilters()" aria-label="{{ localesPromocodes[locale].promoCodes.resetFilters }}">{{ localesPromocodes[locale].promoCodes.resetFilters }}</button>
             </div>
         </section>
 
         <div id="loadingSpinner" class="loading" style="display: none;">
             <div class="spinner"></div>
-            <p>{{ localesPromocodes[lang].promoCodes.loading }}</p>
+            <p>{{ localesPromocodes[locale].promoCodes.loading }}</p>
         </div>
 
         <div id="promocodes-result-count"></div>
 
         <section id="catalog" class="promo-grid" aria-labelledby="catalog-title" role="region">
-            <h2 id="catalog-title" class="visually-hidden">{% if lang == 'ru' %}Каталог промокодов{% else %}Promo codes catalog{% endif %}</h2>
+            <h2 id="catalog-title" class="visually-hidden">{% if locale == 'ru' %}Каталог промокодов{% else %}Promo codes catalog{% endif %}</h2>
         </section>
 
         <section class="faq" aria-labelledby="faq-title">
-            <h2 id="faq-title">{{ localesPromocodes[lang].promoCodes.faqTitle }}</h2>
+            <h2 id="faq-title">{{ localesPromocodes[locale].promoCodes.faqTitle }}</h2>
             <details>
-                <summary lang="{{ lang }}">{{ localesPromocodes[lang].promoCodes.faq1Question }}</summary>
-                <p>{{ localesPromocodes[lang].promoCodes.faq1Answer | safe }}</p>
+                <summary lang="{{ locale }}">{{ localesPromocodes[locale].promoCodes.faq1Question }}</summary>
+                <p>{{ localesPromocodes[locale].promoCodes.faq1Answer | safe }}</p>
             </details>
             <details>
-                <summary lang="{{ lang }}">{{ localesPromocodes[lang].promoCodes.faq2Question }}</summary>
-                <p>{{ localesPromocodes[lang].promoCodes.faq2Answer | safe }}</p>
+                <summary lang="{{ locale }}">{{ localesPromocodes[locale].promoCodes.faq2Question }}</summary>
+                <p>{{ localesPromocodes[locale].promoCodes.faq2Answer | safe }}</p>
             </details>
         </section>
 
         <section class="bonus" aria-labelledby="bonus-title">
-            <h2 id="bonus-title">{{ localesPromocodes[lang].promoCodes.bonusTitle }}</h2>
-            <p>{{ localesPromocodes[lang].promoCodes.bonusText }}</p>
-            <form action="/subscribe" method="post" aria-label="{{ localesPromocodes[lang].promoCodes.bonusTitle }}">
-                <input type="email" name="email" placeholder="{{ localesPromocodes[lang].promoCodes.emailPlaceholder }}" required aria-label="{{ localesPromocodes[lang].promoCodes.emailPlaceholder }}">
-                <button type="submit" class="submit-btn">{{ localesPromocodes[lang].promoCodes.subscribeButton }}</button>
+            <h2 id="bonus-title">{{ localesPromocodes[locale].promoCodes.bonusTitle }}</h2>
+            <p>{{ localesPromocodes[locale].promoCodes.bonusText }}</p>
+            <form action="/subscribe" method="post" aria-label="{{ localesPromocodes[locale].promoCodes.bonusTitle }}">
+                <input type="email" name="email" placeholder="{{ localesPromocodes[locale].promoCodes.emailPlaceholder }}" required aria-label="{{ localesPromocodes[locale].promoCodes.emailPlaceholder }}">
+                <button type="submit" class="submit-btn">{{ localesPromocodes[locale].promoCodes.subscribeButton }}</button>
             </form>
         </section>
     </main>
     
     <footer>
-        <p>{{ localesPromocodes[lang].promoCodes.footerText | safe }}</p>
+        <p>{{ localesPromocodes[locale].promoCodes.footerText | safe }}</p>
     </footer>
 
     <!-- Structured Data -->
@@ -274,14 +275,14 @@ eleventyComputed:
             {
                 "@type": "ListItem",
                 "position": 1,
-                "name": "{{ localesPromocodes[lang].promoCodes.breadcrumbHome }}",
-                "item": "https://serpmonn.ru"
+                "name": "{{ localesPromocodes[locale].promoCodes.breadcrumbHome }}",
+                "item": "{{ site.baseUrl }}/"
             },
             {
                 "@type": "ListItem",
                 "position": 2,
-                "name": "{{ localesPromocodes[lang].promoCodes.breadcrumbPromoCodes }}",
-                "item": "https://serpmonn.ru{% if lang == 'ru' %}/frontend/promo-codes-and-discounts/promokody-skidki.html{% else %}/frontend/{{ lang }}/promo-codes-and-discounts/promokody-skidki.html{% endif %}"
+                "name": "{{ localesPromocodes[locale].promoCodes.breadcrumbPromoCodes }}",
+                "item": "{{ canonical }}"
             }
         ]
     }
@@ -291,9 +292,9 @@ eleventyComputed:
     {
         "@context": "https://schema.org",
         "@type": "WebPage",
-        "name": "{{ localesPromocodes[lang].promoCodes.title }}",
-        "description": "{{ localesPromocodes[lang].promoCodes.metaDescription }}",
-        "url": "https://serpmonn.ru{% if lang == 'ru' %}/frontend/promo-codes-and-discounts/promokody-skidki.html{% else %}/frontend/{{ lang }}/promo-codes-and-discounts/promokody-skidki.html{% endif %}"
+        "name": "{{ localesPromocodes[locale].promoCodes.title }}",
+        "description": "{{ localesPromocodes[locale].promoCodes.metaDescription }}",
+        "url": "{{ canonical }}"
     }
     </script>
 

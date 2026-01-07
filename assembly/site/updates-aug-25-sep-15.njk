@@ -8,6 +8,7 @@ eleventyComputed:
   title: "{{ updatesAug25Sep15[locale].meta.title }}"
   description: "{{ updatesAug25Sep15[locale].meta.ogDescription }}"
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/updates-aug-25-sep-15.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/updates-aug-25-sep-15.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -23,32 +24,28 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ updatesAug25Sep15[locale].meta.ogTitle }}">
     <meta property="og:description" content="{{ updatesAug25Sep15[locale].meta.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{{ page.url }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ updatesAug25Sep15[locale].meta.twitterTitle }}">
     <meta name="twitter:description" content="{{ updatesAug25Sep15[locale].meta.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
     <!-- Каноническая ссылка -->
-    {% if locale == 'ru' %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html" />
-    {% else %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/{{ locale }}/news/articles/updates-aug-25-sep-15.html" />
-    {% endif %}
+    <link rel="canonical" href="{{ canonical }}" />
     
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
       {% if loc == 'ru' %}
-        <link rel="alternate" href="https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/updates-aug-25-sep-15.html" hreflang="{{ loc }}" />
       {% else %}
-        <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/news/articles/updates-aug-25-sep-15.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/news/articles/updates-aug-25-sep-15.html" hreflang="{{ loc }}" />
       {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/news/articles/updates-aug-25-sep-15.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/updates-aug-25-sep-15.html" hreflang="x-default" />
 
     <!-- JSON-LD: Article -->
     <script type="application/ld+json">
@@ -57,10 +54,10 @@ eleventyComputed:
       "@type": "Article",
       "headline": "{{ updatesAug25Sep15[locale].jsonld.headline }}",
       "description": "{{ updatesAug25Sep15[locale].jsonld.description }}",
-      "image": ["https://www.serpmonn.ru/frontend/images/Banner_Serpmonn.png"],
+      "image": ["{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png"],
       "author": {"@type": "Organization", "name": "Serpmonn"},
-      "publisher": {"@type": "Organization", "name": "Serpmonn", "logo": {"@type": "ImageObject", "url": "https://www.serpmonn.ru/frontend/images/serpmonn.ico"}},
-      "mainEntityOfPage": {"@type": "WebPage", "@id": "https://www.serpmonn.ru{{ page.url }}"}
+      "publisher": {"@type": "Organization", "name": "Serpmonn", "logo": {"@type": "ImageObject", "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"}},
+      "mainEntityOfPage": {"@type": "WebPage", "@id": "{{ canonical }}"}
     }
     </script>
 
@@ -70,8 +67,8 @@ eleventyComputed:
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.home }}", "item": "https://www.serpmonn.ru/"},
-        {"@type": "ListItem", "position": 2, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.news }}", "item": "https://www.serpmonn.ru/frontend/news/"},
+        {"@type": "ListItem", "position": 1, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.home }}", "item": "{{ site.baseUrl }}/"},
+        {"@type": "ListItem", "position": 2, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.news }}", "item": "{{ site.baseUrl }}/frontend/news/"},
         {"@type": "ListItem", "position": 3, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.current }}"}
       ]
     }
@@ -89,8 +86,8 @@ eleventyComputed:
 
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
-      <a href="/">{{ updatesAug25Sep15[locale].breadcrumbs.home }}</a> →
-      <a href="/frontend/news/">{{ updatesAug25Sep15[locale].breadcrumbs.news }}</a> →
+      <a href="{{ site.baseUrl }}/">{{ updatesAug25Sep15[locale].breadcrumbs.home }}</a> →
+      <a href="{{ site.baseUrl }}/frontend/news/">{{ updatesAug25Sep15[locale].breadcrumbs.news }}</a> →
       <span>{{ updatesAug25Sep15[locale].breadcrumbs.current }}</span>
     </div>
 
@@ -143,8 +140,8 @@ eleventyComputed:
       </div>
 
       <div class="social-share">
-        <a class="share-btn vk" href="https://vk.com/share.php?url=https%3A%2F%2Fserpmonn.ru{{ page.url | urlencode }}" target="_blank" rel="noopener">{{ updatesAug25Sep15[locale].share.vk }}</a>
-        <a class="share-btn telegram" href="https://t.me/share/url?url=https%3A%2F%2Fserpmonn.ru{{ page.url | urlencode }}&text={{ updatesAug25Sep15[locale].article.title | urlencode }}" target="_blank" rel="noopener">{{ updatesAug25Sep15[locale].share.telegram }}</a>
+        <a class="share-btn vk" href="https://vk.com/share.php?url={{ site.baseUrl }}{{ page.url | urlencode }}" target="_blank" rel="noopener">{{ updatesAug25Sep15[locale].share.vk }}</a>
+        <a class="share-btn telegram" href="https://t.me/share/url?url={{ site.baseUrl }}{{ page.url | urlencode }}&text={{ updatesAug25Sep15[locale].article.title | urlencode }}" target="_blank" rel="noopener">{{ updatesAug25Sep15[locale].share.telegram }}</a>
       </div>
     </article>
 

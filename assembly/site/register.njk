@@ -8,6 +8,7 @@ eleventyComputed:
   title: "{{ registerTranslations[locale].register.title }}"
   description: "{{ registerTranslations[locale].register.description }}"
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/register/register.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/register/register.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -17,42 +18,34 @@ eleventyComputed:
         <meta http-equiv="Content-Language" content="{{ locale }}">
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{{ registerTranslations[locale].register.title }}</title>
-        <meta name="description" content="{{ registerTranslations[locale].register.description }}">
+        <title>{{ title }}</title>
+        <meta name="description" content="{{ description }}">
         
         <!-- Open Graph -->
         <meta property="og:title" content="{{ registerTranslations[locale].register.ogTitle }}">
         <meta property="og:description" content="{{ registerTranslations[locale].register.ogDescription }}">
-        <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-        {% if locale == 'ru' %}
-        <meta property="og:url" content="https://serpmonn.ru/frontend/register/register.html">
-        {% else %}
-        <meta property="og:url" content="https://serpmonn.ru/frontend/{{ locale }}/register/register.html">
-        {% endif %}
+        <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+        <meta property="og:url" content="{{ canonical }}">
         <meta property="og:type" content="website">
         
         <!-- Twitter -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="{{ registerTranslations[locale].register.ogTitle }}">
         <meta name="twitter:description" content="{{ registerTranslations[locale].register.twitterDescription }}">
-        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+        <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
         
         <!-- Каноническая ссылка -->
-        {% if locale == 'ru' %}
-        <link rel="canonical" href="https://serpmonn.ru/frontend/register/register.html" />
-        {% else %}
-        <link rel="canonical" href="https://serpmonn.ru/frontend/{{ locale }}/register/register.html" />
-        {% endif %}
+        <link rel="canonical" href="{{ canonical }}" />
         
         <!-- Hreflang для всех языков -->
         {% for loc in locales %}
           {% if loc == 'ru' %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/register/register.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/register/register.html" hreflang="{{ loc }}" />
           {% else %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/register/register.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/register/register.html" hreflang="{{ loc }}" />
           {% endif %}
         {% endfor %}
-        <link rel="alternate" href="https://serpmonn.ru/frontend/register/register.html" hreflang="x-default" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/register/register.html" hreflang="x-default" />
         
         <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
         <link rel="stylesheet" href="register_styles.css">

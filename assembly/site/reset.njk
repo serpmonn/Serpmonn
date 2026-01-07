@@ -18,23 +18,24 @@ eleventyComputed:
     <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>{{ reset[locale].reset.pageTitle }}</title>
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
     
     <!-- Open Graph -->
     <meta property="og:title" content="{{ reset[locale].reset.ogTitle }}">
     <meta property="og:description" content="{{ reset[locale].reset.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{{ page.url | safe }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ reset[locale].reset.twitterTitle }}">
     <meta name="twitter:description" content="{{ reset[locale].reset.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon" />
-    <link rel="canonical" href="https://www.serpmonn.ru{{ page.url | safe }}">
+    <link rel="canonical" href="{{ canonical }}">
     
     <!-- Стили -->
     <link rel="stylesheet" href="reset_styles.css" />
@@ -43,12 +44,12 @@ eleventyComputed:
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/login/forgot/reset/reset.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/login/forgot/reset/reset.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/login/forgot/reset/reset.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/login/forgot/reset/reset.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/login/forgot/reset/reset.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/login/forgot/reset/reset.html" hreflang="x-default" />
     
     <!-- Скрипты -->
     <script type="module" src="reset_script.js" defer></script>
