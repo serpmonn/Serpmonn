@@ -8,6 +8,7 @@ eleventyComputed:
   title: "{{ productFootprintCalculator[locale].title }}"
   description: "{{ productFootprintCalculator[locale].meta_description }}"
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/tools/ecology/product-footprint-calculator.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/tools/ecology/product-footprint-calculator.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -25,8 +26,14 @@ eleventyComputed:
     <meta property="og:title" content="{{ productFootprintCalculator[locale].og_title }}">
     <meta property="og:description" content="{{ productFootprintCalculator[locale].og_description }}">
     <meta property="og:image" content="{{ productFootprintCalculator[locale].og_image }}">
-    <meta property="og:url" content="https://serpmonn.ru{{ page.url }}">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="website">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ productFootprintCalculator[locale].og_title }}">
+    <meta name="twitter:description" content="{{ productFootprintCalculator[locale].og_description }}">
+    <meta name="twitter:image" content="{{ productFootprintCalculator[locale].og_image }}">
 
     <!-- VKontakte -->
     <meta property="vk:title" content="{{ productFootprintCalculator[locale].vk_title }}">
@@ -36,21 +43,17 @@ eleventyComputed:
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
-    {% if locale == 'ru' %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/tools/ecology/product-footprint-calculator.html" />
-    {% else %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/{{ locale }}/tools/ecology/product-footprint-calculator.html" />
-    {% endif %}
+    <link rel="canonical" href="{{ canonical }}" />
     
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
       {% if loc == 'ru' %}
-        <link rel="alternate" href="https://serpmonn.ru/frontend/tools/ecology/product-footprint-calculator.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/ecology/product-footprint-calculator.html" hreflang="{{ loc }}" />
       {% else %}
-        <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/tools/ecology/product-footprint-calculator.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/ecology/product-footprint-calculator.html" hreflang="{{ loc }}" />
       {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/tools/ecology/product-footprint-calculator.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/ecology/product-footprint-calculator.html" hreflang="x-default" />
 
     <!-- JSON-LD: WebApplication -->
     <script type="application/ld+json">
@@ -61,7 +64,7 @@ eleventyComputed:
       "description": "{{ productFootprintCalculator[locale].meta_description }}",
       "applicationCategory": "UtilityApplication",
       "operatingSystem": "Any",
-      "url": "https://www.serpmonn.ru{{ page.url }}",
+      "url": "{{ canonical }}",
       "author": {
         "@type": "Organization",
         "name": "Serpmonn"
@@ -84,13 +87,13 @@ eleventyComputed:
           "@type": "ListItem",
           "position": 1,
           "name": "{{ productFootprintCalculator[locale].breadcrumbs.home }}",
-          "item": "https://www.serpmonn.ru/"
+          "item": "{{ site.baseUrl }}/"
         },
         {
           "@type": "ListItem",
           "position": 2,
           "name": "{{ productFootprintCalculator[locale].breadcrumbs.tools }}",
-          "item": "https://www.serpmonn.ru/frontend/tools/"
+          "item": "{{ site.baseUrl }}/frontend/tools/"
         },
         {
           "@type": "ListItem",
@@ -196,10 +199,10 @@ eleventyComputed:
             </div>
 
             <div class="share-buttons">
-                <a class="share-btn vk" href="https://vk.com/share.php?url=https%3A%2F%2Fserpmonn.ru{{ page.url | urlencode }}" target="_blank" rel="noopener">
+                <a class="share-btn vk" href="https://vk.com/share.php?url={{ canonical | urlencode }}" target="_blank" rel="noopener">
                     {{ productFootprintCalculator[locale].buttons.share_vk }}
                 </a>
-                <a class="share-btn telegram" href="https://t.me/share/url?url=https%3A%2F%2Fserpmonn.ru{{ page.url | urlencode }}&text={{ productFootprintCalculator[locale].header.title | urlencode }}" target="_blank" rel="noopener">
+                <a class="share-btn telegram" href="https://t.me/share/url?url={{ canonical | urlencode }}&text={{ productFootprintCalculator[locale].header.title | urlencode }}" target="_blank" rel="noopener">
                     {{ productFootprintCalculator[locale].buttons.share_telegram }}
                 </a>
             </div>

@@ -8,7 +8,7 @@ eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   title: "{{ profile[locale].profile.pageTitle }}"
   description: "{{ profile[locale].profile.metaDescription }}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/profile/profile.html{% else %}{{ site.baseUrl }}/{{ locale }}/profile/profile.html{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/profile/profile.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/profile/profile.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -24,28 +24,28 @@ eleventyComputed:
     <!-- Open Graph -->
     <meta property="og:title" content="{{ profile[locale].profile.ogTitle }}">
     <meta property="og:description" content="{{ profile[locale].profile.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="https://serpmonn.ru{{ page.url | safe }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="profile">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ profile[locale].profile.ogTitle }}">
     <meta name="twitter:description" content="{{ profile[locale].profile.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     
     <!-- Каноническая ссылка -->
-    <link rel="canonical" href="https://serpmonn.ru{{ page.url | safe }}" />
+    <link rel="canonical" href="{{ canonical }}" />
     
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/profile/profile.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/profile/profile.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/profile/profile.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/profile/profile.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/profile/profile.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/profile/profile.html" hreflang="x-default" />
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="profile_styles.css">

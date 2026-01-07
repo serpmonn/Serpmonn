@@ -2,82 +2,75 @@
 pagination:
   data: locales
   size: 1
-  alias: lang
-permalink: "{% if lang == 'ru' %}/frontend/news/articles/port-forwarding-guide.html{% else %}/frontend/{{ lang }}/news/articles/port-forwarding-guide.html{% endif %}"
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/news/articles/port-forwarding-guide.html{% else %}/frontend/{{ locale }}/news/articles/port-forwarding-guide.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/port-forwarding-guide.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/port-forwarding-guide.html{% endif %}"
 ---
 
 <!DOCTYPE html>
-<html lang="{{ lang }}" dir="{% if lang in ['ar', 'he', 'ug', 'fa'] %}rtl{% else %}ltr{% endif %}">
+<html lang="{{ locale }}" dir="{{ dir }}">
 <head>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <meta http-equiv="Content-Language" content="{{ lang }}">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="{{ portForwardingGuide[lang].meta.description }}">
-    <title>{{ portForwardingGuide[lang].meta.title }}</title>
+    <meta name="description" content="{{ portForwardingGuide[locale].meta.description }}">
+    <title>{{ portForwardingGuide[locale].meta.title }}</title>
     
     <!-- Open Graph -->
-    <meta property="og:title" content="{{ portForwardingGuide[lang].meta.ogTitle }}">
-    <meta property="og:description" content="{{ portForwardingGuide[lang].meta.ogDescription }}">
-    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-    {% if lang == 'ru' %}
-    <meta property="og:url" content="https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html">
-    {% else %}
-    <meta property="og:url" content="https://serpmonn.ru/frontend/{{ lang }}/news/articles/port-forwarding-guide.html">
-    {% endif %}
+    <meta property="og:title" content="{{ portForwardingGuide[locale].meta.ogTitle }}">
+    <meta property="og:description" content="{{ portForwardingGuide[locale].meta.ogDescription }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
     
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ portForwardingGuide[lang].meta.twitterTitle }}">
-    <meta name="twitter:description" content="{{ portForwardingGuide[lang].meta.twitterDescription }}">
-    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta name="twitter:title" content="{{ portForwardingGuide[locale].meta.twitterTitle }}">
+    <meta name="twitter:description" content="{{ portForwardingGuide[locale].meta.twitterDescription }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
     <!-- Structured Data -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      "headline": "{{ portForwardingGuide[lang].meta.ogTitle }}",
+      "headline": "{{ portForwardingGuide[locale].meta.ogTitle }}",
       "datePublished": "2025-10-29",
       "author": {
         "@type": "Organization",
         "name": "Serpmonn"
       },
-      "description": "{{ portForwardingGuide[lang].meta.ogDescription }}",
-      "image": "https://serpmonn.ru/frontend/images/Banner_Serpmonn.png",
-      "inLanguage": "{{ lang }}",
+      "description": "{{ portForwardingGuide[locale].meta.ogDescription }}",
+      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
+      "inLanguage": "{{ locale }}",
       "publisher": {
         "@type": "Organization",
         "name": "Serpmonn",
         "logo": {
           "@type": "ImageObject",
-          "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"
+          "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"
         }
       },
-      "url": "https://serpmonn.ru{% if lang == 'ru' %}/frontend/news/articles/port-forwarding-guide.html{% else %}/frontend/{{ lang }}/news/articles/port-forwarding-guide.html{% endif %}"
+      "url": "{{ canonical }}"
     }
     </script>
 
     <!-- Каноническая ссылка -->
-    {% if lang == 'ru' %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html" />
-    {% else %}
-    <link rel="canonical" href="https://serpmonn.ru/frontend/{{ lang }}/news/articles/port-forwarding-guide.html" />
-    {% endif %}
+    <link rel="canonical" href="{{ canonical }}" />
 
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
     {% if loc == 'ru' %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html" hreflang="{{ loc }}" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/port-forwarding-guide.html" hreflang="{{ loc }}" />
     {% else %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/{{ loc }}/news/articles/port-forwarding-guide.html" hreflang="{{ loc }}" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/news/articles/port-forwarding-guide.html" hreflang="{{ loc }}" />
     {% endif %}
     {% endfor %}
-    <link rel="alternate" href="https://serpmonn.ru/frontend/news/articles/port-forwarding-guide.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/port-forwarding-guide.html" hreflang="x-default" />
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -97,79 +90,79 @@ eleventyComputed:
     </button>
     
     <div class="floating-toc">
-        <h3>{{ portForwardingGuide[lang].article.sections.toc.title }}</h3>
+        <h3>{{ portForwardingGuide[locale].article.sections.toc.title }}</h3>
         <ul>
-            <li><a href="#section-what-is">{{ portForwardingGuide[lang].article.sections.toc.items[0] }}</a></li>
-            <li><a href="#section-why-need">{{ portForwardingGuide[lang].article.sections.toc.items[1] }}</a></li>
-            <li><a href="#section-preparation">{{ portForwardingGuide[lang].article.sections.toc.items[2] }}</a></li>
-            <li><a href="#section-step-by-step">{{ portForwardingGuide[lang].article.sections.toc.items[3] }}</a></li>
-            <li><a href="#section-routers">{{ portForwardingGuide[lang].article.sections.toc.items[4] }}</a></li>
-            <li><a href="#section-verification">{{ portForwardingGuide[lang].article.sections.toc.items[5] }}</a></li>
-            <li><a href="#section-troubleshooting">{{ portForwardingGuide[lang].article.sections.toc.items[6] }}</a></li>
-            <li><a href="#section-security">{{ portForwardingGuide[lang].article.sections.toc.items[7] }}</a></li>
+            <li><a href="#section-what-is">{{ portForwardingGuide[locale].article.sections.toc.items[0] }}</a></li>
+            <li><a href="#section-why-need">{{ portForwardingGuide[locale].article.sections.toc.items[1] }}</a></li>
+            <li><a href="#section-preparation">{{ portForwardingGuide[locale].article.sections.toc.items[2] }}</a></li>
+            <li><a href="#section-step-by-step">{{ portForwardingGuide[locale].article.sections.toc.items[3] }}</a></li>
+            <li><a href="#section-routers">{{ portForwardingGuide[locale].article.sections.toc.items[4] }}</a></li>
+            <li><a href="#section-verification">{{ portForwardingGuide[locale].article.sections.toc.items[5] }}</a></li>
+            <li><a href="#section-troubleshooting">{{ portForwardingGuide[locale].article.sections.toc.items[6] }}</a></li>
+            <li><a href="#section-security">{{ portForwardingGuide[locale].article.sections.toc.items[7] }}</a></li>
         </ul>
     </div>
     
     <div id="menuContainer"></div>
     <article class="article-container" tabindex="0">
         <header class="article-header">
-            <span class="article-category">{{ portForwardingGuide[lang].article.category }}</span>
+            <span class="article-category">{{ portForwardingGuide[locale].article.category }}</span>
             <div class="table-of-contents sticky-toc">
-                <h2>{{ portForwardingGuide[lang].article.sections.toc.title }}</h2>
+                <h2>{{ portForwardingGuide[locale].article.sections.toc.title }}</h2>
                 <ul>
-                    <li><a href="#section-what-is">{{ portForwardingGuide[lang].article.sections.toc.items[0] }}</a></li>
-                    <li><a href="#section-why-need">{{ portForwardingGuide[lang].article.sections.toc.items[1] }}</a></li>
-                    <li><a href="#section-preparation">{{ portForwardingGuide[lang].article.sections.toc.items[2] }}</a></li>
-                    <li><a href="#section-step-by-step">{{ portForwardingGuide[lang].article.sections.toc.items[3] }}</a></li>
-                    <li><a href="#section-routers">{{ portForwardingGuide[lang].article.sections.toc.items[4] }}</a></li>
-                    <li><a href="#section-verification">{{ portForwardingGuide[lang].article.sections.toc.items[5] }}</a></li>
-                    <li><a href="#section-troubleshooting">{{ portForwardingGuide[lang].article.sections.toc.items[6] }}</a></li>
-                    <li><a href="#section-security">{{ portForwardingGuide[lang].article.sections.toc.items[7] }}</a></li>
+                    <li><a href="#section-what-is">{{ portForwardingGuide[locale].article.sections.toc.items[0] }}</a></li>
+                    <li><a href="#section-why-need">{{ portForwardingGuide[locale].article.sections.toc.items[1] }}</a></li>
+                    <li><a href="#section-preparation">{{ portForwardingGuide[locale].article.sections.toc.items[2] }}</a></li>
+                    <li><a href="#section-step-by-step">{{ portForwardingGuide[locale].article.sections.toc.items[3] }}</a></li>
+                    <li><a href="#section-routers">{{ portForwardingGuide[locale].article.sections.toc.items[4] }}</a></li>
+                    <li><a href="#section-verification">{{ portForwardingGuide[locale].article.sections.toc.items[5] }}</a></li>
+                    <li><a href="#section-troubleshooting">{{ portForwardingGuide[locale].article.sections.toc.items[6] }}</a></li>
+                    <li><a href="#section-security">{{ portForwardingGuide[locale].article.sections.toc.items[7] }}</a></li>
                 </ul>
             </div>
             <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
             </div>
-            <h1 class="article-title">{{ portForwardingGuide[lang].article.title }}</h1>
-            <div class="article-meta">{{ portForwardingGuide[lang].article.date }} • {{ portForwardingGuide[lang].article.readTime }}</div>
+            <h1 class="article-title">{{ portForwardingGuide[locale].article.title }}</h1>
+            <div class="article-meta">{{ portForwardingGuide[locale].article.date }} • {{ portForwardingGuide[locale].article.readTime }}</div>
         </header>
 
         <div class="article-content">
-            <p>{{ portForwardingGuide[lang].article.intro }}</p>
+            <p>{{ portForwardingGuide[locale].article.intro }}</p>
 
-            <h2 id="section-what-is">{{ portForwardingGuide[lang].article.sections.whatIs.title }}</h2>
-            <p>{{ portForwardingGuide[lang].article.sections.whatIs.content | safe }}</p>
+            <h2 id="section-what-is">{{ portForwardingGuide[locale].article.sections.whatIs.title }}</h2>
+            <p>{{ portForwardingGuide[locale].article.sections.whatIs.content | safe }}</p>
             
             <div class="visual-guide">
                 <div class="visual-item">
                     <div class="visual-icon"><i class="fas fa-globe"></i></div>
-                    <h3>{{ portForwardingGuide[lang].article.sections.whatIs.visualGuide.internet.title }}</h3>
-                    <p>{{ portForwardingGuide[lang].article.sections.whatIs.visualGuide.internet.desc }}</p>
+                    <h3>{{ portForwardingGuide[locale].article.sections.whatIs.visualGuide.internet.title }}</h3>
+                    <p>{{ portForwardingGuide[locale].article.sections.whatIs.visualGuide.internet.desc }}</p>
                 </div>
                 <div class="visual-item">
                     <div class="visual-icon"><i class="fas fa-router"></i></div>
-                    <h3>{{ portForwardingGuide[lang].article.sections.whatIs.visualGuide.router.title }}</h3>
-                    <p>{{ portForwardingGuide[lang].article.sections.whatIs.visualGuide.router.desc }}</p>
+                    <h3>{{ portForwardingGuide[locale].article.sections.whatIs.visualGuide.router.title }}</h3>
+                    <p>{{ portForwardingGuide[locale].article.sections.whatIs.visualGuide.router.desc }}</p>
                 </div>
                 <div class="visual-item">
                     <div class="visual-icon"><i class="fas fa-desktop"></i></div>
-                    <h3>{{ portForwardingGuide[lang].article.sections.whatIs.visualGuide.device.title }}</h3>
-                    <p>{{ portForwardingGuide[lang].article.sections.whatIs.visualGuide.device.desc }}</p>
+                    <h3>{{ portForwardingGuide[locale].article.sections.whatIs.visualGuide.device.title }}</h3>
+                    <p>{{ portForwardingGuide[locale].article.sections.whatIs.visualGuide.device.desc }}</p>
                 </div>
             </div>
 
-            <h2 id="section-why-need">{{ portForwardingGuide[lang].article.sections.whyNeed.title }}</h2>
+            <h2 id="section-why-need">{{ portForwardingGuide[locale].article.sections.whyNeed.title }}</h2>
             
             <table class="port-table">
                 <thead>
                     <tr>
-                        {% for header in portForwardingGuide[lang].article.sections.whyNeed.table.headers %}
+                        {% for header in portForwardingGuide[locale].article.sections.whyNeed.table.headers %}
                         <th>{{ header }}</th>
                         {% endfor %}
                     </tr>
                 </thead>
                 <tbody>
-                    {% for row in portForwardingGuide[lang].article.sections.whyNeed.table.rows %}
+                    {% for row in portForwardingGuide[locale].article.sections.whyNeed.table.rows %}
                     <tr>
                         <td>{{ row.purpose | safe }}</td>
                         <td>{{ row.ports | safe }}</td>
@@ -180,14 +173,14 @@ eleventyComputed:
             </table>
 
             <div class="security-warning">
-                <h4>{{ portForwardingGuide[lang].article.sections.securityWarning.title }}</h4>
-                <p>{{ portForwardingGuide[lang].article.sections.securityWarning.content }}</p>
+                <h4>{{ portForwardingGuide[locale].article.sections.securityWarning.title }}</h4>
+                <p>{{ portForwardingGuide[locale].article.sections.securityWarning.content }}</p>
             </div>
 
-            <h2 id="section-preparation">{{ portForwardingGuide[lang].article.sections.preparation.title }}</h2>
+            <h2 id="section-preparation">{{ portForwardingGuide[locale].article.sections.preparation.title }}</h2>
             
             <ol class="step-list">
-                {% for step in portForwardingGuide[lang].article.sections.preparation.steps %}
+                {% for step in portForwardingGuide[locale].article.sections.preparation.steps %}
                 <li>
                     <h3>{{ step.title }}</h3>
                     <p>{{ step.content | safe }}</p>
@@ -225,10 +218,10 @@ eleventyComputed:
                 {% endfor %}
             </ol>
 
-            <h2 id="section-step-by-step">{{ portForwardingGuide[lang].article.sections.stepByStep.title }}</h2>
+            <h2 id="section-step-by-step">{{ portForwardingGuide[locale].article.sections.stepByStep.title }}</h2>
             
             <ol class="step-list">
-                {% for step in portForwardingGuide[lang].article.sections.stepByStep.steps %}
+                {% for step in portForwardingGuide[locale].article.sections.stepByStep.steps %}
                 <li>
                     <h3>{{ step.title }}</h3>
                     <p>{{ step.content | safe }}</p>
@@ -261,9 +254,9 @@ eleventyComputed:
                 {% endfor %}
             </ol>
 
-            <h2 id="section-routers">{{ portForwardingGuide[lang].article.sections.routers.title }}</h2>
+            <h2 id="section-routers">{{ portForwardingGuide[locale].article.sections.routers.title }}</h2>
 
-            {% for guide in portForwardingGuide[lang].article.sections.routers.guides %}
+            {% for guide in portForwardingGuide[locale].article.sections.routers.guides %}
             <div class="router-guide">
                 <h4>{{ guide.icon }} {{ guide.brand }}</h4>
                 <ol>
@@ -284,10 +277,10 @@ eleventyComputed:
             </div>
             {% endfor %}
 
-            <h2 id="section-verification">{{ portForwardingGuide[lang].article.sections.verification.title }}</h2>
+            <h2 id="section-verification">{{ portForwardingGuide[locale].article.sections.verification.title }}</h2>
 
             <ol class="step-list">
-                {% for step in portForwardingGuide[lang].article.sections.verification.steps %}
+                {% for step in portForwardingGuide[locale].article.sections.verification.steps %}
                 <li>
                     <h3>{{ step.title }}</h3>
                     <p>{{ step.content | safe }}</p>
@@ -311,17 +304,17 @@ eleventyComputed:
             </ol>
 
             <div class="success-tip">
-                <h4>{{ portForwardingGuide[lang].article.sections.verification.successTips.title }}</h4>
+                <h4>{{ portForwardingGuide[locale].article.sections.verification.successTips.title }}</h4>
                 <ul>
-                    {% for tip in portForwardingGuide[lang].article.sections.verification.successTips.tips %}
+                    {% for tip in portForwardingGuide[locale].article.sections.verification.successTips.tips %}
                     <li>{{ tip }}</li>
                     {% endfor %}
                 </ul>
             </div>
 
-            <h2 id="section-troubleshooting">{{ portForwardingGuide[lang].article.sections.troubleshooting.title }}</h2>
+            <h2 id="section-troubleshooting">{{ portForwardingGuide[locale].article.sections.troubleshooting.title }}</h2>
 
-            {% for problem in portForwardingGuide[lang].article.sections.troubleshooting.problems %}
+            {% for problem in portForwardingGuide[locale].article.sections.troubleshooting.problems %}
             <div class="router-guide">
                 <h4>{{ problem.title }}</h4>
                 {% if problem.content %}<p>{{ problem.content | safe }}</p>{% endif %}
@@ -333,29 +326,29 @@ eleventyComputed:
             </div>
             {% endfor %}
 
-            <h2 id="section-security">{{ portForwardingGuide[lang].article.sections.security.title }}</h2>
+            <h2 id="section-security">{{ portForwardingGuide[locale].article.sections.security.title }}</h2>
 
             <div class="security-warning">
-                <h4>{{ portForwardingGuide[lang].article.sections.security.rules.title }}</h4>
+                <h4>{{ portForwardingGuide[locale].article.sections.security.rules.title }}</h4>
                 <ol>
-                    {% for rule in portForwardingGuide[lang].article.sections.security.rules.items %}
+                    {% for rule in portForwardingGuide[locale].article.sections.security.rules.items %}
                     <li>{{ rule | safe }}</li>
                     {% endfor %}
                 </ol>
             </div>
 
             <div class="success-tip">
-                <h4>{{ portForwardingGuide[lang].article.sections.security.bestPractices.title }}</h4>
+                <h4>{{ portForwardingGuide[locale].article.sections.security.bestPractices.title }}</h4>
                 <ul>
-                    {% for practice in portForwardingGuide[lang].article.sections.security.bestPractices.items %}
+                    {% for practice in portForwardingGuide[locale].article.sections.security.bestPractices.items %}
                     <li>{{ practice | safe }}</li>
                     {% endfor %}
                 </ul>
             </div>
 
-            <h3>{{ portForwardingGuide[lang].article.sections.security.checklist.title }}</h3>
+            <h3>{{ portForwardingGuide[locale].article.sections.security.checklist.title }}</h3>
             <ul class="checklist">
-                {% for item in portForwardingGuide[lang].article.sections.security.checklist.items %}
+                {% for item in portForwardingGuide[locale].article.sections.security.checklist.items %}
                 <li>
                     <input type="checkbox" id="security{{ loop.index }}">
                     <label for="security{{ loop.index }}">{{ item }}</label>
@@ -364,25 +357,25 @@ eleventyComputed:
             </ul>
 
             <div class="share-buttons">
-                <h3>{{ portForwardingGuide[lang].article.sections.share.title }}</h3>
-                <button onclick="share('telegram')" aria-label="Поделиться в Telegram">{{ portForwardingGuide[lang].article.sections.share.telegram }}</button>
-                <button onclick="share('vk')" aria-label="Поделиться во ВКонтакте">{{ portForwardingGuide[lang].article.sections.share.vk }}</button>
+                <h3>{{ portForwardingGuide[locale].article.sections.share.title }}</h3>
+                <button onclick="share('telegram')" aria-label="{{ portForwardingGuide[locale].article.sections.share.telegramAria }}">{{ portForwardingGuide[locale].article.sections.share.telegram }}</button>
+                <button onclick="share('vk')" aria-label="{{ portForwardingGuide[locale].article.sections.share.vkAria }}">{{ portForwardingGuide[locale].article.sections.share.vk }}</button>
             </div>
 
             <div class="comments-section">
-                <h2>{{ portForwardingGuide[lang].article.sections.comments.title }}</h2>
+                <h2>{{ portForwardingGuide[locale].article.sections.comments.title }}</h2>
                 <div class="comment-form">
-                    <h3>{{ portForwardingGuide[lang].article.sections.comments.formTitle }}</h3>
+                    <h3>{{ portForwardingGuide[locale].article.sections.comments.formTitle }}</h3>
                     <form id="commentForm">
                         <div class="form-group">
-                            <label for="commentName">{{ portForwardingGuide[lang].article.sections.comments.nameLabel }}</label>
+                            <label for="commentName">{{ portForwardingGuide[locale].article.sections.comments.nameLabel }}</label>
                             <input type="text" id="commentName" required>
                         </div>
                         <div class="form-group">
-                            <label for="commentText">{{ portForwardingGuide[lang].article.sections.comments.commentLabel }}</label>
+                            <label for="commentText">{{ portForwardingGuide[locale].article.sections.comments.commentLabel }}</label>
                             <textarea id="commentText" required></textarea>
                         </div>
-                        <button type="submit" class="submit-button">{{ portForwardingGuide[lang].article.sections.comments.submit }}</button>
+                        <button type="submit" class="submit-button">{{ portForwardingGuide[locale].article.sections.comments.submit }}</button>
                     </form>
                 </div>
                 <div id="commentsList" class="comments-list">
@@ -392,16 +385,16 @@ eleventyComputed:
         </div>
 
         <div class="social-subscribe">
-            <a class="tg-btn" href="{{ portForwardingGuide[lang].article.social.telegram.url }}" target="_blank" rel="noopener" aria-label="{{ portForwardingGuide[lang].article.social.telegram.aria }}">{{ portForwardingGuide[lang].article.social.telegram.text }}</a>
-            <a class="vk-btn" href="{{ portForwardingGuide[lang].article.social.vk.url }}" target="_blank" rel="noopener" aria-label="{{ portForwardingGuide[lang].article.social.vk.aria }}">{{ portForwardingGuide[lang].article.social.vk.text }}</a>
+            <a class="tg-btn" href="{{ portForwardingGuide[locale].article.social.telegram.url }}" target="_blank" rel="noopener" aria-label="{{ portForwardingGuide[locale].article.social.telegram.aria }}">{{ portForwardingGuide[locale].article.social.telegram.text }}</a>
+            <a class="vk-btn" href="{{ portForwardingGuide[locale].article.social.vk.url }}" target="_blank" rel="noopener" aria-label="{{ portForwardingGuide[locale].article.social.vk.aria }}">{{ portForwardingGuide[locale].article.social.vk.text }}</a>
         </div>
     </article>
 
-    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Вернуться наверх">{{ portForwardingGuide[lang].article.buttons.scrollTop }}</button>
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="{{ portForwardingGuide[locale].article.buttons.scrollTopAria }}">{{ portForwardingGuide[locale].article.buttons.scrollTop }}</button>
 
     <div id="mobile-anchor-ad" class="mobile-anchor-ad ad-banner loading" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none">
         <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center">
-            <button type="button" aria-label="Закрыть рекламу" onclick="this.closest('.mobile-anchor-ad').style.display='none';localStorage.setItem('anchor_closed','1')" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">{{ portForwardingGuide[lang].article.buttons.closeAd }}</button>
+            <button type="button" aria-label="{{ portForwardingGuide[locale].article.buttons.closeAdAria }}" onclick="this.closest('.mobile-anchor-ad').style.display='none';localStorage.setItem('anchor_closed','1')" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">{{ portForwardingGuide[locale].article.buttons.closeAd }}</button>
             <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
         </div>
     </div>
@@ -414,22 +407,22 @@ eleventyComputed:
             const comment = {
                 name: name,
                 text: text,
-                date: new Date().toLocaleString('{{ lang }}')
+                date: new Date().toLocaleString('{{ locale }}')
             };
             
-            let comments = JSON.parse(localStorage.getItem('articleComments_{{ lang }}')) || [];
+            let comments = JSON.parse(localStorage.getItem('articleComments_{{ locale }}')) || [];
             comments.push(comment);
-            localStorage.setItem('articleComments_{{ lang }}', JSON.stringify(comments));
+            localStorage.setItem('articleComments_{{ locale }}', JSON.stringify(comments));
             
             return comment;
         }
         
         function loadComments() {
-            const comments = JSON.parse(localStorage.getItem('articleComments_{{ lang }}')) || [];
+            const comments = JSON.parse(localStorage.getItem('articleComments_{{ locale }}')) || [];
             const commentsList = document.getElementById('commentsList');
             
             if (comments.length === 0) {
-                commentsList.innerHTML = '<div class="no-comments">{{ portForwardingGuide[lang].article.sections.comments.noComments }}</div>';
+                commentsList.innerHTML = '<div class="no-comments">{{ portForwardingGuide[locale].article.sections.comments.noComments }}</div>';
                 return;
             }
             
