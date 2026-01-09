@@ -51,236 +51,30 @@ eleventyComputed:
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <!-- Стили для калькулятора амортизации -->
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
+    
+    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
     <style>
-      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
-      body { 
-        max-width: 1200px; 
-        margin: 0 auto; 
-        padding: 16px; 
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-        background: #f5f5f5;
+      .ad-top-banner .mrg-tag { 
+        width: 970px !important; 
+        height: 250px !important; 
       }
-      .breadcrumb {
-        margin-bottom: 20px;
-        padding: 10px 0;
-        color: #666;
-        font-size: 0.9rem;
+      @media (max-width: 1199px) { 
+        .ad-top-banner .mrg-tag { 
+          width: 728px !important; 
+          height: 90px !important; 
+        } 
       }
-      .breadcrumb a {
-        color: #007bff;
-        text-decoration: none;
-      }
-      .breadcrumb a:hover {
-        text-decoration: underline;
-      }
-      h1 { 
-        margin: 16px 0; 
-        text-align: center;
-        color: #333;
-      }
-      .calculator-container {
-        background: #fff;
-        border-radius: 12px;
-        padding: 24px;
-        margin: 20px 0;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      }
-      .error-message {
-        display: none;
-        color: #dc3545;
-        padding: 10px;
-        margin-bottom: 10px;
-      }
-      .error-message:not(.hidden) {
-        display: block;
-      }
-      .input-section {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 20px;
-        margin-bottom: 30px;
-      }
-      .input-group {
-        display: flex;
-        flex-direction: column;
-      }
-      label { 
-        font-size: 14px; 
-        color: #495057; 
-        margin-bottom: 8px;
-        font-weight: 500;
-      }
-      input, select { 
-        width: 100%; 
-        padding: 12px; 
-        border: 2px solid #e9ecef; 
-        border-radius: 8px; 
-        font-size: 16px;
-        transition: border-color 0.3s ease;
-      }
-      input:focus, select:focus {
-        outline: none;
-        border-color: #007bff;
-      }
-      .calculate-btn, .reset-btn, .share-btn, .export-btn, .csv-btn {
-        background: linear-gradient(90deg, #007bff, #0056b3);
-        color: #fff;
-        border: none;
-        padding: 15px 30px;
-        border-radius: 8px;
-        font-size: 18px;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        margin: 20px 10px;
-      }
-      .reset-btn {
-        background: linear-gradient(90deg, #6c757d, #5a6268);
-      }
-      .calculate-btn:hover, .reset-btn:hover, .share-btn:hover, .export-btn:hover, .csv-btn:hover {
-        background: linear-gradient(90deg, #0056b3, #004085);
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.4);
-      }
-      .reset-btn:hover {
-        background: linear-gradient(90deg, #5a6268, #4b5156);
-      }
-      .calculate-btn:active, .reset-btn:active, .share-btn:active, .export-btn:active, .csv-btn:active {
-        transform: scale(0.98);
-      }
-      .results, .breakdown, .history {
-        background: #f8f9fa;
-        border: 2px solid #e9ecef;
-        border-radius: 8px;
-        padding: 20px;
-        margin-top: 20px;
-      }
-      .results.loading::before, .breakdown.loading::before, .history.loading::before {
-        content: '';
-        display: block;
-        height: 100px;
-        background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-        background-size: 200% 100%;
-        animation: skeleton-loading 1.5s infinite;
-      }
-      @keyframes skeleton-loading {
-        0% { background-position: 200% 0; }
-        100% { background-position: -200% 0; }
-      }
-      .results:not(.hidden), .breakdown:not(.hidden), .history:not(.hidden) {
-        animation: fadeIn 0.5s ease;
-      }
-      @keyframes fadeIn {
-        from { opacity: 0; transform: translateY(10px); }
-        to { opacity: 1; transform: translateY(0); }
-      }
-      .result-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 20px;
-        margin-top: 20px;
-      }
-      .result-item {
-        text-align: center;
-        padding: 15px;
-        background: #fff;
-        border-radius: 8px;
-        border: 1px solid #dee2e6;
-      }
-      .result-value {
-        font-size: 24px;
-        font-weight: bold;
-        color: #007bff;
-        margin-bottom: 5px;
-      }
-      .result-label {
-        color: #495057;
-        font-size: 14px;
-      }
-      .breakdown h3, .history h3 {
-        color: #333;
-        margin-bottom: 20px;
-        text-align: center;
-      }
-      .breakdown-item, .history-item {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 12px 0;
-        border-bottom: 1px solid #e9ecef;
-      }
-      .breakdown-item:last-child, .history-item:last-child {
-        border-bottom: none;
-      }
-      .history-item button {
-        background: #007bff;
-        color: #fff;
-        border: none;
-        padding: 8px 12px;
-        border-radius: 4px;
-        cursor: pointer;
-      }
-      .history-item button:hover {
-        background: #0056b3;
-      }
-      .info-tips {
-        background: #e3f2fd;
-        border: 1px solid #bbdefb;
-        border-radius: 8px;
-        padding: 20px;
-        margin-top: 30px;
-      }
-      .info-tips h3 {
-        color: #1976d2;
-        margin-bottom: 15px;
-      }
-      .tip-item {
-        margin-bottom: 10px;
-        padding-left: 20px;
-        position: relative;
-        color: #343a40;
-      }
-      .tip-item:before {
-        content: "💡";
-        position: absolute;
-        left: 0;
-      }
-      .disclaimer {
-        margin-top: 20px;
-        color: #495057;
-        font-size: 0.9rem;
-        text-align: center;
-      }
-      #mobile-anchor-ad button {
-        background: none;
-        border: 0;
-        font-size: 16px;
-        line-height: 1;
-        cursor: pointer;
-      }
-      @media (max-width: 768px) {
-        .input-section {
-          grid-template-columns: 1fr;
-        }
-        .result-grid {
-          grid-template-columns: 1fr;
-        }
-        body {
-          padding: 12px;
-        }
-        .calculate-btn, .reset-btn, .share-btn, .export-btn, .csv-btn {
-          width: 100%;
-          margin: 10px 0;
-        }
-        #mobile-anchor-ad {
-          bottom: env(safe-area-inset-bottom);
-        }
+      @media (max-width: 768px) { 
+        .ad-top-banner .mrg-tag { 
+          width: 320px !important; 
+          height: 50px !important; 
+        } 
       }
     </style>
   </head>
-  <body>
+  <body class="depreciation-calculator">
     <!-- Меню -->
     <div id="menuContainer"></div>
 
