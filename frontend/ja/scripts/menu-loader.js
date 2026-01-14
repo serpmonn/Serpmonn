@@ -1,6 +1,5 @@
 // Исправленный импорт
 import { initMenu } from './menu.js';
-import '/frontend/scripts/language-selector.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
 
@@ -38,16 +37,17 @@ const langToDir = {
 };
 const resolvedDir = langToDir[spnLang];
 const primaryMenuPath = resolvedDir ? `/frontend/${resolvedDir}/menu.html` : '/frontend/menu.html';
+
 fetch(primaryMenuPath)
     .then(r => r.ok ? r : fetch('/frontend/menu.html'))
-        // Путь из папки about-project
-
     .then(response => {
         if (!response.ok) throw new Error('Меню не найдено');
         return response.text();
     })
     .then(html => {
         document.body.insertAdjacentHTML('afterbegin', html);
+        
+        // Модифицируем ссылки в меню под текущий язык
         try {
             const currentLang = spnLang;
             const supported = new Set(Object.keys(langToDir));
@@ -108,8 +108,31 @@ fetch(primaryMenuPath)
         }
         
         initMenu();
+        
         // Apply GEO filtering after menu init
         try { applyGeoFilter(); } catch {}
+        
+        // ========== ЗАГРУЖАЕМ СКРИПТ СЕЛЕКТОРА ЯЗЫКА ==========
+        const script = document.createElement('script');
+        
+        // Определяем путь к скрипту в зависимости от локали
+        const scriptPath = resolvedDir ? 
+            `/frontend/${resolvedDir}/scripts/language-selector.js` : 
+            '/frontend/scripts/language-selector.js';
+        
+        script.src = scriptPath;
+        script.onerror = (e) => {
+            console.error('❌ Ошибка загрузки скрипта селектора:', e);
+            // Пробуем загрузить из корня, если в локали не нашли
+            if (resolvedDir) {
+                const fallbackScript = document.createElement('script');
+                fallbackScript.src = '/frontend/scripts/language-selector.js';
+                document.body.appendChild(fallbackScript);
+            }
+        };
+        
+        document.body.appendChild(script);
+        // ========== КОНЕЦ ЗАГРУЗКИ СКРИПТА ==========
         
         // Инициализируем доступность ПОСЛЕ загрузки меню
         setTimeout(() => {
