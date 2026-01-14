@@ -1,4 +1,4 @@
-const CACHE_NAME = 'serpmonn-v4';
+const CACHE_NAME = 'serpmonn-v5';
 const urlsToCache = [
   '/frontend/main.html',
   '/frontend/menu.html',
