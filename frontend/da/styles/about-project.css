@@ -283,6 +283,44 @@ p {
     color: rgba(255, 255, 255, 0.95);
 }
 
+/* Стили для кнопки "Поддержать проект" */
+.support-button {
+    display: inline-block;
+    margin-top: 20px;
+    padding: 12px 24px;
+    background-color: #EA4335; /* Красный цвет, как в контактах */
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s, transform 0.2s;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 4px 6px rgba(234, 67, 53, 0.2);
+}
+
+.support-button:hover {
+    background-color: #D33426;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 8px rgba(234, 67, 53, 0.3);
+}
+
+.support-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(234, 67, 53, 0.2);
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+    .support-button {
+        width: 100%;
+        padding: 14px 20px;
+        font-size: 15px;
+    }
+}
+
 /* Мобильные стили для технической информации */
 @media (max-width: 768px) {
     .technical-info {
@@ -301,5 +339,58 @@ p {
     
     .stat-label {
         font-size: 0.8rem;
+    }
+}
+
+/* Контейнер для кнопки поддержки в счётчике */
+.support-button-container {
+    text-align: center;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+/* Кнопка поддержки в стиле счётчика */
+.support-button-counter {
+    display: inline-block;
+    padding: 12px 32px;
+    background: linear-gradient(90deg, #ff1717, #ff1b1b);
+    color: white !important;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    text-align: center;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(255, 23, 23, 0.25);
+    font-family: inherit;
+}
+
+.support-button-counter:hover {
+    background: linear-gradient(90deg, #e54646, #d40606);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255, 23, 23, 0.35);
+    text-decoration: none;
+    color: white !important;
+}
+
+.support-button-counter:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(255, 23, 23, 0.2);
+}
+
+/* Адаптивность для кнопки */
+@media (max-width: 768px) {
+    .support-button-counter {
+        width: 100%;
+        padding: 14px 24px;
+        font-size: 15px;
+    }
+    
+    .support-button-container {
+        margin-top: 20px;
+        padding-top: 15px;
     }
 }
