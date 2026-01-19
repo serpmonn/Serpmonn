@@ -1,0 +1,315 @@
+body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        .about-section {
+            max-width: 1100px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+
+        h1 {
+            font-size: 2.4rem;
+            color: #222;
+            text-align: center;
+            margin-bottom: 0.6em;
+        }
+
+        p {
+            font-size: 1.1rem;
+            color: #555;
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+
+        /* Новый стиль для списка донатов */
+        .donation-list {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            margin: 40px 0;
+        }
+
+        .donation-item {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            border: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px; /* Уменьшил gap с 40px до 20px */
+            transition: all 0.25s ease;
+        }
+
+        .donation-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+        }
+
+        .donation-info {
+            flex: 1;
+            margin-right: 20px; /* Добавил отступ справа */
+        }
+
+        .donation-info h3 {
+            margin: 0 0 12px 0;
+            font-size: 1.6rem;
+            color: #222;
+        }
+
+        /* ЗЕЛЕНЫЕ метки методов (изменил с синего на зелёный) */
+        .donation-method {
+            display: inline-block;
+            background: #f0fff4; /* Светло-зелёный фон */
+            color: #2e7d32; /* Тёмно-зелёный текст */
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border: 1px solid #c8e6c9; /* Зелёная граница */
+        }
+
+        .instructions {
+            margin-top: 15px;
+        }
+
+        .instructions ul {
+            padding-left: 20px;
+            margin: 0;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            color: #444;
+            line-height: 1.5;
+            font-size: 0.95rem;
+        }
+
+        .donation-button {
+            flex-shrink: 0;
+            width: 180px; /* Уменьшил ширину с 220px до 180px */
+        }
+
+        .support-button-counter {
+            display: block;
+            width: 100%;
+            padding: 14px 20px; /* Уменьшил padding по горизонтали */
+            background: linear-gradient(90deg, #ff1717, #ff1b1b);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1rem;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(255,23,23,0.25);
+        }
+
+        .support-button-counter:hover {
+            background: linear-gradient(90deg, #e54646, #d40606);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(255,23,23,0.35);
+            color: white;
+        }
+
+        .thanks-block {
+            margin-top: 60px;
+            text-align: center;
+            color: #555;
+            font-size: 1.1rem;
+            line-height: 1.6;
+            padding: 25px;
+            background: #f8f9ff;
+            border-radius: 12px;
+            border-left: 4px solid #ff1b1b;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 900px) {
+            .donation-item {
+                flex-direction: column;
+                gap: 25px;
+                text-align: center;
+            }
+            
+            .donation-info {
+                margin-right: 0; /* Убираем отступ на мобильных */
+            }
+            
+            .donation-button {
+                width: 100%;
+                max-width: 280px;
+            }
+            
+            .donation-info h3 {
+                text-align: center;
+            }
+            
+            .instructions ul {
+                text-align: left;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .about-section { 
+                margin: 30px 15px; 
+            }
+            
+            h1 { 
+                font-size: 2rem; 
+            }
+            
+            .donation-item {
+                padding: 24px;
+                gap: 15px;
+            }
+            
+            .donation-info h3 {
+                font-size: 1.4rem;
+            }
+            
+            .donation-button {
+                width: 160px; /* Ещё уменьшим на маленьких экранах */
+            }
+        }
+
+        /* Общая инструкция */
+        .general-instructions {
+            background: #f8f9ff;
+            border-radius: 12px;
+            padding: 24px;
+            margin: 30px 0;
+            border-left: 4px solid #ff1b1b;
+        }
+
+        .general-instructions h2 {
+            font-size: 1.5rem;
+            color: #222;
+            margin-top: 0;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .general-steps {
+            padding-left: 20px;
+            margin: 20px 0;
+        }
+
+        .general-steps li {
+            margin-bottom: 10px;
+            color: #444;
+            line-height: 1.5;
+        }
+
+        .note {
+            text-align: left !important;
+            color: #666 !important;
+            font-size: 0.95rem !important;
+            margin-bottom: 0 !important;
+            font-style: italic;
+        }
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f9;
+}
+
+.about-section {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+}
+
+h1 {
+    font-size: 2.4rem;
+    color: #222;
+    text-align: center;
+    margin-bottom: 0.6em;
+}
+
+p {
+    font-size: 1.1rem;
+    color: #555;
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.donation-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin: 40px 0;
+}
+
+.donation-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border: 1px solid #eee;
+    transition: all 0.25s ease;
+    text-align: center;
+}
+
+.donation-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+}
+
+.donation-card h3 {
+    margin: 0 0 12px 0;
+    font-size: 1.4rem;
+    color: #222;
+}
+
+.donation-card .description {
+    color: #666;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.support-button-counter {
+    display: block;
+    width: 100%;
+    max-width: 260px;
+    margin: 0 auto;
+    padding: 12px 24px;
+    background: linear-gradient(90deg, #ff1717, #ff1b1b);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(255,23,23,0.25);
+}
+
+.support-button-counter:hover {
+    background: linear-gradient(90deg, #e54646, #d40606);
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(255,23,23,0.35);
+    color: white;
+}
+
+.thanks-block {
+    margin-top: 60px;
+    text-align: center;
+    color: #555;
+    font-size: 1.1rem;
+    line-height: 1.6;
+}
+
+@media (max-width: 768px) {
+    .about-section { margin: 30px 15px; }
+    h1 { font-size: 2rem; }
+    .donation-grid { gap: 20px; }
+}

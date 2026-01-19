@@ -1,0 +1,193 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/donate/donate.html{% else %}/frontend/{{ locale }}/donate/donate.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  title: "{{ donate[locale].donate.pageTitle }}"
+  description: "{{ donate[locale].donate.ogDescription }}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/donate/donate.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/donate/donate.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <title>{{ donate[locale].donate.pageTitle }}</title>
+
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ donate[locale].donate.ogTitle }}">
+    <meta property="og:description" content="{{ donate[locale].donate.ogDescription }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ donate[locale].donate.twitterTitle }}">
+    <meta name="twitter:description" content="{{ donate[locale].donate.twitterDescription }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="/frontend/styles/donation/donation.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="canonical" href="{{ canonical }}">
+    
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/donate/donate.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/donate/donate.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/donate/donate.html" hreflang="x-default" />
+    
+    <!-- Скрипты -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+
+    <div id="preloader" class="preloader">
+        <div class="spinner"></div>
+        <div class="loader-text">{{ donate[locale].common.loading }}</div>
+    </div>
+
+    <main class="about-section">
+        <h1>{{ donate[locale].donate.mainTitle }}</h1>
+        <p>{{ donate[locale].donate.subtitle }}</p>
+
+        <!-- Общая инструкция -->
+        <div class="general-instructions">
+            <h2>{{ donate[locale].donate.howToSupport }}</h2>
+            <ol class="general-steps">
+                {% for step in donate[locale].donate.steps %}
+                <li><strong>{{ step.label }}</strong> {{ step.text }}</li>
+                {% endfor %}
+            </ol>
+            <p class="note">{{ donate[locale].donate.paymentNote }}</p>
+        </div>
+
+        <!-- Список методов доната -->
+        <div class="donation-list">
+
+            <!-- Boosty -->
+            <div class="donation-item">
+                <div class="donation-info">
+                    <span class="donation-method">{{ donate[locale].donate.methods.boosty.type }}</span>
+                    <h3>{{ donate[locale].donate.methods.boosty.title }}</h3>
+                    <div class="instructions">
+                        <ul>
+                            {% for instruction in donate[locale].donate.methods.boosty.instructions %}
+                            <li>{{ instruction }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="donation-button">
+                    <a href="https://boosty.to/serpmonn/donate" target="_blank" class="support-button-counter">
+                        {{ donate[locale].donate.methods.boosty.button }}
+                    </a>
+                </div>
+            </div>
+
+            <!-- DonationAlerts -->
+            <div class="donation-item">
+                <div class="donation-info">
+                    <span class="donation-method">{{ donate[locale].donate.methods.donationalerts.type }}</span>
+                    <h3>{{ donate[locale].donate.methods.donationalerts.title }}</h3>
+                    <div class="instructions">
+                        <ul>
+                            {% for instruction in donate[locale].donate.methods.donationalerts.instructions %}
+                            <li>{{ instruction }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="donation-button">
+                    <a href="https://www.donationalerts.com/r/serpmonn" target="_blank" class="support-button-counter">
+                        {{ donate[locale].donate.methods.donationalerts.button }}
+                    </a>
+                </div>
+            </div>
+
+            <!-- Тинькофф -->
+            <div class="donation-item">
+                <div class="donation-info">
+                    <span class="donation-method">{{ donate[locale].donate.methods.tinkoff.type }}</span>
+                    <h3>{{ donate[locale].donate.methods.tinkoff.title }}</h3>
+                    <div class="instructions">
+                        <ul>
+                            {% for instruction in donate[locale].donate.methods.tinkoff.instructions %}
+                            <li>{{ instruction }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="donation-button">
+                    <a href="https://www.tbank.ru/cf/3hi697AiFoO" target="_blank" class="support-button-counter">
+                        {{ donate[locale].donate.methods.tinkoff.button }}
+                    </a>
+                </div>
+            </div>
+
+            <!-- ЮMoney -->
+            <div class="donation-item">
+                <div class="donation-info">
+                    <span class="donation-method">{{ donate[locale].donate.methods.yoomoney.type }}</span>
+                    <h3>{{ donate[locale].donate.methods.yoomoney.title }}</h3>
+                    <div class="instructions">
+                        <ul>
+                            {% for instruction in donate[locale].donate.methods.yoomoney.instructions %}
+                            <li>{{ instruction }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="donation-button">
+                    <a href="https://yoomoney.ru/fundraise/1FD2SEEEF7T.260119" target="_blank" class="support-button-counter">
+                        {{ donate[locale].donate.methods.yoomoney.button }}
+                    </a>
+                </div>
+            </div>
+
+            <!-- VK Донат -->
+            <div class="donation-item">
+                <div class="donation-info">
+                    <span class="donation-method">{{ donate[locale].donate.methods.vk.type }}</span>
+                    <h3>{{ donate[locale].donate.methods.vk.title }}</h3>
+                    <div class="instructions">
+                        <ul>
+                            {% for instruction in donate[locale].donate.methods.vk.instructions %}
+                            <li>{{ instruction }}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+                <div class="donation-button">
+                    <a href="https://vk.com/serpmonn_site" target="_blank" class="support-button-counter">
+                        {{ donate[locale].donate.methods.vk.button }}
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="thanks-block">
+            {{ donate[locale].donate.thanksMessage | safe }}
+        </div>
+    </main>
+
+    <script>
+        window.addEventListener('load', function() {
+            document.getElementById('preloader').style.display = 'none';
+        });
+    </script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>
