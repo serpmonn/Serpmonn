@@ -31,6 +31,7 @@ eleventyComputed:
   menu_privacy_policy: "{{ menuTranslations[locale].privacy_policy }}"
   menu_ad_info: "{{ menuTranslations[locale].ad_info }}"
   menu_about_project: "{{ menuTranslations[locale].about_project }}"
+  menu_support_project: "{{ menuTranslations[locale].support_project }}"
   menu_settings: "{{ menuTranslations[locale].settings }}"
   menu_accessibility: "{{ menuTranslations[locale].accessibility }}"
   menu_large_font: "{{ menuTranslations[locale].large_font }}"
@@ -440,6 +441,12 @@ eleventyComputed:
     <a href="{% if locale == 'ru' %}/frontend/about-project/about-project.html{% else %}/frontend/{{ locale }}/about-project/about-project.html{% endif %}" id="about-project-btn">
         <img src="/frontend/images/about-project.ico" alt="О проекте" class="icon">
         {{ menu_about_project }}
+    </a>
+
+    <!-- Поддержать проект -->
+    <a href="{% if locale == 'ru' %}/frontend/donate/donate.html{% else %}/frontend/{{ locale }}/donate/donate.html{% endif %}" target="_blank" id="support-project-btn">
+        <img src="/frontend/images/donate.jpg" alt="Поддержать проект" class="icon">
+        {{ menu_support_project }}
     </a>
 
     <!-- ========== НАСТРОЙКИ ========== -->
