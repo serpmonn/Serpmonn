@@ -1,0 +1,270 @@
+/* privacy-styles.css */
+
+/* Плавная прокрутка для всей страницы */
+html {
+    scroll-behavior: smooth;
+}
+
+/* Общие стили для тела документа */
+body {
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    line-height: 1.6;
+    color: #333;
+    background: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+/* Основной контейнер для контента политики */
+.policy-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 40px 20px;
+    background: white;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border-radius: 8px;
+}
+
+/* Стили для главного заголовка h1 - красно-черный стиль */
+h1 {
+    color: #333;
+    font-size: 28px;
+    text-align: center;
+    margin-bottom: 30px;
+    border-bottom: 3px solid #d32f2f;
+    padding-bottom: 15px;
+}
+
+/* Стили для заголовков разделов h2 - красно-черный стиль */
+h2 {
+    color: #d32f2f;
+    font-size: 22px;
+    margin-top: 40px;
+    margin-bottom: 15px;
+    padding-top: 20px;
+    padding-bottom: 8px;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+}
+
+/* Убираем верхнюю границу у первого h2 */
+h2:first-of-type {
+    border-top: none;
+}
+
+/* Стили для навигационного меню - красно-черный стиль */
+.policy-nav {
+    background: #ffffff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 30px;
+    border-left: 4px solid #d32f2f;
+}
+
+/* Стили для списка в навигации */
+.policy-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 10px;
+}
+
+/* Стили для ссылок в навигации - красно-черный стиль */
+.policy-nav a {
+    color: #333;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background 0.3s ease;
+    display: block;
+}
+
+/* Стили для ссылок при наведении - красно-черный стиль */
+.policy-nav a:hover {
+    background: #e3f2fd;
+    text-decoration: underline;
+}
+
+/* Стили для обычных параграфов */
+p {
+    margin: 15px 0;
+}
+
+/* Стили для ненумерованных списков */
+ul {
+    margin: 15px 0;
+    padding-left: 20px;
+}
+
+/* Стили для элементов списка */
+li {
+    margin-bottom: 10px;
+}
+
+/* Общие стили для ссылок - красно-черный стиль */
+a {
+    color: #d32f2f;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+/* Стили для ссылок при наведении - красно-черный стиль */
+a:hover {
+    color: #b71c1c;
+    text-decoration: underline;
+}
+
+/* Стили для выделения сильных элементов - красно-черный стиль */
+strong {
+    color: #d32f2f;
+}
+
+/* Стили для блока с датой обновления */
+.date-updated {
+    color: #7f8c8d;
+    font-style: italic;
+}
+
+/* Контейнер для кнопки принятия политики */
+.accept-container {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 2px solid #eee;
+}
+
+/* Стили для кнопки принятия политики - красно-черный стиль */
+.accept-button {
+    background: #d32f2f;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease;
+}
+
+/* Стили для кнопки при наведении - красно-черный стиль */
+.accept-button:hover {
+    background: #b71c1c;
+    transform: translateY(-2px);
+}
+
+/* Стили для кнопки при нажатии */
+.accept-button:active {
+    transform: translateY(0);
+}
+
+/* Стили для секций контента */
+section {
+    margin-bottom: 30px;
+}
+
+/* Убираем разделительную линию у последней секции */
+section:last-of-type {
+    border-bottom: none;
+}
+
+/* Медиа-запрос для планшетов и маленьких ноутбуков */
+@media (max-width: 768px) {
+    .policy-container {
+        padding: 20px 15px;
+        margin: 10px;
+        border-radius: 6px;
+    }
+    
+    .policy-nav ul {
+        grid-template-columns: 1fr;
+    }
+    
+    h1 {
+        font-size: 1.8rem;
+    }
+    
+    h2 {
+        font-size: 1.4rem;
+    }
+    
+    .accept-button {
+        width: 100%;
+        padding: 15px;
+    }
+}
+
+/* Медиа-запрос для мобильных телефонов */
+@media (max-width: 480px) {
+    body {
+        padding: 5px;
+    }
+    
+    .policy-container {
+        padding: 15px;
+        margin: 5px;
+    }
+    
+    h1 {
+        font-size: 1.6rem;
+    }
+    
+    h2 {
+        font-size: 1.2rem;
+    }
+    
+    ul {
+        padding-left: 15px;
+    }
+}
+
+/* Улучшения для пользователей с reduced-motion preference */
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+    
+    .accept-button {
+        transition: none;
+    }
+}
+
+/* Стили для состояния фокуса (доступность) - красно-черный стиль */
+a:focus,
+button:focus {
+    outline: 2px solid #d32f2f;
+    outline-offset: 2px;
+}
+
+/* RTL поддержка */
+[dir="rtl"] .policy-nav ul {
+    padding-right: 20px;
+    padding-left: 0;
+}
+
+[dir="rtl"] ul {
+    padding-right: 20px;
+    padding-left: 0;
+}
+
+/* Плавная прокрутка для навигационных ссылок */
+.policy-nav a {
+    cursor: pointer;
+}
+
+/* Стили для элементов списка в секциях */
+ul li {
+    margin-bottom: 8px;
+}
+
+/* Дополнительные стили для заголовков */
+h1 {
+    border-bottom: 3px solid #333;
+    padding-bottom: 10px;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #333;
+    margin-top: 30px;
+}
