@@ -36,13 +36,13 @@ p {
 .donation-item {
     background: white;
     border-radius: 16px;
-    padding: 28px 30px;
+    padding: 32px;
     box-shadow: 0 8px 24px rgba(0,0,0,0.08);
     border: 1px solid #eee;
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 10px; /* УМЕНЬШИЛ gap С 20px ДО 10px */
+    justify-content: flex-start;
+    gap: 20px;
     transition: all 0.25s ease;
 }
 
@@ -53,8 +53,6 @@ p {
 
 .donation-info {
     flex: 1;
-    max-width: 50%; /* УМЕНЬШИЛ С 60% ДО 50% !!! */
-    padding-right: 0;
 }
 
 .donation-info h3 {
@@ -63,7 +61,7 @@ p {
     color: #222;
 }
 
-/* ЗЕЛЁНЫЕ метки методов */
+/* ЗЕЛЕНЫЕ метки методов */
 .donation-method {
     display: inline-block;
     background: #f0fff4;
@@ -83,7 +81,6 @@ p {
 .instructions ul {
     padding-left: 20px;
     margin: 0;
-    max-width: 80%;
 }
 
 .instructions li {
@@ -96,12 +93,12 @@ p {
 .donation-button {
     flex-shrink: 0;
     width: 180px;
-    margin-left: 10px; /* УМЕНЬШИЛ С 20px ДО 10px */
+    margin-right: 60px;
 }
 
 .support-button-counter {
     display: block;
-    width: 80%;
+    width: 100%;
     padding: 14px 20px;
     background: linear-gradient(90deg, #ff1717, #ff1b1b);
     color: white;
@@ -133,6 +130,56 @@ p {
     border-left: 4px solid #ff1b1b;
 }
 
+/* Адаптивность для списка донатов */
+@media (max-width: 900px) {
+    .donation-item {
+        flex-direction: column;
+        gap: 25px;
+        text-align: center;
+    }
+    
+    .donation-info {
+        margin-right: 0;
+    }
+    
+    .donation-button {
+        width: 100%;
+        max-width: 280px;
+    }
+    
+    .donation-info h3 {
+        text-align: center;
+    }
+    
+    .instructions ul {
+        text-align: left;
+    }
+}
+
+@media (max-width: 768px) {
+    .about-section { 
+        margin: 30px 15px; 
+    }
+    
+    h1 { 
+        font-size: 2rem; 
+    }
+    
+    .donation-item {
+        padding: 24px;
+        gap: 15px;
+    }
+    
+    .donation-info h3 {
+        font-size: 1.4rem;
+    }
+    
+    /* УДАЛИЛ ЭТУ СТРОКУ - она мешала на ПК */
+    /* .donation-button {
+        width: 160px;
+    } */
+}
+
 /* Общая инструкция */
 .general-instructions {
     background: #f8f9ff;
@@ -162,79 +209,301 @@ p {
 }
 
 .note {
-    text-align: left;
-    color: #666;
-    font-size: 0.95rem;
-    margin-bottom: 0;
+    text-align: left !important;
+    color: #666 !important;
+    font-size: 0.95rem !important;
+    margin-bottom: 0 !important;
     font-style: italic;
-    line-height: 1.5;
 }
 
-/* Адаптивность */
-@media (max-width: 900px) {
-    .donation-item {
-        flex-direction: column;
-        text-align: center;
+/* ===== Стили для секции "Куда идут донаты" ===== */
+.donation-purpose {
+    background: white;
+    border-radius: 16px;
+    padding: 32px;
+    margin: 40px 0;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+    border: 1px solid #eee;
+    transition: all 0.25s ease;
+}
+
+.donation-purpose:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.12);
+}
+
+.donation-purpose h2 {
+    font-size: 1.8rem;
+    color: #222;
+    text-align: center;
+    margin: 0 0 30px 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.purpose-distribution {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-bottom: 20px;
+}
+
+.purpose-item {
+    background: #f8f9ff;
+    border-radius: 12px;
+    padding: 25px;
+    border: 2px solid #e2e8f0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.purpose-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    border-color: #ff1b1b;
+}
+
+.purpose-icon {
+    font-size: 2.8rem;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.purpose-content h3 {
+    color: #222;
+    margin: 0 0 15px 0;
+    font-size: 1.4rem;
+    text-align: center;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.purpose-details {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.purpose-details li {
+    padding: 10px 0;
+    color: #444;
+    font-size: 1rem;
+    line-height: 1.5;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    transition: transform 0.2s ease;
+}
+
+.purpose-details li:hover {
+    transform: translateX(5px);
+    color: #222;
+}
+
+.purpose-details li:before {
+    content: "•";
+    color: #ff1b1b;
+    font-weight: bold;
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    margin-top: 2px;
+}
+
+/* Стили для первого блока (сервер) */
+.purpose-item:nth-child(1) {
+    border-left: 5px solid #3498db;
+}
+
+.purpose-item:nth-child(1) .purpose-content h3 {
+    color: #3498db;
+}
+
+.purpose-item:nth-child(1) .purpose-details li:before {
+    color: #3498db;
+}
+
+/* Стили для второго блока (команда) */
+.purpose-item:nth-child(2) {
+    border-left: 5px solid #2ecc71;
+}
+
+.purpose-item:nth-child(2) .purpose-content h3 {
+    color: #2ecc71;
+}
+
+.purpose-item:nth-child(2) .purpose-details li:before {
+    color: #2ecc71;
+}
+
+/* Стили для эмодзи в списке команды */
+.purpose-item:nth-child(2) .purpose-details li {
+    font-size: 1.05rem;
+}
+
+.purpose-item:nth-child(2) .purpose-details li:before {
+    display: none;
+}
+
+/* Декоративные элементы */
+.purpose-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, transparent, rgba(255, 27, 27, 0.3), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.purpose-item:hover::before {
+    opacity: 1;
+}
+
+/* Анимация для иконок */
+@keyframes float {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-5px); }
+    100% { transform: translateY(0px); }
+}
+
+.purpose-item:hover .purpose-icon {
+    animation: float 2s ease-in-out infinite;
+}
+
+/* Адаптивность для секции "Куда идут донаты" */
+@media (max-width: 768px) {
+    .donation-purpose {
         padding: 24px;
-        gap: 15px;
+        margin: 30px 0;
     }
     
-    .donation-info {
-        flex: 1;
-        width: 80%;
-        max-width: 80%;
-        padding-right: 0;
-        margin-bottom: 10px;
+    .donation-purpose h2 {
+        font-size: 1.5rem;
+        margin-bottom: 20px;
+        flex-direction: column;
+        gap: 5px;
     }
     
-    .donation-button {
-        width: 100%;
-        max-width: 280px;
-        margin-left: 0;
+    .purpose-distribution {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
     
-    .donation-info h3 {
-        text-align: center;
+    .purpose-item {
+        padding: 20px;
     }
     
-    .instructions ul {
-        text-align: left;
+    .purpose-icon {
+        font-size: 2.2rem;
+    }
+    
+    .purpose-content h3 {
+        font-size: 1.2rem;
+    }
+    
+    .purpose-details li {
+        font-size: 0.95rem;
+        padding: 8px 0;
+    }
+    
+    .purpose-item:nth-child(2) .purpose-details li {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .donation-purpose {
+        padding: 20px 15px;
+        margin: 25px 0;
+    }
+    
+    .donation-purpose h2 {
+        font-size: 1.3rem;
+    }
+    
+    .purpose-item {
+        padding: 18px;
+    }
+    
+    .purpose-icon {
+        font-size: 1.8rem;
+    }
+    
+    .purpose-content h3 {
+        font-size: 1.1rem;
+    }
+    
+    .purpose-details li {
+        font-size: 0.9rem;
+        padding: 6px 0;
+    }
+}
+
+/* Стили для прелоадера */
+.preloader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #ff1b1b;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.loader-text {
+    margin-top: 20px;
+    color: #ff1b1b;
+    font-size: 1.2rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Общая адаптивность */
+@media (max-width: 768px) {
+    .thanks-block {
+        margin-top: 40px;
+        padding: 20px;
+        font-size: 1rem;
     }
     
     .general-instructions {
         padding: 20px;
-    }
-}
-
-@media (max-width: 768px) {
-    .about-section { 
-        margin: 30px 15px; 
-    }
-    
-    h1 { 
-        font-size: 2rem; 
-    }
-    
-    .donation-item {
-        padding: 20px;
-        gap: 10px;
-    }
-    
-    .donation-info h3 {
-        font-size: 1.4rem;
-    }
-    
-    .donation-button {
-        width: 100%;
-        max-width: 250px;
+        margin: 25px 0;
     }
     
     .general-instructions h2 {
         font-size: 1.3rem;
     }
-    
+}
+
+@media (max-width: 480px) {
     .thanks-block {
-        margin-top: 40px;
-        padding: 20px;
+        padding: 15px;
+        margin-top: 30px;
+    }
+    
+    .general-instructions {
+        padding: 18px;
     }
 }
