@@ -2,10 +2,13 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-    <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="he">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Исправленный viewport для PWA/TWA -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>פרופיל — Serpmonn</title>
     <meta name="description" content="נהל את הפרופיל, הכלים וההגדרות שלך ב-Serpmonn.">
     
@@ -226,96 +229,143 @@
     <link rel="alternate" href="https://serpmonn.ru/frontend/profile/profile.html" hreflang="x-default" />
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
     <link rel="stylesheet" href="profile_styles.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    
+    <!-- Подключение скриптов -->
     <script type="module" src="profile_scripts.js" defer></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script type="module" src="/frontend/scripts/pwa-fix.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <h2>👤 פרופיל משתמש</h2>
+    <!-- Обертка для страницы -->
+    <div class="page-wrapper">
+        <!-- Основной контейнер -->
+        <div class="container">
+            <h2>👤 פרופיל משתמש</h2>
 
-        <!-- Информация о профиле -->
-        <div id="profileInfo" class="card">
-            <h3>📋 מידע</h3>
-            <p><strong>שם משתמש:</strong> <span id="username"></span></p>
-            <p><strong>אימייל:</strong> <span id="email"></span></p>
-        </div>
-
-        <!-- Раздел инструментов -->
-        <div class="card">
-            <h3>🧰 כלים</h3>
-            <div class="tools-grid">
-                <a class="tool-link" href="/frontend/he/tools/marketing/utm-builder.html">
-                    <span class="tool-icon">🔗</span>
-                    <span class="tool-text">מחולל UTM</span>
-                </a>
-                <a class="tool-link" href="/frontend/he/tools/security/password-generator.html">
-                    <span class="tool-icon">🔐</span>
-                    <span class="tool-text">מחולל סיסמאות</span>
-                </a>
-                <a class="tool-link" href="/frontend/he/tools/marketing/word-counter.html">
-                    <span class="tool-icon">📊</span>
-                    <span class="tool-text">מונה מילים/תוים</span>
-                </a>
-                <a class="tool-link" href="/frontend/he/tools/engineering/unit-converter.html">
-                    <span class="tool-icon">🔄</span>
-                    <span class="tool-text">ממיר יחידות</span>
-                </a>
-                <a class="tool-link" href="/frontend/he/tools/logistics/depreciation-calculator.html">
-                    <span class="tool-icon">🔧</span>
-                    <span class="tool-text">מחשבון פחת</span>
-                </a>
-                <a class="tool-link" href="/frontend/he/tools/logistics/fuel-calculator.html">
-                    <span class="tool-icon">⛽</span>
-                    <span class="tool-text">מחשבון דלק</span>
-                </a>
-                <a class="tool-link" href="/frontend/he/tools/ecology/product-footprint-calculator.html">
-                    <span class="tool-icon">🌍</span>
-                    <span class="tool-text">מחשבון טביעת רגל אקולוגית של מוצרים</span>
-                </a>
+            <!-- Информация о профиле -->
+            <div id="profileInfo" class="card">
+                <h3>📋 מידע</h3>
+                <p><strong>שם משתמש:</strong> <span id="username"></span></p>
+                <p><strong>אימייל:</strong> <span id="email"></span></p>
             </div>
-            <div id="recentTools" class="recent-tools"></div>
-        </div>
 
-        <!-- Редактирование профиля -->
-        <div class="card">
-            <h3>✏️ ערוך פרופיל</h3>
-            <form id="profileForm" class="form-card">
-                <label for="newUsername">שם משתמש חדש</label>
-                <input type="text" id="newUsername" name="newUsername" maxlength="255" placeholder="הזן שם חדש">
+            <!-- Раздел инструментов -->
+            <div class="card">
+                <h3>🧰 כלים</h3>
+                <div class="tools-grid">
+                    <a class="tool-link" href="/frontend/he/tools/marketing/utm-builder.html">
+                        <span class="tool-icon">🔗</span>
+                        <span class="tool-text">מחולל UTM</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/he/tools/security/password-generator.html">
+                        <span class="tool-icon">🔐</span>
+                        <span class="tool-text">מחולל סיסמאות</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/he/tools/marketing/word-counter.html">
+                        <span class="tool-icon">📊</span>
+                        <span class="tool-text">מונה מילים/תוים</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/he/tools/engineering/unit-converter.html">
+                        <span class="tool-icon">🔄</span>
+                        <span class="tool-text">ממיר יחידות</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/he/tools/logistics/depreciation-calculator.html">
+                        <span class="tool-icon">🔧</span>
+                        <span class="tool-text">מחשבון פחת</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/he/tools/logistics/fuel-calculator.html">
+                        <span class="tool-icon">⛽</span>
+                        <span class="tool-text">מחשבון דלק</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/he/tools/ecology/product-footprint-calculator.html">
+                        <span class="tool-icon">🌍</span>
+                        <span class="tool-text">מחשבון טביעת רגל אקולוגית של מוצרים</span>
+                    </a>
+                </div>
+                <div id="recentTools" class="recent-tools"></div>
+            </div>
 
-                <label for="newEmail">אימייל חדש</label>
-                <input type="email" id="newEmail" name="newEmail" placeholder="הזן אימייל חדש">
+            <!-- Редактирование профиля -->
+            <div class="card">
+                <h3>✏️ ערוך פרופיל</h3>
+                <form id="profileForm" class="form-card">
+                    <label for="newUsername">שם משתמש חדש</label>
+                    <input type="text" id="newUsername" name="newUsername" maxlength="255" placeholder="הזן שם חדש">
 
-                <button type="submit" class="primary-button">💾 שמור שינויים</button>
-            </form>
-            <p id="message" class="message"></p>
-        </div>
+                    <label for="newEmail">אימייל חדש</label>
+                    <input type="email" id="newEmail" name="newEmail" placeholder="הזן אימייל חדש">
 
-        <!-- Дополнительные функции -->
-        <div class="card">
-            <h3>📧 תכונות נוספות</h3>
-            <div class="onnmail-buttons">
-                <button id="createOnnmailButton" class="secondary-button">
-                    <span class="button-icon">➕</span>
-                    @onnmail: צור אימייל
-                </button>
-                <button id="loginOnnmailButton" class="secondary-button">
-                    <span class="button-icon">🔑</span>
-                    @onnmail: התחבר
+                    <button type="submit" class="primary-button">💾 שמור שינויים</button>
+                </form>
+                <p id="message" class="message"></p>
+            </div>
+
+            <!-- Дополнительные функции -->
+            <div class="card">
+                <h3>📧 תכונות נוספות</h3>
+                <div class="onnmail-buttons">
+                    <button id="createOnnmailButton" class="secondary-button">
+                        <span class="button-icon">➕</span>
+                        @onnmail: צור אימייל
+                    </button>
+                    <button id="loginOnnmailButton" class="secondary-button">
+                        <span class="button-icon">🔑</span>
+                        @onnmail: התחבר
+                    </button>
+                </div>
+            </div>
+
+            <!-- Выход из аккаунта -->
+            <div class="logout-section">
+                <button id="logoutButton" class="danger-button">
+                    <span class="button-icon">🚪</span>
+                    התנתק
                 </button>
             </div>
-        </div>
-
-        <!-- Выход из аккаунта -->
-        <div class="logout-section">
-            <button id="logoutButton" class="danger-button">
-                <span class="button-icon">🚪</span>
-                התנתק
-            </button>
         </div>
     </div>
+
+    <!-- Скрипт для PWA/TWA исправлений -->
+    <script>
+        // Автоматическая прокрутка вверх при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Немедленная прокрутка вверх
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            
+            // Дополнительная прокрутка после загрузки
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+            }, 100);
+            
+            // Для PWA/TWA
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.matchMedia('(display-mode: fullscreen)').matches) {
+                // Принудительно устанавливаем top: 0
+                setTimeout(() => {
+                    window.scrollTo(0, 0);
+                }, 200);
+            }
+        });
+
+        // Предотвращаем масштабирование при двойном тапе на мобильных
+        if ('ontouchstart' in window) {
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+        }
+    </script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
 </html>

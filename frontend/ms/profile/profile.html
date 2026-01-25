@@ -2,10 +2,13 @@
 <!DOCTYPE html>
 <html lang="ms" dir="ltr">
 <head>
-    <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="ms">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Исправленный viewport для PWA/TWA -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>Profil — Serpmonn</title>
     <meta name="description" content="Urus profil, alat dan tetapan anda di Serpmonn.">
     
@@ -226,96 +229,143 @@
     <link rel="alternate" href="https://serpmonn.ru/frontend/profile/profile.html" hreflang="x-default" />
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
     <link rel="stylesheet" href="profile_styles.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    
+    <!-- Подключение скриптов -->
     <script type="module" src="profile_scripts.js" defer></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script type="module" src="/frontend/scripts/pwa-fix.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <h2>👤 Profil Pengguna</h2>
+    <!-- Обертка для страницы -->
+    <div class="page-wrapper">
+        <!-- Основной контейнер -->
+        <div class="container">
+            <h2>👤 Profil Pengguna</h2>
 
-        <!-- Информация о профиле -->
-        <div id="profileInfo" class="card">
-            <h3>📋 Maklumat</h3>
-            <p><strong>Nama pengguna:</strong> <span id="username"></span></p>
-            <p><strong>Emel:</strong> <span id="email"></span></p>
-        </div>
-
-        <!-- Раздел инструментов -->
-        <div class="card">
-            <h3>🧰 Alat</h3>
-            <div class="tools-grid">
-                <a class="tool-link" href="/frontend/ms/tools/marketing/utm-builder.html">
-                    <span class="tool-icon">🔗</span>
-                    <span class="tool-text">Penjana UTM</span>
-                </a>
-                <a class="tool-link" href="/frontend/ms/tools/security/password-generator.html">
-                    <span class="tool-icon">🔐</span>
-                    <span class="tool-text">Penjana Kata Laluan</span>
-                </a>
-                <a class="tool-link" href="/frontend/ms/tools/marketing/word-counter.html">
-                    <span class="tool-icon">📊</span>
-                    <span class="tool-text">Pengira Perkataan/Aksara</span>
-                </a>
-                <a class="tool-link" href="/frontend/ms/tools/engineering/unit-converter.html">
-                    <span class="tool-icon">🔄</span>
-                    <span class="tool-text">Penukar Unit</span>
-                </a>
-                <a class="tool-link" href="/frontend/ms/tools/logistics/depreciation-calculator.html">
-                    <span class="tool-icon">🔧</span>
-                    <span class="tool-text">Kalkulator Susut Nilai</span>
-                </a>
-                <a class="tool-link" href="/frontend/ms/tools/logistics/fuel-calculator.html">
-                    <span class="tool-icon">⛽</span>
-                    <span class="tool-text">Kalkulator Bahan Api</span>
-                </a>
-                <a class="tool-link" href="/frontend/ms/tools/ecology/product-footprint-calculator.html">
-                    <span class="tool-icon">🌍</span>
-                    <span class="tool-text">Kalkulator Jejak Ekologi Produk</span>
-                </a>
+            <!-- Информация о профиле -->
+            <div id="profileInfo" class="card">
+                <h3>📋 Maklumat</h3>
+                <p><strong>Nama pengguna:</strong> <span id="username"></span></p>
+                <p><strong>Emel:</strong> <span id="email"></span></p>
             </div>
-            <div id="recentTools" class="recent-tools"></div>
-        </div>
 
-        <!-- Редактирование профиля -->
-        <div class="card">
-            <h3>✏️ Edit Profil</h3>
-            <form id="profileForm" class="form-card">
-                <label for="newUsername">Nama pengguna baharu</label>
-                <input type="text" id="newUsername" name="newUsername" maxlength="255" placeholder="Masukkan nama baharu">
+            <!-- Раздел инструментов -->
+            <div class="card">
+                <h3>🧰 Alat</h3>
+                <div class="tools-grid">
+                    <a class="tool-link" href="/frontend/ms/tools/marketing/utm-builder.html">
+                        <span class="tool-icon">🔗</span>
+                        <span class="tool-text">Penjana UTM</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ms/tools/security/password-generator.html">
+                        <span class="tool-icon">🔐</span>
+                        <span class="tool-text">Penjana Kata Laluan</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ms/tools/marketing/word-counter.html">
+                        <span class="tool-icon">📊</span>
+                        <span class="tool-text">Pengira Perkataan/Aksara</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ms/tools/engineering/unit-converter.html">
+                        <span class="tool-icon">🔄</span>
+                        <span class="tool-text">Penukar Unit</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ms/tools/logistics/depreciation-calculator.html">
+                        <span class="tool-icon">🔧</span>
+                        <span class="tool-text">Kalkulator Susut Nilai</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ms/tools/logistics/fuel-calculator.html">
+                        <span class="tool-icon">⛽</span>
+                        <span class="tool-text">Kalkulator Bahan Api</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ms/tools/ecology/product-footprint-calculator.html">
+                        <span class="tool-icon">🌍</span>
+                        <span class="tool-text">Kalkulator Jejak Ekologi Produk</span>
+                    </a>
+                </div>
+                <div id="recentTools" class="recent-tools"></div>
+            </div>
 
-                <label for="newEmail">Emel baharu</label>
-                <input type="email" id="newEmail" name="newEmail" placeholder="Masukkan emel baharu">
+            <!-- Редактирование профиля -->
+            <div class="card">
+                <h3>✏️ Edit Profil</h3>
+                <form id="profileForm" class="form-card">
+                    <label for="newUsername">Nama pengguna baharu</label>
+                    <input type="text" id="newUsername" name="newUsername" maxlength="255" placeholder="Masukkan nama baharu">
 
-                <button type="submit" class="primary-button">💾 Simpan perubahan</button>
-            </form>
-            <p id="message" class="message"></p>
-        </div>
+                    <label for="newEmail">Emel baharu</label>
+                    <input type="email" id="newEmail" name="newEmail" placeholder="Masukkan emel baharu">
 
-        <!-- Дополнительные функции -->
-        <div class="card">
-            <h3>📧 Ciri Tambahan</h3>
-            <div class="onnmail-buttons">
-                <button id="createOnnmailButton" class="secondary-button">
-                    <span class="button-icon">➕</span>
-                    @onnmail: Buat emel
-                </button>
-                <button id="loginOnnmailButton" class="secondary-button">
-                    <span class="button-icon">🔑</span>
-                    @onnmail: Log masuk
+                    <button type="submit" class="primary-button">💾 Simpan perubahan</button>
+                </form>
+                <p id="message" class="message"></p>
+            </div>
+
+            <!-- Дополнительные функции -->
+            <div class="card">
+                <h3>📧 Ciri Tambahan</h3>
+                <div class="onnmail-buttons">
+                    <button id="createOnnmailButton" class="secondary-button">
+                        <span class="button-icon">➕</span>
+                        @onnmail: Buat emel
+                    </button>
+                    <button id="loginOnnmailButton" class="secondary-button">
+                        <span class="button-icon">🔑</span>
+                        @onnmail: Log masuk
+                    </button>
+                </div>
+            </div>
+
+            <!-- Выход из аккаунта -->
+            <div class="logout-section">
+                <button id="logoutButton" class="danger-button">
+                    <span class="button-icon">🚪</span>
+                    Log keluar
                 </button>
             </div>
-        </div>
-
-        <!-- Выход из аккаунта -->
-        <div class="logout-section">
-            <button id="logoutButton" class="danger-button">
-                <span class="button-icon">🚪</span>
-                Log keluar
-            </button>
         </div>
     </div>
+
+    <!-- Скрипт для PWA/TWA исправлений -->
+    <script>
+        // Автоматическая прокрутка вверх при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Немедленная прокрутка вверх
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            
+            // Дополнительная прокрутка после загрузки
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+            }, 100);
+            
+            // Для PWA/TWA
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.matchMedia('(display-mode: fullscreen)').matches) {
+                // Принудительно устанавливаем top: 0
+                setTimeout(() => {
+                    window.scrollTo(0, 0);
+                }, 200);
+            }
+        });
+
+        // Предотвращаем масштабирование при двойном тапе на мобильных
+        if ('ontouchstart' in window) {
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+        }
+    </script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
 </html>

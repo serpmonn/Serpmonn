@@ -2,10 +2,13 @@
 <!DOCTYPE html>
 <html lang="ks" dir="rtl">
 <head>
-    <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="ks">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Исправленный viewport для PWA/TWA -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <title>پروفایل — Serpmonn</title>
     <meta name="description" content="Serpmonn پیٹھ چھُہ تہند پروفایل، آلات تہ ترتیباۓ انتظام کَرنَو.">
     
@@ -226,96 +229,143 @@
     <link rel="alternate" href="https://serpmonn.ru/frontend/profile/profile.html" hreflang="x-default" />
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    
+    <!-- Подключение стилей -->
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
     <link rel="stylesheet" href="profile_styles.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    
+    <!-- Подключение скриптов -->
     <script type="module" src="profile_scripts.js" defer></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script type="module" src="/frontend/scripts/pwa-fix.js" defer></script>
 </head>
 <body>
-    <div class="container">
-        <h2>👤 صارف پروفایل</h2>
+    <!-- Обертка для страницы -->
+    <div class="page-wrapper">
+        <!-- Основной контейнер -->
+        <div class="container">
+            <h2>👤 صارف پروفایل</h2>
 
-        <!-- Информация о профиле -->
-        <div id="profileInfo" class="card">
-            <h3>📋 معلومات</h3>
-            <p><strong>صارف نام:</strong> <span id="username"></span></p>
-            <p><strong>ای میل:</strong> <span id="email"></span></p>
-        </div>
-
-        <!-- Раздел инструментов -->
-        <div class="card">
-            <h3>🧰 آلات</h3>
-            <div class="tools-grid">
-                <a class="tool-link" href="/frontend/ks/tools/marketing/utm-builder.html">
-                    <span class="tool-icon">🔗</span>
-                    <span class="tool-text">UTM بنیٲنِیو</span>
-                </a>
-                <a class="tool-link" href="/frontend/ks/tools/security/password-generator.html">
-                    <span class="tool-icon">🔐</span>
-                    <span class="tool-text">پاسورڈ بنیٲنِیو</span>
-                </a>
-                <a class="tool-link" href="/frontend/ks/tools/marketing/word-counter.html">
-                    <span class="tool-icon">📊</span>
-                    <span class="tool-text">لفظ/حرف گنٛار</span>
-                </a>
-                <a class="tool-link" href="/frontend/ks/tools/engineering/unit-converter.html">
-                    <span class="tool-icon">🔄</span>
-                    <span class="tool-text">ایکائے بدلن وٲل</span>
-                </a>
-                <a class="tool-link" href="/frontend/ks/tools/logistics/depreciation-calculator.html">
-                    <span class="tool-icon">🔧</span>
-                    <span class="tool-text">مقدار گھٹاون وٲل کیلکولیٹر</span>
-                </a>
-                <a class="tool-link" href="/frontend/ks/tools/logistics/fuel-calculator.html">
-                    <span class="tool-icon">⛽</span>
-                    <span class="tool-text">ایندھن کیلکولیٹر</span>
-                </a>
-                <a class="tool-link" href="/frontend/ks/tools/ecology/product-footprint-calculator.html">
-                    <span class="tool-icon">🌍</span>
-                    <span class="tool-text">مصنوعاتُک ماحولیاتی نقش قدم کیلکولیٹر</span>
-                </a>
+            <!-- Информация о профиле -->
+            <div id="profileInfo" class="card">
+                <h3>📋 معلومات</h3>
+                <p><strong>صارف نام:</strong> <span id="username"></span></p>
+                <p><strong>ای میل:</strong> <span id="email"></span></p>
             </div>
-            <div id="recentTools" class="recent-tools"></div>
-        </div>
 
-        <!-- Редактирование профиля -->
-        <div class="card">
-            <h3>✏️ پروفایل تدوین کَرنَو</h3>
-            <form id="profileForm" class="form-card">
-                <label for="newUsername">نوٚو صارف نام</label>
-                <input type="text" id="newUsername" name="newUsername" maxlength="255" placeholder="نوٚو نام درج کَرنَو">
+            <!-- Раздел инструментов -->
+            <div class="card">
+                <h3>🧰 آلات</h3>
+                <div class="tools-grid">
+                    <a class="tool-link" href="/frontend/ks/tools/marketing/utm-builder.html">
+                        <span class="tool-icon">🔗</span>
+                        <span class="tool-text">UTM بنیٲنِیو</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ks/tools/security/password-generator.html">
+                        <span class="tool-icon">🔐</span>
+                        <span class="tool-text">پاسورڈ بنیٲنِیو</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ks/tools/marketing/word-counter.html">
+                        <span class="tool-icon">📊</span>
+                        <span class="tool-text">لفظ/حرف گنٛار</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ks/tools/engineering/unit-converter.html">
+                        <span class="tool-icon">🔄</span>
+                        <span class="tool-text">ایکائے بدلن وٲل</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ks/tools/logistics/depreciation-calculator.html">
+                        <span class="tool-icon">🔧</span>
+                        <span class="tool-text">مقدار گھٹاون وٲل کیلکولیٹر</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ks/tools/logistics/fuel-calculator.html">
+                        <span class="tool-icon">⛽</span>
+                        <span class="tool-text">ایندھن کیلکولیٹر</span>
+                    </a>
+                    <a class="tool-link" href="/frontend/ks/tools/ecology/product-footprint-calculator.html">
+                        <span class="tool-icon">🌍</span>
+                        <span class="tool-text">مصنوعاتُک ماحولیاتی نقش قدم کیلکولیٹر</span>
+                    </a>
+                </div>
+                <div id="recentTools" class="recent-tools"></div>
+            </div>
 
-                <label for="newEmail">نوٚو ای میل</label>
-                <input type="email" id="newEmail" name="newEmail" placeholder="نوٚو ای میل درج کَرنَو">
+            <!-- Редактирование профиля -->
+            <div class="card">
+                <h3>✏️ پروفایل تدوین کَرنَو</h3>
+                <form id="profileForm" class="form-card">
+                    <label for="newUsername">نوٚو صارف نام</label>
+                    <input type="text" id="newUsername" name="newUsername" maxlength="255" placeholder="نوٚو نام درج کَرنَو">
 
-                <button type="submit" class="primary-button">💾 بدلاو محفوظ کَرنَو</button>
-            </form>
-            <p id="message" class="message"></p>
-        </div>
+                    <label for="newEmail">نوٚو ای میل</label>
+                    <input type="email" id="newEmail" name="newEmail" placeholder="نوٚو ای میل درج کَرنَو">
 
-        <!-- Дополнительные функции -->
-        <div class="card">
-            <h3>📧 اضافی خصوصیات</h3>
-            <div class="onnmail-buttons">
-                <button id="createOnnmailButton" class="secondary-button">
-                    <span class="button-icon">➕</span>
-                    @onnmail: ای میل بناونَو
-                </button>
-                <button id="loginOnnmailButton" class="secondary-button">
-                    <span class="button-icon">🔑</span>
-                    @onnmail: لاگ ان
+                    <button type="submit" class="primary-button">💾 بدلاو محفوظ کَرنَو</button>
+                </form>
+                <p id="message" class="message"></p>
+            </div>
+
+            <!-- Дополнительные функции -->
+            <div class="card">
+                <h3>📧 اضافی خصوصیات</h3>
+                <div class="onnmail-buttons">
+                    <button id="createOnnmailButton" class="secondary-button">
+                        <span class="button-icon">➕</span>
+                        @onnmail: ای میل بناونَو
+                    </button>
+                    <button id="loginOnnmailButton" class="secondary-button">
+                        <span class="button-icon">🔑</span>
+                        @onnmail: لاگ ان
+                    </button>
+                </div>
+            </div>
+
+            <!-- Выход из аккаунта -->
+            <div class="logout-section">
+                <button id="logoutButton" class="danger-button">
+                    <span class="button-icon">🚪</span>
+                    لاگ آوٹ
                 </button>
             </div>
-        </div>
-
-        <!-- Выход из аккаунта -->
-        <div class="logout-section">
-            <button id="logoutButton" class="danger-button">
-                <span class="button-icon">🚪</span>
-                لاگ آوٹ
-            </button>
         </div>
     </div>
+
+    <!-- Скрипт для PWA/TWA исправлений -->
+    <script>
+        // Автоматическая прокрутка вверх при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Немедленная прокрутка вверх
+            window.scrollTo({ top: 0, behavior: 'instant' });
+            
+            // Дополнительная прокрутка после загрузки
+            setTimeout(() => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                document.documentElement.scrollTop = 0;
+                document.body.scrollTop = 0;
+            }, 100);
+            
+            // Для PWA/TWA
+            if (window.matchMedia('(display-mode: standalone)').matches || 
+                window.matchMedia('(display-mode: fullscreen)').matches) {
+                // Принудительно устанавливаем top: 0
+                setTimeout(() => {
+                    window.scrollTo(0, 0);
+                }, 200);
+            }
+        });
+
+        // Предотвращаем масштабирование при двойном тапе на мобильных
+        if ('ontouchstart' in window) {
+            let lastTouchEnd = 0;
+            document.addEventListener('touchend', function(event) {
+                const now = (new Date()).getTime();
+                if (now - lastTouchEnd <= 300) {
+                    event.preventDefault();
+                }
+                lastTouchEnd = now;
+            }, false);
+        }
+    </script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
 </html>
