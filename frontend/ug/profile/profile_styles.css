@@ -164,11 +164,16 @@ h3 {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
+/* Кнопка выхода - ИСПРАВЛЕННАЯ */
 .danger-button {
     background-color: #dc3545;
     color: white;
     margin-top: 20px;
     max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    width: 100%;
 }
 
 .danger-button:hover {
@@ -301,12 +306,17 @@ h3 {
     transform: translateX(2px);
 }
 
-/* Секция выхода */
+/* Секция выхода - ИСПРАВЛЕННАЯ */
 .logout-section {
     text-align: center;
     margin-top: 30px;
     padding-top: 20px;
     border-top: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
 }
 
 .button-icon {
@@ -387,6 +397,10 @@ h3 {
         margin-top: 20px;
         padding-top: 15px;
     }
+    
+    .danger-button {
+        max-width: 100%;
+    }
 }
 
 /* Специальные стили для PWA/TWA */
@@ -408,6 +422,15 @@ h3 {
     .container {
         margin-top: 0;
         margin-bottom: 20px;
+    }
+    
+    .logout-section {
+        padding-left: env(safe-area-inset-left, 0);
+        padding-right: env(safe-area-inset-right, 0);
+    }
+    
+    .danger-button {
+        max-width: 280px;
     }
 }
 
@@ -475,4 +498,25 @@ html, body {
 
 * {
     -webkit-tap-highlight-color: transparent;
+}
+
+/* Дополнительные исправления для центрирования */
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Центрирование кнопок внутри карточек */
+.card .primary-button,
+.card .secondary-button {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Гарантия что все кнопки правильно отображаются */
+button {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
 }
