@@ -1,3 +1,23 @@
+/* ========== ЯВНАЯ ФИКСАЦИЯ ДЛЯ RTL (ДОБАВЬТЕ В НАЧАЛО) ========== */
+
+/* Отключаем RTL-зеркалирование для меню */
+.menu-button,
+.menu-container {
+    transform: none !important;
+    right: 10px !important;
+    left: auto !important;
+}
+
+/* Явно фиксируем позицию для RTL языков */
+[dir="rtl"] .menu-button,
+[dir="rtl"] .menu-container {
+    right: 10px !important;
+    left: auto !important;
+    transform: none !important;
+}
+
+/* ========== ОРИГИНАЛЬНЫЕ СТИЛИ ========== */
+
 .menu-button {
     position: fixed;
     top: 10px;
@@ -8,11 +28,10 @@
     cursor: pointer;
     border: none;
     font-size: 24px;
-    font-weight: bold;                                                  /* Толстый текст */
+    font-weight: bold;
     border-radius: 10px;
     transition: width 0.3s;
-    z-index: 1;                                                     /* Высокий z-index для отображения поверх всех элементов */
-    z-index: 1;                                                         /* Высокий z-index для отображения поверх всех элементов */
+    z-index: 1;
 }
 
 .menu-button span.s {
@@ -38,12 +57,9 @@
     transform: translateY(-20px);
     visibility: hidden;
     transition: opacity 0.3s ease, transform 0.3s ease, visibility 0.3s;
-    max-height: 80vh; /* Ограничиваем высоту меню на ПК */
-    overflow-y: auto; /* Добавляем вертикальную прокрутку на ПК */
-    overflow-x: hidden; /* Скрываем горизонтальную прокрутку */
-    max-height: 80vh;                                                  /* Ограничение высоты меню на ПК */
-    overflow-y: auto;                                                  /* Добавление вертикальной прокрутку на ПК */
-    overflow-x: hidden;                                                /* Скрытие горизонтальной прокрутки */
+    max-height: 80vh;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .menu-container.active {
@@ -58,17 +74,15 @@
     color: #333;
     text-decoration: none;
     border-radius: 5px;
-    font-weight: bold;                                                  /* Толстый текст */
+    font-weight: bold;
 }
 
 .menu-container a:hover {
-    background-color: #f0f0f0;						/* Цвет кнопки при наведении (светло-серый) */
-    background-color: #f0f0f0;						                   /* Цвет кнопки при наведении (светло-серый) */
+    background-color: #f0f0f0;
 }
 
 .submenu-container {
-    display: none; /* Скрываем неактивные подменю */
-    display: none;                                                      /* Скрытие неактивного подменю */
+    display: none;
     padding-left: 20px;
     opacity: 0;
     transform: translateY(-10px);
@@ -76,20 +90,18 @@
 }
 
 .submenu-container.active {
-    display: block; /* Показываем активное подменю */
-    display: block;                                                     /* Показываем активное подменю */
+    display: block;
     opacity: 1;
     transform: translateY(0);
 }
 
-.submenu-container a {                                                  /* Улучшенные стили для категорий инструментов */
+.submenu-container a {
     font-size: 0.9rem;
     padding: 8px 12px;
     margin: 2px 0;
     border-radius: 6px;
     transition: all 0.2s ease;
-    font-weight: bold; /* Добавляем жирный шрифт для всех пунктов подменю */
-    font-weight: bold;                                                  /* Добавляем жирный шрифт для всех пунктов подменю */
+    font-weight: bold;
 }
 
 .submenu-container a:hover {
@@ -98,11 +110,12 @@
     transform: translateX(3px);
 }
 
-.menu-item[data-submenu]{                                               /* Стили для заголовков категорий */
+.menu-item[data-submenu] {
     position: relative;
     font-weight: bold;
 }
 
+/* СТРЕЛОЧКИ ДЛЯ LTR (СПРАВА) */
 .menu-item[data-submenu]:after {
     content: '▶';
     position: absolute;
@@ -196,119 +209,113 @@
     }
 }
 
-.submenu-container .icon {                                                  /* Улучшенные стили для иконок в категориях */
+.submenu-container .icon {
     width: 20px;
     height: 20px;
     margin-right: 8px;
 }
 
-.menu-logo {                                                                /* Стили для логотипа в меню */
-    width: 42px;                                                            /* Ширина логотипа */
-    height: 42px;                                                           /* Высота логотипа */
-    flex-shrink: 0;                                                         /* Запрет уменьшения размера в flex-контейнере */
-    object-fit: contain;                                                    /* Сохранение пропорций изображения */
+.menu-logo {
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    object-fit: contain;
 }
 
-.menu-search-row {                                                          /* Контейнер для горизонтального расположения элементов поиска */
-    display: flex;                                                          /* Flex-распределение элементов */
-    align-items: center;                                                    /* Вертикальное выравнивание по центру */
-    gap: 5px;                                                               /* Расстояние между элементами */
+.menu-search-row {
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
-.icon {                                                                     /* Базовые стили для иконок */
-    display: inline-block;                                                  /* Блочно-строчное отображение */
-    width: 24px;                                                            /* Ширина иконки */
-    height: 24px;                                                           /* Высота иконки */
-    margin-right: 10px;                                                     /* Отступ справа */
-    vertical-align: middle;                                                 /* Вертикальное выравнивание по середине */
-    border-radius: 50%;                                                     /* Скругление углов для создания круга */
+.icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+    vertical-align: middle;
+    border-radius: 50%;
 }
 
-.menu-search-container {                                                    /* Контейнер для поисковой системы */
-    padding: 5px;                                                           /* Внутренние отступы */
-    border-radius: 8px;                                                     /* Скругление углов контейнера */
-    margin: 0;                                                              /* Обнуление внешних отступов */
+.menu-search-container {
+    padding: 5px;
+    border-radius: 8px;
+    margin: 0;
 }
 
 /* Адаптация поля поиска */
 .menu-search-row .gcse-searchbox-only {
     flex-grow: 1;
-    min-width: 0; /* Важно для корректного сжатия */
-    flex-grow: 1;                                                           /* Растягивание на доступное пространство */
-    min-width: 0;                                                           /* Разрешение сжатия в flex-контейнере */
+    min-width: 0;
 }
 
 /* Скрыть устаревшие элементы выбора языка в меню, если остались */
 [data-lang] { display: none !important; }
-/* Скрыть раздел "Язык" (устаревший) */
 [data-submenu="langSubmenu"],
 #langSubmenu { display: none !important; }
 
-.menu-search-container .gcse-searchbox-only {                               /* Полноразмерное отображение поискового контейнера */
-    width: 100%;                                                            /* Ширина на весь контейнер */
+.menu-search-container .gcse-searchbox-only {
+    width: 100%;
 }
 
 .gsc-search-button.gsc-search-button-v2 {
-	transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;                        /* Плавный переход */
-	height: 34px; 															/* меньше по вертикали */
-	min-height: 34px;
-	padding: 0 12px; 														/* компактно по горизонтали */
-	border-radius: 8px;
+    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+    height: 34px;
+    min-height: 34px;
+    padding: 0 12px;
+    border-radius: 8px;
 }
 
 /* Жёстко держим кнопку справа и по центру относительно поля */
 .menu-search-row .gsc-search-box,
 .menu-search-row .gsc-search-box-tools {
-  display: flex !important;
-  align-items: center !important;
-  flex-wrap: nowrap !important;
-  gap: 6px !important;
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
 }
 
 .menu-search-row .gsc-search-button.gsc-search-button-v2,
 .menu-search-row button.gsc-search-button {
-  display: inline-flex !important;
-  align-items: center !important;
-  height: 34px !important;
-  line-height: 34px !important;
-  margin: 0 !important;
-  vertical-align: middle !important;
-  align-self: center !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    height: 34px !important;
+    line-height: 34px !important;
+    margin: 0 !important;
+    vertical-align: middle !important;
+    align-self: center !important;
 }
 
-.menu-search-container input {                                              /* Стилизация поля ввода поиска */
-    width: 100%;                                                            /* Ширина на весь контейнер */
-    padding: 8px 12px;                                                      /* Внутренние отступы */
-    border: 1px solid #ddd;                                               /* Граница серого цвета */
-    border-radius: 20px;                                                    /* Сильное скругление для овальной формы */
-    font-size: 14px;                                                        /* Размер шрифта */
+.menu-search-container input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    font-size: 14px;
 }
 
-.menu-search-container.hidden {                                             /* Скрытие поискового контейнера */
-    display: none;                                                          /* Скрытие элемента */
+.menu-search-container.hidden {
+    display: none;
 }
 
 /* Адаптивность для мобильных устройств */
 @media (max-width: 600px) {
-    /* Гарантируем минимальный размер touch-таргета на мобильных */
     .menu-button {
         min-width: 44px;
         min-height: 44px;
     }
     .menu-container {
         max-width: 85%;
-        max-height: 80vh; /* Ограничиваем высоту меню */
-        overflow-y: auto; /* Добавляем вертикальный скроллинг */
-        overflow-x: hidden; /* Скрываем горизонтальный скроллинг */
-        top: 10px; /* Уменьшаем отступ сверху */
-        right: 5px; /* Уменьшаем отступ справа */
-        padding: 8px; /* Уменьшаем внутренние отступы */
-        /* Стили для скроллбара */
+        max-height: 80vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        top: 10px;
+        right: 5px;
+        padding: 8px;
         scrollbar-width: thin;
         scrollbar-color: rgba(0, 0, 0, 0.3) transparent;
     }
 
-    /* Стили для скроллбара в WebKit браузерах */
     .menu-container::-webkit-scrollbar {
         width: 4px;
     }
@@ -327,28 +334,26 @@
     }
 
     .menu-container a {
-        padding: 8px; /* Уменьшаем отступы для элементов меню */
-        font-size: 0.9rem; /* Немного уменьшаем размер шрифта */
+        padding: 8px;
+        font-size: 0.9rem;
     }
 
     .submenu-container {
-        padding-left: 12px; /* Уменьшаем отступ подменю */
+        padding-left: 12px;
     }
 
     .submenu-container a {
-        font-size: 0.8rem; /* Уменьшаем размер шрифта в подменю */
-        padding: 5px 8px; /* Уменьшаем отступы в подменю */
+        font-size: 0.8rem;
+        padding: 5px 8px;
         font-weight: bold;
     }
 
-    /* Уменьшаем размер иконок на мобильных */
     .menu-container .icon {
         width: 16px;
         height: 16px;
         margin-right: 8px;
     }
 
-    /* Делаем кнопки более компактными */
     .menu-button {
         top: 5px;
         right: 5px;
@@ -360,7 +365,7 @@
     .menu-search-row button.gsc-search-button {
         min-height: 41px;
         height: 41px !important;
-        padding: 0px 12px;                                                              /* Добавляем вертикальные отступы */
+        padding: 0px 12px;
         border-radius: 0 8px 8px 0;
     }
 }
@@ -369,32 +374,30 @@
 @media (max-width: 480px) {
     .menu-container {
         max-width: 90%;
-        max-height: 75vh; /* Еще меньше высота */
-        padding: 6px; /* Еще меньше отступы */
+        max-height: 75vh;
+        padding: 6px;
     }
 
     .menu-container a {
-        padding: 6px; /* Еще меньше отступы */
-        font-size: 0.85rem; /* Еще меньше шрифт */
+        padding: 6px;
+        font-size: 0.85rem;
     }
 
     .submenu-container {
-        padding-left: 10px; /* Еще меньше отступ подменю */
+        padding-left: 10px;
     }
 
     .submenu-container a {
-        font-size: 0.75rem; /* Еще меньше шрифт в подменю */
-        padding: 4px 6px; /* Еще меньше отступы в подменю */
+        font-size: 0.75rem;
+        padding: 4px 6px;
     }
 
-    /* Еще меньше иконки */
     .menu-container .icon {
         width: 14px;
         height: 14px;
         margin-right: 6px;
     }
 
-    /* Еще компактнее кнопка */
     .menu-button {
         top: 3px;
         right: 3px;
@@ -406,7 +409,7 @@
     .menu-search-row button.gsc-search-button {
         min-height: 41px;
         height: 41px !important;
-        padding: 0px 12px;                                                              /* Добавляем вертикальные отступы */
+        padding: 0px 12px;
         border-radius: 0 8px 8px 0;
     }
 }
@@ -420,59 +423,59 @@
     line-height: 1;
     font-weight: 700;
     color: #fff;
-    background-color: #dc3545; /* красный брендовый */
+    background-color: #dc3545;
     border-radius: 9999px;
     vertical-align: middle;
 }
 
 /* Стили для кнопок доступности в меню */
 .a11y-toggle {
-  display: flex !important;
-  align-items: center;
-  justify-content: space-between;
-  padding: 8px 12px !important;
-  text-decoration: none !important;
-  color: inherit !important;
-  border-radius: 6px;
-  transition: background-color 0.2s;
-  min-height: 44px; /* Минимальный размер для touch targets */
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px !important;
+    text-decoration: none !important;
+    color: inherit !important;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    min-height: 44px;
 }
 
 .a11y-toggle:hover {
-  background-color: rgba(255,255,255,0.1) !important;
+    background-color: rgba(255,255,255,0.1) !important;
 }
 
 .a11y-toggle:active {
-  background-color: rgba(255,255,255,0.2) !important;
+    background-color: rgba(255,255,255,0.2) !important;
 }
 
 .a11y-icon {
-  margin-right: 8px;
-  font-size: 16px;
-  flex-shrink: 0;
+    margin-right: 8px;
+    font-size: 16px;
+    flex-shrink: 0;
 }
 
 .a11y-status {
-  font-size: 14px;
-  margin-left: auto;
-  flex-shrink: 0;
+    font-size: 14px;
+    margin-left: auto;
+    flex-shrink: 0;
 }
 
 /* Мобильные стили для кнопок доступности */
 @media (max-width: 768px) {
-  .a11y-toggle {
-    min-width: 44px;
-    min-height: 44px;
-    padding: 12px 16px !important;
-  }
+    .a11y-toggle {
+        min-width: 44px;
+        min-height: 44px;
+        padding: 12px 16px !important;
+    }
 
-  .a11y-icon {
-    font-size: 18px;
-  }
+    .a11y-icon {
+        font-size: 18px;
+    }
 
-  .a11y-status {
-    font-size: 16px;
-  }
+    .a11y-status {
+        font-size: 16px;
+    }
 }
 
 /* Стили для логотипа в меню */
@@ -502,3 +505,120 @@
         min-height: 48px;
     }
 }
+
+/* ========== RTL СТИЛИ (СТРЕЛОЧКИ СЛЕВА И ПОИСК) ========== */
+
+/* СТРЕЛОЧКИ ДЛЯ RTL (СЛЕВА) */
+[dir="rtl"] .menu-item[data-submenu]:after {
+    content: '◀' !important;
+    right: auto !important;
+    left: 10px !important;
+    transform: translateY(-50%) !important;
+}
+
+[dir="rtl"] .menu-item[data-submenu][aria-expanded="true"]:after {
+    transform: translateY(-50%) rotate(-90deg) !important;
+}
+
+/* ПОИСКОВАЯ СТРОКА ДЛЯ RTL: Логотип (справа) → Поле поиска → Кнопка поиска (слева) */
+[dir="rtl"] .menu-search-row {
+    flex-direction: row !important; /* Отменяем row-reverse, оставляем нормальный порядок */
+}
+
+/* Для RTL меняем порядок через order: 3-2-1 (справа налево) */
+[dir="rtl"] .menu-logo-link {
+    order: 3 !important; /* Логотип справа (последний) */
+}
+
+[dir="rtl"] .menu-search-row .gcse-searchbox-only {
+    order: 2 !important; /* Поле поиска в середине */
+}
+
+[dir="rtl"] .menu-search-row .gsc-search-button.gsc-search-button-v2,
+[dir="rtl"] .menu-search-row button.gsc-search-button {
+    order: 1 !important; /* Кнопка поиска слева (первая) */
+    border-radius: 8px 0 0 8px !important; /* Скругление слева */
+}
+
+/* Внутренний контейнер Google Search для RTL - кнопка слева от поля */
+[dir="rtl"] .gsc-search-box,
+[dir="rtl"] .gsc-search-box-tools {
+    flex-direction: row !important; /* Кнопка | Поле (нормальный порядок) */
+}
+
+/* Кнопка поиска Google для RTL */
+[dir="rtl"] .gsc-search-button.gsc-search-button-v2 {
+    border-radius: 8px 0 0 8px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Поле ввода Google для RTL */
+[dir="rtl"] .gsc-input {
+    border-radius: 0 8px 8px 0 !important;
+    text-align: right !important;
+    direction: rtl !important;
+}
+
+/* ИКОНКИ ДЛЯ RTL (СПРАВА ОТ ТЕКСТА) */
+[dir="rtl"] .icon {
+    margin-right: 0 !important;
+    margin-left: 10px !important;
+}
+
+[dir="rtl"] .tool-icon,
+[dir="rtl"] .game-icon,
+[dir="rtl"] .app-icon,
+[dir="rtl"] .a11y-icon {
+    margin-right: 0 !important;
+    margin-left: 8px !important;
+}
+
+/* ПОДМЕНЮ ДЛЯ RTL (ОТСТУП СПРАВА) */
+[dir="rtl"] .submenu-container {
+    padding-left: 0 !important;
+    padding-right: 20px !important;
+}
+
+/* HOVER-ЭФФЕКТ ДЛЯ RTL (ДВИЖЕНИЕ ВЛЕВО) */
+[dir="rtl"] .submenu-container a:hover {
+    transform: translateX(-3px) !important;
+}
+
+/* СТРЕЛОЧКИ В ПОДМЕНЮ ДЛЯ RTL */
+[dir="rtl"] .submenu-container .menu-item[data-submenu]:after {
+    right: auto !important;
+    left: 10px !important;
+}
+
+/* А11Y-СТАТУС ДЛЯ RTL */
+[dir="rtl"] .a11y-status {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+
+/* МОБИЛЬНАЯ ВЕРСИЯ ДЛЯ RTL */
+@media (max-width: 600px) {
+    [dir="rtl"] .menu-search-row .gsc-search-button.gsc-search-button-v2,
+    [dir="rtl"] .menu-search-row button.gsc-search-button {
+        border-radius: 8px 0 0 8px !important;
+    }
+    
+    [dir="rtl"] .submenu-container {
+        padding-left: 0 !important;
+        padding-right: 12px !important;
+    }
+}
+
+@media (max-width: 480px) {
+    [dir="rtl"] .submenu-container {
+        padding-left: 0 !important;
+        padding-right: 10px !important;
+    }
+    
+    [dir="rtl"] .icon {
+        margin-right: 0 !important;
+        margin-left: 6px !important;
+    }
+}
+
