@@ -32,6 +32,7 @@ eleventyComputed:
   menu_privacy_policy: "{{ menuTranslations[locale].privacy_policy }}"
   menu_ad_info: "{{ menuTranslations[locale].ad_info }}"
   menu_about_project: "{{ menuTranslations[locale].about_project }}"
+  menu_what_to_improve: "{{ menuTranslations[locale].what_to_improve }}"
   menu_support_project: "{{ menuTranslations[locale].support_project }}"
   menu_settings: "{{ menuTranslations[locale].settings }}"
   menu_accessibility: "{{ menuTranslations[locale].accessibility }}"
@@ -449,6 +450,12 @@ eleventyComputed:
     <a href="{% if locale == 'ru' %}/frontend/about-project/about-project.html{% else %}/frontend/{{ locale }}/about-project/about-project.html{% endif %}" id="about-project-btn">
         <img src="/frontend/images/about-project.ico" alt="О проекте" class="icon">
         {{ menu_about_project }}
+    </a>
+
+    <!-- Что улучшить -->
+    <a href="{% if locale == 'ru' %}/frontend/improve/improve.html{% else %}/frontend/{{ locale }}/improve/improve.html{% endif %}" id="what-to-improve-btn">
+        <img src="/frontend/images/whatIsImprove.jpeg" alt="{{ menu_what_to_improve }}" class="icon">
+        {{ menu_what_to_improve }}
     </a>
 
     <!-- Поддержать проект -->

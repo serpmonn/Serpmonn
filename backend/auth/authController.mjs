@@ -8,12 +8,12 @@ const envPath = isProduction                                                    
 
 dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути
                                                                                               
-import bcrypt from 'bcryptjs';													 // Импортируем bcrypt для хеширования паролей
-import paseto from 'paseto';													 // Импортируем paseto для создания токенов
-import { query } from '../database/config.mjs';											 // Импортируем функцию query для работы с БД
-import { validationResult } from 'express-validator';										 // Импортируем validationResult для проверки данных
-import { v4 as uuidv4 } from 'uuid';												 // Импортируем uuidv4 для генерации уникальных ID
-import { sendConfirmationEmail } from '../utils/mailer.mjs';									 // Импортируем функцию для отправки email
+import bcrypt from 'bcryptjs';													                                                                         // Импортируем bcrypt для хеширования паролей
+import paseto from 'paseto';													                                                   // Импортируем paseto для создания токенов
+import { query } from '../database/config.mjs';											                                     // Импортируем функцию query для работы с БД
+import { validationResult } from 'express-validator';										                                 // Импортируем validationResult для проверки данных
+import { v4 as uuidv4 } from 'uuid';												                                             // Импортируем uuidv4 для генерации уникальных ID
+import { sendConfirmationEmail } from '../utils/mailer.mjs';									                           // Импортируем функцию для отправки email
                                                                                               
 const { V2 } = paseto;                                                                         					 // Извлекаем V2 из paseto для работы с токенами
 const { hash, compare } = bcrypt;                                                              					 // Извлекаем hash и compare из bcrypt
@@ -55,7 +55,7 @@ export const registerUser = async (req, res) => {                               
     });                                                                                       
   } catch (error) {                                                                           					 // Обрабатываем возможные ошибки
     console.error("Ошибка регистрации:", error);                                              					 // Логируем ошибку в консоль
-    res.status(500).json({ message: "Ошибка сервера." });                                    					 // Возвращаем ошибку сервера клиенту
+    res.status(500).json({ message: "Ошибка сервера." });                                    					   // Возвращаем ошибку сервера клиенту
   }                                                                                         
 };
 
@@ -111,49 +111,49 @@ export const confirmTelegram = async (req, res) => {
   }
 };
                                                                                               
-export const confirmEmail = async (req, res) => {                                             					 // Определяем функцию для подтверждения email
-  const { email, userId } = req.body;                                                        					 // Извлекаем email и userId из тела запроса
+export const confirmEmail = async (req, res) => {                                             					        // Определяем функцию для подтверждения email
+  const { email, userId } = req.body;                                                        					          // Извлекаем email и userId из тела запроса
                                                                                               
-  try {                                                                                       					 // Начинаем блок обработки ошибок
-    const [user] = await query("SELECT id FROM users WHERE id = ? AND email = ?", [userId, email]); 				 // Проверяем пользователя
-    if (!user) {                                                                              					 // Проверяем, найден ли пользователь
-      return res.status(404).json({ message: "Пользователь не найден." });							 // Возвращаем ошибку
+  try {                                                                                       					        // Начинаем блок обработки ошибок
+    const [user] = await query("SELECT id FROM users WHERE id = ? AND email = ?", [userId, email]); 				    // Проверяем пользователя
+    if (!user) {                                                                              					        // Проверяем, найден ли пользователь
+      return res.status(404).json({ message: "Пользователь не найден." });							                        // Возвращаем ошибку
     }                                                                                         
                                                                                               
-    const confirmationToken = uuidv4();												 // Генерируем токен подтверждения
-    const tokenExpires = new Date(Date.now() + 3600000);									 // Устанавливаем срок действия токена (1 час)
+    const confirmationToken = uuidv4();												                                                  // Генерируем токен подтверждения
+    const tokenExpires = new Date(Date.now() + 3600000);									                                      // Устанавливаем срок действия токена (1 час)
                                                                                               
-    await query(														 // Выполняем запрос на обновление пользователя
-      "UPDATE users SET confirmation_token = ?, confirmation_token_expires = ? WHERE id = ?",					 // SQL-запрос для обновления
-      [confirmationToken, tokenExpires, userId]											 // Передаем данные в запрос
+    await query(														                                                                    // Выполняем запрос на обновление пользователя
+      "UPDATE users SET confirmation_token = ?, confirmation_token_expires = ? WHERE id = ?",					          // SQL-запрос для обновления
+      [confirmationToken, tokenExpires, userId]											                                            // Передаем данные в запрос
     );                                                                                        
                                                                                               
-    const confirmLink = `https://serpmonn.ru/auth/confirm?token=${confirmationToken}`;						 // Формируем ссылку подтверждения
-    await sendConfirmationEmail(email, confirmLink);										 // Отправляем письмо с подтверждением
+    const confirmLink = `https://serpmonn.ru/auth/confirm?token=${confirmationToken}`;						              // Формируем ссылку подтверждения
+    await sendConfirmationEmail(email, confirmLink);										                                        // Отправляем письмо с подтверждением
                                                                                               
-    res.json({ success: true, message: "Письмо с подтверждением отправлено." });						 // Отправляем успешный ответ клиенту
-  } catch (error) {														 // Обрабатываем возможные ошибки
-    console.error("Ошибка отправки email:", error);										 // Логируем ошибку в консоль
-    res.status(500).json({ message: "Ошибка сервера." });									 // Возвращаем ошибку сервера клиенту
+    res.json({ success: true, message: "Письмо с подтверждением отправлено." });						                    // Отправляем успешный ответ клиенту
+  } catch (error) {														                                                                  // Обрабатываем возможные ошибки
+    console.error("Ошибка отправки email:", error);										                                          // Логируем ошибку в консоль
+    res.status(500).json({ message: "Ошибка сервера." });									                                      // Возвращаем ошибку сервера клиенту
   }                                                                                         
 };                                                                                           
                                                                                               
-export const confirmToken = async (req, res) => {                                             // Определяем функцию для проверки токена
-  const { token } = req.query;                                                               // Извлекаем токен из параметров запроса
+export const confirmToken = async (req, res) => {                                                               // Определяем функцию для проверки токена
+  const { token } = req.query;                                                                                  // Извлекаем токен из параметров запроса
                                                                                               
-  try {                                                                                       // Начинаем блок обработки ошибок
-    const [user] = await query(                                                               // Выполняем запрос на поиск пользователя
-      "SELECT id, email, username FROM users WHERE confirmation_token = ? AND confirmation_token_expires > ?", // SQL-запрос
-      [token, new Date()]                                                                     // Передаем токен и текущую дату
+  try {                                                                                                         // Начинаем блок обработки ошибок
+    const [user] = await query(                                                                                 // Выполняем запрос на поиск пользователя
+      "SELECT id, email, username FROM users WHERE confirmation_token = ? AND confirmation_token_expires > ?",  // SQL-запрос
+      [token, new Date()]                                                                                       // Передаем токен и текущую дату
     );                                                                                        
                                                                                               
-    if (!user) {                                                                              // Проверяем, найден ли пользователь
-      return res.status(400).json({ message: "Недействительный или истёкший токен." });       // Возвращаем ошибку
+    if (!user) {                                                                                                // Проверяем, найден ли пользователь
+      return res.status(400).json({ message: "Недействительный или истёкший токен." });                         // Возвращаем ошибку
     }                                                                                         
                                                                                               
-    await query(                                                                              // Выполняем запрос на обновление статуса
+    await query(                                                                                                // Выполняем запрос на обновление статуса
       "UPDATE users SET confirmed = ?, confirmation_token = NULL, confirmation_token_expires = NULL WHERE id = ?", // SQL-запрос
-      [true, user.id]                                                                         // Устанавливаем confirmed и сбрасываем токен
+      [true, user.id]                                                                                           // Устанавливаем confirmed и сбрасываем токен
     );                                                                                        
                                                                                               
     const payload = { id: user.id, email: user.email, username: user.username || user.email };             // Формируем данные для токена
@@ -168,7 +168,7 @@ export const confirmToken = async (req, res) => {                               
     });                                                                                       
                                                                                               
     console.log('Подтверждение: пользователь', user.email, 'confirmed = 1, токен создан');    // Логируем подтверждение
-    res.redirect('https://serpmonn.ru/frontend/profile/profile.html');                    // Переадресуем на страницу профиля
+    res.redirect('https://serpmonn.ru/frontend/profile/profile.html');                        // Переадресуем на страницу профиля
   } catch (error) {                                                                           // Обрабатываем возможные ошибки
     console.error("Ошибка подтверждения:", error);                                             // Логируем ошибку в консоль
     res.status(500).json({ message: "Ошибка сервера." });                                    // Возвращаем ошибку сервера клиенту
@@ -197,14 +197,14 @@ export const loginUser = async (req, res) => {                                  
     res.cookie('token', token, {                                                              // Устанавливаем cookie с токеном
       httpOnly: true,                                                                        // Защищаем cookie от доступа через JS
       secure: true,                                                                          // Устанавливаем только для HTTPS
-      sameSite: 'Lax',                                                                    // Устанавливаем политику SameSite для работы между страницами
+      sameSite: 'Lax',                                                                       // Устанавливаем политику SameSite для работы между страницами
       maxAge: 24 * 60 * 60 * 1000,                                                           // Устанавливаем срок действия (1 день)
       domain: '.serpmonn.ru'                                                                 // Ведущая точка для работы на всех поддоменах
     });                                                                                       
                                                                                               
     res.json({ message: 'Вход выполнен успешно' });                                           // Отправляем успешный ответ клиенту
   } catch (error) {                                                                           // Обрабатываем возможные ошибки
-    res.status(500).json({ message: 'Ошибка при выполнении запроса', error });               // Возвращаем ошибку сервера
+    res.status(500).json({ message: 'Ошибка при выполнении запроса', error });                // Возвращаем ошибку сервера
   }                                                                                         
 };                                                                                           
                                                                                               
@@ -212,7 +212,7 @@ export const logoutUser = (req, res) => {                                       
   res.clearCookie('token', {                                                                 // Удаляем cookie с токеном
     httpOnly: true,                                                                          // Защищаем cookie от доступа через JS
     secure: true,                                                                            // Устанавливаем только для HTTPS
-    sameSite: 'Lax'                                                                       // Устанавливаем политику SameSite для работы между страницами
+    sameSite: 'Lax'                                                                          // Устанавливаем политику SameSite для работы между страницами
   });                                                                                       
   res.json({ message: 'Выход выполнен успешно' });                                           // Отправляем успешный ответ клиенту
 };                                                                                           

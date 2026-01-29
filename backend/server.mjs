@@ -22,6 +22,7 @@ import promocodesRoutes from './promocodes/promocodesRoutes.mjs';               
 import likesRoutes from './likes/likesRoutes.mjs';                                                                              // Импортируем маршруты для системы лайков и реакций
 import analyticsRoutes from './analytics/analyticsRoutes.mjs';                                                                  // Импортируем маршруты для сбора и анализа аналитики
 import gameAnalyticsRoutes from './analytics/gameAnalytics.mjs';                                                                // Импортируем маршруты для аналитики игровых событий
+import improveRoutes from './improve/improve.mjs';                                                                              // Импорт маршрута для сбора предложений пользователей
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);                                                                                                       // Доверяем первому прокси (например, Nginx) для корректного IP
@@ -110,6 +111,7 @@ app.use('/api/promocodes', promocodesRoutes);                                   
 app.use('/api/likes', likesRoutes);                                                                                              // Подключаем маршруты лайков с аутентификацией (GET без токена, POST с токеном)
 app.use('/api/analytics/likes', analyticsRoutes);                                                                                // Подключаем маршруты аналитики лайков (статистика конверсии гостевых в авторизованные)
 app.use('/api/analytics/game', gameAnalyticsRoutes);                                                                             // Подключаем маршруты аналитики игровых событий и статистики
+app.use('/improve', improveRoutes);                                                                                              // Маршрут предложки
 
 app.use((err, req, res, next) => {                                                                                               // Обработчик ошибок (после всех роутов и middleware)
     if (err && err.code === 'EBADCSRFTOKEN') {                                                                                   // Обработчик ошибок CSRF (невалидный токен)

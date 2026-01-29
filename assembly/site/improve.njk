@@ -1,0 +1,407 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+
+permalink: |
+  {%- if locale == 'ru' -%}
+  /frontend/improve/improve.html
+  {%- else -%}
+  /frontend/{{ locale }}/improve/improve.html
+  {%- endif -%}
+
+eleventyComputed:
+  dir: |
+    {%- if rtlLocales.indexOf(locale) != -1 -%}
+    rtl
+    {%- else -%}
+    ltr
+    {%- endif -%}
+  title: "{{ improve[locale].title }}"
+  description: "{{ improve[locale].description }}"
+  canonical: |
+    {%- if locale == 'ru' -%}
+    {{ site.baseUrl }}/frontend/improve/improve.html
+    {%- else -%}
+    {{ site.baseUrl }}/frontend/{{ locale }}/improve/improve.html
+    {%- endif -%}
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ improve[locale].title }}</title>
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="{{ improve[locale].title }}">
+    <meta property="og:description" content="{{ improve[locale].description }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ improve[locale].title }}">
+    <meta name="twitter:description" content="{{ improve[locale].description }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="canonical" href="{{ canonical }}">
+    
+    <!-- Стили -->
+    <link rel="stylesheet" href="/frontend/styles/improve/improve.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    
+    <!-- Hreflang для всех языков -->
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/improve/improve.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/improve/improve.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/improve/improve.html" hreflang="x-default" />
+    
+    <!-- Скрипты -->
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    
+    <!-- Скрытый элемент с переводами для JavaScript -->
+    <div id="translation-data" 
+         data-form-sending="{{ improve[locale].form_sending }}"
+         data-alert-required="{{ improve[locale].alert_required }}"
+         data-alert-success="{{ improve[locale].alert_success }}"
+         data-alert-error="{{ improve[locale].alert_error }}"
+         style="display: none;"></div>
+    
+    <style>
+        /* Стили для сообщений формы */
+        .form-message {
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: bold;
+            border-left: 4px solid;
+            transition: all 0.3s ease;
+            display: none;
+        }
+        
+        .form-message.success {
+            background-color: #d4edda;
+            color: #155724;
+            border-left-color: #28a745;
+        }
+        
+        .form-message.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border-left-color: #dc3545;
+        }
+        
+        /* Индикатор загрузки */
+        .submit-button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+        
+        .submit-button:disabled:hover {
+            transform: none;
+            box-shadow: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <!-- Меню будет загружено через menu-loader.js -->
+    </header>
+
+    <main class="improvement-section">
+        <section>
+            <h1>{{ improve[locale].title }}</h1>
+            <p>{{ improve[locale].description }}</p>
+            
+            <div class="info-message">
+                {{ improve[locale].info_message }}
+            </div>
+        </section>
+
+        <section>
+            <h2>{{ improve[locale].stats_title }}</h2>
+            <div class="suggestions-stats">
+                <div class="stat-card">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">{{ improve[locale].stats_accepted }}</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">{{ improve[locale].stats_in_progress }}</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">{{ improve[locale].stats_implemented }}</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number">0</span>
+                    <span class="stat-label">{{ improve[locale].stats_this_week }}</span>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>{{ improve[locale].categories_title }}</h2>
+            <div class="categories">
+                <div class="category-card">
+                    <h3>🎯 {{ improve[locale].category_functionality }}</h3>
+                    <ul>
+                        <li>{{ improve[locale].category_functionality_item1 }}</li>
+                        <li>{{ improve[locale].category_functionality_item2 }}</li>
+                        <li>{{ improve[locale].category_functionality_item3 }}</li>
+                    </ul>
+                </div>
+                <div class="category-card">
+                    <h3>🎨 {{ improve[locale].category_design }}</h3>
+                    <ul>
+                        <li>{{ improve[locale].category_design_item1 }}</li>
+                        <li>{{ improve[locale].category_design_item2 }}</li>
+                        <li>{{ improve[locale].category_design_item3 }}</li>
+                    </ul>
+                </div>
+                <div class="category-card">
+                    <h3>⚡ {{ improve[locale].category_performance }}</h3>
+                    <ul>
+                        <li>{{ improve[locale].category_performance_item1 }}</li>
+                        <li>{{ improve[locale].category_performance_item2 }}</li>
+                        <li>{{ improve[locale].category_performance_item3 }}</li>
+                    </ul>
+                </div>
+                <div class="category-card">
+                    <h3>📱 {{ improve[locale].category_content }}</h3>
+                    <ul>
+                        <li>{{ improve[locale].category_content_item1 }}</li>
+                        <li>{{ improve[locale].category_content_item2 }}</li>
+                        <li>{{ improve[locale].category_content_item3 }}</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <section>
+            <h2>{{ improve[locale].examples_title }}</h2>
+            <div class="examples">
+                <div class="example-item">
+                    <div class="example-title">{{ improve[locale].example1_title }}</div>
+                    <p>"{{ improve[locale].example1_text }}"</p>
+                </div>
+                <div class="example-item">
+                    <div class="example-title">{{ improve[locale].example2_title }}</div>
+                    <p>"{{ improve[locale].example2_text }}"</p>
+                </div>
+                <div class="example-item">
+                    <div class="example-title">{{ improve[locale].example3_title }}</div>
+                    <p>"{{ improve[locale].example3_text }}"</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="improvement-form">
+            <h2>{{ improve[locale].form_title }}</h2>
+            <form id="improvementForm">
+                <div class="form-group">
+                    <label for="name">{{ improve[locale].form_name_label }}</label>
+                    <input type="text" id="name" name="name" placeholder="{{ improve[locale].form_name_placeholder }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="email">{{ improve[locale].form_email_label }}</label>
+                    <input type="email" id="email" name="email" placeholder="{{ improve[locale].form_email_placeholder }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="category">{{ improve[locale].form_category_label }} *</label>
+                    <select id="category" name="category" required>
+                        <option value="" disabled selected>{{ improve[locale].form_category_option_default }}</option>
+                        <option value="functionality">{{ improve[locale].form_category_option1 }}</option>
+                        <option value="design">{{ improve[locale].form_category_option2 }}</option>
+                        <option value="performance">{{ improve[locale].form_category_option3 }}</option>
+                        <option value="content">{{ improve[locale].form_category_option4 }}</option>
+                        <option value="bug">{{ improve[locale].form_category_option5 }}</option>
+                        <option value="other">{{ improve[locale].form_category_option6 }}</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="title">{{ improve[locale].form_title_label }} *</label>
+                    <input type="text" id="title" name="title" required placeholder="{{ improve[locale].form_title_placeholder }}">
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">{{ improve[locale].form_description_label }} *</label>
+                    <textarea id="description" name="description" required placeholder="{{ improve[locale].form_description_placeholder }}"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="priority">{{ improve[locale].form_priority_label }}</label>
+                    <select id="priority" name="priority">
+                        <option value="low">{{ improve[locale].form_priority_option1 }}</option>
+                        <option value="medium" selected>{{ improve[locale].form_priority_option2 }}</option>
+                        <option value="high">{{ improve[locale].form_priority_option3 }}</option>
+                        <option value="critical">{{ improve[locale].form_priority_option4 }}</option>
+                    </select>
+                </div>
+                
+                <button type="submit" class="submit-button">{{ improve[locale].form_submit_button }}</button>
+                
+                <div id="formMessage" class="form-message"></div>
+            </form>
+        </section>
+
+        <section>
+            <h2>{{ improve[locale].process_title }}</h2>
+            <p>1. <strong>{{ improve[locale].process_step1_title }}</strong> — {{ improve[locale].process_step1_text }}</p>
+            <p>2. <strong>{{ improve[locale].process_step2_title }}</strong> — {{ improve[locale].process_step2_text }}</p>
+            <p>3. <strong>{{ improve[locale].process_step3_title }}</strong> — {{ improve[locale].process_step3_text }}</p>
+            <p>4. <strong>{{ improve[locale].process_step4_title }}</strong> — {{ improve[locale].process_step4_text }}</p>
+            <p>5. <strong>{{ improve[locale].process_step5_title }}</strong> — {{ improve[locale].process_step5_text }}</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>© 2026 {{ improve[locale].footer_text }}</p>
+        <p class="footer-link">
+            <a href="{% if locale == 'ru' %}/frontend/privacy-policy/privacy-policy.html{% else %}/frontend/{{ locale }}/privacy-policy/privacy-policy.html{% endif %}">
+                {{ improve[locale].footer_privacy_link }}
+            </a>
+        </p>
+    </footer>
+
+    <script>
+        document.getElementById('improvementForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitButton = this.querySelector('.submit-button');
+            const originalButtonText = submitButton.textContent;
+            const formMessage = document.getElementById('formMessage');
+            const translationData = document.getElementById('translation-data').dataset;
+            
+            // Показать состояние загрузки
+            submitButton.textContent = translationData.formSending || 'Отправка...';
+            submitButton.disabled = true;
+            formMessage.style.display = 'none';
+            formMessage.className = 'form-message';
+            formMessage.textContent = '';
+            
+            try {
+                // Данные формы
+                const formData = {
+                    name: document.getElementById('name').value,
+                    email: document.getElementById('email').value,
+                    category: document.getElementById('category').value,
+                    title: document.getElementById('title').value,
+                    description: document.getElementById('description').value,
+                    priority: document.getElementById('priority').value,
+                    language: '{{ locale }}',
+                    page: 'improve'
+                };
+                
+                // Базовая проверка на фронтенде
+                if (!formData.category || !formData.title || !formData.description) {
+                    throw new Error(translationData.alertRequired || 'Пожалуйста, заполните все обязательные поля');
+                }
+                
+                // Отправка на бэк (абсолютный URL для продакшена)
+                const response = await fetch('/improve', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData),
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Успешная отправка
+                    formMessage.textContent = result.message || translationData.alertSuccess || 'Спасибо! Ваше предложение успешно отправлено';
+                    formMessage.className = 'form-message success';
+                    formMessage.style.display = 'block';
+                    
+                    // Сброс формы
+                    this.reset();
+                    
+                    // Прокрутка к форме
+                    setTimeout(() => {
+                        window.scrollTo({
+                            top: document.querySelector('.improvement-form').offsetTop - 20,
+                            behavior: 'smooth'
+                        });
+                    }, 100);
+                    
+                    // Обновление счетчика статистики
+                    const statElement = document.querySelector('.stat-card:first-child .stat-number');
+                    if (statElement) {
+                        const currentCount = parseInt(statElement.textContent) || 0;
+                        animateCounter(statElement, currentCount + 1);
+                    }
+                    
+                } else {
+                    // Ошибка валидации или сервера
+                    let errorMessage = result.message || translationData.alertError || 'Ошибка отправки. Пожалуйста, попробуйте еще раз';
+                    if (result.errors && result.errors.length > 0) {
+                        errorMessage += ': ' + result.errors.map(err => err.msg).join(', ');
+                    }
+                    throw new Error(errorMessage);
+                }
+                
+            } catch (error) {
+                // Ошибка отправки
+                console.error('Ошибка отправки формы:', error);
+                
+                formMessage.textContent = error.message;
+                formMessage.className = 'form-message error';
+                formMessage.style.display = 'block';
+                
+            } finally {
+                // Восстановить кнопку
+                submitButton.textContent = originalButtonText;
+                submitButton.disabled = false;
+            }
+        });
+
+        function updateStats() {
+            const today = new Date().getDay();
+            const weekStats = [0, 0, 0, 0, 0, 0, 0];
+            const lastStat = document.querySelector('.stat-card:last-child .stat-number');
+            if (lastStat) {
+                lastStat.textContent = weekStats[today];
+            }
+        }
+
+        function animateCounter(element, finalValue, duration = 1000) {
+            let start = parseInt(element.textContent) || 0;
+            const increment = (finalValue - start) / (duration / 16);
+            const timer = setInterval(() => {
+                start += increment;
+                if (Math.abs(finalValue - start) < 1) {
+                    element.textContent = finalValue;
+                    clearInterval(timer);
+                } else {
+                    element.textContent = Math.floor(start);
+                }
+            }, 16);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            
+            const firstCounter = document.querySelector('.stat-card:first-child .stat-number');
+            if (firstCounter) {
+                animateCounter(firstCounter, 0);
+            }
+        });
+    </script>
+    
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>
