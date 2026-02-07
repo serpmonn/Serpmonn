@@ -20,17 +20,19 @@ const VITE_PORT = process.env.VITE_PORT;                                        
 const NEWS_PORT = process.env.NEWS_PORT;                                                                                        // Порт news сервера (только из .env)
 
 // Middleware - промежуточное программное обеспечение
-app.use(cors({                                                                                                                   // Применяем CORS с заданными настройками безопасности
-    origin: [                                                                                                                    // Указываем разрешенные домены для доступа к API
-        'https://serpmonn.ru',                                                                                                   // Разрешаем основной домен serpmonn.ru
-        'https://www.serpmonn.ru',                                                                                               // Разрешаем домен с www префиксом
-        `http://localhost:${VITE_PORT}`,                                                                                         // Разрешаем локальный Vite dev сервер (порт из .env)
-        `http://127.0.0.1:${VITE_PORT}`,                                                                                         // Разрешаем альтернативный адрес Vite dev сервера
-        `http://localhost:${NEWS_PORT}`,                                                                                         // Разрешаем доступ с того же домена (news сервер, порт из .env)
-        `http://127.0.0.1:${NEWS_PORT}`                                                                                          // Разрешаем альтернативный адрес news сервера
-    ],                                                                                                                         
-    credentials: true                                                                                                            // Разрешаем отправку cookies через междоменные запросы
-}));                                                                                                                           
+app.use(cors({
+    origin: [
+        'https://serpmonn.ru',
+        'https://www.serpmonn.ru',
+        'http://serpmonn.ru',  // ← ДОБАВЬ HTTP версию
+        'http://www.serpmonn.ru',  // ← ДОБАВЬ HTTP www
+        `http://localhost:${VITE_PORT}`,
+        `http://127.0.0.1:${VITE_PORT}`,
+        `http://localhost:${NEWS_PORT}`,
+        `http://127.0.0.1:${NEWS_PORT}`
+    ],
+    credentials: true
+}));                                                                                                                         
 app.use(express.json());                                                                                                         // Включаем парсинг JSON данных в теле входящих запросов
 app.use(express.urlencoded({ extended: true }));                                                                                 // Включаем парсинг URL-encoded данных с расширенным синтаксисом
 
