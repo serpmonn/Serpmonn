@@ -12,18 +12,19 @@ let isSortedByExpiry = false;
 let sortAscending = true;
 const topBrands = [
     'яндекс афиша', 'yandex afisha', 'афиша', 'afisha',
+    'авито путешествия', 'avito puteshestvia', 'avito', 'puteshestvia',
     'яндекс лавка', 'yandex lavka',
     'тануки', 'tanuki',
     'яндекс плюс', 'yandex plus',
     'сберпрайм', 'sberprime', 'сбер прайм', 'sber prime',
     'befree', 'be free',
-    'ашан', 'ashan',
-    'premier', 'премьер',
+    'нетпринт', 'netprint',
     'ёбидоёби', 'yobidoyobi',
+    'premier', 'премьер',
     'яндекс музыка', 'yandex music', 'yandex muzyka',
     'кинопоиск', 'kinopoisk',
     'винлаб', 'winelab', 'wine lab',
-    'okko', 'окко'
+    'ашан', 'ashan',
 ];
 const categoryLabels = {
     'еда': 'Еда и рестораны',
