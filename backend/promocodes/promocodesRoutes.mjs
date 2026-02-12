@@ -22,18 +22,18 @@ let promocodesCache = {
 // Белый список брендов
 const TOP_BRANDS_PATTERNS = [
   /(?:Яндекс\s*)?Афиша|(?:Yandex\s*)?Afisha/i,
+  /(?:Авито\s*)?Путешествия|(?:Avito\s*)?Travel|(?:Avito\s*)?Puteshestviya/i,
   /Яндекс\s*Лавка|Yandex\s*Lavka/i,
   /Тануки|Tanuki/i,
   /Яндекс\s*Плюс|Yandex\s*Plus/i,
-  /Сбер\s*Прайм|СберПрайм|Sber\s*Prime|SberPrime/i,
+  /Сбер\s*Прайм|СберПрайм|Sber\s*Prime|SberPrime|Сберпрайм/i,
   /befree|be\s*free/i,
-  /Ашан|Ashan/i,
+  /Netprint|Нетпринт/i,
   /Premier|Премьер/i,
-  /ёбидоёби|yobidoyobi/i,
   /Яндекс\s*Музык|Yandex\s*Music|Yandex\s*Muzyka/i,
   /Кинопоиск|Kinopoisk/i,
   /ВинЛаб|Винлаб|Wine\s*Lab|Winelab/i,
-  /OKKO|окко/i,
+  /Ашан|Ashan/i,
 ];
 
 function isWhitelistedTopByText(text) {

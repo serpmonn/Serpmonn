@@ -5,24 +5,20 @@
   "type": "module",
   "main": "backend/server.mjs",
   "scripts": {
-    "stop:all": "pm2 delete all",
-    "clean:start": "npm run stop:all && sleep 2 && npm run start",
-    "start": "pm2 start --name \"auth-server\" backend/server.mjs && pm2 start --name \"news-server\" backend/news/news-server.mjs && pm2 start --name \"leaderboard-server\" backend/games/leaderboard-server.mjs && pm2 start --name \"x-car-server\" backend/X-Car/x-car-server.mjs && pm2 start --name \"onnmail-server\" backend/auth/onnmail-server.mjs && pm2 start --name \"password-reset-server\" backend/auth/password-reset-server.mjs && pm2 start --name \"serpmonngamesbot\" backend/telegram_bots/Serpmonn_games/Serpmonn_games.mjs && pm2 start --name \"serpmonnconfirmbot\" backend/telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs && pm2 start --name \"memebot\" backend/telegram_bots/meme-bot/meme-bot.mjs",
-    "stop": "pm2 stop all",
-    "restart": "pm2 restart all",
+    "start": "pm2 start --name \"auth-server\" backend/server.mjs && pm2 start --name \"news-server\" backend/news/news-server.mjs && pm2 start --name \"leaderboard-server\" backend/games/leaderboard-server.mjs && pm2 start --name \"x-car-server\" backend/X-Car/x-car-server.mjs && pm2 start --name \"onnmail-server\" backend/auth/onnmail-server.mjs && pm2 start --name \"password-reset-server\" backend/auth/password-reset-server.mjs && pm2 start --name \"serpmonngamesbot\" backend/telegram_bots/Serpmonn_games/Serpmonn_games.mjs && pm2 start --name \"serpmonnconfirmbot\" backend/telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs && pm2 start --name \"memebot\" backend/telegram_bots/meme-bot/meme-bot.mjs && pm2 start --name \"ai-search\" backend/ai-search/ai-search.mjs",    "restart": "pm2 restart all",
     "delete": "pm2 delete all",
-    "monit": "pm2 monit",
     "logs": "pm2 logs",
     "status": "pm2 status",
-    "start-auth": "node backend/server.mjs",
-    "start-news": "node backend/news/news-server.mjs",
-    "start-leaderboard": "node backend/games/leaderboard-server.mjs",
-    "start-X-Car": "node backend/X-Car/x-car-server.mjs",
-    "start-onnmail": "node backend/auth/onnmail-server.mjs",
-    "start-password-reset": "node backend/auth/password-reset-server.mjs",
-    "start-serpmonngames": "node backend/telegram_bots/Serpmonn_games/Serpmonn_games.mjs",
-    "start-serpmonnconfirm": "node backend/telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs",
-    "start-memebot": "node backend/telegram_bots/meme-bot/meme-bot.mjs",
+    "start-auth": "pm2 start --name \"auth-server\" backend/server.mjs",
+    "start-news": "pm2 start --name \"news-server\" backend/news/news-server.mjs",
+    "start-leaderboard": "pm2 start --name \"leaderboard-server\" backend/games/leaderboard-server.mjs",
+    "start-X-Car": "pm2 start --name \"x-car-server\" backend/X-Car/x-car-server.mjs",
+    "start-onnmail": "pm2 start --name \"onnmail-server\" backend/auth/onnmail-server.mjs",
+    "start-password-reset": "pm2 start --name \"password-reset-server\" backend/auth/password-reset-server.mjs",
+    "start-serpmonngames": "pm2 start --name \"serpmonngamesbot\" backend/telegram_bots/Serpmonn_games/Serpmonn_games.mjs",
+    "start-serpmonnconfirm": "pm2 start --name \"serpmonnconfirmbot\" backend/telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs",
+    "start-memebot": "pm2 start --name \"memebot\" backend/telegram_bots/meme-bot/meme-bot.mjs",
+    "start-ai": "pm2 start --name \"ai-search\" backend/ai-search/ai-search.mjs",
     "dev:backend": "concurrently \"npm run start-auth\" \"npm run start-news\" \"npm run start-leaderboard\" \"npm run start-X-Car\" \"npm run start-onnmail\" \"npm run start-password-reset\" \"npm run dev-serpmonngames\" \"npm run dev-serpmonnconfirm\" \"npm run dev-memebot\"",
     "dev:fullstack": "concurrently \"npm run dev:backend\" \"npm run dev:vite\"",
     "dev:vite": "vite",
@@ -35,11 +31,25 @@
     "site:build": "eleventy",
     "site:clean": "rm -rf dist"
   },
-  "author": "Sergei Popov",
-  "repository": {
-    "type": "git",
-    "url": "ssh://git@gitverse.ru:2222/Serpmonn/Serpmonn_project.git"
+  "author": {
+    "name": "Sergei Popov",
+    "email": "sergei@serpmonn.ru",
+    "url": "https://serpmonn.ru"
   },
+  "repositories": [
+    {
+      "type": "git",
+      "name": "gitverse",
+      "url": "ssh://git@gitverse.ru:2222/Serpmonn/Serpmonn_project.git",
+      "description": "Основной рабочий репозиторий (GitVerse)"
+    },
+    {
+      "type": "git", 
+      "name": "github",
+      "url": "https://github.com/Serpmonn/serpmonn.git",
+      "description": "GitHub зеркало"
+    }
+  ],
   "keywords": [
     "Serpmonn",
     "поиск",
@@ -47,7 +57,14 @@
     "игры",
     "инструменты",
     "автоматизация",
-    "промокоды"
+    "промокоды",
+    "ии",
+    "искусственный интеллект",
+    "ai-search",
+    "pwa",
+    "twa",
+    "russian",
+    "российский"
   ],
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -79,7 +96,8 @@
     "concurrently": "^9.2.1",
     "nunjucks": "^3.2.4",
     "pm2": "^6.0.8",
-    "vite": "^7.1.7"
+    "vite": "^7.1.7",
+    "nodemon": "^3.0.0"
   },
   "overrides": {
     "form-data": "^4.0.4",

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Widget Demo</title>
+    <link rel="stylesheet" href="../dist/owui-widget.css">
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #f0f0f0;
+        }
+        #owui-chat-container {
+            width: 400px;
+            height: 600px;
+            border: 1px solid #ccc;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            background-color: #fff;
+            overflow: hidden;
+        }
+        .instructions {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+            text-align: left;
+            max-width: 500px;
+        }
+        .instructions code {
+            background-color: #d1d1d1;
+            padding: 2px 5px;
+            border-radius: 3px;
+        }
+        .instructions ul {
+            padding-left: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="instructions">
+        <h2>Chat Widget Demo</h2>
+        <p>This page demonstrates the Open WebUI Chat Widget.</p>
+        <p><strong>Important:</strong></p>
+        <ul>
+            <li>Make sure you have run <code>npm install</code> and <code>npm run build</code> in the project root to generate the <code>../dist/ChatWidget.js</code> file.</li>
+            <li>Open this page in your browser.</li>
+            <li>To make the chat functional, you need to append query parameters to this page's URL in your browser's address bar. For example:
+                <ul>
+                    <li><code>?api_key=YOUR_API_KEY</code></li>
+                    <li><code>?api_key=YOUR_API_KEY&model=your_model_name</code></li>
+                    <li><code>?api_key=YOUR_API_KEY&endpoint=https://your.custom.endpoint/api/chat/completions</code></li>
+                </ul>
+            </li>
+        </ul>
+        <p>The widget will appear below.</p>
+    </div>
+
+    <div id="owui-chat-container">
+        <!-- The chat widget will be mounted here -->
+    </div>
+
+    <script type="module">
+      // Make sure the path to ChatWidget.js is correct relative to this HTML file.
+      // This assumes 'examples/index.html' and 'dist/ChatWidget.js'
+      import ChatWidget, { mount } from '../dist/ChatWidget.js';
+
+      mount(ChatWidget, {
+        target: document.getElementById('owui-chat-container')
+      });
+    </script>
+</body>
+</html>

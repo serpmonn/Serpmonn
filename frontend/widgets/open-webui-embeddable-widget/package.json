@@ -1,0 +1,42 @@
+{
+	"name": "owui-widget",
+	"private": true,
+	"version": "0.0.1",
+	"type": "module",
+	"scripts": {
+		"build": "vite build",
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+		"format": "prettier --write .",
+		"lint": "prettier --check .",
+		"package": "npm run build",
+		"serve:demo": "http-server .",
+		"dev": "vite"
+	},
+	"devDependencies": {
+		"@sveltejs/vite-plugin-svelte": "^5.0.0",
+		"@types/marked": "^5.0.2",
+		"http-server": "^14.1.1",
+		"marked": "^16.2.1",
+		"prettier": "^3.4.2",
+		"prettier-plugin-svelte": "^3.3.3",
+		"svelte": "^5.0.0",
+		"svelte-check": "^4.0.0",
+		"typescript": "^5.0.0",
+		"vite": "^6.2.6"
+	},
+	"files": [
+		"dist",
+		"src/lib"
+	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"svelte": "./dist/ChatWidget.js",
+			"import": "./dist/ChatWidget.js"
+		},
+		"./package.json": "./package.json"
+	},
+	"svelte": "./dist/ChatWidget.js",
+	"types": "./dist/index.d.ts"
+}
