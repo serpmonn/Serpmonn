@@ -1,173 +1,146 @@
-(function initSerpmonnLettersBackground(){
-  try {
-    const isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;
-    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return; // уважаем системные настройки
+(function initSerpmonnLettersBackground(){                                                                 // Самовызывающаяся функция — запускается сразу после загрузки скрипта
+  try {                                                                                                    // Защита от любых ошибок — страница не упадёт
+    const isCoarse = window.matchMedia && window.matchMedia('(pointer: coarse)').matches;                  // Определяет тач-устройство (телефон/планшет)
+    const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;  // Проверяет настройку «уменьшить движение» в ОС
+    if (prefersReduced) return;                                                                            // Если включена экономия анимации — скрипт завершается
 
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d', { alpha: true });
-    canvas.id = 'serpmonn-letters-bg';
-    Object.assign(canvas.style, {
-      position: 'static', width: '100%', height: 'auto',
-      zIndex: '1', pointerEvents: 'none', display: 'block'
+    const canvas = document.createElement('canvas');                                                       // Создаётся элемент canvas для рисования
+    const ctx = canvas.getContext('2d', { alpha: true });                                                  // Получается 2D-контекст с прозрачностью
+    canvas.id = 'serpmonn-letters-bg';                                                                     // Устанавливается id для элемента
+
+    Object.assign(canvas.style, {                                                                          // Применяются стили к canvas сразу пачкой
+      position: 'static', width: '100%', height: 'auto',                                                   // Ширина 100%, высота подстраивается
+      zIndex: '1', pointerEvents: 'none', display: 'block'                                                 // Лежит под контентом, не ловит клики
     });
 
-    const bodyEl = document.body;
-    
-    // Вставляем canvas между новостным и поисковым контейнерами
-    const newsContainer = document.querySelector('.news-container');
-    const searchCard = document.querySelector('.search-card');
-    
-    if (newsContainer && searchCard) {
-      // Вставляем canvas после новостного контейнера
-      newsContainer.parentNode.insertBefore(canvas, newsContainer.nextSibling);
-    } else {
-      // Fallback: вставляем в начало body если контейнеры не найдены
-      if (bodyEl.firstChild) bodyEl.insertBefore(canvas, bodyEl.firstChild); 
-      else bodyEl.appendChild(canvas);
+    const bodyEl = document.body;                                                                          // Ссылка на body для удобства
+
+    const newsContainer = document.querySelector('.news-container');                                       // Находит блок с заголовком и описанием
+    const searchCard    = document.querySelector('.search-card');                                          // Находит блок с поисковой формой
+
+    if (newsContainer && searchCard) {                                                                     // Если оба блока найдены
+      newsContainer.parentNode.insertBefore(canvas, newsContainer.nextSibling);                            // canvas вставляется после .news-container
+    } else {                                                                                               // Иначе (fallback на случай странной структуры)
+      if (bodyEl.firstChild) bodyEl.insertBefore(canvas, bodyEl.firstChild);                               // Вставка в начало body
+      else bodyEl.appendChild(canvas);                                                                     // Или в конец, если body пуст
     }
 
-    let width = 0, height = 0, dpr = Math.min(window.devicePixelRatio || 1, 1.5);
-    const text = 'Serpmonn'; // Заглавная S, остальное строчные
-    const glyphs = [];
+    let width = 0, height = 0, dpr = Math.min(window.devicePixelRatio || 1, 1.5);                          // Переменные размеров + ограниченный dpr
+    const text = 'Serpmonn';                                                                               // Текст, который будет анимирован
+    const glyphs = [];                                                                                     // Массив объектов — по одному на каждую букву
 
-    const RED = '#dc3545';
-    const DARK = 'rgba(0,0,0,0.75)';
+    const RED  = '#dc3545';                                                                                // Красный цвет для букв S e r p
+    const DARK = 'rgba(0,0,0,0.75)';                                                                       // Тёмный полупрозрачный для m o n n
 
-    const mouse = { x: null, y: null };
-    window.addEventListener('mousemove', (e)=>{ if (isCoarse) return; mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
-    window.addEventListener('mouseleave', ()=>{ mouse.x = null; mouse.y = null; });
+    const mouse = { x: null, y: null };                                                                    // Объект для хранения координат курсора
+    window.addEventListener('mousemove', (e)=>{ if (isCoarse) return; mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });  // Отслеживание мыши (только на не-тач)
+    window.addEventListener('mouseleave', ()=>{ mouse.x = null; mouse.y = null; });                        // Сброс координат при уходе курсора с окна
 
-    function resize(){
-      width = Math.floor(window.innerWidth);
-      
-      // Фиксированная высота для canvas между контейнерами
-      height = 120; // Высота в пикселях для букв
-      
-      canvas.width = Math.floor(width * dpr);
-      canvas.height = Math.floor(height * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      layout();
+    function resize(){                                                                                     // Функция пересчёта размеров при изменении окна
+      width  = Math.floor(window.innerWidth);                                                              // Текущая ширина окна
+      height = 120;                                                                                        // Фиксированная высота зоны букв
+      canvas.width  = Math.floor(width  * dpr);                                                            // Физическая ширина canvas (Retina)
+      canvas.height = Math.floor(height * dpr);                                                            // Физическая высота canvas
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);                                                              // Масштабирование контекста под плотность пикселей
+      layout();                                                                                            // Пересчёт позиций букв
     }
 
-    function layout(){
-      glyphs.length = 0;
-      const margin = Math.min(40, width * 0.05);
-      const availableWidth = Math.max(0, width - margin * 2);
-      const spacing = 8; // Уменьшаем расстояние между буквами
-      // Подбираем размер шрифта - уменьшаем для ПК
-      let fontSize = Math.min(40, Math.max(16, Math.floor(availableWidth / (text.length * 1.4))));
+    function layout(){                                                                                     // Расстановка букв по центру canvas
+      glyphs.length = 0;                                                                                   // Очистка старых букв
+      const margin = Math.min(40, width * 0.05);                                                           // Отступы слева/справа
+      const availableWidth = Math.max(0, width - margin * 2);                                              // Доступная ширина для текста
+      const spacing = 8;                                                                                   // Расстояние между буквами
 
-      if (width < 480) fontSize = Math.max(24, Math.floor(fontSize * 0.9)); // Мобильные
-      else if (width > 1024) fontSize = Math.max(20, Math.floor(fontSize * 0.8)); // ПК
-      
-      ctx.font = `800 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;
+      let fontSize = Math.min(40, Math.max(16, Math.floor(availableWidth / (text.length * 1.4))));         // Подбор размера шрифта
 
-      ctx.textBaseline = 'middle';
-      const widths = [...text].map(ch => ctx.measureText(ch).width);
-      const totalTextWidth = widths.reduce((a,b)=>a+b,0) + spacing * (text.length - 1);
+      if (width < 480) fontSize = Math.max(24, Math.floor(fontSize * 0.9));                                // Увеличение на мобильных
+      else if (width > 1024) fontSize = Math.max(20, Math.floor(fontSize * 0.8));                          // Уменьшение на десктопах
 
-      let x = Math.floor((width - totalTextWidth) / 2);
-      
-      // Размещаем буквы по центру canvas
-      let y = Math.floor(height / 2);
-      
-      for (let i = 0; i < text.length; i++){
+      ctx.font = `800 ${fontSize}px system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif`;        // Установка жирного шрифта
+      ctx.textBaseline = 'middle';                                                                         // Выравнивание по вертикальному центру
+
+      const widths = [...text].map(ch => ctx.measureText(ch).width);                                       // Ширина каждой буквы
+      const totalTextWidth = widths.reduce((a,b)=>a+b,0) + spacing * (text.length - 1);                    // Общая ширина слова
+
+      let x = Math.floor((width - totalTextWidth) / 2);                                                    // Центрирование по горизонтали
+      let y = Math.floor(height / 2);                                                                      // Центрирование по вертикали
+
+      for (let i = 0; i < text.length; i++){                                                               // Проход по каждой букве
         const ch = text[i];
         const w = widths[i];
         const baseX = x, baseY = y;
-        const color = i < 4 ? RED : DARK; // первые 4 буквы красные
-        glyphs.push({ ch, baseX, baseY, x: baseX, y: baseY, vx: 0, vy: 0, w, h: fontSize, color });
-
-        x += w + spacing;
+        const color = i < 4 ? RED : DARK;                                                                  // Первые 4 — красные, остальные тёмные
+        glyphs.push({ ch, baseX, baseY, x: baseX, y: baseY, vx: 0, vy: 0, w, h: fontSize, color });        // Добавление буквы в массив
+        x += w + spacing;                                                                                  // Сдвиг позиции
       }
     }
 
-    const friction = 0.86;        // трение
-    const springK = 0.08;          // сила возврата к базе
-    const repelRadius = 260;       // ещё больше радиус отталкивания курсором
-    const repelStrength = 2.0;     // ещё сильнее отталкивание
-    const maxOffset = 96;          // увеличенная амплитуда смещения
+    const friction     = 0.86;                                                                             // Трение — затухание движения
+    const springK      = 0.08;                                                                             // Сила возврата к базе (пружина)
+    const repelRadius  = 260;                                                                              // Радиус отталкивания от курсора
+    const repelStrength= 2.0;                                                                              // Сила отталкивания
+    const maxOffset    = 96;                                                                               // Максимальное отклонение от центра
 
-    function step(){
-      // фон
-      ctx.clearRect(0,0,width,height);
-      const grad = ctx.createLinearGradient(0,0,width,height);
-      grad.addColorStop(0,'rgba(220,53,69,0.03)');
-      grad.addColorStop(1,'rgba(0,0,0,0.02)');
-      ctx.fillStyle = grad;
-      ctx.fillRect(0,0,width,height);
+    function step(){                                                                                       // Главный цикл анимации (~60 fps)
+      ctx.clearRect(0,0,width,height);                                                                     // Очистка canvas перед кадром
 
-      const mx = mouse.x, my = mouse.y;
-      
-      // Получаем позицию canvas относительно viewport для правильного расчета координат
-      let canvasRect = null;
-      try {
-        canvasRect = canvas.getBoundingClientRect();
-      } catch(_) {}
-      
-      for (const g of glyphs){
-        // Сила возврата к базовой позиции (пружина)
-        const dxBase = g.baseX - g.x;
-        const dyBase = g.baseY - g.y;
-        g.vx += dxBase * springK;
-        g.vy += dyBase * springK;
+      const grad = ctx.createLinearGradient(0,0,width,height);                                             // Диагональный градиент
+      grad.addColorStop(0, 'rgba(0,0,0,0)');                                                             // Полностью прозрачный в начале
+      grad.addColorStop(1, 'rgba(0,0,0,0)');                                                             // Полностью прозрачный в конце
+      ctx.fillStyle = grad;                                                                                // Назначение градиента
+      ctx.fillRect(0,0,width,height);                                                                      // Заливка слабым фоном
 
-        // Отталкивание от курсора - используем координаты относительно canvas
-        if (mx != null && my != null && canvasRect){
-          const canvasX = mx - canvasRect.left;
-          const canvasY = my - canvasRect.top;
-          
-          const dx = g.x + g.w/2 - canvasX; // от центра буквы
-          const dy = g.y - canvasY;
-          const dist2 = dx*dx + dy*dy;
-          if (dist2 < repelRadius * repelRadius){
-            const dist = Math.sqrt(dist2) || 1;
-            const force = (repelRadius - dist) / repelRadius; // 0..1
-            const fx = (dx / dist) * force * repelStrength;
-            const fy = (dy / dist) * force * repelStrength;
-            g.vx += fx;
-            g.vy += fy;
+      const mx = mouse.x, my = mouse.y;                                                                    // Координаты курсора
+      let canvasRect = null;                                                                               // Позиция canvas на странице
+      try { canvasRect = canvas.getBoundingClientRect(); } catch(_) {}                                     // Получение координат (с защитой)
+
+      for (const g of glyphs){                                                                             // Обработка каждой буквы
+        g.vx += (g.baseX - g.x) * springK;                                                                 // Сила возврата по X
+        g.vy += (g.baseY - g.y) * springK;                                                                 // Сила возврата по Y
+
+        if (mx != null && my != null && canvasRect){                                                       // Если курсор есть
+          const canvasX = mx - canvasRect.left;                                                            // Локальная X внутри canvas
+          const canvasY = my - canvasRect.top;                                                             // Локальная Y внутри canvas
+          const dx = g.x + g.w/2 - canvasX;                                                                // Расстояние по X от центра буквы
+          const dy = g.y - canvasY;                                                                        // Расстояние по Y
+          const dist2 = dx*dx + dy*dy;                                                                     // Квадрат расстояния
+          if (dist2 < repelRadius * repelRadius){                                                          // Курсор в зоне отталкивания
+            const dist = Math.sqrt(dist2) || 1;                                                            // Реальное расстояние
+            const force = (repelRadius - dist) / repelRadius;                                              // Сила отталкивания
+            g.vx += (dx / dist) * force * repelStrength;                                                   // Ускорение по X
+            g.vy += (dy / dist) * force * repelStrength;                                                   // Ускорение по Y
           }
         }
 
-        // Применяем трение
-        g.vx *= friction;
-        g.vy *= friction;
+        g.vx *= friction;                                                                                  // Трение по X
+        g.vy *= friction;                                                                                  // Трение по Y
+        g.x += g.vx;                                                                                       // Движение по X
+        g.y += g.vy;                                                                                       // Движение по Y
 
-        // Обновляем позицию
-        g.x += g.vx;
-        g.y += g.vy;
-
-        // Ограничиваем максимальное смещение от базы
-        const offX = g.x - g.baseX;
-        const offY = g.y - g.baseY;
-        const offLen = Math.hypot(offX, offY);
-        if (offLen > maxOffset){
-          const scale = maxOffset / (offLen || 1);
-          g.x = g.baseX + offX * scale;
-          g.y = g.baseY + offY * scale;
+        const offLen = Math.hypot(g.x - g.baseX, g.y - g.baseY);                                           // Текущее отклонение
+        if (offLen > maxOffset){                                                                           // Если слишком далеко
+          const scale = maxOffset / (offLen || 1);                                                         // Коэффициент ограничения
+          g.x = g.baseX + (g.x - g.baseX) * scale;                                                         // Ограничение по X
+          g.y = g.baseY + (g.y - g.baseY) * scale;                                                         // Ограничение по Y
         }
 
-        // Рисуем букву
-        ctx.shadowColor = g.color === RED ? 'rgba(220,53,69,0.35)' : 'rgba(0,0,0,0.15)';
-
-        ctx.shadowBlur = g.color === RED ? 16 : 8;
-        ctx.fillStyle = g.color;
-        ctx.fillText(g.ch, g.x, g.y);
-        ctx.shadowBlur = 0;
+        ctx.shadowColor = g.color === RED ? 'rgba(220,53,69,0.35)' : 'rgba(0,0,0,0.15)';                   // Цвет тени
+        ctx.shadowBlur  = g.color === RED ? 16 : 8;                                                        // Размытие тени
+        ctx.fillStyle   = g.color;                                                                         // Цвет буквы
+        ctx.fillText(g.ch, g.x, g.y);                                                                      // Рисование буквы
+        ctx.shadowBlur  = 0;                                                                               // Сброс тени
       }
 
-      requestAnimationFrame(step);
+      requestAnimationFrame(step);                                                                         // Следующий кадр
     }
 
-    function onVisibility(){
-      if (document.visibilityState === 'visible') requestAnimationFrame(step);
+    function onVisibility(){                                                                               // Обработчик видимости вкладки
+      if (document.visibilityState === 'visible') requestAnimationFrame(step);                             // Возобновление при возвращении
     }
 
-    window.addEventListener('resize', resize);
-    document.addEventListener('visibilitychange', onVisibility);
-    resize();
-    requestAnimationFrame(step);
-  } catch(_){ /* noop */ }
+    window.addEventListener('resize', resize);                                                             // Подписка на изменение размера окна
+    document.addEventListener('visibilitychange', onVisibility);                                           // Подписка на смену видимости вкладки
+    resize();                                                                                              // Первый пересчёт размеров
+    requestAnimationFrame(step);                                                                           // Запуск анимации
+  } catch(_){ /* noop */ }                                                                                 // Игнорирование ошибок
 })();
