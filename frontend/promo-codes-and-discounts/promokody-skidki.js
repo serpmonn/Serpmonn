@@ -165,28 +165,6 @@ async function loadPromocodesFromAPI() {
             const { data, stats, timestamp } = JSON.parse(cachedData);
             if (Date.now() - timestamp < API_CONFIG.updateInterval) {
                 allPromocodes = data.map(normalizePromo);
-                // КОММЕНТАРИЙ: Промокод Шерри был закомментирован по требованию
-                /*
-                allPromocodes.unshift({
-                    id: 'manual-sherry-001',
-                    title: 'Шерри - Промокоды и бонусы',
-                    description: 'Экономия на покупках! Установи приложение Шерри, зарегистрируйся с промокодом U9H9 и получи 100 ₽ на счёт. Промокоды для популярных сервисов и магазинов ждут тебя!',
-                    promocode: 'U9H9',
-                    discount_percent: null,
-                    discount_amount: 100,
-                    bonus_description: 'Бонус 100 ₽ при регистрации',
-                    valid_until: '2035-12-31T23:59:59',
-                    landing_url: 'https://sharry.prfl.me/sites/etztqv?erid=2VtzqvZcE2u',
-                    image_url: '/frontend/images/sherry-promo.png',
-                    conditions: 'Зарегистрируйтесь в приложении Шерри и введите промокод при регистрации.',
-                    advertiser_info: 'Реклама ООО «Перфлюенс» ИНН: 7725380313, 6+ erid: 2VtzqwuxWPn',
-                    category: 'сервисы',
-                    country: 'Россия',
-                    is_top: true,
-                    created_at: new Date().toISOString(),
-                    groupDescription: 'Экономия, скидки, популярные бренды в одном приложении! Совершай покупки с промокодами и получай реальные деньги.'
-                });
-                */
                 filteredPromocodes = [...allPromocodes];
                 updateStats(stats || { total: 0, active: 0 });
                 renderPromocodes();
@@ -258,15 +236,31 @@ async function refreshPromocodes() {
     try {
         elements.refreshBtn.disabled = true;
         elements.refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновление...';
+        
         const response = await fetch(`${API_CONFIG.baseUrl}/refresh`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
+        
         if (!response.ok) throw new Error(`HTTP ошибка! Статус: ${response.status}`);
+        
         const result = await response.json();
         if (result.status === 'success') {
             localStorage.removeItem('promo_cache');
             await loadPromocodesFromAPI();
+            
+            isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';                                                                         // ВОССТАНАВЛИВАЕТ СОСТОЯНИЕ СОРТИРОВКИ ИЗ LOCALSTORAGE
+            sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
+            
+            if (elements.sortButton) {                                                                                                                          // Обновляет текст кнопки сортировки
+                if (isSortedByExpiry) {
+                    elements.sortButton.innerHTML = `Сортировка ${sortAscending ? '↑' : '↓'}`;
+                } else {
+                    elements.sortButton.innerHTML = 'Сортировка по сроку';
+                }
+            }
+            
+            filterPromos();                                                                                                                                     // Применяет фильтры с сохранённой сортировкой
             updateLastUpdateTime();
             showToast(result.message, 'success');
         } else {
