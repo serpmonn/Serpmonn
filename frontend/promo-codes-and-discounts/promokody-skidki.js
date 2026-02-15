@@ -74,6 +74,70 @@ let isLoadingMore = false;
 let hasMore = true;
 let observer;
 
+// ========== НОВЫЙ КОД: Защита от pull-to-refresh на мобильных устройствах ==========
+(function preventPullToRefresh() {
+    // Добавляем CSS защиту
+    const style = document.createElement('style');
+    style.textContent = `
+        html, body {
+            overscroll-behavior-y: contain;
+            -webkit-overflow-scrolling: touch;
+            overflow-y: auto;
+            position: relative;
+            height: 100%;
+        }
+        
+        /* Для контейнера с промокодами */
+        #catalog {
+            overscroll-behavior-y: contain;
+        }
+    `;
+    document.head.appendChild(style);
+    
+    // Проверяем, что это мобильное устройство
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    if (!isMobile) return;
+    
+    let touchStartY = 0;
+    let touchStartX = 0;
+    let isPullingDown = false;
+    
+    // Перехватываем touch-события
+    document.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+        touchStartX = e.touches[0].clientX;
+        isPullingDown = (window.scrollY === 0);
+    }, { passive: true });
+    
+    document.addEventListener('touchmove', (e) => {
+        if (!isPullingDown) return;
+        
+        const currentY = e.touches[0].clientY;
+        const currentX = e.touches[0].clientX;
+        const pullDistance = currentY - touchStartY;
+        const horizontalDistance = Math.abs(currentX - touchStartX);
+        
+        // Если тянем вниз (pullDistance > 0) и страница вверху, и движение больше вертикальное чем горизонтальное
+        if (pullDistance > 5 && window.scrollY <= 0 && horizontalDistance < pullDistance) {
+            e.preventDefault(); // Блокируем нативное обновление
+        }
+    }, { passive: false });
+    
+    document.addEventListener('touchend', () => {
+        isPullingDown = false;
+    });
+    
+    // Дополнительная защита для iOS Safari
+    if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'auto';
+    }
+    
+    console.log('✅ Защита от pull-to-refresh активирована');
+})();
+// ========== КОНЕЦ НОВОГО КОДА ==========
+
 function escapeHtml(unsafe) {
     return unsafe
         .replace(/&/g, "&amp;")
