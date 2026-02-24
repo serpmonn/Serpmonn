@@ -16,13 +16,11 @@
     const bodyEl = document.body;                                                                                                           // Ссылка на body для удобства
 
     const newsContainer = document.querySelector('.news-container');                                                                        // Находит блок с заголовком и описанием
-    const searchCard    = document.querySelector('.search-card');                                                                           // Находит блок с поисковой формой
-
-    if (newsContainer && searchCard) {                                                                                                      // Если оба блока найдены
-      newsContainer.parentNode.insertBefore(canvas, newsContainer.nextSibling);                                                             // canvas вставляется после .news-container
-    } else {                                                                                                                                // Иначе (fallback на случай странной структуры)
-      if (bodyEl.firstChild) bodyEl.insertBefore(canvas, bodyEl.firstChild);                                                                // Вставка в начало body
-      else bodyEl.appendChild(canvas);                                                                                                      // Или в конец, если body пуст
+      if (newsContainer) {
+      newsContainer.parentNode.insertBefore(canvas, newsContainer.nextSibling);
+    } else {
+      if (bodyEl.firstChild) bodyEl.insertBefore(canvas, bodyEl.firstChild);
+      else bodyEl.appendChild(canvas);
     }
 
     let width = 0, height = 0, dpr = Math.min(window.devicePixelRatio || 1, 1.5);                                                           // Переменные размеров + ограниченный dpr
