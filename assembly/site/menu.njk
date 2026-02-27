@@ -7,6 +7,7 @@ permalink: "{% if locale == 'ru' %}/frontend/menu.html{% else %}/frontend/{{ loc
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/menu.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/menu.html{% endif %}"
+  menu_home: "{{ menuTranslations[locale].home }}"
   menu_auth: "{{ menuTranslations[locale].auth }}"
   menu_news: "{{ menuTranslations[locale].news }}"
   menu_games: "{{ menuTranslations[locale].games }}"
@@ -73,20 +74,14 @@ eleventyComputed:
 
     <!-- ========== ГЛАВНАЯ ========== -->
     <a href="{% if locale == 'ru' %}/frontend/main.html{% else %}/frontend/{{ locale }}/index.html{% endif %}" class="menu-item">
-        <img src="/frontend/images/serpmonn.ico" alt="Главная" class="icon">
-        Главная
+        <img src="/frontend/images/serpmonn.ico" alt="{{ menu_home }}" class="icon">
+        {{ menu_home }}
     </a>
 
     <!-- ========== РАЗДЕЛ АУТЕНТИФИКАЦИИ ========== -->
     <a href="{% if locale == 'ru' %}/frontend/register/register.html{% else %}/frontend/{{ locale }}/register/register.html{% endif %}" id="login-register-btn">
         <img src="/frontend/images/login.ico" alt="Authentication" class="icon">
         {{ menu_auth }}
-    </a>
-
-    <!-- ========== РАЗДЕЛ AI ========== -->
-    <a href="https://ai.serpmonn.ru" target="_blank" class="ai-menu-item">
-        <img src="/frontend/images/serpmonn-ai.jpg" alt="Serpmonn AI" class="icon ai-icon">
-        Serpmonn AI
     </a>
 
     <!-- ========== РАЗДЕЛ НОВОСТЕЙ ========== -->
