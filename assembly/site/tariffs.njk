@@ -1,0 +1,522 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/tariffs/tariffs.html{% else %}/frontend/{{ locale }}/tariffs/tariffs.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  title: "{{ tariffs[locale].tariffs.pageTitle }}"
+  description: "{{ tariffs[locale].tariffs.ogDescription }}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/tariffs/tariffs.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/tariffs/tariffs.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="Content-Language" content="{{ locale }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <title>{{ tariffs[locale].tariffs.pageTitle }}</title>
+  <meta name="description" content="{{ tariffs[locale].tariffs.metaDescription }}">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ tariffs[locale].tariffs.ogTitle }}">
+  <meta property="og:description" content="{{ tariffs[locale].tariffs.ogDescription }}">
+  <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ tariffs[locale].tariffs.twitterTitle }}">
+  <meta name="twitter:description" content="{{ tariffs[locale].tariffs.twitterDescription }}">
+  <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+  <link rel="canonical" href="{{ canonical }}">
+
+  <!-- Hreflang для всех языков -->
+  {% for loc in locales %}
+    {% if loc == 'ru' %}
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/tariffs/tariffs.html" hreflang="{{ loc }}" />
+    {% else %}
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tariffs/tariffs.html" hreflang="{{ loc }}" />
+    {% endif %}
+  {% endfor %}
+  <link rel="alternate" href="{{ site.baseUrl }}/frontend/tariffs/tariffs.html" hreflang="x-default" />
+
+  <!-- Стили: можно вынести в отдельный tariffs.css, но пока inline как в макете -->
+  <style>
+    :root {
+      --bg: #020617;
+      --bg-card: #020617;
+      --bg-card-soft: #020617;
+      --border-subtle: #1e293b;
+      --accent: #22c55e;
+      --accent-soft: rgba(34, 197, 94, 0.1);
+      --accent-strong: #16a34a;
+      --text-main: #e5e7eb;
+      --text-muted: #9ca3af;
+      --danger: #f97373;
+      --danger-soft: rgba(248, 113, 113, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top, #0f172a 0, #020617 50%, #020617 100%);
+      color: var(--text-main);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 24px 16px;
+    }
+
+    .page {
+      width: 100%;
+      max-width: 1100px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .header {
+      text-align: left;
+    }
+
+    .tariff-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--accent);
+      background: var(--accent-soft);
+      border: 1px solid rgba(34, 197, 94, 0.35);
+      margin-bottom: 10px;
+    }
+
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(34, 197, 94, 0.3);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      margin: 0;
+      font-size: 14px;
+      color: var(--text-muted);
+      max-width: 520px;
+    }
+
+    .plans {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
+      align-items: stretch;
+    }
+
+    @media (max-width: 768px) {
+      .plans {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      position: relative;
+      border-radius: 16px;
+      border: 1px solid var(--border-subtle);
+      background: radial-gradient(circle at top left, #0b1120 0, #020617 50%);
+      padding: 18px 18px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      overflow: hidden;
+      word-wrap: break-word;
+      overflow-wrap: anywhere;
+    }
+
+    .card--pro {
+      border-color: rgba(34, 197, 94, 0.7);
+      box-shadow:
+        0 0 0 1px rgba(34, 197, 94, 0.25),
+        0 40px 80px rgba(15, 23, 42, 0.9);
+      background:
+        radial-gradient(circle at top, rgba(34, 197, 94, 0.14), transparent 55%),
+        radial-gradient(circle at bottom right, rgba(37, 99, 235, 0.16), transparent 60%),
+        #020617;
+    }
+
+    .card-label {
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .card-label-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #4b5563;
+    }
+
+    .card--pro .card-label-dot {
+      background: var(--accent);
+    }
+
+    .card-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+    }
+
+    .card-title {
+      font-size: 22px;
+      letter-spacing: -0.03em;
+      margin-bottom: 4px;
+    }
+
+    .card-desc {
+      margin: 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .price-tag {
+      text-align: right;
+    }
+
+    .price {
+      font-size: 22px;
+      font-weight: 600;
+      letter-spacing: -0.03em;
+    }
+
+    .price span {
+      font-size: 13px;
+      font-weight: 400;
+      color: var(--text-muted);
+    }
+
+    .price-note {
+      margin: 2px 0 0;
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      color: var(--accent);
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(34, 197, 94, 0.65);
+    }
+
+    .pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: var(--accent);
+    }
+
+    .features {
+      margin: 8px 0 14px;
+      padding: 0;
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    .features li {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      color: var(--text-muted);
+    }
+
+    .features-icon {
+      margin-top: 2px;
+      flex-shrink: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: rgba(148, 163, 184, 0.9);
+    }
+
+    .card--pro .features-icon {
+      border-color: rgba(34, 197, 94, 0.8);
+      color: rgba(34, 197, 94, 0.95);
+    }
+
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-top: auto;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 500;
+      border: 1px solid transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition:
+        background-color 0.15s ease,
+        border-color 0.15s ease,
+        color 0.15s ease,
+        transform 0.1s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #022c22;
+      box-shadow:
+        0 0 0 1px rgba(15, 23, 42, 0.4),
+        0 20px 40px rgba(34, 197, 94, 0.35);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-strong);
+      border-color: var(--accent-strong);
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: rgba(148, 163, 184, 0.4);
+      color: var(--text-muted);
+    }
+
+    .btn-ghost:hover {
+      border-color: rgba(148, 163, 184, 0.75);
+      color: #e5e7eb;
+      transform: translateY(-1px);
+    }
+
+    .btn-icon {
+      width: 16px;
+      height: 16px;
+    }
+
+    .note {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .note-strong {
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    .back-link {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 4px;
+    }
+
+    .back-link:hover {
+      color: #e5e7eb;
+    }
+
+    .back-link svg {
+      width: 14px;
+      height: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="header">
+      <a href="{% if locale == 'ru' %}/frontend/main.html{% else %}/frontend/{{ locale }}/index.html{% endif %}" class="back-link">
+        <svg viewBox="0 0 24 24" fill="none">
+          <path d="M15 6L9 12L15 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        {{ tariffs[locale].tariffs.backToSearch }}
+      </a>
+
+      <div class="tariff-badge">
+        <span class="badge-dot"></span>
+        {{ tariffs[locale].tariffs.badgeTitle }}
+      </div>
+
+      <h1>{{ tariffs[locale].tariffs.mainTitle }}</h1>
+      <p class="subtitle">
+        {{ tariffs[locale].tariffs.subtitle }}
+      </p>
+    </header>
+
+    <section class="plans">
+      <!-- Free -->
+      <article class="card">
+        <div class="card-label">
+          <span class="card-label-dot"></span>
+          {{ tariffs[locale].tariffs.free.label }}
+        </div>
+
+        <div class="card-title-row">
+          <div>
+            <div class="card-title">{{ tariffs[locale].tariffs.free.name }}</div>
+            <p class="card-desc">
+              {{ tariffs[locale].tariffs.free.description }}
+            </p>
+          </div>
+
+          <div class="price-tag">
+            <div class="price">
+              {{ tariffs[locale].tariffs.free.price }}
+              <span>{{ tariffs[locale].tariffs.free.priceNoteShort }}</span>
+            </div>
+            <p class="price-note">
+              {{ tariffs[locale].tariffs.free.limitNote }}
+            </p>
+          </div>
+        </div>
+
+        <ul class="features">
+          <li>
+            <span class="features-icon">✓</span>
+            <span>{{ tariffs[locale].tariffs.free.feature1 }}</span>
+          </li>
+          <li>
+            <span class="features-icon">✓</span>
+            <span>{{ tariffs[locale].tariffs.free.feature2 }}</span>
+          </li>
+          <li>
+            <span class="features-icon">✓</span>
+            <span>{{ tariffs[locale].tariffs.free.feature3 }}</span>
+          </li>
+          <li>
+            <span class="features-icon">–</span>
+            <span>{{ tariffs[locale].tariffs.free.feature4 }}</span>
+          </li>
+        </ul>
+
+        <div class="cta-row">
+          <a href="{% if locale == 'ru' %}/frontend/register/register.html{% else %}/frontend/{{ locale }}/register/register.html{% endif %}" class="btn btn-ghost">
+            {{ tariffs[locale].tariffs.free.cta }}
+          </a>
+          <span class="note">{{ tariffs[locale].tariffs.free.note }}</span>
+        </div>
+      </article>
+
+      <!-- Pro -->
+      <article class="card card--pro">
+        <div class="card-label">
+          <span class="card-label-dot"></span>
+          {{ tariffs[locale].tariffs.pro.label }}
+        </div>
+
+        <div class="card-title-row">
+          <div>
+            <div class="card-title">{{ tariffs[locale].tariffs.pro.name }}</div>
+            <p class="card-desc">
+              {{ tariffs[locale].tariffs.pro.description }}
+            </p>
+          </div>
+
+          <div class="price-tag">
+            <div class="price">
+              {{ tariffs[locale].tariffs.pro.price }}
+              <span>{{ tariffs[locale].tariffs.pro.pricePeriod }}</span>
+            </div>
+            <p class="price-note">
+              {{ tariffs[locale].tariffs.pro.limitNote }}
+            </p>
+          </div>
+        </div>
+
+        <ul class="features">
+          <li>
+            <span class="features-icon">✓</span>
+            <span>{{ tariffs[locale].tariffs.pro.feature1 }}</span>
+          </li>
+          <li>
+            <span class="features-icon">✓</span>
+            <span>{{ tariffs[locale].tariffs.pro.feature2 }}</span>
+          </li>
+          <li>
+            <span class="features-icon">✓</span>
+            <span>{{ tariffs[locale].tariffs.pro.feature3 }}</span>
+          </li>
+          <li>
+            <span class="features-icon">✓</span>
+            <span>{{ tariffs[locale].tariffs.pro.feature4 }}</span>
+          </li>
+        </ul>
+
+        <div class="cta-row">
+          <a href="#" class="btn btn-primary">
+            {{ tariffs[locale].tariffs.pro.cta }}
+          </a>
+          <span class="note-strong">
+            {{ tariffs[locale].tariffs.pro.noteStrong }}
+          </span>
+        </div>
+      </article>
+    </section>
+
+    <p class="note">
+      {{ tariffs[locale].tariffs.footerText }}
+      <a href="{% if locale == 'ru' %}/frontend/privacy-policy/privacy-policy.html{% else %}/frontend/{{ locale }}/privacy-policy/privacy-policy.html{% endif %}" style="color:#22c55e;">
+        {{ tariffs[locale].tariffs.footerPrivacy }}
+      </a>
+      {{ tariffs[locale].tariffs.footerAnd }}
+      <a href="{% if locale == 'ru' %}/frontend/offer/offer.html{% else %}/frontend/{{ locale }}/offer/offer.html{% endif %}" style="color:#22c55e;">
+        {{ tariffs[locale].tariffs.footerOffer }}
+      </a>.
+    </p>
+  </div>
+
+<script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

@@ -1,172 +1,205 @@
 ﻿/* ===== ОСНОВНЫЕ КОНТЕЙНЕРЫ ===== */
+
 .container {
-    text-align: center;
-    background-color: rgba(255, 255, 255, 0.4);
-    border-radius: 10px;
-    padding: 1.5%;
-    position: relative;
-    align-self: center;
-    margin-top: 1.5%;
-    margin-bottom: 1.5%;
+    text-align: center;                                                               /* Центрирование содержимого внутри контейнера */
+    background-color: rgba(255, 255, 255, 0.4);                                     /* Полупрозрачный светлый фон для читаемости */
+    border-radius: 10px;                                                              /* Скруглённые углы */
+    padding: 1.5%;                                                                    /* Внутренние отступы */
+    position: relative;                                                               /* Для абсолютного позиционирования детей */
+    align-self: center;                                                               /* Центрирование во flex-родителе */
+    margin: 1.5% 0;                                                                   /* Отступы сверху и снизу */
     width: auto;
     height: auto;
 }
 
 .logo {
-    width: 65px;
+    width: 65px;                                                                      /* Фиксированная ширина логотипа */
     height: auto;
-    vertical-align: middle;
+    vertical-align: middle;                                                           /* Выравнивание по центру строки */
 }
 
-/* ===== КОНТЕЙНЕР ПОИСКА ===== */
-.main-search-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0; /* Убираем зазор между полем и кнопкой */
+.search-card-wrapper {
+  max-width: 960px;
+  width: 100%;
+  margin: 10px auto 0;
+  padding: 0 12px;
 }
 
-/* ===== ИСПРАВЛЕНИЕ ПОЛЯ ПОИСКА ===== */
-.gcse-searchbox-only {
-    display: inline-block;
-    vertical-align: middle;
-    position: relative;
-    width: 100%;
-    max-width: 500px; /* Контролируем максимальную ширину */
-}
-
-/* Поле ввода - ГЛАВНЫЙ РАЗМЕР ЗДЕСЬ */
-.gsc-input-box {
-    height: 44px !important; /* Фиксированная высота */
-    border-radius: 24px 0 0 24px !important;
-    border: 1px solid #dfe1e5 !important;
-    border-right: none !important;
-    padding: 0 16px !important;
-    display: flex !important;
-    align-items: center !important;
-}
-
-/* Само поле ввода */
-.gsc-input-box input {
-    height: 100% !important;
-    font-size: 16px !important;
-}
-
-/* ===== ИСПРАВЛЕНИЕ КНОПКИ ПОИСКА ===== */
-.gsc-search-button {
-    display: block !important;
-    visibility: visible !important;
-}
-
-.gsc-search-button.gsc-search-button-v2 {
-    /* ОСНОВНОЙ РАЗМЕР КНОПКИ - СООТВЕТСТВУЕТ ПОЛЮ */
-    height: 44px !important;        /* Одинаковая высота с полем */
-    min-height: 44px !important;    /* Фиксируем минимальную высоту */
-    width: 56px !important;         /* Фиксированная ширина */
-    padding: 0 !important;          /* Убираем внутренние отступы */
-    
-    /* Визуальное оформление */
-    border-radius: 0 24px 24px 0 !important;
-    background-color: #4285f4 !important;
-    border: 1px solid #4285f4 !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    
-    /* Анимации */
-    transition: transform 0.2s ease, background-color 0.2s ease;
-}
-
-/* Иконка поиска */
-.gsc-search-button-v2 svg {
-    width: 20px !important;
-    height: 20px !important;
-    fill: white !important;
-}
-
-/* Эффекты наведения */
-.gsc-search-button.gsc-search-button-v2:hover {
-    transform: translateY(-1px);
-    background-color: #3367d6 !important;
-    border-color: #3367d6 !important;
-}
-
-.gsc-search-button.gsc-search-button-v2:active {
-    transform: translateY(0);
-    background-color: #2a56c6 !important;
-}
-
-.gsc-search-button.gsc-search-button-v2:focus {
-    outline: 2px solid #1e11b5;
-    outline-offset: 2px;
-}
-
-/* ===== СТЕКЛЯННАЯ КАРТОЧКА ===== */
 .search-card {
-    backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);                                                       /* Эффект матового стекла */
     -webkit-backdrop-filter: blur(8px);
-    background: rgba(255, 255, 255, 0.35);
-    border: 1px solid rgba(220, 53, 69, 0.15);
+    background: rgba(255, 255, 255, 0.35);                                          /* Полупрозрачный фон */
+    border: 1px solid rgba(220, 53, 69, 0.15);                                      /* Лёгкая красноватая рамка */
     border-radius: 14px;
     padding: 14px 16px;
     margin-top: 10px;
 }
 
-/* Фокус на поле поиска */
-.gcse-searchbox-only:focus-within {
-    outline: 2px solid #dc3545;
-    outline-offset: 3px;
-    border-radius: 10px;
+/* Контейнер всей поисковой строки (лого + поле + кнопка) */
+.main-search-container {
+    background: #ffffff;                                                              /* белый фон карточки */
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.09);
+    padding: 8px;
+    display: flex;                                                                    /* флекс-контейнер */
+    align-items: center;                                                              /* вертикальное выравнивание по центру */
+    gap: 8px;
+    border: 1px solid #e2e8f0;
+    transition: box-shadow 0.25s ease, border-color 0.2s ease;
+    max-width: 800px;
+    margin: 0 auto;
+    flex-wrap: nowrap;                                                                /* ← КРИТИЧНО: НЕ переносить элементы на новую строку */
+    flex-direction: row;                                                              /* ← явно указываем горизонтальное направление */
+    flex-shrink: 0;                                                                   /* ← не даём сжиматься всему контейнеру */
 }
 
-/* ===== АНИМАЦИИ ===== */
-.card, .counter-card {
-    transition: transform .2s ease, box-shadow .2s ease;
+.main-search-container:focus-within {
+    box-shadow: 0 14px 40px rgba(79, 70, 229, 0.16);
+    border-color: #c7d2fe;
 }
 
-.card:hover, .counter-card:hover {
+.logo {
+    flex-shrink: 0;                                                                   /* логотип не сжимается */
+}
+
+.search-form {
+    display: flex;
+    flex: 1 1 auto;                                                                   /* форма растягивается по доступной ширине */
+    gap: 8px;
+}
+
+/* Поле ввода */
+.search-form input[type="search"] {
+    flex: 1 1 0;                                                                      /* берёт всё оставшееся место */
+    min-width: 0;                                                                     /* разрешаем сжиматься, чтобы кнопка не падала вниз */
+    height: 54px;
+    padding: 0 20px;
+    font-size: 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background: #ffffff;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.search-form input[type="search"]:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3.5px rgba(99, 102, 241, 0.14);
+}
+
+/* Кнопка отправки (только иконка) */
+.search-btn {
+    height: 54px;
+    width: 64px;
+    min-width: 64px;
+    padding: 0;
+    background: linear-gradient(145deg, #111111, #1a1a1a);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.22s ease;
+    flex-shrink: 0;      /* не сжимается */
+    margin-left: auto;
+}
+
+.search-btn svg {
+    stroke: red;
+    stroke-width: 2.5;
+    transition: transform 0.28s ease;
+}
+
+.search-btn:hover {
+    background: linear-gradient(145deg, #1a1a1a, #222222);
+    transform: translateY(-1px) scale(1.04);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
+}
+
+.search-btn:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Общие стили элементов формы */
+input,
+textarea,
+select,
+button {
+    margin-bottom: 0;                                                                 /* Убираем лишние отступы снизу */
+}
+
+/* Ссылки при наведении */
+a:hover {
+    color: #007bff;
+    text-decoration: underline;
+}
+
+/* Микро-анимация карточек (если используются где-то ещё) */
+.card,
+.counter-card {
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:hover,
+.counter-card:hover {
     transform: translateY(-3px);
-    box-shadow: 0 10px 24px rgba(0,0,0,0.12);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
-/* ===== МОБИЛЬНАЯ ВЕРСИЯ ===== */
+/* ──────────────────────────────────────────────── */
+/*                МОБИЛЬНАЯ ВЕРСИЯ                 */
+/* ──────────────────────────────────────────────── */
+
 @media (max-width: 600px) {
-    /* Уменьшаем размер для мобильных */
-    .gcse-searchbox-only {
+
+    .main-search-container {
+        padding: 6px;
+        gap: 6px;
+        border-radius: 14px;
         max-width: 100%;
+        margin: 0 12px;
+        flex-wrap: nowrap;                                                            /* ← Обязательно на мобиле тоже */
     }
-    
-    /* Поле ввода на мобильных */
-    .gsc-input-box {
-        height: 41px !important;     /* Чуть меньше на мобильных */
-        padding: 0 12px !important;
+
+    .search-form input[type="search"] {
+        height: 50px;
+        padding: 0 16px;
+        font-size: 15px;
+        border-radius: 10px;
     }
-    
-    /* Кнопка на мобильных - СООТВЕТСТВУЕТ ПОЛЮ */
-    .gsc-search-button.gsc-search-button-v2,
-    .main-search-container .gsc-search-button.gsc-search-button-v2 {
-        height: 41px !important;     /* ОДИНАКОВО с полем */
-        min-height: 41px !important;
-        width: 48px !important;      /* Чуть уже на мобильных */
-        border-radius: 0 20px 20px 0 !important; /* Меньше скругление */
+
+    .search-btn {
+        height: 50px;
+        width: 58px;
+        min-width: 58px;
+        border-radius: 10px;
     }
-    
-    /* Иконка меньше на мобильных */
-    .gsc-search-button-v2 svg {
-        width: 16px !important;
-        height: 16px !important;
+
+    .logo {
+        width: 52px;
     }
-    
-    .search-title { 
-        font-size: 22px; 
+
+    /* Совместимость со старыми Google Custom Search (если остались) */
+    .main-search-container .gsc-search-button,
+    .main-search-container button.gsc-search-button-v2 {
+        min-height: 41px;
+        height: 41px !important;
+        padding: 0 12px;
+        border-radius: 0 8px 8px 0;
     }
-    .search-subtitle { 
-        font-size: 14px; 
+
+    .menu-search-row .gsc-search-button,
+    .menu-search-row button.gsc-search-button-v2 {
+        min-height: 41px;
+        height: 41px !important;
+        padding: 0 12px;
+        border-radius: 0 18px 18px 0;
     }
-    .cta-buttons { 
-        gap: 10px; 
-    }
-    .cta-button { 
-        padding: 9px 14px; 
+
+    .header .main-search-container .gcse-searchbox-only {
+        max-width: 100%;
     }
 }

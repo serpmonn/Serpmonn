@@ -1,0 +1,112 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/offer/offer.html{% else %}/frontend/{{ locale }}/offer/offer.html{% endif %}"
+eleventyComputed:
+  title: "{{ offerTranslations[locale].offer.pageTitle }}"
+  description: "{{ offerTranslations[locale].offer.metaDescription }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/offer/offer.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/offer/offer.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}">
+
+  <!-- OG -->
+  <meta property="og:title" content="{{ offerTranslations[locale].offer.ogTitle }}">
+  <meta property="og:description" content="{{ offerTranslations[locale].offer.ogDescription }}">
+  <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ offerTranslations[locale].offer.twitterTitle }}">
+  <meta name="twitter:description" content="{{ offerTranslations[locale].offer.twitterDescription }}">
+  <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="{{ canonical }}">
+
+  <!-- hreflang -->
+  {% for loc in locales %}
+    {% if loc == 'ru' %}
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/offer/offer.html" hreflang="{{ loc }}">
+    {% else %}
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/offer/offer.html" hreflang="{{ loc }}">
+    {% endif %}
+  {% endfor %}
+  <link rel="alternate" href="{{ site.baseUrl }}/frontend/offer/offer.html" hreflang="x-default">
+
+  <!-- Styles (как у политики, но с локализованным css путём) -->
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="{% if locale == 'ru' %}/frontend/styles/privacy-policy/privacy-styles.css{% else %}/frontend/{{ locale }}/styles/privacy-policy/privacy-styles.css{% endif %}">
+
+  <!-- Favicon -->
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+  <link rel="icon" type="image/png" sizes="32x32" href="/frontend/images/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/frontend/images/favicon-16x16.png">
+</head>
+<body>
+  <div id="menuContainer"></div>
+
+  <main class="policy-container" lang="{{ locale }}">
+    <h1>{{ offerTranslations[locale].offer.mainTitle }}</h1>
+
+    <section id="general">
+      <h2>{{ offerTranslations[locale].offer.sections.general.title }}</h2>
+      <p>{{ offerTranslations[locale].offer.sections.general.content1 | safe }}</p>
+    </section>
+
+    <section id="services">
+      <h2>{{ offerTranslations[locale].offer.sections.services.title }}</h2>
+      <p>{{ offerTranslations[locale].offer.sections.services.content1 }}</p>
+    </section>
+
+    <section id="price">
+      <h2>{{ offerTranslations[locale].offer.sections.price.title }}</h2>
+      <p>{{ offerTranslations[locale].offer.sections.price.content1 }}</p>
+    </section>
+
+    <section id="payment">
+      <h2>{{ offerTranslations[locale].offer.sections.payment.title }}</h2>
+      <p>{{ offerTranslations[locale].offer.sections.payment.content1 }}</p>
+    </section>
+
+    <section id="term">
+      <h2>{{ offerTranslations[locale].offer.sections.term.title }}</h2>
+      <p>{{ offerTranslations[locale].offer.sections.term.content1 }}</p>
+    </section>
+
+    <section id="refunds">
+      <h2>{{ offerTranslations[locale].offer.sections.refunds.title }}</h2>
+      <p>{{ offerTranslations[locale].offer.sections.refunds.content1 | safe }}</p>
+    </section>
+
+    <section id="personal-data">
+      <h2>{{ offerTranslations[locale].offer.sections.personalData.title }}</h2>
+      <p>{{ offerTranslations[locale].offer.sections.personalData.content1 | safe }}</p>
+    </section>
+
+    <section id="acceptance">
+      <h2>{{ offerTranslations[locale].offer.sections.acceptance.title }}</h2>
+      <p>{{ offerTranslations[locale].offer.sections.acceptance.content1 }}</p>
+      <p class="date-updated"><strong>{{ offerTranslations[locale].offer.sections.acceptance.lastUpdated }}</strong></p>
+    </section>
+  </main>
+
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

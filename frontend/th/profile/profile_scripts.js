@@ -18,6 +18,66 @@ document.addEventListener('DOMContentLoaded', () => {                           
             if (response.ok) {                                                                                                				// Успешный ответ
                 usernameField.textContent = data.username || '';                                                              				// Установка имени
                 emailField.textContent = data.email || '';                                                                    				// Установка email
+                // === Тариф и лимиты ===
+                const planNameEl = document.getElementById('planName');
+                const planStatusEl = document.getElementById('planStatus');
+                const planQuotaEl = document.getElementById('planQuota');
+                const planHintEl = document.getElementById('planHint');
+
+                const plan = data.plan || 'free';
+
+                if (plan === 'pro') {
+                    planNameEl.textContent = 'Pro';
+
+                    if (data.is_pro_active) {
+                        const until = data.pro_until
+                            ? new Date(data.pro_until).toLocaleDateString('ru-RU')
+                            : '';
+
+                        planStatusEl.textContent = until
+                            ? `Pro активен до ${until}.`
+                            : 'Pro активен.';
+
+                        if (data.quotas && data.quotas.pro_monthly) {
+                            const q = data.quotas.pro_monthly;
+                            planQuotaEl.textContent =
+                                `Использовано ${q.used} из ${q.limit} запросов в этом месяце (${q.month_key}). ` +
+                                `Осталось ${q.remaining} запросов.`;
+                        } else {
+                            planQuotaEl.textContent = 'Месячный лимит Pro: до 2000 запросов.';
+                        }
+
+                        planHintEl.innerHTML =
+                            'После окончания срока вы автоматически вернётесь на бесплатный тариф. ' +
+                            'Подробнее — на <a href="/frontend/tariffs/tariffs.html">странице тарифов</a>.';
+                    } else {
+                        planStatusEl.textContent =
+                            'Pro привязан к аккаунту, но сейчас не активен (срок действия закончился).';
+                        planQuotaEl.textContent =
+                            'Сейчас действует бесплатный дневной лимит — до 15 запросов в день.';
+                        planHintEl.innerHTML =
+                            'Продлить Pro можно будет на <a href="/frontend/tariffs/index.html">странице тарифов</a>, когда оплата станет доступна.';
+                    }
+                } else {
+                    // Free
+                    planNameEl.textContent = 'Free';
+                    planStatusEl.textContent =
+                        'Доступен бесплатный тариф с ограничением по числу запросов.';
+
+                    if (data.quotas && data.quotas.free_daily) {
+                        const q = data.quotas.free_daily;
+                        planQuotaEl.textContent =
+                            `Для авторизованных пользователей доступно до ${q.limit} запросов в день. ` +
+                            'Счётчик обновляется каждый день.';
+                    } else {
+                        planQuotaEl.textContent =
+                            'Для авторизованных пользователей доступно до 15 запросов в день.';
+                    }
+
+                    planHintEl.innerHTML =
+                        'Тариф Pro с увеличенным лимитом будет доступен позже на ' +
+                        '<a href="/frontend/tariffs/index.html">странице тарифов</a>.';
+                }
                 if (!data.confirmed) {                                                                                        				// Не подтвержден
                     messageField.textContent = 'Подтвердите ваш аккаунт для создания почтового ящика';                         				// Сообщение
                 } else if (data.mailbox_created) {                                                                            				// Почта создана

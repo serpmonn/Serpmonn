@@ -42,23 +42,77 @@ const getUserProfile = async (req, res) => {                                    
     }                                                                                                                      
 };
 
+const getMonthKey = () => new Date().toISOString().slice(0, 7);                                                                 // '2026-02'
+
 // Контроллер для получения информации о пользователе
 const getUserInfo = async (req, res) => {                                                                                        // Определяем функцию для получения информации
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');                                                    // Устанавливаем заголовки для отключения кэширования
     try {                                                                                                                        // Начинаем блок обработки ошибок
         const { email } = req.user;                                                                                              // Извлекаем email из объекта пользователя в запросе
         console.log('Email пользователя из токена (getUserInfo):', email);                                                       // Логируем email пользователя для отладки
-        const queryText = 'SELECT username, email, confirmed, mailbox_created FROM users WHERE email = ?';                       // Определяем SQL-запрос для получения данных пользователя
-        const result = await query(queryText, [email]);                                                                          // Выполняем запрос к БД с email
-        console.log('Результат запроса к БД (getUserInfo):', result);                                                            // Логируем результат запроса для отладки
 
-        if (!result || result.length === 0) {                                                                                    // Проверяем, получены ли данные пользователя
-            return res.status(404).json({ message: 'Пользователь не найден' });                                                  // Возвращаем ошибку, если пользователь не найден
-        }                                                                                                                      
+        // 1. читаем юзера с полями тарифа
+        const queryText = `
+        SELECT id, username, email, confirmed, mailbox_created, plan, pro_until, created_at
+        FROM users
+        WHERE email = ?
+        LIMIT 1
+        `;
+        const result = await query(queryText, [email]);
+        console.log('Результат запроса к БД (getUserInfo):', result);
 
-        const user = result[0];                                                                                                  // Извлекаем данные первого пользователя из результата
-        res.json({ username: user.username, email: user.email, confirmed: user.confirmed, mailbox_created: user.mailbox_created }); // Возвращаем данные пользователя в структурированном виде
-    } catch (err) {                                                                                                              // Обрабатываем возможные ошибки
+        if (!result || result.length === 0) {
+        return res.status(404).json({ message: 'Пользователь не найден' });
+        }
+
+        const user = result[0];
+
+        const now = new Date();
+        const isProActive =
+        user.plan === 'pro' &&
+        user.pro_until &&
+        new Date(user.pro_until) > now;
+
+        // 2. считаем месячный usage для Pro (если активен)
+        let proUsage = null;
+        if (isProActive) {
+        const monthKey = getMonthKey();
+        const usageRows = await query(
+            'SELECT requests FROM ai_usage_monthly WHERE user_id = ? AND month_key = ? LIMIT 1',
+            [user.id, monthKey]
+        );
+        const used = usageRows && usageRows.length > 0 ? usageRows[0].requests : 0;
+        const limit = 2000;
+        proUsage = {
+            used,
+            limit,
+            remaining: Math.max(0, limit - used),
+            month_key: monthKey
+        };
+        }
+
+        // 3. бесплатный дневной лимит — как справочная инфа
+        const freeDaily = {
+        limit: 15,
+        used: null,
+        remaining: null
+        };
+
+        res.json({
+        username: user.username,
+        email: user.email,
+        confirmed: user.confirmed,
+        mailbox_created: user.mailbox_created,
+        created_at: user.created_at,
+        plan: user.plan,
+        pro_until: user.pro_until,
+        is_pro_active: isProActive,
+        quotas: {
+            free_daily: freeDaily,
+            pro_monthly: proUsage
+        }
+        });
+    } catch (err) {                                                                                                            // Обрабатываем возможные ошибки
         console.error('Ошибка при получении данных профиля:', err);                                                              // Логируем ошибку в консоль
         res.status(401).json({ message: 'Недействительный токен или ошибка авторизации' });                                      // Возвращаем ошибку авторизации клиенту
     }                                                                                                                      

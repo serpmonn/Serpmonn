@@ -1,135 +1,205 @@
 ﻿/* ===== ОСНОВНЫЕ КОНТЕЙНЕРЫ ===== */
+
 .container {
-    text-align: center;                                                               /* Центрирование содержимого внутри контейнера по горизонтали */
+    text-align: center;                                                               /* Центрирование содержимого внутри контейнера */
     background-color: rgba(255, 255, 255, 0.4);                                     /* Полупрозрачный светлый фон для читаемости */
-    border-radius: 10px;                                                              /* Скруглённые углы контейнера на 10px */
-    padding: 1.5%;                                                                    /* Внутренние отступы от краёв контейнера */
-    position: relative;                                                               /* База для абсолютного позиционирования внутренних элементов */
-    align-self: center;                                                               /* Центрирование контейнера по поперечной оси во flex-родителе */
-    margin-top: 1.5%;                                                                 /* Внешний отступ сверху */
-    margin-bottom: 1.5%;                                                              /* Внешний отступ снизу */
-    width: auto;                                                                      /* Ширина подстраивается под содержимое (если родитель не ограничивает) */
-    height: auto;                                                                     /* Высота подстраивается под содержимое */
+    border-radius: 10px;                                                              /* Скруглённые углы */
+    padding: 1.5%;                                                                    /* Внутренние отступы */
+    position: relative;                                                               /* Для абсолютного позиционирования детей */
+    align-self: center;                                                               /* Центрирование во flex-родителе */
+    margin: 1.5% 0;                                                                   /* Отступы сверху и снизу */
+    width: auto;
+    height: auto;
 }
 
 .logo {
-    width: 65px;                                                                      /* Фиксированная ширина логотипа 65px */
-    height: auto;                                                                     /* Высота масштабируется пропорционально ширине */
-    vertical-align: middle;                                                           /* Вертикальное выравнивание логотипа по центру строки */
+    width: 65px;                                                                      /* Фиксированная ширина логотипа */
+    height: auto;
+    vertical-align: middle;                                                           /* Выравнивание по центру строки */
 }
 
-/* Контейнер поиска в шапке */
+.search-card-wrapper {
+  max-width: 960px;
+  width: 100%;
+  margin: 10px auto 0;
+  padding: 0 12px;
+}
+
+.search-card {
+    backdrop-filter: blur(8px);                                                       /* Эффект матового стекла */
+    -webkit-backdrop-filter: blur(8px);
+    background: rgba(255, 255, 255, 0.35);                                          /* Полупрозрачный фон */
+    border: 1px solid rgba(220, 53, 69, 0.15);                                      /* Лёгкая красноватая рамка */
+    border-radius: 14px;
+    padding: 14px 16px;
+    margin-top: 10px;
+}
+
+/* Контейнер всей поисковой строки (лого + поле + кнопка) */
 .main-search-container {
-    display: flex;                                                                    /* Flex-контейнер для строки поиска */
-    align-items: center;                                                              /* Вертикальное выравнивание элементов по центру */
-    justify-content: center;                                                          /* Горизонтальное выравнивание элементов по центру */
+    background: #ffffff;                                                              /* белый фон карточки */
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.09);
+    padding: 8px;
+    display: flex;                                                                    /* флекс-контейнер */
+    align-items: center;                                                              /* вертикальное выравнивание по центру */
+    gap: 8px;
+    border: 1px solid #e2e8f0;
+    transition: box-shadow 0.25s ease, border-color 0.2s ease;
+    max-width: 800px;
+    margin: 0 auto;
+    flex-wrap: nowrap;                                                                /* ← КРИТИЧНО: НЕ переносить элементы на новую строку */
+    flex-direction: row;                                                              /* ← явно указываем горизонтальное направление */
+    flex-shrink: 0;                                                                   /* ← не даём сжиматься всему контейнеру */
 }
 
-/* Блок поиска – инлайн-блок + выравнивание */
-.gcse-searchbox-only {
-    display: inline-block;                                                            /* Блок поиска как inline-block, чтобы был в строке c логотипом */
-    vertical-align: middle;                                                           /* Блок поиска по вертикали по центру строки */
-    position: relative;                                                               /* Относительное позиционирование (на случай абсолютных потомков) */
+.main-search-container:focus-within {
+    box-shadow: 0 14px 40px rgba(79, 70, 229, 0.16);
+    border-color: #c7d2fe;
 }
 
-/* Ограничиваем ширину строки поиска в шапке */
-.header .main-search-container .gcse-searchbox-only {
-    max-width: 400px;                                                                 /* Максимальная ширина блока поиска 400px */
-    width: 100%;                                                                      /* Занимает всю доступную ширину до 400px */
+.logo {
+    flex-shrink: 0;                                                                   /* логотип не сжимается */
 }
 
-/* Кнопка поиска */
-.gsc-search-button.gsc-search-button-v2 {
-    transition: transform 0.2s ease, background-color 0.2s ease, color 0.2s ease;     /* Плавные анимации при hover/active */
-    height: 34px;                                                                     /* Фиксированная высота кнопки 34px */
-    min-height: 34px;                                                                 /* Не даём кнопке сжиматься ниже 34px */
-    padding: 0 12px;                                                                  /* Горизонтальные внутренние отступы 12px, вертикальные 0 */
-    border-radius: 8px;                                                               /* Скруглённые углы кнопки на 8px */
+.search-form {
+    display: flex;
+    flex: 1 1 auto;                                                                   /* форма растягивается по доступной ширине */
+    gap: 8px;
 }
 
-a:hover {
-    color: #007bff;                                                                 /* Цвет текста ссылок при наведении – синий */
-    text-decoration: underline;                                                       /* Подчёркивание ссылок при наведении */
+/* Поле ввода */
+.search-form input[type="search"] {
+    flex: 1 1 0;                                                                      /* берёт всё оставшееся место */
+    min-width: 0;                                                                     /* разрешаем сжиматься, чтобы кнопка не падала вниз */
+    height: 54px;
+    padding: 0 20px;
+    font-size: 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 12px;
+    background: #ffffff;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
-.gsc-search-button.gsc-search-button-v2:hover {
-    transform: translateY(-1px);                                                      /* Лёгкий подъём кнопки при наведении */
-    background-color: #555555;                                                      /* Более тёмный фон кнопки при наведении */
+.search-form input[type="search"]:focus {
+    outline: none;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3.5px rgba(99, 102, 241, 0.14);
 }
 
-/* Поля ввода */
+/* Кнопка отправки (только иконка) */
+.search-btn {
+    height: 54px;
+    width: 64px;
+    min-width: 64px;
+    padding: 0;
+    background: linear-gradient(145deg, #111111, #1a1a1a);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.22s ease;
+    flex-shrink: 0;      /* не сжимается */
+    margin-left: auto;
+}
+
+.search-btn svg {
+    stroke: red;
+    stroke-width: 2.5;
+    transition: transform 0.28s ease;
+}
+
+.search-btn:hover {
+    background: linear-gradient(145deg, #1a1a1a, #222222);
+    transform: translateY(-1px) scale(1.04);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
+}
+
+.search-btn:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+}
+
+/* Общие стили элементов формы */
 input,
 textarea,
 select,
-button {                                                                              /* Общие стили для всех элементов ввода и кнопок */
-    margin-bottom: 0px;                                                               /* Убираем нижний внешний отступ, чтобы не было лишних зазоров */
+button {
+    margin-bottom: 0;                                                                 /* Убираем лишние отступы снизу */
 }
 
-/* Стеклянная карточка вокруг поиска */
-.search-card {
-    backdrop-filter: blur(8px); /* Размытие фона за карточкой (эффект стекла) */
-    -webkit-backdrop-filter: blur(8px); /* Вариант для браузеров на WebKit */
-    background: rgba(255, 255, 255, 0.35); /* Полупрозрачный белый фон карточки */
-    border: 1px solid rgba(220, 53, 69, 0.15); /* Тонкая рамка с лёгким красным оттенком */
-    border-radius: 14px; /* Скруглённые углы карточки на 14px */
-    padding: 14px 16px; /* Внутренние отступы карточки */
-    margin-top: 10px; /* Отступ сверху от соседних элементов */
+/* Ссылки при наведении */
+a:hover {
+    color: #007bff;
+    text-decoration: underline;
 }
 
-/* Фокус/hover у поля поиска */
-.gcse-searchbox-only:focus-within {
-    outline: 2px solid #dc3545; /* Красная обводка, когда фокус внутри блока поиска */
-    outline-offset: 3px; /* Отступ обводки от границы блока */
-    border-radius: 10px; /* Скругление углов обводки */
-}
-
-/* Микро-анимация поднятия карточек (общий класс на всякий случай) */
+/* Микро-анимация карточек (если используются где-то ещё) */
 .card,
 .counter-card {
-    transition: transform .2s ease, box-shadow .2s ease; /* Плавные переходы для перемещения и тени */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
+
 .card:hover,
 .counter-card:hover {
-    transform: translateY(-3px); /* Поднимаем карточку на 3px при наведении */
-    box-shadow: 0 10px 24px rgba(0,0,0,0.12); /* Добавляем более выражённую тень при наведении */
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
 }
 
-/* Состояния нажатия и фокуса для кнопки */
-.gsc-search-button.gsc-search-button-v2:active {
-    transform: translateY(0); /* При нажатии возвращаем кнопку в базовое положение по Y */
-    background-color: #444444; /* Более тёмный фон в активном состоянии */
-}
-.gsc-search-button.gsc-search-button-v2:focus {
-    outline: 2px solid #1e11b5; /* Синяя обводка при фокусе с клавиатуры */
-    outline-offset: 2px; /* Отступ обводки от кнопки */
-}
+/* ──────────────────────────────────────────────── */
+/*                МОБИЛЬНАЯ ВЕРСИЯ                 */
+/* ──────────────────────────────────────────────── */
 
-/* Мобильная версия */
-@media (max-width: 600px) { /* Применяем эти стили при ширине экрана 600px и меньше */
-    /* Стили для кнопки поиска на главной странице в мобильной версии */
-    .main-search-container .gsc-search-button.gsc-search-button-v2,
-    .main-search-container button.gsc-search-button {
-        min-height: 41px; /* Минимальная высота кнопки 41px на мобильных */
-        height: 41px !important; /* Жёстко фиксируем высоту 41px */
-        padding: 0px 12px; /* Горизонтальные отступы 12px */
-        border-radius: 0 8px 8px 0; /* Скругляем правые углы кнопки, левый стык – с полем */
+@media (max-width: 600px) {
+
+    .main-search-container {
+        padding: 6px;
+        gap: 6px;
+        border-radius: 14px;
+        max-width: 100%;
+        margin: 0 12px;
+        flex-wrap: nowrap;                                                            /* ← Обязательно на мобиле тоже */
     }
 
-    .search-title { font-size: 22px; } /* Размер шрифта заголовка поиска на мобиле */
-    .search-subtitle { font-size: 14px; } /* Размер шрифта подзаголовка */
-    .cta-buttons { gap: 10px; } /* Расстояние между CTA-кнопками 10px */
-    .cta-button { padding: 9px 14px; } /* Внутренние отступы CTA-кнопок */
-
-    .menu-search-row .gsc-search-button.gsc-search-button-v2,
-    .menu-search-row button.gsc-search-button {
-        min-height: 41px; /* Минимальная высота кнопки поиска в меню */
-        height: 41px !important; /* Фиксированная высота 41px в меню */
-        padding: 0px 12px; /* Горизонтальные отступы 12px */
-        border-radius: 0 18px 18px 0; /* Более сильное скругление правых углов кнопки в меню */
+    .search-form input[type="search"] {
+        height: 50px;
+        padding: 0 16px;
+        font-size: 15px;
+        border-radius: 10px;
     }
 
-    /* В мобиле ограничение ширины поисковой строки */
+    .search-btn {
+        height: 50px;
+        width: 58px;
+        min-width: 58px;
+        border-radius: 10px;
+    }
+
+    .logo {
+        width: 52px;
+    }
+
+    /* Совместимость со старыми Google Custom Search (если остались) */
+    .main-search-container .gsc-search-button,
+    .main-search-container button.gsc-search-button-v2 {
+        min-height: 41px;
+        height: 41px !important;
+        padding: 0 12px;
+        border-radius: 0 8px 8px 0;
+    }
+
+    .menu-search-row .gsc-search-button,
+    .menu-search-row button.gsc-search-button-v2 {
+        min-height: 41px;
+        height: 41px !important;
+        padding: 0 12px;
+        border-radius: 0 18px 18px 0;
+    }
+
     .header .main-search-container .gcse-searchbox-only {
-        max-width: 100%; /* На мобильных строка поиска может занимать всю доступную ширину */
+        max-width: 100%;
     }
 }

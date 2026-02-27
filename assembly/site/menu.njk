@@ -71,6 +71,12 @@ eleventyComputed:
         </select>
     </div>
 
+    <!-- ========== ГЛАВНАЯ ========== -->
+    <a href="{% if locale == 'ru' %}/frontend/main.html{% else %}/frontend/{{ locale }}/index.html{% endif %}" class="menu-item">
+        <img src="/frontend/images/serpmonn.ico" alt="Главная" class="icon">
+        Главная
+    </a>
+
     <!-- ========== РАЗДЕЛ АУТЕНТИФИКАЦИИ ========== -->
     <a href="{% if locale == 'ru' %}/frontend/register/register.html{% else %}/frontend/{{ locale }}/register/register.html{% endif %}" id="login-register-btn">
         <img src="/frontend/images/login.ico" alt="Authentication" class="icon">
@@ -265,19 +271,6 @@ eleventyComputed:
                 <img src="/frontend/images/serpmonn.ico" alt="Serpmonn Beta" class="icon">
                 Serpmonn Beta (TWA)
             </a>
-        </div>
-    </div>
-
-    <!-- =========- БЛОК ПОИСКА ========== -->
-    <div class="menu-search-container" id="menuSearchContainer">
-        <div class="menu-search-row">
-            <!-- Логотип сайта -->
-            <a href="{% if locale == 'ru' %}/frontend/main.html{% else %}/frontend/{{ locale }}/index.html{% endif %}" class="menu-logo-link">
-                <img src="/frontend/images/serpmonn.ico" alt="Serpmonn" class="menu-logo">
-            </a>
-
-            <!-- Поисковая строка Google -->
-            <div class="gcse-searchbox-only"></div>
         </div>
     </div>
 

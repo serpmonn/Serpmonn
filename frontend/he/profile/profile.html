@@ -253,6 +253,15 @@
                 <p><strong>אימייל:</strong> <span id="email"></span></p>
             </div>
 
+            <!-- Информация о тарифе и лимитах -->
+            <div id="planCard" class="card">
+                <h3>📦 Тариф и лимиты</h3>
+                <p><strong>Текущий тариф:</strong> <span id="planName">—</span></p>
+                <p id="planStatus"></p>
+                <p id="planQuota"></p>
+                <p id="planHint"></p>
+            </div>
+
             <!-- Раздел инструментов -->
             <div class="card">
                 <h3>🧰 כלים</h3>
@@ -331,29 +340,21 @@
 
     <!-- Скрипт для PWA/TWA исправлений -->
     <script>
-        // Автоматическая прокрутка вверх при загрузке
         document.addEventListener('DOMContentLoaded', function() {
-            // Немедленная прокрутка вверх
             window.scrollTo({ top: 0, behavior: 'instant' });
-            
-            // Дополнительная прокрутка после загрузки
             setTimeout(() => {
                 window.scrollTo({ top: 0, behavior: 'smooth' });
                 document.documentElement.scrollTop = 0;
                 document.body.scrollTop = 0;
             }, 100);
-            
-            // Для PWA/TWA
             if (window.matchMedia('(display-mode: standalone)').matches || 
                 window.matchMedia('(display-mode: fullscreen)').matches) {
-                // Принудительно устанавливаем top: 0
                 setTimeout(() => {
                     window.scrollTo(0, 0);
                 }, 200);
             }
         });
 
-        // Предотвращаем масштабирование при двойном тапе на мобильных
         if ('ontouchstart' in window) {
             let lastTouchEnd = 0;
             document.addEventListener('touchend', function(event) {

@@ -1,50 +1,363 @@
 html, body {
-	margin: 0;                                                     /* Убираем отступы */
-	padding: 0;                                                    /* Убираем внутренние отступы */
-	height: 100%;                                                  /* Высота 100% от родителя */
-	width: 100%;                                                   /* Ширина 100% от родителя */
-	font-family: Arial, sans-serif;                                /* Шрифт для текста */
-	display: flex;                                                 /* Используем флекс-контейнер для гибкой верстки */
-	justify-content: space-between;                                /* Выравнивание элементов по горизонтали */
-	align-items: center;                                           /* Выравнивание элементов по вертикали */
-	flex-direction: column;                                        /* Направление элементов по вертикали */
-	overflow: auto;                                                /* Включаем прокрутку */
-	-ms-overflow-style: none;                                      /* Для Internet Explorer и Edge */
-	scrollbar-width: thin;                                         /* Для Firefox — узкая полоса прокрутки */
-	box-sizing: border-box;                                        /* Учитываем padding и border в размерах элемента */
+  margin: 0;                      /* Убираем отступы */
+  padding: 0;                     /* Убираем внутренние отступы */
+  height: 100%;                   /* Высота 100% от родителя */
+  width: 100%;                    /* Ширина 100% от родителя */
+  font-family: Arial, sans-serif; /* Шрифт для текста */
+  display: flex;                  /* Флекс-контейнер для всей страницы */
+  justify-content: space-between; /* Выравнивание по вертикали через column */
+  align-items: center;            /* Центр по горизонтали */
+  flex-direction: column;         /* Колонка: сверху вниз */
+  overflow: auto;                 /* Прокрутка по странице */
+  -ms-overflow-style: none;       /* Для IE и Edge */
+  scrollbar-width: thin;          /* Узкий скролл в Firefox */
+  box-sizing: border-box;         /* Учитываем padding и border в размерах */
 }
 
 body::-webkit-scrollbar {
-	width: 12px;                                                   /* Устанавливаем ширину полосы прокрутки */
+  width: 12px;                    /* Ширина полосы прокрутки */
 }
 
 body::-webkit-scrollbar-track {
-	background: #f1f1f1;                                           /* Цвет фона полосы прокрутки */
+  background: #f1f1f1;            /* Цвет дорожки скролла */
 }
 
 body::-webkit-scrollbar-thumb {
-	background: #888;                                              /* Цвет самой полосы прокрутки */
+  background: #888;               /* Цвет ползунка скролла */
 }
 
 body:hover::-webkit-scrollbar-thumb {
-	background: #555;                                              /* Цвет полосы при наведении */
+  background: #555;               /* Цвет ползунка при hover */
 }
 
 h1 {
-	text-align: center;                                            /* Выравнивание заголовка по центру */
-	font-size: 20px;                                               /* Размер шрифта */
-	text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);                   /* Тень для текста */
+  text-align: center;             /* Центрируем заголовки */
+  font-size: 20px;                /* Размер шрифта */
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1); /* Лёгкая тень */
 }
 
 a {
-	color: inherit;                                                /* Наследуем цвет ссылки от родительского элемента */
+  color: inherit;                 /* Наследуем цвет текста */
 }
 
 a:hover {
-	color: #888888;                                                /* Цвет ссылки при наведении */
-	text-decoration: underline;                                    /* Подчеркивание ссылки при наведении */
+  color: #888888;                 /* Цвет при наведении */
+  text-decoration: underline;     /* Подчёркивание при наведении */
 }
 
-a:active, a:visited {
-	color: #f47059;                                                    /* Цвет для активных и посещенных ссылок */
+a:active,
+a:visited {
+  color: #f47059;                 /* Цвет активных/посещённых ссылок */
+}
+
+/* ====== AI результат: общий контейнер ====== */
+
+.ai-result-container {
+  background: rgba(255,255,255,0.9);
+  border-radius: 14px;
+  border: 1px solid rgba(220,53,69,0.12);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.08);
+  padding: 12px 14px;
+  margin-top: 12px;
+}
+
+/* Заголовок (если понадобится) */
+.ai-result-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.ai-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ai-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.ai-model {
+  font-size: 11px;
+  color: #6b7280;
+}
+
+/* Контент ответа */
+
+.ai-result-content {
+  margin-top: 4px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #111827;
+}
+
+.ai-result-content a {
+  color: #111827;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(79,70,229,0.25);
+}
+
+.ai-result-content a:hover {
+  color: #111827;
+  border-bottom-style: solid;
+}
+
+.ai-result-content h1,
+.ai-result-content h2,
+.ai-result-content h3 {
+  margin: 12px 0 4px;
+  font-weight: 600;
+}
+
+.ai-result-content ul {
+  padding-left: 18px;
+  margin: 4px 0 8px;
+}
+
+.ai-result-content li {
+  margin-bottom: 3px;
+}
+
+.ai-result-content .md-link {
+  color: #4f46e5;
+  text-decoration: none;
+  border-bottom: 1px dashed rgba(79,70,229,0.5);
+}
+
+.ai-result-content .md-link:hover {
+  border-bottom-style: solid;
+}
+
+/* Лоадер */
+
+.ai-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 6px 4px;
+}
+
+.loading-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.loading-dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: #4f46e5;
+  animation: serpmonn-dot 1s infinite ease-in-out;
+}
+
+.loading-dots span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.loading-dots span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.loading-text {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+@keyframes serpmonn-dot {
+  0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; }
+  40% { transform: scale(1); opacity: 1; }
+}
+
+/* Бейдж «найден через поиск» */
+
+.ai-search-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #111111;
+  background: rgba(0,0,0,0.04);
+  border-radius: 999px;
+  padding: 2px 8px;
+  margin-bottom: 4px;
+}
+
+.ai-search-badge svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* Футер: действия + оценка + время */
+
+.ai-result-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-start;   /* все иконки группой слева */
+  gap: 8px;
+  margin-top: 10px;
+}
+
+/* Группы кнопок */
+.ai-actions,
+.ai-feedback {
+  display: flex;
+  gap: 6px;
+}
+
+/* Базовый стиль круглых кнопок */
+.ai-action-btn,
+.feedback-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 999px;
+  border: 1px solid rgba(220, 53, 69, 0.35); /* красный бордер */
+  background: linear-gradient(145deg, #111111, #1a1a1a); /* как search-btn */
+  cursor: pointer;
+  padding: 0;
+  transition: background 0.2s ease, transform 0.15s ease,
+              box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* Общий вид иконок */
+.ai-icon {
+  width: 18px;
+  height: 18px;
+  stroke: red;           /* красный цвет */
+  fill: none;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Hover/Active эффекты */
+.ai-action-btn:hover,
+.feedback-btn:hover {
+  background: linear-gradient(145deg, #1a1a1a, #222222);
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.ai-action-btn:active,
+.feedback-btn:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Дополнительный акцент для лайка/дизлайка */
+.feedback-btn.like {
+  border-color: rgba(40, 167, 69, 0.4); /* зелёный оттенок для лайка */
+}
+
+.feedback-btn.dislike {
+  border-color: rgba(220, 53, 69, 0.7); /* более насыщенный красный для дизлайка */
+}
+
+/* Время генерации */
+
+.ai-timestamp {
+  color: #9ca3af;
+  font-size: 11px;
+}
+
+/* Блок источников */
+
+.ai-sources {
+  margin-top: 10px;
+  padding-top: 6px;
+  border-top: 1px dashed rgba(148,163,184,0.4);
+}
+
+.sources-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: #4b5563;
+  margin-bottom: 6px;
+}
+
+.source-item {
+  background: transparent;
+  border-radius: 8px;
+  padding: 4px 6px;
+}
+
+.source-item:hover {
+  background: #f3f4ff;
+  border-color: rgba(79,70,229,0.35);
+}
+
+.source-favicon {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.source-title {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.source-url {
+  color: #6b7280;
+  font-size: 11px;
+}
+
+/* Ошибка */
+
+.ai-error {
+  padding: 12px 10px;
+  border-radius: 12px;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #991b1b;
+  font-size: 13px;
+}
+
+.ai-error .error-icon {
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.ai-error .retry-btn {
+  margin-top: 6px;
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 999px;
+  border: none;
+  cursor: pointer;
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+/* Мобильная адаптация */
+
+@media (max-width: 640px) {
+  .ai-result-container {
+    margin: 16px 8px 0;
+    padding: 12px 12px;
+  }
+
+  .ai-result-header {
+    align-items: flex-start;
+  }
+
+  .ai-actions {
+    gap: 4px;
+  }
+
+  .ai-result-footer {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
 }

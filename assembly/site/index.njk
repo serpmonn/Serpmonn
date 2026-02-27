@@ -19,10 +19,80 @@ eleventyComputed:
   canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/{% else %}{{ site.baseUrl }}/{{ locale }}/{% endif %}"
 ---
 
-<div class="container search-card">
+<div class="search-card-wrapper">
   <div class="main-search-container">
     <img src="/frontend/images/serpmonn.ico" alt="Serpmonn Logo" class="logo" title="Serpmonn">
-    <div class="gcse-searchbox-only"></div>
+
+    <form id="ai-search-form" class="search-form">
+      <input 
+        type="search" 
+        name="q" 
+        placeholder="Спросите у ИИ что угодно..."
+        autocomplete="off"
+        required
+        autofocus
+        title="Напишите запрос для ИИ: от фильмов до работы и учёбы"
+      >
+      <button 
+        type="submit" 
+        aria-label="Отправить запрос ИИ"
+        class="search-btn"
+        title="Отправить запрос Serpmonn AI"
+      >
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" 
+             stroke="#ff4d4d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="7" y1="17" x2="17" y2="7" />
+          <polyline points="7 7 17 7 17 17" />
+        </svg>
+      </button>
+    </form>
+  </div>
+
+  <div id="ai-result-container" class="ai-result-container" style="display: none;">
+    <div id="ai-result-content" class="ai-result-content"></div>
+
+    <div class="ai-result-footer">
+      <div class="ai-actions">
+        <!-- Копировать -->
+        <button class="ai-action-btn" title="Копировать ответ" aria-label="Копировать ответ">
+          <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="9" y="9" width="10" height="12" rx="2"></rect>
+            <rect x="5" y="3" width="10" height="12" rx="2"></rect>
+          </svg>
+        </button>
+
+        <!-- Поделиться -->
+        <button class="ai-action-btn" title="Поделиться ответом" aria-label="Поделиться ответом">
+          <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 12v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6"></path>
+            <path d="M12 5l0 12"></path>
+            <path d="M8 9l4-4 4 4"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="ai-feedback">
+        <!-- Лайк -->
+        <button class="feedback-btn like" title="Ответ помог" aria-label="Ответ помог">
+          <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 11v10"></path>
+            <path d="M3 11h4"></path>
+            <path d="M9 21h7.2a2 2 0 0 0 2-1.6l1.2-7A2 2 0 0 0 17.4 10H14l.5-3.5A2 2 0 0 0 12.5 4l-3.2 5.1A2 2 0 0 1 8 10H7"></path>
+          </svg>
+        </button>
+
+        <!-- Дизлайк -->
+        <button class="feedback-btn dislike" title="Ответ не помог" aria-label="Ответ не помог">
+          <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M7 13V3"></path>
+            <path d="M3 13h4"></path>
+            <path d="M9 3h7.2a2 2 0 0 1 2 1.6l1.2 7A2 2 0 0 1 17.4 14H14l.5 3.5A2 2 0 0 1 12.5 20l-3.2-5.1A2 2 0 0 0 8 14H7"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="ai-timestamp" id="ai-timestamp"></div>
+    </div>
   </div>
 </div>
 

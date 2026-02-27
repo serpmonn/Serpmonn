@@ -5,23 +5,134 @@ import express from 'express';
 import cors from 'cors';
 import fetch from 'node-fetch';
 import rateLimit from 'express-rate-limit';
+import cookieParser from 'cookie-parser';
+import paseto from 'paseto';
+import { query as dbQuery } from '../database/config.mjs';
 
 dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
+
+const { V2 } = paseto;
+const secretKey = process.env.SECRET_KEY;
+const PRO_MONTHLY_LIMIT = 2000;
 
 const httpsAgent = new https.Agent({
   rejectUnauthorized: false
 });
 
 const app = express();
-
+app.use(cookieParser());
 // Константы GigaChat
 const GIGA_AUTH_URL = 'https://ngw.devices.sberbank.ru:9443/api/v2/oauth';
 const GIGA_API_URL = 'https://gigachat.devices.sberbank.ru/api/v1/chat/completions';
 const CLIENT_SECRET = process.env.GIGACHAT_CREDENTIALS;                                                                                                                                                                                       // Ваша строка авторизации
 const SERPER_API_KEY = process.env.SERPER_API_KEY;
+const usageStore = new Map();                                                                                                                                                                                                                 // Простое хранилище лимитов в памяти
+const GUEST_DAILY_LIMIT = 5;                                                                                                                                                                                                                  // гость
+const USER_DAILY_LIMIT = 15;                                                                                                                                                                                                                  // авторизованный (бесплатный)
 // Переменные для хранения токена
 let accessToken = null;
 let tokenExpiresAt = 0;
+
+function getMonthKey() {
+  return new Date().toISOString().slice(0, 7);                                                                                                                                                                                                // Возвращает строку вида '2026-02' для текущего месяца
+}
+
+async function getUserPlan(userId) {
+  const sql = 'SELECT plan, pro_until FROM users WHERE id = ? LIMIT 1';
+  const rows = await dbQuery(sql, [userId]);
+  if (!rows || rows.length === 0) return { plan: 'free', proUntil: null };
+
+  const row = rows[0];
+  return {
+    plan: row.plan || 'free',
+    proUntil: row.pro_until                                                                                                                                                                                                                    // в mysql2 это будет JS Date или строка, нам достаточно сравнения
+  };
+}
+
+async function checkAndIncrementProMonthly(userId) {
+  const monthKey = getMonthKey();
+
+  // читаем текущий usage
+  const selectSql =
+    'SELECT requests FROM ai_usage_monthly WHERE user_id = ? AND month_key = ? LIMIT 1';
+  const rows = await dbQuery(selectSql, [userId, monthKey]);
+
+  let used = 0;
+  if (!rows || rows.length === 0) {
+    // создаём запись с requests = 1
+    const insertSql =
+      'INSERT INTO ai_usage_monthly (user_id, month_key, requests) VALUES (?, ?, 1)';
+    await dbQuery(insertSql, [userId, monthKey]);
+    used = 1;
+  } else {
+    used = rows[0].requests;
+    if (used >= PRO_MONTHLY_LIMIT) {
+      return { ok: false, used, limit: PRO_MONTHLY_LIMIT };
+    }
+    const updateSql =
+      'UPDATE ai_usage_monthly SET requests = requests + 1 WHERE user_id = ? AND month_key = ?';
+    await dbQuery(updateSql, [userId, monthKey]);
+    used += 1;
+  }
+
+  return { ok: true, used, limit: PRO_MONTHLY_LIMIT };
+}
+
+async function attachUserIfToken(req, res, next) {
+  const token = req.cookies.token;                                                                                                                                                                                                              // тот же cookie, что ставит auth-сервер
+  if (!token) {
+    req.user = null;
+    return next();
+  }
+
+  if (!secretKey) {
+    console.error('SECRET_KEY не задан в ai-search');
+    req.user = null;
+    return next();
+  }
+
+  try {
+    const payload = await V2.verify(token, secretKey);
+    // payload: { id, username, email }
+    req.user = payload;
+  } catch (e) {
+    console.warn('Недействительный токен на ai-search:', e.message);
+    req.user = null;
+  }
+
+  next();
+}
+
+function getUserIdentity(req) {                                                                                                                                                                                                                 // Определяет, гость это или авторизованный
+  if (req.user && req.user.id) {
+    return { id: `user:${req.user.id}`, type: 'user' };                                                                                                                                                                                         // У тебя здесь уже есть авторизация -> берём id пользователя
+  }
+
+  return { id: `guest:${req.ip}`, type: 'guest' };                                                                                                                                                                                              // Иначе — гость. Для простоты считает по IP.
+}
+
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function checkAndIncrementUsage(identity) {                                                                                                                                                                                                     // Проверка лимита и инкремент
+  const today = getTodayKey();
+  const key = `${identity.id}:${today}`;
+  const entry = usageStore.get(key) || { requests: 0 };
+
+  const limit = identity.type === 'guest'
+    ? GUEST_DAILY_LIMIT
+    : USER_DAILY_LIMIT;
+
+  if (entry.requests >= limit) {
+    // лимит уже исчерпан
+    return { ok: false, limit, used: entry.requests };
+  }
+
+  entry.requests += 1;
+  usageStore.set(key, entry);
+  return { ok: true, limit, used: entry.requests };
+}
 
 // ============================================================================
 // ФУНКЦИЯ ПОЛУЧЕНИЯ ТОКЕНА
@@ -75,6 +186,8 @@ const aiSearchLimiter = rateLimit({
   keyGenerator: (req) => req.ip
 });
 
+app.use(attachUserIfToken);
+
 // ============================================================================
 // МАРШРУТ ИИ-ПОИСКА
 // ============================================================================
@@ -82,6 +195,67 @@ app.post('/ai-search', aiSearchLimiter, async (req, res) => {
   try {
     const query = (req.body.q || '').trim();
     if (!query) return res.status(400).json({ error: 'Запрос пуст' });
+
+    const identity = getUserIdentity(req);
+
+        if (identity.type === 'guest') {                                                                                                                                                                        // 1) ГОСТЬ: только суточный лимит 5 (как сейчас)
+          const usage = checkAndIncrementUsage(identity);
+
+          if (!usage.ok) {
+            return res.status(403).json({
+              error:
+                'Лимит 5 запросов для гостей исчерпан. ' +
+                'Пожалуйста, <a href="/frontend/login/login.html">войдите</a> ' +
+                'или <a href="/frontend/register/register.html">зарегистрируйтесь</a>, чтобы продолжить.',
+              needAuth: true,
+              limit: usage.limit,
+              used: usage.used
+            });
+          }
+        }
+
+    if (identity.type === 'user') {                                                                                                                                                                               // 2) АВТОРИЗОВАННЫЙ: free или pro
+      const userId = req.user.id;
+
+      // читаем план
+      const planInfo = await getUserPlan(userId);
+      const now = new Date();
+      const isProActive =
+        planInfo.plan === 'pro' &&
+        planInfo.proUntil &&
+        new Date(planInfo.proUntil) > now;
+
+      if (isProActive) {
+        // Pro: месячный лимит 2000
+        const proUsage = await checkAndIncrementProMonthly(userId);
+        if (!proUsage.ok) {
+          return res.status(403).json({
+            error:
+              'Вы исчерпали лимит 2000 запросов в месяц по тарифу Pro. ' +
+              'Лимит будет обновлён в начале следующего месяца.',
+            needAuth: false,
+            limit: proUsage.limit,
+            used: proUsage.used
+          });
+        }
+        // суточный лимит можно не применять
+      } else {
+
+        const usage = checkAndIncrementUsage(identity);                                                                                                                                           // Free‑юзер: суточный лимит 15
+
+        if (!usage.ok) {
+          return res.status(403).json({
+            error:
+            'Лимит запросов на сегодня исчерпан. ' +
+            'Вы можете перейти на <a href="/frontend/tariffs/tariffs.html">страницу тарифов</a>, ' +
+            'и оформить тариф Pro (до 2000 запросов в месяц).',
+            needAuth: false,
+            limit: usage.limit,
+            used: usage.used
+          });
+        }
+      }
+    }
 
     console.log('🚀 Начинаю поиск через Serper:', query);
 

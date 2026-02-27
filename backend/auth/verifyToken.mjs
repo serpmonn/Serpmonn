@@ -30,8 +30,7 @@ const verifyToken = async (req, res, next) => {                                 
         const payload = await V2.verify(token, secretKey);                                                                      // Проверяем токен с использованием секретного ключа
         req.user = payload;                                                                                                     // Сохраняем данные пользователя в объект запроса
         const subjectHint = payload?.id || payload?.sub || payload?.userId || payload?.username || 'unknown';
-        console.log('[auth] verified user:', subjectHint);
-                     // Короткий безопасный лог
+        console.log('[auth] verified user:', subjectHint);                                                                      // Короткий безопасный лог
         next();                                                                                                                 // Переходим к следующему middleware или маршруту
     } catch (error) {                                                                                                           // Обрабатываем возможные ошибки
         console.error('Ошибка верификации токена:', error);                                                                     // Логируем ошибку верификации токена
