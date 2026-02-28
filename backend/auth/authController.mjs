@@ -191,7 +191,7 @@ export const loginUser = async (req, res) => {                                  
       return res.status(401).json({ message: 'Неверный email или пароль' });                  // Возвращаем ошибку
     }                                                                                         
                                                                                               
-    const payload = { id: user.id, username: user.username, email: user.email };                           // Формируем данные для токена
+    const payload = { id: user.id, username: user.username, email: user.email };              // Формируем данные для токена
     const token = await V2.sign(payload, secretKey);                                          // Создаем авторизационный токен
                                                                                               
     res.cookie('token', token, {                                                              // Устанавливаем cookie с токеном

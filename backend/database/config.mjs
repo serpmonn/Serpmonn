@@ -1,12 +1,5 @@
-import dotenv from 'dotenv';                                                                                                     // Импортируем dotenv для работы с переменными окружения
-import { resolve } from 'path';                                                                                                  // Импортируем resolve для создания абсолютных путей
-
-const isProduction = process.env.NODE_ENV === 'production';                                                                      // Определяем режим работы: production или development
-const envPath = isProduction                                                                                                     // Выбираем путь к .env файлу в зависимости от окружения
-    ? '/var/www/serpmonn.ru/backend/.env'                                                                                        // Продакшен путь на сервере
-    : resolve(process.cwd(), 'backend/.env');                                                                                    // Разработка - абсолютный путь к .env в папке backend
-
-dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути
+import dotenv from 'dotenv';                                                                                                     // Импортируем dotenv для работы с переменными окружения                                                                                                 // Импортируем resolve для создания абсолютных путей
+dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });                                                                    // Загружаем переменные окружения из выбранного пути
 
 import mysql from 'mysql2';
 
