@@ -13,6 +13,7 @@ import express from 'express';                                                  
 import cookieParser from 'cookie-parser';                                                                                        // Импортируем cookie-parser для работы с cookies
 
 import authRoutes from './auth/authRoutes.mjs';                                                                                  // Импортируем маршруты аутентификации и авторизации
+import yookassaRouter from './yookassa/yookassaRoutes.mjs';                                                                      // Импортируем маршруты yookassa
 import profilesRoutes from './profiles/profilesRoutes.mjs';                                                                      // Импортируем маршруты для работы с профилями пользователей
 import counterRoutes from './Counter/CounterRoutes.mjs';                                                                         // Импортируем маршруты для работы со счетчиками и статистикой
 import subscribeRouter from './subscriber/subscribeRoutes.mjs';                                                                  // Импортируем маршруты для управления подписками и рассылками
@@ -97,6 +98,8 @@ const csrfProtection = csrf({                                                   
 app.get('/csrf-token', csrfProtection, (req, res) => {                                                                           // Эндпоинт для получения CSRF-токена
     res.json({ csrfToken: req.csrfToken() });                                                                                    // Возвращаем CSRF токен клиенту в JSON формате
 });
+
+app.use(yookassaRouter);
 
 app.use('/auth', authRoutes);                                                                                                    // Подключаем маршруты аутентификации с префиксом /auth
 app.use('/profile', profilesRoutes);                                                                                             // Подключаем маршруты профилей с префиксом /profile

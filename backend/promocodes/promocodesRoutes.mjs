@@ -210,10 +210,14 @@ function flattenPerfluenceData(perfArray) {
       let { percent: offerPercent, amount: offerAmount } = extractDiscountFromTexts(landing.name, project.name, project.product_info, offerTitle);
       
       let bonusDescription = null;
-      const keywords = /скидка|подарок|бонус|сертификат/i;
-      const candidate = firstDefined(landing.name, project.name, stripHtml(project.product_info));
-      if (candidate && keywords.test(candidate)) {
-        bonusDescription = candidate;
+      const offerBonusCandidate = firstDefined(
+        landing.name,
+        stripHtml(project.product_info),
+        project.name
+      );
+      // Берём любой осмысленный текст > 10 символов
+      if (offerBonusCandidate && String(offerBonusCandidate).trim().length > 10) {
+        bonusDescription = String(offerBonusCandidate).trim();
       }
 
       const offerCategory = determineCategoryFromText(project.category_name, offerTitle, groupDescription);
@@ -224,8 +228,8 @@ function flattenPerfluenceData(perfArray) {
       totalPromos += promos.length;
 
       for (const promo of promos) {
-        const title = firstDefined(project.name, promo.name) || 'Промокод';
-        const description = firstDefined(promo.comment, stripHtml(project.product_info)) || 'Описание недоступно';
+        const title = firstDefined(project.name, landing.name,  promo.name ) || 'Промокод';
+        const description = firstDefined(stripHtml(promo.comment), stripHtml(project.product_info)) || 'Описание недоступно';
 
         const code = firstDefined(promo.code);
         const when = normalizeDate(firstDefined(promo.date));
@@ -236,9 +240,15 @@ function flattenPerfluenceData(perfArray) {
         const { percent, amount } = extractDiscountFromTexts(promo.name, promo.comment, landing.name, project.name, project.product_info, title);
         
         let promoBonusDescription = null;
-        const promoCandidate = firstDefined(promo.name, promo.comment, landing.name, project.name);
-        if (promoCandidate && keywords.test(promoCandidate)) {
-          promoBonusDescription = promoCandidate;
+        const promoBonusCandidate = firstDefined(
+          stripHtml(promo.comment),
+          stripHtml(promo.name),
+          landing.name,
+          stripHtml(project.product_info),
+          project.name
+        );
+        if (promoBonusCandidate && String(promoBonusCandidate).trim().length > 10) {
+          promoBonusDescription = String(promoBonusCandidate).trim();
         }
 
         const category = determineCategoryFromText(project.category_name, title, description);
