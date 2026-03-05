@@ -42,7 +42,7 @@ const getUserProfile = async (req, res) => {                                    
     }                                                                                                                      
 };
 
-const getMonthKey = () => new Date().toISOString().slice(0, 7);                                                                 // '2026-02'
+const getMonthKey = () => new Date().toISOString().slice(0, 7);                                                                  // '2026-02'
 
 // Контроллер для получения информации о пользователе
 const getUserInfo = async (req, res) => {                                                                                        // Определяем функцию для получения информации
@@ -99,6 +99,7 @@ const getUserInfo = async (req, res) => {                                       
         };
 
         res.json({
+        id: user.id, 
         username: user.username,
         email: user.email,
         confirmed: user.confirmed,
@@ -112,7 +113,7 @@ const getUserInfo = async (req, res) => {                                       
             pro_monthly: proUsage
         }
         });
-    } catch (err) {                                                                                                            // Обрабатываем возможные ошибки
+    } catch (err) {                                                                                                              // Обрабатываем возможные ошибки
         console.error('Ошибка при получении данных профиля:', err);                                                              // Логируем ошибку в консоль
         res.status(401).json({ message: 'Недействительный токен или ошибка авторизации' });                                      // Возвращаем ошибку авторизации клиенту
     }                                                                                                                      
@@ -130,22 +131,22 @@ const updateUserProfile = async (req, res) => {                                 
         return res.status(400).json({ message: 'Email и username обязательны' });                                                // Возвращаем ошибку, если данные отсутствуют
     }                                                                                                                      
 
-    try {                                                                                                                       // Начинаем блок обработки ошибок
-        const queryText = 'UPDATE users SET username = ?, email = ? WHERE email = ?';                                           // Определяем SQL-запрос для обновления данных
-        const result = await query(queryText, [username, email, oldEmail]);                                                     // Выполняем запрос к БД для обновления
-        console.log('Результат обновления:', result);                                                                           // Логируем результат обновления для отладки
+    try {                                                                                                                        // Начинаем блок обработки ошибок
+        const queryText = 'UPDATE users SET username = ?, email = ? WHERE email = ?';                                            // Определяем SQL-запрос для обновления данных
+        const result = await query(queryText, [username, email, oldEmail]);                                                      // Выполняем запрос к БД для обновления
+        console.log('Результат обновления:', result);                                                                            // Логируем результат обновления для отладки
 
-        if (oldEmail !== email || oldUsername !== username) {                                                                   // Проверяем, изменились ли email или username
-            res.clearCookie('token');                                                                                           // Очищаем старый токен в куки
-            const newToken = await V2.sign({ username, email }, secretKey);                                                     // Создаем новый токен с обновленными данными
-            res.cookie('token', newToken, { httpOnly: true, secure: true });                                                    // Устанавливаем новый токен в куки
-            return res.json({ message: 'Профиль обновлен, новый токен создан', token: newToken });                              // Возвращаем ответ с новым токеном
+        if (oldEmail !== email || oldUsername !== username) {                                                                    // Проверяем, изменились ли email или username
+            res.clearCookie('token');                                                                                            // Очищаем старый токен в куки
+            const newToken = await V2.sign({ username, email }, secretKey);                                                      // Создаем новый токен с обновленными данными
+            res.cookie('token', newToken, { httpOnly: true, secure: true });                                                     // Устанавливаем новый токен в куки
+            return res.json({ message: 'Профиль обновлен, новый токен создан', token: newToken });                               // Возвращаем ответ с новым токеном
         }                                                                                                                      
 
-        res.json({ message: 'Профиль обновлен успешно' });                                                                      // Возвращаем успешный ответ без нового токена
-    } catch (err) {                                                                                                             // Обрабатываем возможные ошибки
-        console.error('Ошибка при обновлении профиля:', err);                                                                   // Логируем ошибку в консоль
-        res.status(500).json({ message: 'Ошибка при обновлении профиля', error: err });                                         // Возвращаем ошибку сервера клиенту
+        res.json({ message: 'Профиль обновлен успешно' });                                                                       // Возвращаем успешный ответ без нового токена
+    } catch (err) {                                                                                                              // Обрабатываем возможные ошибки
+        console.error('Ошибка при обновлении профиля:', err);                                                                    // Логируем ошибку в консоль
+        res.status(500).json({ message: 'Ошибка при обновлении профиля', error: err });                                          // Возвращаем ошибку сервера клиенту
     }                                                                                                                      
 };
 
