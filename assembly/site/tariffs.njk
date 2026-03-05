@@ -494,10 +494,10 @@ eleventyComputed:
         </ul>
 
         <div class="cta-row">
-          <a href="#" class="btn btn-primary">
+          <a href="#" class="btn btn-primary" id="buy-pro-btn">
             {{ tariffs[locale].tariffs.pro.cta }}
           </a>
-          <span class="note-strong">
+          <span class="note-strong" id="buy-pro-status">
             {{ tariffs[locale].tariffs.pro.noteStrong }}
           </span>
         </div>
@@ -516,6 +516,77 @@ eleventyComputed:
     </p>
   </div>
 
+<script>
+  (function () {
+    const buyBtn = document.getElementById('buy-pro-btn');
+    const statusEl = document.getElementById('buy-pro-status');
+
+    if (!buyBtn) return;
+
+    buyBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      try {
+        buyBtn.disabled = true;
+        const originalText = buyBtn.textContent;
+        buyBtn.textContent = '{{ tariffs[locale].tariffs.pro.loadingText | default("Подождите...") }}';
+
+        const infoResp = await fetch('/profile/info', {
+          credentials: 'include'
+        });
+
+        if (infoResp.status === 401 || infoResp.status === 403) {
+          window.location.href = '{% if locale == "ru" %}/frontend/login/login.html{% else %}/frontend/{{ locale }}/login/login.html{% endif %}';
+          return;
+        }
+
+        if (!infoResp.ok) {
+          throw new Error('profile_error');
+        }
+
+        const user = await infoResp.json();
+        if (!user || !user.id) {
+          throw new Error('no_user_id');
+        }
+
+        const createResp = await fetch('/api/yookassa/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            userId: user.id,
+            amount: {{ tariffs[locale].tariffs.pro.priceNumeric | default(499) }},
+            description: 'Serpmonn Pro — 30 дней'
+          })
+        });
+
+        const data = await createResp.json();
+
+        if (!createResp.ok || !data.success || !data.confirmationUrl) {
+          buyBtn.disabled = false;
+          buyBtn.textContent = originalText;
+          if (statusEl) {
+            statusEl.textContent =
+              '{{ tariffs[locale].tariffs.pro.errorText | default("Не удалось создать платёж. Попробуйте позже.") }}';
+          }
+          return;
+        }
+
+        window.location.href = data.confirmationUrl;
+      } catch (err) {
+        console.error('buy pro error', err);
+        buyBtn.disabled = false;
+        buyBtn.textContent = '{{ tariffs[locale].tariffs.pro.cta }}';
+        if (statusEl) {
+          statusEl.textContent =
+            '{{ tariffs[locale].tariffs.pro.errorText | default("Ошибка. Попробуйте позже.") }}';
+        }
+      }
+    });
+  })();
+</script>
 <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

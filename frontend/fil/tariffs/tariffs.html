@@ -672,11 +672,11 @@
         </ul>
 
         <div class="cta-row">
-          <a href="#" class="btn btn-primary">
-            Magiging available ang pagbabayad sa susunod
+          <a href="#" class="btn btn-primary" id="buy-pro-btn">
+            Kunin ang Pro na plano
           </a>
-          <span class="note-strong">
-            Ang Pro plan ay nagkakahalaga ng 2499 ₽ kada buwan. Hindi pa naka-enable ang pagbabayad; pagkatapos ma‑connect ang YooKassa, magiging posible ang pagbabayad sa page na ito.
+          <span class="note-strong" id="buy-pro-status">
+            Sa pagbayad para sa Pro, makakakuha ka ng hanggang 2000 request bawat buwan nang walang higpit na araw-araw na limit.
           </span>
         </div>
       </article>
@@ -694,6 +694,77 @@
     </p>
   </div>
 
+<script>
+  (function () {
+    const buyBtn = document.getElementById('buy-pro-btn');
+    const statusEl = document.getElementById('buy-pro-status');
+
+    if (!buyBtn) return;
+
+    buyBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      try {
+        buyBtn.disabled = true;
+        const originalText = buyBtn.textContent;
+        buyBtn.textContent = 'Gumagawa ng bayad...';
+
+        const infoResp = await fetch('/profile/info', {
+          credentials: 'include'
+        });
+
+        if (infoResp.status === 401 || infoResp.status === 403) {
+          window.location.href = '/frontend/fil/login/login.html';
+          return;
+        }
+
+        if (!infoResp.ok) {
+          throw new Error('profile_error');
+        }
+
+        const user = await infoResp.json();
+        if (!user || !user.id) {
+          throw new Error('no_user_id');
+        }
+
+        const createResp = await fetch('/api/yookassa/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            userId: user.id,
+            amount: 499,
+            description: 'Serpmonn Pro — 30 дней'
+          })
+        });
+
+        const data = await createResp.json();
+
+        if (!createResp.ok || !data.success || !data.confirmationUrl) {
+          buyBtn.disabled = false;
+          buyBtn.textContent = originalText;
+          if (statusEl) {
+            statusEl.textContent =
+              'Hindi naisagawa ang pagbabayad. Subukan muli mamaya.';
+          }
+          return;
+        }
+
+        window.location.href = data.confirmationUrl;
+      } catch (err) {
+        console.error('buy pro error', err);
+        buyBtn.disabled = false;
+        buyBtn.textContent = 'Kunin ang Pro na plano';
+        if (statusEl) {
+          statusEl.textContent =
+            'Hindi naisagawa ang pagbabayad. Subukan muli mamaya.';
+        }
+      }
+    });
+  })();
+</script>
 <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

@@ -672,11 +672,11 @@
         </ul>
 
         <div class="cta-row">
-          <a href="#" class="btn btn-primary">
-            התשלום יהיה זמין בהמשך
+          <a href="#" class="btn btn-primary" id="buy-pro-btn">
+            להצטרף למסלול Pro
           </a>
-          <span class="note-strong">
-            תכנית Pro עולה 2499 ₽ לחודש. התשלום עדיין לא הופעל; לאחר חיבור YooKassa התשלום יהיה זמין בעמוד זה.
+          <span class="note-strong" id="buy-pro-status">
+            לאחר תשלום על Pro תקבל עד 2000 פניות בחודש ללא מגבלות יומיות נוקשות.
           </span>
         </div>
       </article>
@@ -694,6 +694,77 @@
     </p>
   </div>
 
+<script>
+  (function () {
+    const buyBtn = document.getElementById('buy-pro-btn');
+    const statusEl = document.getElementById('buy-pro-status');
+
+    if (!buyBtn) return;
+
+    buyBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      try {
+        buyBtn.disabled = true;
+        const originalText = buyBtn.textContent;
+        buyBtn.textContent = 'יוצר תשלום...';
+
+        const infoResp = await fetch('/profile/info', {
+          credentials: 'include'
+        });
+
+        if (infoResp.status === 401 || infoResp.status === 403) {
+          window.location.href = '/frontend/he/login/login.html';
+          return;
+        }
+
+        if (!infoResp.ok) {
+          throw new Error('profile_error');
+        }
+
+        const user = await infoResp.json();
+        if (!user || !user.id) {
+          throw new Error('no_user_id');
+        }
+
+        const createResp = await fetch('/api/yookassa/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            userId: user.id,
+            amount: 499,
+            description: 'Serpmonn Pro — 30 дней'
+          })
+        });
+
+        const data = await createResp.json();
+
+        if (!createResp.ok || !data.success || !data.confirmationUrl) {
+          buyBtn.disabled = false;
+          buyBtn.textContent = originalText;
+          if (statusEl) {
+            statusEl.textContent =
+              'יצירת התשלום נכשלה. נסה שוב מאוחר יותר.';
+          }
+          return;
+        }
+
+        window.location.href = data.confirmationUrl;
+      } catch (err) {
+        console.error('buy pro error', err);
+        buyBtn.disabled = false;
+        buyBtn.textContent = 'להצטרף למסלול Pro';
+        if (statusEl) {
+          statusEl.textContent =
+            'יצירת התשלום נכשלה. נסה שוב מאוחר יותר.';
+        }
+      }
+    });
+  })();
+</script>
 <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

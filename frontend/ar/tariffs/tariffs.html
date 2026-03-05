@@ -672,11 +672,11 @@
         </ul>
 
         <div class="cta-row">
-          <a href="#" class="btn btn-primary">
-            الدفع سيكون متاحاً لاحقاً
+          <a href="#" class="btn btn-primary" id="buy-pro-btn">
+            الاشتراك في باقة Pro
           </a>
-          <span class="note-strong">
-            تكلفة خطة Pro هي 2499 ₽ في الشهر. الدفع غير مفعّل بعد؛ بعد ربط YooKassa سيكون الدفع متاحاً على هذه الصفحة.
+          <span class="note-strong" id="buy-pro-status">
+            بعد الدفع لباقتك Pro ستحصل على ما يصل إلى 2000 طلب شهريًا بدون حدود يومية صارمة.
           </span>
         </div>
       </article>
@@ -694,6 +694,77 @@
     </p>
   </div>
 
+<script>
+  (function () {
+    const buyBtn = document.getElementById('buy-pro-btn');
+    const statusEl = document.getElementById('buy-pro-status');
+
+    if (!buyBtn) return;
+
+    buyBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      try {
+        buyBtn.disabled = true;
+        const originalText = buyBtn.textContent;
+        buyBtn.textContent = 'جارٍ إنشاء الدفع...';
+
+        const infoResp = await fetch('/profile/info', {
+          credentials: 'include'
+        });
+
+        if (infoResp.status === 401 || infoResp.status === 403) {
+          window.location.href = '/frontend/ar/login/login.html';
+          return;
+        }
+
+        if (!infoResp.ok) {
+          throw new Error('profile_error');
+        }
+
+        const user = await infoResp.json();
+        if (!user || !user.id) {
+          throw new Error('no_user_id');
+        }
+
+        const createResp = await fetch('/api/yookassa/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            userId: user.id,
+            amount: 499,
+            description: 'Serpmonn Pro — 30 дней'
+          })
+        });
+
+        const data = await createResp.json();
+
+        if (!createResp.ok || !data.success || !data.confirmationUrl) {
+          buyBtn.disabled = false;
+          buyBtn.textContent = originalText;
+          if (statusEl) {
+            statusEl.textContent =
+              'تعذّر إنشاء الدفع. حاول مرة أخرى لاحقًا.';
+          }
+          return;
+        }
+
+        window.location.href = data.confirmationUrl;
+      } catch (err) {
+        console.error('buy pro error', err);
+        buyBtn.disabled = false;
+        buyBtn.textContent = 'الاشتراك في باقة Pro';
+        if (statusEl) {
+          statusEl.textContent =
+            'تعذّر إنشاء الدفع. حاول مرة أخرى لاحقًا.';
+        }
+      }
+    });
+  })();
+</script>
 <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

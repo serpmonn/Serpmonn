@@ -672,11 +672,11 @@
         </ul>
 
         <div class="cta-row">
-          <a href="#" class="btn btn-primary">
-            支付功能稍后开放
+          <a href="#" class="btn btn-primary" id="buy-pro-btn">
+            开通 Pro 套餐
           </a>
-          <span class="note-strong">
-            Pro 方案价格为每月 2499 ₽。支付功能尚未启用；待接入 YooKassa 后，可在本页面完成支付。
+          <span class="note-strong" id="buy-pro-status">
+            支付 Pro 套餐后，你每月可获得最多 2000 次请求额度，没有严格的每日限制。
           </span>
         </div>
       </article>
@@ -694,6 +694,77 @@
     </p>
   </div>
 
+<script>
+  (function () {
+    const buyBtn = document.getElementById('buy-pro-btn');
+    const statusEl = document.getElementById('buy-pro-status');
+
+    if (!buyBtn) return;
+
+    buyBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      try {
+        buyBtn.disabled = true;
+        const originalText = buyBtn.textContent;
+        buyBtn.textContent = '正在创建支付…';
+
+        const infoResp = await fetch('/profile/info', {
+          credentials: 'include'
+        });
+
+        if (infoResp.status === 401 || infoResp.status === 403) {
+          window.location.href = '/frontend/zh-cn/login/login.html';
+          return;
+        }
+
+        if (!infoResp.ok) {
+          throw new Error('profile_error');
+        }
+
+        const user = await infoResp.json();
+        if (!user || !user.id) {
+          throw new Error('no_user_id');
+        }
+
+        const createResp = await fetch('/api/yookassa/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            userId: user.id,
+            amount: 499,
+            description: 'Serpmonn Pro — 30 дней'
+          })
+        });
+
+        const data = await createResp.json();
+
+        if (!createResp.ok || !data.success || !data.confirmationUrl) {
+          buyBtn.disabled = false;
+          buyBtn.textContent = originalText;
+          if (statusEl) {
+            statusEl.textContent =
+              '创建支付失败，请稍后重试。';
+          }
+          return;
+        }
+
+        window.location.href = data.confirmationUrl;
+      } catch (err) {
+        console.error('buy pro error', err);
+        buyBtn.disabled = false;
+        buyBtn.textContent = '开通 Pro 套餐';
+        if (statusEl) {
+          statusEl.textContent =
+            '创建支付失败，请稍后重试。';
+        }
+      }
+    });
+  })();
+</script>
 <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

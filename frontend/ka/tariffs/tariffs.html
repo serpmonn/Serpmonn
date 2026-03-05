@@ -672,11 +672,11 @@
         </ul>
 
         <div class="cta-row">
-          <a href="#" class="btn btn-primary">
-            გადახდა მოგვიანებით იქნება ხელმისაწვდომი
+          <a href="#" class="btn btn-primary" id="buy-pro-btn">
+            Pro ტარიფის გააქტიურება
           </a>
-          <span class="note-strong">
-            Pro ტარიფის ღირებულებაა 2499 ₽ თვეში. გადახდა ჯერ არ არის აქტიური; YooKassa‑ს შეერთების შემდეგ გადახდა ხელმისაწვდომი იქნება ამ გვერდზე.
+          <span class="note-strong" id="buy-pro-status">
+            Pro ტარიფის გადახდის შემდეგ თვეში 2000-მდე მოთხოვნას მიიღებთ მკაცრი დღიური ლიმიტების გარეშე.
           </span>
         </div>
       </article>
@@ -694,6 +694,77 @@
     </p>
   </div>
 
+<script>
+  (function () {
+    const buyBtn = document.getElementById('buy-pro-btn');
+    const statusEl = document.getElementById('buy-pro-status');
+
+    if (!buyBtn) return;
+
+    buyBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      try {
+        buyBtn.disabled = true;
+        const originalText = buyBtn.textContent;
+        buyBtn.textContent = 'გადახდის შექმნა...';
+
+        const infoResp = await fetch('/profile/info', {
+          credentials: 'include'
+        });
+
+        if (infoResp.status === 401 || infoResp.status === 403) {
+          window.location.href = '/frontend/ka/login/login.html';
+          return;
+        }
+
+        if (!infoResp.ok) {
+          throw new Error('profile_error');
+        }
+
+        const user = await infoResp.json();
+        if (!user || !user.id) {
+          throw new Error('no_user_id');
+        }
+
+        const createResp = await fetch('/api/yookassa/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            userId: user.id,
+            amount: 499,
+            description: 'Serpmonn Pro — 30 дней'
+          })
+        });
+
+        const data = await createResp.json();
+
+        if (!createResp.ok || !data.success || !data.confirmationUrl) {
+          buyBtn.disabled = false;
+          buyBtn.textContent = originalText;
+          if (statusEl) {
+            statusEl.textContent =
+              'გადახდის შექმნა ვერ მოხერხდა. სცადეთ მოგვიანებით.';
+          }
+          return;
+        }
+
+        window.location.href = data.confirmationUrl;
+      } catch (err) {
+        console.error('buy pro error', err);
+        buyBtn.disabled = false;
+        buyBtn.textContent = 'Pro ტარიფის გააქტიურება';
+        if (statusEl) {
+          statusEl.textContent =
+            'გადახდის შექმნა ვერ მოხერხდა. სცადეთ მოგვიანებით.';
+        }
+      }
+    });
+  })();
+</script>
 <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

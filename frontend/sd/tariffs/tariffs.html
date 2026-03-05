@@ -672,11 +672,11 @@
         </ul>
 
         <div class="cta-row">
-          <a href="#" class="btn btn-primary">
-            ادائگي بعد ۾ موجود ٿيندي
+          <a href="#" class="btn btn-primary" id="buy-pro-btn">
+            Pro پلان حاصل ڪريو
           </a>
-          <span class="note-strong">
-            Pro پلان جي قيمت مھيني 2499 ₽ آهي. ادائگي اڃا فعال نه آهي؛ YooKassa سان ڳنڍجڻ بعد ادائگي هن صفحي تي ممڪن ٿيندي.
+          <span class="note-strong" id="buy-pro-status">
+            Pro پلان جي ادائيگي بعد توهان کي سخت روزاني حدن کان سواءِ هر مهيني 2000 تائين رِڪويسٽون ملن ٿيون.
           </span>
         </div>
       </article>
@@ -694,6 +694,77 @@
     </p>
   </div>
 
+<script>
+  (function () {
+    const buyBtn = document.getElementById('buy-pro-btn');
+    const statusEl = document.getElementById('buy-pro-status');
+
+    if (!buyBtn) return;
+
+    buyBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      try {
+        buyBtn.disabled = true;
+        const originalText = buyBtn.textContent;
+        buyBtn.textContent = 'ادائيگي ٺاهي پئي وڃي...';
+
+        const infoResp = await fetch('/profile/info', {
+          credentials: 'include'
+        });
+
+        if (infoResp.status === 401 || infoResp.status === 403) {
+          window.location.href = '/frontend/sd/login/login.html';
+          return;
+        }
+
+        if (!infoResp.ok) {
+          throw new Error('profile_error');
+        }
+
+        const user = await infoResp.json();
+        if (!user || !user.id) {
+          throw new Error('no_user_id');
+        }
+
+        const createResp = await fetch('/api/yookassa/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            userId: user.id,
+            amount: 499,
+            description: 'Serpmonn Pro — 30 дней'
+          })
+        });
+
+        const data = await createResp.json();
+
+        if (!createResp.ok || !data.success || !data.confirmationUrl) {
+          buyBtn.disabled = false;
+          buyBtn.textContent = originalText;
+          if (statusEl) {
+            statusEl.textContent =
+              'ادائيگي ٺاهي نه سگهيس. مھرباني ڪري بعد ۾ وري ڪوشش ڪريو.';
+          }
+          return;
+        }
+
+        window.location.href = data.confirmationUrl;
+      } catch (err) {
+        console.error('buy pro error', err);
+        buyBtn.disabled = false;
+        buyBtn.textContent = 'Pro پلان حاصل ڪريو';
+        if (statusEl) {
+          statusEl.textContent =
+            'ادائيگي ٺاهي نه سگهيس. مھرباني ڪري بعد ۾ وري ڪوشش ڪريو.';
+        }
+      }
+    });
+  })();
+</script>
 <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

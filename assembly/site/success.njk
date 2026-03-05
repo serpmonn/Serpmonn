@@ -1,0 +1,36 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/tariffs/success.html{% else %}/frontend/{{ locale }}/tariffs/success.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  title: "{{ tariffs[locale].tariffs.successTitle | default('Оплата успешно завершена') }}"
+  description: "{{ tariffs[locale].tariffs.successDescription | default('Тариф Pro будет активирован в течение нескольких секунд.') }}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}">
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+</head>
+<body style="background:#020617;color:#e5e7eb;font-family:system-ui,-apple-system,BlinkMacSystemFont,'SF Pro Text','Segoe UI',sans-serif;display:flex;align-items:center;justify-content:center;min-height:100vh;padding:16px;">
+  <div style="max-width:480px;text-align:center;">
+    <h1 style="font-size:24px;margin-bottom:12px;">
+      {{ tariffs[locale].tariffs.successTitle | default('Оплата прошла успешно') }}
+    </h1>
+    <p style="font-size:14px;color:#9ca3af;margin-bottom:20px;">
+      {{ tariffs[locale].tariffs.successDescription | default('Тариф Pro будет активирован в течение нескольких секунд. Если он не включился, обновите страницу ИИ-поиска.') }}
+    </p>
+    <a href="{% if locale == 'ru' %}/frontend/main.html{% else %}/frontend/{{ locale }}/index.html{% endif %}"
+       style="display:inline-flex;align-items:center;justify-content:center;padding:10px 18px;border-radius:999px;background:#22c55e;color:#022c22;text-decoration:none;font-size:14px;font-weight:500;">
+      {{ tariffs[locale].tariffs.successBackToAi | default('Вернуться к ИИ‑поиску') }}
+    </a>
+  </div>
+</body>
+</html>

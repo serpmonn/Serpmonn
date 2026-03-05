@@ -672,11 +672,11 @@
         </ul>
 
         <div class="cta-row">
-          <a href="#" class="btn btn-primary">
-            পেমেন্ট পরে উপলব্ধ হবে
+          <a href="#" class="btn btn-primary" id="buy-pro-btn">
+            Pro ট্যারিফ নিন
           </a>
-          <span class="note-strong">
-            Pro প্ল্যানের মূল্য মাসে 2499 ₽। পেমেন্ট এখনো সক্রিয় নয়; YooKassa সংযোগের পর এই পৃষ্ঠায় পেমেন্ট করা যাবে।
+          <span class="note-strong" id="buy-pro-status">
+            Pro ট্যারিফ পরিশোধ করলে আপনি মাসে সর্বোচ্চ ২০০০টি রিকুয়েস্ট পাবেন, কড়া দৈনিক সীমা ছাড়াই।
           </span>
         </div>
       </article>
@@ -694,6 +694,77 @@
     </p>
   </div>
 
+<script>
+  (function () {
+    const buyBtn = document.getElementById('buy-pro-btn');
+    const statusEl = document.getElementById('buy-pro-status');
+
+    if (!buyBtn) return;
+
+    buyBtn.addEventListener('click', async (e) => {
+      e.preventDefault();
+
+      try {
+        buyBtn.disabled = true;
+        const originalText = buyBtn.textContent;
+        buyBtn.textContent = 'পেমেন্ট তৈরি হচ্ছে...';
+
+        const infoResp = await fetch('/profile/info', {
+          credentials: 'include'
+        });
+
+        if (infoResp.status === 401 || infoResp.status === 403) {
+          window.location.href = '/frontend/bn/login/login.html';
+          return;
+        }
+
+        if (!infoResp.ok) {
+          throw new Error('profile_error');
+        }
+
+        const user = await infoResp.json();
+        if (!user || !user.id) {
+          throw new Error('no_user_id');
+        }
+
+        const createResp = await fetch('/api/yookassa/create', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          credentials: 'include',
+          body: JSON.stringify({
+            userId: user.id,
+            amount: 499,
+            description: 'Serpmonn Pro — 30 дней'
+          })
+        });
+
+        const data = await createResp.json();
+
+        if (!createResp.ok || !data.success || !data.confirmationUrl) {
+          buyBtn.disabled = false;
+          buyBtn.textContent = originalText;
+          if (statusEl) {
+            statusEl.textContent =
+              'পেমেন্ট তৈরি করা যায়নি। পরে আবার চেষ্টা করুন।';
+          }
+          return;
+        }
+
+        window.location.href = data.confirmationUrl;
+      } catch (err) {
+        console.error('buy pro error', err);
+        buyBtn.disabled = false;
+        buyBtn.textContent = 'Pro ট্যারিফ নিন';
+        if (statusEl) {
+          statusEl.textContent =
+            'পেমেন্ট তৈরি করা যায়নি। পরে আবার চেষ্টা করুন।';
+        }
+      }
+    });
+  })();
+</script>
 <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
