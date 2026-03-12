@@ -9,7 +9,7 @@ eleventyComputed:
   canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/menu.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/menu.html{% endif %}"
   menu_home: "{{ menuTranslations[locale].home }}"
   menu_auth: "{{ menuTranslations[locale].auth }}"
-  menu_news: "{{ menuTranslations[locale].news }}"
+  menu_knowledge_base: "{{ menuTranslations[locale].knowledge_base }}"
   menu_games: "{{ menuTranslations[locale].games }}"
   menu_all_games: "{{ menuTranslations[locale].all_games }}"
   menu_web_games: "{{ menuTranslations[locale].web_games }}"
@@ -82,12 +82,6 @@ eleventyComputed:
     <a href="{% if locale == 'ru' %}/frontend/register/register.html{% else %}/frontend/{{ locale }}/register/register.html{% endif %}" id="login-register-btn">
         <img src="/frontend/images/login.ico" alt="Authentication" class="icon">
         {{ menu_auth }}
-    </a>
-
-    <!-- ========== РАЗДЕЛ НОВОСТЕЙ ========== -->
-    <a href="{% if locale == 'ru' %}/frontend/news/news.html{% else %}/frontend/{{ locale }}/news/news.html{% endif %}" class="menu-item">
-        <img src="/frontend/images/news.png" alt="Новости" class="icon">
-        {{ menu_news }}
     </a>
 
     <!-- ========== РАЗДЕЛ ИГР ========== -->
@@ -376,6 +370,19 @@ eleventyComputed:
         </div>
     </div>
 
+    <!-- ========== РАЗДЕЛ БАЗЫ ЗНАНИЙ ========== -->
+    <a href="{% if locale == 'ru' %}/frontend/news/news.html{% else %}/frontend/{{ locale }}/news/news.html{% endif %}" class="menu-item">
+        <img src="/frontend/images/news.png" alt="{{ menu_knowledge_base }}" class="icon">
+        {{ menu_knowledge_base }}
+    </a>
+
+    <!-- ========== ЮРИДИЧЕСКИЕ РАЗДЕЛЫ ========== -->
+    <!-- Политика конфиденциальности -->
+    <a href="{% if locale == 'ru' %}/frontend/privacy-policy/privacy-policy.html{% else %}/frontend/{{ locale }}/privacy-policy/privacy-policy.html{% endif %}" id="privacy-policy-btn">
+        <img src="/frontend/images/privacy-policy.ico" alt="Политика конфиденциальности" class="icon">
+        {{ menu_privacy_policy }}
+    </a>
+
     <!-- ========== РАЗДЕЛ ПАРТНЁРОВ ========== -->
     <a href="#" class="menu-item" data-submenu="partnersSubmenu">
         <img src="/frontend/images/OurPartners.ico" alt="Наши партнёры" class="icon">
@@ -418,13 +425,6 @@ eleventyComputed:
             OneHouseBoat
         </a>
     </div>
-
-    <!-- ========== ЮРИДИЧЕСКИЕ РАЗДЕЛЫ ========== -->
-    <!-- Политика конфиденциальности -->
-    <a href="{% if locale == 'ru' %}/frontend/privacy-policy/privacy-policy.html{% else %}/frontend/{{ locale }}/privacy-policy/privacy-policy.html{% endif %}" id="privacy-policy-btn">
-        <img src="/frontend/images/privacy-policy.ico" alt="Политика конфиденциальности" class="icon">
-        {{ menu_privacy_policy }}
-    </a>
 
     <!-- Информация о рекламе -->
     <a href="{% if locale == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ locale }}/ad-info/ad-info.html{% endif %}" id="ad-info-btn">
