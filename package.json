@@ -5,11 +5,12 @@
   "type": "module",
   "main": "backend/server.mjs",
   "scripts": {
-    "start": "pm2 start --name \"auth-server\" backend/server.mjs && pm2 start --name \"news-server\" backend/news/news-server.mjs && pm2 start --name \"leaderboard-server\" backend/games/leaderboard-server.mjs && pm2 start --name \"onnmail-server\" backend/auth/onnmail-server.mjs && pm2 start --name \"password-reset-server\" backend/auth/password-reset-server.mjs && pm2 start --name \"serpmonngamesbot\" backend/telegram_bots/Serpmonn_games/Serpmonn_games.mjs && pm2 start --name \"serpmonnconfirmbot\" backend/telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs && pm2 start --name \"memebot\" backend/telegram_bots/meme-bot/meme-bot.mjs && pm2 start --name \"ai-search\" backend/ai-search/ai-search.mjs && pm2 start --name \"autoReplyBot\" /var/www/bots/autoReplyBot/autoReplyBot.mjs && pm2 start --name \"communityBotBlog\" /var/www/bots/communityBotBlog/communityBotBlog.mjs && pm2 start --name \"communityBotSite\" /var/www/bots/communityBotSite/communityBotSite.mjs && pm2 start --name \"serpmonnKeeperBot\" /var/www/bots/serpmonnKeeperBot/serpmonnKeeperBot.mjs",
+    "start": "pm2 start --name \"auth-server\" backend/server.mjs && pm2 start --name \"news-server\" backend/news/news-server.mjs && pm2 start --name \"leaderboard-server\" backend/games/leaderboard-server.mjs && pm2 start --name \"onnmail-server\" backend/auth/onnmail-server.mjs && pm2 start --name \"password-reset-server\" backend/auth/password-reset-server.mjs && pm2 start --name \"serpmonngamesbot\" backend/telegram_bots/Serpmonn_games/Serpmonn_games.mjs && pm2 start --name \"serpmonnconfirmbot\" backend/telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs && pm2 start --name \"memebot\" backend/telegram_bots/meme-bot/meme-bot.mjs && pm2 start --name \"ai-search\" backend/ai-search/ai-search.mjs && pm2 start --name \"autoReplyBot\" /var/www/bots/autoReplyBot/autoReplyBot.mjs && pm2 start --name \"communityBotBlog\" /var/www/bots/communityBotBlog/communityBotBlog.mjs && pm2 start --name \"communityBotSite\" /var/www/bots/communityBotSite/communityBotSite.mjs && pm2 start --name \"serpmonnKeeperBot\" /var/www/bots/serpmonnKeeperBot/serpmonnKeeperBot.mjs && pm2 start pm2-goaccess.config.cjs",
     "restart": "pm2 restart all",
     "delete": "pm2 delete all",
     "logs": "pm2 logs",
     "status": "pm2 status",
+    "start-analytics": "pm2 start pm2-goaccess.config.cjs",
     "start-auth": "pm2 start --name \"auth-server\" backend/server.mjs",
     "start-news": "pm2 start --name \"news-server\" backend/news/news-server.mjs",
     "start-leaderboard": "pm2 start --name \"leaderboard-server\" backend/games/leaderboard-server.mjs",

@@ -19,10 +19,8 @@ import counterRoutes from './Counter/CounterRoutes.mjs';                        
 import subscribeRouter from './subscriber/subscribeRoutes.mjs';                                                                  // Импортируем маршруты для управления подписками и рассылками
 import rateLimit from 'express-rate-limit';                                                                                      // Импортируем ограничитель частоты запросов для защиты от DDoS
 import csrf from 'csurf';                                                                                                        // Импортируем CSRF middleware для защиты от межсайтовых запросов
+import { analyticsRouter } from './analytics/analytics.mjs';                                                                     // Маршруты аналитики страницы промокодов
 import promocodesRoutes from './promocodes/promocodesRoutes.mjs';                                                                // Импортируем маршруты для работы с промокодами и акциями
-import likesRoutes from './likes/likesRoutes.mjs';                                                                               // Импортируем маршруты для системы лайков и реакций
-import analyticsRoutes from './analytics/analyticsRoutes.mjs';                                                                   // Импортируем маршруты для сбора и анализа аналитики
-import gameAnalyticsRoutes from './analytics/gameAnalytics.mjs';                                                                 // Импортируем маршруты для аналитики игровых событий
 import improveRoutes from './improve/improve.mjs';                                                                               // Импорт маршрута для сбора предложений пользователей
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
@@ -104,12 +102,10 @@ app.use(yookassaRouter);
 app.use('/auth', authRoutes);                                                                                                    // Подключаем маршруты аутентификации с префиксом /auth
 app.use('/profile', profilesRoutes);                                                                                             // Подключаем маршруты профилей с префиксом /profile
 app.use('/counter', counterRoutes);                                                                                              // Подключаем маршруты счетчиков с префиксом /counter
-app.use(subscribeRouter);                                                                                                        // Подключаем маршруты подписки без дополнительного префикса
+app.use('/api', analyticsRouter);                                                                                                // Подключение маршрутов аналитики страницы промокодов
 app.use('/promocodes', promocodesRoutes);                                                                                        // Подключаем маршруты промокодов с префиксом /promocodes
 app.use('/api/promocodes', promocodesRoutes);                                                                                    // Дублируем маршруты промокодов под /api/promocodes для фронтенда
-app.use('/api/likes', likesRoutes);                                                                                              // Подключаем маршруты лайков с аутентификацией (GET без токена, POST с токеном)
-app.use('/api/analytics/likes', analyticsRoutes);                                                                                // Подключаем маршруты аналитики лайков (статистика конверсии гостевых в авторизованные)
-app.use('/api/analytics/game', gameAnalyticsRoutes);                                                                             // Подключаем маршруты аналитики игровых событий и статистики
+app.use(subscribeRouter);                                                                                                        // Подключаем маршруты подписки без дополнительного префикса
 app.use('/improve', improveRoutes);                                                                                              // Маршрут предложки
 
 app.use((err, req, res, next) => {                                                                                               // Обработчик ошибок (после всех роутов и middleware)

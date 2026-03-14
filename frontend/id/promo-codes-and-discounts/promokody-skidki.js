@@ -550,7 +550,7 @@ function createPromoCard(promo, isTopOffer = false) {
             </div>
             ${promo.promocode ? `
                 <p class="code">${escapeHtml(promo.promocode)} 
-                    <button class="submit-btn copy-btn" onclick="copyToClipboard('${escapeHtml(promo.promocode)}')" aria-label="Скопировать промокод ${escapeHtml(promo.promocode)}">Копировать</button>
+                    <button class="submit-btn copy-btn" type="button" aria-label="Скопировать промокод ${escapeHtml(promo.promocode)}">Копировать</button>
                 </p>
             ` : ''}
             <p class="bonus-info">${escapeHtml(bonusText)}</p>
@@ -630,9 +630,10 @@ function createPromoCard(promo, isTopOffer = false) {
     }
 
     const copyBtn = card.querySelector('.copy-btn');
-    if (copyBtn) {
+    if (copyBtn && promo.promocode) {
         copyBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Предотвращаем срабатывание клика по карточке
+            e.stopPropagation();
+            copyToClipboard(promo); // передаёт всю карточку
         });
     }
 
@@ -818,34 +819,25 @@ function filterPromos() {
     resultCount.textContent = `Найдено промокодов: ${filteredPromocodes.length}`;
     resultCount.className = 'result-count';
     resultCountContainer.appendChild(resultCount);
-
-    if (country) {
-        fetch('/track-filter', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ filter: 'country', value: country })
-        }).then(response => {
-            if (!response.ok) {
-                throw new Error(`Ошибка трекинга фильтра: ${response.status} ${response.statusText}`);
-            }
-            return response.json();
-        }).then(data => {
-            console.log('[Client] Трекинг фильтра успешен:', data);
-        }).catch(error => {
-            console.error('[Client] Ошибка трекинга фильтра:', error);
-            logError('Ошибка трекинга фильтра', error);
-        });
-    }
 }
 
-function copyToClipboard(text) {
+function copyToClipboard(promo) {
+    const text = promo.promocode || promo.code || String(promo);
+
     navigator.clipboard.writeText(text).then(async () => {
         showToast('Код скопирован!', 'success');
         try {
             await fetch('/api/track-copy', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ promocode: text, timestamp: new Date().toISOString() })
+                body: JSON.stringify({
+                    promocode: text,
+                    promocodeId: promo.id,
+                    title: promo.title,
+                    advertiser_info: promo.advertiser_info,
+                    landing_url: promo.landing_url || promo.link || promo.url,
+                    timestamp: new Date().toISOString()
+                })
             });
         } catch (error) {
             logError('Ошибка трекинга копирования', error);
