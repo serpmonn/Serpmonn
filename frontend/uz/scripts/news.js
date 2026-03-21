@@ -6,8 +6,6 @@ export async function loadNews() {
             ? 'http://localhost:4000/news'                        // URL для разработки - локальный news сервер
             : 'https://www.serpmonn.ru/news';                     // URL для продакшена - продакшен домен
 
-        console.log(`Загрузка новостей из: ${newsApiUrl}`);       // Логируем источник для отладки
-
         const response = await fetch(newsApiUrl, {                // Выполняем запрос к выбранному URL
             method: 'GET',                                        // Используем GET метод для получения данных
             headers: {

@@ -294,7 +294,33 @@
       <div class="ai-timestamp" id="ai-timestamp"></div>
     </div>
   </div>
+
+  <!-- Модальное окно для шаринга -->
+  <div id="ai-share-modal" class="ai-share-modal" style="display:none;">
+    <div class="ai-share-backdrop"></div>
+    <div class="ai-share-dialog" tabindex="-1">
+      <button class="ai-share-close" aria-label="Закрыть окно поделиться">×</button>
+      <div class="ai-share-title">Поделиться ответом</div>
+
+      <div class="ai-share-quick">
+        <a class="ai-share-pill ai-share-telegram" target="_blank" rel="noopener" title="Telegram"></a>
+        <a class="ai-share-pill ai-share-vk" target="_blank" rel="noopener" title="ВКонтакте"></a>
+        <a class="ai-share-pill ai-share-copy" href="javascript:void(0)" title="Скопировать ссылку"></a>
+      </div>
+    </div>
+  </div>
+
 </div>
+
+<!-- Toast для уведомлений о копировании -->
+<div id="ai-share-toast" class="ai-share-toast" style="display:none;"></div>
+
+<script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js"></script>
+<script>
+  if (window.vkBridge) {
+    vkBridge.send('VKWebAppInit');
+  }
+</script>
 
 <div class="ad-container main-page">
   <ins class="mrg-tag" style="display:inline-block;width:auto;height:250px" data-ad-client="ad-1844119" data-ad-slot="1844119"></ins>
@@ -306,7 +332,7 @@
   <button id="accept-cookies" class="cookie-button">Accetta</button>
   <button id="decline-cookies" class="cookie-button">Rifiuta</button>
 </div>                                                                                                                                                    
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js?v=miniapp1" defer></script>
 <script type="module" src="/frontend/scripts/scripts.js" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 <script src="/frontend/scripts/serpmonn-letters-bg.js" defer></script>

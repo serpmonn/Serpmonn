@@ -340,6 +340,185 @@ a:visited {
   color: #b91c1c;
 }
 
+/* ====== Модалка "Поделиться ответом" ====== */
+
+.ai-share-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1300;
+  display: none;                 /* управляется JS */
+  align-items: center;
+  justify-content: center;
+  font-family: inherit;
+}
+
+.ai-share-modal .ai-share-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35); /* лёгкий тёмный фон */
+}
+
+/* Карточка модалки — как ai-result-container, но поменьше и по центру */
+.ai-share-dialog {
+  max-width: 320px;
+  background: rgba(255,255,255,0.96);
+  border-radius: 16px;
+  border: 1px solid rgba(148,163,184,0.35);
+  box-shadow: 0 24px 60px rgba(15,23,42,0.35);
+  padding: 14px 14px 10px;
+  transform: scale(0.96) translateY(4px);
+  opacity: 0;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.ai-share-modal[data-open="true"] .ai-share-dialog {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+}
+
+.ai-share-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #0f172a;
+}
+
+/* Кнопка закрытия в правом верхнем углу */
+.ai-share-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+  border: none;
+  background: transparent;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 18px;
+  line-height: 1;
+  padding: 4px;
+}
+
+.ai-share-close:hover {
+  color: #111827;
+}
+
+/* Варианты шаринга: вертикальный стек, как список действий */
+.ai-share-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* Кнопки опций — по стилю близки к .ai-action-btn, но вытянутые */
+.ai-share-option {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(220, 53, 69, 0.35);  /* красный бордер, как у .ai-action-btn */
+  background: linear-gradient(145deg, #111111, #1a1a1a);
+  color: #f9fafb;
+  font-size: 13px;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease,
+              box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/* hover/active — повторяем поведение круглых кнопок */
+.ai-share-option:hover {
+  background: linear-gradient(145deg, #1a1a1a, #222222);
+  transform: translateY(-1px) scale(1.03);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+}
+
+.ai-share-option:active {
+  transform: translateY(0) scale(0.96);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+/* Немного отличий для соцсетей, но в том же диапазоне */
+.ai-share-telegram {
+  border-color: rgba(56, 189, 248, 0.7);
+}
+
+.ai-share-vk {
+  border-color: rgba(59, 130, 246, 0.7);
+}
+
+/* ====== Тост "скопировано" ====== */
+
+.ai-share-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%) translateY(20px);
+  background: rgba(17, 24, 39, 0.96);           /* тёмный, как фон action-кнопок */
+  color: #f9fafb;
+  padding: 7px 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  border: 1px solid rgba(220, 53, 69, 0.45);    /* красный акцент */
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 1400;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+
+.ai-share-toast.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.ai-share-quick {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+/* Круглые иконки наверху */
+.ai-share-pill {
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid rgba(220,53,69,0.35);
+  background: linear-gradient(145deg, #111111, #1a1a1a);
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+  transition: transform 0.15s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.ai-share-pill:hover {
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+}
+
+/* Примитивные псевдо-«иконки» (можно заменить на SVG) */
+.ai-share-pill.ai-share-telegram::before,
+.ai-share-pill.ai-share-vk::before,
+.ai-share-pill.ai-share-copy::before {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border-radius: 999px;
+  border: 2px solid #f9fafb;
+}
+
+.ai-share-pill.ai-share-telegram {
+  border-color: rgba(56,189,248,0.8);
+}
+
+.ai-share-pill.ai-share-vk {
+  border-color: rgba(59,130,246,0.8);
+}
+
+.ai-share-pill.ai-share-copy {
+  border-color: rgba(148,163,184,0.9);
+}
+
 /* Мобильная адаптация */
 
 @media (max-width: 640px) {
@@ -359,5 +538,15 @@ a:visited {
   .ai-result-footer {
     flex-wrap: wrap;
     justify-content: flex-start;
+  }
+
+  .ai-share-dialog {
+    max-width: none;
+    width: calc(100% - 24px);
+    margin: 0 12px;
+  }
+
+  .ai-share-toast {
+    bottom: 16px;
   }
 }

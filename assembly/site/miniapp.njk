@@ -1,0 +1,45 @@
+---
+permalink: "/frontend/mini/miniapp.html"
+layout: "layouts/base.njk"
+title: "Serpmonn Mini"
+---
+
+<style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Прячем стандартный хедер/футер и отступы именно в этом шаблоне */
+  body > header,
+  body > footer {
+    display: none !important;
+  }
+
+  /* На всякий случай прячем баннер куки, если он всё равно в DOM */
+  #cookie-consent {
+    display: none !important;
+  }
+
+  body > main {
+    margin: 0;
+    padding: 0;
+  }
+
+  #spn-mini-frame {
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    border: 0;
+    margin: 0;
+    padding: 0;
+    display: block;
+    z-index: 1;
+  }
+</style>
+
+<iframe id="spn-mini-frame"
+        src="/frontend/main.html"
+        frameborder="0"></iframe>

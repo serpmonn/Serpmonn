@@ -13,8 +13,7 @@ const { V2 } = paseto;                                                          
 
 const verifyToken = async (req, res, next) => {                                                                                 // Определяем middleware для проверки токена
     const token = req.cookies.token;                                                                                            // Извлекаем токен из cookies запроса
-    console.log('[auth] token present:', Boolean(token), 'path:', req.path, 'ip:', req.ip);
-                     // Безопасное логирование: не выводим сам токен
+    console.log('[auth] token present:', Boolean(token), 'path:', req.path, 'ip:', req.ip);                                     // Безопасное логирование: не выводим сам токен
 
     if (!token) {                                                                                                               // Проверяем, присутствует ли токен
         return res.status(401).json({ message: 'Токен отсутствует' });                                                          // Возвращаем ошибку, если токен отсутствует

@@ -156,48 +156,48 @@ export const confirmToken = async (req, res) => {                               
       [true, user.id]                                                                                           // Устанавливаем confirmed и сбрасываем токен
     );                                                                                        
                                                                                               
-    const payload = { id: user.id, email: user.email, username: user.username || user.email };             // Формируем данные для токена
-    const authToken = await V2.sign(payload, secretKey);                                      // Создаем авторизационный токен
+    const payload = { id: user.id, email: user.email, username: user.username || user.email };                  // Формируем данные для токена
+    const authToken = await V2.sign(payload, secretKey);                                                        // Создаем авторизационный токен
                                                                                               
-    res.cookie('token', authToken, {                                                         // Устанавливаем cookie с токеном
-      httpOnly: true,                                                                        // Защищаем cookie от доступа через JS
-      secure: true,                                                                          // Устанавливаем только для HTTPS
-      sameSite: 'Lax',                                                                       // Устанавливаем политику SameSite
-      maxAge: 30 * 24 * 60 * 60 * 1000,                                                      // Устанавливаем срок действия (30 дней)
-      domain: '.serpmonn.ru'                                                                 // Ведущая точка для работы на всех поддоменах
+    res.cookie('token', authToken, {                                                                            // Устанавливаем cookie с токеном
+      httpOnly: true,                                                                                           // Защищаем cookie от доступа через JS
+      secure: true,                                                                                             // Устанавливаем только для HTTPS
+      sameSite: 'Lax',                                                                                          // Устанавливаем политику SameSite
+      maxAge: 30 * 24 * 60 * 60 * 1000,                                                                         // Устанавливаем срок действия (30 дней)
+      domain: '.serpmonn.ru'                                                                                    // Ведущая точка для работы на всех поддоменах
     });                                                                                       
                                                                                               
-    console.log('Подтверждение: пользователь', user.email, 'confirmed = 1, токен создан');    // Логируем подтверждение
-    res.redirect('https://serpmonn.ru/frontend/profile/profile.html');                        // Переадресуем на страницу профиля
-  } catch (error) {                                                                           // Обрабатываем возможные ошибки
-    console.error("Ошибка подтверждения:", error);                                             // Логируем ошибку в консоль
-    res.status(500).json({ message: "Ошибка сервера." });                                    // Возвращаем ошибку сервера клиенту
+    console.log('Подтверждение: пользователь', user.email, 'confirmed = 1, токен создан');                      // Логируем подтверждение
+    res.redirect('https://serpmonn.ru/frontend/profile/profile.html');                                          // Переадресуем на страницу профиля
+  } catch (error) {                                                                                             // Обрабатываем возможные ошибки
+    console.error("Ошибка подтверждения:", error);                                                              // Логируем ошибку в консоль
+    res.status(500).json({ message: "Ошибка сервера." });                                                       // Возвращаем ошибку сервера клиенту
   }                                                                                         
 };                                                                                           
                                                                                               
-export const loginUser = async (req, res) => {                                                // Определяем функцию для входа пользователя
-  const { email, password } = req.body;                                                      // Извлекаем email и пароль из тела запроса
+export const loginUser = async (req, res) => {                                                                  // Определяем функцию для входа пользователя
+  const { email, password } = req.body;                                                                         // Извлекаем email и пароль из тела запроса
                                                                                               
-  const queryStr = 'SELECT * FROM users WHERE email = ?';                                     // Задаем SQL-запрос для поиска пользователя
-  try {                                                                                       // Начинаем блок обработки ошибок
-    const results = await query(queryStr, [email]);                                           // Выполняем запрос к базе данных
-    if (results.length === 0) {                                                               // Проверяем, найден ли пользователь
-      return res.status(401).json({ message: 'Неверный email или пароль' });                  // Возвращаем ошибку
+  const queryStr = 'SELECT * FROM users WHERE email = ?';                                                       // Задаем SQL-запрос для поиска пользователя
+  try {                                                                                                         // Начинаем блок обработки ошибок
+    const results = await query(queryStr, [email]);                                                             // Выполняем запрос к базе данных
+    if (results.length === 0) {                                                                                 // Проверяем, найден ли пользователь
+      return res.status(401).json({ message: 'Неверный email или пароль' });                                    // Возвращаем ошибку
     }                                                                                         
                                                                                               
-    const user = results[0];                                                                  // Извлекаем первого найденного пользователя
-    const isMatch = await compare(password, user.password_hash);                              // Сравниваем введенный пароль с хешем
-    if (!isMatch) {                                                                           // Проверяем, совпадает ли пароль
-      return res.status(401).json({ message: 'Неверный email или пароль' });                  // Возвращаем ошибку
+    const user = results[0];                                                                                    // Извлекаем первого найденного пользователя
+    const isMatch = await compare(password, user.password_hash);                                                // Сравниваем введенный пароль с хешем
+    if (!isMatch) {                                                                                             // Проверяем, совпадает ли пароль
+      return res.status(401).json({ message: 'Неверный email или пароль' });                                    // Возвращаем ошибку
     }                                                                                         
                                                                                               
-    const payload = { id: user.id, username: user.username, email: user.email };              // Формируем данные для токена
-    const token = await V2.sign(payload, secretKey);                                          // Создаем авторизационный токен
+    const payload = { id: user.id, username: user.username, email: user.email };                                // Формируем данные для токена
+    const token = await V2.sign(payload, secretKey);                                                            // Создаем авторизационный токен
                                                                                               
-    res.cookie('token', token, {                                                              // Устанавливаем cookie с токеном
-      httpOnly: true,                                                                        // Защищаем cookie от доступа через JS
-      secure: true,                                                                          // Устанавливаем только для HTTPS
-      sameSite: 'Lax',                                                                       // Устанавливаем политику SameSite для работы между страницами
+    res.cookie('token', token, {                                                                                // Устанавливаем cookie с токеном
+      httpOnly: true,                                                                                           // Защищаем cookie от доступа через JS
+      secure: true,                                                                                             // Устанавливаем только для HTTPS
+      sameSite: 'Lax',                                                                                          // Устанавливаем политику SameSite для работы между страницами
       maxAge: 24 * 60 * 60 * 1000,                                                           // Устанавливаем срок действия (1 день)
       domain: '.serpmonn.ru'                                                                 // Ведущая точка для работы на всех поддоменах
     });                                                                                       

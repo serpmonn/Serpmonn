@@ -298,6 +298,217 @@
     display: none;
 }
 
+/* Бейджи для пунктов меню */
+.badge {
+    display: inline-block;
+    margin-left: 8px;
+    padding: 2px 6px;
+    font-size: 10px;
+    line-height: 1;
+    font-weight: 700;
+    color: #fff;
+    background-color: #dc3545;
+    border-radius: 9999px;
+    vertical-align: middle;
+}
+
+/* Стили для кнопок доступности в меню */
+.a11y-toggle {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px !important;
+    text-decoration: none !important;
+    color: inherit !important;
+    border-radius: 6px;
+    transition: background-color 0.2s;
+    min-height: 44px;
+}
+
+.a11y-toggle:hover {
+    background-color: rgba(255,255,255,0.1) !important;
+}
+
+.a11y-toggle:active {
+    background-color: rgba(255,255,255,0.2) !important;
+}
+
+.a11y-icon {
+    margin-right: 8px;
+    font-size: 16px;
+    flex-shrink: 0;
+}
+
+.a11y-status {
+    font-size: 14px;
+    margin-left: auto;
+    flex-shrink: 0;
+}
+
+/* Стили для логотипа в меню */
+.menu-logo-link {
+    display: inline-block;
+    text-decoration: none;
+    transition: transform 0.2s ease;
+    min-width: 44px;
+    min-height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.menu-logo-link:hover {
+    transform: scale(1.1);
+}
+
+.menu-logo-link:active {
+    transform: scale(0.95);
+}
+
+/* ========== RTL СТИЛИ (СТРЕЛОЧКИ СЛЕВА И ПОИСК) ========== */
+
+/* СТРЕЛОЧКИ ДЛЯ RTL (СЛЕВА) */
+[dir="rtl"] .menu-item[data-submenu]:after {
+    content: '◀' !important;
+    right: auto !important;
+    left: 10px !important;
+    transform: translateY(-50%) !important;
+}
+
+[dir="rtl"] .menu-item[data-submenu][aria-expanded="true"]:after {
+    transform: translateY(-50%) rotate(-90deg) !important;
+}
+
+/* ПОИСКОВАЯ СТРОКА ДЛЯ RTL: Логотип (справа) → Поле поиска → Кнопка поиска (слева) */
+[dir="rtl"] .menu-search-row {
+    flex-direction: row !important; /* Отменяем row-reverse, оставляем нормальный порядок */
+}
+
+/* Для RTL меняем порядок через order: 3-2-1 (справа налево) */
+[dir="rtl"] .menu-logo-link {
+    order: 3 !important; /* Логотип справа (последний) */
+}
+
+[dir="rtl"] .menu-search-row .gcse-searchbox-only {
+    order: 2 !important; /* Поле поиска в середине */
+}
+
+[dir="rtl"] .menu-search-row .gsc-search-button.gsc-search-button-v2,
+[dir="rtl"] .menu-search-row button.gsc-search-button {
+    order: 1 !important; /* Кнопка поиска слева (первая) */
+    border-radius: 8px 0 0 8px !important; /* Скругление слева */
+}
+
+/* Внутренний контейнер Google Search для RTL - кнопка слева от поля */
+[dir="rtl"] .gsc-search-box,
+[dir="rtl"] .gsc-search-box-tools {
+    flex-direction: row !important; /* Кнопка | Поле (нормальный порядок) */
+}
+
+/* Кнопка поиска Google для RTL */
+[dir="rtl"] .gsc-search-button.gsc-search-button-v2 {
+    border-radius: 8px 0 0 8px !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+}
+
+/* Поле ввода Google для RTL */
+[dir="rtl"] .gsc-input {
+    border-radius: 0 8px 8px 0 !important;
+    text-align: right !important;
+    direction: rtl !important;
+}
+
+/* ИКОНКИ ДЛЯ RTL (СПРАВА ОТ ТЕКСТА) */
+[dir="rtl"] .icon {
+    margin-right: 0 !important;
+    margin-left: 10px !important;
+}
+
+[dir="rtl"] .tool-icon,
+[dir="rtl"] .game-icon,
+[dir="rtl"] .app-icon,
+[dir="rtl"] .a11y-icon {
+    margin-right: 0 !important;
+    margin-left: 8px !important;
+}
+
+/* ПОДМЕНЮ ДЛЯ RTL (ОТСТУП СПРАВА) */
+[dir="rtl"] .submenu-container {
+    padding-left: 0 !important;
+    padding-right: 20px !important;
+}
+
+/* HOVER-ЭФФЕКТ ДЛЯ RTL (ДВИЖЕНИЕ ВЛЕВО) */
+[dir="rtl"] .submenu-container a:hover {
+    transform: translateX(-3px) !important;
+}
+
+/* СТРЕЛОЧКИ В ПОДМЕНЮ ДЛЯ RTL */
+[dir="rtl"] .submenu-container .menu-item[data-submenu]:after {
+    right: auto !important;
+    left: 10px !important;
+}
+
+/* А11Y-СТАТУС ДЛЯ RTL */
+[dir="rtl"] .a11y-status {
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+
+/* Ряд с двумя кнопками */
+.auth-buttons {
+  display: flex;          /* ставит VK и Serpmonn в строку */
+  align-items: center;    /* выравнивает по вертикали */
+  gap: 15px;              /* расстояние между ними */
+  padding: 8px 10px;
+}
+
+/* Общий контейнер-иконка (кнопка) */
+.auth-icon {
+  display: inline-flex;   /* даёт центрирование содержимого */
+  align-items: center;    /* по вертикали */
+  justify-content: center;/* по горизонтали */
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;     /* делает круг */
+  background: #fff;       /* белый фон, */
+}
+
+/* Серпмонн-кнопка: картинка заполняет кнопку без искажений */
+.serpmonn-btn {
+  width: 48px;
+  height: 48px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Контейнер Serpmonn — белый фон, как у VK */
+.auth-serpmonn {
+  background: #fff;
+}
+
+.mini-shell-root,
+.mini-shell-layout {
+  width: 100%;
+  height: 100%;
+}
+
+.mini-shell-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.mini-menu-container {
+  /* если меню сверху фиксированное */
+}
+
+.mini-frame {
+  width: 100%;
+  border: 0;
+  flex: 1 1 auto;
+}
+
 /* Адаптивность для мобильных устройств */
 @media (max-width: 600px) {
     .menu-button {
@@ -414,53 +625,6 @@
     }
 }
 
-/* Бейджи для пунктов меню */
-.badge {
-    display: inline-block;
-    margin-left: 8px;
-    padding: 2px 6px;
-    font-size: 10px;
-    line-height: 1;
-    font-weight: 700;
-    color: #fff;
-    background-color: #dc3545;
-    border-radius: 9999px;
-    vertical-align: middle;
-}
-
-/* Стили для кнопок доступности в меню */
-.a11y-toggle {
-    display: flex !important;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 12px !important;
-    text-decoration: none !important;
-    color: inherit !important;
-    border-radius: 6px;
-    transition: background-color 0.2s;
-    min-height: 44px;
-}
-
-.a11y-toggle:hover {
-    background-color: rgba(255,255,255,0.1) !important;
-}
-
-.a11y-toggle:active {
-    background-color: rgba(255,255,255,0.2) !important;
-}
-
-.a11y-icon {
-    margin-right: 8px;
-    font-size: 16px;
-    flex-shrink: 0;
-}
-
-.a11y-status {
-    font-size: 14px;
-    margin-left: auto;
-    flex-shrink: 0;
-}
-
 /* Мобильные стили для кнопок доступности */
 @media (max-width: 768px) {
     .a11y-toggle {
@@ -478,123 +642,12 @@
     }
 }
 
-/* Стили для логотипа в меню */
-.menu-logo-link {
-    display: inline-block;
-    text-decoration: none;
-    transition: transform 0.2s ease;
-    min-width: 44px;
-    min-height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.menu-logo-link:hover {
-    transform: scale(1.1);
-}
-
-.menu-logo-link:active {
-    transform: scale(0.95);
-}
-
 /* Мобильные стили для логотипа */
 @media (max-width: 768px) {
     .menu-logo-link {
         min-width: 48px;
         min-height: 48px;
     }
-}
-
-/* ========== RTL СТИЛИ (СТРЕЛОЧКИ СЛЕВА И ПОИСК) ========== */
-
-/* СТРЕЛОЧКИ ДЛЯ RTL (СЛЕВА) */
-[dir="rtl"] .menu-item[data-submenu]:after {
-    content: '◀' !important;
-    right: auto !important;
-    left: 10px !important;
-    transform: translateY(-50%) !important;
-}
-
-[dir="rtl"] .menu-item[data-submenu][aria-expanded="true"]:after {
-    transform: translateY(-50%) rotate(-90deg) !important;
-}
-
-/* ПОИСКОВАЯ СТРОКА ДЛЯ RTL: Логотип (справа) → Поле поиска → Кнопка поиска (слева) */
-[dir="rtl"] .menu-search-row {
-    flex-direction: row !important; /* Отменяем row-reverse, оставляем нормальный порядок */
-}
-
-/* Для RTL меняем порядок через order: 3-2-1 (справа налево) */
-[dir="rtl"] .menu-logo-link {
-    order: 3 !important; /* Логотип справа (последний) */
-}
-
-[dir="rtl"] .menu-search-row .gcse-searchbox-only {
-    order: 2 !important; /* Поле поиска в середине */
-}
-
-[dir="rtl"] .menu-search-row .gsc-search-button.gsc-search-button-v2,
-[dir="rtl"] .menu-search-row button.gsc-search-button {
-    order: 1 !important; /* Кнопка поиска слева (первая) */
-    border-radius: 8px 0 0 8px !important; /* Скругление слева */
-}
-
-/* Внутренний контейнер Google Search для RTL - кнопка слева от поля */
-[dir="rtl"] .gsc-search-box,
-[dir="rtl"] .gsc-search-box-tools {
-    flex-direction: row !important; /* Кнопка | Поле (нормальный порядок) */
-}
-
-/* Кнопка поиска Google для RTL */
-[dir="rtl"] .gsc-search-button.gsc-search-button-v2 {
-    border-radius: 8px 0 0 8px !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-}
-
-/* Поле ввода Google для RTL */
-[dir="rtl"] .gsc-input {
-    border-radius: 0 8px 8px 0 !important;
-    text-align: right !important;
-    direction: rtl !important;
-}
-
-/* ИКОНКИ ДЛЯ RTL (СПРАВА ОТ ТЕКСТА) */
-[dir="rtl"] .icon {
-    margin-right: 0 !important;
-    margin-left: 10px !important;
-}
-
-[dir="rtl"] .tool-icon,
-[dir="rtl"] .game-icon,
-[dir="rtl"] .app-icon,
-[dir="rtl"] .a11y-icon {
-    margin-right: 0 !important;
-    margin-left: 8px !important;
-}
-
-/* ПОДМЕНЮ ДЛЯ RTL (ОТСТУП СПРАВА) */
-[dir="rtl"] .submenu-container {
-    padding-left: 0 !important;
-    padding-right: 20px !important;
-}
-
-/* HOVER-ЭФФЕКТ ДЛЯ RTL (ДВИЖЕНИЕ ВЛЕВО) */
-[dir="rtl"] .submenu-container a:hover {
-    transform: translateX(-3px) !important;
-}
-
-/* СТРЕЛОЧКИ В ПОДМЕНЮ ДЛЯ RTL */
-[dir="rtl"] .submenu-container .menu-item[data-submenu]:after {
-    right: auto !important;
-    left: 10px !important;
-}
-
-/* А11Y-СТАТУС ДЛЯ RTL */
-[dir="rtl"] .a11y-status {
-    margin-left: 0 !important;
-    margin-right: auto !important;
 }
 
 /* МОБИЛЬНАЯ ВЕРСИЯ ДЛЯ RTL */

@@ -12,6 +12,7 @@ import cors from 'cors';                                                        
 import express from 'express';                                                                                                   // Импортируем express для создания веб-сервера
 import cookieParser from 'cookie-parser';                                                                                        // Импортируем cookie-parser для работы с cookies
 
+import vkidRoutes from './vkid/vkidRoutes.mjs';                                                                                  // Импорт маршрутов авторизации ВК
 import authRoutes from './auth/authRoutes.mjs';                                                                                  // Импортируем маршруты аутентификации и авторизации
 import yookassaRouter from './yookassa/yookassaRoutes.mjs';                                                                      // Импортируем маршруты yookassa
 import profilesRoutes from './profiles/profilesRoutes.mjs';                                                                      // Импортируем маршруты для работы с профилями пользователей
@@ -107,6 +108,7 @@ app.use('/promocodes', promocodesRoutes);                                       
 app.use('/api/promocodes', promocodesRoutes);                                                                                    // Дублируем маршруты промокодов под /api/promocodes для фронтенда
 app.use(subscribeRouter);                                                                                                        // Подключаем маршруты подписки без дополнительного префикса
 app.use('/improve', improveRoutes);                                                                                              // Маршрут предложки
+app.use('/api', vkidRoutes);                                                                                                     // появится /api/vkid-login
 
 app.use((err, req, res, next) => {                                                                                               // Обработчик ошибок (после всех роутов и middleware)
     if (err && err.code === 'EBADCSRFTOKEN') {                                                                                   // Обработчик ошибок CSRF (невалидный токен)

@@ -189,14 +189,31 @@ function showResult(data) {
   setupActionButtons();
 }
 
+function showShareToast(message) {
+  const toast = document.getElementById('ai-share-toast');
+  if (!toast) return;
+  toast.textContent = message;
+  toast.style.display = 'block';
+  toast.classList.add('visible');
+  setTimeout(() => {
+    toast.classList.remove('visible');
+    setTimeout(() => {
+      toast.style.display = 'none';
+    }, 200);
+  }, 2000);
+}
+
 // ======================================================================================================================
 // НАСТРОЙКА ИНТЕРАКТИВНЫХ КНОПОК ДЕЙСТВИЙ
 // ======================================================================================================================
 function setupActionButtons() {
+  // 1. Копировать ответ
   const copyBtn = document.querySelector('.ai-action-btn[title^="Копировать"]');
   if (copyBtn) {
     copyBtn.addEventListener('click', async () => {
-      const content = document.getElementById('ai-result-content').textContent;
+      const content = document.getElementById('ai-result-content')?.textContent || '';
+      if (!content) return;
+
       try {
         await navigator.clipboard.writeText(content);
         copyBtn.dataset.state = 'copied';
@@ -208,51 +225,111 @@ function setupActionButtons() {
       } catch (err) {
         console.error('Ошибка копирования:', err);
       }
-    });
+    }, { once: true });
   }
 
+  // 2. Поделиться
   const shareBtn = document.querySelector('.ai-action-btn[title^="Поделиться"]');
   if (shareBtn) {
-    const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     let isSharing = false;
+    const resultEl = document.getElementById('ai-result-content');
 
-    // Мобилки: Web Share API
-    if (isMobile && navigator.share) {
-      shareBtn.addEventListener('click', async () => {
-        if (isSharing) return;
+    const openShareModal = () => {
+      const modal = document.getElementById('ai-share-modal');
+      if (!modal || !resultEl) return;
+
+      const dialog = modal.querySelector('.ai-share-dialog');
+      const closeBtn = modal.querySelector('.ai-share-close');
+      const backdrop = modal.querySelector('.ai-share-backdrop');
+      const tgLink = modal.querySelector('.ai-share-telegram');
+      const vkLink = modal.querySelector('.ai-share-vk');
+
+      const quickTg = modal.querySelector('.ai-share-pill.ai-share-telegram');
+      const quickVk = modal.querySelector('.ai-share-pill.ai-share-vk');
+      const quickCopy = modal.querySelector('.ai-share-pill.ai-share-copy');
+
+      const pageUrl = window.location.href.split('#')[0];
+      const answerText = resultEl.textContent.trim().substring(0, 300);
+
+      // Ссылки
+      if (tgLink) {
+        tgLink.href =
+          `https://t.me/share/url?url=${encodeURIComponent(pageUrl)}` +
+          `&text=${encodeURIComponent(answerText)}`;
+      }
+
+      if (vkLink) {
+        vkLink.href =
+          `https://vk.com/share.php?url=${encodeURIComponent(pageUrl)}` +
+          `&title=${encodeURIComponent('Ответ от Serpmonn AI')}` +
+          `&comment=${encodeURIComponent(answerText)}`;
+      }
+
+      // Быстрые круглые кнопки
+      if (quickTg && tgLink) quickTg.onclick = () => tgLink.click();
+      if (quickVk && vkLink) quickVk.onclick = () => vkLink.click();
+
+      if (quickCopy) {
+        quickCopy.onclick = async () => {
+          try {
+            await navigator.clipboard.writeText(pageUrl);
+            showShareToast('Ссылка на ответ скопирована');
+          } catch (e) {
+            console.error('Clipboard error', e);
+          }
+        };
+      }
+
+      const close = () => {
+        modal.removeAttribute('data-open');
+        setTimeout(() => { modal.style.display = 'none'; }, 150);
+        document.removeEventListener('keydown', onEsc);
+      };
+      const onEsc = (e) => {
+        if (e.key === 'Escape') close();
+      };
+
+      if (closeBtn) closeBtn.onclick = close;
+      if (backdrop) backdrop.onclick = close;
+
+      modal.style.display = 'flex';
+      modal.setAttribute('data-open', 'true');
+      if (dialog) dialog.focus();
+      document.addEventListener('keydown', onEsc);
+    };
+
+    shareBtn.addEventListener('click', async () => {
+      if (!resultEl) return;
+
+      // 1) Пытаемся вызвать системный share везде, где он есть (мобилка или десктоп)
+      if (navigator.share && !isSharing) {
         isSharing = true;
         try {
           await navigator.share({
             title: 'Serpmonn AI',
-            text: document
-              .getElementById('ai-result-content')
-              .textContent.substring(0, 100) + '...',
+            text: resultEl.textContent.trim().substring(0, 200),
             url: window.location.href
           });
-        } catch (err) {
-          console.error('Ошибка sharing:', err);
-        } finally {
           isSharing = false;
-        }
-      });
-    } else {
-      // Десктоп: копируем ссылку и показываем отклик
-      shareBtn.addEventListener('click', async () => {
-        try {
-          await navigator.clipboard.writeText(window.location.href);
-          shareBtn.dataset.state = 'copied-link';
-          shareBtn.style.borderColor = '#10b981';
-          setTimeout(() => {
-            shareBtn.dataset.state = '';
-            shareBtn.style.borderColor = '';
-          }, 2000);
+          return; // нативный share отработал → свою модалку не показываем
         } catch (err) {
-          console.error('Ошибка копирования ссылки:', err);
+          // если юзер сам отменил, тоже просто выходим
+          if (err && err.name === 'AbortError') {
+            isSharing = false;
+            return;
+          }
+          console.warn('navigator.share не сработал, fallback на модалку', err);
+          isSharing = false;
+          // и идём в fallback
         }
-      });
-    }
+      }
+
+      // 2) Если API нет или упал → показываем свою модалку
+      openShareModal();
+    });
   }
 
+  // 3. Лайк/дизлайк
   document.querySelectorAll('.feedback-btn').forEach(btn => {
     btn.addEventListener('click', function () {
       const isLike = this.classList.contains('like');
@@ -271,6 +348,7 @@ function setupActionButtons() {
     });
   });
 }
+
 
 // ======================================================================================================================
 // РЕКЛАМНЫЙ БЛОК: ОБРАБОТКА ins.mrg-tag
