@@ -77,79 +77,6 @@
     });
   }
 
-  // Pull-to-refresh для страниц с прокруткой у body
-  function setupPullToRefresh() {
-    if (!isTouchDevice()) return;
-    const threshold = 70; // px
-    let pulling = false;
-    let startY = 0;
-    let currentY = 0;
-    let scrollStartTop = 0;
-    let indicator;
-
-    function ensureIndicator() {
-      if (indicator) return indicator;
-      indicator = document.createElement("div");
-      indicator.style.position = "fixed";
-      indicator.style.top = "8px";
-      indicator.style.left = "50%";
-      indicator.style.transform = "translateX(-50%)";
-      indicator.style.padding = "6px 10px";
-      indicator.style.borderRadius = "16px";
-      indicator.style.background = "rgba(0,0,0,0.6)";
-      indicator.style.color = "#fff";
-      indicator.style.fontSize = "12px";
-      indicator.style.zIndex = "9999";
-      indicator.style.opacity = "0";
-      indicator.style.transition = "opacity 150ms ease";
-      indicator.textContent = "Потяните, чтобы обновить";
-      document.body.appendChild(indicator);
-      return indicator;
-    }
-
-    function onTouchStart(e) {
-      if (document.scrollingElement && document.scrollingElement.scrollTop > 0) return;
-      const t = e.touches[0];
-      startY = t.clientY;
-      scrollStartTop = document.scrollingElement ? document.scrollingElement.scrollTop : 0;
-      pulling = scrollStartTop <= 0;
-      currentY = startY;
-    }
-
-    function onTouchMove(e) {
-      if (!pulling) return;
-      const t = e.touches[0];
-      currentY = t.clientY;
-      const dy = currentY - startY;
-      if (dy > 10) {
-        ensureIndicator().style.opacity = "1";
-        ensureIndicator().textContent = dy > threshold ? "Отпустите для обновления" : "Потяните, чтобы обновить";
-      }
-    }
-
-    function onTouchEnd() {
-      if (!pulling) return;
-      const dy = currentY - startY;
-      ensureIndicator().style.opacity = "0";
-      if (dy > threshold) {
-        haptic(20);
-        // Страницы могут перехватить событие; по умолчанию — перезагрузка
-        const ev = new CustomEvent("spn:pull-to-refresh");
-        const canceled = !window.dispatchEvent(ev);
-        if (!canceled) {
-          location.reload();
-        }
-      }
-      pulling = false;
-      startY = 0;
-      currentY = 0;
-    }
-
-    window.addEventListener("touchstart", onTouchStart, { passive: true });
-    window.addEventListener("touchmove", onTouchMove, { passive: true });
-    window.addEventListener("touchend", onTouchEnd, { passive: true });
-  }
-
   // Увеличение размеров touch-таргетов через небольшой runtime-стиль
   function injectTouchTargetStyles() {
     const style = document.createElement("style");
@@ -171,7 +98,6 @@
   function init() {
     setupLazyImages();
     setupSwipeNavigation();
-    setupPullToRefresh();
     injectTouchTargetStyles();
     setupPassiveScroll();
   }
