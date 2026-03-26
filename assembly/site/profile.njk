@@ -14,180 +14,186 @@ eleventyComputed:
 <!DOCTYPE html>
 <html lang="{{ locale }}" dir="{{ dir }}">
 <head>
-    <meta http-equiv="Content-Language" content="{{ locale }}">
-    <meta charset="UTF-8">
-    <!-- Исправленный viewport для PWA/TWA -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <title>{{ profile[locale].profile.pageTitle }}</title>
-    <meta name="description" content="{{ profile[locale].profile.metaDescription }}">
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="{{ profile[locale].profile.ogTitle }}">
-    <meta property="og:description" content="{{ profile[locale].profile.ogDescription }}">
-    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="{{ canonical }}">
-    <meta property="og:type" content="profile">
-    
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ profile[locale].profile.ogTitle }}">
-    <meta name="twitter:description" content="{{ profile[locale].profile.twitterDescription }}">
-    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
-    
-    <!-- Каноническая ссылка -->
-    <link rel="canonical" href="{{ canonical }}" />
-    
-    <!-- Hreflang для всех языков -->
-    {% for loc in locales %}
-        {% if loc == 'ru' %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/profile/profile.html" hreflang="{{ loc }}" />
-        {% else %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/profile/profile.html" hreflang="{{ loc }}" />
-        {% endif %}
-    {% endfor %}
-    <link rel="alternate" href="{{ site.baseUrl }}/frontend/profile/profile.html" hreflang="x-default" />
-    
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
-    
-    <!-- Подключение стилей -->
-    <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <link rel="stylesheet" href="profile_styles.css">
-    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-    
-    <!-- Подключение скриптов -->
-    <script type="module" src="profile_scripts.js" defer></script>
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <meta http-equiv="Content-Language" content="{{ locale }}">
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+  >
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+  <title>{{ profile[locale].profile.pageTitle }}</title>
+  <meta name="description" content="{{ profile[locale].profile.metaDescription }}">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="{{ profile[locale].profile.ogTitle }}">
+  <meta property="og:description" content="{{ profile[locale].profile.ogDescription }}">
+  <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:type" content="website">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ profile[locale].profile.ogTitle }}">
+  <meta name="twitter:description" content="{{ profile[locale].profile.twitterDescription }}">
+  <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+
+  <!-- Каноническая ссылка -->
+  <link rel="canonical" href="{{ canonical }}">
+
+  <!-- hreflang -->
+  {% for loc in locales %}
+    {% if loc == 'ru' %}
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/profile/profile.html" hreflang="{{ loc }}">
+    {% else %}
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/profile/profile.html" hreflang="{{ loc }}">
+    {% endif %}
+  {% endfor %}
+  <link rel="alternate" href="{{ site.baseUrl }}/frontend/profile/profile.html" hreflang="x-default">
+
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+
+  <!-- Стили -->
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="profile_styles.css">
+
+  <!-- Скрипты -->
+  <script type="module" src="profile_scripts.js" defer></script>
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>
-    <!-- Обертка для страницы -->
-    <div class="page-wrapper">
-        <!-- Основной контейнер -->
-        <div class="container">
-            <h2>{{ profile[locale].profile.mainTitle }}</h2>
+<div class="page-wrapper">
+  <main class="container" role="main">
+    <!-- Верхняя зона профиля -->
+    <section class="profile-header card" aria-labelledby="profileHeaderTitle">
+      <div class="profile-avatar" aria-hidden="true">
+        <span id="avatarInitials">U</span>
+      </div>
 
-            <!-- Информация о профиле -->
-            <div id="profileInfo" class="card">
-                <h3>{{ profile[locale].profile.infoSection.title }}</h3>
-                <p><strong>{{ profile[locale].profile.infoSection.username }}</strong> <span id="username"></span></p>
-                <p><strong>{{ profile[locale].profile.infoSection.email }}</strong> <span id="email"></span></p>
-            </div>
+      <div class="profile-header-main">
+        <h1 id="profileHeaderTitle">
+          {{ profile[locale].profile.mainTitle }}
+        </h1>
 
-            <!-- Информация о тарифе и лимитах -->
-            <div id="planCard" class="card">
-                <h3>📦 Тариф и лимиты</h3>
-                <p><strong>Текущий тариф:</strong> <span id="planName">—</span></p>
-                <p id="planStatus"></p>
-                <p id="planQuota"></p>
-                <p id="planHint"></p>
-            </div>
+        <p class="profile-identity">
+          <span id="username" class="profile-username">—</span>
+          <span class="profile-dot">•</span>
+          <span id="email" class="profile-email">—</span>
+        </p>
 
-            <!-- Раздел инструментов -->
-            <div class="card">
-                <h3>{{ profile[locale].profile.toolsSection.title }}</h3>
-                <div class="tools-grid">
-                    <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/marketing/utm-builder.html{% else %}/frontend/{{ locale }}/tools/marketing/utm-builder.html{% endif %}">
-                        <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.utm.icon }}</span>
-                        <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.utm.text }}</span>
-                    </a>
-                    <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/security/password-generator.html{% else %}/frontend/{{ locale }}/tools/security/password-generator.html{% endif %}">
-                        <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.password.icon }}</span>
-                        <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.password.text }}</span>
-                    </a>
-                    <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/marketing/word-counter.html{% else %}/frontend/{{ locale }}/tools/marketing/word-counter.html{% endif %}">
-                        <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.wordCounter.icon }}</span>
-                        <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.wordCounter.text }}</span>
-                    </a>
-                    <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/engineering/unit-converter.html{% else %}/frontend/{{ locale }}/tools/engineering/unit-converter.html{% endif %}">
-                        <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.unitConverter.icon }}</span>
-                        <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.unitConverter.text }}</span>
-                    </a>
-                    <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/logistics/depreciation-calculator.html{% else %}/frontend/{{ locale }}/tools/logistics/depreciation-calculator.html{% endif %}">
-                        <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.depreciation.icon }}</span>
-                        <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.depreciation.text }}</span>
-                    </a>
-                    <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/logistics/fuel-calculator.html{% else %}/frontend/{{ locale }}/tools/logistics/fuel-calculator.html{% endif %}">
-                        <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.fuel.icon }}</span>
-                        <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.fuel.text }}</span>
-                    </a>
-                    <a class="tool-link" href="{% if locale == 'ru' %}/frontend/tools/ecology/product-footprint-calculator.html{% else %}/frontend/{{ locale }}/tools/ecology/product-footprint-calculator.html{% endif %}">
-                        <span class="tool-icon">{{ profile[locale].profile.toolsSection.tools.footprint.icon }}</span>
-                        <span class="tool-text">{{ profile[locale].profile.toolsSection.tools.footprint.text }}</span>
-                    </a>
-                </div>
-                <div id="recentTools" class="recent-tools"></div>
-            </div>
-
-            <!-- Редактирование профиля -->
-            <div class="card">
-                <h3>{{ profile[locale].profile.editSection.title }}</h3>
-                <form id="profileForm" class="form-card">
-                    <label for="newUsername">{{ profile[locale].profile.editSection.newUsername }}</label>
-                    <input type="text" id="newUsername" name="newUsername" maxlength="255" placeholder="{{ profile[locale].profile.editSection.newUsernamePlaceholder }}">
-
-                    <label for="newEmail">{{ profile[locale].profile.editSection.newEmail }}</label>
-                    <input type="email" id="newEmail" name="newEmail" placeholder="{{ profile[locale].profile.editSection.newEmailPlaceholder }}">
-
-                    <button type="submit" class="primary-button">{{ profile[locale].profile.editSection.saveButton }}</button>
-                </form>
-                <p id="message" class="message"></p>
-            </div>
-
-            <!-- Дополнительные функции -->
-            <div class="card">
-                <h3>{{ profile[locale].profile.extraSection.title }}</h3>
-                <div class="onnmail-buttons">
-                    <button id="createOnnmailButton" class="secondary-button">
-                        <span class="button-icon">{{ profile[locale].profile.extraSection.createOnnmailIcon }}</span>
-                        {{ profile[locale].profile.extraSection.createOnnmail }}
-                    </button>
-                    <button id="loginOnnmailButton" class="secondary-button">
-                        <span class="button-icon">{{ profile[locale].profile.extraSection.loginOnnmailIcon }}</span>
-                        {{ profile[locale].profile.extraSection.loginOnnmail }}
-                    </button>
-                </div>
-            </div>
-
-            <!-- Выход из аккаунта -->
-            <div class="logout-section">
-                <button id="logoutButton" class="danger-button">
-                    <span class="button-icon">{{ profile[locale].profile.logoutSection.buttonIcon }}</span>
-                    {{ profile[locale].profile.logoutSection.buttonText }}
-                </button>
-            </div>
+        <div class="profile-status-row">
+          <span id="accountStatusBadge" class="status-badge status-badge--unconfirmed">
+            {{ profile[locale].profile.infoSection.accountStatusLabel }}
+          </span>
+          <span id="planBadge" class="status-badge status-badge--free">
+            Free
+          </span>
         </div>
-    </div>
 
-    <!-- Скрипт для PWA/TWA исправлений -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            window.scrollTo({ top: 0, behavior: 'instant' });
-            setTimeout(() => {
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-                document.documentElement.scrollTop = 0;
-                document.body.scrollTop = 0;
-            }, 100);
-            if (window.matchMedia('(display-mode: standalone)').matches || 
-                window.matchMedia('(display-mode: fullscreen)').matches) {
-                setTimeout(() => {
-                    window.scrollTo(0, 0);
-                }, 200);
-            }
-        });
+        <!-- ТОЛЬКО текст onnmail -->
+        <div class="profile-onnmail-row">
+          <span class="profile-onnmail-title">
+            {{ profile[locale].profile.extraSection.onnmailLabel or '@onnmail' }}
+          </span>
+          <span class="profile-onnmail-desc">
+            {{ profile[locale].profile.extraSection.onnmailDescription or "Почта Serpmonn для уведомлений и сервисных писем." }}
+          </span>
+        </div>
+      </div>
 
-        if ('ontouchstart' in window) {
-            let lastTouchEnd = 0;
-            document.addEventListener('touchend', function(event) {
-                const now = (new Date()).getTime();
-                if (now - lastTouchEnd <= 300) {
-                    event.preventDefault();
-                }
-                lastTouchEnd = now;
-            }, false);
-        }
-    </script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+      <!-- ПРАВАЯ колонка -->
+      <div class="profile-header-actions">
+        <button id="openEditProfile" type="button" class="secondary-button">
+          {{ profile[locale].profile.editSection.openEditButton or "Изменить данные" }}
+        </button>
+        <div class="profile-onnmail-actions">
+          <button
+            id="createOnnmailButton"
+            type="button"
+            class="secondary-button secondary-button--xs"
+          >
+            {{ profile[locale].profile.extraSection.createOnnmail or "Создать" }}
+          </button>
+          <button
+            id="loginOnnmailButton"
+            type="button"
+            class="secondary-button secondary-button--xs"
+          >
+            {{ profile[locale].profile.extraSection.loginOnnmail or "Открыть" }}
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
+    <div id="editProfileMount"></div>
+
+    <!-- Блок тарифа и лимитов -->
+    <section id="planCard" class="card" aria-labelledby="planTitle">
+      <div class="card-header-row">
+        <h2 id="planTitle">
+          {{ profile[locale].profile.planSection.title or "Подписка и лимиты" }}
+        </h2>
+        <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
+          {{ profile[locale].profile.planSection.manageButton or "Управлять тарифом" }}
+        </button>
+      </div>
+
+      <p class="plan-subtitle">
+        {{ profile[locale].profile.planSection.currentPlanLabel or "Текущий тариф:" }}
+        <span id="planName" class="plan-name">Free</span>
+      </p>
+
+      <p id="planStatus" class="plan-status"></p>
+
+      <div class="plan-quota">
+        <div class="plan-quota-header">
+          <span>{{ profile[locale].profile.planSection.quotaLabel or "Месячный лимит запросов" }}</span>
+          <span id="planQuotaCounter" class="plan-quota-counter">—</span>
+        </div>
+        <div class="plan-quota-bar">
+          <div id="planQuotaBarFill" class="plan-quota-bar-fill"></div>
+        </div>
+        <p id="planQuotaHint" class="plan-quota-hint"></p>
+      </div>
+
+      <p id="planHint" class="plan-hint"></p>
+    </section>
+
+    <!-- Мои инструменты (избранное + недавние) -->
+    <section class="card" aria-labelledby="toolsTitle">
+      <h2 id="toolsTitle">
+        {{ profile[locale].profile.toolsSection.title or "Мои инструменты" }}
+      </h2>
+
+      <div class="tools-grid" id="favoriteTools"></div>
+
+      <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
+        {{ profile[locale].profile.toolsSection.noFavorites1 or "Вы ещё не выбрали инструменты." }}
+        {{ profile[locale].profile.toolsSection.noFavorites2 or "Отметьте ⭐ на странице" }}
+        <a href="{% if locale == 'ru' %}/frontend/tools/tools.html{% else %}/frontend/{{ locale }}/tools/tools.html{% endif %}">
+          {{ profile[locale].profile.toolsSection.allToolsLink or "всех инструментов" }}
+        </a>,
+        {{ profile[locale].profile.toolsSection.noFavorites3 or "и они появятся здесь." }}
+      </p>
+
+      <div id="recentTools" class="recent-tools"></div>
+    </section>
+
+    <!-- Выход -->
+    <section class="logout-section" aria-label="{{ profile[locale].profile.logoutSection.ariaLabel or 'Выход из аккаунта' }}">
+      <button id="logoutButton" type="button" class="danger-button">
+        {{ profile[locale].profile.logoutSection.buttonText or "Выйти из аккаунта" }}
+      </button>
+    </section>
+
+    <!-- Глобальный статус -->
+    <p id="globalMessage" class="message" aria-live="polite"></p>
+  </main>
+</div>
+
+<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
 </html>
