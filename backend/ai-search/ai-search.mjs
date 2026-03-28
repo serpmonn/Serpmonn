@@ -104,10 +104,21 @@ async function attachUserIfToken(req, res, next) {
 }
 
 function getUserIdentity(req) {                                                                                                                                                                                                                 // Определяет, гость это или авторизованный
+  // 1. Обычный авторизованный пользователь с сайта serpmonn.ru
   if (req.user && req.user.id) {
     return { id: `user:${req.user.id}`, type: 'user' };                                                                                                                                                                                         // У тебя здесь уже есть авторизация -> берём id пользователя
   }
 
+  // 2. Специальный режим для ВК-агента: считаем по VK user id
+  const vkClient = req.headers['x-client'];
+  const vkUserId = req.headers['x-vk-user'];
+
+  if (vkClient === 'vk-agent' && vkUserId) {
+    // гостевой тариф, но ключ — vk-user:<id>
+    return { id: `vk-user:${vkUserId}`, type: 'guest' };
+  }
+
+  // 3. Остальные гости (браузер без куки) — по IP, как было
   return { id: `guest:${req.ip}`, type: 'guest' };                                                                                                                                                                                              // Иначе — гость. Для простоты считает по IP.
 }
 
@@ -202,6 +213,22 @@ app.post('/ai-search', aiSearchLimiter, async (req, res) => {
           const usage = checkAndIncrementUsage(identity);
 
           if (!usage.ok) {
+            const isVkAgent = req.headers['x-client'] === 'vk-agent';
+
+            if (isVkAgent) {
+              // Чистый текст для ВК, без HTML
+              return res.status(403).json({
+                error:
+                  'Лимит 5 запросов в день исчерпан. ' +
+                  'Чтобы продолжить пользоваться Serpmonn без ограничений, войдите: https://serpmonn.ru/frontend/login/login.html ' +
+                  'или зарегистрируйтесь: https://serpmonn.ru/frontend/register/register.html',
+                needAuth: true,
+                limit: usage.limit,
+                used: usage.used
+              });
+            }
+
+
             return res.status(403).json({
               error:
                 'Лимит 5 запросов для гостей исчерпан. ' +
