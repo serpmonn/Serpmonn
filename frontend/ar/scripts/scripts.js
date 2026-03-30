@@ -207,15 +207,89 @@ function showShareToast(message) {
 // НАСТРОЙКА ИНТЕРАКТИВНЫХ КНОПОК ДЕЙСТВИЙ
 // ======================================================================================================================
 function setupActionButtons() {
-  // 1. Копировать ответ
+
+  function openWebShareModal(pageUrl, answerText) {
+    const modal = document.getElementById('ai-share-modal');
+    if (!modal) return;
+
+    const dialog = modal.querySelector('.ai-share-dialog');
+    const backdrop = modal.querySelector('.ai-share-backdrop');
+
+    const quickTg = modal.querySelector('.ai-share-pill.ai-share-telegram');
+    const quickVk = modal.querySelector('.ai-share-pill.ai-share-vk');
+
+    // Telegram
+    const tgUrl =
+      'https://t.me/share/url?url=' +
+      encodeURIComponent(pageUrl) +
+      '&text=' +
+      encodeURIComponent(answerText);
+
+    // VK
+    const vkUrl =
+      'https://vk.com/share.php?url=' +
+      encodeURIComponent(pageUrl) +
+      '&title=' +
+      encodeURIComponent('Ответ от Serpmonn AI') +
+      '&comment=' +
+      encodeURIComponent(answerText);
+
+    if (quickTg) {
+      quickTg.onclick = () => {
+        window.open(tgUrl, '_blank', 'noopener');
+      };
+    }
+
+    if (quickVk) {
+      quickVk.onclick = () => {
+        window.open(vkUrl, '_blank', 'noopener');
+      };
+    }
+
+    const close = () => {
+      modal.removeAttribute('data-open');
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 150);
+      document.removeEventListener('keydown', onEsc);
+    };
+
+    const onEsc = e => {
+      if (e.key === 'Escape') close();
+    };
+
+    if (backdrop) backdrop.onclick = close;
+
+    modal.style.display = 'flex';
+    modal.setAttribute('data-open', 'true');
+    if (dialog) dialog.focus();
+    document.addEventListener('keydown', onEsc);
+  }
+
+  /// 1. Копировать ответ
   const copyBtn = document.querySelector('.ai-action-btn[title^="Копировать"]');
   if (copyBtn) {
     copyBtn.addEventListener('click', async () => {
-      const content = document.getElementById('ai-result-content')?.textContent || '';
-      if (!content) return;
+      const contentEl = document.getElementById('ai-result-content');
+      const content = contentEl?.textContent.trim() || '';
+      if (!content) {
+        showShareToast('Нет текста для копирования');
+        return;
+      }
 
       try {
-        await navigator.clipboard.writeText(content);
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(content);
+        } else {
+          const tmp = document.createElement('textarea');
+          tmp.value = content;
+          document.body.appendChild(tmp);
+          tmp.select();
+          document.execCommand('copy');
+          document.body.removeChild(tmp);
+        }
+
+        showShareToast('Ответ скопирован');
         copyBtn.dataset.state = 'copied';
         copyBtn.style.borderColor = '#10b981';
         setTimeout(() => {
@@ -224,108 +298,41 @@ function setupActionButtons() {
         }, 2000);
       } catch (err) {
         console.error('Ошибка копирования:', err);
+        showShareToast('Не удалось скопировать');
       }
-    }, { once: true });
+    });
   }
 
   // 2. Поделиться
   const shareBtn = document.querySelector('.ai-action-btn[title^="Поделиться"]');
   if (shareBtn) {
-    let isSharing = false;
     const resultEl = document.getElementById('ai-result-content');
 
-    const openShareModal = () => {
-      const modal = document.getElementById('ai-share-modal');
-      if (!modal || !resultEl) return;
-
-      const dialog = modal.querySelector('.ai-share-dialog');
-      const closeBtn = modal.querySelector('.ai-share-close');
-      const backdrop = modal.querySelector('.ai-share-backdrop');
-      const tgLink = modal.querySelector('.ai-share-telegram');
-      const vkLink = modal.querySelector('.ai-share-vk');
-
-      const quickTg = modal.querySelector('.ai-share-pill.ai-share-telegram');
-      const quickVk = modal.querySelector('.ai-share-pill.ai-share-vk');
-      const quickCopy = modal.querySelector('.ai-share-pill.ai-share-copy');
-
-      const pageUrl = window.location.href.split('#')[0];
-      const answerText = resultEl.textContent.trim().substring(0, 300);
-
-      // Ссылки
-      if (tgLink) {
-        tgLink.href =
-          `https://t.me/share/url?url=${encodeURIComponent(pageUrl)}` +
-          `&text=${encodeURIComponent(answerText)}`;
-      }
-
-      if (vkLink) {
-        vkLink.href =
-          `https://vk.com/share.php?url=${encodeURIComponent(pageUrl)}` +
-          `&title=${encodeURIComponent('Ответ от Serpmonn AI')}` +
-          `&comment=${encodeURIComponent(answerText)}`;
-      }
-
-      // Быстрые круглые кнопки
-      if (quickTg && tgLink) quickTg.onclick = () => tgLink.click();
-      if (quickVk && vkLink) quickVk.onclick = () => vkLink.click();
-
-      if (quickCopy) {
-        quickCopy.onclick = async () => {
-          try {
-            await navigator.clipboard.writeText(pageUrl);
-            showShareToast('Ссылка на ответ скопирована');
-          } catch (e) {
-            console.error('Clipboard error', e);
-          }
-        };
-      }
-
-      const close = () => {
-        modal.removeAttribute('data-open');
-        setTimeout(() => { modal.style.display = 'none'; }, 150);
-        document.removeEventListener('keydown', onEsc);
-      };
-      const onEsc = (e) => {
-        if (e.key === 'Escape') close();
-      };
-
-      if (closeBtn) closeBtn.onclick = close;
-      if (backdrop) backdrop.onclick = close;
-
-      modal.style.display = 'flex';
-      modal.setAttribute('data-open', 'true');
-      if (dialog) dialog.focus();
-      document.addEventListener('keydown', onEsc);
-    };
-
-    shareBtn.addEventListener('click', async () => {
+    shareBtn.addEventListener('click', () => {
       if (!resultEl) return;
 
-      // 1) Пытаемся вызвать системный share везде, где он есть (мобилка или десктоп)
-      if (navigator.share && !isSharing) {
-        isSharing = true;
-        try {
-          await navigator.share({
-            title: 'Serpmonn AI',
-            text: resultEl.textContent.trim().substring(0, 200),
-            url: window.location.href
+      const pageUrl = window.location.href.split('#')[0];
+      const answerText =
+        resultEl.textContent.trim().substring(0, 300) || 'Ответ от Serpmonn AI';
+
+      // простая евристика: считаем, что mini app только на домене vk.com
+      const isVkMiniApp =
+        window.location.hostname === 'vk.com' ||
+        window.location.hostname.endsWith('.vk.com');
+
+      // 1) Внутри VK Mini Apps — нативный VK share
+      if (isVkMiniApp && window.vkBridge && typeof window.vkBridge.send === 'function') {
+        window.vkBridge
+          .send('VKWebAppShare', { link: pageUrl })
+          .catch(err => {
+            console.warn('VKWebAppShare error, fallback to web modal:', err);
+            openWebShareModal(pageUrl, answerText);
           });
-          isSharing = false;
-          return; // нативный share отработал → свою модалку не показываем
-        } catch (err) {
-          // если юзер сам отменил, тоже просто выходим
-          if (err && err.name === 'AbortError') {
-            isSharing = false;
-            return;
-          }
-          console.warn('navigator.share не сработал, fallback на модалку', err);
-          isSharing = false;
-          // и идём в fallback
-        }
+        return;
       }
 
-      // 2) Если API нет или упал → показываем свою модалку
-      openShareModal();
+      // 2) Обычный веб — всегда модалка
+      openWebShareModal(pageUrl, answerText);
     });
   }
 
@@ -482,6 +489,7 @@ function initPage() {
   setupEventListeners();
   loadPageData();
   initAdObserver();
+  setupActionButtons();
 }
 
 document.addEventListener('DOMContentLoaded', initPage);
