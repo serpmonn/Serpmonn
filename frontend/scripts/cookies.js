@@ -1,46 +1,46 @@
-const cookieConsent = document.getElementById('cookie-consent');
-const acceptCookiesButton = document.getElementById('accept-cookies');
-const declineCookiesButton = document.getElementById('decline-cookies');
+import { shouldShowCookieBanner } from './scripts.js';
 
-export function setCookie(name, value, days) {
-  let expires = "";
-  if (days) {
-    const date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    expires = "; expires=" + date.toUTCString();
-  }
-  document.cookie = name + "=" + (value || "") + expires + "; path=/";
+function setCookie(name, value, days) {
+  const d = new Date();
+  d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+  const expires = 'expires=' + d.toUTCString();
+  document.cookie = name + '=' + value + ';' + expires + ';path=/;SameSite=Lax';
 }
 
-export function getCookie(name) {
-  const value = `; ${document.cookie}`;
-  const parts = value.split(`; ${name}=`);
-  if (parts.length === 2) {
-    return parts.pop().split(';').shift();
+function getCookie(name) {
+  const cname = name + '=';
+  const decoded = decodeURIComponent(document.cookie);
+  const parts = decoded.split(';');
+  for (let c of parts) {
+    c = c.trim();
+    if (c.indexOf(cname) === 0) {
+      return c.substring(cname.length);
+    }
   }
   return null;
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  if (!cookieConsent || !acceptCookiesButton || !declineCookiesButton) return;
+export function showCookieBanner() {
+  if (!shouldShowCookieBanner()) return; // только web (ПК + моб. браузер)
 
-  const cookiesAccepted = getCookie('cookies_accepted');
+  const cookieConsent = document.getElementById('cookie-consent');
+  const acceptBtn = document.getElementById('accept-cookies');
+  const declineBtn = document.getElementById('decline-cookies');
 
-  // Если куки ещё не приняты — показываем баннер
-  if (!cookiesAccepted) {
-    cookieConsent.style.display = 'block';
-  }
+  if (!cookieConsent || !acceptBtn || !declineBtn) return;
 
-  acceptCookiesButton.addEventListener('click', () => {
+  const status = getCookie('cookies_accepted');
+  if (status === 'true' || status === 'declined') return;
+
+  cookieConsent.style.display = 'block';
+
+  acceptBtn.onclick = () => {
     setCookie('cookies_accepted', 'true', 365);
     cookieConsent.style.display = 'none';
+  };
 
-    // Опционально: короткое визуальное подтверждение для пользователя
-    // showCookiesToast('Куки приняты');
-  });
-
-  declineCookiesButton.addEventListener('click', () => {
+  declineBtn.onclick = () => {
+    setCookie('cookies_accepted', 'declined', 365);
     cookieConsent.style.display = 'none';
-    // Здесь можно добавить логику для "отклонить" (например, не грузить аналитики)
-  });
-});
+  };
+}
