@@ -40,7 +40,7 @@
     background: #ffffff;                                                              /* белый фон карточки */
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.09);
-    padding: 8px;
+    padding: 8px 8px;                                                                /* было 8px, стало больше по бокам */
     display: flex;                                                                    /* флекс-контейнер */
     align-items: center;                                                              /* вертикальное выравнивание по центру */
     gap: 8px;
@@ -166,30 +166,38 @@ a:hover {
 @media (max-width: 600px) {
 
     .main-search-container {
-        padding: 6px;
-        gap: 6px;
-        border-radius: 14px;
+        width: 100%;
         max-width: 100%;
-        margin: 0 12px;
+        box-sizing: border-box; 
+        padding: 6px 4px 6px 4px;
+        gap: 4px;
+        border-radius: 14px;
+        margin: 0;
         flex-wrap: nowrap;                                                            /* ← Обязательно на мобиле тоже */
     }
 
     .search-form input[type="search"] {
+        flex: 1 1 auto;
         height: 50px;
         padding: 0 16px;
         font-size: 15px;
         border-radius: 10px;
+        min-width: 0;
     }
 
     .search-btn {
         height: 50px;
-        width: 58px;
-        min-width: 58px;
+        width: 52px;
+        min-width: 52px;   /* width == min-width, без конфликта */
         border-radius: 10px;
+        margin-right: 6px; /* внешний отступ справа */
+        flex-shrink: 0;
     }
 
     .logo {
-        width: 52px;
+        width: 46px;
+        margin: 0;
+        padding: 0;
     }
 
     /* Совместимость со старыми Google Custom Search (если остались) */
@@ -215,8 +223,10 @@ a:hover {
 
     .search-card-wrapper {
         width: 100%;
+        max-width: 100%;
         box-sizing: border-box;
-        padding: 0 10px 12px;  /* слева/справа/снизу отступы вокруг поиска и ответа */
+        padding: 0 10px 12px;
+        margin: 10px auto 0;
     }
 
     .ai-result-container {

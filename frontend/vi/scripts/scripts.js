@@ -1,7 +1,32 @@
-import { setCookie, getCookie } from './cookies.js';
+import { showCookieBanner } from './cookies.js';
 import { loadNews } from './news.js';
 import { generateCombinedBackground } from './backgroundGenerator.js';
 import '/frontend/pwa/app.js';
+
+// scripts.js
+
+export function getEnv() {
+  const ua = navigator.userAgent || '';
+
+  const isStandalonePWA =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+
+  const params = new URLSearchParams(window.location.search);
+  const envParam = params.get('env') || '';
+
+  if (envParam === 'vk_mini' || location.host.includes('vk.com')) return 'vk_mini';
+  if (envParam === 'twa') return 'twa';
+  if (isStandalonePWA) return 'pwa';
+
+  return 'web';
+}
+
+export function shouldShowCookieBanner() {
+  return getEnv() === 'web';
+}
+
+// дальше — твой существующий код scripts.js
 
 // ======================================================================================================================
 // МАРКДАУН РЕНДЕРЕР ДЛЯ КРАСИВОГО ФОРМАТИРОВАНИЯ ОТВЕТОВ ИИ
@@ -490,6 +515,7 @@ function initPage() {
   loadPageData();
   initAdObserver();
   setupActionButtons();
+  showCookieBanner();
 }
 
 document.addEventListener('DOMContentLoaded', initPage);

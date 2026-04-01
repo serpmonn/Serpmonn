@@ -21,7 +21,7 @@ function getCookie(name) {
 }
 
 export function showCookieBanner() {
-  if (!shouldShowCookieBanner()) return; // только web (ПК + моб. браузер)
+  if (!shouldShowCookieBanner()) return;                                                                                                                                                                      // только web (ПК + моб. браузер)
 
   const cookieConsent = document.getElementById('cookie-consent');
   const acceptBtn = document.getElementById('accept-cookies');

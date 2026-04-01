@@ -1,16 +1,10 @@
 html, body {
-  margin: 0;                      /* Убираем отступы */
-  padding: 0;                     /* Убираем внутренние отступы */
-  height: 100%;                   /* Высота 100% от родителя */
-  width: 100%;                    /* Ширина 100% от родителя */
-  font-family: Arial, sans-serif; /* Шрифт для текста */
-  display: flex;                  /* Флекс-контейнер для всей страницы */
-  align-items: center;            /* Центр по горизонтали */
-  flex-direction: column;         /* Колонка: сверху вниз */
-  overflow: auto;                 /* Прокрутка по странице */
-  -ms-overflow-style: none;       /* Для IE и Edge */
-  scrollbar-width: thin;          /* Узкий скролл в Firefox */
-  box-sizing: border-box;         /* Учитываем padding и border в размерах */
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+  font-family: Arial, sans-serif;
+  box-sizing: border-box;
 }
 
 body::-webkit-scrollbar {
@@ -509,31 +503,32 @@ a:visited {
 /* Мобильная адаптация */
 
 @media (max-width: 640px) {
+  .search-card-wrapper {
+    width: 100%;
+    max-width: 100%;
+    margin: 10px auto 0;
+    padding: 0 10px;
+    box-sizing: border-box;
+  }
+
+  .main-search-container {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    box-sizing: border-box;
+  }
+
   .ai-result-container {
-    margin: 16px 8px 0;
-    padding: 12px 12px;
+    width: 100%;
+    max-width: 100%;
+    margin: 12px 0 0;
+    padding: 12px 10px;
+    box-sizing: border-box;
+    overflow-x: hidden;
   }
 
-  .ai-result-header {
-    align-items: flex-start;
-  }
-
-  .ai-actions {
-    gap: 4px;
-  }
-
-  .ai-result-footer {
-    flex-wrap: wrap;
-    justify-content: flex-start;
-  }
-
-  .ai-share-dialog {
-    max-width: none;
-    width: calc(100% - 24px);
-    margin: 0 12px;
-  }
-
-  .ai-share-toast {
-    bottom: 16px;
+  .ai-result-content {
+    overflow-wrap: anywhere;
+    word-wrap: break-word;
   }
 }
