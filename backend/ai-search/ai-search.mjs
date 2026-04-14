@@ -341,12 +341,20 @@ app.post('/ai-search', aiSearchLimiter, async (req, res) => {
     });
 
     const data = await gigaRes.json();
-    
+
+    if (!gigaRes.ok || !data.choices?.length) {
+      console.error('GigaChat API error:', gigaRes.status, JSON.stringify(data));
+      return res.status(502).json({
+        error: 'Ошибка при обращении к GigaChat. Попробуйте позже.',
+        answer: 'Сервис ИИ временно недоступен.'
+      });
+    }
+
     res.json({
-      answer: data.choices[0].message.content,
+      answer: data.choices[0].message?.content || 'Нет текста ответа от модели.',
       usedWebSearch: true,
       model: 'GigaChat-2-Max',
-      sources: sources,                                                                                                                                                                                                                 // Массив с ссылками и заголовками
+      sources: sources,
       timestamp: new Date().toISOString()
     });
 

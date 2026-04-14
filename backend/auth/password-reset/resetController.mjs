@@ -5,18 +5,18 @@ import { saveToken, getTokenData, removeToken, canSendToken } from '../../utils/
 import { query } from '../../database/config.mjs';                                                                                     // Импортируем функцию для выполнения запросов к базе данных
 
 // Контроллер для обработки запроса сброса пароля
-export const forgotPassword = async (req, res) => {											// Определяем функцию для запроса сброса пароля
-    const { email } = req.body;														// Извлекаем email из тела запроса
+export const forgotPassword = async (req, res) => {											                                           // Определяем функцию для запроса сброса пароля
+    const { email } = req.body;														                                                   // Извлекаем email из тела запроса
 
-    try {                                                                                                                       // Начинаем блок обработки ошибок
-        const users = await query('SELECT id FROM users WHERE email = ?', [email]);                                             // Выполняем запрос к БД для поиска пользователя по email
-        if (users.length === 0) {                                                                                               // Проверяем, найден ли пользователь
-            return res.status(200).json({ message: 'Проверьте почту — если адрес зарегистрирован, вы получите письмо со ссылкой.' }); // Возвращаем общий ответ, чтобы не раскрывать наличие email
+    try {                                                                                                                              // Начинаем блок обработки ошибок
+        const users = await query('SELECT id FROM users WHERE email = ?', [email]);                                                    // Выполняем запрос к БД для поиска пользователя по email
+        if (users.length === 0) {                                                                                                      // Проверяем, найден ли пользователь
+            return res.status(200).json({ message: 'Проверьте почту — если адрес зарегистрирован, вы получите письмо со ссылкой.' });  // Возвращаем общий ответ, чтобы не раскрывать наличие email
         }                                                                                                                      
 
-        const user = users[0];                                                                                                  // Получаем данные первого найденного пользователя
+        const user = users[0];                                                                                                         // Получаем данные первого найденного пользователя
 
-        if (!canSendToken(user.id)) {                                                                                           // Проверяем, можно ли отправить новый токен
+        if (!canSendToken(user.id)) {                                                                                                  // Проверяем, можно ли отправить новый токен
             return res.status(429).json({ message: 'Слишком частые запросы. Попробуйте через несколько минут.' });               // Возвращаем ошибку при превышении лимита запросов
         }                                                                                                                      
 

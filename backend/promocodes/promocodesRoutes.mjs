@@ -552,4 +552,5 @@ router.post('/api/track-filter', promocodesLimiter, async (req, res) => {
   console.log('[PROMOCODES] Модуль промокодов инициализирован');
 })();
 
+export { filterPromocodes, loadPromocodesFromAPI };
 export default router;

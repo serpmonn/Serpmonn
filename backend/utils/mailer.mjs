@@ -127,3 +127,56 @@ export async function sendConfirmationEmail(to, confirmLink) {
     throw error;
   }
 }
+
+export async function sendPromoEmail(to, promoText, unsubscribeLink, promoHtmlBlock) {
+  console.log(`🎁 Promo email for: ${to}`);
+
+  const mailOptions = {
+    from: '"Serpmonn" <noreply@serpmonn.ru>',
+    to,
+    subject: 'Промокоды от Serpmonn',
+    text: `${promoText}\n\nЕсли вы больше не хотите получать такие письма, отпишитесь по ссылке: ${unsubscribeLink}`,
+    html: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+
+              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 8px 0 16px 0;">
+                <tr>
+                  <td style="width: 1%; padding-right: 8px; vertical-align: middle;">
+                    <img
+                      src="https://serpmonn.ru/frontend/images/Serpmonn-192x192.png"
+                      alt="Serpmonn"
+                      style="width: 40px; height: 40px; border-radius: 50%; display: block;"
+                    />
+                  </td>
+                  <td style="vertical-align: middle;">
+                    <span style="font-size: 18px; font-weight: bold; color: #dc3545;">
+                      Промокоды от Serpmonn
+                    </span>
+                  </td>
+                </tr>
+              </table>
+
+              ${promoHtmlBlock}
+
+              <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;" />
+
+              <p style="font-size: 12px; color: #777;">
+                Если вы больше не хотите получать такие письма, вы можете
+                <a href="${unsubscribeLink}" style="color: #dc3545;">отписаться от рассылки</a>.
+              </p>
+            </div>
+          `
+  };
+
+  try {
+    const info = await transporter.sendMail(mailOptions);
+    console.log('✅ Promo email processed:', info.messageId);
+    return info;
+  } catch (error) {
+    console.error('❌ Promo email error:', error.message);
+    if (process.env.NODE_ENV === 'development') {
+      return { messageId: 'dev-error', response: 'Promo email failed but continuing in dev mode' };
+    }
+    throw error;
+  }
+}
