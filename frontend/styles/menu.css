@@ -509,6 +509,65 @@
   flex: 1 1 auto;
 }
 
+/* Затемнение всего экрана */
+.spn-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  pointer-events: none;                                                                                                                                             /* было auto */
+}
+
+/* А интерактивные элементы оверлея (если появятся) могут включать pointer-events */
+.spn-menu-overlay__hole,
+.spn-menu-overlay__hint,
+.spn-menu-overlay__arrow {
+  pointer-events: none;
+}
+
+/* «Дырка» над кнопкой меню через огромный box-shadow */
+.spn-menu-overlay__hole {
+  position: absolute;
+  border-radius: 999px;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+  pointer-events: none;
+}
+
+/* Контейнер подсказки */
+.spn-menu-overlay__hint {
+  position: absolute;
+  max-width: 260px;
+  color: #fff;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Линия-стрелка, которая тянется к кнопке меню */
+.spn-menu-overlay__arrow {
+  position: absolute;
+  width: 80px;          /* длина стрелки, можно подстроить */
+  height: 2px;
+  background: #fff;
+  transform-origin: left center;
+}
+
+/* Наконечник стрелки */
+.spn-menu-overlay__arrow::after {
+  content: "";
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 8px solid #fff;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+}
+
+@media (max-width: 480px) {
+  .spn-menu-overlay__hint {
+    max-width: 200px;
+  }
+}
+
 /* Адаптивность для мобильных устройств */
 @media (max-width: 600px) {
     .menu-button {
