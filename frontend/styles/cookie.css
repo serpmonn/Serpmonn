@@ -7,12 +7,13 @@
     background-color: rgba(0, 0, 0, 0.7);                               /* Полупрозрачный черный фон */
     color: white;
     text-align: center;
-    padding: 0.5%;
+    padding: 4px 8px;
     z-index: 100;                                                       /* Сниженный z-index, но выше основного контента */
 }
 
 .cookie-consent p {
     font-size: 12px;                                                    /* Увеличенный размер шрифта */
+    margin: 0;
 }
 
 .cookie-button {                                                        /* Стили кнопки кук */
@@ -20,16 +21,10 @@
     color: white;
     border: none;
     font-size: 12px;                                                    /* Увеличиваем размер шрифта до 18 пикселей */
-    padding: 10px 20px;
-    margin: 10px auto;                                                  /* Центрирование кнопки по горизонтали */
+    padding: 8px 14px;
+    margin: 4px 4px;                                                   /* Центрирование кнопки по горизонтали */
     cursor: pointer;
     border-radius: 8px;                                                 /* Скругленные углы */
-}
-@media (max-width: 768px) {
-    .cookie-button {
-        min-width: 44px;
-        min-height: 44px;
-    }
 }
 
 .cookie-button:hover {                                                  /* Эффект при наведении на кнопку */
@@ -44,4 +39,19 @@
 
 a {
     text-decoration: underline;
+}
+
+@media (min-width: 1024px) {
+
+    .cookie-button {
+        min-width: 0;
+        min-height: 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .cookie-button {
+        min-width: 0;
+        min-height: 0;
+    }
 }

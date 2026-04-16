@@ -20,7 +20,16 @@ const httpsAgent = new https.Agent({
 });
 
 const app = express();
+// один nginx перед приложением
+app.set('trust proxy', 1);
 app.use(cookieParser());
+
+// ЛОГ IP — временно для проверки
+app.use((req, res, next) => {
+  console.log('AI IP:', req.ip, 'xff:', req.headers['x-forwarded-for']);
+  next();
+});
+
 // Константы GigaChat
 const GIGA_AUTH_URL = 'https://ngw.devices.sberbank.ru:9443/api/v2/oauth';
 const GIGA_API_URL = 'https://gigachat.devices.sberbank.ru/api/v1/chat/completions';
