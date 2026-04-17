@@ -139,6 +139,125 @@ fetch(primaryMenuPath)
 
     initMenu();
 
+    // === Одноразовая подсказка для кнопки меню ===
+    (function () {
+      const COOKIE_NAME = 'spn_menu_hint_shown';
+
+      function getCookie(name) {
+        const m = document.cookie.match(
+          new RegExp('(?:^|; )' + name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') + '=([^;]*)')
+        );
+        return m ? decodeURIComponent(m[1]) : undefined;
+      }
+
+      function setCookie(name, value, days) {
+        let expires = '';
+        if (days) {
+          const d = new Date();
+          d.setTime(d.getTime() + days * 24 * 60 * 60 * 1000);
+          expires = '; expires=' + d.toUTCString();
+        }
+        document.cookie =
+          name + '=' + encodeURIComponent(value) + expires + '; path=/; SameSite=Lax';
+      }
+
+      // Уже показывали — выходим
+      if (getCookie(COOKIE_NAME) === '1') return;
+
+      // Ждём, пока меню добавится в DOM
+      setTimeout(() => {
+        const menuButton = document.getElementById('menuButton');
+        if (!menuButton) return;
+
+        const rect = menuButton.getBoundingClientRect();
+        if (!rect.width && !rect.height) return;
+
+        const overlay = document.createElement('div');
+        overlay.className = 'spn-menu-overlay';
+
+        const hole = document.createElement('div');
+        hole.className = 'spn-menu-overlay__hole';
+
+        const padding = 8;
+        const holeLeft = rect.left - padding;
+        const holeTop = rect.top - padding;
+        const holeWidth = rect.width + padding * 2;
+        const holeHeight = rect.height + padding * 2;
+
+        hole.style.left = holeLeft + 'px';
+        hole.style.top = holeTop + 'px';
+        hole.style.width = holeWidth + 'px';
+        hole.style.height = holeHeight + 'px';
+
+        const hint = document.createElement('div');
+        hint.className = 'spn-menu-overlay__hint';
+
+        let text = 'Нажмите здесь, чтобы открыть меню';
+        if (spnLang && spnLang !== 'ru') {
+          if (spnLang.startsWith('en')) text = 'Tap here to open the menu';
+        }
+
+        // Текстовый блок под кнопкой
+        const textDiv = document.createElement('div');
+        textDiv.textContent = text;
+        textDiv.style.textAlign = 'center';
+
+        hint.appendChild(textDiv);
+
+        // Располагаем текст ПОД кнопкой
+        const hintTop = holeTop + holeHeight + 16;
+        let hintLeft = holeLeft + holeWidth / 2 - 130;
+        hintLeft = Math.max(8, Math.min(hintLeft, window.innerWidth - 268));
+
+        hint.style.top = hintTop + 'px';
+        hint.style.left = hintLeft + 'px';
+
+        // === Стрелка, реально указывающая на кнопку ===
+        const arrow = document.createElement('div');
+        arrow.className = 'spn-menu-overlay__arrow';
+
+        // Точка старта стрелки (верхний центр текста)
+        const textCenterX = hintLeft + 130; // половина 260
+        const textTopY = hintTop;
+
+        // Точка цели — центр дырки/кнопки
+        const targetX = holeLeft + holeWidth / 2;
+        const targetY = holeTop + holeHeight / 2;
+
+        // Вектор
+        const dx = targetX - textCenterX;
+        const dy = targetY - textTopY;
+
+        // Длина стрелки (максимум 120px, чтобы не уходила слишком далеко)
+        const dist = Math.min(Math.sqrt(dx * dx + dy * dy), 70);
+
+        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+
+        arrow.style.left = textCenterX + 'px';
+        arrow.style.top = textTopY + 'px';
+        arrow.style.width = dist + 'px';
+        arrow.style.transform = `rotate(${angle}deg)`;
+
+        overlay.appendChild(hole);
+        overlay.appendChild(hint);
+        overlay.appendChild(arrow);
+        document.body.appendChild(overlay);
+
+        function closeOverlay() {
+          setCookie(COOKIE_NAME, '1', 365);
+          overlay.remove();
+          document.removeEventListener('click', onAnyClick, true);
+        }
+
+        function onAnyClick() {
+          closeOverlay();
+        }
+
+        document.addEventListener('click', onAnyClick, true);
+      }, 300);
+    })();
+    // === Конец подсказки ===
+
     // Apply GEO filtering after menu init
     try { applyGeoFilter(); } catch {}
 
