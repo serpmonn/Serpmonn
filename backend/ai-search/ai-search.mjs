@@ -29,7 +29,9 @@ app.use(cookieParser());
 // Лог IP
 app.use((req, res, next) => {
   const xff = req.headers['x-forwarded-for'] || '-';
-  console.log(`Пользователь | IP: ${req.ip} | X-Forwarded-For: ${xff}`);
+  console.log(
+    `${nowMSK()} | Пользователь | IP: ${req.ip} | X-Forwarded-For: ${xff}`
+  );
   next();
 });
 
@@ -46,6 +48,14 @@ const USER_DAILY_LIMIT = 15;  // авторизованный (бесплатн�
 // Переменные для хранения токена
 let accessToken = null;
 let tokenExpiresAt = 0;
+
+function nowMSK() {
+  const now = new Date();
+  // MSK = UTC+3
+  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+  const msk = new Date(utc + 3 * 60 * 60 * 1000);
+  return msk.toISOString().replace('T', ' ').slice(0, 19) + ' MSK';
+}
 
 function getMonthKey() {
   // Возвращает строку вида '2026-02' для текущего месяца
@@ -316,7 +326,7 @@ app.post('/ai-search', aiSearchLimiter, async (req, res) => {
     }
 
     // ---- Serper ----
-    console.log(`Запрос: "${query}"`);
+    console.log(`${nowMSK()} | Запрос: "${query}"`);
 
     const searchResponse = await fetch('https://google.serper.dev/search', {
       method: 'POST',
@@ -415,9 +425,9 @@ app.post('/ai-search', aiSearchLimiter, async (req, res) => {
       }
     }
 
-    console.log(`Пользователь (тип): ${userLabel}`);
+    console.log(`${nowMSK()} | Пользователь (тип): ${userLabel}`);
     console.log(
-      `Ответ: "${answer.slice(0, 200).replace(/\s+/g, ' ')}..."`
+      `${nowMSK()} | Ответ: "${answer.slice(0, 200).replace(/\s+/g, ' ')}..."`
     );
 
     // ---- Ответ фронту ----
