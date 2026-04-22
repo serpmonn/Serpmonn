@@ -65,6 +65,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const favoriteContainer = document.getElementById('favoriteTools');
   const noFavoritesMessage = document.getElementById('noFavoritesMessage');
+  const pointsBalanceEl = document.getElementById('pointsBalance');
 
   let isEditOpen = false;
 
@@ -356,6 +357,31 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+    async function loadPoints() {
+    if (!pointsBalanceEl) return;
+
+    try {
+      const response = await fetch('/api/me/points', {
+        method: 'GET',
+        credentials: 'include' // обязательно, чтобы ушла кука token [web:223][web:224]
+      });
+
+      const data = await safeJson(response);
+
+      if (!response.ok) {
+        console.error('Не удалось загрузить баллы', response.status, data);
+        pointsBalanceEl.textContent = '—';
+        return;
+      }
+
+      const balance = typeof data?.balance === 'number' ? data.balance : 0;
+      pointsBalanceEl.textContent = balance;
+    } catch (error) {
+      console.error('Ошибка загрузки баллов:', error);
+      pointsBalanceEl.textContent = '—';
+    }
+  }
+
   async function checkCreateMailboxStatus() {
     try {
       const response = await fetch('/profile/get', {
@@ -501,5 +527,6 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ==== ИНИЦИАЛИЗАЦИЯ ==== */
 
   getProfile();
+  loadPoints();
   renderFavoriteTools();
 });

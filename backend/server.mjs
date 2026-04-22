@@ -24,6 +24,8 @@ import csrf from 'csurf';                                                       
 import { analyticsRouter } from './analytics/analytics.mjs';                                                                     // Маршруты аналитики страницы промокодов
 import promocodesRoutes from './promocodes/promocodesRoutes.mjs';                                                                // Импортируем маршруты для работы с промокодами и акциями
 import improveRoutes from './improve/improve.mjs';                                                                               // Импорт маршрута для сбора предложений пользователей
+import pointsRoutes from './points/pointsRoutes.mjs';                                                                            // Импорт маршрута баллов
+import verifyToken from './auth/verifyToken.mjs';
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);                                                                                                       // Доверяем первому прокси (например, Nginx) для корректного IP
@@ -110,7 +112,9 @@ app.use('/api/promocodes', promocodesRoutes);                                   
 app.use(subscribeRouter);                                                                                                        // Подключаем маршруты подписки без дополнительного префикса
 app.use('/', unsubscribeRouter);                                                                                                 // Подключение маршрутов отписки от рассылки промокодов
 app.use('/improve', improveRoutes);                                                                                              // Маршрут предложки
-app.use('/api', vkidRoutes);                                                                                                     // появится /api/vkid-login
+app.use('/api', vkidRoutes);                                                                                                     // Маршрут авторизации vk
+app.use('/api', verifyToken);                                                                                                    // Сначала проверка токена и установка req.user
+app.use('/api', pointsRoutes);                                                                                                   // Маршрут проверки баллов
 
 app.use((err, req, res, next) => {                                                                                               // Обработчик ошибок (после всех роутов и middleware)
     if (err && err.code === 'EBADCSRFTOKEN') {                                                                                   // Обработчик ошибок CSRF (невалидный токен)

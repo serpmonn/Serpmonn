@@ -14,6 +14,7 @@ import { query } from '../database/config.mjs';											                      
 import { validationResult } from 'express-validator';										                                 // Импортируем validationResult для проверки данных
 import { v4 as uuidv4 } from 'uuid';												                                             // Импортируем uuidv4 для генерации уникальных ID
 import { sendConfirmationEmail } from '../utils/mailer.mjs';									                           // Импортируем функцию для отправки email
+import { awardPoints } from '../points/pointsService.js';                                                // Импортирует функцию проверки и начисления баллов
                                                                                               
 const { V2 } = paseto;                                                                         					 // Извлекаем V2 из paseto для работы с токенами
 const { hash, compare } = bcrypt;                                                              					 // Извлекаем hash и compare из bcrypt
@@ -59,54 +60,81 @@ export const registerUser = async (req, res) => {                               
   }                                                                                         
 };
 
-export const confirmTelegram = async (req, res) => {
-  const { userId, source } = req.body;
-  
-  console.log('📱 Подтверждение через Telegram Web App:', { userId, source });
+export const confirmTelegram = async (req, res) => {                                              //     Функция подтверждения аккаунта через Telegram Web App
+  const { userId, source } = req.body;                                                           //     Достаем из тела запроса userId и source (откуда пришли)
 
-  try {
-    if (!userId || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)) {
-      console.log('❌ Неверный формат UserID:', userId);
-      return res.status(400).json({ 
-        success: false, 
-        message: "Неверная ссылка подтверждения" 
+  console.log('📱 Подтверждение через Telegram Web App:', { userId, source });                   //     Логируем входящие данные для отладки
+
+  try {                                                                                          //     Начинаем блок try/catch для обработки ошибок
+    // Проверяем, что userId вообще есть и что это валидный UUID формата xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
+    if (
+      !userId ||
+      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
+    ) {
+      console.log('❌ Неверный формат UserID:', userId);                                         //     Логируем неверный формат userId
+      return res.status(400).json({                                                             //     Возвращаем 400 — плохой запрос
+        success: false,
+        message: "Неверная ссылка подтверждения"
       });
     }
 
-    const [user] = await query(
-      "SELECT id, username, email, confirmed FROM users WHERE id = ?", 
+    const [user] = await query(                                                                 //     Ищем пользователя по id и забираем нужные поля
+      "SELECT id, username, email, confirmed, registration_points_awarded FROM users WHERE id = ?",
       [userId]
     );
 
-    if (!user) {
-      console.log('❌ Пользователь не найден:', userId);
-      return res.status(404).json({ 
-        success: false, 
-        message: "Пользователь не найден. Пройдите регистрацию заново." 
+    if (!user) {                                                                                //     Если пользователь не найден в БД
+      console.log('❌ Пользователь не найден:', userId);                                        //     Логируем ситуацию
+      return res.status(404).json({                                                             //     Возвращаем 404 — пользователь не найден
+        success: false,
+        message: "Пользователь не найден. Пройдите регистрацию заново."
       });
     }
 
-    if (user.confirmed) {
-      console.log('ℹ️ Аккаунт уже подтвержден:', user.username);
-      return res.json({ 
-        success: true, 
-        message: `Аккаунт ${user.username} уже был подтвержден ранее` 
+    if (user.confirmed) {                                                                       //     Если аккаунт уже был подтверждён ранее
+      console.log('ℹ️ Аккаунт уже подтвержден:', user.username);                                //     Логируем, что подтверждение уже было
+
+      if (!user.registration_points_awarded) {                                                  //     Проверяем, выдавался ли уже бонус за регистрацию
+        const REGISTRATION_BONUS = 200;                                                         //     Размер бонуса за регистрацию в баллах
+        await awardPoints(user.id, REGISTRATION_BONUS, 'registration', {                        //     Начисляем баллы через сервисную функцию
+          via: 'telegram'                                                                       //     В meta фиксируем, что подтверждение через Telegram
+        });
+        await query(                                                                            //     Обновляем флаг, чтобы второй раз не начислить
+          'UPDATE users SET registration_points_awarded = 1 WHERE id = ?',
+          [user.id]
+        );
+      }
+
+      return res.json({                                                                         //     Возвращаем успешный ответ
+        success: true,
+        message: `Аккаунт ${user.username} уже был подтвержден ранее`
       });
     }
 
-    console.log('✅ Подтверждаем аккаунт:', user.username);
-    await query("UPDATE users SET confirmed = ? WHERE id = ?", [true, user.id]);
+    console.log('✅ Подтверждаем аккаунт:', user.username);                                     //     Логируем, что сейчас подтверждаем аккаунт
+    await query("UPDATE users SET confirmed = ? WHERE id = ?", [true, user.id]);                //     Ставим confirmed = true в БД
 
-    res.json({ 
-      success: true, 
-      message: `Аккаунт ${user.username} успешно подтвержден!` 
+    if (!user.registration_points_awarded) {                                                    //     Бонус за регистрацию — только если ещё не давали
+      const REGISTRATION_BONUS = 200;                                                           //     Размер бонуса
+      await awardPoints(user.id, REGISTRATION_BONUS, 'registration', {                          //     Начисляем баллы
+        via: 'telegram'                                                                         //     Источник — Telegram
+      });
+      await query(                                                                              //     Фиксируем, что бонус уже выдан
+        'UPDATE users SET registration_points_awarded = 1 WHERE id = ?',
+        [user.id]
+      );
+    }
+
+    res.json({                                                                                  //     Отправляем успешный ответ клиенту
+      success: true,
+      message: `Аккаунт ${user.username} успешно подтвержден!`
     });
 
-  } catch (error) {
-    console.error("❌ Ошибка при подтверждении через Telegram:", error);
-    res.status(500).json({ 
-      success: false, 
-      message: "Произошла техническая ошибка. Попробуйте позже." 
+  } catch (error) {                                                                             //     Ловим любые ошибки
+    console.error("❌ Ошибка при подтверждении через Telegram:", error);                        //     Логируем ошибку на сервере
+    res.status(500).json({                                                                      //     Возвращаем 500 — внутренняя ошибка сервера
+      success: false,
+      message: "Произошла техническая ошибка. Попробуйте позже."
     });
   }
 };
@@ -138,42 +166,57 @@ export const confirmEmail = async (req, res) => {                               
   }                                                                                         
 };                                                                                           
                                                                                               
-export const confirmToken = async (req, res) => {                                                               // Определяем функцию для проверки токена
-  const { token } = req.query;                                                                                  // Извлекаем токен из параметров запроса
-                                                                                              
-  try {                                                                                                         // Начинаем блок обработки ошибок
-    const [user] = await query(                                                                                 // Выполняем запрос на поиск пользователя
-      "SELECT id, email, username FROM users WHERE confirmation_token = ? AND confirmation_token_expires > ?",  // SQL-запрос
-      [token, new Date()]                                                                                       // Передаем токен и текущую дату
-    );                                                                                        
-                                                                                              
-    if (!user) {                                                                                                // Проверяем, найден ли пользователь
-      return res.status(400).json({ message: "Недействительный или истёкший токен." });                         // Возвращаем ошибку
-    }                                                                                         
-                                                                                              
-    await query(                                                                                                // Выполняем запрос на обновление статуса
-      "UPDATE users SET confirmed = ?, confirmation_token = NULL, confirmation_token_expires = NULL WHERE id = ?", // SQL-запрос
-      [true, user.id]                                                                                           // Устанавливаем confirmed и сбрасываем токен
-    );                                                                                        
-                                                                                              
-    const payload = { id: user.id, email: user.email, username: user.username || user.email };                  // Формируем данные для токена
-    const authToken = await V2.sign(payload, secretKey);                                                        // Создаем авторизационный токен
-                                                                                              
-    res.cookie('token', authToken, {                                                                            // Устанавливаем cookie с токеном
-      httpOnly: true,                                                                                           // Защищаем cookie от доступа через JS
-      secure: true,                                                                                             // Устанавливаем только для HTTPS
-      sameSite: 'Lax',                                                                                          // Устанавливаем политику SameSite
-      maxAge: 30 * 24 * 60 * 60 * 1000,                                                                         // Устанавливаем срок действия (30 дней)
-      domain: '.serpmonn.ru'                                                                                    // Ведущая точка для работы на всех поддоменах
-    });                                                                                       
-                                                                                              
-    console.log('Подтверждение: пользователь', user.email, 'confirmed = 1, токен создан');                      // Логируем подтверждение
-    res.redirect('https://serpmonn.ru/frontend/profile/profile.html');                                          // Переадресуем на страницу профиля
-  } catch (error) {                                                                                             // Обрабатываем возможные ошибки
-    console.error("Ошибка подтверждения:", error);                                                              // Логируем ошибку в консоль
-    res.status(500).json({ message: "Ошибка сервера." });                                                       // Возвращаем ошибку сервера клиенту
-  }                                                                                         
-};                                                                                           
+export const confirmToken = async (req, res) => {                                               //     Функция для подтверждения email по токену из письма
+  const { token } = req.query;                                                                  //     Достаем токен из строки запроса (?token=...)
+
+  try {                                                                                         //     Начинаем блок try/catch
+    const [user] = await query(                                                                 //     Ищем пользователя по токену и проверяем срок действия
+      "SELECT id, email, username, registration_points_awarded FROM users WHERE confirmation_token = ? AND confirmation_token_expires > ?",
+      [token, new Date()]
+    );
+
+    if (!user) {                                                                                //     Если пользователь не найден или токен истёк
+      return res.status(400).json({ message: "Недействительный или истёкший токен." });        //     Возвращаем 400 — токен невалиден
+    }
+
+    await query(                                                                                //     Обновляем статус пользователя
+      "UPDATE users SET confirmed = ?, confirmation_token = NULL, confirmation_token_expires = NULL WHERE id = ?",
+      [true, user.id]
+    );
+
+    if (!user.registration_points_awarded) {                                                    //     Если бонус за регистрацию ещё не выдавался
+      const REGISTRATION_BONUS = 200;                                                           //     Размер бонуса за регистрацию
+      await awardPoints(user.id, REGISTRATION_BONUS, 'registration', {                          //     Начисляем баллы через сервис
+        via: 'email'                                                                            //     В meta фиксируем, что подтверждение через email
+      });
+      await query(                                                                              //     Обновляем флаг, чтобы больше не начислять
+        'UPDATE users SET registration_points_awarded = 1 WHERE id = ?',
+        [user.id]
+      );
+    }
+
+    const payload = {                                                                           //     Формируем payload для PASETO-токена авторизации
+      id: user.id,
+      email: user.email,
+      username: user.username || user.email
+    };
+    const authToken = await V2.sign(payload, secretKey);                                        //     Подписываем payload секретным ключом и получаем токен
+
+    res.cookie('token', authToken, {                                                            //     Устанавливаем httpOnly-cookie с токеном на домен serpmonn.ru
+      httpOnly: true,                                                                           //     Cookie недоступна из JS
+      secure: true,                                                                             //     Только по HTTPS
+      sameSite: 'Lax',                                                                          //     Базовая защита от CSRF
+      maxAge: 30 * 24 * 60 * 60 * 1000,                                                         //     Время жизни cookie — 30 дней
+      domain: '.serpmonn.ru'                                                                    //     Действует для всех поддоменов serpmonn.ru
+    });
+
+    console.log('Подтверждение: пользователь', user.email, 'confirmed = 1, токен создан');      //     Логируем успешное подтверждение
+    res.redirect('https://serpmonn.ru/frontend/profile/profile.html');                          //     Редиректим пользователя в профиль
+  } catch (error) {                                                                             //     Обрабатываем ошибки
+    console.error("Ошибка подтверждения:", error);                                              //     Логируем ошибку на сервере
+    res.status(500).json({ message: "Ошибка сервера." });                                       //     Возвращаем 500 — внутренняя ошибка сервера
+  }
+};                                                     
                                                                                               
 export const loginUser = async (req, res) => {                                                                  // Определяем функцию для входа пользователя
   const { email, password } = req.body;                                                                         // Извлекаем email и пароль из тела запроса
@@ -198,23 +241,23 @@ export const loginUser = async (req, res) => {                                  
       httpOnly: true,                                                                                           // Защищаем cookie от доступа через JS
       secure: true,                                                                                             // Устанавливаем только для HTTPS
       sameSite: 'Lax',                                                                                          // Устанавливаем политику SameSite для работы между страницами
-      maxAge: 24 * 60 * 60 * 1000,                                                           // Устанавливаем срок действия (1 день)
-      domain: '.serpmonn.ru'                                                                 // Ведущая точка для работы на всех поддоменах
+      maxAge: 24 * 60 * 60 * 1000,                                                                              // Устанавливаем срок действия (1 день)
+      domain: '.serpmonn.ru'                                                                                    // Ведущая точка для работы на всех поддоменах
     });                                                                                       
                                                                                               
-    res.json({ message: 'Вход выполнен успешно' });                                           // Отправляем успешный ответ клиенту
-  } catch (error) {                                                                           // Обрабатываем возможные ошибки
-    res.status(500).json({ message: 'Ошибка при выполнении запроса', error });                // Возвращаем ошибку сервера
+    res.json({ message: 'Вход выполнен успешно' });                                                             // Отправляем успешный ответ клиенту
+  } catch (error) {                                                                                             // Обрабатываем возможные ошибки
+    res.status(500).json({ message: 'Ошибка при выполнении запроса', error });                                  // Возвращаем ошибку сервера
   }                                                                                         
 };                                                                                           
                                                                                               
-export const logoutUser = (req, res) => {                                                    // Определяем функцию для выхода пользователя
-  res.clearCookie('token', {                                                                 // Удаляем cookie с токеном
-    httpOnly: true,                                                                          // Защищаем cookie от доступа через JS
-    secure: true,                                                                            // Устанавливаем только для HTTPS
-    sameSite: 'Lax'                                                                          // Устанавливаем политику SameSite для работы между страницами
+export const logoutUser = (req, res) => {                                                                       // Определяем функцию для выхода пользователя
+  res.clearCookie('token', {                                                                                    // Удаляем cookie с токеном
+    httpOnly: true,                                                                                             // Защищаем cookie от доступа через JS
+    secure: true,                                                                                               // Устанавливаем только для HTTPS
+    sameSite: 'Lax'                                                                                             // Устанавливаем политику SameSite для работы между страницами
   });                                                                                       
-  res.json({ message: 'Выход выполнен успешно' });                                           // Отправляем успешный ответ клиенту
+  res.json({ message: 'Выход выполнен успешно' });                                                              // Отправляем успешный ответ клиенту
 };                                                                                           
                                                                                               
-export default { registerUser, confirmEmail, confirmToken, loginUser, logoutUser };          // Экспортируем все функции
+export default { registerUser, confirmEmail, confirmToken, loginUser, logoutUser };                             // Экспортируем все функции
