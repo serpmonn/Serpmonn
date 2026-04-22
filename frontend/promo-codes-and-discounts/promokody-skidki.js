@@ -147,6 +147,20 @@ function escapeHtml(unsafe) {
         .replace(/'/g, "&#039;");
 }
 
+function getOrCreateVisitorId() {
+  const name = 'sm_vid';
+  const m = document.cookie.match(new RegExp('(?:^|; )' + name + '=([^;]*)'));
+  if (m) return decodeURIComponent(m[1]);
+
+  const id = (crypto.randomUUID && crypto.randomUUID())
+    || ('v_' + Math.random().toString(36).slice(2) + Date.now().toString(36));
+
+  // 2 года
+  const maxAge = 60 * 60 * 24 * 365 * 2;
+  document.cookie = `${name}=${encodeURIComponent(id)}; Path=/; Max-Age=${maxAge}; SameSite=Lax`;
+  return id;
+}
+
 function getPromoTitle(promo) {
     const strip = (s) => typeof s === 'string' ? s.replace(/<[^>]*>/g, '').trim() : '';
     if (promo && typeof promo.name === 'string' && promo.name.trim() !== '') {
@@ -604,7 +618,8 @@ function createPromoCard(promo, isTopOffer = false) {
                         body: JSON.stringify({ 
                             promocode: promo.promocode, 
                             url: landingUrl,
-                            source: 'card_click'
+                            source: 'card_click',
+                            visitor_id: getOrCreateVisitorId()
                         })
                     });
                 } catch (error) {
@@ -648,7 +663,8 @@ function createPromoCard(promo, isTopOffer = false) {
                     body: JSON.stringify({ 
                         promocode: promo.promocode, 
                         url: landingUrl,
-                        source: 'button_click'
+                        source: 'button_click',
+                        visitor_id: getOrCreateVisitorId()
                     })
                 });
             } catch (error) {
@@ -836,6 +852,7 @@ function copyToClipboard(promo) {
                     title: promo.title,
                     advertiser_info: promo.advertiser_info,
                     landing_url: promo.landing_url || promo.link || promo.url,
+                    visitor_id: getOrCreateVisitorId(),
                     timestamp: new Date().toISOString()
                 })
             });
