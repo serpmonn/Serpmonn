@@ -14,6 +14,8 @@ dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
 const { V2 } = paseto;
 const secretKey = process.env.SECRET_KEY;
 const PRO_MONTHLY_LIMIT = 2000;
+const idempotencyStore = new Map();
+const IDEMPOTENCY_TTL_MS = 5 * 60 * 1000;                                                                                                       // 5 минут живёт результат
 
 // Агент HTTPS (пока оставляю как у тебя)
 const httpsAgent = new https.Agent({
@@ -252,6 +254,18 @@ app.post('/ai-search', aiSearchLimiter, async (req, res) => {
 
     const identity = getUserIdentity(req);
 
+    const idempotencyKey = req.headers['x-idempotency-key'];
+
+    if (idempotencyKey) {
+      const cacheKey = `${identity.id}:${idempotencyKey}`;
+      const cached = idempotencyStore.get(cacheKey);
+
+      if (cached && (Date.now() - cached.createdAt) < IDEMPOTENCY_TTL_MS) {
+        // Уже есть готовый ответ для этого пользователя и этого ключа
+        return res.json(cached.response);
+      }
+    }
+
     // 1) ГОСТЬ: только суточный лимит 5
     if (identity.type === 'guest') {
       const usage = checkAndIncrementUsage(identity);
@@ -430,14 +444,25 @@ app.post('/ai-search', aiSearchLimiter, async (req, res) => {
       `${nowMSK()} | Ответ: "${answer.slice(0, 200).replace(/\s+/g, ' ')}..."`
     );
 
-    // ---- Ответ фронту ----
-    res.json({
+    const responsePayload = {
       answer,
       usedWebSearch: true,
       model: 'GigaChat-2-Max',
       sources,
       timestamp: new Date().toISOString()
-    });
+    };
+
+    // Кладём в идемпотентный кеш, если есть ключ
+    if (idempotencyKey) {
+      const cacheKey = `${identity.id}:${idempotencyKey}`;
+      idempotencyStore.set(cacheKey, {
+        response: responsePayload,
+        createdAt: Date.now()
+      });
+    }
+
+    // Ответ фронту
+    res.json(responsePayload);
   } catch (error) {
     console.error('💥 Ошибка в /ai-search:', error);
     res.status(500).json({ error: 'Internal Server Error' });

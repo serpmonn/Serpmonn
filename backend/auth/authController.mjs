@@ -43,17 +43,23 @@ export const registerUser = async (req, res) => {                               
     const userId = uuidv4();                                                                  					 // Генерируем уникальный ID пользователя
     const telegramConfirmLink = `https://t.me/SerpmonnConfirmBot?startapp=${userId}`;            				 // Формируем ссылку для подтверждения
                                                                                               
-    await query(                                                                              					 // Выполняем запрос на вставку пользователя
-      "INSERT INTO users (id, username, email, password_hash, confirmed) VALUES (?, ?, ?, ?, ?)", 			 // SQL-запрос для вставки
-      [userId, username, email, passwordHash, false]                                           					 // Передаем данные в запрос
-    );                                                                                        
-                                                                                              
-    res.status(200).json({                                                                    					 // Отправляем успешный ответ клиенту
-      success: true,                                                                          					 // Указываем успешность операции
-      message: "Регистрация успешна! Выберите способ подтверждения.",                         					 // Сообщение для пользователя
-      userId: userId,                                                                         					 // Передаем ID пользователя
-      confirmLink: telegramConfirmLink                                                        					 // Передаем ссылку для подтверждения
-    });                                                                                       
+    await query(                                                                                         // Выполняем SQL-запрос к базе данных
+      "INSERT INTO users (id, username, email, password_hash, confirmed) VALUES (?, ?, ?, ?, ?)",        // Вставляем нового пользователя в таблицу users
+      [userId, username, email, passwordHash, false]                                                     // Передаём значения: ID, логин, email, хеш пароля и флаг confirmed = false
+    );
+
+    // 50 баллов — бонус за регистрацию (независимо от подтверждения)                                     // Комментарий: базовый бонус только за факт регистрации
+    const REGISTRATION_BASE_BONUS = 50;                                                                  // Задаём константу размера бонуса за регистрацию
+    await awardPoints(userId, REGISTRATION_BASE_BONUS, 'registration_signup', {                          // Начисляем баллы через сервисную функцию awardPoints
+      via: 'signup'                                                                                      // В meta фиксируем, что эти баллы выданы именно за регистрацию
+    });
+
+    res.status(200).json({                                                                              // Отправляем успешный ответ клиенту
+      success: true,                                                                                    // Помечаем, что операция прошла успешно
+      message: "Регистрация успешна! Выберите способ подтверждения.",                                   // Сообщение пользователю о результате регистрации
+      userId: userId,                                                                                   // Возвращаем ID созданного пользователя
+      confirmLink: telegramConfirmLink                                                                  // Возвращаем ссылку на подтверждение через Telegram
+    });                                                                                                 // Завершаем формирование ответа                                                                                       
   } catch (error) {                                                                           					 // Обрабатываем возможные ошибки
     console.error("Ошибка регистрации:", error);                                              					 // Логируем ошибку в консоль
     res.status(500).json({ message: "Ошибка сервера." });                                    					   // Возвращаем ошибку сервера клиенту
