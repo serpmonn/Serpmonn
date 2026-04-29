@@ -1024,33 +1024,62 @@ elements.statusSelect?.addEventListener('change', filterPromos);
 elements.countrySelect?.addEventListener('change', filterPromos);
 
 document.addEventListener('DOMContentLoaded', async () => {
-    isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';
-    sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
-    const savedSearch = localStorage.getItem('promo_search') || '';
-    const savedCategory = localStorage.getItem('promo_category') || '';
-    const savedStatus = localStorage.getItem('promo_status') || '';
-    const savedCountry = localStorage.getItem('promo_country') || '';
-    elements.searchInput.value = savedSearch;
-    elements.categorySelect.value = savedCategory;
-    elements.statusSelect.value = savedStatus;
-    elements.countrySelect.value = savedCountry;
-    await loadPromocodesFromAPI();
-    updateLastUpdateTime();
-    startAutoUpdate();
-    filterPromos();
-    if (elements.refreshBtn) {
-        elements.refreshBtn.addEventListener('click', async () => {
-            await refreshPromocodes();
-        });
+  // ---- старая инициализация промокодов ----
+  isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';
+  sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
+  const savedSearch = localStorage.getItem('promo_search') || '';
+  const savedCategory = localStorage.getItem('promo_category') || '';
+  const savedStatus = localStorage.getItem('promo_status') || '';
+  const savedCountry = localStorage.getItem('promo_country') || '';
+
+  elements.searchInput.value = savedSearch;
+  elements.categorySelect.value = savedCategory;
+  elements.statusSelect.value = savedStatus;
+  elements.countrySelect.value = savedCountry;
+
+  await loadPromocodesFromAPI();
+  updateLastUpdateTime();
+  startAutoUpdate();
+  filterPromos();
+
+  if (elements.refreshBtn) {
+    elements.refreshBtn.addEventListener('click', async () => {
+      await refreshPromocodes();
+    });
+  }
+
+  if (elements.toggleFilters) {
+    elements.toggleFilters.addEventListener('click', () => toggleFilters(elements.toggleFilters));
+    elements.toggleFilters.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggleFilters(elements.toggleFilters);
+      }
+    });
+  }
+
+  // ---- сюда переезжает код счетчика подписчиков ----
+        const el = document.getElementById('subscribersCount');
+    if (el) {
+    try {
+        const res = await fetch('/api/subscribers/count', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        const raw = Number(data.count) || 0;
+
+        const formatted = raw.toLocaleString('ru-RU');
+
+        const oldText = el.textContent;
+
+        const newText = oldText.replace(
+        /(\d[\d\s\u00A0]*)(\s*)/u,
+        `${formatted} `
+        );
+
+        el.textContent = newText;
+    } catch (err) {
+        console.error('Не удалось получить количество подписчиков', err);
     }
-    if (elements.toggleFilters) {
-        elements.toggleFilters.addEventListener('click', () => toggleFilters(elements.toggleFilters));
-        elements.toggleFilters.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                toggleFilters(elements.toggleFilters);
-            }
-        });
     }
 });
 

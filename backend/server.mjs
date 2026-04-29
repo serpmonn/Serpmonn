@@ -19,6 +19,7 @@ import profilesRoutes from './profiles/profilesRoutes.mjs';                     
 import counterRoutes from './Counter/CounterRoutes.mjs';                                                                         // Импортируем маршруты для работы со счетчиками и статистикой
 import subscribeRouter from './subscriber/subscribeRoutes.mjs';                                                                  // Импортируем маршруты для управления подписками и рассылками
 import unsubscribeRouter from './subscriber/unsubscribeRouter.mjs';                                                              // Импорт маршрутов отписки от рассылки промокодов
+import subscribersCountRouter from './subscriber/subscribersCountRoutes.mjs';                                                    // Импорт маршрутов количества подписчиков на промокоды
 import rateLimit from 'express-rate-limit';                                                                                      // Импортируем ограничитель частоты запросов для защиты от DDoS
 import csrf from 'csurf';                                                                                                        // Импортируем CSRF middleware для защиты от межсайтовых запросов
 import { analyticsRouter } from './analytics/analytics.mjs';                                                                     // Маршруты аналитики страницы промокодов
@@ -111,6 +112,7 @@ app.use('/promocodes', promocodesRoutes);                                       
 app.use('/api/promocodes', promocodesRoutes);                                                                                    // Дублируем маршруты промокодов под /api/promocodes для фронтенда
 app.use(subscribeRouter);                                                                                                        // Подключаем маршруты подписки без дополнительного префикса
 app.use('/', unsubscribeRouter);                                                                                                 // Подключение маршрутов отписки от рассылки промокодов
+app.use('/api', subscribersCountRouter);                                                                                         // Подключение маршрута количество подписчиков на промокоды
 app.use('/improve', improveRoutes);                                                                                              // Маршрут предложки
 app.use('/api', vkidRoutes);                                                                                                     // Маршрут авторизации vk
 app.use('/api', verifyToken);                                                                                                    // Сначала проверка токена и установка req.user
