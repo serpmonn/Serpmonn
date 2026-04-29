@@ -26,6 +26,14 @@ const topBrands = [
     'винлаб', 'winelab', 'wine lab',
     'ашан', 'ashan',
 ];
+
+    // Добавьте этот массив в начало файла promokody-skidki.js (после const topBrands)
+const specialCopyProjects = [
+    'Мегамаркет', 'Яндекс Лавка', 'Ашан', 'COZY HOME', 'Netprint',
+    'Яндекс Еда', 'SYNERGETIC', 'ТВОЕ', 'DDX Fitness', 'Плати по миру',
+    'Сберздоровье', 'Anywayanyday', 'Librederm', 'PetShop', 'GamersHub'
+];
+
 const categoryLabels = {
     'еда': 'Еда и рестораны',
     'продукты': 'Продукты',
@@ -645,10 +653,50 @@ function createPromoCard(promo, isTopOffer = false) {
     }
 
     const copyBtn = card.querySelector('.copy-btn');
+
     if (copyBtn && promo.promocode) {
-        copyBtn.addEventListener('click', (e) => {
+        copyBtn.addEventListener('click', async (e) => {
             e.stopPropagation();
-            copyToClipboard(promo); // передаёт всю карточку
+
+            // Копирование промокода (как и раньше)
+            await copyToClipboard(promo);
+
+            // Формируем строку для поиска по проектам
+            const combinedForSpecial = [
+                promo?.title,
+                promo?.name,
+                promo?.description,
+                promo?.advertiser_info,
+                promo?.category,
+                promo?.landing_url,
+                promo?.link,
+                promo?.url
+            ].filter(Boolean).join(' ').toLowerCase();
+
+            const isSpecialProject = specialCopyProjects.some(project =>
+                combinedForSpecial.includes(project.toLowerCase())
+            );
+
+            // Для спец‑проектов: дополнительно сделать "использовать"
+            if (isSpecialProject && landingUrl) {
+                try {
+                    await fetch('/api/track-click', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            promocode: promo.promocode,
+                            url: landingUrl,
+                            source: 'copy-button-special',
+                            visitor_id: getOrCreateVisitorId()
+                        })
+                    });
+                } catch (error) {
+                    logError('Ошибка трекинга клика по copy для спец‑проекта', error);
+                }
+
+                // Открываем лендинг как при "Использовать"
+                window.open(landingUrl, '_blank');
+            }
         });
     }
 
