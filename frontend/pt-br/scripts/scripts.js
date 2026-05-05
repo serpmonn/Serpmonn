@@ -26,7 +26,12 @@ export function shouldShowCookieBanner() {
   return getEnv() === 'web';
 }
 
-// дальше — твой существующий код scripts.js
+function generateIdempotencyKey() {
+  if (window.crypto && window.crypto.randomUUID) {
+    return window.crypto.randomUUID();
+  }
+  return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
+}
 
 // ======================================================================================================================
 // МАРКДАУН РЕНДЕРЕР ДЛЯ КРАСИВОГО ФОРМАТИРОВАНИЯ ОТВЕТОВ ИИ
@@ -433,52 +438,67 @@ function initPage() {
   }
 
   function setupEventListeners() {
-    newsContainer.addEventListener('click', function () {
-      this.classList.toggle('expanded');
-    });
+  const newsContainer = document.getElementById('news-container');
+  if (!newsContainer) return;
 
-    const searchForm = document.getElementById('ai-search-form');
-    searchForm.addEventListener('submit', async e => {
-      e.preventDefault();
+  newsContainer.addEventListener('click', function () {
+    this.classList.toggle('expanded');
+  });
 
-      const input = searchForm.querySelector('input[name="q"]');
-      const query = input.value.trim();
+  const searchForm = document.getElementById('ai-search-form');
+  const submitBtn = searchForm.querySelector('button[type="submit"]');
 
-      if (!query) {
-        console.log('Пустой запрос');
-        return;
-      }
+  let isSubmitting = false;
 
-      showLoading();
-      const container = document.getElementById('ai-result-container');
-      if (container) {
-        container.style.display = 'block';
-      }
+  searchForm.addEventListener('submit', async e => {
+    e.preventDefault();
 
-      try {
-        const response = await fetch('/ai-search', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json'
-          },
-          credentials: 'include',                                                                                                                                                                           // вот это нужно, чтобы браузер послал cookie token
-          body: JSON.stringify({ q: query })
-        });
+    if (isSubmitting) {
+      // Уже есть активный запрос – просто игнорируем повторный submit
+      return;
+    }
 
-        if (!response.ok) {
+    const input = searchForm.querySelector('input[name="q"]');
+    const query = input.value.trim();
+
+    if (!query) {
+      console.log('Пустой запрос');
+      return;
+    }
+
+    isSubmitting = true;
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.classList.add('is-loading'); // если хочешь анимацию по классу
+    }
+
+    showLoading();
+    const container = document.getElementById('ai-result-container');
+    if (container) {
+      container.style.display = 'block';
+    }
+
+    try {
+      const idempotencyKey = generateIdempotencyKey();
+
+      const response = await fetch('/ai-search', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'X-Idempotency-Key': idempotencyKey
+        },
+        credentials: 'include',
+        body: JSON.stringify({ q: query })
+      });
+
+      if (!response.ok) {
         let errData = null;
         try {
           errData = await response.json();
         } catch (_) {}
 
         if (errData && errData.error) {
-          if (errData.needAuth) {
-            showResult({ error: errData.error });
-
-            return;
-          }
-
           showResult({ error: errData.error });
           return;
         }
@@ -486,22 +506,28 @@ function initPage() {
         throw new Error(`HTTP ${response.status}: ${response.statusText}`);
       }
 
-        const data = await response.json();
-        const answer = data.answer || '';
+      const data = await response.json();
+      const answer = data.answer || '';
 
-        showResult({
-          answer,
-          usedWebSearch: data.usedWebSearch === true,
-          sources: data.sources || []
-        });
-      } catch (error) {
-        console.error('Ошибка при запросе к ИИ:', error);
-        showResult({
-          error: 'Ошибка связи с ИИ. Проверьте консоль или попробуйте позже.'
-        });
+      showResult({
+        answer,
+        usedWebSearch: data.usedWebSearch === true,
+        sources: data.sources || []
+      });
+    } catch (error) {
+      console.error('Ошибка при запросе к ИИ:', error);
+      showResult({
+        error: 'Ошибка связи с ИИ. Проверьте консоль или попробуйте позже.'
+      });
+    } finally {
+      isSubmitting = false;
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('is-loading');
       }
-    });
-  }
+    }
+  });
+}
 
   async function loadPageData() {
     try {
