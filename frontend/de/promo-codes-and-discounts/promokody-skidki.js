@@ -266,28 +266,6 @@ async function loadPromocodesFromAPI() {
             throw new Error(`Неверный формат данных: ${result.message || 'нет данных'}`);
         }
         allPromocodes = result.data.map(normalizePromo);
-        // КОММЕНТАРИЙ: Промокод Шерри был закомментирован по требованию
-        /*
-        allPromocodes.unshift({
-            id: 'manual-sherry-001',
-            title: 'Шерри - Промокоды и бонусы',
-            description: 'Экономия на покупках! Установи приложение Шерри, зарегистрируйся с промокодом U9H9 и получи 100 ₽ на счёт. Промокоды для популярных сервисов и магазинов ждут тебя!',
-            promocode: 'U9H9',
-            discount_percent: null,
-            discount_amount: 100,
-            bonus_description: 'Бонус 100 ₽ при регистрации',
-            valid_until: '2035-12-31T23:59:59',
-            landing_url: 'https://sharry.prfl.me/sites/f4jzit?erid=2VtzqvJaEWT',
-            image_url: '/frontend/images/sherry-promo.png',
-            conditions: 'Зарегистрируйтесь в приложении Шерри и введите промокод при регистрации.',
-            advertiser_info: 'Реклама ООО «Перфлюенс» ИНН: 7725380313, 6+ erid: 2VtzqwuxWPn',
-            category: 'сервисы',
-            country: 'Россия',
-            is_top: false,
-            created_at: new Date().toISOString(),
-            groupDescription: 'Экономия, скидки, популярные бренды в одном приложении! Совершай покупки с промокодами и получай реальные деньги.'
-        });
-        */
         filteredPromocodes = [...allPromocodes];
         const newDate = new Date().toISOString();
         localStorage.setItem('promo_cache', JSON.stringify({ 
@@ -592,7 +570,15 @@ function createPromoCard(promo, isTopOffer = false) {
         </div>
         <div class="promo-card-footer">
             ${landingUrl ? `
-                <a href="${escapeHtml(landingUrl)}" target="_blank" class="register-link use-btn">Использовать</a>
+                <div class="promo-footer-actions">
+                    <a href="${escapeHtml(landingUrl)}" target="_blank" class="register-link use-btn">Использовать</a>
+                    <button 
+                        type="button" 
+                        class="promo-share-button" 
+                        aria-label="Поделиться этим промокодом">
+                        <span class="promo-share-icon">⤴</span>
+                    </button>
+                </div>
             ` : ''}
             ${promo.advertiser_info ? `
                 <p class="ad">Реклама. ${escapeHtml(promo.advertiser_info)}</p>
@@ -718,6 +704,20 @@ function createPromoCard(promo, isTopOffer = false) {
             } catch (error) {
                 logError('Ошибка трекинга клика', error);
             }
+        });
+    }
+    
+    const codeParam = promo.promocode || '';
+    const shareBtn = card.querySelector('.promo-share-button');
+    if (shareBtn) {
+        shareBtn.addEventListener('click', (e) => {
+            e.stopPropagation(); // чтобы не срабатывал клик по карточке
+
+           const shareUrl = `${window.location.origin}/promo?code=${
+                encodeURIComponent(codeParam)
+            }`;
+
+            sharePromo(promo, shareUrl);
         });
     }
 
@@ -878,11 +878,13 @@ function filterPromos() {
         noResultsMessage.remove();
     }
     const resultCountContainer = document.getElementById('promocodes-result-count');
-    resultCountContainer.innerHTML = '';
-    const resultCount = document.createElement('p');
-    resultCount.textContent = `Найдено промокодов: ${filteredPromocodes.length}`;
-    resultCount.className = 'result-count';
-    resultCountContainer.appendChild(resultCount);
+    if (resultCountContainer) {
+        resultCountContainer.innerHTML = '';
+        const resultCount = document.createElement('p');
+        resultCount.textContent = `Найдено промокодов: ${filteredPromocodes.length}`;
+        resultCount.className = 'result-count';
+        resultCountContainer.appendChild(resultCount);
+    }
 }
 
 function copyToClipboard(promo) {
@@ -1154,5 +1156,37 @@ function collapseAdIfNoFill(container, timeoutMs) {
     } catch (error) {
         logError('Ошибка проверки рекламы', error);
         container.style.display = 'none';
+    }
+}
+
+let isSharing = false;
+
+async function sharePromo(promo, url) {
+    const text = `Нашёл рабочий промокод на ${promo?.title || promo?.name || 'Serpmonn'}`;
+
+    try {
+        if (navigator.share) {
+            if (isSharing) return;
+            isSharing = true;
+
+            await navigator.share({
+                title: 'Промокод от Serpmonn',
+                text,   // без URL
+                url     // тут уже короткий https://serpmonn.ru/promo?code=...
+            });
+
+            isSharing = false;
+            return;
+        }
+
+        if (window.vkBridge) {
+            await vkBridge.send('VKWebAppShare', { link: url });
+            return;
+        }
+
+        window.prompt('Скопируйте ссылку и отправьте другу:', url);
+    } catch (error) {
+        isSharing = false;
+        console.error('Ошибка шаринга промокода', error);
     }
 }

@@ -198,12 +198,12 @@ body {
     background: #f8f8f8;
     border: 1px solid #ddd;
     border-radius: 10px;
-    padding: 15px;
+    padding: 10px 12px;     /* было 15px */
     text-align: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
-    min-height: 280px;
+    min-height: 240px;      /* было 280px */
     position: relative;
 }
 
@@ -220,13 +220,63 @@ body {
 
 .promo-card-footer {
     margin-top: auto;
-    padding-top: 10px;
+    padding-top: 8px;
     border-top: 1px solid #eee;
 }
 
+.promo-footer-actions {
+    display: flex;
+    align-items: center;      /* ключевое */
+    justify-content: center;
+    gap: 6px;
+    margin-bottom: 4px;
+}
+
+.promo-share-icon {
+    display: inline-block;
+    transform: translateY(1px); /* опускаем символ на 1px */
+}
+
+.promo-share-button {
+    height: 48px;
+    min-height: 48px;
+    width: 48px;
+    min-width: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 900;
+    border-radius: 50%;
+    cursor: pointer;
+    flex-shrink: 0;
+    border: none;
+
+    /* цветовая схема, которая сочетается с твоим фоном и submit-btn */
+    background: linear-gradient(135deg, #667eea, #ff6b81);
+    color: #ffffff;
+    box-shadow: 0 3px 8px rgba(102, 126, 234, 0.45);
+    transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.promo-share-button:hover {
+    filter: brightness(1.06);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.6);
+}
+
+.promo-share-button:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
 .promo-card img {
-    max-width: 80px;
-    margin-bottom: 8px;
+    max-width: 40px;
+    max-height: 40px;
+    width: 40px;
+    height: 40px;
+    margin-bottom: 4px;
+    object-fit: contain;
 }
 
 .promo-card .description {
@@ -285,10 +335,16 @@ body {
     font-size: 14px;
 }
 
+.country {
+    margin: 4px 0 2px;        /* было стандартное p, обычно ~16px снизу */
+    font-size: 13px;
+    color: #555;
+}
+
 .expiry {
     font-size: 13px;
     color: #666;
-    margin-bottom: 8px;
+    margin: 2px 0 4px;        /* было 8px снизу, делаем меньше */
 }
 
 .expiry.expired {
@@ -304,7 +360,7 @@ body {
     width: 100%;
     max-width: 260px;
     min-height: 48px;
-    padding: 12px 20px;
+    padding: 10px 20px;
     background: linear-gradient(90deg, #ff4500, #ff8c00);
     color: #ffffff !important; /* Явно белый текст */
     font-size: 16px;
@@ -314,11 +370,13 @@ body {
     border-radius: 10px;
     transition: all 0.2s ease;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
-    margin-top: 12px;
+    margin-top: 0;
     z-index: 10;
     border: none;
     cursor: pointer;
     font-family: inherit;
+    line-height: 1; 
+    box-sizing: border-box;
 }
 
 .register-link::after {
@@ -537,8 +595,8 @@ body {
 .promo-header {
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 12px;
+    gap: 8px;
+    margin-bottom: 8px;
     text-align: left;
 }
 
@@ -555,25 +613,26 @@ body {
 }
 
 .details-btn {
-    background: linear-gradient(90deg, #ff6b00, #ff5252);
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 8px;
+    background: transparent;
+    color: #555;
+    border: 1px solid #ddd;
+    padding: 2px 6px;          /* ещё меньше */
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    margin: 12px 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    margin: 4px 0;             /* было больше */
     display: inline-flex;
     align-items: center;
-    gap: 8px;
+    gap: 4px;
+    line-height: 1.1;          /* плотнее строка */
     transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .details-btn:hover {
-    background: linear-gradient(90deg, #e55e00, #e53935);
-    transform: translateY(-2px);
-    box-shadow: 0 3px 10px rgba(255, 107, 0, 0.3);
+    background: rgba(0, 0, 0, 0.03);
+    transform: translateY(-1px);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .details-btn:hover .details-icon {
