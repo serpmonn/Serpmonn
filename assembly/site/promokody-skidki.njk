@@ -159,7 +159,7 @@ eleventyComputed:
     
     <script>var time_s = 30;</script>
     <script src="https://seo-fast.ru/site_external/test_view.js"></script>
-    <script src="promokody-skidki.js?v=25" defer></script>
+    <script src="promokody-skidki.js?v=26" defer></script>
     <script src="https://yandex.ru/ads/system/context.js" async></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
@@ -255,6 +255,17 @@ eleventyComputed:
         <section class="bonus" aria-labelledby="bonus-title">
             <h2 id="bonus-title">{{ localesPromocodes[locale].promoCodes.bonusTitle }}</h2>
             <p>{{ localesPromocodes[locale].promoCodes.bonusText }}</p>
+
+
+            <div class="social-proof" aria-live="polite">
+                <span class="social-proof-count" id="subscribersCount">
+                    Уже подписались более 3&nbsp;000 человек
+                </span>
+                <span class="social-proof-note">
+                    Присоединяйтесь к пользователям, которые экономят с Serpmonn каждый месяц.
+                </span>
+            </div>
+
             <form action="/subscribe" method="post" aria-label="{{ localesPromocodes[locale].promoCodes.bonusTitle }}">
                 <input type="email" name="email" placeholder="{{ localesPromocodes[locale].promoCodes.emailPlaceholder }}" required aria-label="{{ localesPromocodes[locale].promoCodes.emailPlaceholder }}">
                 <button type="submit" class="submit-btn">{{ localesPromocodes[locale].promoCodes.subscribeButton }}</button>
