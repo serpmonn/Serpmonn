@@ -1,5 +1,9 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
 
+// ЧИТАЕМ РЕФЕРАЛЬНЫЙ КОД ИЗ URL (?ref=...)
+const urlParams = new URLSearchParams(window.location.search);
+const referralUsername = urlParams.get('ref') || null;
+
 // ОБРАБОТЧИК ОТПРАВКИ ФОРМЫ РЕГИСТРАЦИИ
 document.getElementById("registerForm").addEventListener("submit", async function (event) {
     event.preventDefault();                                                                              // Предотвращаем стандартную отправку формы
@@ -10,10 +14,15 @@ document.getElementById("registerForm").addEventListener("submit", async functio
 
     try {
         // Отправляем POST запрос на сервер для регистрации пользователя
-        const response = await fetch("/auth/register", {                                                // Относительный путь к API регистрации
-            method: "POST",                                                                             // Метод HTTP запроса
-            headers: { "Content-Type": "application/json" },                                            // Заголовок указывающий тип данных JSON
-            body: JSON.stringify({ username, email, password }),                                        // Преобразуем данные в JSON строку
+        const response = await fetch("/auth/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                username,
+                email,
+                password,
+                ref: referralUsername                                                                   // реф-код, если был в URL
+            }),
         });
 
         // Проверяем, есть ли тело ответа перед парсингом JSON

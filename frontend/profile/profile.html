@@ -235,10 +235,10 @@
   <!-- Стили -->
   <link rel="stylesheet" href="/frontend/styles/styles.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="profile_styles2.css">
+  <link rel="stylesheet" href="profile_styles.css">
 
   <!-- Скрипты -->
-  <script type="module" src="profile_scripts2.js" defer></script>
+  <script type="module" src="profile_scripts.js" defer></script>
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>
@@ -323,6 +323,38 @@
 
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
+
+        <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">Реферальная программа</h2>
+
+      <p class="plan-hint">
+        Приглашайте друзей и получайте баллы. Вы и приглашённый
+        получите бонус после регистрации.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Моя реферальная ссылка:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Скопировать
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
 
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">

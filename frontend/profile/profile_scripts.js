@@ -69,6 +69,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const favoriteContainer = document.getElementById('favoriteTools');
   const noFavoritesMessage = document.getElementById('noFavoritesMessage');
 
+  const referralLinkInput = document.getElementById('referralLink');
+  const copyReferralLinkBtn = document.getElementById('copyReferralLink');
+  const referralHint = document.getElementById('referralHint');
+
   let isEditOpen = false;
 
   /* ==== УТИЛИТЫ ==== */
@@ -272,6 +276,26 @@ document.addEventListener('DOMContentLoaded', () => {
       emailField.textContent = email || '—';
       updateAvatarInitials(username, email);
 
+      // Обновляем реферальную ссылку, если есть username
+      if (referralLinkInput) {
+        if (username) {
+          const baseUrl = 'https://serpmonn.ru/frontend/register/register.html';
+          const url = `${baseUrl}?ref=${encodeURIComponent(username)}`;
+          referralLinkInput.value = url;
+
+          if (referralHint) {
+            referralHint.textContent =
+              'Скопируйте ссылку и отправьте другу. За регистрацию по ней вы оба получите бонусные баллы.';
+          }
+        } else {
+          referralLinkInput.value = '';
+          if (referralHint) {
+            referralHint.textContent =
+              'Чтобы получить реферальную ссылку, укажите имя в профиле.';
+          }
+        }
+      }
+
       if (!data.confirmed) {
         setBadge(accountStatusBadge, 'status-badge--unconfirmed', 'Email не подтверждён');
       } else {
@@ -389,15 +413,23 @@ document.addEventListener('DOMContentLoaded', () => {
   function mapPointsReason(item) {
     switch (item.type) {
       case 'registration_backfill_50':
-        return 'Бонус за регистрацию';
-      case 'registration_backfill':
-        return 'Бонус за подтверждение';
       case 'registration_signup':
         return 'Бонус за регистрацию';
+
+      case 'registration_backfill':
+        return 'Бонус за подтверждение';
+
       case 'registration':
         if (item.meta?.via === 'telegram') return 'Подтверждение через Telegram';
         if (item.meta?.via === 'email') return 'Подтверждение email';
         return 'Подтверждение аккаунта';
+
+      // Рефералка
+      case 'referral_referrer':
+        return 'Бонус за приглашённого друга';
+      case 'referral_referee':
+        return 'Бонус за регистрацию по приглашению';
+
       default:
         return 'Операция с баллами';
     }
@@ -423,6 +455,27 @@ document.addEventListener('DOMContentLoaded', () => {
       return [];
     }
   }
+
+  async function updateReferralCounter() {
+  const referralCounterEl = document.getElementById('referralCounter');
+  if (!referralCounterEl) return;
+
+  try {
+    const history = await loadPointsHistory();
+
+    const referralCount = history.filter(
+      item => item.type === 'referral_referrer'
+    ).length;
+
+    referralCounterEl.textContent =
+      referralCount > 0
+        ? `Приглашено друзей: ${referralCount}`
+        : 'Вы ещё не приглашали друзей.';
+  } catch (error) {
+    console.error('Ошибка обновления счётчика рефералов:', error);
+    referralCounterEl.textContent = 'Вы ещё не приглашали друзей.';
+  }
+}
 
   async function checkCreateMailboxStatus() {
     try {
@@ -471,6 +524,13 @@ document.addEventListener('DOMContentLoaded', () => {
         emailField.textContent = payload.email;
       }
       updateAvatarInitials(payload.username, payload.email);
+
+      // Обновляем реферальную ссылку, если поменяли username
+      if (payload.username && referralLinkInput) {
+        const baseUrl = 'https://serpmonn.ru/frontend/register/register.html';
+        const url = `${baseUrl}?ref=${encodeURIComponent(payload.username)}`;
+        referralLinkInput.value = url;
+      }
 
       isEditOpen = false;
       renderEditForm();
@@ -555,6 +615,27 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 }
 
+if (copyReferralLinkBtn && referralLinkInput) {
+    copyReferralLinkBtn.addEventListener('click', async () => {
+      const value = referralLinkInput.value.trim();
+      if (!value) {
+        setGlobalMessage('Реферальная ссылка ещё не сгенерирована.', 'error');
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(value);
+        setGlobalMessage('Реферальная ссылка скопирована в буфер обмена.', 'success');
+      } catch (e) {
+        console.error('Ошибка копирования ссылки:', e);
+        // Фолбэк: выделим текст, чтобы юзер сам скопировал
+        referralLinkInput.focus();
+        referralLinkInput.select();
+        setGlobalMessage('Ссылка выделена, нажмите Ctrl+C для копирования.', 'error');
+      }
+    });
+  }
+
   createOnnmailButton.addEventListener('click', () => {
     checkCreateMailboxStatus();
   });
@@ -638,4 +719,5 @@ document.addEventListener('DOMContentLoaded', () => {
   getProfile();
   loadPoints();
   renderFavoriteTools();
+  updateReferralCounter();
 });
