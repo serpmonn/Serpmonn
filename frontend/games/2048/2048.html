@@ -1,91 +1,146 @@
+
 <!DOCTYPE html>
 <html lang="ru" dir="ltr">
 <head>
-<script type="module" src="/frontend/scripts/menu-loader.js" defer></script>                                                <!-- Подключение скрипта загрузки меню -->
-<link rel="stylesheet" href="/frontend/styles/styles.css">                                                                   <!-- Основные стили сайта -->
-<meta http-equiv="Content-Language" content="ru">                                                                           <!-- Указание языка контента -->
-    <meta charset="UTF-8">                                                                                                  <!-- Кодировка UTF-8 -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">                                                 <!-- Адаптивность для мобильных -->
-    <title>2048 - Serpmonn</title>                                                                                         <!-- Заголовок страницы -->
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website">                                                                            <!-- Тип контента для Facebook -->
-    <meta property="og:url" content="https://www.serpmonn.ru/frontend/games/2048/">                                        <!-- URL страницы -->
-    <meta property="og:title" content="2048 - Классическая головоломка">                                                   <!-- Заголовок для соцсетей -->
-    <meta property="og:description" content="Соединяйте одинаковые числа для получения 2048! Классическая головоломка на логику и стратегию."> <!-- Описание -->
-    <meta property="og:image" content="https://www.serpmonn.ru/frontend/images/2048.ico">                                  <!-- Изображение для превью -->
-    
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image">                                                           <!-- Тип карточки для Twitter -->
-    <meta property="twitter:url" content="https://www.serpmonn.ru/frontend/games/2048/">                                   <!-- URL для Twitter -->
-    <meta property="twitter:title" content="2048 - Классическая головоломка">                                              <!-- Заголовок для Twitter -->
-    <meta property="twitter:description" content="Соединяйте одинаковые числа для получения 2048! Классическая головоломка на логику и стратегию."> <!-- Описание -->
-    <meta property="twitter:image" content="https://www.serpmonn.ru/frontend/images/2048.ico">                             <!-- Изображение для Twitter -->
-    
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">                                             <!-- Иконка сайта -->
-    <link rel="stylesheet" href="/frontend/styles/base.css">                                                               <!-- Базовые стили -->
-    <link rel="stylesheet" href="/frontend/styles/accessibility.css">                                                      <!-- Стили доступности -->
-    <link rel="stylesheet" href="2048.css">                                                                                <!-- Стили игры 2048 -->
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>                                                   <!-- Скрипт рекламы -->
-    
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Language" content="ru">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>2048 — классическая головоломка</title>
+  <meta name="description" content="Соединяйте одинаковые числа, чтобы получить 2048! Классическая головоломка на логику и стратегию.">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://serpmonn.ru/frontend/games/2048/2048.html">
+  <meta property="og:title" content="2048 — классическая головоломка">
+  <meta property="og:description" content="Играйте в 2048 онлайн: соединяйте числа, продумывайте ходы и ставьте новые рекорды.">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/2048.ico">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://serpmonn.ru/frontend/games/2048/2048.html">
+  <meta property="twitter:title" content="2048 — классическая головоломка">
+  <meta property="twitter:description" content="Онлайн-игра 2048: логика, стратегия и рекорды.">
+  <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/2048.ico">
+
+  <link rel="canonical" href="https://serpmonn.ru/frontend/games/2048/2048.html">
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/games/2048/2048.css">
+
+  <!-- Меню -->
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+
+  <!-- Реклама -->
+  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+
+  <!-- Structured Data: игра 2048 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "2048",
+    "description": "Соединяйте одинаковые числа, чтобы получить 2048! Классическая головоломка на логику и стратегию.",
+    "url": "https://serpmonn.ru/frontend/games/2048/2048.html",
+    "applicationCategory": "Game",
+    "operatingSystem": "Web",
+    "genre": "Puzzle",
+    "inLanguage": "ru",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Serpmonn"
+    }
+  }
+  </script>
 </head>
 <body>
-    <script>
-      (function(){                                                                                                         // Самовызывающаяся функция для инструкций
-        function isMobile(){ return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768); } // Проверка мобильного устройства
-        function showInstructions(){                                                                                       // Функция показа инструкций
-          try{
-            var old = document.querySelector('.instructions'); if(old) old.style.display='none';                           // Скрытие старых инструкций
-            if (localStorage.getItem('game_instructions_2048_shown') === '1') return;                                      // Проверка, показывались ли уже инструкции
-            var ov = document.createElement('div');                                                                        // Создание оверлея
-            ov.id = 'game-instructions-overlay';                                                                           // ID оверлея
-            ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9998;'; // Стили оверлея
-            var box = document.createElement('div');                                                                       // Создание блока инструкций
-            box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.4);text-align:left;'; // Стили блока
-            var h = document.createElement('h3'); h.textContent = 'Как играть — 2048'; h.style.margin='0 0 8px';           // Заголовок инструкций
-            var p = document.createElement('div');                                                                         // Текст инструкций
-            p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';                                         // Стили текста
-            if (isMobile()) {                                                                                              // Инструкции для мобильных
-              p.textContent = '• Свайпы влево/вправо/вверх/вниз — движение плиток\n• Кнопки: «Новая игра», «Отменить»';
-            } else {                                                                                                       // Инструкции для десктопа
-              p.textContent = '• Стрелки ← ↑ → ↓ — движение плиток\n• Кнопки под полем: «Новая игра», «Отменить»';
-            }
-            var btn = document.createElement('button'); btn.textContent='Понятно';                                         // Кнопка закрытия
-            btn.className='btn'; btn.style.marginTop='10px'; btn.onclick=function(){ ov.remove(); localStorage.setItem('game_instructions_2048_shown','1'); }; // Обработчик клика
-            box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov); // Добавление элементов в DOM
-          }catch(_){}                                                                                                      // Игнорирование ошибок
+  <nav id="menuContainer"></nav>
+
+  <script>
+  (function(){
+    function isMobile(){
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768);
+    }
+    function showInstructions(){
+      try{
+        var old = document.querySelector('.instructions');
+        if (old) old.style.display='none';
+        if (localStorage.getItem('game_instructions_2048_shown') === '1') return;
+
+        var ov = document.createElement('div');
+        ov.id = 'game-instructions-overlay';
+        ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9998;';
+
+        var box = document.createElement('div');
+        box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.4);text-align:left;';
+
+        var h = document.createElement('h3');
+        h.textContent = 'Как играть:';
+        h.style.margin = '0 0 8px';
+
+        var p = document.createElement('div');
+        p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
+
+        
+        if (isMobile()) {
+          p.textContent = {{ game2048Translations[locale].game2048.instructionsMobile | dump | safe }};
+        } else {
+          p.textContent = {{ game2048Translations[locale].game2048.instructionsDesktop | dump | safe }};
         }
-        document.addEventListener('DOMContentLoaded', showInstructions);                                                   // Показ инструкций после загрузки DOM
-      })();
-    </script>
-    <div class="container">                                                                                                <!-- Основной контейнер -->
-        <div class="ad-top-banner" style="text-align:center;margin:16px 0;">                                               <!-- Рекламный баннер -->
-            <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>   <!-- Рекламный тег -->
-        </div>
-        <script>(window.MRGtag = window.MRGtag || []).push({});</script>                                                   <!-- Инициализация рекламы -->
-        <header>                                                                                                           <!-- Шапка страницы -->
-            <h1>🎮 2048</h1>                                                                                              <!-- Заголовок игры -->
-            <div class="score-container">                                                                                  <!-- Контейнер счета -->
-                <div class="score">Счёт: <span id="score">0</span></div>                                                   <!-- Текущий счет -->
-                <div class="best">Лучший: <span id="best">0</span></div>                                                   <!-- Лучший счет -->
-            </div>
-        </header>
         
-        <div class="game-container">                                                                                       <!-- Контейнер игры -->
-            <div class="game-board" id="board"></div>                                                                      <!-- Игровое поле -->
-            <div class="controls">                                                                                         <!-- Панель управления -->
-                <button id="new-game" class="btn">Новая игра</button>                                                      <!-- Кнопка новой игры -->
-                <button id="undo" class="btn">Отменить</button>                                                            <!-- Кнопка отмены хода -->
-            </div>
-        </div>
-        
-        <div class="instructions" style="display:none;">                                                                   <!-- Инструкции (скрыты по умолчанию) -->
-            <h3>Как играть:</h3>                                                                                           <!-- Заголовок инструкций -->
-            <p>Используйте стрелки или свайпы для перемещения плиток. Соединяйте одинаковые числа для получения 2048!</p>  <!-- Текст инструкций -->
-        </div>
+
+        var btn = document.createElement('button');
+        btn.textContent = 'Новая игра';
+        btn.className='btn';
+        btn.style.marginTop='10px';
+        btn.onclick=function(){
+          ov.remove();
+          localStorage.setItem('game_instructions_2048_shown','1');
+        };
+
+        box.appendChild(h);
+        box.appendChild(p);
+        box.appendChild(btn);
+        ov.appendChild(box);
+        document.body.appendChild(ov);
+      }catch(e){}
+    }
+    document.addEventListener('DOMContentLoaded', showInstructions);
+  })();
+  </script>
+
+  <div class="container">
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
     </div>
-    
-    <script src="2048.js"></script>                                                                                        <!-- Подключение скрипта игры -->
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>                                                 <!-- Скрипты для мобильных -->
+    <script>(window.MRGtag = window.MRGtag || []).push({});</script>
+
+    <header>
+      <h1>🎮 2048</h1>
+      <div class="score-container">
+        <div class="score">Счёт: <span id="score">0</span></div>
+        <div class="best">Лучший: <span id="best">0</span></div>
+      </div>
+    </header>
+
+    <div class="game-container">
+      <div class="game-board" id="board"></div>
+      <div class="controls">
+        <button id="new-game" class="btn">Новая игра</button>
+        <button id="undo" class="btn">Отменить</button>
+      </div>
+    </div>
+
+    <div class="instructions" style="display:none;">
+      <h3>Как играть:</h3>
+      <p>Используйте стрелки или свайпы для перемещения плиток. Соединяйте одинаковые числа, чтобы получить 2048!</p>
+    </div>
+  </div>
+
+  <script src="/frontend/games/2048/2048.js"></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
 </html>

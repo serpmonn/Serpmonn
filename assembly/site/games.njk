@@ -62,6 +62,29 @@ eleventyComputed:
     <meta property="og:type" content="website">
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="{{ canonical }}" />
+        <!-- Structured Data: список игр -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "ItemList",
+      "name": "{{ localesGames[locale].games.schemaName | escape }}",
+      "numberOfItems": {{ localesGames[locale].games.totalGames | safe }},
+      "itemListElement": [
+        {% set pos = 1 %}
+        {% for category in localesGames[locale].games.categories %}
+          {% for game in category.games %}
+            {
+              "@type": "ListItem",
+              "position": {{ pos }},
+              "url": "{% if game.external %}{{ game.link }}{% else %}{{ site.baseUrl }}{{ game.link }}{% endif %}",
+              "name": "{{ game.name | escape }}"
+            }{% if not (loop.last and loop.parent.last) %},{% endif %}
+            {% set pos = pos + 1 %}
+          {% endfor %}
+        {% endfor %}
+      ]
+    }
+    </script>
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}

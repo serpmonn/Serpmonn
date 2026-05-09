@@ -1,0 +1,146 @@
+
+<!DOCTYPE html>
+<html lang="th" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Language" content="th">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>2048 — เกมปริศนาคลาสสิก</title>
+  <meta name="description" content="ผสานกระเบื้องที่มีตัวเลขเหมือนกันเพื่อไปให้ถึง 2048! เกมปริศนาคลาสสิกที่เน้นตรรกะและกลยุทธ์.">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://serpmonn.ru/frontend/th/games/2048/2048.html">
+  <meta property="og:title" content="2048 — เกมปริศนาคลาสสิก">
+  <meta property="og:description" content="เล่น 2048 ออนไลน์: ผสานตัวเลข วางแผนการเดิน และทำลายสถิติของคุณเอง.">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/2048.ico">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://serpmonn.ru/frontend/th/games/2048/2048.html">
+  <meta property="twitter:title" content="2048 — เกมปริศนาคลาสสิก">
+  <meta property="twitter:description" content="เกม 2048 ออนไลน์: ตรรกะ กลยุทธ์ และสถิติใหม่.">
+  <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/2048.ico">
+
+  <link rel="canonical" href="https://serpmonn.ru/frontend/th/games/2048/2048.html">
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/games/2048/2048.css">
+
+  <!-- Меню -->
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+
+  <!-- Реклама -->
+  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+
+  <!-- Structured Data: игра 2048 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "2048",
+    "description": "ผสานกระเบื้องที่มีตัวเลขเหมือนกันเพื่อไปให้ถึง 2048! เกมปริศนาคลาสสิกที่เน้นตรรกะและกลยุทธ์.",
+    "url": "https://serpmonn.ru/frontend/th/games/2048/2048.html",
+    "applicationCategory": "Game",
+    "operatingSystem": "Web",
+    "genre": "Puzzle",
+    "inLanguage": "th",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Serpmonn"
+    }
+  }
+  </script>
+</head>
+<body>
+  <nav id="menuContainer"></nav>
+
+  <script>
+  (function(){
+    function isMobile(){
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768);
+    }
+    function showInstructions(){
+      try{
+        var old = document.querySelector('.instructions');
+        if (old) old.style.display='none';
+        if (localStorage.getItem('game_instructions_2048_shown') === '1') return;
+
+        var ov = document.createElement('div');
+        ov.id = 'game-instructions-overlay';
+        ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9998;';
+
+        var box = document.createElement('div');
+        box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.4);text-align:left;';
+
+        var h = document.createElement('h3');
+        h.textContent = 'วิธีเล่น:';
+        h.style.margin = '0 0 8px';
+
+        var p = document.createElement('div');
+        p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
+
+        
+        if (isMobile()) {
+          p.textContent = {{ game2048Translations[locale].game2048.instructionsMobile | dump | safe }};
+        } else {
+          p.textContent = {{ game2048Translations[locale].game2048.instructionsDesktop | dump | safe }};
+        }
+        
+
+        var btn = document.createElement('button');
+        btn.textContent = 'เริ่มเกมใหม่';
+        btn.className='btn';
+        btn.style.marginTop='10px';
+        btn.onclick=function(){
+          ov.remove();
+          localStorage.setItem('game_instructions_2048_shown','1');
+        };
+
+        box.appendChild(h);
+        box.appendChild(p);
+        box.appendChild(btn);
+        ov.appendChild(box);
+        document.body.appendChild(ov);
+      }catch(e){}
+    }
+    document.addEventListener('DOMContentLoaded', showInstructions);
+  })();
+  </script>
+
+  <div class="container">
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+    </div>
+    <script>(window.MRGtag = window.MRGtag || []).push({});</script>
+
+    <header>
+      <h1>🎮 2048</h1>
+      <div class="score-container">
+        <div class="score">คะแนน: <span id="score">0</span></div>
+        <div class="best">ดีที่สุด: <span id="best">0</span></div>
+      </div>
+    </header>
+
+    <div class="game-container">
+      <div class="game-board" id="board"></div>
+      <div class="controls">
+        <button id="new-game" class="btn">เริ่มเกมใหม่</button>
+        <button id="undo" class="btn">ย้อนกลับ</button>
+      </div>
+    </div>
+
+    <div class="instructions" style="display:none;">
+      <h3>วิธีเล่น:</h3>
+      <p>ใช้ปุ่มลูกศรหรือการปัดหน้าจอเพื่อขยับกระเบื้อง ผสานตัวเลขเหมือนกันเพื่อไปให้ถึง 2048!</p>
+    </div>
+  </div>
+
+  <script src="/frontend/games/2048/2048.js"></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

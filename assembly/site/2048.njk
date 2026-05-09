@@ -1,0 +1,158 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/games/2048/2048.html{% else %}/frontend/{{ locale }}/games/2048/2048.html{% endif %}"
+eleventyComputed:
+  title: "{{ game2048Translations[locale].game2048.pageTitle }}"
+  description: "{{ game2048Translations[locale].game2048.metaDescription }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/games/2048/2048.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/games/2048/2048.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Language" content="{{ locale }}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:title" content="{{ game2048Translations[locale].game2048.ogTitle }}">
+  <meta property="og:description" content="{{ game2048Translations[locale].game2048.ogDescription }}">
+  <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/2048.ico">
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="{{ canonical }}">
+  <meta property="twitter:title" content="{{ game2048Translations[locale].game2048.ogTitle }}">
+  <meta property="twitter:description" content="{{ game2048Translations[locale].game2048.twitterDescription }}">
+  <meta property="twitter:image" content="{{ site.baseUrl }}/frontend/images/2048.ico">
+
+  <link rel="canonical" href="{{ canonical }}">
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/games/2048/2048.css">
+
+  <!-- Меню -->
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+
+  <!-- Реклама -->
+  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+
+  <!-- Structured Data: игра 2048 -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "VideoGame",
+    "name": "2048",
+    "description": "{{ game2048Translations[locale].game2048.metaDescription | escape }}",
+    "url": "{{ canonical }}",
+    "applicationCategory": "Game",
+    "operatingSystem": "Web",
+    "genre": "Puzzle",
+    "inLanguage": "{{ locale }}",
+    "publisher": {
+      "@type": "Organization",
+      "name": "Serpmonn"
+    }
+  }
+  </script>
+</head>
+<body>
+  <nav id="menuContainer"></nav>
+
+  <script>
+  (function(){
+    function isMobile(){
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768);
+    }
+    function showInstructions(){
+      try{
+        var old = document.querySelector('.instructions');
+        if (old) old.style.display='none';
+        if (localStorage.getItem('game_instructions_2048_shown') === '1') return;
+
+        var ov = document.createElement('div');
+        ov.id = 'game-instructions-overlay';
+        ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.7);display:flex;align-items:center;justify-content:center;z-index:9998;';
+
+        var box = document.createElement('div');
+        box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;box-shadow:0 8px 30px rgba(0,0,0,.4);text-align:left;';
+
+        var h = document.createElement('h3');
+        h.textContent = '{{ game2048Translations[locale].game2048.howToTitle }}';
+        h.style.margin = '0 0 8px';
+
+        var p = document.createElement('div');
+        p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
+
+        {% raw %}
+        if (isMobile()) {
+          p.textContent = {{ game2048Translations[locale].game2048.instructionsMobile | dump | safe }};
+        } else {
+          p.textContent = {{ game2048Translations[locale].game2048.instructionsDesktop | dump | safe }};
+        }
+        {% endraw %}
+
+        var btn = document.createElement('button');
+        btn.textContent = '{{ game2048Translations[locale].game2048.newGame }}';
+        btn.className='btn';
+        btn.style.marginTop='10px';
+        btn.onclick=function(){
+          ov.remove();
+          localStorage.setItem('game_instructions_2048_shown','1');
+        };
+
+        box.appendChild(h);
+        box.appendChild(p);
+        box.appendChild(btn);
+        ov.appendChild(box);
+        document.body.appendChild(ov);
+      }catch(e){}
+    }
+    document.addEventListener('DOMContentLoaded', showInstructions);
+  })();
+  </script>
+
+  <div class="container">
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+    </div>
+    <script>(window.MRGtag = window.MRGtag || []).push({});</script>
+
+    <header>
+      <h1>{{ game2048Translations[locale].game2048.mainTitle }}</h1>
+      <div class="score-container">
+        <div class="score">{{ game2048Translations[locale].game2048.scoreLabel }} <span id="score">0</span></div>
+        <div class="best">{{ game2048Translations[locale].game2048.bestLabel }} <span id="best">0</span></div>
+      </div>
+    </header>
+
+    <div class="game-container">
+      <div class="game-board" id="board"></div>
+      <div class="controls">
+        <button id="new-game" class="btn">{{ game2048Translations[locale].game2048.newGame }}</button>
+        <button id="undo" class="btn">{{ game2048Translations[locale].game2048.undo }}</button>
+      </div>
+    </div>
+
+    <div class="instructions" style="display:none;">
+      <h3>{{ game2048Translations[locale].game2048.howToTitle }}</h3>
+      <p>{{ game2048Translations[locale].game2048.howToText }}</p>
+    </div>
+  </div>
+
+  <script src="/frontend/games/2048/2048.js"></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>
