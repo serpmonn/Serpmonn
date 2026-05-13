@@ -15,6 +15,7 @@ import { validationResult } from 'express-validator';										                 
 import { v4 as uuidv4 } from 'uuid';												                                             // Импортируем uuidv4 для генерации уникальных ID
 import { sendConfirmationEmail } from '../utils/mailer.mjs';									                           // Импортируем функцию для отправки email
 import { awardPoints } from '../points/pointsService.js';                                                // Импортирует функцию проверки и начисления баллов
+import { checkAndRewardQualifiedReferral } from '../points/referralService.mjs';                         // Импорт функции начисления баллов за активного реферала
                                                                                               
 const { V2 } = paseto;                                                                         					 // Извлекаем V2 из paseto для работы с токенами
 const { hash, compare } = bcrypt;                                                              					 // Извлекаем hash и compare из bcrypt
@@ -77,7 +78,7 @@ export const registerUser = async (req, res) => {                               
           );
 
           if (!freshUser.referred_by) {                                     // Проверяем, что у нового ещё не указан реферер
-            const REFERRER_BONUS = 500;                                     // Сколько баллов дать пригласившему
+            const BASIC_REFERRER_BONUS = 200;                               // бонус для пригласившего реферала без подтверждения
             const REFEREE_BONUS = 150;                                      // Сколько баллов дать приглашённому
 
             await query(                                                    // Обновляем запись нового пользователя
@@ -87,8 +88,8 @@ export const registerUser = async (req, res) => {                               
 
             await awardPoints(                                              // Начисляем бонус пригласившему (рефереру)
               referrer.id,                                                  // id пригласившего пользователя
-              REFERRER_BONUS,                                               // размер бонуса рефереру
-              'referral_referrer',                                          // тип транзакции — бонус рефереру
+              BASIC_REFERRER_BONUS,                                         // размер бонуса рефереру
+              'invite_basic',                                               // тип транзакции — бонус рефереру
               { referee_id: userId, via: 'signup' }                         // meta: кого пригласил и откуда начисление
             );
 
@@ -98,6 +99,15 @@ export const registerUser = async (req, res) => {                               
               'referral_referee',                                           // тип транзакции — бонус приглашённому
               { referrer_id: referrer.id, via: 'signup' }                   // meta: кто пригласил и откуда начисление
             );
+
+            /* где-то в кроне или при достижении условий
+            const QUALIFIED_REFERRER_BONUS = 300;
+            await awardPoints(
+              referrerId,
+              QUALIFIED_REFERRER_BONUS,
+              'invite_qualified',
+              { referee_id: referralId, reason: 'active_7_days' }
+            );*/
           }
         }
       } catch (refErr) {                                                    // Ловим ошибки, связанные только с рефералкой
@@ -164,6 +174,8 @@ export const confirmTelegram = async (req, res) => {                            
         );
       }
 
+      await checkAndRewardQualifiedReferral(user.id);                                           // Проверяет, есть ли у пользователя реферер и нужно ли начислить ему +300
+
       return res.json({                                                                         //     Возвращаем успешный ответ
         success: true,
         message: `Аккаунт ${user.username} уже был подтвержден ранее`
@@ -183,6 +195,8 @@ export const confirmTelegram = async (req, res) => {                            
         [user.id]
       );
     }
+
+    await checkAndRewardQualifiedReferral(user.id);
 
     res.json({                                                                                  //     Отправляем успешный ответ клиенту
       success: true,
@@ -253,6 +267,8 @@ export const confirmToken = async (req, res) => {                               
         [user.id]
       );
     }
+
+    await checkAndRewardQualifiedReferral(user.id);                                             // Проверяет, есть ли у пользователя реферер и нужно ли начислить ему +300
 
     const payload = {                                                                           //     Формируем payload для PASETO-токена авторизации
       id: user.id,

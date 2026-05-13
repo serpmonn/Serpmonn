@@ -411,29 +411,47 @@ document.addEventListener('DOMContentLoaded', () => {
     /* ==== ИСТОРИЯ БАЛЛОВ ==== */
 
   function mapPointsReason(item) {
-    switch (item.type) {
-      case 'registration_backfill_50':
-      case 'registration_signup':
-        return 'Бонус за регистрацию';
+  switch (item.type) {
+    // Регистрация
+    case 'registration_backfill_50':
+    case 'registration_signup':
+      return 'Бонус за регистрацию';
 
-      case 'registration_backfill':
-        return 'Бонус за подтверждение';
+    case 'registration_backfill':
+      return 'Бонус за подтверждение';
 
-      case 'registration':
-        if (item.meta?.via === 'telegram') return 'Подтверждение через Telegram';
-        if (item.meta?.via === 'email') return 'Подтверждение email';
-        return 'Подтверждение аккаунта';
+    case 'registration':
+      if (item.meta?.via === 'telegram') return 'Подтверждение через Telegram';
+      if (item.meta?.via === 'email') return 'Подтверждение email';
+      return 'Подтверждение аккаунта';
 
-      // Рефералка
-      case 'referral_referrer':
-        return 'Бонус за приглашённого друга';
-      case 'referral_referee':
-        return 'Бонус за регистрацию по приглашению';
+    // Рефералка — реферер (новые)
+    case 'invite_basic':
+      return 'Бонус за приглашение друга';
+    case 'invite_qualified':
+      return 'Бонус за активного друга';
 
-      default:
-        return 'Операция с баллами';
-    }
+    // Рефералка — реферер (старый тариф, 500 баллов одним разом)
+    case 'referral_referrer':
+      return 'Бонус за приглашённого друга (старый тариф)';
+
+    // Рефералка — приглашённый
+    case 'referral_referee':
+      return 'Бонус за регистрацию по приглашению';
+
+    // На будущее
+    case 'withdraw_request':
+      return 'Заявка на вывод баллов';
+    case 'withdraw_rollback':
+      return 'Возврат баллов';
+    case 'admin_adjust':
+    case 'manual':
+      return 'Ручная операция с баллами';
+
+    default:
+      return 'Операция с баллами';
   }
+}
 
   async function loadPointsHistory() {
     try {
@@ -464,7 +482,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const history = await loadPointsHistory();
 
     const referralCount = history.filter(
-      item => item.type === 'referral_referrer'
+      item => item.type === 'invite_basic'
     ).length;
 
     referralCounterEl.textContent =

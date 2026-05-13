@@ -13,7 +13,7 @@ import express from 'express';                                                  
 import cookieParser from 'cookie-parser';                                                                                        // Импортируем cookie-parser для работы с cookies
 
 import vkidRoutes from './vkid/vkidRoutes.mjs';                                                                                  // Импорт маршрутов авторизации ВК
-import authRoutes from './auth/authRoutes.mjs';                                                                                  // Импортируем маршруты аутентификации и авторизации
+import authRoutes from './auth/authRoutes.mjs';                                                                                  // Импортирует маршруты аутентификации и авторизации
 import yookassaRouter from './yookassa/yookassaRoutes.mjs';                                                                      // Импортируем маршруты yookassa
 import profilesRoutes from './profiles/profilesRoutes.mjs';                                                                      // Импортируем маршруты для работы с профилями пользователей
 import counterRoutes from './Counter/CounterRoutes.mjs';                                                                         // Импортируем маршруты для работы со счетчиками и статистикой
@@ -26,7 +26,7 @@ import { analyticsRouter } from './analytics/analytics.mjs';                    
 import promocodesRoutes from './promocodes/promocodesRoutes.mjs';                                                                // Импортируем маршруты для работы с промокодами и акциями
 import improveRoutes from './improve/improve.mjs';                                                                               // Импорт маршрута для сбора предложений пользователей
 import pointsRoutes from './points/pointsRoutes.mjs';                                                                            // Импорт маршрута баллов
-import verifyToken from './auth/verifyToken.mjs';
+import verifyToken from './auth/verifyToken.mjs';                                                                                // Импорт маршрута верификации
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);                                                                                                       // Доверяем первому прокси (например, Nginx) для корректного IP
