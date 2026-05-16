@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Profiili — Serpmonn</title>
-  <meta name="description" content="Hallinnoi profiiliasi, tilaustasi ja työkaluja Serpmonnissa.">
+  <meta name="description" content="Hallinnoi profiilia, tilausta ja työkaluja Serpmonnissa.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Profiili — Serpmonn">
-  <meta property="og:description" content="Hallinnoi profiiliasi, tilaustasi ja työkaluja Serpmonnissa.">
+  <meta property="og:description" content="Hallinnoi profiilia, tilausta ja työkaluja Serpmonnissa.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/fi/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Profiili — Serpmonn">
-  <meta name="twitter:description" content="Profiilin, tilauksen ja työkalujen hallinta.">
+  <meta name="twitter:description" content="Hallinnoi profiilia, tilausta ja työkaluja.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Serpmonn-sähköposti ilmoituksille ja palveluviesteille.
+            Serpmonn-sähköposti ilmoituksia ja palveluviestejä varten.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Muokkaa tietoja
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Pisteet:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Muokkaa tietoja
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Kutsujärjestelmä
+      </h2>
+
+      <p class="plan-hint">
+        Kutsu ystäviä ja ansaitse pisteitä. Sinä ja kutsuttu saatte bonuksen rekisteröitymisen jälkeen.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Oma kutsulinkkini:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Kopioi
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Vaihda pisteet Pro-tilaukseen
+      </h2>
+
+      <p class="plan-hint">
+        Vaihda pisteitä Pro-tilauksen päiviin. Nyt: 500 pistettä = 1 Pro-päivä.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Kuinka monta Pro-päivää haluat?
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Vaihda
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -315,12 +399,12 @@
           Tilaus ja rajat
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
-          Hallitse tilausta
+          Hallinnoi tilausta
         </button>
       </div>
 
       <p class="plan-subtitle">
-        Nykyinen tilaus:
+        Nykyinen paketti:
         <span id="planName" class="plan-name">Free</span>
       </p>
 
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Kuukausittainen pyyntöraja</span>
+          <span>Käytettävissä olevat pyynnöt paketissa</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -350,9 +434,9 @@
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
         Et ole vielä valinnut työkaluja.
-        Merkitse ⭐
+        Merkitse ⭐ sivulla
         <a href="/frontend/fi/tools/tools.html">
-          kaikkien työkalujen sivulla
+          kaikki työkalut
         </a>,
         niin ne näkyvät täällä.
       </p>
@@ -361,16 +445,16 @@
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="Kirjaudu ulos tililtä">
+    <section class="logout-section" aria-label="Uloskirjautuminen tililtä">
       <button id="logoutButton" type="button" class="danger-button">
-        Kirjaudu ulos
+        Kirjaudu ulos tililtä
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

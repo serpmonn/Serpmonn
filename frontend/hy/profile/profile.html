@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Պրոֆիլ — Serpmonn</title>
-  <meta name="description" content="Կառավարեք ձեր պրոֆիլը, բաժանորդագրությունն ու գործիքները Serpmonn-ում։">
+  <meta name="description" content="Կառավարեք ձեր պրոֆիլը, բաժանորդագրությունը և գործիքները Serpmonn-ում.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Պրոֆիլ — Serpmonn">
-  <meta property="og:description" content="Կառավարեք ձեր պրոֆիլը, բաժանորդագրությունն ու գործիքները Serpmonn-ում։">
+  <meta property="og:description" content="Կառավարեք ձեր պրոֆիլը, բաժանորդագրությունը և գործիքները Serpmonn-ում.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/hy/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Պրոֆիլ — Serpmonn">
-  <meta name="twitter:description" content="Պրոֆիլի, բաժանորդագրության և գործիքների կառավարում։">
+  <meta name="twitter:description" content="Պրոֆիլի, բաժանորդագրության և գործիքների կառավարում.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Serpmonn-ի էլ․ հասցե ծանուցումների և ծառայողական նամակների համար։
+            Serpmonn փոստ՝ ծանուցումների և ծառայողական նամակների համար։
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Փոփոխել տվյալները
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Միավորներ․
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Փոփոխել տվյալները
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Ռեֆերալ ծրագիր
+      </h2>
+
+      <p class="plan-hint">
+        Հրավիրեք ընկերներին և ստացեք միավորներ։ Գրանցումից հետո ինչպես դուք, այնպես էլ հրավիրվածը կստանաք բոնուս։
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Իմ ռեֆերալ հղումը․
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Պատճենել
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Միավորների փոխանակում Pro-ի հետ
+      </h2>
+
+      <p class="plan-hint">
+        Փոխանակեք միավորները Pro բաժանորդագրության օրերի։ Այժմ՝ 500 միավոր = 1 Pro օր։
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Քանի օր Pro եք ցանկանում ստանալ․
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Փոխանակել
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -315,12 +399,12 @@
           Բաժանորդագրություն և սահմանափակումներ
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
-          Կառավարել փաթեթը
+          Կառավարել սակագինը
         </button>
       </div>
 
       <p class="plan-subtitle">
-        Ընթացիկ փաթեթ՝
+        Ներկայիս սակագին․
         <span id="planName" class="plan-name">Free</span>
       </p>
 
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Ամսական հարցումների սահմանաչափ</span>
+          <span>Առկա հարցումներ ըստ սակագնի</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -350,27 +434,27 @@
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
         Դուք դեռ գործիքներ չեք ընտրել։
-        Տեղադրեք ⭐
+        Դնեք ⭐ նշանը
         <a href="/frontend/hy/tools/tools.html">
-          բոլոր գործիքների էջում
+          բոլոր գործիքների
         </a>,
-        և դրանք կհայտնվեն այստեղ։
+        էջում, և դրանք կցուցադրվեն այստեղ։
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="Ելք օգտվողի հաշվից">
+    <section class="logout-section" aria-label="Ելք հաշվից">
       <button id="logoutButton" type="button" class="danger-button">
         Ելք հաշվից
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>প্রোফাইল — Serpmonn</title>
-  <meta name="description" content="Serpmonn-এ আপনার প্রোফাইল, সাবস্ক্রিপশন এবং টুলস পরিচালনা করুন।">
+  <meta name="description" content="Serpmonn-এ প্রোফাইল, সাবস্ক্রিপশন এবং টুলস ব্যবস্থাপনা।">
 
   <!-- Open Graph -->
   <meta property="og:title" content="প্রোফাইল — Serpmonn">
-  <meta property="og:description" content="Serpmonn-এ আপনার প্রোফাইল, সাবস্ক্রিপশন এবং টুলস পরিচালনা করুন।">
+  <meta property="og:description" content="Serpmonn-এ প্রোফাইল, সাবস্ক্রিপশন এবং টুলস ব্যবস্থাপনা।">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/bn/profile/profile.html">
   <meta property="og:type" content="website">
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            নোটিফিকেশন এবং সার্ভিস মেইলের জন্য Serpmonn ইমেল।
+            নোটিফিকেশন এবং সার্ভিস ইমেইলের জন্য Serpmonn মেইল।
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          ডাটা পরিবর্তন করুন
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                পয়েন্ট:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            তথ্য পরিবর্তন করুন
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,11 +326,77 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        রেফারেল প্রোগ্রাম
+      </h2>
+
+      <p class="plan-hint">
+        বন্ধুদের আমন্ত্রণ করুন এবং পয়েন্ট অর্জন করুন। নিবন্ধনের পর আপনি এবং আমন্ত্রিত উভয়েই বোনাস পাবেন।
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          আমার রেফারেল লিঙ্ক:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          কপি করুন
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        পয়েন্ট দিয়ে Pro নিন
+      </h2>
+
+      <p class="plan-hint">
+        পয়েন্টকে Pro সাবস্ক্রিপশনের দিনে রূপান্তর করুন। এখন: ৫০০ পয়েন্ট = ১ দিন Pro।
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          আপনি কত দিন Pro পেতে চান:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          বিনিময় করুন
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          সাবস্ক্রিপশন ও সীমা
+          সাবস্ক্রিপশন এবং সীমা
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
           প্ল্যান পরিচালনা করুন
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>মাসিক রিকোয়েস্ট সীমা</span>
+          <span>প্ল্যান অনুযায়ী উপলব্ধ অনুরোধ</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -350,9 +434,9 @@
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
         আপনি এখনও কোনো টুল নির্বাচন করেননি।
-        ⭐ চিহ্ন দিন
+        ⭐ চিহ্ন দিন এই পাতায়
         <a href="/frontend/bn/tools/tools.html">
-          সব টুলের পেজে
+          সব টুলস
         </a>,
         এবং সেগুলো এখানে দেখা যাবে।
       </p>
@@ -361,16 +445,16 @@
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="অ্যাকাউন্ট থেকে সাইন আউট">
+    <section class="logout-section" aria-label="অ্যাকাউন্ট থেকে প্রস্থান">
       <button id="logoutButton" type="button" class="danger-button">
-        অ্যাকাউন্ট থেকে বের হন
+        অ্যাকাউন্ট থেকে লগ আউট
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="پروفائل — Serpmonn">
-  <meta name="twitter:description" content="پروفائل، سبسکرپشن اور ٹولز مینجمنٹ۔">
+  <meta name="twitter:description" content="اپنا پروفائل، سبسکرپشن اور ٹولز منظم کریں۔">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Serpmonn ای میل نوٹیفکیشنز اور سروس پیغامات کے لیے۔
+            اطلاعات اور سروس پیغامات کے لیے Serpmonn ای میل۔
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          ڈیٹا تبدیل کریں
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                پوائنٹس:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            ڈیٹا میں ترمیم کریں
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        ریفرل پروگرام
+      </h2>
+
+      <p class="plan-hint">
+        دوستوں کو مدعو کریں اور پوائنٹس حاصل کریں۔ رجسٹریشن کے بعد آپ اور مدعو شدہ دونوں کو بونس ملے گا۔
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          میرا ریفرل لنک:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          کاپی کریں
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        پوائنٹس کو Pro میں تبدیل کریں
+      </h2>
+
+      <p class="plan-hint">
+        پوائنٹس کو Pro سبسکرپشن کے دنوں میں تبدیل کریں۔ اس وقت: 500 پوائنٹس = 1 دن Pro۔
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          آپ کتنے دن کا Pro حاصل کرنا چاہتے ہیں:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          تبدیل کریں
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>ماہانہ ریکویسٹ کی حد</span>
+          <span>پلان کے تحت دستیاب درخواستیں</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,12 +433,12 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        آپ نے ابھی تک کوئی ٹول منتخب نہیں کیا۔
-        ⭐ لگائیں
+        آپ نے ابھی تک کوئی ٹول نہیں منتخب کیا۔
+        صفحہ
         <a href="/frontend/ur/tools/tools.html">
-          تمام ٹولز کے صفحے پر
+          تمام ٹولز
         </a>,
-        تو وہ یہاں نظر آئیں گے۔
+        پر ⭐ لگائیں، وہ یہاں ظاہر ہوں گے۔
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
@@ -363,14 +447,14 @@
     <!-- Выход -->
     <section class="logout-section" aria-label="اکاؤنٹ سے لاگ آؤٹ">
       <button id="logoutButton" type="button" class="danger-button">
-        لاگ آؤٹ
+        اکاؤنٹ سے لاگ آؤٹ
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

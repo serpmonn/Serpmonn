@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>प्रोफ़ाइल — Serpmonn</title>
-  <meta name="description" content="Serpmonn पर अपना प्रोफ़ाइल, सदस्यता और टूल्स प्रबंधित करें।">
+  <meta name="description" content="Serpmonn पर अपनी प्रोफ़ाइल, सब्सक्रिप्शन और टूल्स प्रबंधित करें।">
 
   <!-- Open Graph -->
   <meta property="og:title" content="प्रोफ़ाइल — Serpmonn">
-  <meta property="og:description" content="Serpmonn पर अपना प्रोफ़ाइल, सदस्यता और टूल्स प्रबंधित करें।">
+  <meta property="og:description" content="Serpmonn पर अपनी प्रोफ़ाइल, सब्सक्रिप्शन और टूल्स प्रबंधित करें।">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/hi/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="प्रोफ़ाइल — Serpmonn">
-  <meta name="twitter:description" content="प्रोफ़ाइल, सदस्यता और टूल्स प्रबंधन।">
+  <meta name="twitter:description" content="प्रोफ़ाइल, सब्सक्रिप्शन और टूल्स प्रबंधन।">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            नोटिफिकेशन और सर्विस संदेशों के लिए Serpmonn ईमेल।
+            नोटिफ़िकेशन और सर्विस मैसेज के लिए Serpmonn मेल।
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          डाटा बदलें
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                अंक:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            जानकारी बदलें
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,11 +326,77 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        रेफ़रल प्रोग्राम
+      </h2>
+
+      <p class="plan-hint">
+        दोस्तों को आमंत्रित करें और अंक कमाएँ। रजिस्ट्रेशन के बाद आप और आपका आमंत्रित दोस्त, दोनों बोनस पाएँगे।
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          मेरा रेफ़रल लिंक:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          कॉपी करें
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        अंकों के बदले Pro
+      </h2>
+
+      <p class="plan-hint">
+        अंकों को Pro सब्सक्रिप्शन के दिनों में बदलें। अभी: 500 अंक = 1 दिन Pro।
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          आप कितने दिनों का Pro लेना चाहते हैं:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          बदलिए
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          सदस्यता और सीमाएँ
+          सब्सक्रिप्शन और सीमाएँ
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
           प्लान प्रबंधित करें
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>मासिक रिक्वेस्ट सीमा</span>
+          <span>प्लान के अनुसार उपलब्ध अनुरोध</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -352,25 +436,25 @@
         आपने अभी तक कोई टूल नहीं चुना है।
         ⭐ लगाएँ
         <a href="/frontend/hi/tools/tools.html">
-          सभी टूल्स वाले पेज पर
+          सभी टूल्स
         </a>,
-        ताकि वे यहाँ दिखाई दें।
+        पेज पर और वे यहाँ दिखेंगे।
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="अकाउंट से लॉग आउट">
+    <section class="logout-section" aria-label="खाते से लॉग आउट">
       <button id="logoutButton" type="button" class="danger-button">
-        लॉग आउट
+        खाते से लॉग आउट
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

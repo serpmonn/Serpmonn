@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Profil — Serpmonn</title>
-  <meta name="description" content="Spravujte svůj profil, předplatné a nástroje na Serpmonn.">
+  <meta name="description" content="Správa profilu, předplatného a nástrojů na Serpmonn.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Profil — Serpmonn">
-  <meta property="og:description" content="Spravujte svůj profil, předplatné a nástroje na Serpmonn.">
+  <meta property="og:description" content="Správa profilu, předplatného a nástrojů na Serpmonn.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/cs/profile/profile.html">
   <meta property="og:type" content="website">
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            E‑mail Serpmonn pro oznámení a systémové zprávy.
+            Pošta Serpmonn pro oznámení a servisní e-maily.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Upravit údaje
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Body:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Upravit údaje
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Partnerský program
+      </h2>
+
+      <p class="plan-hint">
+        Zvěte přátele a získávejte body. Vy i pozvaný získáte bonus po registraci.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Můj partnerský odkaz:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Kopírovat
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Směna bodů za Pro
+      </h2>
+
+      <p class="plan-hint">
+        Vyměňte body za dny předplatného Pro. Nyní: 500 bodů = 1 den Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Kolik dní Pro chcete získat:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Směnit
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Měsíční limit dotazů</span>
+          <span>Dostupné požadavky podle tarifu</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -350,11 +434,11 @@
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
         Zatím jste nevybrali žádné nástroje.
-        Označte ⭐ na
+        Označte ⭐ na stránce
         <a href="/frontend/cs/tools/tools.html">
-          stránce všech nástrojů
+          všech nástrojů
         </a>,
-        a zobrazí se zde.
+        a zde se zobrazí.
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
@@ -363,14 +447,14 @@
     <!-- Выход -->
     <section class="logout-section" aria-label="Odhlášení z účtu">
       <button id="logoutButton" type="button" class="danger-button">
-        Odhlásit se
+        Odhlásit se z účtu
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

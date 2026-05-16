@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            알림 및 서비스 메일용 Serpmonn 이메일입니다.
+            알림 및 서비스 메일용 Serpmonn 메일입니다.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          정보 수정
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                포인트:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            정보 수정
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,11 +326,77 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        추천 프로그램
+      </h2>
+
+      <p class="plan-hint">
+        친구를 초대하고 포인트를 받으세요. 가입 후, 여러분과 초대한 친구 모두 보너스를 받습니다.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          내 추천 링크:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          복사
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        포인트를 Pro로 전환
+      </h2>
+
+      <p class="plan-hint">
+        포인트를 Pro 구독 일수로 전환합니다. 현재: 500포인트 = Pro 1일.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          받고 싶은 Pro 일수를 입력하세요:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          전환
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          구독 및 제한
+          구독 및 한도
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
           요금제 관리
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>월간 요청 한도</span>
+          <span>요금제 기준 사용 가능한 요청 수</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,12 +433,12 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        아직 도구를 선택하지 않았습니다.
-        ⭐ 를 표시하면
+        아직 선택한 도구가 없습니다.
+        페이지에서 ⭐ 표시를 하면
         <a href="/frontend/ko/tools/tools.html">
-          전체 도구 페이지에서
+          모든 도구
         </a>,
-        이곳에 표시됩니다.
+        가 여기에 표시됩니다.
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
@@ -363,14 +447,14 @@
     <!-- Выход -->
     <section class="logout-section" aria-label="계정에서 로그아웃">
       <button id="logoutButton" type="button" class="danger-button">
-        로그아웃
+        계정에서 로그아웃
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

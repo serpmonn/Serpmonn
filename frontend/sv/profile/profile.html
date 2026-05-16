@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Profil — Serpmonn</title>
-  <meta name="description" content="Hantera din profil, prenumeration och dina verktyg på Serpmonn.">
+  <meta name="description" content="Hantera din profil, prenumeration och verktyg på Serpmonn.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Profil — Serpmonn">
-  <meta property="og:description" content="Hantera din profil, prenumeration och dina verktyg på Serpmonn.">
+  <meta property="og:description" content="Hantera din profil, prenumeration och verktyg på Serpmonn.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/sv/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Profil — Serpmonn">
-  <meta name="twitter:description" content="Hantering av profil, prenumeration och verktyg.">
+  <meta name="twitter:description" content="Hantera din profil, prenumeration och verktyg.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Serpmonn‑e‑post för aviseringar och tjänstemejl.
+            Serpmonn‑e‑post för aviseringar och servicemeddelanden.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Redigera uppgifter
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Poäng:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Redigera uppgifter
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Vänprogram
+      </h2>
+
+      <p class="plan-hint">
+        Bjud in vänner och tjäna poäng. Både du och den inbjudna användaren får en bonus efter registrering.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Min värvningslänk:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Kopiera
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Byt poäng mot Pro
+      </h2>
+
+      <p class="plan-hint">
+        Byt dina poäng mot Pro‑prenumerationsdagar. Nu: 500 poäng = 1 dag Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Hur många Pro‑dagar vill du få:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Byt
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -315,12 +399,12 @@
           Prenumeration och gränser
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
-          Hantera abonnemang
+          Hantera plan
         </button>
       </div>
 
       <p class="plan-subtitle">
-        Nuvarande plan:
+        Aktuell plan:
         <span id="planName" class="plan-name">Free</span>
       </p>
 
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Månatlig förfrågningsgräns</span>
+          <span>Tillgängliga förfrågningar i din plan</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,10 +433,10 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        Du har inte valt några verktyg ännu.
-        Markera ⭐ på
+        Du har inte valt några verktyg än.
+        Sätt en ⭐ på sidan med
         <a href="/frontend/sv/tools/tools.html">
-          sidan med alla verktyg
+          alla verktyg
         </a>,
         så visas de här.
       </p>
@@ -363,14 +447,14 @@
     <!-- Выход -->
     <section class="logout-section" aria-label="Logga ut från kontot">
       <button id="logoutButton" type="button" class="danger-button">
-        Logga ut
+        Logga ut från kontot
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

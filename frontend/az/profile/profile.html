@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Profil — Serpmonn</title>
-  <meta name="description" content="Serpmonn-də profilinizi, abonəliyinizi və alətlərinizi idarə edin.">
+  <meta name="description" content="Serpmonn-da profil, abonelik və alətlərin idarə edilməsi.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Profil — Serpmonn">
-  <meta property="og:description" content="Serpmonn-də profilinizi, abonəliyinizi və alətlərinizi idarə edin.">
+  <meta property="og:description" content="Serpmonn-da profil, abonelik və alətlərin idarə edilməsi.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/az/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Profil — Serpmonn">
-  <meta name="twitter:description" content="Profil, abonəlik və alətlərin idarə edilməsi.">
+  <meta name="twitter:description" content="Profil, abonelik və alətlərin idarə edilməsi.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Bildirişlər və xidmət məktubları üçün Serpmonn e-poçtu.
+            Bildirişlər və servis məktubları üçün Serpmonn poçtu.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Məlumatları dəyiş
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Ballar:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Məlumatları dəyiş
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,11 +326,77 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Referal proqramı
+      </h2>
+
+      <p class="plan-hint">
+        Dostlarınızı dəvət edin və ballar qazanın. Qeydiyyatdan sonra həm siz, həm də dəvət edilən bonus alacaq.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Mənim referal linkim:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Kopyalamaq
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Balların Pro-ya dəyişdirilməsi
+      </h2>
+
+      <p class="plan-hint">
+        Balları Pro abunəliyinin günlərinə dəyişin. Hazırda: 500 bal = 1 Pro günü.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Neçə gün Pro almaq istəyirsiniz:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Dəyişmək
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          Abonəlik və limitlər
+          Abunəlik və limitlər
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
           Tarifi idarə et
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Aylıq sorğu limiti</span>
+          <span>Tarif üzrə mövcud sorğular</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,12 +433,12 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        Hələ heç bir alət seçməmisiniz.
-        ⭐ işarəsini
+        Hələ alət seçməmisiniz.
+        ⭐ işarəsini səhifədə qoyun
         <a href="/frontend/az/tools/tools.html">
-          bütün alətlər səhifəsində
+          bütün alətlər
         </a>,
-        qoyun və onlar burada görünəcək.
+        və onlar burada görünəcək.
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
@@ -366,11 +450,11 @@
         Hesabdan çıx
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

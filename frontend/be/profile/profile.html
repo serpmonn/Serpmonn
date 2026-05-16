@@ -263,7 +263,7 @@
 
         <div class="profile-status-row">
           <span id="accountStatusBadge" class="status-badge status-badge--unconfirmed">
-            Стан рахунку
+            Статус акаўнта
           </span>
           <span id="planBadge" class="status-badge status-badge--free">
             Free
@@ -283,9 +283,27 @@
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Змяніць даныя
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Балы:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Змяніць даныя
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Рэферальная праграма
+      </h2>
+
+      <p class="plan-hint">
+        Запрашайце сяброў і атрымлівайце балы. Вы і запрошаны атрымаеце бонус пасля рэгістрацыі.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Мая рэферальная спасылка:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Скапіраваць
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Абмен балаў на Pro
+      </h2>
+
+      <p class="plan-hint">
+        Абменьвайце балы на дні падпіскі Pro. Зараз: 500 балаў = 1 дзень Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Колькі дзён Pro вы хочаце атрымаць:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Абмяняць
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Штомесячны ліміт запытаў</span>
+          <span>Даступныя запыты па тарыфе</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -354,7 +438,7 @@
         <a href="/frontend/be/tools/tools.html">
           усіх інструментаў
         </a>,
-        і яны з’явяцца тут.
+        і яны з&#39;явяцца тут.
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
@@ -366,11 +450,11 @@
         Выйсці з акаўнта
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

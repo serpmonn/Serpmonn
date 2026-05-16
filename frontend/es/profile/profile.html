@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Perfil — Serpmonn</title>
-  <meta name="description" content="Administra tu perfil, suscripción y herramientas en Serpmonn.">
+  <meta name="description" content="Gestiona tu perfil, suscripción y herramientas en Serpmonn.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Perfil — Serpmonn">
-  <meta property="og:description" content="Administra tu perfil, suscripción y herramientas en Serpmonn.">
+  <meta property="og:description" content="Gestiona tu perfil, suscripción y herramientas en Serpmonn.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/es/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Perfil — Serpmonn">
-  <meta name="twitter:description" content="Gestión de perfil, suscripción y herramientas.">
+  <meta name="twitter:description" content="Gestiona tu perfil, suscripción y herramientas.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -283,9 +283,27 @@
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Editar datos
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Puntos:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Editar datos
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Programa de referidos
+      </h2>
+
+      <p class="plan-hint">
+        Invita a tus amigos y gana puntos. Tú y la persona invitada recibiréis un bono tras el registro.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Mi enlace de referido:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Copiar
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Canjear puntos por Pro
+      </h2>
+
+      <p class="plan-hint">
+        Canjea puntos por días de suscripción Pro. Ahora: 500 puntos = 1 día de Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          ¿Cuántos días de Pro quieres obtener?
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Canjear
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Límite mensual de solicitudes</span>
+          <span>Solicitudes disponibles según el plan</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,10 +433,10 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        Aún no has seleccionado herramientas.
-        Marca ⭐ en la
+        Todavía no has elegido herramientas.
+        Marca ⭐ en la página de
         <a href="/frontend/es/tools/tools.html">
-          página de todas las herramientas
+          todas las herramientas
         </a>,
         y aparecerán aquí.
       </p>
@@ -366,11 +450,11 @@
         Cerrar sesión
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

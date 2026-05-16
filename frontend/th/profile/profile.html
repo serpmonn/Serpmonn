@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>โปรไฟล์ — Serpmonn</title>
-  <meta name="description" content="จัดการโปรไฟล์ การสมัคร และเครื่องมือของคุณบน Serpmonn.">
+  <meta name="description" content="จัดการโปรไฟล์ การสมัครใช้งาน และเครื่องมือของคุณบน Serpmonn">
 
   <!-- Open Graph -->
   <meta property="og:title" content="โปรไฟล์ — Serpmonn">
-  <meta property="og:description" content="จัดการโปรไฟล์ การสมัคร และเครื่องมือของคุณบน Serpmonn.">
+  <meta property="og:description" content="จัดการโปรไฟล์ การสมัครใช้งาน และเครื่องมือของคุณบน Serpmonn">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/th/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="โปรไฟล์ — Serpmonn">
-  <meta name="twitter:description" content="จัดการโปรไฟล์ การสมัคร และเครื่องมือ.">
+  <meta name="twitter:description" content="จัดการโปรไฟล์ การสมัครใช้งาน และเครื่องมือของคุณ">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -283,9 +283,27 @@
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          แก้ไขข้อมูล
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                แต้ม:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            แก้ไขข้อมูล
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,11 +326,77 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        โปรแกรมแนะนำเพื่อน
+      </h2>
+
+      <p class="plan-hint">
+        ชวนเพื่อนและรับแต้ม ทั้งคุณและผู้ที่ถูกชวนจะได้รับโบนัสหลังจากสมัครใช้งาน.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          ลิงก์แนะนำของฉัน:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          คัดลอก
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        แลกแต้มเป็น Pro
+      </h2>
+
+      <p class="plan-hint">
+        แลกแต้มเป็นจำนวนวันใช้งาน Pro ตอนนี้: 500 แต้ม = Pro 1 วัน.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          ต้องการรับ Pro กี่วัน:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          แลก
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          การสมัครและขีดจำกัด
+          การสมัครใช้งานและขีดจำกัด
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
           จัดการแพ็กเกจ
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>ขีดจำกัดคำขอต่อเดือน</span>
+          <span>คำขอที่ใช้ได้ตามแพ็กเกจ</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,10 +433,10 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        คุณยังไม่ได้เลือกเครื่องมือใด ๆ
-        กด ⭐ ที่
+        คุณยังไม่ได้เลือกเครื่องมือใดเลย.
+        กด ⭐ ที่หน้า
         <a href="/frontend/th/tools/tools.html">
-          หน้าแสดงเครื่องมือทั้งหมด
+          เครื่องมือทั้งหมด
         </a>,
         แล้วจะแสดงที่นี่.
       </p>
@@ -366,11 +450,11 @@
         ออกจากระบบ
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

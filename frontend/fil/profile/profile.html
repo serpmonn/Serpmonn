@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Profile — Serpmonn</title>
-  <meta name="description" content="I-manage ang iyong profile, subscription, at tools sa Serpmonn.">
+  <meta name="description" content="I-manage ang iyong profile, subscription, at mga tool sa Serpmonn.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Profile — Serpmonn">
-  <meta property="og:description" content="I-manage ang iyong profile, subscription, at tools sa Serpmonn.">
+  <meta property="og:description" content="I-manage ang iyong profile, subscription, at mga tool sa Serpmonn.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/fil/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Profile — Serpmonn">
-  <meta name="twitter:description" content="Pag-manage ng profile, subscription, at tools.">
+  <meta name="twitter:description" content="I-manage ang iyong profile, subscription, at mga tool.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Serpmonn email para sa notifications at service messages.
+            Serpmonn mail para sa notifications at service messages.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          I-edit ang data
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Puntos:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Baguhin ang data
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,11 +326,77 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Referral program
+      </h2>
+
+      <p class="plan-hint">
+        Mag-imbita ng mga kaibigan at kumita ng puntos. Ikaw at ang naimbitahan ay makakatanggap ng bonus pagkatapos mag-register.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Aking referral link:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Kopyahin
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Palitan ang puntos para sa Pro
+      </h2>
+
+      <p class="plan-hint">
+        Palitan ang puntos para sa mga araw ng Pro subscription. Sa ngayon: 500 puntos = 1 araw ng Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Ilang araw ng Pro ang gusto mo:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Palitan
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          Subscription at limits
+          Subscription at mga limit
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
           I-manage ang plan
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Buwanang limit ng requests</span>
+          <span>Magagamit na mga request ayon sa plan</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -350,27 +434,27 @@
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
         Wala ka pang napipiling mga tool.
-        Lagyan ng ⭐ sa
+        Lagyan ng ⭐ sa page ng
         <a href="/frontend/fil/tools/tools.html">
-          page ng lahat ng tools
+          lahat ng tool
         </a>,
-        para lumabas sila rito.
+        at lalabas sila dito.
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="Mag-log out sa account">
+    <section class="logout-section" aria-label="Pag-sign out sa account">
       <button id="logoutButton" type="button" class="danger-button">
-        Mag-log out
+        Mag-sign out
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

@@ -42,6 +42,9 @@ const ALL_TOOLS = [
 document.addEventListener('DOMContentLoaded', () => {
   generateCombinedBackground();
 
+  const pointsBalanceEl = document.getElementById('pointsBalance');
+  const pointsHistoryEl = document.getElementById('pointsHistory');
+  const pointsBadgeEl = document.getElementById('pointsBadge');
   const usernameField = document.getElementById('username');
   const emailField = document.getElementById('email');
   const avatarInitials = document.getElementById('avatarInitials');
@@ -53,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const planQuotaBarFillEl = document.getElementById('planQuotaBarFill');
   const planQuotaHintEl = document.getElementById('planQuotaHint');
   const planHintEl = document.getElementById('planHint');
-  const globalMessage = document.getElementById('globalMessage');
 
   const openEditProfileBtn = document.getElementById('openEditProfile');
   const editProfileMount = document.getElementById('editProfileMount');
@@ -65,16 +67,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const favoriteContainer = document.getElementById('favoriteTools');
   const noFavoritesMessage = document.getElementById('noFavoritesMessage');
-  const pointsBalanceEl = document.getElementById('pointsBalance');
+
+  const referralLinkInput = document.getElementById('referralLink');
+  const copyReferralLinkBtn = document.getElementById('copyReferralLink');
+  const referralHint = document.getElementById('referralHint');
 
   let isEditOpen = false;
 
   /* ==== УТИЛИТЫ ==== */
 
   function setGlobalMessage(text, type = '') {
-    globalMessage.textContent = text || '';
-    globalMessage.classList.remove('success', 'error');
-    if (type) globalMessage.classList.add(type);
+    if (!text) return;
+
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+
+    if (type === 'success') toast.classList.add('toast--success');
+    if (type === 'error') toast.classList.add('toast--error');
+
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'toast__icon';
+    iconSpan.textContent = type === 'success' ? '✔' : type === 'error' ? '⚠' : 'ℹ';
+
+    const contentSpan = document.createElement('span');
+    contentSpan.className = 'toast__content';
+    contentSpan.textContent = text;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'toast__close';
+    closeBtn.type = 'button';
+    closeBtn.setAttribute('aria-label', 'Закрыть уведомление');
+    closeBtn.textContent = '×';
+
+    closeBtn.addEventListener('click', () => {
+      toast.classList.remove('toast--visible');
+      setTimeout(() => toast.remove(), 200);
+    });
+
+    toast.appendChild(iconSpan);
+    toast.appendChild(contentSpan);
+    toast.appendChild(closeBtn);
+
+    container.appendChild(toast);
+
+    // небольшая задержка, чтобы сработала анимация появления
+    requestAnimationFrame(() => {
+      toast.classList.add('toast--visible');
+    });
+
+    // авто‑закрытие через 4 секунды
+    setTimeout(() => {
+      toast.classList.remove('toast--visible');
+      setTimeout(() => toast.remove(), 200);
+    }, 4000);
+  }
+
+  function getDayWord(n) {
+    const abs = Math.abs(n);
+    const last = abs % 10;
+    const lastTwo = abs % 100;
+
+    if (last === 1 && lastTwo !== 11) return 'день';
+    if (last >= 2 && last <= 4 && (lastTwo < 10 || lastTwo >= 20)) return 'дня';
+    return 'дней';
   }
 
   function setBadge(el, typeClass, text) {
@@ -270,6 +328,26 @@ document.addEventListener('DOMContentLoaded', () => {
       emailField.textContent = email || '—';
       updateAvatarInitials(username, email);
 
+      // Обновляем реферальную ссылку, если есть username
+      if (referralLinkInput) {
+        if (username) {
+          const baseUrl = 'https://serpmonn.ru/frontend/register/register.html';
+          const url = `${baseUrl}?ref=${encodeURIComponent(username)}`;
+          referralLinkInput.value = url;
+
+          if (referralHint) {
+            referralHint.textContent =
+              'Скопируйте ссылку и отправьте другу. За регистрацию по ней вы оба получите бонусные баллы.';
+          }
+        } else {
+          referralLinkInput.value = '';
+          if (referralHint) {
+            referralHint.textContent =
+              'Чтобы получить реферальную ссылку, укажите имя в профиле.';
+          }
+        }
+      }
+
       if (!data.confirmed) {
         setBadge(accountStatusBadge, 'status-badge--unconfirmed', 'Email не подтверждён');
       } else {
@@ -315,8 +393,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (currentPlan === 'pro' && data.quotas && data.quotas.pro_monthly) {
         const q = data.quotas.pro_monthly;
-        planQuotaCounterEl.textContent = `${q.used} / ${q.limit}`;
-        planQuotaHintEl.textContent = `Осталось ${q.remaining} запросов в этом месяце (${q.month_key}).`;
+
+        // Показываем только оставшиеся запросы
+        planQuotaCounterEl.textContent = `${q.remaining}`;
+
+        planQuotaHintEl.textContent =
+          q.used === 0
+            ? 'Подписка Pro активна, вы ещё не использовали запросы по Pro.'
+            : `Вы уже использовали ${q.used} запросов по Pro.`;
+
         updatePlanQuotaBar(q.used, q.limit);
       } else if (currentPlan === 'free' && data.quotas && data.quotas.free_daily) {
         const q = data.quotas.free_daily;
@@ -325,9 +410,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePlanQuotaBar(q.used ?? 0, q.limit);
       } else {
         if (currentPlan === 'pro') {
+          // Нет данных по квоте — показываем “без данных”, без цифры 2000 и без месяца
           planQuotaCounterEl.textContent = '—';
-          planQuotaHintEl.textContent = 'Месячный лимит Pro: до 2000 запросов.';
-          updatePlanQuotaBar(0, 2000);
+          planQuotaHintEl.textContent = 'Подписка Pro активна. Информация об оставшихся запросах временно недоступна.';
+          updatePlanQuotaBar(0, 100); // просто пустая полоска
         } else {
           planQuotaCounterEl.textContent = '0 / 15';
           planQuotaHintEl.textContent =
@@ -382,6 +468,105 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+    /* ==== ИСТОРИЯ БАЛЛОВ ==== */
+
+  function mapPointsReason(item) {
+  switch (item.type) {
+    // Регистрация
+    case 'registration_backfill_50':
+    case 'registration_signup':
+      return 'Бонус за регистрацию';
+
+    case 'registration_backfill':
+      return 'Бонус за подтверждение';
+
+    case 'registration':
+      if (item.meta?.via === 'telegram') return 'Подтверждение через Telegram';
+      if (item.meta?.via === 'email') return 'Подтверждение email';
+      return 'Подтверждение аккаунта';
+
+    // Рефералка — реферер (новые)
+    case 'invite_basic':
+      return 'Бонус за приглашение друга';
+    case 'invite_qualified':
+      return 'Бонус за активного друга';
+
+    // Рефералка — реферер (старый тариф)
+    case 'referral_referrer':
+      return 'Бонус за приглашённого друга (старый тариф)';
+
+    // Рефералка — приглашённый
+    case 'referral_referee':
+      return 'Бонус за регистрацию по приглашению';
+
+    // Вывод / обмен
+    case 'withdraw_request':
+      if (item.meta?.via === 'pro_exchange') {
+        return 'Обмен баллов на дни Pro';
+      }
+      return 'Заявка на вывод баллов';
+
+    case 'withdraw_paid':
+      if (item.meta?.via === 'pro_exchange') {
+        return 'Подписка Pro активирована за баллы';
+      }
+      return 'Выплата по заявке на вывод';
+
+    case 'withdraw_rollback':
+      return 'Возврат баллов за отменённый вывод';
+
+    // Служебное
+    case 'admin_adjust':
+    case 'manual':
+      return 'Ручная операция с баллами';
+
+    default:
+      return 'Операция с баллами';
+  }
+}
+
+  async function loadPointsHistory() {
+    try {
+      const response = await fetch('/api/me/points/history', {
+        method: 'GET',
+        credentials: 'include'
+      });
+
+      const data = await safeJson(response);
+
+      if (!response.ok) {
+        console.error('Не удалось загрузить историю баллов', response.status, data);
+        return [];
+      }
+
+      return Array.isArray(data.history) ? data.history : [];
+    } catch (error) {
+      console.error('Ошибка загрузки истории баллов:', error);
+      return [];
+    }
+  }
+
+  async function updateReferralCounter() {
+  const referralCounterEl = document.getElementById('referralCounter');
+  if (!referralCounterEl) return;
+
+  try {
+    const history = await loadPointsHistory();
+
+    const referralCount = history.filter(
+      item => item.type === 'invite_basic'
+    ).length;
+
+    referralCounterEl.textContent =
+      referralCount > 0
+        ? `Приглашено друзей: ${referralCount}`
+        : 'Вы ещё не приглашали друзей.';
+  } catch (error) {
+    console.error('Ошибка обновления счётчика рефералов:', error);
+    referralCounterEl.textContent = 'Вы ещё не приглашали друзей.';
+  }
+}
+
   async function checkCreateMailboxStatus() {
     try {
       const response = await fetch('/profile/get', {
@@ -430,6 +615,13 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       updateAvatarInitials(payload.username, payload.email);
 
+      // Обновляем реферальную ссылку, если поменяли username
+      if (payload.username && referralLinkInput) {
+        const baseUrl = 'https://serpmonn.ru/frontend/register/register.html';
+        const url = `${baseUrl}?ref=${encodeURIComponent(payload.username)}`;
+        referralLinkInput.value = url;
+      }
+
       isEditOpen = false;
       renderEditForm();
     } catch (error) {
@@ -458,6 +650,144 @@ document.addEventListener('DOMContentLoaded', () => {
     isEditOpen = !isEditOpen;
     renderEditForm();
   });
+
+  let pointsHistoryLoaded = false;                                                                                  // флаг, что уже грузили историю один раз
+
+  const proExchangeDaysInput = document.getElementById('proExchangeDays');
+  const proExchangeSubmit = document.getElementById('proExchangeSubmit');
+  const proExchangeHint = document.getElementById('proExchangeHint');
+
+  if (proExchangeDaysInput && proExchangeSubmit) {
+  proExchangeSubmit.addEventListener('click', async () => {
+    const raw = proExchangeDaysInput.value.trim();
+    const days = parseInt(raw, 10);
+
+    if (!Number.isFinite(days) || days <= 0) {
+      setGlobalMessage('Введите корректное количество дней Pro.', 'error');
+      return;
+    }
+
+    const POINTS_PER_PRO_DAY = 500;
+    const needPoints = days * POINTS_PER_PRO_DAY;
+
+    const ok = window.confirm(
+      `Вы хотите обменять ${needPoints} баллов на ${days} дней Pro?\n` +
+      'Баллы будут списаны, а срок действия Pro увеличится.'
+    );
+    if (!ok) return;
+
+    try {
+      const response = await fetch('/api/me/points/withdraw/pro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ days })
+      });
+
+      const data = await safeJson(response);
+
+      if (!response.ok) {
+        setGlobalMessage(
+          data?.message || 'Не удалось обменять баллы на Pro.',
+          'error'
+        );
+        return;
+      }
+
+      const dayWord = getDayWord(days);
+
+      setGlobalMessage(
+        data?.message || `Подписка Pro продлена на ${days} ${dayWord}.`,
+        'success'
+      );
+
+      loadPoints();
+      getProfile();
+
+      pointsHistoryLoaded = false;
+      if (pointsHistoryEl) {
+        pointsHistoryEl.innerHTML = '';
+        pointsHistoryEl.style.display = 'none';
+      }
+    } catch (e) {
+      console.error('Ошибка обмена баллов на Pro:', e);
+      setGlobalMessage('Ошибка обмена баллов. Попробуйте позже.', 'error');
+    }
+  });
+}
+
+  if (pointsBadgeEl && pointsHistoryEl) {
+  pointsBadgeEl.style.cursor = 'pointer';
+  pointsBadgeEl.title = 'Показать историю баллов';
+
+  pointsBadgeEl.addEventListener('click', async (event) => {
+    event.stopPropagation(); // чтобы клик по таблетке не считался "вне" при глобальном обработчике
+
+    if (!pointsHistoryLoaded) {
+      const history = await loadPointsHistory();
+
+      pointsHistoryEl.innerHTML = '';
+
+      if (!history.length) {
+        const empty = document.createElement('p');
+        empty.className = 'points-history-empty';
+        empty.textContent = 'Пока нет операций с баллами.';
+        pointsHistoryEl.appendChild(empty);
+      } else {
+        const list = document.createElement('ul');
+        list.className = 'points-history-list';
+
+        history.forEach(item => {
+          const li = document.createElement('li');
+          li.className = 'points-history-item';
+
+          const reason = mapPointsReason(item);
+          const sign = item.amount > 0 ? '+' : '';
+          const amountText = `${sign}${item.amount}`;
+
+          const date = item.createdAt
+            ? new Date(item.createdAt).toLocaleString('ru-RU')
+            : '';
+
+          li.textContent = date
+            ? `${amountText} — ${reason} (${date})`
+            : `${amountText} — ${reason}`;
+
+          list.appendChild(li);
+        });
+
+        pointsHistoryEl.appendChild(list);
+      }
+
+      pointsHistoryLoaded = true;
+    }
+
+    const isHidden =
+      pointsHistoryEl.style.display === 'none' || pointsHistoryEl.style.display === '';
+    pointsHistoryEl.style.display = isHidden ? 'block' : 'none';
+  });
+}
+
+if (copyReferralLinkBtn && referralLinkInput) {
+    copyReferralLinkBtn.addEventListener('click', async () => {
+      const value = referralLinkInput.value.trim();
+      if (!value) {
+        setGlobalMessage('Реферальная ссылка ещё не сгенерирована.', 'error');
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(value);
+        setGlobalMessage('Реферальная ссылка скопирована в буфер обмена.', 'success');
+      } catch (e) {
+        console.error('Ошибка копирования ссылки:', e);
+        // Фолбэк: выделим текст, чтобы юзер сам скопировал
+        referralLinkInput.focus();
+        referralLinkInput.select();
+        setGlobalMessage('Ссылка выделена, нажмите Ctrl+C для копирования.', 'error');
+      }
+    });
+  }
 
   createOnnmailButton.addEventListener('click', () => {
     checkCreateMailboxStatus();
@@ -524,9 +854,23 @@ document.addEventListener('DOMContentLoaded', () => {
     attachTracking('.tools-grid a');
   })();
 
+    document.addEventListener('click', (event) => {
+    if (!pointsHistoryEl) return;
+
+    const isClickOnBadge =
+      pointsBadgeEl && pointsBadgeEl.contains(event.target);
+    const isClickOnHistory =
+      pointsHistoryEl && pointsHistoryEl.contains(event.target);
+
+    if (!isClickOnBadge && !isClickOnHistory) {
+      pointsHistoryEl.style.display = 'none';
+    }
+  });
+
   /* ==== ИНИЦИАЛИЗАЦИЯ ==== */
 
   getProfile();
   loadPoints();
   renderFavoriteTools();
+  updateReferralCounter();
 });

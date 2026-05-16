@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>פּראָפיל — Serpmonn</title>
-  <meta name="description" content="פירט דיין פּראָפיל, אַבאָנעמענט און געצייג אויף Serpmonn.">
+  <meta name="description" content="פירט אָן אײַער פּראָפיל, אַבאָנעמענט און געצײַג בײַ Serpmonn.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="פּראָפיל — Serpmonn">
-  <meta property="og:description" content="פירט דיין פּראָפיל, אַבאָנעמענט און געצייג אויף Serpmonn.">
+  <meta property="og:description" content="פירט אָן אײַער פּראָפיל, אַבאָנעמענט און געצײַג בײַ Serpmonn.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/yi/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="פּראָפיל — Serpmonn">
-  <meta name="twitter:description" content="מאַנאַזשירונג פֿון פּראָפיל, אַבאָנעמענט און געצייג.">
+  <meta name="twitter:description" content="פירט אָן פּראָפיל, אַבאָנעמענט און געצײַג.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -252,7 +252,7 @@
 
       <div class="profile-header-main">
         <h1 id="profileHeaderTitle">
-          ניצער־פּראָפיל
+          באַניצער־פּראָפיל
         </h1>
 
         <p class="profile-identity">
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Serpmonn־אימעיל פֿאַר נאָוטיפיקאַציעס און סערוויס־בריוו.
+            Serpmonn־אימעיל פֿאַר נאָטיפיקאַציעס און סערוויס־בריוו.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          באַאַרבעטן דאַטן
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                פּונקטן:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            ענדערן אינפֿאָרמאַציע
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -299,7 +317,7 @@
             type="button"
             class="secondary-button secondary-button--xs"
           >
-            עפֿן
+            עפֿענען
           </button>
         </div>
       </div>
@@ -308,19 +326,85 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        רפֿעראַל־פּראָגראַם
+      </h2>
+
+      <p class="plan-hint">
+        לאַדט אַיינְ חברים און פאַרדינט פּונקטן. נאָך דער רעגיסטראַציע באַקומען איר און דער אײַנגעלאַדענער אַ באָנוס.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          מײַן רפֿעראַל־לינק:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          קאָפּירן
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        טוישן פּונקטן אויף Pro
+      </h2>
+
+      <p class="plan-hint">
+        טוישט פּונקטן אויף טאַג Pro־אַבאָנעמענט. איצט: 500 פּונקטן = 1 טאָג Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          פֿילע טאַג Pro ווילט איר באַקומען:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          טוישן
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          אַבאָנעמענט און לימיטן
+          אַבאָנעמענט און גרעניצן
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
-          מאַנאַזשירן פּלאן
+          פירן דעם פּלאַן
         </button>
       </div>
 
       <p class="plan-subtitle">
-        אקטועלער פּלאן:
+        קראַנטער פּלאַן:
         <span id="planName" class="plan-name">Free</span>
       </p>
 
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>כוידעשלעכער פֿאָרדערונג־לימיט</span>
+          <span>בנימצא אָנפֿראגן לויט פּלאַן</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -343,18 +427,18 @@
     <!-- Мои инструменты (избранное + недавние) -->
     <section class="card" aria-labelledby="toolsTitle">
       <h2 id="toolsTitle">
-        מײַנע געצייג
+        מײַנע געצײַגן
       </h2>
 
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        איר האָט נאָך ניט אויסגעקליבן קיין געצייג.
-        צייכנט ⭐ אויף דער
+        איר האָט נאָך נישט אויסגעקליבן קיין געצייג.
+        שטעלט אַ ⭐ אויפֿן בלאַט
         <a href="/frontend/yi/tools/tools.html">
-          זײַט פֿון אַלע געצייג
+          אַלע געצײַגן
         </a>,
-        און זיי וועלן זיך דאָ אָנווײזן.
+        און זיי וועלן דאָ דערשײַנען.
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
@@ -363,14 +447,14 @@
     <!-- Выход -->
     <section class="logout-section" aria-label="אַרויסגיין פֿון קאָנטאָ">
       <button id="logoutButton" type="button" class="danger-button">
-        אַרויסגיין
+        אַרויסגיין פֿון קאָנטאָ
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Perfil — Serpmonn">
-  <meta name="twitter:description" content="Gerenciamento de perfil, assinatura e ferramentas.">
+  <meta name="twitter:description" content="Gerencie seu perfil, assinatura e ferramentas.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Email do Serpmonn para notificações e mensagens de serviço.
+            E-mail Serpmonn para notificações e mensagens de serviço.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Editar dados
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Pontos:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Editar dados
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Programa de indicação
+      </h2>
+
+      <p class="plan-hint">
+        Convide amigos e ganhe pontos. Você e a pessoa convidada recebem um bônus após o cadastro.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Meu link de indicação:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Copiar
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Trocar pontos por Pro
+      </h2>
+
+      <p class="plan-hint">
+        Troque pontos por dias de assinatura Pro. Agora: 500 pontos = 1 dia de Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Quantos dias de Pro você quer receber:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Trocar
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Limite mensal de requisições</span>
+          <span>Solicitações disponíveis no plano</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,12 +433,12 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        Você ainda não selecionou ferramentas.
-        Marque ⭐ na
+        Você ainda não selecionou nenhuma ferramenta.
+        Marque ⭐ na página de
         <a href="/frontend/pt-br/tools/tools.html">
-          página de todas as ferramentas
+          todas as ferramentas
         </a>,
-        e elas vão aparecer aqui.
+        e elas aparecerão aqui.
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
@@ -363,14 +447,14 @@
     <!-- Выход -->
     <section class="logout-section" aria-label="Sair da conta">
       <button id="logoutButton" type="button" class="danger-button">
-        Sair
+        Sair da conta
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

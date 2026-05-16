@@ -111,6 +111,7 @@ p {
   display: grid;
   grid-template-columns: auto 1fr auto;
   column-gap: 16px;
+  row-gap: 8px;        /* небольшой вертикальный зазор между строками */
   align-items: center;
 }
 
@@ -188,9 +189,10 @@ p {
 
 .profile-header-actions {
   display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
+  flex-direction: column;   /* два ряда: top-row и onnmail-actions */
+  align-items: flex-end;    /* всё прижато к правому краю */
+  gap: 8px;
+  align-self: flex-start;
 }
 
 .profile-points {
@@ -203,6 +205,60 @@ p {
   color: #111827;
   font-size: 13px;
   font-weight: 500;
+  border: 1px solid transparent;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease,
+              transform 0.08s ease, border-color 0.15s ease;
+}
+
+.profile-points:hover {
+  background: #e0e7ff;
+  border-color: #4f46e5;
+  box-shadow: 0 4px 10px rgba(79, 70, 229, 0.25);
+}
+
+.profile-points:active {
+  transform: scale(0.97);
+}
+
+/* Колонка с баллами + историей */
+.profile-points-column {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;  /* таблетка “прилипает” к тексту, не к правому краю */
+}
+
+/* Всплывающее окошко с историей баллов */
+.points-history {
+  position: absolute;
+  top: 100%;                 /* сразу под таблеткой */
+  left: 0;
+  margin-top: 4px;
+  min-width: 220px;
+  max-width: 280px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
+  font-size: 12px;
+  color: #4b5563;
+  z-index: 20;               /* поверх карточки профиля */
+}
+
+.points-history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.points-history-item + .points-history-item {
+  margin-top: 4px;
+}
+
+.points-history-empty {
+  margin: 0;
+  color: #9ca3af;
 }
 
 .profile-points-label {
@@ -214,10 +270,19 @@ p {
   color: #4f46e5;
 }
 
-.profile-onnmail-actions {
-  display: flex;
-  gap: 6px;
-  margin-top: 62px; /* твоя ручная подгонка на ПК */
+.points-history-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.points-history-item + .points-history-item {
+  margin-top: 4px;
+}
+
+.points-history-empty {
+  margin: 0;
+  color: #aaaaaa;
 }
 
 /* компактные вторичные кнопки */
@@ -228,6 +293,10 @@ p {
   font-size: 12px;
   width: auto;
   box-shadow: none;
+}
+
+#proExchangeSubmit {
+  width: auto;
 }
 
 /* БЕЙДЖИ СТАТУСА */
@@ -677,6 +746,73 @@ button {
   align-items: flex-end;
 }
 
+.card-title-left {
+  text-align: left;
+}
+
+#toastContainer {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none; /* чтобы клики проходили сквозь пустое место */
+}
+
+.toast {
+  min-width: 260px;
+  max-width: 360px;
+  background-color: #1f2933;
+  color: #f9fafb;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: auto; /* по самому тосту можно кликать */
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+
+.toast--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast--success {
+  border-left: 4px solid #22c55e;
+}
+
+.toast--error {
+  border-left: 4px solid #ef4444;
+}
+
+.toast__icon {
+  font-size: 16px;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.toast__content {
+  flex: 1;
+}
+
+.toast__close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 2px;
+  line-height: 1;
+}
+
 @media (max-width: 640px) {
   .form-card--inline {
     grid-template-columns: 1fr;
@@ -720,6 +856,63 @@ button {
   margin-top: 2px;
 }
 
+/* ВЕРХНЯЯ строка справа: Баллы + Изменить в одну линию */
+.profile-header-top-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;             /* расстояние между баллами и кнопкой Изменить */
+}
+
+/* Нижняя строка: Создать / Открыть — по горизонтали,
+   отдельно от верхнего ряда */
+.profile-onnmail-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;            /* расстояние между кнопками Создать и Открыть */
+  margin-top: 60px;      /* отступ от баллов+Изменить, подбери по вкусу */
+}
+
+/* Реферальная программа */
+
+#referralTitle {
+  text-align: left;
+}
+
+.referral-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;           /* если нужен отступ между полем и кнопкой */
+}
+
+.referral-label {
+  flex: 0 0 auto;
+  font-size: 13px;
+  color: #4b5563;
+  margin-right: 8px;
+}
+
+.referral-input {
+  flex: 1; 
+  min-width: 0;
+  font-size: 12px;        /* меньше, чем обычные input-ы */
+  padding: 6px 8px;
+  border-radius: 8px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  box-sizing: border-box;
+  white-space: nowrap;    /* не переносить URL */
+  overflow-x: auto;       /* если не влез — прокрутка по X */
+}
+
+#copyReferralLink {
+  flex: 0 0 auto;
+  font-size: 12px;
+  padding: 6px 10px;
+  min-height: 0;
+  width: auto;
+}
+
 /* АДАПТИВ: МОБИЛКА */
 
 @media (max-width: 768px) {
@@ -750,12 +943,12 @@ button {
     font-size: 17px;
   }
 
-  /* Вся карточка в колонку (как уже делали) */
+  /* Вся шапка профиля в колонку */
   .profile-header {
     display: flex;
     flex-direction: column;
-    align-items: stretch;
     gap: 10px;
+    align-items: stretch;
   }
 
   .profile-avatar {
@@ -775,26 +968,28 @@ button {
     border-top: 1px solid #e5e7eb;
   }
 
-  /* ПРАВАЯ КОЛОНКА: меняем порядок внутри */
+  /* Правая колонка под текстом, всё слева */
   .profile-header-actions {
     order: 2;
-    display: flex;
-    flex-direction: column;
     align-items: flex-start;
     gap: 8px;
     margin-top: 8px;
   }
 
-  /* Сначала "Создать / Открыть" */
-  .profile-onnmail-actions {
-    order: 1;
-    margin-top: 0;         /* убираем большой отступ */
+  /* Баллы и Изменить на мобиле в столбик */
+  .profile-header-top-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
   }
 
-  /* Потом "Изменить данные" */
+  .profile-onnmail-actions {
+    gap: 8px;          /* можно оставить 8 */
+    margin-top: 4px;   /* маленький отступ на мобиле */
+  }
+
   #openEditProfile {
-    order: 2;
-    width: auto;           /* чтобы не растягивалась на всю ширину, если не нужно */
+    width: auto;
   }
 
   .tools-grid {

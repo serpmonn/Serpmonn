@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="プロフィール — Serpmonn">
-  <meta name="twitter:description" content="プロフィール・サブスクリプション・ツールの管理。">
+  <meta name="twitter:description" content="プロフィール、サブスクリプション、ツールの管理。">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -283,9 +283,27 @@
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          データを編集
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                ポイント:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            情報を編集
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,11 +326,77 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        紹介プログラム
+      </h2>
+
+      <p class="plan-hint">
+        友だちを招待してポイントを獲得しましょう。登録後、あなたと招待されたユーザーの両方がボーナスを受け取ります。
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          自分の紹介リンク:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          コピー
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        ポイントを Pro に交換
+      </h2>
+
+      <p class="plan-hint">
+        ポイントを Pro サブスクリプションの日数に交換します。現在: 500 ポイント = Pro 1 日分。
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          取得したい Pro 日数:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          交換
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          サブスクリプションと制限
+          サブスクリプションと上限
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
           プランを管理
@@ -320,7 +404,7 @@
       </div>
 
       <p class="plan-subtitle">
-        現在のプラン：
+        現在のプラン:
         <span id="planName" class="plan-name">Free</span>
       </p>
 
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>月間リクエスト上限</span>
+          <span>プランで利用可能なリクエスト数</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -350,27 +434,27 @@
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
         まだツールを選択していません。
-        ⭐ を付けると、
+        ページ上の ⭐ を付けると、
         <a href="/frontend/ja/tools/tools.html">
-          すべてのツールページ
+          すべてのツール
         </a>,
-        にあるツールがここに表示されます。
+        がここに表示されます。
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="アカウントからログアウト">
+    <section class="logout-section" aria-label="アカウントからのログアウト">
       <button id="logoutButton" type="button" class="danger-button">
-        ログアウト
+        アカウントからログアウト
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

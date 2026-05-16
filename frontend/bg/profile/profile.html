@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Профил — Serpmonn</title>
-  <meta name="description" content="Управлявайте профила, абонамента и инструментите си в Serpmonn.">
+  <meta name="description" content="Управление на профил, абонамент и инструменти в Serpmonn.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Профил — Serpmonn">
-  <meta property="og:description" content="Управлявайте профила, абонамента и инструментите си в Serpmonn.">
+  <meta property="og:description" content="Управление на профил, абонамент и инструменти в Serpmonn.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/bg/profile/profile.html">
   <meta property="og:type" content="website">
@@ -252,7 +252,7 @@
 
       <div class="profile-header-main">
         <h1 id="profileHeaderTitle">
-          Профил на потребителя
+          Потребителски профил
         </h1>
 
         <p class="profile-identity">
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Имейл на Serpmonn за известия и сервизни писма.
+            Поща на Serpmonn за известия и системни писма.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Редактиране на данните
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Точки:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Редактиране на данни
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Реферална програма
+      </h2>
+
+      <p class="plan-hint">
+        Канете приятели и получавайте точки. Вие и поканеният ще получите бонус след регистрация.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Моят реферален линк:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Копирай
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Размяна на точки за Pro
+      </h2>
+
+      <p class="plan-hint">
+        Разменяйте точки за дни абонамент Pro. Сега: 500 точки = 1 ден Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Колко дни Pro искате да получите:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Размени
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Месечен лимит заявки</span>
+          <span>Налични заявки по плана</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -350,9 +434,9 @@
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
         Все още не сте избрали инструменти.
-        Отбележете ⭐ на
+        Отбележете ⭐ на страницата
         <a href="/frontend/bg/tools/tools.html">
-          страницата с всички инструменти
+          всички инструменти
         </a>,
         и те ще се появят тук.
       </p>
@@ -366,11 +450,11 @@
         Изход от акаунта
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

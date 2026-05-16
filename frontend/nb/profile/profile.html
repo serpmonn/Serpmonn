@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Profil — Serpmonn</title>
-  <meta name="description" content="Administrer profilen, abonnementet og verktøyene dine på Serpmonn.">
+  <meta name="description" content="Administrer profil, abonnement og verktøy på Serpmonn.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Profil — Serpmonn">
-  <meta property="og:description" content="Administrer profilen, abonnementet og verktøyene dine på Serpmonn.">
+  <meta property="og:description" content="Administrer profil, abonnement og verktøy på Serpmonn.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/nb/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Profil — Serpmonn">
-  <meta name="twitter:description" content="Administrasjon av profil, abonnement og verktøy.">
+  <meta name="twitter:description" content="Administrer profil, abonnement og verktøy.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -283,9 +283,27 @@
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Endre data
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Poeng:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Rediger informasjon
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Venneprogram
+      </h2>
+
+      <p class="plan-hint">
+        Inviter venner og tjen poeng. Både du og den inviterte får en bonus etter registrering.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Min henvisningslenke:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Kopier
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Bytt poeng til Pro
+      </h2>
+
+      <p class="plan-hint">
+        Bytt poeng mot Pro-abonnementsdager. Nå: 500 poeng = 1 dag Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Hvor mange Pro-dager vil du ha:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Bytt
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -320,7 +404,7 @@
       </div>
 
       <p class="plan-subtitle">
-        Nåværende abonnement:
+        Gjeldende plan:
         <span id="planName" class="plan-name">Free</span>
       </p>
 
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Månedlig grense for forespørsler</span>
+          <span>Tilgjengelige forespørsler i planen</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -350,9 +434,9 @@
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
         Du har ikke valgt noen verktøy ennå.
-        Merk ⭐ på
+        Merk ⭐ på siden med
         <a href="/frontend/nb/tools/tools.html">
-          siden med alle verktøy
+          alle verktøy
         </a>,
         så vises de her.
       </p>
@@ -361,16 +445,16 @@
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="Logg ut av kontoen">
+    <section class="logout-section" aria-label="Logg ut av konto">
       <button id="logoutButton" type="button" class="danger-button">
-        Logg ut
+        Logg ut av konto
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

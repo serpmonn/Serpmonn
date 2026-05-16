@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>个人资料 — Serpmonn</title>
-  <meta name="description" content="在 Serpmonn 管理你的个人资料、订阅和工具。">
+  <meta name="description" content="在 Serpmonn 管理您的个人资料、订阅和工具。">
 
   <!-- Open Graph -->
   <meta property="og:title" content="个人资料 — Serpmonn">
-  <meta property="og:description" content="在 Serpmonn 管理你的个人资料、订阅和工具。">
+  <meta property="og:description" content="在 Serpmonn 管理您的个人资料、订阅和工具。">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="个人资料 — Serpmonn">
-  <meta name="twitter:description" content="管理个人资料、订阅和工具。">
+  <meta name="twitter:description" content="管理您的个人资料、订阅和工具。">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -263,7 +263,7 @@
 
         <div class="profile-status-row">
           <span id="accountStatusBadge" class="status-badge status-badge--unconfirmed">
-            账号状态
+            账户状态
           </span>
           <span id="planBadge" class="status-badge status-badge--free">
             Free
@@ -283,9 +283,27 @@
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          编辑资料
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                积分：
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            修改资料
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,19 +326,85 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        推荐计划
+      </h2>
+
+      <p class="plan-hint">
+        邀请朋友并赚取积分。注册完成后，您和被邀请用户都会获得奖励。
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          我的推荐链接：
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          复制
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        将积分兑换为 Pro
+      </h2>
+
+      <p class="plan-hint">
+        将积分兑换为 Pro 订阅天数。目前：500 积分 = 1 天 Pro。
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          您想获得多少天 Pro：
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          兑换
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          订阅与限制
+          订阅和配额
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
-          管理套餐
+          管理订阅计划
         </button>
       </div>
 
       <p class="plan-subtitle">
-        当前套餐：
+        当前订阅计划：
         <span id="planName" class="plan-name">Free</span>
       </p>
 
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>每月请求上限</span>
+          <span>当前计划可用请求数</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,28 +433,28 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        你还没有选择任何工具。
-        在
+        您还没有选择任何工具。
+        请在
         <a href="/frontend/zh-cn/tools/tools.html">
-          所有工具页面
+          全部工具
         </a>,
-        标记 ⭐，它们就会显示在这里。
+        页面标记 ⭐，它们就会显示在这里。
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="退出账号">
+    <section class="logout-section" aria-label="退出账户">
       <button id="logoutButton" type="button" class="danger-button">
-        退出登录
+        退出账户
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

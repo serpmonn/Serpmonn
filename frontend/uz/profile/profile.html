@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Profil — Serpmonn</title>
-  <meta name="description" content="Serpmonn servisida profilingizni, obunangizni va asboblaringizni boshqaring.">
+  <meta name="description" content="Serpmonn xizmatida profilingizni, obunangizni va asboblaringizni boshqaring.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Profil — Serpmonn">
-  <meta property="og:description" content="Serpmonn servisida profilingizni, obunangizni va asboblaringizni boshqaring.">
+  <meta property="og:description" content="Serpmonn xizmatida profilingizni, obunangizni va asboblaringizni boshqaring.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/uz/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Profil — Serpmonn">
-  <meta name="twitter:description" content="Profil, obuna va asboblarni boshqarish.">
+  <meta name="twitter:description" content="Profilingizni, obunangizni va asboblaringizni boshqaring.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Bildirishnomalar va xizmat xatlari uchun Serpmonn pochtasi.
+            Bildirishnomalar va servis xatlari uchun Serpmonn pochta manzili.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Ma’lumotlarni o‘zgartirish
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Ballar:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Ma’lumotlarni o‘zgartirish
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Referal dasturi
+      </h2>
+
+      <p class="plan-hint">
+        Do‘stlarni taklif qiling va ballar to‘plang. Ro‘yxatdan o‘tgandan so‘ng siz ham, taklif qilingan foydalanuvchi ham bonus oladi.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Mening referal havolam:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Nusxa olish
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Ballarni Pro ga almashtirish
+      </h2>
+
+      <p class="plan-hint">
+        Ballarni Pro obuna kunlariga almashtiring. Hozir: 500 ball = 1 Pro kuni.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Necha kunlik Pro olishni istaysiz:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Almashtirish
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -315,12 +399,12 @@
           Obuna va limitlar
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
-          Tarifni boshqarish
+          Rejani boshqarish
         </button>
       </div>
 
       <p class="plan-subtitle">
-        Joriy tarif:
+        Joriy reja:
         <span id="planName" class="plan-name">Free</span>
       </p>
 
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Oylik so‘rovlar limiti</span>
+          <span>Reja bo‘yicha mavjud so‘rovlar soni</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,12 +433,12 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        Siz hali hech qanday asbob tanlamagansiz.
-        ⭐ belgisini qo‘ying
+        Siz hali birorta asbob tanlamagansiz.
+        ⭐ belgisi qo‘ying
         <a href="/frontend/uz/tools/tools.html">
-          barcha asboblar sahifasida
+          barcha asboblar
         </a>,
-        shunda ular bu yerda ko‘rinadi.
+        sahifasida, shunda ular bu yerda paydo bo‘ladi.
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
@@ -366,11 +450,11 @@
         Hisobdan chiqish
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

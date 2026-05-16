@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Hồ sơ — Serpmonn">
-  <meta name="twitter:description" content="Quản lý hồ sơ, gói đăng ký và công cụ.">
+  <meta name="twitter:description" content="Quản lý hồ sơ, gói đăng ký và công cụ của bạn.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Email Serpmonn dùng cho thông báo và thư dịch vụ.
+            Email Serpmonn cho thông báo và thư dịch vụ.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Chỉnh sửa dữ liệu
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Điểm:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Chỉnh sửa dữ liệu
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Chương trình giới thiệu
+      </h2>
+
+      <p class="plan-hint">
+        Mời bạn bè và nhận điểm thưởng. Bạn và người được mời sẽ nhận được tiền thưởng sau khi đăng ký.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Liên kết giới thiệu của tôi:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Sao chép
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Đổi điểm lấy Pro
+      </h2>
+
+      <p class="plan-hint">
+        Đổi điểm lấy số ngày sử dụng gói Pro. Hiện tại: 500 điểm = 1 ngày Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Bạn muốn nhận bao nhiêu ngày Pro:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Đổi
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Giới hạn yêu cầu hàng tháng</span>
+          <span>Số yêu cầu còn lại trong gói</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -350,9 +434,9 @@
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
         Bạn chưa chọn công cụ nào.
-        Đánh dấu ⭐ trên
+        Đặt biểu tượng ⭐ trên trang
         <a href="/frontend/vi/tools/tools.html">
-          trang tất cả công cụ
+          tất cả công cụ
         </a>,
         và chúng sẽ xuất hiện tại đây.
       </p>
@@ -363,14 +447,14 @@
     <!-- Выход -->
     <section class="logout-section" aria-label="Đăng xuất khỏi tài khoản">
       <button id="logoutButton" type="button" class="danger-button">
-        Đăng xuất
+        Đăng xuất khỏi tài khoản
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

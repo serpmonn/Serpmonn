@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>ޕްރޮފައިލް — Serpmonn</title>
-  <meta name="description" content="Serpmonn ގައި މިހާރު ޕްރޮފައިލް، ސަބްސްކްރިޕްޝަން އަދި ޓޫލްސް މެނޭޖްކުރުން.">
+  <meta name="description" content="Serpmonn އިން ތިޔަ ޕްރޮފައިލް، ސަބްސްކްރިޕްޝަން އަދި ޓޫލްސް މެނެޖްކުރުން.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="ޕްރޮފައިލް — Serpmonn">
-  <meta property="og:description" content="Serpmonn ގައި މިހާރު ޕްރޮފައިލް، ސަބްސްކްރިޕްޝަން އަދި ޓޫލްސް މެނޭޖްކުރުން.">
+  <meta property="og:description" content="Serpmonn އިން ތިޔަ ޕްރޮފައިލް، ސަބްސްކްރިޕްޝަން އަދި ޓޫލްސް މެނެޖްކުރުން.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/dv/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ޕްރޮފައިލް — Serpmonn">
-  <meta name="twitter:description" content="ޕްރޮފައިލް، ސަބްސްކްރިޕްޝަން އަދި ޓޫލްސް މެނޭޖްކުރުން.">
+  <meta name="twitter:description" content="ޕްރޮފައިލް، ސަބްސްކްރިޕްޝަން އަދި ޓޫލްސް މެނެޖްކުރުން.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -252,7 +252,7 @@
 
       <div class="profile-header-main">
         <h1 id="profileHeaderTitle">
-          ޔޫސަރު ޕްރޮފައިލް
+          މެންބަރު ޕްރޮފައިލް
         </h1>
 
         <p class="profile-identity">
@@ -263,7 +263,7 @@
 
         <div class="profile-status-row">
           <span id="accountStatusBadge" class="status-badge status-badge--unconfirmed">
-            އެކައުންޓް ސްޓޭޓަސް
+            އެކައުންޓް ހެދިފަ
           </span>
           <span id="planBadge" class="status-badge status-badge--free">
             Free
@@ -276,30 +276,48 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Serpmonn އިމޭލް ނޮޓިފިކޭޝަން އަދި ސަރވިސް މެސެޖްތައް އިން.
+            ނަމާއިރު އަދި ސަރވިސް މެއިލްތަކަށް Serpmonn މެއިލް.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          ޑޭޓާ ބަދަލުކުރޭ
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                ޕޮއިންޓްސް:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            ޑޭޓާ ފިހުރިގެންނޭ
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
             type="button"
             class="secondary-button secondary-button--xs"
           >
-            ފޮހެލާ
+            މިންވަދެއްޖެ
           </button>
           <button
             id="loginOnnmailButton"
             type="button"
             class="secondary-button secondary-button--xs"
           >
-            ހިފެނޭ
+            ދެއްކުރޭ
           </button>
         </div>
       </div>
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        ރެފަރަލް ޕްރޮގްރާމް
+      </h2>
+
+      <p class="plan-hint">
+        ބޭނުންތަކުން ހިތާނީ ޕޮއިންޓް ހޯދާ. ރެޖިސްޓަރ ވެފައިވާ ކުރިން ކުރަނީ ތިޔަކާ އަދި ހިތާވާ މެންބަރަކަށް ބޯނަސް.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          މަގުރެފަރަލް ލިންކް:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          ކޮޕީ
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        ޕޮއިންޓްސް Pro ގެ ދުވަސްތަކަށް ކުރުން
+      </h2>
+
+      <p class="plan-hint">
+        ޕޮއިންޓްސް Pro ސަބްސްކްރިޕްޝަން ދުވަސްތަކަށް ކުރުން. މިހާރު: 500 ޕޮއިންޓްސް = Pro 1 ދުވަސް.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          ކޮން ކަން Pro ދުވަސް ހިންގާނެއް:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          ކުރުން
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -315,12 +399,12 @@
           ސަބްސްކްރިޕްޝަން އަދި ލިމިޓްތައް
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
-          ޕްލާން މެނޭޖްކުރޭ
+          ޕްލޭން މެނެޖްކުރުން
         </button>
       </div>
 
       <p class="plan-subtitle">
-        މިއަދު ޕްލާން:
+        މިހާރު ޕްލޭން:
         <span id="planName" class="plan-name">Free</span>
       </p>
 
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>މަސް ދުވަހު ރިކުއެސްޓް ލިމިޓް</span>
+          <span>ޕްލޭންގެ އާއި ހުއްޓާ ހުރި ރިކުއެސްޓްތައް</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,28 +433,28 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        އަދިއްވެ، ކޮންމެ ޓޫލް ނުބައިއްޖެ.
+        ތިބާ އަދިއްތަ ކޮން ޓޫލް ނުބައި.
         ⭐ ލައްވާ
         <a href="/frontend/dv/tools/tools.html">
-          ހުރިހާ ޓޫލްސް ސަފުހާއަށް
+          ހުރިހާ ޓޫލްސް
         </a>,
-        ކޮންމެ މަގުގައި އެއްޗެއް ދިޔައެވެ.
+        ޕޭޖުގައި، އެއީ މިތާ ދައްކާނެ.
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="އެކައުންޓް އިން ލޮގްއާއުޓް ކުރުން">
+    <section class="logout-section" aria-label="އެކައުންޓް ނުވަތަ ނިންމާ">
       <button id="logoutButton" type="button" class="danger-button">
-        ލޮގްއާއުޓް
+        އެކައުންޓް ނުވަތަ ނިންމާ
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

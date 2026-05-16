@@ -11,20 +11,20 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
-  <title>سىنجىل — Serpmonn</title>
-  <meta name="description" content="Serpmonn دا سىزنىڭ سىنجىل، abonnentلىقىڭىز ۋە قوراللىرىڭىزنى باشقۇرۇڭ.">
+  <title>ئابۇنت پىروفىل — Serpmonn</title>
+  <meta name="description" content="Serpmonn دا پىروفىلىڭىز، تېرىلغىڭىز ۋە قوراللىرىڭىزنى باشقۇرۇڭ.">
 
   <!-- Open Graph -->
-  <meta property="og:title" content="سىنجىل — Serpmonn">
-  <meta property="og:description" content="Serpmonn دا سىزنىڭ سىنجىل، abonnentلىقىڭىز ۋە قوراللىرىڭىزنى باشقۇرۇڭ.">
+  <meta property="og:title" content="ئابۇنت پىروفىل — Serpmonn">
+  <meta property="og:description" content="Serpmonn دا پىروفىلىڭىز، تېرىلغىڭىز ۋە قوراللىرىڭىزنى باشقۇرۇڭ.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/ug/profile/profile.html">
   <meta property="og:type" content="website">
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="سىنجىل — Serpmonn">
-  <meta name="twitter:description" content="سىنجىل، abonnentلىق ۋە قورال باشقۇرۇش.">
+  <meta name="twitter:title" content="ئابۇنت پىروفىل — Serpmonn">
+  <meta name="twitter:description" content="پىروفىل، تېرىلغۇ ۋە قوراللىرىڭىزنى باشقۇرۇڭ.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -252,7 +252,7 @@
 
       <div class="profile-header-main">
         <h1 id="profileHeaderTitle">
-          ئىشلەتكۈچى سىنجىلى
+          ئىشلەتكۈچى پىروفىلى
         </h1>
 
         <p class="profile-identity">
@@ -263,7 +263,7 @@
 
         <div class="profile-status-row">
           <span id="accountStatusBadge" class="status-badge status-badge--unconfirmed">
-            ھېساب ھالىتى
+            ھېسابات ھالىتى
           </span>
           <span id="planBadge" class="status-badge status-badge--free">
             Free
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            ئۇقتۇرۇش ۋە مۇلازىمەتخەتلەر ئۈچۈن Serpmonn ئېلخېتى.
+            ئۇقتۇرۇش ۋە مۇلازىمەت خەتلىرى ئۈچۈن Serpmonn ئېلخېتى.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          سانلارنى ئۆزگەرتىش
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                نومۇر:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            سانلىق مەلۇماتنى ئۆزگەرتىش
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -299,7 +317,7 @@
             type="button"
             class="secondary-button secondary-button--xs"
           >
-            ئاچۇش
+            ئېچۈش
           </button>
         </div>
       </div>
@@ -308,14 +326,80 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+         تەۋسىيە پروگراممىسى
+      </h2>
+
+      <p class="plan-hint">
+        دوستلرىڭىزنى تەكلىپ قىلىپ نومۇر يىغىڭ. تىزىملىتىش تاماملانغاندىن كېيىن سىز ۋە تەكلىپ قىلغان ئىشلەتكۈچى بونس ئاليسىلەر.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          مېنىڭ تەۋسىيە ئۇلانمىم:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          كۆچۈرۈش
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        نومۇرنى Pro غا ئالماشتۇرۇش
+      </h2>
+
+      <p class="plan-hint">
+        نومۇرنى Pro مۇشتەرىلىك كۈنلىرىگە ئالماشتۇرۇڭ. ھازىرچە: 500 نومۇر = 1 كۈnlük Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          قانچە كۈnlük Pro ئالماقچىسىز:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          ئالماشتۇرۇش
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          Abonnentلىق ۋە چەكلىمە
+          مۇشتەرىلىك ۋە چەك
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
-          پىلان باشقۇرۇش
+          پىلاننى باشقۇرۇش
         </button>
       </div>
 
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>ئايلىق تەلەپ چەكلىمىسى</span>
+          <span>پىلان بويىچە بار بولغان سوراش سانى</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -343,34 +427,34 @@
     <!-- Мои инструменты (избранное + недавние) -->
     <section class="card" aria-labelledby="toolsTitle">
       <h2 id="toolsTitle">
-        قوراللىرىم
+        مېنىڭ قوراللىرىم
       </h2>
 
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
         سىز تېخى ھېچقانداق قورال تاللىمىدىڭىز.
-        ⭐ بەلگىسىنى
+        بەتتىكى ⭐ نى
         <a href="/frontend/ug/tools/tools.html">
-          ھەممە قورال بەتتە
+          بارلىق قوراللار
         </a>,
-        قويۇڭ، بۇ يەردە كۆرۈنىدۇ.
+        غا قويۇڭ، ئۇلار بۇ يەرگە كۆرۈنىدۇ.
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="ھېسابتىن چىقىش">
+    <section class="logout-section" aria-label="ھېساباتتىن چىقىش">
       <button id="logoutButton" type="button" class="danger-button">
-        چىقىش
+        ھېساباتتىن چىقىش
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

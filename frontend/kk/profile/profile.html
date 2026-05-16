@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Профиль — Serpmonn</title>
-  <meta name="description" content="Serpmonn сервисінде профиліңізді, жазылымыңызды және құралдарыңызды басқарыңыз.">
+  <meta name="description" content="Serpmonn сервисінде профилді, жазылымды және құралдарды басқару.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Профиль — Serpmonn">
-  <meta property="og:description" content="Serpmonn сервисінде профиліңізді, жазылымыңызды және құралдарыңызды басқарыңыз.">
+  <meta property="og:description" content="Serpmonn сервисінде профилді, жазылымды және құралдарды басқару.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/kk/profile/profile.html">
   <meta property="og:type" content="website">
@@ -263,7 +263,7 @@
 
         <div class="profile-status-row">
           <span id="accountStatusBadge" class="status-badge status-badge--unconfirmed">
-            Тіркелгінің күйі
+            Аккаунт күйі
           </span>
           <span id="planBadge" class="status-badge status-badge--free">
             Free
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            Хабарламалар мен сервистік хаттарға арналған Serpmonn поштасы.
+            Хабарламалар мен сервис хаттарға арналған Serpmonn поштасы.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          Мәліметтерді өзгерту
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                Ұпай:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            Мәліметтерді өзгерту
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,11 +326,77 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        Рефералдық бағдарлама
+      </h2>
+
+      <p class="plan-hint">
+        Достарыңызды шақырыңыз және ұпай алыңыз. Тіркелгеннен кейін сіз де, шақырылған да бонус аласыз.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          Менің рефералдық сілтемем:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Көшіру
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Ұпайды Pro-ға айырбастау
+      </h2>
+
+      <p class="plan-hint">
+        Ұпайларды Pro жазылымының күндеріне айырбастаңыз. Қазір: 500 ұпай = 1 Pro күні.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Қанша Pro күн алғыңыз келеді:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Айырбастау
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          Жазылым және шектеулер
+          Жазылым және лимиттер
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
           Тарифті басқару
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Ай сайынғы сұраным лимиті</span>
+          <span>Тариф бойынша қолжетімді сұранымдар</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,28 +433,28 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        Әзірге ешқандай құрал таңдаған жоқсыз.
+        Сіз әлі ешқандай құрал таңдамадыңыз.
         ⭐ белгісін қойыңыз
         <a href="/frontend/kk/tools/tools.html">
-          барлық құралдар бетінде
+          барлық құралдар
         </a>,
-        сонда олар осында көрсетіледі.
+        бетінде, сонда олар мұнда пайда болады.
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="Тіркелгіден шығу">
+    <section class="logout-section" aria-label="Аккаунттан шығу">
       <button id="logoutButton" type="button" class="danger-button">
-        Тіркелгіден шығу
+        Аккаунттан шығу
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

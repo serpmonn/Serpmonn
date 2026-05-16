@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>پروفایل — Serpmonn</title>
-  <meta name="description" content="پروفایل، اشتراک و ابزارهای خود را در Serpmonn مدیریت کنید.">
+  <meta name="description" content="مدیریت پروفایل، اشتراک و ابزارها در Serpmonn.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="پروفایل — Serpmonn">
-  <meta property="og:description" content="پروفایل، اشتراک و ابزارهای خود را در Serpmonn مدیریت کنید.">
+  <meta property="og:description" content="مدیریت پروفایل، اشتراک و ابزارها در Serpmonn.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/fa/profile/profile.html">
   <meta property="og:type" content="website">
@@ -276,16 +276,34 @@
             @onnmail
           </span>
           <span class="profile-onnmail-desc">
-            ایمیل Serpmonn برای اعلان‌ها و ایمیل‌های سرویس.
+            ایمیل Serpmonn برای اعلان‌ها و پیام‌های خدماتی.
           </span>
         </div>
       </div>
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          ویرایش اطلاعات
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                امتیاز:
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            ویرایش اطلاعات
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -308,6 +326,72 @@
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        برنامه ارجاع
+      </h2>
+
+      <p class="plan-hint">
+        دوستانتان را دعوت کنید و امتیاز بگیرید. پس از ثبت‌نام، هم شما و هم فرد دعوت‌شده پاداش دریافت می‌کنید.
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          لینک ارجاع من:
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          کپی
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        تبدیل امتیاز به Pro
+      </h2>
+
+      <p class="plan-hint">
+        امتیازها را به روزهای اشتراک Pro تبدیل کنید. در حال حاضر: ۵۰۰ امتیاز = ۱ روز Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          چند روز Pro می‌خواهید دریافت کنید:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          تبدیل
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -328,7 +412,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>حد ماهانه درخواست‌ها</span>
+          <span>درخواست‌های در دسترس بر اساس طرح</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -349,7 +433,7 @@
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        هنوز هیچ ابزاری انتخاب نکرده‌اید.
+        هنوز هیچ ابزاری را انتخاب نکرده‌اید.
         در صفحه
         <a href="/frontend/fa/tools/tools.html">
           همه ابزارها
@@ -361,16 +445,16 @@
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="خروج از حساب کاربری">
+    <section class="logout-section" aria-label="خروج از حساب">
       <button id="logoutButton" type="button" class="danger-button">
         خروج از حساب
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

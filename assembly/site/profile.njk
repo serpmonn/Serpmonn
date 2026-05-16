@@ -105,9 +105,27 @@ eleventyComputed:
 
       <!-- ПРАВАЯ колонка -->
       <div class="profile-header-actions">
-        <button id="openEditProfile" type="button" class="secondary-button">
-          {{ profile[locale].profile.editSection.openEditButton or "Изменить данные" }}
-        </button>
+        <div class="profile-header-top-row">
+          <div class="profile-points-column">
+            <div id="pointsBadge" class="profile-points">
+              <span class="profile-points-label">
+                {{ profile[locale].profile.pointsSection.label or "Баллы:" }}
+              </span>
+              <span id="pointsBalance" class="profile-points-value">—</span>
+            </div>
+
+            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+          </div>
+
+          <button
+            id="openEditProfile"
+            type="button"
+            class="secondary-button secondary-button--small"
+          >
+            {{ profile[locale].profile.editSection.openEditButton or "Изменить данные" }}
+          </button>
+        </div>
+
         <div class="profile-onnmail-actions">
           <button
             id="createOnnmailButton"
@@ -130,6 +148,74 @@ eleventyComputed:
     <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
     <div id="editProfileMount"></div>
 
+    <!-- Реферальная программа -->
+    <section class="card" aria-labelledby="referralTitle">
+      <h2 id="referralTitle">
+        {{ profile[locale].profile.referralSection.title or "Реферальная программа" }}
+      </h2>
+
+      <p class="plan-hint">
+        {{ profile[locale].profile.referralSection.description or
+           "Приглашайте друзей и получайте баллы. Вы и приглашённый получите бонус после регистрации." }}
+      </p>
+
+      <div class="referral-row">
+        <label for="referralLink" class="referral-label">
+          {{ profile[locale].profile.referralSection.linkLabel or "Моя реферальная ссылка:" }}
+        </label>
+        <input
+          id="referralLink"
+          type="text"
+          class="referral-input"
+          readonly
+          value=""
+        >
+        <button
+          id="copyReferralLink"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          {{ profile[locale].profile.referralSection.copyButton or "Скопировать" }}
+        </button>
+      </div>
+      <p id="referralHint" class="plan-hint"></p>
+      <p id="referralCounter" class="plan-quota-hint"></p>
+    </section>
+
+    <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        {{ profile[locale].profile.pointsExchangeSection.title or "Обмен баллов на Pro" }}
+      </h2>
+
+      <p class="plan-hint">
+        {{ profile[locale].profile.pointsExchangeSection.description or
+           "Обменивайте баллы на дни подписки Pro. Сейчас: 500 баллов = 1 день Pro." }}
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          {{ profile[locale].profile.pointsExchangeSection.daysLabel or "Сколько дней Pro вы хотите получить:" }}
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          {{ profile[locale].profile.pointsExchangeSection.submitButton or "Обменять" }}
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -150,7 +236,7 @@ eleventyComputed:
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>{{ profile[locale].profile.planSection.quotaLabel or "Месячный лимит запросов" }}</span>
+          <span>{{ profile[locale].profile.planSection.quotaLabel or "Доступные запросы по тарифу" }}</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -188,11 +274,11 @@ eleventyComputed:
         {{ profile[locale].profile.logoutSection.buttonText or "Выйти из аккаунта" }}
       </button>
     </section>
-
-    <!-- Глобальный статус -->
-    <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
