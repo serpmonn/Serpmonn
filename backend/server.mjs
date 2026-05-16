@@ -26,6 +26,7 @@ import { analyticsRouter } from './analytics/analytics.mjs';                    
 import promocodesRoutes from './promocodes/promocodesRoutes.mjs';                                                                // Импортируем маршруты для работы с промокодами и акциями
 import improveRoutes from './improve/improve.mjs';                                                                               // Импорт маршрута для сбора предложений пользователей
 import pointsRoutes from './points/pointsRoutes.mjs';                                                                            // Импорт маршрута баллов
+import withdrawalRoutes from './points/withdrawalRoutes.mjs';                                                                    // Импорт маршрута обмена баллов на Про
 import verifyToken from './auth/verifyToken.mjs';                                                                                // Импорт маршрута верификации
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
@@ -117,6 +118,7 @@ app.use('/improve', improveRoutes);                                             
 app.use('/api', vkidRoutes);                                                                                                     // Маршрут авторизации vk
 app.use('/api', verifyToken);                                                                                                    // Сначала проверка токена и установка req.user
 app.use('/api', pointsRoutes);                                                                                                   // Маршрут проверки баллов
+app.use('/api', withdrawalRoutes);                                                                                               // Обмен баллов на Pro
 
 app.use((err, req, res, next) => {                                                                                               // Обработчик ошибок (после всех роутов и middleware)
     if (err && err.code === 'EBADCSRFTOKEN') {                                                                                   // Обработчик ошибок CSRF (невалидный токен)

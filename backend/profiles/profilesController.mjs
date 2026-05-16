@@ -73,7 +73,7 @@ const getUserInfo = async (req, res) => {                                       
         user.pro_until &&
         new Date(user.pro_until) > now;
 
-        // 2. считаем месячный usage для Pro (если активен)
+        // 2. считаем usage для Pro (если активен)
         let proUsage = null;
         if (isProActive) {
         const monthKey = getMonthKey();
@@ -82,7 +82,22 @@ const getUserInfo = async (req, res) => {                                       
             [user.id, monthKey]
         );
         const used = usageRows && usageRows.length > 0 ? usageRows[0].requests : 0;
-        const limit = 2000;
+
+        // Базовый лимит за "условный месяц"
+        const BASE_MONTHLY_LIMIT = 2000;
+        const BASE_DAYS = 30;
+
+        // Считаем, сколько дней Pro ещё активно (минимум 1)
+        const now = new Date();
+        const proUntil = new Date(user.pro_until);
+        const msPerDay = 24 * 60 * 60 * 1000;
+        const diffDaysRaw = (proUntil - now) / msPerDay;
+        const diffDays = Math.max(1, Math.ceil(diffDaysRaw));
+
+        // Лимит пропорционально дням
+        const perDayLimit = BASE_MONTHLY_LIMIT / BASE_DAYS;
+        const limit = Math.round(perDayLimit * diffDays);
+
         proUsage = {
             used,
             limit,

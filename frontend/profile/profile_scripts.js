@@ -56,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const planQuotaBarFillEl = document.getElementById('planQuotaBarFill');
   const planQuotaHintEl = document.getElementById('planQuotaHint');
   const planHintEl = document.getElementById('planHint');
-  const globalMessage = document.getElementById('globalMessage');
 
   const openEditProfileBtn = document.getElementById('openEditProfile');
   const editProfileMount = document.getElementById('editProfileMount');
@@ -78,9 +77,62 @@ document.addEventListener('DOMContentLoaded', () => {
   /* ==== УТИЛИТЫ ==== */
 
   function setGlobalMessage(text, type = '') {
-    globalMessage.textContent = text || '';
-    globalMessage.classList.remove('success', 'error');
-    if (type) globalMessage.classList.add(type);
+    if (!text) return;
+
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast';
+
+    if (type === 'success') toast.classList.add('toast--success');
+    if (type === 'error') toast.classList.add('toast--error');
+
+    const iconSpan = document.createElement('span');
+    iconSpan.className = 'toast__icon';
+    iconSpan.textContent = type === 'success' ? '✔' : type === 'error' ? '⚠' : 'ℹ';
+
+    const contentSpan = document.createElement('span');
+    contentSpan.className = 'toast__content';
+    contentSpan.textContent = text;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'toast__close';
+    closeBtn.type = 'button';
+    closeBtn.setAttribute('aria-label', 'Закрыть уведомление');
+    closeBtn.textContent = '×';
+
+    closeBtn.addEventListener('click', () => {
+      toast.classList.remove('toast--visible');
+      setTimeout(() => toast.remove(), 200);
+    });
+
+    toast.appendChild(iconSpan);
+    toast.appendChild(contentSpan);
+    toast.appendChild(closeBtn);
+
+    container.appendChild(toast);
+
+    // небольшая задержка, чтобы сработала анимация появления
+    requestAnimationFrame(() => {
+      toast.classList.add('toast--visible');
+    });
+
+    // авто‑закрытие через 4 секунды
+    setTimeout(() => {
+      toast.classList.remove('toast--visible');
+      setTimeout(() => toast.remove(), 200);
+    }, 4000);
+  }
+
+  function getDayWord(n) {
+    const abs = Math.abs(n);
+    const last = abs % 10;
+    const lastTwo = abs % 100;
+
+    if (last === 1 && lastTwo !== 11) return 'день';
+    if (last >= 2 && last <= 4 && (lastTwo < 10 || lastTwo >= 20)) return 'дня';
+    return 'дней';
   }
 
   function setBadge(el, typeClass, text) {
@@ -341,8 +393,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (currentPlan === 'pro' && data.quotas && data.quotas.pro_monthly) {
         const q = data.quotas.pro_monthly;
-        planQuotaCounterEl.textContent = `${q.used} / ${q.limit}`;
-        planQuotaHintEl.textContent = `Осталось ${q.remaining} запросов в этом месяце (${q.month_key}).`;
+
+        // Показываем только оставшиеся запросы
+        planQuotaCounterEl.textContent = `${q.remaining}`;
+
+        planQuotaHintEl.textContent =
+          q.used === 0
+            ? 'Подписка Pro активна, вы ещё не использовали запросы по Pro.'
+            : `Вы уже использовали ${q.used} запросов по Pro.`;
+
         updatePlanQuotaBar(q.used, q.limit);
       } else if (currentPlan === 'free' && data.quotas && data.quotas.free_daily) {
         const q = data.quotas.free_daily;
@@ -351,9 +410,10 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePlanQuotaBar(q.used ?? 0, q.limit);
       } else {
         if (currentPlan === 'pro') {
+          // Нет данных по квоте — показываем “без данных”, без цифры 2000 и без месяца
           planQuotaCounterEl.textContent = '—';
-          planQuotaHintEl.textContent = 'Месячный лимит Pro: до 2000 запросов.';
-          updatePlanQuotaBar(0, 2000);
+          planQuotaHintEl.textContent = 'Подписка Pro активна. Информация об оставшихся запросах временно недоступна.';
+          updatePlanQuotaBar(0, 100); // просто пустая полоска
         } else {
           planQuotaCounterEl.textContent = '0 / 15';
           planQuotaHintEl.textContent =
@@ -431,7 +491,7 @@ document.addEventListener('DOMContentLoaded', () => {
     case 'invite_qualified':
       return 'Бонус за активного друга';
 
-    // Рефералка — реферер (старый тариф, 500 баллов одним разом)
+    // Рефералка — реферер (старый тариф)
     case 'referral_referrer':
       return 'Бонус за приглашённого друга (старый тариф)';
 
@@ -439,11 +499,23 @@ document.addEventListener('DOMContentLoaded', () => {
     case 'referral_referee':
       return 'Бонус за регистрацию по приглашению';
 
-    // На будущее
+    // Вывод / обмен
     case 'withdraw_request':
+      if (item.meta?.via === 'pro_exchange') {
+        return 'Обмен баллов на дни Pro';
+      }
       return 'Заявка на вывод баллов';
+
+    case 'withdraw_paid':
+      if (item.meta?.via === 'pro_exchange') {
+        return 'Подписка Pro активирована за баллы';
+      }
+      return 'Выплата по заявке на вывод';
+
     case 'withdraw_rollback':
-      return 'Возврат баллов';
+      return 'Возврат баллов за отменённый вывод';
+
+    // Служебное
     case 'admin_adjust':
     case 'manual':
       return 'Ручная операция с баллами';
@@ -579,7 +651,70 @@ document.addEventListener('DOMContentLoaded', () => {
     renderEditForm();
   });
 
-  let pointsHistoryLoaded = false; // флаг, что уже грузили историю один раз
+  let pointsHistoryLoaded = false;                                                                                  // флаг, что уже грузили историю один раз
+
+  const proExchangeDaysInput = document.getElementById('proExchangeDays');
+  const proExchangeSubmit = document.getElementById('proExchangeSubmit');
+  const proExchangeHint = document.getElementById('proExchangeHint');
+
+  if (proExchangeDaysInput && proExchangeSubmit) {
+  proExchangeSubmit.addEventListener('click', async () => {
+    const raw = proExchangeDaysInput.value.trim();
+    const days = parseInt(raw, 10);
+
+    if (!Number.isFinite(days) || days <= 0) {
+      setGlobalMessage('Введите корректное количество дней Pro.', 'error');
+      return;
+    }
+
+    const POINTS_PER_PRO_DAY = 500;
+    const needPoints = days * POINTS_PER_PRO_DAY;
+
+    const ok = window.confirm(
+      `Вы хотите обменять ${needPoints} баллов на ${days} дней Pro?\n` +
+      'Баллы будут списаны, а срок действия Pro увеличится.'
+    );
+    if (!ok) return;
+
+    try {
+      const response = await fetch('/api/me/points/withdraw/pro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ days })
+      });
+
+      const data = await safeJson(response);
+
+      if (!response.ok) {
+        setGlobalMessage(
+          data?.message || 'Не удалось обменять баллы на Pro.',
+          'error'
+        );
+        return;
+      }
+
+      const dayWord = getDayWord(days);
+
+      setGlobalMessage(
+        data?.message || `Подписка Pro продлена на ${days} ${dayWord}.`,
+        'success'
+      );
+
+      loadPoints();
+      getProfile();
+
+      pointsHistoryLoaded = false;
+      if (pointsHistoryEl) {
+        pointsHistoryEl.innerHTML = '';
+        pointsHistoryEl.style.display = 'none';
+      }
+    } catch (e) {
+      console.error('Ошибка обмена баллов на Pro:', e);
+      setGlobalMessage('Ошибка обмена баллов. Попробуйте позже.', 'error');
+    }
+  });
+}
 
   if (pointsBadgeEl && pointsHistoryEl) {
   pointsBadgeEl.style.cursor = 'pointer';

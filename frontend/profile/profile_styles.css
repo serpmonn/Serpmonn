@@ -295,6 +295,10 @@ p {
   box-shadow: none;
 }
 
+#proExchangeSubmit {
+  width: auto;
+}
+
 /* БЕЙДЖИ СТАТУСА */
 
 .status-badge {
@@ -742,6 +746,73 @@ button {
   align-items: flex-end;
 }
 
+.card-title-left {
+  text-align: left;
+}
+
+#toastContainer {
+  position: fixed;
+  bottom: 16px;
+  right: 16px;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  pointer-events: none; /* чтобы клики проходили сквозь пустое место */
+}
+
+.toast {
+  min-width: 260px;
+  max-width: 360px;
+  background-color: #1f2933;
+  color: #f9fafb;
+  border-radius: 8px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.35);
+  padding: 10px 12px;
+  font-size: 14px;
+  line-height: 1.4;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: auto; /* по самому тосту можно кликать */
+  transition: opacity 0.2s ease-out, transform 0.2s ease-out;
+}
+
+.toast--visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast--success {
+  border-left: 4px solid #22c55e;
+}
+
+.toast--error {
+  border-left: 4px solid #ef4444;
+}
+
+.toast__icon {
+  font-size: 16px;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.toast__content {
+  flex: 1;
+}
+
+.toast__close {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 0 2px;
+  line-height: 1;
+}
+
 @media (max-width: 640px) {
   .form-card--inline {
     grid-template-columns: 1fr;
@@ -810,19 +881,19 @@ button {
 
 .referral-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
   align-items: center;
+  gap: 8px;           /* если нужен отступ между полем и кнопкой */
 }
 
 .referral-label {
   flex: 0 0 auto;
   font-size: 13px;
   color: #4b5563;
+  margin-right: 8px;
 }
 
 .referral-input {
-  flex: 1 1 220px;
+  flex: 1; 
   min-width: 0;
   font-size: 12px;        /* меньше, чем обычные input-ы */
   padding: 6px 8px;

@@ -356,6 +356,40 @@
       <p id="referralCounter" class="plan-quota-hint"></p>
     </section>
 
+        <!-- Обмен баллов на Pro -->
+    <section class="card" aria-labelledby="pointsExchangeTitle">
+      <h2 id="pointsExchangeTitle" class="card-title-left">
+        Обмен баллов на Pro
+      </h2>
+
+      <p class="plan-hint">
+        Обменивайте баллы на дни подписки Pro.
+        Сейчас: 500 баллов = 1 день Pro.
+      </p>
+
+      <div class="referral-row">
+        <label for="proExchangeDays" class="referral-label">
+          Сколько дней Pro вы хотите получить:
+        </label>
+        <input
+          id="proExchangeDays"
+          type="number"
+          class="referral-input"
+          min="1"
+          value="7"
+        >
+        <button
+          id="proExchangeSubmit"
+          type="button"
+          class="secondary-button secondary-button--xs"
+        >
+          Обменять
+        </button>
+      </div>
+
+      <p id="proExchangeHint" class="plan-hint"></p>
+    </section>
+
     <!-- Блок тарифа и лимитов -->
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
@@ -376,7 +410,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Месячный лимит запросов</span>
+          <span>Доступные запросы по тарифу</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -419,6 +453,9 @@
     <p id="globalMessage" class="message" aria-live="polite"></p>
   </main>
 </div>
+
+<!-- Toast-уведомления -->
+<div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
