@@ -64,6 +64,27 @@ function getMonthKey() {
   return new Date().toISOString().slice(0, 7);
 }
 
+async function webSearchWithSearxng(query) {
+  const url =
+    `${process.env.SEARXNG_URL || 'http://127.0.0.1/searxng'}/search` +
+    `?q=${encodeURIComponent(query)}` +
+    `&categories=general` +
+    `&format=json`;
+
+  const resp = await fetch(url, { headers: { Accept: 'application/json' } });
+  if (!resp.ok) throw new Error(`SearXNG HTTP ${resp.status}`);
+  const data = await resp.json();
+
+  const results = (data.results || []).slice(0, 8).map(item => ({
+    title: item.title || '',
+    snippet: item.content || item.summary || '',
+    url: item.url || '',
+    hostname: extractHostname(item.url || '')
+  }));
+
+  return results;
+}
+
 async function getUserPlan(userId) {
   const sql = 'SELECT plan, pro_until FROM users WHERE id = ? LIMIT 1';
   const rows = await dbQuery(sql, [userId]);

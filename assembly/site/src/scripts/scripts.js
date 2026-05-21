@@ -34,6 +34,211 @@ function generateIdempotencyKey() {
 }
 
 // ======================================================================================================================
+// ГОЛОСОВОЙ ВВОД
+// ======================================================================================================================
+function initVoiceInput() {
+  // Проверяем поддержку MediaRecorder API
+  if (!navigator.mediaDevices || !window.MediaRecorder) {
+    console.warn('[VOICE] MediaRecorder API не поддерживается');
+    return;
+  }
+
+  const voiceBtn = document.getElementById('voice-input-btn');
+  const searchInput = document.querySelector('#ai-search-form input[name="q"]');
+  
+  if (!voiceBtn || !searchInput) {
+    console.warn('[VOICE] Не найдены элементы кнопки или поля ввода');
+    return;
+  }
+
+  // Показываем кнопку
+  voiceBtn.style.display = 'inline-flex';
+
+  let mediaRecorder = null;
+  let audioChunks = [];
+  let isRecording = false;
+
+  // Индикатор записи
+  let recordingIndicator = document.querySelector('.voice-recording-indicator');
+  if (!recordingIndicator) {
+    recordingIndicator = document.createElement('div');
+    recordingIndicator.className = 'voice-recording-indicator';
+    recordingIndicator.innerHTML = `
+      <div class="voice-recording-dot"></div>
+      <span>Запись голоса...</span>
+    `;
+    document.body.appendChild(recordingIndicator);
+  }
+
+  voiceBtn.addEventListener('click', async () => {
+    if (isRecording) {
+      // Остановка записи
+      if (mediaRecorder && mediaRecorder.state === 'recording') {
+        mediaRecorder.stop();
+      }
+      return;
+    }
+
+    try {
+      // Запрашиваем доступ к микрофону
+      const stream = await navigator.mediaDevices.getUserMedia({ 
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          autoGainControl: true,
+          sampleRate: 16000
+        } 
+      });
+
+      // Определяем поддерживаемый MIME type
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus') 
+        ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')
+        ? 'audio/ogg;codecs=opus'
+        : 'audio/webm';
+
+      mediaRecorder = new MediaRecorder(stream, { 
+        mimeType,
+        audioBitsPerSecond: 128000
+      });
+      
+      audioChunks = [];
+
+      mediaRecorder.ondataavailable = (event) => {
+        if (event.data.size > 0) {
+          audioChunks.push(event.data);
+        }
+      };
+
+      mediaRecorder.onstop = async () => {
+        isRecording = false;
+        voiceBtn.classList.remove('listening');
+        voiceBtn.disabled = false;
+        recordingIndicator.classList.remove('active');
+
+        // Останавливаем все треки микрофона
+        stream.getTracks().forEach(track => track.stop());
+
+        if (audioChunks.length === 0) {
+          showShareToast('Записано 0 байт. Попробуйте снова');
+          searchInput.placeholder = 'Спросите у ИИ что угодно...';
+          return;
+        }
+
+        const audioBlob = new Blob(audioChunks, { type: mimeType });
+
+        // Отправляем на сервер для распознавания
+        await sendAudioForRecognition(audioBlob, mimeType);
+      };
+
+      mediaRecorder.onerror = (event) => {
+        console.error('[VOICE] Ошибка MediaRecorder:', event.error);
+        showShareToast('Ошибка записи звука');
+        resetVoiceUI();
+      };
+
+      // Начинаем запись
+      mediaRecorder.start();
+      isRecording = true;
+      voiceBtn.classList.add('listening');
+      voiceBtn.disabled = false;
+      recordingIndicator.classList.add('active');
+      searchInput.value = '';
+      searchInput.placeholder = 'Говорите...';
+
+      // Автоостановка через 30 секунд
+      const autoStopTimeout = setTimeout(() => {
+        if (mediaRecorder && mediaRecorder.state === 'recording') {
+          mediaRecorder.stop();
+          showShareToast('Запись остановлена (макс. 30 сек)');
+        }
+      }, 30000);
+
+      mediaRecorder.addEventListener('stop', () => {
+        clearTimeout(autoStopTimeout);
+      }, { once: true });
+
+    } catch (error) {
+      console.error('[VOICE] Ошибка доступа к микрофону:', error);
+      
+      let errorMsg = 'Не удалось получить доступ к микрофону';
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        errorMsg = 'Доступ к микрофону запрещён. Разрешите в настройках браузера';
+      } else if (error.name === 'NotFoundError') {
+        errorMsg = 'Микрофон не найден';
+      } else if (error.name === 'NotReadableError') {
+        errorMsg = 'Микрофон занят другим приложением';
+      }
+      
+      showShareToast(errorMsg);
+      resetVoiceUI();
+    }
+  });
+
+  async function sendAudioForRecognition(audioBlob, mimeType) {
+    try {
+      searchInput.placeholder = 'Распознаём речь...';
+      
+      const response = await fetch('/voice/stt', {
+        method: 'POST',
+        headers: {
+          'Content-Type': mimeType
+        },
+        body: audioBlob
+      });
+
+      if (!response.ok) {
+        const errData = await response.json().catch(() => ({}));
+        throw new Error(errData.error || `HTTP ${response.status}`);
+      }
+
+      const data = await response.json();
+      const text = data.text || '';
+
+      if (!text) {
+        showShareToast('Речь не распознана. Попробуйте говорить громче');
+        searchInput.placeholder = 'Спросите у ИИ что угодно...';
+        return;
+      }
+
+      searchInput.value = text;
+      searchInput.placeholder = 'Нажмите Enter для отправки';
+      searchInput.focus();
+      
+      showShareToast(`✓ Распознано: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`);
+      
+      // ✅ ФЛАГ: Помечаем, что это голосовой ввод
+      searchInput.dataset.voiceInput = 'true';
+      
+      // ✅ АВТООТПРАВКА: Ждём 1 секунду, затем ОДИН РАЗ отправляем
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      
+      const form = document.getElementById('ai-search-form');
+      if (form) {
+        const submitEvent = new Event('submit', { 
+          bubbles: true, 
+          cancelable: true 
+        });
+        form.dispatchEvent(submitEvent);
+      }
+
+    } catch (error) {
+      console.error('[VOICE] Ошибка распознавания:', error);
+      showShareToast('Ошибка распознавания речи');
+      searchInput.placeholder = 'Спросите у ИИ что угодно...';
+    }
+  }
+
+  function resetVoiceUI() {
+    isRecording = false;
+    voiceBtn.classList.remove('listening');
+    voiceBtn.disabled = false;
+    recordingIndicator.classList.remove('active');
+    searchInput.placeholder = 'Спросите у ИИ что угодно...';
+  }
+}
+
+// ======================================================================================================================
 // МАРКДАУН РЕНДЕРЕР ДЛЯ КРАСИВОГО ФОРМАТИРОВАНИЯ ОТВЕТОВ ИИ
 // ======================================================================================================================
 function renderMarkdown(text) {
@@ -64,7 +269,7 @@ function renderMarkdown(text) {
 }
 
 // ======================================================================================================================
-// ИЗВЛЕЧЕНИЕ ССЫЛОК ИЗ HTML-ТЕКСТА
+// ИЗВЛЕЧЕНИЕ ССЫЛОК ИЗ HTML-ТЕКСТа
 // ======================================================================================================================
 function extractLinks(text) {
   const linkRegex = /<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/g;
@@ -217,6 +422,94 @@ function showResult(data) {
   }
 
   setupActionButtons();
+}
+
+function showImageResults(data) {
+  const container = document.getElementById('ai-image-results');
+  if (!container) return;
+
+  if (data.error || !Array.isArray(data.images) || data.images.length === 0) {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+
+  const itemsHtml = data.images
+    .slice(0, 24)
+    .map(img => {
+      const title = img.title || '';
+      const thumb = img.thumbnailUrl || img.imageUrl || '';
+      const link = img.imageUrl || img.sourceUrl || '#';
+      const source = img.sourceName || '';
+
+      return `
+        <a class="ai-image-card" href="${link}" target="_blank" rel="noopener">
+          <div class="ai-image-thumb">
+            <img src="${thumb}" alt="${title}">
+          </div>
+          <div class="ai-image-meta">
+            <div class="ai-image-title">${title}</div>
+            <div class="ai-image-source">${source}</div>
+          </div>
+        </a>
+      `;
+    })
+    .join('');
+
+  container.innerHTML = `
+    <div class="ai-image-header">
+      <span>Фото по запросу</span>
+    </div>
+    <div class="ai-image-grid">
+      ${itemsHtml}
+    </div>
+  `;
+  container.style.display = 'block';
+}
+
+function showVideoResults(data) {
+  const container = document.getElementById('ai-video-results');
+  if (!container) return;
+
+  if (data.error || !Array.isArray(data.videos) || data.videos.length === 0) {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    return;
+  }
+
+  const itemsHtml = data.videos
+    .slice(0, 18)
+    .map(video => {
+      const title = video.title || '';
+      const thumb = video.thumbnailUrl || '';
+      const link = video.videoUrl || video.sourceUrl || '#';
+      const source = video.sourceName || '';
+      const duration = video.duration || '';
+
+      return `
+        <a class="ai-video-card" href="${link}" target="_blank" rel="noopener">
+          <div class="ai-video-thumb">
+            <img src="${thumb}" alt="${title}">
+            ${duration ? `<div class="ai-video-duration">${duration}</div>` : ''}
+          </div>
+          <div class="ai-video-meta">
+            <div class="ai-video-title">${title}</div>
+            <div class="ai-video-source">${source}</div>
+          </div>
+        </a>
+      `;
+    })
+    .join('');
+
+  container.innerHTML = `
+    <div class="ai-video-header">
+      <span>Видео по запросу</span>
+    </div>
+    <div class="ai-video-grid">
+      ${itemsHtml}
+    </div>
+  `;
+  container.style.display = 'block';
 }
 
 function showShareToast(message) {
@@ -375,8 +668,6 @@ function setupActionButtons() {
       this.style.borderColor = isLike ? '#10b981' : '#ef4444';
       this.style.color = isLike ? '#047857' : '#dc2626';
 
-      console.log(`Feedback: ${isLike ? 'like' : 'dislike'}`);
-
       setTimeout(() => {
         this.style.background = '';
         this.style.borderColor = '';
@@ -385,7 +676,6 @@ function setupActionButtons() {
     });
   });
 }
-
 
 // ======================================================================================================================
 // РЕКЛАМНЫЙ БЛОК: ОБРАБОТКА ins.mrg-tag
@@ -438,96 +728,193 @@ function initPage() {
   }
 
   function setupEventListeners() {
-  const newsContainer = document.getElementById('news-container');
-  if (!newsContainer) return;
-
-  newsContainer.addEventListener('click', function () {
-    this.classList.toggle('expanded');
-  });
-
-  const searchForm = document.getElementById('ai-search-form');
-  const submitBtn = searchForm.querySelector('button[type="submit"]');
-
-  let isSubmitting = false;
-
-  searchForm.addEventListener('submit', async e => {
-    e.preventDefault();
-
-    if (isSubmitting) {
-      // Уже есть активный запрос – просто игнорируем повторный submit
-      return;
-    }
-
-    const input = searchForm.querySelector('input[name="q"]');
-    const query = input.value.trim();
-
-    if (!query) {
-      console.log('Пустой запрос');
-      return;
-    }
-
-    isSubmitting = true;
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.classList.add('is-loading'); // если хочешь анимацию по классу
-    }
-
-    showLoading();
-    const container = document.getElementById('ai-result-container');
-    if (container) {
-      container.style.display = 'block';
-    }
-
-    try {
-      const idempotencyKey = generateIdempotencyKey();
-
-      const response = await fetch('/ai-search', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          'X-Idempotency-Key': idempotencyKey
-        },
-        credentials: 'include',
-        body: JSON.stringify({ q: query })
+    const newsContainer = document.getElementById('news-container');
+    if (newsContainer) {
+      newsContainer.addEventListener('click', function () {
+        this.classList.toggle('expanded');
       });
+    }
 
-      if (!response.ok) {
-        let errData = null;
-        try {
-          errData = await response.json();
-        } catch (_) {}
+    const searchForm = document.getElementById('ai-search-form');
+    const submitBtn = searchForm?.querySelector('button[type="submit"]');
+    const searchInput = searchForm?.querySelector('input[name="q"]');
 
-        if (errData && errData.error) {
-          showResult({ error: errData.error });
+    if (!searchForm) {
+      console.warn('[AI] Форма поиска не найдена');
+      return;
+    }
+
+    let isSubmitting = false;
+    let lastSubmitTime = 0;
+    let currentIdempotencyKey = null;
+
+    searchForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      // ПРОВЕРКА: Если это голосовой ввод, сбрасываем флаг
+      const isVoiceInput = searchInput?.dataset.voiceInput === 'true';
+      if (isVoiceInput) {
+        delete searchInput.dataset.voiceInput;
+      }
+
+      // Защита от повторной отправки
+      const now = Date.now();
+
+      if (isSubmitting) {
+        console.warn('[AI] ⛔ Запрос УЖЕ выполняется (isSubmitting=true), ИГНОРИРУЕМ');
+        return;
+      }
+
+      if (now - lastSubmitTime < 3000) {
+        console.warn(`[AI] ⛔ Слишком частая отправка (прошло ${now - lastSubmitTime}мс), ИГНОРИРУЕМ`);
+        return;
+      }
+
+      const query = searchInput?.value.trim();
+      if (!query) {
+        return;
+      }
+
+      // Блокируем сразу
+      isSubmitting = true;
+      lastSubmitTime = now;
+
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.classList.add('is-loading');
+      }
+
+      showLoading();
+      const container = document.getElementById('ai-result-container');
+      if (container) {
+        container.style.display = 'block';
+      }
+
+      // Перед новым запросом очищаем/прячем блоки фото/видео
+      if (typeof showImageResults === 'function') {
+        showImageResults({ images: [] });
+      }
+      if (typeof showVideoResults === 'function') {
+        showVideoResults({ videos: [] });
+      }
+
+      try {
+        const idempotencyKey = generateIdempotencyKey();
+        currentIdempotencyKey = idempotencyKey;
+
+        // ТЕСТОВЫЙ маршрут через SearXNG
+        const aiRequest = fetch('/ai-search-searx', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Accept: 'application/json',
+            'X-Idempotency-Key': idempotencyKey
+          },
+          credentials: 'include',
+          body: JSON.stringify({ q: query })
+        });
+
+        // 2. Запрос картинок
+        const imageRequest = fetch(`/ai-image-search?q=${encodeURIComponent(query)}`, {
+          method: 'GET',
+          headers: { Accept: 'application/json' },
+          credentials: 'include'
+        });
+
+        // 3. Запрос видео
+        const videoRequest = fetch(`/ai-video-search?q=${encodeURIComponent(query)}`, {
+          method: 'GET',
+          headers: { Accept: 'application/json' },
+          credentials: 'include'
+        });
+
+        const [aiResponse, imageResponse, videoResponse] = await Promise.all([
+          aiRequest,
+          imageRequest,
+          videoRequest
+        ]);
+
+        // Проверяем, не был ли отправлен новый запрос за время ожидания (для ИИ)
+        if (currentIdempotencyKey !== idempotencyKey) {
+          console.warn('[AI] ⚠️ Обнаружен более новый запрос, игнорируем старый ответ');
           return;
         }
 
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
+        // ---- Обработка ответа ИИ ----
+        if (!aiResponse.ok) {
+          let errData = null;
+          try {
+            errData = await aiResponse.json();
+          } catch (_) {}
 
-      const data = await response.json();
-      const answer = data.answer || '';
+          if (errData && errData.error) {
+            showResult({ error: errData.error });
+          } else {
+            throw new Error(`HTTP ${aiResponse.status}: ${aiResponse.statusText}`);
+          }
+        } else {
+          const data = await aiResponse.json();
+          const answer = data.answer || '';
 
-      showResult({
-        answer,
-        usedWebSearch: data.usedWebSearch === true,
-        sources: data.sources || []
-      });
-    } catch (error) {
-      console.error('Ошибка при запросе к ИИ:', error);
-      showResult({
-        error: 'Ошибка связи с ИИ. Проверьте консоль или попробуйте позже.'
-      });
-    } finally {
-      isSubmitting = false;
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.classList.remove('is-loading');
+          showResult({
+            answer,
+            usedWebSearch: data.usedWebSearch === true,
+            sources: data.sources || []
+          });
+        }
+
+        // ---- Обработка картинок ----
+        if (imageResponse.ok) {
+          const imageData = await imageResponse.json();
+          if (typeof showImageResults === 'function') {
+            showImageResults(imageData);
+          }
+        } else if (typeof showImageResults === 'function') {
+          showImageResults({ images: [] });
+        }
+
+        // ---- Обработка видео ----
+        if (videoResponse.ok) {
+          const videoData = await videoResponse.json();
+          if (typeof showVideoResults === 'function') {
+            showVideoResults(videoData);
+          }
+        } else if (typeof showVideoResults === 'function') {
+          showVideoResults({ videos: [] });
+        }
+      } catch (error) {
+        console.error('[AI] ❌ Ошибка при запросе к ИИ/мультимедиа:', error);
+        showResult({
+          error: 'Ошибка связи с ИИ. Попробуйте позже.'
+        });
+        if (typeof showImageResults === 'function') {
+          showImageResults({ images: [] });
+        }
+        if (typeof showVideoResults === 'function') {
+          showVideoResults({ videos: [] });
+        }
+      } finally {
+        // Сбрасываем placeholder
+        if (searchInput) {
+          searchInput.placeholder = 'Спросите у ИИ что угодно...';
+        }
+
+        // Разблокируем через 2 секунды
+        setTimeout(() => {
+          isSubmitting = false;
+          currentIdempotencyKey = null;
+
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('is-loading');
+          }
+        }, 2000);
       }
-    }
-  });
-}
+    });
+
+    initVoiceInput();
+  }
 
   async function loadPageData() {
     try {

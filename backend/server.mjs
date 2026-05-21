@@ -28,6 +28,10 @@ import improveRoutes from './improve/improve.mjs';                              
 import pointsRoutes from './points/pointsRoutes.mjs';                                                                            // Импорт маршрута баллов
 import withdrawalRoutes from './points/withdrawalRoutes.mjs';                                                                    // Импорт маршрута обмена баллов на Про
 import verifyToken from './auth/verifyToken.mjs';                                                                                // Импорт маршрута верификации
+import voiceRoutes from './voice/voiceRoutes.mjs';                                                                               // Импорт маршрутов голосового ввода
+import aiImageRouter from './ai-search/ai-image-search.mjs';                                                                     // Импорт маршрутов поиска по изображениям
+import aiVideoRouter from './ai-search/ai-video-search.mjs';                                                                     // Импорт маршрутов поиска по видеозаписям
+import aiSearchSearxRouter from './ai-search/ai-search-searx.mjs';                                                               // Импорт маршрута поиска через searxng по всему интернету
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);                                                                                                       // Доверяем первому прокси (например, Nginx) для корректного IP
@@ -69,6 +73,13 @@ app.use((req, res, next) => {                                                   
     next();                                                                                                                      // Передаем управление следующему middleware
 });
 
+app.use(cookieParser());                                                                                                         // Включаем парсинг cookies из заголовков запросов
+
+app.use('/voice/stt', express.raw({                                                                                              // Middleware для парсинга бинарных аудиоданных (ДО express.json!)
+  type: ['audio/webm', 'audio/ogg', 'audio/wav', 'audio/mpeg', 'audio/webm;codecs=opus'],
+  limit: '10mb'
+}));
+
 app.use(express.json({                                                                                                           // Парсинг JSON в запросах с защитой от атаки с огромными телами запросов
     limit: '10kb',                                                                                                               // Ограничиваем размер JSON тела до 10 килобайт
     strict: true                                                                                                                 // Включаем строгий режим парсинга JSON
@@ -79,8 +90,6 @@ app.use(express.urlencoded({                                                    
     limit: '10kb',                                                                                                               // Ограничиваем размер данных до 10 килобайт
     parameterLimit: 10                                                                                                           // Ограничиваем количество параметров до 10
 }));
-
-app.use(cookieParser());                                                                                                         // Включаем парсинг cookies из заголовков запросов
 
 const apiLimiter = rateLimit({                                                                                                   // Глобальный лимитер запросов (защита от DoS/брютфорса)
     windowMs: 15 * 60 * 1000,                                                                                                    // Окно времени - 15 минут в миллисекундах
@@ -96,7 +105,7 @@ const csrfProtection = csrf({                                                   
         sameSite: 'lax',                                                                                                         // Защита от CSRF атак с сохранением UX для навигации
         secure: process.env.NODE_ENV === 'production'                                                                            // Secure cookie только в продакшене (HTTPS)
     },
-    ignoreMethods: ['GET', 'HEAD', 'OPTIONS']                                                                                    // Игнорировать безопасные HTTP методы для CSRF проверки
+    ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],                                                                                   // Игнорировать безопасные HTTP методы для CSRF проверки
 });
 
 app.get('/csrf-token', csrfProtection, (req, res) => {                                                                           // Эндпоинт для получения CSRF-токена
@@ -116,9 +125,13 @@ app.use('/', unsubscribeRouter);                                                
 app.use('/api', subscribersCountRouter);                                                                                         // Подключение маршрута количество подписчиков на промокоды
 app.use('/improve', improveRoutes);                                                                                              // Маршрут предложки
 app.use('/api', vkidRoutes);                                                                                                     // Маршрут авторизации vk
+app.use('/voice', voiceRoutes);                                                                                                  // Маршруты голосового ввода (STT/TTS)
 app.use('/api', verifyToken);                                                                                                    // Сначала проверка токена и установка req.user
 app.use('/api', pointsRoutes);                                                                                                   // Маршрут проверки баллов
 app.use('/api', withdrawalRoutes);                                                                                               // Обмен баллов на Pro
+app.use(aiImageRouter);
+app.use(aiVideoRouter);
+app.use('/', aiSearchSearxRouter);
 
 app.use((err, req, res, next) => {                                                                                               // Обработчик ошибок (после всех роутов и middleware)
     if (err && err.code === 'EBADCSRFTOKEN') {                                                                                   // Обработчик ошибок CSRF (невалидный токен)
