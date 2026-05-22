@@ -1,34 +1,37 @@
-module.exports = {
-  // Массив приложений (процессов), которыми управляет PM2
-  apps: [
+module.exports = {                                      // Экспорт конфигурации PM2
+  apps: [                                               // Массив описаний процессов
+
     // API / основной backend (авторизация, основной HTTP-сервер)
     {
-      name: 'auth-server',                      // Имя процесса в PM2 (pm2 status/pm2 logs)
-      script: 'backend/server.mjs',             // Точка входа для сервера
-      instances: 1,                             // Кол-во копий процесса (1 = одна копия, другие копии для балансировки трафика)
-      max_memory_restart: '512M',               // Перезапустить, если процесс съел больше 512 МБ
+      name: 'auth-server',                              // Имя процесса в PM2 (pm2 status / pm2 logs)
+      script: 'backend/server.mjs',                     // Точка входа сервера
+      instances: 1,                                     // Кол-во копий процесса
+      max_memory_restart: '512M',                       // Перезапуск при превышении 512 МБ
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Формат времени в логах (с часовым поясом, MSK если сервер в Europe/Moscow)
       env: {
-        NODE_ENV: 'production'                  // Окружение внутри процесса (process.env.NODE_ENV)
+        NODE_ENV: 'production'                          // Окружение процесса
       }
     },
 
     // News server (сервер новостей, RSS и т.п.)
     {
-      name: 'news-server',                      // Имя процесса для новостного сервиса
-      script: 'backend/news/news-server.mjs',   // Файл запуска news-сервера
-      instances: 1,                             // Одна копия достаточно
-      max_memory_restart: '256M',               // Лимит памяти для новостного сервиса
+      name: 'news-server',                              // Имя процесса новостного сервиса
+      script: 'backend/news/news-server.mjs',           // Скрипт запуска news-сервера
+      instances: 1,                                     // Одна копия
+      max_memory_restart: '256M',                       // Лимит памяти
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Время в логах (MSK при правильном TZ сервера)
       env: {
-        NODE_ENV: 'production'                  // Работает в режиме продакшена
+        NODE_ENV: 'production'                          // Режим продакшена
       }
     },
 
     // Leaderboard / games (таблицы лидеров)
     {
-      name: 'leaderboard-server',               // Имя процесса для серверной части игр/лидерборда
-      script: 'backend/games/leaderboard-server.mjs', // Скрипт запуска
-      instances: 1,                             // Одна копия
-      max_memory_restart: '256M',               // Лимит памяти
+      name: 'leaderboard-server',                       // Имя процесса лидеров/игр
+      script: 'backend/games/leaderboard-server.mjs',   // Скрипт запуска
+      instances: 1,                                     // Одна копия
+      max_memory_restart: '256M',                       // Лимит памяти
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Логирование с датой/временем
       env: {
         NODE_ENV: 'production'
       }
@@ -36,28 +39,31 @@ module.exports = {
 
     // Workers (фоновая обработка писем и т.п.)
     {
-      name: 'onnmail-server',                   // Процесс, который занимается email (OnnMail)
-      script: 'backend/auth/onnmail-server.mjs',
+      name: 'onnmail-server',                           // Процесс e‑mail (OnnMail)
+      script: 'backend/auth/onnmail-server.mjs',        // Точка входа
       instances: 1,
       max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
       }
     },
     {
-      name: 'password-reset-server',            // Сервер для сброса пароля (отправка ссылок и т.п.)
+      name: 'password-reset-server',                    // Сервер сброса пароля
       script: 'backend/auth/password-reset-server.mjs',
       instances: 1,
       max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
       }
     },
     {
-      name: 'check-pro',                        // Периодическая проверка подписки PRO
+      name: 'check-pro',                                // Периодическая проверка подписки PRO
       script: 'backend/checkPro/checkPro.mjs',
       instances: 1,
       max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
       }
@@ -65,28 +71,31 @@ module.exports = {
 
     // Telegram‑боты
     {
-      name: 'serpmonngamesbot',                 // Telegram-бот для игр Serpmonn_games
+      name: 'serpmonngamesbot',                         // Telegram-бот для игр Serpmonn_games
       script: 'backend/telegram_bots/Serpmonn_games/Serpmonn_games.mjs',
       instances: 1,
       max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
       }
     },
     {
-      name: 'serpmonnconfirmbot',               // Бот подтверждения (например, коды/связка аккаунтов)
+      name: 'serpmonnconfirmbot',                       // Бот подтверждения
       script: 'backend/telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs',
       instances: 1,
       max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
       }
     },
     {
-      name: 'memebot',                          // Мем-бот
+      name: 'memebot',                                  // Мем-бот
       script: 'backend/telegram_bots/meme-bot/meme-bot.mjs',
       instances: 1,
       max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
       }
@@ -94,10 +103,11 @@ module.exports = {
 
     // AI search (отдельный сервис поиска с ИИ)
     {
-      name: 'ai-search',                        // Процесс AI-поиска
+      name: 'ai-search',                                // Процесс AI-поиска
       script: 'backend/ai-search/ai-search.mjs',
       instances: 1,
-      max_memory_restart: '512M',               // Можно дать побольше памяти (модели, запросы)
+      max_memory_restart: '512M',                       // Больше памяти под модели
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
       }
@@ -105,52 +115,59 @@ module.exports = {
 
     // Внешние боты в /var/www — поднимаются с этого же ecosystem
     {
-      name: 'autoReplyBot',                     // Auto-reply бот (путь вне репозитория)
+      name: 'autoReplyBot',                             // Auto-reply бот автоответчик vk
       script: '/var/www/bots/autoReplyBot/autoReplyBot.mjs',
       instances: 1,
       max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
       }
     },
     {
-      name: 'communityBotBlog',                 // Бот для блога (сообщество)
+      name: 'communityBotBlog',                         // Бот для блога в vk
       script: '/var/www/bots/communityBotBlog/communityBotBlog.mjs',
       instances: 1,
       max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
       }
     },
     {
-      name: 'communityBotSite',                 // Бот для сайта (сообщество)
+      name: 'communityBotSite',                         // Бот для сообщества оф сайта в вк
       script: '/var/www/bots/communityBotSite/communityBotSite.mjs',
       instances: 1,
       max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
       }
     },
     {
-      name: 'serpmonnKeeperBot',                // Keeper-бот (служебный)
+      name: 'serpmonnKeeperBot',                        // Keeper-бот (для беседы вк)
       script: '/var/www/bots/serpmonnKeeperBot/serpmonnKeeperBot.mjs',
       instances: 1,
       max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
       }
     },
+
     {
-      name: "goaccess-realtime",
-      script: "/var/www/serpmonn.ru/analytics/goaccess-realtime.sh",
-      cron_restart: "*/5 * * * *",
-      autorestart: false
+      name: 'goaccess-realtime',                        // Периодический запуск goaccess (realtime)
+      script: '/var/www/serpmonn.ru/analytics/goaccess-realtime.sh',
+      cron_restart: '*/5 * * * *',                      // Запуск каждые 5 минут
+      autorestart: false,                               // Не перезапускать при завершении
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z'          // Таймстемпы в логах скрипта
     },
     {
-      name: "goaccess-errors",
-      script: "/var/www/serpmonn.ru/analytics/goaccess-errors.sh",
-      cron_restart: "*/5 * * * *",
-      autorestart: false
+      name: 'goaccess-errors',                          // Периодический запуск goaccess (ошибки)
+      script: '/var/www/serpmonn.ru/analytics/goaccess-errors.sh',
+      cron_restart: '*/5 * * * *',                      // Запуск каждые 5 минут
+      autorestart: false,                               // Не перезапускать при завершении
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z'          // Таймстемпы в логах скрипта
     }
   ]
 };

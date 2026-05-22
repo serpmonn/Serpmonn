@@ -50,66 +50,87 @@ function getTodayKey() {
 }
 
 // ============================================================================
-// ПОЛУЧЕНИЕ GigaChat‑токена
+// ОЛЛАМА: ЛОКАЛЬНЫЕ LLM‑ПРОВАЙДЕРЫ
 // ============================================================================
 
-const GIGA_AUTH_URL = 'https://ngw.devices.sberbank.ru:9443/api/v2/oauth';
-const GIGA_API_URL = 'https://gigachat.devices.sberbank.ru/api/v1/chat/completions';
-const CLIENT_SECRET = process.env.GIGACHAT_CREDENTIALS;
+const OLLAMA_URL = 'http://127.0.0.1:11434/api/chat';
+const OLLAMA_MAIN_MODEL = 'serpmonn-ai-search:latest'; // Phi‑3 3.8B Q4_0
+const OLLAMA_FAST_MODEL = 'serpmonn-ai-fast:latest';   // Gemma‑2 2.6B Q4_0
 
-let accessToken = null;
-let tokenExpiresAt = 0;
-
-async function getGigaChatToken() {
-  const now = Date.now();
-  if (accessToken && now < tokenExpiresAt) return accessToken;
-
-  const response = await fetch(GIGA_AUTH_URL, {
-    method: 'POST',
-    agent: httpsAgent,
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded',
-      Accept: 'application/json',
-      Authorization: `Basic ${CLIENT_SECRET}`,
-      RqUID: crypto.randomUUID ? crypto.randomUUID() : Date.now().toString(),
+async function callOllama(model, query, webContext) {
+  const body = {
+    model,
+    messages: [
+      {
+        role: 'system',
+        content:
+          'Ты — поисковый агент Serpmonn. Тебе ДАН ТЕКСТ из интернета (результаты поиска). ' +
+          'Твоя задача: вытащить из этого текста ответ на вопрос пользователя. ' +
+          'Отвечай кратко, по сути, без воды. Если в тексте есть цифры, факты, даты — используй их. ' +
+          'Если ответа в данных нет — скажи об этом честно и не выдумывай.',
+      },
+      {
+        role: 'user',
+        content: `ДАННЫЕ ИЗ СЕТИ:\n${webContext}\n\nВОПРОС: ${query}`,
+      },
+    ],
+    stream: false,
+    options: {
+      temperature: 0,
     },
-    body: new URLSearchParams({ scope: 'GIGACHAT_API_PERS' }),
+  };
+
+  const res = await fetch(OLLAMA_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
   });
 
-  const raw = await response.text();
+  const raw = await res.text();
 
-  if (!response.ok) {
-    console.error('GigaChat auth error:', response.status, raw);
-    throw new Error(`Ошибка авторизации GigaChat: ${response.status} ${response.statusText}`);
+  if (!res.ok) {
+    console.error(`[Ollama] HTTP error ${res.status}:`, raw);
+    throw new Error(`Ollama HTTP ${res.status}`);
   }
 
   let data;
   try {
     data = JSON.parse(raw);
   } catch (e) {
-    console.error('GigaChat auth JSON parse error:', e.message, 'raw:', raw);
-    throw new Error('Не удалось распарсить ответ GigaChat');
+    console.error('[Ollama] JSON parse error:', e.message, 'raw:', raw.slice(0, 500));
+    throw new Error('Ollama JSON parse error');
   }
 
-  if (!data.access_token) {
-    console.error('GigaChat auth: нет access_token в ответе:', data);
-    throw new Error('Ответ GigaChat без access_token');
+  const answer =
+    data.message?.content ||
+    data.choices?.[0]?.message?.content ||
+    '';
+
+  if (!answer) {
+    console.error('[Ollama] Empty content in response:', data);
+    throw new Error('Ollama empty content');
   }
 
-  accessToken = data.access_token;
+  return answer;
+}
 
-  if (data.expires_at) {
-    tokenExpiresAt =
-      data.expires_at < 10_000_000_000
-        ? data.expires_at * 1000
-        : data.expires_at;
-  } else if (data.expires_in) {
-    tokenExpiresAt = Date.now() + data.expires_in * 1000;
-  } else {
-    tokenExpiresAt = Date.now() + 15 * 60 * 1000;
+// сначала основная модель, затем backup
+async function getAiAnswerFromLocalModels(query, webContext) {
+  try {
+    const answer = await callOllama(OLLAMA_MAIN_MODEL, query, webContext);
+    return { answer, model: OLLAMA_MAIN_MODEL, usedBackup: false };
+  } catch (e) {
+    console.error('[AI] Ошибка основной модели (serpmonn-ai-search):', e.message);
   }
 
-  return accessToken;
+  try {
+    const answer = await callOllama(OLLAMA_FAST_MODEL, query, webContext);
+    return { answer, model: OLLAMA_FAST_MODEL, usedBackup: true };
+  } catch (e) {
+    console.error('[AI] Ошибка backup‑модели (serpmonn-ai-fast):', e.message);
+  }
+
+  throw new Error('Обе локальные модели Ollama недоступны');
 }
 
 // ============================================================================
@@ -225,7 +246,6 @@ async function checkAndIncrementProMonthly(userId) {
 
 async function webSearchWithSearxng(query) {
   try {
-    // используем категорию "general" для обычного веб-поиска
     const data = await fetchSearxViaCurl(query, 'general');
 
     const results = (data.results || [])
@@ -266,195 +286,169 @@ async function webSearchWithSearxng(query) {
 
 const router = express.Router();
 
-router.post('/ai-search-searx', aiSearchLimiter, attachUserIfToken, async (req, res) => {
-  try {
-    const query = (req.body.q || '').trim();
-    if (!query) {
-      return res.status(400).json({ error: 'Запрос пуст' });
-    }
-
-    const identity = getUserIdentity(req);
-
-    const idempotencyKey = req.headers['x-idempotency-key'];
-    if (idempotencyKey) {
-      const cacheKey = `${identity.id}:${idempotencyKey}`;
-      const cached = idempotencyStore.get(cacheKey);
-      if (cached && Date.now() - cached.createdAt < IDEMPOTENCY_TTL_MS) {
-        return res.json(cached.response);
+router.post(
+  '/ai-search-searx',
+  aiSearchLimiter,
+  attachUserIfToken,
+  async (req, res) => {
+    try {
+      const query = (req.body.q || '').trim();
+      if (!query) {
+        return res.status(400).json({ error: 'Запрос пуст' });
       }
-    }
 
-    // Лимиты гостей
-    if (identity.type === 'guest') {
-      const usage = checkAndIncrementUsage(identity);
-      if (!usage.ok) {
-        const isVkAgent = req.headers['x-client'] === 'vk-agent';
+      const identity = getUserIdentity(req);
 
-        if (isVkAgent) {
+      const idempotencyKey = req.headers['x-idempotency-key'];
+      if (idempotencyKey) {
+        const cacheKey = `${identity.id}:${idempotencyKey}`;
+        const cached = idempotencyStore.get(cacheKey);
+        if (cached && Date.now() - cached.createdAt < IDEMPOTENCY_TTL_MS) {
+          return res.json(cached.response);
+        }
+      }
+
+      // Лимиты гостей
+      if (identity.type === 'guest') {
+        const usage = checkAndIncrementUsage(identity);
+        if (!usage.ok) {
+          const isVkAgent = req.headers['x-client'] === 'vk-agent';
+
+          if (isVkAgent) {
+            return res.status(403).json({
+              error:
+                'Лимит 5 запросов в день исчерпан. ' +
+                'Чтобы продолжить пользоваться Serpmonn без ограничений, войдите: https://serpmonn.ru/frontend/login/login.html ' +
+                'или зарегистрируйтесь: https://serpmonn.ru/frontend/register/register.html',
+              needAuth: true,
+              limit: usage.limit,
+              used: usage.used,
+            });
+          }
+
           return res.status(403).json({
             error:
-              'Лимит 5 запросов в день исчерпан. ' +
-              'Чтобы продолжить пользоваться Serpmonn без ограничений, войдите: https://serpmonn.ru/frontend/login/login.html ' +
-              'или зарегистрируйтесь: https://serpmonn.ru/frontend/register/register.html',
+              'Лимит 5 запросов для гостей исчерпан. ' +
+              'Пожалуйста, <a href="/frontend/login/login.html">войдите</a> ' +
+              'или <a href="/frontend/register/register.html">зарегистрируйтесь</a>, чтобы продолжить.',
             needAuth: true,
             limit: usage.limit,
             used: usage.used,
           });
         }
+      }
 
-        return res.status(403).json({
-          error:
-            'Лимит 5 запросов для гостей исчерпан. ' +
-            'Пожалуйста, <a href="/frontend/login/login.html">войдите</a> ' +
-            'или <a href="/frontend/register/register.html">зарегистрируйтесь</a>, чтобы продолжить.',
-          needAuth: true,
-          limit: usage.limit,
-          used: usage.used,
+      // Лимиты авторизованных
+      if (identity.type === 'user') {
+        const userId = req.user.id;
+        const planInfo = await getUserPlan(userId);
+        const now = new Date();
+        const isProActive =
+          planInfo.plan === 'pro' &&
+          planInfo.proUntil &&
+          new Date(planInfo.proUntil) > now;
+
+        if (isProActive) {
+          const proUsage = await checkAndIncrementProMonthly(userId);
+          if (!proUsage.ok) {
+            return res.status(403).json({
+              error:
+                'Вы исчерпали лимит 2000 запросов в месяц по тарифу Pro. ' +
+                'Лимит будет обновлён в начале следующего месяца.',
+              needAuth: false,
+              limit: proUsage.limit,
+              used: proUsage.used,
+            });
+          }
+        } else {
+          const usage = checkAndIncrementUsage(identity);
+          if (!usage.ok) {
+            return res.status(403).json({
+              error:
+                'Лимит запросов на сегодня исчерпан. ' +
+                'Вы можете перейти на <a href="/frontend/tariffs/tariffs.html">страницу тарифов</a>, ' +
+                'и оформить тариф Pro (до 2000 запросов в месяц).',
+              needAuth: false,
+              limit: usage.limit,
+              used: usage.used,
+            });
+          }
+        }
+      }
+
+      console.log(`${nowMSK()} | Запрос: "${query}"`);
+
+      const { webContext, sources } = await webSearchWithSearxng(query);
+
+      let answer;
+      let usedModel;
+      let usedBackup = false;
+
+      try {
+        const aiResult = await getAiAnswerFromLocalModels(query, webContext);
+        answer = aiResult.answer;
+        usedModel = aiResult.model;
+        usedBackup = aiResult.usedBackup;
+      } catch (e) {
+        console.error('AI: обе модели недоступны:', e);
+        return res.status(502).json({
+          error: 'Сервис ИИ временно недоступен.',
+          answer: 'Сервис ИИ временно недоступен.',
         });
       }
-    }
 
-    // Лимиты авторизованных
-    if (identity.type === 'user') {
-      const userId = req.user.id;
-      const planInfo = await getUserPlan(userId);
-      const now = new Date();
-      const isProActive =
-        planInfo.plan === 'pro' &&
-        planInfo.proUntil &&
-        new Date(planInfo.proUntil) > now;
+      if (!answer) {
+        answer = 'Нет текста ответа от модели.';
+      }
 
-      if (isProActive) {
-        const proUsage = await checkAndIncrementProMonthly(userId);
-        if (!proUsage.ok) {
-          return res.status(403).json({
-            error:
-              'Вы исчерпали лимит 2000 запросов в месяц по тарифу Pro. ' +
-              'Лимит будет обновлён в начале следующего месяца.',
-            needAuth: false,
-            limit: proUsage.limit,
-            used: proUsage.used,
-          });
-        }
-      } else {
-        const usage = checkAndIncrementUsage(identity);
-        if (!usage.ok) {
-          return res.status(403).json({
-            error:
-              'Лимит запросов на сегодня исчерпан. ' +
-              'Вы можете перейти на <a href="/frontend/tariffs/tariffs.html">страницу тарифов</a>, ' +
-              'и оформить тариф Pro (до 2000 запросов в месяц).',
-            needAuth: false,
-            limit: usage.limit,
-            used: usage.used,
-          });
+      let userLabel = 'Неизвестный пользователь';
+      if (identity.type === 'user' && req.user) {
+        const parts = [];
+        parts.push(`ID: ${req.user.id}`);
+        if (req.user.username) parts.push(`логин: ${req.user.username}`);
+        if (req.user.email) parts.push(`email: ${req.user.email}`);
+        userLabel = `Авторизованный пользователь (${parts.join(', ')})`;
+      } else if (identity.type === 'guest') {
+        const isVkAgent = req.headers['x-client'] === 'vk-agent';
+        const vkUserId = req.headers['x-vk-user'];
+        if (isVkAgent && vkUserId) {
+          userLabel = `VK-пользователь: ${vkUserId}`;
+        } else {
+          userLabel = `Гость: ${identity.id}`;
         }
       }
-    }
 
-    // Лог запроса
-    console.log(`${nowMSK()} | Запрос: "${query}"`);
+      console.log(`${nowMSK()} | Пользователь (тип): ${userLabel}`);
+      console.log(
+        `${nowMSK()} | Модель: ${usedModel} (backup: ${usedBackup})`
+      );
+      console.log(
+        `${nowMSK()} | Ответ: "${answer.slice(0, 200).replace(/\s+/g, ' ')}..."`
+      );
 
-    // Веб‑поиск через SearXNG
-    const { webContext, sources } = await webSearchWithSearxng(query);
+      const responsePayload = {
+        answer,
+        usedWebSearch: true,
+        model: usedModel,
+        usedBackup,
+        sources,
+        timestamp: new Date().toISOString(),
+      };
 
-    // GigaChat
-    const token = await getGigaChatToken();
-
-    const payload = {
-      model: 'GigaChat-2-Max',
-      messages: [
-        {
-          role: 'system',
-          content:
-            'Ты — поисковый агент. Тебе ДАН ТЕКСТ из интернета. Твоя задача: вытащить из этого текста ответ на вопрос пользователя. Если в тексте есть цифры или факты — используй их.',
-        },
-        {
-          role: 'user',
-          content: `ДАННЫЕ ИЗ СЕТИ:\n${webContext}\n\nВОПРОС: ${query}`,
-        },
-      ],
-      temperature: 0,
-    };
-
-    const gigaRes = await fetch(GIGA_API_URL, {
-      method: 'POST',
-      agent: httpsAgent,
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify(payload),
-    });
-
-    const raw = await gigaRes.text();
-    let data;
-
-    try {
-      data = JSON.parse(raw);
-    } catch (e) {
-      console.error('GigaChat: ошибка парсинга JSON:', e.message);
-      return res.status(502).json({
-        error: 'Неверный формат ответа GigaChat',
-        answer: 'Сервис ИИ временно недоступен.',
-      });
-    }
-
-    if (!gigaRes.ok || !data.choices?.length) {
-      console.error('GigaChat: ошибка API:', gigaRes.status, raw);
-      return res.status(502).json({
-        error: 'Ошибка при обращении к GigaChat. Попробуйте позже.',
-        answer: 'Сервис ИИ временно недоступен.',
-      });
-    }
-
-    const answer =
-      data.choices[0].message?.content || 'Нет текста ответа от модели.';
-
-    // Бизнес‑лог: кто / запрос / ответ
-    let userLabel = 'Неизвестный пользователь';
-    if (identity.type === 'user' && req.user) {
-      const parts = [];
-      parts.push(`ID: ${req.user.id}`);
-      if (req.user.username) parts.push(`логин: ${req.user.username}`);
-      if (req.user.email) parts.push(`email: ${req.user.email}`);
-      userLabel = `Авторизованный пользователь (${parts.join(', ')})`;
-    } else if (identity.type === 'guest') {
-      const isVkAgent = req.headers['x-client'] === 'vk-agent';
-      const vkUserId = req.headers['x-vk-user'];
-      if (isVkAgent && vkUserId) {
-        userLabel = `VK-пользователь: ${vkUserId}`;
-      } else {
-        userLabel = `Гость: ${identity.id}`;
+      if (idempotencyKey) {
+        const cacheKey = `${identity.id}:${idempotencyKey}`;
+        idempotencyStore.set(cacheKey, {
+          response: responsePayload,
+          createdAt: Date.now(),
+        });
       }
+
+      res.json(responsePayload);
+    } catch (error) {
+      console.error('💥 Ошибка в /ai-search-searx:', error);
+      res.status(500).json({ error: 'Internal Server Error' });
     }
-
-    console.log(`${nowMSK()} | Пользователь (тип): ${userLabel}`);
-    console.log(
-      `${nowMSK()} | Ответ: "${answer.slice(0, 200).replace(/\s+/g, ' ')}..."`
-    );
-
-    const responsePayload = {
-      answer,
-      usedWebSearch: true,
-      model: 'GigaChat-2-Max',
-      sources,
-      timestamp: new Date().toISOString(),
-    };
-
-    if (idempotencyKey) {
-      const cacheKey = `${identity.id}:${idempotencyKey}`;
-      idempotencyStore.set(cacheKey, {
-        response: responsePayload,
-        createdAt: Date.now(),
-      });
-    }
-
-    res.json(responsePayload);
-  } catch (error) {
-    console.error('💥 Ошибка в /ai-search-searx:', error);
-    res.status(500).json({ error: 'Internal Server Error' });
   }
-});
+);
 
 export default router;

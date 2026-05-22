@@ -19,14 +19,45 @@ async function fetchSearxViaCurl(query, category) {
     `&categories=${encodeURIComponent(category)}` +
     `&format=json`;
 
-  const { stdout } = await execFileAsync('curl', [
-    '-s',                // тихий режим
-    '-H', 'Host: serpmonn.ru',
-    '--max-time', '15',  // максимум 15 секунд на запрос
-    url
-  ]);
+  try {
+    const { stdout } = await execFileAsync('curl', [
+      '-s',                         // тихий режим
+      '-H', 'Host: serpmonn.ru',
+      '--max-time', '15',           // максимум 15 секунд на запрос
+      '--connect-timeout', '2',     // до 2 секунд на установление соединения
+      url
+    ]);
 
-  return JSON.parse(stdout);
+    if (!stdout) {
+      console.error('[SearXNG] Empty response from curl for URL:', url);
+      return {
+        results: [],
+        answers: [],
+        suggestions: [],
+        unresponsive_engines: ['searxng-empty-response']
+      };
+    }
+
+    try {
+      return JSON.parse(stdout);
+    } catch (parseErr) {
+      console.error('[SearXNG] JSON parse error:', parseErr, 'raw:', stdout.slice(0, 500));
+      return {
+        results: [],
+        answers: [],
+        suggestions: [],
+        unresponsive_engines: ['searxng-json-parse-error']
+      };
+    }
+  } catch (err) {
+    console.error('[SearXNG] fetchSearxViaCurl error:', err);
+    return {
+      results: [],
+      answers: [],
+      suggestions: [],
+      unresponsive_engines: ['searxng-curl-error']
+    };
+  }
 }
 
 export { fetchSearxViaCurl };
