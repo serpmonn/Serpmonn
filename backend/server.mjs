@@ -12,11 +12,14 @@ import cors from 'cors';                                                        
 import express from 'express';                                                                                                   // Импортируем express для создания веб-сервера
 import cookieParser from 'cookie-parser';                                                                                        // Импортируем cookie-parser для работы с cookies
 import rateLimit from 'express-rate-limit';                                                                                      // Импортируем ограничитель частоты запросов для защиты от DDoS
+import helmet from 'helmet';                                                                                                     // Импортируем Helmet для установки защитных HTTP-заголовков
 import { doubleCsrf } from 'csrf-csrf';                                                                                          // Импортируем CSRF middleware для защиты от межсайтовых запросов
 import { connectRoutes } from './routes/routes.mjs';                                                                             // Импортируем функцию централизованного подключения маршрутов
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);                                                                                                       // Доверяем первому прокси (например, Nginx) для корректного IP
+
+app.use(helmet());                                                                                                               // Подключаем стандартный набор защитных HTTP-заголовков для Express
 
 // Порты из переменных окружения
 const AUTH_PORT = process.env.AUTH_PORT;                                                                                         // Порт для auth сервера (только из .env)
@@ -37,6 +40,14 @@ const corsOptions = {                                                           
 };
 
 app.use(cors(corsOptions));                                                                                                      // Применяем CORS с заданными настройками ко всем маршрутам
+
+app.get('/health', (req, res) => {                                                                                               // Эндпоинт проверки состояния приложения для мониторинга и оркестрации
+    res.status(200).json({
+        status: 'ok',                                                                                                            // Базовый статус приложения
+        uptime: process.uptime(),                                                                                                // Время работы процесса в секундах с момента запуска
+        timestamp: new Date().toISOString()                                                                                      // Текущее серверное время в ISO-формате
+    });
+});
 
 app.use((req, res, next) => {                                                                                                    // Middleware: установка заголовка Content-Language по <html lang> страницы/пути
     try {
@@ -82,6 +93,17 @@ const apiLimiter = rateLimit({                                                  
     legacyHeaders: false                                                                                                         // Не использовать устаревшие заголовки (X-RateLimit-*)
 });
 app.use(apiLimiter);                                                                                                             // Применяем глобальный лимитер ко всем маршрутам
+
+const authLimiter = rateLimit({                                                                                                  // Отдельный лимитер для маршрутов авторизации
+    windowMs: 15 * 60 * 1000,                                                                                                    // Окно ограничения — 15 минут
+    max: 10,                                                                                                                     // Максимум 10 запросов на авторизационные маршруты за окно
+    standardHeaders: true,                                                                                                       // Возвращаем стандартные заголовки лимита (RateLimit-*)
+    legacyHeaders: false,                                                                                                        // Не используем устаревшие заголовки (X-RateLimit-*)
+    message: {
+        status: 'error',
+        message: 'Too many authentication attempts'
+    }                                                                                                                            // Сообщение при превышении лимита попыток
+});
 
 const {
     generateToken,

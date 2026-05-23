@@ -20,6 +20,7 @@ import aiSearchSearxRouter from '../ai-search/ai-search-searx.mjs';             
 export function connectRoutes(app) {                                                                                             // Функция централизованного подключения всех маршрутов приложения
     app.use(yookassaRouter);                                                                                                     // Подключаем маршруты платежной системы YooKassa
 
+    app.use('/auth', authLimiter);                                                                                               // Применяем более строгий лимит к маршрутам аутентификации
     app.use('/auth', authRoutes);                                                                                                // Подключаем маршруты аутентификации с префиксом /auth
     app.use('/profile', profilesRoutes);                                                                                         // Подключаем маршруты профилей с префиксом /profile
     app.use('/counter', counterRoutes);                                                                                          // Подключаем маршруты счетчиков с префиксом /counter
