@@ -1,5 +1,6 @@
-process.env.CSRF_SECRET = process.env.CSRF_SECRET || 'test-secret-for-vitest-only';
-process.env.AUTH_PORT = process.env.AUTH_PORT || '3001';
+process.env.NODE_ENV = 'test';                                                                                                   // Принудительно включаем тестовое окружение до импорта приложения
+process.env.CSRF_SECRET = process.env.CSRF_SECRET || 'test-secret-for-vitest-only';                                             // Подставляем тестовый CSRF-секрет
+process.env.AUTH_PORT = process.env.AUTH_PORT || '3001';                                                                        // Подставляем тестовый порт
 
 import request from 'supertest';        // HTTP-клиент для тестирования Express без поднятия реального сервера
 import app from './server.mjs';         // Наше Express-приложение

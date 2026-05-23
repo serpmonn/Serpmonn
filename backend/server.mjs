@@ -1,12 +1,14 @@
 import dotenv from 'dotenv';                                                                                                     // Импортируем dotenv для работы с переменными окружения
 import { resolve } from 'path';                                                                                                  // Импортируем resolve для создания абсолютных путей
 
-const isProduction = process.env.NODE_ENV === 'production';                                                                      // Определяем режим работы: production или development
-const envPath = isProduction                                                                                                     // Выбираем путь к .env файлу в зависимости от окружения
-    ? '/var/www/serpmonn.ru/backend/.env'                                                                                        // Продакшен путь на сервере
-    : resolve(process.cwd(), 'backend/.env');                                                                                    // Разработка - абсолютный путь к .env в папке backend
+const nodeEnv = process.env.NODE_ENV || 'development';                                                                           // Определяем текущее окружение: production, test или development
+const envPath = nodeEnv === 'production'
+    ? '/var/www/serpmonn.ru/backend/.env'                                                                                        // Продакшен: используем основной .env на сервере
+    : nodeEnv === 'test'
+        ? resolve(process.cwd(), 'backend/.env.test')                                                                            // Тесты: используем отдельный тестовый .env.test
+        : resolve(process.cwd(), 'backend/.env');                                                                                // Разработка: используем обычный backend/.env
 
-dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути
+dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного файла
 
 import cors from 'cors';                                                                                                         // Импортируем cors для обработки междоменных HTTP запросов
 import express from 'express';                                                                                                   // Импортируем express для создания веб-сервера
@@ -105,26 +107,31 @@ const authLimiter = rateLimit({                                                 
     }                                                                                                                            // Сообщение при превышении лимита попыток
 });
 
-const {
-    generateToken,
-    doubleCsrfProtection,
-    invalidCsrfTokenError
-} = doubleCsrf({                                                                                                                 // Инициализируем CSRF-защиту через библиотеку csrf-csrf
-    getSecret: () => process.env.CSRF_SECRET,                                                                                    // Берем секрет для подписи CSRF токенов из переменных окружения
-    cookieName: '__Host-psifi.x-csrf-token',                                                                                     // Имя cookie, в которой хранится CSRF токен
+const csrfTools = doubleCsrf({
+    getSecret: () => process.env.CSRF_SECRET,                                                                                    // Берём секрет из переменной окружения
+    getSessionIdentifier: (req) => `${req.ip || 'unknown-ip'}:${req.get('user-agent') || 'unknown-ua'}`,                         // Формируем идентификатор сессии для CSRF из IP и User-Agent
+    cookieName: '__Host-psifi.x-csrf-token',                                                                                     // Имя cookie с CSRF-токеном
     cookieOptions: {
-        httpOnly: true,                                                                                                          // Запрещаем доступ к cookie из JavaScript
-        sameSite: 'lax',                                                                                                         // Ограничиваем межсайтовую отправку cookie для защиты от CSRF
-        secure: process.env.NODE_ENV === 'production',                                                                           // Отправляем cookie только по HTTPS в продакшене
-        path: '/'                                                                                                                // Делаем cookie доступной для всего сайта
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/'
     },
-    size: 64,                                                                                                                    // Устанавливаем длину генерируемого токена
-    ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],                                                                                  // Исключаем безопасные HTTP методы из проверки CSRF
-    getTokenFromRequest: (req) => req.headers['x-csrf-token']                                                                    // Берем CSRF токен из заголовка x-csrf-token
+    size: 64,
+    ignoredMethods: ['GET', 'HEAD', 'OPTIONS']
 });
 
-app.get('/csrf-token', (req, res) => {                                                                                           // Эндпоинт для выдачи CSRF токена клиенту
-    res.json({ csrfToken: generateToken(req, res) });                                                                            // Генерируем и возвращаем новый CSRF токен в JSON
+console.log('[CSRF TOOLS]', Object.keys(csrfTools));                                                                             // Временно выводим реальные ключи объекта, который вернула библиотека
+
+const {
+    generateCsrfToken,                                                                                                           // Правильная функция генерации CSRF-токена в текущей версии csrf-csrf
+    validateRequest,
+    doubleCsrfProtection,
+    invalidCsrfTokenError
+} = csrfTools;
+
+app.get('/csrf-token', (req, res) => {                                                                                           // Эндпоинт выдачи CSRF-токена клиенту
+    return res.status(200).json({ csrfToken: generateCsrfToken(req, res) });                                                    // Генерируем и возвращаем токен правильной функцией
 });
 
 connectRoutes(app, authLimiter);                                                                                                 // Централизованно подключаем все маршруты приложения
