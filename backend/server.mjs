@@ -11,27 +11,9 @@ dotenv.config({ path: envPath });                                               
 import cors from 'cors';                                                                                                         // Импортируем cors для обработки междоменных HTTP запросов
 import express from 'express';                                                                                                   // Импортируем express для создания веб-сервера
 import cookieParser from 'cookie-parser';                                                                                        // Импортируем cookie-parser для работы с cookies
-
-import vkidRoutes from './vkid/vkidRoutes.mjs';                                                                                  // Импорт маршрутов авторизации ВК
-import authRoutes from './auth/authRoutes.mjs';                                                                                  // Импортирует маршруты аутентификации и авторизации
-import yookassaRouter from './yookassa/yookassaRoutes.mjs';                                                                      // Импортируем маршруты yookassa
-import profilesRoutes from './profiles/profilesRoutes.mjs';                                                                      // Импортируем маршруты для работы с профилями пользователей
-import counterRoutes from './Counter/CounterRoutes.mjs';                                                                         // Импортируем маршруты для работы со счетчиками и статистикой
-import subscribeRouter from './subscriber/subscribeRoutes.mjs';                                                                  // Импортируем маршруты для управления подписками и рассылками
-import unsubscribeRouter from './subscriber/unsubscribeRouter.mjs';                                                              // Импорт маршрутов отписки от рассылки промокодов
-import subscribersCountRouter from './subscriber/subscribersCountRoutes.mjs';                                                    // Импорт маршрутов количества подписчиков на промокоды
 import rateLimit from 'express-rate-limit';                                                                                      // Импортируем ограничитель частоты запросов для защиты от DDoS
-import csrf from 'csurf';                                                                                                        // Импортируем CSRF middleware для защиты от межсайтовых запросов
-import { analyticsRouter } from './analytics/analytics.mjs';                                                                     // Маршруты аналитики страницы промокодов
-import promocodesRoutes from './promocodes/promocodesRoutes.mjs';                                                                // Импортируем маршруты для работы с промокодами и акциями
-import improveRoutes from './improve/improve.mjs';                                                                               // Импорт маршрута для сбора предложений пользователей
-import pointsRoutes from './points/pointsRoutes.mjs';                                                                            // Импорт маршрута баллов
-import withdrawalRoutes from './points/withdrawalRoutes.mjs';                                                                    // Импорт маршрута обмена баллов на Про
-import verifyToken from './auth/verifyToken.mjs';                                                                                // Импорт маршрута верификации
-import voiceRoutes from './voice/voiceRoutes.mjs';                                                                               // Импорт маршрутов голосового ввода
-import aiImageRouter from './ai-search/ai-image-search.mjs';                                                                     // Импорт маршрутов поиска по изображениям
-import aiVideoRouter from './ai-search/ai-video-search.mjs';                                                                     // Импорт маршрутов поиска по видеозаписям
-import aiSearchSearxRouter from './ai-search/ai-search-searx.mjs';                                                               // Импорт маршрута поиска через searxng по всему интернету
+import { doubleCsrf } from 'csrf-csrf';                                                                                          // Импортируем CSRF middleware для защиты от межсайтовых запросов
+import { connectRoutes } from './routes/routes.mjs';                                                                             // Импортируем функцию централизованного подключения маршрутов
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);                                                                                                       // Доверяем первому прокси (например, Nginx) для корректного IP
@@ -48,7 +30,7 @@ const corsOptions = {                                                           
         `http://127.0.0.1:${VITE_PORT}`,                                                                                         // Разрешаем альтернативный адрес Vite dev сервера
         `http://localhost:${AUTH_PORT}`,                                                                                         // Разрешаем доступ с того же домена (auth сервер, порт из .env)
         `http://127.0.0.1:${AUTH_PORT}`                                                                                          // Разрешаем альтернативный адрес auth сервера
-    ],                                                                                                                         
+    ],
     credentials: true,                                                                                                           // Разрешаем отправку cookies через междоменные запросы
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],                                                                        // Указываем разрешенные HTTP методы для CORS запросов
     allowedHeaders: ['Authorization', 'Content-Type', 'Accept', 'Origin', 'X-CSRF-Token']                                        // Указываем разрешенные заголовки в CORS запросах
@@ -58,32 +40,34 @@ app.use(cors(corsOptions));                                                     
 
 app.use((req, res, next) => {                                                                                                    // Middleware: установка заголовка Content-Language по <html lang> страницы/пути
     try {
-        // Простая эвристика: если путь /frontend/<lang>/..., используем <lang>
         const parts = req.path.split('/').filter(Boolean);                                                                       // Разбиваем путь на части и убираем пустые элементы
         const idx = parts.indexOf('frontend');                                                                                   // Ищем индекс 'frontend' в пути
         let lang = 'ru';                                                                                                         // Устанавливаем русский язык по умолчанию
+
         if (idx !== -1 && parts[idx + 1]) {                                                                                      // Если нашли 'frontend' и есть следующий элемент
             lang = parts[idx + 1].toLowerCase();                                                                                 // Используем следующий элемент как язык
         }
-        // Нормализация некоторых кодов под стандарты 
+
         if (lang === 'pt-br') lang = 'pt-BR';                                                                                    // Нормализуем бразильский португальский
         if (lang === 'pt-pt') lang = 'pt-PT';                                                                                    // Нормализуем европейский португальский
+
         res.setHeader('Content-Language', lang);                                                                                 // Устанавливаем заголовок Content-Language
-    } catch {}
+    } catch {}                                                                                                                   // Игнорируем ошибки разбора пути, чтобы не ломать основной запрос
+
     next();                                                                                                                      // Передаем управление следующему middleware
 });
 
 app.use(cookieParser());                                                                                                         // Включаем парсинг cookies из заголовков запросов
 
 app.use('/voice/stt', express.raw({                                                                                              // Middleware для парсинга бинарных аудиоданных (ДО express.json!)
-  type: ['audio/webm', 'audio/ogg', 'audio/wav', 'audio/mpeg', 'audio/webm;codecs=opus'],
-  limit: '10mb'
+    type: ['audio/webm', 'audio/ogg', 'audio/wav', 'audio/mpeg', 'audio/webm;codecs=opus'],                                     // Разрешаем поддерживаемые аудио MIME-типы
+    limit: '10mb'                                                                                                                // Ограничиваем размер аудиофайла до 10 мегабайт
 }));
 
 app.use(express.json({                                                                                                           // Парсинг JSON в запросах с защитой от атаки с огромными телами запросов
     limit: '10kb',                                                                                                               // Ограничиваем размер JSON тела до 10 килобайт
     strict: true                                                                                                                 // Включаем строгий режим парсинга JSON
-}));  
+}));
 
 app.use(express.urlencoded({                                                                                                     // Парсинг URL-encoded данных из форм и запросов
     extended: true,                                                                                                              // Включаем расширенный парсинг с поддержкой сложных объектов
@@ -99,44 +83,39 @@ const apiLimiter = rateLimit({                                                  
 });
 app.use(apiLimiter);                                                                                                             // Применяем глобальный лимитер ко всем маршрутам
 
-const csrfProtection = csrf({                                                                                                    // CSRF защита и эндпоинт для получения CSRF-токена
-    cookie: {
-        httpOnly: true,                                                                                                          // Cookie недоступны через JavaScript (повышение безопасности)
-        sameSite: 'lax',                                                                                                         // Защита от CSRF атак с сохранением UX для навигации
-        secure: process.env.NODE_ENV === 'production'                                                                            // Secure cookie только в продакшене (HTTPS)
+const {
+    generateToken,
+    doubleCsrfProtection,
+    invalidCsrfTokenError
+} = doubleCsrf({                                                                                                                 // Инициализируем CSRF-защиту через библиотеку csrf-csrf
+    getSecret: () => process.env.CSRF_SECRET,                                                                                    // Берем секрет для подписи CSRF токенов из переменных окружения
+    cookieName: '__Host-psifi.x-csrf-token',                                                                                     // Имя cookie, в которой хранится CSRF токен
+    cookieOptions: {
+        httpOnly: true,                                                                                                          // Запрещаем доступ к cookie из JavaScript
+        sameSite: 'lax',                                                                                                         // Ограничиваем межсайтовую отправку cookie для защиты от CSRF
+        secure: process.env.NODE_ENV === 'production',                                                                           // Отправляем cookie только по HTTPS в продакшене
+        path: '/'                                                                                                                // Делаем cookie доступной для всего сайта
     },
-    ignoreMethods: ['GET', 'HEAD', 'OPTIONS'],                                                                                   // Игнорировать безопасные HTTP методы для CSRF проверки
+    size: 64,                                                                                                                    // Устанавливаем длину генерируемого токена
+    ignoredMethods: ['GET', 'HEAD', 'OPTIONS'],                                                                                  // Исключаем безопасные HTTP методы из проверки CSRF
+    getTokenFromRequest: (req) => req.headers['x-csrf-token']                                                                    // Берем CSRF токен из заголовка x-csrf-token
 });
 
-app.get('/csrf-token', csrfProtection, (req, res) => {                                                                           // Эндпоинт для получения CSRF-токена
-    res.json({ csrfToken: req.csrfToken() });                                                                                    // Возвращаем CSRF токен клиенту в JSON формате
+app.get('/csrf-token', (req, res) => {                                                                                           // Эндпоинт для выдачи CSRF токена клиенту
+    res.json({ csrfToken: generateToken(req, res) });                                                                            // Генерируем и возвращаем новый CSRF токен в JSON
 });
 
-app.use(yookassaRouter);
+connectRoutes(app);                                                                                                              // Централизованно подключаем все маршруты приложения
 
-app.use('/auth', authRoutes);                                                                                                    // Подключаем маршруты аутентификации с префиксом /auth
-app.use('/profile', profilesRoutes);                                                                                             // Подключаем маршруты профилей с префиксом /profile
-app.use('/counter', counterRoutes);                                                                                              // Подключаем маршруты счетчиков с префиксом /counter
-app.use('/api', analyticsRouter);                                                                                                // Подключение маршрутов аналитики страницы промокодов
-app.use('/promocodes', promocodesRoutes);                                                                                        // Подключаем маршруты промокодов с префиксом /promocodes
-app.use('/api/promocodes', promocodesRoutes);                                                                                    // Дублируем маршруты промокодов под /api/promocodes для фронтенда
-app.use(subscribeRouter);                                                                                                        // Подключаем маршруты подписки без дополнительного префикса
-app.use('/', unsubscribeRouter);                                                                                                 // Подключение маршрутов отписки от рассылки промокодов
-app.use('/api', subscribersCountRouter);                                                                                         // Подключение маршрута количество подписчиков на промокоды
-app.use('/improve', improveRoutes);                                                                                              // Маршрут предложки
-app.use('/api', vkidRoutes);                                                                                                     // Маршрут авторизации vk
-app.use('/voice', voiceRoutes);                                                                                                  // Маршруты голосового ввода (STT/TTS)
-app.use('/api', verifyToken);                                                                                                    // Сначала проверка токена и установка req.user
-app.use('/api', pointsRoutes);                                                                                                   // Маршрут проверки баллов
-app.use('/api', withdrawalRoutes);                                                                                               // Обмен баллов на Pro
-app.use(aiImageRouter);
-app.use(aiVideoRouter);
-app.use('/', aiSearchSearxRouter);
+// ВРЕМЕННО: CSRF middleware стоит внизу
+// После поэтапного тестирования будем поднимать выше или вешать точечно на нужные роуты.
+app.use(doubleCsrfProtection);                                                                                                   // Временно подключаем глобальную CSRF-защиту внизу, чтобы не затронуть уже объявленные выше маршруты
 
 app.use((err, req, res, next) => {                                                                                               // Обработчик ошибок (после всех роутов и middleware)
-    if (err && err.code === 'EBADCSRFTOKEN') {                                                                                   // Обработчик ошибок CSRF (невалидный токен)
-        return res.status(403).json({ status: 'error', message: 'Invalid CSRF token' });                                         // Возвращаем ошибку 403 при невалидном CSRF токене
+    if (err === invalidCsrfTokenError || err?.code === 'INVALID_CSRF_TOKEN') {                                                  // Отдельно обрабатываем ошибки невалидного CSRF токена
+        return res.status(403).json({ status: 'error', message: 'Invalid CSRF token' });                                        // Возвращаем ошибку 403 при невалидном CSRF токене
     }
+
     console.error('[ERROR]', err.stack);                                                                                         // Логируем полный стек ошибки для отладки
     res.status(500).json({                                                                                                       // Отправляем клиенту универсальную ошибку 500
         status: 'error',
@@ -145,7 +124,12 @@ app.use((err, req, res, next) => {                                              
 });
 
 // Запуск основного auth сервера
-const PORT = process.env.AUTH_PORT;                                                                                              // Берем порт только из переменной окружения .env
-app.listen(PORT, () => {                                                                                                         // Запускаем сервер на порту из переменной окружения
-    console.log(`Сервер работает на порту ${PORT}`);                                                                             // Логируем успешный запуск сервера с указанием порта
-});
+const PORT = process.env.AUTH_PORT;                                                                                              // Получаем порт основного сервера из переменной окружения
+
+if (process.env.NODE_ENV !== 'test') {                                                                                           // Не запускаем сервер автоматически в тестовой среде
+    app.listen(PORT, () => {                                                                                                     // Запускаем сервер на указанном порту
+        console.log(`Сервер работает на порту ${PORT}`);                                                                         // Логируем успешный запуск сервера
+    });
+}
+
+export default app;                                                                                                              // Экспортируем Express-приложение для тестов и повторного использования
