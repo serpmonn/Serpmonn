@@ -54,8 +54,8 @@ function getTodayKey() {
 // ============================================================================
 
 const OLLAMA_URL = 'http://127.0.0.1:11434/api/chat';
-const OLLAMA_MAIN_MODEL = 'serpmonn-ai-search:latest'; // Phi‑3 3.8B Q4_0
-const OLLAMA_FAST_MODEL = 'serpmonn-ai-fast:latest';   // Gemma‑2 2.6B Q4_0
+const OLLAMA_MAIN_MODEL = 'serpmonn-ai-fast:latest';   // Gemma‑2 2.6B Q4_0 — теперь основная
+const OLLAMA_FAST_MODEL = 'serpmonn-ai-search:latest'; // Phi‑3 3.8B Q4_0 — теперь backup, в дальнейшем для улучшения ИИ-ответов в реальном времени
 
 async function callOllama(model, query, webContext) {
   const body = {
@@ -64,10 +64,12 @@ async function callOllama(model, query, webContext) {
       {
         role: 'system',
         content:
-          'Ты — поисковый агент Serpmonn. Тебе ДАН ТЕКСТ из интернета (результаты поиска). ' +
-          'Твоя задача: вытащить из этого текста ответ на вопрос пользователя. ' +
-          'Отвечай кратко, по сути, без воды. Если в тексте есть цифры, факты, даты — используй их. ' +
-          'Если ответа в данных нет — скажи об этом честно и не выдумывай.',
+        'Ты — поисковый агент Serpmonn. Тебе ДАН ТЕКСТ из интернета (результаты поиска). ' +
+        'Твоя задача: вытащить из этого текста ответ на вопрос пользователя. ' +
+        'Отвечай ТОЛЬКО на языке вопроса пользователя. ' +
+        'Отвечай в 1–2 коротких предложениях, без списков, без разметки, без исходного кода и без пошаговых инструкций. ' +
+        'Давай только факты, без вступлений. ' +
+        'Если в данных нет ответа — напиши: "Нет информации в найденных данных".',
       },
       {
         role: 'user',
@@ -77,6 +79,9 @@ async function callOllama(model, query, webContext) {
     stream: false,
     options: {
       temperature: 0,
+      num_predict: 98, // ограничиваем длину ответа
+      top_k: 40,
+      top_p: 0.9,
     },
   };
 
@@ -291,6 +296,8 @@ router.post(
   aiSearchLimiter,
   attachUserIfToken,
   async (req, res) => {
+    const reqStart = process.hrtime.bigint(); // начало запроса
+
     try {
       const query = (req.body.q || '').trim();
       if (!query) {
@@ -378,8 +385,14 @@ router.post(
 
       console.log(`${nowMSK()} | Запрос: "${query}"`);
 
+      // ---- тайминг SearXNG ----
+      const searxStart = process.hrtime.bigint();
       const { webContext, sources } = await webSearchWithSearxng(query);
+      const searxEnd = process.hrtime.bigint();
+      const searxMs = Number(searxEnd - searxStart) / 1e6;
 
+      // ---- тайминг моделей ----
+      const modelStart = process.hrtime.bigint();
       let answer;
       let usedModel;
       let usedBackup = false;
@@ -396,6 +409,8 @@ router.post(
           answer: 'Сервис ИИ временно недоступен.',
         });
       }
+      const modelEnd = process.hrtime.bigint();
+      const modelMs = Number(modelEnd - modelStart) / 1e6;
 
       if (!answer) {
         answer = 'Нет текста ответа от модели.';
@@ -418,9 +433,20 @@ router.post(
         }
       }
 
+      const reqEnd = process.hrtime.bigint();
+      const totalMs = Number(reqEnd - reqStart) / 1e6;
+      const otherMs = totalMs - searxMs - modelMs;
+
       console.log(`${nowMSK()} | Пользователь (тип): ${userLabel}`);
       console.log(
         `${nowMSK()} | Модель: ${usedModel} (backup: ${usedBackup})`
+      );
+      console.log(
+        `${nowMSK()} | Тайминги: total=${totalMs.toFixed(
+          0
+        )}ms, searx=${searxMs.toFixed(0)}ms, model=${modelMs.toFixed(
+          0
+        )}ms, other=${otherMs.toFixed(0)}ms`
       );
       console.log(
         `${nowMSK()} | Ответ: "${answer.slice(0, 200).replace(/\s+/g, ' ')}..."`

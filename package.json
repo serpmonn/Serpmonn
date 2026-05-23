@@ -27,7 +27,10 @@
     "start-communityBotSite": "pm2 start ecosystem.config.cjs --only communityBotSite",
     "start-serpmonnKeeperBot": "pm2 start ecosystem.config.cjs --only serpmonnKeeperBot",
     "site:build": "eleventy",
-    "site:clean": "rm -rf dist"
+    "site:clean": "rm -rf dist",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:watch": "vitest"
   },
   "author": {
     "name": "Sergei Popov",
@@ -71,7 +74,7 @@
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
-    "csurf": "^1.11.0",
+    "csrf-csrf": "^4.0.3",
     "date-fns": "^4.1.0",
     "dotenv": "^16.6.1",
     "express": "^4.21.2",
@@ -97,7 +100,11 @@
     "nodemon": "^3.0.0",
     "nunjucks": "^3.2.4",
     "pm2": "^6.0.8",
-    "vite": "^7.1.7"
+    "vite": "^7.1.7",
+    "eslint": "^9.0.0",
+    "@eslint/js": "^9.0.0",
+    "supertest": "^7.0.0",
+    "vitest": "^2.0.0"
   },
   "overrides": {
     "form-data": "^4.0.4",
