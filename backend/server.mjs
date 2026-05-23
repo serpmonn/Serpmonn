@@ -71,7 +71,7 @@ app.use((req, res, next) => {                                                   
 app.use(cookieParser());                                                                                                         // Включаем парсинг cookies из заголовков запросов
 
 app.use('/voice/stt', express.raw({                                                                                              // Middleware для парсинга бинарных аудиоданных (ДО express.json!)
-    type: ['audio/webm', 'audio/ogg', 'audio/wav', 'audio/mpeg', 'audio/webm;codecs=opus'],                                     // Разрешаем поддерживаемые аудио MIME-типы
+    type: ['audio/webm', 'audio/ogg', 'audio/wav', 'audio/mpeg', 'audio/webm;codecs=opus'],                                      // Разрешаем поддерживаемые аудио MIME-типы
     limit: '10mb'                                                                                                                // Ограничиваем размер аудиофайла до 10 мегабайт
 }));
 

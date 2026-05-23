@@ -9,15 +9,26 @@ describe('Server smoke tests', () => {
     it('GET /csrf-token возвращает токен', async () => {
         const res = await request(app).get('/csrf-token');
 
-        expect(res.status).toBe(200);                          // Ожидаем успешный ответ
-        expect(res.body).toHaveProperty('csrfToken');          // В теле должен быть csrfToken
-        expect(typeof res.body.csrfToken).toBe('string');      // Токен — строка
+        expect(res.status).toBe(200);
+        expect(res.body).toHaveProperty('csrfToken');
+        expect(typeof res.body.csrfToken).toBe('string');
     });
 
     it('Неизвестный маршрут не падает с необработанной ошибкой', async () => {
         const res = await request(app).get('/route-that-does-not-exist');
 
-        expect([404, 500]).toContain(res.status);              // 404 (маршрут не найден) или 500 — оба приемлемы
+        expect([404, 500]).toContain(res.status);
+    });
+
+    // --- новый тест ---
+    it('GET /health возвращает статус ok', async () => {
+        const res = await request(app).get('/health');
+
+        expect(res.status).toBe(200);                      // Ожидаем успешный HTTP-ответ
+        expect(res.body.status).toBe('ok');                // Статус приложения — 'ok'
+        expect(res.body).toHaveProperty('uptime');         // Поле uptime присутствует
+        expect(typeof res.body.uptime).toBe('number');     // Uptime — число (секунды)
+        expect(res.body).toHaveProperty('timestamp');      // Поле timestamp присутствует
     });
 
 });
