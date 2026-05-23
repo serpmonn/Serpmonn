@@ -3,7 +3,6 @@ import crypto from 'crypto';
 import https from 'node:https';
 import express from 'express';
 import cors from 'cors';
-import fetch from 'node-fetch';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import paseto from 'paseto';

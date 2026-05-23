@@ -1,7 +1,6 @@
 // backend/vkid/vkidRoutes.mjs
 import express from 'express';
 import rateLimit from 'express-rate-limit';
-import fetch from 'node-fetch';
 import paseto from 'paseto';
 import { query } from '../database/config.mjs';
 

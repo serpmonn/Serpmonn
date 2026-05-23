@@ -7,7 +7,6 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import cookieParser from 'cookie-parser';
 import paseto from 'paseto';
-import fetch from 'node-fetch';
 
 import { query as dbQuery } from '../database/config.mjs';
 import { fetchSearxViaCurl } from '../utils/fetchSearxViaCurl.js';
