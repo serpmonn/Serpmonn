@@ -127,7 +127,7 @@ app.get('/csrf-token', (req, res) => {                                          
     res.json({ csrfToken: generateToken(req, res) });                                                                            // Генерируем и возвращаем новый CSRF токен в JSON
 });
 
-connectRoutes(app);                                                                                                              // Централизованно подключаем все маршруты приложения
+connectRoutes(app, authLimiter);                                                                                                 // Централизованно подключаем все маршруты приложения
 
 // ВРЕМЕННО: CSRF middleware стоит внизу
 // После поэтапного тестирования будем поднимать выше или вешать точечно на нужные роуты.

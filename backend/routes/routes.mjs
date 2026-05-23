@@ -17,7 +17,7 @@ import aiImageRouter from '../ai-search/ai-image-search.mjs';                   
 import aiVideoRouter from '../ai-search/ai-video-search.mjs';                                                                    // Импорт маршрутов AI-поиска по видеозаписям
 import aiSearchSearxRouter from '../ai-search/ai-search-searx.mjs';                                                              // Импорт маршрута AI-поиска через SearxNG
 
-export function connectRoutes(app) {                                                                                             // Функция централизованного подключения всех маршрутов приложения
+export function connectRoutes(app, authLimiter) {                                                                                // Функция централизованного подключения всех маршрутов приложения
     app.use(yookassaRouter);                                                                                                     // Подключаем маршруты платежной системы YooKassa
 
     app.use('/auth', authLimiter);                                                                                               // Применяем более строгий лимит к маршрутам аутентификации
