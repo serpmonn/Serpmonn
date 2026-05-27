@@ -752,13 +752,11 @@ function initPage() {
       e.preventDefault();
       e.stopPropagation();
 
-      // ПРОВЕРКА: Если это голосовой ввод, сбрасываем флаг
       const isVoiceInput = searchInput?.dataset.voiceInput === 'true';
       if (isVoiceInput) {
         delete searchInput.dataset.voiceInput;
       }
 
-      // Защита от повторной отправки
       const now = Date.now();
 
       if (isSubmitting) {
@@ -776,7 +774,6 @@ function initPage() {
         return;
       }
 
-      // Блокируем сразу
       isSubmitting = true;
       lastSubmitTime = now;
 
@@ -786,25 +783,27 @@ function initPage() {
       }
 
       showLoading();
+
       const container = document.getElementById('ai-result-container');
       if (container) {
         container.style.display = 'block';
       }
 
-      // Перед новым запросом очищаем/прячем блоки фото/видео
-      if (typeof showImageResults === 'function') {
-        showImageResults({ images: [] });
-      }
-      if (typeof showVideoResults === 'function') {
-        showVideoResults({ videos: [] });
-      }
+      showImageResults({ images: [] });
+      showVideoResults({ videos: [] });
 
       try {
         const idempotencyKey = generateIdempotencyKey();
         currentIdempotencyKey = idempotencyKey;
 
-        // ТЕСТОВЫЙ маршрут через SearXNG
-        const aiRequest = fetch('/ai-search-searx', {
+        const mode = 'full';
+        const include = {
+          text: true,
+          images: true,
+          videos: true
+        };
+
+        const response = await fetch('/ai-search', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -812,95 +811,60 @@ function initPage() {
             'X-Idempotency-Key': idempotencyKey
           },
           credentials: 'include',
-          body: JSON.stringify({ q: query })
+          body: JSON.stringify({
+            q: query,
+            include,
+            mode
+          })
         });
 
-        // 2. Запрос картинок
-        const imageRequest = fetch(`/ai-image-search?q=${encodeURIComponent(query)}`, {
-          method: 'GET',
-          headers: { Accept: 'application/json' },
-          credentials: 'include'
-        });
-
-        // 3. Запрос видео
-        const videoRequest = fetch(`/ai-video-search?q=${encodeURIComponent(query)}`, {
-          method: 'GET',
-          headers: { Accept: 'application/json' },
-          credentials: 'include'
-        });
-
-        const [aiResponse, imageResponse, videoResponse] = await Promise.all([
-          aiRequest,
-          imageRequest,
-          videoRequest
-        ]);
-
-        // Проверяем, не был ли отправлен новый запрос за время ожидания (для ИИ)
         if (currentIdempotencyKey !== idempotencyKey) {
           console.warn('[AI] ⚠️ Обнаружен более новый запрос, игнорируем старый ответ');
           return;
         }
 
-        // ---- Обработка ответа ИИ ----
-        if (!aiResponse.ok) {
-          let errData = null;
-          try {
-            errData = await aiResponse.json();
-          } catch (_) {}
+        const data = await response.json().catch(() => null);
 
-          if (errData && errData.error) {
-            showResult({ error: errData.error });
+        if (!response.ok) {
+          if (data?.error) {
+            showResult({ error: data.error });
           } else {
-            throw new Error(`HTTP ${aiResponse.status}: ${aiResponse.statusText}`);
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
           }
-        } else {
-          const data = await aiResponse.json();
-          const answer = data.answer || '';
 
-          showResult({
-            answer,
-            usedWebSearch: data.usedWebSearch === true,
-            sources: data.sources || []
-          });
-        }
-
-        // ---- Обработка картинок ----
-        if (imageResponse.ok) {
-          const imageData = await imageResponse.json();
-          if (typeof showImageResults === 'function') {
-            showImageResults(imageData);
-          }
-        } else if (typeof showImageResults === 'function') {
           showImageResults({ images: [] });
+          showVideoResults({ videos: [] });
+          return;
         }
 
-        // ---- Обработка видео ----
-        if (videoResponse.ok) {
-          const videoData = await videoResponse.json();
-          if (typeof showVideoResults === 'function') {
-            showVideoResults(videoData);
-          }
-        } else if (typeof showVideoResults === 'function') {
-          showVideoResults({ videos: [] });
-        }
+        showResult({
+          answer: data?.answer || '',
+          usedWebSearch: data?.usedWebSearch === true,
+          sources: Array.isArray(data?.sources) ? data.sources : []
+        });
+
+        showImageResults({
+          images: Array.isArray(data?.images) ? data.images : []
+        });
+
+        showVideoResults({
+          videos: Array.isArray(data?.videos) ? data.videos : []
+        });
+
       } catch (error) {
-        console.error('[AI] ❌ Ошибка при запросе к ИИ/мультимедиа:', error);
+        console.error('[AI] ❌ Ошибка при запросе к /ai-search:', error);
+
         showResult({
           error: 'Ошибка связи с ИИ. Попробуйте позже.'
         });
-        if (typeof showImageResults === 'function') {
-          showImageResults({ images: [] });
-        }
-        if (typeof showVideoResults === 'function') {
-          showVideoResults({ videos: [] });
-        }
+
+        showImageResults({ images: [] });
+        showVideoResults({ videos: [] });
       } finally {
-        // Сбрасываем placeholder
         if (searchInput) {
           searchInput.placeholder = 'Спросите у ИИ что угодно...';
         }
 
-        // Разблокируем через 2 секунды
         setTimeout(() => {
           isSubmitting = false;
           currentIdempotencyKey = null;

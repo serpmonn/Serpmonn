@@ -101,18 +101,6 @@ module.exports = {                                      // Экспорт кон
       }
     },
 
-    // AI search (отдельный сервис поиска с ИИ)
-    {
-      name: 'ai-search',                                // Процесс AI-поиска
-      script: 'backend/ai-search/ai-search.mjs',
-      instances: 1,
-      max_memory_restart: '512M',                       // Больше памяти под модели
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
-      env: {
-        NODE_ENV: 'production'
-      }
-    },
-
     // Внешние боты в /var/www — поднимаются с этого же ecosystem
     {
       name: 'autoReplyBot',                             // Auto-reply бот автоответчик vk

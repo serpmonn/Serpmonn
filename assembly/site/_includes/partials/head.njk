@@ -9,9 +9,8 @@
 
 <title>{{ title }}</title>
 <meta name="description" content="{{ description }}">
-<meta name="keywords" content="serpmonn, серпмон, серпмонн, поисковик, новости, мини-игры, браузерные игры, поиск без рекламы, ai, искусственный интеллект, промокоды, игры, инструменты">
+<meta name="keywords" content="{{ keywords }}">
 
-{# Все верификационные мета-теги #}
 <meta name="verify-admitad" content="7c9ceea344">
 <meta name="p:domain_verify" content="922f48dff0f0851f5a18bc66a200f1dc">
 <meta name="perfluence-verification" content="f5bac7474a74">
@@ -21,7 +20,6 @@
 <meta name="Affilead-verification" content="3349e707-bab4-49d4-b20c-82b9ac98b669">
 <meta name="kadam-verification" content="kadam0340f16a561e3de4d4b2d1ba64630da4">
 
-{# Hreflang для всех языков #}
 {% for loc in locales %}
   <link rel="alternate" href="{{ site.baseUrl }}/{{ loc }}/" hreflang="{{ loc }}" />
 {% endfor %}
@@ -29,29 +27,25 @@
 
 <link rel="canonical" href="{% if locale == 'ru' %}{{ site.baseUrl }}/{% else %}{{ site.baseUrl }}/{{ locale }}/{% endif %}" />
 
-{# Open Graph #}
-<meta property="og:title" content="{{ title }}" />
-<meta property="og:description" content="{{ description }}" />
+<meta property="og:title" content="{{ ogTitle }}" />
+<meta property="og:description" content="{{ ogDescription }}" />
 <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png" />
 <meta property="og:url" content="{{ currentUrl }}" />
 <meta property="og:type" content="website" />
 <meta property="og:site_name" content="Serpmonn" />
 
-{# Twitter Cards #}
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="{{ title }}">
-<meta name="twitter:description" content="{{ description }}">
+<meta name="twitter:title" content="{{ twitterTitle }}">
+<meta name="twitter:description" content="{{ twitterDescription }}">
 <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
 <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
 <link rel="manifest" href="/frontend/pwa/manifest.json">
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 
-{# Яндекс.Метрика и другие скрипты #}
 <script>window.yaContextCb=window.yaContextCb||[]</script>
 <script src="https://yandex.ru/ads/system/context.js" async></script>
 
-<!-- Яндекс.Метрика -->
 <script type="text/javascript">
     (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
     m[i].l=1*new Date();
@@ -66,13 +60,13 @@
         webvisor:true,
         ecommerce:"dataLayer"
     });
-    
+
     window.addEventListener('load', function() {
         fetch('https://api.ipify.org?format=json')
             .then(response => response.json())
             .then(data => {
                 if (typeof ym !== 'undefined') {
-                    ym(98158791, 'params', { 
+                    ym(98158791, 'params', {
                         ip_address: data.ip,
                         user_ip: data.ip
                     });
@@ -87,7 +81,6 @@
     });
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Яндекс.Метрика -->
 
 <script type="application/ld+json">
 {
@@ -102,7 +95,7 @@
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
-  "@type": "WebSite", 
+  "@type": "WebSite",
   "name": "Serpmonn",
   "url": "{{ site.baseUrl }}/",
   "potentialAction": {

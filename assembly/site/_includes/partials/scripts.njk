@@ -26,7 +26,7 @@
 
   document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
-    
+
     var mo = new MutationObserver(function(muts) {
       muts.forEach(function(m) {
         m.addedNodes && m.addedNodes.forEach(function(n) {
@@ -36,7 +36,7 @@
         });
       });
     });
-    
+
     mo.observe(document.documentElement, { childList: true, subtree: true });
   });
 </script>

@@ -13,9 +13,7 @@ import pointsRoutes from '../points/pointsRoutes.mjs';                          
 import withdrawalRoutes from '../points/withdrawalRoutes.mjs';                                                                   // Импорт маршрута обмена баллов на Pro
 import verifyToken from '../auth/verifyToken.mjs';                                                                               // Импорт маршрута верификации токена
 import voiceRoutes from '../voice/voiceRoutes.mjs';                                                                              // Импорт маршрутов голосового ввода
-import aiImageRouter from '../ai-search/ai-image-search.mjs';                                                                    // Импорт маршрутов AI-поиска по изображениям
-import aiVideoRouter from '../ai-search/ai-video-search.mjs';                                                                    // Импорт маршрутов AI-поиска по видеозаписям
-import aiSearchSearxRouter from '../ai-search/ai-search-searx.mjs';                                                              // Импорт маршрута AI-поиска через SearxNG
+import aiSearchRouter from '../ai-search/ai-search.mjs';                                                                         // Импорт маршрута AI-поиска через SearxNG
 
 export function connectRoutes(app, authLimiter) {                                                                                // Функция централизованного подключения всех маршрутов приложения
     app.use(yookassaRouter);                                                                                                     // Подключаем маршруты платежной системы YooKassa
@@ -36,7 +34,5 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/api', verifyToken);                                                                                                // Подключаем маршрут верификации токена и установки req.user
     app.use('/api', pointsRoutes);                                                                                               // Подключаем маршрут проверки баллов
     app.use('/api', withdrawalRoutes);                                                                                           // Подключаем маршрут обмена баллов на Pro
-    app.use(aiImageRouter);                                                                                                      // Подключаем маршруты AI-поиска по изображениям
-    app.use(aiVideoRouter);                                                                                                      // Подключаем маршруты AI-поиска по видеозаписям
-    app.use('/', aiSearchSearxRouter);                                                                                           // Подключаем маршрут AI-поиска через SearxNG
+    app.use('/', aiSearchRouter);                                                                                                // Подключаем маршрут AI-поиска через SearxNG
 }

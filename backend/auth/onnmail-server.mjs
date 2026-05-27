@@ -15,7 +15,6 @@ import cookieParser from 'cookie-parser';                                       
 import onnmailRoutes from './onnmail/onnmailRoutes.mjs';                                                                         // Импортируем маршруты для почтового API и рассылок
 
 import rateLimit from 'express-rate-limit';                                                                                      // Импортируем ограничитель частоты запросов для защиты от спама
-import csrf from 'csurf';                                                                                                        // Импортируем CSRF middleware для защиты от межсайтовых запросов
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);                                                                                                       // Доверяем первому прокси (например, Nginx) для корректного IP
@@ -49,16 +48,6 @@ const apiLimiter = rateLimit({
     legacyHeaders: false                                                                                                         // Не использовать устаревшие заголовки (X-RateLimit-*)
 });
 app.use(apiLimiter);                                                                                                             // Применяем ограничитель ко всем маршрутам почтового API
-
-// CSRF protection - защита от межсайтовой подделки запросов для почтовых операций
-const csrfProtection = csrf({
-    cookie: {
-        httpOnly: true,                                                                                                          // Cookie недоступны через JavaScript (повышение безопасности)
-        sameSite: 'lax',                                                                                                         // Защита от CSRF атак с сохранением UX для навигации
-        secure: process.env.NODE_ENV === 'production'                                                                            // Secure cookie только в продакшене (HTTPS соединение)
-    },
-    ignoreMethods: ['GET', 'HEAD', 'OPTIONS']                                                                                    // Игнорировать безопасные HTTP методы для CSRF проверки
-});
 
 // Подключаем маршруты почтового API
 app.use('/mail-api', onnmailRoutes);                                                                                             // Подключаем маршруты с префиксом /mail-api для изоляции API

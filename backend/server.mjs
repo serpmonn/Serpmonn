@@ -38,7 +38,7 @@ const corsOptions = {                                                           
     ],
     credentials: true,                                                                                                           // Разрешаем отправку cookies через междоменные запросы
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],                                                                        // Указываем разрешенные HTTP методы для CORS запросов
-    allowedHeaders: ['Authorization', 'Content-Type', 'Accept', 'Origin', 'X-CSRF-Token']                                        // Указываем разрешенные заголовки в CORS запросах
+    allowedHeaders: ['Authorization', 'Content-Type', 'Accept', 'Origin', 'X-CSRF-Token', 'X-Idempotency-Key']                   // Указываем разрешенные заголовки в CORS запросах
 };
 
 app.use(cors(corsOptions));                                                                                                      // Применяем CORS с заданными настройками ко всем маршрутам
@@ -120,8 +120,6 @@ const csrfTools = doubleCsrf({
     size: 64,
     ignoredMethods: ['GET', 'HEAD', 'OPTIONS']
 });
-
-console.log('[CSRF TOOLS]', Object.keys(csrfTools));                                                                             // Временно выводим реальные ключи объекта, который вернула библиотека
 
 const {
     generateCsrfToken,                                                                                                           // Правильная функция генерации CSRF-токена в текущей версии csrf-csrf
