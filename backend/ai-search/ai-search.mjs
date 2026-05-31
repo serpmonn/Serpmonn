@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import express from 'express';
 import paseto from 'paseto';
 
+import { getBackendMessages } from '../utils/i18n.mjs';
 import { query as dbQuery } from '../database/config.mjs';
 import { fetchSearxViaCurl } from '../utils/fetchSearxViaCurl.js';
 
@@ -228,7 +229,7 @@ async function checkAndIncrementProMonthly(userId) {
   return { ok: true, used, limit: PRO_MONTHLY_LIMIT };
 }
 
-async function enforceLogicalSearchLimit(req, identity) {
+async function enforceLogicalSearchLimit(req, identity, t) {
   if (identity.type === 'guest') {
     const usage = checkAndIncrementUsage(identity);
 
@@ -240,8 +241,7 @@ async function enforceLogicalSearchLimit(req, identity) {
           ok: false,
           status: 403,
           payload: {
-            error:
-              'Лимит 5 запросов в день исчерпан. Чтобы продолжить пользоваться Serpmonn без ограничений, войдите: https://serpmonn.ru/frontend/login/login.html или зарегистрируйтесь: https://serpmonn.ru/frontend/register/register.html',
+            error: t.guestLimitVk,
             needAuth: true,
             limit: usage.limit,
             used: usage.used,
@@ -253,8 +253,7 @@ async function enforceLogicalSearchLimit(req, identity) {
         ok: false,
         status: 403,
         payload: {
-          error:
-            'Лимит 5 запросов для гостей исчерпан. Пожалуйста, войдите или зарегистрируйтесь, чтобы продолжить.',
+          error: t.guestLimit,
           needAuth: true,
           limit: usage.limit,
           used: usage.used,
@@ -283,8 +282,7 @@ async function enforceLogicalSearchLimit(req, identity) {
           ok: false,
           status: 403,
           payload: {
-            error:
-              'Вы исчерпали лимит 2000 запросов в месяц по тарифу Pro. Лимит будет обновлён в начале следующего месяца.',
+            error: t.proLimit,
             needAuth: false,
             limit: proUsage.limit,
             used: proUsage.used,
@@ -302,8 +300,7 @@ async function enforceLogicalSearchLimit(req, identity) {
         ok: false,
         status: 403,
         payload: {
-          error:
-            'Лимит запросов на сегодня исчерпан. Вы можете перейти на страницу тарифов и оформить тариф Pro.',
+          error: t.freeLimit,
           needAuth: false,
           limit: usage.limit,
           used: usage.used,
@@ -399,8 +396,9 @@ router.post(
   '/ai-search',
   attachUserIfToken,
   async (req, res) => {
-  console.log('IN /ai-search, body =', req.body);
+    console.log('IN /ai-search, body =', req.body);
     const reqStart = process.hrtime.bigint();
+    const { locale, t } = getBackendMessages(req);
 
     try {
       const q = (req.body?.q || '').trim();
@@ -412,7 +410,7 @@ router.post(
       const wantVideos = include.videos === true;
 
       if (!q) {
-        return res.status(400).json({ error: 'Запрос пуст' });
+        return res.status(400).json({ error: t.queryEmpty });
       }
 
       const identity = getUserIdentity(req);
@@ -431,12 +429,12 @@ router.post(
         }
       }
 
-      const limitCheck = await enforceLogicalSearchLimit(req, identity);
+      const limitCheck = await enforceLogicalSearchLimit(req, identity, t);
       if (!limitCheck.ok) {
         return res.status(limitCheck.status).json(limitCheck.payload);
       }
 
-      console.log(`${nowMSK()} | /ai-search | query="${q}" | mode=${mode}`);
+      console.log(`${nowMSK()} | /ai-search | locale=${locale} | query="${q}" | mode=${mode}`);
       console.log(
         `${nowMSK()} | include: text=${wantText}, images=${wantImages}, videos=${wantVideos}`
       );
@@ -451,12 +449,20 @@ router.post(
             const searxEnd = process.hrtime.bigint();
 
             const modelStart = process.hrtime.bigint();
-            const aiResult = await getAiAnswerFromLocalModels(q, webContext);
+            let aiResult;
+            try {
+              aiResult = await getAiAnswerFromLocalModels(q, webContext);
+            } catch (e) {
+              const publicError = new Error(t.aiUnavailable);
+              publicError.isPublic = true;
+              publicError.status = 502;
+              throw publicError;
+            }
             const modelEnd = process.hrtime.bigint();
 
             return {
               type: 'text',
-              answer: aiResult.answer || 'Нет текста ответа от модели.',
+              answer: aiResult.answer || t.noModelText,
               model: aiResult.model,
               usedBackup: aiResult.usedBackup,
               usedWebSearch: true,
@@ -543,9 +549,29 @@ router.post(
           }
         } else {
           responsePayload.partialFailures.push(
-            item.reason?.message || 'Unknown task error'
+            item.reason?.message || t.unknownTaskError
           );
         }
+      }
+
+      const textFailure = settled.find(
+        item =>
+          item.status === 'rejected' &&
+          item.reason?.isPublic === true
+      );
+
+      if (wantText && textFailure && !responsePayload.answer) {
+        return res.status(textFailure.reason.status || 502).json({
+          error: textFailure.reason.message || t.aiUnavailable,
+          images: Array.isArray(responsePayload.images) ? responsePayload.images : [],
+          videos: Array.isArray(responsePayload.videos) ? responsePayload.videos : [],
+          sources: [],
+          usedWebSearch: false,
+          model: null,
+          usedBackup: false,
+          partialFailures: responsePayload.partialFailures,
+          timestamp: new Date().toISOString(),
+        });
       }
 
       const reqEnd = process.hrtime.bigint();
@@ -570,7 +596,14 @@ router.post(
       return res.json(responsePayload);
     } catch (error) {
       console.error('💥 Ошибка в /ai-search:', error);
-      return res.status(500).json({ error: 'Internal Server Error' });
+
+      if (error?.isPublic) {
+        return res.status(error.status || 400).json({
+          error: error.message || t.internalError,
+        });
+      }
+
+      return res.status(500).json({ error: t.internalError });
     }
   }
 );

@@ -33,10 +33,90 @@ function generateIdempotencyKey() {
   return Date.now().toString(36) + '-' + Math.random().toString(36).slice(2);
 }
 
+function getCurrentLocale() {
+  return (document.documentElement.lang || 'en').toLowerCase();
+}
+
+function getCurrentLanguageTag() {
+  const locale = getCurrentLocale();
+
+  if (locale === 'zh-cn') return 'zh-CN';
+  if (locale === 'pt-br') return 'pt-BR';
+  if (locale === 'pt-pt') return 'pt-PT';
+  if (locale === 'ku-arab') return 'ku-Arab';
+
+  return locale;
+}
+
+const UI_MESSAGES = {
+  ru: {
+    loading: 'Serpmonn AI анализирует запрос...',
+    retry: 'Попробовать снова',
+    sources: 'Источники',
+    imagesHeader: 'Фото по запросу',
+    videosHeader: 'Видео по запросу',
+    networkError: 'Ошибка связи с ИИ. Попробуйте позже.',
+    askAnything: 'Спросите у ИИ что угодно...',
+    webSearchUsed: 'Использован веб‑поиск',
+    recording: 'Запись голоса...',
+    zeroBytes: 'Записано 0 байт. Попробуйте снова',
+    audioRecordError: 'Ошибка записи звука',
+    speakNow: 'Говорите...',
+    autoStopped: 'Запись остановлена (макс. 30 сек)',
+    micAccessFailed: 'Не удалось получить доступ к микрофону',
+    micDenied: 'Доступ к микрофону запрещён. Разрешите в настройках браузера',
+    micNotFound: 'Микрофон не найден',
+    micBusy: 'Микрофон занят другим приложением',
+    recognizing: 'Распознаём речь...',
+    speechNotRecognized: 'Речь не распознана. Попробуйте говорить громче',
+    pressEnter: 'Нажмите Enter для отправки',
+    recognizedPrefix: '✓ Распознано: ',
+    speechRecognitionError: 'Ошибка распознавания речи',
+    noTextToCopy: 'Нет текста для копирования',
+    copied: 'Ответ скопирован',
+    copyFailed: 'Не удалось скопировать',
+    shareTitleDefault: 'Ответ от Serpmonn AI',
+  },
+  en: {
+    loading: 'Serpmonn AI is analyzing your query...',
+    retry: 'Try again',
+    sources: 'Sources',
+    imagesHeader: 'Images for your query',
+    videosHeader: 'Videos for your query',
+    networkError: 'Connection error with AI. Please try again later.',
+    askAnything: 'Ask AI anything...',
+    webSearchUsed: 'Web search used',
+    recording: 'Recording voice...',
+    zeroBytes: 'Recorded 0 bytes. Please try again',
+    audioRecordError: 'Audio recording error',
+    speakNow: 'Speak now...',
+    autoStopped: 'Recording stopped (max. 30 sec)',
+    micAccessFailed: 'Could not access the microphone',
+    micDenied: 'Microphone access was denied. Allow it in browser settings',
+    micNotFound: 'Microphone not found',
+    micBusy: 'Microphone is being used by another application',
+    recognizing: 'Recognizing speech...',
+    speechNotRecognized: 'Speech was not recognized. Try speaking louder',
+    pressEnter: 'Press Enter to send',
+    recognizedPrefix: '✓ Recognized: ',
+    speechRecognitionError: 'Speech recognition error',
+    noTextToCopy: 'No text to copy',
+    copied: 'Answer copied',
+    copyFailed: 'Could not copy',
+    shareTitleDefault: 'Answer from Serpmonn AI',
+  }
+};
+
+function getUiMessages() {
+  const locale = getCurrentLocale();
+  return UI_MESSAGES[locale] || UI_MESSAGES[locale.split('-')[0]] || UI_MESSAGES.en;
+}
+
 // ======================================================================================================================
 // ГОЛОСОВОЙ ВВОД
 // ======================================================================================================================
 function initVoiceInput() {
+  const t = getUiMessages();
   // Проверяем поддержку MediaRecorder API
   if (!navigator.mediaDevices || !window.MediaRecorder) {
     console.warn('[VOICE] MediaRecorder API не поддерживается');
@@ -65,7 +145,7 @@ function initVoiceInput() {
     recordingIndicator.className = 'voice-recording-indicator';
     recordingIndicator.innerHTML = `
       <div class="voice-recording-dot"></div>
-      <span>Запись голоса...</span>
+      <span>${t.recording}</span>
     `;
     document.body.appendChild(recordingIndicator);
   }
@@ -120,8 +200,8 @@ function initVoiceInput() {
         stream.getTracks().forEach(track => track.stop());
 
         if (audioChunks.length === 0) {
-          showShareToast('Записано 0 байт. Попробуйте снова');
-          searchInput.placeholder = 'Спросите у ИИ что угодно...';
+          showShareToast(t.zeroBytes);
+          searchInput.placeholder = getUiMessages().askAnything;
           return;
         }
 
@@ -133,7 +213,7 @@ function initVoiceInput() {
 
       mediaRecorder.onerror = (event) => {
         console.error('[VOICE] Ошибка MediaRecorder:', event.error);
-        showShareToast('Ошибка записи звука');
+        showShareToast(t.audioRecordError);
         resetVoiceUI();
       };
 
@@ -144,13 +224,13 @@ function initVoiceInput() {
       voiceBtn.disabled = false;
       recordingIndicator.classList.add('active');
       searchInput.value = '';
-      searchInput.placeholder = 'Говорите...';
+      searchInput.placeholder = t.speakNow;
 
       // Автоостановка через 30 секунд
       const autoStopTimeout = setTimeout(() => {
         if (mediaRecorder && mediaRecorder.state === 'recording') {
           mediaRecorder.stop();
-          showShareToast('Запись остановлена (макс. 30 сек)');
+          showShareToast(t.autoStopped);
         }
       }, 30000);
 
@@ -161,13 +241,13 @@ function initVoiceInput() {
     } catch (error) {
       console.error('[VOICE] Ошибка доступа к микрофону:', error);
       
-      let errorMsg = 'Не удалось получить доступ к микрофону';
+      let errorMsg = t.micAccessFailed;
       if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        errorMsg = 'Доступ к микрофону запрещён. Разрешите в настройках браузера';
+        errorMsg = t.micDenied;
       } else if (error.name === 'NotFoundError') {
-        errorMsg = 'Микрофон не найден';
+        errorMsg = t.micNotFound;
       } else if (error.name === 'NotReadableError') {
-        errorMsg = 'Микрофон занят другим приложением';
+        errorMsg = t.micBusy;
       }
       
       showShareToast(errorMsg);
@@ -177,7 +257,7 @@ function initVoiceInput() {
 
   async function sendAudioForRecognition(audioBlob, mimeType) {
     try {
-      searchInput.placeholder = 'Распознаём речь...';
+      searchInput.placeholder = t.recognizing;
       
       const response = await fetch('/voice/stt', {
         method: 'POST',
@@ -196,16 +276,16 @@ function initVoiceInput() {
       const text = data.text || '';
 
       if (!text) {
-        showShareToast('Речь не распознана. Попробуйте говорить громче');
-        searchInput.placeholder = 'Спросите у ИИ что угодно...';
+        showShareToast(t.speechNotRecognized);
+        searchInput.placeholder = getUiMessages().askAnything;
         return;
       }
 
       searchInput.value = text;
-      searchInput.placeholder = 'Нажмите Enter для отправки';
+      searchInput.placeholder = t.pressEnter;
       searchInput.focus();
       
-      showShareToast(`✓ Распознано: ${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`);
+      showShareToast(`${t.recognizedPrefix}${text.substring(0, 50)}${text.length > 50 ? '...' : ''}`);
       
       // ✅ ФЛАГ: Помечаем, что это голосовой ввод
       searchInput.dataset.voiceInput = 'true';
@@ -224,8 +304,8 @@ function initVoiceInput() {
 
     } catch (error) {
       console.error('[VOICE] Ошибка распознавания:', error);
-      showShareToast('Ошибка распознавания речи');
-      searchInput.placeholder = 'Спросите у ИИ что угодно...';
+      showShareToast(t.speechRecognitionError);
+      searchInput.placeholder = getUiMessages().askAnything;
     }
   }
 
@@ -234,7 +314,7 @@ function initVoiceInput() {
     voiceBtn.classList.remove('listening');
     voiceBtn.disabled = false;
     recordingIndicator.classList.remove('active');
-    searchInput.placeholder = 'Спросите у ИИ что угодно...';
+    searchInput.placeholder = getUiMessages().askAnything;
   }
 }
 
@@ -295,6 +375,7 @@ function extractLinks(text) {
 // ПОКАЗАТЬ АНИМАЦИЮ ЗАГРУЗКИ
 // ======================================================================================================================
 function showLoading() {
+  const t = getUiMessages();
   const contentDiv = document.getElementById('ai-result-content');
   if (!contentDiv) return;
 
@@ -305,13 +386,13 @@ function showLoading() {
         <span></span>
         <span></span>
       </div>
-      <div class="loading-text">Serpmonn AI анализирует запрос...</div>
+      <div class="loading-text">${t.loading}</div>
     </div>
   `;
 
   const timestampDiv = document.getElementById('ai-timestamp');
   if (timestampDiv) {
-    timestampDiv.textContent = new Date().toLocaleTimeString('ru-RU', {
+    timestampDiv.textContent = new Date().toLocaleTimeString(getCurrentLanguageTag(), {
       hour: '2-digit',
       minute: '2-digit'
     });
@@ -322,6 +403,7 @@ function showLoading() {
 // ПОКАЗАТЬ РЕЗУЛЬТАТ ОТВЕТА ИИ
 // ======================================================================================================================
 function showResult(data) {
+  const t = getUiMessages();
   const contentDiv = document.getElementById('ai-result-content');
   const container = document.getElementById('ai-result-container');
   let html = '';
@@ -332,7 +414,7 @@ function showResult(data) {
         <div class="error-icon">⚠️</div>
         <div class="error-message">${data.error}</div>
         <button class="retry-btn">
-          Попробовать снова
+          ${t.retry}
         </button>
       </div>
     `;
@@ -345,7 +427,7 @@ function showResult(data) {
           <svg viewBox="0 0 24 24" fill="currentColor">
             <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
           </svg>
-          Использован веб‑поиск
+          ${t.webSearchUsed}
         </div>
       `;
     }
@@ -359,7 +441,7 @@ function showResult(data) {
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
               <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
             </svg>
-            Источники
+            ${t.sources}
           </div>
           ${
             data.sources
@@ -389,7 +471,7 @@ function showResult(data) {
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
               </svg>
-              Источники
+              ${t.sources}
             </div>
             ${
               links.map(link => {
@@ -425,6 +507,7 @@ function showResult(data) {
 }
 
 function showImageResults(data) {
+  const t = getUiMessages();
   const container = document.getElementById('ai-image-results');
   if (!container) return;
 
@@ -458,7 +541,7 @@ function showImageResults(data) {
 
   container.innerHTML = `
     <div class="ai-image-header">
-      <span>Фото по запросу</span>
+      <span>${t.imagesHeader}</span>
     </div>
     <div class="ai-image-grid">
       ${itemsHtml}
@@ -468,6 +551,7 @@ function showImageResults(data) {
 }
 
 function showVideoResults(data) {
+  const t = getUiMessages();
   const container = document.getElementById('ai-video-results');
   if (!container) return;
 
@@ -503,7 +587,7 @@ function showVideoResults(data) {
 
   container.innerHTML = `
     <div class="ai-video-header">
-      <span>Видео по запросу</span>
+      <span>${t.videosHeader}</span>
     </div>
     <div class="ai-video-grid">
       ${itemsHtml}
@@ -530,7 +614,7 @@ function showShareToast(message) {
 // НАСТРОЙКА ИНТЕРАКТИВНЫХ КНОПОК ДЕЙСТВИЙ
 // ======================================================================================================================
 function setupActionButtons() {
-
+  const t = getUiMessages();
   function openWebShareModal(pageUrl, answerText) {
     const modal = document.getElementById('ai-share-modal');
     if (!modal) return;
@@ -553,7 +637,7 @@ function setupActionButtons() {
       'https://vk.com/share.php?url=' +
       encodeURIComponent(pageUrl) +
       '&title=' +
-      encodeURIComponent('Ответ от Serpmonn AI') +
+      encodeURIComponent(t.shareTitleDefault) +
       '&comment=' +
       encodeURIComponent(answerText);
 
@@ -590,13 +674,13 @@ function setupActionButtons() {
   }
 
   /// 1. Копировать ответ
-  const copyBtn = document.querySelector('.ai-action-btn[title^="Копировать"]');
+  const copyBtn = document.querySelector('.ai-action-btn[data-ai-action="copy"]');
   if (copyBtn) {
     copyBtn.addEventListener('click', async () => {
       const contentEl = document.getElementById('ai-result-content');
       const content = contentEl?.textContent.trim() || '';
       if (!content) {
-        showShareToast('Нет текста для копирования');
+        showShareToast(t.noTextToCopy);
         return;
       }
 
@@ -612,7 +696,7 @@ function setupActionButtons() {
           document.body.removeChild(tmp);
         }
 
-        showShareToast('Ответ скопирован');
+        showShareToast(t.copied);
         copyBtn.dataset.state = 'copied';
         copyBtn.style.borderColor = '#10b981';
         setTimeout(() => {
@@ -621,13 +705,13 @@ function setupActionButtons() {
         }, 2000);
       } catch (err) {
         console.error('Ошибка копирования:', err);
-        showShareToast('Не удалось скопировать');
+        showShareToast(t.copyFailed);
       }
     });
   }
 
   // 2. Поделиться
-  const shareBtn = document.querySelector('.ai-action-btn[title^="Поделиться"]');
+  const shareBtn = document.querySelector('.ai-action-btn[data-ai-action="share"]');
   if (shareBtn) {
     const resultEl = document.getElementById('ai-result-content');
 
@@ -636,7 +720,7 @@ function setupActionButtons() {
 
       const pageUrl = window.location.href.split('#')[0];
       const answerText =
-        resultEl.textContent.trim().substring(0, 300) || 'Ответ от Serpmonn AI';
+        resultEl.textContent.trim().substring(0, 300) || t.shareTitleDefault;
 
       // простая евристика: считаем, что mini app только на домене vk.com
       const isVkMiniApp =
@@ -803,18 +887,22 @@ function initPage() {
           videos: true
         };
 
+        const locale = getCurrentLocale();
+
         const response = await fetch('/ai-search', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
-            'X-Idempotency-Key': idempotencyKey
+            'X-Idempotency-Key': idempotencyKey,
+            'X-User-Lang': locale
           },
           credentials: 'include',
           body: JSON.stringify({
             q: query,
             include,
-            mode
+            mode,
+            lang: locale
           })
         });
 
@@ -855,14 +943,14 @@ function initPage() {
         console.error('[AI] ❌ Ошибка при запросе к /ai-search:', error);
 
         showResult({
-          error: 'Ошибка связи с ИИ. Попробуйте позже.'
+          error: getUiMessages().networkError
         });
 
         showImageResults({ images: [] });
         showVideoResults({ videos: [] });
       } finally {
         if (searchInput) {
-          searchInput.placeholder = 'Спросите у ИИ что угодно...';
+          searchInput.placeholder = getUiMessages().askAnything;
         }
 
         setTimeout(() => {
