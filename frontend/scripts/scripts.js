@@ -797,10 +797,10 @@ async function initPage() {
       showImageResults({ images: [] });
       showVideoResults({ videos: [] });
 
+      const idempotencyKey = generateIdempotencyKey();
+      currentIdempotencyKey = idempotencyKey;
+      
       try {
-        const idempotencyKey = generateIdempotencyKey();
-        currentIdempotencyKey = idempotencyKey;
-
         const mode = 'full';
         const include = {
           text: true,

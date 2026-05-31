@@ -1,3 +1,4 @@
+import { loadMessages, getMessages } from './i18n-loader.js';
 import { showCookieBanner } from './cookies.js';
 import { loadNews } from './news.js';
 import { generateCombinedBackground } from './backgroundGenerator.js';
@@ -48,75 +49,11 @@ function getCurrentLanguageTag() {
   return locale;
 }
 
-const UI_MESSAGES = {
-  ru: {
-    loading: 'Serpmonn AI анализирует запрос...',
-    retry: 'Попробовать снова',
-    sources: 'Источники',
-    imagesHeader: 'Фото по запросу',
-    videosHeader: 'Видео по запросу',
-    networkError: 'Ошибка связи с ИИ. Попробуйте позже.',
-    askAnything: 'Спросите у ИИ что угодно...',
-    webSearchUsed: 'Использован веб‑поиск',
-    recording: 'Запись голоса...',
-    zeroBytes: 'Записано 0 байт. Попробуйте снова',
-    audioRecordError: 'Ошибка записи звука',
-    speakNow: 'Говорите...',
-    autoStopped: 'Запись остановлена (макс. 30 сек)',
-    micAccessFailed: 'Не удалось получить доступ к микрофону',
-    micDenied: 'Доступ к микрофону запрещён. Разрешите в настройках браузера',
-    micNotFound: 'Микрофон не найден',
-    micBusy: 'Микрофон занят другим приложением',
-    recognizing: 'Распознаём речь...',
-    speechNotRecognized: 'Речь не распознана. Попробуйте говорить громче',
-    pressEnter: 'Нажмите Enter для отправки',
-    recognizedPrefix: '✓ Распознано: ',
-    speechRecognitionError: 'Ошибка распознавания речи',
-    noTextToCopy: 'Нет текста для копирования',
-    copied: 'Ответ скопирован',
-    copyFailed: 'Не удалось скопировать',
-    shareTitleDefault: 'Ответ от Serpmonn AI',
-  },
-  en: {
-    loading: 'Serpmonn AI is analyzing your query...',
-    retry: 'Try again',
-    sources: 'Sources',
-    imagesHeader: 'Images for your query',
-    videosHeader: 'Videos for your query',
-    networkError: 'Connection error with AI. Please try again later.',
-    askAnything: 'Ask AI anything...',
-    webSearchUsed: 'Web search used',
-    recording: 'Recording voice...',
-    zeroBytes: 'Recorded 0 bytes. Please try again',
-    audioRecordError: 'Audio recording error',
-    speakNow: 'Speak now...',
-    autoStopped: 'Recording stopped (max. 30 sec)',
-    micAccessFailed: 'Could not access the microphone',
-    micDenied: 'Microphone access was denied. Allow it in browser settings',
-    micNotFound: 'Microphone not found',
-    micBusy: 'Microphone is being used by another application',
-    recognizing: 'Recognizing speech...',
-    speechNotRecognized: 'Speech was not recognized. Try speaking louder',
-    pressEnter: 'Press Enter to send',
-    recognizedPrefix: '✓ Recognized: ',
-    speechRecognitionError: 'Speech recognition error',
-    noTextToCopy: 'No text to copy',
-    copied: 'Answer copied',
-    copyFailed: 'Could not copy',
-    shareTitleDefault: 'Answer from Serpmonn AI',
-  }
-};
-
-function getUiMessages() {
-  const locale = getCurrentLocale();
-  return UI_MESSAGES[locale] || UI_MESSAGES[locale.split('-')[0]] || UI_MESSAGES.en;
-}
-
 // ======================================================================================================================
 // ГОЛОСОВОЙ ВВОД
 // ======================================================================================================================
 function initVoiceInput() {
-  const t = getUiMessages();
+  const t = getMessages();
   // Проверяем поддержку MediaRecorder API
   if (!navigator.mediaDevices || !window.MediaRecorder) {
     console.warn('[VOICE] MediaRecorder API не поддерживается');
@@ -201,7 +138,7 @@ function initVoiceInput() {
 
         if (audioChunks.length === 0) {
           showShareToast(t.zeroBytes);
-          searchInput.placeholder = getUiMessages().askAnything;
+          searchInput.placeholder = getMessages().askAnything;
           return;
         }
 
@@ -277,7 +214,7 @@ function initVoiceInput() {
 
       if (!text) {
         showShareToast(t.speechNotRecognized);
-        searchInput.placeholder = getUiMessages().askAnything;
+        searchInput.placeholder = getMessages().askAnything;
         return;
       }
 
@@ -305,7 +242,7 @@ function initVoiceInput() {
     } catch (error) {
       console.error('[VOICE] Ошибка распознавания:', error);
       showShareToast(t.speechRecognitionError);
-      searchInput.placeholder = getUiMessages().askAnything;
+      searchInput.placeholder = getMessages().askAnything;
     }
   }
 
@@ -314,7 +251,7 @@ function initVoiceInput() {
     voiceBtn.classList.remove('listening');
     voiceBtn.disabled = false;
     recordingIndicator.classList.remove('active');
-    searchInput.placeholder = getUiMessages().askAnything;
+    searchInput.placeholder = getMessages().askAnything;
   }
 }
 
@@ -375,7 +312,7 @@ function extractLinks(text) {
 // ПОКАЗАТЬ АНИМАЦИЮ ЗАГРУЗКИ
 // ======================================================================================================================
 function showLoading() {
-  const t = getUiMessages();
+  const t = getMessages();
   const contentDiv = document.getElementById('ai-result-content');
   if (!contentDiv) return;
 
@@ -403,7 +340,7 @@ function showLoading() {
 // ПОКАЗАТЬ РЕЗУЛЬТАТ ОТВЕТА ИИ
 // ======================================================================================================================
 function showResult(data) {
-  const t = getUiMessages();
+  const t = getMessages();
   const contentDiv = document.getElementById('ai-result-content');
   const container = document.getElementById('ai-result-container');
   let html = '';
@@ -507,7 +444,7 @@ function showResult(data) {
 }
 
 function showImageResults(data) {
-  const t = getUiMessages();
+  const t = getMessages();
   const container = document.getElementById('ai-image-results');
   if (!container) return;
 
@@ -551,7 +488,7 @@ function showImageResults(data) {
 }
 
 function showVideoResults(data) {
-  const t = getUiMessages();
+  const t = getMessages();
   const container = document.getElementById('ai-video-results');
   if (!container) return;
 
@@ -614,68 +551,12 @@ function showShareToast(message) {
 // НАСТРОЙКА ИНТЕРАКТИВНЫХ КНОПОК ДЕЙСТВИЙ
 // ======================================================================================================================
 function setupActionButtons() {
-  const t = getUiMessages();
-  function openWebShareModal(pageUrl, answerText) {
-    const modal = document.getElementById('ai-share-modal');
-    if (!modal) return;
+  const t = getMessages();
 
-    const dialog = modal.querySelector('.ai-share-dialog');
-    const backdrop = modal.querySelector('.ai-share-backdrop');
-
-    const quickTg = modal.querySelector('.ai-share-pill.ai-share-telegram');
-    const quickVk = modal.querySelector('.ai-share-pill.ai-share-vk');
-
-    // Telegram
-    const tgUrl =
-      'https://t.me/share/url?url=' +
-      encodeURIComponent(pageUrl) +
-      '&text=' +
-      encodeURIComponent(answerText);
-
-    // VK
-    const vkUrl =
-      'https://vk.com/share.php?url=' +
-      encodeURIComponent(pageUrl) +
-      '&title=' +
-      encodeURIComponent(t.shareTitleDefault) +
-      '&comment=' +
-      encodeURIComponent(answerText);
-
-    if (quickTg) {
-      quickTg.onclick = () => {
-        window.open(tgUrl, '_blank', 'noopener');
-      };
-    }
-
-    if (quickVk) {
-      quickVk.onclick = () => {
-        window.open(vkUrl, '_blank', 'noopener');
-      };
-    }
-
-    const close = () => {
-      modal.removeAttribute('data-open');
-      setTimeout(() => {
-        modal.style.display = 'none';
-      }, 150);
-      document.removeEventListener('keydown', onEsc);
-    };
-
-    const onEsc = e => {
-      if (e.key === 'Escape') close();
-    };
-
-    if (backdrop) backdrop.onclick = close;
-
-    modal.style.display = 'flex';
-    modal.setAttribute('data-open', 'true');
-    if (dialog) dialog.focus();
-    document.addEventListener('keydown', onEsc);
-  }
-
-  /// 1. Копировать ответ
+  // ── copy ──────────────────────────────────────────────────────────────
   const copyBtn = document.querySelector('.ai-action-btn[data-ai-action="copy"]');
-  if (copyBtn) {
+  if (copyBtn && !copyBtn.dataset.initialized) {
+    copyBtn.dataset.initialized = 'true';
     copyBtn.addEventListener('click', async () => {
       const contentEl = document.getElementById('ai-result-content');
       const content = contentEl?.textContent.trim() || '';
@@ -710,24 +591,22 @@ function setupActionButtons() {
     });
   }
 
-  // 2. Поделиться
+  // ── share ─────────────────────────────────────────────────────────────
   const shareBtn = document.querySelector('.ai-action-btn[data-ai-action="share"]');
-  if (shareBtn) {
-    const resultEl = document.getElementById('ai-result-content');
-
+  if (shareBtn && !shareBtn.dataset.initialized) {
+    shareBtn.dataset.initialized = 'true';
     shareBtn.addEventListener('click', () => {
+      const resultEl = document.getElementById('ai-result-content');
       if (!resultEl) return;
 
       const pageUrl = window.location.href.split('#')[0];
       const answerText =
         resultEl.textContent.trim().substring(0, 300) || t.shareTitleDefault;
 
-      // простая евристика: считаем, что mini app только на домене vk.com
       const isVkMiniApp =
         window.location.hostname === 'vk.com' ||
         window.location.hostname.endsWith('.vk.com');
 
-      // 1) Внутри VK Mini Apps — нативный VK share
       if (isVkMiniApp && window.vkBridge && typeof window.vkBridge.send === 'function') {
         window.vkBridge
           .send('VKWebAppShare', { link: pageUrl })
@@ -738,20 +617,19 @@ function setupActionButtons() {
         return;
       }
 
-      // 2) Обычный веб — всегда модалка
       openWebShareModal(pageUrl, answerText);
     });
   }
 
-  // 3. Лайк/дизлайк
+  // ── feedback ──────────────────────────────────────────────────────────
   document.querySelectorAll('.feedback-btn').forEach(btn => {
+    if (btn.dataset.initialized) return;
+    btn.dataset.initialized = 'true';
     btn.addEventListener('click', function () {
       const isLike = this.classList.contains('like');
-
       this.style.background = isLike ? '#ecfdf5' : '#fef2f2';
       this.style.borderColor = isLike ? '#10b981' : '#ef4444';
       this.style.color = isLike ? '#047857' : '#dc2626';
-
       setTimeout(() => {
         this.style.background = '';
         this.style.borderColor = '';
@@ -759,6 +637,48 @@ function setupActionButtons() {
       }, 3000);
     });
   });
+
+  // ── openWebShareModal — внутри функции, как было ─────────────────────
+  function openWebShareModal(pageUrl, answerText) {
+    const modal = document.getElementById('ai-share-modal');
+    if (!modal) return;
+
+    const dialog = modal.querySelector('.ai-share-dialog');
+    const backdrop = modal.querySelector('.ai-share-backdrop');
+    const quickTg = modal.querySelector('.ai-share-pill.ai-share-telegram');
+    const quickVk = modal.querySelector('.ai-share-pill.ai-share-vk');
+
+    const tgUrl =
+      'https://t.me/share/url?url=' +
+      encodeURIComponent(pageUrl) +
+      '&text=' +
+      encodeURIComponent(answerText);
+
+    const vkUrl =
+      'https://vk.com/share.php?url=' +
+      encodeURIComponent(pageUrl) +
+      '&title=' +
+      encodeURIComponent(t.shareTitleDefault) +
+      '&comment=' +
+      encodeURIComponent(answerText);
+
+    if (quickTg) quickTg.onclick = () => window.open(tgUrl, '_blank', 'noopener');
+    if (quickVk) quickVk.onclick = () => window.open(vkUrl, '_blank', 'noopener');
+
+    const close = () => {
+      modal.removeAttribute('data-open');
+      setTimeout(() => { modal.style.display = 'none'; }, 150);
+      document.removeEventListener('keydown', onEsc);
+    };
+
+    const onEsc = e => { if (e.key === 'Escape') close(); };
+    if (backdrop) backdrop.onclick = close;
+
+    modal.style.display = 'flex';
+    modal.setAttribute('data-open', 'true');
+    if (dialog) dialog.focus();
+    document.addEventListener('keydown', onEsc);
+  }
 }
 
 // ======================================================================================================================
@@ -804,7 +724,8 @@ function initAdObserver() {
 // ======================================================================================================================
 // ИНИЦИАЛИЗАЦИЯ СТРАНИЦЫ
 // ======================================================================================================================
-function initPage() {
+async function initPage() {
+  await loadMessages();
   const newsContainer = document.getElementById('news-container');
   if (!newsContainer) {
     console.error('Не найден контейнер новостей');
@@ -943,32 +864,40 @@ function initPage() {
         console.error('[AI] ❌ Ошибка при запросе к /ai-search:', error);
 
         showResult({
-          error: getUiMessages().networkError
+          error: getMessages().networkError
         });
 
         showImageResults({ images: [] });
         showVideoResults({ videos: [] });
       } finally {
-        if (searchInput) {
-          searchInput.placeholder = getUiMessages().askAnything;
-        }
+      if (searchInput) {
+        searchInput.placeholder = getMessages().askAnything;
+      }
 
-        setTimeout(() => {
+      setTimeout(() => {
+        // Сбрасываем только если это всё ещё наш запрос
+        if (currentIdempotencyKey === idempotencyKey || currentIdempotencyKey === null) {
           isSubmitting = false;
           currentIdempotencyKey = null;
-
           if (submitBtn) {
             submitBtn.disabled = false;
             submitBtn.classList.remove('is-loading');
           }
-        }, 2000);
-      }
+        }
+      }, 2000);
+    }
     });
 
     initVoiceInput();
   }
 
   async function loadPageData() {
+    const newsContainer = document.getElementById('news-container');
+    if (newsContainer) {
+      newsContainer.addEventListener('click', function () {
+        this.classList.toggle('expanded');
+      });
+    }
     try {
       await Promise.allSettled([loadNews(), generateCombinedBackground()]);
     } catch (error) {
@@ -979,7 +908,6 @@ function initPage() {
   setupEventListeners();
   loadPageData();
   initAdObserver();
-  setupActionButtons();
   showCookieBanner();
 }
 
