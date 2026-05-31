@@ -725,7 +725,6 @@ function initAdObserver() {
 // ИНИЦИАЛИЗАЦИЯ СТРАНИЦЫ
 // ======================================================================================================================
 async function initPage() {
-  await loadMessages();
   const newsContainer = document.getElementById('news-container');
   if (!newsContainer) {
     console.error('Не найден контейнер новостей');
@@ -799,7 +798,7 @@ async function initPage() {
 
       const idempotencyKey = generateIdempotencyKey();
       currentIdempotencyKey = idempotencyKey;
-      
+
       try {
         const mode = 'full';
         const include = {
@@ -911,4 +910,7 @@ async function initPage() {
   showCookieBanner();
 }
 
-document.addEventListener('DOMContentLoaded', initPage);
+document.addEventListener('DOMContentLoaded', async () => {
+  await loadMessages();  // ← сначала загружаем переводы
+  initPage();
+});

@@ -7,7 +7,13 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 const router = express.Router();
 
-const SUPPORTED = ['ru', 'en'];
+const SUPPORTED = [
+  'ru', 'en', 'ar', 'az', 'be', 'bg', 'bn', 'cs', 'da', 'de',
+  'el', 'es', 'fi', 'fil', 'fr', 'he', 'hi', 'hu', 'hy', 'id',
+  'it', 'ja', 'ka', 'kk', 'ko', 'ms', 'nb', 'nl', 'pl', 'pt-br',
+  'pt-pt', 'ro', 'sr', 'sv', 'th', 'tr', 'ur', 'uz', 'vi',
+  'zh-cn', 'fa', 'es-419', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'
+];
 
 router.get('/i18n/:locale', (req, res) => {
   const requested = (req.params.locale || req.get('X-User-Lang') || 'en').toLowerCase();
