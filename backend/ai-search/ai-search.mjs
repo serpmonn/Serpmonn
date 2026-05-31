@@ -56,12 +56,13 @@ async function callOllama(model, query, webContext) {
       {
         role: 'system',
         content:
-          'Ты — поисковый агент Serpmonn. Тебе ДАН ТЕКСТ из интернета (результаты поиска). ' +
-          'Твоя задача: вытащить из этого текста ответ на вопрос пользователя. ' +
-          'Отвечай ТОЛЬКО на языке на котором написан вопрос пользователя. ' +
-          'Отвечай в 1–2 коротких предложениях. ' +
-          'Давай только факты, без вступлений. ' +
-          'Если в данных нет ответа — напиши: "Нет информации в найденных данных".',
+          'You are Serpmonn search assistant. ' +
+          'You are given web search results text. ' +
+          'Your task is to answer the user question using only that data. ' +
+          'Reply only in the same language as the user question. ' +
+          'Reply in 1-2 short sentences. ' +
+          'Use facts only, without introductions. ' +
+          'If the answer is not present in the data, reply: "No information found in the provided data."',
       },
       {
         role: 'user',
@@ -314,7 +315,7 @@ async function enforceLogicalSearchLimit(req, identity, t) {
   return { ok: true };
 }
 
-async function webSearchWithSearxng(query) {
+async function webSearchWithSearxng(query, t) {
   try {
     const data = await fetchSearxViaCurl(query, 'general');
 
@@ -328,9 +329,9 @@ async function webSearchWithSearxng(query) {
 
     const webContext = results.length
       ? results
-          .map((r) => `Сайт: ${r.title}\nИнфо: ${r.content}`)
-          .join('\n\n')
-      : 'Актуальные данные не найдены.';
+        .map((r) => `${t.searchContextSource}: ${r.title}\n${t.searchContextSnippet}: ${r.content}`)
+        .join('\n\n')
+      : t.searchNoData;
 
     const sources = results.map((r) => ({
       title: r.title,
@@ -341,20 +342,20 @@ async function webSearchWithSearxng(query) {
   } catch (e) {
     console.error('Ошибка при обращении к SearXNG (general):', e);
     return {
-      webContext: 'Актуальные данные не найдены.',
+      webContext: t.searchNoData,
       sources: [],
     };
   }
 }
 
-async function imageSearchWithSearxng(query) {
+async function imageSearchWithSearxng(query, t) {
   try {
     const data = await fetchSearxViaCurl(query, 'images');
 
     const images = (data.results || [])
       .slice(0, 24)
       .map((item) => ({
-        title: item.title || `Результат по запросу "${query}"`,
+        title: item.title || t.imageFallbackTitle.replace('{query}', query),
         thumbnailUrl: item.img_src || item.thumbnail || '',
         imageUrl: item.img_src || item.url || '',
         sourceUrl: item.url || '',
@@ -369,14 +370,14 @@ async function imageSearchWithSearxng(query) {
   }
 }
 
-async function videoSearchWithSearxng(query) {
+async function videoSearchWithSearxng(query, t) {
   try {
     const data = await fetchSearxViaCurl(query, 'videos');
 
     const videos = (data.results || [])
       .slice(0, 18)
       .map((item) => ({
-        title: item.title || `Видео по запросу "${query}"`,
+        title: item.title || t.videoFallbackTitle.replace('{query}', query),
         thumbnailUrl: item.thumbnail || item.img_src || '',
         videoUrl: item.url || '',
         sourceUrl: item.url || '',
@@ -445,7 +446,7 @@ router.post(
         tasks.push(
           (async () => {
             const searxStart = process.hrtime.bigint();
-            const { webContext, sources } = await webSearchWithSearxng(q);
+            const { webContext, sources } = await webSearchWithSearxng(q, t);
             const searxEnd = process.hrtime.bigint();
 
             const modelStart = process.hrtime.bigint();
@@ -480,7 +481,7 @@ router.post(
         tasks.push(
           (async () => {
             const start = process.hrtime.bigint();
-            const images = await imageSearchWithSearxng(q);
+            const images = await imageSearchWithSearxng(q, t);
             const end = process.hrtime.bigint();
 
             return {
@@ -498,7 +499,7 @@ router.post(
         tasks.push(
           (async () => {
             const start = process.hrtime.bigint();
-            const videos = await videoSearchWithSearxng(q);
+            const videos = await videoSearchWithSearxng(q, t);
             const end = process.hrtime.bigint();
 
             return {

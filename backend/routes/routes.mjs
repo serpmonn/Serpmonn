@@ -14,6 +14,7 @@ import withdrawalRoutes from '../points/withdrawalRoutes.mjs';                  
 import verifyToken from '../auth/verifyToken.mjs';                                                                               // Импорт маршрута верификации токена
 import voiceRoutes from '../voice/voiceRoutes.mjs';                                                                              // Импорт маршрутов голосового ввода
 import aiSearchRouter from '../ai-search/ai-search.mjs';                                                                         // Импорт маршрута AI-поиска через SearxNG
+import i18nRoute from './i18n-route.mjs';                                                                                        // Импорт маршрута переводов для бэка
 
 export function connectRoutes(app, authLimiter) {                                                                                // Функция централизованного подключения всех маршрутов приложения
     app.use(yookassaRouter);                                                                                                     // Подключаем маршруты платежной системы YooKassa
@@ -35,4 +36,5 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/api', pointsRoutes);                                                                                               // Подключаем маршрут проверки баллов
     app.use('/api', withdrawalRoutes);                                                                                           // Подключаем маршрут обмена баллов на Pro
     app.use('/', aiSearchRouter);                                                                                                // Подключаем маршрут AI-поиска через SearxNG
+    app.use('/', i18nRoute);                                                                                                     // Подключаем маршрут переводов
 }
