@@ -1,196 +1,231 @@
-import dotenv from 'dotenv';                                                                             // Импортируем dotenv для работы с переменными окружения
-import { resolve } from 'path';                                                                          // Импортируем resolve для создания абсолютных путей
+import dotenv from 'dotenv';
+import { resolve } from 'path';
 
-const isProduction = process.env.NODE_ENV === 'production';                                              // Определяем режим работы: production или development
-const envPath = isProduction                                                                             // Выбираем путь к .env файлу в зависимости от окружения
-    ? '/var/www/serpmonn.ru/backend/.env'                                                                // Продакшен путь на сервере
-    : resolve(process.cwd(), 'backend/.env');                                                            // Разработка - абсолютный путь к .env в папке backend
+const isProduction = process.env.NODE_ENV === 'production';
+const envPath = isProduction
+  ? '/var/www/serpmonn.ru/backend/.env'
+  : resolve(process.cwd(), 'backend/.env');
 
-dotenv.config({ path: envPath });                                                                        // Загружаем переменные окружения из выбранного пути
-                                                                                              
-import bcrypt from 'bcryptjs';													                                                 // Импортируем bcrypt для хеширования паролей
-import paseto from 'paseto';													                                                   // Импортируем paseto для создания токенов
-import { query } from '../database/config.mjs';											                                     // Импортируем функцию query для работы с БД
-import { validationResult } from 'express-validator';										                                 // Импортируем validationResult для проверки данных
-import { v4 as uuidv4 } from 'uuid';												                                             // Импортируем uuidv4 для генерации уникальных ID
-import { sendConfirmationEmail } from '../utils/mailer.mjs';									                           // Импортируем функцию для отправки email
-import { awardPoints } from '../points/pointsService.js';                                                // Импортирует функцию проверки и начисления баллов
-import { checkAndRewardQualifiedReferral } from '../points/referralService.mjs';                         // Импорт функции начисления баллов за активного реферала
-                                                                                              
-const { V2 } = paseto;                                                                         					 // Извлекаем V2 из paseto для работы с токенами
-const { hash, compare } = bcrypt;                                                              					 // Извлекаем hash и compare из bcrypt
-const secretKey = process.env.SECRET_KEY;                                                     					 // Получаем секретный ключ из переменных окружения
-                                                                                              
-export const registerUser = async (req, res) => {                                                        // Определяем функцию для регистрации пользователя
-  const errors = validationResult(req);                                                                  // Проверяем данные запроса на ошибки валидации
-  if (!errors.isEmpty()) {                                                                               // Если есть ошибки валидации
-    return res.status(400).json({ errors: errors.array() });                                             // Возвращаем клиенту список ошибок и выходим
+dotenv.config({ path: envPath });
+
+import bcrypt from 'bcryptjs';
+import paseto from 'paseto';
+import { query } from '../database/config.mjs';
+import { v4 as uuidv4 } from 'uuid';
+import { sendConfirmationEmail } from '../utils/mailer.mjs';
+import { awardPoints } from '../points/pointsService.js';
+import { checkAndRewardQualifiedReferral } from '../points/referralService.mjs';
+
+const { V2 } = paseto;
+const { hash, compare } = bcrypt;
+const secretKey = process.env.SECRET_KEY;
+
+function maskEmail(email) {
+  if (!email || typeof email !== 'string') return null;
+  const [name, domain] = email.split('@');
+  if (!name || !domain) return email;
+  return `${name.slice(0, 2)}***@${domain}`;
+}
+
+function logAuthRequest(req, label, extra = {}) {
+  console.log(`[AUTH] ${label}`, {
+    method: req.method,
+    path: req.originalUrl,
+    ip: req.ip,
+    referer: req.headers.referer || null,
+    userAgent: req.headers['user-agent'] || null,
+    body: {
+      ...req.body,
+      password: req.body?.password ? '[REDACTED]' : undefined,
+      email: req.body?.email ? maskEmail(req.body.email) : undefined
+    },
+    query: req.query,
+    ...extra
+  });
+}
+
+function assertNoUndefinedParams(label, params) {
+  const badIndexes = params
+    .map((value, index) => (value === undefined ? index : -1))
+    .filter(index => index !== -1);
+
+  if (badIndexes.length > 0) {
+    console.error(`[AUTH SQL PARAM ERROR] ${label}`, {
+      badIndexes,
+      params
+    });
+    return false;
   }
 
-  const { username, email, password, ref } = req.body;                                                   // Берём из тела запроса логин, почту, пароль и реф-код (username пригласившего)
+  return true;
+}
 
-  try {                                                                                                  // Начинаем основной блок try/catch для обработки ошибок
-    const [usernameExists] = await query(                                                                // Делаем запрос к БД: есть ли уже такой username
-      "SELECT id FROM users WHERE username = ?", 
+function safeQuery(label, sql, params) {
+  if (!assertNoUndefinedParams(label, params)) {
+    const error = new Error('Некорректные входные данные.');
+    error.status = 400;
+    error.isPublic = true;
+    throw error;
+  }
+
+  return query(sql, params);
+}
+
+export const registerUser = async (req, res) => {
+  const { username, email, password, ref } = req.body;
+  logAuthRequest(req, 'registerUser:start');
+
+  try {
+    const [usernameExists] = await safeQuery(
+      'registerUser:checkUsername',
+      'SELECT id FROM users WHERE username = ?',
       [username]
     );
-    if (usernameExists && usernameExists.id) {                                                           // Если запись с таким username уже нашлась
-      return res.status(400).json({ message: "Имя пользователя уже используется!" });                    // Отправляем ошибку о занятости логина
+
+    if (usernameExists && usernameExists.id) {
+      return res.status(400).json({ message: 'Имя пользователя уже используется!' });
     }
 
-    const [emailExists] = await query(                                                                   // Проверяем, занят ли email
-      "SELECT id FROM users WHERE email = ?", 
+    const [emailExists] = await safeQuery(
+      'registerUser:checkEmail',
+      'SELECT id FROM users WHERE email = ?',
       [email]
     );
-    if (emailExists && emailExists.id) {                                                                 // Если в БД уже есть пользователь с этим email
-      return res.status(400).json({ message: "Email уже используется!" });                               // Возвращаем ошибку о занятости email
+
+    if (emailExists && emailExists.id) {
+      return res.status(400).json({ message: 'Email уже используется!' });
     }
 
-    const passwordHash = await hash(password, 10);                          // Хешируем пароль с солью (10 раундов)
-    const userId = uuidv4();                                                // Генерируем уникальный UUID для нового пользователя
-    const telegramConfirmLink = `https://t.me/SerpmonnConfirmBot?startapp=${userId}`; // Собираем ссылку на подтверждение через Telegram
+    const passwordHash = await hash(password, 10);
+    const userId = uuidv4();
+    const telegramConfirmLink = `https://t.me/SerpmonnConfirmBot?startapp=${userId}`;
 
-    await query(                                                            // Выполняем SQL-запрос вставки нового пользователя
-      "INSERT INTO users (id, username, email, password_hash, confirmed) VALUES (?, ?, ?, ?, ?)", // SQL для создания записи в users
-      [userId, username, email, passwordHash, false]                        // Передаём значения полей: id, логин, почта, хеш, confirmed = false
+    await safeQuery(
+      'registerUser:insertUser',
+      'INSERT INTO users (id, username, email, password_hash, confirmed) VALUES (?, ?, ?, ?, ?)',
+      [userId, username, email, passwordHash, false]
     );
 
-    const REGISTRATION_BASE_BONUS = 50;                                     // Константа: размер базового бонуса за сам факт регистрации
-    await awardPoints(                                                      // Вызываем сервис начисления баллов
-      userId,                                                               // Кому начисляем: новому пользователю
-      REGISTRATION_BASE_BONUS,                                              // Сколько баллов начислить
-      'registration_signup',                                                // Тип операции в системе баллов (за регистрацию)
-      { via: 'signup' }                                                     // Доп. данные (meta): источник — обычная регистрация
+    const REGISTRATION_BASE_BONUS = 50;
+    await awardPoints(
+      userId,
+      REGISTRATION_BASE_BONUS,
+      'registration_signup',
+      { via: 'signup' }
     );
 
-    // ===== РЕФЕРАЛКА: ref = username пригласившего =====
-    if (ref) {                                                              // Если в запросе был передан реф-код (username пригласившего)
-      try {                                                                 // Отдельный try, чтобы не уронить всю регистрацию из-за рефералки
-        const [referrer] = await query(                                     // Ищем пользователя-реферера по его username
-          "SELECT id FROM users WHERE username = ?",
+    if (ref) {
+      try {
+        const [referrer] = await safeQuery(
+          'registerUser:findReferrer',
+          'SELECT id FROM users WHERE username = ?',
           [ref]
         );
 
-        if (referrer && referrer.id && referrer.id !== userId) {            // Если реферер найден и это не тот же самый новый пользователь
-          const [freshUser] = await query(                                  // Получаем свежую запись нового пользователя
-            "SELECT referred_by FROM users WHERE id = ?",
+        if (referrer && referrer.id && referrer.id !== userId) {
+          const [freshUser] = await safeQuery(
+            'registerUser:getFreshUser',
+            'SELECT referred_by FROM users WHERE id = ?',
             [userId]
           );
 
-          if (!freshUser.referred_by) {                                     // Проверяем, что у нового ещё не указан реферер
-            const BASIC_REFERRER_BONUS = 200;                               // бонус для пригласившего реферала без подтверждения
-            const REFEREE_BONUS = 150;                                      // Сколько баллов дать приглашённому
+          if (freshUser && !freshUser.referred_by) {
+            const BASIC_REFERRER_BONUS = 200;
+            const REFEREE_BONUS = 150;
 
-            await query(                                                    // Обновляем запись нового пользователя
-              "UPDATE users SET referred_by = ? WHERE id = ?",              // Сохраняем, кем он был приглашён
+            await safeQuery(
+              'registerUser:updateReferredBy',
+              'UPDATE users SET referred_by = ? WHERE id = ?',
               [referrer.id, userId]
             );
 
-            await awardPoints(                                              // Начисляем бонус пригласившему (рефереру)
-              referrer.id,                                                  // id пригласившего пользователя
-              BASIC_REFERRER_BONUS,                                         // размер бонуса рефереру
-              'invite_basic',                                               // тип транзакции — бонус рефереру
-              { referee_id: userId, via: 'signup' }                         // meta: кого пригласил и откуда начисление
-            );
-
-            await awardPoints(                                              // Начисляем бонус приглашённому
-              userId,                                                       // id нового пользователя
-              REFEREE_BONUS,                                                // размер бонуса приглашённому
-              'referral_referee',                                           // тип транзакции — бонус приглашённому
-              { referrer_id: referrer.id, via: 'signup' }                   // meta: кто пригласил и откуда начисление
-            );
-
-            /* где-то в кроне или при достижении условий
-            const QUALIFIED_REFERRER_BONUS = 300;
             await awardPoints(
-              referrerId,
-              QUALIFIED_REFERRER_BONUS,
-              'invite_qualified',
-              { referee_id: referralId, reason: 'active_7_days' }
-            );*/
+              referrer.id,
+              BASIC_REFERRER_BONUS,
+              'invite_basic',
+              { referee_id: userId, via: 'signup' }
+            );
+
+            await awardPoints(
+              userId,
+              REFEREE_BONUS,
+              'referral_referee',
+              { referrer_id: referrer.id, via: 'signup' }
+            );
           }
         }
-      } catch (refErr) {                                                    // Ловим ошибки, связанные только с рефералкой
-        console.error('Ошибка обработки рефералки при регистрации:', refErr); // Пишем ошибку в лог
-        // Не прерываем регистрацию: если рефералка сломалась, новый пользователь всё равно создаётся
+      } catch (refErr) {
+        console.error('Ошибка обработки рефералки при регистрации:', refErr);
       }
     }
-    // ===== конец блока рефералки =====
 
-    res.status(200).json({                                                  // Возвращаем успешный ответ клиенту
-      success: true,                                                        // Флаг успеха регистрации
-      message: "Регистрация успешна! Выберите способ подтверждения.",       // Текст сообщения для пользователя
-      userId: userId,                                                       // Отдаём клиенту id нового пользователя
-      confirmLink: telegramConfirmLink                                      // Отдаём ссылку для подтверждения через Telegram
+    return res.status(200).json({
+      success: true,
+      message: 'Регистрация успешна! Выберите способ подтверждения.',
+      userId,
+      confirmLink: telegramConfirmLink
     });
-  } catch (error) {                                                         // Ловим любые ошибки из основного блока try
-    console.error("Ошибка регистрации:", error);                            // Логируем ошибку на сервере
-    res.status(500).json({ message: "Ошибка сервера." });                   // Возвращаем клиенту 500 и сообщение об ошибке сервера
+  } catch (error) {
+    console.error('Ошибка регистрации:', error);
+
+    if (error?.isPublic) {
+      return res.status(error.status || 400).json({
+        message: 'Проверьте правильность данных регистрации.'
+      });
+    }
+
+    return res.status(500).json({ message: 'Ошибка сервера.' });
   }
 };
 
-export const confirmTelegram = async (req, res) => {                                              //     Функция подтверждения аккаунта через Telegram Web App
-  const { userId, source } = req.body;                                                           //     Достаем из тела запроса userId и source (откуда пришли)
+export const confirmTelegram = async (req, res) => {
+  const { userId, source } = req.body;
+  logAuthRequest(req, 'confirmTelegram:start', { source });
 
-  console.log('📱 Подтверждение через Telegram Web App:', { userId, source });                   //     Логируем входящие данные для отладки
-
-  try {                                                                                          //     Начинаем блок try/catch для обработки ошибок
-    // Проверяем, что userId вообще есть и что это валидный UUID формата xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-    if (
-      !userId ||
-      !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(userId)
-    ) {
-      console.log('❌ Неверный формат UserID:', userId);                                         //     Логируем неверный формат userId
-      return res.status(400).json({                                                             //     Возвращаем 400 — плохой запрос
-        success: false,
-        message: "Неверная ссылка подтверждения"
-      });
-    }
-
-    const [user] = await query(                                                                 //     Ищем пользователя по id и забираем нужные поля
-      "SELECT id, username, email, confirmed, registration_points_awarded FROM users WHERE id = ?",
+  try {
+    const [user] = await safeQuery(
+      'confirmTelegram:getUser',
+      'SELECT id, username, email, confirmed, registration_points_awarded FROM users WHERE id = ?',
       [userId]
     );
 
-    if (!user) {                                                                                //     Если пользователь не найден в БД
-      console.log('❌ Пользователь не найден:', userId);                                        //     Логируем ситуацию
-      return res.status(404).json({                                                             //     Возвращаем 404 — пользователь не найден
+    if (!user) {
+      return res.status(404).json({
         success: false,
-        message: "Пользователь не найден. Пройдите регистрацию заново."
+        message: 'Пользователь не найден. Пройдите регистрацию заново.'
       });
     }
 
-    if (user.confirmed) {                                                                       //     Если аккаунт уже был подтверждён ранее
-      console.log('ℹ️ Аккаунт уже подтвержден:', user.username);                                //     Логируем, что подтверждение уже было
-
-      if (!user.registration_points_awarded) {                                                  //     Проверяем, выдавался ли уже бонус за регистрацию
-        const REGISTRATION_BONUS = 200;                                                         //     Размер бонуса за регистрацию в баллах
-        await awardPoints(user.id, REGISTRATION_BONUS, 'registration', {                        //     Начисляем баллы через сервисную функцию
-          via: 'telegram'                                                                       //     В meta фиксируем, что подтверждение через Telegram
-        });
-        await query(                                                                            //     Обновляем флаг, чтобы второй раз не начислить
+    if (user.confirmed) {
+      if (!user.registration_points_awarded) {
+        const REGISTRATION_BONUS = 200;
+        await awardPoints(user.id, REGISTRATION_BONUS, 'registration', { via: 'telegram' });
+        await safeQuery(
+          'confirmTelegram:setRegistrationAwardedAlreadyConfirmed',
           'UPDATE users SET registration_points_awarded = 1 WHERE id = ?',
           [user.id]
         );
       }
 
-      await checkAndRewardQualifiedReferral(user.id);                                           // Проверяет, есть ли у пользователя реферер и нужно ли начислить ему +300
+      await checkAndRewardQualifiedReferral(user.id);
 
-      return res.json({                                                                         //     Возвращаем успешный ответ
+      return res.json({
         success: true,
         message: `Аккаунт ${user.username} уже был подтвержден ранее`
       });
     }
 
-    console.log('✅ Подтверждаем аккаунт:', user.username);                                     //     Логируем, что сейчас подтверждаем аккаунт
-    await query("UPDATE users SET confirmed = ? WHERE id = ?", [true, user.id]);                //     Ставим confirmed = true в БД
+    await safeQuery(
+      'confirmTelegram:setConfirmed',
+      'UPDATE users SET confirmed = ? WHERE id = ?',
+      [true, user.id]
+    );
 
-    if (!user.registration_points_awarded) {                                                    //     Бонус за регистрацию — только если ещё не давали
-      const REGISTRATION_BONUS = 200;                                                           //     Размер бонуса
-      await awardPoints(user.id, REGISTRATION_BONUS, 'registration', {                          //     Начисляем баллы
-        via: 'telegram'                                                                         //     Источник — Telegram
-      });
-      await query(                                                                              //     Фиксируем, что бонус уже выдан
+    if (!user.registration_points_awarded) {
+      const REGISTRATION_BONUS = 200;
+      await awardPoints(user.id, REGISTRATION_BONUS, 'registration', { via: 'telegram' });
+      await safeQuery(
+        'confirmTelegram:setRegistrationAwarded',
         'UPDATE users SET registration_points_awarded = 1 WHERE id = ?',
         [user.id]
       );
@@ -198,141 +233,201 @@ export const confirmTelegram = async (req, res) => {                            
 
     await checkAndRewardQualifiedReferral(user.id);
 
-    res.json({                                                                                  //     Отправляем успешный ответ клиенту
+    return res.json({
       success: true,
       message: `Аккаунт ${user.username} успешно подтвержден!`
     });
+  } catch (error) {
+    console.error('❌ Ошибка при подтверждении через Telegram:', error);
 
-  } catch (error) {                                                                             //     Ловим любые ошибки
-    console.error("❌ Ошибка при подтверждении через Telegram:", error);                        //     Логируем ошибку на сервере
-    res.status(500).json({                                                                      //     Возвращаем 500 — внутренняя ошибка сервера
+    if (error?.isPublic) {
+      return res.status(error.status || 400).json({
+        success: false,
+        message: 'Не удалось подтвердить аккаунт. Начните подтверждение заново.'
+      });
+    }
+
+    return res.status(500).json({
       success: false,
-      message: "Произошла техническая ошибка. Попробуйте позже."
+      message: 'Произошла техническая ошибка. Попробуйте позже.'
     });
   }
 };
-                                                                                              
-export const confirmEmail = async (req, res) => {                                             					        // Определяем функцию для подтверждения email
-  const { email, userId } = req.body;                                                        					          // Извлекаем email и userId из тела запроса
-                                                                                              
-  try {                                                                                       					        // Начинаем блок обработки ошибок
-    const [user] = await query("SELECT id FROM users WHERE id = ? AND email = ?", [userId, email]); 				    // Проверяем пользователя
-    if (!user) {                                                                              					        // Проверяем, найден ли пользователь
-      return res.status(404).json({ message: "Пользователь не найден." });							                        // Возвращаем ошибку
-    }                                                                                         
-                                                                                              
-    const confirmationToken = uuidv4();												                                                  // Генерируем токен подтверждения
-    const tokenExpires = new Date(Date.now() + 3600000);									                                      // Устанавливаем срок действия токена (1 час)
-                                                                                              
-    await query(														                                                                    // Выполняем запрос на обновление пользователя
-      "UPDATE users SET confirmation_token = ?, confirmation_token_expires = ? WHERE id = ?",					          // SQL-запрос для обновления
-      [confirmationToken, tokenExpires, userId]											                                            // Передаем данные в запрос
-    );                                                                                        
-                                                                                              
-    const confirmLink = `https://serpmonn.ru/auth/confirm?token=${confirmationToken}`;						              // Формируем ссылку подтверждения
-    await sendConfirmationEmail(email, confirmLink);										                                        // Отправляем письмо с подтверждением
-                                                                                              
-    res.json({ success: true, message: "Письмо с подтверждением отправлено." });						                    // Отправляем успешный ответ клиенту
-  } catch (error) {														                                                                  // Обрабатываем возможные ошибки
-    console.error("Ошибка отправки email:", error);										                                          // Логируем ошибку в консоль
-    res.status(500).json({ message: "Ошибка сервера." });									                                      // Возвращаем ошибку сервера клиенту
-  }                                                                                         
-};                                                                                           
-                                                                                              
-export const confirmToken = async (req, res) => {                                               //     Функция для подтверждения email по токену из письма
-  const { token } = req.query;                                                                  //     Достаем токен из строки запроса (?token=...)
 
-  try {                                                                                         //     Начинаем блок try/catch
-    const [user] = await query(                                                                 //     Ищем пользователя по токену и проверяем срок действия
-      "SELECT id, email, username, registration_points_awarded FROM users WHERE confirmation_token = ? AND confirmation_token_expires > ?",
+export const confirmEmail = async (req, res) => {
+  const { email, userId } = req.body;
+  logAuthRequest(req, 'confirmEmail:start', { userId, email: maskEmail(email) });
+
+  try {
+    const [user] = await safeQuery(
+      'confirmEmail:getUser',
+      'SELECT id FROM users WHERE id = ? AND email = ?',
+      [userId, email]
+    );
+
+    if (!user) {
+      return res.status(404).json({
+        message: 'Пользователь не найден. Пройдите регистрацию заново.'
+      });
+    }
+
+    const confirmationToken = uuidv4();
+    const tokenExpires = new Date(Date.now() + 3600000);
+
+    await safeQuery(
+      'confirmEmail:updateConfirmationToken',
+      'UPDATE users SET confirmation_token = ?, confirmation_token_expires = ? WHERE id = ?',
+      [confirmationToken, tokenExpires, userId]
+    );
+
+    const confirmLink = `https://serpmonn.ru/auth/confirm?token=${confirmationToken}`;
+    await sendConfirmationEmail(email, confirmLink);
+
+    return res.json({
+      success: true,
+      message: 'Письмо с подтверждением отправлено.'
+    });
+  } catch (error) {
+    console.error('Ошибка отправки email:', error);
+
+    if (error?.isPublic) {
+      return res.status(error.status || 400).json({
+        message: 'Не удалось отправить письмо. Обновите страницу и попробуйте ещё раз.'
+      });
+    }
+
+    return res.status(500).json({ message: 'Ошибка сервера.' });
+  }
+};
+
+export const confirmToken = async (req, res) => {
+  const { token } = req.query;
+  logAuthRequest(req, 'confirmToken:start', { token });
+
+  try {
+    const [user] = await safeQuery(
+      'confirmToken:getUserByToken',
+      'SELECT id, email, username, registration_points_awarded FROM users WHERE confirmation_token = ? AND confirmation_token_expires > ?',
       [token, new Date()]
     );
 
-    if (!user) {                                                                                //     Если пользователь не найден или токен истёк
-      return res.status(400).json({ message: "Недействительный или истёкший токен." });        //     Возвращаем 400 — токен невалиден
+    if (!user) {
+      return res.status(400).json({
+        message: 'Ссылка для подтверждения недействительна или уже устарела.'
+      });
     }
 
-    await query(                                                                                //     Обновляем статус пользователя
-      "UPDATE users SET confirmed = ?, confirmation_token = NULL, confirmation_token_expires = NULL WHERE id = ?",
+    await safeQuery(
+      'confirmToken:confirmUser',
+      'UPDATE users SET confirmed = ?, confirmation_token = NULL, confirmation_token_expires = NULL WHERE id = ?',
       [true, user.id]
     );
 
-    if (!user.registration_points_awarded) {                                                    //     Если бонус за регистрацию ещё не выдавался
-      const REGISTRATION_BONUS = 200;                                                           //     Размер бонуса за регистрацию
-      await awardPoints(user.id, REGISTRATION_BONUS, 'registration', {                          //     Начисляем баллы через сервис
-        via: 'email'                                                                            //     В meta фиксируем, что подтверждение через email
-      });
-      await query(                                                                              //     Обновляем флаг, чтобы больше не начислять
+    if (!user.registration_points_awarded) {
+      const REGISTRATION_BONUS = 200;
+      await awardPoints(user.id, REGISTRATION_BONUS, 'registration', { via: 'email' });
+      await safeQuery(
+        'confirmToken:setRegistrationAwarded',
         'UPDATE users SET registration_points_awarded = 1 WHERE id = ?',
         [user.id]
       );
     }
 
-    await checkAndRewardQualifiedReferral(user.id);                                             // Проверяет, есть ли у пользователя реферер и нужно ли начислить ему +300
+    await checkAndRewardQualifiedReferral(user.id);
 
-    const payload = {                                                                           //     Формируем payload для PASETO-токена авторизации
+    const payload = {
       id: user.id,
       email: user.email,
       username: user.username || user.email
     };
-    const authToken = await V2.sign(payload, secretKey);                                        //     Подписываем payload секретным ключом и получаем токен
 
-    res.cookie('token', authToken, {                                                            //     Устанавливаем httpOnly-cookie с токеном на домен serpmonn.ru
-      httpOnly: true,                                                                           //     Cookie недоступна из JS
-      secure: true,                                                                             //     Только по HTTPS
-      sameSite: 'Lax',                                                                          //     Базовая защита от CSRF
-      maxAge: 30 * 24 * 60 * 60 * 1000,                                                         //     Время жизни cookie — 30 дней
-      domain: '.serpmonn.ru'                                                                    //     Действует для всех поддоменов serpmonn.ru
+    const authToken = await V2.sign(payload, secretKey);
+
+    res.cookie('token', authToken, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Lax',
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      domain: '.serpmonn.ru'
     });
 
-    console.log('Подтверждение: пользователь', user.email, 'confirmed = 1, токен создан');      //     Логируем успешное подтверждение
-    res.redirect('https://serpmonn.ru/frontend/profile/profile.html');                          //     Редиректим пользователя в профиль
-  } catch (error) {                                                                             //     Обрабатываем ошибки
-    console.error("Ошибка подтверждения:", error);                                              //     Логируем ошибку на сервере
-    res.status(500).json({ message: "Ошибка сервера." });                                       //     Возвращаем 500 — внутренняя ошибка сервера
+    console.log('Подтверждение: пользователь', user.email, 'confirmed = 1, токен создан');
+    return res.redirect('https://serpmonn.ru/frontend/profile/profile.html');
+  } catch (error) {
+    console.error('Ошибка подтверждения:', error);
+
+    if (error?.isPublic) {
+      return res.status(error.status || 400).json({
+        message: 'Ссылка для подтверждения некорректна или устарела. Запросите новую ссылку.'
+      });
+    }
+
+    return res.status(500).json({ message: 'Ошибка сервера.' });
   }
-};                                                     
-                                                                                              
-export const loginUser = async (req, res) => {                                                                  // Определяем функцию для входа пользователя
-  const { email, password } = req.body;                                                                         // Извлекаем email и пароль из тела запроса
-                                                                                              
-  const queryStr = 'SELECT * FROM users WHERE email = ?';                                                       // Задаем SQL-запрос для поиска пользователя
-  try {                                                                                                         // Начинаем блок обработки ошибок
-    const results = await query(queryStr, [email]);                                                             // Выполняем запрос к базе данных
-    if (results.length === 0) {                                                                                 // Проверяем, найден ли пользователь
-      return res.status(401).json({ message: 'Неверный email или пароль' });                                    // Возвращаем ошибку
-    }                                                                                         
-                                                                                              
-    const user = results[0];                                                                                    // Извлекаем первого найденного пользователя
-    const isMatch = await compare(password, user.password_hash);                                                // Сравниваем введенный пароль с хешем
-    if (!isMatch) {                                                                                             // Проверяем, совпадает ли пароль
-      return res.status(401).json({ message: 'Неверный email или пароль' });                                    // Возвращаем ошибку
-    }                                                                                         
-                                                                                              
-    const payload = { id: user.id, username: user.username, email: user.email };                                // Формируем данные для токена
-    const token = await V2.sign(payload, secretKey);                                                            // Создаем авторизационный токен
-                                                                                              
-    res.cookie('token', token, {                                                                                // Устанавливаем cookie с токеном
-      httpOnly: true,                                                                                           // Защищаем cookie от доступа через JS
-      secure: true,                                                                                             // Устанавливаем только для HTTPS
-      sameSite: 'Lax',                                                                                          // Устанавливаем политику SameSite для работы между страницами
-      maxAge: 24 * 60 * 60 * 1000,                                                                              // Устанавливаем срок действия (1 день)
-      domain: '.serpmonn.ru'                                                                                    // Ведущая точка для работы на всех поддоменах
-    });                                                                                       
-                                                                                              
-    res.json({ message: 'Вход выполнен успешно' });                                                             // Отправляем успешный ответ клиенту
-  } catch (error) {                                                                                             // Обрабатываем возможные ошибки
-    res.status(500).json({ message: 'Ошибка при выполнении запроса', error });                                  // Возвращаем ошибку сервера
-  }                                                                                         
-};                                                                                           
-                                                                                              
-export const logoutUser = (req, res) => {                                                                       // Определяем функцию для выхода пользователя
-  res.clearCookie('token', {                                                                                    // Удаляем cookie с токеном
-    httpOnly: true,                                                                                             // Защищаем cookie от доступа через JS
-    secure: true,                                                                                               // Устанавливаем только для HTTPS
-    sameSite: 'Lax'                                                                                             // Устанавливаем политику SameSite для работы между страницами
-  });                                                                                       
-  res.json({ message: 'Выход выполнен успешно' });                                                              // Отправляем успешный ответ клиенту
-};                                                                                           
-                                                                                              
-export default { registerUser, confirmEmail, confirmToken, loginUser, logoutUser };                             // Экспортируем все функции
+};
+
+export const loginUser = async (req, res) => {
+  const { email, password } = req.body;
+  logAuthRequest(req, 'loginUser:start', { email: maskEmail(email) });
+
+  try {
+    const results = await safeQuery(
+      'loginUser:getUserByEmail',
+      'SELECT * FROM users WHERE email = ?',
+      [email]
+    );
+
+    if (results.length === 0) {
+      return res.status(401).json({ message: 'Неверный email или пароль' });
+    }
+
+    const user = results[0];
+    const isMatch = await compare(password, user.password_hash);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: 'Неверный email или пароль' });
+    }
+
+    const payload = { id: user.id, username: user.username, email: user.email };
+    const token = await V2.sign(payload, secretKey);
+
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'Lax',
+      maxAge: 24 * 60 * 60 * 1000,
+      domain: '.serpmonn.ru'
+    });
+
+    return res.json({ message: 'Вход выполнен успешно' });
+  } catch (error) {
+    console.error('Ошибка при логине:', error);
+
+    if (error?.isPublic) {
+      return res.status(error.status || 400).json({
+        message: 'Неверный email или пароль'
+      });
+    }
+
+    return res.status(500).json({ message: 'Ошибка при выполнении запроса' });
+  }
+};
+
+export const logoutUser = (req, res) => {
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: true,
+    sameSite: 'Lax'
+  });
+
+  return res.json({ message: 'Выход выполнен успешно' });
+};
+
+export default {
+  registerUser,
+  confirmTelegram,
+  confirmEmail,
+  confirmToken,
+  loginUser,
+  logoutUser
+};
