@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Health Dashboard — Serpmonn</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <style>
+    :root {
+      --ok:   #22c55e;
+      --warn: #eab308;
+      --bad:  #ef4444;
+      --text: #e5e7eb;
+      --muted:#9ca3af;
+      --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+      --sans: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--sans);
+      background: radial-gradient(circle at top left, #1d283a 0%, #020617 60%);
+      min-height: 100vh;
+      color: var(--text);
+      padding: 16px;
+    }
+
+    .wrap {
+      max-width: 960px;
+      margin: 24px auto;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .header h1 {
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #f9fafb;
+    }
+
+    .header .sub {
+      font-size: 12px;
+      color: var(--muted);
+      margin-top: 3px;
+    }
+
+    .chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 5px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(148,163,184,0.15);
+      background: rgba(15,23,42,0.9);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .dot.ok   { background: var(--ok);   box-shadow: 0 0 8px rgba(34,197,94,0.7); }
+    .dot.warn { background: var(--warn); box-shadow: 0 0 8px rgba(234,179,8,0.7); }
+    .dot.bad  { background: var(--bad);  box-shadow: 0 0 8px rgba(239,68,68,0.7); }
+
+    /* Error banner */
+    .error-banner {
+      background: rgba(239,68,68,0.1);
+      border: 1px solid rgba(239,68,68,0.35);
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #fca5a5;
+      margin-bottom: 14px;
+      display: none;
+    }
+
+    /* Pills */
+    .pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-bottom: 18px;
+    }
+
+    .pill {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(55,65,81,0.8);
+      background: rgba(15,23,42,0.85);
+      color: var(--muted);
+      display: inline-flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .pill strong { color: var(--text); font-weight: 500; }
+
+    /* Grid */
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    @media (max-width: 600px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    /* Panel */
+    .panel {
+      background: rgba(17,24,39,0.9);
+      border: 1px solid rgba(30,64,175,0.35);
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+
+    .panel-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #93c5fd;
+      margin-bottom: 12px;
+    }
+
+    /* KV */
+    .kv {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 5px 10px;
+      font-size: 12px;
+    }
+
+    .kv dt { color: var(--muted); align-self: center; }
+
+    .kv dd {
+      font-family: var(--mono);
+      font-size: 12px;
+      color: var(--text);
+      text-align: right;
+    }
+
+    .kv dd.ok    { color: var(--ok); }
+    .kv dd.warn  { color: var(--warn); }
+    .kv dd.bad   { color: var(--bad); }
+    .kv dd.muted { color: var(--muted); }
+
+    /* Metrics */
+    .metrics {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .metric {
+      flex: 1;
+      min-width: 72px;
+      background: rgba(15,23,42,0.8);
+      border: 1px solid rgba(30,64,175,0.4);
+      border-radius: 8px;
+      padding: 8px 10px;
+    }
+
+    .metric-label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--muted);
+      margin-bottom: 4px;
+    }
+
+    .metric-value {
+      font-family: var(--mono);
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .metric-value.ok   { color: var(--ok); }
+    .metric-value.warn { color: var(--warn); }
+    .metric-value.bad  { color: var(--bad); }
+
+    /* Footer */
+    .footer {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px dashed rgba(55,65,81,0.5);
+      font-size: 11px;
+      color: var(--muted);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="header">
+    <div>
+      <h1>⬡ Serpmonn backend</h1>
+      <div class="sub">Health Dashboard · автообновление каждые 10с</div>
+    </div>
+    <div class="chip">
+      <span class="dot bad" id="chipDot"></span>
+      <span id="chipText">Ожидание...</span>
+    </div>
+  </div>
+
+  <div class="error-banner" id="errorBanner"></div>
+
+  <div class="pills">
+    <div class="pill"><strong>service</strong> <span id="pService">—</span></div>
+    <div class="pill"><strong>env</strong>     <span id="pEnv">—</span></div>
+    <div class="pill"><strong>pid</strong>     <span id="pPid">—</span></div>
+    <div class="pill"><strong>node</strong>    <span id="pNode">—</span></div>
+    <div class="pill"><strong>uptime</strong>  <span id="pUptime">—</span></div>
+  </div>
+
+  <div class="grid">
+
+    <div class="panel">
+      <div class="panel-title">⚙ Runtime</div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-label">Status</div>
+          <div class="metric-value" id="mStatus">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Ready</div>
+          <div class="metric-value" id="mReady">—</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Shutdown</div>
+          <div class="metric-value" id="mShutdown">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">🧠 Memory</div>
+      <dl class="kv">
+        <dt>RSS</dt>        <dd id="mRss">—</dd>
+        <dt>Heap used</dt>  <dd id="mHeapUsed">—</dd>
+        <dt>Heap total</dt> <dd id="mHeapTotal">—</dd>
+        <dt>External</dt>   <dd id="mExternal" class="muted">—</dd>
+      </dl>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">✔ Checks</div>
+      <div class="metrics">
+        <div class="metric">
+          <div class="metric-label">SMTP</div>
+          <div class="metric-value" id="mSmtp">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title">🕒 Timestamps</div>
+      <dl class="kv">
+        <dt>Server</dt>      <dd id="tServer">—</dd>
+        <dt>Local</dt>       <dd id="tLocal">—</dd>
+        <dt>Last update</dt> <dd id="tLast">—</dd>
+      </dl>
+    </div>
+
+  </div>
+
+  <div class="footer">
+    <span>Источник: <code>/health</code> · интервал: 10с · без кеша</span>
+    <span id="fCounter">Обновлений: 0</span>
+  </div>
+
+</div>
+
+<script>
+  const HEALTH_URL = '/health';
+  const INTERVAL   = 10_000;
+  let   updateCount = 0;
+
+  const $ = (id) => document.getElementById(id);
+
+  function formatUptime(sec) {
+    if (typeof sec !== 'number') return '—';
+    const d = Math.floor(sec / 86400);
+    const h = Math.floor((sec % 86400) / 3600);
+    const m = Math.floor((sec % 3600) / 60);
+    const s = Math.floor(sec % 60);
+    if (d) return `${d}d ${h}h ${m}m`;
+    if (h) return `${h}h ${m}m`;
+    if (m) return `${m}m ${s}s`;
+    return `${s}s`;
+  }
+
+  function mb(v) {
+    return typeof v === 'number' ? v.toFixed(2) + ' MB' : '—';
+  }
+
+  function setChip(state, label) {
+    $('chipDot').className = 'dot ' + state;
+    $('chipText').textContent = label;
+  }
+
+  function showError(msg) {
+    const b = $('errorBanner');
+    b.textContent = msg;
+    b.style.display = 'block';
+  }
+
+  function hideError() {
+    $('errorBanner').style.display = 'none';
+  }
+
+  function cls(base, condition, trueClass, falseClass) {
+    const el = $(base);
+    el.className = 'metric-value ' + (condition ? trueClass : falseClass);
+    return el;
+  }
+
+  function render(data) {
+    hideError();
+
+    const ready  = !!data.ready;
+    const status = data.status || 'unknown';
+
+    if (ready)                            setChip('ok',   'OK · ' + status);
+    else if (status === 'shutting_down')  setChip('warn', 'SHUTTING DOWN');
+    else                                  setChip('warn', status.toUpperCase());
+
+    $('pService').textContent = data.service     || '—';
+    $('pEnv').textContent     = data.env         || '—';
+    $('pPid').textContent     = data.pid         ?? '—';
+    $('pNode').textContent    = data.nodeVersion || '—';
+    $('pUptime').textContent  = formatUptime(data.uptimeSec);
+
+    cls('mStatus',   ready,              'ok',   'warn').textContent = status;
+    cls('mReady',    ready,              'ok',   'warn').textContent = String(ready);
+    cls('mShutdown', !data.isShuttingDown, 'ok', 'warn').textContent = data.isShuttingDown ? 'yes' : 'no';
+
+    const mem = data.memory || {};
+    $('mRss').textContent       = mb(mem.rssMb);
+    $('mHeapUsed').textContent  = mb(mem.heapUsedMb);
+    $('mHeapTotal').textContent = mb(mem.heapTotalMb);
+    $('mExternal').textContent  = mb(mem.externalMb);
+
+    const smtp = data.checks?.smtp?.configured;
+    const mSmtp = $('mSmtp');
+    mSmtp.textContent = smtp ? 'configured' : 'missing';
+    mSmtp.className   = 'metric-value ' + (smtp ? 'ok' : 'bad');
+
+    $('tServer').textContent = data.timestamp || '—';
+    $('tLocal').textContent  = new Date().toISOString();
+    $('tLast').textContent   = new Date().toLocaleTimeString('ru-RU');
+
+    $('fCounter').textContent = 'Обновлений: ' + (++updateCount);
+  }
+
+  async function tick() {
+    try {
+      const res = await fetch(HEALTH_URL, { cache: 'no-store' });
+      if (!res.ok) {
+        setChip('bad', 'HTTP ' + res.status);
+        showError('Сервер вернул ' + res.status);
+        return;
+      }
+      render(await res.json());
+    } catch (err) {
+      setChip('bad', 'UNAVAILABLE');
+      showError('Нет ответа: ' + err.message);
+    }
+  }
+
+  tick();
+  setInterval(tick, INTERVAL);
+</script>
+</body>
+</html>
