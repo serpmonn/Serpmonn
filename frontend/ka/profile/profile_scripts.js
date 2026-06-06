@@ -57,6 +57,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const planQuotaHintEl = document.getElementById('planQuotaHint');
   const planHintEl = document.getElementById('planHint');
 
+  const aiAccessBlock = document.getElementById('aiAccessBlock');
+  const openAiServiceBtn = document.getElementById('openAiService');
+  const aiAccessHint = document.getElementById('aiAccessHint');
+
   const openEditProfileBtn = document.getElementById('openEditProfile');
   const editProfileMount = document.getElementById('editProfileMount');
 
@@ -437,6 +441,18 @@ document.addEventListener('DOMContentLoaded', () => {
             '<a href="/frontend/tariffs/tariffs.html">на странице тарифов</a>.';
         }
       }
+
+    if (aiAccessBlock && aiAccessHint) {
+        if (currentPlan === 'pro') {
+          // Pro активен — показываем кнопку
+          aiAccessBlock.style.display = 'block';
+          aiAccessHint.textContent = 'У вас активен тариф Pro. Нажмите, чтобы открыть AI-сервис.';
+        } else {
+          // Free или Pro истёк — скрываем блок
+          aiAccessBlock.style.display = 'none';
+        }
+      }
+
     } catch (error) {
       console.error('Ошибка получения профиля:', error);
       setGlobalMessage('Ошибка загрузки данных профиля. Попробуйте снова.', 'error');
@@ -854,7 +870,7 @@ if (copyReferralLinkBtn && referralLinkInput) {
     attachTracking('.tools-grid a');
   })();
 
-    document.addEventListener('click', (event) => {
+  document.addEventListener('click', (event) => {
     if (!pointsHistoryEl) return;
 
     const isClickOnBadge =
@@ -866,6 +882,13 @@ if (copyReferralLinkBtn && referralLinkInput) {
       pointsHistoryEl.style.display = 'none';
     }
   });
+
+  if (openAiServiceBtn) {
+    openAiServiceBtn.addEventListener('click', () => {
+      // Просто перенаправляем на защищённый поддомен
+      window.location.href = 'https://ai.serpmonn.ru';
+    });
+  }
 
   /* ==== ИНИЦИАЛИЗАЦИЯ ==== */
 
