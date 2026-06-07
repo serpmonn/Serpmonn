@@ -1,0 +1,31 @@
+[Unit]
+Description=Serpmonn P2P Relay/Bootstrap Node
+Documentation=https://github.com/serpmonn/Serpmonn
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=serpmonn
+Group=serpmonn
+
+# Бинарник кладётся в /usr/local/bin/serpmonn-relay (см. deploy.sh)
+ExecStart=/usr/local/bin/serpmonn-relay \
+    -key /etc/serpmonn/relay-identity.key \
+    -port 4001
+
+# Перезапуск при падении — с задержкой 5 секунд.
+Restart=always
+RestartSec=5s
+
+# Лимиты ресурсов для MVP.
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Логи через journald (journalctl -u serpmonn-relay -f).
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=serpmonn-relay
+
+[Install]
+WantedBy=multi-user.target
