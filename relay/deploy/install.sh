@@ -2,9 +2,24 @@
 # install.sh — деплой Serpmonn relay/bootstrap ноды на сервер.
 #
 # Запускать с правами root на целевом сервере:
-#   bash install.sh
 #
-# Что делает:
+#   # Скачать только папку relay (без клонирования всего репозитория):
+#   apt-get install -y git  # или yum install git
+#   git clone --no-checkout --depth=1 --filter=blob:none \
+#       https://github.com/serpmonn/Serpmonn /opt/serpmonn-tmp
+#   cd /opt/serpmonn-tmp && git sparse-checkout set relay
+#   git checkout
+#   mv relay /opt/serpmonn-relay
+#   cd /opt/serpmonn-relay
+#   rm -rf /opt/serpmonn-tmp
+#   bash deploy/install.sh
+#
+# ИЛИ — скачать напрямую архивом (без git):
+#   curl -sL https://github.com/serpmonn/Serpmonn/archive/refs/heads/master.tar.gz \
+#       | tar -xz --strip=2 Serpmonn-master/relay -C /opt/serpmonn-relay
+#   bash /opt/serpmonn-relay/deploy/install.sh
+#
+# Что делает скрипт:
 #   1. Создаёт системного пользователя serpmonn (без shell, без home).
 #   2. Создаёт /etc/serpmonn/ и генерирует ключ (если нет).
 #   3. Собирает бинарники из relay/ (нужен Go >= 1.21).

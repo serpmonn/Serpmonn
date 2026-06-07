@@ -12,10 +12,27 @@
 
 ## Деплой (первый раз)
 
+Скачивать нужно только папку `relay/`, а не весь репозиторий.
+
+**Вариант A — через curl (без git, рекомендуется):**
 ```bash
-# На сервере, с правами root:
-git clone https://github.com/serpmonn/Serpmonn /opt/serpmonn
-cd /opt/serpmonn/relay
+mkdir -p /opt/serpmonn-relay
+curl -sL https://github.com/serpmonn/Serpmonn/archive/refs/heads/master.tar.gz \
+    | tar -xz --strip-components=2 -C /opt/serpmonn-relay Serpmonn-master/relay
+cd /opt/serpmonn-relay
+bash deploy/install.sh
+```
+
+**Вариант B — через git sparse-checkout:**
+```bash
+git clone --no-checkout --depth=1 --filter=blob:none \
+    https://github.com/serpmonn/Serpmonn /opt/serpmonn-tmp
+cd /opt/serpmonn-tmp
+git sparse-checkout set relay
+git checkout
+mv relay /opt/serpmonn-relay
+rm -rf /opt/serpmonn-tmp
+cd /opt/serpmonn-relay
 bash deploy/install.sh
 ```
 
