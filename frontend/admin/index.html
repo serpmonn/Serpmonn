@@ -95,11 +95,11 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="femail">Email *</label>
+                    <label for="femail">Email сотрудника *</label>
                     <input type="email" id="femail" placeholder="ivan@serpmonn.ru" required>
                 </div>
                 <div class="form-group" id="passwordGroup">
-                    <label for="fpassword">Пароль *</label>
+                    <label for="fpassword">Пароль для входа в систему *</label>
                     <input type="password" id="fpassword" placeholder="Минимум 8 символов">
                     <small class="hint" style="display:none">При редактировании оставьте пустым, чтобы не менять</small>
                 </div>
@@ -136,6 +136,33 @@
                         <input type="date" id="fhire_date">
                     </div>
                 </div>
+
+                <!-- Блок почтового ящика — только при создании -->
+                <div class="form-group mailbox-section" id="mailboxSection" style="display:none;border-top:1px solid #e5e7eb;padding-top:16px;margin-top:4px">
+                    <label class="checkbox-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500">
+                        <input type="checkbox" id="createMailbox" style="width:16px;height:16px;cursor:pointer">
+                        Создать почтовый ящик @serpmonn.ru
+                    </label>
+                    <div id="mailboxFields" style="display:none;margin-top:12px">
+                        <div class="form-group" style="margin-bottom:12px">
+                            <label for="fmailLocal">Логин почты *</label>
+                            <div style="display:flex;align-items:center;gap:0">
+                                <input type="text" id="fmailLocal" placeholder="ivan.ivanov"
+                                    style="border-radius:6px 0 0 6px;flex:1"
+                                    pattern="[a-zA-Z0-9._%+\-]+"
+                                    title="Только латинские буквы, цифры и символы ._%+-">
+                                <span style="background:#f3f4f6;border:1px solid #d1d5db;border-left:none;padding:8px 12px;border-radius:0 6px 6px 0;color:#6b7280;font-size:14px;white-space:nowrap">@serpmonn.ru</span>
+                            </div>
+                            <small class="hint">Только латинские буквы, цифры и ._%+-</small>
+                        </div>
+                        <div class="form-group">
+                            <label for="fmailPassword">Пароль почты *</label>
+                            <input type="password" id="fmailPassword" placeholder="Минимум 8 символов">
+                            <small class="hint">Пароль для входа в почту (Roundcube)</small>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal-actions">
                     <button type="button" class="btn btn-outline" id="cancelBtn">Отмена</button>
                     <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>

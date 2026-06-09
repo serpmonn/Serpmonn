@@ -54,6 +54,32 @@ function formatDate(d) {
     try { return new Date(d).toLocaleDateString('ru-RU'); } catch { return d; }
 }
 
+// --- TRANSLITERATE для автозаполнения логина почты ---
+function transliterate(str) {
+    const map = {
+        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z',
+        'и':'i','й':'j','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r',
+        'с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'sch',
+        'ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',
+        'А':'A','Б':'B','В':'V','Г':'G','Д':'D','Е':'E','Ё':'E','Ж':'Zh','З':'Z',
+        'И':'I','Й':'J','К':'K','Л':'L','М':'M','Н':'N','О':'O','П':'P','Р':'R',
+        'С':'S','Т':'T','У':'U','Ф':'F','Х':'Kh','Ц':'Ts','Ч':'Ch','Ш':'Sh','Щ':'Sch',
+        'Ъ':'','Ы':'Y','Ь':'','Э':'E','Ю':'Yu','Я':'Ya'
+    };
+    return str.split('').map(c => map[c] !== undefined ? map[c] : c).join('');
+}
+
+function autoFillMailLocal() {
+    const mailLocalInput = document.getElementById('fmailLocal');
+    if (!mailLocalInput || document.getElementById('createMailbox')?.checked === false) return;
+    // Не перезаписываем если пользователь уже вручную что-то набрал
+    if (mailLocalInput.dataset.manualEdit === 'true') return;
+    const first = transliterate(document.getElementById('fname').value.trim()).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const last  = transliterate(document.getElementById('lname').value.trim()).toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (first && last) mailLocalInput.value = `${first}.${last}`;
+    else if (first) mailLocalInput.value = first;
+}
+
 // --- FILTERS & RENDER ---
 function applyFilters() {
     const q = document.getElementById('searchInput').value.toLowerCase();
@@ -142,6 +168,13 @@ function openCreate() {
     document.getElementById('employeeId').value = '';
     document.getElementById('fpassword').required = true;
     document.querySelector('#passwordGroup small').style.display = 'none';
+
+    // Показываем блок почты, сбрасываем состояние
+    document.getElementById('mailboxSection').style.display = 'block';
+    document.getElementById('createMailbox').checked = false;
+    document.getElementById('mailboxFields').style.display = 'none';
+    document.getElementById('fmailLocal').dataset.manualEdit = 'false';
+
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('fname').focus();
 }
@@ -162,6 +195,12 @@ window.openEdit = function(id) {
     document.getElementById('fpassword').value = '';
     document.getElementById('fpassword').required = false;
     document.querySelector('#passwordGroup small').style.display = 'block';
+
+    // При редактировании скрываем блок создания почты
+    document.getElementById('mailboxSection').style.display = 'none';
+    document.getElementById('createMailbox').checked = false;
+    document.getElementById('mailboxFields').style.display = 'none';
+
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('fname').focus();
 };
@@ -204,6 +243,24 @@ async function saveEmployee(e) {
     const pw = document.getElementById('fpassword').value;
     if (pw) body.password = pw;
 
+    // Проверяем нужно ли создать почтовый ящик
+    const needMailbox = !editingId && document.getElementById('createMailbox')?.checked;
+    const mailLocal   = document.getElementById('fmailLocal')?.value.trim();
+    const mailPass    = document.getElementById('fmailPassword')?.value;
+
+    if (needMailbox) {
+        if (!mailLocal) {
+            showAlert('Укажите логин почтового ящика', 'error');
+            btn.disabled = false; btn.textContent = 'Сохранить';
+            return;
+        }
+        if (!mailPass || mailPass.length < 8) {
+            showAlert('Пароль почты — минимум 8 символов', 'error');
+            btn.disabled = false; btn.textContent = 'Сохранить';
+            return;
+        }
+    }
+
     try {
         const url = editingId ? `${API}/employees/${editingId}` : `${API}/employees`;
         const method = editingId ? 'PUT' : 'POST';
@@ -218,8 +275,32 @@ async function saveEmployee(e) {
             const err = await r.json().catch(() => ({ message: r.statusText }));
             throw new Error(err.message || r.statusText);
         }
-        closeModal();
-        showAlert(editingId ? 'Сотрудник обновлён' : 'Сотрудник добавлен', 'success');
+
+        // Создаём почтовый ящик если нужно
+        if (needMailbox) {
+            btn.textContent = 'Создание ящика...';
+            const mr = await fetch(`${API}/mailbox`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ localPart: mailLocal, password: mailPass }),
+            });
+            if (!mr.ok) {
+                const merr = await mr.json().catch(() => ({ message: mr.statusText }));
+                // Сотрудник создан, но ящик не создался — показываем предупреждение
+                closeModal();
+                showAlert(`Сотрудник создан, но ящик не создан: ${merr.message}`, 'error');
+                await loadEmployees();
+                return;
+            }
+            const mdata = await mr.json();
+            closeModal();
+            showAlert(`Сотрудник добавлен. Ящик ${mdata.email} создан ✓`, 'success');
+        } else {
+            closeModal();
+            showAlert(editingId ? 'Сотрудник обновлён' : 'Сотрудник добавлен', 'success');
+        }
+
         await loadEmployees();
     } catch (err) {
         showAlert('Ошибка: ' + err.message, 'error');
@@ -283,6 +364,26 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('searchInput').addEventListener('input', applyFilters);
     document.getElementById('roleFilter').addEventListener('change', applyFilters);
+
+    // Чекбокс почтового ящика
+    document.getElementById('createMailbox').addEventListener('change', function() {
+        const fields = document.getElementById('mailboxFields');
+        fields.style.display = this.checked ? 'block' : 'none';
+        if (this.checked) {
+            // Автозаполняем логин
+            document.getElementById('fmailLocal').dataset.manualEdit = 'false';
+            autoFillMailLocal();
+        }
+    });
+
+    // Автозаполнение логина почты при вводе имени/фамилии
+    document.getElementById('fname').addEventListener('input', autoFillMailLocal);
+    document.getElementById('lname').addEventListener('input', autoFillMailLocal);
+
+    // Если пользователь сам редактирует логин — не перезаписываем
+    document.getElementById('fmailLocal').addEventListener('input', function() {
+        this.dataset.manualEdit = 'true';
+    });
 
     document.getElementById('modalOverlay').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeModal();
