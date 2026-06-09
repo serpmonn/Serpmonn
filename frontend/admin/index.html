@@ -96,7 +96,13 @@
                 </div>
                 <div class="form-group">
                     <label for="femail">Email *</label>
-                    <input type="email" id="femail" placeholder="ivan@serpmonn.ru" required>
+                    <div class="email-input-wrap">
+                        <input type="text" id="femail" placeholder="ivan.ivanov" required
+                               pattern="[a-zA-Z0-9._\-]+"
+                               title="Только латинские буквы, цифры, точка, дефис, подчёркивание">
+                        <span class="email-suffix">@serpmonn.ru</span>
+                    </div>
+                    <small class="hint" id="femailHint" style="display:none">При редактировании email менять нельзя</small>
                 </div>
                 <div class="form-group" id="passwordGroup">
                     <label for="fpassword">Пароль *</label>
@@ -136,6 +142,22 @@
                         <input type="date" id="fhire_date">
                     </div>
                 </div>
+
+                <!-- Блок почтового ящика (только при создании) -->
+                <div class="form-group mailbox-block" id="mailboxBlock">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="fCreateMailbox">
+                        <span>Создать почтовый ящик <strong>@serpmonn.ru</strong></span>
+                    </label>
+                    <div id="mailboxFields" style="display:none; margin-top:10px">
+                        <div class="form-group">
+                            <label for="fMailboxPassword">Пароль почтового ящика *</label>
+                            <input type="password" id="fMailboxPassword" placeholder="Минимум 8 символов">
+                            <small class="hint">Пароль для входа в почту (Roundcube)</small>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="modal-actions">
                     <button type="button" class="btn btn-outline" id="cancelBtn">Отмена</button>
                     <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
