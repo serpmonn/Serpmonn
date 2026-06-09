@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ — Сотрудники</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <link rel="stylesheet" href="admin_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+</head>
+<body>
+
+<!-- Шапка панели -->
+<header class="admin-header">
+    <div class="admin-header-inner">
+        <div class="admin-logo">
+            <a href="/frontend/main.html">🐍 Serpmonn</a>
+            <span class="admin-badge">Админ</span>
+        </div>
+        <nav class="admin-nav">
+            <a href="/frontend/admin/index.html" class="nav-link active">👥 Сотрудники</a>
+            <a href="/frontend/admin/health.html" class="nav-link">🩺 Статус</a>
+        </nav>
+        <button class="btn btn-outline" id="logoutBtn">Выйти</button>
+    </div>
+</header>
+
+<!-- Основной контент -->
+<main class="admin-main">
+    <div class="admin-container">
+
+        <!-- Заголовок секции -->
+        <div class="section-header">
+            <div>
+                <h1>Сотрудники</h1>
+                <p class="section-desc">Управление учётными записями сотрудников</p>
+            </div>
+            <button class="btn btn-primary" id="addEmployeeBtn">
+                + Добавить сотрудника
+            </button>
+        </div>
+
+        <!-- Поиск и фильтры -->
+        <div class="toolbar">
+            <input type="search" id="searchInput" placeholder="Поиск по имени, email, должности..." class="search-input">
+            <select id="roleFilter" class="filter-select">
+                <option value="">Все роли</option>
+                <option value="admin">Администратор</option>
+                <option value="moderator">Модератор</option>
+                <option value="editor">Редактор</option>
+                <option value="support">Поддержка</option>
+                <option value="developer">Разработчик</option>
+            </select>
+        </div>
+
+        <!-- Сообщения -->
+        <div id="alertBox" class="alert" style="display:none;"></div>
+
+        <!-- Таблица сотрудников -->
+        <div class="table-wrapper">
+            <table class="employees-table" id="employeesTable">
+                <thead>
+                    <tr>
+                        <th>Имя</th>
+                        <th>Email</th>
+                        <th>Роль</th>
+                        <th>Должность</th>
+                        <th>Статус</th>
+                        <th>Дата найма</th>
+                        <th>Действия</th>
+                    </tr>
+                </thead>
+                <tbody id="employeesTbody">
+                    <tr id="loadingRow">
+                        <td colspan="7" class="loading-cell">Загрузка...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Пагинация -->
+        <div class="pagination" id="pagination"></div>
+
+    </div>
+</main>
+
+<!-- Модалка: создать / редактировать -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-header">
+            <h2 id="modalTitle">Добавить сотрудника</h2>
+            <button class="modal-close" id="modalClose" aria-label="Закрыть">&times;</button>
+        </div>
+        <div class="modal-body">
+            <form id="employeeForm" novalidate>
+                <input type="hidden" id="employeeId">
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fname">Имя *</label>
+                        <input type="text" id="fname" placeholder="Иван" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="lname">Фамилия *</label>
+                        <input type="text" id="lname" placeholder="Иванов" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="femail">Email *</label>
+                    <input type="email" id="femail" placeholder="ivan@serpmonn.ru" required>
+                </div>
+
+                <div class="form-group" id="passwordGroup">
+                    <label for="fpassword">Пароль *</label>
+                    <input type="password" id="fpassword" placeholder="Минимум 8 символов">
+                    <small class="hint">При редактировании оставьте пустым, чтобы не менять</small>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="frole">Роль *</label>
+                        <select id="frole" required>
+                            <option value="">— выберите —</option>
+                            <option value="admin">Администратор</option>
+                            <option value="moderator">Модератор</option>
+                            <option value="editor">Редактор</option>
+                            <option value="support">Поддержка</option>
+                            <option value="developer">Разработчик</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fposition">Должность</label>
+                        <input type="text" id="fposition" placeholder="Старший разработчик">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="fstatus">Статус</label>
+                        <select id="fstatus">
+                            <option value="active">Активен</option>
+                            <option value="inactive">Неактивен</option>
+                            <option value="on_leave">В отпуске</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="fhire_date">Дата найма</label>
+                        <input type="date" id="fhire_date">
+                    </div>
+                </div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" id="cancelBtn">Отмена</button>
+                    <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Модалка: подтверждение удаления -->
+<div class="modal-overlay" id="deleteOverlay">
+    <div class="modal modal-sm" role="dialog" aria-modal="true">
+        <div class="modal-header">
+            <h2>Удалить сотрудника?</h2>
+            <button class="modal-close" id="deleteCancelX">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p id="deleteConfirmText">Это действие необратимо.</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" id="deleteCancelBtn">Отмена</button>
+                <button class="btn btn-danger" id="deleteConfirmBtn">Удалить</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="module" src="admin_scripts.js"></script>
+<script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</body>
+</html>
