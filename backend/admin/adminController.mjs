@@ -10,7 +10,9 @@ dotenv.config({ path: envPath });
 
 import bcrypt from 'bcryptjs';
 import paseto from 'paseto';
+import { execSync } from 'child_process';
 import { query } from '../database/config.mjs';
+import { mailQuery } from '../database/mailDatabase.config.mjs';
 import { v4 as uuidv4 } from 'uuid';
 
 const { V4 } = paseto;
@@ -188,4 +190,73 @@ export const deleteEmployee = async (req, res) => {
   }
 };
 
-export default { loginAdmin, logoutAdmin, getMe, createEmployee, listEmployees, updateEmployee, deleteEmployee };
+// --- Почта @serpmonn.ru ---
+
+export const createStaffMailbox = async (req, res) => {
+  const { localPart, password } = req.body;
+
+  if (!localPart || !password) {
+    return res.status(400).json({ message: 'Логин и пароль обязательны' });
+  }
+  if (!/^[a-z0-9._%+-]+$/.test(localPart)) {
+    return res.status(400).json({ message: 'Логин может содержать только латинские буквы, цифры и символы ._%+-' });
+  }
+  if (password.length < 8) {
+    return res.status(400).json({ message: 'Пароль минимум 8 символов' });
+  }
+
+  const domain = 'serpmonn.ru';
+  const fullEmail = `${localPart}@${domain}`;
+
+  try {
+    const existing = await mailQuery('SELECT id FROM users WHERE email = ?', [fullEmail]);
+    if (existing.length > 0) {
+      return res.status(400).json({ message: 'Почтовый ящик уже существует' });
+    }
+
+    const domainRows = await mailQuery('SELECT id FROM domains WHERE domain = ?', [domain]);
+    if (domainRows.length === 0) {
+      return res.status(500).json({ message: `Домен ${domain} не найден в mail-БД` });
+    }
+    const domainId = domainRows[0].id;
+
+    const dovecotPassword = generateDovecotHash(password);
+
+    await mailQuery(
+      'INSERT INTO users (email, password, domain_id, home, uid, gid) VALUES (?, ?, ?, ?, ?, ?)',
+      [fullEmail, dovecotPassword, domainId, `/var/vmail/${domain}/${localPart}`, 5000, 5000]
+    );
+
+    const mailDir = `/var/vmail/${domain}/${localPart}/Maildir`;
+    try {
+      execSync(`mkdir -p ${mailDir}/{cur,new,tmp}`);
+      execSync(`chown -R vmail:vmail /var/vmail/${domain}/${localPart}`);
+      execSync(`chmod -R 700 /var/vmail/${domain}/${localPart}`);
+    } catch (fsError) {
+      console.error('[admin] ошибка создания директорий Maildir:', fsError);
+    }
+
+    console.log(`[admin] создан почтовый ящик: ${fullEmail}`);
+    return res.status(201).json({ success: true, email: fullEmail, message: 'Почтовый ящик создан' });
+
+  } catch (error) {
+    console.error('[admin] ошибка создания почтового ящика:', error);
+    try { await mailQuery('DELETE FROM users WHERE email = ?', [fullEmail]); } catch (_) {}
+    return res.status(500).json({ message: 'Ошибка создания почтового ящика: ' + error.message });
+  }
+};
+
+function generateDovecotHash(password) {
+  try {
+    const salt = execSync('openssl rand -base64 12')
+      .toString().trim().replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
+    const hash = execSync(`openssl passwd -6 -salt ${salt} '${password}'`)
+      .toString().trim();
+    return `{SHA512-CRYPT}${hash}`;
+  } catch (error) {
+    console.error('[admin] ошибка генерации хеша, используем PLAIN:', error);
+    return `{PLAIN}${password}`;
+  }
+}
+
+export default { loginAdmin, logoutAdmin, getMe, createEmployee, listEmployees, updateEmployee, deleteEmployee, createStaffMailbox };
