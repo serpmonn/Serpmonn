@@ -15,7 +15,6 @@ import verifyToken from '../auth/verifyToken.mjs';                              
 import voiceRoutes from '../voice/voiceRoutes.mjs';                                                                              // Импорт маршрутов голосового ввода
 import aiSearchRouter from '../ai-search/ai-search.mjs';                                                                         // Импорт маршрута AI-поиска через SearxNG
 import i18nRoute from './i18n-route.mjs';                                                                                        // Импорт маршрута переводов для бэка
-import adminRoutes from '../admin/adminRoutes.mjs';                                                                              // Импорт маршрутов админ-панели
 
 export function connectRoutes(app, authLimiter) {                                                                                // Функция централизованного подключения всех маршрутов приложения
     app.use(yookassaRouter);                                                                                                     // Подключаем маршруты платежной системы YooKassa
@@ -33,13 +32,9 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/improve', improveRoutes);                                                                                          // Подключаем маршрут предложки
     app.use('/api', vkidRoutes);                                                                                                 // Подключаем маршрут авторизации VK ID
     app.use('/voice', voiceRoutes);                                                                                              // Подключаем маршруты голосового ввода (STT/TTS)
-    app.use('/api', (req, res, next) => {
-        if (req.path.startsWith('/admin')) return next();
-        verifyToken(req, res, next);
-    });                                                                                                                         // Подключаем маршрут верификации токена и установки req.user для всех кроме /admin
+    app.use('/api', verifyToken);                                                                                                // JWT-аутентификация для всех /api маршрутов
     app.use('/api', pointsRoutes);                                                                                               // Подключаем маршрут проверки баллов
     app.use('/api', withdrawalRoutes);                                                                                           // Подключаем маршрут обмена баллов на Pro
     app.use('/', aiSearchRouter);                                                                                                // Подключаем маршрут AI-поиска через SearxNG
     app.use('/', i18nRoute);                                                                                                     // Подключаем маршрут переводов
-    app.use('/api/admin', adminRoutes);                                                                                          // Подключаем маршруты админ-панели
 }
