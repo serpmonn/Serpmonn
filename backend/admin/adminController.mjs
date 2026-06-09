@@ -189,45 +189,31 @@ export const deleteEmployee = async (req, res) => {
     let mailboxError = null;
 
     if (deleteMailbox) {
-      // Определяем localPart из email сотрудника или ищем ящик по имени
-      // Ищем все ящики @serpmonn.ru — берём тот что совпадает с email или есть в mail-БД
-      const emailLocal = employee.email?.endsWith('@serpmonn.ru')
-        ? employee.email.split('@')[0]
-        : null;
-
-      // Ищем в mail-БД ящик по email сотрудника
-      let mailEmail = null;
-      if (emailLocal) {
-        const rows = await mailQuery('SELECT email FROM users WHERE email = ?', [employee.email]);
-        if (rows.length > 0) mailEmail = employee.email;
-      }
-
-      // Если не нашли по email — пробуем найти по имени (first.last@serpmonn.ru)
-      if (!mailEmail) {
-        const guessed = `${employee.first_name.toLowerCase()}.${employee.last_name.toLowerCase()}@serpmonn.ru`;
-        const rows = await mailQuery('SELECT email FROM users WHERE email = ?', [guessed]);
-        if (rows.length > 0) mailEmail = guessed;
-      }
-
-      if (mailEmail) {
-        try {
-          const local = mailEmail.split('@')[0];
-          await mailQuery('DELETE FROM users WHERE email = ?', [mailEmail]);
-
-          // Удаляем папки Maildir
-          const mailDir = `/var/vmail/serpmonn.ru/${local}`;
-          if (fs.existsSync(mailDir)) {
-            execSync(`rm -rf ${mailDir}`);
-          }
-
-          mailboxDeleted = true;
-          console.log(`[admin] удалён почтовый ящик: ${mailEmail}`);
-        } catch (err) {
-          mailboxError = err.message;
-          console.error('[admin] ошибка удаления почтового ящика:', err);
-        }
+      // Только точное совпадение: email сотрудника должен быть @serpmonn.ru
+      // и существовать в mail-БД — никакого угадывания по имени/фамилии
+      if (!employee.email || !employee.email.endsWith('@serpmonn.ru')) {
+        mailboxError = 'Email сотрудника не относится к домену @serpmonn.ru';
       } else {
-        mailboxError = 'Почтовый ящик не найден в mail-БД';
+        const rows = await mailQuery('SELECT email FROM users WHERE email = ?', [employee.email]);
+        if (rows.length === 0) {
+          mailboxError = `Почтовый ящик ${employee.email} не найден в mail-БД`;
+        } else {
+          try {
+            const local = employee.email.split('@')[0];
+            await mailQuery('DELETE FROM users WHERE email = ?', [employee.email]);
+
+            const mailDir = `/var/vmail/serpmonn.ru/${local}`;
+            if (fs.existsSync(mailDir)) {
+              execSync(`rm -rf ${mailDir}`);
+            }
+
+            mailboxDeleted = true;
+            console.log(`[admin] удалён почтовый ящик: ${employee.email}`);
+          } catch (err) {
+            mailboxError = err.message;
+            console.error('[admin] ошибка удаления почтового ящика:', err);
+          }
+        }
       }
     }
 
