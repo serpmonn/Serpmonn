@@ -37,7 +37,15 @@ function statusLabel(s) {
 }
 
 function roleLabel(r) {
-    const map = { admin: 'Администратор', moderator: 'Модератор', editor: 'Редактор', support: 'Поддержка', developer: 'Разработчик', marketer: 'Маркетолог' };
+    const map = {
+        admin: 'Администратор',
+        moderator: 'Модератор',
+        editor: 'Редактор',
+        support: 'Поддержка',
+        developer: 'Разработчик',
+        marketer: 'Маркетолог',
+        tester: 'Тестировщик',
+    };
     return map[r] || r;
 }
 
