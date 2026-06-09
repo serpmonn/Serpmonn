@@ -33,7 +33,10 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/improve', improveRoutes);                                                                                          // Подключаем маршрут предложки
     app.use('/api', vkidRoutes);                                                                                                 // Подключаем маршрут авторизации VK ID
     app.use('/voice', voiceRoutes);                                                                                              // Подключаем маршруты голосового ввода (STT/TTS)
-    app.use('/api', verifyToken);                                                                                                // Подключаем маршрут верификации токена и установки req.user
+    app.use('/api', (req, res, next) => {
+        if (req.path.startsWith('/admin')) return next();
+        verifyToken(req, res, next);
+    });                                                                                                                         // Подключаем маршрут верификации токена и установки req.user для всех кроме /admin
     app.use('/api', pointsRoutes);                                                                                               // Подключаем маршрут проверки баллов
     app.use('/api', withdrawalRoutes);                                                                                           // Подключаем маршрут обмена баллов на Pro
     app.use('/', aiSearchRouter);                                                                                                // Подключаем маршрут AI-поиска через SearxNG
