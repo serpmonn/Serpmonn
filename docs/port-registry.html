@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>serpmonn.ru — Port Registry</title>
+<link href="https://api.fontshare.com/v2/css?f[]=satoshi@400,500,700&f[]=jet-brains-mono@400,700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root, [data-theme="light"] {
+  --color-bg: #f7f6f2; --color-surface: #f9f8f5; --color-surface-2: #fbfbf9;
+  --color-surface-offset: #f3f0ec; --color-divider: #dcd9d5; --color-border: #d4d1ca;
+  --color-text: #28251d; --color-text-muted: #7a7974; --color-text-faint: #bab9b4;
+  --color-primary: #01696f; --color-primary-highlight: #cedcd8;
+  --color-success: #437a22; --color-success-highlight: #d4dfcc;
+  --color-orange: #da7101; --color-orange-highlight: #e7d7c4;
+  --color-blue: #006494; --color-blue-highlight: #c6d8e4;
+  --color-purple: #7a39bb; --color-purple-highlight: #dacfde;
+  --color-warning: #964219; --color-warning-highlight: #ddcfc6;
+  --font-body: 'Satoshi', sans-serif; --font-mono: 'JetBrains Mono', monospace;
+  --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem;
+  --shadow-sm: 0 1px 2px oklch(0.2 0.01 80 / 0.06); --shadow-md: 0 4px 12px oklch(0.2 0.01 80 / 0.08);
+  --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem; --space-4: 1rem;
+  --space-6: 1.5rem; --space-8: 2rem; --space-10: 2.5rem;
+  --transition: 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-theme="dark"] {
+  --color-bg: #171614; --color-surface: #1c1b19; --color-surface-2: #201f1d;
+  --color-surface-offset: #1d1c1a; --color-divider: #262523; --color-border: #393836;
+  --color-text: #cdccca; --color-text-muted: #797876; --color-text-faint: #5a5957;
+  --color-primary: #4f98a3; --color-primary-highlight: #313b3b;
+  --color-success: #6daa45; --color-success-highlight: #3a4435;
+  --color-orange: #fdab43; --color-orange-highlight: #564b3e;
+  --color-blue: #5591c7; --color-blue-highlight: #3a4550;
+  --color-purple: #a86fdf; --color-purple-highlight: #4e4652;
+  --color-warning: #bb653b; --color-warning-highlight: #564942;
+  --shadow-sm: 0 1px 2px oklch(0 0 0 / 0.2); --shadow-md: 0 4px 12px oklch(0 0 0 / 0.3);
+}
+html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
+body { min-height: 100dvh; font-family: var(--font-body); font-size: 1rem; color: var(--color-text); background: var(--color-bg); line-height: 1.6; }
+.page { max-width: 900px; margin: 0 auto; padding: var(--space-8) var(--space-6); }
+header { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-10); padding-bottom: var(--space-6); border-bottom: 1px solid var(--color-divider); }
+.logo { display: flex; align-items: center; gap: var(--space-3); }
+.logo-icon { width: 36px; height: 36px; }
+.logo-text { font-size: 1.1rem; font-weight: 700; color: var(--color-text); }
+.logo-sub { font-size: 0.8rem; color: var(--color-text-muted); font-weight: 400; }
+.theme-btn { background: var(--color-surface-offset); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: var(--space-2) var(--space-3); color: var(--color-text-muted); cursor: pointer; font-size: 0.85rem; transition: all var(--transition); display: flex; align-items: center; gap: var(--space-2); }
+.theme-btn:hover { color: var(--color-text); background: var(--color-surface-2); }
+h1 { font-size: clamp(1.3rem, 2vw, 1.7rem); font-weight: 700; color: var(--color-text); margin-bottom: var(--space-2); }
+.subtitle { color: var(--color-text-muted); font-size: 0.9rem; margin-bottom: var(--space-8); }
+.range-block { margin-bottom: var(--space-8); }
+.range-header { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-4); padding-bottom: var(--space-3); border-bottom: 1px solid var(--color-divider); }
+.range-badge { font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700; padding: var(--space-1) var(--space-3); border-radius: 9999px; letter-spacing: 0.02em; }
+.range-title { font-size: 1rem; font-weight: 600; color: var(--color-text); }
+.range-desc { font-size: 0.82rem; color: var(--color-text-muted); margin-left: auto; }
+.ports-table { width: 100%; border-collapse: collapse; }
+.ports-table th { text-align: left; font-size: 0.75rem; font-weight: 600; color: var(--color-text-faint); text-transform: uppercase; letter-spacing: 0.06em; padding: var(--space-2) var(--space-3); }
+.ports-table td { padding: var(--space-3); border-top: 1px solid var(--color-divider); font-size: 0.88rem; vertical-align: middle; }
+.ports-table tr:hover td { background: var(--color-surface-offset); }
+.port-num { font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; color: var(--color-text); }
+.port-name { font-weight: 500; color: var(--color-text); }
+.port-desc { color: var(--color-text-muted); font-size: 0.82rem; }
+.port-routes { color: var(--color-text-faint); font-size: 0.78rem; font-family: var(--font-mono); display: flex; flex-wrap: wrap; gap: var(--space-1); }
+.route-tag { background: var(--color-surface-2); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1px 6px; }
+.status-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; margin-right: var(--space-2); }
+.status-active { background: var(--color-success); box-shadow: 0 0 0 2px var(--color-success-highlight); }
+.status-system { background: var(--color-text-faint); }
+.status-reserved { background: var(--color-warning); box-shadow: 0 0 0 2px var(--color-warning-highlight); }
+.c-games { background: var(--color-success-highlight); color: var(--color-success); }
+.c-content { background: var(--color-orange-highlight); color: var(--color-orange); }
+.c-api { background: var(--color-primary-highlight); color: var(--color-primary); }
+.c-mail { background: var(--color-purple-highlight); color: var(--color-purple); }
+.c-bg { background: var(--color-blue-highlight); color: var(--color-blue); }
+.c-infra { background: var(--color-surface-offset); color: var(--color-text-muted); }
+.note-block { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-lg); padding: var(--space-4) var(--space-6); margin-bottom: var(--space-8); font-size: 0.83rem; color: var(--color-text-muted); line-height: 1.7; }
+.note-block strong { color: var(--color-text); }
+footer { margin-top: var(--space-10); padding-top: var(--space-6); border-top: 1px solid var(--color-divider); font-size: 0.78rem; color: var(--color-text-faint); display: flex; justify-content: space-between; align-items: center; }
+@media (max-width: 600px) {
+  .page { padding: var(--space-6) var(--space-4); }
+  .range-desc { display: none; }
+  .ports-table th:last-child, .ports-table td:last-child { display: none; }
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <header>
+    <div class="logo">
+      <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="36" height="36" rx="8" fill="var(--color-primary)" opacity="0.12"/>
+        <rect x="6" y="14" width="6" height="16" rx="2" fill="var(--color-primary)"/>
+        <rect x="15" y="8" width="6" height="22" rx="2" fill="var(--color-primary)"/>
+        <rect x="24" y="18" width="6" height="12" rx="2" fill="var(--color-primary)" opacity="0.6"/>
+      </svg>
+      <div>
+        <div class="logo-text">serpmonn.ru</div>
+        <div class="logo-sub">Port Registry</div>
+      </div>
+    </div>
+    <button class="theme-btn" data-theme-toggle aria-label="Toggle theme">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      Тема
+    </button>
+  </header>
+
+  <h1>Карта портов сервера</h1>
+  <p class="subtitle">Все занятые порты, их назначение и диапазоны. Обновлять при добавлении нового сервиса.</p>
+
+  <div class="note-block">
+    <strong>Принцип распределения:</strong> Каждому типу сервиса отведён свой диапазон —
+    это упрощает навигацию, дебаг и onboarding. При добавлении нового сервиса выбирать порт
+    из соответствующего диапазона. <strong>Порт 8003</strong> — временный (VS Code Remote SSH),
+    освобождается после закрытия сессии IDE.
+  </div>
+
+  <!-- 3000–3999 -->
+  <div class="range-block">
+    <div class="range-header">
+      <span class="range-badge c-games">3000–3999</span>
+      <span class="range-title">Игры и геймплей</span>
+      <span class="range-desc">Games / Score / Leaderboard</span>
+    </div>
+    <table class="ports-table">
+      <thead><tr><th>Порт</th><th>Сервис</th><th>Описание</th><th>Маршруты nginx</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="port-num">3000</span></td>
+          <td><span class="status-dot status-active"></span><span class="port-name">games-server</span></td>
+          <td><span class="port-desc">Очки, лидерборды, запрещённые слова</span></td>
+          <td><div class="port-routes">
+            <span class="route-tag">/add-score</span>
+            <span class="route-tag">/leaderboard</span>
+            <span class="route-tag">/backend/games/redsquare2/leaderboard</span>
+            <span class="route-tag">/proxy/bannedWords</span>
+          </div></td>
+        </tr>
+        <tr>
+          <td><span class="port-num">3001</span></td>
+          <td><span class="status-dot status-active"></span><span class="port-name">onehouseboat</span></td>
+          <td><span class="port-desc">Отдельный проект / backend</span></td>
+          <td><div class="port-routes"><span class="route-tag">отдельный vhost</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="port-num">3002–3999</span></td>
+          <td><span class="status-dot status-reserved"></span><span class="port-name">зарезервировано</span></td>
+          <td><span class="port-desc">Новые игры, вспомогательные игровые сервисы</span></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4000–4999 -->
+  <div class="range-block">
+    <div class="range-header">
+      <span class="range-badge c-content">4000–4999</span>
+      <span class="range-title">Контент</span>
+      <span class="range-desc">News / Feed / Media</span>
+    </div>
+    <table class="ports-table">
+      <thead><tr><th>Порт</th><th>Сервис</th><th>Описание</th><th>Маршруты nginx</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="port-num">4000</span></td>
+          <td><span class="status-dot status-active"></span><span class="port-name">news-server</span></td>
+          <td><span class="port-desc">Новостная лента</span></td>
+          <td><div class="port-routes"><span class="route-tag">/news</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="port-num">4001–4999</span></td>
+          <td><span class="status-dot status-reserved"></span><span class="port-name">зарезервировано</span></td>
+          <td><span class="port-desc">Дополнительные контент-сервисы (лента, медиа)</span></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 5000–5999 -->
+  <div class="range-block">
+    <div class="range-header">
+      <span class="range-badge c-api">5000–5999</span>
+      <span class="range-title">Основной API</span>
+      <span class="range-desc">Auth / Profile / Voice / AI</span>
+    </div>
+    <table class="ports-table">
+      <thead><tr><th>Порт</th><th>Сервис</th><th>Описание</th><th>Маршруты nginx</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="port-num">5000</span></td>
+          <td><span class="status-dot status-active"></span><span class="port-name">auth-server</span></td>
+          <td><span class="port-desc">Аутентификация, профили, подписки, аналитика, API</span></td>
+          <td><div class="port-routes">
+            <span class="route-tag">/auth/*</span>
+            <span class="route-tag">/profile/</span>
+            <span class="route-tag">/api/</span>
+            <span class="route-tag">/voice/</span>
+            <span class="route-tag">/i18n/</span>
+            <span class="route-tag">/subscribe</span>
+            <span class="route-tag">/counter</span>
+            <span class="route-tag">/health</span>
+            <span class="route-tag">/improve</span>
+            <span class="route-tag">/csrf-token</span>
+            <span class="route-tag">/ai-search</span>
+          </div></td>
+        </tr>
+        <tr>
+          <td><span class="port-num">5001–5999</span></td>
+          <td><span class="status-dot status-reserved"></span><span class="port-name">зарезервировано</span></td>
+          <td><span class="port-desc">Расширение API, микросервисы авторизации</span></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 6000–6999 -->
+  <div class="range-block">
+    <div class="range-header">
+      <span class="range-badge c-mail">6000–6999</span>
+      <span class="range-title">Почта и аккаунты</span>
+      <span class="range-desc">Mail / Password / Account</span>
+    </div>
+    <table class="ports-table">
+      <thead><tr><th>Порт</th><th>Сервис</th><th>Описание</th><th>Маршруты nginx</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="port-num">6000</span></td>
+          <td><span class="status-dot status-active"></span><span class="port-name">onnmail-server</span></td>
+          <td><span class="port-desc">Почтовый API (отправка, вебхуки)</span></td>
+          <td><div class="port-routes"><span class="route-tag">/mail-api/</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="port-num">6500</span></td>
+          <td><span class="status-dot status-active"></span><span class="port-name">password-reset-server</span></td>
+          <td><span class="port-desc">Сброс и восстановление пароля</span></td>
+          <td><div class="port-routes"><span class="route-tag">/auth/forgot-password</span><span class="route-tag">/auth/reset-password</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="port-num">6001–6499, 6501–6999</span></td>
+          <td><span class="status-dot status-reserved"></span><span class="port-name">зарезервировано</span></td>
+          <td><span class="port-desc">Дополнительные почтовые / аккаунт-сервисы</span></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 7000–7999 -->
+  <div class="range-block">
+    <div class="range-header">
+      <span class="range-badge c-bg">7000–7999</span>
+      <span class="range-title">Фоновые сервисы</span>
+      <span class="range-desc">Workers / Cron / Checks</span>
+    </div>
+    <table class="ports-table">
+      <thead><tr><th>Порт</th><th>Сервис</th><th>Описание</th><th>Маршруты nginx</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="port-num">7000</span></td>
+          <td><span class="status-dot status-active"></span><span class="port-name">check-pro</span></td>
+          <td><span class="port-desc">Фоновые проверки (подписки, статусы)</span></td>
+          <td><div class="port-routes"><span class="route-tag">нет (внутренний)</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="port-num">7001–7999</span></td>
+          <td><span class="status-dot status-reserved"></span><span class="port-name">зарезервировано</span></td>
+          <td><span class="port-desc">Cron-задачи, воркеры, очереди</span></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 8000–8999 -->
+  <div class="range-block">
+    <div class="range-header">
+      <span class="range-badge c-infra">8000–8999</span>
+      <span class="range-title">Инфраструктура / Админка</span>
+      <span class="range-desc">Admin / DevTools / Monitoring</span>
+    </div>
+    <table class="ports-table">
+      <thead><tr><th>Порт</th><th>Сервис</th><th>Описание</th><th>Маршруты nginx</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><span class="port-num">8000</span></td>
+          <td><span class="status-dot status-reserved"></span><span class="port-name">admin-server</span></td>
+          <td><span class="port-desc">🔜 Планируемая панель администратора</span></td>
+          <td><div class="port-routes"><span class="route-tag">/api/admin/</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="port-num">8003</span></td>
+          <td><span class="status-dot status-system"></span><span class="port-name">VS Code Server</span></td>
+          <td><span class="port-desc">Временный — Remote SSH (IDE). Освобождается после закрытия.</span></td>
+          <td><div class="port-routes"><span class="route-tag">не проксируется</span></div></td>
+        </tr>
+        <tr>
+          <td><span class="port-num">8001–8002, 8004–8999</span></td>
+          <td><span class="status-dot status-reserved"></span><span class="port-name">зарезервировано</span></td>
+          <td><span class="port-desc">Мониторинг, метрики, dev-инструменты</span></td>
+          <td></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <span>serpmonn.ru · port-registry</span>
+    <span>Обновлено: июнь 2026</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  const t = document.querySelector('[data-theme-toggle]');
+  const r = document.documentElement;
+  t && t.addEventListener('click', () => {
+    const d = r.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    r.setAttribute('data-theme', d);
+  });
+})();
+</script>
+</body>
+</html>
