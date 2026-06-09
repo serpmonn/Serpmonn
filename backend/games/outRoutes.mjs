@@ -1,6 +1,35 @@
 // Партнёрские ссылки — редирект через /out?game=...
 // Пользователь видит мгновенный переход, партнёр видит Referer: serpmonn.ru
 
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+// Файл для записи кликов — backend/games/affiliate-clicks.json
+const CLICKS_FILE = path.join(__dirname, 'affiliate-clicks.json');
+
+// Инициализируем файл если его нет
+if (!fs.existsSync(CLICKS_FILE)) {
+  fs.writeFileSync(CLICKS_FILE, JSON.stringify([], null, 2), 'utf8');
+}
+
+function logClick(game, ip, ua) {
+  try {
+    const clicks = JSON.parse(fs.readFileSync(CLICKS_FILE, 'utf8'));
+    clicks.push({
+      game,
+      ip,
+      ua: ua?.slice(0, 120) ?? '',
+      ts: new Date().toISOString(),
+    });
+    fs.writeFileSync(CLICKS_FILE, JSON.stringify(clicks, null, 2), 'utf8');
+  } catch (e) {
+    console.error('[affiliate/out] Ошибка записи клика:', e.message);
+  }
+}
+
 const GAME_LINKS = {
   'atomic-heart':          'https://rzekl.com/g/ky2n1t1o3k7c9ceea34447ed6832c6937d428ecd/?erid=5jtCeReNwxHpfQTFQqS8mWE',
   'lost-ark':              'https://ficca2021.com/g/xv8wkx2q4t7c9ceea3443cb67d624d0197bfefde/?erid=25H8d7vbP8SRTvJ4WQksxm',
@@ -40,10 +69,34 @@ export function outRoutes(app) {
       return res.status(403).send('Forbidden');
     }
 
-    // Логируем клик
-    console.log(`[affiliate/out] game=${game} ip=${req.ip} ua=${req.headers['user-agent']?.slice(0, 80)}`);
+    const ip = req.headers['x-forwarded-for']?.split(',')[0].trim() ?? req.ip;
+    const ua = req.headers['user-agent'];
+
+    // Записываем клик в файл (async, не задерживает редирект)
+    setImmediate(() => logClick(game, ip, ua));
 
     // Мгновенный 302-редирект — браузер передаёт Referer: serpmonn.ru
     res.redirect(302, dest);
+  });
+
+  // GET /out/stats — простой просмотр кликов (добавь авторизацию перед продом)
+  app.get('/out/stats', (req, res) => {
+    try {
+      const clicks = JSON.parse(fs.readFileSync(CLICKS_FILE, 'utf8'));
+
+      // Группируем по игре
+      const byGame = {};
+      for (const click of clicks) {
+        byGame[click.game] = (byGame[click.game] ?? 0) + 1;
+      }
+
+      res.json({
+        total: clicks.length,
+        byGame,
+        last10: clicks.slice(-10).reverse(),
+      });
+    } catch (e) {
+      res.status(500).json({ error: e.message });
+    }
   });
 }
