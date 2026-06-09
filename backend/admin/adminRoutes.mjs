@@ -7,7 +7,8 @@ import {
   createEmployee,
   listEmployees,
   updateEmployee,
-  deleteEmployee
+  deleteEmployee,
+  createStaffMailbox
 } from './adminController.mjs';
 
 const router = Router();
@@ -24,5 +25,8 @@ router.get('/employees', verifyAdmin, listEmployees);
 router.post('/employees', verifyAdmin, createEmployee);
 router.put('/employees/:id', verifyAdmin, updateEmployee);
 router.delete('/employees/:id', verifyAdmin, deleteEmployee);
+
+// Почтовые ящики @serpmonn.ru
+router.post('/mailbox', verifyAdmin, createStaffMailbox);
 
 export default router;
