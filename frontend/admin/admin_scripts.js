@@ -1,5 +1,5 @@
 // === ADMIN PANEL — EMPLOYEE MANAGEMENT ===
-// Ожидает PASETO-токен в cookie 'token' или sessionStorage 'adminToken'
+// Токен хранится в httpOnly cookie admin_token — все запросы идут с credentials: 'include'
 
 const API = '/api/admin';
 const PER_PAGE = 15;
@@ -10,31 +10,16 @@ let currentPage = 1;
 let editingId = null;
 let deleteTargetId = null;
 
-// --- AUTH HELPERS ---
-function getToken() {
-    // Сначала sessionStorage, потом cookie
-    const ss = sessionStorage.getItem('adminToken');
-    if (ss) return ss;
-    const match = document.cookie.match(/(?:^|; )token=([^;]*)/);
-    return match ? decodeURIComponent(match[1]) : null;
-}
-
-function authHeaders() {
-    const t = getToken();
-    return t ? { 'Authorization': `Bearer ${t}`, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' };
-}
-
+// --- AUTH ---
 async function checkAuth() {
-    const token = getToken();
-    if (!token) { redirect(); return; }
     try {
-        const r = await fetch(`${API}/me`, { headers: authHeaders() });
+        const r = await fetch(`${API}/me`, { credentials: 'include' });
         if (!r.ok) redirect();
     } catch { redirect(); }
 }
 
 function redirect() {
-    window.location.href = '/frontend/login/login.html?next=' + encodeURIComponent(window.location.pathname);
+    window.location.href = '/frontend/admin/login.html';
 }
 
 // --- UI HELPERS ---
@@ -61,14 +46,13 @@ function formatDate(d) {
     try { return new Date(d).toLocaleDateString('ru-RU'); } catch { return d; }
 }
 
-// --- RENDER TABLE ---
+// --- FILTERS & RENDER ---
 function applyFilters() {
     const q = document.getElementById('searchInput').value.toLowerCase();
     const role = document.getElementById('roleFilter').value;
     filtered = allEmployees.filter(e => {
-        const matchQ = !q || [
-            e.first_name, e.last_name, e.email, e.position, e.role
-        ].some(f => f && f.toLowerCase().includes(q));
+        const matchQ = !q || [e.first_name, e.last_name, e.email, e.position, e.role]
+            .some(f => f && f.toLowerCase().includes(q));
         const matchRole = !role || e.role === role;
         return matchQ && matchRole;
     });
@@ -89,25 +73,21 @@ function renderTable() {
     } else {
         tbody.innerHTML = page.map(e => `
             <tr>
-                <td>
-                    <div class="emp-name">${escHtml(e.first_name)} ${escHtml(e.last_name)}</div>
-                    <div class="emp-email">${escHtml(e.email)}</div>
-                </td>
-                <td>${escHtml(e.email)}</td>
-                <td><span class="role-badge">${escHtml(roleLabel(e.role))}</span></td>
-                <td>${escHtml(e.position || '—')}</td>
+                <td><div class="emp-name">${esc(e.first_name)} ${esc(e.last_name)}</div></td>
+                <td>${esc(e.email)}</td>
+                <td><span class="role-badge">${esc(roleLabel(e.role))}</span></td>
+                <td>${esc(e.position || '—')}</td>
                 <td><span class="status-badge status-${e.status || 'active'}">${statusLabel(e.status || 'active')}</span></td>
                 <td>${formatDate(e.hire_date)}</td>
                 <td>
                     <div class="actions-cell">
                         <button class="btn-icon edit" title="Редактировать" onclick="openEdit('${e.id}')">✏️</button>
-                        <button class="btn-icon delete" title="Удалить" onclick="openDelete('${e.id}', '${escHtml(e.first_name)} ${escHtml(e.last_name)}')">🗑</button>
+                        <button class="btn-icon delete" title="Удалить" onclick="openDelete('${e.id}', '${esc(e.first_name)} ${esc(e.last_name)}')">🗑</button>
                     </div>
                 </td>
             </tr>
         `).join('');
     }
-
     renderPagination(totalPages);
 }
 
@@ -115,26 +95,26 @@ function renderPagination(totalPages) {
     const el = document.getElementById('pagination');
     if (totalPages <= 1) { el.innerHTML = ''; return; }
     let html = '';
-    html += `<button class="page-btn" onclick="goPage(${currentPage-1})" ${currentPage===1?'disabled':''}>‹</button>`;
+    html += `<button class="page-btn" onclick="goPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>‹</button>`;
     for (let i = 1; i <= totalPages; i++) {
         if (totalPages > 7 && Math.abs(i - currentPage) > 2 && i !== 1 && i !== totalPages) {
             if (i === 2 || i === totalPages - 1) html += `<span style="padding:0 4px;color:#aaa">…</span>`;
             continue;
         }
-        html += `<button class="page-btn ${i===currentPage?'active':''}" onclick="goPage(${i})">${i}</button>`;
+        html += `<button class="page-btn ${i === currentPage ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
     }
-    html += `<button class="page-btn" onclick="goPage(${currentPage+1})" ${currentPage===totalPages?'disabled':''}>›</button>`;
+    html += `<button class="page-btn" onclick="goPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>›</button>`;
     el.innerHTML = html;
 }
 
-window.goPage = function(p) { currentPage = p; renderTable(); };
+window.goPage = p => { currentPage = p; renderTable(); };
 
 // --- LOAD ---
 async function loadEmployees() {
     document.getElementById('employeesTbody').innerHTML =
         '<tr><td colspan="7" class="loading-cell">Загрузка...</td></tr>';
     try {
-        const r = await fetch(`${API}/employees`, { headers: authHeaders() });
+        const r = await fetch(`${API}/employees`, { credentials: 'include' });
         if (r.status === 401) { redirect(); return; }
         if (!r.ok) throw new Error(await r.text());
         const data = await r.json();
@@ -142,7 +122,7 @@ async function loadEmployees() {
         applyFilters();
     } catch (err) {
         document.getElementById('employeesTbody').innerHTML =
-            `<tr><td colspan="7" class="empty-cell">Ошибка загрузки: ${escHtml(err.message)}</td></tr>`;
+            `<tr><td colspan="7" class="empty-cell">Ошибка загрузки: ${esc(err.message)}</td></tr>`;
     }
 }
 
@@ -170,7 +150,7 @@ window.openEdit = function(id) {
     document.getElementById('frole').value = e.role || '';
     document.getElementById('fposition').value = e.position || '';
     document.getElementById('fstatus').value = e.status || 'active';
-    document.getElementById('fhire_date').value = e.hire_date ? e.hire_date.slice(0,10) : '';
+    document.getElementById('fhire_date').value = e.hire_date ? e.hire_date.slice(0, 10) : '';
     document.getElementById('fpassword').value = '';
     document.getElementById('fpassword').required = false;
     document.querySelector('#passwordGroup small').style.display = 'block';
@@ -217,20 +197,14 @@ async function saveEmployee(e) {
     if (pw) body.password = pw;
 
     try {
-        let r;
-        if (editingId) {
-            r = await fetch(`${API}/employees/${editingId}`, {
-                method: 'PUT',
-                headers: authHeaders(),
-                body: JSON.stringify(body),
-            });
-        } else {
-            r = await fetch(`${API}/employees`, {
-                method: 'POST',
-                headers: authHeaders(),
-                body: JSON.stringify(body),
-            });
-        }
+        const url = editingId ? `${API}/employees/${editingId}` : `${API}/employees`;
+        const method = editingId ? 'PUT' : 'POST';
+        const r = await fetch(url, {
+            method,
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(body),
+        });
         if (r.status === 401) { redirect(); return; }
         if (!r.ok) {
             const err = await r.json().catch(() => ({ message: r.statusText }));
@@ -256,7 +230,7 @@ async function confirmDelete() {
     try {
         const r = await fetch(`${API}/employees/${deleteTargetId}`, {
             method: 'DELETE',
-            headers: authHeaders(),
+            credentials: 'include',
         });
         if (r.status === 401) { redirect(); return; }
         if (!r.ok) throw new Error((await r.json().catch(() => ({}))).message || r.statusText);
@@ -272,14 +246,13 @@ async function confirmDelete() {
 }
 
 // --- LOGOUT ---
-function logout() {
-    sessionStorage.removeItem('adminToken');
-    document.cookie = 'token=; Max-Age=0; path=/';
-    window.location.href = '/frontend/login/login.html';
+async function logout() {
+    await fetch(`${API}/logout`, { method: 'POST', credentials: 'include' });
+    window.location.href = '/frontend/admin/login.html';
 }
 
-// --- ESCAPE HTML ---
-function escHtml(s) {
+// --- ESC HTML ---
+function esc(s) {
     if (!s) return '';
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
@@ -303,15 +276,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('searchInput').addEventListener('input', applyFilters);
     document.getElementById('roleFilter').addEventListener('change', applyFilters);
 
-    // Закрыть модалку по клику на оверлей
     document.getElementById('modalOverlay').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeModal();
     });
     document.getElementById('deleteOverlay').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeDelete();
     });
-
-    // Закрыть по Escape
     document.addEventListener('keydown', e => {
         if (e.key === 'Escape') { closeModal(); closeDelete(); }
     });

@@ -73,47 +73,38 @@ export const logoutAdmin = (req, res) => {
   return res.json({ success: true, message: 'Выход выполнен' });
 };
 
+// --- Проверка токена ---
+
+export const getMe = (req, res) => {
+  return res.json({ success: true, sub: req.admin?.sub || 'admin' });
+};
+
 // --- Управление сотрудниками ---
 
 export const createEmployee = async (req, res) => {
-  const { username, email, password } = req.body;
+  const { first_name, last_name, email, password, role, position, status, hire_date } = req.body;
 
-  if (!username || !email || !password) {
-    return res.status(400).json({ message: 'Заполните все поля: username, email, password' });
+  if (!first_name || !last_name || !email || !password || !role) {
+    return res.status(400).json({ message: 'Заполните обязательные поля: имя, фамилия, email, пароль, роль' });
   }
 
   try {
-    const [usernameExists] = await query(
-      'SELECT id FROM users WHERE username = ?',
-      [username]
-    );
-    if (usernameExists?.id) {
-      return res.status(400).json({ message: 'Имя пользователя уже занято' });
-    }
-
-    const [emailExists] = await query(
-      'SELECT id FROM users WHERE email = ?',
-      [email]
-    );
+    const [emailExists] = await query('SELECT id FROM employees WHERE email = ?', [email]);
     if (emailExists?.id) {
       return res.status(400).json({ message: 'Email уже используется' });
     }
 
     const passwordHash = await hash(password, 10);
-    const userId = uuidv4();
+    const employeeId = uuidv4();
 
     await query(
-      'INSERT INTO users (id, username, email, password_hash, confirmed) VALUES (?, ?, ?, ?, ?)',
-      [userId, username, email, passwordHash, true]
+      `INSERT INTO employees (id, first_name, last_name, email, password_hash, role, position, status, hire_date)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [employeeId, first_name, last_name, email, passwordHash, role, position || null, status || 'active', hire_date || null]
     );
 
-    console.log(`[admin] создан сотрудник: ${username} <${email}> id=${userId}`);
-
-    return res.status(201).json({
-      success: true,
-      message: `Сотрудник ${username} создан`,
-      userId
-    });
+    console.log(`[admin] создан сотрудник: ${first_name} ${last_name} <${email}> id=${employeeId}`);
+    return res.status(201).json({ success: true, message: 'Сотрудник создан', id: employeeId });
   } catch (error) {
     console.error('[admin] ошибка создания сотрудника:', error);
     return res.status(500).json({ message: 'Ошибка сервера' });
@@ -123,12 +114,57 @@ export const createEmployee = async (req, res) => {
 export const listEmployees = async (req, res) => {
   try {
     const employees = await query(
-      'SELECT id, username, email, confirmed, created_at FROM users ORDER BY created_at DESC',
+      'SELECT id, first_name, last_name, email, role, position, status, hire_date, created_at FROM employees ORDER BY created_at DESC',
       []
     );
-    return res.json({ success: true, employees });
+    return res.json(employees);
   } catch (error) {
     console.error('[admin] ошибка получения списка сотрудников:', error);
+    return res.status(500).json({ message: 'Ошибка сервера' });
+  }
+};
+
+export const updateEmployee = async (req, res) => {
+  const { id } = req.params;
+  const { first_name, last_name, email, password, role, position, status, hire_date } = req.body;
+
+  if (!id) return res.status(400).json({ message: 'ID обязателен' });
+
+  try {
+    const [existing] = await query('SELECT id FROM employees WHERE id = ?', [id]);
+    if (!existing) return res.status(404).json({ message: 'Сотрудник не найден' });
+
+    if (email) {
+      const [emailExists] = await query('SELECT id FROM employees WHERE email = ? AND id != ?', [email, id]);
+      if (emailExists?.id) return res.status(400).json({ message: 'Email уже используется' });
+    }
+
+    const fields = [];
+    const values = [];
+
+    if (first_name !== undefined) { fields.push('first_name = ?'); values.push(first_name); }
+    if (last_name  !== undefined) { fields.push('last_name = ?');  values.push(last_name); }
+    if (email      !== undefined) { fields.push('email = ?');      values.push(email); }
+    if (role       !== undefined) { fields.push('role = ?');       values.push(role); }
+    if (position   !== undefined) { fields.push('position = ?');   values.push(position); }
+    if (status     !== undefined) { fields.push('status = ?');     values.push(status); }
+    if (hire_date  !== undefined) { fields.push('hire_date = ?');  values.push(hire_date || null); }
+
+    if (password) {
+      const passwordHash = await hash(password, 10);
+      fields.push('password_hash = ?');
+      values.push(passwordHash);
+    }
+
+    if (fields.length === 0) return res.status(400).json({ message: 'Нет полей для обновления' });
+
+    values.push(id);
+    await query(`UPDATE employees SET ${fields.join(', ')} WHERE id = ?`, values);
+
+    console.log(`[admin] обновлён сотрудник id=${id}`);
+    return res.json({ success: true, message: 'Сотрудник обновлён' });
+  } catch (error) {
+    console.error('[admin] ошибка обновления сотрудника:', error);
     return res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
@@ -136,24 +172,20 @@ export const listEmployees = async (req, res) => {
 export const deleteEmployee = async (req, res) => {
   const { id } = req.params;
 
-  if (!id) {
-    return res.status(400).json({ message: 'ID сотрудника обязателен' });
-  }
+  if (!id) return res.status(400).json({ message: 'ID сотрудника обязателен' });
 
   try {
-    const [user] = await query('SELECT id, username FROM users WHERE id = ?', [id]);
-    if (!user) {
-      return res.status(404).json({ message: 'Пользователь не найден' });
-    }
+    const [employee] = await query('SELECT id, first_name, last_name FROM employees WHERE id = ?', [id]);
+    if (!employee) return res.status(404).json({ message: 'Сотрудник не найден' });
 
-    await query('DELETE FROM users WHERE id = ?', [id]);
+    await query('DELETE FROM employees WHERE id = ?', [id]);
 
-    console.log(`[admin] удалён пользователь: ${user.username} id=${id}`);
-    return res.json({ success: true, message: `Пользователь ${user.username} удалён` });
+    console.log(`[admin] удалён сотрудник: ${employee.first_name} ${employee.last_name} id=${id}`);
+    return res.json({ success: true, message: 'Сотрудник удалён' });
   } catch (error) {
-    console.error('[admin] ошибка удаления пользователя:', error);
+    console.error('[admin] ошибка удаления сотрудника:', error);
     return res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
 
-export default { loginAdmin, logoutAdmin, createEmployee, listEmployees, deleteEmployee };
+export default { loginAdmin, logoutAdmin, getMe, createEmployee, listEmployees, updateEmployee, deleteEmployee };

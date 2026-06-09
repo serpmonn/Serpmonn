@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Вход — Админ панель</title>
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: #f5f6fa;
+            font-family: Arial, sans-serif;
+        }
+        .login-box {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+            padding: 40px 36px;
+            width: 100%;
+            max-width: 380px;
+        }
+        .login-box h1 {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin: 0 0 6px;
+        }
+        .login-box p {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin: 0 0 28px;
+        }
+        label {
+            display: block;
+            font-size: 0.88rem;
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+        input[type=password] {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            box-sizing: border-box;
+            transition: border-color 0.18s;
+        }
+        input[type=password]:focus {
+            border-color: #007bff;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(0,123,255,0.12);
+        }
+        button[type=submit] {
+            width: 100%;
+            padding: 11px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.18s;
+            margin-bottom: 0;
+        }
+        button[type=submit]:hover { background: #0056b3; }
+        button[type=submit]:disabled { opacity: 0.6; cursor: default; }
+        #msg {
+            margin-top: 14px;
+            font-size: 0.9rem;
+            text-align: center;
+            min-height: 20px;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        .back-link a { color: #007bff; }
+    </style>
+</head>
+<body>
+<div class="login-box">
+    <h1>🐍 Админ панель</h1>
+    <p>Введите пароль администратора</p>
+    <form id="loginForm">
+        <label for="password">Пароль</label>
+        <input type="password" id="password" autocomplete="current-password" required autofocus>
+        <button type="submit" id="submitBtn">Войти</button>
+    </form>
+    <div id="msg"></div>
+    <div class="back-link"><a href="/frontend/main.html">← На сайт</a></div>
+</div>
+<script>
+document.getElementById('loginForm').addEventListener('submit', async e => {
+    e.preventDefault();
+    const btn = document.getElementById('submitBtn');
+    const msg = document.getElementById('msg');
+    const password = document.getElementById('password').value;
+    btn.disabled = true;
+    btn.textContent = 'Вход...';
+    msg.style.color = '#6c757d';
+    msg.textContent = '';
+    try {
+        const r = await fetch('/api/admin/login', {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password }),
+        });
+        const data = await r.json().catch(() => ({}));
+        if (r.ok) {
+            msg.style.color = 'green';
+            msg.textContent = 'Выполняется вход...';
+            setTimeout(() => {
+                const next = new URLSearchParams(window.location.search).get('next');
+                window.location.href = next || '/frontend/admin/index.html';
+            }, 600);
+        } else {
+            msg.style.color = 'red';
+            msg.textContent = data.message || 'Неверный пароль';
+            btn.disabled = false;
+            btn.textContent = 'Войти';
+        }
+    } catch {
+        msg.style.color = 'red';
+        msg.textContent = 'Ошибка соединения с сервером';
+        btn.disabled = false;
+        btn.textContent = 'Войти';
+    }
+});
+</script>
+</body>
+</html>
