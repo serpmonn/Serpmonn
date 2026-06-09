@@ -1,6 +1,3 @@
-// === ADMIN PANEL — EMPLOYEE MANAGEMENT ===
-// Токен хранится в httpOnly cookie admin_token — все запросы идут с credentials: 'include'
-
 const API = '/api/admin';
 const PER_PAGE = 15;
 
@@ -10,7 +7,6 @@ let currentPage = 1;
 let editingId = null;
 let deleteTargetId = null;
 
-// --- AUTH ---
 async function checkAuth() {
     try {
         const r = await fetch(`${API}/me`, { credentials: 'include' });
@@ -22,7 +18,6 @@ function redirect() {
     window.location.href = '/frontend/admin/login.html';
 }
 
-// --- UI HELPERS ---
 function showAlert(msg, type = 'success') {
     const box = document.getElementById('alertBox');
     box.textContent = msg;
@@ -54,17 +49,10 @@ function formatDate(d) {
     try { return new Date(d).toLocaleDateString('ru-RU'); } catch { return d; }
 }
 
-// --- TRANSLITERATE для автозаполнения логина почты ---
 function transliterate(str) {
     const map = {
-        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z',
-        'и':'i','й':'j','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r',
-        'с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'sch',
-        'ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',
-        'А':'A','Б':'B','В':'V','Г':'G','Д':'D','Е':'E','Ё':'E','Ж':'Zh','З':'Z',
-        'И':'I','Й':'J','К':'K','Л':'L','М':'M','Н':'N','О':'O','П':'P','Р':'R',
-        'С':'S','Т':'T','У':'U','Ф':'F','Х':'Kh','Ц':'Ts','Ч':'Ch','Ш':'Sh','Щ':'Sch',
-        'Ъ':'','Ы':'Y','Ь':'','Э':'E','Ю':'Yu','Я':'Ya'
+        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z','и':'i','й':'j','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'sch','ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',
+        'А':'A','Б':'B','В':'V','Г':'G','Д':'D','Е':'E','Ё':'E','Ж':'Zh','З':'Z','И':'I','Й':'J','К':'K','Л':'L','М':'M','Н':'N','О':'O','П':'P','Р':'R','С':'S','Т':'T','У':'U','Ф':'F','Х':'Kh','Ц':'Ts','Ч':'Ch','Ш':'Sh','Щ':'Sch','Ъ':'','Ы':'Y','Ь':'','Э':'E','Ю':'Yu','Я':'Ya'
     };
     return str.split('').map(c => map[c] !== undefined ? map[c] : c).join('');
 }
@@ -79,13 +67,11 @@ function autoFillMailLocal() {
     else if (first) mailLocalInput.value = first;
 }
 
-// --- FILTERS & RENDER ---
 function applyFilters() {
     const q = document.getElementById('searchInput').value.toLowerCase();
     const role = document.getElementById('roleFilter').value;
     filtered = allEmployees.filter(e => {
-        const matchQ = !q || [e.first_name, e.last_name, e.email, e.position, e.role]
-            .some(f => f && f.toLowerCase().includes(q));
+        const matchQ = !q || [e.first_name, e.last_name, e.email, e.mailbox, e.position, e.role].some(f => f && String(f).toLowerCase().includes(q));
         const matchRole = !role || e.role === role;
         return matchQ && matchRole;
     });
@@ -102,12 +88,13 @@ function renderTable() {
     const page = filtered.slice(start, start + PER_PAGE);
 
     if (page.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="7" class="empty-cell">Сотрудники не найдены</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="8" class="empty-cell">Сотрудники не найдены</td></tr>`;
     } else {
         tbody.innerHTML = page.map(e => `
             <tr>
                 <td><div class="emp-name">${esc(e.first_name)} ${esc(e.last_name)}</div></td>
                 <td>${esc(e.email)}</td>
+                <td>${esc(e.mailbox || '—')}</td>
                 <td><span class="role-badge">${esc(roleLabel(e.role))}</span></td>
                 <td>${esc(e.position || '—')}</td>
                 <td><span class="status-badge status-${e.status || 'active'}">${statusLabel(e.status || 'active')}</span></td>
@@ -115,7 +102,7 @@ function renderTable() {
                 <td>
                     <div class="actions-cell">
                         <button class="btn-icon edit" title="Редактировать" onclick="openEdit('${e.id}')">✏️</button>
-                        <button class="btn-icon delete" title="Удалить" onclick="openDelete('${e.id}', '${esc(e.first_name)} ${esc(e.last_name)}')">🗑</button>
+                        <button class="btn-icon delete" title="Удалить" onclick="openDelete('${e.id}')">🗑</button>
                     </div>
                 </td>
             </tr>
@@ -142,10 +129,8 @@ function renderPagination(totalPages) {
 
 window.goPage = p => { currentPage = p; renderTable(); };
 
-// --- LOAD ---
 async function loadEmployees() {
-    document.getElementById('employeesTbody').innerHTML =
-        '<tr><td colspan="7" class="loading-cell">Загрузка...</td></tr>';
+    document.getElementById('employeesTbody').innerHTML = '<tr><td colspan="8" class="loading-cell">Загрузка...</td></tr>';
     try {
         const r = await fetch(`${API}/employees`, { credentials: 'include' });
         if (r.status === 401) { redirect(); return; }
@@ -154,12 +139,10 @@ async function loadEmployees() {
         allEmployees = Array.isArray(data) ? data : (data.employees || []);
         applyFilters();
     } catch (err) {
-        document.getElementById('employeesTbody').innerHTML =
-            `<tr><td colspan="7" class="empty-cell">Ошибка загрузки: ${esc(err.message)}</td></tr>`;
+        document.getElementById('employeesTbody').innerHTML = `<tr><td colspan="8" class="empty-cell">Ошибка загрузки: ${esc(err.message)}</td></tr>`;
     }
 }
 
-// --- MODAL: CREATE / EDIT ---
 function openCreate() {
     editingId = null;
     document.getElementById('modalTitle').textContent = 'Добавить сотрудника';
@@ -203,12 +186,13 @@ function closeModal() {
     editingId = null;
 }
 
-// --- MODAL: DELETE ---
-window.openDelete = function(id, name) {
+window.openDelete = function(id) {
+    const e = allEmployees.find(x => String(x.id) === String(id));
+    if (!e) return;
     deleteTargetId = id;
-    document.getElementById('deleteConfirmText').textContent =
-        `Удалить сотрудника «${name}»? Это действие необратимо.`;
+    document.getElementById('deleteConfirmText').textContent = `Удалить сотрудника «${e.first_name} ${e.last_name}»? Это действие необратимо.`;
     document.getElementById('deleteMailboxCheck').checked = false;
+    document.getElementById('deleteMailboxInfo').textContent = e.mailbox ? `Будет удалён: ${e.mailbox}` : 'У сотрудника нет сохранённого корпоративного ящика';
     document.getElementById('deleteOverlay').classList.add('open');
 };
 
@@ -217,29 +201,30 @@ function closeDelete() {
     deleteTargetId = null;
 }
 
-// --- SAVE ---
 async function saveEmployee(e) {
     e.preventDefault();
     const btn = document.getElementById('submitBtn');
     btn.disabled = true;
     btn.textContent = 'Сохранение...';
 
+    const needMailbox = !editingId && document.getElementById('createMailbox')?.checked;
+    const mailLocal = document.getElementById('fmailLocal')?.value.trim();
+    const mailPass = document.getElementById('fmailPassword')?.value;
+    const mailbox = needMailbox && mailLocal ? `${mailLocal}@serpmonn.ru` : null;
+
     const body = {
         first_name: document.getElementById('fname').value.trim(),
-        last_name:  document.getElementById('lname').value.trim(),
-        email:      document.getElementById('femail').value.trim(),
-        role:       document.getElementById('frole').value,
-        position:   document.getElementById('fposition').value.trim(),
-        status:     document.getElementById('fstatus').value,
-        hire_date:  document.getElementById('fhire_date').value || null,
+        last_name: document.getElementById('lname').value.trim(),
+        email: document.getElementById('femail').value.trim(),
+        role: document.getElementById('frole').value,
+        position: document.getElementById('fposition').value.trim(),
+        status: document.getElementById('fstatus').value,
+        hire_date: document.getElementById('fhire_date').value || null,
+        mailbox
     };
 
     const pw = document.getElementById('fpassword').value;
     if (pw) body.password = pw;
-
-    const needMailbox = !editingId && document.getElementById('createMailbox')?.checked;
-    const mailLocal   = document.getElementById('fmailLocal')?.value.trim();
-    const mailPass    = document.getElementById('fmailPassword')?.value;
 
     if (needMailbox) {
         if (!mailLocal) {
@@ -279,19 +264,18 @@ async function saveEmployee(e) {
             });
             if (!mr.ok) {
                 const merr = await mr.json().catch(() => ({ message: mr.statusText }));
-                closeModal();
                 showAlert(`Сотрудник создан, но ящик не создан: ${merr.message}`, 'error');
+                closeModal();
                 await loadEmployees();
                 return;
             }
             const mdata = await mr.json();
-            closeModal();
             showAlert(`Сотрудник добавлен. Ящик ${mdata.email} создан ✓`, 'success');
         } else {
-            closeModal();
             showAlert(editingId ? 'Сотрудник обновлён' : 'Сотрудник добавлен', 'success');
         }
 
+        closeModal();
         await loadEmployees();
     } catch (err) {
         showAlert('Ошибка: ' + err.message, 'error');
@@ -301,7 +285,6 @@ async function saveEmployee(e) {
     }
 }
 
-// --- DELETE ---
 async function confirmDelete() {
     if (!deleteTargetId) return;
     const btn = document.getElementById('deleteConfirmBtn');
@@ -319,20 +302,14 @@ async function confirmDelete() {
         });
         if (r.status === 401) { redirect(); return; }
         if (!r.ok) throw new Error((await r.json().catch(() => ({}))).message || r.statusText);
-
         const data = await r.json();
         closeDelete();
-
         if (deleteMailbox) {
-            if (data.mailboxDeleted) {
-                showAlert('Сотрудник и почтовый ящик удалены ✓', 'success');
-            } else {
-                showAlert(`Сотрудник удалён. Ящик: ${data.mailboxError || 'не найден'}`, 'error');
-            }
+            if (data.mailboxDeleted) showAlert('Сотрудник и почтовый ящик удалены ✓', 'success');
+            else showAlert(`Сотрудник удалён. Почта: ${data.mailboxError || 'не удалена'}`, 'error');
         } else {
             showAlert('Сотрудник удалён', 'success');
         }
-
         await loadEmployees();
     } catch (err) {
         showAlert('Ошибка: ' + err.message, 'error');
@@ -342,19 +319,16 @@ async function confirmDelete() {
     }
 }
 
-// --- LOGOUT ---
 async function logout() {
     await fetch(`${API}/logout`, { method: 'POST', credentials: 'include' });
     window.location.href = '/frontend/admin/login.html';
 }
 
-// --- ESC HTML ---
 function esc(s) {
     if (!s) return '';
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
-// --- INIT ---
 document.addEventListener('DOMContentLoaded', async () => {
     await checkAuth();
     await loadEmployees();
@@ -369,7 +343,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('deleteCancelX').addEventListener('click', closeDelete);
 
     document.getElementById('logoutBtn').addEventListener('click', logout);
-
     document.getElementById('searchInput').addEventListener('input', applyFilters);
     document.getElementById('roleFilter').addEventListener('change', applyFilters);
 
@@ -384,18 +357,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     document.getElementById('fname').addEventListener('input', autoFillMailLocal);
     document.getElementById('lname').addEventListener('input', autoFillMailLocal);
+    document.getElementById('fmailLocal').addEventListener('input', function() { this.dataset.manualEdit = 'true'; });
 
-    document.getElementById('fmailLocal').addEventListener('input', function() {
-        this.dataset.manualEdit = 'true';
-    });
-
-    document.getElementById('modalOverlay').addEventListener('click', e => {
-        if (e.target === e.currentTarget) closeModal();
-    });
-    document.getElementById('deleteOverlay').addEventListener('click', e => {
-        if (e.target === e.currentTarget) closeDelete();
-    });
-    document.addEventListener('keydown', e => {
-        if (e.key === 'Escape') { closeModal(); closeDelete(); }
-    });
+    document.getElementById('modalOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+    document.getElementById('deleteOverlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeDelete(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeDelete(); } });
 });

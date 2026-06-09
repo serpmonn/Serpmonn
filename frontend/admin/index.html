@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="/frontend/admin/admin_styles.css">
 </head>
 <body>
-
 <header class="admin-header">
     <div class="admin-header-inner">
         <div class="admin-logo">
@@ -23,10 +22,8 @@
         <button class="btn btn-outline btn-sm" id="logoutBtn">Выйти</button>
     </div>
 </header>
-
 <main class="admin-main">
     <div class="admin-container">
-
         <div class="section-header">
             <div>
                 <h1>Сотрудники</h1>
@@ -34,9 +31,7 @@
             </div>
             <button class="btn btn-primary" id="addEmployeeBtn">+ Добавить сотрудника</button>
         </div>
-
         <div id="alertBox" class="alert" style="display:none"></div>
-
         <div class="toolbar">
             <input type="search" id="searchInput" placeholder="Поиск по имени, email, должности..." class="search-input">
             <select id="roleFilter" class="filter-select">
@@ -50,13 +45,13 @@
                 <option value="tester">Тестировщик</option>
             </select>
         </div>
-
         <div class="table-wrapper">
             <table class="employees-table">
                 <thead>
                     <tr>
                         <th>Имя</th>
                         <th>Email</th>
+                        <th>Почта @serpmonn.ru</th>
                         <th>Роль</th>
                         <th>Должность</th>
                         <th>Статус</th>
@@ -65,16 +60,13 @@
                     </tr>
                 </thead>
                 <tbody id="employeesTbody">
-                    <tr><td colspan="7" class="loading-cell">Загрузка...</td></tr>
+                    <tr><td colspan="8" class="loading-cell">Загрузка...</td></tr>
                 </tbody>
             </table>
         </div>
         <div class="pagination" id="pagination"></div>
-
     </div>
 </main>
-
-<!-- Modal: Create / Edit -->
 <div class="modal-overlay" id="modalOverlay">
     <div class="modal">
         <div class="modal-header">
@@ -136,8 +128,6 @@
                         <input type="date" id="fhire_date">
                     </div>
                 </div>
-
-                <!-- Блок почтового ящика — только при создании -->
                 <div class="form-group mailbox-section" id="mailboxSection" style="display:none;border-top:1px solid #e5e7eb;padding-top:16px;margin-top:4px">
                     <label class="checkbox-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:500">
                         <input type="checkbox" id="createMailbox" style="width:16px;height:16px;cursor:pointer">
@@ -147,10 +137,7 @@
                         <div class="form-group" style="margin-bottom:12px">
                             <label for="fmailLocal">Логин почты *</label>
                             <div style="display:flex;align-items:center;gap:0">
-                                <input type="text" id="fmailLocal" placeholder="ivan.ivanov"
-                                    style="border-radius:6px 0 0 6px;flex:1"
-                                    pattern="[a-zA-Z0-9._%+\-]+"
-                                    title="Только латинские буквы, цифры и символы ._%+-">
+                                <input type="text" id="fmailLocal" placeholder="ivan.ivanov" style="border-radius:6px 0 0 6px;flex:1" pattern="[a-zA-Z0-9._%+\-]+" title="Только латинские буквы, цифры и символы ._%+-">
                                 <span style="background:#f3f4f6;border:1px solid #d1d5db;border-left:none;padding:8px 12px;border-radius:0 6px 6px 0;color:#6b7280;font-size:14px;white-space:nowrap">@serpmonn.ru</span>
                             </div>
                             <small class="hint">Только латинские буквы, цифры и ._%+-</small>
@@ -162,7 +149,6 @@
                         </div>
                     </div>
                 </div>
-
                 <div class="modal-actions">
                     <button type="button" class="btn btn-outline" id="cancelBtn">Отмена</button>
                     <button type="submit" class="btn btn-primary" id="submitBtn">Сохранить</button>
@@ -171,8 +157,6 @@
         </div>
     </div>
 </div>
-
-<!-- Modal: Delete -->
 <div class="modal-overlay" id="deleteOverlay">
     <div class="modal modal-sm">
         <div class="modal-header">
@@ -181,9 +165,13 @@
         </div>
         <div class="modal-body">
             <p id="deleteConfirmText">Это действие необратимо.</p>
-            <label class="checkbox-label" style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-top:14px;font-size:14px">
-                <input type="checkbox" id="deleteMailboxCheck" style="width:16px;height:16px;cursor:pointer">
-                Также удалить почтовый ящик @serpmonn.ru
+            <label class="checkbox-label" style="display:flex;align-items:flex-start;gap:8px;cursor:pointer;margin-top:14px;font-size:14px">
+                <input type="checkbox" id="deleteMailboxCheck" style="width:16px;height:16px;cursor:pointer;margin-top:2px">
+                <span>
+                    Также удалить почтовый ящик @serpmonn.ru
+                    <br>
+                    <small id="deleteMailboxInfo" style="color:#6b7280"></small>
+                </span>
             </label>
             <div class="modal-actions" style="margin-top:20px">
                 <button type="button" class="btn btn-outline" id="deleteCancelBtn">Отмена</button>
@@ -192,7 +180,6 @@
         </div>
     </div>
 </div>
-
 <script src="/frontend/admin/admin_scripts.js"></script>
 </body>
 </html>

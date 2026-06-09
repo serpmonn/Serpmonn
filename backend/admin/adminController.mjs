@@ -19,8 +19,6 @@ import fs from 'fs';
 const { V4 } = paseto;
 const { hash, compare } = bcrypt;
 
-// --- Авторизация администратора ---
-
 export const loginAdmin = async (req, res) => {
   const { password } = req.body;
 
@@ -45,10 +43,7 @@ export const loginAdmin = async (req, res) => {
     const token = await V4.sign(
       { sub: 'admin' },
       privateKey,
-      {
-        audience: 'admin-panel',
-        expiresIn: '8h'
-      }
+      { audience: 'admin-panel', expiresIn: '8h' }
     );
 
     res.cookie('admin_token', token, {
@@ -76,16 +71,12 @@ export const logoutAdmin = (req, res) => {
   return res.json({ success: true, message: 'Выход выполнен' });
 };
 
-// --- Проверка токена ---
-
 export const getMe = (req, res) => {
   return res.json({ success: true, sub: req.admin?.sub || 'admin' });
 };
 
-// --- Управление сотрудниками ---
-
 export const createEmployee = async (req, res) => {
-  const { first_name, last_name, email, password, role, position, status, hire_date } = req.body;
+  const { first_name, last_name, email, password, role, position, status, hire_date, mailbox } = req.body;
 
   if (!first_name || !last_name || !email || !password || !role) {
     return res.status(400).json({ message: 'Заполните обязательные поля: имя, фамилия, email, пароль, роль' });
@@ -101,12 +92,12 @@ export const createEmployee = async (req, res) => {
     const employeeId = uuidv4();
 
     await query(
-      `INSERT INTO employees (id, first_name, last_name, email, password_hash, role, position, status, hire_date)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      [employeeId, first_name, last_name, email, passwordHash, role, position || null, status || 'active', hire_date || null]
+      `INSERT INTO employees (id, first_name, last_name, email, password_hash, role, position, status, hire_date, mailbox)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [employeeId, first_name, last_name, email, passwordHash, role, position || null, status || 'active', hire_date || null, mailbox || null]
     );
 
-    console.log(`[admin] создан сотрудник: ${first_name} ${last_name} <${email}> id=${employeeId}`);
+    console.log(`[admin] создан сотрудник: ${first_name} ${last_name} <${email}> id=${employeeId} mailbox=${mailbox || 'NULL'}`);
     return res.status(201).json({ success: true, message: 'Сотрудник создан', id: employeeId });
   } catch (error) {
     console.error('[admin] ошибка создания сотрудника:', error);
@@ -117,7 +108,7 @@ export const createEmployee = async (req, res) => {
 export const listEmployees = async (req, res) => {
   try {
     const employees = await query(
-      'SELECT id, first_name, last_name, email, role, position, status, hire_date, created_at FROM employees ORDER BY created_at DESC',
+      'SELECT id, first_name, last_name, email, mailbox, role, position, status, hire_date, created_at FROM employees ORDER BY created_at DESC',
       []
     );
     return res.json(employees);
@@ -129,7 +120,7 @@ export const listEmployees = async (req, res) => {
 
 export const updateEmployee = async (req, res) => {
   const { id } = req.params;
-  const { first_name, last_name, email, password, role, position, status, hire_date } = req.body;
+  const { first_name, last_name, email, password, role, position, status, hire_date, mailbox } = req.body;
 
   if (!id) return res.status(400).json({ message: 'ID обязателен' });
 
@@ -148,6 +139,7 @@ export const updateEmployee = async (req, res) => {
     if (first_name !== undefined) { fields.push('first_name = ?'); values.push(first_name); }
     if (last_name  !== undefined) { fields.push('last_name = ?');  values.push(last_name); }
     if (email      !== undefined) { fields.push('email = ?');      values.push(email); }
+    if (mailbox    !== undefined) { fields.push('mailbox = ?');    values.push(mailbox || null); }
     if (role       !== undefined) { fields.push('role = ?');       values.push(role); }
     if (position   !== undefined) { fields.push('position = ?');   values.push(position); }
     if (status     !== undefined) { fields.push('status = ?');     values.push(status); }
@@ -179,7 +171,7 @@ export const deleteEmployee = async (req, res) => {
   if (!id) return res.status(400).json({ message: 'ID сотрудника обязателен' });
 
   try {
-    const [employee] = await query('SELECT id, first_name, last_name, email FROM employees WHERE id = ?', [id]);
+    const [employee] = await query('SELECT id, first_name, last_name, email, mailbox FROM employees WHERE id = ?', [id]);
     if (!employee) return res.status(404).json({ message: 'Сотрудник не найден' });
 
     await query('DELETE FROM employees WHERE id = ?', [id]);
@@ -189,26 +181,22 @@ export const deleteEmployee = async (req, res) => {
     let mailboxError = null;
 
     if (deleteMailbox) {
-      // Только точное совпадение: email сотрудника должен быть @serpmonn.ru
-      // и существовать в mail-БД — никакого угадывания по имени/фамилии
-      if (!employee.email || !employee.email.endsWith('@serpmonn.ru')) {
-        mailboxError = 'Email сотрудника не относится к домену @serpmonn.ru';
+      if (!employee.mailbox) {
+        mailboxError = 'У сотрудника не сохранён корпоративный ящик';
+      } else if (!employee.mailbox.endsWith('@serpmonn.ru')) {
+        mailboxError = 'Корпоративный ящик должен относиться к домену @serpmonn.ru';
       } else {
-        const rows = await mailQuery('SELECT email FROM users WHERE email = ?', [employee.email]);
+        const rows = await mailQuery('SELECT email FROM users WHERE email = ?', [employee.mailbox]);
         if (rows.length === 0) {
-          mailboxError = `Почтовый ящик ${employee.email} не найден в mail-БД`;
+          mailboxError = `Почтовый ящик ${employee.mailbox} не найден в mail-БД`;
         } else {
           try {
-            const local = employee.email.split('@')[0];
-            await mailQuery('DELETE FROM users WHERE email = ?', [employee.email]);
-
+            const local = employee.mailbox.split('@')[0];
+            await mailQuery('DELETE FROM users WHERE email = ?', [employee.mailbox]);
             const mailDir = `/var/vmail/serpmonn.ru/${local}`;
-            if (fs.existsSync(mailDir)) {
-              execSync(`rm -rf ${mailDir}`);
-            }
-
+            if (fs.existsSync(mailDir)) execSync(`rm -rf ${mailDir}`);
             mailboxDeleted = true;
-            console.log(`[admin] удалён почтовый ящик: ${employee.email}`);
+            console.log(`[admin] удалён почтовый ящик: ${employee.mailbox}`);
           } catch (err) {
             mailboxError = err.message;
             console.error('[admin] ошибка удаления почтового ящика:', err);
@@ -228,8 +216,6 @@ export const deleteEmployee = async (req, res) => {
     return res.status(500).json({ message: 'Ошибка сервера' });
   }
 };
-
-// --- Почта @serpmonn.ru ---
 
 export const createStaffMailbox = async (req, res) => {
   const { localPart, password } = req.body;
@@ -277,7 +263,6 @@ export const createStaffMailbox = async (req, res) => {
 
     console.log(`[admin] создан почтовый ящик: ${fullEmail}`);
     return res.status(201).json({ success: true, email: fullEmail, message: 'Почтовый ящик создан' });
-
   } catch (error) {
     console.error('[admin] ошибка создания почтового ящика:', error);
     try { await mailQuery('DELETE FROM users WHERE email = ?', [fullEmail]); } catch (_) {}
@@ -287,10 +272,8 @@ export const createStaffMailbox = async (req, res) => {
 
 function generateDovecotHash(password) {
   try {
-    const salt = execSync('openssl rand -base64 12')
-      .toString().trim().replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
-    const hash = execSync(`openssl passwd -6 -salt ${salt} '${password}'`)
-      .toString().trim();
+    const salt = execSync('openssl rand -base64 12').toString().trim().replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
+    const hash = execSync(`openssl passwd -6 -salt ${salt} '${password}'`).toString().trim();
     return `{SHA512-CRYPT}${hash}`;
   } catch (error) {
     console.error('[admin] ошибка генерации хеша, используем PLAIN:', error);
