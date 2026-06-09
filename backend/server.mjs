@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';                                                                                                     // Импортируем dotenv для работы с переменными окружения
 import { resolve } from 'path';                                                                                                  // Импортируем resolve для создания абсолютных путей
-import adminRoutes from './admin/adminRoutes.mjs';
 
 const nodeEnv = process.env.NODE_ENV || 'development';                                                                           // Определяем текущее окружение: production, test или development
 const envPath = nodeEnv === 'production'
