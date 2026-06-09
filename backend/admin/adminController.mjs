@@ -26,10 +26,10 @@ export const loginAdmin = async (req, res) => {
   }
 
   const adminPassword = process.env.ADMIN_PASSWORD;
-  const secretKey = process.env.ADMIN_SECRET_KEY;
+  const privateKey = process.env.ADMIN_PRIVATE_KEY;
 
-  if (!adminPassword || !secretKey) {
-    console.error('[admin] ADMIN_PASSWORD или ADMIN_SECRET_KEY не заданы в .env');
+  if (!adminPassword || !privateKey) {
+    console.error('[admin] ADMIN_PASSWORD или ADMIN_PRIVATE_KEY не заданы в .env');
     return res.status(500).json({ message: 'Ошибка сервера: конфигурация отсутствует' });
   }
 
@@ -41,7 +41,7 @@ export const loginAdmin = async (req, res) => {
   try {
     const token = await V4.sign(
       { sub: 'admin' },
-      secretKey,
+      privateKey,
       {
         audience: 'admin-panel',
         expiresIn: '8h'

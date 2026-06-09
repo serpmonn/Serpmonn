@@ -19,14 +19,14 @@ const verifyAdmin = async (req, res, next) => {
     return res.status(401).json({ message: 'Требуется авторизация' });
   }
 
-  const secretKey = process.env.ADMIN_SECRET_KEY;
-  if (!secretKey) {
-    console.error('ADMIN_SECRET_KEY не задан в .env');
+  const publicKey = process.env.ADMIN_PUBLIC_KEY;
+  if (!publicKey) {
+    console.error('ADMIN_PUBLIC_KEY не задан в .env');
     return res.status(500).json({ message: 'Ошибка сервера: конфигурация отсутствует' });
   }
 
   try {
-    const payload = await V4.verify(token, secretKey, {
+    const payload = await V4.verify(token, publicKey, {
       audience: 'admin-panel'
     });
     req.admin = payload;
