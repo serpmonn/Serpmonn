@@ -2,7 +2,6 @@
 // Токен хранится в httpOnly cookie admin_token — все запросы идут с credentials: 'include'
 
 const API = '/api/admin';
-const MAIL_API = '/mail-api';
 const PER_PAGE = 15;
 
 let allEmployees = [];
@@ -53,6 +52,32 @@ function roleLabel(r) {
 function formatDate(d) {
     if (!d) return '—';
     try { return new Date(d).toLocaleDateString('ru-RU'); } catch { return d; }
+}
+
+// --- TRANSLITERATE для автозаполнения логина почты ---
+function transliterate(str) {
+    const map = {
+        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'e','ж':'zh','з':'z',
+        'и':'i','й':'j','к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r',
+        'с':'s','т':'t','у':'u','ф':'f','х':'kh','ц':'ts','ч':'ch','ш':'sh','щ':'sch',
+        'ъ':'','ы':'y','ь':'','э':'e','ю':'yu','я':'ya',
+        'А':'A','Б':'B','В':'V','Г':'G','Д':'D','Е':'E','Ё':'E','Ж':'Zh','З':'Z',
+        'И':'I','Й':'J','К':'K','Л':'L','М':'M','Н':'N','О':'O','П':'P','Р':'R',
+        'С':'S','Т':'T','У':'U','Ф':'F','Х':'Kh','Ц':'Ts','Ч':'Ch','Ш':'Sh','Щ':'Sch',
+        'Ъ':'','Ы':'Y','Ь':'','Э':'E','Ю':'Yu','Я':'Ya'
+    };
+    return str.split('').map(c => map[c] !== undefined ? map[c] : c).join('');
+}
+
+function autoFillMailLocal() {
+    const mailLocalInput = document.getElementById('fmailLocal');
+    if (!mailLocalInput || document.getElementById('createMailbox')?.checked === false) return;
+    // Не перезаписываем если пользователь уже вручную что-то набрал
+    if (mailLocalInput.dataset.manualEdit === 'true') return;
+    const first = transliterate(document.getElementById('fname').value.trim()).toLowerCase().replace(/[^a-z0-9]/g, '');
+    const last  = transliterate(document.getElementById('lname').value.trim()).toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (first && last) mailLocalInput.value = `${first}.${last}`;
+    else if (first) mailLocalInput.value = first;
 }
 
 // --- FILTERS & RENDER ---
@@ -144,17 +169,11 @@ function openCreate() {
     document.getElementById('fpassword').required = true;
     document.querySelector('#passwordGroup small').style.display = 'none';
 
-    // email: разблокируем, сбрасываем
-    document.getElementById('femail').value = '';
-    document.getElementById('femail').readOnly = false;
-    document.getElementById('femailHint').style.display = 'none';
-
-    // блок mailbox показываем только при создании
-    document.getElementById('mailboxBlock').style.display = 'block';
-    document.getElementById('fCreateMailbox').checked = false;
+    // Показываем блок почты, сбрасываем состояние
+    document.getElementById('mailboxSection').style.display = 'block';
+    document.getElementById('createMailbox').checked = false;
     document.getElementById('mailboxFields').style.display = 'none';
-    document.getElementById('fMailboxPassword').value = '';
-    document.getElementById('fMailboxPassword').required = false;
+    document.getElementById('fmailLocal').dataset.manualEdit = 'false';
 
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('fname').focus();
@@ -168,13 +187,7 @@ window.openEdit = function(id) {
     document.getElementById('employeeId').value = id;
     document.getElementById('fname').value = e.first_name || '';
     document.getElementById('lname').value = e.last_name || '';
-
-    // email при редактировании — показываем только локальную часть, блокируем
-    const emailLocal = (e.email || '').replace(/@serpmonn\.ru$/, '');
-    document.getElementById('femail').value = emailLocal;
-    document.getElementById('femail').readOnly = true;
-    document.getElementById('femailHint').style.display = 'block';
-
+    document.getElementById('femail').value = e.email || '';
     document.getElementById('frole').value = e.role || '';
     document.getElementById('fposition').value = e.position || '';
     document.getElementById('fstatus').value = e.status || 'active';
@@ -183,8 +196,10 @@ window.openEdit = function(id) {
     document.getElementById('fpassword').required = false;
     document.querySelector('#passwordGroup small').style.display = 'block';
 
-    // блок mailbox скрываем при редактировании
-    document.getElementById('mailboxBlock').style.display = 'none';
+    // При редактировании скрываем блок создания почты
+    document.getElementById('mailboxSection').style.display = 'none';
+    document.getElementById('createMailbox').checked = false;
+    document.getElementById('mailboxFields').style.display = 'none';
 
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('fname').focus();
@@ -215,13 +230,10 @@ async function saveEmployee(e) {
     btn.disabled = true;
     btn.textContent = 'Сохранение...';
 
-    const emailLocal = document.getElementById('femail').value.trim();
-    const fullEmail = emailLocal.includes('@') ? emailLocal : `${emailLocal}@serpmonn.ru`;
-
     const body = {
         first_name: document.getElementById('fname').value.trim(),
         last_name:  document.getElementById('lname').value.trim(),
-        email:      fullEmail,
+        email:      document.getElementById('femail').value.trim(),
         role:       document.getElementById('frole').value,
         position:   document.getElementById('fposition').value.trim(),
         status:     document.getElementById('fstatus').value,
@@ -231,18 +243,25 @@ async function saveEmployee(e) {
     const pw = document.getElementById('fpassword').value;
     if (pw) body.password = pw;
 
-    // Проверяем нужно ли создать mailbox
-    const createMailbox = !editingId && document.getElementById('fCreateMailbox').checked;
-    const mailboxPassword = document.getElementById('fMailboxPassword').value;
-    if (createMailbox && mailboxPassword.length < 8) {
-        showAlert('Пароль почтового ящика должен быть минимум 8 символов', 'error');
-        btn.disabled = false;
-        btn.textContent = 'Сохранить';
-        return;
+    // Проверяем нужно ли создать почтовый ящик
+    const needMailbox = !editingId && document.getElementById('createMailbox')?.checked;
+    const mailLocal   = document.getElementById('fmailLocal')?.value.trim();
+    const mailPass    = document.getElementById('fmailPassword')?.value;
+
+    if (needMailbox) {
+        if (!mailLocal) {
+            showAlert('Укажите логин почтового ящика', 'error');
+            btn.disabled = false; btn.textContent = 'Сохранить';
+            return;
+        }
+        if (!mailPass || mailPass.length < 8) {
+            showAlert('Пароль почты — минимум 8 символов', 'error');
+            btn.disabled = false; btn.textContent = 'Сохранить';
+            return;
+        }
     }
 
     try {
-        // 1. Сохраняем сотрудника
         const url = editingId ? `${API}/employees/${editingId}` : `${API}/employees`;
         const method = editingId ? 'PUT' : 'POST';
         const r = await fetch(url, {
@@ -257,32 +276,31 @@ async function saveEmployee(e) {
             throw new Error(err.message || r.statusText);
         }
 
-        // 2. Создаём почтовый ящик если нужно
-        if (createMailbox) {
+        // Создаём почтовый ящик если нужно
+        if (needMailbox) {
             btn.textContent = 'Создание ящика...';
-            const mr = await fetch(`${MAIL_API}/create-mailbox`, {
+            const mr = await fetch(`${API}/mailbox`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    email: fullEmail,
-                    password: mailboxPassword,
-                }),
+                body: JSON.stringify({ localPart: mailLocal, password: mailPass }),
             });
             if (!mr.ok) {
                 const merr = await mr.json().catch(() => ({ message: mr.statusText }));
-                // Сотрудник уже создан — предупреждаем, но не считаем критической ошибкой
-                showAlert(`Сотрудник добавлен, но ящик не создан: ${merr.message || mr.statusText}`, 'error');
-                await loadEmployees();
+                // Сотрудник создан, но ящик не создался — показываем предупреждение
                 closeModal();
+                showAlert(`Сотрудник создан, но ящик не создан: ${merr.message}`, 'error');
+                await loadEmployees();
                 return;
             }
-            showAlert(`Сотрудник добавлен, ящик ${fullEmail} создан ✓`, 'success');
+            const mdata = await mr.json();
+            closeModal();
+            showAlert(`Сотрудник добавлен. Ящик ${mdata.email} создан ✓`, 'success');
         } else {
+            closeModal();
             showAlert(editingId ? 'Сотрудник обновлён' : 'Сотрудник добавлен', 'success');
         }
 
-        closeModal();
         await loadEmployees();
     } catch (err) {
         showAlert('Ошибка: ' + err.message, 'error');
@@ -347,43 +365,25 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('searchInput').addEventListener('input', applyFilters);
     document.getElementById('roleFilter').addEventListener('change', applyFilters);
 
-    // Показываем/скрываем поля почтового ящика
-    document.getElementById('fCreateMailbox').addEventListener('change', function() {
+    // Чекбокс почтового ящика
+    document.getElementById('createMailbox').addEventListener('change', function() {
         const fields = document.getElementById('mailboxFields');
-        const pwInput = document.getElementById('fMailboxPassword');
+        fields.style.display = this.checked ? 'block' : 'none';
         if (this.checked) {
-            fields.style.display = 'block';
-            pwInput.required = true;
-        } else {
-            fields.style.display = 'none';
-            pwInput.required = false;
-            pwInput.value = '';
+            // Автозаполняем логин
+            document.getElementById('fmailLocal').dataset.manualEdit = 'false';
+            autoFillMailLocal();
         }
     });
 
-    // Авто-подстановка email из имени/фамилии
-    function autoFillEmail() {
-        if (editingId) return; // только при создании
-        const emailInput = document.getElementById('femail');
-        if (emailInput.value.trim()) return; // не перезаписываем если уже заполнено
-        const fname = document.getElementById('fname').value.trim().toLowerCase();
-        const lname = document.getElementById('lname').value.trim().toLowerCase();
-        if (fname && lname) {
-            // транслитерация простая
-            const tr = s => s.replace(/а/g,'a').replace(/б/g,'b').replace(/в/g,'v')
-                .replace(/г/g,'g').replace(/д/g,'d').replace(/е/g,'e').replace(/ё/g,'e')
-                .replace(/ж/g,'zh').replace(/з/g,'z').replace(/и/g,'i').replace(/й/g,'j')
-                .replace(/к/g,'k').replace(/л/g,'l').replace(/м/g,'m').replace(/н/g,'n')
-                .replace(/о/g,'o').replace(/п/g,'p').replace(/р/g,'r').replace(/с/g,'s')
-                .replace(/т/g,'t').replace(/у/g,'u').replace(/ф/g,'f').replace(/х/g,'h')
-                .replace(/ц/g,'ts').replace(/ч/g,'ch').replace(/ш/g,'sh').replace(/щ/g,'sch')
-                .replace(/ъ/g,'').replace(/ы/g,'y').replace(/ь/g,'').replace(/э/g,'e')
-                .replace(/ю/g,'yu').replace(/я/g,'ya').replace(/[^a-z0-9]/g,'');
-            emailInput.value = `${tr(fname)}.${tr(lname)}`;
-        }
-    }
-    document.getElementById('fname').addEventListener('blur', autoFillEmail);
-    document.getElementById('lname').addEventListener('blur', autoFillEmail);
+    // Автозаполнение логина почты при вводе имени/фамилии
+    document.getElementById('fname').addEventListener('input', autoFillMailLocal);
+    document.getElementById('lname').addEventListener('input', autoFillMailLocal);
+
+    // Если пользователь сам редактирует логин — не перезаписываем
+    document.getElementById('fmailLocal').addEventListener('input', function() {
+        this.dataset.manualEdit = 'true';
+    });
 
     document.getElementById('modalOverlay').addEventListener('click', e => {
         if (e.target === e.currentTarget) closeModal();
