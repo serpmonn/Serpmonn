@@ -72,7 +72,6 @@ function transliterate(str) {
 function autoFillMailLocal() {
     const mailLocalInput = document.getElementById('fmailLocal');
     if (!mailLocalInput || document.getElementById('createMailbox')?.checked === false) return;
-    // Не перезаписываем если пользователь уже вручную что-то набрал
     if (mailLocalInput.dataset.manualEdit === 'true') return;
     const first = transliterate(document.getElementById('fname').value.trim()).toLowerCase().replace(/[^a-z0-9]/g, '');
     const last  = transliterate(document.getElementById('lname').value.trim()).toLowerCase().replace(/[^a-z0-9]/g, '');
@@ -168,13 +167,10 @@ function openCreate() {
     document.getElementById('employeeId').value = '';
     document.getElementById('fpassword').required = true;
     document.querySelector('#passwordGroup small').style.display = 'none';
-
-    // Показываем блок почты, сбрасываем состояние
     document.getElementById('mailboxSection').style.display = 'block';
     document.getElementById('createMailbox').checked = false;
     document.getElementById('mailboxFields').style.display = 'none';
     document.getElementById('fmailLocal').dataset.manualEdit = 'false';
-
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('fname').focus();
 }
@@ -195,12 +191,9 @@ window.openEdit = function(id) {
     document.getElementById('fpassword').value = '';
     document.getElementById('fpassword').required = false;
     document.querySelector('#passwordGroup small').style.display = 'block';
-
-    // При редактировании скрываем блок создания почты
     document.getElementById('mailboxSection').style.display = 'none';
     document.getElementById('createMailbox').checked = false;
     document.getElementById('mailboxFields').style.display = 'none';
-
     document.getElementById('modalOverlay').classList.add('open');
     document.getElementById('fname').focus();
 };
@@ -215,6 +208,7 @@ window.openDelete = function(id, name) {
     deleteTargetId = id;
     document.getElementById('deleteConfirmText').textContent =
         `Удалить сотрудника «${name}»? Это действие необратимо.`;
+    document.getElementById('deleteMailboxCheck').checked = false;
     document.getElementById('deleteOverlay').classList.add('open');
 };
 
@@ -243,7 +237,6 @@ async function saveEmployee(e) {
     const pw = document.getElementById('fpassword').value;
     if (pw) body.password = pw;
 
-    // Проверяем нужно ли создать почтовый ящик
     const needMailbox = !editingId && document.getElementById('createMailbox')?.checked;
     const mailLocal   = document.getElementById('fmailLocal')?.value.trim();
     const mailPass    = document.getElementById('fmailPassword')?.value;
@@ -276,7 +269,6 @@ async function saveEmployee(e) {
             throw new Error(err.message || r.statusText);
         }
 
-        // Создаём почтовый ящик если нужно
         if (needMailbox) {
             btn.textContent = 'Создание ящика...';
             const mr = await fetch(`${API}/mailbox`, {
@@ -287,7 +279,6 @@ async function saveEmployee(e) {
             });
             if (!mr.ok) {
                 const merr = await mr.json().catch(() => ({ message: mr.statusText }));
-                // Сотрудник создан, но ящик не создался — показываем предупреждение
                 closeModal();
                 showAlert(`Сотрудник создан, но ящик не создан: ${merr.message}`, 'error');
                 await loadEmployees();
@@ -316,15 +307,32 @@ async function confirmDelete() {
     const btn = document.getElementById('deleteConfirmBtn');
     btn.disabled = true;
     btn.textContent = 'Удаление...';
+
+    const deleteMailbox = document.getElementById('deleteMailboxCheck').checked;
+
     try {
         const r = await fetch(`${API}/employees/${deleteTargetId}`, {
             method: 'DELETE',
             credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ deleteMailbox }),
         });
         if (r.status === 401) { redirect(); return; }
         if (!r.ok) throw new Error((await r.json().catch(() => ({}))).message || r.statusText);
+
+        const data = await r.json();
         closeDelete();
-        showAlert('Сотрудник удалён', 'success');
+
+        if (deleteMailbox) {
+            if (data.mailboxDeleted) {
+                showAlert('Сотрудник и почтовый ящик удалены ✓', 'success');
+            } else {
+                showAlert(`Сотрудник удалён. Ящик: ${data.mailboxError || 'не найден'}`, 'error');
+            }
+        } else {
+            showAlert('Сотрудник удалён', 'success');
+        }
+
         await loadEmployees();
     } catch (err) {
         showAlert('Ошибка: ' + err.message, 'error');
@@ -365,22 +373,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     document.getElementById('searchInput').addEventListener('input', applyFilters);
     document.getElementById('roleFilter').addEventListener('change', applyFilters);
 
-    // Чекбокс почтового ящика
     document.getElementById('createMailbox').addEventListener('change', function() {
         const fields = document.getElementById('mailboxFields');
         fields.style.display = this.checked ? 'block' : 'none';
         if (this.checked) {
-            // Автозаполняем логин
             document.getElementById('fmailLocal').dataset.manualEdit = 'false';
             autoFillMailLocal();
         }
     });
 
-    // Автозаполнение логина почты при вводе имени/фамилии
     document.getElementById('fname').addEventListener('input', autoFillMailLocal);
     document.getElementById('lname').addEventListener('input', autoFillMailLocal);
 
-    // Если пользователь сам редактирует логин — не перезаписываем
     document.getElementById('fmailLocal').addEventListener('input', function() {
         this.dataset.manualEdit = 'true';
     });
