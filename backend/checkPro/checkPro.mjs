@@ -1,10 +1,16 @@
 import dotenv from 'dotenv';
+import { resolve } from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import paseto from 'paseto';
 import { query as dbQuery } from '../database/config.mjs';
 
-dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
+const isProduction = process.env.NODE_ENV === 'production';
+const envPath = isProduction
+  ? '/var/www/serpmonn.ru/backend/.env'
+  : resolve(process.cwd(), 'backend/.env');
+
+dotenv.config({ path: envPath });
 
 const { V2 } = paseto;
 const secretKey = process.env.SECRET_KEY;
@@ -62,7 +68,7 @@ app.get('/auth/check-pro', async (req, res) => {                                
   }
 });
 
-const PORT = 7000;
+const PORT = process.env.CHECKPRO_PORT;                                                                                                                                                // Порт сервиса (только из .env)
 app.listen(PORT, () => {
   console.log(`check-pro service on port ${PORT}`);
 });
