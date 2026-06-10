@@ -28,6 +28,7 @@ import (
 	"flag"
 	"fmt"
 	"log"
+	"net"
 	"os"
 	"os/signal"
 	"syscall"
@@ -37,14 +38,17 @@ import (
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	libcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/host"
+	ma "github.com/multiformats/go-multiaddr"
 	"github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
 )
 
 func main() {
-	keyFile := flag.String("key", "/etc/serpmonn/relay-identity.key",
+	keyFile  := flag.String("key", "/etc/serpmonn/relay-identity.key",
 		"Path to Ed25519 private key file (base64-encoded)")
-	port := flag.Int("port", 4001, "TCP/UDP port to listen on")
+	port     := flag.Int("port", 4001, "TCP/UDP port to listen on")
+	announce := flag.String("announce", "",
+		"Public IP to announce (e.g. 188.235.13.20); leave empty if server has a direct public IP")
 	flag.Parse()
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
@@ -62,7 +66,8 @@ func main() {
 		log.Fatalf("relay: connmgr: %v", err)
 	}
 
-	h, err := libp2p.New(
+	// Опции libp2p — базовые.
+	opts := []libp2p.Option{
 		libp2p.Identity(priv),
 		// TCP + QUIC: оба транспорта на одном порту.
 		libp2p.ListenAddrStrings(
@@ -75,20 +80,35 @@ func main() {
 		libp2p.DefaultSecurity,
 		libp2p.DefaultMuxers,
 		libp2p.ConnectionManager(connMgr),
-		// Relay-сервер НЕ пытается делать hole punching —
-		// он сам публично доступен.
 		libp2p.DisableMetrics(),
-		// Сервер relay'а не нужен клиентом relay'а.
 		libp2p.ForceReachabilityPublic(),
-	)
+	}
+
+	// Если указан -announce — подменяем исходящие адреса публичным IP.
+	// Это нужно когда сервер за NAT (напр. MikroTik): libp2p слушает 0.0.0.0,
+	// но в DHT и клиентам объявляет внешний IP.
+	if *announce != "" {
+		if net.ParseIP(*announce) == nil {
+			log.Fatalf("relay: -announce: invalid IP address %q", *announce)
+		}
+		p   := *port
+		pub := *announce
+		opts = append(opts, libp2p.AddrsFactory(func(addrs []ma.Multiaddr) []ma.Multiaddr {
+			return []ma.Multiaddr{
+				ma.StringCast(fmt.Sprintf("/ip4/%s/tcp/%d", pub, p)),
+				ma.StringCast(fmt.Sprintf("/ip4/%s/udp/%d/quic-v1", pub, p)),
+			}
+		}))
+		log.Printf("relay: announcing public IP %s port %d", pub, p)
+	}
+
+	h, err := libp2p.New(opts...)
 	if err != nil {
 		log.Fatalf("relay: libp2p.New: %v", err)
 	}
 	defer func() { _ = h.Close() }()
 
 	// Circuit Relay v2 — сервер.
-	// ReservationTTL обязателен: если 0 — expire=now, клиент отклоняет запрос.
-	// Limit: только Duration для MVP (Data=0 — без лимита трафика).
 	relayLimits := relayv2.Resources{
 		ReservationTTL:         time.Hour,
 		MaxReservations:        1024,
@@ -97,8 +117,8 @@ func main() {
 		MaxReservationsPerIP:   16,
 		MaxReservationsPerASN:  32,
 		Limit: &relayv2.RelayLimit{
-			Duration: 24 * time.Hour, // длинные сессии допустимы
-			Data:     0,              // без лимита трафика
+			Duration: 24 * time.Hour,
+			Data:     0,
 		},
 	}
 
@@ -107,11 +127,10 @@ func main() {
 		log.Fatalf("relay: circuit relay v2: %v", err)
 	}
 
-	// DHT server mode — чтобы клиенты могли найти нас и входить через
-	// DHT-роутинг. НЕ bootstrapируемся сами ни к кому — мы и есть bootstrap.
+	// DHT server mode.
 	kad, err := dht.New(ctx, h,
 		dht.Mode(dht.ModeServer),
-		dht.BootstrapPeers(), // намеренно пусто — мы корневой узел
+		dht.BootstrapPeers(),
 	)
 	if err != nil {
 		log.Fatalf("relay: dht: %v", err)
@@ -129,14 +148,9 @@ func main() {
 	log.Println("relay: shutdown")
 }
 
-// loadOrCreateKey — читает Ed25519 ключ из файла (base64 raw-std).
-// Если файл не существует — создаёт новый и записывает.
-// ВНИМАНИЕ: в production ключ должен быть создан командой keygen и
-// размещён в /etc/serpmonn/relay-identity.key вручную ДО первого запуска.
 func loadOrCreateKey(path string) (libcrypto.PrivKey, error) {
 	data, err := os.ReadFile(path)
 	if err == nil {
-		// Файл есть — декодируем.
 		raw, err := base64.StdEncoding.DecodeString(string(data))
 		if err != nil {
 			return nil, fmt.Errorf("decode key %s: %w", path, err)
@@ -151,7 +165,6 @@ func loadOrCreateKey(path string) (libcrypto.PrivKey, error) {
 	if !os.IsNotExist(err) {
 		return nil, fmt.Errorf("read key %s: %w", path, err)
 	}
-	// Файла нет — генерируем (только для первой инициализации).
 	log.Printf("relay: key file %s not found — generating new Ed25519 key", path)
 	priv, _, err := libcrypto.GenerateEd25519Key(rand.Reader)
 	if err != nil {
@@ -163,7 +176,6 @@ func loadOrCreateKey(path string) (libcrypto.PrivKey, error) {
 	}
 	encoded := base64.StdEncoding.EncodeToString(raw)
 	if err := os.MkdirAll("/etc/serpmonn", 0700); err != nil {
-		// Если нет прав — записываем рядом с бинарником.
 		log.Printf("relay: cannot create /etc/serpmonn (%v), saving key to ./relay-identity.key", err)
 		path = "relay-identity.key"
 	}
@@ -174,8 +186,6 @@ func loadOrCreateKey(path string) (libcrypto.PrivKey, error) {
 	return priv, nil
 }
 
-// printAddrs печатает все публичные multiaddr'ы ноды — их нужно
-// скопировать в DefaultBootstraps() в Serpmonn_messenger.
 func printAddrs(h host.Host, port int) {
 	pid := h.ID()
 	log.Printf("relay: PeerID = %s", pid)
@@ -183,7 +193,6 @@ func printAddrs(h host.Host, port int) {
 	for _, a := range h.Addrs() {
 		log.Printf("  %s/p2p/%s", a, pid)
 	}
-	// Подсказка: если сервер за NAT/proxy, публичный IP надо указать явно.
 	log.Printf("relay: If behind NAT, use /ip4/<PUBLIC_IP>/tcp/%d/p2p/%s", port, pid)
 	log.Printf("relay: If behind NAT, use /ip4/<PUBLIC_IP>/udp/%d/quic-v1/p2p/%s", port, pid)
 }
