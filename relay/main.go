@@ -38,17 +38,16 @@ import (
 	dht "github.com/libp2p/go-libp2p-kad-dht"
 	libcrypto "github.com/libp2p/go-libp2p/core/crypto"
 	"github.com/libp2p/go-libp2p/core/host"
-	ma "github.com/multiformats/go-multiaddr"
 	"github.com/libp2p/go-libp2p/p2p/net/connmgr"
 	relayv2 "github.com/libp2p/go-libp2p/p2p/protocol/circuitv2/relay"
+	ma "github.com/multiformats/go-multiaddr"
 )
 
 func main() {
-	keyFile  := flag.String("key", "/etc/serpmonn/relay-identity.key",
+	keyFile := flag.String("key", "/etc/serpmonn/relay-identity.key",
 		"Path to Ed25519 private key file (base64-encoded)")
-	port     := flag.Int("port", 4001, "TCP/UDP port to listen on")
-	announce := flag.String("announce", "",
-		"Public IP to announce (e.g. 188.235.13.20); leave empty if server has a direct public IP")
+	port  := flag.Int("port", 4001, "TCP/UDP port to listen on")
+	extIP := flag.String("extip", "", "Public IP to announce when behind NAT (e.g. 188.235.13.20)")
 	flag.Parse()
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
@@ -66,7 +65,6 @@ func main() {
 		log.Fatalf("relay: connmgr: %v", err)
 	}
 
-	// Опции libp2p — базовые.
 	opts := []libp2p.Option{
 		libp2p.Identity(priv),
 		// TCP + QUIC: оба транспорта на одном порту.
@@ -84,22 +82,19 @@ func main() {
 		libp2p.ForceReachabilityPublic(),
 	}
 
-	// Если указан -announce — подменяем исходящие адреса публичным IP.
-	// Это нужно когда сервер за NAT (напр. MikroTik): libp2p слушает 0.0.0.0,
-	// но в DHT и клиентам объявляет внешний IP.
-	if *announce != "" {
-		if net.ParseIP(*announce) == nil {
-			log.Fatalf("relay: -announce: invalid IP address %q", *announce)
+	// Если указан внешний IP (сервер за NAT) — анонсируем его явно.
+	// AddrsFactory заменяет 0.0.0.0 на публичный IP в списке multiaddrs.
+	if *extIP != "" {
+		if net.ParseIP(*extIP) == nil {
+			log.Fatalf("relay: invalid -extip value: %q", *extIP)
 		}
-		p   := *port
-		pub := *announce
+		p, ip := *port, *extIP
 		opts = append(opts, libp2p.AddrsFactory(func(addrs []ma.Multiaddr) []ma.Multiaddr {
-			return []ma.Multiaddr{
-				ma.StringCast(fmt.Sprintf("/ip4/%s/tcp/%d", pub, p)),
-				ma.StringCast(fmt.Sprintf("/ip4/%s/udp/%d/quic-v1", pub, p)),
-			}
+			pubTCP,  _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d", ip, p))
+			pubQUIC, _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/udp/%d/quic-v1", ip, p))
+			// Публичные адреса первыми, локальные оставляем как fallback.
+			return append([]ma.Multiaddr{pubTCP, pubQUIC}, addrs...)
 		}))
-		log.Printf("relay: announcing public IP %s port %d", pub, p)
 	}
 
 	h, err := libp2p.New(opts...)
@@ -193,6 +188,8 @@ func printAddrs(h host.Host, port int) {
 	for _, a := range h.Addrs() {
 		log.Printf("  %s/p2p/%s", a, pid)
 	}
-	log.Printf("relay: If behind NAT, use /ip4/<PUBLIC_IP>/tcp/%d/p2p/%s", port, pid)
-	log.Printf("relay: If behind NAT, use /ip4/<PUBLIC_IP>/udp/%d/quic-v1/p2p/%s", port, pid)
+	log.Printf("relay: If behind NAT, use -extip <PUBLIC_IP> flag")
+	log.Printf("relay: Expected public addrs with -extip:")
+	log.Printf("  /ip4/<PUBLIC_IP>/tcp/%d/p2p/%s", port, pid)
+	log.Printf("  /ip4/<PUBLIC_IP>/udp/%d/quic-v1/p2p/%s", port, pid)
 }
