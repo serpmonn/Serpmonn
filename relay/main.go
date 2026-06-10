@@ -17,8 +17,11 @@
 //   - BufferSize: 4096 байт — дефолт libp2p, не ограничиваем
 //   - Limit по трафику: не устанавливаем (nil)
 //
-// Транспорт: TCP + QUIC-v1 на 4001. Оба нужны: QUIC оптимальнее,
-// но некоторые мобильные сети блокируют UDP — TCP как fallback.
+// Транспорты:
+//   - TCP + QUIC-v1 на порту 4001 (основные)
+//   - QUIC-v1 + WebTransport на порту 443 (мобильные операторы)
+//   - WebSocket на порту 4002 — nginx проксирует wss://relay.serpmonn.ru/p2p-ws → 127.0.0.1:4002
+//     (порт 443 занят nginx, поэтому /ws слушаем отдельно)
 package main
 
 import (
@@ -46,9 +49,10 @@ import (
 func main() {
 	keyFile := flag.String("key", "/etc/serpmonn/relay-identity.key",
 		"Path to Ed25519 private key file (base64-encoded)")
-	port  := flag.Int("port", 4001, "TCP/UDP port to listen on")
-	port443 := flag.Int("port443", 443, "Extra TCP/UDP port (443) for mobile carrier compatibility")
-	extIP := flag.String("extip", "", "Public IP to announce when behind NAT (e.g. 188.235.13.20)")
+	port    := flag.Int("port", 4001, "TCP/UDP port to listen on")
+	port443 := flag.Int("port443", 443, "Extra UDP port (443) for QUIC/WebTransport — mobile carrier compatibility")
+	wsPort  := flag.Int("wsport", 4002, "TCP port for WebSocket transport (proxied by nginx via wss://relay.serpmonn.ru/p2p-ws)")
+	extIP   := flag.String("extip", "", "Public IP to announce when behind NAT (e.g. 188.235.13.20)")
 	flag.Parse()
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
@@ -68,15 +72,17 @@ func main() {
 
 	opts := []libp2p.Option{
 		libp2p.Identity(priv),
-		// TCP + QUIC: оба транспорта на одном порту.
 		libp2p.ListenAddrStrings(
+			// Основные порты (TCP + QUIC)
 			fmt.Sprintf("/ip4/0.0.0.0/tcp/%d", *port),
 			fmt.Sprintf("/ip6/::/tcp/%d", *port),
 			fmt.Sprintf("/ip4/0.0.0.0/udp/%d/quic-v1", *port),
 			fmt.Sprintf("/ip6/::/udp/%d/quic-v1", *port),
+			// Порт 443 — QUIC + WebTransport (мобильные операторы не блокируют UDP/443)
 			fmt.Sprintf("/ip4/0.0.0.0/udp/%d/quic-v1", *port443),
 			fmt.Sprintf("/ip4/0.0.0.0/udp/%d/quic-v1/webtransport", *port443),
-			fmt.Sprintf("/ip4/0.0.0.0/tcp/%d/ws", *port443),
+			// WebSocket на отдельном порту — nginx проксирует wss://relay.serpmonn.ru/p2p-ws → здесь
+			fmt.Sprintf("/ip4/0.0.0.0/tcp/%d/ws", *wsPort),
 		),
 		libp2p.DefaultTransports,
 		libp2p.DefaultSecurity,
@@ -92,14 +98,15 @@ func main() {
 		if net.ParseIP(*extIP) == nil {
 			log.Fatalf("relay: invalid -extip value: %q", *extIP)
 		}
-		p, p443, ip := *port, *port443, *extIP  // разыменовываем всё до замыкания
+		p, p443, pws, ip := *port, *port443, *wsPort, *extIP
 		opts = append(opts, libp2p.AddrsFactory(func(addrs []ma.Multiaddr) []ma.Multiaddr {
 			pubTCP,     _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d", ip, p))
 			pubQUIC,    _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/udp/%d/quic-v1", ip, p))
 			pubQUIC443, _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/udp/%d/quic-v1", ip, p443))
 			pubWT443,   _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/udp/%d/quic-v1/webtransport", ip, p443))
-			pubWS443,   _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/ws", ip, p443))
-			return append([]ma.Multiaddr{pubTCP, pubQUIC, pubQUIC443, pubWT443, pubWS443}, addrs...)
+			pubWS,      _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/ws", ip, pws))
+			// Публичные адреса первыми, локальные оставляем как fallback.
+			return append([]ma.Multiaddr{pubTCP, pubQUIC, pubQUIC443, pubWT443, pubWS}, addrs...)
 		}))
 	}
 
@@ -142,7 +149,7 @@ func main() {
 		log.Fatalf("relay: dht bootstrap: %v", err)
 	}
 
-	printAddrs(h, *port, *extIP)
+	printAddrs(h, *port, *wsPort, *extIP)
 
 	log.Println("relay: running — waiting for connections")
 	<-ctx.Done()
@@ -187,17 +194,18 @@ func loadOrCreateKey(path string) (libcrypto.PrivKey, error) {
 	return priv, nil
 }
 
-func printAddrs(h host.Host, port int, extIP string) {
-    pid := h.ID()
-    log.Printf("relay: PeerID = %s", pid)
-    log.Printf("relay: Multiaddrs (put these in DefaultBootstraps):")
-    for _, a := range h.Addrs() {
-        log.Printf("  %s/p2p/%s", a, pid)
-    }
-    if extIP == "" {
-        log.Printf("relay: If behind NAT, use -extip <PUBLIC_IP> flag")
-        log.Printf("relay: Expected public addrs with -extip:")
-        log.Printf("  /ip4/<PUBLIC_IP>/tcp/%d/p2p/%s", port, pid)
-        log.Printf("  /ip4/<PUBLIC_IP>/udp/%d/quic-v1/p2p/%s", port, pid)
-    }
+func printAddrs(h host.Host, port int, wsPort int, extIP string) {
+	pid := h.ID()
+	log.Printf("relay: PeerID = %s", pid)
+	log.Printf("relay: Multiaddrs (put these in DefaultBootstraps):")
+	for _, a := range h.Addrs() {
+		log.Printf("  %s/p2p/%s", a, pid)
+	}
+	if extIP == "" {
+		log.Printf("relay: If behind NAT, use -extip <PUBLIC_IP> flag")
+		log.Printf("relay: Expected public addrs with -extip:")
+		log.Printf("  /ip4/<PUBLIC_IP>/tcp/%d/p2p/%s", port, pid)
+		log.Printf("  /ip4/<PUBLIC_IP>/udp/%d/quic-v1/p2p/%s", port, pid)
+		log.Printf("  /ip4/<PUBLIC_IP>/tcp/%d/ws/p2p/%s  ← nginx proxies wss://relay.serpmonn.ru/p2p-ws here", wsPort, pid)
+	}
 }
