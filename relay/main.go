@@ -47,6 +47,7 @@ func main() {
 	keyFile := flag.String("key", "/etc/serpmonn/relay-identity.key",
 		"Path to Ed25519 private key file (base64-encoded)")
 	port  := flag.Int("port", 4001, "TCP/UDP port to listen on")
+	port443 := flag.Int("port443", 443, "Extra TCP/UDP port (443) for mobile carrier compatibility")
 	extIP := flag.String("extip", "", "Public IP to announce when behind NAT (e.g. 188.235.13.20)")
 	flag.Parse()
 
@@ -73,6 +74,9 @@ func main() {
 			fmt.Sprintf("/ip6/::/tcp/%d", *port),
 			fmt.Sprintf("/ip4/0.0.0.0/udp/%d/quic-v1", *port),
 			fmt.Sprintf("/ip6/::/udp/%d/quic-v1", *port),
+			fmt.Sprintf("/ip4/0.0.0.0/udp/%d/quic-v1", *port443),
+			fmt.Sprintf("/ip4/0.0.0.0/udp/%d/quic-v1/webtransport", *port443),
+			fmt.Sprintf("/ip4/0.0.0.0/tcp/%d/ws", *port443),
 		),
 		libp2p.DefaultTransports,
 		libp2p.DefaultSecurity,
@@ -88,12 +92,14 @@ func main() {
 		if net.ParseIP(*extIP) == nil {
 			log.Fatalf("relay: invalid -extip value: %q", *extIP)
 		}
-		p, ip := *port, *extIP
+		p, p443, ip := *port, *port443, *extIP  // разыменовываем всё до замыкания
 		opts = append(opts, libp2p.AddrsFactory(func(addrs []ma.Multiaddr) []ma.Multiaddr {
-			pubTCP,  _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d", ip, p))
-			pubQUIC, _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/udp/%d/quic-v1", ip, p))
-			// Публичные адреса первыми, локальные оставляем как fallback.
-			return append([]ma.Multiaddr{pubTCP, pubQUIC}, addrs...)
+			pubTCP,     _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d", ip, p))
+			pubQUIC,    _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/udp/%d/quic-v1", ip, p))
+			pubQUIC443, _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/udp/%d/quic-v1", ip, p443))
+			pubWT443,   _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/udp/%d/quic-v1/webtransport", ip, p443))
+			pubWS443,   _ := ma.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d/ws", ip, p443))
+			return append([]ma.Multiaddr{pubTCP, pubQUIC, pubQUIC443, pubWT443, pubWS443}, addrs...)
 		}))
 	}
 
