@@ -136,7 +136,7 @@ func main() {
 		log.Fatalf("relay: dht bootstrap: %v", err)
 	}
 
-	printAddrs(h, *port)
+	printAddrs(h, *port, *extIP)
 
 	log.Println("relay: running — waiting for connections")
 	<-ctx.Done()
@@ -181,15 +181,17 @@ func loadOrCreateKey(path string) (libcrypto.PrivKey, error) {
 	return priv, nil
 }
 
-func printAddrs(h host.Host, port int) {
-	pid := h.ID()
-	log.Printf("relay: PeerID = %s", pid)
-	log.Printf("relay: Multiaddrs (put these in DefaultBootstraps):")
-	for _, a := range h.Addrs() {
-		log.Printf("  %s/p2p/%s", a, pid)
-	}
-	log.Printf("relay: If behind NAT, use -extip <PUBLIC_IP> flag")
-	log.Printf("relay: Expected public addrs with -extip:")
-	log.Printf("  /ip4/<PUBLIC_IP>/tcp/%d/p2p/%s", port, pid)
-	log.Printf("  /ip4/<PUBLIC_IP>/udp/%d/quic-v1/p2p/%s", port, pid)
+func printAddrs(h host.Host, port int, extIP string) {
+    pid := h.ID()
+    log.Printf("relay: PeerID = %s", pid)
+    log.Printf("relay: Multiaddrs (put these in DefaultBootstraps):")
+    for _, a := range h.Addrs() {
+        log.Printf("  %s/p2p/%s", a, pid)
+    }
+    if extIP == "" {
+        log.Printf("relay: If behind NAT, use -extip <PUBLIC_IP> flag")
+        log.Printf("relay: Expected public addrs with -extip:")
+        log.Printf("  /ip4/<PUBLIC_IP>/tcp/%d/p2p/%s", port, pid)
+        log.Printf("  /ip4/<PUBLIC_IP>/udp/%d/quic-v1/p2p/%s", port, pid)
+    }
 }
