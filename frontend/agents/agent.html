@@ -40,7 +40,27 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251
 .dev-avatar{width:32px;height:32px;border-radius:50%;background:#cedcd8;display:flex;align-items:center;justify-content:center;font-size:1rem}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#0c4e54;color:#fff;padding:12px 20px;border-radius:10px;font-size:.9rem;transition:transform .3s;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
-@media(max-width:480px){.hero{padding:24px 16px 32px}.content{padding:12px}}
+
+/* Gateway access block */
+.access-card{background:#fff;border-radius:12px;border:2px solid #01696f;padding:20px;margin-bottom:16px}
+.access-card-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.access-badge{background:#cedcd8;color:#0c4e54;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
+.access-card h2{font-size:1rem;font-weight:700;color:#0c4e54;margin:0}
+.access-field{margin-bottom:12px}
+.access-label{font-size:.75rem;font-weight:600;color:#7a7974;text-transform:uppercase;letter-spacing:.05em;margin-bottom:5px}
+.access-value-row{display:flex;align-items:center;gap:8px}
+.access-value{flex:1;background:#f3f0ec;border:1px solid #dcd9d5;border-radius:8px;padding:10px 12px;font-size:.8125rem;font-family:'Courier New',monospace;color:#28251d;word-break:break-all;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy-btn{flex-shrink:0;background:#01696f;color:#fff;border:none;border-radius:8px;padding:10px 14px;font-size:.8rem;font-weight:600;cursor:pointer;transition:background .18s;white-space:nowrap}
+.copy-btn:hover{background:#0c4e54}
+.copy-btn.copied{background:#437a22}
+.token-toggle{background:none;border:none;color:#01696f;font-size:.8125rem;cursor:pointer;padding:0;margin-top:4px;text-decoration:underline}
+.access-expires{font-size:.8rem;color:#7a7974;margin-top:12px;padding-top:12px;border-top:1px solid #f3f0ec}
+.access-expires span{color:#437a22;font-weight:600}
+.curl-block{background:#1c1b19;border-radius:8px;padding:14px;margin-top:12px}
+.curl-code{font-family:'Courier New',monospace;font-size:.75rem;color:#cdccca;line-height:1.6;white-space:pre-wrap;word-break:break-all}
+.curl-label{font-size:.75rem;color:#797876;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+
+@media(max-width:480px){.hero{padding:24px 16px 32px}.content{padding:12px}.access-value{font-size:.75rem}}
 </style>
 </head>
 <body>
@@ -56,6 +76,41 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251
 </div>
 
 <div class="content">
+
+  <!-- Блок API доступа — показывается только при активной подписке -->
+  <div class="access-card" id="accessCard" style="display:none">
+    <div class="access-card-header">
+      <h2>Ваш API доступ</h2>
+      <span class="access-badge">Активно</span>
+    </div>
+
+    <div class="access-field">
+      <div class="access-label">Gateway URL</div>
+      <div class="access-value-row">
+        <div class="access-value" id="gatewayUrlVal">—</div>
+        <button class="copy-btn" onclick="copyField('gatewayUrlVal', this)">Копировать</button>
+      </div>
+    </div>
+
+    <div class="access-field">
+      <div class="access-label">Ваш токен (Authorization Bearer)</div>
+      <div class="access-value-row">
+        <div class="access-value" id="tokenVal">••••••••••••••••••••</div>
+        <button class="copy-btn" onclick="copyField('tokenVal', this)" id="copyTokenBtn">Копировать</button>
+      </div>
+      <button class="token-toggle" onclick="toggleToken()">Показать токен</button>
+    </div>
+
+    <div class="access-expires" id="accessExpires"></div>
+
+    <div style="margin-top:14px">
+      <div class="curl-label">Пример запроса (cURL)</div>
+      <div class="curl-block">
+        <div class="curl-code" id="curlExample">Загрузка...</div>
+      </div>
+    </div>
+  </div>
+
   <div class="card">
     <h2>Что умеет агент</h2>
     <ul class="feature-list" id="featureList"></ul>
@@ -73,8 +128,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251
     <h2>Как это работает</h2>
     <ol class="how-it-works">
       <li>Нажмите «Подключить» и оплатите через YooKassa</li>
-      <li>Получите инструкцию по настройке на почту</li>
-      <li>Агент начинает работать в течение 10 минут</li>
+      <li>На этой странице появится ваш Gateway URL и токен</li>
+      <li>Вставьте URL и токен в свой код — агент готов</li>
       <li>Управляйте агентом в разделе «Мои агенты»</li>
     </ol>
   </div>
@@ -119,13 +174,90 @@ if(agent){
   document.getElementById('devAvatar').textContent = agent.dev[0];
 }
 
-// Проверяем авторизацию
 const token = typeof serpToken !== 'undefined' ? serpToken : null;
 const subscribeBtn = document.getElementById('subscribeBtn');
 const loginHint = document.getElementById('loginHint');
 
+let realToken = null; // хранит расшифрованный токен для отображения
+let tokenVisible = false;
+
 if(!token){
   loginHint.innerHTML = 'Для подключения <a href="/frontend/register/register.html">войдите или зарегистрируйтесь</a>';
+} else {
+  // Проверяем есть ли активная подписка
+  checkAccess();
+}
+
+async function checkAccess(){
+  try {
+    // Получаем числовой id агента из базы (фронт использует slug, бэкенд — number id)
+    // Пробуем /api/agents/:id/access через slug → если 404, значит нет подписки
+    const res = await fetch(`/api/agents/${encodeURIComponent(id)}/access`, {
+      headers: { 'Authorization': 'Bearer ' + token }
+    });
+    if(res.ok){
+      const data = await res.json();
+      showAccessBlock(data);
+      // Если подписан — скрываем блок оплаты
+      document.getElementById('priceBlock').style.display = 'none';
+    }
+    // 403 = нет подписки, просто не показываем блок
+  } catch(e) {
+    // Тихо игнорируем — блок не показываем
+  }
+}
+
+function showAccessBlock(data){
+  realToken = token;
+  const card = document.getElementById('accessCard');
+  card.style.display = 'block';
+
+  document.getElementById('gatewayUrlVal').textContent = data.gateway_url;
+
+  // Токен маскируем
+  document.getElementById('tokenVal').textContent = '••••••••••••••••••••';
+
+  // Дата окончания
+  if(data.active_until){
+    const d = new Date(data.active_until);
+    const fmt = d.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
+    document.getElementById('accessExpires').innerHTML = `Подписка активна до: <span>${fmt}</span>`;
+  }
+
+  // Пример cURL
+  document.getElementById('curlExample').textContent =
+    `curl -X POST ${data.gateway_url} \\
+  -H "Authorization: Bearer <ваш_токен>" \\
+  -H "Content-Type: application/json" \\
+  -d '{"message": "Привет!"}'`;
+}
+
+function toggleToken(){
+  const el = document.getElementById('tokenVal');
+  const btn = document.querySelector('.token-toggle');
+  if(tokenVisible){
+    el.textContent = '••••••••••••••••••••';
+    btn.textContent = 'Показать токен';
+  } else {
+    el.textContent = realToken || token;
+    btn.textContent = 'Скрыть токен';
+  }
+  tokenVisible = !tokenVisible;
+}
+
+function copyField(elId, btn){
+  let text;
+  if(elId === 'tokenVal'){
+    text = realToken || token; // Всегда копируем реальный токен
+  } else {
+    text = document.getElementById(elId).textContent;
+  }
+  navigator.clipboard.writeText(text).then(()=>{
+    const orig = btn.textContent;
+    btn.textContent = 'Скопировано!';
+    btn.classList.add('copied');
+    setTimeout(()=>{ btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  });
 }
 
 subscribeBtn.addEventListener('click', async () => {
@@ -141,10 +273,10 @@ subscribeBtn.addEventListener('click', async () => {
       headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}
     });
     const data = await res.json();
-    if(data.confirmationUrl){
-      location.href = data.confirmationUrl;
+    if(data.confirmation_url || data.confirmationUrl){
+      location.href = data.confirmation_url || data.confirmationUrl;
     } else {
-      throw new Error(data.error || 'Ошибка');
+      throw new Error(data.error || data.message || 'Ошибка');
     }
   } catch(e){
     subscribeBtn.disabled = false;

@@ -8,7 +8,7 @@ import {
     getActiveSubscriptionsByBuyer,
     creditDeveloper
 } from './subscriptions.model.mjs';
-import { getAgentByIdPublic } from './agents.model.mjs';
+import { getAgentByIdPublic, getAgentByIdOrSlug } from './agents.model.mjs';
 import verifyToken from '../auth/verifyToken.mjs';
 
 const router = express.Router();
@@ -76,7 +76,55 @@ router.post('/:id/subscribe', verifyToken, async (req, res) => {
     }
 });
 
-// GET /api/agents/my-subscriptions — активные подписки бизнеса
+// GET /api/agents/:id/access — gateway URL + инструкция. :id может быть числом или slug
+router.get('/:id/access', verifyToken, async (req, res) => {
+    try {
+        const buyerUserId = req.user.id;
+
+        // Находим агента по slug или числовому id
+        const agent = await getAgentByIdOrSlug(req.params.id);
+        if (!agent) {
+            return res.status(404).json({ status: 'error', message: 'Агент не найден' });
+        }
+
+        const [sub] = await query(
+            `SELECT id, active_until FROM agent_subscriptions
+             WHERE agent_id = ? AND buyer_user_id = ? AND status = 'active' AND active_until > NOW()
+             LIMIT 1`,
+            [agent.id, buyerUserId]
+        );
+
+        if (!sub) {
+            return res.status(403).json({ status: 'error', message: 'Нет активной подписки' });
+        }
+
+        // Gateway URL: используем slug если есть, иначе числовой id
+        const agentRef  = agent.slug || agent.id;
+        const gatewayUrl = `https://api.serpmonn.ru/gateway/${agentRef}`;
+
+        return res.json({
+            status:       'ok',
+            gateway_url:  gatewayUrl,
+            agent_id:     agent.id,
+            agent_slug:   agent.slug,
+            active_until: sub.active_until,
+            instructions: {
+                method:  'POST',
+                url:     gatewayUrl,
+                headers: {
+                    'Authorization': 'Bearer <ваш_токен>',
+                    'Content-Type':  'application/json'
+                },
+                body_example: { message: 'Привет!' }
+            }
+        });
+    } catch (err) {
+        console.error('[subscriptions] access error:', err);
+        return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    }
+});
+
+// GET /api/agents/my-subscriptions
 router.get('/my-subscriptions', verifyToken, async (req, res) => {
     try {
         const subs = await getActiveSubscriptionsByBuyer(req.user.id);
@@ -97,7 +145,7 @@ router.post('/subscription-webhook', async (req, res) => {
             const meta     = payment.metadata || {};
 
             if (meta.type !== 'agent_subscription') {
-                return res.sendStatus(200);                 // Не наш тип платежа — игнорируем
+                return res.sendStatus(200);
             }
 
             const sub = await getSubscriptionByPaymentId(payment.id);
@@ -106,8 +154,8 @@ router.post('/subscription-webhook', async (req, res) => {
                 return res.sendStatus(200);
             }
 
-            await activateSubscription(payment.id);        // Активируем подписку на 30 дней
-            await creditDeveloper(sub.agent_id, sub.price_rub); // Начисляем 90% разработчику
+            await activateSubscription(payment.id);
+            await creditDeveloper(sub.agent_id, sub.price_rub);
 
             console.log(
                 `[subscriptions] activated: agent=${sub.agent_id} buyer=${sub.buyer_user_id} payment=${payment.id}`
