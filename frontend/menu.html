@@ -1,4 +1,3 @@
-
 <!-- Стили (общие для всех локалей) -->
 <link rel="stylesheet" href="/frontend/styles/accessibility.css">
 <link rel="stylesheet" href="/frontend/styles/menu.css">
@@ -49,6 +48,34 @@
         <img src="/frontend/images/login.ico" alt="Профиль" class="icon">
         Профиль
     </a>
+
+    <!-- ========== ИИ АГЕНТЫ ========== -->
+    <a href="#" class="menu-item" data-submenu="agentsSubmenu">
+        <span class="tool-icon">🤖</span>
+        ИИ Агенты
+    </a>
+
+    <!-- Подменю агентов -->
+    <div class="submenu-container" id="agentsSubmenu">
+        <a href="/frontend/agents/agents.html"
+           class="menu-item"
+           data-route="agents-catalog">
+            <span class="tool-icon">🔍</span>
+            Каталог агентов
+        </a>
+        <a href="/frontend/agents/my-agents.html"
+           class="menu-item"
+           data-route="my-agents">
+            <span class="tool-icon">📋</span>
+            Мои агенты
+        </a>
+        <a href="/frontend/agents/dashboard.html"
+           class="menu-item"
+           data-route="dev-dashboard">
+            <span class="tool-icon">⚡</span>
+            Кабинет разработчика
+        </a>
+    </div>
 
     <!-- ========== РАЗДЕЛ ИГР ========== -->
     <a href="#" class="menu-item" data-submenu="gamesSubmenu">
@@ -500,24 +527,15 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // 1. Берём текущий путь из адресной строки
     var path = window.location.pathname;
-
-    // 2. Нормализуем главную (на случай, если вдруг будет "/" или "/frontend/")
     if (path === '/' || path === '/frontend/') {
       path = '/frontend/main.html';
     }
-
-    // 3. Ищем в меню все ссылки
     var links = document.querySelectorAll('.menu-container a[href]');
-
-    // 4. Перебираем ссылки и скрываем ту, чей href совпадает с текущим путём
     links.forEach(function (link) {
       var href = link.getAttribute('href');
-
       if (href === path) {
-        // Это ссылка на текущую страницу — прячем её
-        link.hidden = true; // то же самое, что display: none
+        link.hidden = true;
       }
     });
   });
