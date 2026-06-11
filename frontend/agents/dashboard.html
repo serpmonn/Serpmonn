@@ -1,185 +1,298 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html lang="ru" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Кабинет разработчика — Serpmonn</title>
-<link rel="stylesheet" href="/frontend/styles/accessibility.css">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes">
+<title>Кабинет разработчика — Serpmonn Agents</title>
+<meta name="description" content="Кабинет разработчика ИИ-агентов на платформе Serpmonn. Публикуйте агентов и отслеживайте доходы.">
+<link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+<link rel="manifest" href="/frontend/pwa/manifest.json">
+<link rel="stylesheet" href="/frontend/styles/styles.css">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251d;min-height:100dvh}
-.page-header{background:#fff;border-bottom:1px solid #dcd9d5;padding:16px 20px}
-.page-header h1{font-size:1.25rem;font-weight:700;color:#01696f}
-.page-header p{font-size:.875rem;color:#7a7974;margin-top:2px}
-.content{max-width:700px;margin:0 auto;padding:20px}
-.kpi-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:12px;margin-bottom:20px}
-.kpi-card{background:#fff;border-radius:12px;border:1px solid #dcd9d5;padding:16px}
-.kpi-label{font-size:.75rem;color:#7a7974;font-weight:600;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
-.kpi-value{font-size:1.75rem;font-weight:800;color:#01696f;font-variant-numeric:tabular-nums}
-.kpi-sub{font-size:.8125rem;color:#7a7974;margin-top:2px}
-.section-title{font-size:1rem;font-weight:700;margin-bottom:12px;color:#0c4e54}
-.card{background:#fff;border-radius:12px;border:1px solid #dcd9d5;padding:20px;margin-bottom:16px}
-.agent-row{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid #f3f0ec}
-.agent-row:last-child{border-bottom:none}
-.agent-row-emoji{font-size:1.5rem;width:40px;text-align:center}
-.agent-row-info{flex:1}
-.agent-row-name{font-weight:600;font-size:.9rem}
-.agent-row-meta{font-size:.8125rem;color:#7a7974;margin-top:2px}
-.agent-row-stats{text-align:right}
-.agent-row-subs{font-weight:700;color:#01696f;font-size:.9375rem}
-.agent-row-earned{font-size:.8125rem;color:#7a7974}
-.badge-active{background:#d4dfcc;color:#2e5c10;padding:2px 8px;border-radius:4px;font-size:.75rem;font-weight:600}
-.btn-primary{display:inline-block;padding:12px 20px;background:#01696f;color:#fff;border-radius:10px;font-size:.9375rem;font-weight:700;border:none;cursor:pointer;text-decoration:none;transition:background .18s}
-.btn-primary:hover{background:#0c4e54}
-.add-agent-block{background:linear-gradient(135deg,#f3f0ec,#e6e4df);border-radius:12px;padding:20px;text-align:center;border:2px dashed #d4d1ca;margin-bottom:16px}
-.add-agent-block h3{font-size:1rem;font-weight:700;margin-bottom:6px}
-.add-agent-block p{font-size:.875rem;color:#7a7974;margin-bottom:14px}
-.payout-block{background:#fff;border-radius:12px;border:1px solid #dcd9d5;padding:20px;margin-bottom:16px}
-.payout-amount{font-size:2rem;font-weight:800;color:#01696f;margin:8px 0}
-.btn-outline{display:inline-block;padding:10px 20px;background:#fff;border:1.5px solid #01696f;color:#01696f;border-radius:10px;font-size:.9rem;font-weight:700;cursor:pointer;text-decoration:none;transition:all .18s}
-.btn-outline:hover{background:#01696f;color:#fff}
-.skeleton{background:linear-gradient(90deg,#f3f0ec 25%,#e6e4df 50%,#f3f0ec 75%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:8px;height:40px;margin-bottom:8px}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.tabs{display:flex;gap:4px;background:#f3f0ec;padding:4px;border-radius:10px;margin-bottom:20px}
-.tab{flex:1;padding:8px;border:none;background:none;border-radius:7px;font-size:.875rem;font-weight:600;cursor:pointer;color:#7a7974;transition:all .18s}
-.tab.active{background:#fff;color:#01696f;box-shadow:0 1px 3px rgba(0,0,0,.08)}
-@media(max-width:480px){.kpi-grid{grid-template-columns:1fr 1fr}}
+  .dev-page { max-width: 1000px; margin: 0 auto; padding: 24px 16px 56px; }
+  .page-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 28px; }
+  .page-header h1 { font-size: clamp(1.4rem, 3vw, 2rem); margin-bottom: 5px; }
+  .page-header p { color: #888; font-size: 0.93rem; }
+  .btn-primary { display: inline-block; padding: 10px 22px; background: #e8463c; color: #fff; border-radius: 10px; font-weight: 600; font-size: 0.92rem; text-decoration: none; border: none; cursor: pointer; transition: background .15s; white-space: nowrap; }
+  .btn-primary:hover { background: #c8332a; }
+  /* KPI */
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 14px; margin-bottom: 32px; }
+  .kpi-card { border: 1.5px solid #e8e8e8; border-radius: 13px; padding: 18px 20px; background: #fff; }
+  .kpi-val { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .kpi-val.green { color: #28a745; }
+  .kpi-val.red { color: #e8463c; }
+  .kpi-label { font-size: 0.82rem; color: #888; margin-top: 4px; }
+  .kpi-delta { font-size: 0.78rem; margin-top: 2px; }
+  .kpi-delta.up { color: #28a745; }
+  .kpi-delta.down { color: #e8463c; }
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; border-bottom: 2px solid #e8e8e8; margin-bottom: 24px; overflow-x: auto; }
+  .tab-btn { padding: 9px 18px; font-size: 0.92rem; font-weight: 500; border: none; background: none; cursor: pointer; border-bottom: 2.5px solid transparent; margin-bottom: -2px; white-space: nowrap; color: #888; transition: all .15s; }
+  .tab-btn.active { color: #e8463c; border-bottom-color: #e8463c; font-weight: 600; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+  /* Таблица агентов */
+  .agents-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .agents-table th { text-align: left; padding: 10px 12px; font-weight: 600; font-size: 0.8rem; color: #888; border-bottom: 1.5px solid #e8e8e8; }
+  .agents-table td { padding: 12px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+  .agents-table tr:last-child td { border-bottom: none; }
+  .agents-table tr:hover td { background: #fafafa; }
+  .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
+  .dot-active { background: #28a745; }
+  .dot-review { background: #ffc107; }
+  .dot-draft { background: #aaa; }
+  .action-link { color: #e8463c; font-size: 0.83rem; cursor: pointer; text-decoration: none; }
+  .action-link:hover { text-decoration: underline; }
+  /* Форма добавления агента */
+  .add-agent-form { max-width: 640px; }
+  .form-group { margin-bottom: 18px; }
+  .form-group label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
+  .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px 14px; border-radius: 9px; border: 1.5px solid #e0e0e0; font-size: 0.93rem; font-family: inherit; outline: none; transition: border .15s; background: #fff; color: inherit; }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: #e8463c; }
+  .form-group textarea { min-height: 90px; resize: vertical; }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .form-hint { font-size: 0.8rem; color: #aaa; margin-top: 4px; }
+  .form-actions { display: flex; gap: 12px; margin-top: 8px; }
+  .btn-outline { background: none; border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 10px 22px; font-size: 0.92rem; cursor: pointer; transition: border .15s; color: inherit; }
+  .btn-outline:hover { border-color: #e8463c; color: #e8463c; }
+  /* Выплаты */
+  .payouts-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .payouts-table th { text-align: left; padding: 10px 12px; font-weight: 600; font-size: 0.8rem; color: #888; border-bottom: 1.5px solid #e8e8e8; }
+  .payouts-table td { padding: 12px 12px; border-bottom: 1px solid #f0f0f0; }
+  .payout-status { font-size: 0.8rem; font-weight: 600; padding: 2px 9px; border-radius: 10px; }
+  .payout-done { background: #d4edda; color: #155724; }
+  .payout-pending { background: #fff3cd; color: #856404; }
+  .balance-block { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; padding: 20px 24px; border: 1.5px solid #e8e8e8; border-radius: 14px; background: #fff; margin-bottom: 24px; }
+  .balance-block .bal-val { font-size: 2rem; font-weight: 700; color: #28a745; }
+  .balance-block .bal-label { font-size: 0.83rem; color: #888; margin-top: 2px; }
+  @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .kpi-val { font-size: 1.4rem; } }
+  @media (prefers-color-scheme: dark) {
+    .kpi-card, .balance-block { background: #1e1e1e; border-color: #333; }
+    .agents-table tr:hover td { background: #222; }
+    .form-group input, .form-group textarea, .form-group select { background: #1e1e1e; border-color: #444; }
+    .tabs { border-color: #333; }
+  }
 </style>
 </head>
 <body>
-<div class="page-header">
-  <h1>⚡ Кабинет разработчика</h1>
-  <p>Ваши агенты и заработок</p>
-</div>
+<script type="module" src="/frontend/scripts/menu-loader.js?v=miniapp1" defer></script>
 
-<div class="content">
-  <div class="kpi-grid">
+<main class="dev-page">
+  <div class="page-header">
+    <div>
+      <h1>⚡ Кабинет разработчика</h1>
+      <p>Публикуйте агентов и зарабатывайте на подписках пользователей</p>
+    </div>
+    <button class="btn-primary" onclick="showTab('add')">+ Новый агент</button>
+  </div>
+
+  <!-- KPI -->
+  <div class="kpi-row">
     <div class="kpi-card">
-      <div class="kpi-label">Агентов</div>
-      <div class="kpi-value" id="kpiAgents">—</div>
-      <div class="kpi-sub">опубликовано</div>
+      <div class="kpi-val">3</div>
+      <div class="kpi-label">Моих агентов</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Подписок</div>
-      <div class="kpi-value" id="kpiSubs">—</div>
-      <div class="kpi-sub">активных</div>
+      <div class="kpi-val">47</div>
+      <div class="kpi-label">Активных подписок</div>
+      <div class="kpi-delta up">▲ +12 за месяц</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">Заработано</div>
-      <div class="kpi-value" id="kpiEarned">—</div>
-      <div class="kpi-sub">всего, ₽</div>
+      <div class="kpi-val green">32 430 ₽</div>
+      <div class="kpi-label">Доход за месяц</div>
+      <div class="kpi-delta up">▲ +18%</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-label">К выплате</div>
-      <div class="kpi-value" id="kpiPayout">—</div>
-      <div class="kpi-sub">доступно, ₽</div>
+      <div class="kpi-val">4.8 ★</div>
+      <div class="kpi-label">Средний рейтинг</div>
     </div>
   </div>
 
+  <!-- Вкладки -->
   <div class="tabs">
-    <button class="tab active" data-tab="agents">Мои агенты</button>
-    <button class="tab" data-tab="payouts">Выплаты</button>
+    <button class="tab-btn active" onclick="showTab('agents')">Мои агенты</button>
+    <button class="tab-btn" onclick="showTab('add')">Добавить агента</button>
+    <button class="tab-btn" onclick="showTab('payouts')">Выплаты</button>
+    <button class="tab-btn" onclick="showTab('docs')">Документация API</button>
   </div>
 
-  <!-- Вкладка: Агенты -->
-  <div id="tabAgents">
-    <div class="add-agent-block">
-      <h3>➕ Добавить агента</h3>
-      <p>Опубликуйте своего ИИ агента и зарабатывайте 90% от каждой подписки</p>
-      <button class="btn-primary" onclick="showAddModal()">Опубликовать агента</button>
-    </div>
-    <div class="card">
-      <div class="section-title">Ваши агенты</div>
-      <div id="devAgentsList"><div class="skeleton"></div><div class="skeleton"></div></div>
-    </div>
+  <!-- Вкладка: Мои агенты -->
+  <div class="tab-panel active" id="panel-agents">
+    <table class="agents-table">
+      <thead>
+        <tr>
+          <th>Агент</th>
+          <th>Статус</th>
+          <th>Подписчиков</th>
+          <th>Доход/мес</th>
+          <th>Рейтинг</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>💬 ВКонтакте Менеджер</strong><br><span style="color:#aaa;font-size:0.8rem">Соцсети</span></td>
+          <td><span class="status-dot dot-active"></span>Активен</td>
+          <td>31</td>
+          <td>30 690 ₽</td>
+          <td>4.9 ★</td>
+          <td><a class="action-link" href="#">Редактировать</a> · <a class="action-link" href="#">Статистика</a></td>
+        </tr>
+        <tr>
+          <td><strong>✍️ SEO Копирайтер</strong><br><span style="color:#aaa;font-size:0.8rem">Контент</span></td>
+          <td><span class="status-dot dot-review"></span>На модерации</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td><a class="action-link" href="#">Редактировать</a></td>
+        </tr>
+        <tr>
+          <td><strong>🎧 Оператор поддержки</strong><br><span style="color:#aaa;font-size:0.8rem">Поддержка</span></td>
+          <td><span class="status-dot dot-draft"></span>Черновик</td>
+          <td>—</td>
+          <td>—</td>
+          <td>—</td>
+          <td><a class="action-link" href="#">Редактировать</a> · <a class="action-link" href="#">Опубликовать</a></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Вкладка: Добавить агента -->
+  <div class="tab-panel" id="panel-add">
+    <form class="add-agent-form" onsubmit="submitAgent(event)">
+      <div class="form-group">
+        <label>Название агента *</label>
+        <input type="text" placeholder="Например: ВКонтакте Менеджер" required maxlength="60">
+        <div class="form-hint">До 60 символов, понятно и конкретно</div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Категория *</label>
+          <select required>
+            <option value="">Выберите категорию</option>
+            <option>Соцсети</option>
+            <option>Поддержка</option>
+            <option>Продажи</option>
+            <option>Контент</option>
+            <option>Аналитика</option>
+            <option>Другое</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Цена (₽/мес) *</label>
+          <input type="number" placeholder="990" min="0" max="99999" required>
+          <div class="form-hint">0 = бесплатно</div>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Краткое описание *</label>
+        <textarea placeholder="Что делает агент? Для кого? Какую задачу решает?" required maxlength="300"></textarea>
+        <div class="form-hint">До 300 символов — это видят пользователи в каталоге</div>
+      </div>
+      <div class="form-group">
+        <label>URL вебхука агента *</label>
+        <input type="url" placeholder="https://your-agent.example.com/webhook" required>
+        <div class="form-hint">Serpmonn будет слать POST-запросы на этот адрес</div>
+      </div>
+      <div class="form-group">
+        <label>Эмодзи-иконка</label>
+        <input type="text" placeholder="💬" maxlength="4">
+        <div class="form-hint">Одно эмодзи как иконка в каталоге</div>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary">Отправить на модерацию</button>
+        <button type="button" class="btn-outline">Сохранить черновик</button>
+      </div>
+    </form>
   </div>
 
   <!-- Вкладка: Выплаты -->
-  <div id="tabPayouts" style="display:none">
-    <div class="payout-block">
-      <div class="section-title">Доступно к выплате</div>
-      <div class="payout-amount"><span id="payoutAmount">0</span> ₽</div>
-      <p style="font-size:.875rem;color:#7a7974;margin-bottom:14px">Выплата на карту / ЮMoney в течение 3 рабочих дней</p>
-      <button class="btn-outline" id="requestPayoutBtn">Запросить выплату</button>
+  <div class="tab-panel" id="panel-payouts">
+    <div class="balance-block">
+      <div>
+        <div class="bal-val">18 750 ₽</div>
+        <div class="bal-label">Доступно к выводу</div>
+      </div>
+      <button class="btn-primary">Вывести средства</button>
+      <div style="font-size:0.83rem;color:#aaa">Выплаты 1-го числа каждого месяца<br>на карту РФ или ЮMoney</div>
     </div>
-    <div class="card">
-      <div class="section-title">История выплат</div>
-      <div id="payoutHistory" style="color:#7a7974;font-size:.875rem;text-align:center;padding:20px">Выплат ещё не было</div>
+    <table class="payouts-table">
+      <thead>
+        <tr>
+          <th>Дата</th>
+          <th>Сумма</th>
+          <th>Способ</th>
+          <th>Статус</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>01.06.2026</td>
+          <td>28 140 ₽</td>
+          <td>Карта РФ</td>
+          <td><span class="payout-status payout-done">Выплачено</span></td>
+        </tr>
+        <tr>
+          <td>01.05.2026</td>
+          <td>21 760 ₽</td>
+          <td>Карта РФ</td>
+          <td><span class="payout-status payout-done">Выплачено</span></td>
+        </tr>
+        <tr>
+          <td>01.07.2026</td>
+          <td>~32 430 ₽</td>
+          <td>—</td>
+          <td><span class="payout-status payout-pending">Ожидается</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Вкладка: Документация API -->
+  <div class="tab-panel" id="panel-docs">
+    <div style="max-width:640px">
+      <h2 style="font-size:1.1rem;margin-bottom:16px">Интеграция с платформой</h2>
+      <p style="color:#666;font-size:0.93rem;margin-bottom:20px;line-height:1.6">Serpmonn отправляет POST-запросы на URL вашего вебхука при каждом событии (сообщение пользователя, подключение, отключение).</p>
+      <h3 style="font-size:0.95rem;margin-bottom:10px;font-weight:600">Формат входящего запроса</h3>
+      <pre style="background:#f5f5f5;border-radius:10px;padding:16px;font-size:0.83rem;overflow-x:auto;line-height:1.6">POST /your-webhook HTTP/1.1
+Content-Type: application/json
+X-Serpmonn-Token: &lt;your_secret_token&gt;
+
+{
+  "event": "message",
+  "user_id": "u_123456",
+  "agent_id": "ag_789",
+  "text": "Привет! Как заказать?",
+  "ts": 1749638400
+}</pre>
+      <h3 style="font-size:0.95rem;margin:20px 0 10px;font-weight:600">Формат ответа</h3>
+      <pre style="background:#f5f5f5;border-radius:10px;padding:16px;font-size:0.83rem;overflow-x:auto;line-height:1.6">HTTP/1.1 200 OK
+Content-Type: application/json
+
+{
+  "reply": "Привет! Для заказа нажмите...",
+  "actions": []  // опционально
+}</pre>
+      <p style="margin-top:16px;font-size:0.85rem;color:#aaa">Полная документация и SDK будут опубликованы при запуске бета-версии API (июль 2026).</p>
     </div>
   </div>
-</div>
+</main>
 
 <script>
-const token = typeof serpToken !== 'undefined' ? serpToken : null;
-
-if(!token){
-  document.querySelector('.content').innerHTML = '<div style="text-align:center;padding:60px 20px"><div style="font-size:2.5rem;margin-bottom:16px">🔒</div><div style="font-weight:700;margin-bottom:8px">Нужна авторизация</div><p style="color:#7a7974;margin-bottom:20px">Войдите чтобы открыть кабинет разработчика</p><a href="/frontend/register/register.html" style="background:#01696f;color:#fff;padding:12px 24px;border-radius:10px;text-decoration:none;font-weight:700">Войти</a></div>';
-} else {
-  loadDashboard();
-}
-
-async function loadDashboard(){
-  try{
-    const res = await fetch('/api/agents/my-developer-agents',{
-      headers:{'Authorization':'Bearer '+token}
+  function showTab(name) {
+    document.querySelectorAll('.tab-btn').forEach((b, i) => {
+      const panels = ['agents','add','payouts','docs'];
+      b.classList.toggle('active', panels[i] === name);
     });
-    const data = await res.json();
-    const agents = data.agents || [];
-    const totalSubs = agents.reduce((s,a)=>s+(a.active_subscribers||0),0);
-    const totalEarned = agents.reduce((s,a)=>s+(a.earned_rub||0),0);
-    document.getElementById('kpiAgents').textContent = agents.length;
-    document.getElementById('kpiSubs').textContent = totalSubs;
-    document.getElementById('kpiEarned').textContent = totalEarned.toLocaleString('ru');
-    document.getElementById('kpiPayout').textContent = (data.available_payout||0).toLocaleString('ru');
-    document.getElementById('payoutAmount').textContent = (data.available_payout||0).toLocaleString('ru');
-    renderDevAgents(agents);
-  } catch(e){
-    // Показываем демо-данные если API не готово
-    document.getElementById('kpiAgents').textContent = '1';
-    document.getElementById('kpiSubs').textContent = '0';
-    document.getElementById('kpiEarned').textContent = '0';
-    document.getElementById('kpiPayout').textContent = '0';
-    renderDevAgents([]);
+    document.querySelectorAll('.tab-panel').forEach(p => {
+      p.classList.toggle('active', p.id === 'panel-' + name);
+    });
   }
-}
-
-function renderDevAgents(agents){
-  const el = document.getElementById('devAgentsList');
-  if(!agents.length){
-    el.innerHTML = '<div style="text-align:center;padding:24px;color:#7a7974"><div style="font-size:2rem;margin-bottom:8px">🤖</div>У вас пока нет опубликованных агентов</div>';
-    return;
+  function submitAgent(e) {
+    e.preventDefault();
+    alert('Агент отправлен на модерацию! Мы проверим его в течение 1-2 рабочих дней.');
   }
-  el.innerHTML = agents.map(a=>`
-    <div class="agent-row">
-      <div class="agent-row-emoji">🤖</div>
-      <div class="agent-row-info">
-        <div class="agent-row-name">${a.name}</div>
-        <div class="agent-row-meta">${a.price_rub}₽/мес · <span class="badge-active">Активен</span></div>
-      </div>
-      <div class="agent-row-stats">
-        <div class="agent-row-subs">${a.active_subscribers||0} подп.</div>
-        <div class="agent-row-earned">${(a.earned_rub||0).toLocaleString('ru')} ₽</div>
-      </div>
-    </div>`).join('');
-}
-
-// Табы
-document.querySelectorAll('.tab').forEach(tab=>{
-  tab.addEventListener('click',()=>{
-    document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('tabAgents').style.display = tab.dataset.tab==='agents'?'block':'none';
-    document.getElementById('tabPayouts').style.display = tab.dataset.tab==='payouts'?'block':'none';
-  });
-});
-
-document.getElementById('requestPayoutBtn').addEventListener('click',()=>{
-  alert('Функция выплат будет доступна после верификации аккаунта.');
-});
-
-function showAddModal(){
-  alert('Форма публикации агента — скоро. Пока пишите на support@serpmonn.ru');
-}
 </script>
 </body>
 </html>

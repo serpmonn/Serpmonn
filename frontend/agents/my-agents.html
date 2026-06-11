@@ -1,123 +1,143 @@
-<!DOCTYPE html>
-<html lang="ru">
+<!doctype html>
+<html lang="ru" dir="ltr">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes">
 <title>Мои агенты — Serpmonn</title>
-<link rel="stylesheet" href="/frontend/styles/accessibility.css">
+<meta name="description" content="Управляйте подключёнными ИИ-агентами на платформе Serpmonn.">
+<link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+<link rel="manifest" href="/frontend/pwa/manifest.json">
+<link rel="stylesheet" href="/frontend/styles/styles.css">
 <style>
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251d;min-height:100dvh}
-.page-header{background:#fff;border-bottom:1px solid #dcd9d5;padding:16px 20px;position:sticky;top:0;z-index:10}
-.page-header h1{font-size:1.25rem;font-weight:700;color:#01696f}
-.page-header p{font-size:.875rem;color:#7a7974;margin-top:2px}
-.content{max-width:640px;margin:0 auto;padding:20px}
-.agent-item{background:#fff;border-radius:12px;border:1px solid #dcd9d5;padding:16px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start}
-.agent-emoji{font-size:2rem;flex-shrink:0;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:#f3f0ec;border-radius:10px}
-.agent-info{flex:1;min-width:0}
-.agent-name{font-weight:700;font-size:.9375rem;margin-bottom:4px}
-.agent-meta{font-size:.8125rem;color:#7a7974;margin-bottom:8px}
-.agent-status{display:inline-flex;align-items:center;gap:4px;font-size:.8125rem;font-weight:600;padding:3px 10px;border-radius:999px}
-.status-active{background:#d4dfcc;color:#2e5c10}
-.status-pending{background:#ffe9cc;color:#c55700}
-.status-expired{background:#e8e8e8;color:#7a7974}
-.agent-actions{display:flex;gap:8px;margin-top:10px}
-.btn-sm{padding:6px 14px;border-radius:8px;font-size:.8125rem;font-weight:600;cursor:pointer;border:none;transition:all .18s}
-.btn-outline{background:#fff;border:1px solid #d4d1ca;color:#28251d}
-.btn-outline:hover{border-color:#01696f;color:#01696f}
-.btn-danger-sm{background:#fff;border:1px solid #dcd9d5;color:#a13544;font-size:.8125rem;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:600}
-.empty-state{text-align:center;padding:60px 20px}
-.empty-icon{font-size:3.5rem;margin-bottom:16px}
-.empty-title{font-size:1.125rem;font-weight:700;margin-bottom:8px}
-.empty-desc{color:#7a7974;font-size:.9rem;margin-bottom:20px}
-.btn-primary{display:inline-block;padding:12px 24px;background:#01696f;color:#fff;border-radius:10px;font-size:.9375rem;font-weight:700;text-decoration:none;transition:background .18s}
-.btn-primary:hover{background:#0c4e54}
-.loading{text-align:center;padding:40px;color:#7a7974}
-.skeleton{background:linear-gradient(90deg,#f3f0ec 25%,#e6e4df 50%,#f3f0ec 75%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:8px}
-@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
-.skel-card{height:100px;margin-bottom:12px;border-radius:12px}
+  .my-agents-page { max-width: 900px; margin: 0 auto; padding: 24px 16px 48px; }
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 { font-size: clamp(1.4rem, 3vw, 2rem); margin-bottom: 6px; }
+  .page-header p { color: #888; font-size: 0.95rem; }
+  .empty-state { text-align: center; padding: 64px 24px; }
+  .empty-state-icon { font-size: 3.5rem; margin-bottom: 16px; }
+  .empty-state h2 { font-size: 1.2rem; margin-bottom: 10px; }
+  .empty-state p { color: #888; max-width: 340px; margin: 0 auto 24px; font-size: 0.95rem; line-height: 1.5; }
+  .btn-primary { display: inline-block; padding: 11px 28px; background: #e8463c; color: #fff; border-radius: 10px; font-weight: 600; font-size: 0.95rem; text-decoration: none; border: none; cursor: pointer; transition: background .15s; }
+  .btn-primary:hover { background: #c8332a; }
+  .my-agent-card { border: 1.5px solid #e8e8e8; border-radius: 14px; padding: 18px 20px; display: flex; align-items: center; gap: 16px; margin-bottom: 14px; background: #fff; transition: box-shadow .15s; }
+  .my-agent-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.08); }
+  .agent-icon-lg { width: 52px; height: 52px; border-radius: 13px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
+  .agent-info { flex: 1; }
+  .agent-info h3 { font-size: 1rem; font-weight: 600; margin-bottom: 3px; }
+  .agent-info .meta { font-size: 0.83rem; color: #999; }
+  .agent-status { display: inline-flex; align-items: center; gap: 5px; font-size: 0.82rem; font-weight: 600; padding: 3px 10px; border-radius: 12px; }
+  .status-active { background: #d4edda; color: #155724; }
+  .status-paused { background: #fff3cd; color: #856404; }
+  .agent-actions { display: flex; gap: 8px; flex-shrink: 0; }
+  .btn-sm { padding: 6px 14px; border-radius: 8px; font-size: 0.83rem; font-weight: 600; cursor: pointer; border: 1.5px solid; transition: all .15s; text-decoration: none; display: inline-block; }
+  .btn-outline { background: none; border-color: #e0e0e0; color: inherit; }
+  .btn-outline:hover { border-color: #e8463c; color: #e8463c; }
+  .btn-danger { background: none; border-color: #fcc; color: #e8463c; }
+  .btn-danger:hover { background: #e8463c; color: #fff; border-color: #e8463c; }
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px,1fr)); gap: 14px; margin-bottom: 28px; }
+  .stat-card { border: 1.5px solid #e8e8e8; border-radius: 12px; padding: 16px 18px; background: #fff; }
+  .stat-card .stat-val { font-size: 1.6rem; font-weight: 700; }
+  .stat-card .stat-label { font-size: 0.82rem; color: #888; margin-top: 3px; }
+  @media (max-width: 600px) { .my-agent-card { flex-wrap: wrap; } .agent-actions { width: 100%; } }
+  @media (prefers-color-scheme: dark) {
+    .my-agent-card, .stat-card { background: #1e1e1e; border-color: #333; }
+    .agent-icon-lg { background: #2a2a2a; }
+  }
 </style>
 </head>
 <body>
-<div class="page-header">
-  <h1>📋 Мои агенты</h1>
-  <p>Управление подключёнными ИИ агентами</p>
-</div>
+<script type="module" src="/frontend/scripts/menu-loader.js?v=miniapp1" defer></script>
 
-<div class="content">
-  <div id="loadingState">
-    <div class="skeleton skel-card"></div>
-    <div class="skeleton skel-card"></div>
+<main class="my-agents-page" id="mainContent">
+  <div class="page-header">
+    <h1>📋 Мои агенты</h1>
+    <p>Управляйте подключёнными ИИ-агентами</p>
   </div>
-  <div id="listState" style="display:none"></div>
-  <div id="emptyState" style="display:none">
-    <div class="empty-state">
-      <div class="empty-icon">🤖</div>
-      <div class="empty-title">Нет подключённых агентов</div>
-      <div class="empty-desc">Выберите агента в каталоге и подключите его к своему бизнесу</div>
-      <a href="/frontend/agents/agents.html" class="btn-primary">Открыть каталог</a>
+
+  <!-- Показывается если агенты есть -->
+  <div id="hasAgents" style="display:none">
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-val" id="statActive">0</div>
+        <div class="stat-label">Активных агентов</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statMessages">0</div>
+        <div class="stat-label">Сообщений за месяц</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-val" id="statSpend">0 ₽</div>
+        <div class="stat-label">Расходы в месяц</div>
+      </div>
+    </div>
+    <div id="agentsList"></div>
+    <div style="margin-top:20px">
+      <a href="/frontend/agents/agents.html" class="btn-primary">+ Добавить агента</a>
     </div>
   </div>
-</div>
+
+  <!-- Показывается если агентов нет -->
+  <div id="noAgents" class="empty-state">
+    <div class="empty-state-icon">🤖</div>
+    <h2>Агентов пока нет</h2>
+    <p>Подключите первого ИИ-агента из каталога и автоматизируйте рутинные задачи уже сегодня.</p>
+    <a href="/frontend/agents/agents.html" class="btn-primary">Перейти в каталог</a>
+  </div>
+</main>
 
 <script>
-const token = typeof serpToken !== 'undefined' ? serpToken : null;
+  // Демо-данные (заменить на API)
+  const demoAgents = [
+    { id: 1, icon: '💬', name: 'ВКонтакте Менеджер', category: 'Соцсети', status: 'active', messages: 1240, price: 990, since: 'с 01.05.2026' },
+    { id: 2, icon: '✍️', name: 'SEO Копирайтер', category: 'Контент', status: 'paused', messages: 85, price: 790, since: 'с 10.06.2026' },
+  ];
 
-async function loadMyAgents(){
-  if(!token){
-    location.href = '/frontend/register/register.html?next=' + encodeURIComponent(location.href);
-    return;
-  }
-  try{
-    const res = await fetch('/api/agents/my-subscriptions',{
-      headers:{'Authorization':'Bearer '+token}
-    });
-    const data = await res.json();
-    document.getElementById('loadingState').style.display='none';
-    if(!data.subscriptions || !data.subscriptions.length){
-      document.getElementById('emptyState').style.display='block';
+  function renderAgents(agents) {
+    if (!agents || agents.length === 0) {
+      document.getElementById('noAgents').style.display = '';
+      document.getElementById('hasAgents').style.display = 'none';
       return;
     }
-    document.getElementById('listState').style.display='block';
-    renderAgents(data.subscriptions);
-  } catch(e){
-    document.getElementById('loadingState').innerHTML='<p style="color:#a13544;text-align:center;padding:40px">Ошибка загрузки. Попробуйте позже.</p>';
-  }
-}
-
-const AGENT_NAMES = {
-  'vk-manager':{emoji:'💬',name:'ИИ менеджер ВКонтакте'},
-  'tg-support':{emoji:'📨',name:'Telegram поддержка'},
-  'avito-bot':{emoji:'🏪',name:'Авито-ассистент'},
-  'seo-writer':{emoji:'✍️',name:'SEO-копирайтер'},
-  'hr-screener':{emoji:'👔',name:'HR-скринер'},
-  'wb-manager':{emoji:'📦',name:'Менеджер Wildberries'},
-};
-
-function renderAgents(subs){
-  const list = document.getElementById('listState');
-  list.innerHTML = subs.map(s => {
-    const a = AGENT_NAMES[s.agent_id] || {emoji:'🤖',name:s.agent_id};
-    const statusClass = s.status === 'active' ? 'status-active' : s.status === 'pending' ? 'status-pending' : 'status-expired';
-    const statusLabel = s.status === 'active' ? '● Активен' : s.status === 'pending' ? '⏳ Ожидает оплаты' : '✕ Истёк';
-    const expiresAt = s.expires_at ? new Date(s.expires_at).toLocaleDateString('ru',{day:'numeric',month:'long',year:'numeric'}) : '—';
-    return `
-    <div class="agent-item">
-      <div class="agent-emoji">${a.emoji}</div>
-      <div class="agent-info">
-        <div class="agent-name">${a.name}</div>
-        <div class="agent-meta">Активен до: ${expiresAt}</div>
-        <span class="agent-status ${statusClass}">${statusLabel}</span>
+    document.getElementById('noAgents').style.display = 'none';
+    document.getElementById('hasAgents').style.display = '';
+    const active = agents.filter(a => a.status === 'active');
+    document.getElementById('statActive').textContent = active.length;
+    document.getElementById('statMessages').textContent = agents.reduce((s,a) => s + a.messages, 0).toLocaleString('ru');
+    document.getElementById('statSpend').textContent = agents.reduce((s,a) => s + a.price, 0).toLocaleString('ru') + ' ₽';
+    const list = document.getElementById('agentsList');
+    list.innerHTML = agents.map(a => `
+      <div class="my-agent-card">
+        <div class="agent-icon-lg">${a.icon}</div>
+        <div class="agent-info">
+          <h3>${a.name}</h3>
+          <div class="meta">${a.category} · ${a.since} · ${a.messages.toLocaleString('ru')} сообщений</div>
+          <span class="agent-status ${a.status === 'active' ? 'status-active' : 'status-paused'}">
+            ${a.status === 'active' ? '● Активен' : '⏸ Пауза'}
+          </span>
+        </div>
         <div class="agent-actions">
-          <a href="/frontend/agents/agent.html?id=${s.agent_id}" class="btn-sm btn-outline">Подробнее</a>
-          ${s.status !== 'active' ? `<a href="/frontend/agents/agent.html?id=${s.agent_id}" class="btn-sm btn-outline">Продлить</a>` : ''}
+          <button class="btn-sm btn-outline" onclick="toggleAgent(${a.id})">${a.status === 'active' ? 'Пауза' : 'Запустить'}</button>
+          <button class="btn-sm btn-outline">Настройки</button>
+          <button class="btn-sm btn-danger" onclick="removeAgent(${a.id})">Отключить</button>
         </div>
       </div>
-    </div>`;
-  }).join('');
-}
+    `).join('');
+  }
 
-loadMyAgents();
+  let agents = [...demoAgents];
+
+  function toggleAgent(id) {
+    agents = agents.map(a => a.id === id ? {...a, status: a.status === 'active' ? 'paused' : 'active'} : a);
+    renderAgents(agents);
+  }
+  function removeAgent(id) {
+    if (!confirm('Отключить агента?')) return;
+    agents = agents.filter(a => a.id !== id);
+    renderAgents(agents);
+  }
+
+  // Для демо — показываем агентов. В продакшне проверять авторизацию и тянуть с API
+  renderAgents(agents);
 </script>
 </body>
 </html>
