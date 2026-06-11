@@ -14,34 +14,28 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251
 .hero-emoji{font-size:4rem;display:block;margin-bottom:12px}
 .hero h1{font-size:1.5rem;font-weight:800;margin-bottom:8px}
 .hero p{font-size:.9375rem;opacity:.85;max-width:480px;margin:0 auto;line-height:1.6}
-.hero-badges{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
-.hero-badge{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:999px;font-size:.8125rem}
 .content{max-width:640px;margin:0 auto;padding:20px}
 .card{background:#fff;border-radius:12px;border:1px solid #dcd9d5;padding:20px;margin-bottom:16px}
 .card h2{font-size:1rem;font-weight:700;margin-bottom:12px;color:#0c4e54}
-.feature-list{list-style:none}
-.feature-list li{padding:8px 0;border-bottom:1px solid #f3f0ec;font-size:.9rem;display:flex;gap:10px;align-items:flex-start}
-.feature-list li:last-child{border-bottom:none}
-.feature-list li::before{content:'✓';color:#01696f;font-weight:700;flex-shrink:0;margin-top:1px}
 .price-block{background:#fff;border-radius:12px;border:2px solid #01696f;padding:20px;margin-bottom:16px;text-align:center}
 .price-big{font-size:2.5rem;font-weight:800;color:#01696f;line-height:1}
 .price-period{font-size:.875rem;color:#7a7974;margin-top:4px}
 .price-note{font-size:.8125rem;color:#7a7974;margin-top:8px}
-.btn-primary{display:block;width:100%;padding:16px;background:#01696f;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:12px;text-align:center;transition:background .18s}
+.price-free{font-size:1.5rem;font-weight:800;color:#437a22}
+.btn-primary{display:block;width:100%;padding:16px;background:#01696f;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:12px;text-align:center;transition:background .18s;text-decoration:none}
 .btn-primary:hover{background:#0c4e54}
 .btn-primary:disabled{background:#bab9b4;cursor:not-allowed}
 .login-hint{font-size:.8125rem;color:#7a7974;text-align:center;margin-top:8px}
 .login-hint a{color:#01696f}
-.how-it-works{counter-reset:steps}
+.how-it-works{counter-reset:steps;list-style:none}
 .how-it-works li{padding:10px 0;border-bottom:1px solid #f3f0ec;font-size:.9rem;display:flex;gap:12px;align-items:flex-start;counter-increment:steps}
 .how-it-works li:last-child{border-bottom:none}
 .how-it-works li::before{content:counter(steps);background:#cedcd8;color:#01696f;font-weight:700;border-radius:50%;width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.8125rem}
 .dev-info{font-size:.8125rem;color:#7a7974;display:flex;align-items:center;gap:8px}
-.dev-avatar{width:32px;height:32px;border-radius:50%;background:#cedcd8;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.dev-avatar{width:32px;height:32px;border-radius:50%;background:#cedcd8;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#0c4e54}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#0c4e54;color:#fff;padding:12px 20px;border-radius:10px;font-size:.9rem;transition:transform .3s;z-index:999;white-space:nowrap}
 .toast.show{transform:translateX(-50%) translateY(0)}
-
-/* Gateway access block */
+/* Access block */
 .access-card{background:#fff;border-radius:12px;border:2px solid #01696f;padding:20px;margin-bottom:16px}
 .access-card-header{display:flex;align-items:center;gap:10px;margin-bottom:16px}
 .access-badge{background:#cedcd8;color:#0c4e54;font-size:.75rem;font-weight:700;padding:3px 10px;border-radius:999px;text-transform:uppercase;letter-spacing:.04em}
@@ -59,7 +53,9 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251
 .curl-block{background:#1c1b19;border-radius:8px;padding:14px;margin-top:12px}
 .curl-code{font-family:'Courier New',monospace;font-size:.75rem;color:#cdccca;line-height:1.6;white-space:pre-wrap;word-break:break-all}
 .curl-label{font-size:.75rem;color:#797876;margin-bottom:6px;font-weight:600;text-transform:uppercase;letter-spacing:.04em}
-
+/* Skeleton */
+@keyframes shimmer{0%,100%{opacity:1}50%{opacity:.4}}
+.skel{background:#e8e8e8;border-radius:6px;animation:shimmer 1.4s infinite}
 @media(max-width:480px){.hero{padding:24px 16px 32px}.content{padding:12px}.access-value{font-size:.75rem}}
 </style>
 </head>
@@ -69,21 +65,19 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251
 </div>
 
 <div class="hero" id="agentHero">
-  <span class="hero-emoji" id="heroEmoji">🤖</span>
-  <h1 id="heroTitle">Загрузка...</h1>
+  <span class="hero-emoji">🤖</span>
+  <h1 id="heroTitle"><span class="skel" style="display:inline-block;width:200px;height:24px"></span></h1>
   <p id="heroDesc"></p>
-  <div class="hero-badges" id="heroBadges"></div>
 </div>
 
 <div class="content">
 
-  <!-- Блок API доступа — показывается только при активной подписке -->
+  <!-- Блок API доступа — показывается при активной подписке -->
   <div class="access-card" id="accessCard" style="display:none">
     <div class="access-card-header">
       <h2>Ваш API доступ</h2>
       <span class="access-badge">Активно</span>
     </div>
-
     <div class="access-field">
       <div class="access-label">Gateway URL</div>
       <div class="access-value-row">
@@ -91,37 +85,31 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251
         <button class="copy-btn" onclick="copyField('gatewayUrlVal', this)">Копировать</button>
       </div>
     </div>
-
     <div class="access-field">
       <div class="access-label">Ваш токен (Authorization Bearer)</div>
       <div class="access-value-row">
         <div class="access-value" id="tokenVal">••••••••••••••••••••</div>
-        <button class="copy-btn" onclick="copyField('tokenVal', this)" id="copyTokenBtn">Копировать</button>
+        <button class="copy-btn" onclick="copyTokenField(this)">Копировать</button>
       </div>
       <button class="token-toggle" onclick="toggleToken()">Показать токен</button>
     </div>
-
     <div class="access-expires" id="accessExpires"></div>
-
     <div style="margin-top:14px">
       <div class="curl-label">Пример запроса (cURL)</div>
-      <div class="curl-block">
-        <div class="curl-code" id="curlExample">Загрузка...</div>
-      </div>
+      <div class="curl-block"><div class="curl-code" id="curlExample"></div></div>
     </div>
   </div>
 
-  <div class="card">
-    <h2>Что умеет агент</h2>
-    <ul class="feature-list" id="featureList"></ul>
+  <!-- Описание -->
+  <div class="card" id="descCard" style="display:none">
+    <h2>Описание</h2>
+    <p id="agentDescription" style="font-size:.9rem;color:#555;line-height:1.65"></p>
   </div>
 
+  <!-- Блок цены / покупки -->
   <div class="price-block" id="priceBlock">
-    <div class="price-big" id="priceVal">—</div>
-    <div class="price-period">₽ в месяц</div>
-    <div class="price-note">Отмена в любой момент · Без скрытых платежей</div>
-    <button class="btn-primary" id="subscribeBtn">Подключить агента</button>
-    <div class="login-hint" id="loginHint"></div>
+    <div class="skel" style="height:48px;width:120px;margin:0 auto 8px"></div>
+    <div class="skel" style="height:14px;width:80px;margin:0 auto"></div>
   </div>
 
   <div class="card">
@@ -134,163 +122,205 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251
     </ol>
   </div>
 
-  <div class="card">
+  <div class="card" id="devCard" style="display:none">
     <h2>Разработчик</h2>
     <div class="dev-info">
       <div class="dev-avatar" id="devAvatar">S</div>
       <div>
-        <div style="font-weight:600;font-size:.875rem" id="devName">Serpmonn</div>
+        <div style="font-weight:600;font-size:.875rem" id="devName">—</div>
         <div style="color:#7a7974;font-size:.8125rem">Верифицированный разработчик</div>
       </div>
     </div>
   </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
 
 <script>
-const AGENTS = {
-  'vk-manager':{emoji:'💬',title:'ИИ менеджер ВКонтакте',desc:'Отвечает на сообщения, обрабатывает заявки и квалифицирует лиды 24/7 без участия человека.',price:990,badges:['ВКонтакте','Хит продаж','24/7'],features:['Мгновенные ответы на входящие сообщения ВКонтакте','Квалификация лидов по вашему скрипту продаж','Запись на встречу / заявка в CRM','Ответы на частые вопросы из базы знаний','Передача живому менеджеру при необходимости','Ежедневный отчёт в Telegram'],dev:'Serpmonn'},
-  'tg-support':{emoji:'📨',title:'Telegram поддержка',desc:'Отвечает на частые вопросы, принимает заявки и эскалирует сложные случаи менеджеру.',price:790,badges:['Telegram','Поддержка'],features:['Ответы на FAQ 24/7','Приём и регистрация заявок','Эскалация сложных вопросов','Интеграция с вашей базой знаний','Статистика обращений'],dev:'Serpmonn'},
-  'avito-bot':{emoji:'🏪',title:'Авито-ассистент',desc:'Автоматически отвечает покупателям, торгуется и договаривается о встрече.',price:1190,badges:['Авито'],features:['Мгновенные ответы покупателям','Гибкий торг в заданных рамках','Запись на просмотр/встречу','Обработка нескольких диалогов одновременно','Уведомление о горячих клиентах'],dev:'Serpmonn'},
-  'seo-writer':{emoji:'✍️',title:'SEO-копирайтер',desc:'Пишет SEO-оптимизированные тексты для карточек товаров, статей и лендингов.',price:1490,badges:['SEO','Контент'],features:['Генерация текстов под ключевые слова','Оптимизация карточек товаров','Написание статей для блога','Проверка уникальности','Экспорт в Word / Google Docs'],dev:'Serpmonn'},
-  'hr-screener':{emoji:'👔',title:'HR-скринер резюме',desc:'Анализирует резюме, задаёт уточняющие вопросы и составляет рейтинг кандидатов.',price:1290,badges:['HR','Рекрутинг'],features:['Анализ резюме по заданным критериям','Автоматическое первичное интервью','Рейтинг кандидатов','Сводный отчёт для рекрутера','Интеграция с hh.ru / Telegram'],dev:'Serpmonn'},
-  'wb-manager':{emoji:'📦',title:'Менеджер Wildberries',desc:'Отвечает на отзывы, оптимизирует карточки и отслеживает конкурентов.',price:1690,badges:['Wildberries','Маркетплейс'],features:['Ответы на отзывы покупателей','Оптимизация карточек товаров','Мониторинг цен конкурентов','Анализ ключевых слов','Еженедельный отчёт'],dev:'Serpmonn'},
-};
+const params    = new URLSearchParams(location.search);
+const agentId   = params.get('id');
+const userToken = typeof serpToken !== 'undefined' ? serpToken : null;
 
-const params = new URLSearchParams(location.search);
-const id = params.get('id') || 'vk-manager';
-const agent = AGENTS[id];
-
-if(agent){
-  document.title = agent.title + ' — Serpmonn';
-  document.getElementById('heroEmoji').textContent = agent.emoji;
-  document.getElementById('heroTitle').textContent = agent.title;
-  document.getElementById('heroDesc').textContent = agent.desc;
-  document.getElementById('heroBadges').innerHTML = agent.badges.map(b=>`<span class="hero-badge">${b}</span>`).join('');
-  document.getElementById('featureList').innerHTML = agent.features.map(f=>`<li>${f}</li>`).join('');
-  document.getElementById('priceVal').textContent = agent.price.toLocaleString('ru');
-  document.getElementById('devName').textContent = agent.dev;
-  document.getElementById('devAvatar').textContent = agent.dev[0];
-}
-
-const token = typeof serpToken !== 'undefined' ? serpToken : null;
-const subscribeBtn = document.getElementById('subscribeBtn');
-const loginHint = document.getElementById('loginHint');
-
-let realToken = null; // хранит расшифрованный токен для отображения
+let agentData    = null;
+let realToken    = userToken;
 let tokenVisible = false;
 
-if(!token){
-  loginHint.innerHTML = 'Для подключения <a href="/frontend/register/register.html">войдите или зарегистрируйтесь</a>';
-} else {
-  // Проверяем есть ли активная подписка
-  checkAccess();
+if (!agentId) {
+  location.href = '/frontend/agents/agents.html';
 }
 
-async function checkAccess(){
+// ── Загрузка данных агента ──────────────────────────────────────────────────
+async function loadAgent() {
   try {
-    // Получаем числовой id агента из базы (фронт использует slug, бэкенд — number id)
-    // Пробуем /api/agents/:id/access через slug → если 404, значит нет подписки
-    const res = await fetch(`/api/agents/${encodeURIComponent(id)}/access`, {
-      headers: { 'Authorization': 'Bearer ' + token }
-    });
-    if(res.ok){
-      const data = await res.json();
-      showAccessBlock(data);
-      // Если подписан — скрываем блок оплаты
+    const res  = await fetch('/api/agents/marketplace');
+    const data = await res.json();
+    if (data.status !== 'ok') throw new Error();
+
+    // Ищем по slug или id
+    agentData = data.agents.find(a =>
+      String(a.slug) === String(agentId) || String(a.id) === String(agentId)
+    );
+
+    if (!agentData) {
+      document.getElementById('heroTitle').textContent = 'Агент не найден';
+      document.getElementById('heroDesc').textContent  = 'Возможно, он снят с публикации.';
       document.getElementById('priceBlock').style.display = 'none';
+      return;
     }
-    // 403 = нет подписки, просто не показываем блок
+
+    renderAgent(agentData);
+    if (userToken) checkAccess();
+    else renderBuyBlock(agentData);
+
   } catch(e) {
-    // Тихо игнорируем — блок не показываем
+    document.getElementById('heroTitle').textContent = 'Ошибка загрузки';
+    document.getElementById('heroDesc').textContent  = 'Попробуйте обновить страницу.';
   }
 }
 
-function showAccessBlock(data){
-  realToken = token;
+function renderAgent(a) {
+  document.title = a.name + ' — Serpmonn';
+  document.getElementById('heroTitle').textContent = a.name;
+  document.getElementById('heroDesc').textContent  = a.description || '';
+
+  if (a.description) {
+    document.getElementById('agentDescription').textContent = a.description;
+    document.getElementById('descCard').style.display = 'block';
+  }
+
+  if (a.developer_name || a.user_name) {
+    const name = a.developer_name || a.user_name || 'Serpmonn';
+    document.getElementById('devName').textContent   = name;
+    document.getElementById('devAvatar').textContent = name[0].toUpperCase();
+    document.getElementById('devCard').style.display = 'block';
+  }
+}
+
+function renderBuyBlock(a) {
+  const price  = Number(a.price_rub);
+  const block  = document.getElementById('priceBlock');
+  const isFree = price === 0;
+  block.innerHTML = `
+    ${ isFree
+      ? '<div class="price-free">Бесплатно</div>'
+      : `<div class="price-big">${price.toLocaleString('ru-RU')}</div>
+         <div class="price-period">₽ в месяц</div>`
+    }
+    <div class="price-note">Отмена в любой момент · Без скрытых платежей</div>
+    <button class="btn-primary" id="subscribeBtn">${isFree ? 'Подключить бесплатно' : 'Подключить агента'}</button>
+    <div class="login-hint" id="loginHint"></div>
+  `;
+
+  const btn       = document.getElementById('subscribeBtn');
+  const loginHint = document.getElementById('loginHint');
+
+  if (!userToken) {
+    loginHint.innerHTML = 'Для подключения <a href="/frontend/register/register.html">войдите или зарегистрируйтесь</a>';
+  }
+
+  btn.addEventListener('click', async () => {
+    if (!userToken) {
+      location.href = '/frontend/register/register.html?next=' + encodeURIComponent(location.href);
+      return;
+    }
+    btn.disabled     = true;
+    btn.textContent  = 'Перенаправление...';
+    try {
+      const res  = await fetch(`/api/agents/${encodeURIComponent(agentId)}/subscribe`, {
+        method:  'POST',
+        headers: { 'Authorization': 'Bearer ' + userToken, 'Content-Type': 'application/json' }
+      });
+      const data = await res.json();
+      const url  = data.confirmation_url || data.confirmationUrl;
+      if (url) {
+        location.href = url;
+      } else if (data.status === 'ok') {
+        // бесплатный агент — сразу показываем доступ
+        checkAccess();
+      } else {
+        throw new Error(data.error || data.message || 'Ошибка');
+      }
+    } catch(e) {
+      btn.disabled    = false;
+      btn.textContent = 'Подключить агента';
+      showToast('❌ ' + e.message);
+    }
+  });
+}
+
+// ── Проверка активной подписки ──────────────────────────────────────────────
+async function checkAccess() {
+  try {
+    const res = await fetch(`/api/agents/${encodeURIComponent(agentId)}/access`, {
+      headers: { 'Authorization': 'Bearer ' + userToken }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      showAccessBlock(data);
+      document.getElementById('priceBlock').style.display = 'none';
+    } else {
+      // нет подписки — показываем блок покупки
+      renderBuyBlock(agentData);
+    }
+  } catch(e) {
+    renderBuyBlock(agentData);
+  }
+}
+
+function showAccessBlock(data) {
   const card = document.getElementById('accessCard');
   card.style.display = 'block';
+  document.getElementById('gatewayUrlVal').textContent = data.gateway_url || '—';
+  document.getElementById('tokenVal').textContent      = '••••••••••••••••••••';
 
-  document.getElementById('gatewayUrlVal').textContent = data.gateway_url;
-
-  // Токен маскируем
-  document.getElementById('tokenVal').textContent = '••••••••••••••••••••';
-
-  // Дата окончания
-  if(data.active_until){
-    const d = new Date(data.active_until);
-    const fmt = d.toLocaleDateString('ru-RU', {day:'numeric', month:'long', year:'numeric'});
+  if (data.active_until) {
+    const fmt = new Date(data.active_until).toLocaleDateString('ru-RU', {day:'numeric',month:'long',year:'numeric'});
     document.getElementById('accessExpires').innerHTML = `Подписка активна до: <span>${fmt}</span>`;
   }
 
-  // Пример cURL
   document.getElementById('curlExample').textContent =
-    `curl -X POST ${data.gateway_url} \\
+    `curl -X POST ${data.gateway_url || 'https://api.serpmonn.ru/gateway/...'} \\
   -H "Authorization: Bearer <ваш_токен>" \\
   -H "Content-Type: application/json" \\
   -d '{"message": "Привет!"}'`;
 }
 
-function toggleToken(){
-  const el = document.getElementById('tokenVal');
+function toggleToken() {
+  const el  = document.getElementById('tokenVal');
   const btn = document.querySelector('.token-toggle');
-  if(tokenVisible){
-    el.textContent = '••••••••••••••••••••';
-    btn.textContent = 'Показать токен';
-  } else {
-    el.textContent = realToken || token;
-    btn.textContent = 'Скрыть токен';
-  }
   tokenVisible = !tokenVisible;
+  el.textContent  = tokenVisible ? (realToken || '—') : '••••••••••••••••••••';
+  btn.textContent = tokenVisible ? 'Скрыть токен' : 'Показать токен';
 }
 
-function copyField(elId, btn){
-  let text;
-  if(elId === 'tokenVal'){
-    text = realToken || token; // Всегда копируем реальный токен
-  } else {
-    text = document.getElementById(elId).textContent;
-  }
-  navigator.clipboard.writeText(text).then(()=>{
+function copyField(elId, btn) {
+  const text = document.getElementById(elId).textContent;
+  navigator.clipboard.writeText(text).then(() => {
     const orig = btn.textContent;
     btn.textContent = 'Скопировано!';
     btn.classList.add('copied');
-    setTimeout(()=>{ btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
   });
 }
 
-subscribeBtn.addEventListener('click', async () => {
-  if(!token){
-    location.href = '/frontend/register/register.html?next=' + encodeURIComponent(location.href);
-    return;
-  }
-  subscribeBtn.disabled = true;
-  subscribeBtn.textContent = 'Перенаправление...';
-  try{
-    const res = await fetch(`/api/agents/${id}/subscribe`, {
-      method:'POST',
-      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}
-    });
-    const data = await res.json();
-    if(data.confirmation_url || data.confirmationUrl){
-      location.href = data.confirmation_url || data.confirmationUrl;
-    } else {
-      throw new Error(data.error || data.message || 'Ошибка');
-    }
-  } catch(e){
-    subscribeBtn.disabled = false;
-    subscribeBtn.textContent = 'Подключить агента';
-    showToast('❌ ' + e.message);
-  }
-});
+function copyTokenField(btn) {
+  navigator.clipboard.writeText(realToken || '').then(() => {
+    const orig = btn.textContent;
+    btn.textContent = 'Скопировано!';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
 
-function showToast(msg){
+function showToast(msg) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 3000);
+  setTimeout(() => t.classList.remove('show'), 3000);
 }
+
+loadAgent();
 </script>
 </body>
 </html>
