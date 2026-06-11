@@ -1,0 +1,195 @@
+<!doctype html>
+<html lang="ru" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes">
+<title>Каталог ИИ Агентов — Serpmonn</title>
+<meta name="description" content="Каталог ИИ-агентов на платформе Serpmonn. Найдите агента для автоматизации бизнеса, поддержки клиентов и других задач.">
+<link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+<link rel="manifest" href="/frontend/pwa/manifest.json">
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<style>
+  .agents-page { max-width: 1100px; margin: 0 auto; padding: 24px 16px 48px; }
+  .agents-header { margin-bottom: 28px; }
+  .agents-header h1 { font-size: clamp(1.4rem, 3vw, 2rem); margin-bottom: 8px; }
+  .agents-header p { color: #888; font-size: 0.97rem; }
+  .agents-filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .filter-btn { padding: 6px 16px; border-radius: 20px; border: 1.5px solid #e0e0e0; background: none; font-size: 0.9rem; cursor: pointer; transition: all .18s; color: inherit; }
+  .filter-btn.active, .filter-btn:hover { background: #e8463c; border-color: #e8463c; color: #fff; }
+  .agents-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(280px,100%), 1fr)); gap: 20px; }
+  .agent-card { border: 1.5px solid #e8e8e8; border-radius: 14px; padding: 20px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow .18s, transform .18s; background: #fff; }
+  .agent-card:hover { box-shadow: 0 6px 24px rgba(0,0,0,.10); transform: translateY(-2px); }
+  .agent-card-top { display: flex; align-items: center; gap: 12px; }
+  .agent-icon { width: 48px; height: 48px; border-radius: 12px; background: #f5f5f5; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; }
+  .agent-name { font-weight: 600; font-size: 1rem; }
+  .agent-category { font-size: 0.78rem; color: #e8463c; font-weight: 500; margin-top: 2px; }
+  .agent-desc { font-size: 0.9rem; color: #666; line-height: 1.5; flex: 1; }
+  .agent-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 4px; }
+  .agent-price { font-weight: 700; font-size: 1rem; }
+  .agent-price.free { color: #28a745; }
+  .agent-btn { padding: 7px 18px; border-radius: 8px; background: #e8463c; color: #fff; border: none; font-size: 0.87rem; font-weight: 600; cursor: pointer; transition: background .15s; text-decoration: none; display: inline-block; }
+  .agent-btn:hover { background: #c8332a; }
+  .agent-badge { font-size: 0.72rem; padding: 2px 8px; border-radius: 10px; font-weight: 600; }
+  .badge-new { background: #fff3cd; color: #856404; }
+  .badge-popular { background: #d4edda; color: #155724; }
+  .badge-beta { background: #cce5ff; color: #004085; }
+  .agents-empty { text-align: center; padding: 60px 20px; color: #aaa; }
+  .search-agents { width: 100%; max-width: 420px; padding: 10px 16px; border-radius: 10px; border: 1.5px solid #e0e0e0; font-size: 0.97rem; margin-bottom: 20px; outline: none; transition: border .15s; }
+  .search-agents:focus { border-color: #e8463c; }
+  @media (prefers-color-scheme: dark) {
+    .agent-card { background: #1e1e1e; border-color: #333; }
+    .agent-icon { background: #2a2a2a; }
+    .agent-desc { color: #aaa; }
+    .search-agents { background: #1e1e1e; color: #eee; border-color: #444; }
+    .filter-btn { color: #ccc; border-color: #444; }
+  }
+</style>
+</head>
+<body>
+<script type="module" src="/frontend/scripts/menu-loader.js?v=miniapp1" defer></script>
+
+<main class="agents-page">
+  <div class="agents-header">
+    <h1>🤖 Каталог ИИ-агентов</h1>
+    <p>Автоматизируйте задачи с готовыми ИИ-агентами от разработчиков платформы</p>
+  </div>
+
+  <input type="search" class="search-agents" id="agentSearch" placeholder="Поиск агентов..." autocomplete="off">
+
+  <div class="agents-filters">
+    <button class="filter-btn active" data-cat="all">Все</button>
+    <button class="filter-btn" data-cat="support">Поддержка</button>
+    <button class="filter-btn" data-cat="sales">Продажи</button>
+    <button class="filter-btn" data-cat="content">Контент</button>
+    <button class="filter-btn" data-cat="analytics">Аналитика</button>
+    <button class="filter-btn" data-cat="social">Соцсети</button>
+  </div>
+
+  <div class="agents-grid" id="agentsGrid">
+    <!-- ВКонтакте менеджер -->
+    <div class="agent-card" data-cat="social">
+      <div class="agent-card-top">
+        <div class="agent-icon">💬</div>
+        <div>
+          <div class="agent-name">ВКонтакте Менеджер</div>
+          <div class="agent-category">Соцсети</div>
+        </div>
+        <span class="agent-badge badge-popular">Популярный</span>
+      </div>
+      <div class="agent-desc">Автоматически отвечает на сообщения ВКонтакте, обрабатывает заявки и ведёт диалоги с клиентами 24/7.</div>
+      <div class="agent-footer">
+        <span class="agent-price">990 ₽/мес</span>
+        <a href="/frontend/agents/agent-vk-manager.html" class="agent-btn">Подключить</a>
+      </div>
+    </div>
+    <!-- Оператор поддержки -->
+    <div class="agent-card" data-cat="support">
+      <div class="agent-card-top">
+        <div class="agent-icon">🎧</div>
+        <div>
+          <div class="agent-name">Оператор поддержки</div>
+          <div class="agent-category">Поддержка</div>
+        </div>
+        <span class="agent-badge badge-new">Новый</span>
+      </div>
+      <div class="agent-desc">Отвечает на типовые вопросы клиентов, создаёт тикеты, эскалирует сложные случаи к человеку.</div>
+      <div class="agent-footer">
+        <span class="agent-price">1 490 ₽/мес</span>
+        <a href="#" class="agent-btn">Подключить</a>
+      </div>
+    </div>
+    <!-- SEO Копирайтер -->
+    <div class="agent-card" data-cat="content">
+      <div class="agent-card-top">
+        <div class="agent-icon">✍️</div>
+        <div>
+          <div class="agent-name">SEO Копирайтер</div>
+          <div class="agent-category">Контент</div>
+        </div>
+        <span class="agent-badge badge-beta">Бета</span>
+      </div>
+      <div class="agent-desc">Пишет SEO-оптимизированные статьи, описания товаров, посты для соцсетей по вашим ключевым словам.</div>
+      <div class="agent-footer">
+        <span class="agent-price">790 ₽/мес</span>
+        <a href="#" class="agent-btn">Подключить</a>
+      </div>
+    </div>
+    <!-- Аналитик продаж -->
+    <div class="agent-card" data-cat="analytics">
+      <div class="agent-card-top">
+        <div class="agent-icon">📊</div>
+        <div>
+          <div class="agent-name">Аналитик продаж</div>
+          <div class="agent-category">Аналитика</div>
+        </div>
+      </div>
+      <div class="agent-desc">Анализирует данные CRM, строит отчёты, выявляет слабые места воронки продаж и даёт рекомендации.</div>
+      <div class="agent-footer">
+        <span class="agent-price">1 990 ₽/мес</span>
+        <a href="#" class="agent-btn">Подключить</a>
+      </div>
+    </div>
+    <!-- Лид-квалификатор -->
+    <div class="agent-card" data-cat="sales">
+      <div class="agent-card-top">
+        <div class="agent-icon">🎯</div>
+        <div>
+          <div class="agent-name">Лид-квалификатор</div>
+          <div class="agent-category">Продажи</div>
+        </div>
+        <span class="agent-badge badge-new">Новый</span>
+      </div>
+      <div class="agent-desc">Задаёт квалифицирующие вопросы новым лидам, оценивает их потенциал и передаёт менеджеру готовые карточки.</div>
+      <div class="agent-footer">
+        <span class="agent-price">1 290 ₽/мес</span>
+        <a href="#" class="agent-btn">Подключить</a>
+      </div>
+    </div>
+    <!-- Бесплатный базовый -->
+    <div class="agent-card" data-cat="support">
+      <div class="agent-card-top">
+        <div class="agent-icon">🆓</div>
+        <div>
+          <div class="agent-name">Базовый помощник</div>
+          <div class="agent-category">Поддержка</div>
+        </div>
+      </div>
+      <div class="agent-desc">Отвечает на FAQ по вашему сайту. Бесплатно до 100 сообщений в месяц. Идеально для старта.</div>
+      <div class="agent-footer">
+        <span class="agent-price free">Бесплатно</span>
+        <a href="#" class="agent-btn">Подключить</a>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script>
+  // Фильтрация по категории
+  const filterBtns = document.querySelectorAll('.filter-btn');
+  const cards = document.querySelectorAll('.agent-card');
+  filterBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      filterBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cat = btn.dataset.cat;
+      cards.forEach(card => {
+        card.style.display = (cat === 'all' || card.dataset.cat === cat) ? '' : 'none';
+      });
+      filterSearch();
+    });
+  });
+  // Поиск
+  const searchInput = document.getElementById('agentSearch');
+  function filterSearch() {
+    const q = searchInput.value.toLowerCase();
+    const activeCat = document.querySelector('.filter-btn.active').dataset.cat;
+    cards.forEach(card => {
+      const text = card.textContent.toLowerCase();
+      const catMatch = activeCat === 'all' || card.dataset.cat === activeCat;
+      card.style.display = (catMatch && text.includes(q)) ? '' : 'none';
+    });
+  }
+  searchInput.addEventListener('input', filterSearch);
+</script>
+</body>
+</html>

@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Агент — Serpmonn</title>
+<link rel="stylesheet" href="/frontend/styles/accessibility.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251d;min-height:100dvh}
+.back-bar{padding:12px 20px;display:flex;align-items:center;gap:8px;background:#fff;border-bottom:1px solid #edeae5}
+.back-bar a{color:#01696f;text-decoration:none;font-size:.875rem;font-weight:600;display:flex;align-items:center;gap:4px}
+.hero{background:linear-gradient(135deg,#01696f,#0c4e54);color:#fff;padding:32px 20px 40px;text-align:center}
+.hero-emoji{font-size:4rem;display:block;margin-bottom:12px}
+.hero h1{font-size:1.5rem;font-weight:800;margin-bottom:8px}
+.hero p{font-size:.9375rem;opacity:.85;max-width:480px;margin:0 auto;line-height:1.6}
+.hero-badges{display:flex;gap:8px;justify-content:center;margin-top:14px;flex-wrap:wrap}
+.hero-badge{background:rgba(255,255,255,.15);padding:4px 12px;border-radius:999px;font-size:.8125rem}
+.content{max-width:640px;margin:0 auto;padding:20px}
+.card{background:#fff;border-radius:12px;border:1px solid #dcd9d5;padding:20px;margin-bottom:16px}
+.card h2{font-size:1rem;font-weight:700;margin-bottom:12px;color:#0c4e54}
+.feature-list{list-style:none}
+.feature-list li{padding:8px 0;border-bottom:1px solid #f3f0ec;font-size:.9rem;display:flex;gap:10px;align-items:flex-start}
+.feature-list li:last-child{border-bottom:none}
+.feature-list li::before{content:'✓';color:#01696f;font-weight:700;flex-shrink:0;margin-top:1px}
+.price-block{background:#fff;border-radius:12px;border:2px solid #01696f;padding:20px;margin-bottom:16px;text-align:center}
+.price-big{font-size:2.5rem;font-weight:800;color:#01696f;line-height:1}
+.price-period{font-size:.875rem;color:#7a7974;margin-top:4px}
+.price-note{font-size:.8125rem;color:#7a7974;margin-top:8px}
+.btn-primary{display:block;width:100%;padding:16px;background:#01696f;color:#fff;border:none;border-radius:10px;font-size:1rem;font-weight:700;cursor:pointer;margin-top:12px;text-align:center;transition:background .18s}
+.btn-primary:hover{background:#0c4e54}
+.btn-primary:disabled{background:#bab9b4;cursor:not-allowed}
+.login-hint{font-size:.8125rem;color:#7a7974;text-align:center;margin-top:8px}
+.login-hint a{color:#01696f}
+.how-it-works{counter-reset:steps}
+.how-it-works li{padding:10px 0;border-bottom:1px solid #f3f0ec;font-size:.9rem;display:flex;gap:12px;align-items:flex-start;counter-increment:steps}
+.how-it-works li:last-child{border-bottom:none}
+.how-it-works li::before{content:counter(steps);background:#cedcd8;color:#01696f;font-weight:700;border-radius:50%;width:24px;height:24px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:.8125rem}
+.dev-info{font-size:.8125rem;color:#7a7974;display:flex;align-items:center;gap:8px}
+.dev-avatar{width:32px;height:32px;border-radius:50%;background:#cedcd8;display:flex;align-items:center;justify-content:center;font-size:1rem}
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(100px);background:#0c4e54;color:#fff;padding:12px 20px;border-radius:10px;font-size:.9rem;transition:transform .3s;z-index:999;white-space:nowrap}
+.toast.show{transform:translateX(-50%) translateY(0)}
+@media(max-width:480px){.hero{padding:24px 16px 32px}.content{padding:12px}}
+</style>
+</head>
+<body>
+<div class="back-bar">
+  <a href="/frontend/agents/agents.html">← Все агенты</a>
+</div>
+
+<div class="hero" id="agentHero">
+  <span class="hero-emoji" id="heroEmoji">🤖</span>
+  <h1 id="heroTitle">Загрузка...</h1>
+  <p id="heroDesc"></p>
+  <div class="hero-badges" id="heroBadges"></div>
+</div>
+
+<div class="content">
+  <div class="card">
+    <h2>Что умеет агент</h2>
+    <ul class="feature-list" id="featureList"></ul>
+  </div>
+
+  <div class="price-block" id="priceBlock">
+    <div class="price-big" id="priceVal">—</div>
+    <div class="price-period">₽ в месяц</div>
+    <div class="price-note">Отмена в любой момент · Без скрытых платежей</div>
+    <button class="btn-primary" id="subscribeBtn">Подключить агента</button>
+    <div class="login-hint" id="loginHint"></div>
+  </div>
+
+  <div class="card">
+    <h2>Как это работает</h2>
+    <ol class="how-it-works">
+      <li>Нажмите «Подключить» и оплатите через YooKassa</li>
+      <li>Получите инструкцию по настройке на почту</li>
+      <li>Агент начинает работать в течение 10 минут</li>
+      <li>Управляйте агентом в разделе «Мои агенты»</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h2>Разработчик</h2>
+    <div class="dev-info">
+      <div class="dev-avatar" id="devAvatar">S</div>
+      <div>
+        <div style="font-weight:600;font-size:.875rem" id="devName">Serpmonn</div>
+        <div style="color:#7a7974;font-size:.8125rem">Верифицированный разработчик</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const AGENTS = {
+  'vk-manager':{emoji:'💬',title:'ИИ менеджер ВКонтакте',desc:'Отвечает на сообщения, обрабатывает заявки и квалифицирует лиды 24/7 без участия человека.',price:990,badges:['ВКонтакте','Хит продаж','24/7'],features:['Мгновенные ответы на входящие сообщения ВКонтакте','Квалификация лидов по вашему скрипту продаж','Запись на встречу / заявка в CRM','Ответы на частые вопросы из базы знаний','Передача живому менеджеру при необходимости','Ежедневный отчёт в Telegram'],dev:'Serpmonn'},
+  'tg-support':{emoji:'📨',title:'Telegram поддержка',desc:'Отвечает на частые вопросы, принимает заявки и эскалирует сложные случаи менеджеру.',price:790,badges:['Telegram','Поддержка'],features:['Ответы на FAQ 24/7','Приём и регистрация заявок','Эскалация сложных вопросов','Интеграция с вашей базой знаний','Статистика обращений'],dev:'Serpmonn'},
+  'avito-bot':{emoji:'🏪',title:'Авито-ассистент',desc:'Автоматически отвечает покупателям, торгуется и договаривается о встрече.',price:1190,badges:['Авито'],features:['Мгновенные ответы покупателям','Гибкий торг в заданных рамках','Запись на просмотр/встречу','Обработка нескольких диалогов одновременно','Уведомление о горячих клиентах'],dev:'Serpmonn'},
+  'seo-writer':{emoji:'✍️',title:'SEO-копирайтер',desc:'Пишет SEO-оптимизированные тексты для карточек товаров, статей и лендингов.',price:1490,badges:['SEO','Контент'],features:['Генерация текстов под ключевые слова','Оптимизация карточек товаров','Написание статей для блога','Проверка уникальности','Экспорт в Word / Google Docs'],dev:'Serpmonn'},
+  'hr-screener':{emoji:'👔',title:'HR-скринер резюме',desc:'Анализирует резюме, задаёт уточняющие вопросы и составляет рейтинг кандидатов.',price:1290,badges:['HR','Рекрутинг'],features:['Анализ резюме по заданным критериям','Автоматическое первичное интервью','Рейтинг кандидатов','Сводный отчёт для рекрутера','Интеграция с hh.ru / Telegram'],dev:'Serpmonn'},
+  'wb-manager':{emoji:'📦',title:'Менеджер Wildberries',desc:'Отвечает на отзывы, оптимизирует карточки и отслеживает конкурентов.',price:1690,badges:['Wildberries','Маркетплейс'],features:['Ответы на отзывы покупателей','Оптимизация карточек товаров','Мониторинг цен конкурентов','Анализ ключевых слов','Еженедельный отчёт'],dev:'Serpmonn'},
+};
+
+const params = new URLSearchParams(location.search);
+const id = params.get('id') || 'vk-manager';
+const agent = AGENTS[id];
+
+if(agent){
+  document.title = agent.title + ' — Serpmonn';
+  document.getElementById('heroEmoji').textContent = agent.emoji;
+  document.getElementById('heroTitle').textContent = agent.title;
+  document.getElementById('heroDesc').textContent = agent.desc;
+  document.getElementById('heroBadges').innerHTML = agent.badges.map(b=>`<span class="hero-badge">${b}</span>`).join('');
+  document.getElementById('featureList').innerHTML = agent.features.map(f=>`<li>${f}</li>`).join('');
+  document.getElementById('priceVal').textContent = agent.price.toLocaleString('ru');
+  document.getElementById('devName').textContent = agent.dev;
+  document.getElementById('devAvatar').textContent = agent.dev[0];
+}
+
+// Проверяем авторизацию
+const token = typeof serpToken !== 'undefined' ? serpToken : null;
+const subscribeBtn = document.getElementById('subscribeBtn');
+const loginHint = document.getElementById('loginHint');
+
+if(!token){
+  loginHint.innerHTML = 'Для подключения <a href="/frontend/register/register.html">войдите или зарегистрируйтесь</a>';
+}
+
+subscribeBtn.addEventListener('click', async () => {
+  if(!token){
+    location.href = '/frontend/register/register.html?next=' + encodeURIComponent(location.href);
+    return;
+  }
+  subscribeBtn.disabled = true;
+  subscribeBtn.textContent = 'Перенаправление...';
+  try{
+    const res = await fetch(`/api/agents/${id}/subscribe`, {
+      method:'POST',
+      headers:{'Authorization':'Bearer '+token,'Content-Type':'application/json'}
+    });
+    const data = await res.json();
+    if(data.confirmationUrl){
+      location.href = data.confirmationUrl;
+    } else {
+      throw new Error(data.error || 'Ошибка');
+    }
+  } catch(e){
+    subscribeBtn.disabled = false;
+    subscribeBtn.textContent = 'Подключить агента';
+    showToast('❌ ' + e.message);
+  }
+});
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 3000);
+}
+</script>
+</body>
+</html>
