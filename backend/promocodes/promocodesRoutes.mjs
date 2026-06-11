@@ -464,6 +464,28 @@ router.get('/', promocodesLimiter, async (req, res) => {
   }
 });
 
+// Поиск одной карточки по точному промокоду — для страницы /promo?code=...
+router.get('/by-code', promocodesLimiter, (req, res) => {
+  try {
+    const code = (req.query.code || '').trim();
+    if (!code) {
+      return res.status(400).json({ status: 'error', message: 'Параметр code обязателен' });
+    }
+    const promo = promocodesCache.data.find(
+      p => p.promocode && p.promocode.toLowerCase() === code.toLowerCase()
+    );
+    if (!promo) {
+      return res.status(404).json({ status: 'error', message: 'Промокод не найден' });
+    }
+    res.set('Cache-Control', 'public, max-age=300');
+    res.json({ status: 'success', data: promo });
+  } catch (error) {
+    console.error('[PROMOCODES] Ошибка /by-code:', error);
+    res.set('Cache-Control', 'no-store');
+    res.status(500).json({ status: 'error', message: 'Ошибка сервера' });
+  }
+});
+
 router.get('/stats', promocodesLimiter, (req, res) => {
   try {
     res.set('Cache-Control', 'no-store');
