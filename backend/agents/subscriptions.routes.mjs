@@ -8,7 +8,7 @@ import {
     getActiveSubscriptionsByBuyer,
     creditDeveloper
 } from './subscriptions.model.mjs';
-import { getAgentByIdPublic } from './agents.model.mjs';
+import { getAgentByIdPublic, getAgentByIdOrSlug } from './agents.model.mjs';
 import verifyToken from '../auth/verifyToken.mjs';
 
 const router = express.Router();
@@ -76,32 +76,37 @@ router.post('/:id/subscribe', verifyToken, async (req, res) => {
     }
 });
 
-// GET /api/agents/:id/access — получить gateway URL и токен для уже подписанного бизнеса
+// GET /api/agents/:id/access — gateway URL + инструкция. :id может быть числом или slug
 router.get('/:id/access', verifyToken, async (req, res) => {
     try {
-        const agentId     = Number(req.params.id);
         const buyerUserId = req.user.id;
 
-        // Проверяем активную подписку
+        // Находим агента по slug или числовому id
+        const agent = await getAgentByIdOrSlug(req.params.id);
+        if (!agent) {
+            return res.status(404).json({ status: 'error', message: 'Агент не найден' });
+        }
+
         const [sub] = await query(
             `SELECT id, active_until FROM agent_subscriptions
              WHERE agent_id = ? AND buyer_user_id = ? AND status = 'active' AND active_until > NOW()
              LIMIT 1`,
-            [agentId, buyerUserId]
+            [agent.id, buyerUserId]
         );
 
         if (!sub) {
             return res.status(403).json({ status: 'error', message: 'Нет активной подписки' });
         }
 
-        // Токен — это JWT пользователя (тот же что он уже имеет), gateway его принимает
-        // Возвращаем готовые данные для интеграции
-        const gatewayUrl = `https://api.serpmonn.ru/gateway/${agentId}`;
+        // Gateway URL: используем slug если есть, иначе числовой id
+        const agentRef  = agent.slug || agent.id;
+        const gatewayUrl = `https://api.serpmonn.ru/gateway/${agentRef}`;
 
         return res.json({
-            status:      'ok',
-            gateway_url: gatewayUrl,
-            agent_id:    agentId,
+            status:       'ok',
+            gateway_url:  gatewayUrl,
+            agent_id:     agent.id,
+            agent_slug:   agent.slug,
             active_until: sub.active_until,
             instructions: {
                 method:  'POST',
@@ -119,7 +124,7 @@ router.get('/:id/access', verifyToken, async (req, res) => {
     }
 });
 
-// GET /api/agents/my-subscriptions — активные подписки бизнеса
+// GET /api/agents/my-subscriptions
 router.get('/my-subscriptions', verifyToken, async (req, res) => {
     try {
         const subs = await getActiveSubscriptionsByBuyer(req.user.id);
