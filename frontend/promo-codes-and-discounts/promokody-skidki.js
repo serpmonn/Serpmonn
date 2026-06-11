@@ -1056,6 +1056,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadPromocodesFromAPI();
   updateLastUpdateTime();
   startAutoUpdate();
+
+  // Читаем ?search= из URL — перекрывает сохранённый поиск из localStorage
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlSearch = urlParams.get('search');
+  if (urlSearch) {
+    elements.searchInput.value = urlSearch;
+  }
+
   filterPromos();
 
   if (elements.refreshBtn) {
