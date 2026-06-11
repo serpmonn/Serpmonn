@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Мои агенты — Serpmonn</title>
+<link rel="stylesheet" href="/frontend/styles/accessibility.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251d;min-height:100dvh}
+.page-header{background:#fff;border-bottom:1px solid #dcd9d5;padding:16px 20px;position:sticky;top:0;z-index:10}
+.page-header h1{font-size:1.25rem;font-weight:700;color:#01696f}
+.page-header p{font-size:.875rem;color:#7a7974;margin-top:2px}
+.content{max-width:640px;margin:0 auto;padding:20px}
+.agent-item{background:#fff;border-radius:12px;border:1px solid #dcd9d5;padding:16px;margin-bottom:12px;display:flex;gap:14px;align-items:flex-start}
+.agent-emoji{font-size:2rem;flex-shrink:0;width:48px;height:48px;display:flex;align-items:center;justify-content:center;background:#f3f0ec;border-radius:10px}
+.agent-info{flex:1;min-width:0}
+.agent-name{font-weight:700;font-size:.9375rem;margin-bottom:4px}
+.agent-meta{font-size:.8125rem;color:#7a7974;margin-bottom:8px}
+.agent-status{display:inline-flex;align-items:center;gap:4px;font-size:.8125rem;font-weight:600;padding:3px 10px;border-radius:999px}
+.status-active{background:#d4dfcc;color:#2e5c10}
+.status-pending{background:#ffe9cc;color:#c55700}
+.status-expired{background:#e8e8e8;color:#7a7974}
+.agent-actions{display:flex;gap:8px;margin-top:10px}
+.btn-sm{padding:6px 14px;border-radius:8px;font-size:.8125rem;font-weight:600;cursor:pointer;border:none;transition:all .18s}
+.btn-outline{background:#fff;border:1px solid #d4d1ca;color:#28251d}
+.btn-outline:hover{border-color:#01696f;color:#01696f}
+.btn-danger-sm{background:#fff;border:1px solid #dcd9d5;color:#a13544;font-size:.8125rem;padding:6px 14px;border-radius:8px;cursor:pointer;font-weight:600}
+.empty-state{text-align:center;padding:60px 20px}
+.empty-icon{font-size:3.5rem;margin-bottom:16px}
+.empty-title{font-size:1.125rem;font-weight:700;margin-bottom:8px}
+.empty-desc{color:#7a7974;font-size:.9rem;margin-bottom:20px}
+.btn-primary{display:inline-block;padding:12px 24px;background:#01696f;color:#fff;border-radius:10px;font-size:.9375rem;font-weight:700;text-decoration:none;transition:background .18s}
+.btn-primary:hover{background:#0c4e54}
+.loading{text-align:center;padding:40px;color:#7a7974}
+.skeleton{background:linear-gradient(90deg,#f3f0ec 25%,#e6e4df 50%,#f3f0ec 75%);background-size:200% 100%;animation:shimmer 1.5s ease-in-out infinite;border-radius:8px}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.skel-card{height:100px;margin-bottom:12px;border-radius:12px}
+</style>
+</head>
+<body>
+<div class="page-header">
+  <h1>📋 Мои агенты</h1>
+  <p>Управление подключёнными ИИ агентами</p>
+</div>
+
+<div class="content">
+  <div id="loadingState">
+    <div class="skeleton skel-card"></div>
+    <div class="skeleton skel-card"></div>
+  </div>
+  <div id="listState" style="display:none"></div>
+  <div id="emptyState" style="display:none">
+    <div class="empty-state">
+      <div class="empty-icon">🤖</div>
+      <div class="empty-title">Нет подключённых агентов</div>
+      <div class="empty-desc">Выберите агента в каталоге и подключите его к своему бизнесу</div>
+      <a href="/frontend/agents/agents.html" class="btn-primary">Открыть каталог</a>
+    </div>
+  </div>
+</div>
+
+<script>
+const token = typeof serpToken !== 'undefined' ? serpToken : null;
+
+async function loadMyAgents(){
+  if(!token){
+    location.href = '/frontend/register/register.html?next=' + encodeURIComponent(location.href);
+    return;
+  }
+  try{
+    const res = await fetch('/api/agents/my-subscriptions',{
+      headers:{'Authorization':'Bearer '+token}
+    });
+    const data = await res.json();
+    document.getElementById('loadingState').style.display='none';
+    if(!data.subscriptions || !data.subscriptions.length){
+      document.getElementById('emptyState').style.display='block';
+      return;
+    }
+    document.getElementById('listState').style.display='block';
+    renderAgents(data.subscriptions);
+  } catch(e){
+    document.getElementById('loadingState').innerHTML='<p style="color:#a13544;text-align:center;padding:40px">Ошибка загрузки. Попробуйте позже.</p>';
+  }
+}
+
+const AGENT_NAMES = {
+  'vk-manager':{emoji:'💬',name:'ИИ менеджер ВКонтакте'},
+  'tg-support':{emoji:'📨',name:'Telegram поддержка'},
+  'avito-bot':{emoji:'🏪',name:'Авито-ассистент'},
+  'seo-writer':{emoji:'✍️',name:'SEO-копирайтер'},
+  'hr-screener':{emoji:'👔',name:'HR-скринер'},
+  'wb-manager':{emoji:'📦',name:'Менеджер Wildberries'},
+};
+
+function renderAgents(subs){
+  const list = document.getElementById('listState');
+  list.innerHTML = subs.map(s => {
+    const a = AGENT_NAMES[s.agent_id] || {emoji:'🤖',name:s.agent_id};
+    const statusClass = s.status === 'active' ? 'status-active' : s.status === 'pending' ? 'status-pending' : 'status-expired';
+    const statusLabel = s.status === 'active' ? '● Активен' : s.status === 'pending' ? '⏳ Ожидает оплаты' : '✕ Истёк';
+    const expiresAt = s.expires_at ? new Date(s.expires_at).toLocaleDateString('ru',{day:'numeric',month:'long',year:'numeric'}) : '—';
+    return `
+    <div class="agent-item">
+      <div class="agent-emoji">${a.emoji}</div>
+      <div class="agent-info">
+        <div class="agent-name">${a.name}</div>
+        <div class="agent-meta">Активен до: ${expiresAt}</div>
+        <span class="agent-status ${statusClass}">${statusLabel}</span>
+        <div class="agent-actions">
+          <a href="/frontend/agents/agent.html?id=${s.agent_id}" class="btn-sm btn-outline">Подробнее</a>
+          ${s.status !== 'active' ? `<a href="/frontend/agents/agent.html?id=${s.agent_id}" class="btn-sm btn-outline">Продлить</a>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+loadMyAgents();
+</script>
+</body>
+</html>

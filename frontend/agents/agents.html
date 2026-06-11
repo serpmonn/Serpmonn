@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ИИ Агенты — Serpmonn</title>
+<link rel="stylesheet" href="/frontend/styles/accessibility.css">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#f7f6f2;color:#28251d;min-height:100dvh}
+.page-header{background:#fff;border-bottom:1px solid #dcd9d5;padding:16px 20px;position:sticky;top:0;z-index:10}
+.page-header h1{font-size:1.25rem;font-weight:700;color:#01696f}
+.page-header p{font-size:.875rem;color:#7a7974;margin-top:2px}
+.filters{padding:16px 20px;display:flex;gap:8px;flex-wrap:wrap;background:#fff;border-bottom:1px solid #edeae5}
+.filter-btn{padding:6px 14px;border-radius:999px;border:1px solid #d4d1ca;background:#fff;font-size:.8125rem;cursor:pointer;transition:all .18s}
+.filter-btn.active,.filter-btn:hover{background:#01696f;color:#fff;border-color:#01696f}
+.agents-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:16px;padding:20px}
+.agent-card{background:#fff;border-radius:12px;border:1px solid #dcd9d5;overflow:hidden;transition:box-shadow .18s,transform .18s;cursor:pointer;text-decoration:none;color:inherit;display:block}
+.agent-card:hover{box-shadow:0 8px 24px oklch(0.2 0.01 80/0.1);transform:translateY(-2px)}
+.agent-card-cover{height:120px;background:linear-gradient(135deg,#01696f 0%,#0c4e54 100%);display:flex;align-items:center;justify-content:center;font-size:3rem}
+.agent-card-body{padding:16px}
+.agent-card-category{font-size:.75rem;font-weight:600;color:#01696f;text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.agent-card-title{font-size:1rem;font-weight:700;margin-bottom:6px;line-height:1.3}
+.agent-card-desc{font-size:.8125rem;color:#7a7974;line-height:1.5;margin-bottom:12px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.agent-card-footer{display:flex;align-items:center;justify-content:space-between}
+.agent-price{font-size:1rem;font-weight:700;color:#01696f}
+.agent-price span{font-size:.75rem;font-weight:400;color:#7a7974}
+.agent-badge{font-size:.75rem;padding:3px 8px;border-radius:4px;background:#cedcd8;color:#01696f;font-weight:600}
+.agent-badge.new{background:#e8f4f4;color:#0c4e54}
+.empty-state{text-align:center;padding:60px 20px;color:#7a7974}
+.empty-state-icon{font-size:3rem;margin-bottom:12px}
+.section-sep{padding:8px 20px;font-size:.8125rem;font-weight:600;color:#7a7974;text-transform:uppercase;letter-spacing:.05em;background:#f7f6f2}
+.dev-banner{margin:0 20px 16px;background:linear-gradient(135deg,#0c4e54,#01696f);border-radius:12px;padding:16px 20px;color:#fff;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.dev-banner h3{font-size:1rem;font-weight:700}
+.dev-banner p{font-size:.8125rem;opacity:.85;margin-top:2px}
+.dev-banner a{background:#fff;color:#01696f;padding:8px 16px;border-radius:8px;font-size:.875rem;font-weight:700;text-decoration:none;white-space:nowrap}
+@media(max-width:480px){.agents-grid{padding:12px}.dev-banner{flex-direction:column;align-items:flex-start}}
+</style>
+</head>
+<body>
+<div class="page-header">
+  <h1>🤖 ИИ Агенты</h1>
+  <p>Готовые агенты для вашего бизнеса — подключите за пару минут</p>
+</div>
+
+<div class="filters">
+  <button class="filter-btn active" data-cat="all">Все</button>
+  <button class="filter-btn" data-cat="vk">ВКонтакте</button>
+  <button class="filter-btn" data-cat="telegram">Telegram</button>
+  <button class="filter-btn" data-cat="whatsapp">WhatsApp</button>
+  <button class="filter-btn" data-cat="avito">Авито</button>
+  <button class="filter-btn" data-cat="seo">SEO</button>
+  <button class="filter-btn" data-cat="hr">HR</button>
+</div>
+
+<div id="agentsList">
+  <div class="section-sep">🔥 Популярные</div>
+  <div class="agents-grid" id="agentsGrid"></div>
+
+  <div class="dev-banner">
+    <div>
+      <h3>Вы разработчик?</h3>
+      <p>Публикуйте агентов и зарабатывайте 90% от каждой подписки</p>
+    </div>
+    <a href="/frontend/agents/dashboard.html">Кабинет разработчика →</a>
+  </div>
+</div>
+
+<script>
+const AGENTS = [
+  {id:'vk-manager',emoji:'💬',cat:'vk',title:'ИИ менеджер ВКонтакте',desc:'Отвечает на сообщения, обрабатывает заявки, квалифицирует лиды 24/7 без участия человека.',price:990,badge:'Хит'},
+  {id:'tg-support',emoji:'📨',cat:'telegram',title:'Telegram поддержка',desc:'Отвечает на частые вопросы, принимает заявки, эскалирует сложные случаи менеджеру.',price:790,badge:'Новинка',badgeType:'new'},
+  {id:'avito-bot',emoji:'🏪',cat:'avito',title:'Авито-ассистент',desc:'Автоматически отвечает покупателям, торгуется, договаривается о встрече.',price:1190,badge:''},
+  {id:'seo-writer',emoji:'✍️',cat:'seo',title:'SEO-копирайтер',desc:'Пишет SEO-оптимизированные тексты для карточек товаров, статей и лендингов.',price:1490,badge:''},
+  {id:'hr-screener',emoji:'👔',cat:'hr',title:'HR-скринер резюме',desc:'Анализирует резюме, задаёт уточняющие вопросы, составляет рейтинг кандидатов.',price:1290,badge:'Новинка',badgeType:'new'},
+  {id:'wb-manager',emoji:'📦',cat:'avito',title:'Менеджер Wildberries',desc:'Отвечает на отзывы, оптимизирует карточки, отслеживает конкурентов.',price:1690,badge:''},
+];
+
+function renderAgents(cat){
+  const grid = document.getElementById('agentsGrid');
+  const filtered = cat === 'all' ? AGENTS : AGENTS.filter(a => a.cat === cat);
+  if(!filtered.length){
+    grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-state-icon">🔍</div><p>Агентов в этой категории пока нет</p></div>';
+    return;
+  }
+  grid.innerHTML = filtered.map(a => `
+    <a class="agent-card" href="/frontend/agents/agent.html?id=${a.id}">
+      <div class="agent-card-cover" style="background:linear-gradient(135deg,${catColor(a.cat)} 0%,${catColorDark(a.cat)} 100%)">${a.emoji}</div>
+      <div class="agent-card-body">
+        <div class="agent-card-category">${catLabel(a.cat)}</div>
+        <div class="agent-card-title">${a.title}</div>
+        <div class="agent-card-desc">${a.desc}</div>
+        <div class="agent-card-footer">
+          <div class="agent-price">${a.price.toLocaleString('ru')} ₽<span>/мес</span></div>
+          ${a.badge ? `<span class="agent-badge ${a.badgeType||''}">${a.badge}</span>` : ''}
+        </div>
+      </div>
+    </a>`).join('');
+}
+
+function catLabel(c){{vk:'ВКонтакте',telegram:'Telegram',whatsapp:'WhatsApp',avito:'Маркетплейс',seo:'SEO',hr:'HR'}[c]||c;return {vk:'ВКонтакте',telegram:'Telegram',whatsapp:'WhatsApp',avito:'Маркетплейс',seo:'SEO',hr:'HR'}[c]||c;}
+function catColor(c){{vk:'#4a76a8',telegram:'#0088cc',whatsapp:'#25d366',avito:'#00aaff',seo:'#f5a623',hr:'#9b59b6'}[c];return {vk:'#4a76a8',telegram:'#0088cc',whatsapp:'#25d366',avito:'#00aaff',seo:'#f5a623',hr:'#9b59b6'}[c]||'#01696f';}
+function catColorDark(c){return {vk:'#2d5a8a',telegram:'#006699',whatsapp:'#128c4e',avito:'#0077cc',seo:'#c8841a',hr:'#7d3a96'}[c]||'#0c4e54';}
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderAgents(btn.dataset.cat);
+  });
+});
+
+renderAgents('all');
+</script>
+</body>
+</html>
