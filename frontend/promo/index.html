@@ -4,26 +4,27 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- OG / Telegram / VK preview — заполняется JS после загрузки данных -->
+  <!-- OG / Telegram / VK preview -->
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Serpmonn.ru">
   <meta name="twitter:card" content="summary_large_image">
 
   <title id="pageTitle">Промокод | Serpmonn.ru</title>
 
-  <link rel="icon" href="/frontend/images/favicon.ico" type="image/x-icon">
+  <!-- Favicon -->
+  <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+
+  <!-- Глобальные стили сайта -->
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    html {
-      -webkit-font-smoothing: antialiased;
-      scroll-behavior: smooth;
-    }
+    html { -webkit-font-smoothing: antialiased; scroll-behavior: smooth; }
 
     body {
       min-height: 100dvh;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background: #f5f5f0;
       color: #1a1a1a;
       display: flex;
@@ -32,54 +33,43 @@
       padding: 0 16px 40px;
     }
 
-    /* ── Header ── */
-    .site-header {
+    /* ── Меню (nav) занимает всю ширину ── */
+    header {
+      width: 100%;
+    }
+    header nav#main-nav {
+      width: 100%;
+    }
+
+    /* ── Breadcrumb / back link ── */
+    .back-bar {
       width: 100%;
       max-width: 640px;
+      padding: 14px 0 10px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      padding: 16px 0;
-      border-bottom: 1px solid rgba(0,0,0,.08);
-      margin-bottom: 32px;
+      gap: 6px;
     }
-    .site-logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      text-decoration: none;
-    }
-    .site-logo img {
-      width: 36px;
-      height: 36px;
-      border-radius: 8px;
-      object-fit: contain;
-    }
-    .site-logo-text {
-      font-size: 1.1rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1;
-    }
-    .site-logo-text .red  { color: #c0392b; }
-    .site-logo-text .dark { color: #1a1a1a; }
-
-    .all-promos-link {
-      font-size: 0.85rem;
+    .back-bar a {
+      font-size: 0.83rem;
       color: #01696f;
       text-decoration: none;
       font-weight: 500;
-      padding: 6px 12px;
-      border: 1.5px solid #01696f;
-      border-radius: 20px;
-      transition: background 0.18s, color 0.18s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.18s;
     }
-    .all-promos-link:hover { background: #01696f; color: #fff; }
+    .back-bar a:hover { color: #0c4e54; }
+    .back-bar a::before { content: '←'; font-size: 0.9em; }
+    .back-bar .sep { color: #ccc; font-size: 0.78rem; }
+    .back-bar .current { font-size: 0.83rem; color: #999; }
 
     /* ── Card ── */
     .promo-wrap {
       width: 100%;
       max-width: 560px;
+      margin-top: 8px;
     }
 
     .promo-card {
@@ -130,7 +120,7 @@
 
     .discount-badge {
       flex-shrink: 0;
-      background: #01696f;
+      background: #c0392b;
       color: #fff;
       border-radius: 20px;
       padding: 4px 12px;
@@ -205,7 +195,7 @@
       padding: 12px 18px;
       border-radius: 12px;
       border: none;
-      background: #01696f;
+      background: #c0392b;
       color: #fff;
       font-size: 0.92rem;
       font-weight: 700;
@@ -213,8 +203,11 @@
       text-align: center;
       text-decoration: none;
       transition: background 0.18s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
-    .btn-use:hover { background: #0c4e54; }
+    .btn-use:hover { background: #a93226; }
 
     .btn-share {
       flex-shrink: 0;
@@ -251,7 +244,7 @@
     }
 
     /* ── Skeleton ── */
-    .skeleton-wrap { width: 100%; max-width: 560px; }
+    .skeleton-wrap { width: 100%; max-width: 560px; margin-top: 8px; }
     .skeleton-card {
       background: #fff;
       border-radius: 16px;
@@ -280,7 +273,7 @@
     .sk-btn { height:44px; flex:1; border-radius:12px; }
     .sk-btn.small { flex: 0 0 80px; }
 
-    /* ── Copied toast ── */
+    /* ── Toast ── */
     .toast {
       position: fixed;
       bottom: 32px;
@@ -308,31 +301,36 @@
 </head>
 <body>
 
-<header class="site-header">
-  <a href="/" class="site-logo">
-    <img src="/frontend/images/Serpmonn-192x192.png" alt="Serpmonn" width="36" height="36" loading="eager">
-    <span class="site-logo-text">
-      <span class="red">Serp</span><span class="dark">monn</span>
-    </span>
-  </a>
-  <a href="/promo" class="all-promos-link">Все промокоды</a>
+<!-- Меню — такое же как на странице промокодов -->
+<header>
+  <nav id="main-nav" aria-label="Основная навигация"></nav>
 </header>
+
+<!-- Хлебные крошки / ссылка назад -->
+<nav class="back-bar" aria-label="Навигация">
+  <a href="/frontend/promo-codes-and-discounts/promokody-skidki.html">Все промокоды</a>
+  <span class="sep">›</span>
+  <span class="current" id="breadcrumbCurrent">Промокод</span>
+</nav>
 
 <div id="root"></div>
 
 <div class="toast" id="toast">Промокод скопирован!</div>
 
+<!-- Меню загружается тем же механизмом что и на основном сайте -->
+<script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+
 <script>
 (function () {
-  const root = document.getElementById('root');
+  const root  = document.getElementById('root');
   const toast = document.getElementById('toast');
 
-  // ── Params ──
+  // ── Если code= не передан — редирект на основную страницу промокодов ──
   const params = new URLSearchParams(window.location.search);
-  const code = (params.get('code') || '').trim();
+  const code   = (params.get('code') || '').trim();
 
   if (!code) {
-    window.location.href = '/promo';
+    window.location.replace('/frontend/promo-codes-and-discounts/promokody-skidki.html');
     return;
   }
 
@@ -377,7 +375,7 @@
   function discountLabel(p) {
     if (!p) return null;
     if (p.discount_percent) return `−${p.discount_percent}%`;
-    if (p.discount_amount)  return `−${p.discount_amount} ₽`;
+    if (p.discount_amount)  return `−${p.discount_amount} ₽`;
     return null;
   }
 
@@ -390,9 +388,7 @@
   function copyText(text) {
     if (navigator.clipboard) {
       navigator.clipboard.writeText(text).catch(() => fallbackCopy(text));
-    } else {
-      fallbackCopy(text);
-    }
+    } else { fallbackCopy(text); }
   }
 
   function fallbackCopy(text) {
@@ -405,6 +401,18 @@
     document.body.removeChild(ta);
   }
 
+  function esc(str) {
+    return String(str || '')
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
+  function setMeta(property, content) {
+    let el = document.querySelector(`meta[property="${property}"]`);
+    if (!el) { el = document.createElement('meta'); el.setAttribute('property', property); document.head.appendChild(el); }
+    el.setAttribute('content', content);
+  }
+
   // ── Render ──
   function render(promo) {
     const expired = isExpired(promo.valid_until);
@@ -412,10 +420,11 @@
     const dateStr = formatDate(promo.valid_until);
     const hasCode = Boolean(promo.promocode);
 
-    // Update <title> + OG
-    const titleText = `${promo.title} — промокод${badge ? ' ' + badge : ''} | Serpmonn.ru`;
+    // Обновляем title, OG, хлебные крошки
+    const titleText = `${promo.title}${badge ? ' — ' + badge : ''} | Serpmonn.ru`;
     document.title = titleText;
-    document.getElementById('pageTitle').textContent = titleText;
+    const bc = document.getElementById('breadcrumbCurrent');
+    if (bc) bc.textContent = promo.title;
     setMeta('og:title',       titleText);
     setMeta('og:description', promo.description || '');
     if (promo.image_url) setMeta('og:image', promo.image_url);
@@ -456,14 +465,13 @@
                    Перейти на сайт →
                  </a>`
               : ''}
-            <button class="btn-share" onclick="doShare()">🔗 Поделиться</button>
+            <button class="btn-share" onclick="doShare()">&#128279; Поделиться</button>
           </div>
         </div>
       </div>`;
 
-    // Expose helpers to onclick
     window.doCopy = function () {
-      const btn  = document.getElementById('btnCopy');
+      const btn = document.getElementById('btnCopy');
       copyText(promo.promocode);
       showToast('Промокод скопирован!');
       btn.textContent = '✓ Скопировано';
@@ -483,28 +491,15 @@
   }
 
   function renderNotFound(codeParam) {
+    const bc = document.getElementById('breadcrumbCurrent');
+    if (bc) bc.textContent = 'Не найдено';
     root.innerHTML = `
       <div class="not-found">
         <div class="icon">🔍</div>
         <h2>Промокод не найден</h2>
         <p>Промокод «${esc(codeParam)}» не найден или больше не активен.</p>
-        <a href="/promo">Смотреть все промокоды</a>
+        <a href="/frontend/promo-codes-and-discounts/promokody-skidki.html">Смотреть все промокоды</a>
       </div>`;
-  }
-
-  function setMeta(property, content) {
-    let el = document.querySelector(`meta[property="${property}"]`);
-    if (!el) { el = document.createElement('meta'); el.setAttribute('property', property); document.head.appendChild(el); }
-    el.setAttribute('content', content);
-  }
-
-  function esc(str) {
-    return String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
   }
 
   // ── Fetch ──
