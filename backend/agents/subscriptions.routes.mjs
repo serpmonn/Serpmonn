@@ -76,6 +76,49 @@ router.post('/:id/subscribe', verifyToken, async (req, res) => {
     }
 });
 
+// GET /api/agents/:id/access — получить gateway URL и токен для уже подписанного бизнеса
+router.get('/:id/access', verifyToken, async (req, res) => {
+    try {
+        const agentId     = Number(req.params.id);
+        const buyerUserId = req.user.id;
+
+        // Проверяем активную подписку
+        const [sub] = await query(
+            `SELECT id, active_until FROM agent_subscriptions
+             WHERE agent_id = ? AND buyer_user_id = ? AND status = 'active' AND active_until > NOW()
+             LIMIT 1`,
+            [agentId, buyerUserId]
+        );
+
+        if (!sub) {
+            return res.status(403).json({ status: 'error', message: 'Нет активной подписки' });
+        }
+
+        // Токен — это JWT пользователя (тот же что он уже имеет), gateway его принимает
+        // Возвращаем готовые данные для интеграции
+        const gatewayUrl = `https://api.serpmonn.ru/gateway/${agentId}`;
+
+        return res.json({
+            status:      'ok',
+            gateway_url: gatewayUrl,
+            agent_id:    agentId,
+            active_until: sub.active_until,
+            instructions: {
+                method:  'POST',
+                url:     gatewayUrl,
+                headers: {
+                    'Authorization': 'Bearer <ваш_токен>',
+                    'Content-Type':  'application/json'
+                },
+                body_example: { message: 'Привет!' }
+            }
+        });
+    } catch (err) {
+        console.error('[subscriptions] access error:', err);
+        return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    }
+});
+
 // GET /api/agents/my-subscriptions — активные подписки бизнеса
 router.get('/my-subscriptions', verifyToken, async (req, res) => {
     try {
@@ -97,7 +140,7 @@ router.post('/subscription-webhook', async (req, res) => {
             const meta     = payment.metadata || {};
 
             if (meta.type !== 'agent_subscription') {
-                return res.sendStatus(200);                 // Не наш тип платежа — игнорируем
+                return res.sendStatus(200);
             }
 
             const sub = await getSubscriptionByPaymentId(payment.id);
@@ -106,8 +149,8 @@ router.post('/subscription-webhook', async (req, res) => {
                 return res.sendStatus(200);
             }
 
-            await activateSubscription(payment.id);        // Активируем подписку на 30 дней
-            await creditDeveloper(sub.agent_id, sub.price_rub); // Начисляем 90% разработчику
+            await activateSubscription(payment.id);
+            await creditDeveloper(sub.agent_id, sub.price_rub);
 
             console.log(
                 `[subscriptions] activated: agent=${sub.agent_id} buyer=${sub.buyer_user_id} payment=${payment.id}`
