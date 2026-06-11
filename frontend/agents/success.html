@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="ru" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, user-scalable=yes">
+<title>Подписка оформлена — Serpmonn</title>
+<meta name="description" content="Подписка на ИИ-агента оформлена. Получите ваш gateway URL для интеграции.">
+<link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+<link rel="manifest" href="/frontend/pwa/manifest.json">
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<style>
+  .success-page { max-width: 680px; margin: 0 auto; padding: 40px 16px 64px; }
+  .success-hero { text-align: center; padding: 32px 0 28px; }
+  .success-icon { font-size: 4rem; margin-bottom: 16px; display: block; }
+  .success-hero h1 { font-size: clamp(1.5rem, 3vw, 2rem); margin-bottom: 8px; }
+  .success-hero p { color: #666; font-size: 0.95rem; max-width: 380px; margin: 0 auto; }
+
+  .gateway-card { border: 2px solid #28a745; border-radius: 16px; padding: 24px 24px 20px; background: #f8fff9; margin: 28px 0; }
+  .gateway-card h2 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; color: #155724; }
+  .gateway-card .sub-label { font-size: 0.82rem; color: #888; margin-bottom: 14px; }
+  .url-row { display: flex; align-items: center; gap: 10px; }
+  .url-box { flex: 1; background: #fff; border: 1.5px solid #d0ecd5; border-radius: 9px; padding: 11px 14px; font-family: monospace; font-size: 0.88rem; word-break: break-all; color: #155724; }
+  .copy-btn { flex-shrink: 0; padding: 10px 18px; background: #28a745; color: #fff; border-radius: 9px; border: none; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: background .15s; white-space: nowrap; }
+  .copy-btn:hover { background: #1e7e34; }
+  .copy-btn.copied { background: #155724; }
+
+  .info-block { border: 1.5px solid #e8e8e8; border-radius: 14px; padding: 20px 22px; margin-bottom: 16px; }
+  .info-block h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 12px; }
+  .info-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid #f5f5f5; font-size: 0.88rem; }
+  .info-row:last-child { border-bottom: none; }
+  .info-row .label { color: #888; }
+  .info-row .val { font-weight: 600; }
+
+  .code-block { background: #1e1e2e; color: #cdd6f4; border-radius: 11px; padding: 18px; font-family: monospace; font-size: 0.82rem; line-height: 1.7; overflow-x: auto; margin: 12px 0; }
+  .code-block .kw { color: #cba6f7; }
+  .code-block .str { color: #a6e3a1; }
+  .code-block .key { color: #89dceb; }
+  .code-block .cmt { color: #585b70; }
+
+  .actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+  .btn-primary { display: inline-block; padding: 12px 26px; background: #e8463c; color: #fff; border-radius: 10px; font-weight: 600; font-size: 0.93rem; text-decoration: none; border: none; cursor: pointer; transition: background .15s; }
+  .btn-primary:hover { background: #c8332a; }
+  .btn-outline { display: inline-block; padding: 12px 26px; background: none; border: 1.5px solid #e0e0e0; color: inherit; border-radius: 10px; font-weight: 600; font-size: 0.93rem; text-decoration: none; transition: border .15s; }
+  .btn-outline:hover { border-color: #e8463c; color: #e8463c; }
+
+  .loading-skeleton { height: 52px; background: #f0f0f0; border-radius: 9px; animation: shimmer 1.4s ease-in-out infinite; }
+  @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+  .alert { padding: 14px 18px; border-radius: 10px; font-size: 0.9rem; margin: 20px 0; }
+  .alert-warn { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+  .alert-err  { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+  @media (prefers-color-scheme: dark) {
+    .gateway-card { background: #0d2313; border-color: #28a745; }
+    .url-box { background: #1a2e1c; border-color: #2d5c35; color: #a6e3a1; }
+    .info-block { background: #1e1e1e; border-color: #333; }
+    .info-row { border-color: #2a2a2a; }
+    .success-hero p { color: #aaa; }
+    .loading-skeleton { background: #333; }
+    .alert-warn { background: #3a2e0a; color: #ffd25a; border-color: #856404; }
+    .alert-err  { background: #3a1218; color: #f1898e; border-color: #721c24; }
+  }
+</style>
+</head>
+<body>
+<script type="module" src="/frontend/scripts/menu-loader.js?v=miniapp1" defer></script>
+
+<main class="success-page">
+  <div class="success-hero">
+    <span class="success-icon" id="heroIcon">⏳</span>
+    <h1 id="heroTitle">Проверяем оплату...</h1>
+    <p id="heroDesc">Подождите несколько секунд</p>
+  </div>
+
+  <div id="pageContent"></div>
+
+  <div class="actions">
+    <a href="/frontend/agents/my-agents.html" class="btn-outline">← Мои агенты</a>
+    <a href="/frontend/agents/agents.html" class="btn-outline">Каталог агентов</a>
+  </div>
+</main>
+
+<script>
+const token = typeof serpToken !== 'undefined' ? serpToken : null;
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function copyText(text, btn) {
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Скопировано';
+    btn.classList.add('copied');
+    setTimeout(() => { btn.textContent = orig; btn.classList.remove('copied'); }, 2000);
+  });
+}
+
+function renderSuccess(data) {
+  document.getElementById('heroIcon').textContent = '🎉';
+  document.getElementById('heroTitle').textContent = 'Подписка активна!';
+  document.getElementById('heroDesc').textContent = `Агент подключён. Используйте gateway URL для интеграции.`;
+
+  const until = new Date(data.active_until).toLocaleDateString('ru-RU', { day:'2-digit', month:'long', year:'numeric' });
+  const gurl  = esc(data.gateway_url);
+
+  const ex = data.instructions || {};
+  const bodyEx = JSON.stringify(ex.body_example || { message: 'Привет!' }, null, 2);
+
+  document.getElementById('pageContent').innerHTML = `
+    <div class="gateway-card">
+      <h2>🔗 Ваш Gateway URL</h2>
+      <div class="sub-label">Используйте этот URL вместо прямого обращения к агенту</div>
+      <div class="url-row">
+        <div class="url-box" id="gatewayUrlText">${gurl}</div>
+        <button class="copy-btn" onclick="copyText('${data.gateway_url}', this)">Копировать</button>
+      </div>
+    </div>
+
+    <div class="info-block">
+      <h3>Детали подписки</h3>
+      <div class="info-row"><span class="label">Агент ID</span><span class="val">${esc(data.agent_id)}</span></div>
+      ${data.agent_slug ? `<div class="info-row"><span class="label">Slug</span><span class="val">/${esc(data.agent_slug)}</span></div>` : ''}
+      <div class="info-row"><span class="label">Активна до</span><span class="val">${until}</span></div>
+    </div>
+
+    <div class="info-block">
+      <h3>Пример запроса</h3>
+      <div class="code-block"><span class="cmt"># curl</span>
+<span class="kw">curl</span> -X POST <span class="str">${gurl}</span> \\
+  -H <span class="str">"Authorization: Bearer &lt;ваш_токен&gt;"</span> \\
+  -H <span class="str">"Content-Type: application/json"</span> \\
+  -d <span class="str">'${esc(JSON.stringify(ex.body_example || { message: 'Привет!' }))}'</span></div>
+
+      <div class="code-block"><span class="cmt"># Python</span>
+<span class="kw">import</span> requests
+
+<span class="key">response</span> = requests.post(
+    <span class="str">"${gurl}"</span>,
+    headers={
+        <span class="str">"Authorization"</span>: <span class="str">"Bearer &lt;ваш_токен&gt;"</span>,
+        <span class="str">"Content-Type"</span>: <span class="str">"application/json"</span>,
+    },
+    json=${esc(bodyEx)}
+)
+<span class="kw">print</span>(response.json())</div>
+    </div>
+  `;
+}
+
+function renderPending() {
+  document.getElementById('heroIcon').textContent = '⏳';
+  document.getElementById('heroTitle').textContent = 'Оплата обрабатывается';
+  document.getElementById('heroDesc').textContent = 'YooKassa обрабатывает платёж. Обычно это занимает до 2 минут.';
+  document.getElementById('pageContent').innerHTML = `
+    <div class="alert alert-warn">
+      <strong>Платёж ещё не подтверждён.</strong> Обновите страницу через минуту — или перейдите в <a href="/frontend/agents/my-agents.html">«Мои агенты»</a> позже.
+    </div>`;
+}
+
+function renderError(msg) {
+  document.getElementById('heroIcon').textContent = '❌';
+  document.getElementById('heroTitle').textContent = 'Что-то пошло не так';
+  document.getElementById('heroDesc').textContent = '';
+  document.getElementById('pageContent').innerHTML = `
+    <div class="alert alert-err">${esc(msg)}</div>
+    <p style="font-size:.9rem;color:#888;margin-top:12px">Если деньги списались — напишите в поддержку. Мы разберёмся.</p>`;
+}
+
+async function init() {
+  const params  = new URLSearchParams(location.search);
+  const agentId = params.get('agent_id');
+
+  if (!agentId) {
+    renderError('Не указан ID агента в URL.');
+    return;
+  }
+
+  if (!token) {
+    renderError('Вы не авторизованы. Пожалуйста, войдите и попробуйте снова.');
+    return;
+  }
+
+  // Небольшая задержка — webhook от YooKassa приходит асинхронно
+  await new Promise(r => setTimeout(r, 1500));
+
+  try {
+    const r = await fetch(`/api/agents/${agentId}/access`, {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    const d = await r.json();
+
+    if (r.ok && d.status === 'ok') {
+      renderSuccess(d);
+    } else if (r.status === 403) {
+      // Возможно webhook ещё не пришёл — показываем pending
+      renderPending();
+    } else {
+      renderError(d.message || 'Ошибка при получении данных');
+    }
+  } catch (err) {
+    renderError('Ошибка сети. Проверьте подключение и обновите страницу.');
+  }
+}
+
+init();
+</script>
+</body>
+</html>
