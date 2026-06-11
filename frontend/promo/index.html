@@ -11,7 +11,7 @@
 
   <title id="pageTitle">Промокод | Serpmonn.ru</title>
 
-  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/frontend/images/favicon.ico" type="image/x-icon">
 
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -44,13 +44,26 @@
       margin-bottom: 32px;
     }
     .site-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+    }
+    .site-logo img {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+    .site-logo-text {
       font-size: 1.1rem;
       font-weight: 700;
-      color: #1a1a1a;
-      text-decoration: none;
       letter-spacing: -0.02em;
+      line-height: 1;
     }
-    .site-logo span { color: #01696f; }
+    .site-logo-text .red  { color: #c0392b; }
+    .site-logo-text .dark { color: #1a1a1a; }
+
     .all-promos-link {
       font-size: 0.85rem;
       color: #01696f;
@@ -296,8 +309,13 @@
 <body>
 
 <header class="site-header">
-  <a href="/" class="site-logo">Serm<span>onn</span></a>
-  <a href="/frontend/promo-codes-and-discounts/promokody-skidki.html" class="all-promos-link">Все промокоды</a>
+  <a href="/" class="site-logo">
+    <img src="/frontend/images/Serpmonn-192x192.png" alt="Serpmonn" width="36" height="36" loading="eager">
+    <span class="site-logo-text">
+      <span class="red">Serp</span><span class="dark">monn</span>
+    </span>
+  </a>
+  <a href="/promo" class="all-promos-link">Все промокоды</a>
 </header>
 
 <div id="root"></div>
@@ -314,7 +332,7 @@
   const code = (params.get('code') || '').trim();
 
   if (!code) {
-    window.location.href = '/frontend/promo-codes-and-discounts/promokody-skidki.html';
+    window.location.href = '/promo';
     return;
   }
 
@@ -470,7 +488,7 @@
         <div class="icon">🔍</div>
         <h2>Промокод не найден</h2>
         <p>Промокод «${esc(codeParam)}» не найден или больше не активен.</p>
-        <a href="/frontend/promo-codes-and-discounts/promokody-skidki.html">Смотреть все промокоды</a>
+        <a href="/promo">Смотреть все промокоды</a>
       </div>`;
   }
 
