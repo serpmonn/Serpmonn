@@ -644,7 +644,7 @@ function createPromoCard(promo, isTopOffer = false) {
         copyBtn.addEventListener('click', async (e) => {
             e.stopPropagation();
 
-            // Копирование промокода (как и раньше)
+            // Копирование промокода с визуальным feedback на кнопке
             await copyToClipboard(promo, copyBtn);
 
             // Формируем строку для поиска по проектам
@@ -892,12 +892,18 @@ function copyToClipboard(promo, btn) {
 
     const onSuccess = async () => {
         showToast('Код скопирован!', 'success');
+
+        // Визуальный feedback на кнопке
         if (btn) {
             const originalText = btn.textContent;
-            btn.textContent = '✓';
+            btn.textContent = 'Скопировано ✓';
             btn.disabled = true;
-            setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }, 2000);
         }
+
         try {
             await fetch('/api/track-copy', {
                 method: 'POST',
@@ -1050,14 +1056,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadPromocodesFromAPI();
   updateLastUpdateTime();
   startAutoUpdate();
-
-  // Читаем ?search= из URL — перекрывает localStorage
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlSearch = urlParams.get('search');
-  if (urlSearch) {
-    elements.searchInput.value = urlSearch;
-  }
-
   filterPromos();
 
   if (elements.refreshBtn) {
