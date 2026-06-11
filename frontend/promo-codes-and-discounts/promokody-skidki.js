@@ -645,7 +645,7 @@ function createPromoCard(promo, isTopOffer = false) {
             e.stopPropagation();
 
             // Копирование промокода (как и раньше)
-            await copyToClipboard(promo);
+            await copyToClipboard(promo, copyBtn);
 
             // Формируем строку для поиска по проектам
             const combinedForSpecial = [
@@ -887,11 +887,17 @@ function filterPromos() {
     }
 }
 
-function copyToClipboard(promo) {
+function copyToClipboard(promo, btn) {
     const text = promo.promocode || promo.code || String(promo);
 
-    navigator.clipboard.writeText(text).then(async () => {
+    const onSuccess = async () => {
         showToast('Код скопирован!', 'success');
+        if (btn) {
+            const originalText = btn.textContent;
+            btn.textContent = '✓';
+            btn.disabled = true;
+            setTimeout(() => { btn.textContent = originalText; btn.disabled = false; }, 2000);
+        }
         try {
             await fetch('/api/track-copy', {
                 method: 'POST',
@@ -909,14 +915,16 @@ function copyToClipboard(promo) {
         } catch (error) {
             logError('Ошибка трекинга копирования', error);
         }
-    }).catch(() => {
+    };
+
+    return navigator.clipboard.writeText(text).then(onSuccess).catch(() => {
         const textArea = document.createElement('textarea');
         textArea.value = text;
         document.body.appendChild(textArea);
         textArea.select();
         document.execCommand('copy');
         document.body.removeChild(textArea);
-        showToast('Код скопирован!', 'success');
+        return onSuccess();
     });
 }
 
@@ -1042,6 +1050,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadPromocodesFromAPI();
   updateLastUpdateTime();
   startAutoUpdate();
+
+  // Читаем ?search= из URL — перекрывает localStorage
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlSearch = urlParams.get('search');
+  if (urlSearch) {
+    elements.searchInput.value = urlSearch;
+  }
+
   filterPromos();
 
   if (elements.refreshBtn) {
