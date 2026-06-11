@@ -18,6 +18,7 @@ import i18nRoute from './i18n-route.mjs';                                       
 import { outRoutes } from '../games/outRoutes.mjs';                                                                              // Импорт маршрута партнёрских редиректов /out
 import agentsRouter from '../agents/agents.routes.mjs';                                                                          // Импорт маршрутов агентов
 import subscriptionsRouter from '../agents/subscriptions.routes.mjs';                                                            // Импорт маршрутов подписок на агентов
+import logsRouter from '../agents/logs.routes.mjs';                                                                              // Импорт маршрутов логов агентов
 
 export function connectRoutes(app, authLimiter) {                                                                                // Функция централизованного подключения всех маршрутов приложения
     app.use(yookassaRouter);                                                                                                     // Подключаем маршруты платёжной системы YooKassa
@@ -43,6 +44,7 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/api', withdrawalRoutes);                                                                                           // Подключаем маршрут обмена баллов на Pro
     app.use('/api/agents', agentsRouter);                                                                                        // Подключаем маршруты агентов
     app.use('/api/agents', subscriptionsRouter);                                                                                 // Подключаем маршруты подписок на агентов
+    app.use('/api/agents', logsRouter);                                                                                          // Подключаем маршруты логов агентов
     app.use('/', aiSearchRouter);                                                                                                // Подключаем маршрут AI-поиска через SearxNG
     app.use('/', i18nRoute);                                                                                                     // Подключаем маршрут переводов
     outRoutes(app);                                                                                                              // Подключаем партнёрские редиректы /out
