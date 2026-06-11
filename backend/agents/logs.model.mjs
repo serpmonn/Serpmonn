@@ -1,8 +1,8 @@
-import { pool } from '../db.mjs';
+import { query } from '../database/config.mjs';
 
 // Записать событие агента
 export async function createLog({ agentId, buyerUserId, eventType, payload }) {
-    const [result] = await pool.query(
+    const [result] = await query(
         `INSERT INTO agent_logs (agent_id, buyer_user_id, event_type, payload)
          VALUES (?, ?, ?, ?)`,
         [agentId, buyerUserId || null, eventType, payload ? JSON.stringify(payload) : null]
@@ -12,7 +12,7 @@ export async function createLog({ agentId, buyerUserId, eventType, payload }) {
 
 // Получить логи для бизнеса по конкретному агенту
 export async function getLogsByBuyer({ agentId, buyerUserId, limit = 100, offset = 0 }) {
-    const [rows] = await pool.query(
+    const rows = await query(
         `SELECT id, event_type, payload, created_at
          FROM agent_logs
          WHERE agent_id = ? AND buyer_user_id = ?
@@ -26,13 +26,13 @@ export async function getLogsByBuyer({ agentId, buyerUserId, limit = 100, offset
 // Статистика для разработчика: события по агенту за последние 30 дней
 export async function getStatsByAgent(agentId, ownerUserId) {
     // Проверяем владельца
-    const [agentRows] = await pool.query(
+    const agentRows = await query(
         `SELECT id FROM agents WHERE id = ? AND user_id = ?`,
         [agentId, ownerUserId]
     );
     if (!agentRows.length) return null;
 
-    const [daily] = await pool.query(
+    const daily = await query(
         `SELECT DATE(created_at) AS day, event_type, COUNT(*) AS cnt
          FROM agent_logs
          WHERE agent_id = ? AND created_at >= NOW() - INTERVAL 30 DAY
@@ -41,7 +41,7 @@ export async function getStatsByAgent(agentId, ownerUserId) {
         [agentId]
     );
 
-    const [totals] = await pool.query(
+    const totals = await query(
         `SELECT event_type, COUNT(*) AS cnt
          FROM agent_logs
          WHERE agent_id = ?
@@ -49,7 +49,7 @@ export async function getStatsByAgent(agentId, ownerUserId) {
         [agentId]
     );
 
-    const [uniqueBuyers] = await pool.query(
+    const uniqueBuyers = await query(
         `SELECT COUNT(DISTINCT buyer_user_id) AS cnt
          FROM agent_logs
          WHERE agent_id = ?`,
@@ -77,7 +77,7 @@ export async function getCallCount(agentId, buyerUserId = null, period = 'all') 
     const buyerClause = buyerUserId !== null ? 'AND buyer_user_id = ?' : '';
     const params = buyerUserId !== null ? [agentId, buyerUserId] : [agentId];
 
-    const [[row]] = await pool.query(
+    const rows = await query(
         `SELECT COUNT(*) AS cnt
          FROM agent_logs
          WHERE agent_id = ? AND event_type = 'gateway_call'
@@ -85,5 +85,5 @@ export async function getCallCount(agentId, buyerUserId = null, period = 'all') 
          ${periodClause}`,
         params
     );
-    return Number(row?.cnt ?? 0);
+    return Number(rows[0]?.cnt ?? 0);
 }

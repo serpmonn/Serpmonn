@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import verifyToken from '../auth/verifyToken.mjs';
-import { pool } from '../db.mjs';
+import { query } from '../database/config.mjs';
 import { createLog, getLogsByBuyer, getStatsByAgent, getCallCount } from './logs.model.mjs';
 
 const router = Router();
@@ -17,7 +17,7 @@ router.post('/:id/log', async (req, res) => {
             return res.status(401).json({ status: 'error', message: 'Нет X-Agent-Key' });
         }
 
-        const [rows] = await pool.query(
+        const rows = await query(
             `SELECT id FROM agents WHERE id = ? AND api_key = ?`,
             [agentId, apiKey]
         );
@@ -51,7 +51,7 @@ router.get('/:id/logs', verifyToken, async (req, res) => {
         const limit   = Math.min(Number(req.query.limit) || 50, 200);
         const offset  = Number(req.query.offset) || 0;
 
-        const [sub] = await pool.query(
+        const sub = await query(
             `SELECT id FROM agent_subscriptions
              WHERE agent_id = ? AND buyer_user_id = ? AND status = 'active'
              LIMIT 1`,
@@ -108,7 +108,7 @@ router.get('/:id/stats/calls', verifyToken, async (req, res) => {
         const agentId = Number(req.params.id);
 
         // Проверяем наличие активной подписки
-        const [sub] = await pool.query(
+        const sub = await query(
             `SELECT id FROM agent_subscriptions
              WHERE agent_id = ? AND buyer_user_id = ? AND status = 'active'
              LIMIT 1`,
