@@ -15,35 +15,33 @@
   .page-header p { color: #888; font-size: 0.93rem; }
   .btn-primary { display: inline-block; padding: 10px 22px; background: #e8463c; color: #fff; border-radius: 10px; font-weight: 600; font-size: 0.92rem; text-decoration: none; border: none; cursor: pointer; transition: background .15s; white-space: nowrap; }
   .btn-primary:hover { background: #c8332a; }
+  .btn-primary:disabled { background: #ccc; cursor: not-allowed; }
   /* KPI */
   .kpi-row { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 14px; margin-bottom: 32px; }
   .kpi-card { border: 1.5px solid #e8e8e8; border-radius: 13px; padding: 18px 20px; background: #fff; }
   .kpi-val { font-size: 1.8rem; font-weight: 700; font-variant-numeric: tabular-nums; }
   .kpi-val.green { color: #28a745; }
-  .kpi-val.red { color: #e8463c; }
   .kpi-label { font-size: 0.82rem; color: #888; margin-top: 4px; }
-  .kpi-delta { font-size: 0.78rem; margin-top: 2px; }
-  .kpi-delta.up { color: #28a745; }
-  .kpi-delta.down { color: #e8463c; }
+  .kpi-skeleton { height: 1.8rem; width: 80px; background: #f0f0f0; border-radius: 6px; animation: shimmer 1.4s infinite; }
+  @keyframes shimmer { 0%,100%{opacity:1} 50%{opacity:.4} }
   /* Tabs */
   .tabs { display: flex; gap: 4px; border-bottom: 2px solid #e8e8e8; margin-bottom: 24px; overflow-x: auto; }
   .tab-btn { padding: 9px 18px; font-size: 0.92rem; font-weight: 500; border: none; background: none; cursor: pointer; border-bottom: 2.5px solid transparent; margin-bottom: -2px; white-space: nowrap; color: #888; transition: all .15s; }
   .tab-btn.active { color: #e8463c; border-bottom-color: #e8463c; font-weight: 600; }
   .tab-panel { display: none; }
   .tab-panel.active { display: block; }
-  /* Таблица агентов */
-  .agents-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-  .agents-table th { text-align: left; padding: 10px 12px; font-weight: 600; font-size: 0.8rem; color: #888; border-bottom: 1.5px solid #e8e8e8; }
-  .agents-table td { padding: 12px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
-  .agents-table tr:last-child td { border-bottom: none; }
+  /* Таблицы */
+  .agents-table, .payouts-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  .agents-table th, .payouts-table th { text-align: left; padding: 10px 12px; font-weight: 600; font-size: 0.8rem; color: #888; border-bottom: 1.5px solid #e8e8e8; }
+  .agents-table td, .payouts-table td { padding: 12px 12px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+  .agents-table tr:last-child td, .payouts-table tr:last-child td { border-bottom: none; }
   .agents-table tr:hover td { background: #fafafa; }
   .status-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 5px; }
   .dot-active { background: #28a745; }
-  .dot-review { background: #ffc107; }
   .dot-draft { background: #aaa; }
   .action-link { color: #e8463c; font-size: 0.83rem; cursor: pointer; text-decoration: none; }
   .action-link:hover { text-decoration: underline; }
-  /* Форма добавления агента */
+  /* Форма */
   .add-agent-form { max-width: 640px; }
   .form-group { margin-bottom: 18px; }
   .form-group label { display: block; font-weight: 600; font-size: 0.9rem; margin-bottom: 6px; }
@@ -55,22 +53,35 @@
   .form-actions { display: flex; gap: 12px; margin-top: 8px; }
   .btn-outline { background: none; border: 1.5px solid #e0e0e0; border-radius: 10px; padding: 10px 22px; font-size: 0.92rem; cursor: pointer; transition: border .15s; color: inherit; }
   .btn-outline:hover { border-color: #e8463c; color: #e8463c; }
-  /* Выплаты */
-  .payouts-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-  .payouts-table th { text-align: left; padding: 10px 12px; font-weight: 600; font-size: 0.8rem; color: #888; border-bottom: 1.5px solid #e8e8e8; }
-  .payouts-table td { padding: 12px 12px; border-bottom: 1px solid #f0f0f0; }
-  .payout-status { font-size: 0.8rem; font-weight: 600; padding: 2px 9px; border-radius: 10px; }
-  .payout-done { background: #d4edda; color: #155724; }
-  .payout-pending { background: #fff3cd; color: #856404; }
+  /* Баланс */
   .balance-block { display: flex; align-items: center; gap: 28px; flex-wrap: wrap; padding: 20px 24px; border: 1.5px solid #e8e8e8; border-radius: 14px; background: #fff; margin-bottom: 24px; }
-  .balance-block .bal-val { font-size: 2rem; font-weight: 700; color: #28a745; }
+  .balance-block .bal-val { font-size: 2rem; font-weight: 700; color: #28a745; font-variant-numeric: tabular-nums; }
   .balance-block .bal-label { font-size: 0.83rem; color: #888; margin-top: 2px; }
+  .balance-meta { font-size: 0.83rem; color: #aaa; line-height: 1.6; }
+  /* Статус выплаты */
+  .payout-status { font-size: 0.8rem; font-weight: 600; padding: 2px 9px; border-radius: 10px; }
+  .payout-done    { background: #d4edda; color: #155724; }
+  .payout-pending { background: #fff3cd; color: #856404; }
+  .payout-rejected{ background: #f8d7da; color: #721c24; }
+  /* Модальное окно вывода */
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 1000; align-items: center; justify-content: center; }
+  .modal-overlay.open { display: flex; }
+  .modal-box { background: #fff; border-radius: 16px; padding: 28px; width: 100%; max-width: 420px; margin: 16px; }
+  .modal-box h2 { font-size: 1.1rem; margin-bottom: 18px; }
+  .modal-close { float: right; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #888; margin-top: -4px; }
+  .payout-amount-info { font-size: 1.5rem; font-weight: 700; color: #28a745; margin-bottom: 18px; }
+  .empty-state { text-align: center; padding: 40px 16px; color: #aaa; }
+  .empty-state p { margin-top: 8px; font-size: 0.9rem; }
   @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .kpi-val { font-size: 1.4rem; } }
   @media (prefers-color-scheme: dark) {
-    .kpi-card, .balance-block { background: #1e1e1e; border-color: #333; }
+    .kpi-card, .balance-block, .modal-box { background: #1e1e1e; border-color: #333; }
     .agents-table tr:hover td { background: #222; }
     .form-group input, .form-group textarea, .form-group select { background: #1e1e1e; border-color: #444; }
     .tabs { border-color: #333; }
+    .kpi-skeleton { background: #333; }
+    .payout-done { background: #1a3324; color: #75c98a; }
+    .payout-pending { background: #3a2e0a; color: #ffd25a; }
+    .payout-rejected { background: #3a1218; color: #f1898e; }
   }
 </style>
 </head>
@@ -89,121 +100,66 @@
   <!-- KPI -->
   <div class="kpi-row">
     <div class="kpi-card">
-      <div class="kpi-val">3</div>
+      <div class="kpi-val" id="kpiAgents"><div class="kpi-skeleton"></div></div>
       <div class="kpi-label">Моих агентов</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-val">47</div>
+      <div class="kpi-val" id="kpiSubs"><div class="kpi-skeleton"></div></div>
       <div class="kpi-label">Активных подписок</div>
-      <div class="kpi-delta up">▲ +12 за месяц</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-val green">32 430 ₽</div>
-      <div class="kpi-label">Доход за месяц</div>
-      <div class="kpi-delta up">▲ +18%</div>
+      <div class="kpi-val green" id="kpiEarned"><div class="kpi-skeleton"></div></div>
+      <div class="kpi-label">Всего заработано</div>
     </div>
     <div class="kpi-card">
-      <div class="kpi-val">4.8 ★</div>
-      <div class="kpi-label">Средний рейтинг</div>
+      <div class="kpi-val green" id="kpiAvailable"><div class="kpi-skeleton"></div></div>
+      <div class="kpi-label">Доступно к выводу</div>
     </div>
   </div>
 
   <!-- Вкладки -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('agents')">Мои агенты</button>
+    <button class="tab-btn active" onclick="showTab('agents')">  Мои агенты</button>
     <button class="tab-btn" onclick="showTab('add')">Добавить агента</button>
-    <button class="tab-btn" onclick="showTab('payouts')">Выплаты</button>
+    <button class="tab-btn" onclick="showTab('payouts')">  Выплаты</button>
     <button class="tab-btn" onclick="showTab('docs')">Документация API</button>
   </div>
 
   <!-- Вкладка: Мои агенты -->
   <div class="tab-panel active" id="panel-agents">
-    <table class="agents-table">
-      <thead>
-        <tr>
-          <th>Агент</th>
-          <th>Статус</th>
-          <th>Подписчиков</th>
-          <th>Доход/мес</th>
-          <th>Рейтинг</th>
-          <th>Действия</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>💬 ВКонтакте Менеджер</strong><br><span style="color:#aaa;font-size:0.8rem">Соцсети</span></td>
-          <td><span class="status-dot dot-active"></span>Активен</td>
-          <td>31</td>
-          <td>30 690 ₽</td>
-          <td>4.9 ★</td>
-          <td><a class="action-link" href="#">Редактировать</a> · <a class="action-link" href="#">Статистика</a></td>
-        </tr>
-        <tr>
-          <td><strong>✍️ SEO Копирайтер</strong><br><span style="color:#aaa;font-size:0.8rem">Контент</span></td>
-          <td><span class="status-dot dot-review"></span>На модерации</td>
-          <td>—</td>
-          <td>—</td>
-          <td>—</td>
-          <td><a class="action-link" href="#">Редактировать</a></td>
-        </tr>
-        <tr>
-          <td><strong>🎧 Оператор поддержки</strong><br><span style="color:#aaa;font-size:0.8rem">Поддержка</span></td>
-          <td><span class="status-dot dot-draft"></span>Черновик</td>
-          <td>—</td>
-          <td>—</td>
-          <td>—</td>
-          <td><a class="action-link" href="#">Редактировать</a> · <a class="action-link" href="#">Опубликовать</a></td>
-        </tr>
-      </tbody>
-    </table>
+    <div id="agentsTableWrap">
+      <div class="kpi-skeleton" style="height:120px;border-radius:10px"></div>
+    </div>
   </div>
 
   <!-- Вкладка: Добавить агента -->
   <div class="tab-panel" id="panel-add">
-    <form class="add-agent-form" onsubmit="submitAgent(event)">
+    <form class="add-agent-form" onsubmit="submitAgent(event)" id="agentForm">
       <div class="form-group">
         <label>Название агента *</label>
-        <input type="text" placeholder="Например: ВКонтакте Менеджер" required maxlength="60">
+        <input type="text" name="name" placeholder="Например: ВКонтакте Менеджер" required maxlength="60">
         <div class="form-hint">До 60 символов, понятно и конкретно</div>
       </div>
       <div class="form-row">
         <div class="form-group">
-          <label>Категория *</label>
-          <select required>
-            <option value="">Выберите категорию</option>
-            <option>Соцсети</option>
-            <option>Поддержка</option>
-            <option>Продажи</option>
-            <option>Контент</option>
-            <option>Аналитика</option>
-            <option>Другое</option>
-          </select>
+          <label>Цена (₽/мес) *</label>
+          <input type="number" name="price_rub" placeholder="990" min="0" max="99999" required>
+          <div class="form-hint">0 = бесплатно</div>
         </div>
         <div class="form-group">
-          <label>Цена (₽/мес) *</label>
-          <input type="number" placeholder="990" min="0" max="99999" required>
-          <div class="form-hint">0 = бесплатно</div>
+          <label>Webhook URL агента *</label>
+          <input type="url" name="webhook_url" placeholder="https://your-agent.example.com/webhook" required>
         </div>
       </div>
       <div class="form-group">
         <label>Краткое описание *</label>
-        <textarea placeholder="Что делает агент? Для кого? Какую задачу решает?" required maxlength="300"></textarea>
+        <textarea name="description" placeholder="Что делает агент? Для кого? Какую задачу решает?" required maxlength="300"></textarea>
         <div class="form-hint">До 300 символов — это видят пользователи в каталоге</div>
       </div>
-      <div class="form-group">
-        <label>URL вебхука агента *</label>
-        <input type="url" placeholder="https://your-agent.example.com/webhook" required>
-        <div class="form-hint">Serpmonn будет слать POST-запросы на этот адрес</div>
-      </div>
-      <div class="form-group">
-        <label>Эмодзи-иконка</label>
-        <input type="text" placeholder="💬" maxlength="4">
-        <div class="form-hint">Одно эмодзи как иконка в каталоге</div>
-      </div>
       <div class="form-actions">
-        <button type="submit" class="btn-primary">Отправить на модерацию</button>
-        <button type="button" class="btn-outline">Сохранить черновик</button>
+        <button type="submit" class="btn-primary" id="submitAgentBtn">Опубликовать агента</button>
       </div>
+      <div id="agentFormMsg" style="margin-top:12px;font-size:.9rem"></div>
     </form>
   </div>
 
@@ -211,88 +167,262 @@
   <div class="tab-panel" id="panel-payouts">
     <div class="balance-block">
       <div>
-        <div class="bal-val">18 750 ₽</div>
+        <div class="bal-val" id="balanceVal">—</div>
         <div class="bal-label">Доступно к выводу</div>
       </div>
-      <button class="btn-primary">Вывести средства</button>
-      <div style="font-size:0.83rem;color:#aaa">Выплаты 1-го числа каждого месяца<br>на карту РФ или ЮMoney</div>
+      <button class="btn-primary" id="withdrawBtn" onclick="openPayoutModal()" disabled>Вывести</button>
+      <div class="balance-meta">Мин. сумма вывода: 500 ₽<br>Обработка в течение 3 раб. дней</div>
     </div>
-    <table class="payouts-table">
-      <thead>
-        <tr>
-          <th>Дата</th>
-          <th>Сумма</th>
-          <th>Способ</th>
-          <th>Статус</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>01.06.2026</td>
-          <td>28 140 ₽</td>
-          <td>Карта РФ</td>
-          <td><span class="payout-status payout-done">Выплачено</span></td>
-        </tr>
-        <tr>
-          <td>01.05.2026</td>
-          <td>21 760 ₽</td>
-          <td>Карта РФ</td>
-          <td><span class="payout-status payout-done">Выплачено</span></td>
-        </tr>
-        <tr>
-          <td>01.07.2026</td>
-          <td>~32 430 ₽</td>
-          <td>—</td>
-          <td><span class="payout-status payout-pending">Ожидается</span></td>
-        </tr>
-      </tbody>
-    </table>
+    <div id="payoutsTableWrap">
+      <div class="kpi-skeleton" style="height:80px;border-radius:10px"></div>
+    </div>
   </div>
 
-  <!-- Вкладка: Документация API -->
+  <!-- Вкладка: Документация -->
   <div class="tab-panel" id="panel-docs">
     <div style="max-width:640px">
       <h2 style="font-size:1.1rem;margin-bottom:16px">Интеграция с платформой</h2>
-      <p style="color:#666;font-size:0.93rem;margin-bottom:20px;line-height:1.6">Serpmonn отправляет POST-запросы на URL вашего вебхука при каждом событии (сообщение пользователя, подключение, отключение).</p>
-      <h3 style="font-size:0.95rem;margin-bottom:10px;font-weight:600">Формат входящего запроса</h3>
+      <p style="color:#666;font-size:0.93rem;margin-bottom:20px;line-height:1.6">Serpmonn проксирует POST-запросы через gateway на URL вашего вебхука. Бизнес получает гатевей-URL после оплаты подписки.</p>
+      <h3 style="font-size:0.95rem;margin-bottom:10px;font-weight:600">Что приходит на ваш webhook</h3>
       <pre style="background:#f5f5f5;border-radius:10px;padding:16px;font-size:0.83rem;overflow-x:auto;line-height:1.6">POST /your-webhook HTTP/1.1
-Content-Type: application/json
-X-Serpmonn-Token: &lt;your_secret_token&gt;
+X-Serpmonn-Agent: 42
+X-Buyer-Id: 1337
+X-Request-Id: uuid
 
-{
-  "event": "message",
-  "user_id": "u_123456",
-  "agent_id": "ag_789",
-  "text": "Привет! Как заказать?",
-  "ts": 1749638400
-}</pre>
-      <h3 style="font-size:0.95rem;margin:20px 0 10px;font-weight:600">Формат ответа</h3>
-      <pre style="background:#f5f5f5;border-radius:10px;padding:16px;font-size:0.83rem;overflow-x:auto;line-height:1.6">HTTP/1.1 200 OK
-Content-Type: application/json
-
-{
-  "reply": "Привет! Для заказа нажмите...",
-  "actions": []  // опционально
-}</pre>
-      <p style="margin-top:16px;font-size:0.85rem;color:#aaa">Полная документация и SDK будут опубликованы при запуске бета-версии API (июль 2026).</p>
+{ ...body от бизнеса }</pre>
+      <p style="margin-top:16px;font-size:0.85rem;color:#aaa">Полная документация будет опубликована при запуске бета-версии API.</p>
     </div>
   </div>
 </main>
 
+<!-- Модаль вывода -->
+<div class="modal-overlay" id="payoutModal">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closePayoutModal()">&times;</button>
+    <h2>Вывести средства</h2>
+    <div class="payout-amount-info" id="payoutAmountInfo"></div>
+    <form onsubmit="submitPayout(event)">
+      <div class="form-group">
+        <label>Способ выплаты *</label>
+        <select name="method" id="payoutMethod" required>
+          <option value="">Выберите</option>
+          <option value="card_rf">Карта РФ</option>
+          <option value="yoomoney">ЮМоней</option>
+          <option value="sbp">СБП</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label id="payoutDetailsLabel">Реквизиты *</label>
+        <input type="text" name="details" id="payoutDetails" placeholder="Номер карты / номер телефона" required>
+      </div>
+      <div class="form-actions">
+        <button type="submit" class="btn-primary" id="payoutSubmitBtn">Отправить заявку</button>
+      </div>
+      <div id="payoutMsg" style="margin-top:10px;font-size:.88rem"></div>
+    </form>
+  </div>
+</div>
+
 <script>
-  function showTab(name) {
-    document.querySelectorAll('.tab-btn').forEach((b, i) => {
-      const panels = ['agents','add','payouts','docs'];
-      b.classList.toggle('active', panels[i] === name);
-    });
-    document.querySelectorAll('.tab-panel').forEach(p => {
-      p.classList.toggle('active', p.id === 'panel-' + name);
-    });
+const token = typeof serpToken !== 'undefined' ? serpToken : null;
+let earningsData = null;
+
+async function loadEarnings() {
+  if (!token) return;
+  try {
+    const r = await fetch('/api/agents/earnings', { headers: { Authorization: 'Bearer ' + token } });
+    const d = await r.json();
+    if (d.status !== 'ok') return;
+    earningsData = d;
+
+    const totalSubs = d.agents.reduce((s, a) => s + (Number(a.active_subs) || 0), 0);
+    document.getElementById('kpiAgents').textContent    = d.agents.length;
+    document.getElementById('kpiSubs').textContent      = totalSubs;
+    document.getElementById('kpiEarned').textContent    = fmt(d.totalEarned);
+    document.getElementById('kpiAvailable').textContent = fmt(d.available);
+    document.getElementById('balanceVal').textContent   = fmt(d.available);
+
+    const withdrawBtn = document.getElementById('withdrawBtn');
+    withdrawBtn.disabled = d.available < 500;
+
+    renderAgentsTable(d.agents);
+  } catch(e) {
+    console.error(e);
   }
-  function submitAgent(e) {
-    e.preventDefault();
-    alert('Агент отправлен на модерацию! Мы проверим его в течение 1-2 рабочих дней.');
+}
+
+async function loadPayouts() {
+  if (!token) return;
+  try {
+    const r = await fetch('/api/agents/payouts', { headers: { Authorization: 'Bearer ' + token } });
+    const d = await r.json();
+    renderPayoutsTable(d.payouts || []);
+  } catch(e) {}
+}
+
+function fmt(n) {
+  return Number(n).toLocaleString('ru-RU') + ' ₽';
+}
+
+function renderAgentsTable(agents) {
+  if (!agents.length) {
+    document.getElementById('agentsTableWrap').innerHTML =
+      '<div class="empty-state">🤖<p>У вас пока нет агентов.<br>Нажмите «+ Новый агент».</p></div>';
+    return;
   }
+  let rows = agents.map(a => `
+    <tr>
+      <td><strong>${esc(a.name)}</strong>${a.slug ? `<br><span style="color:#aaa;font-size:.78rem">/${a.slug}</span>` : ''}</td>
+      <td><span class="status-dot ${a.is_published ? 'dot-active' : 'dot-draft'}"></span>${a.is_published ? 'Активен' : 'Черновик'}</td>
+      <td>${a.active_subs}</td>
+      <td>${fmt(a.earned_rub)}</td>
+      <td>${a.tasks_done}</td>
+      <td><a class="action-link" onclick="togglePublish(${a.id}, ${a.is_published})">${a.is_published ? 'Снять' : 'Опубликовать'}</a></td>
+    </tr>`);
+  document.getElementById('agentsTableWrap').innerHTML = `
+    <table class="agents-table">
+      <thead><tr>
+        <th>Агент</th><th>Статус</th><th>Подписчиков</th><th>Заработок</th><th>Задач</th><th>Действия</th>
+      </tr></thead>
+      <tbody>${rows.join('')}</tbody>
+    </table>`;
+}
+
+function renderPayoutsTable(payouts) {
+  if (!payouts.length) {
+    document.getElementById('payoutsTableWrap').innerHTML =
+      '<div class="empty-state">💸<p>История выплат пуста.</p></div>';
+    return;
+  }
+  const statusMap = { pending: 'Ожидается', paid: 'Выплачено', rejected: 'Отклонено' };
+  const statusCls = { pending: 'payout-pending', paid: 'payout-done', rejected: 'payout-rejected' };
+  const methodMap = { card_rf: 'Карта РФ', yoomoney: 'ЮМоней', sbp: 'СБП' };
+  let rows = payouts.map(p => `
+    <tr>
+      <td>${new Date(p.created_at).toLocaleDateString('ru-RU')}</td>
+      <td>${fmt(p.amount_rub)}</td>
+      <td>${methodMap[p.method] || p.method}</td>
+      <td>${esc(p.details)}</td>
+      <td><span class="payout-status ${statusCls[p.status]}">${statusMap[p.status]}</span>${p.admin_note ? `<br><span style="font-size:.78rem;color:#aaa">${esc(p.admin_note)}</span>` : ''}</td>
+    </tr>`);
+  document.getElementById('payoutsTableWrap').innerHTML = `
+    <table class="payouts-table">
+      <thead><tr>
+        <th>Дата</th><th>Сумма</th><th>Способ</th><th>Реквизиты</th><th>Статус</th>
+      </tr></thead>
+      <tbody>${rows.join('')}</tbody>
+    </table>`;
+}
+
+async function togglePublish(agentId, current) {
+  if (!token) return;
+  const publish = !current;
+  const r = await fetch(`/api/agents/${agentId}/publish`, {
+    method: 'POST',
+    headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+    body: JSON.stringify({ publish })
+  });
+  if (r.ok) loadEarnings();
+}
+
+async function submitAgent(e) {
+  e.preventDefault();
+  if (!token) return;
+  const form = document.getElementById('agentForm');
+  const btn  = document.getElementById('submitAgentBtn');
+  const msg  = document.getElementById('agentFormMsg');
+  const data = Object.fromEntries(new FormData(form));
+
+  btn.disabled = true;
+  btn.textContent = 'Публикуем...';
+  msg.textContent = '';
+
+  try {
+    const r = await fetch('/api/agents', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify(data)
+    });
+    const d = await r.json();
+    if (d.status === 'ok') {
+      msg.style.color = '#28a745';
+      msg.textContent = `Агент создан! API ключ: ${d.api_key}`;
+      form.reset();
+      loadEarnings();
+      showTab('agents');
+    } else {
+      msg.style.color = '#e8463c';
+      msg.textContent = d.message || 'Ошибка';
+    }
+  } catch(err) {
+    msg.style.color = '#e8463c';
+    msg.textContent = 'Ошибка сети';
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Опубликовать агента';
+  }
+}
+
+function openPayoutModal() {
+  if (!earningsData || earningsData.available < 500) return;
+  document.getElementById('payoutAmountInfo').textContent = fmt(earningsData.available);
+  document.getElementById('payoutMsg').textContent = '';
+  document.getElementById('payoutModal').classList.add('open');
+}
+function closePayoutModal() {
+  document.getElementById('payoutModal').classList.remove('open');
+}
+
+async function submitPayout(e) {
+  e.preventDefault();
+  if (!token) return;
+  const method  = document.getElementById('payoutMethod').value;
+  const details = document.getElementById('payoutDetails').value;
+  const btn     = document.getElementById('payoutSubmitBtn');
+  const msg     = document.getElementById('payoutMsg');
+
+  btn.disabled = true;
+  msg.textContent = '';
+
+  try {
+    const r = await fetch('/api/agents/payouts', {
+      method: 'POST',
+      headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ method, details })
+    });
+    const d = await r.json();
+    if (d.status === 'ok') {
+      msg.style.color = '#28a745';
+      msg.textContent = d.message;
+      setTimeout(() => { closePayoutModal(); loadEarnings(); loadPayouts(); }, 1800);
+    } else {
+      msg.style.color = '#e8463c';
+      msg.textContent = d.message || 'Ошибка';
+    }
+  } catch(err) {
+    msg.style.color = '#e8463c';
+    msg.textContent = 'Ошибка сети';
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+function showTab(name) {
+  const panels = ['agents','add','payouts','docs'];
+  document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', panels[i] === name));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+  if (name === 'payouts') loadPayouts();
+}
+
+function esc(s) {
+  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+if (token) {
+  loadEarnings();
+} else {
+  document.querySelectorAll('.kpi-skeleton').forEach(el => el.textContent = '—');
+}
 </script>
 </body>
 </html>
