@@ -47,6 +47,15 @@ export async function getAgentByApiKey(apiKey) {             // Найти аг�
     return rows[0] || null;
 }
 
+export async function getAgentByIdPublic(agentId) {          // Найти агента по id (для подписки)
+    const rows = await query(
+        `SELECT id, name, description, is_published, price_rub, webhook_url
+         FROM agents WHERE id = ? LIMIT 1`,
+        [agentId]
+    );
+    return rows[0] || null;
+}
+
 export async function getPublishedAgents() {                 // Все опубликованные агенты для маркетплейса
     return query(
         `SELECT id, name, description, price_rub, tasks_done
