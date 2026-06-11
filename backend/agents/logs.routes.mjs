@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { verifyToken } from '../auth/auth.middleware.mjs';
+import verifyToken from '../auth/verifyToken.mjs';
 import { pool } from '../db.mjs';
 import { createLog, getLogsByBuyer, getStatsByAgent, getCallCount } from './logs.model.mjs';
 
