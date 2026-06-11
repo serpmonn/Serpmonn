@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import { verifyToken } from '../auth/auth.middleware.mjs';
 import { pool } from '../db.mjs';
-import { createLog, getLogsByBuyer, getStatsByAgent } from './logs.model.mjs';
+import { createLog, getLogsByBuyer, getStatsByAgent, getCallCount } from './logs.model.mjs';
 
 const router = Router();
 
@@ -17,7 +17,6 @@ router.post('/:id/log', async (req, res) => {
             return res.status(401).json({ status: 'error', message: 'Нет X-Agent-Key' });
         }
 
-        // Проверяем что ключ принадлежит этому агенту
         const [rows] = await pool.query(
             `SELECT id FROM agents WHERE id = ? AND api_key = ?`,
             [agentId, apiKey]
@@ -52,7 +51,6 @@ router.get('/:id/logs', verifyToken, async (req, res) => {
         const limit   = Math.min(Number(req.query.limit) || 50, 200);
         const offset  = Number(req.query.offset) || 0;
 
-        // Проверяем что у пользователя есть активная подписка на этого агента
         const [sub] = await pool.query(
             `SELECT id FROM agent_subscriptions
              WHERE agent_id = ? AND buyer_user_id = ? AND status = 'active'
@@ -73,6 +71,7 @@ router.get('/:id/logs', verifyToken, async (req, res) => {
 
 // GET /api/agents/:id/stats
 // Разработчик смотрит аналитику своего агента — авторизация по JWT
+// Ответ содержит call_count: { total, month, day } — число gateway_call вызовов агента
 router.get('/:id/stats', verifyToken, async (req, res) => {
     try {
         const agentId = Number(req.params.id);
@@ -82,9 +81,55 @@ router.get('/:id/stats', verifyToken, async (req, res) => {
             return res.status(403).json({ status: 'error', message: 'Агент не найден или нет доступа' });
         }
 
-        return res.status(200).json({ status: 'ok', stats });
+        // Добавляем счётчик звонков агента — быстро через индекс
+        const [callTotal, callMonth, callDay] = await Promise.all([
+            getCallCount(agentId, null, 'all'),
+            getCallCount(agentId, null, 'month'),
+            getCallCount(agentId, null, 'day'),
+        ]);
+
+        return res.status(200).json({
+            status: 'ok',
+            stats: {
+                ...stats,
+                call_count: { total: callTotal, month: callMonth, day: callDay }
+            }
+        });
     } catch (err) {
         console.error('[logs] stats error:', err);
+        return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
+    }
+});
+
+// GET /api/agents/:id/stats/calls
+// Покупатель смотрит свой счётчик запросов к агенту — авторизация по JWT
+router.get('/:id/stats/calls', verifyToken, async (req, res) => {
+    try {
+        const agentId = Number(req.params.id);
+
+        // Проверяем наличие активной подписки
+        const [sub] = await pool.query(
+            `SELECT id FROM agent_subscriptions
+             WHERE agent_id = ? AND buyer_user_id = ? AND status = 'active'
+             LIMIT 1`,
+            [agentId, req.user.id]
+        );
+        if (!sub.length) {
+            return res.status(403).json({ status: 'error', message: 'Нет активной подписки' });
+        }
+
+        const [callTotal, callMonth, callDay] = await Promise.all([
+            getCallCount(agentId, req.user.id, 'all'),
+            getCallCount(agentId, req.user.id, 'month'),
+            getCallCount(agentId, req.user.id, 'day'),
+        ]);
+
+        return res.status(200).json({
+            status: 'ok',
+            call_count: { total: callTotal, month: callMonth, day: callDay }
+        });
+    } catch (err) {
+        console.error('[logs] calls error:', err);
         return res.status(500).json({ status: 'error', message: 'Internal Server Error' });
     }
 });

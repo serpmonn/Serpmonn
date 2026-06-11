@@ -58,3 +58,32 @@ export async function getStatsByAgent(agentId, ownerUserId) {
 
     return { daily, totals, unique_buyers: uniqueBuyers[0]?.cnt || 0 };
 }
+
+/**
+ * Количество успешных gateway_call для пары агент+покупатель.
+ * Используется для отображения статистики и будущей тарификации per-request.
+ *
+ * @param {number} agentId
+ * @param {number|null} buyerUserId — если null, считает по всем покупателям
+ * @param {'day'|'month'|'all'} period
+ */
+export async function getCallCount(agentId, buyerUserId = null, period = 'all') {
+    const periodClause = period === 'day'
+        ? 'AND created_at >= NOW() - INTERVAL 1 DAY'
+        : period === 'month'
+            ? 'AND created_at >= NOW() - INTERVAL 30 DAY'
+            : '';
+
+    const buyerClause = buyerUserId !== null ? 'AND buyer_user_id = ?' : '';
+    const params = buyerUserId !== null ? [agentId, buyerUserId] : [agentId];
+
+    const [[row]] = await pool.query(
+        `SELECT COUNT(*) AS cnt
+         FROM agent_logs
+         WHERE agent_id = ? AND event_type = 'gateway_call'
+         ${buyerClause}
+         ${periodClause}`,
+        params
+    );
+    return Number(row?.cnt ?? 0);
+}

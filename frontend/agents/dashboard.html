@@ -70,6 +70,31 @@
   .modal-box h2 { font-size: 1.1rem; margin-bottom: 18px; }
   .modal-close { float: right; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #888; margin-top: -4px; }
   .payout-amount-info { font-size: 1.5rem; font-weight: 700; color: #28a745; margin-bottom: 18px; }
+  /* Документация */
+  .docs-section { max-width: 720px; }
+  .docs-section h2 { font-size: 1.05rem; font-weight: 700; margin: 28px 0 10px; }
+  .docs-section h2:first-child { margin-top: 0; }
+  .docs-section p { font-size: 0.9rem; color: #555; line-height: 1.65; margin-bottom: 12px; }
+  .docs-section ul { font-size: 0.9rem; color: #555; line-height: 1.7; padding-left: 20px; margin-bottom: 12px; }
+  .code-block { background: #1e1e2e; color: #cdd6f4; border-radius: 11px; padding: 16px 18px; font-family: monospace; font-size: 0.82rem; line-height: 1.7; overflow-x: auto; margin: 8px 0 18px; position: relative; }
+  .code-block .kw  { color: #cba6f7; }
+  .code-block .str { color: #a6e3a1; }
+  .code-block .key { color: #89dceb; }
+  .code-block .cmt { color: #585b70; }
+  .code-block .num { color: #fab387; }
+  .copy-code-btn { position: absolute; top: 10px; right: 12px; background: rgba(255,255,255,.1); border: none; color: #cdd6f4; border-radius: 6px; padding: 4px 10px; font-size: 0.75rem; cursor: pointer; transition: background .15s; }
+  .copy-code-btn:hover { background: rgba(255,255,255,.2); }
+  .inline-code { background: #f0f0f4; color: #d63384; padding: 1px 6px; border-radius: 4px; font-family: monospace; font-size: 0.87em; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 6px; font-size: 0.78rem; font-weight: 700; margin-right: 4px; }
+  .badge-post { background: #d4edda; color: #155724; }
+  .badge-get  { background: #cce5ff; color: #004085; }
+  .endpoint-row { display: flex; align-items: baseline; gap: 8px; margin-bottom: 6px; }
+  .endpoint-url { font-family: monospace; font-size: 0.88rem; color: #333; }
+  .table-simple { width: 100%; border-collapse: collapse; font-size: 0.87rem; margin-bottom: 16px; }
+  .table-simple th { text-align: left; padding: 8px 12px; background: #f8f8f8; border: 1px solid #e8e8e8; font-weight: 600; color: #555; }
+  .table-simple td { padding: 8px 12px; border: 1px solid #e8e8e8; vertical-align: top; }
+  .table-simple td:first-child { font-family: monospace; color: #d63384; font-size: 0.83rem; white-space: nowrap; }
+  .divider { border: none; border-top: 1.5px solid #f0f0f0; margin: 28px 0; }
   .empty-state { text-align: center; padding: 40px 16px; color: #aaa; }
   .empty-state p { margin-top: 8px; font-size: 0.9rem; }
   @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .kpi-val { font-size: 1.4rem; } }
@@ -82,6 +107,13 @@
     .payout-done { background: #1a3324; color: #75c98a; }
     .payout-pending { background: #3a2e0a; color: #ffd25a; }
     .payout-rejected { background: #3a1218; color: #f1898e; }
+    .docs-section p, .docs-section ul { color: #aaa; }
+    .inline-code { background: #2a2a3e; color: #f38ba8; }
+    .endpoint-url { color: #cdd6f4; }
+    .table-simple th { background: #252525; border-color: #333; color: #aaa; }
+    .table-simple td { border-color: #333; }
+    .table-simple td:first-child { color: #f38ba8; }
+    .divider { border-color: #2a2a2a; }
   }
 </style>
 </head>
@@ -119,9 +151,9 @@
 
   <!-- Вкладки -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('agents')">  Мои агенты</button>
+    <button class="tab-btn active" onclick="showTab('agents')">Мои агенты</button>
     <button class="tab-btn" onclick="showTab('add')">Добавить агента</button>
-    <button class="tab-btn" onclick="showTab('payouts')">  Выплаты</button>
+    <button class="tab-btn" onclick="showTab('payouts')">Выплаты</button>
     <button class="tab-btn" onclick="showTab('docs')">Документация API</button>
   </div>
 
@@ -140,6 +172,11 @@
         <input type="text" name="name" placeholder="Например: ВКонтакте Менеджер" required maxlength="60">
         <div class="form-hint">До 60 символов, понятно и конкретно</div>
       </div>
+      <div class="form-group">
+        <label>Slug (ЧПУ-идентификатор)</label>
+        <input type="text" name="slug" placeholder="vk-manager" pattern="[a-z0-9\-]+" maxlength="50">
+        <div class="form-hint">Только строчные латинские буквы, цифры и дефис. Пример: <code>vk-manager</code> → gateway URL будет <code>/gateway/vk-manager</code>. Если не заполнить — будет числовой ID.</div>
+      </div>
       <div class="form-row">
         <div class="form-group">
           <label>Цена (₽/мес) *</label>
@@ -157,7 +194,7 @@
         <div class="form-hint">До 300 символов — это видят пользователи в каталоге</div>
       </div>
       <div class="form-actions">
-        <button type="submit" class="btn-primary" id="submitAgentBtn">Опубликовать агента</button>
+        <button type="submit" class="btn-primary" id="submitAgentBtn">Создать агента</button>
       </div>
       <div id="agentFormMsg" style="margin-top:12px;font-size:.9rem"></div>
     </form>
@@ -178,19 +215,118 @@
     </div>
   </div>
 
-  <!-- Вкладка: Документация -->
+  <!-- Вкладка: Документация API -->
   <div class="tab-panel" id="panel-docs">
-    <div style="max-width:640px">
-      <h2 style="font-size:1.1rem;margin-bottom:16px">Интеграция с платформой</h2>
-      <p style="color:#666;font-size:0.93rem;margin-bottom:20px;line-height:1.6">Serpmonn проксирует POST-запросы через gateway на URL вашего вебхука. Бизнес получает гатевей-URL после оплаты подписки.</p>
-      <h3 style="font-size:0.95rem;margin-bottom:10px;font-weight:600">Что приходит на ваш webhook</h3>
-      <pre style="background:#f5f5f5;border-radius:10px;padding:16px;font-size:0.83rem;overflow-x:auto;line-height:1.6">POST /your-webhook HTTP/1.1
-X-Serpmonn-Agent: 42
-X-Buyer-Id: 1337
-X-Request-Id: uuid
+    <div class="docs-section">
 
-{ ...body от бизнеса }</pre>
-      <p style="margin-top:16px;font-size:0.85rem;color:#aaa">Полная документация будет опубликована при запуске бета-версии API.</p>
+      <h2>Как работает платформа</h2>
+      <p>Serpmonn выступает как proxy-шлюз между бизнесом и вашим агентом. Бизнес платит за подписку, получает <strong>Gateway URL</strong> и использует его вместо прямого обращения к вашему сервису. Вы не раскрываете свой webhook-адрес — платформа берёт на себя авторизацию, логирование и биллинг.</p>
+
+      <hr class="divider">
+
+      <h2>Шаг 1. Зарегистрируйте агента</h2>
+      <p>Заполните форму на вкладке «Добавить агента». После создания вы получите <span class="inline-code">api_key</span> — он отображается <strong>один раз</strong>. Сохраните его в безопасном месте.</p>
+      <table class="table-simple">
+        <tr><th>Поле</th><th>Описание</th></tr>
+        <tr><td>name</td><td>Название агента (до 60 символов)</td></tr>
+        <tr><td>slug</td><td>ЧПУ-идентификатор: <code>vk-manager</code> → URL <code>/gateway/vk-manager</code>. Необязательно.</td></tr>
+        <tr><td>webhook_url</td><td>URL, куда Serpmonn будет форвардить запросы покупателей</td></tr>
+        <tr><td>price_rub</td><td>Цена подписки в рублях в месяц (0 = бесплатно)</td></tr>
+      </table>
+
+      <hr class="divider">
+
+      <h2>Шаг 2. Настройте webhook</h2>
+      <p>Когда покупатель обращается к вашему агенту через gateway, Serpmonn делает <strong>POST или GET запрос</strong> на ваш <span class="inline-code">webhook_url</span> со следующими заголовками:</p>
+      <div class="code-block">
+        <button class="copy-code-btn" onclick="copyBlock(this)">Копировать</button>
+POST /ваш-webhook HTTP/1.1
+<span class="key">X-Serpmonn-Agent</span>: <span class="num">42</span>          <span class="cmt"># числовой ID вашего агента</span>
+<span class="key">X-Buyer-Id</span>:       <span class="num">1337</span>        <span class="cmt"># ID покупателя в Serpmonn</span>
+<span class="key">X-Request-Id</span>:     <span class="str">uuid-v4</span>      <span class="cmt"># уникальный ID запроса для дедупликации</span>
+<span class="key">Content-Type</span>:     <span class="str">application/json</span>
+
+<span class="cmt">// тело запроса — то, что отправил бизнес</span>
+{ <span class="str">"message"</span>: <span class="str">"Привет!"</span> }</div>
+
+      <p>Ваш сервер должен ответить HTTP 200 с любым телом. Serpmonn вернёт ответ покупателю как есть.</p>
+
+      <hr class="divider">
+
+      <h2>Шаг 3. Примеры интеграции для покупателя</h2>
+      <p>Когда бизнес оформляет подписку, он получает свой персональный <span class="inline-code">gateway_url</span> вида <span class="inline-code">https://api.serpmonn.ru/gateway/ВАШ-SLUG</span>. Вот как его использовать:</p>
+
+      <div class="code-block" style="position:relative">
+        <button class="copy-code-btn" onclick="copyBlock(this)">Копировать</button>
+<span class="cmt"># curl</span>
+<span class="kw">curl</span> -X POST https://api.serpmonn.ru/gateway/<span class="str">your-slug</span> \\
+  -H <span class="str">"Authorization: Bearer &lt;jwt_токен&gt;"</span> \\
+  -H <span class="str">"Content-Type: application/json"</span> \\
+  -d <span class="str">'{ "message": "Привет!" }'</span></div>
+
+      <div class="code-block">
+        <button class="copy-code-btn" onclick="copyBlock(this)">Копировать</button>
+<span class="cmt"># Python</span>
+<span class="kw">import</span> requests
+
+<span class="key">r</span> = requests.post(
+    <span class="str">"https://api.serpmonn.ru/gateway/your-slug"</span>,
+    headers={
+        <span class="str">"Authorization"</span>: <span class="str">"Bearer &lt;jwt_токен&gt;"</span>,
+        <span class="str">"Content-Type"</span>: <span class="str">"application/json"</span>,
+    },
+    json={<span class="str">"message"</span>: <span class="str">"Привет!"</span>}
+)
+<span class="kw">print</span>(r.json())</div>
+
+      <div class="code-block">
+        <button class="copy-code-btn" onclick="copyBlock(this)">Копировать</button>
+<span class="cmt">// JavaScript / Node.js</span>
+<span class="kw">const</span> <span class="key">response</span> = <span class="kw">await</span> fetch(<span class="str">'https://api.serpmonn.ru/gateway/your-slug'</span>, {
+  <span class="key">method</span>: <span class="str">'POST'</span>,
+  <span class="key">headers</span>: {
+    <span class="str">'Authorization'</span>: <span class="str">`Bearer ${token}`</span>,
+    <span class="str">'Content-Type'</span>: <span class="str">'application/json'</span>,
+  },
+  <span class="key">body</span>: JSON.stringify({ <span class="key">message</span>: <span class="str">'Привет!'</span> })
+});
+<span class="kw">const</span> <span class="key">data</span> = <span class="kw">await</span> response.json();</div>
+
+      <hr class="divider">
+
+      <h2>API для разработчика</h2>
+      <p>Авторизация во всех запросах — заголовок <span class="inline-code">Authorization: Bearer &lt;токен&gt;</span>.</p>
+
+      <div class="endpoint-row"><span class="badge badge-post">POST</span><span class="endpoint-url">/api/agents</span></div>
+      <p style="margin-bottom:8px">Создать агента. Тело: <span class="inline-code">{ name, slug?, description?, webhook_url, price_rub }</span>. Возвращает <span class="inline-code">agent_id</span> и <span class="inline-code">api_key</span> (один раз!).</p>
+
+      <div class="endpoint-row"><span class="badge badge-get">GET</span><span class="endpoint-url">/api/agents</span></div>
+      <p style="margin-bottom:8px">Список своих агентов с метриками.</p>
+
+      <div class="endpoint-row"><span class="badge badge-post">POST</span><span class="endpoint-url">/api/agents/:id/publish</span></div>
+      <p style="margin-bottom:8px">Опубликовать или снять. Тело: <span class="inline-code">{ publish: true | false }</span>.</p>
+
+      <div class="endpoint-row"><span class="badge badge-get">GET</span><span class="endpoint-url">/api/agents/earnings</span></div>
+      <p style="margin-bottom:8px">Статистика заработка: агенты, подписки, баланс к выводу.</p>
+
+      <div class="endpoint-row"><span class="badge badge-get">GET</span><span class="endpoint-url">/api/agents/:id/stats</span></div>
+      <p style="margin-bottom:8px">Аналитика конкретного агента: кол-во запросов по дням, активные подписчики.</p>
+
+      <div class="endpoint-row"><span class="badge badge-post">POST</span><span class="endpoint-url">/api/agents/:id/log</span></div>
+      <p>Записать событие из своего агента. Заголовок <span class="inline-code">X-Agent-Key: &lt;ваш_api_key&gt;</span>. Тело: <span class="inline-code">{ event_type, payload?, buyer_user_id? }</span>.</p>
+
+      <hr class="divider">
+
+      <h2>Коды ошибок gateway</h2>
+      <table class="table-simple">
+        <tr><th>HTTP</th><th>Причина</th></tr>
+        <tr><td>401</td><td>Нет или невалидный JWT-токен покупателя</td></tr>
+        <tr><td>403</td><td>У покупателя нет активной подписки</td></tr>
+        <tr><td>404</td><td>Агент с таким slug/id не найден</td></tr>
+        <tr><td>502</td><td>У агента не настроен webhook_url</td></tr>
+        <tr><td>504</td><td>Ваш сервер не ответил за 30 секунд</td></tr>
+      </table>
+
     </div>
   </div>
 </main>
@@ -261,7 +397,7 @@ async function loadPayouts() {
 }
 
 function fmt(n) {
-  return Number(n).toLocaleString('ru-RU') + ' ₽';
+  return Number(n).toLocaleString('ru-RU') + ' ₽';
 }
 
 function renderAgentsTable(agents) {
@@ -277,7 +413,11 @@ function renderAgentsTable(agents) {
       <td>${a.active_subs}</td>
       <td>${fmt(a.earned_rub)}</td>
       <td>${a.tasks_done}</td>
-      <td><a class="action-link" onclick="togglePublish(${a.id}, ${a.is_published})">${a.is_published ? 'Снять' : 'Опубликовать'}</a></td>
+      <td>
+        <a class="action-link" onclick="togglePublish(${a.id}, ${a.is_published})">${a.is_published ? 'Снять' : 'Опубликовать'}</a>
+        <span style="color:#ddd"> · </span>
+        <a class="action-link" onclick="deleteAgentConfirm(${a.id})" style="color:#e8463c">Удалить</a>
+      </td>
     </tr>`);
   document.getElementById('agentsTableWrap').innerHTML = `
     <table class="agents-table">
@@ -325,6 +465,15 @@ async function togglePublish(agentId, current) {
   if (r.ok) loadEarnings();
 }
 
+async function deleteAgentConfirm(agentId) {
+  if (!confirm('Удалить агента? Все подписки на него будут потеряны.')) return;
+  const r = await fetch(`/api/agents/${agentId}`, {
+    method: 'DELETE',
+    headers: { Authorization: 'Bearer ' + token }
+  });
+  if (r.ok) loadEarnings();
+}
+
 async function submitAgent(e) {
   e.preventDefault();
   if (!token) return;
@@ -333,8 +482,11 @@ async function submitAgent(e) {
   const msg  = document.getElementById('agentFormMsg');
   const data = Object.fromEntries(new FormData(form));
 
+  // Если slug пустой — не передаём
+  if (!data.slug?.trim()) delete data.slug;
+
   btn.disabled = true;
-  btn.textContent = 'Публикуем...';
+  btn.textContent = 'Создаём...';
   msg.textContent = '';
 
   try {
@@ -346,10 +498,10 @@ async function submitAgent(e) {
     const d = await r.json();
     if (d.status === 'ok') {
       msg.style.color = '#28a745';
-      msg.textContent = `Агент создан! API ключ: ${d.api_key}`;
+      msg.innerHTML = `✅ Агент создан!<br><strong>API ключ (сохраните!):</strong> <code style="font-size:.85rem;background:#f5f5f5;padding:3px 7px;border-radius:5px">${esc(d.api_key)}</code>`;
       form.reset();
       loadEarnings();
-      showTab('agents');
+      setTimeout(() => showTab('agents'), 2500);
     } else {
       msg.style.color = '#e8463c';
       msg.textContent = d.message || 'Ошибка';
@@ -359,7 +511,7 @@ async function submitAgent(e) {
     msg.textContent = 'Ошибка сети';
   } finally {
     btn.disabled = false;
-    btn.textContent = 'Опубликовать агента';
+    btn.textContent = 'Создать агента';
   }
 }
 
@@ -412,6 +564,16 @@ function showTab(name) {
   document.querySelectorAll('.tab-btn').forEach((b, i) => b.classList.toggle('active', panels[i] === name));
   document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
   if (name === 'payouts') loadPayouts();
+}
+
+function copyBlock(btn) {
+  const block = btn.closest('.code-block');
+  const text  = block.innerText.replace('Копировать', '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    const orig = btn.textContent;
+    btn.textContent = '✓ Скопировано';
+    setTimeout(() => btn.textContent = orig, 2000);
+  });
 }
 
 function esc(s) {
