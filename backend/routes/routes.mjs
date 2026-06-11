@@ -20,6 +20,7 @@ import agentsRouter from '../agents/agents.routes.mjs';                         
 import subscriptionsRouter from '../agents/subscriptions.routes.mjs';                                                            // Импорт маршрутов подписок на агентов
 import logsRouter from '../agents/logs.routes.mjs';                                                                              // Импорт маршрутов логов агентов
 import gatewayRouter from '../gateway/gateway.routes.mjs';                                                                       // Импорт гетвей роутера агентов
+import cors from 'cors';                                                                                                         // Импорт cors для открытого доступа к gateway
 
 export function connectRoutes(app, authLimiter) {                                                                                // Функция централизованного подключения всех маршрутов приложения
     app.use(yookassaRouter);                                                                                                     // Подключаем маршруты платёжной системы YooKassa
@@ -46,6 +47,7 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/api/agents', agentsRouter);                                                                                        // Подключаем маршруты агентов
     app.use('/api/agents', subscriptionsRouter);                                                                                 // Подключаем маршруты подписок на агентов
     app.use('/api/agents', logsRouter);                                                                                          // Подключаем маршруты логов агентов
+    app.use('/gateway', cors({ origin: '*', methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Authorization', 'Content-Type', 'X-Buyer-Token'] })); // Gateway открыт для внешних клиентов — авторизация через токен
     app.use('/gateway', gatewayRouter);                                                                                          // Подключаем гетвей прокси агентов
     app.use('/', aiSearchRouter);                                                                                                // Подключаем маршрут AI-поиска через SearxNG
     app.use('/', i18nRoute);                                                                                                     // Подключаем маршрут переводов
