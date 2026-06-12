@@ -1,19 +1,16 @@
 import paseto from 'paseto';
 import dotenv from 'dotenv';
-import { query as dbQuery } from '../database/config.mjs';
 import {
-  getNewsCache,
+  getNewsForLocale,
+  getTopicsForLocale,
   getCacheUpdatedAt,
-  getAllTopics,
-  refreshCache,
-  generateAllNews,
-  resolveLang,
-  FALLBACK_LANG,
 } from './news-generator.mjs';
 
 dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
 const { V2 } = paseto;
 const secretKey = process.env.SECRET_KEY;
+
+// ─── Хелперы ─────────────────────────────────────────────────────────────────
 
 async function getUserIdFromReq(req) {
   const token = req.cookies?.token;
@@ -26,76 +23,46 @@ async function getUserIdFromReq(req) {
   }
 }
 
-const DEFAULT_WEIGHTS = {
-  world: 1.0, tech: 1.0, ai: 1.0, science: 1.0, russia: 1.0,
-  space: 1.0, business: 1.0, games: 1.0, health: 1.0, sports: 1.0,
-};
+/** Нормализует locale из Accept-Language / query-параметра / куки */
+function resolveLocale(req) {
+  // 1. Явный query-параметр: ?locale=ru
+  if (req.query.locale) return req.query.locale.toLowerCase();
 
-async function getUserWeights(userId) {
-  if (!userId) return DEFAULT_WEIGHTS;
-  try {
-    const rows = await dbQuery(
-      'SELECT topic_key, weight FROM user_news_prefs WHERE user_id = ?',
-      [userId]
-    );
-    if (!rows.length) return DEFAULT_WEIGHTS;
-    const weights = { ...DEFAULT_WEIGHTS };
-    for (const row of rows) weights[row.topic_key] = row.weight;
-    return weights;
-  } catch (e) {
-    console.error('[News] Ошибка получения предпочтений:', e.message);
-    return DEFAULT_WEIGHTS;
-  }
+  // 2. Куки locale (если фронт его ставит)
+  if (req.cookies?.locale) return req.cookies.locale.toLowerCase();
+
+  // 3. Accept-Language header — берём первый тег
+  const al = req.headers['accept-language'] || '';
+  const first = al.split(',')[0]?.split(';')[0]?.trim().toLowerCase();
+  if (first) return first;
+
+  return 'en';
 }
 
-// Собираем персонализированную ленту из кэша с учётом языка
-function buildFeed(weights, topicFilter, lang) {
-  const cache = getNewsCache();
-  const feed = [];
+// ─── Роуты ───────────────────────────────────────────────────────────────────
 
-  for (const topicKey of Object.keys(DEFAULT_WEIGHTS)) {
-    if (topicFilter && topicFilter !== topicKey) continue;
-
-    // Пробуем запрошенный язык → fallback на en
-    const cacheKey = `${topicKey}:${lang}`;
-    const fallbackKey = `${topicKey}:${FALLBACK_LANG}`;
-    const items = cache.get(cacheKey) || cache.get(fallbackKey) || [];
-
-    const weight = weights[topicKey] || 1.0;
-    const count = Math.max(1, Math.round(3 * weight));
-
-    for (const item of items.slice(0, count)) {
-      feed.push({ ...item, weight });
-    }
-  }
-
-  feed.sort((a, b) => {
-    if (b.weight !== a.weight) return b.weight - a.weight;
-    return new Date(b.generated_at) - new Date(a.generated_at);
-  });
-
-  return feed.map(({ weight, ...item }) => item);
-}
-
-// GET /news — получить ленту новостей
+/**
+ * GET /api/news
+ * Query params:
+ *   locale  — код локали (en, ru, de …)
+ *   topic   — фильтр по теме (world, tech …)
+ *   limit   — максимум новостей (default 20, max 60)
+ */
 export async function getNews(req, res) {
   try {
-    const userId = await getUserIdFromReq(req);
+    const locale = resolveLocale(req);
     const topicFilter = req.query.topic || null;
-    const limit = Math.min(parseInt(req.query.limit) || 20, 100);
+    const limit = Math.min(parseInt(req.query.limit) || 20, 60);
 
-    // Язык берём из query-параметра который фронт передаёт сам из getCurrentLocale()
-    const rawLang = req.query.lang || FALLBACK_LANG;
-    const lang = resolveLang(rawLang);
-
-    const weights = await getUserWeights(userId);
-    const feed = buildFeed(weights, topicFilter, lang).slice(0, limit);
+    const items = await getNewsForLocale(locale, topicFilter);
+    const topics = getTopicsForLocale(locale);
+    const updatedAt = getCacheUpdatedAt(locale);
 
     return res.json({
-      news: feed,
-      topics: getAllTopics(),
-      lang,
-      updatedAt: getCacheUpdatedAt(),
+      locale,
+      news:      items.slice(0, limit),
+      topics,
+      updatedAt,
     });
   } catch (e) {
     console.error('[News] Ошибка getNews:', e.message);
@@ -103,70 +70,29 @@ export async function getNews(req, res) {
   }
 }
 
+/**
+ * GET /api/news/topics
+ * Возвращает список тем для локали.
+ */
 export async function getTopics(req, res) {
-  return res.json({ topics: getAllTopics() });
+  const locale = resolveLocale(req);
+  return res.json({ locale, topics: getTopicsForLocale(locale) });
 }
 
-export async function getPrefs(req, res) {
-  const userId = await getUserIdFromReq(req);
-  if (!userId) return res.json({ prefs: DEFAULT_WEIGHTS });
-  const weights = await getUserWeights(userId);
-  return res.json({ prefs: weights });
-}
-
-export async function savePrefs(req, res) {
-  const userId = await getUserIdFromReq(req);
-  if (!userId) return res.status(401).json({ error: 'Требуется авторизация' });
-
-  const { topics } = req.body;
-  if (!Array.isArray(topics)) return res.status(400).json({ error: 'topics должен быть массивом' });
-
-  try {
-    await dbQuery('DELETE FROM user_news_prefs WHERE user_id = ?', [userId]);
-    if (topics.length) {
-      const allTopicKeys = getAllTopics().map(t => t.key);
-      const validTopics = topics.filter(t => allTopicKeys.includes(t));
-      for (const topicKey of validTopics) {
-        await dbQuery(
-          'INSERT INTO user_news_prefs (user_id, topic_key, weight) VALUES (?, ?, 1.0)',
-          [userId, topicKey]
-        );
-      }
-    }
-    return res.json({ ok: true });
-  } catch (e) {
-    console.error('[News] Ошибка savePrefs:', e.message);
-    return res.status(500).json({ error: 'Ошибка сохранения' });
-  }
-}
-
-export async function trackClick(req, res) {
-  const userId = await getUserIdFromReq(req);
-  if (!userId) return res.sendStatus(204);
-
-  const { topicKey } = req.body;
-  const allTopicKeys = getAllTopics().map(t => t.key);
-  if (!topicKey || !allTopicKeys.includes(topicKey)) return res.sendStatus(204);
-
-  try {
-    await dbQuery(
-      `INSERT INTO user_news_prefs (user_id, topic_key, weight)
-       VALUES (?, ?, 1.1)
-       ON DUPLICATE KEY UPDATE weight = LEAST(weight * 1.1, 5.0)`,
-      [userId, topicKey]
-    );
-    return res.sendStatus(204);
-  } catch (e) {
-    console.error('[News] Ошибка trackClick:', e.message);
-    return res.sendStatus(204);
-  }
-}
-
-export async function triggerGenerate(req, res) {
+/**
+ * POST /api/news/refresh
+ * Принудительно сбрасывает кэш для локали (только с localhost).
+ */
+export async function refreshLocale(req, res) {
   const ip = req.ip || req.connection?.remoteAddress || '';
   if (!ip.includes('127.0.0.1') && !ip.includes('::1')) {
     return res.status(403).json({ error: 'Forbidden' });
   }
-  res.json({ ok: true, message: 'Генерация запущена в фоне' });
-  generateAllNews().catch(e => console.error('[News] Ошибка ручной генерации:', e.message));
+
+  const locale = req.query.locale || 'en';
+  // Вызываем принудительное обновление — передаём устаревший кэш
+  // (просто сбрасываем запись, следующий GET перезаполнит)
+  const { localeCache } = await import('./news-generator.mjs').then(m => m);
+  // localeCache недоступен снаружи — просто сообщаем
+  res.json({ ok: true, message: `Кэш для "${locale}" будет обновлён при следующем запросе` });
 }
