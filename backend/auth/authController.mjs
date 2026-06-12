@@ -351,7 +351,7 @@ export const confirmToken = async (req, res) => {
       domain: '.serpmonn.ru'
     });
 
-    console.log('Подтверждение: пользователь', user.email, 'confirmed = 1, токен создан');
+    console.log('Подтверждение: пользователь', maskEmail(user.email), 'confirmed = 1, токен создан');
     return res.redirect('https://serpmonn.ru/frontend/profile/profile.html');
   } catch (error) {
     console.error('Ошибка подтверждения:', error);
