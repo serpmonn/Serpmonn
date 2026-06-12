@@ -142,6 +142,195 @@
 <link rel="manifest" href="/frontend/pwa/manifest.json">
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 
+<style>
+/* ===== NEWS FEED BLOCK ===== */
+.news-feed-block {
+  width: 100%;
+  background: var(--color-bg, #f7f6f2);
+  border-bottom: 1px solid rgba(0,0,0,0.07);
+  padding: 10px 0 6px;
+  position: relative;
+  z-index: 10;
+}
+
+.news-feed-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 12px;
+}
+
+/* Category tabs */
+.news-tabs {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 6px;
+  margin-bottom: 8px;
+}
+.news-tabs::-webkit-scrollbar { display: none; }
+
+.news-tab {
+  flex-shrink: 0;
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  border: 1px solid rgba(0,0,0,0.12);
+  background: transparent;
+  cursor: pointer;
+  color: var(--color-text, #28251d);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  white-space: nowrap;
+}
+.news-tab:hover { background: rgba(0,0,0,0.05); }
+.news-tab.active {
+  background: var(--accent, #e8263e);
+  color: #fff;
+  border-color: transparent;
+}
+
+/* Cards row */
+.news-cards-row {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  padding-bottom: 2px;
+}
+.news-cards-row::-webkit-scrollbar { display: none; }
+
+/* Single news card */
+.news-card {
+  flex-shrink: 0;
+  width: 190px;
+  background: var(--color-surface, #f9f8f5);
+  border: 1px solid rgba(0,0,0,0.08);
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: box-shadow 0.18s, transform 0.18s;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+}
+.news-card:hover {
+  box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+  transform: translateY(-1px);
+}
+
+/* Big hero card */
+.news-card.hero-card {
+  width: 280px;
+}
+
+.news-card-img {
+  width: 100%;
+  height: 95px;
+  object-fit: cover;
+  background: #e0deda;
+  flex-shrink: 0;
+}
+.hero-card .news-card-img { height: 140px; }
+
+.news-card-body {
+  padding: 7px 9px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex: 1;
+}
+
+.news-card-category {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--accent, #e8263e);
+  line-height: 1;
+}
+
+.news-card-title {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-text, #28251d);
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.hero-card .news-card-title {
+  font-size: 13.5px;
+  -webkit-line-clamp: 4;
+}
+
+.news-card-meta {
+  font-size: 10px;
+  color: var(--color-text-muted, #7a7974);
+  margin-top: auto;
+}
+
+/* Loading skeleton */
+.news-skeleton-card {
+  flex-shrink: 0;
+  width: 190px;
+  height: 155px;
+  background: linear-gradient(90deg, #e8e6e1 25%, #f0ede8 50%, #e8e6e1 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+  border-radius: 10px;
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+/* No-news message */
+.news-empty {
+  font-size: 12px;
+  color: var(--color-text-muted, #7a7974);
+  padding: 6px 0;
+}
+
+/* Header row */
+.news-feed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+}
+.news-feed-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--color-text-muted, #7a7974);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.news-feed-updated {
+  font-size: 10px;
+  color: var(--color-text-faint, #bab9b4);
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .news-feed-block { background: #1c1b19; border-bottom-color: rgba(255,255,255,0.07); }
+  .news-card { background: #201f1d; border-color: rgba(255,255,255,0.08); }
+  .news-card-img { background: #2d2c2a; }
+  .news-skeleton-card { background: linear-gradient(90deg,#2a2926 25%,#333230 50%,#2a2926 75%); background-size: 200% 100%; }
+  .news-tab { color: #cdccca; border-color: rgba(255,255,255,0.12); }
+  .news-tab:hover { background: rgba(255,255,255,0.06); }
+}
+[data-theme="dark"] .news-feed-block { background: #1c1b19; border-bottom-color: rgba(255,255,255,0.07); }
+[data-theme="dark"] .news-card { background: #201f1d; border-color: rgba(255,255,255,0.08); }
+[data-theme="dark"] .news-card-img { background: #2d2c2a; }
+[data-theme="dark"] .news-skeleton-card { background: linear-gradient(90deg,#2a2926 25%,#333230 50%,#2a2926 75%); background-size: 200% 100%; }
+[data-theme="dark"] .news-tab { color: #cdccca; border-color: rgba(255,255,255,0.12); }
+</style>
+
 <script>window.yaContextCb=window.yaContextCb||[]</script>
 <script src="https://yandex.ru/ads/system/context.js" async></script>
 
@@ -206,10 +395,40 @@
 </script>
   </head>
   <body>
-    <div class="news-container" id="news-container">
-  <h1>Serpmonn — мультимодальный ИИ‑поиск, картинки, видео, новости, игры и промокоды</h1>
-  
-</div>
+    <!-- ===== NEWS FEED — над поисковой строкой ===== -->
+    <div class="news-feed-block" id="news-feed-block">
+      <div class="news-feed-inner">
+        <div class="news-feed-header">
+          <span class="news-feed-title">Новости</span>
+          <span class="news-feed-updated" id="news-feed-updated"></span>
+        </div>
+
+        <!-- Category tabs -->
+        <nav class="news-tabs" id="news-tabs" aria-label="Категории новостей">
+          <button class="news-tab active" data-cat="all">Всё</button>
+          <button class="news-tab" data-cat="tech">Технологии</button>
+          <button class="news-tab" data-cat="science">Наука</button>
+          <button class="news-tab" data-cat="world">Мир</button>
+          <button class="news-tab" data-cat="business">Бизнес</button>
+          <button class="news-tab" data-cat="sport">Спорт</button>
+          <button class="news-tab" data-cat="health">Здоровье</button>
+        </nav>
+
+        <!-- Cards row (filled by JS) -->
+        <div class="news-cards-row" id="news-cards-row" role="list">
+          <!-- skeletons while loading -->
+          <div class="news-skeleton-card" style="width:280px;height:185px;"></div>
+          <div class="news-skeleton-card"></div>
+          <div class="news-skeleton-card"></div>
+          <div class="news-skeleton-card"></div>
+          <div class="news-skeleton-card"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SEO h1 (скрыт визуально) -->
+    <h1 class="sr-only">Serpmonn — мультимодальный ИИ‑поиск, картинки, видео, новости, игры и промокоды</h1>
+
     <main>
       
 <div class="search-card-wrapper">
@@ -396,5 +615,154 @@
   });
 </script>
 
+<!-- ===== NEWS FEED SCRIPT ===== -->
+<script>
+(function () {
+  'use strict';
+
+  // ---- CONFIG ----
+  // Темы по категориям (запросы для SearXNG)
+  var CAT_QUERIES = {
+    all:      ['последние новости', 'главные новости дня'],
+    tech:     ['технологии новости', 'IT новости', 'искусственный интеллект новости'],
+    science:  ['наука открытия', 'научные новости'],
+    world:    ['мировые новости', 'международные события'],
+    business: ['экономика бизнес новости', 'финансы рынки'],
+    sport:    ['спортивные новости', 'футбол новости'],
+    health:   ['здоровье медицина новости']
+  };
+
+  // Placeholder изображения по категориям (picsum seeds)
+  var CAT_IMAGES = {
+    all: 10, tech: 20, science: 30, world: 40,
+    business: 50, sport: 60, health: 70
+  };
+
+  var SEARXNG_BASE = '/searxng/search';   // proxy path — настрой на своём сервере
+  var currentCat = 'all';
+  var cache = {};
+
+  var tabsEl   = document.getElementById('news-tabs');
+  var rowEl    = document.getElementById('news-cards-row');
+  var updEl    = document.getElementById('news-feed-updated');
+
+  // ---- UTILS ----
+  function timeAgo(dateStr) {
+    var d = new Date(dateStr);
+    if (isNaN(d)) return '';
+    var diff = Math.floor((Date.now() - d) / 1000);
+    if (diff < 60)   return 'только что';
+    if (diff < 3600) return Math.floor(diff/60) + ' мин назад';
+    if (diff < 86400)return Math.floor(diff/3600) + ' ч назад';
+    return Math.floor(diff/86400) + ' дн назад';
+  }
+
+  function imgUrl(item, catSeed) {
+    // Если SearXNG вернул thumbnail — используем его, иначе picsum
+    if (item.thumbnail && item.thumbnail.startsWith('http')) return item.thumbnail;
+    var seed = (item.title || '').replace(/\s+/g,'').slice(0,10) || String(catSeed);
+    return 'https://picsum.photos/seed/' + seed + '/400/220';
+  }
+
+  // ---- RENDER ----
+  function renderCards(items, cat) {
+    if (!items || items.length === 0) {
+      rowEl.innerHTML = '<p class="news-empty">Нет новостей по этой теме.</p>';
+      return;
+    }
+
+    var html = '';
+    items.forEach(function (item, i) {
+      var isHero = i === 0;
+      var catLabel = item._cat || '';
+      var ago = timeAgo(item.publishedDate || item.pubdate || '');
+      var url = item.url || '#';
+      var title = item.title || 'Без заголовка';
+      var imgSrc = imgUrl(item, CAT_IMAGES[cat] || 10);
+
+      html += '<a class="news-card' + (isHero ? ' hero-card' : '') + '" href="' + url +
+        '" target="_blank" rel="noopener noreferrer" role="listitem" title="' + title.replace(/"/g,'&quot;') + '">' +
+        '<img class="news-card-img" src="' + imgSrc + '" alt="" width="400" height="220" loading="lazy" onerror="this.src=\'https://picsum.photos/seed/news' + i + '/400/220\'">' +
+        '<div class="news-card-body">' +
+          (catLabel ? '<span class="news-card-category">' + catLabel + '</span>' : '') +
+          '<span class="news-card-title">' + title + '</span>' +
+          (ago ? '<span class="news-card-meta">' + ago + '</span>' : '') +
+        '</div>' +
+        '</a>';
+    });
+
+    rowEl.innerHTML = html;
+    updEl.textContent = 'обновлено ' + new Date().toLocaleTimeString('ru', {hour:'2-digit',minute:'2-digit'});
+  }
+
+  function showSkeletons() {
+    var html = '<div class="news-skeleton-card" style="width:280px;height:185px;"></div>';
+    for (var i = 0; i < 5; i++) html += '<div class="news-skeleton-card"></div>';
+    rowEl.innerHTML = html;
+  }
+
+  // ---- FETCH ----
+  function fetchNews(cat) {
+    if (cache[cat]) { renderCards(cache[cat], cat); return; }
+    showSkeletons();
+
+    var queries = CAT_QUERIES[cat] || CAT_QUERIES.all;
+    var query = queries[Math.floor(Math.random() * queries.length)];
+
+    var url = SEARXNG_BASE + '?q=' + encodeURIComponent(query) +
+      '&format=json&language=ru-RU&time_range=day&categories=news&engines=google%2Cbing%2Cduckduckgo';
+
+    fetch(url)
+      .then(function (r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
+      .then(function (data) {
+        var results = (data.results || []).slice(0, 10);
+        // Добавляем категорию-лейбл на карточку
+        results = results.map(function (item) {
+          item._cat = item.category || '';
+          return item;
+        });
+        cache[cat] = results;
+        renderCards(results, cat);
+      })
+      .catch(function (err) {
+        console.warn('[NewsFeed] fetch error:', err);
+        // Показываем fallback карточки
+        renderCards(getFallback(), cat);
+      });
+  }
+
+  // ---- FALLBACK (пока SearXNG не настроен или ошибка) ----
+  function getFallback() {
+    return [
+      { title: 'ИИ обогнал человека в решении математических задач', url: '#', _cat: 'Технологии', publishedDate: new Date(Date.now()-3600000).toISOString() },
+      { title: 'Новые исследования меняют представление о сне', url: '#', _cat: 'Наука', publishedDate: new Date(Date.now()-7200000).toISOString() },
+      { title: 'Рынки акций показали рост после заявления ФРС', url: '#', _cat: 'Бизнес', publishedDate: new Date(Date.now()-10800000).toISOString() },
+      { title: 'Прорыв в лечении редкого генетического заболевания', url: '#', _cat: 'Здоровье', publishedDate: new Date(Date.now()-14400000).toISOString() },
+      { title: 'Рекорд на чемпионате мира по лёгкой атлетике', url: '#', _cat: 'Спорт', publishedDate: new Date(Date.now()-18000000).toISOString() },
+      { title: 'Открыт новый экзопланета в обитаемой зоне звезды', url: '#', _cat: 'Наука', publishedDate: new Date(Date.now()-21600000).toISOString() }
+    ];
+  }
+
+  // ---- TABS ----
+  tabsEl.addEventListener('click', function (e) {
+    var btn = e.target.closest('.news-tab');
+    if (!btn) return;
+    tabsEl.querySelectorAll('.news-tab').forEach(function (t) { t.classList.remove('active'); });
+    btn.classList.add('active');
+    currentCat = btn.dataset.cat;
+    fetchNews(currentCat);
+  });
+
+  // ---- INIT ----
+  document.addEventListener('DOMContentLoaded', function () {
+    fetchNews('all');
+  });
+
+})();
+</script>
+
   </body>
-</html>                                                                                                                                                                                 
+</html>
