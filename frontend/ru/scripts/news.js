@@ -3,7 +3,6 @@ export async function loadNews() {
         const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const base  = isDev ? 'http://localhost:4000' : 'https://www.serpmonn.ru';
 
-        // Определяем локаль из пути URL — /ru/, /en/, /de/ и т.д.
         const pathLocale = window.location.pathname.split('/').filter(Boolean)[0] || '';
         const knownLocales = [
             'ar','az','be','bg','bn','cs','da','de','dv','el','en','es','es-419',
@@ -13,7 +12,7 @@ export async function loadNews() {
         ];
         const locale = knownLocales.includes(pathLocale.toLowerCase())
             ? pathLocale.toLowerCase()
-            : (navigator.language || 'en').split('-')[0].toLowerCase();
+            : (navigator.language || 'ru').split('-')[0].toLowerCase();
 
         const url = `${base}/news?locale=${encodeURIComponent(locale)}&limit=20`;
         const response = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
@@ -38,7 +37,6 @@ export async function loadNews() {
                 newsLink.target = '_blank';
                 newsLink.rel    = 'noopener noreferrer';
 
-                // Изображение (если есть)
                 if (article.img) {
                     const newsImage = document.createElement('img');
                     newsImage.className = 'news-image';
