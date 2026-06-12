@@ -87,7 +87,7 @@ async function callOllama(model, query, webContext) {
   const raw = await res.text();
 
   if (!res.ok) {
-    console.error(`[Ollama] HTTP error ${res.status}:`, raw);
+    console.error(`[Ollama] HTTP error ${res.status}`);
     throw new Error(`Ollama HTTP ${res.status}`);
   }
 
@@ -95,7 +95,7 @@ async function callOllama(model, query, webContext) {
   try {
     data = JSON.parse(raw);
   } catch (e) {
-    console.error('[Ollama] JSON parse error:', e.message, 'raw:', raw.slice(0, 500));
+    console.error('[Ollama] JSON parse error:', e.message);
     throw new Error('Ollama JSON parse error');
   }
 
@@ -105,7 +105,7 @@ async function callOllama(model, query, webContext) {
     '';
 
   if (!answer) {
-    console.error('[Ollama] Empty content in response:', data);
+    console.error('[Ollama] Empty content in response');
     throw new Error('Ollama empty content');
   }
 
@@ -340,7 +340,7 @@ async function webSearchWithSearxng(query, t) {
 
     return { webContext, sources };
   } catch (e) {
-    console.error('Ошибка при обращении к SearXNG (general):', e);
+    console.error('Ошибка при обращении к SearXNG (general):', e.message);
     return {
       webContext: t.searchNoData,
       sources: [],
@@ -365,7 +365,7 @@ async function imageSearchWithSearxng(query, t) {
 
     return images;
   } catch (e) {
-    console.error('Ошибка при обращении к SearXNG (images):', e);
+    console.error('Ошибка при обращении к SearXNG (images):', e.message);
     return [];
   }
 }
@@ -388,7 +388,7 @@ async function videoSearchWithSearxng(query, t) {
 
     return videos;
   } catch (e) {
-    console.error('Ошибка при обращении к SearXNG (videos):', e);
+    console.error('Ошибка при обращении к SearXNG (videos):', e.message);
     return [];
   }
 }
@@ -397,7 +397,6 @@ router.post(
   '/ai-search',
   attachUserIfToken,
   async (req, res) => {
-    console.log('IN /ai-search, body =', req.body);
     const reqStart = process.hrtime.bigint();
     const { locale, t } = getBackendMessages(req);
 
@@ -434,11 +433,6 @@ router.post(
       if (!limitCheck.ok) {
         return res.status(limitCheck.status).json(limitCheck.payload);
       }
-
-      console.log(`${nowMSK()} | /ai-search | locale=${locale} | query="${q}" | mode=${mode}`);
-      console.log(
-        `${nowMSK()} | include: text=${wantText}, images=${wantImages}, videos=${wantVideos}`
-      );
 
       const tasks = [];
 
@@ -578,13 +572,7 @@ router.post(
       const reqEnd = process.hrtime.bigint();
       const totalMs = Number(reqEnd - reqStart) / 1e6;
 
-      console.log(`${nowMSK()} | /ai-search | total=${totalMs.toFixed(0)}ms`);
-      console.log(
-        `${nowMSK()} | /ai-search | answer="${(responsePayload.answer || '').slice(0, 200).replace(/\s+/g, ' ')}..."`
-      );
-      console.log(
-        `${nowMSK()} | /ai-search | images=${responsePayload.images.length}, videos=${responsePayload.videos.length}, sources=${responsePayload.sources.length}`
-      );
+      console.log(`${nowMSK()} | /ai-search | total=${totalMs.toFixed(0)}ms | ok`);
 
       if (idempotencyKey) {
         const cacheKey = `${identity.id}:${idempotencyKey}`;
@@ -596,7 +584,7 @@ router.post(
 
       return res.json(responsePayload);
     } catch (error) {
-      console.error('💥 Ошибка в /ai-search:', error);
+      console.error('💥 Ошибка в /ai-search:', error.message);
 
       if (error?.isPublic) {
         return res.status(error.status || 400).json({
