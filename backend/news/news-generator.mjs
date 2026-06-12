@@ -236,7 +236,7 @@ const LOCALE_TOPICS = {
     { key: 'business', label: 'Տնտեսություն',query: 'տնտեսական նորություններ' },
     { key: 'games',    label: 'Խաղեր',      query: 'video games news today' },
     { key: 'health',   label: 'Առողջություն',query: 'առողջություն նորություններ' },
-    { key: 'sports',   label: 'Սպորտ',      query: 'սպորտային նորություններ' },
+    { key: 'sports',   label: 'Սպορտ',      query: 'սպորտային նորություններ' },
   ],
   'id':     [
     { key: 'world',    label: 'Dunia',       query: 'berita dunia hari ini' },
@@ -315,7 +315,7 @@ const LOCALE_TOPICS = {
     { key: 'health',   label: 'صحت',        query: 'health news today' },
     { key: 'sports',   label: 'کھیل',       query: 'sports news today' },
   ],
-  'ku-Arab':[\
+  'ku-Arab':[
     { key: 'world',    label: 'جیهان',      query: 'world news today kurdish' },
     { key: 'tech',     label: 'تەکنەلۆجیا', query: 'technology news today' },
     { key: 'ai',       label: 'AI',          query: 'artificial intelligence news today' },
