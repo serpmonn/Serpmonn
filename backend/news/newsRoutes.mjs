@@ -1,16 +1,37 @@
-import express from 'express';                                                                                                   // Импортируем Express для создания маршрутов
-import { getNews } from './newsController.mjs';                                                                                  // Импортируем контроллер для получения новостей
+import express from 'express';
+import {
+  getNews,
+  getTopics,
+  getPrefs,
+  savePrefs,
+  trackClick,
+  triggerGenerate,
+} from './newsController.mjs';
 
-const router = express.Router();                                                                                                 // Создаем экземпляр маршрутизатора Express
+const router = express.Router();
 
-router.options('*', (req, res) => {                                                                                              // Определяем обработчик для OPTIONS-запросов
-    res.setHeader('Access-Control-Allow-Origin', 'https://serpmonn.ru');                                                         // Устанавливаем разрешенный источник
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');                                            // Устанавливаем разрешенные методы
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');                                                // Устанавливаем разрешенные заголовки
-    res.setHeader('Access-Control-Allow-Credentials', 'true');                                                                   // Разрешаем отправку cookies
-    res.status(200).end();                                                                                                       // Завершаем запрос с кодом 200
-});
+// Получить ленту новостей (персонализированную)
+// GET /news?topic=tech&limit=20
+router.get('/news', getNews);
 
-router.get('/news', getNews);                                                                                                    // Определяем GET маршрут для получения новостей
+// Получить список всех тем
+// GET /news/topics
+router.get('/news/topics', getTopics);
 
-export default router;                                                                                                           // Экспортируем маршрутизатор для использования в приложении
+// Получить предпочтения пользователя
+// GET /news/prefs
+router.get('/news/prefs', getPrefs);
+
+// Сохранить выбранные темы
+// POST /news/prefs { topics: ['tech', 'ai', 'world'] }
+router.post('/news/prefs', savePrefs);
+
+// Трекинг клика по новости (пассивная персонализация)
+// POST /news/click { topicKey: 'tech' }
+router.post('/news/click', trackClick);
+
+// Ручной запуск генерации (только 127.0.0.1)
+// POST /news/generate
+router.post('/news/generate', triggerGenerate);
+
+export default router;
