@@ -3,7 +3,6 @@ export async function loadNews() {
         const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         const base  = isDev ? 'http://localhost:4000' : 'https://www.serpmonn.ru';
 
-        // Определяем локаль из пути URL — /ru/, /en/, /de/ и т.д.
         const pathLocale = window.location.pathname.split('/').filter(Boolean)[0] || '';
         const knownLocales = [
             'ar','az','be','bg','bn','cs','da','de','dv','el','en','es','es-419',
@@ -17,76 +16,60 @@ export async function loadNews() {
 
         const url = `${base}/news?locale=${encodeURIComponent(locale)}&limit=20`;
         const response = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
-
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const data = await response.json();
-        const newsContainer = document.getElementById('news-container');
-        if (!newsContainer) return;
-
         const articles = data.news || [];
+        if (articles.length === 0) return;
 
-        if (articles.length > 0) {
-            newsContainer.innerHTML = '';
-            articles.forEach(article => {
-                const newsItem = document.createElement('div');
-                newsItem.className = 'news-item';
+        const block    = document.getElementById('news-block');
+        const heroEl   = document.getElementById('news-hero');
+        const heroTag  = document.getElementById('news-hero-tag');
+        const heroHL   = document.getElementById('news-hero-headline');
+        const heroDesc = document.getElementById('news-hero-desc');
+        const heroSrc  = document.getElementById('news-hero-source');
+        const heroTime = document.getElementById('news-hero-time');
+        const feed     = document.getElementById('news-feed');
 
-                const newsLink = document.createElement('a');
-                newsLink.className = 'news-link';
-                newsLink.href   = article.url;
-                newsLink.target = '_blank';
-                newsLink.rel    = 'noopener noreferrer';
+        if (!block || !heroEl || !feed) return;
 
-                // Изображение (если есть)
-                if (article.img) {
-                    const newsImage = document.createElement('img');
-                    newsImage.className = 'news-image';
-                    newsImage.src     = article.img;
-                    newsImage.alt     = article.title;
-                    newsImage.loading = 'lazy';
-                    newsItem.appendChild(newsImage);
-                }
+        const tagMap = { ai: 'ai', tech: 'tech', world: 'world', science: 'sci', sport: 'sport' };
+        const tagClass = (cat) => tagMap[cat] || 'ai';
 
-                const newsTitle = document.createElement('div');
-                newsTitle.className   = 'news-title';
-                newsTitle.textContent = article.title;
-
-                const newsMeta = document.createElement('div');
-                newsMeta.className = 'news-meta';
-                const topicBadge = document.createElement('span');
-                topicBadge.className   = 'news-topic';
-                topicBadge.textContent = article.topicLabel || '';
-                const sourceSpan = document.createElement('span');
-                sourceSpan.className   = 'news-source';
-                sourceSpan.textContent = article.source || '';
-                newsMeta.appendChild(topicBadge);
-                newsMeta.appendChild(sourceSpan);
-
-                const newsContent = document.createElement('div');
-                newsContent.className = 'news-content';
-                if (article.snippet) {
-                    newsContent.textContent = article.snippet;
-                } else {
-                    newsContent.style.display = 'none';
-                }
-
-                if (article.publishedAt) {
-                    const newsDate = document.createElement('div');
-                    newsDate.className   = 'news-date';
-                    newsDate.textContent = new Date(article.publishedAt).toLocaleDateString();
-                    newsLink.appendChild(newsDate);
-                }
-
-                newsLink.appendChild(newsTitle);
-                newsLink.appendChild(newsMeta);
-                newsLink.appendChild(newsContent);
-                newsItem.appendChild(newsLink);
-                newsContainer.appendChild(newsItem);
-            });
-        } else {
-            newsContainer.textContent = 'Нет доступных новостей.';
+        function timeAgo(dateStr) {
+            if (!dateStr) return '';
+            const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
+            if (diff < 1)  return '<1 мин';
+            if (diff < 60) return diff + ' мин';
+            const h = Math.floor(diff / 60);
+            if (h < 24)    return h + ' ч';
+            return Math.floor(h / 24) + ' д';
         }
+
+        // Hero — первая новость
+        const hero = articles[0];
+        heroEl.href          = hero.url || '#';
+        heroTag.textContent  = hero.topicLabel || hero.category || '';
+        heroTag.className    = `news-tag ${tagClass(hero.category)}`;
+        heroHL.textContent   = hero.title || '';
+        heroDesc.textContent = hero.snippet || hero.description || '';
+        heroSrc.textContent  = hero.source || '';
+        heroTime.textContent = timeAgo(hero.publishedAt);
+
+        // Feed — остальные карточки
+        feed.innerHTML = articles.slice(1).map(item => `
+            <a class="card" href="${item.url || '#'}" target="_blank" rel="noopener noreferrer">
+                <span class="news-tag ${tagClass(item.category)}">${item.topicLabel || item.category || ''}</span>
+                <p class="card-headline">${item.title || ''}</p>
+                <div class="card-meta">
+                    <span class="card-source">${item.source || ''}</span>
+                    <span class="card-time">${timeAgo(item.publishedAt)}</span>
+                </div>
+            </a>`
+        ).join('');
+
+        block.style.display = 'block';
+
     } catch (error) {
         console.error('Ошибка загрузки новостей:', error);
     }
