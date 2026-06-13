@@ -2,7 +2,7 @@
  * news.js — загрузка и рендер новостей на главной странице.
  *
  * API: GET /news?locale=<lang>&limit=10
- * Ответ: { locale, news: NewsItem[], topics: string[], updatedAt }
+ * Ответ: { locale, news: NewsItem[], updatedAt }
  *
  * NewsItem: { id, topic_key, lang, title, body, cover_url, sources, generated_at }
  */
@@ -42,24 +42,31 @@ function resolveSourceUrl(sources) {
   return '#';
 }
 
+function resolveHostname(href) {
+  try { return href !== '#' ? new URL(href).hostname : ''; }
+  catch { return ''; }
+}
+
 function buildFeedCard(item) {
-  const href = resolveSourceUrl(item.sources);
-  const date = formatDate(item.generated_at);
+  const href     = resolveSourceUrl(item.sources);
+  const date     = formatDate(item.generated_at);
+  const hostname = resolveHostname(href);
   return `
-    <a class="feed-item" href="${href}" target="_blank" rel="noopener noreferrer">
-      <div class="feed-item-body">
-        ${item.topic_key ? `<span class="news-tag">${item.topic_key}</span>` : ''}
-        <div class="feed-item-title">${item.title}</div>
-        ${date ? `<div class="feed-item-date">${date}</div>` : ''}
+    <a class="card" href="${href}" target="_blank" rel="noopener noreferrer">
+      ${item.topic_key ? `<span class="news-tag">${item.topic_key}</span>` : ''}
+      <div class="card-headline">${item.title || ''}</div>
+      <div class="card-meta">
+        <span class="card-source">${hostname}</span>
+        ${date ? `<span class="card-time">${date}</span>` : ''}
       </div>
     </a>
   `.trim();
 }
 
 export async function loadNews() {
-  const block   = document.getElementById('news-block');
-  const heroEl  = document.getElementById('news-hero');
-  const feed    = document.getElementById('news-feed');
+  const block  = document.getElementById('news-block');
+  const heroEl = document.getElementById('news-hero');
+  const feed   = document.getElementById('news-feed');
 
   if (!block || !heroEl || !feed) return;
 
@@ -77,18 +84,16 @@ export async function loadNews() {
 
     if (items.length === 0) return;
 
-    // Первая новость — герой
-    const hero = items[0];
+    const hero     = items[0];
     const heroHref = resolveSourceUrl(hero.sources);
 
     heroEl.href = heroHref;
-    document.getElementById('news-hero-tag').textContent       = hero.topic_key || '';
-    document.getElementById('news-hero-headline').textContent  = hero.title     || '';
-    document.getElementById('news-hero-desc').textContent      = hero.body      || '';
-    document.getElementById('news-hero-source').textContent    = heroHref !== '#' ? new URL(heroHref).hostname : '';
-    document.getElementById('news-hero-time').textContent      = formatDate(hero.generated_at);
+    document.getElementById('news-hero-tag').textContent      = hero.topic_key || '';
+    document.getElementById('news-hero-headline').textContent = hero.title     || '';
+    document.getElementById('news-hero-desc').textContent     = hero.body      || '';
+    document.getElementById('news-hero-source').textContent   = resolveHostname(heroHref);
+    document.getElementById('news-hero-time').textContent     = formatDate(hero.generated_at);
 
-    // Остальные — лента
     feed.innerHTML = items.slice(1).map(buildFeedCard).join('');
 
     block.style.display = '';
