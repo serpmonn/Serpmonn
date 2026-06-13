@@ -6,14 +6,19 @@ import fs from 'fs';
 import path from 'path';
 import http from 'http';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+dotenv.config({ path: path.join(__dirname, '../.env') });
 
 // Пути
 const FRONTEND_PATH      = '/var/www/serpmonn.ru/frontend';
 const OUT_ROUTES_FILE    = path.join(__dirname, '../backend/games/outRoutes.mjs');
 const PAGE_COUNT_FILE    = '/var/www/serpmonn.ru/assembly/site/src/about-project/page-count.json';
 const PARTNERS_COUNT_FILE = '/var/www/serpmonn.ru/assembly/site/src/about-project/partners-count.json';
+
+const PORT = process.env.AUTH_PORT || 3000;
 
 // ─── 1. Счётчик HTML-страниц ──────────────────────────────────────────────────
 let pageCount = 0;
@@ -74,7 +79,7 @@ function getJson(url) {
 
 async function countPromoPartners() {
   try {
-    const json = await getJson('http://localhost:3000/api/promocodes');
+    const json = await getJson(`http://localhost:${PORT}/api/promocodes`);
     return new Set(
       (json.data || []).map(p => p.advertiser_info).filter(Boolean)
     ).size;
