@@ -1,22 +1,24 @@
 /**
- * news.js — загрузка и рендер новостей на главной странице.
- * Газетная сетка: 1 главная + 2 малых справа.
+ * news.js — вариант 5: hero-карточка + горизонтальная лента
  *
- * HTML-структура (должна быть в шаблоне верхней частью страницы):
+ * HTML в шаблоне (верх страницы):
  *
  * <div id="news-block" style="display:none">
  *   <div class="news-block-header">
  *     <span class="news-dot"></span>
  *     <span class="news-block-title">Сейчас в мире</span>
  *   </div>
- *   <div class="newspaper" id="news-newspaper"></div>
+ *   <div id="news-hero-wrap"></div>
+ *   <div class="feed-wrapper">
+ *     <div class="news-feed" id="news-feed"></div>
+ *   </div>
  * </div>
  */
 
-const NEWS_LIMIT = 3;
+const NEWS_LIMIT = 10;
 
 const TOPIC_TAG_MAP = {
-  ai:         { cls: 'ai',    label: 'AI' },
+  ai:         { cls: 'ai',    label: 'ИИ' },
   tech:       { cls: 'tech',  label: 'Технологии' },
   technology: { cls: 'tech',  label: 'Технологии' },
   world:      { cls: 'world', label: 'Мир' },
@@ -59,49 +61,50 @@ function resolveHostname(href) {
   try { return href !== '#' ? new URL(href).hostname : ''; } catch { return ''; }
 }
 
-function buildTagHtml(topicKey) {
+function tagHtml(topicKey) {
   const t = getTag(topicKey);
   return `<span class="news-tag ${t.cls}">${t.label}</span>`;
 }
 
-function buildMainCard(item) {
+function buildHero(item) {
   const href = resolveSourceUrl(item.sources);
   const host = resolveHostname(href);
   const date = formatDate(item.generated_at);
   return `
-    <a class="np-main" href="${href}" target="_blank" rel="noopener noreferrer">
-      ${buildTagHtml(item.topic_key)}
-      <div class="np-main-headline">${item.title || ''}</div>
-      ${item.body ? `<div class="np-main-desc">${item.body}</div>` : ''}
-      <div class="np-main-meta">
-        <span class="np-source">${host}</span>
-        ${date ? `<span class="np-time">${date}</span>` : ''}
+    <a class="combo-hero" href="${href}" target="_blank" rel="noopener noreferrer">
+      ${tagHtml(item.topic_key)}
+      <p class="combo-hero-headline">${item.title || ''}</p>
+      ${item.body ? `<p class="combo-hero-desc">${item.body}</p>` : ''}
+      <div class="combo-hero-meta">
+        <span class="card-source">${host}</span>
+        ${date ? `<span class="card-time">${date}</span>` : ''}
       </div>
     </a>
   `.trim();
 }
 
-function buildSmallCard(item) {
+function buildCard(item) {
   const href = resolveSourceUrl(item.sources);
   const host = resolveHostname(href);
   const date = formatDate(item.generated_at);
   return `
-    <a class="np-small" href="${href}" target="_blank" rel="noopener noreferrer">
-      ${buildTagHtml(item.topic_key)}
-      <div class="np-small-headline">${item.title || ''}</div>
-      <div class="np-small-meta">
-        <span class="np-source">${host}</span>
-        ${date ? `<span class="np-time">${date}</span>` : ''}
+    <a class="card" href="${href}" target="_blank" rel="noopener noreferrer">
+      ${tagHtml(item.topic_key)}
+      <p class="card-headline">${item.title || ''}</p>
+      <div class="card-meta">
+        <span class="card-source">${host}</span>
+        ${date ? `<span class="card-time">${date}</span>` : ''}
       </div>
     </a>
   `.trim();
 }
 
 export async function loadNews() {
-  const block     = document.getElementById('news-block');
-  const newspaper = document.getElementById('news-newspaper');
+  const block    = document.getElementById('news-block');
+  const heroWrap = document.getElementById('news-hero-wrap');
+  const feed     = document.getElementById('news-feed');
 
-  if (!block || !newspaper) return;
+  if (!block || !heroWrap || !feed) return;
 
   try {
     const response = await fetch(buildNewsUrl(), {
@@ -117,11 +120,9 @@ export async function loadNews() {
 
     if (items.length === 0) return;
 
-    let html = buildMainCard(items[0]);
-    if (items[1]) html += buildSmallCard(items[1]);
-    if (items[2]) html += buildSmallCard(items[2]);
+    heroWrap.innerHTML = buildHero(items[0]);
+    feed.innerHTML     = items.slice(1).map(buildCard).join('');
 
-    newspaper.innerHTML = html;
     block.style.display = '';
   } catch (err) {
     console.error('[News] Ошибка загрузки:', err);
