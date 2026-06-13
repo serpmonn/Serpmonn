@@ -3,10 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serpmonn Messenger — децентрализованный P2P-мессенджер</title>
-<meta name="description" content="Serpmonn Messenger — децентрализованный P2P-мессенджер с end-to-end шифрованием. Работает через интернет без централизованных серверов. Пре-альфа для Android.">
+<title>Serpmonn Messenger — децентрализованный мессенджер</title>
+<meta name="description" content="Serpmonn Messenger — децентрализованный P2P-мессенджер с end-to-end шифрованием для Android. Никто не имеет доступа к вашим сообщениям. Пре-альфа.">
 <meta property="og:title" content="Serpmonn Messenger — пре-альфа">
-<meta property="og:description" content="Децентрализованный P2P-мессенджер с E2E-шифрованием. Без центрального сервера.">
+<meta property="og:description" content="Децентрализованный P2P-мессенджер с E2E-шифрованием. Никто не имеет доступа к переписке.">
 <meta property="og:image" content="https://serpmonn.ru/apple-touch-icon.png">
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -55,47 +55,39 @@ img,svg{display:block;max-width:100%;}
 a,button{transition:color var(--transition-interactive),background var(--transition-interactive),border-color var(--transition-interactive);}
 button{cursor:pointer;background:none;border:none;font:inherit;color:inherit;}
 :focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm);}
-
 nav{position:sticky;top:0;z-index:100;background:color-mix(in oklch,var(--color-bg) 85%,transparent);backdrop-filter:blur(12px);border-bottom:1px solid oklch(from var(--color-text) l c h/.07);padding:var(--space-4) 0;}
 .nav-inner{max-width:var(--content-default);margin:0 auto;padding:0 var(--space-6);display:flex;align-items:center;justify-content:space-between;}
 .nav-logo{display:flex;align-items:center;gap:var(--space-3);text-decoration:none;color:var(--color-text);font-family:var(--font-display);font-size:var(--text-sm);font-weight:700;}
 .nav-logo img{width:28px;height:28px;border-radius:var(--radius-sm);}
 .theme-toggle{width:36px;height:36px;border-radius:var(--radius-full);display:flex;align-items:center;justify-content:center;color:var(--color-text-muted);border:1px solid oklch(from var(--color-text) l c h/.10);}
 .theme-toggle:hover{color:var(--color-text);background:var(--color-surface-offset);}
-
 .badge{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-xs);font-weight:500;letter-spacing:.04em;text-transform:uppercase;padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);border:1px solid var(--color-warning);color:var(--color-warning);}
 .badge-dot{width:6px;height:6px;border-radius:50%;background:var(--color-warning);}
-
 .hero{max-width:var(--content-default);margin:0 auto;padding:clamp(4rem,10vw,5rem) var(--space-6) clamp(3rem,8vw,5rem);}
 .hero-eyebrow{margin-bottom:var(--space-5);}
 .hero-title{font-family:var(--font-display);font-size:var(--text-2xl);font-weight:700;line-height:1.1;letter-spacing:-.03em;margin-bottom:var(--space-6);}
 .hero-title span{color:var(--color-primary);}
 .hero-desc{font-size:var(--text-lg);color:var(--color-text-muted);max-width:60ch;margin-bottom:var(--space-8);line-height:1.5;}
 .hero-actions{display:flex;align-items:center;flex-wrap:wrap;gap:var(--space-4);}
-
 .btn-primary{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);font-weight:600;padding:var(--space-3) var(--space-6);background:var(--color-primary);color:#fff;border-radius:var(--radius-lg);text-decoration:none;}
 .btn-primary:hover{background:var(--color-primary-hover);}
 .btn-secondary{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);font-weight:500;padding:var(--space-3) var(--space-5);color:var(--color-text-muted);border:1px solid oklch(from var(--color-text) l c h/.15);border-radius:var(--radius-lg);text-decoration:none;}
 .btn-secondary:hover{color:var(--color-text);border-color:oklch(from var(--color-text) l c h/.28);background:var(--color-surface);}
-
 .disclaimer{max-width:var(--content-default);margin:0 auto var(--space-12);padding:0 var(--space-6);}
 .disclaimer-inner{background:color-mix(in oklch,var(--color-warning) 8%,var(--color-surface));border:1px solid color-mix(in oklch,var(--color-warning) 30%,transparent);border-radius:var(--radius-xl);padding:var(--space-5) var(--space-6);display:flex;gap:var(--space-4);align-items:flex-start;}
 .disclaimer-icon{flex-shrink:0;color:var(--color-warning);margin-top:2px;}
 .disclaimer-text{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.6;}
 .disclaimer-text strong{color:var(--color-warning);font-weight:600;}
-
 .section-divider{max-width:var(--content-default);margin:0 auto;padding:0 var(--space-6);border:none;border-top:1px solid var(--color-divider);}
 .section-wrap{max-width:var(--content-default);margin:0 auto;padding:clamp(3rem,8vw,5rem) var(--space-6);}
 .section-label{font-size:var(--text-xs);font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--color-primary);margin-bottom:var(--space-5);}
 .section-title{font-family:var(--font-display);font-size:var(--text-xl);font-weight:700;letter-spacing:-.02em;margin-bottom:var(--space-12);line-height:1.2;}
-
 .features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(270px,100%),1fr));gap:var(--space-4);}
 .feature-card{background:var(--color-surface);border:1px solid oklch(from var(--color-text) l c h/.07);border-radius:var(--radius-xl);padding:var(--space-6);transition:box-shadow var(--transition-interactive),border-color var(--transition-interactive);}
 .feature-card:hover{box-shadow:var(--shadow-md);border-color:oklch(from var(--color-text) l c h/.14);}
 .feature-icon{width:36px;height:36px;margin-bottom:var(--space-4);color:var(--color-primary);}
 .feature-title{font-size:var(--text-base);font-weight:600;margin-bottom:var(--space-2);}
 .feature-desc{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.6;}
-
 .roadmap-list{display:flex;flex-direction:column;gap:var(--space-2);}
 .roadmap-item{display:flex;align-items:flex-start;gap:var(--space-4);padding:var(--space-4) var(--space-5);border-radius:var(--radius-lg);background:var(--color-surface);border:1px solid oklch(from var(--color-text) l c h/.07);}
 .roadmap-item.done{opacity:.5;}
@@ -107,7 +99,6 @@ nav{position:sticky;top:0;z-index:100;background:color-mix(in oklch,var(--color-
 .roadmap-desc{font-size:var(--text-xs);color:var(--color-text-muted);}
 .roadmap-status{font-size:var(--text-xs);font-weight:600;letter-spacing:.04em;padding-top:3px;flex-shrink:0;}
 .status-done{color:var(--color-primary);}.status-current{color:var(--color-warning);}.status-future{color:var(--color-text-faint);}
-
 .feedback-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:var(--space-4);}
 .feedback-card{background:var(--color-surface);border:1px solid oklch(from var(--color-text) l c h/.07);border-radius:var(--radius-xl);padding:var(--space-6);}
 .feedback-type{font-size:var(--text-xs);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--color-primary);margin-bottom:var(--space-3);}
@@ -115,7 +106,6 @@ nav{position:sticky;top:0;z-index:100;background:color-mix(in oklch,var(--color-
 .feedback-card p{font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);line-height:1.6;}
 .feedback-link{display:inline-flex;align-items:center;gap:var(--space-2);font-size:var(--text-sm);font-weight:600;font-family:var(--font-display);color:var(--color-primary);text-decoration:none;}
 .feedback-link:hover{color:var(--color-primary-hover);}
-
 footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
 .footer-inner{max-width:var(--content-default);margin:0 auto;padding:0 var(--space-6);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);}
 .footer-copy{font-size:var(--text-xs);color:var(--color-text-faint);}
@@ -141,8 +131,8 @@ footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
 <main id="main">
 <section class="hero">
   <div class="hero-eyebrow"><span class="badge"><span class="badge-dot"></span>Пре-альфа · В разработке</span></div>
-  <h1 class="hero-title">Мессенджер без<br><span>центрального сервера</span></h1>
-  <p class="hero-desc">Serpmonn Messenger — децентрализованный P2P-мессенджер с end-to-end шифрованием для Android. Пиры соединяются напрямую. Серверы Serpmonn нужны только при первом поиске и никогда не видят ваши сообщения.</p>
+  <h1 class="hero-title"><span>Децентрализованный</span><br>мессенджер</h1>
+  <p class="hero-desc">Serpmonn Messenger — P2P-мессенджер с end-to-end шифрованием для Android. Сообщения передаются напрямую между устройствами. Никто — ни серверы, ни мы сами — не имеет доступа к вашей переписке.</p>
   <div class="hero-actions">
     <a href="/frontend/downloads/app-debug.apk" class="btn-primary" download>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -157,7 +147,7 @@ footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
 <div class="disclaimer">
   <div class="disclaimer-inner">
     <svg class="disclaimer-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-    <p class="disclaimer-text"><strong>Пре-альфа — приложение в активной разработке.</strong> Возможны баги и изменения. Требуется Android 8.0+, интернет-соединение. Не используйте для передачи критически важных данных.</p>
+    <p class="disclaimer-text"><strong>Пре-альфа — приложение в активной разработке.</strong> Возможны баги и изменения. Требуется Android 8.0+, интернет-соединение. Групповые беседы пока не поддерживаются. Не используйте для передачи критически важных данных.</p>
   </div>
 </div>
 <hr class="section-divider">
@@ -167,18 +157,18 @@ footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
   <div class="features-grid">
     <article class="feature-card">
       <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      <h3 class="feature-title">End-to-end шифрование</h3>
-      <p class="feature-desc">Сообщения шифруются на устройстве до отправки и расшифровываются только у получателя. Ни серверы, ни посредники не имеют доступа к содержимому.</p>
+      <h3 class="feature-title">Абсолютное шифрование</h3>
+      <p class="feature-desc">Сообщения шифруются на вашем устройстве и расшифровываются только у собеседника. Никто — ни серверы, ни разработчики — не имеет доступа к содержимому. Даже количество пользователей мессенджера нам неизвестно.</p>
     </article>
     <article class="feature-card">
       <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"/></svg>
       <h3 class="feature-title">Прямое P2P-соединение</h3>
-      <p class="feature-desc">Устройства соединяются напрямую, минуя сервер. Серверы Serpmonn нужны только при первом поиске и никогда не передают сообщения.</p>
+      <p class="feature-desc">Устройства соединяются напрямую, без промежуточных серверов. Сообщения не проходят через инфраструктуру Serpmonn.</p>
     </article>
     <article class="feature-card">
       <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
       <h3 class="feature-title">Android-приложение</h3>
-      <p class="feature-desc">Нативное приложение на Kotlin/Compose. Поддерживаются 1:1 чаты и групповые беседы. Go-core через gomobile.</p>
+      <p class="feature-desc">Нативное приложение на Kotlin/Compose. Поддерживаются личные переписки (1:1). Go-core через gomobile.</p>
     </article>
     <article class="feature-card">
       <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
