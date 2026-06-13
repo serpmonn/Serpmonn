@@ -10,7 +10,13 @@
  *   </div>
  *   <div id="news-hero-wrap"></div>
  *   <div class="feed-wrapper">
+ *     <button class="feed-arrow feed-arrow-left" aria-label="Назад" hidden>
+ *       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+ *     </button>
  *     <div class="news-feed" id="news-feed"></div>
+ *     <button class="feed-arrow feed-arrow-right" aria-label="Вперёд">
+ *       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+ *     </button>
  *   </div>
  * </div>
  */
@@ -18,26 +24,26 @@
 const NEWS_LIMIT = 10;
 
 const TOPIC_TAG_MAP = {
-  ai:         { cls: 'ai',       label: '\u0418\u0418' },
-  tech:       { cls: 'tech',     label: '\u0422\u0435\u0445\u043d\u043e\u043b\u043e\u0433\u0438\u0438' },
-  technology: { cls: 'tech',     label: '\u0422\u0435\u0445\u043d\u043e\u043b\u043e\u0433\u0438\u0438' },
-  world:      { cls: 'world',    label: '\u041c\u0438\u0440' },
-  science:    { cls: 'sci',      label: '\u041d\u0430\u0443\u043a\u0430' },
-  sci:        { cls: 'sci',      label: '\u041d\u0430\u0443\u043a\u0430' },
-  sport:      { cls: 'sport',    label: '\u0421\u043f\u043e\u0440\u0442' },
-  sports:     { cls: 'sport',    label: '\u0421\u043f\u043e\u0440\u0442' },
-  space:      { cls: 'space',    label: '\u041a\u043e\u0441\u043c\u043e\u0441' },
-  business:   { cls: 'business', label: '\u0411\u0438\u0437\u043d\u0435\u0441' },
-  health:     { cls: 'health',   label: '\u0417\u0434\u043e\u0440\u043e\u0432\u044c\u0435' },
-  games:      { cls: 'games',    label: '\u0418\u0433\u0440\u044b' },
-  politics:   { cls: 'politics', label: '\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430' },
-  economy:    { cls: 'economy',  label: '\u042d\u043a\u043e\u043d\u043e\u043c\u0438\u043a\u0430' },
-  culture:    { cls: 'culture',  label: '\u041a\u0443\u043b\u044c\u0442\u0443\u0440\u0430' },
+  ai:         { cls: 'ai',       label: 'ИИ' },
+  tech:       { cls: 'tech',     label: 'Технологии' },
+  technology: { cls: 'tech',     label: 'Технологии' },
+  world:      { cls: 'world',    label: 'Мир' },
+  science:    { cls: 'sci',      label: 'Наука' },
+  sci:        { cls: 'sci',      label: 'Наука' },
+  sport:      { cls: 'sport',    label: 'Спорт' },
+  sports:     { cls: 'sport',    label: 'Спорт' },
+  space:      { cls: 'space',    label: 'Космос' },
+  business:   { cls: 'business', label: 'Бизнес' },
+  health:     { cls: 'health',   label: 'Здоровье' },
+  games:      { cls: 'games',    label: 'Игры' },
+  politics:   { cls: 'politics', label: 'Политика' },
+  economy:    { cls: 'economy',  label: 'Экономика' },
+  culture:    { cls: 'culture',  label: 'Культура' },
 };
 
 function getTag(topicKey) {
   const k = (topicKey || '').toLowerCase();
-  return TOPIC_TAG_MAP[k] || { cls: 'ai', label: topicKey || 'AI' };
+  return TOPIC_TAG_MAP[k] || { cls: 'world', label: topicKey || 'Новости' };
 }
 
 function buildNewsUrl() {
@@ -74,6 +80,7 @@ function tagHtml(topicKey) {
 }
 
 function buildHero(item) {
+  // fix: бэкенд отдаёт topicKey (camelCase)
   const href = item.url || resolveSourceUrl(item.sources) || '#';
   const host = item.source || resolveHostname(href);
   const date = formatDate(item.publishedAt || item.generated_at);
@@ -106,6 +113,81 @@ function buildCard(item) {
   `.trim();
 }
 
+/** Drag-to-scroll для ленты */
+function initDragScroll(feed) {
+  let isDown = false;
+  let startX = 0;
+  let scrollLeft = 0;
+  let moved = false;
+
+  feed.addEventListener('mousedown', (e) => {
+    isDown = true;
+    moved = false;
+    startX = e.pageX - feed.offsetLeft;
+    scrollLeft = feed.scrollLeft;
+    feed.style.cursor = 'grabbing';
+    feed.style.userSelect = 'none';
+  });
+
+  feed.addEventListener('mouseleave', () => {
+    isDown = false;
+    feed.style.cursor = 'grab';
+    feed.style.userSelect = '';
+  });
+
+  feed.addEventListener('mouseup', (e) => {
+    isDown = false;
+    feed.style.cursor = 'grab';
+    feed.style.userSelect = '';
+    // если двигали — блокируем клик по ссылке
+    if (moved) e.preventDefault();
+  });
+
+  feed.addEventListener('mousemove', (e) => {
+    if (!isDown) return;
+    e.preventDefault();
+    const x = e.pageX - feed.offsetLeft;
+    const walk = (x - startX) * 1.2;
+    if (Math.abs(walk) > 4) moved = true;
+    feed.scrollLeft = scrollLeft - walk;
+  });
+
+  // блокируем переход по ссылке если было перетаскивание
+  feed.addEventListener('click', (e) => {
+    if (moved) { e.preventDefault(); moved = false; }
+  }, true);
+}
+
+/** Стрелки-кнопки: обновляем видимость */
+function updateArrows(feed, btnLeft, btnRight) {
+  if (!btnLeft || !btnRight) return;
+  const atStart = feed.scrollLeft <= 4;
+  const atEnd   = feed.scrollLeft >= feed.scrollWidth - feed.clientWidth - 4;
+  btnLeft.hidden  = atStart;
+  btnRight.hidden = atEnd;
+}
+
+/** Инициализация стрелок */
+function initArrows(feed) {
+  const wrapper  = feed.closest('.feed-wrapper');
+  if (!wrapper) return;
+
+  const btnLeft  = wrapper.querySelector('.feed-arrow-left');
+  const btnRight = wrapper.querySelector('.feed-arrow-right');
+
+  const SCROLL_STEP = 220;
+
+  btnLeft?.addEventListener('click', () => {
+    feed.scrollBy({ left: -SCROLL_STEP, behavior: 'smooth' });
+  });
+  btnRight?.addEventListener('click', () => {
+    feed.scrollBy({ left: SCROLL_STEP, behavior: 'smooth' });
+  });
+
+  feed.addEventListener('scroll', () => updateArrows(feed, btnLeft, btnRight), { passive: true });
+  updateArrows(feed, btnLeft, btnRight);
+}
+
 export async function loadNews() {
   const block    = document.getElementById('news-block');
   const heroWrap = document.getElementById('news-hero-wrap');
@@ -131,7 +213,11 @@ export async function loadNews() {
     feed.innerHTML     = items.slice(1).map(buildCard).join('');
 
     block.style.display = '';
+
+    // инициализируем скролл-поведение
+    initDragScroll(feed);
+    initArrows(feed);
   } catch (err) {
-    console.error('[News] \u041e\u0448\u0438\u0431\u043a\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0438:', err);
+    console.error('[News] Ошибка загрузки:', err);
   }
 }
