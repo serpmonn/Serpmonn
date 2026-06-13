@@ -725,20 +725,17 @@ function initAdObserver() {
 // ИНИЦИАЛИЗАЦИЯ СТРАНИЦЫ
 // ======================================================================================================================
 async function initPage() {
+  await loadMessages();
+
+  // Больше НЕ падаем если #news-container нет — он опционален
   const newsContainer = document.getElementById('news-container');
-  if (!newsContainer) {
-    console.error('Не найден контейнер новостей');
-    return;
+  if (newsContainer) {
+    newsContainer.addEventListener('click', function () {
+      this.classList.toggle('expanded');
+    });
   }
 
   function setupEventListeners() {
-    const newsContainer = document.getElementById('news-container');
-    if (newsContainer) {
-      newsContainer.addEventListener('click', function () {
-        this.classList.toggle('expanded');
-      });
-    }
-
     const searchForm = document.getElementById('ai-search-form');
     const submitBtn = searchForm?.querySelector('button[type="submit"]');
     const searchInput = searchForm?.querySelector('input[name="q"]');
@@ -796,10 +793,10 @@ async function initPage() {
       showImageResults({ images: [] });
       showVideoResults({ videos: [] });
 
-      const idempotencyKey = generateIdempotencyKey();
-      currentIdempotencyKey = idempotencyKey;
-
       try {
+        const idempotencyKey = generateIdempotencyKey();
+        currentIdempotencyKey = idempotencyKey;
+
         const mode = 'full';
         const include = {
           text: true,
@@ -869,34 +866,27 @@ async function initPage() {
         showImageResults({ images: [] });
         showVideoResults({ videos: [] });
       } finally {
-      if (searchInput) {
-        searchInput.placeholder = getMessages().askAnything;
-      }
-
-      setTimeout(() => {
-        // Сбрасываем только если это всё ещё наш запрос
-        if (currentIdempotencyKey === idempotencyKey || currentIdempotencyKey === null) {
-          isSubmitting = false;
-          currentIdempotencyKey = null;
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.classList.remove('is-loading');
-          }
+        if (searchInput) {
+          searchInput.placeholder = getMessages().askAnything;
         }
-      }, 2000);
-    }
+
+        setTimeout(() => {
+          if (currentIdempotencyKey === idempotencyKey || currentIdempotencyKey === null) {
+            isSubmitting = false;
+            currentIdempotencyKey = null;
+            if (submitBtn) {
+              submitBtn.disabled = false;
+              submitBtn.classList.remove('is-loading');
+            }
+          }
+        }, 2000);
+      }
     });
 
     initVoiceInput();
   }
 
   async function loadPageData() {
-    const newsContainer = document.getElementById('news-container');
-    if (newsContainer) {
-      newsContainer.addEventListener('click', function () {
-        this.classList.toggle('expanded');
-      });
-    }
     try {
       await Promise.allSettled([loadNews(), generateCombinedBackground()]);
     } catch (error) {
@@ -910,7 +900,4 @@ async function initPage() {
   showCookieBanner();
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-  await loadMessages();  // ← сначала загружаем переводы
-  initPage();
-});
+document.addEventListener('DOMContentLoaded', initPage);

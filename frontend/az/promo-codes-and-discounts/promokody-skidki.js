@@ -711,12 +711,12 @@ function createPromoCard(promo, isTopOffer = false) {
     const shareBtn = card.querySelector('.promo-share-button');
     if (shareBtn) {
         shareBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // чтобы не срабатывал клик по карточке
+            e.stopPropagation();
 
-           const shareUrl = `${window.location.origin}/promo?code=${
-                encodeURIComponent(codeParam)
-            }`;
+            // Не шарим карточки без промокода — ссылка была бы /promo?code=
+            if (!codeParam) return;
 
+            const shareUrl = `${window.location.origin}/promo?code=${encodeURIComponent(codeParam)}`;
             sharePromo(promo, shareUrl);
         });
     }
@@ -1056,6 +1056,14 @@ document.addEventListener('DOMContentLoaded', async () => {
   await loadPromocodesFromAPI();
   updateLastUpdateTime();
   startAutoUpdate();
+
+  // Читаем ?search= из URL — перекрывает сохранённый поиск из localStorage
+  const urlParams = new URLSearchParams(window.location.search);
+  const urlSearch = urlParams.get('search');
+  if (urlSearch) {
+    elements.searchInput.value = urlSearch;
+  }
+
   filterPromos();
 
   if (elements.refreshBtn) {
@@ -1173,34 +1181,35 @@ function collapseAdIfNoFill(container, timeoutMs) {
     }
 }
 
-let isSharing = false;
-
 async function sharePromo(promo, url) {
+    const title = 'Промокод от Serpmonn';
     const text = `Нашёл рабочий промокод на ${promo?.title || promo?.name || 'Serpmonn'}`;
 
     try {
         if (navigator.share) {
-            if (isSharing) return;
-            isSharing = true;
-
-            await navigator.share({
-                title: 'Промокод от Serpmonn',
-                text,   // без URL
-                url     // тут уже короткий https://serpmonn.ru/promo?code=...
-            });
-
-            isSharing = false;
+            await navigator.share({ title, text, url });
             return;
         }
+    } catch (err) {
+        // AbortError — пользователь просто закрыл шторку шаринга, не ошибка
+        if (err?.name === 'AbortError') return;
+        console.warn('navigator.share упал, fallback на clipboard:', err);
+    }
 
-        if (window.vkBridge) {
-            await vkBridge.send('VKWebAppShare', { link: url });
-            return;
-        }
-
-        window.prompt('Скопируйте ссылку и отправьте другу:', url);
-    } catch (error) {
-        isSharing = false;
-        console.error('Ошибка шаринга промокода', error);
+    // Десктоп или браузер без Web Share API — копируем ссылку в буфер
+    try {
+        await navigator.clipboard.writeText(url);
+        showToast('Ссылка скопирована!', 'success');
+    } catch (_) {
+        // Совсем старый браузер без Clipboard API
+        const ta = document.createElement('textarea');
+        ta.value = url;
+        ta.style.position = 'fixed';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        document.execCommand('copy');
+        ta.remove();
+        showToast('Ссылка скопирована!', 'success');
     }
 }

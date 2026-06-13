@@ -1,76 +1,98 @@
-export async function loadNews() {
-    try {
-        const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-        const base  = isDev ? 'http://localhost:4000' : 'https://www.serpmonn.ru';
+/**
+ * news.js — загрузка и рендер новостей на главной странице.
+ *
+ * API: GET /news?locale=<lang>&limit=10
+ * Ответ: { locale, news: NewsItem[], topics: string[], updatedAt }
+ *
+ * NewsItem: { id, topic_key, lang, title, body, cover_url, sources, generated_at }
+ */
 
-        const pathLocale = window.location.pathname.split('/').filter(Boolean)[0] || '';
-        const knownLocales = [
-            'ar','az','be','bg','bn','cs','da','de','dv','el','en','es','es-419',
-            'fa','fi','fil','fr','he','hi','hu','hy','id','it','ja','ka','kk','ko',
-            'ks','ku-arab','ms','nb','nl','pl','ps','pt-br','pt-pt','ro','ru',
-            'sd','sr','sv','th','tr','ug','ur','uz','vi','yi','zh-cn',
-        ];
-        const locale = knownLocales.includes(pathLocale.toLowerCase())
-            ? pathLocale.toLowerCase()
-            : (navigator.language || 'en').split('-')[0].toLowerCase();
+const NEWS_LIMIT = 10;
 
-        const url = `${base}/news?locale=${encodeURIComponent(locale)}&limit=20`;
-        const response = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
-        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+function buildNewsUrl() {
+  const lang = (document.documentElement.lang || 'en').toLowerCase();
+  return `/news?locale=${encodeURIComponent(lang)}&limit=${NEWS_LIMIT}`;
+}
 
-        const data = await response.json();
-        const articles = data.news || [];
-        if (articles.length === 0) return;
+function formatDate(iso) {
+  if (!iso) return '';
+  try {
+    const lang = (document.documentElement.lang || 'en').toLowerCase();
+    return new Date(iso).toLocaleDateString(lang, {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return '';
+  }
+}
 
-        const block    = document.getElementById('news-block');
-        const heroEl   = document.getElementById('news-hero');
-        const heroTag  = document.getElementById('news-hero-tag');
-        const heroHL   = document.getElementById('news-hero-headline');
-        const heroDesc = document.getElementById('news-hero-desc');
-        const heroSrc  = document.getElementById('news-hero-source');
-        const heroTime = document.getElementById('news-hero-time');
-        const feed     = document.getElementById('news-feed');
-
-        if (!block || !heroEl || !feed) return;
-
-        const tagMap = { ai: 'ai', tech: 'tech', world: 'world', science: 'sci', sport: 'sport' };
-        const tagClass = (cat) => tagMap[cat] || 'ai';
-
-        function timeAgo(dateStr) {
-            if (!dateStr) return '';
-            const diff = Math.floor((Date.now() - new Date(dateStr).getTime()) / 60000);
-            if (diff < 1)  return '<1 мин';
-            if (diff < 60) return diff + ' мин';
-            const h = Math.floor(diff / 60);
-            if (h < 24)    return h + ' ч';
-            return Math.floor(h / 24) + ' д';
-        }
-
-        // Hero — первая новость
-        const hero = articles[0];
-        heroEl.href          = hero.url || '#';
-        heroTag.textContent  = hero.topicLabel || hero.category || '';
-        heroTag.className    = `news-tag ${tagClass(hero.category)}`;
-        heroHL.textContent   = hero.title || '';
-        heroDesc.textContent = hero.snippet || hero.description || '';
-        heroSrc.textContent  = hero.source || '';
-        heroTime.textContent = timeAgo(hero.publishedAt);
-
-        // Feed — остальные карточки
-        feed.innerHTML = articles.slice(1).map(item => `
-            <a class="card" href="${item.url || '#'}" target="_blank" rel="noopener noreferrer">
-                <span class="news-tag ${tagClass(item.category)}">${item.topicLabel || item.category || ''}</span>
-                <p class="card-headline">${item.title || ''}</p>
-                <div class="card-meta">
-                    <span class="card-source">${item.source || ''}</span>
-                    <span class="card-time">${timeAgo(item.publishedAt)}</span>
-                </div>
-            </a>`
-        ).join('');
-
-        block.style.display = 'block';
-
-    } catch (error) {
-        console.error('Ошибка загрузки новостей:', error);
+function resolveSourceUrl(sources) {
+  try {
+    const arr = typeof sources === 'string' ? JSON.parse(sources) : sources;
+    if (Array.isArray(arr) && arr.length > 0) {
+      const first = arr[0];
+      if (typeof first === 'string') return first || '#';
+      return first.url || first.link || '#';
     }
+  } catch {
+    // ignore
+  }
+  return '#';
+}
+
+function buildFeedCard(item) {
+  const href = resolveSourceUrl(item.sources);
+  const date = formatDate(item.generated_at);
+  return `
+    <a class="feed-item" href="${href}" target="_blank" rel="noopener noreferrer">
+      <div class="feed-item-body">
+        ${item.topic_key ? `<span class="news-tag">${item.topic_key}</span>` : ''}
+        <div class="feed-item-title">${item.title}</div>
+        ${date ? `<div class="feed-item-date">${date}</div>` : ''}
+      </div>
+    </a>
+  `.trim();
+}
+
+export async function loadNews() {
+  const block   = document.getElementById('news-block');
+  const heroEl  = document.getElementById('news-hero');
+  const feed    = document.getElementById('news-feed');
+
+  if (!block || !heroEl || !feed) return;
+
+  try {
+    const response = await fetch(buildNewsUrl(), {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      credentials: 'include',
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+    const data  = await response.json();
+    const items = Array.isArray(data?.news) ? data.news : [];
+
+    if (items.length === 0) return;
+
+    // Первая новость — герой
+    const hero = items[0];
+    const heroHref = resolveSourceUrl(hero.sources);
+
+    heroEl.href = heroHref;
+    document.getElementById('news-hero-tag').textContent       = hero.topic_key || '';
+    document.getElementById('news-hero-headline').textContent  = hero.title     || '';
+    document.getElementById('news-hero-desc').textContent      = hero.body      || '';
+    document.getElementById('news-hero-source').textContent    = heroHref !== '#' ? new URL(heroHref).hostname : '';
+    document.getElementById('news-hero-time').textContent      = formatDate(hero.generated_at);
+
+    // Остальные — лента
+    feed.innerHTML = items.slice(1).map(buildFeedCard).join('');
+
+    block.style.display = '';
+  } catch (err) {
+    console.error('[News] Ошибка загрузки:', err);
+  }
 }
