@@ -15,8 +15,8 @@ dotenv.config({ path: path.join(__dirname, '../.env') });
 // Пути
 const FRONTEND_PATH      = '/var/www/serpmonn.ru/frontend';
 const OUT_ROUTES_FILE    = path.join(__dirname, '../backend/games/outRoutes.mjs');
-const PAGE_COUNT_FILE    = '/var/www/serpmonn.ru/assembly/site/src/about-project/page-count.json';
-const PARTNERS_COUNT_FILE = '/var/www/serpmonn.ru/assembly/site/src/about-project/partners-count.json';
+const PAGE_COUNT_FILE    = '/var/www/serpmonn.ru/frontend/about-project/page-count.json';
+const PARTNERS_COUNT_FILE = '/var/www/serpmonn.ru/frontend/about-project/partners-count.json';
 
 const PORT = process.env.AUTH_PORT || 3000;
 
@@ -46,7 +46,6 @@ function countHtml(dir) {
 function countGamePartners() {
   try {
     const src = fs.readFileSync(OUT_ROUTES_FILE, 'utf8');
-    // Ищем блок GAME_LINKS = { ... } и считаем ключи вида 'slug':
     const match = src.match(/const GAME_LINKS\s*=\s*\{([\s\S]*?)\};/);
     if (!match) {
       console.warn('⚠️  GAME_LINKS не найден в outRoutes.mjs, возвращаю 0');
