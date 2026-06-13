@@ -1,10 +1,9 @@
 // count-stats.mjs
 // Считает страницы, игровых партнёров (динамически из outRoutes.mjs) и
-// промо-партнёров (из API), пишет два JSON для страницы «О проекте»
+// промо-партнёров (напрямую из Perfluence API), пишет два JSON для страницы «О проекте»
 
 import fs from 'fs';
 import path from 'path';
-import http from 'http';
 import { fileURLToPath } from 'url';
 import dotenv from 'dotenv';
 
@@ -18,7 +17,8 @@ const OUT_ROUTES_FILE     = path.join(__dirname, '../backend/games/outRoutes.mjs
 const PAGE_COUNT_FILE     = '/var/www/serpmonn.ru/frontend/about-project/page-count.json';
 const PARTNERS_COUNT_FILE = '/var/www/serpmonn.ru/frontend/about-project/partners-count.json';
 
-const PORT = process.env.AUTH_PORT || 3000;
+const PERFLUENCE_URL = 'https://dash.perfluence.net/blogger/promocode-api/json';
+const PERFLUENCE_KEY = process.env.PERFLUENCE_API_KEY || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ODk4OTg3LCJhdXRoX2tleSI6Iml1Tl9fVk5WdTdOY0RqT1RKZW1EbUpUV1JjeUxqNFp4IiwiZGF0YSI6W119.k8vSFrvEtc75g7Gu-YdIcvhu6nB60V2CTOjti0IPfhQ';
 
 // ─── 1. Счётчик HTML-страниц ──────────────────────────────────────────────────
 let pageCount = 0;
@@ -59,31 +59,23 @@ function countGamePartners() {
   }
 }
 
-// ─── 3. Промо-партнёры — из локального API ───────────────────────────────────
-function getJson(url) {
-  return new Promise((resolve, reject) => {
-    const req = http.get(url, res => {
-      if (res.statusCode !== 200) return reject(new Error(`HTTP ${res.statusCode}`));
-      let data = '';
-      res.setEncoding('utf8');
-      res.on('data', chunk => { data += chunk; });
-      res.on('end', () => {
-        try { resolve(JSON.parse(data)); } catch (e) { reject(e); }
-      });
-    });
-    req.on('error', reject);
-    req.setTimeout(10000, () => req.destroy(new Error('Timeout')));
-  });
-}
-
+// ─── 3. Промо-партнёры — напрямую из Perfluence API ─────────────────────────
 async function countPromoPartners() {
   try {
-    const json = await getJson(`http://localhost:${PORT}/api/promocodes`);
-    return new Set(
-      (json.data || []).map(p => p.advertiser_info).filter(Boolean)
-    ).size;
+    const res = await fetch(`${PERFLUENCE_URL}?key=${PERFLUENCE_KEY}`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const raw = await res.json();
+    const perfArray = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
+
+    const brands = new Set();
+    for (const item of perfArray) {
+      const name = item?.project?.name;
+      if (name) brands.add(name.trim());
+    }
+    console.log(`✅ Perfluence: получено ${perfArray.length} записей, уникальных брендов: ${brands.size}`);
+    return brands.size;
   } catch (err) {
-    console.error(`⚠️  Не удалось получить промо-партнёров: ${err.message}`);
+    console.error(`⚠️  Не удалось получить данные из Perfluence: ${err.message}`);
     return 0;
   }
 }
