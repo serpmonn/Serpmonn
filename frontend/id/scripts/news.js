@@ -79,18 +79,33 @@ function tagHtml(topicKey) {
   return `<span class="news-tag ${t.cls}">${t.label}</span>`;
 }
 
+/** Маленькая цветная точка категории для карточек ленты */
+function dotHtml(topicKey) {
+  const t = getTag(topicKey);
+  return `<span class="card-dot card-dot--${t.cls}" title="${t.label}"></span>`;
+}
+
+/** Фавикон источника */
+function faviconHtml(hostname) {
+  if (!hostname) return '';
+  const src = `https://www.google.com/s2/favicons?domain=${hostname}&sz=16`;
+  return `<img class="card-favicon" src="${src}" alt="" width="14" height="14" loading="lazy" onerror="this.style.display='none'">`;
+}
+
 function buildHero(item) {
-  // fix: бэкенд отдаёт topicKey (camelCase)
-  const href = item.url || resolveSourceUrl(item.sources) || '#';
-  const host = item.source || resolveHostname(href);
-  const date = formatDate(item.publishedAt || item.generated_at);
+  const href     = item.url || resolveSourceUrl(item.sources) || '#';
+  const hostname = item.source || resolveHostname(href);
+  const date     = formatDate(item.publishedAt || item.generated_at);
   return `
-    <a class="combo-hero" href="${href}" target="_blank" rel="noopener noreferrer">
+    <a class="combo-hero" href="${href}" target="_blank" rel="noopener noreferrer" data-tag="${getTag(item.topicKey).cls}">
       ${tagHtml(item.topicKey)}
       <p class="combo-hero-headline">${item.title || ''}</p>
       ${item.snippet ? `<p class="combo-hero-desc">${item.snippet}</p>` : ''}
       <div class="combo-hero-meta">
-        <span class="card-source">${host}</span>
+        <span class="card-source">
+          ${faviconHtml(hostname)}
+          ${hostname}
+        </span>
         ${date ? `<span class="card-time">${date}</span>` : ''}
       </div>
     </a>
@@ -98,15 +113,21 @@ function buildHero(item) {
 }
 
 function buildCard(item) {
-  const href = item.url || resolveSourceUrl(item.sources) || '#';
-  const host = item.source || resolveHostname(href);
-  const date = formatDate(item.publishedAt || item.generated_at);
+  const href     = item.url || resolveSourceUrl(item.sources) || '#';
+  const hostname = item.source || resolveHostname(href);
+  const date     = formatDate(item.publishedAt || item.generated_at);
+  const tagCls   = getTag(item.topicKey).cls;
   return `
-    <a class="card" href="${href}" target="_blank" rel="noopener noreferrer">
-      ${tagHtml(item.topicKey)}
-      <p class="card-headline">${item.title || ''}</p>
+    <a class="card" href="${href}" target="_blank" rel="noopener noreferrer" data-tag="${tagCls}">
+      <div class="card-top">
+        ${dotHtml(item.topicKey)}
+        <p class="card-headline">${item.title || ''}</p>
+      </div>
       <div class="card-meta">
-        <span class="card-source">${host}</span>
+        <span class="card-source">
+          ${faviconHtml(hostname)}
+          ${hostname}
+        </span>
         ${date ? `<span class="card-time">${date}</span>` : ''}
       </div>
     </a>
@@ -139,7 +160,6 @@ function initDragScroll(feed) {
     isDown = false;
     feed.style.cursor = 'grab';
     feed.style.userSelect = '';
-    // если двигали — блокируем клик по ссылке
     if (moved) e.preventDefault();
   });
 
@@ -152,7 +172,6 @@ function initDragScroll(feed) {
     feed.scrollLeft = scrollLeft - walk;
   });
 
-  // блокируем переход по ссылке если было перетаскивание
   feed.addEventListener('click', (e) => {
     if (moved) { e.preventDefault(); moved = false; }
   }, true);
@@ -214,7 +233,6 @@ export async function loadNews() {
 
     block.style.display = '';
 
-    // инициализируем скролл-поведение
     initDragScroll(feed);
     initArrows(feed);
   } catch (err) {
