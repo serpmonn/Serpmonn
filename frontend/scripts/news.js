@@ -18,14 +18,21 @@
 const NEWS_LIMIT = 10;
 
 const TOPIC_TAG_MAP = {
-  ai:         { cls: 'ai',    label: '\u0418\u0418' },
-  tech:       { cls: 'tech',  label: '\u0422\u0435\u0445\u043d\u043e\u043b\u043e\u0433\u0438\u0438' },
-  technology: { cls: 'tech',  label: '\u0422\u0435\u0445\u043d\u043e\u043b\u043e\u0433\u0438\u0438' },
-  world:      { cls: 'world', label: '\u041c\u0438\u0440' },
-  science:    { cls: 'sci',   label: '\u041d\u0430\u0443\u043a\u0430' },
-  sci:        { cls: 'sci',   label: '\u041d\u0430\u0443\u043a\u0430' },
-  sport:      { cls: 'sport', label: '\u0421\u043f\u043e\u0440\u0442' },
-  sports:     { cls: 'sport', label: '\u0421\u043f\u043e\u0440\u0442' },
+  ai:         { cls: 'ai',       label: '\u0418\u0418' },
+  tech:       { cls: 'tech',     label: '\u0422\u0435\u0445\u043d\u043e\u043b\u043e\u0433\u0438\u0438' },
+  technology: { cls: 'tech',     label: '\u0422\u0435\u0445\u043d\u043e\u043b\u043e\u0433\u0438\u0438' },
+  world:      { cls: 'world',    label: '\u041c\u0438\u0440' },
+  science:    { cls: 'sci',      label: '\u041d\u0430\u0443\u043a\u0430' },
+  sci:        { cls: 'sci',      label: '\u041d\u0430\u0443\u043a\u0430' },
+  sport:      { cls: 'sport',    label: '\u0421\u043f\u043e\u0440\u0442' },
+  sports:     { cls: 'sport',    label: '\u0421\u043f\u043e\u0440\u0442' },
+  space:      { cls: 'space',    label: '\u041a\u043e\u0441\u043c\u043e\u0441' },
+  business:   { cls: 'business', label: '\u0411\u0438\u0437\u043d\u0435\u0441' },
+  health:     { cls: 'health',   label: '\u0417\u0434\u043e\u0440\u043e\u0432\u044c\u0435' },
+  games:      { cls: 'games',    label: '\u0418\u0433\u0440\u044b' },
+  politics:   { cls: 'politics', label: '\u041f\u043e\u043b\u0438\u0442\u0438\u043a\u0430' },
+  economy:    { cls: 'economy',  label: '\u042d\u043a\u043e\u043d\u043e\u043c\u0438\u043a\u0430' },
+  culture:    { cls: 'culture',  label: '\u041a\u0443\u043b\u044c\u0442\u0443\u0440\u0430' },
 };
 
 function getTag(topicKey) {
