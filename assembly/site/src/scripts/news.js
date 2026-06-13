@@ -9,13 +9,11 @@
 
 const NEWS_LIMIT = 10;
 
-/** Относительный URL — работает и на localhost (если Vite проксирует), и на проде. */
 function buildNewsUrl() {
   const lang = (document.documentElement.lang || 'en').toLowerCase();
   return `/news?locale=${encodeURIComponent(lang)}&limit=${NEWS_LIMIT}`;
 }
 
-/** Форматирует дату generated_at в человекочитаемый вид. */
 function formatDate(iso) {
   if (!iso) return '';
   try {
@@ -30,10 +28,6 @@ function formatDate(iso) {
   }
 }
 
-/**
- * Возвращает первый источник из поля sources.
- * sources может быть JSON-строкой, массивом объектов { url, link } или массивом строк.
- */
 function resolveSourceUrl(sources) {
   try {
     const arr = typeof sources === 'string' ? JSON.parse(sources) : sources;
@@ -43,48 +37,31 @@ function resolveSourceUrl(sources) {
       return first.url || first.link || '#';
     }
   } catch {
-    // ignore malformed JSON
+    // ignore
   }
   return '#';
 }
 
-/** Экранирует HTML-спецсимволы в тексте (защита от XSS в title/body). */
-function esc(str) {
-  return String(str ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;');
-}
-
-/** Строит HTML одной карточки новости. */
-function buildNewsCard(item) {
+function buildFeedCard(item) {
   const href = resolveSourceUrl(item.sources);
   const date = formatDate(item.generated_at);
-  const cover = item.cover_url
-    ? `<img class="news-item__cover" src="${esc(item.cover_url)}" alt="" loading="lazy" decoding="async">`
-    : '';
-
   return `
-    <a class="news-item" href="${esc(href)}" target="_blank" rel="noopener noreferrer">
-      ${cover}
-      <div class="news-item__body">
-        ${item.topic_key ? `<span class="news-item__topic">${esc(item.topic_key)}</span>` : ''}
-        <div class="news-item__title">${esc(item.title)}</div>
-        ${item.body ? `<div class="news-item__desc">${esc(item.body)}</div>` : ''}
-        ${date ? `<div class="news-item__date">${date}</div>` : ''}
+    <a class="feed-item" href="${href}" target="_blank" rel="noopener noreferrer">
+      <div class="feed-item-body">
+        ${item.topic_key ? `<span class="news-tag">${item.topic_key}</span>` : ''}
+        <div class="feed-item-title">${item.title}</div>
+        ${date ? `<div class="feed-item-date">${date}</div>` : ''}
       </div>
     </a>
   `.trim();
 }
 
-/**
- * Основная функция — вызывается из scripts.js → loadPageData().
- * Тихо выходит если #news-container нет на странице (например, страница /news/)
- */
 export async function loadNews() {
-  const container = document.getElementById('news-container');
-  if (!container) return;
+  const block   = document.getElementById('news-block');
+  const heroEl  = document.getElementById('news-hero');
+  const feed    = document.getElementById('news-feed');
+
+  if (!block || !heroEl || !feed) return;
 
   try {
     const response = await fetch(buildNewsUrl(), {
@@ -93,21 +70,29 @@ export async function loadNews() {
       credentials: 'include',
     });
 
-    if (!response.ok) {
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    }
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
 
-    const data = await response.json();
+    const data  = await response.json();
     const items = Array.isArray(data?.news) ? data.news : [];
 
-    if (items.length === 0) {
-      container.innerHTML = '<p class="news-empty">Нет свежих новостей.</p>';
-      return;
-    }
+    if (items.length === 0) return;
 
-    container.innerHTML = items.map(buildNewsCard).join('');
+    // Первая новость — герой
+    const hero = items[0];
+    const heroHref = resolveSourceUrl(hero.sources);
+
+    heroEl.href = heroHref;
+    document.getElementById('news-hero-tag').textContent       = hero.topic_key || '';
+    document.getElementById('news-hero-headline').textContent  = hero.title     || '';
+    document.getElementById('news-hero-desc').textContent      = hero.body      || '';
+    document.getElementById('news-hero-source').textContent    = heroHref !== '#' ? new URL(heroHref).hostname : '';
+    document.getElementById('news-hero-time').textContent      = formatDate(hero.generated_at);
+
+    // Остальные — лента
+    feed.innerHTML = items.slice(1).map(buildFeedCard).join('');
+
+    block.style.display = '';
   } catch (err) {
     console.error('[News] Ошибка загрузки:', err);
-    // контейнер оставляем пустым — не ломаем страницу
   }
 }
