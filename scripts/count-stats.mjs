@@ -1,136 +1,130 @@
 // count-stats.mjs
-// Считает количество страниц и партнёров для страницы "О проекте"
+// Считает страницы, игровых партнёров (динамически из outRoutes.mjs) и
+// промо-партнёров (из API), пишет два JSON для страницы «О проекте»
 
 import fs from 'fs';
 import path from 'path';
 import http from 'http';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // Пути
-const FRONTEND_PATH = '/var/www/serpmonn.ru/frontend';
-const PAGE_COUNT_FILE = '/var/www/serpmonn.ru/assembly/site/src/about-project/page-count.json';
+const FRONTEND_PATH      = '/var/www/serpmonn.ru/frontend';
+const OUT_ROUTES_FILE    = path.join(__dirname, '../backend/games/outRoutes.mjs');
+const PAGE_COUNT_FILE    = '/var/www/serpmonn.ru/assembly/site/src/about-project/page-count.json';
 const PARTNERS_COUNT_FILE = '/var/www/serpmonn.ru/assembly/site/src/about-project/partners-count.json';
 
-// --- Счётчик страниц ---
+// ─── 1. Счётчик HTML-страниц ──────────────────────────────────────────────────
 let pageCount = 0;
 
 function countHtml(dir) {
   try {
-    const items = fs.readdirSync(dir);
-
-    for (const item of items) {
+    for (const item of fs.readdirSync(dir)) {
       if (item.startsWith('.')) continue;
-
-      const fullPath = path.join(dir, item);
-
+      const full = path.join(dir, item);
       try {
-        const stat = fs.statSync(fullPath);
-
+        const stat = fs.statSync(full);
         if (stat.isDirectory()) {
-          if (item !== 'node_modules' && item !== '.git') {
-            countHtml(fullPath);
-          }
+          if (item !== 'node_modules' && item !== '.git') countHtml(full);
         } else if (item.endsWith('.html') || item.endsWith('.htm')) {
           pageCount++;
         }
-      } catch {
-        // пропускаем ошибки доступа
-      }
+      } catch { /* пропускаем недоступные */ }
     }
   } catch (err) {
     console.log(`Не могу прочитать папку ${dir}: ${err.message}`);
   }
 }
 
-// --- HTTP-утилита без fetch (надёжнее под cron/PM2) ---
+// ─── 2. Игровые партнёры — динамически из outRoutes.mjs ──────────────────────
+function countGamePartners() {
+  try {
+    const src = fs.readFileSync(OUT_ROUTES_FILE, 'utf8');
+    // Ищем блок GAME_LINKS = { ... } и считаем ключи вида 'slug':
+    const match = src.match(/const GAME_LINKS\s*=\s*\{([\s\S]*?)\};/);
+    if (!match) {
+      console.warn('⚠️  GAME_LINKS не найден в outRoutes.mjs, возвращаю 0');
+      return 0;
+    }
+    const keys = match[1].match(/^\s*'[\w-]+'/gm);
+    return keys ? keys.length : 0;
+  } catch (err) {
+    console.error(`⚠️  Не удалось прочитать outRoutes.mjs: ${err.message}`);
+    return 0;
+  }
+}
+
+// ─── 3. Промо-партнёры — из локального API ───────────────────────────────────
 function getJson(url) {
   return new Promise((resolve, reject) => {
     const req = http.get(url, res => {
-      if (res.statusCode !== 200) {
-        return reject(new Error(`HTTP ${res.statusCode}`));
-      }
+      if (res.statusCode !== 200) return reject(new Error(`HTTP ${res.statusCode}`));
       let data = '';
       res.setEncoding('utf8');
       res.on('data', chunk => { data += chunk; });
       res.on('end', () => {
-        try {
-          resolve(JSON.parse(data));
-        } catch (e) {
-          reject(e);
-        }
+        try { resolve(JSON.parse(data)); } catch (e) { reject(e); }
       });
     });
     req.on('error', reject);
-    req.setTimeout(10000, () => {
-      req.destroy(new Error('Timeout'));
-    });
+    req.setTimeout(10000, () => req.destroy(new Error('Timeout')));
   });
 }
 
-// --- Счётчик партнёров ---
-// Статичное число игровых партнёров (Admitad)
-const GAME_PARTNERS = 14;
-
-async function countPartners() {
+async function countPromoPartners() {
   try {
     const json = await getJson('http://localhost:3000/api/promocodes');
-
-    const promoPartners = new Set(
-      (json.data || [])
-        .map(p => p.advertiser_info)
-        .filter(Boolean)
+    return new Set(
+      (json.data || []).map(p => p.advertiser_info).filter(Boolean)
     ).size;
-
-    return { promoPartners, gamePartners: GAME_PARTNERS };
   } catch (err) {
-    console.error(`⚠️ Не удалось получить партнёров по промокодам: ${err.message}`);
-    return { promoPartners: 0, gamePartners: GAME_PARTNERS };
+    console.error(`⚠️  Не удалось получить промо-партнёров: ${err.message}`);
+    return 0;
   }
 }
 
+// ─── main ─────────────────────────────────────────────────────────────────────
 (async () => {
   try {
     // 1) Страницы
-    console.log(`🔍 Ищу HTML/HTM в папке: ${FRONTEND_PATH}`);
-
+    console.log(`🔍 Ищу HTML/HTM в: ${FRONTEND_PATH}`);
     if (!fs.existsSync(FRONTEND_PATH)) {
-      console.log(`❌ Папка "${FRONTEND_PATH}" не найдена`);
+      console.error(`❌ Папка "${FRONTEND_PATH}" не найдена`);
       process.exit(1);
     }
-
     countHtml(FRONTEND_PATH);
 
     const pageResult = {
       count: pageCount,
       updated: new Date().toISOString(),
-      updatedReadable: new Date().toLocaleString('ru-RU')
+      updatedReadable: new Date().toLocaleString('ru-RU'),
     };
-
     fs.writeFileSync(PAGE_COUNT_FILE, JSON.stringify(pageResult, null, 2));
     console.log(`✅ HTML/HTM страниц: ${pageCount}`);
-    console.log(`💾 page-count.json сохранён в ${PAGE_COUNT_FILE}`);
+    console.log(`💾 page-count.json → ${PAGE_COUNT_FILE}`);
 
     // 2) Партнёры
-    const { promoPartners, gamePartners } = await countPartners();
-    const totalPartners = promoPartners + gamePartners;
+    const gamePartners  = countGamePartners();
+    const promoPartners = await countPromoPartners();
+    const total         = gamePartners + promoPartners;
 
     const partnersResult = {
-      promoPartners,
       gamePartners,
-      total: totalPartners,
+      promoPartners,
+      total,
       updated: new Date().toISOString(),
-      updatedReadable: new Date().toLocaleString('ru-RU')
+      updatedReadable: new Date().toLocaleString('ru-RU'),
     };
-
     fs.writeFileSync(PARTNERS_COUNT_FILE, JSON.stringify(partnersResult, null, 2));
     console.log(
-      `✅ Партнёров всего: ${totalPartners} ` +
-      `(промокоды: ${promoPartners}, игры: ${gamePartners})`
+      `✅ Партнёров всего: ${total} (игры: ${gamePartners}, промокоды: ${promoPartners})`
     );
-    console.log(`💾 partners-count.json сохранён в ${PARTNERS_COUNT_FILE}`);
+    console.log(`💾 partners-count.json → ${PARTNERS_COUNT_FILE}`);
 
     process.exit(0);
-  } catch (error) {
-    console.error('❌ Ошибка:', error.message);
+  } catch (err) {
+    console.error('❌ Ошибка:', err.message);
     process.exit(1);
   }
 })();
