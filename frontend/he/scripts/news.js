@@ -18,14 +18,14 @@
 const NEWS_LIMIT = 10;
 
 const TOPIC_TAG_MAP = {
-  ai:         { cls: 'ai',    label: 'ИИ' },
-  tech:       { cls: 'tech',  label: 'Технологии' },
-  technology: { cls: 'tech',  label: 'Технологии' },
-  world:      { cls: 'world', label: 'Мир' },
-  science:    { cls: 'sci',   label: 'Наука' },
-  sci:        { cls: 'sci',   label: 'Наука' },
-  sport:      { cls: 'sport', label: 'Спорт' },
-  sports:     { cls: 'sport', label: 'Спорт' },
+  ai:         { cls: 'ai',    label: '\u0418\u0418' },
+  tech:       { cls: 'tech',  label: '\u0422\u0435\u0445\u043d\u043e\u043b\u043e\u0433\u0438\u0438' },
+  technology: { cls: 'tech',  label: '\u0422\u0435\u0445\u043d\u043e\u043b\u043e\u0433\u0438\u0438' },
+  world:      { cls: 'world', label: '\u041c\u0438\u0440' },
+  science:    { cls: 'sci',   label: '\u041d\u0430\u0443\u043a\u0430' },
+  sci:        { cls: 'sci',   label: '\u041d\u0430\u0443\u043a\u0430' },
+  sport:      { cls: 'sport', label: '\u0421\u043f\u043e\u0440\u0442' },
+  sports:     { cls: 'sport', label: '\u0421\u043f\u043e\u0440\u0442' },
 };
 
 function getTag(topicKey) {
@@ -72,7 +72,7 @@ function buildHero(item) {
   const date = formatDate(item.generated_at);
   return `
     <a class="combo-hero" href="${href}" target="_blank" rel="noopener noreferrer">
-      ${tagHtml(item.topic_key)}
+      ${tagHtml(item.topicKey)}
       <p class="combo-hero-headline">${item.title || ''}</p>
       ${item.body ? `<p class="combo-hero-desc">${item.body}</p>` : ''}
       <div class="combo-hero-meta">
@@ -89,7 +89,7 @@ function buildCard(item) {
   const date = formatDate(item.generated_at);
   return `
     <a class="card" href="${href}" target="_blank" rel="noopener noreferrer">
-      ${tagHtml(item.topic_key)}
+      ${tagHtml(item.topicKey)}
       <p class="card-headline">${item.title || ''}</p>
       <div class="card-meta">
         <span class="card-source">${host}</span>
@@ -125,6 +125,6 @@ export async function loadNews() {
 
     block.style.display = '';
   } catch (err) {
-    console.error('[News] Ошибка загрузки:', err);
+    console.error('[News] \u041e\u0448\u0438\u0431\u043a\u0430 \u0437\u0430\u0433\u0440\u0443\u0437\u043a\u0438:', err);
   }
 }
