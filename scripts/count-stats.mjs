@@ -10,12 +10,12 @@ import dotenv from 'dotenv';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-dotenv.config({ path: path.join(__dirname, '../.env') });
+dotenv.config({ path: path.join(__dirname, '../backend/.env') });
 
 // Пути
-const FRONTEND_PATH      = '/var/www/serpmonn.ru/frontend';
-const OUT_ROUTES_FILE    = path.join(__dirname, '../backend/games/outRoutes.mjs');
-const PAGE_COUNT_FILE    = '/var/www/serpmonn.ru/frontend/about-project/page-count.json';
+const FRONTEND_PATH       = '/var/www/serpmonn.ru/frontend';
+const OUT_ROUTES_FILE     = path.join(__dirname, '../backend/games/outRoutes.mjs');
+const PAGE_COUNT_FILE     = '/var/www/serpmonn.ru/frontend/about-project/page-count.json';
 const PARTNERS_COUNT_FILE = '/var/www/serpmonn.ru/frontend/about-project/partners-count.json';
 
 const PORT = process.env.AUTH_PORT || 3000;
