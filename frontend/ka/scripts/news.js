@@ -74,14 +74,14 @@ function tagHtml(topicKey) {
 }
 
 function buildHero(item) {
-  const href = resolveSourceUrl(item.sources);
-  const host = resolveHostname(href);
-  const date = formatDate(item.generated_at);
+  const href = item.url || resolveSourceUrl(item.sources) || '#';
+  const host = item.source || resolveHostname(href);
+  const date = formatDate(item.publishedAt || item.generated_at);
   return `
     <a class="combo-hero" href="${href}" target="_blank" rel="noopener noreferrer">
       ${tagHtml(item.topicKey)}
       <p class="combo-hero-headline">${item.title || ''}</p>
-      ${item.body ? `<p class="combo-hero-desc">${item.body}</p>` : ''}
+      ${item.snippet ? `<p class="combo-hero-desc">${item.snippet}</p>` : ''}
       <div class="combo-hero-meta">
         <span class="card-source">${host}</span>
         ${date ? `<span class="card-time">${date}</span>` : ''}
@@ -91,9 +91,9 @@ function buildHero(item) {
 }
 
 function buildCard(item) {
-  const href = resolveSourceUrl(item.sources);
-  const host = resolveHostname(href);
-  const date = formatDate(item.generated_at);
+  const href = item.url || resolveSourceUrl(item.sources) || '#';
+  const host = item.source || resolveHostname(href);
+  const date = formatDate(item.publishedAt || item.generated_at);
   return `
     <a class="card" href="${href}" target="_blank" rel="noopener noreferrer">
       ${tagHtml(item.topicKey)}
