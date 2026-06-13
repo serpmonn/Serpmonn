@@ -226,6 +226,10 @@
                 <img src="/frontend/images/serpmonn.ico" alt="Serpmonn Beta" class="icon">
                 Serpmonn Beta (TWA)
             </a>
+            <a href="/frontend/messenger.html" class="menu-item" data-route="messenger">
+                <img src="/frontend/images/serpmonn.ico" alt="Serpmonn Messenger" class="icon">
+                Serpmonn Messenger
+            </a>
         </div>
     </div>
 
@@ -500,24 +504,19 @@
 
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    // 1. Берём текущий путь из адресной строки
     var path = window.location.pathname;
 
-    // 2. Нормализуем главную (на случай, если вдруг будет "/" или "/frontend/")
     if (path === '/' || path === '/frontend/') {
       path = '/frontend/main.html';
     }
 
-    // 3. Ищем в меню все ссылки
     var links = document.querySelectorAll('.menu-container a[href]');
 
-    // 4. Перебираем ссылки и скрываем ту, чей href совпадает с текущим путём
     links.forEach(function (link) {
       var href = link.getAttribute('href');
 
       if (href === path) {
-        // Это ссылка на текущую страницу — прячем её
-        link.hidden = true; // то же самое, что display: none
+        link.hidden = true;
       }
     });
   });
