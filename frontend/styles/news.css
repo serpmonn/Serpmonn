@@ -11,19 +11,14 @@
 	flex-direction: column;
 	gap: 10px;
 	margin: 0 auto 20px;
-	padding-top: 20px; /* отступ сверху — заголовок не прижат к краю */
+	padding-top: 20px;
 }
 
 @media (max-width: 768px) {
-	.news-block {
-		width: 60%;
-	}
+	.news-block { width: 60%; }
 }
-
 @media (max-width: 480px) {
-	.news-block {
-		width: 60%;
-	}
+	.news-block { width: 60%; }
 }
 
 /* Шапка: мигающая точка + надпись */
@@ -129,23 +124,60 @@
 }
 
 /* ==========================================================
-   ГОРИЗОНТАЛЬНАЯ ЛЕНТА карточек
+   ГОРИЗОНТАЛЬНАЯ ЛЕНТА + СТРЕЛКИ
    ========================================================== */
 .feed-wrapper {
 	position: relative;
-	/* убрано overflow:hidden — оно блокировало скролл ленты */
+	display: flex;
+	align-items: center;
+	gap: 6px;
 }
-/* fade-градиент справа — только визуальный намёк, не мешает скроллу */
+/* fade-градиент — намёк что лента продолжается */
 .feed-wrapper::after {
 	content: '';
 	position: absolute;
-	right: 0; top: 0; bottom: 6px;
-	width: 48px;
-	background: linear-gradient(to left, rgba(249,250,251,0.9), transparent);
+	right: 32px; top: 0; bottom: 6px;
+	width: 40px;
+	background: linear-gradient(to left, rgba(249,250,251,0.85), transparent);
 	pointer-events: none;
 	z-index: 1;
 }
+
+/* Кнопки-стрелки */
+.feed-arrow {
+	flex-shrink: 0;
+	width: 28px;
+	height: 28px;
+	border-radius: 50%;
+	border: 1px solid rgba(0,0,0,.1);
+	background: #ffffff;
+	box-shadow: 0 1px 4px rgba(0,0,0,.08);
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	color: #374151;
+	transition: background .15s, border-color .15s, box-shadow .15s, opacity .15s;
+	padding: 0;
+	z-index: 2;
+}
+.feed-arrow:hover {
+	background: #f9fafb;
+	border-color: rgba(244,112,89,.35);
+	box-shadow: 0 2px 8px rgba(244,112,89,.15);
+	color: #f47059;
+}
+.feed-arrow:active {
+	transform: scale(.93);
+}
+/* прячем на мобайльных — там и так пальцем */
+@media (max-width: 768px) {
+	.feed-arrow { display: none; }
+	.feed-wrapper::after { right: 0; }
+}
+
 .news-feed {
+	flex: 1;
 	display: flex;
 	gap: 10px;
 	overflow-x: auto;
@@ -153,7 +185,6 @@
 	-webkit-overflow-scrolling: touch;
 	padding-bottom: 6px;
 	scrollbar-width: none;
-	/* cursor drag-scroll */
 	cursor: grab;
 }
 .news-feed:active { cursor: grabbing; }
