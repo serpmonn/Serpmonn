@@ -117,7 +117,6 @@
       font-family: var(--font-mono); letter-spacing: 0.04em;
     }
 
-    /* fat meter bar */
     .fat-bar-wrap {
       width: 420px; max-width: 100%;
       background: var(--surface);
@@ -140,17 +139,11 @@
 <div class="header">
   <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
     <rect width="30" height="30" rx="7" fill="#16181c"/>
-    <!-- rat body -->
     <ellipse cx="15" cy="17" rx="7" ry="5" fill="#c8a882"/>
-    <!-- head -->
     <ellipse cx="21" cy="13" rx="4" ry="3.5" fill="#c8a882"/>
-    <!-- ear -->
     <ellipse cx="20" cy="10" rx="2" ry="1.5" fill="#e8c0a0"/>
-    <!-- eye -->
     <circle cx="22.5" cy="12.5" r="1" fill="#1a0a0a"/>
-    <!-- tail -->
     <path d="M8 18 Q4 16 3 20" stroke="#a07050" stroke-width="1.5" fill="none" stroke-linecap="round"/>
-    <!-- food dot -->
     <circle cx="25" cy="7" r="2.5" fill="#ff6b35"/>
   </svg>
   <h1>FAT RAT <span>// serpmonn.ru</span></h1>
@@ -199,14 +192,12 @@ const W = canvas.width, H = canvas.height;
 const CELL = 28;
 const COLS = Math.floor(W / CELL);
 const ROWS = Math.floor(H / CELL);
-const MAX_FAT = 60; // max weight in kg
+const MAX_FAT = 60;
 
 let rat, food, bonusFood, walls, eaten, weight, best, gameRunning, animFrame;
 best = 0;
 
-// ---- MAZE GENERATION (recursive backtracker) ----
 function generateMaze() {
-  // grid of cells, each cell has walls: N E S W
   const mc = Math.floor(COLS / 2);
   const mr = Math.floor(ROWS / 2);
   const visited = Array.from({length: mr}, () => new Array(mc).fill(false));
@@ -230,7 +221,6 @@ function generateMaze() {
   }
   carve(0, 0);
 
-  // Convert maze cells to pixel wall segments
   const ws = new Set();
   for (let row = 0; row < mr; row++) {
     for (let col = 0; col < mc; col++) {
@@ -239,11 +229,9 @@ function generateMaze() {
       if (wallGrid[row][col].S && row < mr-1) ws.add(`${px},${py+1}`);
     }
   }
-  // border walls
   const wallSet = new Set();
   for (let c = 0; c < COLS; c++) { wallSet.add(`${c},0`); wallSet.add(`${c},${ROWS-1}`); }
   for (let r = 0; r < ROWS; r++) { wallSet.add(`0,${r}`); wallSet.add(`${COLS-1},${r}`); }
-  // inner maze walls (scale 2x)
   for (const key of ws) {
     const [x, y] = key.split(',').map(Number);
     wallSet.add(`${x+1},${y+1}`);
@@ -269,7 +257,6 @@ function randomFree() {
   return f[Math.floor(Math.random() * f.length)];
 }
 
-// ---- RAT PATHFINDING (BFS) ----
 function bfs(start, target) {
   const queue = [start];
   const visited = new Map();
@@ -278,7 +265,6 @@ function bfs(start, target) {
   while (queue.length) {
     const cur = queue.shift();
     if (cur.x === target.x && cur.y === target.y) {
-      // reconstruct path
       const path = [];
       let node = `${target.x},${target.y}`;
       while (visited.get(node)) {
@@ -299,14 +285,12 @@ function bfs(start, target) {
   return [];
 }
 
-// ---- DRAW ----
 function drawWalls() {
   ctx.fillStyle = '#23262f';
   for (let x = 0; x < COLS; x++)
     for (let y = 0; y < ROWS; y++)
       if (isWall(x,y)) {
         ctx.fillRect(x*CELL, y*CELL, CELL, CELL);
-        // subtle top highlight
         ctx.fillStyle = 'rgba(255,255,255,0.04)';
         ctx.fillRect(x*CELL, y*CELL, CELL, 2);
         ctx.fillStyle = '#23262f';
@@ -321,7 +305,6 @@ function drawFood(f, isBonus) {
   ctx.shadowBlur = isBonus ? 14 : 10;
   ctx.fillStyle = isBonus ? '#a78bfa' : '#ff6b35';
   ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
-  // shine
   ctx.fillStyle = 'rgba(255,255,255,0.35)';
   ctx.beginPath(); ctx.arc(cx-r*0.3, cy-r*0.3, r*0.3, 0, Math.PI*2); ctx.fill();
   ctx.shadowBlur = 0;
@@ -329,16 +312,14 @@ function drawFood(f, isBonus) {
 
 function drawRat() {
   if (!rat) return;
-  const fatT = Math.min(weight / MAX_FAT, 1); // 0..1
+  const fatT = Math.min(weight / MAX_FAT, 1);
   const baseR = CELL/2 - 3;
-  const bodyR = baseR + fatT * baseR * 1.8; // grows up to ~3x
+  const bodyR = baseR + fatT * baseR * 1.8;
   const cx = rat.drawX + CELL/2, cy = rat.drawY + CELL/2;
 
-  // shadow
   ctx.fillStyle = 'rgba(0,0,0,0.25)';
   ctx.beginPath(); ctx.ellipse(cx, cy+bodyR*0.5+3, bodyR*0.9, bodyR*0.25, 0, 0, Math.PI*2); ctx.fill();
 
-  // body
   const fatColor = fatT < 0.5
     ? lerpColor('#c8a882','#e8a050', fatT*2)
     : lerpColor('#e8a050','#ff7030', (fatT-0.5)*2);
@@ -348,7 +329,6 @@ function drawRat() {
   ctx.beginPath(); ctx.ellipse(cx, cy, bodyR, bodyR*0.85, 0, 0, Math.PI*2); ctx.fill();
   ctx.shadowBlur = 0;
 
-  // head (stays smaller)
   const headR = baseR * 0.65 + fatT * baseR * 0.4;
   const headOff = bodyR * 0.7;
   const hx = cx + (rat.dirX || 1) * headOff;
@@ -356,15 +336,12 @@ function drawRat() {
   ctx.fillStyle = fatColor;
   ctx.beginPath(); ctx.ellipse(hx, hy, headR, headR*0.9, 0, 0, Math.PI*2); ctx.fill();
 
-  // ear
   ctx.fillStyle = '#e8c0a0';
   ctx.beginPath(); ctx.ellipse(hx - (rat.dirX||1)*headR*0.3, hy - headR*0.7, headR*0.4, headR*0.3, 0, 0, Math.PI*2); ctx.fill();
 
-  // eye
   ctx.fillStyle = '#1a0505';
   ctx.beginPath(); ctx.arc(hx + (rat.dirX||1)*headR*0.2, hy - headR*0.15, Math.max(1.5, headR*0.2), 0, Math.PI*2); ctx.fill();
 
-  // tail
   const tx = cx - (rat.dirX||1) * bodyR;
   ctx.strokeStyle = '#a07050';
   ctx.lineWidth = Math.max(1, 2 - fatT);
@@ -373,7 +350,6 @@ function drawRat() {
   ctx.quadraticCurveTo(tx - (rat.dirX||1)*12, cy + 10, tx - (rat.dirX||1)*20, cy + 5);
   ctx.stroke();
 
-  // fat jiggle rings when very fat
   if (fatT > 0.5) {
     const rings = Math.floor(fatT * 3);
     ctx.strokeStyle = `rgba(255,160,60,${0.15 + fatT*0.2})`;
@@ -404,7 +380,6 @@ function render() {
   drawRat();
 }
 
-// ---- CLICK TARGET ----
 let clickTarget = null;
 
 canvas.addEventListener('click', e => {
@@ -424,7 +399,6 @@ canvas.addEventListener('touchend', e => {
   if (!isWall(mx, my)) clickTarget = {x:mx, y:my};
 }, {passive:false});
 
-// ---- GAME LOOP ----
 let path = [];
 let stepTimer = 0;
 let bonusTimer = 0;
@@ -432,7 +406,6 @@ let bonusSpawnTimer = 0;
 let lastTime = 0;
 
 function getSpeed() {
-  // speed slows with weight: starts at 6 cells/sec, min 1.2
   const fatT = Math.min(weight / MAX_FAT, 1);
   return Math.max(1.2, 6 - fatT * 4.8);
 }
@@ -443,7 +416,6 @@ function gameLoop(ts) {
 
   if (!gameRunning) return;
 
-  // lerp rat draw position
   const targetX = rat.x * CELL, targetY = rat.y * CELL;
   rat.drawX += (targetX - rat.drawX) * Math.min(1, dt * 14);
   rat.drawY += (targetY - rat.drawY) * Math.min(1, dt * 14);
@@ -454,7 +426,6 @@ function gameLoop(ts) {
   if (stepTimer >= stepInterval) {
     stepTimer -= stepInterval;
 
-    // recalc path if needed
     const target = clickTarget || food;
     if (!path.length || (clickTarget && (path[path.length-1].x !== clickTarget.x || path[path.length-1].y !== clickTarget.y))) {
       path = bfs({x:rat.x, y:rat.y}, target);
@@ -468,7 +439,6 @@ function gameLoop(ts) {
       rat.y = next.y;
     }
 
-    // check food
     if (rat.x === food.x && rat.y === food.y) {
       eaten++;
       weight = Math.round((weight + 0.3 + Math.random()*0.2) * 10) / 10;
@@ -491,7 +461,6 @@ function gameLoop(ts) {
     }
   }
 
-  // bonus food timer
   if (bonusFood) {
     bonusTimer += dt;
     if (bonusTimer > 8) { bonusFood = null; bonusTimer = 0; }
@@ -524,9 +493,7 @@ function updateUI() {
 
 function init() {
   walls = generateMaze();
-  // place rat at a free cell near center
   rat = { x: Math.floor(COLS/2), y: Math.floor(ROWS/2), drawX:0, drawY:0, dirX:1, dirY:0 };
-  // make sure not in wall
   if (isWall(rat.x, rat.y)) {
     const f = freeCells();
     const c = f[Math.floor(f.length/2)];
@@ -556,7 +523,6 @@ function startGame() {
 
 document.getElementById('startBtn').addEventListener('click', startGame);
 
-// initial render
 init();
 render();
 </script>
