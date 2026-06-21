@@ -313,10 +313,10 @@ async function refreshPromocodes() {
             localStorage.removeItem('promo_cache');
             await loadPromocodesFromAPI();
             
-            isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';                                                                         // ВОССТАНАВЛИВАЕТ СОСТОЯНИЕ СОРТИРОВКИ ИЗ LOCALSTORAGE
+            isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';
             sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
             
-            if (elements.sortButton) {                                                                                                                          // Обновляет текст кнопки сортировки
+            if (elements.sortButton) {
                 if (isSortedByExpiry) {
                     elements.sortButton.innerHTML = `Сортировка ${sortAscending ? '↑' : '↓'}`;
                 } else {
@@ -324,7 +324,7 @@ async function refreshPromocodes() {
                 }
             }
             
-            filterPromos();                                                                                                                                     // Применяет фильтры с сохранённой сортировкой
+            filterPromos();
             updateLastUpdateTime();
             showToast(result.message, 'success');
         } else {
@@ -487,6 +487,78 @@ function initInfiniteScroll() {
     });
 }
 
+// ===== SHARE TOAST =====
+let _shareToastEl = null;
+let _shareToastTimer = null;
+
+function showShareToast(msg) {
+    if (!_shareToastEl) {
+        _shareToastEl = document.createElement('div');
+        _shareToastEl.className = 'share-toast';
+        document.body.appendChild(_shareToastEl);
+    }
+    _shareToastEl.textContent = msg;
+    _shareToastEl.classList.add('visible');
+    clearTimeout(_shareToastTimer);
+    _shareToastTimer = setTimeout(() => {
+        _shareToastEl.classList.remove('visible');
+    }, 2500);
+}
+// ===== /SHARE TOAST =====
+
+// ===== SHARE BUTTON VISUAL FEEDBACK =====
+function applyShareSuccess(btn) {
+    const originalHTML = btn.innerHTML;
+    btn.setAttribute('data-shared', '1');
+    btn.innerHTML = '<span class="promo-share-icon">✓</span>';
+    setTimeout(() => {
+        btn.removeAttribute('data-shared');
+        btn.innerHTML = originalHTML;
+    }, 2000);
+}
+
+function addShareRipple(btn, e) {
+    const rect = btn.getBoundingClientRect();
+    const size = Math.max(rect.width, rect.height);
+    const ripple = document.createElement('span');
+    ripple.className = 'share-ripple';
+    ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px`;
+    btn.appendChild(ripple);
+    ripple.addEventListener('animationend', () => ripple.remove());
+}
+// ===== /SHARE BUTTON VISUAL FEEDBACK =====
+
+async function sharePromo(promo, url, btn) {
+    const title = getPromoTitle(promo);
+    const text = promo.bonus_description
+        || (promo.discount_percent ? `Скидка ${promo.discount_percent}%` : '')
+        || (promo.discount_amount  ? `Скидка ${promo.discount_amount}₽` : '')
+        || 'Промокод';
+
+    const shareData = { title, text, url };
+
+    try {
+        if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+            await navigator.share(shareData);
+        } else {
+            await navigator.clipboard.writeText(url);
+            showShareToast('🔗 Ссылка скопирована!');
+        }
+        if (btn) applyShareSuccess(btn);
+    } catch (err) {
+        if (err.name !== 'AbortError') {
+            // фоллбэк: просто копируем
+            try {
+                await navigator.clipboard.writeText(url);
+                showShareToast('🔗 Ссылка скопирована!');
+                if (btn) applyShareSuccess(btn);
+            } catch (_) {
+                showShareToast('⚠️ Не удалось скопировать ссылку');
+            }
+        }
+    }
+}
+
 function createPromoCard(promo, isTopOffer = false) {
     const card = document.createElement('div');
     const combined = [
@@ -580,636 +652,46 @@ function createPromoCard(promo, isTopOffer = false) {
                     </button>
                 </div>
             ` : ''}
-            ${promo.advertiser_info ? `
-                <p class="ad">Реклама. ${escapeHtml(promo.advertiser_info)}</p>
-            ` : ''}
         </div>
     `;
 
-    // Сохраняем URL в data-атрибут для обработки клика по карточке
-    if (landingUrl) {
-        card.dataset.landingUrl = landingUrl;
-    }
-
-    // Обработчик для клика по карточке
-    if (landingUrl) {
-        card.addEventListener('click', (e) => {
-            // Проверяем, что клик был не по интерактивным элементам
-            const interactiveElements = ['BUTTON', 'A', 'INPUT', 'SELECT', 'TEXTAREA'];
-            const isInteractive = e.target.closest('button') || 
-                                 e.target.closest('a') || 
-                                 e.target.closest('.details-content') ||
-                                 interactiveElements.includes(e.target.tagName);
-            
-            if (!isInteractive) {
-                window.open(landingUrl, '_blank');
-                
-                // Трекинг клика
-                try {
-                    fetch('/api/track-click', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ 
-                            promocode: promo.promocode, 
-                            url: landingUrl,
-                            source: 'card_click',
-                            visitor_id: getOrCreateVisitorId()
-                        })
-                    });
-                } catch (error) {
-                    logError('Ошибка трекинга клика по карточке', error);
-                }
-            }
-        });
-    }
-
-    const detailsBtn = card.querySelector('.details-btn');
-    if (detailsBtn) {
-        detailsBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Предотвращаем срабатывание клика по карточке
-            toggleDetails(detailsBtn);
-        });
-        detailsBtn.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                e.stopPropagation();
-                toggleDetails(detailsBtn);
-            }
+    // ===== НАВЕШИВАЕМ ОБРАБОТЧИКИ =====
+    const shareBtn = card.querySelector('.promo-share-button');
+    if (shareBtn && landingUrl) {
+        shareBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            addShareRipple(shareBtn, e);
+            const shareUrl = landingUrl.startsWith('http') ? landingUrl : `https://serpmonn.ru${landingUrl}`;
+            sharePromo(promo, shareUrl, shareBtn);
         });
     }
 
     const copyBtn = card.querySelector('.copy-btn');
-
     if (copyBtn && promo.promocode) {
-        copyBtn.addEventListener('click', async (e) => {
+        copyBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-
-            // Копирование промокода с визуальным feedback на кнопке
-            await copyToClipboard(promo, copyBtn);
-
-            // Формируем строку для поиска по проектам
-            const combinedForSpecial = [
-                promo?.title,
-                promo?.name,
-                promo?.description,
-                promo?.advertiser_info,
-                promo?.category,
-                promo?.landing_url,
-                promo?.link,
-                promo?.url
-            ].filter(Boolean).join(' ').toLowerCase();
-
-            const isSpecialProject = specialCopyProjects.some(project =>
-                combinedForSpecial.includes(project.toLowerCase())
-            );
-
-            // Для спец‑проектов: дополнительно сделать "использовать"
-            if (isSpecialProject && landingUrl) {
-                try {
-                    await fetch('/api/track-click', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            promocode: promo.promocode,
-                            url: landingUrl,
-                            source: 'copy-button-special',
-                            visitor_id: getOrCreateVisitorId()
-                        })
-                    });
-                } catch (error) {
-                    logError('Ошибка трекинга клика по copy для спец‑проекта', error);
-                }
-
-                // Открываем лендинг как при "Использовать"
-                window.open(landingUrl, '_blank');
-            }
+            copyPromoCode(promo.promocode, copyBtn, promo);
         });
     }
 
-    const useBtn = card.querySelector('.use-btn');
-    if (useBtn) {
-        useBtn.addEventListener('click', async (e) => {
-            e.stopPropagation(); // Предотвращаем срабатывание клика по карточке
-            try {
-                await fetch('/api/track-click', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        promocode: promo.promocode, 
-                        url: landingUrl,
-                        source: 'button_click',
-                        visitor_id: getOrCreateVisitorId()
-                    })
-                });
-            } catch (error) {
-                logError('Ошибка трекинга клика', error);
-            }
+    const detailsBtn = card.querySelector('.details-btn');
+    const detailsContent = card.querySelector(`#${detailsId}`);
+    if (detailsBtn && detailsContent) {
+        detailsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const expanded = detailsBtn.getAttribute('aria-expanded') === 'true';
+            detailsBtn.setAttribute('aria-expanded', String(!expanded));
+            detailsContent.style.display = expanded ? 'none' : 'block';
         });
     }
-    
-    const codeParam = promo.promocode || '';
-    const shareBtn = card.querySelector('.promo-share-button');
-    if (shareBtn) {
-        shareBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
 
-            // Не шарим карточки без промокода — ссылка была бы /promo?code=
-            if (!codeParam) return;
-
-            const shareUrl = `${window.location.origin}/promo?code=${encodeURIComponent(codeParam)}`;
-            sharePromo(promo, shareUrl);
+    if (landingUrl) {
+        card.addEventListener('click', (e) => {
+            if (!e.target.closest('button') && !e.target.closest('a')) {
+                window.open(landingUrl, '_blank', 'noopener,noreferrer');
+            }
         });
     }
 
     return card;
-}
-
-function formatDate(date) {
-    return date.toLocaleDateString('ru-RU', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric'
-    });
-}
-
-function updateStats(stats) {
-    if (!stats) return;
-    if (elements.totalPromos) elements.totalPromos.textContent = stats.total ?? 0;
-    if (elements.activePromos) elements.activePromos.textContent = stats.active ?? stats.total ?? 0;
-}
-
-function showToast(message, type = 'success') {
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    toast.setAttribute('aria-live', 'polite');
-    toast.textContent = message;
-    document.body.appendChild(toast);
-    setTimeout(() => toast.classList.add('show'), 100);
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 300);
-    }, 3000);
-}
-
-function updateLastUpdateTime() {
-    const lastUpdate = localStorage.getItem(API_CONFIG.lastUpdateKey);
-    if (!elements.lastUpdate) {
-        return;
-    }
-    if (!lastUpdate) {
-        const newDate = new Date().toISOString();
-        localStorage.setItem(API_CONFIG.lastUpdateKey, newDate);
-        elements.lastUpdate.textContent = new Date(newDate).toLocaleString('ru-RU', { 
-            dateStyle: 'short', 
-            timeStyle: 'medium'
-        });
-        return;
-    }
-    const date = new Date(lastUpdate);
-    if (isNaN(date.getTime())) {
-        const newDate = new Date().toISOString();
-        localStorage.setItem(API_CONFIG.lastUpdateKey, newDate);
-        elements.lastUpdate.textContent = new Date(newDate).toLocaleString('ru-RU', { 
-            dateStyle: 'short', 
-            timeStyle: 'medium'
-        });
-        return;
-    }
-    elements.lastUpdate.classList.add('updating');
-    elements.lastUpdate.textContent = '';
-    elements.lastUpdate.textContent = date.toLocaleString('ru-RU', { 
-        dateStyle: 'short', 
-        timeStyle: 'medium'
-    });
-    setTimeout(() => elements.lastUpdate.classList.remove('updating'), 300);
-}
-
-function startAutoUpdate() {
-    if (updateTimer) clearInterval(updateTimer);
-    updateTimer = setInterval(async () => {
-        await loadPromocodesFromAPI();
-    }, API_CONFIG.updateInterval);
-}
-
-function stopAutoUpdate() {
-    if (updateTimer) {
-        clearInterval(updateTimer);
-        updateTimer = null;
-    }
-}
-
-function filterPromos() {
-    const search = elements.searchInput.value.toLowerCase();
-    const category = elements.categorySelect?.value || '';
-    const status = elements.statusSelect?.value || '';
-    const country = elements.countrySelect?.value || '';
-    localStorage.setItem('promo_search', search);
-    localStorage.setItem('promo_category', category);
-    localStorage.setItem('promo_status', status);
-    localStorage.setItem('promo_country', country);
-    
-    filteredPromocodes = allPromocodes.filter(promo => {
-        const title = (promo && typeof promo.title === 'string' ? promo.title : '').toLowerCase();
-        const description = (promo.description || promo.subtitle || '').toLowerCase();
-        const promoCategory = promo.category || 'другие';
-        const promoCountry = promo.country || 'Россия';
-        const matchesSearch = title.includes(search) || description.includes(search) || search === '';
-        const matchesCategory = category === '' || promoCategory === category;
-        const matchesCountry = country === '' || promoCountry === country;
-        const now = new Date();
-        const expiry = new Date(promo.valid_until || promo.expiry_date || '9999-12-31');
-        const matchesStatus = status === '' ||
-            (status === 'active' && expiry >= now) ||
-            (status === 'expired' && expiry < now && promo.valid_until);
-        return matchesSearch && matchesCategory && matchesCountry && matchesStatus;
-    });
-
-    // ЕДИНАЯ СОРТИРОВКА
-    if (!isSortedByExpiry) {
-        // Сортировка по умолчанию: сначала топ-бренды по порядку в массиве, затем остальные по дате
-        filteredPromocodes.sort((a, b) => {
-            const aIsTop = topBrands.some(brand => 
-                a.title.toLowerCase().includes(brand.toLowerCase())
-            );
-            const bIsTop = topBrands.some(brand => 
-                b.title.toLowerCase().includes(brand.toLowerCase())
-            );
-
-            // Топ бренды сначала
-            if (aIsTop && !bIsTop) return -1;
-            if (!aIsTop && bIsTop) return 1;
-
-            // Если оба топ - сортируем по порядку в массиве topBrands
-            if (aIsTop && bIsTop) {
-                const indexA = topBrands.findIndex(brand => 
-                    a.title.toLowerCase().includes(brand.toLowerCase())
-                );
-                const indexB = topBrands.findIndex(brand => 
-                    b.title.toLowerCase().includes(brand.toLowerCase())
-                );
-                return indexA - indexB;
-            }
-
-            // Если оба не топ - сортируем по дате (от ближайшей к дальнейшей)
-            const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
-            const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
-            return dateA - dateB;
-        });
-    } else {
-        // Сортировка по сроку действия
-        filteredPromocodes.sort((a, b) => {
-            const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
-            const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
-            return sortAscending ? dateA - dateB : dateB - dateA;
-        });
-    }
-
-    renderPromocodes();
-    
-    const noResultsMessage = document.querySelector('.no-results');
-    if (filteredPromocodes.length === 0 && (search !== '' || category !== '' || status !== '' || country !== '')) {
-        if (!noResultsMessage) {
-            const message = document.createElement('div');
-            message.className = 'no-results';
-            message.innerHTML = '<h3>Промокоды не найдены</h3><p>Попробуйте изменить параметры поиска</p>';
-            elements.catalog.prepend(message);
-        }
-    } else if (noResultsMessage) {
-        noResultsMessage.remove();
-    }
-    const resultCountContainer = document.getElementById('promocodes-result-count');
-    if (resultCountContainer) {
-        resultCountContainer.innerHTML = '';
-        const resultCount = document.createElement('p');
-        resultCount.textContent = `Найдено промокодов: ${filteredPromocodes.length}`;
-        resultCount.className = 'result-count';
-        resultCountContainer.appendChild(resultCount);
-    }
-}
-
-function copyToClipboard(promo, btn) {
-    const text = promo.promocode || promo.code || String(promo);
-
-    const onSuccess = async () => {
-        showToast('Код скопирован!', 'success');
-
-        // Визуальный feedback на кнопке
-        if (btn) {
-            const originalText = btn.textContent;
-            btn.textContent = 'Скопировано ✓';
-            btn.disabled = true;
-            setTimeout(() => {
-                btn.textContent = originalText;
-                btn.disabled = false;
-            }, 2000);
-        }
-
-        try {
-            await fetch('/api/track-copy', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    promocode: text,
-                    promocodeId: promo.id,
-                    title: promo.title,
-                    advertiser_info: promo.advertiser_info,
-                    landing_url: promo.landing_url || promo.link || promo.url,
-                    visitor_id: getOrCreateVisitorId(),
-                    timestamp: new Date().toISOString()
-                })
-            });
-        } catch (error) {
-            logError('Ошибка трекинга копирования', error);
-        }
-    };
-
-    return navigator.clipboard.writeText(text).then(onSuccess).catch(() => {
-        const textArea = document.createElement('textarea');
-        textArea.value = text;
-        document.body.appendChild(textArea);
-        textArea.select();
-        document.execCommand('copy');
-        document.body.removeChild(textArea);
-        return onSuccess();
-    });
-}
-
-function sortByExpiry() {
-    isSortedByExpiry = true;
-    sortAscending = !sortAscending;
-    localStorage.setItem('promo_sort_by_expiry', 'true');
-    localStorage.setItem('promo_sort_ascending', sortAscending ? 'true' : 'false');
-    
-    // Применить новую сортировку
-    filterPromos();
-    
-    if (elements.sortButton) {
-        elements.sortButton.innerHTML = `Сортировка ${sortAscending ? '↑' : '↓'}`;
-        elements.sortButton.setAttribute('aria-label', `Сортировать по сроку действия, текущий порядок: ${sortAscending ? 'восходящий' : 'нисходящий'}`);
-    }
-}
-
-function toggleFilters(button) {
-    const content = elements.filtersContent;
-    if (content) {
-        const isExpanded = content.style.display === 'block';
-        content.style.display = isExpanded ? 'none' : 'block';
-        button.setAttribute('aria-expanded', !isExpanded);
-        button.textContent = isExpanded ? 'Фильтры' : 'Скрыть фильтры';
-    }
-}
-
-function lazyLoadImages() {
-    const images = document.querySelectorAll('img.lazy-load');
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const img = entry.target;
-                img.src = img.dataset.src;
-                img.classList.remove('lazy-load');
-                observer.unobserve(img);
-            }
-        });
-    }, { rootMargin: '100px' });
-    images.forEach(img => observer.observe(img));
-}
-
-function lazyLoadAds() {
-    const ads = document.querySelectorAll('.promo-ad-inline');
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const ad = entry.target;
-                const ins = ad.querySelector('ins.mrg-tag');
-                if (ins && !ins.dataset.loaded) {
-                    ins.dataset.loaded = 'true';
-                    (window.MRGtag = window.MRGtag || []).push({});
-                    collapseAdIfNoFill(ad, 1500);
-                }
-                observer.unobserve(ad);
-            }
-        });
-    }, { rootMargin: '200px' });
-    ads.forEach(ad => observer.observe(ad));
-}
-
-document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = e.target.querySelector('input[name="email"]').value;
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const messageEl = document.createElement('p');
-    messageEl.className = 'message';
-    if (!emailRegex.test(email)) {
-        messageEl.textContent = 'Введите корректный email';
-        messageEl.style.color = '#ff5252';
-        e.target.appendChild(messageEl);
-        setTimeout(() => messageEl.remove(), 3000);
-        return;
-    }
-    try {
-        const response = await fetch('/subscribe', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: `email=${encodeURIComponent(email)}`
-        });
-        if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-        const result = await response.json();
-        messageEl.textContent = result.message || 'Спасибо за подписку!';
-        messageEl.style.color = '#28a745';
-        e.target.appendChild(messageEl);
-        e.target.reset();
-        setTimeout(() => messageEl.remove(), 3000);
-    } catch (error) {
-        logError('Ошибка подписки', error);
-        messageEl.textContent = error.message.includes('HTTP error')
-            ? `Ошибка сервера: ${error.message}`
-            : 'Ошибка при подписке. Попробуйте позже.';
-        messageEl.style.color = '#ff5252';
-        e.target.appendChild(messageEl);
-        setTimeout(() => messageEl.remove(), 3000);
-    }
-});
-
-elements.searchInput?.addEventListener('input', () => {
-    clearTimeout(debounceTimeout);
-    debounceTimeout = setTimeout(filterPromos, 300);
-});
-
-elements.categorySelect?.addEventListener('change', filterPromos);
-elements.statusSelect?.addEventListener('change', filterPromos);
-elements.countrySelect?.addEventListener('change', filterPromos);
-
-document.addEventListener('DOMContentLoaded', async () => {
-  // ---- старая инициализация промокодов ----
-  isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';
-  sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
-  const savedSearch = localStorage.getItem('promo_search') || '';
-  const savedCategory = localStorage.getItem('promo_category') || '';
-  const savedStatus = localStorage.getItem('promo_status') || '';
-  const savedCountry = localStorage.getItem('promo_country') || '';
-
-  elements.searchInput.value = savedSearch;
-  elements.categorySelect.value = savedCategory;
-  elements.statusSelect.value = savedStatus;
-  elements.countrySelect.value = savedCountry;
-
-  await loadPromocodesFromAPI();
-  updateLastUpdateTime();
-  startAutoUpdate();
-
-  // Читаем ?search= из URL — перекрывает сохранённый поиск из localStorage
-  const urlParams = new URLSearchParams(window.location.search);
-  const urlSearch = urlParams.get('search');
-  if (urlSearch) {
-    elements.searchInput.value = urlSearch;
-  }
-
-  filterPromos();
-
-  if (elements.refreshBtn) {
-    elements.refreshBtn.addEventListener('click', async () => {
-      await refreshPromocodes();
-    });
-  }
-
-  if (elements.toggleFilters) {
-    elements.toggleFilters.addEventListener('click', () => toggleFilters(elements.toggleFilters));
-    elements.toggleFilters.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        toggleFilters(elements.toggleFilters);
-      }
-    });
-  }
-
-  // ---- сюда переезжает код счетчика подписчиков ----
-        const el = document.getElementById('subscribersCount');
-    if (el) {
-    try {
-        const res = await fetch('/api/subscribers/count', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        const raw = Number(data.count) || 0;
-
-        const formatted = raw.toLocaleString('ru-RU');
-
-        const oldText = el.textContent;
-
-        const newText = oldText.replace(
-        /(\d[\d\s\u00A0]*)(\s*)/u,
-        `${formatted} `
-        );
-
-        el.textContent = newText;
-    } catch (err) {
-        console.error('Не удалось получить количество подписчиков', err);
-    }
-    }
-});
-
-function toggleDetails(button) {
-    const content = button.nextElementSibling;
-    if (content && content.classList.contains('details-content')) {
-        const isExpanded = content.style.display === 'block';
-        content.style.display = isExpanded ? 'none' : 'block';
-        button.setAttribute('aria-expanded', !isExpanded);
-        const textSpan = button.querySelector('.details-text');
-        if (textSpan) textSpan.textContent = isExpanded ? 'Подробнее' : 'Скрыть';
-        button.querySelector('.details-icon').textContent = isExpanded ? '▼' : '▲';
-    }
-}
-
-window.addEventListener('beforeunload', () => {
-    stopAutoUpdate();
-});
-
-const adCache = new Map();
-function createInlineAd() {
-    const adId = `ad-${Math.random().toString(36).substr(2, 9)}`;
-    if (adCache.has(adId)) return adCache.get(adId).cloneNode(true);
-    const wrap = document.createElement('div');
-    wrap.className = "promo-ad-inline";
-    wrap.style.textAlign = "center";
-    wrap.style.margin = "12px 0";
-    wrap.innerHTML = `
-        <ins class="mrg-tag"
-             style="display:inline-block;width:100%;max-width:300px;height:250px"
-             data-ad-client="ad-1898023"
-             data-ad-slot="1898023"
-             data-adaptive="true">
-        </ins>`;
-    adCache.set(adId, wrap);
-    return wrap.cloneNode(true);
-}
-
-function insertInfeedAdsIntoCatalog(catalog, interval) {
-    if (!catalog) return;
-    catalog.querySelectorAll('.promo-ad-inline').forEach(el => el.remove());
-    const cards = Array.from(catalog.querySelectorAll('.promo-card'));
-    if (!cards.length) return;
-    const step = interval || 5;
-    for (let i = step; i < cards.length; i += step) {
-        const afterCard = cards[i - 1];
-        if (afterCard && afterCard.parentNode) {
-            const ad = createInlineAd();
-            afterCard.parentNode.insertBefore(ad, afterCard.nextSibling);
-        }
-    }
-}
-
-function collapseAdIfNoFill(container, timeoutMs) {
-    try {
-        const t = timeoutMs || 1500;
-        setTimeout(() => {
-            if (!container) return;
-            const ins = container.querySelector('ins.mrg-tag');
-            const hasContent = ins && (
-                ins.querySelector('iframe') ||
-                ins.innerHTML.trim().length > 0 ||
-                ins.offsetHeight > 10
-            );
-            if (hasContent) {
-                container.classList.add('ad-loaded');
-            } else {
-                container.style.display = 'none';
-                logError('Реклама не загрузилась', new Error(`Ad failed to load: client=${ins.dataset.adClient}, slot=${ins.dataset.adSlot}`));
-            }
-        }, t);
-    } catch (error) {
-        logError('Ошибка проверки рекламы', error);
-        container.style.display = 'none';
-    }
-}
-
-async function sharePromo(promo, url) {
-    const title = 'Промокод от Serpmonn';
-    const text = `Нашёл рабочий промокод на ${promo?.title || promo?.name || 'Serpmonn'}`;
-
-    try {
-        if (navigator.share) {
-            await navigator.share({ title, text, url });
-            return;
-        }
-    } catch (err) {
-        // AbortError — пользователь просто закрыл шторку шаринга, не ошибка
-        if (err?.name === 'AbortError') return;
-        console.warn('navigator.share упал, fallback на clipboard:', err);
-    }
-
-    // Десктоп или браузер без Web Share API — копируем ссылку в буфер
-    try {
-        await navigator.clipboard.writeText(url);
-        showToast('Ссылка скопирована!', 'success');
-    } catch (_) {
-        // Совсем старый браузер без Clipboard API
-        const ta = document.createElement('textarea');
-        ta.value = url;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        ta.remove();
-        showToast('Ссылка скопирована!', 'success');
-    }
 }
