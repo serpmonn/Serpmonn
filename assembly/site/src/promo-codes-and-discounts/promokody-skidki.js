@@ -1181,35 +1181,144 @@ function collapseAdIfNoFill(container, timeoutMs) {
     }
 }
 
+// =====================================================
+// SHARE POPUP — поп-ап для десктопа + нативный шаринг на мобиле
+// =====================================================
+
+function getOrCreateShareOverlay() {
+    let overlay = document.getElementById('share-popup-overlay');
+    if (overlay) return overlay;
+
+    overlay = document.createElement('div');
+    overlay.id = 'share-popup-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Поделиться промокодом');
+
+    overlay.innerHTML = `
+        <div class="share-popup">
+            <button class="share-popup__close" aria-label="Закрыть">&times;</button>
+            <p class="share-popup__title">Поделиться промокодом</p>
+            <p class="share-popup__promo-name"></p>
+            <div class="share-networks">
+                <a class="share-network-btn" id="sn-vk" href="#" target="_blank" rel="noopener noreferrer" aria-label="ВКонтакте">
+                    <span class="sn-icon sn-icon--vk">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20.96 16.27c-.2-.3-.7-1-1.44-1.74-.77-.77-1.8-1.65-2.27-2.08.52-.68 1.52-2.03 2.04-3.08.38-.77.76-1.8.52-2.29-.21-.44-.88-.44-1.36-.44h-2.13c-.32 0-.5.18-.6.4-.53 1.3-1.34 2.66-1.84 3.23-.15.16-.28.2-.38.17-.15-.05-.23-.28-.23-.62V8.07c0-.5-.05-1.02-.28-1.3-.18-.22-.48-.33-.82-.33H10.1c-.3 0-.6.1-.8.32-.14.15-.22.36-.22.6 0 .12.01.24.04.35.1.45.3.94.44 1.45.17.6.22 1.13.14 1.6-.1.62-.45 1.18-.73 1.48-.34.35-.64.53-.88.6-.14.04-.26.04-.33.02-.07-.03-.13-.08-.17-.17-.07-.17-.06-.4-.04-.58l.08-.77c.05-.5.1-1.03.08-1.47-.03-.73-.3-1.28-.76-1.57-.34-.21-.76-.28-1.15-.2-.38.07-.7.27-.9.54-.15.2-.22.44-.2.67.02.22.11.42.25.57.1.1.22.16.35.17.28.02.52-.12.65-.36.06-.12.08-.26.06-.4-.02-.12-.07-.22-.15-.29.2-.04.37 0 .5.08.2.12.33.4.35.8.02.38-.02.85-.07 1.3l-.08.8c-.05.38-.1.83.1 1.26.12.26.33.48.6.6.26.12.55.14.83.06.4-.11.83-.4 1.27-.87.38-.42.8-1.1 1-1.9.13-.52.14-1.1.03-1.65-.08-.4-.22-.77-.38-1.08V9.77c0 .16 0 .27.01.34.02.28.1.5.2.65.16.22.37.27.56.22.28-.07.58-.34.85-.73.57-.83 1.3-2.07 1.72-3.06h1.52c.2 0 .3.04.33.07.02.02.04.08-.04.3-.44.98-1.36 2.26-1.92 2.98-.33.43-.57.75-.56 1.13.01.36.22.65.57 1 .47.44 1.46 1.28 2.18 2.02.65.66 1.1 1.3 1.27 1.57.13.22.14.37.1.45-.04.07-.15.12-.34.12h-1.97c-.4 0-.67-.1-.95-.36-.3-.26-.65-.7-1.14-1.22-.4-.43-.84-.9-1.1-1.12-.13-.1-.26-.17-.38-.18-.12-.01-.24.03-.33.12-.17.16-.23.42-.23.73v.42c0 .42-.06.7-.18.86-.1.12-.24.17-.48.17H9.4c-.3 0-.47-.08-.57-.2-.07-.08-.11-.2-.11-.34v-.18-.18-.45c0-.53-.08-.88-.28-1.06-.13-.12-.3-.16-.47-.12-.2.05-.4.2-.6.44-.8 1.02-1.82 2.45-2.43 3.18-.14.17-.28.27-.4.3h-2.3c-.28 0-.44-.1-.5-.23-.07-.15-.03-.37.13-.64.7-1.16 2.75-3.5 3.53-4.4.64-.74.78-1.1.32-1.74-.22-.3-.6-.6-1-.9-.43-.32-.9-.65-1.2-1-.42-.48-.54-1.08-.3-1.65.27-.63.9-1.05 1.66-1.1H6.5c.3 0 .48.1.6.25.15.18.2.46.17.82-.05.56-.22 1.33-.38 1.88-.07.25-.03.46.1.6.12.13.32.17.54.1.2-.07.42-.22.6-.42.62-.7 1.44-2.16 1.6-2.73H20c.22 0 .4.04.5.13.12.1.14.27.06.5-.18.54-.62 1.42-1.1 2.2-.45.73-.96 1.42-1.37 1.9-.26.3-.44.54-.54.72-.13.24-.15.48-.06.7.07.17.22.33.42.5.25.2.58.42.9.65.72.52 1.55 1.1 2.1 1.82.53.7.73 1.47.57 2.2-.14.6-.56 1.1-1.1 1.38-.5.25-1.05.3-1.53.13-.36-.12-.65-.35-.85-.65z"/></svg>
+                    </span>
+                    ВКонтакте
+                </a>
+                <a class="share-network-btn" id="sn-tg" href="#" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+                    <span class="sn-icon sn-icon--tg">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.68 7.92c-.12.56-.46.7-.93.44l-2.58-1.9-1.24 1.2c-.14.14-.26.26-.52.26l.18-2.6 4.74-4.28c.2-.18-.04-.28-.32-.1L7.92 13.8l-2.52-.79c-.54-.17-.56-.54.12-.8l9.84-3.8c.46-.16.86.11.28.39z"/></svg>
+                    </span>
+                    Telegram
+                </a>
+                <a class="share-network-btn" id="sn-wa" href="#" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+                    <span class="sn-icon sn-icon--wa">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                    </span>
+                    WhatsApp
+                </a>
+                <a class="share-network-btn" id="sn-x" href="#" target="_blank" rel="noopener noreferrer" aria-label="X (Twitter)">
+                    <span class="sn-icon sn-icon--x">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.737-8.835L1.254 2.25H8.08l4.261 5.636L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+                    </span>
+                    X
+                </a>
+                <a class="share-network-btn" id="sn-ok" href="#" target="_blank" rel="noopener noreferrer" aria-label="Одноклассники">
+                    <span class="sn-icon sn-icon--ok">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zm0 4.5a3.5 3.5 0 110 7 3.5 3.5 0 010-7zm3.75 9.25c.47.47.47 1.23 0 1.7l-1.9 1.9c.52.14 1.05.23 1.6.27.66.05 1.16.62 1.11 1.28-.05.66-.62 1.16-1.28 1.11-1.45-.11-2.82-.62-3.98-1.44-1.16.82-2.53 1.33-3.98 1.44-.66.05-1.23-.45-1.28-1.11-.05-.66.45-1.23 1.11-1.28.55-.04 1.08-.13 1.6-.27l-1.9-1.9c-.47-.47-.47-1.23 0-1.7.47-.47 1.23-.47 1.7 0L12 16.54l2.05-2.04c.47-.47 1.23-.47 1.7.25z"/></svg>
+                    </span>
+                    ОК
+                </a>
+            </div>
+            <div class="share-popup__url-row">
+                <input type="text" class="share-popup__url-input" readonly aria-label="Ссылка на промокод">
+                <button class="share-popup__copy-btn" type="button">Копировать</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Закрытие по крестику
+    overlay.querySelector('.share-popup__close').addEventListener('click', closeSharePopup);
+
+    // Закрытие по клику на фон
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeSharePopup();
+    });
+
+    // Закрытие по Escape
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('visible')) closeSharePopup();
+    });
+
+    // Кнопка копирования URL
+    overlay.querySelector('.share-popup__copy-btn').addEventListener('click', () => {
+        const input = overlay.querySelector('.share-popup__url-input');
+        const btn = overlay.querySelector('.share-popup__copy-btn');
+        navigator.clipboard.writeText(input.value).catch(() => {
+            input.select();
+            document.execCommand('copy');
+        });
+        btn.textContent = 'Скопировано ✓';
+        btn.classList.add('copied');
+        showToast('Ссылка скопирована!', 'success');
+        setTimeout(() => {
+            btn.textContent = 'Копировать';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+
+    return overlay;
+}
+
+function openSharePopup(promo, url) {
+    const overlay = getOrCreateShareOverlay();
+    const promoName = promo?.title || promo?.name || 'промокод';
+    const shareText = `Нашёл рабочий промокод на ${promoName}`;
+
+    overlay.querySelector('.share-popup__promo-name').textContent = promoName;
+    overlay.querySelector('.share-popup__url-input').value = url;
+
+    const enc = encodeURIComponent;
+    overlay.querySelector('#sn-vk').href =
+        `https://vk.com/share.php?url=${enc(url)}&title=${enc(shareText)}`;
+    overlay.querySelector('#sn-tg').href =
+        `https://t.me/share/url?url=${enc(url)}&text=${enc(shareText)}`;
+    overlay.querySelector('#sn-wa').href =
+        `https://api.whatsapp.com/send?text=${enc(shareText + ' ' + url)}`;
+    overlay.querySelector('#sn-x').href =
+        `https://twitter.com/intent/tweet?url=${enc(url)}&text=${enc(shareText)}`;
+    overlay.querySelector('#sn-ok').href =
+        `https://connect.ok.ru/offer?url=${enc(url)}&title=${enc(shareText)}`;
+
+    overlay.classList.add('visible');
+    overlay.querySelector('.share-popup__close').focus();
+}
+
+function closeSharePopup() {
+    const overlay = document.getElementById('share-popup-overlay');
+    if (overlay) overlay.classList.remove('visible');
+}
+
 async function sharePromo(promo, url) {
     const title = 'Промокод от Serpmonn';
     const text = `Нашёл рабочий промокод на ${promo?.title || promo?.name || 'Serpmonn'}`;
 
-    try {
-        if (navigator.share) {
+    // Мобильные устройства — нативный Web Share API
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+        try {
             await navigator.share({ title, text, url });
             return;
+        } catch (err) {
+            if (err?.name === 'AbortError') return; // пользователь закрыл шторку
+            console.warn('navigator.share failed, fallback to popup:', err);
         }
-    } catch (err) {
-        // AbortError — пользователь просто закрыл шторку шаринга, не ошибка
-        if (err?.name === 'AbortError') return;
-        console.warn('navigator.share упал, fallback на clipboard:', err);
     }
 
-    // Десктоп или браузер без Web Share API — копируем ссылку в буфер
-    try {
-        await navigator.clipboard.writeText(url);
-        showToast('Ссылка скопирована!', 'success');
-    } catch (_) {
-        // Совсем старый браузер без Clipboard API
-        const ta = document.createElement('textarea');
-        ta.value = url;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        ta.remove();
-        showToast('Ссылка скопирована!', 'success');
-    }
+    // Десктоп или браузер без Web Share API — показываем поп-ап с соцсетями
+    openSharePopup(promo, url);
 }
