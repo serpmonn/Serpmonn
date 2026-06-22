@@ -836,3 +836,216 @@ body {
 .details-content {
     pointer-events: auto;
 }
+
+/* =====================================================
+   SHARE POPUP — оверлей + попап с соцсетями
+   Сети: ВКонтакте, Telegram, ОК, Email
+   ===================================================== */
+
+#share-popup-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 9000;
+    align-items: center;
+    justify-content: center;
+}
+
+#share-popup-overlay.visible {
+    display: flex;
+    animation: share-overlay-in 0.18s ease;
+}
+
+@keyframes share-overlay-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.share-popup {
+    background: #fff;
+    border-radius: 16px;
+    padding: 24px 20px 20px;
+    width: min(92vw, 360px);
+    box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+    position: relative;
+    animation: share-popup-in 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes share-popup-in {
+    from { transform: scale(0.82); opacity: 0; }
+    to   { transform: scale(1);    opacity: 1; }
+}
+
+.share-popup__close {
+    position: absolute;
+    top: 10px;
+    right: 12px;
+    font-size: 22px;
+    line-height: 1;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #888;
+    padding: 4px;
+    border-radius: 6px;
+    transition: color 0.15s, background 0.15s;
+}
+
+.share-popup__close:hover {
+    color: #333;
+    background: rgba(0,0,0,0.06);
+}
+
+.share-popup__title {
+    font-size: 16px;
+    font-weight: 700;
+    color: #222;
+    margin: 0 0 4px;
+    padding-right: 28px;
+    text-align: center;
+}
+
+.share-popup__promo-name {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    margin: 0 0 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* Сетка кнопок соцсетей */
+.share-networks {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.share-network-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    text-decoration: none;
+    color: #333;
+    font-size: 11px;
+    font-weight: 600;
+    width: 56px;
+    transition: transform 0.15s ease;
+}
+
+.share-network-btn:hover {
+    transform: translateY(-3px);
+}
+
+.share-network-btn .sn-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    color: #fff;
+    transition: filter 0.15s ease, box-shadow 0.15s ease;
+}
+
+.share-network-btn:hover .sn-icon {
+    filter: brightness(1.08);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+
+/* Цвета иконок */
+.sn-icon--vk    { background: #0077ff; }
+.sn-icon--tg    { background: #26a5e4; }
+.sn-icon--ok    { background: #ee8208; }
+.sn-icon--email { background: #6c757d; }
+
+/* Строка с URL и кнопкой копирования */
+.share-popup__url-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.share-popup__url-input {
+    flex: 1;
+    font-size: 12px;
+    padding: 7px 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    color: #444;
+    background: #f7f7f7;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: text;
+    outline: none;
+}
+
+.share-popup__copy-btn {
+    flex-shrink: 0;
+    padding: 7px 12px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: filter 0.15s, transform 0.15s;
+    white-space: nowrap;
+}
+
+.share-popup__copy-btn:hover {
+    filter: brightness(1.08);
+    transform: translateY(-1px);
+}
+
+.share-popup__copy-btn.copied {
+    background: #28a745;
+}
+
+/* Мобильный вид — bottom-sheet */
+@media (max-width: 500px) {
+    #share-popup-overlay {
+        align-items: flex-end;
+    }
+
+    .share-popup {
+        width: 100%;
+        border-radius: 20px 20px 0 0;
+        animation: share-popup-slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    @keyframes share-popup-slide-up {
+        from { transform: translateY(100%); opacity: 0.6; }
+        to   { transform: translateY(0);    opacity: 1; }
+    }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+    .share-popup {
+        background: #1e1e2e;
+        box-shadow: 0 12px 40px rgba(0,0,0,0.55);
+    }
+    .share-popup__title      { color: #eee; }
+    .share-popup__promo-name { color: #aaa; }
+    .share-network-btn       { color: #ccc; }
+    .share-popup__url-input {
+        background: #2a2a3e;
+        border-color: #3a3a50;
+        color: #ccc;
+    }
+    .share-popup__close      { color: #aaa; }
+    .share-popup__close:hover { background: rgba(255,255,255,0.08); color: #eee; }
+}

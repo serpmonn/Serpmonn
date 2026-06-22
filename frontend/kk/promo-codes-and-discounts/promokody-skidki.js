@@ -313,10 +313,10 @@ async function refreshPromocodes() {
             localStorage.removeItem('promo_cache');
             await loadPromocodesFromAPI();
             
-            isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';                                                                         // ВОССТАНАВЛИВАЕТ СОСТОЯНИЕ СОРТИРОВКИ ИЗ LOCALSTORAGE
+            isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';
             sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
             
-            if (elements.sortButton) {                                                                                                                          // Обновляет текст кнопки сортировки
+            if (elements.sortButton) {
                 if (isSortedByExpiry) {
                     elements.sortButton.innerHTML = `Сортировка ${sortAscending ? '↑' : '↓'}`;
                 } else {
@@ -324,7 +324,7 @@ async function refreshPromocodes() {
                 }
             }
             
-            filterPromos();                                                                                                                                     // Применяет фильтры с сохранённой сортировкой
+            filterPromos();
             updateLastUpdateTime();
             showToast(result.message, 'success');
         } else {
@@ -586,15 +586,12 @@ function createPromoCard(promo, isTopOffer = false) {
         </div>
     `;
 
-    // Сохраняем URL в data-атрибут для обработки клика по карточке
     if (landingUrl) {
         card.dataset.landingUrl = landingUrl;
     }
 
-    // Обработчик для клика по карточке
     if (landingUrl) {
         card.addEventListener('click', (e) => {
-            // Проверяем, что клик был не по интерактивным элементам
             const interactiveElements = ['BUTTON', 'A', 'INPUT', 'SELECT', 'TEXTAREA'];
             const isInteractive = e.target.closest('button') || 
                                  e.target.closest('a') || 
@@ -604,7 +601,6 @@ function createPromoCard(promo, isTopOffer = false) {
             if (!isInteractive) {
                 window.open(landingUrl, '_blank');
                 
-                // Трекинг клика
                 try {
                     fetch('/api/track-click', {
                         method: 'POST',
@@ -626,7 +622,7 @@ function createPromoCard(promo, isTopOffer = false) {
     const detailsBtn = card.querySelector('.details-btn');
     if (detailsBtn) {
         detailsBtn.addEventListener('click', (e) => {
-            e.stopPropagation(); // Предотвращаем срабатывание клика по карточке
+            e.stopPropagation();
             toggleDetails(detailsBtn);
         });
         detailsBtn.addEventListener('keydown', (e) => {
@@ -644,10 +640,8 @@ function createPromoCard(promo, isTopOffer = false) {
         copyBtn.addEventListener('click', async (e) => {
             e.stopPropagation();
 
-            // Копирование промокода с визуальным feedback на кнопке
             await copyToClipboard(promo, copyBtn);
 
-            // Формируем строку для поиска по проектам
             const combinedForSpecial = [
                 promo?.title,
                 promo?.name,
@@ -663,7 +657,6 @@ function createPromoCard(promo, isTopOffer = false) {
                 combinedForSpecial.includes(project.toLowerCase())
             );
 
-            // Для спец‑проектов: дополнительно сделать "использовать"
             if (isSpecialProject && landingUrl) {
                 try {
                     await fetch('/api/track-click', {
@@ -680,7 +673,6 @@ function createPromoCard(promo, isTopOffer = false) {
                     logError('Ошибка трекинга клика по copy для спец‑проекта', error);
                 }
 
-                // Открываем лендинг как при "Использовать"
                 window.open(landingUrl, '_blank');
             }
         });
@@ -689,7 +681,7 @@ function createPromoCard(promo, isTopOffer = false) {
     const useBtn = card.querySelector('.use-btn');
     if (useBtn) {
         useBtn.addEventListener('click', async (e) => {
-            e.stopPropagation(); // Предотвращаем срабатывание клика по карточке
+            e.stopPropagation();
             try {
                 await fetch('/api/track-click', {
                     method: 'POST',
@@ -713,7 +705,6 @@ function createPromoCard(promo, isTopOffer = false) {
         shareBtn.addEventListener('click', (e) => {
             e.stopPropagation();
 
-            // Не шарим карточки без промокода — ссылка была бы /promo?code=
             if (!codeParam) return;
 
             const shareUrl = `${window.location.origin}/promo?code=${encodeURIComponent(codeParam)}`;
@@ -824,9 +815,7 @@ function filterPromos() {
         return matchesSearch && matchesCategory && matchesCountry && matchesStatus;
     });
 
-    // ЕДИНАЯ СОРТИРОВКА
     if (!isSortedByExpiry) {
-        // Сортировка по умолчанию: сначала топ-бренды по порядку в массиве, затем остальные по дате
         filteredPromocodes.sort((a, b) => {
             const aIsTop = topBrands.some(brand => 
                 a.title.toLowerCase().includes(brand.toLowerCase())
@@ -835,11 +824,9 @@ function filterPromos() {
                 b.title.toLowerCase().includes(brand.toLowerCase())
             );
 
-            // Топ бренды сначала
             if (aIsTop && !bIsTop) return -1;
             if (!aIsTop && bIsTop) return 1;
 
-            // Если оба топ - сортируем по порядку в массиве topBrands
             if (aIsTop && bIsTop) {
                 const indexA = topBrands.findIndex(brand => 
                     a.title.toLowerCase().includes(brand.toLowerCase())
@@ -850,13 +837,11 @@ function filterPromos() {
                 return indexA - indexB;
             }
 
-            // Если оба не топ - сортируем по дате (от ближайшей к дальнейшей)
             const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
             const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
             return dateA - dateB;
         });
     } else {
-        // Сортировка по сроку действия
         filteredPromocodes.sort((a, b) => {
             const dateA = new Date(a.valid_until || a.expiry_date || '9999-12-31');
             const dateB = new Date(b.valid_until || b.expiry_date || '9999-12-31');
@@ -893,7 +878,6 @@ function copyToClipboard(promo, btn) {
     const onSuccess = async () => {
         showToast('Код скопирован!', 'success');
 
-        // Визуальный feedback на кнопке
         if (btn) {
             const originalText = btn.textContent;
             btn.textContent = 'Скопировано ✓';
@@ -940,7 +924,6 @@ function sortByExpiry() {
     localStorage.setItem('promo_sort_by_expiry', 'true');
     localStorage.setItem('promo_sort_ascending', sortAscending ? 'true' : 'false');
     
-    // Применить новую сортировку
     filterPromos();
     
     if (elements.sortButton) {
@@ -1040,7 +1023,6 @@ elements.statusSelect?.addEventListener('change', filterPromos);
 elements.countrySelect?.addEventListener('change', filterPromos);
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // ---- старая инициализация промокодов ----
   isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';
   sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
   const savedSearch = localStorage.getItem('promo_search') || '';
@@ -1057,7 +1039,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateLastUpdateTime();
   startAutoUpdate();
 
-  // Читаем ?search= из URL — перекрывает сохранённый поиск из localStorage
   const urlParams = new URLSearchParams(window.location.search);
   const urlSearch = urlParams.get('search');
   if (urlSearch) {
@@ -1082,29 +1063,24 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  // ---- сюда переезжает код счетчика подписчиков ----
-        const el = document.getElementById('subscribersCount');
-    if (el) {
+  const el = document.getElementById('subscribersCount');
+  if (el) {
     try {
         const res = await fetch('/api/subscribers/count', { cache: 'no-store' });
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         const raw = Number(data.count) || 0;
-
         const formatted = raw.toLocaleString('ru-RU');
-
         const oldText = el.textContent;
-
         const newText = oldText.replace(
-        /(\d[\d\s\u00A0]*)(\s*)/u,
-        `${formatted} `
+            /(\d[\d\s\u00A0]*)(\s*)/u,
+            `${formatted} `
         );
-
         el.textContent = newText;
     } catch (err) {
         console.error('Не удалось получить количество подписчиков', err);
     }
-    }
+  }
 });
 
 function toggleDetails(button) {
@@ -1181,35 +1157,130 @@ function collapseAdIfNoFill(container, timeoutMs) {
     }
 }
 
+// =====================================================
+// SHARE POPUP — поп-ап для десктопа + нативный шаринг на мобиле
+// =====================================================
+
+function getOrCreateShareOverlay() {
+    let overlay = document.getElementById('share-popup-overlay');
+    if (overlay) return overlay;
+
+    overlay = document.createElement('div');
+    overlay.id = 'share-popup-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Поделиться промокодом');
+
+    overlay.innerHTML = `
+        <div class="share-popup">
+            <button class="share-popup__close" aria-label="Закрыть">&times;</button>
+            <p class="share-popup__title">Поделиться промокодом</p>
+            <p class="share-popup__promo-name"></p>
+            <div class="share-networks">
+                <a class="share-network-btn" id="sn-vk" href="#" target="_blank" rel="noopener noreferrer" aria-label="ВКонтакте">
+                    <span class="sn-icon sn-icon--vk">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.162 18.994c.609 0 .85-.407.84-1.024-.032-1.82.614-2.737 2.066-1.26 1.64 1.67 1.986 2.284 3.408 2.284h2.742c.814 0 1.143-.27.95-.8-.48-1.327-4.297-5.17-4.056-5.512.222-.317 3.347-4.596 3.604-5.664.13-.54-.1-.8-.72-.8H18.22c-.69 0-.91.38-1.14.96-1.048 2.7-2.86 5.073-3.57 4.633-.69-.424-.52-2.686-.484-4.252.02-.75.013-1.557-.746-1.738-.518-.124-1.26-.108-1.76-.108-1.47 0-2.67.5-2.018 1.36.49.643.637 1.934.44 4.26-.26 3.117-3.148-.95-4.29-4.17-.285-.81-.567-1.25-1.3-1.25H1.616c-.777 0-.932.366-.72.972 1.37 3.956 5.87 12.638 12.266 12.11z"/></svg>
+                    </span>
+                    ВКонтакте
+                </a>
+                <a class="share-network-btn" id="sn-tg" href="#" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
+                    <span class="sn-icon sn-icon--tg">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8l-1.68 7.92c-.12.56-.46.7-.93.44l-2.58-1.9-1.24 1.2c-.14.14-.26.26-.52.26l.18-2.6 4.74-4.28c.2-.18-.04-.28-.32-.1L7.92 13.8l-2.52-.79c-.54-.17-.56-.54.12-.8l9.84-3.8c.46-.16.86.11.28.39z"/></svg>
+                    </span>
+                    Telegram
+                </a>
+                <a class="share-network-btn" id="sn-ok" href="#" target="_blank" rel="noopener noreferrer" aria-label="Одноклассники">
+                    <span class="sn-icon sn-icon--ok">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zm0 4.5a3.5 3.5 0 110 7 3.5 3.5 0 010-7zm3.75 9.25c.47.47.47 1.23 0 1.7l-1.9 1.9c.52.14 1.05.23 1.6.27.66.05 1.16.62 1.11 1.28-.05.66-.62 1.16-1.28 1.11-1.45-.11-2.82-.62-3.98-1.44-1.16.82-2.53 1.33-3.98 1.44-.66.05-1.23-.45-1.28-1.11-.05-.66.45-1.23 1.11-1.28.55-.04 1.08-.13 1.6-.27l-1.9-1.9c-.47-.47-.47-1.23 0-1.7.47-.47 1.23-.47 1.7 0L12 16.54l2.05-2.04c.47-.47 1.23-.47 1.7.25z"/></svg>
+                    </span>
+                    ОК
+                </a>
+                <a class="share-network-btn" id="sn-email" href="#" aria-label="Email">
+                    <span class="sn-icon sn-icon--email">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M20 4H4c-1.1 0-2 .9-2 2v12c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
+                    </span>
+                    Email
+                </a>
+            </div>
+            <div class="share-popup__url-row">
+                <input type="text" class="share-popup__url-input" readonly aria-label="Ссылка на промокод">
+                <button class="share-popup__copy-btn" type="button">Копировать</button>
+            </div>
+        </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    overlay.querySelector('.share-popup__close').addEventListener('click', closeSharePopup);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) closeSharePopup();
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && overlay.classList.contains('visible')) closeSharePopup();
+    });
+
+    overlay.querySelector('.share-popup__copy-btn').addEventListener('click', () => {
+        const input = overlay.querySelector('.share-popup__url-input');
+        const btn = overlay.querySelector('.share-popup__copy-btn');
+        navigator.clipboard.writeText(input.value).catch(() => {
+            input.select();
+            document.execCommand('copy');
+        });
+        btn.textContent = 'Скопировано ✓';
+        btn.classList.add('copied');
+        showToast('Ссылка скопирована!', 'success');
+        setTimeout(() => {
+            btn.textContent = 'Копировать';
+            btn.classList.remove('copied');
+        }, 2000);
+    });
+
+    return overlay;
+}
+
+function openSharePopup(promo, url) {
+    const overlay = getOrCreateShareOverlay();
+    const promoName = promo?.title || promo?.name || 'промокод';
+    const shareText = `Нашёл рабочий промокод на ${promoName}`;
+
+    overlay.querySelector('.share-popup__promo-name').textContent = promoName;
+    overlay.querySelector('.share-popup__url-input').value = url;
+
+    const enc = encodeURIComponent;
+    overlay.querySelector('#sn-vk').href =
+        `https://vk.com/share.php?url=${enc(url)}&title=${enc(shareText)}`;
+    overlay.querySelector('#sn-tg').href =
+        `https://t.me/share/url?url=${enc(url)}&text=${enc(shareText)}`;
+    overlay.querySelector('#sn-ok').href =
+        `https://connect.ok.ru/offer?url=${enc(url)}&title=${enc(shareText)}`;
+    overlay.querySelector('#sn-email').href =
+        `mailto:?subject=${enc('Промокод от Serpmonn')}&body=${enc(shareText + '\n\n' + url)}`;
+
+    overlay.classList.add('visible');
+    overlay.querySelector('.share-popup__close').focus();
+}
+
+function closeSharePopup() {
+    const overlay = document.getElementById('share-popup-overlay');
+    if (overlay) overlay.classList.remove('visible');
+}
+
 async function sharePromo(promo, url) {
     const title = 'Промокод от Serpmonn';
     const text = `Нашёл рабочий промокод на ${promo?.title || promo?.name || 'Serpmonn'}`;
 
-    try {
-        if (navigator.share) {
+    const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+    if (navigator.share && isMobile) {
+        try {
             await navigator.share({ title, text, url });
             return;
+        } catch (err) {
+            if (err?.name === 'AbortError') return;
+            console.warn('navigator.share failed, fallback to popup:', err);
         }
-    } catch (err) {
-        // AbortError — пользователь просто закрыл шторку шаринга, не ошибка
-        if (err?.name === 'AbortError') return;
-        console.warn('navigator.share упал, fallback на clipboard:', err);
     }
 
-    // Десктоп или браузер без Web Share API — копируем ссылку в буфер
-    try {
-        await navigator.clipboard.writeText(url);
-        showToast('Ссылка скопирована!', 'success');
-    } catch (_) {
-        // Совсем старый браузер без Clipboard API
-        const ta = document.createElement('textarea');
-        ta.value = url;
-        ta.style.position = 'fixed';
-        ta.style.opacity = '0';
-        document.body.appendChild(ta);
-        ta.select();
-        document.execCommand('copy');
-        ta.remove();
-        showToast('Ссылка скопирована!', 'success');
-    }
+    openSharePopup(promo, url);
 }
