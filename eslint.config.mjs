@@ -1,5 +1,82 @@
 import js from '@eslint/js';
 
+// Общие браузерные глобалы (window, document, и т..) — используются в браузерных JS файлах
+const browserGlobals = {
+    window: 'readonly',
+    document: 'readonly',
+    localStorage: 'readonly',
+    sessionStorage: 'readonly',
+    navigator: 'readonly',
+    location: 'readonly',
+    history: 'readonly',
+    alert: 'readonly',
+    confirm: 'readonly',
+    prompt: 'readonly',
+    getComputedStyle: 'readonly',
+    requestAnimationFrame: 'readonly',
+    cancelAnimationFrame: 'readonly',
+    setTimeout: 'readonly',
+    clearTimeout: 'readonly',
+    setInterval: 'readonly',
+    clearInterval: 'readonly',
+    console: 'readonly',
+    fetch: 'readonly',
+    crypto: 'readonly',
+    performance: 'readonly',
+    screen: 'readonly',
+    innerWidth: 'readonly',
+    innerHeight: 'readonly',
+    scrollX: 'readonly',
+    scrollY: 'readonly',
+    pageXOffset: 'readonly',
+    pageYOffset: 'readonly',
+    Image: 'readonly',
+    Audio: 'readonly',
+    Event: 'readonly',
+    CustomEvent: 'readonly',
+    MouseEvent: 'readonly',
+    KeyboardEvent: 'readonly',
+    TouchEvent: 'readonly',
+    HTMLElement: 'readonly',
+    HTMLInputElement: 'readonly',
+    HTMLCanvasElement: 'readonly',
+    Element: 'readonly',
+    Node: 'readonly',
+    NodeList: 'readonly',
+    DOMParser: 'readonly',
+    URL: 'readonly',
+    URLSearchParams: 'readonly',
+    Blob: 'readonly',
+    File: 'readonly',
+    FileReader: 'readonly',
+    FormData: 'readonly',
+    XMLHttpRequest: 'readonly',
+    WebSocket: 'readonly',
+    Worker: 'readonly',
+    MutationObserver: 'readonly',
+    IntersectionObserver: 'readonly',
+    ResizeObserver: 'readonly',
+    PerformanceObserver: 'readonly',
+    Promise: 'readonly',
+    Symbol: 'readonly',
+    Map: 'readonly',
+    Set: 'readonly',
+    WeakMap: 'readonly',
+    WeakSet: 'readonly',
+    Proxy: 'readonly',
+    Reflect: 'readonly',
+    JSON: 'readonly',
+    Math: 'readonly',
+    Array: 'readonly',
+    Object: 'readonly',
+    String: 'readonly',
+    Number: 'readonly',
+    Boolean: 'readonly',
+    Date: 'readonly',
+    RegExp: 'readonly',
+    Error: 'readonly'
+};
+
 export default [
     {
         ignores: [
@@ -12,6 +89,7 @@ export default [
     },
     js.configs.recommended,
     {
+        // Все JS/MJS файлы — базовые настройки ES Modules + Node.js глобалы
         files: ['**/*.js', '**/*.mjs'],
         languageOptions: {
             ecmaVersion: 'latest',
@@ -26,7 +104,11 @@ export default [
                 clearInterval: 'readonly',
                 URL: 'readonly',
                 URLSearchParams: 'readonly',
-                fetch: 'readonly'
+                fetch: 'readonly',
+                Promise: 'readonly',
+                Symbol: 'readonly',
+                Map: 'readonly',
+                Set: 'readonly'
             }
         },
         rules: {
@@ -36,7 +118,7 @@ export default [
         }
     },
     {
-        // CommonJS файлы assembly — require, module, __dirname разрешены
+        // CommonJS файлы assembly — require, module, __dirname, другие CommonJS глобалы
         files: ['assembly/*.js', 'assembly/**/*.js'],
         ignores: ['assembly/site/src/**/*.js'],
         languageOptions: {
@@ -59,46 +141,47 @@ export default [
         }
     },
     {
-        // Браузерные JS файлы сайта — document, window, localStorage, getComputedStyle разрешены
-        files: ['assembly/site/src/**/*.js'],
+        // Service Worker файлы — self, caches, clients разрешены
+        files: ['**/service-worker.js', '**/sw.js', '**/*-sw.js', '**/sw-*.js'],
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'script',
             globals: {
-                window: 'readonly',
-                document: 'readonly',
-                localStorage: 'readonly',
-                sessionStorage: 'readonly',
-                navigator: 'readonly',
+                self: 'readonly',
+                caches: 'readonly',
+                clients: 'readonly',
+                importScripts: 'readonly',
+                fetch: 'readonly',
+                Request: 'readonly',
+                Response: 'readonly',
+                Headers: 'readonly',
+                Cache: 'readonly',
+                CacheStorage: 'readonly',
+                skipWaiting: 'readonly',
+                console: 'readonly',
+                Promise: 'readonly',
+                URL: 'readonly',
+                URLSearchParams: 'readonly',
                 location: 'readonly',
-                history: 'readonly',
-                alert: 'readonly',
-                confirm: 'readonly',
-                getComputedStyle: 'readonly',
-                requestAnimationFrame: 'readonly',
-                cancelAnimationFrame: 'readonly',
+                crypto: 'readonly',
                 setTimeout: 'readonly',
                 clearTimeout: 'readonly',
                 setInterval: 'readonly',
-                clearInterval: 'readonly',
-                console: 'readonly',
-                Image: 'readonly',
-                Audio: 'readonly',
-                Event: 'readonly',
-                CustomEvent: 'readonly',
-                HTMLElement: 'readonly',
-                Element: 'readonly',
-                Node: 'readonly',
-                NodeList: 'readonly',
-                MutationObserver: 'readonly',
-                IntersectionObserver: 'readonly',
-                ResizeObserver: 'readonly',
-                fetch: 'readonly',
-                performance: 'readonly',
-                screen: 'readonly',
-                innerWidth: 'readonly',
-                innerHeight: 'readonly'
+                clearInterval: 'readonly'
             }
+        },
+        rules: {
+            'no-empty': 'warn'
+        }
+    },
+    {
+        // Браузерные JS файлы сайта (assembly/site/src, кроме service-worker)
+        files: ['assembly/site/src/**/*.js'],
+        ignores: ['**/service-worker.js', '**/sw.js'],
+        languageOptions: {
+            ecmaVersion: 'latest',
+            sourceType: 'script',
+            globals: browserGlobals
         },
         rules: {
             'no-empty': 'warn'
