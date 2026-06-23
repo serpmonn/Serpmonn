@@ -34,17 +34,34 @@ eleventyComputed:
     <meta name="twitter:description" content="{{ updatesAugust17[locale].meta.twitterDescription }}">
     <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
-    <!-- JSON-LD: Article -->
+    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      "headline": "{{ updatesAugust17[locale].jsonld.headline }}",
-      "description": "{{ updatesAugust17[locale].jsonld.description }}",
-      "image": ["{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png"],
-      "author": {"@type": "Organization", "name": "Serpmonn"},
-      "publisher": {"@type": "Organization", "name": "Serpmonn", "logo": {"@type": "ImageObject", "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"}},
-      "mainEntityOfPage": {"@type": "WebPage", "@id": "{{ canonical }}"}
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ canonical }}"
+      },
+      "headline": "{{ updatesAugust17[locale].jsonld.headline | replace('"', '&quot;') }}",
+      "description": "{{ updatesAugust17[locale].jsonld.description | replace('"', '&quot;') }}",
+      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
+      "datePublished": "2025-08-17",
+      "dateModified": "2025-08-17",
+      "inLanguage": "{{ locale }}",
+      "url": "{{ canonical }}",
+      "author": {
+        "@type": "Organization",
+        "name": "Serpmonn"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"
+        }
+      }
     }
     </script>
 
