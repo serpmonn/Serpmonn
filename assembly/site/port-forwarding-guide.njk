@@ -33,29 +33,36 @@ eleventyComputed:
     <meta name="twitter:description" content="{{ portForwardingGuide[locale].meta.twitterDescription }}">
     <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Structured Data -->
+    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      "headline": "{{ portForwardingGuide[locale].meta.ogTitle }}",
+      "headline": "{{ portForwardingGuide[locale].meta.ogTitle | replace('"', '&quot;') }}",
+      "description": "{{ portForwardingGuide[locale].meta.ogDescription | replace('"', '&quot;') }}",
+      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
       "datePublished": "2025-10-29",
+      "dateModified": "2025-10-29",
+      "inLanguage": "{{ locale }}",
+      "url": "{{ canonical }}",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ canonical }}"
+      },
       "author": {
         "@type": "Organization",
-        "name": "Serpmonn"
+        "name": "Serpmonn",
+        "url": "{{ site.baseUrl }}"
       },
-      "description": "{{ portForwardingGuide[locale].meta.ogDescription }}",
-      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
-      "inLanguage": "{{ locale }}",
       "publisher": {
         "@type": "Organization",
         "name": "Serpmonn",
+        "url": "{{ site.baseUrl }}",
         "logo": {
           "@type": "ImageObject",
           "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"
         }
-      },
-      "url": "{{ canonical }}"
+      }
     }
     </script>
 

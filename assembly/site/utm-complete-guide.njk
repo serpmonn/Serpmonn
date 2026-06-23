@@ -34,6 +34,39 @@ eleventyComputed:
     <meta name="twitter:description" content="{{ utmCompleteGuide[locale].twitterDescription }}">
     <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
+    <!-- Structured Data: Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": "{{ utmCompleteGuide[locale].title | replace('"', '&quot;') }}",
+      "description": "{{ utmCompleteGuide[locale].description | replace('"', '&quot;') }}",
+      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
+      "datePublished": "2025-09-15",
+      "dateModified": "2025-09-15",
+      "inLanguage": "{{ locale }}",
+      "url": "{{ canonical }}",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ canonical }}"
+      },
+      "author": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "url": "{{ site.baseUrl }}"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "url": "{{ site.baseUrl }}",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"
+        }
+      }
+    }
+    </script>
+
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="{{ canonical }}" />
 
