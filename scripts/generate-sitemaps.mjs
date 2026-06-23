@@ -78,6 +78,35 @@ function toUrl(filePath) {
   return rel ? `${SITE_BASE}/${rel}` : `${SITE_BASE}/`;
 }
 
+// --- Получение промокодов из Perfluence API для sitemap ---
+async function fetchPromocodesForSitemap() {
+  try {
+    const PERFLUENCE_KEY = process.env.PERFLUENCE_API_KEY ||
+      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ODk4OTg3LCJhdXRoX2tleSI6Iml1Tl9fVk5WdTdOY0RqT1RKZW1EbUpUV1JjeUxqNFp4IiwiZGF0YSI6W119.k8vSFrvEtc75g7Gu-YdIcvhu6nB60V2CTOjti0IPfhQ';
+    const res = await fetch(
+      `https://dash.perfluence.net/blogger/promocode-api/json?key=${PERFLUENCE_KEY}`
+    );
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const raw = await res.json();
+    const perfArray = Array.isArray(raw) ? raw : (Array.isArray(raw?.data) ? raw.data : []);
+
+    const codes = new Set();
+    for (const item of perfArray) {
+      for (const group of (item?.groups || [])) {
+        for (const promo of (group?.promocodes || [])) {
+          if (promo?.code && promo.code.trim()) {
+            codes.add(promo.code.trim());
+          }
+        }
+      }
+    }
+    return [...codes];
+  } catch (err) {
+    console.warn(`[SITEMAP] Не удалось получить промокоды из Perfluence API: ${err.message}`);
+    return [];
+  }
+}
+
 function generateSitemapForLang(langDirName) {
   const today = formatDateYYYYMMDD(new Date());
   const parts = [];
@@ -118,7 +147,7 @@ function generateSitemapForLang(langDirName) {
   return outPath;
 }
 
-function generateSitemapForRU() {
+async function generateSitemapForRU() {
   const today = formatDateYYYYMMDD(new Date());
   const parts = [];
   parts.push('<?xml version="1.0" encoding="UTF-8"?>');
@@ -164,6 +193,16 @@ function generateSitemapForRU() {
     const url = toUrl(f);
     parts.push(
       `  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.60</priority>\n  </url>`
+    );
+  }
+
+  // --- Промокоды из Perfluence API ---
+  const promoCodes = await fetchPromocodesForSitemap();
+  console.log(`[SITEMAP] Добавляем ${promoCodes.length} промокодов в sitemap-ru.xml`);
+  for (const code of promoCodes) {
+    const url = `${SITE_BASE}/promo?code=${encodeURIComponent(code)}`;
+    parts.push(
+      `  <url>\n    <loc>${url}</loc>\n    <lastmod>${today}</lastmod>\n    <changefreq>weekly</changefreq>\n    <priority>0.70</priority>\n  </url>`
     );
   }
 
@@ -328,7 +367,7 @@ function generateIndex(langs) {
   return outPath;
 }
 
-function main() {
+async function main() {
   console.log('=== Генерация sitemap для Serpmonn ===');
   console.log(`PROJECT_ROOT: ${PROJECT_ROOT}`);
   console.log(`FRONTEND_DIR: ${FRONTEND_DIR}`);
@@ -364,9 +403,9 @@ function main() {
 
   const generated = [];
   
-  // Создаем sitemap для русского языка
+  // Создаем sitemap для русского языка (async — загружает промокоды из API)
   console.log('\nГенерация sitemap для русского языка...');
-  generated.push(generateSitemapForRU());
+  generated.push(await generateSitemapForRU());
   
   // Создаем sitemaps для всех других языков
   for (const l of langs) {
