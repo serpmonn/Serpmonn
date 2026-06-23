@@ -18,14 +18,14 @@
 {% for loc in locales %}
   <link rel="alternate" href="{{ currentUrl | replace('/' + locale + '/', '/' + loc + '/') }}" hreflang="{{ loc }}" />
 {% endfor %}
-<link rel="alternate" href="{{ currentUrl | replace('/' + locale + '/', '/ru/') }}" hreflang="x-default" />
+<link rel="alternate" href="{{ currentUrl | replace('/' + locale + '/', '/en/') }}" hreflang="x-default" />
 <link rel="canonical" href="{{ currentUrl }}" />
 <meta property="og:title" content="{{ ogTitle }}" />
 <meta property="og:description" content="{{ ogDescription }}" />
 <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png" />
 <meta property="og:url" content="{{ currentUrl }}" />
 <meta property="og:type" content="website" />
-<meta property="og:locale" content="{{ locale | replace('-', '_') }}" />
+<meta property="og:locale" content="{{ locale | ogLocale }}" />
 <meta property="og:site_name" content="Serpmonn" />
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ twitterTitle }}">
@@ -77,9 +77,9 @@
   "url": "{{ site.baseUrl }}/",
   "logo": {
     "@type": "ImageObject",
-    "url": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
-    "width": 1200,
-    "height": 630
+    "url": "{{ site.baseUrl }}/frontend/images/Serpmonn-96x96.png",
+    "width": 96,
+    "height": 96
   }
 }
 </script>
