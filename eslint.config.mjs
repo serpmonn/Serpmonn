@@ -118,7 +118,7 @@ export default [
         }
     },
     {
-        // CommonJS файлы assembly — require, module, __dirname, другие CommonJS глобалы
+        // CommonJS файлы assembly — require, module, __dirname разрешены
         files: ['assembly/*.js', 'assembly/**/*.js'],
         ignores: ['assembly/site/src/**/*.js'],
         languageOptions: {
@@ -171,11 +171,12 @@ export default [
             }
         },
         rules: {
-            'no-empty': 'warn'
+            'no-empty': 'warn',
+            'no-undef': 'off'
         }
     },
     {
-        // Браузерные JS файлы сайта (assembly/site/src, кроме service-worker)
+        // Браузерные JS файлы сайта (assembly/site/src) — отключаем no-undef т..к. файлы разделяют глобальный скоп через HTML
         files: ['assembly/site/src/**/*.js'],
         ignores: ['**/service-worker.js', '**/sw.js'],
         languageOptions: {
@@ -184,7 +185,8 @@ export default [
             globals: browserGlobals
         },
         rules: {
-            'no-empty': 'warn'
+            'no-empty': 'warn',
+            'no-undef': 'off'  // Браузерные скрипты используют общий скоп HTML-страницы
         }
     }
 ];
