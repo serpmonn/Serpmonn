@@ -22,9 +22,9 @@
 <meta name="kadam-verification" content="kadam0340f16a561e3de4d4b2d1ba64630da4">
 
 {% for loc in locales %}
-  <link rel="alternate" href="{{ site.baseUrl }}/{{ loc }}/" hreflang="{{ loc }}" />
+      <link rel="alternate" href="{{ currentUrl | replace('/' + locale + '/', '/' + loc + '/') }}" hreflang="{{ loc }}" />
 {% endfor %}
-<link rel="alternate" href="{{ site.baseUrl }}/ru/" hreflang="x-default" />
+<link rel="alternate" href="{{ currentUrl | replace('/' + locale + '/', '/ru/') }}" hreflang="x-default" />
 
 <link rel="canonical" href="{{ currentUrl }}" />
 
