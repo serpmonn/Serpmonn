@@ -38,7 +38,7 @@ export default [
     {
         // CommonJS файлы assembly — require, module, __dirname разрешены
         files: ['assembly/*.js', 'assembly/**/*.js'],
-        ignores: ['assembly/site/src/games/**/*.js'],
+        ignores: ['assembly/site/src/**/*.js'],
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'commonjs',
@@ -59,8 +59,8 @@ export default [
         }
     },
     {
-        // Браузерные JS файлы игр — document, window, localStorage, getComputedStyle разрешены
-        files: ['assembly/site/src/games/**/*.js'],
+        // Браузерные JS файлы сайта — document, window, localStorage, getComputedStyle разрешены
+        files: ['assembly/site/src/**/*.js'],
         languageOptions: {
             ecmaVersion: 'latest',
             sourceType: 'script',
