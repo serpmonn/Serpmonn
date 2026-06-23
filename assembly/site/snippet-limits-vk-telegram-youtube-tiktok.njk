@@ -46,7 +46,37 @@ eleventyComputed:
     {% endfor %}
     <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" hreflang="x-default" />
 
-    <!-- Подключение стилей -->
+        <!-- Structured Data: Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ canonical }}"
+      },
+      "headline": "{{ snippetLimitsVkTelegramYoutubeTiktok[locale].meta.title | replace('"', '&quot;') }}",
+      "description": "{{ snippetLimitsVkTelegramYoutubeTiktok[locale].meta.description | replace('"', '&quot;') }}",
+      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
+      "datePublished": "2025-01-20",
+      "dateModified": "2025-06-23",
+      "inLanguage": "{{ locale }}",
+      "url": "{{ canonical }}",
+      "author": {
+        "@type": "Organization",
+        "name": "Serpmonn"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"
+        }
+      }
+    }
+    </script>
+<!-- Подключение стилей -->
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
