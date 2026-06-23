@@ -168,9 +168,6 @@ const OVERWRITE_RULES = {
     '.txt': true,
     '.md': true,
     
-    // Иконки
-    '.ico': true,
-    
     // Другие веб-файлы
     '.webmanifest': true,
     
