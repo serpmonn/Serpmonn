@@ -160,7 +160,7 @@ function determineCountryFromText(...texts) {
   // Явное определение России для российских брендов без KZ/UZ/казахстан/узбекистан
   if (/okko|elementaree|yandex\s*music\s*$|яндекс\s*музык\s*$|yandex\s*plus\s*$|яндекс\s*плюс\s*$|лэтуаль|letual|альфа-карта|alfa-karta|газпромбанк|gazprombank|мир\s*дебетовая/i.test(text) && !/kz|uz|казахстан|узбекистан|georgia|грузия/i.test(text)) return 'Россия';
   // Явное определение Казахстана по валюте ₸, KZ или упоминаниям в названиях, исключая российские бренды
-  if (/\₸|kz|казахстан|kazakhstan|яндекс.*казахстан|yandex.*kazakhstan|еда.*казахстан|go.*казахстан|плюс.*kz|музык.*kz|choco.*рядом/i.test(text) && !/okko|elementaree|лэтуаль|letual|альфа-карта|alfa-karta|газпромбанк|gazprombank|мир\s*дебетовая/i.test(text)) return 'Казахстан';
+  if (/₸|kz|казахстан|kazakhstan|яндекс.*казахстан|yandex.*kazakhstan|еда.*казахстан|go.*казахстан|плюс.*kz|музык.*kz|choco.*рядом/i.test(text) && !/okko|elementaree|лэтуаль|letual|альфа-карта|alfa-karta|газпромбанк|gazprombank|мир\s*дебетовая/i.test(text)) return 'Казахстан';
   // Явное определение Узбекистана по UZ или упоминаниям в названиях, исключая российские бренды
   if (/uz|узбекистан|uzbekistan|яндекс.*узбекистан|yandex.*uzbekistan|еда.*узбекистан|go.*узбекистан|плюс.*uz/i.test(text) && !/okko|elementaree|лэтуаль|letual|альфа-карта|alfa-karta|газпромбанк|gazprombank|мир\s*дебетовая/i.test(text)) return 'Узбекистан';
   // Явное определение Грузии, исключая российские бренды
