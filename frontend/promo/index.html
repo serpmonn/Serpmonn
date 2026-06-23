@@ -375,7 +375,7 @@
   function discountLabel(p) {
     if (!p) return null;
     if (p.discount_percent) return `−${p.discount_percent}%`;
-    if (p.discount_amount)  return `−${p.discount_amount} ₽`;
+    if (p.discount_amount)  return `−${p.discount_amount} ₽`;
     return null;
   }
 
@@ -413,6 +413,33 @@
     el.setAttribute('content', content);
   }
 
+  // ── JSON-LD (schema.org/Offer) ──
+  function injectJsonLd(promo) {
+    const old = document.getElementById('json-ld-promo');
+    if (old) old.remove();
+
+    const schema = {
+      '@context': 'https://schema.org',
+      '@type': 'Offer',
+      'name': promo.title,
+      'description': promo.description || '',
+      'url': window.location.href
+    };
+
+    if (promo.discount_percent) schema['discount'] = promo.discount_percent + '%';
+    if (promo.valid_until)      schema['priceValidUntil'] = promo.valid_until;
+    if (promo.image_url)        schema['image'] = promo.image_url;
+    if (promo.landing_url) {
+      schema['seller'] = { '@type': 'Organization', 'url': promo.landing_url };
+    }
+
+    const script = document.createElement('script');
+    script.id   = 'json-ld-promo';
+    script.type = 'application/ld+json';
+    script.textContent = JSON.stringify(schema);
+    document.head.appendChild(script);
+  }
+
   // ── Render ──
   function render(promo) {
     const expired = isExpired(promo.valid_until);
@@ -429,6 +456,9 @@
     setMeta('og:description', promo.description || '');
     if (promo.image_url) setMeta('og:image', promo.image_url);
     setMeta('og:url', window.location.href);
+
+    // Вставляем JSON-LD
+    injectJsonLd(promo);
 
     root.innerHTML = `
       <div class="promo-wrap">
