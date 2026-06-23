@@ -9,6 +9,23 @@ module.exports = function(eleventyConfig) {
   eleventyConfig.addPassthroughCopy({ "site/src": "frontend" });
 
   /**
+   * SEO: фильтр для правильного формата og:locale
+   * Преобразует BCP47 локаль в формат Facebook/VK (xx_XX)
+   */
+  eleventyConfig.addFilter("ogLocale", function(locale) {
+    const map = {
+      'zh-cn': 'zh_CN',
+      'zh-tw': 'zh_TW',
+      'zh-hk': 'zh_HK',
+      'pt-br': 'pt_BR',
+      'sr-latn': 'sr_Latn'
+    };
+    if (map[locale]) return map[locale];
+    // Для остальных: xx-yy → xx_YY
+    return locale.replace('-', '_').replace(/(_[a-z]{2,})$/, s => s.toUpperCase());
+  });
+
+  /**
    * ДОПОЛНИТЕЛЬНОЕ КОПИРОВАНИЕ В ЛОКАЛИ (после сборки)
    */
   eleventyConfig.on('eleventy.after', async () => {
