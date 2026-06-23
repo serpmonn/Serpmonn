@@ -4,18 +4,18 @@ export default [
     {
         ignores: [
             'node_modules/**',
-            'dist/**',                              // Production сборка — не проверяем
-            'assembly/dist/**',                     // Сборка assembly — не проверяем
-            'frontend/analytics/**',                // Аналитика фронтенда — не проверяем
-            'backend/analytics/**'                  // Аналитика бэкенда — не проверяем
+            'dist/**',
+            'assembly/dist/**',
+            'frontend/analytics/**',
+            'backend/analytics/**'
         ]
     },
-    js.configs.recommended,                         // Базовый набор рекомендуемых правил ESLint
+    js.configs.recommended,
     {
-        files: ['**/*.js', '**/*.mjs'],             // Применяем ко всем JS и MJS файлам
+        files: ['**/*.js', '**/*.mjs'],
         languageOptions: {
-            ecmaVersion: 'latest',                  // Используем актуальную версию ECMAScript
-            sourceType: 'module',                   // Проект на ES Modules
+            ecmaVersion: 'latest',
+            sourceType: 'module',
             globals: {
                 console: 'readonly',
                 process: 'readonly',
@@ -26,12 +26,13 @@ export default [
                 clearInterval: 'readonly',
                 URL: 'readonly',
                 URLSearchParams: 'readonly',
-                fetch: 'readonly'                   // Нативный fetch доступен в Node 18+
+                fetch: 'readonly'
             }
         },
         rules: {
-            'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],  // Предупреждение о неиспользуемых переменных (кроме _)
-            'no-undef': 'error'                     // Ошибка при обращении к необъявленной переменной
+            'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+            'no-undef': 'error',
+            'no-empty': 'warn'
         }
     },
     {
@@ -58,7 +59,7 @@ export default [
         }
     },
     {
-        // Браузерные JS файлы игр — document, window, localStorage разрешены
+        // Браузерные JS файлы игр — document, window, localStorage, getComputedStyle разрешены
         files: ['assembly/site/src/games/**/*.js'],
         languageOptions: {
             ecmaVersion: 'latest',
@@ -73,6 +74,7 @@ export default [
                 history: 'readonly',
                 alert: 'readonly',
                 confirm: 'readonly',
+                getComputedStyle: 'readonly',
                 requestAnimationFrame: 'readonly',
                 cancelAnimationFrame: 'readonly',
                 setTimeout: 'readonly',
@@ -83,8 +85,23 @@ export default [
                 Image: 'readonly',
                 Audio: 'readonly',
                 Event: 'readonly',
-                CustomEvent: 'readonly'
+                CustomEvent: 'readonly',
+                HTMLElement: 'readonly',
+                Element: 'readonly',
+                Node: 'readonly',
+                NodeList: 'readonly',
+                MutationObserver: 'readonly',
+                IntersectionObserver: 'readonly',
+                ResizeObserver: 'readonly',
+                fetch: 'readonly',
+                performance: 'readonly',
+                screen: 'readonly',
+                innerWidth: 'readonly',
+                innerHeight: 'readonly'
             }
+        },
+        rules: {
+            'no-empty': 'warn'
         }
     }
 ];
