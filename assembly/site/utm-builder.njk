@@ -39,15 +39,34 @@ eleventyComputed:
 
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
-        {% if loc == 'ru' %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/marketing/utm-builder.html" hreflang="{{ loc }}" />
-        {% else %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/marketing/utm-builder.html" hreflang="{{ loc }}" />
-        {% endif %}
+        <link rel="alternate" href="{{ canonical | replace('/' + locale + '/', '/' + loc + '/') }}" hreflang="{{ loc }}" />
     {% endfor %}
-    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/marketing/utm-builder.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ canonical | replace('/' + locale + '/', '/ru/') }}" hreflang="x-default" />
 
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+        <!-- Structured Data: SoftwareApplication -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "{{ utmBuilder[locale].meta.title | replace('"', '&quot;') }}",
+      "description": "{{ utmBuilder[locale].meta.description | replace('"', '&quot;') }}",
+      "url": "{{ canonical }}",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "{{ locale }}",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "RUB"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "url": "{{ site.baseUrl }}/"
+      }
+    }
+    </script>
+<link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
