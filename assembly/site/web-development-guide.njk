@@ -35,20 +35,26 @@ eleventyComputed:
     <meta name="twitter:description" content="{{ webDevelopmentGuide[locale].meta.twitterDescription }}">
     <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Structured Data -->
+<!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Article",
-      "headline": "{{ webDevelopmentGuide[locale].meta.ogTitle }}",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ canonical }}"
+      },
+      "headline": "{{ webDevelopmentGuide[locale].meta.ogTitle | replace('"', '&quot;') }}",
+      "description": "{{ webDevelopmentGuide[locale].meta.ogDescription | replace('"', '&quot;') }}",
+      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
       "datePublished": "2024-08-18",
+      "dateModified": "2025-06-23",
+      "inLanguage": "{{ locale }}",
+      "url": "{{ canonical }}",
       "author": {
         "@type": "Organization",
         "name": "Serpmonn"
       },
-      "description": "{{ webDevelopmentGuide[locale].meta.ogDescription }}",
-      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
-      "inLanguage": "{{ locale }}",
       "publisher": {
         "@type": "Organization",
         "name": "Serpmonn",
@@ -56,8 +62,7 @@ eleventyComputed:
           "@type": "ImageObject",
           "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico"
         }
-      },
-      "url": "{{ canonical }}"
+      }
     }
     </script>
 
