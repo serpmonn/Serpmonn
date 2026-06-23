@@ -139,6 +139,37 @@ export default [
         }
     },
     {
+        // Тестовые файлы — глобалы Jest/Vitest/Mocha разрешены
+        files: ['**/*.test.mjs', '**/*.test.js', '**/*.spec.mjs', '**/*.spec.js'],
+        languageOptions: {
+            ecmaVersion: 'latest',
+            sourceType: 'module',
+            globals: {
+                describe: 'readonly',
+                it: 'readonly',
+                test: 'readonly',
+                expect: 'readonly',
+                beforeAll: 'readonly',
+                afterAll: 'readonly',
+                beforeEach: 'readonly',
+                afterEach: 'readonly',
+                vi: 'readonly',
+                jest: 'readonly',
+                spyOn: 'readonly',
+                mock: 'readonly',
+                console: 'readonly',
+                process: 'readonly',
+                Buffer: 'readonly',
+                setTimeout: 'readonly',
+                clearTimeout: 'readonly',
+                URL: 'readonly',
+                URLSearchParams: 'readonly',
+                fetch: 'readonly',
+                crypto: 'readonly'
+            }
+        }
+    },
+    {
         // CommonJS файлы assembly — require, module, __dirname разрешены
         files: ['assembly/*.js', 'assembly/**/*.js'],
         ignores: ['assembly/site/src/**/*.js'],
