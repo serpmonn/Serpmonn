@@ -57,6 +57,8 @@ const browserGlobals = {
     IntersectionObserver: 'readonly',
     ResizeObserver: 'readonly',
     PerformanceObserver: 'readonly',
+    AbortController: 'readonly',
+    AbortSignal: 'readonly',
     Promise: 'readonly',
     Symbol: 'readonly',
     Map: 'readonly',
@@ -102,19 +104,38 @@ export default [
                 clearTimeout: 'readonly',
                 setInterval: 'readonly',
                 clearInterval: 'readonly',
+                setImmediate: 'readonly',
+                clearImmediate: 'readonly',
                 URL: 'readonly',
                 URLSearchParams: 'readonly',
                 fetch: 'readonly',
+                crypto: 'readonly',
+                AbortController: 'readonly',
+                AbortSignal: 'readonly',
                 Promise: 'readonly',
                 Symbol: 'readonly',
                 Map: 'readonly',
-                Set: 'readonly'
+                Set: 'readonly',
+                WeakMap: 'readonly',
+                WeakSet: 'readonly',
+                TextEncoder: 'readonly',
+                TextDecoder: 'readonly',
+                Blob: 'readonly',
+                FormData: 'readonly',
+                Headers: 'readonly',
+                Request: 'readonly',
+                Response: 'readonly',
+                ReadableStream: 'readonly',
+                WritableStream: 'readonly',
+                TransformStream: 'readonly'
             }
         },
         rules: {
             'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
             'no-undef': 'error',
-            'no-empty': 'warn'
+            'no-empty': 'warn',
+            'no-unreachable': 'warn',
+            'no-dupe-keys': 'warn'
         }
     },
     {
@@ -176,7 +197,7 @@ export default [
         }
     },
     {
-        // Браузерные JS файлы сайта (assembly/site/src) — отключаем no-undef т..к. файлы разделяют глобальный скоп через HTML
+        // Браузерные JS файлы сайта (assembly/site/src) — отключаем no-undef т.к. файлы разделяют глобальный скоп через HTML
         files: ['assembly/site/src/**/*.js'],
         ignores: ['**/service-worker.js', '**/sw.js'],
         languageOptions: {
@@ -186,7 +207,8 @@ export default [
         },
         rules: {
             'no-empty': 'warn',
-            'no-undef': 'off'  // Браузерные скрипты используют общий скоп HTML-страницы
+            'no-undef': 'off',
+            'no-dupe-keys': 'warn'
         }
     }
 ];
