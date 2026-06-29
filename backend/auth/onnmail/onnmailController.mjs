@@ -1,166 +1,166 @@
-import dotenv from 'dotenv';                                                                                                    // Импорт модуля для работы с переменными окружения
-import { resolve } from 'path';                                                                                                 // Импорт функции для работы с путями файловой системы
-import { execSync } from 'child_process';                                                                                       // Импорт модуля для выполнения системных команд
-import { query } from '../../database/config.mjs';                                                                              // Импорт функции для работы с БД Serpmonn (веб-пользователи)
-import { mailQuery } from '../../database/mailDatabase.config.mjs';                                                             // Импорт функции для работы с БД mailserver (почтовые пользователи)
+import dotenv from 'dotenv';
+import { resolve } from 'path';
+import { execFileSync } from 'child_process';
+import { query } from '../../database/config.mjs';
+import { mailQuery } from '../../database/mailDatabase.config.mjs';
 
-const isProduction = process.env.NODE_ENV === 'production';                                                                     // Проверка режима работы (продакшен или разработка)
-const envPath = isProduction                                                                                                    // Определение пути к файлу .env в зависимости от режима
-    ? '/var/www/serpmonn.ru/backend/.env'                                                                                       // Путь для продакшена на сервере
-    : resolve(process.cwd(), 'backend/.env');                                                                                   // Путь для разработки - абсолютный путь
+const isProduction = process.env.NODE_ENV === 'production';
+const envPath = isProduction
+    ? '/var/www/serpmonn.ru/backend/.env'
+    : resolve(process.cwd(), 'backend/.env');
 
-dotenv.config({ path: envPath });                                                                                               // Загрузка переменных окружения из указанного файла
+dotenv.config({ path: envPath });
 
-export const createMailbox = async (req, res) => {                                                                              // Экспорт асинхронной функции для создания почтового ящика
-    let emailLocalPart = null;                                                                                                  // Объявление переменной для хранения локальной части email для отката
-    
-    try {                                                                                                                       // Начало блока обработки ошибок
-        const { username, emailLocalPart: localPart, password } = req.body;                                                     // Деструктуризация данных из тела запроса
-        const userEmail = req.user.email;                                                                                       // Получение email пользователя из объекта запроса (аутентификация)
-        emailLocalPart = localPart;                                                                                             // Сохранение локальной части email для использования в блоке catch
+export const createMailbox = async (req, res) => {
+    let emailLocalPart = null;
 
-        console.log('🔍 Создание почтового ящика для:', userEmail);                                                             // Логирование начала процесса создания ящика
+    try {
+        const { username, emailLocalPart: localPart, password } = req.body;
+        const userEmail = req.user.email;
+        emailLocalPart = localPart;
 
-        const [user] = await query('SELECT confirmed, mailbox_created FROM users WHERE email = ?', [userEmail]);                // Запрос к БД Serpmonn для получения данных пользователя
-        
-        if (!user) {                                                                                                            // Проверка существования пользователя в веб-БД
-            return res.status(404).json({ message: 'Пользователь не найден' });                                                 // Возврат ошибки 404 если пользователь не найден
+        console.log('🔍 Создание почтового ящика для:', userEmail);
+
+        const [user] = await query('SELECT confirmed, mailbox_created FROM users WHERE email = ?', [userEmail]);
+
+        if (!user) {
+            return res.status(404).json({ message: 'Пользователь не найден' });
         }
-        if (!user.confirmed) {                                                                                                  // Проверка подтверждения email аккаунта пользователя
-            return res.status(403).json({ message: 'Подтвердите ваш аккаунт' });                                                // Возврат ошибки 403 если аккаунт не подтвержден
+        if (!user.confirmed) {
+            return res.status(403).json({ message: 'Подтвердите ваш аккаунт' });
         }
-        if (user.mailbox_created) {                                                                                             // Проверка是否已经创建过邮箱 (создан ли уже почтовый ящик)
-            return res.status(403).json({ message: 'Вы уже создали почтовый ящик' });                                           // Возврат ошибки 403 если почтовый ящик уже создан
-        }
-
-        if (!username || !localPart || !password) {                                                                             // Проверка наличия всех обязательных полей в запросе
-            return res.status(400).json({ message: 'Все поля обязательны для заполнения' });                                    // Возврат ошибки 400 при отсутствии полей
-        }
-        if (!/^[a-z0-9._%+-]+$/.test(localPart)) {                                                                              // Проверка формата локальной части email (только латиница, цифры, символы)
-            return res.status(400).json({ message: 'Логин может содержать только латинские буквы, цифры и символы ._%+-' });    // Возврат ошибки при неверном формате
-        }
-        if (password.length < 8) {                                                                                              // Проверка минимальной длины пароля
-            return res.status(400).json({ message: 'Пароль должен содержать минимум 8 символов' });                             // Возврат ошибки при коротком пароле
+        if (user.mailbox_created) {
+            return res.status(403).json({ message: 'Вы уже создали почтовый ящик' });
         }
 
-        const domain = 'onnmail.ru';                                                                                            // Определение домена для почтового ящика
-        const fullEmail = `${localPart}@${domain}`;                                                                             // Формирование полного email адреса
-
-        console.log('📨 Создаваемый email:', fullEmail);                                                                        // Логирование создаваемого email адреса
-
-        const existingMailUser = await mailQuery('SELECT id FROM users WHERE email = ?', [fullEmail]);                          // Запрос к БД mailserver для проверки существования email
-        if (existingMailUser && existingMailUser.length > 0) {                                                                  // Проверка是否存在记录 (существует ли уже почтовый ящик)
-            return res.status(400).json({ message: 'Почтовый ящик уже существует' });                                           // Возврат ошибки 400 если почтовый ящик уже существует
+        if (!username || !localPart || !password) {
+            return res.status(400).json({ message: 'Все поля обязательны для заполнения' });
+        }
+        if (!/^[a-z0-9._%+-]+$/.test(localPart)) {
+            return res.status(400).json({ message: 'Логин может содержать только латинские буквы, цифры и символы ._%+-' });
+        }
+        if (password.length < 8) {
+            return res.status(400).json({ message: 'Пароль должен содержать минимум 8 символов' });
         }
 
-        const domainRows = await mailQuery('SELECT id FROM domains WHERE domain = ?', [domain]);                                // Запрос к БД mailserver для получения ID домена
-        if (domainRows.length === 0) {                                                                                          // Проверка наличия домена в почтовой БД
-            throw new Error(`Домен ${domain} не найден в БД mailserver`);                                                       // Выброс ошибки если домен не найден
-        }
-        const domainId = domainRows[0].id;                                                                                      // Получение ID домена из результата запроса
+        const domain = 'onnmail.ru';
+        const fullEmail = `${localPart}@${domain}`;
 
-        const dovecotPassword = await generateDovecotPassword(password);                                                        // Вызов функции генерации хешированного пароля для Dovecot
-        
-        await mailQuery(                                                                                                        // Выполнение запроса на добавление пользователя в БД mailserver
-            'INSERT INTO users (email, password, domain_id, home, uid, gid) VALUES (?, ?, ?, ?, ?, ?)',                         // SQL запрос для вставки данных почтового пользователя
+        console.log('📨 Создаваемый email:', fullEmail);
+
+        const existingMailUser = await mailQuery('SELECT id FROM users WHERE email = ?', [fullEmail]);
+        if (existingMailUser && existingMailUser.length > 0) {
+            return res.status(400).json({ message: 'Почтовый ящик уже существует' });
+        }
+
+        const domainRows = await mailQuery('SELECT id FROM domains WHERE domain = ?', [domain]);
+        if (domainRows.length === 0) {
+            throw new Error(`Домен ${domain} не найден в БД mailserver`);
+        }
+        const domainId = domainRows[0].id;
+
+        const dovecotPassword = await generateDovecotPassword(password);
+
+        await mailQuery(
+            'INSERT INTO users (email, password, domain_id, home, uid, gid) VALUES (?, ?, ?, ?, ?, ?)',
             [
-                fullEmail,                                                                                                      // Полный email адрес
-                dovecotPassword,                                                                                                // Хешированный пароль для Dovecot
-                domainId,                                                                                                       // ID домена из таблицы domains
-                `/var/vmail/${domain}/${localPart}`,                                                                            // home - путь к домашней директории пользователя
-                5000,                                                                                                           // uid - ID пользователя vmail (владелец файлов)
-                5000                                                                                                            // gid - ID группы vmail (группа доступа)
+                fullEmail,
+                dovecotPassword,
+                domainId,
+                `/var/vmail/${domain}/${localPart}`,
+                5000,
+                5000
             ]
         );
 
-        const mailDir = `/var/vmail/${domain}/${localPart}/Maildir`;                                                            // Формирование пути к директории Maildir
-        try {                                                                                                                   // Блок обработки ошибок при создании директорий
-            execSync(`mkdir -p ${mailDir}/{cur,new,tmp}`);                                                                      // Выполнение команды создания структуры директорий Maildir
-            execSync(`chown -R vmail:vmail /var/vmail/${domain}/${localPart}`);                                                 // Выполнение команды изменения владельца директорий на vmail
-            execSync(`chmod -R 700 /var/vmail/${domain}/${localPart}`);                                                         // Выполнение команды установки прав доступа 700
-        } catch (fsError) {                                                                                                     // Обработка ошибок файловой системы
-            console.error('❌ Ошибка создания директорий:', fsError);                                                           // Логирование ошибки создания директорий
+        const mailDir = `/var/vmail/${domain}/${localPart}/Maildir`;
+        try {
+            execFileSync('mkdir', ['-p', `${mailDir}/cur`, `${mailDir}/new`, `${mailDir}/tmp`]);
+            execFileSync('chown', ['-R', 'vmail:vmail', `/var/vmail/${domain}/${localPart}`]);
+            execFileSync('chmod', ['-R', '700', `/var/vmail/${domain}/${localPart}`]);
+        } catch (fsError) {
+            console.error('❌ Ошибка создания директорий:', fsError);
         }
 
-        await query('UPDATE users SET mailbox_created = ? WHERE email = ?', [1, userEmail]);                                    // Запрос на обновление флага mailbox_created в БД Serpmonn
+        await query('UPDATE users SET mailbox_created = ? WHERE email = ?', [1, userEmail]);
 
-        console.log(`🎉 Почтовый ящик ${fullEmail} успешно создан!`);                                                          // Логирование успешного создания почтового ящика
+        console.log(`🎉 Почтовый ящик ${fullEmail} успешно создан!`);
 
-        res.status(201).json({                                                                                                  // Отправка успешного ответа клиенту с статусом 201 (Created)
-            success: true,                                                                                                      // Флаг успешного выполнения операции
-            email: fullEmail,                                                                                                   // Созданный email адрес для отображения пользователю
-            message: 'Почтовый ящик успешно создан'                                                                             // Сообщение об успешном создании ящика
+        res.status(201).json({
+            success: true,
+            email: fullEmail,
+            message: 'Почтовый ящик успешно создан'
         });
 
-    } catch (error) {                                                                                                           // Обработка ошибок в блоке try
-        console.error('💥 Ошибка создания почтового ящика:', error);                                                           // Логирование критической ошибки создания ящика
-        
-        if (emailLocalPart) {                                                                                                   // Проверка наличия локальной части email для выполнения отката
-            try {                                                                                                               // Блок попытки отката изменений
-                await rollbackMailboxCreation(emailLocalPart);                                                                  // Вызов функции отката изменений
-            } catch (rollbackError) {                                                                                           // Обработка ошибок при выполнении отката
-                console.error('❌ Ошибка при откате изменений:', rollbackError);                                                // Логирование ошибки отката изменений
+    } catch (error) {
+        console.error('💥 Ошибка создания почтового ящика:', error);
+
+        if (emailLocalPart) {
+            try {
+                await rollbackMailboxCreation(emailLocalPart);
+            } catch (rollbackError) {
+                console.error('❌ Ошибка при откате изменений:', rollbackError);
             }
         }
 
-        let errorMessage = 'Ошибка при создании почтового ящика';                                                               // Базовое сообщение об ошибке для пользователя
-        if (error.message.includes('Duplicate entry') || error.message.includes('уже существует')) {                            // Проверка типа ошибки - дублирование записи
-            errorMessage = 'Почтовый ящик уже существует';                                                                      // Сообщение о существующем почтовом ящике
-        } else if (error.message.includes('ER_NO_SUCH_TABLE')) {                                                                // Проверка ошибки - таблица не найдена
-            errorMessage = 'Ошибка базы данных: таблица не найдена';                                                            // Сообщение об ошибке таблицы БД
-        } else if (error.message.includes('ER_ACCESS_DENIED_ERROR')) {                                                          // Проверка ошибки - доступ запрещен
-            errorMessage = 'Ошибка доступа к базе данных';                                                                      // Сообщение об ошибке доступа к БД
-        } else {                                                                                                                // Для всех остальных типов ошибок
-            errorMessage += ': ' + error.message;                                                                               // Добавление оригинального сообщения об ошибке
+        let errorMessage = 'Ошибка при создании почтового ящика';
+        if (error.message.includes('Duplicate entry') || error.message.includes('уже существует')) {
+            errorMessage = 'Почтовый ящик уже существует';
+        } else if (error.message.includes('ER_NO_SUCH_TABLE')) {
+            errorMessage = 'Ошибка базы данных: таблица не найдена';
+        } else if (error.message.includes('ER_ACCESS_DENIED_ERROR')) {
+            errorMessage = 'Ошибка доступа к базе данных';
+        } else {
+            errorMessage += ': ' + error.message;
         }
 
-        res.status(400).json({                                                                                                  // Отправка ошибки клиенту с статусом 400 (Bad Request)
-            success: false,                                                                                                     // Флаг неуспешного выполнения операции
-            message: errorMessage                                                                                               // Сообщение об ошибке для отображения пользователю
+        res.status(400).json({
+            success: false,
+            message: errorMessage
         });
     }
 };
 
-async function generateDovecotPassword(password) {                                                                              // Объявление асинхронной функции для генерации хешированного пароля
-    try {                                                                                                                       // Начало блока try для перехвата возможных ошибок
-        const salt = execSync('openssl rand -base64 12')                                                                        // Генерация случайной соли длиной 12 байт в base64 формате
-            .toString()                                                                                                         // Преобразование буфера вывода в строку
-            .trim()                                                                                                             // Удаление пробельных символов в начале и конце строки
-            .replace(/[^a-zA-Z0-9]/g, '')                                                                                       // Удаление всех не-алфавитно-цифровых символов из соли
-            .substring(0, 16);                                                                                                  // Обрезка соли до 16 символов для соответствия требованиям
-        
-        const hash = execSync(`openssl passwd -6 -salt ${salt} '${password}'`)                                                  // Генерация хеша SHA512 с использованием созданной соли и пароля
-            .toString()                                                                                                         // Преобразование результата хеширования в строку
-            .trim();                                                                                                            // Удаление лишних пробелов вокруг хеша
-        
-        return `{SHA512-CRYPT}${hash}`;                                                                                         // Возврат хеша с указанием алгоритма для Dovecot
-        
-    } catch (error) {                                                                                                           // Обработка ошибок в случае сбоя генерации хеша
-        console.error('❌ Ошибка генерации хеша, используем PLAIN:', error);                                                    // Логирование ошибки с подробностями
-        return `{PLAIN}${password}`;                                                                                            // Возврат пароля в незашифрованном виде (резервный вариант)
+async function generateDovecotPassword(password) {
+    try {
+        const salt = execFileSync('openssl', ['rand', '-base64', '12'])
+            .toString()
+            .trim()
+            .replace(/[^a-zA-Z0-9]/g, '')
+            .substring(0, 16);
+
+        const hash = execFileSync('openssl', ['passwd', '-6', '-salt', salt, password])
+            .toString()
+            .trim();
+
+        return `{SHA512-CRYPT}${hash}`;
+
+    } catch (error) {
+        console.error('❌ Ошибка генерации хеша, используем PLAIN:', error);
+        return `{PLAIN}${password}`;
     }
 }
 
-async function rollbackMailboxCreation(emailLocalPart) {                                                                        // Объявление асинхронной функции для отката изменений
-    const domain = 'onnmail.ru';                                                                                                // Определение домена для почтового ящика
-    const fullEmail = `${emailLocalPart}@${domain}`;                                                                            // Формирование полного email адреса из локальной части
-    
-    try {                                                                                                                       // Блок попытки отката изменений
-        console.log('🔄 Откат изменений для:', fullEmail);                                                                      // Логирование начала процесса отката
-        
-        await mailQuery('DELETE FROM users WHERE email = ?', [fullEmail]);                                                      // Запрос на удаление пользователя из БД mailserver
-        
-        const mailDir = `/var/vmail/${domain}/${emailLocalPart}`;                                                               // Формирование пути к директории почты пользователя
-        try {                                                                                                                   // Блок попытки удаления директорий
-            execSync(`rm -rf ${mailDir}`);                                                                                      // Выполнение команды рекурсивного удаления директории
-        } catch (fsError) {                                                                                                     // Обработка ошибок при удалении директорий
-            console.warn('⚠️ Не удалось удалить директорию:', fsError);                                                        // Логирование предупреждения о неудачном удалении
+async function rollbackMailboxCreation(emailLocalPart) {
+    const domain = 'onnmail.ru';
+    const fullEmail = `${emailLocalPart}@${domain}`;
+
+    try {
+        console.log('🔄 Откат изменений для:', fullEmail);
+
+        await mailQuery('DELETE FROM users WHERE email = ?', [fullEmail]);
+
+        const mailDir = `/var/vmail/${domain}/${emailLocalPart}`;
+        try {
+            execFileSync('rm', ['-rf', mailDir]);
+        } catch (fsError) {
+            console.warn('⚠️ Не удалось удалить директорию:', fsError);
         }
-        
-    } catch (error) {                                                                                                           // Обработка ошибок при выполнении отката
-        console.error('❌ Ошибка при откате изменений:', error);                                                                // Логирование ошибки отката изменений
-        throw error;                                                                                                            // Повторный выброс ошибки для обработки на уровне выше
+
+    } catch (error) {
+        console.error('❌ Ошибка при откате изменений:', error);
+        throw error;
     }
 }
 
-export default { createMailbox };                                                                                               // Экспорт объекта с функцией createMailbox по умолчанию
+export default { createMailbox };
