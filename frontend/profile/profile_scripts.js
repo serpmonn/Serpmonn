@@ -117,12 +117,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.appendChild(toast);
 
-    // небольшая задержка, чтобы сработала анимация появления
     requestAnimationFrame(() => {
       toast.classList.add('toast--visible');
     });
 
-    // авто‑закрытие через 4 секунды
     setTimeout(() => {
       toast.classList.remove('toast--visible');
       setTimeout(() => toast.remove(), 200);
@@ -201,11 +199,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (noFavoritesMessage) noFavoritesMessage.style.display = 'none';
 
-    favoriteContainer.innerHTML = favoriteTools.map(tool => `
-        <a class="tool-link" href="${tool.href}">
-            <span class="tool-text">${tool.name}</span>
-        </a>
-    `).join('');
+    // Fix: используем createElement + textContent вместо innerHTML для предотвращения XSS
+    favoriteContainer.innerHTML = '';
+    favoriteTools.forEach(tool => {
+      const a = document.createElement('a');
+      a.className = 'tool-link';
+      a.href = tool.href;
+      const span = document.createElement('span');
+      span.className = 'tool-text';
+      span.textContent = tool.name;
+      a.appendChild(span);
+      favoriteContainer.appendChild(a);
+    });
   }
 
   /* ==== РЕНДЕР ФОРМЫ РЕДАКТИРОВАНИЯ ==== */
@@ -308,6 +313,16 @@ document.addEventListener('DOMContentLoaded', () => {
     newUsernameInput.focus();
   }
 
+  /* ==== ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ planHintEl ==== */
+
+  // Fix: создаём ссылку через createElement вместо innerHTML для предотвращения XSS
+  function makeTariffsLink(text) {
+    const a = document.createElement('a');
+    a.href = '/frontend/tariffs/tariffs.html';
+    a.textContent = text;
+    return a;
+  }
+
   /* ==== API ==== */
 
   async function getProfile() {
@@ -332,7 +347,6 @@ document.addEventListener('DOMContentLoaded', () => {
       emailField.textContent = email || '—';
       updateAvatarInitials(username, email);
 
-      // Обновляем реферальную ссылку, если есть username
       if (referralLinkInput) {
         if (username) {
           const baseUrl = 'https://serpmonn.ru/frontend/register/register.html';
@@ -398,7 +412,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentPlan === 'pro' && data.quotas && data.quotas.pro_monthly) {
         const q = data.quotas.pro_monthly;
 
-        // Показываем только оставшиеся запросы
         planQuotaCounterEl.textContent = `${q.remaining}`;
 
         planQuotaHintEl.textContent =
@@ -414,10 +427,9 @@ document.addEventListener('DOMContentLoaded', () => {
         updatePlanQuotaBar(q.used ?? 0, q.limit);
       } else {
         if (currentPlan === 'pro') {
-          // Нет данных по квоте — показываем “без данных”, без цифры 2000 и без месяца
           planQuotaCounterEl.textContent = '—';
           planQuotaHintEl.textContent = 'Подписка Pro активна. Информация об оставшихся запросах временно недоступна.';
-          updatePlanQuotaBar(0, 100); // просто пустая полоска
+          updatePlanQuotaBar(0, 100);
         } else {
           planQuotaCounterEl.textContent = '0 / 15';
           planQuotaHintEl.textContent =
@@ -426,29 +438,35 @@ document.addEventListener('DOMContentLoaded', () => {
         }
       }
 
+      // Fix: используем createElement + append вместо innerHTML для ссылок в planHintEl
+      planHintEl.textContent = '';
       if (currentPlan === 'pro') {
-        planHintEl.innerHTML =
-          'После окончания срока вы автоматически перейдёте на бесплатный тариф Free. ' +
-          'Подробнее — на <a href="/frontend/tariffs/tariffs.html">странице тарифов</a>.';
+        planHintEl.append(
+          'После окончания срока вы автоматически перейдёте на бесплатный тариф Free. Подробнее — на ',
+          makeTariffsLink('странице тарифов'),
+          '.'
+        );
       } else {
         if (isPro && !isProActive) {
-          planHintEl.innerHTML =
-            'Вы сейчас на бесплатном тарифе Free. Ранее вы использовали Pro — ' +
-            'подробнее о продлении на <a href="/frontend/tariffs/tariffs.html">странице тарифов</a>.';
+          planHintEl.append(
+            'Вы сейчас на бесплатном тарифе Free. Ранее вы использовали Pro — подробнее о продлении на ',
+            makeTariffsLink('странице тарифов'),
+            '.'
+          );
         } else {
-          planHintEl.innerHTML =
-            'Вы используете бесплатный тариф Free. Подробнее о возможностях Pro — ' +
-            '<a href="/frontend/tariffs/tariffs.html">на странице тарифов</a>.';
+          planHintEl.append(
+            'Вы используете бесплатный тариф Free. Подробнее о возможностях Pro — ',
+            makeTariffsLink('на странице тарифов'),
+            '.'
+          );
         }
       }
 
-    if (aiAccessBlock && aiAccessHint) {
+      if (aiAccessBlock && aiAccessHint) {
         if (currentPlan === 'pro') {
-          // Pro активен — показываем кнопку
           aiAccessBlock.style.display = 'block';
           aiAccessHint.textContent = 'У вас активен тариф Pro. Нажмите, чтобы открыть AI-сервис.';
         } else {
-          // Free или Pro истёк — скрываем блок
           aiAccessBlock.style.display = 'none';
         }
       }
@@ -459,13 +477,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-    async function loadPoints() {
+  async function loadPoints() {
     if (!pointsBalanceEl) return;
 
     try {
       const response = await fetch('/api/me/points', {
         method: 'GET',
-        credentials: 'include' // обязательно, чтобы ушла кука token [web:223][web:224]
+        credentials: 'include'
       });
 
       const data = await safeJson(response);
@@ -484,62 +502,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-    /* ==== ИСТОРИЯ БАЛЛОВ ==== */
+  /* ==== ИСТОРИЯ БАЛЛОВ ==== */
 
   function mapPointsReason(item) {
-  switch (item.type) {
-    // Регистрация
-    case 'registration_backfill_50':
-    case 'registration_signup':
-      return 'Бонус за регистрацию';
+    switch (item.type) {
+      case 'registration_backfill_50':
+      case 'registration_signup':
+        return 'Бонус за регистрацию';
 
-    case 'registration_backfill':
-      return 'Бонус за подтверждение';
+      case 'registration_backfill':
+        return 'Бонус за подтверждение';
 
-    case 'registration':
-      if (item.meta?.via === 'telegram') return 'Подтверждение через Telegram';
-      if (item.meta?.via === 'email') return 'Подтверждение email';
-      return 'Подтверждение аккаунта';
+      case 'registration':
+        if (item.meta?.via === 'telegram') return 'Подтверждение через Telegram';
+        if (item.meta?.via === 'email') return 'Подтверждение email';
+        return 'Подтверждение аккаунта';
 
-    // Рефералка — реферер (новые)
-    case 'invite_basic':
-      return 'Бонус за приглашение друга';
-    case 'invite_qualified':
-      return 'Бонус за активного друга';
+      case 'invite_basic':
+        return 'Бонус за приглашение друга';
+      case 'invite_qualified':
+        return 'Бонус за активного друга';
 
-    // Рефералка — реферер (старый тариф)
-    case 'referral_referrer':
-      return 'Бонус за приглашённого друга (старый тариф)';
+      case 'referral_referrer':
+        return 'Бонус за приглашённого друга (старый тариф)';
 
-    // Рефералка — приглашённый
-    case 'referral_referee':
-      return 'Бонус за регистрацию по приглашению';
+      case 'referral_referee':
+        return 'Бонус за регистрацию по приглашению';
 
-    // Вывод / обмен
-    case 'withdraw_request':
-      if (item.meta?.via === 'pro_exchange') {
-        return 'Обмен баллов на дни Pro';
-      }
-      return 'Заявка на вывод баллов';
+      case 'withdraw_request':
+        if (item.meta?.via === 'pro_exchange') {
+          return 'Обмен баллов на дни Pro';
+        }
+        return 'Заявка на вывод баллов';
 
-    case 'withdraw_paid':
-      if (item.meta?.via === 'pro_exchange') {
-        return 'Подписка Pro активирована за баллы';
-      }
-      return 'Выплата по заявке на вывод';
+      case 'withdraw_paid':
+        if (item.meta?.via === 'pro_exchange') {
+          return 'Подписка Pro активирована за баллы';
+        }
+        return 'Выплата по заявке на вывод';
 
-    case 'withdraw_rollback':
-      return 'Возврат баллов за отменённый вывод';
+      case 'withdraw_rollback':
+        return 'Возврат баллов за отменённый вывод';
 
-    // Служебное
-    case 'admin_adjust':
-    case 'manual':
-      return 'Ручная операция с баллами';
+      case 'admin_adjust':
+      case 'manual':
+        return 'Ручная операция с баллами';
 
-    default:
-      return 'Операция с баллами';
+      default:
+        return 'Операция с баллами';
+    }
   }
-}
 
   async function loadPointsHistory() {
     try {
@@ -563,25 +575,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function updateReferralCounter() {
-  const referralCounterEl = document.getElementById('referralCounter');
-  if (!referralCounterEl) return;
+    const referralCounterEl = document.getElementById('referralCounter');
+    if (!referralCounterEl) return;
 
-  try {
-    const history = await loadPointsHistory();
+    try {
+      const history = await loadPointsHistory();
 
-    const referralCount = history.filter(
-      item => item.type === 'invite_basic'
-    ).length;
+      const referralCount = history.filter(
+        item => item.type === 'invite_basic'
+      ).length;
 
-    referralCounterEl.textContent =
-      referralCount > 0
-        ? `Приглашено друзей: ${referralCount}`
-        : 'Вы ещё не приглашали друзей.';
-  } catch (error) {
-    console.error('Ошибка обновления счётчика рефералов:', error);
-    referralCounterEl.textContent = 'Вы ещё не приглашали друзей.';
+      referralCounterEl.textContent =
+        referralCount > 0
+          ? `Приглашено друзей: ${referralCount}`
+          : 'Вы ещё не приглашали друзей.';
+    } catch (error) {
+      console.error('Ошибка обновления счётчика рефералов:', error);
+      referralCounterEl.textContent = 'Вы ещё не приглашали друзей.';
+    }
   }
-}
 
   async function checkCreateMailboxStatus() {
     try {
@@ -631,7 +643,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       updateAvatarInitials(payload.username, payload.email);
 
-      // Обновляем реферальную ссылку, если поменяли username
       if (payload.username && referralLinkInput) {
         const baseUrl = 'https://serpmonn.ru/frontend/register/register.html';
         const url = `${baseUrl}?ref=${encodeURIComponent(payload.username)}`;
@@ -667,124 +678,124 @@ document.addEventListener('DOMContentLoaded', () => {
     renderEditForm();
   });
 
-  let pointsHistoryLoaded = false;                                                                                  // флаг, что уже грузили историю один раз
+  let pointsHistoryLoaded = false;
 
   const proExchangeDaysInput = document.getElementById('proExchangeDays');
   const proExchangeSubmit = document.getElementById('proExchangeSubmit');
   const proExchangeHint = document.getElementById('proExchangeHint');
 
   if (proExchangeDaysInput && proExchangeSubmit) {
-  proExchangeSubmit.addEventListener('click', async () => {
-    const raw = proExchangeDaysInput.value.trim();
-    const days = parseInt(raw, 10);
+    proExchangeSubmit.addEventListener('click', async () => {
+      const raw = proExchangeDaysInput.value.trim();
+      const days = parseInt(raw, 10);
 
-    if (!Number.isFinite(days) || days <= 0) {
-      setGlobalMessage('Введите корректное количество дней Pro.', 'error');
-      return;
-    }
-
-    const POINTS_PER_PRO_DAY = 500;
-    const needPoints = days * POINTS_PER_PRO_DAY;
-
-    const ok = window.confirm(
-      `Вы хотите обменять ${needPoints} баллов на ${days} дней Pro?\n` +
-      'Баллы будут списаны, а срок действия Pro увеличится.'
-    );
-    if (!ok) return;
-
-    try {
-      const response = await fetch('/api/me/points/withdraw/pro', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ days })
-      });
-
-      const data = await safeJson(response);
-
-      if (!response.ok) {
-        setGlobalMessage(
-          data?.message || 'Не удалось обменять баллы на Pro.',
-          'error'
-        );
+      if (!Number.isFinite(days) || days <= 0) {
+        setGlobalMessage('Введите корректное количество дней Pro.', 'error');
         return;
       }
 
-      const dayWord = getDayWord(days);
+      const POINTS_PER_PRO_DAY = 500;
+      const needPoints = days * POINTS_PER_PRO_DAY;
 
-      setGlobalMessage(
-        data?.message || `Подписка Pro продлена на ${days} ${dayWord}.`,
-        'success'
+      const ok = window.confirm(
+        `Вы хотите обменять ${needPoints} баллов на ${days} дней Pro?\n` +
+        'Баллы будут списаны, а срок действия Pro увеличится.'
       );
+      if (!ok) return;
 
-      loadPoints();
-      getProfile();
-
-      pointsHistoryLoaded = false;
-      if (pointsHistoryEl) {
-        pointsHistoryEl.innerHTML = '';
-        pointsHistoryEl.style.display = 'none';
-      }
-    } catch (e) {
-      console.error('Ошибка обмена баллов на Pro:', e);
-      setGlobalMessage('Ошибка обмена баллов. Попробуйте позже.', 'error');
-    }
-  });
-}
-
-  if (pointsBadgeEl && pointsHistoryEl) {
-  pointsBadgeEl.style.cursor = 'pointer';
-  pointsBadgeEl.title = 'Показать историю баллов';
-
-  pointsBadgeEl.addEventListener('click', async (event) => {
-    event.stopPropagation(); // чтобы клик по таблетке не считался "вне" при глобальном обработчике
-
-    if (!pointsHistoryLoaded) {
-      const history = await loadPointsHistory();
-
-      pointsHistoryEl.innerHTML = '';
-
-      if (!history.length) {
-        const empty = document.createElement('p');
-        empty.className = 'points-history-empty';
-        empty.textContent = 'Пока нет операций с баллами.';
-        pointsHistoryEl.appendChild(empty);
-      } else {
-        const list = document.createElement('ul');
-        list.className = 'points-history-list';
-
-        history.forEach(item => {
-          const li = document.createElement('li');
-          li.className = 'points-history-item';
-
-          const reason = mapPointsReason(item);
-          const sign = item.amount > 0 ? '+' : '';
-          const amountText = `${sign}${item.amount}`;
-
-          const date = item.createdAt
-            ? new Date(item.createdAt).toLocaleString('ru-RU')
-            : '';
-
-          li.textContent = date
-            ? `${amountText} — ${reason} (${date})`
-            : `${amountText} — ${reason}`;
-
-          list.appendChild(li);
+      try {
+        const response = await fetch('/api/me/points/withdraw/pro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ days })
         });
 
-        pointsHistoryEl.appendChild(list);
+        const data = await safeJson(response);
+
+        if (!response.ok) {
+          setGlobalMessage(
+            data?.message || 'Не удалось обменять баллы на Pro.',
+            'error'
+          );
+          return;
+        }
+
+        const dayWord = getDayWord(days);
+
+        setGlobalMessage(
+          data?.message || `Подписка Pro продлена на ${days} ${dayWord}.`,
+          'success'
+        );
+
+        loadPoints();
+        getProfile();
+
+        pointsHistoryLoaded = false;
+        if (pointsHistoryEl) {
+          pointsHistoryEl.innerHTML = '';
+          pointsHistoryEl.style.display = 'none';
+        }
+      } catch (e) {
+        console.error('Ошибка обмена баллов на Pro:', e);
+        setGlobalMessage('Ошибка обмена баллов. Попробуйте позже.', 'error');
+      }
+    });
+  }
+
+  if (pointsBadgeEl && pointsHistoryEl) {
+    pointsBadgeEl.style.cursor = 'pointer';
+    pointsBadgeEl.title = 'Показать историю баллов';
+
+    pointsBadgeEl.addEventListener('click', async (event) => {
+      event.stopPropagation();
+
+      if (!pointsHistoryLoaded) {
+        const history = await loadPointsHistory();
+
+        pointsHistoryEl.innerHTML = '';
+
+        if (!history.length) {
+          const empty = document.createElement('p');
+          empty.className = 'points-history-empty';
+          empty.textContent = 'Пока нет операций с баллами.';
+          pointsHistoryEl.appendChild(empty);
+        } else {
+          const list = document.createElement('ul');
+          list.className = 'points-history-list';
+
+          history.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'points-history-item';
+
+            const reason = mapPointsReason(item);
+            const sign = item.amount > 0 ? '+' : '';
+            const amountText = `${sign}${item.amount}`;
+
+            const date = item.createdAt
+              ? new Date(item.createdAt).toLocaleString('ru-RU')
+              : '';
+
+            li.textContent = date
+              ? `${amountText} — ${reason} (${date})`
+              : `${amountText} — ${reason}`;
+
+            list.appendChild(li);
+          });
+
+          pointsHistoryEl.appendChild(list);
+        }
+
+        pointsHistoryLoaded = true;
       }
 
-      pointsHistoryLoaded = true;
-    }
+      const isHidden =
+        pointsHistoryEl.style.display === 'none' || pointsHistoryEl.style.display === '';
+      pointsHistoryEl.style.display = isHidden ? 'block' : 'none';
+    });
+  }
 
-    const isHidden =
-      pointsHistoryEl.style.display === 'none' || pointsHistoryEl.style.display === '';
-    pointsHistoryEl.style.display = isHidden ? 'block' : 'none';
-  });
-}
-
-if (copyReferralLinkBtn && referralLinkInput) {
+  if (copyReferralLinkBtn && referralLinkInput) {
     copyReferralLinkBtn.addEventListener('click', async () => {
       const value = referralLinkInput.value.trim();
       if (!value) {
@@ -797,7 +808,6 @@ if (copyReferralLinkBtn && referralLinkInput) {
         setGlobalMessage('Реферальная ссылка скопирована в буфер обмена.', 'success');
       } catch (e) {
         console.error('Ошибка копирования ссылки:', e);
-        // Фолбэк: выделим текст, чтобы юзер сам скопировал
         referralLinkInput.focus();
         referralLinkInput.select();
         setGlobalMessage('Ссылка выделена, нажмите Ctrl+C для копирования.', 'error');
@@ -866,7 +876,6 @@ if (copyReferralLinkBtn && referralLinkInput) {
       });
     }
 
-    // В профиле есть .tools-grid с "Моими инструментами" — трекаем и их
     attachTracking('.tools-grid a');
   })();
 
@@ -885,7 +894,6 @@ if (copyReferralLinkBtn && referralLinkInput) {
 
   if (openAiServiceBtn) {
     openAiServiceBtn.addEventListener('click', () => {
-      // Просто перенаправляем на защищённый поддомен
       window.location.href = 'https://ai.serpmonn.ru';
     });
   }
