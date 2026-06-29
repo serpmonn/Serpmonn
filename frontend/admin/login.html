@@ -120,8 +120,10 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
             msg.style.color = 'green';
             msg.textContent = 'Выполняется вход...';
             setTimeout(() => {
-                const next = new URLSearchParams(window.location.search).get('next');
-                window.location.href = next || '/frontend/admin/index.html';
+                const raw = new URLSearchParams(window.location.search).get('next');
+                // Разрешаем только относительные пути (начинаются с / но не с //)
+                const next = (raw && /^\/(?!\/)/.test(raw)) ? raw : '/frontend/admin/index.html';
+                window.location.href = next;
             }, 600);
         } else {
             msg.style.color = 'red';

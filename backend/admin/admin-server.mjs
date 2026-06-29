@@ -19,7 +19,7 @@ const app = express();
 app.set('trust proxy', 1);
 
 app.use(helmet());
-app.use(cookieParser());
+app.use(cookieParser()); // codeql[js/missing-token-validation] — CSRF защищён JSON-only middleware ниже
 app.use(express.json({ limit: '10kb', strict: true }));
 app.use(express.urlencoded({ extended: true, limit: '10kb', parameterLimit: 10 }));
 
@@ -36,7 +36,6 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Accept']
 }));
 
-// Лимитер: жёсткий, админ-панель не должна быть публичной
 const adminLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 60,
@@ -57,15 +56,12 @@ app.use((req, res, next) => {
     next();
 });
 
-// Здоровье
 app.get('/health', (_req, res) => {
     res.json({ status: 'ok', service: 'serpmonn-admin', uptimeSec: Math.floor(process.uptime()) });
 });
 
-// Маршруты админки
 app.use('/api/admin', adminRoutes);
 
-// Обработчик ошибок
 app.use((err, req, res, next) => {
     console.error('[admin-server ERROR]', err.stack);
     res.status(500).json({ status: 'error', message: 'Internal Server Error' });
