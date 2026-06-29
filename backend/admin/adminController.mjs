@@ -10,7 +10,7 @@ dotenv.config({ path: envPath });
 
 import bcrypt from 'bcryptjs';
 import paseto from 'paseto';
-import { execFileSync } from 'child_process';
+import { execFileSync, spawnSync } from 'child_process';
 import { query } from '../database/config.mjs';
 import { mailQuery } from '../database/mailDatabase.config.mjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -270,15 +270,23 @@ export const createStaffMailbox = async (req, res) => {
   }
 };
 
+// Генерация SHA512-CRYPT хеша для Dovecot.
+// Пароль передаётся через stdin, а не через аргументы CLI — не виден в ps aux и /proc/<pid>/cmdline.
 function generateDovecotHash(password) {
-  try {
-    const saltRaw = execFileSync('openssl', ['rand', '-base64', '12']).toString().trim().replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
-    const hash = execFileSync('openssl', ['passwd', '-6', '-salt', saltRaw, password]).toString().trim();
-    return `{SHA512-CRYPT}${hash}`;
-  } catch (error) {
-    console.error('[admin] ошибка генерации хеша, используем PLAIN:', error);
-    return `{PLAIN}${password}`;
+  const saltRaw = execFileSync('openssl', ['rand', '-base64', '12'])
+    .toString().trim().replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
+
+  const result = spawnSync(
+    'openssl',
+    ['passwd', '-6', '-stdin', '-salt', saltRaw],
+    { input: password + '\n', encoding: 'utf8' }
+  );
+
+  if (result.status !== 0 || !result.stdout) {
+    throw new Error(`[admin] openssl passwd завершился с ошибкой: ${result.stderr || 'неизвестная ошибка'}`);
   }
+
+  return `{SHA512-CRYPT}${result.stdout.trim()}`;
 }
 
 export default { loginAdmin, logoutAdmin, getMe, createEmployee, listEmployees, updateEmployee, deleteEmployee, createStaffMailbox };
