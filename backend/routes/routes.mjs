@@ -27,7 +27,7 @@ export function connectRoutes(app, authLimiter) {                               
     app.use(yookassaRouter);                                                                                                     // Подключаем маршруты платёжной системы YooKassa
 
     app.use('/auth', authLimiter);                                                                                               // Применяем более строгий лимит к маршрутам аутентификации
-    app.use('/auth', authRoutes);                                                                                                // Подключаем маршруты аутентификации с префиксом /auth
+    app.use('/auth', authRoutes);                                                                                               // Подключаем маршруты аутентификации с префиксом /auth
     app.use('/profile', profilesRoutes);                                                                                         // Подключаем маршруты профилей с префиксом /profile
     app.use('/counter', counterRoutes);                                                                                          // Подключаем маршруты счетчиков с префиксом /counter
     app.use('/api', analyticsRouter);                                                                                            // Подключаем маршруты аналитики страницы промокодов
@@ -48,6 +48,8 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/api/agents', agentsRouter);                                                                                        // Подключаем маршруты агентов
     app.use('/api/agents', subscriptionsRouter);                                                                                 // Подключаем маршруты подписок на агентов
     app.use('/api/agents', logsRouter);                                                                                          // Подключаем маршруты логов агентов
+    // Gateway открыт для внешних клиентов, авторизация через Bearer-токен — cookies не используются, origin: '*' безопасен.
+    // codeql[js/cors-permissive-configuration]
     app.use('/gateway', cors({ origin: '*', methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Authorization', 'Content-Type', 'X-Buyer-Token'] })); // Gateway открыт для внешних клиентов — авторизация через токен
     app.use('/gateway', gatewayRouter);                                                                                          // Подключаем гетвей прокси агентов
     app.use('/', newsRoutes);                                                                                                    // Подключаем маршруты новостей (GET /news, GET /news/topics, POST /news/refresh)
