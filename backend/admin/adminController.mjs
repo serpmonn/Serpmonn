@@ -10,7 +10,7 @@ dotenv.config({ path: envPath });
 
 import bcrypt from 'bcryptjs';
 import paseto from 'paseto';
-import { execSync } from 'child_process';
+import { execFileSync } from 'child_process';
 import { query } from '../database/config.mjs';
 import { mailQuery } from '../database/mailDatabase.config.mjs';
 import { v4 as uuidv4 } from 'uuid';
@@ -194,7 +194,7 @@ export const deleteEmployee = async (req, res) => {
             const local = employee.mailbox.split('@')[0];
             await mailQuery('DELETE FROM users WHERE email = ?', [employee.mailbox]);
             const mailDir = `/var/vmail/serpmonn.ru/${local}`;
-            if (fs.existsSync(mailDir)) execSync(`rm -rf ${mailDir}`);
+            if (fs.existsSync(mailDir)) execFileSync('rm', ['-rf', mailDir]);
             mailboxDeleted = true;
             console.log(`[admin] удалён почтовый ящик: ${employee.mailbox}`);
           } catch (err) {
@@ -254,9 +254,9 @@ export const createStaffMailbox = async (req, res) => {
 
     const mailDir = `/var/vmail/${domain}/${localPart}/Maildir`;
     try {
-      execSync(`mkdir -p ${mailDir}/{cur,new,tmp}`);
-      execSync(`chown -R vmail:vmail /var/vmail/${domain}/${localPart}`);
-      execSync(`chmod -R 700 /var/vmail/${domain}/${localPart}`);
+      execFileSync('mkdir', ['-p', `${mailDir}/cur`, `${mailDir}/new`, `${mailDir}/tmp`]);
+      execFileSync('chown', ['-R', 'vmail:vmail', `/var/vmail/${domain}/${localPart}`]);
+      execFileSync('chmod', ['-R', '700', `/var/vmail/${domain}/${localPart}`]);
     } catch (fsError) {
       console.error('[admin] ошибка создания директорий Maildir:', fsError);
     }
@@ -272,8 +272,8 @@ export const createStaffMailbox = async (req, res) => {
 
 function generateDovecotHash(password) {
   try {
-    const salt = execSync('openssl rand -base64 12').toString().trim().replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
-    const hash = execSync(`openssl passwd -6 -salt ${salt} '${password}'`).toString().trim();
+    const saltRaw = execFileSync('openssl', ['rand', '-base64', '12']).toString().trim().replace(/[^a-zA-Z0-9]/g, '').substring(0, 16);
+    const hash = execFileSync('openssl', ['passwd', '-6', '-salt', saltRaw, password]).toString().trim();
     return `{SHA512-CRYPT}${hash}`;
   } catch (error) {
     console.error('[admin] ошибка генерации хеша, используем PLAIN:', error);
