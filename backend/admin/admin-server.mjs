@@ -45,6 +45,18 @@ const adminLimiter = rateLimit({
 });
 app.use(adminLimiter);
 
+// CSRF-защита: только JSON-запросы для мутирующих методов (HTML-формы не могут подделаться)
+app.use((req, res, next) => {
+    const mutating = ['POST', 'PUT', 'DELETE', 'PATCH'];
+    if (mutating.includes(req.method)) {
+        const ct = req.headers['content-type'] || '';
+        if (!ct.includes('application/json')) {
+            return res.status(415).json({ message: 'Unsupported Media Type' });
+        }
+    }
+    next();
+});
+
 // Здоровье
 app.get('/health', (_req, res) => {
     res.json({ status: 'ok', service: 'serpmonn-admin', uptimeSec: Math.floor(process.uptime()) });
