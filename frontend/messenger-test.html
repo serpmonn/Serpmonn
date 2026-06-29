@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serpmonn Messenger — децентрализованный мессенджер</title>
+<meta name="description" content="Serpmonn Messenger — децентрализованный P2P-мессенджер с end-to-end шифрованием для Android. Никто не имеет доступа к вашим сообщениям. Пре-альфа.">
+<meta property="og:title" content="Serpmonn Messenger — пре-альфа">
+<meta property="og:description" content="Децентрализованный P2P-мессенджер с E2E-шифрованием. Никто не имеет доступа к переписке.">
+<meta property="og:image" content="https://serpmonn.ru/apple-touch-icon.png">
+<link rel="icon" href="/favicon.ico">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300..700&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ──────────────────────────────────────────────────── */
+:root, [data-theme="light"] {
+  --color-bg:       #f5f5f5;
+  --color-surface:  #ebebeb;
+  --color-surface-2:#e2e2e2;
+  --color-surface-offset:#d8d8d8;
+  --color-divider:  #cccccc;
+  --color-text:     #111111;
+  --color-text-muted:#555555;
+  --color-text-faint:#999999;
+  --color-primary:  #e03030;
+  --color-primary-hover:#c42020;
+  --color-primary-active:#a01818;
+  --color-warning:  #b45309;
+  --shadow-sm:      0 1px 3px rgba(0,0,0,.10);
+  --shadow-md:      0 4px 14px rgba(0,0,0,.12);
+  --shadow-lg:      0 12px 32px rgba(0,0,0,.15);
+}
+[data-theme="dark"] {
+  --color-bg:       #0e0e0e;
+  --color-surface:  #161616;
+  --color-surface-2:#1e1e1e;
+  --color-surface-offset:#242424;
+  --color-divider:  #2a2a2a;
+  --color-text:     #e8e8e8;
+  --color-text-muted:#888888;
+  --color-text-faint:#555555;
+  --color-primary:  #ff4d4d;
+  --color-primary-hover:#e03030;
+  --color-primary-active:#c42020;
+  --color-warning:  #f59e0b;
+  --shadow-sm:      0 1px 3px rgba(0,0,0,.40);
+  --shadow-md:      0 4px 14px rgba(0,0,0,.50);
+  --shadow-lg:      0 12px 32px rgba(0,0,0,.60);
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme]){
+  --color-bg:#0e0e0e;--color-surface:#161616;--color-surface-2:#1e1e1e;
+  --color-surface-offset:#242424;--color-divider:#2a2a2a;
+  --color-text:#e8e8e8;--color-text-muted:#888888;--color-text-faint:#555555;
+  --color-primary:#ff4d4d;--color-primary-hover:#e03030;--color-primary-active:#c42020;
+  --color-warning:#f59e0b;
+  --shadow-sm:0 1px 3px rgba(0,0,0,.40);--shadow-md:0 4px 14px rgba(0,0,0,.50);--shadow-lg:0 12px 32px rgba(0,0,0,.60);
+}}
+
+/* ── MISC TOKENS ─────────────────────────────────────────────── */
+:root {
+  --text-xs:   clamp(0.75rem,  .7rem  + .25vw, .875rem);
+  --text-sm:   clamp(0.875rem, .8rem  + .35vw, 1rem);
+  --text-base: clamp(1rem,     .95rem + .25vw, 1.125rem);
+  --text-lg:   clamp(1.125rem, 1rem   + .75vw, 1.5rem);
+  --text-xl:   clamp(1.5rem,   1.2rem + 1.25vw,2.25rem);
+  --text-2xl:  clamp(2rem,     1.2rem + 2.5vw, 3.5rem);
+  --space-1:.25rem;--space-2:.5rem;--space-3:.75rem;--space-4:1rem;--space-5:1.25rem;
+  --space-6:1.5rem;--space-8:2rem;--space-10:2.5rem;--space-12:3rem;--space-16:4rem;
+  --radius-sm:.375rem;--radius-md:.5rem;--radius-lg:.75rem;--radius-xl:1rem;--radius-full:9999px;
+  --transition:180ms cubic-bezier(.16,1,.3,1);
+  --content-default:900px;
+  --font-display:'JetBrains Mono','Courier New',monospace;
+  --font-body:'Inter','Helvetica Neue',sans-serif;
+}
+
+/* ── BASE ────────────────────────────────────────────────────── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;scroll-padding-top:4rem;-webkit-font-smoothing:antialiased;}
+body{min-height:100dvh;font-family:var(--font-body);font-size:var(--text-base);
+  color:var(--color-text);background:var(--color-bg);line-height:1.6;}
+img,svg{display:block;max-width:100%;}
+a{color:inherit;text-decoration:none;}
+a,button{transition:color var(--transition),background var(--transition),
+  border-color var(--transition),box-shadow var(--transition);}
+button{cursor:pointer;background:none;border:none;font:inherit;color:inherit;}
+:focus-visible{outline:2px solid var(--color-primary);outline-offset:3px;border-radius:var(--radius-sm);}
+
+/* ── NAV ─────────────────────────────────────────────────────── */
+nav{
+  position:sticky;top:0;z-index:100;
+  background:color-mix(in srgb,var(--color-bg) 88%,transparent);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--color-divider);
+  padding:var(--space-4) 0;
+}
+.nav-inner{
+  max-width:var(--content-default);margin:0 auto;
+  padding:0 var(--space-6);display:flex;align-items:center;justify-content:space-between;
+}
+.nav-logo{
+  display:flex;align-items:center;gap:var(--space-3);
+  font-family:var(--font-display);font-size:var(--text-sm);font-weight:700;letter-spacing:-.01em;
+}
+.nav-logo img{width:28px;height:28px;border-radius:var(--radius-sm);}
+.nav-logo span{
+  background:linear-gradient(90deg,var(--color-primary) 0%,#ff8080 100%);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.nav-back{
+  font-size:var(--text-xs);color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-2);
+}
+.nav-back:hover{color:var(--color-text);}
+.nav-right{display:flex;align-items:center;gap:var(--space-4);}
+.theme-toggle{
+  width:36px;height:36px;border-radius:var(--radius-full);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--color-text-muted);
+  border:1px solid var(--color-divider);
+}
+.theme-toggle:hover{color:var(--color-primary);border-color:var(--color-primary);background:color-mix(in srgb,var(--color-primary) 8%,transparent);}
+
+/* ── BADGE ───────────────────────────────────────────────────── */
+.badge{
+  display:inline-flex;align-items:center;gap:var(--space-2);
+  font-size:var(--text-xs);font-weight:600;letter-spacing:.05em;text-transform:uppercase;
+  padding:var(--space-1) var(--space-3);border-radius:var(--radius-full);
+  border:1px solid color-mix(in srgb,var(--color-warning) 60%,transparent);
+  color:var(--color-warning);
+  background:color-mix(in srgb,var(--color-warning) 8%,transparent);
+}
+.badge-dot{width:6px;height:6px;border-radius:50%;background:var(--color-warning);animation:pulse-dot 2s ease-in-out infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.4);}}
+
+/* ── HERO ────────────────────────────────────────────────────── */
+.hero{
+  max-width:var(--content-default);margin:0 auto;
+  padding:clamp(4rem,10vw,6rem) var(--space-6) clamp(3rem,7vw,5rem);
+}
+.hero-eyebrow{margin-bottom:var(--space-6);}
+.hero-title{
+  font-family:var(--font-display);font-size:var(--text-2xl);
+  font-weight:700;line-height:1.05;letter-spacing:-.03em;
+  margin-bottom:var(--space-6);
+}
+.hero-title .accent{
+  color:var(--color-primary);
+  text-shadow:0 0 40px color-mix(in srgb,var(--color-primary) 35%,transparent);
+}
+.hero-desc{font-size:var(--text-lg);color:var(--color-text-muted);max-width:58ch;margin-bottom:var(--space-8);line-height:1.6;}
+
+/* ── DOWNLOAD BLOCK ──────────────────────────────────────────── */
+.download-block{
+  display:flex;flex-direction:column;gap:var(--space-4);
+  margin-bottom:var(--space-6);
+}
+.download-row{
+  display:flex;align-items:stretch;gap:var(--space-3);flex-wrap:wrap;
+}
+.download-card{
+  flex:1;min-width:220px;
+  display:flex;flex-direction:column;
+  background:var(--color-surface);
+  border:1px solid var(--color-divider);
+  border-radius:var(--radius-xl);
+  padding:var(--space-4) var(--space-5);
+  transition:border-color var(--transition),box-shadow var(--transition),transform var(--transition);
+}
+.download-card:hover{
+  border-color:color-mix(in srgb,var(--color-primary) 45%,transparent);
+  box-shadow:var(--shadow-md);
+  transform:translateY(-1px);
+}
+.download-card.recommended{
+  border-color:color-mix(in srgb,var(--color-primary) 50%,transparent);
+  background:color-mix(in srgb,var(--color-primary) 5%,var(--color-surface));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--color-primary) 15%,transparent);
+}
+.download-card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:var(--space-2);
+}
+.download-card-title{
+  font-size:var(--text-sm);font-weight:700;
+  display:flex;align-items:center;gap:var(--space-2);
+}
+.download-card-title svg{color:var(--color-primary);flex-shrink:0;}
+.download-tag{
+  font-size:var(--text-xs);font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  padding:2px var(--space-2);border-radius:var(--radius-full);
+  background:color-mix(in srgb,var(--color-primary) 12%,transparent);
+  color:var(--color-primary);
+}
+.download-tag.muted{
+  background:color-mix(in srgb,var(--color-text-faint) 15%,transparent);
+  color:var(--color-text-faint);
+}
+.download-card-desc{
+  font-size:var(--text-xs);color:var(--color-text-muted);line-height:1.55;
+  margin-bottom:var(--space-4);flex:1;
+}
+.download-btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:var(--space-2);
+  font-size:var(--text-xs);font-weight:600;
+  padding:var(--space-2) var(--space-4);
+  border-radius:var(--radius-lg);
+  align-self:flex-start;
+}
+.download-btn.primary{
+  background:linear-gradient(135deg,var(--color-primary),#c42020);
+  color:#fff;
+  box-shadow:0 3px 12px color-mix(in srgb,var(--color-primary) 35%,transparent);
+}
+.download-btn.primary:hover{
+  background:linear-gradient(135deg,var(--color-primary-hover),#a01818);
+  box-shadow:0 5px 18px color-mix(in srgb,var(--color-primary) 50%,transparent);
+  transform:translateY(-1px);
+}
+.download-btn.secondary{
+  color:var(--color-text-muted);
+  border:1px solid var(--color-divider);
+}
+.download-btn.secondary:hover{
+  color:var(--color-text);
+  border-color:color-mix(in srgb,var(--color-primary) 50%,transparent);
+  background:color-mix(in srgb,var(--color-primary) 6%,transparent);
+}
+.download-hint{
+  font-size:var(--text-xs);color:var(--color-text-faint);line-height:1.5;
+}
+
+/* ── ROADMAP ANCHOR BTN ──────────────────────────────────────── */
+.btn-secondary{
+  display:inline-flex;align-items:center;gap:var(--space-2);
+  font-size:var(--text-sm);font-weight:500;
+  padding:var(--space-3) var(--space-5);
+  color:var(--color-text-muted);
+  border:1px solid var(--color-divider);
+  border-radius:var(--radius-lg);
+}
+.btn-secondary:hover{color:var(--color-text);border-color:var(--color-primary);background:color-mix(in srgb,var(--color-primary) 6%,transparent);}
+
+/* ── DISCLAIMER ──────────────────────────────────────────────── */
+.disclaimer{max-width:var(--content-default);margin:0 auto var(--space-12);padding:0 var(--space-6);}
+.disclaimer-inner{
+  background:color-mix(in srgb,var(--color-warning) 7%,var(--color-surface));
+  border:1px solid color-mix(in srgb,var(--color-warning) 30%,transparent);
+  border-radius:var(--radius-xl);
+  padding:var(--space-5) var(--space-6);
+  display:flex;gap:var(--space-4);align-items:flex-start;
+}
+.disclaimer-icon{flex-shrink:0;color:var(--color-warning);margin-top:2px;}
+.disclaimer-text{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.7;}
+.disclaimer-text strong{color:var(--color-warning);font-weight:600;}
+
+/* ── SECTIONS ────────────────────────────────────────────────── */
+.section-divider{max-width:var(--content-default);margin:0 auto;padding:0 var(--space-6);border:none;border-top:1px solid var(--color-divider);}
+.section-wrap{max-width:var(--content-default);margin:0 auto;padding:clamp(3rem,8vw,5rem) var(--space-6);}
+.section-label{
+  font-size:var(--text-xs);font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--color-primary);margin-bottom:var(--space-4);
+}
+.section-title{
+  font-family:var(--font-display);font-size:var(--text-xl);
+  font-weight:700;letter-spacing:-.02em;margin-bottom:var(--space-10);line-height:1.2;
+}
+
+/* ── FEATURE CARDS ───────────────────────────────────────────── */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(270px,100%),1fr));gap:var(--space-4);}
+.feature-card{
+  background:var(--color-surface);
+  border:1px solid var(--color-divider);
+  border-radius:var(--radius-xl);
+  padding:var(--space-6);
+  position:relative;overflow:hidden;
+  transition:box-shadow var(--transition),border-color var(--transition),transform var(--transition);
+}
+.feature-card::before{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--color-primary) 6%,transparent),transparent 60%);
+  opacity:0;transition:opacity var(--transition);
+}
+.feature-card:hover{box-shadow:var(--shadow-md);border-color:color-mix(in srgb,var(--color-primary) 45%,transparent);transform:translateY(-2px);}
+.feature-card:hover::before{opacity:1;}
+.feature-icon{
+  width:36px;height:36px;margin-bottom:var(--space-4);
+  color:var(--color-primary);
+  filter:drop-shadow(0 0 8px color-mix(in srgb,var(--color-primary) 50%,transparent));
+}
+.feature-title{font-size:var(--text-base);font-weight:600;margin-bottom:var(--space-2);}
+.feature-desc{font-size:var(--text-sm);color:var(--color-text-muted);line-height:1.6;}
+
+/* ── ROADMAP ─────────────────────────────────────────────────── */
+.roadmap-list{display:flex;flex-direction:column;gap:var(--space-2);}
+.roadmap-item{
+  display:flex;align-items:flex-start;gap:var(--space-4);
+  padding:var(--space-4) var(--space-5);
+  border-radius:var(--radius-lg);
+  background:var(--color-surface);
+  border:1px solid var(--color-divider);
+  transition:border-color var(--transition);
+}
+.roadmap-item.done{opacity:.45;}
+.roadmap-item.current{
+  border-color:color-mix(in srgb,var(--color-primary) 50%,transparent);
+  background:color-mix(in srgb,var(--color-primary) 6%,var(--color-surface));
+  box-shadow:0 0 0 1px color-mix(in srgb,var(--color-primary) 20%,transparent);
+}
+.roadmap-num{font-family:var(--font-display);font-size:var(--text-xs);font-weight:700;color:var(--color-text-faint);flex-shrink:0;width:28px;padding-top:2px;}
+.roadmap-item.current .roadmap-num{color:var(--color-primary);}
+.roadmap-body{flex:1;}
+.roadmap-title{font-size:var(--text-sm);font-weight:600;margin-bottom:var(--space-1);}
+.roadmap-desc{font-size:var(--text-xs);color:var(--color-text-muted);}
+.roadmap-status{font-size:var(--text-xs);font-weight:700;letter-spacing:.04em;padding-top:3px;flex-shrink:0;}
+.status-done{color:var(--color-text-faint);}
+.status-current{color:var(--color-primary);}
+.status-future{color:var(--color-text-faint);}
+
+/* ── FEEDBACK ────────────────────────────────────────────────── */
+.feedback-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:var(--space-4);}
+.feedback-card{
+  background:var(--color-surface);
+  border:1px solid var(--color-divider);
+  border-radius:var(--radius-xl);
+  padding:var(--space-6);
+  transition:border-color var(--transition);
+}
+.feedback-card:hover{border-color:color-mix(in srgb,var(--color-primary) 45%,transparent);}
+.feedback-type{font-size:var(--text-xs);font-weight:700;letter-spacing:.07em;text-transform:uppercase;color:var(--color-primary);margin-bottom:var(--space-3);}
+.feedback-card h3{font-size:var(--text-base);font-weight:600;margin-bottom:var(--space-2);}
+.feedback-card p{font-size:var(--text-sm);color:var(--color-text-muted);margin-bottom:var(--space-5);line-height:1.6;}
+.feedback-link{
+  display:inline-flex;align-items:center;gap:var(--space-2);
+  font-size:var(--text-sm);font-weight:600;
+  font-family:var(--font-display);
+  color:var(--color-primary);
+}
+.feedback-link:hover{color:var(--color-primary-hover);}
+
+/* ── FOOTER ──────────────────────────────────────────────────── */
+footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
+.footer-inner{
+  max-width:var(--content-default);margin:0 auto;
+  padding:0 var(--space-6);display:flex;align-items:center;
+  justify-content:space-between;flex-wrap:wrap;gap:var(--space-4);
+}
+.footer-copy{font-size:var(--text-xs);color:var(--color-text-faint);}
+.footer-links{display:flex;gap:var(--space-6);}
+.footer-links a{font-size:var(--text-xs);color:var(--color-text-faint);}
+.footer-links a:hover{color:var(--color-primary);}
+
+/* ── MOBILE ──────────────────────────────────────────────────── */
+@media(max-width:600px){
+  .hero-desc{font-size:var(--text-base);}
+  .nav-logo span{display:none;}
+  .footer-inner{flex-direction:column;text-align:center;}
+  .download-row{flex-direction:column;}
+  .download-card{min-width:unset;}
+}
+</style>
+</head>
+<body>
+<a href="#main" style="position:absolute;left:-9999px">Перейти к содержимому</a>
+
+<nav>
+  <div class="nav-inner">
+    <a href="/" class="nav-logo">
+      <img src="/apple-touch-icon.png" alt="Serpmonn" width="28" height="28">
+      <span>Serpmonn Messenger</span>
+    </a>
+    <div class="nav-right">
+      <a href="/" class="nav-back">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+        serpmonn.ru
+      </a>
+      <button class="theme-toggle" data-theme-toggle aria-label="Сменить тему">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<main id="main">
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="badge"><span class="badge-dot"></span>Пре-альфа · В разработке</span>
+  </div>
+  <h1 class="hero-title"><span class="accent">Децентрализованный</span><br>мессенджер</h1>
+  <p class="hero-desc">Serpmonn Messenger — P2P-мессенджер с end-to-end шифрованием для Android. Сообщения передаются напрямую между устройствами. Никто — ни серверы, ни Serpmonn — не имеет доступа к вашей переписке.</p>
+
+  <!-- DOWNLOAD CARDS -->
+  <div class="download-block">
+    <div class="download-row">
+
+      <!-- ARM32 — основной рекомендуемый -->
+      <div class="download-card recommended">
+        <div class="download-card-header">
+          <span class="download-card-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
+            ARM32
+          </span>
+          <span class="download-tag">Рекомендуется</span>
+        </div>
+        <p class="download-card-desc">Подходит для <strong>большинства Android-смартфонов</strong> — Xiaomi, Samsung, OnePlus, Huawei и других. Выбирайте этот вариант, если не знаете архитектуру своего устройства.</p>
+        <a href="/frontend/downloads/serpmonn-debug.apk" class="download-btn primary" download>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Скачать APK · ~82 МБ
+        </a>
+      </div>
+
+      <!-- ARM32 прямой файл -->
+      <div class="download-card">
+        <div class="download-card-header">
+          <span class="download-card-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
+            ARM32 (alt)
+          </span>
+          <span class="download-tag muted">Альт. ссылка</span>
+        </div>
+        <p class="download-card-desc">Та же сборка ARM32, альтернативная ссылка на случай если основная не работает.</p>
+        <a href="/frontend/downloads/serpmonn-debug-arm32.apk" class="download-btn secondary" download>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Скачать APK · ~82 МБ
+        </a>
+      </div>
+
+      <!-- x86 эмулятор -->
+      <div class="download-card">
+        <div class="download-card-header">
+          <span class="download-card-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            x86 Эмулятор
+          </span>
+          <span class="download-tag muted">Для тестов</span>
+        </div>
+        <p class="download-card-desc">Только для запуска в <strong>Android-эмуляторе</strong> на ПК (Android Studio, Genymotion). На реальных смартфонах не нужен.</p>
+        <a href="/frontend/downloads/serpmonn-debug-x86emu.apk" class="download-btn secondary" download>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Скачать APK · ~84 МБ
+        </a>
+      </div>
+
+    </div>
+    <p class="download-hint">Перед установкой разрешите установку из неизвестных источников в настройках Android. Требуется Android 8.0+.</p>
+  </div>
+
+  <a href="#roadmap" class="btn-secondary" style="align-self:flex-start">
+    Дорожная карта
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+</section>
+
+<!-- DISCLAIMER -->
+<div class="disclaimer">
+  <div class="disclaimer-inner">
+    <svg class="disclaimer-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+    <p class="disclaimer-text"><strong>Пре-альфа — приложение в активной разработке.</strong> Возможны баги и изменения. Требуется Android 8.0+, интернет-соединение. Групповые беседы пока не поддерживаются. Не используйте для передачи критически важных данных.</p>
+  </div>
+</div>
+
+<hr class="section-divider">
+
+<!-- FEATURES -->
+<section class="section-wrap">
+  <p class="section-label">Возможности</p>
+  <h2 class="section-title">Как это работает</h2>
+  <div class="features-grid">
+
+    <article class="feature-card">
+      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="3" y="11" width="18" height="11" rx="2"/>
+        <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+      </svg>
+      <h3 class="feature-title">Абсолютное шифрование</h3>
+      <p class="feature-desc">Сообщения шифруются на вашем устройстве и расшифровываются только у собеседника. Никто — ни серверы, ни Serpmonn — не имеет доступа к содержимому.</p>
+    </article>
+
+    <article class="feature-card">
+      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <circle cx="5" cy="12" r="2"/><circle cx="19" cy="5" r="2"/><circle cx="19" cy="19" r="2"/>
+        <path d="M7 12h5m2-5-5 5m5 5-5-5"/>
+      </svg>
+      <h3 class="feature-title">Прямое P2P-соединение</h3>
+      <p class="feature-desc">Устройства соединяются напрямую, без промежуточных серверов. Сообщения не проходят через инфраструктуру Serpmonn.</p>
+    </article>
+
+    <article class="feature-card">
+      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <rect x="5" y="2" width="14" height="20" rx="2"/>
+        <line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/>
+      </svg>
+      <h3 class="feature-title">Android-приложение</h3>
+      <p class="feature-desc">Нативное приложение для Android. Поддерживаются личные переписки (1:1). Групповые чаты — в планах.</p>
+    </article>
+
+    <article class="feature-card">
+      <svg class="feature-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+      </svg>
+      <h3 class="feature-title">Relay-fallback</h3>
+      <p class="feature-desc">Если прямое соединение невозможно из-за NAT, трафик идёт через relay-узлы — по-прежнему зашифрованный E2E.</p>
+    </article>
+
+  </div>
+</section>
+
+<hr class="section-divider">
+
+<!-- ROADMAP -->
+<section class="section-wrap" id="roadmap">
+  <p class="section-label">Дорожная карта</p>
+  <h2 class="section-title">Этапы разработки</h2>
+  <ol class="roadmap-list">
+    <li class="roadmap-item done">
+      <span class="roadmap-num">01</span>
+      <div class="roadmap-body"><div class="roadmap-title">JS-прототип</div><div class="roadmap-desc">Референсная реализация на Node.js + libp2p.</div></div>
+      <span class="roadmap-status status-done">✓</span>
+    </li>
+    <li class="roadmap-item done">
+      <span class="roadmap-num">02</span>
+      <div class="roadmap-body"><div class="roadmap-title">Go-core: identity, crypto, chat, storage</div><div class="roadmap-desc">Ключи, шифрование, структура чатов, хранилище сообщений.</div></div>
+      <span class="roadmap-status status-done">✓</span>
+    </li>
+    <li class="roadmap-item done">
+      <span class="roadmap-num">03</span>
+      <div class="roadmap-body"><div class="roadmap-title">Go-core net: QUIC + Relay v2 + DCUtR + GossipSub</div><div class="roadmap-desc">Сетевой стек: P2P-соединения, hole punching, групповой pub/sub.</div></div>
+      <span class="roadmap-status status-done">✓</span>
+    </li>
+    <li class="roadmap-item current">
+      <span class="roadmap-num">04</span>
+      <div class="roadmap-body"><div class="roadmap-title">Android: onboarding, чат, QR</div><div class="roadmap-desc">Kotlin/Compose UI — текущая пре-альфа.</div></div>
+      <span class="roadmap-status status-current">→ Сейчас</span>
+    </li>
+    <li class="roadmap-item">
+      <span class="roadmap-num">05</span>
+      <div class="roadmap-body"><div class="roadmap-title">Backup, restore, linked desktop</div><div class="roadmap-desc">Резервные копии ключей и привязка десктоп-клиента через QR.</div></div>
+      <span class="roadmap-status status-future">Далее</span>
+    </li>
+    <li class="roadmap-item">
+      <span class="roadmap-num">06</span>
+      <div class="roadmap-body"><div class="roadmap-title">BLE / Wi-Fi Direct mesh</div><div class="roadmap-desc">Общение без интернета — по Bluetooth и в локальной сети.</div></div>
+      <span class="roadmap-status status-future">Далее</span>
+    </li>
+    <li class="roadmap-item">
+      <span class="roadmap-num">07</span>
+      <div class="roadmap-body"><div class="roadmap-title">iOS</div><div class="roadmap-desc">Портирование на Apple-платформы.</div></div>
+      <span class="roadmap-status status-future">Далее</span>
+    </li>
+  </ol>
+</section>
+
+<hr class="section-divider">
+
+<!-- FEEDBACK -->
+<section class="section-wrap">
+  <p class="section-label">Обратная связь</p>
+  <h2 class="section-title">Помогите сделать лучше</h2>
+  <div class="feedback-grid">
+    <div class="feedback-card">
+      <p class="feedback-type">Баги и проблемы</p>
+      <h3>Нашли ошибку?</h3>
+      <p>Расскажите что пошло не так: версия Android, шаги для воспроизведения, что ожидали и что получили.</p>
+      <a href="mailto:support@serpmonn.ru" class="feedback-link">support@serpmonn.ru
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    </div>
+    <div class="feedback-card">
+      <p class="feedback-type">Идеи и предложения</p>
+      <h3>Есть идея?</h3>
+      <p>Хотите функцию, которой нет? Или есть мысли по UX — пишите, всё читаем.</p>
+      <a href="mailto:improve@serpmonn.ru" class="feedback-link">improve@serpmonn.ru
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>
+      </a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <p class="footer-copy">© 2026 Serpmonn.</p>
+    <nav class="footer-links">
+      <a href="/">serpmonn.ru</a>
+      <a href="mailto:support@serpmonn.ru">Поддержка</a>
+    </nav>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var t=document.querySelector('[data-theme-toggle]'),r=document.documentElement;
+  var d=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme:dark)').matches?'dark':'light');
+  r.setAttribute('data-theme',d);
+  function si(m){
+    if(!t)return;
+    t.innerHTML=m==='dark'
+      ?'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>'
+      :'<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+  }
+  si(d);
+  if(t)t.addEventListener('click',function(){d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);si(d);});
+})();
+</script>
+</body>
+</html>
