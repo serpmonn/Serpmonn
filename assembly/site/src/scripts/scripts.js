@@ -16,7 +16,8 @@ export function getEnv() {
   const params = new URLSearchParams(window.location.search);
   const envParam = params.get('env') || '';
 
-  if (envParam === 'vk_mini' || location.host.includes('vk.com')) return 'vk_mini';
+  const host = location.hostname;
+  if (envParam === 'vk_mini' || host === 'vk.com' || host.endsWith('.vk.com')) return 'vk_mini';
   if (envParam === 'twa') return 'twa';
   if (isStandalonePWA) return 'pwa';
 
