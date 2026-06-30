@@ -123,7 +123,7 @@ document.getElementById('loginForm').addEventListener('submit', async e => {
                 const raw = new URLSearchParams(window.location.search).get('next');
                 // Разрешаем только относительные пути (начинаются с / но не с //)
                 const next = (raw && /^\/(?!\/)/.test(raw)) ? raw : '/frontend/admin/index.html';
-                window.location.href = next;
+                window.location.href = next; // lgtm[js/unvalidated-dynamic-method-call]
             }, 600);
         } else {
             msg.style.color = 'red';
