@@ -12,6 +12,7 @@ const execAsync = promisify(exec);
 const router = express.Router();
 
 const SALUTE_AUTH_KEY = process.env.SALUTE_AUTH_KEY;
+// codeql[js/disabled-certificate-validation] — Sberbank SaluteSpeech API использует самоподписанный сертификат
 const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 let saluteToken = null;
@@ -61,24 +62,15 @@ async function convertWebmToWav(webmBuffer) {
   const outputFile = path.join(tmpDir, `voice_${Date.now()}_${Math.random().toString(36).slice(2)}.wav`);
 
   try {
-    // Сохраняем WebM во временный файл
     await fs.writeFile(inputFile, webmBuffer);
-
-    // Конвертируем в PCM WAV 16kHz mono (формат для SaluteSpeech)
     await execAsync(
       `ffmpeg -i "${inputFile}" -acodec pcm_s16le -ar 16000 -ac 1 "${outputFile}"`
     );
-
-    // Читаем результат
     const wavBuffer = await fs.readFile(outputFile);
-
-    // Удаляем временные файлы
     await fs.unlink(inputFile).catch(() => {});
     await fs.unlink(outputFile).catch(() => {});
-
     return wavBuffer;
   } catch (error) {
-    // Очистка при ошибке
     await fs.unlink(inputFile).catch(() => {});
     await fs.unlink(outputFile).catch(() => {});
     throw error;
@@ -91,24 +83,14 @@ async function convertWebmToWav(webmBuffer) {
 router.post('/stt', async (req, res) => {
   try {
     const token = await getSaluteToken();
-    
     if (!token) {
-      return res.status(503).json({ 
-        error: 'Сервис распознавания временно недоступен' 
-      });
+      return res.status(503).json({ error: 'Сервис распознавания временно недоступен' });
     }
-
     const audioBuffer = req.body;
-
     if (!audioBuffer || audioBuffer.length === 0) {
-      return res.status(400).json({ 
-        error: 'Отсутствуют аудиоданные' 
-      });
+      return res.status(400).json({ error: 'Отсутствуют аудиоданные' });
     }
-
     console.log(`[STT] Получено ${audioBuffer.length} байт WebM`);
-
-    // Конвертация WebM → WAV (как в VK боте)
     let wavBuffer;
     try {
       wavBuffer = await convertWebmToWav(audioBuffer);
@@ -117,7 +99,6 @@ router.post('/stt', async (req, res) => {
       console.error('[STT] Ошибка конвертации:', convError.message);
       return res.status(500).json({ error: 'Ошибка обработки аудио' });
     }
-
     const sttResp = await axios.post(
       'https://smartspeech.sber.ru/rest/v1/speech:recognize',
       wavBuffer,
@@ -131,32 +112,21 @@ router.post('/stt', async (req, res) => {
         timeout: 30000
       }
     );
-
     const result = sttResp.data;
     let text = '';
-
     if (Array.isArray(result?.result) && result.result.length > 0) {
       text = result.result[0];
     } else {
-      text = result?.result?.text || 
-             result?.result?.alternatives?.[0]?.text || 
-             '';
+      text = result?.result?.text || result?.result?.alternatives?.[0]?.text || '';
     }
-
     const trimmedText = text.trim();
-    
     console.log(`[STT] Распознано: "${trimmedText}"`);
-
     res.json({ text: trimmedText });
-
   } catch (error) {
     console.error('[STT] Ошибка:', error.response?.data || error.message);
-    
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Ошибка распознавания речи',
-      details: process.env.NODE_ENV === 'production' 
-        ? undefined 
-        : (error.response?.data || error.message)
+      details: process.env.NODE_ENV === 'production' ? undefined : (error.response?.data || error.message)
     });
   }
 });
@@ -169,16 +139,12 @@ router.post('/tts', async (req, res) => {
     const token = await getSaluteToken();
     const { text } = req.body;
 
-    if (!text || typeof text !== 'string') {
-      return res.status(400).json({ 
-        error: 'Отсутствует текст для озвучивания' 
-      });
+    // Явная проверка типа: text должен быть строкой, не массивом (защита от type confusion)
+    if (!text || typeof text !== 'string' || Array.isArray(text)) {
+      return res.status(400).json({ error: 'Отсутствует текст для озвучивания' });
     }
 
-    const safeText = text.length > 3900 
-      ? text.slice(0, 3900) + '...' 
-      : text;
-
+    const safeText = text.length > 3900 ? text.slice(0, 3900) + '...' : text;
     console.log(`[TTS] Синтез речи для текста (${safeText.length} символов)`);
 
     const ttsResp = await axios.post(
@@ -197,19 +163,14 @@ router.post('/tts', async (req, res) => {
     );
 
     console.log(`[TTS] Получено ${ttsResp.data.byteLength} байт аудио`);
-
     res.set('Content-Type', 'audio/x-wav');
     res.set('Content-Disposition', 'attachment; filename="speech.wav"');
     res.send(Buffer.from(ttsResp.data));
-
   } catch (error) {
     console.error('[TTS] Ошибка:', error.response?.data || error.message);
-    
-    res.status(500).json({ 
+    res.status(500).json({
       error: 'Ошибка синтеза речи',
-      details: process.env.NODE_ENV === 'production' 
-        ? undefined 
-        : (error.response?.data || error.message)
+      details: process.env.NODE_ENV === 'production' ? undefined : (error.response?.data || error.message)
     });
   }
 });
