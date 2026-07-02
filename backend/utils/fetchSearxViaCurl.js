@@ -20,13 +20,18 @@ async function fetchSearxViaCurl(query, category) {
     `&format=json`;
 
   try {
-    const { stdout } = await execFileAsync('curl', [
-      '-s',                         // тихий режим
+    const { stdout, stderr } = await execFileAsync('curl', [
+      '-sS',                        // тихий режим, но показывать ошибки curl
+      '-f',                         // HTTP 4xx/5xx => ошибка выхода
       '-H', 'Host: serpmonn.ru',
       '--max-time', '15',           // максимум 15 секунд на запрос
       '--connect-timeout', '2',     // до 2 секунд на установление соединения
       url
     ]);
+
+    if (stderr?.trim()) {
+      console.warn('[SearXNG] curl stderr:', stderr.slice(0, 300));
+    }
 
     if (!stdout) {
       console.error('[SearXNG] Empty response from curl for URL:', url);
@@ -41,7 +46,7 @@ async function fetchSearxViaCurl(query, category) {
     try {
       return JSON.parse(stdout);
     } catch (parseErr) {
-      console.error('[SearXNG] JSON parse error:', parseErr, 'raw:', stdout.slice(0, 500));
+      console.error('[SearXNG] JSON parse error:', parseErr.message, 'raw:', stdout.slice(0, 500));
       return {
         results: [],
         answers: [],
@@ -50,7 +55,14 @@ async function fetchSearxViaCurl(query, category) {
       };
     }
   } catch (err) {
-    console.error('[SearXNG] fetchSearxViaCurl error:', err);
+    console.error('[SearXNG] fetchSearxViaCurl error:', {
+      message: err.message,
+      code: err.code,
+      signal: err.signal,
+      killed: err.killed,
+      stdoutPreview: err.stdout ? String(err.stdout).slice(0, 300) : null,
+      stderrPreview: err.stderr ? String(err.stderr).slice(0, 300) : null,
+    });
     return {
       results: [],
       answers: [],
