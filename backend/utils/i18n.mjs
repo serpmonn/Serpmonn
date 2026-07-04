@@ -11,8 +11,10 @@ const DEFAULT_LOCALE = 'en';
 // Кэш: грузим JSON один раз при старте
 const cache = {};
 for (const loc of SUPPORTED_LOCALES) {
+  // en.json пустой — используем en.base.json как эталон для английского
+  const fileName = loc === 'en' ? 'en.base.json' : `${loc}.json`;
   cache[loc] = require(
-    path.resolve(__dirname, '../../shared/i18n', `${loc}.json`)
+    path.resolve(__dirname, '../../shared/i18n', fileName)
   );
 }
 
