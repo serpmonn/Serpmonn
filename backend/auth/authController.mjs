@@ -15,6 +15,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { sendConfirmationEmail } from '../utils/mailer.mjs';
 import { awardPoints } from '../points/pointsService.js';
 import { checkAndRewardQualifiedReferral } from '../points/referralService.mjs';
+import { getBackendMessages } from '../utils/i18n.mjs';
 
 const { V2 } = paseto;
 const { hash, compare } = bcrypt;
@@ -62,9 +63,10 @@ function assertNoUndefinedParams(label, params) {
 
 function safeQuery(label, sql, params) {
   if (!assertNoUndefinedParams(label, params)) {
-    const error = new Error('Некорректные входные данные.');
+    const error = new Error('auth.invalidInput');
     error.status = 400;
     error.isPublic = true;
+    error.i18nKey = 'auth.invalidInput';
     throw error;
   }
 
@@ -73,6 +75,7 @@ function safeQuery(label, sql, params) {
 
 export const registerUser = async (req, res) => {
   const { username, email, password, ref } = req.body;
+  const { t } = getBackendMessages(req);
   logAuthRequest(req, 'registerUser:start');
 
   try {
@@ -83,7 +86,7 @@ export const registerUser = async (req, res) => {
     );
 
     if (usernameExists && usernameExists.id) {
-      return res.status(400).json({ message: 'Имя пользователя уже используется!' });
+      return res.status(400).json({ message: t['auth.usernameTaken'] });
     }
 
     const [emailExists] = await safeQuery(
@@ -93,7 +96,7 @@ export const registerUser = async (req, res) => {
     );
 
     if (emailExists && emailExists.id) {
-      return res.status(400).json({ message: 'Email уже используется!' });
+      return res.status(400).json({ message: t['auth.emailTaken'] });
     }
 
     const passwordHash = await hash(password, 10);
@@ -161,7 +164,7 @@ export const registerUser = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: 'Регистрация успешна! Выберите способ подтверждения.',
+      message: t['auth.registerSuccess'],
       userId,
       confirmLink: telegramConfirmLink
     });
@@ -170,16 +173,17 @@ export const registerUser = async (req, res) => {
 
     if (error?.isPublic) {
       return res.status(error.status || 400).json({
-        message: 'Проверьте правильность данных регистрации.'
+        message: t[error.i18nKey] ?? t['auth.registerDataError']
       });
     }
 
-    return res.status(500).json({ message: 'Ошибка сервера.' });
+    return res.status(500).json({ message: t['auth.serverError'] });
   }
 };
 
 export const confirmTelegram = async (req, res) => {
   const { userId, source } = req.body;
+  const { t } = getBackendMessages(req);
   logAuthRequest(req, 'confirmTelegram:start', { source });
 
   try {
@@ -192,7 +196,7 @@ export const confirmTelegram = async (req, res) => {
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: 'Пользователь не найден. Пройдите регистрацию заново.'
+        message: t['auth.userNotFound']
       });
     }
 
@@ -211,7 +215,7 @@ export const confirmTelegram = async (req, res) => {
 
       return res.json({
         success: true,
-        message: `Аккаунт ${user.username} уже был подтвержден ранее`
+        message: (t['auth.alreadyConfirmed'] || '').replace('{username}', user.username)
       });
     }
 
@@ -235,7 +239,7 @@ export const confirmTelegram = async (req, res) => {
 
     return res.json({
       success: true,
-      message: `Аккаунт ${user.username} успешно подтвержден!`
+      message: (t['auth.confirmSuccess'] || '').replace('{username}', user.username)
     });
   } catch (error) {
     console.error('❌ Ошибка при подтверждении через Telegram:', error);
@@ -243,19 +247,20 @@ export const confirmTelegram = async (req, res) => {
     if (error?.isPublic) {
       return res.status(error.status || 400).json({
         success: false,
-        message: 'Не удалось подтвердить аккаунт. Начните подтверждение заново.'
+        message: t[error.i18nKey] ?? t['auth.confirmFailed']
       });
     }
 
     return res.status(500).json({
       success: false,
-      message: 'Произошла техническая ошибка. Попробуйте позже.'
+      message: t['auth.confirmTechError']
     });
   }
 };
 
 export const confirmEmail = async (req, res) => {
   const { email, userId } = req.body;
+  const { t } = getBackendMessages(req);
   logAuthRequest(req, 'confirmEmail:start', { userId, email: maskEmail(email) });
 
   try {
@@ -267,7 +272,7 @@ export const confirmEmail = async (req, res) => {
 
     if (!user) {
       return res.status(404).json({
-        message: 'Пользователь не найден. Пройдите регистрацию заново.'
+        message: t['auth.userNotFound']
       });
     }
 
@@ -285,23 +290,24 @@ export const confirmEmail = async (req, res) => {
 
     return res.json({
       success: true,
-      message: 'Письмо с подтверждением отправлено.'
+      message: t['auth.emailSent']
     });
   } catch (error) {
     console.error('Ошибка отправки email:', error);
 
     if (error?.isPublic) {
       return res.status(error.status || 400).json({
-        message: 'Не удалось отправить письмо. Обновите страницу и попробуйте ещё раз.'
+        message: t[error.i18nKey] ?? t['auth.emailSendFailed']
       });
     }
 
-    return res.status(500).json({ message: 'Ошибка сервера.' });
+    return res.status(500).json({ message: t['auth.serverError'] });
   }
 };
 
 export const confirmToken = async (req, res) => {
   const { token } = req.query;
+  const { t } = getBackendMessages(req);
   logAuthRequest(req, 'confirmToken:start', { token });
 
   try {
@@ -313,7 +319,7 @@ export const confirmToken = async (req, res) => {
 
     if (!user) {
       return res.status(400).json({
-        message: 'Ссылка для подтверждения недействительна или уже устарела.'
+        message: t['auth.tokenInvalid']
       });
     }
 
@@ -358,16 +364,17 @@ export const confirmToken = async (req, res) => {
 
     if (error?.isPublic) {
       return res.status(error.status || 400).json({
-        message: 'Ссылка для подтверждения некорректна или устарела. Запросите новую ссылку.'
+        message: t[error.i18nKey] ?? t['auth.tokenInvalidRetry']
       });
     }
 
-    return res.status(500).json({ message: 'Ошибка сервера.' });
+    return res.status(500).json({ message: t['auth.serverError'] });
   }
 };
 
 export const loginUser = async (req, res) => {
   const { email, password } = req.body;
+  const { t } = getBackendMessages(req);
   logAuthRequest(req, 'loginUser:start', { email: maskEmail(email) });
 
   try {
@@ -378,14 +385,14 @@ export const loginUser = async (req, res) => {
     );
 
     if (results.length === 0) {
-      return res.status(401).json({ message: 'Неверный email или пароль' });
+      return res.status(401).json({ message: t['auth.wrongCredentials'] });
     }
 
     const user = results[0];
     const isMatch = await compare(password, user.password_hash);
 
     if (!isMatch) {
-      return res.status(401).json({ message: 'Неверный email или пароль' });
+      return res.status(401).json({ message: t['auth.wrongCredentials'] });
     }
 
     const payload = { id: user.id, username: user.username, email: user.email };
@@ -399,28 +406,30 @@ export const loginUser = async (req, res) => {
       domain: '.serpmonn.ru'
     });
 
-    return res.json({ message: 'Вход выполнен успешно' });
+    return res.json({ message: t['auth.loginSuccess'] });
   } catch (error) {
     console.error('Ошибка при логине:', error);
 
     if (error?.isPublic) {
       return res.status(error.status || 400).json({
-        message: 'Неверный email или пароль'
+        message: t[error.i18nKey] ?? t['auth.wrongCredentials']
       });
     }
 
-    return res.status(500).json({ message: 'Ошибка при выполнении запроса' });
+    return res.status(500).json({ message: t['auth.loginQueryError'] });
   }
 };
 
 export const logoutUser = (req, res) => {
+  const { t } = getBackendMessages(req);
+
   res.clearCookie('token', {
     httpOnly: true,
     secure: true,
     sameSite: 'Lax'
   });
 
-  return res.json({ message: 'Выход выполнен успешно' });
+  return res.json({ message: t['auth.logoutSuccess'] });
 };
 
 export default {
