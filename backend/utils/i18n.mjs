@@ -1,22 +1,29 @@
 import { createRequire } from 'module';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const require = createRequire(import.meta.url);
 
-const SUPPORTED_LOCALES = ['ru', 'en'];
 const DEFAULT_LOCALE = 'en';
+
+// Динамически загружаем все локали из shared/i18n/
+const i18nDir = path.resolve(__dirname, '../../shared/i18n');
+const SUPPORTED_LOCALES = fs
+  .readdirSync(i18nDir)
+  .filter(f => f.endsWith('.json') && !f.includes('base'))
+  .map(f => f.replace('.json', ''));
 
 // Кэш: грузим JSON один раз при старте
 const cache = {};
 for (const loc of SUPPORTED_LOCALES) {
-  // en.json пустой — используем en.base.json как эталон для английского
-  const fileName = loc === 'en' ? 'en.base.json' : `${loc}.json`;
-  cache[loc] = require(
-    path.resolve(__dirname, '../../shared/i18n', fileName)
-  );
+  cache[loc] = require(path.resolve(i18nDir, `${loc}.json`));
 }
+
+// en.base.json как фолбэк для английского (содержит полный набор ключей)
+const enBase = require(path.resolve(i18nDir, 'en.base.json'));
+cache['en'] = Object.keys(cache['en'] || {}).length > 0 ? cache['en'] : enBase;
 
 /**
  * Определяет локаль из запроса.
@@ -40,10 +47,10 @@ export function resolveLocale(req) {
 
 /**
  * Возвращает { locale, t } для использования в роутере.
- * t — объект с переводами, всегда полный (фолбэк на en).
+ * t — объект с переводами, фолбэк на en.base.json.
  */
 export function getBackendMessages(req) {
   const locale = resolveLocale(req);
-  const t = cache[locale] ?? cache[DEFAULT_LOCALE];
+  const t = { ...enBase, ...(cache[locale] ?? {}) };
   return { locale, t };
 }
