@@ -1,4 +1,5 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
+import { t } from '/frontend/scripts/i18n-loader.js';
 
 // ОБРАБОТЧИК ОТПРАВКИ ФОРМЫ РЕГИСТРАЦИИ
 document.getElementById("registerForm").addEventListener("submit", async function (event) {
@@ -32,12 +33,12 @@ document.getElementById("registerForm").addEventListener("submit", async functio
             // Показываем поп-ап с выбором метода
             document.getElementById("confirmPopup").style.display = "block";                           // Отображаем попап выбора способа подтверждения
         } else {                                                                                        // Если ответ с ошибкой
-            document.getElementById("message").textContent = data.message || "Ошибка регистрации";     // Показываем сообщение об ошибке
+            document.getElementById("message").textContent = data.message || t('register.error');      // i18n
             return;                                                                                     // Прерываем выполнение функции
         }
     } catch (error) {                                                                                   // Обработка ошибок при выполнении запроса
         console.error("Ошибка регистрации:", error);                                                    // Логируем ошибку в консоль
-        document.getElementById("message").textContent = "Ошибка сервера.";                            // Показываем общее сообщение об ошибке
+        document.getElementById("message").textContent = t('register.serverError');                    // i18n
     }
 });
 
@@ -47,7 +48,7 @@ document.getElementById("telegramConfirmLink").addEventListener("click", functio
     
     const userId = sessionStorage.getItem('pendingUserId');
     if (!userId) {
-        alert("Ошибка: ID пользователя не найден. Пройдите регистрацию заново.");
+        alert(t('register.userIdNotFound'));
         return;
     }
 
@@ -80,16 +81,16 @@ document.getElementById("telegramConfirmLink").addEventListener("click", functio
             window.open(webFallbackLink, '_blank');
         }, 1000);
         
-        document.getElementById("message").textContent = "Открываем Telegram App для подтверждения. Нажмите START и подтвердите аккаунт.";
+        document.getElementById("message").textContent = t('register.telegramMobileHint');
     } else {
         // НА ПК: открываем вашу HTML страницу в НОВОЙ ВКЛАДКЕ
         window.open(telegramLink, '_blank');
         
         document.getElementById("message").innerHTML = `
             <div style="background: #e3f2fd; padding: 15px; border-radius: 8px; margin: 10px 0;">
-                <strong>Открыта страница подтверждения аккаунта</strong>
-                <p>Если страница не открылась автоматически, <a href="${telegramLink}" target="_blank">нажмите здесь</a></p>
-                <p>После подтверждения вернитесь на эту страницу</p>
+                <strong>${t('register.telegramDesktopTitle')}</strong>
+                <p>${t('register.telegramDesktopHint')} <a href="${telegramLink}" target="_blank">${t('register.telegramDesktopLink')}</a></p>
+                <p>${t('register.telegramDesktopReturn')}</p>
             </div>
         `;
     }
@@ -120,15 +121,15 @@ document.getElementById("emailConfirmButton").addEventListener("click", async ()
         const data = text ? JSON.parse(text) : {};                                                      // Парсим JSON только если есть содержимое
 
         if (response.ok) {                                                                              // Если ответ успешный
-            document.getElementById("message").textContent = "Письмо с подтверждением отправлено на ваш email!"; // Сообщение об успешной отправке
+            document.getElementById("message").textContent = t('register.emailSent');                  // i18n
             document.getElementById("confirmPopup").style.display = "none";                             // Скрываем попап подтверждения
             sessionStorage.removeItem('pendingUserId');                                                 // Удаляем сохраненный ID пользователя
         } else {                                                                                        // Если ответ с ошибкой
-            document.getElementById("message").textContent = data.message || "Ошибка при отправке письма."; // Показываем сообщение об ошибке
+            document.getElementById("message").textContent = data.message || t('register.emailError'); // i18n
         }
     } catch (error) {                                                                                   // Обработка ошибок при выполнении запроса
         console.error("Ошибка отправки email:", error);                                                 // Логируем ошибку в консоль
-        document.getElementById("message").textContent = "Ошибка сервера.";                             // Показываем общее сообщение об ошибке
+        document.getElementById("message").textContent = t('register.serverError');                    // i18n
     } finally {                                                                                         // Блок выполняется всегда, независимо от результата
         // Включаем кнопку обратно после завершения запроса
         button.disabled = false;                                                                        // Разблокируем кнопку после завершения операции
