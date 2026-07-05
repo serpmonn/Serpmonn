@@ -13,6 +13,7 @@ module.exports = function(eleventyConfig) {
    * Преобразует BCP47 локаль в формат Facebook/VK (xx_XX)
    */
   eleventyConfig.addFilter("ogLocale", function(locale) {
+    if (!locale) return 'ru_RU'; // защита от undefined для страниц без локали
     const map = {
       'zh-cn': 'zh_CN',
       'zh-tw': 'zh_TW',
