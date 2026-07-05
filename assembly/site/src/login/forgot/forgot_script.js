@@ -1,35 +1,36 @@
-import { t } from '/frontend/scripts/i18n-loader.js';
+import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
 
-document.addEventListener('DOMContentLoaded', function () {
-    const form = document.getElementById('forgot-form');
-    const message = document.getElementById('forgot-message');
+document.addEventListener("DOMContentLoaded", () => {
+    generateCombinedBackground();
 
-    if (!form) return;
+    const form = document.getElementById("forgotForm");
+    const message = document.getElementById("message");
 
-    form.addEventListener('submit', async function (e) {
+    form.addEventListener("submit", async (e) => {
         e.preventDefault();
 
-        const email = document.getElementById('forgot-email').value.trim();
-
+        const email = document.getElementById("email").value.trim();
         if (!email) {
-            message.textContent = t('forgot.emailEmpty');
-            message.style.color = 'red';
+            message.textContent = "Введите email.";
+            message.style.color = "red";
             return;
         }
 
         try {
-            const response = await fetch('/api/auth/forgot-password', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+            const res = await fetch("https://serpmonn.ru/auth-api/forgot", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
                 body: JSON.stringify({ email })
             });
 
-            const data = await response.json();
-            message.textContent = data.message || t('forgot.success');
-            message.style.color = response.ok ? 'green' : 'red';
+            const data = await res.json();
+            message.textContent = data.message;
+            message.style.color = res.ok ? "green" : "red";
         } catch (err) {
-            message.textContent = t('login.connectionError');
-            message.style.color = 'red';
+            message.textContent = "Ошибка соединения с сервером.";
+            message.style.color = "red";
         }
     });
 });
