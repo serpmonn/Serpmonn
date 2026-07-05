@@ -21,29 +21,36 @@
  * </div>
  */
 
+import { getMessages } from './i18n-loader.js';
+
 const NEWS_LIMIT = 10;
 
 const TOPIC_TAG_MAP = {
-  ai:         { cls: 'ai',       label: 'ИИ' },
-  tech:       { cls: 'tech',     label: 'Технологии' },
-  technology: { cls: 'tech',     label: 'Технологии' },
-  world:      { cls: 'world',    label: 'Мир' },
-  science:    { cls: 'sci',      label: 'Наука' },
-  sci:        { cls: 'sci',      label: 'Наука' },
-  sport:      { cls: 'sport',    label: 'Спорт' },
-  sports:     { cls: 'sport',    label: 'Спорт' },
-  space:      { cls: 'space',    label: 'Космос' },
-  business:   { cls: 'business', label: 'Бизнес' },
-  health:     { cls: 'health',   label: 'Здоровье' },
-  games:      { cls: 'games',    label: 'Игры' },
-  politics:   { cls: 'politics', label: 'Политика' },
-  economy:    { cls: 'economy',  label: 'Экономика' },
-  culture:    { cls: 'culture',  label: 'Культура' },
+  ai:         { cls: 'ai',       key: 'news.tag.ai' },
+  tech:       { cls: 'tech',     key: 'news.tag.tech' },
+  technology: { cls: 'tech',     key: 'news.tag.tech' },
+  world:      { cls: 'world',    key: 'news.tag.world' },
+  science:    { cls: 'sci',      key: 'news.tag.science' },
+  sci:        { cls: 'sci',      key: 'news.tag.science' },
+  sport:      { cls: 'sport',    key: 'news.tag.sport' },
+  sports:     { cls: 'sport',    key: 'news.tag.sport' },
+  space:      { cls: 'space',    key: 'news.tag.space' },
+  business:   { cls: 'business', key: 'news.tag.business' },
+  health:     { cls: 'health',   key: 'news.tag.health' },
+  games:      { cls: 'games',    key: 'news.tag.games' },
+  politics:   { cls: 'politics', key: 'news.tag.politics' },
+  economy:    { cls: 'economy',  key: 'news.tag.economy' },
+  culture:    { cls: 'culture',  key: 'news.tag.culture' },
 };
 
 function getTag(topicKey) {
   const k = (topicKey || '').toLowerCase();
-  return TOPIC_TAG_MAP[k] || { cls: 'world', label: topicKey || 'Новости' };
+  const t = getMessages();
+  if (TOPIC_TAG_MAP[k]) {
+    const entry = TOPIC_TAG_MAP[k];
+    return { cls: entry.cls, label: t[entry.key] || entry.key };
+  }
+  return { cls: 'world', label: topicKey || t['news.tag.world'] || 'News' };
 }
 
 function buildNewsUrl() {
