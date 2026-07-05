@@ -1,4 +1,5 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';                                       // Импортируем функцию генерации фона из внешнего модуля
+import { t } from '/frontend/scripts/i18n-loader.js';                                                                        // Импортируем функцию локализации
 
 // ОБРАБОТЧИК ОТПРАВКИ ФОРМЫ ВХОДА
 document.getElementById("loginForm").addEventListener("submit", async function(event) {                                      // Добавляем асинхронный обработчик события отправки формы
@@ -10,13 +11,13 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
 
     // ВАЛИДАЦИЯ ПОЛЕЙ ФОРМЫ
     if (email.length < 1) {                                                                                                  // Проверяем что поле email не пустое
-        messageElement.textContent = "Email не может быть пустым.";                                                          // Устанавливаем текст сообщения об ошибке
+        messageElement.textContent = t('login.emailEmpty');                                                                  // i18n
         messageElement.style.color = "red";                                                                                  // Устанавливаем красный цвет текста для ошибки
         return;                                                                                                              // Прерываем выполнение функции если валидация не пройдена
     }
 
     if (password.length < 6) {                                                                                               // Проверяем что пароль содержит минимум 6 символов
-        messageElement.textContent = "Пароль должен содержать минимум 6 символов.";                                          // Устанавливаем текст сообщения об ошибке
+        messageElement.textContent = t('login.passwordShort');                                                               // i18n
         messageElement.style.color = "red";                                                                                  // Устанавливаем красный цвет текста для ошибки
         return;                                                                                                              // Прерываем выполнение функции если валидация не пройдена
     }
@@ -40,7 +41,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         
         console.log('Данные ответа:', data);                                                                                 // Логируем данные ответа для отладки
         
-        messageElement.textContent = data.message || "Произошла ошибка";                                                     // Устанавливаем текст сообщения из ответа или по умолчанию
+        messageElement.textContent = data.message || t('login.error');                                                       // i18n fallback
         messageElement.style.color = response.ok ? "green" : "red";                                                          // Устанавливаем зеленый цвет для успеха, красный для ошибки
 
         if (response.ok) {                                                                                                   // Проверяем успешен ли ответ (статус 200-299)
@@ -51,7 +52,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         }                                                                                                                   
     } catch (error) {                                                                                                        // Обработка ошибок в блоке try
         console.error('Ошибка при логине:', error);                                                                          // Логируем ошибку в консоль
-        messageElement.textContent = "Ошибка соединения с сервером.";                                                        // Показываем пользователю сообщение об ошибке сети
+        messageElement.textContent = t('login.connectionError');                                                             // i18n
         messageElement.style.color = "red";                                                                                  // Устанавливаем красный цвет текста
     }                                                                                                                       
 });

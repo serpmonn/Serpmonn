@@ -1,4 +1,5 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
+import { t } from '/frontend/scripts/i18n-loader.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     generateCombinedBackground();
@@ -11,7 +12,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const email = document.getElementById("email").value.trim();
         if (!email) {
-            message.textContent = "Введите email.";
+            message.textContent = t('forgot.emailEmpty');
             message.style.color = "red";
             return;
         }
@@ -29,7 +30,7 @@ document.addEventListener("DOMContentLoaded", () => {
             message.textContent = data.message;
             message.style.color = res.ok ? "green" : "red";
         } catch (err) {
-            message.textContent = "Ошибка соединения с сервером.";
+            message.textContent = t('login.connectionError');
             message.style.color = "red";
         }
     });
