@@ -1,74 +1,50 @@
-import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';                                       // Импортируем функцию генерации фона из внешнего модуля
-import { t } from '/frontend/scripts/i18n-loader.js';                                                                        // Импортируем функцию локализации
+import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
+import { t } from '/frontend/scripts/i18n-loader.js';
 
-// ОБРАБОТЧИК ОТПРАВКИ ФОРМЫ ВХОДА
-document.getElementById("loginForm").addEventListener("submit", async function(event) {                                      // Добавляем асинхронный обработчик события отправки формы
-    event.preventDefault();                                                                                                  // Предотвращаем стандартную отправку формы (перезагрузку страницы)
+document.addEventListener('DOMContentLoaded', function () {
+    generateCombinedBackground();
 
-    const email = document.getElementById("email").value.trim();                                                             // Получаем значение email из поля ввода и убираем пробелы по краям
-    const password = document.getElementById("password").value;                                                              // Получаем значение пароля из поля ввода
-    const messageElement = document.getElementById("message");                                                               // Получаем ссылку на элемент для вывода сообщений
+    const form = document.getElementById('login-form');
+    const messageElement = document.getElementById('login-message');
 
-    // ВАЛИДАЦИЯ ПОЛЕЙ ФОРМЫ
-    if (email.length < 1) {                                                                                                  // Проверяем что поле email не пустое
-        messageElement.textContent = t('login.emailEmpty');                                                                  // i18n
-        messageElement.style.color = "red";                                                                                  // Устанавливаем красный цвет текста для ошибки
-        return;                                                                                                              // Прерываем выполнение функции если валидация не пройдена
-    }
+    if (!form) return;
 
-    if (password.length < 6) {                                                                                               // Проверяем что пароль содержит минимум 6 символов
-        messageElement.textContent = t('login.passwordShort');                                                               // i18n
-        messageElement.style.color = "red";                                                                                  // Устанавливаем красный цвет текста для ошибки
-        return;                                                                                                              // Прерываем выполнение функции если валидация не пройдена
-    }
+    form.addEventListener('submit', async function (e) {
+        e.preventDefault();
 
-    try {                                                                                                                    // Начало блока try для обработки возможных ошибок
-        console.log('Отправка запроса на /auth/login');                                                                      // Логируем начало отправки запроса
-        // ОТПРАВКА ЗАПРОСА НА СЕРВЕР
-        const response = await fetch("/auth/login", {                                                                        // Отправляем асинхронный POST запрос на endpoint логина
-            method: "POST",                                                                                                  // Указываем метод HTTP запроса - POST
-            headers: {                                                                                                       // Устанавливаем заголовки запроса
-                "Content-Type": "application/json"                                                                           // Указываем что отправляем данные в формате JSON
-            },
-            body: JSON.stringify({ email, password }),                                                                       // Преобразуем объект с данными в JSON строку
-            credentials: 'include'                                                                                           // Включаем отправку cookies (для аутентификации)
-        });
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
 
-        console.log('Ответ /auth/login:', response.status, response.statusText);                                             // Логируем статус ответа от сервера
-        // ОБРАБОТКА ОТВЕТА ОТ СЕРВЕРА
-        const text = await response.text();                                                                                  // Получаем текст ответа от сервера
-        const data = text ? JSON.parse(text) : {};                                                                           // Парсим JSON только если ответ не пустой
-        
-        console.log('Данные ответа:', data);                                                                                 // Логируем данные ответа для отладки
-        
-        messageElement.textContent = data.message || t('login.error');                                                       // i18n fallback
-        messageElement.style.color = response.ok ? "green" : "red";                                                          // Устанавливаем зеленый цвет для успеха, красный для ошибки
+        if (email.length < 1) {
+            messageElement.textContent = t('login.emailEmpty');
+            messageElement.style.color = 'red';
+            return;
+        }
 
-        if (response.ok) {                                                                                                   // Проверяем успешен ли ответ (статус 200-299)
-            console.log('Логин успешен, редирект на профиль');                                                               // Логируем успешный логин
-            setTimeout(() => {                                                                                               // Устанавливаем задержку перед редиректом
-                window.location.href = "/frontend/profile/profile.html";                                                     // Перенаправляем пользователя на страницу профиля
-            }, 1000);                                                                                                        // Задержка 1 секунда чтобы пользователь увидел сообщение
-        }                                                                                                                   
-    } catch (error) {                                                                                                        // Обработка ошибок в блоке try
-        console.error('Ошибка при логине:', error);                                                                          // Логируем ошибку в консоль
-        messageElement.textContent = t('login.connectionError');                                                             // i18n
-        messageElement.style.color = "red";                                                                                  // Устанавливаем красный цвет текста
-    }                                                                                                                       
+        if (password.length < 6) {
+            messageElement.textContent = t('login.passwordShort');
+            messageElement.style.color = 'red';
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                window.location.href = data.redirect || '/';
+            } else {
+                messageElement.textContent = data.message || t('login.error');
+                messageElement.style.color = 'red';
+            }
+        } catch (err) {
+            messageElement.textContent = t('login.connectionError');
+            messageElement.style.color = 'red';
+        }
+    });
 });
-
-// ИНИЦИАЛИЗАЦИЯ ПРИ ПОЛНОЙ ЗАГРУЗКЕ DOM
-document.addEventListener("DOMContentLoaded", () => {                                                                        // Добавляем обработчик события полной загрузки DOM
-    generateCombinedBackground();                                                                                            // Вызываем функцию генерации фона страницы
-
-    const passwordField = document.getElementById("password");                                                               // Получаем ссылку на поле ввода пароля
-    const togglePassword = document.getElementById("togglePassword");                                                        // Получаем ссылку на кнопку переключения видимости пароля
-
-    if (togglePassword && passwordField) {                                                                                   // Проверяем что оба элемента существуют на странице
-        togglePassword.addEventListener("click", () => {                                                                     // Добавляем обработчик клика на кнопку переключения
-            const isPasswordVisible = passwordField.type === "text";                                                         // Проверяем текущий тип поля (текст или пароль)
-            passwordField.type = isPasswordVisible ? "password" : "text";                                                    // Переключаем тип поля между password и text
-            togglePassword.textContent = isPasswordVisible ? "👁" : "🙈";                                                    // Меняем иконку на кнопке в зависимости от состояния
-        });                                                                                                                 
-    }                                                                                                                       
-});                                                                                                                         
