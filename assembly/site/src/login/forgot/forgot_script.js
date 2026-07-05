@@ -1,37 +1,35 @@
-import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
 import { t } from '/frontend/scripts/i18n-loader.js';
 
-document.addEventListener("DOMContentLoaded", () => {
-    generateCombinedBackground();
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('forgot-form');
+    const message = document.getElementById('forgot-message');
 
-    const form = document.getElementById("forgotForm");
-    const message = document.getElementById("message");
+    if (!form) return;
 
-    form.addEventListener("submit", async (e) => {
+    form.addEventListener('submit', async function (e) {
         e.preventDefault();
 
-        const email = document.getElementById("email").value.trim();
+        const email = document.getElementById('forgot-email').value.trim();
+
         if (!email) {
             message.textContent = t('forgot.emailEmpty');
-            message.style.color = "red";
+            message.style.color = 'red';
             return;
         }
 
         try {
-            const res = await fetch("https://serpmonn.ru/auth-api/forgot", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+            const response = await fetch('/api/auth/forgot-password', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })
             });
 
-            const data = await res.json();
-            message.textContent = data.message;
-            message.style.color = res.ok ? "green" : "red";
+            const data = await response.json();
+            message.textContent = data.message || t('forgot.success');
+            message.style.color = response.ok ? 'green' : 'red';
         } catch (err) {
             message.textContent = t('login.connectionError');
-            message.style.color = "red";
+            message.style.color = 'red';
         }
     });
 });
