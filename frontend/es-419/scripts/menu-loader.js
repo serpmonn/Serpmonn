@@ -2,6 +2,7 @@
 import { initMenu } from './menu.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
+import { t } from './i18n-loader.js';
 
 // Немедленно применяем сохранённые настройки доступности
 (function applySavedAccessibility() {
@@ -192,10 +193,7 @@ fetch(primaryMenuPath)
         const hint = document.createElement('div');
         hint.className = 'spn-menu-overlay__hint';
 
-        let text = 'Нажмите здесь, чтобы открыть меню';
-        if (spnLang && spnLang !== 'ru') {
-          if (spnLang.startsWith('en')) text = 'Tap here to open the menu';
-        }
+        const text = t('menu.hint');
 
         // Текстовый блок под кнопкой
         const textDiv = document.createElement('div');
@@ -217,7 +215,7 @@ fetch(primaryMenuPath)
         arrow.className = 'spn-menu-overlay__arrow';
 
         // Точка старта стрелки (верхний центр текста)
-        const textCenterX = hintLeft + 130; // половина 260
+        const textCenterX = hintLeft + 130;
         const textTopY = hintTop;
 
         // Точка цели — центр дырки/кнопки
@@ -228,7 +226,7 @@ fetch(primaryMenuPath)
         const dx = targetX - textCenterX;
         const dy = targetY - textTopY;
 
-        // Длина стрелки (максимум 120px, чтобы не уходила слишком далеко)
+        // Длина стрелки (максимум 70px)
         const dist = Math.min(Math.sqrt(dx * dx + dy * dy), 70);
 
         const angle = Math.atan2(dy, dx) * 180 / Math.PI;
@@ -302,11 +300,9 @@ fetch(primaryMenuPath)
 
             // 1. Обмен кода на токены через SDK (PKCE внутри SDK)
             const tokens = await VKID.Auth.exchangeCode(code, deviceId);
-            // tokens.access_token, tokens.id_token и пр.
 
             // 2. Получаем инфу о пользователе
             const userInfo = await VKID.Auth.userInfo(tokens.access_token);
-            // userInfo.user.id, userInfo.user.email, userInfo.user.first_name и т.д.
 
             const vkUserId = userInfo.user?.id || userInfo.user?.user_id;
             const email = userInfo.user?.email ?? null;
@@ -329,11 +325,9 @@ fetch(primaryMenuPath)
               console.log('VKID backend login:', data);
 
               if (data && data.success) {
-                // редиректим туда же, куда после обычной авторизации
                 window.location.href = '/frontend/profile/profile.html';
               } else {
                 console.error('VKID login failed:', data);
-                // тут при желании можно показать юзеру ошибку
               }
             } catch (e) {
               console.error('VKID OneTap flow error:', e);
