@@ -1,4 +1,5 @@
 import { generateCombinedBackground } from '../scripts/backgroundGenerator.js';
+import { getPageT } from '../scripts/i18n-loader.js';
 
 // Карта всех доступных инструментов (имя должно совпадать с data-tool-name в tools.html)
 const ALL_TOOLS = [
@@ -39,7 +40,9 @@ const ALL_TOOLS = [
   }
 ];
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  const t = await getPageT('profile');
+
   generateCombinedBackground();
 
   const pointsBalanceEl = document.getElementById('pointsBalance');
@@ -103,7 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const closeBtn = document.createElement('button');
     closeBtn.className = 'toast__close';
     closeBtn.type = 'button';
-    closeBtn.setAttribute('aria-label', 'Закрыть уведомление');
+    closeBtn.setAttribute('aria-label', t('profile.closeNotification'));
     closeBtn.textContent = '×';
 
     closeBtn.addEventListener('click', () => {
@@ -117,12 +120,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     container.appendChild(toast);
 
-    // небольшая задержка, чтобы сработала анимация появления
     requestAnimationFrame(() => {
       toast.classList.add('toast--visible');
     });
 
-    // авто‑закрытие через 4 секунды
     setTimeout(() => {
       toast.classList.remove('toast--visible');
       setTimeout(() => toast.remove(), 200);
@@ -201,11 +202,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (noFavoritesMessage) noFavoritesMessage.style.display = 'none';
 
-    favoriteContainer.innerHTML = favoriteTools.map(tool => `
-        <a class="tool-link" href="${tool.href}">
-            <span class="tool-text">${tool.name}</span>
-        </a>
-    `).join('');
+    // Fix: используем createElement + textContent вместо innerHTML для предотвращения XSS
+    favoriteContainer.innerHTML = '';
+    favoriteTools.forEach(tool => {
+      const a = document.createElement('a');
+      a.className = 'tool-link';
+      a.href = tool.href;
+      const span = document.createElement('span');
+      span.className = 'tool-text';
+      span.textContent = tool.name;
+      a.appendChild(span);
+      favoriteContainer.appendChild(a);
+    });
   }
 
   /* ==== РЕНДЕР ФОРМЫ РЕДАКТИРОВАНИЯ ==== */
@@ -226,33 +234,33 @@ document.addEventListener('DOMContentLoaded', () => {
         : '';
 
     editProfileMount.innerHTML = `
-    <section class="edit-inline" aria-label="Редактирование данных">
+    <section class="edit-inline" aria-label="${t('profile.editSectionLabel')}">
       <form id="profileForm" class="form-card form-card--inline" novalidate>
         <div class="form-field form-field--inline">
-          <label for="newUsername">Имя</label>
+          <label for="newUsername">${t('profile.labelName')}</label>
           <input type="text"
               id="newUsername"
               name="newUsername"
               maxlength="255"
-              placeholder="Введите новое имя"
+              placeholder="${t('profile.namePlaceholder')}"
               value="${usernameValue}">
         </div>
 
         <div class="form-field form-field--inline">
-          <label for="newEmail">Email</label>
+          <label for="newEmail">${t('profile.labelEmail')}</label>
           <input type="email"
               id="newEmail"
               name="newEmail"
-              placeholder="Введите новый email"
+              placeholder="${t('profile.emailPlaceholder')}"
               value="${emailValue}">
         </div>
 
         <div class="form-actions form-actions--inline">
           <button type="submit" class="primary-button primary-button--inline">
-            Сохранить
+            ${t('profile.save')}
           </button>
           <button type="button" id="cancelEditProfile" class="secondary-button secondary-button--inline">
-            Отмена
+            ${t('profile.cancel')}
           </button>
         </div>
 
@@ -293,12 +301,12 @@ document.addEventListener('DOMContentLoaded', () => {
       }
 
       if (!Object.keys(payload).length) {
-        setGlobalMessage('Нет изменений для сохранения.', 'error');
+        setGlobalMessage(t('profile.noChanges'), 'error');
         return;
       }
 
       if (payload.email && !payload.email.includes('@')) {
-        newEmailError.textContent = 'Введите корректный email.';
+        newEmailError.textContent = t('profile.invalidEmail');
         return;
       }
 
@@ -306,6 +314,16 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     newUsernameInput.focus();
+  }
+
+  /* ==== ВСПОМОГАТЕЛЬНАЯ ФУНКЦИЯ ДЛЯ planHintEl ==== */
+
+  // Fix: создаём ссылку через createElement вместо innerHTML для предотвращения XSS
+  function makeTariffsLink(text) {
+    const a = document.createElement('a');
+    a.href = '/frontend/tariffs/tariffs.html';
+    a.textContent = text;
+    return a;
   }
 
   /* ==== API ==== */
@@ -320,7 +338,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await safeJson(response);
 
       if (!response.ok) {
-        setGlobalMessage(data?.message || 'Не удалось загрузить профиль.', 'error');
+        setGlobalMessage(data?.message || t('profile.loadError'), 'error');
         if (response.status === 401) handleUnauthorized();
         return;
       }
@@ -328,11 +346,10 @@ document.addEventListener('DOMContentLoaded', () => {
       const username = data.username || '';
       const email = data.email || '';
 
-      usernameField.textContent = username || 'Без имени';
+      usernameField.textContent = username || t('profile.noName');
       emailField.textContent = email || '—';
       updateAvatarInitials(username, email);
 
-      // Обновляем реферальную ссылку, если есть username
       if (referralLinkInput) {
         if (username) {
           const baseUrl = 'https://serpmonn.ru/frontend/register/register.html';
@@ -340,22 +357,20 @@ document.addEventListener('DOMContentLoaded', () => {
           referralLinkInput.value = url;
 
           if (referralHint) {
-            referralHint.textContent =
-              'Скопируйте ссылку и отправьте другу. За регистрацию по ней вы оба получите бонусные баллы.';
+            referralHint.textContent = t('profile.referralHint');
           }
         } else {
           referralLinkInput.value = '';
           if (referralHint) {
-            referralHint.textContent =
-              'Чтобы получить реферальную ссылку, укажите имя в профиле.';
+            referralHint.textContent = t('profile.referralHintNoName');
           }
         }
       }
 
       if (!data.confirmed) {
-        setBadge(accountStatusBadge, 'status-badge--unconfirmed', 'Email не подтверждён');
+        setBadge(accountStatusBadge, 'status-badge--unconfirmed', t('profile.emailNotConfirmed'));
       } else {
-        setBadge(accountStatusBadge, 'status-badge--ok', 'Аккаунт подтверждён');
+        setBadge(accountStatusBadge, 'status-badge--ok', t('profile.accountConfirmed'));
       }
 
       const plan = data.plan || 'free';
@@ -367,12 +382,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
       if (currentPlan === 'pro') {
         planNameEl.textContent = 'Pro';
-        setBadge(planBadge, 'status-badge--pro', 'Pro активен');
+        setBadge(planBadge, 'status-badge--pro', t('profile.proActive'));
       } else {
         planNameEl.textContent = 'Free';
 
         if (isPro && !isProActive) {
-          setBadge(planBadge, 'status-badge--pro-expired', 'Pro истёк, активен Free');
+          setBadge(planBadge, 'status-badge--pro-expired', t('profile.proExpired'));
         } else {
           setBadge(planBadge, 'status-badge--free', 'Free');
         }
@@ -383,89 +398,90 @@ document.addEventListener('DOMContentLoaded', () => {
           ? new Date(data.pro_until).toLocaleDateString('ru-RU')
           : '';
         planStatusEl.textContent = until
-          ? `Подписка Pro активна до ${until}.`
-          : 'Подписка Pro активна.';
+          ? t('profile.proActiveUntil', { date: until })
+          : t('profile.proActiveNoDate');
       } else {
         if (isPro && !isProActive) {
-          planStatusEl.textContent =
-            'Ранее вы использовали тариф Pro, но срок его действия закончился. Сейчас действует бесплатный тариф Free.';
+          planStatusEl.textContent = t('profile.proExpiredStatus');
         } else {
-          planStatusEl.textContent =
-            'Сейчас действует бесплатный тариф Free с ограничением по числу запросов.';
+          planStatusEl.textContent = t('profile.freeStatus');
         }
       }
 
       if (currentPlan === 'pro' && data.quotas && data.quotas.pro_monthly) {
         const q = data.quotas.pro_monthly;
 
-        // Показываем только оставшиеся запросы
         planQuotaCounterEl.textContent = `${q.remaining}`;
 
         planQuotaHintEl.textContent =
           q.used === 0
-            ? 'Подписка Pro активна, вы ещё не использовали запросы по Pro.'
-            : `Вы уже использовали ${q.used} запросов по Pro.`;
+            ? t('profile.proQuotaUnused')
+            : t('profile.proQuotaUsed', { used: q.used });
 
         updatePlanQuotaBar(q.used, q.limit);
       } else if (currentPlan === 'free' && data.quotas && data.quotas.free_daily) {
         const q = data.quotas.free_daily;
         planQuotaCounterEl.textContent = `${q.used ?? 0} / ${q.limit}`;
-        planQuotaHintEl.textContent = 'Счётчик обновляется ежедневно.';
+        planQuotaHintEl.textContent = t('profile.freeQuotaHint');
         updatePlanQuotaBar(q.used ?? 0, q.limit);
       } else {
         if (currentPlan === 'pro') {
-          // Нет данных по квоте — показываем “без данных”, без цифры 2000 и без месяца
           planQuotaCounterEl.textContent = '—';
-          planQuotaHintEl.textContent = 'Подписка Pro активна. Информация об оставшихся запросах временно недоступна.';
-          updatePlanQuotaBar(0, 100); // просто пустая полоска
+          planQuotaHintEl.textContent = t('profile.proQuotaUnavailable');
+          updatePlanQuotaBar(0, 100);
         } else {
           planQuotaCounterEl.textContent = '0 / 15';
-          planQuotaHintEl.textContent =
-            'Для авторизованных пользователей доступно до 15 запросов в день.';
+          planQuotaHintEl.textContent = t('profile.freeQuotaDefault');
           updatePlanQuotaBar(0, 15);
         }
       }
 
+      // Fix: используем createElement + append вместо innerHTML для ссылок в planHintEl
+      planHintEl.textContent = '';
       if (currentPlan === 'pro') {
-        planHintEl.innerHTML =
-          'После окончания срока вы автоматически перейдёте на бесплатный тариф Free. ' +
-          'Подробнее — на <a href="/frontend/tariffs/tariffs.html">странице тарифов</a>.';
+        planHintEl.append(
+          t('profile.proHintPrefix'),
+          makeTariffsLink(t('profile.tariffsPage')),
+          '.'
+        );
       } else {
         if (isPro && !isProActive) {
-          planHintEl.innerHTML =
-            'Вы сейчас на бесплатном тарифе Free. Ранее вы использовали Pro — ' +
-            'подробнее о продлении на <a href="/frontend/tariffs/tariffs.html">странице тарифов</a>.';
+          planHintEl.append(
+            t('profile.freeAfterProHint'),
+            makeTariffsLink(t('profile.tariffsPage')),
+            '.'
+          );
         } else {
-          planHintEl.innerHTML =
-            'Вы используете бесплатный тариф Free. Подробнее о возможностях Pro — ' +
-            '<a href="/frontend/tariffs/tariffs.html">на странице тарифов</a>.';
+          planHintEl.append(
+            t('profile.freeHint'),
+            makeTariffsLink(t('profile.tariffsPageFree')),
+            '.'
+          );
         }
       }
 
-    if (aiAccessBlock && aiAccessHint) {
+      if (aiAccessBlock && aiAccessHint) {
         if (currentPlan === 'pro') {
-          // Pro активен — показываем кнопку
           aiAccessBlock.style.display = 'block';
-          aiAccessHint.textContent = 'У вас активен тариф Pro. Нажмите, чтобы открыть AI-сервис.';
+          aiAccessHint.textContent = t('profile.aiHint');
         } else {
-          // Free или Pro истёк — скрываем блок
           aiAccessBlock.style.display = 'none';
         }
       }
 
     } catch (error) {
       console.error('Ошибка получения профиля:', error);
-      setGlobalMessage('Ошибка загрузки данных профиля. Попробуйте снова.', 'error');
+      setGlobalMessage(t('profile.loadErrorRetry'), 'error');
     }
   }
 
-    async function loadPoints() {
+  async function loadPoints() {
     if (!pointsBalanceEl) return;
 
     try {
       const response = await fetch('/api/me/points', {
         method: 'GET',
-        credentials: 'include' // обязательно, чтобы ушла кука token [web:223][web:224]
+        credentials: 'include'
       });
 
       const data = await safeJson(response);
@@ -484,62 +500,56 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-    /* ==== ИСТОРИЯ БАЛЛОВ ==== */
+  /* ==== ИСТОРИЯ БАЛЛОВ ==== */
 
   function mapPointsReason(item) {
-  switch (item.type) {
-    // Регистрация
-    case 'registration_backfill_50':
-    case 'registration_signup':
-      return 'Бонус за регистрацию';
+    switch (item.type) {
+      case 'registration_backfill_50':
+      case 'registration_signup':
+        return t('points.registration');
 
-    case 'registration_backfill':
-      return 'Бонус за подтверждение';
+      case 'registration_backfill':
+        return t('points.registrationConfirm');
 
-    case 'registration':
-      if (item.meta?.via === 'telegram') return 'Подтверждение через Telegram';
-      if (item.meta?.via === 'email') return 'Подтверждение email';
-      return 'Подтверждение аккаунта';
+      case 'registration':
+        if (item.meta?.via === 'telegram') return t('points.telegramConfirm');
+        if (item.meta?.via === 'email') return t('points.emailConfirm');
+        return t('points.accountConfirm');
 
-    // Рефералка — реферер (новые)
-    case 'invite_basic':
-      return 'Бонус за приглашение друга';
-    case 'invite_qualified':
-      return 'Бонус за активного друга';
+      case 'invite_basic':
+        return t('points.inviteBasic');
+      case 'invite_qualified':
+        return t('points.inviteQualified');
 
-    // Рефералка — реферер (старый тариф)
-    case 'referral_referrer':
-      return 'Бонус за приглашённого друга (старый тариф)';
+      case 'referral_referrer':
+        return t('points.referralReferrer');
 
-    // Рефералка — приглашённый
-    case 'referral_referee':
-      return 'Бонус за регистрацию по приглашению';
+      case 'referral_referee':
+        return t('points.referralReferee');
 
-    // Вывод / обмен
-    case 'withdraw_request':
-      if (item.meta?.via === 'pro_exchange') {
-        return 'Обмен баллов на дни Pro';
-      }
-      return 'Заявка на вывод баллов';
+      case 'withdraw_request':
+        if (item.meta?.via === 'pro_exchange') {
+          return t('points.withdrawProExchange');
+        }
+        return t('points.withdrawRequest');
 
-    case 'withdraw_paid':
-      if (item.meta?.via === 'pro_exchange') {
-        return 'Подписка Pro активирована за баллы';
-      }
-      return 'Выплата по заявке на вывод';
+      case 'withdraw_paid':
+        if (item.meta?.via === 'pro_exchange') {
+          return t('points.proActivatedByPoints');
+        }
+        return t('points.withdrawPaid');
 
-    case 'withdraw_rollback':
-      return 'Возврат баллов за отменённый вывод';
+      case 'withdraw_rollback':
+        return t('points.withdrawRollback');
 
-    // Служебное
-    case 'admin_adjust':
-    case 'manual':
-      return 'Ручная операция с баллами';
+      case 'admin_adjust':
+      case 'manual':
+        return t('points.manualAdjust');
 
-    default:
-      return 'Операция с баллами';
+      default:
+        return t('points.genericOperation');
+    }
   }
-}
 
   async function loadPointsHistory() {
     try {
@@ -563,25 +573,25 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   async function updateReferralCounter() {
-  const referralCounterEl = document.getElementById('referralCounter');
-  if (!referralCounterEl) return;
+    const referralCounterEl = document.getElementById('referralCounter');
+    if (!referralCounterEl) return;
 
-  try {
-    const history = await loadPointsHistory();
+    try {
+      const history = await loadPointsHistory();
 
-    const referralCount = history.filter(
-      item => item.type === 'invite_basic'
-    ).length;
+      const referralCount = history.filter(
+        item => item.type === 'invite_basic'
+      ).length;
 
-    referralCounterEl.textContent =
-      referralCount > 0
-        ? `Приглашено друзей: ${referralCount}`
-        : 'Вы ещё не приглашали друзей.';
-  } catch (error) {
-    console.error('Ошибка обновления счётчика рефералов:', error);
-    referralCounterEl.textContent = 'Вы ещё не приглашали друзей.';
+      referralCounterEl.textContent =
+        referralCount > 0
+          ? t('profile.referralCount', { count: referralCount })
+          : t('profile.noReferrals');
+    } catch (error) {
+      console.error('Ошибка обновления счётчика рефералов:', error);
+      referralCounterEl.textContent = t('profile.noReferrals');
+    }
   }
-}
 
   async function checkCreateMailboxStatus() {
     try {
@@ -593,7 +603,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await safeJson(response);
 
       if (!response.ok) {
-        setGlobalMessage(data?.message || 'Ошибка доступа к почте.', 'error');
+        setGlobalMessage(data?.message || t('profile.mailAccessError'), 'error');
         if (response.status === 401) handleUnauthorized();
         return;
       }
@@ -601,7 +611,7 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = './onnmail/onnmail.html';
     } catch (error) {
       console.error('Ошибка проверки статуса:', error);
-      setGlobalMessage('Ошибка проверки статуса. Попробуйте снова.', 'error');
+      setGlobalMessage(t('profile.statusCheckError'), 'error');
     }
   }
 
@@ -617,11 +627,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await safeJson(response);
 
       if (!response.ok) {
-        setGlobalMessage(data?.message || 'Не удалось сохранить изменения.', 'error');
+        setGlobalMessage(data?.message || t('profile.saveFailed'), 'error');
         return;
       }
 
-      setGlobalMessage(data?.message || 'Данные профиля обновлены.', 'success');
+      setGlobalMessage(data?.message || t('profile.saveSuccess'), 'success');
 
       if (payload.username) {
         usernameField.textContent = payload.username;
@@ -631,7 +641,6 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       updateAvatarInitials(payload.username, payload.email);
 
-      // Обновляем реферальную ссылку, если поменяли username
       if (payload.username && referralLinkInput) {
         const baseUrl = 'https://serpmonn.ru/frontend/register/register.html';
         const url = `${baseUrl}?ref=${encodeURIComponent(payload.username)}`;
@@ -642,7 +651,7 @@ document.addEventListener('DOMContentLoaded', () => {
       renderEditForm();
     } catch (error) {
       console.error('Ошибка обновления профиля:', error);
-      setGlobalMessage('Произошла ошибка при обновлении данных.', 'error');
+      setGlobalMessage(t('profile.updateError'), 'error');
     }
   }
 
@@ -667,140 +676,136 @@ document.addEventListener('DOMContentLoaded', () => {
     renderEditForm();
   });
 
-  let pointsHistoryLoaded = false;                                                                                  // флаг, что уже грузили историю один раз
+  let pointsHistoryLoaded = false;
 
   const proExchangeDaysInput = document.getElementById('proExchangeDays');
   const proExchangeSubmit = document.getElementById('proExchangeSubmit');
   const proExchangeHint = document.getElementById('proExchangeHint');
 
   if (proExchangeDaysInput && proExchangeSubmit) {
-  proExchangeSubmit.addEventListener('click', async () => {
-    const raw = proExchangeDaysInput.value.trim();
-    const days = parseInt(raw, 10);
+    proExchangeSubmit.addEventListener('click', async () => {
+      const raw = proExchangeDaysInput.value.trim();
+      const days = parseInt(raw, 10);
 
-    if (!Number.isFinite(days) || days <= 0) {
-      setGlobalMessage('Введите корректное количество дней Pro.', 'error');
-      return;
-    }
-
-    const POINTS_PER_PRO_DAY = 500;
-    const needPoints = days * POINTS_PER_PRO_DAY;
-
-    const ok = window.confirm(
-      `Вы хотите обменять ${needPoints} баллов на ${days} дней Pro?\n` +
-      'Баллы будут списаны, а срок действия Pro увеличится.'
-    );
-    if (!ok) return;
-
-    try {
-      const response = await fetch('/api/me/points/withdraw/pro', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ days })
-      });
-
-      const data = await safeJson(response);
-
-      if (!response.ok) {
-        setGlobalMessage(
-          data?.message || 'Не удалось обменять баллы на Pro.',
-          'error'
-        );
+      if (!Number.isFinite(days) || days <= 0) {
+        setGlobalMessage(t('profile.invalidProDays'), 'error');
         return;
       }
 
-      const dayWord = getDayWord(days);
+      const POINTS_PER_PRO_DAY = 500;
+      const needPoints = days * POINTS_PER_PRO_DAY;
 
-      setGlobalMessage(
-        data?.message || `Подписка Pro продлена на ${days} ${dayWord}.`,
-        'success'
-      );
+      const ok = window.confirm(t('profile.exchangeConfirm', { points: needPoints, days }));
+      if (!ok) return;
 
-      loadPoints();
-      getProfile();
-
-      pointsHistoryLoaded = false;
-      if (pointsHistoryEl) {
-        pointsHistoryEl.innerHTML = '';
-        pointsHistoryEl.style.display = 'none';
-      }
-    } catch (e) {
-      console.error('Ошибка обмена баллов на Pro:', e);
-      setGlobalMessage('Ошибка обмена баллов. Попробуйте позже.', 'error');
-    }
-  });
-}
-
-  if (pointsBadgeEl && pointsHistoryEl) {
-  pointsBadgeEl.style.cursor = 'pointer';
-  pointsBadgeEl.title = 'Показать историю баллов';
-
-  pointsBadgeEl.addEventListener('click', async (event) => {
-    event.stopPropagation(); // чтобы клик по таблетке не считался "вне" при глобальном обработчике
-
-    if (!pointsHistoryLoaded) {
-      const history = await loadPointsHistory();
-
-      pointsHistoryEl.innerHTML = '';
-
-      if (!history.length) {
-        const empty = document.createElement('p');
-        empty.className = 'points-history-empty';
-        empty.textContent = 'Пока нет операций с баллами.';
-        pointsHistoryEl.appendChild(empty);
-      } else {
-        const list = document.createElement('ul');
-        list.className = 'points-history-list';
-
-        history.forEach(item => {
-          const li = document.createElement('li');
-          li.className = 'points-history-item';
-
-          const reason = mapPointsReason(item);
-          const sign = item.amount > 0 ? '+' : '';
-          const amountText = `${sign}${item.amount}`;
-
-          const date = item.createdAt
-            ? new Date(item.createdAt).toLocaleString('ru-RU')
-            : '';
-
-          li.textContent = date
-            ? `${amountText} — ${reason} (${date})`
-            : `${amountText} — ${reason}`;
-
-          list.appendChild(li);
+      try {
+        const response = await fetch('/api/me/points/withdraw/pro', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          credentials: 'include',
+          body: JSON.stringify({ days })
         });
 
-        pointsHistoryEl.appendChild(list);
+        const data = await safeJson(response);
+
+        if (!response.ok) {
+          setGlobalMessage(
+            data?.message || t('profile.exchangeFailed'),
+            'error'
+          );
+          return;
+        }
+
+        const dayWord = getDayWord(days);
+
+        setGlobalMessage(
+          data?.message || t('profile.proExtended', { days, word: dayWord }),
+          'success'
+        );
+
+        loadPoints();
+        getProfile();
+
+        pointsHistoryLoaded = false;
+        if (pointsHistoryEl) {
+          pointsHistoryEl.innerHTML = '';
+          pointsHistoryEl.style.display = 'none';
+        }
+      } catch (e) {
+        console.error('Ошибка обмена баллов на Pro:', e);
+        setGlobalMessage(t('profile.exchangeError'), 'error');
+      }
+    });
+  }
+
+  if (pointsBadgeEl && pointsHistoryEl) {
+    pointsBadgeEl.style.cursor = 'pointer';
+    pointsBadgeEl.title = t('profile.showPointsHistory');
+
+    pointsBadgeEl.addEventListener('click', async (event) => {
+      event.stopPropagation();
+
+      if (!pointsHistoryLoaded) {
+        const history = await loadPointsHistory();
+
+        pointsHistoryEl.innerHTML = '';
+
+        if (!history.length) {
+          const empty = document.createElement('p');
+          empty.className = 'points-history-empty';
+          empty.textContent = t('profile.noPointsHistory');
+          pointsHistoryEl.appendChild(empty);
+        } else {
+          const list = document.createElement('ul');
+          list.className = 'points-history-list';
+
+          history.forEach(item => {
+            const li = document.createElement('li');
+            li.className = 'points-history-item';
+
+            const reason = mapPointsReason(item);
+            const sign = item.amount > 0 ? '+' : '';
+            const amountText = `${sign}${item.amount}`;
+
+            const date = item.createdAt
+              ? new Date(item.createdAt).toLocaleString('ru-RU')
+              : '';
+
+            li.textContent = date
+              ? `${amountText} — ${reason} (${date})`
+              : `${amountText} — ${reason}`;
+
+            list.appendChild(li);
+          });
+
+          pointsHistoryEl.appendChild(list);
+        }
+
+        pointsHistoryLoaded = true;
       }
 
-      pointsHistoryLoaded = true;
-    }
+      const isHidden =
+        pointsHistoryEl.style.display === 'none' || pointsHistoryEl.style.display === '';
+      pointsHistoryEl.style.display = isHidden ? 'block' : 'none';
+    });
+  }
 
-    const isHidden =
-      pointsHistoryEl.style.display === 'none' || pointsHistoryEl.style.display === '';
-    pointsHistoryEl.style.display = isHidden ? 'block' : 'none';
-  });
-}
-
-if (copyReferralLinkBtn && referralLinkInput) {
+  if (copyReferralLinkBtn && referralLinkInput) {
     copyReferralLinkBtn.addEventListener('click', async () => {
       const value = referralLinkInput.value.trim();
       if (!value) {
-        setGlobalMessage('Реферальная ссылка ещё не сгенерирована.', 'error');
+        setGlobalMessage(t('profile.referralNotReady'), 'error');
         return;
       }
 
       try {
         await navigator.clipboard.writeText(value);
-        setGlobalMessage('Реферальная ссылка скопирована в буфер обмена.', 'success');
+        setGlobalMessage(t('profile.referralCopied'), 'success');
       } catch (e) {
         console.error('Ошибка копирования ссылки:', e);
-        // Фолбэк: выделим текст, чтобы юзер сам скопировал
         referralLinkInput.focus();
         referralLinkInput.select();
-        setGlobalMessage('Ссылка выделена, нажмите Ctrl+C для копирования.', 'error');
+        setGlobalMessage(t('profile.referralCopyFallback'), 'error');
       }
     });
   }
@@ -834,7 +839,7 @@ if (copyReferralLinkBtn && referralLinkInput) {
 
       const title = document.createElement('p');
       title.className = 'recent-tools-title';
-      title.textContent = 'Недавно использованные инструменты';
+      title.textContent = t('profile.recentTools');
       wrap.appendChild(title);
 
       const ul = document.createElement('ul');
@@ -866,7 +871,6 @@ if (copyReferralLinkBtn && referralLinkInput) {
       });
     }
 
-    // В профиле есть .tools-grid с "Моими инструментами" — трекаем и их
     attachTracking('.tools-grid a');
   })();
 
@@ -885,7 +889,6 @@ if (copyReferralLinkBtn && referralLinkInput) {
 
   if (openAiServiceBtn) {
     openAiServiceBtn.addEventListener('click', () => {
-      // Просто перенаправляем на защищённый поддомен
       window.location.href = 'https://ai.serpmonn.ru';
     });
   }
