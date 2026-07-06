@@ -309,10 +309,8 @@
         var _tmr = window._tmr || (window._tmr = []);
         _tmr.push({id: "3552905", type: "pageView", start: (new Date()).getTime()});
         
-        // Получаем USER_ID из dataLayer если он существует
         var userId = '';
         if (window.dataLayer && window.dataLayer.length > 0) {
-            // Ищем userId в последних элементах dataLayer
             for (var i = window.dataLayer.length - 1; i >= 0; i--) {
                 if (window.dataLayer[i].userId) {
                     userId = window.dataLayer[i].userId;
@@ -321,7 +319,6 @@
             }
         }
         
-        // Добавляем пользовательские параметры если userId найден
         if (userId) {
             _tmr.push({id: "3552905", type: "pageView", pid: userId});
         }
@@ -346,7 +343,7 @@
 </head>
 <body>
     <header>
-        <nav id="main-nav" aria-label="Main navigation"></nav>
+        <nav id="main-nav" aria-label=""></nav>
     </header>
     
     <main class="container">
@@ -417,7 +414,7 @@
         <div id="promocodes-result-count"></div>
 
         <section id="catalog" class="promo-grid" aria-labelledby="catalog-title" role="region">
-            <h2 id="catalog-title" class="visually-hidden">Promo codes catalog</h2>
+            <h2 id="catalog-title" class="visually-hidden"></h2>
         </section>
 
         <section class="faq" aria-labelledby="faq-title">
@@ -436,13 +433,12 @@
             <h2 id="bonus-title">Subscribe to Promotions</h2>
             <p>Get fresh promo codes first!</p>
 
-
             <div class="social-proof" aria-live="polite">
                 <span class="social-proof-count" id="subscribersCount">
-                    Уже подписались более 3&nbsp;000 человек
+                    
                 </span>
                 <span class="social-proof-note">
-                    Присоединяйтесь к пользователям, которые экономят с Serpmonn каждый месяц.
+                    
                 </span>
             </div>
 
