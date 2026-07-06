@@ -1063,7 +1063,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-  const el = document.getElementById('subscribersCount');
+    const el = document.getElementById('subscribersCount');
     if (el) {
         try {
             const res = await fetch('/api/subscribers/count', { cache: 'no-store' });
@@ -1071,9 +1071,19 @@ document.addEventListener('DOMContentLoaded', async () => {
             const data = await res.json();
             const raw = Number(data.count) || 0;
             const lang = document.documentElement.lang || 'ru-RU';
-            el.textContent = raw.toLocaleString(lang);
+            const formatted = raw.toLocaleString(lang);
+
+            const numEl = el.querySelector('#subCount');
+            if (numEl) {
+                // Идеальный вариант — если в HTML есть <span id="subCount">
+                numEl.textContent = formatted;
+            } else {
+                // Fallback — заменяем первое число в тексте span
+                el.textContent = el.textContent.replace(/[\d][\d\u00A0\s,.]*/, formatted);
+            }
         } catch (err) {
             console.error('Failed to fetch subscribers count', err);
+            // span остаётся нетронутым — хардкод из HTML виден пользователю
         }
     }
 });
