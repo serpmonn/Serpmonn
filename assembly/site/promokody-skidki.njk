@@ -78,7 +78,7 @@ eleventyComputed:
                         localStorage.setItem(KEY, current);
                     }
                 } catch (error) {
-                    console.error('{% if locale == "ru" %}Ошибка проверки версии{% else %}Error checking version{% endif %}:', error);
+                    console.error('Error checking version:', error);
                 }
             }
             checkVersion();
@@ -129,10 +129,8 @@ eleventyComputed:
         var _tmr = window._tmr || (window._tmr = []);
         _tmr.push({id: "3552905", type: "pageView", start: (new Date()).getTime()});
         
-        // Получаем USER_ID из dataLayer если он существует
         var userId = '';
         if (window.dataLayer && window.dataLayer.length > 0) {
-            // Ищем userId в последних элементах dataLayer
             for (var i = window.dataLayer.length - 1; i >= 0; i--) {
                 if (window.dataLayer[i].userId) {
                     userId = window.dataLayer[i].userId;
@@ -141,7 +139,6 @@ eleventyComputed:
             }
         }
         
-        // Добавляем пользовательские параметры если userId найден
         if (userId) {
             _tmr.push({id: "3552905", type: "pageView", pid: userId});
         }
@@ -166,7 +163,7 @@ eleventyComputed:
 </head>
 <body>
     <header>
-        <nav id="main-nav" aria-label="{% if locale == 'ru' %}Основная навигация{% else %}Main navigation{% endif %}"></nav>
+        <nav id="main-nav" aria-label="{{ localesPromocodes[locale].promoCodes.mainNavLabel }}"></nav>
     </header>
     
     <main class="container">
@@ -237,7 +234,7 @@ eleventyComputed:
         <div id="promocodes-result-count"></div>
 
         <section id="catalog" class="promo-grid" aria-labelledby="catalog-title" role="region">
-            <h2 id="catalog-title" class="visually-hidden">{% if locale == 'ru' %}Каталог промокодов{% else %}Promo codes catalog{% endif %}</h2>
+            <h2 id="catalog-title" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.catalogTitle }}</h2>
         </section>
 
         <section class="faq" aria-labelledby="faq-title">
@@ -256,13 +253,12 @@ eleventyComputed:
             <h2 id="bonus-title">{{ localesPromocodes[locale].promoCodes.bonusTitle }}</h2>
             <p>{{ localesPromocodes[locale].promoCodes.bonusText }}</p>
 
-
             <div class="social-proof" aria-live="polite">
                 <span class="social-proof-count" id="subscribersCount">
-                    Уже подписались более 3&nbsp;000 человек
+                    {{ localesPromocodes[locale].promoCodes.socialProofCount }}
                 </span>
                 <span class="social-proof-note">
-                    Присоединяйтесь к пользователям, которые экономят с Serpmonn каждый месяц.
+                    {{ localesPromocodes[locale].promoCodes.socialProofNote }}
                 </span>
             </div>
 
