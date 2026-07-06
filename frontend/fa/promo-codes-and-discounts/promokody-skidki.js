@@ -1064,23 +1064,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   const el = document.getElementById('subscribersCount');
-  if (el) {
-    try {
-        const res = await fetch('/api/subscribers/count', { cache: 'no-store' });
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const data = await res.json();
-        const raw = Number(data.count) || 0;
-        const formatted = raw.toLocaleString('ru-RU');
-        const oldText = el.textContent;
-        const newText = oldText.replace(
-            /(\d[\d\s\u00A0]*)(\s*)/u,
-            `${formatted} `
-        );
-        el.textContent = newText;
-    } catch (err) {
-        console.error('Не удалось получить количество подписчиков', err);
+    if (el) {
+        try {
+            const res = await fetch('/api/subscribers/count', { cache: 'no-store' });
+            if (!res.ok) throw new Error(`HTTP ${res.status}`);
+            const data = await res.json();
+            const raw = Number(data.count) || 0;
+            const lang = document.documentElement.lang || 'ru-RU';
+            el.textContent = raw.toLocaleString(lang);
+        } catch (err) {
+            console.error('Failed to fetch subscribers count', err);
+        }
     }
-  }
 });
 
 function toggleDetails(button) {
