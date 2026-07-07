@@ -1,36 +1,37 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
+import { getPageT } from '../../scripts/i18n-loader.js';
 
-document.addEventListener("DOMContentLoaded", () => {
-    generateCombinedBackground();
+document.addEventListener('DOMContentLoaded', async () => {
+  const t = await getPageT('forgot');
 
-    const form = document.getElementById("forgotForm");
-    const message = document.getElementById("message");
+  generateCombinedBackground();
 
-    form.addEventListener("submit", async (e) => {
-        e.preventDefault();
+  const form = document.getElementById('forgotForm');
+  const message = document.getElementById('message');
 
-        const email = document.getElementById("email").value.trim();
-        if (!email) {
-            message.textContent = "Введите email.";
-            message.style.color = "red";
-            return;
-        }
+  form.addEventListener('submit', async (e) => {
+    e.preventDefault();
 
-        try {
-            const res = await fetch("https://serpmonn.ru/auth-api/forgot", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify({ email })
-            });
+    const email = document.getElementById('email').value.trim();
+    if (!email) {
+      message.textContent = t('forgot.emailEmpty');
+      message.style.color = 'red';
+      return;
+    }
 
-            const data = await res.json();
-            message.textContent = data.message;
-            message.style.color = res.ok ? "green" : "red";
-        } catch (err) {
-            message.textContent = "Ошибка соединения с сервером.";
-            message.style.color = "red";
-        }
-    });
+    try {
+      const res = await fetch('https://serpmonn.ru/auth-api/forgot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+
+      const data = await res.json();
+      message.textContent = data.message;
+      message.style.color = res.ok ? 'green' : 'red';
+    } catch (err) {
+      message.textContent = t('forgot.connectionError');
+      message.style.color = 'red';
+    }
+  });
 });
