@@ -2,7 +2,7 @@
 import { initMenu } from './menu.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
-import { t } from './i18n-loader.js';
+import { t, loadMessages } from './i18n-loader.js';
 import { getFrontendPath } from './locale-paths.js';
 
 // Немедленно применяем сохранённые настройки доступности
@@ -167,7 +167,9 @@ fetch(primaryMenuPath)
       if (getCookie(COOKIE_NAME) === '1') return;
 
       // Ждём, пока меню добавится в DOM
-      setTimeout(() => {
+      setTimeout(async () => {
+        await loadMessages();
+
         const menuButton = document.getElementById('menuButton');
         if (!menuButton) return;
 
