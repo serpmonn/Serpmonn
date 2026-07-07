@@ -1,5 +1,6 @@
 import { generateCombinedBackground } from '../scripts/backgroundGenerator.js';
 import { getPageT } from '../scripts/i18n-loader.js';
+import { getFrontendPath, getFrontendUrl } from '../scripts/locale-paths.js';
 
 const ALL_TOOLS = [
   {
@@ -188,7 +189,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function handleUnauthorized() {
-    window.location.href = '../login/login.html';
+    window.location.href = getFrontendPath('login/login.html');
   }
 
   async function safeJson(response) {
@@ -376,8 +377,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (referralLinkInput) {
         if (username) {
-          const baseUrl = 'https://serpmonn.ru/frontend/register/register.html';
-          const url = `${baseUrl}?ref=${encodeURIComponent(username)}`;
+          const url = `${getFrontendUrl('register/register.html')}?ref=${encodeURIComponent(username)}`;
           referralLinkInput.value = url;
 
           if (referralHint) {
@@ -666,8 +666,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       updateAvatarInitials(payload.username, payload.email);
 
       if (payload.username && referralLinkInput) {
-        const baseUrl = 'https://serpmonn.ru/frontend/register/register.html';
-        const url = `${baseUrl}?ref=${encodeURIComponent(payload.username)}`;
+        const url = `${getFrontendUrl('register/register.html')}?ref=${encodeURIComponent(payload.username)}`;
         referralLinkInput.value = url;
       }
 

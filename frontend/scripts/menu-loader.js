@@ -2,7 +2,8 @@
 import { initMenu } from './menu.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
-import { t, loadMessages, getMessages } from './i18n-loader.js';
+import { t } from './i18n-loader.js';
+import { getFrontendPath } from './locale-paths.js';
 
 // Немедленно применяем сохранённые настройки доступности
 (function applySavedAccessibility() {
@@ -165,100 +166,94 @@ fetch(primaryMenuPath)
       // Уже показывали — выходим
       if (getCookie(COOKIE_NAME) === '1') return;
 
-      // Гарантируем загрузку i18n перед рендером подсказки
-      const ensureMessages = Object.keys(getMessages()).length > 0
-        ? Promise.resolve()
-        : loadMessages();
+      // Ждём, пока меню добавится в DOM
+      setTimeout(() => {
+        const menuButton = document.getElementById('menuButton');
+        if (!menuButton) return;
 
-      ensureMessages.then(() => {
-        setTimeout(() => {
-          const menuButton = document.getElementById('menuButton');
-          if (!menuButton) return;
+        const rect = menuButton.getBoundingClientRect();
+        if (!rect.width && !rect.height) return;
 
-          const rect = menuButton.getBoundingClientRect();
-          if (!rect.width && !rect.height) return;
+        const overlay = document.createElement('div');
+        overlay.className = 'spn-menu-overlay';
 
-          const overlay = document.createElement('div');
-          overlay.className = 'spn-menu-overlay';
+        const hole = document.createElement('div');
+        hole.className = 'spn-menu-overlay__hole';
 
-          const hole = document.createElement('div');
-          hole.className = 'spn-menu-overlay__hole';
+        const padding = 8;
+        const holeLeft = rect.left - padding;
+        const holeTop = rect.top - padding;
+        const holeWidth = rect.width + padding * 2;
+        const holeHeight = rect.height + padding * 2;
 
-          const padding = 8;
-          const holeLeft = rect.left - padding;
-          const holeTop = rect.top - padding;
-          const holeWidth = rect.width + padding * 2;
-          const holeHeight = rect.height + padding * 2;
+        hole.style.left = holeLeft + 'px';
+        hole.style.top = holeTop + 'px';
+        hole.style.width = holeWidth + 'px';
+        hole.style.height = holeHeight + 'px';
 
-          hole.style.left = holeLeft + 'px';
-          hole.style.top = holeTop + 'px';
-          hole.style.width = holeWidth + 'px';
-          hole.style.height = holeHeight + 'px';
+        const hint = document.createElement('div');
+        hint.className = 'spn-menu-overlay__hint';
 
-          const hint = document.createElement('div');
-          hint.className = 'spn-menu-overlay__hint';
+        const text = t('menu.hint');
 
-          const text = t('menu.hint');
+        // Текстовый блок под кнопкой
+        const textDiv = document.createElement('div');
+        textDiv.textContent = text;
+        textDiv.style.textAlign = 'center';
 
-          // Текстовый блок под кнопкой
-          const textDiv = document.createElement('div');
-          textDiv.textContent = text;
-          textDiv.style.textAlign = 'center';
+        hint.appendChild(textDiv);
 
-          hint.appendChild(textDiv);
+        // Располагаем текст ПОД кнопкой
+        const hintTop = holeTop + holeHeight + 16;
+        let hintLeft = holeLeft + holeWidth / 2 - 130;
+        hintLeft = Math.max(8, Math.min(hintLeft, window.innerWidth - 268));
 
-          // Располагаем текст ПОД кнопкой
-          const hintTop = holeTop + holeHeight + 16;
-          let hintLeft = holeLeft + holeWidth / 2 - 130;
-          hintLeft = Math.max(8, Math.min(hintLeft, window.innerWidth - 268));
+        hint.style.top = hintTop + 'px';
+        hint.style.left = hintLeft + 'px';
 
-          hint.style.top = hintTop + 'px';
-          hint.style.left = hintLeft + 'px';
+        // === Стрелка, реально указывающая на кнопку ===
+        const arrow = document.createElement('div');
+        arrow.className = 'spn-menu-overlay__arrow';
 
-          // === Стрелка, реально указывающая на кнопку ===
-          const arrow = document.createElement('div');
-          arrow.className = 'spn-menu-overlay__arrow';
+        // Точка старта стрелки (верхний центр текста)
+        const textCenterX = hintLeft + 130;
+        const textTopY = hintTop;
 
-          // Точка старта стрелки (верхний центр текста)
-          const textCenterX = hintLeft + 130;
-          const textTopY = hintTop;
+        // Точка цели — центр дырки/кнопки
+        const targetX = holeLeft + holeWidth / 2;
+        const targetY = holeTop + holeHeight / 2;
 
-          // Точка цели — центр дырки/кнопки
-          const targetX = holeLeft + holeWidth / 2;
-          const targetY = holeTop + holeHeight / 2;
+        // Вектор
+        const dx = targetX - textCenterX;
+        const dy = targetY - textTopY;
 
-          // Вектор
-          const dx = targetX - textCenterX;
-          const dy = targetY - textTopY;
+        // Длина стрелки (максимум 70px)
+        const dist = Math.min(Math.sqrt(dx * dx + dy * dy), 70);
 
-          // Длина стрелки (максимум 70px)
-          const dist = Math.min(Math.sqrt(dx * dx + dy * dy), 70);
+        const angle = Math.atan2(dy, dx) * 180 / Math.PI;
 
-          const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+        arrow.style.left = textCenterX + 'px';
+        arrow.style.top = textTopY + 'px';
+        arrow.style.width = dist + 'px';
+        arrow.style.transform = `rotate(${angle}deg)`;
 
-          arrow.style.left = textCenterX + 'px';
-          arrow.style.top = textTopY + 'px';
-          arrow.style.width = dist + 'px';
-          arrow.style.transform = `rotate(${angle}deg)`;
+        overlay.appendChild(hole);
+        overlay.appendChild(hint);
+        overlay.appendChild(arrow);
+        document.body.appendChild(overlay);
 
-          overlay.appendChild(hole);
-          overlay.appendChild(hint);
-          overlay.appendChild(arrow);
-          document.body.appendChild(overlay);
+        function closeOverlay() {
+          setCookie(COOKIE_NAME, '1', 365);
+          overlay.remove();
+          document.removeEventListener('click', onAnyClick, true);
+        }
 
-          function closeOverlay() {
-            setCookie(COOKIE_NAME, '1', 365);
-            overlay.remove();
-            document.removeEventListener('click', onAnyClick, true);
-          }
+        function onAnyClick() {
+          closeOverlay();
+        }
 
-          function onAnyClick() {
-            closeOverlay();
-          }
-
-          document.addEventListener('click', onAnyClick, true);
-        }, 300);
-      }).catch(() => {});
+        document.addEventListener('click', onAnyClick, true);
+      }, 300);
     })();
     // === Конец подсказки ===
 
@@ -331,7 +326,7 @@ fetch(primaryMenuPath)
               console.log('VKID backend login:', data);
 
               if (data && data.success) {
-                window.location.href = '/frontend/profile/profile.html';
+                window.location.href = getFrontendPath('profile/profile.html');
               } else {
                 console.error('VKID login failed:', data);
               }

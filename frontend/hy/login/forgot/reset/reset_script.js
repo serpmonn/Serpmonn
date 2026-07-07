@@ -1,4 +1,5 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
+import { getFrontendPath } from '../../../scripts/locale-paths.js';
 
 document.addEventListener("DOMContentLoaded", () => {
     generateCombinedBackground();
@@ -49,7 +50,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             if (res.ok) {
                 setTimeout(() => {
-                    window.location.href = "/frontend/login/login.html";
+                    window.location.href = getFrontendPath('login/login.html');
                 }, 2000);
             }
         } catch (err) {

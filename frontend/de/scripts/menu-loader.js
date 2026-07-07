@@ -3,6 +3,7 @@ import { initMenu } from './menu.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
 import { t } from './i18n-loader.js';
+import { getFrontendPath } from './locale-paths.js';
 
 // Немедленно применяем сохранённые настройки доступности
 (function applySavedAccessibility() {
@@ -325,7 +326,7 @@ fetch(primaryMenuPath)
               console.log('VKID backend login:', data);
 
               if (data && data.success) {
-                window.location.href = '/frontend/profile/profile.html';
+                window.location.href = getFrontendPath('profile/profile.html');
               } else {
                 console.error('VKID login failed:', data);
               }

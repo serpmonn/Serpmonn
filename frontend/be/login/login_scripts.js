@@ -1,4 +1,5 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';                                       // Импортируем функцию генерации фона из внешнего модуля
+import { getFrontendPath } from '../scripts/locale-paths.js';
 
 // ОБРАБОТЧИК ОТПРАВКИ ФОРМЫ ВХОДА
 document.getElementById("loginForm").addEventListener("submit", async function(event) {                                      // Добавляем асинхронный обработчик события отправки формы
@@ -46,7 +47,7 @@ document.getElementById("loginForm").addEventListener("submit", async function(e
         if (response.ok) {                                                                                                   // Проверяем успешен ли ответ (статус 200-299)
             console.log('Логин успешен, редирект на профиль');                                                               // Логируем успешный логин
             setTimeout(() => {                                                                                               // Устанавливаем задержку перед редиректом
-                window.location.href = "/frontend/profile/profile.html";                                                     // Перенаправляем пользователя на страницу профиля
+                window.location.href = getFrontendPath('profile/profile.html');                                              // Перенаправляем пользователя на страницу профиля
             }, 1000);                                                                                                        // Задержка 1 секунда чтобы пользователь увидел сообщение
         }                                                                                                                   
     } catch (error) {                                                                                                        // Обработка ошибок в блоке try

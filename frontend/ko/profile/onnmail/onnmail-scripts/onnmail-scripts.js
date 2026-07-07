@@ -1,3 +1,5 @@
+import { getFrontendPath } from '../../../scripts/locale-paths.js';
+
 const registerForm = document.getElementById('registerForm');                                                                 // Получаем форму регистрации
 const statusMessage = document.getElementById('statusMessage');                                                               // Получаем элемент для статуса
 let csrfToken = '';                                                                                                           // Инициализируем переменную для CSRF-токена
@@ -15,7 +17,7 @@ const checkUserStatus = async () => {                                           
             const data = await response.json();                                                                               // Получаем данные ответа
             if (response.status === 401) {                                                                                    // Проверяем статус 401
                 statusMessage.textContent = data.message || 'Пожалуйста, войдите в аккаунт';                                  // Выводим сообщение
-                window.location.href = '/frontend/login/login.html';                                                          // Перенаправляем на логин
+                window.location.href = getFrontendPath('login/login.html');                                                   // Перенаправляем на логин
                 return false;                                                                                                 // Прерываем выполнение
             }
             if (response.status === 403) {                                                                                    // Проверяем статус 403
