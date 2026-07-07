@@ -315,7 +315,7 @@ const LOCALE_TOPICS = {
     { key: 'health',   label: 'صحت',        query: 'health news today' },
     { key: 'sports',   label: 'کھیل',       query: 'sports news today' },
   ],
-  'ku-Arab':[
+  'ku-arab':[
     { key: 'world',    label: 'جیهان',      query: 'world news today kurdish' },
     { key: 'tech',     label: 'تەکنەلۆجیا', query: 'technology news today' },
     { key: 'ai',       label: 'AI',          query: 'artificial intelligence news today' },

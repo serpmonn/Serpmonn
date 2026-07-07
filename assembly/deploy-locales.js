@@ -23,7 +23,7 @@ try {
     console.log('❌ Ошибка загрузки locales.json:', error.message);
     console.log('⚠️  Используем fallback список локалей');
     // Fallback на случай ошибки
-    locales = ['en', 'ar', 'az', 'be', 'bg', 'bn', 'cs', 'da', 'de', 'el', 'es', 'es-419', 'fa', 'fi', 'fil', 'fr', 'he', 'hi', 'hu', 'hy', 'id', 'it', 'ja', 'ka', 'kk', 'ko', 'ms', 'nb', 'nl', 'pl', 'pt-br', 'pt-pt', 'ro', 'sr', 'sv', 'th', 'tr', 'ur', 'uz', 'vi', 'zh-cn', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'];
+    locales = ['en', 'ar', 'az', 'be', 'bg', 'bn', 'cs', 'da', 'de', 'el', 'es', 'es-419', 'fa', 'fi', 'fil', 'fr', 'he', 'hi', 'hu', 'hy', 'id', 'it', 'ja', 'ka', 'kk', 'ko', 'ms', 'nb', 'nl', 'pl', 'pt-br', 'pt-pt', 'ro', 'sr', 'sv', 'th', 'tr', 'ur', 'uz', 'vi', 'zh-cn', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-arab', 'yi'];
 }
 
 // Проверяем существование путей
@@ -200,6 +200,13 @@ for (const locale of locales) {
     } else {
         console.log(`   ⚠️  Папка не найдена в сборке: ${locale}`);
     }
+}
+
+// Удаляем устаревшую папку локали после переименования ku-Arab → ku-arab
+const legacyLocalePath = path.join(TARGET_PATH, 'ku-Arab');
+if (fs.existsSync(legacyLocalePath)) {
+    fs.rmSync(legacyLocalePath, { recursive: true, force: true });
+    console.log('\n🗑️  Удалена устаревшая папка: frontend/ku-Arab');
 }
 
 console.log('\n📊 Итоги синхронизации:');

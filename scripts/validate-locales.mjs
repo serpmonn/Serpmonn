@@ -4,58 +4,7 @@ import path from 'node:path';
 const root = process.cwd();
 const i18nDir = path.join(root, 'shared', 'i18n');
 const baseFile = path.join(i18nDir, 'en.base.json');
-
-const locales = [
-  'ru',
-  'ar',
-  'az',
-  'be',
-  'bg',
-  'bn',
-  'cs',
-  'da',
-  'de',
-  'el',
-  'en',
-  'es',
-  'es-419',
-  'fa',
-  'fi',
-  'fil',
-  'fr',
-  'he',
-  'hi',
-  'hu',
-  'hy',
-  'id',
-  'it',
-  'ja',
-  'ka',
-  'kk',
-  'ko',
-  'ms',
-  'nb',
-  'nl',
-  'pl',
-  'pt-br',
-  'pt-pt',
-  'ro',
-  'sr',
-  'sv',
-  'th',
-  'tr',
-  'ur',
-  'uz',
-  'vi',
-  'zh-cn',
-  'ps',
-  'sd',
-  'ug',
-  'dv',
-  'ks',
-  'ku-Arab',
-  'yi'
-];
+const localesFile = path.join(root, 'assembly', 'site', '_data', 'locales.json');
 
 function readJson(filePath) {
   try {
@@ -64,6 +13,13 @@ function readJson(filePath) {
     throw new Error(`${filePath}: ${err.message}`);
   }
 }
+
+if (!fs.existsSync(localesFile)) {
+  console.error(`Missing locales file: ${localesFile}`);
+  process.exit(1);
+}
+
+const locales = readJson(localesFile);
 
 if (!fs.existsSync(baseFile)) {
   console.error(`Missing base file: ${baseFile}`);
@@ -121,11 +77,17 @@ for (const locale of locales) {
     }
   }
 
+  if (locale === 'en') {
+    console.log('[en] OK (uses en.base.json)');
+    continue;
+  }
+
   if (missingKeys.length > 0) {
-    console.warn(`[${locale}] missing ${missingKeys.length} keys`);
+    console.error(`[${locale}] missing ${missingKeys.length} keys`);
     for (const key of missingKeys) {
-      console.warn(`  - ${key}`);
+      console.error(`  - ${key}`);
     }
+    hasErrors = true;
   } else {
     console.log(`[${locale}] OK`);
   }

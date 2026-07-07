@@ -35,7 +35,7 @@ const langToDir = {
   'sv': 'sv', 'da': 'da', 'nb': 'nb', 'fi': 'fi',
   'pt-pt': 'pt-pt', 'es-419': 'es-419',
   'ps': 'ps', 'sd': 'sd', 'ug': 'ug', 'dv': 'dv', 'ks': 'ks',
-  'ku-Arab': 'ku-Arab', 'yi': 'yi'
+  'ku-arab': 'ku-arab', 'yi': 'yi'
 };
 const resolvedDir = langToDir[spnLang];
 const primaryMenuPath = resolvedDir ? `/frontend/${resolvedDir}/menu.html` : '/frontend/menu.html';

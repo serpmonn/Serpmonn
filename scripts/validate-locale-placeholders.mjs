@@ -5,61 +5,18 @@ const root = process.cwd();
 const i18nDir = path.join(root, 'shared', 'i18n');
 const baseFile = path.join(i18nDir, 'en.base.json');
 
-const locales = [
-  'ru',
-  'ar',
-  'az',
-  'be',
-  'bg',
-  'bn',
-  'cs',
-  'da',
-  'de',
-  'el',
-  'en',
-  'es',
-  'es-419',
-  'fa',
-  'fi',
-  'fil',
-  'fr',
-  'he',
-  'hi',
-  'hu',
-  'hy',
-  'id',
-  'it',
-  'ja',
-  'ka',
-  'kk',
-  'ko',
-  'ms',
-  'nb',
-  'nl',
-  'pl',
-  'pt-br',
-  'pt-pt',
-  'ro',
-  'sr',
-  'sv',
-  'th',
-  'tr',
-  'ur',
-  'uz',
-  'vi',
-  'zh-cn',
-  'ps',
-  'sd',
-  'ug',
-  'dv',
-  'ks',
-  'ku-Arab',
-  'yi'
-];
+const localesFile = path.join(root, 'assembly', 'site', '_data', 'locales.json');
 
 function readJson(filePath) {
   return JSON.parse(fs.readFileSync(filePath, 'utf8'));
 }
+
+if (!fs.existsSync(localesFile)) {
+  console.error(`Missing locales file: ${localesFile}`);
+  process.exit(1);
+}
+
+const locales = readJson(localesFile);
 
 function extractPlaceholders(value) {
   return [...value.matchAll(/\{([a-zA-Z0-9_]+)\}/g)].map(m => m[1]).sort();

@@ -12,7 +12,7 @@ const SUPPORTED = [
   'el', 'es', 'fi', 'fil', 'fr', 'he', 'hi', 'hu', 'hy', 'id',
   'it', 'ja', 'ka', 'kk', 'ko', 'ms', 'nb', 'nl', 'pl', 'pt-br',
   'pt-pt', 'ro', 'sr', 'sv', 'th', 'tr', 'ur', 'uz', 'vi',
-  'zh-cn', 'fa', 'es-419', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-Arab', 'yi'
+  'zh-cn', 'fa', 'es-419', 'ps', 'sd', 'ug', 'dv', 'ks', 'ku-arab', 'yi'
 ];
 
 router.get('/i18n/:locale', (req, res) => {
