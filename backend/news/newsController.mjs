@@ -1,5 +1,6 @@
-import paseto from 'paseto';
 import dotenv from 'dotenv';
+import paseto from 'paseto';
+import { resolveLocale } from '../utils/i18n.mjs';
 import {
   getNewsForLocale,
   getTopicsForLocale,
@@ -21,22 +22,6 @@ async function getUserIdFromReq(req) {
   } catch {
     return null;
   }
-}
-
-/** Нормализует locale из Accept-Language / query-параметра / куки */
-function resolveLocale(req) {
-  // 1. Явный query-параметр: ?locale=ru
-  if (req.query.locale) return req.query.locale.toLowerCase();
-
-  // 2. Куки locale (если фронт его ставит)
-  if (req.cookies?.locale) return req.cookies.locale.toLowerCase();
-
-  // 3. Accept-Language header — берём первый тег
-  const al = req.headers['accept-language'] || '';
-  const first = al.split(',')[0]?.split(';')[0]?.trim().toLowerCase();
-  if (first) return first;
-
-  return 'en';
 }
 
 // ─── Роуты ───────────────────────────────────────────────────────────────────

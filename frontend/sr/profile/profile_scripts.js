@@ -1,67 +1,29 @@
 import { generateCombinedBackground } from '../scripts/backgroundGenerator.js';
 import { getPageT } from '../scripts/i18n-loader.js';
 import { getFrontendPath, getFrontendUrl } from '../scripts/locale-paths.js';
-
-const ALL_TOOLS = [
-  {
-    href: '/frontend/tools/marketing/utm-builder.html',
-    nameKey: 'tools.utmBuilder',
-    icon: '🔗'
-  },
-  {
-    href: '/frontend/tools/marketing/word-counter.html',
-    nameKey: 'tools.wordCounter',
-    icon: '📝'
-  },
-  {
-    href: '/frontend/tools/security/password-generator.html',
-    nameKey: 'tools.passwordGenerator',
-    icon: '🔑'
-  },
-  {
-    href: '/frontend/tools/engineering/unit-converter.html',
-    nameKey: 'tools.unitConverter',
-    icon: '🔄'
-  },
-  {
-    href: '/frontend/tools/logistics/depreciation-calculator.html',
-    nameKey: 'tools.depreciationCalculator',
-    icon: '🔧'
-  },
-  {
-    href: '/frontend/tools/logistics/fuel-calculator.html',
-    nameKey: 'tools.fuelCalculator',
-    icon: '⛽'
-  },
-  {
-    href: '/frontend/tools/ecology/product-footprint-calculator.html',
-    nameKey: 'tools.footprintCalculator',
-    icon: '🌍'
-  }
-];
+import {
+  TOOL_CATALOG,
+  normalizeToolHref,
+  loadAndMigrateFavorites,
+  isFavoriteHref
+} from '../scripts/tool-favorites.js';
 
 function getLocalizedHref(href) {
-  const lang = (document.documentElement.lang || 'ru').trim();
-  if (lang === 'ru') return href;
-  return href.replace('/frontend/', `/frontend/${lang}/`);
+  const relative = href.replace(/^\/frontend\//, '');
+  return getFrontendPath(relative);
 }
 
 function buildTools(t) {
-  return ALL_TOOLS.map(tool => ({
+  return TOOL_CATALOG.map(tool => ({
     ...tool,
     name: t(tool.nameKey),
+    neutralHref: tool.href,
     href: getLocalizedHref(tool.href)
   }));
 }
 
 function isFavoriteEntry(entry, tool) {
-  if (!entry) return false;
-  if (entry === tool.name) return true;
-  if (entry === tool.href) return true;
-  const neutralHref = tool.href.replace(/\/frontend\/[^/]+\//, '/frontend/');
-  if (entry === neutralHref) return true;
-  if (neutralHref.endsWith(entry) || entry.endsWith(neutralHref)) return true;
-  return false;
+  return isFavoriteHref(entry, tool.neutralHref);
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -205,19 +167,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   function renderFavoriteTools() {
     if (!favoriteContainer) return;
 
-    let favorites = [];
-    try {
-      const stored = localStorage.getItem('favorites');
-      if (stored && typeof stored === 'string') {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) favorites = parsed;
-      }
-    } catch (e) {
-      favorites = [];
-    }
-
     const tools = buildTools(t);
-    const favoriteTools = tools.filter(tool => favorites.some(entry => isFavoriteEntry(entry, tool)));
+    const favorites = loadAndMigrateFavorites(tools);
+    const favoriteTools = tools.filter(tool =>
+      favorites.some(entry => isFavoriteEntry(entry, tool))
+    );
 
     if (!favoriteTools.length) {
       favoriteContainer.innerHTML = '';
@@ -854,6 +808,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   (function trackRecentTools() {
     const STORAGE_KEY = 'serp_tools_recent';
     const container = document.getElementById('recentTools');
+    const tools = buildTools(t);
     const recent = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
 
     if (recent.length && container) {
@@ -867,10 +822,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const ul = document.createElement('ul');
       recent.slice(0, 6).forEach((item) => {
+        const neutral = normalizeToolHref(item.href || '');
+        const tool = tools.find((tool) => tool.neutralHref === neutral);
         const li = document.createElement('li');
         const a = document.createElement('a');
-        a.href = item.href;
-        a.textContent = item.title;
+        a.href = tool ? tool.href : (neutral || item.href || '#');
+        a.textContent = tool ? tool.name : (item.title || neutral);
         li.appendChild(a);
         ul.appendChild(li);
       });
@@ -881,10 +838,14 @@ document.addEventListener('DOMContentLoaded', async () => {
     function attachTracking(selector) {
       document.querySelectorAll(selector).forEach((a) => {
         a.addEventListener('click', () => {
+          const neutral = normalizeToolHref(a.getAttribute('href') || '');
+          if (!neutral.includes('/tools/')) return;
+
+          const tool = tools.find((tool) => tool.neutralHref === neutral);
           const arr = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
           arr.unshift({
-            title: a.textContent.trim().slice(0, 80),
-            href: a.getAttribute('href')
+            href: neutral,
+            title: tool ? tool.name : a.textContent.trim().slice(0, 80)
           });
           const unique = arr.filter(
             (v, i, self) => self.findIndex((x) => x.href === v.href) === i

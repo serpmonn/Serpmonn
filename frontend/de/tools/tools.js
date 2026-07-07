@@ -1,3 +1,9 @@
+import {
+  normalizeToolHref,
+  loadAndMigrateFavorites,
+  isFavoriteHref
+} from '../scripts/tool-favorites.js';
+
 document.addEventListener('DOMContentLoaded', () => {                                                                           // Ожидание полной загрузки DOM перед выполнением скрипта
   // Кэширование DOM-элементов
   const adBanners = document.querySelectorAll('.ad-banner');                                                                   // Все рекламные баннеры на странице
@@ -91,30 +97,17 @@ document.addEventListener('DOMContentLoaded', () => {                           
     menuContainer.classList.remove('loading');                                                                                 // Удаление класса loading
   }, { once: true });                                                                                                          // Одноразовый обработчик
 
-  // Инициализация избранного из localStorage
-  let favorites = [];                                                                                                          // Массив для хранения избранных инструментов
-  const storedFavorites = localStorage.getItem('favorites');                                                                   // Получение избранного из localStorage
-  if (storedFavorites && typeof storedFavorites === 'string') {                                                                // Проверка наличия и типа данных
-    try {
-      favorites = JSON.parse(storedFavorites);                                                                                 // Парсинг JSON строки в массив
-      if (!Array.isArray(favorites)) throw new Error('Invalid favorites format');                                              // Проверка, что это массив
-    } catch (e) {                                                                                                              // Обработка ошибок парсинга
-      favorites = [];                                                                                                          // Сброс к пустому массиву при ошибке
-      localStorage.setItem('favorites', JSON.stringify(favorites));                                                            // Сохранение пустого массива
-    }
-  }
+  let favorites = loadAndMigrateFavorites();
 
   function normalizeFavoriteKey(btn) {
     const link = btn.closest('.card')?.querySelector('a[href]');
     const href = link?.getAttribute('href') || '';
-    if (href) {
-      return href.replace(/\/frontend\/[^/]+\//, '/frontend/');
-    }
-    return btn.getAttribute('data-tool-name') || btn.parentElement?.querySelector('h2')?.textContent.trim() || '';
+    return normalizeToolHref(href);
   }
 
   function isFavoriteKey(key) {
-    return favorites.some(entry => entry === key || key.endsWith(entry) || entry.endsWith(key));
+    if (!key) return false;
+    return favorites.some(entry => isFavoriteHref(entry, key));
   }
 
   const categoryLabels = {};
@@ -157,8 +150,8 @@ document.addEventListener('DOMContentLoaded', () => {                           
         favorites.push(toolKey);                                                                                               // Добавление в массив избранного
         btn.classList.add('favorite');                                                                                         // Визуальное выделение
         btn.setAttribute('aria-pressed', 'true');                                                                              // Обновление состояния
-      } else {                                                                                                                 // Если инструмент уже в избранном
-        favorites = favorites.filter(entry => entry !== toolKey && !toolKey.endsWith(entry) && !entry.endsWith(toolKey));    // Удаление из массива
+      } else {
+        favorites = favorites.filter(entry => !isFavoriteHref(entry, toolKey));
         btn.classList.remove('favorite');                                                                                      // Снятие визуального выделения
         btn.setAttribute('aria-pressed', 'false');                                                                             // Обновление состояния
       }
