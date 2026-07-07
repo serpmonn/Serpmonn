@@ -40,6 +40,18 @@ const COUNTRY_KEYS = ['Россия', 'Казахстан', 'Узбекиста�
 
 let t;
 
+function getPromoPagePath() {
+    const locale = (document.documentElement.lang || 'ru').trim();
+    if (locale === 'ru') {
+        return '/frontend/promo-codes-and-discounts/promokody-skidki.html';
+    }
+    return `/frontend/${locale}/promo-codes-and-discounts/promokody-skidki.html`;
+}
+
+function buildPromoShareUrl(code) {
+    return `${window.location.origin}${getPromoPagePath()}?code=${encodeURIComponent(code)}`;
+}
+
 function getDateLocale() {
     const lang = (document.documentElement.lang || 'en').trim();
     if (lang === 'zh-cn') return 'zh-CN';
@@ -342,9 +354,9 @@ async function refreshPromocodes() {
             
             filterPromos();
             updateLastUpdateTime();
-            showToast(result.message, 'success');
+            showToast(t('promo.refreshed'), 'success');
         } else {
-            showToast(result.message || t('promo.updateError'), 'error');
+            showToast(t('promo.updateError'), 'error');
         }
     } catch (error) {
         logError('Ошибка принудительного обновления', error);
@@ -518,6 +530,9 @@ function createPromoCard(promo, isTopOffer = false) {
     const isYandexTravel = /(Яндекс\s*Путешеств|Yandex\s*Travel|travelyandex|yandex\.travel)/i.test(combined);
     
     card.className = `promo-card ${isTopOffer ? 'top-offer' : ''} ${isYandexTravel ? 'travel-highlight' : ''} clickable-card`;
+    if (isTopOffer) {
+        card.setAttribute('data-top-badge', t('promo.topBadge'));
+    }
     if (isYandexTravel) {
         card.setAttribute('data-travel-badge', t('promo.travelBadge'));
     }
@@ -728,7 +743,7 @@ function createPromoCard(promo, isTopOffer = false) {
 
             if (!codeParam) return;
 
-            const shareUrl = `${window.location.origin}/promo?code=${encodeURIComponent(codeParam)}`;
+            const shareUrl = buildPromoShareUrl(codeParam);
             sharePromo(promo, shareUrl);
         });
     }
@@ -823,9 +838,13 @@ function filterPromos() {
     filteredPromocodes = allPromocodes.filter(promo => {
         const title = (promo && typeof promo.title === 'string' ? promo.title : '').toLowerCase();
         const description = (promo.description || promo.subtitle || '').toLowerCase();
+        const promocode = (promo.promocode || '').toLowerCase();
         const promoCategory = promo.category || 'другие';
         const promoCountry = promo.country || 'Россия';
-        const matchesSearch = title.includes(search) || description.includes(search) || search === '';
+        const matchesSearch = search === '' ||
+            title.includes(search) ||
+            description.includes(search) ||
+            promocode.includes(search);
         const matchesCategory = category === '' || promoCategory === category;
         const matchesCountry = country === '' || promoCountry === country;
         const now = new Date();
@@ -1017,7 +1036,7 @@ document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
         });
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const result = await response.json();
-        messageEl.textContent = result.message || t('promo.subscribeThanks');
+        messageEl.textContent = t('promo.subscribeThanks');
         messageEl.style.color = '#28a745';
         e.target.appendChild(messageEl);
         e.target.reset();
@@ -1063,8 +1082,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   startAutoUpdate();
 
   const urlParams = new URLSearchParams(window.location.search);
+  const urlCode = urlParams.get('code');
   const urlSearch = urlParams.get('search');
-  if (urlSearch) {
+  if (urlCode) {
+    elements.searchInput.value = urlCode;
+  } else if (urlSearch) {
     elements.searchInput.value = urlSearch;
   }
 
