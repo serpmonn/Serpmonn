@@ -1087,28 +1087,23 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   const el = document.getElementById('subscribersCount');
-    if (el) {
-        try {
-            const res = await fetch('/api/subscribers/count', { cache: 'no-store' });
-            if (!res.ok) throw new Error(`HTTP ${res.status}`);
-            const data = await res.json();
-            const raw = Number(data.count) || 0;
-            const lang = document.documentElement.lang || 'ru-RU';
-            const formatted = raw.toLocaleString(lang);
+  if (el) {
+    try {
+      const res = await fetch('/api/subscribers/count', { cache: 'no-store' });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      const raw = Number(data.count) || 0;
+      const lang = document.documentElement.lang || 'en';
+      const formatted = raw.toLocaleString(lang);
 
-            const numEl = el.querySelector('#subCount');
-            if (numEl) {
-                // Идеальный вариант — если в HTML есть <span id="subCount">
-                numEl.textContent = formatted;
-            } else {
-                // Fallback — заменяем первое число в тексте span
-                el.textContent = el.textContent.replace(/[\d][\d\u00A0\s,.]*/, formatted);
-            }
-        } catch (err) {
-            console.error('Failed to fetch subscribers count', err);
-            // span остаётся нетронутым — хардкод из HTML виден пользователю
-        }
+      const template = el.dataset.countTemplate;
+      if (template && template.includes('{count}')) {
+        el.textContent = template.replace('{count}', formatted);
+      }
+    } catch (err) {
+      console.error('Failed to fetch subscribers count', err);
     }
+  }
 });
 
 function toggleDetails(button) {

@@ -156,7 +156,7 @@ eleventyComputed:
     
     <script>var time_s = 30;</script>
     <script src="https://seo-fast.ru/site_external/test_view.js"></script>
-    <script type="module" src="promokody-skidki.js?v=27" defer></script>
+    <script type="module" src="promokody-skidki.js?v=28" defer></script>
     <script src="https://yandex.ru/ads/system/context.js" async></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
@@ -255,8 +255,8 @@ eleventyComputed:
             <p>{{ localesPromocodes[locale].promoCodes.bonusText }}</p>
 
             <div class="social-proof" aria-live="polite">
-                <span class="social-proof-count" id="subscribersCount">
-                    {{ localesPromocodes[locale].promoCodes.socialProofCount }}
+                <span class="social-proof-count" id="subscribersCount" data-count-template="{{ localesPromocodes[locale].promoCodes.socialProofCount }}">
+                    {{ localesPromocodes[locale].promoCodes.socialProofCount | replace('{count}', '3 000') }}
                 </span>
                 <span class="social-proof-note">
                     {{ localesPromocodes[locale].promoCodes.socialProofNote }}
