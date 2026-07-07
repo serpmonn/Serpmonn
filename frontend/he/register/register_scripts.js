@@ -1,5 +1,8 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
 
+const urlParams = new URLSearchParams(window.location.search);
+const referralUsername = urlParams.get('ref') || null;
+
 // ОБРАБОТЧИК ОТПРАВКИ ФОРМЫ РЕГИСТРАЦИИ
 document.getElementById("registerForm").addEventListener("submit", async function (event) {
     event.preventDefault();                                                                              // Предотвращаем стандартную отправку формы
@@ -13,7 +16,12 @@ document.getElementById("registerForm").addEventListener("submit", async functio
         const response = await fetch("/auth/register", {                                                // Относительный путь к API регистрации
             method: "POST",                                                                             // Метод HTTP запроса
             headers: { "Content-Type": "application/json" },                                            // Заголовок указывающий тип данных JSON
-            body: JSON.stringify({ username, email, password }),                                        // Преобразуем данные в JSON строку
+            body: JSON.stringify({
+                username,
+                email,
+                password,
+                ref: referralUsername
+            }),
         });
 
         // Проверяем, есть ли тело ответа перед парсингом JSON
