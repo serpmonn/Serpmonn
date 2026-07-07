@@ -1,44 +1,67 @@
 import { generateCombinedBackground } from '../scripts/backgroundGenerator.js';
 import { getPageT } from '../scripts/i18n-loader.js';
 
-// Карта всех доступных инструментов (имя должно совпадать с data-tool-name в tools.html)
 const ALL_TOOLS = [
   {
-    name: '🔗 Генератор UTM‑меток',
     href: '/frontend/tools/marketing/utm-builder.html',
+    nameKey: 'tools.utmBuilder',
     icon: '🔗'
   },
   {
-    name: '📝 Счётчик слов/символов',
     href: '/frontend/tools/marketing/word-counter.html',
+    nameKey: 'tools.wordCounter',
     icon: '📝'
   },
   {
-    name: '🔑 Генератор паролей',
     href: '/frontend/tools/security/password-generator.html',
+    nameKey: 'tools.passwordGenerator',
     icon: '🔑'
   },
   {
-    name: '🔄 Конвертер единиц измерения',
     href: '/frontend/tools/engineering/unit-converter.html',
+    nameKey: 'tools.unitConverter',
     icon: '🔄'
   },
   {
-    name: '🔧 Калькулятор амортизации автомобиля',
     href: '/frontend/tools/logistics/depreciation-calculator.html',
+    nameKey: 'tools.depreciationCalculator',
     icon: '🔧'
   },
   {
-    name: '⛽ Калькулятор топлива',
     href: '/frontend/tools/logistics/fuel-calculator.html',
+    nameKey: 'tools.fuelCalculator',
     icon: '⛽'
   },
   {
-    name: '🌍 Калькулятор экологического следа продуктов',
     href: '/frontend/tools/ecology/product-footprint-calculator.html',
+    nameKey: 'tools.footprintCalculator',
     icon: '🌍'
   }
 ];
+
+function getLocalizedHref(href) {
+  const lang = (document.documentElement.lang || 'ru').trim();
+  if (lang === 'ru') return href;
+  return href.replace('/frontend/', `/frontend/${lang}/`);
+}
+
+function buildTools(t) {
+  return ALL_TOOLS.map(tool => ({
+    ...tool,
+    name: t(tool.nameKey),
+    href: getLocalizedHref(tool.href)
+  }));
+}
+
+function isFavoriteEntry(entry, tool) {
+  if (!entry) return false;
+  if (entry === tool.name) return true;
+  if (entry === tool.href) return true;
+  const neutralHref = tool.href.replace(/\/frontend\/[^/]+\//, '/frontend/');
+  if (entry === neutralHref) return true;
+  if (neutralHref.endsWith(entry) || entry.endsWith(neutralHref)) return true;
+  return false;
+}
 
 document.addEventListener('DOMContentLoaded', async () => {
   const t = await getPageT('profile');
@@ -135,9 +158,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     const last = abs % 10;
     const lastTwo = abs % 100;
 
-    if (last === 1 && lastTwo !== 11) return 'день';
-    if (last >= 2 && last <= 4 && (lastTwo < 10 || lastTwo >= 20)) return 'дня';
-    return 'дней';
+    if (last === 1 && lastTwo !== 11) return t('profile.dayWord.one');
+    if (last >= 2 && last <= 4 && (lastTwo < 10 || lastTwo >= 20)) return t('profile.dayWord.few');
+    return t('profile.dayWord.many');
   }
 
   function setBadge(el, typeClass, text) {
@@ -192,7 +215,8 @@ document.addEventListener('DOMContentLoaded', async () => {
       favorites = [];
     }
 
-    const favoriteTools = ALL_TOOLS.filter(tool => favorites.includes(tool.name));
+    const tools = buildTools(t);
+    const favoriteTools = tools.filter(tool => favorites.some(entry => isFavoriteEntry(entry, tool)));
 
     if (!favoriteTools.length) {
       favoriteContainer.innerHTML = '';
@@ -225,7 +249,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
 
     const usernameValue =
-      usernameField.textContent && usernameField.textContent !== 'Без имени'
+      usernameField.textContent && usernameField.textContent !== t('profile.noName')
         ? usernameField.textContent
         : '';
     const emailValue =
@@ -395,7 +419,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (currentPlan === 'pro') {
         const until = data.pro_until
-          ? new Date(data.pro_until).toLocaleDateString('ru-RU')
+          ? new Date(data.pro_until).toLocaleDateString(document.documentElement.lang || 'ru')
           : '';
         planStatusEl.textContent = until
           ? t('profile.proActiveUntil', { date: until })
@@ -768,7 +792,7 @@ document.addEventListener('DOMContentLoaded', async () => {
             const amountText = `${sign}${item.amount}`;
 
             const date = item.createdAt
-              ? new Date(item.createdAt).toLocaleString('ru-RU')
+              ? new Date(item.createdAt).toLocaleString(document.documentElement.lang || 'ru')
               : '';
 
             li.textContent = date

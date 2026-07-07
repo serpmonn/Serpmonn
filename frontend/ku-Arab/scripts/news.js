@@ -21,7 +21,7 @@
  * </div>
  */
 
-import { getMessages } from './i18n-loader.js';
+import { getMessages, t } from './i18n-loader.js';
 
 const NEWS_LIMIT = 10;
 
@@ -200,6 +200,9 @@ function initArrows(feed) {
 
   const btnLeft  = wrapper.querySelector('.feed-arrow-left');
   const btnRight = wrapper.querySelector('.feed-arrow-right');
+
+  if (btnLeft) btnLeft.setAttribute('aria-label', t('news.prev'));
+  if (btnRight) btnRight.setAttribute('aria-label', t('news.next'));
 
   const SCROLL_STEP = 220;
 

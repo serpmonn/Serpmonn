@@ -33,13 +33,15 @@ export function resolveLocale(req) {
   const candidates = [
     req.headers['x-user-lang'],
     req.body?.lang,
-    (req.headers['accept-language'] || '').split(',')[0].trim().slice(0, 2),
+    (req.headers['accept-language'] || '').split(',')[0].trim().split(';')[0],
   ];
 
   for (const c of candidates) {
     if (!c) continue;
-    const normalized = c.toLowerCase().slice(0, 2);
+    const normalized = c.toLowerCase().trim();
     if (SUPPORTED_LOCALES.includes(normalized)) return normalized;
+    const short = normalized.slice(0, 2);
+    if (SUPPORTED_LOCALES.includes(short)) return short;
   }
 
   return DEFAULT_LOCALE;

@@ -103,13 +103,26 @@ document.addEventListener('DOMContentLoaded', () => {                           
     }
   }
 
+  function normalizeFavoriteKey(btn) {
+    const link = btn.closest('.card')?.querySelector('a[href]');
+    const href = link?.getAttribute('href') || '';
+    if (href) {
+      return href.replace(/\/frontend\/[^/]+\//, '/frontend/');
+    }
+    return btn.getAttribute('data-tool-name') || btn.parentElement?.querySelector('h2')?.textContent.trim() || '';
+  }
+
+  function isFavoriteKey(key) {
+    return favorites.some(entry => entry === key || key.endsWith(entry) || entry.endsWith(key));
+  }
+
   // Установка начального количества инструментов
   toolsCountElement.textContent = document.querySelectorAll('.card:not(.tool-placeholder)').length;                            // Подсчет активных инструментов (исключая заглушки)
 
   // Обработчик для кнопок избранного
   document.querySelectorAll('.favorite-btn').forEach(btn => {                                                                  // Перебор всех кнопок избранного
-    const toolName = btn.getAttribute('data-tool-name') || btn.parentElement.querySelector('h2').textContent.trim();           // Получение названия инструмента из data-атрибута или заголовка
-    if (favorites.includes(toolName)) {                                                                                        // Проверка, есть ли инструмент в избранном
+    const toolKey = normalizeFavoriteKey(btn);                                                                                 // Стабильный ключ (href без локали или название)
+    if (isFavoriteKey(toolKey)) {                                                                                              // Проверка, есть ли инструмент в избранном
       btn.classList.add('favorite');                                                                                           // Добавление класса для визуального выделения
       btn.setAttribute('aria-pressed', 'true');                                                                                // Установка состояния для accessibility
     } else {
@@ -117,13 +130,13 @@ document.addEventListener('DOMContentLoaded', () => {                           
       btn.setAttribute('aria-pressed', 'false');                                                                               // Сброс состояния для accessibility
     }
     btn.addEventListener('click', () => {                                                                                      // Добавление обработчика клика
-      if (!toolName) return;                                                                                                   // Выход если нет названия инструмента
-      if (!favorites.includes(toolName)) {                                                                                     // Если инструмента нет в избранном
-        favorites.push(toolName);                                                                                              // Добавление в массив избранного
+      if (!toolKey) return;                                                                                                   // Выход если нет ключа инструмента
+      if (!isFavoriteKey(toolKey)) {                                                                                           // Если инструмента нет в избранном
+        favorites.push(toolKey);                                                                                               // Добавление в массив избранного
         btn.classList.add('favorite');                                                                                         // Визуальное выделение
         btn.setAttribute('aria-pressed', 'true');                                                                              // Обновление состояния
       } else {                                                                                                                 // Если инструмент уже в избранном
-        favorites = favorites.filter(name => name !== toolName);                                                               // Удаление из массива
+        favorites = favorites.filter(entry => entry !== toolKey && !toolKey.endsWith(entry) && !entry.endsWith(toolKey));    // Удаление из массива
         btn.classList.remove('favorite');                                                                                      // Снятие визуального выделения
         btn.setAttribute('aria-pressed', 'false');                                                                             // Обновление состояния
       }
@@ -186,8 +199,10 @@ document.addEventListener('DOMContentLoaded', () => {                           
   function sortCards(cards, sortByFavorites = false) {                                                                         // cards - массив карточек, sortByFavorites - флаг сортировки
     return sortByFavorites                                                                                                     // Если включена сортировка по избранному
       ? cards.sort((a, b) => {                                                                                                 // Сортировка массива
-          const aIsFavorite = favorites.includes(a.querySelector('.favorite-btn')?.getAttribute('data-tool-name') || a.querySelector('h2').textContent.trim()); // Проверка избранного для карточки A
-          const bIsFavorite = favorites.includes(b.querySelector('.favorite-btn')?.getAttribute('data-tool-name') || b.querySelector('h2').textContent.trim()); // Проверка избранного для карточки B
+          const aKey = a.querySelector('.favorite-btn') ? normalizeFavoriteKey(a.querySelector('.favorite-btn')) : '';
+          const bKey = b.querySelector('.favorite-btn') ? normalizeFavoriteKey(b.querySelector('.favorite-btn')) : '';
+          const aIsFavorite = isFavoriteKey(aKey);
+          const bIsFavorite = isFavoriteKey(bKey);
           return bIsFavorite - aIsFavorite;                                                                                    // Сортировка: избранные сверху (true - false = 1)
         })
       : cards;                                                                                                                 // Возврат исходного массива без сортировки

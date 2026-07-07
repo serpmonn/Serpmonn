@@ -43,3 +43,11 @@ export function t(key, vars = {}) {
   }
   return value;
 }
+
+/** Loads shared i18n messages and returns the t() function for page scripts. */
+export async function getPageT(_pageName) {
+  if (Object.keys(messages).length === 0) {
+    await loadMessages();
+  }
+  return t;
+}
