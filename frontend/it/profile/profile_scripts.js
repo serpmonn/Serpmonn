@@ -346,7 +346,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Fix: создаём ссылку через createElement вместо innerHTML для предотвращения XSS
   function makeTariffsLink(text) {
     const a = document.createElement('a');
-    a.href = '/frontend/tariffs/tariffs.html';
+    a.href = getFrontendPath('tariffs/tariffs.html');
     a.textContent = text;
     return a;
   }
@@ -846,7 +846,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   managePlanButton.addEventListener('click', () => {
-    window.location.href = '/frontend/tariffs/tariffs.html';
+    window.location.href = getFrontendPath('tariffs/tariffs.html');
   });
 
   /* ==== НЕДАВНИЕ ИНСТРУМЕНТЫ ==== */
