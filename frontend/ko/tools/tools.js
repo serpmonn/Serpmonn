@@ -3,7 +3,8 @@ document.addEventListener('DOMContentLoaded', () => {                           
   const adBanners = document.querySelectorAll('.ad-banner');                                                                   // Все рекламные баннеры на странице
   const searchInput = document.querySelector('.filter-bar input[type="text"]');                                                // Поле ввода для поиска инструментов
   const categorySelect = document.querySelector('.filter-bar select');                                                         // Выпадающий список категорий
-  const clearButton = document.querySelector('.filter-bar button[aria-label="Очистить фильтры"]');                             // Кнопка очистки фильтров
+  const filterBar = document.getElementById('tools-filter-bar');
+  const clearButton = document.getElementById('clear-filters');
   const clearFavoritesButton = document.getElementById('clear-favorites');                                                     // Кнопка очистки избранного
   const sortFavoritesButton = document.getElementById('sort-favorites');                                                       // Кнопка сортировки по избранному
   const toolsCountElement = document.getElementById('tools-count');                                                            // Элемент для отображения количества инструментов
@@ -116,7 +117,28 @@ document.addEventListener('DOMContentLoaded', () => {                           
     return favorites.some(entry => entry === key || key.endsWith(entry) || entry.endsWith(key));
   }
 
-  // Установка начального количества инструментов
+  const categoryLabels = {};
+  if (categorySelect) {
+    categorySelect.querySelectorAll('option').forEach((option) => {
+      if (option.value) categoryLabels[option.value] = option.textContent.trim();
+    });
+  }
+
+  const defaultMetaDescription = document.querySelector('meta[name="description"]')?.content || '';
+  const metaAllTemplate = filterBar?.dataset.dynamicMetaAll || defaultMetaDescription;
+  const metaCategoryTemplate = filterBar?.dataset.dynamicMetaCategory || defaultMetaDescription;
+
+  function updateMetaDescription(category = '') {
+    const meta = document.querySelector('meta[name="description"]');
+    if (!meta) return;
+    if (!category) {
+      meta.content = metaAllTemplate;
+      return;
+    }
+    const categoryLabel = categoryLabels[category] || category;
+    meta.content = metaCategoryTemplate.replace('{category}', categoryLabel);
+  }
+
   toolsCountElement.textContent = document.querySelectorAll('.card:not(.tool-placeholder)').length;                            // Подсчет активных инструментов (исключая заглушки)
 
   // Обработчик для кнопок избранного
@@ -225,7 +247,7 @@ document.addEventListener('DOMContentLoaded', () => {                           
     filterMessage.classList.toggle('hidden', activeCount > 0);                                                                 // Показ/скрытие сообщения "не найдено"
 
     // Обновление мета-описания для SEO
-    document.querySelector('meta[name="description"]').content = `Инструменты Serpmonn для ${category || 'всех категорий'}: UTM-генератор, пароли, калькуляторы и др.`; // Динамическое обновление meta description
+    updateMetaDescription(category);
   }
 
   // Инициализация фильтрации из параметров URL
@@ -258,7 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {                           
   });
 
   // Обработчик кнопки "Очистить фильтры"
-  clearButton.addEventListener('click', () => {                                                                                // Обработчик клика по кнопке очистки
+  if (clearButton) clearButton.addEventListener('click', () => {                                                                                // Обработчик клика по кнопке очистки
     searchInput.value = '';                                                                                                    // Очистка поля поиска
     categorySelect.value = '';                                                                                                 // Сброс выбора категории
     sortFavoritesButton.classList.remove('active');                                                                            // Отключение сортировки по избранному

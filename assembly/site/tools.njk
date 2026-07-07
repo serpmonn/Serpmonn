@@ -95,7 +95,9 @@ eleventyComputed:
         <p class="subtitle">{{ tools[locale].page.subtitle }}</p>
 
         <!-- Панель фильтров -->
-        <div class="filter-bar">
+        <div class="filter-bar" id="tools-filter-bar"
+             data-dynamic-meta-all="{{ tools[locale].filters.dynamicMetaAll }}"
+             data-dynamic-meta-category="{{ tools[locale].filters.dynamicMetaCategory }}">
             <input type="text" 
                    placeholder="{{ tools[locale].filters.searchPlaceholder }}" 
                    aria-label="{{ tools[locale].aria.searchTools }}">
@@ -105,7 +107,7 @@ eleventyComputed:
                     <option value="{{ category.key }}">{{ category.name }}</option>
                 {% endfor %}
             </select>
-            <button aria-label="{{ tools[locale].aria.clearFilters }}">{{ tools[locale].filters.clearFilters }}</button>
+            <button id="clear-filters" aria-label="{{ tools[locale].aria.clearFilters }}">{{ tools[locale].filters.clearFilters }}</button>
             <button id="clear-favorites" aria-label="{{ tools[locale].aria.clearFavorites }}">{{ tools[locale].filters.clearFavorites }}</button>
             <button id="sort-favorites" aria-label="{{ tools[locale].aria.showFavoritesTop }}">{{ tools[locale].filters.sortFavorites }}</button>
             <div class="filter-message hidden" role="alert">{{ tools[locale].filters.noResults }}</div>

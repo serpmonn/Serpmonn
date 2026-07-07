@@ -98,7 +98,7 @@ eleventyComputed:
             {{ profile[locale].profile.extraSection.onnmailLabel or '@onnmail' }}
           </span>
           <span class="profile-onnmail-desc">
-            {{ profile[locale].profile.extraSection.onnmailDescription or "Почта Serpmonn для уведомлений и сервисных писем." }}
+            {{ profile[locale].profile.extraSection.onnmailDescription }}
           </span>
         </div>
       </div>
@@ -109,7 +109,7 @@ eleventyComputed:
           <div class="profile-points-column">
             <div id="pointsBadge" class="profile-points">
               <span class="profile-points-label">
-                {{ profile[locale].profile.pointsSection.label or "Баллы:" }}
+                {{ profile[locale].profile.pointsSection.label }}
               </span>
               <span id="pointsBalance" class="profile-points-value">—</span>
             </div>
@@ -122,7 +122,7 @@ eleventyComputed:
             type="button"
             class="secondary-button secondary-button--small"
           >
-            {{ profile[locale].profile.editSection.openEditButton or "Изменить данные" }}
+            {{ profile[locale].profile.editSection.openEditButton }}
           </button>
         </div>
 
@@ -132,14 +132,14 @@ eleventyComputed:
             type="button"
             class="secondary-button secondary-button--xs"
           >
-            {{ profile[locale].profile.extraSection.createOnnmail or "Создать" }}
+            {{ profile[locale].profile.extraSection.createOnnmail }}
           </button>
           <button
             id="loginOnnmailButton"
             type="button"
             class="secondary-button secondary-button--xs"
           >
-            {{ profile[locale].profile.extraSection.loginOnnmail or "Открыть" }}
+            {{ profile[locale].profile.extraSection.loginOnnmail }}
           </button>
         </div>
       </div>
@@ -151,17 +151,16 @@ eleventyComputed:
     <!-- Реферальная программа -->
     <section class="card" aria-labelledby="referralTitle">
       <h2 id="referralTitle">
-        {{ profile[locale].profile.referralSection.title or "Реферальная программа" }}
+        {{ profile[locale].profile.referralSection.title }}
       </h2>
 
       <p class="plan-hint">
-        {{ profile[locale].profile.referralSection.description or
-           "Приглашайте друзей и получайте баллы. Вы и приглашённый получите бонус после регистрации." }}
+        {{ profile[locale].profile.referralSection.description }}
       </p>
 
       <div class="referral-row">
         <label for="referralLink" class="referral-label">
-          {{ profile[locale].profile.referralSection.linkLabel or "Моя реферальная ссылка:" }}
+          {{ profile[locale].profile.referralSection.linkLabel }}
         </label>
         <input
           id="referralLink"
@@ -175,7 +174,7 @@ eleventyComputed:
           type="button"
           class="secondary-button secondary-button--xs"
         >
-          {{ profile[locale].profile.referralSection.copyButton or "Скопировать" }}
+          {{ profile[locale].profile.referralSection.copyButton }}
         </button>
       </div>
       <p id="referralHint" class="plan-hint"></p>
@@ -185,17 +184,16 @@ eleventyComputed:
     <!-- Обмен баллов на Pro -->
     <section class="card" aria-labelledby="pointsExchangeTitle">
       <h2 id="pointsExchangeTitle" class="card-title-left">
-        {{ profile[locale].profile.pointsExchangeSection.title or "Обмен баллов на Pro" }}
+        {{ profile[locale].profile.pointsExchangeSection.title }}
       </h2>
 
       <p class="plan-hint">
-        {{ profile[locale].profile.pointsExchangeSection.description or
-           "Обменивайте баллы на дни подписки Pro. Сейчас: 500 баллов = 1 день Pro." }}
+        {{ profile[locale].profile.pointsExchangeSection.description }}
       </p>
 
       <div class="referral-row">
         <label for="proExchangeDays" class="referral-label">
-          {{ profile[locale].profile.pointsExchangeSection.daysLabel or "Сколько дней Pro вы хотите получить:" }}
+          {{ profile[locale].profile.pointsExchangeSection.daysLabel }}
         </label>
         <input
           id="proExchangeDays"
@@ -209,7 +207,7 @@ eleventyComputed:
           type="button"
           class="secondary-button secondary-button--xs"
         >
-          {{ profile[locale].profile.pointsExchangeSection.submitButton or "Обменять" }}
+          {{ profile[locale].profile.pointsExchangeSection.submitButton }}
         </button>
       </div>
 
@@ -220,15 +218,15 @@ eleventyComputed:
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          {{ profile[locale].profile.planSection.title or "Подписка и лимиты" }}
+          {{ profile[locale].profile.planSection.title }}
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
-          {{ profile[locale].profile.planSection.manageButton or "Управлять тарифом" }}
+          {{ profile[locale].profile.planSection.manageButton }}
         </button>
       </div>
 
       <p class="plan-subtitle">
-        {{ profile[locale].profile.planSection.currentPlanLabel or "Текущий тариф:" }}
+        {{ profile[locale].profile.planSection.currentPlanLabel }}
         <span id="planName" class="plan-name">Free</span>
       </p>
 
@@ -236,7 +234,7 @@ eleventyComputed:
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>{{ profile[locale].profile.planSection.quotaLabel or "Доступные запросы по тарифу" }}</span>
+          <span>{{ profile[locale].profile.planSection.quotaLabel }}</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -258,27 +256,27 @@ eleventyComputed:
     <!-- Мои инструменты (избранное + недавние) -->
     <section class="card" aria-labelledby="toolsTitle">
       <h2 id="toolsTitle">
-        {{ profile[locale].profile.toolsSection.title or "Мои инструменты" }}
+        {{ profile[locale].profile.toolsSection.title }}
       </h2>
 
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        {{ profile[locale].profile.toolsSection.noFavorites1 or "Вы ещё не выбрали инструменты." }}
-        {{ profile[locale].profile.toolsSection.noFavorites2 or "Отметьте ⭐ на странице" }}
+        {{ profile[locale].profile.toolsSection.noFavorites1 }}
+        {{ profile[locale].profile.toolsSection.noFavorites2 }}
         <a href="{% if locale == 'ru' %}/frontend/tools/tools.html{% else %}/frontend/{{ locale }}/tools/tools.html{% endif %}">
-          {{ profile[locale].profile.toolsSection.allToolsLink or "всех инструментов" }}
+          {{ profile[locale].profile.toolsSection.allToolsLink }}
         </a>,
-        {{ profile[locale].profile.toolsSection.noFavorites3 or "и они появятся здесь." }}
+        {{ profile[locale].profile.toolsSection.noFavorites3 }}
       </p>
 
       <div id="recentTools" class="recent-tools"></div>
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="{{ profile[locale].profile.logoutSection.ariaLabel or 'Выход из аккаунта' }}">
+    <section class="logout-section" aria-label="{{ profile[locale].profile.logoutSection.ariaLabel }}">
       <button id="logoutButton" type="button" class="danger-button">
-        {{ profile[locale].profile.logoutSection.buttonText or "Выйти из аккаунта" }}
+        {{ profile[locale].profile.logoutSection.buttonText }}
       </button>
     </section>
   </main>
