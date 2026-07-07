@@ -1,3 +1,5 @@
+import { getPageT } from '/frontend/scripts/i18n-loader.js';
+
 const API_CONFIG = {
     baseUrl: '/api/promocodes',
     updateInterval: 24 * 60 * 60 * 1000,
@@ -34,31 +36,49 @@ const specialCopyProjects = [
     'Сберздоровье', 'Anywayanyday', 'Librederm', 'PetShop', 'GamersHub'
 ];
 
-const categoryLabels = {
-    'еда': 'Еда и рестораны',
-    'продукты': 'Продукты',
-    'развлечения': 'Развлечения',
-    'товары': 'Товары',
-    'услуги': 'Услуги',
-    'другие': 'Другие',
-    'игры': 'Игры',
-    'гаджеты': 'Гаджеты',
-    'сервисы': 'Сервисы',
-    'мода': 'Мода',
-    'здоровье': 'Здоровье',
-    'транспорт': 'Транспорт',
-    'путешествия': 'Путешествия',
-    'финансы': 'Финансы',
-    'страхование': 'Страхование',
-    'фитнес': 'Фитнес'
-};
+const COUNTRY_KEYS = ['Россия', 'Казахстан', 'Узбекистан', 'Грузия'];
 
-const countryLabels = {
-    'Россия': 'Россия',
-    'Казахстан': 'Казахстан',
-    'Узбекистан': 'Узбекистан',
-    'Грузия': 'Грузия'
-};
+let t;
+
+function getDateLocale() {
+    const lang = (document.documentElement.lang || 'en').trim();
+    if (lang === 'zh-cn') return 'zh-CN';
+    if (lang === 'pt-br') return 'pt-BR';
+    if (lang === 'pt-pt') return 'pt-PT';
+    if (lang === 'ku-arab') return 'ku-Arab';
+    return lang;
+}
+
+function getCategoryLabel(category) {
+    const key = `promo.cat.${category}`;
+    const label = t(key);
+    return label === key ? category.charAt(0).toUpperCase() + category.slice(1) : label;
+}
+
+function getCountryLabel(country) {
+    const key = `promo.country.${country}`;
+    const label = t(key);
+    return label === key ? country : label;
+}
+
+function setRefreshButtonInner(updating = false) {
+    if (!elements.refreshBtn) return;
+    const label = updating ? t('promo.refreshing') : t('promo.refresh');
+    elements.refreshBtn.innerHTML = `<i class="icon-refresh"></i> ${label}`;
+}
+
+function updateSortButtonUI() {
+    if (!elements.sortButton) return;
+    if (isSortedByExpiry) {
+        elements.sortButton.innerHTML = t('promo.sortActive', { arrow: sortAscending ? '↑' : '↓' });
+        elements.sortButton.setAttribute('aria-label', t('promo.sortAriaWithOrder', {
+            order: sortAscending ? t('promo.sortAsc') : t('promo.sortDesc')
+        }));
+    } else {
+        elements.sortButton.innerHTML = t('promo.sortByExpiry');
+        elements.sortButton.setAttribute('aria-label', t('promo.sortAria'));
+    }
+}
 
 const elements = {
     searchInput: document.getElementById('searchInput'),
@@ -184,7 +204,7 @@ function getPromoTitle(promo) {
             return u.hostname.replace(/^www\./, '');
         }
     } catch (_) {}
-    return 'Предложение партнёра';
+    return t('promo.partnerOffer');
 }
 
 function normalizePromo(raw) {
@@ -255,7 +275,7 @@ async function loadPromocodesFromAPI() {
                 updateStats(stats || { total: 0, active: 0 });
                 renderPromocodes();
                 updateLastUpdateTime();
-                updateCountrySelect(Object.keys(countryLabels));
+                updateCountrySelect(COUNTRY_KEYS);
                 return true;
             }
         }
@@ -282,14 +302,14 @@ async function loadPromocodesFromAPI() {
                 updateCategorySelect(catResult.data);
             }
         }
-        updateCountrySelect(Object.keys(countryLabels));
+        updateCountrySelect(COUNTRY_KEYS);
         renderPromocodes();
         updateLastUpdateTime();
-        showToast('Промокоды обновлены!', 'success');
+        showToast(t('promo.refreshed'), 'success');
         return true;
     } catch (error) {
         logError('Ошибка загрузки промокодов', error);
-        showToast(`Ошибка загрузки: ${error.message}`, 'error');
+        showToast(t('promo.loadError', { message: error.message }), 'error');
         return false;
     } finally {
         elements.loadingSpinner.style.display = 'none';
@@ -299,7 +319,7 @@ async function loadPromocodesFromAPI() {
 async function refreshPromocodes() {
     try {
         elements.refreshBtn.disabled = true;
-        elements.refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновление...';
+        setRefreshButtonInner(true);
         
         const response = await fetch(`${API_CONFIG.baseUrl}/refresh`, {
             method: 'POST',
@@ -317,26 +337,22 @@ async function refreshPromocodes() {
             sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
             
             if (elements.sortButton) {
-                if (isSortedByExpiry) {
-                    elements.sortButton.innerHTML = `Сортировка ${sortAscending ? '↑' : '↓'}`;
-                } else {
-                    elements.sortButton.innerHTML = 'Сортировка по сроку';
-                }
+                updateSortButtonUI();
             }
             
             filterPromos();
             updateLastUpdateTime();
             showToast(result.message, 'success');
         } else {
-            showToast(result.message || 'Ошибка при обновлении', 'error');
+            showToast(result.message || t('promo.updateError'), 'error');
         }
     } catch (error) {
         logError('Ошибка принудительного обновления', error);
-        showToast(`Ошибка обновления: ${error.message}`, 'error');
+        showToast(t('promo.refreshError', { message: error.message }), 'error');
         updateLastUpdateTime();
     } finally {
         elements.refreshBtn.disabled = false;
-        elements.refreshBtn.innerHTML = '<i class="icon-refresh"></i> Обновить';
+        setRefreshButtonInner(false);
     }
 }
 
@@ -345,7 +361,7 @@ function addOfferSchema(promos) {
         "@context": "https://schema.org",
         "@type": "Offer",
         "name": getPromoTitle(promo),
-        "description": promo.description || promo.subtitle || "Описание будет доступно позже",
+        "description": promo.description || promo.subtitle || t('promo.descriptionPending'),
         "url": promo.landing_url || promo.link || promo.url || "",
         "category": promo.category || "другие",
         "priceCurrency": promo.discount_amount ? "RUB" : undefined,
@@ -353,7 +369,7 @@ function addOfferSchema(promos) {
         "validThrough": promo.valid_until || promo.expiry_date || undefined,
         "offeredBy": {
             "@type": "Organization",
-            "name": promo.advertiser_info || "Партнёр Serpmonn"
+            "name": promo.advertiser_info || t('promo.partnerName')
         },
         "image": promo.image_url || "https://serpmonn.ru/frontend/images/skidki-i-akcii.png",
         "availability": (promo.valid_until || promo.expiry_date) && new Date(promo.valid_until || promo.expiry_date) < new Date() ? "http://schema.org/OutOfStock" : "http://schema.org/InStock",
@@ -373,11 +389,11 @@ function addOfferSchema(promos) {
 function updateCategorySelect(categories) {
     const select = elements.categorySelect;
     if (!select) return;
-    select.innerHTML = '<option value="">Все категории</option>';
+    select.innerHTML = `<option value="">${t('promo.allCategories')}</option>`;
     categories.forEach(category => {
         const option = document.createElement('option');
         option.value = category;
-        option.textContent = categoryLabels[category] || category.charAt(0).toUpperCase() + category.slice(1);
+        option.textContent = getCategoryLabel(category);
         select.appendChild(option);
     });
 }
@@ -385,12 +401,13 @@ function updateCategorySelect(categories) {
 function updateCountrySelect(countries) {
     const select = elements.countrySelect;
     if (!select) return;
-    select.innerHTML = '<option value="">Все страны</option>';
+    select.innerHTML = `<option value="">${t('promo.allCountries')}</option>`;
     countries.forEach(country => {
-        if (countryLabels[country]) {
+        const key = `promo.country.${country}`;
+        if (t(key) !== key || COUNTRY_KEYS.includes(country)) {
             const option = document.createElement('option');
             option.value = country;
-            option.textContent = countryLabels[country];
+            option.textContent = getCountryLabel(country);
             select.appendChild(option);
         }
     });
@@ -411,8 +428,7 @@ function resetFilters() {
     localStorage.setItem('promo_sort_ascending', 'true');
     
     if (elements.sortButton) {
-        elements.sortButton.innerHTML = 'Сортировка по сроку';
-        elements.sortButton.setAttribute('aria-label', 'Сортировать по сроку действия');
+        updateSortButtonUI();
     }
     
     filterPromos();
@@ -431,8 +447,8 @@ function renderPromocodes() {
     if (filteredPromocodes.length === 0) {
         catalog.innerHTML = `
             <div class="no-results">
-                <h3>Промокоды не найдены</h3>
-                <p>Попробуйте изменить параметры поиска или обновить данные</p>
+                <h3>${t('promo.noResultsTitle')}</h3>
+                <p>${t('promo.noResultsHint')}</p>
             </div>
         `;
         return;
@@ -502,6 +518,9 @@ function createPromoCard(promo, isTopOffer = false) {
     const isYandexTravel = /(Яндекс\s*Путешеств|Yandex\s*Travel|travelyandex|yandex\.travel)/i.test(combined);
     
     card.className = `promo-card ${isTopOffer ? 'top-offer' : ''} ${isYandexTravel ? 'travel-highlight' : ''} clickable-card`;
+    if (isYandexTravel) {
+        card.setAttribute('data-travel-badge', t('promo.travelBadge'));
+    }
     card.dataset.category = promo.category || 'другие';
     card.dataset.expiry = promo.valid_until || promo.expiry_date || '9999-12-31';
     card.dataset.country = promo.country || 'Россия';
@@ -529,14 +548,16 @@ function createPromoCard(promo, isTopOffer = false) {
     if (promo.bonus_description) {
         bonusText = promo.bonus_description;
     } else if (promo.discount_percent) {
-        bonusText = `Скидка ${promo.discount_percent}%`;
+        bonusText = t('promo.discountPercent', { percent: promo.discount_percent });
     } else if (promo.discount_amount) {
-        bonusText = isSberCard ? `Сертификат на ${promo.discount_amount}₽` : `Скидка ${promo.discount_amount}₽`;
+        bonusText = isSberCard
+            ? t('promo.certificateAmount', { amount: promo.discount_amount })
+            : t('promo.discountAmount', { amount: promo.discount_amount });
     } else {
-        bonusText = 'Без промокода';
+        bonusText = t('promo.noPromocode');
     }
 
-    const detailsContent = escapeHtml(promo.description || promo.groupDescription || 'Описание будет доступно позже');
+    const detailsContent = escapeHtml(promo.description || promo.groupDescription || t('promo.descriptionPending'));
     
     const landingUrl = promo.landing_url || promo.link || promo.url;
 
@@ -550,38 +571,38 @@ function createPromoCard(promo, isTopOffer = false) {
             </div>
             ${promo.promocode ? `
                 <p class="code">${escapeHtml(promo.promocode)} 
-                    <button class="submit-btn copy-btn" type="button" aria-label="Скопировать промокод ${escapeHtml(promo.promocode)}">Копировать</button>
+                    <button class="submit-btn copy-btn" type="button" aria-label="${escapeHtml(t('promo.copyCodeAria', { code: promo.promocode }))}">${t('promo.copy')}</button>
                 </p>
             ` : ''}
             <p class="bonus-info">${escapeHtml(bonusText)}</p>
             <button type="button" class="details-btn" aria-expanded="false" aria-controls="${detailsId}" tabindex="0">
                 <span class="details-icon">▼</span>
-                <span class="details-text">Подробнее</span>
+                <span class="details-text">${t('promo.details')}</span>
             </button>
             <div class="details-content" id="${detailsId}" style="display: none; margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
                 ${detailsContent}
             </div>
-            ${promo.conditions ? `<p><strong>Условия:</strong> ${escapeHtml(promo.conditions)}</p>` : ''}
-            <p class="country">Страна: ${escapeHtml(promo.country || 'Россия')}</p>
+            ${promo.conditions ? `<p><strong>${t('promo.conditions')}</strong> ${escapeHtml(promo.conditions)}</p>` : ''}
+            <p class="country">${t('promo.countryPrefix')} ${escapeHtml(getCountryLabel(promo.country || 'Россия'))}</p>
             <p class="expiry ${isExpired ? 'expired' : ''}">
-                Действует до: ${formatDate(expiryDate)}
-                ${isExpired ? ' (Истёк)' : ''}
+                ${t('promo.validUntil')} ${formatDate(expiryDate)}
+                ${isExpired ? ` ${t('promo.expired')}` : ''}
             </p>
         </div>
         <div class="promo-card-footer">
             ${landingUrl ? `
                 <div class="promo-footer-actions">
-                    <a href="${escapeHtml(landingUrl)}" target="_blank" class="register-link use-btn">Использовать</a>
+                    <a href="${escapeHtml(landingUrl)}" target="_blank" class="register-link use-btn">${t('promo.use')}</a>
                     <button 
                         type="button" 
                         class="promo-share-button" 
-                        aria-label="Поделиться этим промокодом">
+                        aria-label="${t('promo.shareAria')}">
                         <span class="promo-share-icon">⤴</span>
                     </button>
                 </div>
             ` : ''}
             ${promo.advertiser_info ? `
-                <p class="ad">Реклама. ${escapeHtml(promo.advertiser_info)}</p>
+                <p class="ad">${t('promo.ad')} ${escapeHtml(promo.advertiser_info)}</p>
             ` : ''}
         </div>
     `;
@@ -716,7 +737,7 @@ function createPromoCard(promo, isTopOffer = false) {
 }
 
 function formatDate(date) {
-    return date.toLocaleDateString('ru-RU', {
+    return date.toLocaleDateString(getDateLocale(), {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric'
@@ -750,7 +771,7 @@ function updateLastUpdateTime() {
     if (!lastUpdate) {
         const newDate = new Date().toISOString();
         localStorage.setItem(API_CONFIG.lastUpdateKey, newDate);
-        elements.lastUpdate.textContent = new Date(newDate).toLocaleString('ru-RU', { 
+        elements.lastUpdate.textContent = new Date(newDate).toLocaleString(getDateLocale(), { 
             dateStyle: 'short', 
             timeStyle: 'medium'
         });
@@ -760,7 +781,7 @@ function updateLastUpdateTime() {
     if (isNaN(date.getTime())) {
         const newDate = new Date().toISOString();
         localStorage.setItem(API_CONFIG.lastUpdateKey, newDate);
-        elements.lastUpdate.textContent = new Date(newDate).toLocaleString('ru-RU', { 
+        elements.lastUpdate.textContent = new Date(newDate).toLocaleString(getDateLocale(), { 
             dateStyle: 'short', 
             timeStyle: 'medium'
         });
@@ -768,7 +789,7 @@ function updateLastUpdateTime() {
     }
     elements.lastUpdate.classList.add('updating');
     elements.lastUpdate.textContent = '';
-    elements.lastUpdate.textContent = date.toLocaleString('ru-RU', { 
+    elements.lastUpdate.textContent = date.toLocaleString(getDateLocale(), { 
         dateStyle: 'short', 
         timeStyle: 'medium'
     });
@@ -856,7 +877,7 @@ function filterPromos() {
         if (!noResultsMessage) {
             const message = document.createElement('div');
             message.className = 'no-results';
-            message.innerHTML = '<h3>Промокоды не найдены</h3><p>Попробуйте изменить параметры поиска</p>';
+            message.innerHTML = `<h3>${t('promo.noResultsTitle')}</h3><p>${t('promo.noResultsHintShort')}</p>`;
             elements.catalog.prepend(message);
         }
     } else if (noResultsMessage) {
@@ -866,7 +887,7 @@ function filterPromos() {
     if (resultCountContainer) {
         resultCountContainer.innerHTML = '';
         const resultCount = document.createElement('p');
-        resultCount.textContent = `Найдено промокодов: ${filteredPromocodes.length}`;
+        resultCount.textContent = t('promo.foundCount', { count: filteredPromocodes.length });
         resultCount.className = 'result-count';
         resultCountContainer.appendChild(resultCount);
     }
@@ -876,11 +897,11 @@ function copyToClipboard(promo, btn) {
     const text = promo.promocode || promo.code || String(promo);
 
     const onSuccess = async () => {
-        showToast('Код скопирован!', 'success');
+        showToast(t('promo.codeCopied'), 'success');
 
         if (btn) {
             const originalText = btn.textContent;
-            btn.textContent = 'Скопировано ✓';
+            btn.textContent = t('promo.copied');
             btn.disabled = true;
             setTimeout(() => {
                 btn.textContent = originalText;
@@ -927,8 +948,7 @@ function sortByExpiry() {
     filterPromos();
     
     if (elements.sortButton) {
-        elements.sortButton.innerHTML = `Сортировка ${sortAscending ? '↑' : '↓'}`;
-        elements.sortButton.setAttribute('aria-label', `Сортировать по сроку действия, текущий порядок: ${sortAscending ? 'восходящий' : 'нисходящий'}`);
+        updateSortButtonUI();
     }
 }
 
@@ -938,7 +958,7 @@ function toggleFilters(button) {
         const isExpanded = content.style.display === 'block';
         content.style.display = isExpanded ? 'none' : 'block';
         button.setAttribute('aria-expanded', !isExpanded);
-        button.textContent = isExpanded ? 'Фильтры' : 'Скрыть фильтры';
+        button.textContent = isExpanded ? t('promo.filters') : t('promo.hideFilters');
     }
 }
 
@@ -983,7 +1003,7 @@ document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
     const messageEl = document.createElement('p');
     messageEl.className = 'message';
     if (!emailRegex.test(email)) {
-        messageEl.textContent = 'Введите корректный email';
+        messageEl.textContent = t('promo.invalidEmail');
         messageEl.style.color = '#ff5252';
         e.target.appendChild(messageEl);
         setTimeout(() => messageEl.remove(), 3000);
@@ -997,7 +1017,7 @@ document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
         });
         if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
         const result = await response.json();
-        messageEl.textContent = result.message || 'Спасибо за подписку!';
+        messageEl.textContent = result.message || t('promo.subscribeThanks');
         messageEl.style.color = '#28a745';
         e.target.appendChild(messageEl);
         e.target.reset();
@@ -1005,8 +1025,8 @@ document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
     } catch (error) {
         logError('Ошибка подписки', error);
         messageEl.textContent = error.message.includes('HTTP error')
-            ? `Ошибка сервера: ${error.message}`
-            : 'Ошибка при подписке. Попробуйте позже.';
+            ? t('promo.serverError', { message: error.message })
+            : t('promo.subscribeError');
         messageEl.style.color = '#ff5252';
         e.target.appendChild(messageEl);
         setTimeout(() => messageEl.remove(), 3000);
@@ -1023,6 +1043,8 @@ elements.statusSelect?.addEventListener('change', filterPromos);
 elements.countrySelect?.addEventListener('change', filterPromos);
 
 document.addEventListener('DOMContentLoaded', async () => {
+  t = await getPageT('promo');
+
   isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';
   sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
   const savedSearch = localStorage.getItem('promo_search') || '';
@@ -1037,6 +1059,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   await loadPromocodesFromAPI();
   updateLastUpdateTime();
+  updateSortButtonUI();
   startAutoUpdate();
 
   const urlParams = new URLSearchParams(window.location.search);
@@ -1063,7 +1086,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
-    const el = document.getElementById('subscribersCount');
+  const el = document.getElementById('subscribersCount');
     if (el) {
         try {
             const res = await fetch('/api/subscribers/count', { cache: 'no-store' });
@@ -1095,7 +1118,7 @@ function toggleDetails(button) {
         content.style.display = isExpanded ? 'none' : 'block';
         button.setAttribute('aria-expanded', !isExpanded);
         const textSpan = button.querySelector('.details-text');
-        if (textSpan) textSpan.textContent = isExpanded ? 'Подробнее' : 'Скрыть';
+        if (textSpan) textSpan.textContent = isExpanded ? t('promo.details') : t('promo.hide');
         button.querySelector('.details-icon').textContent = isExpanded ? '▼' : '▲';
     }
 }
@@ -1174,19 +1197,19 @@ function getOrCreateShareOverlay() {
     overlay.id = 'share-popup-overlay';
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
-    overlay.setAttribute('aria-label', 'Поделиться промокодом');
+    overlay.setAttribute('aria-label', t('promo.shareDialogAria'));
 
     overlay.innerHTML = `
         <div class="share-popup">
-            <button class="share-popup__close" aria-label="Закрыть">&times;</button>
-            <p class="share-popup__title">Поделиться промокодом</p>
+            <button class="share-popup__close" aria-label="${t('promo.close')}">&times;</button>
+            <p class="share-popup__title">${t('promo.shareHeading')}</p>
             <p class="share-popup__promo-name"></p>
             <div class="share-networks">
-                <a class="share-network-btn" id="sn-vk" href="#" target="_blank" rel="noopener noreferrer" aria-label="ВКонтакте">
+                <a class="share-network-btn" id="sn-vk" href="#" target="_blank" rel="noopener noreferrer" aria-label="VK">
                     <span class="sn-icon sn-icon--vk">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M13.162 18.994c.609 0 .85-.407.84-1.024-.032-1.82.614-2.737 2.066-1.26 1.64 1.67 1.986 2.284 3.408 2.284h2.742c.814 0 1.143-.27.95-.8-.48-1.327-4.297-5.17-4.056-5.512.222-.317 3.347-4.596 3.604-5.664.13-.54-.1-.8-.72-.8H18.22c-.69 0-.91.38-1.14.96-1.048 2.7-2.86 5.073-3.57 4.633-.69-.424-.52-2.686-.484-4.252.02-.75.013-1.557-.746-1.738-.518-.124-1.26-.108-1.76-.108-1.47 0-2.67.5-2.018 1.36.49.643.637 1.934.44 4.26-.26 3.117-3.148-.95-4.29-4.17-.285-.81-.567-1.25-1.3-1.25H1.616c-.777 0-.932.366-.72.972 1.37 3.956 5.87 12.638 12.266 12.11z"/></svg>
                     </span>
-                    ВКонтакте
+                    VK
                 </a>
                 <a class="share-network-btn" id="sn-tg" href="#" target="_blank" rel="noopener noreferrer" aria-label="Telegram">
                     <span class="sn-icon sn-icon--tg">
@@ -1194,11 +1217,11 @@ function getOrCreateShareOverlay() {
                     </span>
                     Telegram
                 </a>
-                <a class="share-network-btn" id="sn-ok" href="#" target="_blank" rel="noopener noreferrer" aria-label="Одноклассники">
+                <a class="share-network-btn" id="sn-ok" href="#" target="_blank" rel="noopener noreferrer" aria-label="OK">
                     <span class="sn-icon sn-icon--ok">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 1C5.925 1 1 5.925 1 12s4.925 11 11 11 11-4.925 11-11S18.075 1 12 1zm0 4.5a3.5 3.5 0 110 7 3.5 3.5 0 010-7zm3.75 9.25c.47.47.47 1.23 0 1.7l-1.9 1.9c.52.14 1.05.23 1.6.27.66.05 1.16.62 1.11 1.28-.05.66-.62 1.16-1.28 1.11-1.45-.11-2.82-.62-3.98-1.44-1.16.82-2.53 1.33-3.98 1.44-.66.05-1.23-.45-1.28-1.11-.05-.66.45-1.23 1.11-1.28.55-.04 1.08-.13 1.6-.27l-1.9-1.9c-.47-.47-.47-1.23 0-1.7.47-.47 1.23-.47 1.7 0L12 16.54l2.05-2.04c.47-.47 1.23-.47 1.7.25z"/></svg>
                     </span>
-                    ОК
+                    OK
                 </a>
                 <a class="share-network-btn" id="sn-email" href="#" aria-label="Email">
                     <span class="sn-icon sn-icon--email">
@@ -1208,8 +1231,8 @@ function getOrCreateShareOverlay() {
                 </a>
             </div>
             <div class="share-popup__url-row">
-                <input type="text" class="share-popup__url-input" readonly aria-label="Ссылка на промокод">
-                <button class="share-popup__copy-btn" type="button">Копировать</button>
+                <input type="text" class="share-popup__url-input" readonly aria-label="${t('promo.shareUrlAria')}">
+                <button class="share-popup__copy-btn" type="button">${t('promo.copy')}</button>
             </div>
         </div>
     `;
@@ -1233,11 +1256,11 @@ function getOrCreateShareOverlay() {
             input.select();
             document.execCommand('copy');
         });
-        btn.textContent = 'Скопировано ✓';
+        btn.textContent = t('promo.copied');
         btn.classList.add('copied');
-        showToast('Ссылка скопирована!', 'success');
+        showToast(t('promo.linkCopied'), 'success');
         setTimeout(() => {
-            btn.textContent = 'Копировать';
+            btn.textContent = t('promo.copy');
             btn.classList.remove('copied');
         }, 2000);
     });
@@ -1247,8 +1270,8 @@ function getOrCreateShareOverlay() {
 
 function openSharePopup(promo, url) {
     const overlay = getOrCreateShareOverlay();
-    const promoName = promo?.title || promo?.name || 'промокод';
-    const shareText = `Нашёл рабочий промокод на ${promoName}`;
+    const promoName = promo?.title || promo?.name || t('promo.defaultName');
+    const shareText = t('promo.shareText', { name: promoName });
 
     overlay.querySelector('.share-popup__promo-name').textContent = promoName;
     overlay.querySelector('.share-popup__url-input').value = url;
@@ -1261,7 +1284,7 @@ function openSharePopup(promo, url) {
     overlay.querySelector('#sn-ok').href =
         `https://connect.ok.ru/offer?url=${enc(url)}&title=${enc(shareText)}`;
     overlay.querySelector('#sn-email').href =
-        `mailto:?subject=${enc('Промокод от Serpmonn')}&body=${enc(shareText + '\n\n' + url)}`;
+        `mailto:?subject=${enc(t('promo.emailSubject'))}&body=${enc(shareText + '\n\n' + url)}`;
 
     overlay.classList.add('visible');
     overlay.querySelector('.share-popup__close').focus();
@@ -1273,8 +1296,8 @@ function closeSharePopup() {
 }
 
 async function sharePromo(promo, url) {
-    const title = 'Промокод от Serpmonn';
-    const text = `Нашёл рабочий промокод на ${promo?.title || promo?.name || 'Serpmonn'}`;
+    const title = t('promo.shareTitle');
+    const text = t('promo.shareText', { name: promo?.title || promo?.name || 'Serpmonn' });
 
     const isMobile = /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
     if (navigator.share && isMobile) {
@@ -1289,3 +1312,6 @@ async function sharePromo(promo, url) {
 
     openSharePopup(promo, url);
 }
+
+window.sortByExpiry = sortByExpiry;
+window.resetFilters = resetFilters;
