@@ -1,0 +1,24 @@
+[Unit]
+Description=Serpmonn Whisper STT (faster-whisper medium)
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/serpmonn.ru/backend/voice/whisper-server
+Environment=WHISPER_HOST=127.0.0.1
+Environment=WHISPER_PORT=8765
+Environment=WHISPER_MODEL=medium
+Environment=WHISPER_DEVICE=cpu
+Environment=WHISPER_COMPUTE_TYPE=int8
+Environment=WHISPER_THREADS=4
+Environment=HF_HOME=/var/lib/serpmonn-whisper
+Environment=TORCH_HOME=/var/lib/serpmonn-whisper
+ExecStart=/var/www/serpmonn.ru/backend/voice/whisper-server/venv/bin/python server.py
+Restart=on-failure
+RestartSec=10
+TimeoutStartSec=600
+
+[Install]
+WantedBy=multi-user.target
