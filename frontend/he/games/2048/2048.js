@@ -138,7 +138,8 @@ class Game2048 {                                                                
 
             if (this.isGameOver()) {                                                                                        /* Проверка окончания игры */
                 setTimeout(() => {                                                                                          /* Задержка для плавности */
-                    alert('Игра окончена! Ваш счёт: ' + this.score);                                                        /* Сообщение об окончании */
+                    const tpl = (window.i18n && window.i18n.gameOverAlert) || 'Game over! Your score: {score}';
+                    alert(tpl.replace('{score}', this.score));
                     if (window.showFullScreenAd) { window.showFullScreenAd(); }                                             /* Показ рекламы если доступно */
                 }, 100);
             }

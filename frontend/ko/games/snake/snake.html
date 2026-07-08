@@ -1,0 +1,140 @@
+
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Language" content="ko">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>스네이크 — Serpmonn</title>
+  <meta name="description" content="클래식 스네이크 게임: 사과를 최대한 많이 먹고 충돌을 피하세요.">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://serpmonn.ru/frontend/ko/games/snake/snake.html">
+  <meta property="og:title" content="스네이크 — Serpmonn">
+  <meta property="og:description" content="클래식 스네이크를 온라인으로: 뱀을 조작하고 먹이를 모아 기록을 세우세요.">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/snake.png">
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://serpmonn.ru/frontend/ko/games/snake/snake.html">
+  <meta property="twitter:title" content="스네이크 — Serpmonn">
+  <meta property="twitter:description" content="온라인 스네이크 게임: Serpmonn 아케이드 클래식.">
+  <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/snake.png">
+
+  <link rel="canonical" href="https://serpmonn.ru/frontend/ko/games/snake/snake.html">
+  <link rel="icon" href="/frontend/images/snake.png" type="image/x-icon">
+
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css">
+  <link rel="stylesheet" href="/frontend/games/snake/snake.css">
+
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+  <div id="menuContainer"></div>
+
+  <script>
+  (function(){
+    function isMobile(){
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768);
+    }
+    function showInstructions(){
+      try{
+        if (localStorage.getItem('game_instructions_snake_shown') === '1') return;
+
+        var ov = document.createElement('div');
+        ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9998;';
+
+        var box = document.createElement('div');
+        box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
+
+        var h = document.createElement('h3');
+        h.textContent = '플레이 방법 — 스네이크';
+        h.style.margin = '0 0 8px';
+
+        var p = document.createElement('div');
+        p.style.cssText = 'font-size:14px;line-height:1.5;white-space:pre-line';
+
+        
+        if (isMobile()) {
+          p.textContent = {{ gameSnakeTranslations[locale].gameSnake.instructionsMobile | dump | safe }};
+        } else {
+          p.textContent = {{ gameSnakeTranslations[locale].gameSnake.instructionsDesktop | dump | safe }};
+        }
+        
+
+        var btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.textContent = '확인';
+        btn.style.marginTop = '10px';
+        btn.onclick = function(){
+          localStorage.setItem('game_instructions_snake_shown','1');
+          ov.remove();
+        };
+
+        box.appendChild(h);
+        box.appendChild(p);
+        box.appendChild(btn);
+        ov.appendChild(box);
+        document.body.appendChild(ov);
+      }catch(e){}
+    }
+    document.addEventListener('DOMContentLoaded', showInstructions);
+  })();
+  </script>
+
+  <div class="page">
+    <header>
+      <img src="/frontend/images/snake.png" width="28" height="28" alt="게임" style="border-radius:6px;">
+      <h1>스네이크</h1>
+    </header>
+
+    <div class="wrap">
+      <div class="panel">
+        <canvas id="game" width="480" height="480" aria-label="게임판"></canvas>
+        <div class="hint">조작: 방향키 또는 WASD. 일시정지 — 스페이스. 다시 시작 — R.</div>
+      </div>
+
+      <div class="panel">
+        <h2>통계</h2>
+
+        <div class="stats">
+          <div class="stat">점수<br><b id="score">0</b></div>
+          <div class="stat">최고<br><b id="best">0</b></div>
+        </div>
+
+        <div class="stats">
+          <div class="stat">속도<br><b id="speed">1x</b></div>
+          <div class="stat">판 크기<br><b>24×24</b></div>
+        </div>
+
+        <div style="display:flex; gap:8px; justify-content:center; margin-top:8px;">
+          <button class="btn primary" id="btnStart">시작</button>
+          <button class="btn" id="btnPause">일시정지</button>
+          <button class="btn" id="btnReset">다시</button>
+        </div>
+
+        <div class="controls" aria-label="모바일 조작">
+          <div></div>
+          <button class="btn" data-dir="up">▲</button>
+          <div></div>
+          <button class="btn" data-dir="left">◀</button>
+          <button class="btn" data-dir="down">▼</button>
+          <button class="btn" data-dir="right">▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.i18n = {
+      gameOver: "게임 오버",
+      pressRToRestart: "R — 다시 시작"
+    };
+  </script>
+  <script src="/frontend/games/snake/snake.js?v=2" defer></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

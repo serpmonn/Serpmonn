@@ -225,6 +225,11 @@
     /**
      * Показывает экран окончания игры
      */
+    // Текст окончания игры
+    function gameOverText(key, fallback) {
+        return (window.i18n && window.i18n[key]) || fallback;
+    }
+
     function gameOver() {
         alive = false;
         stopGameLoop();
@@ -233,15 +238,13 @@
         ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         
-        // Текст "Игра окончена"
         ctx.fillStyle = '#fff';
         ctx.textAlign = 'center';
         ctx.font = 'bold 28px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Игра окончена', canvas.width / 2, canvas.height / 2 - 10);
+        ctx.fillText(gameOverText('gameOver', 'Game over'), canvas.width / 2, canvas.height / 2 - 10);
         
-        // Инструкция для рестарта
         ctx.font = '16px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Нажмите R — заново', canvas.width / 2, canvas.height / 2 + 18);
+        ctx.fillText(gameOverText('pressRToRestart', 'Press R — restart'), canvas.width / 2, canvas.height / 2 + 18);
     }
 
     /**
