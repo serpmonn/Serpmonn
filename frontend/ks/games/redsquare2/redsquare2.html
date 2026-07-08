@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="ks" dir="rtl">
+<head>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="ks">
+    <title>Falling Blue Squares</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Test your reflexes in a game where you dodge falling shapes! Can you last as long as possible and avoid collisions?">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta property="og:title" content="Test your reflexes dodging falling shapes!" />
+    <meta property="og:description" content="Can you last as long as possible and avoid collisions? Test your skills in this dynamic game!" />
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico" />
+    <meta property="og:url" content="https://serpmonn.ru/frontend/ks/games/redsquare2/redsquare2.html" />
+    <meta property="og:type" content="game" />
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Falling shapes — Serpmonn">
+    <meta name="twitter:description" content="Play the browser mini-game Falling shapes on Serpmonn.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
+    <link rel="canonical" href="https://serpmonn.ru/frontend/ks/games/redsquare2/redsquare2.html"/>
+    <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <script>window.yaContextCb=window.yaContextCb||[]</script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
+    <script>
+    window.i18n = {
+      scorePrefix: "Score: ",
+      missedPrefix: "Misses: ",
+      pause: "Pause",
+      resume: "Resume",
+      bannedNicknameAlert: "Nickname contains banned words. Please choose another nickname."
+    };
+    </script>
+    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+</head>
+<body>
+    <div class="instruction-overlay" id="instructionOverlay">
+        <div class="instruction-content">
+            <h2 class="instruction-title">How to play Falling Blue Squares?</h2>
+            <ul class="instruction-list">
+                <li><strong>Controls:</strong> Use arrow keys or touch on a touchscreen to move the red square left and right</li>
+                <li><strong>Goal:</strong> Dodge falling objects</li>
+                <li><strong>Scoring:</strong> You get 1 point for each object you dodge</li>
+                <li><strong>Misses:</strong> If an object hits you, it counts as a miss</li>
+                <li><strong>Game over:</strong> The game ends after 10 collisions</li>
+                <li><strong>Leaderboard:</strong> After the game you can view your results on the leaderboard</li>
+                <li><strong>Pause:</strong> Use the Pause button to temporarily stop the game</li>
+            </ul>
+            <button class="instruction-button" id="understandBtn">Got it, let&#39;s play!</button>
+        </div>
+    </div>
+
+    <div id="score">Score: 0</div>
+    <div id="missed">Misses: 0</div>
+    <div class="button-container">
+        <button id="leaderboardBtn">Leaderboard</button>
+        <button id="pauseBtn">Pause</button>
+        <button id="restartBtn">Restart</button>
+    </div>
+    <form id="nicknameForm">
+        <input type="text" id="nickname" placeholder="Enter your name" required>
+        <button type="submit">Start game</button>
+    </form>
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="ad-container" style="margin: 10px 0; text-align: center;">
+        <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
+             data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
+    </div>
+
+    <div class="ad-container" style="margin: 20px 0; text-align: center;">
+        <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
+             data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+    </div>
+
+    <script>
+        (MRGtag = window.MRGtag || []).push({});
+    </script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

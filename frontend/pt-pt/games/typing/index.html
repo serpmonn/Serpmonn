@@ -1,0 +1,462 @@
+
+<!DOCTYPE html>
+<html lang="pt-pt" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Typing Speed — Serpmonn</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0e0f11; --surface: #16181c; --surface2: #1e2027;
+      --border: #2a2d36; --text: #e8e9ec; --muted: #7b7e8a; --faint: #3a3d48;
+      --primary: #f0c040; --success: #6daa45; --error: #e05555;
+      --font-mono: 'Share Tech Mono', monospace; --font-body: 'Inter', sans-serif;
+      --radius: 0.75rem; --transition: 150ms cubic-bezier(0.16,1,0.3,1);
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+    body {
+      min-height: 100dvh; background: var(--bg); color: var(--text);
+      font-family: var(--font-body);
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; padding: 1.5rem 1rem; gap: 1.25rem;
+    }
+    .header { display: flex; align-items: center; gap: 0.75rem; }
+    .header h1 { font-family: var(--font-mono); font-size: 1.25rem; color: var(--primary); letter-spacing: 0.07em; }
+    .header h1 span { color: var(--muted); font-size: 0.75rem; }
+
+    .tabs {
+      display: flex; gap: 0.4rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 0.3rem;
+    }
+    .tab {
+      font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.05em;
+      padding: 0.35rem 0.9rem; border-radius: calc(var(--radius) - 0.2rem);
+      border: none; background: transparent; color: var(--muted); cursor: pointer;
+      transition: background var(--transition), color var(--transition);
+    }
+    .tab.active { background: var(--primary); color: #0e0f11; font-weight: 700; }
+    .tab:hover:not(.active) { color: var(--text); background: var(--surface2); }
+
+    .stats { display: flex; gap: 0.75rem; flex-wrap: wrap; justify-content: center; }
+    .stat {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 0.45rem 1rem; text-align: center; min-width: 78px;
+    }
+    .stat-label { font-size: 0.6rem; font-family: var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .stat-value { font-family: var(--font-mono); font-size: 1.45rem; line-height: 1.2; margin-top: 0.1rem; }
+    .stat-value.wpm { color: var(--primary); }
+    .stat-value.acc { color: var(--success); }
+    .stat-value.timer { color: var(--text); }
+    .stat-value.best { color: #a78bfa; }
+
+    .typing-wrap {
+      width: min(640px, 100%); background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.5rem 1.75rem; position: relative;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5); cursor: text;
+    }
+    .progress-bar {
+      position: absolute; top: 0; left: 0; right: 0; height: 3px;
+      border-radius: var(--radius) var(--radius) 0 0;
+      background: var(--border); overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%; border-radius: inherit;
+      background: linear-gradient(90deg, var(--primary), #ff6b35);
+      transition: width 0.1s linear; width: 0%;
+    }
+    .words {
+      font-family: var(--font-mono); font-size: 1.2rem;
+      line-height: 2.1; letter-spacing: 0.04em;
+      user-select: none; word-break: break-word;
+      max-height: 6.5rem; overflow: hidden;
+    }
+    .char { position: relative; display: inline; }
+    .char.correct { color: var(--success); }
+    .char.wrong   { color: var(--error); text-decoration: underline wavy; }
+    .char.pending { color: var(--faint); }
+    .char.cursor::before {
+      content: ''; position: absolute;
+      left: -1px; top: 0.1em; bottom: 0.1em; width: 2px;
+      background: var(--primary); border-radius: 2px;
+      animation: blink 1s step-end infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0} }
+    @keyframes shake {
+      0%,100%{transform:translateX(0)} 20%{transform:translateX(-4px)} 60%{transform:translateX(4px)}
+    }
+    .shake { animation: shake 0.15s ease; }
+    #hiddenInput {
+      position: absolute; opacity: 0; pointer-events: none;
+      width: 1px; height: 1px; top: 0; left: 0;
+    }
+    .click-hint {
+      margin-top: 0.75rem; font-size: 0.7rem; color: var(--muted);
+      font-family: var(--font-mono); text-align: center; letter-spacing: 0.05em;
+    }
+    .kbd {
+      display: inline-block; font-family: var(--font-mono); font-size: 0.65rem;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-bottom-width: 2px; border-radius: 4px;
+      padding: 0.1rem 0.35rem; color: var(--muted);
+    }
+
+    .result {
+      width: min(640px, 100%); background: var(--surface);
+      border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 1.5rem 1.75rem;
+      display: none; flex-direction: column; align-items: center; gap: 1rem;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    .result.show { display: flex; }
+    .result-title { font-family: var(--font-mono); font-size: 1.1rem; color: var(--primary); letter-spacing: 0.08em; }
+    .result-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 0.65rem; width: 100%; }
+    .result-item {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 0.5rem; padding: 0.6rem 0.5rem; text-align: center;
+    }
+    .result-label { font-size: 0.58rem; font-family: var(--font-mono); color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .result-val { font-family: var(--font-mono); font-size: 1.3rem; line-height: 1.3; }
+    .new-record {
+      font-family: var(--font-mono); font-size: 0.82rem; color: var(--primary); letter-spacing: 0.06em;
+      animation: pulse 1s ease-in-out infinite alternate;
+    }
+    @keyframes pulse { from{opacity:0.6} to{opacity:1} }
+
+    .btn-row { display: flex; gap: 0.75rem; }
+    .btn {
+      font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700;
+      letter-spacing: 0.08em; padding: 0.55rem 1.5rem;
+      border-radius: 0.5rem; border: none; cursor: pointer;
+      transition: background var(--transition), transform 0.1s;
+    }
+    .btn:active { transform: scale(0.97); }
+    .btn-primary { background: var(--primary); color: #0e0f11; }
+    .btn-primary:hover { background: #ffe066; }
+    .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .btn-ghost:hover { color: var(--text); border-color: var(--text); }
+
+    .history { width: min(640px,100%); display: flex; flex-direction: column; gap: 0.4rem; }
+    .history-title { font-family: var(--font-mono); font-size: 0.62rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .history-list { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+    .history-chip {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 999px; padding: 0.2rem 0.65rem;
+      font-family: var(--font-mono); font-size: 0.7rem; color: var(--muted);
+    }
+    .history-chip.top { border-color: var(--primary); color: var(--primary); }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-label="Typing Speed" role="img">
+    <rect width="32" height="32" rx="8" fill="#16181c"/>
+    <rect x="5" y="9" width="22" height="15" rx="2" stroke="#f0c040" stroke-width="1.5" fill="none"/>
+    <rect x="8" y="13" width="3" height="2" rx="0.5" fill="#f0c040"/>
+    <rect x="13" y="13" width="3" height="2" rx="0.5" fill="#7b7e8a"/>
+    <rect x="18" y="13" width="3" height="2" rx="0.5" fill="#7b7e8a"/>
+    <rect x="8" y="17" width="13" height="2" rx="0.5" fill="#3a3d48"/>
+    <circle cx="25" cy="7" r="4" fill="#0e0f11"/>
+    <circle cx="25" cy="7" r="3" fill="#6daa45"/>
+    <path d="M23.5 7l1 1 2-2" stroke="white" stroke-width="1" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+  <h1>TYPING SPEED <span>// serpmonn.ru</span></h1>
+</div>
+
+<div class="tabs" role="tablist" aria-label="Modo de prueba">
+  <button class="tab active" data-mode="15" role="tab" aria-selected="true">15 seg</button>
+  <button class="tab" data-mode="30" role="tab">30 seg</button>
+  <button class="tab" data-mode="60" role="tab">60 seg</button>
+  <button class="tab" data-mode="words" role="tab">25 palabras</button>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-label">WPM</div><div class="stat-value wpm" id="liveWpm">—</div></div>
+  <div class="stat"><div class="stat-label">Precisión</div><div class="stat-value acc" id="liveAcc">—</div></div>
+  <div class="stat"><div class="stat-label">Tiempo</div><div class="stat-value timer" id="liveTimer">—</div></div>
+  <div class="stat"><div class="stat-label">Récord</div><div class="stat-value best" id="liveBest">—</div></div>
+</div>
+
+<div class="typing-wrap" id="typingWrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="words" id="wordsDisplay" aria-live="polite"></div>
+  <input type="text" id="hiddenInput" autocomplete="off" autocorrect="off"
+         autocapitalize="off" spellcheck="false" aria-label="Campo de entrada">
+  <div class="click-hint" id="clickHint">
+    <span class="kbd">clic</span> o <span class="kbd">Enter</span> para empezar &nbsp;·&nbsp; <span class="kbd">Esc</span> reiniciar
+  </div>
+</div>
+
+<div class="result" id="resultPanel">
+  <div class="result-title">RESULTADO</div>
+  <div class="result-grid">
+    <div class="result-item">
+      <div class="result-label">WPM</div>
+      <div class="result-val" id="resWpm" style="color:var(--primary)">—</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">Precisión</div>
+      <div class="result-val" id="resAcc" style="color:var(--success)">—</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">Caracteres</div>
+      <div class="result-val" id="resChars" style="color:var(--text)">—</div>
+    </div>
+    <div class="result-item">
+      <div class="result-label">Errores</div>
+      <div class="result-val" id="resErrors" style="color:var(--error)">—</div>
+    </div>
+  </div>
+  <div class="new-record" id="newRecord" style="display:none">🏆 ¡NUEVO RÉCORD!</div>
+  <div class="btn-row">
+    <button class="btn btn-primary" id="retryBtn">OTRA VEZ</button>
+    <button class="btn btn-ghost" id="newTextBtn">NUEVO TEXTO</button>
+  </div>
+</div>
+
+<div class="history" id="historyPanel" style="display:none">
+  <div class="history-title">Últimos resultados</div>
+  <div class="history-list" id="historyList"></div>
+</div>
+
+<script>
+window.i18n = {
+  wordBankRu: [],
+  newRecord: "🏆 ¡NUEVO RÉCORD!"
+};
+</script>
+<script>
+const WORDS_RU = [
+  'сервер','клиент','сеть','порт','запрос','ответ','файл','данные','код','функция',
+  'класс','объект','метод','строка','массив','цикл','ошибка','тест','база','таблица',
+  'индекс','ключ','значение','токен','доступ','права','сессия','кэш','буфер','поток',
+  'процесс','память','ядро','пакет','протокол','адрес','домен','хост','путь','папка',
+  'список','карта','граф','узел','ребро','вес','глубина','высота','ширина','скорость',
+  'время','задача','очередь','стек','вызов','возврат','аргумент','переменная',
+  'константа','тип','число','текст','булево','пустой','ноль','один','два','три',
+  'алгоритм','сортировка','поиск','фильтр','маршрут','запись','чтение','удаление',
+  'создание','обновление','версия','релиз','ветка','коммит','слияние','конфликт',
+  'патч','билд','деплой','контейнер','образ','том','прокси','балансировщик'
+];
+const WORDS_EN = [
+  'server','client','network','port','request','response','file','data','code','function',
+  'class','object','method','string','array','loop','error','test','database','table',
+  'index','key','value','token','access','rights','session','cache','buffer','stream',
+  'process','memory','kernel','packet','protocol','address','domain','host','path','folder',
+  'list','map','graph','node','edge','weight','depth','height','width','speed',
+  'time','task','queue','stack','call','return','argument','variable','constant','type',
+  'number','text','boolean','empty','null','true','false','algorithm','sort','search',
+  'filter','route','read','write','delete','create','update','version','release','branch',
+  'commit','merge','conflict','patch','build','deploy','container','image','volume','proxy'
+];
+
+let mode = '15';
+let words = [], charList = [], cursorPos = 0;
+let started = false, finished = false;
+let timerInterval = null, timeLeft = 0, totalTime = 0;
+let correctChars = 0, wrongChars = 0;
+let history = [], bestWpm = {};
+
+function generateWords() {
+  const bank = [...(window.i18n?.wordBankRu || []), ...WORDS_EN];
+  const count = mode === 'words' ? 25 : 90;
+  const arr = [];
+  for (let i = 0; i < count; i++) arr.push(bank[Math.floor(Math.random() * bank.length)]);
+  return arr;
+}
+
+function buildCharList(wordArr) {
+  const chars = [];
+  wordArr.forEach((w, wi) => {
+    for (let i = 0; i < w.length; i++) chars.push({ch:w[i], state:'pending', word:wi});
+    if (wi < wordArr.length - 1) chars.push({ch:' ', state:'pending', word:wi, isSpace:true});
+  });
+  return chars;
+}
+
+const wordsDisplay = document.getElementById('wordsDisplay');
+const hiddenInput  = document.getElementById('hiddenInput');
+const progressFill = document.getElementById('progressFill');
+const clickHint    = document.getElementById('clickHint');
+const liveWpm      = document.getElementById('liveWpm');
+const liveAcc      = document.getElementById('liveAcc');
+const liveTimer    = document.getElementById('liveTimer');
+const liveBest     = document.getElementById('liveBest');
+const resultPanel  = document.getElementById('resultPanel');
+const typingWrap   = document.getElementById('typingWrap');
+
+function renderWords() {
+  wordsDisplay.innerHTML = '';
+  charList.forEach((c, i) => {
+    const span = document.createElement('span');
+    span.className = 'char ' + c.state + (i === cursorPos ? ' cursor' : '');
+    span.textContent = c.ch === ' ' ? '\u00a0' : c.ch;
+    wordsDisplay.appendChild(span);
+  });
+  const curEl = wordsDisplay.querySelector('.cursor');
+  if (curEl) {
+    const wTop = wordsDisplay.getBoundingClientRect().top;
+    const cTop = curEl.getBoundingClientRect().top;
+    const lineH = parseFloat(getComputedStyle(wordsDisplay).lineHeight);
+    if (cTop - wTop > lineH * 1.5) {
+      wordsDisplay.scrollTop += lineH;
+    }
+  }
+}
+
+function updateLiveStats() {
+  const elapsed = totalTime > 0 ? totalTime : 0.01;
+  const wpm = Math.round((correctChars / 5) / (elapsed / 60));
+  const total = correctChars + wrongChars;
+  const acc = total > 0 ? Math.round(correctChars / total * 100) : 100;
+  liveWpm.textContent   = started ? wpm  : '—';
+  liveAcc.textContent   = started ? acc + '%' : '—';
+  if (mode !== 'words') {
+    liveTimer.textContent = timeLeft + 's';
+    progressFill.style.width = ((1 - timeLeft / parseInt(mode)) * 100) + '%';
+  } else {
+    const done = charList.filter(c => c.state !== 'pending').length;
+    progressFill.style.width = (done / charList.length * 100) + '%';
+    liveTimer.textContent = started ? Math.round(totalTime) + 's' : '—';
+  }
+  const bk = bestWpm[mode];
+  liveBest.textContent = bk ? bk + ' wpm' : '—';
+}
+
+function initTest(newText = true) {
+  clearInterval(timerInterval);
+  started = false; finished = false;
+  cursorPos = 0; correctChars = 0; wrongChars = 0; totalTime = 0;
+  if (newText) words = generateWords();
+  charList = buildCharList(words);
+  timeLeft = mode === 'words' ? 0 : parseInt(mode);
+  progressFill.style.width = '0%';
+  wordsDisplay.scrollTop = 0;
+  clickHint.style.display = 'block';
+  resultPanel.classList.remove('show');
+  typingWrap.style.display = 'block';
+  hiddenInput.value = '';
+  renderWords();
+  updateLiveStats();
+}
+
+function startTest() {
+  if (started || finished) return;
+  started = true;
+  clickHint.style.display = 'none';
+  const startTs = performance.now();
+  if (mode !== 'words') {
+    timerInterval = setInterval(() => {
+      totalTime = (performance.now() - startTs) / 1000;
+      timeLeft = Math.max(0, parseInt(mode) - Math.floor(totalTime));
+      updateLiveStats();
+      if (timeLeft <= 0) finishTest();
+    }, 100);
+  } else {
+    timerInterval = setInterval(() => {
+      totalTime = (performance.now() - startTs) / 1000;
+      updateLiveStats();
+    }, 100);
+  }
+}
+
+hiddenInput.addEventListener('input', e => {
+  const val = hiddenInput.value;
+  if (!val.length || finished) return;
+  if (!started) startTest();
+  const typed = val[val.length - 1];
+  hiddenInput.value = '';
+  if (cursorPos >= charList.length) return;
+  const expected = charList[cursorPos].ch;
+  if (typed === expected) {
+    charList[cursorPos].state = 'correct'; correctChars++;
+  } else {
+    charList[cursorPos].state = 'wrong'; wrongChars++;
+    typingWrap.classList.remove('shake');
+    void typingWrap.offsetWidth;
+    typingWrap.classList.add('shake');
+    setTimeout(() => typingWrap.classList.remove('shake'), 150);
+  }
+  cursorPos++;
+  if (mode === 'words' && cursorPos >= charList.length) { finishTest(); return; }
+  renderWords(); updateLiveStats();
+});
+
+hiddenInput.addEventListener('keydown', e => {
+  if (e.key === 'Backspace' && cursorPos > 0 && !finished) {
+    cursorPos--;
+    const c = charList[cursorPos];
+    if (c.state === 'wrong') wrongChars--;
+    else if (c.state === 'correct') correctChars--;
+    c.state = 'pending';
+    renderWords(); updateLiveStats();
+    e.preventDefault();
+  }
+});
+
+function finishTest() {
+  if (finished) return;
+  finished = true;
+  clearInterval(timerInterval);
+  const elapsed = mode !== 'words' ? parseInt(mode) : Math.max(totalTime, 1);
+  const wpm = Math.max(0, Math.round((correctChars / 5) / (elapsed / 60)));
+  const total = correctChars + wrongChars;
+  const acc = total > 0 ? Math.round(correctChars / total * 100) : 100;
+  const errors = charList.filter(c => c.state === 'wrong').length;
+  const isNew = (!bestWpm[mode] || wpm > bestWpm[mode]) && wpm > 0;
+  if (isNew) bestWpm[mode] = wpm;
+  history.unshift({wpm, acc, mode});
+  if (history.length > 8) history.pop();
+  document.getElementById('resWpm').textContent    = wpm;
+  document.getElementById('resAcc').textContent    = acc + '%';
+  document.getElementById('resChars').textContent  = correctChars;
+  document.getElementById('resErrors').textContent = errors;
+  document.getElementById('newRecord').style.display = isNew ? 'block' : 'none';
+  if (isNew) document.getElementById('newRecord').textContent = window.i18n?.newRecord || '🏆 NEW RECORD!';
+  resultPanel.classList.add('show');
+  typingWrap.style.display = 'none';
+  renderHistory(); updateLiveStats();
+}
+
+function renderHistory() {
+  const panel = document.getElementById('historyPanel');
+  const list  = document.getElementById('historyList');
+  if (!history.length) { panel.style.display = 'none'; return; }
+  panel.style.display = 'flex';
+  list.innerHTML = '';
+  const best = Math.max(...history.map(h => h.wpm));
+  history.forEach(h => {
+    const chip = document.createElement('span');
+    chip.className = 'history-chip' + (h.wpm === best ? ' top' : '');
+    chip.textContent = `${h.wpm} wpm · ${h.acc}% · ${h.mode}`;
+    list.appendChild(chip);
+  });
+}
+
+function focusInput() { hiddenInput.focus({preventScroll:true}); }
+typingWrap.addEventListener('click', () => { if (!finished) focusInput(); });
+document.addEventListener('keydown', e => {
+  if (e.key === 'Enter' && !started && !finished) focusInput();
+  if (e.key === 'Escape') { initTest(false); focusInput(); }
+});
+document.getElementById('retryBtn').addEventListener('click',   () => { initTest(false); focusInput(); });
+document.getElementById('newTextBtn').addEventListener('click', () => { initTest(true);  focusInput(); });
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => { b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    btn.classList.add('active'); btn.setAttribute('aria-selected','true');
+    mode = btn.dataset.mode;
+    initTest(true); focusInput();
+  });
+});
+
+initTest();
+</script>
+</body>
+</html>

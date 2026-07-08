@@ -24,6 +24,10 @@
 
     // Ключ для сохранения рекорда в localStorage
     const bestKey = 'coins_best_score_v1';
+
+    function t(key, fallback) {
+        return (window.i18n && window.i18n[key]) || fallback;
+    }
     
     // Загружаем рекорд из localStorage или устанавливаем 0
     let best = parseInt(localStorage.getItem(bestKey) || '0', 10);
@@ -314,11 +318,11 @@
         
         // Отрисовываем заголовок
         ctx.font = 'bold 28px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Игра окончена', canvas.width / 2, canvas.height / 2 - 10);
+        ctx.fillText(t('gameOver', 'Game over'), canvas.width / 2, canvas.height / 2 - 10);
         
         // Отрисовываем инструкцию
         ctx.font = '16px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Нажмите R — заново', canvas.width / 2, canvas.height / 2 + 18);
+        ctx.fillText(t('pressRToRestart', 'Press R — restart'), canvas.width / 2, canvas.height / 2 + 18);
         
         // Пытаемся показать рекламу
         try {

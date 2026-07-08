@@ -83,14 +83,7 @@
 
         var p = document.createElement('div');
         p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
-
-        
-        if (isMobile()) {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsMobile | dump | safe }};
-        } else {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsDesktop | dump | safe }};
-        }
-        
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
 
         var btn = document.createElement('button');
         btn.textContent = 'ن۪و گیم';
@@ -142,7 +135,9 @@
 
   <script>
     window.i18n = {
-      gameOverAlert: "گیم ختم! تہند اسکور: {score}"
+      gameOverAlert: "گیم ختم! تہند اسکور: {score}",
+      instructionsDesktop: "• اَرو کیز ← ↑ → ↓ — ٹائلو حٕرکت دِوان\n• بورڈ چو تھ۪چ پنن بٹن: \"ن۪و گیم\"، \"واپس\"",
+      instructionsMobile: "• ژٕندر/داہن/ہندِر/بون سوائپ — ٹائلو حٕرکت دِوان\n• بٹن: \"ن۪و گیم\"، \"واپس\""
     };
   </script>
   <script src="/frontend/games/2048/2048.js?v=2"></script>

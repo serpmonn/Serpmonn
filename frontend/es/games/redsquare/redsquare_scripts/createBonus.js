@@ -1,3 +1,5 @@
+import { formatScore, parseScore } from './i18n.js';
+
 export const createBonus = () => {
     const bonus = document.createElement('div');
     bonus.classList.add('bonus');
@@ -12,7 +14,7 @@ export const checkBonusCollision = () => {
     const playerRect = player.getBoundingClientRect();
     const bonuses = document.querySelectorAll('.bonus');
     const scoreDisplay = document.getElementById('score');
-    let score = parseInt(scoreDisplay.textContent.replace('Очки: ', ''));
+    let score = parseScore(scoreDisplay.textContent);
     bonuses.forEach(bonus => {
         const bonusRect = bonus.getBoundingClientRect();
         if (
@@ -22,7 +24,7 @@ export const checkBonusCollision = () => {
             playerRect.bottom > bonusRect.top
         ) {
             score += 10;
-            scoreDisplay.textContent = 'Очки: ' + score;
+            scoreDisplay.textContent = formatScore(score);
             bonus.remove();
             createBonus();
         }

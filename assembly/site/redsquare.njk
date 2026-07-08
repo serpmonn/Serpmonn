@@ -1,0 +1,94 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/games/redsquare/redsquare.html{% else %}/frontend/{{ locale }}/games/redsquare/redsquare.html{% endif %}"
+eleventyComputed:
+  title: "{{ gameRedsquareTranslations[locale].gameRedsquare.pageTitle }}"
+  description: "{{ gameRedsquareTranslations[locale].gameRedsquare.metaDescription }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/games/redsquare/redsquare.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/games/redsquare/redsquare.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="{{ locale }}">
+    <title>{{ title }}</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="{{ description }}">
+    <meta property="og:title" content="{{ gameRedsquareTranslations[locale].gameRedsquare.ogTitle }}">
+    <meta property="og:description" content="{{ gameRedsquareTranslations[locale].gameRedsquare.ogDescription }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/RedSquare2.ico">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="game">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ gameRedsquareTranslations[locale].gameRedsquare.ogTitle }}">
+    <meta name="twitter:description" content="{{ gameRedsquareTranslations[locale].gameRedsquare.twitterDescription }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/RedSquare2.ico">
+    <link rel="canonical" href="{{ canonical }}">
+    <link rel="icon" href="/frontend/images/SquareEscape.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/games/redsquare/redsquare_styles/redsquare_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <script>
+    window.i18n = {
+      scorePrefix: {{ gameRedsquareTranslations[locale].gameRedsquare.scorePrefix | dump | safe }},
+      pause: {{ gameRedsquareTranslations[locale].gameRedsquare.pause | dump | safe }},
+      resume: {{ gameRedsquareTranslations[locale].gameRedsquare.resume | dump | safe }},
+      allLevelsComplete: {{ gameRedsquareTranslations[locale].gameRedsquare.allLevelsComplete | dump | safe }},
+      modalYourScore: {{ gameRedsquareTranslations[locale].gameRedsquare.modalYourScore | dump | safe }},
+      modalBestResult: {{ gameRedsquareTranslations[locale].gameRedsquare.modalBestResult | dump | safe }},
+      modalOk: {{ gameRedsquareTranslations[locale].gameRedsquare.modalOk | dump | safe }}
+    };
+    </script>
+    <script type="module" src="/frontend/games/redsquare/redsquare_scripts/redsquare_scripts.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    <div class="instruction-overlay" id="instructionOverlay">
+        <div class="instruction-content">
+            <h2>{{ gameRedsquareTranslations[locale].gameRedsquare.instructionTitle }}</h2>
+            <div class="instruction-list">
+                <p>{{ gameRedsquareTranslations[locale].gameRedsquare.inst1 }}</p>
+                <p>{{ gameRedsquareTranslations[locale].gameRedsquare.inst2 }}</p>
+                <p>{{ gameRedsquareTranslations[locale].gameRedsquare.inst3 }}</p>
+                <p>{{ gameRedsquareTranslations[locale].gameRedsquare.inst4 }}</p>
+                <p>{{ gameRedsquareTranslations[locale].gameRedsquare.inst5 }}</p>
+            </div>
+            <button class="instruction-button" id="understandBtn">{{ gameRedsquareTranslations[locale].gameRedsquare.understandBtn }}</button>
+        </div>
+    </div>
+    <div class="score" id="score">{{ gameRedsquareTranslations[locale].gameRedsquare.scorePrefix }}0</div>
+    <div class="game-area">
+        <div class="ad-container" style="margin: 10px 0; text-align: center;">
+            <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
+                 data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
+        </div>
+        <div class="player" id="player"></div>
+        <div class="obstacle" style="top: 20%; left: 20%;"></div>
+        <div class="obstacle" style="top: 80%; left: 80%;"></div>
+    </div>
+    <div class="controls">
+        <div class="button" id="up">↑</div>
+        <div class="button" id="left">←</div>
+        <div class="button" id="down">↓</div>
+        <div class="button" id="right">→</div>
+    </div>
+    <button class="start" id="start">{{ gameRedsquareTranslations[locale].gameRedsquare.startGame }}</button>
+    <button class="restart" id="restart">{{ gameRedsquareTranslations[locale].gameRedsquare.restart }}</button>
+    <button class="home" id="home">{{ gameRedsquareTranslations[locale].gameRedsquare.home }}</button>
+    <button id="pauseBtn">{{ gameRedsquareTranslations[locale].gameRedsquare.pause }}</button>
+    <div class="ad-container" style="margin: 20px 0; text-align: center;">
+        <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
+             data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+    </div>
+    <script>
+        (MRGtag = window.MRGtag || []).push({});
+    </script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

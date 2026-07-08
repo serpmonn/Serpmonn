@@ -1,83 +1,81 @@
+
 <!DOCTYPE html>
 <html lang="ko" dir="ltr">
-	<head>
+<head>
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="ko">
-	    <title>Falling blocks</title>
-	    <meta charset="UTF-8">
-	    <meta name="description" content="Test your reflexes in a game where you dodge falling blocks! Can you last as long as possible and avoid collisions? Test your skills and reflexes in this fast‑paced game!">
-	    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-	    <meta property="og:title" content="Испытайте свои рефлексы в игре, где нужно уворачиваться от падающих фигур!" />
-        <meta property="og:description" content="Сможете ли вы продержаться как можно дольше и избежать столкновений? Проверьте свои навыки и реакцию в этой динамичной игре!" />            
-	    <meta property="og:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico" />
-        <meta property="og:url" content="https://www.serpmonn.ru/frontend/ko/games/redsquare2/redsquare2.html" />
-        <meta property="og:type" content="game" />
-        <!-- Twitter -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="Падающие фигуры — Serpmonn">
-        <meta name="twitter:description" content="Играй в браузерную мини‑игру 'Падающие фигуры' на Serpmonn.">
-        <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
-	    <link rel="canonical" href="https://www.serpmonn.ru/frontend/ko/games/redsquare2/redsquare2.html"/>
-	    <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
-	    <!-- Стили -->
-	    <link rel="stylesheet" href="redsquare2_styles/redsquare2_styles.css">
-        <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-	    <!-- Скрипты -->
-        <!-- Yandex.RTB -->
-        <script>window.yaContextCb=window.yaContextCb||[]</script>
-        <script src="https://yandex.ru/ads/system/context.js" async></script>
-        <script type="module" src="redsquare2_scripts/redsquare2_scripts.js" defer></script>
-        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <!-- Mail.ru Advertising -->
+    <title>떨어지는 파란 사각형</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="떨어지는 도형을 피하며 반사 신경을 테스트하세요!">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta property="og:title" content="반사 신경을 테스트하세요!" />
+    <meta property="og:description" content="얼마나 오래 버틸 수 있나요?" />
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico" />
+    <meta property="og:url" content="https://serpmonn.ru/frontend/ko/games/redsquare2/redsquare2.html" />
+    <meta property="og:type" content="game" />
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="떨어지는 도형 — Serpmonn">
+    <meta name="twitter:description" content="Serpmonn 미니게임.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
+    <link rel="canonical" href="https://serpmonn.ru/frontend/ko/games/redsquare2/redsquare2.html"/>
+    <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <script>window.yaContextCb=window.yaContextCb||[]</script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
+    <script>
+    window.i18n = {
+      scorePrefix: "점수: ",
+      missedPrefix: "실수: ",
+      pause: "일시정지",
+      resume: "계속",
+      bannedNicknameAlert: "닉네임에 금지된 단어가 있습니다. 다른 닉네임을 선택하세요."
+    };
+    </script>
+    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
-	</head>
+</head>
 <body>
-    <!-- Оверлей с инструкцией -->
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
-            <h2 class="instruction-title">Как играть в "Падающие синие квадраты"?</h2>
+            <h2 class="instruction-title">떨어지는 파란 사각형 플레이 방법</h2>
             <ul class="instruction-list">
-                <li><strong>Управление:</strong> Используйте стрелки или касание на сенсорном экране, чтобы перемещать красный квадрат влево и вправо</li>
-                <li><strong>Цель игры:</strong> Уворачиваться от падающих объектов</li>
-                <li><strong>Начисление очков:</strong> Вы получаете 1 очко за каждый пропущенный объект</li>
-                <li><strong>Пропуски:</strong> Если объект упадёт на Вас это считается как пропуск</li>
-                <li><strong>Конец игры:</strong> Игра заканчивается при столкновении с 10 объектами</li>
-                <li><strong>Таблица лидеров:</strong> После игры вы можете посмотреть свои результаты в таблице лидеров</li>
-                <li><strong>Пауза:</strong> Используйте кнопку "Пауза" для временной остановки игры</li>
+                <li><strong>조작:</strong> 방향키 또는 터치로 빨간 사각형을 좌우로 이동</li>
+                <li><strong>목표:</strong> 떨어지는 물체 피하기</li>
+                <li><strong>점수:</strong> 피할 때마다 1점</li>
+                <li><strong>실수:</strong> 물체에 맞으면 실수로 카운트</li>
+                <li><strong>게임 오버:</strong> 10번 충돌 시 종료</li>
+                <li><strong>리더보드:</strong> 게임 후 결과 확인</li>
+                <li><strong>일시정지:</strong> 일시정지 버튼으로 멈추기</li>
             </ul>
-            <button class="instruction-button" id="understandBtn">Понятно, начинаем!</button>
+            <button class="instruction-button" id="understandBtn">알겠어요, 시작!</button>
         </div>
     </div>
 
-    <div id="score">Очки: 0</div>
-    <div id="missed">Пропуски: 0</div>
+    <div id="score">점수: 0</div>
+    <div id="missed">실수: 0</div>
     <div class="button-container">
-        <button id="leaderboardBtn">Таблица лидеров</button>
-        <button id="pauseBtn">Пауза</button>
-        <button id="restartBtn">Заново</button>
+        <button id="leaderboardBtn">리더보드</button>
+        <button id="pauseBtn">일시정지</button>
+        <button id="restartBtn">다시</button>
     </div>
     <form id="nicknameForm">
-        <input type="text" id="nickname" placeholder="Введи своё Имя" required>
-        <button type="submit">Начать игру</button>
+        <input type="text" id="nickname" placeholder="이름 입력" required>
+        <button type="submit">게임 시작</button>
     </form>
     <canvas id="gameCanvas"></canvas>
 
-            <!-- Рекламный блок - мобильный -->
-            <div class="ad-container" style="margin: 10px 0; text-align: center;">
-                <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
-                     data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
-            </div>
+    <div class="ad-container" style="margin: 10px 0; text-align: center;">
+        <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
+             data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
+    </div>
 
-    <script>
-    </script>
-
-    <!-- Рекламный блок - квадрат -->
     <div class="ad-container" style="margin: 20px 0; text-align: center;">
         <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
              data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
     </div>
 
-    <!-- Mail.ru Advertising Script -->
     <script>
         (MRGtag = window.MRGtag || []).push({});
     </script>

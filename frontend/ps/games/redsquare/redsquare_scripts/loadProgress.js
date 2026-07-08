@@ -1,3 +1,5 @@
+import { formatScore } from './i18n.js';
+
 export const loadProgress = ({ player, gameArea, gameAreaRect, scoreDisplay, levels, enemies, speed, level, updatePlayerPosition, createEnemies }) => {
     const savedState = localStorage.getItem('gameState');
     if (savedState) {
@@ -8,7 +10,7 @@ export const loadProgress = ({ player, gameArea, gameAreaRect, scoreDisplay, lev
         speed = gameState.speed;
         level = gameState.level;
         updatePlayerPosition(player, gameAreaRect, playerXPercent, playerYPercent);
-        scoreDisplay.textContent = 'Очки: ' + score;
+        scoreDisplay.textContent = formatScore(score);
         createEnemies(levels[level - 1].enemies, { speed, gameArea, enemies });
         return { playerXPercent, playerYPercent, score, speed, level };
     } else {

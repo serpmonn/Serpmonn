@@ -83,14 +83,7 @@
 
         var p = document.createElement('div');
         p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
-
-        
-        if (isMobile()) {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsMobile | dump | safe }};
-        } else {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsDesktop | dump | safe }};
-        }
-        
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
 
         var btn = document.createElement('button');
         btn.textContent = 'Permainan baru';
@@ -142,7 +135,9 @@
 
   <script>
     window.i18n = {
-      gameOverAlert: "Permainan selesai! Skor Anda: {score}"
+      gameOverAlert: "Permainan selesai! Skor Anda: {score}",
+      instructionsDesktop: "• Tombol panah ← ↑ → ↓ — menggerakkan ubin\n• Tombol di bawah papan: \"Permainan baru\", \"Batalkan\"",
+      instructionsMobile: "• Swipe kiri/kanan/atas/bawah — menggerakkan ubin\n• Tombol: \"Permainan baru\", \"Batalkan\""
     };
   </script>
   <script src="/frontend/games/2048/2048.js?v=2"></script>

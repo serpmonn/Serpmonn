@@ -56,14 +56,7 @@
 
         var p = document.createElement('div');
         p.style.cssText = 'font-size:14px;line-height:1.5;white-space:pre-line';
-
-        
-        if (isMobile()) {
-          p.textContent = {{ gameSnakeTranslations[locale].gameSnake.instructionsMobile | dump | safe }};
-        } else {
-          p.textContent = {{ gameSnakeTranslations[locale].gameSnake.instructionsDesktop | dump | safe }};
-        }
-        
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
 
         var btn = document.createElement('button');
         btn.className = 'btn';
@@ -131,7 +124,9 @@
   <script>
     window.i18n = {
       gameOver: "게임 오버",
-      pressRToRestart: "R — 다시 시작"
+      pressRToRestart: "R — 다시 시작",
+      instructionsDesktop: "• 방향키 또는 WASD — 조작\n• 스페이스 — 일시정지\n• R — 다시 시작",
+      instructionsMobile: "• 스와이프 — 조작\n• 시작/일시정지 — 버튼"
     };
   </script>
   <script src="/frontend/games/snake/snake.js?v=2" defer></script>

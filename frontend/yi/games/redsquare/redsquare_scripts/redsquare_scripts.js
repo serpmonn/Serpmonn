@@ -5,6 +5,7 @@ import { updatePlayerPosition } from './updatePlayerPosition.js';
 import { checkCollision } from './checkCollision.js';
 import { loadProgress } from './loadProgress.js';
 import { createBonus, checkBonusCollision } from './createBonus.js';
+import { t, formatScore } from './i18n.js';
 
 const gameArea = document.querySelector('.game-area');
 let gameAreaRect = gameArea.getBoundingClientRect();
@@ -93,7 +94,7 @@ const movePlayer = (direction) => {
 
 const updateScore = () => {
     score++;
-    scoreDisplay.textContent = 'Очки: ' + score;
+    scoreDisplay.textContent = formatScore(score);
     if (score >= levels[level - 1].points) {
         nextLevel();
     }
@@ -108,7 +109,7 @@ const nextLevel = () => {
         enemies = [];
         createEnemies(levels[level - 1].enemies, { speed, gameArea, enemies });
     } else {
-        alert('Ты прошёл все уровни! Поздравляем!');
+        alert(t('allLevelsComplete'));
         endGame();
     }
 };
@@ -141,9 +142,9 @@ const endGame = () => {
     modal.className = 'modal';
     modal.innerHTML = `
         <div class="modal-content">
-            <h2>Твои очки: ${score}</h2>
-            <p>Лучший результат: ${highScores[0] || 0}</p>
-            <button id="okButton">Окей</button>
+            <h2>${t('modalYourScore')} ${score}</h2>
+            <p>${t('modalBestResult')} ${highScores[0] || 0}</p>
+            <button id="okButton">${t('modalOk')}</button>
         </div>
     `;
     document.body.appendChild(modal);
@@ -201,10 +202,10 @@ pauseButton.addEventListener('click', () => {
     const enemies = document.querySelectorAll('.enemy-fast, .enemy-slow');
     if (isPaused) {
         enemies.forEach(enemy => enemy.style.animationPlayState = 'running');
-        pauseButton.textContent = 'Пауза';
+        pauseButton.textContent = t('pause');
     } else {
         enemies.forEach(enemy => enemy.style.animationPlayState = 'paused');
-        pauseButton.textContent = 'Продолжить';
+        pauseButton.textContent = t('resume');
     }
     isPaused = !isPaused;
 });
@@ -277,7 +278,7 @@ restartButton.addEventListener('click', () => {
     level = 1;
     enemies.forEach(enemy => enemy.remove());
     enemies = [];
-    scoreDisplay.textContent = 'Очки: ' + score;
+    scoreDisplay.textContent = formatScore(score);
     isPaused = false;
     generateRandomKeyframes({ styleSheet });
     createEnemies(levels[0].enemies, { speed, gameArea, enemies });

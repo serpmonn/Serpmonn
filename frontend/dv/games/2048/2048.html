@@ -83,14 +83,7 @@
 
         var p = document.createElement('div');
         p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
-
-        
-        if (isMobile()) {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsMobile | dump | safe }};
-        } else {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsDesktop | dump | safe }};
-        }
-        
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
 
         var btn = document.createElement('button');
         btn.textContent = 'ނައި ގެމް';
@@ -142,7 +135,9 @@
 
   <script>
     window.i18n = {
-      gameOverAlert: "ގޭމް ނިމިއްޖެ! ތިޔާގެ ސްކޯރް: {score}"
+      gameOverAlert: "ގޭމް ނިމިއްޖެ! ތިޔާގެ ސްކޯރް: {score}",
+      instructionsDesktop: "• އޮކް ކީތައް ← ↑ → ↓ — ޓައިލްތައް ހުރި ކަން އަންނަން\n• ބޯޑުގެ ތިރީގައި ބައިވެރި ބަޓަން: \"ނައި ގެމް\"، \"ފަހަތައް ފުހެވުން\"",
+      instructionsMobile: "• ކަން ވެސް ސްވައިޕް ކުރުން — ޓައިލްތައް ހުރި ކަން އަންނަން\n• ބަޓަން: \"ނައި ގެމް\"، \"ފަހަތައް ފުހެވުން\""
     };
   </script>
   <script src="/frontend/games/2048/2048.js?v=2"></script>

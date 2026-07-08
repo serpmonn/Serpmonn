@@ -1,0 +1,96 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/games/redsquare2/redsquare2.html{% else %}/frontend/{{ locale }}/games/redsquare2/redsquare2.html{% endif %}"
+eleventyComputed:
+  title: "{{ gameRedsquare2Translations[locale].gameRedsquare2.pageTitle }}"
+  description: "{{ gameRedsquare2Translations[locale].gameRedsquare2.metaDescription }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/games/redsquare2/redsquare2.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/games/redsquare2/redsquare2.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="{{ locale }}">
+    <title>{{ title }}</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="{{ description }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta property="og:title" content="{{ gameRedsquare2Translations[locale].gameRedsquare2.ogTitle }}" />
+    <meta property="og:description" content="{{ gameRedsquare2Translations[locale].gameRedsquare2.ogDescription }}" />
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/RedSquare2.ico" />
+    <meta property="og:url" content="{{ canonical }}" />
+    <meta property="og:type" content="game" />
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ gameRedsquare2Translations[locale].gameRedsquare2.twitterTitle }}">
+    <meta name="twitter:description" content="{{ gameRedsquare2Translations[locale].gameRedsquare2.twitterDescription }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/RedSquare2.ico">
+    <link rel="canonical" href="{{ canonical }}"/>
+    <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <script>window.yaContextCb=window.yaContextCb||[]</script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
+    <script>
+    window.i18n = {
+      scorePrefix: {{ gameRedsquare2Translations[locale].gameRedsquare2.scorePrefix | dump | safe }},
+      missedPrefix: {{ gameRedsquare2Translations[locale].gameRedsquare2.missedPrefix | dump | safe }},
+      pause: {{ gameRedsquare2Translations[locale].gameRedsquare2.pause | dump | safe }},
+      resume: {{ gameRedsquare2Translations[locale].gameRedsquare2.resume | dump | safe }},
+      bannedNicknameAlert: {{ gameRedsquare2Translations[locale].gameRedsquare2.bannedNicknameAlert | dump | safe }}
+    };
+    </script>
+    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+</head>
+<body>
+    <div class="instruction-overlay" id="instructionOverlay">
+        <div class="instruction-content">
+            <h2 class="instruction-title">{{ gameRedsquare2Translations[locale].gameRedsquare2.instructionTitle }}</h2>
+            <ul class="instruction-list">
+                <li><strong>{{ gameRedsquare2Translations[locale].gameRedsquare2.instControl }}</strong> {{ gameRedsquare2Translations[locale].gameRedsquare2.instControlText }}</li>
+                <li><strong>{{ gameRedsquare2Translations[locale].gameRedsquare2.instGoal }}</strong> {{ gameRedsquare2Translations[locale].gameRedsquare2.instGoalText }}</li>
+                <li><strong>{{ gameRedsquare2Translations[locale].gameRedsquare2.instScoring }}</strong> {{ gameRedsquare2Translations[locale].gameRedsquare2.instScoringText }}</li>
+                <li><strong>{{ gameRedsquare2Translations[locale].gameRedsquare2.instMisses }}</strong> {{ gameRedsquare2Translations[locale].gameRedsquare2.instMissesText }}</li>
+                <li><strong>{{ gameRedsquare2Translations[locale].gameRedsquare2.instEnd }}</strong> {{ gameRedsquare2Translations[locale].gameRedsquare2.instEndText }}</li>
+                <li><strong>{{ gameRedsquare2Translations[locale].gameRedsquare2.instLeaderboard }}</strong> {{ gameRedsquare2Translations[locale].gameRedsquare2.instLeaderboardText }}</li>
+                <li><strong>{{ gameRedsquare2Translations[locale].gameRedsquare2.instPause }}</strong> {{ gameRedsquare2Translations[locale].gameRedsquare2.instPauseText }}</li>
+            </ul>
+            <button class="instruction-button" id="understandBtn">{{ gameRedsquare2Translations[locale].gameRedsquare2.understandBtn }}</button>
+        </div>
+    </div>
+
+    <div id="score">{{ gameRedsquare2Translations[locale].gameRedsquare2.scorePrefix }}0</div>
+    <div id="missed">{{ gameRedsquare2Translations[locale].gameRedsquare2.missedPrefix }}0</div>
+    <div class="button-container">
+        <button id="leaderboardBtn">{{ gameRedsquare2Translations[locale].gameRedsquare2.leaderboardBtn }}</button>
+        <button id="pauseBtn">{{ gameRedsquare2Translations[locale].gameRedsquare2.pause }}</button>
+        <button id="restartBtn">{{ gameRedsquare2Translations[locale].gameRedsquare2.restart }}</button>
+    </div>
+    <form id="nicknameForm">
+        <input type="text" id="nickname" placeholder="{{ gameRedsquare2Translations[locale].gameRedsquare2.nicknamePlaceholder }}" required>
+        <button type="submit">{{ gameRedsquare2Translations[locale].gameRedsquare2.nicknameSubmit }}</button>
+    </form>
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="ad-container" style="margin: 10px 0; text-align: center;">
+        <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
+             data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
+    </div>
+
+    <div class="ad-container" style="margin: 20px 0; text-align: center;">
+        <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
+             data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+    </div>
+
+    <script>
+        (MRGtag = window.MRGtag || []).push({});
+    </script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

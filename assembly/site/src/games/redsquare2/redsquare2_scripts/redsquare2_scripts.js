@@ -1,4 +1,5 @@
         import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
+        import { t, formatScore, formatMissed } from './i18n.js';
 
             const canvas = document.getElementById('gameCanvas');
             const ctx = canvas.getContext('2d');
@@ -112,7 +113,7 @@
                         // Если объект достиг нижней границы экрана и не был задет игроком
                         objects.splice(objects.indexOf(obj), 1);
                         score++; // Увеличиваем очки за пропуск объекта
-                        document.getElementById('score').innerText = `Очки: ${score}`;
+                        document.getElementById('score').innerText = formatScore(score);
                         if (score % 10 === 0) {
                             level++;
                             objectSpeed += 1; // Увеличиваем скорость падения объектов
@@ -128,7 +129,7 @@
                         // Если объект касается игрока
                         objects.splice(objects.indexOf(obj), 1);
                         missedObjects++; // Увеличиваем счётчик пропусков при касании
-                        document.getElementById('missed').innerText = `Пропуски: ${missedObjects}`;
+                        document.getElementById('missed').innerText = formatMissed(missedObjects);
                         if (missedObjects >= 10) {
                             endGame(); // Завершаем игру при достижении лимита пропусков
                         }
@@ -260,9 +261,9 @@
             player.x = canvas.width / 2 - 25;                                                               // Сброс позиции игрока
             player.dx = 0;
             isPaused = false;
-            document.getElementById('score').innerText = `Очки: ${score}`;
-            document.getElementById('missed').innerText = `Пропуски: ${missedObjects}`;
-            document.getElementById('pauseBtn').innerText = 'Пауза';
+            document.getElementById('score').innerText = formatScore(score);
+            document.getElementById('missed').innerText = formatMissed(missedObjects);
+            document.getElementById('pauseBtn').innerText = t('pause');
             if (gameInterval) clearInterval(gameInterval);                                                  // Перезапуск интервала создания объектов
             gameInterval = setInterval(createObject, 1000);
         }
@@ -284,7 +285,7 @@
                     e.preventDefault();
                     const nickname = document.getElementById('nickname').value;
                     if (containsBannedWords(nickname)) {
-                        alert('Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм.');
+                        alert(t('bannedNicknameAlert'));
                     } else {
                         player.nickname = nickname;
                         document.getElementById('nicknameForm').style.display = 'none';
@@ -321,7 +322,7 @@
 
             document.getElementById('pauseBtn').addEventListener('click', function() {
                 isPaused = !isPaused;
-                document.getElementById('pauseBtn').innerText = isPaused ? 'Продолжить' : 'Пауза';
+                document.getElementById('pauseBtn').innerText = isPaused ? t('resume') : t('pause');
             });
 
             document.getElementById('restartBtn').addEventListener('click', function() {

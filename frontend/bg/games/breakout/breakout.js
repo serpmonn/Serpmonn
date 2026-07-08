@@ -30,6 +30,11 @@
     const scoreEl = document.getElementById('score');
     const livesEl = document.getElementById('lives');
     const bestEl = document.getElementById('best');
+
+    function t(key, fallback) {
+        return (window.i18n && window.i18n[key]) || fallback;
+    }
+
     bestEl.textContent = String(best);
     let score = 0, lives = 3, running = false;
     let raf;
@@ -226,9 +231,9 @@
         ctx.fillStyle = '#fff';
         ctx.textAlign = 'center';
         ctx.font = 'bold 22px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Игра окончена', W / 2, H / 2 - 10);
+        ctx.fillText(t('gameOver', 'Game over'), W / 2, H / 2 - 10);
         ctx.font = '16px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Нажмите R — заново', W / 2, H / 2 + 18);
+        ctx.fillText(t('pressRToRestart', 'Press R — restart'), W / 2, H / 2 + 18);
         
         // Показ рекламы
         try {
@@ -246,9 +251,9 @@
         ctx.fillStyle = '#fff';
         ctx.textAlign = 'center';
         ctx.font = 'bold 22px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Победа!', W / 2, H / 2 - 10);
+        ctx.fillText(t('winMessage', 'You win!'), W / 2, H / 2 - 10);
         ctx.font = '16px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Нажмите R — заново', W / 2, H / 2 + 18);
+        ctx.fillText(t('pressRToRestart', 'Press R — restart'), W / 2, H / 2 + 18);
         
         // Показ рекламы
         try {

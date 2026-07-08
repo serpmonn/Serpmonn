@@ -1,48 +1,56 @@
+
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
 <head>
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="zh-cn">
-    <title>Square Escape — Serpmonn</title>
+    <title>方块逃脱 — Serpmonn</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Play ">
-    <!-- Open Graph -->
-    <meta property="og:title" content="Квадратное бегство — мини‑игра на Serpmonn">
-    <meta property="og:description" content="Играй в браузерную мини‑игру 'Квадратное бегство' на Serpmonn.">
+    <meta name="description" content="玩方块逃脱！控制角色，收集奖励，躲避碰撞。">
+    <meta property="og:title" content="方块逃脱 — Serpmonn 小游戏">
+    <meta property="og:description" content="在 Serpmonn 上玩浏览器小游戏方块逃脱。">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
-    <meta property="og:url" content="https://www.serpmonn.ru/frontend/zh-cn/games/redsquare/redsquare.html">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/games/redsquare/redsquare.html">
     <meta property="og:type" content="game">
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Квадратное бегство — Serpmonn">
-    <meta name="twitter:description" content="Играй в браузерную мини‑игру 'Квадратное бегство' на Serpmonn.">
+    <meta name="twitter:title" content="方块逃脱 — Serpmonn 小游戏">
+    <meta name="twitter:description" content="Serpmonn 浏览器小游戏方块逃脱。">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
-    <link rel="canonical" href="https://www.serpmonn.ru/frontend/zh-cn/games/redsquare/redsquare.html">
+    <link rel="canonical" href="https://serpmonn.ru/frontend/zh-cn/games/redsquare/redsquare.html">
     <link rel="icon" href="/frontend/images/SquareEscape.ico" type="image/x-icon">
-    <!-- Стили -->
     <link rel="stylesheet" href="/frontend/games/redsquare/redsquare_styles/redsquare_styles.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-    <!-- Скрипты -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
-    <script type="module" src="redsquare_scripts/redsquare_scripts.js" defer></script>
+    <script>
+    window.i18n = {
+      scorePrefix: "分数：",
+      pause: "暂停",
+      resume: "继续",
+      allLevelsComplete: "你通过了所有关卡！恭喜！",
+      modalYourScore: "你的分数：",
+      modalBestResult: "最佳成绩：",
+      modalOk: "确定"
+    };
+    </script>
+    <script type="module" src="/frontend/games/redsquare/redsquare_scripts/redsquare_scripts.js" defer></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
-            <h2>Как играть в "Квадратное бегство"?</h2>
+            <h2>如何玩方块逃脱？</h2>
             <div class="instruction-list">
-                <p>1. Управляйте красным квадратом с помощью кнопок, клавиш стрелок или свайпов на мобильных устройствах</p>
-                <p>2. Избегайте столкновений с синими квадратами и зелеными препятствиями</p>
-                <p>3. Собирайте золотые бонусы для дополнительных очков</p>
-                <p>4. Чем дольше вы продержитесь, тем больше очков получите</p>
-                <p>5. Используйте кнопку "Пауза" (или пробел) для перерыва</p>
+                <p>1. 用按钮、方向键或手机滑动控制红色方块</p>
+                <p>2. 躲避蓝色方块和绿色障碍</p>
+                <p>3. 收集金色奖励获得额外分数</p>
+                <p>4. 坚持越久，得分越高</p>
+                <p>5. 使用暂停按钮（或空格）休息</p>
             </div>
-            <button class="instruction-button" id="understandBtn">Всё понятно!</button>
+            <button class="instruction-button" id="understandBtn">知道了！</button>
         </div>
     </div>
-    <div class="score" id="score">Очки: 0</div>
+    <div class="score" id="score">分数：0</div>
     <div class="game-area">
         <div class="ad-container" style="margin: 10px 0; text-align: center;">
             <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
@@ -58,10 +66,10 @@
         <div class="button" id="down">↓</div>
         <div class="button" id="right">→</div>
     </div>
-    <button class="start" id="start">Начать игру</button>
-    <button class="restart" id="restart">Заново</button>
-    <button class="home" id="home">Домой</button>
-    <button id="pauseBtn">Пауза</button>
+    <button class="start" id="start">开始游戏</button>
+    <button class="restart" id="restart">重来</button>
+    <button class="home" id="home">主页</button>
+    <button id="pauseBtn">暂停</button>
     <div class="ad-container" style="margin: 20px 0; text-align: center;">
         <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
              data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>

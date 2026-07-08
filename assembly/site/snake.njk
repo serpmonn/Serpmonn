@@ -68,14 +68,7 @@ eleventyComputed:
 
         var p = document.createElement('div');
         p.style.cssText = 'font-size:14px;line-height:1.5;white-space:pre-line';
-
-        {% raw %}
-        if (isMobile()) {
-          p.textContent = {{ gameSnakeTranslations[locale].gameSnake.instructionsMobile | dump | safe }};
-        } else {
-          p.textContent = {{ gameSnakeTranslations[locale].gameSnake.instructionsDesktop | dump | safe }};
-        }
-        {% endraw %}
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
 
         var btn = document.createElement('button');
         btn.className = 'btn';
@@ -143,7 +136,9 @@ eleventyComputed:
   <script>
     window.i18n = {
       gameOver: {{ gameSnakeTranslations[locale].gameSnake.gameOver | dump | safe }},
-      pressRToRestart: {{ gameSnakeTranslations[locale].gameSnake.pressRToRestart | dump | safe }}
+      pressRToRestart: {{ gameSnakeTranslations[locale].gameSnake.pressRToRestart | dump | safe }},
+      instructionsDesktop: {{ gameSnakeTranslations[locale].gameSnake.instructionsDesktop | dump | safe }},
+      instructionsMobile: {{ gameSnakeTranslations[locale].gameSnake.instructionsMobile | dump | safe }}
     };
   </script>
   <script src="/frontend/games/snake/snake.js?v=2" defer></script>

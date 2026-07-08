@@ -56,14 +56,7 @@
 
         var p = document.createElement('div');
         p.style.cssText = 'font-size:14px;line-height:1.5;white-space:pre-line';
-
-        
-        if (isMobile()) {
-          p.textContent = {{ gameSnakeTranslations[locale].gameSnake.instructionsMobile | dump | safe }};
-        } else {
-          p.textContent = {{ gameSnakeTranslations[locale].gameSnake.instructionsDesktop | dump | safe }};
-        }
-        
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
 
         var btn = document.createElement('button');
         btn.className = 'btn';
@@ -131,7 +124,9 @@
   <script>
     window.i18n = {
       gameOver: "ゲームオーバー",
-      pressRToRestart: "R を押してやり直し"
+      pressRToRestart: "R を押してやり直し",
+      instructionsDesktop: "• 矢印キーまたは WASD — 操作\n• スペース — 一時停止\n• R — やり直し",
+      instructionsMobile: "• スワイプ — 操作\n• スタート/一時停止 — ボタン"
     };
   </script>
   <script src="/frontend/games/snake/snake.js?v=2" defer></script>

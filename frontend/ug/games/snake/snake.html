@@ -56,14 +56,7 @@
 
         var p = document.createElement('div');
         p.style.cssText = 'font-size:14px;line-height:1.5;white-space:pre-line';
-
-        
-        if (isMobile()) {
-          p.textContent = {{ gameSnakeTranslations[locale].gameSnake.instructionsMobile | dump | safe }};
-        } else {
-          p.textContent = {{ gameSnakeTranslations[locale].gameSnake.instructionsDesktop | dump | safe }};
-        }
-        
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
 
         var btn = document.createElement('button');
         btn.className = 'btn';
@@ -131,7 +124,9 @@
   <script>
     window.i18n = {
       gameOver: "انتهت اللعبة",
-      pressRToRestart: "اضغط R — من جديد"
+      pressRToRestart: "اضغط R — من جديد",
+      instructionsDesktop: "• الأسهم أو WASD — التحكم\n• مسافة — إيقاف مؤقت\n• R — إعادة تشغيل",
+      instructionsMobile: "• السحب — التحكم\n• ابدأ/إيقاف — الأزرار"
     };
   </script>
   <script src="/frontend/games/snake/snake.js?v=2" defer></script>

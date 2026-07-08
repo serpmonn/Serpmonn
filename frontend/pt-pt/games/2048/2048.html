@@ -83,14 +83,7 @@
 
         var p = document.createElement('div');
         p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
-
-        
-        if (isMobile()) {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsMobile | dump | safe }};
-        } else {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsDesktop | dump | safe }};
-        }
-        
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
 
         var btn = document.createElement('button');
         btn.textContent = 'Novo jogo';
@@ -142,7 +135,9 @@
 
   <script>
     window.i18n = {
-      gameOverAlert: "Fim de jogo! A sua pontuação: {score}"
+      gameOverAlert: "Fim de jogo! A sua pontuação: {score}",
+      instructionsDesktop: "• Teclas de setas ← ↑ → ↓ — mover as peças\n• Botões por baixo do tabuleiro: \"Novo jogo\", \"Anular\"",
+      instructionsMobile: "• Deslizar para a esquerda/direita/cima/baixo — mover as peças\n• Botões: \"Novo jogo\", \"Anular\""
     };
   </script>
   <script src="/frontend/games/2048/2048.js?v=2"></script>

@@ -32,6 +32,15 @@
 
     // Рекорд
     const bestKey = 'flappy_best_score_v1';
+
+    function t(key, fallback) {
+        return (window.i18n && window.i18n[key]) || fallback;
+    }
+
+    function tVar(key, fallback, score) {
+        return t(key, fallback).replace('{score}', String(score));
+    }
+
     let best = parseInt(localStorage.getItem(bestKey) || '0', 10);
     bestEl.textContent = String(best);
 
@@ -114,18 +123,18 @@
         ctx.fillStyle = '#fff';
         ctx.textAlign = 'center';
         ctx.font = 'bold 18px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Flappy Bird', W / 2, H / 2 - 50);
+        ctx.fillText(t('welcomeTitle', 'Flappy Bird'), W / 2, H / 2 - 50);
 
         // Инструкция
         ctx.font = '12px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Нажмите ПРОБЕЛ, КЛИК', W / 2, H / 2 - 15);
-        ctx.fillText('или кнопку СТАРТ', W / 2, H / 2 + 0);
-        ctx.fillText('чтобы начать играть', W / 2, H / 2 + 15);
+        ctx.fillText(t('welcomeLine1', 'Press SPACE or CLICK'), W / 2, H / 2 - 15);
+        ctx.fillText(t('welcomeLine2', 'or the START button'), W / 2, H / 2 + 0);
+        ctx.fillText(t('welcomeLine3', 'to begin playing'), W / 2, H / 2 + 15);
 
         // Рекорд
         ctx.font = '11px system-ui, -apple-system, Segoe UI, Roboto, Arial';
         ctx.fillStyle = '#f1c40f';
-        ctx.fillText(`Ваш рекорд: ${best}`, W / 2, H / 2 + 40);
+        ctx.fillText(tVar('yourBest', 'Your best: {score}', best), W / 2, H / 2 + 40);
     }
 
     /**
@@ -280,22 +289,22 @@
         ctx.fillStyle = '#fff';
         ctx.textAlign = 'center';
         ctx.font = 'bold 18px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Игра окончена!', W / 2, H / 2 - 50);
+        ctx.fillText(t('gameOver', 'Game over!'), W / 2, H / 2 - 50);
 
         ctx.font = '14px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText(`Ваш счёт: ${score}`, W / 2, H / 2 - 20);
+        ctx.fillText(tVar('yourScore', 'Your score: {score}', score), W / 2, H / 2 - 20);
 
         if (score === best && score > 0) {
             ctx.fillStyle = '#f1c40f';
             ctx.font = '14px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-            ctx.fillText('🎉 Новый рекорд! 🎉', W / 2, H / 2 + 5);
+            ctx.fillText(t('newRecord', '🎉 New record! 🎉'), W / 2, H / 2 + 5);
             ctx.fillStyle = '#fff';
         }
 
         ctx.font = '11px system-ui, -apple-system, Segoe UI, Roboto, Arial';
-        ctx.fillText('Нажмите ПРОБЕЛ, R/К', W / 2, H / 2 + 35);
-        ctx.fillText('или кнопку ЗАНОВО', W / 2, H / 2 + 50);
-        ctx.fillText('чтобы играть снова', W / 2, H / 2 + 65);
+        ctx.fillText(t('restartLine1', 'Press SPACE, R'), W / 2, H / 2 + 35);
+        ctx.fillText(t('restartLine2', 'or RESTART button'), W / 2, H / 2 + 50);
+        ctx.fillText(t('restartLine3', 'to play again'), W / 2, H / 2 + 65);
 
         // Умный показ рекламы
         try {

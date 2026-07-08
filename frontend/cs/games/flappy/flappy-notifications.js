@@ -23,16 +23,15 @@ window.flappyNotifications = {
     showCompactNotification: function() {
         this.isNotificationActive = true;
         
-        // Короткие случайные мотивационные сообщения
-        const messages = [
-            "Попробуй ещё раз! 💪",
-            "Становишься лучше! 🚀",
-            "Следующий рекорд близко! ⭐",
-            "Сосредоточься! 🎯",
-            "Новый вызов! 🌟",
-            "Побьешь рекорд! 🔥",
-            "Найди свой ритм! 🎵",
-            "Ты справишься! 💫"
+        const messages = (window.i18n && window.i18n.motivationalMessages) || [
+            "Try again! 💪",
+            "You're getting better! 🚀",
+            "Next record is close! ⭐",
+            "Focus! 🎯",
+            "New challenge! 🌟",
+            "You'll beat the record! 🔥",
+            "Find your rhythm! 🎵",
+            "You've got this! 💫"
         ];
         
         const randomMessage = messages[Math.floor(Math.random() * messages.length)];
@@ -113,7 +112,8 @@ window.flappyNotifications = {
         `;
         
         const content = document.createElement('div');
-        content.innerHTML = `🎉 <strong>Рекорд: ${score}</strong>`;
+        const tpl = (window.i18n && window.i18n.recordNotificationHtml) || '🎉 <strong>Record: {score}</strong>';
+        content.innerHTML = tpl.replace('{score}', String(score));
         
         notification.appendChild(content);
         document.body.appendChild(notification);

@@ -19,7 +19,7 @@ window.showFullScreenAd = window.showFullScreenAd || function() {
             
             const btn = document.createElement('button');
             btn.className = 'btn';
-            btn.textContent = 'Продолжить';
+            btn.textContent = (window.i18n && window.i18n.continueAd) || 'Continue';
             btn.style.marginTop = '10px';
             btn.onclick = function() { ov.remove(); };
             

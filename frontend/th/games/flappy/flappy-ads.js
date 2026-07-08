@@ -20,7 +20,7 @@ window.showFullScreenAd = window.showFullScreenAd || function() {
             
             // Заголовок рекламного блока
             var title = document.createElement('div');
-            title.textContent = 'Реклама';
+            title.textContent = (window.i18n && window.i18n.adTitle) || 'Advertisement';
             title.style.cssText = 'color:#f1c40f;font-weight:bold;margin-bottom:15px;font-size:16px;';
             
             // Создаем рекламный блок
@@ -31,7 +31,7 @@ window.showFullScreenAd = window.showFullScreenAd || function() {
             
             // Создаем кнопку закрытия рекламы
             var btn = document.createElement('button');
-            btn.textContent = 'Продолжить игру';
+            btn.textContent = (window.i18n && window.i18n.continueAd) || 'Continue playing';
             btn.style.cssText = `
                 background: linear-gradient(135deg, #2ecc71, #27ae60);
                 border: none;

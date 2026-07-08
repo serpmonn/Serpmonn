@@ -1,0 +1,131 @@
+
+<!DOCTYPE html>
+<html lang="fr" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Language" content="fr">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>Puzzle 15 — Serpmonn</title>
+  <meta name="description" content="Puzzle 15 classique : rangez les tuiles de 1 à 15. Entraînez mémoire et logique.">
+
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://serpmonn.ru/frontend/fr/games/fifteen/fifteen.html">
+  <meta property="og:title" content="Puzzle 15 — Serpmonn">
+  <meta property="og:description" content="Jouez au Puzzle 15 en ligne : rangez les tuiles et battez vos records.">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/fifteen.png">
+
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://serpmonn.ru/frontend/fr/games/fifteen/fifteen.html">
+  <meta property="twitter:title" content="Puzzle 15 — Serpmonn">
+  <meta property="twitter:description" content="Puzzle 15 en ligne : le classique sur Serpmonn.">
+  <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/fifteen.png">
+
+  <link rel="canonical" href="https://serpmonn.ru/frontend/fr/games/fifteen/fifteen.html">
+  <link rel="icon" href="/frontend/images/fifteen.png" type="image/x-icon">
+
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css">
+  <link rel="stylesheet" href="/frontend/games/fifteen/fifteen.css">
+
+  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+  <div id="menuContainer"></div>
+
+  <script>
+    window.i18n = {
+      continueAd: "Continuer",
+      instructionsDesktop: "• Flèches ou WASD — déplacer les tuiles\n• Objectif : ordonner les nombres 1 à 15\n• Case vide en bas à droite\n• Moins de coups et de temps, c'est mieux !",
+      instructionsMobile: "• Glissements — déplacer les tuiles\n• Objectif : ordonner les nombres 1 à 15\n• Case vide en bas à droite"
+    };
+  </script>
+  <script src="/frontend/games/fifteen/fifteen-ads.js?v=2" defer></script>
+
+  <script>
+  (function(){
+    function isMobile(){
+      return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768);
+    }
+    function showInstructions(){
+      try{
+        if (localStorage.getItem('game_instructions_fifteen_shown') === '1') return;
+
+        var ov = document.createElement('div');
+        ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9998;';
+
+        var box = document.createElement('div');
+        box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
+
+        var h = document.createElement('h3');
+        h.textContent = 'Comment jouer — Puzzle 15';
+        h.style.margin = '0 0 8px';
+
+        var p = document.createElement('div');
+        p.style.cssText = 'font-size:14px;line-height:1.5;white-space:pre-line';
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
+
+        var btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.textContent = 'Compris';
+        btn.style.marginTop = '10px';
+        btn.onclick = function(){
+          localStorage.setItem('game_instructions_fifteen_shown','1');
+          ov.remove();
+        };
+
+        box.appendChild(h);
+        box.appendChild(p);
+        box.appendChild(btn);
+        ov.appendChild(box);
+        document.body.appendChild(ov);
+      }catch(e){}
+    }
+    document.addEventListener('DOMContentLoaded', showInstructions);
+  })();
+  </script>
+
+  <div class="page">
+    <header>
+      <img src="/frontend/images/fifteen.png" width="28" height="28" alt="Jeux" style="border-radius:6px;">
+      <h1>Puzzle 15</h1>
+    </header>
+
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+    </div>
+    <script>(window.MRGtag = window.MRGtag || []).push({});</script>
+
+    <div class="wrap">
+      <div class="panel">
+        <div id="game" class="game-board" aria-label="Plateau du puzzle 15"></div>
+        <div class="hint" style="display:none;">Déplacez les tuiles pour ordonner les nombres de 1 à 15. Flèches ou WASD.</div>
+      </div>
+
+      <div class="panel">
+        <div class="stats">
+          <div class="stat">Coups<br><b id="moves">0</b></div>
+          <div class="stat">Temps<br><b id="time">0</b>s</div>
+          <div class="stat">Record<br><b id="best">0</b></div>
+        </div>
+
+        <div class="controls">
+          <button class="btn primary" id="btnNewGame">Nouvelle partie</button>
+          <button class="btn" id="btnReset">Réinitialiser</button>
+        </div>
+
+        <div class="solved-message" id="solvedMessage" style="display:none;">
+          <h3>Félicitations !</h3>
+          <p>Vous avez résolu le puzzle !</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/frontend/games/fifteen/fifteen.js?v=2" defer></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

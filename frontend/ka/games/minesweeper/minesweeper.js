@@ -18,10 +18,18 @@
 
     // Ключ для сохранения рекорда в localStorage
     const bestKey = 'mines_best_time_v1';
+
+    function t(key, fallback) {
+        return (window.i18n && window.i18n[key]) || fallback;
+    }
+
+    function formatTime(seconds) {
+        return String(seconds) + t('timeSuffix', 's');
+    }
     
     // Загружаем рекорд из localStorage или устанавливаем 0
     let bestSaved = parseInt(localStorage.getItem(bestKey) || '0', 10);
-    bestEl.textContent = bestSaved > 0 ? String(bestSaved) + 'с' : '—';
+    bestEl.textContent = bestSaved > 0 ? formatTime(bestSaved) : t('noRecord', '—');
 
     // Переменные состояния игры
     let grid,        // Двумерный массив значений клеток (-1 = мина, 0-8 = количество мин вокруг)
@@ -179,7 +187,7 @@
             alive = false;        // Игрок погиб
             clearInterval(timer); // Останавливаем таймер
             showMines();          // Показываем все мины
-            showGameOverMessage('Подорвались'); // Сообщение о поражении
+            showGameOverMessage(t('loseMessage', 'Boom!')); // Сообщение о поражении
             return;
         }
         
@@ -225,11 +233,12 @@
             
             // Обновляем рекорд если текущее время лучше
             if (bestSaved === 0 || finalTime < bestSaved) {
+                bestSaved = finalTime;
                 localStorage.setItem(bestKey, String(finalTime));
-                bestEl.textContent = String(finalTime) + 'с';
+                bestEl.textContent = formatTime(finalTime);
             }
             
-            showGameOverMessage('Победа!'); // Сообщение о победе
+            showGameOverMessage(t('winMessage', 'You win!')); // Сообщение о победе
         }
     }
 

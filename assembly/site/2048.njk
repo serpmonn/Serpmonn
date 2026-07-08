@@ -95,14 +95,7 @@ eleventyComputed:
 
         var p = document.createElement('div');
         p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
-
-        {% raw %}
-        if (isMobile()) {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsMobile | dump | safe }};
-        } else {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsDesktop | dump | safe }};
-        }
-        {% endraw %}
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
 
         var btn = document.createElement('button');
         btn.textContent = '{{ game2048Translations[locale].game2048.newGame }}';
@@ -154,7 +147,9 @@ eleventyComputed:
 
   <script>
     window.i18n = {
-      gameOverAlert: {{ game2048Translations[locale].game2048.gameOverAlert | dump | safe }}
+      gameOverAlert: {{ game2048Translations[locale].game2048.gameOverAlert | dump | safe }},
+      instructionsDesktop: {{ game2048Translations[locale].game2048.instructionsDesktop | dump | safe }},
+      instructionsMobile: {{ game2048Translations[locale].game2048.instructionsMobile | dump | safe }}
     };
   </script>
   <script src="/frontend/games/2048/2048.js?v=2"></script>

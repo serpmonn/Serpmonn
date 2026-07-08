@@ -83,14 +83,7 @@
 
         var p = document.createElement('div');
         p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
-
-        
-        if (isMobile()) {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsMobile | dump | safe }};
-        } else {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsDesktop | dump | safe }};
-        }
-        
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
 
         var btn = document.createElement('button');
         btn.textContent = 'नई गेम';
@@ -142,7 +135,9 @@
 
   <script>
     window.i18n = {
-      gameOverAlert: "खेल समाप्त! आपका स्कोर: {score}"
+      gameOverAlert: "खेल समाप्त! आपका स्कोर: {score}",
+      instructionsDesktop: "• एरो कीज़ ← ↑ → ↓ — टाइलों को हिलाने के लिए\n• ग्रिड के नीचे बटन: \"नई गेम\", \"पूर्ववत\"",
+      instructionsMobile: "• बाएँ/दाएँ/ऊपर/नीचे स्वाइप — टाइलों को हिलाने के लिए\n• बटन: \"नई गेम\", \"पूर्ववत\""
     };
   </script>
   <script src="/frontend/games/2048/2048.js?v=2"></script>

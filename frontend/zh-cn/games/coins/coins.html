@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="Content-Language" content="zh-cn">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>金币 — Serpmonn</title>
+  <meta name="description" content="在限定时间内收集金币，躲避障碍。简单街机游戏。">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://serpmonn.ru/frontend/zh-cn/games/coins/coins.html">
+  <meta property="og:title" content="金币 — Serpmonn">
+  <meta property="og:description" content="在线玩金币：尽可能多收集金币，刷新纪录。">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/images/coins.png">
+  <meta property="twitter:card" content="summary_large_image">
+  <meta property="twitter:url" content="https://serpmonn.ru/frontend/zh-cn/games/coins/coins.html">
+  <meta property="twitter:title" content="金币 — Serpmonn">
+  <meta property="twitter:description" content="在线金币游戏：Serpmonn 简单街机。">
+  <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/coins.png">
+  <link rel="canonical" href="https://serpmonn.ru/frontend/zh-cn/games/coins/coins.html">
+  <link rel="icon" href="/frontend/images/coins.png" type="image/x-icon">
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css">
+  <link rel="stylesheet" href="/frontend/games/coins/coins.css">
+  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+  <div id="menuContainer"></div>
+  <script>
+    window.i18n = {
+      gameOver: "游戏结束",
+      pressRToRestart: "按 R — 重来",
+      continueAd: "继续",
+      instructionsDesktop: "• 方向键或 WASD — 移动\n• R — 重来",
+      instructionsMobile: "• 滑动 — 移动\n• 开始/重来 — 按钮"
+    };
+  </script>
+  <script src="/frontend/games/coins/coins-ads.js?v=2" defer></script>
+  <script>
+  (function(){
+    function isMobile(){ return /Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent) || (window.innerWidth < 768); }
+    function showInstructions(){
+      try{
+        if (localStorage.getItem('game_instructions_coins_shown') === '1') return;
+        var ov = document.createElement('div');
+        ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:9998;';
+        var box = document.createElement('div');
+        box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
+        var h = document.createElement('h3');
+        h.textContent = '如何游玩 — 金币';
+        h.style.margin = '0 0 8px';
+        var p = document.createElement('div');
+        p.style.cssText = 'font-size:14px;line-height:1.5;white-space:pre-line';
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
+        var btn = document.createElement('button');
+        btn.className = 'btn';
+        btn.textContent = '知道了';
+        btn.style.marginTop = '10px';
+        btn.onclick = function(){ localStorage.setItem('game_instructions_coins_shown','1'); ov.remove(); };
+        box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
+      }catch(e){}
+    }
+    document.addEventListener('DOMContentLoaded', showInstructions);
+  })();
+  </script>
+  <div class="page">
+    <header>
+      <img src="/frontend/images/coins.png" width="28" height="28" alt="游戏" style="border-radius:6px;">
+      <h1>金币</h1>
+    </header>
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+    </div>
+    <script>(window.MRGtag = window.MRGtag || []).push({});</script>
+    <div class="wrap">
+      <div class="panel">
+        <canvas id="game" width="480" height="480" aria-label="游戏区域"></canvas>
+        <div class="hint" style="display:none;">操作：方向键或 WASD。限时尽可能多收集金币。重来 — R。</div>
+      </div>
+      <div class="panel">
+        <div class="stats">
+          <div class="stat">金币<br><b id="score">0</b></div>
+          <div class="stat">时间<br><b id="time">60</b>秒</div>
+          <div class="stat">最高<br><b id="best">0</b></div>
+        </div>
+        <div class="controls">
+          <button class="btn primary" id="btnStart">开始</button>
+          <button class="btn" id="btnReset">重来</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="/frontend/games/coins/coins.js?v=2" defer></script>
+  <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

@@ -83,14 +83,7 @@
 
         var p = document.createElement('div');
         p.style.cssText='font-size:14px;line-height:1.5;white-space:pre-line';
-
-        
-        if (isMobile()) {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsMobile | dump | safe }};
-        } else {
-          p.textContent = {{ game2048Translations[locale].game2048.instructionsDesktop | dump | safe }};
-        }
-        
+        p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
 
         var btn = document.createElement('button');
         btn.textContent = 'নতুন গেম';
@@ -142,7 +135,9 @@
 
   <script>
     window.i18n = {
-      gameOverAlert: "গেম শেষ! আপনার স্কোর: {score}"
+      gameOverAlert: "গেম শেষ! আপনার স্কোর: {score}",
+      instructionsDesktop: "• অ্যারো কী ← ↑ → ↓ — টাইল সরানো\n• গ্রিডের নিচের বোতাম: \"নতুন গেম\", \"আনডু\"",
+      instructionsMobile: "• বামে/ডানে/উপরে/নিচে সোয়াইপ — টাইল সরানো\n• বোতাম: \"নতুন গেম\", \"আনডু\""
     };
   </script>
   <script src="/frontend/games/2048/2048.js?v=2"></script>

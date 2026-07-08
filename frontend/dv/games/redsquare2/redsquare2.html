@@ -1,0 +1,84 @@
+
+<!DOCTYPE html>
+<html lang="dv" dir="rtl">
+<head>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="dv">
+    <title>المربعات الزرقاء الساقطة</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="اختبر ردود فعلك في لعبة تتجنب فيها الأشكال الساقطة!">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta property="og:title" content="اختبر ردود فعلك!" />
+    <meta property="og:description" content="هل يمكنك الصمود أطول فترة ممكنة؟" />
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico" />
+    <meta property="og:url" content="https://serpmonn.ru/frontend/dv/games/redsquare2/redsquare2.html" />
+    <meta property="og:type" content="game" />
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="أشكال ساقطة — Serpmonn">
+    <meta name="twitter:description" content="لعبة مصغرة على Serpmonn.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
+    <link rel="canonical" href="https://serpmonn.ru/frontend/dv/games/redsquare2/redsquare2.html"/>
+    <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <script>window.yaContextCb=window.yaContextCb||[]</script>
+    <script src="https://yandex.ru/ads/system/context.js" async></script>
+    <script>
+    window.i18n = {
+      scorePrefix: "النقاط: ",
+      missedPrefix: "الأخطاء: ",
+      pause: "إيقاف",
+      resume: "متابعة",
+      bannedNicknameAlert: "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر."
+    };
+    </script>
+    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+</head>
+<body>
+    <div class="instruction-overlay" id="instructionOverlay">
+        <div class="instruction-content">
+            <h2 class="instruction-title">كيف تلعب المربعات الزرقاء الساقطة؟</h2>
+            <ul class="instruction-list">
+                <li><strong>التحكم:</strong> استخدم الأسهم أو اللمس لتحريك المربع الأحمر</li>
+                <li><strong>الهدف:</strong> تجنب الأجسام الساقطة</li>
+                <li><strong>النقاط:</strong> نقطة واحدة لكل جسم تتجنبه</li>
+                <li><strong>الأخطاء:</strong> إذا اصطدم بك جسم يُحسب خطأ</li>
+                <li><strong>نهاية اللعبة:</strong> تنتهي اللعبة بعد 10 اصطدامات</li>
+                <li><strong>لوحة المتصدرين:</strong> بعد اللعبة يمكنك رؤية نتائجك</li>
+                <li><strong>إيقاف:</strong> استخدم زر الإيقاف المؤقت</li>
+            </ul>
+            <button class="instruction-button" id="understandBtn">فهمت، لنبدأ!</button>
+        </div>
+    </div>
+
+    <div id="score">النقاط: 0</div>
+    <div id="missed">الأخطاء: 0</div>
+    <div class="button-container">
+        <button id="leaderboardBtn">لوحة المتصدرين</button>
+        <button id="pauseBtn">إيقاف</button>
+        <button id="restartBtn">من جديد</button>
+    </div>
+    <form id="nicknameForm">
+        <input type="text" id="nickname" placeholder="أدخل اسمك" required>
+        <button type="submit">ابدأ اللعبة</button>
+    </form>
+    <canvas id="gameCanvas"></canvas>
+
+    <div class="ad-container" style="margin: 10px 0; text-align: center;">
+        <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
+             data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
+    </div>
+
+    <div class="ad-container" style="margin: 20px 0; text-align: center;">
+        <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
+             data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+    </div>
+
+    <script>
+        (MRGtag = window.MRGtag || []).push({});
+    </script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

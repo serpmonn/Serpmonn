@@ -1,0 +1,531 @@
+
+<!DOCTYPE html>
+<html lang="be" dir="ltr" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fat Rat — Serpmonn Games</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0e0f11;
+      --surface: #16181c;
+      --surface2: #1e2027;
+      --border: #2a2d36;
+      --text: #e8e9ec;
+      --muted: #7b7e8a;
+      --primary: #f0c040;
+      --primary-dim: #b89020;
+      --wall: #2a2d36;
+      --wall-lit: #3a3f4d;
+      --food-color: #ff6b35;
+      --bonus-color: #a78bfa;
+      --rat-base: #c8a882;
+      --font-mono: 'Share Tech Mono', monospace;
+      --font-body: 'Inter', sans-serif;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+    body {
+      min-height: 100dvh;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      gap: 1rem;
+    }
+    .header {
+      display: flex; align-items: center; gap: 0.75rem;
+    }
+    .header h1 {
+      font-family: var(--font-mono);
+      font-size: 1.3rem;
+      color: var(--primary);
+      letter-spacing: 0.06em;
+    }
+    .header h1 span { color: var(--muted); font-size: 0.8rem; }
+
+    .scoreboard {
+      display: flex; gap: 1rem;
+    }
+    .score-item {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 0.4rem 1rem;
+      text-align: center;
+      min-width: 80px;
+    }
+    .score-label {
+      font-size: 0.6rem; font-family: var(--font-mono);
+      color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em;
+    }
+    .score-value {
+      font-family: var(--font-mono); font-size: 1.35rem;
+      color: var(--primary); line-height: 1.2;
+    }
+
+    .canvas-wrap {
+      position: relative;
+      border-radius: 1rem;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 0 40px rgba(240,192,64,0.06), 0 8px 32px rgba(0,0,0,0.6);
+      cursor: pointer;
+    }
+    canvas { display: block; }
+
+    .overlay {
+      position: absolute; inset: 0;
+      background: rgba(14,15,17,0.9);
+      backdrop-filter: blur(6px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 0.85rem;
+      border-radius: 1rem;
+      transition: opacity 0.2s;
+    }
+    .overlay.hidden { opacity: 0; pointer-events: none; }
+    .overlay-title {
+      font-family: var(--font-mono); font-size: 1.6rem;
+      color: var(--primary); letter-spacing: 0.06em;
+    }
+    .overlay-sub {
+      color: var(--muted); font-size: 0.82rem;
+      text-align: center; line-height: 1.7; max-width: 260px;
+    }
+    .overlay-score {
+      font-family: var(--font-mono); font-size: 0.95rem; color: var(--text);
+    }
+    .btn {
+      background: var(--primary); color: #0e0f11;
+      font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700;
+      letter-spacing: 0.08em; border: none; border-radius: 0.5rem;
+      padding: 0.6rem 1.75rem; cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn:hover { background: #ffe066; }
+    .btn:active { transform: scale(0.97); }
+
+    .hint {
+      font-size: 0.7rem; color: var(--muted);
+      font-family: var(--font-mono); letter-spacing: 0.04em;
+    }
+
+    .fat-bar-wrap {
+      width: 420px; max-width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      height: 10px;
+      overflow: hidden;
+    }
+    .fat-bar {
+      height: 100%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f0c040, #ff6b35);
+      transition: width 0.3s ease;
+      width: 0%;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
+    <rect width="30" height="30" rx="7" fill="#16181c"/>
+    <ellipse cx="15" cy="17" rx="7" ry="5" fill="#c8a882"/>
+    <ellipse cx="21" cy="13" rx="4" ry="3.5" fill="#c8a882"/>
+    <ellipse cx="20" cy="10" rx="2" ry="1.5" fill="#e8c0a0"/>
+    <circle cx="22.5" cy="12.5" r="1" fill="#1a0a0a"/>
+    <path d="M8 18 Q4 16 3 20" stroke="#a07050" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+    <circle cx="25" cy="7" r="2.5" fill="#ff6b35"/>
+  </svg>
+  <h1>FAT RAT <span>// serpmonn.ru</span></h1>
+</div>
+
+<div class="scoreboard">
+  <div class="score-item">
+    <div class="score-label">Съедено</div>
+    <div class="score-value" id="eaten">0</div>
+  </div>
+  <div class="score-item">
+    <div class="score-label">Вес кг</div>
+    <div class="score-value" id="weight">0.1</div>
+  </div>
+  <div class="score-item">
+    <div class="score-label">Рекорд</div>
+    <div class="score-value" id="best">0</div>
+  </div>
+</div>
+
+<div class="fat-bar-wrap"><div class="fat-bar" id="fatBar"></div></div>
+
+<div class="canvas-wrap" id="canvasWrap">
+  <canvas id="c" width="420" height="420"></canvas>
+  <div class="overlay" id="overlay">
+    <div class="overlay-title">🐀 FAT RAT</div>
+    <div class="overlay-sub">
+      Кликай по лабиринту — крыса бежит к еде.<br>
+      Чем толще крыса — тем медленнее движется.<br>
+      <span style="color:#a78bfa">Фиолетовая еда</span> — супербуст ×3!<br>
+      Цель: максимально разжиреть крысу!
+    </div>
+    <button class="btn" id="startBtn">НАЧАТЬ</button>
+  </div>
+</div>
+
+<div class="hint">[клик / тап] — укажи еду крысе</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const overlay = document.getElementById('overlay');
+const fatBar = document.getElementById('fatBar');
+
+const W = canvas.width, H = canvas.height;
+const CELL = 28;
+const COLS = Math.floor(W / CELL);
+const ROWS = Math.floor(H / CELL);
+const MAX_FAT = 60;
+
+let rat, food, bonusFood, walls, eaten, weight, best, gameRunning, animFrame;
+best = 0;
+
+function generateMaze() {
+  const mc = Math.floor(COLS / 2);
+  const mr = Math.floor(ROWS / 2);
+  const visited = Array.from({length: mr}, () => new Array(mc).fill(false));
+  const wallGrid = Array.from({length: mr}, () =>
+    Array.from({length: mc}, () => ({N:true, E:true, S:true, W:true}))
+  );
+
+  function carve(cx, cy) {
+    visited[cy][cx] = true;
+    const dirs = [{dx:1,dy:0,d:'E',od:'W'},{dx:-1,dy:0,d:'W',od:'E'},
+                  {dx:0,dy:1,d:'S',od:'N'},{dx:0,dy:-1,d:'N',od:'S'}]
+      .sort(() => Math.random() - 0.5);
+    for (const {dx, dy, d, od} of dirs) {
+      const nx = cx + dx, ny = cy + dy;
+      if (nx >= 0 && nx < mc && ny >= 0 && ny < mr && !visited[ny][nx]) {
+        wallGrid[cy][cx][d] = false;
+        wallGrid[ny][nx][od] = false;
+        carve(nx, ny);
+      }
+    }
+  }
+  carve(0, 0);
+
+  const ws = new Set();
+  for (let row = 0; row < mr; row++) {
+    for (let col = 0; col < mc; col++) {
+      const px = col * 2, py = row * 2;
+      if (wallGrid[row][col].E && col < mc-1) ws.add(`${px+1},${py}`);
+      if (wallGrid[row][col].S && row < mr-1) ws.add(`${px},${py+1}`);
+    }
+  }
+  const wallSet = new Set();
+  for (let c = 0; c < COLS; c++) { wallSet.add(`${c},0`); wallSet.add(`${c},${ROWS-1}`); }
+  for (let r = 0; r < ROWS; r++) { wallSet.add(`0,${r}`); wallSet.add(`${COLS-1},${r}`); }
+  for (const key of ws) {
+    const [x, y] = key.split(',').map(Number);
+    wallSet.add(`${x+1},${y+1}`);
+  }
+  return wallSet;
+}
+
+function isWall(x, y) {
+  return walls.has(`${x},${y}`);
+}
+
+function freeCells() {
+  const free = [];
+  for (let x = 1; x < COLS-1; x++)
+    for (let y = 1; y < ROWS-1; y++)
+      if (!isWall(x,y) && !(rat && rat.x===x && rat.y===y))
+        free.push({x,y});
+  return free;
+}
+
+function randomFree() {
+  const f = freeCells();
+  return f[Math.floor(Math.random() * f.length)];
+}
+
+function bfs(start, target) {
+  const queue = [start];
+  const visited = new Map();
+  visited.set(`${start.x},${start.y}`, null);
+  const dirs = [{x:1,y:0},{x:-1,y:0},{x:0,y:1},{x:0,y:-1}];
+  while (queue.length) {
+    const cur = queue.shift();
+    if (cur.x === target.x && cur.y === target.y) {
+      const path = [];
+      let node = `${target.x},${target.y}`;
+      while (visited.get(node)) {
+        path.unshift(node);
+        node = visited.get(node);
+      }
+      return path.map(k => { const [x,y]=k.split(',').map(Number); return {x,y}; });
+    }
+    for (const d of dirs) {
+      const nx = cur.x + d.x, ny = cur.y + d.y;
+      const key = `${nx},${ny}`;
+      if (!isWall(nx,ny) && !visited.has(key)) {
+        visited.set(key, `${cur.x},${cur.y}`);
+        queue.push({x:nx,y:ny});
+      }
+    }
+  }
+  return [];
+}
+
+function drawWalls() {
+  ctx.fillStyle = '#23262f';
+  for (let x = 0; x < COLS; x++)
+    for (let y = 0; y < ROWS; y++)
+      if (isWall(x,y)) {
+        ctx.fillRect(x*CELL, y*CELL, CELL, CELL);
+        ctx.fillStyle = 'rgba(255,255,255,0.04)';
+        ctx.fillRect(x*CELL, y*CELL, CELL, 2);
+        ctx.fillStyle = '#23262f';
+      }
+}
+
+function drawFood(f, isBonus) {
+  if (!f) return;
+  const cx = f.x * CELL + CELL/2, cy = f.y * CELL + CELL/2;
+  const r = isBonus ? CELL/2 - 4 : CELL/2 - 5;
+  ctx.shadowColor = isBonus ? '#a78bfa' : '#ff6b35';
+  ctx.shadowBlur = isBonus ? 14 : 10;
+  ctx.fillStyle = isBonus ? '#a78bfa' : '#ff6b35';
+  ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.beginPath(); ctx.arc(cx-r*0.3, cy-r*0.3, r*0.3, 0, Math.PI*2); ctx.fill();
+  ctx.shadowBlur = 0;
+}
+
+function drawRat() {
+  if (!rat) return;
+  const fatT = Math.min(weight / MAX_FAT, 1);
+  const baseR = CELL/2 - 3;
+  const bodyR = baseR + fatT * baseR * 1.8;
+  const cx = rat.drawX + CELL/2, cy = rat.drawY + CELL/2;
+
+  ctx.fillStyle = 'rgba(0,0,0,0.25)';
+  ctx.beginPath(); ctx.ellipse(cx, cy+bodyR*0.5+3, bodyR*0.9, bodyR*0.25, 0, 0, Math.PI*2); ctx.fill();
+
+  const fatColor = fatT < 0.5
+    ? lerpColor('#c8a882','#e8a050', fatT*2)
+    : lerpColor('#e8a050','#ff7030', (fatT-0.5)*2);
+  ctx.shadowColor = fatT > 0.7 ? '#ff6020' : 'transparent';
+  ctx.shadowBlur = fatT > 0.7 ? 18 : 0;
+  ctx.fillStyle = fatColor;
+  ctx.beginPath(); ctx.ellipse(cx, cy, bodyR, bodyR*0.85, 0, 0, Math.PI*2); ctx.fill();
+  ctx.shadowBlur = 0;
+
+  const headR = baseR * 0.65 + fatT * baseR * 0.4;
+  const headOff = bodyR * 0.7;
+  const hx = cx + (rat.dirX || 1) * headOff;
+  const hy = cy + (rat.dirY || 0) * headOff * 0.7;
+  ctx.fillStyle = fatColor;
+  ctx.beginPath(); ctx.ellipse(hx, hy, headR, headR*0.9, 0, 0, Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = '#e8c0a0';
+  ctx.beginPath(); ctx.ellipse(hx - (rat.dirX||1)*headR*0.3, hy - headR*0.7, headR*0.4, headR*0.3, 0, 0, Math.PI*2); ctx.fill();
+
+  ctx.fillStyle = '#1a0505';
+  ctx.beginPath(); ctx.arc(hx + (rat.dirX||1)*headR*0.2, hy - headR*0.15, Math.max(1.5, headR*0.2), 0, Math.PI*2); ctx.fill();
+
+  const tx = cx - (rat.dirX||1) * bodyR;
+  ctx.strokeStyle = '#a07050';
+  ctx.lineWidth = Math.max(1, 2 - fatT);
+  ctx.beginPath();
+  ctx.moveTo(tx, cy);
+  ctx.quadraticCurveTo(tx - (rat.dirX||1)*12, cy + 10, tx - (rat.dirX||1)*20, cy + 5);
+  ctx.stroke();
+
+  if (fatT > 0.5) {
+    const rings = Math.floor(fatT * 3);
+    ctx.strokeStyle = `rgba(255,160,60,${0.15 + fatT*0.2})`;
+    ctx.lineWidth = 1.5;
+    for (let i = 1; i <= rings; i++) {
+      ctx.beginPath();
+      ctx.ellipse(cx, cy, bodyR * (0.5 + i*0.2), bodyR * (0.4 + i*0.15), 0, 0, Math.PI*2);
+      ctx.stroke();
+    }
+  }
+}
+
+function lerpColor(a, b, t) {
+  const ah = parseInt(a.slice(1),16), bh = parseInt(b.slice(1),16);
+  const ar = (ah>>16)&0xff, ag=(ah>>8)&0xff, ab=ah&0xff;
+  const br = (bh>>16)&0xff, bg=(bh>>8)&0xff, bb=bh&0xff;
+  const r = Math.round(ar+(br-ar)*t), g=Math.round(ag+(bg-ag)*t), bl2=Math.round(ab+(bb-ab)*t);
+  return `rgb(${r},${g},${bl2})`;
+}
+
+function render() {
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#0e0f11';
+  ctx.fillRect(0,0,W,H);
+  drawWalls();
+  drawFood(food, false);
+  drawFood(bonusFood, true);
+  drawRat();
+}
+
+let clickTarget = null;
+
+canvas.addEventListener('click', e => {
+  if (!gameRunning) return;
+  const rect = canvas.getBoundingClientRect();
+  const mx = Math.floor((e.clientX - rect.left) / CELL);
+  const my = Math.floor((e.clientY - rect.top) / CELL);
+  if (!isWall(mx, my)) clickTarget = {x:mx, y:my};
+});
+canvas.addEventListener('touchend', e => {
+  if (!gameRunning) return;
+  e.preventDefault();
+  const rect = canvas.getBoundingClientRect();
+  const touch = e.changedTouches[0];
+  const mx = Math.floor((touch.clientX - rect.left) / CELL);
+  const my = Math.floor((touch.clientY - rect.top) / CELL);
+  if (!isWall(mx, my)) clickTarget = {x:mx, y:my};
+}, {passive:false});
+
+let path = [];
+let stepTimer = 0;
+let bonusTimer = 0;
+let bonusSpawnTimer = 0;
+let lastTime = 0;
+
+function getSpeed() {
+  const fatT = Math.min(weight / MAX_FAT, 1);
+  return Math.max(1.2, 6 - fatT * 4.8);
+}
+
+function gameLoop(ts) {
+  const dt = Math.min((ts - lastTime) / 1000, 0.1);
+  lastTime = ts;
+
+  if (!gameRunning) return;
+
+  const targetX = rat.x * CELL, targetY = rat.y * CELL;
+  rat.drawX += (targetX - rat.drawX) * Math.min(1, dt * 14);
+  rat.drawY += (targetY - rat.drawY) * Math.min(1, dt * 14);
+
+  stepTimer += dt;
+  const stepInterval = 1 / getSpeed();
+
+  if (stepTimer >= stepInterval) {
+    stepTimer -= stepInterval;
+
+    const target = clickTarget || food;
+    if (!path.length || (clickTarget && (path[path.length-1].x !== clickTarget.x || path[path.length-1].y !== clickTarget.y))) {
+      path = bfs({x:rat.x, y:rat.y}, target);
+    }
+
+    if (path.length) {
+      const next = path.shift();
+      rat.dirX = next.x - rat.x;
+      rat.dirY = next.y - rat.y;
+      rat.x = next.x;
+      rat.y = next.y;
+    }
+
+    if (rat.x === food.x && rat.y === food.y) {
+      eaten++;
+      weight = Math.round((weight + 0.3 + Math.random()*0.2) * 10) / 10;
+      if (weight > best) best = weight;
+      food = randomFree();
+      path = [];
+      clickTarget = null;
+      spawnBonusChance();
+      updateUI();
+    }
+    if (bonusFood && rat.x === bonusFood.x && rat.y === bonusFood.y) {
+      eaten += 3;
+      weight = Math.round((weight + 1.2 + Math.random()*0.5) * 10) / 10;
+      if (weight > best) best = weight;
+      bonusFood = null;
+      bonusTimer = 0;
+      path = [];
+      clickTarget = null;
+      updateUI();
+    }
+  }
+
+  if (bonusFood) {
+    bonusTimer += dt;
+    if (bonusTimer > 8) { bonusFood = null; bonusTimer = 0; }
+  }
+  bonusSpawnTimer += dt;
+  if (bonusSpawnTimer > 15) {
+    bonusSpawnTimer = 0;
+    spawnBonus();
+  }
+
+  render();
+  animFrame = requestAnimationFrame(gameLoop);
+}
+
+function spawnBonusChance() {
+  if (!bonusFood && Math.random() < 0.18) spawnBonus();
+}
+function spawnBonus() {
+  bonusFood = randomFree();
+  bonusTimer = 0;
+}
+
+function updateUI() {
+  document.getElementById('eaten').textContent = eaten;
+  document.getElementById('weight').textContent = weight.toFixed(1);
+  document.getElementById('best').textContent = best.toFixed(1);
+  const fatT = Math.min(weight / MAX_FAT, 1) * 100;
+  fatBar.style.width = fatT + '%';
+}
+
+function init() {
+  walls = generateMaze();
+  rat = { x: Math.floor(COLS/2), y: Math.floor(ROWS/2), drawX:0, drawY:0, dirX:1, dirY:0 };
+  if (isWall(rat.x, rat.y)) {
+    const f = freeCells();
+    const c = f[Math.floor(f.length/2)];
+    rat.x = c.x; rat.y = c.y;
+  }
+  rat.drawX = rat.x * CELL; rat.drawY = rat.y * CELL;
+  food = randomFree();
+  bonusFood = null;
+  bonusTimer = 0;
+  bonusSpawnTimer = 0;
+  eaten = 0;
+  weight = 0.1;
+  path = [];
+  clickTarget = null;
+  stepTimer = 0;
+  updateUI();
+}
+
+function startGame() {
+  init();
+  overlay.classList.add('hidden');
+  gameRunning = true;
+  lastTime = performance.now();
+  cancelAnimationFrame(animFrame);
+  animFrame = requestAnimationFrame(gameLoop);
+}
+
+document.getElementById('startBtn').addEventListener('click', startGame);
+
+init();
+render();
+</script>
+</body>
+</html>
