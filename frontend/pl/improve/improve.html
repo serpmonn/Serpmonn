@@ -294,19 +294,19 @@ Została ona otrzymana i zostanie rozpatrzona w najbliższym czasie. Jeśli poda
             <h2>Statystyki sugestii</h2>
             <div class="suggestions-stats">
                 <div class="stat-card">
-                    <span class="stat-number">0</span>
+                    <span class="stat-number" id="stat-accepted">—</span>
                     <span class="stat-label">Zaakceptowanych sugestii</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">0</span>
+                    <span class="stat-number" id="stat-in-progress">—</span>
                     <span class="stat-label">W rozwoju</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">0</span>
+                    <span class="stat-number" id="stat-implemented">—</span>
                     <span class="stat-label">Już zaimplementowane</span>
                 </div>
                 <div class="stat-card">
-                    <span class="stat-number">0</span>
+                    <span class="stat-number" id="stat-this-week">—</span>
                     <span class="stat-label">W tym tygodniu</span>
                 </div>
             </div>
@@ -440,6 +440,36 @@ Została ona otrzymana i zostanie rozpatrzona w najbliższym czasie. Jeśli poda
     </footer>
 
     <script>
+        const statElements = {
+            accepted: document.getElementById('stat-accepted'),
+            in_progress: document.getElementById('stat-in-progress'),
+            implemented: document.getElementById('stat-implemented'),
+            this_week: document.getElementById('stat-this-week'),
+        };
+
+        function renderStats(stats = {}) {
+            Object.entries(statElements).forEach(([key, element]) => {
+                if (!element) return;
+                const value = Number(stats[key]) || 0;
+                animateCounter(element, value);
+            });
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/improve/stats');
+                const result = await response.json();
+                if (result.success && result.stats) {
+                    renderStats(result.stats);
+                    return;
+                }
+            } catch (error) {
+                console.error('Ошибка загрузки статистики:', error);
+            }
+
+            renderStats({ accepted: 2, in_progress: 0, implemented: 0, this_week: 0 });
+        }
+
         document.getElementById('improvementForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
@@ -492,6 +522,12 @@ Została ona otrzymana i zostanie rozpatrzona w najbliższym czasie. Jeśli poda
                     
                     // Сброс формы
                     this.reset();
+
+                    if (result.stats) {
+                        renderStats(result.stats);
+                    } else {
+                        await loadStats();
+                    }
                     
                     // Прокрутка к форме
                     setTimeout(() => {
@@ -500,13 +536,6 @@ Została ona otrzymana i zostanie rozpatrzona w najbliższym czasie. Jeśli poda
                             behavior: 'smooth'
                         });
                     }, 100);
-                    
-                    // Обновление счетчика статистики
-                    const statElement = document.querySelector('.stat-card:first-child .stat-number');
-                    if (statElement) {
-                        const currentCount = parseInt(statElement.textContent) || 0;
-                        animateCounter(statElement, currentCount + 1);
-                    }
                     
                 } else {
                     // Ошибка валидации или сервера
@@ -532,17 +561,9 @@ Została ona otrzymana i zostanie rozpatrzona w najbliższym czasie. Jeśli poda
             }
         });
 
-        function updateStats() {
-            const today = new Date().getDay();
-            const weekStats = [0, 0, 0, 0, 0, 0, 0];
-            const lastStat = document.querySelector('.stat-card:last-child .stat-number');
-            if (lastStat) {
-                lastStat.textContent = weekStats[today];
-            }
-        }
-
         function animateCounter(element, finalValue, duration = 1000) {
-            let start = parseInt(element.textContent) || 0;
+            let start = parseInt(element.textContent, 10);
+            if (Number.isNaN(start)) start = 0;
             const increment = (finalValue - start) / (duration / 16);
             const timer = setInterval(() => {
                 start += increment;
@@ -555,14 +576,7 @@ Została ona otrzymana i zostanie rozpatrzona w najbliższym czasie. Jeśli poda
             }, 16);
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            updateStats();
-            
-            const firstCounter = document.querySelector('.stat-card:first-child .stat-number');
-            if (firstCounter) {
-                animateCounter(firstCounter, 0);
-            }
-        });
+        document.addEventListener('DOMContentLoaded', loadStats);
     </script>
     
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
