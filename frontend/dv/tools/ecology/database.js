@@ -3,6 +3,106 @@
  * Данные основаны на научных исследованиях и международных стандартах
  */
 
+function getEcoPageI18n() {
+    return (typeof window !== 'undefined' && window.i18n) || {};
+}
+
+function getProductLabel(productId) {
+    const i18n = getEcoPageI18n();
+    if (i18n.products?.[productId]) return i18n.products[productId];
+    return ECO_DATABASE[productId]?.name || productId;
+}
+
+const ALT_KEY_BY_RU = {
+    'растительные белки': 'plant_proteins',
+    'бобовые': 'legumes',
+    'орехи': 'nuts',
+    'птица': 'poultry',
+    'рыба': 'fish',
+    'водоросли': 'seaweed',
+    'растительное молоко': 'plant_milk',
+    'овсяное молоко': 'oat_milk',
+    'растительные сыры': 'plant_cheese',
+    'тофу': 'tofu',
+    'киноа': 'quinoa',
+    'булгур': 'bulgur',
+    'гречка': 'buckwheat',
+    'овес': 'oats_grain',
+    'ячмень': 'barley_grain',
+    'рожь': 'rye_grain',
+    'батат': 'sweet_potato',
+    'репа': 'turnip',
+    'сезонные овощи': 'seasonal_vegetables',
+    'местные сезонные овощи': 'local_seasonal_vegetables',
+    'местные сезонные фрукты': 'local_seasonal_fruits',
+    'местные фрукты': 'local_fruits',
+    'чай': 'tea',
+    'цикорий': 'chicory',
+    'фрукты': 'fruits',
+    'семена': 'seeds',
+    'курица': 'chicken',
+    'индейка': 'turkey',
+    'растительные масла': 'plant_oils',
+    'авокадо': 'avocado',
+    'растительные йогурты': 'plant_yogurt',
+    'кефир': 'kefir',
+    'растительные омега-3': 'plant_omega3',
+    'льняное семя': 'flax_seeds',
+    'другие виды рыбы': 'other_fish',
+    'другие морепродукты': 'other_seafood',
+    'консервированные помидоры': 'canned_tomatoes',
+    'кабачки': 'zucchini',
+    'сезонные корнеплоды': 'seasonal_root_vegetables',
+    'свекла': 'beets',
+    'сладкий картофель': 'sweet_potato',
+    'другие корнеплоды': 'other_root_vegetables',
+    'сезонные цитрусовые': 'seasonal_citrus',
+    'сезонные ягоды': 'seasonal_berries',
+    'другие зерновые': 'other_grains',
+    'другие псевдозерновые': 'other_pseudograins',
+    'фасоль': 'beans',
+    'горох': 'peas',
+    'нут': 'chickpeas',
+    'чечевица': 'lentils',
+    'растительные напитки': 'plant_drinks',
+    'местные травы': 'local_herbs',
+    'местные напитки': 'local_drinks',
+    'безалкогольные варианты': 'non_alcoholic_options',
+    'растительные десерты': 'plant_desserts',
+    'мед': 'honey',
+    'стевия': 'stevia',
+    'хлеб ржаной': 'rye_bread',
+    'цельнозерновой': 'whole_grain',
+    'перловка': 'pearl_barley',
+    'овсянка': 'oatmeal',
+    'пшено': 'millet',
+    'цельнозерновые макароны': 'whole_grain_pasta',
+    'пшеница': 'wheat',
+    'оливковое масло': 'olive_oil',
+    'подсолнечное': 'sunflower_oil',
+    'уменьшить количество': 'reduce_amount',
+    'йогурт натуральный': 'plain_yogurt',
+    'йогурт': 'yogurt',
+    'уменьшить жирность': 'reduce_fat',
+    'другие сезонные овощи': 'other_seasonal_vegetables',
+    'яблоки местные': 'local_apples',
+    'яблоки': 'apples',
+    'травяные чаи': 'herbal_teas',
+    'вода': 'water',
+    'компот': 'compote',
+    'морс': 'fruit_drink',
+    'квас': 'kvass',
+    'лук': 'onion'
+};
+
+function localizeAlternatives(alternatives) {
+    const altMap = getEcoPageI18n().alternatives || {};
+    return (alternatives || []).map(item => {
+        const key = ALT_KEY_BY_RU[item] || item;
+        return altMap[key] || item;
+    });
+}
+
 const ECO_DATABASE = {
     // Мясные продукты (кг CO₂ эквивалента на кг продукта)
     beef: {
@@ -609,14 +709,14 @@ function calculateProductFootprint(productId, quantity, region = 'national', sea
 
     return {
         productId,
-        productName: product.name,
+        productName: getProductLabel(productId),
         quantity: quantity,
         carbonFootprint: product.carbonFootprint * quantity * totalFactor,
         waterFootprint: product.waterFootprint * quantity * totalFactor,
         landFootprint: product.landFootprint * quantity * totalFactor,
         ecoRating: product.ecoRating,
         category: product.category,
-        alternatives: product.alternatives,
+        alternatives: localizeAlternatives(product.alternatives),
         description: product.description,
         factors: {
             regional: regionalFactor,
@@ -632,55 +732,57 @@ function calculateProductFootprint(productId, quantity, region = 'national', sea
  * @returns {Array} Массив рекомендаций
  */
 function getRecommendations(products) {
+    const items = getEcoPageI18n().recommendationItems || {};
     const recommendations = [];
-    
-    // Анализ продуктов с высоким следом
+
     const highImpactProducts = products.filter(p => p.ecoRating <= 4);
-    
-    if (highImpactProducts.length > 0) {
+    if (highImpactProducts.length > 0 && items.highImpact) {
         recommendations.push({
             type: 'warning',
-            title: 'Продукты с высоким экологическим следом',
-            description: `Рассмотрите альтернативы для: ${highImpactProducts.map(p => p.productName).join(', ')}`,
+            title: items.highImpact.title,
+            description: (items.highImpact.description || '').replace(
+                '{products}',
+                highImpactProducts.map(p => p.productName).join(', ')
+            ),
             impact: 'high'
         });
     }
 
-    // Рекомендации по категориям
-    const meatProducts = products.filter(p => p.category === 'meat');
-    if (meatProducts.length > 0) {
+    if (products.some(p => p.category === 'meat') && items.reduceMeat) {
         recommendations.push({
             type: 'suggestion',
-            title: 'Снижение потребления мяса',
-            description: 'Попробуйте заменить мясо растительными белками 1-2 раза в неделю',
+            title: items.reduceMeat.title,
+            description: items.reduceMeat.description,
             impact: 'medium'
         });
     }
 
-    const dairyProducts = products.filter(p => p.category === 'dairy');
-    if (dairyProducts.length > 0) {
+    if (products.some(p => p.category === 'dairy') && items.dairyAlternatives) {
         recommendations.push({
             type: 'suggestion',
-            title: 'Альтернативы молочным продуктам',
-            description: 'Попробуйте растительное молоко и сыры',
+            title: items.dairyAlternatives.title,
+            description: items.dairyAlternatives.description,
             impact: 'medium'
         });
     }
 
-    // Общие рекомендации
-    recommendations.push({
-        type: 'tip',
-        title: 'Покупайте местные сезонные продукты',
-        description: 'Это снижает транспортный след и поддерживает местных производителей',
-        impact: 'low'
-    });
+    if (items.buyLocal) {
+        recommendations.push({
+            type: 'tip',
+            title: items.buyLocal.title,
+            description: items.buyLocal.description,
+            impact: 'low'
+        });
+    }
 
-    recommendations.push({
-        type: 'tip',
-        title: 'Планируйте покупки',
-        description: 'Избегайте пищевых отходов - покупайте только необходимое',
-        impact: 'medium'
-    });
+    if (items.planPurchases) {
+        recommendations.push({
+            type: 'tip',
+            title: items.planPurchases.title,
+            description: items.planPurchases.description,
+            impact: 'medium'
+        });
+    }
 
     return recommendations;
 }
@@ -698,8 +800,8 @@ function getComparisons(products) {
             comparisons.push({
                 product: product.productName,
                 currentFootprint: product.carbonFootprint,
-                alternatives: product.alternatives,
-                potentialSavings: product.carbonFootprint * 0.5 // Предполагаемая экономия 50%
+                alternatives: localizeAlternatives(product.alternatives),
+                potentialSavings: product.carbonFootprint * 0.5
             });
         }
     });
@@ -717,6 +819,8 @@ if (typeof module !== 'undefined' && module.exports) {
         convertToKilograms,
         calculateProductFootprint,
         getRecommendations,
-        getComparisons
+        getComparisons,
+        getProductLabel,
+        localizeAlternatives
     };
 }

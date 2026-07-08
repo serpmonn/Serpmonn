@@ -54,7 +54,10 @@ export function toggleSubmenu(event, submenuId) {
     }
 }
 
-export function initPWA() {
+import { loadMessages, t } from './i18n-loader.js';
+
+export async function initPWA() {
+    await loadMessages();
     let deferredPrompt;
     const installAppButton = document.getElementById('installAppButton');
     const pwaInstructions = document.getElementById('pwaInstructions');
@@ -103,7 +106,7 @@ export function initPWA() {
     if (isIOS && confirmInstallBtn) {
         confirmInstallBtn.style.display = 'none';
         const iosNote = document.createElement('p');
-        iosNote.textContent = 'В iOS используйте меню "Поделиться" → "На экран Домой"';
+        iosNote.textContent = t('menu.pwaIosHint');
         iosNote.style.marginTop = '10px';
         confirmInstallBtn.after(iosNote);
     }
@@ -190,7 +193,7 @@ export function initMenu() {
     });
 
     // Инициализация PWA
-    initPWA();
+    void initPWA();
     
     // Инициализация доступности
     if (window.initA11y) {

@@ -46,6 +46,11 @@ eleventyComputed:
   menu_soon: "{{ menuTranslations[locale].soon }}"
   menu_pwa_install: "{{ menuTranslations[locale].pwa_install }}"
   menu_pwa_instructions: "{{ menuTranslations[locale].pwa_instructions }}"
+  menu_pwa_step1: "{{ menuTranslations[locale].pwa_step1 }}"
+  menu_pwa_step2: "{{ menuTranslations[locale].pwa_step2 }}"
+  menu_pwa_step3: "{{ menuTranslations[locale].pwa_step3 }}"
+  menu_pwa_install_btn: "{{ menuTranslations[locale].pwa_install_btn }}"
+  menu_pwa_close_btn: "{{ menuTranslations[locale].pwa_close_btn }}"
 ---
 
 <!-- Стили (общие для всех локалей) -->
@@ -524,12 +529,12 @@ eleventyComputed:
         <h3>{{ menu_pwa_install }}</h3>
         <p>{{ menu_pwa_instructions }}</p>
         <ol>
-            <li>Нажмите "Установить" ниже</li>
-            <li>Подтвердите в диалоговом окне браузера</li>
-            <li>Или используйте меню браузера (⋮) → "Установить страницу/Добавить на главный экран"</li>
+            <li>{{ menu_pwa_step1 }}</li>
+            <li>{{ menu_pwa_step2 }}</li>
+            <li>{{ menu_pwa_step3 }}</li>
         </ol>
-        <button id="confirmPWAInstall" class="pwa-install-btn">Установить</button>
-        <button id="closePWAInstructions" class="pwa-close-btn">Закрыть</button>
+        <button id="confirmPWAInstall" class="pwa-install-btn">{{ menu_pwa_install_btn }}</button>
+        <button id="closePWAInstructions" class="pwa-close-btn">{{ menu_pwa_close_btn }}</button>
     </div>
 </div>
 

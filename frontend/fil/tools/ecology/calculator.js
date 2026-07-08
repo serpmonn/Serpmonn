@@ -1,641 +1,390 @@
 /**
- * Калькулятор экологического следа продуктов
- * Основная логика и взаимодействие с пользователем
+ * Ecological footprint calculator — uses window.i18n from product-footprint-calculator.njk
  */
 
+function getEcoI18n() {
+  return window.i18n || {};
+}
+
+function ecoT(path, vars = {}) {
+  const parts = path.split('.');
+  let value = getEcoI18n();
+  for (const part of parts) {
+    value = value?.[part];
+  }
+  if (typeof value !== 'string') return path;
+  for (const [name, val] of Object.entries(vars)) {
+    value = value.replaceAll(`{${name}}`, String(val));
+  }
+  return value;
+}
+
+function getLocale() {
+  return document.documentElement.lang || 'ru';
+}
+
 class EcoFootprintCalculator {
-    constructor() {
-        this.products = [];
-        this.results = null;
-        this.init();
+  constructor() {
+    this.products = [];
+    this.results = null;
+    this.init();
+  }
+
+  init() {
+    this.setupEventListeners();
+    this.loadSavedData();
+    this.renderProductRows();
+  }
+
+  setupEventListeners() {
+    document.addEventListener('change', (e) => {
+      if (e.target.classList.contains('product-select') || e.target.classList.contains('quantity-input')) {
+        this.updateUnitDisplay(e.target.closest('.product-row'));
+      }
+    });
+
+    const calculateBtn = document.querySelector('.calculate-btn');
+    if (calculateBtn) {
+      calculateBtn.addEventListener('click', () => this.calculateFootprint());
+    }
+  }
+
+  buildProductOptions() {
+    const products = Object.keys(ECO_DATABASE).filter(id => id !== 'pieces');
+    const i18nProducts = getEcoI18n().products || {};
+    let html = `<option value="">${ecoT('products.select_product')}</option>`;
+    products.forEach(productId => {
+      const label = i18nProducts[productId] || ECO_DATABASE[productId]?.name || productId;
+      html += `<option value="${productId}">${label}</option>`;
+    });
+    return html;
+  }
+
+  createProductRow() {
+    const row = document.createElement('div');
+    row.className = 'product-row';
+    row.innerHTML = `
+      <select class="product-select">${this.buildProductOptions()}</select>
+      <input type="number" class="quantity-input" placeholder="${ecoT('js.quantityPlaceholder')}" min="0" step="0.1">
+      <span class="unit-display"></span>
+      <button type="button" class="remove-btn" onclick="removeProductRow(this)">${ecoT('js.remove')}</button>
+    `;
+    return row;
+  }
+
+  renderProductRows() {
+    const container = document.getElementById('products-container');
+    if (!container) return;
+    container.innerHTML = '';
+    container.appendChild(this.createProductRow());
+    this.updateRemoveButtons();
+  }
+
+  addProductRow() {
+    const container = document.getElementById('products-container');
+    if (!container) return;
+    container.appendChild(this.createProductRow());
+    this.updateRemoveButtons();
+  }
+
+  updateRemoveButtons() {
+    const rows = document.querySelectorAll('.product-row');
+    rows.forEach(row => {
+      const btn = row.querySelector('.remove-btn');
+      if (btn) btn.style.display = rows.length > 1 ? 'inline-block' : 'none';
+    });
+  }
+
+  collectProductsFromRows() {
+    const collected = [];
+    document.querySelectorAll('.product-row').forEach(row => {
+      const productId = row.querySelector('.product-select')?.value;
+      const quantity = parseFloat(row.querySelector('.quantity-input')?.value || '');
+      if (!productId || !quantity || quantity <= 0) return;
+
+      const unit = this.resolveUnit(productId);
+      const product = ECO_DATABASE[productId];
+      if (!product) return;
+
+      collected.push({
+        id: productId,
+        name: getProductLabel(productId),
+        quantity,
+        unit
+      });
+    });
+    return collected;
+  }
+
+  resolveUnit(productId) {
+    const product = ECO_DATABASE[productId];
+    if (!product) return 'kg';
+    if (product.category === 'beverages' || productId === 'milk') return 'l';
+    if (productId === 'eggs' || productId === 'chocolate' || productId === 'sugar') return 'g';
+    return 'kg';
+  }
+
+  addProduct() {
+    const rows = document.querySelectorAll('.product-row');
+    const lastRow = rows[rows.length - 1];
+    if (!lastRow) return;
+
+    const productId = lastRow.querySelector('.product-select')?.value;
+    const quantity = parseFloat(lastRow.querySelector('.quantity-input')?.value || '');
+
+    if (!productId || !quantity || quantity <= 0) {
+      alert(ecoT('errors.select_product_and_qty'));
+      return;
     }
 
-    init() {
-        // Инициализация при загрузке страницы
-        this.setupEventListeners();
-        this.loadSavedData();
-        this.renderProducts();
+    this.products.push({
+      id: productId,
+      name: getProductLabel(productId),
+      quantity,
+      unit: this.resolveUnit(productId)
+    });
+
+    lastRow.querySelector('.product-select').value = '';
+    lastRow.querySelector('.quantity-input').value = '';
+    this.updateUnitDisplay(lastRow);
+    this.displaySelectedProducts();
+  }
+
+  displaySelectedProducts() {
+    const container = document.getElementById('products-container');
+    if (!container || this.products.length === 0) return;
+
+    let html = `<div class="selected-products"><h3>${ecoT('js.selectedProductsTitle')}</h3>`;
+    this.products.forEach((product, index) => {
+      const unitLabel = this.getUnitLabel(product.unit);
+      html += `<div class="selected-product">
+        <span>${product.name} - ${product.quantity} ${unitLabel}</span>
+        <button type="button" onclick="removeSelectedProduct(${index})">${ecoT('js.remove')}</button>
+      </div>`;
+    });
+    html += '</div>';
+
+    container.querySelector('.selected-products')?.remove();
+    container.insertAdjacentHTML('beforeend', html);
+  }
+
+  getUnitLabel(unit) {
+    const units = getEcoI18n().units || {};
+    return units[unit] || unit;
+  }
+
+  updateUnitDisplay(row) {
+    if (!row) return;
+    const productId = row.querySelector('.product-select')?.value;
+    const unitDisplay = row.querySelector('.unit-display');
+    if (!unitDisplay) return;
+    if (!productId) {
+      unitDisplay.textContent = '';
+      return;
+    }
+    const unit = this.resolveUnit(productId);
+    unitDisplay.textContent = ecoT('js.unitLabel', { unit: this.getUnitLabel(unit) });
+  }
+
+  async calculateFootprint() {
+    const fromRows = this.collectProductsFromRows();
+    if (fromRows.length > 0) {
+      this.products = fromRows;
     }
 
-    setupEventListeners() {
-        // Обработчики для динамически добавляемых элементов
-        document.addEventListener('change', (e) => {
-            if (e.target.classList.contains('product-select') || 
-                e.target.classList.contains('quantity-input')) {
-                // Автоматически показываем единицы измерения при выборе продукта
-                this.updateUnitDisplay();
-            }
-        });
+    if (this.products.length === 0) {
+      this.showError(ecoT('errors.no_products'));
+      return;
+    }
 
-        // Обработчик для кнопки расчета
-        const calculateBtn = document.querySelector('.calculate-btn');
-        if (calculateBtn) {
-            calculateBtn.addEventListener('click', () => this.calculateFootprint());
+    this.showLoading();
+
+    try {
+      const productFootprints = [];
+      let totalCarbon = 0;
+      let totalWater = 0;
+      let totalLand = 0;
+      let totalEcoRating = 0;
+
+      this.products.forEach(product => {
+        const quantityInKg = convertToKilograms(product.quantity, product.unit, product.id);
+        const footprint = calculateProductFootprint(product.id, quantityInKg);
+        if (footprint) {
+          productFootprints.push(footprint);
+          totalCarbon += footprint.carbonFootprint;
+          totalWater += footprint.waterFootprint;
+          totalLand += footprint.landFootprint;
+          totalEcoRating += footprint.ecoRating;
         }
+      });
+
+      const averageEcoRating = totalEcoRating / productFootprints.length;
+      this.results = {
+        totalCarbon: Math.round(totalCarbon * 100) / 100,
+        totalWater: Math.round(totalWater),
+        totalLand: Math.round(totalLand * 100) / 100,
+        ecoRating: Math.round(averageEcoRating * 10) / 10,
+        products: productFootprints,
+        recommendations: getRecommendations(productFootprints),
+        comparisons: getComparisons(productFootprints)
+      };
+
+      this.displayResults();
+      this.saveResults();
+    } catch (error) {
+      console.error('Eco calculator error:', error);
+      this.showError(ecoT('errors.calculation_error'));
+    } finally {
+      this.hideLoading();
     }
+  }
 
-    /**
-     * Отобразить список доступных продуктов
-     */
-    renderProducts() {
-        const container = document.getElementById('products-container');
-        
-        if (!container) {
-            console.error('Элемент products-container не найден');
-            return;
-        }
+  displayResults() {
+    const resultsSection = document.getElementById('results-section');
+    if (resultsSection) resultsSection.style.display = 'block';
+    this.hideLoading();
 
-        // Получаем все продукты из базы данных
-        const allProducts = Object.values(ECO_DATABASE);
-        
-        // Создаем HTML для выпадающего списка со всеми продуктами
-        let html = `<div class="product-row">
-            <select class="product-select" data-product="beef">
-                <option value="">Выберите продукт...</option>`;
-        
-        allProducts.forEach(product => {
-            const productId = Object.keys(ECO_DATABASE).find(key => ECO_DATABASE[key] === product);
-            html += `<option value="${productId}">${product.name}</option>`;
-        });
-        
-        html += `</select>
-            <input type="number" class="quantity-input" placeholder="Количество" min="0" step="0.1">
-            <span class="unit-display"></span>
-            <button class="add-btn" onclick="addProduct()">Добавить</button>
+    document.getElementById('carbon-footprint').textContent = this.results.totalCarbon.toFixed(2);
+    document.getElementById('water-footprint').textContent = this.results.totalWater.toLocaleString(getLocale());
+    document.getElementById('land-footprint').textContent = this.results.totalLand.toFixed(2);
+    document.getElementById('eco-score').textContent = this.results.ecoRating.toFixed(1);
+
+    this.displayComparisons();
+    this.displayRecommendations();
+    resultsSection?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  displayComparisons() {
+    const comparisonContainer = document.getElementById('comparison-results');
+    if (!comparisonContainer) return;
+    comparisonContainer.innerHTML = '';
+
+    this.results.comparisons.forEach(comparison => {
+      const item = document.createElement('div');
+      item.className = 'comparison-item';
+      item.innerHTML = `
+        <div>
+          <strong>${comparison.product}</strong><br>
+          <small>${ecoT('js.comparisonCurrentFootprint', { value: comparison.currentFootprint.toFixed(2) })}</small>
         </div>
-        <button class="calculate-btn" onclick="calculateFootprint()">
-            🌍 Рассчитать экологический след
-        </button>`;
+        <div>
+          <strong>${ecoT('js.comparisonAlternatives')}</strong><br>
+          <small>${comparison.alternatives.join(', ')}</small><br>
+          <small style="color: #2E8B57;">${ecoT('js.comparisonSavings', { value: comparison.potentialSavings.toFixed(2) })}</small>
+        </div>
+      `;
+      comparisonContainer.appendChild(item);
+    });
+  }
 
-        container.innerHTML = html;
+  displayRecommendations() {
+    const recommendationsContainer = document.getElementById('recommendations-list');
+    if (!recommendationsContainer) return;
+    recommendationsContainer.innerHTML = '';
+
+    this.results.recommendations.forEach(rec => {
+      const item = document.createElement('div');
+      item.className = 'recommendation-item';
+      let icon = '💡';
+      if (rec.type === 'warning') icon = '⚠️';
+      if (rec.type === 'suggestion') icon = '🌱';
+      item.innerHTML = `<strong>${icon} ${rec.title}</strong><br><small>${rec.description}</small>`;
+      recommendationsContainer.appendChild(item);
+    });
+  }
+
+  showLoading() {
+    const resultsSection = document.getElementById('results-section');
+    if (!resultsSection) return;
+    resultsSection.style.display = 'block';
+
+    let loading = document.getElementById('results-loading');
+    if (!loading) {
+      loading = document.createElement('div');
+      loading.id = 'results-loading';
+      loading.className = 'loading';
+      loading.innerHTML = `<div class="spinner"></div><p>${ecoT('js.loading')}</p>`;
+      resultsSection.appendChild(loading);
     }
+    loading.style.display = 'flex';
+  }
 
-    /**
-     * Получить название категории на русском языке
-     */
-    getCategoryName(category) {
-        const categoryNames = {
-            'meat': 'Мясо',
-            'dairy': 'Молочные продукты',
-            'fish': 'Рыба',
-            'seafood': 'Морепродукты',
-            'vegetables': 'Овощи',
-            'fruits': 'Фрукты',
-            'grains': 'Зерновые',
-            'legumes': 'Бобовые',
-            'nuts': 'Орехи',
-            'beverages': 'Напитки',
-            'sweets': 'Сладости'
-        };
-        return categoryNames[category] || category;
-    }
+  hideLoading() {
+    const loading = document.getElementById('results-loading');
+    if (loading) loading.style.display = 'none';
+  }
 
+  showError(message) {
+    const resultsSection = document.getElementById('results-section');
+    if (!resultsSection) return;
+    resultsSection.style.display = 'block';
+    const existing = resultsSection.querySelector('.error');
+    if (existing) existing.remove();
+    const error = document.createElement('div');
+    error.className = 'error';
+    error.innerHTML = `<strong>${ecoT('js.errorPrefix')}</strong> ${message}`;
+    resultsSection.prepend(error);
+  }
 
-    /**
-     * Добавить продукт в расчет
-     */
-    addProduct() {
-        const productSelect = document.querySelector('.product-select');
-        const quantityInput = document.querySelector('.quantity-input');
-        
-        if (!productSelect || !quantityInput) {
-            console.error('Элементы формы не найдены');
-            return;
-        }
-        
-        const productId = productSelect.value;
-        const quantity = parseFloat(quantityInput.value);
-        
-        if (!productId || !quantity || quantity <= 0) {
-            alert('Пожалуйста, выберите продукт и введите количество');
-            return;
-        }
-        
-        const product = ECO_DATABASE[productId];
-        if (!product) {
-            console.error('Продукт не найден:', productId);
-            return;
-        }
-        
-        // Автоматически определяем единицы измерения
-        let unit = 'kg'; // по умолчанию килограммы
-        
-        // Для жидкостей используем литры
-        if (product.category === 'beverages' || productId === 'milk') {
-            unit = 'l';
-        }
-        // Для мелких продуктов используем граммы
-        else if (productId === 'eggs' || productId === 'chocolate' || productId === 'sugar') {
-            unit = 'g';
-        }
-        
-        // Добавляем продукт в список
-        this.products.push({
-            id: productId,
-            name: product.name,
-            quantity: quantity,
-            unit: unit
-        });
-        
-        // Очищаем форму
-        productSelect.value = '';
-        quantityInput.value = '';
-        
-        // Обновляем отображение выбранных продуктов (расчет по кнопке)
-        this.displaySelectedProducts();
-        // Обновляем подсказку единиц после очистки формы
-        this.updateUnitDisplay();
-        
-        console.log('Добавлен продукт:', product.name, quantity, unit);
-    }
+  saveResults() {
+    if (!this.results) return;
+    try {
+      localStorage.setItem('ecoFootprintResults', JSON.stringify({
+        results: this.results,
+        timestamp: new Date().toISOString()
+      }));
+    } catch {}
+  }
 
-    /**
-     * Отобразить выбранные продукты
-     */
-    displaySelectedProducts() {
-        const container = document.getElementById('products-container');
-        
-        if (this.products.length === 0) {
-            return;
-        }
-        
-        // Создаем HTML для отображения выбранных продуктов
-        let selectedHtml = '<div class="selected-products"><h3>Выбранные продукты:</h3>';
-        
-        this.products.forEach((product, index) => {
-            selectedHtml += `<div class="selected-product">
-                <span>${product.name} - ${product.quantity} ${product.unit}</span>
-                <button onclick="removeSelectedProduct(${index})">Удалить</button>
-            </div>`;
-        });
-        
-        selectedHtml += '</div>';
-        
-        // Добавляем после основной формы
-        const existingSelected = container.querySelector('.selected-products');
-        if (existingSelected) {
-            existingSelected.remove();
-        }
-        container.insertAdjacentHTML('beforeend', selectedHtml);
-    }
-
-    /**
-     * Удалить продукт из корзины
-     */
-    removeProduct(button) {
-        const productRow = button.closest('.product-row');
-        productRow.remove();
-        this.updateRemoveButtons();
-    }
-
-    /**
-     * Обновить видимость кнопок удаления
-     */
-    updateRemoveButtons() {
-        const productRows = document.querySelectorAll('.product-row');
-        productRows.forEach((row, index) => {
-            const removeBtn = row.querySelector('.remove-btn');
-            if (productRows.length > 1) {
-                removeBtn.style.display = 'block';
-            } else {
-                removeBtn.style.display = 'none';
-            }
-        });
-    }
-
-    /**
-     * Обновить отображение единиц измерения
-     */
-    updateUnitDisplay() {
-        const productSelect = document.querySelector('.product-select');
-        const unitDisplay = document.querySelector('.unit-display');
-        
-        if (!productSelect || !unitDisplay) return;
-        
-        const productId = productSelect.value;
-        if (!productId) {
-            unitDisplay.textContent = '';
-            return;
-        }
-        
-        const product = ECO_DATABASE[productId];
-        if (!product) return;
-        
-        // Определяем единицы измерения
-        let unit = 'кг';
-        if (product.category === 'beverages' || productId === 'milk') {
-            unit = 'л';
-        } else if (productId === 'eggs' || productId === 'chocolate' || productId === 'sugar') {
-            unit = 'г';
-        }
-        
-        unitDisplay.textContent = `Единица: ${unit}`;
-    }
-
-    /**
-     * Рассчитать экологический след
-     */
-    async calculateFootprint() {
-        if (this.products.length === 0) {
-            this.showError('Пожалуйста, добавьте хотя бы один продукт');
-            return;
-        }
-
-        this.showLoading();
-
-        try {
-            // Рассчитываем след для каждого продукта
-            const productFootprints = [];
-            let totalCarbon = 0;
-            let totalWater = 0;
-            let totalLand = 0;
-            let totalEcoRating = 0;
-
-            this.products.forEach(product => {
-                const quantityInKg = convertToKilograms(product.quantity, product.unit, product.id);
-                const footprint = calculateProductFootprint(product.id, quantityInKg);
-                
-                if (footprint) {
-                    productFootprints.push(footprint);
-                    totalCarbon += footprint.carbonFootprint;
-                    totalWater += footprint.waterFootprint;
-                    totalLand += footprint.landFootprint;
-                    totalEcoRating += footprint.ecoRating;
-                }
-            });
-
-            // Рассчитываем средний эко-рейтинг
-            const averageEcoRating = totalEcoRating / productFootprints.length;
-
-            // Получаем рекомендации и сравнения
-            const recommendations = getRecommendations(productFootprints);
-            const comparisons = getComparisons(productFootprints);
-
-            this.results = {
-                totalCarbon: Math.round(totalCarbon * 100) / 100,
-                totalWater: Math.round(totalWater),
-                totalLand: Math.round(totalLand * 100) / 100,
-                ecoRating: Math.round(averageEcoRating * 10) / 10,
-                products: productFootprints,
-                recommendations: recommendations,
-                comparisons: comparisons
-            };
-
-            this.displayResults();
-            this.saveResults();
-
-        } catch (error) {
-            console.error('Ошибка расчета:', error);
-            this.showError('Произошла ошибка при расчете. Попробуйте еще раз.');
-        } finally {
-            this.hideLoading();
-        }
-    }
-
-    /**
-     * Отобразить результаты
-     */
-    displayResults() {
-        const resultsSection = document.getElementById('results-section');
-        if (resultsSection) {
-            resultsSection.style.display = 'block';
-        }
-
-        // Скрываем индикатор загрузки, если он есть
-        this.hideLoading();
-
-        // Обновляем основные показатели
-        const carbonEl = document.getElementById('carbon-footprint');
-        const waterEl = document.getElementById('water-footprint');
-        const landEl = document.getElementById('land-footprint');
-        const ecoEl = document.getElementById('eco-score');
-        
-        if (carbonEl) carbonEl.textContent = this.results.totalCarbon.toFixed(2);
-        if (waterEl) waterEl.textContent = this.results.totalWater.toLocaleString();
-        if (landEl) landEl.textContent = this.results.totalLand.toFixed(2);
-        if (ecoEl) ecoEl.textContent = this.results.ecoRating.toFixed(1);
-
-        // Отображаем сравнения
-        this.displayComparisons();
-        
-        // Отображаем рекомендации
-        this.displayRecommendations();
-
-        // Прокручиваем к результатам
-        resultsSection.scrollIntoView({ behavior: 'smooth' });
-    }
-
-    /**
-     * Отобразить сравнения с альтернативами
-     */
-    displayComparisons() {
-        let comparisonContainer = document.getElementById('comparison-results');
-        
-        if (!comparisonContainer) {
-            // Создаем элемент если его нет
-            const resultsSection = document.getElementById('results-section');
-            if (resultsSection) {
-                const newElement = document.createElement('div');
-                newElement.id = 'comparison-results';
-                resultsSection.appendChild(newElement);
-                comparisonContainer = newElement;
-            } else {
-                console.error('Элемент comparison-results не найден и не может быть создан');
-                return;
-            }
-        }
-
-        comparisonContainer.innerHTML = '';
-
-        this.results.comparisons.forEach(comparison => {
-            const comparisonItem = document.createElement('div');
-            comparisonItem.className = 'comparison-item';
-            comparisonItem.innerHTML = `
-                <div>
-                    <strong>${comparison.product}</strong><br>
-                    <small>Текущий след: ${comparison.currentFootprint.toFixed(2)} кг CO₂</small>
-                </div>
-                <div>
-                    <strong>Альтернативы:</strong><br>
-                    <small>${comparison.alternatives.join(', ')}</small><br>
-                    <small style="color: #2E8B57;">Экономия: ~${comparison.potentialSavings.toFixed(2)} кг CO₂</small>
-                </div>
-            `;
-            comparisonContainer.appendChild(comparisonItem);
-        });
-    }
-
-    /**
-     * Отобразить рекомендации
-     */
-    displayRecommendations() {
-        let recommendationsContainer = document.getElementById('recommendations-list');
-        
-        if (!recommendationsContainer) {
-            // Создаем элемент если его нет
-            const resultsSection = document.getElementById('results-section');
-            if (resultsSection) {
-                const newElement = document.createElement('div');
-                newElement.id = 'recommendations-list';
-                resultsSection.appendChild(newElement);
-                recommendationsContainer = newElement;
-            } else {
-                console.error('Элемент recommendations-list не найден и не может быть создан');
-                return;
-            }
-        }
-
-        recommendationsContainer.innerHTML = '';
-
-        this.results.recommendations.forEach(rec => {
-            const recItem = document.createElement('div');
-            recItem.className = 'recommendation-item';
-            
-            let icon = '💡';
-            if (rec.type === 'warning') icon = '⚠️';
-            if (rec.type === 'suggestion') icon = '🌱';
-            
-            recItem.innerHTML = `
-                <strong>${icon} ${rec.title}</strong><br>
-                <small>${rec.description}</small>
-            `;
-            recommendationsContainer.appendChild(recItem);
-        });
-    }
-
-    /**
-     * Показать загрузку
-     */
-    showLoading() {
-        const resultsSection = document.getElementById('results-section');
-        if (!resultsSection) return;
-        resultsSection.style.display = 'block';
-
-        let loading = document.getElementById('results-loading');
-        if (!loading) {
-            loading = document.createElement('div');
-            loading.id = 'results-loading';
-            loading.className = 'loading';
-            loading.innerHTML = `
-                <div class="spinner"></div>
-                <p>Рассчитываем экологический след...</p>
-            `;
-            resultsSection.appendChild(loading);
-        }
-        loading.style.display = 'flex';
-    }
-
-    hideLoading() {
-        const loading = document.getElementById('results-loading');
-        if (loading) {
-            loading.style.display = 'none';
-        }
-    }
-
-    /**
-     * Показать ошибку
-     */
-    showError(message) {
-        const resultsSection = document.getElementById('results-section');
-        resultsSection.style.display = 'block';
-        resultsSection.innerHTML = `
-            <div class="error">
-                <strong>Ошибка:</strong> ${message}
-            </div>
-        `;
-    }
-
-    /**
-     * Сохранить результаты в localStorage
-     */
-    saveResults() {
-        if (this.results) {
-            localStorage.setItem('ecoFootprintResults', JSON.stringify({
-                results: this.results,
-                timestamp: new Date().toISOString()
-            }));
-        }
-    }
-
-    /**
-     * Загрузить сохраненные данные
-     */
-    loadSavedData() {
-        const saved = localStorage.getItem('ecoFootprintResults');
-        if (saved) {
-            try {
-                const data = JSON.parse(saved);
-                const savedDate = new Date(data.timestamp);
-                const now = new Date();
-                
-                // Показываем сохраненные результаты, если они не старше 24 часов
-                if (now - savedDate < 24 * 60 * 60 * 1000) {
-                    this.results = data.results;
-                    this.displayResults();
-                }
-            } catch (error) {
-                console.error('Ошибка загрузки сохраненных данных:', error);
-            }
-        }
-    }
-
-    /**
-     * Поделиться результатами
-     */
-    shareResults(platform) {
-        if (!this.results) {
-            alert('Сначала рассчитайте экологический след');
-            return;
-        }
-
-        const text = `Мой экологический след продуктов: ${this.results.totalCarbon} кг CO₂, ${this.results.totalWater.toLocaleString()} л воды. Эко-рейтинг: ${this.results.ecoRating}/10. Рассчитайте свой на SerpMonn!`;
-        const url = window.location.href;
-
-        let shareUrl = '';
-        
-        switch (platform) {
-            case 'vk':
-                shareUrl = `https://vk.com/share.php?url=${encodeURIComponent(url)}&title=${encodeURIComponent('Калькулятор экологического следа продуктов')}&description=${encodeURIComponent(text)}`;
-                break;
-            case 'telegram':
-                shareUrl = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
-                break;
-        }
-
-        if (shareUrl) {
-            window.open(shareUrl, '_blank', 'width=600,height=400');
-        }
-    }
+  loadSavedData() {
+    try {
+      const saved = localStorage.getItem('ecoFootprintResults');
+      if (!saved) return;
+      const data = JSON.parse(saved);
+      if (Date.now() - new Date(data.timestamp).getTime() < 24 * 60 * 60 * 1000) {
+        this.results = data.results;
+        this.displayResults();
+      }
+    } catch {}
+  }
 }
 
-// Глобальные функции для HTML
-let calculator;
-
-function addProduct() {
-    if (window.ecoCalculator) {
-        window.ecoCalculator.addProduct();
-    }
+function initProductCalculator() {
+  const required = ['products-container', 'carbon-footprint', 'water-footprint', 'land-footprint', 'eco-score', 'results-section'];
+  const missing = required.filter(id => !document.getElementById(id));
+  if (missing.length > 0) {
+    console.error('Eco calculator missing elements:', missing);
+    return;
+  }
+  window.ecoCalculator = new EcoFootprintCalculator();
 }
 
-function removeProduct(button) {
-    if (window.ecoCalculator) {
-        window.ecoCalculator.removeProduct(button);
-    }
+function addProductRow() {
+  window.ecoCalculator?.addProductRow();
+}
+
+function removeProductRow(button) {
+  const row = button.closest('.product-row');
+  row?.remove();
+  window.ecoCalculator?.updateRemoveButtons();
 }
 
 function calculateFootprint() {
-    if (window.ecoCalculator) {
-        window.ecoCalculator.calculateFootprint();
-    }
+  window.ecoCalculator?.calculateFootprint();
 }
 
-function shareResults(platform) {
-    if (window.ecoCalculator) {
-        window.ecoCalculator.shareResults(platform);
-    }
+function removeSelectedProduct(index) {
+  if (!window.ecoCalculator) return;
+  window.ecoCalculator.products.splice(index, 1);
+  window.ecoCalculator.displaySelectedProducts();
+  if (window.ecoCalculator.products.length > 0) {
+    window.ecoCalculator.calculateFootprint();
+  }
 }
 
-// Инициализация при загрузке страницы (удалено - дублирует код ниже)
-
-// Дополнительные утилиты
-
-/**
- * Форматировать число с разделителями тысяч
- */
-function formatNumber(num) {
-    return num.toLocaleString('ru-RU');
-}
-
-/**
- * Получить цвет для эко-рейтинга
- */
-function getEcoRatingColor(rating) {
-    if (rating >= 8) return '#2E8B57'; // Зеленый
-    if (rating >= 6) return '#FFA500'; // Оранжевый
-    if (rating >= 4) return '#FF6347'; // Красноватый
-    return '#DC143C'; // Красный
-}
-
-/**
- * Получить описание эко-рейтинга
- */
-function getEcoRatingDescription(rating) {
-    if (rating >= 8) return 'Отличный экологический выбор!';
-    if (rating >= 6) return 'Хороший экологический выбор';
-    if (rating >= 4) return 'Умеренное воздействие на экологию';
-    return 'Высокое воздействие на экологию';
-}
-
-// Глобальные функции для HTML
-window.calculateFootprint = function() {
-    if (window.ecoCalculator) {
-        window.ecoCalculator.calculateFootprint();
-    } else {
-        console.error('Калькулятор не инициализирован');
-    }
-};
-
-window.addProduct = function() {
-    if (window.ecoCalculator) {
-        window.ecoCalculator.addProduct();
-    } else {
-        console.error('Калькулятор не инициализирован');
-    }
-};
-
-window.removeProduct = function(button) {
-    if (window.ecoCalculator) {
-        window.ecoCalculator.removeProduct(button);
-    } else {
-        console.error('Калькулятор не инициализирован');
-    }
-};
-
-window.shareResults = function(platform) {
-    if (window.ecoCalculator) {
-        window.ecoCalculator.shareResults(platform);
-    } else {
-        console.error('Калькулятор не инициализирован');
-    }
-};
-
-window.removeSelectedProduct = function(index) {
-    if (window.ecoCalculator) {
-        window.ecoCalculator.products.splice(index, 1);
-        window.ecoCalculator.displaySelectedProducts();
-        window.ecoCalculator.calculateFootprint();
-    }
-};
-
-
-
-// Инициализация после загрузки DOM
-document.addEventListener('DOMContentLoaded', function() {
-    // Проверяем, что все необходимые элементы существуют
-    const requiredElements = [
-        'products-container',
-        'carbon-footprint',
-        'water-footprint', 
-        'land-footprint',
-        'eco-score',
-        'results-section',
-        'comparison-results',
-        'recommendations-list'
-    ];
-    
-    const missingElements = requiredElements.filter(id => !document.getElementById(id));
-    
-    if (missingElements.length > 0) {
-        console.error('Отсутствуют элементы:', missingElements);
-        return;
-    }
-    
-    // Инициализируем калькулятор только если все элементы найдены
-    window.ecoCalculator = new EcoFootprintCalculator();
-    console.log('Калькулятор инициализирован успешно');
-});
-
-// Экспорт для тестирования
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = EcoFootprintCalculator;
-}
+window.initProductCalculator = initProductCalculator;
+window.addProductRow = addProductRow;
+window.removeProductRow = removeProductRow;
+window.calculateFootprint = calculateFootprint;
+window.removeSelectedProduct = removeSelectedProduct;
+window.addProduct = addProductRow;

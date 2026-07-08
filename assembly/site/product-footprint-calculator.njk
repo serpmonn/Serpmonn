@@ -221,8 +221,8 @@ eleventyComputed:
       </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js"></script>
-    <script src="/frontend/tools/ecology/calculator.js"></script>
+    <script src="/frontend/tools/ecology/database.js?v=2"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
@@ -239,6 +239,8 @@ eleventyComputed:
         document.addEventListener('DOMContentLoaded', function() {
             if (typeof initProductCalculator === 'function') {
                 initProductCalculator();
+            } else if (window.ecoCalculator === undefined && typeof EcoFootprintCalculator !== 'undefined') {
+                window.ecoCalculator = new EcoFootprintCalculator();
             }
         });
     </script>
