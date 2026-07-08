@@ -33,7 +33,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Таблица лидеров",
       "nicknamePlaceholder": "Введи своё Имя",
       "nicknameSubmit": "Начать игру",
-      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм."
+      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм.",
+      "scoreTableTitle": "Таблица лидеров — Падающие синие квадраты",
+      "scoreTableMetaDescription": "Посмотрите, кто лидирует в игре! Узнайте, кто набрал наибольшее количество очков и сравните свои результаты с другими игроками. Сможете ли вы попасть в топ?",
+      "scoreTableColRank": "Место",
+      "scoreTableColNickname": "Ник",
+      "scoreTableColScore": "Очки"
     }
   },
   "ar": {
@@ -68,7 +73,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "لوحة المتصدرين",
       "nicknamePlaceholder": "أدخل اسمك",
       "nicknameSubmit": "ابدأ اللعبة",
-      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر."
+      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر.",
+      "scoreTableTitle": "لوحة المتصدرين — المربعات الزرقاء الساقطة",
+      "scoreTableMetaDescription": "اطلع على المتصدرين! قارن نتائجك مع اللاعبين الآخرين.",
+      "scoreTableColRank": "المرتبة",
+      "scoreTableColNickname": "الاسم",
+      "scoreTableColScore": "النقاط"
     }
   },
   "az": {
@@ -103,7 +113,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Sıralama",
       "nicknamePlaceholder": "Adını gir",
       "nicknameSubmit": "Başla",
-      "bannedNicknameAlert": "Takma ad yasaklı kelimeler içeriyor. Başka bir tane seç."
+      "bannedNicknameAlert": "Takma ad yasaklı kelimeler içeriyor. Başka bir tane seç.",
+      "scoreTableTitle": "Sıralama — Düşen mavi kareler",
+      "scoreTableMetaDescription": "Oyunda kim önde gör! Sonuçlarını diğer oyuncılarla karşılaştır.",
+      "scoreTableColRank": "Sıra",
+      "scoreTableColNickname": "Takma ad",
+      "scoreTableColScore": "Puan"
     }
   },
   "be": {
@@ -138,7 +153,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Таблица лидеров",
       "nicknamePlaceholder": "Введи своё Имя",
       "nicknameSubmit": "Начать игру",
-      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм."
+      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм.",
+      "scoreTableTitle": "Таблица лидеров — Падающие синие квадраты",
+      "scoreTableMetaDescription": "Посмотрите, кто лидирует в игре! Узнайте, кто набрал наибольшее количество очков и сравните свои результаты с другими игроками. Сможете ли вы попасть в топ?",
+      "scoreTableColRank": "Место",
+      "scoreTableColNickname": "Ник",
+      "scoreTableColScore": "Очки"
     }
   },
   "bg": {
@@ -173,7 +193,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Таблица лидеров",
       "nicknamePlaceholder": "Введи своё Имя",
       "nicknameSubmit": "Начать игру",
-      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм."
+      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм.",
+      "scoreTableTitle": "Таблица лидеров — Падающие синие квадраты",
+      "scoreTableMetaDescription": "Посмотрите, кто лидирует в игре! Узнайте, кто набрал наибольшее количество очков и сравните свои результаты с другими игроками. Сможете ли вы попасть в топ?",
+      "scoreTableColRank": "Место",
+      "scoreTableColNickname": "Ник",
+      "scoreTableColScore": "Очки"
     }
   },
   "bn": {
@@ -208,7 +233,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "cs": {
@@ -243,7 +273,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Ranking",
       "nicknamePlaceholder": "Wpisz swoje imię",
       "nicknameSubmit": "Start",
-      "bannedNicknameAlert": "Nick zawiera zakazane słowa. Wybierz inny."
+      "bannedNicknameAlert": "Nick zawiera zakazane słowa. Wybierz inny.",
+      "scoreTableTitle": "Ranking — Spadające niebieskie kwadraty",
+      "scoreTableMetaDescription": "Zobacz, kto prowadzi w grze! Porównaj wyniki z innymi graczami.",
+      "scoreTableColRank": "Miejsce",
+      "scoreTableColNickname": "Nick",
+      "scoreTableColScore": "Punkty"
     }
   },
   "da": {
@@ -278,7 +313,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Bestenliste",
       "nicknamePlaceholder": "Gib deinen Namen ein",
       "nicknameSubmit": "Spiel starten",
-      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen."
+      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen.",
+      "scoreTableTitle": "Bestenliste — Fallende blaue Quadrate",
+      "scoreTableMetaDescription": "Sieh, wer das Spiel anführt! Vergleiche deine Ergebnisse mit anderen Spielern.",
+      "scoreTableColRank": "Platz",
+      "scoreTableColNickname": "Name",
+      "scoreTableColScore": "Punkte"
     }
   },
   "de": {
@@ -313,7 +353,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Bestenliste",
       "nicknamePlaceholder": "Gib deinen Namen ein",
       "nicknameSubmit": "Spiel starten",
-      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen."
+      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen.",
+      "scoreTableTitle": "Bestenliste — Fallende blaue Quadrate",
+      "scoreTableMetaDescription": "Sieh, wer das Spiel anführt! Vergleiche deine Ergebnisse mit anderen Spielern.",
+      "scoreTableColRank": "Platz",
+      "scoreTableColNickname": "Name",
+      "scoreTableColScore": "Punkte"
     }
   },
   "el": {
@@ -348,7 +393,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "en": {
@@ -383,7 +433,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "es": {
@@ -418,7 +473,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Clasificación",
       "nicknamePlaceholder": "Introduce tu nombre",
       "nicknameSubmit": "Iniciar",
-      "bannedNicknameAlert": "El apodo contiene palabras prohibidas. Elige otro."
+      "bannedNicknameAlert": "El apodo contiene palabras prohibidas. Elige otro.",
+      "scoreTableTitle": "Clasificación — Cuadrados azules cayendo",
+      "scoreTableMetaDescription": "¡Mira quién lidera el juego! Compara tus resultados con otros jugadores.",
+      "scoreTableColRank": "Puesto",
+      "scoreTableColNickname": "Apodo",
+      "scoreTableColScore": "Puntos"
     }
   },
   "es-419": {
@@ -453,7 +513,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Clasificación",
       "nicknamePlaceholder": "Introduce tu nombre",
       "nicknameSubmit": "Iniciar",
-      "bannedNicknameAlert": "El apodo contiene palabras prohibidas. Elige otro."
+      "bannedNicknameAlert": "El apodo contiene palabras prohibidas. Elige otro.",
+      "scoreTableTitle": "Clasificación — Cuadrados azules cayendo",
+      "scoreTableMetaDescription": "¡Mira quién lidera el juego! Compara tus resultados con otros jugadores.",
+      "scoreTableColRank": "Puesto",
+      "scoreTableColNickname": "Apodo",
+      "scoreTableColScore": "Puntos"
     }
   },
   "fa": {
@@ -488,7 +553,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "لوحة المتصدرين",
       "nicknamePlaceholder": "أدخل اسمك",
       "nicknameSubmit": "ابدأ اللعبة",
-      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر."
+      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر.",
+      "scoreTableTitle": "لوحة المتصدرين — المربعات الزرقاء الساقطة",
+      "scoreTableMetaDescription": "اطلع على المتصدرين! قارن نتائجك مع اللاعبين الآخرين.",
+      "scoreTableColRank": "المرتبة",
+      "scoreTableColNickname": "الاسم",
+      "scoreTableColScore": "النقاط"
     }
   },
   "fi": {
@@ -523,7 +593,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Bestenliste",
       "nicknamePlaceholder": "Gib deinen Namen ein",
       "nicknameSubmit": "Spiel starten",
-      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen."
+      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen.",
+      "scoreTableTitle": "Bestenliste — Fallende blaue Quadrate",
+      "scoreTableMetaDescription": "Sieh, wer das Spiel anführt! Vergleiche deine Ergebnisse mit anderen Spielern.",
+      "scoreTableColRank": "Platz",
+      "scoreTableColNickname": "Name",
+      "scoreTableColScore": "Punkte"
     }
   },
   "fil": {
@@ -558,7 +633,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "fr": {
@@ -593,7 +673,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Classement",
       "nicknamePlaceholder": "Entrez votre nom",
       "nicknameSubmit": "Démarrer",
-      "bannedNicknameAlert": "Le pseudo contient des mots interdits. Choisissez-en un autre."
+      "bannedNicknameAlert": "Le pseudo contient des mots interdits. Choisissez-en un autre.",
+      "scoreTableTitle": "Classement — Carrés bleus tombants",
+      "scoreTableMetaDescription": "Découvrez qui mène le jeu ! Comparez vos résultats avec les autres joueurs.",
+      "scoreTableColRank": "Rang",
+      "scoreTableColNickname": "Pseudo",
+      "scoreTableColScore": "Points"
     }
   },
   "he": {
@@ -628,7 +713,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "لوحة المتصدرين",
       "nicknamePlaceholder": "أدخل اسمك",
       "nicknameSubmit": "ابدأ اللعبة",
-      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر."
+      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر.",
+      "scoreTableTitle": "لوحة المتصدرين — المربعات الزرقاء الساقطة",
+      "scoreTableMetaDescription": "اطلع على المتصدرين! قارن نتائجك مع اللاعبين الآخرين.",
+      "scoreTableColRank": "المرتبة",
+      "scoreTableColNickname": "الاسم",
+      "scoreTableColScore": "النقاط"
     }
   },
   "hi": {
@@ -663,7 +753,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "hu": {
@@ -698,7 +793,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Ranking",
       "nicknamePlaceholder": "Wpisz swoje imię",
       "nicknameSubmit": "Start",
-      "bannedNicknameAlert": "Nick zawiera zakazane słowa. Wybierz inny."
+      "bannedNicknameAlert": "Nick zawiera zakazane słowa. Wybierz inny.",
+      "scoreTableTitle": "Ranking — Spadające niebieskie kwadraty",
+      "scoreTableMetaDescription": "Zobacz, kto prowadzi w grze! Porównaj wyniki z innymi graczami.",
+      "scoreTableColRank": "Miejsce",
+      "scoreTableColNickname": "Nick",
+      "scoreTableColScore": "Punkty"
     }
   },
   "hy": {
@@ -733,7 +833,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Таблица лидеров",
       "nicknamePlaceholder": "Введи своё Имя",
       "nicknameSubmit": "Начать игру",
-      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм."
+      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм.",
+      "scoreTableTitle": "Таблица лидеров — Падающие синие квадраты",
+      "scoreTableMetaDescription": "Посмотрите, кто лидирует в игре! Узнайте, кто набрал наибольшее количество очков и сравните свои результаты с другими игроками. Сможете ли вы попасть в топ?",
+      "scoreTableColRank": "Место",
+      "scoreTableColNickname": "Ник",
+      "scoreTableColScore": "Очки"
     }
   },
   "id": {
@@ -768,7 +873,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "it": {
@@ -803,7 +913,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Classifica",
       "nicknamePlaceholder": "Inserisci il nome",
       "nicknameSubmit": "Avvia",
-      "bannedNicknameAlert": "Il nickname contiene parole vietate. Scegline un altro."
+      "bannedNicknameAlert": "Il nickname contiene parole vietate. Scegline un altro.",
+      "scoreTableTitle": "Classifica — Quadrati blu cadenti",
+      "scoreTableMetaDescription": "Scopri chi guida il gioco! Confronta i tuoi risultati con altri giocatori.",
+      "scoreTableColRank": "Posizione",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Punteggio"
     }
   },
   "ja": {
@@ -838,7 +953,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "ランキング",
       "nicknamePlaceholder": "名前を入力",
       "nicknameSubmit": "ゲーム開始",
-      "bannedNicknameAlert": "ニックネームに禁止語が含まれています。別の名前を選んでください。"
+      "bannedNicknameAlert": "ニックネームに禁止語が含まれています。別の名前を選んでください。",
+      "scoreTableTitle": "ランキング — 落ちる青い四角",
+      "scoreTableMetaDescription": "ゲームのトッププレイヤーを確認！他のプレイヤーとスコアを比較しよう。",
+      "scoreTableColRank": "順位",
+      "scoreTableColNickname": "ニックネーム",
+      "scoreTableColScore": "スコア"
     }
   },
   "ka": {
@@ -873,7 +993,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Таблица лидеров",
       "nicknamePlaceholder": "Введи своё Имя",
       "nicknameSubmit": "Начать игру",
-      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм."
+      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм.",
+      "scoreTableTitle": "Таблица лидеров — Падающие синие квадраты",
+      "scoreTableMetaDescription": "Посмотрите, кто лидирует в игре! Узнайте, кто набрал наибольшее количество очков и сравните свои результаты с другими игроками. Сможете ли вы попасть в топ?",
+      "scoreTableColRank": "Место",
+      "scoreTableColNickname": "Ник",
+      "scoreTableColScore": "Очки"
     }
   },
   "kk": {
@@ -908,7 +1033,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Таблица лидеров",
       "nicknamePlaceholder": "Введи своё Имя",
       "nicknameSubmit": "Начать игру",
-      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм."
+      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм.",
+      "scoreTableTitle": "Таблица лидеров — Падающие синие квадраты",
+      "scoreTableMetaDescription": "Посмотрите, кто лидирует в игре! Узнайте, кто набрал наибольшее количество очков и сравните свои результаты с другими игроками. Сможете ли вы попасть в топ?",
+      "scoreTableColRank": "Место",
+      "scoreTableColNickname": "Ник",
+      "scoreTableColScore": "Очки"
     }
   },
   "ko": {
@@ -943,7 +1073,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "리더보드",
       "nicknamePlaceholder": "이름 입력",
       "nicknameSubmit": "게임 시작",
-      "bannedNicknameAlert": "닉네임에 금지된 단어가 있습니다. 다른 닉네임을 선택하세요."
+      "bannedNicknameAlert": "닉네임에 금지된 단어가 있습니다. 다른 닉네임을 선택하세요.",
+      "scoreTableTitle": "리더보드 — 떨어지는 파란 사각형",
+      "scoreTableMetaDescription": "게임 1위를 확인하세요! 다른 플레이어와 점수를 비교해 보세요.",
+      "scoreTableColRank": "순위",
+      "scoreTableColNickname": "닉네임",
+      "scoreTableColScore": "점수"
     }
   },
   "ms": {
@@ -978,7 +1113,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "nb": {
@@ -1013,7 +1153,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Bestenliste",
       "nicknamePlaceholder": "Gib deinen Namen ein",
       "nicknameSubmit": "Spiel starten",
-      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen."
+      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen.",
+      "scoreTableTitle": "Bestenliste — Fallende blaue Quadrate",
+      "scoreTableMetaDescription": "Sieh, wer das Spiel anführt! Vergleiche deine Ergebnisse mit anderen Spielern.",
+      "scoreTableColRank": "Platz",
+      "scoreTableColNickname": "Name",
+      "scoreTableColScore": "Punkte"
     }
   },
   "nl": {
@@ -1048,7 +1193,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Bestenliste",
       "nicknamePlaceholder": "Gib deinen Namen ein",
       "nicknameSubmit": "Spiel starten",
-      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen."
+      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen.",
+      "scoreTableTitle": "Bestenliste — Fallende blaue Quadrate",
+      "scoreTableMetaDescription": "Sieh, wer das Spiel anführt! Vergleiche deine Ergebnisse mit anderen Spielern.",
+      "scoreTableColRank": "Platz",
+      "scoreTableColNickname": "Name",
+      "scoreTableColScore": "Punkte"
     }
   },
   "pl": {
@@ -1083,7 +1233,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Ranking",
       "nicknamePlaceholder": "Wpisz swoje imię",
       "nicknameSubmit": "Start",
-      "bannedNicknameAlert": "Nick zawiera zakazane słowa. Wybierz inny."
+      "bannedNicknameAlert": "Nick zawiera zakazane słowa. Wybierz inny.",
+      "scoreTableTitle": "Ranking — Spadające niebieskie kwadraty",
+      "scoreTableMetaDescription": "Zobacz, kto prowadzi w grze! Porównaj wyniki z innymi graczami.",
+      "scoreTableColRank": "Miejsce",
+      "scoreTableColNickname": "Nick",
+      "scoreTableColScore": "Punkty"
     }
   },
   "pt-br": {
@@ -1118,7 +1273,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Ranking",
       "nicknamePlaceholder": "Digite seu nome",
       "nicknameSubmit": "Iniciar",
-      "bannedNicknameAlert": "O apelido contém palavras proibidas. Escolha outro."
+      "bannedNicknameAlert": "O apelido contém palavras proibidas. Escolha outro.",
+      "scoreTableTitle": "Ranking — Quadrados azuis caindo",
+      "scoreTableMetaDescription": "Veja quem lidera o jogo! Compare seus resultados com outros jogadores.",
+      "scoreTableColRank": "Posição",
+      "scoreTableColNickname": "Apelido",
+      "scoreTableColScore": "Pontos"
     }
   },
   "pt-pt": {
@@ -1153,7 +1313,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Clasificación",
       "nicknamePlaceholder": "Introduce tu nombre",
       "nicknameSubmit": "Iniciar",
-      "bannedNicknameAlert": "El apodo contiene palabras prohibidas. Elige otro."
+      "bannedNicknameAlert": "El apodo contiene palabras prohibidas. Elige otro.",
+      "scoreTableTitle": "Clasificación — Cuadrados azules cayendo",
+      "scoreTableMetaDescription": "¡Mira quién lidera el juego! Compara tus resultados con otros jugadores.",
+      "scoreTableColRank": "Puesto",
+      "scoreTableColNickname": "Apodo",
+      "scoreTableColScore": "Puntos"
     }
   },
   "ro": {
@@ -1188,7 +1353,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "sr": {
@@ -1223,7 +1393,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Таблица лидеров",
       "nicknamePlaceholder": "Введи своё Имя",
       "nicknameSubmit": "Начать игру",
-      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм."
+      "bannedNicknameAlert": "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм.",
+      "scoreTableTitle": "Таблица лидеров — Падающие синие квадраты",
+      "scoreTableMetaDescription": "Посмотрите, кто лидирует в игре! Узнайте, кто набрал наибольшее количество очков и сравните свои результаты с другими игроками. Сможете ли вы попасть в топ?",
+      "scoreTableColRank": "Место",
+      "scoreTableColNickname": "Ник",
+      "scoreTableColScore": "Очки"
     }
   },
   "sv": {
@@ -1258,7 +1433,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Bestenliste",
       "nicknamePlaceholder": "Gib deinen Namen ein",
       "nicknameSubmit": "Spiel starten",
-      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen."
+      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen.",
+      "scoreTableTitle": "Bestenliste — Fallende blaue Quadrate",
+      "scoreTableMetaDescription": "Sieh, wer das Spiel anführt! Vergleiche deine Ergebnisse mit anderen Spielern.",
+      "scoreTableColRank": "Platz",
+      "scoreTableColNickname": "Name",
+      "scoreTableColScore": "Punkte"
     }
   },
   "th": {
@@ -1293,7 +1473,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "tr": {
@@ -1328,7 +1513,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Sıralama",
       "nicknamePlaceholder": "Adını gir",
       "nicknameSubmit": "Başla",
-      "bannedNicknameAlert": "Takma ad yasaklı kelimeler içeriyor. Başka bir tane seç."
+      "bannedNicknameAlert": "Takma ad yasaklı kelimeler içeriyor. Başka bir tane seç.",
+      "scoreTableTitle": "Sıralama — Düşen mavi kareler",
+      "scoreTableMetaDescription": "Oyunda kim önde gör! Sonuçlarını diğer oyuncılarla karşılaştır.",
+      "scoreTableColRank": "Sıra",
+      "scoreTableColNickname": "Takma ad",
+      "scoreTableColScore": "Puan"
     }
   },
   "ur": {
@@ -1363,7 +1553,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "لوحة المتصدرين",
       "nicknamePlaceholder": "أدخل اسمك",
       "nicknameSubmit": "ابدأ اللعبة",
-      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر."
+      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر.",
+      "scoreTableTitle": "لوحة المتصدرين — المربعات الزرقاء الساقطة",
+      "scoreTableMetaDescription": "اطلع على المتصدرين! قارن نتائجك مع اللاعبين الآخرين.",
+      "scoreTableColRank": "المرتبة",
+      "scoreTableColNickname": "الاسم",
+      "scoreTableColScore": "النقاط"
     }
   },
   "uz": {
@@ -1398,7 +1593,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Sıralama",
       "nicknamePlaceholder": "Adını gir",
       "nicknameSubmit": "Başla",
-      "bannedNicknameAlert": "Takma ad yasaklı kelimeler içeriyor. Başka bir tane seç."
+      "bannedNicknameAlert": "Takma ad yasaklı kelimeler içeriyor. Başka bir tane seç.",
+      "scoreTableTitle": "Sıralama — Düşen mavi kareler",
+      "scoreTableMetaDescription": "Oyunda kim önde gör! Sonuçlarını diğer oyuncılarla karşılaştır.",
+      "scoreTableColRank": "Sıra",
+      "scoreTableColNickname": "Takma ad",
+      "scoreTableColScore": "Puan"
     }
   },
   "vi": {
@@ -1433,7 +1633,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "zh-cn": {
@@ -1468,7 +1673,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "排行榜",
       "nicknamePlaceholder": "输入你的名字",
       "nicknameSubmit": "开始游戏",
-      "bannedNicknameAlert": "昵称包含禁用词，请换一个。"
+      "bannedNicknameAlert": "昵称包含禁用词，请换一个。",
+      "scoreTableTitle": "排行榜 — 坠落的蓝色方块",
+      "scoreTableMetaDescription": "看看谁是游戏冠军！比较你的分数与其他玩家。",
+      "scoreTableColRank": "名次",
+      "scoreTableColNickname": "昵称",
+      "scoreTableColScore": "分数"
     }
   },
   "ps": {
@@ -1503,7 +1713,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "لوحة المتصدرين",
       "nicknamePlaceholder": "أدخل اسمك",
       "nicknameSubmit": "ابدأ اللعبة",
-      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر."
+      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر.",
+      "scoreTableTitle": "لوحة المتصدرين — المربعات الزرقاء الساقطة",
+      "scoreTableMetaDescription": "اطلع على المتصدرين! قارن نتائجك مع اللاعبين الآخرين.",
+      "scoreTableColRank": "المرتبة",
+      "scoreTableColNickname": "الاسم",
+      "scoreTableColScore": "النقاط"
     }
   },
   "sd": {
@@ -1538,7 +1753,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "ug": {
@@ -1573,7 +1793,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "لوحة المتصدرين",
       "nicknamePlaceholder": "أدخل اسمك",
       "nicknameSubmit": "ابدأ اللعبة",
-      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر."
+      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر.",
+      "scoreTableTitle": "لوحة المتصدرين — المربعات الزرقاء الساقطة",
+      "scoreTableMetaDescription": "اطلع على المتصدرين! قارن نتائجك مع اللاعبين الآخرين.",
+      "scoreTableColRank": "المرتبة",
+      "scoreTableColNickname": "الاسم",
+      "scoreTableColScore": "النقاط"
     }
   },
   "dv": {
@@ -1608,7 +1833,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "لوحة المتصدرين",
       "nicknamePlaceholder": "أدخل اسمك",
       "nicknameSubmit": "ابدأ اللعبة",
-      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر."
+      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر.",
+      "scoreTableTitle": "لوحة المتصدرين — المربعات الزرقاء الساقطة",
+      "scoreTableMetaDescription": "اطلع على المتصدرين! قارن نتائجك مع اللاعبين الآخرين.",
+      "scoreTableColRank": "المرتبة",
+      "scoreTableColNickname": "الاسم",
+      "scoreTableColScore": "النقاط"
     }
   },
   "ks": {
@@ -1643,7 +1873,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Leaderboard",
       "nicknamePlaceholder": "Enter your name",
       "nicknameSubmit": "Start game",
-      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname."
+      "bannedNicknameAlert": "Nickname contains banned words. Please choose another nickname.",
+      "scoreTableTitle": "Leaderboard — Falling Blue Squares",
+      "scoreTableMetaDescription": "See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?",
+      "scoreTableColRank": "Rank",
+      "scoreTableColNickname": "Nickname",
+      "scoreTableColScore": "Score"
     }
   },
   "ku-arab": {
@@ -1678,7 +1913,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "لوحة المتصدرين",
       "nicknamePlaceholder": "أدخل اسمك",
       "nicknameSubmit": "ابدأ اللعبة",
-      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر."
+      "bannedNicknameAlert": "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر.",
+      "scoreTableTitle": "لوحة المتصدرين — المربعات الزرقاء الساقطة",
+      "scoreTableMetaDescription": "اطلع على المتصدرين! قارن نتائجك مع اللاعبين الآخرين.",
+      "scoreTableColRank": "المرتبة",
+      "scoreTableColNickname": "الاسم",
+      "scoreTableColScore": "النقاط"
     }
   },
   "yi": {
@@ -1713,7 +1953,12 @@ export const TRANSLATIONS = {
       "leaderboardBtn": "Bestenliste",
       "nicknamePlaceholder": "Gib deinen Namen ein",
       "nicknameSubmit": "Spiel starten",
-      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen."
+      "bannedNicknameAlert": "Nickname enthält verbotene Wörter. Bitte wähle einen anderen.",
+      "scoreTableTitle": "Bestenliste — Fallende blaue Quadrate",
+      "scoreTableMetaDescription": "Sieh, wer das Spiel anführt! Vergleiche deine Ergebnisse mit anderen Spielern.",
+      "scoreTableColRank": "Platz",
+      "scoreTableColNickname": "Name",
+      "scoreTableColScore": "Punkte"
     }
   }
 };

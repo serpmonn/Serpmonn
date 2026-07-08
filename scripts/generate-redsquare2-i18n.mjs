@@ -19,11 +19,32 @@ const T = {
   tr: { pageTitle:"Düşen mavi kareler", metaDescription:"Düşen şekillerden kaçarak reflekslerini test et!", ogTitle:"Reflekslerini test et!", ogDescription:"Ne kadar dayanabilirsin?", twitterTitle:"Düşen şekiller — Serpmonn", twitterDescription:"Serpmonn mini oyun.", instructionTitle:"Düşen mavi kareler nasıl oynanır?", instControl:"Kontroller:", instControlText:"Kırmızı kareyi ok tuşları veya dokunmatikle hareket ettir", instGoal:"Hedef:", instGoalText:"Düşen nesnelerden kaç", instScoring:"Puan:", instScoringText:"Kaçırdığın her nesne için 1 puan", instMisses:"Hatalar:", instMissesText:"Bir nesne sana çarparsa hata sayılır", instEnd:"Oyun sonu:", instEndText:"10 çarpışmadan sonra oyun biter", instLeaderboard:"Sıralama:", instLeaderboardText:"Oyundan sonra sonuçlarını gör", instPause:"Duraklat:", instPauseText:"Geçici durdurmak için Duraklat düğmesini kullan", understandBtn:"Anladım, başlayalım!", scorePrefix:"Puan: ", missedPrefix:"Hatalar: ", pause:"Duraklat", resume:"Devam", restart:"Yeniden", leaderboardBtn:"Sıralama", nicknamePlaceholder:"Adını gir", nicknameSubmit:"Başla", bannedNicknameAlert:"Takma ad yasaklı kelimeler içeriyor. Başka bir tane seç." },
 };
 
-function get(locale) {
-  if (T[locale]) return { ...T[locale] };
+const SCORE_TABLE = {
+  ru: { scoreTableTitle:"Таблица лидеров — Падающие синие квадраты", scoreTableMetaDescription:"Посмотрите, кто лидирует в игре! Узнайте, кто набрал наибольшее количество очков и сравните свои результаты с другими игроками. Сможете ли вы попасть в топ?", scoreTableColRank:"Место", scoreTableColNickname:"Ник", scoreTableColScore:"Очки" },
+  en: { scoreTableTitle:"Leaderboard — Falling Blue Squares", scoreTableMetaDescription:"See who leads the game! Check the top scores and compare your results with other players. Can you make it to the top?", scoreTableColRank:"Rank", scoreTableColNickname:"Nickname", scoreTableColScore:"Score" },
+  de: { scoreTableTitle:"Bestenliste — Fallende blaue Quadrate", scoreTableMetaDescription:"Sieh, wer das Spiel anführt! Vergleiche deine Ergebnisse mit anderen Spielern.", scoreTableColRank:"Platz", scoreTableColNickname:"Name", scoreTableColScore:"Punkte" },
+  fr: { scoreTableTitle:"Classement — Carrés bleus tombants", scoreTableMetaDescription:"Découvrez qui mène le jeu ! Comparez vos résultats avec les autres joueurs.", scoreTableColRank:"Rang", scoreTableColNickname:"Pseudo", scoreTableColScore:"Points" },
+  es: { scoreTableTitle:"Clasificación — Cuadrados azules cayendo", scoreTableMetaDescription:"¡Mira quién lidera el juego! Compara tus resultados con otros jugadores.", scoreTableColRank:"Puesto", scoreTableColNickname:"Apodo", scoreTableColScore:"Puntos" },
+  "zh-cn": { scoreTableTitle:"排行榜 — 坠落的蓝色方块", scoreTableMetaDescription:"看看谁是游戏冠军！比较你的分数与其他玩家。", scoreTableColRank:"名次", scoreTableColNickname:"昵称", scoreTableColScore:"分数" },
+  ja: { scoreTableTitle:"ランキング — 落ちる青い四角", scoreTableMetaDescription:"ゲームのトッププレイヤーを確認！他のプレイヤーとスコアを比較しよう。", scoreTableColRank:"順位", scoreTableColNickname:"ニックネーム", scoreTableColScore:"スコア" },
+  ko: { scoreTableTitle:"리더보드 — 떨어지는 파란 사각형", scoreTableMetaDescription:"게임 1위를 확인하세요! 다른 플레이어와 점수를 비교해 보세요.", scoreTableColRank:"순위", scoreTableColNickname:"닉네임", scoreTableColScore:"점수" },
+  ar: { scoreTableTitle:"لوحة المتصدرين — المربعات الزرقاء الساقطة", scoreTableMetaDescription:"اطلع على المتصدرين! قارن نتائجك مع اللاعبين الآخرين.", scoreTableColRank:"المرتبة", scoreTableColNickname:"الاسم", scoreTableColScore:"النقاط" },
+  it: { scoreTableTitle:"Classifica — Quadrati blu cadenti", scoreTableMetaDescription:"Scopri chi guida il gioco! Confronta i tuoi risultati con altri giocatori.", scoreTableColRank:"Posizione", scoreTableColNickname:"Nickname", scoreTableColScore:"Punteggio" },
+  "pt-br": { scoreTableTitle:"Ranking — Quadrados azuis caindo", scoreTableMetaDescription:"Veja quem lidera o jogo! Compare seus resultados com outros jogadores.", scoreTableColRank:"Posição", scoreTableColNickname:"Apelido", scoreTableColScore:"Pontos" },
+  pl: { scoreTableTitle:"Ranking — Spadające niebieskie kwadraty", scoreTableMetaDescription:"Zobacz, kto prowadzi w grze! Porównaj wyniki z innymi graczami.", scoreTableColRank:"Miejsce", scoreTableColNickname:"Nick", scoreTableColScore:"Punkty" },
+  tr: { scoreTableTitle:"Sıralama — Düşen mavi kareler", scoreTableMetaDescription:"Oyunda kim önde gör! Sonuçlarını diğer oyuncılarla karşılaştır.", scoreTableColRank:"Sıra", scoreTableColNickname:"Takma ad", scoreTableColScore:"Puan" },
+};
+
+function getScoreTable(locale) {
+  if (SCORE_TABLE[locale]) return { ...SCORE_TABLE[locale] };
   const fb = FALLBACK[locale];
-  if (fb && T[fb]) return { ...T[fb] };
-  return { ...T.en };
+  if (fb && SCORE_TABLE[fb]) return { ...SCORE_TABLE[fb] };
+  return { ...SCORE_TABLE.en };
+}
+
+function get(locale) {
+  const base = T[locale] ? { ...T[locale] } : (FALLBACK[locale] && T[FALLBACK[locale]]) ? { ...T[FALLBACK[locale]] } : { ...T.en };
+  return { ...base, ...getScoreTable(locale) };
 }
 
 const TRANSLATIONS = Object.fromEntries(LOCALES.map((locale) => [locale, { gameRedsquare2: get(locale) }]));

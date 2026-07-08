@@ -313,7 +313,8 @@
 	    });
 
             document.getElementById('leaderboardBtn').addEventListener('click', function() {
-                window.open('/frontend/games/redsquare2/score_table.html', '_blank');
+                const url = window.i18n?.scoreTableUrl || '/frontend/games/redsquare2/score_table.html';
+                window.open(url, '_blank');
             });
 
             document.getElementById('homeBtn').addEventListener('click', function() {

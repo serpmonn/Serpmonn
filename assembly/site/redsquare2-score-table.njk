@@ -1,0 +1,57 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/games/redsquare2/score_table.html{% else %}/frontend/{{ locale }}/games/redsquare2/score_table.html{% endif %}"
+eleventyComputed:
+  title: "{{ gameRedsquare2Translations[locale].gameRedsquare2.scoreTableTitle }}"
+  description: "{{ gameRedsquare2Translations[locale].gameRedsquare2.scoreTableMetaDescription }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/games/redsquare2/score_table.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/games/redsquare2/score_table.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+<link rel="stylesheet" href="/frontend/styles/styles.css">
+<meta http-equiv="Content-Language" content="{{ locale }}">
+    <title>{{ title }}</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="{{ description }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="canonical" href="{{ canonical }}"/>
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/leaderboards.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/leaderboard.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+</head>
+<body>
+    <div class="ad-container" style="margin: 10px 0; text-align: center;">
+        <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
+             data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>{{ gameRedsquare2Translations[locale].gameRedsquare2.scoreTableColRank }}</th>
+                <th>{{ gameRedsquare2Translations[locale].gameRedsquare2.scoreTableColNickname }}</th>
+                <th>{{ gameRedsquare2Translations[locale].gameRedsquare2.scoreTableColScore }}</th>
+            </tr>
+        </thead>
+        <tbody id="leaderboardBody"></tbody>
+    </table>
+
+    <div class="ad-container" style="margin: 20px 0; text-align: center;">
+        <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
+             data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+    </div>
+
+    <script>
+        (MRGtag = window.MRGtag || []).push({});
+    </script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+</body>
+</html>

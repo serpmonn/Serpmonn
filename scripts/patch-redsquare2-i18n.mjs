@@ -10,6 +10,7 @@ const KEYS = [
   'instLeaderboard', 'instLeaderboardText', 'instPause', 'instPauseText', 'understandBtn',
   'scorePrefix', 'missedPrefix', 'pause', 'resume', 'restart', 'leaderboardBtn',
   'nicknamePlaceholder', 'nicknameSubmit', 'bannedNicknameAlert',
+  'scoreTableTitle', 'scoreTableMetaDescription', 'scoreTableColRank', 'scoreTableColNickname', 'scoreTableColScore',
 ];
 
 for (const locale of LOCALES) {
