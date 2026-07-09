@@ -76,6 +76,64 @@ function syncSearchQueryToUrl(query) {
   }
 }
 
+let lastShareContext = {
+  query: '',
+  answer: '',
+  answerEmpty: false
+};
+
+function setShareContext(query, answer, answerEmpty = false) {
+  lastShareContext = {
+    query: (query || '').trim(),
+    answer: (answer || '').trim(),
+    answerEmpty: !!answerEmpty
+  };
+}
+
+function buildSharePayload() {
+  const messages = getMessages();
+  const { query, answer, answerEmpty } = lastShareContext;
+  const pageUrl = buildSharePageUrl(query);
+  const lines = [];
+
+  if (query) {
+    lines.push(t('shareQueryLine', { query }));
+  }
+
+  if (answer) {
+    lines.push(answer);
+  } else if (!answerEmpty) {
+    lines.push(messages.shareTitleDefault);
+  }
+
+  lines.push(pageUrl);
+
+  const shareText = lines.join('\n\n');
+  const shareTitle = query ? `Serpmonn: ${query}` : messages.shareTitleDefault;
+
+  return {
+    pageUrl,
+    shareText,
+    answerText: answer,
+    query,
+    shareTitle
+  };
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  const tmp = document.createElement('textarea');
+  tmp.value = text;
+  document.body.appendChild(tmp);
+  tmp.select();
+  document.execCommand('copy');
+  document.body.removeChild(tmp);
+}
+
 // ======================================================================================================================
 // ГОЛОСОВОЙ ВВОД
 // ======================================================================================================================
@@ -335,10 +393,108 @@ function extractLinks(text) {
   return links.slice(0, 3);
 }
 
+function getSourceHostname(link) {
+  try {
+    return new URL(link).hostname.replace(/^www\./, '');
+  } catch (e) {
+    return '';
+  }
+}
+
+function getSourceFaviconUrl(hostname, size = 32) {
+  if (!hostname) return '';
+  return `https://www.google.com/s2/favicons?domain=${hostname}&sz=${size}`;
+}
+
+function normalizeSourceItems(items) {
+  return items
+    .slice(0, 6)
+    .map((item) => ({
+      link: item.link || item.url || '',
+      title: item.title || item.text || item.link || item.url || ''
+    }))
+    .filter((item) => item.link);
+}
+
+function renderSourcesBlock(items, messages) {
+  const sources = normalizeSourceItems(items);
+  if (!sources.length) return '';
+
+  const toggleLabel = `${messages.sources} (${sources.length})`;
+
+  const chips = sources
+    .map((src) => {
+      const hostname = getSourceHostname(src.link);
+      const favicon = getSourceFaviconUrl(hostname, 32);
+      return `
+        <a href="${src.link}" target="_blank" rel="noopener" class="ai-source-chip" title="${src.title}">
+          <img src="${favicon}" class="ai-source-chip-favicon" alt="" width="14" height="14" loading="lazy">
+        </a>
+      `;
+    })
+    .join('');
+
+  const listItems = sources
+    .map((src) => {
+      const hostname = getSourceHostname(src.link);
+      const favicon = getSourceFaviconUrl(hostname, 16);
+      return `
+        <a href="${src.link}" target="_blank" rel="noopener" class="source-item">
+          <img src="${favicon}" class="source-favicon" alt="" width="16" height="16" loading="lazy">
+          <span class="source-title">${src.title}</span>
+          <span class="source-url">${hostname}</span>
+        </a>
+      `;
+    })
+    .join('');
+
+  return `
+    <div class="ai-sources">
+      <div class="ai-sources-bar">
+        <div class="ai-sources-chips">${chips}</div>
+        <button type="button" class="ai-sources-toggle" aria-expanded="false" aria-controls="ai-sources-list">
+          <span class="ai-sources-toggle-label">${toggleLabel}</span>
+          <svg class="ai-sources-chevron" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+          </svg>
+        </button>
+      </div>
+      <div id="ai-sources-list" class="ai-sources-list" hidden>
+        ${listItems}
+      </div>
+    </div>
+  `;
+}
+
+function setupSourcesToggle(root = document) {
+  const block = root.querySelector('.ai-sources');
+  if (!block) return;
+
+  const toggle = block.querySelector('.ai-sources-toggle');
+  const list = block.querySelector('.ai-sources-list');
+  if (!toggle || !list) return;
+
+  toggle.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    const nextExpanded = !expanded;
+
+    toggle.setAttribute('aria-expanded', nextExpanded ? 'true' : 'false');
+    list.hidden = !nextExpanded;
+    block.classList.toggle('is-expanded', nextExpanded);
+  });
+}
+
 // ======================================================================================================================
 // ПОКАЗАТЬ АНИМАЦИЮ ЗАГРУЗКИ
 // ======================================================================================================================
+function setResultActionsVisible(visible) {
+  const footer = document.querySelector('.ai-result-footer');
+  if (!footer) return;
+  footer.classList.toggle('is-pending', !visible);
+}
+
 function showLoading() {
+  setResultActionsVisible(false);
   const t = getMessages();
   const contentDiv = document.getElementById('ai-result-content');
   if (!contentDiv) return;
@@ -574,6 +730,7 @@ function finalizePendingMedia(state) {
 }
 
 function showStreamingTextStart(data, options = {}) {
+  setResultActionsVisible(false);
   const messages = getMessages();
   const contentDiv = document.getElementById('ai-result-content');
   const container = document.getElementById('ai-result-container');
@@ -738,65 +895,28 @@ function showResult(data, options = {}) {
     html += renderAnswerHtml(resolved.text, resolved.isEmpty);
 
     if (!resolved.isEmpty && Array.isArray(data.sources) && data.sources.length > 0) {
-      html += `
-        <div class="ai-sources">
-          <div class="sources-title">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-            </svg>
-            ${t.sources}
-          </div>
-          ${
-            data.sources
-              .slice(0, 6)
-              .map(src => {
-                let hostname = '';
-                try { hostname = new URL(src.link).hostname; } catch (e) {}
-                return `
-                  <a href="${src.link}" target="_blank" rel="noopener" class="source-item">
-                    <img src="https://www.google.com/s2/favicons?domain=${hostname}&sz=16" 
-                         class="source-favicon" alt="">
-                    <span class="source-title">${src.title || src.link}</span>
-                    <span class="source-url">${hostname}</span>
-                  </a>
-                `;
-              })
-              .join('')
-          }
-        </div>
-      `;
+      html += renderSourcesBlock(data.sources, t);
     } else if (!resolved.isEmpty) {
       const links = extractLinks(html);
       if (links.length > 0) {
-        html += `
-          <div class="ai-sources">
-            <div class="sources-title">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-              </svg>
-              ${t.sources}
-            </div>
-            ${
-              links.map(link => {
-                let hostname = '';
-                try { hostname = new URL(link.url).hostname; } catch (e) {}
-                return `
-                  <a href="${link.url}" target="_blank" rel="noopener" class="source-item">
-                    <img src="https://www.google.com/s2/favicons?domain=${hostname}&sz=16" 
-                         class="source-favicon" alt="">
-                    <span class="source-title">${link.text || link.url}</span>
-                    <span class="source-url">${hostname}</span>
-                  </a>
-                `;
-              }).join('')
-            }
-          </div>
-        `;
+        html += renderSourcesBlock(links, t);
       }
     }
   }
 
   contentDiv.innerHTML = html;
+  setupSourcesToggle(contentDiv);
+  setResultActionsVisible(!data.error);
+
+  if (!data.error) {
+    const resolved = resolveAnswerForDisplay(data);
+    const searchInput = document.querySelector('#ai-search-form input[name="q"]');
+    setShareContext(
+      searchInput?.value.trim() || getQueryFromUrl(),
+      resolved.text,
+      resolved.isEmpty
+    );
+  }
 
   if (container) {
     container.style.display = 'block';
@@ -926,24 +1046,15 @@ function setupActionButtons() {
   if (copyBtn && !copyBtn.dataset.initialized) {
     copyBtn.dataset.initialized = 'true';
     copyBtn.addEventListener('click', async () => {
-      const contentEl = document.getElementById('ai-result-content');
-      const content = contentEl?.textContent.trim() || '';
+      const payload = buildSharePayload();
+      const content = payload.answerText || '';
       if (!content) {
         showShareToast(t.noTextToCopy);
         return;
       }
 
       try {
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          await navigator.clipboard.writeText(content);
-        } else {
-          const tmp = document.createElement('textarea');
-          tmp.value = content;
-          document.body.appendChild(tmp);
-          tmp.select();
-          document.execCommand('copy');
-          document.body.removeChild(tmp);
-        }
+        await copyTextToClipboard(content);
 
         showShareToast(t.copied);
         copyBtn.dataset.state = 'copied';
@@ -964,14 +1075,12 @@ function setupActionButtons() {
   if (shareBtn && !shareBtn.dataset.initialized) {
     shareBtn.dataset.initialized = 'true';
     shareBtn.addEventListener('click', () => {
-      const resultEl = document.getElementById('ai-result-content');
-      if (!resultEl) return;
+      const payload = buildSharePayload();
 
-      const searchInput = document.querySelector('#ai-search-form input[name="q"]');
-      const query = searchInput?.value.trim() || '';
-      const pageUrl = buildSharePageUrl(query);
-      const answerText =
-        resultEl.textContent.trim().substring(0, 300) || t.shareTitleDefault;
+      if (!payload.answerText && !payload.query) {
+        showShareToast(t.noTextToCopy);
+        return;
+      }
 
       const isVkMiniApp =
         window.location.hostname === 'vk.com' ||
@@ -979,15 +1088,15 @@ function setupActionButtons() {
 
       if (isVkMiniApp && window.vkBridge && typeof window.vkBridge.send === 'function') {
         window.vkBridge
-          .send('VKWebAppShare', { link: pageUrl })
+          .send('VKWebAppShare', { link: payload.pageUrl })
           .catch(err => {
             console.warn('VKWebAppShare error, fallback to web modal:', err);
-            openWebShareModal(pageUrl, answerText);
+            openWebShareModal(payload);
           });
         return;
       }
 
-      openWebShareModal(pageUrl, answerText);
+      openWebShareModal(payload);
     });
   }
 
@@ -1017,31 +1126,71 @@ function setupActionButtons() {
   });
 
   // ── openWebShareModal — внутри функции, как было ─────────────────────
-  function openWebShareModal(pageUrl, answerText) {
+  function openWebShareModal(payload) {
     const modal = document.getElementById('ai-share-modal');
     if (!modal) return;
+
+    const messages = getMessages();
+    const { pageUrl, shareText, answerText, shareTitle } = payload;
+    const enc = encodeURIComponent;
 
     const dialog = modal.querySelector('.ai-share-dialog');
     const backdrop = modal.querySelector('.ai-share-backdrop');
     const quickTg = modal.querySelector('.ai-share-pill.ai-share-telegram');
     const quickVk = modal.querySelector('.ai-share-pill.ai-share-vk');
+    const quickMax = modal.querySelector('.ai-share-pill.ai-share-max');
+    const quickOk = modal.querySelector('.ai-share-pill.ai-share-ok');
+    const urlInput = modal.querySelector('.ai-share-url-input');
+    const copyBtn = modal.querySelector('.ai-share-copy-btn');
 
-    const tgUrl =
-      'https://t.me/share/url?url=' +
-      encodeURIComponent(pageUrl) +
-      '&text=' +
-      encodeURIComponent(answerText);
+    if (urlInput) {
+      urlInput.value = pageUrl;
+    }
 
-    const vkUrl =
-      'https://vk.com/share.php?url=' +
-      encodeURIComponent(pageUrl) +
-      '&title=' +
-      encodeURIComponent(t.shareTitleDefault) +
-      '&comment=' +
-      encodeURIComponent(answerText);
+    if (copyBtn) {
+      copyBtn.textContent = messages.shareCopyLink;
+      copyBtn.onclick = async () => {
+        try {
+          await copyTextToClipboard(pageUrl);
+          showShareToast(messages.shareLinkCopied);
+        } catch (err) {
+          console.error('Ошибка копирования ссылки:', err);
+          showShareToast(messages.copyFailed);
+        }
+      };
+    }
 
-    if (quickTg) quickTg.onclick = () => window.open(tgUrl, '_blank', 'noopener');
-    if (quickVk) quickVk.onclick = () => window.open(vkUrl, '_blank', 'noopener');
+    if (quickTg) {
+      quickTg.href =
+        'https://t.me/share/url?url=' +
+        enc(pageUrl) +
+        '&text=' +
+        enc(shareText);
+    }
+
+    if (quickVk) {
+      quickVk.href =
+        'https://vk.com/share.php?url=' +
+        enc(pageUrl) +
+        '&title=' +
+        enc(shareTitle) +
+        '&comment=' +
+        enc(answerText || shareText);
+    }
+
+    if (quickMax) {
+      quickMax.href = `https://max.ru/:share?text=${enc(shareText)}`;
+    }
+
+    if (quickOk) {
+      quickOk.href =
+        'https://connect.ok.ru/offer?url=' +
+        enc(pageUrl) +
+        '&title=' +
+        enc(shareTitle) +
+        '&description=' +
+        enc(answerText || shareText);
+    }
 
     const close = () => {
       modal.removeAttribute('data-open');

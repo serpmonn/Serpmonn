@@ -64,16 +64,6 @@ a:visited {
   padding-right: 40px; /* место под кнопку микрофона */
 }
 
-/* Полностью убираем стандартный крестик очистки в Chrome/Safari */
-.search-input-wrapper input[type="search"]::-webkit-search-cancel-button {
-  -webkit-appearance: none;
-}
-
-/* Убираем крестик в Edge/IE */
-.search-input-wrapper input[type="search"]::-ms-clear {
-  display: none;
-}
-
 /* микрофон внутри инпута, без красной рамки */
 .voice-btn {
   position: absolute;
@@ -280,6 +270,27 @@ a:visited {
   gap: 6px;
 }
 
+.ai-result-footer.is-pending .ai-actions,
+.ai-result-footer.is-pending .ai-feedback {
+  display: none;
+}
+
+.ai-result-footer:not(.is-pending) .ai-actions,
+.ai-result-footer:not(.is-pending) .ai-feedback {
+  animation: ai-actions-in 0.2s ease;
+}
+
+@keyframes ai-actions-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 /* Базовый стиль круглых кнопок */
 .ai-action-btn,
 .feedback-btn {
@@ -342,31 +353,105 @@ a:visited {
 
 .ai-sources {
   margin-top: 10px;
-  padding-top: 6px;
-  border-top: 1px dashed rgba(148,163,184,0.4);
+  padding-top: 8px;
+  border-top: 1px dashed rgba(148, 163, 184, 0.35);
 }
 
-.sources-title {
+.ai-sources-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ai-sources-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  align-items: center;
+}
+
+.ai-source-chip {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 12px;
-  color: #4b5563;
-  margin-bottom: 6px;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.ai-source-chip:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+.ai-source-chip-favicon {
+  width: 14px;
+  height: 14px;
+  border-radius: 3px;
+}
+
+.ai-sources-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  padding: 4px 8px;
+  font-size: 11px;
+  color: #6b7280;
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.ai-sources-toggle:hover {
+  color: #4f46e5;
+  background: rgba(79, 70, 229, 0.06);
+}
+
+.ai-sources-chevron {
+  transition: transform 0.2s ease;
+}
+
+.ai-sources.is-expanded .ai-sources-chevron {
+  transform: rotate(180deg);
+}
+
+.ai-sources-list {
+  margin-top: 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ai-sources-list[hidden] {
+  display: none;
 }
 
 .source-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
   background: transparent;
   border-radius: 8px;
   padding: 4px 6px;
+  text-decoration: none;
+  color: inherit;
 }
 
 .source-item:hover {
   background: #f3f4ff;
-  border-color: rgba(79,70,229,0.35);
 }
 
 .source-favicon {
+  flex-shrink: 0;
   width: 16px;
   height: 16px;
   border-radius: 4px;
@@ -374,12 +459,15 @@ a:visited {
 
 .source-title {
   flex: 1;
+  min-width: 0;
+  font-size: 12px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
 .source-url {
+  flex-shrink: 0;
   color: #6b7280;
   font-size: 11px;
 }
@@ -431,7 +519,7 @@ a:visited {
 
 /* Карточка модалки — как ai-result-container, но поменьше и по центру */
 .ai-share-dialog {
-  max-width: 320px;
+  max-width: 380px;
   background: rgba(255,255,255,0.96);
   border-radius: 16px;
   border: 1px solid rgba(148,163,184,0.35);
@@ -546,6 +634,7 @@ a:visited {
 
 .ai-share-quick {
   display: flex;
+  flex-wrap: wrap;
   gap: 10px;
   margin-bottom: 10px;
 }
@@ -576,6 +665,61 @@ a:visited {
 
 .ai-share-pill:hover {
   transform: translateY(-1px) scale(1.05);
+}
+
+.ai-share-pill-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ai-share-pill-icon--vk {
+  background: #0077ff;
+  color: #fff;
+}
+
+.ai-share-pill-icon--max {
+  background: linear-gradient(135deg, #44ccff 0%, #5533ee 62%, #9933dd 100%);
+  color: #fff;
+}
+
+.ai-share-pill-icon--ok {
+  background: #ee8208;
+  color: #fff;
+}
+
+.ai-share-copy-row {
+  display: flex;
+  gap: 8px;
+  align-items: stretch;
+}
+
+.ai-share-url-input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+  width: 0;
+  height: 0;
+}
+
+.ai-share-copy-btn {
+  flex: 1;
+  min-height: 34px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(220, 53, 69, 0.35);
+  background: linear-gradient(145deg, #111111, #1a1a1a);
+  color: #f9fafb;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease;
+}
+
+.ai-share-copy-btn:hover {
+  transform: translateY(-1px);
 }
 
 /* ============================================================================
