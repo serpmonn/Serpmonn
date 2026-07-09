@@ -1,4 +1,4 @@
-import { loadMessages, getMessages } from './i18n-loader.js';
+import { loadMessages, getMessages, t } from './i18n-loader.js';
 import { showCookieBanner } from './cookies.js';
 import { loadNews } from './news.js';
 import { generateCombinedBackground } from './backgroundGenerator.js';
@@ -48,6 +48,32 @@ function getCurrentLanguageTag() {
   if (locale === 'ku-arab') return 'ku-Arab';
 
   return locale;
+}
+
+function getQueryFromUrl() {
+  return (new URLSearchParams(window.location.search).get('q') || '').trim();
+}
+
+function buildSharePageUrl(query) {
+  const url = new URL(window.location.href);
+  url.hash = '';
+
+  if (query) {
+    url.searchParams.set('q', query);
+  } else {
+    url.searchParams.delete('q');
+  }
+
+  return url.toString();
+}
+
+function syncSearchQueryToUrl(query) {
+  const nextUrl = buildSharePageUrl(query);
+  const currentUrl = `${window.location.pathname}${window.location.search}`;
+
+  if (nextUrl !== `${window.location.origin}${currentUrl}`) {
+    history.replaceState(null, '', nextUrl);
+  }
 }
 
 // ======================================================================================================================
@@ -330,20 +356,359 @@ function showLoading() {
 
   const timestampDiv = document.getElementById('ai-timestamp');
   if (timestampDiv) {
-    timestampDiv.textContent = new Date().toLocaleTimeString(getCurrentLanguageTag(), {
-      hour: '2-digit',
-      minute: '2-digit'
+    timestampDiv.textContent = '';
+  }
+}
+
+function formatTimingSeconds(ms) {
+  return (ms / 1000).toFixed(1);
+}
+
+function showSearchTimings(timings) {
+  const timestampDiv = document.getElementById('ai-timestamp');
+  if (!timestampDiv || !timings?.total_ms) return;
+
+  const total = formatTimingSeconds(timings.total_ms);
+
+  if (timings.searx_ms != null && timings.model_ms != null) {
+    timestampDiv.textContent = t('answerTimingDetail', {
+      total,
+      search: formatTimingSeconds(timings.searx_ms),
+      ai: formatTimingSeconds(timings.model_ms)
     });
+    return;
+  }
+
+  timestampDiv.textContent = t('answerTiming', { seconds: total });
+}
+
+function hideMediaResults(type) {
+  const container = document.getElementById(`ai-${type}-results`);
+  if (!container) return;
+  container.style.display = 'none';
+  container.innerHTML = '';
+}
+
+function resolveAnswerForDisplay(data) {
+  const messages = getMessages();
+  const answer = (data.answer || '').trim();
+
+  if (data.answerEmpty === true) {
+    return {
+      text: answer || messages.emptyAnswer,
+      isEmpty: true
+    };
+  }
+
+  if (!answer || answer === messages.noModelText) {
+    return {
+      text: messages.emptyAnswer,
+      isEmpty: true
+    };
+  }
+
+  if (/^no information found in the provided data\.?$/i.test(answer)) {
+    return {
+      text: messages.noDataAnswer,
+      isEmpty: true
+    };
+  }
+
+  return {
+    text: answer,
+    isEmpty: false
+  };
+}
+
+function renderAnswerHtml(answer, isEmpty) {
+  if (isEmpty) {
+    return `<div class="ai-empty-answer">${answer}</div>`;
+  }
+
+  return renderMarkdown(answer);
+}
+
+function showMediaLoading(type) {
+  const container = document.getElementById(`ai-${type}-results`);
+  if (!container) return;
+
+  const messages = getMessages();
+  const header = type === 'images' ? messages.imagesHeader : messages.videosHeader;
+
+  container.innerHTML = `
+    <div class="ai-${type === 'images' ? 'image' : 'video'}-header">
+      <span>${header}</span>
+    </div>
+    <div class="ai-media-loading">
+      <div class="loading-dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="loading-text">${messages.mediaLoading}</div>
+    </div>
+  `;
+  container.style.display = 'block';
+}
+
+async function consumeAiSearchStream(response, onEvent) {
+  if (!response.body) {
+    throw new Error('Streaming body is not available');
+  }
+
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  const processLine = line => {
+    const trimmed = line.trim();
+    if (!trimmed) return;
+    onEvent(JSON.parse(trimmed));
+  };
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
+
+    for (const line of lines) {
+      processLine(line);
+    }
+  }
+
+  if (buffer.trim()) {
+    processLine(buffer);
+  }
+}
+
+async function requestAiSearch({ query, idempotencyKey, locale, useStream }) {
+  const include = {
+    text: true,
+    images: true,
+    videos: true
+  };
+
+  const headers = {
+    'Content-Type': 'application/json',
+    'X-Idempotency-Key': idempotencyKey,
+    'X-User-Lang': locale
+  };
+
+  if (useStream) {
+    headers.Accept = 'application/x-ndjson';
+  } else {
+    headers.Accept = 'application/json';
+  }
+
+  const response = await fetch('/ai-search', {
+    method: 'POST',
+    headers,
+    credentials: 'include',
+    body: JSON.stringify({
+      q: query,
+      include,
+      mode: 'full',
+      lang: locale,
+      stream: useStream
+    })
+  });
+
+  const contentType = response.headers.get('content-type') || '';
+
+  if (!useStream || !contentType.includes('application/x-ndjson')) {
+    const data = await response.json().catch(() => null);
+    return { mode: 'json', response, data };
+  }
+
+  return { mode: 'stream', response };
+}
+
+function createStreamState() {
+  return {
+    gotText: false,
+    didScroll: false,
+    streamingStarted: false,
+    firstTokenReceived: false,
+    streamedAnswer: '',
+    pendingTextStart: null,
+    pendingImages: null,
+    pendingVideos: null,
+    imagesShown: false,
+    videosShown: false
+  };
+}
+
+function flushPendingMedia(state) {
+  if (!state.imagesShown && state.pendingImages !== null) {
+    if (state.pendingImages.length > 0) {
+      showImageResults({ images: state.pendingImages });
+    } else {
+      hideMediaResults('images');
+    }
+    state.imagesShown = true;
+  }
+
+  if (state.imagesShown && !state.videosShown && state.pendingVideos !== null) {
+    if (state.pendingVideos.length > 0) {
+      showVideoResults({ videos: state.pendingVideos });
+    } else {
+      hideMediaResults('videos');
+    }
+    state.videosShown = true;
+  }
+}
+
+function finalizePendingMedia(state) {
+  if (!state.imagesShown) {
+    hideMediaResults('images');
+    state.imagesShown = true;
+  }
+
+  if (!state.videosShown) {
+    hideMediaResults('videos');
+    state.videosShown = true;
+  }
+}
+
+function showStreamingTextStart(data, options = {}) {
+  const messages = getMessages();
+  const contentDiv = document.getElementById('ai-result-content');
+  const container = document.getElementById('ai-result-container');
+  if (!contentDiv) return;
+
+  let html = '';
+
+  if (data.usedWebSearch) {
+    html += `
+      <div class="ai-search-badge">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+          <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+        ${messages.webSearchUsed}
+      </div>
+    `;
+  }
+
+  html += '<div class="ai-streaming-answer" aria-live="polite"></div>';
+  contentDiv.innerHTML = html;
+
+  if (container) {
+    container.style.display = 'block';
+    if (options.scroll !== false) {
+      container.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
+  }
+}
+
+function appendStreamingTextDelta(chunk, state) {
+  state.streamedAnswer += chunk || '';
+  const answerEl = document.querySelector('.ai-streaming-answer');
+  if (answerEl) {
+    answerEl.textContent = state.streamedAnswer;
+  }
+}
+
+function finalizeStreamingText(event, state) {
+  state.gotText = true;
+  showResult(
+    {
+      answer: event.answer || state.streamedAnswer || '',
+      usedWebSearch: event.usedWebSearch === true,
+      sources: Array.isArray(event.sources) ? event.sources : [],
+      answerEmpty: event.answerEmpty === true
+    },
+    { scroll: !state.didScroll }
+  );
+  state.didScroll = true;
+  flushPendingMedia(state);
+}
+
+function handleAiSearchStreamEvent(event, state) {
+  if (event.event === 'text_start') {
+    state.streamingStarted = true;
+    state.pendingTextStart = {
+      usedWebSearch: event.usedWebSearch === true,
+      sources: Array.isArray(event.sources) ? event.sources : []
+    };
+    return;
+  }
+
+  if (event.event === 'text_delta') {
+    if (!state.firstTokenReceived) {
+      state.firstTokenReceived = true;
+      showStreamingTextStart(state.pendingTextStart || { usedWebSearch: true }, { scroll: !state.didScroll });
+      state.didScroll = true;
+      state.streamedAnswer = event.chunk || '';
+      const answerEl = document.querySelector('.ai-streaming-answer');
+      if (answerEl) {
+        answerEl.textContent = state.streamedAnswer;
+      }
+      return;
+    }
+
+    appendStreamingTextDelta(event.chunk, state);
+    return;
+  }
+
+  if (event.event === 'text_done') {
+    if (state.streamingStarted) {
+      finalizeStreamingText(event, state);
+    } else {
+      state.gotText = true;
+      showResult(
+        {
+          answer: event.answer || '',
+          usedWebSearch: event.usedWebSearch === true,
+          sources: Array.isArray(event.sources) ? event.sources : [],
+          answerEmpty: event.answerEmpty === true
+        },
+        { scroll: !state.didScroll }
+      );
+      state.didScroll = true;
+      flushPendingMedia(state);
+    }
+    return;
+  }
+
+  if (event.event === 'error' && event.phase === 'text') {
+    showResult({ error: event.error || getMessages().networkError }, { scroll: !state.didScroll });
+    state.didScroll = true;
+    return;
+  }
+
+  if (event.event === 'images') {
+    state.pendingImages = Array.isArray(event.images) ? event.images : [];
+    flushPendingMedia(state);
+    return;
+  }
+
+  if (event.event === 'videos') {
+    state.pendingVideos = Array.isArray(event.videos) ? event.videos : [];
+    flushPendingMedia(state);
+    return;
+  }
+
+  if (event.event === 'done') {
+    flushPendingMedia(state);
+    finalizePendingMedia(state);
+    showSearchTimings(event.timings);
   }
 }
 
 // ======================================================================================================================
 // ПОКАЗАТЬ РЕЗУЛЬТАТ ОТВЕТА ИИ
 // ======================================================================================================================
-function showResult(data) {
+function showResult(data, options = {}) {
   const t = getMessages();
   const contentDiv = document.getElementById('ai-result-content');
   const container = document.getElementById('ai-result-container');
+  const shouldScroll = options.scroll !== false;
   let html = '';
 
   if (data.error) {
@@ -357,7 +722,7 @@ function showResult(data) {
       </div>
     `;
   } else {
-    const answer = data.answer || '';
+    const resolved = resolveAnswerForDisplay(data);
 
     if (data.usedWebSearch) {
       html += `
@@ -370,9 +735,9 @@ function showResult(data) {
       `;
     }
 
-    html += renderMarkdown(answer);
+    html += renderAnswerHtml(resolved.text, resolved.isEmpty);
 
-    if (Array.isArray(data.sources) && data.sources.length > 0) {
+    if (!resolved.isEmpty && Array.isArray(data.sources) && data.sources.length > 0) {
       html += `
         <div class="ai-sources">
           <div class="sources-title">
@@ -383,7 +748,7 @@ function showResult(data) {
           </div>
           ${
             data.sources
-              .slice(0, 4)
+              .slice(0, 6)
               .map(src => {
                 let hostname = '';
                 try { hostname = new URL(src.link).hostname; } catch (e) {}
@@ -400,7 +765,7 @@ function showResult(data) {
           }
         </div>
       `;
-    } else {
+    } else if (!resolved.isEmpty) {
       const links = extractLinks(html);
       if (links.length > 0) {
         html += `
@@ -435,10 +800,12 @@ function showResult(data) {
 
   if (container) {
     container.style.display = 'block';
-    container.scrollIntoView({
-      behavior: 'smooth',
-      block: 'start'
-    });
+    if (shouldScroll) {
+      container.scrollIntoView({
+        behavior: 'smooth',
+        block: 'start'
+      });
+    }
   }
 
   setupActionButtons();
@@ -456,7 +823,7 @@ function showImageResults(data) {
   }
 
   const itemsHtml = data.images
-    .slice(0, 24)
+    .slice(0, 6)
     .map(img => {
       const title = img.title || '';
       const thumb = img.thumbnailUrl || img.imageUrl || '';
@@ -500,7 +867,7 @@ function showVideoResults(data) {
   }
 
   const itemsHtml = data.videos
-    .slice(0, 18)
+    .slice(0, 6)
     .map(video => {
       const title = video.title || '';
       const thumb = video.thumbnailUrl || '';
@@ -600,7 +967,9 @@ function setupActionButtons() {
       const resultEl = document.getElementById('ai-result-content');
       if (!resultEl) return;
 
-      const pageUrl = window.location.href.split('#')[0];
+      const searchInput = document.querySelector('#ai-search-form input[name="q"]');
+      const query = searchInput?.value.trim() || '';
+      const pageUrl = buildSharePageUrl(query);
       const answerText =
         resultEl.textContent.trim().substring(0, 300) || t.shareTitleDefault;
 
@@ -619,6 +988,14 @@ function setupActionButtons() {
       }
 
       openWebShareModal(pageUrl, answerText);
+    });
+  }
+
+  // ── retry ───────────────────────────────────────────────────────────
+  const retryBtn = document.querySelector('.retry-btn');
+  if (retryBtn) {
+    retryBtn.addEventListener('click', () => {
+      document.getElementById('ai-search-form')?.requestSubmit();
     });
   }
 
@@ -747,7 +1124,6 @@ async function initPage() {
     }
 
     let isSubmitting = false;
-    let lastSubmitTime = 0;
     let currentIdempotencyKey = null;
 
     searchForm.addEventListener('submit', async e => {
@@ -759,15 +1135,8 @@ async function initPage() {
         delete searchInput.dataset.voiceInput;
       }
 
-      const now = Date.now();
-
       if (isSubmitting) {
         console.warn('[AI] ⛔ Запрос УЖЕ выполняется (isSubmitting=true), ИГНОРИРУЕМ');
-        return;
-      }
-
-      if (now - lastSubmitTime < 3000) {
-        console.warn(`[AI] ⛔ Слишком частая отправка (прошло ${now - lastSubmitTime}мс), ИГНОРИРУЕМ`);
         return;
       }
 
@@ -776,8 +1145,9 @@ async function initPage() {
         return;
       }
 
+      syncSearchQueryToUrl(query);
+
       isSubmitting = true;
-      lastSubmitTime = now;
 
       if (submitBtn) {
         submitBtn.disabled = true;
@@ -793,35 +1163,22 @@ async function initPage() {
 
       showImageResults({ images: [] });
       showVideoResults({ videos: [] });
+      showMediaLoading('images');
+      showMediaLoading('videos');
+
+      let idempotencyKey = null;
+      const useStream = getEnv() !== 'vk_mini';
 
       try {
-        const idempotencyKey = generateIdempotencyKey();
+        idempotencyKey = generateIdempotencyKey();
         currentIdempotencyKey = idempotencyKey;
 
-        const mode = 'full';
-        const include = {
-          text: true,
-          images: true,
-          videos: true
-        };
-
         const locale = getCurrentLocale();
-
-        const response = await fetch('/ai-search', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Accept: 'application/json',
-            'X-Idempotency-Key': idempotencyKey,
-            'X-User-Lang': locale
-          },
-          credentials: 'include',
-          body: JSON.stringify({
-            q: query,
-            include,
-            mode,
-            lang: locale
-          })
+        const result = await requestAiSearch({
+          query,
+          idempotencyKey,
+          locale,
+          useStream
         });
 
         if (currentIdempotencyKey !== idempotencyKey) {
@@ -829,33 +1186,54 @@ async function initPage() {
           return;
         }
 
-        const data = await response.json().catch(() => null);
+        if (result.mode === 'json') {
+          const { response, data } = result;
 
-        if (!response.ok) {
-          if (data?.error) {
-            showResult({ error: data.error });
-          } else {
-            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          if (!response.ok) {
+            if (data?.error) {
+              showResult({ error: data.error });
+            } else {
+              throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            showImageResults({ images: [] });
+            showVideoResults({ videos: [] });
+            return;
           }
 
-          showImageResults({ images: [] });
-          showVideoResults({ videos: [] });
+          showResult({
+            answer: data?.answer || '',
+            usedWebSearch: data?.usedWebSearch === true,
+            sources: Array.isArray(data?.sources) ? data.sources : [],
+            answerEmpty: data?.answerEmpty === true
+          });
+
+          if (Array.isArray(data?.images) && data.images.length > 0) {
+            showImageResults({ images: data.images });
+          } else {
+            hideMediaResults('images');
+          }
+
+          if (Array.isArray(data?.videos) && data.videos.length > 0) {
+            showVideoResults({ videos: data.videos });
+          } else {
+            hideMediaResults('videos');
+          }
+
+          showSearchTimings(data?.timings);
           return;
         }
 
-        showResult({
-          answer: data?.answer || '',
-          usedWebSearch: data?.usedWebSearch === true,
-          sources: Array.isArray(data?.sources) ? data.sources : []
+        const streamState = createStreamState();
+
+        await consumeAiSearchStream(result.response, event => {
+          if (currentIdempotencyKey !== idempotencyKey) return;
+          handleAiSearchStreamEvent(event, streamState);
         });
 
-        showImageResults({
-          images: Array.isArray(data?.images) ? data.images : []
-        });
-
-        showVideoResults({
-          videos: Array.isArray(data?.videos) ? data.videos : []
-        });
+        if (!streamState.gotText && result.response.ok === false) {
+          showResult({ error: getMessages().networkError });
+        }
 
       } catch (error) {
         console.error('[AI] ❌ Ошибка при запросе к /ai-search:', error);
@@ -871,20 +1249,27 @@ async function initPage() {
           searchInput.placeholder = getMessages().askAnything;
         }
 
-        setTimeout(() => {
-          if (currentIdempotencyKey === idempotencyKey || currentIdempotencyKey === null) {
-            isSubmitting = false;
-            currentIdempotencyKey = null;
-            if (submitBtn) {
-              submitBtn.disabled = false;
-              submitBtn.classList.remove('is-loading');
-            }
+        const finishedKey = idempotencyKey;
+        if (currentIdempotencyKey === finishedKey || currentIdempotencyKey === null) {
+          isSubmitting = false;
+          currentIdempotencyKey = null;
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.classList.remove('is-loading');
           }
-        }, 2000);
+        }
       }
     });
 
     initVoiceInput();
+
+    const sharedQuery = getQueryFromUrl();
+    if (sharedQuery && searchInput) {
+      searchInput.value = sharedQuery;
+      requestAnimationFrame(() => {
+        searchForm.requestSubmit();
+      });
+    }
   }
 
   async function loadPageData() {

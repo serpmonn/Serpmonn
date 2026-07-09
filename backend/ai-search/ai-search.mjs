@@ -49,26 +49,56 @@ function extractHostname(url) {
   }
 }
 
+function normalizeAiAnswer(answer, t) {
+  const trimmed = (answer || '').trim();
+
+  if (!trimmed || trimmed === t.noModelText) {
+    return {
+      text: t.emptyAnswer,
+      isEmpty: true,
+      reason: 'empty',
+    };
+  }
+
+  if (/^no information found in the provided data\.?$/i.test(trimmed)) {
+    return {
+      text: t.noDataAnswer,
+      isEmpty: true,
+      reason: 'no_data',
+    };
+  }
+
+  return {
+    text: trimmed,
+    isEmpty: false,
+    reason: null,
+  };
+}
+
+function buildOllamaMessages(query, webContext) {
+  return [
+    {
+      role: 'system',
+      content:
+        'You are Serpmonn search assistant. ' +
+        'You are given web search results text. ' +
+        'Your task is to answer the user question using only that data. ' +
+        'Reply only in the same language as the user question. ' +
+        'Reply in 1-2 short sentences. ' +
+        'Use facts only, without introductions. ' +
+        'If the answer is not present in the data, reply: "No information found in the provided data."',
+    },
+    {
+      role: 'user',
+      content: `ДАННЫЕ ИЗ СЕТИ:\n${webContext}\n\nВОПРОС: ${query}`,
+    },
+  ];
+}
+
 async function callOllama(model, query, webContext) {
   const body = {
     model,
-    messages: [
-      {
-        role: 'system',
-        content:
-          'You are Serpmonn search assistant. ' +
-          'You are given web search results text. ' +
-          'Your task is to answer the user question using only that data. ' +
-          'Reply only in the same language as the user question. ' +
-          'Reply in 1-2 short sentences. ' +
-          'Use facts only, without introductions. ' +
-          'If the answer is not present in the data, reply: "No information found in the provided data."',
-      },
-      {
-        role: 'user',
-        content: `ДАННЫЕ ИЗ СЕТИ:\n${webContext}\n\nВОПРОС: ${query}`,
-      },
-    ],
+    messages: buildOllamaMessages(query, webContext),
     stream: false,
     options: {
       temperature: 0,
@@ -112,8 +142,84 @@ async function callOllama(model, query, webContext) {
   return answer;
 }
 
-async function getAiAnswerFromLocalModels(query, webContext) {
+async function streamOllama(model, query, webContext, onToken) {
+  const body = {
+    model,
+    messages: buildOllamaMessages(query, webContext),
+    stream: true,
+    options: {
+      temperature: 0,
+      num_predict: 98,
+      top_k: 40,
+      top_p: 0.9,
+    },
+  };
+
+  const res = await fetch(OLLAMA_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    console.error(`[Ollama] HTTP error ${res.status}`);
+    throw new Error(`Ollama HTTP ${res.status}`);
+  }
+
+  if (!res.body) {
+    throw new Error('Ollama streaming body is not available');
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let answer = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop() || '';
+
+    for (const line of lines) {
+      const trimmed = line.trim();
+      if (!trimmed) continue;
+
+      let data;
+      try {
+        data = JSON.parse(trimmed);
+      } catch (e) {
+        console.error('[Ollama] stream JSON parse error:', e.message);
+        continue;
+      }
+
+      const chunk = data.message?.content || '';
+      if (chunk) {
+        answer += chunk;
+        onToken(chunk);
+      }
+    }
+  }
+
+  if (!answer) {
+    console.error('[Ollama] Empty content in stream');
+    throw new Error('Ollama empty content');
+  }
+
+  return answer;
+}
+
+async function getAiAnswerFromLocalModels(query, webContext, options = {}) {
+  const { onToken } = options;
+
   try {
+    if (onToken) {
+      const answer = await streamOllama(OLLAMA_MAIN_MODEL, query, webContext, onToken);
+      return { answer, model: OLLAMA_MAIN_MODEL, usedBackup: false };
+    }
+
     const answer = await callOllama(OLLAMA_MAIN_MODEL, query, webContext);
     return { answer, model: OLLAMA_MAIN_MODEL, usedBackup: false };
   } catch (e) {
@@ -121,6 +227,11 @@ async function getAiAnswerFromLocalModels(query, webContext) {
   }
 
   try {
+    if (onToken) {
+      const answer = await streamOllama(OLLAMA_FAST_MODEL, query, webContext, onToken);
+      return { answer, model: OLLAMA_FAST_MODEL, usedBackup: true };
+    }
+
     const answer = await callOllama(OLLAMA_FAST_MODEL, query, webContext);
     return { answer, model: OLLAMA_FAST_MODEL, usedBackup: true };
   } catch (e) {
@@ -325,7 +436,7 @@ async function webSearchWithSearxng(query, t) {
         content: item.content || item.summary || '',
         url: item.url || '',
       }))
-      .slice(0, 4);
+      .slice(0, 6);
 
     const webContext = results.length
       ? results
@@ -353,7 +464,7 @@ async function imageSearchWithSearxng(query, t) {
     const data = await fetchSearxViaCurl(query, 'images');
 
     const images = (data.results || [])
-      .slice(0, 24)
+      .slice(0, 6)
       .map((item) => ({
         title: item.title || t.imageFallbackTitle.replace('{query}', query),
         thumbnailUrl: item.img_src || item.thumbnail || '',
@@ -375,7 +486,7 @@ async function videoSearchWithSearxng(query, t) {
     const data = await fetchSearxViaCurl(query, 'videos');
 
     const videos = (data.results || [])
-      .slice(0, 18)
+      .slice(0, 6)
       .map((item) => ({
         title: item.title || t.videoFallbackTitle.replace('{query}', query),
         thumbnailUrl: item.thumbnail || item.img_src || '',
@@ -391,6 +502,299 @@ async function videoSearchWithSearxng(query, t) {
     console.error('Ошибка при обращении к SearXNG (videos):', e.message);
     return [];
   }
+}
+
+function wantsStream(req) {
+  return (
+    req.body?.stream === true ||
+    String(req.headers.accept || '').includes('application/x-ndjson')
+  );
+}
+
+function writeNdjson(res, payload) {
+  if (res.writableEnded) return;
+  res.write(`${JSON.stringify(payload)}\n`);
+}
+
+function startNdjsonResponse(res) {
+  res.status(200);
+  res.setHeader('Content-Type', 'application/x-ndjson; charset=utf-8');
+  res.setHeader('Cache-Control', 'no-cache, no-transform');
+  res.setHeader('Connection', 'keep-alive');
+  res.setHeader('X-Accel-Buffering', 'no');
+  if (typeof res.flushHeaders === 'function') {
+    res.flushHeaders();
+  }
+}
+
+function replayCachedStream(res, cachedResponse) {
+  startNdjsonResponse(res);
+  writeNdjson(res, { event: 'status', phase: 'searching' });
+
+  if (cachedResponse.answer) {
+    writeNdjson(res, {
+      event: 'text_done',
+      answer: cachedResponse.answer,
+      sources: cachedResponse.sources || [],
+      usedWebSearch: cachedResponse.usedWebSearch === true,
+      model: cachedResponse.model || null,
+      usedBackup: cachedResponse.usedBackup === true,
+    });
+  }
+
+  if (Array.isArray(cachedResponse.images) && cachedResponse.images.length > 0) {
+    writeNdjson(res, { event: 'images', images: cachedResponse.images });
+  }
+
+  if (Array.isArray(cachedResponse.videos) && cachedResponse.videos.length > 0) {
+    writeNdjson(res, { event: 'videos', videos: cachedResponse.videos });
+  }
+
+  writeNdjson(res, {
+    event: 'done',
+    timings: cachedResponse.timings || null,
+    partialFailures: cachedResponse.partialFailures || [],
+  });
+
+  res.end();
+}
+
+function createEmptyResponsePayload(q, mode) {
+  return {
+    query: q,
+    mode,
+    answer: null,
+    images: [],
+    videos: [],
+    sources: [],
+    usedWebSearch: false,
+    model: null,
+    usedBackup: false,
+    partialFailures: [],
+    timestamp: new Date().toISOString(),
+    timings: null,
+    answerEmpty: false,
+    answerEmptyReason: null,
+  };
+}
+
+async function runTextTask(q, t, responsePayload, emit) {
+  const searxStart = process.hrtime.bigint();
+  const { webContext, sources } = await webSearchWithSearxng(q, t);
+  const searxEnd = process.hrtime.bigint();
+  const searxMs = Number(searxEnd - searxStart) / 1e6;
+
+  responsePayload.sources = sources;
+  responsePayload.usedWebSearch = true;
+
+  if (emit) {
+    emit({
+      event: 'text_start',
+      sources,
+      usedWebSearch: true,
+      timings: { searx_ms: searxMs },
+    });
+  }
+
+  const modelStart = process.hrtime.bigint();
+  let aiResult;
+  try {
+    aiResult = await getAiAnswerFromLocalModels(q, webContext, {
+      onToken: emit
+        ? (chunk) => emit({ event: 'text_delta', chunk })
+        : null,
+    });
+  } catch (e) {
+    const publicError = new Error(t.aiUnavailable);
+    publicError.isPublic = true;
+    publicError.status = 502;
+    publicError.phase = 'text';
+    throw publicError;
+  }
+  const modelEnd = process.hrtime.bigint();
+  const modelMs = Number(modelEnd - modelStart) / 1e6;
+
+  const normalized = normalizeAiAnswer(aiResult.answer, t);
+
+  responsePayload.answer = normalized.text;
+  responsePayload.answerEmpty = normalized.isEmpty;
+  responsePayload.answerEmptyReason = normalized.reason;
+  responsePayload.model = aiResult.model;
+  responsePayload.usedBackup = aiResult.usedBackup;
+
+  const textTimings = { searx_ms: searxMs, model_ms: modelMs };
+
+  if (emit) {
+    emit({
+      event: 'text_done',
+      answer: responsePayload.answer,
+      sources: responsePayload.sources,
+      usedWebSearch: true,
+      model: responsePayload.model,
+      usedBackup: responsePayload.usedBackup,
+      answerEmpty: responsePayload.answerEmpty,
+      answerEmptyReason: responsePayload.answerEmptyReason,
+      timings: textTimings,
+    });
+  }
+
+  return { type: 'text', timings: textTimings };
+}
+
+async function runImagesTask(q, t, responsePayload, emit) {
+  const start = process.hrtime.bigint();
+  const images = await imageSearchWithSearxng(q, t);
+  const end = process.hrtime.bigint();
+  const imagesMs = Number(end - start) / 1e6;
+
+  responsePayload.images = images;
+
+  if (emit) {
+    emit({
+      event: 'images',
+      images,
+      timings: { images_ms: imagesMs },
+    });
+  }
+
+  return { type: 'images', timings: { images_ms: imagesMs } };
+}
+
+async function runVideosTask(q, t, responsePayload, emit) {
+  const start = process.hrtime.bigint();
+  const videos = await videoSearchWithSearxng(q, t);
+  const end = process.hrtime.bigint();
+  const videosMs = Number(end - start) / 1e6;
+
+  responsePayload.videos = videos;
+
+  if (emit) {
+    emit({
+      event: 'videos',
+      videos,
+      timings: { videos_ms: videosMs },
+    });
+  }
+
+  return { type: 'videos', timings: { videos_ms: videosMs } };
+}
+
+async function executeSearchTasks({
+  q,
+  t,
+  wantText,
+  wantImages,
+  wantVideos,
+  responsePayload,
+  emit,
+}) {
+  const tasks = [];
+  const branchTimings = {};
+
+  if (wantText) {
+    tasks.push(
+      runTextTask(q, t, responsePayload, emit).then((result) => {
+        Object.assign(branchTimings, result.timings);
+        return result;
+      })
+    );
+  }
+
+  if (wantImages) {
+    tasks.push(
+      runImagesTask(q, t, responsePayload, emit).then((result) => {
+        Object.assign(branchTimings, result.timings);
+        return result;
+      })
+    );
+  }
+
+  if (wantVideos) {
+    tasks.push(
+      runVideosTask(q, t, responsePayload, emit).then((result) => {
+        Object.assign(branchTimings, result.timings);
+        return result;
+      })
+    );
+  }
+
+  const settled = await Promise.allSettled(tasks);
+
+  for (const item of settled) {
+    if (item.status === 'rejected') {
+      const reason = item.reason;
+      const message = reason?.message || t.unknownTaskError;
+
+      responsePayload.partialFailures.push(message);
+
+      if (emit) {
+        emit({
+          event: 'error',
+          error: reason?.isPublic ? message : t.internalError,
+          phase: reason?.phase || 'unknown',
+        });
+      }
+    }
+  }
+
+  return { settled, branchTimings };
+}
+
+async function handleStreamingSearch(req, res, ctx) {
+  const {
+    q,
+    mode,
+    wantText,
+    wantImages,
+    wantVideos,
+    t,
+    idempotencyKey,
+    identity,
+    reqStart,
+  } = ctx;
+
+  startNdjsonResponse(res);
+  writeNdjson(res, { event: 'status', phase: 'searching' });
+
+  const responsePayload = createEmptyResponsePayload(q, mode);
+  const emit = (payload) => writeNdjson(res, payload);
+
+  const { settled, branchTimings } = await executeSearchTasks({
+    q,
+    t,
+    wantText,
+    wantImages,
+    wantVideos,
+    responsePayload,
+    emit,
+  });
+
+  const reqEnd = process.hrtime.bigint();
+  const totalMs = Number(reqEnd - reqStart) / 1e6;
+  const timings = {
+    total_ms: totalMs,
+    ...branchTimings,
+  };
+
+  responsePayload.timings = timings;
+
+  writeNdjson(res, {
+    event: 'done',
+    timings,
+    partialFailures: responsePayload.partialFailures,
+  });
+
+  console.log(`${nowMSK()} | /ai-search | stream | total=${totalMs.toFixed(0)}ms | ok`);
+
+  if (idempotencyKey) {
+    const cacheKey = `${identity.id}:${idempotencyKey}`;
+    idempotencyStore.set(cacheKey, {
+      response: responsePayload,
+      createdAt: Date.now(),
+    });
+  }
+
+  res.end();
 }
 
 router.post(
@@ -425,6 +829,9 @@ router.post(
         const cached = idempotencyStore.get(cacheKey);
 
         if (cached && Date.now() - cached.createdAt < IDEMPOTENCY_TTL_MS) {
+          if (wantsStream(req)) {
+            return replayCachedStream(res, cached.response);
+          }
           return res.json(cached.response);
         }
       }
@@ -434,123 +841,36 @@ router.post(
         return res.status(limitCheck.status).json(limitCheck.payload);
       }
 
-      const tasks = [];
+      const stream = wantsStream(req);
 
-      if (wantText) {
-        tasks.push(
-          (async () => {
-            const searxStart = process.hrtime.bigint();
-            const { webContext, sources } = await webSearchWithSearxng(q, t);
-            const searxEnd = process.hrtime.bigint();
-
-            const modelStart = process.hrtime.bigint();
-            let aiResult;
-            try {
-              aiResult = await getAiAnswerFromLocalModels(q, webContext);
-            } catch (e) {
-              const publicError = new Error(t.aiUnavailable);
-              publicError.isPublic = true;
-              publicError.status = 502;
-              throw publicError;
-            }
-            const modelEnd = process.hrtime.bigint();
-
-            return {
-              type: 'text',
-              answer: aiResult.answer || t.noModelText,
-              model: aiResult.model,
-              usedBackup: aiResult.usedBackup,
-              usedWebSearch: true,
-              sources,
-              timings: {
-                searxMs: Number(searxEnd - searxStart) / 1e6,
-                modelMs: Number(modelEnd - modelStart) / 1e6,
-              },
-            };
-          })()
-        );
+      if (stream) {
+        return handleStreamingSearch(req, res, {
+          q,
+          mode,
+          wantText,
+          wantImages,
+          wantVideos,
+          t,
+          idempotencyKey,
+          identity,
+          reqStart,
+        });
       }
 
-      if (wantImages) {
-        tasks.push(
-          (async () => {
-            const start = process.hrtime.bigint();
-            const images = await imageSearchWithSearxng(q, t);
-            const end = process.hrtime.bigint();
+      const responsePayload = createEmptyResponsePayload(q, mode);
 
-            return {
-              type: 'images',
-              images,
-              timings: {
-                imagesMs: Number(end - start) / 1e6,
-              },
-            };
-          })()
-        );
-      }
-
-      if (wantVideos) {
-        tasks.push(
-          (async () => {
-            const start = process.hrtime.bigint();
-            const videos = await videoSearchWithSearxng(q, t);
-            const end = process.hrtime.bigint();
-
-            return {
-              type: 'videos',
-              videos,
-              timings: {
-                videosMs: Number(end - start) / 1e6,
-              },
-            };
-          })()
-        );
-      }
-
-      const settled = await Promise.allSettled(tasks);
-
-      const responsePayload = {
-        query: q,
-        mode,
-        answer: null,
-        images: [],
-        videos: [],
-        sources: [],
-        usedWebSearch: false,
-        model: null,
-        usedBackup: false,
-        partialFailures: [],
-        timestamp: new Date().toISOString(),
-      };
-
-      for (const item of settled) {
-        if (item.status === 'fulfilled') {
-          const value = item.value;
-
-          if (value.type === 'text') {
-            responsePayload.answer = value.answer;
-            responsePayload.sources = value.sources || [];
-            responsePayload.usedWebSearch = value.usedWebSearch;
-            responsePayload.model = value.model;
-            responsePayload.usedBackup = value.usedBackup;
-          }
-
-          if (value.type === 'images') {
-            responsePayload.images = value.images || [];
-          }
-
-          if (value.type === 'videos') {
-            responsePayload.videos = value.videos || [];
-          }
-        } else {
-          responsePayload.partialFailures.push(
-            item.reason?.message || t.unknownTaskError
-          );
-        }
-      }
+      const { settled, branchTimings } = await executeSearchTasks({
+        q,
+        t,
+        wantText,
+        wantImages,
+        wantVideos,
+        responsePayload,
+        emit: null,
+      });
 
       const textFailure = settled.find(
-        item =>
+        (item) =>
           item.status === 'rejected' &&
           item.reason?.isPublic === true
       );
@@ -571,6 +891,11 @@ router.post(
 
       const reqEnd = process.hrtime.bigint();
       const totalMs = Number(reqEnd - reqStart) / 1e6;
+
+      responsePayload.timings = {
+        total_ms: totalMs,
+        ...branchTimings,
+      };
 
       console.log(`${nowMSK()} | /ai-search | total=${totalMs.toFixed(0)}ms | ok`);
 
