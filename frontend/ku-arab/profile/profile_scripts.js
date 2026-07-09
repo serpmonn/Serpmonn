@@ -136,6 +136,12 @@ document.addEventListener('DOMContentLoaded', async () => {
     el.textContent = text;
   }
 
+  function serverMessage(data, fallbackKey) {
+    if (data?.messageKey) return t(data.messageKey);
+    if (data?.message) return data.message;
+    return t(fallbackKey);
+  }
+
   function updateAvatarDisplay(name, email, avatarUrl = currentAvatarUrl) {
     currentDisplayName = name || '';
     currentDisplayEmail = email || '';
@@ -302,7 +308,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await safeJson(response);
 
       if (!response.ok) {
-        setAvatarModalStatus(data?.message || t('profile.avatarUploadFailed'), true);
+        setAvatarModalStatus(serverMessage(data, 'profile.avatarUploadFailed'), true);
         if (response.status === 401) handleUnauthorized();
         return;
       }
@@ -335,7 +341,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const data = await safeJson(response);
 
       if (!response.ok) {
-        setAvatarModalStatus(data?.message || t('profile.avatarDeleteFailed'), true);
+        setAvatarModalStatus(serverMessage(data, 'profile.avatarDeleteFailed'), true);
         if (response.status === 401) handleUnauthorized();
         return;
       }

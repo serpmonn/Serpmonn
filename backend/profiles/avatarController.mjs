@@ -29,15 +29,15 @@ export async function uploadAvatar(req, res) {
     try {
         const userId = await resolveUserId(req);
         if (!userId) {
-            return res.status(404).json({ message: 'Пользователь не найден' });
+            return res.status(404).json({ messageKey: 'profile.avatarUserNotFound' });
         }
 
         if (!req.file) {
-            return res.status(400).json({ message: 'Файл не выбран' });
+            return res.status(400).json({ messageKey: 'profile.avatarFileNotSelected' });
         }
 
         if (!isAllowedAvatarMime(req.file.mimetype)) {
-            return res.status(400).json({ message: 'Допустимы только JPG, PNG и WebP' });
+            return res.status(400).json({ messageKey: 'profile.avatarInvalidType' });
         }
 
         await processAndSaveAvatar(userId, req.file.buffer);
@@ -53,12 +53,12 @@ export async function uploadAvatar(req, res) {
         const updatedAt = rows?.[0]?.avatar_updated_at;
 
         res.json({
-            message: 'Аватар обновлён',
+            messageKey: 'profile.avatarUploadSuccess',
             avatar_url: buildAvatarUrl(userId, updatedAt)
         });
     } catch (err) {
         console.error('Ошибка загрузки аватара:', err);
-        res.status(500).json({ message: 'Не удалось загрузить аватар' });
+        res.status(500).json({ messageKey: 'profile.avatarUploadFailed' });
     }
 }
 
@@ -66,7 +66,7 @@ export async function removeAvatar(req, res) {
     try {
         const userId = await resolveUserId(req);
         if (!userId) {
-            return res.status(404).json({ message: 'Пользователь не найден' });
+            return res.status(404).json({ messageKey: 'profile.avatarUserNotFound' });
         }
 
         await deleteAvatarFile(userId);
@@ -75,9 +75,9 @@ export async function removeAvatar(req, res) {
             [userId]
         );
 
-        res.json({ message: 'Аватар удалён', avatar_url: null });
+        res.json({ messageKey: 'profile.avatarDeleteSuccess', avatar_url: null });
     } catch (err) {
         console.error('Ошибка удаления аватара:', err);
-        res.status(500).json({ message: 'Не удалось удалить аватар' });
+        res.status(500).json({ messageKey: 'profile.avatarDeleteFailed' });
     }
 }

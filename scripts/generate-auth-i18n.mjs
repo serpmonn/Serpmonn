@@ -20,7 +20,7 @@ const FALLBACK = {
 /** Auth-only strings (not in login/register). */
 const EXTRA = {
   ru: {
-    mainTitle: 'Войти в Serpmonn',
+    mainTitle: 'Войти в Серпмонн',
     orDivider: 'или',
     vkButton: 'Войти через VK ID',
     registerSuccessTitle: 'Проверьте почту',
