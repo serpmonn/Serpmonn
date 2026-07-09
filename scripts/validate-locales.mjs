@@ -98,3 +98,27 @@ if (hasErrors) {
 }
 
 console.log('Locale validation finished.');
+
+const authFile = path.join(root, 'assembly', 'site', '_data', 'authTranslations.json');
+const authLocales = readJson(localesFile);
+const authData = readJson(authFile);
+const authKeys = Object.keys(authData.ru || authData.en || {}).sort();
+
+for (const locale of authLocales) {
+  if (!authData[locale]) {
+    console.error(`[authTranslations] missing locale: ${locale}`);
+    hasErrors = true;
+    continue;
+  }
+  const missingAuthKeys = authKeys.filter((key) => authData[locale][key] === undefined);
+  if (missingAuthKeys.length > 0) {
+    console.error(`[authTranslations:${locale}] missing keys: ${missingAuthKeys.join(', ')}`);
+    hasErrors = true;
+  }
+}
+
+if (hasErrors) {
+  process.exit(1);
+}
+
+console.log(`authTranslations.json OK (${authLocales.length} locales)`);

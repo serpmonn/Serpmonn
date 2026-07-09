@@ -9,6 +9,7 @@ const envPath = isProduction                                                    
 dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути
 
 import { query } from '../database/config.mjs';                                                                                  // Импортируем функцию для выполнения запросов к БД
+import { setAuthCookie, clearAuthCookie } from '../auth/authCookie.mjs';
 import paseto from 'paseto';                                                                                                     // Импортируем библиотеку paseto для работы с токенами
 const { V2 } = paseto;                                                                                                           // Извлекаем модуль V2 из paseto
 const secretKey = process.env.SECRET_KEY;                                                                                        // Получаем секретный ключ из переменной окружения
@@ -152,9 +153,9 @@ const updateUserProfile = async (req, res) => {                                 
         console.log('Результат обновления:', result);                                                                            // Логируем результат обновления для отладки
 
         if (oldEmail !== email || oldUsername !== username) {                                                                    // Проверяем, изменились ли email или username
-            res.clearCookie('token');                                                                                            // Очищаем старый токен в куки
-            const newToken = await V2.sign({ username, email }, secretKey);                                                      // Создаем новый токен с обновленными данными
-            res.cookie('token', newToken, { httpOnly: true, secure: true });                                                     // Устанавливаем новый токен в куки
+            clearAuthCookie(res);
+            const newToken = await V2.sign({ username, email }, secretKey);
+            setAuthCookie(res, newToken, 24 * 60 * 60 * 1000);
             return res.json({ message: 'Профиль обновлен, новый токен создан', token: newToken });                               // Возвращаем ответ с новым токеном
         }                                                                                                                      
 

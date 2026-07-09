@@ -3,7 +3,6 @@ import { initMenu } from './menu.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
 import { t, loadMessages } from './i18n-loader.js';
-import { getFrontendPath } from './locale-paths.js';
 
 // Немедленно применяем сохранённые настройки доступности
 (function applySavedAccessibility() {
@@ -39,6 +38,29 @@ const langToDir = {
 };
 const resolvedDir = langToDir[spnLang];
 const primaryMenuPath = resolvedDir ? `/frontend/${resolvedDir}/menu.html` : '/frontend/menu.html';
+
+function hideCurrentPageMenuLinks() {
+  try {
+    let currentPath = window.location.pathname.replace(/\/+$/, '');
+
+    const isVkMiniForHide = /vk_app_id=\d+/.test(window.location.search);
+    if (isVkMiniForHide && (currentPath === '' || currentPath === '/')) {
+      const mainLink = document.querySelector('.menu-container a[data-route="home"]');
+      if (mainLink) {
+        currentPath = (mainLink.getAttribute('href') || '').replace(/\/+$/, '');
+      }
+    }
+
+    document.querySelectorAll('.menu-container a[href]').forEach((link) => {
+      const href = (link.getAttribute('href') || '').replace(/\/+$/, '');
+      if (href === currentPath) {
+        link.style.display = 'none';
+      }
+    });
+  } catch (e) {
+    console.warn('hide-menu error', e);
+  }
+}
 
 fetch(primaryMenuPath)
   .then(r => r.ok ? r : fetch('/frontend/menu.html'))
@@ -84,29 +106,7 @@ fetch(primaryMenuPath)
       });
     } catch {}
 
-  // Скрываем ссылку на текущую страницу (с учётом VK Mini App)
-  try {
-    let currentPath = window.location.pathname.replace(/\/+$/, '');
-
-    // В VK Mini App мы сидим на '/', но главная реально /frontend/main.html
-    const isVkMiniForHide = /vk_app_id=\d+/.test(window.location.search);
-    if (isVkMiniForHide && (currentPath === '' || currentPath === '/')) {
-      const mainLink = document.querySelector('.menu-container a[data-route="home"]');
-      if (mainLink) {
-        currentPath = (mainLink.getAttribute('href') || '').replace(/\/+$/, '');
-      }
-    }
-
-    const links = document.querySelectorAll('.menu-container a[href]');
-    links.forEach(link => {
-      const href = (link.getAttribute('href') || '').replace(/\/+$/, '');
-      if (href === currentPath) {
-        link.style.display = 'none';
-      }
-    });
-  } catch (e) {
-    console.warn('hide-menu error', e);
-  }
+    hideCurrentPageMenuLinks();
 
     // ===== ТОЛЬКО ДЛЯ VK Mini App: клики по data-route =====
     const isVkMiniApp = /vk_app_id=\d+/.test(window.location.search);
@@ -262,103 +262,35 @@ fetch(primaryMenuPath)
     // Apply GEO filtering after menu init
     try { applyGeoFilter(); } catch {}
 
-    /// === VK ID OneTap ===
-  (function initVkIdOneTap() {
-    const container = document.getElementById('VkIdSdkOneTap');
-    if (!container) return;
+    async function updateAuthMenuState() {
+      const authBlock = document.getElementById('auth-block');
+      const profileBlock = document.getElementById('profile-block');
+      if (!authBlock && !profileBlock) return;
 
-    function startOneTap() {
-      if (!('VKIDSDK' in window)) return;
-      const VKID = window.VKIDSDK;
+      try {
+        const resp = await fetch('/auth/protected', { credentials: 'include' });
+        const isLoggedIn = resp.ok;
 
-      VKID.Config.init({
-        app: 54486564,
-        redirectUrl: 'https://serpmonn.ru/',
-        responseMode: VKID.ConfigResponseMode.Callback,
-        source: VKID.ConfigSource.LOWCODE,
-        scope: 'vkid.personal_info email'
-      });
+        if (authBlock) {
+          authBlock.hidden = isLoggedIn;
+          authBlock.style.display = isLoggedIn ? 'none' : '';
+        }
+        if (profileBlock) {
+          profileBlock.hidden = !isLoggedIn;
+          profileBlock.style.display = isLoggedIn ? '' : 'none';
+        }
+      } catch (e) {
+        console.warn('auth menu state check failed', e);
+        if (profileBlock) {
+          profileBlock.hidden = true;
+          profileBlock.style.display = 'none';
+        }
+      }
 
-      const oneTap = new VKID.OneTap();
-
-      oneTap
-        .render({
-          container,
-          showAlternativeLogin: true,
-          styles: {
-            borderRadius: 50,
-            width: 32,
-            height: 32
-          }
-        })
-        .on(VKID.WidgetEvents.ERROR, console.error)
-        .on(VKID.OneTapInternalEvents.LOGIN_SUCCESS, async payload => {
-          try {
-            console.log('VKID LOGIN_SUCCESS payload:', payload);
-            const { code, device_id: deviceId } = payload;
-            if (!code || !deviceId) {
-              console.error('VKID: no code or device_id in payload');
-              return;
-            }
-
-            // 1. Обмен кода на токены через SDK (PKCE внутри SDK)
-            const tokens = await VKID.Auth.exchangeCode(code, deviceId);
-
-            // 2. Получаем инфу о пользователе
-            const userInfo = await VKID.Auth.userInfo(tokens.access_token);
-
-            const vkUserId = userInfo.user?.id || userInfo.user?.user_id;
-            const email = userInfo.user?.email ?? null;
-            const name = userInfo.user?.first_name ?? null;
-
-            if (!vkUserId) {
-              console.error('VKID: user.id not found in userInfo', userInfo);
-              return;
-            }
-
-            // 3. Отправляем минимальный набор данных на свой бэк
-              const resp = await fetch('/api/vkid-login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                credentials: 'include',
-                body: JSON.stringify({ vkUserId, email, name })
-              });
-
-              const data = await resp.json();
-              console.log('VKID backend login:', data);
-
-              if (data && data.success) {
-                window.location.href = getFrontendPath('profile/profile.html');
-              } else {
-                console.error('VKID login failed:', data);
-              }
-            } catch (e) {
-              console.error('VKID OneTap flow error:', e);
-            }
-          });
+      hideCurrentPageMenuLinks();
     }
 
-    if ('VKIDSDK' in window) {
-      startOneTap();
-      return;
-    }
-
-    if (!window.__VKID_LOADING) {
-      window.__VKID_LOADING = true;
-      const s = document.createElement('script');
-      s.src = 'https://unpkg.com/@vkid/sdk@2.6.1/dist-sdk/umd/index.js';
-      s.async = true;
-      s.onload = () => {
-        window.__VKID_LOADING = false;
-        startOneTap();
-      };
-      s.onerror = e => {
-        window.__VKID_LOADING = false;
-        console.error('VK ID SDK load error', e);
-      };
-      document.body.appendChild(s);
-    }
-  })();
+    updateAuthMenuState();
 
     // ========== ЗАГРУЖАЕМ СКРИПТ СЕЛЕКТОРА ЯЗЫКА ==========
     const script = document.createElement('script');

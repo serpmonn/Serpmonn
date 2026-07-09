@@ -29,23 +29,21 @@
         חיפוש בינה מלאכותית
     </a>
 
-    <!-- Блок авторизации в меню -->
-    <div class="menu-item auth-buttons" id="auth-block">
-        <!-- VK -->
-        <div id="VkIdSdkOneTap" class="auth-icon"></div>
+    <!-- Вход (гость) — скрывается после проверки сессии -->
+    <a href="/frontend/he/auth/auth.html"
+       class="menu-item menu-auth-link"
+       id="auth-block"
+       data-route="auth">
+        <img src="/frontend/images/login.ico" alt="התחברות" class="icon">
+        התחברות
+    </a>
 
-        <!-- Serpmonn -->
-        <a href="/frontend/he/register/register.html">
-            <img src="/frontend/images/serpmonn128x128transparent.png"
-                 alt="Serpmonn Login"
-                 class="auth-icon serpmonn-btn">
-        </a>
-    </div>
-
-    <!-- Профиль пользователя -->
+    <!-- Профиль пользователя (только для авторизованных) -->
     <a href="/frontend/he/profile/profile.html"
        class="menu-item menu-profile-link"
-       data-route="profile">
+       id="profile-block"
+       data-route="profile"
+       hidden>
         <img src="/frontend/images/login.ico" alt="פרופיל" class="icon">
         פרופיל
     </a>

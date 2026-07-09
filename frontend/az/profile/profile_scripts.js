@@ -1,6 +1,6 @@
 import { generateCombinedBackground } from '../scripts/backgroundGenerator.js';
 import { getPageT } from '../scripts/i18n-loader.js';
-import { getFrontendPath, getFrontendUrl } from '../scripts/locale-paths.js';
+import { getFrontendPath, getFrontendUrl, redirectToAuth } from '../scripts/locale-paths.js';
 import {
   TOOL_CATALOG,
   normalizeToolHref,
@@ -151,7 +151,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function handleUnauthorized() {
-    window.location.href = getFrontendPath('login/login.html');
+    redirectToAuth({ tab: 'login' });
   }
 
   async function safeJson(response) {
@@ -331,7 +331,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (referralLinkInput) {
         if (username) {
-          const url = `${getFrontendUrl('register/register.html')}?ref=${encodeURIComponent(username)}`;
+          const url = `${getFrontendUrl('auth/auth.html')}?tab=register&ref=${encodeURIComponent(username)}`;
           referralLinkInput.value = url;
 
           if (referralHint) {
@@ -620,7 +620,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       updateAvatarInitials(payload.username, payload.email);
 
       if (payload.username && referralLinkInput) {
-        const url = `${getFrontendUrl('register/register.html')}?ref=${encodeURIComponent(payload.username)}`;
+        const url = `${getFrontendUrl('auth/auth.html')}?tab=register&ref=${encodeURIComponent(payload.username)}`;
         referralLinkInput.value = url;
       }
 
@@ -634,15 +634,18 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function logout() {
     try {
-      await fetch('/auth/logout', {
+      const response = await fetch('/auth/logout', {
         method: 'POST',
         credentials: 'include'
       });
+      if (!response.ok) {
+        console.error('Logout failed:', response.status);
+      }
     } catch (error) {
       console.error('Ошибка выхода:', error);
     } finally {
       localStorage.removeItem('serp_tools_recent');
-      window.location.href = '/';
+      window.location.href = getFrontendPath('main.html');
     }
   }
 

@@ -83,23 +83,21 @@ eleventyComputed:
         {{ menu_home }}
     </a>
 
-    <!-- Блок авторизации в меню -->
-    <div class="menu-item auth-buttons" id="auth-block">
-        <!-- VK -->
-        <div id="VkIdSdkOneTap" class="auth-icon"></div>
+    <!-- Вход (гость) — скрывается после проверки сессии -->
+    <a href="{% if locale == 'ru' %}/frontend/auth/auth.html{% else %}/frontend/{{ locale }}/auth/auth.html{% endif %}"
+       class="menu-item menu-auth-link"
+       id="auth-block"
+       data-route="auth">
+        <img src="/frontend/images/login.ico" alt="{{ menu_auth }}" class="icon">
+        {{ menu_auth }}
+    </a>
 
-        <!-- Serpmonn -->
-        <a href="{% if locale == 'ru' %}/frontend/register/register.html{% else %}/frontend/{{ locale }}/register/register.html{% endif %}">
-            <img src="/frontend/images/serpmonn128x128transparent.png"
-                 alt="Serpmonn Login"
-                 class="auth-icon serpmonn-btn">
-        </a>
-    </div>
-
-    <!-- Профиль пользователя -->
+    <!-- Профиль пользователя (только для авторизованных) -->
     <a href="{% if locale == 'ru' %}/frontend/profile/profile.html{% else %}/frontend/{{ locale }}/profile/profile.html{% endif %}"
        class="menu-item menu-profile-link"
-       data-route="profile">
+       id="profile-block"
+       data-route="profile"
+       hidden>
         <img src="/frontend/images/login.ico" alt="{{ menu_profile }}" class="icon">
         {{ menu_profile }}
     </a>

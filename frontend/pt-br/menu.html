@@ -29,23 +29,21 @@
         Busca com IA
     </a>
 
-    <!-- Блок авторизации в меню -->
-    <div class="menu-item auth-buttons" id="auth-block">
-        <!-- VK -->
-        <div id="VkIdSdkOneTap" class="auth-icon"></div>
+    <!-- Вход (гость) — скрывается после проверки сессии -->
+    <a href="/frontend/pt-br/auth/auth.html"
+       class="menu-item menu-auth-link"
+       id="auth-block"
+       data-route="auth">
+        <img src="/frontend/images/login.ico" alt="Entrar" class="icon">
+        Entrar
+    </a>
 
-        <!-- Serpmonn -->
-        <a href="/frontend/pt-br/register/register.html">
-            <img src="/frontend/images/serpmonn128x128transparent.png"
-                 alt="Serpmonn Login"
-                 class="auth-icon serpmonn-btn">
-        </a>
-    </div>
-
-    <!-- Профиль пользователя -->
+    <!-- Профиль пользователя (только для авторизованных) -->
     <a href="/frontend/pt-br/profile/profile.html"
        class="menu-item menu-profile-link"
-       data-route="profile">
+       id="profile-block"
+       data-route="profile"
+       hidden>
         <img src="/frontend/images/login.ico" alt="Perfil" class="icon">
         Perfil
     </a>

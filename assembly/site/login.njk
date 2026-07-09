@@ -5,131 +5,29 @@ pagination:
   alias: locale
 permalink: "{% if locale == 'ru' %}/frontend/login/login.html{% else %}/frontend/{{ locale }}/login/login.html{% endif %}"
 eleventyComputed:
-  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
-  title: "{{ login[locale].login.pageTitle }}"
-  description: "{{ login[locale].login.ogDescription }}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/login/login.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/login/login.html{% endif %}"
+  authUrl: "{% if locale == 'ru' %}/frontend/auth/auth.html{% else %}/frontend/{{ locale }}/auth/auth.html{% endif %}"
 ---
 
 <!DOCTYPE html>
-<html lang="{{ locale }}" dir="{{ dir }}">
+<html lang="{{ locale }}">
 <head>
-    <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ login[locale].login.pageTitle }}</title>
-    
-    <!-- Open Graph -->
-    <meta property="og:title" content="{{ login[locale].login.ogTitle }}">
-    <meta property="og:description" content="{{ login[locale].login.ogDescription }}">
-    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
-    <meta property="og:url" content="{{ canonical }}">
-    <meta property="og:type" content="website">
-    
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="{{ login[locale].login.twitterTitle }}">
-    <meta name="twitter:description" content="{{ login[locale].login.twitterDescription }}">
-    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
-    
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
-    <link rel="canonical" href="{{ canonical }}">
-    
-    <!-- Hreflang для всех языков -->
-    {% for loc in locales %}
-        {% if loc == 'ru' %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/login/login.html" hreflang="{{ loc }}" />
-        {% else %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/login/login.html" hreflang="{{ loc }}" />
-        {% endif %}
-    {% endfor %}
-    <link rel="alternate" href="{{ site.baseUrl }}/frontend/login/login.html" hreflang="x-default" />
-    
-    <!-- Подключение CSS стилей -->
-    <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <link rel="stylesheet" href="login_styles.css">
-    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-</head>
-<body>
-    <div class="container">
-        <h2>{{ login[locale].login.mainTitle }}</h2>
-        <form id="loginForm">
-            <label for="email">{{ login[locale].login.form.emailLabel }}</label>
-            <input type="email" id="email" name="email" required>
-
-            <label for="password">{{ login[locale].login.form.passwordLabel }}</label>
-            <div class="password-container">
-                <input type="password" id="password" name="password" required>
-                <button type="button" id="togglePassword" aria-label="{{ login[locale].login.form.togglePasswordAria }}">👁</button>
-            </div>
-
-            <button class="submit-btn" type="submit">{{ login[locale].login.form.submitButton }}</button>
-        </form>
-        <p id="message"></p>
-
-        <div class="register-link">
-            <p>{{ login[locale].login.registerText }} <a href="{% if locale == 'ru' %}/frontend/register/register.html{% else %}/frontend/{{ locale }}/register/register.html{% endif %}">{{ login[locale].login.registerLink }}</a></p>
-            <p><a href="{% if locale == 'ru' %}/frontend/login/forgot/forgot.html{% else %}/frontend/{{ locale }}/login/forgot/forgot.html{% endif %}">{{ login[locale].login.forgotPasswordLink }}</a></p>
-        </div>
-    </div>
-    
-    <!-- Разделитель между формой и рекламой -->
-    <div style="height: 60px; clear: both; background: transparent;"></div>
-    
-    <!-- Рекламный контейнер -->
-    <div class="ad-container auth-page">
-        <ins
-            class="mrg-tag"
-            style="display:inline-block;width:auto;height:500px"
-            data-ad-client="ad-1874023"
-            data-ad-slot="1874023">
-        </ins>
-    </div>
-
-    <!-- Подключение рекламного скрипта Mail.ru -->
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <title>Redirecting…</title>
+    <link rel="canonical" href="{{ authUrl }}?tab=login">
     <script>
-        (MRGtag = window.MRGtag || []).push({});
-    </script>
-
-    <!-- Подключение основных JavaScript модулей -->
-    <script type="module" src="login_scripts.js" defer></script>
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-
-    <!-- Fallback скрипт для обработки рекламных блоков -->
-    <script>
-        (function(){
-            function handleIns(ins){
-                if (!ins || ins.__handled) return;
-                ins.__handled = true;
-                setTimeout(function(){
-                    var has = !!ins.querySelector("iframe");
-                    if (!has) {
-                        (window.MRGtag = window.MRGtag || []).push({});
-                    }
-                    setTimeout(function(){
-                        if (!ins.querySelector("iframe")) {
-                            var p = ins.closest(".ad-container");
-                            if(p) p.style.display = 'none';
-                        } 
-                    }, 2000);
-                }, 2000);
-            }
-            
-            document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
-            
-            var mo = new MutationObserver(function(muts){
-                muts.forEach(function(m){
-                    m.addedNodes && m.addedNodes.forEach(function(n){
-                        if(n.querySelectorAll){
-                            n.querySelectorAll("ins.mrg-tag").forEach(handleIns);
-                        } 
-                    }); 
-                });
-            });
-            mo.observe(document.documentElement, {childList: true, subtree: true});
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            params.set('tab', 'login');
+            var target = '{{ authUrl }}?' + params.toString();
+            window.location.replace(target);
         })();
     </script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url={{ authUrl }}?tab=login">
+    </noscript>
+</head>
+<body>
+    <p><a href="{{ authUrl }}?tab=login">Continue to sign in</a></p>
 </body>
 </html>

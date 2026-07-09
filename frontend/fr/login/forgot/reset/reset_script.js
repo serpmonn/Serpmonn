@@ -1,5 +1,5 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
-import { getFrontendPath } from '../../../scripts/locale-paths.js';
+import { buildAuthUrl, getFrontendPath } from '../../../scripts/locale-paths.js';
 import { getPageT } from '../../../scripts/i18n-loader.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -51,7 +51,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (res.ok) {
         setTimeout(() => {
-          window.location.href = getFrontendPath('login/login.html');
+          window.location.href = buildAuthUrl({
+            tab: 'login',
+            returnPath: getFrontendPath('profile/profile.html')
+          });
         }, 2000);
       }
     } catch (err) {

@@ -2,7 +2,6 @@ import express from 'express';
 import { body, query, validationResult } from 'express-validator';
 import {
   registerUser,
-  confirmTelegram,
   confirmEmail,
   confirmToken,
   loginUser,
@@ -45,8 +44,6 @@ function handleValidationErrors(req, res, next) {
     message = 'Проверьте правильность данных регистрации.';
   } else if (req.path === '/confirm-email') {
     message = 'Не удалось отправить письмо. Обновите страницу и попробуйте ещё раз.';
-  } else if (req.path === '/confirm-telegram') {
-    message = 'Не удалось подтвердить аккаунт. Начните подтверждение заново.';
   } else if (req.path === '/confirm') {
     message = 'Ссылка для подтверждения некорректна или устарела. Запросите новую ссылку.';
   } else if (req.path === '/login') {
@@ -63,10 +60,10 @@ router.post(
   authWriteLimiter,
   [
     body('username')
+      .optional({ values: 'falsy' })
       .trim()
-      .notEmpty()
-      .isLength({ min: 3 })
-      .isAlphanumeric(),
+      .isLength({ min: 3, max: 32 })
+      .matches(/^[a-zA-Z0-9._+-]+$/),
     body('email')
       .trim()
       .notEmpty()
@@ -101,23 +98,6 @@ router.post(
     handleValidationErrors
   ],
   confirmEmail
-);
-
-router.post(
-  '/confirm-telegram',
-  authWriteLimiter,
-  [
-    body('userId')
-      .trim()
-      .notEmpty()
-      .isUUID(),
-    body('source')
-      .optional({ values: 'falsy' })
-      .trim()
-      .isLength({ max: 50 }),
-    handleValidationErrors
-  ],
-  confirmTelegram
 );
 
 router.get(

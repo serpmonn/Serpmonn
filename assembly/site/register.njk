@@ -5,120 +5,29 @@ pagination:
   alias: locale
 permalink: "{% if locale == 'ru' %}/frontend/register/register.html{% else %}/frontend/{{ locale }}/register/register.html{% endif %}"
 eleventyComputed:
-  title: "{{ registerTranslations[locale].register.title }}"
-  description: "{{ registerTranslations[locale].register.description }}"
-  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/register/register.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/register/register.html{% endif %}"
+  authUrl: "{% if locale == 'ru' %}/frontend/auth/auth.html{% else %}/frontend/{{ locale }}/auth/auth.html{% endif %}"
 ---
 
 <!DOCTYPE html>
-<html lang="{{ locale }}" dir="{{ dir }}">
-    <head>
-        <link rel="stylesheet" href="/frontend/styles/styles.css">
-        <meta http-equiv="Content-Language" content="{{ locale }}">
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>{{ title }}</title>
-        <meta name="description" content="{{ description }}">
-        
-        <!-- Open Graph -->
-        <meta property="og:title" content="{{ registerTranslations[locale].register.ogTitle }}">
-        <meta property="og:description" content="{{ registerTranslations[locale].register.ogDescription }}">
-        <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
-        <meta property="og:url" content="{{ canonical }}">
-        <meta property="og:type" content="website">
-        
-        <!-- Twitter -->
-        <meta name="twitter:card" content="summary_large_image">
-        <meta name="twitter:title" content="{{ registerTranslations[locale].register.ogTitle }}">
-        <meta name="twitter:description" content="{{ registerTranslations[locale].register.twitterDescription }}">
-        <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
-        
-        <!-- Каноническая ссылка -->
-        <link rel="canonical" href="{{ canonical }}" />
-        
-        <!-- Hreflang для всех языков -->
-        {% for loc in locales %}
-          {% if loc == 'ru' %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/register/register.html" hreflang="{{ loc }}" />
-          {% else %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/register/register.html" hreflang="{{ loc }}" />
-          {% endif %}
-        {% endfor %}
-        <link rel="alternate" href="{{ site.baseUrl }}/frontend/register/register.html" hreflang="x-default" />
-        
-        <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
-        <link rel="stylesheet" href="register_styles.css">
-        
-        <!-- Яндекс.Метрика -->
-        <script type="text/javascript">
-            (function(m,e,t,r,i,k,a){
-                m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-                m[i].l=1*new Date();
-                for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-                k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)
-            })(window, document,'script','https://mc.yandex.ru/metrika/tag.js?id=103554515', 'ym');
-            ym(103554515, 'init', {ssr:true, webvisor:true, clickmap:true, ecommerce:"dataLayer", accurateTrackBounce:true, trackLinks:true});
-        </script>
-        
-        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
-        <script type="module" src="register_scripts.js" defer></script>
-        <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    </head>
-    
-    <body>
-        <noscript><img src="https://mc.yandex.ru/watch/103554515" style="position:absolute; left:-9999px;" alt=""></noscript>
-        
-        <div class="container fade-in">
-            <h2>{{ registerTranslations[locale].register.formTitle }}</h2>
-            <form id="registerForm">
-                <label for="username">{{ registerTranslations[locale].register.usernameLabel }}:</label>
-                <input type="text" id="username" name="username" required>
-                
-                <label for="email">{{ registerTranslations[locale].register.emailLabel }}:</label>
-                <input type="email" id="email" name="email" required>
-                
-                <label for="password">{{ registerTranslations[locale].register.passwordLabel }}:</label>
-                <div class="password-container">
-                    <input type="password" id="password" name="password" required>
-                    <button type="button" id="togglePassword" aria-label="{{ login[locale].login.form.togglePasswordAria }}">👁</button>
-                </div>
-                
-                <label class="policy-checkbox">
-                    <input type="checkbox" required>
-                    {{ registerTranslations[locale].register.policyText | safe }}
-                </label>
-                
-                <button type="submit" class="submit-btn">{{ registerTranslations[locale].register.submitButton }}</button>
-            </form>
-            
-            <p id="message"></p>
-            
-            <div class="login-link">
-                <p>{{ registerTranslations[locale].register.loginText }} <a href="{% if locale == 'ru' %}/frontend/login/login.html{% else %}/frontend/{{ locale }}/login/login.html{% endif %}" class="button-style">{{ registerTranslations[locale].register.loginLink }}</a></p>
-            </div>
-        </div>
-
-        <!-- Рекламный блок -->
-        <div class="ad-container" style="text-align: center; margin: 20px auto; max-width: 600px;">
-            <ins class="mrg-tag" 
-                style="display:inline-block;width:300px;height:250px"
-                data-ad-client="ad-1874025"
-                data-ad-slot="1874025">
-            </ins>
-            <script>(MRGtag = window.MRGtag || []).push({});</script>
-        </div>
-
-        <!-- Попап подтверждения -->
-        <div id="confirmPopup" class="popup">
-            <div class="popup-content">
-                <p>{{ registerTranslations[locale].register.popupTitle }}</p>
-                <a id="telegramConfirmLink" class="btn telegram-btn" target="_blank">{{ registerTranslations[locale].register.telegramButton }}</a>
-                <button id="emailConfirmButton" class="btn email-btn">{{ registerTranslations[locale].register.emailButton }}</button>
-                <button id="closePopup" class="btn close-btn">{{ registerTranslations[locale].register.closeButton }}</button>
-            </div>
-        </div>
-
-        <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-    </body>
+<html lang="{{ locale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting…</title>
+    <link rel="canonical" href="{{ authUrl }}?tab=register">
+    <script>
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            params.set('tab', 'register');
+            var target = '{{ authUrl }}?' + params.toString();
+            window.location.replace(target);
+        })();
+    </script>
+    <noscript>
+        <meta http-equiv="refresh" content="0;url={{ authUrl }}?tab=register">
+    </noscript>
+</head>
+<body>
+    <p><a href="{{ authUrl }}?tab=register">Continue to registration</a></p>
+</body>
 </html>

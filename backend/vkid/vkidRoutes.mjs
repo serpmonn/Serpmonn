@@ -3,6 +3,7 @@ import express from 'express';
 import rateLimit from 'express-rate-limit';
 import paseto from 'paseto';
 import { query } from '../database/config.mjs';
+import { setAuthCookie } from '../auth/authCookie.mjs';
 
 const { V2 } = paseto;
 
@@ -87,13 +88,7 @@ router.post('/vkid-login', vkidLimiter, async (req, res, next) => {
 
     const token = await V2.sign(payload, PASETO_SECRET);
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'Lax',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      domain: '.serpmonn.ru'
-    });
+    setAuthCookie(res, token, 30 * 24 * 60 * 60 * 1000);
 
     return res.json({
       success: true,

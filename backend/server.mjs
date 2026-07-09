@@ -149,9 +149,10 @@ app.use(apiLimiter);                                                            
 
 const authLimiter = rateLimit({                                                                                                  // Отдельный лимитер для маршрутов авторизации
     windowMs: 15 * 60 * 1000,                                                                                                    // Окно ограничения — 15 минут
-    max: 10,                                                                                                                     // Максимум 10 запросов на авторизационные маршруты за окно
+    max: 30,                                                                                                                     // Максимум POST-запросов на auth за окно (логин, регистрация и т.д.)
     standardHeaders: true,                                                                                                       // Возвращаем стандартные заголовки лимита (RateLimit-*)
     legacyHeaders: false,                                                                                                        // Не используем устаревшие заголовки (X-RateLimit-*)
+    skip: (req) => req.method === 'GET',                                                                                         // GET (проверка сессии, confirm) не считаем — иначе меню съедает лимит
     message: {
         status: 'error',
         message: 'Too many authentication attempts'

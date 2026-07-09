@@ -1,4 +1,4 @@
-import { getFrontendPath } from '../../../scripts/locale-paths.js';
+import { getFrontendPath, redirectToAuth } from '../../../scripts/locale-paths.js';
 import { getPageT } from '../../../scripts/i18n-loader.js';
 
 const registerForm = document.getElementById('registerForm');
@@ -16,7 +16,7 @@ const checkUserStatus = async () => {
             const data = await response.json();
             if (response.status === 401) {
                 statusMessage.textContent = data.message || t('onnmail.loginRequired');
-                window.location.href = getFrontendPath('login/login.html');
+                redirectToAuth({ tab: 'login' });
                 return false;
             }
             if (response.status === 403) {

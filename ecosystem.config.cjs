@@ -83,26 +83,6 @@ module.exports = {                                      // Экспорт кон
 
     // Telegram-боты
     {
-      name: 'serpmonngamesbot',                         // Telegram-бот для игр Serpmonn_games
-      script: 'backend/telegram_bots/Serpmonn_games/Serpmonn_games.mjs',
-      instances: 1,
-      max_memory_restart: '256M',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
-      env: {
-        NODE_ENV: 'production'
-      }
-    },
-    {
-      name: 'serpmonnconfirmbot',                       // Бот подтверждения
-      script: 'backend/telegram_bots/SerpmonnConfirmBot/SerpmonnConfirmBot.mjs',
-      instances: 1,
-      max_memory_restart: '256M',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
-      env: {
-        NODE_ENV: 'production'
-      }
-    },
-    {
       name: 'memebot',                                  // Мем-бот
       script: 'backend/telegram_bots/meme-bot/meme-bot.mjs',
       instances: 1,

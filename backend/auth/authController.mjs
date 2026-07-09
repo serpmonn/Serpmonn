@@ -16,6 +16,7 @@ import { sendConfirmationEmail } from '../utils/mailer.mjs';
 import { awardPoints } from '../points/pointsService.js';
 import { checkAndRewardQualifiedReferral } from '../points/referralService.mjs';
 import { getBackendMessages } from '../utils/i18n.mjs';
+import { setAuthCookie, clearAuthCookie } from './authCookie.mjs';
 
 const { V2 } = paseto;
 const { hash, compare } = bcrypt;
@@ -73,19 +74,61 @@ function safeQuery(label, sql, params) {
   return query(sql, params);
 }
 
+async function deriveUsername(email) {
+  const local = String(email || '').split('@')[0].toLowerCase();
+  let base = local.replace(/[^a-z0-9._+-]/g, '').replace(/^\.+|\.+$/g, '');
+  if (base.length < 2) base = 'user';
+
+  let candidate = base.slice(0, 32);
+  let suffix = 1;
+
+  while (true) {
+    const [exists] = await safeQuery(
+      'registerUser:checkDerivedUsername',
+      'SELECT id FROM users WHERE username = ?',
+      [candidate]
+    );
+    if (!exists?.id) return candidate;
+    candidate = `${base.slice(0, 28)}${suffix}`;
+    suffix += 1;
+  }
+}
+
+async function sendRegistrationConfirmationEmail(userId, email) {
+  const confirmationToken = uuidv4();
+  const tokenExpires = new Date(Date.now() + 3600000);
+
+  await safeQuery(
+    'registerUser:updateConfirmationToken',
+    'UPDATE users SET confirmation_token = ?, confirmation_token_expires = ? WHERE id = ?',
+    [confirmationToken, tokenExpires, userId]
+  );
+
+  const confirmLink = `https://serpmonn.ru/auth/confirm?token=${confirmationToken}`;
+  await sendConfirmationEmail(email, confirmLink);
+}
+
 export const registerUser = async (req, res) => {
-  const { username, email, password, ref } = req.body;
+  const { username: usernameInput, email, password, ref } = req.body;
   const { t } = getBackendMessages(req);
   logAuthRequest(req, 'registerUser:start');
 
   try {
+    if (!email || !password) {
+      return res.status(400).json({ message: t['auth.registerDataError'] });
+    }
+
+    const username = usernameInput?.trim()
+      ? usernameInput.trim()
+      : await deriveUsername(email);
+
     const [usernameExists] = await safeQuery(
       'registerUser:checkUsername',
       'SELECT id FROM users WHERE username = ?',
       [username]
     );
 
-    if (usernameExists && usernameExists.id) {
+    if (usernameExists?.id) {
       return res.status(400).json({ message: t['auth.usernameTaken'] });
     }
 
@@ -95,13 +138,12 @@ export const registerUser = async (req, res) => {
       [email]
     );
 
-    if (emailExists && emailExists.id) {
+    if (emailExists?.id) {
       return res.status(400).json({ message: t['auth.emailTaken'] });
     }
 
     const passwordHash = await hash(password, 10);
     const userId = uuidv4();
-    const telegramConfirmLink = `https://t.me/SerpmonnConfirmBot?startapp=${userId}`;
 
     await safeQuery(
       'registerUser:insertUser',
@@ -125,7 +167,7 @@ export const registerUser = async (req, res) => {
           [ref]
         );
 
-        if (referrer && referrer.id && referrer.id !== userId) {
+        if (referrer?.id && referrer.id !== userId) {
           const [freshUser] = await safeQuery(
             'registerUser:getFreshUser',
             'SELECT referred_by FROM users WHERE id = ?',
@@ -162,11 +204,18 @@ export const registerUser = async (req, res) => {
       }
     }
 
+    try {
+      await sendRegistrationConfirmationEmail(userId, email);
+    } catch (mailErr) {
+      console.error('Ошибка авто-отправки письма подтверждения:', mailErr);
+      return res.status(500).json({ message: t['auth.emailSendFailed'] });
+    }
+
     return res.status(200).json({
       success: true,
-      message: t['auth.registerSuccess'],
+      message: t['auth.emailSent'],
       userId,
-      confirmLink: telegramConfirmLink
+      emailSent: true
     });
   } catch (error) {
     console.error('Ошибка регистрации:', error);
@@ -178,83 +227,6 @@ export const registerUser = async (req, res) => {
     }
 
     return res.status(500).json({ message: t['auth.serverError'] });
-  }
-};
-
-export const confirmTelegram = async (req, res) => {
-  const { userId, source } = req.body;
-  const { t } = getBackendMessages(req);
-  logAuthRequest(req, 'confirmTelegram:start', { source });
-
-  try {
-    const [user] = await safeQuery(
-      'confirmTelegram:getUser',
-      'SELECT id, username, email, confirmed, registration_points_awarded FROM users WHERE id = ?',
-      [userId]
-    );
-
-    if (!user) {
-      return res.status(404).json({
-        success: false,
-        message: t['auth.userNotFound']
-      });
-    }
-
-    if (user.confirmed) {
-      if (!user.registration_points_awarded) {
-        const REGISTRATION_BONUS = 200;
-        await awardPoints(user.id, REGISTRATION_BONUS, 'registration', { via: 'telegram' });
-        await safeQuery(
-          'confirmTelegram:setRegistrationAwardedAlreadyConfirmed',
-          'UPDATE users SET registration_points_awarded = 1 WHERE id = ?',
-          [user.id]
-        );
-      }
-
-      await checkAndRewardQualifiedReferral(user.id);
-
-      return res.json({
-        success: true,
-        message: (t['auth.alreadyConfirmed'] || '').replace('{username}', user.username)
-      });
-    }
-
-    await safeQuery(
-      'confirmTelegram:setConfirmed',
-      'UPDATE users SET confirmed = ? WHERE id = ?',
-      [true, user.id]
-    );
-
-    if (!user.registration_points_awarded) {
-      const REGISTRATION_BONUS = 200;
-      await awardPoints(user.id, REGISTRATION_BONUS, 'registration', { via: 'telegram' });
-      await safeQuery(
-        'confirmTelegram:setRegistrationAwarded',
-        'UPDATE users SET registration_points_awarded = 1 WHERE id = ?',
-        [user.id]
-      );
-    }
-
-    await checkAndRewardQualifiedReferral(user.id);
-
-    return res.json({
-      success: true,
-      message: (t['auth.confirmSuccess'] || '').replace('{username}', user.username)
-    });
-  } catch (error) {
-    console.error('❌ Ошибка при подтверждении через Telegram:', error);
-
-    if (error?.isPublic) {
-      return res.status(error.status || 400).json({
-        success: false,
-        message: t[error.i18nKey] ?? t['auth.confirmFailed']
-      });
-    }
-
-    return res.status(500).json({
-      success: false,
-      message: t['auth.confirmTechError']
-    });
   }
 };
 
@@ -349,13 +321,7 @@ export const confirmToken = async (req, res) => {
 
     const authToken = await V2.sign(payload, secretKey);
 
-    res.cookie('token', authToken, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'Lax',
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      domain: '.serpmonn.ru'
-    });
+    setAuthCookie(res, authToken, 30 * 24 * 60 * 60 * 1000);
 
     console.log('Подтверждение: пользователь', maskEmail(user.email), 'confirmed = 1, токен создан');
     return res.redirect('https://serpmonn.ru/frontend/profile/profile.html');
@@ -398,13 +364,7 @@ export const loginUser = async (req, res) => {
     const payload = { id: user.id, username: user.username, email: user.email };
     const token = await V2.sign(payload, secretKey);
 
-    res.cookie('token', token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: 'Lax',
-      maxAge: 24 * 60 * 60 * 1000,
-      domain: '.serpmonn.ru'
-    });
+    setAuthCookie(res, token, 24 * 60 * 60 * 1000);
 
     return res.json({ message: t['auth.loginSuccess'] });
   } catch (error) {
@@ -423,18 +383,13 @@ export const loginUser = async (req, res) => {
 export const logoutUser = (req, res) => {
   const { t } = getBackendMessages(req);
 
-  res.clearCookie('token', {
-    httpOnly: true,
-    secure: true,
-    sameSite: 'Lax'
-  });
+  clearAuthCookie(res);
 
   return res.json({ message: t['auth.logoutSuccess'] });
 };
 
 export default {
   registerUser,
-  confirmTelegram,
   confirmEmail,
   confirmToken,
   loginUser,

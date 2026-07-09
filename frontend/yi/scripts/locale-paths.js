@@ -21,3 +21,48 @@ export function getFrontendPath(relativePath) {
 export function getFrontendUrl(relativePath) {
   return `${SITE_ORIGIN}${getFrontendPath(relativePath)}`;
 }
+
+const FRONTEND_PREFIX = '/frontend/';
+
+/** Allow only same-site frontend paths (blocks open redirects). */
+export function sanitizeReturnPath(input) {
+  if (!input || typeof input !== 'string') return null;
+
+  let path = input.trim();
+  if (!path.startsWith('/')) {
+    try {
+      path = decodeURIComponent(path);
+    } catch {
+      return null;
+    }
+  }
+
+  if (!path.startsWith(FRONTEND_PREFIX)) return null;
+  if (path.includes('://') || path.startsWith('//')) return null;
+
+  const pathname = path.split('?')[0].split('#')[0];
+  if (/\/auth\/auth\.html$/i.test(pathname)) return null;
+
+  return path;
+}
+
+export function getCurrentReturnPath() {
+  return window.location.pathname + window.location.search;
+}
+
+export function buildAuthUrl({ tab = null, returnPath = null } = {}) {
+  const base = getFrontendPath('auth/auth.html');
+  const params = new URLSearchParams();
+
+  if (tab) params.set('tab', tab);
+
+  const safeReturn = sanitizeReturnPath(returnPath ?? getCurrentReturnPath());
+  if (safeReturn) params.set('return', safeReturn);
+
+  const qs = params.toString();
+  return qs ? `${base}?${qs}` : base;
+}
+
+export function redirectToAuth(options = {}) {
+  window.location.href = buildAuthUrl(options);
+}
