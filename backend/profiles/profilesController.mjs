@@ -8,7 +8,8 @@ const envPath = isProduction                                                    
 
 dotenv.config({ path: envPath });                                                                                                // Загружаем переменные окружения из выбранного пути
 
-import { query } from '../database/config.mjs';                                                                                  // Импортируем функцию для выполнения запросов к БД
+import { query } from '../database/config.mjs';
+import { buildAvatarUrl } from './avatarService.mjs';                                                                                  // Импортируем функцию для выполнения запросов к БД
 import { setAuthCookie, clearAuthCookie } from '../auth/authCookie.mjs';
 import paseto from 'paseto';                                                                                                     // Импортируем библиотеку paseto для работы с токенами
 const { V2 } = paseto;                                                                                                           // Извлекаем модуль V2 из paseto
@@ -54,7 +55,7 @@ const getUserInfo = async (req, res) => {                                       
 
         // 1. читаем юзера с полями тарифа
         const queryText = `
-        SELECT id, username, email, confirmed, mailbox_created, plan, pro_until, created_at
+        SELECT id, username, email, confirmed, mailbox_created, avatar_updated_at, plan, pro_until, created_at
         FROM users
         WHERE email = ?
         LIMIT 1
@@ -120,6 +121,7 @@ const getUserInfo = async (req, res) => {                                       
         email: user.email,
         confirmed: user.confirmed,
         mailbox_created: user.mailbox_created,
+        avatar_url: buildAvatarUrl(user.id, user.avatar_updated_at),
         created_at: user.created_at,
         plan: user.plan,
         pro_until: user.pro_until,

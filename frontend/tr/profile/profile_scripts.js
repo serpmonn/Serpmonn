@@ -36,6 +36,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   const pointsBadgeEl = document.getElementById('pointsBadge');
   const usernameField = document.getElementById('username');
   const emailField = document.getElementById('email');
+  const avatarButton = document.getElementById('avatarButton');
+  const avatarImage = document.getElementById('avatarImage');
   const avatarInitials = document.getElementById('avatarInitials');
   const accountStatusBadge = document.getElementById('accountStatusBadge');
   const planBadge = document.getElementById('planBadge');
@@ -66,6 +68,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const referralHint = document.getElementById('referralHint');
 
   let isEditOpen = false;
+  let currentAvatarUrl = null;
+  let currentDisplayName = '';
+  let currentDisplayEmail = '';
 
   /* ==== УТИЛИТЫ ==== */
 
@@ -131,13 +136,220 @@ document.addEventListener('DOMContentLoaded', async () => {
     el.textContent = text;
   }
 
-  function updateAvatarInitials(name, email) {
+  function updateAvatarDisplay(name, email, avatarUrl = currentAvatarUrl) {
+    currentDisplayName = name || '';
+    currentDisplayEmail = email || '';
+    currentAvatarUrl = avatarUrl || null;
+
     const source = (name || email || '').trim();
-    if (!source) {
-      avatarInitials.textContent = 'U';
+    const initials = source ? source[0].toUpperCase() : 'U';
+
+    if (avatarButton) {
+      avatarButton.setAttribute('aria-label', t('profile.avatarButtonAria'));
+    }
+
+    if (avatarImage && avatarInitials) {
+      if (currentAvatarUrl) {
+        avatarImage.src = currentAvatarUrl;
+        avatarImage.alt = name || email || t('profile.avatarImageAlt');
+        avatarImage.hidden = false;
+        avatarInitials.hidden = true;
+      } else {
+        avatarImage.removeAttribute('src');
+        avatarImage.hidden = true;
+        avatarInitials.hidden = false;
+        avatarInitials.textContent = initials;
+      }
+    } else if (avatarInitials) {
+      avatarInitials.textContent = initials;
+    }
+  }
+
+  function getAvatarInitials(name, email) {
+    const source = (name || email || '').trim();
+    return source ? source[0].toUpperCase() : 'U';
+  }
+
+  /* ==== АВАТАР: МОДАЛЬНОЕ ОКНО ==== */
+
+  function getOrCreateAvatarModal() {
+    let overlay = document.getElementById('avatar-modal-overlay');
+    if (overlay) return overlay;
+
+    overlay = document.createElement('div');
+    overlay.id = 'avatar-modal-overlay';
+    overlay.className = 'avatar-modal';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', t('profile.avatarModalTitle'));
+
+    overlay.innerHTML = `
+      <div class="avatar-modal__dialog">
+        <button type="button" class="avatar-modal__close" aria-label="${t('profile.avatarClose')}">&times;</button>
+        <h2 class="avatar-modal__title">${t('profile.avatarModalTitle')}</h2>
+        <p class="avatar-modal__hint">${t('profile.avatarModalHint')}</p>
+        <div class="avatar-modal__preview" id="avatarModalPreview">
+          <span id="avatarModalInitials">U</span>
+          <img id="avatarModalImage" alt="" hidden>
+        </div>
+        <p class="avatar-modal__status" id="avatarModalStatus" aria-live="polite"></p>
+        <div class="avatar-modal__actions">
+          <input type="file" id="avatarFileInput" class="avatar-modal__file-input" accept="image/jpeg,image/png,image/webp">
+          <button type="button" class="secondary-button" id="avatarChooseBtn">${t('profile.avatarChoose')}</button>
+          <button type="button" class="secondary-button avatar-modal__delete" id="avatarDeleteBtn" hidden>${t('profile.avatarDelete')}</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    overlay.querySelector('.avatar-modal__close').addEventListener('click', closeAvatarModal);
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeAvatarModal();
+    });
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && overlay.classList.contains('visible')) closeAvatarModal();
+    });
+
+    const fileInput = overlay.querySelector('#avatarFileInput');
+    const chooseBtn = overlay.querySelector('#avatarChooseBtn');
+
+    chooseBtn.addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files?.[0];
+      if (file) uploadAvatarFile(file);
+      fileInput.value = '';
+    });
+
+    overlay.querySelector('#avatarDeleteBtn').addEventListener('click', deleteAvatar);
+
+    return overlay;
+  }
+
+  function updateAvatarModalPreview() {
+    const overlay = document.getElementById('avatar-modal-overlay');
+    if (!overlay) return;
+
+    const previewImg = overlay.querySelector('#avatarModalImage');
+    const previewInitials = overlay.querySelector('#avatarModalInitials');
+    const deleteBtn = overlay.querySelector('#avatarDeleteBtn');
+    const initials = getAvatarInitials(currentDisplayName, currentDisplayEmail);
+
+    if (currentAvatarUrl) {
+      previewImg.src = currentAvatarUrl;
+      previewImg.alt = currentDisplayName || currentDisplayEmail || t('profile.avatarImageAlt');
+      previewImg.hidden = false;
+      previewInitials.hidden = true;
+      deleteBtn.hidden = false;
+    } else {
+      previewImg.removeAttribute('src');
+      previewImg.hidden = true;
+      previewInitials.hidden = false;
+      previewInitials.textContent = initials;
+      deleteBtn.hidden = true;
+    }
+  }
+
+  function setAvatarModalStatus(text, isError = false) {
+    const status = document.getElementById('avatarModalStatus');
+    if (!status) return;
+    status.textContent = text || '';
+    status.classList.toggle('avatar-modal__status--error', Boolean(isError));
+  }
+
+  function openAvatarModal() {
+    const overlay = getOrCreateAvatarModal();
+    setAvatarModalStatus('');
+    updateAvatarModalPreview();
+    overlay.classList.add('visible');
+    overlay.querySelector('#avatarChooseBtn')?.focus();
+  }
+
+  function closeAvatarModal() {
+    const overlay = document.getElementById('avatar-modal-overlay');
+    if (overlay) overlay.classList.remove('visible');
+    setAvatarModalStatus('');
+  }
+
+  async function uploadAvatarFile(file) {
+    const maxBytes = 2 * 1024 * 1024;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+
+    if (!allowed.includes(file.type)) {
+      setAvatarModalStatus(t('profile.avatarInvalidType'), true);
       return;
     }
-    avatarInitials.textContent = source[0].toUpperCase();
+    if (file.size > maxBytes) {
+      setAvatarModalStatus(t('profile.avatarTooLarge'), true);
+      return;
+    }
+
+    const chooseBtn = document.getElementById('avatarChooseBtn');
+    const deleteBtn = document.getElementById('avatarDeleteBtn');
+    if (chooseBtn) chooseBtn.disabled = true;
+    if (deleteBtn) deleteBtn.disabled = true;
+    setAvatarModalStatus(t('profile.avatarUploading'));
+
+    try {
+      const formData = new FormData();
+      formData.append('avatar', file);
+
+      const response = await fetch('/profile/avatar', {
+        method: 'POST',
+        credentials: 'include',
+        body: formData
+      });
+      const data = await safeJson(response);
+
+      if (!response.ok) {
+        setAvatarModalStatus(data?.message || t('profile.avatarUploadFailed'), true);
+        if (response.status === 401) handleUnauthorized();
+        return;
+      }
+
+      updateAvatarDisplay(currentDisplayName, currentDisplayEmail, data.avatar_url || null);
+      updateAvatarModalPreview();
+      setAvatarModalStatus(t('profile.avatarUploadSuccess'));
+      setGlobalMessage(t('profile.avatarUploadSuccess'), 'success');
+      setTimeout(closeAvatarModal, 600);
+    } catch {
+      setAvatarModalStatus(t('profile.avatarUploadFailed'), true);
+    } finally {
+      if (chooseBtn) chooseBtn.disabled = false;
+      if (deleteBtn) deleteBtn.disabled = false;
+    }
+  }
+
+  async function deleteAvatar() {
+    const chooseBtn = document.getElementById('avatarChooseBtn');
+    const deleteBtn = document.getElementById('avatarDeleteBtn');
+    if (chooseBtn) chooseBtn.disabled = true;
+    if (deleteBtn) deleteBtn.disabled = true;
+    setAvatarModalStatus(t('profile.avatarDeleting'));
+
+    try {
+      const response = await fetch('/profile/avatar', {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+      const data = await safeJson(response);
+
+      if (!response.ok) {
+        setAvatarModalStatus(data?.message || t('profile.avatarDeleteFailed'), true);
+        if (response.status === 401) handleUnauthorized();
+        return;
+      }
+
+      updateAvatarDisplay(currentDisplayName, currentDisplayEmail, null);
+      updateAvatarModalPreview();
+      setAvatarModalStatus(t('profile.avatarDeleteSuccess'));
+      setGlobalMessage(t('profile.avatarDeleteSuccess'), 'success');
+    } catch {
+      setAvatarModalStatus(t('profile.avatarDeleteFailed'), true);
+    } finally {
+      if (chooseBtn) chooseBtn.disabled = false;
+      if (deleteBtn) deleteBtn.disabled = false;
+    }
   }
 
   function updatePlanQuotaBar(used, limit) {
@@ -327,7 +539,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       usernameField.textContent = username || t('profile.noName');
       emailField.textContent = email || '—';
-      updateAvatarInitials(username, email);
+      updateAvatarDisplay(username, email, data.avatar_url || null);
 
       if (referralLinkInput) {
         if (username) {
@@ -617,7 +829,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (payload.email) {
         emailField.textContent = payload.email;
       }
-      updateAvatarInitials(payload.username, payload.email);
+      updateAvatarDisplay(payload.username, payload.email, currentAvatarUrl);
 
       if (payload.username && referralLinkInput) {
         const url = `${getFrontendUrl('auth/auth.html')}?tab=register&ref=${encodeURIComponent(payload.username)}`;
@@ -797,6 +1009,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   loginOnnmailButton.addEventListener('click', () => {
     window.location.href = 'https://serpmonn.ru/mail/';
   });
+
+  if (avatarButton) {
+    avatarButton.addEventListener('click', openAvatarModal);
+  }
 
   logoutButton.addEventListener('click', () => {
     logout();

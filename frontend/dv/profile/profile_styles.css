@@ -127,6 +127,139 @@ p {
   font-weight: 600;
   font-size: 22px;
   box-shadow: 0 8px 20px rgba(79, 70, 229, 0.45);
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.profile-avatar:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 24px rgba(79, 70, 229, 0.5);
+}
+
+.profile-avatar:focus-visible {
+  outline: 2px solid #6366f1;
+  outline-offset: 2px;
+}
+
+.profile-avatar__img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.profile-avatar__img[hidden] {
+  display: none;
+}
+
+/* Модальное окно аватара */
+.avatar-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(15, 23, 42, 0.55);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.avatar-modal.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+.avatar-modal__dialog {
+  width: 100%;
+  max-width: 360px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 20px 50px rgba(15, 23, 42, 0.25);
+  position: relative;
+}
+
+.avatar-modal__close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  border: none;
+  background: none;
+  font-size: 24px;
+  line-height: 1;
+  color: #6b7280;
+  cursor: pointer;
+  padding: 4px;
+}
+
+.avatar-modal__title {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #111827;
+  text-align: center;
+}
+
+.avatar-modal__hint {
+  margin: 0 0 16px;
+  font-size: 13px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.avatar-modal__preview {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 16px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 30% 30%, #4f46e5, #0f172a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #f9fafb;
+  font-weight: 700;
+  font-size: 42px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(79, 70, 229, 0.35);
+}
+
+.avatar-modal__preview img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.avatar-modal__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.avatar-modal__file-input {
+  display: none;
+}
+
+.avatar-modal__status {
+  min-height: 18px;
+  font-size: 12px;
+  color: #6b7280;
+  text-align: center;
+}
+
+.avatar-modal__status--error {
+  color: #dc2626;
+}
+
+.avatar-modal__delete {
+  color: #dc2626;
 }
 
 .profile-header-main {

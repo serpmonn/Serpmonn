@@ -5,6 +5,8 @@ module.exports = {                                      // Экспорт кон
     {
       name: 'auth-server',                              // Имя процесса в PM2 (pm2 status / pm2 logs)
       script: 'backend/server.mjs',                     // Точка входа сервера
+      interpreter: '/root/.nvm/versions/node/v22.22.0/bin/node', // sharp требует Node 20+
+      exec_mode: 'fork',                                // fork, иначе cluster игнорирует interpreter
       instances: 1,                                     // Кол-во копий процесса
       max_memory_restart: '512M',                       // Перезапуск при превышении 512 МБ
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Формат времени в логах (MSK если сервер в Europe/Moscow)
