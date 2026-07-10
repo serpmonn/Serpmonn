@@ -300,24 +300,23 @@
      * @param {string} text - Текст сообщения
      */
     function showGameOverMessage(text) {
-        // Создаем затемняющий оверлей
         const overlay = document.createElement('div');
         overlay.style.cssText = 'position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.5);border-radius:10px;';
         
-        // Создаем контейнер сообщения
         const message = document.createElement('div');
         message.style.cssText = 'background:#141821;border:1px solid #1f2632;color:#fff;padding:12px 16px;border-radius:8px;font-weight:700;';
         message.textContent = text;
         
-        // Добавляем сообщение в контейнер игрового поля
         const container = boardEl.parentElement;
         container.style.position = 'relative';
         overlay.appendChild(message);
         container.appendChild(overlay);
         
-        // Автоматически удаляем сообщение через 1.5 секунды
         setTimeout(() => {
             overlay.remove();
+            if (window.showFullScreenAd) {
+                window.showFullScreenAd();
+            }
         }, 1500);
     }
 

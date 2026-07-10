@@ -1,4 +1,7 @@
 import { getPageT } from '/frontend/scripts/i18n-loader.js';
+import { applyMailAdAttrs, pushMailAdTag } from '/frontend/scripts/mail-ads-config.js';
+import { ensureMailAdsScript } from '/frontend/scripts/mail-ads-loader.js';
+import { runVkFallbackForIns } from '/frontend/scripts/ad-pool.js';
 
 const API_CONFIG = {
     baseUrl: '/api/promocodes',
@@ -489,7 +492,6 @@ function renderPage(page) {
 
     insertInfeedAdsIntoCatalog(catalog, window.innerWidth < 768 ? 10 : 5);
     lazyLoadImages();
-    lazyLoadAds();
 
     const lastCard = catalog.lastElementChild;
     if (lastCard && observer) {
@@ -996,25 +998,6 @@ function lazyLoadImages() {
     images.forEach(img => observer.observe(img));
 }
 
-function lazyLoadAds() {
-    const ads = document.querySelectorAll('.promo-ad-inline');
-    const observer = new IntersectionObserver((entries, observer) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const ad = entry.target;
-                const ins = ad.querySelector('ins.mrg-tag');
-                if (ins && !ins.dataset.loaded) {
-                    ins.dataset.loaded = 'true';
-                    (window.MRGtag = window.MRGtag || []).push({});
-                    collapseAdIfNoFill(ad, 1500);
-                }
-                observer.unobserve(ad);
-            }
-        });
-    }, { rootMargin: '200px' });
-    ads.forEach(ad => observer.observe(ad));
-}
-
 document.querySelector('.bonus form')?.addEventListener('submit', async (e) => {
     e.preventDefault();
     const email = e.target.querySelector('input[name="email"]').value;
@@ -1144,23 +1127,60 @@ window.addEventListener('beforeunload', () => {
     stopAutoUpdate();
 });
 
-const adCache = new Map();
+let promoAdObserver = null;
+
 function createInlineAd() {
-    const adId = `ad-${Math.random().toString(36).substr(2, 9)}`;
-    if (adCache.has(adId)) return adCache.get(adId).cloneNode(true);
     const wrap = document.createElement('div');
-    wrap.className = "promo-ad-inline";
-    wrap.style.textAlign = "center";
-    wrap.style.margin = "12px 0";
-    wrap.innerHTML = `
-        <ins class="mrg-tag"
-             style="display:inline-block;width:100%;max-width:300px;height:250px"
-             data-ad-client="ad-1898023"
-             data-ad-slot="1898023"
-             data-adaptive="true">
-        </ins>`;
-    adCache.set(adId, wrap);
-    return wrap.cloneNode(true);
+    wrap.className = 'promo-ad-inline';
+    wrap.style.textAlign = 'center';
+    wrap.style.margin = '12px 0';
+
+    const ins = document.createElement('ins');
+    applyMailAdAttrs(ins, 'top');
+    ins.style.cssText = 'display:inline-block;width:100%;max-width:300px;min-height:250px';
+    ins.setAttribute('data-adaptive', 'true');
+    wrap.appendChild(ins);
+    return wrap;
+}
+
+function initPromoAdContainer(container) {
+    if (!container || container.dataset.adInit === '1') {
+        return;
+    }
+    container.dataset.adInit = '1';
+    ensureMailAdsScript();
+    pushMailAdTag();
+    setTimeout(pushMailAdTag, 1500);
+    setTimeout(pushMailAdTag, 3000);
+
+    const ins = container.querySelector('ins.mrg-tag');
+    if (ins) {
+        runVkFallbackForIns(ins, { slotKey: 'top' });
+    } else {
+        setTimeout(() => collapseAdIfNoFill(container, 0), 4500);
+    }
+}
+
+function lazyLoadAds() {
+    if (!promoAdObserver) {
+        promoAdObserver = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    return;
+                }
+                initPromoAdContainer(entry.target);
+                observer.unobserve(entry.target);
+            });
+        }, { rootMargin: '200px' });
+    }
+
+    document.querySelectorAll('.promo-ad-inline').forEach(ad => {
+        if (ad.dataset.adObserved === '1') {
+            return;
+        }
+        ad.dataset.adObserved = '1';
+        promoAdObserver.observe(ad);
+    });
 }
 
 function insertInfeedAdsIntoCatalog(catalog, interval) {
@@ -1176,6 +1196,7 @@ function insertInfeedAdsIntoCatalog(catalog, interval) {
             afterCard.parentNode.insertBefore(ad, afterCard.nextSibling);
         }
     }
+    lazyLoadAds();
 }
 
 function collapseAdIfNoFill(container, timeoutMs) {
@@ -1193,7 +1214,6 @@ function collapseAdIfNoFill(container, timeoutMs) {
                 container.classList.add('ad-loaded');
             } else {
                 container.style.display = 'none';
-                logError('Реклама не загрузилась', new Error(`Ad failed to load: client=${ins.dataset.adClient}, slot=${ins.dataset.adSlot}`));
             }
         }, t);
     } catch (error) {

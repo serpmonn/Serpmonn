@@ -84,16 +84,6 @@ module.exports = {                                      // Экспорт кон
     },
 
     // Telegram-боты
-    {
-      name: 'memebot',                                  // Мем-бот
-      script: 'backend/telegram_bots/meme-bot/meme-bot.mjs',
-      instances: 1,
-      max_memory_restart: '256M',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
-      env: {
-        NODE_ENV: 'production'
-      }
-    },
 
     // Внешние боты в /var/www — поднимаются с этого же ecosystem
     {

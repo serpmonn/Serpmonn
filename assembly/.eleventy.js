@@ -2,11 +2,17 @@
 const fs = require('fs');
 const path = require('path');
 
+const mailAdsPath = path.join(__dirname, 'site/src/scripts/mail-ad-slots.json');
+
 module.exports = function(eleventyConfig) {
   /**
    * Пассивное копирование файлов без обработки
    */
   eleventyConfig.addPassthroughCopy({ "site/src": "frontend" });
+
+  eleventyConfig.addGlobalData('mailAds', () => {
+    return JSON.parse(fs.readFileSync(mailAdsPath, 'utf8'));
+  });
 
   /**
    * SEO: фильтр для правильного формата og:locale

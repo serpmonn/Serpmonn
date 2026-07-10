@@ -5,6 +5,7 @@ import paseto from 'paseto';
 import { getBackendMessages } from '../utils/i18n.mjs';
 import { query as dbQuery } from '../database/config.mjs';
 import { fetchSearxViaCurl } from '../utils/fetchSearxViaCurl.js';
+import { saveAiSearchFeedback } from './ai-feedback.model.mjs';
 
 dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
 
@@ -25,13 +26,7 @@ const IDEMPOTENCY_TTL_MS = 5 * 60 * 1000;
 const OLLAMA_URL = 'http://127.0.0.1:11434/api/chat';
 const OLLAMA_MAIN_MODEL = 'serpmonn-ai-search:latest';
 const OLLAMA_FAST_MODEL = 'serpmonn-ai-fast:latest';
-
-function nowMSK() {
-  const now = new Date();
-  const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-  const msk = new Date(utc + 3 * 60 * 60 * 1000);
-  return msk.toISOString().replace('T', ' ').slice(0, 19) + ' MSK';
-}
+const ATTACHMENT_TEXT_MAX_CHARS = 32000;
 
 function getMonthKey() {
   return new Date().toISOString().slice(0, 7);
@@ -75,30 +70,137 @@ function normalizeAiAnswer(answer, t) {
   };
 }
 
-function buildOllamaMessages(query, webContext) {
+function normalizeQueryForHeuristics(query) {
+  return String(query || '')
+    .trim()
+    .replace(/\s+/g, ' ')
+    .replace(/[«»""„"]/g, '"');
+}
+
+const ATTACHMENT_WEB_INTENT_PATTERNS = [
+  /\b(сравни|compare|versus|vs\.?)\b/i,
+  /\b(актуальн|сейчас|сегодня|currently|today|now|latest)\b/i,
+  /\b(курс|цена|стоимость|rate|price|cost)\b/i,
+  /\b(новост|news)\b/i,
+  /\b(в\s+интернет|в\s+сети|online|internet|web)\b/i,
+  /\b(правда\s+ли|это\s+правда|верно\s+ли|is\s+it\s+true)\b/i,
+  /\b(закон|законодательств|legal|regulation|compliance|comply)\b/i,
+  /\b(найди|поищи|search|find|lookup)\b/i,
+  /\b(соответствует|соответствие)\b/i,
+  /\b(судебн|практик|precedent)\b/i,
+  /\b(рынок|market|бирж)\b/i,
+];
+
+const ATTACHMENT_FILE_ONLY_PATTERNS = [
+  /^что\s+(тут|здесь|это)\??$/i,
+  /^о\s+ч[её]м\s+(тут|здесь|это|файл|документ)\??$/i,
+  /^(перескажи|кратко|резюме|summary|summarize)(\s+(файл|текст|документ|this))?\.?$/i,
+  /^(что\s+)?(написано|в\s+файле|в\s+документе)\??$/i,
+  /^(прочитай|проанализируй)\s+(файл|документ|текст)\??$/i,
+  /^(переведи|translate)\s+(файл|текст|документ|это)\??$/i,
+  /^(извлеки|выдели)\s+(главное|суть|ключевое)\??$/i,
+  /^(в\s+файле|в\s+документе|по\s+файлу|по\s+документу)\b/i,
+  /^(этот\s+)?(файл|документ|текст)\s+(о\s+чем|про\s+что)\??$/i,
+  /\b(прикрепл[её]нн|вложенн|attached|uploaded)\s+(файл|документ|текст)\b/i,
+];
+
+function resolveAttachmentSearchMode(query) {
+  const q = normalizeQueryForHeuristics(query);
+
+  if (!q) {
+    return { fileOnly: true, reason: 'empty_query' };
+  }
+
+  if (ATTACHMENT_WEB_INTENT_PATTERNS.some((pattern) => pattern.test(q))) {
+    return { fileOnly: false, reason: 'web_intent' };
+  }
+
+  if (ATTACHMENT_FILE_ONLY_PATTERNS.some((pattern) => pattern.test(q))) {
+    return { fileOnly: true, reason: 'document_intent' };
+  }
+
+  if (q.length <= 28) {
+    return { fileOnly: true, reason: 'short_query' };
+  }
+
+  if (/\b(файл|документ|текст|document|file|attachment)\b/i.test(q)) {
+    return { fileOnly: true, reason: 'document_keyword' };
+  }
+
+  return { fileOnly: false, reason: 'default_hybrid' };
+}
+
+function buildOllamaMessages(query, webContext, attachment = null, options = {}) {
+  const hasAttachment = Boolean(attachment?.text);
+  const fileOnly = hasAttachment && options.fileOnly === true;
+
+  let systemBase =
+    'You are Serpmonn search assistant. ' +
+    'Reply only in the same language as the user question. ' +
+    'Reply in 1-2 short sentences. ' +
+    'Use facts only, without introductions. ';
+
+  if (fileOnly) {
+    systemBase +=
+      'You are given an attached text file. ' +
+      'Answer the question using ONLY the attached file content. ' +
+      'Do not use outside knowledge. ' +
+      'If the answer is not in the file, reply exactly: "No information found in the provided data."';
+  } else if (hasAttachment) {
+    systemBase +=
+      'You are given an attached text file and web search results. ' +
+      'Prefer the attached file when it answers the question. ' +
+      'Your task is to answer using only that data. ' +
+      'If the answer is not present in the data, reply: "No information found in the provided data."';
+  } else {
+    systemBase +=
+      'You are given web search results text. ' +
+      'Your task is to answer the user question using only that data. ' +
+      'If the answer is not present in the data, reply: "No information found in the provided data."';
+  }
+
+  let userContent = '';
+
+  if (hasAttachment) {
+    const fileName = attachment.name || 'attachment.txt';
+    userContent += `ПРИКРЕПЛЁННЫЙ ФАЙЛ (${fileName}):\n${attachment.text}\n\n`;
+  }
+
+  if (!fileOnly) {
+    userContent += `ДАННЫЕ ИЗ СЕТИ:\n${webContext}\n\n`;
+  }
+
+  userContent += `ВОПРОС: ${query}`;
+
   return [
-    {
-      role: 'system',
-      content:
-        'You are Serpmonn search assistant. ' +
-        'You are given web search results text. ' +
-        'Your task is to answer the user question using only that data. ' +
-        'Reply only in the same language as the user question. ' +
-        'Reply in 1-2 short sentences. ' +
-        'Use facts only, without introductions. ' +
-        'If the answer is not present in the data, reply: "No information found in the provided data."',
-    },
-    {
-      role: 'user',
-      content: `ДАННЫЕ ИЗ СЕТИ:\n${webContext}\n\nВОПРОС: ${query}`,
-    },
+    { role: 'system', content: systemBase },
+    { role: 'user', content: userContent },
   ];
 }
 
-async function callOllama(model, query, webContext) {
+function parseAttachmentInput(body, t) {
+  const text = String(body?.attachmentText || '').trim();
+  if (!text) return null;
+
+  if (text.length > ATTACHMENT_TEXT_MAX_CHARS) {
+    const error = new Error(t.attachmentTooLarge);
+    error.status = 400;
+    error.isPublic = true;
+    throw error;
+  }
+
+  const name = String(body?.attachmentName || 'attachment.txt').trim().slice(0, 255);
+
+  return {
+    name: name || 'attachment.txt',
+    text,
+  };
+}
+
+async function callOllama(model, query, webContext, attachment = null, options = {}) {
   const body = {
     model,
-    messages: buildOllamaMessages(query, webContext),
+    messages: buildOllamaMessages(query, webContext, attachment, options),
     stream: false,
     options: {
       temperature: 0,
@@ -142,10 +244,10 @@ async function callOllama(model, query, webContext) {
   return answer;
 }
 
-async function streamOllama(model, query, webContext, onToken) {
+async function streamOllama(model, query, webContext, onToken, attachment = null, options = {}) {
   const body = {
     model,
-    messages: buildOllamaMessages(query, webContext),
+    messages: buildOllamaMessages(query, webContext, attachment, options),
     stream: true,
     options: {
       temperature: 0,
@@ -212,15 +314,29 @@ async function streamOllama(model, query, webContext, onToken) {
 }
 
 async function getAiAnswerFromLocalModels(query, webContext, options = {}) {
-  const { onToken } = options;
+  const { onToken, attachment = null, fileOnly = false } = options;
+  const modelOptions = { fileOnly };
 
   try {
     if (onToken) {
-      const answer = await streamOllama(OLLAMA_MAIN_MODEL, query, webContext, onToken);
+      const answer = await streamOllama(
+        OLLAMA_MAIN_MODEL,
+        query,
+        webContext,
+        onToken,
+        attachment,
+        modelOptions
+      );
       return { answer, model: OLLAMA_MAIN_MODEL, usedBackup: false };
     }
 
-    const answer = await callOllama(OLLAMA_MAIN_MODEL, query, webContext);
+    const answer = await callOllama(
+      OLLAMA_MAIN_MODEL,
+      query,
+      webContext,
+      attachment,
+      modelOptions
+    );
     return { answer, model: OLLAMA_MAIN_MODEL, usedBackup: false };
   } catch (e) {
     console.error('[AI] Ошибка основной модели:', e.message);
@@ -228,11 +344,24 @@ async function getAiAnswerFromLocalModels(query, webContext, options = {}) {
 
   try {
     if (onToken) {
-      const answer = await streamOllama(OLLAMA_FAST_MODEL, query, webContext, onToken);
+      const answer = await streamOllama(
+        OLLAMA_FAST_MODEL,
+        query,
+        webContext,
+        onToken,
+        attachment,
+        modelOptions
+      );
       return { answer, model: OLLAMA_FAST_MODEL, usedBackup: true };
     }
 
-    const answer = await callOllama(OLLAMA_FAST_MODEL, query, webContext);
+    const answer = await callOllama(
+      OLLAMA_FAST_MODEL,
+      query,
+      webContext,
+      attachment,
+      modelOptions
+    );
     return { answer, model: OLLAMA_FAST_MODEL, usedBackup: true };
   } catch (e) {
     console.error('[AI] Ошибка backup-модели:', e.message);
@@ -575,24 +704,46 @@ function createEmptyResponsePayload(q, mode) {
     timings: null,
     answerEmpty: false,
     answerEmptyReason: null,
+    attachmentUsed: false,
+    attachmentName: null,
   };
 }
 
-async function runTextTask(q, t, responsePayload, emit) {
-  const searxStart = process.hrtime.bigint();
-  const { webContext, sources } = await webSearchWithSearxng(q, t);
-  const searxEnd = process.hrtime.bigint();
-  const searxMs = Number(searxEnd - searxStart) / 1e6;
+async function runTextTask(q, t, responsePayload, emit, attachment = null) {
+  const hasAttachment = Boolean(attachment?.text);
+  const searchMode = hasAttachment ? resolveAttachmentSearchMode(q) : { fileOnly: false, reason: 'no_attachment' };
+  const fileOnly = hasAttachment && searchMode.fileOnly;
+  let webContext = t.searchNoData;
+  let sources = [];
+  let searxMs = 0;
 
+  if (hasAttachment) {
+    console.log(`[AI] attachment mode: ${fileOnly ? 'file_only' : 'hybrid'} (${searchMode.reason}) q="${q.slice(0, 80)}"`);
+  }
+
+  if (!fileOnly) {
+    const searxStart = process.hrtime.bigint();
+    const searxResult = await webSearchWithSearxng(q, t);
+    webContext = searxResult.webContext;
+    sources = searxResult.sources;
+    const searxEnd = process.hrtime.bigint();
+    searxMs = Number(searxEnd - searxStart) / 1e6;
+  }
+
+  const usedWebSearch = !fileOnly;
   responsePayload.sources = sources;
-  responsePayload.usedWebSearch = true;
+  responsePayload.usedWebSearch = usedWebSearch;
+  responsePayload.attachmentUsed = hasAttachment;
+  responsePayload.attachmentName = attachment?.name || null;
 
   if (emit) {
     emit({
       event: 'text_start',
       sources,
-      usedWebSearch: true,
-      timings: { searx_ms: searxMs },
+      usedWebSearch,
+      attachmentUsed: hasAttachment,
+      attachmentName: responsePayload.attachmentName,
+      timings: usedWebSearch ? { searx_ms: searxMs } : {},
     });
   }
 
@@ -600,6 +751,8 @@ async function runTextTask(q, t, responsePayload, emit) {
   let aiResult;
   try {
     aiResult = await getAiAnswerFromLocalModels(q, webContext, {
+      attachment,
+      fileOnly,
       onToken: emit
         ? (chunk) => emit({ event: 'text_delta', chunk })
         : null,
@@ -629,11 +782,13 @@ async function runTextTask(q, t, responsePayload, emit) {
       event: 'text_done',
       answer: responsePayload.answer,
       sources: responsePayload.sources,
-      usedWebSearch: true,
+      usedWebSearch: responsePayload.usedWebSearch === true,
       model: responsePayload.model,
       usedBackup: responsePayload.usedBackup,
       answerEmpty: responsePayload.answerEmpty,
       answerEmptyReason: responsePayload.answerEmptyReason,
+      attachmentUsed: responsePayload.attachmentUsed,
+      attachmentName: responsePayload.attachmentName,
       timings: textTimings,
     });
   }
@@ -687,13 +842,14 @@ async function executeSearchTasks({
   wantVideos,
   responsePayload,
   emit,
+  attachment = null,
 }) {
   const tasks = [];
   const branchTimings = {};
 
   if (wantText) {
     tasks.push(
-      runTextTask(q, t, responsePayload, emit).then((result) => {
+      runTextTask(q, t, responsePayload, emit, attachment).then((result) => {
         Object.assign(branchTimings, result.timings);
         return result;
       })
@@ -751,6 +907,7 @@ async function handleStreamingSearch(req, res, ctx) {
     idempotencyKey,
     identity,
     reqStart,
+    attachment,
   } = ctx;
 
   startNdjsonResponse(res);
@@ -767,6 +924,7 @@ async function handleStreamingSearch(req, res, ctx) {
     wantVideos,
     responsePayload,
     emit,
+    attachment,
   });
 
   const reqEnd = process.hrtime.bigint();
@@ -784,7 +942,7 @@ async function handleStreamingSearch(req, res, ctx) {
     partialFailures: responsePayload.partialFailures,
   });
 
-  console.log(`${nowMSK()} | /ai-search | stream | total=${totalMs.toFixed(0)}ms | ok`);
+  console.log('/ai-search | stream | total=' + totalMs.toFixed(0) + 'ms | ok');
 
   if (idempotencyKey) {
     const cacheKey = `${identity.id}:${idempotencyKey}`;
@@ -816,6 +974,8 @@ router.post(
       if (!q) {
         return res.status(400).json({ error: t.queryEmpty });
       }
+
+      const attachment = parseAttachmentInput(req.body, t);
 
       const identity = getUserIdentity(req);
 
@@ -854,6 +1014,7 @@ router.post(
           idempotencyKey,
           identity,
           reqStart,
+          attachment,
         });
       }
 
@@ -867,6 +1028,7 @@ router.post(
         wantVideos,
         responsePayload,
         emit: null,
+        attachment,
       });
 
       const textFailure = settled.find(
@@ -897,7 +1059,7 @@ router.post(
         ...branchTimings,
       };
 
-      console.log(`${nowMSK()} | /ai-search | total=${totalMs.toFixed(0)}ms | ok`);
+      console.log('/ai-search | total=' + totalMs.toFixed(0) + 'ms | ok');
 
       if (idempotencyKey) {
         const cacheKey = `${identity.id}:${idempotencyKey}`;
@@ -917,6 +1079,52 @@ router.post(
         });
       }
 
+      return res.status(500).json({ error: t.internalError });
+    }
+  }
+);
+
+router.post(
+  '/ai-search/feedback',
+  attachUserIfToken,
+  async (req, res) => {
+    const { locale, t } = getBackendMessages(req);
+
+    try {
+      const rating = req.body?.rating;
+      const queryText = String(req.body?.query || '').trim();
+      const answerText = String(req.body?.answer || '').trim();
+      const usedWebSearch = req.body?.usedWebSearch === true;
+
+      if (rating !== 'like' && rating !== 'dislike') {
+        return res.status(400).json({ error: t.internalError });
+      }
+
+      if (!queryText || queryText.length > 500) {
+        return res.status(400).json({ error: t.queryEmpty });
+      }
+
+      if (!answerText || answerText.length > 8000) {
+        return res.status(400).json({ error: t.noModelText });
+      }
+
+      const identity = getUserIdentity(req);
+      const userId = req.user?.id ? Number(req.user.id) : null;
+      const guestKey = userId ? null : identity.id;
+
+      const id = await saveAiSearchFeedback({
+        rating,
+        queryText,
+        answerText,
+        locale,
+        userId: Number.isFinite(userId) ? userId : null,
+        guestKey,
+        usedWebSearch,
+      });
+
+      return res.json({ ok: true, id });
+    } catch (error) {
+      console.error('ai-search feedback error:', error.message);
       return res.status(500).json({ error: t.internalError });
     }
   }

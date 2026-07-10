@@ -1,4 +1,5 @@
 import { getPageT } from '/frontend/scripts/i18n-loader.js';
+import { ensureMailAdsScript } from '/frontend/scripts/mail-ads-loader.js';
 
 let t = (key, vars = {}) => {
   let value = key;
@@ -56,11 +57,8 @@ async function loadJsPDF() {
 
 function loadAdScript() {
   if (!adScriptLoaded) {
-    const script = document.createElement('script');
-    script.src = 'https://ad.mail.ru/static/ads-async.js';
-    script.async = true;
-    script.onload = () => { adScriptLoaded = true; };
-    document.head.appendChild(script);
+    adScriptLoaded = true;
+    ensureMailAdsScript();
   }
 }
 
@@ -577,7 +575,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     });
   }, { threshold: 0.1 });
-  document.querySelectorAll('.ad-top-banner, #mobile-anchor-ad').forEach(banner => {
+  document.querySelectorAll('.ad-top-banner').forEach(banner => {
     const ad = banner.querySelector('.mrg-tag');
     if (ad) adObserver.observe(ad);
   });
@@ -595,11 +593,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderHistory();
 
   if (urlParams.size > 0 || localStorage.getItem('lastDepreciation')) calculateDepreciation();
-
-  if (localStorage.getItem('anchor_closed') !== '1' && window.innerWidth <= 768) {
-    const anchor = document.getElementById('mobile-anchor-ad');
-    if (anchor) anchor.style.display = 'flex';
-  }
 
   document.querySelectorAll('.input-section input, .input-section select').forEach(input => {
     input.addEventListener('input', debounce(calculateDepreciation, 500));

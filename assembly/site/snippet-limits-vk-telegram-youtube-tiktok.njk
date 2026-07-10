@@ -245,8 +245,8 @@ eleventyComputed:
         <div class="ad-top-banner ad-banner">
           <ins class="mrg-tag" 
               style="display:inline-block;"
-              data-ad-client="ad-1897960" 
-              data-ad-slot="1897960">
+              data-ad-client="ad-{{ mailAds.slots.top.id }}" 
+              data-ad-slot="{{ mailAds.slots.top.id }}">
           </ins>
         </div>
         <h1 class="article-title" itemprop="headline">{{ snippetLimitsVkTelegramYoutubeTiktok[locale].article.title }}</h1>
@@ -362,9 +362,7 @@ eleventyComputed:
             
             if (adTag) {
                 const script = document.createElement('script');
-                script.src = 'https://ad.mail.ru/static/ads-async.js';
-                script.async = true;
-                document.head.appendChild(script);
+                import('/frontend/scripts/mail-ads-loader.js').then(m => m.ensureMailAdsScript());
                 (window.MRGtag = window.MRGtag || []).push({});
 
                 // Проверка загрузки рекламы
@@ -418,5 +416,8 @@ eleventyComputed:
             }
         });
     </script>
+
+    {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+    {{ mobileAnchor(localesNews[locale].news.closeAd) }}
 </body>
 </html>

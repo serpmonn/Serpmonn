@@ -4,6 +4,8 @@ import {
   isFavoriteHref
 } from '../scripts/tool-favorites.js';
 
+import { ensureMailAdsScript } from '../scripts/mail-ads-loader.js';
+
 document.addEventListener('DOMContentLoaded', () => {                                                                           // Ожидание полной загрузки DOM перед выполнением скрипта
   // Кэширование DOM-элементов
   const adBanners = document.querySelectorAll('.ad-banner');                                                                   // Все рекламные баннеры на странице
@@ -14,7 +16,7 @@ document.addEventListener('DOMContentLoaded', () => {                           
   const clearFavoritesButton = document.getElementById('clear-favorites');                                                     // Кнопка очистки избранного
   const sortFavoritesButton = document.getElementById('sort-favorites');                                                       // Кнопка сортировки по избранному
   const toolsCountElement = document.getElementById('tools-count');                                                            // Элемент для отображения количества инструментов
-  const cards = document.querySelectorAll('.card');                                                                            // Все карточки инструментов
+  const cards = document.querySelectorAll('.category-section .card');                                                                            // Все карточки инструментов
   const filterMessage = document.querySelector('.filter-message');                                                             // Сообщение при отсутствии результатов
   const menuContainer = document.getElementById('menuContainer');                                                              // Контейнер меню
   let adScriptLoaded = false;                                                                                                  // Флаг загрузки рекламного скрипта
@@ -33,13 +35,10 @@ document.addEventListener('DOMContentLoaded', () => {                           
   }
 
   // Ленивая загрузка скрипта рекламы
-  function loadAdScript() {                                                                                                    // Функция загрузки рекламного скрипта
-    if (!adScriptLoaded) {                                                                                                     // Проверка, не загружен ли уже скрипт
-      const script = document.createElement('script');                                                                         // Создание элемента script
-      script.src = 'https://ad.mail.ru/static/ads-async.js';                                                                   // URL скрипта рекламы Mail.ru
-      script.async = true;                                                                                                     // Асинхронная загрузка
-      script.onload = () => { adScriptLoaded = true; };                                                                        // Установка флага после загрузки
-      document.head.appendChild(script);                                                                                       // Добавление скрипта в head документа
+  function loadAdScript() {
+    if (!adScriptLoaded) {
+      adScriptLoaded = true;
+      ensureMailAdsScript();
     }
   }
 
@@ -196,10 +195,17 @@ document.addEventListener('DOMContentLoaded', () => {                           
       return filterCache.get(cacheKey);                                                                                        // Возврат закэшированного результата
     }
 
-    const filteredCards = Array.from(cards).filter(card => {                                                                   // Фильтрация массива карточек
-      const title = card.querySelector('h2').textContent.toLowerCase();                                                        // Получение заголовка в нижнем регистре
-      const description = card.querySelector('p').textContent.toLowerCase();                                                   // Получение описания в нижнем регистре
-      const cardCategory = card.closest('.category-section').classList;                                                        // Получение классов родительской секции
+    const filteredCards = Array.from(cards).filter(card => {
+      const titleEl = card.querySelector('h2');
+      const descEl = card.querySelector('p');
+      const section = card.closest('.category-section');
+      if (!titleEl || !descEl || !section) {
+        return false;
+      }
+
+      const title = titleEl.textContent.toLowerCase();
+      const description = descEl.textContent.toLowerCase();
+      const cardCategory = section.classList;
 
       const matchesSearch = !searchTerm || title.includes(searchTerm) || description.includes(searchTerm);                     // Проверка соответствия поиску
       const matchesCategory = !category || cardCategory.contains(`category-${category}`);                                      // Проверка соответствия категории

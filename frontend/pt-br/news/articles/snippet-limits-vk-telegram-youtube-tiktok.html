@@ -546,9 +546,7 @@
             
             if (adTag) {
                 const script = document.createElement('script');
-                script.src = 'https://ad.mail.ru/static/ads-async.js';
-                script.async = true;
-                document.head.appendChild(script);
+                import('/frontend/scripts/mail-ads-loader.js').then(m => m.ensureMailAdsScript());
                 (window.MRGtag = window.MRGtag || []).push({});
 
                 // Проверка загрузки рекламы
@@ -602,5 +600,22 @@
             }
         });
     </script>
+
+    
+    
+<div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
+  <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+    <button type="button" aria-label="Fechar anúncio" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+    <ins class="mrg-tag"
+        style="display:inline-block;width:320px;height:50px"
+        data-ad-client="ad-"
+        data-ad-slot=""></ins>
+  </div>
+</div>
+<script type="module">
+  import { initMobileAnchorAd } from '/frontend/scripts/mobile-anchor-ad.js';
+  initMobileAnchorAd();
+</script>
+
 </body>
 </html>

@@ -1,0 +1,10 @@
+{#
+  VK/Mail.ru ad slot. Keys: top, mobileAnchor, fullscreen
+  IDs live in site/src/scripts/mail-ad-slots.json (exposed as mailAds in templates).
+#}
+{% macro mailAd(slotKey, style='display:inline-block;', className='mrg-tag') %}
+<ins class="{{ className }}"
+    style="{{ style }}"
+    data-ad-client="ad-{{ mailAds.slots[slotKey].id }}"
+    data-ad-slot="{{ mailAds.slots[slotKey].id }}"></ins>
+{% endmacro %}

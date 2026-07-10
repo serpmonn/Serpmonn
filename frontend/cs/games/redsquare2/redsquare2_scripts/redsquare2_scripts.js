@@ -1,4 +1,5 @@
         import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
+        import { showGameFullscreenAd } from '/frontend/scripts/mail-ads-config.js';
         import { t, formatScore, formatMissed } from './i18n.js';
 
             const canvas = document.getElementById('gameCanvas');
@@ -230,25 +231,12 @@
 
 		        updateLeaderboard();
 
-		        const adScript = document.createElement('script');                                          // Создаём элемент для скрипта рекламы
-	                adScript.src = "https://ad.mail.ru/static/ads-async.js";                                // Путь к рекламному скрипту
-	                adScript.async = true;                                                                  // Делаем его асинхронным
-	                document.body.appendChild(adScript);                                                    // Добавляем скрипт на страницу
-
-	                const adContainer = document.createElement('ins');                                      // Создаём контейнер для рекламного блока
-	                adContainer.className = "mrg-tag";                                                      // Класс для рекламного блока
-	                adContainer.setAttribute('data-ad-client', "ad-1844883");                               // ID клиента для рекламы
-	                adContainer.setAttribute('data-ad-slot', "1844883");                                    // ID слота для показа рекламы
-
-	                document.body.appendChild(adContainer);                                                 // Добавляем рекламный контейнер на страницу
-
-	                const adInitScript = document.createElement('script');                                  // Инициализируем рекламный скрипт для загрузки рекламы
-	                adInitScript.innerHTML = "(MRGtag = window.MRGtag || []).push({})";                     // Инициализация
-	                document.body.appendChild(adInitScript);                                                // Добавляем на страницу
-
-		        setTimeout(() => {									                                        // Ждём некоторое время перед перенаправлением
+		        const goToScoreTable = () => {
 		            window.location.href = 'score_table.html';
-		        }, 10000); 										                                            // 3 секунды на просмотр рекламы
+		        };
+
+		        showGameFullscreenAd({ onClose: goToScoreTable });
+		        setTimeout(goToScoreTable, 10000);
 		    });
 		}
 

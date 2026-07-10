@@ -48,20 +48,137 @@ a:visited {
    ============================================================================ */
 
 .search-form {
-  display: flex;
-  gap: 8px;
-  align-items: center;
+  width: 100%;
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .search-input-wrapper {
   position: relative;
   flex: 1 1 auto;
+  min-width: 0;
+  width: 100%;
 }
 
-/* инпут с отступом под микрофон */
+/* инпут: скрепка слева, микрофон и крестик справа */
 .search-input-wrapper input[type="search"] {
   width: 100%;
-  padding-right: 40px; /* место под кнопку микрофона */
+  padding-left: 44px;
+  padding-right: 40px;
+}
+
+.search-input-wrapper.has-voice input[type="search"] {
+  padding-right: 42px;
+}
+
+.search-input-wrapper.has-voice input[type="search"]::-webkit-search-cancel-button {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 14px;
+  height: 14px;
+  margin-right: 24px;
+  cursor: pointer;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%239ca3af' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E")
+    center / 14px 14px no-repeat;
+}
+
+.search-input-wrapper.has-voice input[type="search"]::-webkit-search-cancel-button:hover {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2' stroke-linecap='round'%3E%3Cpath d='M18 6 6 18M6 6l12 12'/%3E%3C/svg%3E");
+}
+
+.attach-btn {
+  position: absolute;
+  left: 0;
+  right: auto;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 24px;
+  height: 26px;
+  border: none;
+  padding: 0;
+  margin: 0;
+  background: transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #6b7280;
+  flex-shrink: 0;
+  z-index: 1;
+}
+
+.attach-btn:hover {
+  color: #4f46e5;
+}
+
+.attach-btn:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.25);
+  border-radius: 50%;
+}
+
+.attach-btn.has-file {
+  color: #4f46e5;
+}
+
+.search-attachment-preview {
+  width: 100%;
+  min-width: 0;
+  line-height: 1;
+}
+
+.search-attachment-preview[hidden] {
+  display: none !important;
+}
+
+.search-attachment-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  max-width: 100%;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(79, 70, 229, 0.08);
+  border: 1px solid rgba(79, 70, 229, 0.18);
+  color: #4338ca;
+  font-size: 11px;
+  line-height: 1.2;
+}
+
+.search-attachment-chip svg {
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+}
+
+.search-attachment-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 160px;
+}
+
+.search-attachment-remove {
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  padding: 0 1px;
+  opacity: 0.7;
+}
+
+.search-attachment-remove:hover {
+  opacity: 1;
+}
+
+.ai-attachment-badge {
+  background: rgba(79, 70, 229, 0.08);
+  color: #4338ca;
+  font-size: 11px;
+  padding: 3px 8px;
 }
 
 /* микрофон внутри инпута, без красной рамки */
@@ -83,6 +200,7 @@ a:visited {
   box-shadow: none;
   color: #ff4d4d; /* красный микрофон */
   flex-shrink: 0;
+  z-index: 1;
 }
 
 /* маленький красный микрофон */
@@ -782,9 +900,36 @@ a:visited {
 
 /* Адаптация под мобильные устройства */
 @media (max-width: 640px) {
+  .attach-btn {
+    left: 0;
+    width: 20px;
+    height: 22px;
+  }
+
+  .attach-btn svg {
+    width: 15px;
+    height: 15px;
+    margin-left: -1px;
+  }
+
+  .search-input-wrapper input[type="search"] {
+    padding-left: 38px;
+    padding-right: 36px;
+    font-size: 12px;
+  }
+
+  .search-input-wrapper.has-voice input[type="search"] {
+    padding-right: 38px;
+  }
+
+  .search-input-wrapper.has-voice input[type="search"]::-webkit-search-cancel-button {
+    margin-right: 6px;
+  }
+
   .voice-btn {
     width: 24px;
     height: 24px;
+    right: 7px;
   }
 
   .voice-btn svg {

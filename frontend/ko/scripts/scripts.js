@@ -2,6 +2,7 @@ import { loadMessages, getMessages, t } from './i18n-loader.js';
 import { showCookieBanner } from './cookies.js';
 import { loadNews } from './news.js';
 import { generateCombinedBackground } from './backgroundGenerator.js';
+import { initAdSlotObserver } from './ad-pool.js';
 import '/frontend/pwa/app.js';
 
 // scripts.js
@@ -67,6 +68,133 @@ function buildSharePageUrl(query) {
   return url.toString();
 }
 
+const ATTACHMENT_MAX_BYTES = 100 * 1024;
+
+let searchAttachment = null;
+
+function initTxtAttachment() {
+  const attachBtn = document.getElementById('attach-txt-btn');
+  const fileInput = document.getElementById('attach-txt-input');
+  if (!attachBtn || !fileInput) return;
+
+  const messages = getMessages();
+  attachBtn.title = messages.attachFileTitle;
+  attachBtn.setAttribute('aria-label', messages.attachFileLabel);
+
+  attachBtn.addEventListener('click', () => fileInput.click());
+
+  fileInput.addEventListener('change', async () => {
+    const file = fileInput.files?.[0];
+    fileInput.value = '';
+    if (!file) return;
+
+    const isTxt =
+      /\.txt$/i.test(file.name) ||
+      file.type === 'text/plain' ||
+      file.type === '';
+
+    if (!isTxt) {
+      showShareToast(messages.attachmentInvalidType);
+      return;
+    }
+
+    if (file.size > ATTACHMENT_MAX_BYTES) {
+      showShareToast(messages.attachmentTooLarge);
+      return;
+    }
+
+    try {
+      const text = await file.text();
+      if (!text.trim()) {
+        showShareToast(messages.attachmentInvalidType);
+        return;
+      }
+
+      searchAttachment = {
+        name: file.name,
+        text
+      };
+      renderAttachmentPreview();
+    } catch (error) {
+      console.warn('[attach] read failed:', error);
+      showShareToast(messages.attachmentInvalidType);
+    }
+  });
+}
+
+function renderAttachmentPreview() {
+  const preview = document.getElementById('search-attachment-preview');
+  const attachBtn = document.getElementById('attach-txt-btn');
+  const messages = getMessages();
+
+  if (!preview) return;
+
+  if (!searchAttachment) {
+    preview.hidden = true;
+    preview.innerHTML = '';
+    attachBtn?.classList.remove('has-file');
+    return;
+  }
+
+  attachBtn?.classList.add('has-file');
+  preview.hidden = false;
+  preview.innerHTML = `
+    <span class="search-attachment-chip">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+        <path d="M14 2v6h6"/>
+      </svg>
+      <span class="search-attachment-name">${searchAttachment.name}</span>
+      <button type="button" class="search-attachment-remove" aria-label="${messages.attachmentRemoveLabel}">&times;</button>
+    </span>
+  `;
+
+  preview.querySelector('.search-attachment-remove')?.addEventListener('click', () => {
+    searchAttachment = null;
+    renderAttachmentPreview();
+  });
+}
+
+function getSearchAttachmentPayload() {
+  if (!searchAttachment?.text) {
+    return {};
+  }
+
+  return {
+    attachmentText: searchAttachment.text,
+    attachmentName: searchAttachment.name
+  };
+}
+
+function renderResultBadges(data, messages) {
+  let html = '';
+
+  if (data.attachmentUsed) {
+    html += `
+      <div class="ai-search-badge ai-attachment-badge">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <path d="M14 2v6h6"/>
+        </svg>
+        ${messages.attachmentUsed}
+      </div>
+    `;
+  }
+
+  if (data.usedWebSearch) {
+    html += `
+      <div class="ai-search-badge">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+          <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+        </svg>
+        ${messages.webSearchUsed}
+      </div>
+    `;
+  }
+
+  return html;
+}
+
 function syncSearchQueryToUrl(query) {
   const nextUrl = buildSharePageUrl(query);
   const currentUrl = `${window.location.pathname}${window.location.search}`;
@@ -79,15 +207,87 @@ function syncSearchQueryToUrl(query) {
 let lastShareContext = {
   query: '',
   answer: '',
-  answerEmpty: false
+  answerEmpty: false,
+  usedWebSearch: false
 };
 
-function setShareContext(query, answer, answerEmpty = false) {
+let feedbackLocked = false;
+
+function setShareContext(query, answer, answerEmpty = false, usedWebSearch = false) {
   lastShareContext = {
     query: (query || '').trim(),
     answer: (answer || '').trim(),
-    answerEmpty: !!answerEmpty
+    answerEmpty: !!answerEmpty,
+    usedWebSearch: !!usedWebSearch
   };
+  feedbackLocked = false;
+  resetFeedbackButtons();
+}
+
+function resetFeedbackButtons() {
+  document.querySelectorAll('.feedback-btn').forEach((btn) => {
+    btn.disabled = false;
+    btn.classList.remove('is-selected');
+    btn.style.background = '';
+    btn.style.borderColor = '';
+    btn.style.color = '';
+    btn.style.opacity = '';
+  });
+}
+
+function highlightFeedbackButton(btn, rating) {
+  document.querySelectorAll('.feedback-btn').forEach((item) => {
+    const isActive = item === btn;
+    item.disabled = true;
+    item.classList.toggle('is-selected', isActive);
+
+    if (!isActive) {
+      item.style.opacity = '0.45';
+      return;
+    }
+
+    const isLike = rating === 'like';
+    item.style.opacity = '1';
+    item.style.background = isLike ? '#ecfdf5' : '#fef2f2';
+    item.style.borderColor = isLike ? '#10b981' : '#ef4444';
+    item.style.color = isLike ? '#047857' : '#dc2626';
+  });
+}
+
+async function submitAiFeedback(rating, btn) {
+  if (feedbackLocked) return;
+
+  const { query, answer, answerEmpty } = lastShareContext;
+  if (!answer && answerEmpty) return;
+
+  feedbackLocked = true;
+  highlightFeedbackButton(btn, rating);
+
+  try {
+    const response = await fetch('/ai-search/feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-User-Lang': getCurrentLocale()
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        rating,
+        query: query || getQueryFromUrl(),
+        answer,
+        usedWebSearch: lastShareContext.usedWebSearch === true,
+        locale: getCurrentLocale()
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+  } catch (error) {
+    console.warn('[AI feedback] save failed:', error);
+    feedbackLocked = false;
+    resetFeedbackButtons();
+  }
 }
 
 function buildSharePayload() {
@@ -155,6 +355,7 @@ function initVoiceInput() {
 
   // Показываем кнопку
   voiceBtn.style.display = 'inline-flex';
+  searchInput.closest('.search-input-wrapper')?.classList.add('has-voice');
 
   let mediaRecorder = null;
   let audioChunks = [];
@@ -370,29 +571,6 @@ function renderMarkdown(text) {
   return html;
 }
 
-// ======================================================================================================================
-// ИЗВЛЕЧЕНИЕ ССЫЛОК ИЗ HTML-ТЕКСТа
-// ======================================================================================================================
-function extractLinks(text) {
-  const linkRegex = /<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/g;
-  const links = [];
-  let match;
-
-  while ((match = linkRegex.exec(text)) !== null) {
-    try {
-      const url = new URL(match[1]);
-      links.push({
-        url: match[1],
-        text: match[2] || match[1]
-      });
-    } catch (e) {
-      console.warn('Невалидный URL:', match[1]);
-    }
-  }
-
-  return links.slice(0, 3);
-}
-
 function getSourceHostname(link) {
   try {
     return new URL(link).hostname.replace(/^www\./, '');
@@ -416,18 +594,51 @@ function normalizeSourceItems(items) {
     .filter((item) => item.link);
 }
 
+function dedupeSourcesByHostname(sources) {
+  const seen = new Set();
+  const unique = [];
+
+  for (const src of sources) {
+    const hostname = getSourceHostname(src.link);
+    const key = hostname || src.link;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push({ ...src, hostname });
+  }
+
+  return unique;
+}
+
+function buildSourceHostnameCounts(sources) {
+  const counts = new Map();
+
+  for (const src of sources) {
+    const hostname = getSourceHostname(src.link);
+    const key = hostname || src.link;
+    counts.set(key, (counts.get(key) || 0) + 1);
+  }
+
+  return counts;
+}
+
 function renderSourcesBlock(items, messages) {
   const sources = normalizeSourceItems(items);
   if (!sources.length) return '';
 
+  const chipSources = dedupeSourcesByHostname(sources);
+  const hostnameCounts = buildSourceHostnameCounts(sources);
   const toggleLabel = `${messages.sources} (${sources.length})`;
 
-  const chips = sources
+  const chips = chipSources
     .map((src) => {
-      const hostname = getSourceHostname(src.link);
+      const hostname = src.hostname || getSourceHostname(src.link);
       const favicon = getSourceFaviconUrl(hostname, 32);
+      const count = hostnameCounts.get(hostname || src.link) || 1;
+      const chipTitle =
+        count > 1 ? `${hostname} (${count})` : src.title || hostname;
+
       return `
-        <a href="${src.link}" target="_blank" rel="noopener" class="ai-source-chip" title="${src.title}">
+        <a href="${src.link}" target="_blank" rel="noopener" class="ai-source-chip" title="${chipTitle}">
           <img src="${favicon}" class="ai-source-chip-favicon" alt="" width="14" height="14" loading="lazy">
         </a>
       `;
@@ -495,6 +706,8 @@ function setResultActionsVisible(visible) {
 
 function showLoading() {
   setResultActionsVisible(false);
+  resetFeedbackButtons();
+  feedbackLocked = false;
   const t = getMessages();
   const contentDiv = document.getElementById('ai-result-content');
   if (!contentDiv) return;
@@ -640,11 +853,12 @@ async function consumeAiSearchStream(response, onEvent) {
   }
 }
 
-async function requestAiSearch({ query, idempotencyKey, locale, useStream }) {
+async function requestAiSearch({ query, idempotencyKey, locale, useStream, attachment }) {
+  const hasAttachment = Boolean(attachment?.attachmentText);
   const include = {
     text: true,
-    images: true,
-    videos: true
+    images: !hasAttachment,
+    videos: !hasAttachment
   };
 
   const headers = {
@@ -668,7 +882,8 @@ async function requestAiSearch({ query, idempotencyKey, locale, useStream }) {
       include,
       mode: 'full',
       lang: locale,
-      stream: useStream
+      stream: useStream,
+      ...(attachment || {})
     })
   });
 
@@ -736,18 +951,7 @@ function showStreamingTextStart(data, options = {}) {
   const container = document.getElementById('ai-result-container');
   if (!contentDiv) return;
 
-  let html = '';
-
-  if (data.usedWebSearch) {
-    html += `
-      <div class="ai-search-badge">
-        <svg viewBox="0 0 24 24" fill="currentColor">
-          <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-        </svg>
-        ${messages.webSearchUsed}
-      </div>
-    `;
-  }
+  let html = renderResultBadges(data, messages);
 
   html += '<div class="ai-streaming-answer" aria-live="polite"></div>';
   contentDiv.innerHTML = html;
@@ -778,7 +982,9 @@ function finalizeStreamingText(event, state) {
       answer: event.answer || state.streamedAnswer || '',
       usedWebSearch: event.usedWebSearch === true,
       sources: Array.isArray(event.sources) ? event.sources : [],
-      answerEmpty: event.answerEmpty === true
+      answerEmpty: event.answerEmpty === true,
+      attachmentUsed: event.attachmentUsed === true,
+      attachmentName: event.attachmentName || null
     },
     { scroll: !state.didScroll }
   );
@@ -791,7 +997,9 @@ function handleAiSearchStreamEvent(event, state) {
     state.streamingStarted = true;
     state.pendingTextStart = {
       usedWebSearch: event.usedWebSearch === true,
-      sources: Array.isArray(event.sources) ? event.sources : []
+      sources: Array.isArray(event.sources) ? event.sources : [],
+      attachmentUsed: event.attachmentUsed === true,
+      attachmentName: event.attachmentName || null
     };
     return;
   }
@@ -881,26 +1089,17 @@ function showResult(data, options = {}) {
   } else {
     const resolved = resolveAnswerForDisplay(data);
 
-    if (data.usedWebSearch) {
-      html += `
-        <div class="ai-search-badge">
-          <svg viewBox="0 0 24 24" fill="currentColor">
-            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zM9.5 14C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
-          </svg>
-          ${t.webSearchUsed}
-        </div>
-      `;
-    }
+    html += renderResultBadges(data, t);
 
     html += renderAnswerHtml(resolved.text, resolved.isEmpty);
 
-    if (!resolved.isEmpty && Array.isArray(data.sources) && data.sources.length > 0) {
+    if (
+      data.usedWebSearch &&
+      !resolved.isEmpty &&
+      Array.isArray(data.sources) &&
+      data.sources.length > 0
+    ) {
       html += renderSourcesBlock(data.sources, t);
-    } else if (!resolved.isEmpty) {
-      const links = extractLinks(html);
-      if (links.length > 0) {
-        html += renderSourcesBlock(links, t);
-      }
     }
   }
 
@@ -914,7 +1113,8 @@ function showResult(data, options = {}) {
     setShareContext(
       searchInput?.value.trim() || getQueryFromUrl(),
       resolved.text,
-      resolved.isEmpty
+      resolved.isEmpty,
+      data.usedWebSearch === true
     );
   }
 
@@ -1113,15 +1313,8 @@ function setupActionButtons() {
     if (btn.dataset.initialized) return;
     btn.dataset.initialized = 'true';
     btn.addEventListener('click', function () {
-      const isLike = this.classList.contains('like');
-      this.style.background = isLike ? '#ecfdf5' : '#fef2f2';
-      this.style.borderColor = isLike ? '#10b981' : '#ef4444';
-      this.style.color = isLike ? '#047857' : '#dc2626';
-      setTimeout(() => {
-        this.style.background = '';
-        this.style.borderColor = '';
-        this.style.color = '';
-      }, 3000);
+      const rating = this.classList.contains('like') ? 'like' : 'dislike';
+      submitAiFeedback(rating, this);
     });
   });
 
@@ -1209,43 +1402,10 @@ function setupActionButtons() {
 }
 
 // ======================================================================================================================
-// РЕКЛАМНЫЙ БЛОК: ОБРАБОТКА ins.mrg-tag
+// РЕКЛАМНЫЙ БЛОК: VK → Yandex fallback (ad-pool.js)
 // ======================================================================================================================
-function handleIns(ins) {
-  if (!ins || ins.__handled) return;
-  ins.__handled = true;
-
-  setTimeout(function () {
-    const has = !!ins.querySelector('iframe');
-    if (!has) {
-      (window.MRGtag = window.MRGtag || []).push({});
-    }
-    setTimeout(function () {
-      if (!ins.querySelector('iframe')) {
-        const p = ins.closest(
-          '.ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad'
-        );
-        if (p) p.style.display = 'none';
-      }
-    }, 2000);
-  }, 2000);
-}
-
 function initAdObserver() {
-  document.querySelectorAll('ins.mrg-tag').forEach(handleIns);
-
-  const mo = new MutationObserver(function (muts) {
-    muts.forEach(function (m) {
-      m.addedNodes &&
-        m.addedNodes.forEach(function (n) {
-          if (n.querySelectorAll) {
-            n.querySelectorAll('ins.mrg-tag').forEach(handleIns);
-          }
-        });
-    });
-  });
-
-  mo.observe(document.documentElement, { childList: true, subtree: true });
+  initAdSlotObserver();
 }
 
 // ======================================================================================================================
@@ -1312,8 +1472,17 @@ async function initPage() {
 
       showImageResults({ images: [] });
       showVideoResults({ videos: [] });
-      showMediaLoading('images');
-      showMediaLoading('videos');
+
+      const attachmentPayload = getSearchAttachmentPayload();
+      const hasAttachment = Boolean(attachmentPayload.attachmentText);
+
+      if (!hasAttachment) {
+        showMediaLoading('images');
+        showMediaLoading('videos');
+      } else {
+        hideMediaResults('images');
+        hideMediaResults('videos');
+      }
 
       let idempotencyKey = null;
       const useStream = getEnv() !== 'vk_mini';
@@ -1327,7 +1496,8 @@ async function initPage() {
           query,
           idempotencyKey,
           locale,
-          useStream
+          useStream,
+          attachment: attachmentPayload
         });
 
         if (currentIdempotencyKey !== idempotencyKey) {
@@ -1354,7 +1524,9 @@ async function initPage() {
             answer: data?.answer || '',
             usedWebSearch: data?.usedWebSearch === true,
             sources: Array.isArray(data?.sources) ? data.sources : [],
-            answerEmpty: data?.answerEmpty === true
+            answerEmpty: data?.answerEmpty === true,
+            attachmentUsed: data?.attachmentUsed === true,
+            attachmentName: data?.attachmentName || null
           });
 
           if (Array.isArray(data?.images) && data.images.length > 0) {
@@ -1411,6 +1583,7 @@ async function initPage() {
     });
 
     initVoiceInput();
+    initTxtAttachment();
 
     const sharedQuery = getQueryFromUrl();
     if (sharedQuery && searchInput) {

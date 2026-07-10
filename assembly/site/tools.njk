@@ -69,6 +69,7 @@ eleventyComputed:
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
 </head>
 <body>
     <!-- Меню -->
@@ -79,8 +80,8 @@ eleventyComputed:
         <div class="ad-banner loading">
             <ins class="mrg-tag" 
                 style="display:inline-block;" 
-                data-ad-client="ad-1897960" 
-                data-ad-slot="1897960" 
+                data-ad-client="ad-{{ mailAds.slots.top.id }}" 
+                data-ad-slot="{{ mailAds.slots.top.id }}" 
                 data-ad-id="top-banner"
                 loading="lazy"
                 aria-label="{{ tools[locale].aria.adBanner }}">
@@ -162,21 +163,6 @@ eleventyComputed:
                         ⭐
                     </button>
                 </div>
-            </div>
-        </div>
-
-        <!-- Реклама между категориями -->
-        <div class="ad-banner loading">
-            <ins class="mrg-tag" 
-                style="display:inline-block;" 
-                data-ad-client="ad-1897960" 
-                data-ad-slot="1897960" 
-                data-ad-id="mid-banner"
-                loading="lazy"
-                aria-label="{{ tools[locale].aria.adBanner }}">
-            </ins>
-            <div class="ad-fallback hidden">
-                <p>{{ tools[locale].page.adFallback | safe }}</p>
             </div>
         </div>
 
@@ -329,6 +315,9 @@ eleventyComputed:
             <p>{{ tools[locale].page.developmentText | safe }}</p>
         </div>
     </div>
+
+    {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+    {{ mobileAnchor(localesNews[locale].news.closeAd) }}
 
     <!-- Подключение скриптов -->
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>

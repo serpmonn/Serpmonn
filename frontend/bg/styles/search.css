@@ -37,20 +37,19 @@
 
 /* Контейнер всей поисковой строки (лого + поле + кнопка) */
 .main-search-container {
-    background: #ffffff;                                                              /* белый фон карточки */
+    background: #ffffff;
     border-radius: 16px;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.09);
-    padding: 8px 8px;                                                                /* было 8px, стало больше по бокам */
-    display: flex;                                                                    /* флекс-контейнер */
-    align-items: center;                                                              /* вертикальное выравнивание по центру */
-    gap: 8px;
+    padding: 10px 12px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
     border: 1px solid #e2e8f0;
     transition: box-shadow 0.25s ease, border-color 0.2s ease;
+    width: 100%;
     max-width: 800px;
     margin: 0 auto;
-    flex-wrap: nowrap;                                                                /* ← КРИТИЧНО: НЕ переносить элементы на новую строку */
-    flex-direction: row;                                                              /* ← явно указываем горизонтальное направление */
-    flex-shrink: 0;                                                                   /* ← не даём сжиматься всему контейнеру */
+    box-sizing: border-box;
 }
 
 .main-search-container:focus-within {
@@ -58,14 +57,48 @@
     border-color: #c7d2fe;
 }
 
-.logo {
-    flex-shrink: 0;                                                                   /* логотип не сжимается */
+.main-search-container .logo {
+    flex-shrink: 0;
+    align-self: center;
+    width: 65px;
+    height: auto;
+    margin: 0;
 }
 
 .search-form {
-    display: flex;
-    flex: 1 1 auto;                                                                   /* форма растягивается по доступной ширине */
-    gap: 8px;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.search-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+  min-width: 0;
+}
+
+.search-form-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.search-form-row .search-input-wrapper {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.search-form-row .search-btn {
+  flex-shrink: 0;
+  margin-left: 0;
+}
+
+.search-form .search-input-wrapper input[type="search"] {
+  padding-left: 44px;
+  padding-right: 40px;
 }
 
 /* Поле ввода */
@@ -320,19 +353,25 @@ a:hover {
     .main-search-container {
         width: 100%;
         max-width: 100%;
-        box-sizing: border-box; 
-        padding: 6px 4px 6px 4px;
-        gap: 4px;
+        box-sizing: border-box;
+        padding: 8px 10px;
+        gap: 8px;
         border-radius: 14px;
         margin: 0;
-        flex-wrap: nowrap;                                                            /* ← Обязательно на мобиле тоже */
+    }
+
+    .search-form .search-input-wrapper input[type="search"] {
+        height: 50px;
+        padding-left: 38px;
+        padding-right: 36px;
+        font-size: 12px;
+        border-radius: 10px;
+        min-width: 0;
     }
 
     .search-form input[type="search"] {
         flex: 1 1 auto;
         height: 50px;
-        padding: 0 16px;
-        font-size: 15px;
         border-radius: 10px;
         min-width: 0;
     }
@@ -346,10 +385,11 @@ a:hover {
         flex-shrink: 0;
     }
 
-    .logo {
+    .main-search-container .logo {
         width: 46px;
         margin: 0;
         padding: 0;
+        align-self: center;
     }
 
     /* Совместимость со старыми Google Custom Search (если остались) */

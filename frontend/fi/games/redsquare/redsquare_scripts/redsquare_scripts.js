@@ -1,4 +1,5 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
+import { showGameFullscreenAd } from '/frontend/scripts/mail-ads-config.js';
 import { createEnemies } from './createEnemies.js';
 import { generateRandomKeyframes } from './generateRandomKeyframes.js';
 import { updatePlayerPosition } from './updatePlayerPosition.js';
@@ -150,16 +151,7 @@ const endGame = () => {
     document.body.appendChild(modal);
     document.getElementById('okButton').addEventListener('click', () => {
         modal.remove();
-        setTimeout(() => {
-            const adContainer = document.createElement('ins');
-            adContainer.className = 'mrg-tag';
-            adContainer.setAttribute('data-ad-client', 'ad-1844881');
-            adContainer.setAttribute('data-ad-slot', '1844881');
-            document.body.appendChild(adContainer);
-            const adInitScript = document.createElement('script');
-            adInitScript.innerHTML = '(MRGtag = window.MRGtag || []).push({})';
-            document.body.appendChild(adInitScript);
-        }, 3000);
+        setTimeout(() => showGameFullscreenAd(), 500);
     });
 };
 
@@ -296,8 +288,5 @@ document.addEventListener('DOMContentLoaded', () => {
     generateCombinedBackground().catch(error => {
         console.error('Задача завершена с ошибкой', error);
     });
-    const adScript = document.createElement('script');
-    adScript.src = "https://ad.mail.ru/static/ads-async.js";
-    adScript.async = true;
-    document.body.appendChild(adScript);
+    ensureMailAdsScript();
 });

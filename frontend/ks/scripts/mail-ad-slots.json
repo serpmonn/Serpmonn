@@ -1,0 +1,48 @@
+{
+  "version": 3,
+  "note": "VK primary, Yandex RSYA fallback. Update IDs when partner cabinets change.",
+  "pool": {
+    "enabled": true,
+    "fallbackTimeoutMs": 2500,
+    "mobileMaxWidth": 768
+  },
+  "cabinetGuide": {
+    "minimumBlocks": 3,
+    "formats": {
+      "top": "Adaptive horizontal banner — also used for in-feed rectangles and tall side units.",
+      "mobileAnchor": "Floor / bottom banner — 320x50. Yandex uses floorAd on fallback.",
+      "fullscreen": "Fullscreen interstitial for game overlays. Yandex fallback is mobile-only."
+    }
+  },
+  "slots": {
+    "top": {
+      "id": "1897960",
+      "label": "Adaptive banner",
+      "usage": "top banners, in-content, onnmail, promo catalog in-feed",
+      "yandex": {
+        "blockId": "R-A-19576747-1"
+      }
+    },
+    "mobileAnchor": {
+      "id": "1898031",
+      "label": "Mobile anchor",
+      "usage": "fixed bottom banner on long pages",
+      "yandex": {
+        "blockId": "R-A-19576747-2",
+        "type": "floorAd",
+        "platform": "touch"
+      }
+    },
+    "fullscreen": {
+      "id": "1844883",
+      "label": "Fullscreen interstitial",
+      "usage": "game overlays",
+      "yandex": {
+        "blockId": "R-A-19576747-3",
+        "type": "fullscreen",
+        "platform": "touch",
+        "mobileOnly": true
+      }
+    }
+  }
+}

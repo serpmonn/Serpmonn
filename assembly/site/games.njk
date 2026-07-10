@@ -133,7 +133,7 @@ eleventyComputed:
         <!-- РЕКЛАМНЫЙ БАННЕР -->
         <script async src="https://ad.mail.ru/static/ads-async.js"></script>
         <div class="ad-leaderboard">
-            <ins class="mrg-tag" style="display:inline-block" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+            <ins class="mrg-tag" style="display:inline-block" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
         </div>
         <script>(MRGtag = window.MRGtag || []).push({});</script>
         {% for category in localesGames[locale].games.categories %}
@@ -155,8 +155,7 @@ eleventyComputed:
                     </h2>
                     <p itemprop="description">{{ game.description }}</p>
                    
-                    <!-- БЕЙДЖИ ПЛАТФОРМ (для мобильных игр) -->
-                    {% if game.badges %}
+{% if game.badges %}
                     <div class="platform-badges">
                         {% for badge in game.badges %}
                         <span class="badge {{ badge.type }}">{{ badge.name }}</span>
@@ -177,6 +176,10 @@ eleventyComputed:
         </section>
         {% endfor %}
     </main>
+
+    {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+    {{ mobileAnchor(localesNews[locale].news.closeAd) }}
+
     <!-- ПОДКЛЮЧЕНИЕ СКРИПТОВ -->
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script src="/frontend/games/games.js" defer></script>

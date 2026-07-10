@@ -33,8 +33,6 @@ eleventyComputed:
     <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-    <script>window.yaContextCb=window.yaContextCb||[]</script>
-    <script src="https://yandex.ru/ads/system/context.js" async></script>
     <script>
     window.i18n = {
       scorePrefix: {{ gameRedsquare2Translations[locale].gameRedsquare2.scorePrefix | dump | safe }},
@@ -81,12 +79,12 @@ eleventyComputed:
 
     <div class="ad-container" style="margin: 10px 0; text-align: center;">
         <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
-             data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
+             data-ad-client="ad-{{ mailAds.slots.mobileAnchor.id }}" data-ad-slot="{{ mailAds.slots.mobileAnchor.id }}"></ins>
     </div>
 
     <div class="ad-container" style="margin: 20px 0; text-align: center;">
         <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
-             data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+             data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
     </div>
 
     <script>

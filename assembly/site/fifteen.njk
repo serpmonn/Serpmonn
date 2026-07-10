@@ -55,7 +55,7 @@ eleventyComputed:
       instructionsMobile: {{ gameFifteenTranslations[locale].gameFifteen.instructionsMobile | dump | safe }}
     };
   </script>
-  <script src="/frontend/games/fifteen/fifteen-ads.js?v=2" defer></script>
+  <script type="module" src="/frontend/games/fifteen/fifteen-ads.js?v=3" defer></script>
 
   <script>
   (function(){
@@ -107,7 +107,7 @@ eleventyComputed:
     </header>
 
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
-      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
     </div>
     <script>(window.MRGtag = window.MRGtag || []).push({});</script>
 
