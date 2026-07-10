@@ -1,7 +1,11 @@
 /* Добавьте в начало вашего CSS */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
 html, body {
     overscroll-behavior-y: contain;
-    height: 100%;
+    min-height: 100%;
     overflow-x: hidden;
 }
 
@@ -21,11 +25,12 @@ body {
 .container {
     overscroll-behavior-y: none;
     background: #ffe6e6;
+    width: 100%;
     max-width: 1200px;
     padding: 15px; /* Уменьшено с 20px */
     border-radius: 16px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-    margin: 8px; /* Уменьшено с 10px */
+    margin: 8px auto; /* Уменьшено с 10px */
 }
 
 .hero {
@@ -54,6 +59,7 @@ body {
     gap: 8px; /* Уменьшено с 10px */
 }
 
+.stats-controls h1,
 .stats-controls h2 {
     font-size: 1.2rem; /* Уменьшено с 1.4rem */
     color: #333;
@@ -134,14 +140,49 @@ body {
 #filtersContent {
     display: none;
     flex-direction: column;
-    gap: 4px; /* Уменьшено с 6px */
+    gap: 8px;
     background: #fff;
     padding: 10px;
     border-radius: 8px;
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
 }
 
+.filter-row {
+    display: grid;
+    grid-template-columns: minmax(92px, 38%) minmax(0, 1fr);
+    align-items: center;
+    gap: 8px;
+}
+
+.filter-row label {
+    margin: 0;
+    font-size: 12px;
+    line-height: 1.25;
+    color: #444;
+}
+
+.filter-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+}
+
+.visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 .filters input, .filters select {
+    width: 100%;
+    min-width: 0;
     flex: 1;
     padding: 6px; /* Уменьшено с 8px */
     border: 1px solid #ccc;
@@ -188,10 +229,12 @@ body {
 
 .promo-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
     gap: 15px;
     margin: 15px 0;
     align-items: stretch;
+    width: 100%;
+    min-width: 0;
 }
 
 .promo-card {
@@ -205,6 +248,10 @@ body {
     flex-direction: column;
     min-height: 240px;      /* было 280px */
     position: relative;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow: hidden;
 }
 
 .promo-card:hover {
@@ -216,6 +263,7 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    min-width: 0;
 }
 
 .promo-card-footer {
@@ -270,13 +318,21 @@ body {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
 }
 
-.promo-card img {
+.promo-card img,
+.promo-header img {
     max-width: 40px;
     max-height: 40px;
     width: 40px;
     height: 40px;
     margin-bottom: 4px;
-    object-fit: contain;
+    object-fit: cover;
+    border-radius: 50%;
+    background: #fff;
+    border: 1px solid #e5e7eb;
+}
+
+.promo-header img {
+    margin-bottom: 0;
 }
 
 .promo-card .description {
@@ -295,6 +351,8 @@ body {
     font-weight: bold;
     margin: 8px 0;
     color: #333;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .code button {
@@ -412,22 +470,23 @@ body {
     border: 2px solid #ffd700;
     background: #fff;
     position: relative;
-    overflow: hidden;
+    overflow: visible;
 }
 
 .top-offer::before {
     content: attr(data-top-badge);
     position: absolute;
-    top: 8px;
-    right: 8px;
+    top: 4px;
+    right: 4px;
     background: #667eea;
     color: #fff;
-    padding: 5px 10px;
-    border-radius: 10px;
-    font-size: 0.85rem;
-    font-weight: bold;
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+    padding: 2px 7px;
+    border-radius: 8px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.18);
     z-index: 10;
+    line-height: 1.2;
 }
 
 .promo-card.travel-highlight {
@@ -439,14 +498,21 @@ body {
 .promo-card.travel-highlight::after {
     content: attr(data-travel-badge);
     position: absolute;
-    left: 15px;
-    top: -8px;
+    left: 4px;
+    top: 4px;
     background: #4caf50;
     color: #fff;
-    padding: 3px 8px;
-    border-radius: 10px;
-    font-size: 0.7rem;
+    padding: 2px 7px;
+    border-radius: 8px;
+    font-size: 0.62rem;
     font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    line-height: 1.2;
+    max-width: calc(100% - 72px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .faq {
@@ -489,16 +555,27 @@ body {
 .bonus form {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 8px;
     margin-top: 8px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .bonus input {
     padding: 10px;
-    flex: 1;
+    flex: 1 1 auto;
+    min-width: 0;
     max-width: 280px;
     border: 1px solid #ccc;
     border-radius: 8px;
+    margin-bottom: 0;
+}
+
+.bonus form .submit-btn {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+    white-space: nowrap;
 }
 
 .bonus button {
@@ -515,6 +592,20 @@ body {
 .bonus button:hover {
     background: linear-gradient(90deg, #e55e00, #e53935);
     transform: translateY(-1px);
+}
+
+footer {
+    width: 100%;
+    max-width: 1200px;
+    box-sizing: border-box;
+    padding: 12px 16px calc(20px + env(safe-area-inset-bottom, 0px));
+    text-align: center;
+    font-size: 0.85rem;
+    color: #555;
+}
+
+footer p {
+    margin: 0;
 }
 
 .social-proof {
@@ -555,12 +646,81 @@ body {
 
 .promo-ad-inline {
     display: none;
+    width: 100%;
+    box-sizing: border-box;
     text-align: center;
-    margin: 12px 0;
+    margin: 0;
+    padding: 10px 12px;
+    background: #f8f8f8;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    min-height: 0;
+    overflow: hidden;
+}
+
+/* Грузим off-screen — пустая ячейка в сетке не видна */
+.promo-ad-inline.ad-loading {
+    display: block;
+    height: 0;
+    min-height: 0;
+    max-height: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+    background: transparent;
+    overflow: visible;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.promo-ad-inline.ad-loading .promo-ad-inline__slot {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    width: 300px;
+    height: 300px;
+    overflow: hidden;
 }
 
 .promo-ad-inline.ad-loaded {
     display: block;
+    opacity: 1;
+    pointer-events: auto;
+    padding: 10px 12px;
+}
+
+.promo-ad-inline.is-collapsed {
+    display: none;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+}
+
+.promo-ad-inline__slot {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.promo-ad-inline .mrg-tag,
+.promo-ad-inline .yandex-rtb-slot {
+    display: block;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    min-height: 0;
+}
+
+.promo-ad-inline .mrg-tag iframe,
+.promo-ad-inline .yandex-rtb-slot iframe {
+    margin: 0 auto;
+    max-width: 100%;
 }
 
 .icon-refresh::before {
@@ -603,6 +763,8 @@ body {
 .promo-header img {
     flex-shrink: 0;
     margin-bottom: 0;
+    border-radius: 50%;
+    object-fit: cover;
 }
 
 .promo-header h3 {
@@ -610,6 +772,8 @@ body {
     font-size: 16px;
     color: #333;
     line-height: 1.3;
+    min-width: 0;
+    overflow-wrap: anywhere;
 }
 
 .details-btn {
@@ -673,10 +837,16 @@ body {
 }
 
 @media (max-width: 767px) {
+    body {
+        align-items: stretch;
+    }
+
     .container {
-        max-width: 95%;
-        padding: 10px; /* Уменьшено с 15px */
-        margin: 6px; /* Уменьшено с 8px */
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 10px;
+        border-radius: 0;
     }
     .hero {
         padding: 6px; /* Уменьшено с 8px */
@@ -688,7 +858,8 @@ body {
         padding: 8px; /* Уменьшено с 10px */
         margin: 6px 0; /* Уменьшено с 8px */
     }
-    .stats-controls h2 {
+    .stats-controls h1,
+.stats-controls h2 {
         font-size: 1.1rem; /* Уменьшено с 1.2rem */
     }
     .stats {
@@ -719,8 +890,18 @@ body {
         margin: 6px 0; /* Уменьшено с 8px */
     }
     #filtersContent {
-        padding: 8px; /* Уменьшено с 10px */
+        padding: 8px;
     }
+
+    .filter-row {
+        grid-template-columns: minmax(84px, 34%) minmax(0, 1fr);
+        gap: 6px;
+    }
+
+    .filter-row label {
+        font-size: 11px;
+    }
+
     .filters input, .filters select {
         padding: 5px; /* Уменьшено с 6px */
         font-size: 11px; /* Уменьшено с 12px */
@@ -730,13 +911,119 @@ body {
         font-size: 12px; /* Уменьшено с 13px */
     }
     .promo-grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 12px;
+        margin: 12px 0;
+    }
+
+    .promo-card {
+        min-height: auto;
+    }
+    .promo-ad-inline {
+        grid-column: 1 / -1;
+    }
+
+    .promo-ad-inline.ad-loaded {
+        padding: 8px 10px;
+    }
+
+    .promo-ad-inline.ad-loaded .mrg-tag,
+    .promo-ad-inline.ad-loaded .yandex-rtb-slot {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 50px;
+        max-height: 90px;
+        aspect-ratio: 320 / 50;
+    }
+
+    .promo-ad-inline.ad-loaded .promo-ad-inline__slot {
+        position: static;
+        left: auto;
+        width: 100%;
+        height: auto;
     }
     .top-offer::before {
-        right: 8px;
-        top: 8px;
-        font-size: 0.7rem;
-        padding: 3px 8px;
+        right: 4px;
+        top: 4px;
+        font-size: 0.58rem;
+        padding: 2px 6px;
+    }
+
+    .promo-card.travel-highlight::after {
+        left: 4px;
+        top: 4px;
+        font-size: 0.56rem;
+        padding: 2px 6px;
+        max-width: calc(100% - 64px);
+    }
+
+    .bonus {
+        padding: 12px;
+    }
+
+    .bonus form {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+    }
+
+    .bonus input {
+        max-width: none;
+        width: 100%;
+        padding: 8px 10px;
+        font-size: 16px;
+    }
+
+    .bonus form .submit-btn {
+        width: 100%;
+        padding: 10px 12px;
+        font-size: 14px;
+        white-space: normal;
+    }
+
+    body {
+        padding-bottom: env(safe-area-inset-bottom, 0px);
+    }
+}
+
+@media (min-width: 768px) {
+    .promo-ad-inline.ad-loaded {
+        min-height: 240px;
+        padding: 10px 12px;
+        display: flex;
+        flex-direction: column;
+        align-self: stretch;
+    }
+
+    .promo-ad-inline.ad-loaded .promo-ad-inline__slot {
+        position: static;
+        left: auto;
+        width: 100%;
+        height: auto;
+        min-height: 218px;
+    }
+
+    .promo-ad-inline.ad-loaded .mrg-tag,
+    .promo-ad-inline.ad-loaded .yandex-rtb-slot {
+        width: 100% !important;
+        max-width: none !important;
+        min-height: 218px;
+        max-height: none;
+        height: 100%;
+        aspect-ratio: auto;
+        margin: 0;
+    }
+
+    .promo-ad-inline.ad-loaded .mrg-tag {
+        min-height: 300px;
+    }
+
+    .promo-ad-inline.ad-loaded .mrg-tag iframe,
+    .promo-ad-inline.ad-loaded .yandex-rtb-slot iframe {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 218px;
+        margin: 0;
     }
 }
 
@@ -744,7 +1031,8 @@ body {
     .stats-controls {
         flex-wrap: nowrap;
     }
-    .stats-controls h2 {
+    .stats-controls h1,
+.stats-controls h2 {
         width: auto;
         margin-right: 10px;
     }
@@ -763,10 +1051,30 @@ body {
         display: flex !important; /* Всегда видно на десктопах */
         flex-direction: row;
         flex-wrap: wrap;
-        gap: 6px;
+        align-items: center;
+        gap: 8px;
         background: none;
         padding: 0;
         box-shadow: none;
+    }
+
+    .filter-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex: 1 1 180px;
+        min-width: 0;
+    }
+
+    .filter-row label {
+        flex: 0 0 auto;
+        white-space: nowrap;
+        font-size: 12px;
+    }
+
+    .filter-actions {
+        flex: 1 1 100%;
+        justify-content: flex-start;
     }
     .toggle-filters {
         display: none; /* Скрыть кнопку на десктопах */

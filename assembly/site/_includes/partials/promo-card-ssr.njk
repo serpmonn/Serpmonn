@@ -1,0 +1,70 @@
+{% macro renderPromoCard(promo, locale) %}
+{% set expiryRaw = promo.valid_until | default('9999-12-31') %}
+{% set countryKey = 'promo.country.' ~ (promo.country | default('Россия')) %}
+<div class="promo-card{% if promo.is_top and not promo.isTravel %} top-offer{% endif %}{% if promo.isTravel %} travel-highlight{% endif %} clickable-card"
+     data-ssr="1"
+     data-promo-id="{{ promo.id }}"
+     data-category="{{ promo.category | default('другие') }}"
+     data-expiry="{{ expiryRaw }}"
+     data-country="{{ promo.country | default('Россия') }}"
+     {% if promo.landing_url %}data-landing-url="{{ promo.landing_url }}"{% endif %}
+     {% if promo.is_top and not promo.isTravel %}data-top-badge="{{ 'promo.topBadge' | promoTr(locale) }}"{% endif %}
+     {% if promo.isTravel %}data-travel-badge="{{ 'promo.travelBadge' | promoTr(locale) }}"{% endif %}>
+    <div class="promo-card-content">
+        <div class="promo-header">
+            <img src="{{ promo.image_url | default('/frontend/images/skidki-i-akcii.png') }}"
+                 alt="{{ promo.displayTitleShort | escape }}"
+                 width="80" height="80" loading="lazy" decoding="async">
+            <h3 title="{{ promo.displayTitle | escape }}">{{ promo.displayTitleShort | escape }}</h3>
+        </div>
+        {% if promo.promocode %}
+        <p class="code">{{ promo.promocode | escape }}
+            <button class="submit-btn copy-btn" type="button" aria-label="{{ 'promo.copyCodeAria' | promoTr(locale, { code: promo.promocode }) }}">{{ 'promo.copy' | promoTr(locale) }}</button>
+        </p>
+        {% endif %}
+        <p class="bonus-info">
+            {% if promo.bonus_description %}
+                {{ promo.bonus_description | escape }}
+            {% elif promo.discount_percent %}
+                {{ 'promo.discountPercent' | promoTr(locale, { percent: promo.discount_percent }) }}
+            {% elif promo.discount_amount %}
+                {% if promo.isSberCard %}
+                    {{ 'promo.certificateAmount' | promoTr(locale, { amount: promo.discount_amount }) }}
+                {% else %}
+                    {{ 'promo.discountAmount' | promoTr(locale, { amount: promo.discount_amount }) }}
+                {% endif %}
+            {% else %}
+                {{ 'promo.noPromocode' | promoTr(locale) }}
+            {% endif %}
+        </p>
+        <button type="button" class="details-btn" aria-expanded="false" aria-controls="{{ promo.detailsId }}" tabindex="0">
+            <span class="details-icon">▼</span>
+            <span class="details-text">{{ 'promo.details' | promoTr(locale) }}</span>
+        </button>
+        <div class="details-content" id="{{ promo.detailsId }}" style="display: none; margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
+            {{ (promo.description or promo.groupDescription or ('promo.descriptionPending' | promoTr(locale))) | escape }}
+        </div>
+        {% if promo.conditions %}
+        <p><strong>{{ 'promo.conditions' | promoTr(locale) }}</strong> {{ promo.conditions | escape }}</p>
+        {% endif %}
+        <p class="country">{{ 'promo.countryPrefix' | promoTr(locale) }} {{ countryKey | promoTr(locale) | escape }}</p>
+        <p class="expiry{% if promo.isExpired %} expired{% endif %}">
+            {{ 'promo.validUntil' | promoTr(locale) }} {{ expiryRaw | formatPromoDate(locale) | escape }}
+            {% if promo.isExpired %} {{ 'promo.expired' | promoTr(locale) }}{% endif %}
+        </p>
+    </div>
+    <div class="promo-card-footer">
+        {% if promo.landing_url %}
+        <div class="promo-footer-actions">
+            <a href="{{ promo.landing_url | escape }}" target="_blank" rel="noopener noreferrer" class="register-link use-btn">{{ 'promo.use' | promoTr(locale) }}</a>
+            <button type="button" class="promo-share-button" aria-label="{{ 'promo.shareAria' | promoTr(locale) }}">
+                <span class="promo-share-icon">⤴</span>
+            </button>
+        </div>
+        {% endif %}
+        {% if promo.advertiser_info %}
+        <p class="ad">{{ 'promo.ad' | promoTr(locale) }} {{ promo.advertiser_info | escape }}</p>
+        {% endif %}
+    </div>
+</div>
+{% endmacro %}

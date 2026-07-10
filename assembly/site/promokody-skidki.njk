@@ -8,6 +8,7 @@ eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/promo-codes-and-discounts/promokody-skidki.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/promo-codes-and-discounts/promokody-skidki.html{% endif %}"
 ---
+{% from "partials/promo-card-ssr.njk" import renderPromoCard %}
 
 <!DOCTYPE html>
 <html lang="{{ locale }}" dir="{{ dir }}">
@@ -55,8 +56,8 @@ eleventyComputed:
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
 
     <!-- Стили -->
-    <link rel="preload" href="promokody-skidki.css?v=13" as="style" onload="this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="promokody-skidki.css?v=13"></noscript>
+    <link rel="preload" href="promokody-skidki.css?v=24" as="style" onload="this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="promokody-skidki.css?v=24"></noscript>
     <link rel="preload" href="/frontend/styles/accessibility.css" as="style" onload="this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/frontend/styles/accessibility.css"></noscript>
 
@@ -154,7 +155,7 @@ eleventyComputed:
     <noscript><div><img src="https://top-fwz1.mail.ru/counter?id=3552905;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
     <!-- /Top.Mail.Ru counter -->
     
-    <script type="module" src="promokody-skidki.js?v=32" defer></script>
+    <script type="module" src="promokody-skidki.js?v=42" defer></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
@@ -164,19 +165,15 @@ eleventyComputed:
     </header>
     
     <main class="container">
-        <section class="hero" aria-labelledby="hero-title">
-            <h1 id="hero-title">{{ localesPromocodes[locale].promoCodes.heroTitle }}</h1>
-        </section>
-
         <section class="stats-controls" aria-labelledby="overview-title">
-            <h2 id="overview-title">{{ localesPromocodes[locale].promoCodes.overviewTitle }}</h2>
+            <h1 id="overview-title">{{ localesPromocodes[locale].promoCodes.heroTitle }}</h1>
             <div class="stats">
                 <div class="stat-item">
-                    <span class="stat-number" id="totalPromos" aria-label="{{ localesPromocodes[locale].promoCodes.totalPromos }}">0</span>
+                    <span class="stat-number" id="totalPromos" aria-label="{{ localesPromocodes[locale].promoCodes.totalPromos }}">{{ promocodesBuild.stats.total | default(0) }}</span>
                     <span class="stat-label">{{ localesPromocodes[locale].promoCodes.totalPromos }}</span>
                 </div>
                 <div class="stat-item">
-                    <span class="stat-number" id="activePromos" aria-label="{{ localesPromocodes[locale].promoCodes.activePromos }}">0</span>
+                    <span class="stat-number" id="activePromos" aria-label="{{ localesPromocodes[locale].promoCodes.activePromos }}">{{ promocodesBuild.stats.active | default(0) }}</span>
                     <span class="stat-label">{{ localesPromocodes[locale].promoCodes.activePromos }}</span>
                 </div>
             </div>
@@ -185,42 +182,54 @@ eleventyComputed:
                     <i class="icon-refresh"></i> {{ localesPromocodes[locale].promoCodes.refreshButton }}
                 </button>
                 <div class="last-update">
-                    {{ localesPromocodes[locale].promoCodes.lastUpdated }} <span id="lastUpdate" aria-label="{{ localesPromocodes[locale].promoCodes.lastUpdated }}">-</span>
+                    {{ localesPromocodes[locale].promoCodes.lastUpdated }} <span id="lastUpdate" aria-label="{{ localesPromocodes[locale].promoCodes.lastUpdated }}">{{ promocodesBuild.stats.lastUpdateFormatted | default('-') }}</span>
                 </div>
             </div>
         </section>
 
-        <section class="filters" aria-labelledby="filters-title">
-            <h2 id="filters-title" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.filtersTitle }}</h2>
+        <section class="filters" aria-label="{{ localesPromocodes[locale].promoCodes.toggleFilters }}">
             <button id="toggleFilters" class="submit-btn toggle-filters" aria-label="{{ localesPromocodes[locale].promoCodes.toggleFilters }}">{{ localesPromocodes[locale].promoCodes.toggleFilters }}</button>
             <div id="filtersContent" style="display: none;">
-                <label for="searchInput" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.searchPlaceholder }}</label>
+                <div class="filter-row">
+                    <label for="searchInput">{{ localesPromocodes[locale].promoCodes.searchPlaceholder }}</label>
+                    <input type="text" id="searchInput" aria-label="{{ localesPromocodes[locale].promoCodes.searchPlaceholder }}" aria-describedby="search-hint">
+                </div>
                 <p id="search-hint" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.searchHint }}</p>
-                <input type="text" id="searchInput" placeholder="{{ localesPromocodes[locale].promoCodes.searchPlaceholder }}" aria-label="{{ localesPromocodes[locale].promoCodes.searchPlaceholder }}" aria-describedby="search-hint">
-                
-                <label for="categorySelect" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.allCategories }}</label>
-                <select id="categorySelect" aria-label="{{ localesPromocodes[locale].promoCodes.allCategories }}">
-                    <option value="">{{ localesPromocodes[locale].promoCodes.allCategories }}</option>
-                </select>
-                
-                <label for="statusSelect" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.allStatuses }}</label>
-                <select id="statusSelect" aria-label="{{ localesPromocodes[locale].promoCodes.allStatuses }}">
-                    <option value="">{{ localesPromocodes[locale].promoCodes.allStatuses }}</option>
-                    <option value="active">{{ localesPromocodes[locale].promoCodes.activeStatus }}</option>
-                    <option value="expired">{{ localesPromocodes[locale].promoCodes.expiredStatus }}</option>
-                </select>
-                
-                <label for="countrySelect" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.allCountries }}</label>
-                <select id="countrySelect" aria-label="{{ localesPromocodes[locale].promoCodes.allCountries }}">
-                    <option value="" selected>{{ localesPromocodes[locale].promoCodes.allCountries }}</option>
-                    <option value="Россия">{{ localesPromocodes[locale].promoCodes.russia }}</option>
-                    <option value="Казахстан">{{ localesPromocodes[locale].promoCodes.kazakhstan }}</option>
-                    <option value="Узбекистан">{{ localesPromocodes[locale].promoCodes.uzbekistan }}</option>
-                    <option value="Грузия">{{ localesPromocodes[locale].promoCodes.georgia }}</option>
-                </select>
-                
-                <button class="submit-btn" onclick="sortByExpiry()" aria-label="{{ localesPromocodes[locale].promoCodes.sortByExpiry }}">{{ localesPromocodes[locale].promoCodes.sortByExpiry }}</button>
-                <button class="submit-btn" onclick="resetFilters()" aria-label="{{ localesPromocodes[locale].promoCodes.resetFilters }}">{{ localesPromocodes[locale].promoCodes.resetFilters }}</button>
+
+                <div class="filter-row">
+                    <label for="categorySelect">{{ localesPromocodes[locale].promoCodes.allCategories }}</label>
+                    <select id="categorySelect" aria-label="{{ localesPromocodes[locale].promoCodes.allCategories }}">
+                        <option value="">{{ localesPromocodes[locale].promoCodes.allCategories }}</option>
+                        {% for cat in promocodesBuild.categories %}
+                        <option value="{{ cat }}">{{ promoI18n[locale]['promo.cat.' ~ cat] | default(cat) }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="filter-row">
+                    <label for="statusSelect">{{ localesPromocodes[locale].promoCodes.allStatuses }}</label>
+                    <select id="statusSelect" aria-label="{{ localesPromocodes[locale].promoCodes.allStatuses }}">
+                        <option value="">{{ localesPromocodes[locale].promoCodes.allStatuses }}</option>
+                        <option value="active">{{ localesPromocodes[locale].promoCodes.activeStatus }}</option>
+                        <option value="expired">{{ localesPromocodes[locale].promoCodes.expiredStatus }}</option>
+                    </select>
+                </div>
+
+                <div class="filter-row">
+                    <label for="countrySelect">{{ localesPromocodes[locale].promoCodes.allCountries }}</label>
+                    <select id="countrySelect" aria-label="{{ localesPromocodes[locale].promoCodes.allCountries }}">
+                        <option value="" selected>{{ localesPromocodes[locale].promoCodes.allCountries }}</option>
+                        <option value="Россия">{{ localesPromocodes[locale].promoCodes.russia }}</option>
+                        <option value="Казахстан">{{ localesPromocodes[locale].promoCodes.kazakhstan }}</option>
+                        <option value="Узбекистан">{{ localesPromocodes[locale].promoCodes.uzbekistan }}</option>
+                        <option value="Грузия">{{ localesPromocodes[locale].promoCodes.georgia }}</option>
+                    </select>
+                </div>
+
+                <div class="filter-actions">
+                    <button class="submit-btn" onclick="sortByExpiry()" aria-label="{{ localesPromocodes[locale].promoCodes.sortByExpiry }}">{{ localesPromocodes[locale].promoCodes.sortByExpiry }}</button>
+                    <button class="submit-btn" onclick="resetFilters()" aria-label="{{ localesPromocodes[locale].promoCodes.resetFilters }}">{{ localesPromocodes[locale].promoCodes.resetFilters }}</button>
+                </div>
             </div>
         </section>
 
@@ -229,10 +238,10 @@ eleventyComputed:
             <p>{{ localesPromocodes[locale].promoCodes.loading }}</p>
         </div>
 
-        <div id="promocodes-result-count"></div>
-
-        <section id="catalog" class="promo-grid" aria-labelledby="catalog-title" role="region">
-            <h2 id="catalog-title" class="visually-hidden">{{ localesPromocodes[locale].promoCodes.catalogTitle }}</h2>
+        <section id="catalog" class="promo-grid" aria-label="{{ localesPromocodes[locale].promoCodes.catalogTitle }}" role="region">
+            {% for promo in promocodesBuild.cards %}
+            {{ renderPromoCard(promo, locale) }}
+            {% endfor %}
         </section>
 
         <section class="faq" aria-labelledby="faq-title">
@@ -302,6 +311,22 @@ eleventyComputed:
         "url": "{{ canonical }}"
     }
     </script>
+
+    {% if promocodesBuild.schemaOffers.length %}
+    <script type="application/ld+json" id="promo-offers-schema">
+    {
+        "@context": "https://schema.org",
+        "@graph": {{ promocodesBuild.schemaOffers | dump | safe }}
+    }
+    </script>
+    {% endif %}
+
+    <script id="promo-bootstrap" type="application/json">{{ {
+        stats: promocodesBuild.stats,
+        categories: promocodesBuild.categories,
+        data: promocodesBuild.data,
+        version: promocodesBuild.version
+    } | dump | safe }}</script>
 
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

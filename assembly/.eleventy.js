@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 
 const mailAdsPath = path.join(__dirname, 'site/src/scripts/mail-ad-slots.json');
+const { loadAllPromoI18n, resolvePromoTr, formatPromoDateForLocale } = require('./site/_data/promo-i18n-loader');
 
 module.exports = function(eleventyConfig) {
   /**
@@ -12,6 +13,16 @@ module.exports = function(eleventyConfig) {
 
   eleventyConfig.addGlobalData('mailAds', () => {
     return JSON.parse(fs.readFileSync(mailAdsPath, 'utf8'));
+  });
+
+  eleventyConfig.addGlobalData('promoI18n', () => loadAllPromoI18n());
+
+  eleventyConfig.addFilter('promoTr', function(key, locale, replacements) {
+    return resolvePromoTr(key, locale, replacements);
+  });
+
+  eleventyConfig.addFilter('formatPromoDate', function(value, locale) {
+    return formatPromoDateForLocale(value, locale);
   });
 
   /**

@@ -40,10 +40,82 @@ export function getSlotKeyFromIns(ins) {
   return null;
 }
 
-function hideElement(el) {
-  if (el) {
-    el.style.display = 'none';
+function hidePromoAdContainer(el) {
+  if (!el) {
+    return;
   }
+  el.classList.add('is-collapsed');
+  el.remove();
+}
+
+function hideElement(el) {
+  if (!el) {
+    return;
+  }
+
+  if (el.classList.contains('promo-ad-inline')) {
+    hidePromoAdContainer(el);
+    return;
+  }
+
+  el.style.display = 'none';
+}
+
+function revealAdContainer(container) {
+  if (!container?.classList?.contains('promo-ad-inline')) {
+    return;
+  }
+
+  container.classList.remove('is-collapsed');
+  container.classList.add('ad-loading');
+}
+
+function getAdContainer(ins) {
+  return ins.closest(
+    '.ad-top-banner,.ad-banner,.ad-container,.ad-leaderboard,.promo-ad-inline'
+  ) || ins.parentElement;
+}
+
+function markAdContainerLoaded(container) {
+  if (!container) {
+    return;
+  }
+
+  if (container.classList.contains('promo-ad-inline')) {
+    const slot = container.querySelector('.promo-ad-inline__slot');
+    if (slot) {
+      slot.style.position = '';
+      slot.style.left = '';
+      slot.style.width = '';
+      slot.style.height = '';
+    }
+    container.classList.remove('ad-loading', 'is-collapsed');
+    container.classList.add('ad-loaded');
+  }
+}
+
+function watchAdContainerFill(container, timeoutMs = 6500) {
+  if (!container) {
+    return;
+  }
+
+  const started = Date.now();
+
+  const tick = () => {
+    if (hasAdFill(container)) {
+      markAdContainerLoaded(container);
+      return;
+    }
+
+    if (Date.now() - started >= timeoutMs) {
+      hideElement(container);
+      return;
+    }
+
+    setTimeout(tick, 300);
+  };
+
+  tick();
 }
 
 export function renderYandexBanner(slotKey, container) {
@@ -155,14 +227,16 @@ export function waitForFill(ins, timeoutMs = FALLBACK_MS) {
 
 async function legacyNoFillHide(ins) {
   ensureMailAdsScript();
+  const container = getAdContainer(ins);
+  revealAdContainer(container);
   const filled = await waitForFill(ins);
 
-  if (!filled) {
-    const parent = ins.closest(
-      '.ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad,.ad-banner,.ad-container'
-    );
-    hideElement(parent);
+  if (filled) {
+    markAdContainerLoaded(container);
+    return;
   }
+
+  hideElement(container);
 }
 
 export async function runVkFallbackForIns(ins, options = {}) {
@@ -177,6 +251,9 @@ export async function runVkFallbackForIns(ins, options = {}) {
     return;
   }
 
+  const container = getAdContainer(ins);
+  revealAdContainer(container);
+
   const yandexCfg = slotsData.slots[slotKey]?.yandex;
   if (!POOL_ENABLED || !yandexCfg?.blockId) {
     await legacyNoFillHide(ins);
@@ -187,17 +264,16 @@ export async function runVkFallbackForIns(ins, options = {}) {
   const filled = await waitForFill(ins, options.timeoutMs ?? FALLBACK_MS);
 
   if (filled) {
+    markAdContainerLoaded(container);
     return;
   }
 
-  const parent = ins.closest(
-    '.ad-top-banner,.ad-banner,.ad-container,.ad-leaderboard,.promo-ad-inline'
-  ) || ins.parentElement;
-
-  if (slotKey === 'top') {
+  if (slotKey === 'top' || slotKey === 'promoInfeed') {
     hideElement(ins);
-    if (!renderYandexBanner('top', parent)) {
-      hideElement(parent);
+    if (renderYandexBanner(slotKey, container)) {
+      watchAdContainerFill(container, 5000);
+    } else {
+      hideElement(container);
     }
     return;
   }
@@ -208,7 +284,7 @@ export async function runVkFallbackForIns(ins, options = {}) {
     return;
   }
 
-  hideElement(parent);
+  hideElement(container);
 }
 
 export function initAdSlotObserver() {
