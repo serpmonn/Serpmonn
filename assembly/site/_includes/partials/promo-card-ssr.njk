@@ -41,12 +41,12 @@
             <span class="details-icon">▼</span>
             <span class="details-text">{{ 'promo.details' | promoTr(locale) }}</span>
         </button>
-        <div class="details-content" id="{{ promo.detailsId }}" style="display: none; margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
-            {{ (promo.description or promo.groupDescription or ('promo.descriptionPending' | promoTr(locale))) | escape }}
+        <div class="details-content" id="{{ promo.detailsId }}" style="display: none;">
+            <p class="details-description">{{ (promo.description or promo.groupDescription or ('promo.descriptionPending' | promoTr(locale))) | escape }}</p>
+            {% if promo.conditions %}
+            <p class="details-conditions"><strong>{{ 'promo.conditions' | promoTr(locale) }}</strong> {{ promo.conditions | escape }}</p>
+            {% endif %}
         </div>
-        {% if promo.conditions %}
-        <p><strong>{{ 'promo.conditions' | promoTr(locale) }}</strong> {{ promo.conditions | escape }}</p>
-        {% endif %}
         <p class="country">{{ 'promo.countryPrefix' | promoTr(locale) }} {{ countryKey | promoTr(locale) | escape }}</p>
         <p class="expiry{% if promo.isExpired %} expired{% endif %}">
             {{ 'promo.validUntil' | promoTr(locale) }} {{ expiryRaw | formatPromoDate(locale) | escape }}

@@ -136,23 +136,21 @@ function getCountryLabel(country) {
     return label === key ? country : label;
 }
 
-function setRefreshButtonInner(updating = false) {
-    if (!elements.refreshBtn) return;
-    const label = updating ? t('promo.refreshing') : t('promo.refresh');
-    elements.refreshBtn.innerHTML = `<i class="icon-refresh"></i> ${label}`;
-}
-
 function updateSortButtonUI() {
-    if (!elements.sortButton) return;
-    if (isSortedByExpiry) {
-        elements.sortButton.innerHTML = t('promo.sortActive', { arrow: sortAscending ? '↑' : '↓' });
-        elements.sortButton.setAttribute('aria-label', t('promo.sortAriaWithOrder', {
-            order: sortAscending ? t('promo.sortAsc') : t('promo.sortDesc')
-        }));
-    } else {
-        elements.sortButton.innerHTML = t('promo.sortByExpiry');
-        elements.sortButton.setAttribute('aria-label', t('promo.sortAria'));
-    }
+    const buttons = [elements.sortButton, elements.sortButtonMobile].filter(Boolean);
+    if (!buttons.length) return;
+
+    const label = isSortedByExpiry
+        ? t('promo.sortActive', { arrow: sortAscending ? '↑' : '↓' })
+        : t('promo.sortByExpiry');
+    const ariaLabel = isSortedByExpiry
+        ? t('promo.sortAriaWithOrder', { order: sortAscending ? t('promo.sortAsc') : t('promo.sortDesc') })
+        : t('promo.sortAria');
+
+    buttons.forEach((button) => {
+        button.textContent = label;
+        button.setAttribute('aria-label', ariaLabel);
+    });
 }
 
 const elements = {
@@ -164,8 +162,10 @@ const elements = {
     totalPromos: document.getElementById('totalPromos'),
     activePromos: document.getElementById('activePromos'),
     lastUpdate: document.getElementById('lastUpdate'),
-    refreshBtn: document.getElementById('refreshBtn'),
-    sortButton: document.querySelector('button[onclick="sortByExpiry()"]'),
+    sortButton: document.getElementById('sortByExpiryBtn'),
+    sortButtonMobile: document.getElementById('sortByExpiryBtnMobile'),
+    resetFiltersBtn: document.getElementById('resetFiltersBtn'),
+    resetFiltersBtnMobile: document.getElementById('resetFiltersBtnMobile'),
     loadingSpinner: document.getElementById('loadingSpinner'),
     toggleFilters: document.getElementById('toggleFilters'),
     filtersContent: document.getElementById('filtersContent')
@@ -403,28 +403,21 @@ async function loadPromocodesFromAPI() {
 
 async function refreshPromocodes() {
     try {
-        elements.refreshBtn.disabled = true;
-        setRefreshButtonInner(true);
-        
         const response = await fetch(`${API_CONFIG.baseUrl}/refresh`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' }
         });
-        
+
         if (!response.ok) throw new Error(`HTTP ошибка! Статус: ${response.status}`);
-        
+
         const result = await response.json();
         if (result.status === 'success') {
             localStorage.removeItem('promo_cache');
             await loadPromocodesFromAPI();
-            
+
             isSortedByExpiry = localStorage.getItem('promo_sort_by_expiry') === 'true';
             sortAscending = localStorage.getItem('promo_sort_ascending') !== 'false';
-            
-            if (elements.sortButton) {
-                updateSortButtonUI();
-            }
-            
+            updateSortButtonUI();
             filterPromos();
             updateLastUpdateTime();
             showToast(t('promo.refreshed'), 'success');
@@ -435,9 +428,6 @@ async function refreshPromocodes() {
         logError('Ошибка принудительного обновления', error);
         showToast(t('promo.refreshError', { message: error.message }), 'error');
         updateLastUpdateTime();
-    } finally {
-        elements.refreshBtn.disabled = false;
-        setRefreshButtonInner(false);
     }
 }
 
@@ -829,7 +819,9 @@ function createPromoCard(promo, isTopOffer = false) {
     }
 
     const detailsContent = escapeHtml(promo.description || promo.groupDescription || t('promo.descriptionPending'));
-    
+    const conditionsBlock = promo.conditions
+        ? `<p class="details-conditions"><strong>${t('promo.conditions')}</strong> ${escapeHtml(promo.conditions)}</p>`
+        : '';
     const landingUrl = promo.landing_url || promo.link || promo.url;
 
     card.innerHTML = `
@@ -850,10 +842,10 @@ function createPromoCard(promo, isTopOffer = false) {
                 <span class="details-icon">▼</span>
                 <span class="details-text">${t('promo.details')}</span>
             </button>
-            <div class="details-content" id="${detailsId}" style="display: none; margin-top: 8px; padding: 8px; background: #f9f9f9; border-radius: 4px;">
-                ${detailsContent}
+            <div class="details-content" id="${detailsId}" style="display: none;">
+                <p class="details-description">${detailsContent}</p>
+                ${conditionsBlock}
             </div>
-            ${promo.conditions ? `<p><strong>${t('promo.conditions')}</strong> ${escapeHtml(promo.conditions)}</p>` : ''}
             <p class="country">${t('promo.countryPrefix')} ${escapeHtml(getCountryLabel(promo.country || 'Россия'))}</p>
             <p class="expiry ${isExpired ? 'expired' : ''}">
                 ${t('promo.validUntil')} ${formatDate(expiryDate)}
@@ -893,8 +885,14 @@ function formatDate(date) {
 
 function updateStats(stats) {
     if (!stats) return;
-    if (elements.totalPromos) elements.totalPromos.textContent = stats.total ?? 0;
-    if (elements.activePromos) elements.activePromos.textContent = stats.active ?? stats.total ?? 0;
+    const total = stats.total ?? 0;
+    const active = stats.active ?? stats.total ?? 0;
+    if (elements.totalPromos) elements.totalPromos.textContent = total;
+    if (elements.activePromos) elements.activePromos.textContent = active;
+    const totalChip = document.getElementById('totalStatChip');
+    if (totalChip) {
+        totalChip.hidden = total === active;
+    }
 }
 
 function showToast(message, type = 'success') {
@@ -1088,12 +1086,14 @@ function sortByExpiry() {
 
 function toggleFilters(button) {
     const content = elements.filtersContent;
-    if (content) {
-        const isExpanded = content.style.display === 'block';
-        content.style.display = isExpanded ? 'none' : 'flex';
-        button.setAttribute('aria-expanded', !isExpanded);
-        button.textContent = isExpanded ? t('promo.filters') : t('promo.hideFilters');
+    if (!content || !button) {
+        return;
     }
+
+    const isExpanded = content.style.display === 'flex';
+    content.style.display = isExpanded ? 'none' : 'flex';
+    button.setAttribute('aria-expanded', String(!isExpanded));
+    button.textContent = isExpanded ? t('promo.filters') : t('promo.hideFilters');
 }
 
 function lazyLoadImages() {
@@ -1201,11 +1201,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   filterPromos();
 
-  if (elements.refreshBtn) {
-    elements.refreshBtn.addEventListener('click', async () => {
-      await refreshPromocodes();
-    });
-  }
+  const bindClick = (el, handler) => {
+    if (el) el.addEventListener('click', handler);
+  };
+
+  bindClick(elements.sortButton, sortByExpiry);
+  bindClick(elements.sortButtonMobile, sortByExpiry);
+  bindClick(elements.resetFiltersBtn, resetFilters);
+  bindClick(elements.resetFiltersBtnMobile, resetFilters);
 
   if (elements.toggleFilters) {
     elements.toggleFilters.addEventListener('click', () => toggleFilters(elements.toggleFilters));
@@ -1238,14 +1241,30 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function toggleDetails(button) {
-    const content = button.nextElementSibling;
-    if (content && content.classList.contains('details-content')) {
-        const isExpanded = content.style.display === 'block';
-        content.style.display = isExpanded ? 'none' : 'flex';
-        button.setAttribute('aria-expanded', !isExpanded);
-        const textSpan = button.querySelector('.details-text');
-        if (textSpan) textSpan.textContent = isExpanded ? t('promo.details') : t('promo.hide');
-        button.querySelector('.details-icon').textContent = isExpanded ? '▼' : '▲';
+    const contentId = button.getAttribute('aria-controls');
+    const content = contentId
+        ? document.getElementById(contentId)
+        : button.nextElementSibling;
+
+    if (!content || !content.classList.contains('details-content')) {
+        return;
+    }
+
+    const isExpanded = button.getAttribute('aria-expanded') === 'true';
+    const willExpand = !isExpanded;
+
+    content.style.display = willExpand ? 'block' : 'none';
+    content.classList.toggle('is-open', willExpand);
+    button.setAttribute('aria-expanded', String(willExpand));
+
+    const textSpan = button.querySelector('.details-text');
+    if (textSpan) {
+        textSpan.textContent = willExpand ? t('promo.hide') : t('promo.details');
+    }
+
+    const icon = button.querySelector('.details-icon');
+    if (icon) {
+        icon.textContent = willExpand ? '▲' : '▼';
     }
 }
 
