@@ -39,7 +39,8 @@
         tickMs,       // Интервал между ходами в миллисекундах (определяет скорость)
         timer,        // Ссылка на игровой таймер
         paused,       // Флаг паузы
-        alive;        // Флаг жизни змейки
+        alive,        // Флаг жизни змейки
+        adShownThisRound; // Реклама fullscreen — один раз за раунд
 
     /**
      * Сбрасывает состояние игры к начальным значениям
@@ -68,6 +69,7 @@
         // Сброс состояния игры
         paused = false;
         alive = true;
+        adShownThisRound = false;
         
         // Запуск игрового цикла
         startGameLoop();
@@ -245,6 +247,15 @@
         
         ctx.font = '16px system-ui, -apple-system, Segoe UI, Roboto, Arial';
         ctx.fillText(gameOverText('pressRToRestart', 'Press R — restart'), canvas.width / 2, canvas.height / 2 + 18);
+
+        if (!adShownThisRound && window.showFullScreenAd) {
+            adShownThisRound = true;
+            setTimeout(() => {
+                try {
+                    window.showFullScreenAd();
+                } catch (_) {}
+            }, 1000);
+        }
     }
 
     /**

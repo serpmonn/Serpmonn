@@ -125,45 +125,18 @@ eleventyComputed:
             {{ menu_web_games }}
         </a>
 
-        <!-- Подменю веб-игр -->
+        <!-- Подменю веб-игр (localesGames — синхрон с games.html) -->
         <div class="submenu-container" id="webGamesSubmenu">
-            <!-- Внутренние веб-игры -->
-            <a href="{% if locale == 'ru' %}/frontend/games/fifteen/fifteen.html{% else %}/frontend/{{ locale }}/games/fifteen/fifteen.html{% endif %}">
-                <img src="/frontend/images/fifteen.png" alt="Пятнашки" class="icon">
-                Пятнашки
+            {% for category in localesGames[locale].games.categories %}
+              {% if category.key == 'web' %}
+                {% for game in category.games %}
+            <a href="{{ game.link }}">
+                <img src="{{ game.image }}" alt="{{ game.name }}" class="icon">
+                {{ game.name }}
             </a>
-            <a href="{% if locale == 'ru' %}/frontend/games/minesweeper/minesweeper.html{% else %}/frontend/{{ locale }}/games/minesweeper/minesweeper.html{% endif %}">
-                <img src="/frontend/images/minesweeper.png" alt="Сапёр" class="icon">
-                Сапёр
-            </a>
-            <a href="{% if locale == 'ru' %}/frontend/games/breakout/breakout.html{% else %}/frontend/{{ locale }}/games/breakout/breakout.html{% endif %}">
-                <img src="/frontend/images/breakout.png" alt="Арканоид" class="icon">
-                Арканоид
-            </a>
-            <a href="{% if locale == 'ru' %}/frontend/games/coins/coins.html{% else %}/frontend/{{ locale }}/games/coins/coins.html{% endif %}">
-                <img src="/frontend/images/coins.png" alt="Монетки" class="icon">
-                Монетки
-            </a>
-            <a href="{% if locale == 'ru' %}/frontend/games/flappy/flappy.html{% else %}/frontend/{{ locale }}/games/flappy/flappy.html{% endif %}">
-                <img src="/frontend/images/flappy.png" alt="Flappy Bird" class="icon">
-                Flappy Bird
-            </a>
-            <a href="{% if locale == 'ru' %}/frontend/games/snake/snake.html{% else %}/frontend/{{ locale }}/games/snake/snake.html{% endif %}">
-                <img src="/frontend/images/snake.png" alt="Змейка" class="icon">
-                Змейка
-            </a>
-            <a href="{% if locale == 'ru' %}/frontend/games/2048/2048.html{% else %}/frontend/{{ locale }}/games/2048/2048.html{% endif %}">
-                <img src="/frontend/images/2048.ico" alt="2048" class="icon">
-                2048
-            </a>
-            <a href="{% if locale == 'ru' %}/frontend/games/redsquare/redsquare.html{% else %}/frontend/{{ locale }}/games/redsquare/redsquare.html{% endif %}">
-                <img src="/frontend/images/SquareEscape.ico" alt="Квадратное бегство" class="icon">
-                Квадратное бегство
-            </a>
-            <a href="{% if locale == 'ru' %}/frontend/games/redsquare2/redsquare2.html{% else %}/frontend/{{ locale }}/games/redsquare2/redsquare2.html{% endif %}">
-                <img src="/frontend/images/RedSquare2.ico" alt="Падающие фигуры" class="icon">
-                Падающие фигуры
-            </a>
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
         </div>
 
 <a href="#" class="menu-item" data-submenu="androidGamesSubmenu">

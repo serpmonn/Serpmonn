@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Typing Speed — Serpmonn</title>
+  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -154,6 +155,10 @@
 </head>
 <body>
 
+<div class="ad-top-banner" style="width:100%;max-width:640px;text-align:center;margin:0 auto 12px;">
+  <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+</div>
+
 <div class="header">
   <svg width="32" height="32" viewBox="0 0 32 32" fill="none" aria-label="Typing Speed" role="img">
     <rect width="32" height="32" rx="8" fill="#16181c"/>
@@ -231,6 +236,7 @@ window.i18n = {
   newRecord: "🏆 新記録！"
 };
 </script>
+<script type="module" src="/frontend/games/typing/typing-ads.js?v=1" defer></script>
 <script>
 const WORDS_RU = [
   'сервер','клиент','сеть','порт','запрос','ответ','файл','данные','код','функция',
@@ -262,6 +268,7 @@ let started = false, finished = false;
 let timerInterval = null, timeLeft = 0, totalTime = 0;
 let correctChars = 0, wrongChars = 0;
 let history = [], bestWpm = {};
+let typingAdShownThisRound = false;
 
 function generateWords() {
   const bank = [...(window.i18n?.wordBankRu || []), ...WORDS_EN];
@@ -332,6 +339,7 @@ function updateLiveStats() {
 function initTest(newText = true) {
   clearInterval(timerInterval);
   started = false; finished = false;
+  typingAdShownThisRound = false;
   cursorPos = 0; correctChars = 0; wrongChars = 0; totalTime = 0;
   if (newText) words = generateWords();
   charList = buildCharList(words);
@@ -422,6 +430,15 @@ function finishTest() {
   resultPanel.classList.add('show');
   typingWrap.style.display = 'none';
   renderHistory(); updateLiveStats();
+
+  if (!typingAdShownThisRound && window.showFullScreenAd) {
+    typingAdShownThisRound = true;
+    setTimeout(() => {
+      try {
+        window.showFullScreenAd();
+      } catch (_) {}
+    }, 800);
+  }
 }
 
 function renderHistory() {
@@ -458,5 +475,8 @@ document.querySelectorAll('.tab').forEach(btn => {
 
 initTest();
 </script>
+
+<script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
+
 </body>
 </html>

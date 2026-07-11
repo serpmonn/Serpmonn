@@ -15,6 +15,7 @@ eleventyComputed:
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ title }}</title>
+  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap" rel="stylesheet">
@@ -147,6 +148,10 @@ eleventyComputed:
 </head>
 <body>
 
+<div class="ad-top-banner" style="width:100%;max-width:420px;text-align:center;margin:0 auto 12px;">
+  <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
+</div>
+
 <div class="header">
   <svg width="30" height="30" viewBox="0 0 30 30" fill="none" aria-hidden="true">
     <rect width="30" height="30" rx="7" fill="#16181c"/>
@@ -193,6 +198,7 @@ eleventyComputed:
 
 <div class="hint">{{ gameRatTranslations[locale].gameRat.hint }}</div>
 
+<script type="module" src="/frontend/games/rat/rat-ads.js?v=1" defer></script>
 <script>
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
@@ -206,6 +212,7 @@ const ROWS = Math.floor(H / CELL);
 const MAX_FAT = 60;
 
 let rat, food, bonusFood, walls, eaten, weight, best, gameRunning, animFrame;
+let ratAdShownThisRound = false;
 best = 0;
 
 function generateMaze() {
@@ -459,6 +466,10 @@ function gameLoop(ts) {
       clickTarget = null;
       spawnBonusChance();
       updateUI();
+      if (weight >= MAX_FAT) {
+        endGame();
+        return;
+      }
     }
     if (bonusFood && rat.x === bonusFood.x && rat.y === bonusFood.y) {
       eaten += 3;
@@ -469,6 +480,10 @@ function gameLoop(ts) {
       path = [];
       clickTarget = null;
       updateUI();
+      if (weight >= MAX_FAT) {
+        endGame();
+        return;
+      }
     }
   }
 
@@ -523,9 +538,27 @@ function init() {
   updateUI();
 }
 
+function endGame() {
+  gameRunning = false;
+  cancelAnimationFrame(animFrame);
+  overlay.querySelector('.overlay-title').textContent = '🏆 MAX FAT!';
+  overlay.querySelector('.overlay-sub').innerHTML =
+    eaten + ' · ' + weight.toFixed(1) + ' {{ gameRatTranslations[locale].gameRat.weightLabel }}';
+  overlay.classList.remove('hidden');
+  if (!ratAdShownThisRound && window.showFullScreenAd) {
+    ratAdShownThisRound = true;
+    setTimeout(() => {
+      try {
+        window.showFullScreenAd();
+      } catch (_) {}
+    }, 1000);
+  }
+}
+
 function startGame() {
   init();
   overlay.classList.add('hidden');
+  ratAdShownThisRound = false;
   gameRunning = true;
   lastTime = performance.now();
   cancelAnimationFrame(animFrame);
@@ -537,5 +570,6 @@ document.getElementById('startBtn').addEventListener('click', startGame);
 init();
 render();
 </script>
+{% include "partials/ad-pool-init.njk" %}
 </body>
 </html>

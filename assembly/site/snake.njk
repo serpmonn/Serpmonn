@@ -43,6 +43,7 @@ eleventyComputed:
   <link rel="stylesheet" href="/frontend/games/snake/snake.css">
 
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
 </head>
 <body>
   <div id="menuContainer"></div>
@@ -91,6 +92,9 @@ eleventyComputed:
   </script>
 
   <div class="page">
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
+    </div>
     <header>
       <img src="/frontend/images/snake.png" width="28" height="28" alt="{{ gameSnakeTranslations[locale].gameSnake.gamesAlt }}" style="border-radius:6px;">
       <h1>{{ gameSnakeTranslations[locale].gameSnake.mainTitle }}</h1>
@@ -141,7 +145,9 @@ eleventyComputed:
       instructionsMobile: {{ gameSnakeTranslations[locale].gameSnake.instructionsMobile | dump | safe }}
     };
   </script>
-  <script src="/frontend/games/snake/snake.js?v=2" defer></script>
+  <script type="module" src="/frontend/games/snake/snake-ads.js?v=1" defer></script>
+  <script src="/frontend/games/snake/snake.js?v=3" defer></script>
   <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+{% include "partials/ad-pool-init.njk" %}
 </body>
 </html>
