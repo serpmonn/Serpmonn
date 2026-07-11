@@ -87,8 +87,7 @@ eleventyComputed:
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
       <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
     </div>
-    <script>(window.MRGtag = window.MRGtag || []).push({});</script>
-    <div class="wrap">
+<div class="wrap">
       <div class="panel">
         <canvas id="game" width="480" height="640" aria-label="{{ gameBreakoutTranslations[locale].gameBreakout.canvasAria }}"></canvas>
         <div class="hint" style="display:none;">{{ gameBreakoutTranslations[locale].gameBreakout.hint }}</div>
@@ -108,5 +107,6 @@ eleventyComputed:
   </div>
   <script src="/frontend/games/breakout/breakout.js?v=2" defer></script>
   <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+{% include "partials/ad-pool-init.njk" %}
 </body>
 </html>

@@ -82,40 +82,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-// === 5. Обработка рекламы ===
-const adContainer = document.querySelector('.ad-leaderboard');
-if (adContainer) {
-    let adVisible = false;
-
-    const observer = new MutationObserver((mutations) => {
-        for (const m of mutations) {
-            for (const node of m.addedNodes) {
-                if (node.tagName === 'IFRAME') {
-                    const src = node.src || '';
-                    if (src.includes('mail.ru') || src.includes('mrg-tag') || node.offsetHeight > 0) {
-                        adVisible = true;
-                        adContainer.style.display = 'flex';
-                        observer.disconnect();
-                        return;
-                    }
-                }
-            }
-        }
-    });
-
-    observer.observe(document.body, { childList: true, subtree: true });
-
-    setTimeout(() => {
-        if (!adVisible) {
-            const iframe = document.querySelector('iframe[src*="mail.ru"], iframe[src*="mrg"]');
-            if (!iframe || iframe.offsetHeight === 0) {
-                adContainer.style.display = 'none';
-            }
-        }
-        observer.disconnect();
-    }, 6000);
-}
-
     // === 6. Аналитика ===
     document.querySelectorAll('.card a.btn').forEach(btn => {
         btn.addEventListener('click', () => {

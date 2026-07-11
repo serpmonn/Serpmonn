@@ -129,11 +129,7 @@ eleventyComputed:
             data-ad-slot="{{ mailAds.slots.top.id }}">
         </ins>
       </div>
-      <script>
-        (MRGtag = window.MRGtag || []).push({});
-      </script>
-      
-      <!-- Основной заголовок и подзаголовок -->
+<!-- Основной заголовок и подзаголовок -->
       <h1 class="news-title">{{ localesNews[locale].news.heroTitle }}</h1>  <!-- ИСПРАВЛЕНО: lang → locale -->
       <p class="news-subtitle">{{ localesNews[locale].news.heroSubtitle }}</p>  <!-- ИСПРАВЛЕНО: lang → locale -->
 
@@ -228,5 +224,6 @@ eleventyComputed:
   
 {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
 {{ mobileAnchor(localesNews[locale].news.closeAd) }}
+{% include "partials/ad-pool-init.njk" %}
 </body>
 </html>

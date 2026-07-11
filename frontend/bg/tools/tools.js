@@ -4,11 +4,8 @@ import {
   isFavoriteHref
 } from '../scripts/tool-favorites.js';
 
-import { ensureMailAdsScript } from '../scripts/mail-ads-loader.js';
-
 document.addEventListener('DOMContentLoaded', () => {                                                                           // Ожидание полной загрузки DOM перед выполнением скрипта
   // Кэширование DOM-элементов
-  const adBanners = document.querySelectorAll('.ad-banner');                                                                   // Все рекламные баннеры на странице
   const searchInput = document.querySelector('.filter-bar input[type="text"]');                                                // Поле ввода для поиска инструментов
   const categorySelect = document.querySelector('.filter-bar select');                                                         // Выпадающий список категорий
   const filterBar = document.getElementById('tools-filter-bar');
@@ -19,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {                           
   const cards = document.querySelectorAll('.category-section .card');                                                                            // Все карточки инструментов
   const filterMessage = document.querySelector('.filter-message');                                                             // Сообщение при отсутствии результатов
   const menuContainer = document.getElementById('menuContainer');                                                              // Контейнер меню
-  let adScriptLoaded = false;                                                                                                  // Флаг загрузки рекламного скрипта
 
   // Функция debounce - ограничение частоты вызова функции
   function debounce(func, wait) {                                                                                              // func - функция для выполнения, wait - время задержки
@@ -33,63 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {                           
       timeout = setTimeout(later, wait);                                                                                       // Установка нового таймера
     };
   }
-
-  // Ленивая загрузка скрипта рекламы
-  function loadAdScript() {
-    if (!adScriptLoaded) {
-      adScriptLoaded = true;
-      ensureMailAdsScript();
-    }
-  }
-
-  // Инициализация рекламы с использованием Intersection Observer
-  const observerOptions = { threshold: 0.1 };                                                                                  // Настройки observer - срабатывает при 10% видимости
-  const adObserver = new IntersectionObserver(                                                                                 // Создание observer для ленивой загрузки рекламы
-    debounce((entries, observer) => {                                                                                          // Оборачивание в debounce для оптимизации
-      entries.forEach(entry => {                                                                                               // Обработка каждого наблюдаемого элемента
-        if (entry.isIntersecting) {                                                                                            // Если элемент видим в viewport
-          loadAdScript();                                                                                                      // Загрузка рекламного скрипта
-          (MRGtag = window.MRGtag || []).push({});                                                                             // Инициализация рекламного тега
-          observer.unobserve(entry.target);                                                                                    // Прекращение наблюдения за элементом
-        }
-      });
-    }, 100),                                                                                                                   // Задержка 100ms для debounce
-    observerOptions                                                                                                            // Передача настроек observer
-  );
-
-  // Один MutationObserver для всех баннеров - отслеживание изменений в DOM рекламных баннеров
-  const mutationObserver = new MutationObserver(() => {                                                                        // Создание observer для отслеживания мутаций
-    adBanners.forEach(banner => {                                                                                              // Перебор всех рекламных баннеров
-      const ad = banner.querySelector('.mrg-tag');                                                                             // Поиск рекламного тега внутри баннера
-      let attempts = 0;                                                                                                        // Счетчик попыток проверки
-      const maxAttempts = 5;                                                                                                   // Максимальное количество попыток
-      const interval = setInterval(() => {                                                                                     // Установка интервала для проверки
-        if (!ad.hasChildNodes() || ad.innerHTML.trim() === '') {                                                               // Если реклама не загрузилась (пустой контент)
-          if (attempts >= maxAttempts) {                                                                                       // Если достигнут лимит попыток
-            banner.classList.add('hidden');                                                                                    // Скрытие баннера
-            banner.classList.remove('loading');                                                                                // Удаление индикатора загрузки
-            clearInterval(interval);                                                                                           // Очистка интервала
-            setTimeout(() => {                                                                                                 // Повторная попытка через 5 секунд
-              if (!ad.hasChildNodes() || ad.innerHTML.trim() === '') {                                                         // Если реклама все еще не загружена
-                (MRGtag = window.MRGtag || []).push({});                                                                       // Повторная инициализация рекламы
-              }
-            }, 5000);
-          }
-        } else {                                                                                                               // Если реклама загрузилась успешно
-          banner.classList.remove('loading');                                                                                  // Удаление индикатора загрузки
-          clearInterval(interval);                                                                                             // Очистка интервала
-        }
-        attempts++;                                                                                                            // Увеличение счетчика попыток
-      }, 1000);                                                                                                                // Проверка каждую секунду
-    });
-  });
-
-  // Применение observers ко всем рекламным баннерам
-  adBanners.forEach(banner => {                                                                                                // Перебор всех рекламных баннеров
-    const ad = banner.querySelector('.mrg-tag');                                                                               // Поиск рекламного тега
-    adObserver.observe(ad);                                                                                                    // Наблюдение за видимостью рекламы
-    mutationObserver.observe(ad, { childList: true, subtree: true });                                                          // Наблюдение за изменениями в рекламном теге
-  });
 
   // Удаление индикатора загрузки меню после его загрузки
   menuContainer.addEventListener('load', () => {                                                                               // Событие загрузки меню

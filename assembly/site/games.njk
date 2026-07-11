@@ -135,8 +135,7 @@ eleventyComputed:
         <div class="ad-leaderboard">
             <ins class="mrg-tag" style="display:inline-block" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
         </div>
-        <script>(MRGtag = window.MRGtag || []).push({});</script>
-        {% for category in localesGames[locale].games.categories %}
+{% for category in localesGames[locale].games.categories %}
         <!-- СЕКЦИЯ КАТЕГОРИИ -->
         <section itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <meta itemprop="position" content="{{ loop.index }}">
@@ -185,5 +184,6 @@ eleventyComputed:
     <script src="/frontend/games/games.js" defer></script>
     <script src="/frontend/scripts/interactive-bg.js" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+{% include "partials/ad-pool-init.njk" %}
 </body>
 </html>

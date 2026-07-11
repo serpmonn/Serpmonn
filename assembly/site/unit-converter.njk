@@ -71,11 +71,7 @@ eleventyComputed:
           data-ad-slot="{{ mailAds.slots.top.id }}">
       </ins>
     </div>
-    <script>
-      (MRGtag = window.MRGtag || []).push({});
-    </script>
-    
-    <h1>{{ unitConverter[locale].page.title }}</h1>
+<h1>{{ unitConverter[locale].page.title }}</h1>
 
     <div class="converter-container">
       <!-- Выбор категории -->
@@ -470,24 +466,12 @@ eleventyComputed:
 
     <!-- Загрузка меню -->
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-<script>/*GLOBAL_AD_HOOK*/(function(){
-      function handleIns(ins){
-        if (!ins || ins.__handled) return; ins.__handled = true;
-        setTimeout(function(){
-          var has = !!ins.querySelector("iframe");
-          if (!has) { (window.MRGtag=window.MRGtag||[]).push({}); }
-          setTimeout(function(){ if (!ins.querySelector("iframe")) { var p=ins.closest(".ad-top-banner,.ad-leaderboard,.promo-ad-inline,#mobile-anchor-ad"); if(p) p.style.display='none'; } }, 2000);
-        }, 2000);
-      }
-      document.querySelectorAll("ins.mrg-tag").forEach(handleIns);
-      var mo = new MutationObserver(function(muts){
-        muts.forEach(function(m){ m.addedNodes && m.addedNodes.forEach(function(n){ if(n.querySelectorAll){ n.querySelectorAll("ins.mrg-tag").forEach(handleIns); } }); });
-      });
-      mo.observe(document.documentElement,{childList:true,subtree:true});
-    })();</script>
+<script>
+</script>
     
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
 {{ mobileAnchor(unitConverter[locale].page.labels.closeAd) }}
+{% include "partials/ad-pool-init.njk" %}
 </body>
 </html>

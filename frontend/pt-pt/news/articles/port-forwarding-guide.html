@@ -1068,41 +1068,6 @@ nmap -p porta O-SEU-IP-EXTERNO</code></pre>
                 document.querySelector('.floating-toc').style.display = 'block';
             }
             
-            // Управление рекламой
-            document.querySelectorAll('.mrg-tag').forEach(ad => {
-                const banner = ad.closest('.ad-banner');
-                const observer = new IntersectionObserver((entries, observer) => {
-                    entries.forEach(entry => {
-                        if (entry.isIntersecting) {
-                            const script = document.createElement('script');
-                            import('/frontend/scripts/mail-ads-loader.js').then(m => m.ensureMailAdsScript());
-                            (window.MRGtag = window.MRGtag || []).push({});
-                            observer.unobserve(entry.target);
-                        }
-                    });
-                }, { threshold: 0.1 });
-                observer.observe(ad);
-                
-                const mutationObserver = new MutationObserver(() => {
-                    let attempts = 0;
-                    const maxAttempts = 5;
-                    const interval = setInterval(() => {
-                        if (!ad.hasChildNodes() || ad.innerHTML.trim() === '') {
-                            if (attempts >= maxAttempts) {
-                                banner.classList.add('hidden');
-                                banner.classList.remove('loading');
-                                clearInterval(interval);
-                            }
-                        } else {
-                            banner.classList.remove('loading');
-                            clearInterval(interval);
-                        }
-                        attempts++;
-                    }, 1000);
-                });
-                mutationObserver.observe(ad, { childList: true, subtree: true });
-            });
-            
         });
     </script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
@@ -1121,6 +1086,9 @@ nmap -p porta O-SEU-IP-EXTERNO</code></pre>
   import { initMobileAnchorAd } from '/frontend/scripts/mobile-anchor-ad.js';
   initMobileAnchorAd();
 </script>
+
+
+<script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 
 </body>
 </html>

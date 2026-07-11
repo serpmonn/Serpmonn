@@ -1,5 +1,4 @@
 import { getPageT } from '/frontend/scripts/i18n-loader.js';
-import { ensureMailAdsScript } from '/frontend/scripts/mail-ads-loader.js';
 
 let t = (key, vars = {}) => {
   let value = key;
@@ -11,7 +10,6 @@ let t = (key, vars = {}) => {
 
 let calcCache = new Map();
 const CACHE_TTL = 60 * 60 * 1000;
-let adScriptLoaded = false;
 let chartInstance = null;
 
 function getCurrency() {
@@ -55,12 +53,6 @@ async function loadJsPDF() {
   }
 }
 
-function loadAdScript() {
-  if (!adScriptLoaded) {
-    adScriptLoaded = true;
-    ensureMailAdsScript();
-  }
-}
 
 function debounce(func, wait) {
   let timeout;
@@ -565,20 +557,6 @@ function renderHistory() {
 
 document.addEventListener('DOMContentLoaded', async () => {
   t = await getPageT('depreciation');
-
-  const adObserver = new IntersectionObserver((entries, observer) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        loadAdScript();
-        (window.MRGtag = window.MRGtag || []).push({});
-        observer.unobserve(entry.target);
-      }
-    });
-  }, { threshold: 0.1 });
-  document.querySelectorAll('.ad-top-banner').forEach(banner => {
-    const ad = banner.querySelector('.mrg-tag');
-    if (ad) adObserver.observe(ad);
-  });
 
   const urlParams = new URLSearchParams(window.location.search);
   ['carBrand', 'carModel', 'carYear', 'initialPrice', 'currentMileage', 'usageType', 'fuelType', 'maintenanceLevel', 'climateZone', 'region', 'currentNewPrice', 'marketGrowth', 'inflationRate', 'demandLevel', 'technicalCondition'].forEach(id => {
