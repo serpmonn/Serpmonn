@@ -3,12 +3,12 @@ pagination:
   data: locales
   size: 1
   alias: locale
-permalink: "{% if locale == 'ru' %}/frontend/news/articles/updates-august-17.html{% else %}/frontend/{{ locale }}/news/articles/updates-august-17.html{% endif %}"
+permalink: "{% if locale == 'ru' %}/frontend/knowledge-base/articles/updates-august-17.html{% else %}/frontend/{{ locale }}/knowledge-base/articles/updates-august-17.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   title: "{{ updatesAugust17[locale].meta.title }}"
   description: "{{ updatesAugust17[locale].meta.ogDescription }}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/updates-august-17.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/updates-august-17.html{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/articles/updates-august-17.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/articles/updates-august-17.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -72,7 +72,7 @@ eleventyComputed:
       "@type": "BreadcrumbList",
       "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "{{ updatesAugust17[locale].breadcrumbs.home }}", "item": "{{ site.baseUrl }}/"},
-        {"@type": "ListItem", "position": 2, "name": "{{ updatesAugust17[locale].breadcrumbs.news }}", "item": "{{ site.baseUrl }}/frontend/news/"},
+        {"@type": "ListItem", "position": 2, "name": "{{ updatesAugust17[locale].breadcrumbs.news }}", "item": "{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html"},
         {"@type": "ListItem", "position": 3, "name": "{{ updatesAugust17[locale].breadcrumbs.current }}"}
       ]
     }
@@ -89,7 +89,7 @@ eleventyComputed:
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
       <a href="{{ site.baseUrl }}/">{{ updatesAugust17[locale].breadcrumbs.home }}</a> → 
-      <a href="{{ site.baseUrl }}/frontend/news/">{{ updatesAugust17[locale].breadcrumbs.news }}</a> → 
+      <a href="{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html">{{ updatesAugust17[locale].breadcrumbs.news }}</a> → 
       <span>{{ updatesAugust17[locale].breadcrumbs.current }}</span>
     </div>
 

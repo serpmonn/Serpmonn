@@ -3,12 +3,12 @@ pagination:
   data: locales
   size: 1
   alias: locale
-permalink: "{% if locale == 'ru' %}/frontend/news/articles/cookies-complete-guide.html{% else %}/frontend/{{ locale }}/news/articles/cookies-complete-guide.html{% endif %}"
+permalink: "{% if locale == 'ru' %}/frontend/knowledge-base/articles/cookies-complete-guide.html{% else %}/frontend/{{ locale }}/knowledge-base/articles/cookies-complete-guide.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   title: "{{ cookiesCompleteGuide[locale].meta.title }}"
   description: "{{ cookiesCompleteGuide[locale].meta.description }}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/cookies-complete-guide.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/cookies-complete-guide.html{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/articles/cookies-complete-guide.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/articles/cookies-complete-guide.html{% endif %}"
 ---
 
 {% set t = cookiesCompleteGuide[locale] %}
@@ -71,12 +71,12 @@ eleventyComputed:
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/cookies-complete-guide.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/cookies-complete-guide.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/news/articles/cookies-complete-guide.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/knowledge-base/articles/cookies-complete-guide.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/cookies-complete-guide.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/cookies-complete-guide.html" hreflang="x-default" />
 
     <!-- Иконка -->
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">

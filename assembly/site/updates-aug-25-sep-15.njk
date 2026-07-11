@@ -3,12 +3,12 @@ pagination:
   data: locales
   size: 1
   alias: locale
-permalink: "{% if locale == 'ru' %}/frontend/news/articles/updates-aug-25-sep-15.html{% else %}/frontend/{{ locale }}/news/articles/updates-aug-25-sep-15.html{% endif %}"
+permalink: "{% if locale == 'ru' %}/frontend/knowledge-base/articles/updates-aug-25-sep-15.html{% else %}/frontend/{{ locale }}/knowledge-base/articles/updates-aug-25-sep-15.html{% endif %}"
 eleventyComputed:
   title: "{{ updatesAug25Sep15[locale].meta.title }}"
   description: "{{ updatesAug25Sep15[locale].meta.ogDescription }}"
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/updates-aug-25-sep-15.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/updates-aug-25-sep-15.html{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/articles/updates-aug-25-sep-15.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/articles/updates-aug-25-sep-15.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -40,12 +40,12 @@ eleventyComputed:
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
       {% if loc == 'ru' %}
-        <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/updates-aug-25-sep-15.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/updates-aug-25-sep-15.html" hreflang="{{ loc }}" />
       {% else %}
-        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/news/articles/updates-aug-25-sep-15.html" hreflang="{{ loc }}" />
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/knowledge-base/articles/updates-aug-25-sep-15.html" hreflang="{{ loc }}" />
       {% endif %}
     {% endfor %}
-    <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/updates-aug-25-sep-15.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/updates-aug-25-sep-15.html" hreflang="x-default" />
 
     <!-- Structured Data: Article -->
     <script type="application/ld+json">
@@ -85,7 +85,7 @@ eleventyComputed:
       "@type": "BreadcrumbList",
       "itemListElement": [
         {"@type": "ListItem", "position": 1, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.home }}", "item": "{{ site.baseUrl }}/"},
-        {"@type": "ListItem", "position": 2, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.news }}", "item": "{{ site.baseUrl }}/frontend/news/"},
+        {"@type": "ListItem", "position": 2, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.news }}", "item": "{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html"},
         {"@type": "ListItem", "position": 3, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.current }}"}
       ]
     }
@@ -104,7 +104,7 @@ eleventyComputed:
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
       <a href="{{ site.baseUrl }}/">{{ updatesAug25Sep15[locale].breadcrumbs.home }}</a> →
-      <a href="{{ site.baseUrl }}/frontend/news/">{{ updatesAug25Sep15[locale].breadcrumbs.news }}</a> →
+      <a href="{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html">{{ updatesAug25Sep15[locale].breadcrumbs.news }}</a> →
       <span>{{ updatesAug25Sep15[locale].breadcrumbs.current }}</span>
     </div>
 

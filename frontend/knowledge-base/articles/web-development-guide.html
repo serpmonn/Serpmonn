@@ -1,0 +1,848 @@
+
+<!DOCTYPE html>
+<html lang="ru" dir="ltr">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="ru">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Пошаговое руководство для начинающих по созданию веб-сайта с нуля: HTML, CSS, JavaScript, выбор хостинга и публикация.">
+    <title>Как создать свой первый веб-сайт с нуля — Полное руководство для начинающих</title>
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Как создать свой первый веб-сайт с нуля — Полное руководство для начинающих">
+    <meta property="og:description" content="Пошаговое руководство по созданию веб-сайта с нуля. HTML, CSS, JavaScript и современные инструменты разработки.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/knowledge-base/articles/web-development-guide.html">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Как создать свой первый веб-сайт с нуля">
+    <meta name="twitter:description" content="Полное руководство по веб-разработке для начинающих">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+<!-- Structured Data: Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://serpmonn.ru/frontend/knowledge-base/articles/web-development-guide.html"
+      },
+      "headline": "Как создать свой первый веб-сайт с нуля — Полное руководство для начинающих",
+      "description": "Пошаговое руководство по созданию веб-сайта с нуля. HTML, CSS, JavaScript и современные инструменты разработки.",
+      "image": "https://serpmonn.ru/frontend/images/Banner_Serpmonn.png",
+      "datePublished": "2024-08-18",
+      "dateModified": "2025-06-23",
+      "inLanguage": "ru",
+      "url": "https://serpmonn.ru/frontend/knowledge-base/articles/web-development-guide.html",
+      "author": {
+        "@type": "Organization",
+        "name": "Serpmonn"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"
+        }
+      }
+    }
+    </script>
+
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="https://serpmonn.ru/frontend/knowledge-base/articles/web-development-guide.html" />
+
+    <!-- Hreflang для всех языков -->
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/knowledge-base/articles/web-development-guide.html" hreflang="ru" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ar/knowledge-base/articles/web-development-guide.html" hreflang="ar" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/az/knowledge-base/articles/web-development-guide.html" hreflang="az" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/be/knowledge-base/articles/web-development-guide.html" hreflang="be" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/bg/knowledge-base/articles/web-development-guide.html" hreflang="bg" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/bn/knowledge-base/articles/web-development-guide.html" hreflang="bn" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/cs/knowledge-base/articles/web-development-guide.html" hreflang="cs" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/da/knowledge-base/articles/web-development-guide.html" hreflang="da" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/de/knowledge-base/articles/web-development-guide.html" hreflang="de" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/el/knowledge-base/articles/web-development-guide.html" hreflang="el" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/en/knowledge-base/articles/web-development-guide.html" hreflang="en" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/es/knowledge-base/articles/web-development-guide.html" hreflang="es" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/es-419/knowledge-base/articles/web-development-guide.html" hreflang="es-419" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/fa/knowledge-base/articles/web-development-guide.html" hreflang="fa" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/fi/knowledge-base/articles/web-development-guide.html" hreflang="fi" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/fil/knowledge-base/articles/web-development-guide.html" hreflang="fil" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/fr/knowledge-base/articles/web-development-guide.html" hreflang="fr" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/he/knowledge-base/articles/web-development-guide.html" hreflang="he" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/hi/knowledge-base/articles/web-development-guide.html" hreflang="hi" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/hu/knowledge-base/articles/web-development-guide.html" hreflang="hu" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/hy/knowledge-base/articles/web-development-guide.html" hreflang="hy" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/id/knowledge-base/articles/web-development-guide.html" hreflang="id" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/it/knowledge-base/articles/web-development-guide.html" hreflang="it" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ja/knowledge-base/articles/web-development-guide.html" hreflang="ja" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ka/knowledge-base/articles/web-development-guide.html" hreflang="ka" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/kk/knowledge-base/articles/web-development-guide.html" hreflang="kk" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ko/knowledge-base/articles/web-development-guide.html" hreflang="ko" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ms/knowledge-base/articles/web-development-guide.html" hreflang="ms" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/nb/knowledge-base/articles/web-development-guide.html" hreflang="nb" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/nl/knowledge-base/articles/web-development-guide.html" hreflang="nl" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/pl/knowledge-base/articles/web-development-guide.html" hreflang="pl" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/pt-br/knowledge-base/articles/web-development-guide.html" hreflang="pt-br" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/pt-pt/knowledge-base/articles/web-development-guide.html" hreflang="pt-pt" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ro/knowledge-base/articles/web-development-guide.html" hreflang="ro" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/sr/knowledge-base/articles/web-development-guide.html" hreflang="sr" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/sv/knowledge-base/articles/web-development-guide.html" hreflang="sv" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/th/knowledge-base/articles/web-development-guide.html" hreflang="th" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/tr/knowledge-base/articles/web-development-guide.html" hreflang="tr" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ur/knowledge-base/articles/web-development-guide.html" hreflang="ur" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/uz/knowledge-base/articles/web-development-guide.html" hreflang="uz" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/vi/knowledge-base/articles/web-development-guide.html" hreflang="vi" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/zh-cn/knowledge-base/articles/web-development-guide.html" hreflang="zh-cn" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ps/knowledge-base/articles/web-development-guide.html" hreflang="ps" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/sd/knowledge-base/articles/web-development-guide.html" hreflang="sd" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ug/knowledge-base/articles/web-development-guide.html" hreflang="ug" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/dv/knowledge-base/articles/web-development-guide.html" hreflang="dv" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ks/knowledge-base/articles/web-development-guide.html" hreflang="ks" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/ku-arab/knowledge-base/articles/web-development-guide.html" hreflang="ku-arab" />
+    
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/yi/knowledge-base/articles/web-development-guide.html" hreflang="yi" />
+    
+    
+    <link rel="alternate" href="https://serpmonn.ru/frontend/knowledge-base/articles/web-development-guide.html" hreflang="x-default" />
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/web-development-guide.css">
+</head>
+<body>
+    <div class="reading-progress">
+        <div class="reading-progress-bar"></div>
+    </div>
+    
+    <button class="toc-toggle" onclick="toggleFloatingToc()">
+        <i class="fas fa-list"></i>
+    </button>
+    
+    <div class="floating-toc">
+        <h3>Оглавление</h3>
+        <ul>
+            
+            <li><a href="#section-goals">Что вы узнаете</a></li>
+            
+            <li><a href="#section-tools">Необходимые инструменты</a></li>
+            
+            <li><a href="#section-guide">Пошаговое руководство</a></li>
+            
+            <li><a href="#section-modern-tools">Современные инструменты</a></li>
+            
+            <li><a href="#section-faq">Частые вопросы</a></li>
+            
+            <li><a href="#section-resources">Полезные ресурсы</a></li>
+            
+        </ul>
+    </div>
+    
+    <div id="menuContainer"></div>
+    <article class="article-container" tabindex="0">
+        <header class="article-header">
+            <span class="article-category">Разработка</span>
+            <div class="table-of-contents sticky-toc">
+                <h2>Оглавление</h2>
+                <ul>
+                    
+                    <li><a href="#section-goals">Что вы узнаете</a></li>
+                    
+                    <li><a href="#section-tools">Необходимые инструменты</a></li>
+                    
+                    <li><a href="#section-guide">Пошаговое руководство</a></li>
+                    
+                    <li><a href="#section-modern-tools">Современные инструменты</a></li>
+                    
+                    <li><a href="#section-faq">Частые вопросы</a></li>
+                    
+                    <li><a href="#section-resources">Полезные ресурсы</a></li>
+                    
+                </ul>
+            </div>
+            <div class="ad-top-banner ad-banner loading">
+                <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
+            </div>
+            <h1 class="article-title">Как создать свой первый веб-сайт с нуля</h1>
+            <div class="article-meta">18 августа 2024 • 12 минут чтения</div>
+        </header>
+
+        <div class="article-content">
+            <p>Создание веб-сайта может показаться сложной задачей для новичка, но на самом деле это увлекательный процесс, который доступен каждому. В этом руководстве мы пройдем весь путь от идеи до работающего сайта.</p>
+
+            <h2 id="section-goals">🎯 Что вы узнаете</h2>
+            <ul>
+                
+                <li>Основы HTML, CSS и JavaScript</li>
+                
+                <li>Как выбрать хостинг и домен</li>
+                
+                <li>Современные инструменты разработки</li>
+                
+                <li>Публикация сайта в интернете</li>
+                
+            </ul>
+
+            <h2 id="section-tools">📋 Необходимые инструменты</h2>
+            <div class="tech-grid">
+                
+                <div class="tech-card">
+                    <span class="tech-icon">💻</span>
+                    <h4>Текстовый редактор</h4>
+                    <p>VS Code, Sublime Text или Notepad++</p>
+                </div>
+                
+                <div class="tech-card">
+                    <span class="tech-icon">🌐</span>
+                    <h4>Браузер</h4>
+                    <p>Chrome, Firefox или Safari</p>
+                </div>
+                
+                <div class="tech-card">
+                    <span class="tech-icon">📁</span>
+                    <h4>Файловый менеджер</h4>
+                    <p>Для организации проекта</p>
+                </div>
+                
+            </div>
+
+            <h2 id="section-guide">🚀 Пошаговое руководство</h2>
+            
+            <div class="visual-guide">
+                
+                <div class="visual-item">
+                    <div class="visual-icon"><i class="fas fa-pencil-alt"></i></div>
+                    <h3>Планирование</h3>
+                    <p>Определите цели и структуру сайта</p>
+                </div>
+                
+                <div class="visual-item">
+                    <div class="visual-icon"><i class="fas fa-code"></i></div>
+                    <h3>Разработка</h3>
+                    <p>Создайте HTML, CSS и JavaScript</p>
+                </div>
+                
+                <div class="visual-item">
+                    <div class="visual-icon"><i class="fas fa-rocket"></i></div>
+                    <h3>Публикация</h3>
+                    <p>Разместите сайт в интернете</p>
+                </div>
+                
+            </div>
+            
+            <ol class="step-list">
+                
+                <li>
+                    <h3>Планирование и дизайн</h3>
+                    <p>Определите цель сайта, целевую аудиторию и основные функции. Создайте простой макет на бумаге или в графическом редакторе.</p>
+                    
+                    
+                    
+                    
+                </li>
+                
+                <li>
+                    <h3>Создание структуры HTML</h3>
+                    <p>Начните с базовой HTML-структуры. HTML — это скелет вашего сайта.</p>
+                    
+                    
+                    <div class="code-example">
+                        <h4>Базовый HTML-шаблон:</h4>
+                        <pre><code class="language-html">&lt;!DOCTYPE html&gt;
+&lt;html lang=&quot;ru&quot;&gt;
+&lt;head&gt;
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+    &lt;meta name=&quot;viewport&quot; content=&quot;width=device-width, initial-scale=1.0&quot;&gt;
+    &lt;title&gt;Мой первый сайт&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;h1&gt;Добро пожаловать!&lt;/h1&gt;
+    &lt;p&gt;Это мой первый веб-сайт.&lt;/p&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+                    </div>
+                    
+                    
+                    
+                    <div class="interactive-editor html-editor">
+                        <div class="editor-toolbar">
+                            <span>HTML редактор</span>
+                            <button class="run-button" onclick="runCode(this)">Выполнить</button>
+                        </div>
+                        <div class="editor-content">
+                            <div class="code-area">
+                                <textarea class="code-textarea">&lt;h1&gt;Мой первый сайт&lt;/h1&gt;
+&lt;p&gt;Привет, мир! Это мой первый веб-сайт.&lt;/p&gt;
+&lt;button onclick=&quot;alert(&#39;Привет!&#39;)&quot;&gt;Нажми меня&lt;/button&gt;</textarea>
+                            </div>
+                            <div class="preview-area"></div>
+                        </div>
+                    </div>
+                    
+                </li>
+                
+                <li>
+                    <h3>Стилизация с помощью CSS</h3>
+                    <p>CSS отвечает за внешний вид сайта. Начните с простых стилей и постепенно усложняйте.</p>
+                    
+                    
+                    <div class="code-example">
+                        <h4>Базовые CSS-стили:</h4>
+                        <pre><code class="language-css">body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f0f0;
+}
+h1 {
+    color: #333;
+    text-align: center;
+}
+p {
+    line-height: 1.6;
+    color: #666;
+}</code></pre>
+                    </div>
+                    
+                    
+                    
+                    <div class="interactive-editor css-editor">
+                        <div class="editor-toolbar">
+                            <span>CSS редактор</span>
+                            <button class="run-button" onclick="runCode(this)">Выполнить</button>
+                        </div>
+                        <div class="editor-content">
+                            <div class="code-area">
+                                <textarea class="code-textarea">body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #f5f5f5;
+}
+h1 {
+    color: #dc3545;
+    text-align: center;
+}
+p {
+    line-height: 1.6;
+    color: #333;
+    padding: 10px;
+    background: white;
+    border-radius: 5px;
+}</textarea>
+                            </div>
+                            <div class="preview-area"><h1>Пример заголовка</h1><p>Пример текста для стилизации с помощью CSS</p></div>
+                        </div>
+                    </div>
+                    
+                </li>
+                
+                <li>
+                    <h3>Добавление интерактивности</h3>
+                    <p>JavaScript делает сайт интерактивным. Начните с простых функций.</p>
+                    
+                    
+                    <div class="code-example">
+                        <h4>Простой JavaScript:</h4>
+                        <pre><code class="language-javascript">document.getElementById(&#39;myButton&#39;).addEventListener(&#39;click&#39;, function() {
+    alert(&#39;Привет, мир!&#39;);
+});</code></pre>
+                    </div>
+                    
+                    
+                    
+                </li>
+                
+                <li>
+                    <h3>Тестирование</h3>
+                    <p>Откройте сайт в разных браузерах и на разных устройствах. Убедитесь, что всё работает корректно.</p>
+                    
+                    
+                    
+                    
+                </li>
+                
+                <li>
+                    <h3>Публикация</h3>
+                    <p>Выберите хостинг (например, GitHub Pages, Netlify или Vercel) и загрузите файлы сайта.</p>
+                    
+                    
+                    
+                    
+                </li>
+                
+            </ol>
+
+            <div class="highlight-box">
+                <h4>💡 Совет для начинающих</h4>
+                <p>Не пытайтесь создать сложный сайт сразу. Начните с простой одностраничной страницы и постепенно добавляйте новые функции.</p>
+            </div>
+
+            <h2 id="section-modern-tools">🔧 Современные инструменты</h2>
+            <p>Для более продвинутой разработки рассмотрите:</p>
+            <ul>
+                
+                <li><strong>Фреймворки:</strong> React, Vue.js, Angular</li>
+                
+                <li><strong>CSS-фреймворки:</strong> Bootstrap, Tailwind CSS</li>
+                
+                <li><strong>Сборщики:</strong> Webpack, Vite, Parcel</li>
+                
+                <li><strong>Системы контроля версий:</strong> Git</li>
+                
+            </ul>
+
+            <div class="warning-box">
+                <h4>⚠️ Важно помнить</h4>
+                <p>Веб-разработка постоянно развивается. Будьте готовы учиться новым технологиям и следить за трендами в индустрии.</p>
+            </div>
+
+            <h2 id="section-faq">❓ Часто задаваемые вопросы</h2>
+            
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Сколько времени нужно, чтобы создать первый сайт?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Для простого сайта-визитки может хватить нескольких часов или дней. Более сложные проекты могут занять недели или месяцы, в зависимости от сложности и времени, которое вы готовы уделять.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Нужно ли знать математику для веб-разработки?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>Для большинства веб-проектов advanced математика не требуется. Основные навыки, которые вам понадобятся - это логическое мышление и решение проблем.</p>
+                </div>
+            </div>
+            
+            <div class="faq-item">
+                <div class="faq-question" onclick="toggleFaq(this)">
+                    Какой язык программирования лучше учить первым?
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+                <div class="faq-answer">
+                    <p>HTML и CSS - это основа веба, и их следует изучить в первую очередь. Затем рекомендуется перейти к JavaScript, который добавляет интерактивность на сайт.</p>
+                </div>
+            </div>
+            
+
+            <h3>Чеклист для самостоятельной проверки</h3>
+            <ul class="checklist">
+                
+                <li>
+                    <input type="checkbox" id="check1">
+                    <label for="check1">Я определил цель и аудиторию моего сайта</label>
+                </li>
+                
+                <li>
+                    <input type="checkbox" id="check2">
+                    <label for="check2">Я создал базовую HTML-структуру</label>
+                </li>
+                
+                <li>
+                    <input type="checkbox" id="check3">
+                    <label for="check3">Я добавил CSS-стилизацию для элементов</label>
+                </li>
+                
+                <li>
+                    <input type="checkbox" id="check4">
+                    <label for="check4">Я протестировал сайт на разных устройствах</label>
+                </li>
+                
+                <li>
+                    <input type="checkbox" id="check5">
+                    <label for="check5">Я выбрал хостинг и опубликовал сайт</label>
+                </li>
+                
+            </ul>
+
+            <h2 id="section-resources">📚 Полезные ресурсы</h2>
+            <ul>
+                
+                <li><a href="https://developer.mozilla.org/ru/" target="_blank" rel="noopener">MDN Web Docs (русский)</a> — отличная документация</li>
+                
+                <li><a href="https://www.w3schools.com/" target="_blank" rel="noopener">W3Schools</a> — интерактивные уроки</li>
+                
+                <li><a href="https://habr.com/ru/all/" target="_blank" rel="noopener">Habr.com</a> — статьи и советы на русском</li>
+                
+                <li><a href="https://github.com/" target="_blank" rel="noopener">GitHub</a> — для хостинга и изучения кода</li>
+                
+            </ul>
+
+            <p>Создание веб-сайта — это творческий процесс, который может принести много удовольствия и новых возможностей. Не бойтесь экспериментировать и учиться на своих ошибках!</p>
+
+            <div class="share-buttons">
+                <h3>Поделиться статьёй</h3>
+                <button onclick="share('telegram')" aria-label="Поделиться в Telegram">Telegram</button>
+                <button onclick="share('vk')" aria-label="Поделиться во ВКонтакте">ВКонтакте</button>
+            </div>
+
+            <div class="comments-section">
+                <h2>Комментарии</h2>
+                <div class="comment-form">
+                    <h3>Оставьте ваш отзыв</h3>
+                    <form id="commentForm">
+                        <div class="form-group">
+                            <label for="commentName">Ваше имя:</label>
+                            <input type="text" id="commentName" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="commentText">Ваш комментарий:</label>
+                            <textarea id="commentText" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-button">Отправить</button>
+                    </form>
+                </div>
+                <div id="commentsList" class="comments-list">
+                    <!-- Комментарии будут загружены здесь -->
+                </div>
+            </div>
+        </div>
+
+        <div class="social-subscribe">
+            <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener" aria-label="Подписаться на Telegram-канал Serpmonn">Подписаться в Telegram</a>
+            <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener" aria-label="Подписаться на сообщество ВКонтакте Serpmonn">Подписаться во ВК</a>
+        </div>
+    </article>
+
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Вернуться наверх">↑ Наверх</button>
+
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    
+    <script>
+        // Локализованные строки для JavaScript
+        const localeTexts = {
+            noComments: "Пока нет комментариев. Будьте первым!",
+            commentSaved: "Комментарий успешно сохранен!",
+            error: "Ошибка"
+        };
+        
+        // Функции для работы с комментариями
+        function saveComment(name, text) {
+            const comment = {
+                name: name,
+                text: text,
+                date: new Date().toLocaleString('ru')
+            };
+            
+            let comments = JSON.parse(localStorage.getItem('articleComments_ru')) || [];
+            comments.push(comment);
+            localStorage.setItem('articleComments_ru', JSON.stringify(comments));
+            
+            return comment;
+        }
+        
+        function loadComments() {
+            const comments = JSON.parse(localStorage.getItem('articleComments_ru')) || [];
+            const commentsList = document.getElementById('commentsList');
+            
+            if (comments.length === 0) {
+                commentsList.innerHTML = '<div class="no-comments">' + localeTexts.noComments + '</div>';
+                return;
+            }
+            
+            commentsList.innerHTML = comments.map(comment => `
+                <div class="comment">
+                    <div class="comment-header">
+                        <span class="comment-author">${escapeHtml(comment.name)}</span>
+                        <span class="comment-date">${escapeHtml(comment.date)}</span>
+                    </div>
+                    <div class="comment-text">${escapeHtml(comment.text)}</div>
+                </div>
+            `).join('');
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Основные функции
+        function toggleFloatingToc() {
+            const floatingToc = document.querySelector('.floating-toc');
+            floatingToc.style.display = floatingToc.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        function share(network) {
+            const url = encodeURIComponent(window.location.href);
+            const title = encodeURIComponent(document.title);
+            const shareUrls = {
+                telegram: `https://t.me/share/url?url=${url}&text=${title}`,
+                vk: `https://vk.com/share.php?url=${url}&title=${title}`
+            };
+            window.open(shareUrls[network], '_blank');
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Загрузка комментариев
+            loadComments();
+            
+            // Обработка формы комментариев
+            document.getElementById('commentForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const nameInput = document.getElementById('commentName');
+                const textInput = document.getElementById('commentText');
+                
+                const name = nameInput.value.trim();
+                const text = textInput.value.trim();
+                
+                if (name && text) {
+                    saveComment(name, text);
+                    loadComments();
+                    
+                    // Очистка формы
+                    nameInput.value = '';
+                    textInput.value = '';
+                    
+                    // Показать сообщение об успехе
+                    alert(localeTexts.commentSaved);
+                }
+            });
+            
+            // Анимация появления контента
+            const contentObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.article-content > *').forEach(el => contentObserver.observe(el));
+            
+            // Кнопка "Наверх"
+            window.addEventListener('scroll', () => {
+                const button = document.querySelector('.scroll-to-top');
+                button.classList.toggle('show', window.scrollY > 300);
+            });
+            
+            // Прогресс чтения
+            const progressBar = document.querySelector('.reading-progress-bar');
+            window.addEventListener('scroll', () => {
+                const windowHeight = window.innerHeight;
+                const documentHeight = document.documentElement.scrollHeight;
+                const scrollTop = window.scrollY;
+                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
+                progressBar.style.width = `${progress}%`;
+            });
+            
+            // Показывать плавающее оглавление на десктопах
+            if (window.innerWidth > 991) {
+                document.querySelector('.floating-toc').style.display = 'block';
+            }
+            
+        });
+
+        // Функция для интерактивного редактора
+        function runCode(button) {
+            const editor = button.closest('.interactive-editor');
+            const codeArea = editor.querySelector('.code-textarea');
+            const previewArea = editor.querySelector('.preview-area');
+            
+            try {
+                if (editor.classList.contains('html-editor')) {
+                    previewArea.innerHTML = codeArea.value;
+                } else if (editor.classList.contains('css-editor')) {
+                    const styleTag = document.createElement('style');
+                    styleTag.textContent = codeArea.value;
+                    previewArea.innerHTML = '<h1>Пример заголовка</h1><p>Пример текста для стилизации с помощью CSS</p>';
+                    previewArea.appendChild(styleTag);
+                }
+            } catch (error) {
+                previewArea.innerHTML = `<div class="error">${localeTexts.error}: ${error.message}</div>`;
+            }
+        }
+        
+        // Функция для переключения FAQ
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            answer.classList.toggle('show');
+            const icon = element.querySelector('i');
+            icon.classList.toggle('fa-chevron-down');
+            icon.classList.toggle('fa-chevron-up');
+        }
+    </script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+
+
+<div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
+  <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+    <button type="button" aria-label="Закрыть рекламу" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+    <ins class="mrg-tag"
+        style="display:inline-block;width:320px;height:50px"
+        data-ad-client="ad-"
+        data-ad-slot=""></ins>
+  </div>
+</div>
+<script type="module">
+  import { initMobileAnchorAd } from '/frontend/scripts/mobile-anchor-ad.js';
+  initMobileAnchorAd();
+</script>
+
+
+<script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
+
+</body>
+</html>

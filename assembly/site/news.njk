@@ -3,10 +3,10 @@ pagination:
   data: locales
   size: 1
   alias: locale  # ИСПРАВЛЕНО: lang → locale
-permalink: "{% if locale == 'ru' %}/frontend/news/news.html{% else %}/frontend/{{ locale }}/news/news.html{% endif %}"
+permalink: "{% if locale == 'ru' %}/frontend/knowledge-base/knowledge-base.html{% else %}/frontend/{{ locale }}/knowledge-base/knowledge-base.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/news.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/news.html{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/knowledge-base.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -17,7 +17,7 @@ eleventyComputed:
   <link rel="stylesheet" href="/frontend/styles/base.css">
   <link rel="stylesheet" href="/frontend/styles/menu.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/news/news.css">
+  <link rel="stylesheet" href="/frontend/knowledge-base/knowledge-base.css">
   
   <!-- Мета-теги для SEO и социальных сетей -->
   <meta http-equiv="Content-Language" content="{{ locale }}">  <!-- ИСПРАВЛЕНО: lang → locale -->
@@ -60,12 +60,12 @@ eleventyComputed:
   <!-- Hreflang для всех языков -->
   {% for loc in locales %}
     {% if loc == 'ru' %}
-      <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/news.html" hreflang="{{ loc }}" />
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html" hreflang="{{ loc }}" />
     {% else %}
-      <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/news/news.html" hreflang="{{ loc }}" />
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/knowledge-base/knowledge-base.html" hreflang="{{ loc }}" />
     {% endif %}
   {% endfor %}
-  <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/news.html" hreflang="x-default" />
+  <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html" hreflang="x-default" />
 
   <!-- Schema.org разметка -->
   <script type="application/ld+json">
@@ -103,8 +103,9 @@ eleventyComputed:
   </script>
 
   <!-- RSS лента (если нужен общий для всех языков, оставляем так) -->
-  <link rel="alternate" type="application/rss+xml" title="RSS базы знаний Serpmonn" href="/frontend/news/rss.xml">
+  <link rel="alternate" type="application/rss+xml" title="RSS базы знаний Серпмонн" href="/frontend/knowledge-base/rss.xml">
   <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+  <script async src="https://ad.mail.ru/static/ads-async.js"></script>
 </head>
 <body>
   <!-- Контейнер для меню -->
@@ -112,24 +113,16 @@ eleventyComputed:
   
   <!-- Основной контент страницы -->
   <div class="page">
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      <!-- ИСПРАВЛЕНО: ссылка на главную с учетом языка -->
-      <a href="{% if locale == 'ru' %}/{% else %}/{{ locale }}/{% endif %}">{{ localesNews[locale].news.breadcrumbHome }}</a> →  <!-- ИСПРАВЛЕНО: lang → locale -->
-      <span>{{ localesNews[locale].news.breadcrumbNews }}</span>  <!-- ИСПРАВЛЕНО: lang → locale -->
+    <div class="ad-top-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-{{ mailAds.slots.top.id }}"
+          data-ad-slot="{{ mailAds.slots.top.id }}">
+      </ins>
     </div>
 
-    <!-- Заголовок раздела с рекламным баннером -->
+    <!-- Заголовок раздела -->
     <div class="news-header">
-      <div class="ad-top-banner" style="text-align:center;margin:16px 0;min-height:50px;">
-        <script async src="https://ad.mail.ru/static/ads-async.js" defer></script>
-        <ins class="mrg-tag" 
-            style="display:inline-block;"
-            data-ad-client="ad-{{ mailAds.slots.top.id }}" 
-            data-ad-slot="{{ mailAds.slots.top.id }}">
-        </ins>
-      </div>
-<!-- Основной заголовок и подзаголовок -->
       <h1 class="news-title">{{ localesNews[locale].news.heroTitle }}</h1>  <!-- ИСПРАВЛЕНО: lang → locale -->
       <p class="news-subtitle">{{ localesNews[locale].news.heroSubtitle }}</p>  <!-- ИСПРАВЛЕНО: lang → locale -->
 
@@ -160,7 +153,7 @@ eleventyComputed:
       <h2 class="rss-title">{{ localesNews[locale].news.rssTitle }}</h2>  <!-- ИСПРАВЛЕНО: lang → locale -->
       <p class="rss-description">{{ localesNews[locale].news.rssDescription }}</p>  <!-- ИСПРАВЛЕНО: lang → locale -->
       <!-- Оставляем RSS общим для всех языков, но можно сделать языковым -->
-      <a href="/frontend/news/rss.xml" class="rss-btn" target="_blank" rel="noopener">{{ localesNews[locale].news.rssButton }}</a>  <!-- ИСПРАВЛЕНО: lang → locale -->
+      <a href="/frontend/knowledge-base/rss.xml" class="rss-btn" target="_blank" rel="noopener">{{ localesNews[locale].news.rssButton }}</a>  <!-- ИСПРАВЛЕНО: lang → locale -->
       <div class="social-subscribe">
         <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">{{ localesNews[locale].news.telegramButton }}</a>  <!-- ИСПРАВЛЕНО: lang → locale -->
         <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">{{ localesNews[locale].news.vkButton }}</a>  <!-- ИСПРАВЛЕНО: lang → locale -->
@@ -171,7 +164,7 @@ eleventyComputed:
     <div class="news-categories">
       {% for category in localesNews[locale].news.categories %}  <!-- ИСПРАВЛЕНО: lang → locale -->
       <a class="category-link {% if category.key == 'all' %}active{% endif %}" 
-         href="{% if locale == 'ru' %}/frontend/news/{% else %}/frontend/{{ locale }}/news/{% endif %}?category={{ category.key }}" 
+         href="{% if locale == 'ru' %}/frontend/knowledge-base/knowledge-base.html{% else %}/frontend/{{ locale }}/knowledge-base/knowledge-base.html{% endif %}?category={{ category.key }}" 
          data-category="{{ category.key }}">
         {{ category.name }}
       </a>
@@ -219,7 +212,7 @@ eleventyComputed:
 
   <!-- Подключение JavaScript файлов -->
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-  <script type="module" src="/frontend/news/news.js?v=2" defer></script>
+  <script type="module" src="/frontend/knowledge-base/knowledge-base.js?v=3" defer></script>
   <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}

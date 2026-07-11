@@ -3,12 +3,12 @@ pagination:
   data: locales
   size: 1
   alias: locale
-permalink: "{% if locale == 'ru' %}/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% else %}/frontend/{{ locale }}/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% endif %}"
+permalink: "{% if locale == 'ru' %}/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% else %}/frontend/{{ locale }}/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
   title: "{{ snippetLimitsVkTelegramYoutubeTiktok[locale].meta.title }}"
   description: "{{ snippetLimitsVkTelegramYoutubeTiktok[locale].meta.description }}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -39,12 +39,12 @@ eleventyComputed:
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/snippet-limits-vk-telegram-youtube-tiktok.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html" hreflang="x-default" />
 
         <!-- Structured Data: Article -->
     <script type="application/ld+json">
@@ -231,7 +231,7 @@ eleventyComputed:
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
       <a href="{{ site.baseUrl }}/{% if locale != 'ru' %}{{ locale }}/{% endif %}">{{ snippetLimitsVkTelegramYoutubeTiktok[locale].breadcrumb.home }}</a> →
-      <a href="{{ site.baseUrl }}/{% if locale != 'ru' %}{{ locale }}/{% endif %}frontend/news/index.html">{{ snippetLimitsVkTelegramYoutubeTiktok[locale].breadcrumb.news }}</a> →
+      <a href="{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/knowledge-base.html{% endif %}">{{ snippetLimitsVkTelegramYoutubeTiktok[locale].breadcrumb.news }}</a> →
       <span>{{ snippetLimitsVkTelegramYoutubeTiktok[locale].breadcrumb.current }}</span>
     </div>
 

@@ -1,0 +1,528 @@
+
+<!DOCTYPE html>
+<html lang="ko" dir="ltr">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="ko">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    
+    
+    <title>IndexNow: 실용적인 구현 및 팁</title>
+    <meta name="description" content="빠른 검색 엔진 업데이트: 설정, 변경된-항목만, 일반적인 오류, 사이트맵 핑 비교 및 구현 체크리스트.">
+    <meta name="keywords" content="IndexNow, SEO, 인덱싱, 검색 엔진, Bing, Yandex, 웹사이트 업데이트">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="IndexNow: 실용적인 구현 및 팁">
+    <meta property="og:description" content="설정, 변경된-항목만 모드, 오류 및 사이트맵 핑 비교.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/ko/knowledge-base/articles/indexnow-practical-guide.html">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="IndexNow: 실용적인 구현 및 팁">
+    <meta name="twitter:description" content="설정, 변경된-항목만 모드, 오류 및 사이트맵 핑 비교.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="https://serpmonn.ru/frontend/ko/knowledge-base/articles/indexnow-practical-guide.html" />
+
+    <!-- Structured Data: Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://serpmonn.ru/frontend/ko/knowledge-base/articles/indexnow-practical-guide.html"
+      },
+      "headline": "IndexNow: 실용적인 구현 및 팁",
+      "description": "빠른 검색 엔진 업데이트: 설정, 변경된-항목만, 일반적인 오류, 사이트맵 핑 비교 및 구현 체크리스트.",
+      "image": "https://serpmonn.ru/frontend/images/Banner_Serpmonn.png",
+      "datePublished": "2025-01-15",
+      "dateModified": "2025-06-23",
+      "inLanguage": "ko",
+      "url": "https://serpmonn.ru/frontend/ko/knowledge-base/articles/indexnow-practical-guide.html",
+      "author": {
+        "@type": "Organization",
+        "name": "Serpmonn"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"
+        }
+      }
+    }
+    </script>
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+
+    <style>
+      body { 
+        max-width: 800px; 
+        margin: 0 auto; 
+        padding: 16px; 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+        background: #f5f5f5; 
+        line-height: 1.7; 
+      }
+      article { 
+        background: #fff; 
+        border-radius: 12px; 
+        padding: 40px; 
+        margin: 20px auto; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        max-width: 800px; 
+      }
+      .article-header { 
+        text-align: center; 
+        margin-bottom: 30px; 
+        padding-bottom: 20px; 
+        border-bottom: 2px solid #e9ecef; 
+      }
+      .article-title { 
+        font-size: 2.2rem; 
+        color: #333; 
+        margin-bottom: 10px; 
+        font-weight: 700; 
+      }
+      .article-date { 
+        color: #6c757d; 
+        font-size: 1.05rem; 
+        font-weight: 500; 
+      }
+      .summary { 
+        background: #e8f5e8; 
+        border: 1px solid #c3e6c3; 
+        border-radius: 8px; 
+        padding: 16px; 
+        margin: 20px 0; 
+        color: #155724; 
+      }
+      .toc { 
+        background: #f8f9fa; 
+        border: 1px solid #e9ecef; 
+        border-radius: 8px; 
+        padding: 16px; 
+        margin: 20px 0; 
+      }
+      .toc a { 
+        text-decoration: none; 
+      }
+      h2 { 
+        margin-top: 28px; 
+        color: #dc3545;
+      }
+      .code { 
+        background: #f8f9fa; 
+        border: 1px solid #dee2e6; 
+        border-radius: 6px; 
+        padding: 12px; 
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; 
+        font-size: .95rem; 
+        overflow-x: auto; 
+        white-space: pre-wrap;
+      }
+      .note { 
+        background: #fff3cd; 
+        border: 1px solid #ffe08a; 
+        border-radius: 8px; 
+        padding: 12px; 
+        margin: 16px 0; 
+        color: #7a5b00; 
+      }
+      .faq { 
+        background: #f8f9fa; 
+        border: 1px solid #e9ecef; 
+        border-radius: 8px; 
+        padding: 16px; 
+      }
+      .faq h3 { 
+        margin: 0 0 10px; 
+      }
+      .muted { 
+        color:#6c757d; 
+      }
+      .breadcrumb { 
+        margin-bottom: 16px; 
+        padding: 8px 0; 
+      }
+      .breadcrumb a {
+        text-decoration: none;
+        color: #007bff;
+      }
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+      .ad-top-banner {
+        text-align: center;
+        margin: 16px 0;
+        position: relative;
+        transition: opacity 0.3s ease, height 0.3s ease;
+      }
+      .ad-top-banner.hidden {
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+        margin: 0;
+      }
+      .ad-top-banner .mrg-tag {
+        width: 100% !important;
+        max-width: 970px;
+        height: auto;
+        aspect-ratio: 970 / 250;
+        display: inline-block;
+      }
+      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { max-width: 728px; aspect-ratio: 728 / 90; } }
+      @media (max-width: 768px) { .ad-top-banner .mrg-tag { max-width: 320px; aspect-ratio: 320 / 50; } }
+      .cta-button { 
+        display: block; 
+        text-align: center; 
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+        color: white; 
+        border: none; 
+        padding: 15px 30px; 
+        border-radius: 10px; 
+        font-size: 1.1rem; 
+        cursor: pointer; 
+        transition: transform 0.3s ease; 
+        margin: 30px 0; 
+        text-decoration: none; 
+      }
+      .cta-button:hover { 
+        transform: scale(1.02); 
+        text-decoration: none; 
+        color: #fff; 
+      }
+      .section-item {
+        margin-bottom: 10px;
+      }
+      .section-item-title {
+        font-weight: bold;
+      }
+      .social-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+      }
+      .tg-btn, .vk-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 25px;
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform .2s ease, box-shadow .2s ease;
+      }
+      .tg-btn {
+        background: #229ED9;
+      }
+      .vk-btn {
+        background: #2787F5;
+      }
+      .tg-btn:hover, .vk-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(0,0,0,.15);
+      }
+    </style>
+</head>
+<body>
+    <style>
+      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
+      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
+    </style>
+    
+    <nav id="menuContainer" aria-label=""></nav>
+    
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      
+        <a href="/ko/">Home</a> →
+        <a href="/frontend/ko/knowledge-base/knowledge-base.html">Knowledge base</a> →
+      
+      <span>IndexNow: 실용적인 구현 및 팁</span>
+    </div>
+
+    <article>
+      <header class="article-header">
+        <div class="ad-top-banner ad-banner">
+          <ins class="mrg-tag" 
+              style="display:inline-block;"
+              data-ad-client="ad-1897960" 
+              data-ad-slot="1897960">
+          </ins>
+        </div>
+        <h1 class="article-title">IndexNow: 실용적인 구현 및 팁</h1>
+        <div class="article-date">2025년 9월 15일 • 5분 읽기</div>
+      </header>
+
+      <div class="summary">
+        <strong>왜 읽어야 하나요:</strong> 검색 엔진에 빠르게 업데이트를 전달하는 방법, 변경된-항목만을 사용하는 시기, IndexNow가 사이트맵 핑과 어떻게 다른지, 일반적인 오류를 피하는 방법.
+      </div>
+
+      <div class="toc">
+        <strong>목차</strong>
+        <ol>
+          
+          <li><a href="#what">IndexNow란 무엇인가</a></li>
+          
+          <li><a href="#setup">키 설정 및 기본 핑</a></li>
+          
+          <li><a href="#changed">변경된-항목만 모드: 시기 및 방법</a></li>
+          
+          <li><a href="#compare">IndexNow vs 사이트맵 핑</a></li>
+          
+          <li><a href="#errors">일반적인 오류</a></li>
+          
+          <li><a href="#faq">FAQ 및 체크리스트</a></li>
+          
+        </ol>
+      </div>
+
+      
+      <h2 id="what">1) IndexNow란 무엇인가</h2>
+      
+      
+      <p>IndexNow는 URL 변경(생성, 업데이트, 삭제)에 대해 검색 엔진에 즉시 알릴 수 있는 프로토콜입니다. Bing, Yandex, Seznam 및 기타 서비스에서 지원합니다. 장점은 최소한의 인덱싱 지연과 적은 크롤링 노이즈입니다.</p>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <h2 id="setup">2) 키 설정 및 기본 핑</h2>
+      
+      
+      
+      
+      <ol>
+        
+        <li>키(GUID)를 생성하고 <code>YOUR_KEY.txt</code> 파일을 사이트 루트(<code>/.well-known/</code> 또는 도메인 루트)에 키 문자열과 함께 배치합니다.</li>
+        
+        <li>URL과 키로 엔드포인트에 핑을 보냅니다. 예시(단일 URL):</li>
+        
+      </ol>
+      
+      
+      
+      <div class="code">POST https://api.indexnow.org/indexnow
+Content-Type: application/json
+
+{
+  "host": "www.serpmonn.ru",
+  "key": "YOUR_KEY",
+  "urlList": [
+    "https://www.serpmonn.ru/frontend/knowledge-base/articles/utm-complete-guide.html"
+  ]
+}</div>
+      
+      
+      
+      
+      
+      <div class="note">일괄 처리의 경우 한 요청에 최대 10,000개의 URL을 지정하거나 변경 로그 파일 URL이 포함된 파일 피드를 사용합니다.</div>
+      
+      
+      
+      
+      
+      <h2 id="changed">3) 변경된-항목만 모드</h2>
+      
+      
+      <p>마지막 커밋/배포에서 실제로 변경된 파일만 핑하는 아이디어입니다. 이렇게 하면 노이즈와 할당량 사용이 줄어듭니다.</p>
+      
+      
+      
+      
+      
+      
+      
+        
+        <ul>
+          
+          <li>VCS(git diff) 또는 빌드 아티팩트에서 변경된 경로 목록을 가져옵니다.</li>
+          
+          <li>공개 경로로 필터링합니다(<code>node_modules</code>, <code>.git</code>, 개인 폴더 제외).</li>
+          
+          <li>관련 없는 URL 전송을 피하기 위해 도메인/언어별로 그룹화합니다.</li>
+          
+        </ul>
+        
+      
+      
+      
+      <div class="note">프로덕션에서는 대체 수단을 갖는 것이 유용합니다: 변경된-항목만이 비어 있는 경우(예: 구성에 대한 핫픽스), 중요한 사이트맵에 핑을 보냅니다.</div>
+      
+      
+      
+      
+      
+      <h2 id="compare">4) IndexNow vs 사이트맵 핑</h2>
+      
+      
+      
+      
+      
+      
+      
+      
+        
+        <ul>
+          
+          <li class="section-item">
+            <span class="section-item-title">속도:</span> IndexNow는 업데이트를 더 빠르게 제공하며 크롤링 주기를 기다리지 않습니다. 사이트맵 핑은 사이트맵의 존재를 알리지만 특정 URL의 변경 사항은 알리지 않습니다.
+          </li>
+          
+          <li class="section-item">
+            <span class="section-item-title">노이즈:</span> IndexNow - 변경된 URL을 대상으로 합니다. 사이트맵 - 전체 맵 스캔(크롤링 예산에 더 비쌉니다).
+          </li>
+          
+          <li class="section-item">
+            <span class="section-item-title">신뢰성:</span> 사이트맵은 기초로 남아 있습니다. IndexNow는 보완하고 가속화합니다. 둘 다 사용하는 것이 좋습니다.
+          </li>
+          
+        </ul>
+        
+      
+      
+      
+      
+      
+      
+      
+      <h2 id="errors">5) 일반적인 오류</h2>
+      
+      
+      
+      
+      
+      
+      
+      
+        
+        <ul>
+          
+          <li>키가 공개 URL을 통해 액세스할 수 없거나 <code>key</code> 매개변수와 일치하지 않습니다.</li>
+          
+          <li>개인/404 페이지 핑, 표준화되지 않은 매개변수.</li>
+          
+          <li>동일한 URL의 너무 빈번한 반복(반복을 제한합니다).</li>
+          
+          <li>다국어 지원 무시(해당 지역화 버전을 핑해야 합니다).</li>
+          
+        </ul>
+        
+      
+      
+      
+      
+      
+      
+      
+      <h2 id="faq">6) FAQ 및 체크리스트</h2>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="faq">
+        
+        <h3>한 번에 몇 개의 URL을 보내야 합니까?</h3>
+        <p>일괄 처리당 최대 10,000개 - 유형/언어별로 최적으로 그룹화합니다.</p>
+        
+        <h3>삭제를 핑해야 합니까?</h3>
+        <p>예 - 삭제된 페이지의 URL을 전달하여 인덱스 해제를 가속화합니다.</p>
+        
+        <h3>작동하는지 확인하는 방법은?</h3>
+        <p>API 응답 로그(200/202), 서버 로그의 크롤링 급증, 새로운 URL의 더 빠른 출현.</p>
+        
+        
+        
+        <h3></h3>
+        <ul>
+          
+          <li>키가 배치되고 HTTPS를 통해 액세스할 수 있습니다.</li>
+          
+          <li>CI/CD에서 변경된-항목만 경로를 수집합니다.</li>
+          
+          <li>중복 제거 및 반복 제한.</li>
+          
+          <li>빈 일괄 처리 시 사이트맵 핑으로 대체.</li>
+          
+        </ul>
+        
+      </div>
+      
+      
+      
+
+      
+      <div class="note" style="margin-top: 30px;">
+        <strong>:</strong> IndexNow는 새롭고 변경된 페이지의 인덱싱을 크게 가속화합니다. 기존 사이트맵과 결합하면 SEO 최적화를 위한 강력한 도구입니다.
+      </div>
+      
+
+      <!-- ИСПРАВЛЕНО: ссылка на инструмент SEO с учетом языка -->
+      <a href="/frontend/ko/tools/seo/index.html" class="cta-button">📊 SEO 확인</a>
+
+      <p class="muted">업데이트: 2025.09.15 • 카테고리: SEO</p>
+    </article>
+
+    <div class="social-buttons">
+      <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Telegram 구독</a>
+      <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">VK 구독</a>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    
+    <!-- Скрипты -->
+<script>
+</script>
+    
+    <!-- Скрипт для управления рекламным баннером -->
+
+
+<div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
+  <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+    <button type="button" aria-label="" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+    <ins class="mrg-tag"
+        style="display:inline-block;width:320px;height:50px"
+        data-ad-client="ad-"
+        data-ad-slot=""></ins>
+  </div>
+</div>
+<script type="module">
+  import { initMobileAnchorAd } from '/frontend/scripts/mobile-anchor-ad.js';
+  initMobileAnchorAd();
+</script>
+
+
+<script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
+
+</body>
+</html>

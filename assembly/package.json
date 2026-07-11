@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "npm run validate:i18n --prefix .. && eleventy",
-    "deploy": "npm run build && node ../scripts/count-stats.mjs && node deploy-locales.js",
+    "deploy": "npm run build && node ../scripts/count-stats.mjs && node deploy-locales.js && node ../scripts/write-news-redirects.mjs",
     "assemble": "node deploy-locales.js",
     "dev": "eleventy --serve",
     "clean": "rm -rf dist"

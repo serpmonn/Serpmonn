@@ -58,6 +58,11 @@ function hideElement(el) {
     return;
   }
 
+  if (el.classList.contains('ad-banner') || el.classList.contains('ad-top-banner')) {
+    el.classList.add('hidden');
+    el.classList.remove('loading', 'ad-loaded');
+  }
+
   el.style.display = 'none';
 }
 
@@ -78,6 +83,12 @@ function getAdContainer(ins) {
 
 function markAdContainerLoaded(container) {
   if (!container) {
+    return;
+  }
+
+  if (container.classList.contains('ad-banner') || container.classList.contains('ad-top-banner')) {
+    container.classList.remove('loading');
+    container.classList.add('ad-loaded');
     return;
   }
 

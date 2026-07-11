@@ -1,0 +1,528 @@
+
+<!DOCTYPE html>
+<html lang="be" dir="ltr">
+<head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="be">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+    
+    
+    <title>IndexNow: Практычная рэалізацыя і парады</title>
+    <meta name="description" content="Хуткія абнаўленні пошукавых сістэм: налада, changed-only, частыя памылкі, параўнанне з sitemap ping і чэк-ліст рэалізацыі.">
+    <meta name="keywords" content="IndexNow, SEO, індэксацыя, пошукавыя сістэмы, Bing, Yandex, абнаўленне сайта">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="IndexNow: Практычная рэалізацыя і парады">
+    <meta property="og:description" content="Налада, рэжым changed-only, памылкі і параўнанне з sitemap ping.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/be/knowledge-base/articles/indexnow-practical-guide.html">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="IndexNow: Практычная рэалізацыя і парады">
+    <meta name="twitter:description" content="Налада, рэжым changed-only, памылкі і параўнанне з sitemap ping.">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="https://serpmonn.ru/frontend/be/knowledge-base/articles/indexnow-practical-guide.html" />
+
+    <!-- Structured Data: Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://serpmonn.ru/frontend/be/knowledge-base/articles/indexnow-practical-guide.html"
+      },
+      "headline": "IndexNow: Практычная рэалізацыя і парады",
+      "description": "Хуткія абнаўленні пошукавых сістэм: налада, changed-only, частыя памылкі, параўнанне з sitemap ping і чэк-ліст рэалізацыі.",
+      "image": "https://serpmonn.ru/frontend/images/Banner_Serpmonn.png",
+      "datePublished": "2025-01-15",
+      "dateModified": "2025-06-23",
+      "inLanguage": "be",
+      "url": "https://serpmonn.ru/frontend/be/knowledge-base/articles/indexnow-practical-guide.html",
+      "author": {
+        "@type": "Organization",
+        "name": "Serpmonn"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"
+        }
+      }
+    }
+    </script>
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+
+    <style>
+      body { 
+        max-width: 800px; 
+        margin: 0 auto; 
+        padding: 16px; 
+        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
+        background: #f5f5f5; 
+        line-height: 1.7; 
+      }
+      article { 
+        background: #fff; 
+        border-radius: 12px; 
+        padding: 40px; 
+        margin: 20px auto; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
+        max-width: 800px; 
+      }
+      .article-header { 
+        text-align: center; 
+        margin-bottom: 30px; 
+        padding-bottom: 20px; 
+        border-bottom: 2px solid #e9ecef; 
+      }
+      .article-title { 
+        font-size: 2.2rem; 
+        color: #333; 
+        margin-bottom: 10px; 
+        font-weight: 700; 
+      }
+      .article-date { 
+        color: #6c757d; 
+        font-size: 1.05rem; 
+        font-weight: 500; 
+      }
+      .summary { 
+        background: #e8f5e8; 
+        border: 1px solid #c3e6c3; 
+        border-radius: 8px; 
+        padding: 16px; 
+        margin: 20px 0; 
+        color: #155724; 
+      }
+      .toc { 
+        background: #f8f9fa; 
+        border: 1px solid #e9ecef; 
+        border-radius: 8px; 
+        padding: 16px; 
+        margin: 20px 0; 
+      }
+      .toc a { 
+        text-decoration: none; 
+      }
+      h2 { 
+        margin-top: 28px; 
+        color: #dc3545;
+      }
+      .code { 
+        background: #f8f9fa; 
+        border: 1px solid #dee2e6; 
+        border-radius: 6px; 
+        padding: 12px; 
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; 
+        font-size: .95rem; 
+        overflow-x: auto; 
+        white-space: pre-wrap;
+      }
+      .note { 
+        background: #fff3cd; 
+        border: 1px solid #ffe08a; 
+        border-radius: 8px; 
+        padding: 12px; 
+        margin: 16px 0; 
+        color: #7a5b00; 
+      }
+      .faq { 
+        background: #f8f9fa; 
+        border: 1px solid #e9ecef; 
+        border-radius: 8px; 
+        padding: 16px; 
+      }
+      .faq h3 { 
+        margin: 0 0 10px; 
+      }
+      .muted { 
+        color:#6c757d; 
+      }
+      .breadcrumb { 
+        margin-bottom: 16px; 
+        padding: 8px 0; 
+      }
+      .breadcrumb a {
+        text-decoration: none;
+        color: #007bff;
+      }
+      .breadcrumb a:hover {
+        text-decoration: underline;
+      }
+      .ad-top-banner {
+        text-align: center;
+        margin: 16px 0;
+        position: relative;
+        transition: opacity 0.3s ease, height 0.3s ease;
+      }
+      .ad-top-banner.hidden {
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+        margin: 0;
+      }
+      .ad-top-banner .mrg-tag {
+        width: 100% !important;
+        max-width: 970px;
+        height: auto;
+        aspect-ratio: 970 / 250;
+        display: inline-block;
+      }
+      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { max-width: 728px; aspect-ratio: 728 / 90; } }
+      @media (max-width: 768px) { .ad-top-banner .mrg-tag { max-width: 320px; aspect-ratio: 320 / 50; } }
+      .cta-button { 
+        display: block; 
+        text-align: center; 
+        background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
+        color: white; 
+        border: none; 
+        padding: 15px 30px; 
+        border-radius: 10px; 
+        font-size: 1.1rem; 
+        cursor: pointer; 
+        transition: transform 0.3s ease; 
+        margin: 30px 0; 
+        text-decoration: none; 
+      }
+      .cta-button:hover { 
+        transform: scale(1.02); 
+        text-decoration: none; 
+        color: #fff; 
+      }
+      .section-item {
+        margin-bottom: 10px;
+      }
+      .section-item-title {
+        font-weight: bold;
+      }
+      .social-buttons {
+        display: flex;
+        justify-content: center;
+        gap: 12px;
+        margin-top: 24px;
+        flex-wrap: wrap;
+      }
+      .tg-btn, .vk-btn {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 25px;
+        color: #fff;
+        font-weight: 600;
+        text-decoration: none;
+        transition: transform .2s ease, box-shadow .2s ease;
+      }
+      .tg-btn {
+        background: #229ED9;
+      }
+      .vk-btn {
+        background: #2787F5;
+      }
+      .tg-btn:hover, .vk-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 14px rgba(0,0,0,.15);
+      }
+    </style>
+</head>
+<body>
+    <style>
+      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
+      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
+    </style>
+    
+    <nav id="menuContainer" aria-label=""></nav>
+    
+    <!-- Хлебные крошки -->
+    <div class="breadcrumb">
+      
+        <a href="/be/">Home</a> →
+        <a href="/frontend/be/knowledge-base/knowledge-base.html">Knowledge base</a> →
+      
+      <span>IndexNow: Практычная рэалізацыя і парады</span>
+    </div>
+
+    <article>
+      <header class="article-header">
+        <div class="ad-top-banner ad-banner">
+          <ins class="mrg-tag" 
+              style="display:inline-block;"
+              data-ad-client="ad-1897960" 
+              data-ad-slot="1897960">
+          </ins>
+        </div>
+        <h1 class="article-title">IndexNow: Практычная рэалізацыя і парады</h1>
+        <div class="article-date">15 верасня 2025 • 5 хвілін чытання</div>
+      </header>
+
+      <div class="summary">
+        <strong>Навошта чытаць:</strong> як хутка дастаўляць абнаўленні ў пошукавыя сістэмы, калі выкарыстоўваць changed-only, чым IndexNow адрозніваецца ад sitemap ping, і як пазбегнуць частых памылак.
+      </div>
+
+      <div class="toc">
+        <strong>Змест</strong>
+        <ol>
+          
+          <li><a href="#what">Што такое IndexNow</a></li>
+          
+          <li><a href="#setup">Устаноўка ключа і базавы пінг</a></li>
+          
+          <li><a href="#changed">Рэжым changed-only: калі і як</a></li>
+          
+          <li><a href="#compare">IndexNow vs sitemap ping</a></li>
+          
+          <li><a href="#errors">Частыя памылкі</a></li>
+          
+          <li><a href="#faq">FAQ і чэк-ліст</a></li>
+          
+        </ol>
+      </div>
+
+      
+      <h2 id="what">1) Што такое IndexNow</h2>
+      
+      
+      <p>IndexNow — гэта пратакол, які дазваляе імгненна паведамляць пошукавым сістэмам пра змены URL (стварэнне, абнаўленне, выдаленне). Падтрымліваецца Bing, Yandex, Seznam і шэрагам сэрвісаў. Перавага — мінімальная затрымка індэксацыі і менш crawl-шума.</p>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <h2 id="setup">2) Устаноўка ключа і базавы пінг</h2>
+      
+      
+      
+      
+      <ol>
+        
+        <li>Згенеруйце ключ (GUID) і змесціце файл <code>YOUR_KEY.txt</code> ў корань сайта (<code>/.well-known/</code> або корань дамена) са радком ключа.</li>
+        
+        <li>Пінг endpoint з URL і ключом. Прыклад (адзіны URL):</li>
+        
+      </ol>
+      
+      
+      
+      <div class="code">POST https://api.indexnow.org/indexnow
+Content-Type: application/json
+
+{
+  "host": "www.serpmonn.ru",
+  "key": "YOUR_KEY",
+  "urlList": [
+    "https://www.serpmonn.ru/frontend/knowledge-base/articles/utm-complete-guide.html"
+  ]
+}</div>
+      
+      
+      
+      
+      
+      <div class="note">Для партый пакажыце да 10 000 URL у адным запыце альбо выкарыстоўвайце файлавы канал з URL файла змяненняў.</div>
+      
+      
+      
+      
+      
+      <h2 id="changed">3) Рэжым changed-only</h2>
+      
+      
+      <p>Сэнс — пінгваць толькі рэальна змененыя файлы за апошні коміт/дэплой. Гэта зніжае шум і выдатак квот.</p>
+      
+      
+      
+      
+      
+      
+      
+        
+        <ul>
+          
+          <li>Бярыце спіс змененых шляхоў з VCS (git diff) альбо білд-артэфактаў.</li>
+          
+          <li>Фільтруйце па публічных маршрутах (выключаючы <code>node_modules</code>, <code>.git</code>, прыватныя папкі).</li>
+          
+          <li>Групуйце па даменах/мовах, каб не дасылаць неадпаведныя URL.</li>
+          
+        </ul>
+        
+      
+      
+      
+      <div class="note">На продакшэне карысна мець fallback: калі changed-only даў пуста (напрыклад, гарачы фікс канфігаў), пінгануць важныя карты сайта.</div>
+      
+      
+      
+      
+      
+      <h2 id="compare">4) IndexNow vs sitemap ping</h2>
+      
+      
+      
+      
+      
+      
+      
+      
+        
+        <ul>
+          
+          <li class="section-item">
+            <span class="section-item-title">Хуткасць:</span> IndexNow хутчэй дастаўляе абнаўленні, не чакае crawl цыкла; sitemap ping сігналізуе аб наяўнасці карты, але не аб змене канкрэтнага URL.
+          </li>
+          
+          <li class="section-item">
+            <span class="section-item-title">Шум:</span> IndexNow — дакладна па змененых URL; sitemap — сканаванне ўсёй карты (даражэй па crawl бюджэце).
+          </li>
+          
+          <li class="section-item">
+            <span class="section-item-title">Надзейнасць:</span> sitemaps застаюцца базай; IndexNow дапаўняе і паскарае. Лепей выкарыстоўваць абодва.
+          </li>
+          
+        </ul>
+        
+      
+      
+      
+      
+      
+      
+      
+      <h2 id="errors">5) Частыя памылкі</h2>
+      
+      
+      
+      
+      
+      
+      
+      
+        
+        <ul>
+          
+          <li>Ключ не даступны па публічным URL альбо не супадае з параметрам <code>key</code>.</li>
+          
+          <li>Пінгуюць прыватныя/404 старонкі, параметры без кананізацыі.</li>
+          
+          <li>Занадта частыя паўторы адных і тых жа URL (дросселяваць паўторы).</li>
+          
+          <li>Ігнаруюць шматмоўе (трэба пінгваць адпаведную лакалізаваную версію).</li>
+          
+        </ul>
+        
+      
+      
+      
+      
+      
+      
+      
+      <h2 id="faq">6) FAQ і чэк-ліст</h2>
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      <div class="faq">
+        
+        <h3>Колькі URL дасылаць за раз?</h3>
+        <p>Да 10 000 у партыі — аптымальна групаваць па тыпу/мове.</p>
+        
+        <h3>Ці трэба пінгваць выдаленне?</h3>
+        <p>Так — перадавайце URL выдаленых старонак, каб паскорыць дэіндэксацыю.</p>
+        
+        <h3>Чым пацвердзіць, што працуе?</h3>
+        <p>Лагі адказаў API (200/202), ўсплёскі crawl у лагах сервера, паскарэнне з&#39;яўлення новых URL.</p>
+        
+        
+        
+        <h3></h3>
+        <ul>
+          
+          <li>Ключ размешчаны і даступны па HTTPS.</li>
+          
+          <li>Збор changed-only шляхоў з CI/CD.</li>
+          
+          <li>Дэдуплікацыя і дросэляванне паўтораў.</li>
+          
+          <li>Fallback на пінг sitemap пры пустой партыі.</li>
+          
+        </ul>
+        
+      </div>
+      
+      
+      
+
+      
+      <div class="note" style="margin-top: 30px;">
+        <strong>:</strong> IndexNow значна паскарае індэксацыю новых і змененых старонак. У спалучэнні з традыцыйнымі sitemaps гэта магутны інструмент для SEO-аптымізацыі.
+      </div>
+      
+
+      <!-- ИСПРАВЛЕНО: ссылка на инструмент SEO с учетом языка -->
+      <a href="/frontend/be/tools/seo/index.html" class="cta-button">📊 Праверыць SEO</a>
+
+      <p class="muted">Абноўлена: 15.09.2025 • Катэгорыя: SEO</p>
+    </article>
+
+    <div class="social-buttons">
+      <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Падпісацца ў Telegram</a>
+      <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Падпісацца ў VK</a>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    
+    <!-- Скрипты -->
+<script>
+</script>
+    
+    <!-- Скрипт для управления рекламным баннером -->
+
+
+<div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
+  <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+    <button type="button" aria-label="" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+    <ins class="mrg-tag"
+        style="display:inline-block;width:320px;height:50px"
+        data-ad-client="ad-"
+        data-ad-slot=""></ins>
+  </div>
+</div>
+<script type="module">
+  import { initMobileAnchorAd } from '/frontend/scripts/mobile-anchor-ad.js';
+  initMobileAnchorAd();
+</script>
+
+
+<script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
+
+</body>
+</html>

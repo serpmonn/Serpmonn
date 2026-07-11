@@ -3,10 +3,10 @@ pagination:
   data: locales
   size: 1
   alias: locale
-permalink: "{% if locale == 'ru' %}/frontend/news/articles/indexnow-practical-guide.html{% else %}/frontend/{{ locale }}/news/articles/indexnow-practical-guide.html{% endif %}"
+permalink: "{% if locale == 'ru' %}/frontend/knowledge-base/articles/indexnow-practical-guide.html{% else %}/frontend/{{ locale }}/knowledge-base/articles/indexnow-practical-guide.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/indexnow-practical-guide.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/indexnow-practical-guide.html{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/articles/indexnow-practical-guide.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/articles/indexnow-practical-guide.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -257,10 +257,10 @@ eleventyComputed:
     <div class="breadcrumb">
       {% if locale == 'ru' %}
         <a href="/">Главная</a> →
-        <a href="/frontend/news/news.html">Новости</a> →
+        <a href="/frontend/knowledge-base/knowledge-base.html">{{ indexnowPracticalGuide[locale].breadcrumbNews | default('База знаний') }}</a> →
       {% else %}
         <a href="/{{ locale }}/">Home</a> →
-        <a href="/frontend/{{ locale }}/news/news.html">News</a> →
+        <a href="/frontend/{{ locale }}/knowledge-base/knowledge-base.html">{{ indexnowPracticalGuide[locale].breadcrumbNews | default('Knowledge base') }}</a> →
       {% endif %}
       <span>{{ article.article.title }}</span>
     </div>

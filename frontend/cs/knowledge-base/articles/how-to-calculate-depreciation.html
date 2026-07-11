@@ -1,0 +1,274 @@
+
+<!DOCTYPE html>
+<html lang="cs" dir="ltr">  <!-- ИЗМЕНЕНО: lang → locale -->
+  <head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="cs">  <!-- ИЗМЕНЕНО: lang → locale -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    
+      <!-- ИЗМЕНЕНО: lang → locale -->
+    
+    <title>Jak správně vypočítat amortizaci automobilu - Kompletní průvodce</title>
+    <meta name="description" content="Podrobný průvodce používáním kalkulačky amortizace. Naučte se zohlednit všechny faktory a získat přesné výsledky.">
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content="Jak správně vypočítat amortizaci automobilu - Kompletní průvodce">
+    <meta property="og:description" content="Podrobný průvodce používáním kalkulačky amortizace. Naučte se zohlednit všechny faktory a získat přesné výsledky.">
+    <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="https://serpmonn.ru/frontend/cs/knowledge-base/articles/how-to-calculate-depreciation.html">
+    <meta property="og:type" content="article">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Jak vypočítat amortizaci automobilu">
+    <meta name="twitter:description" content="Kompletní průvodce výpočtem amortizace s ohledem na všechny faktory">
+    <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
+
+    <!-- Каноническая ссылка -->
+    <link rel="canonical" href="https://serpmonn.ru/frontend/cs/knowledge-base/articles/how-to-calculate-depreciation.html" />
+
+    <!-- Structured Data: Article -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://serpmonn.ru/frontend/cs/knowledge-base/articles/how-to-calculate-depreciation.html"
+      },
+      "headline": "Jak správně vypočítat amortizaci automobilu - Kompletní průvodce",
+      "description": "Podrobný průvodce používáním kalkulačky amortizace. Naučte se zohlednit všechny faktory a získat přesné výsledky.",
+      "image": "https://serpmonn.ru/frontend/images/Banner_Serpmonn.png",
+      "datePublished": "2025-01-10",
+      "dateModified": "2025-06-23",
+      "inLanguage": "cs",
+      "url": "https://serpmonn.ru/frontend/cs/knowledge-base/articles/how-to-calculate-depreciation.html",
+      "author": {
+        "@type": "Organization",
+        "name": "Serpmonn"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://serpmonn.ru/frontend/images/serpmonn.ico"
+        }
+      }
+    }
+    </script>
+    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    
+    <style>
+      /* ad top adaptive start */
+      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
+      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
+      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
+      /* ad top adaptive end */
+      
+      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.7; }
+      .article-container { background: #fff; border-radius: 12px; padding: 40px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+      .article-header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #e9ecef; }
+      .article-title { font-size: 2.5rem; color: #333; margin-bottom: 15px; font-weight: 700; line-height: 1.2; }
+      .article-meta { color: #6c757d; font-size: 1.1rem; margin-bottom: 20px; }
+      .article-category { display: inline-block; padding: 8px 16px; background: #dc3545; color: #fff; border-radius: 20px; font-size: 0.9rem; font-weight: 500; }
+      .article-content { font-size: 1.1rem; color: #333; }
+      .article-content h2 { color: #dc3545; margin-top: 40px; margin-bottom: 20px; font-size: 1.8rem; font-weight: 600; }
+      .article-content h3 { color: #495057; margin-top: 30px; margin-bottom: 15px; font-size: 1.4rem; font-weight: 600; }
+      .article-content p { margin-bottom: 20px; }
+      .article-content ul, .article-content ol { margin-bottom: 20px; padding-left: 25px; }
+      .article-content li { margin-bottom: 10px; }
+      .highlight-box { background: #fdecea; border: 1px solid #f5c6cb; border-radius: 8px; padding: 20px; margin: 25px 0; color: #721c24; }
+      .highlight-box h4 { color: #721c24; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
+      .warning-box { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px; margin: 25px 0; border-left: 4px solid #ffc107; }
+      .warning-box h4 { color: #856404; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
+      .example-box { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin: 25px 0; border-left: 4px solid #6c757d; }
+      .example-box h4 { color: #495057; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
+      .step-list { counter-reset: step-counter; list-style: none; padding: 0; }
+      .step-list li { counter-increment: step-counter; margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #dc3545; position: relative; }
+      .step-list li::before { content: counter(step-counter); position: absolute; left: -15px; top: 20px; background: #dc3545; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; }
+
+      .social-subscribe { display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
+      .tg-btn, .vk-btn { display: inline-block; padding: 10px 20px; border-radius: 25px; color: #fff; font-weight: 600; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
+      .tg-btn { background: #229ED9; }
+      .vk-btn { background: #2787F5; }
+      .tg-btn:hover, .vk-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.15); }
+    </style>
+  </head>
+  <body>
+    <style>
+      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
+      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
+    </style>
+    
+    <!-- ИЗМЕНЕНО: все lang → locale -->
+    <nav id="menuContainer" aria-label="Menu"></nav>
+    
+    <div class="article-container">
+      <div class="article-header">
+        <span class="article-category">Výukový program</span>
+        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+        <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+          <ins class="mrg-tag" 
+              style="display:inline-block;"
+              data-ad-client="ad-1897960" 
+              data-ad-slot="1897960">
+          </ins>
+        </div>
+<h1 class="article-title">Jak správně vypočítat amortizaci automobilu</h1>
+        <div class="article-meta">19. srpna 2024 • 8 minut čtení</div>
+      </div>
+
+      <div class="article-content">
+        <p>Správný výpočet amortizace automobilu je důležitou dovedností pro každého řidiče. Pomůže vám činit informovaná rozhodnutí o nákupu, prodeji a údržbě vašeho vozidla.</p>
+
+        <h2>🎯 Co je amortizace automobilu</h2>
+        <p>Amortizace je proces postupného snižování hodnoty automobilu v průběhu času. Ovlivňuje ji mnoho faktorů, které je důležité zohlednit ve výpočtech.</p>
+
+        <h2>📊 Hlavní faktory amortizace</h2>
+        <ul>
+          
+          <li><strong>Najeto kilometrů:</strong>  Čím více kilometrů auto ujelo, tím větší je opotřebení</li>
+          
+          <li><strong>Věk:</strong>  Doba provozu ovlivňuje technický stav</li>
+          
+          <li><strong>Provozní podmínky:</strong>  Městská jízda způsobuje větší opotřebení než dálnice</li>
+          
+          <li><strong>Kvalita údržby:</strong>  Pravidelná údržba prodlužuje životnost vozu</li>
+          
+          <li><strong>Značka a model:</strong>  Některé značky jsou spolehlivější</li>
+          
+        </ul>
+
+        <h2>🔧 Jak používat kalkulačku amortizace</h2>
+        
+        <ol class="step-list">
+          
+          <li>
+            <h3>Příprava dat</h3>
+            <p>Shromážděte všechny potřebné informace o automobilu: rok výroby, najeto kilometrů, značka, model, provozní podmínky.</p>
+          </li>
+          
+          <li>
+            <h3>Zadání parametrů</h3>
+            <p>Zadejte data do příslušných polí kalkulačky. Buďte co nejpřesnější, abyste získali spolehlivé výsledky.</p>
+          </li>
+          
+          <li>
+            <h3>Analýza výsledků</h3>
+            <p>Prostudujte získaná data: zůstatková hodnota, procento opotřebení, doporučení údržby.</p>
+          </li>
+          
+        </ol>
+
+        <div class="example-box">
+          <h4>📝 Příklad výpočtu</h4>
+          <p>
+            <!-- ИЗМЕНЕНО: все lang → locale -->
+            <strong>Car:</strong> Toyota Camry 2018<br>
+            <strong>Mileage:</strong> 150 000 km<br>
+            <strong>Conditions:</strong> 70 % město, 30 % dálnice<br>
+            <strong>Maintenance:</strong> Pravidelná údržba<br>
+            <strong>Result:</strong> Zůstatková hodnota ~65 % původní
+          </p>
+        </div>
+
+        <h2>💡 Tipy na snížení amortizace</h2>
+        <ul>
+          
+          <li><strong>Pravidelná údržba:</strong>  Včasná výměna oleje a filtrů</li>
+          
+          <li><strong>Opatrná jízda:</strong>  Vyhýbejte se prudkým rozjezdům a brzdění</li>
+          
+          <li><strong>Kvalitní palivo:</strong>  Používejte doporučené značky</li>
+          
+          <li><strong>Ochrana proti korozi:</strong>  Ošetřete karoserii protikorozními přípravky</li>
+          
+          <li><strong>Správné skladování:</strong>  Pokud je to možné, používejte garáž</li>
+          
+        </ul>
+
+        <div class="highlight-box">
+          <h4>💡 Důležitý tip</h4>
+          <p>Pravidelně kontrolujte stav svého vozu a vedte si záznamy o údržbě. To pomůže přesněji posoudit skutečné opotřebení a plánovat náklady na opravy.</p>
+        </div>
+
+        <h2>⚠️ Co ovlivňuje přesnost výpočtů</h2>
+        <ul>
+          
+          <li><strong>Výkyvy trhu:</strong>  Ceny automobilů se mohou měnit</li>
+          
+          <li><strong>Technický stav:</strong>  Kvalita předchozí údržby</li>
+          
+          <li><strong>Nehody a opravy:</strong>  Vážná poškození snižují hodnotu</li>
+          
+          <li><strong>Úpravy:</strong>  Terénní a sportovní vylepšení</li>
+          
+        </ul>
+
+        <div class="warning-box">
+          <h4>⚠️ Omezení kalkulačky</h4>
+          <p>Kalkulačka poskytuje přibližný odhad. Pro přesné ocenění automobilu se doporučuje kontaktovat profesionálního odhadce nebo specializovanou službu.</p>
+        </div>
+
+        <h2>📈 Kdy přepočítat amortizaci</h2>
+        <ul>
+          
+          <li>Po každé údržbě (pro úpravu stavu)</li>
+          
+          <li>Při změně provozních podmínek</li>
+          
+          <li>Před koupí nebo prodejem automobilu</li>
+          
+          <li>Při plánování velkých výdajů na opravy</li>
+          
+        </ul>
+
+        <h2>🔗 Užitečné odkazy</h2>
+        <ul>
+          
+          <!-- ИЗМЕНЕНО: все lang → locale -->
+          <li><a href="/frontend/tools/logistics/depreciation-calculator.html">Kalkulačka amortizace</a> — our tool for calculations</li>
+          
+          <!-- ИЗМЕНЕНО: все lang → locale -->
+          <li><a href="/frontend/tools/logistics/fuel-calculator.html">Kalkulačka spotřeby paliva</a> — our tool for calculations</li>
+          
+        </ul>
+
+        <p>Správný výpočet amortizace vám pomůže činit informovaná rozhodnutí a plánovat rozpočet na automobil. Používejte naši kalkulačku pravidelně ke sledování změn hodnoty vašeho vozidla.</p>
+      </div>
+
+      <div class="social-subscribe">
+        <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Přihlásit se k odběru na Telegramu</a>
+        <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Přihlásit se k odběru na VK</a>
+      </div>
+    </div>
+
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  
+
+<div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
+  <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+    <button type="button" aria-label="Zavřít reklamu" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+    <ins class="mrg-tag"
+        style="display:inline-block;width:320px;height:50px"
+        data-ad-client="ad-"
+        data-ad-slot=""></ins>
+  </div>
+</div>
+<script type="module">
+  import { initMobileAnchorAd } from '/frontend/scripts/mobile-anchor-ad.js';
+  initMobileAnchorAd();
+</script>
+
+
+<script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
+
+</body>
+</html>

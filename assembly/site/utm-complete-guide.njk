@@ -3,12 +3,12 @@ pagination:
   data: locales
   size: 1
   alias: locale
-permalink: "{% if locale == 'ru' %}/frontend/news/articles/utm-complete-guide.html{% else %}/frontend/{{ locale }}/news/articles/utm-complete-guide.html{% endif %}"
+permalink: "{% if locale == 'ru' %}/frontend/knowledge-base/articles/utm-complete-guide.html{% else %}/frontend/{{ locale }}/knowledge-base/articles/utm-complete-guide.html{% endif %}"
 eleventyComputed:
   title: "{{ utmCompleteGuide[locale].title }}"
   description: "{{ utmCompleteGuide[locale].description }}"
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
-  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/news/articles/utm-complete-guide.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/news/articles/utm-complete-guide.html{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/articles/utm-complete-guide.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/articles/utm-complete-guide.html{% endif %}"
 ---
 
 <!DOCTYPE html>
@@ -73,12 +73,12 @@ eleventyComputed:
     <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/utm-complete-guide.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/utm-complete-guide.html" hreflang="{{ loc }}" />
         {% else %}
-            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/news/articles/utm-complete-guide.html" hreflang="{{ loc }}" />
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/knowledge-base/articles/utm-complete-guide.html" hreflang="{{ loc }}" />
         {% endif %}
     {% endfor %}
-    <link rel="alternate" href="{{ site.baseUrl }}/frontend/news/articles/utm-complete-guide.html" hreflang="x-default" />
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/utm-complete-guide.html" hreflang="x-default" />
 
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     
@@ -214,7 +214,7 @@ eleventyComputed:
     <!-- Хлебные крошки -->
     <div class="breadcrumb">
         <a href="{{ site.baseUrl }}/{% if locale != 'ru' %}{{ locale }}/{% endif %}">{{ utmCompleteGuide[locale].breadcrumbHome }}</a> →
-        <a href="{{ site.baseUrl }}/{% if locale != 'ru' %}{{ locale }}{% endif %}/frontend/news">{{ utmCompleteGuide[locale].breadcrumbNews }}</a> →
+        <a href="{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/knowledge-base.html{% endif %}">{{ utmCompleteGuide[locale].breadcrumbNews }}</a> →
         <span>{{ utmCompleteGuide[locale].breadcrumbCurrent }}</span>
     </div>
 
