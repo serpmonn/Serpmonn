@@ -1,28 +1,25 @@
-// loadStats.js — загружает страницы и партнёров из JSON, записанных кроном
+// loadStats.js — загружает статистику из JSON, обновляемых count-stats.mjs
 document.addEventListener('DOMContentLoaded', function () {
     const BASE = '../about-project/';
 
-    // Страницы
-    fetch(BASE + 'page-count.json')
-        .then(r => r.json())
-        .then(data => {
-            const el = document.getElementById('page-count');
-            if (el) el.textContent = data.count.toLocaleString('ru-RU');
-        })
-        .catch(() => {
-            const el = document.getElementById('page-count');
-            if (el) el.textContent = '—';
-        });
+    function loadCount(file, elementId, field = 'count') {
+        fetch(BASE + file)
+            .then(r => r.json())
+            .then(data => {
+                const el = document.getElementById(elementId);
+                const value = data[field];
+                if (el && typeof value === 'number') {
+                    el.textContent = value.toLocaleString('ru-RU');
+                }
+            })
+            .catch(() => {
+                const el = document.getElementById(elementId);
+                if (el) el.textContent = '—';
+            });
+    }
 
-    // Партнёры
-    fetch(BASE + 'partners-count.json')
-        .then(r => r.json())
-        .then(data => {
-            const el = document.getElementById('partners-count');
-            if (el) el.textContent = data.total.toLocaleString('ru-RU');
-        })
-        .catch(() => {
-            const el = document.getElementById('partners-count');
-            if (el) el.textContent = '—';
-        });
+    loadCount('page-count.json', 'page-count');
+    loadCount('tools-count.json', 'tools-count');
+    loadCount('games-count.json', 'games-count');
+    loadCount('partners-count.json', 'partners-count', 'total');
 });
