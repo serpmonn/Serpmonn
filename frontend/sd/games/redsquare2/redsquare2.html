@@ -4,18 +4,18 @@
 <head>
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="sd">
-    <title>Falling Blue Squares</title>
+    <title>المربعات الزرقاء الساقطة</title>
     <meta charset="UTF-8">
-    <meta name="description" content="Test your reflexes in a game where you dodge falling shapes! Can you last as long as possible and avoid collisions?">
+    <meta name="description" content="اختبر ردود فعلك في لعبة تتجنب فيها الأشكال الساقطة!">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta property="og:title" content="Test your reflexes dodging falling shapes!" />
-    <meta property="og:description" content="Can you last as long as possible and avoid collisions? Test your skills in this dynamic game!" />
+    <meta property="og:title" content="اختبر ردود فعلك!" />
+    <meta property="og:description" content="هل يمكنك الصمود أطول فترة ممكنة؟" />
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico" />
     <meta property="og:url" content="https://serpmonn.ru/frontend/sd/games/redsquare2/redsquare2.html" />
     <meta property="og:type" content="game" />
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Falling shapes — Serpmonn">
-    <meta name="twitter:description" content="Play the browser mini-game Falling shapes on Serpmonn.">
+    <meta name="twitter:title" content="أشكال ساقطة — Serpmonn">
+    <meta name="twitter:description" content="لعبة مصغرة على Serpmonn.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
     <link rel="canonical" href="https://serpmonn.ru/frontend/sd/games/redsquare2/redsquare2.html"/>
     <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
@@ -23,11 +23,11 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script>
     window.i18n = {
-      scorePrefix: "Score: ",
-      missedPrefix: "Misses: ",
-      pause: "Pause",
-      resume: "Resume",
-      bannedNicknameAlert: "Nickname contains banned words. Please choose another nickname.",
+      scorePrefix: "النقاط: ",
+      missedPrefix: "الأخطاء: ",
+      pause: "إيقاف",
+      resume: "متابعة",
+      bannedNicknameAlert: "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر.",
       scoreTableUrl: "/frontend/sd/games/redsquare2/score_table.html"
     };
     </script>
@@ -38,30 +38,30 @@
 <body>
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
-            <h2 class="instruction-title">How to play Falling Blue Squares?</h2>
+            <h2 class="instruction-title">كيف تلعب المربعات الزرقاء الساقطة؟</h2>
             <ul class="instruction-list">
-                <li><strong>Controls:</strong> Use arrow keys or touch on a touchscreen to move the red square left and right</li>
-                <li><strong>Goal:</strong> Dodge falling objects</li>
-                <li><strong>Scoring:</strong> You get 1 point for each object you dodge</li>
-                <li><strong>Misses:</strong> If an object hits you, it counts as a miss</li>
-                <li><strong>Game over:</strong> The game ends after 10 collisions</li>
-                <li><strong>Leaderboard:</strong> After the game you can view your results on the leaderboard</li>
-                <li><strong>Pause:</strong> Use the Pause button to temporarily stop the game</li>
+                <li><strong>التحكم:</strong> استخدم الأسهم أو اللمس لتحريك المربع الأحمر</li>
+                <li><strong>الهدف:</strong> تجنب الأجسام الساقطة</li>
+                <li><strong>النقاط:</strong> نقطة واحدة لكل جسم تتجنبه</li>
+                <li><strong>الأخطاء:</strong> إذا اصطدم بك جسم يُحسب خطأ</li>
+                <li><strong>نهاية اللعبة:</strong> تنتهي اللعبة بعد 10 اصطدامات</li>
+                <li><strong>لوحة المتصدرين:</strong> بعد اللعبة يمكنك رؤية نتائجك</li>
+                <li><strong>إيقاف:</strong> استخدم زر الإيقاف المؤقت</li>
             </ul>
-            <button class="instruction-button" id="understandBtn">Got it, let&#39;s play!</button>
+            <button class="instruction-button" id="understandBtn">فهمت، لنبدأ!</button>
         </div>
     </div>
 
-    <div id="score">Score: 0</div>
-    <div id="missed">Misses: 0</div>
+    <div id="score">النقاط: 0</div>
+    <div id="missed">الأخطاء: 0</div>
     <div class="button-container">
-        <button id="leaderboardBtn">Leaderboard</button>
-        <button id="pauseBtn">Pause</button>
-        <button id="restartBtn">Restart</button>
+        <button id="leaderboardBtn">لوحة المتصدرين</button>
+        <button id="pauseBtn">إيقاف</button>
+        <button id="restartBtn">من جديد</button>
     </div>
     <form id="nicknameForm">
-        <input type="text" id="nickname" placeholder="Enter your name" required>
-        <button type="submit">Start game</button>
+        <input type="text" id="nickname" placeholder="أدخل اسمك" required>
+        <button type="submit">ابدأ اللعبة</button>
     </form>
     <canvas id="gameCanvas"></canvas>
 

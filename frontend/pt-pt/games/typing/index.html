@@ -174,18 +174,18 @@
   <h1>TYPING SPEED <span>// serpmonn.ru</span></h1>
 </div>
 
-<div class="tabs" role="tablist" aria-label="Modo de prueba">
+<div class="tabs" role="tablist" aria-label="Modo de teste">
   <button class="tab active" data-mode="15" role="tab" aria-selected="true">15 seg</button>
   <button class="tab" data-mode="30" role="tab">30 seg</button>
   <button class="tab" data-mode="60" role="tab">60 seg</button>
-  <button class="tab" data-mode="words" role="tab">25 palabras</button>
+  <button class="tab" data-mode="words" role="tab">25 palavras</button>
 </div>
 
 <div class="stats">
   <div class="stat"><div class="stat-label">WPM</div><div class="stat-value wpm" id="liveWpm">—</div></div>
-  <div class="stat"><div class="stat-label">Precisión</div><div class="stat-value acc" id="liveAcc">—</div></div>
-  <div class="stat"><div class="stat-label">Tiempo</div><div class="stat-value timer" id="liveTimer">—</div></div>
-  <div class="stat"><div class="stat-label">Récord</div><div class="stat-value best" id="liveBest">—</div></div>
+  <div class="stat"><div class="stat-label">Precisão</div><div class="stat-value acc" id="liveAcc">—</div></div>
+  <div class="stat"><div class="stat-label">Tempo</div><div class="stat-value timer" id="liveTimer">—</div></div>
+  <div class="stat"><div class="stat-label">Recorde</div><div class="stat-value best" id="liveBest">—</div></div>
 </div>
 
 <div class="typing-wrap" id="typingWrap">
@@ -194,7 +194,7 @@
   <input type="text" id="hiddenInput" autocomplete="off" autocorrect="off"
          autocapitalize="off" spellcheck="false" aria-label="Campo de entrada">
   <div class="click-hint" id="clickHint">
-    <span class="kbd">clic</span> o <span class="kbd">Enter</span> para empezar &nbsp;·&nbsp; <span class="kbd">Esc</span> reiniciar
+    <span class="kbd">clique</span> ou <span class="kbd">Enter</span> para começar &nbsp;·&nbsp; <span class="kbd">Esc</span> reiniciar
   </div>
 </div>
 
@@ -206,7 +206,7 @@
       <div class="result-val" id="resWpm" style="color:var(--primary)">—</div>
     </div>
     <div class="result-item">
-      <div class="result-label">Precisión</div>
+      <div class="result-label">Precisão</div>
       <div class="result-val" id="resAcc" style="color:var(--success)">—</div>
     </div>
     <div class="result-item">
@@ -214,14 +214,14 @@
       <div class="result-val" id="resChars" style="color:var(--text)">—</div>
     </div>
     <div class="result-item">
-      <div class="result-label">Errores</div>
+      <div class="result-label">Erros</div>
       <div class="result-val" id="resErrors" style="color:var(--error)">—</div>
     </div>
   </div>
-  <div class="new-record" id="newRecord" style="display:none">🏆 ¡NUEVO RÉCORD!</div>
+  <div class="new-record" id="newRecord" style="display:none">🏆 NOVO RECORDE!</div>
   <div class="btn-row">
-    <button class="btn btn-primary" id="retryBtn">OTRA VEZ</button>
-    <button class="btn btn-ghost" id="newTextBtn">NUEVO TEXTO</button>
+    <button class="btn btn-primary" id="retryBtn">OUTRA VEZ</button>
+    <button class="btn btn-ghost" id="newTextBtn">NOVO TEXTO</button>
   </div>
 </div>
 
@@ -233,23 +233,11 @@
 <script>
 window.i18n = {
   wordBankRu: [],
-  newRecord: "🏆 ¡NUEVO RÉCORD!"
+  newRecord: "🏆 NOVO RECORDE!"
 };
 </script>
 <script type="module" src="/frontend/games/typing/typing-ads.js?v=1" defer></script>
 <script>
-const WORDS_RU = [
-  'сервер','клиент','сеть','порт','запрос','ответ','файл','данные','код','функция',
-  'класс','объект','метод','строка','массив','цикл','ошибка','тест','база','таблица',
-  'индекс','ключ','значение','токен','доступ','права','сессия','кэш','буфер','поток',
-  'процесс','память','ядро','пакет','протокол','адрес','домен','хост','путь','папка',
-  'список','карта','граф','узел','ребро','вес','глубина','высота','ширина','скорость',
-  'время','задача','очередь','стек','вызов','возврат','аргумент','переменная',
-  'константа','тип','число','текст','булево','пустой','ноль','один','два','три',
-  'алгоритм','сортировка','поиск','фильтр','маршрут','запись','чтение','удаление',
-  'создание','обновление','версия','релиз','ветка','коммит','слияние','конфликт',
-  'патч','билд','деплой','контейнер','образ','том','прокси','балансировщик'
-];
 const WORDS_EN = [
   'server','client','network','port','request','response','file','data','code','function',
   'class','object','method','string','array','loop','error','test','database','table',
@@ -262,6 +250,12 @@ const WORDS_EN = [
   'commit','merge','conflict','patch','build','deploy','container','image','volume','proxy'
 ];
 
+function getWordBank() {
+  const localized = window.i18n?.wordBankRu;
+  if (Array.isArray(localized) && localized.length) return localized;
+  return WORDS_EN;
+}
+
 let mode = '15';
 let words = [], charList = [], cursorPos = 0;
 let started = false, finished = false;
@@ -271,7 +265,7 @@ let history = [], bestWpm = {};
 let typingAdShownThisRound = false;
 
 function generateWords() {
-  const bank = [...(window.i18n?.wordBankRu || []), ...WORDS_EN];
+  const bank = getWordBank();
   const count = mode === 'words' ? 25 : 90;
   const arr = [];
   for (let i = 0; i < count; i++) arr.push(bank[Math.floor(Math.random() * bank.length)]);

@@ -6,7 +6,7 @@ const targetFile = path.join(process.cwd(), 'assembly', 'site', '_data', 'gameRa
 const KEYS = [
   'pageTitle', 'eatenLabel', 'weightLabel', 'bestLabel',
   'overlayLine1', 'overlayLine2', 'bonusFoodLabel', 'overlayLine3', 'overlayGoal',
-  'startBtn', 'hint',
+  'startBtn', 'hint', 'gameOverTitle',
 ];
 
 for (const locale of LOCALES) {

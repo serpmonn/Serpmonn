@@ -7,18 +7,18 @@
     <meta http-equiv="Content-Language" content="pt-pt">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Calculadora de Depreciação de Automóvel — Logística Serpmonn</title>
-    <meta name="description" content="Cálculo da depreciação do automóvel com base na quilometragem, tempo e condições de utilização">
+    <title>Calculadora de Depreciação de Carro — Logística Serpmonn</title>
+    <meta name="description" content="Cálculo da depreciação do carro com base na quilometragem, tempo e condições de uso">
     <!-- Open Graph -->
-    <meta property="og:title" content="Calculadora de Depreciação de Automóvel — Logística Serpmonn">
-    <meta property="og:description" content="Cálculo de depreciação de automóvel para condutores">
+    <meta property="og:title" content="Calculadora de Depreciação de Carro — Logística Serpmonn">
+    <meta property="og:description" content="Cálculo de depreciação de carro para motoristas">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/pt-pt/tools/logistics/depreciation-calculator.html">
     <meta property="og:type" content="website">
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Calculadora de Depreciação de Automóvel — Logística Serpmonn">
-    <meta name="twitter:description" content="Cálculo de depreciação de automóvel para condutores">
+    <meta name="twitter:title" content="Calculadora de Depreciação de Carro — Logística Serpmonn">
+    <meta name="twitter:description" content="Cálculo de depreciação de carro para motoristas">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     
     <!-- Каноническая ссылка -->
@@ -222,7 +222,7 @@
             <link rel="alternate" href="https://serpmonn.ru/frontend/yi/tools/logistics/depreciation-calculator.html" hreflang="yi" />
         
     
-    <link rel="alternate" href="https://serpmonn.ru/frontend/tools/logistics/depreciation-calculator.html" hreflang="x-default" />      <!-- Structured Data: SoftwareApplication -->     <script type="application/ld+json">     {       "@context": "https://schema.org",       "@type": "SoftwareApplication",       "name": "Calculadora de Depreciação de Automóvel — Logística Serpmonn",       "description": "Cálculo da depreciação do automóvel com base na quilometragem, tempo e condições de utilização",       "url": "https://serpmonn.ru/frontend/pt-pt/tools/logistics/depreciation-calculator.html",       "applicationCategory": "UtilityApplication",       "operatingSystem": "Web",       "inLanguage": "pt-pt",       "offers": {         "@type": "Offer",         "price": "0",         "priceCurrency": "RUB"       },       "publisher": {         "@type": "Organization",         "name": "Serpmonn",         "url": "https://serpmonn.ru/"       }     }     </script>
+    <link rel="alternate" href="https://serpmonn.ru/frontend/tools/logistics/depreciation-calculator.html" hreflang="x-default" />      <!-- Structured Data: SoftwareApplication -->     <script type="application/ld+json">     {       "@context": "https://schema.org",       "@type": "SoftwareApplication",       "name": "Calculadora de Depreciação de Carro — Logística Serpmonn",       "description": "Cálculo da depreciação do carro com base na quilometragem, tempo e condições de uso",       "url": "https://serpmonn.ru/frontend/pt-pt/tools/logistics/depreciation-calculator.html",       "applicationCategory": "UtilityApplication",       "operatingSystem": "Web",       "inLanguage": "pt-pt",       "offers": {         "@type": "Offer",         "price": "0",         "priceCurrency": "RUB"       },       "publisher": {         "@type": "Organization",         "name": "Serpmonn",         "url": "https://serpmonn.ru/"       }     }     </script>
     
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
@@ -251,7 +251,7 @@
       }
     </style>
   </head>
-  <body class="depreciation-calculator" data-currency="€" data-month="mês">
+  <body class="depreciation-calculator" data-currency="R$" data-month="mês">
     <!-- Меню -->
     <div id="menuContainer"></div>
 
@@ -289,14 +289,14 @@
       </ins>
     </div>
 
-    <h1>Calculadora de Depreciação de Automóvel</h1>
+    <h1>Calculadora de Depreciação de Carro</h1>
     <div class="calculator-container">
-      <h2>Introduza os parâmetros do automóvel</h2>
+      <h2>Introduza os parâmetros do carro</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">Marca do Automóvel</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="Ex.: Toyota" title="Introduza a marca do automóvel, ex. Toyota ou BMW">
+          <label for="carBrand">Marca do Carro</label>
+          <input type="text" id="carBrand" list="carBrands" placeholder="Ex.: Toyota" title="Introduza a marca do carro, ex. Toyota ou BMW">
           <datalist id="carBrands">
             
             <option value="Toyota">
@@ -313,25 +313,25 @@
         </div>
         <div class="input-group">
           <label for="carModel">Modelo</label>
-          <input type="text" id="carModel" placeholder="Ex.: Camry" title="Introduza o modelo do automóvel, ex. Camry ou X5">
+          <input type="text" id="carModel" placeholder="Ex.: Camry" title="Introduza o modelo do carro, ex. Camry ou X5">
         </div>
         <div class="input-group">
-          <label for="carYear">Ano de Fabrico</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Introduza o ano de fabrico (1990–2025)">
+          <label for="carYear">Ano de Fabricação</label>
+          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Introduza o ano de fabricação (1990–2025)">
         </div>
         <div class="input-group">
-          <label for="initialPrice">Custo Inicial (€)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Introduza o custo inicial do automóvel em euros">
+          <label for="initialPrice">Custo Inicial (R$)</label>
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Introduza o custo inicial do carro em reais">
         </div>
         <div class="input-group">
           <label for="currentMileage">Quilometragem Atual (km)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Introduza a quilometragem atual em quilómetros">
+          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Introduza a quilometragem atual em quilômetros">
         </div>
         <div class="input-group">
-          <label for="usageType">Tipo de Utilização</label>
-          <select id="usageType" title="Selecione o tipo de utilização do automóvel">
+          <label for="usageType">Tipo de Uso</label>
+          <select id="usageType" title="Selecione o tipo de uso do carro">
             
-            <option value="personal">Utilização Pessoal</option>
+            <option value="personal">Uso Pessoal</option>
             
             <option value="taxi">Táxi</option>
             
@@ -343,11 +343,11 @@
         </div>
         <div class="input-group">
           <label for="fuelType">Tipo de Combustível</label>
-          <select id="fuelType" title="Selecione o tipo de combustível do automóvel">
+          <select id="fuelType" title="Selecione o tipo de combustível do carro">
             
             <option value="petrol">Gasolina</option>
             
-            <option value="diesel">Gasóleo</option>
+            <option value="diesel">Diesel</option>
             
             <option value="hybrid">Híbrido</option>
             
@@ -357,7 +357,7 @@
         </div>
         <div class="input-group">
           <label for="maintenanceLevel">Nível de Manutenção</label>
-          <select id="maintenanceLevel" title="Selecione o nível de manutenção do automóvel">
+          <select id="maintenanceLevel" title="Selecione o nível de manutenção do carro">
             
             <option value="excellent">Excelente</option>
             
@@ -365,7 +365,7 @@
             
             <option value="average">Médio</option>
             
-            <option value="poor">Fraco</option>
+            <option value="poor">Ruim</option>
             
           </select>
         </div>
@@ -379,15 +379,15 @@
             
             <option value="hot">Quente</option>
             
-            <option value="humid">Húmido</option>
+            <option value="humid">Úmido</option>
             
           </select>
         </div>
         <div class="input-group">
           <label for="region">Região</label>
-          <select id="region" title="Selecione a região de operação do automóvel">
+          <select id="region" title="Selecione a região de operação do carro">
             
-            <option value="central">Central (Moscovo)</option>
+            <option value="central">Central (Moscou)</option>
             
             <option value="north">Norte (São Petersburgo)</option>
             
@@ -398,14 +398,14 @@
           </select>
         </div>
         <div class="input-group">
-          <label for="currentNewPrice">Preço Atual de Novos Análogos (€)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="Introduza o preço atual de um automóvel novo similar em euros">
-          <small style="color: #6c757d; font-size: 12px;">Preço de um automóvel novo similar agora</small>
+          <label for="currentNewPrice">Preço Atual de Novos Análogos (R$)</label>
+          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="Introduza o preço atual de um carro novo similar em reais">
+          <small style="color: #6c757d; font-size: 12px;">Preço de um carro novo similar agora</small>
         </div>
         <div class="input-group">
           <label for="marketGrowth">Crescimento do Preço de Mercado (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Especifique o crescimento de preços de automóveis novos desde a compra em percentagem">
-          <small style="color: #6c757d; font-size: 12px;">Crescimento de preços de automóveis novos desde a compra</small>
+          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Especifique o crescimento de preços de carros novos desde a compra em percentual">
+          <small style="color: #6c757d; font-size: 12px;">Crescimento de preços de carros novos desde a compra</small>
         </div>
         <div class="input-group">
           <label for="inflationRate">Inflação Anual (%)</label>
@@ -413,20 +413,20 @@
           <small style="color: #6c757d; font-size: 12px;">Inflação média por ano de propriedade</small>
         </div>
         <div class="input-group">
-          <label for="demandLevel">Procura do Modelo</label>
-          <select id="demandLevel" title="Selecione o nível de procura do modelo">
+          <label for="demandLevel">Demanda do Modelo</label>
+          <select id="demandLevel" title="Selecione o nível de demanda do modelo">
             
-            <option value="high" >Alta Procura</option>
+            <option value="high" >Alta Demanda</option>
             
-            <option value="medium" selected>Procura Média</option>
+            <option value="medium" selected>Demanda Média</option>
             
-            <option value="low" >Baixa Procura</option>
+            <option value="low" >Baixa Demanda</option>
             
           </select>
         </div>
         <div class="input-group">
           <label for="technicalCondition">Condição Técnica</label>
-          <select id="technicalCondition" title="Selecione a condição técnica do automóvel">
+          <select id="technicalCondition" title="Selecione a condição técnica do carro">
             
             <option value="excellent" selected>Excelente (original)</option>
             
@@ -434,16 +434,16 @@
             
             <option value="average" >Médio (reparado)</option>
             
-            <option value="poor" >Fraco (acidentado)</option>
+            <option value="poor" >Ruim (acidentado)</option>
             
           </select>
-          <small style="color: #6c757d; font-size: 12px;">Considera acidentes, reparações, repintura</small>
+          <small style="color: #6c757d; font-size: 12px;">Considera acidentes, reparos, repintura</small>
         </div>
       </div>
       <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Calcular depreciação do automóvel">Calcular Depreciação</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="Repor formulário">Repor</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="Copiar link de cálculo">Partilhar</button>
+        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Calcular depreciação do carro">Calcular Depreciação</button>
+        <button class="reset-btn" onclick="resetForm()" aria-label="Redefinir formulário">Redefinir</button>
+        <button class="share-btn" onclick="copyShareLink()" aria-label="Copiar link de cálculo">Compartilhar</button>
         <button class="export-btn" onclick="exportToPDF()" aria-label="Exportar resultados para PDF">Exportar para PDF</button>
         <button class="csv-btn" onclick="exportToCSV()" aria-label="Exportar resultados para CSV">Exportar para CSV</button>
       </div>
@@ -452,26 +452,26 @@
         <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
         <div class="result-grid">
           <div class="result-item">
-            <div class="result-value" id="currentValue">0 €</div>
+            <div class="result-value" id="currentValue">0 R$</div>
             <div class="result-label">Valor Atual</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="totalDepreciation">0 €</div>
+            <div class="result-value" id="totalDepreciation">0 R$</div>
             <div class="result-label">Depreciação Total</div>
           </div>
           <div class="result-item">
             <div class="result-value" id="depreciationPercent">0%</div>
-            <div class="result-label">Percentagem de Depreciação</div>
+            <div class="result-label">Percentual de Depreciação</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="monthlyDepreciation">0 €/mês</div>
+            <div class="result-value" id="monthlyDepreciation">0 R$/mês</div>
             <div class="result-label">Depreciação Mensal</div>
           </div>
         </div>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
-      <h3>Detalhe da Depreciação</h3>
+      <h3>Detalhamento da Depreciação</h3>
       <div id="breakdownList"></div>
     </div>
     <div id="history" class="history hidden" aria-live="polite">
@@ -481,17 +481,17 @@
     <div class="info-tips">
       <h3>💡 Informações Úteis</h3>
       
-      <div class="tip-item">A depreciação depende da quilometragem, tempo de serviço e condições de utilização</div>
+      <div class="tip-item">A depreciação depende da quilometragem, tempo de serviço e condições de uso</div>
       
-      <div class="tip-item">A utilização comercial aumenta o desgaste em 1,5-2 vezes</div>
+      <div class="tip-item">O uso comercial aumenta o desgaste em 1,5-2 vezes</div>
       
       <div class="tip-item">A manutenção regular e serviço de qualidade retardam a depreciação</div>
       
-      <div class="tip-item">As condições climáticas afetam o desgaste da carroçaria e eletrónica</div>
+      <div class="tip-item">As condições climáticas afetam o desgaste da carroceria e eletrônicos</div>
       
       <div class="tip-item">Veículos híbridos e elétricos têm menos depreciação do motor, mas a bateria desgasta com a quilometragem</div>
       
-      <div class="tip-item"><strong>Fatores de Mercado:</strong> Considere o aumento de preços de automóveis novos e a procura pelo seu modelo</div>
+      <div class="tip-item"><strong>Fatores de Mercado:</strong> Considere o aumento de preços de carros novos e a demanda pelo o seu modelo</div>
       
       <div class="tip-item"><strong>Características Regionais:</strong> Os preços podem variar muito em diferentes cidades</div>
       
@@ -502,7 +502,7 @@
     
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-    <button type="button" aria-label="Fechar anúncio" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+    <button type="button" aria-label="Fechar publicidade" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
     <ins class="mrg-tag"
         style="display:inline-block;width:320px;height:50px"
         data-ad-client="ad-"

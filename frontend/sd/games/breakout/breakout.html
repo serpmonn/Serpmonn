@@ -5,17 +5,17 @@
   <meta charset="UTF-8">
   <meta http-equiv="Content-Language" content="sd">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Breakout — Serpmonn</title>
-  <meta name="description" content="Breakout: bounce the ball with your paddle and break blocks to score points.">
+  <title>كسر الطوب — Serpmonn</title>
+  <meta name="description" content="كسر الطوب: ارتد بالكرة بالمضرب واكسر الكتل لجمع النقاط.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://serpmonn.ru/frontend/sd/games/breakout/breakout.html">
-  <meta property="og:title" content="Breakout — Serpmonn">
-  <meta property="og:description" content="Play Breakout online: bounce the ball, break blocks and beat your records.">
+  <meta property="og:title" content="كسر الطوب — Serpmonn">
+  <meta property="og:description" content="العب كسر الطوب عبر الإنترنت: ارتد بالكرة واكسر الكتل وحقق أرقامًا قياسية.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/breakout.png">
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://serpmonn.ru/frontend/sd/games/breakout/breakout.html">
-  <meta property="twitter:title" content="Breakout — Serpmonn">
-  <meta property="twitter:description" content="Online Breakout: arcade classic on Serpmonn.">
+  <meta property="twitter:title" content="كسر الطوب — Serpmonn">
+  <meta property="twitter:description" content="كسر الطوب عبر الإنترنت: كلاسيكية الأركيد على Serpmonn.">
   <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/breakout.png">
   <link rel="canonical" href="https://serpmonn.ru/frontend/sd/games/breakout/breakout.html">
   <link rel="icon" href="/frontend/images/breakout.png" type="image/x-icon">
@@ -31,12 +31,12 @@
   <div id="menuContainer"></div>
   <script>
     window.i18n = {
-      gameOver: "Game over",
-      winMessage: "You win!",
-      pressRToRestart: "Press R — restart",
-      continueAd: "Continue",
-      instructionsDesktop: "• ← → or A/D — paddle\n• Space — start/pause\n• R — restart",
-      instructionsMobile: "• Move the paddle with your finger\n• Start — Start button, Pause — Start, Restart — R (if available)"
+      gameOver: "انتهت اللعبة",
+      winMessage: "فوز!",
+      pressRToRestart: "اضغط R — من جديد",
+      continueAd: "متابعة",
+      instructionsDesktop: "• ← → أو A/D — المضرب\n• مسافة — بدء/إيقاف\n• R — إعادة",
+      instructionsMobile: "• حرّك المضرب بإصبعك\n• ابدأ — زر البدء، إيقاف — البدء، إعادة — R"
     };
   </script>
   <script type="module" src="/frontend/games/breakout/breakout-ads.js?v=3" defer></script>
@@ -51,14 +51,14 @@
         var box = document.createElement('div');
         box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
         var h = document.createElement('h3');
-        h.textContent = 'How to play — Breakout';
+        h.textContent = 'كيفية اللعب — كسر الطوب';
         h.style.margin = '0 0 8px';
         var p = document.createElement('div');
         p.style.cssText = 'font-size:14px;line-height:1.5;white-space:pre-line';
         p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
         var btn = document.createElement('button');
         btn.className = 'btn';
-        btn.textContent = 'Got it';
+        btn.textContent = 'فهمت';
         btn.style.marginTop = '10px';
         btn.onclick = function(){ localStorage.setItem('game_instructions_breakout_shown','1'); ov.remove(); };
         box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
@@ -69,26 +69,26 @@
   </script>
   <div class="page">
     <header>
-      <img src="/frontend/images/breakout.png" width="28" height="28" alt="Games" style="border-radius:6px;">
-      <h1>Breakout</h1>
+      <img src="/frontend/images/breakout.png" width="28" height="28" alt="ألعاب" style="border-radius:6px;">
+      <h1>كسر الطوب</h1>
     </header>
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
       <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
     </div>
 <div class="wrap">
       <div class="panel">
-        <canvas id="game" width="480" height="640" aria-label="Game board"></canvas>
-        <div class="hint" style="display:none;">Controls: ← → or A/D. Start/pause — Space. Restart — R.</div>
+        <canvas id="game" width="480" height="640" aria-label="لوحة اللعب"></canvas>
+        <div class="hint" style="display:none;">التحكم: ← → أو A/D. بدء/إيقاف — مسافة. إعادة — R.</div>
       </div>
       <div class="panel">
         <div class="stats">
-          <div class="stat">Score<br><b id="score">0</b></div>
-          <div class="stat">Lives<br><b id="lives">3</b></div>
-          <div class="stat">Best<br><b id="best">0</b></div>
+          <div class="stat">النقاط<br><b id="score">0</b></div>
+          <div class="stat">الأرواح<br><b id="lives">3</b></div>
+          <div class="stat">الأفضل<br><b id="best">0</b></div>
         </div>
         <div class="controls">
-          <button class="btn primary" id="btnStart">Start</button>
-          <button class="btn" id="btnReset">Restart</button>
+          <button class="btn primary" id="btnStart">ابدأ</button>
+          <button class="btn" id="btnReset">من جديد</button>
         </div>
       </div>
     </div>

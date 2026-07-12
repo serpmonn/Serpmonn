@@ -5,17 +5,17 @@
   <meta charset="UTF-8">
   <meta http-equiv="Content-Language" content="fil">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Breakout — Serpmonn</title>
-  <meta name="description" content="Breakout: bounce the ball with your paddle and break blocks to score points.">
+  <title>Арканоид — Serpmonn</title>
+  <meta name="description" content="Арканоид (Breakout): отбивай мяч платформой и разбивай блоки, набирая очки.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://serpmonn.ru/frontend/fil/games/breakout/breakout.html">
-  <meta property="og:title" content="Breakout — Serpmonn">
-  <meta property="og:description" content="Play Breakout online: bounce the ball, break blocks and beat your records.">
+  <meta property="og:title" content="Арканоид — Serpmonn">
+  <meta property="og:description" content="Играйте в арканоид онлайн: отбивайте мяч, разбивайте блоки и бейте рекорды.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/breakout.png">
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://serpmonn.ru/frontend/fil/games/breakout/breakout.html">
-  <meta property="twitter:title" content="Breakout — Serpmonn">
-  <meta property="twitter:description" content="Online Breakout: arcade classic on Serpmonn.">
+  <meta property="twitter:title" content="Арканоид — Serpmonn">
+  <meta property="twitter:description" content="Онлайн-арканоид: классика аркад на Serpmonn.">
   <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/breakout.png">
   <link rel="canonical" href="https://serpmonn.ru/frontend/fil/games/breakout/breakout.html">
   <link rel="icon" href="/frontend/images/breakout.png" type="image/x-icon">
@@ -31,12 +31,12 @@
   <div id="menuContainer"></div>
   <script>
     window.i18n = {
-      gameOver: "Game over",
-      winMessage: "You win!",
-      pressRToRestart: "Press R — restart",
-      continueAd: "Continue",
-      instructionsDesktop: "• ← → or A/D — paddle\n• Space — start/pause\n• R — restart",
-      instructionsMobile: "• Move the paddle with your finger\n• Start — Start button, Pause — Start, Restart — R (if available)"
+      gameOver: "Игра окончена",
+      winMessage: "Победа!",
+      pressRToRestart: "Нажмите R — заново",
+      continueAd: "Продолжить",
+      instructionsDesktop: "• ← → или A/D — платформа\n• Пробел — старт/пауза\n• R — заново",
+      instructionsMobile: "• Двигайте платформу пальцем по экрану\n• Старт — кнопка «Старт», Пауза — «Старт», Заново — «R» (если доступно)"
     };
   </script>
   <script type="module" src="/frontend/games/breakout/breakout-ads.js?v=3" defer></script>
@@ -51,14 +51,14 @@
         var box = document.createElement('div');
         box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
         var h = document.createElement('h3');
-        h.textContent = 'How to play — Breakout';
+        h.textContent = 'Как играть — Арканоид';
         h.style.margin = '0 0 8px';
         var p = document.createElement('div');
         p.style.cssText = 'font-size:14px;line-height:1.5;white-space:pre-line';
         p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
         var btn = document.createElement('button');
         btn.className = 'btn';
-        btn.textContent = 'Got it';
+        btn.textContent = 'Понятно';
         btn.style.marginTop = '10px';
         btn.onclick = function(){ localStorage.setItem('game_instructions_breakout_shown','1'); ov.remove(); };
         box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
@@ -69,26 +69,26 @@
   </script>
   <div class="page">
     <header>
-      <img src="/frontend/images/breakout.png" width="28" height="28" alt="Games" style="border-radius:6px;">
-      <h1>Breakout</h1>
+      <img src="/frontend/images/breakout.png" width="28" height="28" alt="Игры" style="border-radius:6px;">
+      <h1>Арканоид</h1>
     </header>
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
       <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
     </div>
 <div class="wrap">
       <div class="panel">
-        <canvas id="game" width="480" height="640" aria-label="Game board"></canvas>
-        <div class="hint" style="display:none;">Controls: ← → or A/D. Start/pause — Space. Restart — R.</div>
+        <canvas id="game" width="480" height="640" aria-label="Игровое поле"></canvas>
+        <div class="hint" style="display:none;">Управление: ← → или A/D. Старт/пауза — пробел. Заново — R.</div>
       </div>
       <div class="panel">
         <div class="stats">
-          <div class="stat">Score<br><b id="score">0</b></div>
-          <div class="stat">Lives<br><b id="lives">3</b></div>
-          <div class="stat">Best<br><b id="best">0</b></div>
+          <div class="stat">Очки<br><b id="score">0</b></div>
+          <div class="stat">Жизни<br><b id="lives">3</b></div>
+          <div class="stat">Рекорд<br><b id="best">0</b></div>
         </div>
         <div class="controls">
-          <button class="btn primary" id="btnStart">Start</button>
-          <button class="btn" id="btnReset">Restart</button>
+          <button class="btn primary" id="btnStart">Старт</button>
+          <button class="btn" id="btnReset">Заново</button>
         </div>
       </div>
     </div>

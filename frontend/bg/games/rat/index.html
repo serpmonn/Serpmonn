@@ -190,6 +190,11 @@
 
 <script type="module" src="/frontend/games/rat/rat-ads.js?v=1" defer></script>
 <script>
+window.i18n = {
+  gameOverTitle: "🏆 МАКС. МАЗНИНИ!"
+};
+</script>
+<script>
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
 const overlay = document.getElementById('overlay');
@@ -531,7 +536,7 @@ function init() {
 function endGame() {
   gameRunning = false;
   cancelAnimationFrame(animFrame);
-  overlay.querySelector('.overlay-title').textContent = '🏆 MAX FAT!';
+  overlay.querySelector('.overlay-title').textContent = window.i18n?.gameOverTitle || '🏆 MAX FAT!';
   overlay.querySelector('.overlay-sub').innerHTML =
     eaten + ' · ' + weight.toFixed(1) + ' Вес кг';
   overlay.classList.remove('hidden');

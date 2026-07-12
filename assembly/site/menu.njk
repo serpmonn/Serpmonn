@@ -10,6 +10,8 @@ eleventyComputed:
   menu_home: "{{ menuTranslations[locale].home }}"
   menu_auth: "{{ menuTranslations[locale].auth }}"
   menu_profile: "{{ menuTranslations[locale].profile }}"
+  menu_findings_inbox: "{{ menuTranslations[locale].findings_inbox or 'Inbox' }}"
+  menu_findings_feed: "{{ menuTranslations[locale].findings_feed or menuTranslations['en'].findings_feed or 'Findings feed' }}"
   menu_knowledge_base: "{{ menuTranslations[locale].knowledge_base }}"
   menu_games: "{{ menuTranslations[locale].games }}"
   menu_all_games: "{{ menuTranslations[locale].all_games }}"
@@ -100,6 +102,25 @@ eleventyComputed:
        hidden>
         <img src="/frontend/images/login.ico" alt="{{ menu_profile }}" class="icon">
         {{ menu_profile }}
+    </a>
+
+    <a href="#"
+       class="menu-item menu-inbox-link"
+       id="inbox-block"
+       data-route="findings-inbox"
+       data-finding-open-inbox="1"
+       hidden>
+        <img src="/frontend/images/findings-inbox.svg" alt="{{ menu_findings_inbox }}" class="icon">
+        {{ menu_findings_inbox }}
+    </a>
+
+    <a href="#"
+       class="menu-item menu-feed-link"
+       id="findings-feed-block"
+       data-route="findings-feed"
+       data-finding-open-feed="1">
+        <img src="/frontend/images/serpmonn.ico" alt="{{ menu_findings_feed }}" class="icon">
+        {{ menu_findings_feed }}
     </a>
 
     <!-- ========== РАЗДЕЛ ИГР ========== -->

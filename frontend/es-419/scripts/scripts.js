@@ -3,6 +3,7 @@ import { showCookieBanner } from './cookies.js';
 import { loadNews } from './news.js';
 import { generateCombinedBackground } from './backgroundGenerator.js';
 import { initAdSlotObserver } from './ad-pool.js';
+import { initFindingsSave } from './findings-client.js';
 import '/frontend/pwa/app.js';
 
 // scripts.js
@@ -208,17 +209,25 @@ let lastShareContext = {
   query: '',
   answer: '',
   answerEmpty: false,
-  usedWebSearch: false
+  usedWebSearch: false,
+  sources: [],
+  images: [],
+  videos: [],
+  timings: null
 };
 
 let feedbackLocked = false;
 
-function setShareContext(query, answer, answerEmpty = false, usedWebSearch = false) {
+function setShareContext(query, answer, answerEmpty = false, usedWebSearch = false, extras = {}) {
   lastShareContext = {
     query: (query || '').trim(),
     answer: (answer || '').trim(),
     answerEmpty: !!answerEmpty,
-    usedWebSearch: !!usedWebSearch
+    usedWebSearch: !!usedWebSearch,
+    sources: Array.isArray(extras.sources) ? extras.sources : [],
+    images: Array.isArray(extras.images) ? extras.images : lastShareContext.images,
+    videos: Array.isArray(extras.videos) ? extras.videos : lastShareContext.videos,
+    timings: extras.timings !== undefined ? extras.timings : lastShareContext.timings
   };
   feedbackLocked = false;
   resetFeedbackButtons();
@@ -708,6 +717,10 @@ function showLoading() {
   setResultActionsVisible(false);
   resetFeedbackButtons();
   feedbackLocked = false;
+  lastShareContext.sources = [];
+  lastShareContext.images = [];
+  lastShareContext.videos = [];
+  lastShareContext.timings = null;
   const t = getMessages();
   const contentDiv = document.getElementById('ai-result-content');
   if (!contentDiv) return;
@@ -736,6 +749,8 @@ function formatTimingSeconds(ms) {
 function showSearchTimings(timings) {
   const timestampDiv = document.getElementById('ai-timestamp');
   if (!timestampDiv || !timings?.total_ms) return;
+
+  lastShareContext.timings = timings;
 
   const total = formatTimingSeconds(timings.total_ms);
 
@@ -1114,7 +1129,8 @@ function showResult(data, options = {}) {
       searchInput?.value.trim() || getQueryFromUrl(),
       resolved.text,
       resolved.isEmpty,
-      data.usedWebSearch === true
+      data.usedWebSearch === true,
+      { sources: data.sources || [] }
     );
   }
 
@@ -1139,8 +1155,11 @@ function showImageResults(data) {
   if (data.error || !Array.isArray(data.images) || data.images.length === 0) {
     container.style.display = 'none';
     container.innerHTML = '';
+    lastShareContext.images = [];
     return;
   }
+
+  lastShareContext.images = data.images.slice(0, 6);
 
   const itemsHtml = data.images
     .slice(0, 6)
@@ -1183,8 +1202,11 @@ function showVideoResults(data) {
   if (data.error || !Array.isArray(data.videos) || data.videos.length === 0) {
     container.style.display = 'none';
     container.innerHTML = '';
+    lastShareContext.videos = [];
     return;
   }
+
+  lastShareContext.videos = data.videos.slice(0, 6);
 
   const itemsHtml = data.videos
     .slice(0, 6)
@@ -1399,6 +1421,8 @@ function setupActionButtons() {
     if (dialog) dialog.focus();
     document.addEventListener('keydown', onEsc);
   }
+
+  initFindingsSave(() => ({ ...lastShareContext }));
 }
 
 // ======================================================================================================================

@@ -6,19 +6,19 @@
   <meta http-equiv="Content-Language" content="ro">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Minesweeper — Serpmonn</title>
-  <meta name="description" content="Minesweeper: clear all safe cells. 10×10, 15 mines, first click is safe, right-click to flag.">
+  <title>Campo minato — Serpmonn</title>
+  <meta name="description" content="Campo minato: scopri tutte le caselle sicure. 10×10, 15 mine, primo clic sicuro, tasto destro per la bandiera.">
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://serpmonn.ru/frontend/ro/games/minesweeper/minesweeper.html">
-  <meta property="og:title" content="Minesweeper — Serpmonn">
-  <meta property="og:description" content="Play Minesweeper online: reveal cells, flag mines and beat your best time.">
+  <meta property="og:title" content="Campo minato — Serpmonn">
+  <meta property="og:description" content="Gioca a Campo minato online: scopri le caselle, segna le mine e batti il record.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/minesweeper.png">
 
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://serpmonn.ru/frontend/ro/games/minesweeper/minesweeper.html">
-  <meta property="twitter:title" content="Minesweeper — Serpmonn">
-  <meta property="twitter:description" content="Online Minesweeper: a classic logic puzzle on Serpmonn.">
+  <meta property="twitter:title" content="Campo minato — Serpmonn">
+  <meta property="twitter:description" content="Campo minato online: classico puzzle logico su Serpmonn.">
   <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/minesweeper.png">
 
   <link rel="canonical" href="https://serpmonn.ru/frontend/ro/games/minesweeper/minesweeper.html">
@@ -40,11 +40,11 @@
     window.i18n = {
       timeSuffix: "s",
       noRecord: "—",
-      winMessage: "You win!",
+      winMessage: "Vittoria!",
       loseMessage: "Boom!",
-      continueAd: "Continue",
-      instructionsDesktop: "• LMB — reveal\n• RMB or Shift — flag\n• First click is safe",
-      instructionsMobile: "• Short tap — reveal\n• Long tap (≥0.4s) — flag"
+      continueAd: "Continua",
+      instructionsDesktop: "• Click sinistro — scopri\n• Click destro o Shift — bandiera\n• Primo clic sicuro",
+      instructionsMobile: "• Tocco breve — scopri\n• Tocco lungo (≥0,4s) — bandiera"
     };
   </script>
   <script type="module" src="/frontend/games/minesweeper/minesweeper-ads.js?v=3" defer></script>
@@ -65,7 +65,7 @@
         box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
 
         var h = document.createElement('h3');
-        h.textContent = 'How to play — Minesweeper';
+        h.textContent = 'Come giocare — Campo minato';
         h.style.margin = '0 0 8px';
 
         var p = document.createElement('div');
@@ -74,7 +74,7 @@
 
         var btn = document.createElement('button');
         btn.className = 'btn';
-        btn.textContent = 'Got it';
+        btn.textContent = 'Capito';
         btn.style.marginTop = '10px';
         btn.onclick = function(){
           localStorage.setItem('game_instructions_mines_shown','1');
@@ -94,8 +94,8 @@
 
   <div class="page">
     <header>
-      <img src="/frontend/images/minesweeper.png" width="28" height="28" alt="Games" style="border-radius:6px;">
-      <h1>Minesweeper</h1>
+      <img src="/frontend/images/minesweeper.png" width="28" height="28" alt="Giochi" style="border-radius:6px;">
+      <h1>Campo minato</h1>
     </header>
 
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
@@ -103,20 +103,20 @@
     </div>
 <div class="wrap">
       <div class="panel">
-        <div id="board" class="board" aria-label="Game board"></div>
-        <div class="hint" style="display:none;">LMB — reveal, RMB/Shift — flag. First click is always safe. Restart — R.</div>
+        <div id="board" class="board" aria-label="Campo di gioco"></div>
+        <div class="hint" style="display:none;">Click sx — scopri, click dx/Shift — bandiera. Primo clic sempre sicuro. Ricomincia — R.</div>
       </div>
 
       <div class="panel">
         <div class="stats">
-          <div class="stat">Mines<br><b id="minesLeft">15</b></div>
-          <div class="stat">Time<br><b id="time">0</b>s</div>
-          <div class="stat">Best<br><b id="best">—</b></div>
+          <div class="stat">Mine<br><b id="minesLeft">15</b></div>
+          <div class="stat">Tempo<br><b id="time">0</b>s</div>
+          <div class="stat">Record<br><b id="best">—</b></div>
         </div>
 
         <div class="controls">
-          <button class="btn primary" id="btnStart">Start</button>
-          <button class="btn" id="btnReset">Restart</button>
+          <button class="btn primary" id="btnStart">Avvia</button>
+          <button class="btn" id="btnReset">Ricomincia</button>
         </div>
       </div>
     </div>

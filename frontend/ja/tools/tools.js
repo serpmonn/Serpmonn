@@ -38,6 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {                           
   let favorites = loadAndMigrateFavorites();
 
   function normalizeFavoriteKey(btn) {
+    const fromAttr = btn.dataset.toolHref?.trim();
+    if (fromAttr) return normalizeToolHref(fromAttr);
+
     const link = btn.closest('.card')?.querySelector('a[href]');
     const href = link?.getAttribute('href') || '';
     return normalizeToolHref(href);

@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Serpmonn — pesquisa de IA multimodal, imagens, vídeos e notícias</title>
-<meta name="description" content="Serpmonn — pesquisa de IA multimodal em texto, imagens e vídeo, bem como notícias, jogos, códigos promocionais e ferramentas online.">
-<meta name="keywords" content="serpmonn, pesquisa multimodal, IA, inteligência artificial, motor de pesquisa, pesquisa de imagens, pesquisa de vídeos, notícias, jogos, códigos promocionais, ferramentas online">
+<meta name="description" content="Serpmonn — pesquisa de IA multimodal em texto, imagens e vídeo, além de notícias, jogos, códigos promocionais e ferramentas online.">
+<meta name="keywords" content="serpmonn, pesquisa multimodal, IA, inteligência artificial, mecanismo de busca, busca por imagens, busca por vídeos, notícias, jogos, códigos promocionais, ferramentas online">
 <meta name="theme-color" content="#ffffff">
 <meta name="verify-admitad" content="7c9ceea344">
 <meta name="p:domain_verify" content="922f48dff0f0851f5a18bc66a200f1dc">
@@ -120,7 +120,7 @@
 <link rel="alternate" href="https://serpmonn.ru/en/" hreflang="x-default" />
 <link rel="canonical" href="https://serpmonn.ru/pt-pt/" />
 <meta property="og:title" content="Serpmonn — pesquisa de IA multimodal, imagens, vídeos e notícias" />
-<meta property="og:description" content="Serpmonn — pesquisa de IA multimodal em texto, imagens e vídeo, bem como notícias, jogos, códigos promocionais e ferramentas online." />
+<meta property="og:description" content="Serpmonn — pesquisa de IA multimodal em texto, imagens e vídeo, além de notícias, jogos, códigos promocionais e ferramentas online." />
 <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png" />
 <meta property="og:url" content="https://serpmonn.ru/pt-pt/" />
 <meta property="og:type" content="website" />
@@ -128,7 +128,7 @@
 <meta property="og:site_name" content="Serpmonn" />
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Serpmonn — pesquisa de IA multimodal, imagens, vídeos e notícias">
-<meta name="twitter:description" content="Serpmonn — pesquisa de IA multimodal em texto, imagens e vídeo, bem como notícias, jogos, códigos promocionais e ferramentas online.">
+<meta name="twitter:description" content="Serpmonn — pesquisa de IA multimodal em texto, imagens e vídeo, além de notícias, jogos, códigos promocionais e ferramentas online.">
 <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
 <link rel="manifest" href="/frontend/pwa/manifest.json">
@@ -209,7 +209,7 @@
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
     </button>
     <div class="news-feed" id="news-feed"></div>
-    <button class="feed-arrow feed-arrow-right" aria-label="Seguinte">
+    <button class="feed-arrow feed-arrow-right" aria-label="Próximo">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
     </button>
   </div>
@@ -258,8 +258,8 @@
           type="button" 
           id="voice-input-btn"
           class="voice-btn is-hidden"
-          aria-label="Entrada de voz"
-          title="Clique para entrada de voz"
+          aria-label="Entrada por voz"
+          title="clique para entrada por voz"
         >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -273,7 +273,7 @@
 
           <button 
             type="submit" 
-            aria-label="Enviar consulta de IA"
+            aria-label="Enviar consulta para a IA"
             class="search-btn"
             title="Enviar consulta para o Serpmonn AI"
           >
@@ -302,11 +302,19 @@
           </svg>
         </button>
 
-        <button class="ai-action-btn" data-ai-action="share" title="Partilhar resposta" aria-label="Partilhar resposta" >
+        <button class="ai-action-btn" data-ai-action="share" title="Compartilhar resposta" aria-label="Compartilhar resposta" >
           <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
             <path d="M7 12v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6"></path>
             <path d="M12 5l0 12"></path>
             <path d="M8 9l4-4 4 4"></path>
+          </svg>
+        </button>
+
+        <button class="ai-action-btn" data-ai-action="save-finding" title="Save" aria-label="Save">
+          <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
           </svg>
         </button>
       </div>
@@ -339,7 +347,7 @@
   <div id="ai-share-modal" class="ai-share-modal" style="display:none;">
     <div class="ai-share-backdrop"></div>
     <div class="ai-share-dialog" tabindex="-1">
-      <div class="ai-share-title">Partilhar resposta</div>
+      <div class="ai-share-title">Compartilhar resposta</div>
 
       <div class="ai-share-quick">
         <a class="ai-share-pill ai-share-telegram" target="_blank" rel="noopener" title="Telegram" aria-label="Telegram">
@@ -391,6 +399,45 @@
 
 <div id="ai-share-toast" class="ai-share-toast" style="display:none;"></div>
 
+<div id="finding-save-modal" class="ai-share-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="finding-save-title" data-mode="confirm">
+  <div class="ai-share-backdrop"></div>
+  <div class="ai-share-dialog finding-save-dialog" tabindex="-1">
+    <button type="button" class="ai-share-close finding-save-close" aria-label="Close">&times;</button>
+    <div class="ai-share-title" id="finding-save-title">Finding saved</div>
+
+    <div class="finding-save-section finding-save-section--confirm" data-finding-section="confirm">
+      <div class="finding-save-visibility">
+        <label class="finding-save-radio">
+          <input type="radio" name="finding-visibility" value="private" checked>
+          <span data-finding-i18n="visibilityPrivate">Only me</span>
+        </label>
+        <label class="finding-save-radio">
+          <input type="radio" name="finding-visibility" value="link">
+          <span data-finding-i18n="visibilityLink">Anyone with the link</span>
+        </label>
+        <label class="finding-save-radio">
+          <input type="radio" name="finding-visibility" value="public">
+          <span data-finding-i18n="visibilityPublic">Show in feed</span>
+        </label>
+      </div>
+      <div class="finding-save-actions finding-save-actions--row">
+        <button type="button" class="ai-share-copy-btn" data-finding-action="save">Save</button>
+        <button type="button" class="finding-share-toggle-btn" data-finding-action="share-toggle">Send to a friend</button>
+      </div>
+      <div class="finding-share-form" id="finding-save-share-form" hidden>
+        <label class="finding-share-field">
+          <input type="text" id="finding-save-share-username" autocomplete="off" spellcheck="false">
+        </label>
+        <label class="finding-share-field">
+          <textarea id="finding-save-share-message" rows="2"></textarea>
+        </label>
+        <button type="button" class="ai-share-copy-btn finding-share-submit-btn" data-finding-action="share-send">Send to user</button>
+      </div>
+      <button type="button" class="finding-save-cancel-btn finding-save-cancel-btn--full" data-finding-action="cancel">Cancel</button>
+    </div>
+  </div>
+</div>
+
 <script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js"></script>
 <script>
   if (window.vkBridge) {
@@ -400,7 +447,7 @@
 
     </main>
     <div id="cookie-consent" class="cookie-consent">
-  <p>Este site utiliza cookies para melhorar o funcionamento. Ao continuar, aceita a  <a href="/frontend/privacy-policy/privacy-policy.html">política de privacidade</a>.</p>
+  <p>Este site usa cookies para melhorar o funcionamento. Ao continuar, você concorda com a  <a href="/frontend/privacy-policy/privacy-policy.html">política de privacidade</a>.</p>
   <button id="accept-cookies" class="cookie-button">Aceitar</button>
   <button id="decline-cookies" class="cookie-button">Recusar</button>
 </div>

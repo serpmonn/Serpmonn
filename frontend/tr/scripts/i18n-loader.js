@@ -3,7 +3,11 @@ let messages = {};
 let currentLocale = DEFAULT_LOCALE;
 
 function getCurrentLocale() {
-  return (document.documentElement.lang || DEFAULT_LOCALE).trim();
+  try {
+    const fromStorage = localStorage.getItem('spn_lang');
+    if (fromStorage) return fromStorage.trim().toLowerCase();
+  } catch (_) {}
+  return (document.documentElement.lang || DEFAULT_LOCALE).trim().toLowerCase();
 }
 
 async function loadJson(url) {

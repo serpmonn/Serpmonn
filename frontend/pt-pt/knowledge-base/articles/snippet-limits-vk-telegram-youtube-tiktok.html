@@ -259,6 +259,7 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
 
     <style>
@@ -374,27 +375,6 @@
         margin-bottom: 16px; 
         padding: 8px 0; 
       }
-      .ad-top-banner {
-        text-align: center;
-        margin: 16px 0;
-        position: relative;
-        transition: opacity 0.3s ease, height 0.3s ease;
-      }
-      .ad-top-banner.hidden {
-        opacity: 0;
-        height: 0;
-        overflow: hidden;
-        margin: 0;
-      }
-      .ad-top-banner .mrg-tag {
-        width: 100% !important;
-        max-width: 970px;
-        height: auto;
-        aspect-ratio: 970 / 250;
-        display: inline-block;
-      }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { max-width: 728px; aspect-ratio: 728 / 90; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { max-width: 320px; aspect-ratio: 320 / 50; } }
       
       /* RTL поддержка */
       [dir="rtl"] .breadcrumb { text-align: right; }
@@ -420,7 +400,7 @@
       <meta itemprop="publisher" content="Serpmonn">
       
       <header class="article-header">
-        <div class="ad-top-banner ad-banner">
+        <div class="ad-top-banner ad-banner loading">
           <ins class="mrg-tag" 
               style="display:inline-block;"
               data-ad-client="ad-1897960" 
@@ -432,7 +412,7 @@
       </header>
 
       <div class="summary" itemprop="abstract">
-        <strong>Porque ler isto:</strong> para garantir que títulos e descrições não sejam cortados e proporcionem o máximo de CTR. Abaixo — tabela resumida de limites e exemplos visuais 'antes/depois' para correção.
+        <strong>Por que ler isso:</strong> para garantir que títulos e descrições não sejam cortados e forneçam o máximo de CTR. Abaixo — tabela resumida de limites e exemplos visuais 'antes/depois' para correção.
       </div>
 
       <div class="toc">
@@ -443,7 +423,7 @@
           <li><a href="#tg">Telegram: &#39;antes/depois&#39;</a></li>
           <li><a href="#yt">YouTube: &#39;antes/depois&#39;</a></li>
           <li><a href="#tt">TikTok: &#39;antes/depois&#39;</a></li>
-          <li><a href="#tips">Dicas para pré-visualização e metadados</a></li>
+          <li><a href="#tips">Dicas para visualização e metadados</a></li>
         </ol>
       </div>
 
@@ -456,21 +436,21 @@
               <th>Plataforma</th>
               <th>Título (rec./limite)</th>
               <th>Descrição/texto (rec./limite)</th>
-              <th>Pré-visualização/corte</th>
+              <th>Visualização/corte</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><strong>VK</strong></td>
               <td>≤ 60–70 / —</td>
-              <td>≤ 140–160 / até 4096 caracteres na publicação</td>
-              <td>Snippet de ligação corta título ~70, descrição ~140+</td>
+              <td>≤ 140–160 / até 4096 caracteres na postagem</td>
+              <td>Snippet de link corta título ~70, descrição ~140+</td>
             </tr>
             <tr>
               <td><strong>Telegram</strong></td>
               <td>≤ 70 / — (extraído do OG)</td>
               <td>≤ 120–160 / 4096 na mensagem</td>
-              <td>Pré-visualização do OG: título ~70, descrição ~120–140</td>
+              <td>Visualização do OG: título ~70, descrição ~120–140</td>
             </tr>
             <tr>
               <td><strong>YouTube</strong></td>
@@ -490,9 +470,9 @@
         <h2 id="vk">2) VK: &#39;antes/depois&#39;</h2>
         <div class="example" itemscope itemtype="http://schema.org/HowToTip">
           <span class="label before">ANTES</span>
-          <p itemprop="text">&quot;Um título incrivelmente detalhado e muito longo sobre a nossa nova funcionalidade que inevitavelmente será cortado em todas as pré-visualizações e reduzirá o CTR…&quot;</p>
+          <p itemprop="text">&quot;Um título incrivelmente detalhado e muito longo sobre nosso novo recurso que inevitavelmente será cortado em todas as visualizações e reduzirá o CTR…&quot;</p>
           <span class="label after">DEPOIS</span>
-          <p itemprop="text"><strong>„Nova funcionalidade: mais rápida e simples”</strong> — curto e claro. Subtítulo/descrição: „Reunimos as principais capacidades e exemplos de uso” (≤ 140).</p>
+          <p itemprop="text"><strong>„Novo recurso: mais rápido e simples”</strong> — curto e claro. Subtítulo/descrição: „Reunimos os principais recursos e exemplos de uso” (≤ 140).</p>
         </div>
 
         <h2 id="tg">3) Telegram: &#39;antes/depois&#39;</h2>
@@ -506,7 +486,7 @@
         <h2 id="yt">4) YouTube: &#39;antes/depois&#39;</h2>
         <div class="example" itemscope itemtype="http://schema.org/HowToTip">
           <span class="label before">ANTES</span>
-          <p itemprop="text">&quot;Como construímos SEO em 30 dias: desagregação completa de todas as etapas da auditoria à implementação, análise e relatórios [2025]&quot; (105 caracteres)</p>
+          <p itemprop="text">&quot;Como construímos SEO em 30 dias: detalhamento completo de todas as etapas da auditoria à implementação, análise e relatórios [2025]&quot; (105 caracteres)</p>
           <span class="label after">DEPOIS</span>
           <p itemprop="text"><strong>„SEO em 30 dias: plano passo a passo”</strong> — „Auditoria, implementação, relatórios. Erros e life hacks (2025)”. Título ≤ 60, primeiros 150–200 caracteres da descrição — principais benefícios e CTA.</p>
         </div>
@@ -514,21 +494,21 @@
         <h2 id="tt">5) TikTok: &#39;antes/depois&#39;</h2>
         <div class="example" itemscope itemtype="http://schema.org/HowToTip">
           <span class="label before">ANTES</span>
-          <p itemprop="text">&quot;Veja a nossa nova explicação longa com muitos detalhes e ligações — lembre-se de ler até ao fim!&quot;</p>
+          <p itemprop="text">&quot;Assista nossa nova explicação longa com muitos detalhes e links — lembre-se de ler até o final!&quot;</p>
           <span class="label after">DEPOIS</span>
-          <p itemprop="text"><strong>„3 erros de UTM que consomem tráfego”</strong> — „Verifique source/medium, codificação e redirecionamentos. Guia completo — pela ligação".</p>
+          <p itemprop="text"><strong>„3 erros de UTM que consomem tráfego”</strong> — „Verifique source/medium, codificação e redirecionamentos. Guia completo — pelo link".</p>
         </div>
 
-        <h2 id="tips">6) Dicas para pré-visualização e metadados</h2>
+        <h2 id="tips">6) Dicas para visualização e metadados</h2>
         <ul>
           
-          <li itemscope itemtype="http://schema.org/HowToTip">Defina <strong>metatags OG</strong> (title/description/image) para pré-visualização correta no VK/Telegram.</li>
+          <li itemscope itemtype="http://schema.org/HowToTip">Defina <strong>metatags OG</strong> (title/description/image) para visualização correta no VK/Telegram.</li>
           
           <li itemscope itemtype="http://schema.org/HowToTip">Mantenha <strong>title ≤ 60–70</strong>, <strong>description ≤ 140–160</strong> para visibilidade universal.</li>
           
           <li itemscope itemtype="http://schema.org/HowToTip">Coloque os <strong>principais benefícios nas primeiras 1–2 linhas</strong> da descrição.</li>
           
-          <li itemscope itemtype="http://schema.org/HowToTip">Verifique a pré-visualização antes da publicação (por rascunhos/bots de pré-visualização/partilha).</li>
+          <li itemscope itemtype="http://schema.org/HowToTip">Verifique a visualização antes da publicação (por rascunhos/bots de visualização/compartilhamento).</li>
           
         </ul>
       </section>
@@ -542,7 +522,7 @@
     
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-    <button type="button" aria-label="Fechar anúncio" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+    <button type="button" aria-label="Fechar publicidade" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
     <ins class="mrg-tag"
         style="display:inline-block;width:320px;height:50px"
         data-ad-client="ad-"

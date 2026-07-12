@@ -3,6 +3,7 @@ import { initMenu } from './menu.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
 import { t, loadMessages } from './i18n-loader.js';
+import { initFindingsModals } from '/frontend/scripts/findings-modals.js';
 
 // Немедленно применяем сохранённые настройки доступности
 (function applySavedAccessibility() {
@@ -265,7 +266,8 @@ fetch(primaryMenuPath)
     async function updateAuthMenuState() {
       const authBlock = document.getElementById('auth-block');
       const profileBlock = document.getElementById('profile-block');
-      if (!authBlock && !profileBlock) return;
+      const inboxBlock = document.getElementById('inbox-block');
+      if (!authBlock && !profileBlock && !inboxBlock) return;
 
       try {
         const resp = await fetch('/auth/protected', { credentials: 'include' });
@@ -279,18 +281,56 @@ fetch(primaryMenuPath)
           profileBlock.hidden = !isLoggedIn;
           profileBlock.style.display = isLoggedIn ? '' : 'none';
         }
+        if (inboxBlock) {
+          inboxBlock.hidden = !isLoggedIn;
+          inboxBlock.style.display = isLoggedIn ? '' : 'none';
+        }
+        if (isLoggedIn) {
+          updateInboxBadge();
+        }
       } catch (e) {
         console.warn('auth menu state check failed', e);
         if (profileBlock) {
           profileBlock.hidden = true;
           profileBlock.style.display = 'none';
         }
+        if (inboxBlock) {
+          inboxBlock.hidden = true;
+          inboxBlock.style.display = 'none';
+        }
       }
 
       hideCurrentPageMenuLinks();
     }
 
+    async function updateInboxBadge() {
+      const inboxBlock = document.getElementById('inbox-block');
+      if (!inboxBlock) return;
+
+      try {
+        const resp = await fetch('/api/findings/inbox/unread-count', { credentials: 'include' });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        const count = Number(data?.count) || 0;
+        let badge = inboxBlock.querySelector('.menu-inbox-badge');
+        if (count > 0) {
+          if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'menu-inbox-badge';
+            inboxBlock.appendChild(badge);
+          }
+          badge.textContent = count > 99 ? '99+' : String(count);
+        } else if (badge) {
+          badge.remove();
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+
     updateAuthMenuState();
+
+    initFindingsModals({ onInboxRead: updateInboxBadge });
 
     // ========== ЗАГРУЖАЕМ СКРИПТ СЕЛЕКТОРА ЯЗЫКА ==========
     const script = document.createElement('script');

@@ -13,7 +13,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — супербуст ×3!",
       "overlayGoal": "Цель: максимально разжиреть крысу!",
       "startBtn": "НАЧАТЬ",
-      "hint": "[клик / тап] — укажи еду крысе"
+      "hint": "[клик / тап] — укажи еду крысе",
+      "gameOverTitle": "🏆 МАКС. ЖИР!"
     }
   },
   "ar": {
@@ -28,7 +29,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — تعزيز فائق ×3!",
       "overlayGoal": "الهدف: إسمان الفأر قدر الإمكان!",
       "startBtn": "ابدأ",
-      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر"
+      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر",
+      "gameOverTitle": "🏆 أقصى دهون!"
     }
   },
   "az": {
@@ -43,7 +45,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — süper güç ×3!",
       "overlayGoal": "Hedef: fareyi olabildiğince şişmanlat!",
       "startBtn": "BAŞLA",
-      "hint": "[tıkla / dokun] — fareye yemeği göster"
+      "hint": "[tıkla / dokun] — fareye yemeği göster",
+      "gameOverTitle": "🏆 MAKS YAĞ!"
     }
   },
   "be": {
@@ -58,7 +61,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — супербуст ×3!",
       "overlayGoal": "Цель: максимально разжиреть крысу!",
       "startBtn": "НАЧАТЬ",
-      "hint": "[клик / тап] — укажи еду крысе"
+      "hint": "[клик / тап] — укажи еду крысе",
+      "gameOverTitle": "🏆 МАКС. ЖЫР!"
     }
   },
   "bg": {
@@ -73,7 +77,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — супербуст ×3!",
       "overlayGoal": "Цель: максимально разжиреть крысу!",
       "startBtn": "НАЧАТЬ",
-      "hint": "[клик / тап] — укажи еду крысе"
+      "hint": "[клик / тап] — укажи еду крысе",
+      "gameOverTitle": "🏆 МАКС. МАЗНИНИ!"
     }
   },
   "bn": {
@@ -88,7 +93,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 সর্বোচ্চ চর্বি!"
     }
   },
   "cs": {
@@ -103,7 +109,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Cel: zmaksymalnie utuczyć szczura!",
       "startBtn": "START",
-      "hint": "[klik / dotknij] — wskaż jedzenie szczurowi"
+      "hint": "[klik / dotknij] — wskaż jedzenie szczurowi",
+      "gameOverTitle": "🏆 MAX. TUK!"
     }
   },
   "da": {
@@ -118,7 +125,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — Super-Boost ×3!",
       "overlayGoal": "Ziel: die Ratte so dick wie möglich machen!",
       "startBtn": "START",
-      "hint": "[Klick / Tippen] — zeige der Ratte das Futter"
+      "hint": "[Klick / Tippen] — zeige der Ratte das Futter",
+      "gameOverTitle": "🏆 MAX FEDT!"
     }
   },
   "de": {
@@ -133,7 +141,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — Super-Boost ×3!",
       "overlayGoal": "Ziel: die Ratte so dick wie möglich machen!",
       "startBtn": "START",
-      "hint": "[Klick / Tippen] — zeige der Ratte das Futter"
+      "hint": "[Klick / Tippen] — zeige der Ratte das Futter",
+      "gameOverTitle": "🏆 MAX FETT!"
     }
   },
   "el": {
@@ -148,7 +157,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 ΜΑΞ ΛΙΠΟΣ!"
     }
   },
   "en": {
@@ -163,7 +173,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 MAX FAT!"
     }
   },
   "es": {
@@ -178,7 +189,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — súper impulso ×3!",
       "overlayGoal": "Objetivo: ¡engordar la rata al máximo!",
       "startBtn": "EMPEZAR",
-      "hint": "[clic / toque] — señala la comida a la rata"
+      "hint": "[clic / toque] — señala la comida a la rata",
+      "gameOverTitle": "🏆 ¡GRASA MÁX!"
     }
   },
   "es-419": {
@@ -193,7 +205,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — súper impulso ×3!",
       "overlayGoal": "Objetivo: ¡engordar la rata al máximo!",
       "startBtn": "EMPEZAR",
-      "hint": "[clic / toque] — señala la comida a la rata"
+      "hint": "[clic / toque] — señala la comida a la rata",
+      "gameOverTitle": "🏆 ¡GRASA MÁX!"
     }
   },
   "fa": {
@@ -208,7 +221,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — تعزيز فائق ×3!",
       "overlayGoal": "الهدف: إسمان الفأر قدر الإمكان!",
       "startBtn": "ابدأ",
-      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر"
+      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر",
+      "gameOverTitle": "🏆 حداکثر چربی!"
     }
   },
   "fi": {
@@ -223,7 +237,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — Super-Boost ×3!",
       "overlayGoal": "Ziel: die Ratte so dick wie möglich machen!",
       "startBtn": "START",
-      "hint": "[Klick / Tippen] — zeige der Ratte das Futter"
+      "hint": "[Klick / Tippen] — zeige der Ratte das Futter",
+      "gameOverTitle": "🏆 MAX RASVA!"
     }
   },
   "fil": {
@@ -238,7 +253,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 MAX TABA!"
     }
   },
   "fr": {
@@ -253,7 +269,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3 !",
       "overlayGoal": "Objectif : faire grossir le rat au maximum !",
       "startBtn": "DÉMARRER",
-      "hint": "[clic / toucher] — indiquez la nourriture au rat"
+      "hint": "[clic / toucher] — indiquez la nourriture au rat",
+      "gameOverTitle": "🏆 GRAISSE MAX !"
     }
   },
   "he": {
@@ -268,7 +285,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — تعزيز فائق ×3!",
       "overlayGoal": "الهدف: إسمان الفأر قدر الإمكان!",
       "startBtn": "ابدأ",
-      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر"
+      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر",
+      "gameOverTitle": "🏆 שומן מקס!"
     }
   },
   "hi": {
@@ -283,7 +301,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 अधिकतम वसा!"
     }
   },
   "hu": {
@@ -298,7 +317,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Cel: zmaksymalnie utuczyć szczura!",
       "startBtn": "START",
-      "hint": "[klik / dotknij] — wskaż jedzenie szczurowi"
+      "hint": "[klik / dotknij] — wskaż jedzenie szczurowi",
+      "gameOverTitle": "🏆 MAX ZSÍR!"
     }
   },
   "hy": {
@@ -313,7 +333,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — супербуст ×3!",
       "overlayGoal": "Цель: максимально разжиреть крысу!",
       "startBtn": "НАЧАТЬ",
-      "hint": "[клик / тап] — укажи еду крысе"
+      "hint": "[клик / тап] — укажи еду крысе",
+      "gameOverTitle": "🏆 MAX ՃԱՐՏՈՒՔ!"
     }
   },
   "id": {
@@ -328,7 +349,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 LEMAK MAKS!"
     }
   },
   "it": {
@@ -343,7 +365,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Obiettivo: ingrassare il ratto il più possibile!",
       "startBtn": "AVVIA",
-      "hint": "[clic / tocco] — indica il cibo al ratto"
+      "hint": "[clic / tocco] — indica il cibo al ratto",
+      "gameOverTitle": "🏆 GRASSO MAX!"
     }
   },
   "ja": {
@@ -358,7 +381,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — スーパーブースト ×3！",
       "overlayGoal": "目標：ネズミを最大限太らせよう！",
       "startBtn": "スタート",
-      "hint": "[クリック / タップ] — 餌の方向を指定"
+      "hint": "[クリック / タップ] — 餌の方向を指定",
+      "gameOverTitle": "🏆 最大脂肪！"
     }
   },
   "ka": {
@@ -373,7 +397,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — супербуст ×3!",
       "overlayGoal": "Цель: максимально разжиреть крысу!",
       "startBtn": "НАЧАТЬ",
-      "hint": "[клик / тап] — укажи еду крысе"
+      "hint": "[клик / тап] — укажи еду крысе",
+      "gameOverTitle": "🏆 MAX ცხიმი!"
     }
   },
   "kk": {
@@ -388,7 +413,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — супербуст ×3!",
       "overlayGoal": "Цель: максимально разжиреть крысу!",
       "startBtn": "НАЧАТЬ",
-      "hint": "[клик / тап] — укажи еду крысе"
+      "hint": "[клик / тап] — укажи еду крысе",
+      "gameOverTitle": "🏆 МАКС. МАЙ!"
     }
   },
   "ko": {
@@ -403,7 +429,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — 슈퍼 부스트 ×3!",
       "overlayGoal": "목표: 쥐를 최대한 살찌우자!",
       "startBtn": "시작",
-      "hint": "[클릭 / 탭] — 쥐에게 먹이 방향 지정"
+      "hint": "[클릭 / 탭] — 쥐에게 먹이 방향 지정",
+      "gameOverTitle": "🏆 최대 지방!"
     }
   },
   "ms": {
@@ -418,7 +445,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 LEMAK MAKS!"
     }
   },
   "nb": {
@@ -433,7 +461,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — Super-Boost ×3!",
       "overlayGoal": "Ziel: die Ratte so dick wie möglich machen!",
       "startBtn": "START",
-      "hint": "[Klick / Tippen] — zeige der Ratte das Futter"
+      "hint": "[Klick / Tippen] — zeige der Ratte das Futter",
+      "gameOverTitle": "🏆 MAKS FETT!"
     }
   },
   "nl": {
@@ -448,7 +477,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — Super-Boost ×3!",
       "overlayGoal": "Ziel: die Ratte so dick wie möglich machen!",
       "startBtn": "START",
-      "hint": "[Klick / Tippen] — zeige der Ratte das Futter"
+      "hint": "[Klick / Tippen] — zeige der Ratte das Futter",
+      "gameOverTitle": "🏆 MAX VET!"
     }
   },
   "pl": {
@@ -463,7 +493,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Cel: zmaksymalnie utuczyć szczura!",
       "startBtn": "START",
-      "hint": "[klik / dotknij] — wskaż jedzenie szczurowi"
+      "hint": "[klik / dotknij] — wskaż jedzenie szczurowi",
+      "gameOverTitle": "🏆 MAKS. TŁUSZCZ!"
     }
   },
   "pt-br": {
@@ -478,7 +509,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super impulso ×3!",
       "overlayGoal": "Objetivo: engordar o rato ao máximo!",
       "startBtn": "INICIAR",
-      "hint": "[clique / toque] — aponte a comida ao rato"
+      "hint": "[clique / toque] — aponte a comida ao rato",
+      "gameOverTitle": "🏆 GORDURA MÁX!"
     }
   },
   "pt-pt": {
@@ -486,14 +518,15 @@ export const TRANSLATIONS = {
       "pageTitle": "Fat Rat — Serpmonn Games",
       "eatenLabel": "Comido",
       "weightLabel": "Peso kg",
-      "bestLabel": "Récord",
-      "overlayLine1": "Haz clic en el laberinto — la rata corre hacia la comida.",
-      "overlayLine2": "Cuanto más gorda la rata — más lento se mueve.",
-      "bonusFoodLabel": "Comida morada",
-      "overlayLine3": " — súper impulso ×3!",
-      "overlayGoal": "Objetivo: ¡engordar la rata al máximo!",
-      "startBtn": "EMPEZAR",
-      "hint": "[clic / toque] — señala la comida a la rata"
+      "bestLabel": "Recorde",
+      "overlayLine1": "clique no labirinto — o rato corre até a comida.",
+      "overlayLine2": "Quanto mais gordo o rato — mais lento ele se move.",
+      "bonusFoodLabel": "Comida roxa",
+      "overlayLine3": " — super impulso ×3!",
+      "overlayGoal": "Objetivo: engordar o rato ao máximo!",
+      "startBtn": "INICIAR",
+      "hint": "[clique / toque] — aponte a comida ao rato",
+      "gameOverTitle": "🏆 GORDURA MÁX!"
     }
   },
   "ro": {
@@ -508,7 +541,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 GRĂSIME MAX!"
     }
   },
   "sr": {
@@ -523,7 +557,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — супербуст ×3!",
       "overlayGoal": "Цель: максимально разжиреть крысу!",
       "startBtn": "НАЧАТЬ",
-      "hint": "[клик / тап] — укажи еду крысе"
+      "hint": "[клик / тап] — укажи еду крысе",
+      "gameOverTitle": "🏆 MAKS. MAST!"
     }
   },
   "sv": {
@@ -538,7 +573,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — Super-Boost ×3!",
       "overlayGoal": "Ziel: die Ratte so dick wie möglich machen!",
       "startBtn": "START",
-      "hint": "[Klick / Tippen] — zeige der Ratte das Futter"
+      "hint": "[Klick / Tippen] — zeige der Ratte das Futter",
+      "gameOverTitle": "🏆 MAX FETT!"
     }
   },
   "th": {
@@ -553,7 +589,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 ไขมันสูงสุด!"
     }
   },
   "tr": {
@@ -568,7 +605,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — süper güç ×3!",
       "overlayGoal": "Hedef: fareyi olabildiğince şişmanlat!",
       "startBtn": "BAŞLA",
-      "hint": "[tıkla / dokun] — fareye yemeği göster"
+      "hint": "[tıkla / dokun] — fareye yemeği göster",
+      "gameOverTitle": "🏆 MAKS. YAĞ!"
     }
   },
   "ur": {
@@ -583,7 +621,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — تعزيز فائق ×3!",
       "overlayGoal": "الهدف: إسمان الفأر قدر الإمكان!",
       "startBtn": "ابدأ",
-      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر"
+      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر",
+      "gameOverTitle": "🏆 زیادہ سے زیادہ چربی!"
     }
   },
   "uz": {
@@ -598,7 +637,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — süper güç ×3!",
       "overlayGoal": "Hedef: fareyi olabildiğince şişmanlat!",
       "startBtn": "BAŞLA",
-      "hint": "[tıkla / dokun] — fareye yemeği göster"
+      "hint": "[tıkla / dokun] — fareye yemeği göster",
+      "gameOverTitle": "🏆 MAKS YOG'!"
     }
   },
   "vi": {
@@ -613,7 +653,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 BÉO TỐI ĐA!"
     }
   },
   "zh-cn": {
@@ -628,7 +669,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — 超级加速 ×3！",
       "overlayGoal": "目标：让老鼠尽可能变胖！",
       "startBtn": "开始",
-      "hint": "[点击 / 轻触] — 为老鼠指明食物"
+      "hint": "[点击 / 轻触] — 为老鼠指明食物",
+      "gameOverTitle": "🏆 最大脂肪！"
     }
   },
   "ps": {
@@ -643,7 +685,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — تعزيز فائق ×3!",
       "overlayGoal": "الهدف: إسمان الفأر قدر الإمكان!",
       "startBtn": "ابدأ",
-      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر"
+      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر",
+      "gameOverTitle": "🏆 MAX FAT!"
     }
   },
   "sd": {
@@ -658,7 +701,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 MAX FAT!"
     }
   },
   "ug": {
@@ -673,7 +717,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — تعزيز فائق ×3!",
       "overlayGoal": "الهدف: إسمان الفأر قدر الإمكان!",
       "startBtn": "ابدأ",
-      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر"
+      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر",
+      "gameOverTitle": "🏆 MAX FAT!"
     }
   },
   "dv": {
@@ -688,7 +733,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — تعزيز فائق ×3!",
       "overlayGoal": "الهدف: إسمان الفأر قدر الإمكان!",
       "startBtn": "ابدأ",
-      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر"
+      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر",
+      "gameOverTitle": "🏆 MAX FAT!"
     }
   },
   "ks": {
@@ -703,7 +749,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — super boost ×3!",
       "overlayGoal": "Goal: fatten the rat as much as possible!",
       "startBtn": "START",
-      "hint": "[click / tap] — point the rat to food"
+      "hint": "[click / tap] — point the rat to food",
+      "gameOverTitle": "🏆 MAX FAT!"
     }
   },
   "ku-arab": {
@@ -718,7 +765,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — تعزيز فائق ×3!",
       "overlayGoal": "الهدف: إسمان الفأر قدر الإمكان!",
       "startBtn": "ابدأ",
-      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر"
+      "hint": "[نقر / لمس] — أشر إلى الطعام للفأر",
+      "gameOverTitle": "🏆 MAX FAT!"
     }
   },
   "yi": {
@@ -733,7 +781,8 @@ export const TRANSLATIONS = {
       "overlayLine3": " — Super-Boost ×3!",
       "overlayGoal": "Ziel: die Ratte so dick wie möglich machen!",
       "startBtn": "START",
-      "hint": "[Klick / Tippen] — zeige der Ratte das Futter"
+      "hint": "[Klick / Tippen] — zeige der Ratte das Futter",
+      "gameOverTitle": "🏆 MAX FAT!"
     }
   }
 };

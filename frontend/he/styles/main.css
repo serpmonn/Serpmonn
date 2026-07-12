@@ -840,6 +840,131 @@ a:visited {
   transform: translateY(-1px);
 }
 
+/* ====== Модалка «Сохранить находку» (оболочка ai-share-modal) ====== */
+
+.finding-save-dialog {
+  position: relative;
+  width: min(440px, 94vw);
+}
+
+.finding-save-close {
+  position: absolute;
+  top: 8px;
+  right: 10px;
+}
+
+.finding-save-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.finding-save-visibility {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+  color: #374151;
+}
+
+.finding-save-radio {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.finding-save-radio input {
+  accent-color: #dc3545;
+}
+
+.finding-save-share-label {
+  margin: 0 0 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+}
+
+.finding-save-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: #fff;
+  font-size: 14px;
+  color: #111827;
+}
+
+.finding-save-input:focus {
+  outline: none;
+  border-color: rgba(220, 53, 69, 0.55);
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.12);
+}
+
+.finding-save-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.finding-save-actions--row .ai-share-copy-btn,
+.finding-save-actions--row .finding-share-toggle-btn {
+  flex: 1;
+  width: auto;
+}
+
+.finding-save-cancel-btn--full {
+  width: 100%;
+  margin-top: 4px;
+}
+
+.finding-save-cancel-btn {
+  flex: 1;
+  min-height: 34px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: #fff;
+  color: #374151;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.finding-save-cancel-btn:hover {
+  background: #f9fafb;
+}
+
+.finding-save-open-link {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 8px 12px;
+  border-radius: 999px;
+  background: rgba(220, 53, 69, 0.08);
+  color: #b91c1c;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.finding-save-open-link:hover {
+  background: rgba(220, 53, 69, 0.14);
+  text-decoration: none;
+}
+
+.finding-save-share-block {
+  border-top: 1px solid rgba(148, 163, 184, 0.25);
+  padding-top: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.finding-open-row {
+  margin-bottom: 4px;
+}
+
 /* ============================================================================
    ИНДИКАТОР ЗАПИСИ ГОЛОСА
    ============================================================================ */
@@ -975,4 +1100,213 @@ a:visited {
     overflow-wrap: anywhere;
     word-wrap: break-word;
   }
+}
+
+/* ====== Модалки входящих и просмотра находки ====== */
+
+.finding-panel-modal .finding-panel-dialog {
+  position: relative;
+  width: min(560px, 94vw);
+  max-height: min(85vh, 720px);
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 14px;
+  overflow: hidden;
+}
+
+.finding-panel-modal .finding-view-dialog {
+  width: min(760px, 96vw);
+}
+
+.finding-panel-title {
+  font-size: 17px;
+  font-weight: 600;
+  margin: 0 28px 6px 0;
+  color: #0f172a;
+}
+
+.finding-panel-hint {
+  margin: 0 0 12px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #6b7280;
+}
+
+.finding-panel-body {
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+  padding-right: 2px;
+}
+
+.finding-panel-query {
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+  margin: 0 0 10px;
+  line-height: 1.35;
+}
+
+.finding-inbox-dialog .finding-panel-body {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.finding-inbox-item {
+  padding: 12px 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.finding-inbox-item:hover {
+  border-color: rgba(220, 53, 69, 0.35);
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.06);
+}
+
+.finding-inbox-item--unread {
+  border-color: rgba(220, 53, 69, 0.45);
+  background: rgba(254, 242, 242, 0.5);
+}
+
+.finding-inbox-from {
+  margin: 0 0 4px;
+  font-size: 12px;
+  color: #6b7280;
+}
+
+.finding-inbox-query {
+  margin: 0;
+  font-size: 15px;
+  font-weight: 600;
+  color: #111827;
+}
+
+.finding-inbox-date {
+  margin: 6px 0 0;
+  font-size: 12px;
+  color: #9ca3af;
+}
+
+.finding-inbox-open-btn {
+  display: inline-flex;
+  margin-top: 8px;
+  pointer-events: none;
+}
+
+.finding-inbox-skeleton {
+  height: 88px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: linear-gradient(90deg, #f3f4f6 0%, #e5e7eb 50%, #f3f4f6 100%);
+  background-size: 200% 100%;
+  animation: finding-skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes finding-skeleton-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.finding-inbox-item--enter {
+  animation: finding-inbox-item-in 0.35s ease both;
+  animation-delay: var(--inbox-delay, 0ms);
+}
+
+@keyframes finding-inbox-item-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.finding-empty,
+.finding-loading,
+.finding-error {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.finding-inbox-empty {
+  padding: 24px 16px;
+  text-align: center;
+  border: 1px dashed #d1d5db;
+  border-radius: 12px;
+}
+
+.finding-view-actions--row {
+  display: flex;
+  gap: 8px;
+}
+
+.finding-view-actions--row .ai-share-copy-btn,
+.finding-view-actions--row .finding-share-toggle-btn {
+  flex: 1;
+  width: auto;
+}
+
+.finding-share-toggle-btn {
+  min-height: 34px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  background: #fff;
+  color: #374151;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+
+.finding-share-toggle-btn:hover {
+  background: #f9fafb;
+  border-color: rgba(220, 53, 69, 0.35);
+  color: #b91c1c;
+}
+
+.finding-share-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.finding-share-form[hidden] {
+  display: none;
+}
+
+.finding-share-field input,
+.finding-share-field textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(148, 163, 184, 0.45);
+  font: inherit;
+  font-size: 13px;
+  color: #111827;
+  background: #fff;
+}
+
+.finding-share-field textarea {
+  resize: vertical;
+  min-height: 56px;
+}
+
+.finding-share-field input:focus,
+.finding-share-field textarea:focus {
+  outline: none;
+  border-color: rgba(220, 53, 69, 0.55);
+  box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.1);
+}
+
+.finding-share-submit-btn {
+  width: 100%;
 }

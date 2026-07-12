@@ -132,6 +132,14 @@ eleventyComputed:
             <path d="M8 9l4-4 4 4"></path>
           </svg>
         </button>
+
+        <button class="ai-action-btn" data-ai-action="save-finding" title="Save" aria-label="Save">
+          <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+            <polyline points="7 3 7 8 15 8"></polyline>
+          </svg>
+        </button>
       </div>
 
       <div class="ai-feedback">
@@ -213,6 +221,45 @@ eleventyComputed:
 </div>
 
 <div id="ai-share-toast" class="ai-share-toast" style="display:none;"></div>
+
+<div id="finding-save-modal" class="ai-share-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="finding-save-title" data-mode="confirm">
+  <div class="ai-share-backdrop"></div>
+  <div class="ai-share-dialog finding-save-dialog" tabindex="-1">
+    <button type="button" class="ai-share-close finding-save-close" aria-label="Close">&times;</button>
+    <div class="ai-share-title" id="finding-save-title">Finding saved</div>
+
+    <div class="finding-save-section finding-save-section--confirm" data-finding-section="confirm">
+      <div class="finding-save-visibility">
+        <label class="finding-save-radio">
+          <input type="radio" name="finding-visibility" value="private" checked>
+          <span data-finding-i18n="visibilityPrivate">Only me</span>
+        </label>
+        <label class="finding-save-radio">
+          <input type="radio" name="finding-visibility" value="link">
+          <span data-finding-i18n="visibilityLink">Anyone with the link</span>
+        </label>
+        <label class="finding-save-radio">
+          <input type="radio" name="finding-visibility" value="public">
+          <span data-finding-i18n="visibilityPublic">Show in feed</span>
+        </label>
+      </div>
+      <div class="finding-save-actions finding-save-actions--row">
+        <button type="button" class="ai-share-copy-btn" data-finding-action="save">Save</button>
+        <button type="button" class="finding-share-toggle-btn" data-finding-action="share-toggle">Send to a friend</button>
+      </div>
+      <div class="finding-share-form" id="finding-save-share-form" hidden>
+        <label class="finding-share-field">
+          <input type="text" id="finding-save-share-username" autocomplete="off" spellcheck="false">
+        </label>
+        <label class="finding-share-field">
+          <textarea id="finding-save-share-message" rows="2"></textarea>
+        </label>
+        <button type="button" class="ai-share-copy-btn finding-share-submit-btn" data-finding-action="share-send">Send to user</button>
+      </div>
+      <button type="button" class="finding-save-cancel-btn finding-save-cancel-btn--full" data-finding-action="cancel">Cancel</button>
+    </div>
+  </div>
+</div>
 
 <script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js"></script>
 <script>

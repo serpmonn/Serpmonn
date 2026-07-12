@@ -85,6 +85,7 @@ eleventyComputed:
     <!-- Стили -->
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
 
     <style>
@@ -185,27 +186,6 @@ eleventyComputed:
             margin-bottom: 16px; 
             padding: 8px 0; 
         }
-        .ad-top-banner {
-            text-align: center;
-            margin: 16px 0;
-            position: relative;
-            transition: opacity 0.3s ease, height 0.3s ease;
-        }
-        .ad-top-banner.hidden {
-            opacity: 0;
-            height: 0;
-            overflow: hidden;
-            margin: 0;
-        }
-        .ad-top-banner .mrg-tag {
-            width: 100% !important;
-            max-width: 970px;
-            height: auto;
-            aspect-ratio: 970 / 250;
-            display: inline-block;
-        }
-        @media (max-width: 1199px) { .ad-top-banner .mrg-tag { max-width: 728px; aspect-ratio: 728 / 90; } }
-        @media (max-width: 768px) { .ad-top-banner .mrg-tag { max-width: 320px; aspect-ratio: 320 / 50; } }
     </style>
 </head>
 <body>
@@ -220,7 +200,7 @@ eleventyComputed:
 
     <article>
         <header class="article-header">
-            <div class="ad-top-banner ad-banner">
+            <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" 
                     style="display:inline-block;"
                     data-ad-client="ad-{{ mailAds.slots.top.id }}" 

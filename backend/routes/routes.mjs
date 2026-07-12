@@ -22,6 +22,7 @@ import logsRouter from '../agents/logs.routes.mjs';                             
 import gatewayRouter from '../gateway/gateway.routes.mjs';                                                                       // Импорт гетвей роутера агентов
 import cors from 'cors';                                                                                                         // Импорт cors для открытого доступа к gateway
 import newsRoutes from '../news/newsRoutes.mjs';                                                                                 // Импорт маршрутов новостей
+import findingsRoutes from '../findings/findings.routes.mjs';                                                                   // Находки AI-поиска
 
 export function connectRoutes(app, authLimiter) {                                                                                // Функция централизованного подключения всех маршрутов приложения
     app.use(yookassaRouter);                                                                                                     // Подключаем маршруты платёжной системы YooKassa
@@ -39,6 +40,7 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/improve', improveRoutes);                                                                                          // Подключаем маршрут предложки
     app.use('/api', vkidRoutes);                                                                                                 // Подключаем маршрут авторизации VK ID
     app.use('/voice', voiceRoutes);                                                                                              // Подключаем маршруты голосового ввода (STT/TTS)
+    app.use('/api', findingsRoutes);                                                                                             // Находки: публичный GET + auth на отдельных роутах
     app.use('/api', (req, res, next) => {                                                                                        // verifyToken — пропускаем /api/admin (обрабатывается admin-server)
         if (req.path.startsWith('/admin')) return next('route');
         return verifyToken(req, res, next);

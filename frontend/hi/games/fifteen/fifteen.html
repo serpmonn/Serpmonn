@@ -6,19 +6,19 @@
   <meta http-equiv="Content-Language" content="hi">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Fifteen Puzzle — Serpmonn</title>
-  <meta name="description" content="Classic 15 Puzzle: arrange tiles 1–15 in order. Train your memory and logic.">
+  <title>Пятнашки — Serpmonn</title>
+  <meta name="description" content="Классическая головоломка 15 Puzzle: собери плитки 1–15 по порядку. Тренируйте память и логику.">
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://serpmonn.ru/frontend/hi/games/fifteen/fifteen.html">
-  <meta property="og:title" content="Fifteen Puzzle — Serpmonn">
-  <meta property="og:description" content="Play Fifteen Puzzle online: arrange tiles 1–15 and beat your move and time records.">
+  <meta property="og:title" content="Пятнашки — Serpmonn">
+  <meta property="og:description" content="Играйте в пятнашки онлайн: расставьте плитки 1–15 и бейте рекорды по ходам и времени.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/fifteen.png">
 
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://serpmonn.ru/frontend/hi/games/fifteen/fifteen.html">
-  <meta property="twitter:title" content="Fifteen Puzzle — Serpmonn">
-  <meta property="twitter:description" content="Online Fifteen Puzzle: the classic 15 Puzzle on Serpmonn.">
+  <meta property="twitter:title" content="Пятнашки — Serpmonn">
+  <meta property="twitter:description" content="Онлайн-головоломка Пятнашки: классика 15 Puzzle на Serpmonn.">
   <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/fifteen.png">
 
   <link rel="canonical" href="https://serpmonn.ru/frontend/hi/games/fifteen/fifteen.html">
@@ -38,9 +38,9 @@
 
   <script>
     window.i18n = {
-      continueAd: "Continue",
-      instructionsDesktop: "• Arrow keys or WASD — move tiles\n• Goal: arrange numbers 1 to 15 in order\n• Empty cell must be in the bottom-right corner\n• Fewer moves and less time is better!",
-      instructionsMobile: "• Swipes — move tiles\n• Goal: arrange numbers 1 to 15 in order\n• Empty cell must be in the bottom-right corner"
+      continueAd: "Продолжить",
+      instructionsDesktop: "• Стрелки или WASD — перемещение плиток\n• Цель: расставить числа по порядку от 1 до 15\n• Пустая клетка должна быть в правом нижнем углу\n• Чем меньше ходов и времени — тем лучше!",
+      instructionsMobile: "• Свайпы — перемещение плиток\n• Цель: расставить числа по порядку от 1 до 15\n• Пустая клетка должна быть в правом нижнем углу"
     };
   </script>
   <script type="module" src="/frontend/games/fifteen/fifteen-ads.js?v=3" defer></script>
@@ -61,7 +61,7 @@
         box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
 
         var h = document.createElement('h3');
-        h.textContent = 'How to play — Fifteen Puzzle';
+        h.textContent = 'Как играть — Пятнашки';
         h.style.margin = '0 0 8px';
 
         var p = document.createElement('div');
@@ -70,7 +70,7 @@
 
         var btn = document.createElement('button');
         btn.className = 'btn';
-        btn.textContent = 'Got it';
+        btn.textContent = 'Понятно';
         btn.style.marginTop = '10px';
         btn.onclick = function(){
           localStorage.setItem('game_instructions_fifteen_shown','1');
@@ -90,8 +90,8 @@
 
   <div class="page">
     <header>
-      <img src="/frontend/images/fifteen.png" width="28" height="28" alt="Games" style="border-radius:6px;">
-      <h1>Fifteen Puzzle</h1>
+      <img src="/frontend/images/fifteen.png" width="28" height="28" alt="Игры" style="border-radius:6px;">
+      <h1>Пятнашки</h1>
     </header>
 
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
@@ -99,25 +99,25 @@
     </div>
 <div class="wrap">
       <div class="panel">
-        <div id="game" class="game-board" aria-label="Fifteen puzzle board"></div>
-        <div class="hint" style="display:none;">Move tiles to arrange numbers from 1 to 15 in order. Use arrow keys or WASD.</div>
+        <div id="game" class="game-board" aria-label="Игровое поле пятнашки"></div>
+        <div class="hint" style="display:none;">Перемещайте плитки, чтобы расставить числа по порядку от 1 до 15. Используйте стрелки или WASD.</div>
       </div>
 
       <div class="panel">
         <div class="stats">
-          <div class="stat">Moves<br><b id="moves">0</b></div>
-          <div class="stat">Time<br><b id="time">0</b>s</div>
-          <div class="stat">Best<br><b id="best">0</b></div>
+          <div class="stat">Ходы<br><b id="moves">0</b></div>
+          <div class="stat">Время<br><b id="time">0</b>с</div>
+          <div class="stat">Рекорд<br><b id="best">0</b></div>
         </div>
 
         <div class="controls">
-          <button class="btn primary" id="btnNewGame">New game</button>
-          <button class="btn" id="btnReset">Reset</button>
+          <button class="btn primary" id="btnNewGame">Новая игра</button>
+          <button class="btn" id="btnReset">Сбросить</button>
         </div>
 
         <div class="solved-message" id="solvedMessage" style="display:none;">
-          <h3>Congratulations!</h3>
-          <p>You solved the puzzle!</p>
+          <h3>Поздравляем!</h3>
+          <p>Вы собрали головоломку!</p>
         </div>
       </div>
     </div>

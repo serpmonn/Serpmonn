@@ -4672,12 +4672,12 @@
     }
   },
   "pt-pt": {
-    "lang": "pt-pt",
+    "lang": "pt-br",
     "textDirection": "ltr",
     "meta": {
       "title": "IndexNow: Implementação prática e dicas",
-      "description": "Atualizações rápidas de motores de busca: configuração, apenas-alteradas, erros comuns, comparação com sitemap ping e lista de verificação de implementação.",
-      "keywords": "IndexNow, SEO, indexação, motores de busca, Bing, Yandex, atualizações do site",
+      "description": "Atualizações rápidas de mecanismos de busca: configuração, apenas-alteradas, erros comuns, comparação com sitemap ping e lista de verificação de implementação.",
+      "keywords": "IndexNow, SEO, indexação, mecanismos de busca, Bing, Yandex, atualizações do site",
       "og": {
         "title": "IndexNow: Implementação prática e dicas",
         "description": "Configuração, modo apenas-alteradas, erros e comparação com sitemap ping."
@@ -4695,21 +4695,21 @@
     },
     "buttons": {
       "calculatorCTA": "📊 Verificar SEO",
-      "telegram": "Subscrever no Telegram",
-      "vk": "Subscrever no VK"
+      "telegram": "Inscrever-se no Telegram",
+      "vk": "Inscrever-se no VK"
     },
     "content": {
-      "intro": "Atualizações rápidas de motores de busca: configuração, apenas-alteradas, erros comuns, comparação com sitemap ping e lista de verificação de implementação.",
+      "intro": "Atualizações rápidas de mecanismos de busca: configuração, apenas-alteradas, erros comuns, comparação com sitemap ping e lista de verificação de implementação.",
       "summary": {
-        "title": "Porquê ler:",
-        "text": "como entregar atualizações rapidamente aos motores de busca, quando usar apenas-alteradas, como o IndexNow difere do sitemap ping e como evitar erros comuns."
+        "title": "Por que ler:",
+        "text": "como entregar atualizações rapidamente aos mecanismos de busca, quando usar apenas-alteradas, como o IndexNow difere do sitemap ping e como evitar erros comuns."
       },
       "toc": {
         "title": "Índice",
         "items": [
           {
             "id": "what",
-            "text": "O que é o IndexNow"
+            "text": "O que é IndexNow"
           },
           {
             "id": "setup",
@@ -4736,25 +4736,25 @@
       "sections": [
         {
           "id": "what",
-          "title": "1) O que é o IndexNow",
-          "content": "IndexNow é um protocolo que permite notificar instantaneamente os motores de busca sobre alterações de URL (criação, atualização, exclusão). Suportado pelo Bing, Yandex, Seznam e outros serviços. A vantagem é o atraso mínimo de indexação e menos ruído de rastreamento."
+          "title": "1) O que é IndexNow",
+          "content": "IndexNow é um protocolo que permite notificar instantaneamente os mecanismos de busca sobre alterações de URL (criação, atualização, exclusão). Suportado por Bing, Yandex, Seznam e outros serviços. A vantagem é o atraso mínimo de indexação e menos ruído de rastreamento."
         },
         {
           "id": "setup",
           "title": "2) Configuração da chave e ping básico",
           "steps": [
             "Gere uma chave (GUID) e coloque o ficheiro <code>YOUR_KEY.txt</code> na raiz do site (<code>/.well-known/</code> ou raiz do domínio) com a string da chave.",
-            "Envie ping para o endpoint com o URL e a chave. Exemplo (URL único):"
+            "Envie ping para o endpoint com URL e chave. Exemplo (URL único):"
           ],
           "code": "POST https://api.indexnow.org/indexnow\nContent-Type: application/json\n\n{\n  \"host\": \"www.serpmonn.ru\",\n  \"key\": \"YOUR_KEY\",\n  \"urlList\": [\n    \"https://www.serpmonn.ru/frontend/knowledge-base/articles/utm-complete-guide.html\"\n  ]\n}",
-          "note": "Para lotes, especifique até 10.000 URLs num pedido ou use um feed de ficheiro com um URL de ficheiro de registo de alterações."
+          "note": "Para lotes, especifique até 10.000 URLs em uma solicitação ou use um feed de ficheiro com um ficheiro de log de alterações."
         },
         {
           "id": "changed",
           "title": "3) Modo apenas-alteradas",
-          "content": "A ideia é enviar ping apenas para ficheiros realmente alterados no último commit/implementação. Isto reduz o ruído e o uso de quota.",
+          "content": "A ideia é enviar ping apenas para arquivos realmente alterados no último commit/implantação. Isso reduz o ruído e o uso de cota.",
           "items": [
-            "Obtenha a lista de caminhos alterados do VCS (git diff) ou artefactos de construção.",
+            "Obtenha a lista de caminhos alterados do VCS (git diff) ou artefatos de build.",
             "Filtre por rotas públicas (excluindo <code>node_modules</code>, <code>.git</code>, pastas privadas).",
             "Agrupe por domínio/idioma para evitar enviar URLs irrelevantes."
           ],
@@ -4770,10 +4770,10 @@
             },
             {
               "title": "Ruído",
-              "description": "IndexNow - direcionado a URLs alteradas; sitemap - varrimento de todo o mapa (mais caro para o orçamento de rastreamento)."
+              "description": "IndexNow - direcionado a URLs alteradas; sitemap - varredura de todo o mapa (mais caro para o orçamento de rastreamento)."
             },
             {
-              "title": "Fiabilidade",
+              "title": "Confiabilidade",
               "description": "Sitemaps permanecem a base; IndexNow complementa e acelera. É melhor usar ambos."
             }
           ]
@@ -4785,7 +4785,7 @@
             "A chave não está acessível via URL público ou não corresponde ao parâmetro <code>key</code>.",
             "Enviar ping para páginas privadas/404, parâmetros sem canonicalização.",
             "Repetições muito frequentes dos mesmos URLs (limite as repetições).",
-            "Ignorar multilingue (precisa enviar ping para a versão localizada correspondente)."
+            "Ignorar multilíngue (precisa enviar ping para a versão localizada correspondente)."
           ]
         },
         {
@@ -4794,20 +4794,20 @@
           "faqItems": [
             {
               "question": "Quantos URLs enviar de uma vez?",
-              "answer": "Até 10.000 num lote - idealmente agrupados por tipo/idioma."
+              "answer": "Até 10.000 em um lote - idealmente agrupados por tipo/idioma."
             },
             {
               "question": "Devo enviar ping para exclusões?",
               "answer": "Sim - passe os URLs das páginas excluídas para acelerar a desindexação."
             },
             {
-              "question": "Como confirmar que está a funcionar?",
-              "answer": "Registos de resposta da API (200/202), picos de rastreamento nos registos do servidor, aparecimento mais rápido de novos URLs."
+              "question": "Como confirmar que está funcionando?",
+              "answer": "Logs de resposta da API (200/202), picos de rastreamento nos logs do servidor, aparecimento mais rápido de novos URLs."
             }
           ],
           "checklist": [
             "Chave colocada e acessível via HTTPS.",
-            "Recolher caminhos apenas-alteradas do CI/CD.",
+            "Coletar caminhos apenas-alteradas do CI/CD.",
             "Deduplicação e limitação de repetições.",
             "Fallback para sitemap ping em lote vazio."
           ]
@@ -6828,149 +6828,149 @@
     }
   },
   "ks": {
-    "lang": "en",
-    "textDirection": "ltr",
+    "lang": "ur",
+    "textDirection": "rtl",
     "meta": {
-      "title": "IndexNow: Practical Implementation and Tips",
-      "description": "Fast search engine updates: setup, changed-only, common errors, comparison with sitemap ping and implementation checklist.",
-      "keywords": "IndexNow, SEO, indexing, search engines, Bing, Yandex, website updates",
+      "title": "IndexNow: عملی نفاذ اور تجاویز",
+      "description": "فوری سرچ انجن اپ ڈیٹس: سیٹ اپ، صرف تبدیل شدہ، عام غلطیاں، سائٹ میپ پنگ سے موازنہ اور نفاذ چیک لسٹ",
+      "keywords": "IndexNow, SEO، انڈیکسنگ، سرچ انجنز، بینگ، یانڈیکس، ویب سائٹ اپ ڈیٹس",
       "og": {
-        "title": "IndexNow: Practical Implementation and Tips",
-        "description": "Setup, changed-only mode, errors and comparison with sitemap ping."
+        "title": "IndexNow: عملی نفاذ اور تجاویز",
+        "description": "سیٹ اپ، صرف-تبدیل شدہ موڈ، غلطیاں اور سائٹ میپ پنگ سے موازنہ"
       },
       "twitter": {
-        "title": "IndexNow: Practical Implementation and Tips",
-        "description": "Setup, changed-only mode, errors and comparison with sitemap ping."
+        "title": "IndexNow: عملی نفاذ اور تجاویز",
+        "description": "سیٹ اپ، صرف-تبدیل شدہ موڈ، غلطیاں اور سائٹ میپ پنگ سے موازنہ"
       }
     },
     "article": {
       "category": "SEO",
-      "title": "IndexNow: Practical Implementation and Tips",
-      "date": "September 15, 2025",
-      "readingTime": "5 min read"
+      "title": "IndexNow: عملی نفاذ اور تجاویز",
+      "date": "15 ستمبر 2025",
+      "readingTime": "5 منٹ کی پڑھائی"
     },
     "buttons": {
-      "calculatorCTA": "📊 Check SEO",
-      "telegram": "Subscribe on Telegram",
-      "vk": "Subscribe on VK"
+      "calculatorCTA": "📊 SEO چیک کریں",
+      "telegram": "ٹیلیگرام پر سبسکرائب کریں",
+      "vk": "وی کے پر سبسکرائب کریں"
     },
     "content": {
-      "intro": "Fast search engine updates: setup, changed-only, common errors, comparison with sitemap ping and implementation checklist.",
+      "intro": "فوری سرچ انجن اپ ڈیٹس: سیٹ اپ، صرف تبدیل شدہ، عام غلطیاں، سائٹ میپ پنگ سے موازنہ اور نفاذ چیک لسٹ",
       "summary": {
-        "title": "Why read:",
-        "text": "how to quickly deliver updates to search engines, when to use changed-only, how IndexNow differs from sitemap ping, and how to avoid common mistakes."
+        "title": "پڑھنے کی وجہ:",
+        "text": "سرچ انجنز کو اپ ڈیٹس کیسے فوری فراہم کرنا ہے، کب صرف-تبدیل شدہ استعمال کرنا ہے، IndexNow سائٹ میپ پنگ سے کیسے مختلف ہے اور عام غلطیوں سے کیسے بچنا ہے"
       },
       "toc": {
-        "title": "Table of Contents",
+        "title": "فہرست",
         "items": [
           {
             "id": "what",
-            "text": "What is IndexNow"
+            "text": "IndexNow کیا ہے"
           },
           {
             "id": "setup",
-            "text": "Key setup and basic ping"
+            "text": "کلید کا سیٹ اپ اور بنیادی پنگ"
           },
           {
             "id": "changed",
-            "text": "Changed-only mode: when and how"
+            "text": "صرف-تبدیل شدہ موڈ: کب اور کیسے"
           },
           {
             "id": "compare",
-            "text": "IndexNow vs sitemap ping"
+            "text": "IndexNow بمقابلہ سائٹ میپ پنگ"
           },
           {
             "id": "errors",
-            "text": "Common errors"
+            "text": "عام غلطیاں"
           },
           {
             "id": "faq",
-            "text": "FAQ and checklist"
+            "text": "عمومی سوالات اور چیک لسٹ"
           }
         ]
       },
       "sections": [
         {
           "id": "what",
-          "title": "1) What is IndexNow",
-          "content": "IndexNow is a protocol that allows you to instantly notify search engines about URL changes (creation, update, deletion). Supported by Bing, Yandex, Seznam and other services. The advantage is minimal indexing delay and less crawl noise."
+          "title": "1) IndexNow کیا ہے",
+          "content": "IndexNow ایک پروٹوکول ہے جو آپ کو سرچ انجنز کو URL تبدیلیوں (تخلیق، اپ ڈیٹ، حذف) کے بارے میں فوری طور پر مطلع کرنے دیتا ہے۔ بینگ، یانڈیکس، Seznam اور دیگر خدمات کی طرف سے معاونت یافتہ۔ فائدہ کم از کم انڈیکسنگ تاخیر اور کم کرال شور ہے۔"
         },
         {
           "id": "setup",
-          "title": "2) Key setup and basic ping",
+          "title": "2) کلید کا سیٹ اپ اور بنیادی پنگ",
           "steps": [
-            "Generate a key (GUID) and place the <code>YOUR_KEY.txt</code> file in the site root (<code>/.well-known/</code> or domain root) with the key string.",
-            "Ping the endpoint with the URL and key. Example (single URL):"
+            "ایک کلید (GUID) بنائیں اور <code>YOUR_KEY.txt</code> فائل کو سائٹ کی جڑ میں (<code>/.well-known/</code> یا ڈومین جڑ) کلید کی سٹرنگ کے ساتھ رکھیں۔",
+            "یو آر ایل اور کلید کے ساتھ اینڈ پوائنٹ کو پنگ کریں۔ مثال (واحد یو آر ایل):"
           ],
           "code": "POST https://api.indexnow.org/indexnow\nContent-Type: application/json\n\n{\n  \"host\": \"www.serpmonn.ru\",\n  \"key\": \"YOUR_KEY\",\n  \"urlList\": [\n    \"https://www.serpmonn.ru/frontend/knowledge-base/articles/utm-complete-guide.html\"\n  ]\n}",
-          "note": "For batches, specify up to 10,000 URLs in one request or use a file feed with a change log file URL."
+          "note": "بیچوں کے لیے، ایک درخواست میں 10,000 تک یو آر ایلز متعین کریں یا تبدیلی لاگ فائل یو آر ایل کے ساتھ فائل فیڈ استعمال کریں۔"
         },
         {
           "id": "changed",
-          "title": "3) Changed-only mode",
-          "content": "The idea is to ping only the files that have actually changed in the last commit/deployment. This reduces noise and quota usage.",
+          "title": "3) صرف-تبدیل شدہ موڈ",
+          "content": "خیال یہ ہے کہ صرف ان فائلوں کو پنگ کیا جائے جو آخری کمٹ/تعیناتی میں واقعی تبدیل ہوئی ہیں۔ اس سے شور اور کوٹہ استعمال کم ہوتا ہے۔",
           "items": [
-            "Get the list of changed paths from VCS (git diff) or build artifacts.",
-            "Filter by public routes (excluding <code>node_modules</code>, <code>.git</code>, private folders).",
-            "Group by domains/languages to avoid sending irrelevant URLs."
+            "VCS (git diff) یا بلڈ آرٹیفیکٹس سے تبدیل شدہ راستوں کی فہرست حاصل کریں۔",
+            "عوامی راستوں کے لحاظ سے فلٹر کریں (<code>node_modules</code>، <code>.git</code>، نجی فولڈرز کو چھوڑ کر)۔",
+            "غیر متعلقہ یو آر ایلز بھیجنے سے بچنے کے لیے ڈومین/زبانوں کے لحاظ سے گروپ کریں۔"
           ],
-          "note": "In production, it is useful to have a fallback: if changed-only is empty (for example, a hotfix for configurations), ping important sitemaps."
+          "note": "پروڈکشن میں، فال بیک رکھنا مفید ہے: اگر صرف-تبدیل شدہ خالی ہے (مثال کے طور پر ترتیبات کے لیے ہاٹ فکس)، اہم سائٹ میپس کو پنگ کریں۔"
         },
         {
           "id": "compare",
-          "title": "4) IndexNow vs sitemap ping",
+          "title": "4) IndexNow بمقابلہ سائٹ میپ پنگ",
           "items": [
             {
-              "title": "Speed",
-              "description": "IndexNow delivers updates faster, does not wait for the crawl cycle; sitemap ping signals the presence of a sitemap but not changes to a specific URL."
+              "title": "رفتار",
+              "description": "IndexNow تیزی سے اپ ڈیٹس فراہم کرتا ہے، کرال سائیکل کا انتظار نہیں کرتا؛ سائٹ میپ پنگ سائٹ میپ کی موجودگی کی نشاندہی کرتا ہے لیکن مخصوص یو آر ایل میں تبدیلیوں کی نہیں۔"
             },
             {
-              "title": "Noise",
-              "description": "IndexNow - targeted at changed URLs; sitemap - scan of the entire map (more expensive for crawl budget)."
+              "title": "شور",
+              "description": "IndexNow - تبدیل شدہ یو آر ایلز پر ہدف بند؛ سائٹ میپ - پورے نقشے کی اسکین (کرال بجٹ کے لیے زیادہ مہنگا)۔"
             },
             {
-              "title": "Reliability",
-              "description": "Sitemaps remain the base; IndexNow complements and speeds up. It's better to use both."
+              "title": "قابل اعتمادی",
+              "description": "سائٹ میپس بنیاد رہتی ہیں؛ IndexNow تکمیل کرتا ہے اور تیز کرتا ہے۔ دونوں کو استعمال کرنا بہتر ہے۔"
             }
           ]
         },
         {
           "id": "errors",
-          "title": "5) Common errors",
+          "title": "5) عام غلطیاں",
           "items": [
-            "The key is not accessible via a public URL or does not match the <code>key</code> parameter.",
-            "Pinging private/404 pages, parameters without canonicalization.",
-            "Too frequent repetitions of the same URLs (throttle repetitions).",
-            "Ignoring multilingualism (need to ping the corresponding localized version)."
+            "کلید عوامی یو آر ایل کے ذریعے قابل رسائی نہیں ہے یا <code>key</code> پیرامیٹر سے مماثل نہیں ہے۔",
+            "نجی/404 صفحات کو پنگ کرنا، canonicalization کے بغیر پیرامیٹرز۔",
+            "ایک ہی یو آر ایلز کی بہت زیادہ تکرار (تکرار کو محدود کریں)۔",
+            "کثیر اللسانییت کو نظر انداز کرنا (متعلقہ مقامی ورژن کو پنگ کرنے کی ضرورت ہے)۔"
           ]
         },
         {
           "id": "faq",
-          "title": "6) FAQ and checklist",
+          "title": "6) عمومی سوالات اور چیک لسٹ",
           "faqItems": [
             {
-              "question": "How many URLs to send at a time?",
-              "answer": "Up to 10,000 in a batch - optimally group by type/language."
+              "question": "ایک وقت میں کتنے یو آر ایلز بھیجیں؟",
+              "answer": "ایک بیچ میں 10,000 تک - قسم/زبان کے لحاظ سے بہترین گروپنگ۔"
             },
             {
-              "question": "Should I ping deletions?",
-              "answer": "Yes - pass the URLs of deleted pages to speed up deindexing."
+              "question": "کیا ڈیلیٹ کو پنگ کریں؟",
+              "answer": "جی ہاں - ڈی انڈیکسنگ کو تیز کرنے کے لیے ڈیلیٹ شدہ صفحات کے یو آر ایلز پاس کریں۔"
             },
             {
-              "question": "How to confirm it's working?",
-              "answer": "API response logs (200/202), crawl spikes in server logs, faster appearance of new URLs."
+              "question": "کام کرنے کی تصدیق کیسے کریں؟",
+              "answer": "API جواب لاگز (200/202)، سرور لاگز میں کرال سپائیکس، نئے یو آر ایلز کی تیزی سے ظاہری۔"
             }
           ],
           "checklist": [
-            "The key is placed and accessible via HTTPS.",
-            "Collect changed-only paths from CI/CD.",
-            "Deduplication and throttling of repetitions.",
-            "Fallback to sitemap ping on empty batch."
+            "کلید رکھی گئی ہے اور HTTPS کے ذریعے قابل رسائی ہے۔",
+            "صرف-تبدیل شدہ راستے CI/CD سے جمع کریں۔",
+            "ڈی ڈپلیکیشن اور تکرار کی حدود۔",
+            "خالی بیچ پر سائٹ میپ پنگ پر فال بیک۔"
           ]
         }
       ],
-      "conclusion": "IndexNow significantly speeds up the indexing of new and changed pages. Combined with traditional sitemaps, it is a powerful tool for SEO optimization.",
-      "updated": "Updated: 09/15/2025 • Category: SEO"
+      "conclusion": "IndexNow نئے اور تبدیل شدہ صفحات کی انڈیکسنگ کو کافی حد تک تیز کرتا ہے۔ روایتی سائٹ میپس کے ساتھ ملا کر، یہ SEO آپٹیمائزیشن کے لیے ایک طاقتور ٹول ہے۔",
+      "updated": "اپ ڈیٹ: 15/09/2025 • زمرہ: SEO"
     }
   }
 }

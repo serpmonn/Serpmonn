@@ -4,18 +4,18 @@
 <head>
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="pt-pt">
-    <title>Cuadrados azules cayendo</title>
+    <title>Quadrados azuis caindo</title>
     <meta charset="UTF-8">
-    <meta name="description" content="¡Pon a prueba tus reflejos esquivando figuras que caen!">
+    <meta name="description" content="Teste os seus reflexos desviando de formas que caem!">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta property="og:title" content="¡Pon a prueba tus reflejos!" />
-    <meta property="og:description" content="¿Puedes aguantar el mayor tiempo posible?" />
+    <meta property="og:title" content="Teste os seus reflexos!" />
+    <meta property="og:description" content="Quanto tempo você aguenta?" />
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico" />
     <meta property="og:url" content="https://serpmonn.ru/frontend/pt-pt/games/redsquare2/redsquare2.html" />
     <meta property="og:type" content="game" />
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Figuras cayendo — Serpmonn">
-    <meta name="twitter:description" content="Minijuego de navegador en Serpmonn.">
+    <meta name="twitter:title" content="Formas caindo — Serpmonn">
+    <meta name="twitter:description" content="Minijogo no Serpmonn.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
     <link rel="canonical" href="https://serpmonn.ru/frontend/pt-pt/games/redsquare2/redsquare2.html"/>
     <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
@@ -23,11 +23,11 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script>
     window.i18n = {
-      scorePrefix: "Puntos: ",
-      missedPrefix: "Fallos: ",
-      pause: "Pausa",
+      scorePrefix: "Pontos: ",
+      missedPrefix: "Erros: ",
+      pause: "Pausar",
       resume: "Continuar",
-      bannedNicknameAlert: "El apodo contiene palabras prohibidas. Elige otro.",
+      bannedNicknameAlert: "O apelido contém palavras proibidas. Escolha outro.",
       scoreTableUrl: "/frontend/pt-pt/games/redsquare2/score_table.html"
     };
     </script>
@@ -38,29 +38,29 @@
 <body>
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
-            <h2 class="instruction-title">¿Cómo jugar Cuadrados azules cayendo?</h2>
+            <h2 class="instruction-title">Como jogar Quadrados azuis caindo?</h2>
             <ul class="instruction-list">
-                <li><strong>Controles:</strong> Usa las flechas o el tacto para mover el cuadrado rojo</li>
-                <li><strong>Objetivo:</strong> Esquivar objetos que caen</li>
-                <li><strong>Puntos:</strong> 1 punto por cada objeto esquivado</li>
-                <li><strong>Fallos:</strong> Si un objeto te golpea, cuenta como fallo</li>
-                <li><strong>Fin del juego:</strong> El juego termina tras 10 colisiones</li>
-                <li><strong>Clasificación:</strong> Tras el juego puedes ver tus resultados</li>
-                <li><strong>Pausa:</strong> Usa el botón Pausa para detener temporalmente</li>
+                <li><strong>Controlos:</strong> Use setas ou toque para mover o quadrado vermelho</li>
+                <li><strong>Objetivo:</strong> Desviar de objetos que caem</li>
+                <li><strong>Pontos:</strong> 1 ponto por objeto desviado</li>
+                <li><strong>Erros:</strong> Se um objeto te atingir, conta como erro</li>
+                <li><strong>Fim de jogo:</strong> O jogo termina após 10 colisões</li>
+                <li><strong>Ranking:</strong> Após o jogo veja os seus resultados</li>
+                <li><strong>Pausa:</strong> Use o botão Pausar para parar</li>
             </ul>
-            <button class="instruction-button" id="understandBtn">¡Entendido, empecemos!</button>
+            <button class="instruction-button" id="understandBtn">Entendi, vamos jogar!</button>
         </div>
     </div>
 
-    <div id="score">Puntos: 0</div>
-    <div id="missed">Fallos: 0</div>
+    <div id="score">Pontos: 0</div>
+    <div id="missed">Erros: 0</div>
     <div class="button-container">
-        <button id="leaderboardBtn">Clasificación</button>
-        <button id="pauseBtn">Pausa</button>
-        <button id="restartBtn">De nuevo</button>
+        <button id="leaderboardBtn">Ranking</button>
+        <button id="pauseBtn">Pausar</button>
+        <button id="restartBtn">Reiniciar</button>
     </div>
     <form id="nicknameForm">
-        <input type="text" id="nickname" placeholder="Introduce tu nombre" required>
+        <input type="text" id="nickname" placeholder="Digite seu nome" required>
         <button type="submit">Iniciar</button>
     </form>
     <canvas id="gameCanvas"></canvas>

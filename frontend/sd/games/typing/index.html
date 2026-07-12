@@ -174,82 +174,70 @@
   <h1>TYPING SPEED <span>// serpmonn.ru</span></h1>
 </div>
 
-<div class="tabs" role="tablist" aria-label="Test mode">
-  <button class="tab active" data-mode="15" role="tab" aria-selected="true">15 sec</button>
-  <button class="tab" data-mode="30" role="tab">30 sec</button>
-  <button class="tab" data-mode="60" role="tab">60 sec</button>
-  <button class="tab" data-mode="words" role="tab">25 words</button>
+<div class="tabs" role="tablist" aria-label="وضع الاختبار">
+  <button class="tab active" data-mode="15" role="tab" aria-selected="true">15 ث</button>
+  <button class="tab" data-mode="30" role="tab">30 ث</button>
+  <button class="tab" data-mode="60" role="tab">60 ث</button>
+  <button class="tab" data-mode="words" role="tab">25 كلمة</button>
 </div>
 
 <div class="stats">
   <div class="stat"><div class="stat-label">WPM</div><div class="stat-value wpm" id="liveWpm">—</div></div>
-  <div class="stat"><div class="stat-label">Accuracy</div><div class="stat-value acc" id="liveAcc">—</div></div>
-  <div class="stat"><div class="stat-label">Time</div><div class="stat-value timer" id="liveTimer">—</div></div>
-  <div class="stat"><div class="stat-label">Best</div><div class="stat-value best" id="liveBest">—</div></div>
+  <div class="stat"><div class="stat-label">الدقة</div><div class="stat-value acc" id="liveAcc">—</div></div>
+  <div class="stat"><div class="stat-label">الوقت</div><div class="stat-value timer" id="liveTimer">—</div></div>
+  <div class="stat"><div class="stat-label">الأفضل</div><div class="stat-value best" id="liveBest">—</div></div>
 </div>
 
 <div class="typing-wrap" id="typingWrap">
   <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
   <div class="words" id="wordsDisplay" aria-live="polite"></div>
   <input type="text" id="hiddenInput" autocomplete="off" autocorrect="off"
-         autocapitalize="off" spellcheck="false" aria-label="Input field">
+         autocapitalize="off" spellcheck="false" aria-label="حقل الإدخال">
   <div class="click-hint" id="clickHint">
-    <span class="kbd">click</span> or <span class="kbd">Enter</span> to start &nbsp;·&nbsp; <span class="kbd">Esc</span> restart
+    <span class="kbd">نقر</span> أو <span class="kbd">Enter</span> للبدء &nbsp;·&nbsp; <span class="kbd">Esc</span> إعادة
   </div>
 </div>
 
 <div class="result" id="resultPanel">
-  <div class="result-title">RESULT</div>
+  <div class="result-title">النتيجة</div>
   <div class="result-grid">
     <div class="result-item">
       <div class="result-label">WPM</div>
       <div class="result-val" id="resWpm" style="color:var(--primary)">—</div>
     </div>
     <div class="result-item">
-      <div class="result-label">Accuracy</div>
+      <div class="result-label">الدقة</div>
       <div class="result-val" id="resAcc" style="color:var(--success)">—</div>
     </div>
     <div class="result-item">
-      <div class="result-label">Characters</div>
+      <div class="result-label">أحرف</div>
       <div class="result-val" id="resChars" style="color:var(--text)">—</div>
     </div>
     <div class="result-item">
-      <div class="result-label">Errors</div>
+      <div class="result-label">أخطاء</div>
       <div class="result-val" id="resErrors" style="color:var(--error)">—</div>
     </div>
   </div>
-  <div class="new-record" id="newRecord" style="display:none">🏆 NEW RECORD!</div>
+  <div class="new-record" id="newRecord" style="display:none">🏆 رقم قياسي جديد!</div>
   <div class="btn-row">
-    <button class="btn btn-primary" id="retryBtn">TRY AGAIN</button>
-    <button class="btn btn-ghost" id="newTextBtn">NEW TEXT</button>
+    <button class="btn btn-primary" id="retryBtn">مرة أخرى</button>
+    <button class="btn btn-ghost" id="newTextBtn">نص جديد</button>
   </div>
 </div>
 
 <div class="history" id="historyPanel" style="display:none">
-  <div class="history-title">Recent results</div>
+  <div class="history-title">النتائج الأخيرة</div>
   <div class="history-list" id="historyList"></div>
 </div>
 
 <script>
 window.i18n = {
   wordBankRu: [],
-  newRecord: "🏆 NEW RECORD!"
+  newRecord: "🏆 رقم قياسي جديد!"
 };
 </script>
 <script type="module" src="/frontend/games/typing/typing-ads.js?v=1" defer></script>
 <script>
-const WORDS_RU = [
-  'сервер','клиент','сеть','порт','запрос','ответ','файл','данные','код','функция',
-  'класс','объект','метод','строка','массив','цикл','ошибка','тест','база','таблица',
-  'индекс','ключ','значение','токен','доступ','права','сессия','кэш','буфер','поток',
-  'процесс','память','ядро','пакет','протокол','адрес','домен','хост','путь','папка',
-  'список','карта','граф','узел','ребро','вес','глубина','высота','ширина','скорость',
-  'время','задача','очередь','стек','вызов','возврат','аргумент','переменная',
-  'константа','тип','число','текст','булево','пустой','ноль','один','два','три',
-  'алгоритм','сортировка','поиск','фильтр','маршрут','запись','чтение','удаление',
-  'создание','обновление','версия','релиз','ветка','коммит','слияние','конфликт',
-  'патч','билд','деплой','контейнер','образ','том','прокси','балансировщик'
-];
 const WORDS_EN = [
   'server','client','network','port','request','response','file','data','code','function',
   'class','object','method','string','array','loop','error','test','database','table',
@@ -262,6 +250,12 @@ const WORDS_EN = [
   'commit','merge','conflict','patch','build','deploy','container','image','volume','proxy'
 ];
 
+function getWordBank() {
+  const localized = window.i18n?.wordBankRu;
+  if (Array.isArray(localized) && localized.length) return localized;
+  return WORDS_EN;
+}
+
 let mode = '15';
 let words = [], charList = [], cursorPos = 0;
 let started = false, finished = false;
@@ -271,7 +265,7 @@ let history = [], bestWpm = {};
 let typingAdShownThisRound = false;
 
 function generateWords() {
-  const bank = [...(window.i18n?.wordBankRu || []), ...WORDS_EN];
+  const bank = getWordBank();
   const count = mode === 'words' ? 25 : 90;
   const arr = [];
   for (let i = 0; i < count; i++) arr.push(bank[Math.floor(Math.random() * bank.length)]);

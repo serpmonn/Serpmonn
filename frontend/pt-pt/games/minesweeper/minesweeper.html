@@ -6,19 +6,19 @@
   <meta http-equiv="Content-Language" content="pt-pt">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Buscaminas — Serpmonn</title>
-  <meta name="description" content="Buscaminas: abre todas las casillas seguras. 10×10, 15 minas, primer clic seguro, clic derecho para bandera.">
+  <title>Campo minado — Serpmonn</title>
+  <meta name="description" content="Campo minado: revele todas as casas seguras. 10×10, 15 minas, primeiro clique seguro, botão direito para bandeira.">
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://serpmonn.ru/frontend/pt-pt/games/minesweeper/minesweeper.html">
-  <meta property="og:title" content="Buscaminas — Serpmonn">
-  <meta property="og:description" content="Juega Buscaminas en línea: revela casillas, marca minas y bate tu mejor tiempo.">
+  <meta property="og:title" content="Campo minado — Serpmonn">
+  <meta property="og:description" content="Jogue Campo minado online: revele casas, marque minas e bata seu recorde.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/minesweeper.png">
 
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://serpmonn.ru/frontend/pt-pt/games/minesweeper/minesweeper.html">
-  <meta property="twitter:title" content="Buscaminas — Serpmonn">
-  <meta property="twitter:description" content="Buscaminas en línea: clásico de lógica en Serpmonn.">
+  <meta property="twitter:title" content="Campo minado — Serpmonn">
+  <meta property="twitter:description" content="Campo minado online: clássico de lógica no Serpmonn.">
   <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/minesweeper.png">
 
   <link rel="canonical" href="https://serpmonn.ru/frontend/pt-pt/games/minesweeper/minesweeper.html">
@@ -40,11 +40,11 @@
     window.i18n = {
       timeSuffix: "s",
       noRecord: "—",
-      winMessage: "¡Victoria!",
-      loseMessage: "¡Boom!",
+      winMessage: "Vitória!",
+      loseMessage: "Boom!",
       continueAd: "Continuar",
-      instructionsDesktop: "• Clic izquierdo — revelar\n• Clic derecho o Shift — bandera\n• Primer clic seguro",
-      instructionsMobile: "• Toque corto — revelar\n• Toque largo (≥0,4s) — bandera"
+      instructionsDesktop: "• clique esquerdo — revelar\n• clique direito ou Shift — bandeira\n• Primeiro clique seguro",
+      instructionsMobile: "• Toque curto — revelar\n• Toque longo (≥0,4s) — bandeira"
     };
   </script>
   <script type="module" src="/frontend/games/minesweeper/minesweeper-ads.js?v=3" defer></script>
@@ -65,7 +65,7 @@
         box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
 
         var h = document.createElement('h3');
-        h.textContent = 'Cómo jugar — Buscaminas';
+        h.textContent = 'Como jogar — Campo minado';
         h.style.margin = '0 0 8px';
 
         var p = document.createElement('div');
@@ -74,7 +74,7 @@
 
         var btn = document.createElement('button');
         btn.className = 'btn';
-        btn.textContent = 'Entendido';
+        btn.textContent = 'Entendi';
         btn.style.marginTop = '10px';
         btn.onclick = function(){
           localStorage.setItem('game_instructions_mines_shown','1');
@@ -94,8 +94,8 @@
 
   <div class="page">
     <header>
-      <img src="/frontend/images/minesweeper.png" width="28" height="28" alt="Juegos" style="border-radius:6px;">
-      <h1>Buscaminas</h1>
+      <img src="/frontend/images/minesweeper.png" width="28" height="28" alt="Jogos" style="border-radius:6px;">
+      <h1>Campo minado</h1>
     </header>
 
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
@@ -103,20 +103,20 @@
     </div>
 <div class="wrap">
       <div class="panel">
-        <div id="board" class="board" aria-label="Tablero de juego"></div>
-        <div class="hint" style="display:none;">Clic izq. — revelar, clic der./Shift — bandera. Primer clic siempre seguro. Reinicio — R.</div>
+        <div id="board" class="board" aria-label="Tabuleiro"></div>
+        <div class="hint" style="display:none;">clique esq. — revelar, dir./Shift — bandeira. Primeiro clique sempre seguro. Reiniciar — R.</div>
       </div>
 
       <div class="panel">
         <div class="stats">
           <div class="stat">Minas<br><b id="minesLeft">15</b></div>
-          <div class="stat">Tiempo<br><b id="time">0</b>s</div>
-          <div class="stat">Récord<br><b id="best">—</b></div>
+          <div class="stat">Tempo<br><b id="time">0</b>s</div>
+          <div class="stat">Recorde<br><b id="best">—</b></div>
         </div>
 
         <div class="controls">
           <button class="btn primary" id="btnStart">Iniciar</button>
-          <button class="btn" id="btnReset">De nuevo</button>
+          <button class="btn" id="btnReset">Reiniciar</button>
         </div>
       </div>
     </div>

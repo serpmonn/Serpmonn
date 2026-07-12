@@ -157,15 +157,15 @@
 
 <div class="scoreboard">
   <div class="score-item">
-    <div class="score-label">Eaten</div>
+    <div class="score-label">مأكول</div>
     <div class="score-value" id="eaten">0</div>
   </div>
   <div class="score-item">
-    <div class="score-label">Weight kg</div>
+    <div class="score-label">الوزن كغ</div>
     <div class="score-value" id="weight">0.1</div>
   </div>
   <div class="score-item">
-    <div class="score-label">Best</div>
+    <div class="score-label">الأفضل</div>
     <div class="score-value" id="best">0</div>
   </div>
 </div>
@@ -177,18 +177,23 @@
   <div class="overlay" id="overlay">
     <div class="overlay-title">🐀 FAT RAT</div>
     <div class="overlay-sub">
-      Click the maze — the rat runs to the food.<br>
-      The fatter the rat — the slower it moves.<br>
-      <span style="color:#a78bfa">Purple food</span> — super boost ×3!<br>
-      Goal: fatten the rat as much as possible!
+      انقر على المتاهة — الفأر يجري نحو الطعام.<br>
+      كلما زاد سمن الفأر — أبطأ حركته.<br>
+      <span style="color:#a78bfa">طعام بنفسجي</span> — تعزيز فائق ×3!<br>
+      الهدف: إسمان الفأر قدر الإمكان!
     </div>
-    <button class="btn" id="startBtn">START</button>
+    <button class="btn" id="startBtn">ابدأ</button>
   </div>
 </div>
 
-<div class="hint">[click / tap] — point the rat to food</div>
+<div class="hint">[نقر / لمس] — أشر إلى الطعام للفأر</div>
 
 <script type="module" src="/frontend/games/rat/rat-ads.js?v=1" defer></script>
+<script>
+window.i18n = {
+  gameOverTitle: "🏆 MAX FAT!"
+};
+</script>
 <script>
 const canvas = document.getElementById('c');
 const ctx = canvas.getContext('2d');
@@ -531,9 +536,9 @@ function init() {
 function endGame() {
   gameRunning = false;
   cancelAnimationFrame(animFrame);
-  overlay.querySelector('.overlay-title').textContent = '🏆 MAX FAT!';
+  overlay.querySelector('.overlay-title').textContent = window.i18n?.gameOverTitle || '🏆 MAX FAT!';
   overlay.querySelector('.overlay-sub').innerHTML =
-    eaten + ' · ' + weight.toFixed(1) + ' Weight kg';
+    eaten + ' · ' + weight.toFixed(1) + ' الوزن كغ';
   overlay.classList.remove('hidden');
   if (!ratAdShownThisRound && window.showFullScreenAd) {
     ratAdShownThisRound = true;

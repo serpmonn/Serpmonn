@@ -10,8 +10,8 @@
     
     
     <title>IndexNow: Implementação prática e dicas</title>
-    <meta name="description" content="Atualizações rápidas de motores de busca: configuração, apenas-alteradas, erros comuns, comparação com sitemap ping e lista de verificação de implementação.">
-    <meta name="keywords" content="IndexNow, SEO, indexação, motores de busca, Bing, Yandex, atualizações do site">
+    <meta name="description" content="Atualizações rápidas de mecanismos de busca: configuração, apenas-alteradas, erros comuns, comparação com sitemap ping e lista de verificação de implementação.">
+    <meta name="keywords" content="IndexNow, SEO, indexação, mecanismos de busca, Bing, Yandex, atualizações do site">
     
     <!-- Open Graph -->
     <meta property="og:title" content="IndexNow: Implementação prática e dicas">
@@ -39,7 +39,7 @@
         "@id": "https://serpmonn.ru/frontend/pt-pt/knowledge-base/articles/indexnow-practical-guide.html"
       },
       "headline": "IndexNow: Implementação prática e dicas",
-      "description": "Atualizações rápidas de motores de busca: configuração, apenas-alteradas, erros comuns, comparação com sitemap ping e lista de verificação de implementação.",
+      "description": "Atualizações rápidas de mecanismos de busca: configuração, apenas-alteradas, erros comuns, comparação com sitemap ping e lista de verificação de implementação.",
       "image": "https://serpmonn.ru/frontend/images/Banner_Serpmonn.png",
       "datePublished": "2025-01-15",
       "dateModified": "2025-06-23",
@@ -62,6 +62,7 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
 
     <style>
@@ -161,27 +162,6 @@
       .breadcrumb a:hover {
         text-decoration: underline;
       }
-      .ad-top-banner {
-        text-align: center;
-        margin: 16px 0;
-        position: relative;
-        transition: opacity 0.3s ease, height 0.3s ease;
-      }
-      .ad-top-banner.hidden {
-        opacity: 0;
-        height: 0;
-        overflow: hidden;
-        margin: 0;
-      }
-      .ad-top-banner .mrg-tag {
-        width: 100% !important;
-        max-width: 970px;
-        height: auto;
-        aspect-ratio: 970 / 250;
-        display: inline-block;
-      }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { max-width: 728px; aspect-ratio: 728 / 90; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { max-width: 320px; aspect-ratio: 320 / 50; } }
       .cta-button { 
         display: block; 
         text-align: center; 
@@ -254,7 +234,7 @@
 
     <article>
       <header class="article-header">
-        <div class="ad-top-banner ad-banner">
+        <div class="ad-top-banner ad-banner loading">
           <ins class="mrg-tag" 
               style="display:inline-block;"
               data-ad-client="ad-1897960" 
@@ -266,14 +246,14 @@
       </header>
 
       <div class="summary">
-        <strong>Porquê ler:</strong> como entregar atualizações rapidamente aos motores de busca, quando usar apenas-alteradas, como o IndexNow difere do sitemap ping e como evitar erros comuns.
+        <strong>Por que ler:</strong> como entregar atualizações rapidamente aos mecanismos de busca, quando usar apenas-alteradas, como o IndexNow difere do sitemap ping e como evitar erros comuns.
       </div>
 
       <div class="toc">
         <strong>Índice</strong>
         <ol>
           
-          <li><a href="#what">O que é o IndexNow</a></li>
+          <li><a href="#what">O que é IndexNow</a></li>
           
           <li><a href="#setup">Configuração da chave e ping básico</a></li>
           
@@ -289,10 +269,10 @@
       </div>
 
       
-      <h2 id="what">1) O que é o IndexNow</h2>
+      <h2 id="what">1) O que é IndexNow</h2>
       
       
-      <p>IndexNow é um protocolo que permite notificar instantaneamente os motores de busca sobre alterações de URL (criação, atualização, exclusão). Suportado pelo Bing, Yandex, Seznam e outros serviços. A vantagem é o atraso mínimo de indexação e menos ruído de rastreamento.</p>
+      <p>IndexNow é um protocolo que permite notificar instantaneamente os mecanismos de busca sobre alterações de URL (criação, atualização, exclusão). Suportado por Bing, Yandex, Seznam e outros serviços. A vantagem é o atraso mínimo de indexação e menos ruído de rastreamento.</p>
       
       
       
@@ -315,7 +295,7 @@
         
         <li>Gere uma chave (GUID) e coloque o ficheiro <code>YOUR_KEY.txt</code> na raiz do site (<code>/.well-known/</code> ou raiz do domínio) com a string da chave.</li>
         
-        <li>Envie ping para o endpoint com o URL e a chave. Exemplo (URL único):</li>
+        <li>Envie ping para o endpoint com URL e chave. Exemplo (URL único):</li>
         
       </ol>
       
@@ -336,7 +316,7 @@ Content-Type: application/json
       
       
       
-      <div class="note">Para lotes, especifique até 10.000 URLs num pedido ou use um feed de ficheiro com um URL de ficheiro de registo de alterações.</div>
+      <div class="note">Para lotes, especifique até 10.000 URLs em uma solicitação ou use um feed de ficheiro com um ficheiro de log de alterações.</div>
       
       
       
@@ -345,7 +325,7 @@ Content-Type: application/json
       <h2 id="changed">3) Modo apenas-alteradas</h2>
       
       
-      <p>A ideia é enviar ping apenas para ficheiros realmente alterados no último commit/implementação. Isto reduz o ruído e o uso de quota.</p>
+      <p>A ideia é enviar ping apenas para arquivos realmente alterados no último commit/implantação. Isso reduz o ruído e o uso de cota.</p>
       
       
       
@@ -356,7 +336,7 @@ Content-Type: application/json
         
         <ul>
           
-          <li>Obtenha a lista de caminhos alterados do VCS (git diff) ou artefactos de construção.</li>
+          <li>Obtenha a lista de caminhos alterados do VCS (git diff) ou artefatos de build.</li>
           
           <li>Filtre por rotas públicas (excluindo <code>node_modules</code>, <code>.git</code>, pastas privadas).</li>
           
@@ -390,11 +370,11 @@ Content-Type: application/json
           </li>
           
           <li class="section-item">
-            <span class="section-item-title">Ruído:</span> IndexNow - direcionado a URLs alteradas; sitemap - varrimento de todo o mapa (mais caro para o orçamento de rastreamento).
+            <span class="section-item-title">Ruído:</span> IndexNow - direcionado a URLs alteradas; sitemap - varredura de todo o mapa (mais caro para o orçamento de rastreamento).
           </li>
           
           <li class="section-item">
-            <span class="section-item-title">Fiabilidade:</span> Sitemaps permanecem a base; IndexNow complementa e acelera. É melhor usar ambos.
+            <span class="section-item-title">Confiabilidade:</span> Sitemaps permanecem a base; IndexNow complementa e acelera. É melhor usar ambos.
           </li>
           
         </ul>
@@ -424,7 +404,7 @@ Content-Type: application/json
           
           <li>Repetições muito frequentes dos mesmos URLs (limite as repetições).</li>
           
-          <li>Ignorar multilingue (precisa enviar ping para a versão localizada correspondente).</li>
+          <li>Ignorar multilíngue (precisa enviar ping para a versão localizada correspondente).</li>
           
         </ul>
         
@@ -451,13 +431,13 @@ Content-Type: application/json
       <div class="faq">
         
         <h3>Quantos URLs enviar de uma vez?</h3>
-        <p>Até 10.000 num lote - idealmente agrupados por tipo/idioma.</p>
+        <p>Até 10.000 em um lote - idealmente agrupados por tipo/idioma.</p>
         
         <h3>Devo enviar ping para exclusões?</h3>
         <p>Sim - passe os URLs das páginas excluídas para acelerar a desindexação.</p>
         
-        <h3>Como confirmar que está a funcionar?</h3>
-        <p>Registos de resposta da API (200/202), picos de rastreamento nos registos do servidor, aparecimento mais rápido de novos URLs.</p>
+        <h3>Como confirmar que está funcionando?</h3>
+        <p>Logs de resposta da API (200/202), picos de rastreamento nos logs do servidor, aparecimento mais rápido de novos URLs.</p>
         
         
         
@@ -466,7 +446,7 @@ Content-Type: application/json
           
           <li>Chave colocada e acessível via HTTPS.</li>
           
-          <li>Recolher caminhos apenas-alteradas do CI/CD.</li>
+          <li>Coletar caminhos apenas-alteradas do CI/CD.</li>
           
           <li>Deduplicação e limitação de repetições.</li>
           
@@ -492,8 +472,8 @@ Content-Type: application/json
     </article>
 
     <div class="social-buttons">
-      <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Subscrever no Telegram</a>
-      <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Subscrever no VK</a>
+      <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Inscrever-se no Telegram</a>
+      <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Inscrever-se no VK</a>
     </div>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>

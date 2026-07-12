@@ -4,18 +4,18 @@
 <head>
 <link rel="stylesheet" href="/frontend/styles/styles.css">
 <meta http-equiv="Content-Language" content="ro">
-    <title>Falling Blue Squares</title>
+    <title>Quadrati blu cadenti</title>
     <meta charset="UTF-8">
-    <meta name="description" content="Test your reflexes in a game where you dodge falling shapes! Can you last as long as possible and avoid collisions?">
+    <meta name="description" content="Metti alla prova i riflessi schivando forme che cadono!">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <meta property="og:title" content="Test your reflexes dodging falling shapes!" />
-    <meta property="og:description" content="Can you last as long as possible and avoid collisions? Test your skills in this dynamic game!" />
+    <meta property="og:title" content="Metti alla prova i riflessi!" />
+    <meta property="og:description" content="Quanto a lungo resisti?" />
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico" />
     <meta property="og:url" content="https://serpmonn.ru/frontend/ro/games/redsquare2/redsquare2.html" />
     <meta property="og:type" content="game" />
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Falling shapes — Serpmonn">
-    <meta name="twitter:description" content="Play the browser mini-game Falling shapes on Serpmonn.">
+    <meta name="twitter:title" content="Forme cadenti — Serpmonn">
+    <meta name="twitter:description" content="Minigioco su Serpmonn.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
     <link rel="canonical" href="https://serpmonn.ru/frontend/ro/games/redsquare2/redsquare2.html"/>
     <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
@@ -23,11 +23,11 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script>
     window.i18n = {
-      scorePrefix: "Score: ",
-      missedPrefix: "Misses: ",
-      pause: "Pause",
-      resume: "Resume",
-      bannedNicknameAlert: "Nickname contains banned words. Please choose another nickname.",
+      scorePrefix: "Punti: ",
+      missedPrefix: "Errori: ",
+      pause: "Pausa",
+      resume: "Riprendi",
+      bannedNicknameAlert: "Il nickname contiene parole vietate. Scegline un altro.",
       scoreTableUrl: "/frontend/ro/games/redsquare2/score_table.html"
     };
     </script>
@@ -38,30 +38,30 @@
 <body>
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
-            <h2 class="instruction-title">How to play Falling Blue Squares?</h2>
+            <h2 class="instruction-title">Come giocare a Quadrati blu cadenti?</h2>
             <ul class="instruction-list">
-                <li><strong>Controls:</strong> Use arrow keys or touch on a touchscreen to move the red square left and right</li>
-                <li><strong>Goal:</strong> Dodge falling objects</li>
-                <li><strong>Scoring:</strong> You get 1 point for each object you dodge</li>
-                <li><strong>Misses:</strong> If an object hits you, it counts as a miss</li>
-                <li><strong>Game over:</strong> The game ends after 10 collisions</li>
-                <li><strong>Leaderboard:</strong> After the game you can view your results on the leaderboard</li>
-                <li><strong>Pause:</strong> Use the Pause button to temporarily stop the game</li>
+                <li><strong>Controlli:</strong> Usa frecce o touch per muovere il quadrato rosso</li>
+                <li><strong>Obiettivo:</strong> Schiva gli oggetti che cadono</li>
+                <li><strong>Punteggio:</strong> 1 punto per ogni oggetto schivato</li>
+                <li><strong>Errori:</strong> Se un oggetto ti colpisce, conta come errore</li>
+                <li><strong>Fine partita:</strong> La partita finisce dopo 10 collisioni</li>
+                <li><strong>Classifica:</strong> Dopo la partita vedi i risultati</li>
+                <li><strong>Pausa:</strong> Usa il pulsante Pausa per fermare</li>
             </ul>
-            <button class="instruction-button" id="understandBtn">Got it, let&#39;s play!</button>
+            <button class="instruction-button" id="understandBtn">Capito, iniziamo!</button>
         </div>
     </div>
 
-    <div id="score">Score: 0</div>
-    <div id="missed">Misses: 0</div>
+    <div id="score">Punti: 0</div>
+    <div id="missed">Errori: 0</div>
     <div class="button-container">
-        <button id="leaderboardBtn">Leaderboard</button>
-        <button id="pauseBtn">Pause</button>
-        <button id="restartBtn">Restart</button>
+        <button id="leaderboardBtn">Classifica</button>
+        <button id="pauseBtn">Pausa</button>
+        <button id="restartBtn">Ricomincia</button>
     </div>
     <form id="nicknameForm">
-        <input type="text" id="nickname" placeholder="Enter your name" required>
-        <button type="submit">Start game</button>
+        <input type="text" id="nickname" placeholder="Inserisci il nome" required>
+        <button type="submit">Avvia</button>
     </form>
     <canvas id="gameCanvas"></canvas>
 

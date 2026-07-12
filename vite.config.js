@@ -17,7 +17,7 @@ export default defineConfig({                                                   
         changeOrigin: true                                                                              // Изменение заголовка Origin для обхода CORS ограничений
       },
       
-      // Основной сервер (profiles, likes, analytics, promocodes и т.д.)
+      // Основной сервер (profiles, analytics, promocodes и т.д.)
       '/api': {                                                                                         // Прокси для всех запросов начинающихся с /api
         target: 'http://localhost:5000',                                                                // Целевой сервер - основной бэкенд на порту 5000
         changeOrigin: true                                                                              // Изменение заголовка Origin для обхода CORS ограничений
@@ -32,12 +32,6 @@ export default defineConfig({                                                   
       // Leaderboard (игры)
       '/games': {                                                                                       // Прокси для всех запросов начинающихся с /games
         target: 'http://localhost:3000',                                                                // Целевой сервер - сервер лидерборда на порту 3000
-        changeOrigin: true                                                                              // Изменение заголовка Origin для обхода CORS ограничений
-      },
-      
-      // X-Car игра
-      '/xcar': {                                                                                        // Прокси для всех запросов начинающихся с /xcar
-        target: 'http://localhost:5500',                                                                // Целевой сервер - сервер X-Car игры на порту 5500
         changeOrigin: true                                                                              // Изменение заголовка Origin для обхода CORS ограничений
       },
       

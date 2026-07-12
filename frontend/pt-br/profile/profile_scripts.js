@@ -2,6 +2,14 @@ import { generateCombinedBackground } from '../scripts/backgroundGenerator.js';
 import { getPageT } from '../scripts/i18n-loader.js';
 import { getFrontendPath, getFrontendUrl, redirectToAuth } from '../scripts/locale-paths.js';
 import {
+  apiGet,
+  apiDelete,
+  loadT as loadFindingT,
+  getFindingT,
+  showToast,
+} from '../scripts/findings-client.js';
+import { openFindingModal } from '../scripts/findings-modals.js';
+import {
   TOOL_CATALOG,
   normalizeToolHref,
   loadAndMigrateFavorites,
@@ -1102,10 +1110,92 @@ document.addEventListener('DOMContentLoaded', async () => {
     });
   }
 
+  /* ==== МОИ НАХОДКИ ==== */
+
+  async function loadMyFindings() {
+    const listEl = document.getElementById('myFindingsList');
+    const titleEl = document.getElementById('myFindingsTitle');
+    const loadingEl = document.getElementById('myFindingsLoading');
+    if (!listEl) return;
+
+    await loadFindingT();
+    const ft = (key, vars) => getFindingT(`finding.${key}`, vars);
+    if (titleEl) titleEl.textContent = ft('myFindingsTitle');
+
+    const { ok, data, status } = await apiGet('/api/findings/mine/list');
+    if (loadingEl) loadingEl.remove();
+
+    if (!ok) {
+      const msg = status === 401 ? ft('loginRequired') : ft('loadFailed');
+      listEl.innerHTML = `<p class="plan-hint">${msg}</p>`;
+      return;
+    }
+
+    const items = data.items || [];
+    if (!items.length) {
+      listEl.innerHTML = `<p class="plan-hint">${ft('noFindings')}</p>`;
+      return;
+    }
+
+    listEl.innerHTML = '';
+    items.forEach((item) => {
+      const row = document.createElement('div');
+      row.className = 'profile-finding-item';
+
+      const openBtn = document.createElement('button');
+      openBtn.type = 'button';
+      openBtn.className = 'profile-finding-open';
+      openBtn.textContent = item.query_text || ft('pageTitle');
+      openBtn.addEventListener('click', () => {
+        openFindingModal(item.public_id);
+      });
+
+      const meta = document.createElement('span');
+      meta.className = 'plan-quota-hint';
+      try {
+        meta.textContent = new Date(item.created_at).toLocaleString(
+          document.documentElement.lang || 'ru'
+        );
+      } catch {
+        meta.textContent = item.created_at || '';
+      }
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'profile-finding-delete';
+      deleteBtn.setAttribute('aria-label', ft('deleteLabel'));
+      deleteBtn.title = ft('deleteLabel');
+      deleteBtn.textContent = '×';
+      deleteBtn.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        deleteBtn.disabled = true;
+        const { ok } = await apiDelete(
+          `/api/findings/${encodeURIComponent(item.public_id)}`
+        );
+        if (ok) {
+          row.remove();
+          showToast(ft('deletedToast'));
+          if (!listEl.querySelector('.profile-finding-item')) {
+            listEl.innerHTML = `<p class="plan-hint">${ft('noFindings')}</p>`;
+          }
+        } else {
+          deleteBtn.disabled = false;
+          showToast(ft('deleteFailed'));
+        }
+      });
+
+      row.appendChild(openBtn);
+      row.appendChild(meta);
+      row.appendChild(deleteBtn);
+      listEl.appendChild(row);
+    });
+  }
+
   /* ==== ИНИЦИАЛИЗАЦИЯ ==== */
 
   getProfile();
   loadPoints();
   renderFavoriteTools();
   updateReferralCounter();
+  loadMyFindings();
 });

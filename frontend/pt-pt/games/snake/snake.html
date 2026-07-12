@@ -6,19 +6,19 @@
   <meta http-equiv="Content-Language" content="pt-pt">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <title>Serpiente — Serpmonn</title>
-  <meta name="description" content="Juego clásico de la Serpiente: recoge tantas manzanas como puedas y evita choques.">
+  <title>Cobrinha — Serpmonn</title>
+  <meta name="description" content="Jogo clássico da Cobrinha: colete o máximo de maçãs e evite colisões.">
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://serpmonn.ru/frontend/pt-pt/games/snake/snake.html">
-  <meta property="og:title" content="Serpiente — Serpmonn">
-  <meta property="og:description" content="Juega a la Serpiente clásica en línea: controla la serpiente, come y bate récords.">
+  <meta property="og:title" content="Cobrinha — Serpmonn">
+  <meta property="og:description" content="Jogue Cobrinha clássica online: controle a cobra, coma e bata recordes.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/snake.png">
 
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://serpmonn.ru/frontend/pt-pt/games/snake/snake.html">
-  <meta property="twitter:title" content="Serpiente — Serpmonn">
-  <meta property="twitter:description" content="Juego Serpiente en línea: clásico arcade en Serpmonn.">
+  <meta property="twitter:title" content="Cobrinha — Serpmonn">
+  <meta property="twitter:description" content="Jogo Cobrinha online: clássico de arcade no Serpmonn.">
   <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/snake.png">
 
   <link rel="canonical" href="https://serpmonn.ru/frontend/pt-pt/games/snake/snake.html">
@@ -52,7 +52,7 @@
         box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
 
         var h = document.createElement('h3');
-        h.textContent = 'Cómo jugar — Serpiente';
+        h.textContent = 'Como jogar — Cobrinha';
         h.style.margin = '0 0 8px';
 
         var p = document.createElement('div');
@@ -61,7 +61,7 @@
 
         var btn = document.createElement('button');
         btn.className = 'btn';
-        btn.textContent = 'Entendido';
+        btn.textContent = 'Entendi';
         btn.style.marginTop = '10px';
         btn.onclick = function(){
           localStorage.setItem('game_instructions_snake_shown','1');
@@ -84,36 +84,36 @@
       <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
     </div>
     <header>
-      <img src="/frontend/images/snake.png" width="28" height="28" alt="Juegos" style="border-radius:6px;">
-      <h1>Serpiente</h1>
+      <img src="/frontend/images/snake.png" width="28" height="28" alt="Jogos" style="border-radius:6px;">
+      <h1>Cobrinha</h1>
     </header>
 
     <div class="wrap">
       <div class="panel">
-        <canvas id="game" width="480" height="480" aria-label="Tablero de juego"></canvas>
-        <div class="hint">Controles: flechas o WASD. Pausa — Espacio. Reinicio — R.</div>
+        <canvas id="game" width="480" height="480" aria-label="Tabuleiro"></canvas>
+        <div class="hint">Controlos: setas ou WASD. Pausa — Espaço. Reiniciar — R.</div>
       </div>
 
       <div class="panel">
-        <h2>Estadísticas</h2>
+        <h2>Estatísticas</h2>
 
         <div class="stats">
-          <div class="stat">Puntuación<br><b id="score">0</b></div>
-          <div class="stat">Récord<br><b id="best">0</b></div>
+          <div class="stat">Pontuação<br><b id="score">0</b></div>
+          <div class="stat">Recorde<br><b id="best">0</b></div>
         </div>
 
         <div class="stats">
-          <div class="stat">Velocidad<br><b id="speed">1x</b></div>
-          <div class="stat">Tamaño del tablero<br><b>24×24</b></div>
+          <div class="stat">Velocidade<br><b id="speed">1x</b></div>
+          <div class="stat">Tamanho do campo<br><b>24×24</b></div>
         </div>
 
         <div style="display:flex; gap:8px; justify-content:center; margin-top:8px;">
           <button class="btn primary" id="btnStart">Iniciar</button>
           <button class="btn" id="btnPause">Pausa</button>
-          <button class="btn" id="btnReset">De nuevo</button>
+          <button class="btn" id="btnReset">Reiniciar</button>
         </div>
 
-        <div class="controls" aria-label="Controles móviles">
+        <div class="controls" aria-label="Controles móveis">
           <div></div>
           <button class="btn" data-dir="up">▲</button>
           <div></div>
@@ -127,10 +127,10 @@
 
   <script>
     window.i18n = {
-      gameOver: "Fin del juego",
-      pressRToRestart: "Pulsa R — de nuevo",
-      instructionsDesktop: "• Flechas o WASD — control\n• Espacio — pausa\n• R — reiniciar",
-      instructionsMobile: "• Deslizar — control\n• Iniciar/Pausa — botones"
+      gameOver: "Fim de jogo",
+      pressRToRestart: "Pressione R — reiniciar",
+      instructionsDesktop: "• Setas ou WASD — controle\n• Espaço — pausa\n• R — reiniciar",
+      instructionsMobile: "• Deslizar — controle\n• Iniciar/Pausa — botões"
     };
   </script>
   <script type="module" src="/frontend/games/snake/snake-ads.js?v=1" defer></script>

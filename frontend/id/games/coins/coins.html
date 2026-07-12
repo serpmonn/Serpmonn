@@ -5,17 +5,17 @@
   <meta charset="UTF-8">
   <meta http-equiv="Content-Language" content="id">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Coins — Serpmonn</title>
-  <meta name="description" content="Collect coins within the time limit while avoiding obstacles. A simple arcade game.">
+  <title>Монетки — Serpmonn</title>
+  <meta name="description" content="Собирай монетки за отведённое время, уклоняясь от препятствий. Простая аркада.">
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://serpmonn.ru/frontend/id/games/coins/coins.html">
-  <meta property="og:title" content="Coins — Serpmonn">
-  <meta property="og:description" content="Play Coins online: collect as many coins as you can in time and beat your records.">
+  <meta property="og:title" content="Монетки — Serpmonn">
+  <meta property="og:description" content="Играйте в Монетки онлайн: собирайте монеты за время и бейте рекорды.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/coins.png">
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://serpmonn.ru/frontend/id/games/coins/coins.html">
-  <meta property="twitter:title" content="Coins — Serpmonn">
-  <meta property="twitter:description" content="Online Coins game: a simple arcade on Serpmonn.">
+  <meta property="twitter:title" content="Монетки — Serpmonn">
+  <meta property="twitter:description" content="Онлайн-игра Монетки: простая аркада на Serpmonn.">
   <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/coins.png">
   <link rel="canonical" href="https://serpmonn.ru/frontend/id/games/coins/coins.html">
   <link rel="icon" href="/frontend/images/coins.png" type="image/x-icon">
@@ -31,11 +31,11 @@
   <div id="menuContainer"></div>
   <script>
     window.i18n = {
-      gameOver: "Game over",
-      pressRToRestart: "Press R — restart",
-      continueAd: "Continue",
-      instructionsDesktop: "• Arrow keys or WASD — move\n• R — restart",
-      instructionsMobile: "• Swipes — move direction\n• Start/Restart — buttons"
+      gameOver: "Игра окончена",
+      pressRToRestart: "Нажмите R — заново",
+      continueAd: "Продолжить",
+      instructionsDesktop: "• Стрелки или WASD — движение\n• R — заново",
+      instructionsMobile: "• Свайпы — направление движения\n• Старт/Заново — кнопки"
     };
   </script>
   <script type="module" src="/frontend/games/coins/coins-ads.js?v=3" defer></script>
@@ -50,14 +50,14 @@
         var box = document.createElement('div');
         box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
         var h = document.createElement('h3');
-        h.textContent = 'How to play — Coins';
+        h.textContent = 'Как играть — Монетки';
         h.style.margin = '0 0 8px';
         var p = document.createElement('div');
         p.style.cssText = 'font-size:14px;line-height:1.5;white-space:pre-line';
         p.textContent = isMobile() ? window.i18n.instructionsMobile : window.i18n.instructionsDesktop;
         var btn = document.createElement('button');
         btn.className = 'btn';
-        btn.textContent = 'Got it';
+        btn.textContent = 'Понятно';
         btn.style.marginTop = '10px';
         btn.onclick = function(){ localStorage.setItem('game_instructions_coins_shown','1'); ov.remove(); };
         box.appendChild(h); box.appendChild(p); box.appendChild(btn); ov.appendChild(box); document.body.appendChild(ov);
@@ -68,26 +68,26 @@
   </script>
   <div class="page">
     <header>
-      <img src="/frontend/images/coins.png" width="28" height="28" alt="Games" style="border-radius:6px;">
-      <h1>Coins</h1>
+      <img src="/frontend/images/coins.png" width="28" height="28" alt="Игры" style="border-radius:6px;">
+      <h1>Монетки</h1>
     </header>
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
       <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
     </div>
 <div class="wrap">
       <div class="panel">
-        <canvas id="game" width="480" height="480" aria-label="Game board"></canvas>
-        <div class="hint" style="display:none;">Controls: arrow keys or WASD. Collect as many coins as possible in time. Restart — R.</div>
+        <canvas id="game" width="480" height="480" aria-label="Игровое поле"></canvas>
+        <div class="hint" style="display:none;">Управление: стрелки или WASD. Соберите как можно больше монет за время. Перезапуск — R.</div>
       </div>
       <div class="panel">
         <div class="stats">
-          <div class="stat">Coins<br><b id="score">0</b></div>
-          <div class="stat">Time<br><b id="time">60</b>s</div>
-          <div class="stat">Best<br><b id="best">0</b></div>
+          <div class="stat">Монеты<br><b id="score">0</b></div>
+          <div class="stat">Время<br><b id="time">60</b>с</div>
+          <div class="stat">Рекорд<br><b id="best">0</b></div>
         </div>
         <div class="controls">
-          <button class="btn primary" id="btnStart">Start</button>
-          <button class="btn" id="btnReset">Restart</button>
+          <button class="btn primary" id="btnStart">Старт</button>
+          <button class="btn" id="btnReset">Заново</button>
         </div>
       </div>
     </div>

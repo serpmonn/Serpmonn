@@ -1,0 +1,62 @@
+/* Shared compact top ad banner (no reserved height while loading) */
+.ad-top-banner {
+  text-align: center;
+  margin: 4px 0 12px;
+  min-height: 0;
+  transition: opacity 0.3s ease, margin 0.3s ease;
+  overflow: hidden;
+}
+
+.ad-top-banner.loading .mrg-tag {
+  height: 0 !important;
+  min-height: 0;
+  overflow: hidden;
+  opacity: 0;
+}
+
+.ad-top-banner.loading::before {
+  content: none;
+}
+
+.ad-top-banner.ad-loaded .mrg-tag,
+.ad-top-banner:not(.loading):not(.hidden) .mrg-tag {
+  width: 100% !important;
+  max-width: 970px;
+  height: auto !important;
+  opacity: 1;
+  aspect-ratio: 970 / 250;
+  display: inline-block;
+}
+
+.ad-top-banner.hidden {
+  display: none !important;
+  height: 0;
+  margin: 0;
+}
+
+.ad-top-banner ins[style*="display: none"],
+.ad-top-banner ins[style*="height: 0px"],
+.ad-top-banner ins[style*="height: 0"],
+.ad-top-banner ins[style*="width: 0px"] {
+  display: none !important;
+}
+
+@media (max-width: 1199px) {
+  .ad-top-banner.ad-loaded .mrg-tag,
+  .ad-top-banner:not(.loading):not(.hidden) .mrg-tag {
+    max-width: 728px;
+    aspect-ratio: 728 / 90;
+  }
+}
+
+@media (max-width: 768px) {
+  .ad-top-banner.ad-loaded .mrg-tag,
+  .ad-top-banner:not(.loading):not(.hidden) .mrg-tag {
+    max-width: 320px;
+    aspect-ratio: 320 / 50;
+  }
+}
+
+[dir="rtl"] .ad-top-banner {
+  text-align: center;
+}

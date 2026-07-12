@@ -1,0 +1,67 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/find/view.html{% else %}/frontend/{{ locale }}/find/view.html{% endif %}"
+eleventyComputed:
+  layout: "layouts/base.njk"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  title: "Finding — Serpmonn"
+  adsEnabled: false
+  searchPlaceholder: "{{ i18n[locale].searchPlaceholder }}"
+  submitTitle: "{{ i18n[locale].submitTitle }}"
+---
+
+<div class="search-card-wrapper finding-view-page">
+  <div class="main-search-container">
+    <a href="{% if locale == 'ru' %}/frontend/main.html{% else %}/frontend/{{ locale }}/index.html{% endif %}" class="finding-view-logo-link">
+      <img src="/frontend/images/serpmonn.ico" alt="Serpmonn" class="logo" title="Serpmonn">
+    </a>
+
+    <form id="finding-search-form" class="search-form" action="{% if locale == 'ru' %}/frontend/main.html{% else %}/frontend/{{ locale }}/index.html{% endif %}" method="get">
+      <div class="search-form-body">
+        <div class="search-form-row">
+          <div class="search-input-wrapper">
+            <input type="search" name="q" id="finding-search-q" placeholder="{{ searchPlaceholder }}" autocomplete="off" readonly>
+          </div>
+          <button type="submit" class="search-btn" title="{{ submitTitle }}" aria-label="{{ submitTitle }}">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ff4d4d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="7" y1="17" x2="17" y2="7" />
+              <polyline points="7 7 17 7 17 17" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div id="finding-result-wrap" class="finding-result-wrap">
+    <div class="ai-result-container finding-view-result" id="finding-result-container">
+      <p class="finding-view-badge" id="finding-view-badge"></p>
+      <p class="finding-view-meta" id="finding-view-meta"></p>
+      <div id="finding-view-root" class="ai-result-content">
+        <p class="finding-loading">…</p>
+      </div>
+      <div class="finding-view-actions finding-view-actions--row">
+        <button type="button" id="finding-share-page" class="ai-share-copy-btn"></button>
+        <button type="button" id="finding-share-toggle" class="finding-share-toggle-btn" hidden></button>
+      </div>
+      <div class="finding-share-form" id="finding-share-form" hidden>
+        <label class="finding-share-field">
+          <input type="text" id="finding-share-username" autocomplete="off" spellcheck="false">
+        </label>
+        <label class="finding-share-field">
+          <textarea id="finding-share-message" rows="2"></textarea>
+        </label>
+        <button type="button" class="ai-share-copy-btn finding-share-submit-btn" id="finding-share-submit"></button>
+      </div>
+    </div>
+
+    <div id="ai-image-results" class="ai-image-results" style="display:none;"></div>
+    <div id="ai-video-results" class="ai-video-results" style="display:none;"></div>
+  </div>
+</div>
+
+<link rel="stylesheet" href="/frontend/find/find-view.css">
+<script type="module" src="/frontend/find/find-view.js" defer></script>

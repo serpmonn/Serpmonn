@@ -12,11 +12,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Perfil — Serpmonn</title>
-  <meta name="description" content="Gira o seu perfil, subscrição e ferramentas no Serpmonn.">
+  <meta name="description" content="Gerencie seu perfil, assinatura e ferramentas no Serpmonn.">
 
   <!-- Open Graph -->
   <meta property="og:title" content="Perfil — Serpmonn">
-  <meta property="og:description" content="Gira o seu perfil, subscrição e ferramentas no Serpmonn.">
+  <meta property="og:description" content="Gerencie seu perfil, assinatura e ferramentas no Serpmonn.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/pt-pt/profile/profile.html">
   <meta property="og:type" content="website">
@@ -24,7 +24,7 @@
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Perfil — Serpmonn">
-  <meta name="twitter:description" content="Gira o seu perfil, subscrição e ferramentas.">
+  <meta name="twitter:description" content="Gerencie seu perfil, assinatura e ferramentas.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
   <!-- Каноническая ссылка -->
@@ -236,6 +236,7 @@
   <link rel="stylesheet" href="/frontend/styles/styles.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
   <link rel="stylesheet" href="profile_styles.css">
+  <link rel="stylesheet" href="/frontend/find/find-view.css">
 
   <!-- Скрипты -->
   <script type="module" src="profile_scripts.js" defer></script>
@@ -253,7 +254,7 @@
 
       <div class="profile-header-main">
         <h1 id="profileHeaderTitle">
-          Perfil de utilizador
+          Perfil do utilizador
         </h1>
 
         <p class="profile-identity">
@@ -264,7 +265,7 @@
 
         <div class="profile-status-row">
           <span id="accountStatusBadge" class="status-badge status-badge--unconfirmed">
-            Estado da conta
+            Status da conta
           </span>
           <span id="planBadge" class="status-badge status-badge--free">
             Free
@@ -301,7 +302,7 @@
             type="button"
             class="secondary-button secondary-button--small"
           >
-            Alterar dados
+            Editar dados
           </button>
         </div>
 
@@ -330,16 +331,16 @@
     <!-- Реферальная программа -->
     <section class="card" aria-labelledby="referralTitle">
       <h2 id="referralTitle">
-        Programa de referências
+        Programa de indicação
       </h2>
 
       <p class="plan-hint">
-        Convide amigos e ganhe pontos. Você e o convidado recebem um bónus após o registo.
+        Convide amigos e ganhe pontos. Você e a pessoa convidada recebem um bônus após o registo.
       </p>
 
       <div class="referral-row">
         <label for="referralLink" class="referral-label">
-          A minha ligação de referência:
+          Meu link de indicação:
         </label>
         <input
           id="referralLink"
@@ -367,12 +368,12 @@
       </h2>
 
       <p class="plan-hint">
-        Troque pontos por dias de subscrição Pro. Agora: 500 pontos = 1 dia de Pro.
+        Troque pontos por dias de assinatura Pro. Agora: 500 pontos = 1 dia de Pro.
       </p>
 
       <div class="referral-row">
         <label for="proExchangeDays" class="referral-label">
-          Quantos dias de Pro pretende receber:
+          Quantos dias de Pro você quer receber:
         </label>
         <input
           id="proExchangeDays"
@@ -397,10 +398,10 @@
     <section id="planCard" class="card" aria-labelledby="planTitle">
       <div class="card-header-row">
         <h2 id="planTitle">
-          Subscrição e limites
+          Assinatura e limites
         </h2>
         <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
-          Gerir plano
+          Gerenciar plano
         </button>
       </div>
 
@@ -413,7 +414,7 @@
 
       <div class="plan-quota">
         <div class="plan-quota-header">
-          <span>Pedidos disponíveis no plano</span>
+          <span>Solicitações disponíveis no plano</span>
           <span id="planQuotaCounter" class="plan-quota-counter">—</span>
         </div>
         <div class="plan-quota-bar">
@@ -432,16 +433,24 @@
       </div>
     </section>
 
+    <!-- Мои находки -->
+    <section class="card" aria-labelledby="myFindingsTitle">
+      <h2 id="myFindingsTitle">My findings</h2>
+      <div id="myFindingsList" class="profile-findings-list" aria-live="polite">
+        <p class="plan-hint" id="myFindingsLoading">…</p>
+      </div>
+    </section>
+
     <!-- Мои инструменты (избранное + недавние) -->
     <section class="card" aria-labelledby="toolsTitle">
       <h2 id="toolsTitle">
-        As minhas ferramentas
+        Minhas ferramentas
       </h2>
 
       <div class="tools-grid" id="favoriteTools"></div>
 
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
-        Ainda não selecionou nenhuma ferramenta.
+        Você ainda não selecionou nenhuma ferramenta.
         Marque ⭐ na página de
         <a href="/frontend/pt-pt/tools/tools.html">
           todas as ferramentas
@@ -453,9 +462,9 @@
     </section>
 
     <!-- Выход -->
-    <section class="logout-section" aria-label="Terminar sessão na conta">
+    <section class="logout-section" aria-label="Sair da conta">
       <button id="logoutButton" type="button" class="danger-button">
-        Terminar sessão
+        Sair da conta
       </button>
     </section>
   </main>

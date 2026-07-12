@@ -7,18 +7,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>Puzzle 15 — Serpmonn</title>
-  <meta name="description" content="Puzzle 15 clásico: ordena las fichas del 1 al 15. Entrena memoria y lógica.">
+  <meta name="description" content="Puzzle 15 clássico: ordene as peças de 1 a 15. Treine a memória e lógica.">
 
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://serpmonn.ru/frontend/pt-pt/games/fifteen/fifteen.html">
   <meta property="og:title" content="Puzzle 15 — Serpmonn">
-  <meta property="og:description" content="Juega Puzzle 15 en línea: ordena las fichas y bate tus récords.">
+  <meta property="og:description" content="Jogue Puzzle 15 online: ordene as peças e bata recordes.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/fifteen.png">
 
   <meta property="twitter:card" content="summary_large_image">
   <meta property="twitter:url" content="https://serpmonn.ru/frontend/pt-pt/games/fifteen/fifteen.html">
   <meta property="twitter:title" content="Puzzle 15 — Serpmonn">
-  <meta property="twitter:description" content="Puzzle 15 en línea: el clásico en Serpmonn.">
+  <meta property="twitter:description" content="Puzzle 15 online: clássico no Serpmonn.">
   <meta property="twitter:image" content="https://serpmonn.ru/frontend/images/fifteen.png">
 
   <link rel="canonical" href="https://serpmonn.ru/frontend/pt-pt/games/fifteen/fifteen.html">
@@ -39,8 +39,8 @@
   <script>
     window.i18n = {
       continueAd: "Continuar",
-      instructionsDesktop: "• Flechas o WASD — mover fichas\n• Objetivo: ordenar números del 1 al 15\n• Casilla vacía abajo a la derecha\n• ¡Menos movimientos y tiempo es mejor!",
-      instructionsMobile: "• Deslizar — mover fichas\n• Objetivo: ordenar números del 1 al 15\n• Casilla vacía abajo a la derecha"
+      instructionsDesktop: "• Setas ou WASD — mover peças\n• Objetivo: ordenar números 1–15\n• Célula vazia no canto inferior direito\n• Menos jogadas e tempo é melhor!",
+      instructionsMobile: "• Deslizar — mover peças\n• Objetivo: ordenar números 1–15\n• Célula vazia no canto inferior direito"
     };
   </script>
   <script type="module" src="/frontend/games/fifteen/fifteen-ads.js?v=3" defer></script>
@@ -61,7 +61,7 @@
         box.style.cssText = 'max-width:90vw;background:#141821;color:#fff;border:1px solid #1f2632;border-radius:12px;padding:16px;text-align:left;';
 
         var h = document.createElement('h3');
-        h.textContent = 'Cómo jugar — Puzzle 15';
+        h.textContent = 'Como jogar — Puzzle 15';
         h.style.margin = '0 0 8px';
 
         var p = document.createElement('div');
@@ -70,7 +70,7 @@
 
         var btn = document.createElement('button');
         btn.className = 'btn';
-        btn.textContent = 'Entendido';
+        btn.textContent = 'Entendi';
         btn.style.marginTop = '10px';
         btn.onclick = function(){
           localStorage.setItem('game_instructions_fifteen_shown','1');
@@ -90,7 +90,7 @@
 
   <div class="page">
     <header>
-      <img src="/frontend/images/fifteen.png" width="28" height="28" alt="Juegos" style="border-radius:6px;">
+      <img src="/frontend/images/fifteen.png" width="28" height="28" alt="Jogos" style="border-radius:6px;">
       <h1>Puzzle 15</h1>
     </header>
 
@@ -99,25 +99,25 @@
     </div>
 <div class="wrap">
       <div class="panel">
-        <div id="game" class="game-board" aria-label="Tablero del puzzle 15"></div>
-        <div class="hint" style="display:none;">Mueve las fichas para ordenar los números del 1 al 15. Flechas o WASD.</div>
+        <div id="game" class="game-board" aria-label="Tabuleiro do puzzle 15"></div>
+        <div class="hint" style="display:none;">Mova as peças para ordenar os números de 1 a 15. Setas ou WASD.</div>
       </div>
 
       <div class="panel">
         <div class="stats">
-          <div class="stat">Movimientos<br><b id="moves">0</b></div>
-          <div class="stat">Tiempo<br><b id="time">0</b>s</div>
-          <div class="stat">Récord<br><b id="best">0</b></div>
+          <div class="stat">Jogadas<br><b id="moves">0</b></div>
+          <div class="stat">Tempo<br><b id="time">0</b>s</div>
+          <div class="stat">Recorde<br><b id="best">0</b></div>
         </div>
 
         <div class="controls">
-          <button class="btn primary" id="btnNewGame">Nueva partida</button>
+          <button class="btn primary" id="btnNewGame">Novo jogo</button>
           <button class="btn" id="btnReset">Reiniciar</button>
         </div>
 
         <div class="solved-message" id="solvedMessage" style="display:none;">
-          <h3>¡Felicidades!</h3>
-          <p>¡Has resuelto el puzzle!</p>
+          <h3>Parabéns!</h3>
+          <p>Resolveu o puzzle!</p>
         </div>
       </div>
     </div>
