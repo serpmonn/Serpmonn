@@ -6,6 +6,22 @@ export function escapeHtml(str) {
     .replace(/"/g, '&quot;');
 }
 
+export function excerptAnswerPreview(source) {
+  if (!source) return '';
+  if (typeof source === 'string' && !source.trimStart().startsWith('{')) {
+    const text = source.replace(/\s+/g, ' ').trim();
+    return text.length > 220 ? `${text.slice(0, 217)}…` : text;
+  }
+  try {
+    const data = typeof source === 'string' ? JSON.parse(source) : source;
+    const text = String(data?.answer?.text || '').replace(/\s+/g, ' ').trim();
+    if (!text) return '';
+    return text.length > 220 ? `${text.slice(0, 217)}…` : text;
+  } catch {
+    return '';
+  }
+}
+
 function getSourceHostname(link) {
   try {
     return new URL(link).hostname.replace(/^www\./, '');
@@ -52,15 +68,10 @@ function buildSourceHostnameCounts(sources) {
   return counts;
 }
 
-export function renderSourcesBlock(items, sourcesLabel, listId = 'finding-sources-list') {
-  const sources = normalizeSourceItems(items);
-  if (!sources.length) return '';
-
+function renderSourceChips(sources) {
   const chipSources = dedupeSourcesByHostname(sources);
   const hostnameCounts = buildSourceHostnameCounts(sources);
-  const toggleLabel = `${sourcesLabel} (${sources.length})`;
-
-  const chips = chipSources
+  return chipSources
     .map((src) => {
       const hostname = src.hostname || getSourceHostname(src.link);
       const favicon = getSourceFaviconUrl(hostname, 32);
@@ -75,8 +86,10 @@ export function renderSourcesBlock(items, sourcesLabel, listId = 'finding-source
       `;
     })
     .join('');
+}
 
-  const listItems = sources
+function renderSourceListItems(sources) {
+  return sources
     .map((src) => {
       const hostname = getSourceHostname(src.link);
       const favicon = getSourceFaviconUrl(hostname, 16);
@@ -89,51 +102,11 @@ export function renderSourcesBlock(items, sourcesLabel, listId = 'finding-source
       `;
     })
     .join('');
-
-  return `
-    <div class="ai-sources">
-      <div class="ai-sources-bar">
-        <div class="ai-sources-chips">${chips}</div>
-        <button type="button" class="ai-sources-toggle" aria-expanded="false" aria-controls="${listId}">
-          <span class="ai-sources-toggle-label">${escapeHtml(toggleLabel)}</span>
-          <svg class="ai-sources-chevron" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-            <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
-          </svg>
-        </button>
-      </div>
-      <div id="${listId}" class="ai-sources-list" hidden>
-        ${listItems}
-      </div>
-    </div>
-  `;
 }
 
-export function setupSourcesToggle(root) {
-  const block = root.querySelector('.ai-sources');
-  if (!block) return;
-
-  const toggle = block.querySelector('.ai-sources-toggle');
-  const list = block.querySelector('.ai-sources-list');
-  if (!toggle || !list) return;
-
-  toggle.addEventListener('click', () => {
-    const expanded = toggle.getAttribute('aria-expanded') === 'true';
-    const nextExpanded = !expanded;
-    toggle.setAttribute('aria-expanded', nextExpanded ? 'true' : 'false');
-    list.hidden = !nextExpanded;
-    block.classList.toggle('is-expanded', nextExpanded);
-  });
-}
-
-export function renderImageBlock(container, images, header) {
-  if (!container) return;
-  if (!Array.isArray(images) || !images.length) {
-    container.style.display = 'none';
-    container.innerHTML = '';
-    return;
-  }
-
-  const itemsHtml = images
+function renderImageGrid(images) {
+  if (!Array.isArray(images) || !images.length) return '';
+  const cards = images
     .slice(0, 6)
     .map((img) => {
       const title = escapeHtml(img.title || '');
@@ -143,35 +116,24 @@ export function renderImageBlock(container, images, header) {
       return `
         <a class="ai-image-card" href="${link}" target="_blank" rel="noopener noreferrer">
           <div class="ai-image-thumb">
-            <img src="${thumb}" alt="${title}">
+            <img src="${thumb}" alt="${title}" loading="lazy">
           </div>
           <div class="ai-image-meta">
             <div class="ai-image-title">${title}</div>
             <div class="ai-image-source">${source}</div>
           </div>
-        </a>
-      `;
+        </a>`;
     })
     .join('');
-
-  container.innerHTML = `
-    <div class="ai-image-header">
-      <span>${escapeHtml(header)}</span>
-    </div>
-    <div class="ai-image-grid">${itemsHtml}</div>
-  `;
-  container.style.display = 'block';
+  return `
+    <div class="finding-details-section finding-details-section--images">
+      <div class="ai-image-grid">${cards}</div>
+    </div>`;
 }
 
-export function renderVideoBlock(container, videos, header) {
-  if (!container) return;
-  if (!Array.isArray(videos) || !videos.length) {
-    container.style.display = 'none';
-    container.innerHTML = '';
-    return;
-  }
-
-  const itemsHtml = videos
+function renderVideoGrid(videos) {
+  if (!Array.isArray(videos) || !videos.length) return '';
+  const cards = videos
     .slice(0, 6)
     .map((video) => {
       const title = escapeHtml(video.title || '');
@@ -182,25 +144,81 @@ export function renderVideoBlock(container, videos, header) {
       return `
         <a class="ai-video-card" href="${link}" target="_blank" rel="noopener noreferrer">
           <div class="ai-video-thumb">
-            <img src="${thumb}" alt="${title}">
+            <img src="${thumb}" alt="${title}" loading="lazy">
             ${duration ? `<div class="ai-video-duration">${duration}</div>` : ''}
           </div>
           <div class="ai-video-meta">
             <div class="ai-video-title">${title}</div>
             <div class="ai-video-source">${source}</div>
           </div>
-        </a>
-      `;
+        </a>`;
     })
     .join('');
+  return `
+    <div class="finding-details-section finding-details-section--videos">
+      <div class="ai-video-grid">${cards}</div>
+    </div>`;
+}
 
-  container.innerHTML = `
-    <div class="ai-video-header">
-      <span>${escapeHtml(header)}</span>
+function renderDetailsBlock({ sources, images, videos, t, detailsListId }) {
+  const normalizedSources = normalizeSourceItems(sources);
+  const hasSources = normalizedSources.length > 0;
+  const hasImages = Array.isArray(images) && images.length > 0;
+  const hasVideos = Array.isArray(videos) && videos.length > 0;
+
+  if (!hasSources && !hasImages && !hasVideos) return '';
+
+  const chipsHtml = hasSources ? renderSourceChips(normalizedSources) : '';
+  const bodyParts = [];
+
+  if (hasSources) {
+    bodyParts.push(`
+      <div class="finding-details-section finding-details-section--sources">
+        ${renderSourceListItems(normalizedSources)}
+      </div>`);
+  }
+  if (hasImages) bodyParts.push(renderImageGrid(images));
+  if (hasVideos) bodyParts.push(renderVideoGrid(videos));
+
+  return `
+    <div class="ai-sources finding-collapsible finding-details-block">
+      <div class="ai-sources-bar finding-collapsible-bar">
+        ${chipsHtml ? `<div class="ai-sources-chips">${chipsHtml}</div>` : '<div class="ai-sources-chips"></div>'}
+        <button type="button" class="ai-sources-toggle finding-collapsible-toggle" aria-expanded="false" aria-controls="${detailsListId}">
+          <span class="ai-sources-toggle-label">${escapeHtml(t('detailsLabel'))}</span>
+          <svg class="ai-sources-chevron" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M7.41 8.59 12 13.17l4.59-4.58L18 10l-6 6-6-6z"/>
+          </svg>
+        </button>
+      </div>
+      <div id="${detailsListId}" class="ai-sources-list finding-collapsible-body finding-details-body" hidden>
+        ${bodyParts.join('')}
+      </div>
     </div>
-    <div class="ai-video-grid">${itemsHtml}</div>
   `;
-  container.style.display = 'block';
+}
+
+export function setupFindingToggles(root) {
+  if (!root) return;
+
+  root.querySelectorAll('.finding-collapsible, .ai-sources, .finding-details-block').forEach((block) => {
+    const toggle = block.querySelector('.finding-collapsible-toggle, .ai-sources-toggle');
+    const body = block.querySelector('.finding-collapsible-body, .ai-sources-list');
+    if (!toggle || !body || toggle.dataset.boundToggle) return;
+    toggle.dataset.boundToggle = 'true';
+
+    toggle.addEventListener('click', () => {
+      const expanded = toggle.getAttribute('aria-expanded') === 'true';
+      const nextExpanded = !expanded;
+      toggle.setAttribute('aria-expanded', nextExpanded ? 'true' : 'false');
+      body.hidden = !nextExpanded;
+      block.classList.toggle('is-expanded', nextExpanded);
+    });
+  });
+}
+
+export function setupSourcesToggle(root) {
+  setupFindingToggles(root);
 }
 
 export function renderFindingContent({
@@ -209,7 +227,7 @@ export function renderFindingContent({
   videoEl,
   data,
   t,
-  sourcesListId = 'finding-sources-list',
+  sourcesListId = 'finding-details-list',
 }) {
   const snap = data.snapshot || {};
   const answerText = snap.answer?.text || '';
@@ -222,23 +240,30 @@ export function renderFindingContent({
   const images = snap.media?.images || [];
   const videos = snap.media?.videos || [];
   const sources = snap.sources || [];
+  const isOwner = data.isOwner === true || data.is_owner === true;
 
   if (rootEl) {
     rootEl.innerHTML = `
-      <div class="finding-view-badge">${escapeHtml(t('savedFindingLabel'))}</div>
+      ${isOwner ? `<div class="finding-view-badge">${escapeHtml(t('savedFindingLabel'))}</div>` : ''}
       <div class="finding-view-meta">${[
         author ? `${escapeHtml(t('authorLabel'))}: ${escapeHtml(author)}` : '',
         escapeHtml(createdAt),
       ].filter(Boolean).join(' · ')}</div>
       ${query ? `<div class="finding-panel-query">${escapeHtml(query)}</div>` : ''}
       <div class="finding-view-answer">${escapeHtml(answerText).replace(/\n/g, '<br>')}</div>
-      ${renderSourcesBlock(sources, t('sourcesLabel'), sourcesListId)}
+      ${renderDetailsBlock({ sources, images, videos, t, detailsListId: sourcesListId })}
     `;
-    setupSourcesToggle(rootEl);
+    setupFindingToggles(rootEl);
   }
 
-  renderImageBlock(imageEl, images, t('imagesLabel'));
-  renderVideoBlock(videoEl, videos, t('videosLabel'));
+  if (imageEl) {
+    imageEl.innerHTML = '';
+    imageEl.style.display = 'none';
+  }
+  if (videoEl) {
+    videoEl.innerHTML = '';
+    videoEl.style.display = 'none';
+  }
 
   return { query, publicId: data.publicId || data.public_id };
 }

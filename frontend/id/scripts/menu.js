@@ -1,23 +1,32 @@
+export function closeMenu() {
+    const menuButton = document.getElementById('menuButton');
+    const menuContainer = document.getElementById('menuContainer');
+    if (!menuContainer || !menuContainer.classList.contains('active')) return;
+
+    menuContainer.classList.remove('active');
+    menuContainer.setAttribute('aria-hidden', 'true');
+    if (menuButton) {
+        menuButton.innerHTML = '<span class="s">S</span><span class="n">n</span>';
+        menuButton.setAttribute('aria-expanded', 'false');
+    }
+
+    document.querySelectorAll('.submenu-container').forEach(sub => {
+        sub.classList.remove('active');
+        sub.setAttribute('aria-hidden', 'true');
+        const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
+        if (parent) {
+            parent.setAttribute('aria-expanded', 'false');
+            parent.setAttribute('aria-hidden', 'true');
+        }
+    });
+}
+
 export function toggleMenu(event) {
     const menuButton = document.getElementById('menuButton');
     const menuContainer = document.getElementById('menuContainer');
     
     if (menuContainer.classList.contains('active')) {
-        menuContainer.classList.remove('active');
-        menuButton.innerHTML = '<span class="s">S</span><span class="n">n</span>';
-        menuContainer.setAttribute('aria-hidden', 'true');
-        menuButton.setAttribute('aria-expanded', 'false');
-        
-        // Закрываем все подменю при закрытии главного меню
-        document.querySelectorAll('.submenu-container').forEach(sub => {
-            sub.classList.remove('active');
-            sub.setAttribute('aria-hidden', 'true');
-            const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
-            if (parent) {
-                parent.setAttribute('aria-expanded', 'false');
-                parent.setAttribute('aria-hidden', 'true');
-            }
-        });
+        closeMenu();
     } else {
         menuContainer.classList.add('active');
         menuButton.innerHTML = '<span class="s">Serp</span><span class="n">monn</span>';
@@ -173,21 +182,7 @@ export function initMenu() {
         if (menuContainer && menuContainer.classList.contains('active')) {
             // Проверяем, что клик не внутри меню и не на кнопку меню
             if (!menuContainer.contains(e.target) && e.target !== menuButton) {
-                menuContainer.classList.remove('active');
-                menuContainer.setAttribute('aria-hidden', 'true');
-                menuButton.innerHTML = '<span class="s">S</span><span class="n">n</span>';
-                menuButton.setAttribute('aria-expanded', 'false');
-                
-                // Закрываем все подменю
-                document.querySelectorAll('.submenu-container').forEach(sub => {
-                    sub.classList.remove('active');
-                    sub.setAttribute('aria-hidden', 'true');
-                    const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
-                    if (parent) {
-                        parent.setAttribute('aria-expanded', 'false');
-                        parent.setAttribute('aria-hidden', 'true');
-                    }
-                });
+                closeMenu();
             }
         }
     });

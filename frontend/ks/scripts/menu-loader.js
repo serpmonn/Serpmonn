@@ -267,7 +267,8 @@ fetch(primaryMenuPath)
       const authBlock = document.getElementById('auth-block');
       const profileBlock = document.getElementById('profile-block');
       const inboxBlock = document.getElementById('inbox-block');
-      if (!authBlock && !profileBlock && !inboxBlock) return;
+      const notificationsBlock = document.getElementById('findings-notifications-block');
+      if (!authBlock && !profileBlock && !inboxBlock && !notificationsBlock) return;
 
       try {
         const resp = await fetch('/auth/protected', { credentials: 'include' });
@@ -285,8 +286,12 @@ fetch(primaryMenuPath)
           inboxBlock.hidden = !isLoggedIn;
           inboxBlock.style.display = isLoggedIn ? '' : 'none';
         }
+        if (notificationsBlock) {
+          notificationsBlock.hidden = !isLoggedIn;
+          notificationsBlock.style.display = isLoggedIn ? '' : 'none';
+        }
         if (isLoggedIn) {
-          updateInboxBadge();
+          refreshUnreadUi();
         }
       } catch (e) {
         console.warn('auth menu state check failed', e);
@@ -298,9 +303,48 @@ fetch(primaryMenuPath)
           inboxBlock.hidden = true;
           inboxBlock.style.display = 'none';
         }
+        if (notificationsBlock) {
+          notificationsBlock.hidden = true;
+          notificationsBlock.style.display = 'none';
+        }
       }
 
       hideCurrentPageMenuLinks();
+    }
+
+    async function updateMenuUnreadIndicator() {
+      const menuButton = document.getElementById('menuButton');
+      if (!menuButton) return;
+
+      let hasUnread = false;
+      try {
+        const [inboxResp, notifResp] = await Promise.all([
+          fetch('/api/findings/inbox/unread-count', { credentials: 'include' }),
+          fetch('/api/findings/notifications/unread-count', { credentials: 'include' }),
+        ]);
+        if (inboxResp.ok) {
+          const data = await inboxResp.json();
+          if ((Number(data?.count) || 0) > 0) hasUnread = true;
+        }
+        if (notifResp.ok) {
+          const data = await notifResp.json();
+          if ((Number(data?.count) || 0) > 0) hasUnread = true;
+        }
+      } catch {
+        /* ignore */
+      }
+
+      let dot = menuButton.querySelector('.menu-button-unread-dot');
+      if (hasUnread) {
+        if (!dot) {
+          dot = document.createElement('span');
+          dot.className = 'menu-button-unread-dot';
+          dot.setAttribute('aria-hidden', 'true');
+          menuButton.appendChild(dot);
+        }
+      } else if (dot) {
+        dot.remove();
+      }
     }
 
     async function updateInboxBadge() {
@@ -328,9 +372,45 @@ fetch(primaryMenuPath)
       }
     }
 
+    async function updateNotificationsBadge() {
+      const block = document.getElementById('findings-notifications-block');
+      if (!block) return;
+
+      try {
+        const resp = await fetch('/api/findings/notifications/unread-count', { credentials: 'include' });
+        if (!resp.ok) return;
+        const data = await resp.json();
+        const count = Number(data?.count) || 0;
+        let badge = block.querySelector('.menu-inbox-badge');
+        if (count > 0) {
+          if (!badge) {
+            badge = document.createElement('span');
+            badge.className = 'menu-inbox-badge';
+            block.appendChild(badge);
+          }
+          badge.textContent = count > 99 ? '99+' : String(count);
+        } else if (badge) {
+          badge.remove();
+        }
+      } catch {
+        /* ignore */
+      }
+    }
+
+    async function refreshUnreadUi() {
+      await Promise.all([
+        updateMenuUnreadIndicator(),
+        updateInboxBadge(),
+        updateNotificationsBadge(),
+      ]);
+    }
+
     updateAuthMenuState();
 
-    initFindingsModals({ onInboxRead: updateInboxBadge });
+    initFindingsModals({
+      onInboxRead: refreshUnreadUi,
+      onNotificationsRead: refreshUnreadUi,
+    });
 
     // ========== ЗАГРУЖАЕМ СКРИПТ СЕЛЕКТОРА ЯЗЫКА ==========
     const script = document.createElement('script');

@@ -1,4 +1,5 @@
 import express from 'express';
+import crypto from 'node:crypto';
 import paseto from 'paseto';
 import verifyToken from '../auth/verifyToken.mjs';
 import { getBackendMessages } from '../utils/i18n.mjs';
@@ -15,7 +16,22 @@ import {
   countUnreadInbox,
   markShareRead,
   deleteFindingByPublicId,
-  listPublicFindings,
+  updateFindingVisibility,
+  listFeedFindings,
+  isFollowing,
+  toggleFollow,
+  getFindingStats,
+  recordFindingView,
+  toggleFindingLike,
+  listFindingComments,
+  insertFindingComment,
+  insertNotification,
+  countUnreadNotifications,
+  listNotifications,
+  markNotificationRead,
+  markAllNotificationsRead,
+  listFindingsByUsername,
+  cloneFindingForUser,
 } from './findings.model.mjs';
 
 const { V2 } = paseto;
@@ -42,15 +58,17 @@ async function resolveDbUserId(req) {
   return row?.id || null;
 }
 
-function canViewFinding(finding, viewerUserId, hasShare) {
+async function canViewFinding(finding, viewerUserId, hasShare) {
   if (!finding) return false;
   if (viewerUserId && finding.user_id === viewerUserId) return true;
   if (finding.visibility === 'public' || finding.visibility === 'link') return true;
-  if (finding.visibility === 'followers') return false;
+  if (finding.visibility === 'followers' && viewerUserId) {
+    return isFollowing(viewerUserId, finding.user_id);
+  }
   return !!hasShare;
 }
 
-function serializeFinding(finding, viewerUserId = null, hasShare = false) {
+function serializeFinding(finding, viewerUserId = null, hasShare = false, stats = null) {
   const isOwner = !!(viewerUserId && finding.user_id === viewerUserId);
   return {
     publicId: finding.public_id,
@@ -62,25 +80,134 @@ function serializeFinding(finding, viewerUserId = null, hasShare = false) {
     author: finding.author_username || null,
     isOwner,
     canShare: isOwner || !!hasShare,
+    likesCount: stats?.likesCount ?? 0,
+    commentsCount: stats?.commentsCount ?? 0,
+    viewsCount: stats?.viewsCount ?? 0,
+    likedByMe: stats?.likedByMe ?? false,
   };
 }
 
-router.get('/findings/feed/list', async (req, res) => {
+function buildViewerKey(req, viewerUserId) {
+  if (viewerUserId) return `u:${viewerUserId}`;
+  const ip = String(req.headers['x-forwarded-for'] || req.socket?.remoteAddress || 'unknown')
+    .split(',')[0]
+    .trim();
+  const ua = String(req.headers['user-agent'] || '').slice(0, 120);
+  const hash = crypto.createHash('sha256').update(`${ip}|${ua}`).digest('hex').slice(0, 32);
+  return `g:${hash}`;
+}
+
+router.get('/findings/feed/list', attachOptionalUser, async (req, res) => {
   try {
+    const mode = String(req.query.mode || 'all').trim() === 'following' ? 'following' : 'all';
+    const q = String(req.query.q || '').trim();
     const limit = req.query.limit;
     const offset = req.query.offset;
-    const rows = await listPublicFindings(limit, offset);
-    res.json({
-      items: rows.map((row) => ({
-        public_id: row.public_id,
-        query_text: row.query_text,
-        locale: row.locale,
-        created_at: row.created_at,
-        author_username: row.author_username,
-      })),
-    });
+    const viewerUserId = req.user?.email
+      ? (await getUserIdByEmail(req.user.email))?.id || null
+      : null;
+
+    if (mode === 'following' && !viewerUserId) {
+      return res.status(401).json({ error: 'login_required' });
+    }
+
+    const items = await listFeedFindings({ mode, viewerUserId, q, limit, offset });
+    res.json({ items, mode });
   } catch (err) {
     console.error('[findings] feed list', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
+router.get('/findings/notifications/unread-count', verifyToken, async (req, res) => {
+  try {
+    const userId = await resolveDbUserId(req);
+    if (!userId) return res.status(401).json({ error: 'unauthorized' });
+    const count = await countUnreadNotifications(userId);
+    res.json({ count });
+  } catch (err) {
+    console.error('[findings] notifications unread-count', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
+router.get('/findings/notifications/list', verifyToken, async (req, res) => {
+  try {
+    const userId = await resolveDbUserId(req);
+    if (!userId) return res.status(401).json({ error: 'unauthorized' });
+    const items = await listNotifications(userId);
+    res.json({ items });
+  } catch (err) {
+    console.error('[findings] notifications list', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
+router.post('/findings/notifications/read-all', verifyToken, async (req, res) => {
+  try {
+    const userId = await resolveDbUserId(req);
+    if (!userId) return res.status(401).json({ error: 'unauthorized' });
+    await markAllNotificationsRead(userId);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[findings] notifications read-all', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
+router.post('/findings/notifications/:id/read', verifyToken, async (req, res) => {
+  try {
+    const userId = await resolveDbUserId(req);
+    if (!userId) return res.status(401).json({ error: 'unauthorized' });
+    const notificationId = Number.parseInt(req.params.id, 10);
+    if (!Number.isFinite(notificationId)) return res.status(400).json({ error: 'invalid_id' });
+    await markNotificationRead(notificationId, userId);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[findings] notification read', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
+router.get('/findings/users/:username/findings', attachOptionalUser, async (req, res) => {
+  try {
+    const username = String(req.params.username || '').trim();
+    if (!username) return res.status(400).json({ error: 'username_required' });
+    const viewerUserId = req.user?.email
+      ? (await getUserIdByEmail(req.user.email))?.id || null
+      : null;
+    const result = await listFindingsByUsername(username, viewerUserId);
+    if (!result.ok) {
+      if (result.error === 'user_not_found') return res.status(404).json({ error: 'user_not_found' });
+      return res.status(400).json({ error: result.error });
+    }
+    res.json(result);
+  } catch (err) {
+    console.error('[findings] user findings', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
+router.post('/findings/users/:username/follow', verifyToken, async (req, res) => {
+  try {
+    const userId = await resolveDbUserId(req);
+    if (!userId) return res.status(401).json({ error: 'unauthorized' });
+    const username = String(req.params.username || '').trim();
+    const target = await getUserIdByUsername(username);
+    if (!target) return res.status(404).json({ error: 'user_not_found' });
+    const result = await toggleFollow(userId, target.id);
+    if (!result.ok) {
+      if (result.error === 'self_follow') return res.status(400).json({ error: 'self_follow' });
+      return res.status(400).json({ error: result.error });
+    }
+    res.json({
+      ok: true,
+      following: result.following,
+      username: target.username,
+      followersCount: result.followersCount ?? 0,
+    });
+  } catch (err) {
+    console.error('[findings] follow', err);
     res.status(500).json({ error: 'internal_error' });
   }
 });
@@ -222,6 +349,139 @@ router.post('/findings/:publicId/share', verifyToken, async (req, res) => {
   }
 });
 
+router.post('/findings/:publicId/save', verifyToken, async (req, res) => {
+  try {
+    const userId = await resolveDbUserId(req);
+    if (!userId) return res.status(401).json({ error: 'unauthorized' });
+
+    const publicId = String(req.params.publicId || '').trim();
+    if (!publicId.startsWith('fnd_')) return res.status(400).json({ error: 'invalid_id' });
+
+    const result = await cloneFindingForUser(publicId, userId);
+    if (!result.ok) {
+      if (result.error === 'not_found') return res.status(404).json({ error: 'not_found' });
+      if (result.error === 'forbidden') return res.status(403).json({ error: 'forbidden' });
+      if (result.error === 'already_owner') return res.status(400).json({ error: 'already_owner' });
+      return res.status(400).json({ error: result.error });
+    }
+
+    res.json({
+      ok: true,
+      publicId: result.publicId,
+      alreadySaved: result.alreadySaved === true,
+    });
+  } catch (err) {
+    console.error('[findings] save clone', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
+router.post('/findings/:publicId/like', verifyToken, async (req, res) => {
+  try {
+    const userId = await resolveDbUserId(req);
+    if (!userId) return res.status(401).json({ error: 'unauthorized' });
+
+    const publicId = String(req.params.publicId || '').trim();
+    const finding = await getFindingByPublicId(publicId);
+    if (!finding) return res.status(404).json({ error: 'not_found' });
+
+    const hasShare = await userHasShareAccess(finding.id, userId);
+    const allowed = await canViewFinding(finding, userId, hasShare);
+    if (!allowed) return res.status(403).json({ error: 'forbidden' });
+
+    const result = await toggleFindingLike(finding.id, userId);
+    const stats = await getFindingStats(finding.id, userId);
+
+    res.json({ ok: true, liked: result.liked, ...stats });
+  } catch (err) {
+    console.error('[findings] like', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
+router.get('/findings/:publicId/comments', attachOptionalUser, async (req, res) => {
+  try {
+    const publicId = String(req.params.publicId || '').trim();
+    const finding = await getFindingByPublicId(publicId);
+    if (!finding) return res.status(404).json({ error: 'not_found' });
+
+    const viewerUserId = req.user?.email
+      ? (await getUserIdByEmail(req.user.email))?.id || null
+      : null;
+    const hasShare = viewerUserId
+      ? await userHasShareAccess(finding.id, viewerUserId)
+      : false;
+    const allowed = await canViewFinding(finding, viewerUserId, hasShare);
+    if (!allowed) return res.status(403).json({ error: 'forbidden' });
+
+    const items = await listFindingComments(finding.id);
+    res.json({ items });
+  } catch (err) {
+    console.error('[findings] comments list', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
+router.post('/findings/:publicId/comments', verifyToken, async (req, res) => {
+  try {
+    const userId = await resolveDbUserId(req);
+    if (!userId) return res.status(401).json({ error: 'unauthorized' });
+
+    const publicId = String(req.params.publicId || '').trim();
+    const body = String(req.body?.body || '').trim();
+    const finding = await getFindingByPublicId(publicId);
+    if (!finding) return res.status(404).json({ error: 'not_found' });
+
+    const hasShare = await userHasShareAccess(finding.id, userId);
+    const allowed = await canViewFinding(finding, userId, hasShare);
+    if (!allowed) return res.status(403).json({ error: 'forbidden' });
+
+    const result = await insertFindingComment(finding.id, userId, body);
+    if (!result.ok) return res.status(400).json({ error: result.error });
+
+    if (finding.user_id !== userId) {
+      await insertNotification({
+        userId: finding.user_id,
+        type: 'comment',
+        actorUserId: userId,
+        findingId: finding.id,
+        commentId: result.commentId,
+      });
+    }
+
+    const stats = await getFindingStats(finding.id, userId);
+    res.status(201).json({ ok: true, commentId: result.commentId, ...stats });
+  } catch (err) {
+    console.error('[findings] comment create', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
+router.patch('/findings/:publicId', verifyToken, async (req, res) => {
+  try {
+    const userId = await resolveDbUserId(req);
+    if (!userId) return res.status(401).json({ error: 'unauthorized' });
+
+    const publicId = String(req.params.publicId || '').trim();
+    const visibility = String(req.body?.visibility || '').trim();
+    if (!publicId.startsWith('fnd_')) {
+      return res.status(400).json({ error: 'invalid_id' });
+    }
+
+    const result = await updateFindingVisibility(userId, publicId, visibility);
+    if (!result.ok) {
+      if (result.error === 'not_found') return res.status(404).json({ error: 'not_found' });
+      if (result.error === 'forbidden') return res.status(403).json({ error: 'forbidden' });
+      return res.status(400).json({ error: result.error });
+    }
+
+    res.json({ ok: true, publicId, visibility: result.visibility });
+  } catch (err) {
+    console.error('[findings] patch visibility', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
 router.delete('/findings/:publicId', verifyToken, async (req, res) => {
   try {
     const userId = await resolveDbUserId(req);
@@ -264,11 +524,18 @@ router.get('/findings/:publicId', attachOptionalUser, async (req, res) => {
       ? await userHasShareAccess(finding.id, viewerUserId)
       : false;
 
-    if (!canViewFinding(finding, viewerUserId, hasShare)) {
+    const allowed = await canViewFinding(finding, viewerUserId, hasShare);
+    if (!allowed) {
       return res.status(403).json({ error: 'forbidden' });
     }
 
-    res.json(serializeFinding(finding, viewerUserId, hasShare));
+    const isOwner = !!(viewerUserId && finding.user_id === viewerUserId);
+    if (!isOwner) {
+      await recordFindingView(finding.id, buildViewerKey(req, viewerUserId));
+    }
+
+    const stats = await getFindingStats(finding.id, viewerUserId);
+    res.json(serializeFinding(finding, viewerUserId, hasShare, stats));
   } catch (err) {
     console.error('[findings] get', err);
     res.status(500).json({ error: 'internal_error' });

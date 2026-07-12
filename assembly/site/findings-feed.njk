@@ -6,7 +6,8 @@ pagination:
 permalink: "{% if locale == 'ru' %}/frontend/findings/feed.html{% else %}/frontend/{{ locale }}/findings/feed.html{% endif %}"
 eleventyComputed:
   dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
-  title: "Findings feed — Serpmonn"
+  title: "{{ findingPageI18n[locale].feedTitle }} — Serpmonn"
+  feedTitle: "{{ findingPageI18n[locale].feedTitle }}"
 ---
 
 <!DOCTYPE html>
@@ -14,7 +15,7 @@ eleventyComputed:
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Findings feed — Serpmonn</title>
+  <title>{{ title }}</title>
   <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
   <link rel="stylesheet" href="/frontend/styles/styles.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
@@ -27,7 +28,7 @@ eleventyComputed:
 <div class="page-wrapper">
   <main class="container" role="main">
     <section class="card finding-inbox-card" aria-labelledby="findings-feed-title">
-      <h1 id="findings-feed-title">Findings feed</h1>
+      <h1 id="findings-feed-title">{{ feedTitle }}</h1>
       <p id="findings-feed-hint" class="finding-inbox-subtitle"></p>
       <div id="findings-feed-list" class="findings-inbox-list" aria-live="polite">
         <p class="plan-hint">…</p>

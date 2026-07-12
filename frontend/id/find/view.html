@@ -242,14 +242,26 @@
 
   <div id="finding-result-wrap" class="finding-result-wrap">
     <div class="ai-result-container finding-view-result" id="finding-result-container">
-      <p class="finding-view-badge" id="finding-view-badge"></p>
-      <p class="finding-view-meta" id="finding-view-meta"></p>
       <div id="finding-view-root" class="ai-result-content">
         <p class="finding-loading">…</p>
       </div>
       <div class="finding-view-actions finding-view-actions--row">
-        <button type="button" id="finding-share-page" class="ai-share-copy-btn"></button>
-        <button type="button" id="finding-share-toggle" class="finding-share-toggle-btn" hidden></button>
+        <span id="finding-view-views" class="finding-view-views"></span>
+        <button type="button" id="finding-share-page" class="finding-icon-btn finding-copy-icon-btn" hidden aria-hidden="true">
+          <svg class="finding-copy-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <rect x="8" y="8" width="13" height="13" rx="2"/>
+            <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/>
+          </svg>
+        </button>
+        <button type="button" id="finding-share-toggle" class="finding-icon-btn finding-share-icon-btn" hidden aria-hidden="true">
+          <svg class="finding-share-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <circle cx="18" cy="5" r="3"/>
+            <circle cx="6" cy="12" r="3"/>
+            <circle cx="18" cy="19" r="3"/>
+            <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+            <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+          </svg>
+        </button>
       </div>
       <div class="finding-share-form" id="finding-share-form" hidden>
         <label class="finding-share-field">
@@ -266,6 +278,8 @@
     <div id="ai-video-results" class="ai-video-results" style="display:none;"></div>
   </div>
 </div>
+
+<div id="ai-share-toast" class="ai-share-toast" style="display:none;" aria-live="polite"></div>
 
 <link rel="stylesheet" href="/frontend/find/find-view.css">
 <script type="module" src="/frontend/find/find-view.js" defer></script>

@@ -1,4 +1,5 @@
 import { getPageT } from './i18n-loader.js';
+import { flyFindingToMenu } from './finding-fly-animation.js';
 
 let t = (key, vars = {}) => key;
 
@@ -20,7 +21,11 @@ function getLocalePrefix() {
 }
 
 export function buildFindingViewUrl(publicId) {
-  return `${getLocalePrefix()}/find/view.html?id=${encodeURIComponent(publicId)}`;
+  const path = `${getLocalePrefix()}/find/view.html?id=${encodeURIComponent(publicId)}`;
+  if (typeof window !== 'undefined' && window.location?.origin) {
+    return `${window.location.origin}${path}`;
+  }
+  return path;
 }
 
 export function buildInboxUrl() {
@@ -77,12 +82,22 @@ async function apiDelete(path) {
   return { ok: res.ok, status: res.status, data };
 }
 
-function getModal() {
+async function apiPatch(path, body) {
+  const res = await fetch(path, {
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(body),
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
+
+function getSaveModal() {
   return document.getElementById('finding-save-modal');
 }
 
-function closeModal() {
-  const modal = getModal();
+function closeOverlayModal(modal) {
   if (!modal) return;
   modal.removeAttribute('data-open');
   setTimeout(() => {
@@ -90,65 +105,101 @@ function closeModal() {
   }, 150);
 }
 
-function openModal() {
-  const modal = getModal();
+function openOverlayModal(modal, focusSelector) {
   if (!modal) return;
   modal.style.display = 'flex';
   modal.setAttribute('data-open', 'true');
-  modal.querySelector('.finding-save-dialog')?.focus();
+  modal.querySelector(focusSelector)?.focus();
+}
+
+function closeSaveModal() {
+  closeOverlayModal(getSaveModal());
+}
+
+function openSaveModal() {
+  openOverlayModal(getSaveModal(), '.finding-save-dialog');
+}
+
+export async function copyTextToClipboard(text) {
+  const value = String(text || '');
+  if (!value) return false;
+
+  try {
+    if (navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(value);
+      return true;
+    }
+  } catch {
+    /* fallback below */
+  }
+
+  try {
+    const tmp = document.createElement('textarea');
+    tmp.value = value;
+    tmp.setAttribute('readonly', '');
+    tmp.style.position = 'fixed';
+    tmp.style.left = '-9999px';
+    tmp.style.top = '0';
+    document.body.appendChild(tmp);
+    tmp.focus();
+    tmp.select();
+    tmp.setSelectionRange(0, value.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(tmp);
+    return ok;
+  } catch {
+    return false;
+  }
+}
+
+function ensureToastElement() {
+  let el = document.getElementById('ai-share-toast');
+  if (el) return el;
+  el = document.createElement('div');
+  el.id = 'ai-share-toast';
+  el.className = 'ai-share-toast';
+  el.style.display = 'none';
+  document.body.appendChild(el);
+  return el;
 }
 
 export function showToast(message) {
-  const el = document.getElementById('ai-share-toast');
-  if (!el) {
-    window.alert(message);
-    return;
-  }
+  if (!message) return;
+  const el = ensureToastElement();
   el.textContent = message;
   el.hidden = false;
-  el.classList.add('is-visible');
+  el.style.display = 'block';
+  el.classList.add('visible');
   clearTimeout(showToast._timer);
   showToast._timer = setTimeout(() => {
-    el.hidden = true;
-    el.classList.remove('is-visible');
-  }, 3200);
+    el.classList.remove('visible');
+    clearTimeout(showToast._hideTimer);
+    showToast._hideTimer = setTimeout(() => {
+      el.style.display = 'none';
+      el.hidden = true;
+    }, 200);
+  }, 2200);
 }
 
-function resetShareForm(modal) {
-  const shareForm = modal.querySelector('#finding-save-share-form');
-  const shareUsername = modal.querySelector('#finding-save-share-username');
-  const shareMessage = modal.querySelector('#finding-save-share-message');
-  if (shareForm) shareForm.hidden = true;
-  if (shareUsername) shareUsername.value = '';
-  if (shareMessage) shareMessage.value = '';
-}
-
-function localizeModal(modal) {
-  modal.querySelectorAll('[data-finding-i18n]').forEach((el) => {
-    const key = el.dataset.findingI18n;
-    if (key) el.textContent = tk(key);
-  });
+function localizeSaveModal(modal) {
   const titleEl = modal.querySelector('#finding-save-title');
-  const saveBtn = modal.querySelector('[data-finding-action="save"]');
+  const savePrivateBtn = modal.querySelector('[data-finding-action="save-private"]');
+  const shareOpenBtn = modal.querySelector('[data-finding-action="share-open"]');
   const cancelBtn = modal.querySelector('[data-finding-action="cancel"]');
-  const shareToggleBtn = modal.querySelector('[data-finding-action="share-toggle"]');
-  const shareSendBtn = modal.querySelector('[data-finding-action="share-send"]');
-  const shareUsername = modal.querySelector('#finding-save-share-username');
-  const shareMessage = modal.querySelector('#finding-save-share-message');
 
   if (titleEl) titleEl.textContent = tk('saveLabel');
-  if (saveBtn) saveBtn.textContent = tk('saveLabel');
+  if (savePrivateBtn) {
+    savePrivateBtn.textContent = tk('saveToProfile');
+    savePrivateBtn.title = tk('saveToProfileHint');
+  }
+  if (shareOpenBtn) {
+    shareOpenBtn.textContent = tk('shareMenuTitle');
+    shareOpenBtn.title = tk('saveHint');
+  }
   if (cancelBtn) cancelBtn.textContent = tk('cancelLabel');
-  if (shareToggleBtn) shareToggleBtn.textContent = tk('sendToFriend');
-  if (shareSendBtn) shareSendBtn.textContent = tk('sendToUser');
-  if (shareUsername) shareUsername.placeholder = tk('usernamePlaceholder');
-  if (shareMessage) shareMessage.placeholder = tk('messagePlaceholder');
 }
 
-async function savePendingFinding(modal, pendingContext) {
-  const visibility =
-    modal.querySelector('input[name="finding-visibility"]:checked')?.value || 'private';
-
+async function savePendingFinding(pendingContext, visibility = 'private') {
   const snapshot = buildFindingSnapshot(pendingContext);
   const { ok, status, data } = await apiPost('/api/findings', {
     query: pendingContext.query || '',
@@ -166,7 +217,7 @@ async function savePendingFinding(modal, pendingContext) {
     return { ok: false };
   }
 
-  return { ok: true, publicId: data.publicId };
+  return { ok: true, publicId: data.publicId, visibility: data.visibility };
 }
 
 export async function initFindingsSave(getContext) {
@@ -176,41 +227,29 @@ export async function initFindingsSave(getContext) {
   if (!saveBtn || saveBtn.dataset.initialized) return;
   saveBtn.dataset.initialized = 'true';
 
-  const modal = getModal();
-  if (!modal) return;
+  const saveModal = getSaveModal();
+  if (!saveModal) return;
 
-  const backdrop = modal.querySelector('.ai-share-backdrop');
-  const closeBtn = modal.querySelector('.finding-save-close');
-  const cancelBtn = modal.querySelector('[data-finding-action="cancel"]');
-  const confirmSaveBtn = modal.querySelector('[data-finding-action="save"]');
-  const shareToggleBtn = modal.querySelector('[data-finding-action="share-toggle"]');
-  const shareSendBtn = modal.querySelector('[data-finding-action="share-send"]');
-  const shareForm = modal.querySelector('#finding-save-share-form');
-  const shareUsername = modal.querySelector('#finding-save-share-username');
-  const shareMessage = modal.querySelector('#finding-save-share-message');
+  const saveBackdrop = saveModal.querySelector('.ai-share-backdrop');
+  const saveCloseBtn = saveModal.querySelector('.finding-save-close');
+  const saveCancelBtn = saveModal.querySelector('[data-finding-action="cancel"]');
+  const savePrivateBtn = saveModal.querySelector('[data-finding-action="save-private"]');
+  const shareOpenBtn = saveModal.querySelector('[data-finding-action="share-open"]');
 
   let pendingContext = null;
 
-  const close = () => {
-    closeModal();
+  const closeSave = () => {
+    closeSaveModal();
     pendingContext = null;
-    resetShareForm(modal);
   };
 
-  backdrop?.addEventListener('click', close);
-  closeBtn?.addEventListener('click', close);
-  cancelBtn?.addEventListener('click', close);
+  saveBackdrop?.addEventListener('click', closeSave);
+  saveCloseBtn?.addEventListener('click', closeSave);
+  saveCancelBtn?.addEventListener('click', closeSave);
 
   saveBtn.title = tk('saveLabel');
   saveBtn.setAttribute('aria-label', tk('saveLabel'));
-  localizeModal(modal);
-
-  shareToggleBtn?.addEventListener('click', () => {
-    if (!shareForm) return;
-    const nextOpen = shareForm.hidden;
-    shareForm.hidden = !nextOpen;
-    if (nextOpen) shareUsername?.focus();
-  });
+  localizeSaveModal(saveModal);
 
   saveBtn.addEventListener('click', async () => {
     const ctx = getContext();
@@ -226,61 +265,55 @@ export async function initFindingsSave(getContext) {
     }
 
     pendingContext = ctx;
-    resetShareForm(modal);
-    localizeModal(modal);
-    openModal();
+    localizeSaveModal(saveModal);
+    openSaveModal();
   });
 
-  confirmSaveBtn?.addEventListener('click', async () => {
+  async function finishSave(visibility, toastKey, triggerBtn) {
     if (!pendingContext) return;
-    confirmSaveBtn.disabled = true;
-    const result = await savePendingFinding(modal, pendingContext);
-    confirmSaveBtn.disabled = false;
+    if (savePrivateBtn) savePrivateBtn.disabled = true;
+    if (shareOpenBtn) shareOpenBtn.disabled = true;
+    const result = await savePendingFinding(pendingContext, visibility);
+    if (savePrivateBtn) savePrivateBtn.disabled = false;
+    if (shareOpenBtn) shareOpenBtn.disabled = false;
     if (!result.ok) return;
 
-    showToast(tk('savedToast'));
-    close();
-  });
+    closeSaveModal();
+    await flyFindingToMenu(triggerBtn || saveModal.querySelector('.finding-save-dialog'));
+    showToast(tk(toastKey));
+    pendingContext = null;
+  }
 
-  shareSendBtn?.addEventListener('click', async () => {
+  savePrivateBtn?.addEventListener('click', () => finishSave('private', 'savedToast', savePrivateBtn));
+
+  shareOpenBtn?.addEventListener('click', async () => {
     if (!pendingContext) return;
-    const toUsername = (shareUsername?.value || '').trim().replace(/^@/, '');
-    if (!toUsername) {
-      shareUsername?.focus();
-      return;
-    }
 
-    shareSendBtn.disabled = true;
-    const saved = await savePendingFinding(modal, pendingContext);
-    if (!saved.ok) {
-      shareSendBtn.disabled = false;
-      return;
-    }
+    const query = pendingContext.query || '';
+    if (savePrivateBtn) savePrivateBtn.disabled = true;
+    shareOpenBtn.disabled = true;
 
-    const { ok, status, data } = await apiPost(
-      `/api/findings/${encodeURIComponent(saved.publicId)}/share`,
-      {
-        toUsername,
-        message: (shareMessage?.value || '').trim(),
-      }
-    );
-    shareSendBtn.disabled = false;
+    const result = await savePendingFinding(pendingContext, 'private');
+    if (savePrivateBtn) savePrivateBtn.disabled = false;
+    shareOpenBtn.disabled = false;
+    if (!result.ok) return;
 
-    if (!ok) {
-      if (status === 401) {
-        window.location.href = buildAuthUrl(window.location.pathname + window.location.search);
-        return;
-      }
-      const err = data?.error;
-      if (err === 'user_not_found') showToast(tk('userNotFound'));
-      else if (err === 'self_share') showToast(tk('selfShare'));
-      else showToast(tk('shareFailed'));
-      return;
-    }
+    closeSaveModal();
+    pendingContext = null;
 
-    showToast(tk('shareSent', { username: data?.toUsername || toUsername }));
-    close();
+    const { openShareMenuModal, initFindingsModals } = await import('./findings-modals.js');
+    await initFindingsModals();
+
+    openShareMenuModal({
+      publicId: result.publicId,
+      isOwner: true,
+      visibility: result.visibility || 'private',
+      query,
+      onPublished: async () => {
+        await flyFindingToMenu(shareOpenBtn || saveModal.querySelector('.finding-save-dialog'));
+      },
+    });
   });
 }
 
-export { apiGet, apiPost, apiDelete };
+export { apiGet, apiPost, apiDelete, apiPatch };

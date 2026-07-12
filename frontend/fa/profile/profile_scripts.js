@@ -4,11 +4,13 @@ import { getFrontendPath, getFrontendUrl, redirectToAuth } from '../scripts/loca
 import {
   apiGet,
   apiDelete,
+  apiPatch,
   loadT as loadFindingT,
   getFindingT,
   showToast,
 } from '../scripts/findings-client.js';
 import { openFindingModal } from '../scripts/findings-modals.js';
+import { renderFindingListCard } from '../scripts/finding-list-card.js';
 import {
   TOOL_CATALOG,
   normalizeToolHref,
@@ -73,7 +75,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const referralLinkInput = document.getElementById('referralLink');
   const copyReferralLinkBtn = document.getElementById('copyReferralLink');
-  const referralHint = document.getElementById('referralHint');
 
   let isEditOpen = false;
   let currentAvatarUrl = null;
@@ -559,14 +560,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (username) {
           const url = `${getFrontendUrl('auth/auth.html')}?tab=register&ref=${encodeURIComponent(username)}`;
           referralLinkInput.value = url;
-
-          if (referralHint) {
-            referralHint.textContent = t('profile.referralHint');
+          referralLinkInput.title = t('profile.referralHint');
+          if (copyReferralLinkBtn) {
+            copyReferralLinkBtn.title = t('profile.referralHint');
           }
         } else {
           referralLinkInput.value = '';
-          if (referralHint) {
-            referralHint.textContent = t('profile.referralHintNoName');
+          referralLinkInput.title = t('profile.referralHintNoName');
+          if (copyReferralLinkBtn) {
+            copyReferralLinkBtn.title = t('profile.referralHintNoName');
           }
         }
       }
@@ -604,11 +606,19 @@ document.addEventListener('DOMContentLoaded', async () => {
         planStatusEl.textContent = until
           ? t('profile.proActiveUntil', { date: until })
           : t('profile.proActiveNoDate');
+        planStatusEl.hidden = false;
+        if (managePlanButton) managePlanButton.title = '';
       } else {
+        planStatusEl.textContent = '';
+        planStatusEl.hidden = true;
         if (isPro && !isProActive) {
-          planStatusEl.textContent = t('profile.proExpiredStatus');
+          if (managePlanButton) {
+            managePlanButton.title = t('profile.proExpiredTooltip');
+          }
         } else {
-          planStatusEl.textContent = t('profile.freeStatus');
+          if (managePlanButton) {
+            managePlanButton.title = t('profile.freeHintTooltip');
+          }
         }
       }
 
@@ -621,47 +631,42 @@ document.addEventListener('DOMContentLoaded', async () => {
           q.used === 0
             ? t('profile.proQuotaUnused')
             : t('profile.proQuotaUsed', { used: q.used });
+        planQuotaHintEl.hidden = false;
+        planQuotaCounterEl.title = '';
 
         updatePlanQuotaBar(q.used, q.limit);
       } else if (currentPlan === 'free' && data.quotas && data.quotas.free_daily) {
         const q = data.quotas.free_daily;
         planQuotaCounterEl.textContent = `${q.used ?? 0} / ${q.limit}`;
-        planQuotaHintEl.textContent = t('profile.freeQuotaHint');
+        planQuotaHintEl.textContent = '';
+        planQuotaHintEl.hidden = true;
+        planQuotaCounterEl.title = t('profile.freeQuotaHint');
         updatePlanQuotaBar(q.used ?? 0, q.limit);
       } else {
         if (currentPlan === 'pro') {
           planQuotaCounterEl.textContent = '—';
           planQuotaHintEl.textContent = t('profile.proQuotaUnavailable');
+          planQuotaHintEl.hidden = false;
+          planQuotaCounterEl.title = '';
           updatePlanQuotaBar(0, 100);
         } else {
           planQuotaCounterEl.textContent = '0 / 15';
-          planQuotaHintEl.textContent = t('profile.freeQuotaDefault');
+          planQuotaHintEl.textContent = '';
+          planQuotaHintEl.hidden = true;
+          planQuotaCounterEl.title = t('profile.freeQuotaDefault');
           updatePlanQuotaBar(0, 15);
         }
       }
 
-      // Fix: используем createElement + append вместо innerHTML для ссылок в planHintEl
       planHintEl.textContent = '';
+      planHintEl.hidden = true;
       if (currentPlan === 'pro') {
+        planHintEl.hidden = false;
         planHintEl.append(
           t('profile.proHintPrefix'),
           makeTariffsLink(t('profile.tariffsPage')),
           '.'
         );
-      } else {
-        if (isPro && !isProActive) {
-          planHintEl.append(
-            t('profile.freeAfterProHint'),
-            makeTariffsLink(t('profile.tariffsPage')),
-            '.'
-          );
-        } else {
-          planHintEl.append(
-            t('profile.freeHint'),
-            makeTariffsLink(t('profile.tariffsPageFree')),
-            '.'
-          );
-        }
       }
 
       if (aiAccessBlock && aiAccessHint) {
@@ -948,7 +953,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     pointsBadgeEl.style.cursor = 'pointer';
     pointsBadgeEl.title = t('profile.showPointsHistory');
 
-    pointsBadgeEl.addEventListener('click', async (event) => {
+    const togglePointsHistory = async (event) => {
       event.stopPropagation();
 
       if (!pointsHistoryLoaded) {
@@ -993,6 +998,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       const isHidden =
         pointsHistoryEl.style.display === 'none' || pointsHistoryEl.style.display === '';
       pointsHistoryEl.style.display = isHidden ? 'block' : 'none';
+    };
+
+    pointsBadgeEl.addEventListener('click', togglePointsHistory);
+    pointsBadgeEl.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        togglePointsHistory(event);
+      }
     });
   }
 
@@ -1112,15 +1125,206 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   /* ==== МОИ НАХОДКИ ==== */
 
+  let myFindingsCache = [];
+  let myFindingsFilter = 'all';
+
+  function initProfileTabs() {
+    const tabButtons = document.querySelectorAll('[data-profile-tab]');
+    const panels = document.querySelectorAll('[data-profile-panel]');
+    if (!tabButtons.length || !panels.length) return;
+
+    const TAB_KEY = 'profileActiveTab';
+    const allowed = new Set(['profile', 'findings', 'plan', 'tools']);
+
+    function activate(tabId) {
+      if (!allowed.has(tabId)) tabId = 'profile';
+
+      tabButtons.forEach((btn) => {
+        const active = btn.dataset.profileTab === tabId;
+        btn.classList.toggle('profile-tabs__btn--active', active);
+        btn.setAttribute('aria-selected', active ? 'true' : 'false');
+      });
+
+      panels.forEach((panel) => {
+        const show = panel.dataset.profilePanel === tabId;
+        panel.hidden = !show;
+        panel.classList.toggle('profile-panel--active', show);
+      });
+
+      try {
+        localStorage.setItem(TAB_KEY, tabId);
+      } catch {
+        /* ignore */
+      }
+    }
+
+    tabButtons.forEach((btn) => {
+      btn.addEventListener('click', () => activate(btn.dataset.profileTab));
+    });
+
+    const hash = (location.hash || '').replace(/^#/, '');
+    let saved = '';
+    try {
+      saved = localStorage.getItem(TAB_KEY) || '';
+    } catch {
+      saved = '';
+    }
+    activate(allowed.has(hash) ? hash : allowed.has(saved) ? saved : 'profile');
+  }
+
+  function updateFindingsSummary(items) {
+    const summaryEl = document.getElementById('myFindingsSummary');
+    if (!summaryEl) return;
+
+    const total = items.length;
+    const inFeed = items.filter((item) => item.visibility === 'public').length;
+    const tpl =
+      document.body.dataset.findingsSummaryTpl ||
+      '{total} findings · {public} in feed';
+
+    summaryEl.textContent = tpl
+      .replace('{total}', String(total))
+      .replace('{public}', String(inFeed));
+  }
+
+  function renderMyFindingsList(items, ft) {
+    const listEl = document.getElementById('myFindingsList');
+    const emptyEl = document.getElementById('myFindingsEmpty');
+    if (!listEl) return;
+
+    updateFindingsSummary(myFindingsCache);
+
+    const filtered =
+      myFindingsFilter === 'all'
+        ? items
+        : items.filter((item) => (item.visibility || 'private') === myFindingsFilter);
+
+    if (!myFindingsCache.length) {
+      listEl.innerHTML = '';
+      if (emptyEl) emptyEl.hidden = false;
+      return;
+    }
+
+    if (emptyEl) emptyEl.hidden = true;
+
+    if (!filtered.length) {
+      listEl.innerHTML = `<p class="profile-findings-filter-empty">${ft('noFindingsFilter')}</p>`;
+      return;
+    }
+
+    listEl.innerHTML = filtered
+      .map((item, index) =>
+        renderFindingListCard(item, { mode: 'owner', t: ft, index, profileCompact: true })
+      )
+      .join('');
+    bindOwnerFindingCards(listEl, ft);
+  }
+
+  function initFindingsFilters(ft) {
+    document.querySelectorAll('[data-findings-filter]').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        myFindingsFilter = btn.dataset.findingsFilter || 'all';
+        document.querySelectorAll('[data-findings-filter]').forEach((other) => {
+          other.classList.toggle(
+            'profile-filter-btn--active',
+            other.dataset.findingsFilter === myFindingsFilter
+          );
+        });
+        renderMyFindingsList(myFindingsCache, ft);
+      });
+    });
+  }
+
+  function bindOwnerFindingCards(listEl, ft) {
+    listEl.querySelectorAll('.finding-list-card--owner').forEach((card) => {
+      const publicId = card.dataset.publicId;
+
+      card.addEventListener('click', (event) => {
+        if (event.target.closest('button, select')) return;
+        openFindingModal(publicId);
+      });
+      card.classList.add('finding-list-card--clickable');
+
+      const visSelect = card.querySelector('[data-action="visibility"]');
+      if (visSelect) {
+        let previousVis = visSelect.value;
+        visSelect.addEventListener('click', (event) => event.stopPropagation());
+        visSelect.addEventListener('change', async () => {
+          const nextVis = visSelect.value;
+          if (nextVis === previousVis) return;
+
+          const confirmKeys = {
+            private: 'makePrivateConfirm',
+            followers: 'followersConfirm',
+            public: 'publishConfirm',
+          };
+          const label = card.dataset.query || ft('pageTitle');
+          const confirmed = window.confirm(ft(confirmKeys[nextVis], { query: label }));
+          if (!confirmed) {
+            visSelect.value = previousVis;
+            return;
+          }
+
+          visSelect.disabled = true;
+          const { ok } = await apiPatch(
+            `/api/findings/${encodeURIComponent(publicId)}`,
+            { visibility: nextVis }
+          );
+          visSelect.disabled = false;
+          if (!ok) {
+            visSelect.value = previousVis;
+            showToast(ft('visibilityFailed'));
+            return;
+          }
+
+          previousVis = nextVis;
+          card.dataset.visibility = nextVis;
+          const toastKeys = {
+            private: 'madePrivateToast',
+            followers: 'followersToast',
+            public: 'publishedToast',
+          };
+          showToast(ft(toastKeys[nextVis]));
+        });
+      }
+
+      card.querySelector('[data-action="delete"]')?.addEventListener('click', async (event) => {
+        event.stopPropagation();
+        const deleteBtn = event.currentTarget;
+        const label = card.dataset.query || ft('pageTitle');
+        const confirmed = window.confirm(ft('deleteConfirm', { query: label }));
+        if (!confirmed) return;
+
+        deleteBtn.disabled = true;
+        const { ok } = await apiDelete(`/api/findings/${encodeURIComponent(publicId)}`);
+        if (ok) {
+          card.remove();
+          showToast(ft('deletedToast'));
+          myFindingsCache = myFindingsCache.filter((item) => {
+            const id = item.publicId || item.public_id;
+            return id !== publicId;
+          });
+          if (!myFindingsCache.length) {
+            renderMyFindingsList([], ft);
+          } else {
+            renderMyFindingsList(myFindingsCache, ft);
+          }
+        } else {
+          deleteBtn.disabled = false;
+          showToast(ft('deleteFailed'));
+        }
+      });
+    });
+  }
+
   async function loadMyFindings() {
     const listEl = document.getElementById('myFindingsList');
-    const titleEl = document.getElementById('myFindingsTitle');
     const loadingEl = document.getElementById('myFindingsLoading');
     if (!listEl) return;
 
     await loadFindingT();
     const ft = (key, vars) => getFindingT(`finding.${key}`, vars);
-    if (titleEl) titleEl.textContent = ft('myFindingsTitle');
+    initFindingsFilters(ft);
 
     const { ok, data, status } = await apiGet('/api/findings/mine/list');
     if (loadingEl) loadingEl.remove();
@@ -1131,68 +1335,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       return;
     }
 
-    const items = data.items || [];
-    if (!items.length) {
-      listEl.innerHTML = `<p class="plan-hint">${ft('noFindings')}</p>`;
-      return;
-    }
-
-    listEl.innerHTML = '';
-    items.forEach((item) => {
-      const row = document.createElement('div');
-      row.className = 'profile-finding-item';
-
-      const openBtn = document.createElement('button');
-      openBtn.type = 'button';
-      openBtn.className = 'profile-finding-open';
-      openBtn.textContent = item.query_text || ft('pageTitle');
-      openBtn.addEventListener('click', () => {
-        openFindingModal(item.public_id);
-      });
-
-      const meta = document.createElement('span');
-      meta.className = 'plan-quota-hint';
-      try {
-        meta.textContent = new Date(item.created_at).toLocaleString(
-          document.documentElement.lang || 'ru'
-        );
-      } catch {
-        meta.textContent = item.created_at || '';
-      }
-
-      const deleteBtn = document.createElement('button');
-      deleteBtn.type = 'button';
-      deleteBtn.className = 'profile-finding-delete';
-      deleteBtn.setAttribute('aria-label', ft('deleteLabel'));
-      deleteBtn.title = ft('deleteLabel');
-      deleteBtn.textContent = '×';
-      deleteBtn.addEventListener('click', async (event) => {
-        event.stopPropagation();
-        deleteBtn.disabled = true;
-        const { ok } = await apiDelete(
-          `/api/findings/${encodeURIComponent(item.public_id)}`
-        );
-        if (ok) {
-          row.remove();
-          showToast(ft('deletedToast'));
-          if (!listEl.querySelector('.profile-finding-item')) {
-            listEl.innerHTML = `<p class="plan-hint">${ft('noFindings')}</p>`;
-          }
-        } else {
-          deleteBtn.disabled = false;
-          showToast(ft('deleteFailed'));
-        }
-      });
-
-      row.appendChild(openBtn);
-      row.appendChild(meta);
-      row.appendChild(deleteBtn);
-      listEl.appendChild(row);
-    });
+    myFindingsCache = data.items || [];
+    renderMyFindingsList(myFindingsCache, ft);
   }
 
   /* ==== ИНИЦИАЛИЗАЦИЯ ==== */
 
+  initProfileTabs();
   getProfile();
   loadPoints();
   renderFavoriteTools();

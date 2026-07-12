@@ -4,33 +4,26 @@
 <head>
   <meta http-equiv="Content-Language" content="de">
   <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, viewport-fit=cover"
-  >
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
   <title>Profil — Serpmonn</title>
   <meta name="description" content="Verwaltung von Profil, Abonnement und Tools auf Serpmonn.">
 
-  <!-- Open Graph -->
   <meta property="og:title" content="Profil — Serpmonn">
   <meta property="og:description" content="Verwaltung von Profil, Abonnement und Tools auf Serpmonn.">
   <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
   <meta property="og:url" content="https://serpmonn.ru/frontend/de/profile/profile.html">
   <meta property="og:type" content="website">
 
-  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Profil — Serpmonn">
   <meta name="twitter:description" content="Verwaltung von Profil, Abonnement und Tools.">
   <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-  <!-- Каноническая ссылка -->
   <link rel="canonical" href="https://serpmonn.ru/frontend/de/profile/profile.html">
 
-  <!-- hreflang -->
   
     
       <link rel="alternate" href="https://serpmonn.ru/frontend/profile/profile.html" hreflang="ru">
@@ -231,224 +224,181 @@
   <link rel="alternate" href="https://serpmonn.ru/frontend/profile/profile.html" hreflang="x-default">
 
   <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
-
-  <!-- Стили -->
   <link rel="stylesheet" href="/frontend/styles/styles.css">
   <link rel="stylesheet" href="/frontend/styles/accessibility.css">
   <link rel="stylesheet" href="profile_styles.css">
   <link rel="stylesheet" href="/frontend/find/find-view.css">
 
-  <!-- Скрипты -->
   <script type="module" src="profile_scripts.js" defer></script>
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
-<body>
+<body class="profile-page" data-findings-summary-tpl="{total} findings · {public} in feed" data-search-path="/frontend/de/index.html">
 <div class="page-wrapper">
-  <main class="container" role="main">
-    <!-- Верхняя зона профиля -->
-    <section class="profile-header card" aria-labelledby="profileHeaderTitle">
+  <main class="container profile-shell" role="main">
+
+    <header class="profile-hero" aria-label="Profile">
       <button type="button" class="profile-avatar" id="avatarButton" aria-haspopup="dialog">
         <img id="avatarImage" class="profile-avatar__img" alt="" hidden>
         <span id="avatarInitials">U</span>
       </button>
 
-      <div class="profile-header-main">
-        <h1 id="profileHeaderTitle">
-          Benutzerprofil
-        </h1>
-
-        <p class="profile-identity">
+      <div class="profile-hero__body">
+        <h1 class="profile-hero__title">
           <span id="username" class="profile-username">—</span>
-          <span class="profile-dot">•</span>
+        </h1>
+        <p class="profile-identity">
           <span id="email" class="profile-email">—</span>
         </p>
-
         <div class="profile-status-row">
           <span id="accountStatusBadge" class="status-badge status-badge--unconfirmed">
             Kontostatus
           </span>
-          <span id="planBadge" class="status-badge status-badge--free">
-            Free
-          </span>
-        </div>
-
-        <!-- ТОЛЬКО текст onnmail -->
-        <div class="profile-onnmail-row">
-          <span class="profile-onnmail-title">
-            @onnmail
-          </span>
-          <span class="profile-onnmail-desc">
-            Serpmonn-Mail für Benachrichtigungen und Service-E-Mails.
-          </span>
+          <span id="planBadge" class="status-badge status-badge--free">Free</span>
         </div>
       </div>
 
-      <!-- ПРАВАЯ колонка -->
-      <div class="profile-header-actions">
-        <div class="profile-header-top-row">
-          <div class="profile-points-column">
-            <div id="pointsBadge" class="profile-points">
-              <span class="profile-points-label">
-                Punkte:
-              </span>
-              <span id="pointsBalance" class="profile-points-value">—</span>
-            </div>
-
-            <div id="pointsHistory" class="points-history" style="display:none;"></div>
+      <div class="profile-hero__actions">
+        <div class="profile-points-column">
+          <div id="pointsBadge" class="profile-points" role="button" tabindex="0">
+            <span class="profile-points-label">Punkte:</span>
+            <span id="pointsBalance" class="profile-points-value">—</span>
           </div>
-
-          <button
-            id="openEditProfile"
-            type="button"
-            class="secondary-button secondary-button--small"
-          >
-            Daten bearbeiten
-          </button>
+          <div id="pointsHistory" class="points-history" style="display:none;"></div>
         </div>
+        <button id="openEditProfile" type="button" class="profile-btn profile-btn--ghost">
+          Daten bearbeiten
+        </button>
+      </div>
+    </header>
 
+    <div id="editProfileMount"></div>
+
+    <nav class="profile-tabs" role="tablist" aria-label="Profil — Serpmonn">
+      <button type="button" class="profile-tabs__btn profile-tabs__btn--active" role="tab" id="tab-btn-profile" data-profile-tab="profile" aria-selected="true" aria-controls="tab-profile">Profile</button>
+      <button type="button" class="profile-tabs__btn" role="tab" id="tab-btn-findings" data-profile-tab="findings" aria-selected="false" aria-controls="tab-findings">Findings</button>
+      <button type="button" class="profile-tabs__btn" role="tab" id="tab-btn-plan" data-profile-tab="plan" aria-selected="false" aria-controls="tab-plan">Plan &amp;amp; points</button>
+      <button type="button" class="profile-tabs__btn" role="tab" id="tab-btn-tools" data-profile-tab="tools" aria-selected="false" aria-controls="tab-tools">Tools</button>
+    </nav>
+
+    <!-- Профиль -->
+    <section id="tab-profile" class="profile-panel profile-panel--active" role="tabpanel" data-profile-panel="profile" aria-labelledby="tab-btn-profile">
+      <div class="profile-panel-block">
+        <h2 class="profile-panel__heading">@onnmail email</h2>
+        <p class="profile-panel__hint">Serpmonn-Mail für Benachrichtigungen und Service-E-Mails.</p>
         <div class="profile-onnmail-actions">
-          <button
-            id="createOnnmailButton"
-            type="button"
-            class="secondary-button secondary-button--xs"
-          >
+          <button id="createOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm">
             Erstellen
           </button>
-          <button
-            id="loginOnnmailButton"
-            type="button"
-            class="secondary-button secondary-button--xs"
-          >
+          <button id="loginOnnmailButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm">
             Öffnen
           </button>
         </div>
       </div>
-    </section>
 
-    <!-- Контейнер для формы редактирования (встраивается JS-ом) -->
-    <div id="editProfileMount"></div>
-
-    <!-- Реферальная программа -->
-    <section class="card" aria-labelledby="referralTitle">
-      <h2 id="referralTitle">
-        Empfehlungsprogramm
-      </h2>
-
-      <p class="plan-hint">
-        Laden Sie Freunde ein und sammeln Sie Punkte. Sie und die eingeladene Person erhalten nach der Registrierung einen Bonus.
-      </p>
-
-      <div class="referral-row">
-        <label for="referralLink" class="referral-label">
-          Mein Empfehlungslink:
-        </label>
-        <input
-          id="referralLink"
-          type="text"
-          class="referral-input"
-          readonly
-          value=""
-        >
-        <button
-          id="copyReferralLink"
-          type="button"
-          class="secondary-button secondary-button--xs"
-        >
-          Kopieren
+      <div class="profile-panel-block profile-panel-block--logout">
+        <button id="logoutButton" type="button" class="profile-btn profile-btn--danger profile-btn--block">
+          Vom Konto abmelden
         </button>
       </div>
-      <p id="referralHint" class="plan-hint"></p>
-      <p id="referralCounter" class="plan-quota-hint"></p>
     </section>
 
-    <!-- Обмен баллов на Pro -->
-    <section class="card" aria-labelledby="pointsExchangeTitle">
-      <h2 id="pointsExchangeTitle" class="card-title-left">
-        Punkte in Pro umtauschen
-      </h2>
-
-      <p class="plan-hint">
-        Tauschen Sie Punkte in Pro-Abonnementtage um. Aktuell: 500 Punkte = 1 Pro-Tag.
-      </p>
-
-      <div class="referral-row">
-        <label for="proExchangeDays" class="referral-label">
-          Wie viele Pro-Tage möchten Sie erhalten:
-        </label>
-        <input
-          id="proExchangeDays"
-          type="number"
-          class="referral-input"
-          min="1"
-          value="7"
-        >
-        <button
-          id="proExchangeSubmit"
-          type="button"
-          class="secondary-button secondary-button--xs"
-        >
-          Umtauschen
-        </button>
-      </div>
-
-      <p id="proExchangeHint" class="plan-hint"></p>
-    </section>
-
-    <!-- Блок тарифа и лимитов -->
-    <section id="planCard" class="card" aria-labelledby="planTitle">
-      <div class="card-header-row">
-        <h2 id="planTitle">
-          Abonnement und Limits
-        </h2>
-        <button id="managePlanButton" type="button" class="secondary-button secondary-button--small">
-          Tarif verwalten
-        </button>
-      </div>
-
-      <p class="plan-subtitle">
-        Aktueller Tarif:
-        <span id="planName" class="plan-name">Free</span>
-      </p>
-
-      <p id="planStatus" class="plan-status"></p>
-
-      <div class="plan-quota">
-        <div class="plan-quota-header">
-          <span>Verfügbare Anfragen im Tarif</span>
-          <span id="planQuotaCounter" class="plan-quota-counter">—</span>
+    <!-- Находки -->
+    <section id="tab-findings" class="profile-panel" role="tabpanel" data-profile-panel="findings" aria-labelledby="tab-btn-findings" hidden>
+      <div class="profile-findings-toolbar">
+        <div>
+          <h2 class="profile-panel__heading profile-panel__heading--inline">My findings</h2>
+          <p id="myFindingsSummary" class="profile-findings-summary"></p>
         </div>
-        <div class="plan-quota-bar">
-          <div id="planQuotaBarFill" class="plan-quota-bar-fill"></div>
+        <div class="profile-findings-filters" role="group" aria-label="My findings">
+          <button type="button" class="profile-filter-btn profile-filter-btn--active" data-findings-filter="all">All</button>
+          <button type="button" class="profile-filter-btn" data-findings-filter="private">Private</button>
+          <button type="button" class="profile-filter-btn" data-findings-filter="public">In feed</button>
+          <button type="button" class="profile-filter-btn" data-findings-filter="followers">Followers</button>
         </div>
-        <p id="planQuotaHint" class="plan-quota-hint"></p>
       </div>
 
-      <p id="planHint" class="plan-hint"></p>
-      <!-- Доступ к AI-сервису -->
-      <div id="aiAccessBlock" class="profile-ai-access" style="display:none;">
-        <button id="openAiService" type="button" class="primary-button">
-          KI-Service öffnen
-        </button>
-        <p id="aiAccessHint" class="plan-hint"></p>
-      </div>
-    </section>
-
-    <!-- Мои находки -->
-    <section class="card" aria-labelledby="myFindingsTitle">
-      <h2 id="myFindingsTitle">My findings</h2>
       <div id="myFindingsList" class="profile-findings-list" aria-live="polite">
-        <p class="plan-hint" id="myFindingsLoading">…</p>
+        <div id="myFindingsLoading" class="profile-findings-skeleton" aria-hidden="true">
+          <div class="profile-skeleton-card"></div>
+          <div class="profile-skeleton-card"></div>
+          <div class="profile-skeleton-card"></div>
+        </div>
+      </div>
+
+      <p id="myFindingsEmpty" class="profile-empty-state" hidden>
+        <span>No saved findings yet</span>
+        <a href="/frontend/de/index.html" class="profile-empty-state__link">Go to search</a>
+      </p>
+    </section>
+
+    <!-- Тариф и баллы -->
+    <section id="tab-plan" class="profile-panel" role="tabpanel" data-profile-panel="plan" aria-labelledby="tab-btn-plan" hidden>
+      <div id="planCard" class="plan-dashboard">
+        <div class="plan-dashboard__head">
+          <div>
+            <p class="plan-dashboard__label">Aktueller Tarif:</p>
+            <p class="plan-dashboard__plan">
+              <span id="planName" class="plan-name">Free</span>
+            </p>
+            <p id="planStatus" class="plan-status"></p>
+          </div>
+          <button id="managePlanButton" type="button" class="profile-btn profile-btn--primary profile-btn--sm">
+            Tarif verwalten
+          </button>
+        </div>
+
+        <div class="plan-quota plan-quota--dashboard">
+          <div class="plan-quota-header">
+            <span>Verfügbare Anfragen im Tarif</span>
+            <span id="planQuotaCounter" class="plan-quota-counter">—</span>
+          </div>
+          <div class="plan-quota-bar">
+            <div id="planQuotaBarFill" class="plan-quota-bar-fill"></div>
+          </div>
+          <p id="planQuotaHint" class="plan-quota-hint"></p>
+        </div>
+
+        <p id="planHint" class="plan-hint plan-hint--compact" hidden></p>
+
+        <div id="aiAccessBlock" class="profile-ai-access" style="display:none;">
+          <button id="openAiService" type="button" class="profile-btn profile-btn--primary profile-btn--block">
+            KI-Service öffnen
+          </button>
+          <p id="aiAccessHint" class="plan-hint"></p>
+        </div>
+
+        <details class="profile-details">
+          <summary class="profile-details__summary">Exchange points for Pro</summary>
+          <div class="profile-details__body">
+            <p class="plan-hint">Tauschen Sie Punkte in Pro-Abonnementtage um. Aktuell: 500 Punkte = 1 Pro-Tag.</p>
+            <div class="profile-inline-form">
+              <label for="proExchangeDays" class="referral-label">Wie viele Pro-Tage möchten Sie erhalten:</label>
+              <input id="proExchangeDays" type="number" class="profile-input" min="1" value="7">
+              <button id="proExchangeSubmit" type="button" class="profile-btn profile-btn--ghost profile-btn--sm">
+                Umtauschen
+              </button>
+            </div>
+            <p id="proExchangeHint" class="plan-hint"></p>
+          </div>
+        </details>
+
+        <div class="profile-referral-compact">
+          <label for="referralLink" class="referral-label">Referral link</label>
+          <div class="profile-referral-row">
+            <input id="referralLink" type="text" class="profile-input profile-input--readonly" readonly value="">
+            <button id="copyReferralLink" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" title="">
+              Kopieren
+            </button>
+          </div>
+          <p id="referralCounter" class="plan-quota-hint"></p>
+        </div>
       </div>
     </section>
 
-    <!-- Мои инструменты (избранное + недавние) -->
-    <section class="card" aria-labelledby="toolsTitle">
-      <h2 id="toolsTitle">
-        Meine Tools
-      </h2>
-
+    <!-- Инструменты -->
+    <section id="tab-tools" class="profile-panel" role="tabpanel" data-profile-panel="tools" aria-labelledby="tab-btn-tools" hidden>
+      <h2 class="profile-panel__heading">Meine Tools</h2>
       <div class="tools-grid" id="favoriteTools"></div>
-
       <p id="noFavoritesMessage" class="plan-hint" style="display:none;">
         Sie haben noch keine Tools ausgewählt.
         Markieren Sie ⭐ auf der Seite
@@ -457,20 +407,12 @@
         </a>,
         und sie werden hier angezeigt.
       </p>
-
       <div id="recentTools" class="recent-tools"></div>
     </section>
 
-    <!-- Выход -->
-    <section class="logout-section" aria-label="Vom Konto abmelden">
-      <button id="logoutButton" type="button" class="danger-button">
-        Vom Konto abmelden
-      </button>
-    </section>
   </main>
 </div>
 
-<!-- Toast-уведомления -->
 <div id="toastContainer" aria-live="polite" aria-atomic="true"></div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>

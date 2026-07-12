@@ -12,6 +12,7 @@ eleventyComputed:
   menu_profile: "{{ menuTranslations[locale].profile }}"
   menu_findings_inbox: "{{ menuTranslations[locale].findings_inbox or 'Inbox' }}"
   menu_findings_feed: "{{ menuTranslations[locale].findings_feed or menuTranslations['en'].findings_feed or 'Findings feed' }}"
+  menu_findings_notifications: "{{ menuTranslations[locale].findings_notifications or menuTranslations['en'].findings_notifications or 'Notifications' }}"
   menu_knowledge_base: "{{ menuTranslations[locale].knowledge_base }}"
   menu_games: "{{ menuTranslations[locale].games }}"
   menu_all_games: "{{ menuTranslations[locale].all_games }}"
@@ -105,6 +106,15 @@ eleventyComputed:
     </a>
 
     <a href="#"
+       class="menu-item menu-feed-link"
+       id="findings-feed-block"
+       data-route="findings-feed"
+       data-finding-open-feed="1">
+        <img src="/frontend/images/findings-feed.svg" alt="{{ menu_findings_feed }}" class="icon">
+        {{ menu_findings_feed }}
+    </a>
+
+    <a href="#"
        class="menu-item menu-inbox-link"
        id="inbox-block"
        data-route="findings-inbox"
@@ -115,12 +125,12 @@ eleventyComputed:
     </a>
 
     <a href="#"
-       class="menu-item menu-feed-link"
-       id="findings-feed-block"
-       data-route="findings-feed"
-       data-finding-open-feed="1">
-        <img src="/frontend/images/serpmonn.ico" alt="{{ menu_findings_feed }}" class="icon">
-        {{ menu_findings_feed }}
+       class="menu-item menu-notifications-link"
+       id="findings-notifications-block"
+       data-finding-open-notifications="1"
+       hidden>
+        <img src="/frontend/images/findings-notifications.svg" alt="{{ menu_findings_notifications or 'Notifications' }}" class="icon">
+        {{ menu_findings_notifications or 'Notifications' }}
     </a>
 
     <!-- ========== РАЗДЕЛ ИГР ========== -->
