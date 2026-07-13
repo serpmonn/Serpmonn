@@ -4,7 +4,7 @@ import {
   loadT,
   getFindingT,
 } from '/frontend/scripts/findings-client.js';
-import { openInboxModal, initFindingsModals } from '/frontend/scripts/findings-modals.js';
+import { openActivityModal, initFindingsModals } from '/frontend/scripts/findings-modals.js';
 
 async function renderInboxPage() {
   generateCombinedBackground();
@@ -23,7 +23,7 @@ async function renderInboxPage() {
   if (listEl) {
     listEl.innerHTML = `<p class="plan-hint">${t('inboxLoading')}</p>`;
   }
-  openInboxModal();
+  openActivityModal('inbox');
 }
 
 document.addEventListener('DOMContentLoaded', renderInboxPage);

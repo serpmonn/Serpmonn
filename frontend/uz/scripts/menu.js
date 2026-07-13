@@ -179,9 +179,11 @@ export function initMenu() {
     // Закрытие меню при клике вне его области
     document.addEventListener('click', (e) => {
         const menuContainer = document.getElementById('menuContainer');
+        const menuCorner = document.getElementById('menuCorner');
         if (menuContainer && menuContainer.classList.contains('active')) {
-            // Проверяем, что клик не внутри меню и не на кнопку меню
-            if (!menuContainer.contains(e.target) && e.target !== menuButton) {
+            const inMenu = menuContainer.contains(e.target);
+            const inCorner = menuCorner && menuCorner.contains(e.target);
+            if (!inMenu && !inCorner) {
                 closeMenu();
             }
         }

@@ -51,10 +51,10 @@ function ensureIconButtonContent(btn, iconHtml) {
 export function renderViewsControl(count, { label = '' } = {}) {
   const safeLabel = label || 'Views';
   return `
-    <span class="finding-icon-btn finding-views-control" title="${safeLabel}" aria-label="${safeLabel}">
+    <button type="button" class="finding-icon-btn finding-views-control" disabled tabindex="-1" title="${safeLabel}" aria-label="${safeLabel}">
       ${FINDING_VIEWS_ICON}
       <span class="finding-views-control__count">${Number(count) || 0}</span>
-    </span>`;
+    </button>`;
 }
 
 export function updateViewsControl(el, { count }) {

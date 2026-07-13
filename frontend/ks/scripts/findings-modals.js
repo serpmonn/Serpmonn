@@ -27,6 +27,7 @@ let onNotificationsRead = null;
 
 const feedState = { mode: 'all', q: '', offset: 0, items: [], hasMore: false };
 const inboxState = { view: 'dialogs', username: null, items: [] };
+const activityState = { tab: 'inbox' };
 let shareSendContext = null;
 let shareMenuContext = null;
 let modalStackZ = 100000;
@@ -180,36 +181,118 @@ function bindFindingListCards(listEl, modal, { mode = 'feed' } = {}) {
   });
 }
 
-function ensureInboxModal() {
-  let modal = document.getElementById('finding-inbox-modal');
+function ensureActivityModal() {
+  let modal = document.getElementById('finding-activity-modal');
   if (modal) return modal;
 
   modal = document.createElement('div');
-  modal.id = 'finding-inbox-modal';
+  modal.id = 'finding-activity-modal';
   modal.className = 'ai-share-modal finding-panel-modal';
   modal.style.display = 'none';
   modal.setAttribute('role', 'dialog');
   modal.setAttribute('aria-modal', 'true');
   modal.innerHTML = `
     <div class="ai-share-backdrop"></div>
-    <div class="ai-share-dialog finding-panel-dialog finding-inbox-dialog" tabindex="-1">
+    <div class="ai-share-dialog finding-panel-dialog finding-inbox-dialog finding-activity-dialog" tabindex="-1">
       <button type="button" class="ai-share-close finding-panel-close" aria-label="×">&times;</button>
-      <div class="finding-inbox-toolbar">
-        <button type="button" class="finding-inbox-back-btn" id="finding-inbox-back-btn" hidden></button>
-        <h2 class="finding-panel-title" id="finding-inbox-modal-title"></h2>
+      <h2 class="finding-panel-title finding-activity-thread-title" data-inbox-thread-title hidden></h2>
+      <div class="finding-activity-toolbar" data-activity-tabs>
+        <div class="finding-activity-tabs finding-feed-tabs" role="tablist">
+          <button type="button" class="finding-feed-tab finding-activity-tab finding-feed-tab--active" data-activity-tab="inbox" role="tab"></button>
+          <button type="button" class="finding-feed-tab finding-activity-tab" data-activity-tab="notifications" role="tab"></button>
+        </div>
       </div>
-      <p class="finding-panel-hint" id="finding-inbox-modal-hint"></p>
-      <div class="finding-panel-body" id="finding-inbox-modal-list" aria-live="polite"></div>
+      <div class="finding-inbox-toolbar finding-activity-inbox-toolbar">
+        <button type="button" class="finding-inbox-back-btn" data-inbox-back hidden></button>
+      </div>
+      <p class="finding-panel-hint" data-inbox-hint></p>
+      <section class="finding-activity-panel" data-activity-panel="inbox">
+        <div class="finding-panel-body" data-inbox-list aria-live="polite"></div>
+      </section>
+      <section class="finding-activity-panel" data-activity-panel="notifications" hidden>
+        <div class="finding-panel-body" data-notifications-list aria-live="polite"></div>
+      </section>
     </div>
   `;
   document.body.appendChild(modal);
   bindPanelClose(modal);
-  modal.querySelector('#finding-inbox-back-btn')?.addEventListener('click', () => {
+
+  modal.querySelector('[data-inbox-back]')?.addEventListener('click', () => {
     inboxState.view = 'dialogs';
     inboxState.username = null;
-    loadInboxInto(modal);
+    loadActivityInto(modal);
   });
+
+  modal.querySelectorAll('[data-activity-tab]').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      const nextTab = tab.dataset.activityTab;
+      if (!nextTab || nextTab === activityState.tab) return;
+      activityState.tab = nextTab;
+      inboxState.view = 'dialogs';
+      inboxState.username = null;
+      loadActivityInto(modal);
+    });
+  });
+
   return modal;
+}
+
+function localizeActivityTabs(modal) {
+  modal.querySelectorAll('[data-activity-tab]').forEach((tab) => {
+    tab.textContent =
+      tab.dataset.activityTab === 'notifications' ? tk('notificationsTitle') : tk('inboxTitle');
+  });
+}
+
+function setActivityPanels(modal) {
+  const inThread = activityState.tab === 'inbox' && inboxState.view === 'thread';
+  const tabsEl = modal.querySelector('[data-activity-tabs]');
+  const threadTitleEl = modal.querySelector('[data-inbox-thread-title]');
+  const hintEl = modal.querySelector('[data-inbox-hint]');
+
+  if (tabsEl) tabsEl.hidden = inThread;
+  if (threadTitleEl) threadTitleEl.hidden = !inThread;
+
+  modal.querySelectorAll('[data-activity-panel]').forEach((panel) => {
+    const isActive = panel.dataset.activityPanel === activityState.tab;
+    panel.hidden = !isActive;
+  });
+
+  modal.querySelectorAll('[data-activity-tab]').forEach((tab) => {
+    tab.classList.toggle('finding-feed-tab--active', tab.dataset.activityTab === activityState.tab);
+    tab.setAttribute('aria-selected', tab.dataset.activityTab === activityState.tab ? 'true' : 'false');
+  });
+
+  if (hintEl) {
+    hintEl.hidden = activityState.tab !== 'inbox' || inThread;
+  }
+}
+
+async function loadActivityInto(modal) {
+  localizeActivityTabs(modal);
+  setActivityPanels(modal);
+  if (activityState.tab === 'inbox') {
+    await loadInboxInto(modal);
+  } else {
+    await loadNotificationsInto(modal);
+  }
+}
+
+export async function openActivityModal(tab = 'inbox') {
+  await loadT();
+  activityState.tab = tab === 'notifications' ? 'notifications' : 'inbox';
+  if (activityState.tab === 'inbox') {
+    inboxState.view = 'dialogs';
+    inboxState.username = null;
+    inboxState.items = [];
+  }
+  const modal = ensureActivityModal();
+  openPanel(modal);
+  await loadActivityInto(modal);
+}
+
+function ensureInboxModal() {
+  return ensureActivityModal();
 }
 
 function ensureFeedModal() {
@@ -278,26 +361,7 @@ function ensureFeedModal() {
 }
 
 function ensureNotificationsModal() {
-  let modal = document.getElementById('finding-notifications-modal');
-  if (modal) return modal;
-
-  modal = document.createElement('div');
-  modal.id = 'finding-notifications-modal';
-  modal.className = 'ai-share-modal finding-panel-modal';
-  modal.style.display = 'none';
-  modal.setAttribute('role', 'dialog');
-  modal.setAttribute('aria-modal', 'true');
-  modal.innerHTML = `
-    <div class="ai-share-backdrop"></div>
-    <div class="ai-share-dialog finding-panel-dialog finding-inbox-dialog" tabindex="-1">
-      <button type="button" class="ai-share-close finding-panel-close" aria-label="×">&times;</button>
-      <h2 class="finding-panel-title" id="finding-notifications-modal-title"></h2>
-      <div class="finding-panel-body" id="finding-notifications-modal-list" aria-live="polite"></div>
-    </div>
-  `;
-  document.body.appendChild(modal);
-  bindPanelClose(modal);
-  return modal;
+  return ensureActivityModal();
 }
 
 function ensureAuthorModal() {
@@ -348,7 +412,7 @@ function ensureViewModal() {
         <div id="finding-modal-image-results"></div>
         <div id="finding-modal-video-results"></div>
         <div class="finding-view-actions finding-view-actions--row">
-          <span id="finding-modal-views" class="finding-view-views"></span>
+          <div id="finding-modal-views" class="finding-view-views" role="group"></div>
           <button type="button" class="finding-icon-btn finding-like-control finding-view-like-btn" id="finding-modal-like-btn" hidden>
             ${FINDING_LIKE_ICON}
             <span class="finding-like-control__count">0</span>
@@ -397,7 +461,11 @@ function ensureShareMenuModal() {
   document.body.appendChild(modal);
 
   const closeMenuModal = () => {
+    const ctx = shareMenuContext;
     closePanel(modal);
+    if (ctx?.pendingSave?.onCancel) {
+      ctx.pendingSave.onCancel();
+    }
     shareMenuContext = null;
   };
   modal.querySelector('.ai-share-backdrop')?.addEventListener('click', closeMenuModal);
@@ -406,21 +474,50 @@ function ensureShareMenuModal() {
 
   modal.querySelector('#finding-share-menu-friend')?.addEventListener('click', () => {
     const ctx = shareMenuContext;
-    if (!ctx?.publicId) return;
+    if (!ctx) return;
     closePanel(modal);
-    openShareSendModal({ publicId: ctx.publicId, replyToUsername: ctx.replyToUsername || null });
+    if (ctx.pendingSave) {
+      openShareSendModal({
+        pendingSave: ctx.pendingSave,
+        query: ctx.query || '',
+        replyToUsername: ctx.replyToUsername || null,
+        onComplete: ctx.onComplete,
+      });
+    } else if (ctx.publicId) {
+      openShareSendModal({ publicId: ctx.publicId, replyToUsername: ctx.replyToUsername || null });
+    }
     shareMenuContext = null;
   });
 
   modal.querySelector('#finding-share-menu-feed')?.addEventListener('click', async () => {
     const ctx = shareMenuContext;
-    if (!ctx?.publicId || !ctx.isOwner) return;
+    if (!ctx) return;
+
     const label = ctx.query || tk('pageTitle');
     if (!window.confirm(tk('publishConfirm', { query: label }))) return;
 
     const feedBtn = modal.querySelector('#finding-share-menu-feed');
     feedBtn.disabled = true;
-    const { ok } = await apiPatch(`/api/findings/${encodeURIComponent(ctx.publicId)}`, {
+
+    let publicId = ctx.publicId;
+    if (!publicId && ctx.pendingSave) {
+      const saved = await ctx.pendingSave.save('public');
+      feedBtn.disabled = false;
+      if (!saved?.ok) return;
+      publicId = saved.publicId;
+      closePanel(modal);
+      showToast(tk('publishedToast'));
+      ctx.onComplete?.(saved);
+      shareMenuContext = null;
+      return;
+    }
+
+    if (!publicId || !ctx.isOwner) {
+      feedBtn.disabled = false;
+      return;
+    }
+
+    const { ok } = await apiPatch(`/api/findings/${encodeURIComponent(publicId)}`, {
       visibility: 'public',
     });
     feedBtn.disabled = false;
@@ -438,7 +535,7 @@ function ensureShareMenuModal() {
   return modal;
 }
 
-function localizeShareMenuModal(modal, { isOwner = false, visibility = 'private' } = {}) {
+function localizeShareMenuModal(modal, { isOwner = false, visibility = 'private', pendingSave = null } = {}) {
   const titleEl = modal.querySelector('#finding-share-menu-title');
   const friendBtn = modal.querySelector('#finding-share-menu-friend');
   const feedBtn = modal.querySelector('#finding-share-menu-feed');
@@ -447,7 +544,7 @@ function localizeShareMenuModal(modal, { isOwner = false, visibility = 'private'
   if (titleEl) titleEl.textContent = tk('shareMenuTitle');
   if (friendBtn) friendBtn.textContent = tk('sendToFriend');
   if (feedBtn) {
-    const showFeed = isOwner && visibility !== 'public';
+    const showFeed = pendingSave || (isOwner && visibility !== 'public');
     feedBtn.hidden = !showFeed;
     feedBtn.textContent = tk('publishToFeed');
     feedBtn.title = tk('publishToFeedHint');
@@ -462,11 +559,22 @@ export function openShareMenuModal({
   query = '',
   replyToUsername = null,
   onPublished = null,
+  pendingSave = null,
+  onComplete = null,
 } = {}) {
-  if (!publicId) return;
-  shareMenuContext = { publicId, isOwner, visibility, query, replyToUsername, onPublished };
+  if (!publicId && !pendingSave) return;
+  shareMenuContext = {
+    publicId: publicId || null,
+    isOwner: pendingSave ? true : isOwner,
+    visibility,
+    query,
+    replyToUsername,
+    onPublished,
+    pendingSave,
+    onComplete,
+  };
   const modal = ensureShareMenuModal();
-  localizeShareMenuModal(modal, { isOwner, visibility });
+  localizeShareMenuModal(modal, { isOwner: shareMenuContext.isOwner, visibility, pendingSave });
   openPanel(modal);
 }
 
@@ -499,14 +607,25 @@ function ensureShareSendModal() {
   `;
   document.body.appendChild(modal);
 
-  const closeSend = () => closePanel(modal);
+  const closeSend = () => {
+    const ctx = shareSendContext;
+    closePanel(modal);
+    if (ctx?.pendingSave) {
+      openShareMenuModal({
+        query: ctx.query || '',
+        pendingSave: ctx.pendingSave,
+        onComplete: ctx.onComplete,
+      });
+    }
+    shareSendContext = null;
+  };
   modal.querySelector('.ai-share-backdrop')?.addEventListener('click', closeSend);
   modal.querySelector('.finding-share-send-close')?.addEventListener('click', closeSend);
   modal.querySelector('#finding-share-send-cancel')?.addEventListener('click', closeSend);
 
   modal.querySelector('#finding-share-send-submit')?.addEventListener('click', async () => {
     const ctx = shareSendContext;
-    if (!ctx?.publicId) return;
+    if (!ctx) return;
 
     const usernameEl = modal.querySelector('#finding-share-send-username');
     const messageEl = modal.querySelector('#finding-share-send-message');
@@ -518,8 +637,24 @@ function ensureShareSendModal() {
     }
 
     submitBtn.disabled = true;
+
+    let publicId = ctx.publicId;
+    if (!publicId && ctx.pendingSave) {
+      const saved = await ctx.pendingSave.save('private');
+      if (!saved?.ok) {
+        submitBtn.disabled = false;
+        return;
+      }
+      publicId = saved.publicId;
+    }
+
+    if (!publicId) {
+      submitBtn.disabled = false;
+      return;
+    }
+
     const { ok, status, data } = await apiPost(
-      `/api/findings/${encodeURIComponent(ctx.publicId)}/share`,
+      `/api/findings/${encodeURIComponent(publicId)}/share`,
       {
         toUsername,
         message: (messageEl?.value || '').trim(),
@@ -539,6 +674,7 @@ function ensureShareSendModal() {
     closePanel(modal);
     const toastKey = ctx.replyToUsername ? 'replySent' : 'shareSent';
     showToast(tk(toastKey, { username: data?.toUsername || toUsername }));
+    ctx.onComplete?.({ ok: true, publicId });
     shareSendContext = null;
   });
 
@@ -566,9 +702,15 @@ function localizeShareSendModal(modal, { replyToUsername = null } = {}) {
   }
 }
 
-export function openShareSendModal({ publicId, replyToUsername = null }) {
-  if (!publicId) return;
-  shareSendContext = { publicId, replyToUsername };
+export function openShareSendModal({
+  publicId = null,
+  replyToUsername = null,
+  pendingSave = null,
+  query = '',
+  onComplete = null,
+} = {}) {
+  if (!publicId && !pendingSave) return;
+  shareSendContext = { publicId, replyToUsername, pendingSave, onComplete, query };
   const modal = ensureShareSendModal();
   localizeShareSendModal(modal, { replyToUsername });
   openPanel(modal);
@@ -745,20 +887,25 @@ function setupLikeButton(modal, publicId, findingData, t) {
 }
 
 async function loadInboxInto(modal) {
-  const titleEl = modal.querySelector('#finding-inbox-modal-title');
-  const hintEl = modal.querySelector('#finding-inbox-modal-hint');
-  const listEl = modal.querySelector('#finding-inbox-modal-list');
-  const backBtn = modal.querySelector('#finding-inbox-back-btn');
+  const threadTitleEl = modal.querySelector('[data-inbox-thread-title]');
+  const hintEl = modal.querySelector('[data-inbox-hint]');
+  const listEl = modal.querySelector('[data-inbox-list]');
+  const backBtn = modal.querySelector('[data-inbox-back]');
   const t = (key, vars) => tk(key, vars);
 
   if (!listEl) return;
+
+  setActivityPanels(modal);
 
   if (inboxState.view === 'thread' && inboxState.username) {
     if (backBtn) {
       backBtn.hidden = false;
       backBtn.textContent = t('inboxBack');
     }
-    if (titleEl) titleEl.textContent = t('byUser', { user: inboxState.username });
+    if (threadTitleEl) {
+      threadTitleEl.hidden = false;
+      threadTitleEl.textContent = t('byUser', { user: inboxState.username });
+    }
     if (hintEl) hintEl.hidden = true;
 
     const threadItems = inboxState.items.filter(
@@ -767,7 +914,7 @@ async function loadInboxInto(modal) {
     if (!threadItems.length) {
       inboxState.view = 'dialogs';
       inboxState.username = null;
-      return loadInboxInto(modal);
+      return loadActivityInto(modal);
     }
 
     listEl.innerHTML = threadItems
@@ -788,7 +935,7 @@ async function loadInboxInto(modal) {
   }
 
   if (backBtn) backBtn.hidden = true;
-  if (titleEl) titleEl.textContent = t('inboxTitle');
+  if (threadTitleEl) threadTitleEl.hidden = true;
   if (hintEl) {
     const hint = t('inboxHint');
     hintEl.textContent = hint;
@@ -825,7 +972,7 @@ async function loadInboxInto(modal) {
     el.addEventListener('click', () => {
       inboxState.view = 'thread';
       inboxState.username = el.dataset.inboxUsername;
-      loadInboxInto(modal);
+      loadActivityInto(modal);
     });
     el.style.cursor = 'pointer';
   });
@@ -904,10 +1051,8 @@ async function loadFeedInto(modal, { reset = true } = {}) {
 }
 
 async function loadNotificationsInto(modal) {
-  const titleEl = modal.querySelector('#finding-notifications-modal-title');
-  const listEl = modal.querySelector('#finding-notifications-modal-list');
+  const listEl = modal.querySelector('[data-notifications-list]');
 
-  if (titleEl) titleEl.textContent = tk('notificationsTitle');
   if (!listEl) return;
 
   listEl.innerHTML = renderInboxSkeleton(2);
@@ -1015,10 +1160,7 @@ export async function openAuthorFindingsModal(username) {
 }
 
 export async function openNotificationsModal() {
-  await loadT();
-  const modal = ensureNotificationsModal();
-  openPanel(modal);
-  await loadNotificationsInto(modal);
+  await openActivityModal('notifications');
 }
 
 export async function openFeedModal() {
@@ -1032,13 +1174,7 @@ export async function openFeedModal() {
 }
 
 export async function openInboxModal() {
-  await loadT();
-  inboxState.view = 'dialogs';
-  inboxState.username = null;
-  inboxState.items = [];
-  const modal = ensureInboxModal();
-  openPanel(modal);
-  await loadInboxInto(modal);
+  await openActivityModal('inbox');
 }
 
 export async function openFindingModal(publicId, options = {}) {
@@ -1133,10 +1269,12 @@ export async function initFindingsModals(options = {}) {
   onNotificationsRead = options.onNotificationsRead || null;
 
   await loadT();
-  ensureInboxModal();
+  ['finding-inbox-modal', 'finding-notifications-modal'].forEach((id) => {
+    document.getElementById(id)?.remove();
+  });
+  ensureActivityModal();
   ensureViewModal();
   ensureFeedModal();
-  ensureNotificationsModal();
   ensureAuthorModal();
 
   document.addEventListener('click', (event) => {
@@ -1145,22 +1283,6 @@ export async function initFindingsModals(options = {}) {
       event.preventDefault();
       closeMenu();
       openFeedModal();
-      return;
-    }
-
-    const inboxTrigger = event.target.closest('[data-finding-open-inbox]');
-    if (inboxTrigger) {
-      event.preventDefault();
-      closeMenu();
-      openInboxModal();
-      return;
-    }
-
-    const notificationsTrigger = event.target.closest('[data-finding-open-notifications]');
-    if (notificationsTrigger) {
-      event.preventDefault();
-      closeMenu();
-      openNotificationsModal();
       return;
     }
 
@@ -1179,10 +1301,9 @@ export async function initFindingsModals(options = {}) {
     [
       'finding-share-send-modal',
       'finding-share-menu-modal',
+      'finding-activity-modal',
       'finding-view-modal',
-      'finding-inbox-modal',
       'finding-feed-modal',
-      'finding-notifications-modal',
       'finding-author-modal',
     ].forEach((id) => {
       const m = document.getElementById(id);

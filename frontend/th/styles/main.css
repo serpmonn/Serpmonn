@@ -1371,14 +1371,19 @@ a:visited {
 }
 
 .finding-view-views {
-  display: inline-flex;
+  display: flex;
   align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
   height: 36px;
-  line-height: 1;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
 }
 
-.finding-view-actions--row .finding-view-views .finding-views-control {
+.finding-view-views .finding-views-control {
   margin: 0;
+  vertical-align: middle;
 }
 
 .finding-share-toggle-btn {
@@ -1451,6 +1456,16 @@ a:visited {
 .finding-feed-tabs {
   display: flex;
   gap: 6px;
+}
+
+.finding-activity-toolbar[hidden],
+.finding-activity-thread-title[hidden],
+.finding-activity-inbox-toolbar [hidden] {
+  display: none !important;
+}
+
+.finding-activity-inbox-toolbar {
+  margin-bottom: 4px;
 }
 
 .finding-feed-tab {
@@ -1951,9 +1966,16 @@ a:visited {
 
 .finding-icon-btn.finding-views-control {
   cursor: default;
+  opacity: 1;
 }
 
-.finding-icon-btn.finding-views-control:hover {
+.finding-icon-btn.finding-views-control:disabled {
+  opacity: 1;
+  color: #374151;
+}
+
+.finding-icon-btn.finding-views-control:hover,
+.finding-icon-btn.finding-views-control:disabled:hover {
   border-color: #e5e7eb;
   color: #374151;
 }

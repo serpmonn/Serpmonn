@@ -1,15 +1,13 @@
 /* ========== ЯВНАЯ ФИКСАЦИЯ ДЛЯ RTL (ДОБАВЬТЕ В НАЧАЛО) ========== */
 
 /* Отключаем RTL-зеркалирование для меню */
-.menu-button,
+.menu-corner,
 .menu-container {
     transform: none !important;
-    right: 10px !important;
-    left: auto !important;
 }
 
 /* Явно фиксируем позицию для RTL языков */
-[dir="rtl"] .menu-button,
+[dir="rtl"] .menu-corner,
 [dir="rtl"] .menu-container {
     right: 10px !important;
     left: auto !important;
@@ -18,10 +16,75 @@
 
 /* ========== ОРИГИНАЛЬНЫЕ СТИЛИ ========== */
 
+.menu-corner {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  z-index: 10001;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+[dir="rtl"] .menu-corner {
+  right: 10px !important;
+  left: auto !important;
+}
+
+.menu-activity-bell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.92);
+  color: #374151;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+  flex-shrink: 0;
+}
+
+.menu-activity-bell:hover {
+  color: #b91c1c;
+  background: rgba(254, 242, 242, 0.95);
+}
+
+.menu-activity-bell__icon {
+  display: block;
+}
+
+.menu-activity-bell__badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  border-radius: 999px;
+  background: #e53935;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 18px;
+  text-align: center;
+  border: 2px solid #fff;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.menu-activity-bell[hidden],
+.menu-activity-bell__badge[hidden] {
+  display: none !important;
+}
+
 .menu-button {
-    position: fixed;
-    top: 10px;
-    right: 10px;
+  position: relative;
+  top: auto;
+  right: auto;
     background-color: rgba(255, 255, 255, 0.9);
     color: #fff;
     padding: 10px;

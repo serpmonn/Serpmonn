@@ -290,28 +290,30 @@ export async function initFindingsSave(getContext) {
     if (!pendingContext) return;
 
     const query = pendingContext.query || '';
-    if (savePrivateBtn) savePrivateBtn.disabled = true;
-    shareOpenBtn.disabled = true;
-
-    const result = await savePendingFinding(pendingContext, 'private');
-    if (savePrivateBtn) savePrivateBtn.disabled = false;
-    shareOpenBtn.disabled = false;
-    if (!result.ok) return;
+    const ctxSnapshot = pendingContext;
 
     closeSaveModal();
-    pendingContext = null;
 
     const { openShareMenuModal, initFindingsModals } = await import('./findings-modals.js');
     await initFindingsModals();
 
+    const completeShareSave = async (triggerBtn) => {
+      closeSaveModal();
+      pendingContext = null;
+      await flyFindingToMenu(triggerBtn || shareOpenBtn || saveModal.querySelector('.finding-save-dialog'));
+    };
+
     openShareMenuModal({
-      publicId: result.publicId,
-      isOwner: true,
-      visibility: result.visibility || 'private',
       query,
-      onPublished: async () => {
-        await flyFindingToMenu(shareOpenBtn || saveModal.querySelector('.finding-save-dialog'));
+      pendingSave: {
+        save: (visibility) => savePendingFinding(ctxSnapshot, visibility),
+        onCancel: () => {
+          pendingContext = ctxSnapshot;
+          localizeSaveModal(saveModal);
+          openSaveModal();
+        },
       },
+      onComplete: () => completeShareSave(shareOpenBtn),
     });
   });
 }

@@ -4,13 +4,23 @@
 <link rel="stylesheet" href="/frontend/styles/menu.css">
 <link rel="stylesheet" href="/frontend/styles/pwa.css">
 
-<!-- Кнопка открытия/закрытия меню -->
-<button class="menu-button" id="menuButton" 
+<!-- Кнопки меню и активности -->
+<div class="menu-corner" id="menuCorner">
+  <button type="button" class="menu-activity-bell" id="activityBellBtn" hidden
+          aria-label="Активность">
+    <svg class="menu-activity-bell__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+    </svg>
+    <span class="menu-activity-bell__badge" id="activityBellBadge" hidden aria-hidden="true"></span>
+  </button>
+  <button class="menu-button" id="menuButton" 
         aria-controls="menuContainer"
         aria-haspopup="menu"
         aria-expanded="false">
     <span class="s">S</span><span class="n">n</span>
-</button>
+  </button>
+</div>
 
 <!-- Основной контейнер меню -->
 <div class="menu-container" id="menuContainer">
@@ -55,25 +65,6 @@
        data-finding-open-feed="1">
         <img src="/frontend/images/findings-feed.svg" alt="Лента находок" class="icon">
         Лента находок
-    </a>
-
-    <a href="#"
-       class="menu-item menu-inbox-link"
-       id="inbox-block"
-       data-route="findings-inbox"
-       data-finding-open-inbox="1"
-       hidden>
-        <img src="/frontend/images/findings-inbox.svg" alt="Сообщения" class="icon">
-        Сообщения
-    </a>
-
-    <a href="#"
-       class="menu-item menu-notifications-link"
-       id="findings-notifications-block"
-       data-finding-open-notifications="1"
-       hidden>
-        <img src="/frontend/images/findings-notifications.svg" alt="Уведомления" class="icon">
-        Уведомления
     </a>
 
     <!-- ========== РАЗДЕЛ ИГР ========== -->

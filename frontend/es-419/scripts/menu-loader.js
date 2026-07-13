@@ -3,7 +3,7 @@ import { initMenu } from './menu.js';
 import '/frontend/scripts/accessibility.js';
 import { applyGeoFilter } from '/frontend/scripts/geo-filter.js';
 import { t, loadMessages } from './i18n-loader.js';
-import { initFindingsModals } from '/frontend/scripts/findings-modals.js';
+import { initFindingsModals, openActivityModal } from '/frontend/scripts/findings-modals.js';
 
 // Немедленно применяем сохранённые настройки доступности
 (function applySavedAccessibility() {
@@ -266,9 +266,8 @@ fetch(primaryMenuPath)
     async function updateAuthMenuState() {
       const authBlock = document.getElementById('auth-block');
       const profileBlock = document.getElementById('profile-block');
-      const inboxBlock = document.getElementById('inbox-block');
-      const notificationsBlock = document.getElementById('findings-notifications-block');
-      if (!authBlock && !profileBlock && !inboxBlock && !notificationsBlock) return;
+      const activityBell = document.getElementById('activityBellBtn');
+      if (!authBlock && !profileBlock && !activityBell) return;
 
       try {
         const resp = await fetch('/auth/protected', { credentials: 'include' });
@@ -282,16 +281,14 @@ fetch(primaryMenuPath)
           profileBlock.hidden = !isLoggedIn;
           profileBlock.style.display = isLoggedIn ? '' : 'none';
         }
-        if (inboxBlock) {
-          inboxBlock.hidden = !isLoggedIn;
-          inboxBlock.style.display = isLoggedIn ? '' : 'none';
-        }
-        if (notificationsBlock) {
-          notificationsBlock.hidden = !isLoggedIn;
-          notificationsBlock.style.display = isLoggedIn ? '' : 'none';
+        if (activityBell) {
+          activityBell.hidden = !isLoggedIn;
+          activityBell.style.display = isLoggedIn ? '' : 'none';
         }
         if (isLoggedIn) {
           refreshUnreadUi();
+        } else {
+          updateActivityBellBadge(0);
         }
       } catch (e) {
         console.warn('auth menu state check failed', e);
@@ -299,24 +296,35 @@ fetch(primaryMenuPath)
           profileBlock.hidden = true;
           profileBlock.style.display = 'none';
         }
-        if (inboxBlock) {
-          inboxBlock.hidden = true;
-          inboxBlock.style.display = 'none';
-        }
-        if (notificationsBlock) {
-          notificationsBlock.hidden = true;
-          notificationsBlock.style.display = 'none';
+        if (activityBell) {
+          activityBell.hidden = true;
+          activityBell.style.display = 'none';
         }
       }
 
       hideCurrentPageMenuLinks();
     }
 
-    async function updateMenuUnreadIndicator() {
-      const menuButton = document.getElementById('menuButton');
-      if (!menuButton) return;
+    function updateActivityBellBadge(totalCount) {
+      const bell = document.getElementById('activityBellBtn');
+      const badge = document.getElementById('activityBellBadge');
+      if (!bell || !badge) return;
 
-      let hasUnread = false;
+      const count = Number(totalCount) || 0;
+      if (count > 0) {
+        badge.hidden = false;
+        badge.textContent = count > 99 ? '99+' : String(count);
+        bell.setAttribute('aria-label', `${bell.getAttribute('data-label-base') || 'Activity'} (${count})`);
+      } else {
+        badge.hidden = true;
+        badge.textContent = '';
+        const base = bell.getAttribute('data-label-base');
+        if (base) bell.setAttribute('aria-label', base);
+      }
+    }
+
+    async function updateMenuUnreadIndicator() {
+      let total = 0;
       try {
         const [inboxResp, notifResp] = await Promise.all([
           fetch('/api/findings/inbox/unread-count', { credentials: 'include' }),
@@ -324,88 +332,48 @@ fetch(primaryMenuPath)
         ]);
         if (inboxResp.ok) {
           const data = await inboxResp.json();
-          if ((Number(data?.count) || 0) > 0) hasUnread = true;
+          total += Number(data?.count) || 0;
         }
         if (notifResp.ok) {
           const data = await notifResp.json();
-          if ((Number(data?.count) || 0) > 0) hasUnread = true;
+          total += Number(data?.count) || 0;
         }
       } catch {
         /* ignore */
       }
 
-      let dot = menuButton.querySelector('.menu-button-unread-dot');
-      if (hasUnread) {
-        if (!dot) {
-          dot = document.createElement('span');
-          dot.className = 'menu-button-unread-dot';
-          dot.setAttribute('aria-hidden', 'true');
-          menuButton.appendChild(dot);
-        }
-      } else if (dot) {
-        dot.remove();
-      }
-    }
-
-    async function updateInboxBadge() {
-      const inboxBlock = document.getElementById('inbox-block');
-      if (!inboxBlock) return;
-
-      try {
-        const resp = await fetch('/api/findings/inbox/unread-count', { credentials: 'include' });
-        if (!resp.ok) return;
-        const data = await resp.json();
-        const count = Number(data?.count) || 0;
-        let badge = inboxBlock.querySelector('.menu-inbox-badge');
-        if (count > 0) {
-          if (!badge) {
-            badge = document.createElement('span');
-            badge.className = 'menu-inbox-badge';
-            inboxBlock.appendChild(badge);
-          }
-          badge.textContent = count > 99 ? '99+' : String(count);
-        } else if (badge) {
-          badge.remove();
-        }
-      } catch {
-        /* ignore */
-      }
-    }
-
-    async function updateNotificationsBadge() {
-      const block = document.getElementById('findings-notifications-block');
-      if (!block) return;
-
-      try {
-        const resp = await fetch('/api/findings/notifications/unread-count', { credentials: 'include' });
-        if (!resp.ok) return;
-        const data = await resp.json();
-        const count = Number(data?.count) || 0;
-        let badge = block.querySelector('.menu-inbox-badge');
-        if (count > 0) {
-          if (!badge) {
-            badge = document.createElement('span');
-            badge.className = 'menu-inbox-badge';
-            block.appendChild(badge);
-          }
-          badge.textContent = count > 99 ? '99+' : String(count);
-        } else if (badge) {
-          badge.remove();
-        }
-      } catch {
-        /* ignore */
-      }
+      updateActivityBellBadge(total);
     }
 
     async function refreshUnreadUi() {
-      await Promise.all([
-        updateMenuUnreadIndicator(),
-        updateInboxBadge(),
-        updateNotificationsBadge(),
-      ]);
+      await updateMenuUnreadIndicator();
+    }
+
+    function initActivityBell() {
+      const bell = document.getElementById('activityBellBtn');
+      if (!bell || bell.dataset.initialized) return;
+      bell.dataset.initialized = 'true';
+
+      const baseLabel = bell.getAttribute('aria-label') || 'Activity';
+      bell.setAttribute('data-label-base', baseLabel);
+
+      bell.addEventListener('click', async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        const { closeMenu } = await import('./menu.js');
+        closeMenu();
+        try {
+          const resp = await fetch('/auth/protected', { credentials: 'include' });
+          if (!resp.ok) return;
+          await openActivityModal('inbox');
+        } catch {
+          /* ignore */
+        }
+      });
     }
 
     updateAuthMenuState();
+    initActivityBell();
 
     initFindingsModals({
       onInboxRead: refreshUnreadUi,
