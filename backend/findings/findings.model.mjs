@@ -198,7 +198,9 @@ export async function userHasShareAccess(findingId, userId) {
      LIMIT 1`,
     [findingId, userId]
   );
-  return rows.length > 0;
+  if (rows.length > 0) return true;
+  const { userHasDmFindingAccess } = await import('../dm/dm.model.mjs');
+  return userHasDmFindingAccess(findingId, userId);
 }
 
 export async function listFindingsByUser(userId, limit = 50) {
@@ -223,40 +225,24 @@ export async function listFindingsByUser(userId, limit = 50) {
 }
 
 export async function insertFindingShare({ findingId, fromUserId, toUserId, message }) {
-  await ensureFindingsTables();
-  const result = await query(
-    `INSERT INTO finding_shares (finding_id, from_user_id, to_user_id, message)
-     VALUES (?, ?, ?, ?)`,
-    [findingId, fromUserId, toUserId, message ? message.slice(0, 500) : null]
-  );
-  return result.insertId;
+  const { insertDmMessage } = await import('../dm/dm.model.mjs');
+  const { messageId } = await insertDmMessage({
+    senderId: fromUserId,
+    recipientId: toUserId,
+    body: message,
+    findingId,
+  });
+  return messageId;
 }
 
 export async function listInboxForUser(userId, limit = 50) {
-  await ensureFindingsTables();
-  const lim = clampLimit(limit);
-  return query(
-    `SELECT s.id AS share_id, s.message, s.read_at, s.created_at,
-            f.public_id, f.query_text, f.locale,
-            u.username AS from_username
-     FROM finding_shares s
-     JOIN findings f ON f.id = s.finding_id
-     JOIN users u ON u.id = s.from_user_id
-     WHERE s.to_user_id = ?
-     ORDER BY s.created_at DESC
-     LIMIT ${lim}`,
-    [userId]
-  );
+  const { listInboxFlatFromDm } = await import('../dm/dm.model.mjs');
+  return listInboxFlatFromDm(userId, limit);
 }
 
 export async function countUnreadInbox(userId) {
-  await ensureFindingsTables();
-  const rows = await query(
-    `SELECT COUNT(*) AS cnt FROM finding_shares
-     WHERE to_user_id = ? AND read_at IS NULL`,
-    [userId]
-  );
-  return rows[0]?.cnt || 0;
+  const { countUnreadDm } = await import('../dm/dm.model.mjs');
+  return countUnreadDm(userId);
 }
 
 export async function deleteFindingByPublicId(userId, publicId) {
@@ -306,12 +292,8 @@ export async function listPublicFindings(limit = 30, offset = 0) {
 }
 
 export async function markShareRead(shareId, userId) {
-  await ensureFindingsTables();
-  await query(
-    `UPDATE finding_shares SET read_at = CURRENT_TIMESTAMP
-     WHERE id = ? AND to_user_id = ? AND read_at IS NULL`,
-    [shareId, userId]
-  );
+  const { markDmMessageRead } = await import('../dm/dm.model.mjs');
+  await markDmMessageRead(shareId, userId);
 }
 
 export async function isFollowing(followerId, followingId) {
