@@ -8,6 +8,8 @@ export default [
             'assembly/dist/**',
             'frontend/analytics/**',
             'backend/analytics/**',
+            // Локализованные / задеплоенные копии (источник — assembly/site/src)
+            'frontend/*/**',
             // Локальные venv / vendor, не попадают в git, но ломают lint на сервере
             '**/venv/**',
             'backend/voice/whisper-server/**'
@@ -56,9 +58,13 @@ export default [
             }
         },
         rules: {
-            'no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+            'no-unused-vars': ['warn', {
+                argsIgnorePattern: '^_',
+                varsIgnorePattern: '^_',
+                caughtErrorsIgnorePattern: '^_'
+            }],
             'no-undef': 'error',
-            'no-empty': 'warn',
+            'no-empty': ['warn', { allowEmptyCatch: true }],
             'no-unreachable': 'warn',
             'no-dupe-keys': 'warn'
         }
@@ -73,7 +79,7 @@ export default [
         },
         rules: {
             'no-undef': 'off',
-            'no-empty': 'warn',
+            'no-empty': ['warn', { allowEmptyCatch: true }],
             'no-dupe-keys': 'warn'
         }
     },
