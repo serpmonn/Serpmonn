@@ -1,5 +1,5 @@
 import express from 'express';
-import YooKassa from 'yookassa';
+import YooKassa from '../yookassa/yookassaClient.mjs';
 import { query } from '../database/config.mjs';
 import {
     createSubscription,
