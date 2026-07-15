@@ -4,6 +4,7 @@ import { loadNews } from './news.js';
 import { generateCombinedBackground } from './backgroundGenerator.js';
 import { initAdSlotObserver } from './ad-pool.js';
 import { initFindingsSave } from './findings-client.js';
+import { escapeHtml } from './finding-content-render.js';
 import '/frontend/pwa/app.js';
 
 // scripts.js
@@ -145,8 +146,8 @@ function renderAttachmentPreview() {
         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
         <path d="M14 2v6h6"/>
       </svg>
-      <span class="search-attachment-name">${searchAttachment.name}</span>
-      <button type="button" class="search-attachment-remove" aria-label="${messages.attachmentRemoveLabel}">&times;</button>
+      <span class="search-attachment-name">${escapeHtml(searchAttachment.name)}</span>
+      <button type="button" class="search-attachment-remove" aria-label="${escapeHtml(messages.attachmentRemoveLabel)}">&times;</button>
     </span>
   `;
 

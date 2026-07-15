@@ -241,8 +241,19 @@ let observer;
 })();
 // ========== КОНЕЦ НОВОГО КОДА ==========
 
+function safeHttpUrl(u, fallback = '') {
+    if (!u || typeof u !== 'string') return fallback;
+    try {
+        const x = new URL(u, window.location.origin);
+        if (x.protocol !== 'http:' && x.protocol !== 'https:') return fallback;
+        return x.href;
+    } catch {
+        return fallback;
+    }
+}
+
 function escapeHtml(unsafe) {
-    return unsafe
+    return String(unsafe || '')
         .replace(/&/g, "&amp;")
         .replace(/</g, "&lt;")
         .replace(/>/g, "&gt;")
@@ -822,13 +833,14 @@ function createPromoCard(promo, isTopOffer = false) {
     const conditionsBlock = promo.conditions
         ? `<p class="details-conditions"><strong>${t('promo.conditions')}</strong> ${escapeHtml(promo.conditions)}</p>`
         : '';
-    const landingUrl = promo.landing_url || promo.link || promo.url;
+    const landingUrl = safeHttpUrl(promo.landing_url || promo.link || promo.url);
+    const imageUrl = escapeHtml(safeHttpUrl(promo.image_url, '/frontend/images/skidki-i-akcii.png') || '/frontend/images/skidki-i-akcii.png');
 
     card.innerHTML = `
         <div class="promo-card-content">
             <div class="promo-header">
-                <img src="${promo.image_url || '/frontend/images/skidki-i-akcii.png'}" 
-                     data-src="${promo.image_url || '/frontend/images/skidki-i-akcii.png'}" 
+                <img src="${imageUrl}" 
+                     data-src="${imageUrl}" 
                      alt="${titleText}" width="80" height="80" loading="lazy" class="lazy-load">
                 <h3 title="${escapeHtml(getPromoTitle(promo))}">${titleText}</h3>
             </div>
@@ -855,7 +867,7 @@ function createPromoCard(promo, isTopOffer = false) {
         <div class="promo-card-footer">
             ${landingUrl ? `
                 <div class="promo-footer-actions">
-                    <a href="${escapeHtml(landingUrl)}" target="_blank" class="register-link use-btn">${t('promo.use')}</a>
+                    <a href="${escapeHtml(landingUrl)}" target="_blank" rel="noopener noreferrer" class="register-link use-btn">${t('promo.use')}</a>
                     <button 
                         type="button" 
                         class="promo-share-button" 

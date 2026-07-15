@@ -18,6 +18,30 @@ import {
   isFavoriteHref
 } from '../scripts/tool-favorites.js';
 
+function escapeHtmlAttr(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+/** Allow only same-site /frontend/... paths (blocks javascript: / open redirects). */
+function safeFrontendHref(href, fallback = '#') {
+  if (!href || typeof href !== 'string') return fallback;
+  const trimmed = href.trim();
+  if (trimmed.startsWith('/frontend/') && !trimmed.includes('\\') && !/^[a-z]+:/i.test(trimmed.slice(1))) {
+    return trimmed;
+  }
+  try {
+    const u = new URL(trimmed, window.location.origin);
+    if (u.origin === window.location.origin && u.pathname.startsWith('/frontend/')) {
+      return `${u.pathname}${u.search}${u.hash}`;
+    }
+  } catch (_) {}
+  return fallback;
+}
+
 function getLocalizedHref(href) {
   const relative = href.replace(/^\/frontend\//, '');
   return getFrontendPath(relative);
@@ -413,7 +437,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     favoriteTools.forEach(tool => {
       const a = document.createElement('a');
       a.className = 'tool-link';
-      a.href = tool.href;
+      a.href = safeFrontendHref(tool.href);
       const span = document.createElement('span');
       span.className = 'tool-text';
       span.textContent = tool.name;
@@ -440,33 +464,33 @@ document.addEventListener('DOMContentLoaded', async () => {
         : '';
 
     editProfileMount.innerHTML = `
-    <section class="edit-inline" aria-label="${t('profile.editSectionLabel')}">
+    <section class="edit-inline" aria-label="${escapeHtmlAttr(t('profile.editSectionLabel'))}">
       <form id="profileForm" class="form-card form-card--inline" novalidate>
         <div class="form-field form-field--inline">
-          <label for="newUsername">${t('profile.labelName')}</label>
+          <label for="newUsername">${escapeHtmlAttr(t('profile.labelName'))}</label>
           <input type="text"
               id="newUsername"
               name="newUsername"
               maxlength="255"
-              placeholder="${t('profile.namePlaceholder')}"
-              value="${usernameValue}">
+              placeholder="${escapeHtmlAttr(t('profile.namePlaceholder'))}"
+              value="${escapeHtmlAttr(usernameValue)}">
         </div>
 
         <div class="form-field form-field--inline">
-          <label for="newEmail">${t('profile.labelEmail')}</label>
+          <label for="newEmail">${escapeHtmlAttr(t('profile.labelEmail'))}</label>
           <input type="email"
               id="newEmail"
               name="newEmail"
-              placeholder="${t('profile.emailPlaceholder')}"
-              value="${emailValue}">
+              placeholder="${escapeHtmlAttr(t('profile.emailPlaceholder'))}"
+              value="${escapeHtmlAttr(emailValue)}">
         </div>
 
         <div class="form-actions form-actions--inline">
           <button type="submit" class="primary-button primary-button--inline">
-            ${t('profile.save')}
+            ${escapeHtmlAttr(t('profile.save'))}
           </button>
           <button type="button" id="cancelEditProfile" class="secondary-button secondary-button--inline">
-            ${t('profile.cancel')}
+            ${escapeHtmlAttr(t('profile.cancel'))}
           </button>
         </div>
 
@@ -876,7 +900,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Ошибка выхода:', error);
     } finally {
       localStorage.removeItem('serp_tools_recent');
-      window.location.href = getFrontendPath('main.html');
+      window.location.assign(getFrontendPath('main.html'));
     }
   }
 
@@ -1046,7 +1070,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   managePlanButton.addEventListener('click', () => {
-    window.location.href = getFrontendPath('tariffs/tariffs.html');
+    window.location.assign(getFrontendPath('tariffs/tariffs.html'));
   });
 
   /* ==== НЕДАВНИЕ ИНСТРУМЕНТЫ ==== */
@@ -1072,7 +1096,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const tool = tools.find((tool) => tool.neutralHref === neutral);
         const li = document.createElement('li');
         const a = document.createElement('a');
-        a.href = tool ? tool.href : (neutral || item.href || '#');
+        a.href = safeFrontendHref(tool ? tool.href : (neutral || item.href || '#'));
         a.textContent = tool ? tool.name : (item.title || neutral);
         li.appendChild(a);
         ul.appendChild(li);

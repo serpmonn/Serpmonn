@@ -64,5 +64,8 @@ export function buildAuthUrl({ tab = null, returnPath = null } = {}) {
 }
 
 export function redirectToAuth(options = {}) {
-  window.location.href = buildAuthUrl(options);
+  const url = buildAuthUrl(options);
+  if (typeof url === 'string' && url.startsWith('/frontend/')) {
+    window.location.assign(url);
+  }
 }

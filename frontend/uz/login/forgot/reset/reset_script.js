@@ -51,10 +51,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (res.ok) {
         setTimeout(() => {
-          window.location.href = buildAuthUrl({
+          const url = buildAuthUrl({
             tab: 'login',
             returnPath: getFrontendPath('profile/profile.html')
           });
+          if (typeof url === 'string' && url.startsWith('/frontend/')) {
+            window.location.assign(url);
+          }
         }, 2000);
       }
     } catch (err) {

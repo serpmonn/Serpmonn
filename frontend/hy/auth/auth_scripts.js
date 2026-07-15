@@ -4,6 +4,14 @@ import { getPageT } from '../scripts/i18n-loader.js';
 
 const t = await getPageT('auth');
 
+function escapeHtml(str) {
+  return String(str || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
 const urlParams = new URLSearchParams(window.location.search);
 const referralUsername = urlParams.get('ref') || null;
 const initialTab = urlParams.get('tab') === 'register' ? 'register' : 'login';
@@ -11,6 +19,11 @@ const safeReturnPath = sanitizeReturnPath(urlParams.get('return'));
 
 function authRedirectTarget() {
   return safeReturnPath || getFrontendPath('profile/profile.html');
+}
+
+function safeNavigate(url) {
+  const target = sanitizeReturnPath(url) || (typeof url === 'string' && url.startsWith('/frontend/') ? url : null);
+  if (target) window.location.assign(target);
 }
 
 const authFormsView = document.getElementById('authFormsView');
@@ -92,7 +105,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
 
     showMessage(data.message || t('auth.loginSuccess'), 'success');
     setTimeout(() => {
-      window.location.href = authRedirectTarget();
+      safeNavigate(authRedirectTarget());
     }, 800);
   } catch (error) {
     console.error('Login error:', error);
@@ -143,7 +156,7 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
 
     const templateEl = document.getElementById('registerSuccessTemplate');
     const template = templateEl?.innerHTML.trim() || t('register.emailSent');
-    registerSuccessText.innerHTML = template.replace('{email}', email);
+    registerSuccessText.innerHTML = template.replace('{email}', escapeHtml(email));
   } catch (error) {
     console.error('Registration error:', error);
     showMessage(t('register.serverError'));
@@ -208,7 +221,7 @@ function initVkIdOneTap() {
 
           const data = await resp.json();
           if (data?.success) {
-            window.location.href = authRedirectTarget();
+            safeNavigate(authRedirectTarget());
           } else {
             showMessage(t('login.error'));
           }

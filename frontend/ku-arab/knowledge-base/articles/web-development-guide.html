@@ -751,15 +751,26 @@
             
             try {
                 if (editor.classList.contains('html-editor')) {
-                    previewArea.innerHTML = codeArea.value;
+                    // Песочница: HTML из редактора не исполняется в родительской странице
+                    previewArea.replaceChildren();
+                    const frame = document.createElement('iframe');
+                    frame.setAttribute('sandbox', '');
+                    frame.style.width = '100%';
+                    frame.style.minHeight = '200px';
+                    frame.style.border = '0';
+                    frame.srcdoc = codeArea.value;
+                    previewArea.appendChild(frame);
                 } else if (editor.classList.contains('css-editor')) {
                     const styleTag = document.createElement('style');
                     styleTag.textContent = codeArea.value;
-                    previewArea.innerHTML = '<h1>Пример заголовка</h1><p>Пример текста для стилизации с помощью CSS</p>';
+                    previewArea.replaceChildren();
+                    const sample = document.createElement('div');
+                    sample.innerHTML = '<h1>Пример заголовка</h1><p>Пример текста для стилизации с помощью CSS</p>';
+                    previewArea.appendChild(sample);
                     previewArea.appendChild(styleTag);
                 }
             } catch (error) {
-                previewArea.innerHTML = `<div class="error">${localeTexts.error}: ${error.message}</div>`;
+                previewArea.textContent = `${localeTexts.error}: ${error.message}`;
             }
         }
         
