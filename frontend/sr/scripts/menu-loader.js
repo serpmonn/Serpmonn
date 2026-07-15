@@ -327,7 +327,7 @@ fetch(primaryMenuPath)
       let total = 0;
       try {
         const [inboxResp, notifResp] = await Promise.all([
-          fetch('/api/findings/inbox/unread-count', { credentials: 'include' }),
+          fetch('/api/dm/unread-count', { credentials: 'include' }),
           fetch('/api/findings/notifications/unread-count', { credentials: 'include' }),
         ]);
         if (inboxResp.ok) {

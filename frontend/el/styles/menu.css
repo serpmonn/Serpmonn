@@ -18,8 +18,8 @@
 
 .menu-corner {
   position: fixed;
-  top: 10px;
-  right: 10px;
+  top: max(10px, env(safe-area-inset-top, 0px) + 8px);
+  right: max(10px, env(safe-area-inset-right, 0px) + 8px);
   z-index: 10001;
   display: flex;
   align-items: center;
@@ -85,23 +85,27 @@
   position: relative;
   top: auto;
   right: auto;
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #fff;
-    padding: 10px;
-    cursor: pointer;
-    border: none;
-    font-family: Arial, sans-serif;
-    font-size: 24px;
-    font-weight: bold;
-    line-height: 1;
-    width: auto;
-    min-height: auto;
-    display: inline-block;
-    appearance: none;
-    -webkit-appearance: none;
-    border-radius: 10px;
-    transition: width 0.3s;
-    z-index: 10001;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #fff;
+  padding: 10px;
+  cursor: pointer;
+  border: none;
+  font-family: Arial, sans-serif;
+  font-size: 24px;
+  font-weight: bold;
+  line-height: 1;
+  width: auto;
+  min-height: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  border-radius: 10px;
+  transition: width 0.3s;
+  z-index: 10001;
 }
 
 .menu-button-unread-dot {
@@ -657,11 +661,31 @@
 }
 
 /* Адаптивность для мобильных устройств */
+@media (max-width: 768px) {
+  .menu-corner {
+    top: max(14px, env(safe-area-inset-top, 0px) + 10px);
+    right: max(10px, env(safe-area-inset-right, 0px) + 6px);
+    gap: 5px;
+  }
+
+  .menu-activity-bell,
+  .menu-button {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    padding: 0;
+    border-radius: 9px;
+  }
+
+  .menu-button {
+    top: auto;
+    right: auto;
+    font-size: 18px;
+  }
+}
+
 @media (max-width: 600px) {
-    .menu-button {
-        min-width: 44px;
-        min-height: 44px;
-    }
     .menu-container {
         max-width: 85%;
         max-height: 80vh;
@@ -712,13 +736,6 @@
         margin-right: 8px;
     }
 
-    .menu-button {
-        top: 5px;
-        right: 5px;
-        padding: 8px;
-        font-size: 20px;
-    }
-
     .menu-search-row .gsc-search-button.gsc-search-button-v2,
     .menu-search-row button.gsc-search-button {
         min-height: 41px;
@@ -754,13 +771,6 @@
         width: 14px;
         height: 14px;
         margin-right: 6px;
-    }
-
-    .menu-button {
-        top: 3px;
-        right: 3px;
-        padding: 6px;
-        font-size: 18px;
     }
 
     .menu-search-row .gsc-search-button.gsc-search-button-v2,

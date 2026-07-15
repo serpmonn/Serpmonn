@@ -13,21 +13,26 @@ import {
   escapeHtml,
   renderFindingContent,
 } from './finding-content-render.js';
+import { renderFindingListCard } from './finding-list-card.js';
 import {
-  renderFindingListCard,
-  renderInboxDialogCard,
-  groupInboxDialogs,
-} from './finding-list-card.js';
+  renderDmDialogCard,
+  renderChatThread,
+  renderChatComposeBar,
+  renderDmFindingPickerList,
+  renderNotificationItem,
+  renderActivityEmpty,
+} from './dm-chat.js';
 import { applyShareIconButton, updateLikeControl, updateCommentControl, applyCopyIconButton, applySaveIconButton, renderViewsControl, FINDING_COPY_ICON, FINDING_SHARE_ICON, FINDING_LIKE_ICON } from './finding-icons.js';
 import { closeMenu } from './menu.js';
 
 let initialized = false;
+const ACTIVITY_INTRO_KEY = 'spn_activity_intro_seen';
 let onInboxRead = null;
 let onNotificationsRead = null;
 
 const feedState = { mode: 'all', q: '', offset: 0, items: [], hasMore: false };
-const inboxState = { view: 'dialogs', username: null, items: [] };
-const activityState = { tab: 'inbox' };
+const inboxState = { view: 'dialogs', username: null, conversations: [], messages: [], pendingFinding: null, newDialogOpen: false };
+const activityState = { tab: 'inbox', unreadDm: 0, unreadNotifications: 0 };
 let shareSendContext = null;
 let shareMenuContext = null;
 let modalStackZ = 100000;
@@ -183,6 +188,14 @@ function bindFindingListCards(listEl, modal, { mode = 'feed' } = {}) {
 
 function ensureActivityModal() {
   let modal = document.getElementById('finding-activity-modal');
+  if (modal && !modal.querySelector('[data-activity-title]')) {
+    modal.remove();
+    modal = null;
+  }
+  if (modal && !modal.querySelector('[data-activity-intro]')) {
+    modal.remove();
+    modal = null;
+  }
   if (modal) return modal;
 
   modal = document.createElement('div');
@@ -194,20 +207,40 @@ function ensureActivityModal() {
   modal.innerHTML = `
     <div class="ai-share-backdrop"></div>
     <div class="ai-share-dialog finding-panel-dialog finding-inbox-dialog finding-activity-dialog" tabindex="-1">
-      <button type="button" class="ai-share-close finding-panel-close" aria-label="×">&times;</button>
-      <h2 class="finding-panel-title finding-activity-thread-title" data-inbox-thread-title hidden></h2>
+      <header class="finding-activity-header">
+        <div class="finding-activity-header__main">
+          <button type="button" class="finding-activity-back" data-inbox-back hidden aria-label=""></button>
+          <h2 class="finding-panel-title finding-activity-title" data-activity-title></h2>
+          <h2 class="finding-panel-title finding-activity-thread-title" data-inbox-thread-title hidden></h2>
+        </div>
+        <div class="finding-activity-header__actions">
+          <button type="button" class="finding-activity-write" data-inbox-new-open hidden></button>
+          <button type="button" class="finding-activity-close finding-panel-close" aria-label="×"><span aria-hidden="true">&times;</span></button>
+        </div>
+      </header>
       <div class="finding-activity-toolbar" data-activity-tabs>
         <div class="finding-activity-tabs finding-feed-tabs" role="tablist">
           <button type="button" class="finding-feed-tab finding-activity-tab finding-feed-tab--active" data-activity-tab="inbox" role="tab"></button>
           <button type="button" class="finding-feed-tab finding-activity-tab" data-activity-tab="notifications" role="tab"></button>
         </div>
       </div>
-      <div class="finding-inbox-toolbar finding-activity-inbox-toolbar">
-        <button type="button" class="finding-inbox-back-btn" data-inbox-back hidden></button>
+      <div class="finding-activity-intro" data-activity-intro hidden>
+        <p class="finding-activity-intro__text" data-activity-intro-text></p>
+        <button type="button" class="finding-activity-intro__dismiss" data-activity-intro-dismiss aria-label="×"><span aria-hidden="true">&times;</span></button>
       </div>
-      <p class="finding-panel-hint" data-inbox-hint></p>
-      <section class="finding-activity-panel" data-activity-panel="inbox">
-        <div class="finding-panel-body" data-inbox-list aria-live="polite"></div>
+      <div class="finding-dm-new-toolbar" data-inbox-new-toolbar hidden>
+        <div class="finding-dm-new-form" data-inbox-new-form>
+          <input type="text" class="finding-dm-new-input" data-inbox-new-input autocomplete="off" spellcheck="false" />
+          <div class="finding-dm-new-form__actions">
+            <button type="button" class="primary-button finding-dm-new-submit" data-inbox-new-submit></button>
+            <button type="button" class="finding-dm-new-cancel" data-inbox-new-cancel></button>
+          </div>
+          <ul class="finding-dm-new-suggest" data-inbox-new-suggest hidden></ul>
+        </div>
+      </div>
+      <section class="finding-activity-panel finding-dm-panel" data-activity-panel="inbox">
+        <div class="finding-panel-body finding-dm-body" data-inbox-list aria-live="polite"></div>
+        <div data-inbox-compose-wrap hidden></div>
       </section>
       <section class="finding-activity-panel" data-activity-panel="notifications" hidden>
         <div class="finding-panel-body" data-notifications-list aria-live="polite"></div>
@@ -216,10 +249,14 @@ function ensureActivityModal() {
   `;
   document.body.appendChild(modal);
   bindPanelClose(modal);
+  bindNewDialogToolbar(modal);
+  bindActivityIntro(modal);
 
   modal.querySelector('[data-inbox-back]')?.addEventListener('click', () => {
     inboxState.view = 'dialogs';
     inboxState.username = null;
+    inboxState.pendingFinding = null;
+    inboxState.newDialogOpen = false;
     loadActivityInto(modal);
   });
 
@@ -230,6 +267,8 @@ function ensureActivityModal() {
       activityState.tab = nextTab;
       inboxState.view = 'dialogs';
       inboxState.username = null;
+      inboxState.pendingFinding = null;
+      inboxState.newDialogOpen = false;
       loadActivityInto(modal);
     });
   });
@@ -239,19 +278,60 @@ function ensureActivityModal() {
 
 function localizeActivityTabs(modal) {
   modal.querySelectorAll('[data-activity-tab]').forEach((tab) => {
-    tab.textContent =
-      tab.dataset.activityTab === 'notifications' ? tk('notificationsTitle') : tk('inboxTitle');
+    const isInbox = tab.dataset.activityTab === 'inbox';
+    const title = isInbox ? tk('inboxTitle') : tk('notificationsTitle');
+    const count = isInbox ? activityState.unreadDm : activityState.unreadNotifications;
+    const badge =
+      count > 0
+        ? `<span class="finding-activity-tab-badge">${count > 99 ? '99+' : count}</span>`
+        : '';
+    tab.innerHTML = `<span class="finding-activity-tab-label">${escapeHtml(title)}</span>${badge}`;
   });
+}
+
+async function updateActivityTabBadges(modal) {
+  const [dmResp, notifResp] = await Promise.all([
+    apiGet('/api/dm/unread-count'),
+    apiGet('/api/findings/notifications/unread-count'),
+  ]);
+  activityState.unreadDm = dmResp.ok ? Number(dmResp.data?.count) || 0 : 0;
+  activityState.unreadNotifications = notifResp.ok ? Number(notifResp.data?.count) || 0 : 0;
+  if (modal) localizeActivityTabs(modal);
 }
 
 function setActivityPanels(modal) {
   const inThread = activityState.tab === 'inbox' && inboxState.view === 'thread';
+  const inInboxDialogs = activityState.tab === 'inbox' && inboxState.view === 'dialogs';
   const tabsEl = modal.querySelector('[data-activity-tabs]');
+  const activityTitleEl = modal.querySelector('[data-activity-title]');
   const threadTitleEl = modal.querySelector('[data-inbox-thread-title]');
-  const hintEl = modal.querySelector('[data-inbox-hint]');
+  const backBtn = modal.querySelector('[data-inbox-back]');
+  const writeBtn = modal.querySelector('[data-inbox-new-open]');
 
   if (tabsEl) tabsEl.hidden = inThread;
-  if (threadTitleEl) threadTitleEl.hidden = !inThread;
+
+  if (activityTitleEl) {
+    activityTitleEl.hidden = inThread;
+    activityTitleEl.textContent = tk('activityTitle');
+  }
+
+  if (threadTitleEl) {
+    threadTitleEl.hidden = !inThread;
+    if (inThread && inboxState.username) {
+      threadTitleEl.textContent = tk('byUser', { user: inboxState.username });
+    }
+  }
+
+  if (backBtn) {
+    backBtn.hidden = !inThread;
+    backBtn.setAttribute('aria-label', tk('inboxBack'));
+    backBtn.title = tk('inboxBack');
+  }
+
+  if (writeBtn) {
+    writeBtn.hidden = !inInboxDialogs || inboxState.newDialogOpen;
+    writeBtn.textContent = tk('dmNewMessage');
+  }
 
   modal.querySelectorAll('[data-activity-panel]').forEach((panel) => {
     const isActive = panel.dataset.activityPanel === activityState.tab;
@@ -263,13 +343,180 @@ function setActivityPanels(modal) {
     tab.setAttribute('aria-selected', tab.dataset.activityTab === activityState.tab ? 'true' : 'false');
   });
 
-  if (hintEl) {
-    hintEl.hidden = activityState.tab !== 'inbox' || inThread;
+  updateNewDialogToolbar(modal);
+  updateActivityIntro(modal);
+}
+
+function updateActivityIntro(modal) {
+  const introEl = modal?.querySelector('[data-activity-intro]');
+  if (!introEl) return;
+
+  const inThread = activityState.tab === 'inbox' && inboxState.view === 'thread';
+  let seen = false;
+  try {
+    seen = localStorage.getItem(ACTIVITY_INTRO_KEY) === '1';
+  } catch {
+    seen = true;
   }
+
+  introEl.hidden = seen || inThread;
+  const textEl = introEl.querySelector('[data-activity-intro-text]');
+  if (textEl) textEl.textContent = tk('activityIntro');
+}
+
+function dismissActivityIntro(modal) {
+  try {
+    localStorage.setItem(ACTIVITY_INTRO_KEY, '1');
+  } catch {
+    /* ignore */
+  }
+  updateActivityIntro(modal);
+}
+
+function bindActivityIntro(modal) {
+  if (!modal || modal.dataset.introBound) return;
+  modal.dataset.introBound = '1';
+  modal.querySelector('[data-activity-intro-dismiss]')?.addEventListener('click', () => {
+    dismissActivityIntro(modal);
+  });
+}
+
+function bindActivityEmptyActions(modal, listEl) {
+  listEl?.querySelectorAll('[data-activity-empty-action="write"]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      inboxState.newDialogOpen = true;
+      updateNewDialogToolbar(modal);
+      setActivityPanels(modal);
+      modal.querySelector('[data-inbox-new-input]')?.focus();
+    });
+  });
+}
+
+function normalizeDmUsername(raw) {
+  return String(raw || '').trim().replace(/^@+/, '');
+}
+
+function updateNewDialogToolbar(modal) {
+  const toolbar = modal?.querySelector('[data-inbox-new-toolbar]');
+  const input = modal?.querySelector('[data-inbox-new-input]');
+  const submit = modal?.querySelector('[data-inbox-new-submit]');
+  const cancel = modal?.querySelector('[data-inbox-new-cancel]');
+  const writeBtn = modal?.querySelector('[data-inbox-new-open]');
+  const t = (key) => tk(key);
+
+  const showForm =
+    activityState.tab === 'inbox' && inboxState.view === 'dialogs' && inboxState.newDialogOpen;
+
+  if (toolbar) toolbar.hidden = !showForm;
+  if (writeBtn) writeBtn.hidden = !(activityState.tab === 'inbox' && inboxState.view === 'dialogs') || inboxState.newDialogOpen;
+
+  if (!showForm) return;
+
+  if (input) input.placeholder = t('dmNewMessagePlaceholder');
+  if (submit) submit.textContent = t('dmNewMessageOpen');
+  if (cancel) cancel.textContent = t('cancelLabel');
+}
+
+async function startInboxThread(modal, username) {
+  const peer = normalizeDmUsername(username);
+  if (!peer) return;
+
+  const { ok, status } = await apiGet(`/api/dm/conversations/${encodeURIComponent(peer)}/messages`);
+  if (status === 401) return authRedirect();
+  if (!ok) {
+    if (status === 404) showToast(tk('userNotFound'));
+    else showToast(tk('loadFailed'));
+    return;
+  }
+
+  inboxState.newDialogOpen = false;
+  inboxState.view = 'thread';
+  inboxState.username = peer;
+
+  const input = modal.querySelector('[data-inbox-new-input]');
+  const suggest = modal.querySelector('[data-inbox-new-suggest]');
+  if (input) input.value = '';
+  if (suggest) {
+    suggest.hidden = true;
+    suggest.innerHTML = '';
+  }
+
+  await loadActivityInto(modal);
+}
+
+function bindNewDialogToolbar(modal) {
+  if (!modal || modal.dataset.newDialogBound) return;
+  modal.dataset.newDialogBound = '1';
+
+  const openBtn = modal.querySelector('[data-inbox-new-open]');
+  const input = modal.querySelector('[data-inbox-new-input]');
+  const submit = modal.querySelector('[data-inbox-new-submit]');
+  const cancel = modal.querySelector('[data-inbox-new-cancel]');
+  const suggest = modal.querySelector('[data-inbox-new-suggest]');
+  let lookupTimer = null;
+
+  openBtn?.addEventListener('click', () => {
+    inboxState.newDialogOpen = true;
+    updateNewDialogToolbar(modal);
+    input?.focus();
+  });
+
+  cancel?.addEventListener('click', () => {
+    inboxState.newDialogOpen = false;
+    if (input) input.value = '';
+    if (suggest) {
+      suggest.hidden = true;
+      suggest.innerHTML = '';
+    }
+    updateNewDialogToolbar(modal);
+  });
+
+  const tryStart = () => startInboxThread(modal, input?.value || '');
+
+  submit?.addEventListener('click', tryStart);
+  input?.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
+      event.preventDefault();
+      tryStart();
+    }
+  });
+
+  input?.addEventListener('input', () => {
+    clearTimeout(lookupTimer);
+    const q = normalizeDmUsername(input?.value || '');
+    if (!suggest) return;
+    if (q.length < 2) {
+      suggest.hidden = true;
+      suggest.innerHTML = '';
+      return;
+    }
+    lookupTimer = setTimeout(async () => {
+      const { ok, data } = await apiGet(
+        `/api/findings/users/lookup?username=${encodeURIComponent(q)}`
+      );
+      if (!ok) return;
+      const users = data.users || [];
+      if (!users.length) {
+        suggest.hidden = true;
+        suggest.innerHTML = '';
+        return;
+      }
+      suggest.hidden = false;
+      suggest.innerHTML = users
+        .map(
+          (user) =>
+            `<li><button type="button" class="finding-dm-new-suggest__item" data-inbox-new-pick="${escapeHtml(user.username)}">@${escapeHtml(user.username)}</button></li>`
+        )
+        .join('');
+      suggest.querySelectorAll('[data-inbox-new-pick]').forEach((btn) => {
+        btn.addEventListener('click', () => startInboxThread(modal, btn.dataset.inboxNewPick));
+      });
+    }, 250);
+  });
 }
 
 async function loadActivityInto(modal) {
-  localizeActivityTabs(modal);
+  await updateActivityTabBadges(modal);
   setActivityPanels(modal);
   if (activityState.tab === 'inbox') {
     await loadInboxInto(modal);
@@ -284,7 +531,10 @@ export async function openActivityModal(tab = 'inbox') {
   if (activityState.tab === 'inbox') {
     inboxState.view = 'dialogs';
     inboxState.username = null;
-    inboxState.items = [];
+    inboxState.conversations = [];
+    inboxState.messages = [];
+    inboxState.pendingFinding = null;
+    inboxState.newDialogOpen = false;
   }
   const modal = ensureActivityModal();
   openPanel(modal);
@@ -886,11 +1136,146 @@ function setupLikeButton(modal, publicId, findingData, t) {
   };
 }
 
-async function loadInboxInto(modal) {
-  const threadTitleEl = modal.querySelector('[data-inbox-thread-title]');
-  const hintEl = modal.querySelector('[data-inbox-hint]');
+function setInboxComposeVisible(modal, visible) {
+  const wrap = modal.querySelector('[data-inbox-compose-wrap]');
+  if (!wrap) return;
+  wrap.hidden = !visible;
+  if (visible) {
+    wrap.innerHTML = renderChatComposeBar((key, vars) => tk(key, vars), inboxState.pendingFinding);
+    wrap.dataset.boundUsername = '';
+  } else {
+    inboxState.pendingFinding = null;
+  }
+}
+
+function ensureDmFindingPickerModal() {
+  let modal = document.getElementById('finding-dm-picker-modal');
+  if (modal) return modal;
+
+  modal = document.createElement('div');
+  modal.id = 'finding-dm-picker-modal';
+  modal.className = 'ai-share-modal finding-panel-modal';
+  modal.style.display = 'none';
+  modal.setAttribute('role', 'dialog');
+  modal.setAttribute('aria-modal', 'true');
+  modal.innerHTML = `
+    <div class="ai-share-backdrop"></div>
+    <div class="ai-share-dialog finding-panel-dialog finding-dm-picker-dialog" tabindex="-1">
+      <button type="button" class="ai-share-close finding-panel-close" aria-label="×">&times;</button>
+      <h2 class="finding-panel-title" data-dm-picker-title></h2>
+      <p class="finding-panel-hint" data-dm-picker-hint></p>
+      <div class="finding-panel-body" data-dm-picker-list aria-live="polite"></div>
+      <button type="button" class="finding-save-cancel-btn finding-save-cancel-btn--full" data-dm-picker-cancel></button>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  bindPanelClose(modal);
+  modal.querySelector('[data-dm-picker-cancel]')?.addEventListener('click', () => closePanel(modal));
+  return modal;
+}
+
+let dmPickerOnSelect = null;
+
+async function openDmFindingPicker(onSelect) {
+  dmPickerOnSelect = onSelect;
+  const modal = ensureDmFindingPickerModal();
+  const t = (key, vars) => tk(key, vars);
+  modal.querySelector('[data-dm-picker-title]').textContent = t('dmPickFindingTitle');
+  modal.querySelector('[data-dm-picker-hint]').textContent = t('dmPickFindingHint');
+  modal.querySelector('[data-dm-picker-cancel]').textContent = t('cancelLabel');
+  const listEl = modal.querySelector('[data-dm-picker-list]');
+  listEl.innerHTML = `<p class="plan-hint">${escapeHtml(t('inboxLoading'))}</p>`;
+  openPanel(modal);
+
+  const { ok, data } = await apiGet('/api/findings/mine/list');
+  if (!ok) {
+    listEl.innerHTML = `<p class="finding-empty">${escapeHtml(t('loginRequired'))}</p>`;
+    return;
+  }
+
+  const items = data.items || [];
+  listEl.innerHTML = renderDmFindingPickerList(items, t);
+  listEl.querySelectorAll('[data-dm-pick-finding]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const publicId = btn.dataset.dmPickFinding;
+      const item = items.find((row) => row.public_id === publicId);
+      if (!item) return;
+      closePanel(modal);
+      dmPickerOnSelect?.({ publicId: item.public_id, query: item.query_text });
+      dmPickerOnSelect = null;
+    });
+  });
+}
+
+function bindChatThread(modal, username) {
   const listEl = modal.querySelector('[data-inbox-list]');
-  const backBtn = modal.querySelector('[data-inbox-back]');
+  const wrap = modal.querySelector('[data-inbox-compose-wrap]');
+  const composeForm = modal.querySelector('[data-inbox-compose]');
+  const input = modal.querySelector('[data-inbox-compose-input]');
+  const t = (key, vars) => tk(key, vars);
+
+  listEl?.querySelectorAll('[data-action="open-finding"]').forEach((btn) => {
+    btn.addEventListener('click', (event) => {
+      event.stopPropagation();
+      const publicId = btn.dataset.publicId;
+      if (publicId) openFindingModal(publicId);
+    });
+  });
+
+  if (!wrap || wrap.dataset.boundUsername === username) return;
+  wrap.dataset.boundUsername = username;
+
+  wrap.querySelector('[data-inbox-compose-attach]')?.addEventListener('click', () => {
+    openDmFindingPicker((finding) => {
+      inboxState.pendingFinding = finding;
+      setInboxComposeVisible(modal, true);
+      bindChatThread(modal, username);
+      modal.querySelector('[data-inbox-compose-input]')?.focus();
+    });
+  });
+
+  wrap.querySelector('[data-inbox-compose-clear]')?.addEventListener('click', () => {
+    inboxState.pendingFinding = null;
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
+  });
+
+  composeForm?.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const body = String(input?.value || '').trim();
+    const findingPublicId = inboxState.pendingFinding?.publicId || '';
+    if (!body && !findingPublicId) return;
+
+    const sendBtn = composeForm.querySelector('[data-inbox-compose-send]');
+    if (sendBtn) sendBtn.disabled = true;
+
+    const payload = {};
+    if (body) payload.body = body;
+    if (findingPublicId) payload.findingPublicId = findingPublicId;
+
+    const { ok, status } = await apiPost(
+      `/api/dm/conversations/${encodeURIComponent(username)}/messages`,
+      payload
+    );
+
+    if (sendBtn) sendBtn.disabled = false;
+    if (status === 401) return authRedirect();
+    if (!ok) {
+      showToast(t('dmSendFailed'));
+      return;
+    }
+
+    if (input) input.value = '';
+    inboxState.pendingFinding = null;
+    setInboxComposeVisible(modal, true);
+    await loadInboxInto(modal);
+    bindChatThread(modal, username);
+    onInboxRead?.();
+  });
+}
+
+async function loadInboxInto(modal) {
+  const listEl = modal.querySelector('[data-inbox-list]');
   const t = (key, vars) => tk(key, vars);
 
   if (!listEl) return;
@@ -898,55 +1283,50 @@ async function loadInboxInto(modal) {
   setActivityPanels(modal);
 
   if (inboxState.view === 'thread' && inboxState.username) {
-    if (backBtn) {
-      backBtn.hidden = false;
-      backBtn.textContent = t('inboxBack');
-    }
-    if (threadTitleEl) {
-      threadTitleEl.hidden = false;
-      threadTitleEl.textContent = t('byUser', { user: inboxState.username });
-    }
-    if (hintEl) hintEl.hidden = true;
+    setInboxComposeVisible(modal, true);
 
-    const threadItems = inboxState.items.filter(
-      (item) => (item.from_username || '?') === inboxState.username
+    listEl.classList.add('findings-inbox-list--loading');
+    listEl.setAttribute('aria-busy', 'true');
+    listEl.innerHTML = renderInboxSkeleton(2);
+
+    const { ok, status, data } = await apiGet(
+      `/api/dm/conversations/${encodeURIComponent(inboxState.username)}/messages`
     );
-    if (!threadItems.length) {
+    listEl.classList.remove('findings-inbox-list--loading');
+    listEl.setAttribute('aria-busy', 'false');
+
+    if (status === 401) {
+      listEl.innerHTML = `<p class="finding-empty finding-inbox-empty">${escapeHtml(t('loginRequired'))}</p>`;
+      setInboxComposeVisible(modal, false);
+      return;
+    }
+    if (!ok) {
       inboxState.view = 'dialogs';
       inboxState.username = null;
       return loadActivityInto(modal);
     }
 
-    listEl.innerHTML = threadItems
-      .map((item, index) =>
-        renderFindingListCard(item, {
-          mode: 'inbox',
-          t,
-          index,
-          unread: !item.read_at,
-          message: item.message || '',
-          shareId: item.share_id,
-          fromUsername: item.from_username || '',
-        })
-      )
-      .join('');
-    bindFindingListCards(listEl, modal, { mode: 'inbox' });
+    const messages = data.messages || [];
+    inboxState.messages = messages;
+    listEl.innerHTML = renderChatThread(messages, t);
+    bindChatThread(modal, inboxState.username);
+    onInboxRead?.();
+    await updateActivityTabBadges(modal);
+
+    const thread = listEl.querySelector('.finding-dm-thread');
+    if (thread) thread.scrollTop = thread.scrollHeight;
     return;
   }
 
-  if (backBtn) backBtn.hidden = true;
-  if (threadTitleEl) threadTitleEl.hidden = true;
-  if (hintEl) {
-    const hint = t('inboxHint');
-    hintEl.textContent = hint;
-    hintEl.hidden = !hint;
-  }
+  setInboxComposeVisible(modal, false);
+  const composeForm = modal.querySelector('[data-inbox-compose]');
+  if (composeForm) composeForm.dataset.boundUsername = '';
 
   listEl.classList.add('findings-inbox-list--loading');
   listEl.setAttribute('aria-busy', 'true');
   listEl.innerHTML = renderInboxSkeleton(3);
 
-  const { ok, data } = await apiGet('/api/findings/inbox/list');
+  const { ok, data } = await apiGet('/api/dm/conversations');
   listEl.classList.remove('findings-inbox-list--loading');
   listEl.setAttribute('aria-busy', 'false');
 
@@ -955,27 +1335,28 @@ async function loadInboxInto(modal) {
     return;
   }
 
-  const items = data.items || [];
-  inboxState.items = items;
+  const conversations = data.conversations || [];
+  inboxState.conversations = conversations;
 
-  if (!items.length) {
-    listEl.innerHTML = `<p class="finding-empty finding-inbox-empty">${escapeHtml(t('noInbox'))}</p>`;
+  if (!conversations.length) {
+    listEl.innerHTML = renderActivityEmpty('inbox', t);
+    bindActivityEmptyActions(modal, listEl);
+    updateNewDialogToolbar(modal);
     return;
   }
 
-  const dialogs = groupInboxDialogs(items);
-  listEl.innerHTML = dialogs
-    .map((dialog, index) => renderInboxDialogCard(dialog, t, index))
-    .join('');
+  listEl.innerHTML = `<div class="finding-dm-dialog-list">${conversations
+    .map((conv, index) => renderDmDialogCard(conv, t, index))
+    .join('')}</div>`;
 
   listEl.querySelectorAll('[data-inbox-username]').forEach((el) => {
     el.addEventListener('click', () => {
-      inboxState.view = 'thread';
-      inboxState.username = el.dataset.inboxUsername;
-      loadActivityInto(modal);
+      startInboxThread(modal, el.dataset.inboxUsername);
     });
     el.style.cursor = 'pointer';
   });
+
+  updateNewDialogToolbar(modal);
 }
 
 async function loadFeedInto(modal, { reset = true } = {}) {
@@ -1065,28 +1446,19 @@ async function loadNotificationsInto(modal) {
 
   await apiPost('/api/findings/notifications/read-all', {});
   onNotificationsRead?.();
+  await updateActivityTabBadges(modal);
 
   const items = data.items || [];
   if (!items.length) {
-    listEl.innerHTML = `<p class="finding-empty">${escapeHtml(tk('noNotifications'))}</p>`;
+    listEl.innerHTML = renderActivityEmpty('notifications', (key, vars) => tk(key, vars));
     return;
   }
 
-  listEl.innerHTML = items
-    .map((item) => {
-      const text =
-        item.type === 'comment'
-          ? tk('notificationComment', { user: item.actor_username || '?', query: item.query_text || '' })
-          : tk('notificationNewFinding', { user: item.actor_username || '?', query: item.query_text || '' });
-      return `
-        <article class="finding-inbox-item finding-notification-item" data-public-id="${escapeHtml(item.public_id || '')}">
-          <p class="finding-inbox-query">${escapeHtml(text)}</p>
-          <p class="finding-inbox-date">${escapeHtml(formatDate(item.created_at))}</p>
-        </article>`;
-    })
-    .join('');
+  listEl.innerHTML = `<div class="finding-activity-event-list">${items
+    .map((item, index) => renderNotificationItem(item, (key, vars) => tk(key, vars), index))
+    .join('')}</div>`;
 
-  listEl.querySelectorAll('.finding-notification-item').forEach((el) => {
+  listEl.querySelectorAll('.finding-activity-event').forEach((el) => {
     el.addEventListener('click', () => {
       const publicId = el.dataset.publicId;
       if (publicId) {

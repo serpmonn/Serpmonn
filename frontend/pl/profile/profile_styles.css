@@ -1736,8 +1736,10 @@ button {
   .profile-hero {
     grid-template-columns: auto 1fr;
     grid-template-areas:
-      "avatar actions"
-      "body body";
+      "avatar body"
+      "actions actions";
+    gap: 12px 14px;
+    padding-top: 2px;
   }
 
   .profile-avatar {
@@ -1746,11 +1748,22 @@ button {
 
   .profile-hero__actions {
     grid-area: actions;
-    align-items: flex-end;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    gap: 10px;
+    padding-right: 0;
+  }
+
+  .profile-points-column {
+    align-items: flex-start;
+    max-width: calc(100% - 96px);
   }
 
   .profile-hero__body {
     grid-area: body;
+    padding-right: 92px;
   }
 
   .profile-findings-list {
@@ -1767,5 +1780,23 @@ button {
     width: 60px;
     height: 60px;
     font-size: 22px;
+  }
+
+  .profile-hero__body {
+    padding-right: 0;
+  }
+
+  .profile-hero__actions {
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
+
+  .profile-points-column {
+    max-width: 100%;
+    flex: 1 1 auto;
+  }
+
+  #openEditProfile {
+    flex: 0 0 auto;
   }
 }

@@ -123,3 +123,21 @@ export function applySaveIconButton(btn, label, { active = false } = {}) {
   btn.title = label;
   btn.classList.toggle('finding-list-card__action--active', active === true);
 }
+
+/** Карточка находки + лупа — не скрепка, свой символ вложения */
+export const DM_ATTACH_FINDING_ICON = `
+  <svg class="finding-dm-attach-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <path d="M7 3h8l4 4v14a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1z"/>
+    <path d="M15 3v4h4"/>
+    <line x1="8" y1="12" x2="14" y2="12"/>
+    <line x1="8" y1="15" x2="12" y2="15"/>
+    <circle cx="16.5" cy="16.5" r="3.5"/>
+    <line x1="19" y1="19" x2="21.2" y2="21.2"/>
+  </svg>`;
+
+/** Стрелка вправо — не самолётик Telegram */
+export const DM_SEND_ICON = `
+  <svg class="finding-dm-send-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <line x1="4" y1="12" x2="18" y2="12"/>
+    <polyline points="13 7 18 12 13 17"/>
+  </svg>`;
