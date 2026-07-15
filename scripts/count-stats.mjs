@@ -26,7 +26,10 @@ const GAMES_COUNT_FILE    = 'games-count.json';
 const PARTNERS_COUNT_FILE = 'partners-count.json';
 
 const PERFLUENCE_URL = 'https://dash.perfluence.net/blogger/promocode-api/json';
-const PERFLUENCE_KEY = process.env.PERFLUENCE_API_KEY || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ODk4OTg3LCJhdXRoX2tleSI6Iml1Tl9fVk5WdTdOY0RqT1RKZW1EbUpUV1JjeUxqNFp4IiwiZGF0YSI6W119.k8vSFrvEtc75g7Gu-YdIcvhu6nB60V2CTOjti0IPfhQ';
+const PERFLUENCE_KEY = process.env.PERFLUENCE_API_KEY;
+if (!PERFLUENCE_KEY) {
+  console.warn('[count-stats] PERFLUENCE_API_KEY is not set — promocode fetch skipped');
+}
 
 function writeStatsFile(filename, data) {
   const payload = JSON.stringify(data, null, 2);
@@ -115,6 +118,7 @@ function countGamePartners() {
 // ─── 5. Промо-партнёры — напрямую из Perfluence API ───────────────────────────
 async function countPromoPartners() {
   try {
+    if (!PERFLUENCE_KEY) return 0;
     const res = await fetch(`${PERFLUENCE_URL}?key=${PERFLUENCE_KEY}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const raw = await res.json();

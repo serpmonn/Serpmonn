@@ -17,6 +17,7 @@ import {
   loadAndMigrateFavorites,
   isFavoriteHref
 } from '../scripts/tool-favorites.js';
+import { csrfHeaders } from '../scripts/csrf.js';
 
 function escapeHtmlAttr(str) {
   return String(str || '')
@@ -333,6 +334,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const response = await fetch('/profile/avatar', {
         method: 'POST',
+        headers: await csrfHeaders(),
         credentials: 'include',
         body: formData
       });
@@ -367,6 +369,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const response = await fetch('/profile/avatar', {
         method: 'DELETE',
+        headers: await csrfHeaders(),
         credentials: 'include'
       });
       const data = await safeJson(response);
@@ -850,7 +853,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const response = await fetch('/profile/update', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
         body: JSON.stringify(payload)
       });
@@ -889,6 +892,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     try {
       const response = await fetch('/auth/logout', {
         method: 'POST',
+        headers: await csrfHeaders(),
         credentials: 'include'
       });
       if (!response.ok) {
@@ -934,7 +938,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       try {
         const response = await fetch('/api/me/points/withdraw/pro', {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
           credentials: 'include',
           body: JSON.stringify({ days })
         });

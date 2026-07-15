@@ -1,9 +1,13 @@
 export const PERFLUENCE_API_CONFIG = {
   url: 'https://dash.perfluence.net/blogger/promocode-api/json',
-  key: process.env.PERFLUENCE_API_KEY || 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ODk4OTg3LCJhdXRoX2tleSI6Iml1Tl9fVk5WdTdOY0RqT1RKZW1EbUpUV1JjeUxqNFp4IiwiZGF0YSI6W119.k8vSFrvEtc75g7Gu-YdIcvhu6nB60V2CTOjti0IPfhQ',
+  key: process.env.PERFLUENCE_API_KEY,
   updateInterval: 24 * 60 * 60 * 1000,
   cacheKey: 'perfluence_promocodes_cache'
 };
+
+if (!PERFLUENCE_API_CONFIG.key) {
+  console.warn('[promocodes] PERFLUENCE_API_KEY is not set');
+}
 
 const TOP_BRANDS_PATTERNS = [
   /(?:Яндекс\s+)Афиша|(?:Yandex\s+)Afisha/i,

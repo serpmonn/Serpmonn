@@ -101,6 +101,15 @@ const handleRegister = async (e) => {
 
 document.addEventListener('DOMContentLoaded', async () => {
     t = await getPageT('onnmail');
+    try {
+        const csrfResp = await fetch('/csrf-token', { credentials: 'include' });
+        if (csrfResp.ok) {
+            const csrfData = await csrfResp.json();
+            csrfToken = csrfData.csrfToken || '';
+        }
+    } catch (error) {
+        console.error('Onnmail CSRF token error:', error);
+    }
     const canRegister = await checkUserStatus();
     if (canRegister) {
         registerForm.addEventListener('submit', handleRegister);

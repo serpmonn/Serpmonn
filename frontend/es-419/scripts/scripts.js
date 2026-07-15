@@ -554,8 +554,32 @@ function initVoiceInput() {
 // ======================================================================================================================
 // МАРКДАУН РЕНДЕРЕР ДЛЯ КРАСИВОГО ФОРМАТИРОВАНИЯ ОТВЕТОВ ИИ
 // ======================================================================================================================
+function safeHttpUrl(url, fallback = '#') {
+  try {
+    const parsed = new URL(String(url || ''), window.location.origin);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.href;
+    }
+  } catch {
+    /* ignore */
+  }
+  return fallback;
+}
+
 function renderMarkdown(text) {
-  let html = text;
+  const placeholders = [];
+  let raw = String(text ?? '');
+
+  raw = raw.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, href) => {
+    const token = `\u0000MDLINK${placeholders.length}\u0000`;
+    placeholders.push({
+      label: String(label || ''),
+      href: safeHttpUrl(href, '#')
+    });
+    return token;
+  });
+
+  let html = escapeHtml(raw);
 
   html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
   html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
@@ -571,12 +595,13 @@ function renderMarkdown(text) {
   html = html.replace(/(<li>.*<\/li>)/g, '<ul>$1</ul>');
 
   html = html.replace(/^> (.*$)/gim, '<blockquote>$1</blockquote>');
-  // Markdown-ссылки → <a class="md-link">
-  html = html.replace(
-    /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a href="$2" target="_blank" rel="noopener" class="md-link">$1</a>'
-  );
   html = html.replace(/\n/g, '<br>');
+
+  placeholders.forEach((item, index) => {
+    const needle = escapeHtml(`\u0000MDLINK${index}\u0000`);
+    const anchor = `<a href="${escapeHtml(item.href)}" target="_blank" rel="noopener" class="md-link">${escapeHtml(item.label)}</a>`;
+    html = html.split(needle).join(anchor);
+  });
 
   return html;
 }
@@ -646,10 +671,11 @@ function renderSourcesBlock(items, messages) {
       const count = hostnameCounts.get(hostname || src.link) || 1;
       const chipTitle =
         count > 1 ? `${hostname} (${count})` : src.title || hostname;
+      const href = safeHttpUrl(src.link, '#');
 
       return `
-        <a href="${src.link}" target="_blank" rel="noopener" class="ai-source-chip" title="${chipTitle}">
-          <img src="${favicon}" class="ai-source-chip-favicon" alt="" width="14" height="14" loading="lazy">
+        <a href="${escapeHtml(href)}" target="_blank" rel="noopener" class="ai-source-chip" title="${escapeHtml(chipTitle)}">
+          <img src="${escapeHtml(favicon)}" class="ai-source-chip-favicon" alt="" width="14" height="14" loading="lazy">
         </a>
       `;
     })
@@ -659,11 +685,12 @@ function renderSourcesBlock(items, messages) {
     .map((src) => {
       const hostname = getSourceHostname(src.link);
       const favicon = getSourceFaviconUrl(hostname, 16);
+      const href = safeHttpUrl(src.link, '#');
       return `
-        <a href="${src.link}" target="_blank" rel="noopener" class="source-item">
-          <img src="${favicon}" class="source-favicon" alt="" width="16" height="16" loading="lazy">
-          <span class="source-title">${src.title}</span>
-          <span class="source-url">${hostname}</span>
+        <a href="${escapeHtml(href)}" target="_blank" rel="noopener" class="source-item">
+          <img src="${escapeHtml(favicon)}" class="source-favicon" alt="" width="16" height="16" loading="lazy">
+          <span class="source-title">${escapeHtml(src.title)}</span>
+          <span class="source-url">${escapeHtml(hostname)}</span>
         </a>
       `;
     })
@@ -807,7 +834,7 @@ function resolveAnswerForDisplay(data) {
 
 function renderAnswerHtml(answer, isEmpty) {
   if (isEmpty) {
-    return `<div class="ai-empty-answer">${answer}</div>`;
+    return `<div class="ai-empty-answer">${escapeHtml(answer)}</div>`;
   }
 
   return renderMarkdown(answer);
@@ -1096,9 +1123,9 @@ function showResult(data, options = {}) {
     html = `
       <div class="ai-error">
         <div class="error-icon">⚠️</div>
-        <div class="error-message">${data.error}</div>
+        <div class="error-message">${escapeHtml(data.error)}</div>
         <button class="retry-btn">
-          ${t.retry}
+          ${escapeHtml(t.retry)}
         </button>
       </div>
     `;
@@ -1165,10 +1192,10 @@ function showImageResults(data) {
   const itemsHtml = data.images
     .slice(0, 6)
     .map(img => {
-      const title = img.title || '';
-      const thumb = img.thumbnailUrl || img.imageUrl || '';
-      const link = img.imageUrl || img.sourceUrl || '#';
-      const source = img.sourceName || '';
+      const title = escapeHtml(img.title || '');
+      const thumb = escapeHtml(safeHttpUrl(img.thumbnailUrl || img.imageUrl || '', ''));
+      const link = escapeHtml(safeHttpUrl(img.imageUrl || img.sourceUrl || '#', '#'));
+      const source = escapeHtml(img.sourceName || '');
 
       return `
         <a class="ai-image-card" href="${link}" target="_blank" rel="noopener">
@@ -1212,11 +1239,11 @@ function showVideoResults(data) {
   const itemsHtml = data.videos
     .slice(0, 6)
     .map(video => {
-      const title = video.title || '';
-      const thumb = video.thumbnailUrl || '';
-      const link = video.videoUrl || video.sourceUrl || '#';
-      const source = video.sourceName || '';
-      const duration = video.duration || '';
+      const title = escapeHtml(video.title || '');
+      const thumb = escapeHtml(safeHttpUrl(video.thumbnailUrl || '', ''));
+      const link = escapeHtml(safeHttpUrl(video.videoUrl || video.sourceUrl || '#', '#'));
+      const source = escapeHtml(video.sourceName || '');
+      const duration = escapeHtml(video.duration || '');
 
       return `
         <a class="ai-video-card" href="${link}" target="_blank" rel="noopener">

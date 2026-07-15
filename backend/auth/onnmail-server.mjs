@@ -12,6 +12,7 @@ import express from 'express';                                                  
 import cors from 'cors';                                                                                                         // Импортируем cors для обработки междоменных HTTP запросов
 import helmet from 'helmet';                                                                                                     // Импортируем helmet для автоматической защиты HTTP заголовков
 import cookieParser from 'cookie-parser';                                                                                        // Импортируем cookie-parser для работы с cookies
+import { doubleCsrf } from 'csrf-csrf';
 import onnmailRoutes from './onnmail/onnmailRoutes.mjs';                                                                         // Импортируем маршруты для почтового API и рассылок
 
 import rateLimit from 'express-rate-limit';                                                                                      // Импортируем ограничитель частоты запросов для защиты от спама
@@ -34,9 +35,10 @@ app.use(cors({                                                                  
         `http://127.0.0.1:${VITE_PORT}`,                                                                                         // Разрешаем альтернативный адрес Vite dev сервера
         `http://localhost:${ONNMAIL_PORT}`,                                                                                      // Разрешаем локальный домен для разработки (почтовый сервер)
         `http://localhost:${AUTH_PORT}`                                                                                          // Разрешаем локальный домен для auth-сервера
-    ],                                                                                                                         
-    credentials: true                                                                                                            // Разрешаем отправку cookies через междоменные запросы
-}));                                                                                                                           
+    ],
+    credentials: true,                                                                                                           // Разрешаем отправку cookies через междоменные запросы
+    allowedHeaders: ['Authorization', 'Content-Type', 'Accept', 'Origin', 'X-CSRF-Token']
+}));
 app.use(express.json());                                                                                                         // Включаем парсинг JSON данных в теле входящих запросов
 app.use(cookieParser());                                                                                                         // Включаем парсинг cookies из заголовков запросов
 
@@ -49,15 +51,45 @@ const apiLimiter = rateLimit({
 });
 app.use(apiLimiter);                                                                                                             // Применяем ограничитель ко всем маршрутам почтового API
 
+const {
+    generateCsrfToken,
+    doubleCsrfProtection,
+    invalidCsrfTokenError
+} = doubleCsrf({
+    getSecret: () => process.env.CSRF_SECRET,
+    getSessionIdentifier: (req) => `${req.ip || 'unknown-ip'}:${req.get('user-agent') || 'unknown-ua'}`,
+    cookieName: '__Host-psifi.x-csrf-token',
+    cookieOptions: {
+        httpOnly: true,
+        sameSite: 'strict',
+        secure: process.env.NODE_ENV === 'production',
+        path: '/'
+    },
+    size: 64,
+    ignoredMethods: ['GET', 'HEAD', 'OPTIONS']
+});
+
+app.get('/csrf-token', (req, res) => {
+    return res.status(200).json({ csrfToken: generateCsrfToken(req, res) });
+});
+
+// CSRF на create-mailbox (cookie-сессия). Токен берём с того же хоста (/csrf-token).
+app.use('/mail-api', (req, res, next) => {
+    if (req.method === 'POST' && req.path === '/create-mailbox') {
+        return doubleCsrfProtection(req, res, next);
+    }
+    return next();
+});
+
 // Подключаем маршруты почтового API
 app.use('/mail-api', onnmailRoutes);                                                                                             // Подключаем маршруты с префиксом /mail-api для изоляции API
 
 // Обработчик ошибок CSRF для почтового API
 app.use((err, req, res, next) => {
-    if (err && err.code === 'EBADCSRFTOKEN') {                                                                                   // Проверяем является ли ошибка CSRF ошибкой (невалидный токен)
-        return res.status(403).json({ status: 'error', message: 'Invalid CSRF token' });                                         // Возвращаем ошибку 403 при невалидном CSRF токене
+    if (err === invalidCsrfTokenError || err?.code === 'INVALID_CSRF_TOKEN' || err?.code === 'EBADCSRFTOKEN') {
+        return res.status(403).json({ status: 'error', message: 'Invalid CSRF token' });
     }
-    return next(err);                                                                                                            // Передаем другие ошибки следующему обработчику ошибок
+    return next(err);
 });
 
 // Запуск сервера почтового API

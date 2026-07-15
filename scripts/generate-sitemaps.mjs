@@ -81,8 +81,11 @@ function toUrl(filePath) {
 // --- Получение промокодов из Perfluence API для sitemap ---
 async function fetchPromocodesForSitemap() {
   try {
-    const PERFLUENCE_KEY = process.env.PERFLUENCE_API_KEY ||
-      'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpZCI6ODk4OTg3LCJhdXRoX2tleSI6Iml1Tl9fVk5WdTdOY0RqT1RKZW1EbUpUV1JjeUxqNFp4IiwiZGF0YSI6W119.k8vSFrvEtc75g7Gu-YdIcvhu6nB60V2CTOjti0IPfhQ';
+    const PERFLUENCE_KEY = process.env.PERFLUENCE_API_KEY;
+    if (!PERFLUENCE_KEY) {
+      console.warn('[sitemap] PERFLUENCE_API_KEY is not set — skipping promo URLs');
+      return [];
+    }
     const res = await fetch(
       `https://dash.perfluence.net/blogger/promocode-api/json?key=${PERFLUENCE_KEY}`
     );

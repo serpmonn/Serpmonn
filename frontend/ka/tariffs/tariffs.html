@@ -727,15 +727,23 @@
           throw new Error('no_user_id');
         }
 
+        const csrfResp = await fetch('/csrf-token', { credentials: 'include' });
+        if (!csrfResp.ok) {
+          throw new Error('csrf_error');
+        }
+        const csrfData = await csrfResp.json();
+        if (!csrfData?.csrfToken) {
+          throw new Error('csrf_empty');
+        }
+
         const createResp = await fetch('/api/yookassa/create', {
           method: 'POST',
           headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-CSRF-Token': csrfData.csrfToken
           },
           credentials: 'include',
           body: JSON.stringify({
-            userId: user.id,
-            amount: 2499,
             description: 'Serpmonn Pro — 30 дней'
           })
         });

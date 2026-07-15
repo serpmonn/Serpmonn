@@ -1,4 +1,5 @@
 import { getPageT } from '/frontend/scripts/i18n-loader.js';
+import { escapeHtml } from '/frontend/scripts/finding-content-render.js';
 
 let t = (key, vars = {}) => {
   let value = key;
@@ -397,10 +398,10 @@ function displayResults(currentValue, totalDepreciation, depreciationPercent, mo
     const warning = document.createElement('div');
     warning.style.cssText = 'background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 15px; margin-top: 20px; color: #856404;';
     warning.innerHTML = `
-      <strong>${t('depreciation.highDepreciationTitle')}</strong><br>
-      ${t('depreciation.highDepreciationPercent', { percent: depreciationPercent })}<br>
-      ${t('depreciation.highDepreciationCheck')}<br>
-      ${t('depreciation.highDepreciationCondition')}
+      <strong>${escapeHtml(t('depreciation.highDepreciationTitle'))}</strong><br>
+      ${escapeHtml(t('depreciation.highDepreciationPercent', { percent: depreciationPercent }))}<br>
+      ${escapeHtml(t('depreciation.highDepreciationCheck'))}<br>
+      ${escapeHtml(t('depreciation.highDepreciationCondition'))}
     `;
     document.getElementById('results')?.appendChild(warning);
   }
@@ -409,26 +410,26 @@ function displayResults(currentValue, totalDepreciation, depreciationPercent, mo
     const explanation = document.createElement('div');
     explanation.style.cssText = 'background: #e8f5e8; border: 1px solid #c3e6c3; border-radius: 8px; padding: 15px; margin-top: 20px; color: #155724;';
     const ageFactor = Math.max(0.3, 1 - ((new Date().getFullYear() - inputs.carYear) * 0.05));
-    let html = `<strong>${t('depreciation.marketAdjustmentTitle')}</strong><br>`;
-    html += `${t('depreciation.initialPriceLine', { amount: formatMoney(inputs.initialPrice) })}<br>`;
+    let html = `<strong>${escapeHtml(t('depreciation.marketAdjustmentTitle'))}</strong><br>`;
+    html += `${escapeHtml(t('depreciation.initialPriceLine', { amount: formatMoney(inputs.initialPrice) }))}<br>`;
     if (inputs.inflationRate) {
-      html += `${t('depreciation.adjustedPriceInflation', { rate: inputs.inflationRate, amount: formatMoney(adjustedInitialPrice) })}<br>`;
+      html += `${escapeHtml(t('depreciation.adjustedPriceInflation', { rate: inputs.inflationRate, amount: formatMoney(adjustedInitialPrice) }))}<br>`;
     }
     if (inputs.currentNewPrice) {
-      html += `${t('depreciation.currentNewPriceLine', { amount: formatMoney(inputs.currentNewPrice) })}<br>`;
-      html += `${t('depreciation.growthRatio', { ratio: (inputs.currentNewPrice / inputs.initialPrice).toFixed(2) })}<br>`;
+      html += `${escapeHtml(t('depreciation.currentNewPriceLine', { amount: formatMoney(inputs.currentNewPrice) }))}<br>`;
+      html += `${escapeHtml(t('depreciation.growthRatio', { ratio: (inputs.currentNewPrice / inputs.initialPrice).toFixed(2) }))}<br>`;
     } else if (inputs.marketGrowth) {
-      html += `${t('depreciation.priceGrowth', { percent: inputs.marketGrowth })}<br>`;
+      html += `${escapeHtml(t('depreciation.priceGrowth', { percent: inputs.marketGrowth }))}<br>`;
     }
-    html += `${t('depreciation.ageFactor', { percent: (ageFactor * 100).toFixed(0) })}<br>`;
-    html += t('depreciation.finalMarketValue', { amount: formatMoney(currentValue) });
+    html += `${escapeHtml(t('depreciation.ageFactor', { percent: (ageFactor * 100).toFixed(0) }))}<br>`;
+    html += escapeHtml(t('depreciation.finalMarketValue', { amount: formatMoney(currentValue) }));
     explanation.innerHTML = html;
     document.getElementById('results')?.appendChild(explanation);
   }
 
   const disclaimer = document.createElement('div');
   disclaimer.className = 'disclaimer';
-  disclaimer.innerHTML = `<p>${t('depreciation.disclaimer')}</p>`;
+  disclaimer.innerHTML = `<p>${escapeHtml(t('depreciation.disclaimer'))}</p>`;
   document.getElementById('results')?.appendChild(disclaimer);
 }
 
@@ -545,13 +546,22 @@ function renderHistory() {
     document.getElementById('history')?.classList.remove('hidden');
     const list = document.getElementById('historyList');
     if (!list) return;
-    list.innerHTML = history.map((entry, index) => `
-      <li class="history-item">
-        ${entry.carBrand} ${entry.carModel} (${entry.carYear}) - ${new Date(entry.timestamp).toLocaleString(getLocale())}:
-        ${formatMoney(entry.result.currentValue)}
-        <button type="button" onclick="loadHistory(${index})">${t('depreciation.loadHistory')}</button>
-      </li>
-    `).join('');
+    list.replaceChildren();
+    history.forEach((entry, index) => {
+      const li = document.createElement('li');
+      li.className = 'history-item';
+      li.append(
+        document.createTextNode(
+          `${entry.carBrand || ''} ${entry.carModel || ''} (${entry.carYear || ''}) - ${new Date(entry.timestamp).toLocaleString(getLocale())}: ${formatMoney(entry.result?.currentValue)} `
+        )
+      );
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.textContent = t('depreciation.loadHistory');
+      btn.addEventListener('click', () => loadHistory(index));
+      li.appendChild(btn);
+      list.appendChild(li);
+    });
   } catch {}
 }
 

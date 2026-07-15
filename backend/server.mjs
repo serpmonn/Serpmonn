@@ -184,11 +184,46 @@ app.get('/csrf-token', (req, res) => {                                          
     return res.status(200).json({ csrfToken: generateCsrfToken(req, res) });                                                    // Генерируем и возвращаем токен правильной функцией
 });
 
-connectRoutes(app, authLimiter);                                                                                                 // Централизованно подключаем все маршруты приложения
+// CSRF только на cookie-auth мутаторах (opt-in). Webhooks, /improve, login, voice — без токена.
+const CSRF_REQUIRED = [
+    /^\/profile\/(update|avatar)$/,
+    /^\/auth\/logout$/,
+    /^\/api\/yookassa\/create$/,
+    /^\/api\/me\//,
+    /^\/api\/findings(\/|$)/,
+    /^\/api\/dm(\/|$)/
+];
 
-// CSRF после маршрутов — как было до hardening (иначе ломаются POST без токена на проде).
-// codeql[js/missing-token-validation]
-app.use(doubleCsrfProtection);
+const AGENTS_CSRF_EXEMPT_IDS = new Set([
+    'subscription-webhook',
+    'event',
+    'payouts',
+    'marketplace',
+    'my-subscriptions',
+    'earnings'
+]);
+
+function needsAgentsCsrf(req) {
+    const p = req.path;
+    if (req.method === 'POST' && (p === '/api/agents' || p === '/api/agents/')) return true;
+    if (req.method === 'POST' && p === '/api/agents/payouts') return true;
+    if (req.method === 'POST' && /^\/api\/agents\/[^/]+\/(publish|subscribe)$/.test(p)) return true;
+    if (req.method === 'DELETE' && /^\/api\/agents\/[^/]+$/.test(p)) {
+        const id = p.slice('/api/agents/'.length);
+        return !AGENTS_CSRF_EXEMPT_IDS.has(id);
+    }
+    return false;
+}
+
+function csrfIfRequired(req, res, next) {
+    if (CSRF_REQUIRED.some((re) => re.test(req.path)) || needsAgentsCsrf(req)) {
+        return doubleCsrfProtection(req, res, next);
+    }
+    return next();
+}
+
+app.use(csrfIfRequired);
+connectRoutes(app, authLimiter);                                                                                                 // Централизованно подключаем все маршруты приложения
 
 app.use((err, req, res, next) => {                                                                                               // Обработчик ошибок (после всех роутов и middleware)
     if (err === invalidCsrfTokenError || err?.code === 'INVALID_CSRF_TOKEN') {                                                  // Отдельно обрабатываем ошибки невалидного CSRF токена

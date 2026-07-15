@@ -45,6 +45,15 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/api', dmRoutes);                                                                                                   // Личные сообщения (DM)
     app.use('/api', (req, res, next) => {                                                                                        // verifyToken — пропускаем /api/admin (обрабатывается admin-server)
         if (req.path.startsWith('/admin')) return next('route');
+        // Agents: marketplace / webhook / inbound event / agent log — не cookie-сессия
+        if (
+            req.path === '/agents/marketplace' ||
+            req.path === '/agents/event' ||
+            req.path === '/agents/subscription-webhook' ||
+            /^\/agents\/[^/]+\/log$/.test(req.path)
+        ) {
+            return next();
+        }
         return verifyToken(req, res, next);
     });
     app.use('/api', pointsRoutes);                                                                                               // Подключаем маршрут проверки баллов

@@ -22,6 +22,7 @@
  */
 
 import { getMessages, t } from './i18n-loader.js';
+import { escapeHtml } from './finding-content-render.js';
 
 const NEWS_LIMIT = 10;
 
@@ -92,25 +93,36 @@ function dotHtml(topicKey) {
   return `<span class="card-dot card-dot--${t.cls}" title="${t.label}"></span>`;
 }
 
-/** Фавикон источника */
+function safeHttpUrl(url, fallback = '#') {
+  try {
+    const parsed = new URL(String(url || ''), window.location.origin);
+    if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+      return parsed.href;
+    }
+  } catch {
+    /* ignore */
+  }
+  return fallback;
+}
+
 function faviconHtml(hostname) {
   if (!hostname) return '';
-  const src = `https://www.google.com/s2/favicons?domain=${hostname}&sz=16`;
-  return `<img class="card-favicon" src="${src}" alt="" width="14" height="14" loading="lazy" onerror="this.style.display='none'">`;
+  const src = `https://www.google.com/s2/favicons?domain=${encodeURIComponent(hostname)}&sz=16`;
+  return `<img class="card-favicon" src="${escapeHtml(src)}" alt="" width="14" height="14" loading="lazy" onerror="this.style.display='none'">`;
 }
 
 function buildHero(item) {
-  const href     = item.url || resolveSourceUrl(item.sources) || '#';
-  const hostname = item.source || resolveHostname(href);
-  const date     = formatDate(item.publishedAt || item.generated_at);
+  const href     = safeHttpUrl(item.url || resolveSourceUrl(item.sources) || '#', '#');
+  const hostname = escapeHtml(item.source || resolveHostname(href));
+  const date     = escapeHtml(formatDate(item.publishedAt || item.generated_at));
   return `
-    <a class="combo-hero" href="${href}" target="_blank" rel="noopener noreferrer" data-tag="${getTag(item.topicKey).cls}">
+    <a class="combo-hero" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" data-tag="${escapeHtml(getTag(item.topicKey).cls)}">
       ${tagHtml(item.topicKey)}
-      <p class="combo-hero-headline">${item.title || ''}</p>
-      ${item.snippet ? `<p class="combo-hero-desc">${item.snippet}</p>` : ''}
+      <p class="combo-hero-headline">${escapeHtml(item.title || '')}</p>
+      ${item.snippet ? `<p class="combo-hero-desc">${escapeHtml(item.snippet)}</p>` : ''}
       <div class="combo-hero-meta">
         <span class="card-source">
-          ${faviconHtml(hostname)}
+          ${faviconHtml(item.source || resolveHostname(href))}
           ${hostname}
         </span>
         ${date ? `<span class="card-time">${date}</span>` : ''}
@@ -120,19 +132,19 @@ function buildHero(item) {
 }
 
 function buildCard(item) {
-  const href     = item.url || resolveSourceUrl(item.sources) || '#';
-  const hostname = item.source || resolveHostname(href);
-  const date     = formatDate(item.publishedAt || item.generated_at);
-  const tagCls   = getTag(item.topicKey).cls;
+  const href     = safeHttpUrl(item.url || resolveSourceUrl(item.sources) || '#', '#');
+  const hostname = escapeHtml(item.source || resolveHostname(href));
+  const date     = escapeHtml(formatDate(item.publishedAt || item.generated_at));
+  const tagCls   = escapeHtml(getTag(item.topicKey).cls);
   return `
-    <a class="card" href="${href}" target="_blank" rel="noopener noreferrer" data-tag="${tagCls}">
+    <a class="card" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer" data-tag="${tagCls}">
       <div class="card-top">
         ${dotHtml(item.topicKey)}
-        <p class="card-headline">${item.title || ''}</p>
+        <p class="card-headline">${escapeHtml(item.title || '')}</p>
       </div>
       <div class="card-meta">
         <span class="card-source">
-          ${faviconHtml(hostname)}
+          ${faviconHtml(item.source || resolveHostname(href))}
           ${hostname}
         </span>
         ${date ? `<span class="card-time">${date}</span>` : ''}

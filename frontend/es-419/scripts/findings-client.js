@@ -1,5 +1,6 @@
 import { getPageT } from './i18n-loader.js';
 import { flyFindingToMenu } from './finding-fly-animation.js';
+import { csrfHeaders } from './csrf.js';
 
 let t = (key, vars = {}) => key;
 
@@ -62,7 +63,7 @@ export function buildFindingSnapshot(ctx) {
 async function apiPost(path, body) {
   const res = await fetch(path, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
     body: JSON.stringify(body),
   });
@@ -77,7 +78,11 @@ async function apiGet(path) {
 }
 
 async function apiDelete(path) {
-  const res = await fetch(path, { method: 'DELETE', credentials: 'include' });
+  const res = await fetch(path, {
+    method: 'DELETE',
+    headers: await csrfHeaders(),
+    credentials: 'include',
+  });
   const data = await res.json().catch(() => ({}));
   return { ok: res.ok, status: res.status, data };
 }
@@ -85,7 +90,7 @@ async function apiDelete(path) {
 async function apiPatch(path, body) {
   const res = await fetch(path, {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
     credentials: 'include',
     body: JSON.stringify(body),
   });

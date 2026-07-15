@@ -227,9 +227,16 @@ function renderBuyBlock(a) {
     btn.disabled     = true;
     btn.textContent  = 'Перенаправление...';
     try {
-      const res  = await fetch(`/api/agents/${encodeURIComponent(agentId)}/subscribe`, {
+      const csrfResp = await fetch('/csrf-token', { credentials: 'include' });
+      const csrfData = await csrfResp.json();
+      const res  = await fetch(`/api/agents/${encodeURIComponent(agentData?.id || agentId)}/subscribe`, {
         method:  'POST',
-        headers: { 'Authorization': 'Bearer ' + userToken, 'Content-Type': 'application/json' }
+        credentials: 'include',
+        headers: {
+          'Authorization': 'Bearer ' + userToken,
+          'Content-Type': 'application/json',
+          'X-CSRF-Token': csrfData.csrfToken || ''
+        }
       });
       const data = await res.json();
       const url  = data.confirmation_url || data.confirmationUrl;

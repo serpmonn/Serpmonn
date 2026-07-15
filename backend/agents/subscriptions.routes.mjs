@@ -13,6 +13,7 @@ import {
 } from './subscriptions.model.mjs';
 import { getAgentByIdPublic, getAgentByIdOrSlug } from './agents.model.mjs';
 import verifyToken from '../auth/verifyToken.mjs';
+import { getRequestIp, isYooKassaIp } from '../yookassa/yookassaWebhookAuth.mjs';
 
 const router = express.Router();
 
@@ -165,25 +166,37 @@ router.post('/payouts', verifyToken, async (req, res) => {
 // POST /api/agents/subscription-webhook — YooKassa webhook
 router.post('/subscription-webhook', async (req, res) => {
     try {
-        const event = req.body;
-
-        if (event.event === 'payment.succeeded') {
-            const payment = event.object;
-            const meta    = payment.metadata || {};
-
-            if (meta.type !== 'agent_subscription') return res.sendStatus(200);
-
-            const sub = await getSubscriptionByPaymentId(payment.id);
-            if (!sub) {
-                console.warn('[subscriptions] webhook: subscription not found for payment', payment.id);
-                return res.sendStatus(200);
-            }
-
-            await activateSubscription(payment.id);
-            await creditDeveloper(sub.agent_id, sub.price_rub);
-
-            console.log(`[subscriptions] activated: agent=${sub.agent_id} buyer=${sub.buyer_user_id} payment=${payment.id}`);
+        const ip = getRequestIp(req);
+        if (!isYooKassaIp(ip)) {
+            console.warn('[subscriptions] webhook rejected: bad IP', ip);
+            return res.sendStatus(403);
         }
+
+        const event = req.body;
+        if (event?.event !== 'payment.succeeded' || !event?.object?.id) {
+            return res.sendStatus(200);
+        }
+
+        const paymentId = event.object.id;
+        const payment = await yooKassa.getPayment(paymentId);
+        if (payment.status !== 'succeeded' || payment.paid !== true) {
+            console.warn('[subscriptions] webhook: payment not succeeded', paymentId, payment.status);
+            return res.sendStatus(200);
+        }
+
+        const meta = payment.metadata || {};
+        if (meta.type !== 'agent_subscription') return res.sendStatus(200);
+
+        const sub = await getSubscriptionByPaymentId(payment.id);
+        if (!sub) {
+            console.warn('[subscriptions] webhook: subscription not found for payment', payment.id);
+            return res.sendStatus(200);
+        }
+
+        await activateSubscription(payment.id);
+        await creditDeveloper(sub.agent_id, sub.price_rub);
+
+        console.log(`[subscriptions] activated: agent=${sub.agent_id} buyer=${sub.buyer_user_id} payment=${payment.id}`);
 
         return res.sendStatus(200);
     } catch (err) {
