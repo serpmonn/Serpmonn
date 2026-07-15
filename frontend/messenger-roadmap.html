@@ -86,71 +86,82 @@ footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
 <div class="wrap">
   <p class="page-label">Дорожная карта</p>
   <h1 class="page-title">Этапы разработки</h1>
-  <p class="page-desc">Serpmonn Messenger строится поэтапно — от Go-ядра до мультиплатформенного приложения с офлайн-mesh.</p>
+  <p class="page-desc">Serpmonn Messenger развивается поэтапно — от прототипа до публичного релиза. Ниже — статус без внутренних технических деталей.</p>
   <ol class="phase-list">
     <li class="phase done">
-      <div class="phase-header"><span class="phase-num">01</span><span class="phase-name">JS-прототип</span><span class="phase-badge badge-done">✓ Готово</span></div>
+      <div class="phase-header"><span class="phase-num">01</span><span class="phase-name">Прототип протокола</span><span class="phase-badge badge-done">✓ Готово</span></div>
       <div class="phase-body">
         <ul class="phase-tasks">
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Референсная реализация на Node.js + libp2p</li>
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Проверка P2P-модели и протокола</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Референсная реализация обмена сообщениями</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Проверка модели «устройство — устройство»</li>
         </ul>
       </div>
     </li>
     <li class="phase done">
-      <div class="phase-header"><span class="phase-num">02</span><span class="phase-name">Go-core: identity, crypto, chat, storage</span><span class="phase-badge badge-done">✓ Готово</span></div>
+      <div class="phase-header"><span class="phase-num">02</span><span class="phase-name">Ядро безопасности</span><span class="phase-badge badge-done">✓ Готово</span></div>
       <div class="phase-body">
         <ul class="phase-tasks">
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Ed25519-идентификаторы, Curve25519 + AES-GCM</li>
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Структура чатов и сообщений</li>
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Локальное хранилище на SQLite</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Идентификация и криптографические ключи</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Шифрование и проверка целостности сообщений</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Локальное хранилище истории и контактов</li>
         </ul>
       </div>
     </li>
     <li class="phase done">
-      <div class="phase-header"><span class="phase-num">03</span><span class="phase-name">Go-core net: QUIC + Relay v2 + DCUtR + GossipSub</span><span class="phase-badge badge-done">✓ Готово</span></div>
+      <div class="phase-header"><span class="phase-num">03</span><span class="phase-name">Сетевой слой</span><span class="phase-badge badge-done">✓ Готово</span></div>
       <div class="phase-body">
         <ul class="phase-tasks">
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>QUIC-транспорт через libp2p</li>
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Relay v2 + DCUtR hole punching</li>
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>GossipSub для групповых чатов</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Прямые соединения между устройствами</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Обход сетевых ограничений и резервные маршруты</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Доставка сообщений без центрального сервера переписки</li>
+        </ul>
+      </div>
+    </li>
+    <li class="phase done">
+      <div class="phase-header"><span class="phase-num">04</span><span class="phase-name">Android-приложение</span><span class="phase-badge badge-done">✓ Готово</span></div>
+      <div class="phase-body">
+        <ul class="phase-tasks">
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Регистрация, чаты, контакты, QR-обмен</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Резервные копии и восстановление профиля</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Привязка компьютера через QR</li>
+        </ul>
+        <p class="phase-note">MVP-клиент собран; тестовые APK доступны на странице мессенджера.</p>
+      </div>
+    </li>
+    <li class="phase done">
+      <div class="phase-header"><span class="phase-num">05</span><span class="phase-name">Офлайн-режим</span><span class="phase-badge badge-done">✓ Готово</span></div>
+      <div class="phase-body">
+        <ul class="phase-tasks">
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Обмен сообщениями по Bluetooth поблизости</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Локальная сеть через Wi‑Fi Direct</li>
+        </ul>
+      </div>
+    </li>
+    <li class="phase done">
+      <div class="phase-header"><span class="phase-num">06</span><span class="phase-name">Группы и усиленная защита</span><span class="phase-badge badge-done">✓ Готово</span></div>
+      <div class="phase-body">
+        <ul class="phase-tasks">
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Групповые беседы</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>Усиленная защита личных переписок (ротация ключей)</li>
         </ul>
       </div>
     </li>
     <li class="phase current">
-      <div class="phase-header"><span class="phase-num">04</span><span class="phase-name">Android: onboarding, чат, QR</span><span class="phase-badge badge-current">→ Сейчас</span></div>
+      <div class="phase-header"><span class="phase-num">07</span><span class="phase-name">Тестирование в поле</span><span class="phase-badge badge-current">→ Сейчас</span></div>
       <div class="phase-body">
         <ul class="phase-tasks">
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Kotlin + Jetpack Compose UI</li>
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Интеграция Go-core через gomobile</li>
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Onboarding, 1:1 и групповые чаты, QR-код контакта</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Проверка на разных Android-устройствах и сетях</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>Исправление ошибок по отзывам тестировщиков</li>
         </ul>
-        <p class="phase-note">Текущая пре-альфа: app-debug.apk — сборка подписана debug-ключом.</p>
+        <p class="phase-note">Текущая пре-альфа: debug-сборки на странице мессенджера.</p>
       </div>
     </li>
     <li class="phase">
-      <div class="phase-header"><span class="phase-num">05</span><span class="phase-name">Backup, restore, linked desktop</span><span class="phase-badge badge-future">Далее</span></div>
+      <div class="phase-header"><span class="phase-num">08</span><span class="phase-name">Публикация</span><span class="phase-badge badge-future">Далее</span></div>
       <div class="phase-body">
         <ul class="phase-tasks">
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>Зашифрованные резервные копии ключей</li>
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>Привязка десктоп-клиента через QR</li>
-        </ul>
-      </div>
-    </li>
-    <li class="phase">
-      <div class="phase-header"><span class="phase-num">06</span><span class="phase-name">BLE / Wi-Fi Direct mesh</span><span class="phase-badge badge-future">Далее</span></div>
-      <div class="phase-body">
-        <ul class="phase-tasks">
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>Bluetooth Low Energy mesh без интернета</li>
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>Wi-Fi Direct для локальной сети</li>
-        </ul>
-      </div>
-    </li>
-    <li class="phase">
-      <div class="phase-header"><span class="phase-num">07</span><span class="phase-name">iOS</span><span class="phase-badge badge-future">Далее</span></div>
-      <div class="phase-body">
-        <ul class="phase-tasks">
-          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>Портирование на Swift/SwiftUI с тем же Go-core</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>Подписанная сборка для магазина приложений</li>
+          <li><svg class="task-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>Публичный релиз</li>
         </ul>
       </div>
     </li>
@@ -160,7 +171,7 @@ footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
       <h2>Попробуйте пре-альфу сейчас</h2>
       <p>Android 8.0+, интернет-соединение. Debug-сборка.</p>
     </div>
-    <a href="/frontend/downloads/app-debug.apk" class="btn-primary" download>
+    <a href="/frontend/downloads/serpmonn-debug.apk" class="btn-primary" download>
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Скачать APK
     </a>
