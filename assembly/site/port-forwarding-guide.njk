@@ -42,7 +42,7 @@ eleventyComputed:
       "description": "{{ portForwardingGuide[locale].meta.ogDescription | replace('"', '&quot;') }}",
       "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
       "datePublished": "2025-10-29",
-      "dateModified": "2025-10-29",
+      "dateModified": "2026-07-16",
       "inLanguage": "{{ locale }}",
       "url": "{{ canonical }}",
       "mainEntityOfPage": {
@@ -108,6 +108,9 @@ eleventyComputed:
             <li><a href="#section-verification">{{ portForwardingGuide[locale].article.sections.toc.items[5] }}</a></li>
             <li><a href="#section-troubleshooting">{{ portForwardingGuide[locale].article.sections.toc.items[6] }}</a></li>
             <li><a href="#section-security">{{ portForwardingGuide[locale].article.sections.toc.items[7] }}</a></li>
+            {% if portForwardingGuide[locale].article.sections.faq %}
+            <li><a href="#section-faq">{{ portForwardingGuide[locale].article.sections.toc.items[8] or portForwardingGuide[locale].article.sections.faq.title }}</a></li>
+            {% endif %}
         </ul>
     </div>
     
@@ -126,6 +129,9 @@ eleventyComputed:
                     <li><a href="#section-verification">{{ portForwardingGuide[locale].article.sections.toc.items[5] }}</a></li>
                     <li><a href="#section-troubleshooting">{{ portForwardingGuide[locale].article.sections.toc.items[6] }}</a></li>
                     <li><a href="#section-security">{{ portForwardingGuide[locale].article.sections.toc.items[7] }}</a></li>
+                    {% if portForwardingGuide[locale].article.sections.faq %}
+                    <li><a href="#section-faq">{{ portForwardingGuide[locale].article.sections.toc.items[8] or portForwardingGuide[locale].article.sections.faq.title }}</a></li>
+                    {% endif %}
                 </ul>
             </div>
             <div class="ad-top-banner ad-banner loading">
@@ -363,6 +369,36 @@ eleventyComputed:
                 </li>
                 {% endfor %}
             </ul>
+
+            {% if portForwardingGuide[locale].article.sections.faq %}
+            <h2 id="section-faq">{{ portForwardingGuide[locale].article.sections.faq.title }}</h2>
+            <div class="faq-list">
+                {% for item in portForwardingGuide[locale].article.sections.faq.items %}
+                <details class="faq-item">
+                    <summary>{{ item.q }}</summary>
+                    <p>{{ item.a }}</p>
+                </details>
+                {% endfor %}
+            </div>
+            <script type="application/ld+json">
+            {
+              "@context": "https://schema.org",
+              "@type": "FAQPage",
+              "mainEntity": [
+                {% for item in portForwardingGuide[locale].article.sections.faq.items %}
+                {
+                  "@type": "Question",
+                  "name": {{ item.q | dump | safe }},
+                  "acceptedAnswer": {
+                    "@type": "Answer",
+                    "text": {{ item.a | dump | safe }}
+                  }
+                }{% if not loop.last %},{% endif %}
+                {% endfor %}
+              ]
+            }
+            </script>
+            {% endif %}
 
             <div class="share-buttons">
                 <h3>{{ portForwardingGuide[locale].article.sections.share.title }}</h3>

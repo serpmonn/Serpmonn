@@ -108,6 +108,16 @@ eleventyComputed:
     </div>
 
     <h1>{{ depreciationCalculator[locale].page.title }}</h1>
+    {% if depreciationCalculator[locale].page.lead %}
+    <p class="tool-lead">{{ depreciationCalculator[locale].page.lead }}</p>
+    {% endif %}
+    {% if depreciationCalculator[locale].guide %}
+    <aside class="tool-guide-card" aria-label="{{ depreciationCalculator[locale].guide.title }}">
+      <strong>{{ depreciationCalculator[locale].guide.title }}</strong>
+      <p>{{ depreciationCalculator[locale].guide.text }}</p>
+      <a href="{{ depreciationCalculator[locale].guide.href }}">{{ depreciationCalculator[locale].guide.linkText }}</a>
+    </aside>
+    {% endif %}
     <div class="calculator-container">
       <h2>{{ depreciationCalculator[locale].form.sectionTitle }}</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
