@@ -6,7 +6,7 @@ import counterRoutes from '../Counter/CounterRoutes.mjs';                       
 import subscribeRouter from '../subscriber/subscribeRoutes.mjs';                                                                 // Импорт маршрутов подписки и рассылок
 import unsubscribeRouter from '../subscriber/unsubscribeRouter.mjs';                                                             // Импорт маршрутов отписки от рассылки промокодов
 import subscribersCountRouter from '../subscriber/subscribersCountRoutes.mjs';                                                   // Импорт маршрутов количества подписчиков
-import { analyticsRouter } from '../analytics/analytics.mjs';                                                                    // Импорт маршрутов аналитики страницы промокодов
+import { analyticsRouter } from '../analyticsRouter.mjs';                                                                        // Аналитика (stub в CI, если backend/analytics в .gitignore)
 import promocodesRoutes from '../promocodes/promocodesRoutes.mjs';                                                               // Импорт маршрутов промокодов и акций
 import improveRoutes from '../improve/improve.mjs';                                                                              // Импорт маршрута предложки
 import pointsRoutes from '../points/pointsRoutes.mjs';                                                                           // Импорт маршрута баллов
