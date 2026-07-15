@@ -81,8 +81,12 @@
             // Если попали на каталог локали без файла — добавим index.html
             if (newPath === `/frontend/${lang}`) newPath += '/index.html';
             if (newPath !== url.pathname) {
-                if (newPath === RU_DEFAULT || /^\/frontend\/[a-z0-9/-]*$/.test(newPath.split('?')[0])) {
-                    location.assign(newPath + url.search + url.hash);
+                const pathOnly = newPath.split('?')[0];
+                const suffix = url.search + url.hash;
+                if (pathOnly === RU_DEFAULT) {
+                    location.assign(RU_DEFAULT + suffix);
+                } else if (/^\/frontend\/[a-zA-Z0-9./_-]+$/.test(pathOnly)) {
+                    location.assign(pathOnly + suffix);
                 }
             }
         } catch(_) {}

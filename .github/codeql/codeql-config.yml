@@ -14,15 +14,17 @@ paths-ignore:
   - "**/venv/**"
   - relay/vendor
 
-# Заведомые false positive / принятый риск (не прод-эксплуатация):
-# - CDN Font Awesome в educational guides
-# - CORS * только на /gateway (Bearer-токен)
-# - CSRF на отдельных микросервисах без cookies session (admin/onnmail) — своя авторизация
+# Принятый риск / ложные срабатывания:
+# - CDN Prism/FA в educational guides (https; контент статичный)
+# - CORS * только на /gateway (Bearer, без cookie-сессии)
+# - CSRF microservices / clear-text logging CI
 query-filters:
   - exclude:
-      id: js/functionality-from-untrusted-domain
+      id: js/functionality-from-untrusted-source
   - exclude:
       id: js/cors-misconfiguration
+  - exclude:
+      id: js/cors-permissive-configuration
   - exclude:
       id: js/clear-text-logging-sensitive-data
   - exclude:

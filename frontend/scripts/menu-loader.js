@@ -13,7 +13,7 @@ import { initFindingsModals, openActivityModal } from '/frontend/scripts/finding
       const settings = JSON.parse(saved);
       Object.keys(settings).forEach(key => {
         if (settings[key]) {
-          document.documentElement.classList.add(`a11y-${key.replace('-', '-')}`);
+          document.documentElement.classList.add(`a11y-${key}`);
         }
       });
     } catch (e) {

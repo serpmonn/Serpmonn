@@ -22,6 +22,6 @@ app.use(bodyParser.json());                                                     
 app.use('/auth-api', resetRoutes);                                                                                               // Подключаем маршруты для сброса пароля с префиксом /auth-api
 
 // Запуск сервера для обработки запросов сброса пароля
-app.listen(PORT, () => {                                                                                                         // Запускаем сервер на порту из переменной окружения
-    console.log(`password-reset Server is running on http://localhost:${PORT}`);                                                 // Логируем успешный запуск сервера сброса пароля
+app.listen(PORT, () => {
+    console.log('password-reset server is running');
 });
