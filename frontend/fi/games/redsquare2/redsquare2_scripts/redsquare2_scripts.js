@@ -74,7 +74,7 @@
                         ctx.closePath();
                         ctx.fill();
                         break;
-                    case 'star':
+                    case 'star': {
                         const centerX = obj.x + obj.size / 2;
                         const centerY = obj.y + obj.size / 2;
                         const spikes = 5;
@@ -93,6 +93,7 @@
                         ctx.closePath();
                         ctx.fill();
                         break;
+                    }
                     default:
                         break;
                 }

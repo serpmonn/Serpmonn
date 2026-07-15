@@ -7,7 +7,10 @@ export default [
             'dist/**',
             'assembly/dist/**',
             'frontend/analytics/**',
-            'backend/analytics/**'
+            'backend/analytics/**',
+            // Локальные venv / vendor, не попадают в git, но ломают lint на сервере
+            '**/venv/**',
+            'backend/voice/whisper-server/**'
         ]
     },
     js.configs.recommended,
@@ -48,7 +51,8 @@ export default [
                 Response: 'readonly',
                 ReadableStream: 'readonly',
                 WritableStream: 'readonly',
-                TransformStream: 'readonly'
+                TransformStream: 'readonly',
+                structuredClone: 'readonly'
             }
         },
         rules: {
@@ -60,12 +64,12 @@ export default [
         }
     },
     {
-        // Скрипты .js во frontend/ и assembly/site/src/ — браузерные, no-undef выключен
+        // Браузерный фронт: ESM-модули, browser-глобалы не проверяем через no-undef
         files: ['frontend/**/*.js', 'assembly/site/src/**/*.js'],
         ignores: ['**/service-worker.js', '**/sw.js', '**/sw-*.js', '**/*-sw.js'],
         languageOptions: {
             ecmaVersion: 'latest',
-            sourceType: 'script'
+            sourceType: 'module'
         },
         rules: {
             'no-undef': 'off',

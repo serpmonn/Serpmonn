@@ -27,8 +27,8 @@ describe('Server smoke tests', () => {
 
         expect(res.status).toBe(200);                      // Ожидаем успешный HTTP-ответ
         expect(res.body.status).toBe('ok');                // Статус приложения — 'ok'
-        expect(res.body).toHaveProperty('uptime');         // Поле uptime присутствует
-        expect(typeof res.body.uptime).toBe('number');     // Uptime — число (секунды)
+        expect(res.body).toHaveProperty('uptimeSec');      // Поле uptimeSec присутствует
+        expect(typeof res.body.uptimeSec).toBe('number');  // Uptime — число (секунды)
         expect(res.body).toHaveProperty('timestamp');      // Поле timestamp присутствует
     });
 
