@@ -108,8 +108,11 @@ eleventyComputed:
             <li><a href="#section-verification">{{ portForwardingGuide[locale].article.sections.toc.items[5] }}</a></li>
             <li><a href="#section-troubleshooting">{{ portForwardingGuide[locale].article.sections.toc.items[6] }}</a></li>
             <li><a href="#section-security">{{ portForwardingGuide[locale].article.sections.toc.items[7] }}</a></li>
+            {% if portForwardingGuide[locale].article.sections.practicalCases %}
+            <li><a href="#section-practical">{{ portForwardingGuide[locale].article.sections.practicalCases.title }}</a></li>
+            {% endif %}
             {% if portForwardingGuide[locale].article.sections.faq %}
-            <li><a href="#section-faq">{{ portForwardingGuide[locale].article.sections.toc.items[8] or portForwardingGuide[locale].article.sections.faq.title }}</a></li>
+            <li><a href="#section-faq">{{ portForwardingGuide[locale].article.sections.faq.title }}</a></li>
             {% endif %}
         </ul>
     </div>
@@ -129,8 +132,11 @@ eleventyComputed:
                     <li><a href="#section-verification">{{ portForwardingGuide[locale].article.sections.toc.items[5] }}</a></li>
                     <li><a href="#section-troubleshooting">{{ portForwardingGuide[locale].article.sections.toc.items[6] }}</a></li>
                     <li><a href="#section-security">{{ portForwardingGuide[locale].article.sections.toc.items[7] }}</a></li>
+                    {% if portForwardingGuide[locale].article.sections.practicalCases %}
+                    <li><a href="#section-practical">{{ portForwardingGuide[locale].article.sections.practicalCases.title }}</a></li>
+                    {% endif %}
                     {% if portForwardingGuide[locale].article.sections.faq %}
-                    <li><a href="#section-faq">{{ portForwardingGuide[locale].article.sections.toc.items[8] or portForwardingGuide[locale].article.sections.faq.title }}</a></li>
+                    <li><a href="#section-faq">{{ portForwardingGuide[locale].article.sections.faq.title }}</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -369,6 +375,17 @@ eleventyComputed:
                 </li>
                 {% endfor %}
             </ul>
+
+            {% if portForwardingGuide[locale].article.sections.practicalCases %}
+            <h2 id="section-practical">{{ portForwardingGuide[locale].article.sections.practicalCases.title }}</h2>
+            <p>{{ portForwardingGuide[locale].article.sections.practicalCases.intro }}</p>
+            {% for case in portForwardingGuide[locale].article.sections.practicalCases.cases %}
+            <div class="router-guide">
+                <h3>{{ case.title }}</h3>
+                <p>{{ case.body | safe }}</p>
+            </div>
+            {% endfor %}
+            {% endif %}
 
             {% if portForwardingGuide[locale].article.sections.faq %}
             <h2 id="section-faq">{{ portForwardingGuide[locale].article.sections.faq.title }}</h2>

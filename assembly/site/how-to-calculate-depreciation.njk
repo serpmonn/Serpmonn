@@ -100,6 +100,11 @@ eleventyComputed:
       .step-list li { counter-increment: step-counter; margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #dc3545; position: relative; }
       .step-list li::before { content: counter(step-counter); position: absolute; left: -15px; top: 20px; background: #dc3545; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; }
 
+      .faq-list { margin: 24px 0; display: flex; flex-direction: column; gap: 10px; }
+      .faq-item { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 12px 16px; }
+      .faq-item summary { cursor: pointer; font-weight: 600; }
+      .faq-item p { margin: 12px 0 4px; }
+
       .social-subscribe { display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
       .tg-btn, .vk-btn { display: inline-block; padding: 10px 20px; border-radius: 25px; color: #fff; font-weight: 600; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
       .tg-btn { background: #229ED9; }
@@ -167,6 +172,28 @@ eleventyComputed:
           </p>
         </div>
 
+        {% if article.formulaTitle %}
+        <h2>{{ article.formulaTitle }}</h2>
+        <p>{{ article.formulaText }}</p>
+        {% endif %}
+
+        {% if article.kmExample %}
+        <h2>{{ article.kmExampleTitle }}</h2>
+        <p>{{ article.kmExampleIntro }}</p>
+        <div class="example-box">
+          <p>
+            <strong>{{ article.kmExample.purchase }}</strong><br>
+            <strong>{{ article.kmExample.years }}</strong><br>
+            <strong>{{ article.kmExample.mileage }}</strong><br>
+            <strong>{{ article.kmExample.residual }}</strong><br>
+            {{ article.kmExample.total }}<br>
+            <strong>{{ article.kmExample.perKm }}</strong><br>
+            <em>{{ article.kmExample.note }}</em>
+          </p>
+          <p><a href="/frontend/tools/logistics/depreciation-calculator.html">{% if locale == 'ru' %}Открыть калькулятор амортизации онлайн{% else %}Open depreciation calculator{% endif %}</a></p>
+        </div>
+        {% endif %}
+
         <h2>{{ article.tipsTitle }}</h2>
         <ul>
           {% for tip in article.tips %}
@@ -197,6 +224,36 @@ eleventyComputed:
           <li>{{ item }}</li>
           {% endfor %}
         </ul>
+
+        {% if article.faq %}
+        <h2>{{ article.faqTitle }}</h2>
+        <div class="faq-list">
+          {% for item in article.faq %}
+          <details class="faq-item">
+            <summary>{{ item.q }}</summary>
+            <p>{{ item.a }}</p>
+          </details>
+          {% endfor %}
+        </div>
+        <script type="application/ld+json">
+        {
+          "@context": "https://schema.org",
+          "@type": "FAQPage",
+          "mainEntity": [
+            {% for item in article.faq %}
+            {
+              "@type": "Question",
+              "name": {{ item.q | dump | safe }},
+              "acceptedAnswer": {
+                "@type": "Answer",
+                "text": {{ item.a | dump | safe }}
+              }
+            }{% if not loop.last %},{% endif %}
+            {% endfor %}
+          ]
+        }
+        </script>
+        {% endif %}
 
         <h2>{{ article.linksTitle }}</h2>
         <ul>
