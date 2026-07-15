@@ -13,7 +13,7 @@ import { initFindingsModals, openActivityModal } from '/frontend/scripts/finding
       const settings = JSON.parse(saved);
       Object.keys(settings).forEach(key => {
         if (settings[key]) {
-          document.documentElement.classList.add(`a11y-${key.replace('-', '-')}`);
+          document.documentElement.classList.add(`a11y-${key}`);
         }
       });
     } catch (e) {
@@ -70,11 +70,7 @@ fetch(primaryMenuPath)
     return response.text();
   })
   .then(html => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const nodes = Array.from(doc.body.childNodes);
-    nodes.forEach((node) => {
-      document.body.prepend(document.importNode(node, true));
-    });
+    document.body.insertAdjacentHTML('afterbegin', html);
 
     // Модифицируем ссылки в меню под текущий язык
     try {
@@ -84,7 +80,7 @@ fetch(primaryMenuPath)
       const anchors = container ? Array.from(container.querySelectorAll('a[href]')) : [];
       anchors.forEach(a => {
         const href = a.getAttribute('href');
-        if (!href || href.startsWith('#') || /^https?:\/\//i.test(href) || href.startsWith('mailto:') || href.startsWith('javascript:')) return;
+        if (!href || href.startsWith('#') || /^(https?:|mailto:|javascript:|data:|vbscript:)/i.test(href.trim())) return;
         if (!href.startsWith('/frontend/')) return;
         const url = new URL(href, location.origin);
         const parts = url.pathname.split('/').filter(Boolean);
@@ -107,7 +103,11 @@ fetch(primaryMenuPath)
             newParts = ['frontend', currentLang, ...rest];
           }
         }
-        a.setAttribute('href', '/' + newParts.join('/'));
+        const nextHref = '/' + newParts.join('/');
+        // Только относительные /frontend/... пути (без scrub сегментов — иначе ломаются URL)
+        if (/^\/frontend\/[a-zA-Z0-9./_-]+$/.test(nextHref)) {
+          a.setAttribute('href', nextHref);
+        }
       });
     } catch {}
 

@@ -276,7 +276,16 @@ function getOrCreateVisitorId() {
 }
 
 function getPromoTitle(promo) {
-    const strip = (s) => typeof s === 'string' ? s.replace(/<[^>]*>/g, '').trim() : '';
+    const strip = (s) => {
+      if (typeof s !== 'string') return '';
+      let out = s;
+      let prev;
+      do {
+        prev = out;
+        out = out.replace(/<[^>]*>/g, '');
+      } while (out !== prev);
+      return out.trim();
+    };
     if (promo && typeof promo.name === 'string' && promo.name.trim() !== '') {
         return strip(promo.name);
     }
@@ -651,7 +660,7 @@ function wirePromoCard(card, promo) {
     }
 
     card.dataset.wired = '1';
-    const landingUrl = promo.landing_url || promo.link || promo.url;
+    const landingUrl = safeHttpUrl(promo.landing_url || promo.link || promo.url);
 
     if (landingUrl) {
         card.dataset.landingUrl = landingUrl;
@@ -663,8 +672,7 @@ function wirePromoCard(card, promo) {
                                  interactiveElements.includes(e.target.tagName);
 
             if (!isInteractive) {
-                window.open(landingUrl, '_blank');
-
+                window.open(landingUrl, '_blank', 'noopener,noreferrer');
                 try {
                     fetch('/api/track-click', {
                         method: 'POST',
@@ -829,61 +837,123 @@ function createPromoCard(promo, isTopOffer = false) {
         bonusText = t('promo.noPromocode');
     }
 
-    const detailsContent = escapeHtml(promo.description || promo.groupDescription || t('promo.descriptionPending'));
-    const conditionsBlock = promo.conditions
-        ? `<p class="details-conditions"><strong>${t('promo.conditions')}</strong> ${escapeHtml(promo.conditions)}</p>`
-        : '';
     const landingUrl = safeHttpUrl(promo.landing_url || promo.link || promo.url);
-    const imageUrl = escapeHtml(safeHttpUrl(promo.image_url, '/frontend/images/skidki-i-akcii.png') || '/frontend/images/skidki-i-akcii.png');
+    const fallbackImg = '/frontend/images/skidki-i-akcii.png';
+    const imageUrlRaw = safeHttpUrl(promo.image_url, fallbackImg) || fallbackImg;
 
-    card.innerHTML = `
-        <div class="promo-card-content">
-            <div class="promo-header">
-                <img src="${imageUrl}" 
-                     data-src="${imageUrl}" 
-                     alt="${titleText}" width="80" height="80" loading="lazy" class="lazy-load">
-                <h3 title="${escapeHtml(getPromoTitle(promo))}">${titleText}</h3>
-            </div>
-            ${promo.promocode ? `
-                <p class="code">${escapeHtml(promo.promocode)} 
-                    <button class="submit-btn copy-btn" type="button" aria-label="${escapeHtml(t('promo.copyCodeAria', { code: promo.promocode }))}">${t('promo.copy')}</button>
-                </p>
-            ` : ''}
-            <p class="bonus-info">${escapeHtml(bonusText)}</p>
-            <button type="button" class="details-btn" aria-expanded="false" aria-controls="${detailsId}" tabindex="0">
-                <span class="details-icon">▼</span>
-                <span class="details-text">${t('promo.details')}</span>
-            </button>
-            <div class="details-content" id="${detailsId}" style="display: none;">
-                <p class="details-description">${detailsContent}</p>
-                ${conditionsBlock}
-            </div>
-            <p class="country">${t('promo.countryPrefix')} ${escapeHtml(getCountryLabel(promo.country || 'Россия'))}</p>
-            <p class="expiry ${isExpired ? 'expired' : ''}">
-                ${t('promo.validUntil')} ${formatDate(expiryDate)}
-                ${isExpired ? ` ${t('promo.expired')}` : ''}
-            </p>
-        </div>
-        <div class="promo-card-footer">
-            ${landingUrl ? `
-                <div class="promo-footer-actions">
-                    <a href="${escapeHtml(landingUrl)}" target="_blank" rel="noopener noreferrer" class="register-link use-btn">${t('promo.use')}</a>
-                    <button 
-                        type="button" 
-                        class="promo-share-button" 
-                        aria-label="${t('promo.shareAria')}">
-                        <span class="promo-share-icon">⤴</span>
-                    </button>
-                </div>
-            ` : ''}
-            ${promo.advertiser_info ? `
-                <p class="ad">${t('promo.ad')} ${escapeHtml(promo.advertiser_info)}</p>
-            ` : ''}
-        </div>
-    `;
+    // DOM API вместо innerHTML — иначе CodeQL js/xss на шаблонной строке
+    card.replaceChildren();
+    const content = document.createElement('div');
+    content.className = 'promo-card-content';
 
+    const header = document.createElement('div');
+    header.className = 'promo-header';
+    const img = document.createElement('img');
+    img.src = imageUrlRaw;
+    img.dataset.src = imageUrlRaw;
+    img.alt = titleText;
+    img.width = 80;
+    img.height = 80;
+    img.loading = 'lazy';
+    img.className = 'lazy-load';
+    const h3 = document.createElement('h3');
+    h3.title = getPromoTitle(promo);
+    h3.textContent = getPromoTitle(promo);
+    header.append(img, h3);
+    content.appendChild(header);
+
+    if (promo.promocode) {
+      const codeP = document.createElement('p');
+      codeP.className = 'code';
+      codeP.append(document.createTextNode(String(promo.promocode) + ' '));
+      const copyBtn = document.createElement('button');
+      copyBtn.className = 'submit-btn copy-btn';
+      copyBtn.type = 'button';
+      copyBtn.setAttribute('aria-label', t('promo.copyCodeAria', { code: promo.promocode }));
+      copyBtn.textContent = t('promo.copy');
+      codeP.appendChild(copyBtn);
+      content.appendChild(codeP);
+    }
+
+    const bonusP = document.createElement('p');
+    bonusP.className = 'bonus-info';
+    bonusP.textContent = bonusText;
+    content.appendChild(bonusP);
+
+    const detailsBtn = document.createElement('button');
+    detailsBtn.type = 'button';
+    detailsBtn.className = 'details-btn';
+    detailsBtn.setAttribute('aria-expanded', 'false');
+    detailsBtn.setAttribute('aria-controls', detailsId);
+    detailsBtn.tabIndex = 0;
+    const detailsIcon = document.createElement('span');
+    detailsIcon.className = 'details-icon';
+    detailsIcon.textContent = '▼';
+    const detailsText = document.createElement('span');
+    detailsText.className = 'details-text';
+    detailsText.textContent = t('promo.details');
+    detailsBtn.append(detailsIcon, detailsText);
+    content.appendChild(detailsBtn);
+
+    const detailsDiv = document.createElement('div');
+    detailsDiv.className = 'details-content';
+    detailsDiv.id = detailsId;
+    detailsDiv.style.display = 'none';
+    const descP = document.createElement('p');
+    descP.className = 'details-description';
+    descP.textContent = promo.description || promo.groupDescription || t('promo.descriptionPending');
+    detailsDiv.appendChild(descP);
+    if (promo.conditions) {
+      const condP = document.createElement('p');
+      condP.className = 'details-conditions';
+      const strong = document.createElement('strong');
+      strong.textContent = t('promo.conditions');
+      condP.append(strong, document.createTextNode(' ' + String(promo.conditions)));
+      detailsDiv.appendChild(condP);
+    }
+    content.appendChild(detailsDiv);
+
+    const countryP = document.createElement('p');
+    countryP.className = 'country';
+    countryP.textContent = `${t('promo.countryPrefix')} ${getCountryLabel(promo.country || 'Россия')}`;
+    content.appendChild(countryP);
+
+    const expiryP = document.createElement('p');
+    expiryP.className = `expiry${isExpired ? ' expired' : ''}`;
+    expiryP.textContent = `${t('promo.validUntil')} ${formatDate(expiryDate)}${isExpired ? ` ${t('promo.expired')}` : ''}`;
+    content.appendChild(expiryP);
+
+    const footer = document.createElement('div');
+    footer.className = 'promo-card-footer';
+    if (landingUrl) {
+      const actions = document.createElement('div');
+      actions.className = 'promo-footer-actions';
+      const useLink = document.createElement('a');
+      useLink.href = landingUrl;
+      useLink.target = '_blank';
+      useLink.rel = 'noopener noreferrer';
+      useLink.className = 'register-link use-btn';
+      useLink.textContent = t('promo.use');
+      const shareBtn = document.createElement('button');
+      shareBtn.type = 'button';
+      shareBtn.className = 'promo-share-button';
+      shareBtn.setAttribute('aria-label', t('promo.shareAria'));
+      const shareIcon = document.createElement('span');
+      shareIcon.className = 'promo-share-icon';
+      shareIcon.textContent = '⤴';
+      shareBtn.appendChild(shareIcon);
+      actions.append(useLink, shareBtn);
+      footer.appendChild(actions);
+    }
+    if (promo.advertiser_info) {
+      const adP = document.createElement('p');
+      adP.className = 'ad';
+      adP.textContent = `${t('promo.ad')} ${promo.advertiser_info}`;
+      footer.appendChild(adP);
+    }
+
+    card.append(content, footer);
     wirePromoCard(card, promo);
-
     return card;
 }
 

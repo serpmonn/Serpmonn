@@ -1,5 +1,5 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
-import { getFrontendPath } from '../scripts/locale-paths.js';
+import { getFrontendPath, safeAssignLocation } from '../scripts/locale-paths.js';
 import { getPageT } from '../scripts/i18n-loader.js';
 
 const t = await getPageT('login');
@@ -39,7 +39,7 @@ document.getElementById('loginForm').addEventListener('submit', async function (
 
     if (response.ok) {
       setTimeout(() => {
-        window.location.href = getFrontendPath('profile/profile.html');
+        safeAssignLocation(getFrontendPath('profile/profile.html'));
       }, 1000);
     }
   } catch (error) {

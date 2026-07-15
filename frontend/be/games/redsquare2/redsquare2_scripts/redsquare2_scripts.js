@@ -214,7 +214,15 @@
                     .then(response => response.json())
                     .then(data => {
                         const leaderboardDiv = document.getElementById('leaderboard');
-                        leaderboardDiv.innerHTML = 'Leaderboard:<br>' + data.map((entry, i) => `${i + 1}. ${entry.nickname}: ${entry.score}`).join('<br>');
+                        leaderboardDiv.textContent = '';
+                        const title = document.createElement('div');
+                        title.textContent = 'Leaderboard:';
+                        leaderboardDiv.appendChild(title);
+                        data.forEach((entry, i) => {
+                            const line = document.createElement('div');
+                            line.textContent = `${i + 1}. ${entry.nickname}: ${entry.score}`;
+                            leaderboardDiv.appendChild(line);
+                        });
                     });
             }
 

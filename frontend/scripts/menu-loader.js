@@ -80,7 +80,7 @@ fetch(primaryMenuPath)
       const anchors = container ? Array.from(container.querySelectorAll('a[href]')) : [];
       anchors.forEach(a => {
         const href = a.getAttribute('href');
-        if (!href || href.startsWith('#') || /^https?:\/\//i.test(href) || href.startsWith('mailto:') || href.startsWith('javascript:')) return;
+        if (!href || href.startsWith('#') || /^(https?:|mailto:|javascript:|data:|vbscript:)/i.test(href.trim())) return;
         if (!href.startsWith('/frontend/')) return;
         const url = new URL(href, location.origin);
         const parts = url.pathname.split('/').filter(Boolean);
@@ -103,7 +103,11 @@ fetch(primaryMenuPath)
             newParts = ['frontend', currentLang, ...rest];
           }
         }
-        a.setAttribute('href', '/' + newParts.join('/'));
+        const nextHref = '/' + newParts.join('/');
+        // Только относительные /frontend/... пути (без scrub сегментов — иначе ломаются URL)
+        if (/^\/frontend\/[a-zA-Z0-9./_-]+$/.test(nextHref)) {
+          a.setAttribute('href', nextHref);
+        }
       });
     } catch {}
 

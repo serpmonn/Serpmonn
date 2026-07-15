@@ -1,5 +1,5 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
-import { getFrontendPath, sanitizeReturnPath } from '../scripts/locale-paths.js';
+import { getFrontendPath, sanitizeReturnPath, safeAssignLocation } from '../scripts/locale-paths.js';
 import { getPageT } from '../scripts/i18n-loader.js';
 
 const t = await getPageT('auth');
@@ -22,8 +22,7 @@ function authRedirectTarget() {
 }
 
 function safeNavigate(url) {
-  const target = sanitizeReturnPath(url) || (typeof url === 'string' && url.startsWith('/frontend/') ? url : null);
-  if (target) window.location.assign(target);
+  safeAssignLocation(url);
 }
 
 const authFormsView = document.getElementById('authFormsView');

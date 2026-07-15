@@ -10,12 +10,17 @@ export function loadLeaderboard() {
             console.log('📊 Получены данные:', data);
             const leaderboardBody = document.getElementById('leaderboardBody');
 
-            leaderboardBody.innerHTML = ''; // Очистка таблицы перед обновлением
+            leaderboardBody.replaceChildren();
 
             data.forEach((entry, index) => {
                 const row = document.createElement('tr');
-                row.innerHTML = `<td>${index + 1}</td><td>${entry.nickname}</td><td>${entry.score}</td>`;
-
+                const rank = document.createElement('td');
+                rank.textContent = String(index + 1);
+                const nick = document.createElement('td');
+                nick.textContent = String(entry.nickname ?? '');
+                const score = document.createElement('td');
+                score.textContent = String(entry.score ?? '');
+                row.append(rank, nick, score);
                 leaderboardBody.appendChild(row);
             });
         })
@@ -27,4 +32,3 @@ export function loadLeaderboard() {
 document.addEventListener('DOMContentLoaded', () => {
     loadLeaderboard();
 });
-
