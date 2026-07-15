@@ -43,7 +43,7 @@ function writeFileEnsured(filePath, content) {
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
-const EXCLUDE_DIRS = new Set(['scripts', 'styles', 'images', 'i18n', 'pwa', 'telegram-app']);
+const EXCLUDE_DIRS = new Set(['scripts', 'styles', 'images', 'i18n', 'pwa']);
 
 function getAllHtmlFiles(rootDir) {
   const results = [];
