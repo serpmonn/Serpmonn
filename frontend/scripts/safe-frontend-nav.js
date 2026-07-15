@@ -1,7 +1,7 @@
 /**
  * CodeQL-oriented URL/path helpers: regex barriers clear taint for js/xss sinks.
  */
-const FRONTEND_PATH_RE = /^\/frontend\/(?:[a-z]{2}(?:-[a-z0-9]+){0,2}\/)?[a-zA-Z0-9._\-\/]*$/;
+const FRONTEND_PATH_RE = /^\/frontend\/(?:[a-z]{2}(?:-[a-z0-9]+){0,2}\/)?[a-zA-Z0-9._/-]*$/;
 
 /** @returns {boolean} */
 export function isSafeFrontendPath(url) {
@@ -21,7 +21,7 @@ export function safeAssignLocation(url) {
   // Rebuild path from allowlisted charset segments (breaks residual taint).
   const rebuilt = pathOnly
     .split('/')
-    .map((seg) => (seg === '' ? '' : seg.replace(/[^a-zA-Z0-9._\-]/g, '')))
+    .map((seg) => (seg === '' ? '' : seg.replace(/[^a-zA-Z0-9._-]/g, '')))
     .join('/');
   if (!isSafeFrontendPath(rebuilt)) return;
   window.location.assign(rebuilt + qs);
@@ -37,7 +37,7 @@ export function safeSetHref(anchor, url) {
   const pathOnly = url.split('?')[0].split('#')[0];
   const rebuilt = pathOnly
     .split('/')
-    .map((seg) => (seg === '' ? '' : seg.replace(/[^a-zA-Z0-9._\-]/g, '')))
+    .map((seg) => (seg === '' ? '' : seg.replace(/[^a-zA-Z0-9._-]/g, '')))
     .join('/');
   if (!isSafeFrontendPath(rebuilt)) {
     anchor.removeAttribute('href');

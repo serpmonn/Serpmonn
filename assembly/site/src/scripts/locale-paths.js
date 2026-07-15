@@ -13,11 +13,11 @@ export function getCurrentLocale() {
 /** Path under /frontend/, with locale segment for non-ru (e.g. login/login.html). */
 export function getFrontendPath(relativePath) {
   const locale = getCurrentLocale();
-  const path = String(relativePath || '').replace(/^\//, '').replace(/[^a-zA-Z0-9._\-\/]/g, '');
+  const path = String(relativePath || '').replace(/^\//, '').replace(/[^a-zA-Z0-9._/-]/g, '');
   if (locale === 'ru') {
     return `/frontend/${path}`;
   }
-  const safeLocale = String(locale).replace(/[^a-z0-9\-]/g, '');
+  const safeLocale = String(locale).replace(/[^a-z0-9-]/g, '');
   return `/frontend/${safeLocale}/${path}`;
 }
 
