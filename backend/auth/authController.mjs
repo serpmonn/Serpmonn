@@ -76,7 +76,9 @@ function safeQuery(label, sql, params) {
 
 async function deriveUsername(email) {
   const local = String(email || '').split('@')[0].toLowerCase();
-  let base = local.replace(/[^a-z0-9._+-]/g, '').replace(/^\.+|\.+$/g, '');
+  let base = local.replace(/[^a-z0-9._+-]/g, '');
+  while (base.startsWith('.')) base = base.slice(1);
+  while (base.endsWith('.')) base = base.slice(0, -1);
   if (base.length < 2) base = 'user';
 
   let candidate = base.slice(0, 32);

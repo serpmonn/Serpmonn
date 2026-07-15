@@ -44,8 +44,24 @@ function firstDefined(...values) {
 }
 
 function stripHtml(html) {
-  if (!html) return '';
-  return String(html).replace(/<[^>]*>/g, '').trim();
+  let s = String(html || '');
+  let prev;
+  do {
+    prev = s;
+    s = s.replace(/<[^>]*>/g, '');
+  } while (s !== prev);
+  // На случай entity-обхода вида &lt;script&gt;
+  s = s
+    .replace(/&lt;/gi, '<')
+    .replace(/&gt;/gi, '>')
+    .replace(/&quot;/gi, '"')
+    .replace(/&#0*39;/gi, "'")
+    .replace(/&amp;/gi, '&');
+  do {
+    prev = s;
+    s = s.replace(/<[^>]*>/g, '');
+  } while (s !== prev);
+  return s.trim();
 }
 
 function normalizeAdvertiserText(text) {

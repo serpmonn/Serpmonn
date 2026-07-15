@@ -1,59 +1,15 @@
 name: "Serpmonn CodeQL"
 
-# Источник правды — assembly/site/src и backend.
-# frontend/{locale}/** — собранные копии; без ignore одно правило × N локалей ≈ 1000+ алертов.
+# frontend/** — артефакты сборки из assembly/site/src + локали; скан только источников.
+paths:
+  - backend
+  - assembly
+  - scripts
+  - relay
+
 paths-ignore:
-  - node_modules
   - "**/node_modules/**"
   - assembly/node_modules
   - "**/.venv/**"
   - "**/venv/**"
   - relay/vendor
-  - "frontend/ar/**"
-  - "frontend/az/**"
-  - "frontend/be/**"
-  - "frontend/bg/**"
-  - "frontend/bn/**"
-  - "frontend/cs/**"
-  - "frontend/da/**"
-  - "frontend/de/**"
-  - "frontend/dv/**"
-  - "frontend/el/**"
-  - "frontend/en/**"
-  - "frontend/es/**"
-  - "frontend/es-419/**"
-  - "frontend/fa/**"
-  - "frontend/fi/**"
-  - "frontend/fil/**"
-  - "frontend/fr/**"
-  - "frontend/he/**"
-  - "frontend/hi/**"
-  - "frontend/hu/**"
-  - "frontend/hy/**"
-  - "frontend/id/**"
-  - "frontend/it/**"
-  - "frontend/ja/**"
-  - "frontend/ka/**"
-  - "frontend/kk/**"
-  - "frontend/ko/**"
-  - "frontend/ks/**"
-  - "frontend/ku-arab/**"
-  - "frontend/ms/**"
-  - "frontend/nb/**"
-  - "frontend/nl/**"
-  - "frontend/pl/**"
-  - "frontend/ps/**"
-  - "frontend/pt-br/**"
-  - "frontend/pt-pt/**"
-  - "frontend/ro/**"
-  - "frontend/sd/**"
-  - "frontend/sr/**"
-  - "frontend/sv/**"
-  - "frontend/th/**"
-  - "frontend/tr/**"
-  - "frontend/ug/**"
-  - "frontend/ur/**"
-  - "frontend/uz/**"
-  - "frontend/vi/**"
-  - "frontend/yi/**"
-  - "frontend/zh-cn/**"

@@ -41,10 +41,10 @@ async function convertWebmToWav(webmBuffer) {
 // ======================================================================================================================
 router.post('/stt', async (req, res) => {
   try {
-    const audioBuffer = req.body;
-    if (!audioBuffer || audioBuffer.length === 0) {
+    if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
       return res.status(400).json({ error: 'Отсутствуют аудиоданные' });
     }
+    const audioBuffer = req.body;
 
     console.log(`[STT] Получено ${audioBuffer.length} байт WebM`);
 
