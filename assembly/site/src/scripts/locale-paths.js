@@ -1,3 +1,5 @@
+import { isSafeFrontendPath, safeAssignLocation, safeSetHref } from './safe-frontend-nav.js';
+
 const SITE_ORIGIN = 'https://serpmonn.ru';
 
 export function getCurrentLocale() {
@@ -11,11 +13,12 @@ export function getCurrentLocale() {
 /** Path under /frontend/, with locale segment for non-ru (e.g. login/login.html). */
 export function getFrontendPath(relativePath) {
   const locale = getCurrentLocale();
-  const path = relativePath.replace(/^\//, '');
+  const path = String(relativePath || '').replace(/^\//, '').replace(/[^a-zA-Z0-9._\-\/]/g, '');
   if (locale === 'ru') {
     return `/frontend/${path}`;
   }
-  return `/frontend/${locale}/${path}`;
+  const safeLocale = String(locale).replace(/[^a-z0-9\-]/g, '');
+  return `/frontend/${safeLocale}/${path}`;
 }
 
 export function getFrontendUrl(relativePath) {
@@ -39,6 +42,7 @@ export function sanitizeReturnPath(input) {
 
   if (!path.startsWith(FRONTEND_PREFIX)) return null;
   if (path.includes('://') || path.startsWith('//')) return null;
+  if (!isSafeFrontendPath(path.split('?')[0].split('#')[0])) return null;
 
   const pathname = path.split('?')[0].split('#')[0];
   if (/\/auth\/auth\.html$/i.test(pathname)) return null;
@@ -54,7 +58,7 @@ export function buildAuthUrl({ tab = null, returnPath = null } = {}) {
   const base = getFrontendPath('auth/auth.html');
   const params = new URLSearchParams();
 
-  if (tab) params.set('tab', tab);
+  if (tab === 'login' || tab === 'register') params.set('tab', tab);
 
   const safeReturn = sanitizeReturnPath(returnPath ?? getCurrentReturnPath());
   if (safeReturn) params.set('return', safeReturn);
@@ -64,8 +68,7 @@ export function buildAuthUrl({ tab = null, returnPath = null } = {}) {
 }
 
 export function redirectToAuth(options = {}) {
-  const url = buildAuthUrl(options);
-  if (typeof url === 'string' && url.startsWith('/frontend/')) {
-    window.location.assign(url);
-  }
+  safeAssignLocation(buildAuthUrl(options));
 }
+
+export { isSafeFrontendPath, safeAssignLocation, safeSetHref };

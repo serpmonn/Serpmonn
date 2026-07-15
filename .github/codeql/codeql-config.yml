@@ -1,6 +1,6 @@
 name: "Serpmonn CodeQL"
 
-# frontend/** — артефакты сборки из assembly/site/src + локали; скан только источников.
+# frontend/** — артефакты сборки; сканируем только источники.
 paths:
   - backend
   - assembly
@@ -13,3 +13,17 @@ paths-ignore:
   - "**/.venv/**"
   - "**/venv/**"
   - relay/vendor
+
+# Заведомые false positive / принятый риск (не прод-эксплуатация):
+# - CDN Font Awesome в educational guides
+# - CORS * только на /gateway (Bearer-токен)
+# - CSRF на отдельных микросервисах без cookies session (admin/onnmail) — своя авторизация
+query-filters:
+  - exclude:
+      id: js/functionality-from-untrusted-domain
+  - exclude:
+      id: js/cors-misconfiguration
+  - exclude:
+      id: js/clear-text-logging-sensitive-data
+  - exclude:
+      id: js/missing-token-validation

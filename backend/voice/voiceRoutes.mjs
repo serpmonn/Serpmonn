@@ -44,7 +44,8 @@ router.post('/stt', async (req, res) => {
     if (!Buffer.isBuffer(req.body) || req.body.length === 0) {
       return res.status(400).json({ error: 'Отсутствуют аудиоданные' });
     }
-    const audioBuffer = req.body;
+    // Копия байт: снимает type-confusion (JSON/object vs Buffer) для CodeQL и рантайма
+    const audioBuffer = Buffer.from(req.body);
 
     console.log(`[STT] Получено ${audioBuffer.length} байт WebM`);
 

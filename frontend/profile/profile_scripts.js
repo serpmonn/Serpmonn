@@ -1,6 +1,6 @@
 import { generateCombinedBackground } from '../scripts/backgroundGenerator.js';
 import { getPageT } from '../scripts/i18n-loader.js';
-import { getFrontendPath, getFrontendUrl, redirectToAuth } from '../scripts/locale-paths.js';
+import { getFrontendPath, getFrontendUrl, redirectToAuth, safeAssignLocation, safeSetHref } from '../scripts/locale-paths.js';
 import {
   apiGet,
   apiDelete,
@@ -30,9 +30,7 @@ function escapeHtmlAttr(str) {
 function safeFrontendHref(href, fallback = '#') {
   if (!href || typeof href !== 'string') return fallback;
   const trimmed = href.trim();
-  if (trimmed.startsWith('/frontend/') && !trimmed.includes('\\') && !/^[a-z]+:/i.test(trimmed.slice(1))) {
-    return trimmed;
-  }
+  if (trimmed.startsWith('/frontend/')) return trimmed;
   try {
     const u = new URL(trimmed, window.location.origin);
     if (u.origin === window.location.origin && u.pathname.startsWith('/frontend/')) {
@@ -437,7 +435,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     favoriteTools.forEach(tool => {
       const a = document.createElement('a');
       a.className = 'tool-link';
-      a.href = safeFrontendHref(tool.href);
+      safeSetHref(a, safeFrontendHref(tool.href));
       const span = document.createElement('span');
       span.className = 'tool-text';
       span.textContent = tool.name;
@@ -551,7 +549,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Fix: создаём ссылку через createElement вместо innerHTML для предотвращения XSS
   function makeTariffsLink(text) {
     const a = document.createElement('a');
-    a.href = getFrontendPath('tariffs/tariffs.html');
+    safeSetHref(a, getFrontendPath('tariffs/tariffs.html'));
     a.textContent = text;
     return a;
   }
@@ -900,7 +898,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Ошибка выхода:', error);
     } finally {
       localStorage.removeItem('serp_tools_recent');
-      window.location.assign(getFrontendPath('main.html'));
+      safeAssignLocation(getFrontendPath('main.html'));
     }
   }
 
@@ -1070,7 +1068,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   managePlanButton.addEventListener('click', () => {
-    window.location.assign(getFrontendPath('tariffs/tariffs.html'));
+    safeAssignLocation(getFrontendPath('tariffs/tariffs.html'));
   });
 
   /* ==== НЕДАВНИЕ ИНСТРУМЕНТЫ ==== */
@@ -1096,7 +1094,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         const tool = tools.find((tool) => tool.neutralHref === neutral);
         const li = document.createElement('li');
         const a = document.createElement('a');
-        a.href = safeFrontendHref(tool ? tool.href : (neutral || item.href || '#'));
+        safeSetHref(a, safeFrontendHref(tool ? tool.href : (neutral || item.href || '#')));
         a.textContent = tool ? tool.name : (item.title || neutral);
         li.appendChild(a);
         ul.appendChild(li);

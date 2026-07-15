@@ -42,7 +42,8 @@
             
             if (idx === -1) {
                 // Нет /frontend в пути: переходим на домашнюю для локали
-                location.href = (lang === 'ru') ? RU_DEFAULT : `/frontend/${lang}/index.html`;
+                const home = (lang === 'ru') ? RU_DEFAULT : `/frontend/${String(lang).replace(/[^a-z0-9\-]/g, '')}/index.html`;
+                if (home === RU_DEFAULT || home.startsWith('/frontend/')) location.assign(home);
                 return;
             }
             
@@ -79,7 +80,11 @@
             let newPath = targetParts.length ? '/' + targetParts.join('/') : RU_DEFAULT;
             // Если попали на каталог локали без файла — добавим index.html
             if (newPath === `/frontend/${lang}`) newPath += '/index.html';
-            if (newPath !== url.pathname) location.href = newPath + url.search + url.hash;
+            if (newPath !== url.pathname) {
+                if (newPath === RU_DEFAULT || /^\/frontend\/[a-z0-9\-\/]*$/.test(newPath.split('?')[0])) {
+                    location.assign(newPath + url.search + url.hash);
+                }
+            }
         } catch(_) {}
     }
     

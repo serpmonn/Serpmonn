@@ -70,11 +70,7 @@ fetch(primaryMenuPath)
     return response.text();
   })
   .then(html => {
-    const doc = new DOMParser().parseFromString(html, 'text/html');
-    const nodes = Array.from(doc.body.childNodes);
-    nodes.forEach((node) => {
-      document.body.prepend(document.importNode(node, true));
-    });
+    document.body.insertAdjacentHTML('afterbegin', html);
 
     // Модифицируем ссылки в меню под текущий язык
     try {

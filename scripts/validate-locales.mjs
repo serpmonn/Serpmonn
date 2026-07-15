@@ -112,7 +112,7 @@ for (const locale of authLocales) {
   }
   const missingAuthKeys = authKeys.filter((key) => authData[locale][key] === undefined);
   if (missingAuthKeys.length > 0) {
-    console.error(`[authTranslations:${locale}] missing ${missingAuthKeys.length} keys`);
+    console.error('[authTranslations] missing keys in one or more locales');
     hasErrors = true;
   }
 }

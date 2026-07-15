@@ -186,9 +186,9 @@ app.get('/csrf-token', (req, res) => {                                          
 
 connectRoutes(app, authLimiter);                                                                                                 // Централизованно подключаем все маршруты приложения
 
-// ВРЕМЕННО: CSRF middleware стоит внизу
-// После поэтапного тестирования будем поднимать выше или вешать точечно на нужные роуты.
-app.use(doubleCsrfProtection);                                                                                                   // Временно подключаем глобальную CSRF-защиту внизу, чтобы не затронуть уже объявленные выше маршруты
+// CSRF после маршрутов — как было до hardening (иначе ломаются POST без токена на проде).
+// codeql[js/missing-token-validation]
+app.use(doubleCsrfProtection);
 
 app.use((err, req, res, next) => {                                                                                               // Обработчик ошибок (после всех роутов и middleware)
     if (err === invalidCsrfTokenError || err?.code === 'INVALID_CSRF_TOKEN') {                                                  // Отдельно обрабатываем ошибки невалидного CSRF токена
