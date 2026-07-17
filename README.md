@@ -194,7 +194,7 @@ Frontend: `findings-client.js`, `findings-modals.js`, `finding-list-card.js`. Ba
 <p align="center">
   <a href="https://serpmonn.ru/frontend/messenger.html"><strong>Страница мессенджера</strong></a>
   ·
-  <a href="https://serpmonn.ru/frontend/downloads/serpmonn-debug.apk"><strong>⬇ Скачать APK (пре-альфа)</strong></a>
+  <a href="https://serpmonn.ru/frontend/downloads/app-debug.apk"><strong>⬇ Скачать APK (пре-альфа)</strong></a>
 </p>
 
 > **⚠️ Пре-альфа.** Идёт тестирование на реальных устройствах. Возможны сбои. Требуется Android 8.0+. Личные и групповые чаты доступны в тестовой сборке.
@@ -233,7 +233,7 @@ Frontend: `findings-client.js`, `findings-modals.js`, `finding-list-card.js`. Ba
 ## Установка APK
 
 1. Разрешите установку из неизвестных источников в Настройках Android.
-2. Скачайте APK со [страницы мессенджера](https://serpmonn.ru/frontend/messenger.html) (ARM64 — для большинства телефонов).
+2. Скачайте универсальный APK со [страницы мессенджера](https://serpmonn.ru/frontend/messenger.html).
 3. Откройте файл и установите.
 
 > Сборка подписана debug-ключом — предупреждение Android ожидаемо для пре-альфы.

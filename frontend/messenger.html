@@ -155,11 +155,7 @@ nav{
   display:flex;flex-direction:column;gap:var(--space-4);
   margin-bottom:var(--space-6);
 }
-.download-row{
-  display:flex;align-items:stretch;gap:var(--space-3);flex-wrap:wrap;
-}
 .download-card{
-  flex:1;min-width:220px;
   display:flex;flex-direction:column;
   background:var(--color-surface);
   border:1px solid var(--color-divider);
@@ -355,8 +351,6 @@ footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
   .hero-desc{font-size:var(--text-base);}
   .nav-logo span{display:none;}
   .footer-inner{flex-direction:column;text-align:center;}
-  .download-row{flex-direction:column;}
-  .download-card{min-width:unset;}
 }
 </style>
 </head>
@@ -391,58 +385,21 @@ footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
   <h1 class="hero-title"><span class="accent">Децентрализованный</span><br>мессенджер</h1>
   <p class="hero-desc">Serpmonn Messenger — P2P-мессенджер с end-to-end шифрованием для Android. Сообщения передаются напрямую между устройствами. Никто — ни серверы, ни Serpmonn — не имеет доступа к вашей переписке.</p>
 
-  <!-- DOWNLOAD CARDS -->
+  <!-- DOWNLOAD -->
   <div class="download-block">
-    <div class="download-row">
-
-      <!-- ARM64 — основной рекомендуемый -->
-      <div class="download-card recommended">
-        <div class="download-card-header">
-          <span class="download-card-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
-            ARM64
-          </span>
-          <span class="download-tag">Рекомендуется</span>
-        </div>
-        <p class="download-card-desc">Для <strong>большинства современных смартфонов</strong> — Xiaomi, Samsung (с 2017 г.), OnePlus, Google Pixel и других 64-битных устройств. Если не знаете свою архитектуру — берите этот.</p>
-        <a href="/frontend/downloads/serpmonn-debug.apk" class="download-btn primary" download>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Скачать APK · ~82 МБ
-        </a>
+    <div class="download-card recommended" style="max-width:420px">
+      <div class="download-card-header">
+        <span class="download-card-title">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
+          Универсальный APK
+        </span>
+        <span class="download-tag">Пре-альфа</span>
       </div>
-
-      <!-- ARM32 — для старых устройств -->
-      <div class="download-card">
-        <div class="download-card-header">
-          <span class="download-card-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
-            ARM32
-          </span>
-          <span class="download-tag muted">Старые устройства</span>
-        </div>
-        <p class="download-card-desc">Для <strong>32-битных смартфонов</strong> — Samsung Galaxy J4/J2/A2 Core, бюджетные модели 2015–2018 гг. Если основной APK не устанавливается — попробуйте этот.</p>
-        <a href="/frontend/downloads/serpmonn-debug-arm32.apk" class="download-btn secondary" download>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Скачать APK · ~82 МБ
-        </a>
-      </div>
-
-      <!-- x86 эмулятор -->
-      <div class="download-card">
-        <div class="download-card-header">
-          <span class="download-card-title">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
-            x86 Эмулятор
-          </span>
-          <span class="download-tag muted">Для тестов</span>
-        </div>
-        <p class="download-card-desc">Только для запуска в <strong>Android-эмуляторе</strong> на ПК (Android Studio, Genymotion). На реальных смартфонах не нужен.</p>
-        <a href="/frontend/downloads/serpmonn-debug-x86emu.apk" class="download-btn secondary" download>
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-          Скачать APK · ~84 МБ
-        </a>
-      </div>
-
+      <p class="download-card-desc">Один файл для <strong>смартфонов</strong> (современных и старых Android) и <strong>64‑битных эмуляторов</strong>. Отдельные сборки под архитектуры больше не нужны.</p>
+      <a href="/frontend/downloads/app-debug.apk" class="download-btn primary" download>
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Скачать APK · ~118 МБ
+      </a>
     </div>
     <p class="download-hint">Перед установкой разрешите установку из неизвестных источников в настройках Android. Требуется Android 8.0+.</p>
   </div>
