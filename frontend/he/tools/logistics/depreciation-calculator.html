@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="₪" data-month="חודש">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>הזן פרמטרים של רכב</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">מותג רכב</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="לדוגמה: Toyota" title="הזן מותג רכב, לדוגמה Toyota או BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">דגם</label>
-          <input type="text" id="carModel" placeholder="לדוגמה: Camry" title="הזן דגם רכב, לדוגמה Camry או X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">שנת ייצור</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="הזן שנת ייצור (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="הזן שנת ייצור (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">מחיר התחלתי (₪)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="הזן מחיר התחלתי של הרכב בשקלים">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="הזן מחיר התחלתי של הרכב בשקלים">
         </div>
         <div class="input-group">
           <label for="currentMileage">קילומטראז&#39; נוכחי (ק&quot;מ)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="הזן קילומטראז&#39; נוכחי בקילומטרים">
-        </div>
-        <div class="input-group">
-          <label for="usageType">סוג שימוש</label>
-          <select id="usageType" title="בחר סוג שימוש של הרכב">
-            
-            <option value="personal">שימוש אישי</option>
-            
-            <option value="taxi">מונית</option>
-            
-            <option value="commercial">הובלה מסחרית</option>
-            
-            <option value="delivery">משלוח</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">סוג דלק</label>
-          <select id="fuelType" title="בחר סוג דלק של הרכב">
-            
-            <option value="petrol">בנזין</option>
-            
-            <option value="diesel">דיזל</option>
-            
-            <option value="hybrid">היברידי</option>
-            
-            <option value="electric">חשמלי</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">רמת תחזוקה</label>
-          <select id="maintenanceLevel" title="בחר רמת תחזוקה של הרכב">
-            
-            <option value="excellent">מצוין</option>
-            
-            <option value="good">טוב</option>
-            
-            <option value="average">בינוני</option>
-            
-            <option value="poor">גרוע</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">אזור אקלים</label>
-          <select id="climateZone" title="בחר אזור אקלים של הפעלה">
-            
-            <option value="mild">ממוזג</option>
-            
-            <option value="cold">קר</option>
-            
-            <option value="hot">חם</option>
-            
-            <option value="humid">לח</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">אזור</label>
-          <select id="region" title="בחר אזור הפעלה של הרכב">
-            
-            <option value="central">מרכז (מוסקבה)</option>
-            
-            <option value="north">צפון (סנט פטרסבורג)</option>
-            
-            <option value="siberia">סיביר</option>
-            
-            <option value="south">דרום</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">מחיר נוכחי של אנלוגים חדשים (₪)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="הזן מחיר נוכחי של רכב חדש דומה בשקלים">
-          <small style="color: #6c757d; font-size: 12px;">מחיר רכב חדש דומה עכשיו</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">גידול מחירי שוק (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="ציין גידול מחירי רכבים חדשים מאז הרכישה באחוזים">
-          <small style="color: #6c757d; font-size: 12px;">גידול מחירי רכבים חדשים מאז הרכישה</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">אינפלציה שנתית (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="ציין אינפלציה שנתית ממוצעת בתקופת הבעלות">
-          <small style="color: #6c757d; font-size: 12px;">אינפלציה ממוצעת לכל שנת בעלות</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">ביקוש לדגם</label>
-          <select id="demandLevel" title="בחר רמת ביקוש לדגם">
-            
-            <option value="high" >ביקוש גבוה</option>
-            
-            <option value="medium" selected>ביקוש בינוני</option>
-            
-            <option value="low" >ביקוש נמוך</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">מצב טכני</label>
-          <select id="technicalCondition" title="בחר מצב טכני של הרכב">
-            
-            <option value="excellent" selected>מצוין (מקורי)</option>
-            
-            <option value="good" >טוב (פגמים קטנים)</option>
-            
-            <option value="average" >בינוני (מתוקן)</option>
-            
-            <option value="poor" >גרוע (תאונה)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">לוקח בחשבון תאונות, תיקונים, צביעה מחדש</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="הזן קילומטראז&#39; נוכחי בקילומטרים">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="חשב פחת רכב">חשב פחת</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="אפס טופס">איפוס</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="העתק קישור חישוב">שתף</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="ייצא תוצאות ל-PDF">ייצא ל-PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="ייצא תוצאות ל-CSV">ייצא ל-CSV</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="חשב פחת רכב">חשב פחת</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="אפס טופס">איפוס</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="העתק קישור חישוב">שתף</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="ייצא תוצאות ל-PDF">ייצא ל-PDF</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="ייצא תוצאות ל-CSV">ייצא ל-CSV</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">מותג רכב</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="לדוגמה: Toyota" title="הזן מותג רכב, לדוגמה Toyota או BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">דגם</label>
+            <input type="text" id="carModel" placeholder="לדוגמה: Camry" title="הזן דגם רכב, לדוגמה Camry או X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">סוג שימוש</label>
+            <select id="usageType" title="בחר סוג שימוש של הרכב">
+              
+              <option value="personal">שימוש אישי</option>
+              
+              <option value="taxi">מונית</option>
+              
+              <option value="commercial">הובלה מסחרית</option>
+              
+              <option value="delivery">משלוח</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">סוג דלק</label>
+            <select id="fuelType" title="בחר סוג דלק של הרכב">
+              
+              <option value="petrol">בנזין</option>
+              
+              <option value="diesel">דיזל</option>
+              
+              <option value="hybrid">היברידי</option>
+              
+              <option value="electric">חשמלי</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">רמת תחזוקה</label>
+            <select id="maintenanceLevel" title="בחר רמת תחזוקה של הרכב">
+              
+              <option value="excellent">מצוין</option>
+              
+              <option value="good">טוב</option>
+              
+              <option value="average">בינוני</option>
+              
+              <option value="poor">גרוע</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">אזור אקלים</label>
+            <select id="climateZone" title="בחר אזור אקלים של הפעלה">
+              
+              <option value="mild">ממוזג</option>
+              
+              <option value="cold">קר</option>
+              
+              <option value="hot">חם</option>
+              
+              <option value="humid">לח</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">אזור</label>
+            <select id="region" title="בחר אזור הפעלה של הרכב">
+              
+              <option value="central">מרכז (מוסקבה)</option>
+              
+              <option value="north">צפון (סנט פטרסבורג)</option>
+              
+              <option value="siberia">סיביר</option>
+              
+              <option value="south">דרום</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">מחיר נוכחי של אנלוגים חדשים (₪)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="הזן מחיר נוכחי של רכב חדש דומה בשקלים">
+            <small>מחיר רכב חדש דומה עכשיו</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">גידול מחירי שוק (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="ציין גידול מחירי רכבים חדשים מאז הרכישה באחוזים">
+            <small>גידול מחירי רכבים חדשים מאז הרכישה</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">אינפלציה שנתית (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="ציין אינפלציה שנתית ממוצעת בתקופת הבעלות">
+            <small>אינפלציה ממוצעת לכל שנת בעלות</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">ביקוש לדגם</label>
+            <select id="demandLevel" title="בחר רמת ביקוש לדגם">
+              
+              <option value="high" >ביקוש גבוה</option>
+              
+              <option value="medium" selected>ביקוש בינוני</option>
+              
+              <option value="low" >ביקוש נמוך</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">מצב טכני</label>
+            <select id="technicalCondition" title="בחר מצב טכני של הרכב">
+              
+              <option value="excellent" selected>מצוין (מקורי)</option>
+              
+              <option value="good" >טוב (פגמים קטנים)</option>
+              
+              <option value="average" >בינוני (מתוקן)</option>
+              
+              <option value="poor" >גרוע (תאונה)</option>
+              
+            </select>
+            <small>לוקח בחשבון תאונות, תיקונים, צביעה מחדש</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>תוצאות חישוב</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ₪</div>
@@ -465,6 +463,7 @@
             <div class="result-label">פחת חודשי</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

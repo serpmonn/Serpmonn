@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="روپیہ" data-month="ماہ">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>گاڑی کے پیرامیٹرز درج کریں</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">گاڑی کا برانڈ</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="مثال: Toyota" title="گاڑی کا برانڈ درج کریں، مثال Toyota یا BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">ماڈل</label>
-          <input type="text" id="carModel" placeholder="مثال: Camry" title="گاڑی کا ماڈل درج کریں، مثال Camry یا X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">سال ساخت</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="سال ساخت درج کریں (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="سال ساخت درج کریں (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">ابتدائی لاگت (روپیہ)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="گاڑی کی ابتدائی لاگت روپے میں درج کریں">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="گاڑی کی ابتدائی لاگت روپے میں درج کریں">
         </div>
         <div class="input-group">
           <label for="currentMileage">موجودہ میلج (کلومیٹر)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="موجودہ میلج کلومیٹر میں درج کریں">
-        </div>
-        <div class="input-group">
-          <label for="usageType">استعمال کی قسم</label>
-          <select id="usageType" title="گاڑی کے استعمال کی قسم منتخب کریں">
-            
-            <option value="personal">ذاتی استعمال</option>
-            
-            <option value="taxi">ٹیکسی</option>
-            
-            <option value="commercial">تجارتی نقل و حمل</option>
-            
-            <option value="delivery">ترسیل</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">ایندھن کی قسم</label>
-          <select id="fuelType" title="گاڑی کے ایندھن کی قسم منتخب کریں">
-            
-            <option value="petrol">پیٹرول</option>
-            
-            <option value="diesel">ڈیزل</option>
-            
-            <option value="hybrid">ہائبرڈ</option>
-            
-            <option value="electric">بجلی</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">دیکھ بھال کی سطح</label>
-          <select id="maintenanceLevel" title="گاڑی کی دیکھ بھال کی سطح منتخب کریں">
-            
-            <option value="excellent">بہترین</option>
-            
-            <option value="good">اچھا</option>
-            
-            <option value="average">اوسط</option>
-            
-            <option value="poor">خراب</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">آب و ہوا کا علاقہ</label>
-          <select id="climateZone" title="آپریشن کے آب و ہوا کے علاقے کو منتخب کریں">
-            
-            <option value="mild">معتدل</option>
-            
-            <option value="cold">سرد</option>
-            
-            <option value="hot">گرم</option>
-            
-            <option value="humid">مرطوب</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">علاقہ</label>
-          <select id="region" title="گاڑی کے آپریشن کا علاقہ منتخب کریں">
-            
-            <option value="central">مرکزی (ماسکو)</option>
-            
-            <option value="north">شمالی (سینٹ پیٹرزبرگ)</option>
-            
-            <option value="siberia">سائبیریا</option>
-            
-            <option value="south">جنوبی</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">نئے ہم منصبوں کی موجودہ قیمت (روپیہ)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="اسی طرح کی نئی گاڑی کی موجودہ قیمت روپے میں درج کریں">
-          <small style="color: #6c757d; font-size: 12px;">اسی طرح کی نئی گاڑی کی موجودہ قیمت</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">مارکیٹ قیمت میں اضافہ (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="خریداری کے بعد سے نئی گاڑیوں کی قیمت میں اضافہ فیصد میں بیان کریں">
-          <small style="color: #6c757d; font-size: 12px;">خریداری کے بعد سے نئی گاڑیوں کی قیمت میں اضافہ</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">سالانہ افراط زر (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="ملکیت کی مدت کے دوران اوسط سالانہ افراط زر بیان کریں">
-          <small style="color: #6c757d; font-size: 12px;">ملکیت کے ہر سال کے لیے اوسط افراط زر</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">ماڈل کی طلب</label>
-          <select id="demandLevel" title="ماڈل کی طلب کی سطح منتخب کریں">
-            
-            <option value="high" >زیادہ طلب</option>
-            
-            <option value="medium" selected>اوسط طلب</option>
-            
-            <option value="low" >کم طلب</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">تکنیکی حالت</label>
-          <select id="technicalCondition" title="گاڑی کی تکنیکی حالت منتخب کریں">
-            
-            <option value="excellent" selected>بہترین (اصل)</option>
-            
-            <option value="good" >اچھا (چھوٹی خرابیاں)</option>
-            
-            <option value="average" >اوسط (مرمت شدہ)</option>
-            
-            <option value="poor" >خراب (حادثے کا نشانہ)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">حادثات، مرمت، دوبارہ رنگائی کو مدنظر رکھتا ہے</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="موجودہ میلج کلومیٹر میں درج کریں">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="گاڑی کی فرسودگی کا حساب لگائیں">فرسودگی کا حساب لگائیں</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="فارم ری سیٹ کریں">ری سیٹ</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="حساب کا لنک کاپی کریں">اشتراک</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="نتائج PDF میں برآمد کریں">PDF برآمد کریں</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="نتائج CSV میں برآمد کریں">CSV برآمد کریں</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="گاڑی کی فرسودگی کا حساب لگائیں">فرسودگی کا حساب لگائیں</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="فارم ری سیٹ کریں">ری سیٹ</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="حساب کا لنک کاپی کریں">اشتراک</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="نتائج PDF میں برآمد کریں">PDF برآمد کریں</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="نتائج CSV میں برآمد کریں">CSV برآمد کریں</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">گاڑی کا برانڈ</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="مثال: Toyota" title="گاڑی کا برانڈ درج کریں، مثال Toyota یا BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">ماڈل</label>
+            <input type="text" id="carModel" placeholder="مثال: Camry" title="گاڑی کا ماڈل درج کریں، مثال Camry یا X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">استعمال کی قسم</label>
+            <select id="usageType" title="گاڑی کے استعمال کی قسم منتخب کریں">
+              
+              <option value="personal">ذاتی استعمال</option>
+              
+              <option value="taxi">ٹیکسی</option>
+              
+              <option value="commercial">تجارتی نقل و حمل</option>
+              
+              <option value="delivery">ترسیل</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">ایندھن کی قسم</label>
+            <select id="fuelType" title="گاڑی کے ایندھن کی قسم منتخب کریں">
+              
+              <option value="petrol">پیٹرول</option>
+              
+              <option value="diesel">ڈیزل</option>
+              
+              <option value="hybrid">ہائبرڈ</option>
+              
+              <option value="electric">بجلی</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">دیکھ بھال کی سطح</label>
+            <select id="maintenanceLevel" title="گاڑی کی دیکھ بھال کی سطح منتخب کریں">
+              
+              <option value="excellent">بہترین</option>
+              
+              <option value="good">اچھا</option>
+              
+              <option value="average">اوسط</option>
+              
+              <option value="poor">خراب</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">آب و ہوا کا علاقہ</label>
+            <select id="climateZone" title="آپریشن کے آب و ہوا کے علاقے کو منتخب کریں">
+              
+              <option value="mild">معتدل</option>
+              
+              <option value="cold">سرد</option>
+              
+              <option value="hot">گرم</option>
+              
+              <option value="humid">مرطوب</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">علاقہ</label>
+            <select id="region" title="گاڑی کے آپریشن کا علاقہ منتخب کریں">
+              
+              <option value="central">مرکزی (ماسکو)</option>
+              
+              <option value="north">شمالی (سینٹ پیٹرزبرگ)</option>
+              
+              <option value="siberia">سائبیریا</option>
+              
+              <option value="south">جنوبی</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">نئے ہم منصبوں کی موجودہ قیمت (روپیہ)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="اسی طرح کی نئی گاڑی کی موجودہ قیمت روپے میں درج کریں">
+            <small>اسی طرح کی نئی گاڑی کی موجودہ قیمت</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">مارکیٹ قیمت میں اضافہ (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="خریداری کے بعد سے نئی گاڑیوں کی قیمت میں اضافہ فیصد میں بیان کریں">
+            <small>خریداری کے بعد سے نئی گاڑیوں کی قیمت میں اضافہ</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">سالانہ افراط زر (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="ملکیت کی مدت کے دوران اوسط سالانہ افراط زر بیان کریں">
+            <small>ملکیت کے ہر سال کے لیے اوسط افراط زر</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">ماڈل کی طلب</label>
+            <select id="demandLevel" title="ماڈل کی طلب کی سطح منتخب کریں">
+              
+              <option value="high" >زیادہ طلب</option>
+              
+              <option value="medium" selected>اوسط طلب</option>
+              
+              <option value="low" >کم طلب</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">تکنیکی حالت</label>
+            <select id="technicalCondition" title="گاڑی کی تکنیکی حالت منتخب کریں">
+              
+              <option value="excellent" selected>بہترین (اصل)</option>
+              
+              <option value="good" >اچھا (چھوٹی خرابیاں)</option>
+              
+              <option value="average" >اوسط (مرمت شدہ)</option>
+              
+              <option value="poor" >خراب (حادثے کا نشانہ)</option>
+              
+            </select>
+            <small>حادثات، مرمت، دوبارہ رنگائی کو مدنظر رکھتا ہے</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>حساب کے نتائج</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 روپیہ</div>
@@ -465,6 +463,7 @@
             <div class="result-label">ماہانہ فرسودگی</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

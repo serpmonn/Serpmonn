@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="ر.س" data-month="شهر">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>أدخل معلمات السيارة</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">ماركة السيارة</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="مثال: Toyota" title="أدخل ماركة السيارة، مثلاً Toyota أو BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">الموديل</label>
-          <input type="text" id="carModel" placeholder="مثال: Camry" title="أدخل موديل السيارة، مثلاً Camry أو X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">سنة التصنيع</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="أدخل سنة التصنيع (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="أدخل سنة التصنيع (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">التكلفة الأولية (ر.س)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="أدخل التكلفة الأولية للسيارة بالريال">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="أدخل التكلفة الأولية للسيارة بالريال">
         </div>
         <div class="input-group">
           <label for="currentMileage">المسافة المقطوعة الحالية (كم)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="أدخل المسافة المقطوعة الحالية بالكيلومترات">
-        </div>
-        <div class="input-group">
-          <label for="usageType">نوع الاستخدام</label>
-          <select id="usageType" title="اختر نوع استخدام السيارة">
-            
-            <option value="personal">استخدام شخصي</option>
-            
-            <option value="taxi">تاكسي</option>
-            
-            <option value="commercial">نقل تجاري</option>
-            
-            <option value="delivery">توصيل</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">نوع الوقود</label>
-          <select id="fuelType" title="اختر نوع وقود السيارة">
-            
-            <option value="petrol">بنزين</option>
-            
-            <option value="diesel">ديزل</option>
-            
-            <option value="hybrid">هجين</option>
-            
-            <option value="electric">كهربائي</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">مستوى الصيانة</label>
-          <select id="maintenanceLevel" title="اختر مستوى صيانة السيارة">
-            
-            <option value="excellent">ممتاز</option>
-            
-            <option value="good">جيد</option>
-            
-            <option value="average">متوسط</option>
-            
-            <option value="poor">ضعيف</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">المنطقة المناخية</label>
-          <select id="climateZone" title="اختر المنطقة المناخية للتشغيل">
-            
-            <option value="mild">معتدل</option>
-            
-            <option value="cold">بارد</option>
-            
-            <option value="hot">حار</option>
-            
-            <option value="humid">رطب</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">المنطقة</label>
-          <select id="region" title="اختر منطقة تشغيل السيارة">
-            
-            <option value="central">المركزي (موسكو)</option>
-            
-            <option value="north">الشمال (سانت بطرسبرغ)</option>
-            
-            <option value="siberia">سيبيريا</option>
-            
-            <option value="south">الجنوب</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">سعر السيارات الجديدة المماثلة الحالي (ر.س)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="أدخل السعر الحالي لسيارة جديدة مماثلة بالريال">
-          <small style="color: #6c757d; font-size: 12px;">سعر سيارة جديدة مماثلة الآن</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">نمو أسعار السوق (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="حدد نمو أسعار السيارات الجديدة منذ الشراء بالنسبة المئوية">
-          <small style="color: #6c757d; font-size: 12px;">نمو أسعار السيارات الجديدة منذ الشراء</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">معدل التضخم السنوي (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="حدد متوسط التضخم السنوي خلال فترة الملكية">
-          <small style="color: #6c757d; font-size: 12px;">متوسط التضخم لكل سنة من الملكية</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">الطلب على الموديل</label>
-          <select id="demandLevel" title="اختر مستوى الطلب على الموديل">
-            
-            <option value="high" >طلب مرتفع</option>
-            
-            <option value="medium" selected>طلب متوسط</option>
-            
-            <option value="low" >طلب منخفض</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">الحالة الفنية</label>
-          <select id="technicalCondition" title="اختر الحالة الفنية للسيارة">
-            
-            <option value="excellent" selected>ممتاز (أصلي)</option>
-            
-            <option value="good" >جيد (عيوب بسيطة)</option>
-            
-            <option value="average" >متوسط (تم إصلاحه)</option>
-            
-            <option value="poor" >ضعيف (حادث)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">يأخذ في الاعتبار الحوادث والإصلاحات وإعادة الطلاء</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="أدخل المسافة المقطوعة الحالية بالكيلومترات">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="حساب استهلاك السيارة">حساب الاستهلاك</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="إعادة تعيين النموذج">إعادة تعيين</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="نسخ رابط الحساب">مشاركة</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="تصدير النتائج إلى PDF">تصدير إلى PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="تصدير النتائج إلى CSV">تصدير إلى CSV</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="حساب استهلاك السيارة">حساب الاستهلاك</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="إعادة تعيين النموذج">إعادة تعيين</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="نسخ رابط الحساب">مشاركة</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="تصدير النتائج إلى PDF">تصدير إلى PDF</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="تصدير النتائج إلى CSV">تصدير إلى CSV</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">ماركة السيارة</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="مثال: Toyota" title="أدخل ماركة السيارة، مثلاً Toyota أو BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">الموديل</label>
+            <input type="text" id="carModel" placeholder="مثال: Camry" title="أدخل موديل السيارة، مثلاً Camry أو X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">نوع الاستخدام</label>
+            <select id="usageType" title="اختر نوع استخدام السيارة">
+              
+              <option value="personal">استخدام شخصي</option>
+              
+              <option value="taxi">تاكسي</option>
+              
+              <option value="commercial">نقل تجاري</option>
+              
+              <option value="delivery">توصيل</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">نوع الوقود</label>
+            <select id="fuelType" title="اختر نوع وقود السيارة">
+              
+              <option value="petrol">بنزين</option>
+              
+              <option value="diesel">ديزل</option>
+              
+              <option value="hybrid">هجين</option>
+              
+              <option value="electric">كهربائي</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">مستوى الصيانة</label>
+            <select id="maintenanceLevel" title="اختر مستوى صيانة السيارة">
+              
+              <option value="excellent">ممتاز</option>
+              
+              <option value="good">جيد</option>
+              
+              <option value="average">متوسط</option>
+              
+              <option value="poor">ضعيف</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">المنطقة المناخية</label>
+            <select id="climateZone" title="اختر المنطقة المناخية للتشغيل">
+              
+              <option value="mild">معتدل</option>
+              
+              <option value="cold">بارد</option>
+              
+              <option value="hot">حار</option>
+              
+              <option value="humid">رطب</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">المنطقة</label>
+            <select id="region" title="اختر منطقة تشغيل السيارة">
+              
+              <option value="central">المركزي (موسكو)</option>
+              
+              <option value="north">الشمال (سانت بطرسبرغ)</option>
+              
+              <option value="siberia">سيبيريا</option>
+              
+              <option value="south">الجنوب</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">سعر السيارات الجديدة المماثلة الحالي (ر.س)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="أدخل السعر الحالي لسيارة جديدة مماثلة بالريال">
+            <small>سعر سيارة جديدة مماثلة الآن</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">نمو أسعار السوق (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="حدد نمو أسعار السيارات الجديدة منذ الشراء بالنسبة المئوية">
+            <small>نمو أسعار السيارات الجديدة منذ الشراء</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">معدل التضخم السنوي (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="حدد متوسط التضخم السنوي خلال فترة الملكية">
+            <small>متوسط التضخم لكل سنة من الملكية</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">الطلب على الموديل</label>
+            <select id="demandLevel" title="اختر مستوى الطلب على الموديل">
+              
+              <option value="high" >طلب مرتفع</option>
+              
+              <option value="medium" selected>طلب متوسط</option>
+              
+              <option value="low" >طلب منخفض</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">الحالة الفنية</label>
+            <select id="technicalCondition" title="اختر الحالة الفنية للسيارة">
+              
+              <option value="excellent" selected>ممتاز (أصلي)</option>
+              
+              <option value="good" >جيد (عيوب بسيطة)</option>
+              
+              <option value="average" >متوسط (تم إصلاحه)</option>
+              
+              <option value="poor" >ضعيف (حادث)</option>
+              
+            </select>
+            <small>يأخذ في الاعتبار الحوادث والإصلاحات وإعادة الطلاء</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>نتائج الحساب</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ر.س</div>
@@ -465,6 +463,7 @@
             <div class="result-label">الاستهلاك الشهري</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

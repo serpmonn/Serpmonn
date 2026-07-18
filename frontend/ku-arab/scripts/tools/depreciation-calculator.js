@@ -54,6 +54,152 @@ async function loadJsPDF() {
   }
 }
 
+const pdfFontCache = {};
+
+async function loadPdfFontBinary(path) {
+  if (pdfFontCache[path]) return pdfFontCache[path];
+  const res = await fetch(path);
+  if (!res.ok) throw new Error(`Font load failed: ${path}`);
+  const bytes = new Uint8Array(await res.arrayBuffer());
+  let binary = '';
+  const chunk = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunk) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunk));
+  }
+  pdfFontCache[path] = binary;
+  return binary;
+}
+
+function getFieldValue(id) {
+  return (document.getElementById(id)?.value || '').trim();
+}
+
+function hasCalculatedResults() {
+  const results = document.getElementById('results');
+  return Boolean(results && !results.classList.contains('hidden') && getResultText('currentValue'));
+}
+
+function getExportData() {
+  const brand = getFieldValue('carBrand');
+  const model = getFieldValue('carModel');
+  const vehicle = [brand, model].filter(Boolean).join(' ').trim() || '—';
+  return {
+    brand: brand || '—',
+    model: model || '—',
+    vehicle,
+    year: getFieldValue('carYear') || '—',
+    initialPrice: getFieldValue('initialPrice') || '—',
+    mileage: getFieldValue('currentMileage') || '—',
+    currentValue: getResultText('currentValue') || '—',
+    totalDepreciation: getResultText('totalDepreciation') || '—',
+    percent: getResultText('depreciationPercent') || '—',
+    monthly: getResultText('monthlyDepreciation') || '—',
+    costPerKm: getResultText('costPerKm') || '—'
+  };
+}
+
+function csvEscape(value) {
+  const s = String(value ?? '');
+  if (/[";\n\r]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
+  return s;
+}
+
+function ensureExportReady() {
+  if (hasCalculatedResults()) return true;
+  alert(t('depreciation.exportNoResults'));
+  return false;
+}
+
+async function exportToPDF() {
+  if (!ensureExportReady()) return;
+  try {
+    await loadJsPDF();
+    const data = getExportData();
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+
+    const [regular, bold] = await Promise.all([
+      loadPdfFontBinary('/frontend/fonts/DejaVuSans.ttf'),
+      loadPdfFontBinary('/frontend/fonts/DejaVuSans-Bold.ttf')
+    ]);
+    doc.addFileToVFS('DejaVuSans.ttf', regular);
+    doc.addFileToVFS('DejaVuSans-Bold.ttf', bold);
+    doc.addFont('DejaVuSans.ttf', 'DejaVuSans', 'normal');
+    doc.addFont('DejaVuSans-Bold.ttf', 'DejaVuSans', 'bold');
+
+    const margin = 16;
+    const maxWidth = 210 - margin * 2;
+    let y = 20;
+
+    const writeLine = (text, { size = 11, style = 'normal', gap = 7 } = {}) => {
+      doc.setFont('DejaVuSans', style);
+      doc.setFontSize(size);
+      const lines = doc.splitTextToSize(String(text), maxWidth);
+      doc.text(lines, margin, y);
+      y += gap * lines.length;
+    };
+
+    writeLine(t('depreciation.pdfTitle'), { size: 16, style: 'bold', gap: 9 });
+    y += 2;
+    writeLine(t('depreciation.pdfVehicle', { value: data.vehicle }));
+    writeLine(t('depreciation.pdfYear', { value: data.year }));
+    writeLine(t('depreciation.pdfInitialPrice', { value: `${data.initialPrice} ${getCurrency()}` }));
+    writeLine(t('depreciation.pdfMileage', { value: data.mileage }));
+    y += 3;
+    writeLine(t('depreciation.pdfCostPerKm', { value: data.costPerKm }), { size: 12, style: 'bold' });
+    writeLine(t('depreciation.pdfCurrentValue', { value: data.currentValue }));
+    writeLine(t('depreciation.pdfTotalDepreciation', { value: data.totalDepreciation }));
+    writeLine(t('depreciation.pdfPercent', { value: data.percent }));
+    writeLine(t('depreciation.pdfMonthly', { value: data.monthly }));
+    y += 4;
+    writeLine(t('depreciation.pdfNote'), { size: 9, gap: 5 });
+    y += 4;
+    writeLine(`${window.location.origin}${window.location.pathname}`, { size: 8, gap: 4 });
+    writeLine(new Date().toLocaleString(getLocale()), { size: 8, gap: 4 });
+
+    doc.save('depreciation_report.pdf');
+  } catch (err) {
+    console.error(err);
+    alert(t('depreciation.linkCopyError'));
+  }
+}
+
+function exportToCSV() {
+  if (!ensureExportReady()) return;
+  const data = getExportData();
+  const headers = [
+    t('depreciation.csvBrand'),
+    t('depreciation.csvModel'),
+    t('depreciation.csvYear'),
+    t('depreciation.csvInitialPrice'),
+    t('depreciation.csvMileage'),
+    t('depreciation.csvCostPerKm'),
+    t('depreciation.csvCurrentValue'),
+    t('depreciation.csvTotalDepreciation'),
+    t('depreciation.csvPercent'),
+    t('depreciation.csvMonthly')
+  ];
+  const row = [
+    data.brand,
+    data.model,
+    data.year,
+    data.initialPrice,
+    data.mileage,
+    data.costPerKm,
+    data.currentValue,
+    data.totalDepreciation,
+    data.percent,
+    data.monthly
+  ];
+  const sep = ';';
+  const csv = `\uFEFF${headers.map(csvEscape).join(sep)}\n${row.map(csvEscape).join(sep)}\n`;
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const link = document.createElement('a');
+  link.href = URL.createObjectURL(blob);
+  link.download = 'depreciation_report.csv';
+  link.click();
+  URL.revokeObjectURL(link.href);
+}
 
 function debounce(func, wait) {
   let timeout;
@@ -89,51 +235,8 @@ function copyShareLink() {
   });
 }
 
-function exportToPDF() {
-  loadJsPDF().then(() => {
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.setFontSize(16);
-    doc.text(t('depreciation.pdfTitle'), 10, 10);
-    doc.setFontSize(12);
-    doc.text(t('depreciation.pdfCurrentValue', { value: getResultText('currentValue') }), 10, 20);
-    doc.text(t('depreciation.pdfTotalDepreciation', { value: getResultText('totalDepreciation') }), 10, 30);
-    doc.text(t('depreciation.pdfPercent', { value: getResultText('depreciationPercent') }), 10, 40);
-    doc.text(t('depreciation.pdfMonthly', { value: getResultText('monthlyDepreciation') }), 10, 50);
-    doc.text(t('depreciation.pdfNote'), 10, 60);
-    doc.save('depreciation_report.pdf');
-  });
-}
-
-function exportToCSV() {
-  const headers = [
-    t('depreciation.csvBrand'),
-    t('depreciation.csvModel'),
-    t('depreciation.csvYear'),
-    t('depreciation.csvCurrentValue'),
-    t('depreciation.csvTotalDepreciation'),
-    t('depreciation.csvPercent'),
-    t('depreciation.csvMonthly')
-  ];
-  const getVal = id => document.getElementById(id)?.value || '';
-  const data = [[
-    getVal('carBrand'),
-    getVal('carModel'),
-    getVal('carYear'),
-    getResultText('currentValue'),
-    getResultText('totalDepreciation'),
-    getResultText('depreciationPercent'),
-    getResultText('monthlyDepreciation')
-  ]];
-  const csv = [headers.join(','), ...data.map(row => row.join(','))].join('\n');
-  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const link = document.createElement('a');
-  link.href = URL.createObjectURL(blob);
-  link.download = 'depreciation_report.csv';
-  link.click();
-}
-
-function calculateDepreciation() {
+function calculateDepreciation(options) {
+  const shouldScroll = Boolean(options && typeof options === 'object' && !(options instanceof Event) && options.scroll);
   const errorMessage = document.getElementById('error-message');
   if (errorMessage) errorMessage.classList.add('hidden');
   const inputs = {
@@ -158,7 +261,7 @@ function calculateDepreciation() {
     if (errorMessage) {
       errorMessage.textContent = t('depreciation.errorRequiredFields');
       errorMessage.classList.remove('hidden');
-      errorMessage.focus?.();
+      if (shouldScroll) errorMessage.focus?.();
     }
     return;
   }
@@ -166,7 +269,7 @@ function calculateDepreciation() {
     if (errorMessage) {
       errorMessage.textContent = t('depreciation.errorMinPrice');
       errorMessage.classList.remove('hidden');
-      errorMessage.focus?.();
+      if (shouldScroll) errorMessage.focus?.();
     }
     return;
   }
@@ -174,7 +277,7 @@ function calculateDepreciation() {
     if (errorMessage) {
       errorMessage.textContent = t('depreciation.errorNegativeMileage');
       errorMessage.classList.remove('hidden');
-      errorMessage.focus?.();
+      if (shouldScroll) errorMessage.focus?.();
     }
     return;
   }
@@ -182,14 +285,14 @@ function calculateDepreciation() {
     if (errorMessage) {
       errorMessage.textContent = t('depreciation.warnHighMileage');
       errorMessage.classList.remove('hidden');
-      errorMessage.focus?.();
+      if (shouldScroll) errorMessage.focus?.();
     }
   }
   if (inputs.currentNewPrice && inputs.currentNewPrice < 100000) {
     if (errorMessage) {
       errorMessage.textContent = t('depreciation.errorMinNewPrice');
       errorMessage.classList.remove('hidden');
-      errorMessage.focus?.();
+      if (shouldScroll) errorMessage.focus?.();
     }
     return;
   }
@@ -197,7 +300,7 @@ function calculateDepreciation() {
     if (errorMessage) {
       errorMessage.textContent = t('depreciation.errorMarketGrowthRange');
       errorMessage.classList.remove('hidden');
-      errorMessage.focus?.();
+      if (shouldScroll) errorMessage.focus?.();
     }
     return;
   }
@@ -205,7 +308,7 @@ function calculateDepreciation() {
     if (errorMessage) {
       errorMessage.textContent = t('depreciation.errorInflationRange');
       errorMessage.classList.remove('hidden');
-      errorMessage.focus?.();
+      if (shouldScroll) errorMessage.focus?.();
     }
     return;
   }
@@ -303,6 +406,9 @@ function calculateDepreciation() {
 
     document.getElementById('results')?.classList.remove('loading', 'hidden');
     document.getElementById('breakdown')?.classList.remove('loading', 'hidden');
+    if (shouldScroll) {
+      document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }, 300);
 }
 
@@ -315,6 +421,18 @@ function displayResults(currentValue, totalDepreciation, depreciationPercent, mo
   if (dp) dp.textContent = `${depreciationPercent}%`;
   const md = document.getElementById('monthlyDepreciation');
   if (md) md.textContent = formatMonthly(monthlyDepreciation);
+
+  const perKmEl = document.getElementById('costPerKm');
+  if (perKmEl) {
+    const mileage = Number(inputs.currentMileage) || 0;
+    if (mileage > 0) {
+      const perKm = totalDepreciation / mileage;
+      const currency = document.body.dataset.currency || '₽';
+      perKmEl.textContent = `${perKm.toLocaleString(undefined, { maximumFractionDigits: 2, minimumFractionDigits: 2 })} ${currency}/км`;
+    } else {
+      perKmEl.textContent = '—';
+    }
+  }
 
   if (inputs.carBrand && inputs.carModel) {
     const metaDesc = document.querySelector('meta[name="description"]');
@@ -364,13 +482,8 @@ function displayResults(currentValue, totalDepreciation, depreciationPercent, mo
 
   loadChartJs().then(() => {
     if (chartInstance) chartInstance.destroy();
-    const prevCanvas = document.getElementById('depreciationChart');
-    if (prevCanvas?.parentNode) prevCanvas.parentNode.removeChild(prevCanvas);
-    const chartCanvas = document.createElement('canvas');
-    chartCanvas.id = 'depreciationChart';
-    chartCanvas.style.maxHeight = '300px';
-    chartCanvas.style.marginTop = '20px';
-    document.getElementById('results')?.prepend(chartCanvas);
+    const chartCanvas = document.getElementById('depreciationChart');
+    if (!chartCanvas) return;
     chartInstance = new Chart(chartCanvas, {
       type: 'line',
       data: {
@@ -583,8 +696,22 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (urlParams.size > 0 || localStorage.getItem('lastDepreciation')) calculateDepreciation();
 
   document.querySelectorAll('.input-section input, .input-section select').forEach(input => {
-    input.addEventListener('input', debounce(calculateDepreciation, 500));
+    input.addEventListener('input', debounce(() => calculateDepreciation(), 500));
   });
+
+  const moreActions = document.querySelector('.more-actions');
+  if (moreActions) {
+    document.addEventListener('click', (event) => {
+      if (!moreActions.open) return;
+      if (moreActions.contains(event.target)) return;
+      moreActions.open = false;
+    });
+    moreActions.querySelectorAll('button').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        moreActions.open = false;
+      });
+    });
+  }
 });
 
 window.calculateDepreciation = calculateDepreciation;

@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="¥" data-month="月">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>输入汽车参数</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">汽车品牌</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="例如：Toyota" title="输入汽车品牌，例如 Toyota 或 BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">型号</label>
-          <input type="text" id="carModel" placeholder="例如：Camry" title="输入汽车型号，例如 Camry 或 X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">生产年份</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="输入生产年份 (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="输入生产年份 (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">初始成本 (¥)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="以人民币输入汽车的初始成本">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="以人民币输入汽车的初始成本">
         </div>
         <div class="input-group">
           <label for="currentMileage">当前里程 (公里)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="以公里为单位输入当前里程">
-        </div>
-        <div class="input-group">
-          <label for="usageType">使用类型</label>
-          <select id="usageType" title="选择汽车的使用类型">
-            
-            <option value="personal">个人使用</option>
-            
-            <option value="taxi">出租车</option>
-            
-            <option value="commercial">商业运输</option>
-            
-            <option value="delivery">送货</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">燃料类型</label>
-          <select id="fuelType" title="选择汽车的燃料类型">
-            
-            <option value="petrol">汽油</option>
-            
-            <option value="diesel">柴油</option>
-            
-            <option value="hybrid">混合动力</option>
-            
-            <option value="electric">电动</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">维护水平</label>
-          <select id="maintenanceLevel" title="选择汽车的维护水平">
-            
-            <option value="excellent">优秀</option>
-            
-            <option value="good">良好</option>
-            
-            <option value="average">中等</option>
-            
-            <option value="poor">差</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">气候区域</label>
-          <select id="climateZone" title="选择运行气候区域">
-            
-            <option value="mild">温和</option>
-            
-            <option value="cold">寒冷</option>
-            
-            <option value="hot">炎热</option>
-            
-            <option value="humid">潮湿</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">地区</label>
-          <select id="region" title="选择汽车运行地区">
-            
-            <option value="central">中央 (莫斯科)</option>
-            
-            <option value="north">北部 (圣彼得堡)</option>
-            
-            <option value="siberia">西伯利亚</option>
-            
-            <option value="south">南部</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">新类比车型当前价格 (¥)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="以人民币输入类似新车的当前价格">
-          <small style="color: #6c757d; font-size: 12px;">类似新车的当前价格</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">市场价格增长 (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="指定自购买以来新车价格增长的百分比">
-          <small style="color: #6c757d; font-size: 12px;">自购买以来新车价格增长</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">年通货膨胀率 (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="指定拥有期间的平均年通货膨胀率">
-          <small style="color: #6c757d; font-size: 12px;">每个拥有年份的平均通货膨胀</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">车型需求</label>
-          <select id="demandLevel" title="选择车型的需求水平">
-            
-            <option value="high" >高需求</option>
-            
-            <option value="medium" selected>中等需求</option>
-            
-            <option value="low" >低需求</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">技术状况</label>
-          <select id="technicalCondition" title="选择汽车的技术状况">
-            
-            <option value="excellent" selected>优秀 (原装)</option>
-            
-            <option value="good" >良好 (小缺陷)</option>
-            
-            <option value="average" >中等 (已修复)</option>
-            
-            <option value="poor" >差 (事故车)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">考虑事故、维修、重新喷漆</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="以公里为单位输入当前里程">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="计算汽车折旧">计算折旧</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="重置表单">重置</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="复制计算链接">分享</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="将结果导出为 PDF">导出为 PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="将结果导出为 CSV">导出为 CSV</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="计算汽车折旧">计算折旧</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="重置表单">重置</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="复制计算链接">分享</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="将结果导出为 PDF">导出为 PDF</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="将结果导出为 CSV">导出为 CSV</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">汽车品牌</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="例如：Toyota" title="输入汽车品牌，例如 Toyota 或 BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">型号</label>
+            <input type="text" id="carModel" placeholder="例如：Camry" title="输入汽车型号，例如 Camry 或 X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">使用类型</label>
+            <select id="usageType" title="选择汽车的使用类型">
+              
+              <option value="personal">个人使用</option>
+              
+              <option value="taxi">出租车</option>
+              
+              <option value="commercial">商业运输</option>
+              
+              <option value="delivery">送货</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">燃料类型</label>
+            <select id="fuelType" title="选择汽车的燃料类型">
+              
+              <option value="petrol">汽油</option>
+              
+              <option value="diesel">柴油</option>
+              
+              <option value="hybrid">混合动力</option>
+              
+              <option value="electric">电动</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">维护水平</label>
+            <select id="maintenanceLevel" title="选择汽车的维护水平">
+              
+              <option value="excellent">优秀</option>
+              
+              <option value="good">良好</option>
+              
+              <option value="average">中等</option>
+              
+              <option value="poor">差</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">气候区域</label>
+            <select id="climateZone" title="选择运行气候区域">
+              
+              <option value="mild">温和</option>
+              
+              <option value="cold">寒冷</option>
+              
+              <option value="hot">炎热</option>
+              
+              <option value="humid">潮湿</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">地区</label>
+            <select id="region" title="选择汽车运行地区">
+              
+              <option value="central">中央 (莫斯科)</option>
+              
+              <option value="north">北部 (圣彼得堡)</option>
+              
+              <option value="siberia">西伯利亚</option>
+              
+              <option value="south">南部</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">新类比车型当前价格 (¥)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="以人民币输入类似新车的当前价格">
+            <small>类似新车的当前价格</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">市场价格增长 (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="指定自购买以来新车价格增长的百分比">
+            <small>自购买以来新车价格增长</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">年通货膨胀率 (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="指定拥有期间的平均年通货膨胀率">
+            <small>每个拥有年份的平均通货膨胀</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">车型需求</label>
+            <select id="demandLevel" title="选择车型的需求水平">
+              
+              <option value="high" >高需求</option>
+              
+              <option value="medium" selected>中等需求</option>
+              
+              <option value="low" >低需求</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">技术状况</label>
+            <select id="technicalCondition" title="选择汽车的技术状况">
+              
+              <option value="excellent" selected>优秀 (原装)</option>
+              
+              <option value="good" >良好 (小缺陷)</option>
+              
+              <option value="average" >中等 (已修复)</option>
+              
+              <option value="poor" >差 (事故车)</option>
+              
+            </select>
+            <small>考虑事故、维修、重新喷漆</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>计算结果</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ¥</div>
@@ -465,6 +463,7 @@
             <div class="result-label">每月折旧</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="؋" data-month="میاشت">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>د موټرو پارامیټرونه دننه کړئ</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">د موټر برانډ</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="لکه: Toyota" title="د موټر برانډ دننه کړئ، لکه Toyota یا BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">ماډل</label>
-          <input type="text" id="carModel" placeholder="لکه: Camry" title="د موټر ماډل دننه کړئ، لکه Camry یا X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">د تولید کال</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="د تولید کال دننه کړئ (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="د تولید کال دننه کړئ (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">لومړنی لګښت (؋)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="د موټر لومړنی لګښت افغانۍ کې دننه کړئ">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="د موټر لومړنی لګښت افغانۍ کې دننه کړئ">
         </div>
         <div class="input-group">
           <label for="currentMileage">اوسنی کیلومتر (km)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="اوسنی کیلومتر کیلومترۍ کې دننه کړئ">
-        </div>
-        <div class="input-group">
-          <label for="usageType">د کارولو ډول</label>
-          <select id="usageType" title="د موټر د کارولو ډول وټاکئ">
-            
-            <option value="personal">شخصي کارول</option>
-            
-            <option value="taxi">ټاکسی</option>
-            
-            <option value="commercial">تجارتي ترانسپورټ</option>
-            
-            <option value="delivery">تحویلي</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">د سون توکو ډول</label>
-          <select id="fuelType" title="د موټر د سون توکو ډول وټاکئ">
-            
-            <option value="petrol">پټرول</option>
-            
-            <option value="diesel">ډیزل</option>
-            
-            <option value="hybrid">هایبریډ</option>
-            
-            <option value="electric">برقی</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">د ساتنې کچه</label>
-          <select id="maintenanceLevel" title="د موټر د ساتنې کچه وټاکئ">
-            
-            <option value="excellent">ډیر ښه</option>
-            
-            <option value="good">ښه</option>
-            
-            <option value="average">منځنی</option>
-            
-            <option value="poor">خراب</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">د هوا سیمه</label>
-          <select id="climateZone" title="د کارولو د هوا سیمه وټاکئ">
-            
-            <option value="mild">معتدل</option>
-            
-            <option value="cold">سړه</option>
-            
-            <option value="hot">ګرمه</option>
-            
-            <option value="humid">لنده</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">سیمه</label>
-          <select id="region" title="د موټر د کارولو سیمه وټاکئ">
-            
-            <option value="central">مرکزي (مسکو)</option>
-            
-            <option value="north">شمال (سینټ پیټرزبورګ)</option>
-            
-            <option value="siberia">سایبریا</option>
-            
-            <option value="south">سویل</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">د نويو ورته موټرو اوسنی قیمت (؋)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="ورته نوی موټر اوسنی قیمت افغانۍ کې دننه کړئ">
-          <small style="color: #6c757d; font-size: 12px;">ورته نوی موټر اوسنی قیمت</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">د بازار قیمت وده (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="د پیرودو راهیسې د نويو موټرو د قیمت وده په سلنې کې مشخص کړئ">
-          <small style="color: #6c757d; font-size: 12px;">د پیرودو راهیسې د نويو موټرو د قیمت وده</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">کلنی تورم (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="د ملکیت په موده کې اوسط کلنی تورم مشخص کړئ">
-          <small style="color: #6c757d; font-size: 12px;">د ملکیت هر کال لپاره اوسط تورم</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">د ماډل تقاضا</label>
-          <select id="demandLevel" title="د ماډل د تقاضا کچه وټاکئ">
-            
-            <option value="high" >لوړه تقاضا</option>
-            
-            <option value="medium" selected>منځنی تقاضا</option>
-            
-            <option value="low" >کمه تقاضا</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">تخنیکي حالت</label>
-          <select id="technicalCondition" title="د موټر تخنیکي حالت وټاکئ">
-            
-            <option value="excellent" selected>ډیر ښه (اصل)</option>
-            
-            <option value="good" >ښه (کوچنۍ عیبونه)</option>
-            
-            <option value="average" >منځنی (ترمیم شوی)</option>
-            
-            <option value="poor" >خراب (پیښه شوی)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">په پام کې نیسي: پیښې، ترمیم، بیا رنگول</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="اوسنی کیلومتر کیلومترۍ کې دننه کړئ">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="د موټرو کمښت محاسبه کړئ">کمښت محاسبه کړئ</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="فارم بیا تنظیم کړئ">بیا تنظیم</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="د محاسبې لینک کاپي کړئ">شریک کړئ</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="پایلې PDF ته صادر کړئ">PDF ته صادر کړئ</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="پایلې CSV ته صادر کړئ">CSV ته صادر کړئ</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="د موټرو کمښت محاسبه کړئ">کمښت محاسبه کړئ</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="فارم بیا تنظیم کړئ">بیا تنظیم</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="د محاسبې لینک کاپي کړئ">شریک کړئ</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="پایلې PDF ته صادر کړئ">PDF ته صادر کړئ</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="پایلې CSV ته صادر کړئ">CSV ته صادر کړئ</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">د موټر برانډ</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="لکه: Toyota" title="د موټر برانډ دننه کړئ، لکه Toyota یا BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">ماډل</label>
+            <input type="text" id="carModel" placeholder="لکه: Camry" title="د موټر ماډل دننه کړئ، لکه Camry یا X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">د کارولو ډول</label>
+            <select id="usageType" title="د موټر د کارولو ډول وټاکئ">
+              
+              <option value="personal">شخصي کارول</option>
+              
+              <option value="taxi">ټاکسی</option>
+              
+              <option value="commercial">تجارتي ترانسپورټ</option>
+              
+              <option value="delivery">تحویلي</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">د سون توکو ډول</label>
+            <select id="fuelType" title="د موټر د سون توکو ډول وټاکئ">
+              
+              <option value="petrol">پټرول</option>
+              
+              <option value="diesel">ډیزل</option>
+              
+              <option value="hybrid">هایبریډ</option>
+              
+              <option value="electric">برقی</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">د ساتنې کچه</label>
+            <select id="maintenanceLevel" title="د موټر د ساتنې کچه وټاکئ">
+              
+              <option value="excellent">ډیر ښه</option>
+              
+              <option value="good">ښه</option>
+              
+              <option value="average">منځنی</option>
+              
+              <option value="poor">خراب</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">د هوا سیمه</label>
+            <select id="climateZone" title="د کارولو د هوا سیمه وټاکئ">
+              
+              <option value="mild">معتدل</option>
+              
+              <option value="cold">سړه</option>
+              
+              <option value="hot">ګرمه</option>
+              
+              <option value="humid">لنده</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">سیمه</label>
+            <select id="region" title="د موټر د کارولو سیمه وټاکئ">
+              
+              <option value="central">مرکزي (مسکو)</option>
+              
+              <option value="north">شمال (سینټ پیټرزبورګ)</option>
+              
+              <option value="siberia">سایبریا</option>
+              
+              <option value="south">سویل</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">د نويو ورته موټرو اوسنی قیمت (؋)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="ورته نوی موټر اوسنی قیمت افغانۍ کې دننه کړئ">
+            <small>ورته نوی موټر اوسنی قیمت</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">د بازار قیمت وده (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="د پیرودو راهیسې د نويو موټرو د قیمت وده په سلنې کې مشخص کړئ">
+            <small>د پیرودو راهیسې د نويو موټرو د قیمت وده</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">کلنی تورم (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="د ملکیت په موده کې اوسط کلنی تورم مشخص کړئ">
+            <small>د ملکیت هر کال لپاره اوسط تورم</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">د ماډل تقاضا</label>
+            <select id="demandLevel" title="د ماډل د تقاضا کچه وټاکئ">
+              
+              <option value="high" >لوړه تقاضا</option>
+              
+              <option value="medium" selected>منځنی تقاضا</option>
+              
+              <option value="low" >کمه تقاضا</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">تخنیکي حالت</label>
+            <select id="technicalCondition" title="د موټر تخنیکي حالت وټاکئ">
+              
+              <option value="excellent" selected>ډیر ښه (اصل)</option>
+              
+              <option value="good" >ښه (کوچنۍ عیبونه)</option>
+              
+              <option value="average" >منځنی (ترمیم شوی)</option>
+              
+              <option value="poor" >خراب (پیښه شوی)</option>
+              
+            </select>
+            <small>په پام کې نیسي: پیښې، ترمیم، بیا رنگول</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>د محاسبې پایلې</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ؋</div>
@@ -465,6 +463,7 @@
             <div class="result-label">میاشتنۍ کمښت</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

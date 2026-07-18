@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="رپيه" data-month="مهينو">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>گاڏي جا پیرامیٽر داخل ڪريو</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">گاڏي جو برانڊ</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="مثال: Toyota" title="گاڏي جو برانڊ داخل ڪريو، مثال Toyota يا BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">ماڊل</label>
-          <input type="text" id="carModel" placeholder="مثال: Camry" title="گاڏي جو ماڊل داخل ڪريو، مثال Camry يا X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">پيدائش جو سال</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="پيدائش جو سال داخل ڪريو (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="پيدائش جو سال داخل ڪريو (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">ابتدائي قيمت (رپيه)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="گاڏي جي ابتدائي قيمت رپين ۾ داخل ڪريو">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="گاڏي جي ابتدائي قيمت رپين ۾ داخل ڪريو">
         </div>
         <div class="input-group">
           <label for="currentMileage">هاڻوڪو ڪلو ميٽر (ڪم)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="هاڻوڪو ڪلو ميٽر ڪلوميٽرن ۾ داخل ڪريو">
-        </div>
-        <div class="input-group">
-          <label for="usageType">استعمال جو قسم</label>
-          <select id="usageType" title="گاڏي جي استعمال جو قسم چونڊيو">
-            
-            <option value="personal">ذاتي استعمال</option>
-            
-            <option value="taxi">ٽئڪسي</option>
-            
-            <option value="commercial">تجارتي ٽرانسپورٽ</option>
-            
-            <option value="delivery">ترسيل</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">ايڇڻ جو قسم</label>
-          <select id="fuelType" title="گاڏي جي ايڇڻ جو قسم چونڊيو">
-            
-            <option value="petrol">پيٽرول</option>
-            
-            <option value="diesel">ڊيزل</option>
-            
-            <option value="hybrid">هائبرڊ</option>
-            
-            <option value="electric">بجليءَ وارو</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">سنڀال جي سطح</label>
-          <select id="maintenanceLevel" title="گاڏي جي سنڀال جي سطح چونڊيو">
-            
-            <option value="excellent">عمدو</option>
-            
-            <option value="good">سٺو</option>
-            
-            <option value="average">سراسري</option>
-            
-            <option value="poor">خراب</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">آب هوا زون</label>
-          <select id="climateZone" title="آپريشن جي آب هوا زون چونڊيو">
-            
-            <option value="mild">معتدل</option>
-            
-            <option value="cold">ٿڌو</option>
-            
-            <option value="hot">گرم</option>
-            
-            <option value="humid">گهميل</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">علائقو</label>
-          <select id="region" title="گاڏي جي آپريشن جو علائقو چونڊيو">
-            
-            <option value="central">مرڪزي (ماسڪو)</option>
-            
-            <option value="north">اتر (سينٽ پيٽرزبرگ)</option>
-            
-            <option value="siberia">سائبيريا</option>
-            
-            <option value="south">ڏکڻ</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">نوان مشابه گاڏين جي هاڻوڪي قيمت (رپيه)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="مشابه نئين گاڏي جي هاڻوڪي قيمت رپين ۾ داخل ڪريو">
-          <small style="color: #6c757d; font-size: 12px;">مشابه نئين گاڏي جي هاڻوڪي قيمت</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">بازار قيمت وڌاءَ (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="خريداري کان پوءِ نوان گاڏين جي قيمت وڌاءَ سيڪڙو ۾ بيان ڪريو">
-          <small style="color: #6c757d; font-size: 12px;">خريداري کان پوءِ نوان گاڏين جي قيمت وڌاءَ</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">سالانو افراط زر (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="ملڪيت جي دؤر ۾ سراسري سالانو افراط زر بيان ڪريو">
-          <small style="color: #6c757d; font-size: 12px;">ملڪيت هر سال لاءِ سراسري افراط زر</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">ماڊل جي گھربل</label>
-          <select id="demandLevel" title="ماڊل جي گھربل جي سطح چونڊيو">
-            
-            <option value="high" >وڏي گھربل</option>
-            
-            <option value="medium" selected>سراسري گھربل</option>
-            
-            <option value="low" >گھٽ گھربل</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">تخنياتي حالت</label>
-          <select id="technicalCondition" title="گاڏي جي تخنياتي حالت چونڊيو">
-            
-            <option value="excellent" selected>عمدو (اصل)</option>
-            
-            <option value="good" >سٺو (ننڍا نقص)</option>
-            
-            <option value="average" >سراسري (مرمت ٿيل)</option>
-            
-            <option value="poor" >خراب (حادثي ۾ اچي)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">حادثا، مرمت، ٻيهر رنگڻ کي ذهن ۾ رکي ٿو</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="هاڻوڪو ڪلو ميٽر ڪلوميٽرن ۾ داخل ڪريو">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="گاڏي جي گھٽتائي جو حساب ڪريو">گھٽتائي جو حساب ڪريو</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="فارم ٻيهر ترتيب ڏيو">ٻيهر ترتيب ڏيو</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="حساب جو لنڪ نقل ڪريو">شيئر ڪريو</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="نتيجا PDF تي برآمد ڪريو">PDF تي برآمد ڪريو</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="نتيجا CSV تي برآمد ڪريو">CSV تي برآمد ڪريو</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="گاڏي جي گھٽتائي جو حساب ڪريو">گھٽتائي جو حساب ڪريو</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="فارم ٻيهر ترتيب ڏيو">ٻيهر ترتيب ڏيو</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="حساب جو لنڪ نقل ڪريو">شيئر ڪريو</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="نتيجا PDF تي برآمد ڪريو">PDF تي برآمد ڪريو</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="نتيجا CSV تي برآمد ڪريو">CSV تي برآمد ڪريو</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">گاڏي جو برانڊ</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="مثال: Toyota" title="گاڏي جو برانڊ داخل ڪريو، مثال Toyota يا BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">ماڊل</label>
+            <input type="text" id="carModel" placeholder="مثال: Camry" title="گاڏي جو ماڊل داخل ڪريو، مثال Camry يا X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">استعمال جو قسم</label>
+            <select id="usageType" title="گاڏي جي استعمال جو قسم چونڊيو">
+              
+              <option value="personal">ذاتي استعمال</option>
+              
+              <option value="taxi">ٽئڪسي</option>
+              
+              <option value="commercial">تجارتي ٽرانسپورٽ</option>
+              
+              <option value="delivery">ترسيل</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">ايڇڻ جو قسم</label>
+            <select id="fuelType" title="گاڏي جي ايڇڻ جو قسم چونڊيو">
+              
+              <option value="petrol">پيٽرول</option>
+              
+              <option value="diesel">ڊيزل</option>
+              
+              <option value="hybrid">هائبرڊ</option>
+              
+              <option value="electric">بجليءَ وارو</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">سنڀال جي سطح</label>
+            <select id="maintenanceLevel" title="گاڏي جي سنڀال جي سطح چونڊيو">
+              
+              <option value="excellent">عمدو</option>
+              
+              <option value="good">سٺو</option>
+              
+              <option value="average">سراسري</option>
+              
+              <option value="poor">خراب</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">آب هوا زون</label>
+            <select id="climateZone" title="آپريشن جي آب هوا زون چونڊيو">
+              
+              <option value="mild">معتدل</option>
+              
+              <option value="cold">ٿڌو</option>
+              
+              <option value="hot">گرم</option>
+              
+              <option value="humid">گهميل</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">علائقو</label>
+            <select id="region" title="گاڏي جي آپريشن جو علائقو چونڊيو">
+              
+              <option value="central">مرڪزي (ماسڪو)</option>
+              
+              <option value="north">اتر (سينٽ پيٽرزبرگ)</option>
+              
+              <option value="siberia">سائبيريا</option>
+              
+              <option value="south">ڏکڻ</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">نوان مشابه گاڏين جي هاڻوڪي قيمت (رپيه)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="مشابه نئين گاڏي جي هاڻوڪي قيمت رپين ۾ داخل ڪريو">
+            <small>مشابه نئين گاڏي جي هاڻوڪي قيمت</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">بازار قيمت وڌاءَ (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="خريداري کان پوءِ نوان گاڏين جي قيمت وڌاءَ سيڪڙو ۾ بيان ڪريو">
+            <small>خريداري کان پوءِ نوان گاڏين جي قيمت وڌاءَ</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">سالانو افراط زر (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="ملڪيت جي دؤر ۾ سراسري سالانو افراط زر بيان ڪريو">
+            <small>ملڪيت هر سال لاءِ سراسري افراط زر</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">ماڊل جي گھربل</label>
+            <select id="demandLevel" title="ماڊل جي گھربل جي سطح چونڊيو">
+              
+              <option value="high" >وڏي گھربل</option>
+              
+              <option value="medium" selected>سراسري گھربل</option>
+              
+              <option value="low" >گھٽ گھربل</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">تخنياتي حالت</label>
+            <select id="technicalCondition" title="گاڏي جي تخنياتي حالت چونڊيو">
+              
+              <option value="excellent" selected>عمدو (اصل)</option>
+              
+              <option value="good" >سٺو (ننڍا نقص)</option>
+              
+              <option value="average" >سراسري (مرمت ٿيل)</option>
+              
+              <option value="poor" >خراب (حادثي ۾ اچي)</option>
+              
+            </select>
+            <small>حادثا، مرمت، ٻيهر رنگڻ کي ذهن ۾ رکي ٿو</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>حساب جا نتيجا</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 رپيه</div>
@@ -465,6 +463,7 @@
             <div class="result-label">مهينوار گھٽتائي</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

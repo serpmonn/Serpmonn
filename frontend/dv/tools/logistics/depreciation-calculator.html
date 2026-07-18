@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="ރުފިޔާ" data-month="މަސް">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>ކާއު ޕެރަމިޓަރުތައް ލިޔުއްވާ</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">ކާއު ބްރެންޑް</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="މިސާލު: Toyota" title="ކާއު ބްރެންޑް ލިޔުއްވާ، މިސާލު Toyota ނުވަތަ BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">މޯޑަލް</label>
-          <input type="text" id="carModel" placeholder="މިސާލު: Camry" title="ކާއު މޯޑަލް ލިޔުއްވާ، މިސާލު Camry ނުވަތަ X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">ތަރުތީފުކުރުން އަހަރު</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="ތަރުތީފުކުރުން އަހަރު ލިޔުއްވާ (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="ތަރުތީފުކުރުން އަހަރު ލިޔުއްވާ (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">އިނިޝަލް ޕްރައިސް (ރުފިޔާ)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="ކާއުގެ އިނިޝަލް ޕްރައިސް ރުފިޔާ ގައި ލިޔުއްވާ">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="ކާއުގެ އިނިޝަލް ޕްރައިސް ރުފިޔާ ގައި ލިޔުއްވާ">
         </div>
         <div class="input-group">
           <label for="currentMileage">ހަމަކަށަ ކިލޯމީޓަރ (ކމީ)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="ހަމަކަށަ ކިލޯމީޓަރ ކިލޯމީޓަރ ގައި ލިޔުއްވާ">
-        </div>
-        <div class="input-group">
-          <label for="usageType">ބޭނުންކުރުން ބާވަތް</label>
-          <select id="usageType" title="ކާއުގެ ބޭނުންކުރުން ބާވަތް އިޚްތިޔާރުކުރާ">
-            
-            <option value="personal">ޕާސަނަލް ޔޫސް</option>
-            
-            <option value="taxi">ޓެކްސީ</option>
-            
-            <option value="commercial">ކޮމާރޝަލް ޓްރާންސްޕޯޓް</option>
-            
-            <option value="delivery">ޑިލިވަރީ</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">އިންނަ ބާވަތް</label>
-          <select id="fuelType" title="ކާއުގެ އިންނަ ބާވަތް އިޚްތިޔާރުކުރާ">
-            
-            <option value="petrol">ޕެޓްރޯލް</option>
-            
-            <option value="diesel">ޑީޒަލް</option>
-            
-            <option value="hybrid">ހައިބްރިޑް</option>
-            
-            <option value="electric">އިލެކްޓްރިކް</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">ބަލިކުރުން ދަށް</label>
-          <select id="maintenanceLevel" title="ކާއުގެ ބަލިކުރުން ދަށް އިޚްތިޔާރުކުރާ">
-            
-            <option value="excellent">އެކްސެލެންޓް</option>
-            
-            <option value="good">ގުޑް</option>
-            
-            <option value="average">އެވަރޭޖް</option>
-            
-            <option value="poor">ޕޯރ</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">މޫސުމު ޒޯން</label>
-          <select id="climateZone" title="އޮޕެރޭޝަން މޫސުމު ޒޯން އިޚްތިޔާރުކުރާ">
-            
-            <option value="mild">މައިލްޑް</option>
-            
-            <option value="cold">ކޯލްޑް</option>
-            
-            <option value="hot">ހޯޓް</option>
-            
-            <option value="humid">ހިއުމިޑް</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">ސަރަހައްދު</label>
-          <select id="region" title="ކާއު އޮޕެރޭޝަން ސަރަހައްދު އިޚްތިޔާރުކުރާ">
-            
-            <option value="central">ސެންޓްރަލް (މޮސްކޯ)</option>
-            
-            <option value="north">ނޯރތް (ސެންޓް ޕީޓަރސްބާރގް)</option>
-            
-            <option value="siberia">ސިބިރިއާ</option>
-            
-            <option value="south">ސައުތް</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">އެއްގޮތު އާ ކާއުތަކެއްގެ ހަމަކަށަ ޕްރައިސް (ރުފިޔާ)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="އެއްގޮތު އާ އާ ކާއުގެ ހަމަކަށަ ޕްރައިސް ރުފިޔާ ގައި ލިޔުއްވާ">
-          <small style="color: #6c757d; font-size: 12px;">އެއްގޮތު އާ އާ ކާއުގެ ހަމަ ޕްރައިސް</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">މާކެޓް ޕްރައިސް ގްރޯތް (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="ކިރިޔަށްފަހު އާ ކާއުތަކުގެ ޕްރައިސް ގްރޯތް ޕަސެންޓޭޖުގައި އިތުރުކުރާ">
-          <small style="color: #6c757d; font-size: 12px;">ކިރިޔަށްފަހު އާ ކާއުތަކުގެ ޕްރައިސް ގްރޯތް</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">އަހަރުމޫ އިންފްލޭޝަން (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="މުލުކުވުން ދަށުން އެވެރޭ އަހަރުމޫ އިންފްލޭޝަން އިތުރުކުރާ">
-          <small style="color: #6c757d; font-size: 12px;">މުލުކުވުން ހަރުގެ އަހަރުގެ އެވެރޭ އިންފްލޭޝަން</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">މޯޑަލް ޑިމާންޑް</label>
-          <select id="demandLevel" title="މޯޑަލް ޑިމާންޑް ލެވަލް އިޚްތިޔާރުކުރާ">
-            
-            <option value="high" >ހައި ޑިމާންޑް</option>
-            
-            <option value="medium" selected>މީޑިއަމް ޑިމާންޑް</option>
-            
-            <option value="low" >ލޯ ޑިމާންޑް</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">ޓެކްނިކަލް ކޮންޑިޝަން</label>
-          <select id="technicalCondition" title="ކާއުގެ ޓެކްނިކަލް ކޮންޑިޝަން އިޚްތިޔާރުކުރާ">
-            
-            <option value="excellent" selected>އެކްސެލެންޓް (އޮރިޖިނަލް)</option>
-            
-            <option value="good" >ގުޑް (ސަމޯލް ޑިފެކްޓްސް)</option>
-            
-            <option value="average" >އެވަރޭޖް (ރިޕެއަރޑް)</option>
-            
-            <option value="poor" >ޕޯރ (އެކްސިޑެންޓް)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">އަޕަލާ، ރިޕެއަރސް، ރީޕެންޓިން ބަލަހައްޓަވާ</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="ހަމަކަށަ ކިލޯމީޓަރ ކިލޯމީޓަރ ގައި ލިޔުއްވާ">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="ކާއު ގިސްމާ ހިސާބުކުރައްވާ">ގިސްމާ ހިސާބުކުރައްވާ</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="ފޯމް ރިސެޓް">ރިސެޓް</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="ހިސާބު ލިންކް ކޮޕީ">ޝެއަރ</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="ނަތީޖާ PDF އަށް އެކްސްޕޯޓް">PDF އަށް އެކްސްޕޯޓް</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="ނަތީޖާ CSV އަށް އެކްސްޕޯޓް">CSV އަށް އެކްސްޕޯޓް</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="ކާއު ގިސްމާ ހިސާބުކުރައްވާ">ގިސްމާ ހިސާބުކުރައްވާ</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="ފޯމް ރިސެޓް">ރިސެޓް</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="ހިސާބު ލިންކް ކޮޕީ">ޝެއަރ</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="ނަތީޖާ PDF އަށް އެކްސްޕޯޓް">PDF އަށް އެކްސްޕޯޓް</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="ނަތީޖާ CSV އަށް އެކްސްޕޯޓް">CSV އަށް އެކްސްޕޯޓް</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">ކާއު ބްރެންޑް</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="މިސާލު: Toyota" title="ކާއު ބްރެންޑް ލިޔުއްވާ، މިސާލު Toyota ނުވަތަ BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">މޯޑަލް</label>
+            <input type="text" id="carModel" placeholder="މިސާލު: Camry" title="ކާއު މޯޑަލް ލިޔުއްވާ، މިސާލު Camry ނުވަތަ X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">ބޭނުންކުރުން ބާވަތް</label>
+            <select id="usageType" title="ކާއުގެ ބޭނުންކުރުން ބާވަތް އިޚްތިޔާރުކުރާ">
+              
+              <option value="personal">ޕާސަނަލް ޔޫސް</option>
+              
+              <option value="taxi">ޓެކްސީ</option>
+              
+              <option value="commercial">ކޮމާރޝަލް ޓްރާންސްޕޯޓް</option>
+              
+              <option value="delivery">ޑިލިވަރީ</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">އިންނަ ބާވަތް</label>
+            <select id="fuelType" title="ކާއުގެ އިންނަ ބާވަތް އިޚްތިޔާރުކުރާ">
+              
+              <option value="petrol">ޕެޓްރޯލް</option>
+              
+              <option value="diesel">ޑީޒަލް</option>
+              
+              <option value="hybrid">ހައިބްރިޑް</option>
+              
+              <option value="electric">އިލެކްޓްރިކް</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">ބަލިކުރުން ދަށް</label>
+            <select id="maintenanceLevel" title="ކާއުގެ ބަލިކުރުން ދަށް އިޚްތިޔާރުކުރާ">
+              
+              <option value="excellent">އެކްސެލެންޓް</option>
+              
+              <option value="good">ގުޑް</option>
+              
+              <option value="average">އެވަރޭޖް</option>
+              
+              <option value="poor">ޕޯރ</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">މޫސުމު ޒޯން</label>
+            <select id="climateZone" title="އޮޕެރޭޝަން މޫސުމު ޒޯން އިޚްތިޔާރުކުރާ">
+              
+              <option value="mild">މައިލްޑް</option>
+              
+              <option value="cold">ކޯލްޑް</option>
+              
+              <option value="hot">ހޯޓް</option>
+              
+              <option value="humid">ހިއުމިޑް</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">ސަރަހައްދު</label>
+            <select id="region" title="ކާއު އޮޕެރޭޝަން ސަރަހައްދު އިޚްތިޔާރުކުރާ">
+              
+              <option value="central">ސެންޓްރަލް (މޮސްކޯ)</option>
+              
+              <option value="north">ނޯރތް (ސެންޓް ޕީޓަރސްބާރގް)</option>
+              
+              <option value="siberia">ސިބިރިއާ</option>
+              
+              <option value="south">ސައުތް</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">އެއްގޮތު އާ ކާއުތަކެއްގެ ހަމަކަށަ ޕްރައިސް (ރުފިޔާ)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="އެއްގޮތު އާ އާ ކާއުގެ ހަމަކަށަ ޕްރައިސް ރުފިޔާ ގައި ލިޔުއްވާ">
+            <small>އެއްގޮތު އާ އާ ކާއުގެ ހަމަ ޕްރައިސް</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">މާކެޓް ޕްރައިސް ގްރޯތް (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="ކިރިޔަށްފަހު އާ ކާއުތަކުގެ ޕްރައިސް ގްރޯތް ޕަސެންޓޭޖުގައި އިތުރުކުރާ">
+            <small>ކިރިޔަށްފަހު އާ ކާއުތަކުގެ ޕްރައިސް ގްރޯތް</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">އަހަރުމޫ އިންފްލޭޝަން (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="މުލުކުވުން ދަށުން އެވެރޭ އަހަރުމޫ އިންފްލޭޝަން އިތުރުކުރާ">
+            <small>މުލުކުވުން ހަރުގެ އަހަރުގެ އެވެރޭ އިންފްލޭޝަން</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">މޯޑަލް ޑިމާންޑް</label>
+            <select id="demandLevel" title="މޯޑަލް ޑިމާންޑް ލެވަލް އިޚްތިޔާރުކުރާ">
+              
+              <option value="high" >ހައި ޑިމާންޑް</option>
+              
+              <option value="medium" selected>މީޑިއަމް ޑިމާންޑް</option>
+              
+              <option value="low" >ލޯ ޑިމާންޑް</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">ޓެކްނިކަލް ކޮންޑިޝަން</label>
+            <select id="technicalCondition" title="ކާއުގެ ޓެކްނިކަލް ކޮންޑިޝަން އިޚްތިޔާރުކުރާ">
+              
+              <option value="excellent" selected>އެކްސެލެންޓް (އޮރިޖިނަލް)</option>
+              
+              <option value="good" >ގުޑް (ސަމޯލް ޑިފެކްޓްސް)</option>
+              
+              <option value="average" >އެވަރޭޖް (ރިޕެއަރޑް)</option>
+              
+              <option value="poor" >ޕޯރ (އެކްސިޑެންޓް)</option>
+              
+            </select>
+            <small>އަޕަލާ، ރިޕެއަރސް، ރީޕެންޓިން ބަލަހައްޓަވާ</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>ހިސާބު ނަތީޖާ</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ރުފިޔާ</div>
@@ -465,6 +463,7 @@
             <div class="result-label">މަސްމަސް ޑިޕްރީޝިއޭޝަން</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

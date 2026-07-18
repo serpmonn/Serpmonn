@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="€" data-month="μήν">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>Εισάγετε παραμέτρους αυτοκινήτου</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">Μάρκα αυτοκινήτου</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="Π.χ.: Toyota" title="Εισάγετε μάρκα αυτοκινήτου, π.χ. Toyota ή BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">Μοντέλο</label>
-          <input type="text" id="carModel" placeholder="Π.χ.: Camry" title="Εισάγετε μοντέλο αυτοκινήτου, π.χ. Camry ή X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">Έτος κατασκευής</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Εισάγετε έτος κατασκευής (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="Εισάγετε έτος κατασκευής (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">Αρχική τιμή (€)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Εισάγετε αρχική τιμή αυτοκινήτου σε ευρώ">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="Εισάγετε αρχική τιμή αυτοκινήτου σε ευρώ">
         </div>
         <div class="input-group">
           <label for="currentMileage">Τρέχουσα χιλιομετρική (χλμ)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Εισάγετε τρέχουσα χιλιομετρική σε χιλιόμετρα">
-        </div>
-        <div class="input-group">
-          <label for="usageType">Τύπος χρήσης</label>
-          <select id="usageType" title="Επιλέξτε τύπο χρήσης αυτοκινήτου">
-            
-            <option value="personal">Προσωπική χρήση</option>
-            
-            <option value="taxi">Ταξί</option>
-            
-            <option value="commercial">Επαγγελματικές μεταφορές</option>
-            
-            <option value="delivery">Παράδοση</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">Τύπος καυσίμου</label>
-          <select id="fuelType" title="Επιλέξτε τύπο καυσίμου αυτοκινήτου">
-            
-            <option value="petrol">Βενζίνη</option>
-            
-            <option value="diesel">Ντίζελ</option>
-            
-            <option value="hybrid">Υβριδικό</option>
-            
-            <option value="electric">Ηλεκτρικό</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">Επίπεδο συντήρησης</label>
-          <select id="maintenanceLevel" title="Επιλέξτε επίπεδο συντήρησης αυτοκινήτου">
-            
-            <option value="excellent">Εξαιρετικό</option>
-            
-            <option value="good">Καλό</option>
-            
-            <option value="average">Μέτριο</option>
-            
-            <option value="poor">Κακό</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">Κλιματική ζώνη</label>
-          <select id="climateZone" title="Επιλέξτε κλιματική ζώνη λειτουργίας">
-            
-            <option value="mild">Μέτριο</option>
-            
-            <option value="cold">Κρύο</option>
-            
-            <option value="hot">Ζεστό</option>
-            
-            <option value="humid">Υγρό</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">Περιοχή</label>
-          <select id="region" title="Επιλέξτε περιοχή λειτουργίας αυτοκινήτου">
-            
-            <option value="central">Κεντρικό (Μόσχα)</option>
-            
-            <option value="north">Βόρειο (Αγία Πετρούπολη)</option>
-            
-            <option value="siberia">Σιβηρία</option>
-            
-            <option value="south">Νότιο</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">Τρέχουσα τιμή νέων ανάλογων (€)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="Εισάγετε τρέχουσα τιμή παρόμοιου νέου αυτοκινήτου σε ευρώ">
-          <small style="color: #6c757d; font-size: 12px;">Τιμή παρόμοιου νέου αυτοκινήτου τώρα</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">Αύξηση τιμών αγοράς (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Καθορίστε αύξηση τιμών νέων αυτοκινήτων από την αγορά σε ποσοστό">
-          <small style="color: #6c757d; font-size: 12px;">Αύξηση τιμών νέων αυτοκινήτων από την αγορά</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">Ετήσια πληθωρισμός (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="Καθορίστε μέσο ετήσιο πληθωρισμό κατά την περίοδο ιδιοκτησίας">
-          <small style="color: #6c757d; font-size: 12px;">Μέσος πληθωρισμός ανά έτος ιδιοκτησίας</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">Ζήτηση για μοντέλο</label>
-          <select id="demandLevel" title="Επιλέξτε επίπεδο ζήτησης για το μοντέλο">
-            
-            <option value="high" >Υψηλή ζήτηση</option>
-            
-            <option value="medium" selected>Μέτρια ζήτηση</option>
-            
-            <option value="low" >Χαμηλή ζήτηση</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">Τεχνική κατάσταση</label>
-          <select id="technicalCondition" title="Επιλέξτε τεχνική κατάσταση αυτοκινήτου">
-            
-            <option value="excellent" selected>Εξαιρετικό (πρωτότυπο)</option>
-            
-            <option value="good" >Καλό (μικρά ελαττώματα)</option>
-            
-            <option value="average" >Μέτριο (επισκευασμένο)</option>
-            
-            <option value="poor" >Κακό (ατυχηματικό)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">Λαμβάνει υπόψη ατυχήματα, επισκευές, επαναβάψιμο</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="Εισάγετε τρέχουσα χιλιομετρική σε χιλιόμετρα">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Υπολογισμός αποσβέσεων αυτοκινήτου">Υπολογισμός αποσβέσεων</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="Επαναφορά φόρμας">Επαναφορά</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="Αντιγραφή συνδέσμου υπολογισμού">Κοινοποίηση</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="Εξαγωγή αποτελεσμάτων σε PDF">Εξαγωγή σε PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="Εξαγωγή αποτελεσμάτων σε CSV">Εξαγωγή σε CSV</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="Υπολογισμός αποσβέσεων αυτοκινήτου">Υπολογισμός αποσβέσεων</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="Επαναφορά φόρμας">Επαναφορά</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="Αντιγραφή συνδέσμου υπολογισμού">Κοινοποίηση</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="Εξαγωγή αποτελεσμάτων σε PDF">Εξαγωγή σε PDF</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="Εξαγωγή αποτελεσμάτων σε CSV">Εξαγωγή σε CSV</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">Μάρκα αυτοκινήτου</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="Π.χ.: Toyota" title="Εισάγετε μάρκα αυτοκινήτου, π.χ. Toyota ή BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">Μοντέλο</label>
+            <input type="text" id="carModel" placeholder="Π.χ.: Camry" title="Εισάγετε μοντέλο αυτοκινήτου, π.χ. Camry ή X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">Τύπος χρήσης</label>
+            <select id="usageType" title="Επιλέξτε τύπο χρήσης αυτοκινήτου">
+              
+              <option value="personal">Προσωπική χρήση</option>
+              
+              <option value="taxi">Ταξί</option>
+              
+              <option value="commercial">Επαγγελματικές μεταφορές</option>
+              
+              <option value="delivery">Παράδοση</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">Τύπος καυσίμου</label>
+            <select id="fuelType" title="Επιλέξτε τύπο καυσίμου αυτοκινήτου">
+              
+              <option value="petrol">Βενζίνη</option>
+              
+              <option value="diesel">Ντίζελ</option>
+              
+              <option value="hybrid">Υβριδικό</option>
+              
+              <option value="electric">Ηλεκτρικό</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">Επίπεδο συντήρησης</label>
+            <select id="maintenanceLevel" title="Επιλέξτε επίπεδο συντήρησης αυτοκινήτου">
+              
+              <option value="excellent">Εξαιρετικό</option>
+              
+              <option value="good">Καλό</option>
+              
+              <option value="average">Μέτριο</option>
+              
+              <option value="poor">Κακό</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">Κλιματική ζώνη</label>
+            <select id="climateZone" title="Επιλέξτε κλιματική ζώνη λειτουργίας">
+              
+              <option value="mild">Μέτριο</option>
+              
+              <option value="cold">Κρύο</option>
+              
+              <option value="hot">Ζεστό</option>
+              
+              <option value="humid">Υγρό</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">Περιοχή</label>
+            <select id="region" title="Επιλέξτε περιοχή λειτουργίας αυτοκινήτου">
+              
+              <option value="central">Κεντρικό (Μόσχα)</option>
+              
+              <option value="north">Βόρειο (Αγία Πετρούπολη)</option>
+              
+              <option value="siberia">Σιβηρία</option>
+              
+              <option value="south">Νότιο</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">Τρέχουσα τιμή νέων ανάλογων (€)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="Εισάγετε τρέχουσα τιμή παρόμοιου νέου αυτοκινήτου σε ευρώ">
+            <small>Τιμή παρόμοιου νέου αυτοκινήτου τώρα</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">Αύξηση τιμών αγοράς (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="Καθορίστε αύξηση τιμών νέων αυτοκινήτων από την αγορά σε ποσοστό">
+            <small>Αύξηση τιμών νέων αυτοκινήτων από την αγορά</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">Ετήσια πληθωρισμός (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="Καθορίστε μέσο ετήσιο πληθωρισμό κατά την περίοδο ιδιοκτησίας">
+            <small>Μέσος πληθωρισμός ανά έτος ιδιοκτησίας</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">Ζήτηση για μοντέλο</label>
+            <select id="demandLevel" title="Επιλέξτε επίπεδο ζήτησης για το μοντέλο">
+              
+              <option value="high" >Υψηλή ζήτηση</option>
+              
+              <option value="medium" selected>Μέτρια ζήτηση</option>
+              
+              <option value="low" >Χαμηλή ζήτηση</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">Τεχνική κατάσταση</label>
+            <select id="technicalCondition" title="Επιλέξτε τεχνική κατάσταση αυτοκινήτου">
+              
+              <option value="excellent" selected>Εξαιρετικό (πρωτότυπο)</option>
+              
+              <option value="good" >Καλό (μικρά ελαττώματα)</option>
+              
+              <option value="average" >Μέτριο (επισκευασμένο)</option>
+              
+              <option value="poor" >Κακό (ατυχηματικό)</option>
+              
+            </select>
+            <small>Λαμβάνει υπόψη ατυχήματα, επισκευές, επαναβάψιμο</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>Αποτελέσματα υπολογισμού</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 €</div>
@@ -465,6 +463,7 @@
             <div class="result-label">Μηνιαίες αποσβέσεις</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

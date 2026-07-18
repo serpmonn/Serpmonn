@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="₹" data-month="माह">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>कार पैरामीटर दर्ज करें</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">कार ब्रांड</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="उदाहरण: Toyota" title="कार ब्रांड दर्ज करें, उदाहरण Toyota या BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">मॉडल</label>
-          <input type="text" id="carModel" placeholder="उदाहरण: Camry" title="कार मॉडल दर्ज करें, उदाहरण Camry या X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">निर्माण वर्ष</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="निर्माण वर्ष दर्ज करें (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="निर्माण वर्ष दर्ज करें (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">प्रारंभिक लागत (₹)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="रुपये में कार की प्रारंभिक लागत दर्ज करें">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="रुपये में कार की प्रारंभिक लागत दर्ज करें">
         </div>
         <div class="input-group">
           <label for="currentMileage">वर्तमान माइलेज (किमी)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="किलोमीटर में वर्तमान माइलेज दर्ज करें">
-        </div>
-        <div class="input-group">
-          <label for="usageType">उपयोग प्रकार</label>
-          <select id="usageType" title="कार के उपयोग प्रकार का चयन करें">
-            
-            <option value="personal">व्यक्तिगत उपयोग</option>
-            
-            <option value="taxi">टैक्सी</option>
-            
-            <option value="commercial">वाणिज्यिक परिवहन</option>
-            
-            <option value="delivery">डिलीवरी</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">ईंधन प्रकार</label>
-          <select id="fuelType" title="कार के ईंधन प्रकार का चयन करें">
-            
-            <option value="petrol">पेट्रोल</option>
-            
-            <option value="diesel">डीज़ल</option>
-            
-            <option value="hybrid">हाइब्रिड</option>
-            
-            <option value="electric">इलेक्ट्रिक</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">रखरखाव स्तर</label>
-          <select id="maintenanceLevel" title="कार के रखरखाव स्तर का चयन करें">
-            
-            <option value="excellent">उत्कृष्ट</option>
-            
-            <option value="good">अच्छा</option>
-            
-            <option value="average">औसत</option>
-            
-            <option value="poor">खराब</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">जलवायु क्षेत्र</label>
-          <select id="climateZone" title="संचालन के जलवायु क्षेत्र का चयन करें">
-            
-            <option value="mild">हल्का</option>
-            
-            <option value="cold">ठंडा</option>
-            
-            <option value="hot">गर्म</option>
-            
-            <option value="humid">नम</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">क्षेत्र</label>
-          <select id="region" title="कार के संचालन क्षेत्र का चयन करें">
-            
-            <option value="central">केंद्रीय (मास्को)</option>
-            
-            <option value="north">उत्तर (सेंट पीटर्सबर्ग)</option>
-            
-            <option value="siberia">साइबेरिया</option>
-            
-            <option value="south">दक्षिण</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">नए एनालॉग की वर्तमान कीमत (₹)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="रुपये में समान नई कार की वर्तमान कीमत दर्ज करें">
-          <small style="color: #6c757d; font-size: 12px;">अभी समान नई कार की कीमत</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">बाजार मूल्य वृद्धि (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="खरीद के बाद से नई कारों की मूल्य वृद्धि प्रतिशत में निर्दिष्ट करें">
-          <small style="color: #6c757d; font-size: 12px;">खरीद के बाद से नई कारों की मूल्य वृद्धि</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">वार्षिक मुद्रास्फीति (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="स्वामित्व अवधि के दौरान औसत वार्षिक मुद्रास्फीति निर्दिष्ट करें">
-          <small style="color: #6c757d; font-size: 12px;">स्वामित्व के प्रति वर्ष औसत मुद्रास्फीति</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">मॉडल की मांग</label>
-          <select id="demandLevel" title="मॉडल की मांग स्तर चयन करें">
-            
-            <option value="high" >उच्च मांग</option>
-            
-            <option value="medium" selected>मध्यम मांग</option>
-            
-            <option value="low" >कम मांग</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">तकनीकी स्थिति</label>
-          <select id="technicalCondition" title="कार की तकनीकी स्थिति चयन करें">
-            
-            <option value="excellent" selected>उत्कृष्ट (मूल)</option>
-            
-            <option value="good" >अच्छा (मामूली दोष)</option>
-            
-            <option value="average" >औसत (मरम्मत किया गया)</option>
-            
-            <option value="poor" >खराब (दुर्घटनाग्रस्त)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">दुर्घटनाओं, मरम्मत, पुन: रंगाई को ध्यान में रखता है</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="किलोमीटर में वर्तमान माइलेज दर्ज करें">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="कार मूल्यह्रास गणना करें">मूल्यह्रास गणना करें</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="फॉर्म रीसेट करें">रीसेट</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="गणना लिंक कॉपी करें">साझा करें</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="परिणाम PDF निर्यात करें">PDF निर्यात करें</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="परिणाम CSV निर्यात करें">CSV निर्यात करें</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="कार मूल्यह्रास गणना करें">मूल्यह्रास गणना करें</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="फॉर्म रीसेट करें">रीसेट</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="गणना लिंक कॉपी करें">साझा करें</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="परिणाम PDF निर्यात करें">PDF निर्यात करें</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="परिणाम CSV निर्यात करें">CSV निर्यात करें</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">कार ब्रांड</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="उदाहरण: Toyota" title="कार ब्रांड दर्ज करें, उदाहरण Toyota या BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">मॉडल</label>
+            <input type="text" id="carModel" placeholder="उदाहरण: Camry" title="कार मॉडल दर्ज करें, उदाहरण Camry या X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">उपयोग प्रकार</label>
+            <select id="usageType" title="कार के उपयोग प्रकार का चयन करें">
+              
+              <option value="personal">व्यक्तिगत उपयोग</option>
+              
+              <option value="taxi">टैक्सी</option>
+              
+              <option value="commercial">वाणिज्यिक परिवहन</option>
+              
+              <option value="delivery">डिलीवरी</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">ईंधन प्रकार</label>
+            <select id="fuelType" title="कार के ईंधन प्रकार का चयन करें">
+              
+              <option value="petrol">पेट्रोल</option>
+              
+              <option value="diesel">डीज़ल</option>
+              
+              <option value="hybrid">हाइब्रिड</option>
+              
+              <option value="electric">इलेक्ट्रिक</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">रखरखाव स्तर</label>
+            <select id="maintenanceLevel" title="कार के रखरखाव स्तर का चयन करें">
+              
+              <option value="excellent">उत्कृष्ट</option>
+              
+              <option value="good">अच्छा</option>
+              
+              <option value="average">औसत</option>
+              
+              <option value="poor">खराब</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">जलवायु क्षेत्र</label>
+            <select id="climateZone" title="संचालन के जलवायु क्षेत्र का चयन करें">
+              
+              <option value="mild">हल्का</option>
+              
+              <option value="cold">ठंडा</option>
+              
+              <option value="hot">गर्म</option>
+              
+              <option value="humid">नम</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">क्षेत्र</label>
+            <select id="region" title="कार के संचालन क्षेत्र का चयन करें">
+              
+              <option value="central">केंद्रीय (मास्को)</option>
+              
+              <option value="north">उत्तर (सेंट पीटर्सबर्ग)</option>
+              
+              <option value="siberia">साइबेरिया</option>
+              
+              <option value="south">दक्षिण</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">नए एनालॉग की वर्तमान कीमत (₹)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="रुपये में समान नई कार की वर्तमान कीमत दर्ज करें">
+            <small>अभी समान नई कार की कीमत</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">बाजार मूल्य वृद्धि (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="खरीद के बाद से नई कारों की मूल्य वृद्धि प्रतिशत में निर्दिष्ट करें">
+            <small>खरीद के बाद से नई कारों की मूल्य वृद्धि</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">वार्षिक मुद्रास्फीति (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="स्वामित्व अवधि के दौरान औसत वार्षिक मुद्रास्फीति निर्दिष्ट करें">
+            <small>स्वामित्व के प्रति वर्ष औसत मुद्रास्फीति</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">मॉडल की मांग</label>
+            <select id="demandLevel" title="मॉडल की मांग स्तर चयन करें">
+              
+              <option value="high" >उच्च मांग</option>
+              
+              <option value="medium" selected>मध्यम मांग</option>
+              
+              <option value="low" >कम मांग</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">तकनीकी स्थिति</label>
+            <select id="technicalCondition" title="कार की तकनीकी स्थिति चयन करें">
+              
+              <option value="excellent" selected>उत्कृष्ट (मूल)</option>
+              
+              <option value="good" >अच्छा (मामूली दोष)</option>
+              
+              <option value="average" >औसत (मरम्मत किया गया)</option>
+              
+              <option value="poor" >खराब (दुर्घटनाग्रस्त)</option>
+              
+            </select>
+            <small>दुर्घटनाओं, मरम्मत, पुन: रंगाई को ध्यान में रखता है</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>गणना परिणाम</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ₹</div>
@@ -465,6 +463,7 @@
             <div class="result-label">मासिक मूल्यह्रास</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

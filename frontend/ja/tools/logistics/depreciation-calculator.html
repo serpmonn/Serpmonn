@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="¥" data-month="月">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>車両パラメータを入力</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">車両ブランド</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="例：Toyota" title="車両ブランドを入力、例：Toyota または BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">モデル</label>
-          <input type="text" id="carModel" placeholder="例：Camry" title="車両モデルを入力、例：Camry または X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">製造年</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="製造年を入力 (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="製造年を入力 (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">初期コスト (¥)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="円での車両初期コストを入力">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="円での車両初期コストを入力">
         </div>
         <div class="input-group">
           <label for="currentMileage">現在の走行距離 (km)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="キロメートルでの現在走行距離を入力">
-        </div>
-        <div class="input-group">
-          <label for="usageType">使用タイプ</label>
-          <select id="usageType" title="車両使用タイプを選択">
-            
-            <option value="personal">個人使用</option>
-            
-            <option value="taxi">タクシー</option>
-            
-            <option value="commercial">商業輸送</option>
-            
-            <option value="delivery">配送</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">燃料タイプ</label>
-          <select id="fuelType" title="車両燃料タイプを選択">
-            
-            <option value="petrol">ガソリン</option>
-            
-            <option value="diesel">ディーゼル</option>
-            
-            <option value="hybrid">ハイブリッド</option>
-            
-            <option value="electric">電気</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">メンテナンスレベル</label>
-          <select id="maintenanceLevel" title="車両メンテナンスレベルを選択">
-            
-            <option value="excellent">優れている</option>
-            
-            <option value="good">良い</option>
-            
-            <option value="average">普通</option>
-            
-            <option value="poor">悪い</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">気候ゾーン</label>
-          <select id="climateZone" title="運転気候ゾーンを選択">
-            
-            <option value="mild">温和</option>
-            
-            <option value="cold">寒冷</option>
-            
-            <option value="hot">暑熱</option>
-            
-            <option value="humid">湿潤</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">地域</label>
-          <select id="region" title="車両運転地域を選択">
-            
-            <option value="central">中央 (モスクワ)</option>
-            
-            <option value="north">北部 (サンクトペテルブルク)</option>
-            
-            <option value="siberia">シベリア</option>
-            
-            <option value="south">南部</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">新しい類似車両の現在価格 (¥)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="円での類似新車現在価格を入力">
-          <small style="color: #6c757d; font-size: 12px;">現在の類似新車価格</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">市場価格上昇 (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="購入後の新車価格上昇をパーセントで指定">
-          <small style="color: #6c757d; font-size: 12px;">購入後の新車価格上昇</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">年間インフレ率 (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="所有期間中の平均年間インフレ率を指定">
-          <small style="color: #6c757d; font-size: 12px;">所有年ごとの平均インフレ率</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">モデル需要</label>
-          <select id="demandLevel" title="モデル需要レベルを選択">
-            
-            <option value="high" >需要高い</option>
-            
-            <option value="medium" selected>需要中程度</option>
-            
-            <option value="low" >需要低い</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">技術的状態</label>
-          <select id="technicalCondition" title="車両技術的状態を選択">
-            
-            <option value="excellent" selected>優れている (オリジナル)</option>
-            
-            <option value="good" >良い (小さな欠陥)</option>
-            
-            <option value="average" >普通 (修理済み)</option>
-            
-            <option value="poor" >悪い (事故車)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">事故、修理、塗装替えを考慮</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="キロメートルでの現在走行距離を入力">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="車両減価償却を計算">減価償却計算</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="フォームをリセット">リセット</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="計算リンクをコピー">共有</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="結果をPDFにエクスポート">PDFにエクスポート</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="結果をCSVにエクスポート">CSVにエクスポート</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="車両減価償却を計算">減価償却計算</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="フォームをリセット">リセット</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="計算リンクをコピー">共有</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="結果をPDFにエクスポート">PDFにエクスポート</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="結果をCSVにエクスポート">CSVにエクスポート</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">車両ブランド</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="例：Toyota" title="車両ブランドを入力、例：Toyota または BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">モデル</label>
+            <input type="text" id="carModel" placeholder="例：Camry" title="車両モデルを入力、例：Camry または X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">使用タイプ</label>
+            <select id="usageType" title="車両使用タイプを選択">
+              
+              <option value="personal">個人使用</option>
+              
+              <option value="taxi">タクシー</option>
+              
+              <option value="commercial">商業輸送</option>
+              
+              <option value="delivery">配送</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">燃料タイプ</label>
+            <select id="fuelType" title="車両燃料タイプを選択">
+              
+              <option value="petrol">ガソリン</option>
+              
+              <option value="diesel">ディーゼル</option>
+              
+              <option value="hybrid">ハイブリッド</option>
+              
+              <option value="electric">電気</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">メンテナンスレベル</label>
+            <select id="maintenanceLevel" title="車両メンテナンスレベルを選択">
+              
+              <option value="excellent">優れている</option>
+              
+              <option value="good">良い</option>
+              
+              <option value="average">普通</option>
+              
+              <option value="poor">悪い</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">気候ゾーン</label>
+            <select id="climateZone" title="運転気候ゾーンを選択">
+              
+              <option value="mild">温和</option>
+              
+              <option value="cold">寒冷</option>
+              
+              <option value="hot">暑熱</option>
+              
+              <option value="humid">湿潤</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">地域</label>
+            <select id="region" title="車両運転地域を選択">
+              
+              <option value="central">中央 (モスクワ)</option>
+              
+              <option value="north">北部 (サンクトペテルブルク)</option>
+              
+              <option value="siberia">シベリア</option>
+              
+              <option value="south">南部</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">新しい類似車両の現在価格 (¥)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="円での類似新車現在価格を入力">
+            <small>現在の類似新車価格</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">市場価格上昇 (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="購入後の新車価格上昇をパーセントで指定">
+            <small>購入後の新車価格上昇</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">年間インフレ率 (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="所有期間中の平均年間インフレ率を指定">
+            <small>所有年ごとの平均インフレ率</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">モデル需要</label>
+            <select id="demandLevel" title="モデル需要レベルを選択">
+              
+              <option value="high" >需要高い</option>
+              
+              <option value="medium" selected>需要中程度</option>
+              
+              <option value="low" >需要低い</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">技術的状態</label>
+            <select id="technicalCondition" title="車両技術的状態を選択">
+              
+              <option value="excellent" selected>優れている (オリジナル)</option>
+              
+              <option value="good" >良い (小さな欠陥)</option>
+              
+              <option value="average" >普通 (修理済み)</option>
+              
+              <option value="poor" >悪い (事故車)</option>
+              
+            </select>
+            <small>事故、修理、塗装替えを考慮</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>計算結果</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ¥</div>
@@ -465,6 +463,7 @@
             <div class="result-label">月次減価償却</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

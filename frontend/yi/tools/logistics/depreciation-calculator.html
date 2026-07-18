@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="$" data-month="חודש">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>אַרייַן אויטא פּאַראַמעטערס</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">אויטא מאַרקע</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="צ.ב. Toyota" title="אַרייַן אויטא מאַרקע, צ.ב. Toyota אדער BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">מאָדעל</label>
-          <input type="text" id="carModel" placeholder="צ.ב. Camry" title="אַרייַן אויטא מאָדעל, צ.ב. Camry אדער X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">פּראָדוקציע יאָר</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="אַרייַן פּראָדוקציע יאָר (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="אַרייַן פּראָדוקציע יאָר (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">ערשט פּרייַז ($)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="אַרייַן די ערשט פּרייַז פון אויטא אין דאָלאַרס">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="אַרייַן די ערשט פּרייַז פון אויטא אין דאָלאַרס">
         </div>
         <div class="input-group">
           <label for="currentMileage">קראַנט קילאָמעטער (קמ)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="אַרייַן קראַנט קילאָמעטער אין קילאָמעטער">
-        </div>
-        <div class="input-group">
-          <label for="usageType">נוצן טיפּ</label>
-          <select id="usageType" title="קלויב טיפּ פון נוצן פון אויטא">
-            
-            <option value="personal">פּערזענלעך נוצן</option>
-            
-            <option value="taxi">טאַקסי</option>
-            
-            <option value="commercial">האַנדל טראַנספּאָרט</option>
-            
-            <option value="delivery">איבערגעבן</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">ברענוואַרג טיפּ</label>
-          <select id="fuelType" title="קלויב טיפּ פון ברענוואַרג פון אויטא">
-            
-            <option value="petrol">פּעטראָל</option>
-            
-            <option value="diesel">דיזל</option>
-            
-            <option value="hybrid">היבריד</option>
-            
-            <option value="electric">עלעקטריש</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">מאַינטענאַנס לעוועל</label>
-          <select id="maintenanceLevel" title="קלויב מאַינטענאַנס לעוועל פון אויטא">
-            
-            <option value="excellent">ויסגעצייכנט</option>
-            
-            <option value="good">גוט</option>
-            
-            <option value="average">דורכשניטלעך</option>
-            
-            <option value="poor">שוואַך</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">קלימאַט זאָנע</label>
-          <select id="climateZone" title="קלויב אָפּעראַציע קלימאַט זאָנע">
-            
-            <option value="mild">מילד</option>
-            
-            <option value="cold">קאַלט</option>
-            
-            <option value="hot">הייס</option>
-            
-            <option value="humid">פייַכט</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">ראַיאָן</label>
-          <select id="region" title="קלויב אויטא אָפּעראַציע ראַיאָן">
-            
-            <option value="central">צענטראַל (מאָסקווע)</option>
-            
-            <option value="north">צפון (סנט פּעטערסבורג)</option>
-            
-            <option value="siberia">סיביר</option>
-            
-            <option value="south">דרום</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">קראַנט פּרייַז פון נייַע ענלעכע אויטאָס ($)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="אַרייַן קראַנט פּרייַז פון ענלעך נייַ אויטא אין דאָלאַרס">
-          <small style="color: #6c757d; font-size: 12px;">קראַנט פּרייַז פון ענלעך נייַ אויטא</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">מאַרק פּרייַז וווּקס (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="ספּעציפיצירן פּראָצענט פון נייַע אויטאָס פּרייַז וווּקס זינט קויף">
-          <small style="color: #6c757d; font-size: 12px;">נייַע אויטאָס פּרייַז וווּקס זינט קויף</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">יאָרלעך אינפלאַציע (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="ספּעציפיצירן דורכשניטלעך יאָרלעך אינפלאַציע בעשאַס באַזיצן צייט">
-          <small style="color: #6c757d; font-size: 12px;">דורכשניטלעך אינפלאַציע פֿאַר יעדער באַזיצן יאָר</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">מאָדעל פאָדערונג</label>
-          <select id="demandLevel" title="קלויב מאָדעל פאָדערונג לעוועל">
-            
-            <option value="high" >הויך פאָדערונג</option>
-            
-            <option value="medium" selected>דורכשניטלעך פאָדערונג</option>
-            
-            <option value="low" >נידעריק פאָדערונג</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">טעכניש צושטאַנד</label>
-          <select id="technicalCondition" title="קלויב טעכניש צושטאַנד פון אויטא">
-            
-            <option value="excellent" selected>ויסגעצייכנט (אָריגינעל)</option>
-            
-            <option value="good" >גוט (קליינע דעפֿעקטן)</option>
-            
-            <option value="average" >דורכשניטלעך (רעפּאַירעד)</option>
-            
-            <option value="poor" >שוואַך (אַקסידענט)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">באטראכט אַקסידענטן, רעפּאַירז, ריפּאַינטינג</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="אַרייַן קראַנט קילאָמעטער אין קילאָמעטער">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="רעכענען אויטא דעפּריסייישאַן">רעכענען דעפּריסייישאַן</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="רייסעט פאָרעם">רייסעט</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="קאָפּיע קאַלקולאַטיאָן לינק">טיילן</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="עקספּאָרט רעזולטאַטן צו PDF">עקספּאָרט צו PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="עקספּאָרט רעזולטאַטן צו CSV">עקספּאָרט צו CSV</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="רעכענען אויטא דעפּריסייישאַן">רעכענען דעפּריסייישאַן</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="רייסעט פאָרעם">רייסעט</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="קאָפּיע קאַלקולאַטיאָן לינק">טיילן</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="עקספּאָרט רעזולטאַטן צו PDF">עקספּאָרט צו PDF</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="עקספּאָרט רעזולטאַטן צו CSV">עקספּאָרט צו CSV</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">אויטא מאַרקע</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="צ.ב. Toyota" title="אַרייַן אויטא מאַרקע, צ.ב. Toyota אדער BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">מאָדעל</label>
+            <input type="text" id="carModel" placeholder="צ.ב. Camry" title="אַרייַן אויטא מאָדעל, צ.ב. Camry אדער X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">נוצן טיפּ</label>
+            <select id="usageType" title="קלויב טיפּ פון נוצן פון אויטא">
+              
+              <option value="personal">פּערזענלעך נוצן</option>
+              
+              <option value="taxi">טאַקסי</option>
+              
+              <option value="commercial">האַנדל טראַנספּאָרט</option>
+              
+              <option value="delivery">איבערגעבן</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">ברענוואַרג טיפּ</label>
+            <select id="fuelType" title="קלויב טיפּ פון ברענוואַרג פון אויטא">
+              
+              <option value="petrol">פּעטראָל</option>
+              
+              <option value="diesel">דיזל</option>
+              
+              <option value="hybrid">היבריד</option>
+              
+              <option value="electric">עלעקטריש</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">מאַינטענאַנס לעוועל</label>
+            <select id="maintenanceLevel" title="קלויב מאַינטענאַנס לעוועל פון אויטא">
+              
+              <option value="excellent">ויסגעצייכנט</option>
+              
+              <option value="good">גוט</option>
+              
+              <option value="average">דורכשניטלעך</option>
+              
+              <option value="poor">שוואַך</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">קלימאַט זאָנע</label>
+            <select id="climateZone" title="קלויב אָפּעראַציע קלימאַט זאָנע">
+              
+              <option value="mild">מילד</option>
+              
+              <option value="cold">קאַלט</option>
+              
+              <option value="hot">הייס</option>
+              
+              <option value="humid">פייַכט</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">ראַיאָן</label>
+            <select id="region" title="קלויב אויטא אָפּעראַציע ראַיאָן">
+              
+              <option value="central">צענטראַל (מאָסקווע)</option>
+              
+              <option value="north">צפון (סנט פּעטערסבורג)</option>
+              
+              <option value="siberia">סיביר</option>
+              
+              <option value="south">דרום</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">קראַנט פּרייַז פון נייַע ענלעכע אויטאָס ($)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="אַרייַן קראַנט פּרייַז פון ענלעך נייַ אויטא אין דאָלאַרס">
+            <small>קראַנט פּרייַז פון ענלעך נייַ אויטא</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">מאַרק פּרייַז וווּקס (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="ספּעציפיצירן פּראָצענט פון נייַע אויטאָס פּרייַז וווּקס זינט קויף">
+            <small>נייַע אויטאָס פּרייַז וווּקס זינט קויף</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">יאָרלעך אינפלאַציע (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="ספּעציפיצירן דורכשניטלעך יאָרלעך אינפלאַציע בעשאַס באַזיצן צייט">
+            <small>דורכשניטלעך אינפלאַציע פֿאַר יעדער באַזיצן יאָר</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">מאָדעל פאָדערונג</label>
+            <select id="demandLevel" title="קלויב מאָדעל פאָדערונג לעוועל">
+              
+              <option value="high" >הויך פאָדערונג</option>
+              
+              <option value="medium" selected>דורכשניטלעך פאָדערונג</option>
+              
+              <option value="low" >נידעריק פאָדערונג</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">טעכניש צושטאַנד</label>
+            <select id="technicalCondition" title="קלויב טעכניש צושטאַנד פון אויטא">
+              
+              <option value="excellent" selected>ויסגעצייכנט (אָריגינעל)</option>
+              
+              <option value="good" >גוט (קליינע דעפֿעקטן)</option>
+              
+              <option value="average" >דורכשניטלעך (רעפּאַירעד)</option>
+              
+              <option value="poor" >שוואַך (אַקסידענט)</option>
+              
+            </select>
+            <small>באטראכט אַקסידענטן, רעפּאַירז, ריפּאַינטינג</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>קאַלקולאַטיאָן רעזולטאַטן</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 $</div>
@@ -465,6 +463,7 @@
             <div class="result-label">חודש־דעפּריסייישאַן</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

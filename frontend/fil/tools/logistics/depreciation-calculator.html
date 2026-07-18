@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="₱" data-month="buwan">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>Ilagay ang mga parameter ng kotse</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">Brand ng Kotse</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="Hal.: Toyota" title="Ilagay ang brand ng kotse, hal. Toyota o BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">Modelo</label>
-          <input type="text" id="carModel" placeholder="Hal.: Camry" title="Ilagay ang modelo ng kotse, hal. Camry o X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">Taon ng Paggawa</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Ilagay ang taon ng paggawa (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="Ilagay ang taon ng paggawa (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">Paunang Halaga (₱)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Ilagay ang paunang halaga ng kotse sa piso">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="Ilagay ang paunang halaga ng kotse sa piso">
         </div>
         <div class="input-group">
           <label for="currentMileage">Kasalukuyang Mileage (km)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Ilagay ang kasalukuyang mileage sa kilometro">
-        </div>
-        <div class="input-group">
-          <label for="usageType">Uri ng Paggamit</label>
-          <select id="usageType" title="Piliin ang uri ng paggamit ng kotse">
-            
-            <option value="personal">Personal na Paggamit</option>
-            
-            <option value="taxi">Taxi</option>
-            
-            <option value="commercial">Komersyal na Transportasyon</option>
-            
-            <option value="delivery">Paghahatid</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">Uri ng Fuel</label>
-          <select id="fuelType" title="Piliin ang uri ng fuel ng kotse">
-            
-            <option value="petrol">Petrolyo</option>
-            
-            <option value="diesel">Diesel</option>
-            
-            <option value="hybrid">Hybrid</option>
-            
-            <option value="electric">Elektriko</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">Antas ng Pagpapanatili</label>
-          <select id="maintenanceLevel" title="Piliin ang antas ng pagpapanatili ng kotse">
-            
-            <option value="excellent">Mahusay</option>
-            
-            <option value="good">Mabuti</option>
-            
-            <option value="average">Katamtaman</option>
-            
-            <option value="poor">Mahina</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">Climate Zone</label>
-          <select id="climateZone" title="Piliin ang climate zone ng operasyon">
-            
-            <option value="mild">Katamtaman</option>
-            
-            <option value="cold">Malamig</option>
-            
-            <option value="hot">Mainit</option>
-            
-            <option value="humid">Maalinsangan</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">Rehiyon</label>
-          <select id="region" title="Piliin ang rehiyon ng operasyon ng kotse">
-            
-            <option value="central">Sentro (Moscow)</option>
-            
-            <option value="north">Hilaga (St. Petersburg)</option>
-            
-            <option value="siberia">Siberia</option>
-            
-            <option value="south">Timog</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">Kasalukuyang Presyo ng Bagong Katulad (₱)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="Ilagay ang kasalukuyang presyo ng katulad na bagong kotse sa piso">
-          <small style="color: #6c757d; font-size: 12px;">Presyo ng katulad na bagong kotse ngayon</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">Pagtaas ng Presyo sa Market (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Tukuyin ang pagtaas ng presyo ng mga bagong kotse mula nang bilhin sa porsyento">
-          <small style="color: #6c757d; font-size: 12px;">Pagtaas ng presyo ng mga bagong kotse mula nang bilhin</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">Taunang Inflation (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="Tukuyin ang average na taunang inflation sa panahon ng pagmamay-ari">
-          <small style="color: #6c757d; font-size: 12px;">Average na inflation bawat taon ng pagmamay-ari</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">Demand ng Modelo</label>
-          <select id="demandLevel" title="Piliin ang antas ng demand ng modelo">
-            
-            <option value="high" >Mataas na Demand</option>
-            
-            <option value="medium" selected>Katamtamang Demand</option>
-            
-            <option value="low" >Mababang Demand</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">Kondisyong Teknikal</label>
-          <select id="technicalCondition" title="Piliin ang kondisyong teknikal ng kotse">
-            
-            <option value="excellent" selected>Mahusay (Orihinal)</option>
-            
-            <option value="good" >Mabuti (maliliit na depekto)</option>
-            
-            <option value="average" >Katamtaman (naayos na)</option>
-            
-            <option value="poor" >Mahina (nasira sa aksidente)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">Isinasaalang-alang ang mga aksidente, pag-aayos, muling pagpipinta</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="Ilagay ang kasalukuyang mileage sa kilometro">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Kalkulahin ang depresasyon ng kotse">Kalkulahin ang Depresasyon</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="I-reset ang form">I-reset</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="Kopyahin ang link ng pagkalkula">Ibahagi</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="I-export ang mga resulta sa PDF">I-export sa PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="I-export ang mga resulta sa CSV">I-export sa CSV</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="Kalkulahin ang depresasyon ng kotse">Kalkulahin ang Depresasyon</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="I-reset ang form">I-reset</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="Kopyahin ang link ng pagkalkula">Ibahagi</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="I-export ang mga resulta sa PDF">I-export sa PDF</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="I-export ang mga resulta sa CSV">I-export sa CSV</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">Brand ng Kotse</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="Hal.: Toyota" title="Ilagay ang brand ng kotse, hal. Toyota o BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">Modelo</label>
+            <input type="text" id="carModel" placeholder="Hal.: Camry" title="Ilagay ang modelo ng kotse, hal. Camry o X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">Uri ng Paggamit</label>
+            <select id="usageType" title="Piliin ang uri ng paggamit ng kotse">
+              
+              <option value="personal">Personal na Paggamit</option>
+              
+              <option value="taxi">Taxi</option>
+              
+              <option value="commercial">Komersyal na Transportasyon</option>
+              
+              <option value="delivery">Paghahatid</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">Uri ng Fuel</label>
+            <select id="fuelType" title="Piliin ang uri ng fuel ng kotse">
+              
+              <option value="petrol">Petrolyo</option>
+              
+              <option value="diesel">Diesel</option>
+              
+              <option value="hybrid">Hybrid</option>
+              
+              <option value="electric">Elektriko</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">Antas ng Pagpapanatili</label>
+            <select id="maintenanceLevel" title="Piliin ang antas ng pagpapanatili ng kotse">
+              
+              <option value="excellent">Mahusay</option>
+              
+              <option value="good">Mabuti</option>
+              
+              <option value="average">Katamtaman</option>
+              
+              <option value="poor">Mahina</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">Climate Zone</label>
+            <select id="climateZone" title="Piliin ang climate zone ng operasyon">
+              
+              <option value="mild">Katamtaman</option>
+              
+              <option value="cold">Malamig</option>
+              
+              <option value="hot">Mainit</option>
+              
+              <option value="humid">Maalinsangan</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">Rehiyon</label>
+            <select id="region" title="Piliin ang rehiyon ng operasyon ng kotse">
+              
+              <option value="central">Sentro (Moscow)</option>
+              
+              <option value="north">Hilaga (St. Petersburg)</option>
+              
+              <option value="siberia">Siberia</option>
+              
+              <option value="south">Timog</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">Kasalukuyang Presyo ng Bagong Katulad (₱)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="Ilagay ang kasalukuyang presyo ng katulad na bagong kotse sa piso">
+            <small>Presyo ng katulad na bagong kotse ngayon</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">Pagtaas ng Presyo sa Market (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="Tukuyin ang pagtaas ng presyo ng mga bagong kotse mula nang bilhin sa porsyento">
+            <small>Pagtaas ng presyo ng mga bagong kotse mula nang bilhin</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">Taunang Inflation (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="Tukuyin ang average na taunang inflation sa panahon ng pagmamay-ari">
+            <small>Average na inflation bawat taon ng pagmamay-ari</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">Demand ng Modelo</label>
+            <select id="demandLevel" title="Piliin ang antas ng demand ng modelo">
+              
+              <option value="high" >Mataas na Demand</option>
+              
+              <option value="medium" selected>Katamtamang Demand</option>
+              
+              <option value="low" >Mababang Demand</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">Kondisyong Teknikal</label>
+            <select id="technicalCondition" title="Piliin ang kondisyong teknikal ng kotse">
+              
+              <option value="excellent" selected>Mahusay (Orihinal)</option>
+              
+              <option value="good" >Mabuti (maliliit na depekto)</option>
+              
+              <option value="average" >Katamtaman (naayos na)</option>
+              
+              <option value="poor" >Mahina (nasira sa aksidente)</option>
+              
+            </select>
+            <small>Isinasaalang-alang ang mga aksidente, pag-aayos, muling pagpipinta</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>Mga Resulta ng Pagkalkula</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ₱</div>
@@ -465,6 +463,7 @@
             <div class="result-label">Buwanang Depresasyon</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

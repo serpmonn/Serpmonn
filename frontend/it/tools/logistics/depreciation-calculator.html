@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="€" data-month="mese">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>Inserisci i parametri dell&#39;auto</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">Marca dell&#39;auto</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="Es.: Toyota" title="Inserisci la marca dell&#39;auto, es. Toyota o BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">Modello</label>
-          <input type="text" id="carModel" placeholder="Es.: Camry" title="Inserisci il modello dell&#39;auto, es. Camry o X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">Anno di produzione</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Inserisci l&#39;anno di produzione (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="Inserisci l&#39;anno di produzione (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">Costo iniziale (€)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Inserisci il costo iniziale dell&#39;auto in euro">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="Inserisci il costo iniziale dell&#39;auto in euro">
         </div>
         <div class="input-group">
           <label for="currentMileage">Chilometraggio attuale (km)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Inserisci il chilometraggio attuale in chilometri">
-        </div>
-        <div class="input-group">
-          <label for="usageType">Tipo di utilizzo</label>
-          <select id="usageType" title="Seleziona il tipo di utilizzo dell&#39;auto">
-            
-            <option value="personal">Uso personale</option>
-            
-            <option value="taxi">Taxi</option>
-            
-            <option value="commercial">Trasporto commerciale</option>
-            
-            <option value="delivery">Consegna</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">Tipo di carburante</label>
-          <select id="fuelType" title="Seleziona il tipo di carburante dell&#39;auto">
-            
-            <option value="petrol">Benzina</option>
-            
-            <option value="diesel">Diesel</option>
-            
-            <option value="hybrid">Ibrido</option>
-            
-            <option value="electric">Elettrico</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">Livello di manutenzione</label>
-          <select id="maintenanceLevel" title="Seleziona il livello di manutenzione dell&#39;auto">
-            
-            <option value="excellent">Eccellente</option>
-            
-            <option value="good">Buono</option>
-            
-            <option value="average">Medio</option>
-            
-            <option value="poor">Scarso</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">Zona climatica</label>
-          <select id="climateZone" title="Seleziona la zona climatica di funzionamento">
-            
-            <option value="mild">Temperato</option>
-            
-            <option value="cold">Freddo</option>
-            
-            <option value="hot">Caldo</option>
-            
-            <option value="humid">Umido</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">Regione</label>
-          <select id="region" title="Seleziona la regione di funzionamento dell&#39;auto">
-            
-            <option value="central">Centrale (Mosca)</option>
-            
-            <option value="north">Nord (San Pietroburgo)</option>
-            
-            <option value="siberia">Siberia</option>
-            
-            <option value="south">Sud</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">Prezzo attuale dei nuovi analoghi (€)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="Inserisci il prezzo attuale di una nuova auto simile in euro">
-          <small style="color: #6c757d; font-size: 12px;">Prezzo di una nuova auto simile ora</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">Crescita dei prezzi di mercato (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Specifica la crescita dei prezzi delle auto nuove dall&#39;acquisto in percentuale">
-          <small style="color: #6c757d; font-size: 12px;">Crescita dei prezzi delle auto nuove dall&#39;acquisto</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">Inflazione annuale (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="Specifica l&#39;inflazione annuale media durante il periodo di proprietà">
-          <small style="color: #6c757d; font-size: 12px;">Inflazione media per anno di proprietà</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">Domanda del modello</label>
-          <select id="demandLevel" title="Seleziona il livello di domanda del modello">
-            
-            <option value="high" >Alta domanda</option>
-            
-            <option value="medium" selected>Domanda media</option>
-            
-            <option value="low" >Bassa domanda</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">Condizione tecnica</label>
-          <select id="technicalCondition" title="Seleziona la condizione tecnica dell&#39;auto">
-            
-            <option value="excellent" selected>Eccellente (originale)</option>
-            
-            <option value="good" >Buono (piccoli difetti)</option>
-            
-            <option value="average" >Medio (riparato)</option>
-            
-            <option value="poor" >Scarso (incidentato)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">Considera incidenti, riparazioni, ripittura</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="Inserisci il chilometraggio attuale in chilometri">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Calcola l&#39;ammortamento dell&#39;auto">Calcola ammortamento</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="Ripristina il modulo">Ripristina</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="Copia link calcolo">Condividi</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="Esporta risultati in PDF">Esporta in PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="Esporta risultati in CSV">Esporta in CSV</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="Calcola l&#39;ammortamento dell&#39;auto">Calcola ammortamento</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="Ripristina il modulo">Ripristina</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="Copia link calcolo">Condividi</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="Esporta risultati in PDF">Esporta in PDF</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="Esporta risultati in CSV">Esporta in CSV</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">Marca dell&#39;auto</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="Es.: Toyota" title="Inserisci la marca dell&#39;auto, es. Toyota o BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">Modello</label>
+            <input type="text" id="carModel" placeholder="Es.: Camry" title="Inserisci il modello dell&#39;auto, es. Camry o X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">Tipo di utilizzo</label>
+            <select id="usageType" title="Seleziona il tipo di utilizzo dell&#39;auto">
+              
+              <option value="personal">Uso personale</option>
+              
+              <option value="taxi">Taxi</option>
+              
+              <option value="commercial">Trasporto commerciale</option>
+              
+              <option value="delivery">Consegna</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">Tipo di carburante</label>
+            <select id="fuelType" title="Seleziona il tipo di carburante dell&#39;auto">
+              
+              <option value="petrol">Benzina</option>
+              
+              <option value="diesel">Diesel</option>
+              
+              <option value="hybrid">Ibrido</option>
+              
+              <option value="electric">Elettrico</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">Livello di manutenzione</label>
+            <select id="maintenanceLevel" title="Seleziona il livello di manutenzione dell&#39;auto">
+              
+              <option value="excellent">Eccellente</option>
+              
+              <option value="good">Buono</option>
+              
+              <option value="average">Medio</option>
+              
+              <option value="poor">Scarso</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">Zona climatica</label>
+            <select id="climateZone" title="Seleziona la zona climatica di funzionamento">
+              
+              <option value="mild">Temperato</option>
+              
+              <option value="cold">Freddo</option>
+              
+              <option value="hot">Caldo</option>
+              
+              <option value="humid">Umido</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">Regione</label>
+            <select id="region" title="Seleziona la regione di funzionamento dell&#39;auto">
+              
+              <option value="central">Centrale (Mosca)</option>
+              
+              <option value="north">Nord (San Pietroburgo)</option>
+              
+              <option value="siberia">Siberia</option>
+              
+              <option value="south">Sud</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">Prezzo attuale dei nuovi analoghi (€)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="Inserisci il prezzo attuale di una nuova auto simile in euro">
+            <small>Prezzo di una nuova auto simile ora</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">Crescita dei prezzi di mercato (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="Specifica la crescita dei prezzi delle auto nuove dall&#39;acquisto in percentuale">
+            <small>Crescita dei prezzi delle auto nuove dall&#39;acquisto</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">Inflazione annuale (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="Specifica l&#39;inflazione annuale media durante il periodo di proprietà">
+            <small>Inflazione media per anno di proprietà</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">Domanda del modello</label>
+            <select id="demandLevel" title="Seleziona il livello di domanda del modello">
+              
+              <option value="high" >Alta domanda</option>
+              
+              <option value="medium" selected>Domanda media</option>
+              
+              <option value="low" >Bassa domanda</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">Condizione tecnica</label>
+            <select id="technicalCondition" title="Seleziona la condizione tecnica dell&#39;auto">
+              
+              <option value="excellent" selected>Eccellente (originale)</option>
+              
+              <option value="good" >Buono (piccoli difetti)</option>
+              
+              <option value="average" >Medio (riparato)</option>
+              
+              <option value="poor" >Scarso (incidentato)</option>
+              
+            </select>
+            <small>Considera incidenti, riparazioni, ripittura</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>Risultati del calcolo</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 €</div>
@@ -465,6 +463,7 @@
             <div class="result-label">Ammortamento mensile</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

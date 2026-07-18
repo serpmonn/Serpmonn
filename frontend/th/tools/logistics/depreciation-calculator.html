@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="฿" data-month="เดือน">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>กรอกพารามิเตอร์รถยนต์</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">ยี่ห้อรถยนต์</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="เช่น: Toyota" title="กรอกยี่ห้อรถยนต์ เช่น Toyota หรือ BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">รุ่น</label>
-          <input type="text" id="carModel" placeholder="เช่น: Camry" title="กรอกรุ่นรถยนต์ เช่น Camry หรือ X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">ปีที่ผลิต</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="กรอกปีที่ผลิต (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="กรอกปีที่ผลิต (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">ราคาเริ่มต้น (฿)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="กรอกราคาเริ่มต้นของรถยนต์เป็นบาท">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="กรอกราคาเริ่มต้นของรถยนต์เป็นบาท">
         </div>
         <div class="input-group">
           <label for="currentMileage">ระยะทางปัจจุบัน (กม.)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="กรอกระยะทางปัจจุบันเป็นกิโลเมตร">
-        </div>
-        <div class="input-group">
-          <label for="usageType">ประเภทการใช้งาน</label>
-          <select id="usageType" title="เลือกประเภทการใช้งานของรถยนต์">
-            
-            <option value="personal">การใช้ส่วนตัว</option>
-            
-            <option value="taxi">แท็กซี่</option>
-            
-            <option value="commercial">การขนส่งเชิงพาณิชย์</option>
-            
-            <option value="delivery">การจัดส่ง</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">ประเภทเชื้อเพลิง</label>
-          <select id="fuelType" title="เลือกประเภทเชื้อเพลิงของรถยนต์">
-            
-            <option value="petrol">เบนซิน</option>
-            
-            <option value="diesel">ดีเซล</option>
-            
-            <option value="hybrid">ไฮบริด</option>
-            
-            <option value="electric">ไฟฟ้า</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">ระดับการบำรุงรักษา</label>
-          <select id="maintenanceLevel" title="เลือกระดับการบำรุงรักษาของรถยนต์">
-            
-            <option value="excellent">ดีเยี่ยม</option>
-            
-            <option value="good">ดี</option>
-            
-            <option value="average">ปานกลาง</option>
-            
-            <option value="poor">ไม่ดี</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">เขตภูมิอากาศ</label>
-          <select id="climateZone" title="เลือกเขตภูมิอากาศในการใช้งาน">
-            
-            <option value="mild">ปานกลาง</option>
-            
-            <option value="cold">หนาว</option>
-            
-            <option value="hot">ร้อน</option>
-            
-            <option value="humid">ชื้น</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">ภูมิภาค</label>
-          <select id="region" title="เลือกระหว่างการใช้งานรถยนต์">
-            
-            <option value="central">กลาง (มอสโก)</option>
-            
-            <option value="north">เหนือ (เซนต์ปีเตอร์สเบิร์ก)</option>
-            
-            <option value="siberia">ไซบีเรีย</option>
-            
-            <option value="south">ใต้</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">ราคาปัจจุบันของรถใหม่ที่คล้ายกัน (฿)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="กรอกราคาปัจจุบันของรถใหม่ที่คล้ายกันเป็นบาท">
-          <small style="color: #6c757d; font-size: 12px;">ราคารถใหม่ที่คล้ายกันในปัจจุบัน</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">การเติบโตของราคาตลาด (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="ระบุการเติบโตของราคารถใหม่นับตั้งแต่ซื้อเป็นเปอร์เซ็นต์">
-          <small style="color: #6c757d; font-size: 12px;">การเติบโตของราคารถใหม่นับตั้งแต่ซื้อ</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">อัตราเงินเฟ้อรายปี (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="ระบุอัตราเงินเฟ้อรายปีเฉลี่ยระหว่างช่วงเวลาที่เป็นเจ้าของ">
-          <small style="color: #6c757d; font-size: 12px;">อัตราเงินเฟ้อเฉลี่ยต่อปีที่เป็นเจ้าของ</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">ความต้องการของรุ่น</label>
-          <select id="demandLevel" title="เลือกระดับความต้องการของรุ่น">
-            
-            <option value="high" >ความต้องการสูง</option>
-            
-            <option value="medium" selected>ความต้องการปานกลาง</option>
-            
-            <option value="low" >ความต้องการต่ำ</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">สภาพทางเทคนิค</label>
-          <select id="technicalCondition" title="เลือกสภาพทางเทคนิคของรถยนต์">
-            
-            <option value="excellent" selected>ดีเยี่ยม (ต้นฉบับ)</option>
-            
-            <option value="good" >ดี (ข้อบกพร่องเล็กน้อย)</option>
-            
-            <option value="average" >ปานกลาง (ซ่อมแซมแล้ว)</option>
-            
-            <option value="poor" >ไม่ดี (ประสบอุบัติเหตุ)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">คำนึงถึงอุบัติเหตุ การซ่อมแซม การทาสีใหม่</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="กรอกระยะทางปัจจุบันเป็นกิโลเมตร">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="คำนวณค่าสูญราคารถยนต์">คำนวณค่าสูญราคา</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="รีเซ็ตแบบฟอร์ม">รีเซ็ต</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="คัดลอกลิงก์การคำนวณ">แชร์</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="ส่งออกผลลัพธ์เป็น PDF">ส่งออกเป็น PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="ส่งออกผลลัพธ์เป็น CSV">ส่งออกเป็น CSV</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="คำนวณค่าสูญราคารถยนต์">คำนวณค่าสูญราคา</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="รีเซ็ตแบบฟอร์ม">รีเซ็ต</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="คัดลอกลิงก์การคำนวณ">แชร์</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="ส่งออกผลลัพธ์เป็น PDF">ส่งออกเป็น PDF</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="ส่งออกผลลัพธ์เป็น CSV">ส่งออกเป็น CSV</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">ยี่ห้อรถยนต์</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="เช่น: Toyota" title="กรอกยี่ห้อรถยนต์ เช่น Toyota หรือ BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">รุ่น</label>
+            <input type="text" id="carModel" placeholder="เช่น: Camry" title="กรอกรุ่นรถยนต์ เช่น Camry หรือ X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">ประเภทการใช้งาน</label>
+            <select id="usageType" title="เลือกประเภทการใช้งานของรถยนต์">
+              
+              <option value="personal">การใช้ส่วนตัว</option>
+              
+              <option value="taxi">แท็กซี่</option>
+              
+              <option value="commercial">การขนส่งเชิงพาณิชย์</option>
+              
+              <option value="delivery">การจัดส่ง</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">ประเภทเชื้อเพลิง</label>
+            <select id="fuelType" title="เลือกประเภทเชื้อเพลิงของรถยนต์">
+              
+              <option value="petrol">เบนซิน</option>
+              
+              <option value="diesel">ดีเซล</option>
+              
+              <option value="hybrid">ไฮบริด</option>
+              
+              <option value="electric">ไฟฟ้า</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">ระดับการบำรุงรักษา</label>
+            <select id="maintenanceLevel" title="เลือกระดับการบำรุงรักษาของรถยนต์">
+              
+              <option value="excellent">ดีเยี่ยม</option>
+              
+              <option value="good">ดี</option>
+              
+              <option value="average">ปานกลาง</option>
+              
+              <option value="poor">ไม่ดี</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">เขตภูมิอากาศ</label>
+            <select id="climateZone" title="เลือกเขตภูมิอากาศในการใช้งาน">
+              
+              <option value="mild">ปานกลาง</option>
+              
+              <option value="cold">หนาว</option>
+              
+              <option value="hot">ร้อน</option>
+              
+              <option value="humid">ชื้น</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">ภูมิภาค</label>
+            <select id="region" title="เลือกระหว่างการใช้งานรถยนต์">
+              
+              <option value="central">กลาง (มอสโก)</option>
+              
+              <option value="north">เหนือ (เซนต์ปีเตอร์สเบิร์ก)</option>
+              
+              <option value="siberia">ไซบีเรีย</option>
+              
+              <option value="south">ใต้</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">ราคาปัจจุบันของรถใหม่ที่คล้ายกัน (฿)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="กรอกราคาปัจจุบันของรถใหม่ที่คล้ายกันเป็นบาท">
+            <small>ราคารถใหม่ที่คล้ายกันในปัจจุบัน</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">การเติบโตของราคาตลาด (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="ระบุการเติบโตของราคารถใหม่นับตั้งแต่ซื้อเป็นเปอร์เซ็นต์">
+            <small>การเติบโตของราคารถใหม่นับตั้งแต่ซื้อ</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">อัตราเงินเฟ้อรายปี (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="ระบุอัตราเงินเฟ้อรายปีเฉลี่ยระหว่างช่วงเวลาที่เป็นเจ้าของ">
+            <small>อัตราเงินเฟ้อเฉลี่ยต่อปีที่เป็นเจ้าของ</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">ความต้องการของรุ่น</label>
+            <select id="demandLevel" title="เลือกระดับความต้องการของรุ่น">
+              
+              <option value="high" >ความต้องการสูง</option>
+              
+              <option value="medium" selected>ความต้องการปานกลาง</option>
+              
+              <option value="low" >ความต้องการต่ำ</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">สภาพทางเทคนิค</label>
+            <select id="technicalCondition" title="เลือกสภาพทางเทคนิคของรถยนต์">
+              
+              <option value="excellent" selected>ดีเยี่ยม (ต้นฉบับ)</option>
+              
+              <option value="good" >ดี (ข้อบกพร่องเล็กน้อย)</option>
+              
+              <option value="average" >ปานกลาง (ซ่อมแซมแล้ว)</option>
+              
+              <option value="poor" >ไม่ดี (ประสบอุบัติเหตุ)</option>
+              
+            </select>
+            <small>คำนึงถึงอุบัติเหตุ การซ่อมแซม การทาสีใหม่</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>ผลการคำนวณ</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ฿</div>
@@ -465,6 +463,7 @@
             <div class="result-label">ค่าสูญราคารายเดือน</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="₼" data-month="ay">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>Avtomobil parametrlərini daxil edin</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">Avtomobil markası</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="Məsələn: Toyota" title="Avtomobil markasını daxil edin, məsələn Toyota və ya BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">Model</label>
-          <input type="text" id="carModel" placeholder="Məsələn: Camry" title="Avtomobil modelini daxil edin, məsələn Camry və ya X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">Buraxılış ili</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Buraxılış ilini daxil edin (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="Buraxılış ilini daxil edin (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">İlkin dəyər (₼)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Avtomobilin ilkin dəyərini manatla daxil edin">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="Avtomobilin ilkin dəyərini manatla daxil edin">
         </div>
         <div class="input-group">
           <label for="currentMileage">Cari yürüş (km)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Cari yürüşü kilometrlə daxil edin">
-        </div>
-        <div class="input-group">
-          <label for="usageType">İstifadə növü</label>
-          <select id="usageType" title="Avtomobilin istifadə növünü seçin">
-            
-            <option value="personal">Şəxsi istifadə</option>
-            
-            <option value="taxi">Taksi</option>
-            
-            <option value="commercial">Kommersiya daşımaları</option>
-            
-            <option value="delivery">Çatdırılma</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">Yanacaq növü</label>
-          <select id="fuelType" title="Avtomobilin yanacaq növünü seçin">
-            
-            <option value="petrol">Benzin</option>
-            
-            <option value="diesel">Dizel</option>
-            
-            <option value="hybrid">Hibrid</option>
-            
-            <option value="electric">Elektrik</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">Xidmət səviyyəsi</label>
-          <select id="maintenanceLevel" title="Avtomobilin xidmət səviyyəsini seçin">
-            
-            <option value="excellent">Əla</option>
-            
-            <option value="good">Yaxşı</option>
-            
-            <option value="average">Orta</option>
-            
-            <option value="poor">Zəif</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">İqlim zonası</label>
-          <select id="climateZone" title="İstismar iqlim zonasını seçin">
-            
-            <option value="mild">Mülayim</option>
-            
-            <option value="cold">Soyuq</option>
-            
-            <option value="hot">İsti</option>
-            
-            <option value="humid">Rütubətli</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">Region</label>
-          <select id="region" title="Avtomobilin istismar regionunu seçin">
-            
-            <option value="central">Mərkəzi (Moskva)</option>
-            
-            <option value="north">Şimal (Sankt-Peterburq)</option>
-            
-            <option value="siberia">Sibir</option>
-            
-            <option value="south">Cənub</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">Cari yeni analoqların qiyməti (₼)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="Oxşar yeni avtomobilin cari qiymətini manatla daxil edin">
-          <small style="color: #6c757d; font-size: 12px;">Oxşar yeni avtomobilin indiki qiyməti</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">Bazar qiymət artımı (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Alındığı andan etibarən yeni avtomobillərin qiymət artımını faizlə göstərin">
-          <small style="color: #6c757d; font-size: 12px;">Alındığı andan etibarən yeni avtomobillərin qiymət artımı</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">İllik inflyasiya (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="Mülkiyyət dövründə orta illik inflyasiyanı göstərin">
-          <small style="color: #6c757d; font-size: 12px;">Mülkiyyətin hər ili üçün orta inflyasiya</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">Modelə tələbat</label>
-          <select id="demandLevel" title="Modelə tələbat səviyyəsini seçin">
-            
-            <option value="high" >Yüksək tələbat</option>
-            
-            <option value="medium" selected>Orta tələbat</option>
-            
-            <option value="low" >Aşağı tələbat</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">Texniki vəziyyət</label>
-          <select id="technicalCondition" title="Avtomobilin texniki vəziyyətini seçin">
-            
-            <option value="excellent" selected>Əla (orijinal)</option>
-            
-            <option value="good" >Yaxşı (kiçik qüsur)</option>
-            
-            <option value="average" >Orta (təmir edilib)</option>
-            
-            <option value="poor" >Zəif (qəza)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">Qəzaları, təmirləri, rənglənməni nəzərə alır</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="Cari yürüşü kilometrlə daxil edin">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Avtomobil amortizasiyasını hesablayın">Amortizasiyanı hesablayın</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="Formanı sıfırlayın">Sıfırla</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="Hesablama linkini kopyalayın">Paylaş</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="Nəticələri PDF-ə ixrac edin">PDF-ə ixrac</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="Nəticələri CSV-ə ixrac edin">CSV-ə ixrac</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="Avtomobil amortizasiyasını hesablayın">Amortizasiyanı hesablayın</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="Formanı sıfırlayın">Sıfırla</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="Hesablama linkini kopyalayın">Paylaş</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="Nəticələri PDF-ə ixrac edin">PDF-ə ixrac</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="Nəticələri CSV-ə ixrac edin">CSV-ə ixrac</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">Avtomobil markası</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="Məsələn: Toyota" title="Avtomobil markasını daxil edin, məsələn Toyota və ya BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">Model</label>
+            <input type="text" id="carModel" placeholder="Məsələn: Camry" title="Avtomobil modelini daxil edin, məsələn Camry və ya X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">İstifadə növü</label>
+            <select id="usageType" title="Avtomobilin istifadə növünü seçin">
+              
+              <option value="personal">Şəxsi istifadə</option>
+              
+              <option value="taxi">Taksi</option>
+              
+              <option value="commercial">Kommersiya daşımaları</option>
+              
+              <option value="delivery">Çatdırılma</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">Yanacaq növü</label>
+            <select id="fuelType" title="Avtomobilin yanacaq növünü seçin">
+              
+              <option value="petrol">Benzin</option>
+              
+              <option value="diesel">Dizel</option>
+              
+              <option value="hybrid">Hibrid</option>
+              
+              <option value="electric">Elektrik</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">Xidmət səviyyəsi</label>
+            <select id="maintenanceLevel" title="Avtomobilin xidmət səviyyəsini seçin">
+              
+              <option value="excellent">Əla</option>
+              
+              <option value="good">Yaxşı</option>
+              
+              <option value="average">Orta</option>
+              
+              <option value="poor">Zəif</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">İqlim zonası</label>
+            <select id="climateZone" title="İstismar iqlim zonasını seçin">
+              
+              <option value="mild">Mülayim</option>
+              
+              <option value="cold">Soyuq</option>
+              
+              <option value="hot">İsti</option>
+              
+              <option value="humid">Rütubətli</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">Region</label>
+            <select id="region" title="Avtomobilin istismar regionunu seçin">
+              
+              <option value="central">Mərkəzi (Moskva)</option>
+              
+              <option value="north">Şimal (Sankt-Peterburq)</option>
+              
+              <option value="siberia">Sibir</option>
+              
+              <option value="south">Cənub</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">Cari yeni analoqların qiyməti (₼)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="Oxşar yeni avtomobilin cari qiymətini manatla daxil edin">
+            <small>Oxşar yeni avtomobilin indiki qiyməti</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">Bazar qiymət artımı (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="Alındığı andan etibarən yeni avtomobillərin qiymət artımını faizlə göstərin">
+            <small>Alındığı andan etibarən yeni avtomobillərin qiymət artımı</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">İllik inflyasiya (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="Mülkiyyət dövründə orta illik inflyasiyanı göstərin">
+            <small>Mülkiyyətin hər ili üçün orta inflyasiya</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">Modelə tələbat</label>
+            <select id="demandLevel" title="Modelə tələbat səviyyəsini seçin">
+              
+              <option value="high" >Yüksək tələbat</option>
+              
+              <option value="medium" selected>Orta tələbat</option>
+              
+              <option value="low" >Aşağı tələbat</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">Texniki vəziyyət</label>
+            <select id="technicalCondition" title="Avtomobilin texniki vəziyyətini seçin">
+              
+              <option value="excellent" selected>Əla (orijinal)</option>
+              
+              <option value="good" >Yaxşı (kiçik qüsur)</option>
+              
+              <option value="average" >Orta (təmir edilib)</option>
+              
+              <option value="poor" >Zəif (qəza)</option>
+              
+            </select>
+            <small>Qəzaları, təmirləri, rənglənməni nəzərə alır</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>Hesablama nəticələri</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ₼</div>
@@ -465,6 +463,7 @@
             <div class="result-label">Aylıq amortizasiya</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

@@ -52,27 +52,7 @@ eleventyComputed:
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="{{ depreciationCalculator[locale].common.currency }}" data-month="{{ depreciationCalculator[locale].common.month }}">
     <!-- Меню -->
@@ -121,115 +101,133 @@ eleventyComputed:
     <div class="calculator-container">
       <h2>{{ depreciationCalculator[locale].form.sectionTitle }}</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">{{ depreciationCalculator[locale].form.labels.carBrand }}</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="{{ depreciationCalculator[locale].form.placeholders.carBrand }}" title="{{ depreciationCalculator[locale].form.titles.carBrand }}">
-          <datalist id="carBrands">
-            {% for brand in depreciationCalculator[locale].form.brandOptions %}
-            <option value="{{ brand }}">
-            {% endfor %}
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">{{ depreciationCalculator[locale].form.labels.carModel }}</label>
-          <input type="text" id="carModel" placeholder="{{ depreciationCalculator[locale].form.placeholders.carModel }}" title="{{ depreciationCalculator[locale].form.titles.carModel }}">
-        </div>
-        <div class="input-group">
           <label for="carYear">{{ depreciationCalculator[locale].form.labels.carYear }}</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="{{ depreciationCalculator[locale].form.titles.carYear }}">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="{{ depreciationCalculator[locale].form.titles.carYear }}">
         </div>
         <div class="input-group">
           <label for="initialPrice">{{ depreciationCalculator[locale].form.labels.initialPrice }}</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="{{ depreciationCalculator[locale].form.titles.initialPrice }}">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="{{ depreciationCalculator[locale].form.titles.initialPrice }}">
         </div>
         <div class="input-group">
           <label for="currentMileage">{{ depreciationCalculator[locale].form.labels.currentMileage }}</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="{{ depreciationCalculator[locale].form.titles.currentMileage }}">
-        </div>
-        <div class="input-group">
-          <label for="usageType">{{ depreciationCalculator[locale].form.labels.usageType }}</label>
-          <select id="usageType" title="{{ depreciationCalculator[locale].form.titles.usageType }}">
-            {% for option in depreciationCalculator[locale].form.usageTypeOptions %}
-            <option value="{{ option.value }}">{{ option.label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">{{ depreciationCalculator[locale].form.labels.fuelType }}</label>
-          <select id="fuelType" title="{{ depreciationCalculator[locale].form.titles.fuelType }}">
-            {% for option in depreciationCalculator[locale].form.fuelTypeOptions %}
-            <option value="{{ option.value }}">{{ option.label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">{{ depreciationCalculator[locale].form.labels.maintenanceLevel }}</label>
-          <select id="maintenanceLevel" title="{{ depreciationCalculator[locale].form.titles.maintenanceLevel }}">
-            {% for option in depreciationCalculator[locale].form.maintenanceOptions %}
-            <option value="{{ option.value }}">{{ option.label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">{{ depreciationCalculator[locale].form.labels.climateZone }}</label>
-          <select id="climateZone" title="{{ depreciationCalculator[locale].form.titles.climateZone }}">
-            {% for option in depreciationCalculator[locale].form.climateOptions %}
-            <option value="{{ option.value }}">{{ option.label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">{{ depreciationCalculator[locale].form.labels.region }}</label>
-          <select id="region" title="{{ depreciationCalculator[locale].form.titles.region }}">
-            {% for option in depreciationCalculator[locale].form.regionOptions %}
-            <option value="{{ option.value }}">{{ option.label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">{{ depreciationCalculator[locale].form.labels.currentNewPrice }}</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="{{ depreciationCalculator[locale].form.titles.currentNewPrice }}">
-          <small style="color: #6c757d; font-size: 12px;">{{ depreciationCalculator[locale].form.hints.currentNewPrice }}</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">{{ depreciationCalculator[locale].form.labels.marketGrowth }}</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="{{ depreciationCalculator[locale].form.titles.marketGrowth }}">
-          <small style="color: #6c757d; font-size: 12px;">{{ depreciationCalculator[locale].form.hints.marketGrowth }}</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">{{ depreciationCalculator[locale].form.labels.inflationRate }}</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="{{ depreciationCalculator[locale].form.titles.inflationRate }}">
-          <small style="color: #6c757d; font-size: 12px;">{{ depreciationCalculator[locale].form.hints.inflationRate }}</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">{{ depreciationCalculator[locale].form.labels.demandLevel }}</label>
-          <select id="demandLevel" title="{{ depreciationCalculator[locale].form.titles.demandLevel }}">
-            {% for option in depreciationCalculator[locale].form.demandOptions %}
-            <option value="{{ option.value }}" {% if option.selected %}selected{% endif %}>{{ option.label }}</option>
-            {% endfor %}
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">{{ depreciationCalculator[locale].form.labels.technicalCondition }}</label>
-          <select id="technicalCondition" title="{{ depreciationCalculator[locale].form.titles.technicalCondition }}">
-            {% for option in depreciationCalculator[locale].form.conditionOptions %}
-            <option value="{{ option.value }}" {% if option.selected %}selected{% endif %}>{{ option.label }}</option>
-            {% endfor %}
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">{{ depreciationCalculator[locale].form.hints.technicalCondition }}</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="{{ depreciationCalculator[locale].form.titles.currentMileage }}">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="{{ depreciationCalculator[locale].aria.calculate }}">{{ depreciationCalculator[locale].buttons.calculate }}</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="{{ depreciationCalculator[locale].aria.reset }}">{{ depreciationCalculator[locale].buttons.reset }}</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="{{ depreciationCalculator[locale].aria.share }}">{{ depreciationCalculator[locale].buttons.share }}</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="{{ depreciationCalculator[locale].aria.export_pdf }}">{{ depreciationCalculator[locale].buttons.export_pdf }}</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="{{ depreciationCalculator[locale].aria.export_csv }}">{{ depreciationCalculator[locale].buttons.export_csv }}</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="{{ depreciationCalculator[locale].aria.calculate }}">{{ depreciationCalculator[locale].buttons.calculate }}</button>
+        <details class="more-actions">
+          <summary>{{ depreciationCalculator[locale].buttons.moreActions or 'Ещё' }}</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="{{ depreciationCalculator[locale].aria.reset }}">{{ depreciationCalculator[locale].buttons.reset }}</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="{{ depreciationCalculator[locale].aria.share }}">{{ depreciationCalculator[locale].buttons.share }}</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="{{ depreciationCalculator[locale].aria.export_pdf }}">{{ depreciationCalculator[locale].buttons.export_pdf }}</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="{{ depreciationCalculator[locale].aria.export_csv }}">{{ depreciationCalculator[locale].buttons.export_csv }}</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>{{ depreciationCalculator[locale].form.optionalTitle or 'Дополнительно' }}</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">{{ depreciationCalculator[locale].form.labels.carBrand }}</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="{{ depreciationCalculator[locale].form.placeholders.carBrand }}" title="{{ depreciationCalculator[locale].form.titles.carBrand }}" autocomplete="off">
+            <datalist id="carBrands">
+              {% for brand in depreciationCalculator[locale].form.brandOptions %}
+              <option value="{{ brand }}">
+              {% endfor %}
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">{{ depreciationCalculator[locale].form.labels.carModel }}</label>
+            <input type="text" id="carModel" placeholder="{{ depreciationCalculator[locale].form.placeholders.carModel }}" title="{{ depreciationCalculator[locale].form.titles.carModel }}" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">{{ depreciationCalculator[locale].form.labels.usageType }}</label>
+            <select id="usageType" title="{{ depreciationCalculator[locale].form.titles.usageType }}">
+              {% for option in depreciationCalculator[locale].form.usageTypeOptions %}
+              <option value="{{ option.value }}">{{ option.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">{{ depreciationCalculator[locale].form.labels.fuelType }}</label>
+            <select id="fuelType" title="{{ depreciationCalculator[locale].form.titles.fuelType }}">
+              {% for option in depreciationCalculator[locale].form.fuelTypeOptions %}
+              <option value="{{ option.value }}">{{ option.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">{{ depreciationCalculator[locale].form.labels.maintenanceLevel }}</label>
+            <select id="maintenanceLevel" title="{{ depreciationCalculator[locale].form.titles.maintenanceLevel }}">
+              {% for option in depreciationCalculator[locale].form.maintenanceOptions %}
+              <option value="{{ option.value }}">{{ option.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">{{ depreciationCalculator[locale].form.labels.climateZone }}</label>
+            <select id="climateZone" title="{{ depreciationCalculator[locale].form.titles.climateZone }}">
+              {% for option in depreciationCalculator[locale].form.climateOptions %}
+              <option value="{{ option.value }}">{{ option.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">{{ depreciationCalculator[locale].form.labels.region }}</label>
+            <select id="region" title="{{ depreciationCalculator[locale].form.titles.region }}">
+              {% for option in depreciationCalculator[locale].form.regionOptions %}
+              <option value="{{ option.value }}">{{ option.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">{{ depreciationCalculator[locale].form.labels.currentNewPrice }}</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="{{ depreciationCalculator[locale].form.titles.currentNewPrice }}">
+            <small>{{ depreciationCalculator[locale].form.hints.currentNewPrice }}</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">{{ depreciationCalculator[locale].form.labels.marketGrowth }}</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="{{ depreciationCalculator[locale].form.titles.marketGrowth }}">
+            <small>{{ depreciationCalculator[locale].form.hints.marketGrowth }}</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">{{ depreciationCalculator[locale].form.labels.inflationRate }}</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="{{ depreciationCalculator[locale].form.titles.inflationRate }}">
+            <small>{{ depreciationCalculator[locale].form.hints.inflationRate }}</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">{{ depreciationCalculator[locale].form.labels.demandLevel }}</label>
+            <select id="demandLevel" title="{{ depreciationCalculator[locale].form.titles.demandLevel }}">
+              {% for option in depreciationCalculator[locale].form.demandOptions %}
+              <option value="{{ option.value }}" {% if option.selected %}selected{% endif %}>{{ option.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">{{ depreciationCalculator[locale].form.labels.technicalCondition }}</label>
+            <select id="technicalCondition" title="{{ depreciationCalculator[locale].form.titles.technicalCondition }}">
+              {% for option in depreciationCalculator[locale].form.conditionOptions %}
+              <option value="{{ option.value }}" {% if option.selected %}selected{% endif %}>{{ option.label }}</option>
+              {% endfor %}
+            </select>
+            <small>{{ depreciationCalculator[locale].form.hints.technicalCondition }}</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>{{ depreciationCalculator[locale].results.title }}</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">{{ depreciationCalculator[locale].results.costPerKm or 'Амортизация на 1 км' }}</div>
+        </div>
+        <p class="result-disclaimer">{{ depreciationCalculator[locale].results.disclaimer or 'Ориентировочный расчёт, не оценка дилера или страховщика.' }}</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 {{ depreciationCalculator[locale].common.currency }}</div>
@@ -248,6 +246,7 @@ eleventyComputed:
             <div class="result-label">{{ depreciationCalculator[locale].results.monthlyDepreciation }}</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -267,7 +266,7 @@ eleventyComputed:
     {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
     {{ mobileAnchor(depreciationCalculator[locale].aria.closeAd) }}
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   {% include "partials/ad-pool-init.njk" %}
 </body>

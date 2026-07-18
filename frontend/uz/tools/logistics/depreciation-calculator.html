@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="so&#39;m" data-month="oy">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>Avtomobil parametrlarini kiriting</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">Avtomobil markasi</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="Masalan: Toyota" title="Avtomobil markasini kiriting, masalan Toyota yoki BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">Model</label>
-          <input type="text" id="carModel" placeholder="Masalan: Camry" title="Avtomobil modelini kiriting, masalan Camry yoki X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">Ishlab chiqarilgan yili</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Ishlab chiqarilgan yilni kiriting (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="Ishlab chiqarilgan yilni kiriting (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">Boshlang&#39;ich narx (so&#39;m)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Avtomobilning boshlang&#39;ich narxini so&#39;mda kiriting">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="Avtomobilning boshlang&#39;ich narxini so&#39;mda kiriting">
         </div>
         <div class="input-group">
           <label for="currentMileage">Joriy yurish (km)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Joriy yurishni kilometrlarda kiriting">
-        </div>
-        <div class="input-group">
-          <label for="usageType">Foydalanish turi</label>
-          <select id="usageType" title="Avtomobilning foydalanish turini tanlang">
-            
-            <option value="personal">Shaxsiy foydalanish</option>
-            
-            <option value="taxi">Taksi</option>
-            
-            <option value="commercial">Tijorat tashish</option>
-            
-            <option value="delivery">Yetkazib berish</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">Yoqilg&#39;i turi</label>
-          <select id="fuelType" title="Avtomobilning yoqilg&#39;i turini tanlang">
-            
-            <option value="petrol">Benzin</option>
-            
-            <option value="diesel">Dizel</option>
-            
-            <option value="hybrid">Gibrid</option>
-            
-            <option value="electric">Elektrik</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">Xizmat ko&#39;rsatish darajasi</label>
-          <select id="maintenanceLevel" title="Avtomobilning xizmat ko&#39;rsatish darajasini tanlang">
-            
-            <option value="excellent">A&#39;lo</option>
-            
-            <option value="good">Yaxshi</option>
-            
-            <option value="average">O&#39;rtacha</option>
-            
-            <option value="poor">Yomon</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">Iqlim zonasi</label>
-          <select id="climateZone" title="Ishlatish iqlim zonasini tanlang">
-            
-            <option value="mild">Mo&#39;tadil</option>
-            
-            <option value="cold">Sovuq</option>
-            
-            <option value="hot">Issiq</option>
-            
-            <option value="humid">Nam</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">Mintaqa</label>
-          <select id="region" title="Avtomobilning ishlatish mintaqasini tanlang">
-            
-            <option value="central">Markaziy (Moskva)</option>
-            
-            <option value="north">Shimoliy (Sankt-Peterburg)</option>
-            
-            <option value="siberia">Sibir</option>
-            
-            <option value="south">Janubiy</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">Yangi analoglarning joriy narxi (so&#39;m)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="O&#39;xshash yangi avtomobilning joriy narxini so&#39;mda kiriting">
-          <small style="color: #6c757d; font-size: 12px;">O&#39;xshash yangi avtomobilning hozirgi narxi</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">Bozor narxlarining o&#39;sishi (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Sotib olingandan buyon yangi avtomobillarning narx o&#39;sishini foizda ko&#39;rsating">
-          <small style="color: #6c757d; font-size: 12px;">Sotib olingandan buyon yangi avtomobillarning narx o&#39;sishi</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">Yillik inflyatsiya (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="Egallab turgan davrda o&#39;rtacha yillik inflyatsiyani ko&#39;rsating">
-          <small style="color: #6c757d; font-size: 12px;">Egallab turgan har bir yil uchun o&#39;rtacha inflyatsiya</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">Modelga talab</label>
-          <select id="demandLevel" title="Modelga talab darajasini tanlang">
-            
-            <option value="high" >Yuqori talab</option>
-            
-            <option value="medium" selected>O&#39;rtacha talab</option>
-            
-            <option value="low" >Past talab</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">Texnik holat</label>
-          <select id="technicalCondition" title="Avtomobilning texnik holatini tanlang">
-            
-            <option value="excellent" selected>A&#39;lo (original)</option>
-            
-            <option value="good" >Yaxshi (kichik nuqsonlar)</option>
-            
-            <option value="average" >O&#39;rtacha (ta&#39;mirlangan)</option>
-            
-            <option value="poor" >Yomon (baxtsiz hodisali)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">Baxtsiz hodisalar, ta&#39;mirlash, qayta bo&#39;yashni hisobga oladi</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="Joriy yurishni kilometrlarda kiriting">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Avtomobil amortizatsiyasini hisoblash">Amortizatsiyani hisoblash</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="Shaklni qayta o&#39;rnatish">Qayta o&#39;rnatish</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="Hisoblash havolasini nusxalash">Ulashish</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="Natijalarni PDF ga eksport qilish">PDF ga eksport</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="Natijalarni CSV ga eksport qilish">CSV ga eksport</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="Avtomobil amortizatsiyasini hisoblash">Amortizatsiyani hisoblash</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="Shaklni qayta o&#39;rnatish">Qayta o&#39;rnatish</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="Hisoblash havolasini nusxalash">Ulashish</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="Natijalarni PDF ga eksport qilish">PDF ga eksport</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="Natijalarni CSV ga eksport qilish">CSV ga eksport</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">Avtomobil markasi</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="Masalan: Toyota" title="Avtomobil markasini kiriting, masalan Toyota yoki BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">Model</label>
+            <input type="text" id="carModel" placeholder="Masalan: Camry" title="Avtomobil modelini kiriting, masalan Camry yoki X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">Foydalanish turi</label>
+            <select id="usageType" title="Avtomobilning foydalanish turini tanlang">
+              
+              <option value="personal">Shaxsiy foydalanish</option>
+              
+              <option value="taxi">Taksi</option>
+              
+              <option value="commercial">Tijorat tashish</option>
+              
+              <option value="delivery">Yetkazib berish</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">Yoqilg&#39;i turi</label>
+            <select id="fuelType" title="Avtomobilning yoqilg&#39;i turini tanlang">
+              
+              <option value="petrol">Benzin</option>
+              
+              <option value="diesel">Dizel</option>
+              
+              <option value="hybrid">Gibrid</option>
+              
+              <option value="electric">Elektrik</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">Xizmat ko&#39;rsatish darajasi</label>
+            <select id="maintenanceLevel" title="Avtomobilning xizmat ko&#39;rsatish darajasini tanlang">
+              
+              <option value="excellent">A&#39;lo</option>
+              
+              <option value="good">Yaxshi</option>
+              
+              <option value="average">O&#39;rtacha</option>
+              
+              <option value="poor">Yomon</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">Iqlim zonasi</label>
+            <select id="climateZone" title="Ishlatish iqlim zonasini tanlang">
+              
+              <option value="mild">Mo&#39;tadil</option>
+              
+              <option value="cold">Sovuq</option>
+              
+              <option value="hot">Issiq</option>
+              
+              <option value="humid">Nam</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">Mintaqa</label>
+            <select id="region" title="Avtomobilning ishlatish mintaqasini tanlang">
+              
+              <option value="central">Markaziy (Moskva)</option>
+              
+              <option value="north">Shimoliy (Sankt-Peterburg)</option>
+              
+              <option value="siberia">Sibir</option>
+              
+              <option value="south">Janubiy</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">Yangi analoglarning joriy narxi (so&#39;m)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="O&#39;xshash yangi avtomobilning joriy narxini so&#39;mda kiriting">
+            <small>O&#39;xshash yangi avtomobilning hozirgi narxi</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">Bozor narxlarining o&#39;sishi (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="Sotib olingandan buyon yangi avtomobillarning narx o&#39;sishini foizda ko&#39;rsating">
+            <small>Sotib olingandan buyon yangi avtomobillarning narx o&#39;sishi</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">Yillik inflyatsiya (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="Egallab turgan davrda o&#39;rtacha yillik inflyatsiyani ko&#39;rsating">
+            <small>Egallab turgan har bir yil uchun o&#39;rtacha inflyatsiya</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">Modelga talab</label>
+            <select id="demandLevel" title="Modelga talab darajasini tanlang">
+              
+              <option value="high" >Yuqori talab</option>
+              
+              <option value="medium" selected>O&#39;rtacha talab</option>
+              
+              <option value="low" >Past talab</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">Texnik holat</label>
+            <select id="technicalCondition" title="Avtomobilning texnik holatini tanlang">
+              
+              <option value="excellent" selected>A&#39;lo (original)</option>
+              
+              <option value="good" >Yaxshi (kichik nuqsonlar)</option>
+              
+              <option value="average" >O&#39;rtacha (ta&#39;mirlangan)</option>
+              
+              <option value="poor" >Yomon (baxtsiz hodisali)</option>
+              
+            </select>
+            <small>Baxtsiz hodisalar, ta&#39;mirlash, qayta bo&#39;yashni hisobga oladi</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>Hisoblash natijalari</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 so&#39;m</div>
@@ -465,6 +463,7 @@
             <div class="result-label">Oylik amortizatsiya</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

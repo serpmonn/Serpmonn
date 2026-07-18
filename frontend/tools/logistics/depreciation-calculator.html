@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="₽" data-month="мес">
     <!-- Меню -->
@@ -298,163 +278,181 @@
     <div class="calculator-container">
       <h2>Введите параметры автомобиля</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">Марка автомобиля</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="Например: Toyota" title="Введите марку автомобиля, например, Toyota или BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">Модель</label>
-          <input type="text" id="carModel" placeholder="Например: Camry" title="Введите модель автомобиля, например, Camry или X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">Год выпуска</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="Введите год выпуска автомобиля (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="Введите год выпуска автомобиля (1990–2026)">
         </div>
         <div class="input-group">
           <label for="initialPrice">Начальная стоимость (₽)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="Введите начальную стоимость автомобиля в рублях">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="Введите начальную стоимость автомобиля в рублях">
         </div>
         <div class="input-group">
           <label for="currentMileage">Текущий пробег (км)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="Введите текущий пробег автомобиля в километрах">
-        </div>
-        <div class="input-group">
-          <label for="usageType">Тип использования</label>
-          <select id="usageType" title="Выберите тип использования автомобиля">
-            
-            <option value="personal">Личное использование</option>
-            
-            <option value="taxi">Такси</option>
-            
-            <option value="commercial">Коммерческие перевозки</option>
-            
-            <option value="delivery">Доставка</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">Тип топлива</label>
-          <select id="fuelType" title="Выберите тип топлива автомобиля">
-            
-            <option value="petrol">Бензин</option>
-            
-            <option value="diesel">Дизель</option>
-            
-            <option value="hybrid">Гибрид</option>
-            
-            <option value="electric">Электро</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">Уровень обслуживания</label>
-          <select id="maintenanceLevel" title="Выберите уровень обслуживания автомобиля">
-            
-            <option value="excellent">Отличный</option>
-            
-            <option value="good">Хороший</option>
-            
-            <option value="average">Средний</option>
-            
-            <option value="poor">Плохой</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">Климатическая зона</label>
-          <select id="climateZone" title="Выберите климатическую зону эксплуатации">
-            
-            <option value="mild">Умеренная</option>
-            
-            <option value="cold">Холодная</option>
-            
-            <option value="hot">Жаркая</option>
-            
-            <option value="humid">Влажная</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">Регион</label>
-          <select id="region" title="Выберите регион эксплуатации автомобиля">
-            
-            <option value="central">Центральный (Москва)</option>
-            
-            <option value="north">Север (СПб)</option>
-            
-            <option value="siberia">Сибирь</option>
-            
-            <option value="south">Юг</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">Текущая цена новых аналогов (₽)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="Введите текущую цену аналогичного нового автомобиля в рублях">
-          <small style="color: #6c757d; font-size: 12px;">Цена аналогичного нового автомобиля сейчас</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">Рыночный рост цен (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="Укажите рост цен на новые автомобили с момента покупки в процентах">
-          <small style="color: #6c757d; font-size: 12px;">Рост цен на новые авто с момента покупки</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">Годовая инфляция (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="Укажите среднюю годовую инфляцию за период владения">
-          <small style="color: #6c757d; font-size: 12px;">Средняя инфляция за год владения</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">Спрос на модель</label>
-          <select id="demandLevel" title="Выберите уровень спроса на модель">
-            
-            <option value="high" >Высокий спрос</option>
-            
-            <option value="medium" selected>Средний спрос</option>
-            
-            <option value="low" >Низкий спрос</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">Техническое состояние</label>
-          <select id="technicalCondition" title="Выберите техническое состояние автомобиля">
-            
-            <option value="excellent" selected>Отличное (оригинал)</option>
-            
-            <option value="good" >Хорошее (небольшие дефекты)</option>
-            
-            <option value="average" >Среднее (ремонтировался)</option>
-            
-            <option value="poor" >Плохое (аварийный)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">Учитывает аварии, ремонты, перекраску</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="Введите текущий пробег автомобиля в километрах">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="Рассчитать амортизацию автомобиля">Рассчитать амортизацию</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="Сбросить форму">Сбросить</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="Скопировать ссылку на расчёт">Поделиться</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="Экспортировать результаты в PDF">Экспорт в PDF</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="Экспортировать результаты в CSV">Экспорт в CSV</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="Рассчитать амортизацию автомобиля">Рассчитать амортизацию</button>
+        <details class="more-actions">
+          <summary>Ещё</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="Сбросить форму">Сбросить</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="Скопировать ссылку на расчёт">Поделиться</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="Экспортировать результаты в PDF">Экспорт в PDF</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="Экспортировать результаты в CSV">Экспорт в CSV</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Дополнительно</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">Марка автомобиля</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="Например: Toyota" title="Введите марку автомобиля, например, Toyota или BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">Модель</label>
+            <input type="text" id="carModel" placeholder="Например: Camry" title="Введите модель автомобиля, например, Camry или X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">Тип использования</label>
+            <select id="usageType" title="Выберите тип использования автомобиля">
+              
+              <option value="personal">Личное использование</option>
+              
+              <option value="taxi">Такси</option>
+              
+              <option value="commercial">Коммерческие перевозки</option>
+              
+              <option value="delivery">Доставка</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">Тип топлива</label>
+            <select id="fuelType" title="Выберите тип топлива автомобиля">
+              
+              <option value="petrol">Бензин</option>
+              
+              <option value="diesel">Дизель</option>
+              
+              <option value="hybrid">Гибрид</option>
+              
+              <option value="electric">Электро</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">Уровень обслуживания</label>
+            <select id="maintenanceLevel" title="Выберите уровень обслуживания автомобиля">
+              
+              <option value="excellent">Отличный</option>
+              
+              <option value="good">Хороший</option>
+              
+              <option value="average">Средний</option>
+              
+              <option value="poor">Плохой</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">Климатическая зона</label>
+            <select id="climateZone" title="Выберите климатическую зону эксплуатации">
+              
+              <option value="mild">Умеренная</option>
+              
+              <option value="cold">Холодная</option>
+              
+              <option value="hot">Жаркая</option>
+              
+              <option value="humid">Влажная</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">Регион</label>
+            <select id="region" title="Выберите регион эксплуатации автомобиля">
+              
+              <option value="central">Центральный (Москва)</option>
+              
+              <option value="north">Север (СПб)</option>
+              
+              <option value="siberia">Сибирь</option>
+              
+              <option value="south">Юг</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">Текущая цена новых аналогов (₽)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="Введите текущую цену аналогичного нового автомобиля в рублях">
+            <small>Цена аналогичного нового автомобиля сейчас</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">Рыночный рост цен (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="Укажите рост цен на новые автомобили с момента покупки в процентах">
+            <small>Рост цен на новые авто с момента покупки</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">Годовая инфляция (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="Укажите среднюю годовую инфляцию за период владения">
+            <small>Средняя инфляция за год владения</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">Спрос на модель</label>
+            <select id="demandLevel" title="Выберите уровень спроса на модель">
+              
+              <option value="high" >Высокий спрос</option>
+              
+              <option value="medium" selected>Средний спрос</option>
+              
+              <option value="low" >Низкий спрос</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">Техническое состояние</label>
+            <select id="technicalCondition" title="Выберите техническое состояние автомобиля">
+              
+              <option value="excellent" selected>Отличное (оригинал)</option>
+              
+              <option value="good" >Хорошее (небольшие дефекты)</option>
+              
+              <option value="average" >Среднее (ремонтировался)</option>
+              
+              <option value="poor" >Плохое (аварийный)</option>
+              
+            </select>
+            <small>Учитывает аварии, ремонты, перекраску</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>Результаты расчёта</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Амортизация на 1 км</div>
+        </div>
+        <p class="result-disclaimer">Ориентировочный расчёт, не оценка дилера или страховщика.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ₽</div>
@@ -473,6 +471,7 @@
             <div class="result-label">Месячная амортизация</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -526,7 +525,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

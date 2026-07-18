@@ -229,27 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css">
-    
-    <!-- Инлайн-стили только для рекламных блоков (необходимы для корректного отображения рекламы) -->
-    <style>
-      .ad-top-banner .mrg-tag { 
-        width: 970px !important; 
-        height: 250px !important; 
-      }
-      @media (max-width: 1199px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 728px !important; 
-          height: 90px !important; 
-        } 
-      }
-      @media (max-width: 768px) { 
-        .ad-top-banner .mrg-tag { 
-          width: 320px !important; 
-          height: 50px !important; 
-        } 
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
   </head>
   <body class="depreciation-calculator" data-currency="৳" data-month="মাস">
     <!-- Меню -->
@@ -290,163 +270,181 @@
     <div class="calculator-container">
       <h2>গাড়ির প্যারামিটার লিখুন</h2>
       <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
-          <label for="carBrand">গাড়ির ব্র্যান্ড</label>
-          <input type="text" id="carBrand" list="carBrands" placeholder="উদাহরণ: Toyota" title="গাড়ির ব্র্যান্ড লিখুন, উদাহরণস্বরূপ Toyota বা BMW">
-          <datalist id="carBrands">
-            
-            <option value="Toyota">
-            
-            <option value="Lada">
-            
-            <option value="Hyundai">
-            
-            <option value="BMW">
-            
-            <option value="Mercedes">
-            
-          </datalist>
-        </div>
-        <div class="input-group">
-          <label for="carModel">মডেল</label>
-          <input type="text" id="carModel" placeholder="উদাহরণ: Camry" title="গাড়ির মডেল লিখুন, উদাহরণস্বরূপ Camry বা X5">
-        </div>
-        <div class="input-group">
           <label for="carYear">উত্পাদনের বছর</label>
-          <input type="number" id="carYear" min="1990" max="2025" value="2020" title="উত্পাদনের বছর লিখুন (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="উত্পাদনের বছর লিখুন (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">প্রাথমিক মূল্য (৳)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" title="টাকায় গাড়ির প্রাথমিক মূল্য লিখুন">
+          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="টাকায় গাড়ির প্রাথমিক মূল্য লিখুন">
         </div>
         <div class="input-group">
           <label for="currentMileage">বর্তমান মাইলেজ (কিমি)</label>
-          <input type="number" id="currentMileage" placeholder="50000" min="0" title="কিলোমিটারে বর্তমান মাইলেজ লিখুন">
-        </div>
-        <div class="input-group">
-          <label for="usageType">ব্যবহারের ধরন</label>
-          <select id="usageType" title="গাড়ির ব্যবহারের ধরন নির্বাচন করুন">
-            
-            <option value="personal">ব্যক্তিগত ব্যবহার</option>
-            
-            <option value="taxi">ট্যাক্সি</option>
-            
-            <option value="commercial">বাণিজ্যিক পরিবহন</option>
-            
-            <option value="delivery">ডেলিভারি</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="fuelType">জ্বালানির ধরন</label>
-          <select id="fuelType" title="গাড়ির জ্বালানির ধরন নির্বাচন করুন">
-            
-            <option value="petrol">পেট্রোল</option>
-            
-            <option value="diesel">ডিজেল</option>
-            
-            <option value="hybrid">হাইব্রিড</option>
-            
-            <option value="electric">বৈদ্যুতিক</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="maintenanceLevel">রক্ষণাবেক্ষণের স্তর</label>
-          <select id="maintenanceLevel" title="গাড়ির রক্ষণাবেক্ষণের স্তর নির্বাচন করুন">
-            
-            <option value="excellent">চমৎকার</option>
-            
-            <option value="good">ভাল</option>
-            
-            <option value="average">গড়</option>
-            
-            <option value="poor">খারাপ</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="climateZone">জলবায়ু অঞ্চল</label>
-          <select id="climateZone" title="অপারেশন জলবায়ু অঞ্চল নির্বাচন করুন">
-            
-            <option value="mild">মৃদু</option>
-            
-            <option value="cold">ঠান্ডা</option>
-            
-            <option value="hot">গরম</option>
-            
-            <option value="humid">আর্দ্র</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="region">অঞ্চল</label>
-          <select id="region" title="গাড়ির অপারেশন অঞ্চল নির্বাচন করুন">
-            
-            <option value="central">কেন্দ্রীয় (মস্কো)</option>
-            
-            <option value="north">উত্তর (সেন্ট পিটার্সবার্গ)</option>
-            
-            <option value="siberia">সাইবেরিয়া</option>
-            
-            <option value="south">দক্ষিণ</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="currentNewPrice">নতুন অ্যানালগের বর্তমান মূল্য (৳)</label>
-          <input type="number" id="currentNewPrice" placeholder="900000" min="100000" title="টাকায় অনুরূপ নতুন গাড়ির বর্তমান মূল্য লিখুন">
-          <small style="color: #6c757d; font-size: 12px;">এখন অনুরূপ নতুন গাড়ির মূল্য</small>
-        </div>
-        <div class="input-group">
-          <label for="marketGrowth">বাজার মূল্য বৃদ্ধি (%)</label>
-          <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" title="ক্রয়ের সময় থেকে নতুন গাড়ির মূল্য বৃদ্ধি শতাংশে নির্দিষ্ট করুন">
-          <small style="color: #6c757d; font-size: 12px;">ক্রয়ের সময় থেকে নতুন গাড়ির মূল্য বৃদ্ধি</small>
-        </div>
-        <div class="input-group">
-          <label for="inflationRate">বাৎসরিক মুদ্রাস্ফীতি (%)</label>
-          <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" title="মালিকানাধীন সময়কালে গড় বার্ষিক মুদ্রাস্ফীতি নির্দিষ্ট করুন">
-          <small style="color: #6c757d; font-size: 12px;">মালিকানাধীন প্রতিবছরের গড় মুদ্রাস্ফীতি</small>
-        </div>
-        <div class="input-group">
-          <label for="demandLevel">মডেলের চাহিদা</label>
-          <select id="demandLevel" title="মডেলের চাহিদার স্তর নির্বাচন করুন">
-            
-            <option value="high" >উচ্চ চাহিদা</option>
-            
-            <option value="medium" selected>মধ্যম চাহিদা</option>
-            
-            <option value="low" >নিম্ন চাহিদা</option>
-            
-          </select>
-        </div>
-        <div class="input-group">
-          <label for="technicalCondition">প্রযুক্তিগত অবস্থা</label>
-          <select id="technicalCondition" title="গাড়ির প্রযুক্তিগত অবস্থা নির্বাচন করুন">
-            
-            <option value="excellent" selected>চমৎকার (মূল)</option>
-            
-            <option value="good" >ভাল (ছোটখাটো ত্রুটি)</option>
-            
-            <option value="average" >গড় (মেরামত করা হয়েছে)</option>
-            
-            <option value="poor" >খারাপ (দুর্ঘটনায় ক্ষতিগ্রস্ত)</option>
-            
-          </select>
-          <small style="color: #6c757d; font-size: 12px;">দুর্ঘটনা, মেরামত, রঙ করার বিষয়টি বিবেচনা করে</small>
+          <input type="number" id="currentMileage" placeholder="50000" min="0" inputmode="numeric" title="কিলোমিটারে বর্তমান মাইলেজ লিখুন">
         </div>
       </div>
-      <div style="text-align: center;">
-        <button class="calculate-btn" onclick="calculateDepreciation()" aria-label="গাড়ির অবচয় গণনা করুন">অবচয় গণনা করুন</button>
-        <button class="reset-btn" onclick="resetForm()" aria-label="ফর্ম রিসেট করুন">রিসেট</button>
-        <button class="share-btn" onclick="copyShareLink()" aria-label="গণনা লিঙ্ক কপি করুন">শেয়ার করুন</button>
-        <button class="export-btn" onclick="exportToPDF()" aria-label="ফলাফল PDF এ রপ্তানি করুন">PDF এ রপ্তানি</button>
-        <button class="csv-btn" onclick="exportToCSV()" aria-label="ফলাফল CSV এ রপ্তানি করুন">CSV এ রপ্তানি</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="গাড়ির অবচয় গণনা করুন">অবচয় গণনা করুন</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" onclick="resetForm()" aria-label="ফর্ম রিসেট করুন">রিসেট</button>
+            <button type="button" class="share-btn" onclick="copyShareLink()" aria-label="গণনা লিঙ্ক কপি করুন">শেয়ার করুন</button>
+            <button type="button" class="export-btn" onclick="exportToPDF()" aria-label="ফলাফল PDF এ রপ্তানি করুন">PDF এ রপ্তানি</button>
+            <button type="button" class="csv-btn" onclick="exportToCSV()" aria-label="ফলাফল CSV এ রপ্তানি করুন">CSV এ রপ্তানি</button>
+          </div>
+        </details>
       </div>
+
+      <details class="optional-fields">
+        <summary>Additional options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="carBrand">গাড়ির ব্র্যান্ড</label>
+            <input type="text" id="carBrand" list="carBrands" placeholder="উদাহরণ: Toyota" title="গাড়ির ব্র্যান্ড লিখুন, উদাহরণস্বরূপ Toyota বা BMW" autocomplete="off">
+            <datalist id="carBrands">
+              
+              <option value="Toyota">
+              
+              <option value="Lada">
+              
+              <option value="Hyundai">
+              
+              <option value="BMW">
+              
+              <option value="Mercedes">
+              
+            </datalist>
+          </div>
+          <div class="input-group">
+            <label for="carModel">মডেল</label>
+            <input type="text" id="carModel" placeholder="উদাহরণ: Camry" title="গাড়ির মডেল লিখুন, উদাহরণস্বরূপ Camry বা X5" autocomplete="off">
+          </div>
+          <div class="input-group">
+            <label for="usageType">ব্যবহারের ধরন</label>
+            <select id="usageType" title="গাড়ির ব্যবহারের ধরন নির্বাচন করুন">
+              
+              <option value="personal">ব্যক্তিগত ব্যবহার</option>
+              
+              <option value="taxi">ট্যাক্সি</option>
+              
+              <option value="commercial">বাণিজ্যিক পরিবহন</option>
+              
+              <option value="delivery">ডেলিভারি</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="fuelType">জ্বালানির ধরন</label>
+            <select id="fuelType" title="গাড়ির জ্বালানির ধরন নির্বাচন করুন">
+              
+              <option value="petrol">পেট্রোল</option>
+              
+              <option value="diesel">ডিজেল</option>
+              
+              <option value="hybrid">হাইব্রিড</option>
+              
+              <option value="electric">বৈদ্যুতিক</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="maintenanceLevel">রক্ষণাবেক্ষণের স্তর</label>
+            <select id="maintenanceLevel" title="গাড়ির রক্ষণাবেক্ষণের স্তর নির্বাচন করুন">
+              
+              <option value="excellent">চমৎকার</option>
+              
+              <option value="good">ভাল</option>
+              
+              <option value="average">গড়</option>
+              
+              <option value="poor">খারাপ</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climateZone">জলবায়ু অঞ্চল</label>
+            <select id="climateZone" title="অপারেশন জলবায়ু অঞ্চল নির্বাচন করুন">
+              
+              <option value="mild">মৃদু</option>
+              
+              <option value="cold">ঠান্ডা</option>
+              
+              <option value="hot">গরম</option>
+              
+              <option value="humid">আর্দ্র</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="region">অঞ্চল</label>
+            <select id="region" title="গাড়ির অপারেশন অঞ্চল নির্বাচন করুন">
+              
+              <option value="central">কেন্দ্রীয় (মস্কো)</option>
+              
+              <option value="north">উত্তর (সেন্ট পিটার্সবার্গ)</option>
+              
+              <option value="siberia">সাইবেরিয়া</option>
+              
+              <option value="south">দক্ষিণ</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="currentNewPrice">নতুন অ্যানালগের বর্তমান মূল্য (৳)</label>
+            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="টাকায় অনুরূপ নতুন গাড়ির বর্তমান মূল্য লিখুন">
+            <small>এখন অনুরূপ নতুন গাড়ির মূল্য</small>
+          </div>
+          <div class="input-group">
+            <label for="marketGrowth">বাজার মূল্য বৃদ্ধি (%)</label>
+            <input type="number" id="marketGrowth" placeholder="40" min="0" max="200" value="40" inputmode="decimal" title="ক্রয়ের সময় থেকে নতুন গাড়ির মূল্য বৃদ্ধি শতাংশে নির্দিষ্ট করুন">
+            <small>ক্রয়ের সময় থেকে নতুন গাড়ির মূল্য বৃদ্ধি</small>
+          </div>
+          <div class="input-group">
+            <label for="inflationRate">বাৎসরিক মুদ্রাস্ফীতি (%)</label>
+            <input type="number" id="inflationRate" placeholder="5" min="0" max="50" value="5" inputmode="decimal" title="মালিকানাধীন সময়কালে গড় বার্ষিক মুদ্রাস্ফীতি নির্দিষ্ট করুন">
+            <small>মালিকানাধীন প্রতিবছরের গড় মুদ্রাস্ফীতি</small>
+          </div>
+          <div class="input-group">
+            <label for="demandLevel">মডেলের চাহিদা</label>
+            <select id="demandLevel" title="মডেলের চাহিদার স্তর নির্বাচন করুন">
+              
+              <option value="high" >উচ্চ চাহিদা</option>
+              
+              <option value="medium" selected>মধ্যম চাহিদা</option>
+              
+              <option value="low" >নিম্ন চাহিদা</option>
+              
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="technicalCondition">প্রযুক্তিগত অবস্থা</label>
+            <select id="technicalCondition" title="গাড়ির প্রযুক্তিগত অবস্থা নির্বাচন করুন">
+              
+              <option value="excellent" selected>চমৎকার (মূল)</option>
+              
+              <option value="good" >ভাল (ছোটখাটো ত্রুটি)</option>
+              
+              <option value="average" >গড় (মেরামত করা হয়েছে)</option>
+              
+              <option value="poor" >খারাপ (দুর্ঘটনায় ক্ষতিগ্রস্ত)</option>
+              
+            </select>
+            <small>দুর্ঘটনা, মেরামত, রঙ করার বিষয়টি বিবেচনা করে</small>
+          </div>
+        </div>
+      </details>
+
       <div id="results" class="results hidden" aria-live="polite">
         <h3>গণনার ফলাফল</h3>
-        <canvas id="depreciationChart" style="max-height: 300px; margin-top: 20px;"></canvas>
+        <div class="result-hero">
+          <div class="result-value" id="costPerKm">—</div>
+          <div class="result-label">Depreciation per 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate estimate, not a dealer or insurer valuation.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="currentValue">0 ৳</div>
@@ -465,6 +463,7 @@
             <div class="result-label">মাসিক অবচয়</div>
           </div>
         </div>
+        <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -512,7 +511,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=2" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
