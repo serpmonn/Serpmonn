@@ -52,6 +52,9 @@ export function randomShortCode(length = 4) {
     return out;
 }
 
+/** Format for MySQL DATETIME in the process local timezone (matches mysql2 + session NOW()). */
 export function toMysqlDateTime(date) {
-    return date.toISOString().slice(0, 19).replace('T', ' ');
+    const d = date instanceof Date ? date : new Date(date);
+    const pad = (n) => String(n).padStart(2, '0');
+    return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }

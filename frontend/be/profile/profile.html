@@ -295,12 +295,38 @@
         </div>
       </div>
 
+      <div class="profile-panel-block" id="messengerLinkBlock">
+        <h2 class="profile-panel__heading">Serpmonn Messenger</h2>
+        <p class="profile-panel__hint" id="messengerLinkHint">Привяжите мессенджер, чтобы входить на сайт без пароля и SMS.</p>
+        <p class="profile-panel__hint" id="messengerLinkStatus">Проверяем…</p>
+        <div class="profile-onnmail-actions">
+          <button id="messengerLinkButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm">
+            Привязать
+          </button>
+          <button id="messengerUnlinkButton" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" hidden>
+            Отвязать
+          </button>
+        </div>
+      </div>
+
       <div class="profile-panel-block profile-panel-block--logout">
         <button id="logoutButton" type="button" class="profile-btn profile-btn--danger profile-btn--block">
           Выйсці з акаўнта
         </button>
       </div>
     </section>
+
+    <div id="messengerLinkModal" class="messenger-modal" hidden>
+      <div class="messenger-modal__backdrop" data-messenger-link-close></div>
+      <div class="messenger-modal__card" role="dialog" aria-modal="true" aria-labelledby="messengerLinkTitle">
+        <h3 id="messengerLinkTitle">Привязка Serpmonn Messenger</h3>
+        <p class="messenger-modal__hint">Отсканируйте QR в мессенджере</p>
+        <canvas id="messengerLinkQrCanvas" width="220" height="220" aria-label="QR для привязки"></canvas>
+        <p class="messenger-modal__code">Код: <strong id="messengerLinkShortCode">————</strong></p>
+        <p id="messengerLinkModalStatus" class="messenger-modal__status">Ожидаем подтверждение…</p>
+        <button type="button" class="profile-btn profile-btn--ghost profile-btn--block" data-messenger-link-close>Отмена</button>
+      </div>
+    </div>
 
     <!-- Находки -->
     <section id="tab-findings" class="profile-panel" role="tabpanel" data-profile-panel="findings" aria-labelledby="tab-btn-findings" hidden>

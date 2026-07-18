@@ -395,6 +395,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 12px;
   padding: 12px 0;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -404,19 +405,130 @@
   border-bottom: none;
 }
 
-.depreciation-calculator .history-item button {
-  background: linear-gradient(90deg, #dc3545, #ef4444);
-  color: #fff;
+.depreciation-calculator .history-item__meta {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: #374151;
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.depreciation-calculator .history-item__actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 8px;
+  align-items: center;
+}
+
+.depreciation-calculator .history-item button,
+.depreciation-calculator .history-load-btn,
+.depreciation-calculator .history-delete-btn {
+  flex: 0 0 auto;
+  position: relative;
+  z-index: 1;
   border: none;
   padding: 8px 12px;
   border-radius: 999px;
   cursor: pointer;
   font-weight: 600;
   font-size: 13px;
+  white-space: nowrap;
 }
 
-.depreciation-calculator .history-item button:hover {
+.depreciation-calculator .history-load-btn {
+  background: linear-gradient(90deg, #dc3545, #ef4444);
+  color: #fff;
+}
+
+.depreciation-calculator .history-load-btn:hover {
   background: linear-gradient(90deg, #b91c1c, #dc3545);
+}
+
+.depreciation-calculator .history-delete-btn {
+  background: #fff;
+  color: #6b7280;
+  border: 1px solid #e5e7eb;
+}
+
+.depreciation-calculator .history-delete-btn:hover {
+  background: #f3f4f6;
+  color: #111827;
+}
+
+.depreciation-calculator .formula-plain {
+  margin-top: 16px;
+  padding: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.depreciation-calculator .formula-plain h4 {
+  margin: 0 0 8px;
+  font-size: 15px;
+  color: #111827;
+}
+
+.depreciation-calculator .formula-plain p {
+  margin: 0 0 8px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: #374151;
+}
+
+.depreciation-calculator .formula-plain p:last-child {
+  margin-bottom: 0;
+}
+
+.depreciation-calculator .tool-faq {
+  max-width: 800px;
+  width: 100%;
+  margin: 16px auto 0;
+  padding: 16px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+  box-sizing: border-box;
+  align-self: center;
+}
+
+.depreciation-calculator .tool-faq h2 {
+  margin: 0 0 12px;
+  font-size: 1.15rem;
+  color: #111827;
+}
+
+.depreciation-calculator .tool-faq__item {
+  border-top: 1px solid #e5e7eb;
+  padding: 10px 0;
+}
+
+.depreciation-calculator .tool-faq__item:first-of-type {
+  border-top: none;
+}
+
+.depreciation-calculator .tool-faq__item summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #111827;
+  list-style: none;
+}
+
+.depreciation-calculator .tool-faq__item summary::-webkit-details-marker {
+  display: none;
+}
+
+.depreciation-calculator .tool-faq__item p {
+  margin: 8px 0 0;
+  color: #4b5563;
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.depreciation-calculator .money-input {
+  font-variant-numeric: tabular-nums;
 }
 
 .depreciation-calculator .info-tips {

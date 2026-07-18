@@ -65,28 +65,41 @@ async function ensureSchema() {
         `);
 
         // Best-effort columns on users (migration script is source of truth for prod).
-        try {
+        // Check first to avoid noisy ER_DUP_* errors from the shared query() logger.
+        const colRows = await query(
+            `SELECT COLUMN_NAME AS name
+             FROM information_schema.COLUMNS
+             WHERE TABLE_SCHEMA = DATABASE()
+               AND TABLE_NAME = 'users'
+               AND COLUMN_NAME IN ('messenger_user_id', 'messenger_sign_pub')`
+        );
+        const cols = new Set(colRows.map((r) => r.name));
+        if (!cols.has('messenger_user_id')) {
             await query(
                 'ALTER TABLE users ADD COLUMN messenger_user_id VARCHAR(64) NULL DEFAULT NULL'
             );
-        } catch (err) {
-            if (err?.code !== 'ER_DUP_FIELDNAME' && err?.errno !== 1060) throw err;
         }
-        try {
+        if (!cols.has('messenger_sign_pub')) {
             await query(
                 'ALTER TABLE users ADD COLUMN messenger_sign_pub VARCHAR(128) NULL DEFAULT NULL'
             );
-        } catch (err) {
-            if (err?.code !== 'ER_DUP_FIELDNAME' && err?.errno !== 1060) throw err;
         }
-        try {
-            await query(
-                'CREATE UNIQUE INDEX uniq_users_messenger_user_id ON users (messenger_user_id)'
-            );
-        } catch (err) {
-            if (err?.code !== 'ER_DUP_KEYNAME' && err?.errno !== 1061) {
-                // Duplicate values or missing privilege — ignore in soft-ensure path.
-                if (err?.code !== 'ER_DUP_ENTRY' && err?.errno !== 1062) {
+
+        const idxRows = await query(
+            `SELECT COUNT(*) AS cnt
+             FROM information_schema.STATISTICS
+             WHERE TABLE_SCHEMA = DATABASE()
+               AND TABLE_NAME = 'users'
+               AND INDEX_NAME = 'uniq_users_messenger_user_id'`
+        );
+        if (!(idxRows[0]?.cnt > 0)) {
+            try {
+                await query(
+                    'CREATE UNIQUE INDEX uniq_users_messenger_user_id ON users (messenger_user_id)'
+                );
+            } catch (err) {
+                if (err?.code !== 'ER_DUP_KEYNAME' && err?.errno !== 1061
+                    && err?.code !== 'ER_DUP_ENTRY' && err?.errno !== 1062) {
                     console.warn('messenger-auth ensureSchema index:', err.message);
                 }
             }

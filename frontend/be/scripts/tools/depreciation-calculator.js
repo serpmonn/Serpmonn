@@ -42,6 +42,41 @@ function getResultText(id) {
   return (document.getElementById(id)?.textContent || '').trim();
 }
 
+function parseNumericInput(id) {
+  const raw = document.getElementById(id)?.value || '';
+  const cleaned = String(raw).replace(/[\s\u00A0]/g, '').replace(',', '.');
+  if (!cleaned) return NaN;
+  return parseFloat(cleaned);
+}
+
+function formatGroupedNumber(value) {
+  const digits = String(value ?? '').replace(/[^\d]/g, '');
+  if (!digits) return '';
+  return digits.replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+
+function bindMoneyInputs() {
+  document.querySelectorAll('.money-input').forEach((el) => {
+    const apply = () => {
+      el.value = formatGroupedNumber(el.value);
+    };
+    el.addEventListener('input', apply);
+    el.addEventListener('blur', apply);
+    apply();
+  });
+}
+
+function setCurrentYearMax() {
+  const year = new Date().getFullYear();
+  const yearInput = document.getElementById('carYear');
+  if (!yearInput) return;
+  yearInput.max = String(year);
+  yearInput.title = t('depreciation.yearRangeTitle', { year });
+  const current = parseInt(yearInput.value || '', 10);
+  if (!Number.isNaN(current) && current > year) yearInput.value = String(year);
+}
+
+
 async function loadChartJs() {
   if (!window.Chart) {
     await import('https://cdn.jsdelivr.net/npm/chart.js');
@@ -88,7 +123,7 @@ function getExportData() {
     model: model || '—',
     vehicle,
     year: getFieldValue('carYear') || '—',
-    initialPrice: getFieldValue('initialPrice') || '—',
+    initialPrice: formatGroupedNumber(parseNumericInput('initialPrice')) || getFieldValue('initialPrice') || '—',
     mileage: getFieldValue('currentMileage') || '—',
     currentValue: getResultText('currentValue') || '—',
     totalDepreciation: getResultText('totalDepreciation') || '—',
@@ -128,15 +163,25 @@ async function exportToPDF() {
     doc.addFont('DejaVuSans-Bold.ttf', 'DejaVuSans', 'bold');
 
     const margin = 16;
+    const pageHeight = 297;
     const maxWidth = 210 - margin * 2;
     let y = 20;
 
-    const writeLine = (text, { size = 11, style = 'normal', gap = 7 } = {}) => {
+    const ensureSpace = (need = 10) => {
+      if (y + need <= pageHeight - margin) return;
+      doc.addPage();
+      y = 20;
+    };
+
+    const writeLine = (textLine, { size = 11, style = 'normal', gap = 7 } = {}) => {
       doc.setFont('DejaVuSans', style);
       doc.setFontSize(size);
-      const lines = doc.splitTextToSize(String(text), maxWidth);
-      doc.text(lines, margin, y);
-      y += gap * lines.length;
+      const lines = doc.splitTextToSize(String(textLine), maxWidth);
+      lines.forEach((line) => {
+        ensureSpace(gap + 2);
+        doc.text(line, margin, y);
+        y += gap;
+      });
     };
 
     writeLine(t('depreciation.pdfTitle'), { size: 16, style: 'bold', gap: 9 });
@@ -151,6 +196,39 @@ async function exportToPDF() {
     writeLine(t('depreciation.pdfTotalDepreciation', { value: data.totalDepreciation }));
     writeLine(t('depreciation.pdfPercent', { value: data.percent }));
     writeLine(t('depreciation.pdfMonthly', { value: data.monthly }));
+
+    const formulaBody = document.getElementById('formulaPlainBody')?.innerText?.trim();
+    if (formulaBody) {
+      y += 3;
+      writeLine(t('depreciation.formulaTitle'), { size: 12, style: 'bold' });
+      formulaBody.split(/\n+/).forEach((line) => writeLine(line, { size: 9, gap: 5 }));
+    }
+
+    const breakdownText = document.getElementById('breakdownList')?.innerText?.trim();
+    if (breakdownText) {
+      y += 3;
+      writeLine(t('depreciation.pdfBreakdownTitle'), { size: 12, style: 'bold' });
+      breakdownText.split(/\n+/).forEach((line) => {
+        if (line.trim()) writeLine(line.trim(), { size: 9, gap: 5 });
+      });
+    }
+
+    const chartCanvas = document.getElementById('depreciationChart');
+    if (chartCanvas && chartInstance) {
+      try {
+        const img = chartCanvas.toDataURL('image/png', 1.0);
+        const chartHeight = 62;
+        ensureSpace(chartHeight + 12);
+        y += 2;
+        writeLine(t('depreciation.pdfChartTitle'), { size: 12, style: 'bold' });
+        ensureSpace(chartHeight + 4);
+        doc.addImage(img, 'PNG', margin, y, maxWidth, chartHeight);
+        y += chartHeight + 4;
+      } catch (chartErr) {
+        console.warn('PDF chart export skipped', chartErr);
+      }
+    }
+
     y += 4;
     writeLine(t('depreciation.pdfNote'), { size: 9, gap: 5 });
     y += 4;
@@ -236,21 +314,23 @@ function copyShareLink() {
 }
 
 function calculateDepreciation(options) {
-  const shouldScroll = Boolean(options && typeof options === 'object' && !(options instanceof Event) && options.scroll);
+  const opts = (options && typeof options === 'object' && !(options instanceof Event)) ? options : {};
+  const shouldScroll = Boolean(opts.scroll);
+  const saveHistory = Boolean(opts.saveHistory);
   const errorMessage = document.getElementById('error-message');
   if (errorMessage) errorMessage.classList.add('hidden');
   const inputs = {
     carBrand: sanitizeInput(document.getElementById('carBrand')?.value || ''),
     carModel: sanitizeInput(document.getElementById('carModel')?.value || ''),
     carYear: parseInt(document.getElementById('carYear')?.value || '', 10),
-    initialPrice: parseFloat(document.getElementById('initialPrice')?.value || ''),
-    currentMileage: parseFloat(document.getElementById('currentMileage')?.value || ''),
+    initialPrice: parseNumericInput('initialPrice'),
+    currentMileage: parseNumericInput('currentMileage'),
     usageType: document.getElementById('usageType')?.value || 'personal',
     fuelType: document.getElementById('fuelType')?.value || 'petrol',
     maintenanceLevel: document.getElementById('maintenanceLevel')?.value || 'average',
     climateZone: document.getElementById('climateZone')?.value || 'mild',
     region: document.getElementById('region')?.value || 'south',
-    currentNewPrice: parseFloat(document.getElementById('currentNewPrice')?.value || ''),
+    currentNewPrice: parseNumericInput('currentNewPrice'),
     marketGrowth: parseFloat(document.getElementById('marketGrowth')?.value || ''),
     inflationRate: parseFloat(document.getElementById('inflationRate')?.value || ''),
     demandLevel: document.getElementById('demandLevel')?.value || 'medium',
@@ -315,12 +395,17 @@ function calculateDepreciation(options) {
 
   const cacheKey = JSON.stringify(inputs);
   if (calcCache.has(cacheKey)) {
-    const { currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation, totalDepreciationRate, breakdown } = calcCache.get(cacheKey);
-    displayResults(currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation, totalDepreciationRate, inputs);
+    const cached = calcCache.get(cacheKey);
+    const { currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation, totalDepreciationRate, breakdown, plainFormula } = cached;
+    displayResults(currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation, totalDepreciationRate, inputs, undefined, undefined, plainFormula);
     const bd = document.getElementById('breakdownList');
     if (bd) bd.innerHTML = breakdown;
     document.getElementById('results')?.classList.remove('hidden');
     document.getElementById('breakdown')?.classList.remove('hidden');
+    if (saveHistory) persistHistory(inputs, { currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation });
+    if (shouldScroll) {
+      document.getElementById('results')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
     return;
   }
   if (calcCache.size > 10) calcCache.delete(calcCache.keys().next().value);
@@ -393,16 +478,22 @@ function calculateDepreciation(options) {
       { usageMultipliers, fuelMultipliers, maintenanceMultipliers, climateMultipliers, regionMultipliers, demandMultipliers, technicalConditionMultipliers }
     );
 
-    displayResults(currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation, totalDepreciationRate, inputs, adjustedInitialPrice, batteryDepreciation);
+    const plainFormula = buildPlainFormula(inputs, {
+      ageInYears,
+      baseDepreciation,
+      mileageDepreciation,
+      totalDepreciationRate,
+      totalDepreciation,
+      currentValue
+    });
 
-    calcCache.set(cacheKey, { currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation, totalDepreciationRate, breakdown, timestamp: Date.now() });
+    displayResults(currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation, totalDepreciationRate, inputs, adjustedInitialPrice, batteryDepreciation, plainFormula);
+
+    calcCache.set(cacheKey, { currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation, totalDepreciationRate, breakdown, plainFormula, timestamp: Date.now() });
     for (const [key, value] of calcCache) if (Date.now() - value.timestamp > CACHE_TTL) calcCache.delete(key);
-    try {
-      const history = JSON.parse(localStorage.getItem('depreciationHistory') || '[]');
-      history.unshift({ ...inputs, timestamp: new Date().toISOString(), result: { currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation } });
-      if (history.length > 5) history.pop();
-      if (JSON.stringify(history).length < 5 * 1024 * 1024) localStorage.setItem('depreciationHistory', JSON.stringify(history));
-    } catch {}
+    if (saveHistory) {
+      persistHistory(inputs, { currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation });
+    }
 
     document.getElementById('results')?.classList.remove('loading', 'hidden');
     document.getElementById('breakdown')?.classList.remove('loading', 'hidden');
@@ -412,7 +503,7 @@ function calculateDepreciation(options) {
   }, 300);
 }
 
-function displayResults(currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation, totalDepreciationRate, inputs, adjustedInitialPrice, batteryDepreciation) {
+function displayResults(currentValue, totalDepreciation, depreciationPercent, monthlyDepreciation, totalDepreciationRate, inputs, adjustedInitialPrice, batteryDepreciation, plainFormula) {
   const cv = document.getElementById('currentValue');
   if (cv) cv.textContent = formatMoney(currentValue);
   const td = document.getElementById('totalDepreciation');
@@ -433,6 +524,8 @@ function displayResults(currentValue, totalDepreciation, depreciationPercent, mo
       perKmEl.textContent = '—';
     }
   }
+
+  renderPlainFormula(plainFormula);
 
   if (inputs.carBrand && inputs.carModel) {
     const metaDesc = document.querySelector('meta[name="description"]');
@@ -640,60 +733,211 @@ function showBreakdown(initialPrice, baseDepreciation, mileageDepreciation, batt
   return html;
 }
 
+const HISTORY_FIELD_IDS = [
+  'carBrand', 'carModel', 'carYear', 'initialPrice', 'currentMileage',
+  'usageType', 'fuelType', 'maintenanceLevel', 'climateZone', 'region',
+  'currentNewPrice', 'marketGrowth', 'inflationRate', 'demandLevel', 'technicalCondition'
+];
+
+function persistHistory(inputs, result) {
+  try {
+    const history = JSON.parse(localStorage.getItem('depreciationHistory') || '[]');
+    history.unshift({ ...inputs, timestamp: new Date().toISOString(), result });
+    if (history.length > 5) history.pop();
+    if (JSON.stringify(history).length < 5 * 1024 * 1024) {
+      localStorage.setItem('depreciationHistory', JSON.stringify(history));
+    }
+    renderHistory();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function deleteHistory(index) {
+  try {
+    const history = JSON.parse(localStorage.getItem('depreciationHistory') || '[]');
+    if (index < 0 || index >= history.length) return;
+    history.splice(index, 1);
+    localStorage.setItem('depreciationHistory', JSON.stringify(history));
+    renderHistory();
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+function buildPlainFormula(inputs, parts) {
+  const {
+    ageInYears,
+    baseDepreciation,
+    mileageDepreciation,
+    totalDepreciationRate,
+    totalDepreciation,
+    currentValue
+  } = parts;
+  const mileage = Number(inputs.currentMileage) || 0;
+  const perKm = mileage > 0
+    ? `${(totalDepreciation / mileage).toLocaleString(getLocale(), { maximumFractionDigits: 2, minimumFractionDigits: 2 })} ${getCurrency()}/км`
+    : '—';
+  return [
+    t('depreciation.formulaIntro'),
+    t('depreciation.formulaAge', {
+      years: Math.max(ageInYears, 0),
+      percent: (baseDepreciation * 100).toFixed(1)
+    }),
+    t('depreciation.formulaMileage', {
+      km: mileage.toLocaleString(getLocale()),
+      percent: (mileageDepreciation * 100).toFixed(1)
+    }),
+    t('depreciation.formulaFactors', {
+      usage: getSelectLabel('usageType', inputs.usageType),
+      fuel: getSelectLabel('fuelType', inputs.fuelType),
+      maintenance: getSelectLabel('maintenanceLevel', inputs.maintenanceLevel),
+      climate: getSelectLabel('climateZone', inputs.climateZone),
+      region: getSelectLabel('region', inputs.region),
+      demand: getSelectLabel('demandLevel', inputs.demandLevel),
+      condition: getSelectLabel('technicalCondition', inputs.technicalCondition)
+    }),
+    t('depreciation.formulaResult', {
+      percent: (totalDepreciationRate * 100).toFixed(1),
+      total: formatMoney(totalDepreciation),
+      value: formatMoney(currentValue),
+      perKm
+    })
+  ].join('\n');
+}
+
+function renderPlainFormula(plainFormula) {
+  const box = document.getElementById('formulaPlain');
+  const body = document.getElementById('formulaPlainBody');
+  if (!box || !body) return;
+  if (!plainFormula) {
+    box.classList.add('hidden');
+    body.replaceChildren();
+    return;
+  }
+  body.replaceChildren();
+  plainFormula.split('\n').forEach((line) => {
+    const p = document.createElement('p');
+    p.textContent = line;
+    body.appendChild(p);
+  });
+  box.classList.remove('hidden');
+}
+
 function loadHistory(index) {
   try {
     const history = JSON.parse(localStorage.getItem('depreciationHistory') || '[]');
     const entry = history[index];
-    Object.entries(entry || {}).forEach(([key, value]) => {
-      const el = document.getElementById(key);
-      if (el) el.value = value;
+    if (!entry) return;
+
+    let hasOptional = false;
+    HISTORY_FIELD_IDS.forEach((id) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const value = entry[id];
+      if (value == null || value === '' || Number.isNaN(value)) {
+        if (el.tagName === 'SELECT') return;
+        el.value = '';
+        return;
+      }
+      if (id === 'initialPrice' || id === 'currentNewPrice') {
+        el.value = formatGroupedNumber(value);
+      } else {
+        el.value = value;
+      }
+      if (!['carYear', 'initialPrice', 'currentMileage'].includes(id)) hasOptional = true;
     });
-    calculateDepreciation();
-  } catch {}
+
+    const optional = document.querySelector('.optional-fields');
+    if (optional && hasOptional) optional.open = true;
+
+    calculateDepreciation({ scroll: true, saveHistory: false });
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 function renderHistory() {
   try {
     const history = JSON.parse(localStorage.getItem('depreciationHistory') || '[]');
-    if (history.length === 0) return;
-    document.getElementById('history')?.classList.remove('hidden');
+    const section = document.getElementById('history');
     const list = document.getElementById('historyList');
-    if (!list) return;
+    if (!section || !list) return;
+    if (history.length === 0) {
+      section.classList.add('hidden');
+      list.replaceChildren();
+      return;
+    }
+    section.classList.remove('hidden');
     list.replaceChildren();
     history.forEach((entry, index) => {
       const li = document.createElement('li');
       li.className = 'history-item';
-      li.append(
-        document.createTextNode(
-          `${entry.carBrand || ''} ${entry.carModel || ''} (${entry.carYear || ''}) - ${new Date(entry.timestamp).toLocaleString(getLocale())}: ${formatMoney(entry.result?.currentValue)} `
-        )
-      );
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.textContent = t('depreciation.loadHistory');
-      btn.addEventListener('click', () => loadHistory(index));
-      li.appendChild(btn);
+
+      const meta = document.createElement('span');
+      meta.className = 'history-item__meta';
+      const title = [entry.carBrand, entry.carModel].filter(Boolean).join(' ') || t('depreciation.pdfTitle');
+      meta.textContent = `${title} (${entry.carYear || '—'}) · ${new Date(entry.timestamp).toLocaleString(getLocale())} · ${formatMoney(entry.result?.currentValue)}`;
+
+      const actions = document.createElement('div');
+      actions.className = 'history-item__actions';
+
+      const loadBtn = document.createElement('button');
+      loadBtn.type = 'button';
+      loadBtn.className = 'history-load-btn';
+      loadBtn.textContent = t('depreciation.loadHistory');
+      loadBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        loadHistory(index);
+      });
+
+      const deleteBtn = document.createElement('button');
+      deleteBtn.type = 'button';
+      deleteBtn.className = 'history-delete-btn';
+      deleteBtn.textContent = t('depreciation.deleteHistory');
+      deleteBtn.addEventListener('click', (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        deleteHistory(index);
+      });
+
+      actions.append(loadBtn, deleteBtn);
+      li.append(meta, actions);
       list.appendChild(li);
     });
-  } catch {}
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 document.addEventListener('DOMContentLoaded', async () => {
   t = await getPageT('depreciation');
+  setCurrentYearMax();
 
   const urlParams = new URLSearchParams(window.location.search);
   ['carBrand', 'carModel', 'carYear', 'initialPrice', 'currentMileage', 'usageType', 'fuelType', 'maintenanceLevel', 'climateZone', 'region', 'currentNewPrice', 'marketGrowth', 'inflationRate', 'demandLevel', 'technicalCondition'].forEach(id => {
     const value = urlParams.get(id);
-    if (value && document.getElementById(id)) document.getElementById(id).value = value;
+    if (value && document.getElementById(id)) {
+      const el = document.getElementById(id);
+      el.value = (id === 'initialPrice' || id === 'currentNewPrice') ? formatGroupedNumber(value) : value;
+    }
   });
   try {
     const last = JSON.parse(localStorage.getItem('lastDepreciation'));
-    if (last) Object.entries(last).forEach(([k, v]) => { const el = document.getElementById(k); if (el) el.value = v; });
+    if (last) {
+      Object.entries(last).forEach(([k, v]) => {
+        const el = document.getElementById(k);
+        if (!el) return;
+        el.value = (k === 'initialPrice' || k === 'currentNewPrice') ? formatGroupedNumber(v) : v;
+      });
+    }
   } catch {}
 
+  bindMoneyInputs();
   renderHistory();
 
-  if (urlParams.size > 0 || localStorage.getItem('lastDepreciation')) calculateDepreciation();
+  if (urlParams.size > 0 || localStorage.getItem('lastDepreciation')) calculateDepreciation({ saveHistory: false });
 
   document.querySelectorAll('.input-section input, .input-section select').forEach(input => {
     input.addEventListener('input', debounce(() => calculateDepreciation(), 500));
@@ -720,3 +964,4 @@ window.copyShareLink = copyShareLink;
 window.exportToPDF = exportToPDF;
 window.exportToCSV = exportToCSV;
 window.loadHistory = loadHistory;
+window.deleteHistory = deleteHistory;

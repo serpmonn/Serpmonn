@@ -1800,3 +1800,59 @@ button {
     flex: 0 0 auto;
   }
 }
+
+/* Messenger link modal (shared look with auth page) */
+.messenger-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.messenger-modal[hidden] {
+  display: none !important;
+}
+
+.messenger-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 20, 30, 0.45);
+}
+
+.messenger-modal__card {
+  position: relative;
+  width: min(100%, 380px);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  padding: 24px 20px 20px;
+  text-align: center;
+}
+
+.messenger-modal__card h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #333;
+}
+
+.messenger-modal__hint,
+.messenger-modal__code,
+.messenger-modal__status {
+  color: #555;
+  font-size: 15px;
+}
+
+.messenger-modal__card canvas {
+  display: block;
+  margin: 12px auto;
+  width: 220px;
+  height: 220px;
+}
+
+.messenger-modal__status {
+  margin-bottom: 16px;
+  min-height: 1.2em;
+}

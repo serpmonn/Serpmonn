@@ -1385,15 +1385,18 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function loadQrCodeLib() {
-    if (window.QRCode) return window.QRCode;
+    if (window.QRCode?.toCanvas) return window.QRCode;
     await new Promise((resolve, reject) => {
       const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js';
+      script.src = '/frontend/scripts/qrcode.min.js';
       script.async = true;
       script.onload = resolve;
-      script.onerror = reject;
+      script.onerror = () => reject(new Error('QR library failed to load'));
       document.body.appendChild(script);
     });
+    if (!window.QRCode?.toCanvas) {
+      throw new Error('QR library missing toCanvas');
+    }
     return window.QRCode;
   }
 

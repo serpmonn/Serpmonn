@@ -275,15 +275,18 @@ function setMessengerStatus(text) {
 }
 
 async function loadQrCodeLib() {
-  if (window.QRCode) return window.QRCode;
+  if (window.QRCode?.toCanvas) return window.QRCode;
   await new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js';
+    script.src = '/frontend/scripts/qrcode.min.js';
     script.async = true;
     script.onload = resolve;
-    script.onerror = reject;
+    script.onerror = () => reject(new Error('QR library failed to load'));
     document.body.appendChild(script);
   });
+  if (!window.QRCode?.toCanvas) {
+    throw new Error('QR library missing toCanvas');
+  }
   return window.QRCode;
 }
 
@@ -367,9 +370,14 @@ async function startMessengerLogin() {
     const codeEl = document.getElementById('messengerShortCode');
     if (codeEl) codeEl.textContent = data.shortCode || '————';
 
-    await renderMessengerQr(data.qrPayload);
     setMessengerModalOpen(true);
     startMessengerPolling(data.challengeId);
+    try {
+      await renderMessengerQr(data.qrPayload);
+    } catch (qrErr) {
+      console.error('messenger QR render error:', qrErr);
+      setMessengerStatus('QR не загрузился — используйте код ниже');
+    }
   } catch (e) {
     console.error('messenger login start error:', e);
     showMessage(t('login.connectionError'));
