@@ -229,7 +229,7 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=14">
   </head>
   <body class="depreciation-calculator" data-currency="$" data-month="mes">
     <!-- Меню -->
@@ -274,11 +274,11 @@
       <div class="input-section">
         <div class="input-group">
           <label for="carYear">Año de fabricación</label>
-          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="Ingresa el año de fabricación (1990–2025)">
+          <input type="number" id="carYear" min="1990" max="2100" value="2020" inputmode="numeric" title="Ingresa el año de fabricación (1990–2025)">
         </div>
         <div class="input-group">
           <label for="initialPrice">Costo inicial ($)</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="Ingresa el costo inicial del auto en dólares">
+          <input type="text" id="initialPrice" class="money-input" inputmode="numeric" autocomplete="off" placeholder="1500000" title="Ingresa el costo inicial del auto en dólares">
         </div>
         <div class="input-group">
           <label for="currentMileage">Kilometraje actual (km)</label>
@@ -287,7 +287,7 @@
       </div>
 
       <div class="action-bar">
-        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="Calcular depreciación del auto">Calcular depreciación</button>
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true, saveHistory: true })" aria-label="Calcular depreciación del auto">Calcular depreciación</button>
         <details class="more-actions">
           <summary>More</summary>
           <div class="more-actions__list">
@@ -395,7 +395,7 @@
           </div>
           <div class="input-group">
             <label for="currentNewPrice">Precio actual de autos nuevos similares ($)</label>
-            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="Ingresa el precio actual de un auto nuevo similar en dólares">
+            <input type="text" id="currentNewPrice" class="money-input" inputmode="numeric" autocomplete="off" placeholder="900000" title="Ingresa el precio actual de un auto nuevo similar en dólares">
             <small>Precio de un auto nuevo similar ahora</small>
           </div>
           <div class="input-group">
@@ -464,6 +464,10 @@
           </div>
         </div>
         <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
+        <div id="formulaPlain" class="formula-plain hidden" aria-live="polite">
+          <h4>Из чего сложился расчёт</h4>
+          <div id="formulaPlainBody"></div>
+        </div>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -496,6 +500,92 @@
     </div>
     
     
+    <section class="tool-faq" id="faq">
+      <h2>FAQ</h2>
+      
+      <details class="tool-faq__item">
+        <summary>How is depreciation per 1 km calculated?</summary>
+        <p>The calculator estimates total wear from age and mileage with usage adjustments, then divides total depreciation by current mileage to get an approximate cost per kilometre.</p>
+      </details>
+      
+      <details class="tool-faq__item">
+        <summary>Is this a market appraisal?</summary>
+        <p>No. It is an approximate planning estimate, not a dealer, bank or insurer valuation.</p>
+      </details>
+      
+      <details class="tool-faq__item">
+        <summary>Which fields are required?</summary>
+        <p>Year, initial price and current mileage. Extra fields refine the estimate but are optional.</p>
+      </details>
+      
+      <details class="tool-faq__item">
+        <summary>Why does commercial use increase wear?</summary>
+        <p>Taxi, delivery and fleet use usually mean higher annual mileage and harder conditions, so the wear factor is higher.</p>
+      </details>
+      
+      <details class="tool-faq__item">
+        <summary>Can I save calculations?</summary>
+        <p>Yes. After you press Calculate, the result is stored in local history on this device. You can reload or delete entries.</p>
+      </details>
+      
+    </section>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        
+        {
+          "@type": "Question",
+          "name": "How is depreciation per 1 km calculated?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "The calculator estimates total wear from age and mileage with usage adjustments, then divides total depreciation by current mileage to get an approximate cost per kilometre."
+          }
+        },
+        
+        {
+          "@type": "Question",
+          "name": "Is this a market appraisal?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No. It is an approximate planning estimate, not a dealer, bank or insurer valuation."
+          }
+        },
+        
+        {
+          "@type": "Question",
+          "name": "Which fields are required?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Year, initial price and current mileage. Extra fields refine the estimate but are optional."
+          }
+        },
+        
+        {
+          "@type": "Question",
+          "name": "Why does commercial use increase wear?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Taxi, delivery and fleet use usually mean higher annual mileage and harder conditions, so the wear factor is higher."
+          }
+        },
+        
+        {
+          "@type": "Question",
+          "name": "Can I save calculations?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes. After you press Calculate, the result is stored in local history on this device. You can reload or delete entries."
+          }
+        }
+        
+      ]
+    }
+    </script>
+    
+    
+    
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="Cerrar anuncio" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
@@ -511,7 +601,7 @@
 </script>
 
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=13" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>

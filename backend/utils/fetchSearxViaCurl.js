@@ -27,7 +27,9 @@ async function fetchSearxViaCurl(query, category) {
       '--max-time', '15',           // максимум 15 секунд на запрос
       '--connect-timeout', '2',     // до 2 секунд на установление соединения
       url
-    ]);
+    ], {
+      maxBuffer: 10 * 1024 * 1024  // 10 МБ — крупные JSON от SearXNG (images)
+    });
 
     if (stderr?.trim()) {
       console.warn('[SearXNG] curl stderr:', stderr.slice(0, 300));

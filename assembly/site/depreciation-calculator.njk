@@ -52,7 +52,7 @@ eleventyComputed:
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <!-- Стили для калькулятора амортизации -->
-    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=13">
+    <link rel="stylesheet" href="/frontend/styles/tools/depreciation-calculator.css?v=14">
   </head>
   <body class="depreciation-calculator" data-currency="{{ depreciationCalculator[locale].common.currency }}" data-month="{{ depreciationCalculator[locale].common.month }}">
     <!-- Меню -->
@@ -105,11 +105,11 @@ eleventyComputed:
       <div class="input-section">
         <div class="input-group">
           <label for="carYear">{{ depreciationCalculator[locale].form.labels.carYear }}</label>
-          <input type="number" id="carYear" min="1990" max="2026" value="2020" inputmode="numeric" title="{{ depreciationCalculator[locale].form.titles.carYear }}">
+          <input type="number" id="carYear" min="1990" max="2100" value="2020" inputmode="numeric" title="{{ depreciationCalculator[locale].form.titles.carYear }}">
         </div>
         <div class="input-group">
           <label for="initialPrice">{{ depreciationCalculator[locale].form.labels.initialPrice }}</label>
-          <input type="number" id="initialPrice" placeholder="1500000" min="100000" inputmode="decimal" title="{{ depreciationCalculator[locale].form.titles.initialPrice }}">
+          <input type="text" id="initialPrice" class="money-input" inputmode="numeric" autocomplete="off" placeholder="{{ depreciationCalculator[locale].form.placeholders.initialPrice }}" title="{{ depreciationCalculator[locale].form.titles.initialPrice }}">
         </div>
         <div class="input-group">
           <label for="currentMileage">{{ depreciationCalculator[locale].form.labels.currentMileage }}</label>
@@ -118,7 +118,7 @@ eleventyComputed:
       </div>
 
       <div class="action-bar">
-        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true })" aria-label="{{ depreciationCalculator[locale].aria.calculate }}">{{ depreciationCalculator[locale].buttons.calculate }}</button>
+        <button type="button" class="calculate-btn" onclick="calculateDepreciation({ scroll: true, saveHistory: true })" aria-label="{{ depreciationCalculator[locale].aria.calculate }}">{{ depreciationCalculator[locale].buttons.calculate }}</button>
         <details class="more-actions">
           <summary>{{ depreciationCalculator[locale].buttons.moreActions or 'Ещё' }}</summary>
           <div class="more-actions__list">
@@ -188,7 +188,7 @@ eleventyComputed:
           </div>
           <div class="input-group">
             <label for="currentNewPrice">{{ depreciationCalculator[locale].form.labels.currentNewPrice }}</label>
-            <input type="number" id="currentNewPrice" placeholder="900000" min="100000" inputmode="decimal" title="{{ depreciationCalculator[locale].form.titles.currentNewPrice }}">
+            <input type="text" id="currentNewPrice" class="money-input" inputmode="numeric" autocomplete="off" placeholder="{{ depreciationCalculator[locale].form.placeholders.currentNewPrice }}" title="{{ depreciationCalculator[locale].form.titles.currentNewPrice }}">
             <small>{{ depreciationCalculator[locale].form.hints.currentNewPrice }}</small>
           </div>
           <div class="input-group">
@@ -247,6 +247,10 @@ eleventyComputed:
           </div>
         </div>
         <canvas id="depreciationChart" style="max-height: 280px; margin-top: 16px; width: 100%;"></canvas>
+        <div id="formulaPlain" class="formula-plain hidden" aria-live="polite">
+          <h4>{{ depreciationCalculator[locale].results.formulaTitle or 'Из чего сложился расчёт' }}</h4>
+          <div id="formulaPlainBody"></div>
+        </div>
       </div>
     </div>
     <div id="breakdown" class="breakdown hidden" aria-live="polite">
@@ -263,10 +267,40 @@ eleventyComputed:
       <div class="tip-item">{{ tip | safe }}</div>
       {% endfor %}
     </div>
+    {% set faqBlock = depreciationCalculator[locale].faq or depreciationCalculator.en.faq %}
+    {% if faqBlock %}
+    <section class="tool-faq" id="faq">
+      <h2>{{ faqBlock.title }}</h2>
+      {% for item in faqBlock.items %}
+      <details class="tool-faq__item">
+        <summary>{{ item.question }}</summary>
+        <p>{{ item.answer }}</p>
+      </details>
+      {% endfor %}
+    </section>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {% for item in faqBlock.items %}
+        {
+          "@type": "Question",
+          "name": {{ item.question | dump | safe }},
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": {{ item.answer | dump | safe }}
+          }
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+      ]
+    }
+    </script>
+    {% endif %}
     {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
     {{ mobileAnchor(depreciationCalculator[locale].aria.closeAd) }}
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=12" defer></script>
+    <script type="module" src="/frontend/scripts/tools/depreciation-calculator.js?v=13" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   {% include "partials/ad-pool-init.njk" %}
 </body>
