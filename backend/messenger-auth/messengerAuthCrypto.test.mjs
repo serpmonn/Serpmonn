@@ -3,7 +3,8 @@ import crypto from 'crypto';
 import {
     deriveMessengerUserId,
     buildCanonicalString,
-    verifyEd25519Detached
+    verifyEd25519Detached,
+    randomShortCode
 } from './messengerAuthCrypto.mjs';
 
 function rawEd25519PublicKey(keyObject) {
@@ -46,5 +47,16 @@ describe('messengerAuthCrypto', () => {
             }),
             false
         );
+    });
+
+    it('randomShortCode uses alphabet without bias-prone modulo', () => {
+        const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        for (let i = 0; i < 20; i++) {
+            const code = randomShortCode(4);
+            assert.strictEqual(code.length, 4);
+            for (const ch of code) {
+                assert.ok(alphabet.includes(ch), `unexpected char ${ch}`);
+            }
+        }
     });
 });

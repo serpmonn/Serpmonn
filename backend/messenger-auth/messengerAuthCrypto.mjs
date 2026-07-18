@@ -44,10 +44,10 @@ export function randomToken(bytes = 32) {
 
 export function randomShortCode(length = 4) {
     const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    const buf = crypto.randomBytes(length);
     let out = '';
     for (let i = 0; i < length; i++) {
-        out += alphabet[buf[i] % alphabet.length];
+        // crypto.randomInt is unbiased (no modulo bias on CSPRNG bytes).
+        out += alphabet[crypto.randomInt(alphabet.length)];
     }
     return out;
 }
