@@ -1,4 +1,5 @@
 import vkidRoutes from '../vkid/vkidRoutes.mjs';                                                                                 // Импорт маршрутов авторизации ВК
+import messengerAuthRoutes from '../messenger-auth/messengerAuthRoutes.mjs';                                                      // Вход / привязка через Serpmonn Messenger
 import authRoutes from '../auth/authRoutes.mjs';                                                                                 // Импорт маршрутов аутентификации и авторизации
 import yookassaRouter from '../yookassa/yookassaRoutes.mjs';                                                                     // Импорт маршрутов YooKassa
 import profilesRoutes from '../profiles/profilesRoutes.mjs';                                                                     // Импорт маршрутов профилей пользователей
@@ -40,6 +41,7 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/api', subscribersCountRouter);                                                                                     // Подключаем маршрут количества подписчиков на промокоды
     app.use('/improve', improveRoutes);                                                                                          // Подключаем маршрут предложки
     app.use('/api', vkidRoutes);                                                                                                 // Подключаем маршрут авторизации VK ID
+    app.use('/api', messengerAuthRoutes);                                                                                        // Вход через Serpmonn Messenger (публичные + точечный verifyToken)
     app.use('/voice', voiceRoutes);                                                                                              // Подключаем маршруты голосового ввода (STT/TTS)
     app.use('/api', findingsRoutes);                                                                                             // Находки: публичный GET + auth на отдельных роутах
     app.use('/api', dmRoutes);                                                                                                   // Личные сообщения (DM)

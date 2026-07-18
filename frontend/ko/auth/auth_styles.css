@@ -129,3 +129,96 @@
   font-size: 18px;
   padding: 4px;
 }
+
+.messenger-login-btn {
+  display: block;
+  width: 100%;
+  margin: 12px 0 4px;
+  padding: 12px 14px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #ff5252, #ff1717);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.2s;
+}
+
+.messenger-login-btn:hover {
+  background: linear-gradient(90deg, #e53935, #d32f2f);
+  transform: translateY(-1px);
+}
+
+.messenger-login-btn:disabled {
+  opacity: 0.65;
+  cursor: wait;
+  transform: none;
+}
+
+.messenger-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.messenger-modal[hidden] {
+  display: none !important;
+}
+
+.messenger-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(20, 20, 30, 0.45);
+}
+
+.messenger-modal__card {
+  position: relative;
+  width: min(100%, 380px);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  padding: 24px 20px 20px;
+  text-align: center;
+}
+
+.messenger-modal__card h3 {
+  margin: 0 0 8px;
+  font-size: 20px;
+  color: #333;
+}
+
+.messenger-modal__hint {
+  margin: 0 0 16px;
+  color: #555 !important;
+  font-size: 15px;
+}
+
+.messenger-modal__card canvas {
+  display: block;
+  margin: 0 auto 14px;
+  width: 220px;
+  height: 220px;
+}
+
+.messenger-modal__code {
+  margin: 0 0 8px;
+  color: #333 !important;
+  font-size: 16px;
+}
+
+.messenger-modal__status {
+  margin: 0 0 16px;
+  color: #666 !important;
+  font-size: 14px;
+  min-height: 1.2em;
+}
+
+.messenger-modal__card .secondary-btn {
+  margin-top: 0;
+  width: 100%;
+}

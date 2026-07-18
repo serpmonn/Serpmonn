@@ -55,6 +55,10 @@ eleventyComputed:
         <div id="authFormsView">
             <div id="VkIdSdkOneTap" class="vk-auth-widget" aria-label="{{ auth.vkButton }}"></div>
 
+            <button type="button" id="messengerLoginBtn" class="messenger-login-btn">
+                {{ auth.messengerButton }}
+            </button>
+
             <p class="auth-divider"><span>{{ auth.orDivider }}</span></p>
 
             <div class="auth-tabs" role="tablist">
@@ -108,6 +112,18 @@ eleventyComputed:
             <p id="registerSuccessText"></p>
             <template id="registerSuccessTemplate">{{ auth.registerSuccessText | safe }}</template>
             <button type="button" class="submit-btn secondary-btn" id="backToLoginBtn">{{ auth.backToLogin }}</button>
+        </div>
+    </div>
+
+    <div id="messengerLoginModal" class="messenger-modal" hidden>
+        <div class="messenger-modal__backdrop" data-messenger-close></div>
+        <div class="messenger-modal__card" role="dialog" aria-modal="true" aria-labelledby="messengerLoginTitle">
+            <h3 id="messengerLoginTitle">{{ auth.messengerModalTitle }}</h3>
+            <p class="messenger-modal__hint">{{ auth.messengerModalHint }}</p>
+            <canvas id="messengerQrCanvas" width="220" height="220" aria-label="QR"></canvas>
+            <p class="messenger-modal__code">{{ auth.messengerCodeLabel }}: <strong id="messengerShortCode">————</strong></p>
+            <p id="messengerLoginStatus" class="messenger-modal__status">{{ auth.messengerWaiting }}</p>
+            <button type="button" class="submit-btn secondary-btn" data-messenger-close>{{ auth.messengerCancel }}</button>
         </div>
     </div>
 
