@@ -1368,6 +1368,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   /* ==== SERPMONN MESSENGER LINK ==== */
 
   const messengerLinkStatus = document.getElementById('messengerLinkStatus');
+  const messengerLinkHint = document.getElementById('messengerLinkHint');
   const messengerLinkButton = document.getElementById('messengerLinkButton');
   const messengerUnlinkButton = document.getElementById('messengerUnlinkButton');
   const messengerLinkModal = document.getElementById('messengerLinkModal');
@@ -1382,6 +1383,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       messengerLinkPollTimer = null;
       messengerLinkChallengeId = null;
     }
+  }
+
+  function setMessengerLinkUi({ linked, statusText }) {
+    if (messengerLinkStatus) messengerLinkStatus.textContent = statusText;
+    if (messengerLinkHint) messengerLinkHint.hidden = linked !== false;
+    if (messengerLinkButton) messengerLinkButton.hidden = linked !== false;
+    if (messengerUnlinkButton) messengerUnlinkButton.hidden = linked !== true;
   }
 
   async function loadQrCodeLib() {
@@ -1406,21 +1414,20 @@ document.addEventListener('DOMContentLoaded', async () => {
       const resp = await fetch('/api/messenger-auth/me', { credentials: 'include' });
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
-        messengerLinkStatus.textContent = 'Не удалось проверить привязку';
+        setMessengerLinkUi({ linked: null, statusText: 'Не удалось проверить привязку' });
         return;
       }
       if (data.linked) {
-        messengerLinkStatus.textContent = `Привязан: ${data.messengerUserId || 'профиль мессенджера'}`;
-        if (messengerLinkButton) messengerLinkButton.hidden = true;
-        if (messengerUnlinkButton) messengerUnlinkButton.hidden = false;
+        setMessengerLinkUi({
+          linked: true,
+          statusText: `Привязан: ${data.messengerUserId || 'профиль мессенджера'}`
+        });
       } else {
-        messengerLinkStatus.textContent = 'Не привязан';
-        if (messengerLinkButton) messengerLinkButton.hidden = false;
-        if (messengerUnlinkButton) messengerUnlinkButton.hidden = true;
+        setMessengerLinkUi({ linked: false, statusText: 'Не привязан' });
       }
     } catch (e) {
       console.error(e);
-      messengerLinkStatus.textContent = 'Не удалось проверить привязку';
+      setMessengerLinkUi({ linked: null, statusText: 'Не удалось проверить привязку' });
     }
   }
 
