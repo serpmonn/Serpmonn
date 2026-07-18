@@ -1365,6 +1365,156 @@ document.addEventListener('DOMContentLoaded', async () => {
     renderMyFindingsList(myFindingsCache, ft);
   }
 
+  /* ==== SERPMONN MESSENGER LINK ==== */
+
+  const messengerLinkStatus = document.getElementById('messengerLinkStatus');
+  const messengerLinkButton = document.getElementById('messengerLinkButton');
+  const messengerUnlinkButton = document.getElementById('messengerUnlinkButton');
+  const messengerLinkModal = document.getElementById('messengerLinkModal');
+  let messengerLinkPollTimer = null;
+  let messengerLinkChallengeId = null;
+
+  function setMessengerLinkModalOpen(open) {
+    if (!messengerLinkModal) return;
+    messengerLinkModal.hidden = !open;
+    if (!open && messengerLinkPollTimer) {
+      clearInterval(messengerLinkPollTimer);
+      messengerLinkPollTimer = null;
+      messengerLinkChallengeId = null;
+    }
+  }
+
+  async function loadQrCodeLib() {
+    if (window.QRCode) return window.QRCode;
+    await new Promise((resolve, reject) => {
+      const script = document.createElement('script');
+      script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js';
+      script.async = true;
+      script.onload = resolve;
+      script.onerror = reject;
+      document.body.appendChild(script);
+    });
+    return window.QRCode;
+  }
+
+  async function refreshMessengerLinkStatus() {
+    if (!messengerLinkStatus) return;
+    try {
+      const resp = await fetch('/api/messenger-auth/me', { credentials: 'include' });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok) {
+        messengerLinkStatus.textContent = 'Не удалось проверить привязку';
+        return;
+      }
+      if (data.linked) {
+        messengerLinkStatus.textContent = `Привязан: ${data.messengerUserId || 'профиль мессенджера'}`;
+        if (messengerLinkButton) messengerLinkButton.hidden = true;
+        if (messengerUnlinkButton) messengerUnlinkButton.hidden = false;
+      } else {
+        messengerLinkStatus.textContent = 'Не привязан';
+        if (messengerLinkButton) messengerLinkButton.hidden = false;
+        if (messengerUnlinkButton) messengerUnlinkButton.hidden = true;
+      }
+    } catch (e) {
+      console.error(e);
+      messengerLinkStatus.textContent = 'Не удалось проверить привязку';
+    }
+  }
+
+  async function startMessengerLink() {
+    const statusEl = document.getElementById('messengerLinkModalStatus');
+    if (statusEl) statusEl.textContent = 'Ожидаем подтверждение…';
+    try {
+      const resp = await fetch('/api/messenger-auth/link-challenge', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: '{}'
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok || !data?.success) {
+        setGlobalMessage(data?.message || 'Не удалось начать привязку', 'error');
+        return;
+      }
+
+      messengerLinkChallengeId = data.challengeId;
+      const codeEl = document.getElementById('messengerLinkShortCode');
+      if (codeEl) codeEl.textContent = data.shortCode || '————';
+
+      const canvas = document.getElementById('messengerLinkQrCanvas');
+      const QRCode = await loadQrCodeLib();
+      await QRCode.toCanvas(canvas, JSON.stringify(data.qrPayload), {
+        width: 220,
+        margin: 1,
+        color: { dark: '#222222', light: '#ffffff' }
+      });
+
+      setMessengerLinkModalOpen(true);
+
+      if (messengerLinkPollTimer) clearInterval(messengerLinkPollTimer);
+      messengerLinkPollTimer = setInterval(async () => {
+        try {
+          const st = await fetch(
+            `/api/messenger-auth/status?challengeId=${encodeURIComponent(data.challengeId)}`,
+            { credentials: 'include' }
+          );
+          const body = await st.json().catch(() => ({}));
+          if (body.status === 'pending') return;
+          if (body.status === 'approved' && body.exchangeCode) {
+            clearInterval(messengerLinkPollTimer);
+            messengerLinkPollTimer = null;
+            await fetch('/api/messenger-auth/exchange', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              credentials: 'include',
+              body: JSON.stringify({ exchangeCode: body.exchangeCode })
+            });
+            setMessengerLinkModalOpen(false);
+            setGlobalMessage('Serpmonn Messenger привязан', 'success');
+            refreshMessengerLinkStatus();
+            return;
+          }
+          if (body.status === 'expired' || body.status === 'missing' || body.status === 'consumed') {
+            if (statusEl) statusEl.textContent = 'Код истёк — закройте и попробуйте снова';
+            clearInterval(messengerLinkPollTimer);
+            messengerLinkPollTimer = null;
+          }
+        } catch (err) {
+          console.error(err);
+        }
+      }, 1500);
+    } catch (e) {
+      console.error(e);
+      setGlobalMessage('Ошибка связи при привязке', 'error');
+    }
+  }
+
+  if (messengerLinkButton) {
+    messengerLinkButton.addEventListener('click', () => startMessengerLink());
+  }
+  if (messengerUnlinkButton) {
+    messengerUnlinkButton.addEventListener('click', async () => {
+      try {
+        const resp = await fetch('/api/messenger-auth/unlink', {
+          method: 'POST',
+          credentials: 'include'
+        });
+        const data = await resp.json().catch(() => ({}));
+        if (!resp.ok) {
+          setGlobalMessage(data?.message || 'Не удалось отвязать', 'error');
+          return;
+        }
+        setGlobalMessage('Мессенджер отвязан', 'success');
+        refreshMessengerLinkStatus();
+      } catch (e) {
+        setGlobalMessage('Ошибка связи', 'error');
+      }
+    });
+  }
+  document.querySelectorAll('[data-messenger-link-close]').forEach((el) => {
+    el.addEventListener('click', () => setMessengerLinkModalOpen(false));
+  });
+
   /* ==== ИНИЦИАЛИЗАЦИЯ ==== */
 
   initProfileTabs();
@@ -1373,4 +1523,5 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderFavoriteTools();
   updateReferralCounter();
   loadMyFindings();
+  refreshMessengerLinkStatus();
 });

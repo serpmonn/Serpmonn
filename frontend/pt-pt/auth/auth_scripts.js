@@ -253,10 +253,153 @@ function initVkIdOneTap() {
   document.body.appendChild(script);
 }
 
+let messengerPollTimer = null;
+let messengerChallengeId = null;
+
+function setMessengerModalOpen(open) {
+  const modal = document.getElementById('messengerLoginModal');
+  if (!modal) return;
+  modal.hidden = !open;
+  if (!open) {
+    if (messengerPollTimer) {
+      clearInterval(messengerPollTimer);
+      messengerPollTimer = null;
+    }
+    messengerChallengeId = null;
+  }
+}
+
+function setMessengerStatus(text) {
+  const el = document.getElementById('messengerLoginStatus');
+  if (el) el.textContent = text;
+}
+
+async function loadQrCodeLib() {
+  if (window.QRCode) return window.QRCode;
+  await new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js';
+    script.async = true;
+    script.onload = resolve;
+    script.onerror = reject;
+    document.body.appendChild(script);
+  });
+  return window.QRCode;
+}
+
+async function renderMessengerQr(payload) {
+  const canvas = document.getElementById('messengerQrCanvas');
+  if (!canvas) return;
+  const QRCode = await loadQrCodeLib();
+  const text = JSON.stringify(payload);
+  await QRCode.toCanvas(canvas, text, {
+    width: 220,
+    margin: 1,
+    color: { dark: '#222222', light: '#ffffff' }
+  });
+}
+
+async function exchangeMessengerSession(exchangeCode) {
+  const resp = await fetch('/api/messenger-auth/exchange', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({ exchangeCode })
+  });
+  const data = await resp.json().catch(() => ({}));
+  if (!resp.ok || !data?.success) {
+    throw new Error(data?.message || 'exchange failed');
+  }
+  return data;
+}
+
+function startMessengerPolling(challengeId) {
+  if (messengerPollTimer) clearInterval(messengerPollTimer);
+
+  messengerPollTimer = setInterval(async () => {
+    if (!messengerChallengeId || messengerChallengeId !== challengeId) return;
+    try {
+      const resp = await fetch(
+        `/api/messenger-auth/status?challengeId=${encodeURIComponent(challengeId)}`,
+        { credentials: 'include' }
+      );
+      const data = await resp.json().catch(() => ({}));
+      if (data.status === 'pending') return;
+      if (data.status === 'expired' || data.status === 'missing' || data.status === 'consumed') {
+        setMessengerStatus('Код истёк — закройте окно и попробуйте снова');
+        clearInterval(messengerPollTimer);
+        messengerPollTimer = null;
+        return;
+      }
+      if (data.status === 'approved' && data.exchangeCode) {
+        clearInterval(messengerPollTimer);
+        messengerPollTimer = null;
+        setMessengerStatus('Подтверждено, входим…');
+        await exchangeMessengerSession(data.exchangeCode);
+        safeNavigate(authRedirectTarget());
+      }
+    } catch (e) {
+      console.error('messenger status poll error:', e);
+      setMessengerStatus('Ошибка связи — подождите или попробуйте снова');
+    }
+  }, 1500);
+}
+
+async function startMessengerLogin() {
+  const btn = document.getElementById('messengerLoginBtn');
+  if (btn) btn.disabled = true;
+  setMessengerStatus('Ожидаем подтверждение…');
+
+  try {
+    const resp = await fetch('/api/messenger-auth/challenge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: '{}'
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok || !data?.success) {
+      showMessage(data?.message || t('login.error'));
+      return;
+    }
+
+    messengerChallengeId = data.challengeId;
+    const codeEl = document.getElementById('messengerShortCode');
+    if (codeEl) codeEl.textContent = data.shortCode || '————';
+
+    await renderMessengerQr(data.qrPayload);
+    setMessengerModalOpen(true);
+    startMessengerPolling(data.challengeId);
+  } catch (e) {
+    console.error('messenger login start error:', e);
+    showMessage(t('login.connectionError'));
+  } finally {
+    if (btn) btn.disabled = false;
+  }
+}
+
+function initMessengerLogin() {
+  const btn = document.getElementById('messengerLoginBtn');
+  if (btn) {
+    btn.addEventListener('click', () => {
+      startMessengerLogin();
+    });
+  }
+
+  document.querySelectorAll('[data-messenger-close]').forEach((el) => {
+    el.addEventListener('click', () => setMessengerModalOpen(false));
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') setMessengerModalOpen(false);
+  });
+}
+
 function bootAuthPage() {
   generateCombinedBackground();
   activateTab(initialTab);
   initVkIdOneTap();
+  initMessengerLogin();
 }
 
 if (document.readyState === 'loading') {

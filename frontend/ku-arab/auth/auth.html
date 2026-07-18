@@ -233,7 +233,12 @@
         <div id="authFormsView">
             <div id="VkIdSdkOneTap" class="vk-auth-widget" aria-label="بەردەوامبوون بە VK ID"></div>
 
-            <p class="auth-divider"><span>یان</span></p>
+            
+                        <button type="button" id="messengerLoginBtn" class="messenger-login-btn">
+                Sign in with Serpmonn Messenger
+            </button>
+
+<p class="auth-divider"><span>یان</span></p>
 
             <div class="auth-tabs" role="tablist">
                 <button type="button" class="auth-tab active" data-tab="login" role="tab" aria-selected="true" id="tab-login">چوونەژوورەوە</button>
@@ -286,6 +291,17 @@
             <p id="registerSuccessText"></p>
             <template id="registerSuccessTemplate">ئیمەیڵی پشتڕاستکردنەوەمان نارد بۆ <strong>{email}</strong>. بەستەرەکە لە نامەکەدا بکەرەوە بۆ پشتڕاستکردنەوەی هەژمار.</template>
             <button type="button" class="submit-btn secondary-btn" id="backToLoginBtn">العودة إلى تسجيل الدخول</button>
+        </div>
+    
+        <div id="messengerLoginModal" class="messenger-modal" hidden>
+        <div class="messenger-modal__backdrop" data-messenger-close></div>
+        <div class="messenger-modal__card" role="dialog" aria-modal="true" aria-labelledby="messengerLoginTitle">
+            <h3 id="messengerLoginTitle">Sign in with Serpmonn Messenger</h3>
+            <p class="messenger-modal__hint">Scan the QR code in the messenger</p>
+            <canvas id="messengerQrCanvas" width="220" height="220" aria-label="QR"></canvas>
+            <p class="messenger-modal__code">Code: <strong id="messengerShortCode">————</strong></p>
+            <p id="messengerLoginStatus" class="messenger-modal__status">Waiting for confirmation…</p>
+            <button type="button" class="submit-btn secondary-btn" data-messenger-close>Cancel</button>
         </div>
     </div>
 
