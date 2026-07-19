@@ -79,11 +79,15 @@ function smartCopy(source, target, overwrite = false) {
 }
 
 // Функция для синхронизации папки
-function syncFolder(sourceFolder, targetFolder, overwriteRules = {}) {
+// options.htmlOnly — копировать только .html/.htm (для локалей)
+// options.skipDirNames — Set имён подпапок, которые пропускаем на этом уровне
+function syncFolder(sourceFolder, targetFolder, overwriteRules = {}, options = {}) {
     if (!fs.existsSync(sourceFolder)) return { added: 0, updated: 0, skipped: 0 };
     
     const items = fs.readdirSync(sourceFolder);
     let stats = { added: 0, updated: 0, skipped: 0 };
+    const skipDirNames = options.skipDirNames || null;
+    const htmlOnly = Boolean(options.htmlOnly);
     
     for (const item of items) {
         const sourcePath = path.join(sourceFolder, item);
@@ -102,12 +106,23 @@ function syncFolder(sourceFolder, targetFolder, overwriteRules = {}) {
         const stat = fs.statSync(sourcePath);
         
         if (stat.isDirectory()) {
+            if (skipDirNames && skipDirNames.has(item)) {
+                continue;
+            }
             // Рекурсивно синхронизируем подпапки
-            const subStats = syncFolder(sourcePath, targetPath, overwriteRules);
+            const subStats = syncFolder(sourcePath, targetPath, overwriteRules, options);
             stats.added += subStats.added;
             stats.updated += subStats.updated;
             stats.skipped += subStats.skipped;
         } else {
+            if (htmlOnly) {
+                const ext = path.extname(item).toLowerCase();
+                if (ext !== '.html' && ext !== '.htm') {
+                    stats.skipped++;
+                    continue;
+                }
+            }
+
             // Определяем правило перезаписи для файла
             const ext = path.extname(item).toLowerCase();
             const overwrite = overwriteRules[ext] || overwriteRules['*'] || false;
@@ -179,21 +194,28 @@ const OVERWRITE_RULES = {
 
 let totalStats = { added: 0, updated: 0, skipped: 0 };
 
-console.log('\n📋 Синхронизация корневой папки (русский):');
-const rootStats = syncFolder(DIST_PATH, TARGET_PATH, OVERWRITE_RULES);
+console.log('\n📋 Синхронизация корневой папки (русский + общая статика):');
+const rootStats = syncFolder(DIST_PATH, TARGET_PATH, OVERWRITE_RULES, {
+    // В корне локальные папки языков не трогаем этим проходом —
+    // их синхронизируем отдельно и только HTML.
+    skipDirNames: new Set(locales),
+});
 totalStats.added += rootStats.added;
 totalStats.updated += rootStats.updated;
 totalStats.skipped += rootStats.skipped;
 
-// Синхронизация всех языковых папок из locales.json
-console.log('\n🌍 Синхронизация языковых папок:');
+// Синхронизация всех языковых папок из locales.json — только HTML.
+// Статика (images/fonts/styles/scripts/…) живёт в /frontend/*, не в локалях.
+console.log('\n🌍 Синхронизация языковых папок (только HTML):');
 for (const locale of locales) {
     const sourceLocalePath = path.join(DIST_PATH, locale);
     const targetLocalePath = path.join(TARGET_PATH, locale);
     
     if (fs.existsSync(sourceLocalePath)) {
         console.log(`\n   📁 Язык: ${locale}`);
-        const localeStats = syncFolder(sourceLocalePath, targetLocalePath, OVERWRITE_RULES);
+        const localeStats = syncFolder(sourceLocalePath, targetLocalePath, OVERWRITE_RULES, {
+            htmlOnly: true,
+        });
         totalStats.added += localeStats.added;
         totalStats.updated += localeStats.updated;
         totalStats.skipped += localeStats.skipped;
@@ -224,3 +246,21 @@ if (totalChanged === 0) {
 }
 
 console.log('🎉 Умная синхронизация завершена!');
+
+// Удаляем устаревшие дубли статики из локалей (images/fonts/styles/…)
+try {
+    const { spawnSync } = require('child_process');
+    const cleanupScript = path.join(__dirname, '../scripts/cleanup-locale-static-assets.mjs');
+    if (fs.existsSync(cleanupScript)) {
+        console.log('\n🧹 Очистка дублей статики в локалях...');
+        const result = spawnSync(process.execPath, [cleanupScript], {
+            cwd: path.join(__dirname, '..'),
+            stdio: 'inherit',
+        });
+        if (result.status !== 0) {
+            console.log('⚠️  cleanup-locale-static-assets завершился с кодом', result.status);
+        }
+    }
+} catch (err) {
+    console.log('⚠️  Не удалось запустить cleanup-locale-static-assets:', err.message);
+}

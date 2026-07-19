@@ -44,62 +44,13 @@ module.exports = function(eleventyConfig) {
   });
 
   /**
-   * ДОПОЛНИТЕЛЬНОЕ КОПИРОВАНИЕ В ЛОКАЛИ (после сборки)
+   * Статика (images/fonts/styles/scripts/games/…) лежит только в /frontend/*
+   * через addPassthroughCopy выше. В локали копировать её нельзя:
+   * шаблоны уже ссылаются на корневые /frontend/... пути, а копирование
+   * раздувало frontend/ на ~2 ГБ (≈50 МБ × число локалей).
+   * HTML локалей собирается permalink'ами; лишние дубли чистит
+   * scripts/cleanup-locale-static-assets.mjs (вызывается из deploy-locales.js).
    */
-  eleventyConfig.on('eleventy.after', async () => {
-    console.log('📁 Копируем статические файлы в локали...');
-    
-    const srcPath = path.join(__dirname, 'site/src');
-    const distPath = path.join(__dirname, 'dist/frontend');
-    
-    // Загружаем локали для копирования
-    let copyLocales = [];
-    try {
-      const localesPath = path.join(__dirname, 'site/_data/locales.json');
-      const localesData = JSON.parse(fs.readFileSync(localesPath, 'utf8'));
-      copyLocales = localesData.filter(locale => locale !== 'ru');
-      console.log(`📁 Найдено ${copyLocales.length} локалей для копирования`);
-    } catch (error) {
-      console.log('❌ Ошибка чтения locales.json для копирования');
-      copyLocales = ['en', 'ar'];
-    }
-    
-    function copyWithoutTemplates(source, target) {
-      if (!fs.existsSync(source)) return;
-      
-      const stats = fs.statSync(source);
-      
-      if (stats.isDirectory()) {
-        if (!fs.existsSync(target)) {
-          fs.mkdirSync(target, { recursive: true });
-        }
-        
-        const items = fs.readdirSync(source);
-        for (const item of items) {
-          const sourceItem = path.join(source, item);
-          const targetItem = path.join(target, item);
-          
-          if (item === '_includes' || item === '_data') continue;
-          copyWithoutTemplates(sourceItem, targetItem);
-        }
-      } else {
-        const ext = path.extname(source).toLowerCase();
-        const excludePatterns = ['.html', '.njk', '.md'];
-        if (excludePatterns.includes(ext)) return;
-        
-        fs.copyFileSync(source, target);
-      }
-    }
-    
-    let localeCount = 0;
-    for (const locale of copyLocales) {
-      const localeTargetPath = path.join(distPath, locale);
-      copyWithoutTemplates(srcPath, localeTargetPath);
-      localeCount++;
-    }
-    
-    console.log(`✅ Скопировано статических файлов в ${localeCount} локалей`);
-  });
 
   return {
     dir: {
