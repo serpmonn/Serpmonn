@@ -197,17 +197,26 @@ function parseAttachmentInput(body, t) {
   };
 }
 
+const OLLAMA_KEEP_ALIVE = '60m';
+const OLLAMA_NUM_CTX = 2048;
+
+function buildOllamaRequestOptions() {
+  return {
+    temperature: 0,
+    num_predict: 98,
+    top_k: 40,
+    top_p: 0.9,
+    num_ctx: OLLAMA_NUM_CTX,
+  };
+}
+
 async function callOllama(model, query, webContext, attachment = null, options = {}) {
   const body = {
     model,
     messages: buildOllamaMessages(query, webContext, attachment, options),
     stream: false,
-    options: {
-      temperature: 0,
-      num_predict: 98,
-      top_k: 40,
-      top_p: 0.9,
-    },
+    keep_alive: OLLAMA_KEEP_ALIVE,
+    options: buildOllamaRequestOptions(),
   };
 
   const res = await fetch(OLLAMA_URL, {
@@ -249,12 +258,8 @@ async function streamOllama(model, query, webContext, onToken, attachment = null
     model,
     messages: buildOllamaMessages(query, webContext, attachment, options),
     stream: true,
-    options: {
-      temperature: 0,
-      num_predict: 98,
-      top_k: 40,
-      top_p: 0.9,
-    },
+    keep_alive: OLLAMA_KEEP_ALIVE,
+    options: buildOllamaRequestOptions(),
   };
 
   const res = await fetch(OLLAMA_URL, {
@@ -745,6 +750,7 @@ async function runTextTask(q, t, responsePayload, emit, attachment = null) {
       attachmentName: responsePayload.attachmentName,
       timings: usedWebSearch ? { searx_ms: searxMs } : {},
     });
+    emit({ event: 'status', phase: 'generating' });
   }
 
   const modelStart = process.hrtime.bigint();
@@ -1129,5 +1135,26 @@ router.post(
     }
   }
 );
+
+async function warmupSearchModel() {
+  try {
+    await fetch(OLLAMA_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: OLLAMA_MAIN_MODEL,
+        messages: [{ role: 'user', content: 'ok' }],
+        stream: false,
+        keep_alive: OLLAMA_KEEP_ALIVE,
+        options: { ...buildOllamaRequestOptions(), num_predict: 1 },
+      }),
+    });
+    console.log('[AI] search model warmed, keep_alive=' + OLLAMA_KEEP_ALIVE);
+  } catch (e) {
+    console.warn('[AI] warmup failed:', e.message);
+  }
+}
+
+setTimeout(warmupSearchModel, 3000);
 
 export default router;

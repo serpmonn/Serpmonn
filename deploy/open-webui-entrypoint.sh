@@ -16,6 +16,23 @@ if p.exists():
     if n:
         p.write_text(text2)
 PY
+
+# Brand favicons/logo (persist across image updates)
+BRAND_SRC="/serpmonn-branding"
+for dest in \
+  /app/backend/open_webui/static \
+  /app/build/static \
+  /app/static
+do
+  if [ -d "$BRAND_SRC" ] && [ -d "$dest" ]; then
+    for f in favicon.png favicon.ico favicon.svg favicon-96x96.png favicon-dark.png apple-touch-icon.png logo.png; do
+      if [ -f "$BRAND_SRC/$f" ]; then
+        cp -f "$BRAND_SRC/$f" "$dest/$f" 2>/dev/null || true
+      fi
+    done
+  fi
+done
+
 if [ -x /app/backend/start.sh ]; then
   exec /app/backend/start.sh "$@"
 fi

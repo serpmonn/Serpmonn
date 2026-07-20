@@ -1036,6 +1036,18 @@ function finalizeStreamingText(event, state) {
 }
 
 function handleAiSearchStreamEvent(event, state) {
+  if (event.event === 'status') {
+    const loadingText = document.querySelector('#ai-result-content .loading-text');
+    if (!loadingText || state.streamingStarted) return;
+    const messages = getMessages();
+    if (event.phase === 'generating') {
+      loadingText.textContent = messages.loadingAnswer || messages.loading || loadingText.textContent;
+    } else if (event.phase === 'searching') {
+      loadingText.textContent = messages.loading || loadingText.textContent;
+    }
+    return;
+  }
+
   if (event.event === 'text_start') {
     state.streamingStarted = true;
     state.pendingTextStart = {
@@ -1044,14 +1056,19 @@ function handleAiSearchStreamEvent(event, state) {
       attachmentUsed: event.attachmentUsed === true,
       attachmentName: event.attachmentName || null
     };
+    // Show answer box immediately after web search, before first model token
+    showStreamingTextStart(state.pendingTextStart, { scroll: !state.didScroll });
+    state.didScroll = true;
     return;
   }
 
   if (event.event === 'text_delta') {
     if (!state.firstTokenReceived) {
       state.firstTokenReceived = true;
-      showStreamingTextStart(state.pendingTextStart || { usedWebSearch: true }, { scroll: !state.didScroll });
-      state.didScroll = true;
+      if (!document.querySelector('.ai-streaming-answer')) {
+        showStreamingTextStart(state.pendingTextStart || { usedWebSearch: true }, { scroll: !state.didScroll });
+        state.didScroll = true;
+      }
       state.streamedAnswer = event.chunk || '';
       const answerEl = document.querySelector('.ai-streaming-answer');
       if (answerEl) {

@@ -186,6 +186,22 @@ a:hover {
   white-space: pre-wrap;
   line-height: 1.55;
   color: #111827;
+  min-height: 1.55em;
+}
+
+.ai-streaming-answer:empty::after {
+  content: '';
+  display: inline-block;
+  width: 0.55em;
+  height: 1.1em;
+  margin-left: 2px;
+  vertical-align: text-bottom;
+  background: currentColor;
+  animation: ai-caret-blink 1s step-end infinite;
+}
+
+@keyframes ai-caret-blink {
+  50% { opacity: 0; }
 }
 
 .ai-empty-answer {

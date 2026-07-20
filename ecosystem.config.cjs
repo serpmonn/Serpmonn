@@ -83,6 +83,20 @@ module.exports = {                                      // Экспорт кон
       }
     },
 
+    {
+      name: 'health-alert',                             // Письма при падении/восстановлении сервисов
+      script: 'backend/admin/healthAlert.mjs',
+      instances: 1,
+      max_memory_restart: '256M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      env: {
+        NODE_ENV: 'production',
+        HEALTH_ALERT_TO: 'serpmon@gmail.com,sergei@serpmonn.ru',
+        HEALTH_ALERT_INTERVAL_MS: '60000',
+        HEALTH_ALERT_FAIL_THRESHOLD: '2'
+      }
+    },
+
     // Telegram-боты
 
     // Внешние боты в /var/www — поднимаются с этого же ecosystem

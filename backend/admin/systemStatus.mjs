@@ -1,5 +1,6 @@
 import net from 'net';
 import fs from 'fs';
+import os from 'os';
 import { execFile } from 'child_process';
 import { promisify } from 'util';
 import { query } from '../database/config.mjs';
@@ -21,6 +22,108 @@ function formatUptime(ms) {
   if (h > 0) return `${h} ч. ${m} мин.`;
   if (m > 0) return `${m} мин.`;
   return `${sec} сек.`;
+}
+
+function formatBytes(n) {
+  const num = Number(n);
+  if (!Number.isFinite(num) || num < 0) return '—';
+  const units = ['Б', 'КБ', 'МБ', 'ГБ', 'ТБ'];
+  let v = num;
+  let i = 0;
+  while (v >= 1024 && i < units.length - 1) {
+    v /= 1024;
+    i += 1;
+  }
+  const digits = i === 0 ? 0 : (v >= 10 ? 0 : 1);
+  return `${v.toFixed(digits)} ${units[i]}`;
+}
+
+function readCpuTimes() {
+  let idle = 0;
+  let total = 0;
+  for (const cpu of os.cpus()) {
+    const t = cpu.times || {};
+    const idlePart = Number(t.idle) || 0;
+    const sum =
+      (Number(t.user) || 0) +
+      (Number(t.nice) || 0) +
+      (Number(t.sys) || 0) +
+      idlePart +
+      (Number(t.irq) || 0) +
+      (Number(t.steal) || 0);
+    idle += idlePart;
+    total += sum;
+  }
+  return { idle, total };
+}
+
+async function sampleCpuPercent(sampleMs = 120) {
+  const a = readCpuTimes();
+  await new Promise((r) => setTimeout(r, sampleMs));
+  const b = readCpuTimes();
+  const idle = b.idle - a.idle;
+  const total = b.total - a.total;
+  if (total <= 0) return null;
+  return Math.round((1 - idle / total) * 1000) / 10;
+}
+
+function readDiskUsage(path = '/') {
+  try {
+    if (typeof fs.statfsSync !== 'function') return null;
+    const s = fs.statfsSync(path);
+    const total = Number(s.blocks) * Number(s.bsize);
+    const free = Number(s.bavail) * Number(s.bsize);
+    if (!Number.isFinite(total) || total <= 0) return null;
+    const used = Math.max(0, total - free);
+    return {
+      path,
+      totalBytes: total,
+      usedBytes: used,
+      freeBytes: free,
+      percent: Math.round((used / total) * 1000) / 10,
+    };
+  } catch {
+    return null;
+  }
+}
+
+/** Компактная нагрузка хоста для админ-статуса (не htop). */
+async function collectHostLoad() {
+  const load = os.loadavg().map((n) => Math.round(n * 100) / 100);
+  const cores = os.cpus()?.length || 0;
+  const memTotal = os.totalmem();
+  const memFree = os.freemem();
+  const memUsed = Math.max(0, memTotal - memFree);
+  const memPercent = memTotal > 0 ? Math.round((memUsed / memTotal) * 1000) / 10 : null;
+  const disk = readDiskUsage('/');
+  const uptimeSec = Math.floor(os.uptime());
+  let cpuPercent = null;
+  try {
+    cpuPercent = await sampleCpuPercent(120);
+  } catch {
+    cpuPercent = null;
+  }
+
+  return {
+    load1: load[0] ?? null,
+    load5: load[1] ?? null,
+    load15: load[2] ?? null,
+    cores,
+    cpuPercent,
+    memUsedBytes: memUsed,
+    memTotalBytes: memTotal,
+    memPercent,
+    memUsedLabel: formatBytes(memUsed),
+    memTotalLabel: formatBytes(memTotal),
+    diskPath: disk?.path || '/',
+    diskUsedBytes: disk?.usedBytes ?? null,
+    diskTotalBytes: disk?.totalBytes ?? null,
+    diskPercent: disk?.percent ?? null,
+    diskUsedLabel: disk ? formatBytes(disk.usedBytes) : null,
+    diskTotalLabel: disk ? formatBytes(disk.totalBytes) : null,
+    uptimeSec,
+    uptimeLabel: formatUptime(uptimeSec * 1000),
+  };
 }
 
 function probePort(port, host = '127.0.0.1', timeoutMs = 1500) {
@@ -113,34 +216,17 @@ async function probeSearxng() {
   const socketOk = fs.existsSync(SEARXNG_SOCKET);
   const uwsgiOk = await probeSystemd('uwsgi');
 
-  try {
-    const { stdout } = await execFileAsync(
-      'curl',
-      [
-        '-sS',
-        '-f',
-        '-H', 'Host: serpmonn.ru',
-        '--max-time', '10',
-        '--connect-timeout', '2',
-        'http://127.0.0.1/search?q=status-check&categories=general&format=json',
-      ],
-      { timeout: 12000, maxBuffer: 2 * 1024 * 1024, env: process.env }
-    );
-    const data = JSON.parse(stdout);
-    const ok = Array.isArray(data?.results);
-    return {
-      ok,
-      detail: ok ? `Отвечает · результатов: ${data.results.length}` : 'Ответ без results',
-    };
-  } catch (err) {
-    if (socketOk && uwsgiOk) {
-      return { ok: true, detail: 'Сокет/uwsgi живы (HTTP через curl не ответил)' };
-    }
-    return {
-      ok: false,
-      detail: `Не отвечает${err.message ? ` · ${String(err.message).slice(0, 80)}` : ''}`,
-    };
+  // Лёгкая проверка: процесс + unix-сокет. Без /search — не дёргаем внешние движки.
+  if (socketOk && uwsgiOk) {
+    return { ok: true, detail: 'uwsgi active · сокет на месте' };
   }
+  if (uwsgiOk && !socketOk) {
+    return { ok: false, detail: 'uwsgi active, но сокет SearXNG не найден' };
+  }
+  if (!uwsgiOk && socketOk) {
+    return { ok: false, detail: 'Сокет есть, но uwsgi не active' };
+  }
+  return { ok: false, detail: 'uwsgi не active и сокет не найден' };
 }
 
 async function getPm2Map() {
@@ -198,6 +284,7 @@ export const PM2_ALLOWED = new Set([
   'password-reset-server',
   'onnmail-server',
   'check-pro',
+  'health-alert',
   'communityBotBlog',
   'communityBotSite',
   'serpmonnKeeperBot',
@@ -330,7 +417,7 @@ export async function collectSystemStatus() {
     authHttp,
     adminPortOk,
     newsPortOk,
-    lbHttp,
+    lbPortOk,
     mailPortOk,
     resetPortOk,
     checkProPortOk,
@@ -354,7 +441,7 @@ export async function collectSystemStatus() {
     probeHttp(`http://127.0.0.1:${ports.auth}/health`),
     probePort(ports.admin),
     probePort(ports.news),
-    probeHttp(`http://127.0.0.1:${ports.leaderboard}/leaderboard?limit=1`),
+    probePort(ports.leaderboard),
     probePort(ports.onnmail),
     probePort(ports.passwordReset),
     probePort(ports.checkPro),
@@ -372,7 +459,7 @@ export async function collectSystemStatus() {
     probeSystemd('serpmonn-relay'),
     probePort(4001),
     probeHttp('http://127.0.0.1:8765/health', 4000),
-    probeHttp('http://127.0.0.1:8080/', 4000),
+    probeHttp('http://127.0.0.1:8080/health', 4000),
     probeDockerAi(),
   ]);
 
@@ -567,8 +654,8 @@ export async function collectSystemStatus() {
       name: 'Рейтинги игр',
       why: 'Таблицы лидеров в играх',
       level: 'important',
-      ok: (pm2?.['leaderboard-server']?.status === 'online') && lbHttp.ok,
-      detail: lbHttp.ok ? 'Отвечает на запросы' : 'Рейтинги недоступны',
+      ok: (pm2?.['leaderboard-server']?.status === 'online') && lbPortOk,
+      detail: lbPortOk ? 'Порт открыт' : 'Рейтинги недоступны',
       pm2: pm2?.['leaderboard-server']?.status || null,
       pm2Name: 'leaderboard-server',
     }),
@@ -601,6 +688,16 @@ export async function collectSystemStatus() {
       detail: checkProPortOk ? 'Работает' : 'Проверка Pro не отвечает',
       pm2: pm2?.['check-pro']?.status || null,
       pm2Name: 'check-pro',
+    }),
+    buildService({
+      id: 'health-alert',
+      name: 'Алерты на почту',
+      why: 'Письма при падении сервисов (serpmon@ / sergei@)',
+      level: 'important',
+      ok: pm2?.['health-alert']?.status === 'online',
+      detail: pm2?.['health-alert']?.status === 'online' ? 'Следит за сервисами' : 'Остановлен — письма при авариях не уйдут',
+      pm2: pm2?.['health-alert']?.status || null,
+      pm2Name: 'health-alert',
     }),
     buildService({
       id: 'admin',
@@ -703,6 +800,13 @@ export async function collectSystemStatus() {
     tone = 'warn';
   }
 
+  let host = null;
+  try {
+    host = await collectHostLoad();
+  } catch (err) {
+    console.error('[admin] host load failed:', err.message);
+  }
+
   return {
     ok: mustOk,
     tone,
@@ -713,6 +817,7 @@ export async function collectSystemStatus() {
     smtpConfigured,
     mysqlOk,
     pm2Available: Boolean(pm2),
+    host,
     problems: [...failedCritical, ...failedImportant].map((s) => s.name),
     groups: [
       { id: 'critical', title: 'Критично для сайта', items: critical },
