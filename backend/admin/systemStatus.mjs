@@ -171,7 +171,8 @@ async function getPm2Map() {
   }
 }
 
-function buildService({ id, name, why, level, ok, detail, pm2, pm2Name, actions }) {
+function buildService({ id, name, why, level, ok, detail, pm2, pm2Name, controlName, actions }) {
+  const ctrl = controlName || pm2Name || null;
   return {
     id,
     name,
@@ -181,7 +182,10 @@ function buildService({ id, name, why, level, ok, detail, pm2, pm2Name, actions 
     detail: detail || null,
     pm2: pm2 || null,
     pm2Name: pm2Name || null,
-    actions: Array.isArray(actions) ? actions : (pm2Name ? ['start', 'stop', 'restart'] : []),
+    controlName: ctrl,
+    actions: Array.isArray(actions)
+      ? actions
+      : (pm2Name ? ['start', 'stop', 'restart'] : []),
   };
 }
 
@@ -205,6 +209,35 @@ export const PM2_ALLOWED = new Set([
 const PM2_NO_STOP = new Set(['admin-server']);
 
 /**
+ * systemd: id в статусе → unit + разрешённые действия.
+ * stop у критичных нет — чтобы не отрезать себе доступ удалённо.
+ */
+const SYSTEMD_CONTROLS = {
+  nginx: { unit: 'nginx', actions: ['start', 'restart'] },
+  mysql: { unit: 'mysql', actions: ['restart'] },
+  ollama: { unit: 'ollama', actions: ['start', 'restart'] },
+  uwsgi: { unit: 'uwsgi', actions: ['start', 'restart'] },
+  postfix: { unit: 'postfix', actions: ['start', 'stop', 'restart'] },
+  dovecot: { unit: 'dovecot', actions: ['start', 'stop', 'restart'] },
+  opendkim: { unit: 'opendkim', actions: ['start', 'stop', 'restart'] },
+  docker: { unit: 'docker', actions: ['start', 'restart'] },
+  'serpmonn-relay': { unit: 'serpmonn-relay', actions: ['start', 'stop', 'restart'] },
+};
+
+/** Docker-контейнеры: id в статусе → имя контейнера */
+const DOCKER_CONTROLS = {
+  'serpmonn-ai': { container: 'open-webui', actions: ['start', 'restart'] },
+};
+
+function assertAction(action) {
+  if (!['start', 'stop', 'restart'].includes(action)) {
+    const err = new Error('Недопустимое действие');
+    err.status = 400;
+    throw err;
+  }
+}
+
+/**
  * start | stop | restart процесса PM2 (только из allowlist).
  */
 export async function controlPm2Process(name, action) {
@@ -213,11 +246,7 @@ export async function controlPm2Process(name, action) {
     err.status = 400;
     throw err;
   }
-  if (!['start', 'stop', 'restart'].includes(action)) {
-    const err = new Error('Недопустимое действие');
-    err.status = 400;
-    throw err;
-  }
+  assertAction(action);
   if (action === 'stop' && PM2_NO_STOP.has(name)) {
     const err = new Error('Админ-сервер нельзя остановить из панели — только перезапуск');
     err.status = 400;
@@ -230,7 +259,55 @@ export async function controlPm2Process(name, action) {
     env: process.env,
   });
 
-  return { success: true, name, action };
+  return { success: true, name, action, kind: 'pm2' };
+}
+
+async function controlSystemdUnit(entry, action) {
+  assertAction(action);
+  if (!entry.actions.includes(action)) {
+    const err = new Error(`Для этого сервиса действие «${action}» недоступно`);
+    err.status = 400;
+    throw err;
+  }
+  await execFileAsync('systemctl', [action, entry.unit], {
+    timeout: 60000,
+    maxBuffer: 2 * 1024 * 1024,
+    env: process.env,
+  });
+  return { success: true, name: entry.unit, action, kind: 'systemd' };
+}
+
+async function controlDockerContainer(entry, action) {
+  assertAction(action);
+  if (!entry.actions.includes(action)) {
+    const err = new Error(`Для этого контейнера действие «${action}» недоступно`);
+    err.status = 400;
+    throw err;
+  }
+  await execFileAsync('docker', [action, entry.container], {
+    timeout: 120000,
+    maxBuffer: 2 * 1024 * 1024,
+    env: process.env,
+  });
+  return { success: true, name: entry.container, action, kind: 'docker' };
+}
+
+/**
+ * Единая точка управления: PM2 / systemd / Docker (только allowlist).
+ */
+export async function controlManagedService(name, action) {
+  if (PM2_ALLOWED.has(name)) {
+    return controlPm2Process(name, action);
+  }
+  if (SYSTEMD_CONTROLS[name]) {
+    return controlSystemdUnit(SYSTEMD_CONTROLS[name], action);
+  }
+  if (DOCKER_CONTROLS[name]) {
+    return controlDockerContainer(DOCKER_CONTROLS[name], action);
+  }
+  const err = new Error('Неизвестный сервис');
+  err.status = 400;
+  throw err;
 }
 
 /**
@@ -337,6 +414,8 @@ export async function collectSystemStatus() {
       level: 'critical',
       ok: nginxOk,
       detail: nginxOk ? (nginxActive ? 'Сервис active' : 'Порт 80 открыт') : 'Nginx не отвечает',
+      controlName: 'nginx',
+      actions: SYSTEMD_CONTROLS.nginx.actions,
     }),
     buildService({
       id: 'auth',
@@ -357,6 +436,8 @@ export async function collectSystemStatus() {
       level: 'critical',
       ok: mysqlOk,
       detail: mysqlOk ? `Отвечает · ${mysqlMs} мс` : 'Нет связи с MySQL',
+      controlName: 'mysql',
+      actions: SYSTEMD_CONTROLS.mysql.actions,
     }),
     buildService({
       id: 'searxng',
@@ -375,6 +456,8 @@ export async function collectSystemStatus() {
       detail: ollamaOk
         ? `Отвечает${ollamaModels != null ? ` · моделей: ${ollamaModels}` : ''}`
         : 'Не отвечает — ИИ-поиск недоступен',
+      controlName: 'ollama',
+      actions: SYSTEMD_CONTROLS.ollama.actions,
     }),
     buildService({
       id: 'valkey',
@@ -396,6 +479,8 @@ export async function collectSystemStatus() {
       detail: uwsgiActive
         ? (fs.existsSync(SEARXNG_SOCKET) ? 'active · сокет на месте' : 'active · сокет SearXNG не найден')
         : 'Сервис uwsgi не active',
+      controlName: 'uwsgi',
+      actions: SYSTEMD_CONTROLS.uwsgi.actions,
     }),
     buildService({
       id: 'postfix',
@@ -408,6 +493,8 @@ export async function collectSystemStatus() {
         : (!postfixOk
           ? 'Postfix не active или порт 587 закрыт'
           : 'active · порт 587 · учётка в .env'),
+      controlName: 'postfix',
+      actions: SYSTEMD_CONTROLS.postfix.actions,
     }),
     buildService({
       id: 'dovecot',
@@ -416,6 +503,8 @@ export async function collectSystemStatus() {
       level: 'important',
       ok: dovecotOk,
       detail: dovecotOk ? 'active · IMAPS :993' : 'Не active или IMAP недоступен',
+      controlName: 'dovecot',
+      actions: SYSTEMD_CONTROLS.dovecot.actions,
     }),
     buildService({
       id: 'opendkim',
@@ -424,6 +513,8 @@ export async function collectSystemStatus() {
       level: 'important',
       ok: opendkimActive,
       detail: opendkimActive ? 'active' : 'Не active — письма могут чаще попадать в спам',
+      controlName: 'opendkim',
+      actions: SYSTEMD_CONTROLS.opendkim.actions,
     }),
     buildService({
       id: 'whisper',
@@ -446,6 +537,8 @@ export async function collectSystemStatus() {
           ? `Демон active · контейнер AI: running${dockerAi.health ? ` (${dockerAi.health})` : ''}`
           : `Демон active · контейнер AI: ${dockerAi.containerStatus || 'нет'}`)
         : 'Демон Docker не active',
+      controlName: 'docker',
+      actions: SYSTEMD_CONTROLS.docker.actions,
     }),
     buildService({
       id: 'serpmonn-ai',
@@ -456,6 +549,8 @@ export async function collectSystemStatus() {
       detail: openWebuiOk
         ? `Отвечает · HTTP ${openWebuiHttp.status || '—'}`
         : 'Не отвечает на :8080 — Pro AI недоступен',
+      controlName: 'serpmonn-ai',
+      actions: DOCKER_CONTROLS['serpmonn-ai'].actions,
     }),
     buildService({
       id: 'news',
@@ -588,6 +683,8 @@ export async function collectSystemStatus() {
       level: 'optional',
       ok: relayOk,
       detail: relayOk ? 'active · TCP :4001' : 'Не active или порт закрыт',
+      controlName: 'serpmonn-relay',
+      actions: SYSTEMD_CONTROLS['serpmonn-relay'].actions,
     }),
   ];
 

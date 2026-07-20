@@ -15,7 +15,7 @@ import { query } from '../database/config.mjs';
 import { mailQuery } from '../database/mailDatabase.config.mjs';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
-import { collectSystemStatus, controlPm2Process } from './systemStatus.mjs';
+import { collectSystemStatus, controlManagedService } from './systemStatus.mjs';
 
 const { V4 } = paseto;
 const { hash, compare } = bcrypt;
@@ -100,18 +100,18 @@ export const getSystemHealth = async (_req, res) => {
   }
 };
 
-/** Управление процессом PM2: start | stop | restart */
+/** Управление сервисом: PM2 / systemd / Docker (start | stop | restart) */
 export const controlService = async (req, res) => {
   const { name, action } = req.body || {};
   if (!name || !action) {
     return res.status(400).json({ message: 'Нужны name и action' });
   }
   try {
-    const result = await controlPm2Process(String(name), String(action));
+    const result = await controlManagedService(String(name), String(action));
     return res.json(result);
   } catch (error) {
     const status = error.status || 500;
-    console.error('[admin] pm2 control error:', name, action, error.message);
+    console.error('[admin] service control error:', name, action, error.message);
     return res.status(status).json({
       message: error.message || 'Не удалось выполнить действие',
     });
