@@ -30,6 +30,12 @@ async function getUserPlan(userId) {                                            
   };
 }
 
+function safeHeaderValue(value) {
+  const s = String(value ?? '').trim();
+  if (!s || /[\r\n\0]/.test(s)) return '';
+  return s.slice(0, 320);
+}
+
 async function getUserFromToken(req) {
   const token = req.cookies.token;                                                                                                                                                      // та же кука, что и в ai-search/auth
   if (!token || !secretKey) return null;
@@ -59,6 +65,13 @@ app.get('/auth/check-pro', async (req, res) => {                                
 
     if (!isProActive) {
       return res.sendStatus(403);                                                                                                                                                       // нет Pro
+    }
+
+    const email = safeHeaderValue(user.email);
+    const name = safeHeaderValue(user.username || user.email);
+    if (email) {
+      res.set('X-Serpmonn-User-Email', email);
+      res.set('X-Serpmonn-User-Name', name || email);
     }
 
     return res.sendStatus(200);                                                                                                                                                         // всё ок

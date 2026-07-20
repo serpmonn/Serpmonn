@@ -6,6 +6,7 @@ import {
   getMe,
   authCheck,
   getSystemHealth,
+  controlService,
   createEmployee,
   listEmployees,
   updateEmployee,
@@ -23,6 +24,7 @@ router.post('/logout', logoutAdmin);
 router.get('/me', verifyAdmin, getMe);
 router.get('/auth-check', verifyAdmin, authCheck);
 router.get('/system-health', verifyAdmin, getSystemHealth);
+router.post('/service-control', verifyAdmin, controlService);
 
 // Защищённые роуты (требуют admin_token)
 router.get('/employees', verifyAdmin, listEmployees);

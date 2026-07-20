@@ -15,6 +15,7 @@ import { query } from '../database/config.mjs';
 import { mailQuery } from '../database/mailDatabase.config.mjs';
 import { v4 as uuidv4 } from 'uuid';
 import fs from 'fs';
+import { collectSystemStatus, controlPm2Process } from './systemStatus.mjs';
 
 const { V4 } = paseto;
 const { hash, compare } = bcrypt;
@@ -80,23 +81,39 @@ export const authCheck = (_req, res) => {
   return res.status(204).end();
 };
 
-/** Health бэкенда через админ-сессию (без IP-whitelist на /health) */
+/** Сводка статуса сервисов через админ-сессию */
 export const getSystemHealth = async (_req, res) => {
-  const port = process.env.AUTH_PORT || 5000;
   try {
-    const upstream = await fetch(`http://127.0.0.1:${port}/health`, {
-      signal: AbortSignal.timeout(5000),
-    });
-    const data = await upstream.json().catch(() => ({}));
-    return res.status(upstream.ok ? 200 : 503).json(data);
+    const status = await collectSystemStatus();
+    return res.status(status.ok ? 200 : 503).json(status);
   } catch (error) {
-    console.error('[admin] system-health upstream error:', error.message);
+    console.error('[admin] system-health error:', error.message);
     return res.status(503).json({
-      status: 'unavailable',
-      ready: false,
-      service: 'serpmonn-backend',
+      ok: false,
+      tone: 'bad',
+      summary: 'Не удалось проверить статус',
+      checkedAt: new Date().toISOString(),
+      problems: ['Проверка статуса'],
+      groups: [],
       error: error.message,
-      timestamp: new Date().toISOString(),
+    });
+  }
+};
+
+/** Управление процессом PM2: start | stop | restart */
+export const controlService = async (req, res) => {
+  const { name, action } = req.body || {};
+  if (!name || !action) {
+    return res.status(400).json({ message: 'Нужны name и action' });
+  }
+  try {
+    const result = await controlPm2Process(String(name), String(action));
+    return res.json(result);
+  } catch (error) {
+    const status = error.status || 500;
+    console.error('[admin] pm2 control error:', name, action, error.message);
+    return res.status(status).json({
+      message: error.message || 'Не удалось выполнить действие',
     });
   }
 };
