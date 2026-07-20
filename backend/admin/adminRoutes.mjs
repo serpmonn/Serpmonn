@@ -4,6 +4,8 @@ import {
   loginAdmin,
   logoutAdmin,
   getMe,
+  authCheck,
+  getSystemHealth,
   createEmployee,
   listEmployees,
   updateEmployee,
@@ -19,6 +21,8 @@ router.post('/logout', logoutAdmin);
 
 // Проверка токена
 router.get('/me', verifyAdmin, getMe);
+router.get('/auth-check', verifyAdmin, authCheck);
+router.get('/system-health', verifyAdmin, getSystemHealth);
 
 // Защищённые роуты (требуют admin_token)
 router.get('/employees', verifyAdmin, listEmployees);

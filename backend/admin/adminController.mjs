@@ -75,6 +75,32 @@ export const getMe = (req, res) => {
   return res.json({ success: true, sub: req.admin?.sub || 'admin' });
 };
 
+/** Для nginx auth_request: 204 = сессия админа валидна */
+export const authCheck = (_req, res) => {
+  return res.status(204).end();
+};
+
+/** Health бэкенда через админ-сессию (без IP-whitelist на /health) */
+export const getSystemHealth = async (_req, res) => {
+  const port = process.env.AUTH_PORT || 5000;
+  try {
+    const upstream = await fetch(`http://127.0.0.1:${port}/health`, {
+      signal: AbortSignal.timeout(5000),
+    });
+    const data = await upstream.json().catch(() => ({}));
+    return res.status(upstream.ok ? 200 : 503).json(data);
+  } catch (error) {
+    console.error('[admin] system-health upstream error:', error.message);
+    return res.status(503).json({
+      status: 'unavailable',
+      ready: false,
+      service: 'serpmonn-backend',
+      error: error.message,
+      timestamp: new Date().toISOString(),
+    });
+  }
+};
+
 export const createEmployee = async (req, res) => {
   const { first_name, last_name, email, password, role, position, status, hire_date, mailbox } = req.body;
 

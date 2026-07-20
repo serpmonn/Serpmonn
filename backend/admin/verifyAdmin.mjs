@@ -13,7 +13,10 @@ const { V4 } = paseto;
 
 const verifyAdmin = async (req, res, next) => {
   const token = req.cookies.admin_token;
-  console.log('[admin] token present:', Boolean(token), 'path:', req.path, 'ip:', req.ip);
+  const quiet = req.path === '/auth-check';
+  if (!quiet) {
+    console.log('[admin] token present:', Boolean(token), 'path:', req.path, 'ip:', req.ip);
+  }
 
   if (!token) {
     return res.status(401).json({ message: 'Требуется авторизация' });
@@ -30,7 +33,9 @@ const verifyAdmin = async (req, res, next) => {
       audience: 'admin-panel'
     });
     req.admin = payload;
-    console.log('[admin] verified:', payload?.sub || 'unknown');
+    if (!quiet) {
+      console.log('[admin] verified:', payload?.sub || 'unknown');
+    }
     next();
   } catch (error) {
     console.error('[admin] ошибка верификации токена:', error.message);
