@@ -55,7 +55,10 @@ function normalizeAiAnswer(answer, t) {
     };
   }
 
-  if (/^no information found in the provided data\.?$/i.test(trimmed)) {
+  const noDataRe =
+    /^(no information found in the provided data\.?|нет информации[_\s-]*found[_\s-]*in[_\s-]*the[_\s-]*provided[_\s-]*data\.?|в источниках из сети не найдено информации по этой теме\.?|данные из веб-поиска не получены\.?)$/i;
+
+  if (noDataRe.test(trimmed)) {
     return {
       text: t.noDataAnswer,
       isEmpty: true,
@@ -133,6 +136,7 @@ function resolveAttachmentSearchMode(query) {
 function buildOllamaMessages(query, webContext, attachment = null, options = {}) {
   const hasAttachment = Boolean(attachment?.text);
   const fileOnly = hasAttachment && options.fileOnly === true;
+  const hasWebHits = options.hasWebHits === true;
 
   let systemBase =
     'You are Serpmonn search assistant. ' +
@@ -150,8 +154,22 @@ function buildOllamaMessages(query, webContext, attachment = null, options = {})
     systemBase +=
       'You are given an attached text file and web search results. ' +
       'Prefer the attached file when it answers the question. ' +
-      'Your task is to answer using only that data. ' +
-      'If the answer is not present in the data, reply: "No information found in the provided data."';
+      'Answer using only that data. ';
+    if (hasWebHits) {
+      systemBase +=
+        'If sources discuss the topic but do not name one exact item, say what the sources indicate. ' +
+        'Do not claim that information is missing when search results are present.';
+    } else {
+      systemBase +=
+        'If the answer is not present in the data, reply: "No information found in the provided data."';
+    }
+  } else if (hasWebHits) {
+    systemBase +=
+      'You are given web search results text. ' +
+      'Answer the user question using those results. ' +
+      'Summarize the most relevant facts. ' +
+      'If sources discuss the topic but do not name one exact item, say what the sources indicate. ' +
+      'Do not claim that information is missing when search results are present.';
   } else {
     systemBase +=
       'You are given web search results text. ' +
@@ -202,8 +220,8 @@ const OLLAMA_NUM_CTX = 2048;
 
 function buildOllamaRequestOptions() {
   return {
-    temperature: 0,
-    num_predict: 98,
+    temperature: 0.2,
+    num_predict: 120,
     top_k: 40,
     top_p: 0.9,
     num_ctx: OLLAMA_NUM_CTX,
@@ -319,8 +337,8 @@ async function streamOllama(model, query, webContext, onToken, attachment = null
 }
 
 async function getAiAnswerFromLocalModels(query, webContext, options = {}) {
-  const { onToken, attachment = null, fileOnly = false } = options;
-  const modelOptions = { fileOnly };
+  const { onToken, attachment = null, fileOnly = false, hasWebHits = false } = options;
+  const modelOptions = { fileOnly, hasWebHits };
 
   try {
     if (onToken) {
@@ -759,6 +777,7 @@ async function runTextTask(q, t, responsePayload, emit, attachment = null) {
     aiResult = await getAiAnswerFromLocalModels(q, webContext, {
       attachment,
       fileOnly,
+      hasWebHits: sources.length > 0,
       onToken: emit
         ? (chunk) => emit({ event: 'text_delta', chunk })
         : null,
