@@ -28,7 +28,7 @@
     <meta property="vk:description" content="חשב את טביעת הרגל האקולוגית של מוצרי המזון שלך">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/he/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 הוסף מוצרים לסל הקניות
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ הוסף עוד מוצר
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 חשב טביעת רגל אקולוגית
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 חשב טביעת רגל אקולוגית
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 תוצאות החישוב
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">ק&quot;ג שווה ערך CO₂</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">דירוג אקולוגי (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"מחשבון טביעת רגל אקולוגית של מוצרים — SerpMonn","meta_description":"חשב את טביעת הרגל האקולוגית של מוצרי המזון שלך. למד על טביעת הרגל הפחמנית, טביעת הרגל המימית וההשפעה הסביבתית של סל הקניות שלך.","meta_keywords":"טביעת רגל אקולוגית מוצרים, טביעת רגל פחמנית מזון, טביעת רגל מימית מוצרים, מחשבון אקולוגי, טביעת רגל פחמנית תזונה","og_title":"מחשבון טביעת רגל אקולוגית של מוצרים — SerpMonn","og_description":"חשב את טביעת הרגל האקולוגית של מוצרי המזון שלך. למד על טביעת הרגל הפחמנית, טביעת הרגל המימית וההשפעה הסביבתית.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/he/eco-calculators/product-footprint/","vk_title":"מחשבון טביעת רגל אקולוגית של מוצרים","vk_description":"חשב את טביעת הרגל האקולוגית של מוצרי המזון שלך","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"בית","tools":"כלים","current":"מחשבון טביעת רגל מוצרים"},"header":{"title":"🌱 מחשבון טביעת רגל אקולוגית של מוצרים","subtitle":"גלה את ההשפעה הסביבתית של המוצרים בסל הקניות שלך"},"calculator":{"section_title":"🛒 הוסף מוצרים לסל הקניות"},"buttons":{"add_product":"➕ הוסף עוד מוצר","calculate":"🧮 חשב טביעת רגל אקולוגית","share_vk":"📘 שתף ב-VKontakte","share_telegram":"📱 שתף ב-Telegram"},"results":{"title":"📊 תוצאות החישוב","carbon_label":"ק\"ג שווה ערך CO₂","water_label":"ליטר מים","land_label":"מ\"ר אדמה","eco_score_label":"דירוג אקולוגי (1-10)"},"comparison":{"title":"🔍 השוואה עם חלופות"},"recommendations":{"title":"💡 המלצות להפחתת טביעת הרגל האקולוגית"},"errors":{"no_products":"אנא הוסף לפחות מוצר אחד לחישוב.","invalid_quantity":"אנא הזן כמות חוקית למוצר: {product}","calculation_error":"אירעה שגיאה במהלך החישוב. אנא נסה שוב.","select_product_and_qty":"אנא בחר מוצר והזן כמות"},"success":{"calculation_complete":"החישוב הושלם בהצלחה!"},"units":{"kg":"ק\"ג","g":"גרם","l":"ליטר","ml":"מ\"ל","pcs":"יח'","pack":"חבילה"},"products":{"beef":"בקר","chicken":"עוף","pork":"חזיר","fish":"דגים","eggs":"ביצים","milk":"חלב","cheese":"גבינה","yogurt":"יוגורט","rice":"אורז","pasta":"פסטה","bread":"לחם","potatoes":"תפוחי אדמה","tomatoes":"עגבניות","apples":"תפוחים","bananas":"בננות","coffee":"קפה","tea":"תה","chocolate":"שוקולד","sugar":"סוכר","olive_oil":"שמן זית","select_product":"בחר מוצר...","lamb":"כבש","wheat":"חיטה","vegetables":"ירקות (מעורבים)","fruits":"פירות (מעורבים)","nuts":"אגוזים","turkey":"הודו","duck":"ברווז","butter":"חמאה","salmon":"סלמון","tuna":"טונה","shrimp":"שרימפס","cucumbers":"מלפפונים","carrots":"גזר","oranges":"תפוזים","grapes":"ענבים","strawberries":"תותים","quinoa":"קינואה","lentils":"עדשים","chickpeas":"חומוס","wine":"יין","bread_white":"לחם לבן","bread_rye":"לחם שיפון","buckwheat":"כוסמת","oats":"שיבולת שועל","barley":"שעורה פנינה","rye":"שיפון (תבואה)","sunflower_oil":"שמן חמניות","kefir":"קפיר","yogurt_plain":"יוגורט טבעי","cottage_cheese":"גבינת קוטג'","sour_cream":"שמנת חמוצה","cabbage":"כרוב","onions":"בצלים","garlic":"שום","beets":"סלק","pears":"אגסים","peas":"אפונה","beans":"שעועית","kvass":"קוואס","soda":"משקה מוגז","beer":"בירה"},"ads":{"closeAria":"סגור פרסומת"},"js":{"quantityPlaceholder":"כמות","selectedProductsTitle":"מוצרים שנבחרו:","remove":"הסר","unitLabel":"יחידה: {unit}","loading":"מחשבים את טביעת הרגל האקולוגית...","errorPrefix":"שגיאה:","comparisonCurrentFootprint":"טביעת רגל נוכחית: {value} ק\"ג CO₂","comparisonAlternatives":"חלופות:","comparisonSavings":"חיסכון: ~{value} ק\"ג CO₂"},"recommendationItems":{"highImpact":{"title":"מוצרים עם טביעת רגל אקולוגית גבוהה","description":"שקול חלופות עבור: {products}"},"reduceMeat":{"title":"הפחתת צריכת בשר","description":"נסה להחליף בשר בחלבונים מצומח 1–2 פעמים בשבוע"},"dairyAlternatives":{"title":"חלופות למוצרי חלב","description":"נסה חלב וגבינות מצומח"},"buyLocal":{"title":"קנה מוצרים מקומיים עונתיים","description":"זה מפחית את טביעת הרגל של ההובלה ותומך ביצרנים מקומיים"},"planPurchases":{"title":"תכנן את הקניות שלך","description":"הימנע מבזבוז מזון — קנה רק את מה שאתה צריך"}},"alternatives":{"plant_proteins":"חלבונים מצומח","legumes":"קטניות","nuts":"אגוזים","poultry":"עוף","fish":"דגים","seaweed":"אצות","plant_milk":"חלב מצומח","oat_milk":"חלב שיבולת שועל","plant_cheese":"גבינות מצומח","tofu":"טופו","quinoa":"קינואה","bulgur":"בורגול","buckwheat":"כוסמת","oats_grain":"שיבולת שועל","barley_grain":"שעורה","rye_grain":"שיפון","sweet_potato":"בטטה","turnip":"לפת","seasonal_vegetables":"ירקות עונתיים","local_seasonal_vegetables":"ירקות מקומיים עונתיים","local_seasonal_fruits":"פירות מקומיים עונתיים","local_fruits":"פירות מקומיים","tea":"תה","chicory":"עולש","fruits":"פירות","seeds":"זרעים","chicken":"עוף","turkey":"הודו","plant_oils":"שמנים מצומחיים","avocado":"אבוקדו","plant_yogurt":"יוגורט מצומח","kefir":"קפיר","plant_omega3":"אומגה-3 מצומחי","flax_seeds":"זרעי פשתן","other_fish":"דגים אחרים","other_seafood":"פירות ים אחרים","canned_tomatoes":"עגבניות משומרות","zucchini":"קישוא","seasonal_root_vegetables":"ירקות שורש עונתיים","beets":"סלק","other_root_vegetables":"ירקות שורש אחרים","seasonal_citrus":"הדרים עונתיים","seasonal_berries":"פירות יער עונתיים","other_grains":"דגנים אחרים","other_pseudograins":"פסאודו-דגנים אחרים","beans":"שעועית","peas":"אפונה","chickpeas":"חומוס","lentils":"עדשים","plant_drinks":"משקאות מצומחיים","local_herbs":"עשבי תיבול מקומיים","local_drinks":"משקאות מקומיים","non_alcoholic_options":"אפשרויות ללא אלכוהול","plant_desserts":"קינוחים מצומחיים","honey":"דבש","stevia":"סטיביה","rye_bread":"לחם שיפון","whole_grain":"מלא","pearl_barley":"שעורה פנינה","oatmeal":"שיבולת שועל","millet":"דוחן","whole_grain_pasta":"פסטה מלאה","wheat":"חיטה","olive_oil":"שמן זית","sunflower_oil":"שמן חמניות","reduce_amount":"הפחת כמות","plain_yogurt":"יוגורט טבעי","yogurt":"יוגורט","reduce_fat":"הפחת שומן","other_seasonal_vegetables":"ירקות עונתיים אחרים","local_apples":"תפוחים מקומיים","apples":"תפוחים","herbal_teas":"תה צמחים","water":"מים","compote":"קומפוט","fruit_drink":"משקה פירות","kvass":"קוואס","onion":"בצל"}};
+        window.i18n = {"title":"מחשבון טביעת רגל אקולוגית של מוצרים — SerpMonn","meta_description":"חשב את טביעת הרגל האקולוגית של מוצרי המזון שלך. למד על טביעת הרגל הפחמנית, טביעת הרגל המימית וההשפעה הסביבתית של סל הקניות שלך.","meta_keywords":"טביעת רגל אקולוגית מוצרים, טביעת רגל פחמנית מזון, טביעת רגל מימית מוצרים, מחשבון אקולוגי, טביעת רגל פחמנית תזונה","og_title":"מחשבון טביעת רגל אקולוגית של מוצרים — SerpMonn","og_description":"חשב את טביעת הרגל האקולוגית של מוצרי המזון שלך. למד על טביעת הרגל הפחמנית, טביעת הרגל המימית וההשפעה הסביבתית.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/he/eco-calculators/product-footprint/","vk_title":"מחשבון טביעת רגל אקולוגית של מוצרים","vk_description":"חשב את טביעת הרגל האקולוגית של מוצרי המזון שלך","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"בית","tools":"כלים","current":"מחשבון טביעת רגל מוצרים"},"header":{"title":"🌱 מחשבון טביעת רגל אקולוגית של מוצרים","subtitle":"גלה את ההשפעה הסביבתית של המוצרים בסל הקניות שלך"},"calculator":{"section_title":"🛒 הוסף מוצרים לסל הקניות","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ הוסף עוד מוצר","calculate":"🧮 חשב טביעת רגל אקולוגית","share_vk":"📘 שתף ב-VKontakte","share_telegram":"📱 שתף ב-Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 תוצאות החישוב","carbon_label":"ק\"ג שווה ערך CO₂","water_label":"ליטר מים","land_label":"מ\"ר אדמה","eco_score_label":"דירוג אקולוגי (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 השוואה עם חלופות"},"recommendations":{"title":"💡 המלצות להפחתת טביעת הרגל האקולוגית"},"errors":{"no_products":"אנא הוסף לפחות מוצר אחד לחישוב.","invalid_quantity":"אנא הזן כמות חוקית למוצר: {product}","calculation_error":"אירעה שגיאה במהלך החישוב. אנא נסה שוב.","select_product_and_qty":"אנא בחר מוצר והזן כמות"},"success":{"calculation_complete":"החישוב הושלם בהצלחה!"},"units":{"kg":"ק\"ג","g":"גרם","l":"ליטר","ml":"מ\"ל","pcs":"יח'","pack":"חבילה"},"products":{"beef":"בקר","chicken":"עוף","pork":"חזיר","fish":"דגים","eggs":"ביצים","milk":"חלב","cheese":"גבינה","yogurt":"יוגורט","rice":"אורז","pasta":"פסטה","bread":"לחם","potatoes":"תפוחי אדמה","tomatoes":"עגבניות","apples":"תפוחים","bananas":"בננות","coffee":"קפה","tea":"תה","chocolate":"שוקולד","sugar":"סוכר","olive_oil":"שמן זית","select_product":"בחר מוצר...","lamb":"כבש","wheat":"חיטה","vegetables":"ירקות (מעורבים)","fruits":"פירות (מעורבים)","nuts":"אגוזים","turkey":"הודו","duck":"ברווז","butter":"חמאה","salmon":"סלמון","tuna":"טונה","shrimp":"שרימפס","cucumbers":"מלפפונים","carrots":"גזר","oranges":"תפוזים","grapes":"ענבים","strawberries":"תותים","quinoa":"קינואה","lentils":"עדשים","chickpeas":"חומוס","wine":"יין","bread_white":"לחם לבן","bread_rye":"לחם שיפון","buckwheat":"כוסמת","oats":"שיבולת שועל","barley":"שעורה פנינה","rye":"שיפון (תבואה)","sunflower_oil":"שמן חמניות","kefir":"קפיר","yogurt_plain":"יוגורט טבעי","cottage_cheese":"גבינת קוטג'","sour_cream":"שמנת חמוצה","cabbage":"כרוב","onions":"בצלים","garlic":"שום","beets":"סלק","pears":"אגסים","peas":"אפונה","beans":"שעועית","kvass":"קוואס","soda":"משקה מוגז","beer":"בירה"},"ads":{"closeAria":"סגור פרסומת"},"js":{"quantityPlaceholder":"כמות","selectedProductsTitle":"מוצרים שנבחרו:","remove":"הסר","unitLabel":"יחידה: {unit}","loading":"מחשבים את טביעת הרגל האקולוגית...","errorPrefix":"שגיאה:","comparisonCurrentFootprint":"טביעת רגל נוכחית: {value} ק\"ג CO₂","comparisonAlternatives":"חלופות:","comparisonSavings":"חיסכון: ~{value} ק\"ג CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"מוצרים עם טביעת רגל אקולוגית גבוהה","description":"שקול חלופות עבור: {products}"},"reduceMeat":{"title":"הפחתת צריכת בשר","description":"נסה להחליף בשר בחלבונים מצומח 1–2 פעמים בשבוע"},"dairyAlternatives":{"title":"חלופות למוצרי חלב","description":"נסה חלב וגבינות מצומח"},"buyLocal":{"title":"קנה מוצרים מקומיים עונתיים","description":"זה מפחית את טביעת הרגל של ההובלה ותומך ביצרנים מקומיים"},"planPurchases":{"title":"תכנן את הקניות שלך","description":"הימנע מבזבוז מזון — קנה רק את מה שאתה צריך"}},"alternatives":{"plant_proteins":"חלבונים מצומח","legumes":"קטניות","nuts":"אגוזים","poultry":"עוף","fish":"דגים","seaweed":"אצות","plant_milk":"חלב מצומח","oat_milk":"חלב שיבולת שועל","plant_cheese":"גבינות מצומח","tofu":"טופו","quinoa":"קינואה","bulgur":"בורגול","buckwheat":"כוסמת","oats_grain":"שיבולת שועל","barley_grain":"שעורה","rye_grain":"שיפון","sweet_potato":"בטטה","turnip":"לפת","seasonal_vegetables":"ירקות עונתיים","local_seasonal_vegetables":"ירקות מקומיים עונתיים","local_seasonal_fruits":"פירות מקומיים עונתיים","local_fruits":"פירות מקומיים","tea":"תה","chicory":"עולש","fruits":"פירות","seeds":"זרעים","chicken":"עוף","turkey":"הודו","plant_oils":"שמנים מצומחיים","avocado":"אבוקדו","plant_yogurt":"יוגורט מצומח","kefir":"קפיר","plant_omega3":"אומגה-3 מצומחי","flax_seeds":"זרעי פשתן","other_fish":"דגים אחרים","other_seafood":"פירות ים אחרים","canned_tomatoes":"עגבניות משומרות","zucchini":"קישוא","seasonal_root_vegetables":"ירקות שורש עונתיים","beets":"סלק","other_root_vegetables":"ירקות שורש אחרים","seasonal_citrus":"הדרים עונתיים","seasonal_berries":"פירות יער עונתיים","other_grains":"דגנים אחרים","other_pseudograins":"פסאודו-דגנים אחרים","beans":"שעועית","peas":"אפונה","chickpeas":"חומוס","lentils":"עדשים","plant_drinks":"משקאות מצומחיים","local_herbs":"עשבי תיבול מקומיים","local_drinks":"משקאות מקומיים","non_alcoholic_options":"אפשרויות ללא אלכוהול","plant_desserts":"קינוחים מצומחיים","honey":"דבש","stevia":"סטיביה","rye_bread":"לחם שיפון","whole_grain":"מלא","pearl_barley":"שעורה פנינה","oatmeal":"שיבולת שועל","millet":"דוחן","whole_grain_pasta":"פסטה מלאה","wheat":"חיטה","olive_oil":"שמן זית","sunflower_oil":"שמן חמניות","reduce_amount":"הפחת כמות","plain_yogurt":"יוגורט טבעי","yogurt":"יוגורט","reduce_fat":"הפחת שומן","other_seasonal_vegetables":"ירקות עונתיים אחרים","local_apples":"תפוחים מקומיים","apples":"תפוחים","herbal_teas":"תה צמחים","water":"מים","compote":"קומפוט","fruit_drink":"משקה פירות","kvass":"קוואס","onion":"בצל"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

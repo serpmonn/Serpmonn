@@ -28,7 +28,7 @@
     <meta property="vk:description" content="გამოთვალეთ თქვენი საკვები პროდუქტების ეკოლოგიური კვალი">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/ka/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 კალათაში პროდუქტების დამატება
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ სხვა პროდუქტის დამატება
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 ეკოლოგიური კვალის გამოთვლა
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 ეკოლოგიური კვალის გამოთვლა
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 გამოთვლის შედეგები
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">კგ CO₂ ეკვივალენტი</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">ეკო-რეიტინგი (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"პროდუქტების ეკოლოგიური კვალის კალკულატორი — SerpMonn","meta_description":"გამოთვალეთ თქვენი საკვები პროდუქტების ეკოლოგიური კვალი. შეიტყვეთ თქვენი სავაჭრო კალათის ნახშირბადის კვალის, წყლის კვალის და გარემოზე ზემოქმედების შესახებ.","meta_keywords":"პროდუქტების ეკოლოგიური კვალი, საკვების ნახშირბადის კვალი, პროდუქტების წყლის კვალი, ეკოლოგიური კალკულატორი, კვების ნახშირბადის კვალი","og_title":"პროდუქტების ეკოლოგიური კვალის კალკულატორი — SerpMonn","og_description":"გამოთვალეთ თქვენი საკვები პროდუქტების ეკოლოგიური კვალი. შეიტყვეთ ნახშირბადის კვალის, წყლის კვალის და გარემოზე ზემოქმედების შესახებ.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/ka/eco-calculators/product-footprint/","vk_title":"პროდუქტების ეკოლოგიური კვალის კალკულატორი","vk_description":"გამოთვალეთ თქვენი საკვები პროდუქტების ეკოლოგიური კვალი","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"მთავარი","tools":"ხელსაწყოები","current":"პროდუქტის კვალის კალკულატორი"},"header":{"title":"🌱 პროდუქტების ეკოლოგიური კვალის კალკულატორი","subtitle":"გაიგეთ თქვენს კალათაში არსებული პროდუქტების გარემოზე ზემოქმედება"},"calculator":{"section_title":"🛒 კალათაში პროდუქტების დამატება"},"buttons":{"add_product":"➕ სხვა პროდუქტის დამატება","calculate":"🧮 ეკოლოგიური კვალის გამოთვლა","share_vk":"📘 გაზიარება VKontakte-ზე","share_telegram":"📱 გაზიარება Telegram-ზე"},"results":{"title":"📊 გამოთვლის შედეგები","carbon_label":"კგ CO₂ ეკვივალენტი","water_label":"ლიტრი წყალი","land_label":"მ² მიწა","eco_score_label":"ეკო-რეიტინგი (1-10)"},"comparison":{"title":"🔍 ალტერნატივებთან შედარება"},"recommendations":{"title":"💡 ეკოლოგიური კვალის შესამცირებლად რეკომენდაციები"},"errors":{"no_products":"გთხოვთ, გამოთვლისთვის დაამატეთ მინიმუმ ერთი პროდუქტი.","invalid_quantity":"გთხოვთ, შეიყვანოთ სწორი რაოდენობა პროდუქტისთვის: {product}","calculation_error":"გამოთვლის დროს მოხდა შეცდომა. გთხოვთ, სცადოთ ხელახლა.","select_product_and_qty":"გთხოვთ, აირჩიოთ პროდუქტი და შეიყვანოთ რაოდენობა"},"success":{"calculation_complete":"გამოთვლა წარმატებით დასრულდა!"},"units":{"kg":"კგ","g":"გ","l":"ლ","ml":"მლ","pcs":"ცალი","pack":"პაკეტი"},"products":{"beef":"საქონლის ხორცი","chicken":"ქათამი","pork":"ღორის ხორცი","fish":"თევზი","eggs":"კვერცხი","milk":"რძე","cheese":"ყველი","yogurt":"იოგურტი","rice":"ბრინჯი","pasta":"პასტა","bread":"პური","potatoes":"კარტოფილი","tomatoes":"პომიდორი","apples":"ვაშლი","bananas":"ბანანი","coffee":"ყავა","tea":"ჩაი","chocolate":"შოკოლადი","sugar":"შაქარი","olive_oil":"ზეითუნის ზეთი","select_product":"აირჩიეთ პროდუქტი...","lamb":"გემრიელის ხორცი","wheat":"ხორბალი","vegetables":"ბოსტნეული (შერეული)","fruits":"ხილი (შერეული)","nuts":"თხილი","turkey":"ინდაური","duck":"იხვი","butter":"კარაქი","salmon":"ორაგული","tuna":"ტუნა","shrimp":"კრევეტი","cucumbers":"კიტრი","carrots":"სტაფილო","oranges":"ფორთოხალი","grapes":"ყურძენი","strawberries":"მარწყვი","quinoa":"კინოა","lentils":"ოსპი","chickpeas":"ნახუშურთა","wine":"ღვინო","bread_white":"თეთრი პური","bread_rye":"წიფელი ხორბლის პური","buckwheat":"წიფელი","oats":"შვრიის ფაფა","barley":"ქერის კრუპა","rye":"წიფელი ხორბალი (მარცვალი)","sunflower_oil":"მზისყვითელის ზეთი","kefir":"კეფირი","yogurt_plain":"ბუნებრივი იოგურტი","cottage_cheese":"კოტეჯის ყველი","sour_cream":"არაჟანი","cabbage":"კომბოსტო","onions":"ხახვი","garlic":"ნიორი","beets":"ჭარხალი","pears":"მსხალი","peas":"ბარდა","beans":"ლობიო","kvass":"კვასი","soda":"გაზიანი სასმელი","beer":"ლუდი"},"ads":{"closeAria":"რეკლამის დახურვა"},"js":{"quantityPlaceholder":"რაოდენობა","selectedProductsTitle":"არჩეული პროდუქტები:","remove":"წაშლა","unitLabel":"ერთეული: {unit}","loading":"ეკოლოგიური კვალის გამოთვლა...","errorPrefix":"შეცდომა:","comparisonCurrentFootprint":"მიმდინარე კვალი: {value} კგ CO₂","comparisonAlternatives":"ალტერნატივები:","comparisonSavings":"დაზოგვა: ~{value} კგ CO₂"},"recommendationItems":{"highImpact":{"title":"მაღალი ეკოლოგიური კვალის პროდუქტები","description":"განიხილეთ ალტერნატივები: {products}"},"reduceMeat":{"title":"ხორცის მოხმარების შემცირება","description":"სცადეთ ხორცის ჩანაცვლება მცენარეული ცილებით კვირაში 1–2-ჯერ"},"dairyAlternatives":{"title":"რძის პროდუქტების ალტერნატივები","description":"სცადეთ მცენარეული რძე და ყველი"},"buyLocal":{"title":"იყიდეთ ადგილობრივი სეზონური პროდუქტები","description":"ეს ამცირებს ტრანსპორტის კვალს და უჭერს მხარს ადგილობრივ მწარმოებლებს"},"planPurchases":{"title":"დაგეგმეთ შეძენები","description":"თავიდან აიცილეთ საკვების ნარჩენები — იყიდეთ მხოლოდ საჭირო"}},"alternatives":{"plant_proteins":"მცენარეული ცილები","legumes":"პარკოსნები","nuts":"თხილი","poultry":"ფრინველი","fish":"თევზი","seaweed":"ზღვის მცენარეები","plant_milk":"მცენარეული რძე","oat_milk":"შვრიის რძე","plant_cheese":"მცენარეული ყველი","tofu":"ტოფუ","quinoa":"კინოა","bulgur":"ბულგური","buckwheat":"წიფელი","oats_grain":"შვრია","barley_grain":"ქერი","rye_grain":"წიფელი ხორბალი","sweet_potato":"ტკბილი კარტოფილი","turnip":"მძივე","seasonal_vegetables":"სეზონური ბოსტნეული","local_seasonal_vegetables":"ადგილობრივი სეზონური ბოსტნეული","local_seasonal_fruits":"ადგილობრივი სეზონური ხილი","local_fruits":"ადგილობრივი ხილი","tea":"ჩაი","chicory":"ციკორია","fruits":"ხილი","seeds":"თესლი","chicken":"ქათამი","turkey":"ინდაური","plant_oils":"მცენარეული ზეთები","avocado":"ავოკადო","plant_yogurt":"მცენარეული იოგურტი","kefir":"კეფირი","plant_omega3":"მცენარეული ომეგა-3","flax_seeds":"სელის თესლი","other_fish":"სხვა თევზები","other_seafood":"სხვა ზღვის პროდუქტები","canned_tomatoes":"კონსერვირებული პომიდორი","zucchini":"კაბაჩოკი","seasonal_root_vegetables":"სეზონური ფესვის ბოსტნეული","beets":"ჭარხალი","other_root_vegetables":"სხვა ფესვის ბოსტნეული","seasonal_citrus":"სეზონური ციტრუსი","seasonal_berries":"სეზონური კენკრო","other_grains":"სხვა მარცვლეული","other_pseudograins":"სხვა ფსევდომარცვლეული","beans":"ლობიო","peas":"ბარდა","chickpeas":"ნახუშურთა","lentils":"ოსპი","plant_drinks":"მცენარეული სასმელები","local_herbs":"ადგილობრივი ბალახები","local_drinks":"ადგილობრივი სასმელები","non_alcoholic_options":"ულკოჰოლო ვარიანტები","plant_desserts":"მცენარეული დესერტები","honey":"თაფლი","stevia":"სტევია","rye_bread":"წიფელი ხორბლის პური","whole_grain":"მთელი მარცვლეული","pearl_barley":"ქერის კრუპა","oatmeal":"შვრიის ფაფა","millet":"მეურნე","whole_grain_pasta":"მთელი მარცვლის პასტა","wheat":"ხორბალი","olive_oil":"ზეითუნის ზეთი","sunflower_oil":"მზისყვითელის ზეთი","reduce_amount":"რაოდენობის შემცირება","plain_yogurt":"ბუნებრივი იოგურტი","yogurt":"იოგურტი","reduce_fat":"ცხიმის შემცირება","other_seasonal_vegetables":"სხვა სეზონური ბოსტნეული","local_apples":"ადგილობრივი ვაშლი","apples":"ვაშლი","herbal_teas":"ბალახის ჩაი","water":"წყალი","compote":"კომპოტი","fruit_drink":"ხილის სასმელი","kvass":"კვასი","onion":"ხახვი"}};
+        window.i18n = {"title":"პროდუქტების ეკოლოგიური კვალის კალკულატორი — SerpMonn","meta_description":"გამოთვალეთ თქვენი საკვები პროდუქტების ეკოლოგიური კვალი. შეიტყვეთ თქვენი სავაჭრო კალათის ნახშირბადის კვალის, წყლის კვალის და გარემოზე ზემოქმედების შესახებ.","meta_keywords":"პროდუქტების ეკოლოგიური კვალი, საკვების ნახშირბადის კვალი, პროდუქტების წყლის კვალი, ეკოლოგიური კალკულატორი, კვების ნახშირბადის კვალი","og_title":"პროდუქტების ეკოლოგიური კვალის კალკულატორი — SerpMonn","og_description":"გამოთვალეთ თქვენი საკვები პროდუქტების ეკოლოგიური კვალი. შეიტყვეთ ნახშირბადის კვალის, წყლის კვალის და გარემოზე ზემოქმედების შესახებ.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/ka/eco-calculators/product-footprint/","vk_title":"პროდუქტების ეკოლოგიური კვალის კალკულატორი","vk_description":"გამოთვალეთ თქვენი საკვები პროდუქტების ეკოლოგიური კვალი","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"მთავარი","tools":"ხელსაწყოები","current":"პროდუქტის კვალის კალკულატორი"},"header":{"title":"🌱 პროდუქტების ეკოლოგიური კვალის კალკულატორი","subtitle":"გაიგეთ თქვენს კალათაში არსებული პროდუქტების გარემოზე ზემოქმედება"},"calculator":{"section_title":"🛒 კალათაში პროდუქტების დამატება","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ სხვა პროდუქტის დამატება","calculate":"🧮 ეკოლოგიური კვალის გამოთვლა","share_vk":"📘 გაზიარება VKontakte-ზე","share_telegram":"📱 გაზიარება Telegram-ზე","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 გამოთვლის შედეგები","carbon_label":"კგ CO₂ ეკვივალენტი","water_label":"ლიტრი წყალი","land_label":"მ² მიწა","eco_score_label":"ეკო-რეიტინგი (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 ალტერნატივებთან შედარება"},"recommendations":{"title":"💡 ეკოლოგიური კვალის შესამცირებლად რეკომენდაციები"},"errors":{"no_products":"გთხოვთ, გამოთვლისთვის დაამატეთ მინიმუმ ერთი პროდუქტი.","invalid_quantity":"გთხოვთ, შეიყვანოთ სწორი რაოდენობა პროდუქტისთვის: {product}","calculation_error":"გამოთვლის დროს მოხდა შეცდომა. გთხოვთ, სცადოთ ხელახლა.","select_product_and_qty":"გთხოვთ, აირჩიოთ პროდუქტი და შეიყვანოთ რაოდენობა"},"success":{"calculation_complete":"გამოთვლა წარმატებით დასრულდა!"},"units":{"kg":"კგ","g":"გ","l":"ლ","ml":"მლ","pcs":"ცალი","pack":"პაკეტი"},"products":{"beef":"საქონლის ხორცი","chicken":"ქათამი","pork":"ღორის ხორცი","fish":"თევზი","eggs":"კვერცხი","milk":"რძე","cheese":"ყველი","yogurt":"იოგურტი","rice":"ბრინჯი","pasta":"პასტა","bread":"პური","potatoes":"კარტოფილი","tomatoes":"პომიდორი","apples":"ვაშლი","bananas":"ბანანი","coffee":"ყავა","tea":"ჩაი","chocolate":"შოკოლადი","sugar":"შაქარი","olive_oil":"ზეითუნის ზეთი","select_product":"აირჩიეთ პროდუქტი...","lamb":"გემრიელის ხორცი","wheat":"ხორბალი","vegetables":"ბოსტნეული (შერეული)","fruits":"ხილი (შერეული)","nuts":"თხილი","turkey":"ინდაური","duck":"იხვი","butter":"კარაქი","salmon":"ორაგული","tuna":"ტუნა","shrimp":"კრევეტი","cucumbers":"კიტრი","carrots":"სტაფილო","oranges":"ფორთოხალი","grapes":"ყურძენი","strawberries":"მარწყვი","quinoa":"კინოა","lentils":"ოსპი","chickpeas":"ნახუშურთა","wine":"ღვინო","bread_white":"თეთრი პური","bread_rye":"წიფელი ხორბლის პური","buckwheat":"წიფელი","oats":"შვრიის ფაფა","barley":"ქერის კრუპა","rye":"წიფელი ხორბალი (მარცვალი)","sunflower_oil":"მზისყვითელის ზეთი","kefir":"კეფირი","yogurt_plain":"ბუნებრივი იოგურტი","cottage_cheese":"კოტეჯის ყველი","sour_cream":"არაჟანი","cabbage":"კომბოსტო","onions":"ხახვი","garlic":"ნიორი","beets":"ჭარხალი","pears":"მსხალი","peas":"ბარდა","beans":"ლობიო","kvass":"კვასი","soda":"გაზიანი სასმელი","beer":"ლუდი"},"ads":{"closeAria":"რეკლამის დახურვა"},"js":{"quantityPlaceholder":"რაოდენობა","selectedProductsTitle":"არჩეული პროდუქტები:","remove":"წაშლა","unitLabel":"ერთეული: {unit}","loading":"ეკოლოგიური კვალის გამოთვლა...","errorPrefix":"შეცდომა:","comparisonCurrentFootprint":"მიმდინარე კვალი: {value} კგ CO₂","comparisonAlternatives":"ალტერნატივები:","comparisonSavings":"დაზოგვა: ~{value} კგ CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"მაღალი ეკოლოგიური კვალის პროდუქტები","description":"განიხილეთ ალტერნატივები: {products}"},"reduceMeat":{"title":"ხორცის მოხმარების შემცირება","description":"სცადეთ ხორცის ჩანაცვლება მცენარეული ცილებით კვირაში 1–2-ჯერ"},"dairyAlternatives":{"title":"რძის პროდუქტების ალტერნატივები","description":"სცადეთ მცენარეული რძე და ყველი"},"buyLocal":{"title":"იყიდეთ ადგილობრივი სეზონური პროდუქტები","description":"ეს ამცირებს ტრანსპორტის კვალს და უჭერს მხარს ადგილობრივ მწარმოებლებს"},"planPurchases":{"title":"დაგეგმეთ შეძენები","description":"თავიდან აიცილეთ საკვების ნარჩენები — იყიდეთ მხოლოდ საჭირო"}},"alternatives":{"plant_proteins":"მცენარეული ცილები","legumes":"პარკოსნები","nuts":"თხილი","poultry":"ფრინველი","fish":"თევზი","seaweed":"ზღვის მცენარეები","plant_milk":"მცენარეული რძე","oat_milk":"შვრიის რძე","plant_cheese":"მცენარეული ყველი","tofu":"ტოფუ","quinoa":"კინოა","bulgur":"ბულგური","buckwheat":"წიფელი","oats_grain":"შვრია","barley_grain":"ქერი","rye_grain":"წიფელი ხორბალი","sweet_potato":"ტკბილი კარტოფილი","turnip":"მძივე","seasonal_vegetables":"სეზონური ბოსტნეული","local_seasonal_vegetables":"ადგილობრივი სეზონური ბოსტნეული","local_seasonal_fruits":"ადგილობრივი სეზონური ხილი","local_fruits":"ადგილობრივი ხილი","tea":"ჩაი","chicory":"ციკორია","fruits":"ხილი","seeds":"თესლი","chicken":"ქათამი","turkey":"ინდაური","plant_oils":"მცენარეული ზეთები","avocado":"ავოკადო","plant_yogurt":"მცენარეული იოგურტი","kefir":"კეფირი","plant_omega3":"მცენარეული ომეგა-3","flax_seeds":"სელის თესლი","other_fish":"სხვა თევზები","other_seafood":"სხვა ზღვის პროდუქტები","canned_tomatoes":"კონსერვირებული პომიდორი","zucchini":"კაბაჩოკი","seasonal_root_vegetables":"სეზონური ფესვის ბოსტნეული","beets":"ჭარხალი","other_root_vegetables":"სხვა ფესვის ბოსტნეული","seasonal_citrus":"სეზონური ციტრუსი","seasonal_berries":"სეზონური კენკრო","other_grains":"სხვა მარცვლეული","other_pseudograins":"სხვა ფსევდომარცვლეული","beans":"ლობიო","peas":"ბარდა","chickpeas":"ნახუშურთა","lentils":"ოსპი","plant_drinks":"მცენარეული სასმელები","local_herbs":"ადგილობრივი ბალახები","local_drinks":"ადგილობრივი სასმელები","non_alcoholic_options":"ულკოჰოლო ვარიანტები","plant_desserts":"მცენარეული დესერტები","honey":"თაფლი","stevia":"სტევია","rye_bread":"წიფელი ხორბლის პური","whole_grain":"მთელი მარცვლეული","pearl_barley":"ქერის კრუპა","oatmeal":"შვრიის ფაფა","millet":"მეურნე","whole_grain_pasta":"მთელი მარცვლის პასტა","wheat":"ხორბალი","olive_oil":"ზეითუნის ზეთი","sunflower_oil":"მზისყვითელის ზეთი","reduce_amount":"რაოდენობის შემცირება","plain_yogurt":"ბუნებრივი იოგურტი","yogurt":"იოგურტი","reduce_fat":"ცხიმის შემცირება","other_seasonal_vegetables":"სხვა სეზონური ბოსტნეული","local_apples":"ადგილობრივი ვაშლი","apples":"ვაშლი","herbal_teas":"ბალახის ჩაი","water":"წყალი","compote":"კომპოტი","fruit_drink":"ხილის სასმელი","kvass":"კვასი","onion":"ხახვი"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

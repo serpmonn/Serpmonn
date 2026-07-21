@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Υπολογίστε το οικολογικό αποτύπωμα των τροφίμων σας">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/el/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Προσθέστε προϊόντα στο καλάθι
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Προσθέστε άλλο προϊόν
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Υπολογισμός οικολογικού αποτυπώματος
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Υπολογισμός οικολογικού αποτυπώματος
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Αποτελέσματα Υπολογισμού
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg ισοδύναμο CO₂</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Οικολογική βαθμολογία (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων — SerpMonn","meta_description":"Υπολογίστε το οικολογικό αποτύπωμα των τροφίμων σας. Μάθετε για το αποτύπωμα άνθρακα, το υδατικό αποτύπωμα και τον περιβαλλοντικό αντίκτυπο του καλαθιού αγορών σας.","meta_keywords":"οικολογικό αποτύπωμα προϊόντων, αποτύπωμα άνθρακα τροφίμων, υδατικό αποτύπωμα προϊόντων, οικολογική αριθμομηχανή, αποτύπωμα άνθρακα διατροφής","og_title":"Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων — SerpMonn","og_description":"Υπολογίστε το οικολογικό αποτύπωμα των τροφίμων σας. Μάθετε για το αποτύπωμα άνθρακα, το υδατικό αποτύπωμα και τον περιβαλλοντικό αντίκτυπο.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/el/eco-calculators/product-footprint/","vk_title":"Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων","vk_description":"Υπολογίστε το οικολογικό αποτύπωμα των τροφίμων σας","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Αρχική","tools":"Εργαλεία","current":"Αριθμομηχανή Αποτυπώματος Προϊόντων"},"header":{"title":"🌱 Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων","subtitle":"Μάθετε τον περιβαλλοντικό αντίκτυπο των προϊόντων στο καλάθι σας"},"calculator":{"section_title":"🛒 Προσθέστε προϊόντα στο καλάθι"},"buttons":{"add_product":"➕ Προσθέστε άλλο προϊόν","calculate":"🧮 Υπολογισμός οικολογικού αποτυπώματος","share_vk":"📘 Κοινοποίηση στο VKontakte","share_telegram":"📱 Κοινοποίηση στο Telegram"},"results":{"title":"📊 Αποτελέσματα Υπολογισμού","carbon_label":"kg ισοδύναμο CO₂","water_label":"λίτρα νερό","land_label":"m² γης","eco_score_label":"Οικολογική βαθμολογία (1-10)"},"comparison":{"title":"🔍 Σύγκριση με εναλλακτικές"},"recommendations":{"title":"💡 Συστάσεις για μείωση του οικολογικού αποτυπώματος"},"errors":{"no_products":"Προσθέστε τουλάχιστον ένα προϊόν για υπολογισμό.","invalid_quantity":"Εισαγάγετε έγκυρη ποσότητα για το προϊόν: {product}","calculation_error":"Παρουσιάστηκε σφάλμα κατά τον υπολογισμό. Παρακαλώ δοκιμάστε ξανά.","select_product_and_qty":"Παρακαλώ επιλέξτε προϊόν και εισάγετε ποσότητα"},"success":{"calculation_complete":"Ο υπολογισμός ολοκληρώθηκε με επιτυχία!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"τεμ.","pack":"συσκευασία"},"products":{"beef":"Μοσχάρι","chicken":"Κοτόπουλο","pork":"Χοιρινό","fish":"Ψάρι","eggs":"Αυγά","milk":"Γάλα","cheese":"Τυρί","yogurt":"Γιαούρτι","rice":"Ρύζι","pasta":"Ζυμαρικά","bread":"Ψωμί","potatoes":"Πατάτες","tomatoes":"Ντομάτες","apples":"Μήλα","bananas":"Μπανάνες","coffee":"Καφές","tea":"Τσάι","chocolate":"Σοκολάτα","sugar":"Ζάχαρη","olive_oil":"Ελαιόλαδο","select_product":"Επιλέξτε προϊόν...","lamb":"Αρνί","wheat":"Σιτάρι","vegetables":"Λαχανικά (μικτά)","fruits":"Φρούτα (μικτά)","nuts":"Ξηροί καρποί","turkey":"Γαλοπούλα","duck":"Πάπια","butter":"Βούτυρο","salmon":"Σολομός","tuna":"Τόνος","shrimp":"Γαρίδες","cucumbers":"Αγγούρια","carrots":"Καρότα","oranges":"Πορτοκάλια","grapes":"Σταφύλια","strawberries":"Φράουλες","quinoa":"Κινόα","lentils":"Φακές","chickpeas":"Ρεβίθια","wine":"Κρασί","bread_white":"Λευκό ψωμί","bread_rye":"Ψωμί σίκαλης","buckwheat":"Φαγόπυρο","oats":"Νιφάδες βρώμης","barley":"Κριθάρι πέρλες","rye":"Σίκαλη (σπόροι)","sunflower_oil":"Ηλιέλαιο","kefir":"Κεφίρ","yogurt_plain":"Γιαούρτι φυσικό","cottage_cheese":"Κοτέτζι τυρί","sour_cream":"Κρέμα γάλακτος","cabbage":"Λάχανο","onions":"Κρεμμύδια","garlic":"Σκόρδο","beets":"Παντζάρια","pears":"Αχλάδια","peas":"Αρακάς","beans":"Φασόλια","kvass":"Κβας","soda":"Αναψυκτικό","beer":"Μπίρα"},"ads":{"closeAria":"Κλείσιμο διαφήμισης"},"js":{"quantityPlaceholder":"Ποσότητα","selectedProductsTitle":"Επιλεγμένα προϊόντα:","remove":"Αφαίρεση","unitLabel":"Μονάδα: {unit}","loading":"Υπολογισμός οικολογικού αποτυπώματος...","errorPrefix":"Σφάλμα:","comparisonCurrentFootprint":"Τρέχον αποτύπωμα: {value} kg CO₂","comparisonAlternatives":"Εναλλακτικές:","comparisonSavings":"Εξοικονόμηση: ~{value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"Προϊόντα με υψηλό οικολογικό αποτύπωμα","description":"Σκεφτείτε εναλλακτικές για: {products}"},"reduceMeat":{"title":"Μείωση κατανάλωσης κρέατος","description":"Δοκιμάστε να αντικαταστήσετε το κρέας με φυτικές πρωτεΐνες 1–2 φορές την εβδομάδα"},"dairyAlternatives":{"title":"Εναλλακτικές γαλακτοκομικών","description":"Δοκιμάστε φυτικό γάλα και τυριά"},"buyLocal":{"title":"Αγοράστε τοπικά εποχιακά προϊόντα","description":"Μειώνει το αποτύπωμα μεταφοράς και υποστηρίζει τους τοπικούς παραγωγούς"},"planPurchases":{"title":"Σχεδιάστε τις αγορές σας","description":"Αποφύγετε τη σπατάλη τροφίμων — αγοράστε μόνο ό,τι χρειάζεστε"}},"alternatives":{"plant_proteins":"φυτικές πρωτεΐνες","legumes":"όσπρια","nuts":"ξηροί καρποί","poultry":"πουλερικά","fish":"ψάρι","seaweed":"φύκια","plant_milk":"φυτικό γάλα","oat_milk":"γάλα βρώμης","plant_cheese":"φυτικά τυριά","tofu":"τόφου","quinoa":"κινόα","bulgur":"πλιγούρι","buckwheat":"φαγόπυρο","oats_grain":"βρώμη","barley_grain":"κριθάρι","rye_grain":"σίκαλη","sweet_potato":"γλυκοπατάτα","turnip":"γογγύλι","seasonal_vegetables":"εποχιακά λαχανικά","local_seasonal_vegetables":"τοπικά εποχιακά λαχανικά","local_seasonal_fruits":"τοπικά εποχιακά φρούτα","local_fruits":"τοπικά φρούτα","tea":"τσάι","chicory":"κιχώριο","fruits":"φρούτα","seeds":"σπόροι","chicken":"κοτόπουλο","turkey":"γαλοπούλα","plant_oils":"φυτικά έλαια","avocado":"αβοκάντο","plant_yogurt":"φυτικά γιαούρτια","kefir":"κεφίρ","plant_omega3":"φυτικό ωμέγα-3","flax_seeds":"λίνελο σπόροι","other_fish":"άλλα ψάρια","other_seafood":"άλλα θαλασσινά","canned_tomatoes":"ντομάτες κονσέρβας","zucchini":"κολοκυθάκι","seasonal_root_vegetables":"εποχιακά ρίζα λαχανικά","beets":"παντζάρια","other_root_vegetables":"άλλα ρίζα λαχανικά","seasonal_citrus":"εποχιακά εσπεριδοειδή","seasonal_berries":"εποχιακά μούρα","other_grains":"άλλα δημητριακά","other_pseudograins":"άλλα ψευδοδημητριακά","beans":"φασόλια","peas":"αρακάς","chickpeas":"ρεβίθια","lentils":"φακές","plant_drinks":"φυτικά ποτά","local_herbs":"τοπικά βότανα","local_drinks":"τοπικά ποτά","non_alcoholic_options":"μη αλκοολούχες επιλογές","plant_desserts":"φυτικά επιδόρπια","honey":"μέλι","stevia":"στέβια","rye_bread":"ψωμί σίκαλης","whole_grain":"ολικής άλεσης","pearl_barley":"κριθάρι πέρλες","oatmeal":"νιφάδες βρώμης","millet":"κεχρί","whole_grain_pasta":"ζυμαρικά ολικής άλεσης","wheat":"σίτος","olive_oil":"ελαιόλαδο","sunflower_oil":"ηλιέλαιο","reduce_amount":"μείωση ποσότητας","plain_yogurt":"γιαούρτι φυσικό","yogurt":"γιαούρτι","reduce_fat":"μείωση λιπαρών","other_seasonal_vegetables":"άλλα εποχιακά λαχανικά","local_apples":"τοπικά μήλα","apples":"μήλα","herbal_teas":"βότανα τσάι","water":"νερό","compote":"κομπόστα","fruit_drink":"ποτό φρούτων","kvass":"κβας","onion":"κρεμμύδι"}};
+        window.i18n = {"title":"Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων — SerpMonn","meta_description":"Υπολογίστε το οικολογικό αποτύπωμα των τροφίμων σας. Μάθετε για το αποτύπωμα άνθρακα, το υδατικό αποτύπωμα και τον περιβαλλοντικό αντίκτυπο του καλαθιού αγορών σας.","meta_keywords":"οικολογικό αποτύπωμα προϊόντων, αποτύπωμα άνθρακα τροφίμων, υδατικό αποτύπωμα προϊόντων, οικολογική αριθμομηχανή, αποτύπωμα άνθρακα διατροφής","og_title":"Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων — SerpMonn","og_description":"Υπολογίστε το οικολογικό αποτύπωμα των τροφίμων σας. Μάθετε για το αποτύπωμα άνθρακα, το υδατικό αποτύπωμα και τον περιβαλλοντικό αντίκτυπο.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/el/eco-calculators/product-footprint/","vk_title":"Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων","vk_description":"Υπολογίστε το οικολογικό αποτύπωμα των τροφίμων σας","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Αρχική","tools":"Εργαλεία","current":"Αριθμομηχανή Αποτυπώματος Προϊόντων"},"header":{"title":"🌱 Αριθμομηχανή Οικολογικού Αποτυπώματος Προϊόντων","subtitle":"Μάθετε τον περιβαλλοντικό αντίκτυπο των προϊόντων στο καλάθι σας"},"calculator":{"section_title":"🛒 Προσθέστε προϊόντα στο καλάθι","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Προσθέστε άλλο προϊόν","calculate":"🧮 Υπολογισμός οικολογικού αποτυπώματος","share_vk":"📘 Κοινοποίηση στο VKontakte","share_telegram":"📱 Κοινοποίηση στο Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Αποτελέσματα Υπολογισμού","carbon_label":"kg ισοδύναμο CO₂","water_label":"λίτρα νερό","land_label":"m² γης","eco_score_label":"Οικολογική βαθμολογία (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Σύγκριση με εναλλακτικές"},"recommendations":{"title":"💡 Συστάσεις για μείωση του οικολογικού αποτυπώματος"},"errors":{"no_products":"Προσθέστε τουλάχιστον ένα προϊόν για υπολογισμό.","invalid_quantity":"Εισαγάγετε έγκυρη ποσότητα για το προϊόν: {product}","calculation_error":"Παρουσιάστηκε σφάλμα κατά τον υπολογισμό. Παρακαλώ δοκιμάστε ξανά.","select_product_and_qty":"Παρακαλώ επιλέξτε προϊόν και εισάγετε ποσότητα"},"success":{"calculation_complete":"Ο υπολογισμός ολοκληρώθηκε με επιτυχία!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"τεμ.","pack":"συσκευασία"},"products":{"beef":"Μοσχάρι","chicken":"Κοτόπουλο","pork":"Χοιρινό","fish":"Ψάρι","eggs":"Αυγά","milk":"Γάλα","cheese":"Τυρί","yogurt":"Γιαούρτι","rice":"Ρύζι","pasta":"Ζυμαρικά","bread":"Ψωμί","potatoes":"Πατάτες","tomatoes":"Ντομάτες","apples":"Μήλα","bananas":"Μπανάνες","coffee":"Καφές","tea":"Τσάι","chocolate":"Σοκολάτα","sugar":"Ζάχαρη","olive_oil":"Ελαιόλαδο","select_product":"Επιλέξτε προϊόν...","lamb":"Αρνί","wheat":"Σιτάρι","vegetables":"Λαχανικά (μικτά)","fruits":"Φρούτα (μικτά)","nuts":"Ξηροί καρποί","turkey":"Γαλοπούλα","duck":"Πάπια","butter":"Βούτυρο","salmon":"Σολομός","tuna":"Τόνος","shrimp":"Γαρίδες","cucumbers":"Αγγούρια","carrots":"Καρότα","oranges":"Πορτοκάλια","grapes":"Σταφύλια","strawberries":"Φράουλες","quinoa":"Κινόα","lentils":"Φακές","chickpeas":"Ρεβίθια","wine":"Κρασί","bread_white":"Λευκό ψωμί","bread_rye":"Ψωμί σίκαλης","buckwheat":"Φαγόπυρο","oats":"Νιφάδες βρώμης","barley":"Κριθάρι πέρλες","rye":"Σίκαλη (σπόροι)","sunflower_oil":"Ηλιέλαιο","kefir":"Κεφίρ","yogurt_plain":"Γιαούρτι φυσικό","cottage_cheese":"Κοτέτζι τυρί","sour_cream":"Κρέμα γάλακτος","cabbage":"Λάχανο","onions":"Κρεμμύδια","garlic":"Σκόρδο","beets":"Παντζάρια","pears":"Αχλάδια","peas":"Αρακάς","beans":"Φασόλια","kvass":"Κβας","soda":"Αναψυκτικό","beer":"Μπίρα"},"ads":{"closeAria":"Κλείσιμο διαφήμισης"},"js":{"quantityPlaceholder":"Ποσότητα","selectedProductsTitle":"Επιλεγμένα προϊόντα:","remove":"Αφαίρεση","unitLabel":"Μονάδα: {unit}","loading":"Υπολογισμός οικολογικού αποτυπώματος...","errorPrefix":"Σφάλμα:","comparisonCurrentFootprint":"Τρέχον αποτύπωμα: {value} kg CO₂","comparisonAlternatives":"Εναλλακτικές:","comparisonSavings":"Εξοικονόμηση: ~{value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Προϊόντα με υψηλό οικολογικό αποτύπωμα","description":"Σκεφτείτε εναλλακτικές για: {products}"},"reduceMeat":{"title":"Μείωση κατανάλωσης κρέατος","description":"Δοκιμάστε να αντικαταστήσετε το κρέας με φυτικές πρωτεΐνες 1–2 φορές την εβδομάδα"},"dairyAlternatives":{"title":"Εναλλακτικές γαλακτοκομικών","description":"Δοκιμάστε φυτικό γάλα και τυριά"},"buyLocal":{"title":"Αγοράστε τοπικά εποχιακά προϊόντα","description":"Μειώνει το αποτύπωμα μεταφοράς και υποστηρίζει τους τοπικούς παραγωγούς"},"planPurchases":{"title":"Σχεδιάστε τις αγορές σας","description":"Αποφύγετε τη σπατάλη τροφίμων — αγοράστε μόνο ό,τι χρειάζεστε"}},"alternatives":{"plant_proteins":"φυτικές πρωτεΐνες","legumes":"όσπρια","nuts":"ξηροί καρποί","poultry":"πουλερικά","fish":"ψάρι","seaweed":"φύκια","plant_milk":"φυτικό γάλα","oat_milk":"γάλα βρώμης","plant_cheese":"φυτικά τυριά","tofu":"τόφου","quinoa":"κινόα","bulgur":"πλιγούρι","buckwheat":"φαγόπυρο","oats_grain":"βρώμη","barley_grain":"κριθάρι","rye_grain":"σίκαλη","sweet_potato":"γλυκοπατάτα","turnip":"γογγύλι","seasonal_vegetables":"εποχιακά λαχανικά","local_seasonal_vegetables":"τοπικά εποχιακά λαχανικά","local_seasonal_fruits":"τοπικά εποχιακά φρούτα","local_fruits":"τοπικά φρούτα","tea":"τσάι","chicory":"κιχώριο","fruits":"φρούτα","seeds":"σπόροι","chicken":"κοτόπουλο","turkey":"γαλοπούλα","plant_oils":"φυτικά έλαια","avocado":"αβοκάντο","plant_yogurt":"φυτικά γιαούρτια","kefir":"κεφίρ","plant_omega3":"φυτικό ωμέγα-3","flax_seeds":"λίνελο σπόροι","other_fish":"άλλα ψάρια","other_seafood":"άλλα θαλασσινά","canned_tomatoes":"ντομάτες κονσέρβας","zucchini":"κολοκυθάκι","seasonal_root_vegetables":"εποχιακά ρίζα λαχανικά","beets":"παντζάρια","other_root_vegetables":"άλλα ρίζα λαχανικά","seasonal_citrus":"εποχιακά εσπεριδοειδή","seasonal_berries":"εποχιακά μούρα","other_grains":"άλλα δημητριακά","other_pseudograins":"άλλα ψευδοδημητριακά","beans":"φασόλια","peas":"αρακάς","chickpeas":"ρεβίθια","lentils":"φακές","plant_drinks":"φυτικά ποτά","local_herbs":"τοπικά βότανα","local_drinks":"τοπικά ποτά","non_alcoholic_options":"μη αλκοολούχες επιλογές","plant_desserts":"φυτικά επιδόρπια","honey":"μέλι","stevia":"στέβια","rye_bread":"ψωμί σίκαλης","whole_grain":"ολικής άλεσης","pearl_barley":"κριθάρι πέρλες","oatmeal":"νιφάδες βρώμης","millet":"κεχρί","whole_grain_pasta":"ζυμαρικά ολικής άλεσης","wheat":"σίτος","olive_oil":"ελαιόλαδο","sunflower_oil":"ηλιέλαιο","reduce_amount":"μείωση ποσότητας","plain_yogurt":"γιαούρτι φυσικό","yogurt":"γιαούρτι","reduce_fat":"μείωση λιπαρών","other_seasonal_vegetables":"άλλα εποχιακά λαχανικά","local_apples":"τοπικά μήλα","apples":"μήλα","herbal_teas":"βότανα τσάι","water":"νερό","compote":"κομπόστα","fruit_drink":"ποτό φρούτων","kvass":"κβας","onion":"κρεμμύδι"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

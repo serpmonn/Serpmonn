@@ -28,7 +28,7 @@
     <meta property="vk:description" content="আপনার খাদ্য পণ্যগুলির বাস্তবিক পদচিহ্ন গণনা করুন">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/bn/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 কার্টে পণ্য যোগ করুন
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ আরও একটি পণ্য যোগ করুন
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 বাস্তবিক পদচিহ্ন গণনা করুন
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 বাস্তবিক পদচিহ্ন গণনা করুন
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 গণনার ফলাফল
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">কেজি CO₂ সমতুল্য</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">বাস্তবিক রেটিং (১-১০)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"পণ্যের বাস্তবিক পদচিহ্ন ক্যালকুলেটর — SerpMonn","meta_description":"আপনার খাদ্য পণ্যগুলির বাস্তবিক পদচিহ্ন গণনা করুন। আপনার শপিং কার্বনের কার্বন পদচিহ্ন, জল পদচিহ্ন এবং পরিবেশগত প্রভাব সম্পর্কে জানুন।","meta_keywords":"পণ্য বাস্তবিক পদচিহ্ন, খাদ্য কার্বন পদচিহ্ন, পণ্য জল পদচিহ্ন, বাস্তবিক ক্যালকুলেটর, পুষ্টি কার্বন পদচিহ্ন","og_title":"পণ্যের বাস্তবিক পদচিহ্ন ক্যালকুলেটর — SerpMonn","og_description":"আপনার খাদ্য পণ্যগুলির বাস্তবিক পদচিহ্ন গণনা করুন। কার্বন পদচিহ্ন, জল পদচিহ্ন এবং পরিবেশগত প্রভাব সম্পর্কে জানুন।","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/bn/eco-calculators/product-footprint/","vk_title":"পণ্যের বাস্তবিক পদচিহ্ন ক্যালকুলেটর","vk_description":"আপনার খাদ্য পণ্যগুলির বাস্তবিক পদচিহ্ন গণনা করুন","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"হোম","tools":"সাধন","current":"পণ্য পদচিহ্ন ক্যালকুলেটর"},"header":{"title":"🌱 পণ্যের বাস্তবিক পদচিহ্ন ক্যালকুলেটর","subtitle":"আপনার কার্টে পণ্যগুলির পরিবেশগত প্রভাব খুঁজে বের করুন"},"calculator":{"section_title":"🛒 কার্টে পণ্য যোগ করুন"},"buttons":{"add_product":"➕ আরও একটি পণ্য যোগ করুন","calculate":"🧮 বাস্তবিক পদচিহ্ন গণনা করুন","share_vk":"📘 VKontakte-এ শেয়ার করুন","share_telegram":"📱 Telegram-এ শেয়ার করুন"},"results":{"title":"📊 গণনার ফলাফল","carbon_label":"কেজি CO₂ সমতুল্য","water_label":"লিটার জল","land_label":"বর্গমিটার জমি","eco_score_label":"বাস্তবিক রেটিং (১-১০)"},"comparison":{"title":"🔍 বিকল্পগুলির সাথে তুলনা"},"recommendations":{"title":"💡 বাস্তবিক পদচিহ্ন কমানোর জন্য সুপারিশ"},"errors":{"no_products":"গণনার জন্য কমপক্ষে একটি পণ্য যোগ করুন।","invalid_quantity":"পণ্যটির জন্য একটি বৈধ পরিমাণ লিখুন: {product}","calculation_error":"গণনার সময় একটি ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।","select_product_and_qty":"অনুগ্রহ করে একটি পণ্য নির্বাচন করুন এবং পরিমাণ লিখুন"},"success":{"calculation_complete":"গণনা সফলভাবে সম্পূর্ণ হয়েছে!"},"units":{"kg":"কেজি","g":"গ্রাম","l":"লিটার","ml":"মিলি","pcs":"টি","pack":"প্যাক"},"products":{"beef":"গরুর মাংস","chicken":"মুরগি","pork":"শূকরের মাংস","fish":"মাছ","eggs":"ডিম","milk":"দুধ","cheese":"পনির","yogurt":"দই","rice":"চাল","pasta":"পাস্তা","bread":"রুটি","potatoes":"আলু","tomatoes":"টমেটো","apples":"আপেল","bananas":"কলা","coffee":"কফি","tea":"চা","chocolate":"চকোলেট","sugar":"চিনি","olive_oil":"জলপাই তেল","select_product":"একটি পণ্য নির্বাচন করুন...","lamb":"ভেড়ার মাংস","wheat":"গম","vegetables":"সবজি (মিশ্র)","fruits":"ফল (মিশ্র)","nuts":"বাদাম","turkey":"টার্কি","duck":"হাঁস","butter":"মাখন","salmon":"স্যামন","tuna":"টুনা","shrimp":"চিংড়ি","cucumbers":"শসা","carrots":"গাজর","oranges":"কমলা","grapes":"আঙুর","strawberries":"স্ট্রবেরি","quinoa":"কুইনোয়া","lentils":"মসুর ডাল","chickpeas":"ছোলা","wine":"ওয়াইন","bread_white":"সাদা রুটি","bread_rye":"রাই রুটি","buckwheat":"মুগডাল","oats":"ওটমিল","barley":"বার্লি","rye":"রাই (শস্য)","sunflower_oil":"সূর্যমুখীর তেল","kefir":"কেফির","yogurt_plain":"প্লেইন দই","cottage_cheese":"কটেজ চিজ","sour_cream":"সাওয়ার ক্রিম","cabbage":"বাঁধাকপি","onions":"পেঁয়াজ","garlic":"রসুন","beets":"বিট","pears":"নাশপাতি","peas":"মটরশুটি","beans":"বিন","kvass":"কভাস","soda":"সফট ড্রিংক","beer":"বিয়ার"},"ads":{"closeAria":"বিজ্ঞাপন বন্ধ করুন"},"js":{"quantityPlaceholder":"পরিমাণ","selectedProductsTitle":"নির্বাচিত পণ্য:","remove":"সরান","unitLabel":"একক: {unit}","loading":"পারিস্থিতিক পদচিহ্ন গণনা করা হচ্ছে...","errorPrefix":"ত্রুটি:","comparisonCurrentFootprint":"বর্তমান পদচিহ্ন: {value} কেজি CO₂","comparisonAlternatives":"বিকল্প:","comparisonSavings":"সঞ্চয়: ~{value} কেজি CO₂"},"recommendationItems":{"highImpact":{"title":"উচ্চ পারিস্থিতিক পদচিহ্নযুক্ত পণ্য","description":"এর জন্য বিকল্প বিবেচনা করুন: {products}"},"reduceMeat":{"title":"মাংসের ব্যবহার কমান","description":"সপ্তাহে ১–২ বার মাংসের পরিবর্তে উদ্ভিজ্জ প্রোটিন ব্যবহার করে দেখুন"},"dairyAlternatives":{"title":"দুগ্ধজাত পণ্যের বিকল্প","description":"উদ্ভিজ্জ দুধ ও পনির ব্যবহার করে দেখুন"},"buyLocal":{"title":"স্থানীয় মৌসুমি পণ্য কিনুন","description":"এটি পরিবহন পদচিহ্ন কমায় এবং স্থানীয় উৎপাদকদের সমর্থন করে"},"planPurchases":{"title":"কেনাকাটার পরিকল্পনা করুন","description":"খাদ্য অপচয় এড়ান — শুধু প্রয়োজনীয় পরিমাণ কিনুন"}},"alternatives":{"plant_proteins":"উদ্ভিজ্জ প্রোটিন","legumes":"ডাল","nuts":"বাদাম","poultry":"হাঁস-মুরগি","fish":"মাছ","seaweed":"সামুদ্রিক শৈবাল","plant_milk":"উদ্ভিজ্জ দুধ","oat_milk":"ওট মিল্ক","plant_cheese":"উদ্ভিজ্জ পনির","tofu":"টোফু","quinoa":"কুইনোয়া","bulgur":"বুলগুর","buckwheat":"মুগডাল","oats_grain":"ওটস","barley_grain":"বার্লি","rye_grain":"রাই","sweet_potato":"মিষ্টি আলু","turnip":"শালগম","seasonal_vegetables":"মৌসুমি সবজি","local_seasonal_vegetables":"স্থানীয় মৌসুমি সবজি","local_seasonal_fruits":"স্থানীয় মৌসুমি ফল","local_fruits":"স্থানীয় ফল","tea":"চা","chicory":"চিকোরি","fruits":"ফল","seeds":"বীজ","chicken":"মুরগি","turkey":"টার্কি","plant_oils":"উদ্ভিজ্জ তেল","avocado":"অ্যাভোকাডো","plant_yogurt":"উদ্ভিজ্জ দই","kefir":"কেফির","plant_omega3":"উদ্ভিজ্জ ওমেগা-৩","flax_seeds":"তিসির বীজ","other_fish":"অন্যান্য মাছ","other_seafood":"অন্যান্য সামুদ্রিক খাবার","canned_tomatoes":"টিনজাত টমেটো","zucchini":"জুকিনি","seasonal_root_vegetables":"মৌসুমি মূল সবজি","beets":"বিট","other_root_vegetables":"অন্যান্য মূল সবজি","seasonal_citrus":"মৌসুমি সাইট্রাস","seasonal_berries":"মৌসুমি বেরি","other_grains":"অন্যান্য শস্য","other_pseudograins":"অন্যান্য ছদ্মশস্য","beans":"বিন","peas":"মটরশুটি","chickpeas":"ছোলা","lentils":"মসুর ডাল","plant_drinks":"উদ্ভিজ্জ পানীয়","local_herbs":"স্থানীয় ভেষজ","local_drinks":"স্থানীয় পানীয়","non_alcoholic_options":"নন-অ্যালকোহলিক বিকল্প","plant_desserts":"উদ্ভিজ্জ মিষ্টি","honey":"মধু","stevia":"স্টিভিয়া","rye_bread":"রাই রুটি","whole_grain":"সম্পূর্ণ শস্য","pearl_barley":"বার্লি","oatmeal":"ওটমিল","millet":"বাজরা","whole_grain_pasta":"সম্পূর্ণ শস্য পাস্তা","wheat":"গম","olive_oil":"জলপাই তেল","sunflower_oil":"সূর্যমুখীর তেল","reduce_amount":"পরিমাণ কমান","plain_yogurt":"প্লেইন দই","yogurt":"দই","reduce_fat":"চর্বি কমান","other_seasonal_vegetables":"অন্যান্য মৌসুমি সবজি","local_apples":"স্থানীয় আপেল","apples":"আপেল","herbal_teas":"ভেষজ চা","water":"পানি","compote":"কম্পোট","fruit_drink":"ফলের পানীয়","kvass":"কভাস","onion":"পেঁয়াজ"}};
+        window.i18n = {"title":"পণ্যের বাস্তবিক পদচিহ্ন ক্যালকুলেটর — SerpMonn","meta_description":"আপনার খাদ্য পণ্যগুলির বাস্তবিক পদচিহ্ন গণনা করুন। আপনার শপিং কার্বনের কার্বন পদচিহ্ন, জল পদচিহ্ন এবং পরিবেশগত প্রভাব সম্পর্কে জানুন।","meta_keywords":"পণ্য বাস্তবিক পদচিহ্ন, খাদ্য কার্বন পদচিহ্ন, পণ্য জল পদচিহ্ন, বাস্তবিক ক্যালকুলেটর, পুষ্টি কার্বন পদচিহ্ন","og_title":"পণ্যের বাস্তবিক পদচিহ্ন ক্যালকুলেটর — SerpMonn","og_description":"আপনার খাদ্য পণ্যগুলির বাস্তবিক পদচিহ্ন গণনা করুন। কার্বন পদচিহ্ন, জল পদচিহ্ন এবং পরিবেশগত প্রভাব সম্পর্কে জানুন।","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/bn/eco-calculators/product-footprint/","vk_title":"পণ্যের বাস্তবিক পদচিহ্ন ক্যালকুলেটর","vk_description":"আপনার খাদ্য পণ্যগুলির বাস্তবিক পদচিহ্ন গণনা করুন","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"হোম","tools":"সাধন","current":"পণ্য পদচিহ্ন ক্যালকুলেটর"},"header":{"title":"🌱 পণ্যের বাস্তবিক পদচিহ্ন ক্যালকুলেটর","subtitle":"আপনার কার্টে পণ্যগুলির পরিবেশগত প্রভাব খুঁজে বের করুন"},"calculator":{"section_title":"🛒 কার্টে পণ্য যোগ করুন","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ আরও একটি পণ্য যোগ করুন","calculate":"🧮 বাস্তবিক পদচিহ্ন গণনা করুন","share_vk":"📘 VKontakte-এ শেয়ার করুন","share_telegram":"📱 Telegram-এ শেয়ার করুন","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 গণনার ফলাফল","carbon_label":"কেজি CO₂ সমতুল্য","water_label":"লিটার জল","land_label":"বর্গমিটার জমি","eco_score_label":"বাস্তবিক রেটিং (১-১০)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 বিকল্পগুলির সাথে তুলনা"},"recommendations":{"title":"💡 বাস্তবিক পদচিহ্ন কমানোর জন্য সুপারিশ"},"errors":{"no_products":"গণনার জন্য কমপক্ষে একটি পণ্য যোগ করুন।","invalid_quantity":"পণ্যটির জন্য একটি বৈধ পরিমাণ লিখুন: {product}","calculation_error":"গণনার সময় একটি ত্রুটি ঘটেছে। অনুগ্রহ করে আবার চেষ্টা করুন।","select_product_and_qty":"অনুগ্রহ করে একটি পণ্য নির্বাচন করুন এবং পরিমাণ লিখুন"},"success":{"calculation_complete":"গণনা সফলভাবে সম্পূর্ণ হয়েছে!"},"units":{"kg":"কেজি","g":"গ্রাম","l":"লিটার","ml":"মিলি","pcs":"টি","pack":"প্যাক"},"products":{"beef":"গরুর মাংস","chicken":"মুরগি","pork":"শূকরের মাংস","fish":"মাছ","eggs":"ডিম","milk":"দুধ","cheese":"পনির","yogurt":"দই","rice":"চাল","pasta":"পাস্তা","bread":"রুটি","potatoes":"আলু","tomatoes":"টমেটো","apples":"আপেল","bananas":"কলা","coffee":"কফি","tea":"চা","chocolate":"চকোলেট","sugar":"চিনি","olive_oil":"জলপাই তেল","select_product":"একটি পণ্য নির্বাচন করুন...","lamb":"ভেড়ার মাংস","wheat":"গম","vegetables":"সবজি (মিশ্র)","fruits":"ফল (মিশ্র)","nuts":"বাদাম","turkey":"টার্কি","duck":"হাঁস","butter":"মাখন","salmon":"স্যামন","tuna":"টুনা","shrimp":"চিংড়ি","cucumbers":"শসা","carrots":"গাজর","oranges":"কমলা","grapes":"আঙুর","strawberries":"স্ট্রবেরি","quinoa":"কুইনোয়া","lentils":"মসুর ডাল","chickpeas":"ছোলা","wine":"ওয়াইন","bread_white":"সাদা রুটি","bread_rye":"রাই রুটি","buckwheat":"মুগডাল","oats":"ওটমিল","barley":"বার্লি","rye":"রাই (শস্য)","sunflower_oil":"সূর্যমুখীর তেল","kefir":"কেফির","yogurt_plain":"প্লেইন দই","cottage_cheese":"কটেজ চিজ","sour_cream":"সাওয়ার ক্রিম","cabbage":"বাঁধাকপি","onions":"পেঁয়াজ","garlic":"রসুন","beets":"বিট","pears":"নাশপাতি","peas":"মটরশুটি","beans":"বিন","kvass":"কভাস","soda":"সফট ড্রিংক","beer":"বিয়ার"},"ads":{"closeAria":"বিজ্ঞাপন বন্ধ করুন"},"js":{"quantityPlaceholder":"পরিমাণ","selectedProductsTitle":"নির্বাচিত পণ্য:","remove":"সরান","unitLabel":"একক: {unit}","loading":"পারিস্থিতিক পদচিহ্ন গণনা করা হচ্ছে...","errorPrefix":"ত্রুটি:","comparisonCurrentFootprint":"বর্তমান পদচিহ্ন: {value} কেজি CO₂","comparisonAlternatives":"বিকল্প:","comparisonSavings":"সঞ্চয়: ~{value} কেজি CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"উচ্চ পারিস্থিতিক পদচিহ্নযুক্ত পণ্য","description":"এর জন্য বিকল্প বিবেচনা করুন: {products}"},"reduceMeat":{"title":"মাংসের ব্যবহার কমান","description":"সপ্তাহে ১–২ বার মাংসের পরিবর্তে উদ্ভিজ্জ প্রোটিন ব্যবহার করে দেখুন"},"dairyAlternatives":{"title":"দুগ্ধজাত পণ্যের বিকল্প","description":"উদ্ভিজ্জ দুধ ও পনির ব্যবহার করে দেখুন"},"buyLocal":{"title":"স্থানীয় মৌসুমি পণ্য কিনুন","description":"এটি পরিবহন পদচিহ্ন কমায় এবং স্থানীয় উৎপাদকদের সমর্থন করে"},"planPurchases":{"title":"কেনাকাটার পরিকল্পনা করুন","description":"খাদ্য অপচয় এড়ান — শুধু প্রয়োজনীয় পরিমাণ কিনুন"}},"alternatives":{"plant_proteins":"উদ্ভিজ্জ প্রোটিন","legumes":"ডাল","nuts":"বাদাম","poultry":"হাঁস-মুরগি","fish":"মাছ","seaweed":"সামুদ্রিক শৈবাল","plant_milk":"উদ্ভিজ্জ দুধ","oat_milk":"ওট মিল্ক","plant_cheese":"উদ্ভিজ্জ পনির","tofu":"টোফু","quinoa":"কুইনোয়া","bulgur":"বুলগুর","buckwheat":"মুগডাল","oats_grain":"ওটস","barley_grain":"বার্লি","rye_grain":"রাই","sweet_potato":"মিষ্টি আলু","turnip":"শালগম","seasonal_vegetables":"মৌসুমি সবজি","local_seasonal_vegetables":"স্থানীয় মৌসুমি সবজি","local_seasonal_fruits":"স্থানীয় মৌসুমি ফল","local_fruits":"স্থানীয় ফল","tea":"চা","chicory":"চিকোরি","fruits":"ফল","seeds":"বীজ","chicken":"মুরগি","turkey":"টার্কি","plant_oils":"উদ্ভিজ্জ তেল","avocado":"অ্যাভোকাডো","plant_yogurt":"উদ্ভিজ্জ দই","kefir":"কেফির","plant_omega3":"উদ্ভিজ্জ ওমেগা-৩","flax_seeds":"তিসির বীজ","other_fish":"অন্যান্য মাছ","other_seafood":"অন্যান্য সামুদ্রিক খাবার","canned_tomatoes":"টিনজাত টমেটো","zucchini":"জুকিনি","seasonal_root_vegetables":"মৌসুমি মূল সবজি","beets":"বিট","other_root_vegetables":"অন্যান্য মূল সবজি","seasonal_citrus":"মৌসুমি সাইট্রাস","seasonal_berries":"মৌসুমি বেরি","other_grains":"অন্যান্য শস্য","other_pseudograins":"অন্যান্য ছদ্মশস্য","beans":"বিন","peas":"মটরশুটি","chickpeas":"ছোলা","lentils":"মসুর ডাল","plant_drinks":"উদ্ভিজ্জ পানীয়","local_herbs":"স্থানীয় ভেষজ","local_drinks":"স্থানীয় পানীয়","non_alcoholic_options":"নন-অ্যালকোহলিক বিকল্প","plant_desserts":"উদ্ভিজ্জ মিষ্টি","honey":"মধু","stevia":"স্টিভিয়া","rye_bread":"রাই রুটি","whole_grain":"সম্পূর্ণ শস্য","pearl_barley":"বার্লি","oatmeal":"ওটমিল","millet":"বাজরা","whole_grain_pasta":"সম্পূর্ণ শস্য পাস্তা","wheat":"গম","olive_oil":"জলপাই তেল","sunflower_oil":"সূর্যমুখীর তেল","reduce_amount":"পরিমাণ কমান","plain_yogurt":"প্লেইন দই","yogurt":"দই","reduce_fat":"চর্বি কমান","other_seasonal_vegetables":"অন্যান্য মৌসুমি সবজি","local_apples":"স্থানীয় আপেল","apples":"আপেল","herbal_teas":"ভেষজ চা","water":"পানি","compote":"কম্পোট","fruit_drink":"ফলের পানীয়","kvass":"কভাস","onion":"পেঁয়াজ"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

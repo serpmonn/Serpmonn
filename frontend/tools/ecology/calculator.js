@@ -27,13 +27,18 @@ class EcoFootprintCalculator {
   constructor() {
     this.products = [];
     this.results = null;
+    this.chartInstance = null;
     this.init();
   }
 
   init() {
     this.setupEventListeners();
-    this.loadSavedData();
+    this.restoreFromUrl() || this.loadSavedData();
     this.renderProductRows();
+    if (this.products.length) {
+      this.hydrateRowsFromProducts();
+      this.calculateFootprint({ scroll: false });
+    }
   }
 
   setupEventListeners() {
@@ -43,10 +48,171 @@ class EcoFootprintCalculator {
       }
     });
 
-    const calculateBtn = document.querySelector('.calculate-btn');
-    if (calculateBtn) {
-      calculateBtn.addEventListener('click', () => this.calculateFootprint());
+    document.getElementById('btn-eco-calculate')?.addEventListener('click', () => this.calculateFootprint({ scroll: true }));
+    document.querySelector('.calculate-btn:not(#btn-eco-calculate)')?.addEventListener('click', () => this.calculateFootprint({ scroll: true }));
+    document.getElementById('btn-eco-reset')?.addEventListener('click', () => this.resetForm());
+    document.getElementById('btn-eco-share')?.addEventListener('click', () => this.copyShareLink());
+    document.getElementById('btn-eco-pdf')?.addEventListener('click', () => this.exportPdf());
+    document.getElementById('btn-eco-csv')?.addEventListener('click', () => this.exportCsv());
+  }
+
+  getRegion() {
+    return document.getElementById('eco-region')?.value || 'national';
+  }
+
+  getSeason() {
+    return document.getElementById('eco-season')?.value || 'in_season';
+  }
+
+  clearBannerError() {
+    const el = document.getElementById('error-message');
+    if (!el) return;
+    el.textContent = '';
+    el.classList.add('hidden');
+  }
+
+  showBannerError(message) {
+    const el = document.getElementById('error-message');
+    if (el) {
+      el.textContent = message;
+      el.classList.remove('hidden');
+      return;
     }
+    this.showError(message);
+  }
+
+  syncUrl() {
+    const products = this.collectProductsFromRows();
+    const params = new URLSearchParams();
+    if (products.length) {
+      params.set('items', products.map(p => `${p.id}:${p.quantity}:${p.unit}`).join(','));
+    }
+    params.set('region', this.getRegion());
+    params.set('season', this.getSeason());
+    const qs = params.toString();
+    history.replaceState(null, '', qs ? `${location.pathname}?${qs}` : location.pathname);
+  }
+
+  restoreFromUrl() {
+    const params = new URLSearchParams(location.search);
+    const items = params.get('items');
+    if (!items) return false;
+    if (params.get('region') && document.getElementById('eco-region')) {
+      document.getElementById('eco-region').value = params.get('region');
+    }
+    if (params.get('season') && document.getElementById('eco-season')) {
+      document.getElementById('eco-season').value = params.get('season');
+    }
+    this.products = items.split(',').map(chunk => {
+      const [id, qty, unit] = chunk.split(':');
+      if (!id || !ECO_DATABASE[id]) return null;
+      return {
+        id,
+        name: getProductLabel(id),
+        quantity: parseFloat(qty),
+        unit: unit || 'kg',
+      };
+    }).filter(Boolean);
+    return this.products.length > 0;
+  }
+
+  hydrateRowsFromProducts() {
+    const container = document.getElementById('products-container');
+    if (!container) return;
+    container.innerHTML = '';
+    this.products.forEach(p => {
+      const row = this.createProductRow();
+      row.querySelector('.product-select').value = p.id;
+      row.querySelector('.quantity-input').value = p.quantity;
+      container.appendChild(row);
+      this.updateUnitDisplay(row);
+    });
+    if (!this.products.length) container.appendChild(this.createProductRow());
+    this.updateRemoveButtons();
+  }
+
+  resetForm() {
+    this.products = [];
+    this.results = null;
+    this.clearBannerError();
+    this.renderProductRows();
+    const section = document.getElementById('results-section');
+    if (section) section.style.display = 'none';
+    history.replaceState(null, '', location.pathname);
+    try { localStorage.removeItem('ecoFootprintResults'); } catch {}
+  }
+
+  async copyShareLink() {
+    this.products = this.collectProductsFromRows();
+    this.syncUrl();
+    try {
+      await navigator.clipboard.writeText(location.href);
+      alert(ecoT('js.shareCopied') !== 'js.shareCopied' ? ecoT('js.shareCopied') : 'Ссылка скопирована');
+    } catch {
+      prompt('URL', location.href);
+    }
+  }
+
+  exportCsv() {
+    if (!this.results?.products?.length) {
+      alert(ecoT('errors.no_products'));
+      return;
+    }
+    const lines = [['product', 'carbon', 'water', 'land', 'ecoRating'].join(';')];
+    this.results.products.forEach(p => {
+      lines.push([p.name || p.id, p.carbonFootprint, p.waterFootprint, p.landFootprint, p.ecoRating].join(';'));
+    });
+    lines.push(['TOTAL', this.results.totalCarbon, this.results.totalWater, this.results.totalLand, this.results.ecoRating].join(';'));
+    const blob = new Blob(['\uFEFF' + lines.join('\n')], { type: 'text/csv;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'eco-footprint.csv';
+    a.click();
+    URL.revokeObjectURL(a.href);
+  }
+
+  async exportPdf() {
+    if (!this.results) {
+      alert(ecoT('errors.no_products'));
+      return;
+    }
+    try {
+      if (!window.jspdf) {
+        await import('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      let y = 14;
+      doc.text('Eco footprint', 14, y); y += 8;
+      doc.text(`Carbon: ${this.results.totalCarbon}`, 14, y); y += 8;
+      doc.text(`Water: ${this.results.totalWater}`, 14, y); y += 8;
+      doc.text(`Land: ${this.results.totalLand}`, 14, y); y += 8;
+      doc.text(`Score: ${this.results.ecoRating}`, 14, y);
+      doc.save('eco-footprint.pdf');
+    } catch (e) {
+      console.error(e);
+      alert('PDF export failed');
+    }
+  }
+
+  async renderChart() {
+    const canvas = document.getElementById('ecoChart');
+    if (!canvas || !this.results?.products?.length) return;
+    try {
+      if (!window.Chart) await import('https://cdn.jsdelivr.net/npm/chart.js');
+    } catch { return; }
+    if (!window.Chart) return;
+    if (this.chartInstance) this.chartInstance.destroy();
+    const labels = this.results.products.map(p => p.name || p.id);
+    const data = this.results.products.map(p => p.carbonFootprint);
+    this.chartInstance = new Chart(canvas.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels,
+        datasets: [{ label: 'CO2', data, backgroundColor: '#2E8B57' }],
+      },
+      options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } },
+    });
   }
 
   buildProductOptions() {
@@ -65,8 +231,10 @@ class EcoFootprintCalculator {
     row.className = 'product-row';
     row.innerHTML = `
       <select class="product-select">${this.buildProductOptions()}</select>
-      <input type="number" class="quantity-input" placeholder="${ecoT('js.quantityPlaceholder')}" min="0" step="0.1">
-      <span class="unit-display"></span>
+      <div class="quantity-wrap">
+        <input type="number" class="quantity-input" placeholder="${ecoT('js.quantityPlaceholder')}" min="0" step="0.1">
+        <span class="unit-display" aria-hidden="true"></span>
+      </div>
       <button type="button" class="remove-btn" onclick="removeProductRow(this)">${ecoT('js.remove')}</button>
     `;
     return row;
@@ -133,7 +301,7 @@ class EcoFootprintCalculator {
     const quantity = parseFloat(lastRow.querySelector('.quantity-input')?.value || '');
 
     if (!productId || !quantity || quantity <= 0) {
-      alert(ecoT('errors.select_product_and_qty'));
+      this.showBannerError(ecoT('errors.select_product_and_qty'));
       return;
     }
 
@@ -182,24 +350,27 @@ class EcoFootprintCalculator {
       unitDisplay.textContent = '';
       return;
     }
-    const unit = this.resolveUnit(productId);
-    unitDisplay.textContent = ecoT('js.unitLabel', { unit: this.getUnitLabel(unit) });
+    unitDisplay.textContent = this.getUnitLabel(this.resolveUnit(productId));
   }
 
-  async calculateFootprint() {
+  async calculateFootprint(options = {}) {
+    const { scroll = true } = options;
+    this.clearBannerError();
     const fromRows = this.collectProductsFromRows();
     if (fromRows.length > 0) {
       this.products = fromRows;
     }
 
     if (this.products.length === 0) {
-      this.showError(ecoT('errors.no_products'));
+      this.showBannerError(ecoT('errors.no_products'));
       return;
     }
 
     this.showLoading();
 
     try {
+      const region = this.getRegion();
+      const season = this.getSeason();
       const productFootprints = [];
       let totalCarbon = 0;
       let totalWater = 0;
@@ -208,7 +379,7 @@ class EcoFootprintCalculator {
 
       this.products.forEach(product => {
         const quantityInKg = convertToKilograms(product.quantity, product.unit, product.id);
-        const footprint = calculateProductFootprint(product.id, quantityInKg);
+        const footprint = calculateProductFootprint(product.id, quantityInKg, region, season);
         if (footprint) {
           productFootprints.push(footprint);
           totalCarbon += footprint.carbonFootprint;
@@ -226,32 +397,38 @@ class EcoFootprintCalculator {
         ecoRating: Math.round(averageEcoRating * 10) / 10,
         products: productFootprints,
         recommendations: getRecommendations(productFootprints),
-        comparisons: getComparisons(productFootprints)
+        comparisons: getComparisons(productFootprints),
+        region,
+        season,
       };
 
-      this.displayResults();
+      this.displayResults(scroll);
       this.saveResults();
+      this.syncUrl();
+      await this.renderChart();
     } catch (error) {
       console.error('Eco calculator error:', error);
-      this.showError(ecoT('errors.calculation_error'));
+      this.showBannerError(ecoT('errors.calculation_error'));
     } finally {
       this.hideLoading();
     }
   }
 
-  displayResults() {
+  displayResults(scroll = true) {
     const resultsSection = document.getElementById('results-section');
     if (resultsSection) resultsSection.style.display = 'block';
     this.hideLoading();
 
     document.getElementById('carbon-footprint').textContent = this.results.totalCarbon.toFixed(2);
+    const hero = document.getElementById('carbon-footprint-hero');
+    if (hero) hero.textContent = this.results.totalCarbon.toFixed(2);
     document.getElementById('water-footprint').textContent = this.results.totalWater.toLocaleString(getLocale());
     document.getElementById('land-footprint').textContent = this.results.totalLand.toFixed(2);
     document.getElementById('eco-score').textContent = this.results.ecoRating.toFixed(1);
 
     this.displayComparisons();
     this.displayRecommendations();
-    resultsSection?.scrollIntoView({ behavior: 'smooth' });
+    if (scroll) resultsSection?.scrollIntoView({ behavior: 'smooth' });
   }
 
   displayComparisons() {
@@ -331,6 +508,9 @@ class EcoFootprintCalculator {
     try {
       localStorage.setItem('ecoFootprintResults', JSON.stringify({
         results: this.results,
+        products: this.products,
+        region: this.getRegion(),
+        season: this.getSeason(),
         timestamp: new Date().toISOString()
       }));
     } catch {}
@@ -339,13 +519,18 @@ class EcoFootprintCalculator {
   loadSavedData() {
     try {
       const saved = localStorage.getItem('ecoFootprintResults');
-      if (!saved) return;
+      if (!saved) return false;
       const data = JSON.parse(saved);
       if (Date.now() - new Date(data.timestamp).getTime() < 24 * 60 * 60 * 1000) {
         this.results = data.results;
-        this.displayResults();
+        if (Array.isArray(data.products)) this.products = data.products;
+        if (data.region && document.getElementById('eco-region')) document.getElementById('eco-region').value = data.region;
+        if (data.season && document.getElementById('eco-season')) document.getElementById('eco-season').value = data.season;
+        if (this.products.length) return true;
+        if (this.results) this.displayResults(false);
       }
     } catch {}
+    return false;
   }
 }
 

@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Հաշվեք ձեր սննդամթերքի էկոլոգիական հետքը">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/hy/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Ավելացրեք ապրանքներ զամբյուղում
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Ավելացնել մեկ այլ ապրանք
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Հաշվարկել էկոլոգիական հետքը
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Հաշվարկել էկոլոգիական հետքը
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Հաշվարկի արդյունքներ
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">կգ CO₂ համարժեք</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Էկո-գնահատական (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Արտադրանքի էկոլոգիական հետքի հաշվիչ — SerpMonn","meta_description":"Հաշվեք ձեր սննդամթերքի էկոլոգիական հետքը: Իմացեք ձեր գնումների զամբյուղի ածխածնի հետքի, ջրի հետքի և շրջակա միջավայրի ազդեցության մասին:","meta_keywords":"արտադրանքի էկոլոգիական հետք, սննդի ածխածնի հետք, արտադրանքի ջրի հետք, էկոլոգիական հաշվիչ, սնուցման ածխածնի հետք","og_title":"Արտադրանքի էկոլոգիական հետքի հաշվիչ — SerpMonn","og_description":"Հաշվեք ձեր սննդամթերքի էկոլոգիական հետքը: Իմացեք ածխածնի հետքի, ջրի հետքի և շրջակա միջավայրի ազդեցության մասին:","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/hy/eco-calculators/product-footprint/","vk_title":"Արտադրանքի էկոլոգիական հետքի հաշվիչ","vk_description":"Հաշվեք ձեր սննդամթերքի էկոլոգիական հետքը","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Գլխավոր","tools":"Գործիքներ","current":"Արտադրանքի հետքի հաշվիչ"},"header":{"title":"🌱 Արտադրանքի էկոլոգիական հետքի հաշվիչ","subtitle":"Բացահայտեք ձեր զամբյուղում ապրանքների շրջակա միջավայրի ազդեցությունը"},"calculator":{"section_title":"🛒 Ավելացրեք ապրանքներ զամբյուղում"},"buttons":{"add_product":"➕ Ավելացնել մեկ այլ ապրանք","calculate":"🧮 Հաշվարկել էկոլոգիական հետքը","share_vk":"📘 Կիսվել VKontakte-ում","share_telegram":"📱 Կիսվել Telegram-ում"},"results":{"title":"📊 Հաշվարկի արդյունքներ","carbon_label":"կգ CO₂ համարժեք","water_label":"լիտր ջուր","land_label":"մ² հող","eco_score_label":"Էկո-գնահատական (1-10)"},"comparison":{"title":"🔍 Համեմատություն այլընտրանքների հետ"},"recommendations":{"title":"💡 Էկոլոգիական հետքը նվազեցնելու առաջարկներ"},"errors":{"no_products":"Խնդրում ենք ավելացնել առնվազն մեկ ապրանք հաշվարկի համար:","invalid_quantity":"Խնդրում ենք մուտքագրել վավեր քանակություն ապրանքի համար: {product}","calculation_error":"Հաշվարկի ժամանակ տեղի ունեցավ սխալ: Խնդրում ենք կրկին փորձել:","select_product_and_qty":"Խնդրում ենք ընտրել ապրանք և մուտքագրել քանակ"},"success":{"calculation_complete":"Հաշվարկը հաջողությամբ ավարտվեց!"},"units":{"kg":"կգ","g":"գ","l":"լ","ml":"մլ","pcs":"հատ","pack":"փաթեթ"},"products":{"beef":"Տավար","chicken":"Հավ","pork":"Խոզ","fish":"Ձուկ","eggs":"Ձու","milk":"Կաթ","cheese":"Պանիր","yogurt":"Յոգուրտ","rice":"Բրինձ","pasta":"Մակարոն","bread":"Հաց","potatoes":"Կարտոֆիլ","tomatoes":"Լոլիկ","apples":"Խնձոր","bananas":"Բանան","coffee":"Սուրճ","tea":"Թեյ","chocolate":"Շոկոլադ","sugar":"Շաքար","olive_oil":"Ձիթապտղի յուղ","select_product":"Ընտրեք ապրանք...","lamb":"Գառ","wheat":"Ցորեն","vegetables":"Բանջարեղեն (խառն)","fruits":"Մրգեր (խառն)","nuts":"Ընկույզ","turkey":"Հնդկահավ","duck":"Բադ","butter":"Կարագ","salmon":"Սաղմոն","tuna":"Թունա","shrimp":"Մաննա","cucumbers":"Վարունգ","carrots":"Գազար","oranges":"Նարինջ","grapes":"Խաղող","strawberries":"Ելակ","quinoa":"Քինոա","lentils":"Սոխ","chickpeas":"Սիսեռ","wine":"Գինի","bread_white":"Սպիտակ հաց","bread_rye":"Աշորայի հաց","buckwheat":"Հնդկաձուկ","oats":"Վարսակի փաթիլ","barley":"Գարի","rye":"Աշորա (հատիկ)","sunflower_oil":"Արևածաղի յուղ","kefir":"Կեֆիր","yogurt_plain":"Բնական յոգուրտ","cottage_cheese":"Տվարոգ","sour_cream":"Թթվասեր","cabbage":"Կաղամբ","onions":"Սոխ","garlic":"Սխտոր","beets":"Ճակնդեղ","pears":"Տանձ","peas":"Սիսեռ","beans":"Լոբի","kvass":"Կվաս","soda":"Գազավորված ըմպելիք","beer":"Գարեջուր"},"ads":{"closeAria":"Փակել գովազդը"},"js":{"quantityPlaceholder":"Քանակ","selectedProductsTitle":"Ընտրված ապրանքներ:","remove":"Հեռացնել","unitLabel":"Միավոր: {unit}","loading":"Հաշվարկվում է էկոլոգիական հետքը...","errorPrefix":"Սխալ:","comparisonCurrentFootprint":"Ընթացիկ հետք: {value} կգ CO₂","comparisonAlternatives":"Այլընտրանքներ:","comparisonSavings":"Խնայողություն: ~{value} կգ CO₂"},"recommendationItems":{"highImpact":{"title":"Բարձր էկոլոգիական հետք ունեցող ապրանքներ","description":"Նայեք այլընտրանքներին՝ {products}"},"reduceMeat":{"title":"Միսի սպառումը նվազեցնել","description":"Փորձեք շաբաթը 1–2 անգամ միսը փոխարինել բուսական սպիտակուցներով"},"dairyAlternatives":{"title":"Կաթնամթերքի այլընտրանքներ","description":"Փորձեք բուսական կաթ և պանիր"},"buyLocal":{"title":"Գնեք տեղական սեզոնային ապրանքներ","description":"Դա նվազեցնում է տրանսպորտային հետքը և աջակցում տեղական արտադրողներին"},"planPurchases":{"title":"Պլանավորեք ձեր գնումները","description":"Խուսափեք սննդի թափոններից — գնեք միայն անհրաժեշտը"}},"alternatives":{"plant_proteins":"բուսական սպիտակուցներ","legumes":"հատիկավոր","nuts":"ընկույզ","poultry":"թռչուն","fish":"ձուկ","seaweed":"ջրասեխաններ","plant_milk":"բուսական կաթ","oat_milk":"վարսակի կաթ","plant_cheese":"բուսական պանիր","tofu":"տոֆու","quinoa":"քինոա","bulgur":"բուլգուր","buckwheat":"հնդկաձուկ","oats_grain":"վարսակ","barley_grain":"գարի","rye_grain":"աշորա","sweet_potato":"քաղցր կարտոֆիլ","turnip":"ճակնդեղ","seasonal_vegetables":"սեզոնային բանջարեղեն","local_seasonal_vegetables":"տեղական սեզոնային բանջարեղեն","local_seasonal_fruits":"տեղական սեզոնային մրգեր","local_fruits":"տեղական մրգեր","tea":"թեյ","chicory":"հինդկաձուկ","fruits":"մրգեր","seeds":"սերմեր","chicken":"հավ","turkey":"հնդկահավ","plant_oils":"բուսական յուղեր","avocado":"ավոկադո","plant_yogurt":"բուսական յոգուրտ","kefir":"կեֆիր","plant_omega3":"բուսական օմեգա-3","flax_seeds":"վուշի սերմ","other_fish":"այլ ձկներ","other_seafood":"այլ ծովամթերք","canned_tomatoes":"կոնսերվացված լոլիկ","zucchini":"դդում","seasonal_root_vegetables":"սեզոնային արմատային բանջարեղեն","beets":"ճակնդեղ","other_root_vegetables":"այլ արմատային բանջարեղեն","seasonal_citrus":"սեզոնային ցիտրուս","seasonal_berries":"սեզոնային հատապտուղներ","other_grains":"այլ հացահատիկներ","other_pseudograins":"այլ կեղծահացահատիկներ","beans":"լոբի","peas":"սիսեռ","chickpeas":"սիսեռ (նուշ)","lentils":"սոխ","plant_drinks":"բուսական ըմպելիքներ","local_herbs":"տեղական խոտաբույսեր","local_drinks":"տեղական ըմպելիքներ","non_alcoholic_options":"անալկոհոլային տարբերակներ","plant_desserts":"բուսական աղանդեր","honey":"մեղր","stevia":"ստևիա","rye_bread":"աշորայի հաց","whole_grain":"ամբողջական","pearl_barley":"գարի","oatmeal":"վարսակի փաթիլ","millet":"հնդկաձուկ","whole_grain_pasta":"ամբողջական մակարոն","wheat":"ցորեն","olive_oil":"ձիթապտղի յուղ","sunflower_oil":"արևածաղի յուղ","reduce_amount":"նվազեցնել քանակը","plain_yogurt":"բնական յոգուրտ","yogurt":"յոգուրտ","reduce_fat":"նվազեցնել յուղը","other_seasonal_vegetables":"այլ սեզոնային բանջարեղեն","local_apples":"տեղական խնձոր","apples":"խնձոր","herbal_teas":"խոտային թեյեր","water":"ջուր","compote":"կոմպոտ","fruit_drink":"մրգի ըմպելիք","kvass":"կվաս","onion":"սոխ"}};
+        window.i18n = {"title":"Արտադրանքի էկոլոգիական հետքի հաշվիչ — SerpMonn","meta_description":"Հաշվեք ձեր սննդամթերքի էկոլոգիական հետքը: Իմացեք ձեր գնումների զամբյուղի ածխածնի հետքի, ջրի հետքի և շրջակա միջավայրի ազդեցության մասին:","meta_keywords":"արտադրանքի էկոլոգիական հետք, սննդի ածխածնի հետք, արտադրանքի ջրի հետք, էկոլոգիական հաշվիչ, սնուցման ածխածնի հետք","og_title":"Արտադրանքի էկոլոգիական հետքի հաշվիչ — SerpMonn","og_description":"Հաշվեք ձեր սննդամթերքի էկոլոգիական հետքը: Իմացեք ածխածնի հետքի, ջրի հետքի և շրջակա միջավայրի ազդեցության մասին:","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/hy/eco-calculators/product-footprint/","vk_title":"Արտադրանքի էկոլոգիական հետքի հաշվիչ","vk_description":"Հաշվեք ձեր սննդամթերքի էկոլոգիական հետքը","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Գլխավոր","tools":"Գործիքներ","current":"Արտադրանքի հետքի հաշվիչ"},"header":{"title":"🌱 Արտադրանքի էկոլոգիական հետքի հաշվիչ","subtitle":"Բացահայտեք ձեր զամբյուղում ապրանքների շրջակա միջավայրի ազդեցությունը"},"calculator":{"section_title":"🛒 Ավելացրեք ապրանքներ զամբյուղում","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Ավելացնել մեկ այլ ապրանք","calculate":"🧮 Հաշվարկել էկոլոգիական հետքը","share_vk":"📘 Կիսվել VKontakte-ում","share_telegram":"📱 Կիսվել Telegram-ում","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Հաշվարկի արդյունքներ","carbon_label":"կգ CO₂ համարժեք","water_label":"լիտր ջուր","land_label":"մ² հող","eco_score_label":"Էկո-գնահատական (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Համեմատություն այլընտրանքների հետ"},"recommendations":{"title":"💡 Էկոլոգիական հետքը նվազեցնելու առաջարկներ"},"errors":{"no_products":"Խնդրում ենք ավելացնել առնվազն մեկ ապրանք հաշվարկի համար:","invalid_quantity":"Խնդրում ենք մուտքագրել վավեր քանակություն ապրանքի համար: {product}","calculation_error":"Հաշվարկի ժամանակ տեղի ունեցավ սխալ: Խնդրում ենք կրկին փորձել:","select_product_and_qty":"Խնդրում ենք ընտրել ապրանք և մուտքագրել քանակ"},"success":{"calculation_complete":"Հաշվարկը հաջողությամբ ավարտվեց!"},"units":{"kg":"կգ","g":"գ","l":"լ","ml":"մլ","pcs":"հատ","pack":"փաթեթ"},"products":{"beef":"Տավար","chicken":"Հավ","pork":"Խոզ","fish":"Ձուկ","eggs":"Ձու","milk":"Կաթ","cheese":"Պանիր","yogurt":"Յոգուրտ","rice":"Բրինձ","pasta":"Մակարոն","bread":"Հաց","potatoes":"Կարտոֆիլ","tomatoes":"Լոլիկ","apples":"Խնձոր","bananas":"Բանան","coffee":"Սուրճ","tea":"Թեյ","chocolate":"Շոկոլադ","sugar":"Շաքար","olive_oil":"Ձիթապտղի յուղ","select_product":"Ընտրեք ապրանք...","lamb":"Գառ","wheat":"Ցորեն","vegetables":"Բանջարեղեն (խառն)","fruits":"Մրգեր (խառն)","nuts":"Ընկույզ","turkey":"Հնդկահավ","duck":"Բադ","butter":"Կարագ","salmon":"Սաղմոն","tuna":"Թունա","shrimp":"Մաննա","cucumbers":"Վարունգ","carrots":"Գազար","oranges":"Նարինջ","grapes":"Խաղող","strawberries":"Ելակ","quinoa":"Քինոա","lentils":"Սոխ","chickpeas":"Սիսեռ","wine":"Գինի","bread_white":"Սպիտակ հաց","bread_rye":"Աշորայի հաց","buckwheat":"Հնդկաձուկ","oats":"Վարսակի փաթիլ","barley":"Գարի","rye":"Աշորա (հատիկ)","sunflower_oil":"Արևածաղի յուղ","kefir":"Կեֆիր","yogurt_plain":"Բնական յոգուրտ","cottage_cheese":"Տվարոգ","sour_cream":"Թթվասեր","cabbage":"Կաղամբ","onions":"Սոխ","garlic":"Սխտոր","beets":"Ճակնդեղ","pears":"Տանձ","peas":"Սիսեռ","beans":"Լոբի","kvass":"Կվաս","soda":"Գազավորված ըմպելիք","beer":"Գարեջուր"},"ads":{"closeAria":"Փակել գովազդը"},"js":{"quantityPlaceholder":"Քանակ","selectedProductsTitle":"Ընտրված ապրանքներ:","remove":"Հեռացնել","unitLabel":"Միավոր: {unit}","loading":"Հաշվարկվում է էկոլոգիական հետքը...","errorPrefix":"Սխալ:","comparisonCurrentFootprint":"Ընթացիկ հետք: {value} կգ CO₂","comparisonAlternatives":"Այլընտրանքներ:","comparisonSavings":"Խնայողություն: ~{value} կգ CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Բարձր էկոլոգիական հետք ունեցող ապրանքներ","description":"Նայեք այլընտրանքներին՝ {products}"},"reduceMeat":{"title":"Միսի սպառումը նվազեցնել","description":"Փորձեք շաբաթը 1–2 անգամ միսը փոխարինել բուսական սպիտակուցներով"},"dairyAlternatives":{"title":"Կաթնամթերքի այլընտրանքներ","description":"Փորձեք բուսական կաթ և պանիր"},"buyLocal":{"title":"Գնեք տեղական սեզոնային ապրանքներ","description":"Դա նվազեցնում է տրանսպորտային հետքը և աջակցում տեղական արտադրողներին"},"planPurchases":{"title":"Պլանավորեք ձեր գնումները","description":"Խուսափեք սննդի թափոններից — գնեք միայն անհրաժեշտը"}},"alternatives":{"plant_proteins":"բուսական սպիտակուցներ","legumes":"հատիկավոր","nuts":"ընկույզ","poultry":"թռչուն","fish":"ձուկ","seaweed":"ջրասեխաններ","plant_milk":"բուսական կաթ","oat_milk":"վարսակի կաթ","plant_cheese":"բուսական պանիր","tofu":"տոֆու","quinoa":"քինոա","bulgur":"բուլգուր","buckwheat":"հնդկաձուկ","oats_grain":"վարսակ","barley_grain":"գարի","rye_grain":"աշորա","sweet_potato":"քաղցր կարտոֆիլ","turnip":"ճակնդեղ","seasonal_vegetables":"սեզոնային բանջարեղեն","local_seasonal_vegetables":"տեղական սեզոնային բանջարեղեն","local_seasonal_fruits":"տեղական սեզոնային մրգեր","local_fruits":"տեղական մրգեր","tea":"թեյ","chicory":"հինդկաձուկ","fruits":"մրգեր","seeds":"սերմեր","chicken":"հավ","turkey":"հնդկահավ","plant_oils":"բուսական յուղեր","avocado":"ավոկադո","plant_yogurt":"բուսական յոգուրտ","kefir":"կեֆիր","plant_omega3":"բուսական օմեգա-3","flax_seeds":"վուշի սերմ","other_fish":"այլ ձկներ","other_seafood":"այլ ծովամթերք","canned_tomatoes":"կոնսերվացված լոլիկ","zucchini":"դդում","seasonal_root_vegetables":"սեզոնային արմատային բանջարեղեն","beets":"ճակնդեղ","other_root_vegetables":"այլ արմատային բանջարեղեն","seasonal_citrus":"սեզոնային ցիտրուս","seasonal_berries":"սեզոնային հատապտուղներ","other_grains":"այլ հացահատիկներ","other_pseudograins":"այլ կեղծահացահատիկներ","beans":"լոբի","peas":"սիսեռ","chickpeas":"սիսեռ (նուշ)","lentils":"սոխ","plant_drinks":"բուսական ըմպելիքներ","local_herbs":"տեղական խոտաբույսեր","local_drinks":"տեղական ըմպելիքներ","non_alcoholic_options":"անալկոհոլային տարբերակներ","plant_desserts":"բուսական աղանդեր","honey":"մեղր","stevia":"ստևիա","rye_bread":"աշորայի հաց","whole_grain":"ամբողջական","pearl_barley":"գարի","oatmeal":"վարսակի փաթիլ","millet":"հնդկաձուկ","whole_grain_pasta":"ամբողջական մակարոն","wheat":"ցորեն","olive_oil":"ձիթապտղի յուղ","sunflower_oil":"արևածաղի յուղ","reduce_amount":"նվազեցնել քանակը","plain_yogurt":"բնական յոգուրտ","yogurt":"յոգուրտ","reduce_fat":"նվազեցնել յուղը","other_seasonal_vegetables":"այլ սեզոնային բանջարեղեն","local_apples":"տեղական խնձոր","apples":"խնձոր","herbal_teas":"խոտային թեյեր","water":"ջուր","compote":"կոմպոտ","fruit_drink":"մրգի ըմպելիք","kvass":"կվաս","onion":"սոխ"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

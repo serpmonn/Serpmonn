@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Bereken de ecologische voetafdruk van uw voedingsproducten">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/nl/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Voeg producten toe aan uw winkelmand
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Voeg nog een product toe
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Bereken ecologische voetafdruk
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Bereken ecologische voetafdruk
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Berekeningsresultaten
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg CO₂ equivalent</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Eco-score (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Product Ecologische Voetafdruk Calculator — SerpMonn","meta_description":"Bereken de ecologische voetafdruk van uw voedingsproducten. Leer over de koolstofvoetafdruk, water voetafdruk en milieu-impact van uw boodschappenmand.","meta_keywords":"product ecologische voetafdruk, voedsel koolstofvoetafdruk, product water voetafdruk, ecologische rekenmachine, voeding koolstofvoetafdruk","og_title":"Product Ecologische Voetafdruk Calculator — SerpMonn","og_description":"Bereken de ecologische voetafdruk van uw voedingsproducten. Leer over de koolstofvoetafdruk, water voetafdruk en milieu-impact.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/nl/eco-calculators/product-footprint/","vk_title":"Product Ecologische Voetafdruk Calculator","vk_description":"Bereken de ecologische voetafdruk van uw voedingsproducten","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Home","tools":"Hulpmiddelen","current":"Product Voetafdruk Calculator"},"header":{"title":"🌱 Product Ecologische Voetafdruk Calculator","subtitle":"Ontdek de milieu-impact van de producten in uw winkelmand"},"calculator":{"section_title":"🛒 Voeg producten toe aan uw winkelmand"},"buttons":{"add_product":"➕ Voeg nog een product toe","calculate":"🧮 Bereken ecologische voetafdruk","share_vk":"📘 Delen op VKontakte","share_telegram":"📱 Delen op Telegram"},"results":{"title":"📊 Berekeningsresultaten","carbon_label":"kg CO₂ equivalent","water_label":"liter water","land_label":"m² land","eco_score_label":"Eco-score (1-10)"},"comparison":{"title":"🔍 Vergelijking met alternatieven"},"recommendations":{"title":"💡 Aanbevelingen om ecologische voetafdruk te verminderen"},"errors":{"no_products":"Voeg ten minste één product toe om te berekenen.","invalid_quantity":"Voer een geldige hoeveelheid in voor product: {product}","calculation_error":"Er is een fout opgetreden tijdens de berekening. Probeer het opnieuw.","select_product_and_qty":"Selecteer een product en voer een hoeveelheid in"},"success":{"calculation_complete":"Berekening succesvol voltooid!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"st","pack":"verpakking"},"products":{"beef":"Rundvlees","chicken":"Kip","pork":"Varkensvlees","fish":"Vis","eggs":"Eieren","milk":"Melk","cheese":"Kaas","yogurt":"Yoghurt","rice":"Rijst","pasta":"Pasta","bread":"Brood","potatoes":"Aardappelen","tomatoes":"Tomaten","apples":"Appels","bananas":"Bananen","coffee":"Koffie","tea":"Thee","chocolate":"Chocolade","sugar":"Suiker","olive_oil":"Olijfolie","select_product":"Selecteer een product...","lamb":"Lamsvlees","wheat":"Tarwe","vegetables":"Groenten (gemengd)","fruits":"Fruit (gemengd)","nuts":"Noten","turkey":"Kalkoen","duck":"Eend","butter":"Boter","salmon":"Zalm","tuna":"Tonijn","shrimp":"Garnalen","cucumbers":"Komkommers","carrots":"Wortelen","oranges":"Sinaasappels","grapes":"Druiven","strawberries":"Aardbeien","quinoa":"Quinoa","lentils":"Linzen","chickpeas":"Kikkererwten","wine":"Wijn","bread_white":"Wit brood","bread_rye":"Roggebrood","buckwheat":"Boekweit","oats":"Havermout","barley":"Parelgerst","rye":"Rogge (graan)","sunflower_oil":"Zonnebloemolie","kefir":"Kefir","yogurt_plain":"Natuurlijke yoghurt","cottage_cheese":"Kwark","sour_cream":"Zure room","cabbage":"Kool","onions":"Uien","garlic":"Knoflook","beets":"Bieten","pears":"Peren","peas":"Erwten","beans":"Bonen","kvass":"Kvas","soda":"Frisdrank","beer":"Bier"},"ads":{"closeAria":"Advertentie sluiten"},"js":{"quantityPlaceholder":"Hoeveelheid","selectedProductsTitle":"Geselecteerde producten:","remove":"Verwijderen","unitLabel":"Eenheid: {unit}","loading":"Ecologische voetafdruk wordt berekend...","errorPrefix":"Fout:","comparisonCurrentFootprint":"Huidige voetafdruk: {value} kg CO₂","comparisonAlternatives":"Alternatieven:","comparisonSavings":"Besparing: ~{value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"Producten met hoge ecologische voetafdruk","description":"Overweeg alternatieven voor: {products}"},"reduceMeat":{"title":"Vleesconsumptie verminderen","description":"Probeer vlees 1-2 keer per week te vervangen door plantaardige eiwitten"},"dairyAlternatives":{"title":"Alternatieven voor zuivel","description":"Probeer plantaardige melk en kazen"},"buyLocal":{"title":"Koop lokale seizoensproducten","description":"Dit vermindert de transportvoetafdruk en ondersteunt lokale producenten"},"planPurchases":{"title":"Plan uw aankopen","description":"Vermijd voedselverspilling — koop alleen wat u nodig heeft"}},"alternatives":{"plant_proteins":"plantaardige eiwitten","legumes":"peulvruchten","nuts":"noten","poultry":"gevogelte","fish":"vis","seaweed":"zeewier","plant_milk":"plantaardige melk","oat_milk":"havermelk","plant_cheese":"plantaardige kazen","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"boekweit","oats_grain":"haver","barley_grain":"gerst","rye_grain":"rogge","sweet_potato":"zoete aardappel","turnip":"raap","seasonal_vegetables":"seizoensgroenten","local_seasonal_vegetables":"lokale seizoensgroenten","local_seasonal_fruits":"lokale seizoensfruit","local_fruits":"lokaal fruit","tea":"thee","chicory":"cichorei","fruits":"fruit","seeds":"zaden","chicken":"kip","turkey":"kalkoen","plant_oils":"plantaardige oliën","avocado":"avocado","plant_yogurt":"plantaardige yoghurts","kefir":"kefir","plant_omega3":"plantaardige omega-3","flax_seeds":"lijnzaad","other_fish":"andere vissoorten","other_seafood":"andere zeevruchten","canned_tomatoes":"tomaten in blik","zucchini":"courgette","seasonal_root_vegetables":"seizoenswortelgroenten","beets":"bieten","other_root_vegetables":"andere wortelgroenten","seasonal_citrus":"seizoenscitrusvruchten","seasonal_berries":"seizoensbessen","other_grains":"andere granen","other_pseudograins":"andere pseudogranen","beans":"bonen","peas":"erwten","chickpeas":"kikkererwten","lentils":"linzen","plant_drinks":"plantaardige dranken","local_herbs":"lokale kruiden","local_drinks":"lokale dranken","non_alcoholic_options":"alcoholvrije opties","plant_desserts":"plantaardige desserts","honey":"honing","stevia":"stevia","rye_bread":"roggebrood","whole_grain":"volkoren","pearl_barley":"parelgerst","oatmeal":"havermout","millet":"gierst","whole_grain_pasta":"volkoren pasta","wheat":"tarwe","olive_oil":"olijfolie","sunflower_oil":"zonnebloemolie","reduce_amount":"hoeveelheid verminderen","plain_yogurt":"natuurlijke yoghurt","yogurt":"yoghurt","reduce_fat":"vetgehalte verlagen","other_seasonal_vegetables":"andere seizoensgroenten","local_apples":"lokale appels","apples":"appels","herbal_teas":"kruidenthee","water":"water","compote":"compote","fruit_drink":"fruitdrank","kvass":"kvas","onion":"ui"}};
+        window.i18n = {"title":"Product Ecologische Voetafdruk Calculator — SerpMonn","meta_description":"Bereken de ecologische voetafdruk van uw voedingsproducten. Leer over de koolstofvoetafdruk, water voetafdruk en milieu-impact van uw boodschappenmand.","meta_keywords":"product ecologische voetafdruk, voedsel koolstofvoetafdruk, product water voetafdruk, ecologische rekenmachine, voeding koolstofvoetafdruk","og_title":"Product Ecologische Voetafdruk Calculator — SerpMonn","og_description":"Bereken de ecologische voetafdruk van uw voedingsproducten. Leer over de koolstofvoetafdruk, water voetafdruk en milieu-impact.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/nl/eco-calculators/product-footprint/","vk_title":"Product Ecologische Voetafdruk Calculator","vk_description":"Bereken de ecologische voetafdruk van uw voedingsproducten","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Home","tools":"Hulpmiddelen","current":"Product Voetafdruk Calculator"},"header":{"title":"🌱 Product Ecologische Voetafdruk Calculator","subtitle":"Ontdek de milieu-impact van de producten in uw winkelmand"},"calculator":{"section_title":"🛒 Voeg producten toe aan uw winkelmand","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Voeg nog een product toe","calculate":"🧮 Bereken ecologische voetafdruk","share_vk":"📘 Delen op VKontakte","share_telegram":"📱 Delen op Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Berekeningsresultaten","carbon_label":"kg CO₂ equivalent","water_label":"liter water","land_label":"m² land","eco_score_label":"Eco-score (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Vergelijking met alternatieven"},"recommendations":{"title":"💡 Aanbevelingen om ecologische voetafdruk te verminderen"},"errors":{"no_products":"Voeg ten minste één product toe om te berekenen.","invalid_quantity":"Voer een geldige hoeveelheid in voor product: {product}","calculation_error":"Er is een fout opgetreden tijdens de berekening. Probeer het opnieuw.","select_product_and_qty":"Selecteer een product en voer een hoeveelheid in"},"success":{"calculation_complete":"Berekening succesvol voltooid!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"st","pack":"verpakking"},"products":{"beef":"Rundvlees","chicken":"Kip","pork":"Varkensvlees","fish":"Vis","eggs":"Eieren","milk":"Melk","cheese":"Kaas","yogurt":"Yoghurt","rice":"Rijst","pasta":"Pasta","bread":"Brood","potatoes":"Aardappelen","tomatoes":"Tomaten","apples":"Appels","bananas":"Bananen","coffee":"Koffie","tea":"Thee","chocolate":"Chocolade","sugar":"Suiker","olive_oil":"Olijfolie","select_product":"Selecteer een product...","lamb":"Lamsvlees","wheat":"Tarwe","vegetables":"Groenten (gemengd)","fruits":"Fruit (gemengd)","nuts":"Noten","turkey":"Kalkoen","duck":"Eend","butter":"Boter","salmon":"Zalm","tuna":"Tonijn","shrimp":"Garnalen","cucumbers":"Komkommers","carrots":"Wortelen","oranges":"Sinaasappels","grapes":"Druiven","strawberries":"Aardbeien","quinoa":"Quinoa","lentils":"Linzen","chickpeas":"Kikkererwten","wine":"Wijn","bread_white":"Wit brood","bread_rye":"Roggebrood","buckwheat":"Boekweit","oats":"Havermout","barley":"Parelgerst","rye":"Rogge (graan)","sunflower_oil":"Zonnebloemolie","kefir":"Kefir","yogurt_plain":"Natuurlijke yoghurt","cottage_cheese":"Kwark","sour_cream":"Zure room","cabbage":"Kool","onions":"Uien","garlic":"Knoflook","beets":"Bieten","pears":"Peren","peas":"Erwten","beans":"Bonen","kvass":"Kvas","soda":"Frisdrank","beer":"Bier"},"ads":{"closeAria":"Advertentie sluiten"},"js":{"quantityPlaceholder":"Hoeveelheid","selectedProductsTitle":"Geselecteerde producten:","remove":"Verwijderen","unitLabel":"Eenheid: {unit}","loading":"Ecologische voetafdruk wordt berekend...","errorPrefix":"Fout:","comparisonCurrentFootprint":"Huidige voetafdruk: {value} kg CO₂","comparisonAlternatives":"Alternatieven:","comparisonSavings":"Besparing: ~{value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Producten met hoge ecologische voetafdruk","description":"Overweeg alternatieven voor: {products}"},"reduceMeat":{"title":"Vleesconsumptie verminderen","description":"Probeer vlees 1-2 keer per week te vervangen door plantaardige eiwitten"},"dairyAlternatives":{"title":"Alternatieven voor zuivel","description":"Probeer plantaardige melk en kazen"},"buyLocal":{"title":"Koop lokale seizoensproducten","description":"Dit vermindert de transportvoetafdruk en ondersteunt lokale producenten"},"planPurchases":{"title":"Plan uw aankopen","description":"Vermijd voedselverspilling — koop alleen wat u nodig heeft"}},"alternatives":{"plant_proteins":"plantaardige eiwitten","legumes":"peulvruchten","nuts":"noten","poultry":"gevogelte","fish":"vis","seaweed":"zeewier","plant_milk":"plantaardige melk","oat_milk":"havermelk","plant_cheese":"plantaardige kazen","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"boekweit","oats_grain":"haver","barley_grain":"gerst","rye_grain":"rogge","sweet_potato":"zoete aardappel","turnip":"raap","seasonal_vegetables":"seizoensgroenten","local_seasonal_vegetables":"lokale seizoensgroenten","local_seasonal_fruits":"lokale seizoensfruit","local_fruits":"lokaal fruit","tea":"thee","chicory":"cichorei","fruits":"fruit","seeds":"zaden","chicken":"kip","turkey":"kalkoen","plant_oils":"plantaardige oliën","avocado":"avocado","plant_yogurt":"plantaardige yoghurts","kefir":"kefir","plant_omega3":"plantaardige omega-3","flax_seeds":"lijnzaad","other_fish":"andere vissoorten","other_seafood":"andere zeevruchten","canned_tomatoes":"tomaten in blik","zucchini":"courgette","seasonal_root_vegetables":"seizoenswortelgroenten","beets":"bieten","other_root_vegetables":"andere wortelgroenten","seasonal_citrus":"seizoenscitrusvruchten","seasonal_berries":"seizoensbessen","other_grains":"andere granen","other_pseudograins":"andere pseudogranen","beans":"bonen","peas":"erwten","chickpeas":"kikkererwten","lentils":"linzen","plant_drinks":"plantaardige dranken","local_herbs":"lokale kruiden","local_drinks":"lokale dranken","non_alcoholic_options":"alcoholvrije opties","plant_desserts":"plantaardige desserts","honey":"honing","stevia":"stevia","rye_bread":"roggebrood","whole_grain":"volkoren","pearl_barley":"parelgerst","oatmeal":"havermout","millet":"gierst","whole_grain_pasta":"volkoren pasta","wheat":"tarwe","olive_oil":"olijfolie","sunflower_oil":"zonnebloemolie","reduce_amount":"hoeveelheid verminderen","plain_yogurt":"natuurlijke yoghurt","yogurt":"yoghurt","reduce_fat":"vetgehalte verlagen","other_seasonal_vegetables":"andere seizoensgroenten","local_apples":"lokale appels","apples":"appels","herbal_teas":"kruidenthee","water":"water","compote":"compote","fruit_drink":"fruitdrank","kvass":"kvas","onion":"ui"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

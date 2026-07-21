@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Изчислете екологичния отпечатък на вашите хранителни продукти">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/bg/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Добавете продукти в кошницата
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Добавете още продукт
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Изчислете екологичния отпечатък
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Изчислете екологичния отпечатък
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Резултати от изчислението
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">кг CO₂ еквивалент</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Еко-рейтинг (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Калкулатор за екологичен отпечатък на продукти — SerpMonn","meta_description":"Изчислете екологичния отпечатък на вашите хранителни продукти. Научете за въглеродния отпечатък, водния отпечатък и въздействието върху околната среда на вашата пазарска кошница.","meta_keywords":"екологичен отпечатък продукти, въглероден отпечатък храна, воден отпечатък продукти, екологичен калкулатор, въглероден отпечатък хранене","og_title":"Калкулатор за екологичен отпечатък на продукти — SerpMonn","og_description":"Изчислете екологичния отпечатък на вашите хранителни продукти. Научете за въглеродния отпечатък, водния отпечатък и въздействието върху околната среда.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/bg/eco-calculators/product-footprint/","vk_title":"Калкулатор за екологичен отпечатък на продукти","vk_description":"Изчислете екологичния отпечатък на вашите хранителни продукти","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Начало","tools":"Инструменти","current":"Калкулатор за отпечатък на продукти"},"header":{"title":"🌱 Калкулатор за екологичен отпечатък на продукти","subtitle":"Научете въздействието върху околната среда на продуктите във вашата кошница"},"calculator":{"section_title":"🛒 Добавете продукти в кошницата"},"buttons":{"add_product":"➕ Добавете още продукт","calculate":"🧮 Изчислете екологичния отпечатък","share_vk":"📘 Споделете във VKontakte","share_telegram":"📱 Споделете в Telegram"},"results":{"title":"📊 Резултати от изчислението","carbon_label":"кг CO₂ еквивалент","water_label":"литра вода","land_label":"m² земя","eco_score_label":"Еко-рейтинг (1-10)"},"comparison":{"title":"🔍 Сравнение с алтернативи"},"recommendations":{"title":"💡 Препоръки за намаляване на екологичния отпечатък"},"errors":{"no_products":"Моля, добавете поне един продукт за изчисление.","invalid_quantity":"Моля, въведете валидно количество за продукт: {product}","calculation_error":"Възникна грешка по време на изчислението. Моля, опитайте отново.","select_product_and_qty":"Моля, изберете продукт и въведете количество"},"success":{"calculation_complete":"Изчислението завърши успешно!"},"units":{"kg":"кг","g":"г","l":"л","ml":"мл","pcs":"бр.","pack":"опаковка"},"products":{"beef":"Говеждо","chicken":"Пиле","pork":"Свинско","fish":"Риба","eggs":"Яйца","milk":"Мляко","cheese":"Сирене","yogurt":"Кисел мляко","rice":"Ориз","pasta":"Макарони","bread":"Хляб","potatoes":"Картофи","tomatoes":"Домати","apples":"Ябълки","bananas":"Банани","coffee":"Кафе","tea":"Чай","chocolate":"Шоколад","sugar":"Захар","olive_oil":"Зехтин","select_product":"Изберете продукт...","lamb":"Агнешко","wheat":"Пшеница","vegetables":"Зеленчуци (смесени)","fruits":"Плодове (смесени)","nuts":"Ядки","turkey":"Пуйка","duck":"Патешко","butter":"Масло","salmon":"Сьомга","tuna":"Риба тон","shrimp":"Скариди","cucumbers":"Краставици","carrots":"Моркови","oranges":"Портокали","grapes":"Грозде","strawberries":"Ягоди","quinoa":"Киноа","lentils":"Леща","chickpeas":"Нахут","wine":"Вино","bread_white":"Бял хляб","bread_rye":"Ръжен хляб","buckwheat":"Елда","oats":"Овесена каша","barley":"Перлен ечемик","rye":"Ръж (зърно)","sunflower_oil":"Слънчогледово масло","kefir":"Кефир","yogurt_plain":"Натурален кисел мляко","cottage_cheese":"Извара","sour_cream":"Заквасена сметана","cabbage":"Зеле","onions":"Лук","garlic":"Чесън","beets":"Цвекло","pears":"Круши","peas":"Грах","beans":"Боб","kvass":"Квас","soda":"Газирана напитка","beer":"Бира"},"ads":{"closeAria":"Затворете рекламата"},"js":{"quantityPlaceholder":"Количество","selectedProductsTitle":"Избрани продукти:","remove":"Премахни","unitLabel":"Единица: {unit}","loading":"Изчисляване на екологичния отпечатък...","errorPrefix":"Грешка:","comparisonCurrentFootprint":"Текущ отпечатък: {value} кг CO₂","comparisonAlternatives":"Алтернативи:","comparisonSavings":"Спестяване: ~{value} кг CO₂"},"recommendationItems":{"highImpact":{"title":"Продукти с висок екологичен отпечатък","description":"Помислете за алтернативи за: {products}"},"reduceMeat":{"title":"Намаляване на консумацията на месо","description":"Опитайте да замените месото с растителни протеини 1–2 пъти седмично"},"dairyAlternatives":{"title":"Алтернативи на млечните продукти","description":"Опитайте растително мляко и сирена"},"buyLocal":{"title":"Купувайте местни сезонни продукти","description":"Това намалява транспортния отпечатък и подкрепя местните производители"},"planPurchases":{"title":"Планирайте покупките си","description":"Избягвайте хранителните отпадъци — купувайте само необходимото"}},"alternatives":{"plant_proteins":"растителни протеини","legumes":"бобови","nuts":"ядки","poultry":"птици","fish":"риба","seaweed":"водорасли","plant_milk":"растително мляко","oat_milk":"овесено мляко","plant_cheese":"растителни сирена","tofu":"тофу","quinoa":"киноа","bulgur":"булгур","buckwheat":"елда","oats_grain":"овес","barley_grain":"ечемик","rye_grain":"ръж","sweet_potato":"батат","turnip":"ряпа","seasonal_vegetables":"сезонни зеленчуци","local_seasonal_vegetables":"местни сезонни зеленчуци","local_seasonal_fruits":"местни сезонни плодове","local_fruits":"местни плодове","tea":"чай","chicory":"цикория","fruits":"плодове","seeds":"семена","chicken":"пиле","turkey":"пуйка","plant_oils":"растителни масла","avocado":"авокадо","plant_yogurt":"растителни кисели мляка","kefir":"кефир","plant_omega3":"растителни омега-3","flax_seeds":"ленено семе","other_fish":"други видове риба","other_seafood":"други морски продукти","canned_tomatoes":"консервирани домати","zucchini":"тиквички","seasonal_root_vegetables":"сезонни кореноплодни","beets":"цвекло","other_root_vegetables":"други кореноплодни","seasonal_citrus":"сезонни цитруси","seasonal_berries":"сезонни плодове","other_grains":"други зърнени","other_pseudograins":"други псевдозърнени","beans":"боб","peas":"грах","chickpeas":"нахут","lentils":"леща","plant_drinks":"растителни напитки","local_herbs":"местни билки","local_drinks":"местни напитки","non_alcoholic_options":"безалкохолни варианти","plant_desserts":"растителни десерти","honey":"мед","stevia":"стевия","rye_bread":"ръжен хляб","whole_grain":"пълнозърнест","pearl_barley":"перлен ечемик","oatmeal":"овесена каша","millet":"просо","whole_grain_pasta":"пълнозърнести макарони","wheat":"пшеница","olive_oil":"зехтин","sunflower_oil":"слънчогледово","reduce_amount":"намалете количеството","plain_yogurt":"натурален кисел мляко","yogurt":"кисел мляко","reduce_fat":"намалете мазнините","other_seasonal_vegetables":"други сезонни зеленчуци","local_apples":"местни ябълки","apples":"ябълки","herbal_teas":"билкови чайове","water":"вода","compote":"компот","fruit_drink":"морс","kvass":"квас","onion":"лук"}};
+        window.i18n = {"title":"Калкулатор за екологичен отпечатък на продукти — SerpMonn","meta_description":"Изчислете екологичния отпечатък на вашите хранителни продукти. Научете за въглеродния отпечатък, водния отпечатък и въздействието върху околната среда на вашата пазарска кошница.","meta_keywords":"екологичен отпечатък продукти, въглероден отпечатък храна, воден отпечатък продукти, екологичен калкулатор, въглероден отпечатък хранене","og_title":"Калкулатор за екологичен отпечатък на продукти — SerpMonn","og_description":"Изчислете екологичния отпечатък на вашите хранителни продукти. Научете за въглеродния отпечатък, водния отпечатък и въздействието върху околната среда.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/bg/eco-calculators/product-footprint/","vk_title":"Калкулатор за екологичен отпечатък на продукти","vk_description":"Изчислете екологичния отпечатък на вашите хранителни продукти","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Начало","tools":"Инструменти","current":"Калкулатор за отпечатък на продукти"},"header":{"title":"🌱 Калкулатор за екологичен отпечатък на продукти","subtitle":"Научете въздействието върху околната среда на продуктите във вашата кошница"},"calculator":{"section_title":"🛒 Добавете продукти в кошницата","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Добавете още продукт","calculate":"🧮 Изчислете екологичния отпечатък","share_vk":"📘 Споделете във VKontakte","share_telegram":"📱 Споделете в Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Резултати от изчислението","carbon_label":"кг CO₂ еквивалент","water_label":"литра вода","land_label":"m² земя","eco_score_label":"Еко-рейтинг (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Сравнение с алтернативи"},"recommendations":{"title":"💡 Препоръки за намаляване на екологичния отпечатък"},"errors":{"no_products":"Моля, добавете поне един продукт за изчисление.","invalid_quantity":"Моля, въведете валидно количество за продукт: {product}","calculation_error":"Възникна грешка по време на изчислението. Моля, опитайте отново.","select_product_and_qty":"Моля, изберете продукт и въведете количество"},"success":{"calculation_complete":"Изчислението завърши успешно!"},"units":{"kg":"кг","g":"г","l":"л","ml":"мл","pcs":"бр.","pack":"опаковка"},"products":{"beef":"Говеждо","chicken":"Пиле","pork":"Свинско","fish":"Риба","eggs":"Яйца","milk":"Мляко","cheese":"Сирене","yogurt":"Кисел мляко","rice":"Ориз","pasta":"Макарони","bread":"Хляб","potatoes":"Картофи","tomatoes":"Домати","apples":"Ябълки","bananas":"Банани","coffee":"Кафе","tea":"Чай","chocolate":"Шоколад","sugar":"Захар","olive_oil":"Зехтин","select_product":"Изберете продукт...","lamb":"Агнешко","wheat":"Пшеница","vegetables":"Зеленчуци (смесени)","fruits":"Плодове (смесени)","nuts":"Ядки","turkey":"Пуйка","duck":"Патешко","butter":"Масло","salmon":"Сьомга","tuna":"Риба тон","shrimp":"Скариди","cucumbers":"Краставици","carrots":"Моркови","oranges":"Портокали","grapes":"Грозде","strawberries":"Ягоди","quinoa":"Киноа","lentils":"Леща","chickpeas":"Нахут","wine":"Вино","bread_white":"Бял хляб","bread_rye":"Ръжен хляб","buckwheat":"Елда","oats":"Овесена каша","barley":"Перлен ечемик","rye":"Ръж (зърно)","sunflower_oil":"Слънчогледово масло","kefir":"Кефир","yogurt_plain":"Натурален кисел мляко","cottage_cheese":"Извара","sour_cream":"Заквасена сметана","cabbage":"Зеле","onions":"Лук","garlic":"Чесън","beets":"Цвекло","pears":"Круши","peas":"Грах","beans":"Боб","kvass":"Квас","soda":"Газирана напитка","beer":"Бира"},"ads":{"closeAria":"Затворете рекламата"},"js":{"quantityPlaceholder":"Количество","selectedProductsTitle":"Избрани продукти:","remove":"Премахни","unitLabel":"Единица: {unit}","loading":"Изчисляване на екологичния отпечатък...","errorPrefix":"Грешка:","comparisonCurrentFootprint":"Текущ отпечатък: {value} кг CO₂","comparisonAlternatives":"Алтернативи:","comparisonSavings":"Спестяване: ~{value} кг CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Продукти с висок екологичен отпечатък","description":"Помислете за алтернативи за: {products}"},"reduceMeat":{"title":"Намаляване на консумацията на месо","description":"Опитайте да замените месото с растителни протеини 1–2 пъти седмично"},"dairyAlternatives":{"title":"Алтернативи на млечните продукти","description":"Опитайте растително мляко и сирена"},"buyLocal":{"title":"Купувайте местни сезонни продукти","description":"Това намалява транспортния отпечатък и подкрепя местните производители"},"planPurchases":{"title":"Планирайте покупките си","description":"Избягвайте хранителните отпадъци — купувайте само необходимото"}},"alternatives":{"plant_proteins":"растителни протеини","legumes":"бобови","nuts":"ядки","poultry":"птици","fish":"риба","seaweed":"водорасли","plant_milk":"растително мляко","oat_milk":"овесено мляко","plant_cheese":"растителни сирена","tofu":"тофу","quinoa":"киноа","bulgur":"булгур","buckwheat":"елда","oats_grain":"овес","barley_grain":"ечемик","rye_grain":"ръж","sweet_potato":"батат","turnip":"ряпа","seasonal_vegetables":"сезонни зеленчуци","local_seasonal_vegetables":"местни сезонни зеленчуци","local_seasonal_fruits":"местни сезонни плодове","local_fruits":"местни плодове","tea":"чай","chicory":"цикория","fruits":"плодове","seeds":"семена","chicken":"пиле","turkey":"пуйка","plant_oils":"растителни масла","avocado":"авокадо","plant_yogurt":"растителни кисели мляка","kefir":"кефир","plant_omega3":"растителни омега-3","flax_seeds":"ленено семе","other_fish":"други видове риба","other_seafood":"други морски продукти","canned_tomatoes":"консервирани домати","zucchini":"тиквички","seasonal_root_vegetables":"сезонни кореноплодни","beets":"цвекло","other_root_vegetables":"други кореноплодни","seasonal_citrus":"сезонни цитруси","seasonal_berries":"сезонни плодове","other_grains":"други зърнени","other_pseudograins":"други псевдозърнени","beans":"боб","peas":"грах","chickpeas":"нахут","lentils":"леща","plant_drinks":"растителни напитки","local_herbs":"местни билки","local_drinks":"местни напитки","non_alcoholic_options":"безалкохолни варианти","plant_desserts":"растителни десерти","honey":"мед","stevia":"стевия","rye_bread":"ръжен хляб","whole_grain":"пълнозърнест","pearl_barley":"перлен ечемик","oatmeal":"овесена каша","millet":"просо","whole_grain_pasta":"пълнозърнести макарони","wheat":"пшеница","olive_oil":"зехтин","sunflower_oil":"слънчогледово","reduce_amount":"намалете количеството","plain_yogurt":"натурален кисел мляко","yogurt":"кисел мляко","reduce_fat":"намалете мазнините","other_seasonal_vegetables":"други сезонни зеленчуци","local_apples":"местни ябълки","apples":"ябълки","herbal_teas":"билкови чайове","water":"вода","compote":"компот","fruit_drink":"морс","kvass":"квас","onion":"лук"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

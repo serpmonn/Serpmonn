@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Calcule a pegada ecológica dos seus produtos alimentícios">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/pt-br/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Adicione produtos à sua cesta
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Adicionar outro produto
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Calcular pegada ecológica
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Calcular pegada ecológica
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Resultados do cálculo
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg equivalente CO₂</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Pontuação ecológica (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Calculadora de Pegada Ecológica de Produtos — SerpMonn","meta_description":"Calcule a pegada ecológica dos seus produtos alimentícios. Saiba sobre a pegada de carbono, pegada hídrica e impacto ambiental da sua cesta de compras.","meta_keywords":"pegada ecológica produtos, pegada carbono comida, pegada água produtos, calculadora ecológica, pegada carbono nutrição","og_title":"Calculadora de Pegada Ecológica de Produtos — SerpMonn","og_description":"Calcule a pegada ecológica dos seus produtos alimentícios. Saiba sobre a pegada de carbono, pegada hídrica e impacto ambiental.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/pt-br/eco-calculators/product-footprint/","vk_title":"Calculadora de Pegada Ecológica de Produtos","vk_description":"Calcule a pegada ecológica dos seus produtos alimentícios","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Início","tools":"Ferramentas","current":"Calculadora de Pegada de Produtos"},"header":{"title":"🌱 Calculadora de Pegada Ecológica de Produtos","subtitle":"Descubra o impacto ambiental dos produtos na sua cesta"},"calculator":{"section_title":"🛒 Adicione produtos à sua cesta"},"buttons":{"add_product":"➕ Adicionar outro produto","calculate":"🧮 Calcular pegada ecológica","share_vk":"📘 Compartilhar no VKontakte","share_telegram":"📱 Compartilhar no Telegram"},"results":{"title":"📊 Resultados do cálculo","carbon_label":"kg equivalente CO₂","water_label":"litros de água","land_label":"m² de terra","eco_score_label":"Pontuação ecológica (1-10)"},"comparison":{"title":"🔍 Comparação com alternativas"},"recommendations":{"title":"💡 Recomendações para reduzir a pegada ecológica"},"errors":{"no_products":"Adicione pelo menos um produto para calcular.","invalid_quantity":"Insira uma quantidade válida para o produto: {product}","calculation_error":"Ocorreu um erro durante o cálculo. Tente novamente.","select_product_and_qty":"Por favor, selecione um produto e insira uma quantidade"},"success":{"calculation_complete":"Cálculo concluído com sucesso!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"un","pack":"embalagem"},"products":{"beef":"Carne bovina","chicken":"Frango","pork":"Porco","fish":"Peixe","eggs":"Ovos","milk":"Leite","cheese":"Queijo","yogurt":"Iogurte","rice":"Arroz","pasta":"Massa","bread":"Pão","potatoes":"Batatas","tomatoes":"Tomates","apples":"Maçãs","bananas":"Bananas","coffee":"Café","tea":"Chá","chocolate":"Chocolate","sugar":"Açúcar","olive_oil":"Azeite de oliva","select_product":"Selecione um produto...","lamb":"Cordeiro","wheat":"Trigo","vegetables":"Vegetais (mistos)","fruits":"Frutas (mistas)","nuts":"Nozes","turkey":"Peru","duck":"Pato","butter":"Manteiga","salmon":"Salmão","tuna":"Atum","shrimp":"Camarão","cucumbers":"Pepinos","carrots":"Cenouras","oranges":"Laranjas","grapes":"Uvas","strawberries":"Morangos","quinoa":"Quinoa","lentils":"Lentilhas","chickpeas":"Grão-de-bico","wine":"Vinho","bread_white":"Pão branco","bread_rye":"Pão de centeio","buckwheat":"Trigo sarraceno","oats":"Aveia em flocos","barley":"Cevada perlada","rye":"Centeio (grão)","sunflower_oil":"Óleo de girassol","kefir":"Kefir","yogurt_plain":"Iogurte natural","cottage_cheese":"Queijo cottage","sour_cream":"Creme azedo","cabbage":"Repolho","onions":"Cebolas","garlic":"Alho","beets":"Beterrabas","pears":"Peras","peas":"Ervilhas","beans":"Feijão","kvass":"Kvas","soda":"Refrigerante","beer":"Cerveja"},"ads":{"closeAria":"Fechar anúncio"},"js":{"quantityPlaceholder":"Quantidade","selectedProductsTitle":"Produtos selecionados:","remove":"Remover","unitLabel":"Unidade: {unit}","loading":"Calculando a pegada ecológica...","errorPrefix":"Erro:","comparisonCurrentFootprint":"Pegada atual: {value} kg CO₂","comparisonAlternatives":"Alternativas:","comparisonSavings":"Economia: ~{value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"Produtos com alta pegada ecológica","description":"Considere alternativas para: {products}"},"reduceMeat":{"title":"Reduzir o consumo de carne","description":"Tente substituir a carne por proteínas vegetais 1-2 vezes por semana"},"dairyAlternatives":{"title":"Alternativas aos laticínios","description":"Experimente leite e queijos vegetais"},"buyLocal":{"title":"Compre produtos locais da estação","description":"Isso reduz a pegada do transporte e apoia produtores locais"},"planPurchases":{"title":"Planeje suas compras","description":"Evite o desperdício de alimentos — compre apenas o necessário"}},"alternatives":{"plant_proteins":"proteínas vegetais","legumes":"leguminosas","nuts":"nozes","poultry":"aves","fish":"peixe","seaweed":"algas","plant_milk":"leite vegetal","oat_milk":"leite de aveia","plant_cheese":"queijos vegetais","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"trigo sarraceno","oats_grain":"aveia","barley_grain":"cevada","rye_grain":"centeio","sweet_potato":"batata-doce","turnip":"nabo","seasonal_vegetables":"vegetais da estação","local_seasonal_vegetables":"vegetais locais da estação","local_seasonal_fruits":"frutas locais da estação","local_fruits":"frutas locais","tea":"chá","chicory":"chicória","fruits":"frutas","seeds":"sementes","chicken":"frango","turkey":"peru","plant_oils":"óleos vegetais","avocado":"abacate","plant_yogurt":"iogurtes vegetais","kefir":"kefir","plant_omega3":"ômega-3 vegetal","flax_seeds":"sementes de linhaça","other_fish":"outros peixes","other_seafood":"outros frutos do mar","canned_tomatoes":"tomates em conserva","zucchini":"abobrinha","seasonal_root_vegetables":"raízes da estação","beets":"beterrabas","other_root_vegetables":"outras raízes","seasonal_citrus":"cítricos da estação","seasonal_berries":"bagas da estação","other_grains":"outros cereais","other_pseudograins":"outros pseudocereais","beans":"feijão","peas":"ervilhas","chickpeas":"grão-de-bico","lentils":"lentilhas","plant_drinks":"bebidas vegetais","local_herbs":"ervas locais","local_drinks":"bebidas locais","non_alcoholic_options":"opções sem álcool","plant_desserts":"sobremesas vegetais","honey":"mel","stevia":"stévia","rye_bread":"pão de centeio","whole_grain":"integral","pearl_barley":"cevada perlada","oatmeal":"aveia em flocos","millet":"milheto","whole_grain_pasta":"massa integral","wheat":"trigo","olive_oil":"azeite de oliva","sunflower_oil":"óleo de girassol","reduce_amount":"reduzir quantidade","plain_yogurt":"iogurte natural","yogurt":"iogurte","reduce_fat":"reduzir gordura","other_seasonal_vegetables":"outros vegetais da estação","local_apples":"maçãs locais","apples":"maçãs","herbal_teas":"chás de ervas","water":"água","compote":"compota","fruit_drink":"bebida de frutas","kvass":"kvas","onion":"cebola"}};
+        window.i18n = {"title":"Calculadora de Pegada Ecológica de Produtos — SerpMonn","meta_description":"Calcule a pegada ecológica dos seus produtos alimentícios. Saiba sobre a pegada de carbono, pegada hídrica e impacto ambiental da sua cesta de compras.","meta_keywords":"pegada ecológica produtos, pegada carbono comida, pegada água produtos, calculadora ecológica, pegada carbono nutrição","og_title":"Calculadora de Pegada Ecológica de Produtos — SerpMonn","og_description":"Calcule a pegada ecológica dos seus produtos alimentícios. Saiba sobre a pegada de carbono, pegada hídrica e impacto ambiental.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/pt-br/eco-calculators/product-footprint/","vk_title":"Calculadora de Pegada Ecológica de Produtos","vk_description":"Calcule a pegada ecológica dos seus produtos alimentícios","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Início","tools":"Ferramentas","current":"Calculadora de Pegada de Produtos"},"header":{"title":"🌱 Calculadora de Pegada Ecológica de Produtos","subtitle":"Descubra o impacto ambiental dos produtos na sua cesta"},"calculator":{"section_title":"🛒 Adicione produtos à sua cesta","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Adicionar outro produto","calculate":"🧮 Calcular pegada ecológica","share_vk":"📘 Compartilhar no VKontakte","share_telegram":"📱 Compartilhar no Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Resultados do cálculo","carbon_label":"kg equivalente CO₂","water_label":"litros de água","land_label":"m² de terra","eco_score_label":"Pontuação ecológica (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Comparação com alternativas"},"recommendations":{"title":"💡 Recomendações para reduzir a pegada ecológica"},"errors":{"no_products":"Adicione pelo menos um produto para calcular.","invalid_quantity":"Insira uma quantidade válida para o produto: {product}","calculation_error":"Ocorreu um erro durante o cálculo. Tente novamente.","select_product_and_qty":"Por favor, selecione um produto e insira uma quantidade"},"success":{"calculation_complete":"Cálculo concluído com sucesso!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"un","pack":"embalagem"},"products":{"beef":"Carne bovina","chicken":"Frango","pork":"Porco","fish":"Peixe","eggs":"Ovos","milk":"Leite","cheese":"Queijo","yogurt":"Iogurte","rice":"Arroz","pasta":"Massa","bread":"Pão","potatoes":"Batatas","tomatoes":"Tomates","apples":"Maçãs","bananas":"Bananas","coffee":"Café","tea":"Chá","chocolate":"Chocolate","sugar":"Açúcar","olive_oil":"Azeite de oliva","select_product":"Selecione um produto...","lamb":"Cordeiro","wheat":"Trigo","vegetables":"Vegetais (mistos)","fruits":"Frutas (mistas)","nuts":"Nozes","turkey":"Peru","duck":"Pato","butter":"Manteiga","salmon":"Salmão","tuna":"Atum","shrimp":"Camarão","cucumbers":"Pepinos","carrots":"Cenouras","oranges":"Laranjas","grapes":"Uvas","strawberries":"Morangos","quinoa":"Quinoa","lentils":"Lentilhas","chickpeas":"Grão-de-bico","wine":"Vinho","bread_white":"Pão branco","bread_rye":"Pão de centeio","buckwheat":"Trigo sarraceno","oats":"Aveia em flocos","barley":"Cevada perlada","rye":"Centeio (grão)","sunflower_oil":"Óleo de girassol","kefir":"Kefir","yogurt_plain":"Iogurte natural","cottage_cheese":"Queijo cottage","sour_cream":"Creme azedo","cabbage":"Repolho","onions":"Cebolas","garlic":"Alho","beets":"Beterrabas","pears":"Peras","peas":"Ervilhas","beans":"Feijão","kvass":"Kvas","soda":"Refrigerante","beer":"Cerveja"},"ads":{"closeAria":"Fechar anúncio"},"js":{"quantityPlaceholder":"Quantidade","selectedProductsTitle":"Produtos selecionados:","remove":"Remover","unitLabel":"Unidade: {unit}","loading":"Calculando a pegada ecológica...","errorPrefix":"Erro:","comparisonCurrentFootprint":"Pegada atual: {value} kg CO₂","comparisonAlternatives":"Alternativas:","comparisonSavings":"Economia: ~{value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Produtos com alta pegada ecológica","description":"Considere alternativas para: {products}"},"reduceMeat":{"title":"Reduzir o consumo de carne","description":"Tente substituir a carne por proteínas vegetais 1-2 vezes por semana"},"dairyAlternatives":{"title":"Alternativas aos laticínios","description":"Experimente leite e queijos vegetais"},"buyLocal":{"title":"Compre produtos locais da estação","description":"Isso reduz a pegada do transporte e apoia produtores locais"},"planPurchases":{"title":"Planeje suas compras","description":"Evite o desperdício de alimentos — compre apenas o necessário"}},"alternatives":{"plant_proteins":"proteínas vegetais","legumes":"leguminosas","nuts":"nozes","poultry":"aves","fish":"peixe","seaweed":"algas","plant_milk":"leite vegetal","oat_milk":"leite de aveia","plant_cheese":"queijos vegetais","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"trigo sarraceno","oats_grain":"aveia","barley_grain":"cevada","rye_grain":"centeio","sweet_potato":"batata-doce","turnip":"nabo","seasonal_vegetables":"vegetais da estação","local_seasonal_vegetables":"vegetais locais da estação","local_seasonal_fruits":"frutas locais da estação","local_fruits":"frutas locais","tea":"chá","chicory":"chicória","fruits":"frutas","seeds":"sementes","chicken":"frango","turkey":"peru","plant_oils":"óleos vegetais","avocado":"abacate","plant_yogurt":"iogurtes vegetais","kefir":"kefir","plant_omega3":"ômega-3 vegetal","flax_seeds":"sementes de linhaça","other_fish":"outros peixes","other_seafood":"outros frutos do mar","canned_tomatoes":"tomates em conserva","zucchini":"abobrinha","seasonal_root_vegetables":"raízes da estação","beets":"beterrabas","other_root_vegetables":"outras raízes","seasonal_citrus":"cítricos da estação","seasonal_berries":"bagas da estação","other_grains":"outros cereais","other_pseudograins":"outros pseudocereais","beans":"feijão","peas":"ervilhas","chickpeas":"grão-de-bico","lentils":"lentilhas","plant_drinks":"bebidas vegetais","local_herbs":"ervas locais","local_drinks":"bebidas locais","non_alcoholic_options":"opções sem álcool","plant_desserts":"sobremesas vegetais","honey":"mel","stevia":"stévia","rye_bread":"pão de centeio","whole_grain":"integral","pearl_barley":"cevada perlada","oatmeal":"aveia em flocos","millet":"milheto","whole_grain_pasta":"massa integral","wheat":"trigo","olive_oil":"azeite de oliva","sunflower_oil":"óleo de girassol","reduce_amount":"reduzir quantidade","plain_yogurt":"iogurte natural","yogurt":"iogurte","reduce_fat":"reduzir gordura","other_seasonal_vegetables":"outros vegetais da estação","local_apples":"maçãs locais","apples":"maçãs","herbal_teas":"chás de ervas","water":"água","compote":"compota","fruit_drink":"bebida de frutas","kvass":"kvas","onion":"cebola"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

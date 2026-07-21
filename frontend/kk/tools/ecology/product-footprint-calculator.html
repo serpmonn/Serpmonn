@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Азық-түлік өнімдеріңіздің экологиялық ізін есептеңіз">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/kk/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Себетке өнімдерді қосыңыз
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Тағы бір өнім қосу
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Экологиялық ізді есептеу
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Экологиялық ізді есептеу
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Есептеу нәтижелері
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">кг CO₂ эквиваленті</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Эко-рейтинг (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Өнімдердің экологиялық ізі калькуляторы — SerpMonn","meta_description":"Азық-түлік өнімдеріңіздің экологиялық ізін есептеңіз. Сіздің сауда себетіңіздің көміртектік ізі, су ізі және қоршаған ортаға әсері туралы біліңіз.","meta_keywords":"өнімдердің экологиялық ізі, тамақтың көміртектік ізі, өнімдердің су ізі, экологиялық калькулятор, тамақтану көміртектік ізі","og_title":"Өнімдердің экологиялық ізі калькуляторы — SerpMonn","og_description":"Азық-түлік өнімдеріңіздің экологиялық ізін есептеңіз. Көміртектік із, су ізі және қоршаған ортаға әсері туралы біліңіз.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/kk/eco-calculators/product-footprint/","vk_title":"Өнімдердің экологиялық ізі калькуляторы","vk_description":"Азық-түлік өнімдеріңіздің экологиялық ізін есептеңіз","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Басты бет","tools":"Құралдар","current":"Өнім ізі калькуляторы"},"header":{"title":"🌱 Өнімдердің экологиялық ізі калькуляторы","subtitle":"Себетіңіздегі өнімдердің қоршаған ортаға әсерін біліңіз"},"calculator":{"section_title":"🛒 Себетке өнімдерді қосыңыз"},"buttons":{"add_product":"➕ Тағы бір өнім қосу","calculate":"🧮 Экологиялық ізді есептеу","share_vk":"📘 VKontakte-те бөлісу","share_telegram":"📱 Telegram-да бөлісу"},"results":{"title":"📊 Есептеу нәтижелері","carbon_label":"кг CO₂ эквиваленті","water_label":"литр су","land_label":"м² жер","eco_score_label":"Эко-рейтинг (1-10)"},"comparison":{"title":"🔍 Альтернативтермен салыстыру"},"recommendations":{"title":"💡 Экологиялық ізді азайту бойынша ұсыныстар"},"errors":{"no_products":"Есептеу үшін кем дегенде бір өнім қосыңыз.","invalid_quantity":"Өнім үшін дұрыс мөлшерді енгізіңіз: {product}","calculation_error":"Есептеу кезінде қате орын алды. Қайталап көріңіз.","select_product_and_qty":"Өнімді таңдап, санын енгізіңіз"},"success":{"calculation_complete":"Есептеу сәтті аяқталды!"},"units":{"kg":"кг","g":"г","l":"л","ml":"мл","pcs":"дана","pack":"букет"},"products":{"beef":"Сиыр еті","chicken":"Тауық","pork":"Шошқа еті","fish":"Балық","eggs":"Жұмыртқа","milk":"Сүт","cheese":"Ірімшік","yogurt":"Йогурт","rice":"Күріш","pasta":"Макарон","bread":"Нан","potatoes":"Картоп","tomatoes":"Қызанақ","apples":"Алма","bananas":"Банан","coffee":"Кофе","tea":"Шай","chocolate":"Шоколад","sugar":"Қант","olive_oil":"Зәйтүн майы","select_product":"Өнімді таңдаңыз...","lamb":"Қой еті","wheat":"Бидай","vegetables":"Көкөністер (аралас)","fruits":"Жемістер (аралас)","nuts":"Жаңғақтар","turkey":"Күркетауық","duck":"Үйрек","butter":"Сары май","salmon":"Албырт","tuna":"Тунец","shrimp":"Асшаяндар","cucumbers":"Қияр","carrots":"Сәбіз","oranges":"Апельсин","grapes":"Жүзім","strawberries":"Құлпынай","quinoa":"Киноа","lentils":"Сұлы жүп","chickpeas":"Нохат","wine":"Шарап","bread_white":"Ақ нан","bread_rye":"Қара бидай наны","buckwheat":"Қарақұмық","oats":"Сұлы ботқасы","barley":"Арпа крупасы","rye":"Қара бидай (дән)","sunflower_oil":"Күнбағыс майы","kefir":"Кефир","yogurt_plain":"Табиғи йогурт","cottage_cheese":"Сүзбе","sour_cream":"Қаймақ","cabbage":"Қырыққабат","onions":"Пияз","garlic":"Сарымсақ","beets":"Қызылша","pears":"Алмұрт","peas":"Бұршақ","beans":"Бұршақ (құрғақ)","kvass":"Квас","soda":"Газдалған сусын","beer":"Сыра"},"ads":{"closeAria":"Жарнаманы жабу"},"js":{"quantityPlaceholder":"Саны","selectedProductsTitle":"Таңдалған өнімдер:","remove":"Жою","unitLabel":"Бірлік: {unit}","loading":"Экологиялық із есептелуде...","errorPrefix":"Қате:","comparisonCurrentFootprint":"Ағымдағы із: {value} кг CO₂","comparisonAlternatives":"Баламалар:","comparisonSavings":"Үнемдеу: ~{value} кг CO₂"},"recommendationItems":{"highImpact":{"title":"Жоғары экологиялық ізге ие өнімдер","description":"Мыналар үшін баламаларды қарастырыңыз: {products}"},"reduceMeat":{"title":"Ет тұтынуды азайту","description":"Аптасына 1–2 рет етті өсімдік ақуыздарымен ауыстырып көріңіз"},"dairyAlternatives":{"title":"Сүт өнімдеріне баламалар","description":"Өсімдік сүт пен ірімшіктерді қолданып көріңіз"},"buyLocal":{"title":"Жергілікті маусымдық өнімдер сатып алыңыз","description":"Бұл көлік ізін азайтады және жергілікті өндірушілерді қолдайды"},"planPurchases":{"title":"Сатып алуларды жоспарлаңыз","description":"Тамақ қалдықтарынан аулақ болыңыз — тек қажеттісін сатып алыңыз"}},"alternatives":{"plant_proteins":"өсімдік ақуыздары","legumes":"бұршақ тұқымдақтары","nuts":"жаңғақтар","poultry":"құс еті","fish":"балық","seaweed":"теңіз балдыры","plant_milk":"өсімдік сүті","oat_milk":"сұлы сүті","plant_cheese":"өсімдік ірімшіктер","tofu":"тофу","quinoa":"киноа","bulgur":"булгур","buckwheat":"қарақұмық","oats_grain":"сұлы","barley_grain":"арпа","rye_grain":"қара бидай","sweet_potato":"тәтті картоп","turnip":"шалғам","seasonal_vegetables":"маусымдық көкөністер","local_seasonal_vegetables":"жергілікті маусымдық көкөністер","local_seasonal_fruits":"жергілікті маусымдық жемістер","local_fruits":"жергілікті жемістер","tea":"шай","chicory":"цикорий","fruits":"жемістер","seeds":"тұқымдар","chicken":"тауық","turkey":"күркетауық","plant_oils":"өсімдік майлары","avocado":"авокадо","plant_yogurt":"өсімдік йогурттары","kefir":"кефир","plant_omega3":"өсімдік омега-3","flax_seeds":"зығыр тұқымы","other_fish":"басқа балықтар","other_seafood":"басқа теңіз өнімдері","canned_tomatoes":"консервіленген қызанақ","zucchini":"кабачок","seasonal_root_vegetables":"маусымдық тамыр көкөністері","beets":"қызылша","other_root_vegetables":"басқа тамыр көкөністері","seasonal_citrus":"маусымдық цитрустар","seasonal_berries":"маусымдық жидектер","other_grains":"басқа дәнді дақылдар","other_pseudograins":"басқа псевдодәнді дақылдар","beans":"бұршақ","peas":"бұршақ (көк)","chickpeas":"нохат","lentils":"сұлы жүп","plant_drinks":"өсімдік сусындар","local_herbs":"жергілікті шөптер","local_drinks":"жергілікті сусындар","non_alcoholic_options":"алкогольсіз нұсқалар","plant_desserts":"өсімдік десерттер","honey":"бал","stevia":"стевия","rye_bread":"қара бидай наны","whole_grain":"толық дән","pearl_barley":"арпа крупасы","oatmeal":"сұлы ботқасы","millet":"тары","whole_grain_pasta":"толық дәнді макарон","wheat":"бидай","olive_oil":"зәйтүн майы","sunflower_oil":"күнбағыс майы","reduce_amount":"мөлшерін азайту","plain_yogurt":"табиғи йогурт","yogurt":"йогурт","reduce_fat":"майын азайту","other_seasonal_vegetables":"басқа маусымдық көкөністер","local_apples":"жергілікті алмалар","apples":"алмалар","herbal_teas":"шөп шайлары","water":"су","compote":"компот","fruit_drink":"морс","kvass":"квас","onion":"пияз"}};
+        window.i18n = {"title":"Өнімдердің экологиялық ізі калькуляторы — SerpMonn","meta_description":"Азық-түлік өнімдеріңіздің экологиялық ізін есептеңіз. Сіздің сауда себетіңіздің көміртектік ізі, су ізі және қоршаған ортаға әсері туралы біліңіз.","meta_keywords":"өнімдердің экологиялық ізі, тамақтың көміртектік ізі, өнімдердің су ізі, экологиялық калькулятор, тамақтану көміртектік ізі","og_title":"Өнімдердің экологиялық ізі калькуляторы — SerpMonn","og_description":"Азық-түлік өнімдеріңіздің экологиялық ізін есептеңіз. Көміртектік із, су ізі және қоршаған ортаға әсері туралы біліңіз.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/kk/eco-calculators/product-footprint/","vk_title":"Өнімдердің экологиялық ізі калькуляторы","vk_description":"Азық-түлік өнімдеріңіздің экологиялық ізін есептеңіз","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Басты бет","tools":"Құралдар","current":"Өнім ізі калькуляторы"},"header":{"title":"🌱 Өнімдердің экологиялық ізі калькуляторы","subtitle":"Себетіңіздегі өнімдердің қоршаған ортаға әсерін біліңіз"},"calculator":{"section_title":"🛒 Себетке өнімдерді қосыңыз","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Тағы бір өнім қосу","calculate":"🧮 Экологиялық ізді есептеу","share_vk":"📘 VKontakte-те бөлісу","share_telegram":"📱 Telegram-да бөлісу","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Есептеу нәтижелері","carbon_label":"кг CO₂ эквиваленті","water_label":"литр су","land_label":"м² жер","eco_score_label":"Эко-рейтинг (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Альтернативтермен салыстыру"},"recommendations":{"title":"💡 Экологиялық ізді азайту бойынша ұсыныстар"},"errors":{"no_products":"Есептеу үшін кем дегенде бір өнім қосыңыз.","invalid_quantity":"Өнім үшін дұрыс мөлшерді енгізіңіз: {product}","calculation_error":"Есептеу кезінде қате орын алды. Қайталап көріңіз.","select_product_and_qty":"Өнімді таңдап, санын енгізіңіз"},"success":{"calculation_complete":"Есептеу сәтті аяқталды!"},"units":{"kg":"кг","g":"г","l":"л","ml":"мл","pcs":"дана","pack":"букет"},"products":{"beef":"Сиыр еті","chicken":"Тауық","pork":"Шошқа еті","fish":"Балық","eggs":"Жұмыртқа","milk":"Сүт","cheese":"Ірімшік","yogurt":"Йогурт","rice":"Күріш","pasta":"Макарон","bread":"Нан","potatoes":"Картоп","tomatoes":"Қызанақ","apples":"Алма","bananas":"Банан","coffee":"Кофе","tea":"Шай","chocolate":"Шоколад","sugar":"Қант","olive_oil":"Зәйтүн майы","select_product":"Өнімді таңдаңыз...","lamb":"Қой еті","wheat":"Бидай","vegetables":"Көкөністер (аралас)","fruits":"Жемістер (аралас)","nuts":"Жаңғақтар","turkey":"Күркетауық","duck":"Үйрек","butter":"Сары май","salmon":"Албырт","tuna":"Тунец","shrimp":"Асшаяндар","cucumbers":"Қияр","carrots":"Сәбіз","oranges":"Апельсин","grapes":"Жүзім","strawberries":"Құлпынай","quinoa":"Киноа","lentils":"Сұлы жүп","chickpeas":"Нохат","wine":"Шарап","bread_white":"Ақ нан","bread_rye":"Қара бидай наны","buckwheat":"Қарақұмық","oats":"Сұлы ботқасы","barley":"Арпа крупасы","rye":"Қара бидай (дән)","sunflower_oil":"Күнбағыс майы","kefir":"Кефир","yogurt_plain":"Табиғи йогурт","cottage_cheese":"Сүзбе","sour_cream":"Қаймақ","cabbage":"Қырыққабат","onions":"Пияз","garlic":"Сарымсақ","beets":"Қызылша","pears":"Алмұрт","peas":"Бұршақ","beans":"Бұршақ (құрғақ)","kvass":"Квас","soda":"Газдалған сусын","beer":"Сыра"},"ads":{"closeAria":"Жарнаманы жабу"},"js":{"quantityPlaceholder":"Саны","selectedProductsTitle":"Таңдалған өнімдер:","remove":"Жою","unitLabel":"Бірлік: {unit}","loading":"Экологиялық із есептелуде...","errorPrefix":"Қате:","comparisonCurrentFootprint":"Ағымдағы із: {value} кг CO₂","comparisonAlternatives":"Баламалар:","comparisonSavings":"Үнемдеу: ~{value} кг CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Жоғары экологиялық ізге ие өнімдер","description":"Мыналар үшін баламаларды қарастырыңыз: {products}"},"reduceMeat":{"title":"Ет тұтынуды азайту","description":"Аптасына 1–2 рет етті өсімдік ақуыздарымен ауыстырып көріңіз"},"dairyAlternatives":{"title":"Сүт өнімдеріне баламалар","description":"Өсімдік сүт пен ірімшіктерді қолданып көріңіз"},"buyLocal":{"title":"Жергілікті маусымдық өнімдер сатып алыңыз","description":"Бұл көлік ізін азайтады және жергілікті өндірушілерді қолдайды"},"planPurchases":{"title":"Сатып алуларды жоспарлаңыз","description":"Тамақ қалдықтарынан аулақ болыңыз — тек қажеттісін сатып алыңыз"}},"alternatives":{"plant_proteins":"өсімдік ақуыздары","legumes":"бұршақ тұқымдақтары","nuts":"жаңғақтар","poultry":"құс еті","fish":"балық","seaweed":"теңіз балдыры","plant_milk":"өсімдік сүті","oat_milk":"сұлы сүті","plant_cheese":"өсімдік ірімшіктер","tofu":"тофу","quinoa":"киноа","bulgur":"булгур","buckwheat":"қарақұмық","oats_grain":"сұлы","barley_grain":"арпа","rye_grain":"қара бидай","sweet_potato":"тәтті картоп","turnip":"шалғам","seasonal_vegetables":"маусымдық көкөністер","local_seasonal_vegetables":"жергілікті маусымдық көкөністер","local_seasonal_fruits":"жергілікті маусымдық жемістер","local_fruits":"жергілікті жемістер","tea":"шай","chicory":"цикорий","fruits":"жемістер","seeds":"тұқымдар","chicken":"тауық","turkey":"күркетауық","plant_oils":"өсімдік майлары","avocado":"авокадо","plant_yogurt":"өсімдік йогурттары","kefir":"кефир","plant_omega3":"өсімдік омега-3","flax_seeds":"зығыр тұқымы","other_fish":"басқа балықтар","other_seafood":"басқа теңіз өнімдері","canned_tomatoes":"консервіленген қызанақ","zucchini":"кабачок","seasonal_root_vegetables":"маусымдық тамыр көкөністері","beets":"қызылша","other_root_vegetables":"басқа тамыр көкөністері","seasonal_citrus":"маусымдық цитрустар","seasonal_berries":"маусымдық жидектер","other_grains":"басқа дәнді дақылдар","other_pseudograins":"басқа псевдодәнді дақылдар","beans":"бұршақ","peas":"бұршақ (көк)","chickpeas":"нохат","lentils":"сұлы жүп","plant_drinks":"өсімдік сусындар","local_herbs":"жергілікті шөптер","local_drinks":"жергілікті сусындар","non_alcoholic_options":"алкогольсіз нұсқалар","plant_desserts":"өсімдік десерттер","honey":"бал","stevia":"стевия","rye_bread":"қара бидай наны","whole_grain":"толық дән","pearl_barley":"арпа крупасы","oatmeal":"сұлы ботқасы","millet":"тары","whole_grain_pasta":"толық дәнді макарон","wheat":"бидай","olive_oil":"зәйтүн майы","sunflower_oil":"күнбағыс майы","reduce_amount":"мөлшерін азайту","plain_yogurt":"табиғи йогурт","yogurt":"йогурт","reduce_fat":"майын азайту","other_seasonal_vegetables":"басқа маусымдық көкөністер","local_apples":"жергілікті алмалар","apples":"алмалар","herbal_teas":"шөп шайлары","water":"су","compote":"компот","fruit_drink":"морс","kvass":"квас","onion":"пияз"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

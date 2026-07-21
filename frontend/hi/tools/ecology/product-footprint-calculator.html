@@ -28,7 +28,7 @@
     <meta property="vk:description" content="अपने खाद्य उत्पादों के पारिस्थितिक पदचिह्न की गणना करें">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/hi/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 अपनी टोकरी में उत्पाद जोड़ें
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ एक और उत्पाद जोड़ें
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 पारिस्थितिक पदचिह्न की गणना करें
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 पारिस्थितिक पदचिह्न की गणना करें
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 गणना परिणाम
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">किलो CO₂ समतुल्य</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">पारिस्थितिक रेटिंग (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर — SerpMonn","meta_description":"अपने खाद्य उत्पादों के पारिस्थितिक पदचिह्न की गणना करें। अपनी खरीदारी की टोकरी के कार्बन पदचिह्न, जल पदचिह्न और पर्यावरणीय प्रभाव के बारे में जानें।","meta_keywords":"उत्पाद पारिस्थितिक पदचिह्न, भोजन कार्बन पदचिह्न, उत्पाद जल पदचिह्न, पारिस्थितिक कैलकुलेटर, पोषण कार्बन पदचिह्न","og_title":"उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर — SerpMonn","og_description":"अपने खाद्य उत्पादों के पारिस्थितिक पदचिह्न की गणना करें। कार्बन पदचिह्न, जल पदचिह्न और पर्यावरणीय प्रभाव के बारे में जानें।","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/hi/eco-calculators/product-footprint/","vk_title":"उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर","vk_description":"अपने खाद्य उत्पादों के पारिस्थितिक पदचिह्न की गणना करें","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"होम","tools":"टूल्स","current":"उत्पाद पदचिह्न कैलकुलेटर"},"header":{"title":"🌱 उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर","subtitle":"अपनी टोकरी में उत्पादों के पर्यावरणीय प्रभाव का पता लगाएं"},"calculator":{"section_title":"🛒 अपनी टोकरी में उत्पाद जोड़ें"},"buttons":{"add_product":"➕ एक और उत्पाद जोड़ें","calculate":"🧮 पारिस्थितिक पदचिह्न की गणना करें","share_vk":"📘 VKontakte पर साझा करें","share_telegram":"📱 Telegram पर साझा करें"},"results":{"title":"📊 गणना परिणाम","carbon_label":"किलो CO₂ समतुल्य","water_label":"लीटर पानी","land_label":"वर्ग मीटर भूमि","eco_score_label":"पारिस्थितिक रेटिंग (1-10)"},"comparison":{"title":"🔍 विकल्पों के साथ तुलना"},"recommendations":{"title":"💡 पारिस्थितिक पदचिह्न कम करने के सुझाव"},"errors":{"no_products":"कृपया गणना के लिए कम से कम एक उत्पाद जोड़ें।","invalid_quantity":"कृपया उत्पाद {product} के लिए एक वैध मात्रा दर्ज करें","calculation_error":"गणना के दौरान एक त्रुटि हुई। कृपया पुनः प्रयास करें।","select_product_and_qty":"कृपया एक उत्पाद चुनें और मात्रा दर्ज करें"},"success":{"calculation_complete":"गणना सफलतापूर्वक पूरी हुई!"},"units":{"kg":"किलो","g":"ग्राम","l":"लीटर","ml":"मिलीलीटर","pcs":"टुकड़े","pack":"पैक"},"products":{"beef":"गोमांस","chicken":"मुर्गी","pork":"सूअर का मांस","fish":"मछली","eggs":"अंडे","milk":"दूध","cheese":"पनीर","yogurt":"दही","rice":"चावल","pasta":"पास्ता","bread":"रोटी","potatoes":"आलू","tomatoes":"टमाटर","apples":"सेब","bananas":"केला","coffee":"कॉफी","tea":"चाय","chocolate":"चॉकलेट","sugar":"चीनी","olive_oil":"जैतून का तेल","select_product":"एक उत्पाद चुनें...","lamb":"भेड़ का मांस","wheat":"गेहूं","vegetables":"सब्जियां (मिश्रित)","fruits":"फल (मिश्रित)","nuts":"मेवे","turkey":"टर्की","duck":"बत्तख","butter":"मक्खन","salmon":"सैल्मन","tuna":"टूना","shrimp":"झींगा","cucumbers":"खीरा","carrots":"गाजर","oranges":"संतरा","grapes":"अंगूर","strawberries":"स्ट्रॉबेरी","quinoa":"क्विनोआ","lentils":"मसूर","chickpeas":"चना","wine":"शराब","bread_white":"सफेद ब्रेड","bread_rye":"राई की रोटी","buckwheat":"कुट्टू","oats":"ओटमील","barley":"जौ दाना","rye":"राई (अनाज)","sunflower_oil":"सूरजमुखी का तेल","kefir":"केफिर","yogurt_plain":"सादा दही","cottage_cheese":"पनीर (कॉटेज)","sour_cream":"खट्टी क्रीम","cabbage":"पत्तागोभी","onions":"प्याज","garlic":"लहसुन","beets":"चुकंदर","pears":"नाशपाती","peas":"मटर","beans":"बीन्स","kvass":"क्वास","soda":"सॉफ्ट ड्रिंक","beer":"बीयर"},"ads":{"closeAria":"विज्ञापन बंद करें"},"js":{"quantityPlaceholder":"मात्रा","selectedProductsTitle":"चयनित उत्पाद:","remove":"हटाएं","unitLabel":"इकाई: {unit}","loading":"पारिस्थितिक पदचिह्न की गणना हो रही है...","errorPrefix":"त्रुटि:","comparisonCurrentFootprint":"वर्तमान पदचिह्न: {value} किग्रा CO₂","comparisonAlternatives":"विकल्प:","comparisonSavings":"बचत: ~{value} किग्रा CO₂"},"recommendationItems":{"highImpact":{"title":"उच्च पारिस्थितिक पदचिह्न वाले उत्पाद","description":"इनके लिए विकल्प पर विचार करें: {products}"},"reduceMeat":{"title":"मांस की खपत कम करें","description":"सप्ताह में 1–2 बार मांस को पौध-आधारित प्रोटीन से बदलने का प्रयास करें"},"dairyAlternatives":{"title":"डेयरी के विकल्प","description":"पौध-आधारित दूध और पनीर आज़माएं"},"buyLocal":{"title":"स्थानीय मौसमी उत्पाद खरीदें","description":"यह परिवहन पदचिह्न कम करता है और स्थानीय उत्पादकों का समर्थन करता है"},"planPurchases":{"title":"अपनी खरीदारी की योजना बनाएं","description":"भोजन की बर्बादी से बचें — केवल आवश्यकतानुसार खरीदें"}},"alternatives":{"plant_proteins":"पौध-आधारित प्रोटीन","legumes":"फलियां","nuts":"मेवे","poultry":"पोल्ट्री","fish":"मछली","seaweed":"समुद्री शैवाल","plant_milk":"पौध-आधारित दूध","oat_milk":"ओट मिल्क","plant_cheese":"पौध-आधारित पनीर","tofu":"टोफू","quinoa":"क्विनोआ","bulgur":"बुलगुर","buckwheat":"कुट्टू","oats_grain":"जई","barley_grain":"जौ","rye_grain":"राई","sweet_potato":"शकरकंद","turnip":"शलजम","seasonal_vegetables":"मौसमी सब्जियां","local_seasonal_vegetables":"स्थानीय मौसमी सब्जियां","local_seasonal_fruits":"स्थानीय मौसमी फल","local_fruits":"स्थानीय फल","tea":"चाय","chicory":"चिकोरी","fruits":"फल","seeds":"बीज","chicken":"मुर्गी","turkey":"टर्की","plant_oils":"वनस्पति तेल","avocado":"एवोकाडो","plant_yogurt":"पौध-आधारित दही","kefir":"केफिर","plant_omega3":"पौध-आधारित ओमेगा-3","flax_seeds":"अलसी के बीज","other_fish":"अन्य मछलियां","other_seafood":"अन्य समुद्री भोजन","canned_tomatoes":"डिब्बाबंद टमाटर","zucchini":"ज़ुकीनी","seasonal_root_vegetables":"मौसमी जड़ सब्जियां","beets":"चुकंदर","other_root_vegetables":"अन्य जड़ सब्जियां","seasonal_citrus":"मौसमी खट्टे फल","seasonal_berries":"मौसमी बेरी","other_grains":"अन्य अनाज","other_pseudograins":"अन्य छद्म अनाज","beans":"बीन्स","peas":"मटर","chickpeas":"चना","lentils":"मसूर","plant_drinks":"पौध-आधारित पेय","local_herbs":"स्थानीय जड़ी-बूटियां","local_drinks":"स्थानीय पेय","non_alcoholic_options":"गैर-मादक विकल्प","plant_desserts":"पौध-आधारित मिठाई","honey":"शहद","stevia":"स्टीविया","rye_bread":"राई की रोटी","whole_grain":"साबुत अनाज","pearl_barley":"जौ दाना","oatmeal":"ओटमील","millet":"बाजरा","whole_grain_pasta":"साबुत अनाज पास्ता","wheat":"गेहूं","olive_oil":"जैतून का तेल","sunflower_oil":"सूरजमुखी का तेल","reduce_amount":"मात्रा कम करें","plain_yogurt":"सादा दही","yogurt":"दही","reduce_fat":"वसा कम करें","other_seasonal_vegetables":"अन्य मौसमी सब्जियां","local_apples":"स्थानीय सेब","apples":"सेब","herbal_teas":"हर्बल चाय","water":"पानी","compote":"कम्पोट","fruit_drink":"फल का पेय","kvass":"क्वास","onion":"प्याज"}};
+        window.i18n = {"title":"उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर — SerpMonn","meta_description":"अपने खाद्य उत्पादों के पारिस्थितिक पदचिह्न की गणना करें। अपनी खरीदारी की टोकरी के कार्बन पदचिह्न, जल पदचिह्न और पर्यावरणीय प्रभाव के बारे में जानें।","meta_keywords":"उत्पाद पारिस्थितिक पदचिह्न, भोजन कार्बन पदचिह्न, उत्पाद जल पदचिह्न, पारिस्थितिक कैलकुलेटर, पोषण कार्बन पदचिह्न","og_title":"उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर — SerpMonn","og_description":"अपने खाद्य उत्पादों के पारिस्थितिक पदचिह्न की गणना करें। कार्बन पदचिह्न, जल पदचिह्न और पर्यावरणीय प्रभाव के बारे में जानें।","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/hi/eco-calculators/product-footprint/","vk_title":"उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर","vk_description":"अपने खाद्य उत्पादों के पारिस्थितिक पदचिह्न की गणना करें","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"होम","tools":"टूल्स","current":"उत्पाद पदचिह्न कैलकुलेटर"},"header":{"title":"🌱 उत्पाद पारिस्थितिक पदचिह्न कैलकुलेटर","subtitle":"अपनी टोकरी में उत्पादों के पर्यावरणीय प्रभाव का पता लगाएं"},"calculator":{"section_title":"🛒 अपनी टोकरी में उत्पाद जोड़ें","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ एक और उत्पाद जोड़ें","calculate":"🧮 पारिस्थितिक पदचिह्न की गणना करें","share_vk":"📘 VKontakte पर साझा करें","share_telegram":"📱 Telegram पर साझा करें","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 गणना परिणाम","carbon_label":"किलो CO₂ समतुल्य","water_label":"लीटर पानी","land_label":"वर्ग मीटर भूमि","eco_score_label":"पारिस्थितिक रेटिंग (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 विकल्पों के साथ तुलना"},"recommendations":{"title":"💡 पारिस्थितिक पदचिह्न कम करने के सुझाव"},"errors":{"no_products":"कृपया गणना के लिए कम से कम एक उत्पाद जोड़ें।","invalid_quantity":"कृपया उत्पाद {product} के लिए एक वैध मात्रा दर्ज करें","calculation_error":"गणना के दौरान एक त्रुटि हुई। कृपया पुनः प्रयास करें।","select_product_and_qty":"कृपया एक उत्पाद चुनें और मात्रा दर्ज करें"},"success":{"calculation_complete":"गणना सफलतापूर्वक पूरी हुई!"},"units":{"kg":"किलो","g":"ग्राम","l":"लीटर","ml":"मिलीलीटर","pcs":"टुकड़े","pack":"पैक"},"products":{"beef":"गोमांस","chicken":"मुर्गी","pork":"सूअर का मांस","fish":"मछली","eggs":"अंडे","milk":"दूध","cheese":"पनीर","yogurt":"दही","rice":"चावल","pasta":"पास्ता","bread":"रोटी","potatoes":"आलू","tomatoes":"टमाटर","apples":"सेब","bananas":"केला","coffee":"कॉफी","tea":"चाय","chocolate":"चॉकलेट","sugar":"चीनी","olive_oil":"जैतून का तेल","select_product":"एक उत्पाद चुनें...","lamb":"भेड़ का मांस","wheat":"गेहूं","vegetables":"सब्जियां (मिश्रित)","fruits":"फल (मिश्रित)","nuts":"मेवे","turkey":"टर्की","duck":"बत्तख","butter":"मक्खन","salmon":"सैल्मन","tuna":"टूना","shrimp":"झींगा","cucumbers":"खीरा","carrots":"गाजर","oranges":"संतरा","grapes":"अंगूर","strawberries":"स्ट्रॉबेरी","quinoa":"क्विनोआ","lentils":"मसूर","chickpeas":"चना","wine":"शराब","bread_white":"सफेद ब्रेड","bread_rye":"राई की रोटी","buckwheat":"कुट्टू","oats":"ओटमील","barley":"जौ दाना","rye":"राई (अनाज)","sunflower_oil":"सूरजमुखी का तेल","kefir":"केफिर","yogurt_plain":"सादा दही","cottage_cheese":"पनीर (कॉटेज)","sour_cream":"खट्टी क्रीम","cabbage":"पत्तागोभी","onions":"प्याज","garlic":"लहसुन","beets":"चुकंदर","pears":"नाशपाती","peas":"मटर","beans":"बीन्स","kvass":"क्वास","soda":"सॉफ्ट ड्रिंक","beer":"बीयर"},"ads":{"closeAria":"विज्ञापन बंद करें"},"js":{"quantityPlaceholder":"मात्रा","selectedProductsTitle":"चयनित उत्पाद:","remove":"हटाएं","unitLabel":"इकाई: {unit}","loading":"पारिस्थितिक पदचिह्न की गणना हो रही है...","errorPrefix":"त्रुटि:","comparisonCurrentFootprint":"वर्तमान पदचिह्न: {value} किग्रा CO₂","comparisonAlternatives":"विकल्प:","comparisonSavings":"बचत: ~{value} किग्रा CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"उच्च पारिस्थितिक पदचिह्न वाले उत्पाद","description":"इनके लिए विकल्प पर विचार करें: {products}"},"reduceMeat":{"title":"मांस की खपत कम करें","description":"सप्ताह में 1–2 बार मांस को पौध-आधारित प्रोटीन से बदलने का प्रयास करें"},"dairyAlternatives":{"title":"डेयरी के विकल्प","description":"पौध-आधारित दूध और पनीर आज़माएं"},"buyLocal":{"title":"स्थानीय मौसमी उत्पाद खरीदें","description":"यह परिवहन पदचिह्न कम करता है और स्थानीय उत्पादकों का समर्थन करता है"},"planPurchases":{"title":"अपनी खरीदारी की योजना बनाएं","description":"भोजन की बर्बादी से बचें — केवल आवश्यकतानुसार खरीदें"}},"alternatives":{"plant_proteins":"पौध-आधारित प्रोटीन","legumes":"फलियां","nuts":"मेवे","poultry":"पोल्ट्री","fish":"मछली","seaweed":"समुद्री शैवाल","plant_milk":"पौध-आधारित दूध","oat_milk":"ओट मिल्क","plant_cheese":"पौध-आधारित पनीर","tofu":"टोफू","quinoa":"क्विनोआ","bulgur":"बुलगुर","buckwheat":"कुट्टू","oats_grain":"जई","barley_grain":"जौ","rye_grain":"राई","sweet_potato":"शकरकंद","turnip":"शलजम","seasonal_vegetables":"मौसमी सब्जियां","local_seasonal_vegetables":"स्थानीय मौसमी सब्जियां","local_seasonal_fruits":"स्थानीय मौसमी फल","local_fruits":"स्थानीय फल","tea":"चाय","chicory":"चिकोरी","fruits":"फल","seeds":"बीज","chicken":"मुर्गी","turkey":"टर्की","plant_oils":"वनस्पति तेल","avocado":"एवोकाडो","plant_yogurt":"पौध-आधारित दही","kefir":"केफिर","plant_omega3":"पौध-आधारित ओमेगा-3","flax_seeds":"अलसी के बीज","other_fish":"अन्य मछलियां","other_seafood":"अन्य समुद्री भोजन","canned_tomatoes":"डिब्बाबंद टमाटर","zucchini":"ज़ुकीनी","seasonal_root_vegetables":"मौसमी जड़ सब्जियां","beets":"चुकंदर","other_root_vegetables":"अन्य जड़ सब्जियां","seasonal_citrus":"मौसमी खट्टे फल","seasonal_berries":"मौसमी बेरी","other_grains":"अन्य अनाज","other_pseudograins":"अन्य छद्म अनाज","beans":"बीन्स","peas":"मटर","chickpeas":"चना","lentils":"मसूर","plant_drinks":"पौध-आधारित पेय","local_herbs":"स्थानीय जड़ी-बूटियां","local_drinks":"स्थानीय पेय","non_alcoholic_options":"गैर-मादक विकल्प","plant_desserts":"पौध-आधारित मिठाई","honey":"शहद","stevia":"स्टीविया","rye_bread":"राई की रोटी","whole_grain":"साबुत अनाज","pearl_barley":"जौ दाना","oatmeal":"ओटमील","millet":"बाजरा","whole_grain_pasta":"साबुत अनाज पास्ता","wheat":"गेहूं","olive_oil":"जैतून का तेल","sunflower_oil":"सूरजमुखी का तेल","reduce_amount":"मात्रा कम करें","plain_yogurt":"सादा दही","yogurt":"दही","reduce_fat":"वसा कम करें","other_seasonal_vegetables":"अन्य मौसमी सब्जियां","local_apples":"स्थानीय सेब","apples":"सेब","herbal_teas":"हर्बल चाय","water":"पानी","compote":"कम्पोट","fruit_drink":"फल का पेय","kvass":"क्वास","onion":"प्याज"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

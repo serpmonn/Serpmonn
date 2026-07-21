@@ -28,7 +28,7 @@
     <meta property="vk:description" content="רעכנט אַרויס דעם עקאָלאָגישן פֿוס־שפּור פון אייערע עסנוואַרג פּראָדוקטן">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/yi/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 לייגט צו פּראָדוקטן אין אייער זעקל
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ לייגט נאָך אַ פּראָדוקט
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 רעכנט עקאָלאָגישן פֿוס־שפּור
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 רעכנט עקאָלאָגישן פֿוס־שפּור
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 רעזולטאַטן פון רעכענונג
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">קילאָ CO₂ עקוויוואַלענט</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">עקאָ־שאַץ (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"קאַלקולאַטאָר פֿאַר עקאָלאָגישע פֿוס־שפּור פון פּראָדוקטן — SerpMonn","meta_description":"רעכנט אַרויס דעם עקאָלאָגישן פֿוס־שפּור פון אייערע עסנוואַרג פּראָדוקטן. לערנט וועגן דעם קאַרבאָן־פֿוס־שפּור, וואַסער־פֿוס־שפּור און דער סוויווע פּראַל פון אייער איינקויף־זעקל.","meta_keywords":"עקאָלאָגישער פֿוס־שפּור פון פּראָדוקטן, עסנוואַרג קאַרבאָן־פֿוס־שפּור, פֿוס־שפּור פון וואַסער פֿאַר פּראָדוקטן, עקאָלאָגישער קאַלקולאַטאָר, קאַרבאָן־פֿוס־שפּור פון נערונג","og_title":"קאַלקולאַטאָר פֿאַר עקאָלאָגישע פֿוס־שפּור פון פּראָדוקטן — SerpMonn","og_description":"רעכנט אַרויס דעם עקאָלאָגישן פֿוס־שפּור פון אייערע עסנוואַרג פּראָדוקטן. לערנט וועגן קאַרבאָן־פֿוס־שפּור, וואַסער־פֿוס־שפּור און דער סוויווע פּראַל.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/yi/eco-calculators/product-footprint/","vk_title":"קאַלקולאַטאָר פֿאַר עקאָלאָגישע פֿוס־שפּור פון פּראָדוקטן","vk_description":"רעכנט אַרויס דעם עקאָלאָגישן פֿוס־שפּור פון אייערע עסנוואַרג פּראָדוקטן","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"היים","tools":"כּלים","current":"קאַלקולאַטאָר פֿאַר פּראָדוקט־פֿוס־שפּור"},"header":{"title":"🌱 קאַלקולאַטאָר פֿאַר עקאָלאָגישע פֿוס־שפּור פון פּראָדוקטן","subtitle":"געפֿינט דעם סוויווע פּראַל פון די פּראָדוקטן אין אייער איינקויף־זעקל"},"calculator":{"section_title":"🛒 לייגט צו פּראָדוקטן אין אייער זעקל"},"buttons":{"add_product":"➕ לייגט נאָך אַ פּראָדוקט","calculate":"🧮 רעכנט עקאָלאָגישן פֿוס־שפּור","share_vk":"📘 טיילט אויף VKontakte","share_telegram":"📱 טיילט אויף Telegram"},"results":{"title":"📊 רעזולטאַטן פון רעכענונג","carbon_label":"קילאָ CO₂ עקוויוואַלענט","water_label":"ליטער וואַסער","land_label":"קוואַדראַט־מעטער לאַנד","eco_score_label":"עקאָ־שאַץ (1-10)"},"comparison":{"title":"🔍 פאַרגלײַך מיט אַנדערע ברירות"},"recommendations":{"title":"💡 עצות צו פּראָדוצירן דעם עקאָלאָגישן פֿוס־שפּור"},"errors":{"no_products":"לייגט ביטע צומינדסט איין פּראָדוקט פֿאַר רעכענונג.","invalid_quantity":"לייגט ביטע אַ גילטיקן נומער פֿאַר פּראָדוקט: {product}","calculation_error":"אַ טעות איז געשען בײַם רעכענען. פּרובירט ביטע נאָך אַ מאָל.","select_product_and_qty":"ביטע קלײַבט אַ פּראָדוקט און געבט אַ כמות"},"success":{"calculation_complete":"די רעכענונג איז געווען הצלחה!"},"units":{"kg":"קילאָ","g":"גראַם","l":"ליטער","ml":"מיליליטער","pcs":"שטיק","pack":"פּאַקעט"},"products":{"beef":"רינדפֿלייש","chicken":"הינד","pork":"חזיר־פֿלייש","fish":"פֿיש","eggs":"אייער","milk":"מילך","cheese":"קעז","yogurt":"יאָגורט","rice":"רייז","pasta":"פּאַסטע","bread":"ברויט","potatoes":"קאַרטאָפֿל","tomatoes":"טאָמאַטן","apples":"עפּל","bananas":"באַנאַנען","coffee":"קאַווע","tea":"טיי","chocolate":"שאָקאָלאַד","sugar":"צוקער","olive_oil":"אָליווע־אייל","select_product":"קלײַבט אַ פּראָדוקט...","lamb":"לאַמב־פֿלייש","wheat":"ווייץ","vegetables":"געמייז (געמישט)","fruits":"פֿרוכט (געמישט)","nuts":"ניסלעך","turkey":"פּוטער","duck":"אַנט","butter":"פּוטער","salmon":"סאַלמאָן","tuna":"טונאַ","shrimp":"שרימפּס","cucumbers":"קאָווערס","carrots":"מארווען","oranges":"אָראַנדזשן","grapes":"טראויבן","strawberries":"ערדבער","quinoa":"קינואַ","lentils":"לינזן","chickpeas":"קיקערעס","wine":"וויין","bread_white":"ווייס ברויט","bread_rye":"ראָזשין־ברויט","buckwheat":"באָקוויץ","oats":"האַווער־פֿלעק","barley":"פּערל־גערשטן","rye":"ראָזשין (קערן)","sunflower_oil":"זונבלום־אייל","kefir":"קעפיר","yogurt_plain":"נאַטירלעכער יאָגורט","cottage_cheese":"קאָטעדזש־קעז","sour_cream":"זויערע קרעם","cabbage":"קאָל","onions":"ציבעלעס","garlic":"קנאָבל","beets":"ריבעלעך","pears":"בירן","peas":"ערבס","beans":"באָנען","kvass":"קוואַס","soda":"זאָפט","beer":"ביר"},"ads":{"closeAria":"שליסט רעקלאַמע"},"js":{"quantityPlaceholder":"כמות","selectedProductsTitle":"אויסגעקליבענע פּראָדוקטן:","remove":"אַראָפּנעמען","unitLabel":"איינהייט: {unit}","loading":"מען רעכנט דעם עקאָלאָגישן פֿוסאָפּרינט...","errorPrefix":"גרייַז:","comparisonCurrentFootprint":"איצטיקער פֿוסאָפּרינט: {value} ק\"ג CO₂","comparisonAlternatives":"אַלטערנאַטיוון:","comparisonSavings":"שפּאָרונג: ~{value} ק\"ג CO₂"},"recommendationItems":{"highImpact":{"title":"פּראָדוקטן מיט הויכן עקאָלאָגישן פֿוסאָפּרינט","description":"טראַכטט וועגן אַלטערנאַטיוון פֿאַר: {products}"},"reduceMeat":{"title":"פֿאַרמינערן פֿלייש־קאָנסומ","description":"פּרוּווט 1–2 מאָל אין וואָך פֿלייש צו פֿאַרבייטן מיט פֿלאַנצן־פּראָטעינען"},"dairyAlternatives":{"title":"אַלטערנאַטיוון צו מילכיקע פּראָדוקטן","description":"פּרוּווט פֿלאַנצן־מילך און קעז"},"buyLocal":{"title":"קויפֿט לאָקאַלע סעזאָנאַלע פּראָדוקטן","description":"דאָס פֿאַרמינערט דעם טראַנספּאָרט־פֿוסאָפּרינט און שטיצט לאָקאַלע פּראָדוצירער"},"planPurchases":{"title":"פּלאַנירט אייער קויפֿן","description":"מיד אַרויספֿאַל פֿון עסן — קויפֿט נאָר וואָס איר דאַרפֿט"}},"alternatives":{"plant_proteins":"פֿלאַנצן־פּראָטעינען","legumes":"הילזן","nuts":"ניסלעך","poultry":"געפֿיגל","fish":"פֿיש","seaweed":"זייוועד","plant_milk":"פֿלאַנצן־מילך","oat_milk":"האַווער־מילך","plant_cheese":"פֿלאַנצן־קעז","tofu":"טאָפו","quinoa":"קינואַ","bulgur":"בולגור","buckwheat":"באָקוויץ","oats_grain":"האַווער","barley_grain":"גערשטן","rye_grain":"ראָזשין","sweet_potato":"זיסער קאַרטאָפֿל","turnip":"ריבע","seasonal_vegetables":"סעזאָנאַלע געמייז","local_seasonal_vegetables":"לאָקאַלע סעזאָנאַלע געמייז","local_seasonal_fruits":"לאָקאַלע סעזאָנאַלע פֿרוכט","local_fruits":"לאָקאַלע פֿרוכט","tea":"טיי","chicory":"ציקאָריע","fruits":"פֿרוכט","seeds":"זאַמען","chicken":"הינד","turkey":"פּוטער","plant_oils":"פֿלאַנצן־איילן","avocado":"אַוואָקאַדאָ","plant_yogurt":"פֿלאַנצן־יאָגורט","kefir":"קעפיר","plant_omega3":"פֿלאַנצן־אָמעגאַ-3","flax_seeds":"פֿלאַקס־זאַמען","other_fish":"אַנדערע פֿיש","other_seafood":"אַנדערע ים־פֿרוכט","canned_tomatoes":"קאָנסערווירטע טאָמאַטן","zucchini":"צוקיני","seasonal_root_vegetables":"סעזאָנאַלע וואָרצל־געמייז","beets":"ריבעלעך","other_root_vegetables":"אַנדערע וואָרצל־געמייז","seasonal_citrus":"סעזאָנאַלע ציטרוס","seasonal_berries":"סעזאָנאַלע באַרי","other_grains":"אַנדערע געטראַיד","other_pseudograins":"אַנדערע פּסעוודאָ־געטראַיד","beans":"באָנען","peas":"ערבס","chickpeas":"קיקערעס","lentils":"לינזן","plant_drinks":"פֿלאַנצן־געטראַנק","local_herbs":"לאָקאַלע קרויטער","local_drinks":"לאָקאַלע געטראַנק","non_alcoholic_options":"נישט־אַלקאָהאָלישע אָפּציעס","plant_desserts":"פֿלאַנצן־דעסערט","honey":"האָניק","stevia":"סטעוויע","rye_bread":"ראָזשין־ברויט","whole_grain":"גאַנץ־קערן","pearl_barley":"פּערל־גערשטן","oatmeal":"האַווער־פֿלעק","millet":"הירז","whole_grain_pasta":"גאַנץ־קערן פּאַסטע","wheat":"ווייץ","olive_oil":"אָליווע־אייל","sunflower_oil":"זונבלום־אייל","reduce_amount":"פֿאַרמינערן כמות","plain_yogurt":"נאַטירלעכער יאָגורט","yogurt":"יאָגורט","reduce_fat":"פֿאַרמינערן פֿעט","other_seasonal_vegetables":"אַנדערע סעזאָנאַלע געמייז","local_apples":"לאָקאַלע עפּל","apples":"עפּל","herbal_teas":"קראָם־טיי","water":"וואַסער","compote":"קאָמפּאָט","fruit_drink":"פֿרוכט־געטראַנק","kvass":"קוואַס","onion":"ציבעלע"}};
+        window.i18n = {"title":"קאַלקולאַטאָר פֿאַר עקאָלאָגישע פֿוס־שפּור פון פּראָדוקטן — SerpMonn","meta_description":"רעכנט אַרויס דעם עקאָלאָגישן פֿוס־שפּור פון אייערע עסנוואַרג פּראָדוקטן. לערנט וועגן דעם קאַרבאָן־פֿוס־שפּור, וואַסער־פֿוס־שפּור און דער סוויווע פּראַל פון אייער איינקויף־זעקל.","meta_keywords":"עקאָלאָגישער פֿוס־שפּור פון פּראָדוקטן, עסנוואַרג קאַרבאָן־פֿוס־שפּור, פֿוס־שפּור פון וואַסער פֿאַר פּראָדוקטן, עקאָלאָגישער קאַלקולאַטאָר, קאַרבאָן־פֿוס־שפּור פון נערונג","og_title":"קאַלקולאַטאָר פֿאַר עקאָלאָגישע פֿוס־שפּור פון פּראָדוקטן — SerpMonn","og_description":"רעכנט אַרויס דעם עקאָלאָגישן פֿוס־שפּור פון אייערע עסנוואַרג פּראָדוקטן. לערנט וועגן קאַרבאָן־פֿוס־שפּור, וואַסער־פֿוס־שפּור און דער סוויווע פּראַל.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/yi/eco-calculators/product-footprint/","vk_title":"קאַלקולאַטאָר פֿאַר עקאָלאָגישע פֿוס־שפּור פון פּראָדוקטן","vk_description":"רעכנט אַרויס דעם עקאָלאָגישן פֿוס־שפּור פון אייערע עסנוואַרג פּראָדוקטן","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"היים","tools":"כּלים","current":"קאַלקולאַטאָר פֿאַר פּראָדוקט־פֿוס־שפּור"},"header":{"title":"🌱 קאַלקולאַטאָר פֿאַר עקאָלאָגישע פֿוס־שפּור פון פּראָדוקטן","subtitle":"געפֿינט דעם סוויווע פּראַל פון די פּראָדוקטן אין אייער איינקויף־זעקל"},"calculator":{"section_title":"🛒 לייגט צו פּראָדוקטן אין אייער זעקל","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ לייגט נאָך אַ פּראָדוקט","calculate":"🧮 רעכנט עקאָלאָגישן פֿוס־שפּור","share_vk":"📘 טיילט אויף VKontakte","share_telegram":"📱 טיילט אויף Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 רעזולטאַטן פון רעכענונג","carbon_label":"קילאָ CO₂ עקוויוואַלענט","water_label":"ליטער וואַסער","land_label":"קוואַדראַט־מעטער לאַנד","eco_score_label":"עקאָ־שאַץ (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 פאַרגלײַך מיט אַנדערע ברירות"},"recommendations":{"title":"💡 עצות צו פּראָדוצירן דעם עקאָלאָגישן פֿוס־שפּור"},"errors":{"no_products":"לייגט ביטע צומינדסט איין פּראָדוקט פֿאַר רעכענונג.","invalid_quantity":"לייגט ביטע אַ גילטיקן נומער פֿאַר פּראָדוקט: {product}","calculation_error":"אַ טעות איז געשען בײַם רעכענען. פּרובירט ביטע נאָך אַ מאָל.","select_product_and_qty":"ביטע קלײַבט אַ פּראָדוקט און געבט אַ כמות"},"success":{"calculation_complete":"די רעכענונג איז געווען הצלחה!"},"units":{"kg":"קילאָ","g":"גראַם","l":"ליטער","ml":"מיליליטער","pcs":"שטיק","pack":"פּאַקעט"},"products":{"beef":"רינדפֿלייש","chicken":"הינד","pork":"חזיר־פֿלייש","fish":"פֿיש","eggs":"אייער","milk":"מילך","cheese":"קעז","yogurt":"יאָגורט","rice":"רייז","pasta":"פּאַסטע","bread":"ברויט","potatoes":"קאַרטאָפֿל","tomatoes":"טאָמאַטן","apples":"עפּל","bananas":"באַנאַנען","coffee":"קאַווע","tea":"טיי","chocolate":"שאָקאָלאַד","sugar":"צוקער","olive_oil":"אָליווע־אייל","select_product":"קלײַבט אַ פּראָדוקט...","lamb":"לאַמב־פֿלייש","wheat":"ווייץ","vegetables":"געמייז (געמישט)","fruits":"פֿרוכט (געמישט)","nuts":"ניסלעך","turkey":"פּוטער","duck":"אַנט","butter":"פּוטער","salmon":"סאַלמאָן","tuna":"טונאַ","shrimp":"שרימפּס","cucumbers":"קאָווערס","carrots":"מארווען","oranges":"אָראַנדזשן","grapes":"טראויבן","strawberries":"ערדבער","quinoa":"קינואַ","lentils":"לינזן","chickpeas":"קיקערעס","wine":"וויין","bread_white":"ווייס ברויט","bread_rye":"ראָזשין־ברויט","buckwheat":"באָקוויץ","oats":"האַווער־פֿלעק","barley":"פּערל־גערשטן","rye":"ראָזשין (קערן)","sunflower_oil":"זונבלום־אייל","kefir":"קעפיר","yogurt_plain":"נאַטירלעכער יאָגורט","cottage_cheese":"קאָטעדזש־קעז","sour_cream":"זויערע קרעם","cabbage":"קאָל","onions":"ציבעלעס","garlic":"קנאָבל","beets":"ריבעלעך","pears":"בירן","peas":"ערבס","beans":"באָנען","kvass":"קוואַס","soda":"זאָפט","beer":"ביר"},"ads":{"closeAria":"שליסט רעקלאַמע"},"js":{"quantityPlaceholder":"כמות","selectedProductsTitle":"אויסגעקליבענע פּראָדוקטן:","remove":"אַראָפּנעמען","unitLabel":"איינהייט: {unit}","loading":"מען רעכנט דעם עקאָלאָגישן פֿוסאָפּרינט...","errorPrefix":"גרייַז:","comparisonCurrentFootprint":"איצטיקער פֿוסאָפּרינט: {value} ק\"ג CO₂","comparisonAlternatives":"אַלטערנאַטיוון:","comparisonSavings":"שפּאָרונג: ~{value} ק\"ג CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"פּראָדוקטן מיט הויכן עקאָלאָגישן פֿוסאָפּרינט","description":"טראַכטט וועגן אַלטערנאַטיוון פֿאַר: {products}"},"reduceMeat":{"title":"פֿאַרמינערן פֿלייש־קאָנסומ","description":"פּרוּווט 1–2 מאָל אין וואָך פֿלייש צו פֿאַרבייטן מיט פֿלאַנצן־פּראָטעינען"},"dairyAlternatives":{"title":"אַלטערנאַטיוון צו מילכיקע פּראָדוקטן","description":"פּרוּווט פֿלאַנצן־מילך און קעז"},"buyLocal":{"title":"קויפֿט לאָקאַלע סעזאָנאַלע פּראָדוקטן","description":"דאָס פֿאַרמינערט דעם טראַנספּאָרט־פֿוסאָפּרינט און שטיצט לאָקאַלע פּראָדוצירער"},"planPurchases":{"title":"פּלאַנירט אייער קויפֿן","description":"מיד אַרויספֿאַל פֿון עסן — קויפֿט נאָר וואָס איר דאַרפֿט"}},"alternatives":{"plant_proteins":"פֿלאַנצן־פּראָטעינען","legumes":"הילזן","nuts":"ניסלעך","poultry":"געפֿיגל","fish":"פֿיש","seaweed":"זייוועד","plant_milk":"פֿלאַנצן־מילך","oat_milk":"האַווער־מילך","plant_cheese":"פֿלאַנצן־קעז","tofu":"טאָפו","quinoa":"קינואַ","bulgur":"בולגור","buckwheat":"באָקוויץ","oats_grain":"האַווער","barley_grain":"גערשטן","rye_grain":"ראָזשין","sweet_potato":"זיסער קאַרטאָפֿל","turnip":"ריבע","seasonal_vegetables":"סעזאָנאַלע געמייז","local_seasonal_vegetables":"לאָקאַלע סעזאָנאַלע געמייז","local_seasonal_fruits":"לאָקאַלע סעזאָנאַלע פֿרוכט","local_fruits":"לאָקאַלע פֿרוכט","tea":"טיי","chicory":"ציקאָריע","fruits":"פֿרוכט","seeds":"זאַמען","chicken":"הינד","turkey":"פּוטער","plant_oils":"פֿלאַנצן־איילן","avocado":"אַוואָקאַדאָ","plant_yogurt":"פֿלאַנצן־יאָגורט","kefir":"קעפיר","plant_omega3":"פֿלאַנצן־אָמעגאַ-3","flax_seeds":"פֿלאַקס־זאַמען","other_fish":"אַנדערע פֿיש","other_seafood":"אַנדערע ים־פֿרוכט","canned_tomatoes":"קאָנסערווירטע טאָמאַטן","zucchini":"צוקיני","seasonal_root_vegetables":"סעזאָנאַלע וואָרצל־געמייז","beets":"ריבעלעך","other_root_vegetables":"אַנדערע וואָרצל־געמייז","seasonal_citrus":"סעזאָנאַלע ציטרוס","seasonal_berries":"סעזאָנאַלע באַרי","other_grains":"אַנדערע געטראַיד","other_pseudograins":"אַנדערע פּסעוודאָ־געטראַיד","beans":"באָנען","peas":"ערבס","chickpeas":"קיקערעס","lentils":"לינזן","plant_drinks":"פֿלאַנצן־געטראַנק","local_herbs":"לאָקאַלע קרויטער","local_drinks":"לאָקאַלע געטראַנק","non_alcoholic_options":"נישט־אַלקאָהאָלישע אָפּציעס","plant_desserts":"פֿלאַנצן־דעסערט","honey":"האָניק","stevia":"סטעוויע","rye_bread":"ראָזשין־ברויט","whole_grain":"גאַנץ־קערן","pearl_barley":"פּערל־גערשטן","oatmeal":"האַווער־פֿלעק","millet":"הירז","whole_grain_pasta":"גאַנץ־קערן פּאַסטע","wheat":"ווייץ","olive_oil":"אָליווע־אייל","sunflower_oil":"זונבלום־אייל","reduce_amount":"פֿאַרמינערן כמות","plain_yogurt":"נאַטירלעכער יאָגורט","yogurt":"יאָגורט","reduce_fat":"פֿאַרמינערן פֿעט","other_seasonal_vegetables":"אַנדערע סעזאָנאַלע געמייז","local_apples":"לאָקאַלע עפּל","apples":"עפּל","herbal_teas":"קראָם־טיי","water":"וואַסער","compote":"קאָמפּאָט","fruit_drink":"פֿרוכט־געטראַנק","kvass":"קוואַס","onion":"ציבעלע"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

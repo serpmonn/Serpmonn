@@ -28,7 +28,7 @@
     <meta property="vk:description" content="ردپای بوم‌شناختی محصولات غذایی خود را محاسبه کنید">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/fa/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 محصولات را به سبد خرید اضافه کنید
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ افزودن محصول دیگر
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 محاسبه ردپای بوم‌شناختی
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 محاسبه ردپای بوم‌شناختی
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 نتایج محاسبه
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">کیلوگرم معادل CO₂</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">امتیاز بوم‌شناختی (10-1)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"ماشین حساب ردپای بوم‌شناختی محصولات — SerpMonn","meta_description":"ردپای بوم‌شناختی محصولات غذایی خود را محاسبه کنید. در مورد ردپای کربن، ردپای آب و تأثیر محیط زیستی سبد خرید خود بیاموزید.","meta_keywords":"ردپای بوم‌شناختی محصولات, ردپای کربن غذا, ردپای آب محصولات, ماشین حساب بوم‌شناختی, ردپای کربن تغذیه","og_title":"ماشین حساب ردپای بوم‌شناختی محصولات — SerpMonn","og_description":"ردپای بوم‌شناختی محصولات غذایی خود را محاسبه کنید. در مورد ردپای کربن، ردپای آب و تأثیر محیط زیستی بیاموزید.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/fa/eco-calculators/product-footprint/","vk_title":"ماشین حساب ردپای بوم‌شناختی محصولات","vk_description":"ردپای بوم‌شناختی محصولات غذایی خود را محاسبه کنید","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"خانه","tools":"ابزارها","current":"ماشین حساب ردپای محصولات"},"header":{"title":"🌱 ماشین حساب ردپای بوم‌شناختی محصولات","subtitle":"تأثیر محیط زیستی محصولات در سبد خرید خود را کشف کنید"},"calculator":{"section_title":"🛒 محصولات را به سبد خرید اضافه کنید"},"buttons":{"add_product":"➕ افزودن محصول دیگر","calculate":"🧮 محاسبه ردپای بوم‌شناختی","share_vk":"📘 اشتراک در VKontakte","share_telegram":"📱 اشتراک در Telegram"},"results":{"title":"📊 نتایج محاسبه","carbon_label":"کیلوگرم معادل CO₂","water_label":"لیتر آب","land_label":"متر مربع زمین","eco_score_label":"امتیاز بوم‌شناختی (10-1)"},"comparison":{"title":"🔍 مقایسه با جایگزین‌ها"},"recommendations":{"title":"💡 توصیه‌هایی برای کاهش ردپای بوم‌شناختی"},"errors":{"no_products":"لطفاً حداقل یک محصول برای محاسبه اضافه کنید.","invalid_quantity":"لطفاً مقدار معتبر برای محصول وارد کنید: {product}","calculation_error":"خطایی در حین محاسبه رخ داد. لطفاً دوباره تلاش کنید.","select_product_and_qty":"لطفاً یک محصول انتخاب کنید و مقدار را وارد کنید"},"success":{"calculation_complete":"محاسبه با موفقیت کامل شد!"},"units":{"kg":"کیلوگرم","g":"گرم","l":"لیتر","ml":"میلی‌لیتر","pcs":"عدد","pack":"بسته"},"products":{"beef":"گوشت گاو","chicken":"مرغ","pork":"گوشت خوک","fish":"ماهی","eggs":"تخم‌مرغ","milk":"شیر","cheese":"پنیر","yogurt":"ماست","rice":"برنج","pasta":"ماکارونی","bread":"نان","potatoes":"سیب‌زمینی","tomatoes":"گوجه فرنگی","apples":"سیب","bananas":"موز","coffee":"قهوه","tea":"چای","chocolate":"شکلات","sugar":"شکر","olive_oil":"روغن زیتون","select_product":"یک محصول انتخاب کنید...","lamb":"گوشت گوسفند","wheat":"گندم","vegetables":"سبزیجات (مخلوط)","fruits":"میوه (مخلوط)","nuts":"آجیل","turkey":"بوقلمون","duck":"اردک","butter":"کره","salmon":"ماهی سالمون","tuna":"ماهی تن","shrimp":"میگو","cucumbers":"خیار","carrots":"هویج","oranges":"پرتقال","grapes":"انگور","strawberries":"توت‌فرنگی","quinoa":"کینوا","lentils":"عدس","chickpeas":"نخود","wine":"شراب","bread_white":"نان سفید","bread_rye":"نان چاودار","buckwheat":"گندم سیاه","oats":"بلغور جو دوسر","barley":"جو پرل","rye":"چاودار (دانه)","sunflower_oil":"روغن آفتابگردان","kefir":"کفیر","yogurt_plain":"ماست طبیعی","cottage_cheese":"پنیر کوتاژ","sour_cream":"خامه ترش","cabbage":"کلم","onions":"پیاز","garlic":"سیر","beets":"چغندر","pears":"گلابی","peas":"نخود فرنگی","beans":"لوبیا","kvass":"کواس","soda":"نوشابه","beer":"آبجو"},"ads":{"closeAria":"بستن تبلیغ"},"js":{"quantityPlaceholder":"مقدار","selectedProductsTitle":"محصولات انتخاب‌شده:","remove":"حذف","unitLabel":"واحد: {unit}","loading":"در حال محاسبه ردپای زیست‌محیطی...","errorPrefix":"خطا:","comparisonCurrentFootprint":"ردپای فعلی: {value} کیلوگرم CO₂","comparisonAlternatives":"جایگزین‌ها:","comparisonSavings":"صرفه‌جویی: ~{value} کیلوگرم CO₂"},"recommendationItems":{"highImpact":{"title":"محصولات با ردپای زیست‌محیطی بالا","description":"جایگزین‌هایی برای این موارد در نظر بگیرید: {products}"},"reduceMeat":{"title":"کاهش مصرف گوشت","description":"سعی کنید هفته‌ای ۱ تا ۲ بار گوشت را با پروتئین‌های گیاهی جایگزین کنید"},"dairyAlternatives":{"title":"جایگزین‌های لبنیات","description":"شیر و پنیر گیاهی را امتحان کنید"},"buyLocal":{"title":"محصولات محلی فصلی بخرید","description":"این کار ردپای حمل‌ونقل را کاهش می‌دهد و از تولیدکنندگان محلی حمایت می‌کند"},"planPurchases":{"title":"خریدهای خود را برنامه‌ریزی کنید","description":"از هدر رفت غذا جلوگیری کنید — فقط به اندازه نیاز بخرید"}},"alternatives":{"plant_proteins":"پروتئین‌های گیاهی","legumes":"حبوبات","nuts":"آجیل","poultry":"مرغ","fish":"ماهی","seaweed":"جلبک دریایی","plant_milk":"شیر گیاهی","oat_milk":"شیر جو دوسر","plant_cheese":"پنیرهای گیاهی","tofu":"توفو","quinoa":"کینوا","bulgur":"بلغور","buckwheat":"گندم سیاه","oats_grain":"جو دوسر","barley_grain":"جو","rye_grain":"چاودار","sweet_potato":"سیب‌زمینی شیرین","turnip":"شلغم","seasonal_vegetables":"سبزیجات فصلی","local_seasonal_vegetables":"سبزیجات محلی فصلی","local_seasonal_fruits":"میوه‌های محلی فصلی","local_fruits":"میوه‌های محلی","tea":"چای","chicory":"کاسنی","fruits":"میوه","seeds":"دانه‌ها","chicken":"مرغ","turkey":"بوقلمون","plant_oils":"روغن‌های گیاهی","avocado":"آووکادو","plant_yogurt":"ماست‌های گیاهی","kefir":"کفیر","plant_omega3":"امگا-۳ گیاهی","flax_seeds":"دانه کتان","other_fish":"ماهی‌های دیگر","other_seafood":"غذاهای دریایی دیگر","canned_tomatoes":"گوجه فرنگی کنسروی","zucchini":"کدو سبز","seasonal_root_vegetables":"سبزیجات ریشه‌ای فصلی","beets":"چغندر","other_root_vegetables":"سبزیجات ریشه‌ای دیگر","seasonal_citrus":"مرکبات فصلی","seasonal_berries":"توت‌های فصلی","other_grains":"غلات دیگر","other_pseudograins":"شبه‌غلات دیگر","beans":"لوبیا","peas":"نخود فرنگی","chickpeas":"نخود","lentils":"عدس","plant_drinks":"نوشیدنی‌های گیاهی","local_herbs":"گیاهان محلی","local_drinks":"نوشیدنی‌های محلی","non_alcoholic_options":"گزینه‌های بدون الکل","plant_desserts":"دسرهای گیاهی","honey":"عسل","stevia":"استویا","rye_bread":"نان چاودار","whole_grain":"غلات کامل","pearl_barley":"جو پرل","oatmeal":"بلغور جو دوسر","millet":"ارزن","whole_grain_pasta":"ماکارونی غلات کامل","wheat":"گندم","olive_oil":"روغن زیتون","sunflower_oil":"روغن آفتابگردان","reduce_amount":"کاهش مقدار","plain_yogurt":"ماست طبیعی","yogurt":"ماست","reduce_fat":"کاهش چربی","other_seasonal_vegetables":"سبزیجات فصلی دیگر","local_apples":"سیب محلی","apples":"سیب","herbal_teas":"دمنوش‌ها","water":"آب","compote":"کامپوت","fruit_drink":"نوشیدنی میوه‌ای","kvass":"کواس","onion":"پیاز"}};
+        window.i18n = {"title":"ماشین حساب ردپای بوم‌شناختی محصولات — SerpMonn","meta_description":"ردپای بوم‌شناختی محصولات غذایی خود را محاسبه کنید. در مورد ردپای کربن، ردپای آب و تأثیر محیط زیستی سبد خرید خود بیاموزید.","meta_keywords":"ردپای بوم‌شناختی محصولات, ردپای کربن غذا, ردپای آب محصولات, ماشین حساب بوم‌شناختی, ردپای کربن تغذیه","og_title":"ماشین حساب ردپای بوم‌شناختی محصولات — SerpMonn","og_description":"ردپای بوم‌شناختی محصولات غذایی خود را محاسبه کنید. در مورد ردپای کربن، ردپای آب و تأثیر محیط زیستی بیاموزید.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/fa/eco-calculators/product-footprint/","vk_title":"ماشین حساب ردپای بوم‌شناختی محصولات","vk_description":"ردپای بوم‌شناختی محصولات غذایی خود را محاسبه کنید","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"خانه","tools":"ابزارها","current":"ماشین حساب ردپای محصولات"},"header":{"title":"🌱 ماشین حساب ردپای بوم‌شناختی محصولات","subtitle":"تأثیر محیط زیستی محصولات در سبد خرید خود را کشف کنید"},"calculator":{"section_title":"🛒 محصولات را به سبد خرید اضافه کنید","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ افزودن محصول دیگر","calculate":"🧮 محاسبه ردپای بوم‌شناختی","share_vk":"📘 اشتراک در VKontakte","share_telegram":"📱 اشتراک در Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 نتایج محاسبه","carbon_label":"کیلوگرم معادل CO₂","water_label":"لیتر آب","land_label":"متر مربع زمین","eco_score_label":"امتیاز بوم‌شناختی (10-1)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 مقایسه با جایگزین‌ها"},"recommendations":{"title":"💡 توصیه‌هایی برای کاهش ردپای بوم‌شناختی"},"errors":{"no_products":"لطفاً حداقل یک محصول برای محاسبه اضافه کنید.","invalid_quantity":"لطفاً مقدار معتبر برای محصول وارد کنید: {product}","calculation_error":"خطایی در حین محاسبه رخ داد. لطفاً دوباره تلاش کنید.","select_product_and_qty":"لطفاً یک محصول انتخاب کنید و مقدار را وارد کنید"},"success":{"calculation_complete":"محاسبه با موفقیت کامل شد!"},"units":{"kg":"کیلوگرم","g":"گرم","l":"لیتر","ml":"میلی‌لیتر","pcs":"عدد","pack":"بسته"},"products":{"beef":"گوشت گاو","chicken":"مرغ","pork":"گوشت خوک","fish":"ماهی","eggs":"تخم‌مرغ","milk":"شیر","cheese":"پنیر","yogurt":"ماست","rice":"برنج","pasta":"ماکارونی","bread":"نان","potatoes":"سیب‌زمینی","tomatoes":"گوجه فرنگی","apples":"سیب","bananas":"موز","coffee":"قهوه","tea":"چای","chocolate":"شکلات","sugar":"شکر","olive_oil":"روغن زیتون","select_product":"یک محصول انتخاب کنید...","lamb":"گوشت گوسفند","wheat":"گندم","vegetables":"سبزیجات (مخلوط)","fruits":"میوه (مخلوط)","nuts":"آجیل","turkey":"بوقلمون","duck":"اردک","butter":"کره","salmon":"ماهی سالمون","tuna":"ماهی تن","shrimp":"میگو","cucumbers":"خیار","carrots":"هویج","oranges":"پرتقال","grapes":"انگور","strawberries":"توت‌فرنگی","quinoa":"کینوا","lentils":"عدس","chickpeas":"نخود","wine":"شراب","bread_white":"نان سفید","bread_rye":"نان چاودار","buckwheat":"گندم سیاه","oats":"بلغور جو دوسر","barley":"جو پرل","rye":"چاودار (دانه)","sunflower_oil":"روغن آفتابگردان","kefir":"کفیر","yogurt_plain":"ماست طبیعی","cottage_cheese":"پنیر کوتاژ","sour_cream":"خامه ترش","cabbage":"کلم","onions":"پیاز","garlic":"سیر","beets":"چغندر","pears":"گلابی","peas":"نخود فرنگی","beans":"لوبیا","kvass":"کواس","soda":"نوشابه","beer":"آبجو"},"ads":{"closeAria":"بستن تبلیغ"},"js":{"quantityPlaceholder":"مقدار","selectedProductsTitle":"محصولات انتخاب‌شده:","remove":"حذف","unitLabel":"واحد: {unit}","loading":"در حال محاسبه ردپای زیست‌محیطی...","errorPrefix":"خطا:","comparisonCurrentFootprint":"ردپای فعلی: {value} کیلوگرم CO₂","comparisonAlternatives":"جایگزین‌ها:","comparisonSavings":"صرفه‌جویی: ~{value} کیلوگرم CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"محصولات با ردپای زیست‌محیطی بالا","description":"جایگزین‌هایی برای این موارد در نظر بگیرید: {products}"},"reduceMeat":{"title":"کاهش مصرف گوشت","description":"سعی کنید هفته‌ای ۱ تا ۲ بار گوشت را با پروتئین‌های گیاهی جایگزین کنید"},"dairyAlternatives":{"title":"جایگزین‌های لبنیات","description":"شیر و پنیر گیاهی را امتحان کنید"},"buyLocal":{"title":"محصولات محلی فصلی بخرید","description":"این کار ردپای حمل‌ونقل را کاهش می‌دهد و از تولیدکنندگان محلی حمایت می‌کند"},"planPurchases":{"title":"خریدهای خود را برنامه‌ریزی کنید","description":"از هدر رفت غذا جلوگیری کنید — فقط به اندازه نیاز بخرید"}},"alternatives":{"plant_proteins":"پروتئین‌های گیاهی","legumes":"حبوبات","nuts":"آجیل","poultry":"مرغ","fish":"ماهی","seaweed":"جلبک دریایی","plant_milk":"شیر گیاهی","oat_milk":"شیر جو دوسر","plant_cheese":"پنیرهای گیاهی","tofu":"توفو","quinoa":"کینوا","bulgur":"بلغور","buckwheat":"گندم سیاه","oats_grain":"جو دوسر","barley_grain":"جو","rye_grain":"چاودار","sweet_potato":"سیب‌زمینی شیرین","turnip":"شلغم","seasonal_vegetables":"سبزیجات فصلی","local_seasonal_vegetables":"سبزیجات محلی فصلی","local_seasonal_fruits":"میوه‌های محلی فصلی","local_fruits":"میوه‌های محلی","tea":"چای","chicory":"کاسنی","fruits":"میوه","seeds":"دانه‌ها","chicken":"مرغ","turkey":"بوقلمون","plant_oils":"روغن‌های گیاهی","avocado":"آووکادو","plant_yogurt":"ماست‌های گیاهی","kefir":"کفیر","plant_omega3":"امگا-۳ گیاهی","flax_seeds":"دانه کتان","other_fish":"ماهی‌های دیگر","other_seafood":"غذاهای دریایی دیگر","canned_tomatoes":"گوجه فرنگی کنسروی","zucchini":"کدو سبز","seasonal_root_vegetables":"سبزیجات ریشه‌ای فصلی","beets":"چغندر","other_root_vegetables":"سبزیجات ریشه‌ای دیگر","seasonal_citrus":"مرکبات فصلی","seasonal_berries":"توت‌های فصلی","other_grains":"غلات دیگر","other_pseudograins":"شبه‌غلات دیگر","beans":"لوبیا","peas":"نخود فرنگی","chickpeas":"نخود","lentils":"عدس","plant_drinks":"نوشیدنی‌های گیاهی","local_herbs":"گیاهان محلی","local_drinks":"نوشیدنی‌های محلی","non_alcoholic_options":"گزینه‌های بدون الکل","plant_desserts":"دسرهای گیاهی","honey":"عسل","stevia":"استویا","rye_bread":"نان چاودار","whole_grain":"غلات کامل","pearl_barley":"جو پرل","oatmeal":"بلغور جو دوسر","millet":"ارزن","whole_grain_pasta":"ماکارونی غلات کامل","wheat":"گندم","olive_oil":"روغن زیتون","sunflower_oil":"روغن آفتابگردان","reduce_amount":"کاهش مقدار","plain_yogurt":"ماست طبیعی","yogurt":"ماست","reduce_fat":"کاهش چربی","other_seasonal_vegetables":"سبزیجات فصلی دیگر","local_apples":"سیب محلی","apples":"سیب","herbal_teas":"دمنوش‌ها","water":"آب","compote":"کامپوت","fruit_drink":"نوشیدنی میوه‌ای","kvass":"کواس","onion":"پیاز"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

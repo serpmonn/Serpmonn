@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Oziq-ovqat mahsulotlaringizning ekologik izini hisoblang">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/uz/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Savatga mahsulot qo&#39;shing
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Yana mahsulot qo&#39;shing
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Ekologik izni hisoblang
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Ekologik izni hisoblang
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Hisoblash natijalari
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg CO₂ ekvivalenti</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Ekologik reyting (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Mahsulot Ekologik Iz Kalkulyatori — SerpMonn","meta_description":"Oziq-ovqat mahsulotlaringizning ekologik izini hisoblang. Savat tovarlaringizning uglerod izi, suv izi va atrof-muhitga ta'sirini bilib oling.","meta_keywords":"mahsulot ekologik izi, ovqat uglerod izi, mahsulot suv izi, ekologik kalkulyator, ovqatlanish uglerod izi","og_title":"Mahsulot Ekologik Iz Kalkulyatori — SerpMonn","og_description":"Oziq-ovqat mahsulotlaringizning ekologik izini hisoblang. Uglerod izi, suv izi va atrof-muhitga ta'sirini bilib oling.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/uz/eco-calculators/product-footprint/","vk_title":"Mahsulot Ekologik Iz Kalkulyatori","vk_description":"Oziq-ovqat mahsulotlaringizning ekologik izini hisoblang","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Bosh sahifa","tools":"Vositalar","current":"Mahsulot Iz Kalkulyatori"},"header":{"title":"🌱 Mahsulot Ekologik Iz Kalkulyatori","subtitle":"Savatdagi mahsulotlarning atrof-muhitga ta'sirini bilib oling"},"calculator":{"section_title":"🛒 Savatga mahsulot qo'shing"},"buttons":{"add_product":"➕ Yana mahsulot qo'shing","calculate":"🧮 Ekologik izni hisoblang","share_vk":"📘 VKontakte'da ulashing","share_telegram":"📱 Telegram'da ulashing"},"results":{"title":"📊 Hisoblash natijalari","carbon_label":"kg CO₂ ekvivalenti","water_label":"litr suv","land_label":"m² yer","eco_score_label":"Ekologik reyting (1-10)"},"comparison":{"title":"🔍 Muqobil variantlar bilan solishtirish"},"recommendations":{"title":"💡 Ekologik izni kamaytirish bo'yicha tavsiyalar"},"errors":{"no_products":"Iltimos, hisoblash uchun kamida bitta mahsulot qo'shing.","invalid_quantity":"Iltimos, {product} mahsuloti uchun to'g'ri miqdorni kiriting","calculation_error":"Hisoblash paytida xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.","select_product_and_qty":"Iltimos, mahsulot tanlang va miqdorni kiriting"},"success":{"calculation_complete":"Hisoblash muvaffaqiyatli yakunlandi!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"dona","pack":"paket"},"products":{"beef":"Mol go'shti","chicken":"Tovuq","pork":"Cho'chqa go'shti","fish":"Baliq","eggs":"Tuxum","milk":"Sut","cheese":"Pishloq","yogurt":"Yogurt","rice":"Guruch","pasta":"Makaron","bread":"Non","potatoes":"Kartoshka","tomatoes":"Pomidor","apples":"Olma","bananas":"Banan","coffee":"Qahva","tea":"Choy","chocolate":"Shokolad","sugar":"Shakar","olive_oil":"Zaytun yog'i","select_product":"Mahsulot tanlang...","lamb":"Qo'y go'shti","wheat":"Bug'doy","vegetables":"Sabzavotlar (aralash)","fruits":"Mevalar (aralash)","nuts":"Yong'oq","turkey":"Kurka","duck":"O'rdak","butter":"Sariyog'","salmon":"Losos","tuna":"Tunets","shrimp":"Qisqichbaqa","cucumbers":"Bodring","carrots":"Sabzi","oranges":"Apelsin","grapes":"Uzum","strawberries":"Qulupnay","quinoa":"Kinoa","lentils":"Mash","chickpeas":"Nohut","wine":"Vino","bread_white":"Oq non","bread_rye":"Jigarrang bug'doy noni","buckwheat":"Qarag'at","oats":"Suli yormasi","barley":"Arpa guruchi","rye":"Jigarrang bug'doy (don)","sunflower_oil":"Kungaboqar yog'i","kefir":"Kefir","yogurt_plain":"Tabiiy yogurt","cottage_cheese":"Tvorog","sour_cream":"Smetana","cabbage":"Karam","onions":"Piyoz","garlic":"Sarimsoq","beets":"Lavlagi","pears":"Nok","peas":"No'xat","beans":"Loviya","kvass":"Kvass","soda":"Gazlangan ichimlik","beer":"Pivo"},"ads":{"closeAria":"Reklamani yopish"},"js":{"quantityPlaceholder":"Miqdor","selectedProductsTitle":"Tanlangan mahsulotlar:","remove":"O'chirish","unitLabel":"Birlik: {unit}","loading":"Ekologik iz hisoblanmoqda...","errorPrefix":"Xato:","comparisonCurrentFootprint":"Joriy iz: {value} kg CO₂","comparisonAlternatives":"Alternativalar:","comparisonSavings":"Tejash: ~{value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"Yuqori ekologik izga ega mahsulotlar","description":"Quyidagilar uchun alternativalarni ko'rib chiqing: {products}"},"reduceMeat":{"title":"Go'sht iste'molini kamaytirish","description":"Haftada 1–2 marta go'shtni o'simlik asosidagi proteinlar bilan almashtirishga harakat qiling"},"dairyAlternatives":{"title":"Sut mahsulotlariga alternativalar","description":"O'simlik sut va pishloqlarini sinab ko'ring"},"buyLocal":{"title":"Mahalliy mavsumiy mahsulotlarni sotib oling","description":"Bu transport izini kamaytiradi va mahalliy ishlab chiqaruvchilarni qo'llab-quvvatlaydi"},"planPurchases":{"title":"Xaridlaringizni rejalashtiring","description":"Oziq-ovqat chiqindilaridan saqlaning — faqat keraklisini sotib oling"}},"alternatives":{"plant_proteins":"o'simlik proteinlari","legumes":"dukkakli","nuts":"yong'oq","poultry":"qush go'shti","fish":"baliq","seaweed":"dengiz o'tlari","plant_milk":"o'simlik sut","oat_milk":"suli sut","plant_cheese":"o'simlik pishloqlari","tofu":"tofu","quinoa":"kinoa","bulgur":"bulgur","buckwheat":"qarag'at","oats_grain":"suli","barley_grain":"arpa","rye_grain":"jigarrang bug'doy","sweet_potato":"shirin kartoshka","turnip":"turp","seasonal_vegetables":"mavsumiy sabzavotlar","local_seasonal_vegetables":"mahalliy mavsumiy sabzavotlar","local_seasonal_fruits":"mahalliy mavsumiy mevalar","local_fruits":"mahalliy mevalar","tea":"choy","chicory":"tsikoriy","fruits":"mevalar","seeds":"urug'lar","chicken":"tovuq","turkey":"kurka","plant_oils":"o'simlik yog'lari","avocado":"avokado","plant_yogurt":"o'simlik yogurtlari","kefir":"kefir","plant_omega3":"o'simlik omega-3","flax_seeds":"zig'ir urug'i","other_fish":"boshqa baliqlar","other_seafood":"boshqa dengiz mahsulotlari","canned_tomatoes":"konservalangan pomidor","zucchini":"kabachok","seasonal_root_vegetables":"mavsumiy ildiz sabzavotlari","beets":"lavlagi","other_root_vegetables":"boshqa ildiz sabzavotlari","seasonal_citrus":"mavsumiy tsitruslar","seasonal_berries":"mavsumiy rezavorlar","other_grains":"boshqa donlar","other_pseudograins":"boshqa psevdodonlar","beans":"loviya","peas":"no'xat","chickpeas":"nohut","lentils":"mash","plant_drinks":"o'simlik ichimliklar","local_herbs":"mahalliy o'tlar","local_drinks":"mahalliy ichimliklar","non_alcoholic_options":"alkogolsiz variantlar","plant_desserts":"o'simlik desertlari","honey":"asal","stevia":"stevia","rye_bread":"jigarrang bug'doy noni","whole_grain":"to'liq don","pearl_barley":"arpa guruchi","oatmeal":"suli yormasi","millet":"tariq","whole_grain_pasta":"to'liq donli makaron","wheat":"bug'doy","olive_oil":"zaytun yog'i","sunflower_oil":"kungaboqar yog'i","reduce_amount":"miqdorni kamaytirish","plain_yogurt":"tabiiy yogurt","yogurt":"yogurt","reduce_fat":"yog'ni kamaytirish","other_seasonal_vegetables":"boshqa mavsumiy sabzavotlar","local_apples":"mahalliy olmalar","apples":"olmalar","herbal_teas":"o't choylari","water":"suv","compote":"kompot","fruit_drink":"meva ichimligi","kvass":"kvass","onion":"piyoz"}};
+        window.i18n = {"title":"Mahsulot Ekologik Iz Kalkulyatori — SerpMonn","meta_description":"Oziq-ovqat mahsulotlaringizning ekologik izini hisoblang. Savat tovarlaringizning uglerod izi, suv izi va atrof-muhitga ta'sirini bilib oling.","meta_keywords":"mahsulot ekologik izi, ovqat uglerod izi, mahsulot suv izi, ekologik kalkulyator, ovqatlanish uglerod izi","og_title":"Mahsulot Ekologik Iz Kalkulyatori — SerpMonn","og_description":"Oziq-ovqat mahsulotlaringizning ekologik izini hisoblang. Uglerod izi, suv izi va atrof-muhitga ta'sirini bilib oling.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/uz/eco-calculators/product-footprint/","vk_title":"Mahsulot Ekologik Iz Kalkulyatori","vk_description":"Oziq-ovqat mahsulotlaringizning ekologik izini hisoblang","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Bosh sahifa","tools":"Vositalar","current":"Mahsulot Iz Kalkulyatori"},"header":{"title":"🌱 Mahsulot Ekologik Iz Kalkulyatori","subtitle":"Savatdagi mahsulotlarning atrof-muhitga ta'sirini bilib oling"},"calculator":{"section_title":"🛒 Savatga mahsulot qo'shing","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Yana mahsulot qo'shing","calculate":"🧮 Ekologik izni hisoblang","share_vk":"📘 VKontakte'da ulashing","share_telegram":"📱 Telegram'da ulashing","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Hisoblash natijalari","carbon_label":"kg CO₂ ekvivalenti","water_label":"litr suv","land_label":"m² yer","eco_score_label":"Ekologik reyting (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Muqobil variantlar bilan solishtirish"},"recommendations":{"title":"💡 Ekologik izni kamaytirish bo'yicha tavsiyalar"},"errors":{"no_products":"Iltimos, hisoblash uchun kamida bitta mahsulot qo'shing.","invalid_quantity":"Iltimos, {product} mahsuloti uchun to'g'ri miqdorni kiriting","calculation_error":"Hisoblash paytida xatolik yuz berdi. Iltimos, qaytadan urinib ko'ring.","select_product_and_qty":"Iltimos, mahsulot tanlang va miqdorni kiriting"},"success":{"calculation_complete":"Hisoblash muvaffaqiyatli yakunlandi!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"dona","pack":"paket"},"products":{"beef":"Mol go'shti","chicken":"Tovuq","pork":"Cho'chqa go'shti","fish":"Baliq","eggs":"Tuxum","milk":"Sut","cheese":"Pishloq","yogurt":"Yogurt","rice":"Guruch","pasta":"Makaron","bread":"Non","potatoes":"Kartoshka","tomatoes":"Pomidor","apples":"Olma","bananas":"Banan","coffee":"Qahva","tea":"Choy","chocolate":"Shokolad","sugar":"Shakar","olive_oil":"Zaytun yog'i","select_product":"Mahsulot tanlang...","lamb":"Qo'y go'shti","wheat":"Bug'doy","vegetables":"Sabzavotlar (aralash)","fruits":"Mevalar (aralash)","nuts":"Yong'oq","turkey":"Kurka","duck":"O'rdak","butter":"Sariyog'","salmon":"Losos","tuna":"Tunets","shrimp":"Qisqichbaqa","cucumbers":"Bodring","carrots":"Sabzi","oranges":"Apelsin","grapes":"Uzum","strawberries":"Qulupnay","quinoa":"Kinoa","lentils":"Mash","chickpeas":"Nohut","wine":"Vino","bread_white":"Oq non","bread_rye":"Jigarrang bug'doy noni","buckwheat":"Qarag'at","oats":"Suli yormasi","barley":"Arpa guruchi","rye":"Jigarrang bug'doy (don)","sunflower_oil":"Kungaboqar yog'i","kefir":"Kefir","yogurt_plain":"Tabiiy yogurt","cottage_cheese":"Tvorog","sour_cream":"Smetana","cabbage":"Karam","onions":"Piyoz","garlic":"Sarimsoq","beets":"Lavlagi","pears":"Nok","peas":"No'xat","beans":"Loviya","kvass":"Kvass","soda":"Gazlangan ichimlik","beer":"Pivo"},"ads":{"closeAria":"Reklamani yopish"},"js":{"quantityPlaceholder":"Miqdor","selectedProductsTitle":"Tanlangan mahsulotlar:","remove":"O'chirish","unitLabel":"Birlik: {unit}","loading":"Ekologik iz hisoblanmoqda...","errorPrefix":"Xato:","comparisonCurrentFootprint":"Joriy iz: {value} kg CO₂","comparisonAlternatives":"Alternativalar:","comparisonSavings":"Tejash: ~{value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Yuqori ekologik izga ega mahsulotlar","description":"Quyidagilar uchun alternativalarni ko'rib chiqing: {products}"},"reduceMeat":{"title":"Go'sht iste'molini kamaytirish","description":"Haftada 1–2 marta go'shtni o'simlik asosidagi proteinlar bilan almashtirishga harakat qiling"},"dairyAlternatives":{"title":"Sut mahsulotlariga alternativalar","description":"O'simlik sut va pishloqlarini sinab ko'ring"},"buyLocal":{"title":"Mahalliy mavsumiy mahsulotlarni sotib oling","description":"Bu transport izini kamaytiradi va mahalliy ishlab chiqaruvchilarni qo'llab-quvvatlaydi"},"planPurchases":{"title":"Xaridlaringizni rejalashtiring","description":"Oziq-ovqat chiqindilaridan saqlaning — faqat keraklisini sotib oling"}},"alternatives":{"plant_proteins":"o'simlik proteinlari","legumes":"dukkakli","nuts":"yong'oq","poultry":"qush go'shti","fish":"baliq","seaweed":"dengiz o'tlari","plant_milk":"o'simlik sut","oat_milk":"suli sut","plant_cheese":"o'simlik pishloqlari","tofu":"tofu","quinoa":"kinoa","bulgur":"bulgur","buckwheat":"qarag'at","oats_grain":"suli","barley_grain":"arpa","rye_grain":"jigarrang bug'doy","sweet_potato":"shirin kartoshka","turnip":"turp","seasonal_vegetables":"mavsumiy sabzavotlar","local_seasonal_vegetables":"mahalliy mavsumiy sabzavotlar","local_seasonal_fruits":"mahalliy mavsumiy mevalar","local_fruits":"mahalliy mevalar","tea":"choy","chicory":"tsikoriy","fruits":"mevalar","seeds":"urug'lar","chicken":"tovuq","turkey":"kurka","plant_oils":"o'simlik yog'lari","avocado":"avokado","plant_yogurt":"o'simlik yogurtlari","kefir":"kefir","plant_omega3":"o'simlik omega-3","flax_seeds":"zig'ir urug'i","other_fish":"boshqa baliqlar","other_seafood":"boshqa dengiz mahsulotlari","canned_tomatoes":"konservalangan pomidor","zucchini":"kabachok","seasonal_root_vegetables":"mavsumiy ildiz sabzavotlari","beets":"lavlagi","other_root_vegetables":"boshqa ildiz sabzavotlari","seasonal_citrus":"mavsumiy tsitruslar","seasonal_berries":"mavsumiy rezavorlar","other_grains":"boshqa donlar","other_pseudograins":"boshqa psevdodonlar","beans":"loviya","peas":"no'xat","chickpeas":"nohut","lentils":"mash","plant_drinks":"o'simlik ichimliklar","local_herbs":"mahalliy o'tlar","local_drinks":"mahalliy ichimliklar","non_alcoholic_options":"alkogolsiz variantlar","plant_desserts":"o'simlik desertlari","honey":"asal","stevia":"stevia","rye_bread":"jigarrang bug'doy noni","whole_grain":"to'liq don","pearl_barley":"arpa guruchi","oatmeal":"suli yormasi","millet":"tariq","whole_grain_pasta":"to'liq donli makaron","wheat":"bug'doy","olive_oil":"zaytun yog'i","sunflower_oil":"kungaboqar yog'i","reduce_amount":"miqdorni kamaytirish","plain_yogurt":"tabiiy yogurt","yogurt":"yogurt","reduce_fat":"yog'ni kamaytirish","other_seasonal_vegetables":"boshqa mavsumiy sabzavotlar","local_apples":"mahalliy olmalar","apples":"olmalar","herbal_teas":"o't choylari","water":"suv","compote":"kompot","fruit_drink":"meva ichimligi","kvass":"kvass","onion":"piyoz"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

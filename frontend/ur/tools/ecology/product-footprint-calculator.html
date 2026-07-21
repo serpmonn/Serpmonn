@@ -28,7 +28,7 @@
     <meta property="vk:description" content="اپنے خوراک کی مصنوعات کے ماحولیاتی پاؤں کے نشان کا حساب لگائیں">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/ur/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 ٹوکری میں مصنوعات شامل کریں
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ ایک اور مصنوعہ شامل کریں
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 ماحولیاتی پاؤں کے نشان کا حساب لگائیں
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 ماحولیاتی پاؤں کے نشان کا حساب لگائیں
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 حساب کے نتائج
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">کلوگرام CO₂ مساوی</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">ماحولیاتی درجہ بندی (10-1)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"مصنوعات کے ماحولیاتی پاؤں کے نشان کیلکولیٹر — SerpMonn","meta_description":"اپنے خوراک کی مصنوعات کے ماحولیاتی پاؤں کے نشان کا حساب لگائیں۔ اپنی خریداری کی ٹوکری کے کاربن پاؤں کے نشان، پانی کے پاؤں کے نشان اور ماحول پر اثرات کے بارے میں جانیں۔","meta_keywords":"مصنوعات ماحولیاتی پاؤں کے نشان, خوراک کاربن پاؤں کے نشان, مصنوعات پانی پاؤں کے نشان, ماحولیاتی کیلکولیٹر, غذائیت کاربن پاؤں کے نشان","og_title":"مصنوعات کے ماحولیاتی پاؤں کے نشان کیلکولیٹر — SerpMonn","og_description":"اپنے خوراک کی مصنوعات کے ماحولیاتی پاؤں کے نشان کا حساب لگائیں۔ کاربن پاؤں کے نشان، پانی کے پاؤں کے نشان اور ماحول پر اثرات کے بارے میں جانیں۔","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/ur/eco-calculators/product-footprint/","vk_title":"مصنوعات کے ماحولیاتی پاؤں کے نشان کیلکولیٹر","vk_description":"اپنے خوراک کی مصنوعات کے ماحولیاتی پاؤں کے نشان کا حساب لگائیں","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"ہوم","tools":"اوزار","current":"مصنوعات پاؤں کے نشان کیلکولیٹر"},"header":{"title":"🌱 مصنوعات کے ماحولیاتی پاؤں کے نشان کیلکولیٹر","subtitle":"اپنی ٹوکری میں مصنوعات کے ماحول پر اثرات کا پتہ لگائیں"},"calculator":{"section_title":"🛒 ٹوکری میں مصنوعات شامل کریں"},"buttons":{"add_product":"➕ ایک اور مصنوعہ شامل کریں","calculate":"🧮 ماحولیاتی پاؤں کے نشان کا حساب لگائیں","share_vk":"📘 VKontakte پر شیئر کریں","share_telegram":"📱 Telegram پر شیئر کریں"},"results":{"title":"📊 حساب کے نتائج","carbon_label":"کلوگرام CO₂ مساوی","water_label":"لیٹر پانی","land_label":"مربع میٹر زمین","eco_score_label":"ماحولیاتی درجہ بندی (10-1)"},"comparison":{"title":"🔍 متبادل کے ساتھ موازنہ"},"recommendations":{"title":"💡 ماحولیاتی پاؤں کے نشان کو کم کرنے کی سفارشات"},"errors":{"no_products":"براہ کرم حساب کے لیے کم از کم ایک مصنوعہ شامل کریں۔","invalid_quantity":"براہ کرم مصنوعہ {product} کے لیے درست مقدار درج کریں","calculation_error":"حساب کے دوران ایک خرابی پیش آئی۔ براہ کرم دوبارہ کوشش کریں۔","select_product_and_qty":"براہ کرم ایک مصنوعہ منتخب کریں اور مقدار درج کریں"},"success":{"calculation_complete":"حساب کامیابی سے مکمل ہو گیا!"},"units":{"kg":"کلوگرام","g":"گرام","l":"لیٹر","ml":"ملی لیٹر","pcs":"ٹکڑے","pack":"پیک"},"products":{"beef":"گائے کا گوشت","chicken":"مرغی","pork":"سور کا گوشت","fish":"مچھلی","eggs":"انڈے","milk":"دودھ","cheese":"پنیر","yogurt":"دہی","rice":"چاول","pasta":"پاستا","bread":"روٹی","potatoes":"آلو","tomatoes":"ٹماٹر","apples":"سیب","bananas":"کیلا","coffee":"کافی","tea":"چائے","chocolate":"چاکلیٹ","sugar":"چینی","olive_oil":"زیتون کا تیل","select_product":"ایک مصنوعہ منتخب کریں...","lamb":"بکری کا گوشت","wheat":"گندم","vegetables":"سبزیاں (مخلوط)","fruits":"پھل (مخلوط)","nuts":"مغز","turkey":"ٹرکی","duck":"بطخ","butter":"مکھن","salmon":"سامن","tuna":"ٹونا","shrimp":"جھینگا","cucumbers":"کھیرا","carrots":"گاجر","oranges":"مالٹا","grapes":"انگور","strawberries":"اسٹرابیری","quinoa":"کینوا","lentils":"مسور","chickpeas":"چنے","wine":"شراب","bread_white":"سفید روٹی","bread_rye":"رائی کی روٹی","buckwheat":"بک وہیٹ","oats":"اوٹمیل","barley":"جواری دانہ","rye":"رائی (اناج)","sunflower_oil":"سورج مکھی کا تیل","kefir":"کیفیر","yogurt_plain":"سادہ دہی","cottage_cheese":"کاٹیج پنیر","sour_cream":"کھٹی کریم","cabbage":"گوبھی","onions":"پیاز","garlic":"لہسن","beets":"چقندر","pears":"ناشپاتی","peas":"مٹر","beans":"پھلیاں","kvass":"کواس","soda":"سافٹ ڈرنک","beer":"بیئر"},"ads":{"closeAria":"اشتہار بند کریں"},"js":{"quantityPlaceholder":"مقدار","selectedProductsTitle":"منتخب مصنوعات:","remove":"ہٹائیں","unitLabel":"یونٹ: {unit}","loading":"ماحیاتی اثر کا حساب لگایا جا رہا ہے...","errorPrefix":"خرابی:","comparisonCurrentFootprint":"موجودہ اثر: {value} کلو CO₂","comparisonAlternatives":"متبادل:","comparisonSavings":"بچت: ~{value} کلو CO₂"},"recommendationItems":{"highImpact":{"title":"اعلی ماحیاتی اثر والے مصنوعات","description":"ان کے لیے متبادل پر غور کریں: {products}"},"reduceMeat":{"title":"گوشت کی کھپت کم کریں","description":"ہفتے میں 1–2 بار گوشت کو پودوں پر مبنی پروٹین سے بدلنے کی کوشش کریں"},"dairyAlternatives":{"title":"دودھ کی مصنوعات کے متبادل","description":"پودوں پر مبنی دودھ اور پنیر آزمائیں"},"buyLocal":{"title":"مقامی موسمی مصنوعات خریدیں","description":"یہ نقل و حمل کا اثر کم کرتا ہے اور مقامی پیدا کنندگان کی حمایت کرتا ہے"},"planPurchases":{"title":"اپنی خریداری کی منصوبہ بندی کریں","description":"خوراک کا ضیاع روکیں — صرف ضرورت کے مطابق خریدیں"}},"alternatives":{"plant_proteins":"پودوں پر مبنی پروٹین","legumes":"دالیں","nuts":"مغز","poultry":"مرغی","fish":"مچھلی","seaweed":"سمندری گھاس","plant_milk":"پودوں پر مبنی دودھ","oat_milk":"اوٹ ملک","plant_cheese":"پودوں پر مبنی پنیر","tofu":"ٹوفو","quinoa":"کینوا","bulgur":"بلغور","buckwheat":"بک وہیٹ","oats_grain":"جو","barley_grain":"جواری","rye_grain":"رائی","sweet_potato":"شکر قندی","turnip":"شلجم","seasonal_vegetables":"موسمی سبزیاں","local_seasonal_vegetables":"مقامی موسمی سبزیاں","local_seasonal_fruits":"مقامی موسمی پھل","local_fruits":"مقامی پھل","tea":"چائے","chicory":"چکوری","fruits":"پھل","seeds":"بیج","chicken":"مرغی","turkey":"ٹرکی","plant_oils":"سبزی تیل","avocado":"ایووکاڈو","plant_yogurt":"پودوں پر مبنی دہی","kefir":"کیفیر","plant_omega3":"پودوں پر مبنی اومیگا-3","flax_seeds":"السی کے بیج","other_fish":"دیگر مچھلیاں","other_seafood":"دیگر سمندری غذا","canned_tomatoes":"ڈبے والا ٹماٹر","zucchini":"زکینی","seasonal_root_vegetables":"موسمی جڑ والی سبزیاں","beets":"چقندر","other_root_vegetables":"دیگر جڑ والی سبزیاں","seasonal_citrus":"موسمی کھٹے پھل","seasonal_berries":"موسمی بیریاں","other_grains":"دیگر اناج","other_pseudograins":"دیگر جعلی اناج","beans":"پھلیاں","peas":"مٹر","chickpeas":"چنے","lentils":"مسور","plant_drinks":"پودوں پر مبنی مشروبات","local_herbs":"مقامی جڑی بوٹیاں","local_drinks":"مقامی مشروبات","non_alcoholic_options":"غیر الکحل اختیارات","plant_desserts":"پودوں پر مبنی میٹھے","honey":"شہد","stevia":"اسٹیویا","rye_bread":"رائی کی روٹی","whole_grain":"مکمل اناج","pearl_barley":"جواری دانہ","oatmeal":"اوٹمیل","millet":"باجرہ","whole_grain_pasta":"مکمل اناج پاستا","wheat":"گندم","olive_oil":"زیتون کا تیل","sunflower_oil":"سورج مکھی کا تیل","reduce_amount":"مقدار کم کریں","plain_yogurt":"سادہ دہی","yogurt":"دہی","reduce_fat":"چکنائی کم کریں","other_seasonal_vegetables":"دیگر موسمی سبزیاں","local_apples":"مقامی سیب","apples":"سیب","herbal_teas":"جڑی بوٹی چائے","water":"پانی","compote":"کمپوٹ","fruit_drink":"پھل کا مشروب","kvass":"کواس","onion":"پیاز"}};
+        window.i18n = {"title":"مصنوعات کے ماحولیاتی پاؤں کے نشان کیلکولیٹر — SerpMonn","meta_description":"اپنے خوراک کی مصنوعات کے ماحولیاتی پاؤں کے نشان کا حساب لگائیں۔ اپنی خریداری کی ٹوکری کے کاربن پاؤں کے نشان، پانی کے پاؤں کے نشان اور ماحول پر اثرات کے بارے میں جانیں۔","meta_keywords":"مصنوعات ماحولیاتی پاؤں کے نشان, خوراک کاربن پاؤں کے نشان, مصنوعات پانی پاؤں کے نشان, ماحولیاتی کیلکولیٹر, غذائیت کاربن پاؤں کے نشان","og_title":"مصنوعات کے ماحولیاتی پاؤں کے نشان کیلکولیٹر — SerpMonn","og_description":"اپنے خوراک کی مصنوعات کے ماحولیاتی پاؤں کے نشان کا حساب لگائیں۔ کاربن پاؤں کے نشان، پانی کے پاؤں کے نشان اور ماحول پر اثرات کے بارے میں جانیں۔","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/ur/eco-calculators/product-footprint/","vk_title":"مصنوعات کے ماحولیاتی پاؤں کے نشان کیلکولیٹر","vk_description":"اپنے خوراک کی مصنوعات کے ماحولیاتی پاؤں کے نشان کا حساب لگائیں","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"ہوم","tools":"اوزار","current":"مصنوعات پاؤں کے نشان کیلکولیٹر"},"header":{"title":"🌱 مصنوعات کے ماحولیاتی پاؤں کے نشان کیلکولیٹر","subtitle":"اپنی ٹوکری میں مصنوعات کے ماحول پر اثرات کا پتہ لگائیں"},"calculator":{"section_title":"🛒 ٹوکری میں مصنوعات شامل کریں","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ ایک اور مصنوعہ شامل کریں","calculate":"🧮 ماحولیاتی پاؤں کے نشان کا حساب لگائیں","share_vk":"📘 VKontakte پر شیئر کریں","share_telegram":"📱 Telegram پر شیئر کریں","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 حساب کے نتائج","carbon_label":"کلوگرام CO₂ مساوی","water_label":"لیٹر پانی","land_label":"مربع میٹر زمین","eco_score_label":"ماحولیاتی درجہ بندی (10-1)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 متبادل کے ساتھ موازنہ"},"recommendations":{"title":"💡 ماحولیاتی پاؤں کے نشان کو کم کرنے کی سفارشات"},"errors":{"no_products":"براہ کرم حساب کے لیے کم از کم ایک مصنوعہ شامل کریں۔","invalid_quantity":"براہ کرم مصنوعہ {product} کے لیے درست مقدار درج کریں","calculation_error":"حساب کے دوران ایک خرابی پیش آئی۔ براہ کرم دوبارہ کوشش کریں۔","select_product_and_qty":"براہ کرم ایک مصنوعہ منتخب کریں اور مقدار درج کریں"},"success":{"calculation_complete":"حساب کامیابی سے مکمل ہو گیا!"},"units":{"kg":"کلوگرام","g":"گرام","l":"لیٹر","ml":"ملی لیٹر","pcs":"ٹکڑے","pack":"پیک"},"products":{"beef":"گائے کا گوشت","chicken":"مرغی","pork":"سور کا گوشت","fish":"مچھلی","eggs":"انڈے","milk":"دودھ","cheese":"پنیر","yogurt":"دہی","rice":"چاول","pasta":"پاستا","bread":"روٹی","potatoes":"آلو","tomatoes":"ٹماٹر","apples":"سیب","bananas":"کیلا","coffee":"کافی","tea":"چائے","chocolate":"چاکلیٹ","sugar":"چینی","olive_oil":"زیتون کا تیل","select_product":"ایک مصنوعہ منتخب کریں...","lamb":"بکری کا گوشت","wheat":"گندم","vegetables":"سبزیاں (مخلوط)","fruits":"پھل (مخلوط)","nuts":"مغز","turkey":"ٹرکی","duck":"بطخ","butter":"مکھن","salmon":"سامن","tuna":"ٹونا","shrimp":"جھینگا","cucumbers":"کھیرا","carrots":"گاجر","oranges":"مالٹا","grapes":"انگور","strawberries":"اسٹرابیری","quinoa":"کینوا","lentils":"مسور","chickpeas":"چنے","wine":"شراب","bread_white":"سفید روٹی","bread_rye":"رائی کی روٹی","buckwheat":"بک وہیٹ","oats":"اوٹمیل","barley":"جواری دانہ","rye":"رائی (اناج)","sunflower_oil":"سورج مکھی کا تیل","kefir":"کیفیر","yogurt_plain":"سادہ دہی","cottage_cheese":"کاٹیج پنیر","sour_cream":"کھٹی کریم","cabbage":"گوبھی","onions":"پیاز","garlic":"لہسن","beets":"چقندر","pears":"ناشپاتی","peas":"مٹر","beans":"پھلیاں","kvass":"کواس","soda":"سافٹ ڈرنک","beer":"بیئر"},"ads":{"closeAria":"اشتہار بند کریں"},"js":{"quantityPlaceholder":"مقدار","selectedProductsTitle":"منتخب مصنوعات:","remove":"ہٹائیں","unitLabel":"یونٹ: {unit}","loading":"ماحیاتی اثر کا حساب لگایا جا رہا ہے...","errorPrefix":"خرابی:","comparisonCurrentFootprint":"موجودہ اثر: {value} کلو CO₂","comparisonAlternatives":"متبادل:","comparisonSavings":"بچت: ~{value} کلو CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"اعلی ماحیاتی اثر والے مصنوعات","description":"ان کے لیے متبادل پر غور کریں: {products}"},"reduceMeat":{"title":"گوشت کی کھپت کم کریں","description":"ہفتے میں 1–2 بار گوشت کو پودوں پر مبنی پروٹین سے بدلنے کی کوشش کریں"},"dairyAlternatives":{"title":"دودھ کی مصنوعات کے متبادل","description":"پودوں پر مبنی دودھ اور پنیر آزمائیں"},"buyLocal":{"title":"مقامی موسمی مصنوعات خریدیں","description":"یہ نقل و حمل کا اثر کم کرتا ہے اور مقامی پیدا کنندگان کی حمایت کرتا ہے"},"planPurchases":{"title":"اپنی خریداری کی منصوبہ بندی کریں","description":"خوراک کا ضیاع روکیں — صرف ضرورت کے مطابق خریدیں"}},"alternatives":{"plant_proteins":"پودوں پر مبنی پروٹین","legumes":"دالیں","nuts":"مغز","poultry":"مرغی","fish":"مچھلی","seaweed":"سمندری گھاس","plant_milk":"پودوں پر مبنی دودھ","oat_milk":"اوٹ ملک","plant_cheese":"پودوں پر مبنی پنیر","tofu":"ٹوفو","quinoa":"کینوا","bulgur":"بلغور","buckwheat":"بک وہیٹ","oats_grain":"جو","barley_grain":"جواری","rye_grain":"رائی","sweet_potato":"شکر قندی","turnip":"شلجم","seasonal_vegetables":"موسمی سبزیاں","local_seasonal_vegetables":"مقامی موسمی سبزیاں","local_seasonal_fruits":"مقامی موسمی پھل","local_fruits":"مقامی پھل","tea":"چائے","chicory":"چکوری","fruits":"پھل","seeds":"بیج","chicken":"مرغی","turkey":"ٹرکی","plant_oils":"سبزی تیل","avocado":"ایووکاڈو","plant_yogurt":"پودوں پر مبنی دہی","kefir":"کیفیر","plant_omega3":"پودوں پر مبنی اومیگا-3","flax_seeds":"السی کے بیج","other_fish":"دیگر مچھلیاں","other_seafood":"دیگر سمندری غذا","canned_tomatoes":"ڈبے والا ٹماٹر","zucchini":"زکینی","seasonal_root_vegetables":"موسمی جڑ والی سبزیاں","beets":"چقندر","other_root_vegetables":"دیگر جڑ والی سبزیاں","seasonal_citrus":"موسمی کھٹے پھل","seasonal_berries":"موسمی بیریاں","other_grains":"دیگر اناج","other_pseudograins":"دیگر جعلی اناج","beans":"پھلیاں","peas":"مٹر","chickpeas":"چنے","lentils":"مسور","plant_drinks":"پودوں پر مبنی مشروبات","local_herbs":"مقامی جڑی بوٹیاں","local_drinks":"مقامی مشروبات","non_alcoholic_options":"غیر الکحل اختیارات","plant_desserts":"پودوں پر مبنی میٹھے","honey":"شہد","stevia":"اسٹیویا","rye_bread":"رائی کی روٹی","whole_grain":"مکمل اناج","pearl_barley":"جواری دانہ","oatmeal":"اوٹمیل","millet":"باجرہ","whole_grain_pasta":"مکمل اناج پاستا","wheat":"گندم","olive_oil":"زیتون کا تیل","sunflower_oil":"سورج مکھی کا تیل","reduce_amount":"مقدار کم کریں","plain_yogurt":"سادہ دہی","yogurt":"دہی","reduce_fat":"چکنائی کم کریں","other_seasonal_vegetables":"دیگر موسمی سبزیاں","local_apples":"مقامی سیب","apples":"سیب","herbal_teas":"جڑی بوٹی چائے","water":"پانی","compote":"کمپوٹ","fruit_drink":"پھل کا مشروب","kvass":"کواس","onion":"پیاز"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

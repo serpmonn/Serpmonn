@@ -225,139 +225,145 @@
     
     <link rel="alternate" href="https://serpmonn.ru/frontend/tools/logistics/fuel-calculator.html" hreflang="x-default" />      <!-- Structured Data: SoftwareApplication -->     <script type="application/ld+json">     {       "@context": "https://schema.org",       "@type": "SoftwareApplication",       "name": "ईंधन कैलकुलेटर — Serpmonn लॉजिस्टिक्स",       "description": "ईंधन खपत, यात्रा लागत और बचत की गणना",       "url": "https://serpmonn.ru/frontend/hi/tools/logistics/fuel-calculator.html",       "applicationCategory": "UtilityApplication",       "operatingSystem": "Web",       "inLanguage": "hi",       "offers": {         "@type": "Offer",         "price": "0",         "priceCurrency": "RUB"       },       "publisher": {         "@type": "Organization",         "name": "Serpmonn",         "url": "https://serpmonn.ru/"       }     }     </script>
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/fuel-calculator.css">
-    <style>
-      /* ad top adaptive start */
-      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
-      /* ad top adaptive end */
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/fuel-calculator.css?v=4">
   </head>
-  <body class="fuel-calculator-page">
-    <!-- Меню -->
+  <body class="fuel-calculator-page" data-currency="₽" data-liter="л">
     <div id="menuContainer"></div>
-
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      
-      <a href="/frontend/hi/tools/index.html">🧰 उपकरण</a> → 
-      
-      <span>⛽ ईंधन कैलकुलेटर</span>
-    </div>
 
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
-      <ins class="mrg-tag" 
+      <ins class="mrg-tag"
           style="display:inline-block;"
-          data-ad-client="ad-1897960" 
+          data-ad-client="ad-1897960"
           data-ad-slot="1897960">
       </ins>
     </div>
-<h1>⛽ ईंधन कैलकुलेटर</h1>
+
+    <h1>⛽ ईंधन कैलकुलेटर</h1>
+    
+    <p class="tool-lead">Estimate fuel use and trip cost — including driving style, road and load.</p>
+    
 
     <div class="calculator-container">
       <h2>यात्रा मापदंड दर्ज करें</h2>
-      
+      <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
           <label for="distance">दूरी (किमी)</label>
-          <input type="number" id="distance" placeholder="100" min="1" step="0.1">
+          <input type="number" id="distance" placeholder="100" min="1" step="0.1" inputmode="decimal">
         </div>
-        
         <div class="input-group">
           <label for="fuelConsumption">ईंधन खपत (लीटर/100 किमी)</label>
-          <input type="number" id="fuelConsumption" placeholder="8.5" min="1" step="0.1">
+          <input type="number" id="fuelConsumption" placeholder="8.5" min="1" step="0.1" inputmode="decimal">
         </div>
-        
         <div class="input-group">
           <label for="fuelPrice">ईंधन मूल्य (₽/लीटर)</label>
-          <input type="number" id="fuelPrice" placeholder="55.50" min="1" step="0.01">
-        </div>
-        
-        <div class="input-group">
-          <label for="fuelType">ईंधन प्रकार</label>
-          <select id="fuelType">
-            <option value="petrol">पेट्रोल AI-92</option>
-            <option value="petrol95">पेट्रोल AI-95</option>
-            <option value="petrol98">पेट्रोल AI-98</option>
-            <option value="diesel">डीजल ईंधन</option>
-            <option value="lpg">गैस (प्रोपेन-ब्यूटेन)</option>
-            <option value="cng">गैस (मीथेन)</option>
-          </select>
-        </div>
-        
-        <div class="input-group">
-          <label for="drivingStyle">ड्राइविंग शैली</label>
-          <select id="drivingStyle">
-            <option value="economical">किफायती</option>
-            <option value="normal">सामान्य</option>
-            <option value="sport">खेल</option>
-            <option value="aggressive">आक्रामक</option>
-          </select>
-        </div>
-        
-        <div class="input-group">
-          <label for="roadConditions">सड़क की स्थिति</label>
-          <select id="roadConditions">
-            <option value="highway">हाईवे</option>
-            <option value="city">शहर</option>
-            <option value="mixed">मिश्रित चक्र</option>
-            <option value="offroad">ऑफ-रोड</option>
-          </select>
-        </div>
-        
-        <div class="input-group">
-          <label for="load">वाहन लोड</label>
-          <select id="load">
-            <option value="empty">खाली</option>
-            <option value="light">हल्का लोड</option>
-            <option value="medium">मध्यम लोड</option>
-            <option value="heavy">पूर्ण लोड</option>
-          </select>
-        </div>
-        
-        <div class="input-group">
-          <label for="climate">जलवायु स्थिति</label>
-          <select id="climate">
-            <option value="normal">सामान्य</option>
-            <option value="hot">गर्म (+30°C और अधिक)</option>
-            <option value="cold">ठंडा (-10°C और कम)</option>
-            <option value="rainy">बारिश/बर्फ</option>
-          </select>
+          <input type="number" id="fuelPrice" placeholder="55.50" min="1" step="0.01" inputmode="decimal">
         </div>
       </div>
 
-      <button class="calculate-btn" onclick="calculateFuel()">ईंधन खपत की गणना करें</button>
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-calculate">ईंधन खपत की गणना करें</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" id="btn-reset">Reset</button>
+            <button type="button" class="share-btn" id="btn-share">Share</button>
+            <button type="button" class="export-btn" id="btn-pdf">Export PDF</button>
+            <button type="button" class="csv-btn" id="btn-csv">Export CSV</button>
+          </div>
+        </details>
+      </div>
 
-      <div id="results" class="results" style="display: none;">
+      <details class="optional-fields">
+        <summary>More options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="fuelType">ईंधन प्रकार</label>
+            <select id="fuelType">
+              <option value="petrol">पेट्रोल AI-92</option>
+              <option value="petrol95">पेट्रोल AI-95</option>
+              <option value="petrol98">पेट्रोल AI-98</option>
+              <option value="diesel">डीजल ईंधन</option>
+              <option value="lpg">गैस (प्रोपेन-ब्यूटेन)</option>
+              <option value="cng">गैस (मीथेन)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="drivingStyle">ड्राइविंग शैली</label>
+            <select id="drivingStyle">
+              <option value="economical">किफायती</option>
+              <option value="normal" selected>सामान्य</option>
+              <option value="sport">खेल</option>
+              <option value="aggressive">आक्रामक</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="roadConditions">सड़क की स्थिति</label>
+            <select id="roadConditions">
+              <option value="highway">हाईवे</option>
+              <option value="city">शहर</option>
+              <option value="mixed" selected>मिश्रित चक्र</option>
+              <option value="offroad">ऑफ-रोड</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="load">वाहन लोड</label>
+            <select id="load">
+              <option value="empty">खाली</option>
+              <option value="light">हल्का लोड</option>
+              <option value="medium">मध्यम लोड</option>
+              <option value="heavy">पूर्ण लोड</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climate">जलवायु स्थिति</label>
+            <select id="climate">
+              <option value="normal">सामान्य</option>
+              <option value="hot">गर्म (+30°C और अधिक)</option>
+              <option value="cold">ठंडा (-10°C और कम)</option>
+              <option value="rainy">बारिश/बर्फ</option>
+            </select>
+          </div>
+        </div>
+      </details>
+
+      <div id="results" class="results hidden">
         <h3>गणना परिणाम</h3>
+        <div class="result-hero">
+          <div class="result-value" id="heroCostPerKm">—</div>
+          <div class="result-label">प्रति 1 किमी लागत</div>
+        </div>
+        <p class="result-disclaimer">Approximate fuel cost estimate, not a lab measurement.</p>
         <div class="result-grid">
           <div class="result-item">
-            <div class="result-value" id="totalFuel">0 л</div>
+            <div class="result-value" id="totalFuel">—</div>
             <div class="result-label">कुल ईंधन खपत</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="totalCost">0 ₽</div>
+            <div class="result-value" id="totalCost">—</div>
             <div class="result-label">ईंधन लागत</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="costPerKm">0 ₽/км</div>
+            <div class="result-value" id="costPerKm">—</div>
             <div class="result-label">प्रति 1 किमी लागत</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="adjustedConsumption">0 л/100км</div>
+            <div class="result-value" id="adjustedConsumption">—</div>
             <div class="result-label">समायोजित खपत</div>
           </div>
         </div>
+        <p id="formulaPlain" class="formula-plain"></p>
+        <canvas id="fuelChart" style="max-height:280px;margin-top:16px;width:100%;"></canvas>
       </div>
     </div>
 
-    <div id="comparison" class="comparison" style="display: none;">
+    <div id="comparison" class="comparison hidden">
       <h3>अन्य ड्राइविंग शैलियों के साथ तुलना</h3>
       <table class="comparison-table">
         <thead>
@@ -368,9 +374,13 @@
             <th>बचत/अधिक खपत</th>
           </tr>
         </thead>
-        <tbody id="comparisonBody">
-        </tbody>
+        <tbody id="comparisonBody"></tbody>
       </table>
+    </div>
+
+    <div class="history" id="history">
+      <h3>Recent calculations</h3>
+      <div id="historyList"></div>
     </div>
 
     <div class="fuel-efficiency">
@@ -403,182 +413,10 @@
       
     </div>
 
-    <!-- Вставляем переводы в JavaScript объект -->
     <script>
-      // Глобальная переменная с переводами
-      window.fuelCalculatorTranslations = {"meta":{"title":"ईंधन कैलकुलेटर — Serpmonn लॉजिस्टिक्स","description":"ईंधन खपत, यात्रा लागत और बचत की गणना","twitterDescription":"ड्राइवरों के लिए ईंधन खपत गणना"},"breadcrumb":{"tools":"उपकरण","fuelCalculator":"ईंधन कैलकुलेटर"},"page":{"title":"⛽ ईंधन कैलकुलेटर","form":{"title":"यात्रा मापदंड दर्ज करें","distance":"दूरी (किमी)","fuelConsumption":"ईंधन खपत (लीटर/100 किमी)","fuelPrice":"ईंधन मूल्य (₽/लीटर)","fuelType":"ईंधन प्रकार","drivingStyle":"ड्राइविंग शैली","roadConditions":"सड़क की स्थिति","load":"वाहन लोड","climate":"जलवायु स्थिति","calculate":"ईंधन खपत की गणना करें"},"fuelTypes":{"petrol":"पेट्रोल AI-92","petrol95":"पेट्रोल AI-95","petrol98":"पेट्रोल AI-98","diesel":"डीजल ईंधन","lpg":"गैस (प्रोपेन-ब्यूटेन)","cng":"गैस (मीथेन)"},"drivingStyles":{"economical":"किफायती","normal":"सामान्य","sport":"खेल","aggressive":"आक्रामक"},"roadConditions":{"highway":"हाईवे","city":"शहर","mixed":"मिश्रित चक्र","offroad":"ऑफ-रोड"},"loads":{"empty":"खाली","light":"हल्का लोड","medium":"मध्यम लोड","heavy":"पूर्ण लोड"},"climates":{"normal":"सामान्य","hot":"गर्म (+30°C और अधिक)","cold":"ठंडा (-10°C और कम)","rainy":"बारिश/बर्फ"},"results":{"title":"गणना परिणाम","totalFuel":"कुल ईंधन खपत","totalCost":"ईंधन लागत","costPerKm":"प्रति 1 किमी लागत","adjustedConsumption":"समायोजित खपत"},"comparison":{"title":"अन्य ड्राइविंग शैलियों के साथ तुलना","drivingStyle":"ड्राइविंग शैली","consumption":"खपत (लीटर/100 किमी)","cost":"लागत (₽)","savings":"बचत/अधिक खपत"},"fuelEfficiency":{"title":"🌱 ईंधन दक्षता","tips":["सहज त्वरण और ब्रेकिंग 10-15% ईंधन बचाता है","हाईवे पर 80-90 किमी/घंटा की इष्टतम गति बनाए रखना","समय पर गियर बदलना (2000-2500 आरपीएम)","हर 2 सप्ताह में टायर दबाव की जाँच करें","ट्रंक से अतिरिक्त सामान हटाएं"]},"advice":{"title":"💡 उपयोगी सुझाव","tips":["सपाट सड़क खंडों पर क्रूज कंट्रोल का उपयोग करें","उच्च गति पर खिड़कियां बंद करें","ट्रैफिक जाम से बचने के लिए अपने मार्ग की योजना बनाएं","इंजन और ईंधन प्रणाली की नियमित सर्विसिंग करें","अनुशंसित ऑक्टेन संख्या के साथ गुणवत्ता वाले ईंधन का उपयोग करें"]}},"ads":{"closeAria":"विज्ञापन बंद करें"}};
+      window.fuelCalculatorTranslations = {"meta":{"title":"ईंधन कैलकुलेटर — Serpmonn लॉजिस्टिक्स","description":"ईंधन खपत, यात्रा लागत और बचत की गणना","twitterDescription":"ड्राइवरों के लिए ईंधन खपत गणना"},"breadcrumb":{"tools":"उपकरण","fuelCalculator":"ईंधन कैलकुलेटर"},"page":{"title":"⛽ ईंधन कैलकुलेटर","form":{"title":"यात्रा मापदंड दर्ज करें","distance":"दूरी (किमी)","fuelConsumption":"ईंधन खपत (लीटर/100 किमी)","fuelPrice":"ईंधन मूल्य (₽/लीटर)","fuelType":"ईंधन प्रकार","drivingStyle":"ड्राइविंग शैली","roadConditions":"सड़क की स्थिति","load":"वाहन लोड","climate":"जलवायु स्थिति","calculate":"ईंधन खपत की गणना करें","optionalSummary":"More options"},"fuelTypes":{"petrol":"पेट्रोल AI-92","petrol95":"पेट्रोल AI-95","petrol98":"पेट्रोल AI-98","diesel":"डीजल ईंधन","lpg":"गैस (प्रोपेन-ब्यूटेन)","cng":"गैस (मीथेन)"},"drivingStyles":{"economical":"किफायती","normal":"सामान्य","sport":"खेल","aggressive":"आक्रामक"},"roadConditions":{"highway":"हाईवे","city":"शहर","mixed":"मिश्रित चक्र","offroad":"ऑफ-रोड"},"loads":{"empty":"खाली","light":"हल्का लोड","medium":"मध्यम लोड","heavy":"पूर्ण लोड"},"climates":{"normal":"सामान्य","hot":"गर्म (+30°C और अधिक)","cold":"ठंडा (-10°C और कम)","rainy":"बारिश/बर्फ"},"results":{"title":"गणना परिणाम","totalFuel":"कुल ईंधन खपत","totalCost":"ईंधन लागत","costPerKm":"प्रति 1 किमी लागत","adjustedConsumption":"समायोजित खपत"},"comparison":{"title":"अन्य ड्राइविंग शैलियों के साथ तुलना","drivingStyle":"ड्राइविंग शैली","consumption":"खपत (लीटर/100 किमी)","cost":"लागत (₽)","savings":"बचत/अधिक खपत"},"fuelEfficiency":{"title":"🌱 ईंधन दक्षता","tips":["सहज त्वरण और ब्रेकिंग 10-15% ईंधन बचाता है","हाईवे पर 80-90 किमी/घंटा की इष्टतम गति बनाए रखना","समय पर गियर बदलना (2000-2500 आरपीएम)","हर 2 सप्ताह में टायर दबाव की जाँच करें","ट्रंक से अतिरिक्त सामान हटाएं"]},"advice":{"title":"💡 उपयोगी सुझाव","tips":["सपाट सड़क खंडों पर क्रूज कंट्रोल का उपयोग करें","उच्च गति पर खिड़कियां बंद करें","ट्रैफिक जाम से बचने के लिए अपने मार्ग की योजना बनाएं","इंजन और ईंधन प्रणाली की नियमित सर्विसिंग करें","अनुशंसित ऑक्टेन संख्या के साथ गुणवत्ता वाले ईंधन का उपयोग करें"]},"lead":"Estimate fuel use and trip cost — including driving style, road and load.","disclaimer":"Approximate fuel cost estimate, not a lab measurement.","formulaPlain":"Consumption ≈ base × style × road × load × climate × fuel type. Total: {fuel} L for {distance} km ≈ {cost}.","shareCopied":"Calculation link copied","exportNoResults":"Run a calculation first","exportFailed":"PDF export failed","actions":{"more":"More","reset":"Reset","share":"Share","pdf":"Export PDF","csv":"Export CSV"},"history":{"title":"Recent calculations","empty":"Empty so far"},"errors":{"fillRequired":"Fill distance, consumption and fuel price","positive":"Values must be greater than zero"}},"ads":{"closeAria":"विज्ञापन बंद करें"}};
     </script>
-
-    <script>
-      function calculateFuel() {
-        // Получаем значения из формы
-        const distance = parseFloat(document.getElementById('distance').value);
-        const fuelConsumption = parseFloat(document.getElementById('fuelConsumption').value);
-        const fuelPrice = parseFloat(document.getElementById('fuelPrice').value);
-        const fuelType = document.getElementById('fuelType').value;
-        const drivingStyle = document.getElementById('drivingStyle').value;
-        const roadConditions = document.getElementById('roadConditions').value;
-        const load = document.getElementById('load').value;
-        const climate = document.getElementById('climate').value;
-
-        if (!distance || !fuelConsumption || !fuelPrice) {
-          alert('Пожалуйста, заполните все обязательные поля');
-          return;
-        }
-
-        // Коэффициенты по стилю вождения
-        const drivingStyleMultipliers = {
-          'economical': 0.8,
-          'normal': 1.0,
-          'sport': 1.3,
-          'aggressive': 1.6
-        };
-
-        // Коэффициенты по дорожным условиям
-        const roadConditionsMultipliers = {
-          'highway': 0.9,
-          'city': 1.2,
-          'mixed': 1.0,
-          'offroad': 1.5
-        };
-
-        // Коэффициенты по загрузке
-        const loadMultipliers = {
-          'empty': 1.0,
-          'light': 1.05,
-          'medium': 1.15,
-          'heavy': 1.3
-        };
-
-        // Коэффициенты по климату
-        const climateMultipliers = {
-          'normal': 1.0,
-          'hot': 1.1,
-          'cold': 1.15,
-          'rainy': 1.08
-        };
-
-        // Коэффициенты по типу топлива
-        const fuelTypeMultipliers = {
-          'petrol': 1.0,
-          'petrol95': 1.02,
-          'petrol98': 1.05,
-          'diesel': 0.9,
-          'lpg': 1.2,
-          'cng': 1.1
-        };
-
-        // Расчёт скорректированного расхода
-        const adjustedConsumption = fuelConsumption * 
-          drivingStyleMultipliers[drivingStyle] * 
-          roadConditionsMultipliers[roadConditions] * 
-          loadMultipliers[load] * 
-          climateMultipliers[climate] * 
-          fuelTypeMultipliers[fuelType];
-
-        // Расчёт общего расхода и стоимости
-        const totalFuel = (adjustedConsumption * distance) / 100;
-        const totalCost = totalFuel * fuelPrice;
-        const costPerKm = totalCost / distance;
-
-        // Отображаем результаты
-        document.getElementById('totalFuel').textContent = totalFuel.toFixed(2) + ' л';
-        document.getElementById('totalCost').textContent = Math.round(totalCost).toLocaleString() + ' ₽';
-        document.getElementById('costPerKm').textContent = costPerKm.toFixed(2) + ' ₽/км';
-        document.getElementById('adjustedConsumption').textContent = adjustedConsumption.toFixed(1) + ' л/100км';
-
-        // Показываем результаты
-        document.getElementById('results').style.display = 'block';
-
-        // Показываем сравнение
-        showComparison(distance, fuelConsumption, fuelPrice, fuelType, roadConditions, load, climate);
-      }
-
-      function showComparison(distance, baseConsumption, fuelPrice, fuelType, roadConditions, load, climate) {
-        const comparisonBody = document.getElementById('comparisonBody');
-        
-        const styles = [
-          { name: window.fuelCalculatorTranslations.page.drivingStyles.economical, multiplier: 0.8, color: '#28a745' },
-          { name: window.fuelCalculatorTranslations.page.drivingStyles.normal, multiplier: 1.0, color: '#007bff' },
-          { name: window.fuelCalculatorTranslations.page.drivingStyles.sport, multiplier: 1.3, color: '#ffc107' },
-          { name: window.fuelCalculatorTranslations.page.drivingStyles.aggressive, multiplier: 1.6, color: '#dc3545' }
-        ];
-
-        let html = '';
-        const baseCost = (baseConsumption * distance / 100) * fuelPrice;
-
-        styles.forEach(style => {
-          const adjustedConsumption = baseConsumption * style.multiplier * 
-            getRoadMultiplier(roadConditions) * 
-            getLoadMultiplier(load) * 
-            getClimateMultiplier(climate) * 
-            getFuelTypeMultiplier(fuelType);
-          
-          const totalFuel = (adjustedConsumption * distance) / 100;
-          const totalCost = totalFuel * fuelPrice;
-          const savings = baseCost - totalCost;
-          const savingsText = savings > 0 ? 
-            `+${Math.round(savings).toLocaleString()} ₽` : 
-            `${Math.round(savings).toLocaleString()} ₽`;
-
-          html += `
-            <tr>
-              <td style="color: ${style.color}; font-weight: 600;">${style.name}</td>
-              <td>${adjustedConsumption.toFixed(1)} л/100км</td>
-              <td>${Math.round(totalCost).toLocaleString()} ₽</td>
-              <td style="color: ${savings > 0 ? '#28a745' : '#dc3545'}; font-weight: 600;">${savingsText}</td>
-            </tr>
-          `;
-        });
-
-        comparisonBody.innerHTML = html;
-        document.getElementById('comparison').style.display = 'block';
-      }
-
-      function getRoadMultiplier(roadConditions) {
-        const multipliers = {
-          'highway': 0.9,
-          'city': 1.2,
-          'mixed': 1.0,
-          'offroad': 1.5
-        };
-        return multipliers[roadConditions] || 1.0;
-      }
-
-      function getLoadMultiplier(load) {
-        const multipliers = {
-          'empty': 1.0,
-          'light': 1.05,
-          'medium': 1.15,
-          'heavy': 1.3
-        };
-        return multipliers[load] || 1.0;
-      }
-
-      function getClimateMultiplier(climate) {
-        const multipliers = {
-          'normal': 1.0,
-          'hot': 1.1,
-          'cold': 1.15,
-          'rainy': 1.08
-        };
-        return multipliers[climate] || 1.0;
-      }
-
-      function getFuelTypeMultiplier(fuelType) {
-        const multipliers = {
-          'petrol': 1.0,
-          'petrol95': 1.02,
-          'petrol98': 1.05,
-          'diesel': 0.9,
-          'lpg': 1.2,
-          'cng': 1.1
-        };
-        return multipliers[fuelType] || 1.0;
-      }
-    </script>
-
-    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/fuel-calculator.js?v=2"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 

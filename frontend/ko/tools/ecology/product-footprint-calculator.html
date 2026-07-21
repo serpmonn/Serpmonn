@@ -28,7 +28,7 @@
     <meta property="vk:description" content="식품의 생태 발자국을 계산하세요">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/ko/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 장바구니에 제품 추가
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ 다른 제품 추가
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 생태 발자국 계산
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 생태 발자국 계산
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 계산 결과
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg CO₂ 환산</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">생태 등급 (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"제품 생태 발자국 계산기 — SerpMonn","meta_description":"식품의 생태 발자국을 계산하세요. 장바구니의 탄소 발자국, 물 발자국 및 환경 영향에 대해 알아보세요.","meta_keywords":"제품 생태 발자국, 음식 탄소 발자국, 제품 물 발자국, 생태 계산기, 영양 탄소 발자국","og_title":"제품 생태 발자국 계산기 — SerpMonn","og_description":"식품의 생태 발자국을 계산하세요. 탄소 발자국, 물 발자국 및 환경 영향에 대해 알아보세요.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/ko/eco-calculators/product-footprint/","vk_title":"제품 생태 발자국 계산기","vk_description":"식품의 생태 발자국을 계산하세요","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"홈","tools":"도구","current":"제품 발자국 계산기"},"header":{"title":"🌱 제품 생태 발자국 계산기","subtitle":"장바구니에 있는 제품의 환경 영향 알아보기"},"calculator":{"section_title":"🛒 장바구니에 제품 추가"},"buttons":{"add_product":"➕ 다른 제품 추가","calculate":"🧮 생태 발자국 계산","share_vk":"📘 VKontakte에서 공유","share_telegram":"📱 Telegram에서 공유"},"results":{"title":"📊 계산 결과","carbon_label":"kg CO₂ 환산","water_label":"리터 물","land_label":"m² 토지","eco_score_label":"생태 등급 (1-10)"},"comparison":{"title":"🔍 대안과 비교"},"recommendations":{"title":"💡 생태 발자국 감소 권장 사항"},"errors":{"no_products":"계산을 위해 적어도 하나의 제품을 추가해 주세요.","invalid_quantity":"제품 {product}에 대한 유효한 수량을 입력해 주세요","calculation_error":"계산 중 오류가 발생했습니다. 다시 시도해 주세요.","select_product_and_qty":"제품을 선택하고 수량을 입력해 주세요"},"success":{"calculation_complete":"계산이 성공적으로 완료되었습니다!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"개","pack":"팩"},"products":{"beef":"소고기","chicken":"닭고기","pork":"돼지고기","fish":"생선","eggs":"달걀","milk":"우유","cheese":"치즈","yogurt":"요거트","rice":"쌀","pasta":"파스타","bread":"빵","potatoes":"감자","tomatoes":"토마토","apples":"사과","bananas":"바나나","coffee":"커피","tea":"차","chocolate":"초콜릿","sugar":"설탕","olive_oil":"올리브 오일","select_product":"제품 선택...","lamb":"양고기","wheat":"밀","vegetables":"채소 (혼합)","fruits":"과일 (혼합)","nuts":"견과류","turkey":"칠면조","duck":"오리고기","butter":"버터","salmon":"연어","tuna":"참치","shrimp":"새우","cucumbers":"오이","carrots":"당근","oranges":"오렌지","grapes":"포도","strawberries":"딸기","quinoa":"퀴노아","lentils":"렌틸콩","chickpeas":"병아리콩","wine":"와인","bread_white":"흰 빵","bread_rye":"호밀빵","buckwheat":"메밀","oats":"오트밀","barley":"압맥","rye":"호밀 (곡물)","sunflower_oil":"해바라기 오일","kefir":"케피어","yogurt_plain":"플레인 요거트","cottage_cheese":"코티지 치즈","sour_cream":"사워크림","cabbage":"양배추","onions":"양파","garlic":"마늘","beets":"비트","pears":"배","peas":"완두콩","beans":"콩","kvass":"크바스","soda":"탄산음료","beer":"맥주"},"ads":{"closeAria":"광고 닫기"},"js":{"quantityPlaceholder":"수량","selectedProductsTitle":"선택한 제품:","remove":"삭제","unitLabel":"단위: {unit}","loading":"생태 발자국을 계산하는 중...","errorPrefix":"오류:","comparisonCurrentFootprint":"현재 발자국: {value} kg CO₂","comparisonAlternatives":"대안:","comparisonSavings":"절감: 약 {value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"생태 발자국이 큰 제품","description":"다음 제품의 대안을 고려해 보세요: {products}"},"reduceMeat":{"title":"육류 소비 줄이기","description":"주 1~2회 육류를 식물성 단백질로 대체해 보세요"},"dairyAlternatives":{"title":"유제품 대안","description":"식물성 우유와 치즈를 사용해 보세요"},"buyLocal":{"title":"지역 제철 식품 구매","description":"운송 발자국을 줄이고 지역 생산자를 지원합니다"},"planPurchases":{"title":"구매 계획 세우기","description":"음식물 쓰레기를 줄이고 필요한 만큼만 구매하세요"}},"alternatives":{"plant_proteins":"식물성 단백질","legumes":"콩류","nuts":"견과류","poultry":"가금류","fish":"생선","seaweed":"해조류","plant_milk":"식물성 우유","oat_milk":"오트밀크","plant_cheese":"식물성 치즈","tofu":"두부","quinoa":"퀴노아","bulgur":"불구르","buckwheat":"메밀","oats_grain":"귀리","barley_grain":"보리","rye_grain":"호밀","sweet_potato":"고구마","turnip":"순무","seasonal_vegetables":"제철 채소","local_seasonal_vegetables":"지역 제철 채소","local_seasonal_fruits":"지역 제철 과일","local_fruits":"지역 과일","tea":"차","chicory":"치커리","fruits":"과일","seeds":"씨앗","chicken":"닭고기","turkey":"칠면조","plant_oils":"식물성 기름","avocado":"아보카도","plant_yogurt":"식물성 요거트","kefir":"케피어","plant_omega3":"식물성 오메가-3","flax_seeds":"아마씨","other_fish":"기타 생선","other_seafood":"기타 해산물","canned_tomatoes":"통조림 토마토","zucchini":"주키니","seasonal_root_vegetables":"제철 뿌리채소","beets":"비트","other_root_vegetables":"기타 뿌리채소","seasonal_citrus":"제철 감귤류","seasonal_berries":"제철 베리","other_grains":"기타 곡물","other_pseudograins":"기타 의사곡물","beans":"콩","peas":"완두콩","chickpeas":"병아리콩","lentils":"렌틸콩","plant_drinks":"식물성 음료","local_herbs":"지역 허브","local_drinks":"지역 음료","non_alcoholic_options":"무알코올 음료","plant_desserts":"식물성 디저트","honey":"꿀","stevia":"스테비아","rye_bread":"호밀빵","whole_grain":"통곡물","pearl_barley":"압맥","oatmeal":"오트밀","millet":"기장","whole_grain_pasta":"통밀 파스타","wheat":"밀","olive_oil":"올리브 오일","sunflower_oil":"해바라기 오일","reduce_amount":"양 줄이기","plain_yogurt":"플레인 요거트","yogurt":"요거트","reduce_fat":"지방 줄이기","other_seasonal_vegetables":"기타 제철 채소","local_apples":"지역 사과","apples":"사과","herbal_teas":"허브 차","water":"물","compote":"콤포트","fruit_drink":"과일 음료","kvass":"크바스","onion":"양파"}};
+        window.i18n = {"title":"제품 생태 발자국 계산기 — SerpMonn","meta_description":"식품의 생태 발자국을 계산하세요. 장바구니의 탄소 발자국, 물 발자국 및 환경 영향에 대해 알아보세요.","meta_keywords":"제품 생태 발자국, 음식 탄소 발자국, 제품 물 발자국, 생태 계산기, 영양 탄소 발자국","og_title":"제품 생태 발자국 계산기 — SerpMonn","og_description":"식품의 생태 발자국을 계산하세요. 탄소 발자국, 물 발자국 및 환경 영향에 대해 알아보세요.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/ko/eco-calculators/product-footprint/","vk_title":"제품 생태 발자국 계산기","vk_description":"식품의 생태 발자국을 계산하세요","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"홈","tools":"도구","current":"제품 발자국 계산기"},"header":{"title":"🌱 제품 생태 발자국 계산기","subtitle":"장바구니에 있는 제품의 환경 영향 알아보기"},"calculator":{"section_title":"🛒 장바구니에 제품 추가","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ 다른 제품 추가","calculate":"🧮 생태 발자국 계산","share_vk":"📘 VKontakte에서 공유","share_telegram":"📱 Telegram에서 공유","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 계산 결과","carbon_label":"kg CO₂ 환산","water_label":"리터 물","land_label":"m² 토지","eco_score_label":"생태 등급 (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 대안과 비교"},"recommendations":{"title":"💡 생태 발자국 감소 권장 사항"},"errors":{"no_products":"계산을 위해 적어도 하나의 제품을 추가해 주세요.","invalid_quantity":"제품 {product}에 대한 유효한 수량을 입력해 주세요","calculation_error":"계산 중 오류가 발생했습니다. 다시 시도해 주세요.","select_product_and_qty":"제품을 선택하고 수량을 입력해 주세요"},"success":{"calculation_complete":"계산이 성공적으로 완료되었습니다!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"개","pack":"팩"},"products":{"beef":"소고기","chicken":"닭고기","pork":"돼지고기","fish":"생선","eggs":"달걀","milk":"우유","cheese":"치즈","yogurt":"요거트","rice":"쌀","pasta":"파스타","bread":"빵","potatoes":"감자","tomatoes":"토마토","apples":"사과","bananas":"바나나","coffee":"커피","tea":"차","chocolate":"초콜릿","sugar":"설탕","olive_oil":"올리브 오일","select_product":"제품 선택...","lamb":"양고기","wheat":"밀","vegetables":"채소 (혼합)","fruits":"과일 (혼합)","nuts":"견과류","turkey":"칠면조","duck":"오리고기","butter":"버터","salmon":"연어","tuna":"참치","shrimp":"새우","cucumbers":"오이","carrots":"당근","oranges":"오렌지","grapes":"포도","strawberries":"딸기","quinoa":"퀴노아","lentils":"렌틸콩","chickpeas":"병아리콩","wine":"와인","bread_white":"흰 빵","bread_rye":"호밀빵","buckwheat":"메밀","oats":"오트밀","barley":"압맥","rye":"호밀 (곡물)","sunflower_oil":"해바라기 오일","kefir":"케피어","yogurt_plain":"플레인 요거트","cottage_cheese":"코티지 치즈","sour_cream":"사워크림","cabbage":"양배추","onions":"양파","garlic":"마늘","beets":"비트","pears":"배","peas":"완두콩","beans":"콩","kvass":"크바스","soda":"탄산음료","beer":"맥주"},"ads":{"closeAria":"광고 닫기"},"js":{"quantityPlaceholder":"수량","selectedProductsTitle":"선택한 제품:","remove":"삭제","unitLabel":"단위: {unit}","loading":"생태 발자국을 계산하는 중...","errorPrefix":"오류:","comparisonCurrentFootprint":"현재 발자국: {value} kg CO₂","comparisonAlternatives":"대안:","comparisonSavings":"절감: 약 {value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"생태 발자국이 큰 제품","description":"다음 제품의 대안을 고려해 보세요: {products}"},"reduceMeat":{"title":"육류 소비 줄이기","description":"주 1~2회 육류를 식물성 단백질로 대체해 보세요"},"dairyAlternatives":{"title":"유제품 대안","description":"식물성 우유와 치즈를 사용해 보세요"},"buyLocal":{"title":"지역 제철 식품 구매","description":"운송 발자국을 줄이고 지역 생산자를 지원합니다"},"planPurchases":{"title":"구매 계획 세우기","description":"음식물 쓰레기를 줄이고 필요한 만큼만 구매하세요"}},"alternatives":{"plant_proteins":"식물성 단백질","legumes":"콩류","nuts":"견과류","poultry":"가금류","fish":"생선","seaweed":"해조류","plant_milk":"식물성 우유","oat_milk":"오트밀크","plant_cheese":"식물성 치즈","tofu":"두부","quinoa":"퀴노아","bulgur":"불구르","buckwheat":"메밀","oats_grain":"귀리","barley_grain":"보리","rye_grain":"호밀","sweet_potato":"고구마","turnip":"순무","seasonal_vegetables":"제철 채소","local_seasonal_vegetables":"지역 제철 채소","local_seasonal_fruits":"지역 제철 과일","local_fruits":"지역 과일","tea":"차","chicory":"치커리","fruits":"과일","seeds":"씨앗","chicken":"닭고기","turkey":"칠면조","plant_oils":"식물성 기름","avocado":"아보카도","plant_yogurt":"식물성 요거트","kefir":"케피어","plant_omega3":"식물성 오메가-3","flax_seeds":"아마씨","other_fish":"기타 생선","other_seafood":"기타 해산물","canned_tomatoes":"통조림 토마토","zucchini":"주키니","seasonal_root_vegetables":"제철 뿌리채소","beets":"비트","other_root_vegetables":"기타 뿌리채소","seasonal_citrus":"제철 감귤류","seasonal_berries":"제철 베리","other_grains":"기타 곡물","other_pseudograins":"기타 의사곡물","beans":"콩","peas":"완두콩","chickpeas":"병아리콩","lentils":"렌틸콩","plant_drinks":"식물성 음료","local_herbs":"지역 허브","local_drinks":"지역 음료","non_alcoholic_options":"무알코올 음료","plant_desserts":"식물성 디저트","honey":"꿀","stevia":"스테비아","rye_bread":"호밀빵","whole_grain":"통곡물","pearl_barley":"압맥","oatmeal":"오트밀","millet":"기장","whole_grain_pasta":"통밀 파스타","wheat":"밀","olive_oil":"올리브 오일","sunflower_oil":"해바라기 오일","reduce_amount":"양 줄이기","plain_yogurt":"플레인 요거트","yogurt":"요거트","reduce_fat":"지방 줄이기","other_seasonal_vegetables":"기타 제철 채소","local_apples":"지역 사과","apples":"사과","herbal_teas":"허브 차","water":"물","compote":"콤포트","fruit_drink":"과일 음료","kvass":"크바스","onion":"양파"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

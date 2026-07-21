@@ -40,7 +40,7 @@ eleventyComputed:
     <meta property="vk:description" content="{{ productFootprintCalculator[locale].vk_description }}">
     <meta property="vk:image" content="{{ productFootprintCalculator[locale].vk_image }}">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="{{ canonical }}" />
@@ -107,7 +107,7 @@ eleventyComputed:
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -125,24 +125,63 @@ eleventyComputed:
             <h2 class="section-title">
                 {{ productFootprintCalculator[locale].calculator.section_title }}
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 {{ productFootprintCalculator[locale].buttons.add_product }}
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                {{ productFootprintCalculator[locale].buttons.calculate }}
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    {{ productFootprintCalculator[locale].buttons.calculate }}
+                </button>
+                <details class="more-actions">
+                    <summary>{{ productFootprintCalculator[locale].buttons.more if productFootprintCalculator[locale].buttons.more else 'Ещё' }}</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">{{ productFootprintCalculator[locale].buttons.reset if productFootprintCalculator[locale].buttons.reset else 'Сбросить' }}</button>
+                        <button type="button" id="btn-eco-share">{{ productFootprintCalculator[locale].buttons.share_link if productFootprintCalculator[locale].buttons.share_link else 'Поделиться расчётом' }}</button>
+                        <button type="button" id="btn-eco-pdf">{{ productFootprintCalculator[locale].buttons.pdf if productFootprintCalculator[locale].buttons.pdf else 'Экспорт PDF' }}</button>
+                        <button type="button" id="btn-eco-csv">{{ productFootprintCalculator[locale].buttons.csv if productFootprintCalculator[locale].buttons.csv else 'Экспорт CSV' }}</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>{{ productFootprintCalculator[locale].calculator.optional_summary if productFootprintCalculator[locale].calculator.optional_summary else 'Дополнительно' }}</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">{{ productFootprintCalculator[locale].calculator.region_label if productFootprintCalculator[locale].calculator.region_label else 'Регион происхождения' }}
+                        <select id="eco-region">
+                            <option value="local">{{ productFootprintCalculator[locale].calculator.region_local if productFootprintCalculator[locale].calculator.region_local else 'Местные' }}</option>
+                            <option value="regional">{{ productFootprintCalculator[locale].calculator.region_regional if productFootprintCalculator[locale].calculator.region_regional else 'Региональные' }}</option>
+                            <option value="national" selected>{{ productFootprintCalculator[locale].calculator.region_national if productFootprintCalculator[locale].calculator.region_national else 'По стране' }}</option>
+                            <option value="international">{{ productFootprintCalculator[locale].calculator.region_international if productFootprintCalculator[locale].calculator.region_international else 'Импорт' }}</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">{{ productFootprintCalculator[locale].calculator.season_label if productFootprintCalculator[locale].calculator.season_label else 'Сезонность' }}
+                        <select id="eco-season">
+                            <option value="in_season" selected>{{ productFootprintCalculator[locale].calculator.season_in if productFootprintCalculator[locale].calculator.season_in else 'В сезоне' }}</option>
+                            <option value="out_of_season">{{ productFootprintCalculator[locale].calculator.season_out if productFootprintCalculator[locale].calculator.season_out else 'Вне сезона' }}</option>
+                            <option value="greenhouse">{{ productFootprintCalculator[locale].calculator.season_greenhouse if productFootprintCalculator[locale].calculator.season_greenhouse else 'Теплица' }}</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 {{ productFootprintCalculator[locale].results.title }}
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">{{ productFootprintCalculator[locale].results.carbon_label }}</div>
+            </div>
+            <p class="result-disclaimer">{{ productFootprintCalculator[locale].results.disclaimer if productFootprintCalculator[locale].results.disclaimer else 'Ориентировочный расчёт экологического следа, не лабораторный анализ.' }}</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -162,6 +201,8 @@ eleventyComputed:
                     <div class="result-label">{{ productFootprintCalculator[locale].results.eco_score_label }}</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -202,8 +243,8 @@ eleventyComputed:
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->

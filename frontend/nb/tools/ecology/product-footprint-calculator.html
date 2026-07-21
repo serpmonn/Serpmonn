@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Beregn det økologiske fotavtrykket til matvarene dine">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/nb/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Legg til produkter i handlekurven
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Legg til et produkt til
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Beregn økologisk fotavtrykk
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Beregn økologisk fotavtrykk
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Beregningsresultater
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg CO₂-ekvivalent</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Øko-vurdering (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Produkts Økologiske Fotavtrykk Kalkulator — SerpMonn","meta_description":"Beregn det økologiske fotavtrykket til matvarene dine. Lær om karbonfotavtrykket, vanfotavtrykket og miljøpåvirkningen av handlekurven din.","meta_keywords":"produkters økologiske fotavtrykk, mat karbonfotavtrykk, produkters vanfotavtrykk, økologisk kalkulator, ernæring karbonfotavtrykk","og_title":"Produkts Økologiske Fotavtrykk Kalkulator — SerpMonn","og_description":"Beregn det økologiske fotavtrykket til matvarene dine. Lær om karbonfotavtrykket, vanfotavtrykket og miljøpåvirkningen.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/nb/eco-calculators/product-footprint/","vk_title":"Produkts Økologiske Fotavtrykk Kalkulator","vk_description":"Beregn det økologiske fotavtrykket til matvarene dine","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Hjem","tools":"Verktøy","current":"Produkts Fotavtrykk Kalkulator"},"header":{"title":"🌱 Produkts Økologiske Fotavtrykk Kalkulator","subtitle":"Finn ut miljøpåvirkningen av produktene i handlekurven din"},"calculator":{"section_title":"🛒 Legg til produkter i handlekurven"},"buttons":{"add_product":"➕ Legg til et produkt til","calculate":"🧮 Beregn økologisk fotavtrykk","share_vk":"📘 Del på VKontakte","share_telegram":"📱 Del på Telegram"},"results":{"title":"📊 Beregningsresultater","carbon_label":"kg CO₂-ekvivalent","water_label":"liter vann","land_label":"m² land","eco_score_label":"Øko-vurdering (1-10)"},"comparison":{"title":"🔍 Sammenligning med alternativer"},"recommendations":{"title":"💡 Anbefalinger for å redusere økologisk fotavtrykk"},"errors":{"no_products":"Legg til minst ett produkt for beregning.","invalid_quantity":"Angi en gyldig mengde for produkt: {product}","calculation_error":"Det oppstod en feil under beregningen. Prøv igjen.","select_product_and_qty":"Velg et produkt og angi en mengde"},"success":{"calculation_complete":"Beregningen fullført!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"stk","pack":"pakke"},"products":{"beef":"Storfekjøtt","chicken":"Kylling","pork":"Svinekjøtt","fish":"Fisk","eggs":"Egg","milk":"Melk","cheese":"Ost","yogurt":"Yoghurt","rice":"Ris","pasta":"Pasta","bread":"Brød","potatoes":"Poteter","tomatoes":"Tomater","apples":"Epler","bananas":"Bananer","coffee":"Kaffe","tea":"Te","chocolate":"Sjokolade","sugar":"Sukker","olive_oil":"Olivenolje","select_product":"Velg et produkt...","lamb":"Lammekjøtt","wheat":"Hvete","vegetables":"Grønnsaker (blandet)","fruits":"Frukt (blandet)","nuts":"Nøtter","turkey":"Kalkun","duck":"And","butter":"Smør","salmon":"Laks","tuna":"Tunfisk","shrimp":"Reker","cucumbers":"Agurker","carrots":"Gulrøtter","oranges":"Appelsiner","grapes":"Druer","strawberries":"Jordbær","quinoa":"Quinoa","lentils":"Linser","chickpeas":"Kikerter","wine":"Vin","bread_white":"Hvitt brød","bread_rye":"Rugbrød","buckwheat":"Bokhvete","oats":"Havregryn","barley":"Perlebygg","rye":"Rug (korn)","sunflower_oil":"Solsikkeolje","kefir":"Kefir","yogurt_plain":"Naturell yoghurt","cottage_cheese":"Cottage cheese","sour_cream":"Rømme","cabbage":"Kål","onions":"Løk","garlic":"Hvitløk","beets":"Rødbeter","pears":"Pærer","peas":"Erter","beans":"Bønner","kvass":"Kvass","soda":"Brus","beer":"Øl"},"ads":{"closeAria":"Lukk annonse"},"js":{"quantityPlaceholder":"Mengde","selectedProductsTitle":"Valgte produkter:","remove":"Fjern","unitLabel":"Enhet: {unit}","loading":"Beregner økologisk fotavtrykk...","errorPrefix":"Feil:","comparisonCurrentFootprint":"Nåværende fotavtrykk: {value} kg CO₂","comparisonAlternatives":"Alternativer:","comparisonSavings":"Besparelse: ~{value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"Produkter med høyt økologisk fotavtrykk","description":"Vurder alternativer for: {products}"},"reduceMeat":{"title":"Reduser kjøttforbruket","description":"Prøv å erstatte kjøtt med plantebaserte proteiner 1–2 ganger i uken"},"dairyAlternatives":{"title":"Alternativer til meieriprodukter","description":"Prøv plantebasert melk og ost"},"buyLocal":{"title":"Kjøp lokale sesongprodukter","description":"Det reduserer transportfotavtrykket og støtter lokale produsenter"},"planPurchases":{"title":"Planlegg innkjøpene dine","description":"Unngå matsvinn — kjøp bare det du trenger"}},"alternatives":{"plant_proteins":"plantebaserte proteiner","legumes":"belgfrukter","nuts":"nøtter","poultry":"fjærfe","fish":"fisk","seaweed":"tang","plant_milk":"plantemelk","oat_milk":"havremelk","plant_cheese":"plantebaserte oster","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"bokhvete","oats_grain":"havre","barley_grain":"bygg","rye_grain":"rug","sweet_potato":"søtpotet","turnip":"nepe","seasonal_vegetables":"sesonggrønnsaker","local_seasonal_vegetables":"lokale sesonggrønnsaker","local_seasonal_fruits":"lokale sesongfrukter","local_fruits":"lokale frukter","tea":"te","chicory":"sikori","fruits":"frukter","seeds":"frø","chicken":"kylling","turkey":"kalkun","plant_oils":"vegetabilske oljer","avocado":"avokado","plant_yogurt":"plantebaserte yoghurter","kefir":"kefir","plant_omega3":"plantebasert omega-3","flax_seeds":"linfrø","other_fish":"andre fisk","other_seafood":"andre sjømat","canned_tomatoes":"hermetiske tomater","zucchini":"zucchini","seasonal_root_vegetables":"sesongrotgrønnsaker","beets":"rødbeter","other_root_vegetables":"andre rotgrønnsaker","seasonal_citrus":"sesong-sitrusfrukter","seasonal_berries":"sesongbær","other_grains":"andre korn","other_pseudograins":"andre pseudokorn","beans":"bønner","peas":"erter","chickpeas":"kikerter","lentils":"linser","plant_drinks":"plantedrikker","local_herbs":"lokale urter","local_drinks":"lokale drikker","non_alcoholic_options":"alkoholfrie alternativer","plant_desserts":"plantebaserte desserter","honey":"honning","stevia":"stevia","rye_bread":"rugbrød","whole_grain":"fullkorn","pearl_barley":"perlebygg","oatmeal":"havregryn","millet":"hirse","whole_grain_pasta":"fullkornspasta","wheat":"hvete","olive_oil":"olivenolje","sunflower_oil":"solsikkeolje","reduce_amount":"reduser mengden","plain_yogurt":"naturell yoghurt","yogurt":"yoghurt","reduce_fat":"reduser fettinnhold","other_seasonal_vegetables":"andre sesonggrønnsaker","local_apples":"lokale epler","apples":"epler","herbal_teas":"urtete","water":"vann","compote":"kompott","fruit_drink":"fruktdrikk","kvass":"kvass","onion":"løk"}};
+        window.i18n = {"title":"Produkts Økologiske Fotavtrykk Kalkulator — SerpMonn","meta_description":"Beregn det økologiske fotavtrykket til matvarene dine. Lær om karbonfotavtrykket, vanfotavtrykket og miljøpåvirkningen av handlekurven din.","meta_keywords":"produkters økologiske fotavtrykk, mat karbonfotavtrykk, produkters vanfotavtrykk, økologisk kalkulator, ernæring karbonfotavtrykk","og_title":"Produkts Økologiske Fotavtrykk Kalkulator — SerpMonn","og_description":"Beregn det økologiske fotavtrykket til matvarene dine. Lær om karbonfotavtrykket, vanfotavtrykket og miljøpåvirkningen.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/nb/eco-calculators/product-footprint/","vk_title":"Produkts Økologiske Fotavtrykk Kalkulator","vk_description":"Beregn det økologiske fotavtrykket til matvarene dine","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Hjem","tools":"Verktøy","current":"Produkts Fotavtrykk Kalkulator"},"header":{"title":"🌱 Produkts Økologiske Fotavtrykk Kalkulator","subtitle":"Finn ut miljøpåvirkningen av produktene i handlekurven din"},"calculator":{"section_title":"🛒 Legg til produkter i handlekurven","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Legg til et produkt til","calculate":"🧮 Beregn økologisk fotavtrykk","share_vk":"📘 Del på VKontakte","share_telegram":"📱 Del på Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Beregningsresultater","carbon_label":"kg CO₂-ekvivalent","water_label":"liter vann","land_label":"m² land","eco_score_label":"Øko-vurdering (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Sammenligning med alternativer"},"recommendations":{"title":"💡 Anbefalinger for å redusere økologisk fotavtrykk"},"errors":{"no_products":"Legg til minst ett produkt for beregning.","invalid_quantity":"Angi en gyldig mengde for produkt: {product}","calculation_error":"Det oppstod en feil under beregningen. Prøv igjen.","select_product_and_qty":"Velg et produkt og angi en mengde"},"success":{"calculation_complete":"Beregningen fullført!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"stk","pack":"pakke"},"products":{"beef":"Storfekjøtt","chicken":"Kylling","pork":"Svinekjøtt","fish":"Fisk","eggs":"Egg","milk":"Melk","cheese":"Ost","yogurt":"Yoghurt","rice":"Ris","pasta":"Pasta","bread":"Brød","potatoes":"Poteter","tomatoes":"Tomater","apples":"Epler","bananas":"Bananer","coffee":"Kaffe","tea":"Te","chocolate":"Sjokolade","sugar":"Sukker","olive_oil":"Olivenolje","select_product":"Velg et produkt...","lamb":"Lammekjøtt","wheat":"Hvete","vegetables":"Grønnsaker (blandet)","fruits":"Frukt (blandet)","nuts":"Nøtter","turkey":"Kalkun","duck":"And","butter":"Smør","salmon":"Laks","tuna":"Tunfisk","shrimp":"Reker","cucumbers":"Agurker","carrots":"Gulrøtter","oranges":"Appelsiner","grapes":"Druer","strawberries":"Jordbær","quinoa":"Quinoa","lentils":"Linser","chickpeas":"Kikerter","wine":"Vin","bread_white":"Hvitt brød","bread_rye":"Rugbrød","buckwheat":"Bokhvete","oats":"Havregryn","barley":"Perlebygg","rye":"Rug (korn)","sunflower_oil":"Solsikkeolje","kefir":"Kefir","yogurt_plain":"Naturell yoghurt","cottage_cheese":"Cottage cheese","sour_cream":"Rømme","cabbage":"Kål","onions":"Løk","garlic":"Hvitløk","beets":"Rødbeter","pears":"Pærer","peas":"Erter","beans":"Bønner","kvass":"Kvass","soda":"Brus","beer":"Øl"},"ads":{"closeAria":"Lukk annonse"},"js":{"quantityPlaceholder":"Mengde","selectedProductsTitle":"Valgte produkter:","remove":"Fjern","unitLabel":"Enhet: {unit}","loading":"Beregner økologisk fotavtrykk...","errorPrefix":"Feil:","comparisonCurrentFootprint":"Nåværende fotavtrykk: {value} kg CO₂","comparisonAlternatives":"Alternativer:","comparisonSavings":"Besparelse: ~{value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Produkter med høyt økologisk fotavtrykk","description":"Vurder alternativer for: {products}"},"reduceMeat":{"title":"Reduser kjøttforbruket","description":"Prøv å erstatte kjøtt med plantebaserte proteiner 1–2 ganger i uken"},"dairyAlternatives":{"title":"Alternativer til meieriprodukter","description":"Prøv plantebasert melk og ost"},"buyLocal":{"title":"Kjøp lokale sesongprodukter","description":"Det reduserer transportfotavtrykket og støtter lokale produsenter"},"planPurchases":{"title":"Planlegg innkjøpene dine","description":"Unngå matsvinn — kjøp bare det du trenger"}},"alternatives":{"plant_proteins":"plantebaserte proteiner","legumes":"belgfrukter","nuts":"nøtter","poultry":"fjærfe","fish":"fisk","seaweed":"tang","plant_milk":"plantemelk","oat_milk":"havremelk","plant_cheese":"plantebaserte oster","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"bokhvete","oats_grain":"havre","barley_grain":"bygg","rye_grain":"rug","sweet_potato":"søtpotet","turnip":"nepe","seasonal_vegetables":"sesonggrønnsaker","local_seasonal_vegetables":"lokale sesonggrønnsaker","local_seasonal_fruits":"lokale sesongfrukter","local_fruits":"lokale frukter","tea":"te","chicory":"sikori","fruits":"frukter","seeds":"frø","chicken":"kylling","turkey":"kalkun","plant_oils":"vegetabilske oljer","avocado":"avokado","plant_yogurt":"plantebaserte yoghurter","kefir":"kefir","plant_omega3":"plantebasert omega-3","flax_seeds":"linfrø","other_fish":"andre fisk","other_seafood":"andre sjømat","canned_tomatoes":"hermetiske tomater","zucchini":"zucchini","seasonal_root_vegetables":"sesongrotgrønnsaker","beets":"rødbeter","other_root_vegetables":"andre rotgrønnsaker","seasonal_citrus":"sesong-sitrusfrukter","seasonal_berries":"sesongbær","other_grains":"andre korn","other_pseudograins":"andre pseudokorn","beans":"bønner","peas":"erter","chickpeas":"kikerter","lentils":"linser","plant_drinks":"plantedrikker","local_herbs":"lokale urter","local_drinks":"lokale drikker","non_alcoholic_options":"alkoholfrie alternativer","plant_desserts":"plantebaserte desserter","honey":"honning","stevia":"stevia","rye_bread":"rugbrød","whole_grain":"fullkorn","pearl_barley":"perlebygg","oatmeal":"havregryn","millet":"hirse","whole_grain_pasta":"fullkornspasta","wheat":"hvete","olive_oil":"olivenolje","sunflower_oil":"solsikkeolje","reduce_amount":"reduser mengden","plain_yogurt":"naturell yoghurt","yogurt":"yoghurt","reduce_fat":"reduser fettinnhold","other_seasonal_vegetables":"andre sesonggrønnsaker","local_apples":"lokale epler","apples":"epler","herbal_teas":"urtete","water":"vann","compote":"kompott","fruit_drink":"fruktdrikk","kvass":"kvass","onion":"løk"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

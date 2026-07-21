@@ -225,139 +225,145 @@
     
     <link rel="alternate" href="https://serpmonn.ru/frontend/tools/logistics/fuel-calculator.html" hreflang="x-default" />      <!-- Structured Data: SoftwareApplication -->     <script type="application/ld+json">     {       "@context": "https://schema.org",       "@type": "SoftwareApplication",       "name": "Αριθμομηχανή Καυσίμου — Serpmonn Logistics",       "description": "Υπολογισμός κατανάλωσης καυσίμου, κόστους ταξιδιού και εξοικονομήσεων",       "url": "https://serpmonn.ru/frontend/el/tools/logistics/fuel-calculator.html",       "applicationCategory": "UtilityApplication",       "operatingSystem": "Web",       "inLanguage": "el",       "offers": {         "@type": "Offer",         "price": "0",         "priceCurrency": "RUB"       },       "publisher": {         "@type": "Organization",         "name": "Serpmonn",         "url": "https://serpmonn.ru/"       }     }     </script>
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/fuel-calculator.css">
-    <style>
-      /* ad top adaptive start */
-      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
-      /* ad top adaptive end */
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/fuel-calculator.css?v=4">
   </head>
-  <body class="fuel-calculator-page">
-    <!-- Меню -->
+  <body class="fuel-calculator-page" data-currency="₽" data-liter="л">
     <div id="menuContainer"></div>
-
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      
-      <a href="/frontend/el/tools/index.html">🧰 Εργαλεία</a> → 
-      
-      <span>⛽ Αριθμομηχανή Καυσίμου</span>
-    </div>
 
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
-      <ins class="mrg-tag" 
+      <ins class="mrg-tag"
           style="display:inline-block;"
-          data-ad-client="ad-1897960" 
+          data-ad-client="ad-1897960"
           data-ad-slot="1897960">
       </ins>
     </div>
-<h1>⛽ Αριθμομηχανή Καυσίμου</h1>
+
+    <h1>⛽ Αριθμομηχανή Καυσίμου</h1>
+    
+    <p class="tool-lead">Estimate fuel use and trip cost — including driving style, road and load.</p>
+    
 
     <div class="calculator-container">
       <h2>Εισαγάγετε παραμέτρους ταξιδιού</h2>
-      
+      <div id="error-message" class="error-message hidden" role="alert"></div>
+
       <div class="input-section">
         <div class="input-group">
           <label for="distance">Απόσταση (km)</label>
-          <input type="number" id="distance" placeholder="100" min="1" step="0.1">
+          <input type="number" id="distance" placeholder="100" min="1" step="0.1" inputmode="decimal">
         </div>
-        
         <div class="input-group">
           <label for="fuelConsumption">Κατανάλωση καυσίμου (L/100 km)</label>
-          <input type="number" id="fuelConsumption" placeholder="8.5" min="1" step="0.1">
+          <input type="number" id="fuelConsumption" placeholder="8.5" min="1" step="0.1" inputmode="decimal">
         </div>
-        
         <div class="input-group">
           <label for="fuelPrice">Τιμή καυσίμου (₽/L)</label>
-          <input type="number" id="fuelPrice" placeholder="55.50" min="1" step="0.01">
-        </div>
-        
-        <div class="input-group">
-          <label for="fuelType">Τύπος καυσίμου</label>
-          <select id="fuelType">
-            <option value="petrol">Βενζίνη AI-92</option>
-            <option value="petrol95">Βενζίνη AI-95</option>
-            <option value="petrol98">Βενζίνη AI-98</option>
-            <option value="diesel">Πετρέλαιο</option>
-            <option value="lpg">Αέριο (προπάνιο-βουτάνιο)</option>
-            <option value="cng">Αέριο (μεθάνιο)</option>
-          </select>
-        </div>
-        
-        <div class="input-group">
-          <label for="drivingStyle">Στυλ οδήγησης</label>
-          <select id="drivingStyle">
-            <option value="economical">Οικονομικό</option>
-            <option value="normal">Κανονικό</option>
-            <option value="sport">Αθλητικό</option>
-            <option value="aggressive">Επιθετικό</option>
-          </select>
-        </div>
-        
-        <div class="input-group">
-          <label for="roadConditions">Συνθήκες οδού</label>
-          <select id="roadConditions">
-            <option value="highway">Αυτοκινητόδρομος</option>
-            <option value="city">Πόλη</option>
-            <option value="mixed">Μικτός κύκλος</option>
-            <option value="offroad">Εκτός δρόμου</option>
-          </select>
-        </div>
-        
-        <div class="input-group">
-          <label for="load">Φορτίο οχήματος</label>
-          <select id="load">
-            <option value="empty">Άδειο</option>
-            <option value="light">Ελαφρύ φορτίο</option>
-            <option value="medium">Μέτριο φορτίο</option>
-            <option value="heavy">Πλήρες φορτίο</option>
-          </select>
-        </div>
-        
-        <div class="input-group">
-          <label for="climate">Κλιματικές συνθήκες</label>
-          <select id="climate">
-            <option value="normal">Κανονικές</option>
-            <option value="hot">Ζέστη (+30°C και άνω)</option>
-            <option value="cold">Κρύο (-10°C και κάτω)</option>
-            <option value="rainy">Βροχή/χιόνι</option>
-          </select>
+          <input type="number" id="fuelPrice" placeholder="55.50" min="1" step="0.01" inputmode="decimal">
         </div>
       </div>
 
-      <button class="calculate-btn" onclick="calculateFuel()">Υπολογισμός κατανάλωσης καυσίμου</button>
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-calculate">Υπολογισμός κατανάλωσης καυσίμου</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" class="reset-btn" id="btn-reset">Reset</button>
+            <button type="button" class="share-btn" id="btn-share">Share</button>
+            <button type="button" class="export-btn" id="btn-pdf">Export PDF</button>
+            <button type="button" class="csv-btn" id="btn-csv">Export CSV</button>
+          </div>
+        </details>
+      </div>
 
-      <div id="results" class="results" style="display: none;">
+      <details class="optional-fields">
+        <summary>More options</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="fuelType">Τύπος καυσίμου</label>
+            <select id="fuelType">
+              <option value="petrol">Βενζίνη AI-92</option>
+              <option value="petrol95">Βενζίνη AI-95</option>
+              <option value="petrol98">Βενζίνη AI-98</option>
+              <option value="diesel">Πετρέλαιο</option>
+              <option value="lpg">Αέριο (προπάνιο-βουτάνιο)</option>
+              <option value="cng">Αέριο (μεθάνιο)</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="drivingStyle">Στυλ οδήγησης</label>
+            <select id="drivingStyle">
+              <option value="economical">Οικονομικό</option>
+              <option value="normal" selected>Κανονικό</option>
+              <option value="sport">Αθλητικό</option>
+              <option value="aggressive">Επιθετικό</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="roadConditions">Συνθήκες οδού</label>
+            <select id="roadConditions">
+              <option value="highway">Αυτοκινητόδρομος</option>
+              <option value="city">Πόλη</option>
+              <option value="mixed" selected>Μικτός κύκλος</option>
+              <option value="offroad">Εκτός δρόμου</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="load">Φορτίο οχήματος</label>
+            <select id="load">
+              <option value="empty">Άδειο</option>
+              <option value="light">Ελαφρύ φορτίο</option>
+              <option value="medium">Μέτριο φορτίο</option>
+              <option value="heavy">Πλήρες φορτίο</option>
+            </select>
+          </div>
+          <div class="input-group">
+            <label for="climate">Κλιματικές συνθήκες</label>
+            <select id="climate">
+              <option value="normal">Κανονικές</option>
+              <option value="hot">Ζέστη (+30°C και άνω)</option>
+              <option value="cold">Κρύο (-10°C και κάτω)</option>
+              <option value="rainy">Βροχή/χιόνι</option>
+            </select>
+          </div>
+        </div>
+      </details>
+
+      <div id="results" class="results hidden">
         <h3>Αποτελέσματα υπολογισμού</h3>
+        <div class="result-hero">
+          <div class="result-value" id="heroCostPerKm">—</div>
+          <div class="result-label">Κόστος ανά 1 km</div>
+        </div>
+        <p class="result-disclaimer">Approximate fuel cost estimate, not a lab measurement.</p>
         <div class="result-grid">
           <div class="result-item">
-            <div class="result-value" id="totalFuel">0 л</div>
+            <div class="result-value" id="totalFuel">—</div>
             <div class="result-label">Συνολική κατανάλωση καυσίμου</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="totalCost">0 ₽</div>
+            <div class="result-value" id="totalCost">—</div>
             <div class="result-label">Κόστος καυσίμου</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="costPerKm">0 ₽/км</div>
+            <div class="result-value" id="costPerKm">—</div>
             <div class="result-label">Κόστος ανά 1 km</div>
           </div>
           <div class="result-item">
-            <div class="result-value" id="adjustedConsumption">0 л/100км</div>
+            <div class="result-value" id="adjustedConsumption">—</div>
             <div class="result-label">Προσαρμοσμένη κατανάλωση</div>
           </div>
         </div>
+        <p id="formulaPlain" class="formula-plain"></p>
+        <canvas id="fuelChart" style="max-height:280px;margin-top:16px;width:100%;"></canvas>
       </div>
     </div>
 
-    <div id="comparison" class="comparison" style="display: none;">
+    <div id="comparison" class="comparison hidden">
       <h3>Σύγκριση με άλλα στυλ οδήγησης</h3>
       <table class="comparison-table">
         <thead>
@@ -368,9 +374,13 @@
             <th>Εξοικονόμηση/υπερκατανάλωση</th>
           </tr>
         </thead>
-        <tbody id="comparisonBody">
-        </tbody>
+        <tbody id="comparisonBody"></tbody>
       </table>
+    </div>
+
+    <div class="history" id="history">
+      <h3>Recent calculations</h3>
+      <div id="historyList"></div>
     </div>
 
     <div class="fuel-efficiency">
@@ -403,182 +413,10 @@
       
     </div>
 
-    <!-- Вставляем переводы в JavaScript объект -->
     <script>
-      // Глобальная переменная с переводами
-      window.fuelCalculatorTranslations = {"meta":{"title":"Αριθμομηχανή Καυσίμου — Serpmonn Logistics","description":"Υπολογισμός κατανάλωσης καυσίμου, κόστους ταξιδιού και εξοικονομήσεων","twitterDescription":"Υπολογισμός κατανάλωσης καυσίμου για οδηγούς"},"breadcrumb":{"tools":"Εργαλεία","fuelCalculator":"Αριθμομηχανή Καυσίμου"},"page":{"title":"⛽ Αριθμομηχανή Καυσίμου","form":{"title":"Εισαγάγετε παραμέτρους ταξιδιού","distance":"Απόσταση (km)","fuelConsumption":"Κατανάλωση καυσίμου (L/100 km)","fuelPrice":"Τιμή καυσίμου (₽/L)","fuelType":"Τύπος καυσίμου","drivingStyle":"Στυλ οδήγησης","roadConditions":"Συνθήκες οδού","load":"Φορτίο οχήματος","climate":"Κλιματικές συνθήκες","calculate":"Υπολογισμός κατανάλωσης καυσίμου"},"fuelTypes":{"petrol":"Βενζίνη AI-92","petrol95":"Βενζίνη AI-95","petrol98":"Βενζίνη AI-98","diesel":"Πετρέλαιο","lpg":"Αέριο (προπάνιο-βουτάνιο)","cng":"Αέριο (μεθάνιο)"},"drivingStyles":{"economical":"Οικονομικό","normal":"Κανονικό","sport":"Αθλητικό","aggressive":"Επιθετικό"},"roadConditions":{"highway":"Αυτοκινητόδρομος","city":"Πόλη","mixed":"Μικτός κύκλος","offroad":"Εκτός δρόμου"},"loads":{"empty":"Άδειο","light":"Ελαφρύ φορτίο","medium":"Μέτριο φορτίο","heavy":"Πλήρες φορτίο"},"climates":{"normal":"Κανονικές","hot":"Ζέστη (+30°C και άνω)","cold":"Κρύο (-10°C και κάτω)","rainy":"Βροχή/χιόνι"},"results":{"title":"Αποτελέσματα υπολογισμού","totalFuel":"Συνολική κατανάλωση καυσίμου","totalCost":"Κόστος καυσίμου","costPerKm":"Κόστος ανά 1 km","adjustedConsumption":"Προσαρμοσμένη κατανάλωση"},"comparison":{"title":"Σύγκριση με άλλα στυλ οδήγησης","drivingStyle":"Στυλ οδήγησης","consumption":"Κατανάλωση (L/100 km)","cost":"Κόστος (₽)","savings":"Εξοικονόμηση/υπερκατανάλωση"},"fuelEfficiency":{"title":"🌱 Αποδοτικότητα καυσίμου","tips":["Ομαλή επιτάχυνση και πέδηση εξοικονομεί 10-15% καύσιμο","Διατήρηση βέλτιστης ταχύτητας 80-90 km/h στον αυτοκινητόδρομο","Εγκαίρια αλλαγή ταχυτήτων (2000-2500 σ.α.λ.)","Έλεγχος πίεσης ελαστικών κάθε 2 εβδομάδες","Αφαιρέστε το πλεονάζον φορτίο από τον πορτ-μπαγκάζ"]},"advice":{"title":"💡 Χρήσιμες συμβουλές","tips":["Χρησιμοποιήστε cruise control σε επίπεδες διαδρομές","Κλείστε τα παράθυρα σε υψηλές ταχύτητες","Σχεδιάστε τη διαδρομή σας για να αποφύγετε κυκλοφοριακή συμφόρηση","Συντηρείτε τακτικά τον κινητήρα και το σύστημα καυσίμου","Χρησιμοποιήστε ποιοτικό καύσιμο με τον συνιστώμενο αριθμό οκτανίων"]}},"ads":{"closeAria":"Κλείσιμο διαφήμισης"}};
+      window.fuelCalculatorTranslations = {"meta":{"title":"Αριθμομηχανή Καυσίμου — Serpmonn Logistics","description":"Υπολογισμός κατανάλωσης καυσίμου, κόστους ταξιδιού και εξοικονομήσεων","twitterDescription":"Υπολογισμός κατανάλωσης καυσίμου για οδηγούς"},"breadcrumb":{"tools":"Εργαλεία","fuelCalculator":"Αριθμομηχανή Καυσίμου"},"page":{"title":"⛽ Αριθμομηχανή Καυσίμου","form":{"title":"Εισαγάγετε παραμέτρους ταξιδιού","distance":"Απόσταση (km)","fuelConsumption":"Κατανάλωση καυσίμου (L/100 km)","fuelPrice":"Τιμή καυσίμου (₽/L)","fuelType":"Τύπος καυσίμου","drivingStyle":"Στυλ οδήγησης","roadConditions":"Συνθήκες οδού","load":"Φορτίο οχήματος","climate":"Κλιματικές συνθήκες","calculate":"Υπολογισμός κατανάλωσης καυσίμου","optionalSummary":"More options"},"fuelTypes":{"petrol":"Βενζίνη AI-92","petrol95":"Βενζίνη AI-95","petrol98":"Βενζίνη AI-98","diesel":"Πετρέλαιο","lpg":"Αέριο (προπάνιο-βουτάνιο)","cng":"Αέριο (μεθάνιο)"},"drivingStyles":{"economical":"Οικονομικό","normal":"Κανονικό","sport":"Αθλητικό","aggressive":"Επιθετικό"},"roadConditions":{"highway":"Αυτοκινητόδρομος","city":"Πόλη","mixed":"Μικτός κύκλος","offroad":"Εκτός δρόμου"},"loads":{"empty":"Άδειο","light":"Ελαφρύ φορτίο","medium":"Μέτριο φορτίο","heavy":"Πλήρες φορτίο"},"climates":{"normal":"Κανονικές","hot":"Ζέστη (+30°C και άνω)","cold":"Κρύο (-10°C και κάτω)","rainy":"Βροχή/χιόνι"},"results":{"title":"Αποτελέσματα υπολογισμού","totalFuel":"Συνολική κατανάλωση καυσίμου","totalCost":"Κόστος καυσίμου","costPerKm":"Κόστος ανά 1 km","adjustedConsumption":"Προσαρμοσμένη κατανάλωση"},"comparison":{"title":"Σύγκριση με άλλα στυλ οδήγησης","drivingStyle":"Στυλ οδήγησης","consumption":"Κατανάλωση (L/100 km)","cost":"Κόστος (₽)","savings":"Εξοικονόμηση/υπερκατανάλωση"},"fuelEfficiency":{"title":"🌱 Αποδοτικότητα καυσίμου","tips":["Ομαλή επιτάχυνση και πέδηση εξοικονομεί 10-15% καύσιμο","Διατήρηση βέλτιστης ταχύτητας 80-90 km/h στον αυτοκινητόδρομο","Εγκαίρια αλλαγή ταχυτήτων (2000-2500 σ.α.λ.)","Έλεγχος πίεσης ελαστικών κάθε 2 εβδομάδες","Αφαιρέστε το πλεονάζον φορτίο από τον πορτ-μπαγκάζ"]},"advice":{"title":"💡 Χρήσιμες συμβουλές","tips":["Χρησιμοποιήστε cruise control σε επίπεδες διαδρομές","Κλείστε τα παράθυρα σε υψηλές ταχύτητες","Σχεδιάστε τη διαδρομή σας για να αποφύγετε κυκλοφοριακή συμφόρηση","Συντηρείτε τακτικά τον κινητήρα και το σύστημα καυσίμου","Χρησιμοποιήστε ποιοτικό καύσιμο με τον συνιστώμενο αριθμό οκτανίων"]},"lead":"Estimate fuel use and trip cost — including driving style, road and load.","disclaimer":"Approximate fuel cost estimate, not a lab measurement.","formulaPlain":"Consumption ≈ base × style × road × load × climate × fuel type. Total: {fuel} L for {distance} km ≈ {cost}.","shareCopied":"Calculation link copied","exportNoResults":"Run a calculation first","exportFailed":"PDF export failed","actions":{"more":"More","reset":"Reset","share":"Share","pdf":"Export PDF","csv":"Export CSV"},"history":{"title":"Recent calculations","empty":"Empty so far"},"errors":{"fillRequired":"Fill distance, consumption and fuel price","positive":"Values must be greater than zero"}},"ads":{"closeAria":"Κλείσιμο διαφήμισης"}};
     </script>
-
-    <script>
-      function calculateFuel() {
-        // Получаем значения из формы
-        const distance = parseFloat(document.getElementById('distance').value);
-        const fuelConsumption = parseFloat(document.getElementById('fuelConsumption').value);
-        const fuelPrice = parseFloat(document.getElementById('fuelPrice').value);
-        const fuelType = document.getElementById('fuelType').value;
-        const drivingStyle = document.getElementById('drivingStyle').value;
-        const roadConditions = document.getElementById('roadConditions').value;
-        const load = document.getElementById('load').value;
-        const climate = document.getElementById('climate').value;
-
-        if (!distance || !fuelConsumption || !fuelPrice) {
-          alert('Пожалуйста, заполните все обязательные поля');
-          return;
-        }
-
-        // Коэффициенты по стилю вождения
-        const drivingStyleMultipliers = {
-          'economical': 0.8,
-          'normal': 1.0,
-          'sport': 1.3,
-          'aggressive': 1.6
-        };
-
-        // Коэффициенты по дорожным условиям
-        const roadConditionsMultipliers = {
-          'highway': 0.9,
-          'city': 1.2,
-          'mixed': 1.0,
-          'offroad': 1.5
-        };
-
-        // Коэффициенты по загрузке
-        const loadMultipliers = {
-          'empty': 1.0,
-          'light': 1.05,
-          'medium': 1.15,
-          'heavy': 1.3
-        };
-
-        // Коэффициенты по климату
-        const climateMultipliers = {
-          'normal': 1.0,
-          'hot': 1.1,
-          'cold': 1.15,
-          'rainy': 1.08
-        };
-
-        // Коэффициенты по типу топлива
-        const fuelTypeMultipliers = {
-          'petrol': 1.0,
-          'petrol95': 1.02,
-          'petrol98': 1.05,
-          'diesel': 0.9,
-          'lpg': 1.2,
-          'cng': 1.1
-        };
-
-        // Расчёт скорректированного расхода
-        const adjustedConsumption = fuelConsumption * 
-          drivingStyleMultipliers[drivingStyle] * 
-          roadConditionsMultipliers[roadConditions] * 
-          loadMultipliers[load] * 
-          climateMultipliers[climate] * 
-          fuelTypeMultipliers[fuelType];
-
-        // Расчёт общего расхода и стоимости
-        const totalFuel = (adjustedConsumption * distance) / 100;
-        const totalCost = totalFuel * fuelPrice;
-        const costPerKm = totalCost / distance;
-
-        // Отображаем результаты
-        document.getElementById('totalFuel').textContent = totalFuel.toFixed(2) + ' л';
-        document.getElementById('totalCost').textContent = Math.round(totalCost).toLocaleString() + ' ₽';
-        document.getElementById('costPerKm').textContent = costPerKm.toFixed(2) + ' ₽/км';
-        document.getElementById('adjustedConsumption').textContent = adjustedConsumption.toFixed(1) + ' л/100км';
-
-        // Показываем результаты
-        document.getElementById('results').style.display = 'block';
-
-        // Показываем сравнение
-        showComparison(distance, fuelConsumption, fuelPrice, fuelType, roadConditions, load, climate);
-      }
-
-      function showComparison(distance, baseConsumption, fuelPrice, fuelType, roadConditions, load, climate) {
-        const comparisonBody = document.getElementById('comparisonBody');
-        
-        const styles = [
-          { name: window.fuelCalculatorTranslations.page.drivingStyles.economical, multiplier: 0.8, color: '#28a745' },
-          { name: window.fuelCalculatorTranslations.page.drivingStyles.normal, multiplier: 1.0, color: '#007bff' },
-          { name: window.fuelCalculatorTranslations.page.drivingStyles.sport, multiplier: 1.3, color: '#ffc107' },
-          { name: window.fuelCalculatorTranslations.page.drivingStyles.aggressive, multiplier: 1.6, color: '#dc3545' }
-        ];
-
-        let html = '';
-        const baseCost = (baseConsumption * distance / 100) * fuelPrice;
-
-        styles.forEach(style => {
-          const adjustedConsumption = baseConsumption * style.multiplier * 
-            getRoadMultiplier(roadConditions) * 
-            getLoadMultiplier(load) * 
-            getClimateMultiplier(climate) * 
-            getFuelTypeMultiplier(fuelType);
-          
-          const totalFuel = (adjustedConsumption * distance) / 100;
-          const totalCost = totalFuel * fuelPrice;
-          const savings = baseCost - totalCost;
-          const savingsText = savings > 0 ? 
-            `+${Math.round(savings).toLocaleString()} ₽` : 
-            `${Math.round(savings).toLocaleString()} ₽`;
-
-          html += `
-            <tr>
-              <td style="color: ${style.color}; font-weight: 600;">${style.name}</td>
-              <td>${adjustedConsumption.toFixed(1)} л/100км</td>
-              <td>${Math.round(totalCost).toLocaleString()} ₽</td>
-              <td style="color: ${savings > 0 ? '#28a745' : '#dc3545'}; font-weight: 600;">${savingsText}</td>
-            </tr>
-          `;
-        });
-
-        comparisonBody.innerHTML = html;
-        document.getElementById('comparison').style.display = 'block';
-      }
-
-      function getRoadMultiplier(roadConditions) {
-        const multipliers = {
-          'highway': 0.9,
-          'city': 1.2,
-          'mixed': 1.0,
-          'offroad': 1.5
-        };
-        return multipliers[roadConditions] || 1.0;
-      }
-
-      function getLoadMultiplier(load) {
-        const multipliers = {
-          'empty': 1.0,
-          'light': 1.05,
-          'medium': 1.15,
-          'heavy': 1.3
-        };
-        return multipliers[load] || 1.0;
-      }
-
-      function getClimateMultiplier(climate) {
-        const multipliers = {
-          'normal': 1.0,
-          'hot': 1.1,
-          'cold': 1.15,
-          'rainy': 1.08
-        };
-        return multipliers[climate] || 1.0;
-      }
-
-      function getFuelTypeMultiplier(fuelType) {
-        const multipliers = {
-          'petrol': 1.0,
-          'petrol95': 1.02,
-          'petrol98': 1.05,
-          'diesel': 0.9,
-          'lpg': 1.2,
-          'cng': 1.1
-        };
-        return multipliers[fuelType] || 1.0;
-      }
-    </script>
-
-    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/fuel-calculator.js?v=2"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 

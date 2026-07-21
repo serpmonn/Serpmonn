@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Calculați amprenta ecologică a produselor alimentare">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/ro/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Adăugați produse în coș
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Adăugați alt produs
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Calculați amprenta ecologică
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Calculați amprenta ecologică
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Rezultatele calculului
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg echivalent CO₂</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Evaluare ecologică (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Calculator de Amprentă Ecologică a Produselor — SerpMonn","meta_description":"Calculați amprenta ecologică a produselor alimentare. Aflați despre amprenta de carbon, amprenta hidrică și impactul asupra mediului al coșului de cumpărături.","meta_keywords":"amprenta ecologică a produselor, amprenta de carbon alimente, amprenta hidrică a produselor, calculator ecologic, amprenta de carbon nutriție","og_title":"Calculator de Amprentă Ecologică a Produselor — SerpMonn","og_description":"Calculați amprenta ecologică a produselor alimentare. Aflați despre amprenta de carbon, amprenta hidrică și impactul asupra mediului.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/ro/eco-calculators/product-footprint/","vk_title":"Calculator de Amprentă Ecologică a Produselor","vk_description":"Calculați amprenta ecologică a produselor alimentare","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Acasă","tools":"Instrumente","current":"Calculator de Amprentă Produse"},"header":{"title":"🌱 Calculator de Amprentă Ecologică a Produselor","subtitle":"Aflați impactul asupra mediului al produselor din coșul dvs."},"calculator":{"section_title":"🛒 Adăugați produse în coș"},"buttons":{"add_product":"➕ Adăugați alt produs","calculate":"🧮 Calculați amprenta ecologică","share_vk":"📘 Distribuiți pe VKontakte","share_telegram":"📱 Distribuiți pe Telegram"},"results":{"title":"📊 Rezultatele calculului","carbon_label":"kg echivalent CO₂","water_label":"litri de apă","land_label":"m² de teren","eco_score_label":"Evaluare ecologică (1-10)"},"comparison":{"title":"🔍 Comparație cu alternative"},"recommendations":{"title":"💡 Recomandări pentru reducerea amprentei ecologice"},"errors":{"no_products":"Adăugați cel puțin un produs pentru calcul.","invalid_quantity":"Introduceți o cantitate validă pentru produs: {product}","calculation_error":"A apărut o eroare în timpul calculului. Vă rugăm să încercați din nou.","select_product_and_qty":"Vă rugăm să selectați un produs și să introduceți o cantitate"},"success":{"calculation_complete":"Calcul finalizat cu succes!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"buc","pack":"pachet"},"products":{"beef":"Vită","chicken":"Pui","pork":"Porc","fish":"Pește","eggs":"Ouă","milk":"Lapte","cheese":"Brânză","yogurt":"Iaurt","rice":"Orez","pasta":"Paste","bread":"Pâine","potatoes":"Cartofi","tomatoes":"Roșii","apples":"Mere","bananas":"Banane","coffee":"Cafea","tea":"Ceai","chocolate":"Ciocolată","sugar":"Zahăr","olive_oil":"Ulei de măsline","select_product":"Selectați un produs...","lamb":"Miel","wheat":"Grâu","vegetables":"Legume (amestecate)","fruits":"Fructe (amestecate)","nuts":"Nuci","turkey":"Curcan","duck":"Rață","butter":"Unt","salmon":"Somon","tuna":"Ton","shrimp":"Creveți","cucumbers":"Castraveți","carrots":"Morcovi","oranges":"Portocale","grapes":"Struguri","strawberries":"Căpșuni","quinoa":"Quinoa","lentils":"Linte","chickpeas":"Năut","wine":"Vin","bread_white":"Pâine albă","bread_rye":"Pâine de secară","buckwheat":"Hrișcă","oats":"Fulgi de ovăz","barley":"Orz perlat","rye":"Secară (cereale)","sunflower_oil":"Ulei de floarea-soarelui","kefir":"Kefir","yogurt_plain":"Iaurt natural","cottage_cheese":"Brânză de vaci","sour_cream":"Smântână","cabbage":"Varză","onions":"Cepe","garlic":"Usturoi","beets":"Sfeclă","pears":"Pere","peas":"Mazăre","beans":"Fasole","kvass":"Kvas","soda":"Băutură carbogazoasă","beer":"Bere"},"ads":{"closeAria":"Închideți anunțul"},"js":{"quantityPlaceholder":"Cantitate","selectedProductsTitle":"Produse selectate:","remove":"Elimină","unitLabel":"Unitate: {unit}","loading":"Se calculează amprenta ecologică...","errorPrefix":"Eroare:","comparisonCurrentFootprint":"Amprenta actuală: {value} kg CO₂","comparisonAlternatives":"Alternative:","comparisonSavings":"Economie: ~{value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"Produse cu amprentă ecologică ridicată","description":"Luați în considerare alternative pentru: {products}"},"reduceMeat":{"title":"Reducerea consumului de carne","description":"Încercați să înlocuiți carnea cu proteine vegetale de 1-2 ori pe săptămână"},"dairyAlternatives":{"title":"Alternative la produsele lactate","description":"Încercați laptele și brânzeturile vegetale"},"buyLocal":{"title":"Cumpărați produse locale de sezon","description":"Aceasta reduce amprenta transportului și sprijină producătorii locali"},"planPurchases":{"title":"Planificați-vă cumpărăturile","description":"Evitați risipa alimentară — cumpărați doar ceea ce aveți nevoie"}},"alternatives":{"plant_proteins":"proteine vegetale","legumes":"leguminoase","nuts":"nuci","poultry":"păsări","fish":"pește","seaweed":"alge","plant_milk":"lapte vegetal","oat_milk":"lapte de ovăz","plant_cheese":"brânzeturi vegetale","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"hrișcă","oats_grain":"ovăz","barley_grain":"orz","rye_grain":"secară","sweet_potato":"cartof dulce","turnip":"ridichi","seasonal_vegetables":"legume de sezon","local_seasonal_vegetables":"legume locale de sezon","local_seasonal_fruits":"fructe locale de sezon","local_fruits":"fructe locale","tea":"ceai","chicory":"cicoare","fruits":"fructe","seeds":"semințe","chicken":"pui","turkey":"curcan","plant_oils":"uleiuri vegetale","avocado":"avocado","plant_yogurt":"iaurturi vegetale","kefir":"kefir","plant_omega3":"omega-3 vegetal","flax_seeds":"semințe de in","other_fish":"alți pești","other_seafood":"alte fructe de mare","canned_tomatoes":"roșii conservate","zucchini":"dovlecel","seasonal_root_vegetables":"legume rădăcinoase de sezon","beets":"sfeclă","other_root_vegetables":"alte legume rădăcinoase","seasonal_citrus":"citrice de sezon","seasonal_berries":"fructe de pădure de sezon","other_grains":"alte cereale","other_pseudograins":"alte pseudocereale","beans":"fasole","peas":"mazăre","chickpeas":"năut","lentils":"linte","plant_drinks":"băuturi vegetale","local_herbs":"ierburi locale","local_drinks":"băuturi locale","non_alcoholic_options":"opțiuni fără alcool","plant_desserts":"deserturi vegetale","honey":"miere","stevia":"stevia","rye_bread":"pâine de secară","whole_grain":"integral","pearl_barley":"orz perlat","oatmeal":"fulgi de ovăz","millet":"mei","whole_grain_pasta":"paste integrale","wheat":"grâu","olive_oil":"ulei de măsline","sunflower_oil":"ulei de floarea-soarelui","reduce_amount":"reduceți cantitatea","plain_yogurt":"iaurt natural","yogurt":"iaurt","reduce_fat":"reduceți grăsimile","other_seasonal_vegetables":"alte legume de sezon","local_apples":"mere locale","apples":"mere","herbal_teas":"ceaiuri din plante","water":"apă","compote":"compot","fruit_drink":"băutură de fructe","kvass":"kvas","onion":"ceapă"}};
+        window.i18n = {"title":"Calculator de Amprentă Ecologică a Produselor — SerpMonn","meta_description":"Calculați amprenta ecologică a produselor alimentare. Aflați despre amprenta de carbon, amprenta hidrică și impactul asupra mediului al coșului de cumpărături.","meta_keywords":"amprenta ecologică a produselor, amprenta de carbon alimente, amprenta hidrică a produselor, calculator ecologic, amprenta de carbon nutriție","og_title":"Calculator de Amprentă Ecologică a Produselor — SerpMonn","og_description":"Calculați amprenta ecologică a produselor alimentare. Aflați despre amprenta de carbon, amprenta hidrică și impactul asupra mediului.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/ro/eco-calculators/product-footprint/","vk_title":"Calculator de Amprentă Ecologică a Produselor","vk_description":"Calculați amprenta ecologică a produselor alimentare","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Acasă","tools":"Instrumente","current":"Calculator de Amprentă Produse"},"header":{"title":"🌱 Calculator de Amprentă Ecologică a Produselor","subtitle":"Aflați impactul asupra mediului al produselor din coșul dvs."},"calculator":{"section_title":"🛒 Adăugați produse în coș","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Adăugați alt produs","calculate":"🧮 Calculați amprenta ecologică","share_vk":"📘 Distribuiți pe VKontakte","share_telegram":"📱 Distribuiți pe Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Rezultatele calculului","carbon_label":"kg echivalent CO₂","water_label":"litri de apă","land_label":"m² de teren","eco_score_label":"Evaluare ecologică (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Comparație cu alternative"},"recommendations":{"title":"💡 Recomandări pentru reducerea amprentei ecologice"},"errors":{"no_products":"Adăugați cel puțin un produs pentru calcul.","invalid_quantity":"Introduceți o cantitate validă pentru produs: {product}","calculation_error":"A apărut o eroare în timpul calculului. Vă rugăm să încercați din nou.","select_product_and_qty":"Vă rugăm să selectați un produs și să introduceți o cantitate"},"success":{"calculation_complete":"Calcul finalizat cu succes!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"buc","pack":"pachet"},"products":{"beef":"Vită","chicken":"Pui","pork":"Porc","fish":"Pește","eggs":"Ouă","milk":"Lapte","cheese":"Brânză","yogurt":"Iaurt","rice":"Orez","pasta":"Paste","bread":"Pâine","potatoes":"Cartofi","tomatoes":"Roșii","apples":"Mere","bananas":"Banane","coffee":"Cafea","tea":"Ceai","chocolate":"Ciocolată","sugar":"Zahăr","olive_oil":"Ulei de măsline","select_product":"Selectați un produs...","lamb":"Miel","wheat":"Grâu","vegetables":"Legume (amestecate)","fruits":"Fructe (amestecate)","nuts":"Nuci","turkey":"Curcan","duck":"Rață","butter":"Unt","salmon":"Somon","tuna":"Ton","shrimp":"Creveți","cucumbers":"Castraveți","carrots":"Morcovi","oranges":"Portocale","grapes":"Struguri","strawberries":"Căpșuni","quinoa":"Quinoa","lentils":"Linte","chickpeas":"Năut","wine":"Vin","bread_white":"Pâine albă","bread_rye":"Pâine de secară","buckwheat":"Hrișcă","oats":"Fulgi de ovăz","barley":"Orz perlat","rye":"Secară (cereale)","sunflower_oil":"Ulei de floarea-soarelui","kefir":"Kefir","yogurt_plain":"Iaurt natural","cottage_cheese":"Brânză de vaci","sour_cream":"Smântână","cabbage":"Varză","onions":"Cepe","garlic":"Usturoi","beets":"Sfeclă","pears":"Pere","peas":"Mazăre","beans":"Fasole","kvass":"Kvas","soda":"Băutură carbogazoasă","beer":"Bere"},"ads":{"closeAria":"Închideți anunțul"},"js":{"quantityPlaceholder":"Cantitate","selectedProductsTitle":"Produse selectate:","remove":"Elimină","unitLabel":"Unitate: {unit}","loading":"Se calculează amprenta ecologică...","errorPrefix":"Eroare:","comparisonCurrentFootprint":"Amprenta actuală: {value} kg CO₂","comparisonAlternatives":"Alternative:","comparisonSavings":"Economie: ~{value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Produse cu amprentă ecologică ridicată","description":"Luați în considerare alternative pentru: {products}"},"reduceMeat":{"title":"Reducerea consumului de carne","description":"Încercați să înlocuiți carnea cu proteine vegetale de 1-2 ori pe săptămână"},"dairyAlternatives":{"title":"Alternative la produsele lactate","description":"Încercați laptele și brânzeturile vegetale"},"buyLocal":{"title":"Cumpărați produse locale de sezon","description":"Aceasta reduce amprenta transportului și sprijină producătorii locali"},"planPurchases":{"title":"Planificați-vă cumpărăturile","description":"Evitați risipa alimentară — cumpărați doar ceea ce aveți nevoie"}},"alternatives":{"plant_proteins":"proteine vegetale","legumes":"leguminoase","nuts":"nuci","poultry":"păsări","fish":"pește","seaweed":"alge","plant_milk":"lapte vegetal","oat_milk":"lapte de ovăz","plant_cheese":"brânzeturi vegetale","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"hrișcă","oats_grain":"ovăz","barley_grain":"orz","rye_grain":"secară","sweet_potato":"cartof dulce","turnip":"ridichi","seasonal_vegetables":"legume de sezon","local_seasonal_vegetables":"legume locale de sezon","local_seasonal_fruits":"fructe locale de sezon","local_fruits":"fructe locale","tea":"ceai","chicory":"cicoare","fruits":"fructe","seeds":"semințe","chicken":"pui","turkey":"curcan","plant_oils":"uleiuri vegetale","avocado":"avocado","plant_yogurt":"iaurturi vegetale","kefir":"kefir","plant_omega3":"omega-3 vegetal","flax_seeds":"semințe de in","other_fish":"alți pești","other_seafood":"alte fructe de mare","canned_tomatoes":"roșii conservate","zucchini":"dovlecel","seasonal_root_vegetables":"legume rădăcinoase de sezon","beets":"sfeclă","other_root_vegetables":"alte legume rădăcinoase","seasonal_citrus":"citrice de sezon","seasonal_berries":"fructe de pădure de sezon","other_grains":"alte cereale","other_pseudograins":"alte pseudocereale","beans":"fasole","peas":"mazăre","chickpeas":"năut","lentils":"linte","plant_drinks":"băuturi vegetale","local_herbs":"ierburi locale","local_drinks":"băuturi locale","non_alcoholic_options":"opțiuni fără alcool","plant_desserts":"deserturi vegetale","honey":"miere","stevia":"stevia","rye_bread":"pâine de secară","whole_grain":"integral","pearl_barley":"orz perlat","oatmeal":"fulgi de ovăz","millet":"mei","whole_grain_pasta":"paste integrale","wheat":"grâu","olive_oil":"ulei de măsline","sunflower_oil":"ulei de floarea-soarelui","reduce_amount":"reduceți cantitatea","plain_yogurt":"iaurt natural","yogurt":"iaurt","reduce_fat":"reduceți grăsimile","other_seasonal_vegetables":"alte legume de sezon","local_apples":"mere locale","apples":"mere","herbal_teas":"ceaiuri din plante","water":"apă","compote":"compot","fruit_drink":"băutură de fructe","kvass":"kvas","onion":"ceapă"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

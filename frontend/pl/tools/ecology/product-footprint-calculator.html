@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Oblicz ślad ekologiczny swoich produktów spożywczych">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/pl/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Dodaj produkty do koszyka
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Dodaj kolejny produkt
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Oblicz ślad ekologiczny
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Oblicz ślad ekologiczny
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Wyniki obliczeń
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg ekwiwalentu CO₂</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Ocena ekologiczna (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Kalkulator Śladu Ekologicznego Produktów — SerpMonn","meta_description":"Oblicz ślad ekologiczny swoich produktów spożywczych. Dowiedz się o śladzie węglowym, śladzie wodnym i wpływie na środowisko swojego koszyka zakupowego.","meta_keywords":"ślad ekologiczny produktów, ślad węglowy jedzenia, ślad wodny produktów, kalkulator ekologiczny, ślad węglowy żywienia","og_title":"Kalkulator Śladu Ekologicznego Produktów — SerpMonn","og_description":"Oblicz ślad ekologiczny swoich produktów spożywczych. Dowiedz się o śladzie węglowym, śladzie wodnym i wpływie na środowisko.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/pl/eco-calculators/product-footprint/","vk_title":"Kalkulator Śladu Ekologicznego Produktów","vk_description":"Oblicz ślad ekologiczny swoich produktów spożywczych","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Strona główna","tools":"Narzędzia","current":"Kalkulator Śladu Produktów"},"header":{"title":"🌱 Kalkulator Śladu Ekologicznego Produktów","subtitle":"Dowiedz się, jaki wpływ na środowisko mają produkty w Twoim koszyku"},"calculator":{"section_title":"🛒 Dodaj produkty do koszyka"},"buttons":{"add_product":"➕ Dodaj kolejny produkt","calculate":"🧮 Oblicz ślad ekologiczny","share_vk":"📘 Udostępnij na VKontakte","share_telegram":"📱 Udostępnij na Telegram"},"results":{"title":"📊 Wyniki obliczeń","carbon_label":"kg ekwiwalentu CO₂","water_label":"litrów wody","land_label":"m² ziemi","eco_score_label":"Ocena ekologiczna (1-10)"},"comparison":{"title":"🔍 Porównanie z alternatywami"},"recommendations":{"title":"💡 Zalecenia dotyczące zmniejszenia śladu ekologicznego"},"errors":{"no_products":"Dodaj co najmniej jeden produkt do obliczeń.","invalid_quantity":"Wprowadź prawidłową ilość dla produktu: {product}","calculation_error":"Wystąpił błąd podczas obliczeń. Spróbuj ponownie.","select_product_and_qty":"Proszę wybrać produkt i wprowadzić ilość"},"success":{"calculation_complete":"Obliczenia zakończone pomyślnie!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"szt","pack":"opakowanie"},"products":{"beef":"Wołowina","chicken":"Kurczak","pork":"Wieprzowina","fish":"Ryba","eggs":"Jaja","milk":"Mleko","cheese":"Ser","yogurt":"Jogurt","rice":"Ryż","pasta":"Makaron","bread":"Chleb","potatoes":"Ziemniaki","tomatoes":"Pomidory","apples":"Jabłka","bananas":"Banany","coffee":"Kawa","tea":"Herbata","chocolate":"Czekolada","sugar":"Cukier","olive_oil":"Oliwa z oliwek","select_product":"Wybierz produkt...","lamb":"Jagnięcina","wheat":"Pszenica","vegetables":"Warzywa (mieszane)","fruits":"Owoce (mieszane)","nuts":"Orzechy","turkey":"Indyk","duck":"Kaczka","butter":"Masło","salmon":"Łosoś","tuna":"Tuńczyk","shrimp":"Krewetki","cucumbers":"Ogórki","carrots":"Marchew","oranges":"Pomarańcze","grapes":"Winogrona","strawberries":"Truskawki","quinoa":"Komosa ryżowa","lentils":"Soczewica","chickpeas":"Ciecierzyca","wine":"Wino","bread_white":"Chleb biały","bread_rye":"Chleb żytni","buckwheat":"Gryka","oats":"Owsianka","barley":"Kasza jęczmienna","rye":"Żyto (ziarno)","sunflower_oil":"Olej słonecznikowy","kefir":"Kefir","yogurt_plain":"Jogurt naturalny","cottage_cheese":"Twaróg","sour_cream":"Śmietana","cabbage":"Kapusta","onions":"Cebule","garlic":"Czosnek","beets":"Buraki","pears":"Gruszki","peas":"Groch","beans":"Fasola","kvass":"Kwas chlebowy","soda":"Napój gazowany","beer":"Piwo"},"ads":{"closeAria":"Zamknij reklamę"},"js":{"quantityPlaceholder":"Ilość","selectedProductsTitle":"Wybrane produkty:","remove":"Usuń","unitLabel":"Jednostka: {unit}","loading":"Obliczanie śladu ekologicznego...","errorPrefix":"Błąd:","comparisonCurrentFootprint":"Obecny ślad: {value} kg CO₂","comparisonAlternatives":"Alternatywy:","comparisonSavings":"Oszczędność: ~{value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"Produkty o wysokim śladzie ekologicznym","description":"Rozważ alternatywy dla: {products}"},"reduceMeat":{"title":"Ograniczenie spożycia mięsa","description":"Spróbuj zastąpić mięso białkiem roślinnym 1-2 razy w tygodniu"},"dairyAlternatives":{"title":"Alternatywy dla produktów mlecznych","description":"Spróbuj mleka i serów roślinnych"},"buyLocal":{"title":"Kupuj lokalne produkty sezonowe","description":"To zmniejsza ślad transportowy i wspiera lokalnych producentów"},"planPurchases":{"title":"Planuj zakupy","description":"Unikaj marnowania żywności — kupuj tylko to, czego potrzebujesz"}},"alternatives":{"plant_proteins":"białka roślinne","legumes":"strączki","nuts":"orzechy","poultry":"drób","fish":"ryba","seaweed":"wodorosty","plant_milk":"mleko roślinne","oat_milk":"mleko owsiane","plant_cheese":"sery roślinne","tofu":"tofu","quinoa":"komosa ryżowa","bulgur":"bulgur","buckwheat":"gryka","oats_grain":"owies","barley_grain":"jęczmień","rye_grain":"żyto","sweet_potato":"batat","turnip":"rzepa","seasonal_vegetables":"warzywa sezonowe","local_seasonal_vegetables":"lokalne warzywa sezonowe","local_seasonal_fruits":"lokalne owoce sezonowe","local_fruits":"lokalne owoce","tea":"herbata","chicory":"cykoria","fruits":"owoce","seeds":"nasiona","chicken":"kurczak","turkey":"indyk","plant_oils":"oleje roślinne","avocado":"awokado","plant_yogurt":"jogurty roślinne","kefir":"kefir","plant_omega3":"omega-3 roślinne","flax_seeds":"siemię lniane","other_fish":"inne ryby","other_seafood":"inne owoce morza","canned_tomatoes":"pomidory w puszce","zucchini":"cukinia","seasonal_root_vegetables":"sezonowe warzywa korzeniowe","beets":"buraki","other_root_vegetables":"inne warzywa korzeniowe","seasonal_citrus":"sezonowe cytrusy","seasonal_berries":"sezonowe jagody","other_grains":"inne zboża","other_pseudograins":"inne pseudozboża","beans":"fasola","peas":"groch","chickpeas":"ciecierzyca","lentils":"soczewica","plant_drinks":"napoje roślinne","local_herbs":"lokalne zioła","local_drinks":"lokalne napoje","non_alcoholic_options":"opcje bezalkoholowe","plant_desserts":"desery roślinne","honey":"miód","stevia":"stewia","rye_bread":"chleb żytni","whole_grain":"pełnoziarnisty","pearl_barley":"kasza jęczmienna","oatmeal":"owsianka","millet":"proso","whole_grain_pasta":"makaron pełnoziarnisty","wheat":"pszenica","olive_oil":"oliwa z oliwek","sunflower_oil":"olej słonecznikowy","reduce_amount":"zmniejszyć ilość","plain_yogurt":"jogurt naturalny","yogurt":"jogurt","reduce_fat":"zmniejszyć tłuszcz","other_seasonal_vegetables":"inne warzywa sezonowe","local_apples":"lokalne jabłka","apples":"jabłka","herbal_teas":"herbaty ziołowe","water":"woda","compote":"kompot","fruit_drink":"napój owocowy","kvass":"kwas chlebowy","onion":"cebula"}};
+        window.i18n = {"title":"Kalkulator Śladu Ekologicznego Produktów — SerpMonn","meta_description":"Oblicz ślad ekologiczny swoich produktów spożywczych. Dowiedz się o śladzie węglowym, śladzie wodnym i wpływie na środowisko swojego koszyka zakupowego.","meta_keywords":"ślad ekologiczny produktów, ślad węglowy jedzenia, ślad wodny produktów, kalkulator ekologiczny, ślad węglowy żywienia","og_title":"Kalkulator Śladu Ekologicznego Produktów — SerpMonn","og_description":"Oblicz ślad ekologiczny swoich produktów spożywczych. Dowiedz się o śladzie węglowym, śladzie wodnym i wpływie na środowisko.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/pl/eco-calculators/product-footprint/","vk_title":"Kalkulator Śladu Ekologicznego Produktów","vk_description":"Oblicz ślad ekologiczny swoich produktów spożywczych","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Strona główna","tools":"Narzędzia","current":"Kalkulator Śladu Produktów"},"header":{"title":"🌱 Kalkulator Śladu Ekologicznego Produktów","subtitle":"Dowiedz się, jaki wpływ na środowisko mają produkty w Twoim koszyku"},"calculator":{"section_title":"🛒 Dodaj produkty do koszyka","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Dodaj kolejny produkt","calculate":"🧮 Oblicz ślad ekologiczny","share_vk":"📘 Udostępnij na VKontakte","share_telegram":"📱 Udostępnij na Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Wyniki obliczeń","carbon_label":"kg ekwiwalentu CO₂","water_label":"litrów wody","land_label":"m² ziemi","eco_score_label":"Ocena ekologiczna (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Porównanie z alternatywami"},"recommendations":{"title":"💡 Zalecenia dotyczące zmniejszenia śladu ekologicznego"},"errors":{"no_products":"Dodaj co najmniej jeden produkt do obliczeń.","invalid_quantity":"Wprowadź prawidłową ilość dla produktu: {product}","calculation_error":"Wystąpił błąd podczas obliczeń. Spróbuj ponownie.","select_product_and_qty":"Proszę wybrać produkt i wprowadzić ilość"},"success":{"calculation_complete":"Obliczenia zakończone pomyślnie!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"szt","pack":"opakowanie"},"products":{"beef":"Wołowina","chicken":"Kurczak","pork":"Wieprzowina","fish":"Ryba","eggs":"Jaja","milk":"Mleko","cheese":"Ser","yogurt":"Jogurt","rice":"Ryż","pasta":"Makaron","bread":"Chleb","potatoes":"Ziemniaki","tomatoes":"Pomidory","apples":"Jabłka","bananas":"Banany","coffee":"Kawa","tea":"Herbata","chocolate":"Czekolada","sugar":"Cukier","olive_oil":"Oliwa z oliwek","select_product":"Wybierz produkt...","lamb":"Jagnięcina","wheat":"Pszenica","vegetables":"Warzywa (mieszane)","fruits":"Owoce (mieszane)","nuts":"Orzechy","turkey":"Indyk","duck":"Kaczka","butter":"Masło","salmon":"Łosoś","tuna":"Tuńczyk","shrimp":"Krewetki","cucumbers":"Ogórki","carrots":"Marchew","oranges":"Pomarańcze","grapes":"Winogrona","strawberries":"Truskawki","quinoa":"Komosa ryżowa","lentils":"Soczewica","chickpeas":"Ciecierzyca","wine":"Wino","bread_white":"Chleb biały","bread_rye":"Chleb żytni","buckwheat":"Gryka","oats":"Owsianka","barley":"Kasza jęczmienna","rye":"Żyto (ziarno)","sunflower_oil":"Olej słonecznikowy","kefir":"Kefir","yogurt_plain":"Jogurt naturalny","cottage_cheese":"Twaróg","sour_cream":"Śmietana","cabbage":"Kapusta","onions":"Cebule","garlic":"Czosnek","beets":"Buraki","pears":"Gruszki","peas":"Groch","beans":"Fasola","kvass":"Kwas chlebowy","soda":"Napój gazowany","beer":"Piwo"},"ads":{"closeAria":"Zamknij reklamę"},"js":{"quantityPlaceholder":"Ilość","selectedProductsTitle":"Wybrane produkty:","remove":"Usuń","unitLabel":"Jednostka: {unit}","loading":"Obliczanie śladu ekologicznego...","errorPrefix":"Błąd:","comparisonCurrentFootprint":"Obecny ślad: {value} kg CO₂","comparisonAlternatives":"Alternatywy:","comparisonSavings":"Oszczędność: ~{value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Produkty o wysokim śladzie ekologicznym","description":"Rozważ alternatywy dla: {products}"},"reduceMeat":{"title":"Ograniczenie spożycia mięsa","description":"Spróbuj zastąpić mięso białkiem roślinnym 1-2 razy w tygodniu"},"dairyAlternatives":{"title":"Alternatywy dla produktów mlecznych","description":"Spróbuj mleka i serów roślinnych"},"buyLocal":{"title":"Kupuj lokalne produkty sezonowe","description":"To zmniejsza ślad transportowy i wspiera lokalnych producentów"},"planPurchases":{"title":"Planuj zakupy","description":"Unikaj marnowania żywności — kupuj tylko to, czego potrzebujesz"}},"alternatives":{"plant_proteins":"białka roślinne","legumes":"strączki","nuts":"orzechy","poultry":"drób","fish":"ryba","seaweed":"wodorosty","plant_milk":"mleko roślinne","oat_milk":"mleko owsiane","plant_cheese":"sery roślinne","tofu":"tofu","quinoa":"komosa ryżowa","bulgur":"bulgur","buckwheat":"gryka","oats_grain":"owies","barley_grain":"jęczmień","rye_grain":"żyto","sweet_potato":"batat","turnip":"rzepa","seasonal_vegetables":"warzywa sezonowe","local_seasonal_vegetables":"lokalne warzywa sezonowe","local_seasonal_fruits":"lokalne owoce sezonowe","local_fruits":"lokalne owoce","tea":"herbata","chicory":"cykoria","fruits":"owoce","seeds":"nasiona","chicken":"kurczak","turkey":"indyk","plant_oils":"oleje roślinne","avocado":"awokado","plant_yogurt":"jogurty roślinne","kefir":"kefir","plant_omega3":"omega-3 roślinne","flax_seeds":"siemię lniane","other_fish":"inne ryby","other_seafood":"inne owoce morza","canned_tomatoes":"pomidory w puszce","zucchini":"cukinia","seasonal_root_vegetables":"sezonowe warzywa korzeniowe","beets":"buraki","other_root_vegetables":"inne warzywa korzeniowe","seasonal_citrus":"sezonowe cytrusy","seasonal_berries":"sezonowe jagody","other_grains":"inne zboża","other_pseudograins":"inne pseudozboża","beans":"fasola","peas":"groch","chickpeas":"ciecierzyca","lentils":"soczewica","plant_drinks":"napoje roślinne","local_herbs":"lokalne zioła","local_drinks":"lokalne napoje","non_alcoholic_options":"opcje bezalkoholowe","plant_desserts":"desery roślinne","honey":"miód","stevia":"stewia","rye_bread":"chleb żytni","whole_grain":"pełnoziarnisty","pearl_barley":"kasza jęczmienna","oatmeal":"owsianka","millet":"proso","whole_grain_pasta":"makaron pełnoziarnisty","wheat":"pszenica","olive_oil":"oliwa z oliwek","sunflower_oil":"olej słonecznikowy","reduce_amount":"zmniejszyć ilość","plain_yogurt":"jogurt naturalny","yogurt":"jogurt","reduce_fat":"zmniejszyć tłuszcz","other_seasonal_vegetables":"inne warzywa sezonowe","local_apples":"lokalne jabłka","apples":"jabłka","herbal_teas":"herbaty ziołowe","water":"woda","compote":"kompot","fruit_drink":"napój owocowy","kvass":"kwas chlebowy","onion":"cebula"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

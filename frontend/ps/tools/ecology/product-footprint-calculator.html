@@ -28,7 +28,7 @@
     <meta property="vk:description" content="د خپلو خواړه محصولاتو د چاپیریالي پښې نښه حساب کړئ">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/ps/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 ټوکرۍ ته محصولات اضافه کړئ
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ یو بل محصول اضافه کړئ
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 چاپیریالي پښې نښه حساب کړئ
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 چاپیریالي پښې نښه حساب کړئ
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 د حساب پایلې
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">کيلوګرام CO₂ معادل</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">چاپیریالي درجه بندي (10-1)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"د محصولاتو د چاپیریالي پښې نښه حسابگر — SerpMonn","meta_description":"د خپلو خواړه محصولاتو د چاپیریالي پښې نښه حساب کړئ. د خپلې پلورنځي ټوکرۍ د کاربن پښې نښې، د اوبو پښې نښې او چاپیریالي اغېزو په اړه زده کړئ.","meta_keywords":"محصولات چاپیریالي پښې نښه, خواړه کاربن پښې نښه, محصولات اوبه پښې نښه, چاپیریالي حسابگر, تغذیه کاربن پښې نښه","og_title":"د محصولاتو د چاپیریالي پښې نښه حسابگر — SerpMonn","og_description":"د خپلو خواړه محصولاتو د چاپیریالي پښې نښه حساب کړئ. د کاربن پښې نښې، د اوبو پښې نښې او چاپیریالي اغېزو په اړه زده کړئ.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/ps/eco-calculators/product-footprint/","vk_title":"د محصولاتو د چاپیریالي پښې نښه حسابگر","vk_description":"د خپلو خواړه محصولاتو د چاپیریالي پښې نښه حساب کړئ","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"کور","tools":"اوزار","current":"د محصول پښې نښه حسابگر"},"header":{"title":"🌱 د محصولاتو د چاپیریالي پښې نښه حسابگر","subtitle":"په خپل ټوکرۍ کې د محصولاتو د چاپیریال اغېزې معلومه کړئ"},"calculator":{"section_title":"🛒 ټوکرۍ ته محصولات اضافه کړئ"},"buttons":{"add_product":"➕ یو بل محصول اضافه کړئ","calculate":"🧮 چاپیریالي پښې نښه حساب کړئ","share_vk":"📘 په VKontakte کې شریک کړئ","share_telegram":"📱 په Telegram کې شریک کړئ"},"results":{"title":"📊 د حساب پایلې","carbon_label":"کيلوګرام CO₂ معادل","water_label":"لیتر اوبه","land_label":"مربع متره زمین","eco_score_label":"چاپیریالي درجه بندي (10-1)"},"comparison":{"title":"🔍 د بدیلونو سره پرتله"},"recommendations":{"title":"💡 د چاپیریالي پښې نښې د کمولو لپاره وړاندیزونه"},"errors":{"no_products":"مهرباني وکړئ د حساب لپاره لږ تر لږه یو محصول اضافه کړئ.","invalid_quantity":"مهرباني وکړئ د محصول {product} لپاره سم مقدار داخل کړئ","calculation_error":"په حساب کې ستونزه راغله. مهرباني وکړئ بیا هڅه وکړئ.","select_product_and_qty":"مهرباني وکړئ یو محصول وټاکئ او مقدار ولیکئ"},"success":{"calculation_complete":"حاسبه په بریالیتوب سره بشپړه شوه!"},"units":{"kg":"کيلوګرام","g":"ګرام","l":"لیتر","ml":"ملي لیتر","pcs":"ټوټه","pack":"بسته"},"products":{"beef":"د غوايي غوښه","chicken":"چرګ","pork":"د خنزیر غوښه","fish":"کب","eggs":"هګۍ","milk":"شیدې","cheese":"پنیر","yogurt":"ماست","rice":"ورېځ","pasta":"پاستا","bread":"ډوډۍ","potatoes":"کښتې","tomatoes":"روميان","apples":"مڼې","bananas":"کیله","coffee":"قهوه","tea":"چای","chocolate":"چاکلیټ","sugar":"بوره","olive_oil":"د زیتون تیل","select_product":"یو محصول انتخاب کړئ...","lamb":"د پسه غوښه","wheat":"غنم","vegetables":"سبزيجات (مخلوط)","fruits":"میوه (مخلوط)","nuts":"مغز","turkey":"ترکي","duck":"هیله","butter":"مکھن","salmon":"سالمون","tuna":"ټونا","shrimp":"جھینګا","cucumbers":"ککړی","carrots":"گاجر","oranges":"مالټه","grapes":"انګور","strawberries":"اسټرابري","quinoa":"کینوا","lentils":"مسور","chickpeas":"نخود","wine":"شراب","bread_white":"سپینه ډوډۍ","bread_rye":"د رای ډوډۍ","buckwheat":"بک ویټ","oats":"اوټمیل","barley":"جو دانې","rye":"رای (دانې)","sunflower_oil":"د لمر ګل تیل","kefir":"کیفیر","yogurt_plain":"طبیعي ماست","cottage_cheese":"کاٹیج پنیر","sour_cream":"ترش کریم","cabbage":"بند گوبي","onions":"پیاز","garlic":"اوګه","beets":"چقندر","pears":"ناګ","peas":"مټر","beans":"لوبیا","kvass":"کواس","soda":"سافټ ډرنک","beer":"بیئر"},"ads":{"closeAria":"اعلان بند کړئ"},"js":{"quantityPlaceholder":"مقدار","selectedProductsTitle":"ټاکل شوي محصولات:","remove":"لرې کول","unitLabel":"واحد: {unit}","loading":"چاپیریالي اثر محاسبه کېږي...","errorPrefix":"تېروتنه:","comparisonCurrentFootprint":"اوسنی اثر: {value} کیلو CO₂","comparisonAlternatives":"بدیلونه:","comparisonSavings":"سپما: ~{value} کیلو CO₂"},"recommendationItems":{"highImpact":{"title":"د لوړ چاپیریالي اثر محصولات","description":"د دې لپاره بدیلونه وګورئ: {products}"},"reduceMeat":{"title":"د غوښې مصرف کمول","description":"هڅه وکړئ په اونۍ کې 1–2 ځله غوښه د نباتي پروټینونو سره بدله کړئ"},"dairyAlternatives":{"title":"د شیدو محصولاتو بدیلونه","description":"نباتي شیدې او پنیر وازمایئ"},"buyLocal":{"title":"محلي موسمي محصولات واخلئ","description":"دا د ترانسپورت اثر کموي او محلي تولیدونکو ملاتړ کوي"},"planPurchases":{"title":"خپلې پیرودنې پلان کړئ","description":"د خوراکي ضایعاتو څخه ځان وساتئ — یوازې هغه څه واخلئ چې اړتیا لرئ"}},"alternatives":{"plant_proteins":"نباتي پروټینونه","legumes":"لوبیاډوله","nuts":"مغز","poultry":"مرغۍ","fish":"کب","seaweed":"سمندري علف","plant_milk":"نباتي شیدې","oat_milk":"د جوارو شیدې","plant_cheese":"نباتي پنیر","tofu":"ټوفو","quinoa":"کینوا","bulgur":"بلغور","buckwheat":"بک ویټ","oats_grain":"جوار","barley_grain":"جو","rye_grain":"رای","sweet_potato":"خوږ کښتې","turnip":"شلغم","seasonal_vegetables":"موسمي سبزيجات","local_seasonal_vegetables":"محلي موسمي سبزيجات","local_seasonal_fruits":"محلي موسمي میوه","local_fruits":"محلي میوه","tea":"چای","chicory":"چیکوري","fruits":"میوه","seeds":"تخم","chicken":"چرګ","turkey":"ترکي","plant_oils":"نباتي تیل","avocado":"ایووکاډو","plant_yogurt":"نباتي ماست","kefir":"کیفیر","plant_omega3":"نباتي اومیګا-3","flax_seeds":"د السی تخم","other_fish":"نور کب","other_seafood":"نور سمندري خوراک","canned_tomatoes":"کنسرو شوي روميان","zucchini":"زوکیني","seasonal_root_vegetables":"موسمي ریښیني سبزيجات","beets":"چقندر","other_root_vegetables":"نور ریښیني سبزيجات","seasonal_citrus":"موسمي لیموني","seasonal_berries":"موسمي توت","other_grains":"نورې غلې","other_pseudograins":"نورې جعلي غلې","beans":"لوبیا","peas":"مټر","chickpeas":"نخود","lentils":"مسور","plant_drinks":"نباتي څښاک","local_herbs":"محلي بوټي","local_drinks":"محلي څښاک","non_alcoholic_options":"بې الکوله انتخابونه","plant_desserts":"نباتي خوږښت","honey":"شات","stevia":"سټیویا","rye_bread":"د رای ډوډۍ","whole_grain":"بشپړ غلې","pearl_barley":"جو دانې","oatmeal":"اوټمیل","millet":"باجره","whole_grain_pasta":"بشپړ غلې پاستا","wheat":"غنم","olive_oil":"د زیتون تیل","sunflower_oil":"د لمر ګل تیل","reduce_amount":"مقدار کم کړئ","plain_yogurt":"طبیعي ماست","yogurt":"ماست","reduce_fat":"غوړ کم کړئ","other_seasonal_vegetables":"نور موسمي سبزيجات","local_apples":"محلي مڼې","apples":"مڼې","herbal_teas":"بوټي چای","water":"اوبه","compote":"کمپوټ","fruit_drink":"د میوو څښاک","kvass":"کواس","onion":"پیاز"}};
+        window.i18n = {"title":"د محصولاتو د چاپیریالي پښې نښه حسابگر — SerpMonn","meta_description":"د خپلو خواړه محصولاتو د چاپیریالي پښې نښه حساب کړئ. د خپلې پلورنځي ټوکرۍ د کاربن پښې نښې، د اوبو پښې نښې او چاپیریالي اغېزو په اړه زده کړئ.","meta_keywords":"محصولات چاپیریالي پښې نښه, خواړه کاربن پښې نښه, محصولات اوبه پښې نښه, چاپیریالي حسابگر, تغذیه کاربن پښې نښه","og_title":"د محصولاتو د چاپیریالي پښې نښه حسابگر — SerpMonn","og_description":"د خپلو خواړه محصولاتو د چاپیریالي پښې نښه حساب کړئ. د کاربن پښې نښې، د اوبو پښې نښې او چاپیریالي اغېزو په اړه زده کړئ.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/ps/eco-calculators/product-footprint/","vk_title":"د محصولاتو د چاپیریالي پښې نښه حسابگر","vk_description":"د خپلو خواړه محصولاتو د چاپیریالي پښې نښه حساب کړئ","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"کور","tools":"اوزار","current":"د محصول پښې نښه حسابگر"},"header":{"title":"🌱 د محصولاتو د چاپیریالي پښې نښه حسابگر","subtitle":"په خپل ټوکرۍ کې د محصولاتو د چاپیریال اغېزې معلومه کړئ"},"calculator":{"section_title":"🛒 ټوکرۍ ته محصولات اضافه کړئ","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ یو بل محصول اضافه کړئ","calculate":"🧮 چاپیریالي پښې نښه حساب کړئ","share_vk":"📘 په VKontakte کې شریک کړئ","share_telegram":"📱 په Telegram کې شریک کړئ","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 د حساب پایلې","carbon_label":"کيلوګرام CO₂ معادل","water_label":"لیتر اوبه","land_label":"مربع متره زمین","eco_score_label":"چاپیریالي درجه بندي (10-1)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 د بدیلونو سره پرتله"},"recommendations":{"title":"💡 د چاپیریالي پښې نښې د کمولو لپاره وړاندیزونه"},"errors":{"no_products":"مهرباني وکړئ د حساب لپاره لږ تر لږه یو محصول اضافه کړئ.","invalid_quantity":"مهرباني وکړئ د محصول {product} لپاره سم مقدار داخل کړئ","calculation_error":"په حساب کې ستونزه راغله. مهرباني وکړئ بیا هڅه وکړئ.","select_product_and_qty":"مهرباني وکړئ یو محصول وټاکئ او مقدار ولیکئ"},"success":{"calculation_complete":"حاسبه په بریالیتوب سره بشپړه شوه!"},"units":{"kg":"کيلوګرام","g":"ګرام","l":"لیتر","ml":"ملي لیتر","pcs":"ټوټه","pack":"بسته"},"products":{"beef":"د غوايي غوښه","chicken":"چرګ","pork":"د خنزیر غوښه","fish":"کب","eggs":"هګۍ","milk":"شیدې","cheese":"پنیر","yogurt":"ماست","rice":"ورېځ","pasta":"پاستا","bread":"ډوډۍ","potatoes":"کښتې","tomatoes":"روميان","apples":"مڼې","bananas":"کیله","coffee":"قهوه","tea":"چای","chocolate":"چاکلیټ","sugar":"بوره","olive_oil":"د زیتون تیل","select_product":"یو محصول انتخاب کړئ...","lamb":"د پسه غوښه","wheat":"غنم","vegetables":"سبزيجات (مخلوط)","fruits":"میوه (مخلوط)","nuts":"مغز","turkey":"ترکي","duck":"هیله","butter":"مکھن","salmon":"سالمون","tuna":"ټونا","shrimp":"جھینګا","cucumbers":"ککړی","carrots":"گاجر","oranges":"مالټه","grapes":"انګور","strawberries":"اسټرابري","quinoa":"کینوا","lentils":"مسور","chickpeas":"نخود","wine":"شراب","bread_white":"سپینه ډوډۍ","bread_rye":"د رای ډوډۍ","buckwheat":"بک ویټ","oats":"اوټمیل","barley":"جو دانې","rye":"رای (دانې)","sunflower_oil":"د لمر ګل تیل","kefir":"کیفیر","yogurt_plain":"طبیعي ماست","cottage_cheese":"کاٹیج پنیر","sour_cream":"ترش کریم","cabbage":"بند گوبي","onions":"پیاز","garlic":"اوګه","beets":"چقندر","pears":"ناګ","peas":"مټر","beans":"لوبیا","kvass":"کواس","soda":"سافټ ډرنک","beer":"بیئر"},"ads":{"closeAria":"اعلان بند کړئ"},"js":{"quantityPlaceholder":"مقدار","selectedProductsTitle":"ټاکل شوي محصولات:","remove":"لرې کول","unitLabel":"واحد: {unit}","loading":"چاپیریالي اثر محاسبه کېږي...","errorPrefix":"تېروتنه:","comparisonCurrentFootprint":"اوسنی اثر: {value} کیلو CO₂","comparisonAlternatives":"بدیلونه:","comparisonSavings":"سپما: ~{value} کیلو CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"د لوړ چاپیریالي اثر محصولات","description":"د دې لپاره بدیلونه وګورئ: {products}"},"reduceMeat":{"title":"د غوښې مصرف کمول","description":"هڅه وکړئ په اونۍ کې 1–2 ځله غوښه د نباتي پروټینونو سره بدله کړئ"},"dairyAlternatives":{"title":"د شیدو محصولاتو بدیلونه","description":"نباتي شیدې او پنیر وازمایئ"},"buyLocal":{"title":"محلي موسمي محصولات واخلئ","description":"دا د ترانسپورت اثر کموي او محلي تولیدونکو ملاتړ کوي"},"planPurchases":{"title":"خپلې پیرودنې پلان کړئ","description":"د خوراکي ضایعاتو څخه ځان وساتئ — یوازې هغه څه واخلئ چې اړتیا لرئ"}},"alternatives":{"plant_proteins":"نباتي پروټینونه","legumes":"لوبیاډوله","nuts":"مغز","poultry":"مرغۍ","fish":"کب","seaweed":"سمندري علف","plant_milk":"نباتي شیدې","oat_milk":"د جوارو شیدې","plant_cheese":"نباتي پنیر","tofu":"ټوفو","quinoa":"کینوا","bulgur":"بلغور","buckwheat":"بک ویټ","oats_grain":"جوار","barley_grain":"جو","rye_grain":"رای","sweet_potato":"خوږ کښتې","turnip":"شلغم","seasonal_vegetables":"موسمي سبزيجات","local_seasonal_vegetables":"محلي موسمي سبزيجات","local_seasonal_fruits":"محلي موسمي میوه","local_fruits":"محلي میوه","tea":"چای","chicory":"چیکوري","fruits":"میوه","seeds":"تخم","chicken":"چرګ","turkey":"ترکي","plant_oils":"نباتي تیل","avocado":"ایووکاډو","plant_yogurt":"نباتي ماست","kefir":"کیفیر","plant_omega3":"نباتي اومیګا-3","flax_seeds":"د السی تخم","other_fish":"نور کب","other_seafood":"نور سمندري خوراک","canned_tomatoes":"کنسرو شوي روميان","zucchini":"زوکیني","seasonal_root_vegetables":"موسمي ریښیني سبزيجات","beets":"چقندر","other_root_vegetables":"نور ریښیني سبزيجات","seasonal_citrus":"موسمي لیموني","seasonal_berries":"موسمي توت","other_grains":"نورې غلې","other_pseudograins":"نورې جعلي غلې","beans":"لوبیا","peas":"مټر","chickpeas":"نخود","lentils":"مسور","plant_drinks":"نباتي څښاک","local_herbs":"محلي بوټي","local_drinks":"محلي څښاک","non_alcoholic_options":"بې الکوله انتخابونه","plant_desserts":"نباتي خوږښت","honey":"شات","stevia":"سټیویا","rye_bread":"د رای ډوډۍ","whole_grain":"بشپړ غلې","pearl_barley":"جو دانې","oatmeal":"اوټمیل","millet":"باجره","whole_grain_pasta":"بشپړ غلې پاستا","wheat":"غنم","olive_oil":"د زیتون تیل","sunflower_oil":"د لمر ګل تیل","reduce_amount":"مقدار کم کړئ","plain_yogurt":"طبیعي ماست","yogurt":"ماست","reduce_fat":"غوړ کم کړئ","other_seasonal_vegetables":"نور موسمي سبزيجات","local_apples":"محلي مڼې","apples":"مڼې","herbal_teas":"بوټي چای","water":"اوبه","compote":"کمپوټ","fruit_drink":"د میوو څښاک","kvass":"کواس","onion":"پیاز"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

@@ -28,7 +28,7 @@
     <meta property="vk:description" content="计算您食品的生态足迹">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/zh-cn/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 添加产品到购物篮
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ 添加另一个产品
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 计算生态足迹
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 计算生态足迹
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 计算结果
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">千克二氧化碳当量</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">生态评分 (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"产品生态足迹计算器 — SerpMonn","meta_description":"计算您食品的生态足迹。了解您的购物篮的碳足迹、水足迹和环境影响。","meta_keywords":"产品生态足迹, 食物碳足迹, 产品水足迹, 生态计算器, 营养碳足迹","og_title":"产品生态足迹计算器 — SerpMonn","og_description":"计算您食品的生态足迹。了解碳足迹、水足迹和环境影响。","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/zh-cn/eco-calculators/product-footprint/","vk_title":"产品生态足迹计算器","vk_description":"计算您食品的生态足迹","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"首页","tools":"工具","current":"产品足迹计算器"},"header":{"title":"🌱 产品生态足迹计算器","subtitle":"发现您购物篮中产品对环境的影响"},"calculator":{"section_title":"🛒 添加产品到购物篮"},"buttons":{"add_product":"➕ 添加另一个产品","calculate":"🧮 计算生态足迹","share_vk":"📘 分享到VKontakte","share_telegram":"📱 分享到Telegram"},"results":{"title":"📊 计算结果","carbon_label":"千克二氧化碳当量","water_label":"升水","land_label":"平方米土地","eco_score_label":"生态评分 (1-10)"},"comparison":{"title":"🔍 与替代品比较"},"recommendations":{"title":"💡 减少生态足迹的建议"},"errors":{"no_products":"请至少添加一个产品进行计算。","invalid_quantity":"请输入产品 {product} 的有效数量","calculation_error":"计算过程中发生错误。请重试。","select_product_and_qty":"请选择产品并输入数量"},"success":{"calculation_complete":"计算成功完成！"},"units":{"kg":"千克","g":"克","l":"升","ml":"毫升","pcs":"件","pack":"包"},"products":{"beef":"牛肉","chicken":"鸡肉","pork":"猪肉","fish":"鱼类","eggs":"鸡蛋","milk":"牛奶","cheese":"奶酪","yogurt":"酸奶","rice":"大米","pasta":"意面","bread":"面包","potatoes":"土豆","tomatoes":"番茄","apples":"苹果","bananas":"香蕉","coffee":"咖啡","tea":"茶","chocolate":"巧克力","sugar":"糖","olive_oil":"橄榄油","select_product":"选择产品...","lamb":"羊肉","wheat":"小麦","vegetables":"蔬菜（混合）","fruits":"水果（混合）","nuts":"坚果","turkey":"火鸡","duck":"鸭肉","butter":"黄油","salmon":"三文鱼","tuna":"金枪鱼","shrimp":"虾","cucumbers":"黄瓜","carrots":"胡萝卜","oranges":"橙子","grapes":"葡萄","strawberries":"草莓","quinoa":"藜麦","lentils":"扁豆","chickpeas":"鹰嘴豆","wine":"葡萄酒","bread_white":"白面包","bread_rye":"黑麦面包","buckwheat":"荞麦","oats":"燕麦片","barley":"珍珠大麦","rye":"黑麦（谷物）","sunflower_oil":"葵花籽油","kefir":"开菲尔","yogurt_plain":"原味酸奶","cottage_cheese":"茅屋奶酪","sour_cream":"酸奶油","cabbage":"卷心菜","onions":"洋葱","garlic":"大蒜","beets":"甜菜","pears":"梨","peas":"豌豆","beans":"豆子","kvass":"克瓦斯","soda":"汽水","beer":"啤酒"},"ads":{"closeAria":"关闭广告"},"js":{"quantityPlaceholder":"数量","selectedProductsTitle":"已选产品：","remove":"删除","unitLabel":"单位：{unit}","loading":"正在计算生态足迹...","errorPrefix":"错误：","comparisonCurrentFootprint":"当前足迹：{value} 千克 CO₂","comparisonAlternatives":"替代方案：","comparisonSavings":"节省：约 {value} 千克 CO₂"},"recommendationItems":{"highImpact":{"title":"高生态足迹产品","description":"请考虑以下产品的替代方案：{products}"},"reduceMeat":{"title":"减少肉类消费","description":"尝试每周用植物蛋白替代肉类 1–2 次"},"dairyAlternatives":{"title":"乳制品替代品","description":"尝试植物奶和植物奶酪"},"buyLocal":{"title":"购买当地时令产品","description":"这可以减少运输足迹并支持当地生产者"},"planPurchases":{"title":"规划采购","description":"避免食物浪费——只购买所需数量"}},"alternatives":{"plant_proteins":"植物蛋白","legumes":"豆类","nuts":"坚果","poultry":"禽肉","fish":"鱼类","seaweed":"海藻","plant_milk":"植物奶","oat_milk":"燕麦奶","plant_cheese":"植物奶酪","tofu":"豆腐","quinoa":"藜麦","bulgur":"碾碎小麦","buckwheat":"荞麦","oats_grain":"燕麦","barley_grain":"大麦","rye_grain":"黑麦","sweet_potato":"红薯","turnip":"芜菁","seasonal_vegetables":"时令蔬菜","local_seasonal_vegetables":"当地时令蔬菜","local_seasonal_fruits":"当地时令水果","local_fruits":"当地水果","tea":"茶","chicory":"菊苣","fruits":"水果","seeds":"种子","chicken":"鸡肉","turkey":"火鸡","plant_oils":"植物油","avocado":"牛油果","plant_yogurt":"植物酸奶","kefir":"开菲尔","plant_omega3":"植物来源欧米伽-3","flax_seeds":"亚麻籽","other_fish":"其他鱼类","other_seafood":"其他海鲜","canned_tomatoes":"罐装番茄","zucchini":"西葫芦","seasonal_root_vegetables":"时令根茎蔬菜","beets":"甜菜","other_root_vegetables":"其他根茎蔬菜","seasonal_citrus":"时令柑橘","seasonal_berries":"时令浆果","other_grains":"其他谷物","other_pseudograins":"其他伪谷物","beans":"豆子","peas":"豌豆","chickpeas":"鹰嘴豆","lentils":"扁豆","plant_drinks":"植物饮料","local_herbs":"当地香草","local_drinks":"当地饮品","non_alcoholic_options":"无酒精选项","plant_desserts":"植物甜点","honey":"蜂蜜","stevia":"甜菊糖","rye_bread":"黑麦面包","whole_grain":"全谷物","pearl_barley":"珍珠大麦","oatmeal":"燕麦片","millet":"小米","whole_grain_pasta":"全麦意面","wheat":"小麦","olive_oil":"橄榄油","sunflower_oil":"葵花籽油","reduce_amount":"减少用量","plain_yogurt":"原味酸奶","yogurt":"酸奶","reduce_fat":"减少脂肪含量","other_seasonal_vegetables":"其他时令蔬菜","local_apples":"当地苹果","apples":"苹果","herbal_teas":"花草茶","water":"水","compote":"糖渍水果","fruit_drink":"果汁饮料","kvass":"克瓦斯","onion":"洋葱"}};
+        window.i18n = {"title":"产品生态足迹计算器 — SerpMonn","meta_description":"计算您食品的生态足迹。了解您的购物篮的碳足迹、水足迹和环境影响。","meta_keywords":"产品生态足迹, 食物碳足迹, 产品水足迹, 生态计算器, 营养碳足迹","og_title":"产品生态足迹计算器 — SerpMonn","og_description":"计算您食品的生态足迹。了解碳足迹、水足迹和环境影响。","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/zh-cn/eco-calculators/product-footprint/","vk_title":"产品生态足迹计算器","vk_description":"计算您食品的生态足迹","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"首页","tools":"工具","current":"产品足迹计算器"},"header":{"title":"🌱 产品生态足迹计算器","subtitle":"发现您购物篮中产品对环境的影响"},"calculator":{"section_title":"🛒 添加产品到购物篮","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ 添加另一个产品","calculate":"🧮 计算生态足迹","share_vk":"📘 分享到VKontakte","share_telegram":"📱 分享到Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 计算结果","carbon_label":"千克二氧化碳当量","water_label":"升水","land_label":"平方米土地","eco_score_label":"生态评分 (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 与替代品比较"},"recommendations":{"title":"💡 减少生态足迹的建议"},"errors":{"no_products":"请至少添加一个产品进行计算。","invalid_quantity":"请输入产品 {product} 的有效数量","calculation_error":"计算过程中发生错误。请重试。","select_product_and_qty":"请选择产品并输入数量"},"success":{"calculation_complete":"计算成功完成！"},"units":{"kg":"千克","g":"克","l":"升","ml":"毫升","pcs":"件","pack":"包"},"products":{"beef":"牛肉","chicken":"鸡肉","pork":"猪肉","fish":"鱼类","eggs":"鸡蛋","milk":"牛奶","cheese":"奶酪","yogurt":"酸奶","rice":"大米","pasta":"意面","bread":"面包","potatoes":"土豆","tomatoes":"番茄","apples":"苹果","bananas":"香蕉","coffee":"咖啡","tea":"茶","chocolate":"巧克力","sugar":"糖","olive_oil":"橄榄油","select_product":"选择产品...","lamb":"羊肉","wheat":"小麦","vegetables":"蔬菜（混合）","fruits":"水果（混合）","nuts":"坚果","turkey":"火鸡","duck":"鸭肉","butter":"黄油","salmon":"三文鱼","tuna":"金枪鱼","shrimp":"虾","cucumbers":"黄瓜","carrots":"胡萝卜","oranges":"橙子","grapes":"葡萄","strawberries":"草莓","quinoa":"藜麦","lentils":"扁豆","chickpeas":"鹰嘴豆","wine":"葡萄酒","bread_white":"白面包","bread_rye":"黑麦面包","buckwheat":"荞麦","oats":"燕麦片","barley":"珍珠大麦","rye":"黑麦（谷物）","sunflower_oil":"葵花籽油","kefir":"开菲尔","yogurt_plain":"原味酸奶","cottage_cheese":"茅屋奶酪","sour_cream":"酸奶油","cabbage":"卷心菜","onions":"洋葱","garlic":"大蒜","beets":"甜菜","pears":"梨","peas":"豌豆","beans":"豆子","kvass":"克瓦斯","soda":"汽水","beer":"啤酒"},"ads":{"closeAria":"关闭广告"},"js":{"quantityPlaceholder":"数量","selectedProductsTitle":"已选产品：","remove":"删除","unitLabel":"单位：{unit}","loading":"正在计算生态足迹...","errorPrefix":"错误：","comparisonCurrentFootprint":"当前足迹：{value} 千克 CO₂","comparisonAlternatives":"替代方案：","comparisonSavings":"节省：约 {value} 千克 CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"高生态足迹产品","description":"请考虑以下产品的替代方案：{products}"},"reduceMeat":{"title":"减少肉类消费","description":"尝试每周用植物蛋白替代肉类 1–2 次"},"dairyAlternatives":{"title":"乳制品替代品","description":"尝试植物奶和植物奶酪"},"buyLocal":{"title":"购买当地时令产品","description":"这可以减少运输足迹并支持当地生产者"},"planPurchases":{"title":"规划采购","description":"避免食物浪费——只购买所需数量"}},"alternatives":{"plant_proteins":"植物蛋白","legumes":"豆类","nuts":"坚果","poultry":"禽肉","fish":"鱼类","seaweed":"海藻","plant_milk":"植物奶","oat_milk":"燕麦奶","plant_cheese":"植物奶酪","tofu":"豆腐","quinoa":"藜麦","bulgur":"碾碎小麦","buckwheat":"荞麦","oats_grain":"燕麦","barley_grain":"大麦","rye_grain":"黑麦","sweet_potato":"红薯","turnip":"芜菁","seasonal_vegetables":"时令蔬菜","local_seasonal_vegetables":"当地时令蔬菜","local_seasonal_fruits":"当地时令水果","local_fruits":"当地水果","tea":"茶","chicory":"菊苣","fruits":"水果","seeds":"种子","chicken":"鸡肉","turkey":"火鸡","plant_oils":"植物油","avocado":"牛油果","plant_yogurt":"植物酸奶","kefir":"开菲尔","plant_omega3":"植物来源欧米伽-3","flax_seeds":"亚麻籽","other_fish":"其他鱼类","other_seafood":"其他海鲜","canned_tomatoes":"罐装番茄","zucchini":"西葫芦","seasonal_root_vegetables":"时令根茎蔬菜","beets":"甜菜","other_root_vegetables":"其他根茎蔬菜","seasonal_citrus":"时令柑橘","seasonal_berries":"时令浆果","other_grains":"其他谷物","other_pseudograins":"其他伪谷物","beans":"豆子","peas":"豌豆","chickpeas":"鹰嘴豆","lentils":"扁豆","plant_drinks":"植物饮料","local_herbs":"当地香草","local_drinks":"当地饮品","non_alcoholic_options":"无酒精选项","plant_desserts":"植物甜点","honey":"蜂蜜","stevia":"甜菊糖","rye_bread":"黑麦面包","whole_grain":"全谷物","pearl_barley":"珍珠大麦","oatmeal":"燕麦片","millet":"小米","whole_grain_pasta":"全麦意面","wheat":"小麦","olive_oil":"橄榄油","sunflower_oil":"葵花籽油","reduce_amount":"减少用量","plain_yogurt":"原味酸奶","yogurt":"酸奶","reduce_fat":"减少脂肪含量","other_seasonal_vegetables":"其他时令蔬菜","local_apples":"当地苹果","apples":"苹果","herbal_teas":"花草茶","water":"水","compote":"糖渍水果","fruit_drink":"果汁饮料","kvass":"克瓦斯","onion":"洋葱"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

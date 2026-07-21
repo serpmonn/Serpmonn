@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Számítsa ki élelmiszereinek ökológiai lábnyomát">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/hu/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Termékek hozzáadása a kosárhoz
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ További termék hozzáadása
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Ökológiai lábnyom számítása
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Ökológiai lábnyom számítása
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Számítási eredmények
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg CO₂ egyenérték</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Öko-értékelés (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Termék Ökológiai Lábnyom Számológép — SerpMonn","meta_description":"Számítsa ki élelmiszereinek ökológiai lábnyomát. Tudjon meg a bevásárlókosará szénlábnyomáról, vízlábnyomáról és környezeti hatásairól.","meta_keywords":"termék ökológiai lábnyom, élelmiszer szénlábnyom, termék vízlábnyom, ökológiai számológép, táplálkozás szénlábnyom","og_title":"Termék Ökológiai Lábnyom Számológép — SerpMonn","og_description":"Számítsa ki élelmiszereinek ökológiai lábnyomát. Tudjon meg a szénlábnyomról, vízlábnyomról és környezeti hatásokról.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/hu/eco-calculators/product-footprint/","vk_title":"Termék Ökológiai Lábnyom Számológép","vk_description":"Számítsa ki élelmiszereinek ökológiai lábnyomát","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Főoldal","tools":"Eszközök","current":"Termék Lábnyom Számológép"},"header":{"title":"🌱 Termék Ökológiai Lábnyom Számológép","subtitle":"Fedezze fel a kosarában lévő termékek környezeti hatását"},"calculator":{"section_title":"🛒 Termékek hozzáadása a kosárhoz"},"buttons":{"add_product":"➕ További termék hozzáadása","calculate":"🧮 Ökológiai lábnyom számítása","share_vk":"📘 Megosztás VKontakte-on","share_telegram":"📱 Megosztás Telegram-on"},"results":{"title":"📊 Számítási eredmények","carbon_label":"kg CO₂ egyenérték","water_label":"liter víz","land_label":"m² föld","eco_score_label":"Öko-értékelés (1-10)"},"comparison":{"title":"🔍 Összehasonlítás alternatívákkal"},"recommendations":{"title":"💡 Ajánlások az ökológiai lábnyom csökkentésére"},"errors":{"no_products":"Kérem, adjon hozzá legalább egy terméket a számításhoz.","invalid_quantity":"Kérem, adjon meg érvényes mennyiséget a termékhez: {product}","calculation_error":"Hiba történt a számítás során. Kérem, próbálja újra.","select_product_and_qty":"Kérjük, válasszon terméket és adjon meg mennyiséget"},"success":{"calculation_complete":"A számítás sikeresen befejeződött!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"db","pack":"csomag"},"products":{"beef":"Marhahús","chicken":"Csirke","pork":"Sertéshús","fish":"Hal","eggs":"Tojás","milk":"Tej","cheese":"Sajt","yogurt":"Joghurt","rice":"Rizs","pasta":"Tészta","bread":"Kenyér","potatoes":"Burgonya","tomatoes":"Paradicsom","apples":"Alma","bananas":"Banán","coffee":"Kávé","tea":"Tea","chocolate":"Csokoládé","sugar":"Cukor","olive_oil":"Olívaolaj","select_product":"Válasszon terméket...","lamb":"Bárányhús","wheat":"Búza","vegetables":"Zöldségek (vegyes)","fruits":"Gyümölcsök (vegyes)","nuts":"Diófélék","turkey":"Pulyka","duck":"Kacsa","butter":"Vaj","salmon":"Lazac","tuna":"Tonhal","shrimp":"Rák","cucumbers":"Uborka","carrots":"Sárgarépa","oranges":"Narancs","grapes":"Szőlő","strawberries":"Eper","quinoa":"Quinoa","lentils":"Lencse","chickpeas":"Csicseriborsó","wine":"Bor","bread_white":"Fehér kenyér","bread_rye":"Rozskenyér","buckwheat":"Hajdina","oats":"Zabpehely","barley":"Gyöngyárpa","rye":"Rozs (gabona)","sunflower_oil":"Napraforgóolaj","kefir":"Kefir","yogurt_plain":"Natúr joghurt","cottage_cheese":"Túró","sour_cream":"Tejföl","cabbage":"Káposzta","onions":"Hagyma","garlic":"Fokhagyma","beets":"Cékla","pears":"Körte","peas":"Borsó","beans":"Bab","kvass":"Kvász","soda":"Üdítő","beer":"Sör"},"ads":{"closeAria":"Reklám bezárása"},"js":{"quantityPlaceholder":"Mennyiség","selectedProductsTitle":"Kiválasztott termékek:","remove":"Eltávolítás","unitLabel":"Egység: {unit}","loading":"Ökológiai lábnyom számítása...","errorPrefix":"Hiba:","comparisonCurrentFootprint":"Jelenlegi lábnyom: {value} kg CO₂","comparisonAlternatives":"Alternatívák:","comparisonSavings":"Megtakarítás: ~{value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"Magas ökológiai lábnyommal rendelkező termékek","description":"Fontolja meg az alternatívákat: {products}"},"reduceMeat":{"title":"Húsfogyasztás csökkentése","description":"Próbálja heti 1–2 alkalommal növényi fehérjékkel helyettesíteni a húst"},"dairyAlternatives":{"title":"Tejtermék-alternatívák","description":"Próbáljon növényi tejet és sajtokat"},"buyLocal":{"title":"Vásároljon helyi szezonális termékeket","description":"Ez csökkenti a szállítási lábnyomot és támogatja a helyi termelőket"},"planPurchases":{"title":"Tervezze meg a vásárlásokat","description":"Kerülje az élelmiszer-pazarlást — csak annyit vegyen, amennyire szüksége van"}},"alternatives":{"plant_proteins":"növényi fehérjék","legumes":"hüvelyesek","nuts":"diófélék","poultry":"szárnyas","fish":"hal","seaweed":"tengeri alga","plant_milk":"növényi tej","oat_milk":"zabtej","plant_cheese":"növényi sajtok","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"hajdina","oats_grain":"zab","barley_grain":"árpa","rye_grain":"rozs","sweet_potato":"édesburgonya","turnip":"retek","seasonal_vegetables":"szezonális zöldségek","local_seasonal_vegetables":"helyi szezonális zöldségek","local_seasonal_fruits":"helyi szezonális gyümölcsök","local_fruits":"helyi gyümölcsök","tea":"tea","chicory":"cikória","fruits":"gyümölcsök","seeds":"magvak","chicken":"csirke","turkey":"pulyka","plant_oils":"növényi olajok","avocado":"avokádó","plant_yogurt":"növényi joghurtok","kefir":"kefir","plant_omega3":"növényi omega-3","flax_seeds":"lenmag","other_fish":"egyéb halak","other_seafood":"egyéb tengeri ételek","canned_tomatoes":"konzerv paradicsom","zucchini":"cukkini","seasonal_root_vegetables":"szezonális gyökérzöldségek","beets":"cékla","other_root_vegetables":"egyéb gyökérzöldségek","seasonal_citrus":"szezonális citrusok","seasonal_berries":"szezonális bogyók","other_grains":"egyéb gabonák","other_pseudograins":"egyéb álgabonák","beans":"bab","peas":"borsó","chickpeas":"csicseriborsó","lentils":"lencse","plant_drinks":"növényi italok","local_herbs":"helyi fűszernövények","local_drinks":"helyi italok","non_alcoholic_options":"alkoholmentes lehetőségek","plant_desserts":"növényi desszertek","honey":"méz","stevia":"stevia","rye_bread":"rozskenyér","whole_grain":"teljes kiőrlésű","pearl_barley":"gyöngyárpa","oatmeal":"zabpehely","millet":"köles","whole_grain_pasta":"teljes kiőrlésű tészta","wheat":"búza","olive_oil":"olívaolaj","sunflower_oil":"napraforgóolaj","reduce_amount":"mennyiség csökkentése","plain_yogurt":"natúr joghurt","yogurt":"joghurt","reduce_fat":"zsírtartalom csökkentése","other_seasonal_vegetables":"egyéb szezonális zöldségek","local_apples":"helyi almák","apples":"almák","herbal_teas":"gyógyteák","water":"víz","compote":"kompot","fruit_drink":"gyümölcsital","kvass":"kvász","onion":"hagyma"}};
+        window.i18n = {"title":"Termék Ökológiai Lábnyom Számológép — SerpMonn","meta_description":"Számítsa ki élelmiszereinek ökológiai lábnyomát. Tudjon meg a bevásárlókosará szénlábnyomáról, vízlábnyomáról és környezeti hatásairól.","meta_keywords":"termék ökológiai lábnyom, élelmiszer szénlábnyom, termék vízlábnyom, ökológiai számológép, táplálkozás szénlábnyom","og_title":"Termék Ökológiai Lábnyom Számológép — SerpMonn","og_description":"Számítsa ki élelmiszereinek ökológiai lábnyomát. Tudjon meg a szénlábnyomról, vízlábnyomról és környezeti hatásokról.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/hu/eco-calculators/product-footprint/","vk_title":"Termék Ökológiai Lábnyom Számológép","vk_description":"Számítsa ki élelmiszereinek ökológiai lábnyomát","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Főoldal","tools":"Eszközök","current":"Termék Lábnyom Számológép"},"header":{"title":"🌱 Termék Ökológiai Lábnyom Számológép","subtitle":"Fedezze fel a kosarában lévő termékek környezeti hatását"},"calculator":{"section_title":"🛒 Termékek hozzáadása a kosárhoz","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ További termék hozzáadása","calculate":"🧮 Ökológiai lábnyom számítása","share_vk":"📘 Megosztás VKontakte-on","share_telegram":"📱 Megosztás Telegram-on","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Számítási eredmények","carbon_label":"kg CO₂ egyenérték","water_label":"liter víz","land_label":"m² föld","eco_score_label":"Öko-értékelés (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Összehasonlítás alternatívákkal"},"recommendations":{"title":"💡 Ajánlások az ökológiai lábnyom csökkentésére"},"errors":{"no_products":"Kérem, adjon hozzá legalább egy terméket a számításhoz.","invalid_quantity":"Kérem, adjon meg érvényes mennyiséget a termékhez: {product}","calculation_error":"Hiba történt a számítás során. Kérem, próbálja újra.","select_product_and_qty":"Kérjük, válasszon terméket és adjon meg mennyiséget"},"success":{"calculation_complete":"A számítás sikeresen befejeződött!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"db","pack":"csomag"},"products":{"beef":"Marhahús","chicken":"Csirke","pork":"Sertéshús","fish":"Hal","eggs":"Tojás","milk":"Tej","cheese":"Sajt","yogurt":"Joghurt","rice":"Rizs","pasta":"Tészta","bread":"Kenyér","potatoes":"Burgonya","tomatoes":"Paradicsom","apples":"Alma","bananas":"Banán","coffee":"Kávé","tea":"Tea","chocolate":"Csokoládé","sugar":"Cukor","olive_oil":"Olívaolaj","select_product":"Válasszon terméket...","lamb":"Bárányhús","wheat":"Búza","vegetables":"Zöldségek (vegyes)","fruits":"Gyümölcsök (vegyes)","nuts":"Diófélék","turkey":"Pulyka","duck":"Kacsa","butter":"Vaj","salmon":"Lazac","tuna":"Tonhal","shrimp":"Rák","cucumbers":"Uborka","carrots":"Sárgarépa","oranges":"Narancs","grapes":"Szőlő","strawberries":"Eper","quinoa":"Quinoa","lentils":"Lencse","chickpeas":"Csicseriborsó","wine":"Bor","bread_white":"Fehér kenyér","bread_rye":"Rozskenyér","buckwheat":"Hajdina","oats":"Zabpehely","barley":"Gyöngyárpa","rye":"Rozs (gabona)","sunflower_oil":"Napraforgóolaj","kefir":"Kefir","yogurt_plain":"Natúr joghurt","cottage_cheese":"Túró","sour_cream":"Tejföl","cabbage":"Káposzta","onions":"Hagyma","garlic":"Fokhagyma","beets":"Cékla","pears":"Körte","peas":"Borsó","beans":"Bab","kvass":"Kvász","soda":"Üdítő","beer":"Sör"},"ads":{"closeAria":"Reklám bezárása"},"js":{"quantityPlaceholder":"Mennyiség","selectedProductsTitle":"Kiválasztott termékek:","remove":"Eltávolítás","unitLabel":"Egység: {unit}","loading":"Ökológiai lábnyom számítása...","errorPrefix":"Hiba:","comparisonCurrentFootprint":"Jelenlegi lábnyom: {value} kg CO₂","comparisonAlternatives":"Alternatívák:","comparisonSavings":"Megtakarítás: ~{value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Magas ökológiai lábnyommal rendelkező termékek","description":"Fontolja meg az alternatívákat: {products}"},"reduceMeat":{"title":"Húsfogyasztás csökkentése","description":"Próbálja heti 1–2 alkalommal növényi fehérjékkel helyettesíteni a húst"},"dairyAlternatives":{"title":"Tejtermék-alternatívák","description":"Próbáljon növényi tejet és sajtokat"},"buyLocal":{"title":"Vásároljon helyi szezonális termékeket","description":"Ez csökkenti a szállítási lábnyomot és támogatja a helyi termelőket"},"planPurchases":{"title":"Tervezze meg a vásárlásokat","description":"Kerülje az élelmiszer-pazarlást — csak annyit vegyen, amennyire szüksége van"}},"alternatives":{"plant_proteins":"növényi fehérjék","legumes":"hüvelyesek","nuts":"diófélék","poultry":"szárnyas","fish":"hal","seaweed":"tengeri alga","plant_milk":"növényi tej","oat_milk":"zabtej","plant_cheese":"növényi sajtok","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"hajdina","oats_grain":"zab","barley_grain":"árpa","rye_grain":"rozs","sweet_potato":"édesburgonya","turnip":"retek","seasonal_vegetables":"szezonális zöldségek","local_seasonal_vegetables":"helyi szezonális zöldségek","local_seasonal_fruits":"helyi szezonális gyümölcsök","local_fruits":"helyi gyümölcsök","tea":"tea","chicory":"cikória","fruits":"gyümölcsök","seeds":"magvak","chicken":"csirke","turkey":"pulyka","plant_oils":"növényi olajok","avocado":"avokádó","plant_yogurt":"növényi joghurtok","kefir":"kefir","plant_omega3":"növényi omega-3","flax_seeds":"lenmag","other_fish":"egyéb halak","other_seafood":"egyéb tengeri ételek","canned_tomatoes":"konzerv paradicsom","zucchini":"cukkini","seasonal_root_vegetables":"szezonális gyökérzöldségek","beets":"cékla","other_root_vegetables":"egyéb gyökérzöldségek","seasonal_citrus":"szezonális citrusok","seasonal_berries":"szezonális bogyók","other_grains":"egyéb gabonák","other_pseudograins":"egyéb álgabonák","beans":"bab","peas":"borsó","chickpeas":"csicseriborsó","lentils":"lencse","plant_drinks":"növényi italok","local_herbs":"helyi fűszernövények","local_drinks":"helyi italok","non_alcoholic_options":"alkoholmentes lehetőségek","plant_desserts":"növényi desszertek","honey":"méz","stevia":"stevia","rye_bread":"rozskenyér","whole_grain":"teljes kiőrlésű","pearl_barley":"gyöngyárpa","oatmeal":"zabpehely","millet":"köles","whole_grain_pasta":"teljes kiőrlésű tészta","wheat":"búza","olive_oil":"olívaolaj","sunflower_oil":"napraforgóolaj","reduce_amount":"mennyiség csökkentése","plain_yogurt":"natúr joghurt","yogurt":"joghurt","reduce_fat":"zsírtartalom csökkentése","other_seasonal_vegetables":"egyéb szezonális zöldségek","local_apples":"helyi almák","apples":"almák","herbal_teas":"gyógyteák","water":"víz","compote":"kompot","fruit_drink":"gyümölcsital","kvass":"kvász","onion":"hagyma"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

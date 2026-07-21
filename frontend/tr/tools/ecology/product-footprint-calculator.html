@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Gıda ürünlerinizin ekolojik ayak izini hesaplayın">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/tr/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Sepetinize ürün ekleyin
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Başka bir ürün ekle
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Ekolojik ayak izini hesapla
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Ekolojik ayak izini hesapla
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Hesaplama Sonuçları
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg CO₂ eşdeğeri</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Eko değerlendirme (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Ürün Ekolojik Ayak İzi Hesaplayıcı — SerpMonn","meta_description":"Gıda ürünlerinizin ekolojik ayak izini hesaplayın. Alışveriş sepetinizin karbon ayak izi, su ayak izi ve çevresel etkisi hakkında bilgi edinin.","meta_keywords":"ürün ekolojik ayak izi, gıda karbon ayak izi, ürün su ayak izi, ekolojik hesap makinesi, beslenme karbon ayak izi","og_title":"Ürün Ekolojik Ayak İzi Hesaplayıcı — SerpMonn","og_description":"Gıda ürünlerinizin ekolojik ayak izini hesaplayın. Karbon ayak izi, su ayak izi ve çevresel etki hakkında bilgi edinin.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/tr/eco-calculators/product-footprint/","vk_title":"Ürün Ekolojik Ayak İzi Hesaplayıcı","vk_description":"Gıda ürünlerinizin ekolojik ayak izini hesaplayın","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Ana Sayfa","tools":"Araçlar","current":"Ürün Ayak İzi Hesaplayıcı"},"header":{"title":"🌱 Ürün Ekolojik Ayak İzi Hesaplayıcı","subtitle":"Sepetinizdeki ürünlerin çevresel etkisini öğrenin"},"calculator":{"section_title":"🛒 Sepetinize ürün ekleyin"},"buttons":{"add_product":"➕ Başka bir ürün ekle","calculate":"🧮 Ekolojik ayak izini hesapla","share_vk":"📘 VKontakte'da paylaş","share_telegram":"📱 Telegram'da paylaş"},"results":{"title":"📊 Hesaplama Sonuçları","carbon_label":"kg CO₂ eşdeğeri","water_label":"litre su","land_label":"m² arazi","eco_score_label":"Eko değerlendirme (1-10)"},"comparison":{"title":"🔍 Alternatiflerle karşılaştırma"},"recommendations":{"title":"💡 Ekolojik ayak izini azaltma önerileri"},"errors":{"no_products":"Lütfen hesaplama için en az bir ürün ekleyin.","invalid_quantity":"Lütfen {product} ürünü için geçerli bir miktar girin","calculation_error":"Hesaplama sırasında bir hata oluştu. Lütfen tekrar deneyin.","select_product_and_qty":"Lütfen bir ürün seçin ve miktar girin"},"success":{"calculation_complete":"Hesaplama başarıyla tamamlandı!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"adet","pack":"paket"},"products":{"beef":"Sığır eti","chicken":"Tavuk","pork":"Domuz eti","fish":"Balık","eggs":"Yumurta","milk":"Süt","cheese":"Peynir","yogurt":"Yoğurt","rice":"Pirinç","pasta":"Makarna","bread":"Ekmek","potatoes":"Patates","tomatoes":"Domates","apples":"Elma","bananas":"Muz","coffee":"Kahve","tea":"Çay","chocolate":"Çikolata","sugar":"Şeker","olive_oil":"Zeytinyağı","select_product":"Bir ürün seçin...","lamb":"Kuzu eti","wheat":"Buğday","vegetables":"Sebzeler (karışık)","fruits":"Meyveler (karışık)","nuts":"Kuruyemiş","turkey":"Hindi","duck":"Ördek","butter":"Tereyağı","salmon":"Somon","tuna":"Ton balığı","shrimp":"Karides","cucumbers":"Salatalık","carrots":"Havuç","oranges":"Portakal","grapes":"Üzüm","strawberries":"Çilek","quinoa":"Kinoa","lentils":"Mercimek","chickpeas":"Nohut","wine":"Şarap","bread_white":"Beyaz ekmek","bread_rye":"Çavdar ekmeği","buckwheat":"Karabuğday","oats":"Yulaf ezmesi","barley":"Arpa","rye":"Çavdar (tahıl)","sunflower_oil":"Ayçiçek yağı","kefir":"Kefir","yogurt_plain":"Sade yoğurt","cottage_cheese":"Lor peyniri","sour_cream":"Ekşi krema","cabbage":"Lahana","onions":"Soğan","garlic":"Sarımsak","beets":"Pancar","pears":"Armut","peas":"Bezelye","beans":"Fasulye","kvass":"Kvas","soda":"Gazlı içecek","beer":"Bira"},"ads":{"closeAria":"Reklamı kapat"},"js":{"quantityPlaceholder":"Miktar","selectedProductsTitle":"Seçilen ürünler:","remove":"Kaldır","unitLabel":"Birim: {unit}","loading":"Ekolojik ayak izi hesaplanıyor...","errorPrefix":"Hata:","comparisonCurrentFootprint":"Mevcut ayak izi: {value} kg CO₂","comparisonAlternatives":"Alternatifler:","comparisonSavings":"Tasarruf: ~{value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"Yüksek ekolojik ayak izine sahip ürünler","description":"Şunlar için alternatifleri değerlendirin: {products}"},"reduceMeat":{"title":"Et tüketimini azaltın","description":"Haftada 1-2 kez eti bitkisel proteinlerle değiştirmeyi deneyin"},"dairyAlternatives":{"title":"Süt ürünleri alternatifleri","description":"Bitkisel süt ve peynirleri deneyin"},"buyLocal":{"title":"Yerel mevsimlik ürünler satın alın","description":"Bu, taşıma ayak izini azaltır ve yerel üreticileri destekler"},"planPurchases":{"title":"Alışverişlerinizi planlayın","description":"Gıda israfından kaçının — yalnızca ihtiyacınız kadar alın"}},"alternatives":{"plant_proteins":"bitkisel proteinler","legumes":"baklagiller","nuts":"kuruyemiş","poultry":"kümes hayvanları","fish":"balık","seaweed":"deniz yosunu","plant_milk":"bitkisel süt","oat_milk":"yulaf sütü","plant_cheese":"bitkisel peynirler","tofu":"tofu","quinoa":"kinoa","bulgur":"bulgur","buckwheat":"karabuğday","oats_grain":"yulaf","barley_grain":"arpa","rye_grain":"çavdar","sweet_potato":"tatlı patates","turnip":"şalgam","seasonal_vegetables":"mevsimlik sebzeler","local_seasonal_vegetables":"yerel mevsimlik sebzeler","local_seasonal_fruits":"yerel mevsimlik meyveler","local_fruits":"yerel meyveler","tea":"çay","chicory":"hindiba","fruits":"meyveler","seeds":"tohumlar","chicken":"tavuk","turkey":"hindi","plant_oils":"bitkisel yağlar","avocado":"avokado","plant_yogurt":"bitkisel yoğurtlar","kefir":"kefir","plant_omega3":"bitkisel omega-3","flax_seeds":"keten tohumu","other_fish":"diğer balıklar","other_seafood":"diğer deniz ürünleri","canned_tomatoes":"konserve domates","zucchini":"kabak","seasonal_root_vegetables":"mevsimlik kök sebzeler","beets":"pancar","other_root_vegetables":"diğer kök sebzeler","seasonal_citrus":"mevsimlik narenciyeler","seasonal_berries":"mevsimlik meyveler","other_grains":"diğer tahıllar","other_pseudograins":"diğer sözde tahıllar","beans":"fasulye","peas":"bezelye","chickpeas":"nohut","lentils":"mercimek","plant_drinks":"bitkisel içecekler","local_herbs":"yerel otlar","local_drinks":"yerel içecekler","non_alcoholic_options":"alkolsüz seçenekler","plant_desserts":"bitkisel tatlılar","honey":"bal","stevia":"stevia","rye_bread":"çavdar ekmeği","whole_grain":"tam tahıl","pearl_barley":"arpa","oatmeal":"yulaf ezmesi","millet":"darı","whole_grain_pasta":"tam tahıllı makarna","wheat":"buğday","olive_oil":"zeytinyağı","sunflower_oil":"ayçiçek yağı","reduce_amount":"miktarı azalt","plain_yogurt":"sade yoğurt","yogurt":"yoğurt","reduce_fat":"yağ oranını azalt","other_seasonal_vegetables":"diğer mevsimlik sebzeler","local_apples":"yerel elmalar","apples":"elmalar","herbal_teas":"bitki çayları","water":"su","compote":"komposto","fruit_drink":"meyve içeceği","kvass":"kvas","onion":"soğan"}};
+        window.i18n = {"title":"Ürün Ekolojik Ayak İzi Hesaplayıcı — SerpMonn","meta_description":"Gıda ürünlerinizin ekolojik ayak izini hesaplayın. Alışveriş sepetinizin karbon ayak izi, su ayak izi ve çevresel etkisi hakkında bilgi edinin.","meta_keywords":"ürün ekolojik ayak izi, gıda karbon ayak izi, ürün su ayak izi, ekolojik hesap makinesi, beslenme karbon ayak izi","og_title":"Ürün Ekolojik Ayak İzi Hesaplayıcı — SerpMonn","og_description":"Gıda ürünlerinizin ekolojik ayak izini hesaplayın. Karbon ayak izi, su ayak izi ve çevresel etki hakkında bilgi edinin.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/tr/eco-calculators/product-footprint/","vk_title":"Ürün Ekolojik Ayak İzi Hesaplayıcı","vk_description":"Gıda ürünlerinizin ekolojik ayak izini hesaplayın","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Ana Sayfa","tools":"Araçlar","current":"Ürün Ayak İzi Hesaplayıcı"},"header":{"title":"🌱 Ürün Ekolojik Ayak İzi Hesaplayıcı","subtitle":"Sepetinizdeki ürünlerin çevresel etkisini öğrenin"},"calculator":{"section_title":"🛒 Sepetinize ürün ekleyin","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Başka bir ürün ekle","calculate":"🧮 Ekolojik ayak izini hesapla","share_vk":"📘 VKontakte'da paylaş","share_telegram":"📱 Telegram'da paylaş","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Hesaplama Sonuçları","carbon_label":"kg CO₂ eşdeğeri","water_label":"litre su","land_label":"m² arazi","eco_score_label":"Eko değerlendirme (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Alternatiflerle karşılaştırma"},"recommendations":{"title":"💡 Ekolojik ayak izini azaltma önerileri"},"errors":{"no_products":"Lütfen hesaplama için en az bir ürün ekleyin.","invalid_quantity":"Lütfen {product} ürünü için geçerli bir miktar girin","calculation_error":"Hesaplama sırasında bir hata oluştu. Lütfen tekrar deneyin.","select_product_and_qty":"Lütfen bir ürün seçin ve miktar girin"},"success":{"calculation_complete":"Hesaplama başarıyla tamamlandı!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"adet","pack":"paket"},"products":{"beef":"Sığır eti","chicken":"Tavuk","pork":"Domuz eti","fish":"Balık","eggs":"Yumurta","milk":"Süt","cheese":"Peynir","yogurt":"Yoğurt","rice":"Pirinç","pasta":"Makarna","bread":"Ekmek","potatoes":"Patates","tomatoes":"Domates","apples":"Elma","bananas":"Muz","coffee":"Kahve","tea":"Çay","chocolate":"Çikolata","sugar":"Şeker","olive_oil":"Zeytinyağı","select_product":"Bir ürün seçin...","lamb":"Kuzu eti","wheat":"Buğday","vegetables":"Sebzeler (karışık)","fruits":"Meyveler (karışık)","nuts":"Kuruyemiş","turkey":"Hindi","duck":"Ördek","butter":"Tereyağı","salmon":"Somon","tuna":"Ton balığı","shrimp":"Karides","cucumbers":"Salatalık","carrots":"Havuç","oranges":"Portakal","grapes":"Üzüm","strawberries":"Çilek","quinoa":"Kinoa","lentils":"Mercimek","chickpeas":"Nohut","wine":"Şarap","bread_white":"Beyaz ekmek","bread_rye":"Çavdar ekmeği","buckwheat":"Karabuğday","oats":"Yulaf ezmesi","barley":"Arpa","rye":"Çavdar (tahıl)","sunflower_oil":"Ayçiçek yağı","kefir":"Kefir","yogurt_plain":"Sade yoğurt","cottage_cheese":"Lor peyniri","sour_cream":"Ekşi krema","cabbage":"Lahana","onions":"Soğan","garlic":"Sarımsak","beets":"Pancar","pears":"Armut","peas":"Bezelye","beans":"Fasulye","kvass":"Kvas","soda":"Gazlı içecek","beer":"Bira"},"ads":{"closeAria":"Reklamı kapat"},"js":{"quantityPlaceholder":"Miktar","selectedProductsTitle":"Seçilen ürünler:","remove":"Kaldır","unitLabel":"Birim: {unit}","loading":"Ekolojik ayak izi hesaplanıyor...","errorPrefix":"Hata:","comparisonCurrentFootprint":"Mevcut ayak izi: {value} kg CO₂","comparisonAlternatives":"Alternatifler:","comparisonSavings":"Tasarruf: ~{value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Yüksek ekolojik ayak izine sahip ürünler","description":"Şunlar için alternatifleri değerlendirin: {products}"},"reduceMeat":{"title":"Et tüketimini azaltın","description":"Haftada 1-2 kez eti bitkisel proteinlerle değiştirmeyi deneyin"},"dairyAlternatives":{"title":"Süt ürünleri alternatifleri","description":"Bitkisel süt ve peynirleri deneyin"},"buyLocal":{"title":"Yerel mevsimlik ürünler satın alın","description":"Bu, taşıma ayak izini azaltır ve yerel üreticileri destekler"},"planPurchases":{"title":"Alışverişlerinizi planlayın","description":"Gıda israfından kaçının — yalnızca ihtiyacınız kadar alın"}},"alternatives":{"plant_proteins":"bitkisel proteinler","legumes":"baklagiller","nuts":"kuruyemiş","poultry":"kümes hayvanları","fish":"balık","seaweed":"deniz yosunu","plant_milk":"bitkisel süt","oat_milk":"yulaf sütü","plant_cheese":"bitkisel peynirler","tofu":"tofu","quinoa":"kinoa","bulgur":"bulgur","buckwheat":"karabuğday","oats_grain":"yulaf","barley_grain":"arpa","rye_grain":"çavdar","sweet_potato":"tatlı patates","turnip":"şalgam","seasonal_vegetables":"mevsimlik sebzeler","local_seasonal_vegetables":"yerel mevsimlik sebzeler","local_seasonal_fruits":"yerel mevsimlik meyveler","local_fruits":"yerel meyveler","tea":"çay","chicory":"hindiba","fruits":"meyveler","seeds":"tohumlar","chicken":"tavuk","turkey":"hindi","plant_oils":"bitkisel yağlar","avocado":"avokado","plant_yogurt":"bitkisel yoğurtlar","kefir":"kefir","plant_omega3":"bitkisel omega-3","flax_seeds":"keten tohumu","other_fish":"diğer balıklar","other_seafood":"diğer deniz ürünleri","canned_tomatoes":"konserve domates","zucchini":"kabak","seasonal_root_vegetables":"mevsimlik kök sebzeler","beets":"pancar","other_root_vegetables":"diğer kök sebzeler","seasonal_citrus":"mevsimlik narenciyeler","seasonal_berries":"mevsimlik meyveler","other_grains":"diğer tahıllar","other_pseudograins":"diğer sözde tahıllar","beans":"fasulye","peas":"bezelye","chickpeas":"nohut","lentils":"mercimek","plant_drinks":"bitkisel içecekler","local_herbs":"yerel otlar","local_drinks":"yerel içecekler","non_alcoholic_options":"alkolsüz seçenekler","plant_desserts":"bitkisel tatlılar","honey":"bal","stevia":"stevia","rye_bread":"çavdar ekmeği","whole_grain":"tam tahıl","pearl_barley":"arpa","oatmeal":"yulaf ezmesi","millet":"darı","whole_grain_pasta":"tam tahıllı makarna","wheat":"buğday","olive_oil":"zeytinyağı","sunflower_oil":"ayçiçek yağı","reduce_amount":"miktarı azalt","plain_yogurt":"sade yoğurt","yogurt":"yoğurt","reduce_fat":"yağ oranını azalt","other_seasonal_vegetables":"diğer mevsimlik sebzeler","local_apples":"yerel elmalar","apples":"elmalar","herbal_teas":"bitki çayları","water":"su","compote":"komposto","fruit_drink":"meyve içeceği","kvass":"kvas","onion":"soğan"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

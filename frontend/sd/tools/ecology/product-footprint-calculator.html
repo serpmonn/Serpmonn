@@ -28,7 +28,7 @@
     <meta property="vk:description" content="پنهنجن کاڌي جي صنعتن جي ماحولياتي پيرن جي نشاني ڳڻيو">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/sd/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 ٽوڪري ۾ صنعتن شامل ڪريو
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ هڪ ٻي صنعت شامل ڪريو
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 ماحولياتي پيرن جي نشاني ڳڻيو
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 ماحولياتي پيرن جي نشاني ڳڻيو
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 ڳڻپ جا نتيجا
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">ڪلوگرام CO₂ برابر</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">ماحولياتي درجو (10-1)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"صنعتن جي ماحولياتي پيرن جي نشاني ڪيلڪيوليٽر — SerpMonn","meta_description":"پنهنجن کاڌي جي صنعتن جي ماحولياتي پيرن جي نشاني ڳڻيو. پنهنجي خريداري جي ٽوڪري جي ڪاربن پيرن جي نشاني، پاڻي پيرن جي نشاني ۽ ماحول تي اثر بابت ڄاڻيو.","meta_keywords":"صنعتن ماحولياتي پيرن جي نشاني, کاڌو ڪاربن پيرن جي نشاني, صنعتن پاڻي پيرن جي نشاني, ماحولياتي ڪيلڪيوليٽر, تغذي ڪاربن پيرن جي نشاني","og_title":"صنعتن جي ماحولياتي پيرن جي نشاني ڪيلڪيوليٽر — SerpMonn","og_description":"پنهنجن کاڌي جي صنعتن جي ماحولياتي پيرن جي نشاني ڳڻيو. ڪاربن پيرن جي نشاني، پاڻي پيرن جي نشاني ۽ ماحول تي اثر بابت ڄاڻيو.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/sd/eco-calculators/product-footprint/","vk_title":"صنعتن جي ماحولياتي پيرن جي نشاني ڪيلڪيوليٽر","vk_description":"پنهنجن کاڌي جي صنعتن جي ماحولياتي پيرن جي نشاني ڳڻيو","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"گھر","tools":"اوزار","current":"صنعت پيرن جي نشاني ڪيلڪيوليٽر"},"header":{"title":"🌱 صنعتن جي ماحولياتي پيرن جي نشاني ڪيلڪيوليٽر","subtitle":"پنهنجي ٽوڪري ۾ صنعتن جي ماحول تي اثر ڄاڻيو"},"calculator":{"section_title":"🛒 ٽوڪري ۾ صنعتن شامل ڪريو"},"buttons":{"add_product":"➕ هڪ ٻي صنعت شامل ڪريو","calculate":"🧮 ماحولياتي پيرن جي نشاني ڳڻيو","share_vk":"📘 VKontakte تي شيئر ڪريو","share_telegram":"📱 Telegram تي شيئر ڪريو"},"results":{"title":"📊 ڳڻپ جا نتيجا","carbon_label":"ڪلوگرام CO₂ برابر","water_label":"ليٽر پاڻي","land_label":"مربع ميٽر زمين","eco_score_label":"ماحولياتي درجو (10-1)"},"comparison":{"title":"🔍 متبادل سان ڀيٽ"},"recommendations":{"title":"💡 ماحولياتي پيرن جي نشاني گھٽائڻ لاءِ صلاحون"},"errors":{"no_products":"مهرباني ڪري ڳڻپ لاءِ گھٽ ۾ گھٽ هڪ صنعت شامل ڪريو.","invalid_quantity":"مهرباني ڪري صنعت {product} لاءِ صحيح مقدار داخل ڪريو","calculation_error":"ڳڻپ دوران ڪو خرابي ٿي. مهرباني ڪري ٻيهر ڪوشش ڪريو.","select_product_and_qty":"مهرباني ڪري هڪ شي چونڊيو ۽ مقدار داخل ڪريو"},"success":{"calculation_complete":"ڳڻپ ڪاميابي سان مڪمل ٿي!"},"units":{"kg":"ڪلوگرام","g":"گرام","l":"ليٽر","ml":"ملي ليٽر","pcs":"ٽڪڙو","pack":"پيڪ"},"products":{"beef":"گائي جو گوشت","chicken":"مرغي","pork":"سور جو گوشت","fish":"مڇي","eggs":"انڊا","milk":"دودھ","cheese":"پنير","yogurt":"دہي","rice":"چانور","pasta":"پاستا","bread":"مڻي","potatoes":"آلو","tomatoes":"ٽماٽا","apples":"سيب","bananas":"ڪيلو","coffee":"ڪافي","tea":"چانهه","chocolate":"چاڪليٽ","sugar":"کانڊ","olive_oil":"زيتون جو تيل","select_product":"هڪ صنعت چونڊيو...","lamb":"بڪري جو گوشت","wheat":"گندم","vegetables":"سبزيون (ملائيل)","fruits":"ميوا (ملائيل)","nuts":"مغز","turkey":"ٽرڪي","duck":"بطخ","butter":"مکڻ","salmon":"سالمون","tuna":"ٽونا","shrimp":"جهينگا","cucumbers":"کيرو","carrots":"گاجر","oranges":"مالٽو","grapes":"انگور","strawberries":"اسٽرابري","quinoa":"ڪينوا","lentils":"مسور","chickpeas":"چڻا","wine":"وائن","bread_white":"اڇي روٽي","bread_rye":"رائي جي روٽي","buckwheat":"بڪ ويٽ","oats":"اوٽميل","barley":"جوار دانو","rye":"رائي (اناج)","sunflower_oil":"سج تيل","kefir":"ڪيفير","yogurt_plain":"سادي دہي","cottage_cheese":"ڪاٽيج پنير","sour_cream":"کڙي ڪريم","cabbage":"بند گوبي","onions":"پياز","garlic":"لھسن","beets":"چقندر","pears":"ناشپاتي","peas":"مٽر","beans":"بينز","kvass":"ڪواس","soda":"سافٽ ڊرنڪ","beer":"بيئر"},"ads":{"closeAria":"اشتھار بند ڪريو"},"js":{"quantityPlaceholder":"مقدار","selectedProductsTitle":"چونڊيل شيون:","remove":"هٽايو","unitLabel":"يونٽ: {unit}","loading":"ماحولياتي اثر جو حساب لڳائي رهيو آهي...","errorPrefix":"غلطي:","comparisonCurrentFootprint":"موجوده اثر: {value} ڪلو CO₂","comparisonAlternatives":"متبادل:","comparisonSavings":"بچت: ~{value} ڪلو CO₂"},"recommendationItems":{"highImpact":{"title":"اعليٰ ماحولياتي اثر واريون شيون","description":"ان لاءِ متبادل غور ڪريو: {products}"},"reduceMeat":{"title":"گوشت جي استعمال کي گهٽايو","description":"هفتے ۾ 1–2 ڀيرا گوشت کي ٻوٽي تي ٺهيل پروٽين سان بدل ڪرڻ جي ڪوشش ڪريو"},"dairyAlternatives":{"title":"دودھ جي شين جا متبادل","description":"ٻوٽي تي ٺهيل دودھ ۽ پنير آزمايو"},"buyLocal":{"title":"مقامي موسمي شيون خريد ڪريو","description":"اهو ٽرانسپورٽ جو اثر گهٽائي ٿو ۽ مقامي پيداوار ڪندڙن جي حمايت ڪري ٿو"},"planPurchases":{"title":"پنھنجي خريداري جو منصوبو بڻايو","description":"کاڌي جي ضايع کان بچو — صرف گهرج مطابق خريد ڪريو"}},"alternatives":{"plant_proteins":"ٻوٽي تي ٺهيل پروٽين","legumes":"دالون","nuts":"مغز","poultry":"مرغي","fish":"مڇي","seaweed":"سمندري گھاس","plant_milk":"ٻوٽي تي ٺهيل دودھ","oat_milk":"اوٽ ملڪ","plant_cheese":"ٻوٽي تي ٺهيل پنير","tofu":"ٽوفو","quinoa":"ڪينوا","bulgur":"بلغور","buckwheat":"بڪ ويٽ","oats_grain":"اوٽس","barley_grain":"جوار","rye_grain":"رائي","sweet_potato":"شڪر قندي","turnip":"شلجم","seasonal_vegetables":"موسمي سبزيون","local_seasonal_vegetables":"مقامي موسمي سبزيون","local_seasonal_fruits":"مقامي موسمي ميوا","local_fruits":"مقامي ميوا","tea":"چانهه","chicory":"چڪوري","fruits":"ميوا","seeds":"ٻج","chicken":"مرغي","turkey":"ٽرڪي","plant_oils":"ٻوٽي تيل","avocado":"ايووڪاڊو","plant_yogurt":"ٻوٽي تي ٺهيل دہي","kefir":"ڪيفير","plant_omega3":"ٻوٽي تي ٺهيل اوميگا-3","flax_seeds":"السي جا ٻج","other_fish":"ٻيون مڇيون","other_seafood":"ٻيو سمندري کاڌو","canned_tomatoes":"ڊبي وارا ٽماٽا","zucchini":"زڪيني","seasonal_root_vegetables":"موسمي جڙ واريون سبزيون","beets":"چقندر","other_root_vegetables":"ٻيون جڙ واريون سبزيون","seasonal_citrus":"موسمي ترش ميوا","seasonal_berries":"موسمي بيريون","other_grains":"ٻيا اناج","other_pseudograins":"ٻيا جعلي اناج","beans":"بينز","peas":"مٽر","chickpeas":"چڻا","lentils":"مسور","plant_drinks":"ٻوٽي تي ٺهيل مشروب","local_herbs":"مقامي جڙي بوٽيون","local_drinks":"مقامي مشروب","non_alcoholic_options":"غير الڪحل اختيار","plant_desserts":"ٻوٽي تي ٺهيل مٺايون","honey":"شهد","stevia":"اسٽيويا","rye_bread":"رائي جي روٽي","whole_grain":"مڪمل اناج","pearl_barley":"جوار دانو","oatmeal":"اوٽميل","millet":"باجره","whole_grain_pasta":"مڪمل اناج پاستا","wheat":"گندم","olive_oil":"زيتون جو تيل","sunflower_oil":"سج تيل","reduce_amount":"مقدار گهٽايو","plain_yogurt":"سادي دہي","yogurt":"دہي","reduce_fat":"چرڀي گهٽايو","other_seasonal_vegetables":"ٻيون موسمي سبزيون","local_apples":"مقامي سيب","apples":"سيب","herbal_teas":"جڙي بوٽي چانهه","water":"پاڻي","compote":"ڪمپوٽ","fruit_drink":"ميوي جو مشروب","kvass":"ڪواس","onion":"پياز"}};
+        window.i18n = {"title":"صنعتن جي ماحولياتي پيرن جي نشاني ڪيلڪيوليٽر — SerpMonn","meta_description":"پنهنجن کاڌي جي صنعتن جي ماحولياتي پيرن جي نشاني ڳڻيو. پنهنجي خريداري جي ٽوڪري جي ڪاربن پيرن جي نشاني، پاڻي پيرن جي نشاني ۽ ماحول تي اثر بابت ڄاڻيو.","meta_keywords":"صنعتن ماحولياتي پيرن جي نشاني, کاڌو ڪاربن پيرن جي نشاني, صنعتن پاڻي پيرن جي نشاني, ماحولياتي ڪيلڪيوليٽر, تغذي ڪاربن پيرن جي نشاني","og_title":"صنعتن جي ماحولياتي پيرن جي نشاني ڪيلڪيوليٽر — SerpMonn","og_description":"پنهنجن کاڌي جي صنعتن جي ماحولياتي پيرن جي نشاني ڳڻيو. ڪاربن پيرن جي نشاني، پاڻي پيرن جي نشاني ۽ ماحول تي اثر بابت ڄاڻيو.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/sd/eco-calculators/product-footprint/","vk_title":"صنعتن جي ماحولياتي پيرن جي نشاني ڪيلڪيوليٽر","vk_description":"پنهنجن کاڌي جي صنعتن جي ماحولياتي پيرن جي نشاني ڳڻيو","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"گھر","tools":"اوزار","current":"صنعت پيرن جي نشاني ڪيلڪيوليٽر"},"header":{"title":"🌱 صنعتن جي ماحولياتي پيرن جي نشاني ڪيلڪيوليٽر","subtitle":"پنهنجي ٽوڪري ۾ صنعتن جي ماحول تي اثر ڄاڻيو"},"calculator":{"section_title":"🛒 ٽوڪري ۾ صنعتن شامل ڪريو","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ هڪ ٻي صنعت شامل ڪريو","calculate":"🧮 ماحولياتي پيرن جي نشاني ڳڻيو","share_vk":"📘 VKontakte تي شيئر ڪريو","share_telegram":"📱 Telegram تي شيئر ڪريو","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 ڳڻپ جا نتيجا","carbon_label":"ڪلوگرام CO₂ برابر","water_label":"ليٽر پاڻي","land_label":"مربع ميٽر زمين","eco_score_label":"ماحولياتي درجو (10-1)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 متبادل سان ڀيٽ"},"recommendations":{"title":"💡 ماحولياتي پيرن جي نشاني گھٽائڻ لاءِ صلاحون"},"errors":{"no_products":"مهرباني ڪري ڳڻپ لاءِ گھٽ ۾ گھٽ هڪ صنعت شامل ڪريو.","invalid_quantity":"مهرباني ڪري صنعت {product} لاءِ صحيح مقدار داخل ڪريو","calculation_error":"ڳڻپ دوران ڪو خرابي ٿي. مهرباني ڪري ٻيهر ڪوشش ڪريو.","select_product_and_qty":"مهرباني ڪري هڪ شي چونڊيو ۽ مقدار داخل ڪريو"},"success":{"calculation_complete":"ڳڻپ ڪاميابي سان مڪمل ٿي!"},"units":{"kg":"ڪلوگرام","g":"گرام","l":"ليٽر","ml":"ملي ليٽر","pcs":"ٽڪڙو","pack":"پيڪ"},"products":{"beef":"گائي جو گوشت","chicken":"مرغي","pork":"سور جو گوشت","fish":"مڇي","eggs":"انڊا","milk":"دودھ","cheese":"پنير","yogurt":"دہي","rice":"چانور","pasta":"پاستا","bread":"مڻي","potatoes":"آلو","tomatoes":"ٽماٽا","apples":"سيب","bananas":"ڪيلو","coffee":"ڪافي","tea":"چانهه","chocolate":"چاڪليٽ","sugar":"کانڊ","olive_oil":"زيتون جو تيل","select_product":"هڪ صنعت چونڊيو...","lamb":"بڪري جو گوشت","wheat":"گندم","vegetables":"سبزيون (ملائيل)","fruits":"ميوا (ملائيل)","nuts":"مغز","turkey":"ٽرڪي","duck":"بطخ","butter":"مکڻ","salmon":"سالمون","tuna":"ٽونا","shrimp":"جهينگا","cucumbers":"کيرو","carrots":"گاجر","oranges":"مالٽو","grapes":"انگور","strawberries":"اسٽرابري","quinoa":"ڪينوا","lentils":"مسور","chickpeas":"چڻا","wine":"وائن","bread_white":"اڇي روٽي","bread_rye":"رائي جي روٽي","buckwheat":"بڪ ويٽ","oats":"اوٽميل","barley":"جوار دانو","rye":"رائي (اناج)","sunflower_oil":"سج تيل","kefir":"ڪيفير","yogurt_plain":"سادي دہي","cottage_cheese":"ڪاٽيج پنير","sour_cream":"کڙي ڪريم","cabbage":"بند گوبي","onions":"پياز","garlic":"لھسن","beets":"چقندر","pears":"ناشپاتي","peas":"مٽر","beans":"بينز","kvass":"ڪواس","soda":"سافٽ ڊرنڪ","beer":"بيئر"},"ads":{"closeAria":"اشتھار بند ڪريو"},"js":{"quantityPlaceholder":"مقدار","selectedProductsTitle":"چونڊيل شيون:","remove":"هٽايو","unitLabel":"يونٽ: {unit}","loading":"ماحولياتي اثر جو حساب لڳائي رهيو آهي...","errorPrefix":"غلطي:","comparisonCurrentFootprint":"موجوده اثر: {value} ڪلو CO₂","comparisonAlternatives":"متبادل:","comparisonSavings":"بچت: ~{value} ڪلو CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"اعليٰ ماحولياتي اثر واريون شيون","description":"ان لاءِ متبادل غور ڪريو: {products}"},"reduceMeat":{"title":"گوشت جي استعمال کي گهٽايو","description":"هفتے ۾ 1–2 ڀيرا گوشت کي ٻوٽي تي ٺهيل پروٽين سان بدل ڪرڻ جي ڪوشش ڪريو"},"dairyAlternatives":{"title":"دودھ جي شين جا متبادل","description":"ٻوٽي تي ٺهيل دودھ ۽ پنير آزمايو"},"buyLocal":{"title":"مقامي موسمي شيون خريد ڪريو","description":"اهو ٽرانسپورٽ جو اثر گهٽائي ٿو ۽ مقامي پيداوار ڪندڙن جي حمايت ڪري ٿو"},"planPurchases":{"title":"پنھنجي خريداري جو منصوبو بڻايو","description":"کاڌي جي ضايع کان بچو — صرف گهرج مطابق خريد ڪريو"}},"alternatives":{"plant_proteins":"ٻوٽي تي ٺهيل پروٽين","legumes":"دالون","nuts":"مغز","poultry":"مرغي","fish":"مڇي","seaweed":"سمندري گھاس","plant_milk":"ٻوٽي تي ٺهيل دودھ","oat_milk":"اوٽ ملڪ","plant_cheese":"ٻوٽي تي ٺهيل پنير","tofu":"ٽوفو","quinoa":"ڪينوا","bulgur":"بلغور","buckwheat":"بڪ ويٽ","oats_grain":"اوٽس","barley_grain":"جوار","rye_grain":"رائي","sweet_potato":"شڪر قندي","turnip":"شلجم","seasonal_vegetables":"موسمي سبزيون","local_seasonal_vegetables":"مقامي موسمي سبزيون","local_seasonal_fruits":"مقامي موسمي ميوا","local_fruits":"مقامي ميوا","tea":"چانهه","chicory":"چڪوري","fruits":"ميوا","seeds":"ٻج","chicken":"مرغي","turkey":"ٽرڪي","plant_oils":"ٻوٽي تيل","avocado":"ايووڪاڊو","plant_yogurt":"ٻوٽي تي ٺهيل دہي","kefir":"ڪيفير","plant_omega3":"ٻوٽي تي ٺهيل اوميگا-3","flax_seeds":"السي جا ٻج","other_fish":"ٻيون مڇيون","other_seafood":"ٻيو سمندري کاڌو","canned_tomatoes":"ڊبي وارا ٽماٽا","zucchini":"زڪيني","seasonal_root_vegetables":"موسمي جڙ واريون سبزيون","beets":"چقندر","other_root_vegetables":"ٻيون جڙ واريون سبزيون","seasonal_citrus":"موسمي ترش ميوا","seasonal_berries":"موسمي بيريون","other_grains":"ٻيا اناج","other_pseudograins":"ٻيا جعلي اناج","beans":"بينز","peas":"مٽر","chickpeas":"چڻا","lentils":"مسور","plant_drinks":"ٻوٽي تي ٺهيل مشروب","local_herbs":"مقامي جڙي بوٽيون","local_drinks":"مقامي مشروب","non_alcoholic_options":"غير الڪحل اختيار","plant_desserts":"ٻوٽي تي ٺهيل مٺايون","honey":"شهد","stevia":"اسٽيويا","rye_bread":"رائي جي روٽي","whole_grain":"مڪمل اناج","pearl_barley":"جوار دانو","oatmeal":"اوٽميل","millet":"باجره","whole_grain_pasta":"مڪمل اناج پاستا","wheat":"گندم","olive_oil":"زيتون جو تيل","sunflower_oil":"سج تيل","reduce_amount":"مقدار گهٽايو","plain_yogurt":"سادي دہي","yogurt":"دہي","reduce_fat":"چرڀي گهٽايو","other_seasonal_vegetables":"ٻيون موسمي سبزيون","local_apples":"مقامي سيب","apples":"سيب","herbal_teas":"جڙي بوٽي چانهه","water":"پاڻي","compote":"ڪمپوٽ","fruit_drink":"ميوي جو مشروب","kvass":"ڪواس","onion":"پياز"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

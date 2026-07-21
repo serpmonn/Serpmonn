@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Vypočítejte ekologickou stopu vašich potravin">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/cs/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Přidejte výrobky do košíku
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Přidat další výrobek
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Vypočítat ekologickou stopu
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Vypočítat ekologickou stopu
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Výsledky výpočtu
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg ekvivalentu CO₂</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Eko-hodnocení (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Kalkulačka Ekologické Stopy Výrobků — SerpMonn","meta_description":"Vypočítejte ekologickou stopu vašich potravin. Zjistěte uhlíkovou stopu, vodní stopu a dopad na životní prostředí vašeho nákupního košíku.","meta_keywords":"ekologická stopa výrobků, uhlíková stopa jídla, vodní stopa výrobků, ekologická kalkulačka, uhlíková stopa výživy","og_title":"Kalkulačka Ekologické Stopy Výrobků — SerpMonn","og_description":"Vypočítejte ekologickou stopu vašich potravin. Zjistěte uhlíkovou stopu, vodní stopu a dopad na životní prostředí.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/cs/eco-calculators/product-footprint/","vk_title":"Kalkulačka Ekologické Stopy Výrobků","vk_description":"Vypočítejte ekologickou stopu vašich potravin","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Domů","tools":"Nástroje","current":"Kalkulačka Stopy Výrobků"},"header":{"title":"🌱 Kalkulačka Ekologické Stopy Výrobků","subtitle":"Zjistěte dopad výrobků ve vašem košíku na životní prostředí"},"calculator":{"section_title":"🛒 Přidejte výrobky do košíku"},"buttons":{"add_product":"➕ Přidat další výrobek","calculate":"🧮 Vypočítat ekologickou stopu","share_vk":"📘 Sdílet na VKontakte","share_telegram":"📱 Sdílet na Telegram"},"results":{"title":"📊 Výsledky výpočtu","carbon_label":"kg ekvivalentu CO₂","water_label":"litrů vody","land_label":"m² půdy","eco_score_label":"Eko-hodnocení (1-10)"},"comparison":{"title":"🔍 Srovnání s alternativami"},"recommendations":{"title":"💡 Doporučení ke snížení ekologické stopy"},"errors":{"no_products":"Přidejte alespoň jeden výrobek pro výpočet.","invalid_quantity":"Zadejte platné množství pro výrobek: {product}","calculation_error":"Při výpočtu došlo k chybě. Zkuste to prosím znovu.","select_product_and_qty":"Vyberte prosím produkt a zadejte množství"},"success":{"calculation_complete":"Výpočet úspěšně dokončen!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"ks","pack":"balení"},"products":{"beef":"Hovězí","chicken":"Kuře","pork":"Vepřové","fish":"Ryba","eggs":"Vejce","milk":"Mléko","cheese":"Sýr","yogurt":"Jogurt","rice":"Rýže","pasta":"Těstoviny","bread":"Chléb","potatoes":"Brambory","tomatoes":"Rajčata","apples":"Jablka","bananas":"Banány","coffee":"Káva","tea":"Čaj","chocolate":"Čokoláda","sugar":"Cukr","olive_oil":"Olivový olej","select_product":"Vyberte výrobek...","lamb":"Jehněčí","wheat":"Pšenice","vegetables":"Zelenina (smíšená)","fruits":"Ovoce (smíšené)","nuts":"Ořechy","turkey":"Krůta","duck":"Kachna","butter":"Máslo","salmon":"Losos","tuna":"Tuňák","shrimp":"Krevety","cucumbers":"Okurky","carrots":"Mrkev","oranges":"Pomeranče","grapes":"Hrozny","strawberries":"Jahody","quinoa":"Quinoa","lentils":"Čočka","chickpeas":"Cizrna","wine":"Víno","bread_white":"Bílý chléb","bread_rye":"Žitný chléb","buckwheat":"Pohanka","oats":"Ovesné vločky","barley":"Ječná kroupa","rye":"Žito (zrnko)","sunflower_oil":"Slunečnicový olej","kefir":"Kefír","yogurt_plain":"Přírodní jogurt","cottage_cheese":"Tvaroh","sour_cream":"Smetana","cabbage":"Zelí","onions":"Cibule","garlic":"Česnek","beets":"Červená řepa","pears":"Hrušky","peas":"Hrách","beans":"Fazole","kvass":"Kvas","soda":"Limonáda","beer":"Pivo"},"ads":{"closeAria":"Zavřít reklamu"},"js":{"quantityPlaceholder":"Množství","selectedProductsTitle":"Vybrané produkty:","remove":"Odebrat","unitLabel":"Jednotka: {unit}","loading":"Počítáme ekologickou stopu...","errorPrefix":"Chyba:","comparisonCurrentFootprint":"Aktuální stopa: {value} kg CO₂","comparisonAlternatives":"Alternativy:","comparisonSavings":"Úspora: ~{value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"Produkty s vysokou ekologickou stopou","description":"Zvažte alternativy pro: {products}"},"reduceMeat":{"title":"Snížení spotřeby masa","description":"Zkuste nahradit maso rostlinnými bílkovinami 1–2× týdně"},"dairyAlternatives":{"title":"Alternativy k mléčným výrobkům","description":"Vyzkoušejte rostlinné mléko a sýry"},"buyLocal":{"title":"Kupujte místní sezónní produkty","description":"Snižuje to dopravní stopu a podporuje místní výrobce"},"planPurchases":{"title":"Plánujte nákupy","description":"Vyhněte se plýtvání potravinami — kupujte jen to, co potřebujete"}},"alternatives":{"plant_proteins":"rostlinné bílkoviny","legumes":"luštěniny","nuts":"ořechy","poultry":"drůbež","fish":"ryba","seaweed":"mořské řasy","plant_milk":"rostlinné mléko","oat_milk":"ovesné mléko","plant_cheese":"rostlinné sýry","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"pohanka","oats_grain":"oves","barley_grain":"ječmen","rye_grain":"žito","sweet_potato":"batát","turnip":"řepa","seasonal_vegetables":"sezónní zelenina","local_seasonal_vegetables":"místní sezónní zelenina","local_seasonal_fruits":"místní sezónní ovoce","local_fruits":"místní ovoce","tea":"čaj","chicory":"čekanka","fruits":"ovoce","seeds":"semena","chicken":"kuře","turkey":"krůta","plant_oils":"rostlinné oleje","avocado":"avokádo","plant_yogurt":"rostlinné jogurty","kefir":"kefír","plant_omega3":"rostlinné omega-3","flax_seeds":"lněná semínka","other_fish":"jiné druhy ryb","other_seafood":"jiné mořské plody","canned_tomatoes":"konzervovaná rajčata","zucchini":"cuketa","seasonal_root_vegetables":"sezónní kořenová zelenina","beets":"červená řepa","other_root_vegetables":"jiná kořenová zelenina","seasonal_citrus":"sezónní citrusy","seasonal_berries":"sezónní bobule","other_grains":"jiné obiloviny","other_pseudograins":"jiné pseudoobiloviny","beans":"fazole","peas":"hrách","chickpeas":"cizrna","lentils":"čočka","plant_drinks":"rostlinné nápoje","local_herbs":"místní byliny","local_drinks":"místní nápoje","non_alcoholic_options":"nealkoholické varianty","plant_desserts":"rostlinné dezerty","honey":"med","stevia":"stevie","rye_bread":"žitný chléb","whole_grain":"celozrnný","pearl_barley":"ječná kroupa","oatmeal":"ovesné vločky","millet":"proso","whole_grain_pasta":"celozrnné těstoviny","wheat":"pšenice","olive_oil":"olivový olej","sunflower_oil":"slunečnicový olej","reduce_amount":"snížit množství","plain_yogurt":"přírodní jogurt","yogurt":"jogurt","reduce_fat":"snížit tuk","other_seasonal_vegetables":"jiná sezónní zelenina","local_apples":"místní jablka","apples":"jablka","herbal_teas":"bylinkové čaje","water":"voda","compote":"kompot","fruit_drink":"ovocný nápoj","kvass":"kvas","onion":"cibule"}};
+        window.i18n = {"title":"Kalkulačka Ekologické Stopy Výrobků — SerpMonn","meta_description":"Vypočítejte ekologickou stopu vašich potravin. Zjistěte uhlíkovou stopu, vodní stopu a dopad na životní prostředí vašeho nákupního košíku.","meta_keywords":"ekologická stopa výrobků, uhlíková stopa jídla, vodní stopa výrobků, ekologická kalkulačka, uhlíková stopa výživy","og_title":"Kalkulačka Ekologické Stopy Výrobků — SerpMonn","og_description":"Vypočítejte ekologickou stopu vašich potravin. Zjistěte uhlíkovou stopu, vodní stopu a dopad na životní prostředí.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/cs/eco-calculators/product-footprint/","vk_title":"Kalkulačka Ekologické Stopy Výrobků","vk_description":"Vypočítejte ekologickou stopu vašich potravin","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Domů","tools":"Nástroje","current":"Kalkulačka Stopy Výrobků"},"header":{"title":"🌱 Kalkulačka Ekologické Stopy Výrobků","subtitle":"Zjistěte dopad výrobků ve vašem košíku na životní prostředí"},"calculator":{"section_title":"🛒 Přidejte výrobky do košíku","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Přidat další výrobek","calculate":"🧮 Vypočítat ekologickou stopu","share_vk":"📘 Sdílet na VKontakte","share_telegram":"📱 Sdílet na Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Výsledky výpočtu","carbon_label":"kg ekvivalentu CO₂","water_label":"litrů vody","land_label":"m² půdy","eco_score_label":"Eko-hodnocení (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Srovnání s alternativami"},"recommendations":{"title":"💡 Doporučení ke snížení ekologické stopy"},"errors":{"no_products":"Přidejte alespoň jeden výrobek pro výpočet.","invalid_quantity":"Zadejte platné množství pro výrobek: {product}","calculation_error":"Při výpočtu došlo k chybě. Zkuste to prosím znovu.","select_product_and_qty":"Vyberte prosím produkt a zadejte množství"},"success":{"calculation_complete":"Výpočet úspěšně dokončen!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"ks","pack":"balení"},"products":{"beef":"Hovězí","chicken":"Kuře","pork":"Vepřové","fish":"Ryba","eggs":"Vejce","milk":"Mléko","cheese":"Sýr","yogurt":"Jogurt","rice":"Rýže","pasta":"Těstoviny","bread":"Chléb","potatoes":"Brambory","tomatoes":"Rajčata","apples":"Jablka","bananas":"Banány","coffee":"Káva","tea":"Čaj","chocolate":"Čokoláda","sugar":"Cukr","olive_oil":"Olivový olej","select_product":"Vyberte výrobek...","lamb":"Jehněčí","wheat":"Pšenice","vegetables":"Zelenina (smíšená)","fruits":"Ovoce (smíšené)","nuts":"Ořechy","turkey":"Krůta","duck":"Kachna","butter":"Máslo","salmon":"Losos","tuna":"Tuňák","shrimp":"Krevety","cucumbers":"Okurky","carrots":"Mrkev","oranges":"Pomeranče","grapes":"Hrozny","strawberries":"Jahody","quinoa":"Quinoa","lentils":"Čočka","chickpeas":"Cizrna","wine":"Víno","bread_white":"Bílý chléb","bread_rye":"Žitný chléb","buckwheat":"Pohanka","oats":"Ovesné vločky","barley":"Ječná kroupa","rye":"Žito (zrnko)","sunflower_oil":"Slunečnicový olej","kefir":"Kefír","yogurt_plain":"Přírodní jogurt","cottage_cheese":"Tvaroh","sour_cream":"Smetana","cabbage":"Zelí","onions":"Cibule","garlic":"Česnek","beets":"Červená řepa","pears":"Hrušky","peas":"Hrách","beans":"Fazole","kvass":"Kvas","soda":"Limonáda","beer":"Pivo"},"ads":{"closeAria":"Zavřít reklamu"},"js":{"quantityPlaceholder":"Množství","selectedProductsTitle":"Vybrané produkty:","remove":"Odebrat","unitLabel":"Jednotka: {unit}","loading":"Počítáme ekologickou stopu...","errorPrefix":"Chyba:","comparisonCurrentFootprint":"Aktuální stopa: {value} kg CO₂","comparisonAlternatives":"Alternativy:","comparisonSavings":"Úspora: ~{value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Produkty s vysokou ekologickou stopou","description":"Zvažte alternativy pro: {products}"},"reduceMeat":{"title":"Snížení spotřeby masa","description":"Zkuste nahradit maso rostlinnými bílkovinami 1–2× týdně"},"dairyAlternatives":{"title":"Alternativy k mléčným výrobkům","description":"Vyzkoušejte rostlinné mléko a sýry"},"buyLocal":{"title":"Kupujte místní sezónní produkty","description":"Snižuje to dopravní stopu a podporuje místní výrobce"},"planPurchases":{"title":"Plánujte nákupy","description":"Vyhněte se plýtvání potravinami — kupujte jen to, co potřebujete"}},"alternatives":{"plant_proteins":"rostlinné bílkoviny","legumes":"luštěniny","nuts":"ořechy","poultry":"drůbež","fish":"ryba","seaweed":"mořské řasy","plant_milk":"rostlinné mléko","oat_milk":"ovesné mléko","plant_cheese":"rostlinné sýry","tofu":"tofu","quinoa":"quinoa","bulgur":"bulgur","buckwheat":"pohanka","oats_grain":"oves","barley_grain":"ječmen","rye_grain":"žito","sweet_potato":"batát","turnip":"řepa","seasonal_vegetables":"sezónní zelenina","local_seasonal_vegetables":"místní sezónní zelenina","local_seasonal_fruits":"místní sezónní ovoce","local_fruits":"místní ovoce","tea":"čaj","chicory":"čekanka","fruits":"ovoce","seeds":"semena","chicken":"kuře","turkey":"krůta","plant_oils":"rostlinné oleje","avocado":"avokádo","plant_yogurt":"rostlinné jogurty","kefir":"kefír","plant_omega3":"rostlinné omega-3","flax_seeds":"lněná semínka","other_fish":"jiné druhy ryb","other_seafood":"jiné mořské plody","canned_tomatoes":"konzervovaná rajčata","zucchini":"cuketa","seasonal_root_vegetables":"sezónní kořenová zelenina","beets":"červená řepa","other_root_vegetables":"jiná kořenová zelenina","seasonal_citrus":"sezónní citrusy","seasonal_berries":"sezónní bobule","other_grains":"jiné obiloviny","other_pseudograins":"jiné pseudoobiloviny","beans":"fazole","peas":"hrách","chickpeas":"cizrna","lentils":"čočka","plant_drinks":"rostlinné nápoje","local_herbs":"místní byliny","local_drinks":"místní nápoje","non_alcoholic_options":"nealkoholické varianty","plant_desserts":"rostlinné dezerty","honey":"med","stevia":"stevie","rye_bread":"žitný chléb","whole_grain":"celozrnný","pearl_barley":"ječná kroupa","oatmeal":"ovesné vločky","millet":"proso","whole_grain_pasta":"celozrnné těstoviny","wheat":"pšenice","olive_oil":"olivový olej","sunflower_oil":"slunečnicový olej","reduce_amount":"snížit množství","plain_yogurt":"přírodní jogurt","yogurt":"jogurt","reduce_fat":"snížit tuk","other_seasonal_vegetables":"jiná sezónní zelenina","local_apples":"místní jablka","apples":"jablka","herbal_teas":"bylinkové čaje","water":"voda","compote":"kompot","fruit_drink":"ovocný nápoj","kvass":"kvas","onion":"cibule"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {

@@ -28,7 +28,7 @@
     <meta property="vk:description" content="Hitung jejak ekologis produk makanan Anda">
     <meta property="vk:image" content="https://serpmonn.ru/frontend/images/eco-calculator-banner.png">
     
-    <link rel="icon" href="/frontend/images/serpmonn.ico" type="image/x-icon">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     
     <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/id/tools/ecology/product-footprint-calculator.html" />
@@ -285,7 +285,7 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/product-footprint-calculator.css?v=4">
     
     <!-- Mail.ru Advertising -->
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -303,24 +303,63 @@
             <h2 class="section-title">
                 🛒 Tambahkan produk ke keranjang
             </h2>
+
+            <div id="error-message" class="error-message hidden" role="alert"></div>
             
             <div id="products-container">
                 <!-- Продукты будут загружены JavaScript -->
             </div>
             
-            <button class="add-product-btn" onclick="addProductRow()">
+            <button type="button" class="add-product-btn" onclick="addProductRow()">
                 ➕ Tambah produk lain
             </button>
-            
-            <button class="calculate-btn" onclick="calculateFootprint()">
-                🧮 Hitung jejak ekologis
-            </button>
+
+            <div class="action-bar">
+                <button type="button" class="calculate-btn" id="btn-eco-calculate">
+                    🧮 Hitung jejak ekologis
+                </button>
+                <details class="more-actions">
+                    <summary>More</summary>
+                    <div class="more-actions__list">
+                        <button type="button" id="btn-eco-reset">Reset</button>
+                        <button type="button" id="btn-eco-share">Share calculation</button>
+                        <button type="button" id="btn-eco-pdf">Export PDF</button>
+                        <button type="button" id="btn-eco-csv">Export CSV</button>
+                    </div>
+                </details>
+            </div>
+
+            <details class="optional-fields">
+                <summary>More options</summary>
+                <div class="optional-grid">
+                    <label for="eco-region">Origin region
+                        <select id="eco-region">
+                            <option value="local">Local</option>
+                            <option value="regional">Regional</option>
+                            <option value="national" selected>National</option>
+                            <option value="international">Imported</option>
+                        </select>
+                    </label>
+                    <label for="eco-season">Seasonality
+                        <select id="eco-season">
+                            <option value="in_season" selected>In season</option>
+                            <option value="out_of_season">Out of season</option>
+                            <option value="greenhouse">Greenhouse</option>
+                        </select>
+                    </label>
+                </div>
+            </details>
         </div>
 
         <div id="results-section" class="results-section">
             <h2 class="section-title">
                 📊 Hasil Perhitungan
             </h2>
+            <div class="result-hero">
+                <div class="result-value" id="carbon-footprint-hero">0</div>
+                <div class="result-label">kg setara CO₂</div>
+            </div>
+            <p class="result-disclaimer">Approximate eco footprint, not a lab analysis.</p>
             
             <div class="results-grid">
                 <div class="result-card">
@@ -340,6 +379,8 @@
                     <div class="result-label">Skor ekologi (1-10)</div>
                 </div>
             </div>
+
+            <canvas id="ecoChart" style="max-height:280px;margin:16px 0;width:100%;"></canvas>
             
             <!-- Рекламный блок - баннер -->
             <div class="ad-container ad-banner" style="margin: 20px 0; text-align: center;">
@@ -380,15 +421,15 @@
         </div>
     </div>
 
-    <script src="/frontend/tools/ecology/database.js?v=2"></script>
-    <script src="/frontend/tools/ecology/calculator.js?v=2"></script>
+    <script src="/frontend/tools/ecology/database.js?v=3"></script>
+    <script src="/frontend/tools/ecology/calculator.js?v=4"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     
     <!-- Mail.ru Advertising Script -->
 <!-- Инициализация переводов для JS -->
     <script>
         // Экспортируем переводы для использования в JavaScript
-        window.i18n = {"title":"Kalkulator Jejak Ekologis Produk — SerpMonn","meta_description":"Hitung jejak ekologis produk makanan Anda. Pelajari tentang jejak karbon, jejak air dan dampak lingkungan dari keranjang belanja Anda.","meta_keywords":"jejak ekologis produk, jejak karbon makanan, jejak air produk, kalkulator ekologis, jejak karbon nutrisi","og_title":"Kalkulator Jejak Ekologis Produk — SerpMonn","og_description":"Hitung jejak ekologis produk makanan Anda. Pelajari tentang jejak karbon, jejak air dan dampak lingkungan.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/id/eco-calculators/product-footprint/","vk_title":"Kalkulator Jejak Ekologis Produk","vk_description":"Hitung jejak ekologis produk makanan Anda","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Beranda","tools":"Alat","current":"Kalkulator Jejak Produk"},"header":{"title":"🌱 Kalkulator Jejak Ekologis Produk","subtitle":"Cari tahu dampak lingkungan dari produk di keranjang Anda"},"calculator":{"section_title":"🛒 Tambahkan produk ke keranjang"},"buttons":{"add_product":"➕ Tambah produk lain","calculate":"🧮 Hitung jejak ekologis","share_vk":"📘 Bagikan di VKontakte","share_telegram":"📱 Bagikan di Telegram"},"results":{"title":"📊 Hasil Perhitungan","carbon_label":"kg setara CO₂","water_label":"liter air","land_label":"m² tanah","eco_score_label":"Skor ekologi (1-10)"},"comparison":{"title":"🔍 Perbandingan dengan alternatif"},"recommendations":{"title":"💡 Rekomendasi untuk mengurangi jejak ekologis"},"errors":{"no_products":"Silakan tambahkan setidaknya satu produk untuk dihitung.","invalid_quantity":"Silakan masukkan jumlah yang valid untuk produk: {product}","calculation_error":"Terjadi kesalahan selama perhitungan. Silakan coba lagi.","select_product_and_qty":"Silakan pilih produk dan masukkan jumlah"},"success":{"calculation_complete":"Perhitungan selesai!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"buah","pack":"bungkus"},"products":{"beef":"Daging sapi","chicken":"Ayam","pork":"Daging babi","fish":"Ikan","eggs":"Telur","milk":"Susu","cheese":"Keju","yogurt":"Yogurt","rice":"Beras","pasta":"Pasta","bread":"Roti","potatoes":"Kentang","tomatoes":"Tomat","apples":"Apel","bananas":"Pisang","coffee":"Kopi","tea":"Teh","chocolate":"Cokelat","sugar":"Gula","olive_oil":"Minyak zaitun","select_product":"Pilih produk...","lamb":"Daging domba","wheat":"Gandum","vegetables":"Sayuran (campuran)","fruits":"Buah (campuran)","nuts":"Kacang","turkey":"Kalkun","duck":"Bebek","butter":"Mentega","salmon":"Salmon","tuna":"Tuna","shrimp":"Udang","cucumbers":"Mentimun","carrots":"Wortel","oranges":"Jeruk","grapes":"Anggur","strawberries":"Stroberi","quinoa":"Kuinoa","lentils":"Lentil","chickpeas":"Kacang arab","wine":"Anggur (wine)","bread_white":"Roti putih","bread_rye":"Roti gandum hitam","buckwheat":"Soba","oats":"Oatmeal","barley":"Barley mutiara","rye":"Gandum hitam (biji)","sunflower_oil":"Minyak bunga matahari","kefir":"Kefir","yogurt_plain":"Yogurt alami","cottage_cheese":"Keju cottage","sour_cream":"Krim asam","cabbage":"Kubis","onions":"Bawang","garlic":"Bawang putih","beets":"Bit","pears":"Pir","peas":"Kacang polong","beans":"Kacang","kvass":"Kvass","soda":"Minuman bersoda","beer":"Bir"},"ads":{"closeAria":"Tutup iklan"},"js":{"quantityPlaceholder":"Jumlah","selectedProductsTitle":"Produk yang dipilih:","remove":"Hapus","unitLabel":"Satuan: {unit}","loading":"Menghitung jejak ekologis...","errorPrefix":"Kesalahan:","comparisonCurrentFootprint":"Jejak saat ini: {value} kg CO₂","comparisonAlternatives":"Alternatif:","comparisonSavings":"Penghematan: ~{value} kg CO₂"},"recommendationItems":{"highImpact":{"title":"Produk dengan jejak ekologis tinggi","description":"Pertimbangkan alternatif untuk: {products}"},"reduceMeat":{"title":"Kurangi konsumsi daging","description":"Coba ganti daging dengan protein nabati 1–2 kali seminggu"},"dairyAlternatives":{"title":"Alternatif produk susu","description":"Coba susu dan keju nabati"},"buyLocal":{"title":"Beli produk lokal musiman","description":"Ini mengurangi jejak transportasi dan mendukung produsen lokal"},"planPurchases":{"title":"Rencanakan pembelian Anda","description":"Hindari pemborosan makanan — beli hanya yang Anda butuhkan"}},"alternatives":{"plant_proteins":"protein nabati","legumes":"kacang-kacangan","nuts":"kacang","poultry":"unggas","fish":"ikan","seaweed":"rumput laut","plant_milk":"susu nabati","oat_milk":"susu oat","plant_cheese":"keju nabati","tofu":"tahu","quinoa":"kuinoa","bulgur":"bulgur","buckwheat":"soba","oats_grain":"oat","barley_grain":"jagung barley","rye_grain":"gandum hitam","sweet_potato":"ubi jalar","turnip":"lobak","seasonal_vegetables":"sayuran musiman","local_seasonal_vegetables":"sayuran lokal musiman","local_seasonal_fruits":"buah lokal musiman","local_fruits":"buah lokal","tea":"teh","chicory":"cikori","fruits":"buah","seeds":"biji","chicken":"ayam","turkey":"kalkun","plant_oils":"minyak nabati","avocado":"alpukat","plant_yogurt":"yogurt nabati","kefir":"kefir","plant_omega3":"omega-3 nabati","flax_seeds":"biji rami","other_fish":"ikan lain","other_seafood":"makanan laut lain","canned_tomatoes":"tomat kaleng","zucchini":"zucchini","seasonal_root_vegetables":"umbi musiman","beets":"bit","other_root_vegetables":"umbi lain","seasonal_citrus":"jeruk musiman","seasonal_berries":"beri musiman","other_grains":"biji-bijian lain","other_pseudograins":"pseudosereal lain","beans":"kacang","peas":"kacang polong","chickpeas":"kacang arab","lentils":"lentil","plant_drinks":"minuman nabati","local_herbs":"herba lokal","local_drinks":"minuman lokal","non_alcoholic_options":"pilihan non-alkohol","plant_desserts":"pencuci mulut nabati","honey":"madu","stevia":"stevia","rye_bread":"roti gandum hitam","whole_grain":"gandum utuh","pearl_barley":"barley mutiara","oatmeal":"oatmeal","millet":"millet","whole_grain_pasta":"pasta gandum utuh","wheat":"gandum","olive_oil":"minyak zaitun","sunflower_oil":"minyak bunga matahari","reduce_amount":"kurangi jumlah","plain_yogurt":"yogurt alami","yogurt":"yogurt","reduce_fat":"kurangi lemak","other_seasonal_vegetables":"sayuran musiman lain","local_apples":"apel lokal","apples":"apel","herbal_teas":"teh herbal","water":"air","compote":"kompot","fruit_drink":"minuman buah","kvass":"kvass","onion":"bawang"}};
+        window.i18n = {"title":"Kalkulator Jejak Ekologis Produk — SerpMonn","meta_description":"Hitung jejak ekologis produk makanan Anda. Pelajari tentang jejak karbon, jejak air dan dampak lingkungan dari keranjang belanja Anda.","meta_keywords":"jejak ekologis produk, jejak karbon makanan, jejak air produk, kalkulator ekologis, jejak karbon nutrisi","og_title":"Kalkulator Jejak Ekologis Produk — SerpMonn","og_description":"Hitung jejak ekologis produk makanan Anda. Pelajari tentang jejak karbon, jejak air dan dampak lingkungan.","og_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","og_url":"https://serpmonn.ru/id/eco-calculators/product-footprint/","vk_title":"Kalkulator Jejak Ekologis Produk","vk_description":"Hitung jejak ekologis produk makanan Anda","vk_image":"https://serpmonn.ru/frontend/images/eco-calculator-banner.png","breadcrumbs":{"home":"Beranda","tools":"Alat","current":"Kalkulator Jejak Produk"},"header":{"title":"🌱 Kalkulator Jejak Ekologis Produk","subtitle":"Cari tahu dampak lingkungan dari produk di keranjang Anda"},"calculator":{"section_title":"🛒 Tambahkan produk ke keranjang","optional_summary":"More options","region_label":"Origin region","region_local":"Local","region_regional":"Regional","region_national":"National","region_international":"Imported","season_label":"Seasonality","season_in":"In season","season_out":"Out of season","season_greenhouse":"Greenhouse"},"buttons":{"add_product":"➕ Tambah produk lain","calculate":"🧮 Hitung jejak ekologis","share_vk":"📘 Bagikan di VKontakte","share_telegram":"📱 Bagikan di Telegram","more":"More","reset":"Reset","share_link":"Share calculation","pdf":"Export PDF","csv":"Export CSV"},"results":{"title":"📊 Hasil Perhitungan","carbon_label":"kg setara CO₂","water_label":"liter air","land_label":"m² tanah","eco_score_label":"Skor ekologi (1-10)","disclaimer":"Approximate eco footprint, not a lab analysis."},"comparison":{"title":"🔍 Perbandingan dengan alternatif"},"recommendations":{"title":"💡 Rekomendasi untuk mengurangi jejak ekologis"},"errors":{"no_products":"Silakan tambahkan setidaknya satu produk untuk dihitung.","invalid_quantity":"Silakan masukkan jumlah yang valid untuk produk: {product}","calculation_error":"Terjadi kesalahan selama perhitungan. Silakan coba lagi.","select_product_and_qty":"Silakan pilih produk dan masukkan jumlah"},"success":{"calculation_complete":"Perhitungan selesai!"},"units":{"kg":"kg","g":"g","l":"l","ml":"ml","pcs":"buah","pack":"bungkus"},"products":{"beef":"Daging sapi","chicken":"Ayam","pork":"Daging babi","fish":"Ikan","eggs":"Telur","milk":"Susu","cheese":"Keju","yogurt":"Yogurt","rice":"Beras","pasta":"Pasta","bread":"Roti","potatoes":"Kentang","tomatoes":"Tomat","apples":"Apel","bananas":"Pisang","coffee":"Kopi","tea":"Teh","chocolate":"Cokelat","sugar":"Gula","olive_oil":"Minyak zaitun","select_product":"Pilih produk...","lamb":"Daging domba","wheat":"Gandum","vegetables":"Sayuran (campuran)","fruits":"Buah (campuran)","nuts":"Kacang","turkey":"Kalkun","duck":"Bebek","butter":"Mentega","salmon":"Salmon","tuna":"Tuna","shrimp":"Udang","cucumbers":"Mentimun","carrots":"Wortel","oranges":"Jeruk","grapes":"Anggur","strawberries":"Stroberi","quinoa":"Kuinoa","lentils":"Lentil","chickpeas":"Kacang arab","wine":"Anggur (wine)","bread_white":"Roti putih","bread_rye":"Roti gandum hitam","buckwheat":"Soba","oats":"Oatmeal","barley":"Barley mutiara","rye":"Gandum hitam (biji)","sunflower_oil":"Minyak bunga matahari","kefir":"Kefir","yogurt_plain":"Yogurt alami","cottage_cheese":"Keju cottage","sour_cream":"Krim asam","cabbage":"Kubis","onions":"Bawang","garlic":"Bawang putih","beets":"Bit","pears":"Pir","peas":"Kacang polong","beans":"Kacang","kvass":"Kvass","soda":"Minuman bersoda","beer":"Bir"},"ads":{"closeAria":"Tutup iklan"},"js":{"quantityPlaceholder":"Jumlah","selectedProductsTitle":"Produk yang dipilih:","remove":"Hapus","unitLabel":"Satuan: {unit}","loading":"Menghitung jejak ekologis...","errorPrefix":"Kesalahan:","comparisonCurrentFootprint":"Jejak saat ini: {value} kg CO₂","comparisonAlternatives":"Alternatif:","comparisonSavings":"Penghematan: ~{value} kg CO₂","shareCopied":"Link copied"},"recommendationItems":{"highImpact":{"title":"Produk dengan jejak ekologis tinggi","description":"Pertimbangkan alternatif untuk: {products}"},"reduceMeat":{"title":"Kurangi konsumsi daging","description":"Coba ganti daging dengan protein nabati 1–2 kali seminggu"},"dairyAlternatives":{"title":"Alternatif produk susu","description":"Coba susu dan keju nabati"},"buyLocal":{"title":"Beli produk lokal musiman","description":"Ini mengurangi jejak transportasi dan mendukung produsen lokal"},"planPurchases":{"title":"Rencanakan pembelian Anda","description":"Hindari pemborosan makanan — beli hanya yang Anda butuhkan"}},"alternatives":{"plant_proteins":"protein nabati","legumes":"kacang-kacangan","nuts":"kacang","poultry":"unggas","fish":"ikan","seaweed":"rumput laut","plant_milk":"susu nabati","oat_milk":"susu oat","plant_cheese":"keju nabati","tofu":"tahu","quinoa":"kuinoa","bulgur":"bulgur","buckwheat":"soba","oats_grain":"oat","barley_grain":"jagung barley","rye_grain":"gandum hitam","sweet_potato":"ubi jalar","turnip":"lobak","seasonal_vegetables":"sayuran musiman","local_seasonal_vegetables":"sayuran lokal musiman","local_seasonal_fruits":"buah lokal musiman","local_fruits":"buah lokal","tea":"teh","chicory":"cikori","fruits":"buah","seeds":"biji","chicken":"ayam","turkey":"kalkun","plant_oils":"minyak nabati","avocado":"alpukat","plant_yogurt":"yogurt nabati","kefir":"kefir","plant_omega3":"omega-3 nabati","flax_seeds":"biji rami","other_fish":"ikan lain","other_seafood":"makanan laut lain","canned_tomatoes":"tomat kaleng","zucchini":"zucchini","seasonal_root_vegetables":"umbi musiman","beets":"bit","other_root_vegetables":"umbi lain","seasonal_citrus":"jeruk musiman","seasonal_berries":"beri musiman","other_grains":"biji-bijian lain","other_pseudograins":"pseudosereal lain","beans":"kacang","peas":"kacang polong","chickpeas":"kacang arab","lentils":"lentil","plant_drinks":"minuman nabati","local_herbs":"herba lokal","local_drinks":"minuman lokal","non_alcoholic_options":"pilihan non-alkohol","plant_desserts":"pencuci mulut nabati","honey":"madu","stevia":"stevia","rye_bread":"roti gandum hitam","whole_grain":"gandum utuh","pearl_barley":"barley mutiara","oatmeal":"oatmeal","millet":"millet","whole_grain_pasta":"pasta gandum utuh","wheat":"gandum","olive_oil":"minyak zaitun","sunflower_oil":"minyak bunga matahari","reduce_amount":"kurangi jumlah","plain_yogurt":"yogurt alami","yogurt":"yogurt","reduce_fat":"kurangi lemak","other_seasonal_vegetables":"sayuran musiman lain","local_apples":"apel lokal","apples":"apel","herbal_teas":"teh herbal","water":"air","compote":"kompot","fruit_drink":"minuman buah","kvass":"kvass","onion":"bawang"}};
         
         // Инициализация калькулятора после загрузки переводов
         document.addEventListener('DOMContentLoaded', function() {
