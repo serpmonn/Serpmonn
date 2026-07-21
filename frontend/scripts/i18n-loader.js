@@ -11,7 +11,8 @@ function getCurrentLocale() {
 }
 
 async function loadJson(url) {
-  const res = await fetch(url, { credentials: 'same-origin' });
+  // no-cache: after deploys browsers must not keep stale locale JSON
+  const res = await fetch(url, { credentials: 'same-origin', cache: 'no-cache' });
   if (!res.ok) {
     throw new Error(`Failed to load ${url}: ${res.status}`);
   }
