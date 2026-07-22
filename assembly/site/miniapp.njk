@@ -1,41 +1,204 @@
 ---
 permalink: "/frontend/mini/miniapp.html"
-layout: "layouts/mini-base.njk"
-title: "Serpmonn Mini"
+layout: "layouts/vk-mini.njk"
+title: "Serpmonn"
 ---
 
-<style>
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
+<script>
+  window.__SPN_VK_MINI__ = true;
+  window.__SPN_MINI_CFG__ = {{ miniApp | dump | safe }};
+</script>
 
-  body > header,
-  body > footer {
-    display: none !important;
-  }
+<div class="vk-mini-shell">
+  <div class="vk-mini-screens">
 
-  body > main {
-    margin: 0;
-    padding: 0;
-  }
+    {# —— SEARCH —— #}
+    <section class="vk-mini-screen is-active vk-mini-search" data-screen="search" aria-label="{{ miniApp.nav.search }}">
+      <div class="vk-mini-brand">
+        <img src="/frontend/images/serpmonn.ico?v=3" alt="Serpmonn" width="56" height="56">
+        <h1>{{ miniApp.title }}</h1>
+        <p>{{ miniApp.search.hint }}</p>
+      </div>
 
-  #spn-mini-frame {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    border: 0;
-    margin: 0;
-    padding: 0;
-    display: block;
-    z-index: 1;
-  }
-</style>
+      <div class="search-card-wrapper">
+        <div class="main-search-container">
+          <form id="ai-search-form" class="search-form">
+            <input
+              type="search"
+              name="q"
+              placeholder="{{ miniApp.search.placeholder }}"
+              autocomplete="off"
+              required
+              autofocus
+              title="{{ miniApp.search.hint }}"
+            >
+            <button type="submit" aria-label="{{ miniApp.search.submitAria }}" class="search-btn" title="{{ miniApp.search.submitAria }}">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                   stroke="#ff4d4d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+              </svg>
+            </button>
+          </form>
+        </div>
 
-<iframe
-  id="spn-mini-frame"
-  src="/frontend/main-mini.html"
-  frameborder="0">
-</iframe>
+        <div id="ai-result-container" class="ai-result-container" style="display: none;">
+          <div id="ai-result-content" class="ai-result-content"></div>
+          <div class="ai-result-footer is-pending">
+            <div class="ai-actions">
+              <button class="ai-action-btn" data-ai-action="copy" title="{{ miniApp.search.copy }}" aria-label="{{ miniApp.search.copy }}">
+                <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="9" y="9" width="10" height="12" rx="2"></rect>
+                  <rect x="5" y="3" width="10" height="12" rx="2"></rect>
+                </svg>
+              </button>
+              <button class="ai-action-btn" data-ai-action="share" title="{{ miniApp.search.share }}" aria-label="{{ miniApp.search.share }}">
+                <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 12v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6"></path>
+                  <path d="M12 5l0 12"></path>
+                  <path d="M8 9l4-4 4 4"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="ai-feedback">
+              <button class="feedback-btn like" title="{{ miniApp.search.like }}" aria-label="{{ miniApp.search.like }}">
+                <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 11v10"></path>
+                  <path d="M3 11h4"></path>
+                  <path d="M9 21h7.2a2 2 0 0 0 2-1.6l1.2-7A2 2 0 0 0 17.4 10H14l.5-3.5A2 2 0 0 0 12.5 4l-3.2 5.1A2 2 0 0 1 8 10H7"></path>
+                </svg>
+              </button>
+              <button class="feedback-btn dislike" title="{{ miniApp.search.dislike }}" aria-label="{{ miniApp.search.dislike }}">
+                <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 13V3"></path>
+                  <path d="M3 13h4"></path>
+                  <path d="M9 3h7.2a2 2 0 0 1 2 1.6l1.2 7A2 2 0 0 1 17.4 14H14l.5 3.5A2 2 0 0 1 12.5 20l-3.2-5.1A2 2 0 0 0 8 14H7"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="ai-timestamp" id="ai-timestamp"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="ai-share-toast" class="ai-share-toast" style="display:none;"></div>
+    </section>
+
+    {# —— NEWS —— #}
+    <section class="vk-mini-screen" data-screen="news" aria-label="{{ miniApp.nav.news }}">
+      <h2 class="vk-mini-section-title">{{ miniApp.news.title }}</h2>
+      <p class="vk-mini-section-sub">{{ miniApp.news.subtitle }}</p>
+      <div class="vk-mini-card-list">
+        {% for article in localesNews.ru.news.articles %}
+          {% if ('serpmonn-install-guide' not in article.link)
+             and ('donate' not in article.link)
+             and ('/promo' not in article.link)
+             and ('promocode' not in article.link)
+             and ('snippet-limits' not in article.link)
+             and ('telegram' not in article.link) %}
+            <button type="button" class="vk-mini-card"
+                    data-open-url="{{ article.link }}"
+                    data-open-title="{{ article.title | escape }}">
+              <strong>{{ article.title }}</strong>
+              <span>{{ article.excerpt }}</span>
+              <span class="vk-mini-meta">{{ article.categoryLabel }} · {{ article.date }} · {{ article.readTime }}</span>
+            </button>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+
+    {# —— TOOLS —— #}
+    <section class="vk-mini-screen" data-screen="tools" aria-label="{{ miniApp.nav.tools }}">
+      <h2 class="vk-mini-section-title">{{ miniApp.tools.title }}</h2>
+      <p class="vk-mini-section-sub">{{ miniApp.tools.subtitle }}</p>
+      <div class="vk-mini-card-list">
+        {% for tool in miniApp.tools.items %}
+          <button type="button" class="vk-mini-card"
+                  data-open-url="{{ tool.href }}"
+                  data-open-title="{{ tool.title | escape }}">
+            <strong>{{ tool.title }}</strong>
+            <span>{{ tool.description }}</span>
+          </button>
+        {% endfor %}
+      </div>
+    </section>
+
+    {# —— GAMES —— #}
+    <section class="vk-mini-screen" data-screen="games" aria-label="{{ miniApp.nav.games }}">
+      <h2 class="vk-mini-section-title">{{ miniApp.games.title }}</h2>
+      <p class="vk-mini-section-sub">{{ miniApp.games.subtitle }}</p>
+      <div class="vk-mini-card-list">
+        {% for group in localesGames.ru.games.groups %}
+          {% if group.key == 'serpmonn' %}
+            {% for platform in group.platforms %}
+              {% if platform.key == 'web' %}
+                {% for game in platform.games %}
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="{{ game.link }}"
+                          data-open-title="{{ game.name | escape }}">
+                    <strong>{{ game.name }}</strong>
+                    <span>{{ game.description }}</span>
+                  </button>
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+      </div>
+    </section>
+  </div>
+
+  <nav class="vk-mini-nav" aria-label="Навигация мини-приложения">
+    <button type="button" data-screen="search" class="is-active">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      {{ miniApp.nav.search }}
+    </button>
+    <button type="button" data-screen="news">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h12v14H4z"/><path d="M16 8h4v11h-4"/><path d="M7 9h6M7 13h6M7 17h4"/></svg>
+      {{ miniApp.nav.news }}
+    </button>
+    <button type="button" data-screen="tools">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-2.5z"/></svg>
+      {{ miniApp.nav.tools }}
+    </button>
+    <button type="button" data-screen="games">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="10" rx="3"/><path d="M8 13h2M9 12v2"/><circle cx="15" cy="12" r="1"/><circle cx="17.5" cy="14" r="1"/></svg>
+      {{ miniApp.nav.games }}
+    </button>
+  </nav>
+</div>
+
+{# Viewer #}
+<div class="vk-mini-viewer" id="vk-mini-viewer" aria-hidden="true">
+  <div class="vk-mini-viewer__bar">
+    <button type="button" class="vk-mini-viewer__back" id="vk-mini-viewer-back">{{ miniApp.viewer.back }}</button>
+    <div class="vk-mini-viewer__title" id="vk-mini-viewer-title"></div>
+  </div>
+  <iframe id="vk-mini-viewer-frame" title="Содержимое" src="about:blank"></iframe>
+</div>
+
+{# Onboarding #}
+<div class="vk-mini-onboarding" id="vk-mini-onboarding" aria-hidden="true">
+  <div class="vk-mini-onboarding__panel" role="dialog" aria-modal="true" aria-label="Онбординг">
+    <div class="vk-mini-onboarding__dots">
+      {% for slide in miniApp.onboarding.slides %}
+        <span{% if loop.first %} class="is-active"{% endif %}></span>
+      {% endfor %}
+    </div>
+    {% for slide in miniApp.onboarding.slides %}
+      <div class="vk-mini-onboarding__slide"{% if not loop.first %} hidden{% endif %}>
+        <h2>{{ slide.title }}</h2>
+        <p>{{ slide.text }}</p>
+      </div>
+    {% endfor %}
+    <div class="vk-mini-onboarding__actions">
+      <button type="button" data-onboard-skip>{{ miniApp.onboarding.skip }}</button>
+      <button type="button" class="is-primary" data-onboard-next>{{ miniApp.onboarding.next }}</button>
+    </div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js"></script>
+<script type="module" src="/frontend/scripts/scripts.js" defer></script>
+<script src="/frontend/scripts/mini/miniapp.js" defer></script>

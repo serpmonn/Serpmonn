@@ -70,6 +70,20 @@ fetch(primaryMenuPath)
     return response.text();
   })
   .then(html => {
+    // VK Mini App / embed: не подключаем полное меню сайта
+    const isVkMiniEmbed =
+      Boolean(window.__SPN_VK_MINI__) ||
+      /(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search) ||
+      /vk_app_id=\d+/.test(window.location.search) ||
+      document.body?.classList?.contains('vk-mini-app') ||
+      document.body?.classList?.contains('vk-mini-embed');
+
+    if (isVkMiniEmbed) {
+      document.body.classList.add('vk-mini-embed');
+      // cookies / donate / install не трогаем — просто не грузим меню
+      return;
+    }
+
     document.body.insertAdjacentHTML('afterbegin', html);
 
     // Модифицируем ссылки в меню под текущий язык

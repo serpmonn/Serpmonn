@@ -2,55 +2,483 @@
 <html lang="ru">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, height=device-height, minimum-scale=1, initial-scale=1, maximum-scale=1, user-scalable=no">
-
-    <title>Serpmonn Mini</title>
-
-    <link rel="icon" href="/frontend/images/favicon.svg?v=3" type="image/svg+xml">
+    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="theme-color" content="#ffffff">
+    <title>Serpmonn</title>
+    <meta name="description" content="Агентный поиск, новости, инструменты и свои игры — внутри ВКонтакте">
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-    <link rel="icon" type="image/png" sizes="32x32" href="/frontend/images/favicon-32x32.png?v=3">
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-
+    <link rel="stylesheet" href="/frontend/styles/mini/miniapp.css?v=2">
   </head>
-  <body>
-    <main>
+  <body class="vk-mini-app" data-vk-mini="1">
+    
+<script>
+  window.__SPN_VK_MINI__ = true;
+  window.__SPN_MINI_CFG__ = {"appId":"54486769","entryUrl":"https://serpmonn.ru/frontend/mini/miniapp.html","title":"Serpmonn","tagline":"Агентный поиск, новости, инструменты и свои игры — внутри ВКонтакте","nav":{"search":"Поиск","news":"Новости","tools":"Инструменты","games":"Игры"},"search":{"placeholder":"Спросите ИИ что угодно…","hint":"Задайте вопрос — Serpmonn AI найдёт ответ по интернету","submitAria":"Отправить запрос","copy":"Копировать ответ","share":"Поделиться","copied":"Ответ скопирован","copyFailed":"Не удалось скопировать","shareFailed":"Не удалось поделиться","like":"Ответ помог","dislike":"Ответ не помог"},"news":{"title":"Новости и статьи","subtitle":"Полезные материалы Serpmonn","open":"Читать","empty":"Пока нет материалов","excludeLinkSubstrings":["serpmonn-install-guide","donate","promo"]},"tools":{"title":"Инструменты Serpmonn","subtitle":"Калькуляторы и утилиты внутри приложения","open":"Открыть","items":[{"title":"Генератор UTM‑меток","description":"UTM‑ссылки для рекламных кампаний","href":"/frontend/tools/marketing/utm-builder.html"},{"title":"Счётчик слов","description":"Подсчёт слов и символов в тексте","href":"/frontend/tools/marketing/word-counter.html"},{"title":"Генератор паролей","description":"Надёжные пароли за секунду","href":"/frontend/tools/security/password-generator.html"},{"title":"JSON форматтер","description":"Форматирование и проверка JSON","href":"/frontend/tools/development/json-formatter.html"},{"title":"Base64 конвертер","description":"Кодирование и декодирование Base64","href":"/frontend/tools/development/base64-converter.html"},{"title":"Палитры цветов","description":"Подбор и копирование цветов","href":"/frontend/tools/design/color-palettes.html"},{"title":"Конвертер форматов","description":"Быстрая конвертация данных","href":"/frontend/tools/design/format-converter.html"},{"title":"Конвертер единиц","description":"Перевод величин и единиц измерения","href":"/frontend/tools/engineering/unit-converter.html"},{"title":"Калькулятор амортизации","description":"Расчёт амортизации для логистики","href":"/frontend/tools/logistics/depreciation-calculator.html"},{"title":"Калькулятор топлива","description":"Расход и стоимость топлива","href":"/frontend/tools/logistics/fuel-calculator.html"},{"title":"Эко‑след продукта","description":"Оценка экологического следа","href":"/frontend/tools/ecology/product-footprint-calculator.html"}]},"games":{"title":"Игры Serpmonn","subtitle":"Свои веб‑игры внутри приложения","open":"Играть","empty":"Скоро появятся новые игры"},"viewer":{"back":"Назад"},"onboarding":{"storageKey":"spn_vk_mini_onboarded_v2","skip":"Пропустить","next":"Далее","done":"Начать","slides":[{"title":"Добро пожаловать в Serpmonn","text":"Агентный поиск с ИИ: задайте вопрос и получите ответ прямо во ВКонтакте."},{"title":"Что внутри","text":"Умный поиск, новости, полезные инструменты и собственные мини‑игры — всё в одном приложении."},{"title":"Как пользоваться","text":"Нижнее меню: Поиск, Новости, Инструменты и Игры. Ответ можно скопировать или поделиться через ВКонтакте."}]},"cabinet":{"urls":["https://serpmonn.ru/frontend/mini/miniapp.html"],"note":"В кабинете VK для Mobile app, Desktop site, Mobile web и режимов разработки укажите один и тот же URL мини-приложения."}};
+</script>
+
+<div class="vk-mini-shell">
+  <div class="vk-mini-screens">
+
+    
+    <section class="vk-mini-screen is-active vk-mini-search" data-screen="search" aria-label="Поиск">
+      <div class="vk-mini-brand">
+        <img src="/frontend/images/serpmonn.ico?v=3" alt="Serpmonn" width="56" height="56">
+        <h1>Serpmonn</h1>
+        <p>Задайте вопрос — Serpmonn AI найдёт ответ по интернету</p>
+      </div>
+
+      <div class="search-card-wrapper">
+        <div class="main-search-container">
+          <form id="ai-search-form" class="search-form">
+            <input
+              type="search"
+              name="q"
+              placeholder="Спросите ИИ что угодно…"
+              autocomplete="off"
+              required
+              autofocus
+              title="Задайте вопрос — Serpmonn AI найдёт ответ по интернету"
+            >
+            <button type="submit" aria-label="Отправить запрос" class="search-btn" title="Отправить запрос">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"
+                   stroke="#ff4d4d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="7" y1="17" x2="17" y2="7" />
+                <polyline points="7 7 17 7 17 17" />
+              </svg>
+            </button>
+          </form>
+        </div>
+
+        <div id="ai-result-container" class="ai-result-container" style="display: none;">
+          <div id="ai-result-content" class="ai-result-content"></div>
+          <div class="ai-result-footer is-pending">
+            <div class="ai-actions">
+              <button class="ai-action-btn" data-ai-action="copy" title="Копировать ответ" aria-label="Копировать ответ">
+                <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="9" y="9" width="10" height="12" rx="2"></rect>
+                  <rect x="5" y="3" width="10" height="12" rx="2"></rect>
+                </svg>
+              </button>
+              <button class="ai-action-btn" data-ai-action="share" title="Поделиться" aria-label="Поделиться">
+                <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 12v6a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-6"></path>
+                  <path d="M12 5l0 12"></path>
+                  <path d="M8 9l4-4 4 4"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="ai-feedback">
+              <button class="feedback-btn like" title="Ответ помог" aria-label="Ответ помог">
+                <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 11v10"></path>
+                  <path d="M3 11h4"></path>
+                  <path d="M9 21h7.2a2 2 0 0 0 2-1.6l1.2-7A2 2 0 0 0 17.4 10H14l.5-3.5A2 2 0 0 0 12.5 4l-3.2 5.1A2 2 0 0 1 8 10H7"></path>
+                </svg>
+              </button>
+              <button class="feedback-btn dislike" title="Ответ не помог" aria-label="Ответ не помог">
+                <svg class="ai-icon" viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 13V3"></path>
+                  <path d="M3 13h4"></path>
+                  <path d="M9 3h7.2a2 2 0 0 1 2 1.6l1.2 7A2 2 0 0 1 17.4 14H14l.5 3.5A2 2 0 0 1 12.5 20l-3.2-5.1A2 2 0 0 0 8 14H7"></path>
+                </svg>
+              </button>
+            </div>
+            <div class="ai-timestamp" id="ai-timestamp"></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="ai-share-toast" class="ai-share-toast" style="display:none;"></div>
+    </section>
+
+    
+    <section class="vk-mini-screen" data-screen="news" aria-label="Новости">
+      <h2 class="vk-mini-section-title">Новости и статьи</h2>
+      <p class="vk-mini-section-sub">Полезные материалы Serpmonn</p>
+      <div class="vk-mini-card-list">
+        
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/updates-sep15-2025-jul22-2026.html"
+                    data-open-title="Обновления Serpmonn: сентябрь 2025 — июль 2026">
+              <strong>Обновления Serpmonn: сентябрь 2025 — июль 2026</strong>
+              <span>Мессенджер, Serpmonn AI, находки, вход через VK и мессенджер, Pro и баллы, новые инструменты, игры и локализация на 49 языков.</span>
+              <span class="vk-mini-meta">Обновления · 22 июля 2026 · 12–18 мин</span>
+            </button>
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/json-formatter-guide.html"
+                    data-open-title="JSON форматтер: зачем он нужен и как пользоваться">
+              <strong>JSON форматтер: зачем он нужен и как пользоваться</strong>
+              <span>Что такое JSON, зачем форматировать и проверять данные, типичные ошибки и как быстро привести JSON в порядок онлайн.</span>
+              <span class="vk-mini-meta">Статьи · 21 июля 2026 · 6 мин</span>
+            </button>
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/cookies-complete-guide.html"
+                    data-open-title="Что такое куки (cookies): полное руководство по управлению и безопасности">
+              <strong>Что такое куки (cookies): полное руководство по управлению и безопасности</strong>
+              <span>Всё о куки-файлах: типы, назначение, управление и очистка. Как защитить свою приватность в интернете и зачем чистить куки.</span>
+              <span class="vk-mini-meta">Безопасность · 29 октября 2025 · 12 мин</span>
+            </button>
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/port-forwarding-guide.html"
+                    data-open-title="Проброс портов на роутере: полное руководство 2025">
+              <strong>Проброс портов на роутере: полное руководство 2025</strong>
+              <span>Пошаговое руководство по настройке проброса портов для игр, серверов и удаленного доступа. Инструкции для всех популярных роутеров.</span>
+              <span class="vk-mini-meta">Обучение · 29 октября 2025 · 15 мин</span>
+            </button>
+          
+        
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/indexnow-practical-guide.html"
+                    data-open-title="IndexNow: практическое внедрение и трюки">
+              <strong>IndexNow: практическое внедрение и трюки</strong>
+              <span>Setup, changed-only, частые ошибки и сравнение с sitemap-пингом. Ускорьте индексацию с нашим чек-листом!</span>
+              <span class="vk-mini-meta">Статьи · 15 сентября 2025 · 7–10 мин</span>
+            </button>
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/utm-complete-guide.html"
+                    data-open-title="UTM метки: полное руководство по использованию">
+              <strong>UTM метки: полное руководство по использованию</strong>
+              <span>Исчерпывающее руководство по созданию и использованию UTM меток для точного отслеживания трафика и рекламных кампаний.</span>
+              <span class="vk-mini-meta">Статьи · 14 сентября 2025 · 8–12 мин</span>
+            </button>
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/web-development-guide.html"
+                    data-open-title="Полное руководство по веб-разработке 2025">
+              <strong>Полное руководство по веб-разработке 2025</strong>
+              <span>От основ HTML до продвинутых фреймворков. Исчерпывающее руководство для начинающих и опытных разработчиков.</span>
+              <span class="vk-mini-meta">Обучение · 12 сентября 2025 · 25–35 мин</span>
+            </button>
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/web-tech-trends-2024.html"
+                    data-open-title="Тренды веб-технологий 2025: что использовать сейчас">
+              <strong>Тренды веб-технологий 2025: что использовать сейчас</strong>
+              <span>Актуальные тренды в веб-разработке, новые фреймворки и лучшие практики для современных проектов.</span>
+              <span class="vk-mini-meta">Статьи · 10 сентября 2025 · 12–16 мин</span>
+            </button>
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/how-to-calculate-depreciation.html"
+                    data-open-title="Как рассчитать амортизацию оборудования">
+              <strong>Как рассчитать амортизацию оборудования</strong>
+              <span>Практическое руководство по расчету амортизации с примерами и формулами. Методы линейной и нелинейной амортизации.</span>
+              <span class="vk-mini-meta">Инженерия · 8 сентября 2025 · 10–14 мин</span>
+            </button>
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/how-to-calculate-the-eco-footprint-of-products.html"
+                    data-open-title="Как рассчитать экологический след продукции">
+              <strong>Как рассчитать экологический след продукции</strong>
+              <span>Методики расчета экологического следа товаров и услуг. Практические примеры и инструменты для оценки воздействия на окружающую среду.</span>
+              <span class="vk-mini-meta">Экология · 5 сентября 2025 · 15–20 мин</span>
+            </button>
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/updates-aug-25-sep-15.html"
+                    data-open-title="Обновления Serpmonn: август-сентябрь 2025">
+              <strong>Обновления Serpmonn: август-сентябрь 2025</strong>
+              <span>Все новые функции и улучшения на Serpmonn за последний месяц. Новые инструменты, исправления и планы на будущее.</span>
+              <span class="vk-mini-meta">Обновления · 3 сентября 2025 · 8–11 мин</span>
+            </button>
+          
+        
+          
+            <button type="button" class="vk-mini-card"
+                    data-open-url="/frontend/knowledge-base/articles/updates-august-17.html"
+                    data-open-title="Обновления Serpmonn: август 2025">
+              <strong>Обновления Serpmonn: август 2025</strong>
+              <span>Ключевые обновления и улучшения, реализованные в августе. Новые возможности поиска и инструменты для разработчиков.</span>
+              <span class="vk-mini-meta">Обновления · 17 августа 2025 · 6–9 мин</span>
+            </button>
+          
+        
+      </div>
+    </section>
+
+    
+    <section class="vk-mini-screen" data-screen="tools" aria-label="Инструменты">
+      <h2 class="vk-mini-section-title">Инструменты Serpmonn</h2>
+      <p class="vk-mini-section-sub">Калькуляторы и утилиты внутри приложения</p>
+      <div class="vk-mini-card-list">
+        
+          <button type="button" class="vk-mini-card"
+                  data-open-url="/frontend/tools/marketing/utm-builder.html"
+                  data-open-title="Генератор UTM‑меток">
+            <strong>Генератор UTM‑меток</strong>
+            <span>UTM‑ссылки для рекламных кампаний</span>
+          </button>
+        
+          <button type="button" class="vk-mini-card"
+                  data-open-url="/frontend/tools/marketing/word-counter.html"
+                  data-open-title="Счётчик слов">
+            <strong>Счётчик слов</strong>
+            <span>Подсчёт слов и символов в тексте</span>
+          </button>
+        
+          <button type="button" class="vk-mini-card"
+                  data-open-url="/frontend/tools/security/password-generator.html"
+                  data-open-title="Генератор паролей">
+            <strong>Генератор паролей</strong>
+            <span>Надёжные пароли за секунду</span>
+          </button>
+        
+          <button type="button" class="vk-mini-card"
+                  data-open-url="/frontend/tools/development/json-formatter.html"
+                  data-open-title="JSON форматтер">
+            <strong>JSON форматтер</strong>
+            <span>Форматирование и проверка JSON</span>
+          </button>
+        
+          <button type="button" class="vk-mini-card"
+                  data-open-url="/frontend/tools/development/base64-converter.html"
+                  data-open-title="Base64 конвертер">
+            <strong>Base64 конвертер</strong>
+            <span>Кодирование и декодирование Base64</span>
+          </button>
+        
+          <button type="button" class="vk-mini-card"
+                  data-open-url="/frontend/tools/design/color-palettes.html"
+                  data-open-title="Палитры цветов">
+            <strong>Палитры цветов</strong>
+            <span>Подбор и копирование цветов</span>
+          </button>
+        
+          <button type="button" class="vk-mini-card"
+                  data-open-url="/frontend/tools/design/format-converter.html"
+                  data-open-title="Конвертер форматов">
+            <strong>Конвертер форматов</strong>
+            <span>Быстрая конвертация данных</span>
+          </button>
+        
+          <button type="button" class="vk-mini-card"
+                  data-open-url="/frontend/tools/engineering/unit-converter.html"
+                  data-open-title="Конвертер единиц">
+            <strong>Конвертер единиц</strong>
+            <span>Перевод величин и единиц измерения</span>
+          </button>
+        
+          <button type="button" class="vk-mini-card"
+                  data-open-url="/frontend/tools/logistics/depreciation-calculator.html"
+                  data-open-title="Калькулятор амортизации">
+            <strong>Калькулятор амортизации</strong>
+            <span>Расчёт амортизации для логистики</span>
+          </button>
+        
+          <button type="button" class="vk-mini-card"
+                  data-open-url="/frontend/tools/logistics/fuel-calculator.html"
+                  data-open-title="Калькулятор топлива">
+            <strong>Калькулятор топлива</strong>
+            <span>Расход и стоимость топлива</span>
+          </button>
+        
+          <button type="button" class="vk-mini-card"
+                  data-open-url="/frontend/tools/ecology/product-footprint-calculator.html"
+                  data-open-title="Эко‑след продукта">
+            <strong>Эко‑след продукта</strong>
+            <span>Оценка экологического следа</span>
+          </button>
+        
+      </div>
+    </section>
+
+    
+    <section class="vk-mini-screen" data-screen="games" aria-label="Игры">
+      <h2 class="vk-mini-section-title">Игры Serpmonn</h2>
+      <p class="vk-mini-section-sub">Свои веб‑игры внутри приложения</p>
+      <div class="vk-mini-card-list">
+        
+          
+            
+              
+                
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="/frontend/games/2048/2048.html"
+                          data-open-title="2048">
+                    <strong>2048</strong>
+                    <span>Классическая головоломка на сложение чисел.</span>
+                  </button>
+                
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="/frontend/games/flappy/flappy.html"
+                          data-open-title="Flappy Bird">
+                    <strong>Flappy Bird</strong>
+                    <span>Аркада на реакцию: поддерживай полёт, пролетай сквозь трубы.</span>
+                  </button>
+                
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="/frontend/games/coins/coins.html"
+                          data-open-title="Монетки">
+                    <strong>Монетки</strong>
+                    <span>Собирайте монеты на поле 20×20, избегая ловушек. Таймер 60с.</span>
+                  </button>
+                
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="/frontend/games/breakout/breakout.html"
+                          data-open-title="Арканоид">
+                    <strong>Арканоид</strong>
+                    <span>Классический Breakout: разбивай блоки, отбивай мяч платформой.</span>
+                  </button>
+                
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="/frontend/games/snake/snake.html"
+                          data-open-title="Змейка">
+                    <strong>Змейка</strong>
+                    <span>Классическая змейка: ешь еду, избегай стен и хвоста.</span>
+                  </button>
+                
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="/frontend/games/minesweeper/minesweeper.html"
+                          data-open-title="Сапёр">
+                    <strong>Сапёр</strong>
+                    <span>Классический Сапёр: открывай клетки, помечай мины флажками.</span>
+                  </button>
+                
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="/frontend/games/fifteen/fifteen.html"
+                          data-open-title="Пятнашки">
+                    <strong>Пятнашки</strong>
+                    <span>Классическая головоломка 15 Puzzle: расставь плитки 1–15 по порядку.</span>
+                  </button>
+                
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="/frontend/games/redsquare/redsquare.html"
+                          data-open-title="Квадратное бегство">
+                    <strong>Квадратное бегство</strong>
+                    <span>Уворачивайся от падающих блоков как можно дольше.</span>
+                  </button>
+                
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="/frontend/games/redsquare2/redsquare2.html"
+                          data-open-title="Падающие фигуры">
+                    <strong>Падающие фигуры</strong>
+                    <span>Тетрис: складывай фигуры в ряды, не давай полю переполниться.</span>
+                  </button>
+                
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="/frontend/games/typing/index.html"
+                          data-open-title="Печатный тренажёр">
+                    <strong>Печатный тренажёр</strong>
+                    <span>Тренируй скорость и точность печати: набирай слова наперегонки со временем.</span>
+                  </button>
+                
+                  <button type="button" class="vk-mini-card"
+                          data-open-url="/frontend/games/rat/index.html"
+                          data-open-title="Раскорми крысу">
+                    <strong>Раскорми крысу</strong>
+                    <span>Кликай по еде как можно быстрее, чтобы крыса разъелась до невероятных размеров.</span>
+                  </button>
+                
+              
+            
+              
+            
+              
+            
+          
+        
+          
+        
+      </div>
+    </section>
+  </div>
+
+  <nav class="vk-mini-nav" aria-label="Навигация мини-приложения">
+    <button type="button" data-screen="search" class="is-active">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      Поиск
+    </button>
+    <button type="button" data-screen="news">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h12v14H4z"/><path d="M16 8h4v11h-4"/><path d="M7 9h6M7 13h6M7 17h4"/></svg>
+      Новости
+    </button>
+    <button type="button" data-screen="tools">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L4 17l3 3 5.3-5.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-2.5z"/></svg>
+      Инструменты
+    </button>
+    <button type="button" data-screen="games">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="8" width="18" height="10" rx="3"/><path d="M8 13h2M9 12v2"/><circle cx="15" cy="12" r="1"/><circle cx="17.5" cy="14" r="1"/></svg>
+      Игры
+    </button>
+  </nav>
+</div>
+
+
+<div class="vk-mini-viewer" id="vk-mini-viewer" aria-hidden="true">
+  <div class="vk-mini-viewer__bar">
+    <button type="button" class="vk-mini-viewer__back" id="vk-mini-viewer-back">Назад</button>
+    <div class="vk-mini-viewer__title" id="vk-mini-viewer-title"></div>
+  </div>
+  <iframe id="vk-mini-viewer-frame" title="Содержимое" src="about:blank"></iframe>
+</div>
+
+
+<div class="vk-mini-onboarding" id="vk-mini-onboarding" aria-hidden="true">
+  <div class="vk-mini-onboarding__panel" role="dialog" aria-modal="true" aria-label="Онбординг">
+    <div class="vk-mini-onboarding__dots">
       
-<style>
-  html, body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
-  }
+        <span class="is-active"></span>
+      
+        <span></span>
+      
+        <span></span>
+      
+    </div>
+    
+      <div class="vk-mini-onboarding__slide">
+        <h2>Добро пожаловать в Serpmonn</h2>
+        <p>Агентный поиск с ИИ: задайте вопрос и получите ответ прямо во ВКонтакте.</p>
+      </div>
+    
+      <div class="vk-mini-onboarding__slide" hidden>
+        <h2>Что внутри</h2>
+        <p>Умный поиск, новости, полезные инструменты и собственные мини‑игры — всё в одном приложении.</p>
+      </div>
+    
+      <div class="vk-mini-onboarding__slide" hidden>
+        <h2>Как пользоваться</h2>
+        <p>Нижнее меню: Поиск, Новости, Инструменты и Игры. Ответ можно скопировать или поделиться через ВКонтакте.</p>
+      </div>
+    
+    <div class="vk-mini-onboarding__actions">
+      <button type="button" data-onboard-skip>Пропустить</button>
+      <button type="button" class="is-primary" data-onboard-next>Далее</button>
+    </div>
+  </div>
+</div>
 
-  body > header,
-  body > footer {
-    display: none !important;
-  }
+<script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js"></script>
+<script type="module" src="/frontend/scripts/scripts.js" defer></script>
+<script src="/frontend/scripts/mini/miniapp.js" defer></script>
 
-  body > main {
-    margin: 0;
-    padding: 0;
-  }
-
-  #spn-mini-frame {
-    position: fixed;
-    inset: 0;
-    width: 100vw;
-    height: 100vh;
-    border: 0;
-    margin: 0;
-    padding: 0;
-    display: block;
-    z-index: 1;
-  }
-</style>
-
-<iframe
-  id="spn-mini-frame"
-  src="/frontend/main-mini.html"
-  frameborder="0">
-</iframe>
-    </main>
   </body>
 </html>

@@ -18,11 +18,19 @@ eleventyComputed:
   menu_all_knowledge_base: "{{ menuTranslations[locale].all_knowledge_base }}"
   menu_games: "{{ menuTranslations[locale].games }}"
   menu_all_games: "{{ menuTranslations[locale].all_games }}"
-  menu_web_games: "{{ menuTranslations[locale].web_games }}"
-  menu_mobile_games: "{{ menuTranslations[locale].mobile_games }}"
-  menu_pc_games: "{{ menuTranslations[locale].pc_games }}"
+  menu_serpmonn_games: "{{ menuTranslations[locale].serpmonn_games }}"
+  menu_partner_games: "{{ menuTranslations[locale].partner_games }}"
+  menu_platform_web: "{{ menuTranslations[locale].platform_web }}"
+  menu_platform_pc: "{{ menuTranslations[locale].platform_pc }}"
+  menu_platform_mobile: "{{ menuTranslations[locale].platform_mobile }}"
+  menu_web_games: "{{ menuTranslations[locale].platform_web }}"
+  menu_mobile_games: "{{ menuTranslations[locale].platform_mobile }}"
+  menu_pc_games: "{{ menuTranslations[locale].platform_pc }}"
   menu_apps: "{{ menuTranslations[locale].apps }}"
   menu_download_app: "{{ menuTranslations[locale].download_app }}"
+  menu_android_apk: "{{ menuTranslations[locale].android_apk }}"
+  menu_messenger_app: "{{ menuTranslations[locale].messenger_app }}"
+  menu_install_guide: "{{ menuTranslations[locale].install_guide }}"
   menu_mobile_apps: "{{ menuTranslations[locale].mobile_apps }}"
   menu_promo_codes: "{{ menuTranslations[locale].promo_codes }}"
   menu_tools: "{{ menuTranslations[locale].tools }}"
@@ -136,7 +144,6 @@ eleventyComputed:
     <!-- Подменю игр -->
     <div class="submenu-container" id="gamesSubmenu">
 
-        <!-- ====== СТРАНИЦА СО ВСЕМИ ИГРАМИ ====== -->
         <a href="{% if locale == 'ru' %}/frontend/games/games.html{% else %}/frontend/{{ locale }}/games/games.html{% endif %}"
         class="menu-item"
         data-route="games-all">
@@ -144,87 +151,75 @@ eleventyComputed:
             {{ menu_all_games }}
         </a>
 
-        <!-- Подраздел: Веб-игры -->
-        <a href="#" class="menu-item" data-submenu="webGamesSubmenu">
-            {{ toolIcon('web', 'cat') }}
-            {{ menu_web_games }}
+        {# —— Игры Serpmonn → Веб / ПК / Мобильные —— #}
+        <a href="#" class="menu-item" data-submenu="serpmonnGamesSubmenu">
+            {{ toolIcon('games', 'cat') }}
+            {{ menu_serpmonn_games }}
         </a>
-
-        <!-- Подменю веб-игр (localesGames — синхрон с games.html) -->
-        <div class="submenu-container" id="webGamesSubmenu">
-            {% for category in localesGames[locale].games.categories %}
-              {% if category.key == 'web' %}
-                {% for game in category.games %}
-            <a href="{{ game.link }}">
-                {{ webGameIcon(game.link) }}
-                {{ game.name }}
+        <div class="submenu-container" id="serpmonnGamesSubmenu">
+            {% for group in localesGames[locale].games.groups %}
+              {% if group.key == 'serpmonn' %}
+                {% for platform in group.platforms %}
+            <a href="#" class="menu-item" data-submenu="serpmonn{{ platform.key | capitalize }}Submenu">
+                {% if platform.key == 'web' %}{{ toolIcon('web', 'cat') }}
+                {% elif platform.key == 'pc' %}{{ toolIcon('pc', 'cat') }}
+                {% else %}{{ toolIcon('mobile', 'cat') }}{% endif %}
+                {{ platform.title }}
             </a>
+            <div class="submenu-container" id="serpmonn{{ platform.key | capitalize }}Submenu">
+                {% if platform.games and platform.games | length %}
+                  {% for game in platform.games %}
+                <a href="{{ game.link }}"{% if game.external %} target="_blank" rel="noopener"{% endif %}>
+                    {% if platform.key == 'web' %}{{ webGameIcon(game.link) }}{% else %}{{ toolIcon('games') }}{% endif %}
+                    {{ game.name }}
+                </a>
+                  {% endfor %}
+                {% elif platform.placeholders and platform.placeholders | length %}
+                  {% for ph in platform.placeholders %}
+                <a href="#" class="game-placeholder">
+                    {{ toolIcon(platform.key) }}
+                    {{ ph.name }} ({{ menu_soon }})
+                </a>
+                  {% endfor %}
+                {% else %}
+                <a href="#" class="game-placeholder">{{ toolIcon(platform.key) }} {{ menu_soon }}</a>
+                {% endif %}
+            </div>
                 {% endfor %}
               {% endif %}
             {% endfor %}
         </div>
 
-<a href="#" class="menu-item" data-submenu="androidGamesSubmenu">
-            {{ toolIcon('mobile', 'cat') }}
-            {{ menu_mobile_games }}
+        {# —— Игры партнёров → Веб / ПК / Мобильные —— #}
+        <a href="#" class="menu-item" data-submenu="partnerGamesSubmenu">
+            {{ toolIcon('partners', 'cat') }}
+            {{ menu_partner_games }}
         </a>
-
-<div class="submenu-container" id="androidGamesSubmenu">
-            <a href="#" class="game-placeholder">
-                {{ toolIcon('mobile') }} Мобильная стратегия ({{ menu_soon }})
+        <div class="submenu-container" id="partnerGamesSubmenu">
+            {% for group in localesGames[locale].games.groups %}
+              {% if group.key == 'partners' %}
+                {% for platform in group.platforms %}
+            <a href="#" class="menu-item" data-submenu="partner{{ platform.key | capitalize }}Submenu">
+                {% if platform.key == 'web' %}{{ toolIcon('web', 'cat') }}
+                {% elif platform.key == 'pc' %}{{ toolIcon('pc', 'cat') }}
+                {% else %}{{ toolIcon('mobile', 'cat') }}{% endif %}
+                {{ platform.title }}
             </a>
-            <a href="#" class="game-placeholder">
-                {{ toolIcon('trophy') }} Аркадная игра ({{ menu_soon }})
-            </a>
-        </div>
-
-        <!-- Подраздел: ПК-игры -->
-        <a href="#" class="menu-item" data-submenu="pcGamesSubmenu">
-            {{ toolIcon('pc', 'cat') }}
-            {{ menu_pc_games }}
-        </a>
-
-        <!-- Подменю ПК-игр -->
-        <div class="submenu-container" id="pcGamesSubmenu">
-            <a href="https://rzekl.com/g/ky2n1t1o3k7c9ceea34447ed6832c6937d428ecd/?erid=5jtCeReNwxHpfQTFQqS8mWE" target="_blank">
-                <img src="/frontend/images/atomic-heart.jpg" alt="Atomic Heart" class="icon"> Atomic Heart
-            </a>
-            <a href="https://ficca2021.com/g/xv8wkx2q4t7c9ceea3443cb67d624d0197bfefde/?erid=25H8d7vbP8SRTvJ4WQksxm" target="_blank">
-                <img src="/frontend/images/lost-ark.png" alt="Lost Ark" class="icon"> Lost Ark
-            </a>
-            <a href="https://codeaven.com/g/pw3myei9ht7c9ceea344a4713a8ace3ce163585e/?erid=5jtCeReNwxHpfQTGQVAJcnX" target="_blank">
-                <img src="/frontend/images/allods-online.png" alt="Аллоды Онлайн" class="icon"> Аллоды Онлайн
-            </a>
-            <a href="https://xcdus.com/g/c5e9n6r3ew7c9ceea344c5c964748a/?erid=MvGzQC98w3З1gMq1pRgkzi9d" target="_blank">
-                <img src="/frontend/images/malinovka.png" alt="Малиновка" class="icon"> Малиновка
-            </a>
-            <a href="https://xmknb.com/g/ilvfzhs26x7c9ceea34461e800f2bd/?erid=2bL9aMPo2e49hMef4piV5BfNfR" target="_blank">
-                <img src="/frontend/images/evolve-rp.png" alt="Evolve RP" class="icon"> Evolve RP
-            </a>
-            <a href="https://rzekl.com/g/txwwmat2wx7c9ceea344c065b8a873/?erid=2bL9aMPo2e49hMef4pfym3SuLK" target="_blank">
-                <img src="/frontend/images/amazing-online.jpg" alt="AMAZING ONLINE" class="icon"> AMAZING ONLINE
-            </a>
-            <a href="https://zmgig.com/g/yog728vijm7c9ceea344f0d389d68d/?erid=MvGzQC98w3З1gMq1oSV73txX" target="_blank">
-                <img src="/frontend/images/nextrp.png" alt="NEXTRP" class="icon"> NEXTRP
-            </a>
-            <a href="https://tywhh.com/g/q10rxle26a7c9ceea34443269ad76debd4fd1b95/?erid=2bL9aMPo2e49hMef4piUr6ZhiU" target="_blank">
-                <img src="/frontend/images/gta5rp.webp" alt="GTA5RP" class="icon"> GTA5RP
-            </a>
-            <a href="https://twnfz.com/g/f15f0db8437c9ceea344d8792ef979/?erid=5jtCeReLm1S3Xx3Lf3au61G" target="_blank">
-                <img src="/frontend/images/lineage-2.png" alt="Lineage 2" class="icon"> Lineage 2
-            </a>
-            <a href="https://rzekl.com/g/7lgnbu225t7c9ceea3444cb8738d24/?erid=MvGzQC98w3З1gMq1oSV73uLi" target="_blank">
-                <img src="/frontend/images/lineage-2-essence.png" alt="Lineage 2 Essence" class="icon"> Lineage 2 Essence
-            </a>
-            <a href="https://dhwnh.com/g/4z1liq0shk7c9ceea34426d3115512/?erid=2bL9aMPo2e49hMef4pfzSMbrkc" target="_blank">
-                <img src="/frontend/images/lineage-2-legacy.png" alt="Lineage 2 Legacy" class="icon"> Lineage 2 Legacy
-            </a>
-            <a href="https://rzekl.com/g/fy90i94aoa7c9ceea3443fcec4d4a3/?erid=MvGzQC98w3З1gMq1oS2xNYhq" target="_blank">
-                <img src="/frontend/images/black-desert.png" alt="Black Desert" class="icon"> Black Desert
-            </a>
-            <a href="https://dorinebeaumont.com/g/jmyq21wgw87c9ceea344a78ad6f5e61bedefe48e/?erid=5jtCeReNwxHpfQTEujFRZrz" target="_blank">
-                <img src="/frontend/images/warface.png" alt="Warface" class="icon"> Warface
-            </a>
+            <div class="submenu-container" id="partner{{ platform.key | capitalize }}Submenu">
+                {% if platform.games and platform.games | length %}
+                  {% for game in platform.games %}
+                <a href="{{ game.link }}"{% if game.external %} target="_blank" rel="noopener"{% endif %}>
+                    {% if game.image %}<img src="{{ game.image }}" alt="{{ game.name }}" class="icon">{% else %}{{ toolIcon('games') }}{% endif %}
+                    {{ game.name }}
+                </a>
+                  {% endfor %}
+                {% else %}
+                <a href="#" class="game-placeholder">{{ toolIcon(platform.key) }} {{ menu_soon }}</a>
+                {% endif %}
+            </div>
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
         </div>
     </div>
 
@@ -236,9 +231,9 @@ eleventyComputed:
 
     <!-- Подменю приложений -->
     <div class="submenu-container" id="appsSubmenu">
-        <!-- Кнопка установки PWA -->
+        <!-- Кнопка установки на главный экран -->
         <a href="#" class="menu-item" id="installAppButton">
-            <img src="/frontend/images/serpmonn.ico?v=3" alt="{{ menu_download_app }}" class="icon">
+            {{ toolIcon('download') }}
             {{ menu_download_app }}
         </a>
 
@@ -248,14 +243,18 @@ eleventyComputed:
         </a>
         <div class="submenu-container" id="mobileAppsSubmenu">
             <a href="/frontend/downloads/Serpmonn_beta.apk" download="Serpmonn_beta.apk" class="menu-item">
-                <img src="/frontend/images/serpmonn.ico?v=3" alt="Serpmonn Beta" class="icon">
-                Serpmonn Beta (TWA)
+                {{ toolIcon('apk') }}
+                {{ menu_android_apk }}
             </a>
             <a href="https://serpmonn.ru/frontend/messenger.html" class="menu-item">
-                <img src="/frontend/images/serpmonn.ico?v=3" alt="Serpmonn Messenger" class="icon">
-                Serpmonn Messenger
+                {{ toolIcon('chat') }}
+                {{ menu_messenger_app }}
             </a>
         </div>
+        <a href="{% if locale == 'ru' %}/frontend/knowledge-base/articles/serpmonn-install-guide.html{% else %}/frontend/{{ locale }}/knowledge-base/articles/serpmonn-install-guide.html{% endif %}" class="menu-item">
+            {{ toolIcon('help') }}
+            {{ menu_install_guide }}
+        </a>
     </div>
 
     <!-- ========== ПРОМОКОДЫ И СКИДКИ ========== -->

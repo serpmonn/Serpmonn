@@ -56,9 +56,40 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
     document.head.appendChild(style);
 
-    // === 4. ФИЛЬТР ПК/ВЕБ ===
+    // === 4. ФИЛЬТР: источник (Serpmonn/партнёры) или платформа (веб/ПК/моб.) ===
     const filterButtons = document.querySelectorAll('.filter-btn');
-    const grids = document.querySelectorAll('.grid');
+    const groups = document.querySelectorAll('.games-group');
+    const GROUP_FILTERS = new Set(['serpmonn', 'partners']);
+    const PLATFORM_FILTERS = new Set(['web', 'pc', 'mobile']);
+
+    const applyFilter = (filter) => {
+        groups.forEach(section => {
+            const group = section.dataset.group;
+            const platforms = section.querySelectorAll('.platform-block');
+
+            if (filter === 'all') {
+                section.classList.remove('hidden');
+                platforms.forEach(p => p.classList.remove('hidden'));
+                return;
+            }
+
+            if (GROUP_FILTERS.has(filter)) {
+                section.classList.toggle('hidden', group !== filter);
+                platforms.forEach(p => p.classList.remove('hidden'));
+                return;
+            }
+
+            if (PLATFORM_FILTERS.has(filter)) {
+                let anyVisible = false;
+                platforms.forEach(p => {
+                    const match = p.dataset.platform === filter;
+                    p.classList.toggle('hidden', !match);
+                    if (match) anyVisible = true;
+                });
+                section.classList.toggle('hidden', !anyVisible);
+            }
+        });
+    };
 
     filterButtons.forEach(btn => {
         btn.addEventListener('click', () => {
@@ -70,15 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
             btn.classList.add('active');
             btn.setAttribute('aria-selected', 'true');
-
-            grids.forEach(grid => {
-                const category = grid.dataset.category;
-                const section = grid.closest('section');
-                const match = filter === 'all' || filter === category;
-                // Скрываем всю секцию (заголовок + сетка), иначе остаются чужие названия
-                grid.classList.toggle('hidden', !match);
-                if (section) section.classList.toggle('hidden', !match);
-            });
+            applyFilter(filter);
         });
     });
 
@@ -86,13 +109,16 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.card a.btn').forEach(btn => {
         btn.addEventListener('click', () => {
             const card = btn.closest('.card');
-            const gameName = card.querySelector('h2 span').textContent.trim();
-            const category = card.closest('section').querySelector('.category-title').textContent.trim();
+            const nameEl = card.querySelector('h2 span[itemprop="name"], h2 span:last-child');
+            const gameName = nameEl ? nameEl.textContent.trim() : '';
+            const groupTitle = card.closest('.games-group')?.querySelector('.group-title')?.textContent.trim() || '';
+            const platformTitle = card.closest('.platform-block')?.querySelector('.platform-title')?.textContent.trim() || '';
 
             if (window.ym) {
                 window.ym(104905836, 'reachGoal', 'game_click', {
                     game_name: gameName,
-                    game_category: category
+                    game_category: groupTitle,
+                    game_platform: platformTitle
                 });
             }
         });

@@ -69,20 +69,7 @@ eleventyComputed:
       "@type": "ItemList",
       "name": "{{ localesGames[locale].games.schemaName | escape }}",
       "numberOfItems": {{ localesGames[locale].games.totalGames | safe }},
-      "itemListElement": [
-        {% set pos = 1 %}
-        {% for category in localesGames[locale].games.categories %}
-          {% for game in category.games %}
-            {
-              "@type": "ListItem",
-              "position": {{ pos }},
-              "url": "{% if game.external %}{{ game.link }}{% else %}{{ site.baseUrl }}{{ game.link }}{% endif %}",
-              "name": "{{ game.name | escape }}"
-            }{% if not (loop.last and loop.parent.last) %},{% endif %}
-            {% set pos = pos + 1 %}
-          {% endfor %}
-        {% endfor %}
-      ]
+      "url": "{{ canonical }}"
     }
     </script>
     <!-- Hreflang для всех языков -->
@@ -115,16 +102,23 @@ eleventyComputed:
             <img class="section-logo-inline" src="/frontend/images/Games.ico" alt="Serpmonn" loading="lazy">
             {{ localesGames[locale].games.mainTitle }}
         </h1>
-        <!-- ФИЛЬТР -->
+        <!-- ФИЛЬТР: источник + платформа -->
         <div class="filter-buttons" role="tablist" aria-label="{{ localesGames[locale].games.filterLabel }}">
             <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
                 {{ localesGames[locale].games.filters.all }}
             </button>
-            <button class="filter-btn" data-filter="pc" role="tab">
-                {{ localesGames[locale].games.filters.pc }}
+            <button class="filter-btn" data-filter="serpmonn" role="tab">
+                {{ localesGames[locale].games.filters.serpmonn }}
             </button>
+            <button class="filter-btn" data-filter="partners" role="tab">
+                {{ localesGames[locale].games.filters.partners }}
+            </button>
+            <span class="filter-sep" aria-hidden="true"></span>
             <button class="filter-btn" data-filter="web" role="tab">
                 {{ localesGames[locale].games.filters.web }}
+            </button>
+            <button class="filter-btn" data-filter="pc" role="tab">
+                {{ localesGames[locale].games.filters.pc }}
             </button>
             <button class="filter-btn" data-filter="mobile" role="tab">
                 {{ localesGames[locale].games.filters.mobile }}
@@ -136,61 +130,83 @@ eleventyComputed:
         <div class="ad-leaderboard">
             <ins class="mrg-tag" style="display:inline-block" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
         </div>
-{% for category in localesGames[locale].games.categories %}
-        <!-- СЕКЦИЯ КАТЕГОРИИ -->
-        <section itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+
+{% for group in localesGames[locale].games.groups %}
+        <section class="games-group" data-group="{{ group.key }}" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
             <meta itemprop="position" content="{{ loop.index }}">
-            <h2 class="category-title">
-                {% if category.key == 'web' %}
-                <span class="section-logo-inline tool-icon tool-icon--cat" aria-hidden="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 9h18"/><path d="M8 5v4"/></svg>
-                </span>
-                {% elif category.key == 'pc' %}
-                <span class="section-logo-inline tool-icon tool-icon--cat" aria-hidden="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/><path d="M12 16v4"/></svg>
-                </span>
+            <h2 class="group-title">
+                {% if group.key == 'serpmonn' %}
+                <span class="section-logo-inline">{{ toolIcon('games', 'cat') }}</span>
                 {% else %}
-                <span class="section-logo-inline tool-icon tool-icon--cat" aria-hidden="true">
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2"/><path d="M11 18h2"/></svg>
-                </span>
+                <span class="section-logo-inline">{{ toolIcon('partners', 'cat') }}</span>
                 {% endif %}
-                {{ category.title }}
+                {{ group.title }}
             </h2>
-            <div class="grid" role="grid" aria-label="{{ category.ariaLabel }}" data-category="{{ category.key }}">
-                {% for game in category.games %}
-                <!-- КАРТОЧКА ИГРЫ -->
-                <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
-                    <meta itemprop="position" content="{{ game.position }}">
-                    <h2>
-                        {% if category.key == 'web' %}
-                        <span class="game-logo-inline game-logo-inline--svg">{{ webGameIcon(game.link, 'cat') }}</span>
-                        {% else %}
-                        <img class="game-logo-inline" src="{{ game.image }}" alt="{{ game.name }}" loading="lazy" itemprop="image">
+
+            {% for platform in group.platforms %}
+            <div class="platform-block" data-platform="{{ platform.key }}">
+                <h3 class="platform-title">
+                    {% if platform.key == 'web' %}{{ toolIcon('web', 'cat') }}
+                    {% elif platform.key == 'pc' %}{{ toolIcon('pc', 'cat') }}
+                    {% else %}{{ toolIcon('mobile', 'cat') }}{% endif %}
+                    {{ platform.title }}
+                </h3>
+                <div class="grid" role="grid" aria-label="{{ platform.ariaLabel }}">
+                    {% if platform.games and platform.games | length %}
+                      {% for game in platform.games %}
+                    <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                        <meta itemprop="position" content="{{ game.position }}">
+                        <h2>
+                            {% if platform.key == 'web' and not game.external %}
+                            <span class="game-logo-inline game-logo-inline--svg">{{ webGameIcon(game.link, 'cat') }}</span>
+                            {% elif game.image %}
+                            <img class="game-logo-inline" src="{{ game.image }}" alt="{{ game.name }}" loading="lazy" itemprop="image">
+                            {% else %}
+                            <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon('games', 'cat') }}</span>
+                            {% endif %}
+                            <span itemprop="name">{{ game.name }}</span>
+                        </h2>
+                        <p itemprop="description">{{ game.description }}</p>
+
+                        {% if game.external or game.badges %}
+                        <div class="platform-badges">
+                            {% if game.external %}
+                            <span class="badge partner">{{ localesGames[locale].games.partnerBadge | default('Партнёр') }}</span>
+                            {% endif %}
+                            {% if game.badges %}
+                            {% for badge in game.badges %}
+                            <span class="badge {{ badge.type }}">{{ badge.name }}</span>
+                            {% endfor %}
+                            {% endif %}
+                        </div>
                         {% endif %}
-                        <span itemprop="name">{{ game.name }}</span>
-                    </h2>
-                    <p itemprop="description">{{ game.description }}</p>
-                   
-{% if game.badges %}
-                    <div class="platform-badges">
-                        {% for badge in game.badges %}
-                        <span class="badge {{ badge.type }}">{{ badge.name }}</span>
-                        {% endfor %}
+
+                        <a class="btn"
+                           href="{{ game.link }}"
+                           {% if game.external %}target="_blank" rel="noopener"{% endif %}
+                           itemprop="url">
+                            {{ game.buttonText }}
+                        </a>
                     </div>
+                      {% endfor %}
+                    {% elif platform.placeholders and platform.placeholders | length %}
+                      {% for ph in platform.placeholders %}
+                    <div class="card card--soon" role="row">
+                        <h2>
+                            <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon(platform.key, 'cat') }}</span>
+                            <span>{{ ph.name }}</span>
+                        </h2>
+                        <p>{{ ph.description | default(localesGames[locale].games.soonLabel) }}</p>
+                    </div>
+                      {% endfor %}
+                    {% else %}
+                    <p class="platform-empty">{{ localesGames[locale].games.emptyPlatform }}</p>
                     {% endif %}
-                   
-                    <!-- КНОПКА ИГРАТЬ/СКАЧАТЬ -->
-                    <a class="btn"
-                       href="{{ game.link }}"
-                       {% if game.external %}target="_blank" rel="noopener"{% endif %}
-                       itemprop="url">
-                        {{ game.buttonText }}
-                    </a>
                 </div>
-                {% endfor %}
             </div>
+            {% endfor %}
         </section>
-        {% endfor %}
+{% endfor %}
     </main>
 
     {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}

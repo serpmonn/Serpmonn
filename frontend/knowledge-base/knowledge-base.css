@@ -88,6 +88,11 @@ body {
   text-align: center; 
 }
 
+.news-header--compact {
+  padding: 18px 20px 16px;
+  margin-bottom: 16px;
+}
+
 .news-header .news-title { 
   font-size: 3rem; 
   margin-bottom: 15px; 
@@ -95,10 +100,49 @@ body {
   color: #fff;
 }
 
+.news-header--compact .news-title {
+  font-size: 1.65rem;
+  margin: 0 0 6px;
+  line-height: 1.25;
+}
+
 .news-subtitle { 
   font-size: 1.2rem; 
   opacity: 0.9; 
   margin-bottom: 20px; 
+}
+
+.news-header--compact .news-subtitle {
+  font-size: 0.95rem;
+  margin: 0 0 12px;
+  opacity: 0.92;
+  line-height: 1.4;
+}
+
+.kb-subscribe {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.kb-subscribe__link {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.18);
+  color: #fff;
+  text-decoration: none;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+
+.kb-subscribe__link:hover {
+  background: rgba(255, 255, 255, 0.32);
+  transform: translateY(-1px);
+  color: #fff;
 }
 
 /* Стили блока статистики */
@@ -322,15 +366,44 @@ body {
 .news-card-share { 
   display: flex; 
   gap: 10px; 
-  margin-top: 10px; 
+  margin-top: 10px;
+  position: relative;
+  z-index: 2;
 }
 
+.kb-share-button {
+  width: 40px;
+  height: 40px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #e53935, #c62828);
+  color: #fff;
+  box-shadow: 0 3px 8px rgba(229, 57, 53, 0.35);
+  transition: transform 0.15s ease, box-shadow 0.15s ease, filter 0.15s ease;
+}
+
+.kb-share-button:hover {
+  filter: brightness(1.06);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(229, 57, 53, 0.5);
+  color: #fff;
+}
+
+.kb-share-button:active {
+  transform: translateY(0);
+}
+
+/* legacy share-btn (если остался) */
 .share-btn { 
   padding: 8px; 
   background: #f8f9fa; 
   border-radius: 50%; 
   text-decoration: none; 
-  color: #333; 
+  color: #333 !important; 
   transition: all 0.2s ease;
   width: 36px;
   height: 36px;
@@ -341,8 +414,174 @@ body {
 
 .share-btn:hover { 
   background: #e53935; 
-  color: white; 
+  color: white !important; 
   transform: scale(1.1);
+}
+
+/* Share popup (как у промокодов) */
+#kb-share-popup-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9000;
+  align-items: center;
+  justify-content: center;
+}
+
+#kb-share-popup-overlay.visible {
+  display: flex;
+  animation: kb-share-overlay-in 0.18s ease;
+}
+
+@keyframes kb-share-overlay-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.kb-share-popup {
+  background: #fff;
+  border-radius: 16px;
+  padding: 24px 20px 20px;
+  width: min(92vw, 360px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.22);
+  position: relative;
+  animation: kb-share-popup-in 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes kb-share-popup-in {
+  from { transform: scale(0.82); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.kb-share-popup__close {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  font-size: 22px;
+  line-height: 1;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  padding: 4px;
+  border-radius: 6px;
+}
+
+.kb-share-popup__close:hover {
+  color: #333;
+  background: rgba(0,0,0,0.06);
+}
+
+.kb-share-popup__title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #222;
+  margin: 0 0 4px;
+  padding-right: 28px;
+  text-align: center;
+}
+
+.kb-share-popup__name {
+  font-size: 13px;
+  color: #666;
+  text-align: center;
+  margin: 0 0 16px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.kb-share-networks {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.kb-share-network-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  color: #333;
+  font-size: 11px;
+  font-weight: 600;
+  width: 56px;
+  transition: transform 0.15s ease;
+}
+
+.kb-share-network-btn:hover {
+  transform: translateY(-3px);
+}
+
+.kb-share-network-btn .sn-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+}
+
+.sn-icon--vk    { background: #0077ff; }
+.sn-icon--tg    { background: #26a5e4; }
+.sn-icon--max   { background: linear-gradient(135deg, #44ccff 0%, #5533ee 62%, #9933dd 100%); }
+.sn-icon--ok    { background: #ee8208; }
+.sn-icon--email { background: #6c757d; }
+
+.kb-share-popup__url-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.kb-share-popup__url-input {
+  flex: 1;
+  font-size: 12px;
+  padding: 7px 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  color: #444;
+  background: #f7f7f7;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  outline: none;
+}
+
+.kb-share-popup__copy-btn {
+  flex-shrink: 0;
+  padding: 7px 12px;
+  background: #e53935;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.kb-share-popup__copy-btn.copied {
+  background: #28a745;
+}
+
+@media (max-width: 500px) {
+  #kb-share-popup-overlay {
+    align-items: flex-end;
+  }
+  .kb-share-popup {
+    width: 100%;
+    border-radius: 20px 20px 0 0;
+  }
 }
 
 /* Стили промо-баннера */
@@ -541,6 +780,20 @@ body {
   .news-header { 
     padding: 20px; 
     margin-bottom: 20px; 
+  }
+
+  .news-header--compact {
+    padding: 14px 16px 12px;
+    margin-bottom: 12px;
+  }
+
+  .news-header--compact .news-title {
+    font-size: 1.35rem;
+  }
+
+  .news-header--compact .news-subtitle {
+    font-size: 0.88rem;
+    margin-bottom: 10px;
   }
   
   .news-grid { 

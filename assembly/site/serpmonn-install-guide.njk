@@ -1,0 +1,184 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/knowledge-base/articles/serpmonn-install-guide.html{% else %}/frontend/{{ locale }}/knowledge-base/articles/serpmonn-install-guide.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/articles/serpmonn-install-guide.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/articles/serpmonn-install-guide.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    {% set article = serpmonnInstallGuide[locale] or serpmonnInstallGuide['en'] or serpmonnInstallGuide['ru'] %}
+
+    <title>{{ article.meta.title }}</title>
+    <meta name="description" content="{{ article.meta.description }}">
+    <meta name="keywords" content="{{ article.meta.keywords }}">
+
+    <meta property="og:title" content="{{ article.meta.og.title }}">
+    <meta property="og:description" content="{{ article.meta.og.description }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="article">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ article.meta.twitter.title }}">
+    <meta name="twitter:description" content="{{ article.meta.twitter.description }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="canonical" href="{{ canonical }}" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "HowTo",
+      "name": "{{ article.meta.title | replace('"', '&quot;') }}",
+      "description": "{{ article.meta.description | replace('"', '&quot;') }}",
+      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
+      "datePublished": "2026-07-23",
+      "dateModified": "2026-07-23",
+      "inLanguage": "{{ locale }}",
+      "url": "{{ canonical }}",
+      "author": { "@type": "Organization", "name": "Serpmonn" },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "logo": { "@type": "ImageObject", "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico?v=3" }
+      }
+    }
+    </script>
+    {% for loc in locales %}
+      {% if loc == 'ru' %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/serpmonn-install-guide.html" hreflang="{{ loc }}" />
+      {% else %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/knowledge-base/articles/serpmonn-install-guide.html" hreflang="{{ loc }}" />
+      {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/serpmonn-install-guide.html" hreflang="x-default" />
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/serpmonn-install-guide.css">
+</head>
+<body>
+{% set tocTitle = article.content.toc.title | default(locale | articleTocTitle, true) %}
+{% set tocItems = [] %}
+{% for item in article.content.toc.items %}
+{% set _ = tocItems.push({ href: '#' + item.id, label: item.text }) %}
+{% endfor %}
+{% include "partials/article-floating-toc.njk" %}
+
+<nav id="menuContainer" aria-label="{{ article.common.menuLabel }}"></nav>
+
+<article class="article-container" tabindex="0">
+  <header class="article-header">
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-{{ mailAds.slots.top.id }}"
+          data-ad-slot="{{ mailAds.slots.top.id }}">
+      </ins>
+    </div>
+    <h1 class="article-title">{{ article.article.title }}</h1>
+    <div class="article-date">{{ article.article.date }} • {{ article.article.readingTime }}</div>
+  </header>
+
+  <div class="article-content">
+    <div class="summary">
+      <strong>{{ article.content.summary.title }}</strong> {{ article.content.summary.text }}
+    </div>
+
+    {% for section in article.content.sections %}
+    <h2 id="{{ section.id }}">{{ section.title }}</h2>
+
+    {% if section.content %}
+    <p>{{ section.content | safe }}</p>
+    {% endif %}
+
+    {% if section.steps %}
+    <ol>
+      {% for step in section.steps %}
+      <li>{{ step | safe }}</li>
+      {% endfor %}
+    </ol>
+    {% endif %}
+
+    {% if section.items %}
+    <ul>
+      {% for item in section.items %}
+      <li>{{ item | safe }}</li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if section.note %}
+    <div class="note">{{ section.note }}</div>
+    {% endif %}
+
+    {% if section.faqItems %}
+    <div class="faq">
+      {% for faq in section.faqItems %}
+      <h3>{{ faq.question }}</h3>
+      <p>{{ faq.answer }}</p>
+      {% endfor %}
+    </div>
+    {% endif %}
+    {% endfor %}
+
+    {% if article.content.conclusion %}
+    <div class="note">
+      <strong>{{ article.common.conclusion }}:</strong> {{ article.content.conclusion }}
+    </div>
+    {% endif %}
+
+    <div class="install-cta-row">
+      <a href="#" class="cta-button" id="installGuidePwaCta">{{ article.buttons.installHome }}</a>
+      <a href="/frontend/downloads/Serpmonn_beta.apk" download="Serpmonn_beta.apk" class="cta-button cta-button--secondary">{{ article.buttons.downloadApk }}</a>
+    </div>
+
+    {% set relatedTitle = locale | articleRelatedTitle %}
+    {% set relatedItems = 'serpmonn-install-guide' | articleRelated(locale) %}
+    {% include "partials/article-related.njk" %}
+  </div>
+
+  <div class="social-buttons">
+    <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">{{ article.buttons.telegram }}</a>
+    <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">{{ article.buttons.vk }}</a>
+  </div>
+</article>
+
+<button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+{% include "partials/article-chrome-scripts.njk" %}
+<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+<script>
+  document.getElementById('installGuidePwaCta')?.addEventListener('click', async (e) => {
+    e.preventDefault();
+    const tryClick = () => document.getElementById('installAppButton');
+    let btn = tryClick();
+    if (!btn) {
+      await new Promise((r) => setTimeout(r, 400));
+      btn = tryClick();
+    }
+    if (btn) btn.click();
+    else window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>
+{% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+{{ mobileAnchor(article.common.closeAd) }}
+{% include "partials/ad-pool-init.njk" %}
+</body>
+</html>

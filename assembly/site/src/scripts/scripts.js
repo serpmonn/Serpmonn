@@ -20,7 +20,16 @@ export function getEnv() {
   const envParam = params.get('env') || '';
 
   const host = location.hostname;
-  if (envParam === 'vk_mini' || host === 'vk.com' || host.endsWith('.vk.com')) return 'vk_mini';
+  if (
+    envParam === 'vk_mini' ||
+    params.has('vk_app_id') ||
+    params.get('vk_mini') === '1' ||
+    Boolean(window.__SPN_VK_MINI__) ||
+    host === 'vk.com' ||
+    host.endsWith('.vk.com')
+  ) {
+    return 'vk_mini';
+  }
   if (envParam === 'twa') return 'twa';
   if (isStandalonePWA) return 'pwa';
 
@@ -28,6 +37,12 @@ export function getEnv() {
 }
 
 export function shouldShowCookieBanner() {
+  if (window.__SPN_VK_MINI__) return false;
+  if (/(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search)) return false;
+  if (/vk_app_id=\d+/.test(window.location.search)) return false;
+  if (document.body?.classList?.contains('vk-mini-app') || document.body?.classList?.contains('vk-mini-embed')) {
+    return false;
+  }
   return getEnv() === 'web';
 }
 
@@ -58,6 +73,20 @@ function getQueryFromUrl() {
 }
 
 function buildSharePageUrl(query) {
+  // В VK Mini App делимся ссылкой на приложение, а не на полный сайт
+  if (
+    window.__SPN_VK_MINI__ ||
+    /vk_app_id=\d+/.test(window.location.search) ||
+    /(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search)
+  ) {
+    const appId = (window.__SPN_MINI_CFG__ && window.__SPN_MINI_CFG__.appId) || '54486769';
+    const base = `https://vk.com/app${appId}`;
+    if (query) {
+      return `${base}#q=${encodeURIComponent(query)}`;
+    }
+    return base;
+  }
+
   const url = new URL(window.location.href);
   url.hash = '';
 
@@ -1333,16 +1362,32 @@ function setupActionButtons() {
       }
 
       const isVkMiniApp =
+        Boolean(window.__SPN_VK_MINI__) ||
+        /vk_app_id=\d+/.test(window.location.search) ||
+        /(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search) ||
         window.location.hostname === 'vk.com' ||
         window.location.hostname.endsWith('.vk.com');
 
       if (isVkMiniApp && window.vkBridge && typeof window.vkBridge.send === 'function') {
         window.vkBridge
           .send('VKWebAppShare', { link: payload.pageUrl })
+          .then(() => {
+            showShareToast(t.shared || t.copied || 'Готово');
+          })
           .catch(err => {
             console.warn('VKWebAppShare error, fallback to web modal:', err);
+            // В мини-приложении не открываем шаринг на другие площадки
+            if (window.__SPN_VK_MINI__ || /vk_app_id=\d+/.test(window.location.search)) {
+              showShareToast(t.shareFailed || t.copyFailed || 'Не удалось поделиться');
+              return;
+            }
             openWebShareModal(payload);
           });
+        return;
+      }
+
+      if (window.__SPN_VK_MINI__) {
+        showShareToast(t.shareFailed || 'Шаринг доступен во ВКонтакте');
         return;
       }
 

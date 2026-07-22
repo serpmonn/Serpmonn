@@ -38,29 +38,29 @@ export function toggleMenu(event) {
 export function toggleSubmenu(event, submenuId) {
     const submenu = document.getElementById(submenuId);
     const menuItem = event.currentTarget;
-    if (submenu) {
-        const parentSubmenu = menuItem.closest('.submenu-container');
-        const isOpen = submenu.classList.contains('active') ? false : true;
-        
-        // Закрываем все подменю, кроме текущего и его родительских
-        document.querySelectorAll('.submenu-container').forEach(sub => {
-            if (sub !== submenu && (!parentSubmenu || !parentSubmenu.contains(sub))) {
-                sub.classList.remove('active');
-                sub.setAttribute('aria-hidden', 'true');
-                const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
-                if (parent) {
-                    parent.setAttribute('aria-expanded', 'false');
-                    parent.setAttribute('aria-hidden', 'true');
-                }
-            }
-        });
-        
-        // Переключаем текущее подменю
-        submenu.classList.toggle('active');
-        submenu.setAttribute('aria-hidden', submenu.classList.contains('active') ? 'false' : 'true');
-        menuItem.setAttribute('aria-expanded', isOpen);
-        menuItem.setAttribute('aria-hidden', 'false');
-    }
+    if (!submenu || !menuItem) return;
+
+    const isOpen = !submenu.classList.contains('active');
+
+    // Закрываем остальные подменю, но оставляем открытыми предков текущего
+    // (иначе при 3+ уровнях вложенности родитель скрывается через display:none)
+    document.querySelectorAll('.submenu-container').forEach(sub => {
+        if (sub === submenu) return;
+        if (sub.contains(submenu)) return; // предок — оставляем
+
+        sub.classList.remove('active');
+        sub.setAttribute('aria-hidden', 'true');
+        const parent = document.querySelector(`[data-submenu="${sub.id}"]`);
+        if (parent) {
+            parent.setAttribute('aria-expanded', 'false');
+            parent.setAttribute('aria-hidden', 'true');
+        }
+    });
+
+    submenu.classList.toggle('active', isOpen);
+    submenu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+    menuItem.setAttribute('aria-expanded', String(isOpen));
+    menuItem.setAttribute('aria-hidden', 'false');
 }
 
 import { loadMessages, t } from './i18n-loader.js';
