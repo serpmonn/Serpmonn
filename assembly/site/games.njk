@@ -103,6 +103,7 @@ eleventyComputed:
     <link rel="stylesheet" href="/frontend/games/games.css">
 </head>
 <body>
+    {% from "partials/tool-icons.njk" import toolIcon, webGameIcon %}
     <nav id="menuContainer" aria-label="{{ localesGames[locale].games.menuLabel }}"></nav>
    
     <main class="page" itemscope itemtype="https://schema.org/ItemList">
@@ -161,7 +162,11 @@ eleventyComputed:
                 <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
                     <meta itemprop="position" content="{{ game.position }}">
                     <h2>
+                        {% if category.key == 'web' %}
+                        <span class="game-logo-inline game-logo-inline--svg">{{ webGameIcon(game.link, 'cat') }}</span>
+                        {% else %}
                         <img class="game-logo-inline" src="{{ game.image }}" alt="{{ game.name }}" loading="lazy" itemprop="image">
+                        {% endif %}
                         <span itemprop="name">{{ game.name }}</span>
                     </h2>
                     <p itemprop="description">{{ game.description }}</p>

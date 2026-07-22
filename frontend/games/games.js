@@ -73,11 +73,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             grids.forEach(grid => {
                 const category = grid.dataset.category;
-                if (filter === 'all' || filter === category) {
-                    grid.classList.remove('hidden');
-                } else {
-                    grid.classList.add('hidden');
-                }
+                const section = grid.closest('section');
+                const match = filter === 'all' || filter === category;
+                // Скрываем всю секцию (заголовок + сетка), иначе остаются чужие названия
+                grid.classList.toggle('hidden', !match);
+                if (section) section.classList.toggle('hidden', !match);
             });
         });
     });

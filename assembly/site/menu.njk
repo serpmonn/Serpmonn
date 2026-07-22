@@ -83,7 +83,7 @@ eleventyComputed:
 
 <!-- Основной контейнер меню -->
 <div class="menu-container" id="menuContainer">
-    {% from "partials/tool-icons.njk" import toolIcon %}
+    {% from "partials/tool-icons.njk" import toolIcon, webGameIcon %}
 
     <!-- ========== СЕЛЕКТОР ЯЗЫКА ========== -->
     <div class="menu-item lang-selector-item lang-selector-container" id="languageSelectorContainer">
@@ -95,7 +95,7 @@ eleventyComputed:
     <a href="{% if locale == 'ru' %}/frontend/main.html{% else %}/frontend/{{ locale }}/index.html{% endif %}"
     class="menu-item"
     data-route="home">
-        <img src="/frontend/images/serpmonn.ico?v=3" alt="{{ menu_home }}" class="icon">
+        {{ toolIcon('search', 'cat') }}
         {{ menu_home }}
     </a>
 
@@ -123,7 +123,7 @@ eleventyComputed:
        id="findings-feed-block"
        data-route="findings-feed"
        data-finding-open-feed="1">
-        <img src="/frontend/images/findings-feed.svg" alt="{{ menu_findings_feed }}" class="icon">
+        {{ toolIcon('feed', 'cat') }}
         {{ menu_findings_feed }}
     </a>
 
@@ -156,7 +156,7 @@ eleventyComputed:
               {% if category.key == 'web' %}
                 {% for game in category.games %}
             <a href="{{ game.link }}">
-                <img src="{{ game.image }}" alt="{{ game.name }}" class="icon">
+                {{ webGameIcon(game.link) }}
                 {{ game.name }}
             </a>
                 {% endfor %}
