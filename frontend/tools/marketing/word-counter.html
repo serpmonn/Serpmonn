@@ -229,92 +229,71 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    
-    <style>
-      /* ad top adaptive start */
-      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
-      /* ad top adaptive end */
-      
-      body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-      h1 { margin: 16px 0; }
-      textarea { width: 100%; min-height: 240px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; }
-      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
-      .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fff; }
-      .num { font-size: 24px; font-weight: 700; }
-      .label { color: #6b7280; }
-
-      /* RTL поддержка */
-      
-
-      /* Адаптивность для мобильных устройств */
-      @media (max-width: 768px) {
-        body { padding: 12px; }
-        .stats { grid-template-columns: repeat(2, 1fr); }
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
   </head>
-  <body>
-    <!-- Меню -->
+  <body class="spn-tool word-counter-page">
     <div id="menuContainer"></div>
-    
+
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
-      <ins class="mrg-tag" 
+      <ins class="mrg-tag"
           style="display:inline-block;"
-          data-ad-client="ad-1897960" 
+          data-ad-client="ad-1897960"
           data-ad-slot="1897960">
       </ins>
     </div>
-    
+
     <h1>📝 Счётчик слов/символов</h1>
-    <textarea id="text" placeholder="Вставьте или введите текст..."></textarea>
     
-    <div class="stats">
-      <div class="card">
-        <div class="num" id="chars">0</div>
-        <div class="label">Символы</div>
+    <p class="tool-lead">Подсчитайте слова, символы, строки и пробелы — прямо в браузере.</p>
+    
+
+    <div class="calculator-container">
+      <h2>Текст</h2>
+      <textarea id="text" class="tool-textarea" placeholder="Вставьте или введите текст..."></textarea>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-copy-stats">Копировать статистику</button>
+        <details class="more-actions">
+          <summary>Ещё</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">Сбросить</button>
+            <button type="button" id="btn-copy-text">Копировать текст</button>
+            <button type="button" id="btn-share">Поделиться</button>
+          </div>
+        </details>
       </div>
-      <div class="card">
-        <div class="num" id="words">0</div>
-        <div class="label">Слова</div>
-      </div>
-      <div class="card">
-        <div class="num" id="lines">0</div>
-        <div class="label">Строки</div>
-      </div>
-      <div class="card">
-        <div class="num" id="spaces">0</div>
-        <div class="label">Пробелы</div>
+
+      <div class="results">
+        <h3>Результаты</h3>
+        <div class="result-hero">
+          <div class="result-value" id="words">0</div>
+          <div class="result-label">Слова</div>
+        </div>
+        <p class="result-disclaimer">Подсчёт в браузере, без отправки текста на сервер.</p>
+        <div class="stats">
+          <div class="card">
+            <div class="num" id="chars">0</div>
+            <div class="label">Символы</div>
+          </div>
+          <div class="card">
+            <div class="num" id="lines">0</div>
+            <div class="label">Строки</div>
+          </div>
+          <div class="card">
+            <div class="num" id="spaces">0</div>
+            <div class="label">Пробелы</div>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      // Вспомогательный селектор
-      const qs = (s)=>document.querySelector(s);
-      
-      // Пересчёт статистики текста
-      function recalc() {
-        const t = qs('#text').value;
-        qs('#chars').textContent = t.length;
-        const words = t.trim() ? t.trim().split(/\s+/).length : 0;
-        qs('#words').textContent = words;
-        const lines = t ? t.split(/\n/).length : 0;
-        qs('#lines').textContent = lines;
-        const spaces = (t.match(/\s/g) || []).length;
-        qs('#spaces').textContent = spaces;
-      }
-      
-      // Обновляем счётчики при вводе
-      qs('#text').addEventListener('input', recalc);
-      
-      // Инициализация при загрузке
-      document.addEventListener('DOMContentLoaded', recalc);
+      window.wordCounterTranslations = {"meta":{"title":"Счётчик слов/символов — Serpmonn","description":"Подсчёт слов, строк и символов в тексте онлайн","ogTitle":"Счётчик слов/символов — Serpmonn","ogDescription":"Бесплатный онлайн-инструмент для подсчёта слов, символов, строк и пробелов","twitterTitle":"Счётчик слов/символов — Serpmonn","twitterDescription":"Анализ текста и подсчёт элементов в реальном времени"},"page":{"title":"📝 Счётчик слов/символов","textareaPlaceholder":"Вставьте или введите текст...","stats":{"chars":"Символы","words":"Слова","lines":"Строки","spaces":"Пробелы"},"features":{"title":"🎯 Особенности инструмента","realtime":"📈 Подсчёт в реальном времени","detailed":"📊 Детальная статистика","multilingual":"🌍 Поддержка всех языков","responsive":"📱 Адаптивный дизайн"},"lead":"Подсчитайте слова, символы, строки и пробелы — прямо в браузере.","formTitle":"Текст","resultsTitle":"Результаты","disclaimer":"Подсчёт в браузере, без отправки текста на сервер.","actions":{"more":"Ещё","reset":"Сбросить","share":"Поделиться","copyStats":"Копировать статистику","copyText":"Копировать текст","copied":"Скопировано"}},"ads":{"closeAria":"Закрыть рекламу","adTitle":"Рекламный блок"},"instructions":{"title":"📖 Как пользоваться:","step1":"1. Вставьте или введите текст в поле выше","step2":"2. Счётчики автоматически обновятся","step3":"3. Анализируйте результаты в реальном времени"}};
     </script>
-    
-    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/word-counter.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">

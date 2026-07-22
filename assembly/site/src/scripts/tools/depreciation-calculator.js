@@ -942,20 +942,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   document.querySelectorAll('.input-section input, .input-section select').forEach(input => {
     input.addEventListener('input', debounce(() => calculateDepreciation(), 500));
   });
-
-  const moreActions = document.querySelector('.more-actions');
-  if (moreActions) {
-    document.addEventListener('click', (event) => {
-      if (!moreActions.open) return;
-      if (moreActions.contains(event.target)) return;
-      moreActions.open = false;
-    });
-    moreActions.querySelectorAll('button').forEach((btn) => {
-      btn.addEventListener('click', () => {
-        moreActions.open = false;
-      });
-    });
-  }
 });
 
 window.calculateDepreciation = calculateDepreciation;

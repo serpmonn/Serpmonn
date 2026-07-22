@@ -15,6 +15,7 @@ eleventyComputed:
   menu_findings_activity: "{{ menuTranslations[locale].findings_activity or menuTranslations['en'].findings_activity or 'Activity' }}"
   menu_findings_notifications: "{{ menuTranslations[locale].findings_notifications or menuTranslations['en'].findings_notifications or 'Notifications' }}"
   menu_knowledge_base: "{{ menuTranslations[locale].knowledge_base }}"
+  menu_all_knowledge_base: "{{ menuTranslations[locale].all_knowledge_base }}"
   menu_games: "{{ menuTranslations[locale].games }}"
   menu_all_games: "{{ menuTranslations[locale].all_games }}"
   menu_web_games: "{{ menuTranslations[locale].web_games }}"
@@ -309,10 +310,10 @@ eleventyComputed:
             <span class="tool-icon">💻</span> {{ menu_development }}
         </a>
         <div class="submenu-container" id="devToolsSubmenu">
-            <a href="#" class="tool-placeholder">
+            <a href="{% if locale == 'ru' %}/frontend/tools/development/json-formatter.html{% else %}/frontend/{{ locale }}/tools/development/json-formatter.html{% endif %}">
                 <span class="tool-icon">📄</span> JSON форматтер
             </a>
-            <a href="#" class="tool-placeholder">
+            <a href="{% if locale == 'ru' %}/frontend/tools/development/base64-converter.html{% else %}/frontend/{{ locale }}/tools/development/base64-converter.html{% endif %}">
                 <span class="tool-icon">🔄</span> Base64 конвертер
             </a>
         </div>
@@ -326,10 +327,10 @@ eleventyComputed:
                class="tool-link" target="_blank" rel="noopener noreferrer">
                 <span class="tool-icon">🤖</span> {{ tool_ai_avatar }}
             </a>
-            <a href="#" class="tool-placeholder">
+            <a href="{% if locale == 'ru' %}/frontend/tools/design/color-palettes.html{% else %}/frontend/{{ locale }}/tools/design/color-palettes.html{% endif %}">
                 <span class="tool-icon">🎨</span> Цветовые палитры
             </a>
-            <a href="#" class="tool-placeholder">
+            <a href="{% if locale == 'ru' %}/frontend/tools/design/format-converter.html{% else %}/frontend/{{ locale }}/tools/design/format-converter.html{% endif %}">
                 <span class="tool-icon">📐</span> Конвертер форматов
             </a>
         </div>
@@ -369,12 +370,82 @@ eleventyComputed:
     </div>
 
     <!-- ========== БАЗА ЗНАНИЙ ========== -->
-    <a href="{% if locale == 'ru' %}/frontend/knowledge-base/knowledge-base.html{% else %}/frontend/{{ locale }}/knowledge-base/knowledge-base.html{% endif %}"
-    class="menu-item"
-    data-route="knowledge">
+    <a href="#" class="menu-item" data-submenu="knowledgeSubmenu">
         <img src="/frontend/images/news.png" alt="{{ menu_knowledge_base }}" class="icon">
         {{ menu_knowledge_base }}
     </a>
+
+    <div class="submenu-container" id="knowledgeSubmenu">
+        <a href="{% if locale == 'ru' %}/frontend/knowledge-base/knowledge-base.html{% else %}/frontend/{{ locale }}/knowledge-base/knowledge-base.html{% endif %}"
+           class="menu-item"
+           data-route="knowledge">
+            <span class="tool-icon">📚</span> {{ menu_all_knowledge_base }}
+        </a>
+
+        {%- set kbArticles = localesNews[locale].news.articles -%}
+        {%- set kbCategories = localesNews[locale].news.categories -%}
+
+        {%- for cat in kbCategories -%}
+          {%- if cat.key == 'articles' -%}
+        <a href="#" class="menu-item" data-submenu="kbArticlesSubmenu">
+            <span class="tool-icon">📰</span> {{ cat.name }}
+        </a>
+        <div class="submenu-container" id="kbArticlesSubmenu">
+            {%- for article in kbArticles -%}
+              {%- if article.category == 'articles' -%}
+            <a href="{{ article.link }}"><span class="tool-icon">📄</span> {{ article.title }}</a>
+              {%- endif -%}
+            {%- endfor -%}
+        </div>
+          {%- elif cat.key == 'tutorials' -%}
+        <a href="#" class="menu-item" data-submenu="kbTutorialsSubmenu">
+            <span class="tool-icon">🎓</span> {{ cat.name }}
+        </a>
+        <div class="submenu-container" id="kbTutorialsSubmenu">
+            {%- for article in kbArticles -%}
+              {%- if article.category == 'tutorials' -%}
+            <a href="{{ article.link }}"><span class="tool-icon">📄</span> {{ article.title }}</a>
+              {%- endif -%}
+            {%- endfor -%}
+        </div>
+          {%- elif cat.key == 'engineering' -%}
+        <a href="#" class="menu-item" data-submenu="kbEngineeringSubmenu">
+            <span class="tool-icon">🔧</span> {{ cat.name }}
+        </a>
+        <div class="submenu-container" id="kbEngineeringSubmenu">
+            {%- for article in kbArticles -%}
+              {%- if article.category == 'engineering' -%}
+            <a href="{{ article.link }}"><span class="tool-icon">📄</span> {{ article.title }}</a>
+              {%- endif -%}
+            {%- endfor -%}
+        </div>
+          {%- elif cat.key == 'ecology' -%}
+        <a href="#" class="menu-item" data-submenu="kbEcologySubmenu">
+            <span class="tool-icon">🌱</span> {{ cat.name }}
+        </a>
+        <div class="submenu-container" id="kbEcologySubmenu">
+            {%- for article in kbArticles -%}
+              {%- if article.category == 'ecology' -%}
+            <a href="{{ article.link }}"><span class="tool-icon">📄</span> {{ article.title }}</a>
+              {%- endif -%}
+            {%- endfor -%}
+        </div>
+          {%- elif cat.key == 'updates' -%}
+        <a href="#" class="menu-item" data-submenu="kbUpdatesSubmenu">
+            <span class="tool-icon">🚀</span> {{ cat.name }}
+        </a>
+        <div class="submenu-container" id="kbUpdatesSubmenu">
+            {%- for article in kbArticles -%}
+              {%- if article.category == 'updates' -%}
+            <a href="{{ article.link }}"><span class="tool-icon">📄</span> {{ article.title }}</a>
+              {%- endif -%}
+            {%- endfor -%}
+        </div>
+          {%- elif cat.key == 'logistics' -%}
+            {# Категория есть в фильтре KB, статей пока нет — пункт скрыт #}
+          {%- endif -%}
+        {%- endfor -%}
+    </div>
 
     <!-- ========== ПОЛИТИКА КОНФИДЕНЦИАЛЬНОСТИ ========== -->
     <a href="{% if locale == 'ru' %}/frontend/privacy-policy/privacy-policy.html{% else %}/frontend/{{ locale }}/privacy-policy/privacy-policy.html{% endif %}"

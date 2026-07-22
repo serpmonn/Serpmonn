@@ -1,0 +1,119 @@
+/* new-tools.css — extras for JSON / Base64 / color / format tools */
+
+.spn-tool pre.out {
+  margin: 0;
+  white-space: pre-wrap;
+  word-break: break-word;
+  text-align: left;
+  font-size: 0.95rem;
+  max-height: 360px;
+  overflow: auto;
+}
+
+.spn-tool input[type="file"] {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  background: #fff;
+  box-sizing: border-box;
+}
+
+.spn-tool input[type="color"] {
+  height: 44px;
+  padding: 4px;
+  cursor: pointer;
+}
+
+.spn-tool .palette-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.spn-tool .swatch {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  padding: 8px;
+  cursor: pointer;
+  text-align: center;
+}
+
+.spn-tool .swatch-color {
+  display: block;
+  height: 72px;
+  border-radius: 8px;
+  background: var(--swatch);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.spn-tool .swatch-hex {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+
+.spn-tool .preview-img {
+  display: block;
+  max-width: 100%;
+  max-height: 320px;
+  margin: 12px auto 0;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+}
+
+.spn-tool .action-bar--split .calculate-btn {
+  flex: 1 1 auto;
+}
+
+.spn-tool .download-btn {
+  flex: 0 0 auto;
+  min-width: 140px;
+  height: 44px;
+  border-radius: 999px;
+  border: 1px solid #dc3545;
+  background: #fff;
+  color: #dc3545;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0 18px;
+}
+
+.spn-tool .download-btn.is-ready {
+  background: linear-gradient(90deg, #dc3545, #ef4444);
+  color: #fff;
+  border-color: transparent;
+  box-shadow: 0 6px 16px rgba(220, 53, 69, 0.28);
+}
+
+.spn-tool .download-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.spn-tool .download-hint {
+  margin: 0 0 12px;
+  text-align: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #b91c1c;
+}
+
+@media (max-width: 768px) {
+  .spn-tool .action-bar--split {
+    flex-wrap: wrap;
+  }
+
+  .spn-tool .action-bar--split .calculate-btn,
+  .spn-tool .action-bar--split .download-btn {
+    flex: 1 1 calc(50% - 10px);
+    min-width: 0;
+  }
+}

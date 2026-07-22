@@ -9,20 +9,28 @@ Type=simple
 User=serpmonn
 Group=serpmonn
 
-# Бинарник кладётся в /usr/local/bin/serpmonn-relay (см. deploy.sh)
+# UDP/443 (QUIC) без root
+AmbientCapabilities=CAP_NET_BIND_SERVICE
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE
+NoNewPrivileges=true
+
+# Бинарник: /usr/local/bin/serpmonn-relay
+# Снаружи только 443: WS на 127.0.0.1:4002 за nginx (/api/v1/sync),
+# технические 4001 — тоже localhost.
 ExecStart=/usr/local/bin/serpmonn-relay \
     -key /etc/serpmonn/relay-identity.key \
-    -port 4001
+    -port 4001 \
+    -wsport 4002 \
+    -port443 443 \
+    -extip 188.235.13.20 \
+    -domain relay.serpmonn.ru
 
-# Перезапуск при падении — с задержкой 5 секунд.
 Restart=always
 RestartSec=5s
 
-# Лимиты ресурсов для MVP.
 LimitNOFILE=65536
 LimitNPROC=4096
 
-# Логи через journald (journalctl -u serpmonn-relay -f).
 StandardOutput=journal
 StandardError=journal
 SyslogIdentifier=serpmonn-relay

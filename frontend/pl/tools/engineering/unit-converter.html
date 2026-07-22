@@ -229,9 +229,10 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
+    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css?v=2">
   </head>
-  <body>
+  <body class="spn-tool unit-converter-page">
     <!-- Меню -->
     <div id="menuContainer"></div>
 
@@ -243,19 +244,23 @@
           data-ad-slot="1897960">
       </ins>
     </div>
-<h1>🔄 Konwerter Jednostek</h1>
+    <h1>🔄 Konwerter Jednostek</h1>
+    
+    <p class="tool-lead">Quickly convert a value between measurement units.</p>
+    
 
-    <div class="converter-container">
+    <div class="calculator-container converter-container">
+      <div id="error-message" class="error-message hidden" role="alert"></div>
       <!-- Выбор категории -->
       <div class="category-selector">
-        <button class="category-btn active" data-category="length">📏 Długość</button>
-        <button class="category-btn" data-category="area">📐 Powierzchnia</button>
-        <button class="category-btn" data-category="volume">📦 Objętość</button>
-        <button class="category-btn" data-category="temperature">🌡️ Temperatura</button>
-        <button class="category-btn" data-category="power">⚡ Moc</button>
-        <button class="category-btn" data-category="pressure">💨 Ciśnienie</button>
-        <button class="category-btn" data-category="mass">⚖️ Masa</button>
-        <button class="category-btn" data-category="speed">🏃 Prędkość</button>
+        <button type="button" class="category-btn active" data-category="length">📏 Długość</button>
+        <button type="button" class="category-btn" data-category="area">📐 Powierzchnia</button>
+        <button type="button" class="category-btn" data-category="volume">📦 Objętość</button>
+        <button type="button" class="category-btn" data-category="temperature">🌡️ Temperatura</button>
+        <button type="button" class="category-btn" data-category="power">⚡ Moc</button>
+        <button type="button" class="category-btn" data-category="pressure">💨 Ciśnienie</button>
+        <button type="button" class="category-btn" data-category="mass">⚖️ Masa</button>
+        <button type="button" class="category-btn" data-category="speed">🏃 Prędkość</button>
       </div>
 
       <!-- Форма конвертера -->
@@ -265,7 +270,7 @@
           <input type="number" id="fromValue" placeholder="Wprowadź wartość" step="any">
         </div>
 
-        <button class="swap-btn" id="swapBtn" title="Zamień">⇄</button>
+        <button type="button" class="swap-btn" id="swapBtn" title="Zamień">⇄</button>
 
         <div class="input-group">
           <label for="toValue">Wynik</label>
@@ -288,17 +293,36 @@
         </div>
       </div>
 
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-convert">Convert</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">Reset</button>
+            <button type="button" id="btn-share">Share</button>
+            <button type="button" id="btn-copy-result">Copy result</button>
+          </div>
+        </details>
+      </div>
+
       <!-- Результат -->
-      <div class="result" id="result">
-        Wprowadź wartość do konwersji
+      <div class="results">
+        <h3>Wynik</h3>
+        <div class="result-hero">
+          <div class="result-value" id="heroResult">—</div>
+        </div>
+        <p class="result-disclaimer">Approximate unit conversion — double-check critical calculations.</p>
+        <div class="result-line" id="result">
+          Wprowadź wartość do konwersji
+        </div>
       </div>
     </div>
 
     <!-- История конвертаций -->
-    <div class="conversion-history">
+    <div class="conversion-history history">
       <h3>📋 Historia konwersji</h3>
       <div id="historyList"></div>
-      <button class="clear-history" id="clearHistory">Wyczyść historię</button>
+      <button type="button" class="clear-history" id="clearHistory">Wyczyść historię</button>
     </div>
 
     <!-- Вставляем переводы как JavaScript объект -->
@@ -306,7 +330,7 @@
       // Глобальная переменная с переводами
       window.unitConverterTranslationsData = {
         locale: 'pl',
-        translations: {"meta":{"title":"Konwerter Jednostek — Serpmonn Inżynieria","description":"Szybka konwersja między różnymi jednostkami miary dla inżynierów","twitterDescription":"Konwerter jednostek dla inżynierów"},"breadcrumb":{"tools":"Narzędzia","unitConverter":"Konwerter Jednostek"},"page":{"title":"🔄 Konwerter Jednostek","categories":{"length":"📏 Długość","area":"📐 Powierzchnia","volume":"📦 Objętość","temperature":"🌡️ Temperatura","power":"⚡ Moc","pressure":"💨 Ciśnienie","mass":"⚖️ Masa","speed":"🏃 Prędkość"},"labels":{"value":"Wartość","result":"Wynik","fromUnit":"Z jednostki","toUnit":"Do jednostki","swap":"Zamień","enterValue":"Wprowadź wartość do konwersji","enterValuePlaceholder":"Wprowadź wartość","resultPlaceholder":"Wynik","conversionHistory":"📋 Historia konwersji","clearHistory":"Wyczyść historię","emptyHistory":"Historia jest pusta","closeAd":"Zamknij reklamę"},"units":{"length":{"mm":"Milimetr (mm)","cm":"Centymetr (cm)","m":"Metr (m)","km":"Kilometr (km)","in":"Cal (cal)","ft":"Stopa (stopa)","yd":"Jard (jard)","mi":"Mila (mila)"},"area":{"mm2":"Milimetr kwadratowy (mm²)","cm2":"Centymetr kwadratowy (cm²)","m2":"Metr kwadratowy (m²)","km2":"Kilometr kwadratowy (km²)","in2":"Cal kwadratowy (cal²)","ft2":"Stopa kwadratowa (stopa²)","yd2":"Jard kwadratowy (jard²)","ac":"Akr (akr)"},"volume":{"ml":"Mililitr (ml)","l":"Litr (l)","m3":"Metr sześcienny (m³)","cm3":"Centymetr sześcienny (cm³)","in3":"Cal sześcienny (cal³)","ft3":"Stopa sześcienna (stopa³)","gal":"Galon (galon)"},"temperature":{"c":"Celsjusz (°C)","f":"Fahrenheit (°F)","k":"Kelwin (K)","r":"Rankine (°R)"},"power":{"w":"Wat (W)","kw":"Kilowat (kW)","mw":"Megawat (MW)","hp":"Konie mechaniczne (KM)","btu":"BTU/godzinę"},"pressure":{"pa":"Pascal (Pa)","kpa":"Kilopaskal (kPa)","mpa":"Megapaskal (MPa)","bar":"Bar (bar)","atm":"Atmosfera (atm)","psi":"PSI (funt na cal kwadratowy)"},"mass":{"mg":"Miligram (mg)","g":"Gram (g)","kg":"Kilogram (kg)","t":"Tona (t)","lb":"Funt (funt)","oz":"Uncja (uncja)"},"speed":{"mps":"M/s (m/s)","kmh":"Km/h (km/h)","mph":"Mph (mil na godzinę)","knot":"Węzeł (węzeł)","fps":"Stopa/s (stopa na sekundę)"}}}}
+        translations: {"meta":{"title":"Konwerter Jednostek — Serpmonn Inżynieria","description":"Szybka konwersja między różnymi jednostkami miary dla inżynierów","twitterDescription":"Konwerter jednostek dla inżynierów"},"breadcrumb":{"tools":"Narzędzia","unitConverter":"Konwerter Jednostek"},"page":{"title":"🔄 Konwerter Jednostek","categories":{"length":"📏 Długość","area":"📐 Powierzchnia","volume":"📦 Objętość","temperature":"🌡️ Temperatura","power":"⚡ Moc","pressure":"💨 Ciśnienie","mass":"⚖️ Masa","speed":"🏃 Prędkość"},"labels":{"value":"Wartość","result":"Wynik","fromUnit":"Z jednostki","toUnit":"Do jednostki","swap":"Zamień","enterValue":"Wprowadź wartość do konwersji","enterValuePlaceholder":"Wprowadź wartość","resultPlaceholder":"Wynik","conversionHistory":"📋 Historia konwersji","clearHistory":"Wyczyść historię","emptyHistory":"Historia jest pusta","closeAd":"Zamknij reklamę"},"units":{"length":{"mm":"Milimetr (mm)","cm":"Centymetr (cm)","m":"Metr (m)","km":"Kilometr (km)","in":"Cal (cal)","ft":"Stopa (stopa)","yd":"Jard (jard)","mi":"Mila (mila)"},"area":{"mm2":"Milimetr kwadratowy (mm²)","cm2":"Centymetr kwadratowy (cm²)","m2":"Metr kwadratowy (m²)","km2":"Kilometr kwadratowy (km²)","in2":"Cal kwadratowy (cal²)","ft2":"Stopa kwadratowa (stopa²)","yd2":"Jard kwadratowy (jard²)","ac":"Akr (akr)"},"volume":{"ml":"Mililitr (ml)","l":"Litr (l)","m3":"Metr sześcienny (m³)","cm3":"Centymetr sześcienny (cm³)","in3":"Cal sześcienny (cal³)","ft3":"Stopa sześcienna (stopa³)","gal":"Galon (galon)"},"temperature":{"c":"Celsjusz (°C)","f":"Fahrenheit (°F)","k":"Kelwin (K)","r":"Rankine (°R)"},"power":{"w":"Wat (W)","kw":"Kilowat (kW)","mw":"Megawat (MW)","hp":"Konie mechaniczne (KM)","btu":"BTU/godzinę"},"pressure":{"pa":"Pascal (Pa)","kpa":"Kilopaskal (kPa)","mpa":"Megapaskal (MPa)","bar":"Bar (bar)","atm":"Atmosfera (atm)","psi":"PSI (funt na cal kwadratowy)"},"mass":{"mg":"Miligram (mg)","g":"Gram (g)","kg":"Kilogram (kg)","t":"Tona (t)","lb":"Funt (funt)","oz":"Uncja (uncja)"},"speed":{"mps":"M/s (m/s)","kmh":"Km/h (km/h)","mph":"Mph (mil na godzinę)","knot":"Węzeł (węzeł)","fps":"Stopa/s (stopa na sekundę)"}},"lead":"Quickly convert a value between measurement units.","disclaimer":"Approximate unit conversion — double-check critical calculations.","actions":{"convert":"Convert","more":"More","reset":"Reset","share":"Share","copy":"Copy result","copied":"Copied"}}}
       };
     </script>
 
@@ -417,7 +441,9 @@
         init() {
           this.setupEventListeners();
           this.populateUnits();
+          this.restoreFromUrl();
           this.updateHistory();
+          this.convert();
         }
 
         setupEventListeners() {
@@ -451,6 +477,75 @@
           document.getElementById('clearHistory').addEventListener('click', () => {
             this.clearHistory();
           });
+
+          document.getElementById('btn-convert')?.addEventListener('click', () => this.convert());
+          document.getElementById('btn-reset')?.addEventListener('click', () => this.resetForm());
+          document.getElementById('btn-share')?.addEventListener('click', () => this.shareLink());
+          document.getElementById('btn-copy-result')?.addEventListener('click', (e) => this.copyResult(e.currentTarget));
+        }
+
+        syncUrl() {
+          const url = new URL(location.href);
+          url.searchParams.set('cat', this.currentCategory);
+          url.searchParams.set('from', document.getElementById('fromUnit').value || '');
+          url.searchParams.set('to', document.getElementById('toUnit').value || '');
+          const v = document.getElementById('fromValue').value;
+          if (v) url.searchParams.set('v', v); else url.searchParams.delete('v');
+          history.replaceState(null, '', url);
+        }
+
+        restoreFromUrl() {
+          const p = new URLSearchParams(location.search);
+          const cat = p.get('cat');
+          if (cat && this.categories[cat]) {
+            this.currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.category === cat);
+            });
+            this.populateUnits();
+          }
+          if (p.get('from') && document.getElementById('fromUnit').querySelector(`option[value="${p.get('from')}"]`)) {
+            document.getElementById('fromUnit').value = p.get('from');
+          }
+          if (p.get('to') && document.getElementById('toUnit').querySelector(`option[value="${p.get('to')}"]`)) {
+            document.getElementById('toUnit').value = p.get('to');
+          }
+          if (p.get('v')) document.getElementById('fromValue').value = p.get('v');
+        }
+
+        resetForm() {
+          document.getElementById('fromValue').value = '';
+          document.getElementById('toValue').value = '';
+          document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = '—';
+          history.replaceState(null, '', location.pathname);
+        }
+
+        async shareLink() {
+          this.syncUrl();
+          try {
+            await navigator.clipboard.writeText(location.href);
+            const btn = document.getElementById('btn-share');
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
+        }
+
+        async copyResult(btn) {
+          const str = document.getElementById('result')?.textContent || '';
+          if (!str) return;
+          try {
+            await navigator.clipboard.writeText(str);
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
         }
 
         setCategory(category) {
@@ -504,6 +599,8 @@
           
           if (isNaN(fromValue)) {
             document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+            const hero = document.getElementById('heroResult');
+            if (hero) hero.textContent = '—';
             return;
           }
           
@@ -516,8 +613,11 @@
           }
           
           document.getElementById('toValue').value = result.toFixed(6);
-          document.getElementById('result').textContent = 
-            `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          const line = `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          document.getElementById('result').textContent = line;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = `${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          this.syncUrl();
           
           // Добавляем в историю
           this.addToHistory(fromValue, fromUnit, toUnit, result);
@@ -637,6 +737,7 @@
     </script>
 
     <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script>
 </script>

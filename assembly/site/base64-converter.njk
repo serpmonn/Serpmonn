@@ -1,0 +1,113 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/tools/development/base64-converter.html{% else %}/frontend/{{ locale }}/tools/development/base64-converter.html{% endif %}"
+eleventyComputed:
+  title: "{{ base64Converter[locale].meta.title }}"
+  description: "{{ base64Converter[locale].meta.description }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/tools/development/base64-converter.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/tools/development/base64-converter.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+  <head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+    <meta property="og:title" content="{{ base64Converter[locale].meta.ogTitle }}">
+    <meta property="og:description" content="{{ base64Converter[locale].meta.ogDescription }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ base64Converter[locale].meta.twitterTitle }}">
+    <meta name="twitter:description" content="{{ base64Converter[locale].meta.twitterDescription }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <link rel="canonical" href="{{ canonical }}" />
+    {% for loc in locales %}
+      {% if loc == 'ru' %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/development/base64-converter.html" hreflang="{{ loc }}" />
+      {% else %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/development/base64-converter.html" hreflang="{{ loc }}" />
+      {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/development/base64-converter.html" hreflang="x-default" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "{{ base64Converter[locale].meta.title | replace('"', '&quot;') }}",
+      "description": "{{ base64Converter[locale].meta.description | replace('"', '&quot;') }}",
+      "url": "{{ canonical }}",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "{{ locale }}",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "RUB" },
+      "publisher": { "@type": "Organization", "name": "Serpmonn", "url": "{{ site.baseUrl }}/" }
+    }
+    </script>
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
+    <link rel="stylesheet" href="/frontend/styles/tools/new-tools.css?v=2">
+  </head>
+  <body class="spn-tool base64-converter-page">
+    <div id="menuContainer"></div>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
+    </div>
+
+    <h1>{{ base64Converter[locale].page.title }}</h1>
+    <p class="tool-lead">{{ base64Converter[locale].page.lead }}</p>
+    <div class="calculator-container">
+      <h2>{{ base64Converter[locale].page.formTitle }}</h2>
+      <div id="error-message" class="error-message hidden" role="alert"></div>
+      <div class="input-group" style="margin-bottom:12px;">
+        <label for="input">{{ base64Converter[locale].page.inputLabel }}</label>
+        <textarea id="input" class="tool-textarea" placeholder="{{ base64Converter[locale].page.placeholder }}"></textarea>
+      </div>
+      <div class="input-group" style="margin-bottom:14px;">
+        <label for="file">{{ base64Converter[locale].page.fileLabel }}</label>
+        <input id="file" type="file">
+      </div>
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-encode">{{ base64Converter[locale].page.actions.encode }}</button>
+        <details class="more-actions">
+          <summary>{{ base64Converter[locale].page.actions.more }}</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-decode">{{ base64Converter[locale].page.actions.decode }}</button>
+            <button type="button" id="btn-copy">{{ base64Converter[locale].page.actions.copy }}</button>
+            <button type="button" id="btn-download">{{ base64Converter[locale].page.actions.download }}</button>
+            <button type="button" id="btn-reset">{{ base64Converter[locale].page.actions.reset }}</button>
+            <button type="button" id="btn-share">{{ base64Converter[locale].page.actions.share }}</button>
+          </div>
+        </details>
+      </div>
+      <div class="results">
+        <h3>{{ base64Converter[locale].page.resultsTitle }}</h3>
+        <div class="result-hero"><pre class="out" id="output">—</pre></div>
+        <p class="result-disclaimer">{{ base64Converter[locale].page.disclaimer }}</p>
+      </div>
+    </div>
+
+    <script>
+      window.base64ConverterTranslations = {{ base64Converter[locale] | dump | safe }};
+    </script>
+    <script type="module" src="/frontend/scripts/tools/base64-converter.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+  {{ mobileAnchor(base64Converter[locale].ads.closeAria) }}
+  {% include "partials/ad-pool-init.njk" %}
+</body>
+</html>

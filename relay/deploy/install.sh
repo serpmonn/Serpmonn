@@ -79,20 +79,16 @@ systemctl enable serpmonn-relay
 systemctl restart serpmonn-relay
 echo "[ok] systemd unit installed and started"
 
-# 5. Открываем порт (если ufw установлен)
-if command -v ufw &>/dev/null; then
-    ufw allow "$PORT"/tcp comment "Serpmonn relay TCP" 2>/dev/null || true
-    ufw allow "$PORT"/udp comment "Serpmonn relay QUIC" 2>/dev/null || true
-    echo "[ok] ufw: port $PORT TCP+UDP opened"
-fi
+# 5. Порты 4001/4002 наружу НЕ открываем — только 443 (nginx WSS + UDP QUIC).
+#    При необходимости: iptables -I INPUT -p tcp --dport 4001 -j DROP (и udp/4001, tcp/4002)
 
 echo ""
 echo "=== DONE ==="
 echo "Check logs:   journalctl -u serpmonn-relay -f"
 echo "Status:       systemctl status serpmonn-relay"
 echo ""
-echo "After start, copy the printed multiaddrs into:"
-echo "  packages/go-core/net/bootstrap.go -> DefaultBootstraps()"
+echo "Public bootstrap (after start):"
+echo "  /dns4/relay.serpmonn.ru/tcp/443/wss/p2p/<PEERID>"
+echo "  /dns4/relay.serpmonn.ru/udp/443/quic-v1/p2p/<PEERID>"
 echo ""
-echo "Then test reservation:"
-echo "  serpmonn-test-reservation -relay /ip4/<IP>/tcp/$PORT/p2p/<PEERID>"
+echo "nginx must proxy: /api/v1/sync → http://127.0.0.1:4002/"

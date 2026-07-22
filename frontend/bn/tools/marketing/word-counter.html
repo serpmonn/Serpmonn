@@ -229,92 +229,71 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    
-    <style>
-      /* ad top adaptive start */
-      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
-      /* ad top adaptive end */
-      
-      body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-      h1 { margin: 16px 0; }
-      textarea { width: 100%; min-height: 240px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; }
-      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
-      .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fff; }
-      .num { font-size: 24px; font-weight: 700; }
-      .label { color: #6b7280; }
-
-      /* RTL поддержка */
-      
-
-      /* Адаптивность для мобильных устройств */
-      @media (max-width: 768px) {
-        body { padding: 12px; }
-        .stats { grid-template-columns: repeat(2, 1fr); }
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
   </head>
-  <body>
-    <!-- Меню -->
+  <body class="spn-tool word-counter-page">
     <div id="menuContainer"></div>
-    
+
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
-      <ins class="mrg-tag" 
+      <ins class="mrg-tag"
           style="display:inline-block;"
-          data-ad-client="ad-1897960" 
+          data-ad-client="ad-1897960"
           data-ad-slot="1897960">
       </ins>
     </div>
-    
+
     <h1>📝 শব্দ/অক্ষর গণনাকারী</h1>
-    <textarea id="text" placeholder="টেক্সট পেস্ট বা টাইপ করুন..."></textarea>
     
-    <div class="stats">
-      <div class="card">
-        <div class="num" id="chars">0</div>
-        <div class="label">অক্ষর</div>
+    <p class="tool-lead">Count words, characters, lines and spaces — right in your browser.</p>
+    
+
+    <div class="calculator-container">
+      <h2>Text</h2>
+      <textarea id="text" class="tool-textarea" placeholder="টেক্সট পেস্ট বা টাইপ করুন..."></textarea>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-copy-stats">Copy stats</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">Reset</button>
+            <button type="button" id="btn-copy-text">Copy text</button>
+            <button type="button" id="btn-share">Share</button>
+          </div>
+        </details>
       </div>
-      <div class="card">
-        <div class="num" id="words">0</div>
-        <div class="label">শব্দ</div>
-      </div>
-      <div class="card">
-        <div class="num" id="lines">0</div>
-        <div class="label">লাইন</div>
-      </div>
-      <div class="card">
-        <div class="num" id="spaces">0</div>
-        <div class="label">স্পেস</div>
+
+      <div class="results">
+        <h3>Results</h3>
+        <div class="result-hero">
+          <div class="result-value" id="words">0</div>
+          <div class="result-label">শব্দ</div>
+        </div>
+        <p class="result-disclaimer">Counted in your browser; text is not sent to the server.</p>
+        <div class="stats">
+          <div class="card">
+            <div class="num" id="chars">0</div>
+            <div class="label">অক্ষর</div>
+          </div>
+          <div class="card">
+            <div class="num" id="lines">0</div>
+            <div class="label">লাইন</div>
+          </div>
+          <div class="card">
+            <div class="num" id="spaces">0</div>
+            <div class="label">স্পেস</div>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      // Вспомогательный селектор
-      const qs = (s)=>document.querySelector(s);
-      
-      // Пересчёт статистики текста
-      function recalc() {
-        const t = qs('#text').value;
-        qs('#chars').textContent = t.length;
-        const words = t.trim() ? t.trim().split(/\s+/).length : 0;
-        qs('#words').textContent = words;
-        const lines = t ? t.split(/\n/).length : 0;
-        qs('#lines').textContent = lines;
-        const spaces = (t.match(/\s/g) || []).length;
-        qs('#spaces').textContent = spaces;
-      }
-      
-      // Обновляем счётчики при вводе
-      qs('#text').addEventListener('input', recalc);
-      
-      // Инициализация при загрузке
-      document.addEventListener('DOMContentLoaded', recalc);
+      window.wordCounterTranslations = {"meta":{"title":"শব্দ/অক্ষর গণনাকারী — Serpmonn","description":"টেক্সটে শব্দ, লাইন এবং অক্ষর গণনা","ogTitle":"শব্দ/অক্ষর গণনাকারী — Serpmonn","ogDescription":"শব্দ, অক্ষর, লাইন এবং স্পেস গণনা করার জন্য বিনামূল্যের অনলাইন টুল","twitterTitle":"শব্দ/অক্ষর গণনাকারী — Serpmonn","twitterDescription":"রিয়েল-টাইমে টেক্সট বিশ্লেষণ এবং উপাদান গণনা"},"page":{"title":"📝 শব্দ/অক্ষর গণনাকারী","textareaPlaceholder":"টেক্সট পেস্ট বা টাইপ করুন...","stats":{"chars":"অক্ষর","words":"শব্দ","lines":"লাইন","spaces":"স্পেস"},"features":{"title":"🎯 টুলের বৈশিষ্ট্য","realtime":"📈 রিয়েল-টাইম গণনা","detailed":"📊 বিস্তারিত পরিসংখ্যান","multilingual":"🌍 সমস্ত ভাষার সমর্থন","responsive":"📱 প্রতিক্রিয়াশীল ডিজাইন"},"lead":"Count words, characters, lines and spaces — right in your browser.","formTitle":"Text","resultsTitle":"Results","disclaimer":"Counted in your browser; text is not sent to the server.","actions":{"more":"More","reset":"Reset","share":"Share","copyStats":"Copy stats","copyText":"Copy text","copied":"Copied"}},"ads":{"closeAria":"বিজ্ঞাপন বন্ধ করুন","adTitle":"বিজ্ঞাপন ব্লক"},"instructions":{"title":"📖 ব্যবহার করার নিয়ম:","step1":"1. উপরের ফিল্ডে টেক্সট পেস্ট বা টাইপ করুন","step2":"2. কাউন্টারগুলি স্বয়ংক্রিয়ভাবে আপডেট হবে","step3":"3. রিয়েল-টাইমে ফলাফল বিশ্লেষণ করুন"}};
     </script>
-    
-    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/word-counter.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">

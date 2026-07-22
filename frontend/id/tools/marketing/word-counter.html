@@ -229,92 +229,71 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    
-    <style>
-      /* ad top adaptive start */
-      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
-      /* ad top adaptive end */
-      
-      body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-      h1 { margin: 16px 0; }
-      textarea { width: 100%; min-height: 240px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; }
-      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
-      .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fff; }
-      .num { font-size: 24px; font-weight: 700; }
-      .label { color: #6b7280; }
-
-      /* RTL поддержка */
-      
-
-      /* Адаптивность для мобильных устройств */
-      @media (max-width: 768px) {
-        body { padding: 12px; }
-        .stats { grid-template-columns: repeat(2, 1fr); }
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
   </head>
-  <body>
-    <!-- Меню -->
+  <body class="spn-tool word-counter-page">
     <div id="menuContainer"></div>
-    
+
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
-      <ins class="mrg-tag" 
+      <ins class="mrg-tag"
           style="display:inline-block;"
-          data-ad-client="ad-1897960" 
+          data-ad-client="ad-1897960"
           data-ad-slot="1897960">
       </ins>
     </div>
-    
+
     <h1>📝 Penghitung Kata/Karakter</h1>
-    <textarea id="text" placeholder="Tempel atau ketik teks..."></textarea>
     
-    <div class="stats">
-      <div class="card">
-        <div class="num" id="chars">0</div>
-        <div class="label">Karakter</div>
+    <p class="tool-lead">Count words, characters, lines and spaces — right in your browser.</p>
+    
+
+    <div class="calculator-container">
+      <h2>Text</h2>
+      <textarea id="text" class="tool-textarea" placeholder="Tempel atau ketik teks..."></textarea>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-copy-stats">Copy stats</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">Reset</button>
+            <button type="button" id="btn-copy-text">Copy text</button>
+            <button type="button" id="btn-share">Share</button>
+          </div>
+        </details>
       </div>
-      <div class="card">
-        <div class="num" id="words">0</div>
-        <div class="label">Kata</div>
-      </div>
-      <div class="card">
-        <div class="num" id="lines">0</div>
-        <div class="label">Baris</div>
-      </div>
-      <div class="card">
-        <div class="num" id="spaces">0</div>
-        <div class="label">Spasi</div>
+
+      <div class="results">
+        <h3>Results</h3>
+        <div class="result-hero">
+          <div class="result-value" id="words">0</div>
+          <div class="result-label">Kata</div>
+        </div>
+        <p class="result-disclaimer">Counted in your browser; text is not sent to the server.</p>
+        <div class="stats">
+          <div class="card">
+            <div class="num" id="chars">0</div>
+            <div class="label">Karakter</div>
+          </div>
+          <div class="card">
+            <div class="num" id="lines">0</div>
+            <div class="label">Baris</div>
+          </div>
+          <div class="card">
+            <div class="num" id="spaces">0</div>
+            <div class="label">Spasi</div>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      // Вспомогательный селектор
-      const qs = (s)=>document.querySelector(s);
-      
-      // Пересчёт статистики текста
-      function recalc() {
-        const t = qs('#text').value;
-        qs('#chars').textContent = t.length;
-        const words = t.trim() ? t.trim().split(/\s+/).length : 0;
-        qs('#words').textContent = words;
-        const lines = t ? t.split(/\n/).length : 0;
-        qs('#lines').textContent = lines;
-        const spaces = (t.match(/\s/g) || []).length;
-        qs('#spaces').textContent = spaces;
-      }
-      
-      // Обновляем счётчики при вводе
-      qs('#text').addEventListener('input', recalc);
-      
-      // Инициализация при загрузке
-      document.addEventListener('DOMContentLoaded', recalc);
+      window.wordCounterTranslations = {"meta":{"title":"Penghitung Kata/Karakter — Serpmonn","description":"Hitung kata, baris dan karakter dalam teks","ogTitle":"Penghitung Kata/Karakter — Serpmonn","ogDescription":"Alat online gratis untuk menghitung kata, karakter, baris dan spasi","twitterTitle":"Penghitung Kata/Karakter — Serpmonn","twitterDescription":"Analisis teks dan penghitungan elemen secara real-time"},"page":{"title":"📝 Penghitung Kata/Karakter","textareaPlaceholder":"Tempel atau ketik teks...","stats":{"chars":"Karakter","words":"Kata","lines":"Baris","spaces":"Spasi"},"features":{"title":"🎯 Fitur Alat","realtime":"📈 Penghitungan real-time","detailed":"📊 Statistik detail","multilingual":"🌍 Dukungan semua bahasa","responsive":"📱 Desain responsif"},"lead":"Count words, characters, lines and spaces — right in your browser.","formTitle":"Text","resultsTitle":"Results","disclaimer":"Counted in your browser; text is not sent to the server.","actions":{"more":"More","reset":"Reset","share":"Share","copyStats":"Copy stats","copyText":"Copy text","copied":"Copied"}},"ads":{"closeAria":"Tutup iklan","adTitle":"Blok iklan"},"instructions":{"title":"📖 Cara penggunaan:","step1":"1. Tempel atau ketik teks di bidang atas","step2":"2. Penghitung akan diperbarui secara otomatis","step3":"3. Analisis hasil secara real-time"}};
     </script>
-    
-    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/word-counter.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">

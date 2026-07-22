@@ -1,0 +1,122 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/tools/design/color-palettes.html{% else %}/frontend/{{ locale }}/tools/design/color-palettes.html{% endif %}"
+eleventyComputed:
+  title: "{{ colorPalettes[locale].meta.title }}"
+  description: "{{ colorPalettes[locale].meta.description }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/tools/design/color-palettes.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/tools/design/color-palettes.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+  <head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+    <meta property="og:title" content="{{ colorPalettes[locale].meta.ogTitle }}">
+    <meta property="og:description" content="{{ colorPalettes[locale].meta.ogDescription }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ colorPalettes[locale].meta.twitterTitle }}">
+    <meta name="twitter:description" content="{{ colorPalettes[locale].meta.twitterDescription }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <link rel="canonical" href="{{ canonical }}" />
+    {% for loc in locales %}
+      {% if loc == 'ru' %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/design/color-palettes.html" hreflang="{{ loc }}" />
+      {% else %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/design/color-palettes.html" hreflang="{{ loc }}" />
+      {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/design/color-palettes.html" hreflang="x-default" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "{{ colorPalettes[locale].meta.title | replace('"', '&quot;') }}",
+      "description": "{{ colorPalettes[locale].meta.description | replace('"', '&quot;') }}",
+      "url": "{{ canonical }}",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "{{ locale }}",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "RUB" },
+      "publisher": { "@type": "Organization", "name": "Serpmonn", "url": "{{ site.baseUrl }}/" }
+    }
+    </script>
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
+    <link rel="stylesheet" href="/frontend/styles/tools/new-tools.css?v=2">
+  </head>
+  <body class="spn-tool color-palettes-page">
+    <div id="menuContainer"></div>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
+    </div>
+
+    <h1>{{ colorPalettes[locale].page.title }}</h1>
+    <p class="tool-lead">{{ colorPalettes[locale].page.lead }}</p>
+    <div class="calculator-container">
+      <h2>{{ colorPalettes[locale].page.formTitle }}</h2>
+      <div class="input-section">
+        <div class="input-group">
+          <label for="color">{{ colorPalettes[locale].page.colorLabel }}</label>
+          <input id="color" type="color" value="#DC3545">
+        </div>
+        <div class="input-group">
+          <label for="hex">{{ colorPalettes[locale].page.hexLabel }}</label>
+          <input id="hex" type="text" value="#DC3545">
+        </div>
+        <div class="input-group">
+          <label for="scheme">{{ colorPalettes[locale].page.schemeLabel }}</label>
+          <select id="scheme">
+            <option value="complementary">{{ colorPalettes[locale].page.schemes.complementary }}</option>
+            <option value="analogous">{{ colorPalettes[locale].page.schemes.analogous }}</option>
+            <option value="triadic">{{ colorPalettes[locale].page.schemes.triadic }}</option>
+            <option value="tetradic">{{ colorPalettes[locale].page.schemes.tetradic }}</option>
+            <option value="mono">{{ colorPalettes[locale].page.schemes.mono }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-generate">{{ colorPalettes[locale].page.actions.generate }}</button>
+        <details class="more-actions">
+          <summary>{{ colorPalettes[locale].page.actions.more }}</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-copy">{{ colorPalettes[locale].page.actions.copy }}</button>
+            <button type="button" id="btn-reset">{{ colorPalettes[locale].page.actions.reset }}</button>
+            <button type="button" id="btn-share">{{ colorPalettes[locale].page.actions.share }}</button>
+          </div>
+        </details>
+      </div>
+      <div class="results">
+        <h3>{{ colorPalettes[locale].page.resultsTitle }}</h3>
+        <div id="palette" class="palette-grid"></div>
+        <p class="result-disclaimer">{{ colorPalettes[locale].page.disclaimer }}</p>
+      </div>
+    </div>
+
+    <script>
+      window.colorPalettesTranslations = {{ colorPalettes[locale] | dump | safe }};
+    </script>
+    <script type="module" src="/frontend/scripts/tools/color-palettes.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+  {{ mobileAnchor(colorPalettes[locale].ads.closeAria) }}
+  {% include "partials/ad-pool-init.njk" %}
+</body>
+</html>

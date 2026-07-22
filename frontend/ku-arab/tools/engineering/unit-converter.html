@@ -229,9 +229,10 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
+    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css?v=2">
   </head>
-  <body>
+  <body class="spn-tool unit-converter-page">
     <!-- Меню -->
     <div id="menuContainer"></div>
 
@@ -243,19 +244,23 @@
           data-ad-slot="1897960">
       </ins>
     </div>
-<h1>🔄 یەکە گۆڕەر</h1>
+    <h1>🔄 یەکە گۆڕەر</h1>
+    
+    <p class="tool-lead">Quickly convert a value between measurement units.</p>
+    
 
-    <div class="converter-container">
+    <div class="calculator-container converter-container">
+      <div id="error-message" class="error-message hidden" role="alert"></div>
       <!-- Выбор категории -->
       <div class="category-selector">
-        <button class="category-btn active" data-category="length">📏 درێژی</button>
-        <button class="category-btn" data-category="area">📐 ڕووبەر</button>
-        <button class="category-btn" data-category="volume">📦 قەبارە</button>
-        <button class="category-btn" data-category="temperature">🌡️ پلەی گەرمی</button>
-        <button class="category-btn" data-category="power">⚡ وزە</button>
-        <button class="category-btn" data-category="pressure">💨 پەستانی</button>
-        <button class="category-btn" data-category="mass">⚖️ بارستە</button>
-        <button class="category-btn" data-category="speed">🏃 خێرایی</button>
+        <button type="button" class="category-btn active" data-category="length">📏 درێژی</button>
+        <button type="button" class="category-btn" data-category="area">📐 ڕووبەر</button>
+        <button type="button" class="category-btn" data-category="volume">📦 قەبارە</button>
+        <button type="button" class="category-btn" data-category="temperature">🌡️ پلەی گەرمی</button>
+        <button type="button" class="category-btn" data-category="power">⚡ وزە</button>
+        <button type="button" class="category-btn" data-category="pressure">💨 پەستانی</button>
+        <button type="button" class="category-btn" data-category="mass">⚖️ بارستە</button>
+        <button type="button" class="category-btn" data-category="speed">🏃 خێرایی</button>
       </div>
 
       <!-- Форма конвертера -->
@@ -265,7 +270,7 @@
           <input type="number" id="fromValue" placeholder="نرخێک بنووسە" step="any">
         </div>
 
-        <button class="swap-btn" id="swapBtn" title="گۆڕین">⇄</button>
+        <button type="button" class="swap-btn" id="swapBtn" title="گۆڕین">⇄</button>
 
         <div class="input-group">
           <label for="toValue">ئەنجام</label>
@@ -288,17 +293,36 @@
         </div>
       </div>
 
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-convert">Convert</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">Reset</button>
+            <button type="button" id="btn-share">Share</button>
+            <button type="button" id="btn-copy-result">Copy result</button>
+          </div>
+        </details>
+      </div>
+
       <!-- Результат -->
-      <div class="result" id="result">
-        نرخێک بنووسە بۆ گۆڕین
+      <div class="results">
+        <h3>ئەنجام</h3>
+        <div class="result-hero">
+          <div class="result-value" id="heroResult">—</div>
+        </div>
+        <p class="result-disclaimer">Approximate unit conversion — double-check critical calculations.</p>
+        <div class="result-line" id="result">
+          نرخێک بنووسە بۆ گۆڕین
+        </div>
       </div>
     </div>
 
     <!-- История конвертаций -->
-    <div class="conversion-history">
+    <div class="conversion-history history">
       <h3>📋 مێژووی گۆڕین</h3>
       <div id="historyList"></div>
-      <button class="clear-history" id="clearHistory">مێژوو بسڕەوە</button>
+      <button type="button" class="clear-history" id="clearHistory">مێژوو بسڕەوە</button>
     </div>
 
     <!-- Вставляем переводы как JavaScript объект -->
@@ -306,7 +330,7 @@
       // Глобальная переменная с переводами
       window.unitConverterTranslationsData = {
         locale: 'ku-arab',
-        translations: {"meta":{"title":"یەکە گۆڕەر — Serpmonn ئەندازیاری","description":"گۆرانی خێرا لە نێوان یەکە جیاوازەکانی پێوانە بۆ ئەندازیاران","twitterDescription":"یەکە گۆڕەر بۆ ئەندازیاران"},"breadcrumb":{"tools":"ئامرازەکان","unitConverter":"یەکە گۆڕەر"},"page":{"title":"🔄 یەکە گۆڕەر","categories":{"length":"📏 درێژی","area":"📐 ڕووبەر","volume":"📦 قەبارە","temperature":"🌡️ پلەی گەرمی","power":"⚡ وزە","pressure":"💨 پەستانی","mass":"⚖️ بارستە","speed":"🏃 خێرایی"},"labels":{"value":"نرخ","result":"ئەنجام","fromUnit":"لە یەکە","toUnit":"بۆ یەکە","swap":"گۆڕین","enterValue":"نرخێک بنووسە بۆ گۆڕین","enterValuePlaceholder":"نرخێک بنووسە","resultPlaceholder":"ئەنجام","conversionHistory":"📋 مێژووی گۆڕین","clearHistory":"مێژوو بسڕەوە","emptyHistory":"مێژوو بەتاڵە","closeAd":"ڕیکلام دابخە"},"units":{"length":{"mm":"میلیمەتر (مم)","cm":"سانتیمەتر (سم)","m":"مەتر (م)","km":"کیلۆمەتر (کم)","in":"ئینچ (ئینچ)","ft":"پێ (پێ)","yd":"یارد (یارد)","mi":"میل (میل)"},"area":{"mm2":"میلیمەتری چوارگۆشە (مم²)","cm2":"سانتیمەتری چوارگۆشە (سم²)","m2":"مەتری چوارگۆشە (م²)","km2":"کیلۆمەتری چوارگۆشە (کم²)","in2":"ئینچی چوارگۆشە (ئینچ²)","ft2":"پێی چوارگۆشە (پێ²)","yd2":"یاردی چوارگۆشە (یارد²)","ac":"ئەکەر (ئەکەر)"},"volume":{"ml":"میلیلتر (مل)","l":"لیتر (ل)","m3":"مەتری چوارگۆشە (م³)","cm3":"سانتیمەتری چوارگۆشە (سم³)","in3":"ئینچی چوارگۆشە (ئینچ³)","ft3":"پێی چوارگۆشە (پێ³)","gal":"گالۆن (گالۆن)"},"temperature":{"c":"سیلیزی (°C)","f":"فەهرەنهایت (°F)","k":"کێڵڤین (K)","r":"ڕانکین (°R)"},"power":{"w":"وات (W)","kw":"کیلۆوات (کەW)","mw":"مێگاوات (مەW)","hp":"هێزی ئەسپ (ئەسپ)","btu":"بی تی یو/کاتژمێر"},"pressure":{"pa":"پاسکاڵ (Pa)","kpa":"کیلۆپاسکاڵ (kPa)","mpa":"مێگاپاسکاڵ (MPa)","bar":"بار (بار)","atm":"بەرگەهەوا (atm)","psi":"پی ئێس ئای (پاوەند بۆ ھەر ئینچی چوارگۆشە)"},"mass":{"mg":"میلیگرام (مگ)","g":"گرام (گ)","kg":"کیلۆگرام (کگ)","t":"تەن (ت)","lb":"پاوەند (پاوەند)","oz":"ئۆنس (ئۆنس)"},"speed":{"mps":"م/چرکە (م/چرکە)","kmh":"کم/کاتژمێر (کم/کاتژمێر)","mph":"میل/کاتژمێر (میل/کاتژمێر)","knot":"گرێ (گرێ)","fps":"پێ/چرکە (پێ/چرکە)"}}}}
+        translations: {"meta":{"title":"یەکە گۆڕەر — Serpmonn ئەندازیاری","description":"گۆرانی خێرا لە نێوان یەکە جیاوازەکانی پێوانە بۆ ئەندازیاران","twitterDescription":"یەکە گۆڕەر بۆ ئەندازیاران"},"breadcrumb":{"tools":"ئامرازەکان","unitConverter":"یەکە گۆڕەر"},"page":{"title":"🔄 یەکە گۆڕەر","categories":{"length":"📏 درێژی","area":"📐 ڕووبەر","volume":"📦 قەبارە","temperature":"🌡️ پلەی گەرمی","power":"⚡ وزە","pressure":"💨 پەستانی","mass":"⚖️ بارستە","speed":"🏃 خێرایی"},"labels":{"value":"نرخ","result":"ئەنجام","fromUnit":"لە یەکە","toUnit":"بۆ یەکە","swap":"گۆڕین","enterValue":"نرخێک بنووسە بۆ گۆڕین","enterValuePlaceholder":"نرخێک بنووسە","resultPlaceholder":"ئەنجام","conversionHistory":"📋 مێژووی گۆڕین","clearHistory":"مێژوو بسڕەوە","emptyHistory":"مێژوو بەتاڵە","closeAd":"ڕیکلام دابخە"},"units":{"length":{"mm":"میلیمەتر (مم)","cm":"سانتیمەتر (سم)","m":"مەتر (م)","km":"کیلۆمەتر (کم)","in":"ئینچ (ئینچ)","ft":"پێ (پێ)","yd":"یارد (یارد)","mi":"میل (میل)"},"area":{"mm2":"میلیمەتری چوارگۆشە (مم²)","cm2":"سانتیمەتری چوارگۆشە (سم²)","m2":"مەتری چوارگۆشە (م²)","km2":"کیلۆمەتری چوارگۆشە (کم²)","in2":"ئینچی چوارگۆشە (ئینچ²)","ft2":"پێی چوارگۆشە (پێ²)","yd2":"یاردی چوارگۆشە (یارد²)","ac":"ئەکەر (ئەکەر)"},"volume":{"ml":"میلیلتر (مل)","l":"لیتر (ل)","m3":"مەتری چوارگۆشە (م³)","cm3":"سانتیمەتری چوارگۆشە (سم³)","in3":"ئینچی چوارگۆشە (ئینچ³)","ft3":"پێی چوارگۆشە (پێ³)","gal":"گالۆن (گالۆن)"},"temperature":{"c":"سیلیزی (°C)","f":"فەهرەنهایت (°F)","k":"کێڵڤین (K)","r":"ڕانکین (°R)"},"power":{"w":"وات (W)","kw":"کیلۆوات (کەW)","mw":"مێگاوات (مەW)","hp":"هێزی ئەسپ (ئەسپ)","btu":"بی تی یو/کاتژمێر"},"pressure":{"pa":"پاسکاڵ (Pa)","kpa":"کیلۆپاسکاڵ (kPa)","mpa":"مێگاپاسکاڵ (MPa)","bar":"بار (بار)","atm":"بەرگەهەوا (atm)","psi":"پی ئێس ئای (پاوەند بۆ ھەر ئینچی چوارگۆشە)"},"mass":{"mg":"میلیگرام (مگ)","g":"گرام (گ)","kg":"کیلۆگرام (کگ)","t":"تەن (ت)","lb":"پاوەند (پاوەند)","oz":"ئۆنس (ئۆنس)"},"speed":{"mps":"م/چرکە (م/چرکە)","kmh":"کم/کاتژمێر (کم/کاتژمێر)","mph":"میل/کاتژمێر (میل/کاتژمێر)","knot":"گرێ (گرێ)","fps":"پێ/چرکە (پێ/چرکە)"}},"lead":"Quickly convert a value between measurement units.","disclaimer":"Approximate unit conversion — double-check critical calculations.","actions":{"convert":"Convert","more":"More","reset":"Reset","share":"Share","copy":"Copy result","copied":"Copied"}}}
       };
     </script>
 
@@ -417,7 +441,9 @@
         init() {
           this.setupEventListeners();
           this.populateUnits();
+          this.restoreFromUrl();
           this.updateHistory();
+          this.convert();
         }
 
         setupEventListeners() {
@@ -451,6 +477,75 @@
           document.getElementById('clearHistory').addEventListener('click', () => {
             this.clearHistory();
           });
+
+          document.getElementById('btn-convert')?.addEventListener('click', () => this.convert());
+          document.getElementById('btn-reset')?.addEventListener('click', () => this.resetForm());
+          document.getElementById('btn-share')?.addEventListener('click', () => this.shareLink());
+          document.getElementById('btn-copy-result')?.addEventListener('click', (e) => this.copyResult(e.currentTarget));
+        }
+
+        syncUrl() {
+          const url = new URL(location.href);
+          url.searchParams.set('cat', this.currentCategory);
+          url.searchParams.set('from', document.getElementById('fromUnit').value || '');
+          url.searchParams.set('to', document.getElementById('toUnit').value || '');
+          const v = document.getElementById('fromValue').value;
+          if (v) url.searchParams.set('v', v); else url.searchParams.delete('v');
+          history.replaceState(null, '', url);
+        }
+
+        restoreFromUrl() {
+          const p = new URLSearchParams(location.search);
+          const cat = p.get('cat');
+          if (cat && this.categories[cat]) {
+            this.currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.category === cat);
+            });
+            this.populateUnits();
+          }
+          if (p.get('from') && document.getElementById('fromUnit').querySelector(`option[value="${p.get('from')}"]`)) {
+            document.getElementById('fromUnit').value = p.get('from');
+          }
+          if (p.get('to') && document.getElementById('toUnit').querySelector(`option[value="${p.get('to')}"]`)) {
+            document.getElementById('toUnit').value = p.get('to');
+          }
+          if (p.get('v')) document.getElementById('fromValue').value = p.get('v');
+        }
+
+        resetForm() {
+          document.getElementById('fromValue').value = '';
+          document.getElementById('toValue').value = '';
+          document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = '—';
+          history.replaceState(null, '', location.pathname);
+        }
+
+        async shareLink() {
+          this.syncUrl();
+          try {
+            await navigator.clipboard.writeText(location.href);
+            const btn = document.getElementById('btn-share');
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
+        }
+
+        async copyResult(btn) {
+          const str = document.getElementById('result')?.textContent || '';
+          if (!str) return;
+          try {
+            await navigator.clipboard.writeText(str);
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
         }
 
         setCategory(category) {
@@ -504,6 +599,8 @@
           
           if (isNaN(fromValue)) {
             document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+            const hero = document.getElementById('heroResult');
+            if (hero) hero.textContent = '—';
             return;
           }
           
@@ -516,8 +613,11 @@
           }
           
           document.getElementById('toValue').value = result.toFixed(6);
-          document.getElementById('result').textContent = 
-            `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          const line = `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          document.getElementById('result').textContent = line;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = `${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          this.syncUrl();
           
           // Добавляем в историю
           this.addToHistory(fromValue, fromUnit, toUnit, result);
@@ -637,6 +737,7 @@
     </script>
 
     <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script>
 </script>

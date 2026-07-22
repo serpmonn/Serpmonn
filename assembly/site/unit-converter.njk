@@ -51,9 +51,10 @@ eleventyComputed:
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
+    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css?v=2">
   </head>
-  <body>
+  <body class="spn-tool unit-converter-page">
     <!-- Меню -->
     <div id="menuContainer"></div>
 
@@ -65,19 +66,23 @@ eleventyComputed:
           data-ad-slot="{{ mailAds.slots.top.id }}">
       </ins>
     </div>
-<h1>{{ unitConverter[locale].page.title }}</h1>
+    <h1>{{ unitConverter[locale].page.title }}</h1>
+    {% if unitConverter[locale].page.lead %}
+    <p class="tool-lead">{{ unitConverter[locale].page.lead }}</p>
+    {% endif %}
 
-    <div class="converter-container">
+    <div class="calculator-container converter-container">
+      <div id="error-message" class="error-message hidden" role="alert"></div>
       <!-- Выбор категории -->
       <div class="category-selector">
-        <button class="category-btn active" data-category="length">{{ unitConverter[locale].page.categories.length }}</button>
-        <button class="category-btn" data-category="area">{{ unitConverter[locale].page.categories.area }}</button>
-        <button class="category-btn" data-category="volume">{{ unitConverter[locale].page.categories.volume }}</button>
-        <button class="category-btn" data-category="temperature">{{ unitConverter[locale].page.categories.temperature }}</button>
-        <button class="category-btn" data-category="power">{{ unitConverter[locale].page.categories.power }}</button>
-        <button class="category-btn" data-category="pressure">{{ unitConverter[locale].page.categories.pressure }}</button>
-        <button class="category-btn" data-category="mass">{{ unitConverter[locale].page.categories.mass }}</button>
-        <button class="category-btn" data-category="speed">{{ unitConverter[locale].page.categories.speed }}</button>
+        <button type="button" class="category-btn active" data-category="length">{{ unitConverter[locale].page.categories.length }}</button>
+        <button type="button" class="category-btn" data-category="area">{{ unitConverter[locale].page.categories.area }}</button>
+        <button type="button" class="category-btn" data-category="volume">{{ unitConverter[locale].page.categories.volume }}</button>
+        <button type="button" class="category-btn" data-category="temperature">{{ unitConverter[locale].page.categories.temperature }}</button>
+        <button type="button" class="category-btn" data-category="power">{{ unitConverter[locale].page.categories.power }}</button>
+        <button type="button" class="category-btn" data-category="pressure">{{ unitConverter[locale].page.categories.pressure }}</button>
+        <button type="button" class="category-btn" data-category="mass">{{ unitConverter[locale].page.categories.mass }}</button>
+        <button type="button" class="category-btn" data-category="speed">{{ unitConverter[locale].page.categories.speed }}</button>
       </div>
 
       <!-- Форма конвертера -->
@@ -87,7 +92,7 @@ eleventyComputed:
           <input type="number" id="fromValue" placeholder="{{ unitConverter[locale].page.labels.enterValuePlaceholder }}" step="any">
         </div>
 
-        <button class="swap-btn" id="swapBtn" title="{{ unitConverter[locale].page.labels.swap }}">⇄</button>
+        <button type="button" class="swap-btn" id="swapBtn" title="{{ unitConverter[locale].page.labels.swap }}">⇄</button>
 
         <div class="input-group">
           <label for="toValue">{{ unitConverter[locale].page.labels.result }}</label>
@@ -110,17 +115,36 @@ eleventyComputed:
         </div>
       </div>
 
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-convert">{{ unitConverter[locale].page.actions.convert if unitConverter[locale].page.actions else 'Конвертировать' }}</button>
+        <details class="more-actions">
+          <summary>{{ unitConverter[locale].page.actions.more if unitConverter[locale].page.actions else 'Ещё' }}</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">{{ unitConverter[locale].page.actions.reset if unitConverter[locale].page.actions else 'Сбросить' }}</button>
+            <button type="button" id="btn-share">{{ unitConverter[locale].page.actions.share if unitConverter[locale].page.actions else 'Поделиться' }}</button>
+            <button type="button" id="btn-copy-result">{{ unitConverter[locale].page.actions.copy if unitConverter[locale].page.actions else 'Копировать результат' }}</button>
+          </div>
+        </details>
+      </div>
+
       <!-- Результат -->
-      <div class="result" id="result">
-        {{ unitConverter[locale].page.labels.enterValue }}
+      <div class="results">
+        <h3>{{ unitConverter[locale].page.labels.result }}</h3>
+        <div class="result-hero">
+          <div class="result-value" id="heroResult">—</div>
+        </div>
+        <p class="result-disclaimer">{{ unitConverter[locale].page.disclaimer if unitConverter[locale].page.disclaimer else 'Ориентировочная конвертация единиц, проверьте критичные расчёты отдельно.' }}</p>
+        <div class="result-line" id="result">
+          {{ unitConverter[locale].page.labels.enterValue }}
+        </div>
       </div>
     </div>
 
     <!-- История конвертаций -->
-    <div class="conversion-history">
+    <div class="conversion-history history">
       <h3>{{ unitConverter[locale].page.labels.conversionHistory }}</h3>
       <div id="historyList"></div>
-      <button class="clear-history" id="clearHistory">{{ unitConverter[locale].page.labels.clearHistory }}</button>
+      <button type="button" class="clear-history" id="clearHistory">{{ unitConverter[locale].page.labels.clearHistory }}</button>
     </div>
 
     <!-- Вставляем переводы как JavaScript объект -->
@@ -239,7 +263,9 @@ eleventyComputed:
         init() {
           this.setupEventListeners();
           this.populateUnits();
+          this.restoreFromUrl();
           this.updateHistory();
+          this.convert();
         }
 
         setupEventListeners() {
@@ -273,6 +299,75 @@ eleventyComputed:
           document.getElementById('clearHistory').addEventListener('click', () => {
             this.clearHistory();
           });
+
+          document.getElementById('btn-convert')?.addEventListener('click', () => this.convert());
+          document.getElementById('btn-reset')?.addEventListener('click', () => this.resetForm());
+          document.getElementById('btn-share')?.addEventListener('click', () => this.shareLink());
+          document.getElementById('btn-copy-result')?.addEventListener('click', (e) => this.copyResult(e.currentTarget));
+        }
+
+        syncUrl() {
+          const url = new URL(location.href);
+          url.searchParams.set('cat', this.currentCategory);
+          url.searchParams.set('from', document.getElementById('fromUnit').value || '');
+          url.searchParams.set('to', document.getElementById('toUnit').value || '');
+          const v = document.getElementById('fromValue').value;
+          if (v) url.searchParams.set('v', v); else url.searchParams.delete('v');
+          history.replaceState(null, '', url);
+        }
+
+        restoreFromUrl() {
+          const p = new URLSearchParams(location.search);
+          const cat = p.get('cat');
+          if (cat && this.categories[cat]) {
+            this.currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.category === cat);
+            });
+            this.populateUnits();
+          }
+          if (p.get('from') && document.getElementById('fromUnit').querySelector(`option[value="${p.get('from')}"]`)) {
+            document.getElementById('fromUnit').value = p.get('from');
+          }
+          if (p.get('to') && document.getElementById('toUnit').querySelector(`option[value="${p.get('to')}"]`)) {
+            document.getElementById('toUnit').value = p.get('to');
+          }
+          if (p.get('v')) document.getElementById('fromValue').value = p.get('v');
+        }
+
+        resetForm() {
+          document.getElementById('fromValue').value = '';
+          document.getElementById('toValue').value = '';
+          document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = '—';
+          history.replaceState(null, '', location.pathname);
+        }
+
+        async shareLink() {
+          this.syncUrl();
+          try {
+            await navigator.clipboard.writeText(location.href);
+            const btn = document.getElementById('btn-share');
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
+        }
+
+        async copyResult(btn) {
+          const str = document.getElementById('result')?.textContent || '';
+          if (!str) return;
+          try {
+            await navigator.clipboard.writeText(str);
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
         }
 
         setCategory(category) {
@@ -326,6 +421,8 @@ eleventyComputed:
           
           if (isNaN(fromValue)) {
             document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+            const hero = document.getElementById('heroResult');
+            if (hero) hero.textContent = '—';
             return;
           }
           
@@ -338,8 +435,11 @@ eleventyComputed:
           }
           
           document.getElementById('toValue').value = result.toFixed(6);
-          document.getElementById('result').textContent = 
-            `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          const line = `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          document.getElementById('result').textContent = line;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = `${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          this.syncUrl();
           
           // Добавляем в историю
           this.addToHistory(fromValue, fromUnit, toUnit, result);
@@ -459,6 +559,7 @@ eleventyComputed:
     </script>
 
     <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script>
 </script>

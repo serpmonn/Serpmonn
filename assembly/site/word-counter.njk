@@ -51,94 +51,71 @@ eleventyComputed:
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    
-    <style>
-      /* ad top adaptive start */
-      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
-      /* ad top adaptive end */
-      
-      body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-      h1 { margin: 16px 0; }
-      textarea { width: 100%; min-height: 240px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; }
-      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
-      .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fff; }
-      .num { font-size: 24px; font-weight: 700; }
-      .label { color: #6b7280; }
-
-      /* RTL поддержка */
-      {% if dir == 'rtl' %}
-      body, textarea, .label { text-align: right; direction: rtl; }
-      {% endif %}
-
-      /* Адаптивность для мобильных устройств */
-      @media (max-width: 768px) {
-        body { padding: 12px; }
-        .stats { grid-template-columns: repeat(2, 1fr); }
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
   </head>
-  <body>
-    <!-- Меню -->
+  <body class="spn-tool word-counter-page">
     <div id="menuContainer"></div>
-    
+
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
-      <ins class="mrg-tag" 
+      <ins class="mrg-tag"
           style="display:inline-block;"
-          data-ad-client="ad-{{ mailAds.slots.top.id }}" 
+          data-ad-client="ad-{{ mailAds.slots.top.id }}"
           data-ad-slot="{{ mailAds.slots.top.id }}">
       </ins>
     </div>
-    
+
     <h1>{{ wordCounter[locale].page.title }}</h1>
-    <textarea id="text" placeholder="{{ wordCounter[locale].page.textareaPlaceholder }}"></textarea>
-    
-    <div class="stats">
-      <div class="card">
-        <div class="num" id="chars">0</div>
-        <div class="label">{{ wordCounter[locale].page.stats.chars }}</div>
+    {% if wordCounter[locale].page.lead %}
+    <p class="tool-lead">{{ wordCounter[locale].page.lead }}</p>
+    {% endif %}
+
+    <div class="calculator-container">
+      <h2>{{ wordCounter[locale].page.formTitle if wordCounter[locale].page.formTitle else 'Текст' }}</h2>
+      <textarea id="text" class="tool-textarea" placeholder="{{ wordCounter[locale].page.textareaPlaceholder }}"></textarea>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-copy-stats">{{ wordCounter[locale].page.actions.copyStats if wordCounter[locale].page.actions else 'Копировать статистику' }}</button>
+        <details class="more-actions">
+          <summary>{{ wordCounter[locale].page.actions.more if wordCounter[locale].page.actions else 'Ещё' }}</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">{{ wordCounter[locale].page.actions.reset if wordCounter[locale].page.actions else 'Сбросить' }}</button>
+            <button type="button" id="btn-copy-text">{{ wordCounter[locale].page.actions.copyText if wordCounter[locale].page.actions else 'Копировать текст' }}</button>
+            <button type="button" id="btn-share">{{ wordCounter[locale].page.actions.share if wordCounter[locale].page.actions else 'Поделиться' }}</button>
+          </div>
+        </details>
       </div>
-      <div class="card">
-        <div class="num" id="words">0</div>
-        <div class="label">{{ wordCounter[locale].page.stats.words }}</div>
-      </div>
-      <div class="card">
-        <div class="num" id="lines">0</div>
-        <div class="label">{{ wordCounter[locale].page.stats.lines }}</div>
-      </div>
-      <div class="card">
-        <div class="num" id="spaces">0</div>
-        <div class="label">{{ wordCounter[locale].page.stats.spaces }}</div>
+
+      <div class="results">
+        <h3>{{ wordCounter[locale].page.resultsTitle if wordCounter[locale].page.resultsTitle else 'Результаты' }}</h3>
+        <div class="result-hero">
+          <div class="result-value" id="words">0</div>
+          <div class="result-label">{{ wordCounter[locale].page.stats.words }}</div>
+        </div>
+        <p class="result-disclaimer">{{ wordCounter[locale].page.disclaimer if wordCounter[locale].page.disclaimer else 'Подсчёт в браузере, без отправки текста на сервер.' }}</p>
+        <div class="stats">
+          <div class="card">
+            <div class="num" id="chars">0</div>
+            <div class="label">{{ wordCounter[locale].page.stats.chars }}</div>
+          </div>
+          <div class="card">
+            <div class="num" id="lines">0</div>
+            <div class="label">{{ wordCounter[locale].page.stats.lines }}</div>
+          </div>
+          <div class="card">
+            <div class="num" id="spaces">0</div>
+            <div class="label">{{ wordCounter[locale].page.stats.spaces }}</div>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      // Вспомогательный селектор
-      const qs = (s)=>document.querySelector(s);
-      
-      // Пересчёт статистики текста
-      function recalc() {
-        const t = qs('#text').value;
-        qs('#chars').textContent = t.length;
-        const words = t.trim() ? t.trim().split(/\s+/).length : 0;
-        qs('#words').textContent = words;
-        const lines = t ? t.split(/\n/).length : 0;
-        qs('#lines').textContent = lines;
-        const spaces = (t.match(/\s/g) || []).length;
-        qs('#spaces').textContent = spaces;
-      }
-      
-      // Обновляем счётчики при вводе
-      qs('#text').addEventListener('input', recalc);
-      
-      // Инициализация при загрузке
-      document.addEventListener('DOMContentLoaded', recalc);
+      window.wordCounterTranslations = {{ wordCounter[locale] | dump | safe }};
     </script>
-    
-    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/word-counter.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
 {{ mobileAnchor(wordCounter[locale].ads.closeAria) }}
 {% include "partials/ad-pool-init.njk" %}

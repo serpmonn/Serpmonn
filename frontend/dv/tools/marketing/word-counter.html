@@ -229,94 +229,71 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    
-    <style>
-      /* ad top adaptive start */
-      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
-      /* ad top adaptive end */
-      
-      body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-      h1 { margin: 16px 0; }
-      textarea { width: 100%; min-height: 240px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 10px; }
-      .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-top: 12px; }
-      .card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fff; }
-      .num { font-size: 24px; font-weight: 700; }
-      .label { color: #6b7280; }
-
-      /* RTL поддержка */
-      
-      body, textarea, .label { text-align: right; direction: rtl; }
-      
-
-      /* Адаптивность для мобильных устройств */
-      @media (max-width: 768px) {
-        body { padding: 12px; }
-        .stats { grid-template-columns: repeat(2, 1fr); }
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
   </head>
-  <body>
-    <!-- Меню -->
+  <body class="spn-tool word-counter-page">
     <div id="menuContainer"></div>
-    
+
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
-      <ins class="mrg-tag" 
+      <ins class="mrg-tag"
           style="display:inline-block;"
-          data-ad-client="ad-1897960" 
+          data-ad-client="ad-1897960"
           data-ad-slot="1897960">
       </ins>
     </div>
-    
+
     <h1>📝 ލަފުޒު/އަކުރ ގަތުން</h1>
-    <textarea id="text" placeholder="ތެއް ޕޭސްޓް ކުރޭ ނުވަތަ ޓައިޕް ކުރޭ..."></textarea>
     
-    <div class="stats">
-      <div class="card">
-        <div class="num" id="chars">0</div>
-        <div class="label">އަކުރުތައް</div>
+    <p class="tool-lead">Count words, characters, lines and spaces — right in your browser.</p>
+    
+
+    <div class="calculator-container">
+      <h2>Text</h2>
+      <textarea id="text" class="tool-textarea" placeholder="ތެއް ޕޭސްޓް ކުރޭ ނުވަތަ ޓައިޕް ކުރޭ..."></textarea>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-copy-stats">Copy stats</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">Reset</button>
+            <button type="button" id="btn-copy-text">Copy text</button>
+            <button type="button" id="btn-share">Share</button>
+          </div>
+        </details>
       </div>
-      <div class="card">
-        <div class="num" id="words">0</div>
-        <div class="label">ލަފުޒުތައް</div>
-      </div>
-      <div class="card">
-        <div class="num" id="lines">0</div>
-        <div class="label">ލައިނުތައް</div>
-      </div>
-      <div class="card">
-        <div class="num" id="spaces">0</div>
-        <div class="label">ހުސްތައް</div>
+
+      <div class="results">
+        <h3>Results</h3>
+        <div class="result-hero">
+          <div class="result-value" id="words">0</div>
+          <div class="result-label">ލަފުޒުތައް</div>
+        </div>
+        <p class="result-disclaimer">Counted in your browser; text is not sent to the server.</p>
+        <div class="stats">
+          <div class="card">
+            <div class="num" id="chars">0</div>
+            <div class="label">އަކުރުތައް</div>
+          </div>
+          <div class="card">
+            <div class="num" id="lines">0</div>
+            <div class="label">ލައިނުތައް</div>
+          </div>
+          <div class="card">
+            <div class="num" id="spaces">0</div>
+            <div class="label">ހުސްތައް</div>
+          </div>
+        </div>
       </div>
     </div>
 
     <script>
-      // Вспомогательный селектор
-      const qs = (s)=>document.querySelector(s);
-      
-      // Пересчёт статистики текста
-      function recalc() {
-        const t = qs('#text').value;
-        qs('#chars').textContent = t.length;
-        const words = t.trim() ? t.trim().split(/\s+/).length : 0;
-        qs('#words').textContent = words;
-        const lines = t ? t.split(/\n/).length : 0;
-        qs('#lines').textContent = lines;
-        const spaces = (t.match(/\s/g) || []).length;
-        qs('#spaces').textContent = spaces;
-      }
-      
-      // Обновляем счётчики при вводе
-      qs('#text').addEventListener('input', recalc);
-      
-      // Инициализация при загрузке
-      document.addEventListener('DOMContentLoaded', recalc);
+      window.wordCounterTranslations = {"meta":{"title":"ލަފުޒު/އަކުރ ގަތުން — Serpmonn","description":"ތެއްގެ ލަފުޒު، ލައިނު އަދި އަކުރ ގަންނަވާނެ","ogTitle":"ލަފުޒު/އަކުރ ގަތުން — Serpmonn","ogDescription":"ލަފުޒު， އަކުރ， ލައިނު އަދި ހުސް ގަންނަވާނެ ފުރީ އޮންލައިން އަޑަށް","twitterTitle":"ލަފުޒު/އަކުރ ގަތުން — Serpmonn","twitterDescription":"ވަގުތު ވަގުތުގައި ތެއްގެ ތަފްޞީލުކުރުން އަދި އެންޓް ގަންނަވުން"},"page":{"title":"📝 ލަފުޒު/އަކުރ ގަތުން","textareaPlaceholder":"ތެއް ޕޭސްޓް ކުރޭ ނުވަތަ ޓައިޕް ކުރޭ...","stats":{"chars":"އަކުރުތައް","words":"ލަފުޒުތައް","lines":"ލައިނުތައް","spaces":"ހުސްތައް"},"features":{"title":"🎯 އަޑަށްގެ ޚިޔާލުތައް","realtime":"📈 ވަގުތު ވަގުތުގައި ގަންނަވުން","detailed":"📊 ތަފްޞީލު ތަފްސީލު","multilingual":"🌍 ހުރިހާ ބަސްތަކަށް އެހީތެރިކަން","responsive":"📱 އިޖާބުދޭ ޑައިޒައިން"},"lead":"Count words, characters, lines and spaces — right in your browser.","formTitle":"Text","resultsTitle":"Results","disclaimer":"Counted in your browser; text is not sent to the server.","actions":{"more":"More","reset":"Reset","share":"Share","copyStats":"Copy stats","copyText":"Copy text","copied":"Copied"}},"ads":{"closeAria":"އެޑް ބަންދުކުރޭ","adTitle":"އެޑް ބްލޮކް"},"instructions":{"title":"📖 ބޭނުންފަދަ ތަފްޞީލު:","step1":"1. މިއަރުގައި ތެއް ޕޭސްޓް ކުރޭ ނުވަތަ ޓައިޕް ކުރޭ","step2":"2. ގަތުންތައް އައުޓޯމެޓިކް އަޕްޑޭޓް ވެދާނެ","step3":"3. ނަތީޖާ ވަގުތު ވަގުތުގައި އެނލައިޒް ކުރޭ"}};
     </script>
-    
-    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/word-counter.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">

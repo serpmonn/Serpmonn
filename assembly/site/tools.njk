@@ -193,23 +193,33 @@ eleventyComputed:
         <div class="category-section category-development" role="region" aria-labelledby="development-title">
             <h2 class="category-title" id="development-title">{{ tools[locale].categories.development.title }}</h2>
             <div class="tools-grid" aria-live="polite">
-                <div class="card tool-placeholder" style="--i: 4;">
-                    <div class="coming-soon">{{ tools[locale].labels.soon }}</div>
+                <div class="card" style="--i: 4;">
                     <h2>{{ tools[locale].tools.jsonFormatter.title }}</h2>
                     <p>{{ tools[locale].tools.jsonFormatter.description }}</p>
-                    <a href="#" rel="nofollow" 
-                       aria-label="{{ tools[locale].tools.jsonFormatter.title }} {{ tools[locale].labels.soonAvailable }}">
-                        {{ tools[locale].labels.soonAvailable }}
+                    <a href="{% if locale == 'ru' %}/frontend/tools/development/json-formatter.html{% else %}/frontend/{{ locale }}/tools/development/json-formatter.html{% endif %}"
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.jsonFormatter.title }}">
+                        {{ tools[locale].buttons.openTool }}
                     </a>
+                    <button class="favorite-btn"
+                            data-tool-href="/frontend/tools/development/json-formatter.html"
+                            data-tool-name="{{ tools[locale].tools.jsonFormatter.title }}"
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].tools.jsonFormatter.title }}">
+                        ⭐
+                    </button>
                 </div>
-                <div class="card tool-placeholder" style="--i: 5;">
-                    <div class="coming-soon">{{ tools[locale].labels.soon }}</div>
+                <div class="card" style="--i: 5;">
                     <h2>{{ tools[locale].tools.base64Converter.title }}</h2>
                     <p>{{ tools[locale].tools.base64Converter.description }}</p>
-                    <a href="#" rel="nofollow" 
-                       aria-label="{{ tools[locale].tools.base64Converter.title }} {{ tools[locale].labels.soonAvailable }}">
-                        {{ tools[locale].labels.soonAvailable }}
+                    <a href="{% if locale == 'ru' %}/frontend/tools/development/base64-converter.html{% else %}/frontend/{{ locale }}/tools/development/base64-converter.html{% endif %}"
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.base64Converter.title }}">
+                        {{ tools[locale].buttons.openTool }}
                     </a>
+                    <button class="favorite-btn"
+                            data-tool-href="/frontend/tools/development/base64-converter.html"
+                            data-tool-name="{{ tools[locale].tools.base64Converter.title }}"
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].tools.base64Converter.title }}">
+                        ⭐
+                    </button>
                 </div>
             </div>
         </div>
@@ -218,23 +228,33 @@ eleventyComputed:
         <div class="category-section category-design" role="region" aria-labelledby="design-title">
             <h2 class="category-title" id="design-title">{{ tools[locale].categories.design.title }}</h2>
             <div class="tools-grid" aria-live="polite">
-                <div class="card tool-placeholder" style="--i: 6;">
-                    <div class="coming-soon">{{ tools[locale].labels.soon }}</div>
+                <div class="card" style="--i: 6;">
                     <h2>{{ tools[locale].tools.colorPalettes.title }}</h2>
                     <p>{{ tools[locale].tools.colorPalettes.description }}</p>
-                    <a href="#" rel="nofollow" 
-                       aria-label="{{ tools[locale].tools.colorPalettes.title }} {{ tools[locale].labels.soonAvailable }}">
-                        {{ tools[locale].labels.soonAvailable }}
+                    <a href="{% if locale == 'ru' %}/frontend/tools/design/color-palettes.html{% else %}/frontend/{{ locale }}/tools/design/color-palettes.html{% endif %}"
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.colorPalettes.title }}">
+                        {{ tools[locale].buttons.openTool }}
                     </a>
+                    <button class="favorite-btn"
+                            data-tool-href="/frontend/tools/design/color-palettes.html"
+                            data-tool-name="{{ tools[locale].tools.colorPalettes.title }}"
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].tools.colorPalettes.title }}">
+                        ⭐
+                    </button>
                 </div>
-                <div class="card tool-placeholder" style="--i: 7;">
-                    <div class="coming-soon">{{ tools[locale].labels.soon }}</div>
+                <div class="card" style="--i: 7;">
                     <h2>{{ tools[locale].tools.formatConverter.title }}</h2>
                     <p>{{ tools[locale].tools.formatConverter.description }}</p>
-                    <a href="#" rel="nofollow" 
-                       aria-label="{{ tools[locale].tools.formatConverter.title }} {{ tools[locale].labels.soonAvailable }}">
-                        {{ tools[locale].labels.soonAvailable }}
+                    <a href="{% if locale == 'ru' %}/frontend/tools/design/format-converter.html{% else %}/frontend/{{ locale }}/tools/design/format-converter.html{% endif %}"
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].tools.formatConverter.title }}">
+                        {{ tools[locale].buttons.openTool }}
                     </a>
+                    <button class="favorite-btn"
+                            data-tool-href="/frontend/tools/design/format-converter.html"
+                            data-tool-name="{{ tools[locale].tools.formatConverter.title }}"
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].tools.formatConverter.title }}">
+                        ⭐
+                    </button>
                 </div>
             </div>
         </div>

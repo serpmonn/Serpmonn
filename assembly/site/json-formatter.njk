@@ -1,0 +1,114 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/tools/development/json-formatter.html{% else %}/frontend/{{ locale }}/tools/development/json-formatter.html{% endif %}"
+eleventyComputed:
+  title: "{{ jsonFormatter[locale].meta.title }}"
+  description: "{{ jsonFormatter[locale].meta.description }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/tools/development/json-formatter.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/tools/development/json-formatter.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+  <head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+    <meta property="og:title" content="{{ jsonFormatter[locale].meta.ogTitle }}">
+    <meta property="og:description" content="{{ jsonFormatter[locale].meta.ogDescription }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ jsonFormatter[locale].meta.twitterTitle }}">
+    <meta name="twitter:description" content="{{ jsonFormatter[locale].meta.twitterDescription }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <link rel="canonical" href="{{ canonical }}" />
+    {% for loc in locales %}
+      {% if loc == 'ru' %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/development/json-formatter.html" hreflang="{{ loc }}" />
+      {% else %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/development/json-formatter.html" hreflang="{{ loc }}" />
+      {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/development/json-formatter.html" hreflang="x-default" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "{{ jsonFormatter[locale].meta.title | replace('"', '&quot;') }}",
+      "description": "{{ jsonFormatter[locale].meta.description | replace('"', '&quot;') }}",
+      "url": "{{ canonical }}",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "{{ locale }}",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "RUB" },
+      "publisher": { "@type": "Organization", "name": "Serpmonn", "url": "{{ site.baseUrl }}/" }
+    }
+    </script>
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
+    <link rel="stylesheet" href="/frontend/styles/tools/new-tools.css?v=2">
+  </head>
+  <body class="spn-tool json-formatter-page">
+    <div id="menuContainer"></div>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
+    </div>
+
+    <h1>{{ jsonFormatter[locale].page.title }}</h1>
+    <p class="tool-lead">{{ jsonFormatter[locale].page.lead }}</p>
+    {% if jsonFormatter[locale].guide %}
+    <aside class="tool-guide-card" aria-label="{{ jsonFormatter[locale].guide.title }}">
+      <strong>{{ jsonFormatter[locale].guide.title }}</strong>
+      <p>{{ jsonFormatter[locale].guide.text }}</p>
+      <a href="{% if locale == 'ru' %}/frontend/knowledge-base/articles/json-formatter-guide.html{% else %}/frontend/{{ locale }}/knowledge-base/articles/json-formatter-guide.html{% endif %}">{{ jsonFormatter[locale].guide.linkText }}</a>
+    </aside>
+    {% endif %}
+    <div class="calculator-container">
+      <h2>{{ jsonFormatter[locale].page.formTitle }}</h2>
+      <div id="error-message" class="error-message hidden" role="alert"></div>
+      <textarea id="input" class="tool-textarea" placeholder='{{ jsonFormatter[locale].page.placeholder }}'></textarea>
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-format">{{ jsonFormatter[locale].page.actions.format }}</button>
+        <details class="more-actions">
+          <summary>{{ jsonFormatter[locale].page.actions.more }}</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-minify">{{ jsonFormatter[locale].page.actions.minify }}</button>
+            <button type="button" id="btn-validate">{{ jsonFormatter[locale].page.actions.validate }}</button>
+            <button type="button" id="btn-copy">{{ jsonFormatter[locale].page.actions.copy }}</button>
+            <button type="button" id="btn-reset">{{ jsonFormatter[locale].page.actions.reset }}</button>
+            <button type="button" id="btn-share">{{ jsonFormatter[locale].page.actions.share }}</button>
+          </div>
+        </details>
+      </div>
+      <div class="results">
+        <h3>{{ jsonFormatter[locale].page.resultsTitle }}</h3>
+        <p id="status" class="result-disclaimer">{{ jsonFormatter[locale].page.statusEmpty }}</p>
+        <div class="result-hero"><pre class="out" id="output">—</pre></div>
+        <p class="result-disclaimer">{{ jsonFormatter[locale].page.disclaimer }}</p>
+      </div>
+    </div>
+
+    <script>
+      window.jsonFormatterTranslations = {{ jsonFormatter[locale] | dump | safe }};
+    </script>
+    <script type="module" src="/frontend/scripts/tools/json-formatter.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+  {{ mobileAnchor(jsonFormatter[locale].ads.closeAria) }}
+  {% include "partials/ad-pool-init.njk" %}
+</body>
+</html>

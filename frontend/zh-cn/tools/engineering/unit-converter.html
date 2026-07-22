@@ -229,9 +229,10 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
+    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css?v=2">
   </head>
-  <body>
+  <body class="spn-tool unit-converter-page">
     <!-- Меню -->
     <div id="menuContainer"></div>
 
@@ -243,19 +244,23 @@
           data-ad-slot="1897960">
       </ins>
     </div>
-<h1>🔄 单位换算器</h1>
+    <h1>🔄 单位换算器</h1>
+    
+    <p class="tool-lead">Quickly convert a value between measurement units.</p>
+    
 
-    <div class="converter-container">
+    <div class="calculator-container converter-container">
+      <div id="error-message" class="error-message hidden" role="alert"></div>
       <!-- Выбор категории -->
       <div class="category-selector">
-        <button class="category-btn active" data-category="length">📏 长度</button>
-        <button class="category-btn" data-category="area">📐 面积</button>
-        <button class="category-btn" data-category="volume">📦 体积</button>
-        <button class="category-btn" data-category="temperature">🌡️ 温度</button>
-        <button class="category-btn" data-category="power">⚡ 功率</button>
-        <button class="category-btn" data-category="pressure">💨 压力</button>
-        <button class="category-btn" data-category="mass">⚖️ 质量</button>
-        <button class="category-btn" data-category="speed">🏃 速度</button>
+        <button type="button" class="category-btn active" data-category="length">📏 长度</button>
+        <button type="button" class="category-btn" data-category="area">📐 面积</button>
+        <button type="button" class="category-btn" data-category="volume">📦 体积</button>
+        <button type="button" class="category-btn" data-category="temperature">🌡️ 温度</button>
+        <button type="button" class="category-btn" data-category="power">⚡ 功率</button>
+        <button type="button" class="category-btn" data-category="pressure">💨 压力</button>
+        <button type="button" class="category-btn" data-category="mass">⚖️ 质量</button>
+        <button type="button" class="category-btn" data-category="speed">🏃 速度</button>
       </div>
 
       <!-- Форма конвертера -->
@@ -265,7 +270,7 @@
           <input type="number" id="fromValue" placeholder="输入数值" step="any">
         </div>
 
-        <button class="swap-btn" id="swapBtn" title="交换">⇄</button>
+        <button type="button" class="swap-btn" id="swapBtn" title="交换">⇄</button>
 
         <div class="input-group">
           <label for="toValue">结果</label>
@@ -288,17 +293,36 @@
         </div>
       </div>
 
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-convert">Convert</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">Reset</button>
+            <button type="button" id="btn-share">Share</button>
+            <button type="button" id="btn-copy-result">Copy result</button>
+          </div>
+        </details>
+      </div>
+
       <!-- Результат -->
-      <div class="result" id="result">
-        输入要转换的数值
+      <div class="results">
+        <h3>结果</h3>
+        <div class="result-hero">
+          <div class="result-value" id="heroResult">—</div>
+        </div>
+        <p class="result-disclaimer">Approximate unit conversion — double-check critical calculations.</p>
+        <div class="result-line" id="result">
+          输入要转换的数值
+        </div>
       </div>
     </div>
 
     <!-- История конвертаций -->
-    <div class="conversion-history">
+    <div class="conversion-history history">
       <h3>📋 转换历史</h3>
       <div id="historyList"></div>
-      <button class="clear-history" id="clearHistory">清除历史</button>
+      <button type="button" class="clear-history" id="clearHistory">清除历史</button>
     </div>
 
     <!-- Вставляем переводы как JavaScript объект -->
@@ -306,7 +330,7 @@
       // Глобальная переменная с переводами
       window.unitConverterTranslationsData = {
         locale: 'zh-cn',
-        translations: {"meta":{"title":"单位换算器 — Serpmonn 工程","description":"工程师快速转换不同测量单位","twitterDescription":"工程师单位换算器"},"breadcrumb":{"tools":"工具","unitConverter":"单位换算器"},"page":{"title":"🔄 单位换算器","categories":{"length":"📏 长度","area":"📐 面积","volume":"📦 体积","temperature":"🌡️ 温度","power":"⚡ 功率","pressure":"💨 压力","mass":"⚖️ 质量","speed":"🏃 速度"},"labels":{"value":"数值","result":"结果","fromUnit":"从单位","toUnit":"到单位","swap":"交换","enterValue":"输入要转换的数值","enterValuePlaceholder":"输入数值","resultPlaceholder":"结果","conversionHistory":"📋 转换历史","clearHistory":"清除历史","emptyHistory":"历史记录为空","closeAd":"关闭广告"},"units":{"length":{"mm":"毫米 (mm)","cm":"厘米 (cm)","m":"米 (m)","km":"千米 (km)","in":"英寸 (英寸)","ft":"英尺 (英尺)","yd":"码 (码)","mi":"英里 (英里)"},"area":{"mm2":"平方毫米 (mm²)","cm2":"平方厘米 (cm²)","m2":"平方米 (m²)","km2":"平方千米 (km²)","in2":"平方英寸 (英寸²)","ft2":"平方英尺 (英尺²)","yd2":"平方码 (码²)","ac":"英亩 (英亩)"},"volume":{"ml":"毫升 (ml)","l":"升 (l)","m3":"立方米 (m³)","cm3":"立方厘米 (cm³)","in3":"立方英寸 (英寸³)","ft3":"立方英尺 (英尺³)","gal":"加仑 (加仑)"},"temperature":{"c":"摄氏度 (°C)","f":"华氏度 (°F)","k":"开尔文 (K)","r":"兰金度 (°R)"},"power":{"w":"瓦特 (W)","kw":"千瓦 (kW)","mw":"兆瓦 (MW)","hp":"马力 (马力)","btu":"英热单位/小时"},"pressure":{"pa":"帕斯卡 (Pa)","kpa":"千帕 (kPa)","mpa":"兆帕 (MPa)","bar":"巴 (bar)","atm":"标准大气压 (atm)","psi":"磅力每平方英寸 (psi)"},"mass":{"mg":"毫克 (mg)","g":"克 (g)","kg":"千克 (kg)","t":"吨 (t)","lb":"磅 (磅)","oz":"盎司 (盎司)"},"speed":{"mps":"米/秒 (m/s)","kmh":"千米/小时 (km/h)","mph":"英里/小时 (mph)","knot":"节 (节)","fps":"英尺/秒 (英尺/秒)"}}}}
+        translations: {"meta":{"title":"单位换算器 — Serpmonn 工程","description":"工程师快速转换不同测量单位","twitterDescription":"工程师单位换算器"},"breadcrumb":{"tools":"工具","unitConverter":"单位换算器"},"page":{"title":"🔄 单位换算器","categories":{"length":"📏 长度","area":"📐 面积","volume":"📦 体积","temperature":"🌡️ 温度","power":"⚡ 功率","pressure":"💨 压力","mass":"⚖️ 质量","speed":"🏃 速度"},"labels":{"value":"数值","result":"结果","fromUnit":"从单位","toUnit":"到单位","swap":"交换","enterValue":"输入要转换的数值","enterValuePlaceholder":"输入数值","resultPlaceholder":"结果","conversionHistory":"📋 转换历史","clearHistory":"清除历史","emptyHistory":"历史记录为空","closeAd":"关闭广告"},"units":{"length":{"mm":"毫米 (mm)","cm":"厘米 (cm)","m":"米 (m)","km":"千米 (km)","in":"英寸 (英寸)","ft":"英尺 (英尺)","yd":"码 (码)","mi":"英里 (英里)"},"area":{"mm2":"平方毫米 (mm²)","cm2":"平方厘米 (cm²)","m2":"平方米 (m²)","km2":"平方千米 (km²)","in2":"平方英寸 (英寸²)","ft2":"平方英尺 (英尺²)","yd2":"平方码 (码²)","ac":"英亩 (英亩)"},"volume":{"ml":"毫升 (ml)","l":"升 (l)","m3":"立方米 (m³)","cm3":"立方厘米 (cm³)","in3":"立方英寸 (英寸³)","ft3":"立方英尺 (英尺³)","gal":"加仑 (加仑)"},"temperature":{"c":"摄氏度 (°C)","f":"华氏度 (°F)","k":"开尔文 (K)","r":"兰金度 (°R)"},"power":{"w":"瓦特 (W)","kw":"千瓦 (kW)","mw":"兆瓦 (MW)","hp":"马力 (马力)","btu":"英热单位/小时"},"pressure":{"pa":"帕斯卡 (Pa)","kpa":"千帕 (kPa)","mpa":"兆帕 (MPa)","bar":"巴 (bar)","atm":"标准大气压 (atm)","psi":"磅力每平方英寸 (psi)"},"mass":{"mg":"毫克 (mg)","g":"克 (g)","kg":"千克 (kg)","t":"吨 (t)","lb":"磅 (磅)","oz":"盎司 (盎司)"},"speed":{"mps":"米/秒 (m/s)","kmh":"千米/小时 (km/h)","mph":"英里/小时 (mph)","knot":"节 (节)","fps":"英尺/秒 (英尺/秒)"}},"lead":"Quickly convert a value between measurement units.","disclaimer":"Approximate unit conversion — double-check critical calculations.","actions":{"convert":"Convert","more":"More","reset":"Reset","share":"Share","copy":"Copy result","copied":"Copied"}}}
       };
     </script>
 
@@ -417,7 +441,9 @@
         init() {
           this.setupEventListeners();
           this.populateUnits();
+          this.restoreFromUrl();
           this.updateHistory();
+          this.convert();
         }
 
         setupEventListeners() {
@@ -451,6 +477,75 @@
           document.getElementById('clearHistory').addEventListener('click', () => {
             this.clearHistory();
           });
+
+          document.getElementById('btn-convert')?.addEventListener('click', () => this.convert());
+          document.getElementById('btn-reset')?.addEventListener('click', () => this.resetForm());
+          document.getElementById('btn-share')?.addEventListener('click', () => this.shareLink());
+          document.getElementById('btn-copy-result')?.addEventListener('click', (e) => this.copyResult(e.currentTarget));
+        }
+
+        syncUrl() {
+          const url = new URL(location.href);
+          url.searchParams.set('cat', this.currentCategory);
+          url.searchParams.set('from', document.getElementById('fromUnit').value || '');
+          url.searchParams.set('to', document.getElementById('toUnit').value || '');
+          const v = document.getElementById('fromValue').value;
+          if (v) url.searchParams.set('v', v); else url.searchParams.delete('v');
+          history.replaceState(null, '', url);
+        }
+
+        restoreFromUrl() {
+          const p = new URLSearchParams(location.search);
+          const cat = p.get('cat');
+          if (cat && this.categories[cat]) {
+            this.currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.category === cat);
+            });
+            this.populateUnits();
+          }
+          if (p.get('from') && document.getElementById('fromUnit').querySelector(`option[value="${p.get('from')}"]`)) {
+            document.getElementById('fromUnit').value = p.get('from');
+          }
+          if (p.get('to') && document.getElementById('toUnit').querySelector(`option[value="${p.get('to')}"]`)) {
+            document.getElementById('toUnit').value = p.get('to');
+          }
+          if (p.get('v')) document.getElementById('fromValue').value = p.get('v');
+        }
+
+        resetForm() {
+          document.getElementById('fromValue').value = '';
+          document.getElementById('toValue').value = '';
+          document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = '—';
+          history.replaceState(null, '', location.pathname);
+        }
+
+        async shareLink() {
+          this.syncUrl();
+          try {
+            await navigator.clipboard.writeText(location.href);
+            const btn = document.getElementById('btn-share');
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
+        }
+
+        async copyResult(btn) {
+          const str = document.getElementById('result')?.textContent || '';
+          if (!str) return;
+          try {
+            await navigator.clipboard.writeText(str);
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
         }
 
         setCategory(category) {
@@ -504,6 +599,8 @@
           
           if (isNaN(fromValue)) {
             document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+            const hero = document.getElementById('heroResult');
+            if (hero) hero.textContent = '—';
             return;
           }
           
@@ -516,8 +613,11 @@
           }
           
           document.getElementById('toValue').value = result.toFixed(6);
-          document.getElementById('result').textContent = 
-            `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          const line = `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          document.getElementById('result').textContent = line;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = `${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          this.syncUrl();
           
           // Добавляем в историю
           this.addToHistory(fromValue, fromUnit, toUnit, result);
@@ -637,6 +737,7 @@
     </script>
 
     <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script>
 </script>

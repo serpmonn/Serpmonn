@@ -229,9 +229,10 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
+    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css?v=2">
   </head>
-  <body>
+  <body class="spn-tool unit-converter-page">
     <!-- Меню -->
     <div id="menuContainer"></div>
 
@@ -243,19 +244,23 @@
           data-ad-slot="1897960">
       </ins>
     </div>
-<h1>🔄 একক রূপান্তরকারী</h1>
+    <h1>🔄 একক রূপান্তরকারী</h1>
+    
+    <p class="tool-lead">Quickly convert a value between measurement units.</p>
+    
 
-    <div class="converter-container">
+    <div class="calculator-container converter-container">
+      <div id="error-message" class="error-message hidden" role="alert"></div>
       <!-- Выбор категории -->
       <div class="category-selector">
-        <button class="category-btn active" data-category="length">📏 দৈর্ঘ্য</button>
-        <button class="category-btn" data-category="area">📐 ক্ষেত্রফল</button>
-        <button class="category-btn" data-category="volume">📦 আয়তন</button>
-        <button class="category-btn" data-category="temperature">🌡️ তাপমাত্রা</button>
-        <button class="category-btn" data-category="power">⚡ শক্তি</button>
-        <button class="category-btn" data-category="pressure">💨 চাপ</button>
-        <button class="category-btn" data-category="mass">⚖️ ভর</button>
-        <button class="category-btn" data-category="speed">🏃 গতি</button>
+        <button type="button" class="category-btn active" data-category="length">📏 দৈর্ঘ্য</button>
+        <button type="button" class="category-btn" data-category="area">📐 ক্ষেত্রফল</button>
+        <button type="button" class="category-btn" data-category="volume">📦 আয়তন</button>
+        <button type="button" class="category-btn" data-category="temperature">🌡️ তাপমাত্রা</button>
+        <button type="button" class="category-btn" data-category="power">⚡ শক্তি</button>
+        <button type="button" class="category-btn" data-category="pressure">💨 চাপ</button>
+        <button type="button" class="category-btn" data-category="mass">⚖️ ভর</button>
+        <button type="button" class="category-btn" data-category="speed">🏃 গতি</button>
       </div>
 
       <!-- Форма конвертера -->
@@ -265,7 +270,7 @@
           <input type="number" id="fromValue" placeholder="মান লিখুন" step="any">
         </div>
 
-        <button class="swap-btn" id="swapBtn" title="বিনিময়">⇄</button>
+        <button type="button" class="swap-btn" id="swapBtn" title="বিনিময়">⇄</button>
 
         <div class="input-group">
           <label for="toValue">ফলাফল</label>
@@ -288,17 +293,36 @@
         </div>
       </div>
 
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-convert">Convert</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">Reset</button>
+            <button type="button" id="btn-share">Share</button>
+            <button type="button" id="btn-copy-result">Copy result</button>
+          </div>
+        </details>
+      </div>
+
       <!-- Результат -->
-      <div class="result" id="result">
-        রূপান্তরের জন্য মান লিখুন
+      <div class="results">
+        <h3>ফলাফল</h3>
+        <div class="result-hero">
+          <div class="result-value" id="heroResult">—</div>
+        </div>
+        <p class="result-disclaimer">Approximate unit conversion — double-check critical calculations.</p>
+        <div class="result-line" id="result">
+          রূপান্তরের জন্য মান লিখুন
+        </div>
       </div>
     </div>
 
     <!-- История конвертаций -->
-    <div class="conversion-history">
+    <div class="conversion-history history">
       <h3>📋 রূপান্তর ইতিহাস</h3>
       <div id="historyList"></div>
-      <button class="clear-history" id="clearHistory">ইতিহাস সাফ করুন</button>
+      <button type="button" class="clear-history" id="clearHistory">ইতিহাস সাফ করুন</button>
     </div>
 
     <!-- Вставляем переводы как JavaScript объект -->
@@ -306,7 +330,7 @@
       // Глобальная переменная с переводами
       window.unitConverterTranslationsData = {
         locale: 'bn',
-        translations: {"meta":{"title":"একক রূপান্তরকারী — Serpmonn ইঞ্জিনিয়ারিং","description":"ইঞ্জিনিয়ারদের জন্য বিভিন্ন পরিমাপ এককের মধ্যে দ্রুত রূপান্তর","twitterDescription":"ইঞ্জিনিয়ারদের জন্য একক রূপান্তরকারী"},"breadcrumb":{"tools":"সরঞ্জাম","unitConverter":"একক রূপান্তরকারী"},"page":{"title":"🔄 একক রূপান্তরকারী","categories":{"length":"📏 দৈর্ঘ্য","area":"📐 ক্ষেত্রফল","volume":"📦 আয়তন","temperature":"🌡️ তাপমাত্রা","power":"⚡ শক্তি","pressure":"💨 চাপ","mass":"⚖️ ভর","speed":"🏃 গতি"},"labels":{"value":"মান","result":"ফলাফল","fromUnit":"একক থেকে","toUnit":"এককে","swap":"বিনিময়","enterValue":"রূপান্তরের জন্য মান লিখুন","enterValuePlaceholder":"মান লিখুন","resultPlaceholder":"ফলাফল","conversionHistory":"📋 রূপান্তর ইতিহাস","clearHistory":"ইতিহাস সাফ করুন","emptyHistory":"ইতিহাস খালি","closeAd":"বিজ্ঞাপন বন্ধ করুন"},"units":{"length":{"mm":"মিলিমিটার (মিমি)","cm":"সেন্টিমিটার (সেমি)","m":"মিটার (মি)","km":"কিলোমিটার (কিমি)","in":"ইঞ্চি (ইঞ্চি)","ft":"ফুট (ফুট)","yd":"গজ (গজ)","mi":"মাইল (মাইল)"},"area":{"mm2":"বর্গ মিলিমিটার (মিমি²)","cm2":"বর্গ সেন্টিমিটার (সেমি²)","m2":"বর্গ মিটার (মি²)","km2":"বর্গ কিলোমিটার (কিমি²)","in2":"বর্গ ইঞ্চি (ইঞ্চি²)","ft2":"বর্গ ফুট (ফুট²)","yd2":"বর্গ গজ (গজ²)","ac":"একর (একর)"},"volume":{"ml":"মিলিলিটার (মিলি)","l":"লিটার (লিটার)","m3":"ঘন মিটার (মি³)","cm3":"ঘন সেন্টিমিটার (সেমি³)","in3":"ঘন ইঞ্চি (ইঞ্চি³)","ft3":"ঘন ফুট (ফুট³)","gal":"গ্যালন (গ্যালন)"},"temperature":{"c":"সেলসিয়াস (°C)","f":"ফারেনহাইট (°F)","k":"কেলভিন (K)","r":"র্যাঙ্কিন (°R)"},"power":{"w":"ওয়াট (W)","kw":"কিলোওয়াট (kW)","mw":"মেগাওয়াট (MW)","hp":"অশ্বশক্তি (অশ্বশক্তি)","btu":"BTU/ঘণ্টা"},"pressure":{"pa":"প্যাসকেল (Pa)","kpa":"কিলোপ্যাসকেল (kPa)","mpa":"মেগাপ্যাসকেল (MPa)","bar":"বার (বার)","atm":"বায়ুমণ্ডল (atm)","psi":"PSI (পাউন্ড প্রতি বর্গ ইঞ্চি)"},"mass":{"mg":"মিলিগ্রাম (মিগ্রা)","g":"গ্রাম (গ্রাম)","kg":"কিলোগ্রাম (কেজি)","t":"টন (টন)","lb":"পাউন্ড (পাউন্ড)","oz":"আউন্স (আউন্স)"},"speed":{"mps":"মি/সে (মি/সে)","kmh":"কিমি/ঘ (কিমি/ঘ)","mph":"মাইল/ঘ (মাইল/ঘ)","knot":"নট (নট)","fps":"ফুট/সে (ফুট/সে)"}}}}
+        translations: {"meta":{"title":"একক রূপান্তরকারী — Serpmonn ইঞ্জিনিয়ারিং","description":"ইঞ্জিনিয়ারদের জন্য বিভিন্ন পরিমাপ এককের মধ্যে দ্রুত রূপান্তর","twitterDescription":"ইঞ্জিনিয়ারদের জন্য একক রূপান্তরকারী"},"breadcrumb":{"tools":"সরঞ্জাম","unitConverter":"একক রূপান্তরকারী"},"page":{"title":"🔄 একক রূপান্তরকারী","categories":{"length":"📏 দৈর্ঘ্য","area":"📐 ক্ষেত্রফল","volume":"📦 আয়তন","temperature":"🌡️ তাপমাত্রা","power":"⚡ শক্তি","pressure":"💨 চাপ","mass":"⚖️ ভর","speed":"🏃 গতি"},"labels":{"value":"মান","result":"ফলাফল","fromUnit":"একক থেকে","toUnit":"এককে","swap":"বিনিময়","enterValue":"রূপান্তরের জন্য মান লিখুন","enterValuePlaceholder":"মান লিখুন","resultPlaceholder":"ফলাফল","conversionHistory":"📋 রূপান্তর ইতিহাস","clearHistory":"ইতিহাস সাফ করুন","emptyHistory":"ইতিহাস খালি","closeAd":"বিজ্ঞাপন বন্ধ করুন"},"units":{"length":{"mm":"মিলিমিটার (মিমি)","cm":"সেন্টিমিটার (সেমি)","m":"মিটার (মি)","km":"কিলোমিটার (কিমি)","in":"ইঞ্চি (ইঞ্চি)","ft":"ফুট (ফুট)","yd":"গজ (গজ)","mi":"মাইল (মাইল)"},"area":{"mm2":"বর্গ মিলিমিটার (মিমি²)","cm2":"বর্গ সেন্টিমিটার (সেমি²)","m2":"বর্গ মিটার (মি²)","km2":"বর্গ কিলোমিটার (কিমি²)","in2":"বর্গ ইঞ্চি (ইঞ্চি²)","ft2":"বর্গ ফুট (ফুট²)","yd2":"বর্গ গজ (গজ²)","ac":"একর (একর)"},"volume":{"ml":"মিলিলিটার (মিলি)","l":"লিটার (লিটার)","m3":"ঘন মিটার (মি³)","cm3":"ঘন সেন্টিমিটার (সেমি³)","in3":"ঘন ইঞ্চি (ইঞ্চি³)","ft3":"ঘন ফুট (ফুট³)","gal":"গ্যালন (গ্যালন)"},"temperature":{"c":"সেলসিয়াস (°C)","f":"ফারেনহাইট (°F)","k":"কেলভিন (K)","r":"র্যাঙ্কিন (°R)"},"power":{"w":"ওয়াট (W)","kw":"কিলোওয়াট (kW)","mw":"মেগাওয়াট (MW)","hp":"অশ্বশক্তি (অশ্বশক্তি)","btu":"BTU/ঘণ্টা"},"pressure":{"pa":"প্যাসকেল (Pa)","kpa":"কিলোপ্যাসকেল (kPa)","mpa":"মেগাপ্যাসকেল (MPa)","bar":"বার (বার)","atm":"বায়ুমণ্ডল (atm)","psi":"PSI (পাউন্ড প্রতি বর্গ ইঞ্চি)"},"mass":{"mg":"মিলিগ্রাম (মিগ্রা)","g":"গ্রাম (গ্রাম)","kg":"কিলোগ্রাম (কেজি)","t":"টন (টন)","lb":"পাউন্ড (পাউন্ড)","oz":"আউন্স (আউন্স)"},"speed":{"mps":"মি/সে (মি/সে)","kmh":"কিমি/ঘ (কিমি/ঘ)","mph":"মাইল/ঘ (মাইল/ঘ)","knot":"নট (নট)","fps":"ফুট/সে (ফুট/সে)"}},"lead":"Quickly convert a value between measurement units.","disclaimer":"Approximate unit conversion — double-check critical calculations.","actions":{"convert":"Convert","more":"More","reset":"Reset","share":"Share","copy":"Copy result","copied":"Copied"}}}
       };
     </script>
 
@@ -417,7 +441,9 @@
         init() {
           this.setupEventListeners();
           this.populateUnits();
+          this.restoreFromUrl();
           this.updateHistory();
+          this.convert();
         }
 
         setupEventListeners() {
@@ -451,6 +477,75 @@
           document.getElementById('clearHistory').addEventListener('click', () => {
             this.clearHistory();
           });
+
+          document.getElementById('btn-convert')?.addEventListener('click', () => this.convert());
+          document.getElementById('btn-reset')?.addEventListener('click', () => this.resetForm());
+          document.getElementById('btn-share')?.addEventListener('click', () => this.shareLink());
+          document.getElementById('btn-copy-result')?.addEventListener('click', (e) => this.copyResult(e.currentTarget));
+        }
+
+        syncUrl() {
+          const url = new URL(location.href);
+          url.searchParams.set('cat', this.currentCategory);
+          url.searchParams.set('from', document.getElementById('fromUnit').value || '');
+          url.searchParams.set('to', document.getElementById('toUnit').value || '');
+          const v = document.getElementById('fromValue').value;
+          if (v) url.searchParams.set('v', v); else url.searchParams.delete('v');
+          history.replaceState(null, '', url);
+        }
+
+        restoreFromUrl() {
+          const p = new URLSearchParams(location.search);
+          const cat = p.get('cat');
+          if (cat && this.categories[cat]) {
+            this.currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.category === cat);
+            });
+            this.populateUnits();
+          }
+          if (p.get('from') && document.getElementById('fromUnit').querySelector(`option[value="${p.get('from')}"]`)) {
+            document.getElementById('fromUnit').value = p.get('from');
+          }
+          if (p.get('to') && document.getElementById('toUnit').querySelector(`option[value="${p.get('to')}"]`)) {
+            document.getElementById('toUnit').value = p.get('to');
+          }
+          if (p.get('v')) document.getElementById('fromValue').value = p.get('v');
+        }
+
+        resetForm() {
+          document.getElementById('fromValue').value = '';
+          document.getElementById('toValue').value = '';
+          document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = '—';
+          history.replaceState(null, '', location.pathname);
+        }
+
+        async shareLink() {
+          this.syncUrl();
+          try {
+            await navigator.clipboard.writeText(location.href);
+            const btn = document.getElementById('btn-share');
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
+        }
+
+        async copyResult(btn) {
+          const str = document.getElementById('result')?.textContent || '';
+          if (!str) return;
+          try {
+            await navigator.clipboard.writeText(str);
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
         }
 
         setCategory(category) {
@@ -504,6 +599,8 @@
           
           if (isNaN(fromValue)) {
             document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+            const hero = document.getElementById('heroResult');
+            if (hero) hero.textContent = '—';
             return;
           }
           
@@ -516,8 +613,11 @@
           }
           
           document.getElementById('toValue').value = result.toFixed(6);
-          document.getElementById('result').textContent = 
-            `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          const line = `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          document.getElementById('result').textContent = line;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = `${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          this.syncUrl();
           
           // Добавляем в историю
           this.addToHistory(fromValue, fromUnit, toUnit, result);
@@ -637,6 +737,7 @@
     </script>
 
     <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script>
 </script>

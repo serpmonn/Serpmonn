@@ -6,106 +6,56 @@
 
 ## Требования
 
-- Linux x86_64 с публичным IP
-- Go ≥ 1.21
-- Порт **4001** открыт TCP + UDP (firewall/ufw)
+- Linux x86_64 (можно за NAT с `-extip`)
+- Go ≥ 1.25
+- **Снаружи только 443**: TCP (nginx WSS) + UDP (QUIC/WebTransport)
+- Порты **4001/4002** — только `127.0.0.1` (firewall DROP с WAN)
 
-## Деплой (первый раз)
+## Публичный доступ
 
-Скачивать нужно только папку `relay/`, а не весь репозиторий.
+| Путь | Куда |
+|---|---|
+| `wss://relay.serpmonn.ru/api/v1/sync` | nginx → `127.0.0.1:4002` (plain WS) |
+| `udp/443` QUIC | напрямую `serpmonn-relay` |
 
-**Вариант A — через curl (без git, рекомендуется):**
+nginx: только `location = /api/v1/sync`; остальное — JSON 404.
+
+## Деплой
+
 ```bash
-mkdir -p /opt/serpmonn-relay
-curl -sL https://github.com/serpmonn/Serpmonn/archive/refs/heads/master.tar.gz \
-    | tar -xz --strip-components=2 -C /opt/serpmonn-relay Serpmonn-master/relay
-cd /opt/serpmonn-relay
+cd /var/www/serpmonn.ru/relay   # или /opt/serpmonn-relay
 bash deploy/install.sh
 ```
 
-**Вариант B — через git sparse-checkout:**
-```bash
-git clone --no-checkout --depth=1 --filter=blob:none \
-    https://github.com/serpmonn/Serpmonn /opt/serpmonn-tmp
-cd /opt/serpmonn-tmp
-git sparse-checkout set relay
-git checkout
-mv relay /opt/serpmonn-relay
-rm -rf /opt/serpmonn-tmp
-cd /opt/serpmonn-relay
-bash deploy/install.sh
-```
+`install.sh`: пользователь `serpmonn`, ключ `/etc/serpmonn/relay-identity.key`,
+бинарник `/usr/local/bin/serpmonn-relay`, systemd unit.
 
-`install.sh` делает:
-1. Создаёт системного пользователя `serpmonn`
-2. Генерирует Ed25519 ключ → `/etc/serpmonn/relay-identity.key` (600, owner serpmonn)
-3. Собирает бинарник → `/usr/local/bin/serpmonn-relay`
-4. Устанавливает и запускает systemd unit `serpmonn-relay`
-5. Открывает порт 4001 TCP+UDP через ufw (если установлен)
+Unit выдаёт `CAP_NET_BIND_SERVICE` для UDP/443 без root.
 
-## Получить PeerID и multiaddr'ы
-
-После первого запуска:
+## Bootstrap multiaddrs
 
 ```bash
-journalctl -u serpmonn-relay -n 20
+journalctl -u serpmonn-relay -n 30
 ```
 
-Вы увидите строки вида:
+Публичные адреса (WAN):
 ```
-relay: PeerID = 12D3KooW...
-relay: Multiaddrs (put these in DefaultBootstraps):
-  /ip4/1.2.3.4/tcp/4001/p2p/12D3KooW...
-  /ip4/1.2.3.4/udp/4001/quic-v1/p2p/12D3KooW...
+/dns4/relay.serpmonn.ru/tcp/443/wss/p2p/<PEERID>
+/dns4/relay.serpmonn.ru/udp/443/quic-v1/p2p/<PEERID>
 ```
 
-Скопируйте эти адреса в `DefaultBootstraps()` в
-`packages/go-core/net/bootstrap.go` репозитория `Serpmonn_messenger`.
+Клиент: path `/api/v1/sync`, без 4001/4002 в bootstrap.
 
-## Тест reservation
+## Firewall (пример)
 
 ```bash
-# На любой машине с Go:
-cd /opt/serpmonn/relay
-go run ./cmd/test-reservation/ -relay /ip4/<IP>/tcp/4001/p2p/<PEERID>
+iptables -I INPUT -i lo -p tcp --dport 4001 -j ACCEPT
+iptables -I INPUT -i lo -p udp --dport 4001 -j ACCEPT
+iptables -I INPUT -i lo -p tcp --dport 4002 -j ACCEPT
+iptables -I INPUT -p tcp --dport 4001 -j DROP
+iptables -I INPUT -p udp --dport 4001 -j DROP
+iptables -I INPUT -p tcp --dport 4002 -j DROP
+netfilter-persistent save
 ```
 
-Успех:
-```
-✓ reservation OK
-  Relay:      12D3KooW...
-  Our PeerID: 12D3KooW...
-  Relay addr: /ip4/1.2.3.4/tcp/4001/p2p/12D3KooW.../p2p-circuit
-  Expires:    2026-06-07T06:00:00+03:00
-```
-
-## Ключи
-
-| Файл | Содержимое | Права |
-|------|-----------|-------|
-| `/etc/serpmonn/relay-identity.key` | Base64 Ed25519 privkey | `600 serpmonn:serpmonn` |
-
-**Никогда не коммитить в репозиторий.** PeerID детерминирован по ключу —
-потеря ключа = смена PeerID = обновление DefaultBootstraps во всех клиентах.
-
-## Обновление
-
-```bash
-cd /opt/serpmonn
-git pull
-cd relay
-go build -o /usr/local/bin/serpmonn-relay .
-systemctl restart serpmonn-relay
-```
-
-## Лимиты Circuit Relay v2 (MVP)
-
-| Параметр | Значение |
-|----------|---------|
-| MaxReservations | 1024 |
-| MaxCircuits | 512 |
-| MaxReservationsPerPeer | 8 |
-| MaxReservationsPerIP | 16 |
-| MaxReservationsPerASN | 32 |
-| Лимит трафика | нет |
-| Лимит времени | нет |
+На роутере: проброс **TCP/443** и **UDP/443**; **не** пробрасывать 4001/4002.

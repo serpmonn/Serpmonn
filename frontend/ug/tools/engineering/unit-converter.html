@@ -229,9 +229,10 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
+    <link rel="stylesheet" href="/frontend/styles/tools/unit-converter.css?v=2">
   </head>
-  <body>
+  <body class="spn-tool unit-converter-page">
     <!-- Меню -->
     <div id="menuContainer"></div>
 
@@ -243,19 +244,23 @@
           data-ad-slot="1897960">
       </ins>
     </div>
-<h1>🔄 بىرلىك ئايلاندۇرغۇچ</h1>
+    <h1>🔄 بىرلىك ئايلاندۇرغۇچ</h1>
+    
+    <p class="tool-lead">Quickly convert a value between measurement units.</p>
+    
 
-    <div class="converter-container">
+    <div class="calculator-container converter-container">
+      <div id="error-message" class="error-message hidden" role="alert"></div>
       <!-- Выбор категории -->
       <div class="category-selector">
-        <button class="category-btn active" data-category="length">📏 ئۇزۇنلۇق</button>
-        <button class="category-btn" data-category="area">📐 يۈزى</button>
-        <button class="category-btn" data-category="volume">📦 ھەجىم</button>
-        <button class="category-btn" data-category="temperature">🌡️ تېمپېراتۇرا</button>
-        <button class="category-btn" data-category="power">⚡ كۈچ</button>
-        <button class="category-btn" data-category="pressure">💨 بېسىم</button>
-        <button class="category-btn" data-category="mass">⚖️ ماسسا</button>
-        <button class="category-btn" data-category="speed">🏃 سۈرئەت</button>
+        <button type="button" class="category-btn active" data-category="length">📏 ئۇزۇنلۇق</button>
+        <button type="button" class="category-btn" data-category="area">📐 يۈزى</button>
+        <button type="button" class="category-btn" data-category="volume">📦 ھەجىم</button>
+        <button type="button" class="category-btn" data-category="temperature">🌡️ تېمپېراتۇرا</button>
+        <button type="button" class="category-btn" data-category="power">⚡ كۈچ</button>
+        <button type="button" class="category-btn" data-category="pressure">💨 بېسىم</button>
+        <button type="button" class="category-btn" data-category="mass">⚖️ ماسسا</button>
+        <button type="button" class="category-btn" data-category="speed">🏃 سۈرئەت</button>
       </div>
 
       <!-- Форма конвертера -->
@@ -265,7 +270,7 @@
           <input type="number" id="fromValue" placeholder="قىممەت كىرگۈزۈڭ" step="any">
         </div>
 
-        <button class="swap-btn" id="swapBtn" title="ئالماشتۇرۇش">⇄</button>
+        <button type="button" class="swap-btn" id="swapBtn" title="ئالماشتۇرۇش">⇄</button>
 
         <div class="input-group">
           <label for="toValue">نەتىجە</label>
@@ -288,17 +293,36 @@
         </div>
       </div>
 
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-convert">Convert</button>
+        <details class="more-actions">
+          <summary>More</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">Reset</button>
+            <button type="button" id="btn-share">Share</button>
+            <button type="button" id="btn-copy-result">Copy result</button>
+          </div>
+        </details>
+      </div>
+
       <!-- Результат -->
-      <div class="result" id="result">
-        ئايلاندۇرۇش ئۈچۈن قىممەت كىرگۈزۈڭ
+      <div class="results">
+        <h3>نەتىجە</h3>
+        <div class="result-hero">
+          <div class="result-value" id="heroResult">—</div>
+        </div>
+        <p class="result-disclaimer">Approximate unit conversion — double-check critical calculations.</p>
+        <div class="result-line" id="result">
+          ئايلاندۇرۇش ئۈچۈن قىممەت كىرگۈزۈڭ
+        </div>
       </div>
     </div>
 
     <!-- История конвертаций -->
-    <div class="conversion-history">
+    <div class="conversion-history history">
       <h3>📋 ئايلاندۇرۇش تارىخى</h3>
       <div id="historyList"></div>
-      <button class="clear-history" id="clearHistory">تارىخنى تازىلاش</button>
+      <button type="button" class="clear-history" id="clearHistory">تارىخنى تازىلاش</button>
     </div>
 
     <!-- Вставляем переводы как JavaScript объект -->
@@ -306,7 +330,7 @@
       // Глобальная переменная с переводами
       window.unitConverterTranslationsData = {
         locale: 'ug',
-        translations: {"meta":{"title":"بىرلىك ئايلاندۇرغۇچ — Serpmonn ئىنژېنېرلىق","description":"ئىنژېنېرلار ئۈچۈن تۇرلۇك ئۆلچەم بىرلىكلىرى ئارىسىدا تېز ئايلاندۇرۇش","twitterDescription":"ئىنژېنېرلار ئۈچۈن بىرلىك ئايلاندۇرغۇچ"},"breadcrumb":{"tools":"قوراللار","unitConverter":"بىرلىك ئايلاندۇرغۇچ"},"page":{"title":"🔄 بىرلىك ئايلاندۇرغۇچ","categories":{"length":"📏 ئۇزۇنلۇق","area":"📐 يۈزى","volume":"📦 ھەجىم","temperature":"🌡️ تېمپېراتۇرا","power":"⚡ كۈچ","pressure":"💨 بېسىم","mass":"⚖️ ماسسا","speed":"🏃 سۈرئەت"},"labels":{"value":"قىممەت","result":"نەتىجە","fromUnit":"بىرلىكتىن","toUnit":"بىرلىككە","swap":"ئالماشتۇرۇش","enterValue":"ئايلاندۇرۇش ئۈچۈن قىممەت كىرگۈزۈڭ","enterValuePlaceholder":"قىممەت كىرگۈزۈڭ","resultPlaceholder":"نەتىجە","conversionHistory":"📋 ئايلاندۇرۇش تارىخى","clearHistory":"تارىخنى تازىلاش","emptyHistory":"تارىخ بوش","closeAd":"ئېلاننى تاقاش"},"units":{"length":{"mm":"مىللىمېتر (مىللىمېتر)","cm":"سانتىمېتر (سانتىمېتر)","m":"مېتر (مېتر)","km":"كىلومېتر (كىلومېتر)","in":"دىيۇم (دىيۇم)","ft":"فۇت (فۇت)","yd":"يارد (يارد)","mi":"مىل (مىل)"},"area":{"mm2":"كۋادرات مىللىمېتر (مىللىمېتر²)","cm2":"كۋادرات سانتىمېتر (سانتىمېتر²)","m2":"كۋادرات مېتر (مېتر²)","km2":"كۋادرات كىلومېتر (كىلومېتر²)","in2":"كۋادرات دىيۇم (دىيۇم²)","ft2":"كۋادرات فۇت (فۇت²)","yd2":"كۋادرات يارد (يارد²)","ac":"ئاكر (ئاكر)"},"volume":{"ml":"مىللىلىتر (مىللىلىتر)","l":"لىتر (لىتر)","m3":"كۇب مېتر (مېتر³)","cm3":"كۇب سانتىمېتر (سانتىمېتر³)","in3":"كۇب دىيۇم (دىيۇم³)","ft3":"كۇب فۇت (فۇت³)","gal":"گاللون (گاللون)"},"temperature":{"c":"سېلزىي (°C)","f":"فارېنخېيت (°F)","k":"كېلۋىن (K)","r":"رانكىن (°R)"},"power":{"w":"ۋات (W)","kw":"كىلوۋات (kW)","mw":"مېگاۋات (MW)","hp":"ئات كۈچى (a.k.)","btu":"BTU/سائەت"},"pressure":{"pa":"پاسكال (Pa)","kpa":"كىلوپاسكال (kPa)","mpa":"مېگاپاسكال (MPa)","bar":"بار (بار)","atm":"ئاتموسفېرا (atm)","psi":"PSI (كۋادرات دىيۇمغا پوند)"},"mass":{"mg":"مىللىگرام (مىللىگرام)","g":"گرام (گرام)","kg":"كىلوگرام (كىلوگرام)","t":"توننا (توننا)","lb":"پوند (پوند)","oz":"ئۇنسىيە (ئۇنسىيە)"},"speed":{"mps":"مېتر/سېكۇنت (مېتر/سېكۇنت)","kmh":"كىلومېتر/سائەت (كىلومېتر/سائەت)","mph":"مىل/سائەت (مىل/سائەت)","knot":"تۇگۈن (تۇگۈن)","fps":"فۇت/سېكۇنت (فۇت/سېكۇنت)"}}}}
+        translations: {"meta":{"title":"بىرلىك ئايلاندۇرغۇچ — Serpmonn ئىنژېنېرلىق","description":"ئىنژېنېرلار ئۈچۈن تۇرلۇك ئۆلچەم بىرلىكلىرى ئارىسىدا تېز ئايلاندۇرۇش","twitterDescription":"ئىنژېنېرلار ئۈچۈن بىرلىك ئايلاندۇرغۇچ"},"breadcrumb":{"tools":"قوراللار","unitConverter":"بىرلىك ئايلاندۇرغۇچ"},"page":{"title":"🔄 بىرلىك ئايلاندۇرغۇچ","categories":{"length":"📏 ئۇزۇنلۇق","area":"📐 يۈزى","volume":"📦 ھەجىم","temperature":"🌡️ تېمپېراتۇرا","power":"⚡ كۈچ","pressure":"💨 بېسىم","mass":"⚖️ ماسسا","speed":"🏃 سۈرئەت"},"labels":{"value":"قىممەت","result":"نەتىجە","fromUnit":"بىرلىكتىن","toUnit":"بىرلىككە","swap":"ئالماشتۇرۇش","enterValue":"ئايلاندۇرۇش ئۈچۈن قىممەت كىرگۈزۈڭ","enterValuePlaceholder":"قىممەت كىرگۈزۈڭ","resultPlaceholder":"نەتىجە","conversionHistory":"📋 ئايلاندۇرۇش تارىخى","clearHistory":"تارىخنى تازىلاش","emptyHistory":"تارىخ بوش","closeAd":"ئېلاننى تاقاش"},"units":{"length":{"mm":"مىللىمېتر (مىللىمېتر)","cm":"سانتىمېتر (سانتىمېتر)","m":"مېتر (مېتر)","km":"كىلومېتر (كىلومېتر)","in":"دىيۇم (دىيۇم)","ft":"فۇت (فۇت)","yd":"يارد (يارد)","mi":"مىل (مىل)"},"area":{"mm2":"كۋادرات مىللىمېتر (مىللىمېتر²)","cm2":"كۋادرات سانتىمېتر (سانتىمېتر²)","m2":"كۋادرات مېتر (مېتر²)","km2":"كۋادرات كىلومېتر (كىلومېتر²)","in2":"كۋادرات دىيۇم (دىيۇم²)","ft2":"كۋادرات فۇت (فۇت²)","yd2":"كۋادرات يارد (يارد²)","ac":"ئاكر (ئاكر)"},"volume":{"ml":"مىللىلىتر (مىللىلىتر)","l":"لىتر (لىتر)","m3":"كۇب مېتر (مېتر³)","cm3":"كۇب سانتىمېتر (سانتىمېتر³)","in3":"كۇب دىيۇم (دىيۇم³)","ft3":"كۇب فۇت (فۇت³)","gal":"گاللون (گاللون)"},"temperature":{"c":"سېلزىي (°C)","f":"فارېنخېيت (°F)","k":"كېلۋىن (K)","r":"رانكىن (°R)"},"power":{"w":"ۋات (W)","kw":"كىلوۋات (kW)","mw":"مېگاۋات (MW)","hp":"ئات كۈچى (a.k.)","btu":"BTU/سائەت"},"pressure":{"pa":"پاسكال (Pa)","kpa":"كىلوپاسكال (kPa)","mpa":"مېگاپاسكال (MPa)","bar":"بار (بار)","atm":"ئاتموسفېرا (atm)","psi":"PSI (كۋادرات دىيۇمغا پوند)"},"mass":{"mg":"مىللىگرام (مىللىگرام)","g":"گرام (گرام)","kg":"كىلوگرام (كىلوگرام)","t":"توننا (توننا)","lb":"پوند (پوند)","oz":"ئۇنسىيە (ئۇنسىيە)"},"speed":{"mps":"مېتر/سېكۇنت (مېتر/سېكۇنت)","kmh":"كىلومېتر/سائەت (كىلومېتر/سائەت)","mph":"مىل/سائەت (مىل/سائەت)","knot":"تۇگۈن (تۇگۈن)","fps":"فۇت/سېكۇنت (فۇت/سېكۇنت)"}},"lead":"Quickly convert a value between measurement units.","disclaimer":"Approximate unit conversion — double-check critical calculations.","actions":{"convert":"Convert","more":"More","reset":"Reset","share":"Share","copy":"Copy result","copied":"Copied"}}}
       };
     </script>
 
@@ -417,7 +441,9 @@
         init() {
           this.setupEventListeners();
           this.populateUnits();
+          this.restoreFromUrl();
           this.updateHistory();
+          this.convert();
         }
 
         setupEventListeners() {
@@ -451,6 +477,75 @@
           document.getElementById('clearHistory').addEventListener('click', () => {
             this.clearHistory();
           });
+
+          document.getElementById('btn-convert')?.addEventListener('click', () => this.convert());
+          document.getElementById('btn-reset')?.addEventListener('click', () => this.resetForm());
+          document.getElementById('btn-share')?.addEventListener('click', () => this.shareLink());
+          document.getElementById('btn-copy-result')?.addEventListener('click', (e) => this.copyResult(e.currentTarget));
+        }
+
+        syncUrl() {
+          const url = new URL(location.href);
+          url.searchParams.set('cat', this.currentCategory);
+          url.searchParams.set('from', document.getElementById('fromUnit').value || '');
+          url.searchParams.set('to', document.getElementById('toUnit').value || '');
+          const v = document.getElementById('fromValue').value;
+          if (v) url.searchParams.set('v', v); else url.searchParams.delete('v');
+          history.replaceState(null, '', url);
+        }
+
+        restoreFromUrl() {
+          const p = new URLSearchParams(location.search);
+          const cat = p.get('cat');
+          if (cat && this.categories[cat]) {
+            this.currentCategory = cat;
+            document.querySelectorAll('.category-btn').forEach(btn => {
+              btn.classList.toggle('active', btn.dataset.category === cat);
+            });
+            this.populateUnits();
+          }
+          if (p.get('from') && document.getElementById('fromUnit').querySelector(`option[value="${p.get('from')}"]`)) {
+            document.getElementById('fromUnit').value = p.get('from');
+          }
+          if (p.get('to') && document.getElementById('toUnit').querySelector(`option[value="${p.get('to')}"]`)) {
+            document.getElementById('toUnit').value = p.get('to');
+          }
+          if (p.get('v')) document.getElementById('fromValue').value = p.get('v');
+        }
+
+        resetForm() {
+          document.getElementById('fromValue').value = '';
+          document.getElementById('toValue').value = '';
+          document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = '—';
+          history.replaceState(null, '', location.pathname);
+        }
+
+        async shareLink() {
+          this.syncUrl();
+          try {
+            await navigator.clipboard.writeText(location.href);
+            const btn = document.getElementById('btn-share');
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
+        }
+
+        async copyResult(btn) {
+          const str = document.getElementById('result')?.textContent || '';
+          if (!str) return;
+          try {
+            await navigator.clipboard.writeText(str);
+            if (btn) {
+              const prev = btn.textContent;
+              btn.textContent = this.translations.page.actions?.copied || 'Скопировано';
+              setTimeout(() => { btn.textContent = prev; }, 1400);
+            }
+          } catch {}
         }
 
         setCategory(category) {
@@ -504,6 +599,8 @@
           
           if (isNaN(fromValue)) {
             document.getElementById('result').textContent = this.translations.page.labels.enterValue;
+            const hero = document.getElementById('heroResult');
+            if (hero) hero.textContent = '—';
             return;
           }
           
@@ -516,8 +613,11 @@
           }
           
           document.getElementById('toValue').value = result.toFixed(6);
-          document.getElementById('result').textContent = 
-            `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          const line = `${fromValue} ${this.categories[this.currentCategory].units[fromUnit].name} = ${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          document.getElementById('result').textContent = line;
+          const hero = document.getElementById('heroResult');
+          if (hero) hero.textContent = `${result.toFixed(6)} ${this.categories[this.currentCategory].units[toUnit].name}`;
+          this.syncUrl();
           
           // Добавляем в историю
           this.addToHistory(fromValue, fromUnit, toUnit, result);
@@ -637,6 +737,7 @@
     </script>
 
     <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 <script>
 </script>

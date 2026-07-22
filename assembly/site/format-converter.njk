@@ -1,0 +1,129 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/tools/design/format-converter.html{% else %}/frontend/{{ locale }}/tools/design/format-converter.html{% endif %}"
+eleventyComputed:
+  title: "{{ formatConverter[locale].meta.title }}"
+  description: "{{ formatConverter[locale].meta.description }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/tools/design/format-converter.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/tools/design/format-converter.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+  <head>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+    <meta property="og:title" content="{{ formatConverter[locale].meta.ogTitle }}">
+    <meta property="og:description" content="{{ formatConverter[locale].meta.ogDescription }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ formatConverter[locale].meta.twitterTitle }}">
+    <meta name="twitter:description" content="{{ formatConverter[locale].meta.twitterDescription }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <link rel="canonical" href="{{ canonical }}" />
+    {% for loc in locales %}
+      {% if loc == 'ru' %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/design/format-converter.html" hreflang="{{ loc }}" />
+      {% else %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/tools/design/format-converter.html" hreflang="{{ loc }}" />
+      {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/tools/design/format-converter.html" hreflang="x-default" />
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "SoftwareApplication",
+      "name": "{{ formatConverter[locale].meta.title | replace('"', '&quot;') }}",
+      "description": "{{ formatConverter[locale].meta.description | replace('"', '&quot;') }}",
+      "url": "{{ canonical }}",
+      "applicationCategory": "UtilityApplication",
+      "operatingSystem": "Web",
+      "inLanguage": "{{ locale }}",
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "RUB" },
+      "publisher": { "@type": "Organization", "name": "Serpmonn", "url": "{{ site.baseUrl }}/" }
+    }
+    </script>
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css">
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
+    <link rel="stylesheet" href="/frontend/styles/tools/new-tools.css?v=2">
+  </head>
+  <body class="spn-tool format-converter-page">
+    <div id="menuContainer"></div>
+    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
+      <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
+    </div>
+
+    <h1>{{ formatConverter[locale].page.title }}</h1>
+    <p class="tool-lead">{{ formatConverter[locale].page.lead }}</p>
+    <div class="calculator-container">
+      <h2>{{ formatConverter[locale].page.formTitle }}</h2>
+      <div id="error-message" class="error-message hidden" role="alert"></div>
+      <div class="input-section">
+        <div class="input-group">
+          <label for="file">{{ formatConverter[locale].page.fileLabel }}</label>
+          <input id="file" type="file" accept="image/*,.bmp,.ico,.gif,.tif,.tiff,.avif,.webp,.jpg,.jpeg,.png">
+        </div>
+        <div class="input-group">
+          <label for="format">{{ formatConverter[locale].page.formatLabel }}</label>
+          <select id="format">
+            <option value="png">{{ formatConverter[locale].page.formats.png }}</option>
+            <option value="jpeg">{{ formatConverter[locale].page.formats.jpeg }}</option>
+            <option value="webp">{{ formatConverter[locale].page.formats.webp }}</option>
+            <option value="avif">{{ formatConverter[locale].page.formats.avif if formatConverter[locale].page.formats.avif else 'AVIF' }}</option>
+            <option value="bmp">{{ formatConverter[locale].page.formats.bmp if formatConverter[locale].page.formats.bmp else 'BMP' }}</option>
+            <option value="ico">{{ formatConverter[locale].page.formats.ico if formatConverter[locale].page.formats.ico else 'ICO' }}</option>
+          </select>
+        </div>
+        <div class="input-group" id="quality-group">
+          <label for="quality">{{ formatConverter[locale].page.qualityLabel }}</label>
+          <input id="quality" type="number" min="10" max="100" value="90">
+        </div>
+      </div>
+      <div class="action-bar action-bar--split">
+        <button type="button" class="calculate-btn" id="btn-convert">{{ formatConverter[locale].page.actions.convert }}</button>
+        <button type="button" class="download-btn" id="btn-download" disabled>{{ formatConverter[locale].page.actions.download }}</button>
+        <details class="more-actions">
+          <summary>{{ formatConverter[locale].page.actions.more }}</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-reset">{{ formatConverter[locale].page.actions.reset }}</button>
+            <button type="button" id="btn-share">{{ formatConverter[locale].page.actions.share }}</button>
+          </div>
+        </details>
+      </div>
+      <div class="results">
+        <h3>{{ formatConverter[locale].page.resultsTitle }}</h3>
+        <div class="result-hero">
+          <div class="result-value" id="heroResult">—</div>
+          <div class="result-label" id="info"></div>
+        </div>
+        <p id="download-hint" class="download-hint hidden">{{ formatConverter[locale].page.downloadHint if formatConverter[locale].page.downloadHint else 'Нажмите «Скачать», чтобы сохранить файл на устройство.' }}</p>
+        <img id="preview" class="preview-img hidden" alt="{{ formatConverter[locale].page.previewAlt }}">
+        <p class="result-disclaimer">{{ formatConverter[locale].page.disclaimer }}</p>
+      </div>
+    </div>
+
+    <script>
+      window.formatConverterTranslations = {{ formatConverter[locale] | dump | safe }};
+    </script>
+    <script type="module" src="/frontend/scripts/tools/format-converter.js?v=2"></script>
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+  {{ mobileAnchor(formatConverter[locale].ads.closeAria) }}
+  {% include "partials/ad-pool-init.njk" %}
+</body>
+</html>

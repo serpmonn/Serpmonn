@@ -154,137 +154,89 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
-    
-    <style>
-      /* ad top adaptive start */
-      .ad-top-banner .mrg-tag { width: 970px !important; height: 250px !important; }
-      @media (max-width: 1199px) { .ad-top-banner .mrg-tag { width: 728px !important; height: 90px !important; } }
-      @media (max-width: 768px) { .ad-top-banner .mrg-tag { width: 320px !important; height: 50px !important; } }
-      /* ad top adaptive end */
-      
-      body { max-width: 960px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
-      h1 { margin: 16px 0; }
-      .row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-      label { font-size: 14px; color: #374151; }
-      input { width: 100%; padding: 10px; border: 1px solid #e5e7eb; border-radius: 8px; }
-      .box { border: 1px solid #e5e7eb; border-radius: 10px; padding: 16px; margin: 12px 0; }
-      .actions { display: flex; gap: 8px; }
-      button { padding: 10px 12px; border-radius: 8px; border: 1px solid #111827; background: #111827; color: #fff; }
-      .muted { color: #6b7280; font-size: 13px; }
-      .output { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; word-break: break-all; }
-
-      /* RTL поддержка */
-      
-
-      /* Адаптивность для мобильных устройств */
-      @media (max-width: 768px) {
-        .row { grid-template-columns: 1fr; }
-        body { padding: 12px; }
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3">
   </head>
-  <body>
-    <!-- Меню -->
+  <body class="spn-tool utm-builder-page">
     <div id="menuContainer"></div>
-    
+
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
-      <ins class="mrg-tag" 
+      <ins class="mrg-tag"
           style="display:inline-block;"
-          data-ad-client="ad-1897960" 
+          data-ad-client="ad-1897960"
           data-ad-slot="1897960">
       </ins>
     </div>
-<h1>🔗 Генератор UTM‑меток</h1>
+
+    <h1>🔗 Генератор UTM‑меток</h1>
     
-    <!-- Форма параметров UTM -->
-    <div class="box">
-      <div class="row">
-        <div>
-          <label>Базовый URL</label>
+    <p class="tool-lead">Соберите UTM-ссылку для кампании за несколько секунд.</p>
+    
+
+    <div class="calculator-container">
+      <h2>Параметры UTM</h2>
+      <div id="error-message" class="error-message hidden" role="alert"></div>
+
+      <div class="input-section">
+        <div class="input-group">
+          <label for="base">Базовый URL</label>
           <input id="base" placeholder="https://example.com/landing" />
         </div>
-        <div>
-          <label>utm_source</label>
+        <div class="input-group">
+          <label for="source">utm_source</label>
           <input id="source" placeholder="telegram" />
         </div>
-        <div>
-          <label>utm_medium</label>
+        <div class="input-group">
+          <label for="medium">utm_medium</label>
           <input id="medium" placeholder="bot" />
         </div>
-        <div>
-          <label>utm_campaign</label>
+        <div class="input-group">
+          <label for="campaign">utm_campaign</label>
           <input id="campaign" placeholder="spring_sale" />
         </div>
-        <div>
-          <label>utm_content</label>
-          <input id="content" placeholder="banner_a" />
-        </div>
-        <div>
-          <label>utm_term</label>
-          <input id="term" placeholder="keyword" />
-        </div>
       </div>
-    </div>
-    
-    <!-- Действия и вывод результата -->
-    <div class="box">
-      <div class="actions">
-        <button id="build">Сгенерировать</button>
-        <button id="copy" type="button">Копировать</button>
+
+      <div class="action-bar">
+        <button type="button" class="calculate-btn" id="btn-build">Сгенерировать</button>
+        <details class="more-actions">
+          <summary>Ещё</summary>
+          <div class="more-actions__list">
+            <button type="button" id="btn-copy">Копировать</button>
+            <button type="button" id="btn-reset">Сбросить</button>
+            <button type="button" id="btn-share">Поделиться</button>
+          </div>
+        </details>
       </div>
-      <p class="muted">Сгенерированная ссылка:</p>
-      <div id="result" class="output"></div>
+
+      <details class="optional-fields">
+        <summary>Дополнительно</summary>
+        <div class="input-section">
+          <div class="input-group">
+            <label for="content">utm_content</label>
+            <input id="content" placeholder="banner_a" />
+          </div>
+          <div class="input-group">
+            <label for="term">utm_term</label>
+            <input id="term" placeholder="keyword" />
+          </div>
+        </div>
+      </details>
+
+      <div class="results">
+        <h3>Сгенерированная ссылка:</h3>
+        <div class="result-hero">
+          <div class="output" id="result">—</div>
+        </div>
+        <p class="result-disclaimer">Ссылка собирается локально в браузере.</p>
+      </div>
     </div>
 
     <script>
-      // Вспомогательный селектор
-      const qs = (s)=>document.querySelector(s);
-      
-      // Формирование ссылки с UTM‑параметрами
-      function buildUrl() {
-        const base = qs('#base').value.trim();
-        const params = new URLSearchParams();
-        const add = (k,v)=>{ if (v && v.trim()) params.set(k, v.trim()); };
-        add('utm_source', qs('#source').value);
-        add('utm_medium', qs('#medium').value);
-        add('utm_campaign', qs('#campaign').value);
-        add('utm_content', qs('#content').value);
-        add('utm_term', qs('#term').value);
-        if (!base) return '';
-        const hasQuery = base.includes('?');
-        return base + (hasQuery ? '&' : '?') + params.toString();
-      }
-      
-      // Кнопка генерации
-      qs('#build').addEventListener('click', ()=>{
-        qs('#result').textContent = buildUrl();
-      });
-      
-      // Копирование результата в буфер обмена
-      qs('#copy').addEventListener('click', async ()=>{
-        const str = qs('#result').textContent;
-        if (!str) return;
-        try { 
-          await navigator.clipboard.writeText(str); 
-          // Опционально: показать уведомление о копировании
-          const originalText = qs('#copy').textContent;
-          qs('#copy').textContent = "Скопировано!";
-          setTimeout(() => {
-            qs('#copy').textContent = originalText;
-          }, 1500);
-        } catch(err) {
-          console.error('Failed to copy: ', err);
-        }
-      });
+      window.utmBuilderTranslations = {"meta":{"title":"Генератор UTM‑меток — Serpmonn","description":"Собирайте UTM‑ссылки для кампаний за секунды","ogTitle":"Генератор UTM‑меток — Serpmonn","ogDescription":"Собирайте UTM‑ссылки для кампаний за секунды","twitterTitle":"Генератор UTM‑меток — Serpmonn","twitterDescription":"Быстрое создание UTM‑ссылок"},"page":{"title":"🔗 Генератор UTM‑меток","fields":{"baseUrl":"Базовый URL"},"placeholders":{"baseUrl":"https://example.com/landing","source":"telegram","medium":"bot","campaign":"spring_sale","content":"banner_a","term":"keyword"},"buttons":{"generate":"Сгенерировать","copy":"Копировать","copied":"Скопировано!"},"generatedLink":"Сгенерированная ссылка:","lead":"Соберите UTM-ссылку для кампании за несколько секунд.","formTitle":"Параметры UTM","optionalSummary":"Дополнительно","disclaimer":"Ссылка собирается локально в браузере.","actions":{"more":"Ещё","reset":"Сбросить","share":"Поделиться","copied":"Скопировано"},"errors":{"baseRequired":"Укажите базовый URL","noResult":"Сначала сгенерируйте ссылку"}},"ads":{"closeAria":"Закрыть рекламу"}};
     </script>
-    
-    <!-- Загрузка меню -->
+    <script type="module" src="/frontend/scripts/tools/utm-builder.js?v=1"></script>
+    <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    
-<script>
-</script>
-    
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
 
