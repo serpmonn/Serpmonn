@@ -1,0 +1,176 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/knowledge-base/articles/updates-sep15-2025-jul22-2026.html{% else %}/frontend/{{ locale }}/knowledge-base/articles/updates-sep15-2025-jul22-2026.html{% endif %}"
+eleventyComputed:
+  title: "{{ updatesSep15Jul22[locale].meta.title }}"
+  description: "{{ updatesSep15Jul22[locale].meta.ogDescription }}"
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/articles/updates-sep15-2025-jul22-2026.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/articles/updates-sep15-2025-jul22-2026.html{% endif %}"
+---
+
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <link rel="stylesheet" href="/frontend/styles/styles.css">
+    <meta http-equiv="Content-Language" content="{{ locale }}">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+
+    <meta property="og:title" content="{{ updatesSep15Jul22[locale].meta.ogTitle }}">
+    <meta property="og:description" content="{{ updatesSep15Jul22[locale].meta.ogDescription }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="article">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ updatesSep15Jul22[locale].meta.twitterTitle }}">
+    <meta name="twitter:description" content="{{ updatesSep15Jul22[locale].meta.twitterDescription }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+
+    <link rel="canonical" href="{{ canonical }}" />
+
+    {% for loc in locales %}
+      {% if loc == 'ru' %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/updates-sep15-2025-jul22-2026.html" hreflang="{{ loc }}" />
+      {% else %}
+        <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/knowledge-base/articles/updates-sep15-2025-jul22-2026.html" hreflang="{{ loc }}" />
+      {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/updates-sep15-2025-jul22-2026.html" hreflang="x-default" />
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "{{ canonical }}"
+      },
+      "headline": "{{ updatesSep15Jul22[locale].jsonld.headline | replace('"', '&quot;') }}",
+      "description": "{{ updatesSep15Jul22[locale].jsonld.description | replace('"', '&quot;') }}",
+      "image": "{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png",
+      "datePublished": "2026-07-22",
+      "dateModified": "2026-07-22",
+      "inLanguage": "{{ locale }}",
+      "url": "{{ canonical }}",
+      "author": {
+        "@type": "Organization",
+        "name": "Serpmonn"
+      },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Serpmonn",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico?v=3"
+        }
+      }
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        {"@type": "ListItem", "position": 1, "name": "{{ updatesSep15Jul22[locale].breadcrumbs.home }}", "item": "{{ site.baseUrl }}/"},
+        {"@type": "ListItem", "position": 2, "name": "{{ updatesSep15Jul22[locale].breadcrumbs.news }}", "item": "{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html"},
+        {"@type": "ListItem", "position": 3, "name": "{{ updatesSep15Jul22[locale].breadcrumbs.current }}"}
+      ]
+    }
+    </script>
+
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/updates-sep15-2025-jul22-2026.css">
+</head>
+<body class="article-page">
+    {% set tocTitle = locale | articleTocTitle %}
+    {% set tocItems = [{ href: '#section-summary', label: updatesSep15Jul22[locale].summary.title }] %}
+    {% for section in updatesSep15Jul22[locale].sections %}
+    {% set tocItems = (tocItems.push({ href: '#section-' ~ loop.index, label: section.title }), tocItems) %}
+    {% endfor %}
+    {% set tocItems = (tocItems.push({ href: '#section-bugfixes', label: updatesSep15Jul22[locale].bugfixes.title }), tocItems) %}
+    {% include "partials/article-floating-toc.njk" %}
+
+    <div id="menuContainer"></div>
+
+    <article class="article-container" tabindex="0">
+      <header class="article-header">
+        <div class="ad-top-banner ad-banner loading">
+          <ins class="mrg-tag"
+              style="display:inline-block;"
+              data-ad-client="ad-{{ mailAds.slots.top.id }}"
+              data-ad-slot="{{ mailAds.slots.top.id }}">
+          </ins>
+        </div>
+        <h1 class="article-title">{{ updatesSep15Jul22[locale].article.title }}</h1>
+        <div class="article-date">{{ updatesSep15Jul22[locale].article.date }}</div>
+      </header>
+
+      <div class="article-content">
+        <div class="summary" id="section-summary">
+          <h3>{{ updatesSep15Jul22[locale].summary.title }}</h3>
+          <ul>
+            {% for item in updatesSep15Jul22[locale].summary.items %}
+            <li>{{ item | safe }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="stats-grid">
+          {% for card in updatesSep15Jul22[locale].stats.cards %}
+          <div class="stat-card"><div class="stat-number">{{ card.number }}</div><div class="stat-label">{{ card.label }}</div></div>
+          {% endfor %}
+        </div>
+
+        {% for section in updatesSep15Jul22[locale].sections %}
+        <div class="update-section">
+          <h3 id="section-{{ loop.index }}">{{ section.title }}</h3>
+          <ul class="feature-list">
+            {% for item in section.items %}
+            <li>{{ item | safe }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
+
+        <div class="bug-fix">
+          <h4 id="section-bugfixes">{{ updatesSep15Jul22[locale].bugfixes.title }}</h4>
+          <ul class="feature-list">
+            {% for item in updatesSep15Jul22[locale].bugfixes.items %}
+            <li>{{ item | safe }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+
+        <div class="social-share">
+          <a class="share-btn vk" href="https://vk.com/share.php?url={{ site.baseUrl }}{{ page.url | urlencode }}" target="_blank" rel="noopener">{{ updatesSep15Jul22[locale].share.vk }}</a>
+          <a class="share-btn telegram" href="https://t.me/share/url?url={{ site.baseUrl }}{{ page.url | urlencode }}&text={{ updatesSep15Jul22[locale].article.title | urlencode }}" target="_blank" rel="noopener">{{ updatesSep15Jul22[locale].share.telegram }}</a>
+        </div>
+
+        {% set relatedTitle = locale | articleRelatedTitle %}
+        {% set relatedItems = 'updates-sep15-2025-jul22-2026' | articleRelated(locale) %}
+        {% include "partials/article-related.njk" %}
+      </div>
+    </article>
+
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+    {% include "partials/article-chrome-scripts.njk" %}
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+    {{ mobileAnchor(updatesSep15Jul22[locale].ads.closeAria) }}
+    {% include "partials/ad-pool-init.njk" %}
+</body>
+</html>

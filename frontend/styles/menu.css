@@ -253,13 +253,52 @@
     color: #999 !important;
 }
 
-/* Стили для иконок инструментов */
+/* Стили для иконок инструментов / KB */
 .tool-icon {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     font-size: 16px;
     margin-right: 8px;
     width: 20px;
+    height: 20px;
     text-align: center;
+    flex-shrink: 0;
+    vertical-align: middle;
+    color: #6b7280;
+}
+.tool-icon--cat {
+    color: #e53935;
+}
+.tool-icon svg {
+    display: block;
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+}
+.tool-icon--cat svg {
+    stroke-width: 2.15;
+}
+.tool-icon--item svg {
+    stroke-width: 1.75;
+}
+.submenu-container a:hover .tool-icon {
+    color: inherit;
+}
+.menu-item > .tool-icon,
+.lang-selector-item > .tool-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 10px;
+}
+.menu-item > .tool-icon svg,
+.lang-selector-item > .tool-icon svg {
+    width: 20px;
+    height: 20px;
+}
+.a11y-toggle .tool-icon {
+    margin-right: 8px;
+    color: #e53935;
 }
 
 /* Стили для иконок игр */
@@ -439,9 +478,22 @@
 }
 
 .a11y-status {
-    font-size: 14px;
+    width: 12px;
+    height: 12px;
     margin-left: auto;
     flex-shrink: 0;
+    border-radius: 50%;
+    border: 2px solid #9ca3af;
+    background: #fff;
+    box-sizing: border-box;
+}
+.a11y-status.is-on {
+    border-color: #e53935;
+    background: #e53935;
+}
+.a11y-status.is-off {
+    border-color: #9ca3af;
+    background: #fff;
 }
 
 /* Стили для логотипа в меню */

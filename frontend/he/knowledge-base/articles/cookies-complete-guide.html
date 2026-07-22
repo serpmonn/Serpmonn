@@ -266,57 +266,64 @@
   <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
     
-    <!-- Стили для этой статьи -->
-    <link rel="stylesheet" href="/frontend/styles/articles/cookies-guide.css">
-    
-    <!-- Внешние библиотеки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/cookies-guide.css">
     
     <!-- Скрипт меню -->
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>
-    <div class="reading-progress">
-        <div class="reading-progress-bar"></div>
-    </div>
     
-    <button class="toc-toggle" onclick="toggleFloatingToc()">
-        <i class="fas fa-list"></i>
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">תוכן העניינים</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="תוכן העניינים">
+  <div class="floating-toc__head">
+    <h3>תוכן העניינים</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
     </button>
+  </div>
+  <ul>
     
-    <div class="floating-toc">
-        <h3>תוכן העניינים</h3>
-        <ul>
-            <li><a href="#section-what-is">מה הם קוקיז?</a></li>
-            <li><a href="#section-how-work">איך קוקיז עובדים?</a></li>
-            <li><a href="#section-types">סוגים של קבצי קוקי</a></li>
-            <li><a href="#section-why-clean">למה לנקות קוקיז?</a></li>
-            <li><a href="#section-how-clean">איך לנקות קוקיז</a></li>
-            <li><a href="#section-manage">ניהול קוקיז</a></li>
-            <li><a href="#section-security">אבטחה</a></li>
-            <li><a href="#section-faq">שאלות נפוצות</a></li>
-        </ul>
-    </div>
+    <li><a href="#section-what-is">מה הם קוקיז?</a></li>
     
+    <li><a href="#section-how-work">איך קוקיז עובדים?</a></li>
+    
+    <li><a href="#section-types">סוגים של קבצי קוקי</a></li>
+    
+    <li><a href="#section-why-clean">למה לנקות קוקיז?</a></li>
+    
+    <li><a href="#section-how-clean">איך לנקות קוקיז</a></li>
+    
+    <li><a href="#section-manage">ניהול קוקיז</a></li>
+    
+    <li><a href="#section-security">אבטחה</a></li>
+    
+    <li><a href="#section-faq">שאלות נפוצות</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+    
+
     <div id="menuContainer"></div>
     
     <article class="article-container" tabindex="0">
         <header class="article-header">
             <span class="article-category">אבטחה</span>
-            <div class="table-of-contents sticky-toc">
-                <h2>תוכן העניינים</h2>
-                <ul>
-                    <li><a href="#section-what-is">מה הם קוקיז?</a></li>
-                    <li><a href="#section-how-work">איך קוקיז עובדים?</a></li>
-                    <li><a href="#section-types">סוגים של קבצי קוקי</a></li>
-                    <li><a href="#section-why-clean">למה לנקות קוקיז?</a></li>
-                    <li><a href="#section-how-clean">איך לנקות קוקיז</a></li>
-                    <li><a href="#section-manage">ניהול קוקיז</a></li>
-                    <li><a href="#section-security">אבטחה</a></li>
-                    <li><a href="#section-faq">שאלות נפוצות</a></li>
-                </ul>
-            </div>
             <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
             </div>
@@ -328,30 +335,42 @@
             <p>בכל פעם שאתה מבקר באתר, אתה מקבל הודעה על שימוש בקוקיז. אבל מה הם באמת? במדריך זה ננתח הכל על קבצי קוקי: מהבסיס ועד הגדרות אבטחה מתקדמות.</p>
 
             <!-- Что такое куки -->
-            <h2 id="section-what-is">🍪 מה הם קבצי קוקי?</h2>
+            <h2 id="section-what-is">מה הם קבצי קוקי?</h2>
             <p><strong>קוקיז</strong> הם קבצי טקסט קטנים שאתרים שומרים על המכשיר שלך. הם מכילים מידע על הפעולות שלך באינטרנט ועוזרים לאתרים "לזכור" אותך.</p>
             
             <div class="analogy-box">
-                <h4>💡 אנלוגיה פשוטה</h4>
+                <h4>אנלוגיה פשוטה</h4>
                 <p>דמיין שקוקיז הם כרטיס ביקור שאתה משאיר בבית קפה. בביקור הבא, המלצר יזהה אותך ויזכור איזה קפה אתה מעדיף.</p>
             </div>
 
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-user-circle"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+</span>
+
                     <h3>זיהוי</h3>
                     <p>האתר מזהה אותך בביקורים חוזרים</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-shopping-cart"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11l2-7H7"/></svg>
+</span>
+
                     <h3>עגלת קניות</h3>
                     <p>שומרת מוצרים גם אם עזבת את האתר</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-language"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+</span>
+
                     <h3>הגדרות</h3>
                     <p>זוכרת שפה, מטבע והעדפות אחרות</p>
                 </div>
@@ -359,7 +378,7 @@
             </div>
 
             <!-- Как работают куки -->
-            <h2 id="section-how-work">🔧 איך קוקיז עובדים?</h2>
+            <h2 id="section-how-work">איך קוקיז עובדים?</h2>
             
             <ol class="step-list">
                 
@@ -394,7 +413,7 @@
             </div>
 
             <!-- Типы куки -->
-            <h2 id="section-types">📊 סוגים של קבצי קוקי</h2>
+            <h2 id="section-types">סוגים של קבצי קוקי</h2>
             
             <table class="cookies-table">
                 <thead>
@@ -436,36 +455,48 @@
             </table>
 
             <div class="privacy-warning">
-                <h4>⚠️ תשומת לב: קוקי צד שלישי</h4>
+                <h4>️ תשומת לב: קוקי צד שלישי</h4>
                 <p>קוקי צד שלישי משמשים לעתים קרובות למעקב אחר הפעילות שלך באתרים שונים. דפדפנים מודרניים מפסיקים בהדרגה את התמיכה בהם כדי להגן על הפרטיות.</p>
             </div>
 
             <!-- Зачем чистить куки -->
-            <h2 id="section-why-clean">🧹 למה לנקות קוקיז?</h2>
+            <h2 id="section-why-clean">למה לנקות קוקיז?</h2>
 
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-shield-alt"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V7z"/></svg>
+</span>
+
                     <h3>אבטחה</h3>
                     <p>הגנה מפני גניבת סשן וגישה לא מורשית</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-user-secret"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+</span>
+
                     <h3>פרטיות</h3>
                     <p>הסרת קוקי מעקב והיסטוריית גלישה</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-broom"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+</span>
+
                     <h3>שחרור מקום</h3>
                     <p>קוקיז תופסים מקום על המכשיר שלך</p>
                 </div>
                 
             </div>
 
-            <h3>📋 מצבים בהם צריך לנקות קוקיז:</h3>
+            <h3>מצבים בהם צריך לנקות קוקיז:</h3>
             <ul>
                 
                 <li><strong>בעיות התחברות</strong> לאתרים</li>
@@ -481,11 +512,11 @@
             </ul>
 
             <!-- Как очистить куки -->
-            <h2 id="section-how-clean">🔧 איך לנקות קוקיז</h2>
+            <h2 id="section-how-clean">איך לנקות קוקיז</h2>
 
             
             <div class="browser-guide">
-                <h4>🌐 Google Chrome</h4>
+                <h4>Google Chrome</h4>
                 <ol>
                     
                     <li>פתח <strong>הגדרות</strong> → <strong>פרטיות ואבטחה</strong></li>
@@ -500,7 +531,7 @@
             </div>
             
             <div class="browser-guide">
-                <h4>🦊 Mozilla Firefox</h4>
+                <h4>Mozilla Firefox</h4>
                 <ol>
                     
                     <li>עבור ל<strong>הגדרות</strong> → <strong>פרטיות ואבטחה</strong></li>
@@ -531,11 +562,11 @@
             
 
             <div class="security-tip">
-                <h4>💡 עצה מקצועית</h4>
+                <h4>עצה מקצועית</h4>
                 <p>השתמש במצב גלישה בסתר/פרטי. במצב זה, קוקיז נמחקים אוטומטית לאחר סגירת החלון.</p>
             </div>
 
-            <h3>⚡ ניקוי מהיר עם קיצורי מקלדת:</h3>
+            <h3>ניקוי מהיר עם קיצורי מקלדת:</h3>
             <ul>
                 
                 <li><strong>Ctrl+Shift+Delete</strong> (Windows/Linux) - פותח חלון ניקוי היסטוריה</li>
@@ -545,7 +576,7 @@
             </ul>
 
             <!-- Управление куки -->
-            <h2 id="section-manage">🎛️ ניהול קוקיז: שיטות עבודה מומלצות</h2>
+            <h2 id="section-manage">️ ניהול קוקיז: שיטות עבודה מומלצות</h2>
 
             <ol class="step-list">
                 
@@ -572,7 +603,7 @@
             </ol>
 
             <div class="security-tip">
-                <h4>🛡️ תוספות לניהול קוקיז</h4>
+                <h4>️ תוספות לניהול קוקיז</h4>
                 <ul>
                     
                     <li><strong>Cookie AutoDelete</strong> - מוחק אוטומטית קוקיז מכרטיסיות סגורות</li>
@@ -585,10 +616,10 @@
             </div>
 
             <!-- Безопасность -->
-            <h2 id="section-security">🔐 אבטחת קוקיז</h2>
+            <h2 id="section-security">אבטחת קוקיז</h2>
 
             <div class="privacy-warning">
-                <h4>🚨 סוגים מסוכנים של התקפות</h4>
+                <h4>סוגים מסוכנים של התקפות</h4>
                 <ul>
                     
                     <li><strong>יירוט קוקי</strong> דרך רשתות לא מאובטחות</li>
@@ -600,7 +631,7 @@
                 </ul>
             </div>
 
-            <h3>🛡️ אמצעי הגנה:</h3>
+            <h3>️ אמצעי הגנה:</h3>
             
             <table class="cookies-table">
                 <thead>
@@ -635,7 +666,7 @@
                 </tbody>
             </table>
 
-            <h3>📋 רשימת בדיקה לאבטחת קוקיז</h3>
+            <h3>רשימת בדיקה לאבטחת קוקיז</h3>
             <ul class="checklist">
                 
                 <li>
@@ -666,7 +697,7 @@
             </ul>
 
             <!-- Частые вопросы -->
-            <h2 id="section-faq">❓ שאלות נפוצות</h2>
+            <h2 id="section-faq">שאלות נפוצות</h2>
 
             
             <div class="browser-guide">
@@ -696,7 +727,7 @@
             
 
             <!-- Выводы -->
-            <h3>🎯 תובנות מפתח:</h3>
+            <h3>תובנות מפתח:</h3>
             <ul>
                 
                 <li>קוקיז הכרחיים לעבודה נוחה באינטרנט</li>
@@ -711,33 +742,29 @@
                 
             </ul>
 
-            <!-- Кнопки поделиться -->
+            
+            
+            
+
+<div class="related-articles">
+  <h3>מאמרים קשורים</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/he/knowledge-base/articles/port-forwarding-guide.html">הפנית פורטים: מדריך מלא 2025</a></li>
+    
+    <li><a href="/frontend/he/knowledge-base/articles/web-development-guide.html">كيف تنشئ أول موقع ويب من الصفر - دليل المبتدئين الكامل</a></li>
+    
+    <li><a href="/frontend/he/knowledge-base/articles/utm-complete-guide.html">UTM: מדריך מלא</a></li>
+    
+  </ul>
+</div>
+
+
+
             <div class="share-buttons">
                 <h3>שתף מאמר</h3>
-                <button onclick="share('telegram')" aria-label="טלגרם">טלגרם</button>
-                <button onclick="share('vk')" aria-label="VKontakte">VKontakte</button>
-            </div>
-
-            <!-- Комментарии -->
-            <div class="comments-section">
-                <h2>תגובות</h2>
-                <div class="comment-form">
-                    <h3>השאר את המשוב שלך</h3>
-                    <form id="commentForm">
-                        <div class="form-group">
-                            <label for="commentName">שמך:</label>
-                            <input type="text" id="commentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="commentText">התגובה שלך:</label>
-                            <textarea id="commentText" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">שלח</button>
-                    </form>
-                </div>
-                <div id="commentsList" class="comments-list">
-                    <!-- Комментарии будут загружены здесь -->
-                </div>
+                <button type="button" onclick="serpmonnShare('telegram')" aria-label="טלגרם">טלגרם</button>
+                <button type="button" onclick="serpmonnShare('vk')" aria-label="VKontakte">VKontakte</button>
             </div>
         </div>
 
@@ -751,127 +778,9 @@
     <!-- Кнопка наверх -->
     <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑ למעלה">↑ למעלה</button>
 
-    <!-- Внешние библиотеки -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    
-    <!-- JavaScript для статьи -->
-    <script>
-        // Функции для работы с комментариями
-        function saveComment(name, text) {
-            const comment = {
-                name: name,
-                text: text,
-                date: new Date().toLocaleString('he')
-            };
-            
-            let comments = JSON.parse(localStorage.getItem('articleComments')) || [];
-            comments.push(comment);
-            localStorage.setItem('articleComments', JSON.stringify(comments));
-            
-            return comment;
-        }
-        
-        function loadComments() {
-            const comments = JSON.parse(localStorage.getItem('articleComments')) || [];
-            const commentsList = document.getElementById('commentsList');
-            
-            if (comments.length === 0) {
-                commentsList.innerHTML = '<div class="no-comments">אין עדיין תגובות. היה הראשון!</div>';
-                return;
-            }
-            
-            commentsList.innerHTML = comments.map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">${escapeHtml(comment.name)}</span>
-                        <span class="comment-date">${escapeHtml(comment.date)}</span>
-                    </div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Основные функции
-        function toggleFloatingToc() {
-            const floatingToc = document.querySelector('.floating-toc');
-            floatingToc.style.display = floatingToc.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        function share(network) {
-            const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent(document.title);
-            const shareUrls = {
-                telegram: `https://t.me/share/url?url=${url}&text=${title}`,
-                vk: `https://vk.com/share.php?url=${url}&title=${title}`
-            };
-            window.open(shareUrls[network], '_blank');
-        }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Загрузка комментариев
-            loadComments();
-            
-            // Обработка формы комментариев
-            document.getElementById('commentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nameInput = document.getElementById('commentName');
-                const textInput = document.getElementById('commentText');
-                
-                const name = nameInput.value.trim();
-                const text = textInput.value.trim();
-                
-                if (name && text) {
-                    saveComment(name, text);
-                    loadComments();
-                    
-                    // Очистка формы
-                    nameInput.value = '';
-                    textInput.value = '';
-                }
-            });
-            
-            // Анимация появления контента
-            const contentObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.article-content > *').forEach(el => contentObserver.observe(el));
-            
-            // Кнопка "Наверх"
-            window.addEventListener('scroll', () => {
-                const button = document.querySelector('.scroll-to-top');
-                button.classList.toggle('show', window.scrollY > 300);
-            });
-            
-            // Прогресс чтения
-            const progressBar = document.querySelector('.reading-progress-bar');
-            window.addEventListener('scroll', () => {
-                const windowHeight = window.innerHeight;
-                const documentHeight = document.documentElement.scrollHeight;
-                const scrollTop = window.scrollY;
-                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
-                progressBar.style.width = `${progress}%`;
-            });
-            
-            // Показывать плавающее оглавление на десктопах
-            if (window.innerWidth > 991) {
-                document.querySelector('.floating-toc').style.display = 'block';
-            }
-            
-        });
-    </script>
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
+
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
 

@@ -1,0 +1,14 @@
+{# Related articles. Expects:
+   relatedTitle: string
+   relatedItems: [{ url: '...', title: '...' }, ...]
+#}
+{% if relatedItems and relatedItems.length %}
+<div class="related-articles">
+  <h3>{{ relatedTitle }}</h3>
+  <ul class="related-links">
+    {% for article in relatedItems %}
+    <li><a href="{{ article.url }}">{{ article.title }}</a></li>
+    {% endfor %}
+  </ul>
+</div>
+{% endif %}

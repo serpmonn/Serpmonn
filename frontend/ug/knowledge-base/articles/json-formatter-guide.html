@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="ug" dir="rtl">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="ug">
     <title>JSON Formatter: why you need it and how to use it — Serpmonn</title>
@@ -245,62 +246,83 @@
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <style>
-      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f3f4f6; line-height: 1.7; color: #111827; }
-      article { background: #fff; border-radius: 16px; padding: 28px; margin: 16px auto; border: 1px solid #e5e7eb; box-shadow: 0 8px 28px rgba(15,23,42,.06); }
-      .article-header { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
-      .article-title { font-size: 1.7rem; margin: 0 0 8px; font-weight: 700; }
-      .article-date { color: #6b7280; font-size: 0.95rem; }
-      .summary { background: #fef2f2; border: 1px solid #fecaca; border-left: 4px solid #dc3545; border-radius: 12px; padding: 14px; margin: 16px 0; color: #7f1d1d; }
-      .toc { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; margin: 16px 0; }
-      .toc a { color: #dc3545; text-decoration: none; font-weight: 600; }
-      .toc a:hover { text-decoration: underline; }
-      h2 { margin-top: 28px; font-size: 1.2rem; }
-      .code, code { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 2px 6px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92rem; }
-      .note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 12px; margin: 16px 0; color: #92400e; }
-      .faq { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; }
-      .faq h3 { margin: 12px 0 6px; font-size: 1rem; }
-      .faq h3:first-child { margin-top: 0; }
-      .article-cta {
-        display: inline-block;
-        padding: 10px 16px;
-        background: #dc3545;
-        color: #fff !important;
-        text-decoration: none !important;
-        border-radius: 8px;
-        font-weight: 600;
-      }
-      .article-cta:hover,
-      .article-cta:visited {
-        color: #fff !important;
-        background: #c82333;
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/json-formatter-guide.css">
 </head>
 <body>
-    <div id="menuContainer"></div>
 
-    <article>
-        <header class="article-header">
-            <div class="ad-top-banner ad-banner loading">
-                <ins class="mrg-tag"
-                    style="display:inline-block;"
-                    data-ad-client="ad-1897960"
-                    data-ad-slot="1897960">
-                </ins>
-            </div>
-            <h1 class="article-title">JSON formatter: why you need it</h1>
-            <div class="article-date">21 July 2026</div>
-        </header>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Contents</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Contents">
+  <div class="floating-toc__head">
+    <h3>Contents</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
+    
+    <li><a href="#what">What is JSON</a></li>
+    
+    <li><a href="#why">Why use a formatter</a></li>
+    
+    <li><a href="#modes">Format, minify and validate</a></li>
+    
+    <li><a href="#mistakes">Common mistakes</a></li>
+    
+    <li><a href="#howto">How to use the Serpmonn tool</a></li>
+    
+    <li><a href="#faq">FAQ</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
+<div id="menuContainer"></div>
+
+<article class="article-container" tabindex="0">
+    <header class="article-header">
+        <div class="ad-top-banner ad-banner loading">
+            <ins class="mrg-tag"
+                style="display:inline-block;"
+                data-ad-client="ad-1897960"
+                data-ad-slot="1897960">
+            </ins>
+        </div>
+        <h1 class="article-title">JSON formatter: why you need it</h1>
+        <div class="article-date">21 July 2026</div>
+    </header>
+
+    <div class="article-content">
         <div class="summary">
             <strong>In short:</strong> JSON is the web’s data exchange format. A formatter makes messy payloads readable, catches syntax errors and prepares data for APIs, configs and logs.
-        </div>
-
-        <div class="toc">
-            <strong>Contents</strong>
-            <ol><li><a href="#what">What is JSON</a></li><li><a href="#why">Why use a formatter</a></li><li><a href="#modes">Format, minify and validate</a></li><li><a href="#mistakes">Common mistakes</a></li><li><a href="#howto">How to use the Serpmonn tool</a></li><li><a href="#faq">FAQ</a></li></ol>
         </div>
 
         <h2 id="what">1) What is JSON</h2>
@@ -330,10 +352,33 @@
           <p>Processing happens in your browser. Still avoid pasting passwords unless necessary.</p><h3>How is this different from editor beautify?</h3>
           <p>Same idea — useful when you need a quick check without opening an IDE.</p><h3>Can I edit JSON in the field?</h3>
           <p>Yes. After edits, click Validate or Format again.</p></div>
-    </article>
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+        
+        
+        
+
+<div class="related-articles">
+  <h3>Related articles</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/ug/knowledge-base/articles/web-development-guide.html">قانداق باشتىدىكى تۇنجى تور بېتىڭىزنى يارىتىسىز - تولۇق باشلىغۇچىلار قوللانمىسى</a></li>
+    
+    <li><a href="/frontend/ug/knowledge-base/articles/cookies-complete-guide.html">كۇكىي (cookies) نېمە؟: باشقۇرۇش ۋە بىخەتەرلىككە تولۇق يېتەكچى</a></li>
+    
+    <li><a href="/frontend/ug/knowledge-base/articles/indexnow-practical-guide.html">IndexNow: ئەمەلىي يول قويۇش ۋە كۆرسەتمىلەر</a></li>
+    
+  </ul>
+</div>
+
+
+    </div>
+</article>
+
+<button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+<script defer src="/frontend/scripts/article-chrome.js"></script>
+
+<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
 
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">

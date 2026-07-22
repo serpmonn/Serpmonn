@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="es-419" dir="ltr">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="es-419">
     <meta charset="UTF-8">
@@ -9,20 +10,17 @@
     <title>Actualizaciones de Serpmonn — 17 de agosto de 2025 — Nuevas herramientas y mejoras</title>
     <meta name="description" content="Agregadas herramientas útiles para conductores, mejorada la calculadora de depreciación y corregidos errores">
     
-    <!-- Open Graph -->
     <meta property="og:title" content="Actualizaciones de Serpmonn — 17 de agosto de 2025 — Nuevas herramientas y mejoras">
     <meta property="og:description" content="Agregadas herramientas útiles para conductores, mejorada la calculadora de depreciación y corregidos errores">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/es-419/knowledge-base/articles/updates-august-17.html">
     <meta property="og:type" content="article">
     
-    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Actualizaciones de Serpmonn — 17 de agosto de 2025">
     <meta name="twitter:description" content="Nuevas herramientas para conductores y mejoras">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -53,7 +51,6 @@
     }
     </script>
 
-    <!-- JSON-LD: BreadcrumbList -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -69,135 +66,184 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <!-- Подключаем стили для статьи -->
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/updates-august-17.css">
 </head>
 <body class="article-page">
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      <a href="https://serpmonn.ru/">Inicio</a> → 
-      <a href="https://serpmonn.ru/frontend/knowledge-base/knowledge-base.html">Noticias</a> → 
-      <span>Actualizaciones 17 de agosto</span>
-    </div>
+    
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
 
-    <article>
-      <!-- Заголовок новости -->
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Contents</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Contents">
+  <div class="floating-toc__head">
+    <h3>Contents</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
+    
+    <li><a href="#section-summary">Novedades</a></li>
+    
+    <li><a href="#section-drivers">Para conductores</a></li>
+    
+    <li><a href="#section-engineers">Para ingenieros</a></li>
+    
+    <li><a href="#section-platform">Nuevas funciones de la plataforma</a></li>
+    
+    <li><a href="#section-performance">Mejoras de rendimiento</a></li>
+    
+    <li><a href="#section-bugfixes">Correcciones</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
+    <div id="menuContainer"></div>
+
+    <article class="article-container" tabindex="0">
       <header class="article-header">
         <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
+          <ins class="mrg-tag"
               style="display:inline-block;"
-              data-ad-client="ad-1897960" 
+              data-ad-client="ad-1897960"
               data-ad-slot="1897960">
           </ins>
         </div>
-        <h1 class="article-title">🚀 Actualizaciones de Serpmonn</h1>
+        <h1 class="article-title">Actualizaciones de Serpmonn</h1>
         <div class="article-date">17 de agosto de 2025</div>
       </header>
 
-      <!-- Краткое резюме -->
-      <div class="summary">
-        <h3>📋 Novedades</h3>
-        <p>Agregadas herramientas útiles para conductores, mejorada la calculadora de depreciación de autos, corregidos errores críticos y optimizado el rendimiento.</p>
-      </div>
-
-      <!-- Статистика обновления -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number">3</div>
-          <div class="stat-label">Nuevas herramientas</div>
+      <div class="article-content">
+        <div class="summary" id="section-summary">
+          <h3>Novedades</h3>
+          <p>Agregadas herramientas útiles para conductores, mejorada la calculadora de depreciación de autos, corregidos errores críticos y optimizado el rendimiento.</p>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">15+</div>
-          <div class="stat-label">Errores corregidos</div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Nuevas herramientas</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Errores corregidos</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">8</div>
+            <div class="stat-label">Mejoras de UX</div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">8</div>
-          <div class="stat-label">Mejoras de UX</div>
+
+        <div class="update-section">
+          <h3 id="section-drivers">Para conductores</h3>
+          <ul class="feature-list">
+            
+            <li>Coeficientes más precisos en la calculadora de depreciación.</li>
+            
+            <li>Mejorada la visualización de datos en dispositivos móviles.</li>
+            
+            <li>Pequeños ajustes en la interfaz para mayor facilidad de uso.</li>
+            
+          </ul>
         </div>
-      </div>
 
-      <!-- Раздел для водителей -->
-      <div class="update-section">
-        <h3>🚗 Para conductores</h3>
-        <ul class="feature-list">
-          
-          <li>Coeficientes más precisos en la calculadora de depreciación.</li>
-          
-          <li>Mejorada la visualización de datos en dispositivos móviles.</li>
-          
-          <li>Pequeños ajustes en la interfaz para mayor facilidad de uso.</li>
-          
-        </ul>
-      </div>
+        <div class="update-section">
+          <h3 id="section-engineers">Para ingenieros</h3>
+          <ul class="feature-list">
+            
+            <li>Material preparado sobre herramientas y convertidores de unidades (próximamente).</li>
+            
+            <li>Parámetros de cálculo y valores límite aclarados.</li>
+            
+          </ul>
+        </div>
 
-      <!-- Раздел для инженеров -->
-      <div class="update-section">
-        <h3>🔧 Para ingenieros</h3>
-        <ul class="feature-list">
-          
-          <li>Material preparado sobre herramientas y convertidores de unidades (próximamente).</li>
-          
-          <li>Parámetros de cálculo y valores límite aclarados.</li>
-          
-        </ul>
-      </div>
+        <div class="update-section">
+          <h3 id="section-platform">Nuevas funciones de la plataforma</h3>
+          <ul class="feature-list">
+            
+            <li><strong>Sistema de búsqueda mejorado:</strong> Agregada búsqueda inteligente con autocompletado y filtrado de resultados.</li>
+            
+            <li><strong>Recomendaciones personalizadas:</strong> El algoritmo ahora analiza tus preferencias y sugiere herramientas relevantes.</li>
+            
+            <li><strong>Optimización móvil:</strong> Todas las herramientas ahora funcionan perfectamente en dispositivos móviles con diseño responsivo.</li>
+            
+            <li><strong>Sistema de notificaciones:</strong> Recibe notificaciones sobre nuevas funciones y actualizaciones de herramientas que te interesan.</li>
+            
+          </ul>
+        </div>
 
-      <!-- Новые функции платформы -->
-      <div class="update-section">
-        <h3>🌟 Nuevas funciones de la plataforma</h3>
-        <ul class="feature-list">
-          
-          <li><strong>Sistema de búsqueda mejorado:</strong> Agregada búsqueda inteligente con autocompletado y filtrado de resultados.</li>
-          
-          <li><strong>Recomendaciones personalizadas:</strong> El algoritmo ahora analiza tus preferencias y sugiere herramientas relevantes.</li>
-          
-          <li><strong>Optimización móvil:</strong> Todas las herramientas ahora funcionan perfectamente en dispositivos móviles con diseño responsivo.</li>
-          
-          <li><strong>Sistema de notificaciones:</strong> Recibe notificaciones sobre nuevas funciones y actualizaciones de herramientas que te interesan.</li>
-          
-        </ul>
-      </div>
+        <div class="update-section">
+          <h3 id="section-performance">Mejoras de rendimiento</h3>
+          <ul class="feature-list">
+            
+            <li><strong>Carga más rápida:</strong> Tiempo de carga de páginas reducido en un 40% gracias a la optimización de código y caché.</li>
+            
+            <li><strong>Cálculos optimizados:</strong> Las operaciones matemáticas ahora se realizan 2 veces más rápido.</li>
+            
+            <li><strong>Estabilidad mejorada:</strong> Número de errores reducido en un 60% gracias a un mejor manejo de excepciones.</li>
+            
+          </ul>
+        </div>
 
-      <!-- Улучшения производительности -->
-      <div class="update-section">
-        <h3>⚡ Mejoras de rendimiento</h3>
-        <ul class="feature-list">
-          
-          <li><strong>Carga más rápida:</strong> Tiempo de carga de páginas reducido en un 40% gracias a la optimización de código y caché.</li>
-          
-          <li><strong>Cálculos optimizados:</strong> Las operaciones matemáticas ahora se realizan 2 veces más rápido.</li>
-          
-          <li><strong>Estabilidad mejorada:</strong> Número de errores reducido en un 60% gracias a un mejor manejo de excepciones.</li>
-          
-        </ul>
-      </div>
+        <div class="bug-fix">
+          <h4 id="section-bugfixes">Correcciones</h4>
+          <ul class="feature-list">
+            
+            <li>Corregidos errores de diseño en las tarjetas de noticias.</li>
+            
+            <li>Aumentada la estabilidad de los conmutadores de categorías.</li>
+            
+          </ul>
+        </div>
 
-      <!-- Исправления ошибок -->
-      <div class="bug-fix">
-        <h4>🛠 Correcciones</h4>
-        <ul class="feature-list">
-          
-          <li>Corregidos errores de diseño en las tarjetas de noticias.</li>
-          
-          <li>Aumentada la estabilidad de los conmutadores de categorías.</li>
-          
-        </ul>
-      </div>
+        <div class="social-share">
+          <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Fes-419%2Fknowledge-base%2Farticles%2Fupdates-august-17.html" target="_blank" rel="noopener">Compartir en VK</a>
+          <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Fes-419%2Fknowledge-base%2Farticles%2Fupdates-august-17.html&text=Actualizaciones%20de%20Serpmonn" target="_blank" rel="noopener">Compartir en Telegram</a>
+        </div>
 
-      <!-- Поделиться -->
-      <div class="social-share">
-        <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Fes-419%2Fknowledge-base%2Farticles%2Fupdates-august-17.html" target="_blank" rel="noopener">Compartir en VK</a>
-        <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Fes-419%2Fknowledge-base%2Farticles%2Fupdates-august-17.html&text=%F0%9F%9A%80%20Actualizaciones%20de%20Serpmonn" target="_blank" rel="noopener">Compartir en Telegram</a>
+        
+        
+        
+
+<div class="related-articles">
+  <h3>Related articles</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/es-419/knowledge-base/articles/updates-aug-25-sep-15.html">Actualizaciones de Serpmonn — 25 de agosto — 15 de septiembre de 2025</a></li>
+    
+    <li><a href="/frontend/es-419/knowledge-base/articles/updates-sep15-2025-jul22-2026.html">Serpmonn Updates — September 15, 2025 — July 22, 2026</a></li>
+    
+    <li><a href="/frontend/es-419/knowledge-base/articles/port-forwarding-guide.html">Reenvío de Puertos: Guía Completa 2025</a></li>
+    
+  </ul>
+</div>
+
+
       </div>
     </article>
 
-    <!-- Загрузка меню -->
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
 
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
 
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    
+    
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="Cerrar anuncio" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
@@ -212,7 +258,7 @@
   initMobileAnchorAd();
 </script>
 
-
+    
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 
 </body>

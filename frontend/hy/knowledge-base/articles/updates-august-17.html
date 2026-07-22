@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="hy" dir="ltr">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="hy">
     <meta charset="UTF-8">
@@ -9,20 +10,17 @@
     <title>Serpmonn թարմացումներ — օգոստոսի 17, 2025 — Նոր գործիքներ և բարելավումներ</title>
     <meta name="description" content="Ավելացվել են օգտակար գործիքներ վարորդների համար, բարելավվել է մաշվածության հաշվիչը և շտկվել են սխալները">
     
-    <!-- Open Graph -->
     <meta property="og:title" content="Serpmonn թարմացումներ — օգոստոսի 17, 2025 — Նոր գործիքներ և բարելավումներ">
     <meta property="og:description" content="Ավելացվել են օգտակար գործիքներ վարորդների համար, բարելավվել է մաշվածության հաշվիչը և շտկվել են սխալները">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/hy/knowledge-base/articles/updates-august-17.html">
     <meta property="og:type" content="article">
     
-    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Serpmonn թարմացումներ — օգոստոսի 17, 2025">
     <meta name="twitter:description" content="Նոր գործիքներ վարորդների համար և բարելավումներ">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -53,7 +51,6 @@
     }
     </script>
 
-    <!-- JSON-LD: BreadcrumbList -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -69,135 +66,184 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <!-- Подключаем стили для статьи -->
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/updates-august-17.css">
 </head>
 <body class="article-page">
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      <a href="https://serpmonn.ru/">Գլխավոր</a> → 
-      <a href="https://serpmonn.ru/frontend/knowledge-base/knowledge-base.html">Նորություններ</a> → 
-      <span>Թարմացումներ օգոստոսի 17</span>
-    </div>
+    
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
 
-    <article>
-      <!-- Заголовок новости -->
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Contents</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Contents">
+  <div class="floating-toc__head">
+    <h3>Contents</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
+    
+    <li><a href="#section-summary">Ինչն է նոր</a></li>
+    
+    <li><a href="#section-drivers">Վարորդների համար</a></li>
+    
+    <li><a href="#section-engineers">Ինժեներների համար</a></li>
+    
+    <li><a href="#section-platform">Պլատֆորմի նոր հատկություններ</a></li>
+    
+    <li><a href="#section-performance">Արտադրողականության բարելավումներ</a></li>
+    
+    <li><a href="#section-bugfixes">Շտկումներ</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
+    <div id="menuContainer"></div>
+
+    <article class="article-container" tabindex="0">
       <header class="article-header">
         <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
+          <ins class="mrg-tag"
               style="display:inline-block;"
-              data-ad-client="ad-1897960" 
+              data-ad-client="ad-1897960"
               data-ad-slot="1897960">
           </ins>
         </div>
-        <h1 class="article-title">🚀 Serpmonn թարմացումներ</h1>
+        <h1 class="article-title">Serpmonn թարմացումներ</h1>
         <div class="article-date">օգոստոսի 17, 2025</div>
       </header>
 
-      <!-- Краткое резюме -->
-      <div class="summary">
-        <h3>📋 Ինչն է նոր</h3>
-        <p>Ավելացվել են օգտակար գործիքներ վարորդների համար, բարելավվել է ավտոմեքենայի մաշվածության հաշվիչը, շտկվել են կրիտիկական սխալները և օպտիմիզացվել է արտադրողականությունը։</p>
-      </div>
-
-      <!-- Статистика обновления -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number">3</div>
-          <div class="stat-label">Նոր գործիքներ</div>
+      <div class="article-content">
+        <div class="summary" id="section-summary">
+          <h3>Ինչն է նոր</h3>
+          <p>Ավելացվել են օգտակար գործիքներ վարորդների համար, բարելավվել է ավտոմեքենայի մաշվածության հաշվիչը, շտկվել են կրիտիկական սխալները և օպտիմիզացվել է արտադրողականությունը։</p>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">15+</div>
-          <div class="stat-label">Շտկված սխալներ</div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">3</div>
+            <div class="stat-label">Նոր գործիքներ</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">Շտկված սխալներ</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">8</div>
+            <div class="stat-label">UX բարելավումներ</div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">8</div>
-          <div class="stat-label">UX բարելավումներ</div>
+
+        <div class="update-section">
+          <h3 id="section-drivers">Վարորդների համար</h3>
+          <ul class="feature-list">
+            
+            <li>Ավելի ճշգրիտ հաշվի են առնվել գործակիցները մաշվածության հաշվիչում։</li>
+            
+            <li>Բարելավվել է տվյալների ցուցադրումը բջջային սարքերում։</li>
+            
+            <li>Փոքր փոփոխություններ ինտերֆեյսում օգտագործման հարմարավետության համար։</li>
+            
+          </ul>
         </div>
-      </div>
 
-      <!-- Раздел для водителей -->
-      <div class="update-section">
-        <h3>🚗 Վարորդների համար</h3>
-        <ul class="feature-list">
-          
-          <li>Ավելի ճշգրիտ հաշվի են առնվել գործակիցները մաշվածության հաշվիչում։</li>
-          
-          <li>Բարելավվել է տվյալների ցուցադրումը բջջային սարքերում։</li>
-          
-          <li>Փոքր փոփոխություններ ինտերֆեյսում օգտագործման հարմարավետության համար։</li>
-          
-        </ul>
-      </div>
+        <div class="update-section">
+          <h3 id="section-engineers">Ինժեներների համար</h3>
+          <ul class="feature-list">
+            
+            <li>Պատրաստվել է նյութ գործիքների և միավորների փոխարկիչների մասին (շուտով)։</li>
+            
+            <li>Պարզաբանվել են հաշվարկման պարամետրերը և սահմանային արժեքները։</li>
+            
+          </ul>
+        </div>
 
-      <!-- Раздел для инженеров -->
-      <div class="update-section">
-        <h3>🔧 Ինժեներների համար</h3>
-        <ul class="feature-list">
-          
-          <li>Պատրաստվել է նյութ գործիքների և միավորների փոխարկիչների մասին (շուտով)։</li>
-          
-          <li>Պարզաբանվել են հաշվարկման պարամետրերը և սահմանային արժեքները։</li>
-          
-        </ul>
-      </div>
+        <div class="update-section">
+          <h3 id="section-platform">Պլատֆորմի նոր հատկություններ</h3>
+          <ul class="feature-list">
+            
+            <li><strong>Բարելավված որոնման համակարգ.</strong> Ավելացվել է խելացի որոնում ավտոմատ լրացմամբ և արդյունքների զտումով։</li>
+            
+            <li><strong>Անհատականացված առաջարկներ.</strong> Ալգորիթմը այժմ վերլուծում է ձեր նախապատվությունները և առաջարկում համապատասխան գործիքներ։</li>
+            
+            <li><strong>Բջջային օպտիմիզացիա.</strong> Բոլոր գործիքները այժմ կատարյալ աշխատում են բջջային սարքերում հարմարվողական դիզայնով։</li>
+            
+            <li><strong>Ծանուցումների համակարգ.</strong> Ստացեք ծանուցումներ նոր հատկությունների և ձեզ հետաքրքրող գործիքների թարմացումների մասին։</li>
+            
+          </ul>
+        </div>
 
-      <!-- Новые функции платформы -->
-      <div class="update-section">
-        <h3>🌟 Պլատֆորմի նոր հատկություններ</h3>
-        <ul class="feature-list">
-          
-          <li><strong>Բարելավված որոնման համակարգ.</strong> Ավելացվել է խելացի որոնում ավտոմատ լրացմամբ և արդյունքների զտումով։</li>
-          
-          <li><strong>Անհատականացված առաջարկներ.</strong> Ալգորիթմը այժմ վերլուծում է ձեր նախապատվությունները և առաջարկում համապատասխան գործիքներ։</li>
-          
-          <li><strong>Բջջային օպտիմիզացիա.</strong> Բոլոր գործիքները այժմ կատարյալ աշխատում են բջջային սարքերում հարմարվողական դիզայնով։</li>
-          
-          <li><strong>Ծանուցումների համակարգ.</strong> Ստացեք ծանուցումներ նոր հատկությունների և ձեզ հետաքրքրող գործիքների թարմացումների մասին։</li>
-          
-        </ul>
-      </div>
+        <div class="update-section">
+          <h3 id="section-performance">Արտադրողականության բարելավումներ</h3>
+          <ul class="feature-list">
+            
+            <li><strong>Ավելի արագ բեռնում.</strong> Էջերի բեռնման ժամանակը կրճատվել է 40%՝ կոդի օպտիմիզացիայի և կեշավորման շնորհիվ։</li>
+            
+            <li><strong>Օպտիմիզացված հաշվարկներ.</strong> Մաթեմատիկական գործողությունները այժմ կատարվում են 2 անգամ ավելի արագ։</li>
+            
+            <li><strong>Բարելավված կայունություն.</strong> Սխալների քանակը կրճատվել է 60%՝ ավելի լավ բացառությունների մշակման շնորհիվ։</li>
+            
+          </ul>
+        </div>
 
-      <!-- Улучшения производительности -->
-      <div class="update-section">
-        <h3>⚡ Արտադրողականության բարելավումներ</h3>
-        <ul class="feature-list">
-          
-          <li><strong>Ավելի արագ բեռնում.</strong> Էջերի բեռնման ժամանակը կրճատվել է 40%՝ կոդի օպտիմիզացիայի և կեշավորման շնորհիվ։</li>
-          
-          <li><strong>Օպտիմիզացված հաշվարկներ.</strong> Մաթեմատիկական գործողությունները այժմ կատարվում են 2 անգամ ավելի արագ։</li>
-          
-          <li><strong>Բարելավված կայունություն.</strong> Սխալների քանակը կրճատվել է 60%՝ ավելի լավ բացառությունների մշակման շնորհիվ։</li>
-          
-        </ul>
-      </div>
+        <div class="bug-fix">
+          <h4 id="section-bugfixes">Շտկումներ</h4>
+          <ul class="feature-list">
+            
+            <li>Շտկվել են դասավորության սխալները նորությունների քարտերում։</li>
+            
+            <li>Աճել է կատեգորիաների անջատիչների աշխատանքի կայունությունը։</li>
+            
+          </ul>
+        </div>
 
-      <!-- Исправления ошибок -->
-      <div class="bug-fix">
-        <h4>🛠 Շտկումներ</h4>
-        <ul class="feature-list">
-          
-          <li>Շտկվել են դասավորության սխալները նորությունների քարտերում։</li>
-          
-          <li>Աճել է կատեգորիաների անջատիչների աշխատանքի կայունությունը։</li>
-          
-        </ul>
-      </div>
+        <div class="social-share">
+          <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Fhy%2Fknowledge-base%2Farticles%2Fupdates-august-17.html" target="_blank" rel="noopener">Կիսվել VK-ում</a>
+          <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Fhy%2Fknowledge-base%2Farticles%2Fupdates-august-17.html&text=Serpmonn%20%D5%A9%D5%A1%D6%80%D5%B4%D5%A1%D6%81%D5%B8%D6%82%D5%B4%D5%B6%D5%A5%D6%80" target="_blank" rel="noopener">Կիսվել Telegram-ում</a>
+        </div>
 
-      <!-- Поделиться -->
-      <div class="social-share">
-        <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Fhy%2Fknowledge-base%2Farticles%2Fupdates-august-17.html" target="_blank" rel="noopener">Կիսվել VK-ում</a>
-        <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Fhy%2Fknowledge-base%2Farticles%2Fupdates-august-17.html&text=%F0%9F%9A%80%20Serpmonn%20%D5%A9%D5%A1%D6%80%D5%B4%D5%A1%D6%81%D5%B8%D6%82%D5%B4%D5%B6%D5%A5%D6%80" target="_blank" rel="noopener">Կիսվել Telegram-ում</a>
+        
+        
+        
+
+<div class="related-articles">
+  <h3>Related articles</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/hy/knowledge-base/articles/updates-aug-25-sep-15.html">Serpmonn թարմացումներ — օգոստոսի 25 — սեպտեմբերի 15, 2025</a></li>
+    
+    <li><a href="/frontend/hy/knowledge-base/articles/updates-sep15-2025-jul22-2026.html">Serpmonn Updates — September 15, 2025 — July 22, 2026</a></li>
+    
+    <li><a href="/frontend/hy/knowledge-base/articles/port-forwarding-guide.html">Պորտերի Քարշում: Ամբողջական Ուղեցույց 2025</a></li>
+    
+  </ul>
+</div>
+
+
       </div>
     </article>
 
-    <!-- Загрузка меню -->
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
 
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
 
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    
+    
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="Փակել գովազդը" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
@@ -212,7 +258,7 @@
   initMobileAnchorAd();
 </script>
 
-
+    
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 
 </body>

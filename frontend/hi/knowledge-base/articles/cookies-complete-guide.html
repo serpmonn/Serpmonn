@@ -266,57 +266,64 @@
   <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
     
-    <!-- Стили для этой статьи -->
-    <link rel="stylesheet" href="/frontend/styles/articles/cookies-guide.css">
-    
-    <!-- Внешние библиотеки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/cookies-guide.css">
     
     <!-- Скрипт меню -->
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>
-    <div class="reading-progress">
-        <div class="reading-progress-bar"></div>
-    </div>
     
-    <button class="toc-toggle" onclick="toggleFloatingToc()">
-        <i class="fas fa-list"></i>
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">विषयसूची</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="विषयसूची">
+  <div class="floating-toc__head">
+    <h3>विषयसूची</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
     </button>
+  </div>
+  <ul>
     
-    <div class="floating-toc">
-        <h3>विषयसूची</h3>
-        <ul>
-            <li><a href="#section-what-is">कुकीज़ क्या हैं?</a></li>
-            <li><a href="#section-how-work">कुकीज़ कैसे काम करती हैं?</a></li>
-            <li><a href="#section-types">कुकी फाइलों के प्रकार</a></li>
-            <li><a href="#section-why-clean">कुकीज़ साफ़ क्यों करें?</a></li>
-            <li><a href="#section-how-clean">कुकीज़ कैसे साफ़ करें</a></li>
-            <li><a href="#section-manage">कुकी प्रबंधन</a></li>
-            <li><a href="#section-security">सुरक्षा</a></li>
-            <li><a href="#section-faq">अक्सर पूछे जाने वाले प्रश्न</a></li>
-        </ul>
-    </div>
+    <li><a href="#section-what-is">कुकीज़ क्या हैं?</a></li>
     
+    <li><a href="#section-how-work">कुकीज़ कैसे काम करती हैं?</a></li>
+    
+    <li><a href="#section-types">कुकी फाइलों के प्रकार</a></li>
+    
+    <li><a href="#section-why-clean">कुकीज़ साफ़ क्यों करें?</a></li>
+    
+    <li><a href="#section-how-clean">कुकीज़ कैसे साफ़ करें</a></li>
+    
+    <li><a href="#section-manage">कुकी प्रबंधन</a></li>
+    
+    <li><a href="#section-security">सुरक्षा</a></li>
+    
+    <li><a href="#section-faq">अक्सर पूछे जाने वाले प्रश्न</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+    
+
     <div id="menuContainer"></div>
     
     <article class="article-container" tabindex="0">
         <header class="article-header">
             <span class="article-category">सुरक्षा</span>
-            <div class="table-of-contents sticky-toc">
-                <h2>विषयसूची</h2>
-                <ul>
-                    <li><a href="#section-what-is">कुकीज़ क्या हैं?</a></li>
-                    <li><a href="#section-how-work">कुकीज़ कैसे काम करती हैं?</a></li>
-                    <li><a href="#section-types">कुकी फाइलों के प्रकार</a></li>
-                    <li><a href="#section-why-clean">कुकीज़ साफ़ क्यों करें?</a></li>
-                    <li><a href="#section-how-clean">कुकीज़ कैसे साफ़ करें</a></li>
-                    <li><a href="#section-manage">कुकी प्रबंधन</a></li>
-                    <li><a href="#section-security">सुरक्षा</a></li>
-                    <li><a href="#section-faq">अक्सर पूछे जाने वाले प्रश्न</a></li>
-                </ul>
-            </div>
             <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
             </div>
@@ -328,30 +335,42 @@
             <p>हर बार जब आप किसी वेबसाइट पर जाते हैं, तो आपको कुकी के उपयोग के बारे में एक संदेश मिलता है। लेकिन वे वास्तव में क्या हैं? इस गाइड में हम कुकी फाइलों के बारे में सब कुछ विश्लेषण करेंगे: मूल बातों से लेकर उन्नत सुरक्षा सेटिंग्स तक।</p>
 
             <!-- Что такое куки -->
-            <h2 id="section-what-is">🍪 कुकी फाइलें क्या हैं?</h2>
+            <h2 id="section-what-is">कुकी फाइलें क्या हैं?</h2>
             <p><strong>कुकीज़</strong> छोटी टेक्स्ट फाइलें हैं जो वेबसाइटें आपके डिवाइस पर सेव करती हैं। इनमें इंटरनेट पर आपकी गतिविधियों की जानकारी होती है और वे वेबसाइटों को आपको "याद रखने" में मदद करती हैं।</p>
             
             <div class="analogy-box">
-                <h4>💡 सरल सादृश्य</h4>
+                <h4>सरल सादृश्य</h4>
                 <p>कल्पना करें कि कुकीज़ एक बिजनेस कार्ड हैं जिसे आप एक कैफे में छोड़ देते हैं। अगली बार जब आप आएंगे, तो वेटर आपको पहचान लेगा और याद रखेगा कि आप कौन सी कॉफी पसंद करते हैं।</p>
             </div>
 
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-user-circle"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+</span>
+
                     <h3>पहचान</h3>
                     <p>वेबसाइट बाद के दौरे में आपको पहचानती है</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-shopping-cart"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11l2-7H7"/></svg>
+</span>
+
                     <h3>शॉपिंग कार्ट</h3>
                     <p>आइटम सेव करती है भले ही आप वेबसाइट छोड़ दें</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-language"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+</span>
+
                     <h3>सेटिंग्स</h3>
                     <p>भाषा, मुद्रा और अन्य प्राथमिकताएं याद रखती है</p>
                 </div>
@@ -359,7 +378,7 @@
             </div>
 
             <!-- Как работают куки -->
-            <h2 id="section-how-work">🔧 कुकीज़ कैसे काम करती हैं?</h2>
+            <h2 id="section-how-work">कुकीज़ कैसे काम करती हैं?</h2>
             
             <ol class="step-list">
                 
@@ -394,7 +413,7 @@
             </div>
 
             <!-- Типы куки -->
-            <h2 id="section-types">📊 कुकी फाइलों के प्रकार</h2>
+            <h2 id="section-types">कुकी फाइलों के प्रकार</h2>
             
             <table class="cookies-table">
                 <thead>
@@ -436,36 +455,48 @@
             </table>
 
             <div class="privacy-warning">
-                <h4>⚠️ ध्यान दें: तीसरे पक्ष की कुकी</h4>
+                <h4>️ ध्यान दें: तीसरे पक्ष की कुकी</h4>
                 <p>तीसरे पक्ष की कुकीज़ का उपयोग अक्सर विभिन्न वेबसाइटों पर आपकी गतिविधि को ट्रैक करने के लिए किया जाता है। आधुनिक ब्राउज़र गोपनीयता की सुरक्षा के लिए धीरे-धीरे उनके समर्थन को समाप्त कर रहे हैं।</p>
             </div>
 
             <!-- Зачем чистить куки -->
-            <h2 id="section-why-clean">🧹 कुकीज़ साफ़ क्यों करें?</h2>
+            <h2 id="section-why-clean">कुकीज़ साफ़ क्यों करें?</h2>
 
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-shield-alt"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V7z"/></svg>
+</span>
+
                     <h3>सुरक्षा</h3>
                     <p>सत्र चोरी और अनधिकृत पहुंच से सुरक्षा</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-user-secret"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+</span>
+
                     <h3>गोपनीयता</h3>
                     <p>ट्रैकिंग कुकी और ब्राउज़िंग इतिहास हटाना</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-broom"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+</span>
+
                     <h3>जगह खाली करना</h3>
                     <p>कुकीज़ आपके डिवाइस पर जगह लेती हैं</p>
                 </div>
                 
             </div>
 
-            <h3>📋 ऐसी स्थितियां जब आपको कुकीज़ साफ़ करनी चाहिए:</h3>
+            <h3>ऐसी स्थितियां जब आपको कुकीज़ साफ़ करनी चाहिए:</h3>
             <ul>
                 
                 <li><strong>वेबसाइटों पर लॉगिन समस्याएं</strong></li>
@@ -481,11 +512,11 @@
             </ul>
 
             <!-- Как очистить куки -->
-            <h2 id="section-how-clean">🔧 कुकीज़ कैसे साफ़ करें</h2>
+            <h2 id="section-how-clean">कुकीज़ कैसे साफ़ करें</h2>
 
             
             <div class="browser-guide">
-                <h4>🌐 Google Chrome</h4>
+                <h4>Google Chrome</h4>
                 <ol>
                     
                     <li>खोलें <strong>सेटिंग्स</strong> → <strong>गोपनीयता और सुरक्षा</strong></li>
@@ -500,7 +531,7 @@
             </div>
             
             <div class="browser-guide">
-                <h4>🦊 Mozilla Firefox</h4>
+                <h4>Mozilla Firefox</h4>
                 <ol>
                     
                     <li>जाएं <strong>सेटिंग्स</strong> → <strong>गोपनीयता और सुरक्षा</strong></li>
@@ -531,11 +562,11 @@
             
 
             <div class="security-tip">
-                <h4>💡 पेशेवर सलाह</h4>
+                <h4>पेशेवर सलाह</h4>
                 <p>गुप्त/निजी ब्राउज़िंग मोड का उपयोग करें। इस मोड में, विंडो बंद करने के बाद कुकीज़ अपने आप हट जाती हैं।</p>
             </div>
 
-            <h3>⚡ कीबोर्ड शॉर्टकट के साथ त्वरित सफाई:</h3>
+            <h3>कीबोर्ड शॉर्टकट के साथ त्वरित सफाई:</h3>
             <ul>
                 
                 <li><strong>Ctrl+Shift+Delete</strong> (Windows/Linux) - इतिहास सफाई विंडो खोलता है</li>
@@ -545,7 +576,7 @@
             </ul>
 
             <!-- Управление куки -->
-            <h2 id="section-manage">🎛️ कुकी प्रबंधन: सर्वोत्तम अभ्यास</h2>
+            <h2 id="section-manage">️ कुकी प्रबंधन: सर्वोत्तम अभ्यास</h2>
 
             <ol class="step-list">
                 
@@ -572,7 +603,7 @@
             </ol>
 
             <div class="security-tip">
-                <h4>🛡️ कुकी प्रबंधन के लिए एक्सटेंशन</h4>
+                <h4>️ कुकी प्रबंधन के लिए एक्सटेंशन</h4>
                 <ul>
                     
                     <li><strong>Cookie AutoDelete</strong> - बंद टैब से कुकीज़ स्वचालित रूप से हटाता है</li>
@@ -585,10 +616,10 @@
             </div>
 
             <!-- Безопасность -->
-            <h2 id="section-security">🔐 कुकी सुरक्षा</h2>
+            <h2 id="section-security">कुकी सुरक्षा</h2>
 
             <div class="privacy-warning">
-                <h4>🚨 खतरनाक हमले के प्रकार</h4>
+                <h4>खतरनाक हमले के प्रकार</h4>
                 <ul>
                     
                     <li><strong>कुकी अवरोधन</strong> असुरक्षित नेटवर्क के माध्यम से</li>
@@ -600,7 +631,7 @@
                 </ul>
             </div>
 
-            <h3>🛡️ सुरक्षा उपाय:</h3>
+            <h3>️ सुरक्षा उपाय:</h3>
             
             <table class="cookies-table">
                 <thead>
@@ -635,7 +666,7 @@
                 </tbody>
             </table>
 
-            <h3>📋 कुकी सुरक्षा चेकलिस्ट</h3>
+            <h3>कुकी सुरक्षा चेकलिस्ट</h3>
             <ul class="checklist">
                 
                 <li>
@@ -666,7 +697,7 @@
             </ul>
 
             <!-- Частые вопросы -->
-            <h2 id="section-faq">❓ अक्सर पूछे जाने वाले प्रश्न</h2>
+            <h2 id="section-faq">अक्सर पूछे जाने वाले प्रश्न</h2>
 
             
             <div class="browser-guide">
@@ -696,7 +727,7 @@
             
 
             <!-- Выводы -->
-            <h3>🎯 मुख्य बातें:</h3>
+            <h3>मुख्य बातें:</h3>
             <ul>
                 
                 <li>कुकीज़ इंटरनेट पर सुविधाजनक काम के लिए आवश्यक हैं</li>
@@ -711,33 +742,29 @@
                 
             </ul>
 
-            <!-- Кнопки поделиться -->
+            
+            
+            
+
+<div class="related-articles">
+  <h3>संबंधित लेख</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/hi/knowledge-base/articles/port-forwarding-guide.html">पोर्ट फॉरवर्डिंग: संपूर्ण गाइड 2025</a></li>
+    
+    <li><a href="/frontend/hi/knowledge-base/articles/web-development-guide.html">কীভাবে স্ক্র্যাচ থেকে আপনার প্রথম ওয়েবসাইট তৈরি করবেন - সম্পূর্ণ প্রারম্ভিক গাইড</a></li>
+    
+    <li><a href="/frontend/hi/knowledge-base/articles/utm-complete-guide.html">UTM: पूर्ण गाइड</a></li>
+    
+  </ul>
+</div>
+
+
+
             <div class="share-buttons">
                 <h3>लेख साझा करें</h3>
-                <button onclick="share('telegram')" aria-label="टेलीग्राम">टेलीग्राम</button>
-                <button onclick="share('vk')" aria-label="VKontakte">VKontakte</button>
-            </div>
-
-            <!-- Комментарии -->
-            <div class="comments-section">
-                <h2>टिप्पणियाँ</h2>
-                <div class="comment-form">
-                    <h3>अपनी प्रतिक्रिया दें</h3>
-                    <form id="commentForm">
-                        <div class="form-group">
-                            <label for="commentName">आपका नाम:</label>
-                            <input type="text" id="commentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="commentText">आपकी टिप्पणी:</label>
-                            <textarea id="commentText" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">भेजें</button>
-                    </form>
-                </div>
-                <div id="commentsList" class="comments-list">
-                    <!-- Комментарии будут загружены здесь -->
-                </div>
+                <button type="button" onclick="serpmonnShare('telegram')" aria-label="टेलीग्राम">टेलीग्राम</button>
+                <button type="button" onclick="serpmonnShare('vk')" aria-label="VKontakte">VKontakte</button>
             </div>
         </div>
 
@@ -751,127 +778,9 @@
     <!-- Кнопка наверх -->
     <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑ ऊपर">↑ ऊपर</button>
 
-    <!-- Внешние библиотеки -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    
-    <!-- JavaScript для статьи -->
-    <script>
-        // Функции для работы с комментариями
-        function saveComment(name, text) {
-            const comment = {
-                name: name,
-                text: text,
-                date: new Date().toLocaleString('hi')
-            };
-            
-            let comments = JSON.parse(localStorage.getItem('articleComments')) || [];
-            comments.push(comment);
-            localStorage.setItem('articleComments', JSON.stringify(comments));
-            
-            return comment;
-        }
-        
-        function loadComments() {
-            const comments = JSON.parse(localStorage.getItem('articleComments')) || [];
-            const commentsList = document.getElementById('commentsList');
-            
-            if (comments.length === 0) {
-                commentsList.innerHTML = '<div class="no-comments">अभी तक कोई टिप्पणी नहीं। पहले बनें!</div>';
-                return;
-            }
-            
-            commentsList.innerHTML = comments.map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">${escapeHtml(comment.name)}</span>
-                        <span class="comment-date">${escapeHtml(comment.date)}</span>
-                    </div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Основные функции
-        function toggleFloatingToc() {
-            const floatingToc = document.querySelector('.floating-toc');
-            floatingToc.style.display = floatingToc.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        function share(network) {
-            const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent(document.title);
-            const shareUrls = {
-                telegram: `https://t.me/share/url?url=${url}&text=${title}`,
-                vk: `https://vk.com/share.php?url=${url}&title=${title}`
-            };
-            window.open(shareUrls[network], '_blank');
-        }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Загрузка комментариев
-            loadComments();
-            
-            // Обработка формы комментариев
-            document.getElementById('commentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nameInput = document.getElementById('commentName');
-                const textInput = document.getElementById('commentText');
-                
-                const name = nameInput.value.trim();
-                const text = textInput.value.trim();
-                
-                if (name && text) {
-                    saveComment(name, text);
-                    loadComments();
-                    
-                    // Очистка формы
-                    nameInput.value = '';
-                    textInput.value = '';
-                }
-            });
-            
-            // Анимация появления контента
-            const contentObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.article-content > *').forEach(el => contentObserver.observe(el));
-            
-            // Кнопка "Наверх"
-            window.addEventListener('scroll', () => {
-                const button = document.querySelector('.scroll-to-top');
-                button.classList.toggle('show', window.scrollY > 300);
-            });
-            
-            // Прогресс чтения
-            const progressBar = document.querySelector('.reading-progress-bar');
-            window.addEventListener('scroll', () => {
-                const windowHeight = window.innerHeight;
-                const documentHeight = document.documentElement.scrollHeight;
-                const scrollTop = window.scrollY;
-                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
-                progressBar.style.width = `${progress}%`;
-            });
-            
-            // Показывать плавающее оглавление на десктопах
-            if (window.innerWidth > 991) {
-                document.querySelector('.floating-toc').style.display = 'block';
-            }
-            
-        });
-    </script>
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
+
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
 

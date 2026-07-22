@@ -4,6 +4,7 @@ const path = require('path');
 
 const mailAdsPath = path.join(__dirname, 'site/src/scripts/mail-ad-slots.json');
 const { loadAllPromoI18n, resolvePromoTr, formatPromoDateForLocale } = require('./site/_data/promo-i18n-loader');
+const articleChromeHelpers = require('./site/_data/articleChromeHelpers');
 
 module.exports = function(eleventyConfig) {
   /**
@@ -23,6 +24,18 @@ module.exports = function(eleventyConfig) {
 
   eleventyConfig.addFilter('formatPromoDate', function(value, locale) {
     return formatPromoDateForLocale(value, locale);
+  });
+
+  eleventyConfig.addFilter('articleRelated', function(slug, locale) {
+    return articleChromeHelpers.relatedList(slug, locale);
+  });
+
+  eleventyConfig.addFilter('articleRelatedTitle', function(locale) {
+    return articleChromeHelpers.relatedTitle(locale);
+  });
+
+  eleventyConfig.addFilter('articleTocTitle', function(locale) {
+    return articleChromeHelpers.tocTitle(locale);
   });
 
   /**

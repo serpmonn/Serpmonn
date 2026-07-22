@@ -263,59 +263,68 @@
   <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/web-development-guide.css">
 </head>
 <body>
-    <div class="reading-progress">
-        <div class="reading-progress-bar"></div>
-    </div>
     
-    <button class="toc-toggle" onclick="toggleFloatingToc()">
-        <i class="fas fa-list"></i>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Cuprins</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Cuprins">
+  <div class="floating-toc__head">
+    <h3>Cuprins</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
     </button>
+  </div>
+  <ul>
     
-    <div class="floating-toc">
-        <h3>Cuprins</h3>
-        <ul>
-            
-            <li><a href="#section-goals">Ce Vei Învăța</a></li>
-            
-            <li><a href="#section-tools">Instrumente Necesare</a></li>
-            
-            <li><a href="#section-guide">Ghid Pas cu Pas</a></li>
-            
-            <li><a href="#section-modern-tools">Instrumente Moderne</a></li>
-            
-            <li><a href="#section-faq">Întrebări Frecvente</a></li>
-            
-            <li><a href="#section-resources">Resurse Utile</a></li>
-            
-        </ul>
-    </div>
+    <li><a href="#section-goals">Ce Vei Învăța</a></li>
     
+    <li><a href="#section-tools">Instrumente Necesare</a></li>
+    
+    <li><a href="#section-guide">Ghid Pas cu Pas</a></li>
+    
+    <li><a href="#section-modern-tools">Instrumente Moderne</a></li>
+    
+    <li><a href="#section-faq">Întrebări Frecvente</a></li>
+    
+    <li><a href="#section-resources">Resurse Utile</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
     <div id="menuContainer"></div>
+    
     <article class="article-container" tabindex="0">
         <header class="article-header">
             <span class="article-category">Dezvoltare</span>
-            <div class="table-of-contents sticky-toc">
-                <h2>Cuprins</h2>
-                <ul>
-                    
-                    <li><a href="#section-goals">Ce Vei Învăța</a></li>
-                    
-                    <li><a href="#section-tools">Instrumente Necesare</a></li>
-                    
-                    <li><a href="#section-guide">Ghid Pas cu Pas</a></li>
-                    
-                    <li><a href="#section-modern-tools">Instrumente Moderne</a></li>
-                    
-                    <li><a href="#section-faq">Întrebări Frecvente</a></li>
-                    
-                    <li><a href="#section-resources">Resurse Utile</a></li>
-                    
-                </ul>
-            </div>
             <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
             </div>
@@ -326,7 +335,7 @@
         <div class="article-content">
             <p>Crearea unei pagini web poate părea o sarcină descurajantă pentru un începător, dar este de fapt un proces captivant accesibil tuturor. În acest ghid, vom parcurge întregul drum de la idee la o pagină web funcțională.</p>
 
-            <h2 id="section-goals">🎯 Ce Vei Învăța</h2>
+            <h2 id="section-goals">Ce Vei Învăța</h2>
             <ul>
                 
                 <li>Fundamentele HTML, CSS și JavaScript</li>
@@ -339,47 +348,71 @@
                 
             </ul>
 
-            <h2 id="section-tools">📋 Instrumente Necesare</h2>
+            <h2 id="section-tools">Instrumente Necesare</h2>
             <div class="tech-grid">
                 
                 <div class="tech-card">
-                    <span class="tech-icon">💻</span>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-5 6 5 6"/><path d="M16 6l5 6-5 6"/></svg>
+</span>
+
                     <h4>Editor de Text</h4>
                     <p>VS Code, Sublime Text sau Notepad++</p>
                 </div>
                 
                 <div class="tech-card">
-                    <span class="tech-icon">🌐</span>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+</span>
+
                     <h4>Browser</h4>
                     <p>Chrome, Firefox sau Safari</p>
                 </div>
                 
                 <div class="tech-card">
-                    <span class="tech-icon">📁</span>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+</span>
+
                     <h4>Manager de Fișiere</h4>
                     <p>Pentru organizarea proiectului</p>
                 </div>
                 
             </div>
 
-            <h2 id="section-guide">🚀 Ghid Pas cu Pas</h2>
+            <h2 id="section-guide">Ghid Pas cu Pas</h2>
             
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-pencil-alt"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+</span>
+
                     <h3>Planificare</h3>
                     <p>Definește obiectivele și structura paginii</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-code"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-5 6 5 6"/><path d="M16 6l5 6-5 6"/></svg>
+</span>
+
                     <h3>Dezvoltare</h3>
                     <p>Creează HTML, CSS și JavaScript</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-rocket"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 3 4 7 4 10l-4 4-4-4c0-3 1-7 4-10z"/><path d="M9 17l-2 4"/><path d="M15 17l2 4"/><circle cx="12" cy="10" r="1.5"/></svg>
+</span>
+
                     <h3>Publicare</h3>
                     <p>Publică pagina web pe internet</p>
                 </div>
@@ -529,11 +562,11 @@ p {
             </ol>
 
             <div class="highlight-box">
-                <h4>💡 Sfat pentru Începători</h4>
+                <h4>Sfat pentru Începători</h4>
                 <p>Nu încerca să creezi imediat o pagină web complexă. Începe cu o pagină web simplă de o singură pagină și adaugă treptat funcționalități noi.</p>
             </div>
 
-            <h2 id="section-modern-tools">🔧 Instrumente Moderne</h2>
+            <h2 id="section-modern-tools">Instrumente Moderne</h2>
             <p>Pentru dezvoltare mai avansată, ia în considerare:</p>
             <ul>
                 
@@ -548,42 +581,27 @@ p {
             </ul>
 
             <div class="warning-box">
-                <h4>⚠️ Important de Reținut</h4>
+                <h4>️ Important de Reținut</h4>
                 <p>Dezvoltarea web evoluează constant. Fii pregătit să înveți tehnologii noi și să urmărești tendințele din industrie.</p>
             </div>
 
-            <h2 id="section-faq">❓ Întrebări Frecvente</h2>
+            <h2 id="section-faq">Întrebări Frecvente</h2>
             
             
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    Cât durează să-ți creezi prima pagină web?
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>Pentru o pagină web simplă de vizită, poate dura câteva ore sau zile. Proiecte mai complexe pot dura săptămâni sau luni, în funcție de complexitate și de timpul pe care ești dispus să-l aloci.</p>
-                </div>
-            </div>
+            <details class="faq-item">
+                <summary>Cât durează să-ți creezi prima pagină web?</summary>
+                <p>Pentru o pagină web simplă de vizită, poate dura câteva ore sau zile. Proiecte mai complexe pot dura săptămâni sau luni, în funcție de complexitate și de timpul pe care ești dispus să-l aloci.</p>
+            </details>
             
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    Trebuie să știi matematică pentru dezvoltarea web?
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>Matematică avansată nu este necesară pentru majoritatea proiectelor web. Abilitățile cheie de care ai nevoie sunt gândirea logică și rezolvarea problemelor.</p>
-                </div>
-            </div>
+            <details class="faq-item">
+                <summary>Trebuie să știi matematică pentru dezvoltarea web?</summary>
+                <p>Matematică avansată nu este necesară pentru majoritatea proiectelor web. Abilitățile cheie de care ai nevoie sunt gândirea logică și rezolvarea problemelor.</p>
+            </details>
             
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    Ce limbaj de programare este mai bine să înveți mai întâi?
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>HTML și CSS sunt fundația web-ului și ar trebui învățate mai întâi. Apoi este recomandat să treci la JavaScript, care adaugă interactivitate paginii web.</p>
-                </div>
-            </div>
+            <details class="faq-item">
+                <summary>Ce limbaj de programare este mai bine să înveți mai întâi?</summary>
+                <p>HTML și CSS sunt fundația web-ului și ar trebui învățate mai întâi. Apoi este recomandat să treci la JavaScript, care adaugă interactivitate paginii web.</p>
+            </details>
             
 
             <h3>Listă de Verificare pentru Autocontrol</h3>
@@ -616,7 +634,7 @@ p {
                 
             </ul>
 
-            <h2 id="section-resources">📚 Resurse Utile</h2>
+            <h2 id="section-resources">Resurse Utile</h2>
             <ul>
                 
                 <li><a href="https://developer.mozilla.org/ro/" target="_blank" rel="noopener">MDN Web Docs (română)</a> — documentație excelentă</li>
@@ -631,31 +649,29 @@ p {
 
             <p>Crearea unei pagini web este un proces creativ care poate aduce multă bucurie și oportunități noi. Nu-ți fie frică să experimentezi și să înveți din greșelile tale!</p>
 
+            
+            
+            
+
+<div class="related-articles">
+  <h3>Articole asemănătoare</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/ro/knowledge-base/articles/cookies-complete-guide.html">Ce sunt cookie-urile?: Ghid complet de gestionare și securitate</a></li>
+    
+    <li><a href="/frontend/ro/knowledge-base/articles/json-formatter-guide.html">JSON formatter: why you need it</a></li>
+    
+    <li><a href="/frontend/ro/knowledge-base/articles/web-tech-trends-2024.html">Tendințe Tehnologii Web 2025 — Ce Trebuie să Știe Dezvoltatorii</a></li>
+    
+  </ul>
+</div>
+
+
+
             <div class="share-buttons">
                 <h3>Distribuie Articolul</h3>
-                <button onclick="share('telegram')" aria-label="Distribuie pe Telegram">Telegram</button>
-                <button onclick="share('vk')" aria-label="Distribuie pe VKontakte">VKontakte</button>
-            </div>
-
-            <div class="comments-section">
-                <h2>Comentarii</h2>
-                <div class="comment-form">
-                    <h3>Lasă-ți Feedback-ul</h3>
-                    <form id="commentForm">
-                        <div class="form-group">
-                            <label for="commentName">Numele tău:</label>
-                            <input type="text" id="commentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="commentText">Comentariul tău:</label>
-                            <textarea id="commentText" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">Trimite</button>
-                    </form>
-                </div>
-                <div id="commentsList" class="comments-list">
-                    <!-- Комментарии будут загружены здесь -->
-                </div>
+                <button type="button" onclick="serpmonnShare('telegram')" aria-label="Distribuie pe Telegram">Telegram</button>
+                <button type="button" onclick="serpmonnShare('vk')" aria-label="Distribuie pe VKontakte">VKontakte</button>
             </div>
         </div>
 
@@ -668,143 +684,20 @@ p {
     <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="Înapoi sus">↑ Sus</button>
 
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    
-    <script>
-        // Локализованные строки для JavaScript
-        const localeTexts = {
-            noComments: "Încă nu există comentarii. Fii primul!",
-            commentSaved: "Comentariu salvat cu succes!",
-            error: "Eroare"
-        };
-        
-        // Функции для работы с комментариями
-        function saveComment(name, text) {
-            const comment = {
-                name: name,
-                text: text,
-                date: new Date().toLocaleString('ro')
-            };
-            
-            let comments = JSON.parse(localStorage.getItem('articleComments_ro')) || [];
-            comments.push(comment);
-            localStorage.setItem('articleComments_ro', JSON.stringify(comments));
-            
-            return comment;
-        }
-        
-        function loadComments() {
-            const comments = JSON.parse(localStorage.getItem('articleComments_ro')) || [];
-            const commentsList = document.getElementById('commentsList');
-            
-            if (comments.length === 0) {
-                commentsList.innerHTML = '<div class="no-comments">' + localeTexts.noComments + '</div>';
-                return;
-            }
-            
-            commentsList.innerHTML = comments.map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">${escapeHtml(comment.name)}</span>
-                        <span class="comment-date">${escapeHtml(comment.date)}</span>
-                    </div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Основные функции
-        function toggleFloatingToc() {
-            const floatingToc = document.querySelector('.floating-toc');
-            floatingToc.style.display = floatingToc.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        function share(network) {
-            const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent(document.title);
-            const shareUrls = {
-                telegram: `https://t.me/share/url?url=${url}&text=${title}`,
-                vk: `https://vk.com/share.php?url=${url}&title=${title}`
-            };
-            window.open(shareUrls[network], '_blank');
-        }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Загрузка комментариев
-            loadComments();
-            
-            // Обработка формы комментариев
-            document.getElementById('commentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nameInput = document.getElementById('commentName');
-                const textInput = document.getElementById('commentText');
-                
-                const name = nameInput.value.trim();
-                const text = textInput.value.trim();
-                
-                if (name && text) {
-                    saveComment(name, text);
-                    loadComments();
-                    
-                    // Очистка формы
-                    nameInput.value = '';
-                    textInput.value = '';
-                    
-                    // Показать сообщение об успехе
-                    alert(localeTexts.commentSaved);
-                }
-            });
-            
-            // Анимация появления контента
-            const contentObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.article-content > *').forEach(el => contentObserver.observe(el));
-            
-            // Кнопка "Наверх"
-            window.addEventListener('scroll', () => {
-                const button = document.querySelector('.scroll-to-top');
-                button.classList.toggle('show', window.scrollY > 300);
-            });
-            
-            // Прогресс чтения
-            const progressBar = document.querySelector('.reading-progress-bar');
-            window.addEventListener('scroll', () => {
-                const windowHeight = window.innerHeight;
-                const documentHeight = document.documentElement.scrollHeight;
-                const scrollTop = window.scrollY;
-                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
-                progressBar.style.width = `${progress}%`;
-            });
-            
-            // Показывать плавающее оглавление на десктопах
-            if (window.innerWidth > 991) {
-                document.querySelector('.floating-toc').style.display = 'block';
-            }
-            
-        });
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
 
-        // Функция для интерактивного редактора
+    <script>
+        const localeTexts = {
+            error: "Error"
+        };
+
         function runCode(button) {
             const editor = button.closest('.interactive-editor');
             const codeArea = editor.querySelector('.code-textarea');
             const previewArea = editor.querySelector('.preview-area');
-            
+
             try {
                 if (editor.classList.contains('html-editor')) {
-                    // Песочница: HTML из редактора не исполняется в родительской странице
                     previewArea.replaceChildren();
                     const frame = document.createElement('iframe');
                     frame.setAttribute('sandbox', '');
@@ -825,15 +718,6 @@ p {
             } catch (error) {
                 previewArea.textContent = `${localeTexts.error}: ${error.message}`;
             }
-        }
-        
-        // Функция для переключения FAQ
-        function toggleFaq(element) {
-            const answer = element.nextElementSibling;
-            answer.classList.toggle('show');
-            const icon = element.querySelector('i');
-            icon.classList.toggle('fa-chevron-down');
-            icon.classList.toggle('fa-chevron-up');
         }
     </script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>

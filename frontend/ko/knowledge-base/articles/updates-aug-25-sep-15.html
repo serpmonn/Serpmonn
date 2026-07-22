@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="ko" dir="ltr">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="ko">
     <meta charset="UTF-8">
@@ -9,23 +10,19 @@
     <title>Serpmonn 업데이트 — 2025년 8월 25일 ~ 9월 15일</title>
     <meta name="description" content="6개의 새로운 미니 게임, 인증 기능이 있는 좋아요, SEO/현지화, 광고 및 버그 수정.">
 
-    <!-- Open Graph -->
     <meta property="og:title" content="Serpmonn 업데이트 — 2025년 8월 25일 ~ 9월 15일">
     <meta property="og:description" content="6개의 새로운 미니 게임, 인증 기능이 있는 좋아요, SEO/현지화, 광고 및 버그 수정.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/ko/knowledge-base/articles/updates-aug-25-sep-15.html">
     <meta property="og:type" content="article">
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Serpmonn 업데이트 — 2025년 8월 25일 ~ 9월 15일">
     <meta name="twitter:description" content="6개의 새로운 미니 게임, 인증 기능이 있는 좋아요, SEO/현지화, 광고 및 버그 수정.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/ko/knowledge-base/articles/updates-aug-25-sep-15.html" />
     
-    <!-- Hreflang для всех языков -->
     
       
         <link rel="alternate" href="https://serpmonn.ru/frontend/knowledge-base/articles/updates-aug-25-sep-15.html" hreflang="ru" />
@@ -225,7 +222,6 @@
     
     <link rel="alternate" href="https://serpmonn.ru/frontend/knowledge-base/articles/updates-aug-25-sep-15.html" hreflang="x-default" />
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -256,7 +252,6 @@
     }
     </script>
 
-    <!-- JSON-LD: BreadcrumbList -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -272,209 +267,294 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <!-- Стиль статьи -->
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/updates-aug-25-sep-15.css">
 </head>
 <body class="article-page">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">목차</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="목차">
+  <div class="floating-toc__head">
+    <h3>목차</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
+    
+    <li><a href="#section-summary">요약</a></li>
+    
+    <li><a href="#section-1">게임 섹션</a></li>
+    
+    <li><a href="#section-2">️ 좋아요 및 인증</a></li>
+    
+    <li><a href="#section-3">SEO 및 색인 생성</a></li>
+    
+    <li><a href="#section-4">현지화 및 콘텐츠</a></li>
+    
+    <li><a href="#section-5">광고</a></li>
+    
+    <li><a href="#section-6">UX 및 접근성</a></li>
+    
+    <li><a href="#section-7">에코 계산기</a></li>
+    
+    <li><a href="#section-8">기타</a></li>
+    
+    <li><a href="#section-9">탐색 및 콘텐츠</a></li>
+    
+    <li><a href="#section-bugfixes">수정</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
     <div id="menuContainer"></div>
 
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      <a href="https://serpmonn.ru/">홈</a> →
-      <a href="https://serpmonn.ru/frontend/knowledge-base/knowledge-base.html">뉴스</a> →
-      <span>업데이트 8월 25일 ~ 9월 15일</span>
-    </div>
-
-    <article>
+    <article class="article-container" tabindex="0">
       <header class="article-header">
         <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
+          <ins class="mrg-tag"
               style="display:inline-block;"
-              data-ad-client="ad-1897960" 
+              data-ad-client="ad-1897960"
               data-ad-slot="1897960">
           </ins>
         </div>
-        <h1 class="article-title">🚀 Serpmonn 업데이트</h1>
+        <h1 class="article-title">Serpmonn 업데이트</h1>
         <div class="article-date">2025년 8월 25일 ~ 9월 15일</div>
       </header>
 
-      <div class="summary">
-        <h3>📋 요약</h3>
-        <ul>
-          
-          <li>6개의 새로운 미니 게임: 스네이크, Flappy Bird, 코인, 브레이크아웃, 지뢰찾기, 피프틴.</li>
-          
-          <li>좋아요: 모든 언어 통합, JWT 인증, MySQL 저장소.</li>
-          
-          <li>SEO/현지화: 사이트맵, IndexNow, zh-CN 번역, 메타 및 hreflang 수정.</li>
-          
-          <li>광고: Mail.ru 배너(모바일 앵커 포함) 및 자동 축소.</li>
-          
-          <li>메뉴 및 게임 섹션 업데이트, 새로운 게임용 카드 및 링크.</li>
-          
-          <li>버그 수정: 지뢰찾기(첫 클릭 시 지뢰 배치, 플러드 필, 타이머, 깃발), 코인(게임 속도).</li>
-          
-          <li>저장소: 브랜치 정리, develop ← master 동기화.</li>
-          
-        </ul>
-      </div>
+      <div class="article-content">
+        <div class="summary" id="section-summary">
+          <h3>요약</h3>
+          <ul>
+            
+            <li>6개의 새로운 미니 게임: 스네이크, Flappy Bird, 코인, 브레이크아웃, 지뢰찾기, 피프틴.</li>
+            
+            <li>좋아요: 모든 언어 통합, JWT 인증, MySQL 저장소.</li>
+            
+            <li>SEO/현지화: 사이트맵, IndexNow, zh-CN 번역, 메타 및 hreflang 수정.</li>
+            
+            <li>광고: Mail.ru 배너(모바일 앵커 포함) 및 자동 축소.</li>
+            
+            <li>메뉴 및 게임 섹션 업데이트, 새로운 게임용 카드 및 링크.</li>
+            
+            <li>버그 수정: 지뢰찾기(첫 클릭 시 지뢰 배치, 플러드 필, 타이머, 깃발), 코인(게임 속도).</li>
+            
+            <li>저장소: 브랜치 정리, develop ← master 동기화.</li>
+            
+          </ul>
+        </div>
 
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-number">6</div><div class="stat-label">새로운 미니 게임</div></div>
-        <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">좋아요 시스템</div></div>
-        <div class="stat-card"><div class="stat-number">20+</div><div class="stat-label">SEO/현지화 수정</div></div>
-      </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-number">6</div><div class="stat-label">새로운 미니 게임</div></div>
+          <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">좋아요 시스템</div></div>
+          <div class="stat-card"><div class="stat-number">20+</div><div class="stat-label">SEO/현지화 수정</div></div>
+        </div>
 
-      
-      <div class="update-section">
-        <h3>🎮 게임 섹션</h3>
-        <ul class="feature-list">
-          
-          <li><strong>스네이크</strong>: 페이지 <code>/frontend/games/snake/index.html</code>, 카드 숨기기/복귀 테스트; 메뉴 링크 추가됨.</li>
-          
-          <li><strong>Flappy Bird</strong>: <code>/frontend/games/flappy/index.html</code>, 카드 및 메뉴 항목.</li>
-          
-          <li><strong>코인</strong>: <code>/frontend/games/coins/index.html</code>, 시간 경과 코인 수집; 틱 속도 감소 및 트랩 이동.</li>
-          
-          <li><strong>브레이크아웃</strong>: <code>/frontend/games/breakout/index.html</code>, 튕김, 점수, 목숨; 목록 및 메뉴 통합됨.</li>
-          
-          <li><strong>지뢰찾기</strong>: <code>/frontend/games/minesweeper/index.html</code>, 10×10 필드/15 지뢰; 수정: 첫 클릭 시 지뢰 배치, 플러드 필, 타이머, 깃발.</li>
-          
-          <li><strong>피프틴</strong>: <code>/frontend/games/fifteen/index.html</code>, 유효한 이동으로 셔플, 타이머 및 이동 카운터.</li>
-          
-          <li>업데이트됨 <code>/frontend/games/index.html</code>: 모든 게임용 카드 추가, 호버/적응형 디자인.</li>
-          
-          <li>메뉴 (<code>/frontend/menu.html</code>): 각 게임별 새로운 '웹 게임' 항목.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>❤️ 좋아요 및 인증</h3>
-        <ul class="feature-list">
-          
-          <li>JWT 인증 및 MySQL 저장소를 갖춘 좋아요 시스템 도입: 검증된 및 게스트 좋아요, 중복 제거 및 마이그레이션.</li>
-          
-          <li>프론트엔드 좋아요 스크립트 42개 언어 검색 페이지 모두에 통합; 버튼 UX 개선(가시성, 호버, 대비).</li>
-          
-          <li>개발 도구: 디버그 페이지/스크립트, 좋아요 마이그레이션, 게임 이벤트 분석.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🔍 SEO 및 색인 생성</h3>
-        <ul class="feature-list">
-          
-          <li>모든 언어용 사이트맵 확장, <code>sitemap-ru.xml</code> 추가, canonical/hreflang 수정됨.</li>
-          
-          <li>변경된 파일용 ping 스크립트와 IndexNow 통합; 모든 언어에서 제목 및 설명 개선.</li>
-          
-          <li>Twitter Cards 및 JSON-LD(뉴스/게임/홈) 추가, 홈페이지용 x-default.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🌍 현지화 및 콘텐츠</h3>
-        <ul class="feature-list">
-          
-          <li>대량 zh-CN 번역(메뉴, 게임, 뉴스, 도구, 프로필) + zh-CN용 RSS.</li>
-          
-          <li>EN: 구조 정렬, 링크/OG/표준 수정, 뉴스/게임/도구/인증 섹션 번역.</li>
-          
-          <li>메뉴 언어 가시성 RU/EN/zh-CN으로 제한(다른 언어는 향후 포함 예정).</li>
-          
-          <li>메뉴에서 구식 파트너 제거(Sky Codex, Sword Whispers 등).</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>📢 광고</h3>
-        <ul class="feature-list">
-          
-          <li>주요 페이지에 Mail.ru 배너; 모바일 앵커 320×50; 프로모션 중 인피드 광고.</li>
-          
-          <li>no-fill 시 광고 블록용 글로벌 자동 축소; 통합 스크립트 및 재푸시.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>📱 UX 및 접근성</h3>
-        <ul class="feature-list">
-          
-          <li>중앙 정렬 기사/뉴스, 안정적인 스크롤 및 여백; 정렬된 Google CSE 검색창.</li>
-          
-          <li>별도 <code>accessibility.css</code>, '감소된 동작' 모드, 고대비, 큰 글꼴; 모든 페이지에 통합 설정.</li>
-          
-          <li>모바일 개선: 스와이프, 당겨서 새로고침, 햅틱 피드백, 이미지 지연 로딩.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🌱 에코 계산기</h3>
-        <ul class="feature-list">
-          
-          <li>'생태학' 카테고리 및 제품 생태 발자국 계산기 추가; 제품 데이터베이스 확장, 로딩/팁 UX 개선.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🧹 기타</h3>
-        <ul class="feature-list">
-          
-          <li>프론트엔드 구조 재구성(menu/main/scripts/styles → <code>frontend/…</code>), PWA 및 서비스 워커 수정.</li>
-          
-          <li>프로모 코드 지오필터(영어/아시아 국가 숨김), 픽셀 추가.</li>
-          
-          <li>Labuba: 프로토타입 시리즈 및 기술 수정; 최종적으로 미공개.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🧭 탐색 및 콘텐츠</h3>
-        <ul class="feature-list">
-          
-          <li>게임 카드 업데이트, A/B 테스트 필요에 따라 추가/숨김.</li>
-          
-          <li>develop이 master와 동기화됨; 구식 브랜치 및 페이지 제거(master의 구식 데모 게임 포함).</li>
-          
-        </ul>
-      </div>
-      
+        
+        <div class="update-section">
+          <h3 id="section-1">게임 섹션</h3>
+          <ul class="feature-list">
+            
+            <li><strong>스네이크</strong>: 페이지 <code>/frontend/games/snake/index.html</code>, 카드 숨기기/복귀 테스트; 메뉴 링크 추가됨.</li>
+            
+            <li><strong>Flappy Bird</strong>: <code>/frontend/games/flappy/index.html</code>, 카드 및 메뉴 항목.</li>
+            
+            <li><strong>코인</strong>: <code>/frontend/games/coins/index.html</code>, 시간 경과 코인 수집; 틱 속도 감소 및 트랩 이동.</li>
+            
+            <li><strong>브레이크아웃</strong>: <code>/frontend/games/breakout/index.html</code>, 튕김, 점수, 목숨; 목록 및 메뉴 통합됨.</li>
+            
+            <li><strong>지뢰찾기</strong>: <code>/frontend/games/minesweeper/index.html</code>, 10×10 필드/15 지뢰; 수정: 첫 클릭 시 지뢰 배치, 플러드 필, 타이머, 깃발.</li>
+            
+            <li><strong>피프틴</strong>: <code>/frontend/games/fifteen/index.html</code>, 유효한 이동으로 셔플, 타이머 및 이동 카운터.</li>
+            
+            <li>업데이트됨 <code>/frontend/games/index.html</code>: 모든 게임용 카드 추가, 호버/적응형 디자인.</li>
+            
+            <li>메뉴 (<code>/frontend/menu.html</code>): 각 게임별 새로운 '웹 게임' 항목.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-2">️ 좋아요 및 인증</h3>
+          <ul class="feature-list">
+            
+            <li>JWT 인증 및 MySQL 저장소를 갖춘 좋아요 시스템 도입: 검증된 및 게스트 좋아요, 중복 제거 및 마이그레이션.</li>
+            
+            <li>프론트엔드 좋아요 스크립트 42개 언어 검색 페이지 모두에 통합; 버튼 UX 개선(가시성, 호버, 대비).</li>
+            
+            <li>개발 도구: 디버그 페이지/스크립트, 좋아요 마이그레이션, 게임 이벤트 분석.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-3">SEO 및 색인 생성</h3>
+          <ul class="feature-list">
+            
+            <li>모든 언어용 사이트맵 확장, <code>sitemap-ru.xml</code> 추가, canonical/hreflang 수정됨.</li>
+            
+            <li>변경된 파일용 ping 스크립트와 IndexNow 통합; 모든 언어에서 제목 및 설명 개선.</li>
+            
+            <li>Twitter Cards 및 JSON-LD(뉴스/게임/홈) 추가, 홈페이지용 x-default.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-4">현지화 및 콘텐츠</h3>
+          <ul class="feature-list">
+            
+            <li>대량 zh-CN 번역(메뉴, 게임, 뉴스, 도구, 프로필) + zh-CN용 RSS.</li>
+            
+            <li>EN: 구조 정렬, 링크/OG/표준 수정, 뉴스/게임/도구/인증 섹션 번역.</li>
+            
+            <li>메뉴 언어 가시성 RU/EN/zh-CN으로 제한(다른 언어는 향후 포함 예정).</li>
+            
+            <li>메뉴에서 구식 파트너 제거(Sky Codex, Sword Whispers 등).</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-5">광고</h3>
+          <ul class="feature-list">
+            
+            <li>주요 페이지에 Mail.ru 배너; 모바일 앵커 320×50; 프로모션 중 인피드 광고.</li>
+            
+            <li>no-fill 시 광고 블록용 글로벌 자동 축소; 통합 스크립트 및 재푸시.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-6">UX 및 접근성</h3>
+          <ul class="feature-list">
+            
+            <li>중앙 정렬 기사/뉴스, 안정적인 스크롤 및 여백; 정렬된 Google CSE 검색창.</li>
+            
+            <li>별도 <code>accessibility.css</code>, '감소된 동작' 모드, 고대비, 큰 글꼴; 모든 페이지에 통합 설정.</li>
+            
+            <li>모바일 개선: 스와이프, 당겨서 새로고침, 햅틱 피드백, 이미지 지연 로딩.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-7">에코 계산기</h3>
+          <ul class="feature-list">
+            
+            <li>'생태학' 카테고리 및 제품 생태 발자국 계산기 추가; 제품 데이터베이스 확장, 로딩/팁 UX 개선.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-8">기타</h3>
+          <ul class="feature-list">
+            
+            <li>프론트엔드 구조 재구성(menu/main/scripts/styles → <code>frontend/…</code>), PWA 및 서비스 워커 수정.</li>
+            
+            <li>프로모 코드 지오필터(영어/아시아 국가 숨김), 픽셀 추가.</li>
+            
+            <li>Labuba: 프로토타입 시리즈 및 기술 수정; 최종적으로 미공개.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-9">탐색 및 콘텐츠</h3>
+          <ul class="feature-list">
+            
+            <li>게임 카드 업데이트, A/B 테스트 필요에 따라 추가/숨김.</li>
+            
+            <li>develop이 master와 동기화됨; 구식 브랜치 및 페이지 제거(master의 구식 데모 게임 포함).</li>
+            
+          </ul>
+        </div>
+        
 
-      <div class="bug-fix">
-        <h4>🛠 수정</h4>
-        <ul class="feature-list">
-          
-          <li>지뢰찾기: 빈 영역 대량 열기가 즉시 시각적으로 반영됨, 타이머 중복되지 않음, 깃발 정확함.</li>
-          
-          <li>코인: 속도 감소(tick=300ms), 트랩 덜 자주 이동(매 3번째 틱마다).</li>
-          
-          <li>게임/메뉴: 링크 및 카드 사소한 문제 해결됨.</li>
-          
-        </ul>
-      </div>
+        <div class="bug-fix">
+          <h4 id="section-bugfixes">수정</h4>
+          <ul class="feature-list">
+            
+            <li>지뢰찾기: 빈 영역 대량 열기가 즉시 시각적으로 반영됨, 타이머 중복되지 않음, 깃발 정확함.</li>
+            
+            <li>코인: 속도 감소(tick=300ms), 트랩 덜 자주 이동(매 3번째 틱마다).</li>
+            
+            <li>게임/메뉴: 링크 및 카드 사소한 문제 해결됨.</li>
+            
+          </ul>
+        </div>
 
-      <div class="social-share">
-        <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Fko%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html" target="_blank" rel="noopener">VK 공유</a>
-        <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Fko%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html&text=%F0%9F%9A%80%20Serpmonn%20%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8" target="_blank" rel="noopener">Telegram 공유</a>
+        <div class="social-share">
+          <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Fko%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html" target="_blank" rel="noopener">VK 공유</a>
+          <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Fko%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html&text=Serpmonn%20%EC%97%85%EB%8D%B0%EC%9D%B4%ED%8A%B8" target="_blank" rel="noopener">Telegram 공유</a>
+        </div>
+
+        
+        
+        
+
+<div class="related-articles">
+  <h3>관련 기사</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/ko/knowledge-base/articles/updates-sep15-2025-jul22-2026.html">Serpmonn Updates — September 15, 2025 — July 22, 2026</a></li>
+    
+    <li><a href="/frontend/ko/knowledge-base/articles/updates-august-17.html">Serpmonn 업데이트 — 2025년 8월 17일 — 새로운 도구 및 개선 사항</a></li>
+    
+    <li><a href="/frontend/ko/knowledge-base/articles/port-forwarding-guide.html">포트 포워딩: 완전 가이드 2025</a></li>
+    
+  </ul>
+</div>
+
+
       </div>
     </article>
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
+
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
     
-    <!-- Скрипты для рекламы -->
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-
-
+    
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="광고 닫기" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
@@ -489,7 +569,7 @@
   initMobileAnchorAd();
 </script>
 
-
+    
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 
 </body>

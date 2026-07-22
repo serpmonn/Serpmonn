@@ -1,0 +1,29 @@
+{# Floating TOC chrome. Expects:
+   tocTitle: string
+   tocItems: [{ href: '#id', label: '...' }, ...]
+#}
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">{{ tocTitle }}</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="{{ tocTitle }}">
+  <div class="floating-toc__head">
+    <h3>{{ tocTitle }}</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
+    {% for item in tocItems %}
+    <li><a href="{{ item.href }}">{{ item.label }}</a></li>
+    {% endfor %}
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>

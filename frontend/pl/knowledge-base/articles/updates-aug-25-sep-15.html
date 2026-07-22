@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="pl" dir="ltr">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="pl">
     <meta charset="UTF-8">
@@ -9,23 +10,19 @@
     <title>Aktualizacje Serpmonn — 25 sierpnia — 15 września 2025</title>
     <meta name="description" content="6 nowych mini-gier, polubienia z autoryzacją, SEO/lokalizacja, reklamy i poprawki błędów.">
 
-    <!-- Open Graph -->
     <meta property="og:title" content="Aktualizacje Serpmonn — 25 sierpnia — 15 września 2025">
     <meta property="og:description" content="6 nowych mini-gier, polubienia z autoryzacją, SEO/lokalizacja, reklamy i poprawki błędów.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/pl/knowledge-base/articles/updates-aug-25-sep-15.html">
     <meta property="og:type" content="article">
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Aktualizacje Serpmonn — 25 sierpnia — 15 września 2025">
     <meta name="twitter:description" content="6 nowych mini-gier, polubienia z autoryzacją, SEO/lokalizacja, reklamy i poprawki błędów.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/pl/knowledge-base/articles/updates-aug-25-sep-15.html" />
     
-    <!-- Hreflang для всех языков -->
     
       
         <link rel="alternate" href="https://serpmonn.ru/frontend/knowledge-base/articles/updates-aug-25-sep-15.html" hreflang="ru" />
@@ -225,7 +222,6 @@
     
     <link rel="alternate" href="https://serpmonn.ru/frontend/knowledge-base/articles/updates-aug-25-sep-15.html" hreflang="x-default" />
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -256,7 +252,6 @@
     }
     </script>
 
-    <!-- JSON-LD: BreadcrumbList -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -272,209 +267,294 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <!-- Стиль статьи -->
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/updates-aug-25-sep-15.css">
 </head>
 <body class="article-page">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Spis treści</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Spis treści">
+  <div class="floating-toc__head">
+    <h3>Spis treści</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
+    
+    <li><a href="#section-summary">Podsumowanie</a></li>
+    
+    <li><a href="#section-1">Sekcja gier</a></li>
+    
+    <li><a href="#section-2">️ Polubienia i uwierzytelnianie</a></li>
+    
+    <li><a href="#section-3">SEO i indeksowanie</a></li>
+    
+    <li><a href="#section-4">Lokalizacja i treść</a></li>
+    
+    <li><a href="#section-5">Reklama</a></li>
+    
+    <li><a href="#section-6">UX i dostępność</a></li>
+    
+    <li><a href="#section-7">Kalkulatory ekologiczne</a></li>
+    
+    <li><a href="#section-8">Inne</a></li>
+    
+    <li><a href="#section-9">Nawigacja i treść</a></li>
+    
+    <li><a href="#section-bugfixes">Poprawki</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
     <div id="menuContainer"></div>
 
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      <a href="https://serpmonn.ru/">Strona główna</a> →
-      <a href="https://serpmonn.ru/frontend/knowledge-base/knowledge-base.html">Aktualności</a> →
-      <span>Aktualizacje 25 sierpnia — 15 września</span>
-    </div>
-
-    <article>
+    <article class="article-container" tabindex="0">
       <header class="article-header">
         <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
+          <ins class="mrg-tag"
               style="display:inline-block;"
-              data-ad-client="ad-1897960" 
+              data-ad-client="ad-1897960"
               data-ad-slot="1897960">
           </ins>
         </div>
-        <h1 class="article-title">🚀 Aktualizacje Serpmonn</h1>
+        <h1 class="article-title">Aktualizacje Serpmonn</h1>
         <div class="article-date">25 sierpnia — 15 września 2025</div>
       </header>
 
-      <div class="summary">
-        <h3>📋 Podsumowanie</h3>
-        <ul>
-          
-          <li>6 nowych mini-gier: Wąż, Flappy Bird, Monety, Breakout, Saper, Piętnastka.</li>
-          
-          <li>Polubienia: integracja we wszystkich językach, autoryzacja JWT, przechowywanie MySQL.</li>
-          
-          <li>SEO/lokalizacja: mapy witryny, IndexNow, tłumaczenia zh-CN, poprawki meta i hreflang.</li>
-          
-          <li>Reklamy: banery Mail.ru (w tym zakotwiczenie mobilne) i automatyczne zwijanie.</li>
-          
-          <li>Aktualizacje menu i sekcji gier, karty i linki do nowych gier.</li>
-          
-          <li>Poprawki błędów: Saper (rozmieszczenie min przy pierwszym kliknięciu, flood fill, timer, flagi), Monety (tempo gry).</li>
-          
-          <li>Repozytoria: czyszczenie gałęzi, synchronizacja develop ← master.</li>
-          
-        </ul>
-      </div>
+      <div class="article-content">
+        <div class="summary" id="section-summary">
+          <h3>Podsumowanie</h3>
+          <ul>
+            
+            <li>6 nowych mini-gier: Wąż, Flappy Bird, Monety, Breakout, Saper, Piętnastka.</li>
+            
+            <li>Polubienia: integracja we wszystkich językach, autoryzacja JWT, przechowywanie MySQL.</li>
+            
+            <li>SEO/lokalizacja: mapy witryny, IndexNow, tłumaczenia zh-CN, poprawki meta i hreflang.</li>
+            
+            <li>Reklamy: banery Mail.ru (w tym zakotwiczenie mobilne) i automatyczne zwijanie.</li>
+            
+            <li>Aktualizacje menu i sekcji gier, karty i linki do nowych gier.</li>
+            
+            <li>Poprawki błędów: Saper (rozmieszczenie min przy pierwszym kliknięciu, flood fill, timer, flagi), Monety (tempo gry).</li>
+            
+            <li>Repozytoria: czyszczenie gałęzi, synchronizacja develop ← master.</li>
+            
+          </ul>
+        </div>
 
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-number">6</div><div class="stat-label">Nowe mini-gry</div></div>
-        <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">System polubień</div></div>
-        <div class="stat-card"><div class="stat-number">20+</div><div class="stat-label">Poprawki SEO/lokalizacji</div></div>
-      </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-number">6</div><div class="stat-label">Nowe mini-gry</div></div>
+          <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">System polubień</div></div>
+          <div class="stat-card"><div class="stat-number">20+</div><div class="stat-label">Poprawki SEO/lokalizacji</div></div>
+        </div>
 
-      
-      <div class="update-section">
-        <h3>🎮 Sekcja gier</h3>
-        <ul class="feature-list">
-          
-          <li><strong>Wąż</strong>: strona <code>/frontend/games/snake/index.html</code>, test ukrycia/przywracania karty; dodano link menu.</li>
-          
-          <li><strong>Flappy Bird</strong>: <code>/frontend/games/flappy/index.html</code>, karta i element menu.</li>
-          
-          <li><strong>Monety</strong>: <code>/frontend/games/coins/index.html</code>, zbieranie monet w czasie; zmniejszona prędkość ticka i ruch pułapek.</li>
-          
-          <li><strong>Breakout</strong>: <code>/frontend/games/breakout/index.html</code>, odbicia, wyniki, życia; zintegrowane z listą i menu.</li>
-          
-          <li><strong>Saper</strong>: <code>/frontend/games/minesweeper/index.html</code>, pole 10×10/15 min; poprawki: rozmieszczenie min przy pierwszym kliknięciu, flood fill, timer, flagi.</li>
-          
-          <li><strong>Piętnastka</strong>: <code>/frontend/games/fifteen/index.html</code>, tasowanie z poprawnymi ruchami, timer i licznik ruchów.</li>
-          
-          <li>Zaktualizowano <code>/frontend/games/index.html</code>: dodano karty dla wszystkich gier, projekt hover/adaptacyjny.</li>
-          
-          <li>Menu (<code>/frontend/menu.html</code>): nowe elementy 'Gry sieciowe' dla każdej gry.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>❤️ Polubienia i uwierzytelnianie</h3>
-        <ul class="feature-list">
-          
-          <li>Wprowadzono system polubień z autoryzacją JWT i przechowywaniem MySQL: zweryfikowane i gościnne polubienia, deduplikacja i migracja.</li>
-          
-          <li>Skrypt polubień frontend zintegrowany na wszystkich 42 stronach wyszukiwania językowego; ulepszono UX przycisków (widoczność, hover, kontrast).</li>
-          
-          <li>Narzędzia deweloperskie: strony/skrypty debugowania, migracja polubień, analityka zdarzeń dla gier.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🔍 SEO i indeksowanie</h3>
-        <ul class="feature-list">
-          
-          <li>Rozszerzono mapy witryn dla wszystkich języków, dodano <code>sitemap-ru.xml</code>, poprawiono canonical/hreflang.</li>
-          
-          <li>Zintegrowano IndexNow ze skryptami ping dla zmienionych plików; ulepszono tytuły i opisy we wszystkich językach.</li>
-          
-          <li>Dodano Twitter Cards i JSON-LD (Aktualności/Gry/Strona główna), x-default dla strony głównej.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🌍 Lokalizacja i treść</h3>
-        <ul class="feature-list">
-          
-          <li>Masowe tłumaczenia zh-CN (menu, gry, aktualności, narzędzia, profil) + RSS dla zh-CN.</li>
-          
-          <li>EN: dostosowanie struktury, poprawki link/OG/canonical, tłumaczenia sekcji Aktualności/Gry/Narzędzia/Uwierzytelnianie.</li>
-          
-          <li>Widoczność języków menu ograniczona do RU/EN/zh-CN (inne dostępne do przyszłego włączenia).</li>
-          
-          <li>Usunięto przestarzałych partnerów z menu (Sky Codex, Sword Whispers itp.).</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>📢 Reklama</h3>
-        <ul class="feature-list">
-          
-          <li>Banery Mail.ru na kluczowych stronach; zakotwiczenie mobilne 320×50; reklamy in-feed na promocji.</li>
-          
-          <li>Globalne automatyczne zwijanie dla bloków reklam przy no-fill; ujednolicony skrypt i ponowne push.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>📱 UX i dostępność</h3>
-        <ul class="feature-list">
-          
-          <li>Wyśrodkowane artykuły/aktualności, stabilne przewijanie i marginesy; wyrównany pasek wyszukiwania Google CSE.</li>
-          
-          <li>Oddzielny <code>accessibility.css</code>, tryb 'Zmniejszony ruch', wysoki kontrast, duża czcionka; ujednolicone ustawienia na wszystkich stronach.</li>
-          
-          <li>Ulepszenia mobilne: przesunięcia, pull-to-refresh, feedback dotykowy, lazy-loading obrazów.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🌱 Kalkulatory ekologiczne</h3>
-        <ul class="feature-list">
-          
-          <li>Dodano kategorię 'Ekologia' i kalkulator śladu ekologicznego produktów; rozszerzono bazę danych produktów, ulepszono UX ładowania/wskazówek.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🧹 Inne</h3>
-        <ul class="feature-list">
-          
-          <li>Reorganizacja struktury frontend (menu/main/scripts/styles → <code>frontend/…</code>), poprawki PWA i service worker.</li>
-          
-          <li>Filtr geograficzny kodów promocyjnych (ukrywanie dla krajów anglojęzycznych/azjatyckich), dodano piksel.</li>
-          
-          <li>Labuba: seria prototypów i poprawek technicznych; ostatecznie - nieopublikowane.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🧭 Nawigacja i treść</h3>
-        <ul class="feature-list">
-          
-          <li>Zaktualizowano karty gier, dodano/ukryto zgodnie z potrzebami do testów A/B.</li>
-          
-          <li>zsynchronizowano develop z master; usunięto przestarzałe gałęzie i strony (w tym stare gry demo z master).</li>
-          
-        </ul>
-      </div>
-      
+        
+        <div class="update-section">
+          <h3 id="section-1">Sekcja gier</h3>
+          <ul class="feature-list">
+            
+            <li><strong>Wąż</strong>: strona <code>/frontend/games/snake/index.html</code>, test ukrycia/przywracania karty; dodano link menu.</li>
+            
+            <li><strong>Flappy Bird</strong>: <code>/frontend/games/flappy/index.html</code>, karta i element menu.</li>
+            
+            <li><strong>Monety</strong>: <code>/frontend/games/coins/index.html</code>, zbieranie monet w czasie; zmniejszona prędkość ticka i ruch pułapek.</li>
+            
+            <li><strong>Breakout</strong>: <code>/frontend/games/breakout/index.html</code>, odbicia, wyniki, życia; zintegrowane z listą i menu.</li>
+            
+            <li><strong>Saper</strong>: <code>/frontend/games/minesweeper/index.html</code>, pole 10×10/15 min; poprawki: rozmieszczenie min przy pierwszym kliknięciu, flood fill, timer, flagi.</li>
+            
+            <li><strong>Piętnastka</strong>: <code>/frontend/games/fifteen/index.html</code>, tasowanie z poprawnymi ruchami, timer i licznik ruchów.</li>
+            
+            <li>Zaktualizowano <code>/frontend/games/index.html</code>: dodano karty dla wszystkich gier, projekt hover/adaptacyjny.</li>
+            
+            <li>Menu (<code>/frontend/menu.html</code>): nowe elementy 'Gry sieciowe' dla każdej gry.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-2">️ Polubienia i uwierzytelnianie</h3>
+          <ul class="feature-list">
+            
+            <li>Wprowadzono system polubień z autoryzacją JWT i przechowywaniem MySQL: zweryfikowane i gościnne polubienia, deduplikacja i migracja.</li>
+            
+            <li>Skrypt polubień frontend zintegrowany na wszystkich 42 stronach wyszukiwania językowego; ulepszono UX przycisków (widoczność, hover, kontrast).</li>
+            
+            <li>Narzędzia deweloperskie: strony/skrypty debugowania, migracja polubień, analityka zdarzeń dla gier.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-3">SEO i indeksowanie</h3>
+          <ul class="feature-list">
+            
+            <li>Rozszerzono mapy witryn dla wszystkich języków, dodano <code>sitemap-ru.xml</code>, poprawiono canonical/hreflang.</li>
+            
+            <li>Zintegrowano IndexNow ze skryptami ping dla zmienionych plików; ulepszono tytuły i opisy we wszystkich językach.</li>
+            
+            <li>Dodano Twitter Cards i JSON-LD (Aktualności/Gry/Strona główna), x-default dla strony głównej.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-4">Lokalizacja i treść</h3>
+          <ul class="feature-list">
+            
+            <li>Masowe tłumaczenia zh-CN (menu, gry, aktualności, narzędzia, profil) + RSS dla zh-CN.</li>
+            
+            <li>EN: dostosowanie struktury, poprawki link/OG/canonical, tłumaczenia sekcji Aktualności/Gry/Narzędzia/Uwierzytelnianie.</li>
+            
+            <li>Widoczność języków menu ograniczona do RU/EN/zh-CN (inne dostępne do przyszłego włączenia).</li>
+            
+            <li>Usunięto przestarzałych partnerów z menu (Sky Codex, Sword Whispers itp.).</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-5">Reklama</h3>
+          <ul class="feature-list">
+            
+            <li>Banery Mail.ru na kluczowych stronach; zakotwiczenie mobilne 320×50; reklamy in-feed na promocji.</li>
+            
+            <li>Globalne automatyczne zwijanie dla bloków reklam przy no-fill; ujednolicony skrypt i ponowne push.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-6">UX i dostępność</h3>
+          <ul class="feature-list">
+            
+            <li>Wyśrodkowane artykuły/aktualności, stabilne przewijanie i marginesy; wyrównany pasek wyszukiwania Google CSE.</li>
+            
+            <li>Oddzielny <code>accessibility.css</code>, tryb 'Zmniejszony ruch', wysoki kontrast, duża czcionka; ujednolicone ustawienia na wszystkich stronach.</li>
+            
+            <li>Ulepszenia mobilne: przesunięcia, pull-to-refresh, feedback dotykowy, lazy-loading obrazów.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-7">Kalkulatory ekologiczne</h3>
+          <ul class="feature-list">
+            
+            <li>Dodano kategorię 'Ekologia' i kalkulator śladu ekologicznego produktów; rozszerzono bazę danych produktów, ulepszono UX ładowania/wskazówek.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-8">Inne</h3>
+          <ul class="feature-list">
+            
+            <li>Reorganizacja struktury frontend (menu/main/scripts/styles → <code>frontend/…</code>), poprawki PWA i service worker.</li>
+            
+            <li>Filtr geograficzny kodów promocyjnych (ukrywanie dla krajów anglojęzycznych/azjatyckich), dodano piksel.</li>
+            
+            <li>Labuba: seria prototypów i poprawek technicznych; ostatecznie - nieopublikowane.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-9">Nawigacja i treść</h3>
+          <ul class="feature-list">
+            
+            <li>Zaktualizowano karty gier, dodano/ukryto zgodnie z potrzebami do testów A/B.</li>
+            
+            <li>zsynchronizowano develop z master; usunięto przestarzałe gałęzie i strony (w tym stare gry demo z master).</li>
+            
+          </ul>
+        </div>
+        
 
-      <div class="bug-fix">
-        <h4>🛠 Poprawki</h4>
-        <ul class="feature-list">
-          
-          <li>Saper: masowe otwieranie pustych obszarów teraz natychmiast odzwierciedlane wizualnie, timer się nie duplikuje, flagi poprawne.</li>
-          
-          <li>Monety: tempo zmniejszone (tick=300ms), pułapki poruszają się rzadziej (co 3. tick).</li>
-          
-          <li>Gry/menu: rozwiązano drobne problemy z linkami i kartami.</li>
-          
-        </ul>
-      </div>
+        <div class="bug-fix">
+          <h4 id="section-bugfixes">Poprawki</h4>
+          <ul class="feature-list">
+            
+            <li>Saper: masowe otwieranie pustych obszarów teraz natychmiast odzwierciedlane wizualnie, timer się nie duplikuje, flagi poprawne.</li>
+            
+            <li>Monety: tempo zmniejszone (tick=300ms), pułapki poruszają się rzadziej (co 3. tick).</li>
+            
+            <li>Gry/menu: rozwiązano drobne problemy z linkami i kartami.</li>
+            
+          </ul>
+        </div>
 
-      <div class="social-share">
-        <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Fpl%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html" target="_blank" rel="noopener">Udostępnij VK</a>
-        <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Fpl%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html&text=%F0%9F%9A%80%20Aktualizacje%20Serpmonn" target="_blank" rel="noopener">Udostępnij Telegram</a>
+        <div class="social-share">
+          <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Fpl%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html" target="_blank" rel="noopener">Udostępnij VK</a>
+          <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Fpl%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html&text=Aktualizacje%20Serpmonn" target="_blank" rel="noopener">Udostępnij Telegram</a>
+        </div>
+
+        
+        
+        
+
+<div class="related-articles">
+  <h3>Podobne artykuły</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/pl/knowledge-base/articles/updates-sep15-2025-jul22-2026.html">Serpmonn Updates — September 15, 2025 — July 22, 2026</a></li>
+    
+    <li><a href="/frontend/pl/knowledge-base/articles/updates-august-17.html">Aktualizacje Serpmonn — 17 sierpnia 2025 — Nowe narzędzia i ulepszenia</a></li>
+    
+    <li><a href="/frontend/pl/knowledge-base/articles/port-forwarding-guide.html">Przekierowanie Portów: Kompleksowy Przewodnik 2025</a></li>
+    
+  </ul>
+</div>
+
+
       </div>
     </article>
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
+
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
     
-    <!-- Скрипты для рекламы -->
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-
-
+    
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="Zamknij reklamę" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
@@ -489,7 +569,7 @@
   initMobileAnchorAd();
 </script>
 
-
+    
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 
 </body>

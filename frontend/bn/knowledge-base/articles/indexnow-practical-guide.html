@@ -2,34 +2,31 @@
 <!DOCTYPE html>
 <html lang="bn" dir="ltr">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="bn">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     
-    
-    
+
     <title>IndexNow: ব্যবহারিক বাস্তবায়ন এবং টিপস</title>
     <meta name="description" content="দ্রুত সার্চ ইঞ্জিন আপডেট: সেটআপ, শুধুমাত্র-পরিবর্তিত, সাধারণ ভুল, সাইটম্যাপ পিংয়ের সাথে তুলনা এবং বাস্তবায়ন চেকলিস্ট।">
     <meta name="keywords" content="IndexNow, এসইও, ইন্ডেক্সিং, সার্চ ইঞ্জিন, বিং, ইয়ানডেক্স, ওয়েবসাইট আপডেট">
-    
-    <!-- Open Graph -->
+
     <meta property="og:title" content="IndexNow: ব্যবহারিক বাস্তবায়ন এবং টিপস">
     <meta property="og:description" content="সেটআপ, শুধুমাত্র-পরিবর্তিত মোড, ভুল এবং সাইটম্যাপ পিংয়ের সাথে তুলনা।">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/bn/knowledge-base/articles/indexnow-practical-guide.html">
     <meta property="og:type" content="article">
-    
-    <!-- Twitter -->
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="IndexNow: ব্যবহারিক বাস্তবায়ন এবং টিপস">
     <meta name="twitter:description" content="সেটআপ, শুধুমাত্র-পরিবর্তিত মোড, ভুল এবং সাইটম্যাপ পিংয়ের সাথে তুলনা।">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/bn/knowledge-base/articles/indexnow-practical-guide.html" />
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -62,246 +59,119 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-
-    <style>
-      body { 
-        max-width: 800px; 
-        margin: 0 auto; 
-        padding: 16px; 
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-        background: #f5f5f5; 
-        line-height: 1.7; 
-      }
-      article { 
-        background: #fff; 
-        border-radius: 12px; 
-        padding: 40px; 
-        margin: 20px auto; 
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-        max-width: 800px; 
-      }
-      .article-header { 
-        text-align: center; 
-        margin-bottom: 30px; 
-        padding-bottom: 20px; 
-        border-bottom: 2px solid #e9ecef; 
-      }
-      .article-title { 
-        font-size: 2.2rem; 
-        color: #333; 
-        margin-bottom: 10px; 
-        font-weight: 700; 
-      }
-      .article-date { 
-        color: #6c757d; 
-        font-size: 1.05rem; 
-        font-weight: 500; 
-      }
-      .summary { 
-        background: #e8f5e8; 
-        border: 1px solid #c3e6c3; 
-        border-radius: 8px; 
-        padding: 16px; 
-        margin: 20px 0; 
-        color: #155724; 
-      }
-      .toc { 
-        background: #f8f9fa; 
-        border: 1px solid #e9ecef; 
-        border-radius: 8px; 
-        padding: 16px; 
-        margin: 20px 0; 
-      }
-      .toc a { 
-        text-decoration: none; 
-      }
-      h2 { 
-        margin-top: 28px; 
-        color: #dc3545;
-      }
-      .code { 
-        background: #f8f9fa; 
-        border: 1px solid #dee2e6; 
-        border-radius: 6px; 
-        padding: 12px; 
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; 
-        font-size: .95rem; 
-        overflow-x: auto; 
-        white-space: pre-wrap;
-      }
-      .note { 
-        background: #fff3cd; 
-        border: 1px solid #ffe08a; 
-        border-radius: 8px; 
-        padding: 12px; 
-        margin: 16px 0; 
-        color: #7a5b00; 
-      }
-      .faq { 
-        background: #f8f9fa; 
-        border: 1px solid #e9ecef; 
-        border-radius: 8px; 
-        padding: 16px; 
-      }
-      .faq h3 { 
-        margin: 0 0 10px; 
-      }
-      .muted { 
-        color:#6c757d; 
-      }
-      .breadcrumb { 
-        margin-bottom: 16px; 
-        padding: 8px 0; 
-      }
-      .breadcrumb a {
-        text-decoration: none;
-        color: #007bff;
-      }
-      .breadcrumb a:hover {
-        text-decoration: underline;
-      }
-      .cta-button { 
-        display: block; 
-        text-align: center; 
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
-        color: white; 
-        border: none; 
-        padding: 15px 30px; 
-        border-radius: 10px; 
-        font-size: 1.1rem; 
-        cursor: pointer; 
-        transition: transform 0.3s ease; 
-        margin: 30px 0; 
-        text-decoration: none; 
-      }
-      .cta-button:hover { 
-        transform: scale(1.02); 
-        text-decoration: none; 
-        color: #fff; 
-      }
-      .section-item {
-        margin-bottom: 10px;
-      }
-      .section-item-title {
-        font-weight: bold;
-      }
-      .social-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 24px;
-        flex-wrap: wrap;
-      }
-      .tg-btn, .vk-btn {
-        display: inline-block;
-        padding: 10px 20px;
-        border-radius: 25px;
-        color: #fff;
-        font-weight: 600;
-        text-decoration: none;
-        transition: transform .2s ease, box-shadow .2s ease;
-      }
-      .tg-btn {
-        background: #229ED9;
-      }
-      .vk-btn {
-        background: #2787F5;
-      }
-      .tg-btn:hover, .vk-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 14px rgba(0,0,0,.15);
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/indexnow-practical-guide.css">
 </head>
 <body>
-    <style>
-      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
-      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
-    </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">সূচিপত্র</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="সূচিপত্র">
+  <div class="floating-toc__head">
+    <h3>সূচিপত্র</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
     
-    <nav id="menuContainer" aria-label=""></nav>
+    <li><a href="#what">IndexNow কি</a></li>
     
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      
-        <a href="/bn/">Home</a> →
-        <a href="/frontend/bn/knowledge-base/knowledge-base.html">Knowledge base</a> →
-      
-      <span>IndexNow: ব্যবহারিক বাস্তবায়ন এবং টিপস</span>
+    <li><a href="#setup">কী সেটআপ এবং বেসিক পিং</a></li>
+    
+    <li><a href="#changed">শুধুমাত্র-পরিবর্তিত মোড: কখন এবং কিভাবে</a></li>
+    
+    <li><a href="#compare">IndexNow বনাম সাইটম্যাপ পিং</a></li>
+    
+    <li><a href="#errors">সাধারণ ভুল</a></li>
+    
+    <li><a href="#faq">প্রায়শই জিজ্ঞাসিত প্রশ্ন এবং চেকলিস্ট</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
+<nav id="menuContainer" aria-label=""></nav>
+
+<article class="article-container" tabindex="0">
+  <header class="article-header">
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-1897960"
+          data-ad-slot="1897960">
+      </ins>
+    </div>
+    <h1 class="article-title">IndexNow: ব্যবহারিক বাস্তবায়ন এবং টিপস</h1>
+    <div class="article-date">১৫ সেপ্টেম্বর ২০২৫ • ৫ মিনিট পড়া</div>
+  </header>
+
+  <div class="article-content">
+    <div class="summary">
+      <strong>কেন পড়বেন:</strong> কিভাবে দ্রুত সার্চ ইঞ্জিনে আপডেট দিতে হয়, কখন শুধুমাত্র-পরিবর্তিত ব্যবহার করবেন, IndexNow কিভাবে সাইটম্যাপ পিং থেকে আলাদা এবং কিভাবে সাধারণ ভুলগুলি এড়াবেন।
     </div>
 
-    <article>
-      <header class="article-header">
-        <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
-              style="display:inline-block;"
-              data-ad-client="ad-1897960" 
-              data-ad-slot="1897960">
-          </ins>
-        </div>
-        <h1 class="article-title">IndexNow: ব্যবহারিক বাস্তবায়ন এবং টিপস</h1>
-        <div class="article-date">১৫ সেপ্টেম্বর ২০২৫ • ৫ মিনিট পড়া</div>
-      </header>
+    
+    <h2 id="what">1) IndexNow কি</h2>
 
-      <div class="summary">
-        <strong>কেন পড়বেন:</strong> কিভাবে দ্রুত সার্চ ইঞ্জিনে আপডেট দিতে হয়, কখন শুধুমাত্র-পরিবর্তিত ব্যবহার করবেন, IndexNow কিভাবে সাইটম্যাপ পিং থেকে আলাদা এবং কিভাবে সাধারণ ভুলগুলি এড়াবেন।
-      </div>
+    
+    <p>IndexNow একটি প্রোটোকল যা আপনাকে URL পরিবর্তন (তৈরি, আপডেট, মুছে ফেলা) সম্পর্কে তাত্ক্ষণিকভাবে সার্চ ইঞ্জিনগুলিকে জানাতে দেয়। বিং, ইয়ানডেক্স, Seznam এবং অন্যান্য পরিষেবা দ্বারা সমর্থিত। সুবিধা হল ন্যূনতম ইন্ডেক্সিং বিলম্ব এবং কম ক্রল শোরগোল।</p>
+    
 
-      <div class="toc">
-        <strong>সূচিপত্র</strong>
-        <ol>
-          
-          <li><a href="#what">IndexNow কি</a></li>
-          
-          <li><a href="#setup">কী সেটআপ এবং বেসিক পিং</a></li>
-          
-          <li><a href="#changed">শুধুমাত্র-পরিবর্তিত মোড: কখন এবং কিভাবে</a></li>
-          
-          <li><a href="#compare">IndexNow বনাম সাইটম্যাপ পিং</a></li>
-          
-          <li><a href="#errors">সাধারণ ভুল</a></li>
-          
-          <li><a href="#faq">প্রায়শই জিজ্ঞাসিত প্রশ্ন এবং চেকলিস্ট</a></li>
-          
-        </ol>
-      </div>
+    
 
+    
+
+    
+
+    
+
+    
+
+    
+    <h2 id="setup">2) কী সেটআপ এবং বেসিক পিং</h2>
+
+    
+
+    
+    <ol>
       
-      <h2 id="what">1) IndexNow কি</h2>
+      <li>একটি কী (GUID) তৈরি করুন এবং <code>YOUR_KEY.txt</code> ফাইলটি সাইটের রুটে (<code>/.well-known/</code> বা ডোমেন রুট) কী স্ট্রিং সহ রাখুন।</li>
       
+      <li>URL এবং কী দিয়ে এন্ডপয়েন্টে পিং করুন। উদাহরণ (একক URL):</li>
       
-      <p>IndexNow একটি প্রোটোকল যা আপনাকে URL পরিবর্তন (তৈরি, আপডেট, মুছে ফেলা) সম্পর্কে তাত্ক্ষণিকভাবে সার্চ ইঞ্জিনগুলিকে জানাতে দেয়। বিং, ইয়ানডেক্স, Seznam এবং অন্যান্য পরিষেবা দ্বারা সমর্থিত। সুবিধা হল ন্যূনতম ইন্ডেক্সিং বিলম্ব এবং কম ক্রল শোরগোল।</p>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <h2 id="setup">2) কী সেটআপ এবং বেসিক পিং</h2>
-      
-      
-      
-      
-      <ol>
-        
-        <li>একটি কী (GUID) তৈরি করুন এবং <code>YOUR_KEY.txt</code> ফাইলটি সাইটের রুটে (<code>/.well-known/</code> বা ডোমেন রুট) কী স্ট্রিং সহ রাখুন।</li>
-        
-        <li>URL এবং কী দিয়ে এন্ডপয়েন্টে পিং করুন। উদাহরণ (একক URL):</li>
-        
-      </ol>
-      
-      
-      
-      <div class="code">POST https://api.indexnow.org/indexnow
+    </ol>
+    
+
+    
+    <div class="code">POST https://api.indexnow.org/indexnow
 Content-Type: application/json
 
 {
@@ -311,180 +181,195 @@ Content-Type: application/json
     "https://www.serpmonn.ru/frontend/knowledge-base/articles/utm-complete-guide.html"
   ]
 }</div>
+    
+
+    
+
+    
+    <div class="note">ব্যাচের জন্য, একটি অনুরোধে 10,000 পর্যন্ত URL উল্লেখ করুন বা একটি পরিবর্তন লগ ফাইল URL সহ একটি ফাইল ফিড ব্যবহার করুন।</div>
+    
+
+    
+
+    
+    <h2 id="changed">3) শুধুমাত্র-পরিবর্তিত মোড</h2>
+
+    
+    <p>ধারণা হল শুধুমাত্র সেই ফাইলগুলিকে পিং করা যা শেষ কমিট/ডেপ্লয়মেন্টে প্রকৃতপক্ষে পরিবর্তিত হয়েছে। এটি শোরগোল এবং কোটা ব্যবহার হ্রাস করে।</p>
+    
+
+    
+
+    
+
+    
       
-      
-      
-      
-      
-      <div class="note">ব্যাচের জন্য, একটি অনুরোধে 10,000 পর্যন্ত URL উল্লেখ করুন বা একটি পরিবর্তন লগ ফাইল URL সহ একটি ফাইল ফিড ব্যবহার করুন।</div>
-      
-      
-      
-      
-      
-      <h2 id="changed">3) শুধুমাত্র-পরিবর্তিত মোড</h2>
-      
-      
-      <p>ধারণা হল শুধুমাত্র সেই ফাইলগুলিকে পিং করা যা শেষ কমিট/ডেপ্লয়মেন্টে প্রকৃতপক্ষে পরিবর্তিত হয়েছে। এটি শোরগোল এবং কোটা ব্যবহার হ্রাস করে।</p>
-      
-      
-      
-      
-      
-      
-      
+      <ul>
         
-        <ul>
-          
-          <li>VCS (git diff) বা বিল্ড আর্টিফ্যাক্ট থেকে পরিবর্তিত পাথের তালিকা পান।</li>
-          
-          <li>পাবলিক রুট দ্বারা ফিল্টার করুন (<code>node_modules</code>, <code>.git</code>, ব্যক্তিগত ফোল্ডারগুলি বাদ দিয়ে)।</li>
-          
-          <li>অপ্রাসঙ্গিক URL পাঠানো এড়াতে ডোমেন/ভাষা অনুসারে গ্রুপ করুন।</li>
-          
-        </ul>
+        <li>VCS (git diff) বা বিল্ড আর্টিফ্যাক্ট থেকে পরিবর্তিত পাথের তালিকা পান।</li>
         
-      
-      
-      
-      <div class="note">প্রোডাকশনে একটি ফ্যালব্যাক থাকা দরকারী: যদি শুধুমাত্র-পরিবর্তিত খালি থাকে (উদাহরণস্বরূপ, কনফিগারেশনের জন্য হটফিক্স), গুরুত্বপূর্ণ সাইটম্যাপগুলিতে পিং করুন।</div>
-      
-      
-      
-      
-      
-      <h2 id="compare">4) IndexNow বনাম সাইটম্যাপ পিং</h2>
-      
-      
-      
-      
-      
-      
-      
-      
+        <li>পাবলিক রুট দ্বারা ফিল্টার করুন (<code>node_modules</code>, <code>.git</code>, ব্যক্তিগত ফোল্ডারগুলি বাদ দিয়ে)।</li>
         
-        <ul>
-          
-          <li class="section-item">
-            <span class="section-item-title">গতি:</span> IndexNow দ্রুত আপডেট সরবরাহ করে, ক্রল চক্রের জন্য অপেক্ষা করে না; সাইটম্যাপ পিং একটি সাইটম্যাপের উপস্থিতি নির্দেশ করে কিন্তু একটি নির্দিষ্ট URL-এ পরিবর্তন নয়।
-          </li>
-          
-          <li class="section-item">
-            <span class="section-item-title">শোরগোল:</span> IndexNow - পরিবর্তিত URL-গুলিকে লক্ষ্য করে; সাইটম্যাপ - সম্পূর্ণ মানচিত্রের স্ক্যান (ক্রল বাজেটের জন্য বেশি ব্যয়বহুল)।
-          </li>
-          
-          <li class="section-item">
-            <span class="section-item-title">নির্ভরযোগ্যতা:</span> সাইটম্যাপগুলি ভিত্তি হিসাবে থাকে; IndexNow সম্পূরক এবং দ্রুত করে। উভয় ব্যবহার করা ভাল।
-          </li>
-          
-        </ul>
+        <li>অপ্রাসঙ্গিক URL পাঠানো এড়াতে ডোমেন/ভাষা অনুসারে গ্রুপ করুন।</li>
         
+      </ul>
       
+    
+
+    
+    <div class="note">প্রোডাকশনে একটি ফ্যালব্যাক থাকা দরকারী: যদি শুধুমাত্র-পরিবর্তিত খালি থাকে (উদাহরণস্বরূপ, কনফিগারেশনের জন্য হটফিক্স), গুরুত্বপূর্ণ সাইটম্যাপগুলিতে পিং করুন।</div>
+    
+
+    
+
+    
+    <h2 id="compare">4) IndexNow বনাম সাইটম্যাপ পিং</h2>
+
+    
+
+    
+
+    
+
+    
       
-      
-      
-      
-      
-      
-      <h2 id="errors">5) সাধারণ ভুল</h2>
-      
-      
-      
-      
-      
-      
-      
-      
+      <ul>
         
-        <ul>
-          
-          <li>কীটি একটি পাবলিক URL এর মাধ্যমে অ্যাক্সেসযোগ্য নয় বা <code>key</code> প্যারামিটারের সাথে মেলে না।</li>
-          
-          <li>ব্যক্তিগত/404 পৃষ্ঠাগুলি পিং করা, ক্যানোনিকালাইজেশন ছাড়া প্যারামিটার।</li>
-          
-          <li>একই URL-গুলির খুব ঘন ঘন পুনরাবৃত্তি (পুনরাবৃত্তি থ্রোটল করুন)।</li>
-          
-          <li>বহুভাষিকতা উপেক্ষা করা (সংশ্লিষ্ট স্থানীয়কৃত সংস্করণ পিং করতে হবে)।</li>
-          
-        </ul>
+        <li class="section-item">
+          <span class="section-item-title">গতি:</span> IndexNow দ্রুত আপডেট সরবরাহ করে, ক্রল চক্রের জন্য অপেক্ষা করে না; সাইটম্যাপ পিং একটি সাইটম্যাপের উপস্থিতি নির্দেশ করে কিন্তু একটি নির্দিষ্ট URL-এ পরিবর্তন নয়।
+        </li>
         
-      
-      
-      
-      
-      
-      
-      
-      <h2 id="faq">6) প্রায়শই জিজ্ঞাসিত প্রশ্ন এবং চেকলিস্ট</h2>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <div class="faq">
+        <li class="section-item">
+          <span class="section-item-title">শোরগোল:</span> IndexNow - পরিবর্তিত URL-গুলিকে লক্ষ্য করে; সাইটম্যাপ - সম্পূর্ণ মানচিত্রের স্ক্যান (ক্রল বাজেটের জন্য বেশি ব্যয়বহুল)।
+        </li>
         
-        <h3>একবারে কতগুলি URL পাঠাব?</h3>
-        <p>একটি ব্যাচে 10,000 পর্যন্ত - সর্বোত্তমভাবে ধরন/ভাষা অনুসারে গ্রুপ করুন।</p>
+        <li class="section-item">
+          <span class="section-item-title">নির্ভরযোগ্যতা:</span> সাইটম্যাপগুলি ভিত্তি হিসাবে থাকে; IndexNow সম্পূরক এবং দ্রুত করে। উভয় ব্যবহার করা ভাল।
+        </li>
         
-        <h3>মুছে ফেলাগুলি পিং করব?</h3>
-        <p>হ্যাঁ - ডিলিস্টিং দ্রুত করতে মুছে ফেলা পৃষ্ঠাগুলির URL পাস করুন।</p>
-        
-        <h3>কিভাবে নিশ্চিত করব যে এটি কাজ করছে?</h3>
-        <p>API প্রতিক্রিয়া লগ (200/202), সার্ভার লগগুলিতে ক্রল স্পাইক, নতুন URL-গুলির দ্রুত উপস্থিতি।</p>
-        
-        
-        
-        <h3></h3>
-        <ul>
-          
-          <li>কীটি স্থাপন করা হয়েছে এবং HTTPS এর মাধ্যমে অ্যাক্সেসযোগ্য।</li>
-          
-          <li>CI/CD থেকে শুধুমাত্র-পরিবর্তিত পাথ সংগ্রহ করুন।</li>
-          
-          <li>ডিডুপ্লিকেশন এবং পুনরাবৃত্তি থ্রোটলিং।</li>
-          
-          <li>খালি ব্যাচে সাইটম্যাপ পিং-এ ফ্যালব্যাক।</li>
-          
-        </ul>
-        
-      </div>
+      </ul>
       
+    
+
+    
+
+    
+
+    
+    <h2 id="errors">5) সাধারণ ভুল</h2>
+
+    
+
+    
+
+    
+
+    
       
+      <ul>
+        
+        <li>কীটি একটি পাবলিক URL এর মাধ্যমে অ্যাক্সেসযোগ্য নয় বা <code>key</code> প্যারামিটারের সাথে মেলে না।</li>
+        
+        <li>ব্যক্তিগত/404 পৃষ্ঠাগুলি পিং করা, ক্যানোনিকালাইজেশন ছাড়া প্যারামিটার।</li>
+        
+        <li>একই URL-গুলির খুব ঘন ঘন পুনরাবৃত্তি (পুনরাবৃত্তি থ্রোটল করুন)।</li>
+        
+        <li>বহুভাষিকতা উপেক্ষা করা (সংশ্লিষ্ট স্থানীয়কৃত সংস্করণ পিং করতে হবে)।</li>
+        
+      </ul>
+      
+    
+
+    
+
+    
+
+    
+    <h2 id="faq">6) প্রায়শই জিজ্ঞাসিত প্রশ্ন এবং চেকলিস্ট</h2>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="faq">
+      
+      <h3>একবারে কতগুলি URL পাঠাব?</h3>
+      <p>একটি ব্যাচে 10,000 পর্যন্ত - সর্বোত্তমভাবে ধরন/ভাষা অনুসারে গ্রুপ করুন।</p>
+      
+      <h3>মুছে ফেলাগুলি পিং করব?</h3>
+      <p>হ্যাঁ - ডিলিস্টিং দ্রুত করতে মুছে ফেলা পৃষ্ঠাগুলির URL পাস করুন।</p>
+      
+      <h3>কিভাবে নিশ্চিত করব যে এটি কাজ করছে?</h3>
+      <p>API প্রতিক্রিয়া লগ (200/202), সার্ভার লগগুলিতে ক্রল স্পাইক, নতুন URL-গুলির দ্রুত উপস্থিতি।</p>
       
 
       
-      <div class="note" style="margin-top: 30px;">
-        <strong>:</strong> IndexNow নতুন এবং পরিবর্তিত পৃষ্ঠাগুলির ইন্ডেক্সিং উল্লেখযোগ্যভাবে ত্বরান্বিত করে। ঐতিহ্যগত সাইটম্যাপগুলির সাথে মিলিত হয়ে, এটি SEO অপ্টিমাইজেশনের জন্য একটি শক্তিশালী সরঞ্জাম।
-      </div>
+      <h3></h3>
+      <ul>
+        
+        <li>কীটি স্থাপন করা হয়েছে এবং HTTPS এর মাধ্যমে অ্যাক্সেসযোগ্য।</li>
+        
+        <li>CI/CD থেকে শুধুমাত্র-পরিবর্তিত পাথ সংগ্রহ করুন।</li>
+        
+        <li>ডিডুপ্লিকেশন এবং পুনরাবৃত্তি থ্রোটলিং।</li>
+        
+        <li>খালি ব্যাচে সাইটম্যাপ পিং-এ ফ্যালব্যাক।</li>
+        
+      </ul>
       
-
-      <!-- ИСПРАВЛЕНО: ссылка на инструмент SEO с учетом языка -->
-      <a href="/frontend/bn/tools/seo/index.html" class="cta-button">📊 এসইও চেক করুন</a>
-
-      <p class="muted">আপডেট হয়েছে: ১৫/০৯/২০২৫ • বিভাগ: SEO</p>
-    </article>
-
-    <div class="social-buttons">
-      <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">টেলিগ্রামে সাবস্ক্রাইব করুন</a>
-      <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">ভিকে-তে সাবস্ক্রাইব করুন</a>
     </div>
+    
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     
-    <!-- Скрипты -->
-<script>
-</script>
+
     
-    <!-- Скрипт для управления рекламным баннером -->
+    <div class="note">
+      <strong>:</strong> IndexNow নতুন এবং পরিবর্তিত পৃষ্ঠাগুলির ইন্ডেক্সিং উল্লেখযোগ্যভাবে ত্বরান্বিত করে। ঐতিহ্যগত সাইটম্যাপগুলির সাথে মিলিত হয়ে, এটি SEO অপ্টিমাইজেশনের জন্য একটি শক্তিশালী সরঞ্জাম।
+    </div>
+    
+
+    <a href="/frontend/bn/tools/seo/index.html" class="cta-button">📊 এসইও চেক করুন</a>
+
+    <p class="muted">আপডেট হয়েছে: ১৫/০৯/২০২৫ • বিভাগ: SEO</p>
+
+    
+    
+    
+
+<div class="related-articles">
+  <h3>Related articles</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/bn/knowledge-base/articles/utm-complete-guide.html">UTM: সম্পূর্ণ নির্দেশিকা</a></li>
+    
+    <li><a href="/frontend/bn/knowledge-base/articles/web-development-guide.html">কীভাবে স্ক্র্যাচ থেকে আপনার প্রথম ওয়েবসাইট তৈরি করবেন - সম্পূর্ণ প্রারম্ভিক গাইড</a></li>
+    
+    <li><a href="/frontend/bn/knowledge-base/articles/cookies-complete-guide.html">কুকি কি?: পরিচালনা ও নিরাপত্তার সম্পূর্ণ গাইড</a></li>
+    
+  </ul>
+</div>
+
+
+  </div>
+
+  <div class="social-buttons">
+    <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">টেলিগ্রামে সাবস্ক্রাইব করুন</a>
+    <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">ভিকে-তে সাবস্ক্রাইব করুন</a>
+  </div>
+</article>
+
+<button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+<script defer src="/frontend/scripts/article-chrome.js"></script>
+
+<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
 
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">

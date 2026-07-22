@@ -263,59 +263,68 @@
   <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/web-development-guide.css">
 </head>
 <body>
-    <div class="reading-progress">
-        <div class="reading-progress-bar"></div>
-    </div>
     
-    <button class="toc-toggle" onclick="toggleFloatingToc()">
-        <i class="fas fa-list"></i>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">پێڕستی ناوەڕۆک</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="پێڕستی ناوەڕۆک">
+  <div class="floating-toc__head">
+    <h3>پێڕستی ناوەڕۆک</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
     </button>
+  </div>
+  <ul>
     
-    <div class="floating-toc">
-        <h3>پێڕستی ناوەڕۆک</h3>
-        <ul>
-            
-            <li><a href="#section-goals">چی فێر دەبی</a></li>
-            
-            <li><a href="#section-tools">ئامرازە پێویستەکان</a></li>
-            
-            <li><a href="#section-guide">ڕێنمای هەنگاو بە هەنگاو</a></li>
-            
-            <li><a href="#section-modern-tools">ئامرازە مۆدێرنەکان</a></li>
-            
-            <li><a href="#section-faq">پرسیارە زۆر باوەکان</a></li>
-            
-            <li><a href="#section-resources">سەرچاوە بەسوودەکان</a></li>
-            
-        </ul>
-    </div>
+    <li><a href="#section-goals">چی فێر دەبی</a></li>
     
+    <li><a href="#section-tools">ئامرازە پێویستەکان</a></li>
+    
+    <li><a href="#section-guide">ڕێنمای هەنگاو بە هەنگاو</a></li>
+    
+    <li><a href="#section-modern-tools">ئامرازە مۆدێرنەکان</a></li>
+    
+    <li><a href="#section-faq">پرسیارە زۆر باوەکان</a></li>
+    
+    <li><a href="#section-resources">سەرچاوە بەسوودەکان</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
     <div id="menuContainer"></div>
+    
     <article class="article-container" tabindex="0">
         <header class="article-header">
             <span class="article-category">پەرەپێدان</span>
-            <div class="table-of-contents sticky-toc">
-                <h2>پێڕستی ناوەڕۆک</h2>
-                <ul>
-                    
-                    <li><a href="#section-goals">چی فێر دەبی</a></li>
-                    
-                    <li><a href="#section-tools">ئامرازە پێویستەکان</a></li>
-                    
-                    <li><a href="#section-guide">ڕێنمای هەنگاو بە هەنگاو</a></li>
-                    
-                    <li><a href="#section-modern-tools">ئامرازە مۆدێرنەکان</a></li>
-                    
-                    <li><a href="#section-faq">پرسیارە زۆر باوەکان</a></li>
-                    
-                    <li><a href="#section-resources">سەرچاوە بەسوودەکان</a></li>
-                    
-                </ul>
-            </div>
             <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
             </div>
@@ -326,7 +335,7 @@
         <div class="article-content">
             <p>دروستکردنی وێبسایت ڕەنگە بۆ نوێزان کارێکی قورس دەربکەوێت، بەڵام لە ڕاستیدا پرۆسەیەکی خۆشە کە هەمووان دەتوانن بەردەستیان بێت. لەم ڕێنمایەدا، هەموو ڕێگاکە لە بیرۆکەوە تا وێبسایتێکی کاراکە پیشان دەدەین.</p>
 
-            <h2 id="section-goals">🎯 چی فێر دەبی</h2>
+            <h2 id="section-goals">چی فێر دەبی</h2>
             <ul>
                 
                 <li>بنەماکانی HTML، CSS و JavaScript</li>
@@ -339,47 +348,71 @@
                 
             </ul>
 
-            <h2 id="section-tools">📋 ئامرازە پێویستەکان</h2>
+            <h2 id="section-tools">ئامرازە پێویستەکان</h2>
             <div class="tech-grid">
                 
                 <div class="tech-card">
-                    <span class="tech-icon">💻</span>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-5 6 5 6"/><path d="M16 6l5 6-5 6"/></svg>
+</span>
+
                     <h4>دەستکاریکەری دەق</h4>
                     <p>VS Code، Sublime Text یان Notepad++</p>
                 </div>
                 
                 <div class="tech-card">
-                    <span class="tech-icon">🌐</span>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+</span>
+
                     <h4>وێبگەڕ</h4>
                     <p>Chrome، Firefox یان Safari</p>
                 </div>
                 
                 <div class="tech-card">
-                    <span class="tech-icon">📁</span>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+</span>
+
                     <h4>بەڕێوەبەری فایل</h4>
                     <p>بۆ ڕێکخستنی پڕۆژە</p>
                 </div>
                 
             </div>
 
-            <h2 id="section-guide">🚀 ڕێنمای هەنگاو بە هەنگاو</h2>
+            <h2 id="section-guide">ڕێنمای هەنگاو بە هەنگاو</h2>
             
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-pencil-alt"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+</span>
+
                     <h3>پلان دانان</h3>
                     <p>ئامانج و پێکهاتەی وێبسایت دیاری بکە</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-code"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-5 6 5 6"/><path d="M16 6l5 6-5 6"/></svg>
+</span>
+
                     <h3>پەرەپێدان</h3>
                     <p>HTML، CSS و JavaScript دروست بکە</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-rocket"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 3 4 7 4 10l-4 4-4-4c0-3 1-7 4-10z"/><path d="M9 17l-2 4"/><path d="M15 17l2 4"/><circle cx="12" cy="10" r="1.5"/></svg>
+</span>
+
                     <h3>بڵاوکردنەوە</h3>
                     <p>وێبسایت لە ئینتەرنێت بڵاو بکەرەوە</p>
                 </div>
@@ -476,11 +509,11 @@
             </ol>
 
             <div class="highlight-box">
-                <h4>💡 ئامۆژگاری بۆ نوێزان</h4>
+                <h4>ئامۆژگاری بۆ نوێزان</h4>
                 <p>هەوڵ مەدە یەکسەر وێبسایتێکی ئاڵۆز دروست بکەیت. لە وێبسایتێکی یەک پەڕەی سادەوە دەستپێبکە و بە هەنگاو هەنگاو تایبەتمەندی نوێ زیاد بکە.</p>
             </div>
 
-            <h2 id="section-modern-tools">🔧 ئامرازە مۆدێرنەکان</h2>
+            <h2 id="section-modern-tools">ئامرازە مۆدێرنەکان</h2>
             <p>بۆ پەرەپێدانی پێشکەوتووتر، ئەمانە بزانە:</p>
             <ul>
                 
@@ -495,42 +528,27 @@
             </ul>
 
             <div class="warning-box">
-                <h4>⚠� شتێکی گرنگ بۆ لەبەرکردن</h4>
+                <h4>� شتێکی گرنگ بۆ لەبەرکردن</h4>
                 <p>پەرەپێدانی وێب بەردەوام گەشە دەکات. ئامادە بە بۆ فێربوونی تەکنەلۆژیای نوێ و شوێنکەوتنی ڕێڕەوی پیشەسازی.</p>
             </div>
 
-            <h2 id="section-faq">❓ پرسیارە زۆر باوەکان</h2>
+            <h2 id="section-faq">پرسیارە زۆر باوەکان</h2>
             
             
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    دروستکردنی یەکەم وێبسایت چەند کات دەوێت؟
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>بۆ وێبسایتێکی سادەی کارتی ناسین، ڕەنگە چەند کاتژمێر یان ڕۆژێک بخایەنێت. پڕۆژە ئاڵۆزترەکان ڕەنگە چەند هەفتە یان مانگێک بخایەنێت، پێوەندی بە ئاڵۆزی و ئەو کاتەوە هەیە کە ئامادەیی تۆ بۆ تەرخانکردنی هەیە.</p>
-                </div>
-            </div>
+            <details class="faq-item">
+                <summary>دروستکردنی یەکەم وێبسایت چەند کات دەوێت؟</summary>
+                <p>بۆ وێبسایتێکی سادەی کارتی ناسین، ڕەنگە چەند کاتژمێر یان ڕۆژێک بخایەنێت. پڕۆژە ئاڵۆزترەکان ڕەنگە چەند هەفتە یان مانگێک بخایەنێت، پێوەندی بە ئاڵۆزی و ئەو کاتەوە هەیە کە ئامادەیی تۆ بۆ تەرخانکردنی هەیە.</p>
+            </details>
             
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    ئایا بۆ پەرەپێدانی وێب پێویستت بە زانینی بیرکاریە؟
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>بۆ زۆربەی پڕۆژەکانی وێب بیرکاری پێشکەوتوو پێویست نیە. توانای سەرەکی پێویستت بیرکردنەوەی لۆجیکی و چارەسەری کێشەیە.</p>
-                </div>
-            </div>
+            <details class="faq-item">
+                <summary>ئایا بۆ پەرەپێدانی وێب پێویستت بە زانینی بیرکاریە؟</summary>
+                <p>بۆ زۆربەی پڕۆژەکانی وێب بیرکاری پێشکەوتوو پێویست نیە. توانای سەرەکی پێویستت بیرکردنەوەی لۆجیکی و چارەسەری کێشەیە.</p>
+            </details>
             
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    کامی زمانەکانی پرۆگرامکردن باشترە یەکەم فێربی؟
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>HTML و CSS بناغەی وێبن و یەکەم پێویستە فێریان ببی. دواتر پێشنیار دەکرێت بچیتە سەر JavaScript کە کارلێک زیاد دەکات بۆ وێبسایت.</p>
-                </div>
-            </div>
+            <details class="faq-item">
+                <summary>کامی زمانەکانی پرۆگرامکردن باشترە یەکەم فێربی؟</summary>
+                <p>HTML و CSS بناغەی وێبن و یەکەم پێویستە فێریان ببی. دواتر پێشنیار دەکرێت بچیتە سەر JavaScript کە کارلێک زیاد دەکات بۆ وێبسایت.</p>
+            </details>
             
 
             <h3>پێڕستی خۆپشکنین</h3>
@@ -563,7 +581,7 @@
                 
             </ul>
 
-            <h2 id="section-resources">📚 سەرچاوە بەسوودەکان</h2>
+            <h2 id="section-resources">سەرچاوە بەسوودەکان</h2>
             <ul>
                 
                 <li><a href="https://developer.mozilla.org/ku/" target="_blank" rel="noopener">MDN Web Docs (کوردی)</a> — بەڵگەنامەی نایاب</li>
@@ -578,31 +596,29 @@
 
             <p>دروستکردنی وێبسایت پرۆسەیەکی داهێنەرانەیە کە دەتوانێت زۆر خۆشی و هەلێکی نوێ بهێنێت. لە تاقیکردنەوە و فێربوون لە هەڵەکانت نەترسە!</p>
 
+            
+            
+            
+
+<div class="related-articles">
+  <h3>Related articles</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/ku-arab/knowledge-base/articles/cookies-complete-guide.html">کوکی (cookies) چیە؟: ڕێنموویی تەواو بۆ سەلامەتی و پاککردنەوە</a></li>
+    
+    <li><a href="/frontend/ku-arab/knowledge-base/articles/json-formatter-guide.html">JSON formatter: why you need it</a></li>
+    
+    <li><a href="/frontend/ku-arab/knowledge-base/articles/web-tech-trends-2024.html">اتجاهات تقنيات الويب 2025 — ما يحتاج المطورون إلى معرفته</a></li>
+    
+  </ul>
+</div>
+
+
+
             <div class="share-buttons">
                 <h3>بڵاوکردنەوەی بابەت</h3>
-                <button onclick="share('telegram')" aria-label="بڵاوکردنەوە لە تێلێگرام">تێلێگرام</button>
-                <button onclick="share('vk')" aria-label="بڵاوکردنەوە لە ڤی کە">ڤی کە</button>
-            </div>
-
-            <div class="comments-section">
-                <h2>بۆچونەکان</h2>
-                <div class="comment-form">
-                    <h3>بۆچونەکەت جێبهێڵە</h3>
-                    <form id="commentForm">
-                        <div class="form-group">
-                            <label for="commentName">ناوت:</label>
-                            <input type="text" id="commentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="commentText">بۆچونەکەت:</label>
-                            <textarea id="commentText" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">ناردن</button>
-                    </form>
-                </div>
-                <div id="commentsList" class="comments-list">
-                    <!-- Комментарии будут загружены здесь -->
-                </div>
+                <button type="button" onclick="serpmonnShare('telegram')" aria-label="بڵاوکردنەوە لە تێلێگرام">تێلێگرام</button>
+                <button type="button" onclick="serpmonnShare('vk')" aria-label="بڵاوکردنەوە لە ڤی کە">ڤی کە</button>
             </div>
         </div>
 
@@ -615,143 +631,20 @@
     <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="گەڕانەوە بۆ سەرەوە">↑ سەرەوە</button>
 
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    
-    <script>
-        // Локализованные строки для JavaScript
-        const localeTexts = {
-            noComments: "هێشتا بۆچون نیە. یەکەم بە!",
-            commentSaved: "بۆچون بە سەرکەوتوویی پاشەکەوت کرا!",
-            error: "هەڵە"
-        };
-        
-        // Функции для работы с комментариями
-        function saveComment(name, text) {
-            const comment = {
-                name: name,
-                text: text,
-                date: new Date().toLocaleString('ku-arab')
-            };
-            
-            let comments = JSON.parse(localStorage.getItem('articleComments_ku-arab')) || [];
-            comments.push(comment);
-            localStorage.setItem('articleComments_ku-arab', JSON.stringify(comments));
-            
-            return comment;
-        }
-        
-        function loadComments() {
-            const comments = JSON.parse(localStorage.getItem('articleComments_ku-arab')) || [];
-            const commentsList = document.getElementById('commentsList');
-            
-            if (comments.length === 0) {
-                commentsList.innerHTML = '<div class="no-comments">' + localeTexts.noComments + '</div>';
-                return;
-            }
-            
-            commentsList.innerHTML = comments.map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">${escapeHtml(comment.name)}</span>
-                        <span class="comment-date">${escapeHtml(comment.date)}</span>
-                    </div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Основные функции
-        function toggleFloatingToc() {
-            const floatingToc = document.querySelector('.floating-toc');
-            floatingToc.style.display = floatingToc.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        function share(network) {
-            const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent(document.title);
-            const shareUrls = {
-                telegram: `https://t.me/share/url?url=${url}&text=${title}`,
-                vk: `https://vk.com/share.php?url=${url}&title=${title}`
-            };
-            window.open(shareUrls[network], '_blank');
-        }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Загрузка комментариев
-            loadComments();
-            
-            // Обработка формы комментариев
-            document.getElementById('commentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nameInput = document.getElementById('commentName');
-                const textInput = document.getElementById('commentText');
-                
-                const name = nameInput.value.trim();
-                const text = textInput.value.trim();
-                
-                if (name && text) {
-                    saveComment(name, text);
-                    loadComments();
-                    
-                    // Очистка формы
-                    nameInput.value = '';
-                    textInput.value = '';
-                    
-                    // Показать сообщение об успехе
-                    alert(localeTexts.commentSaved);
-                }
-            });
-            
-            // Анимация появления контента
-            const contentObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.article-content > *').forEach(el => contentObserver.observe(el));
-            
-            // Кнопка "Наверх"
-            window.addEventListener('scroll', () => {
-                const button = document.querySelector('.scroll-to-top');
-                button.classList.toggle('show', window.scrollY > 300);
-            });
-            
-            // Прогресс чтения
-            const progressBar = document.querySelector('.reading-progress-bar');
-            window.addEventListener('scroll', () => {
-                const windowHeight = window.innerHeight;
-                const documentHeight = document.documentElement.scrollHeight;
-                const scrollTop = window.scrollY;
-                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
-                progressBar.style.width = `${progress}%`;
-            });
-            
-            // Показывать плавающее оглавление на десктопах
-            if (window.innerWidth > 991) {
-                document.querySelector('.floating-toc').style.display = 'block';
-            }
-            
-        });
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
 
-        // Функция для интерактивного редактора
+    <script>
+        const localeTexts = {
+            error: "Error"
+        };
+
         function runCode(button) {
             const editor = button.closest('.interactive-editor');
             const codeArea = editor.querySelector('.code-textarea');
             const previewArea = editor.querySelector('.preview-area');
-            
+
             try {
                 if (editor.classList.contains('html-editor')) {
-                    // Песочница: HTML из редактора не исполняется в родительской странице
                     previewArea.replaceChildren();
                     const frame = document.createElement('iframe');
                     frame.setAttribute('sandbox', '');
@@ -772,15 +665,6 @@
             } catch (error) {
                 previewArea.textContent = `${localeTexts.error}: ${error.message}`;
             }
-        }
-        
-        // Функция для переключения FAQ
-        function toggleFaq(element) {
-            const answer = element.nextElementSibling;
-            answer.classList.toggle('show');
-            const icon = element.querySelector('i');
-            icon.classList.toggle('fa-chevron-down');
-            icon.classList.toggle('fa-chevron-up');
         }
     </script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>

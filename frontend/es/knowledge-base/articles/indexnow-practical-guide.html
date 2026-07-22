@@ -2,34 +2,31 @@
 <!DOCTYPE html>
 <html lang="es" dir="ltr">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="es">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     
-    
-    
+
     <title>IndexNow: Implementación práctica y consejos</title>
     <meta name="description" content="Actualizaciones rápidas de motores de búsqueda: configuración, modo solo-cambiado, errores comunes, comparación con sitemap ping y lista de verificación de implementación.">
     <meta name="keywords" content="IndexNow, SEO, indexación, motores de búsqueda, Bing, Yandex, actualizaciones de sitios web">
-    
-    <!-- Open Graph -->
+
     <meta property="og:title" content="IndexNow: Implementación práctica y consejos">
     <meta property="og:description" content="Configuración, modo solo-cambiado, errores y comparación con sitemap ping.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/es/knowledge-base/articles/indexnow-practical-guide.html">
     <meta property="og:type" content="article">
-    
-    <!-- Twitter -->
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="IndexNow: Implementación práctica y consejos">
     <meta name="twitter:description" content="Configuración, modo solo-cambiado, errores y comparación con sitemap ping.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/es/knowledge-base/articles/indexnow-practical-guide.html" />
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -62,246 +59,119 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-
-    <style>
-      body { 
-        max-width: 800px; 
-        margin: 0 auto; 
-        padding: 16px; 
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-        background: #f5f5f5; 
-        line-height: 1.7; 
-      }
-      article { 
-        background: #fff; 
-        border-radius: 12px; 
-        padding: 40px; 
-        margin: 20px auto; 
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-        max-width: 800px; 
-      }
-      .article-header { 
-        text-align: center; 
-        margin-bottom: 30px; 
-        padding-bottom: 20px; 
-        border-bottom: 2px solid #e9ecef; 
-      }
-      .article-title { 
-        font-size: 2.2rem; 
-        color: #333; 
-        margin-bottom: 10px; 
-        font-weight: 700; 
-      }
-      .article-date { 
-        color: #6c757d; 
-        font-size: 1.05rem; 
-        font-weight: 500; 
-      }
-      .summary { 
-        background: #e8f5e8; 
-        border: 1px solid #c3e6c3; 
-        border-radius: 8px; 
-        padding: 16px; 
-        margin: 20px 0; 
-        color: #155724; 
-      }
-      .toc { 
-        background: #f8f9fa; 
-        border: 1px solid #e9ecef; 
-        border-radius: 8px; 
-        padding: 16px; 
-        margin: 20px 0; 
-      }
-      .toc a { 
-        text-decoration: none; 
-      }
-      h2 { 
-        margin-top: 28px; 
-        color: #dc3545;
-      }
-      .code { 
-        background: #f8f9fa; 
-        border: 1px solid #dee2e6; 
-        border-radius: 6px; 
-        padding: 12px; 
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; 
-        font-size: .95rem; 
-        overflow-x: auto; 
-        white-space: pre-wrap;
-      }
-      .note { 
-        background: #fff3cd; 
-        border: 1px solid #ffe08a; 
-        border-radius: 8px; 
-        padding: 12px; 
-        margin: 16px 0; 
-        color: #7a5b00; 
-      }
-      .faq { 
-        background: #f8f9fa; 
-        border: 1px solid #e9ecef; 
-        border-radius: 8px; 
-        padding: 16px; 
-      }
-      .faq h3 { 
-        margin: 0 0 10px; 
-      }
-      .muted { 
-        color:#6c757d; 
-      }
-      .breadcrumb { 
-        margin-bottom: 16px; 
-        padding: 8px 0; 
-      }
-      .breadcrumb a {
-        text-decoration: none;
-        color: #007bff;
-      }
-      .breadcrumb a:hover {
-        text-decoration: underline;
-      }
-      .cta-button { 
-        display: block; 
-        text-align: center; 
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
-        color: white; 
-        border: none; 
-        padding: 15px 30px; 
-        border-radius: 10px; 
-        font-size: 1.1rem; 
-        cursor: pointer; 
-        transition: transform 0.3s ease; 
-        margin: 30px 0; 
-        text-decoration: none; 
-      }
-      .cta-button:hover { 
-        transform: scale(1.02); 
-        text-decoration: none; 
-        color: #fff; 
-      }
-      .section-item {
-        margin-bottom: 10px;
-      }
-      .section-item-title {
-        font-weight: bold;
-      }
-      .social-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 24px;
-        flex-wrap: wrap;
-      }
-      .tg-btn, .vk-btn {
-        display: inline-block;
-        padding: 10px 20px;
-        border-radius: 25px;
-        color: #fff;
-        font-weight: 600;
-        text-decoration: none;
-        transition: transform .2s ease, box-shadow .2s ease;
-      }
-      .tg-btn {
-        background: #229ED9;
-      }
-      .vk-btn {
-        background: #2787F5;
-      }
-      .tg-btn:hover, .vk-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 14px rgba(0,0,0,.15);
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/indexnow-practical-guide.css">
 </head>
 <body>
-    <style>
-      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
-      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
-    </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Tabla de contenido</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Tabla de contenido">
+  <div class="floating-toc__head">
+    <h3>Tabla de contenido</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
     
-    <nav id="menuContainer" aria-label=""></nav>
+    <li><a href="#what">Qué es IndexNow</a></li>
     
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      
-        <a href="/es/">Home</a> →
-        <a href="/frontend/es/knowledge-base/knowledge-base.html">Knowledge base</a> →
-      
-      <span>IndexNow: Implementación práctica y consejos</span>
+    <li><a href="#setup">Configuración de clave y ping básico</a></li>
+    
+    <li><a href="#changed">Modo solo-cambiado: cuándo y cómo</a></li>
+    
+    <li><a href="#compare">IndexNow vs sitemap ping</a></li>
+    
+    <li><a href="#errors">Errores comunes</a></li>
+    
+    <li><a href="#faq">Preguntas frecuentes y lista de verificación</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
+<nav id="menuContainer" aria-label=""></nav>
+
+<article class="article-container" tabindex="0">
+  <header class="article-header">
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-1897960"
+          data-ad-slot="1897960">
+      </ins>
+    </div>
+    <h1 class="article-title">IndexNow: Implementación práctica y consejos</h1>
+    <div class="article-date">15 de septiembre de 2025 • 5 minutos de lectura</div>
+  </header>
+
+  <div class="article-content">
+    <div class="summary">
+      <strong>Por qué leer:</strong> cómo entregar rápidamente actualizaciones a los motores de búsqueda, cuándo usar solo-cambiado, cómo IndexNow difiere de sitemap ping y cómo evitar errores comunes.
     </div>
 
-    <article>
-      <header class="article-header">
-        <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
-              style="display:inline-block;"
-              data-ad-client="ad-1897960" 
-              data-ad-slot="1897960">
-          </ins>
-        </div>
-        <h1 class="article-title">IndexNow: Implementación práctica y consejos</h1>
-        <div class="article-date">15 de septiembre de 2025 • 5 minutos de lectura</div>
-      </header>
+    
+    <h2 id="what">1) Qué es IndexNow</h2>
 
-      <div class="summary">
-        <strong>Por qué leer:</strong> cómo entregar rápidamente actualizaciones a los motores de búsqueda, cuándo usar solo-cambiado, cómo IndexNow difiere de sitemap ping y cómo evitar errores comunes.
-      </div>
+    
+    <p>IndexNow es un protocolo que permite notificar instantáneamente a los motores de búsqueda sobre cambios en las URL (creación, actualización, eliminación). Compatible con Bing, Yandex, Seznam y otros servicios. La ventaja es un retraso mínimo de indexación y menos ruido de rastreo.</p>
+    
 
-      <div class="toc">
-        <strong>Tabla de contenido</strong>
-        <ol>
-          
-          <li><a href="#what">Qué es IndexNow</a></li>
-          
-          <li><a href="#setup">Configuración de clave y ping básico</a></li>
-          
-          <li><a href="#changed">Modo solo-cambiado: cuándo y cómo</a></li>
-          
-          <li><a href="#compare">IndexNow vs sitemap ping</a></li>
-          
-          <li><a href="#errors">Errores comunes</a></li>
-          
-          <li><a href="#faq">Preguntas frecuentes y lista de verificación</a></li>
-          
-        </ol>
-      </div>
+    
 
+    
+
+    
+
+    
+
+    
+
+    
+    <h2 id="setup">2) Configuración de clave y ping básico</h2>
+
+    
+
+    
+    <ol>
       
-      <h2 id="what">1) Qué es IndexNow</h2>
+      <li>Genere una clave (GUID) y coloque el archivo <code>YOUR_KEY.txt</code> en la raíz del sitio (<code>/.well-known/</code> o raíz del dominio) con la cadena de clave.</li>
       
+      <li>Haga ping al endpoint con URL y clave. Ejemplo (URL única):</li>
       
-      <p>IndexNow es un protocolo que permite notificar instantáneamente a los motores de búsqueda sobre cambios en las URL (creación, actualización, eliminación). Compatible con Bing, Yandex, Seznam y otros servicios. La ventaja es un retraso mínimo de indexación y menos ruido de rastreo.</p>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <h2 id="setup">2) Configuración de clave y ping básico</h2>
-      
-      
-      
-      
-      <ol>
-        
-        <li>Genere una clave (GUID) y coloque el archivo <code>YOUR_KEY.txt</code> en la raíz del sitio (<code>/.well-known/</code> o raíz del dominio) con la cadena de clave.</li>
-        
-        <li>Haga ping al endpoint con URL y clave. Ejemplo (URL única):</li>
-        
-      </ol>
-      
-      
-      
-      <div class="code">POST https://api.indexnow.org/indexnow
+    </ol>
+    
+
+    
+    <div class="code">POST https://api.indexnow.org/indexnow
 Content-Type: application/json
 
 {
@@ -311,180 +181,195 @@ Content-Type: application/json
     "https://www.serpmonn.ru/frontend/knowledge-base/articles/utm-complete-guide.html"
   ]
 }</div>
+    
+
+    
+
+    
+    <div class="note">Para lotes, especifique hasta 10.000 URL en una solicitud o use un feed de archivo con un archivo de registro de cambios.</div>
+    
+
+    
+
+    
+    <h2 id="changed">3) Modo solo-cambiado</h2>
+
+    
+    <p>La idea es hacer ping solo a los archivos realmente cambiados en el último commit/implementación. Esto reduce el ruido y el uso de cuota.</p>
+    
+
+    
+
+    
+
+    
       
-      
-      
-      
-      
-      <div class="note">Para lotes, especifique hasta 10.000 URL en una solicitud o use un feed de archivo con un archivo de registro de cambios.</div>
-      
-      
-      
-      
-      
-      <h2 id="changed">3) Modo solo-cambiado</h2>
-      
-      
-      <p>La idea es hacer ping solo a los archivos realmente cambiados en el último commit/implementación. Esto reduce el ruido y el uso de cuota.</p>
-      
-      
-      
-      
-      
-      
-      
+      <ul>
         
-        <ul>
-          
-          <li>Obtenga la lista de rutas cambiadas de VCS (git diff) o artefactos de compilación.</li>
-          
-          <li>Filtre por rutas públicas (excluyendo <code>node_modules</code>, <code>.git</code>, carpetas privadas).</li>
-          
-          <li>Agrupe por dominios/idiomas para evitar enviar URL irrelevantes.</li>
-          
-        </ul>
+        <li>Obtenga la lista de rutas cambiadas de VCS (git diff) o artefactos de compilación.</li>
         
-      
-      
-      
-      <div class="note">En producción, es útil tener un respaldo: si solo-cambiado está vacío (por ejemplo, corrección de configuraciones), haga ping a sitemaps importantes.</div>
-      
-      
-      
-      
-      
-      <h2 id="compare">4) IndexNow vs sitemap ping</h2>
-      
-      
-      
-      
-      
-      
-      
-      
+        <li>Filtre por rutas públicas (excluyendo <code>node_modules</code>, <code>.git</code>, carpetas privadas).</li>
         
-        <ul>
-          
-          <li class="section-item">
-            <span class="section-item-title">Velocidad:</span> IndexNow entrega actualizaciones más rápido, no espera el ciclo de rastreo; sitemap ping señala la presencia de un sitemap pero no cambios en URL específicas.
-          </li>
-          
-          <li class="section-item">
-            <span class="section-item-title">Ruido:</span> IndexNow - dirigido a URL cambiadas; sitemap - escaneo de todo el mapa (más costoso para el presupuesto de rastreo).
-          </li>
-          
-          <li class="section-item">
-            <span class="section-item-title">Fiabilidad:</span> Los sitemaps siguen siendo la base; IndexNow complementa y acelera. Es mejor usar ambos.
-          </li>
-          
-        </ul>
+        <li>Agrupe por dominios/idiomas para evitar enviar URL irrelevantes.</li>
         
+      </ul>
       
+    
+
+    
+    <div class="note">En producción, es útil tener un respaldo: si solo-cambiado está vacío (por ejemplo, corrección de configuraciones), haga ping a sitemaps importantes.</div>
+    
+
+    
+
+    
+    <h2 id="compare">4) IndexNow vs sitemap ping</h2>
+
+    
+
+    
+
+    
+
+    
       
-      
-      
-      
-      
-      
-      <h2 id="errors">5) Errores comunes</h2>
-      
-      
-      
-      
-      
-      
-      
-      
+      <ul>
         
-        <ul>
-          
-          <li>Clave no accesible a través de URL pública o no coincide con el parámetro <code>key</code>.</li>
-          
-          <li>Hacer ping a páginas privadas/404, parámetros sin canonicalización.</li>
-          
-          <li>Repeticiones demasiado frecuentes de las mismas URL (limite las repeticiones).</li>
-          
-          <li>Ignorar el multilingüismo (es necesario hacer ping a la versión localizada correspondiente).</li>
-          
-        </ul>
+        <li class="section-item">
+          <span class="section-item-title">Velocidad:</span> IndexNow entrega actualizaciones más rápido, no espera el ciclo de rastreo; sitemap ping señala la presencia de un sitemap pero no cambios en URL específicas.
+        </li>
         
-      
-      
-      
-      
-      
-      
-      
-      <h2 id="faq">6) Preguntas frecuentes y lista de verificación</h2>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <div class="faq">
+        <li class="section-item">
+          <span class="section-item-title">Ruido:</span> IndexNow - dirigido a URL cambiadas; sitemap - escaneo de todo el mapa (más costoso para el presupuesto de rastreo).
+        </li>
         
-        <h3>¿Cuántas URL enviar a la vez?</h3>
-        <p>Hasta 10.000 en un lote - agrupe de manera óptima por tipo/idioma.</p>
+        <li class="section-item">
+          <span class="section-item-title">Fiabilidad:</span> Los sitemaps siguen siendo la base; IndexNow complementa y acelera. Es mejor usar ambos.
+        </li>
         
-        <h3>¿Debe hacer ping a las eliminaciones?</h3>
-        <p>Sí - pase las URL de páginas eliminadas para acelerar la desindexación.</p>
-        
-        <h3>¿Cómo confirmar que funciona?</h3>
-        <p>Registros de respuesta de API (200/202), picos de rastreo en registros del servidor, aparición más rápida de nuevas URL.</p>
-        
-        
-        
-        <h3></h3>
-        <ul>
-          
-          <li>Clave colocada y accesible a través de HTTPS.</li>
-          
-          <li>Recolecte rutas solo-cambiadas desde CI/CD.</li>
-          
-          <li>Deduplicación y limitación de repeticiones.</li>
-          
-          <li>Respaldo a sitemap ping en lote vacío.</li>
-          
-        </ul>
-        
-      </div>
+      </ul>
       
+    
+
+    
+
+    
+
+    
+    <h2 id="errors">5) Errores comunes</h2>
+
+    
+
+    
+
+    
+
+    
       
+      <ul>
+        
+        <li>Clave no accesible a través de URL pública o no coincide con el parámetro <code>key</code>.</li>
+        
+        <li>Hacer ping a páginas privadas/404, parámetros sin canonicalización.</li>
+        
+        <li>Repeticiones demasiado frecuentes de las mismas URL (limite las repeticiones).</li>
+        
+        <li>Ignorar el multilingüismo (es necesario hacer ping a la versión localizada correspondiente).</li>
+        
+      </ul>
+      
+    
+
+    
+
+    
+
+    
+    <h2 id="faq">6) Preguntas frecuentes y lista de verificación</h2>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="faq">
+      
+      <h3>¿Cuántas URL enviar a la vez?</h3>
+      <p>Hasta 10.000 en un lote - agrupe de manera óptima por tipo/idioma.</p>
+      
+      <h3>¿Debe hacer ping a las eliminaciones?</h3>
+      <p>Sí - pase las URL de páginas eliminadas para acelerar la desindexación.</p>
+      
+      <h3>¿Cómo confirmar que funciona?</h3>
+      <p>Registros de respuesta de API (200/202), picos de rastreo en registros del servidor, aparición más rápida de nuevas URL.</p>
       
 
       
-      <div class="note" style="margin-top: 30px;">
-        <strong>:</strong> IndexNow acelera significativamente la indexación de páginas nuevas y cambiadas. Combinado con sitemaps tradicionales, es una herramienta poderosa para la optimización SEO.
-      </div>
+      <h3></h3>
+      <ul>
+        
+        <li>Clave colocada y accesible a través de HTTPS.</li>
+        
+        <li>Recolecte rutas solo-cambiadas desde CI/CD.</li>
+        
+        <li>Deduplicación y limitación de repeticiones.</li>
+        
+        <li>Respaldo a sitemap ping en lote vacío.</li>
+        
+      </ul>
       
-
-      <!-- ИСПРАВЛЕНО: ссылка на инструмент SEO с учетом языка -->
-      <a href="/frontend/es/tools/seo/index.html" class="cta-button">📊 Verificar SEO</a>
-
-      <p class="muted">Actualizado: 15 de septiembre de 2025 • Categoría: SEO</p>
-    </article>
-
-    <div class="social-buttons">
-      <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Suscribirse en Telegram</a>
-      <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Suscribirse en VK</a>
     </div>
+    
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     
-    <!-- Скрипты -->
-<script>
-</script>
+
     
-    <!-- Скрипт для управления рекламным баннером -->
+    <div class="note">
+      <strong>:</strong> IndexNow acelera significativamente la indexación de páginas nuevas y cambiadas. Combinado con sitemaps tradicionales, es una herramienta poderosa para la optimización SEO.
+    </div>
+    
+
+    <a href="/frontend/es/tools/seo/index.html" class="cta-button">📊 Verificar SEO</a>
+
+    <p class="muted">Actualizado: 15 de septiembre de 2025 • Categoría: SEO</p>
+
+    
+    
+    
+
+<div class="related-articles">
+  <h3>Artículos relacionados</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/es/knowledge-base/articles/utm-complete-guide.html">UTM: Guía Completa</a></li>
+    
+    <li><a href="/frontend/es/knowledge-base/articles/web-development-guide.html">Cómo crear tu primer sitio web desde cero - Guía completa para principiantes</a></li>
+    
+    <li><a href="/frontend/es/knowledge-base/articles/cookies-complete-guide.html">¿Qué son las cookies?: Guía completa de gestión y seguridad</a></li>
+    
+  </ul>
+</div>
+
+
+  </div>
+
+  <div class="social-buttons">
+    <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Suscribirse en Telegram</a>
+    <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Suscribirse en VK</a>
+  </div>
+</article>
+
+<button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+<script defer src="/frontend/scripts/article-chrome.js"></script>
+
+<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
 
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">

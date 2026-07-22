@@ -10,35 +10,32 @@ eleventyComputed:
 ---
 
 <!DOCTYPE html>
-<html lang="{{ locale }}" dir="{{ dir }}">  <!-- ИЗМЕНЕНО: lang → locale -->
+<html lang="{{ locale }}" dir="{{ dir }}">
   <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <meta http-equiv="Content-Language" content="{{ locale }}">  <!-- ИЗМЕНЕНО: lang → locale -->
+    <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    {% set article = howToCalculateDepreciation[locale] or howToCalculateDepreciation['ru'] %}  <!-- ИЗМЕНЕНО: lang → locale -->
-    
+
+    {% set article = howToCalculateDepreciation[locale] or howToCalculateDepreciation['ru'] %}
+
     <title>{{ article.pageTitle }}</title>
     <meta name="description" content="{{ article.metaDescription }}">
-    
-    <!-- Open Graph -->
+
     <meta property="og:title" content="{{ article.ogTitle }}">
     <meta property="og:description" content="{{ article.ogDescription }}">
     <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
-    
-    <!-- Twitter -->
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ article.twitterTitle }}">
     <meta name="twitter:description" content="{{ article.twitterDescription }}">
     <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="{{ canonical }}" />
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -71,86 +68,58 @@ eleventyComputed:
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    
-    <style>
-      /* ad top adaptive start */
-      /* ad top adaptive end */
-      
-      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.7; }
-      .article-container { background: #fff; border-radius: 12px; padding: 40px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-      .article-header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #e9ecef; }
-      .article-title { font-size: 2.5rem; color: #333; margin-bottom: 15px; font-weight: 700; line-height: 1.2; }
-      .article-meta { color: #6c757d; font-size: 1.1rem; margin-bottom: 20px; }
-      .article-category { display: inline-block; padding: 8px 16px; background: #dc3545; color: #fff; border-radius: 20px; font-size: 0.9rem; font-weight: 500; }
-      .article-content { font-size: 1.1rem; color: #333; }
-      .article-content h2 { color: #dc3545; margin-top: 40px; margin-bottom: 20px; font-size: 1.8rem; font-weight: 600; }
-      .article-content h3 { color: #495057; margin-top: 30px; margin-bottom: 15px; font-size: 1.4rem; font-weight: 600; }
-      .article-content p { margin-bottom: 20px; }
-      .article-content ul, .article-content ol { margin-bottom: 20px; padding-left: 25px; }
-      .article-content li { margin-bottom: 10px; }
-      .highlight-box { background: #fdecea; border: 1px solid #f5c6cb; border-radius: 8px; padding: 20px; margin: 25px 0; color: #721c24; }
-      .highlight-box h4 { color: #721c24; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
-      .warning-box { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px; margin: 25px 0; border-left: 4px solid #ffc107; }
-      .warning-box h4 { color: #856404; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
-      .example-box { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin: 25px 0; border-left: 4px solid #6c757d; }
-      .example-box h4 { color: #495057; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
-      .step-list { counter-reset: step-counter; list-style: none; padding: 0; }
-      .step-list li { counter-increment: step-counter; margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #dc3545; position: relative; }
-      .step-list li::before { content: counter(step-counter); position: absolute; left: -15px; top: 20px; background: #dc3545; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; }
-
-      .faq-list { margin: 24px 0; display: flex; flex-direction: column; gap: 10px; }
-      .faq-item { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 12px 16px; }
-      .faq-item summary { cursor: pointer; font-weight: 600; }
-      .faq-item p { margin: 12px 0 4px; }
-
-      .social-subscribe { display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
-      .tg-btn, .vk-btn { display: inline-block; padding: 10px 20px; border-radius: 25px; color: #fff; font-weight: 600; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
-      .tg-btn { background: #229ED9; }
-      .vk-btn { background: #2787F5; }
-      .tg-btn:hover, .vk-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.15); }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/depreciation-guide.css">
   </head>
   <body>
-    <style>
-      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
-      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
-    </style>
-    
-    <!-- ИЗМЕНЕНО: все lang → locale -->
+    {% set tocTitle = locale | articleTocTitle %}
+    {% set tocItems = [
+      { href: '#what-is', label: article.whatIsTitle },
+      { href: '#factors', label: article.factorsTitle },
+      { href: '#calculator', label: article.calculatorTitle }
+    ] %}
+    {% if article.formulaTitle %}{% set _ = tocItems.push({ href: '#formula', label: article.formulaTitle }) %}{% endif %}
+    {% if article.kmExample %}{% set _ = tocItems.push({ href: '#km-example', label: article.kmExampleTitle }) %}{% endif %}
+    {% set _ = tocItems.push({ href: '#tips', label: article.tipsTitle }) %}
+    {% set _ = tocItems.push({ href: '#accuracy', label: article.accuracyTitle }) %}
+    {% set _ = tocItems.push({ href: '#recalc', label: article.recalcTitle }) %}
+    {% if article.faq %}{% set _ = tocItems.push({ href: '#faq', label: article.faqTitle }) %}{% endif %}
+    {% set _ = tocItems.push({ href: '#links', label: article.linksTitle }) %}
+    {% include "partials/article-floating-toc.njk" %}
+
     <nav id="menuContainer" aria-label="{% if locale == 'ru' %}Меню{% elif locale == 'en' %}Menu{% elif locale == 'ar' or locale == 'he' or locale == 'ug' or locale == 'fa' %}القائمة{% else %}Menu{% endif %}"></nav>
-    
-    <div class="article-container">
-      <div class="article-header">
+
+    <article class="article-container" tabindex="0">
+      <header class="article-header">
         <span class="article-category">{{ article.articleCategory }}</span>
-        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
         <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
+          <ins class="mrg-tag"
               style="display:inline-block;"
-              data-ad-client="ad-{{ mailAds.slots.top.id }}" 
+              data-ad-client="ad-{{ mailAds.slots.top.id }}"
               data-ad-slot="{{ mailAds.slots.top.id }}">
           </ins>
         </div>
-<h1 class="article-title">{{ article.articleTitle }}</h1>
+        <h1 class="article-title">{{ article.articleTitle }}</h1>
         <div class="article-meta">{{ article.articleMeta }}</div>
-      </div>
+      </header>
 
       <div class="article-content">
         <p>{{ article.intro }}</p>
 
-        <h2>{{ article.whatIsTitle }}</h2>
+        <h2 id="what-is">{{ article.whatIsTitle }}</h2>
         <p>{{ article.whatIsText }}</p>
 
-        <h2>{{ article.factorsTitle }}</h2>
+        <h2 id="factors">{{ article.factorsTitle }}</h2>
         <ul>
           {% for factor in article.factors %}
           <li><strong>{{ factor.split(':')[0] }}:</strong> {{ factor.split(':')[1] if ':' in factor else factor }}</li>
           {% endfor %}
         </ul>
 
-        <h2>{{ article.calculatorTitle }}</h2>
-        
+        <h2 id="calculator">{{ article.calculatorTitle }}</h2>
+
         <ol class="step-list">
           {% for step in article.steps %}
           <li>
@@ -163,8 +132,7 @@ eleventyComputed:
         <div class="example-box">
           <h4>{{ article.exampleTitle }}</h4>
           <p>
-            <!-- ИЗМЕНЕНО: все lang → locale -->
-            <strong>{% if locale == 'ru' %}Автомобиль{% elif locale == 'en' %}Car{% elif locale == 'es' %}Automóvil{% elif locale == 'ug' %}ماشىنا{% else %}Car{% endif %}:</strong> {{ article.example.car }}<br>
+            <strong>{% if locale == 'ru' %}Автомобиль{% elif locale == 'en' %}Car{% elif locale == 'es' %}Automóvil{% elif locale == 'ug' %}ماشىna{% else %}Car{% endif %}:</strong> {{ article.example.car }}<br>
             <strong>{% if locale == 'ru' %}Пробег{% elif locale == 'en' %}Mileage{% elif locale == 'es' %}Kilometraje{% elif locale == 'ug' %}يۈرگەن ماسىفا{% else %}Mileage{% endif %}:</strong> {{ article.example.mileage }}<br>
             <strong>{% if locale == 'ru' %}Условия{% elif locale == 'en' %}Conditions{% elif locale == 'es' %}Condiciones{% elif locale == 'ug' %}ئىشلەش شارائىتى{% else %}Conditions{% endif %}:</strong> {{ article.example.conditions }}<br>
             <strong>{% if locale == 'ru' %}Обслуживание{% elif locale == 'en' %}Maintenance{% elif locale == 'es' %}Mantenimiento{% elif locale == 'ug' %}ساقلىش{% else %}Maintenance{% endif %}:</strong> {{ article.example.maintenance }}<br>
@@ -173,12 +141,12 @@ eleventyComputed:
         </div>
 
         {% if article.formulaTitle %}
-        <h2>{{ article.formulaTitle }}</h2>
+        <h2 id="formula">{{ article.formulaTitle }}</h2>
         <p>{{ article.formulaText }}</p>
         {% endif %}
 
         {% if article.kmExample %}
-        <h2>{{ article.kmExampleTitle }}</h2>
+        <h2 id="km-example">{{ article.kmExampleTitle }}</h2>
         <p>{{ article.kmExampleIntro }}</p>
         <div class="example-box">
           <p>
@@ -194,7 +162,7 @@ eleventyComputed:
         </div>
         {% endif %}
 
-        <h2>{{ article.tipsTitle }}</h2>
+        <h2 id="tips">{{ article.tipsTitle }}</h2>
         <ul>
           {% for tip in article.tips %}
           <li><strong>{{ tip.split(':')[0] }}:</strong> {{ tip.split(':')[1] if ':' in tip else tip }}</li>
@@ -206,7 +174,7 @@ eleventyComputed:
           <p>{{ article.highlightText }}</p>
         </div>
 
-        <h2>{{ article.accuracyTitle }}</h2>
+        <h2 id="accuracy">{{ article.accuracyTitle }}</h2>
         <ul>
           {% for item in article.accuracy %}
           <li><strong>{{ item.split(':')[0] }}:</strong> {{ item.split(':')[1] if ':' in item else item }}</li>
@@ -218,7 +186,7 @@ eleventyComputed:
           <p>{{ article.warningText }}</p>
         </div>
 
-        <h2>{{ article.recalcTitle }}</h2>
+        <h2 id="recalc">{{ article.recalcTitle }}</h2>
         <ul>
           {% for item in article.recalc %}
           <li>{{ item }}</li>
@@ -226,7 +194,7 @@ eleventyComputed:
         </ul>
 
         {% if article.faq %}
-        <h2>{{ article.faqTitle }}</h2>
+        <h2 id="faq">{{ article.faqTitle }}</h2>
         <div class="faq-list">
           {% for item in article.faq %}
           <details class="faq-item">
@@ -255,28 +223,32 @@ eleventyComputed:
         </script>
         {% endif %}
 
-        <h2>{{ article.linksTitle }}</h2>
+        <h2 id="links">{{ article.linksTitle }}</h2>
         <ul>
           {% for link in article.links %}
-          <!-- ИЗМЕНЕНО: все lang → locale -->
           <li><a href="{{ link.href }}">{{ link.text }}</a> — {% if locale == 'ru' %}наш инструмент для расчётов{% elif locale == 'en' %}our tool for calculations{% elif locale == 'es' %}nuestra herramienta para cálculos{% elif locale == 'ug' %}ھېسابلاش قورالىمىز{% else %}our tool for calculations{% endif %}</li>
           {% endfor %}
         </ul>
 
         <p>{{ article.conclusion }}</p>
+
+        {% set relatedTitle = locale | articleRelatedTitle %}
+        {% set relatedItems = 'how-to-calculate-depreciation' | articleRelated(locale) %}
+        {% include "partials/article-related.njk" %}
       </div>
 
       <div class="social-subscribe">
         <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">{{ article.telegramBtn }}</a>
         <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">{{ article.vkBtn }}</a>
       </div>
-    </div>
+    </article>
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    
+    <button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+    {% include "partials/article-chrome-scripts.njk" %}
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-  {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
-{{ mobileAnchor(article.closeAd) }}
-{% include "partials/ad-pool-init.njk" %}
-</body>
+    {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+    {{ mobileAnchor(article.closeAd) }}
+    {% include "partials/ad-pool-init.njk" %}
+  </body>
 </html>

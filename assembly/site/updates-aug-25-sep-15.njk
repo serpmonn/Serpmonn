@@ -14,6 +14,7 @@ eleventyComputed:
 <!DOCTYPE html>
 <html lang="{{ locale }}" dir="{{ dir }}">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
@@ -21,23 +22,19 @@ eleventyComputed:
     <title>{{ title }}</title>
     <meta name="description" content="{{ description }}">
 
-    <!-- Open Graph -->
     <meta property="og:title" content="{{ updatesAug25Sep15[locale].meta.ogTitle }}">
     <meta property="og:description" content="{{ updatesAug25Sep15[locale].meta.ogDescription }}">
     <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ updatesAug25Sep15[locale].meta.twitterTitle }}">
     <meta name="twitter:description" content="{{ updatesAug25Sep15[locale].meta.twitterDescription }}">
     <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="{{ canonical }}" />
     
-    <!-- Hreflang для всех языков -->
     {% for loc in locales %}
       {% if loc == 'ru' %}
         <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/updates-aug-25-sep-15.html" hreflang="{{ loc }}" />
@@ -47,7 +44,6 @@ eleventyComputed:
     {% endfor %}
     <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/updates-aug-25-sep-15.html" hreflang="x-default" />
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -78,7 +74,6 @@ eleventyComputed:
     }
     </script>
 
-    <!-- JSON-LD: BreadcrumbList -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -94,27 +89,28 @@ eleventyComputed:
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <!-- Стиль статьи -->
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/updates-aug-25-sep-15.css">
 </head>
 <body class="article-page">
+    {% set tocTitle = locale | articleTocTitle %}
+    {% set tocItems = [{ href: '#section-summary', label: updatesAug25Sep15[locale].summary.title }] %}
+    {% for section in updatesAug25Sep15[locale].sections %}
+    {% set tocItems = (tocItems.push({ href: '#section-' ~ loop.index, label: section.title }), tocItems) %}
+    {% endfor %}
+    {% set tocItems = (tocItems.push({ href: '#section-bugfixes', label: updatesAug25Sep15[locale].bugfixes.title }), tocItems) %}
+    {% include "partials/article-floating-toc.njk" %}
+
     <div id="menuContainer"></div>
 
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      <a href="{{ site.baseUrl }}/">{{ updatesAug25Sep15[locale].breadcrumbs.home }}</a> →
-      <a href="{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html">{{ updatesAug25Sep15[locale].breadcrumbs.news }}</a> →
-      <span>{{ updatesAug25Sep15[locale].breadcrumbs.current }}</span>
-    </div>
-
-    <article>
+    <article class="article-container" tabindex="0">
       <header class="article-header">
         <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
+          <ins class="mrg-tag"
               style="display:inline-block;"
-              data-ad-client="ad-{{ mailAds.slots.top.id }}" 
+              data-ad-client="ad-{{ mailAds.slots.top.id }}"
               data-ad-slot="{{ mailAds.slots.top.id }}">
           </ins>
         </div>
@@ -122,53 +118,59 @@ eleventyComputed:
         <div class="article-date">{{ updatesAug25Sep15[locale].article.date }}</div>
       </header>
 
-      <div class="summary">
-        <h3>{{ updatesAug25Sep15[locale].summary.title }}</h3>
-        <ul>
-          {% for item in updatesAug25Sep15[locale].summary.items %}
-          <li>{{ item | safe }}</li>
-          {% endfor %}
-        </ul>
-      </div>
+      <div class="article-content">
+        <div class="summary" id="section-summary">
+          <h3>{{ updatesAug25Sep15[locale].summary.title }}</h3>
+          <ul>
+            {% for item in updatesAug25Sep15[locale].summary.items %}
+            <li>{{ item | safe }}</li>
+            {% endfor %}
+          </ul>
+        </div>
 
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-number">6</div><div class="stat-label">{{ updatesAug25Sep15[locale].stats.newGames }}</div></div>
-        <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">{{ updatesAug25Sep15[locale].stats.likeSystem }}</div></div>
-        <div class="stat-card"><div class="stat-number">20+</div><div class="stat-label">{{ updatesAug25Sep15[locale].stats.seoLocalization }}</div></div>
-      </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-number">6</div><div class="stat-label">{{ updatesAug25Sep15[locale].stats.newGames }}</div></div>
+          <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">{{ updatesAug25Sep15[locale].stats.likeSystem }}</div></div>
+          <div class="stat-card"><div class="stat-number">20+</div><div class="stat-label">{{ updatesAug25Sep15[locale].stats.seoLocalization }}</div></div>
+        </div>
 
-      {% for section in updatesAug25Sep15[locale].sections %}
-      <div class="update-section">
-        <h3>{{ section.title }}</h3>
-        <ul class="feature-list">
-          {% for item in section.items %}
-          <li>{{ item | safe }}</li>
-          {% endfor %}
-        </ul>
-      </div>
-      {% endfor %}
+        {% for section in updatesAug25Sep15[locale].sections %}
+        <div class="update-section">
+          <h3 id="section-{{ loop.index }}">{{ section.title }}</h3>
+          <ul class="feature-list">
+            {% for item in section.items %}
+            <li>{{ item | safe }}</li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
 
-      <div class="bug-fix">
-        <h4>{{ updatesAug25Sep15[locale].bugfixes.title }}</h4>
-        <ul class="feature-list">
-          {% for item in updatesAug25Sep15[locale].bugfixes.items %}
-          <li>{{ item | safe }}</li>
-          {% endfor %}
-        </ul>
-      </div>
+        <div class="bug-fix">
+          <h4 id="section-bugfixes">{{ updatesAug25Sep15[locale].bugfixes.title }}</h4>
+          <ul class="feature-list">
+            {% for item in updatesAug25Sep15[locale].bugfixes.items %}
+            <li>{{ item | safe }}</li>
+            {% endfor %}
+          </ul>
+        </div>
 
-      <div class="social-share">
-        <a class="share-btn vk" href="https://vk.com/share.php?url={{ site.baseUrl }}{{ page.url | urlencode }}" target="_blank" rel="noopener">{{ updatesAug25Sep15[locale].share.vk }}</a>
-        <a class="share-btn telegram" href="https://t.me/share/url?url={{ site.baseUrl }}{{ page.url | urlencode }}&text={{ updatesAug25Sep15[locale].article.title | urlencode }}" target="_blank" rel="noopener">{{ updatesAug25Sep15[locale].share.telegram }}</a>
+        <div class="social-share">
+          <a class="share-btn vk" href="https://vk.com/share.php?url={{ site.baseUrl }}{{ page.url | urlencode }}" target="_blank" rel="noopener">{{ updatesAug25Sep15[locale].share.vk }}</a>
+          <a class="share-btn telegram" href="https://t.me/share/url?url={{ site.baseUrl }}{{ page.url | urlencode }}&text={{ updatesAug25Sep15[locale].article.title | urlencode }}" target="_blank" rel="noopener">{{ updatesAug25Sep15[locale].share.telegram }}</a>
+        </div>
+
+        {% set relatedTitle = locale | articleRelatedTitle %}
+        {% set relatedItems = 'updates-aug-25-sep-15' | articleRelated(locale) %}
+        {% include "partials/article-related.njk" %}
       </div>
     </article>
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    
-    <!-- Скрипты для рекламы -->
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-{% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
-{{ mobileAnchor(updatesAug25Sep15[locale].ads.closeAria) }}
-{% include "partials/ad-pool-init.njk" %}
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+    {% include "partials/article-chrome-scripts.njk" %}
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+    {{ mobileAnchor(updatesAug25Sep15[locale].ads.closeAria) }}
+    {% include "partials/ad-pool-init.njk" %}
 </body>
 </html>

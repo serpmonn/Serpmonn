@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="az" dir="ltr">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="az">
     <meta charset="UTF-8">
@@ -9,23 +10,19 @@
     <title>Serpmonn Yeniləmələri — 25 Avqust — 15 Sentyabr 2025</title>
     <meta name="description" content="6 yeni mini-oyun, avtorizasiya ilə bəyənmələr, SEO/lokalizasiya, reklam və səhv düzəlişləri.">
 
-    <!-- Open Graph -->
     <meta property="og:title" content="Serpmonn Yeniləmələri — 25 Avqust — 15 Sentyabr 2025">
     <meta property="og:description" content="6 yeni mini-oyun, avtorizasiya ilə bəyənmələr, SEO/lokalizasiya, reklam və səhv düzəlişləri.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/az/knowledge-base/articles/updates-aug-25-sep-15.html">
     <meta property="og:type" content="article">
 
-    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Serpmonn Yeniləmələri — 25 Avqust — 15 Sentyabr 2025">
     <meta name="twitter:description" content="6 yeni mini-oyun, avtorizasiya ilə bəyənmələr, SEO/lokalizasiya, reklam və səhv düzəlişləri.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/az/knowledge-base/articles/updates-aug-25-sep-15.html" />
     
-    <!-- Hreflang для всех языков -->
     
       
         <link rel="alternate" href="https://serpmonn.ru/frontend/knowledge-base/articles/updates-aug-25-sep-15.html" hreflang="ru" />
@@ -225,7 +222,6 @@
     
     <link rel="alternate" href="https://serpmonn.ru/frontend/knowledge-base/articles/updates-aug-25-sep-15.html" hreflang="x-default" />
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -256,7 +252,6 @@
     }
     </script>
 
-    <!-- JSON-LD: BreadcrumbList -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -272,209 +267,294 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <!-- Стиль статьи -->
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/updates-aug-25-sep-15.css">
 </head>
 <body class="article-page">
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Contents</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Contents">
+  <div class="floating-toc__head">
+    <h3>Contents</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
+    
+    <li><a href="#section-summary">Xülasə</a></li>
+    
+    <li><a href="#section-1">Oyunlar Bölməsi</a></li>
+    
+    <li><a href="#section-2">️ Bəyənmələr və Autentifikasiya</a></li>
+    
+    <li><a href="#section-3">SEO və İndeksləşdirmə</a></li>
+    
+    <li><a href="#section-4">Lokalizasiya və Məzmun</a></li>
+    
+    <li><a href="#section-5">Reklam</a></li>
+    
+    <li><a href="#section-6">UX və Əlçatanlıq</a></li>
+    
+    <li><a href="#section-7">Ekoloji Kalkulyatorlar</a></li>
+    
+    <li><a href="#section-8">Digər</a></li>
+    
+    <li><a href="#section-9">Naviqasiya və Məzmun</a></li>
+    
+    <li><a href="#section-bugfixes">Düzəlişlər</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
     <div id="menuContainer"></div>
 
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      <a href="https://serpmonn.ru/">Ana səhifə</a> →
-      <a href="https://serpmonn.ru/frontend/knowledge-base/knowledge-base.html">Xəbərlər</a> →
-      <span>Yeniləmələr 25 Avqust — 15 Sentyabr</span>
-    </div>
-
-    <article>
+    <article class="article-container" tabindex="0">
       <header class="article-header">
         <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
+          <ins class="mrg-tag"
               style="display:inline-block;"
-              data-ad-client="ad-1897960" 
+              data-ad-client="ad-1897960"
               data-ad-slot="1897960">
           </ins>
         </div>
-        <h1 class="article-title">🚀 Serpmonn Yeniləmələri</h1>
+        <h1 class="article-title">Serpmonn Yeniləmələri</h1>
         <div class="article-date">25 Avqust — 15 Sentyabr 2025</div>
       </header>
 
-      <div class="summary">
-        <h3>📋 Xülasə</h3>
-        <ul>
-          
-          <li>6 yeni mini-oyun: İlan, Flappy Bird, Sikkələr, Breakout, Mina Axtaran, On Beş.</li>
-          
-          <li>Bəyənmələr: bütün dillərdə inteqrasiya, JWT avtorizasiyası, MySQL depolama.</li>
-          
-          <li>SEO/lokalizasiya: sayt xəritələri, IndexNow, zh-CN tərcümələri, meta və hreflang düzəlişləri.</li>
-          
-          <li>Reklam: Mail.ru bannerləri (mobil anchor daxil) və avtomatik yığılma.</li>
-          
-          <li>Menyu və oyunlar bölməsi yeniləmələri, yeni oyunlar üçün kartlar və keçidlər.</li>
-          
-          <li>Səhv düzəlişləri: Mina Axtaran (ilk klikdə mina yerləşdirmə, flood fill, taymer, bayraqlar), Sikkələr (oyun sürəti).</li>
-          
-          <li>Repozitoriyalar: filial təmizliyi, develop ← master sinxronizasiyası.</li>
-          
-        </ul>
-      </div>
+      <div class="article-content">
+        <div class="summary" id="section-summary">
+          <h3>Xülasə</h3>
+          <ul>
+            
+            <li>6 yeni mini-oyun: İlan, Flappy Bird, Sikkələr, Breakout, Mina Axtaran, On Beş.</li>
+            
+            <li>Bəyənmələr: bütün dillərdə inteqrasiya, JWT avtorizasiyası, MySQL depolama.</li>
+            
+            <li>SEO/lokalizasiya: sayt xəritələri, IndexNow, zh-CN tərcümələri, meta və hreflang düzəlişləri.</li>
+            
+            <li>Reklam: Mail.ru bannerləri (mobil anchor daxil) və avtomatik yığılma.</li>
+            
+            <li>Menyu və oyunlar bölməsi yeniləmələri, yeni oyunlar üçün kartlar və keçidlər.</li>
+            
+            <li>Səhv düzəlişləri: Mina Axtaran (ilk klikdə mina yerləşdirmə, flood fill, taymer, bayraqlar), Sikkələr (oyun sürəti).</li>
+            
+            <li>Repozitoriyalar: filial təmizliyi, develop ← master sinxronizasiyası.</li>
+            
+          </ul>
+        </div>
 
-      <div class="stats-grid">
-        <div class="stat-card"><div class="stat-number">6</div><div class="stat-label">Yeni Mini-Oyunlar</div></div>
-        <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">Bəyənmə Sistemi</div></div>
-        <div class="stat-card"><div class="stat-number">20+</div><div class="stat-label">SEO/Lokalizasiya Düzəlişləri</div></div>
-      </div>
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-number">6</div><div class="stat-label">Yeni Mini-Oyunlar</div></div>
+          <div class="stat-card"><div class="stat-number">1</div><div class="stat-label">Bəyənmə Sistemi</div></div>
+          <div class="stat-card"><div class="stat-number">20+</div><div class="stat-label">SEO/Lokalizasiya Düzəlişləri</div></div>
+        </div>
 
-      
-      <div class="update-section">
-        <h3>🎮 Oyunlar Bölməsi</h3>
-        <ul class="feature-list">
-          
-          <li><strong>İlan</strong>: səhifə <code>/frontend/games/snake/index.html</code>, kartın gizlənməsi/qaytarılması testi; menyuya keçid əlavə edildi.</li>
-          
-          <li><strong>Flappy Bird</strong>: <code>/frontend/games/flappy/index.html</code>, kart və menyu elementi.</li>
-          
-          <li><strong>Sikkələr</strong>: <code>/frontend/games/coins/index.html</code>, zamanla sikkə toplama; azaldılmış tick sürəti və tələ hərəkəti.</li>
-          
-          <li><strong>Breakout</strong>: <code>/frontend/games/breakout/index.html</code>, sıçrayışlar, xallar, həyatlar; siyahı və menyuya inteqrasiya.</li>
-          
-          <li><strong>Mina Axtaran</strong>: <code>/frontend/games/minesweeper/index.html</code>, 10×10 sahə/15 mina; düzəlişlər: ilk klikdə mina yerləşdirmə, flood fill, taymer, bayraqlar.</li>
-          
-          <li><strong>On Beş</strong>: <code>/frontend/games/fifteen/index.html</code>, etibarlı hərəkətlərlə qarışdırma, taymer və hərəkət sayğacı.</li>
-          
-          <li>Yeniləndi <code>/frontend/games/index.html</code>: bütün oyunlar üçün kartlar əlavə edildi, hover/adaptiv dizayn.</li>
-          
-          <li>Menyu (<code>/frontend/menu.html</code>): hər oyun üçün yeni 'Veb Oyunlar' elementləri.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>❤️ Bəyənmələr və Autentifikasiya</h3>
-        <ul class="feature-list">
-          
-          <li>JWT avtorizasiyası və MySQL depolama ilə bəyənmə sistemi təqdim edildi: təsdiqlənmiş və qonaq bəyənmələr, dedublikasiya və miqrasiya.</li>
-          
-          <li>Ön tərəf bəyənmə skripti bütün 42 dil axtarış səhifələrinə inteqrasiya edildi; düymələrin UX yaxşılaşdırıldı (görünmə, hover, kontrast).</li>
-          
-          <li>Dev alətləri: debug səhifələri/skriptləri, bəyənmə miqrasiyası, oyunlar üçün hadisə analitikası.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🔍 SEO və İndeksləşdirmə</h3>
-        <ul class="feature-list">
-          
-          <li>Bütün dillər üçün sayt xəritələri genişləndirildi, <code>sitemap-ru.xml</code> əlavə edildi, canonical/hreflang düzəldildi.</li>
-          
-          <li>Dəyişən fayllar üçün ping skriptləri ilə IndexNow inteqrasiyası; bütün dillərdə başlıqlar və təsvirlər yaxşılaşdırıldı.</li>
-          
-          <li>Twitter Cards və JSON-LD əlavə edildi (Xəbərlər/Oyunlar/Ana səhifə), ana səhifə üçün x-default.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🌍 Lokalizasiya və Məzmun</h3>
-        <ul class="feature-list">
-          
-          <li>Kütləvi zh-CN tərcümələri (menyu, oyunlar, xəbərlər, alətlər, profil) + zh-CN üçün RSS.</li>
-          
-          <li>EN: struktur uyğunlaşdırma, keçid/OG/canonical düzəlişləri, Xəbərlər/Oyunlar/Alətlər/Autentifikasiya bölmələri üçün tərcümələr.</li>
-          
-          <li>Menyu dili görünməsi RU/EN/zh-CN ilə məhdudlaşdırıldı (digərləri gələcək daxil etmə üçün mövcuddur).</li>
-          
-          <li>Menyudan köhnəlmiş tərəfdaşlar silindi (Sky Codex, Sword Whispers və s.).</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>📢 Reklam</h3>
-        <ul class="feature-list">
-          
-          <li>Əsas səhifələrdə Mail.ru bannerləri; mobil anchor 320×50; promo-da in-feed reklamlar.</li>
-          
-          <li>No-fill zamanı reklam blokları üçün qlobal avtomatik yığılma; vahid skript və yenidən push.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>📱 UX və Əlçatanlıq</h3>
-        <ul class="feature-list">
-          
-          <li>Mərkəzləşdirilmiş məqalələr/xəbərlər, sabit sürüşdürmə və marjlar; Google CSE axtarış çubuğu düzəldildi.</li>
-          
-          <li>Ayrı <code>accessibility.css</code>, 'Azaldılmış Hərəkət' rejimi, yüksək kontrast, böyük şrift; səhifələr arasında vahid tənzimləmələr.</li>
-          
-          <li>Mobil təkmilləşdirmələr: sürüşmə, çəkmə-yeniləmə, haptik geribildirim, lazy-loading şəkilləri.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🌱 Ekoloji Kalkulyatorlar</h3>
-        <ul class="feature-list">
-          
-          <li>'Ekologiya' kateqoriyası və məhsul ekoloji iz kalkulyatoru əlavə edildi; məhsul bazası genişləndirildi, yükləmə/ipucu UX yaxşılaşdırıldı.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🧹 Digər</h3>
-        <ul class="feature-list">
-          
-          <li>Ön tərəf strukturunun yenidən təşkili (menu/main/scripts/styles → <code>frontend/…</code>), PWA və service worker düzəlişləri.</li>
-          
-          <li>Promo kod coğrafi filter (ingilis/asya ölkələri üçün gizlənmə), piksel əlavə edildi.</li>
-          
-          <li>Labuba: prototiplər seriyası və texniki düzəlişlər; nəticədə - nəşr edilmədi.</li>
-          
-        </ul>
-      </div>
-      
-      <div class="update-section">
-        <h3>🧭 Naviqasiya və Məzmun</h3>
-        <ul class="feature-list">
-          
-          <li>Oyun kartları yeniləndi, A/B testi üçün lazım olduğu kimi əlavə edildi/gizləndi.</li>
-          
-          <li>develop master ilə sinxronlaşdırıldı; köhnəlmiş filiallar və səhifələr silindi (master-dan köhnə demo oyunlar daxil).</li>
-          
-        </ul>
-      </div>
-      
+        
+        <div class="update-section">
+          <h3 id="section-1">Oyunlar Bölməsi</h3>
+          <ul class="feature-list">
+            
+            <li><strong>İlan</strong>: səhifə <code>/frontend/games/snake/index.html</code>, kartın gizlənməsi/qaytarılması testi; menyuya keçid əlavə edildi.</li>
+            
+            <li><strong>Flappy Bird</strong>: <code>/frontend/games/flappy/index.html</code>, kart və menyu elementi.</li>
+            
+            <li><strong>Sikkələr</strong>: <code>/frontend/games/coins/index.html</code>, zamanla sikkə toplama; azaldılmış tick sürəti və tələ hərəkəti.</li>
+            
+            <li><strong>Breakout</strong>: <code>/frontend/games/breakout/index.html</code>, sıçrayışlar, xallar, həyatlar; siyahı və menyuya inteqrasiya.</li>
+            
+            <li><strong>Mina Axtaran</strong>: <code>/frontend/games/minesweeper/index.html</code>, 10×10 sahə/15 mina; düzəlişlər: ilk klikdə mina yerləşdirmə, flood fill, taymer, bayraqlar.</li>
+            
+            <li><strong>On Beş</strong>: <code>/frontend/games/fifteen/index.html</code>, etibarlı hərəkətlərlə qarışdırma, taymer və hərəkət sayğacı.</li>
+            
+            <li>Yeniləndi <code>/frontend/games/index.html</code>: bütün oyunlar üçün kartlar əlavə edildi, hover/adaptiv dizayn.</li>
+            
+            <li>Menyu (<code>/frontend/menu.html</code>): hər oyun üçün yeni 'Veb Oyunlar' elementləri.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-2">️ Bəyənmələr və Autentifikasiya</h3>
+          <ul class="feature-list">
+            
+            <li>JWT avtorizasiyası və MySQL depolama ilə bəyənmə sistemi təqdim edildi: təsdiqlənmiş və qonaq bəyənmələr, dedublikasiya və miqrasiya.</li>
+            
+            <li>Ön tərəf bəyənmə skripti bütün 42 dil axtarış səhifələrinə inteqrasiya edildi; düymələrin UX yaxşılaşdırıldı (görünmə, hover, kontrast).</li>
+            
+            <li>Dev alətləri: debug səhifələri/skriptləri, bəyənmə miqrasiyası, oyunlar üçün hadisə analitikası.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-3">SEO və İndeksləşdirmə</h3>
+          <ul class="feature-list">
+            
+            <li>Bütün dillər üçün sayt xəritələri genişləndirildi, <code>sitemap-ru.xml</code> əlavə edildi, canonical/hreflang düzəldildi.</li>
+            
+            <li>Dəyişən fayllar üçün ping skriptləri ilə IndexNow inteqrasiyası; bütün dillərdə başlıqlar və təsvirlər yaxşılaşdırıldı.</li>
+            
+            <li>Twitter Cards və JSON-LD əlavə edildi (Xəbərlər/Oyunlar/Ana səhifə), ana səhifə üçün x-default.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-4">Lokalizasiya və Məzmun</h3>
+          <ul class="feature-list">
+            
+            <li>Kütləvi zh-CN tərcümələri (menyu, oyunlar, xəbərlər, alətlər, profil) + zh-CN üçün RSS.</li>
+            
+            <li>EN: struktur uyğunlaşdırma, keçid/OG/canonical düzəlişləri, Xəbərlər/Oyunlar/Alətlər/Autentifikasiya bölmələri üçün tərcümələr.</li>
+            
+            <li>Menyu dili görünməsi RU/EN/zh-CN ilə məhdudlaşdırıldı (digərləri gələcək daxil etmə üçün mövcuddur).</li>
+            
+            <li>Menyudan köhnəlmiş tərəfdaşlar silindi (Sky Codex, Sword Whispers və s.).</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-5">Reklam</h3>
+          <ul class="feature-list">
+            
+            <li>Əsas səhifələrdə Mail.ru bannerləri; mobil anchor 320×50; promo-da in-feed reklamlar.</li>
+            
+            <li>No-fill zamanı reklam blokları üçün qlobal avtomatik yığılma; vahid skript və yenidən push.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-6">UX və Əlçatanlıq</h3>
+          <ul class="feature-list">
+            
+            <li>Mərkəzləşdirilmiş məqalələr/xəbərlər, sabit sürüşdürmə və marjlar; Google CSE axtarış çubuğu düzəldildi.</li>
+            
+            <li>Ayrı <code>accessibility.css</code>, 'Azaldılmış Hərəkət' rejimi, yüksək kontrast, böyük şrift; səhifələr arasında vahid tənzimləmələr.</li>
+            
+            <li>Mobil təkmilləşdirmələr: sürüşmə, çəkmə-yeniləmə, haptik geribildirim, lazy-loading şəkilləri.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-7">Ekoloji Kalkulyatorlar</h3>
+          <ul class="feature-list">
+            
+            <li>'Ekologiya' kateqoriyası və məhsul ekoloji iz kalkulyatoru əlavə edildi; məhsul bazası genişləndirildi, yükləmə/ipucu UX yaxşılaşdırıldı.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-8">Digər</h3>
+          <ul class="feature-list">
+            
+            <li>Ön tərəf strukturunun yenidən təşkili (menu/main/scripts/styles → <code>frontend/…</code>), PWA və service worker düzəlişləri.</li>
+            
+            <li>Promo kod coğrafi filter (ingilis/asya ölkələri üçün gizlənmə), piksel əlavə edildi.</li>
+            
+            <li>Labuba: prototiplər seriyası və texniki düzəlişlər; nəticədə - nəşr edilmədi.</li>
+            
+          </ul>
+        </div>
+        
+        <div class="update-section">
+          <h3 id="section-9">Naviqasiya və Məzmun</h3>
+          <ul class="feature-list">
+            
+            <li>Oyun kartları yeniləndi, A/B testi üçün lazım olduğu kimi əlavə edildi/gizləndi.</li>
+            
+            <li>develop master ilə sinxronlaşdırıldı; köhnəlmiş filiallar və səhifələr silindi (master-dan köhnə demo oyunlar daxil).</li>
+            
+          </ul>
+        </div>
+        
 
-      <div class="bug-fix">
-        <h4>🛠 Düzəlişlər</h4>
-        <ul class="feature-list">
-          
-          <li>Mina Axtaran: boş sahələrin kütləvi açılması indi dərhal vizual olaraq əks olunur, taymer təkrarlanmır, bayraqlar düzgündür.</li>
-          
-          <li>Sikkələr: sürət azaldıldı (tick=300ms), tələlər daha az hərəkət edir (hər üçüncü tick).</li>
-          
-          <li>Oyunlar/Menyu: keçidlər və kartlarda kiçik problemlər həll edildi.</li>
-          
-        </ul>
-      </div>
+        <div class="bug-fix">
+          <h4 id="section-bugfixes">Düzəlişlər</h4>
+          <ul class="feature-list">
+            
+            <li>Mina Axtaran: boş sahələrin kütləvi açılması indi dərhal vizual olaraq əks olunur, taymer təkrarlanmır, bayraqlar düzgündür.</li>
+            
+            <li>Sikkələr: sürət azaldıldı (tick=300ms), tələlər daha az hərəkət edir (hər üçüncü tick).</li>
+            
+            <li>Oyunlar/Menyu: keçidlər və kartlarda kiçik problemlər həll edildi.</li>
+            
+          </ul>
+        </div>
 
-      <div class="social-share">
-        <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Faz%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html" target="_blank" rel="noopener">VK-də paylaş</a>
-        <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Faz%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html&text=%F0%9F%9A%80%20Serpmonn%20Yenil%C9%99m%C9%99l%C9%99ri" target="_blank" rel="noopener">Telegram-da paylaş</a>
+        <div class="social-share">
+          <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Faz%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html" target="_blank" rel="noopener">VK-də paylaş</a>
+          <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Faz%2Fknowledge-base%2Farticles%2Fupdates-aug-25-sep-15.html&text=Serpmonn%20Yenil%C9%99m%C9%99l%C9%99ri" target="_blank" rel="noopener">Telegram-da paylaş</a>
+        </div>
+
+        
+        
+        
+
+<div class="related-articles">
+  <h3>Related articles</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/az/knowledge-base/articles/updates-sep15-2025-jul22-2026.html">Serpmonn Updates — September 15, 2025 — July 22, 2026</a></li>
+    
+    <li><a href="/frontend/az/knowledge-base/articles/updates-august-17.html">Serpmonn Yeniləmələri — 17 Avqust 2025 — Yeni Alətlər və Təkmilləşdirmələr</a></li>
+    
+    <li><a href="/frontend/az/knowledge-base/articles/port-forwarding-guide.html">Port İstiqamətləndirmə: Tam Bələdçi 2025</a></li>
+    
+  </ul>
+</div>
+
+
       </div>
     </article>
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
+
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
     
-    <!-- Скрипты для рекламы -->
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-
-
+    
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="Reklamı bağla" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
@@ -489,7 +569,7 @@
   initMobileAnchorAd();
 </script>
 
-
+    
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 
 </body>

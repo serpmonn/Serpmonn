@@ -1,34 +1,31 @@
 
 <!DOCTYPE html>
-<html lang="ku-arab" dir="rtl">  <!-- ИЗМЕНЕНО: lang → locale -->
+<html lang="ku-arab" dir="rtl">
   <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <meta http-equiv="Content-Language" content="ku-arab">  <!-- ИЗМЕНЕНО: lang → locale -->
+    <meta http-equiv="Content-Language" content="ku-arab">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     
-      <!-- ИЗМЕНЕНО: lang → locale -->
-    
+
     <title>چۆن بە شێوەیەکی دروست کەمبوونەوەی ئۆتۆمبێل حساب بکەین - ڕێنماییەکی تەواو</title>
     <meta name="description" content="ڕێنماییەکی وردە لەسەر بەکارهێنانی کاڵکیۆلەیتۆری کەمبوونەوە. فێربە چۆن هەموو هۆکارەکان لەبەرچاو بگرە و ئەنجامی ورد بەدەست بهێنە.">
-    
-    <!-- Open Graph -->
+
     <meta property="og:title" content="چۆن بە شێوەیەکی دروست کەمبوونەوەی ئۆتۆمبێل حساب بکەین - ڕێنماییەکی تەواو">
     <meta property="og:description" content="ڕێنماییەکی وردە لەسەر بەکارهێنانی کاڵکیۆلەیتۆری کەمبوونەوە. فێربە چۆن هەموو هۆکارەکان لەبەرچاو بگرە و ئەنجامی ورد بەدەست بهێنە.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/ku-arab/knowledge-base/articles/how-to-calculate-depreciation.html">
     <meta property="og:type" content="article">
-    
-    <!-- Twitter -->
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="چۆن کەمبوونەوەی ئۆتۆمبێل حساب بکەین">
     <meta name="twitter:description" content="ڕێنماییەکی تەواو بۆ حسابکردنی کەمبوونەوە بە لەبەرچاوگرتنی هەموو هۆکارەکان">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/ku-arab/knowledge-base/articles/how-to-calculate-depreciation.html" />
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -61,78 +58,84 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    
-    <style>
-      /* ad top adaptive start */
-      /* ad top adaptive end */
-      
-      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.7; }
-      .article-container { background: #fff; border-radius: 12px; padding: 40px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-      .article-header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #e9ecef; }
-      .article-title { font-size: 2.5rem; color: #333; margin-bottom: 15px; font-weight: 700; line-height: 1.2; }
-      .article-meta { color: #6c757d; font-size: 1.1rem; margin-bottom: 20px; }
-      .article-category { display: inline-block; padding: 8px 16px; background: #dc3545; color: #fff; border-radius: 20px; font-size: 0.9rem; font-weight: 500; }
-      .article-content { font-size: 1.1rem; color: #333; }
-      .article-content h2 { color: #dc3545; margin-top: 40px; margin-bottom: 20px; font-size: 1.8rem; font-weight: 600; }
-      .article-content h3 { color: #495057; margin-top: 30px; margin-bottom: 15px; font-size: 1.4rem; font-weight: 600; }
-      .article-content p { margin-bottom: 20px; }
-      .article-content ul, .article-content ol { margin-bottom: 20px; padding-left: 25px; }
-      .article-content li { margin-bottom: 10px; }
-      .highlight-box { background: #fdecea; border: 1px solid #f5c6cb; border-radius: 8px; padding: 20px; margin: 25px 0; color: #721c24; }
-      .highlight-box h4 { color: #721c24; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
-      .warning-box { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px; margin: 25px 0; border-left: 4px solid #ffc107; }
-      .warning-box h4 { color: #856404; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
-      .example-box { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin: 25px 0; border-left: 4px solid #6c757d; }
-      .example-box h4 { color: #495057; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
-      .step-list { counter-reset: step-counter; list-style: none; padding: 0; }
-      .step-list li { counter-increment: step-counter; margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #dc3545; position: relative; }
-      .step-list li::before { content: counter(step-counter); position: absolute; left: -15px; top: 20px; background: #dc3545; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; }
-
-      .faq-list { margin: 24px 0; display: flex; flex-direction: column; gap: 10px; }
-      .faq-item { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 12px 16px; }
-      .faq-item summary { cursor: pointer; font-weight: 600; }
-      .faq-item p { margin: 12px 0 4px; }
-
-      .social-subscribe { display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
-      .tg-btn, .vk-btn { display: inline-block; padding: 10px 20px; border-radius: 25px; color: #fff; font-weight: 600; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
-      .tg-btn { background: #229ED9; }
-      .vk-btn { background: #2787F5; }
-      .tg-btn:hover, .vk-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.15); }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/depreciation-guide.css">
   </head>
   <body>
-    <style>
-      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
-      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
-    </style>
     
-    <!-- ИЗМЕНЕНО: все lang → locale -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Contents</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Contents">
+  <div class="floating-toc__head">
+    <h3>Contents</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
+    
+    <li><a href="#what-is">🎯 کەمبوونەوەی ئۆتۆمبێل چیە</a></li>
+    
+    <li><a href="#factors">📊 هۆکارە سەرەکییەکانی کەمبوونەوە</a></li>
+    
+    <li><a href="#calculator">🔧 چۆن کاڵکیۆلەیتۆری کەمبوونەوە بەکاربهێنین</a></li>
+    
+    <li><a href="#tips">💡 ئامۆژگاری بۆ کەمکردنەوەی کەمبوونەوە</a></li>
+    
+    <li><a href="#accuracy">⚠️ چی کاریگەری لەسەر وردی حاسابدانەکان هەیە</a></li>
+    
+    <li><a href="#recalc">📈 کەی کەمبوونەوە دووبارە حساب بکەین</a></li>
+    
+    <li><a href="#links">🔗 بەستەرە بەسوودەکان</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
     <nav id="menuContainer" aria-label="Menu"></nav>
-    
-    <div class="article-container">
-      <div class="article-header">
+
+    <article class="article-container" tabindex="0">
+      <header class="article-header">
         <span class="article-category">ڕاهێنان</span>
-        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
         <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
+          <ins class="mrg-tag"
               style="display:inline-block;"
-              data-ad-client="ad-1897960" 
+              data-ad-client="ad-1897960"
               data-ad-slot="1897960">
           </ins>
         </div>
-<h1 class="article-title">چۆن بە شێوەیەکی دروست کەمبوونەوەی ئۆتۆمبێل حساب بکەین</h1>
+        <h1 class="article-title">چۆن بە شێوەیەکی دروست کەمبوونەوەی ئۆتۆمبێل حساب بکەین</h1>
         <div class="article-meta">19ی ئابی 2024 • 8 خولەک خوێندنەوە</div>
-      </div>
+      </header>
 
       <div class="article-content">
         <p>حاسابی دروستی کەمبوونەوەی ئۆتۆمبێل توانایەکی گرنگە بۆ هەموو شۆفێرێک. ئەمە یارمەتیت دەدات بڕیاری زانیاریدار بەدەستهێنە لەبارەی کڕین، فرۆشتن و پارێزگاری لە سەیارەکەت.</p>
 
-        <h2>🎯 کەمبوونەوەی ئۆتۆمبێل چیە</h2>
+        <h2 id="what-is">🎯 کەمبوونەوەی ئۆتۆمبێل چیە</h2>
         <p>کەمبوونەوە پرۆسەی کەمبوونەوەی بەهای ئۆتۆمبێلە بە تێپەڕبوونی کات. کاریگەری لەسەر دەکرێت بە چەندین هۆکار کە گرنگە لە حاسابداندا لەبەرچاو بکرێن.</p>
 
-        <h2>📊 هۆکارە سەرەکییەکانی کەمبوونەوە</h2>
+        <h2 id="factors">📊 هۆکارە سەرەکییەکانی کەمبوونەوە</h2>
         <ul>
           
           <li><strong>پێی ڕۆیشتن:</strong>  هەتا کیلۆمەترێکی زیاتر ئۆتۆمبێل ڕابکێشرێت، فرسایشەکەی زیاترە</li>
@@ -147,8 +150,8 @@
           
         </ul>
 
-        <h2>🔧 چۆن کاڵکیۆلەیتۆری کەمبوونەوە بەکاربهێنین</h2>
-        
+        <h2 id="calculator">🔧 چۆن کاڵکیۆلەیتۆری کەمبوونەوە بەکاربهێنین</h2>
+
         <ol class="step-list">
           
           <li>
@@ -171,7 +174,6 @@
         <div class="example-box">
           <h4>📝 نمونەیەک لە حاسابدان</h4>
           <p>
-            <!-- ИЗМЕНЕНО: все lang → locale -->
             <strong>Car:</strong> تۆیۆتا کەمری 2018<br>
             <strong>Mileage:</strong> 150,000 کم<br>
             <strong>Conditions:</strong> 70% شار، 30% شەقامی خێرا<br>
@@ -184,7 +186,7 @@
 
         
 
-        <h2>💡 ئامۆژگاری بۆ کەمکردنەوەی کەمبوونەوە</h2>
+        <h2 id="tips">💡 ئامۆژگاری بۆ کەمکردنەوەی کەمبوونەوە</h2>
         <ul>
           
           <li><strong>چاودێری بەردەوام:</strong>  گۆڕینی ڕۆن و فلتەر بەکاتی</li>
@@ -204,7 +206,7 @@
           <p>بە بەردەوامی دۆخی ئۆتۆمبێلەکەت پشکنین بکە و تۆمارێکی چاودێری هەڵبگرە. ئەمە یارمەتیت دەدات فرسایشی ڕاستەقینە وردتر هەڵسەنگێنیت و خەرجی چاککردنەوە پلان بکەیت.</p>
         </div>
 
-        <h2>⚠️ چی کاریگەری لەسەر وردی حاسابدانەکان هەیە</h2>
+        <h2 id="accuracy">⚠️ چی کاریگەری لەسەر وردی حاسابدانەکان هەیە</h2>
         <ul>
           
           <li><strong>گۆڕانی بازاڕ:</strong>  نرخی ئۆتۆمبێلەکان دەگۆڕێت</li>
@@ -222,7 +224,7 @@
           <p>کاڵکیۆلەیتۆر خەمڵاندنێکی نزیکەیی پێشکەش دەکات. بۆ هەڵسەنگاندنی وردی ئۆتۆمبێل، پێشنیار دەکرێت پەیوەندی بە هەڵسەنگەرێکی پیشەیی یان خزمەتگوزاری تایبەتەوە بکەیت.</p>
         </div>
 
-        <h2>📈 کەی کەمبوونەوە دووبارە حساب بکەین</h2>
+        <h2 id="recalc">📈 کەی کەمبوونەوە دووبارە حساب بکەین</h2>
         <ul>
           
           <li>دوای هەموو چاودێریەک (بۆ گونجاندنی دۆخ)</li>
@@ -237,31 +239,50 @@
 
         
 
-        <h2>🔗 بەستەرە بەسوودەکان</h2>
+        <h2 id="links">🔗 بەستەرە بەسوودەکان</h2>
         <ul>
           
-          <!-- ИЗМЕНЕНО: все lang → locale -->
           <li><a href="/frontend/tools/logistics/depreciation-calculator.html">کاڵکیۆلەیتۆری کەمبوونەوە</a> — our tool for calculations</li>
           
-          <!-- ИЗМЕНЕНО: все lang → locale -->
           <li><a href="/frontend/tools/logistics/fuel-calculator.html">کاڵکیۆلەیتۆری بەکارهێنانی سووتەمەنی</a> — our tool for calculations</li>
           
         </ul>
 
         <p>حاسابی دروستی کەمبوونەوە یارمەتیت دەدات بڕیاری زانیاریدار بەدەستهێنیت و بودجەی ئۆتۆمبێلەکەت پلان بکەیت. بە بەردەوامی کاڵکیۆلەیتۆرەکەمان بەکاربهێنە بۆ شوێنکەوتنی گۆڕانکاریەکانی بهای سەیارەکەت.</p>
+
+        
+        
+        
+
+<div class="related-articles">
+  <h3>Related articles</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/ku-arab/knowledge-base/articles/how-to-calculate-the-eco-footprint-of-products.html">چۆن پێوانی پێی ژینگەیی بەرهەمەکان دابنرێت - ڕێنمایی تەواو لەگەڵ کاڵکوڵەیتۆر</a></li>
+    
+    <li><a href="/frontend/ku-arab/knowledge-base/articles/utm-complete-guide.html">UTM: ڕێنمایی تەواو</a></li>
+    
+    <li><a href="/frontend/ku-arab/knowledge-base/articles/port-forwarding-guide.html">توجيه المنافذ على الموجه: دليل كامل 2025</a></li>
+    
+  </ul>
+</div>
+
+
       </div>
 
       <div class="social-subscribe">
         <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">سەبسکرایب بکە لە تێلێگرام</a>
         <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">سەبسکرایب بکە لە ڤی کەی</a>
       </div>
-    </div>
+    </article>
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    
+    <button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
+
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-  
-
+    
+    
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="ڕیکلام دابخە" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
@@ -276,8 +297,8 @@
   initMobileAnchorAd();
 </script>
 
-
+    
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 
-</body>
+  </body>
 </html>

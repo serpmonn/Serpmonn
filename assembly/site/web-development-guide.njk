@@ -85,39 +85,22 @@ eleventyComputed:
   <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/web-development-guide.css">
 </head>
 <body>
-    <div class="reading-progress">
-        <div class="reading-progress-bar"></div>
-    </div>
-    
-    <button class="toc-toggle" onclick="toggleFloatingToc()">
-        <i class="fas fa-list"></i>
-    </button>
-    
-    <div class="floating-toc">
-        <h3>{{ webDevelopmentGuide[locale].article.sections.toc.title }}</h3>
-        <ul>
-            {% for item in webDevelopmentGuide[locale].article.sections.toc.items %}
-            <li><a href="#section-{{ item.anchor }}">{{ item.text }}</a></li>
-            {% endfor %}
-        </ul>
-    </div>
-    
+    {% set tocTitle = webDevelopmentGuide[locale].article.sections.toc.title %}
+    {% set tocItems = [] %}
+    {% for item in webDevelopmentGuide[locale].article.sections.toc.items %}
+    {% set tocItems = (tocItems.push({ href: '#section-' ~ item.anchor, label: item.text }), tocItems) %}
+    {% endfor %}
+    {% include "partials/article-floating-toc.njk" %}
+
     <div id="menuContainer"></div>
+    {% from "partials/tool-icons.njk" import toolIcon %}
     <article class="article-container" tabindex="0">
         <header class="article-header">
             <span class="article-category">{{ webDevelopmentGuide[locale].article.category }}</span>
-            <div class="table-of-contents sticky-toc">
-                <h2>{{ webDevelopmentGuide[locale].article.sections.toc.title }}</h2>
-                <ul>
-                    {% for item in webDevelopmentGuide[locale].article.sections.toc.items %}
-                    <li><a href="#section-{{ item.anchor }}">{{ item.text }}</a></li>
-                    {% endfor %}
-                </ul>
-            </div>
             <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
             </div>
@@ -139,7 +122,7 @@ eleventyComputed:
             <div class="tech-grid">
                 {% for card in webDevelopmentGuide[locale].article.sections.tools.techCards %}
                 <div class="tech-card">
-                    <span class="tech-icon">{{ card.icon }}</span>
+                    {{ toolIcon(card.icon, 'cat') }}
                     <h4>{{ card.title }}</h4>
                     <p>{{ card.description }}</p>
                 </div>
@@ -151,7 +134,7 @@ eleventyComputed:
             <div class="visual-guide">
                 {% for visual in webDevelopmentGuide[locale].article.sections.guide.visuals %}
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="{{ visual.icon }}"></i></div>
+                    {{ toolIcon(visual.icon, 'cat') }}
                     <h3>{{ visual.title }}</h3>
                     <p>{{ visual.description }}</p>
                 </div>
@@ -210,15 +193,10 @@ eleventyComputed:
             <h2 id="section-faq">{{ webDevelopmentGuide[locale].article.sections.faq.title }}</h2>
             
             {% for faq in webDevelopmentGuide[locale].article.sections.faq.items %}
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    {{ faq.question }}
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>{{ faq.answer }}</p>
-                </div>
-            </div>
+            <details class="faq-item">
+                <summary>{{ faq.question }}</summary>
+                <p>{{ faq.answer }}</p>
+            </details>
             {% endfor %}
 
             <h3>{{ webDevelopmentGuide[locale].article.sections.checklist.title }}</h3>
@@ -240,31 +218,14 @@ eleventyComputed:
 
             <p>{{ webDevelopmentGuide[locale].article.sections.conclusion }}</p>
 
+            {% set relatedTitle = locale | articleRelatedTitle %}
+            {% set relatedItems = 'web-development-guide' | articleRelated(locale) %}
+            {% include "partials/article-related.njk" %}
+
             <div class="share-buttons">
                 <h3>{{ webDevelopmentGuide[locale].article.sections.share.title }}</h3>
-                <button onclick="share('telegram')" aria-label="{{ webDevelopmentGuide[locale].article.sections.share.telegramAria }}">{{ webDevelopmentGuide[locale].article.sections.share.telegram }}</button>
-                <button onclick="share('vk')" aria-label="{{ webDevelopmentGuide[locale].article.sections.share.vkAria }}">{{ webDevelopmentGuide[locale].article.sections.share.vk }}</button>
-            </div>
-
-            <div class="comments-section">
-                <h2>{{ webDevelopmentGuide[locale].article.sections.comments.title }}</h2>
-                <div class="comment-form">
-                    <h3>{{ webDevelopmentGuide[locale].article.sections.comments.formTitle }}</h3>
-                    <form id="commentForm">
-                        <div class="form-group">
-                            <label for="commentName">{{ webDevelopmentGuide[locale].article.sections.comments.nameLabel }}</label>
-                            <input type="text" id="commentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="commentText">{{ webDevelopmentGuide[locale].article.sections.comments.commentLabel }}</label>
-                            <textarea id="commentText" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">{{ webDevelopmentGuide[locale].article.sections.comments.submit }}</button>
-                    </form>
-                </div>
-                <div id="commentsList" class="comments-list">
-                    <!-- Комментарии будут загружены здесь -->
-                </div>
+                <button type="button" onclick="serpmonnShare('telegram')" aria-label="{{ webDevelopmentGuide[locale].article.sections.share.telegramAria }}">{{ webDevelopmentGuide[locale].article.sections.share.telegram }}</button>
+                <button type="button" onclick="serpmonnShare('vk')" aria-label="{{ webDevelopmentGuide[locale].article.sections.share.vkAria }}">{{ webDevelopmentGuide[locale].article.sections.share.vk }}</button>
             </div>
         </div>
 
@@ -277,143 +238,19 @@ eleventyComputed:
     <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="{{ webDevelopmentGuide[locale].article.buttons.scrollTopAria }}">{{ webDevelopmentGuide[locale].article.buttons.scrollTop }}</button>
 
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    
+    {% include "partials/article-chrome-scripts.njk" %}
     <script>
-        // Локализованные строки для JavaScript
         const localeTexts = {
-            noComments: "{{ webDevelopmentGuide[locale].article.sections.comments.noComments }}",
-            commentSaved: "{{ webDevelopmentGuide[locale].article.sections.comments.commentSaved }}",
-            error: "{{ webDevelopmentGuide[locale].article.sections.comments.error }}"
+            error: "Error"
         };
-        
-        // Функции для работы с комментариями
-        function saveComment(name, text) {
-            const comment = {
-                name: name,
-                text: text,
-                date: new Date().toLocaleString('{{ locale }}')
-            };
-            
-            let comments = JSON.parse(localStorage.getItem('articleComments_{{ locale }}')) || [];
-            comments.push(comment);
-            localStorage.setItem('articleComments_{{ locale }}', JSON.stringify(comments));
-            
-            return comment;
-        }
-        
-        function loadComments() {
-            const comments = JSON.parse(localStorage.getItem('articleComments_{{ locale }}')) || [];
-            const commentsList = document.getElementById('commentsList');
-            
-            if (comments.length === 0) {
-                commentsList.innerHTML = '<div class="no-comments">' + localeTexts.noComments + '</div>';
-                return;
-            }
-            
-            commentsList.innerHTML = comments.map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">${escapeHtml(comment.name)}</span>
-                        <span class="comment-date">${escapeHtml(comment.date)}</span>
-                    </div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Основные функции
-        function toggleFloatingToc() {
-            const floatingToc = document.querySelector('.floating-toc');
-            floatingToc.style.display = floatingToc.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        function share(network) {
-            const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent(document.title);
-            const shareUrls = {
-                telegram: `https://t.me/share/url?url=${url}&text=${title}`,
-                vk: `https://vk.com/share.php?url=${url}&title=${title}`
-            };
-            window.open(shareUrls[network], '_blank');
-        }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Загрузка комментариев
-            loadComments();
-            
-            // Обработка формы комментариев
-            document.getElementById('commentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nameInput = document.getElementById('commentName');
-                const textInput = document.getElementById('commentText');
-                
-                const name = nameInput.value.trim();
-                const text = textInput.value.trim();
-                
-                if (name && text) {
-                    saveComment(name, text);
-                    loadComments();
-                    
-                    // Очистка формы
-                    nameInput.value = '';
-                    textInput.value = '';
-                    
-                    // Показать сообщение об успехе
-                    alert(localeTexts.commentSaved);
-                }
-            });
-            
-            // Анимация появления контента
-            const contentObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.article-content > *').forEach(el => contentObserver.observe(el));
-            
-            // Кнопка "Наверх"
-            window.addEventListener('scroll', () => {
-                const button = document.querySelector('.scroll-to-top');
-                button.classList.toggle('show', window.scrollY > 300);
-            });
-            
-            // Прогресс чтения
-            const progressBar = document.querySelector('.reading-progress-bar');
-            window.addEventListener('scroll', () => {
-                const windowHeight = window.innerHeight;
-                const documentHeight = document.documentElement.scrollHeight;
-                const scrollTop = window.scrollY;
-                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
-                progressBar.style.width = `${progress}%`;
-            });
-            
-            // Показывать плавающее оглавление на десктопах
-            if (window.innerWidth > 991) {
-                document.querySelector('.floating-toc').style.display = 'block';
-            }
-            
-        });
 
-        // Функция для интерактивного редактора
         function runCode(button) {
             const editor = button.closest('.interactive-editor');
             const codeArea = editor.querySelector('.code-textarea');
             const previewArea = editor.querySelector('.preview-area');
-            
+
             try {
                 if (editor.classList.contains('html-editor')) {
-                    // Песочница: HTML из редактора не исполняется в родительской странице
                     previewArea.replaceChildren();
                     const frame = document.createElement('iframe');
                     frame.setAttribute('sandbox', '');
@@ -434,15 +271,6 @@ eleventyComputed:
             } catch (error) {
                 previewArea.textContent = `${localeTexts.error}: ${error.message}`;
             }
-        }
-        
-        // Функция для переключения FAQ
-        function toggleFaq(element) {
-            const answer = element.nextElementSibling;
-            answer.classList.toggle('show');
-            const icon = element.querySelector('i');
-            icon.classList.toggle('fa-chevron-down');
-            icon.classList.toggle('fa-chevron-up');
         }
     </script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>

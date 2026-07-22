@@ -266,57 +266,64 @@
   <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
     
-    <!-- Стили для этой статьи -->
-    <link rel="stylesheet" href="/frontend/styles/articles/cookies-guide.css">
-    
-    <!-- Внешние библиотеки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/cookies-guide.css">
     
     <!-- Скрипт меню -->
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>
-    <div class="reading-progress">
-        <div class="reading-progress-bar"></div>
-    </div>
     
-    <button class="toc-toggle" onclick="toggleFloatingToc()">
-        <i class="fas fa-list"></i>
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">목차</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="목차">
+  <div class="floating-toc__head">
+    <h3>목차</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
     </button>
+  </div>
+  <ul>
     
-    <div class="floating-toc">
-        <h3>목차</h3>
-        <ul>
-            <li><a href="#section-what-is">쿠키란 무엇인가요?</a></li>
-            <li><a href="#section-how-work">쿠키는 어떻게 작동하나요?</a></li>
-            <li><a href="#section-types">쿠키 파일 유형</a></li>
-            <li><a href="#section-why-clean">쿠키를 삭제하는 이유는?</a></li>
-            <li><a href="#section-how-clean">쿠키 삭제 방법</a></li>
-            <li><a href="#section-manage">쿠키 관리</a></li>
-            <li><a href="#section-security">보안</a></li>
-            <li><a href="#section-faq">자주 묻는 질문</a></li>
-        </ul>
-    </div>
+    <li><a href="#section-what-is">쿠키란 무엇인가요?</a></li>
     
+    <li><a href="#section-how-work">쿠키는 어떻게 작동하나요?</a></li>
+    
+    <li><a href="#section-types">쿠키 파일 유형</a></li>
+    
+    <li><a href="#section-why-clean">쿠키를 삭제하는 이유는?</a></li>
+    
+    <li><a href="#section-how-clean">쿠키 삭제 방법</a></li>
+    
+    <li><a href="#section-manage">쿠키 관리</a></li>
+    
+    <li><a href="#section-security">보안</a></li>
+    
+    <li><a href="#section-faq">자주 묻는 질문</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+    
+
     <div id="menuContainer"></div>
     
     <article class="article-container" tabindex="0">
         <header class="article-header">
             <span class="article-category">보안</span>
-            <div class="table-of-contents sticky-toc">
-                <h2>목차</h2>
-                <ul>
-                    <li><a href="#section-what-is">쿠키란 무엇인가요?</a></li>
-                    <li><a href="#section-how-work">쿠키는 어떻게 작동하나요?</a></li>
-                    <li><a href="#section-types">쿠키 파일 유형</a></li>
-                    <li><a href="#section-why-clean">쿠키를 삭제하는 이유는?</a></li>
-                    <li><a href="#section-how-clean">쿠키 삭제 방법</a></li>
-                    <li><a href="#section-manage">쿠키 관리</a></li>
-                    <li><a href="#section-security">보안</a></li>
-                    <li><a href="#section-faq">자주 묻는 질문</a></li>
-                </ul>
-            </div>
             <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
             </div>
@@ -328,30 +335,42 @@
             <p>웹사이트를 방문할 때마다 쿠키 사용에 대한 메시지가 표시됩니다. 하지만 정말 무엇일까요? 이 가이드에서는 쿠키 파일에 대해 모든 것을 분석합니다: 기본부터 고급 보안 설정까지.</p>
 
             <!-- Что такое куки -->
-            <h2 id="section-what-is">🍪 쿠키 파일이란?</h2>
+            <h2 id="section-what-is">쿠키 파일이란?</h2>
             <p><strong>쿠키</strong>는 웹사이트가 사용자의 기기에 저장하는 작은 텍스트 파일입니다. 인터넷에서의 사용자 활동에 대한 정보를 포함하며 사이트가 사용자를 "기억"하도록 돕습니다.</p>
             
             <div class="analogy-box">
-                <h4>💡 간단한 비유</h4>
+                <h4>간단한 비유</h4>
                 <p>쿠키는 카페에 남기는 명함과 같다고 상상해보세요. 다음 방문 시, 웨이터는 사용자를 알아보고 선호하는 커피를 기억할 것입니다.</p>
             </div>
 
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-user-circle"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+</span>
+
                     <h3>식별</h3>
                     <p>사이트는 반복 방문 시 사용자를 인식합니다</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-shopping-cart"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11l2-7H7"/></svg>
+</span>
+
                     <h3>쇼핑 카트</h3>
                     <p>사이트를 떠나도 상품을 저장합니다</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-language"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+</span>
+
                     <h3>설정</h3>
                     <p>언어, 통화 및 기타 선호도를 기억합니다</p>
                 </div>
@@ -359,7 +378,7 @@
             </div>
 
             <!-- Как работают куки -->
-            <h2 id="section-how-work">🔧 쿠키는 어떻게 작동하나요?</h2>
+            <h2 id="section-how-work">쿠키는 어떻게 작동하나요?</h2>
             
             <ol class="step-list">
                 
@@ -394,7 +413,7 @@
             </div>
 
             <!-- Типы куки -->
-            <h2 id="section-types">📊 쿠키 파일 유형</h2>
+            <h2 id="section-types">쿠키 파일 유형</h2>
             
             <table class="cookies-table">
                 <thead>
@@ -436,36 +455,48 @@
             </table>
 
             <div class="privacy-warning">
-                <h4>⚠️ 주의: 제3자 쿠키</h4>
+                <h4>️ 주의: 제3자 쿠키</h4>
                 <p>제3자 쿠키는 종종 다른 웹사이트에서 사용자 활동을 추적하는 데 사용됩니다. 현대 브라우저는 개인 정보를 보호하기 위해 점차 지원을 중단하고 있습니다.</p>
             </div>
 
             <!-- Зачем чистить куки -->
-            <h2 id="section-why-clean">🧹 쿠키를 삭제하는 이유는?</h2>
+            <h2 id="section-why-clean">쿠키를 삭제하는 이유는?</h2>
 
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-shield-alt"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V7z"/></svg>
+</span>
+
                     <h3>보안</h3>
                     <p>세션 도난 및 무단 접근으로부터 보호</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-user-secret"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+</span>
+
                     <h3>개인 정보</h3>
                     <p>추적 쿠키 및 검색 기록 제거</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-broom"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+</span>
+
                     <h3>공간 확보</h3>
                     <p>쿠키는 기기 공간을 차지합니다</p>
                 </div>
                 
             </div>
 
-            <h3>📋 쿠키를 삭제해야 하는 상황:</h3>
+            <h3>쿠키를 삭제해야 하는 상황:</h3>
             <ul>
                 
                 <li><strong>웹사이트 로그인 문제</strong></li>
@@ -481,11 +512,11 @@
             </ul>
 
             <!-- Как очистить куки -->
-            <h2 id="section-how-clean">🔧 쿠키 삭제 방법</h2>
+            <h2 id="section-how-clean">쿠키 삭제 방법</h2>
 
             
             <div class="browser-guide">
-                <h4>🌐 Google Chrome</h4>
+                <h4>Google Chrome</h4>
                 <ol>
                     
                     <li><strong>설정</strong> → <strong>개인정보 및 보안</strong> 열기</li>
@@ -500,7 +531,7 @@
             </div>
             
             <div class="browser-guide">
-                <h4>🦊 Mozilla Firefox</h4>
+                <h4>Mozilla Firefox</h4>
                 <ol>
                     
                     <li><strong>설정</strong> → <strong>개인정보 및 보안</strong>으로 이동</li>
@@ -531,11 +562,11 @@
             
 
             <div class="security-tip">
-                <h4>💡 전문가 조언</h4>
+                <h4>전문가 조언</h4>
                 <p>시크릿/비공개 브라우징 모드를 사용하세요. 이 모드에서는 창을 닫은 후 쿠키가 자동으로 삭제됩니다.</p>
             </div>
 
-            <h3>⚡ 키보드 단축키로 빠른 정리:</h3>
+            <h3>키보드 단축키로 빠른 정리:</h3>
             <ul>
                 
                 <li><strong>Ctrl+Shift+Delete</strong> (Windows/Linux) - 기록 정리 창 열기</li>
@@ -545,7 +576,7 @@
             </ul>
 
             <!-- Управление куки -->
-            <h2 id="section-manage">🎛️ 쿠키 관리: 모범 사례</h2>
+            <h2 id="section-manage">️ 쿠키 관리: 모범 사례</h2>
 
             <ol class="step-list">
                 
@@ -572,7 +603,7 @@
             </ol>
 
             <div class="security-tip">
-                <h4>🛡️ 쿠키 관리 확장 프로그램</h4>
+                <h4>️ 쿠키 관리 확장 프로그램</h4>
                 <ul>
                     
                     <li><strong>Cookie AutoDelete</strong> - 닫힌 탭의 쿠키를 자동으로 삭제</li>
@@ -585,10 +616,10 @@
             </div>
 
             <!-- Безопасность -->
-            <h2 id="section-security">🔐 쿠키 보안</h2>
+            <h2 id="section-security">쿠키 보안</h2>
 
             <div class="privacy-warning">
-                <h4>🚨 위험한 공격 유형</h4>
+                <h4>위험한 공격 유형</h4>
                 <ul>
                     
                     <li><strong>쿠키 가로채기</strong> 불안전한 네트워크를 통해</li>
@@ -600,7 +631,7 @@
                 </ul>
             </div>
 
-            <h3>🛡️ 보호 조치:</h3>
+            <h3>️ 보호 조치:</h3>
             
             <table class="cookies-table">
                 <thead>
@@ -635,7 +666,7 @@
                 </tbody>
             </table>
 
-            <h3>📋 쿠키 보안 체크리스트</h3>
+            <h3>쿠키 보안 체크리스트</h3>
             <ul class="checklist">
                 
                 <li>
@@ -666,7 +697,7 @@
             </ul>
 
             <!-- Частые вопросы -->
-            <h2 id="section-faq">❓ 자주 묻는 질문</h2>
+            <h2 id="section-faq">자주 묻는 질문</h2>
 
             
             <div class="browser-guide">
@@ -696,7 +727,7 @@
             
 
             <!-- Выводы -->
-            <h3>🎯 주요 요점:</h3>
+            <h3>주요 요점:</h3>
             <ul>
                 
                 <li>쿠키는 인터넷 편리한 작업에 필수적입니다</li>
@@ -711,33 +742,29 @@
                 
             </ul>
 
-            <!-- Кнопки поделиться -->
+            
+            
+            
+
+<div class="related-articles">
+  <h3>관련 기사</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/ko/knowledge-base/articles/port-forwarding-guide.html">포트 포워딩: 완전 가이드 2025</a></li>
+    
+    <li><a href="/frontend/ko/knowledge-base/articles/web-development-guide.html">처음부터 당신의 첫 웹사이트를 만드는 방법 - 초보자를 위한 완전 가이드</a></li>
+    
+    <li><a href="/frontend/ko/knowledge-base/articles/utm-complete-guide.html">UTM: 완전 가이드</a></li>
+    
+  </ul>
+</div>
+
+
+
             <div class="share-buttons">
                 <h3>기사 공유</h3>
-                <button onclick="share('telegram')" aria-label="텔레그램">텔레그램</button>
-                <button onclick="share('vk')" aria-label="VKontakte">VKontakte</button>
-            </div>
-
-            <!-- Комментарии -->
-            <div class="comments-section">
-                <h2>댓글</h2>
-                <div class="comment-form">
-                    <h3>의견 남기기</h3>
-                    <form id="commentForm">
-                        <div class="form-group">
-                            <label for="commentName">이름:</label>
-                            <input type="text" id="commentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="commentText">댓글:</label>
-                            <textarea id="commentText" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">제출</button>
-                    </form>
-                </div>
-                <div id="commentsList" class="comments-list">
-                    <!-- Комментарии будут загружены здесь -->
-                </div>
+                <button type="button" onclick="serpmonnShare('telegram')" aria-label="텔레그램">텔레그램</button>
+                <button type="button" onclick="serpmonnShare('vk')" aria-label="VKontakte">VKontakte</button>
             </div>
         </div>
 
@@ -751,127 +778,9 @@
     <!-- Кнопка наверх -->
     <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑ 위로">↑ 위로</button>
 
-    <!-- Внешние библиотеки -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    
-    <!-- JavaScript для статьи -->
-    <script>
-        // Функции для работы с комментариями
-        function saveComment(name, text) {
-            const comment = {
-                name: name,
-                text: text,
-                date: new Date().toLocaleString('ko')
-            };
-            
-            let comments = JSON.parse(localStorage.getItem('articleComments')) || [];
-            comments.push(comment);
-            localStorage.setItem('articleComments', JSON.stringify(comments));
-            
-            return comment;
-        }
-        
-        function loadComments() {
-            const comments = JSON.parse(localStorage.getItem('articleComments')) || [];
-            const commentsList = document.getElementById('commentsList');
-            
-            if (comments.length === 0) {
-                commentsList.innerHTML = '<div class="no-comments">아직 댓글이 없습니다. 첫 번째 댓글을 남겨보세요!</div>';
-                return;
-            }
-            
-            commentsList.innerHTML = comments.map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">${escapeHtml(comment.name)}</span>
-                        <span class="comment-date">${escapeHtml(comment.date)}</span>
-                    </div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Основные функции
-        function toggleFloatingToc() {
-            const floatingToc = document.querySelector('.floating-toc');
-            floatingToc.style.display = floatingToc.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        function share(network) {
-            const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent(document.title);
-            const shareUrls = {
-                telegram: `https://t.me/share/url?url=${url}&text=${title}`,
-                vk: `https://vk.com/share.php?url=${url}&title=${title}`
-            };
-            window.open(shareUrls[network], '_blank');
-        }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Загрузка комментариев
-            loadComments();
-            
-            // Обработка формы комментариев
-            document.getElementById('commentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nameInput = document.getElementById('commentName');
-                const textInput = document.getElementById('commentText');
-                
-                const name = nameInput.value.trim();
-                const text = textInput.value.trim();
-                
-                if (name && text) {
-                    saveComment(name, text);
-                    loadComments();
-                    
-                    // Очистка формы
-                    nameInput.value = '';
-                    textInput.value = '';
-                }
-            });
-            
-            // Анимация появления контента
-            const contentObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.article-content > *').forEach(el => contentObserver.observe(el));
-            
-            // Кнопка "Наверх"
-            window.addEventListener('scroll', () => {
-                const button = document.querySelector('.scroll-to-top');
-                button.classList.toggle('show', window.scrollY > 300);
-            });
-            
-            // Прогресс чтения
-            const progressBar = document.querySelector('.reading-progress-bar');
-            window.addEventListener('scroll', () => {
-                const windowHeight = window.innerHeight;
-                const documentHeight = document.documentElement.scrollHeight;
-                const scrollTop = window.scrollY;
-                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
-                progressBar.style.width = `${progress}%`;
-            });
-            
-            // Показывать плавающее оглавление на десктопах
-            if (window.innerWidth > 991) {
-                document.querySelector('.floating-toc').style.display = 'block';
-            }
-            
-        });
-    </script>
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
+
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
 

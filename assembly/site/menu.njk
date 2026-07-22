@@ -83,10 +83,11 @@ eleventyComputed:
 
 <!-- Основной контейнер меню -->
 <div class="menu-container" id="menuContainer">
+    {% from "partials/tool-icons.njk" import toolIcon %}
 
     <!-- ========== СЕЛЕКТОР ЯЗЫКА ========== -->
     <div class="menu-item lang-selector-item lang-selector-container" id="languageSelectorContainer">
-        <span class="tool-icon">🌐</span>
+        {{ toolIcon('lang', 'cat') }}
         <select class="lang-selector" id="langSelect"></select>
     </div>
 
@@ -103,7 +104,7 @@ eleventyComputed:
        class="menu-item menu-auth-link"
        id="auth-block"
        data-route="auth">
-        <img src="/frontend/images/login.ico" alt="{{ menu_auth }}" class="icon">
+        {{ toolIcon('login', 'cat') }}
         {{ menu_auth }}
     </a>
 
@@ -113,7 +114,7 @@ eleventyComputed:
        id="profile-block"
        data-route="profile"
        hidden>
-        <img src="/frontend/images/login.ico" alt="{{ menu_profile }}" class="icon">
+        {{ toolIcon('user', 'cat') }}
         {{ menu_profile }}
     </a>
 
@@ -128,7 +129,7 @@ eleventyComputed:
 
     <!-- ========== РАЗДЕЛ ИГР ========== -->
     <a href="#" class="menu-item" data-submenu="gamesSubmenu">
-        <img src="/frontend/images/Games.ico" alt="{{ menu_games }}" class="icon">
+        {{ toolIcon('games', 'cat') }}
         {{ menu_games }}
     </a>
 
@@ -139,13 +140,13 @@ eleventyComputed:
         <a href="{% if locale == 'ru' %}/frontend/games/games.html{% else %}/frontend/{{ locale }}/games/games.html{% endif %}"
         class="menu-item"
         data-route="games-all">
-            <img src="/frontend/images/Games.ico" alt="{{ menu_all_games }}" class="icon">
+            {{ toolIcon('games', 'cat') }}
             {{ menu_all_games }}
         </a>
 
         <!-- Подраздел: Веб-игры -->
         <a href="#" class="menu-item" data-submenu="webGamesSubmenu">
-            <img src="/frontend/images/WebGames.ico" alt="{{ menu_web_games }}" class="icon">
+            {{ toolIcon('web', 'cat') }}
             {{ menu_web_games }}
         </a>
 
@@ -164,22 +165,22 @@ eleventyComputed:
         </div>
 
 <a href="#" class="menu-item" data-submenu="androidGamesSubmenu">
-            <img src="/frontend/images/AndroidGames.ico" alt="{{ menu_mobile_games }}" class="icon">
+            {{ toolIcon('mobile', 'cat') }}
             {{ menu_mobile_games }}
         </a>
 
 <div class="submenu-container" id="androidGamesSubmenu">
             <a href="#" class="game-placeholder">
-                <span class="game-icon">📱</span> Мобильная стратегия ({{ menu_soon }})
+                {{ toolIcon('mobile') }} Мобильная стратегия ({{ menu_soon }})
             </a>
             <a href="#" class="game-placeholder">
-                <span class="game-icon">🏆</span> Аркадная игра ({{ menu_soon }})
+                {{ toolIcon('trophy') }} Аркадная игра ({{ menu_soon }})
             </a>
         </div>
 
         <!-- Подраздел: ПК-игры -->
         <a href="#" class="menu-item" data-submenu="pcGamesSubmenu">
-            <img src="/frontend/images/pc-games.png" alt="{{ menu_pc_games }}" class="icon">
+            {{ toolIcon('pc', 'cat') }}
             {{ menu_pc_games }}
         </a>
 
@@ -229,7 +230,7 @@ eleventyComputed:
 
     <!-- ========== РАЗДЕЛ ПРИЛОЖЕНИЙ ========== -->
     <a href="#" class="menu-item" data-submenu="appsSubmenu">
-        <img src="/frontend/images/Apps.ico" alt="{{ menu_apps }}" class="icon">
+        {{ toolIcon('apps', 'cat') }}
         {{ menu_apps }}
     </a>
 
@@ -242,7 +243,7 @@ eleventyComputed:
         </a>
 
 <a href="#" class="menu-item" data-submenu="mobileAppsSubmenu">
-            <img src="/frontend/images/mobile-apps.ico" alt="{{ menu_mobile_apps }}" class="icon">
+            {{ toolIcon('mobile', 'cat') }}
             {{ menu_mobile_apps }}
         </a>
         <div class="submenu-container" id="mobileAppsSubmenu">
@@ -262,13 +263,13 @@ eleventyComputed:
     class="menu-item"
     id="promo-codes-btn"
     data-route="promo">
-        <img src="/frontend/images/skidki-i-akcii.png" alt="{{ menu_promo_codes }}" class="icon">
+        {{ toolIcon('promo', 'cat') }}
         {{ menu_promo_codes }}
     </a>
 
     <!-- ========== РАЗДЕЛ ИНСТРУМЕНТОВ ========== -->
     <a href="#" class="menu-item" data-submenu="toolsSubmenu">
-        <img src="/frontend/images/instruments.jpg" alt="{{ menu_tools }}" class="icon">
+        {{ toolIcon('all', 'cat') }}
         {{ menu_tools }}
     </a>
 
@@ -279,99 +280,99 @@ eleventyComputed:
         <a href="{% if locale == 'ru' %}/frontend/tools/tools.html{% else %}/frontend/{{ locale }}/tools/tools.html{% endif %}"
         class="menu-item"
         data-route="tools-all">
-            <span class="tool-icon">🧰</span> {{ menu_all_tools }}
+            {{ toolIcon('all', 'cat') }} {{ menu_all_tools }}
         </a>
         
         <!-- Маркетинг -->
         <a href="#" class="menu-item" data-submenu="marketingToolsSubmenu">
-            <span class="tool-icon">📊</span> {{ menu_marketing }}
+            {{ toolIcon('marketing', 'cat') }} {{ menu_marketing }}
         </a>
         <div class="submenu-container" id="marketingToolsSubmenu">
             <a href="{% if locale == 'ru' %}/frontend/tools/marketing/utm-builder.html{% else %}/frontend/{{ locale }}/tools/marketing/utm-builder.html{% endif %}">
-                <span class="tool-icon">🔗</span> Генератор UTM‑меток
+                {{ toolIcon('link') }} Генератор UTM‑меток
             </a>
             <a href="{% if locale == 'ru' %}/frontend/tools/marketing/word-counter.html{% else %}/frontend/{{ locale }}/tools/marketing/word-counter.html{% endif %}">
-                <span class="tool-icon">📝</span> Счётчик слов/символов
+                {{ toolIcon('text') }} Счётчик слов/символов
             </a>
         </div>
         
         <!-- Безопасность -->
         <a href="#" class="menu-item" data-submenu="securityToolsSubmenu">
-            <span class="tool-icon">🔐</span> {{ menu_security }}
+            {{ toolIcon('security', 'cat') }} {{ menu_security }}
         </a>
         <div class="submenu-container" id="securityToolsSubmenu">
             <a href="{% if locale == 'ru' %}/frontend/tools/security/password-generator.html{% else %}/frontend/{{ locale }}/tools/security/password-generator.html{% endif %}">
-                <span class="tool-icon">🔑</span> Генератор паролей
+                {{ toolIcon('key') }} Генератор паролей
             </a>
         </div>
         
         <!-- Разработка -->
         <a href="#" class="menu-item" data-submenu="devToolsSubmenu">
-            <span class="tool-icon">💻</span> {{ menu_development }}
+            {{ toolIcon('code', 'cat') }} {{ menu_development }}
         </a>
         <div class="submenu-container" id="devToolsSubmenu">
             <a href="{% if locale == 'ru' %}/frontend/tools/development/json-formatter.html{% else %}/frontend/{{ locale }}/tools/development/json-formatter.html{% endif %}">
-                <span class="tool-icon">📄</span> JSON форматтер
+                {{ toolIcon('json') }} JSON форматтер
             </a>
             <a href="{% if locale == 'ru' %}/frontend/tools/development/base64-converter.html{% else %}/frontend/{{ locale }}/tools/development/base64-converter.html{% endif %}">
-                <span class="tool-icon">🔄</span> Base64 конвертер
+                {{ toolIcon('convert') }} Base64 конвертер
             </a>
         </div>
         
         <!-- Дизайн -->
         <a href="#" class="menu-item" data-submenu="designToolsSubmenu">
-            <span class="tool-icon">🎨</span> {{ menu_design }}
+            {{ toolIcon('design', 'cat') }} {{ menu_design }}
         </a>
         <div class="submenu-container" id="designToolsSubmenu">
             <a href="https://lsuix.com/g/1j6fe2t8jz7c9ceea34457480734a9/?erid=2bL9aMPo2e49hMef4rqxsMZZ36"
                class="tool-link" target="_blank" rel="noopener noreferrer">
-                <span class="tool-icon">🤖</span> {{ tool_ai_avatar }}
+                {{ toolIcon('user') }} {{ tool_ai_avatar }}
             </a>
             <a href="{% if locale == 'ru' %}/frontend/tools/design/color-palettes.html{% else %}/frontend/{{ locale }}/tools/design/color-palettes.html{% endif %}">
-                <span class="tool-icon">🎨</span> Цветовые палитры
+                {{ toolIcon('palette') }} Цветовые палитры
             </a>
             <a href="{% if locale == 'ru' %}/frontend/tools/design/format-converter.html{% else %}/frontend/{{ locale }}/tools/design/format-converter.html{% endif %}">
-                <span class="tool-icon">📐</span> Конвертер форматов
+                {{ toolIcon('image') }} Конвертер форматов
             </a>
         </div>
         
         <!-- Инженерия -->
         <a href="#" class="menu-item" data-submenu="engineeringToolsSubmenu">
-            <span class="tool-icon">🔧</span> {{ menu_engineering }}
+            {{ toolIcon('engineering', 'cat') }} {{ menu_engineering }}
         </a>
         <div class="submenu-container" id="engineeringToolsSubmenu">
             <a href="{% if locale == 'ru' %}/frontend/tools/engineering/unit-converter.html{% else %}/frontend/{{ locale }}/tools/engineering/unit-converter.html{% endif %}">
-                <span class="tool-icon">🔄</span> Конвертер единиц
+                {{ toolIcon('ruler') }} Конвертер единиц
             </a>
         </div>
         
         <!-- Логистика -->
         <a href="#" class="menu-item" data-submenu="logisticsToolsSubmenu">
-            <span class="tool-icon">⚡</span> {{ menu_logistics }}
+            {{ toolIcon('truck', 'cat') }} {{ menu_logistics }}
         </a>
         <div class="submenu-container" id="logisticsToolsSubmenu">
             <a href="{% if locale == 'ru' %}/frontend/tools/logistics/depreciation-calculator.html{% else %}/frontend/{{ locale }}/tools/logistics/depreciation-calculator.html{% endif %}">
-                <span class="tool-icon">🔧</span> Калькулятор амортизации
+                {{ toolIcon('car') }} Калькулятор амортизации
             </a>
             <a href="{% if locale == 'ru' %}/frontend/tools/logistics/fuel-calculator.html{% else %}/frontend/{{ locale }}/tools/logistics/fuel-calculator.html{% endif %}">
-                <span class="tool-icon">⛽</span> Калькулятор топлива
+                {{ toolIcon('fuel') }} Калькулятор топлива
             </a>
         </div>
         
         <!-- Экология -->
         <a href="#" class="menu-item" data-submenu="ecologyToolsSubmenu">
-            <span class="tool-icon">🌱</span> {{ menu_ecology }}
+            {{ toolIcon('leaf', 'cat') }} {{ menu_ecology }}
         </a>
         <div class="submenu-container" id="ecologyToolsSubmenu">
             <a href="{% if locale == 'ru' %}/frontend/tools/ecology/product-footprint-calculator.html{% else %}/frontend/{{ locale }}/tools/ecology/product-footprint-calculator.html{% endif %}">
-                <span class="tool-icon">🌍</span> Экологический след продуктов
+                {{ toolIcon('globe') }} Экологический след продуктов
             </a>
         </div>
     </div>
 
     <!-- ========== БАЗА ЗНАНИЙ ========== -->
     <a href="#" class="menu-item" data-submenu="knowledgeSubmenu">
-        <img src="/frontend/images/news.png" alt="{{ menu_knowledge_base }}" class="icon">
+        {{ toolIcon('books', 'cat') }}
         {{ menu_knowledge_base }}
     </a>
 
@@ -379,7 +380,7 @@ eleventyComputed:
         <a href="{% if locale == 'ru' %}/frontend/knowledge-base/knowledge-base.html{% else %}/frontend/{{ locale }}/knowledge-base/knowledge-base.html{% endif %}"
            class="menu-item"
            data-route="knowledge">
-            <span class="tool-icon">📚</span> {{ menu_all_knowledge_base }}
+            {{ toolIcon('books', 'cat') }} {{ menu_all_knowledge_base }}
         </a>
 
         {%- set kbArticles = localesNews[locale].news.articles -%}
@@ -388,56 +389,56 @@ eleventyComputed:
         {%- for cat in kbCategories -%}
           {%- if cat.key == 'articles' -%}
         <a href="#" class="menu-item" data-submenu="kbArticlesSubmenu">
-            <span class="tool-icon">📰</span> {{ cat.name }}
+            {{ toolIcon('news', 'cat') }} {{ cat.name }}
         </a>
         <div class="submenu-container" id="kbArticlesSubmenu">
             {%- for article in kbArticles -%}
               {%- if article.category == 'articles' -%}
-            <a href="{{ article.link }}"><span class="tool-icon">📄</span> {{ article.title }}</a>
+            <a href="{{ article.link }}">{{ toolIcon('file') }} {{ article.title }}</a>
               {%- endif -%}
             {%- endfor -%}
         </div>
           {%- elif cat.key == 'tutorials' -%}
         <a href="#" class="menu-item" data-submenu="kbTutorialsSubmenu">
-            <span class="tool-icon">🎓</span> {{ cat.name }}
+            {{ toolIcon('graduation', 'cat') }} {{ cat.name }}
         </a>
         <div class="submenu-container" id="kbTutorialsSubmenu">
             {%- for article in kbArticles -%}
               {%- if article.category == 'tutorials' -%}
-            <a href="{{ article.link }}"><span class="tool-icon">📄</span> {{ article.title }}</a>
+            <a href="{{ article.link }}">{{ toolIcon('file') }} {{ article.title }}</a>
               {%- endif -%}
             {%- endfor -%}
         </div>
           {%- elif cat.key == 'engineering' -%}
         <a href="#" class="menu-item" data-submenu="kbEngineeringSubmenu">
-            <span class="tool-icon">🔧</span> {{ cat.name }}
+            {{ toolIcon('engineering', 'cat') }} {{ cat.name }}
         </a>
         <div class="submenu-container" id="kbEngineeringSubmenu">
             {%- for article in kbArticles -%}
               {%- if article.category == 'engineering' -%}
-            <a href="{{ article.link }}"><span class="tool-icon">📄</span> {{ article.title }}</a>
+            <a href="{{ article.link }}">{{ toolIcon('file') }} {{ article.title }}</a>
               {%- endif -%}
             {%- endfor -%}
         </div>
           {%- elif cat.key == 'ecology' -%}
         <a href="#" class="menu-item" data-submenu="kbEcologySubmenu">
-            <span class="tool-icon">🌱</span> {{ cat.name }}
+            {{ toolIcon('leaf', 'cat') }} {{ cat.name }}
         </a>
         <div class="submenu-container" id="kbEcologySubmenu">
             {%- for article in kbArticles -%}
               {%- if article.category == 'ecology' -%}
-            <a href="{{ article.link }}"><span class="tool-icon">📄</span> {{ article.title }}</a>
+            <a href="{{ article.link }}">{{ toolIcon('file') }} {{ article.title }}</a>
               {%- endif -%}
             {%- endfor -%}
         </div>
           {%- elif cat.key == 'updates' -%}
         <a href="#" class="menu-item" data-submenu="kbUpdatesSubmenu">
-            <span class="tool-icon">🚀</span> {{ cat.name }}
+            {{ toolIcon('rocket', 'cat') }} {{ cat.name }}
         </a>
         <div class="submenu-container" id="kbUpdatesSubmenu">
             {%- for article in kbArticles -%}
               {%- if article.category == 'updates' -%}
-            <a href="{{ article.link }}"><span class="tool-icon">📄</span> {{ article.title }}</a>
+            <a href="{{ article.link }}">{{ toolIcon('file') }} {{ article.title }}</a>
               {%- endif -%}
             {%- endfor -%}
         </div>
@@ -452,13 +453,13 @@ eleventyComputed:
     class="menu-item"
     id="privacy-policy-btn"
     data-route="privacy">
-        <img src="/frontend/images/privacy-policy.ico" alt="{{ menu_privacy_policy }}" class="icon">
+        {{ toolIcon('shield', 'cat') }}
         {{ menu_privacy_policy }}
     </a>
 
     <!-- ========== РАЗДЕЛ ПАРТНЁРОВ ========== -->
     <a href="#" class="menu-item" data-submenu="partnersSubmenu">
-        <img src="/frontend/images/OurPartners.ico" alt="{{ menu_partners }}" class="icon">
+        {{ toolIcon('partners', 'cat') }}
         {{ menu_partners }}
     </a>
 
@@ -510,7 +511,7 @@ eleventyComputed:
     class="menu-item"
     id="ad-info-btn"
     data-route="ad-info">
-        <img src="/frontend/images/ad-info.ico" alt="{{ menu_ad_info }}" class="icon">
+        {{ toolIcon('ad', 'cat') }}
         {{ menu_ad_info }}
     </a>
     
@@ -519,7 +520,7 @@ eleventyComputed:
     class="menu-item"
     id="about-project-btn"
     data-route="about">
-        <img src="/frontend/images/about-project.ico" alt="{{ menu_about_project }}" class="icon">
+        {{ toolIcon('about', 'cat') }}
         {{ menu_about_project }}
     </a>
 
@@ -528,7 +529,7 @@ eleventyComputed:
     class="menu-item"
     id="what-to-improve-btn"
     data-route="improve">
-        <img src="/frontend/images/whatIsImprove.jpeg" alt="{{ menu_what_to_improve }}" class="icon">
+        {{ toolIcon('improve', 'cat') }}
         {{ menu_what_to_improve }}
     </a>
 
@@ -537,14 +538,14 @@ eleventyComputed:
     class="menu-item"
     id="support-project-btn"
     data-route="donate">
-        <img src="/frontend/images/donate.jpg" alt="{{ menu_support_project }}" class="icon">
+        {{ toolIcon('donate', 'cat') }}
         {{ menu_support_project }}
     </a>
 
     <!-- ========== НАСТРОЙКИ ========== -->
     <a href="#" class="menu-item" data-submenu="settingsSubmenu" 
        aria-expanded="false" aria-haspopup="true">
-        <img src="/frontend/images/settings.png" alt="{{ menu_settings }}" class="icon">
+        {{ toolIcon('settings', 'cat') }}
         {{ menu_settings }}
     </a>
     
@@ -552,34 +553,34 @@ eleventyComputed:
     <div class="submenu-container" id="settingsSubmenu" aria-hidden="true">
         <a href="#" class="menu-item" data-submenu="a11ySubmenu" 
            aria-expanded="false" aria-haspopup="true">
-            <img src="/frontend/images/availability.png" alt="{{ menu_accessibility }}" class="icon">
+            {{ toolIcon('a11y', 'cat') }}
             {{ menu_accessibility }}
         </a>
         
         <div class="submenu-container" id="a11ySubmenu" aria-hidden="true">
             <a href="#" class="a11y-toggle" data-setting="large-text" 
                role="switch" aria-checked="false">
-                <img src="/frontend/images/large-font.png" alt="{{ menu_large_font }}" class="icon a11y-icon">
+                {{ toolIcon('textsize', 'cat') }}
                 {{ menu_large_font }}
-                <span class="a11y-status" data-status="large-text">⚪</span>
+                <span class="a11y-status is-off" data-status="large-text"></span>
             </a>
             <a href="#" class="a11y-toggle" data-setting="high-contrast" 
                role="switch" aria-checked="false">
-                <img src="/frontend/images/high-contrast.png" alt="{{ menu_high_contrast }}" class="icon a11y-icon">
+                {{ toolIcon('contrast', 'cat') }}
                 {{ menu_high_contrast }}
-                <span class="a11y-status" data-status="high-contrast">⚪</span>
+                <span class="a11y-status is-off" data-status="high-contrast"></span>
             </a>
             <a href="#" class="a11y-toggle" data-setting="underline-links" 
                role="switch" aria-checked="false">
-                <img src="/frontend/images/underline-links.jpg" alt="{{ menu_underline_links }}" class="icon a11y-icon">
+                {{ toolIcon('underline', 'cat') }}
                 {{ menu_underline_links }}
-                <span class="a11y-status" data-status="underline-links">⚪</span>
+                <span class="a11y-status is-off" data-status="underline-links"></span>
             </a>
             <a href="#" class="a11y-toggle" data-setting="reduce-motion" 
                role="switch" aria-checked="false">
-                <span class="a11y-icon" aria-hidden="true">🎬</span>
+                {{ toolIcon('motion', 'cat') }}
                 {{ menu_reduce_animation }}
-                <span class="a11y-status" data-status="reduce-motion">⚪</span>
+                <span class="a11y-status is-off" data-status="reduce-motion"></span>
             </a>
         </div>
     </div>

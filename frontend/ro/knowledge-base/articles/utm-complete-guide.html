@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="ro" dir="ltr">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="ro">
     <title>UTM: Ghid Complet — 2025</title>
@@ -9,20 +10,17 @@
     <meta name="description" content="Ce sunt etichetele UTM, cum să le setați corect, taxonomie pentru GA4, șabloane pentru Google/Meta/VK/Telegram/Email și greșeli comune.">
     <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
 
-    <!-- Open Graph -->
     <meta property="og:title" content="UTM: Ghid Complet — 2025">
     <meta property="og:description" content="Ce sunt etichetele UTM, cum să le setați corect, taxonomie pentru GA4, șabloane pentru Google/Meta/VK/Telegram/Email și greșeli comune.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/ro/knowledge-base/articles/utm-complete-guide.html">
     <meta property="og:type" content="article">
-    
-    <!-- Twitter -->
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="UTM: Ghid Complet — 2025">
     <meta name="twitter:description" content="Ce sunt UTM, parametri, GA4, șabloane pentru diferite canale, greșeli și lista de verificare.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -55,10 +53,8 @@
     }
     </script>
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/ro/knowledge-base/articles/utm-complete-guide.html" />
 
-    <!-- Hreflang для всех языков -->
     
         
             <link rel="alternate" href="https://serpmonn.ru/frontend/knowledge-base/articles/utm-complete-guide.html" hreflang="ru" />
@@ -259,144 +255,94 @@
     <link rel="alternate" href="https://serpmonn.ru/frontend/knowledge-base/articles/utm-complete-guide.html" hreflang="x-default" />
 
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-    
-    <!-- Стили -->
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-
-    <style>
-        body { 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 16px; 
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-            background: #f5f5f5; 
-            line-height: 1.7; 
-        }
-        article { 
-            background: #fff; 
-            border-radius: 12px; 
-            padding: 40px; 
-            margin: 20px auto; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-            max-width: 800px; 
-        }
-        .article-header { 
-            text-align: center; 
-            margin-bottom: 30px; 
-            padding-bottom: 20px; 
-            border-bottom: 2px solid #e9ecef; 
-        }
-        .article-title { 
-            font-size: 2.2rem; 
-            color: #333; 
-            margin-bottom: 10px; 
-            font-weight: 700; 
-        }
-        .article-date { 
-            color: #6c757d; 
-            font-size: 1.05rem; 
-            font-weight: 500; 
-        }
-        .summary { 
-            background: #e8f5e8; 
-            border: 1px solid #c3e6c3; 
-            border-radius: 8px; 
-            padding: 16px; 
-            margin: 20px 0; 
-            color: #155724; 
-        }
-        .toc { 
-            background: #f8f9fa; 
-            border: 1px solid #e9ecef; 
-            border-radius: 8px; 
-            padding: 16px; 
-            margin: 20px 0; 
-        }
-        .toc a { 
-            text-decoration: none; 
-        }
-        h2 { 
-            margin-top: 28px; 
-        }
-        .code { 
-            background: #f8f9fa; 
-            border: 1px solid #dee2e6; 
-            border-radius: 6px; 
-            padding: 12px; 
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; 
-            font-size: .95rem; 
-            overflow-x: auto; 
-            white-space: pre-wrap; 
-        }
-        .note { 
-            background: #fff3cd; 
-            border: 1px solid #ffe08a; 
-            border-radius: 8px; 
-            padding: 12px; 
-            margin: 16px 0; 
-            color: #7a5b00; 
-        }
-        .faq { 
-            background: #f8f9fa; 
-            border: 1px solid #e9ecef; 
-            border-radius: 8px; 
-            padding: 16px; 
-        }
-        .faq h3 { 
-            margin: 0 0 10px; 
-        }
-        .btn { 
-            display:inline-block; 
-            padding:10px 16px; 
-            background:#dc3545; 
-            color:#fff; 
-            text-decoration:none; 
-            border-radius:8px; 
-            font-weight:600; 
-        }
-        .muted { 
-            color:#6c757d; 
-        }
-        .breadcrumb { 
-            margin-bottom: 16px; 
-            padding: 8px 0; 
-        }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/utm-complete-guide.css">
 </head>
 <body>
-    <div id="menuContainer"></div>
 
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-        <a href="https://serpmonn.ru/ro/">Acasă</a> →
-        <a href="https://serpmonn.ru/frontend/ro/knowledge-base/knowledge-base.html">Știri</a> →
-        <span>UTM: Ghid Complet</span>
-    </div>
 
-    <article>
-        <header class="article-header">
-            <div class="ad-top-banner ad-banner loading">
-                <ins class="mrg-tag" 
-                    style="display:inline-block;"
-                    data-ad-client="ad-1897960" 
-                    data-ad-slot="1897960">
-                </ins>
-            </div>
-            <h1 class="article-title">UTM: Ghid Complet</h1>
-            <div class="article-date">15 septembrie 2025</div>
-        </header>
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Cuprins</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Cuprins">
+  <div class="floating-toc__head">
+    <h3>Cuprins</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
+    
+    <li><a href="#what">Ce sunt UTM și de ce</a></li>
+    
+    <li><a href="#params">Parametri UTM: source/medium/campaign/term/content</a></li>
+    
+    <li><a href="#ga4">Legătura cu GA4: atribuire și rapoarte</a></li>
+    
+    <li><a href="#naming">Taxonomie și denumire</a></li>
+    
+    <li><a href="#platforms">Șabloane pentru canale (Google/Meta/VK/Telegram/Email)</a></li>
+    
+    <li><a href="#examples">Exemple și linkuri gata făcute</a></li>
+    
+    <li><a href="#mistakes">Greșeli tipice</a></li>
+    
+    <li><a href="#faq">Întrebări frecvente și lista de verificare</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
+<div id="menuContainer"></div>
+
+<article class="article-container" tabindex="0">
+    <header class="article-header">
+        <div class="ad-top-banner ad-banner loading">
+            <ins class="mrg-tag"
+                style="display:inline-block;"
+                data-ad-client="ad-1897960"
+                data-ad-slot="1897960">
+            </ins>
+        </div>
+        <h1 class="article-title">UTM: Ghid Complet</h1>
+        <div class="article-date">15 septembrie 2025</div>
+    </header>
+
+    <div class="article-content">
         <div class="summary">
             <strong>De ce să citești:</strong> vei învăța să setezi corect etichetele UTM pentru orice campanie, vei evita greșelile comune și vei obține șabloane gata făcute pentru canalele principale. La sfârșit — Întrebări frecvente și lista de verificare.
-        </div>
-
-        <!-- TOC -->
-        <div class="toc">
-            <strong>Cuprins</strong>
-            <ol><li><a href="#what">Ce sunt UTM și de ce</a></li><li><a href="#params">Parametri UTM: source/medium/campaign/term/content</a></li><li><a href="#ga4">Legătura cu GA4: atribuire și rapoarte</a></li><li><a href="#naming">Taxonomie și denumire</a></li><li><a href="#platforms">Șabloane pentru canale (Google/Meta/VK/Telegram/Email)</a></li><li><a href="#examples">Exemple și linkuri gata făcute</a></li><li><a href="#mistakes">Greșeli tipice</a></li><li><a href="#faq">Întrebări frecvente și lista de verificare</a></li></ol>
         </div>
 
         <h2 id="what">1) Ce sunt UTM și de ce</h2>
@@ -424,7 +370,7 @@
   utm_campaign=y2025q3_launch_widget&amp;
   utm_term=buy+widget&amp;
   utm_content=banner_a</div>
-        <div class="code" style="margin-top:10px;">GET https://example.com/landing?
+        <div class="code">GET https://example.com/landing?
   utm_source=facebook&amp;
   utm_medium=paid_social&amp;
   utm_campaign=y2025q3_launch_widget&amp;
@@ -448,15 +394,38 @@
             <ul><li>Formă/codificare, dicționare unificate.</li><li>Același <code>utm_campaign</code> în toate reclamele campaniei.</li><li>Verificarea redirecționărilor, test final de clic.</li></ul>
         </div>
 
-        <p class="muted" style="margin-top:16px;">
+        <p class="muted">
             Actualizat: 15.09.2025 • Categorie: Educație
         </p>
-    </article>
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+        
+        
+        
 
+<div class="related-articles">
+  <h3>Articole asemănătoare</h3>
+  <ul class="related-links">
     
+    <li><a href="/frontend/ro/knowledge-base/articles/cookies-complete-guide.html">Ce sunt cookie-urile?: Ghid complet de gestionare și securitate</a></li>
+    
+    <li><a href="/frontend/ro/knowledge-base/articles/indexnow-practical-guide.html">IndexNow: Implementare practică și sfaturi</a></li>
+    
+    <li><a href="/frontend/ro/knowledge-base/articles/web-development-guide.html">Cum Să-ți Creezi Prima Pagină Web de la Zero - Ghid Complet pentru Începători</a></li>
+    
+  </ul>
+</div>
+
+
+    </div>
+</article>
+
+<button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+<script defer src="/frontend/scripts/article-chrome.js"></script>
+
+<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+
+
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="Închide reclama" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>

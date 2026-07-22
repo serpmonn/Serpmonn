@@ -266,57 +266,64 @@
   <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
     
-    <!-- Стили для этой статьи -->
-    <link rel="stylesheet" href="/frontend/styles/articles/cookies-guide.css">
-    
-    <!-- Внешние библиотеки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/cookies-guide.css">
     
     <!-- Скрипт меню -->
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>
-    <div class="reading-progress">
-        <div class="reading-progress-bar"></div>
-    </div>
     
-    <button class="toc-toggle" onclick="toggleFloatingToc()">
-        <i class="fas fa-list"></i>
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">فهرست مطالب</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="فهرست مطالب">
+  <div class="floating-toc__head">
+    <h3>فهرست مطالب</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
     </button>
+  </div>
+  <ul>
     
-    <div class="floating-toc">
-        <h3>فهرست مطالب</h3>
-        <ul>
-            <li><a href="#section-what-is">کوکی‌ها چیستند؟</a></li>
-            <li><a href="#section-how-work">کوکی‌ها چگونه کار می‌کنند؟</a></li>
-            <li><a href="#section-types">انواع فایل‌های کوکی</a></li>
-            <li><a href="#section-why-clean">چرا کوکی‌ها را پاک کنیم؟</a></li>
-            <li><a href="#section-how-clean">چگونه کوکی‌ها را پاک کنیم</a></li>
-            <li><a href="#section-manage">مدیریت کوکی‌ها</a></li>
-            <li><a href="#section-security">امنیت</a></li>
-            <li><a href="#section-faq">پرسش‌های متداول</a></li>
-        </ul>
-    </div>
+    <li><a href="#section-what-is">کوکی‌ها چیستند؟</a></li>
     
+    <li><a href="#section-how-work">کوکی‌ها چگونه کار می‌کنند؟</a></li>
+    
+    <li><a href="#section-types">انواع فایل‌های کوکی</a></li>
+    
+    <li><a href="#section-why-clean">چرا کوکی‌ها را پاک کنیم؟</a></li>
+    
+    <li><a href="#section-how-clean">چگونه کوکی‌ها را پاک کنیم</a></li>
+    
+    <li><a href="#section-manage">مدیریت کوکی‌ها</a></li>
+    
+    <li><a href="#section-security">امنیت</a></li>
+    
+    <li><a href="#section-faq">پرسش‌های متداول</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+    
+
     <div id="menuContainer"></div>
     
     <article class="article-container" tabindex="0">
         <header class="article-header">
             <span class="article-category">امنیت</span>
-            <div class="table-of-contents sticky-toc">
-                <h2>فهرست مطالب</h2>
-                <ul>
-                    <li><a href="#section-what-is">کوکی‌ها چیستند؟</a></li>
-                    <li><a href="#section-how-work">کوکی‌ها چگونه کار می‌کنند؟</a></li>
-                    <li><a href="#section-types">انواع فایل‌های کوکی</a></li>
-                    <li><a href="#section-why-clean">چرا کوکی‌ها را پاک کنیم؟</a></li>
-                    <li><a href="#section-how-clean">چگونه کوکی‌ها را پاک کنیم</a></li>
-                    <li><a href="#section-manage">مدیریت کوکی‌ها</a></li>
-                    <li><a href="#section-security">امنیت</a></li>
-                    <li><a href="#section-faq">پرسش‌های متداول</a></li>
-                </ul>
-            </div>
             <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
             </div>
@@ -328,30 +335,42 @@
             <p>هر بار که به وبسایتی مراجعه می‌کنید، با پیامی درباره استفاده از کوکی‌ها مواجه می‌شوید. اما آنها واقعاً چیستند؟ در این راهنما همه چیز را درباره فایل‌های کوکی تحلیل می‌کنیم: از اصول اولیه تا تنظیمات امنیتی پیشرفته.</p>
 
             <!-- Что такое куки -->
-            <h2 id="section-what-is">🍪 فایل‌های کوکی چیستند؟</h2>
+            <h2 id="section-what-is">فایل‌های کوکی چیستند؟</h2>
             <p><strong>کوکی‌ها</strong> فایل‌های متنی کوچکی هستند که وبسایت‌ها روی دستگاه شما ذخیره می‌کنند. آنها حاوی اطلاعاتی درباره فعالیت‌های شما در اینترنت هستند و به وبسایت‌ها کمک می‌کنند تا شما را "به خاطر بسپارند".</p>
             
             <div class="analogy-box">
-                <h4>💡 تشبیه ساده</h4>
+                <h4>تشبیه ساده</h4>
                 <p>تصور کنید کوکی‌ها کارت ویزیتی هستند که در یک کافی‌شاپ باقی می‌گذارید. در بازدید بعدی، پیشخدمت شما را می‌شناسد و به خاطر می‌آورد که چه قهوه‌ای را ترجیح می‌دهید.</p>
             </div>
 
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-user-circle"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+</span>
+
                     <h3>شناسایی</h3>
                     <p>وبسایت شما را در بازدیدهای بعدی می‌شناسد</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-shopping-cart"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11l2-7H7"/></svg>
+</span>
+
                     <h3>سبد خرید</h3>
                     <p>کالاها را حتی اگر از سایت خارج شوید ذخیره می‌کند</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-language"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+</span>
+
                     <h3>تنظیمات</h3>
                     <p>زبان، ارز و ترجیحات دیگر را به خاطر می‌سپارد</p>
                 </div>
@@ -359,7 +378,7 @@
             </div>
 
             <!-- Как работают куки -->
-            <h2 id="section-how-work">🔧 کوکی‌ها چگونه کار می‌کنند؟</h2>
+            <h2 id="section-how-work">کوکی‌ها چگونه کار می‌کنند؟</h2>
             
             <ol class="step-list">
                 
@@ -394,7 +413,7 @@
             </div>
 
             <!-- Типы куки -->
-            <h2 id="section-types">📊 انواع فایل‌های کوکی</h2>
+            <h2 id="section-types">انواع فایل‌های کوکی</h2>
             
             <table class="cookies-table">
                 <thead>
@@ -436,36 +455,48 @@
             </table>
 
             <div class="privacy-warning">
-                <h4>⚠️ توجه: کوکی‌های شخص ثالث</h4>
+                <h4>️ توجه: کوکی‌های شخص ثالث</h4>
                 <p>کوکی‌های شخص ثالث اغلب برای ردیابی فعالیت شما در وبسایت‌های مختلف استفاده می‌شوند. مرورگرهای مدرن به تدریج پشتیبانی از آنها را برای محافظت از حریم خصوصی متوقف می‌کنند.</p>
             </div>
 
             <!-- Зачем чистить куки -->
-            <h2 id="section-why-clean">🧹 چرا کوکی‌ها را پاک کنیم؟</h2>
+            <h2 id="section-why-clean">چرا کوکی‌ها را پاک کنیم؟</h2>
 
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-shield-alt"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V7z"/></svg>
+</span>
+
                     <h3>امنیت</h3>
                     <p>محافظت در برابر سرقت جلسه و دسترسی غیرمجاز</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-user-secret"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+</span>
+
                     <h3>حریم خصوصی</h3>
                     <p>حذف کوکی‌های ردیابی و تاریخچه مرور</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-broom"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+</span>
+
                     <h3>آزادسازی فضا</h3>
                     <p>کوکی‌ها فضای دستگاه شما را اشغال می‌کنند</p>
                 </div>
                 
             </div>
 
-            <h3>📋 موقعیت‌هایی که نیاز به پاکسازی کوکی‌ها دارید:</h3>
+            <h3>موقعیت‌هایی که نیاز به پاکسازی کوکی‌ها دارید:</h3>
             <ul>
                 
                 <li><strong>مشکلات ورود</strong> به وبسایت‌ها</li>
@@ -481,11 +512,11 @@
             </ul>
 
             <!-- Как очистить куки -->
-            <h2 id="section-how-clean">🔧 چگونه کوکی‌ها را پاک کنیم</h2>
+            <h2 id="section-how-clean">چگونه کوکی‌ها را پاک کنیم</h2>
 
             
             <div class="browser-guide">
-                <h4>🌐 Google Chrome</h4>
+                <h4>Google Chrome</h4>
                 <ol>
                     
                     <li>باز کنید <strong>تنظیمات</strong> → <strong>حریم خصوصی و امنیت</strong></li>
@@ -500,7 +531,7 @@
             </div>
             
             <div class="browser-guide">
-                <h4>🦊 Mozilla Firefox</h4>
+                <h4>Mozilla Firefox</h4>
                 <ol>
                     
                     <li>بروید به <strong>تنظیمات</strong> → <strong>حریم خصوصی و امنیت</strong></li>
@@ -531,11 +562,11 @@
             
 
             <div class="security-tip">
-                <h4>💡 توصیه حرفه‌ای</h4>
+                <h4>توصیه حرفه‌ای</h4>
                 <p>از حالت ناشناس/مرور خصوصی استفاده کنید. در این حالت، کوکی‌ها پس از بستن پنجره به طور خودکار حذف می‌شوند.</p>
             </div>
 
-            <h3>⚡ پاکسازی سریع با میان‌برهای صفحه کلید:</h3>
+            <h3>پاکسازی سریع با میان‌برهای صفحه کلید:</h3>
             <ul>
                 
                 <li><strong>Ctrl+Shift+Delete</strong> (Windows/Linux) - پنجره پاکسازی تاریخچه را باز می‌کند</li>
@@ -545,7 +576,7 @@
             </ul>
 
             <!-- Управление куки -->
-            <h2 id="section-manage">🎛️ مدیریت کوکی‌ها: بهترین روش‌ها</h2>
+            <h2 id="section-manage">️ مدیریت کوکی‌ها: بهترین روش‌ها</h2>
 
             <ol class="step-list">
                 
@@ -572,7 +603,7 @@
             </ol>
 
             <div class="security-tip">
-                <h4>🛡️ افزونه‌ها برای مدیریت کوکی‌ها</h4>
+                <h4>️ افزونه‌ها برای مدیریت کوکی‌ها</h4>
                 <ul>
                     
                     <li><strong>Cookie AutoDelete</strong> - به طور خودکار کوکی‌های برگه‌های بسته شده را حذف می‌کند</li>
@@ -585,10 +616,10 @@
             </div>
 
             <!-- Безопасность -->
-            <h2 id="section-security">🔐 امنیت کوکی‌ها</h2>
+            <h2 id="section-security">امنیت کوکی‌ها</h2>
 
             <div class="privacy-warning">
-                <h4>🚨 انواع حملات خطرناک</h4>
+                <h4>انواع حملات خطرناک</h4>
                 <ul>
                     
                     <li><strong>رهگیری کوکی</strong> از طریق شبکه‌های ناامن</li>
@@ -600,7 +631,7 @@
                 </ul>
             </div>
 
-            <h3>🛡️ اقدامات حفاظتی:</h3>
+            <h3>️ اقدامات حفاظتی:</h3>
             
             <table class="cookies-table">
                 <thead>
@@ -635,7 +666,7 @@
                 </tbody>
             </table>
 
-            <h3>📋 چک‌لیست امنیت کوکی</h3>
+            <h3>چک‌لیست امنیت کوکی</h3>
             <ul class="checklist">
                 
                 <li>
@@ -666,7 +697,7 @@
             </ul>
 
             <!-- Частые вопросы -->
-            <h2 id="section-faq">❓ پرسش‌های متداول</h2>
+            <h2 id="section-faq">پرسش‌های متداول</h2>
 
             
             <div class="browser-guide">
@@ -696,7 +727,7 @@
             
 
             <!-- Выводы -->
-            <h3>🎯 نکات کلیدی:</h3>
+            <h3>نکات کلیدی:</h3>
             <ul>
                 
                 <li>کوکی‌ها برای کار راحت در اینترنت ضروری هستند</li>
@@ -711,33 +742,29 @@
                 
             </ul>
 
-            <!-- Кнопки поделиться -->
+            
+            
+            
+
+<div class="related-articles">
+  <h3>مقالات مرتبط</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/fa/knowledge-base/articles/port-forwarding-guide.html">فوروارد پورت: راهنمای کامل ۲۰۲۵</a></li>
+    
+    <li><a href="/frontend/fa/knowledge-base/articles/web-development-guide.html">چگونه اولین وبسایت خود را از ابتدا ایجاد کنید - راهنمای کامل برای مبتدیان</a></li>
+    
+    <li><a href="/frontend/fa/knowledge-base/articles/utm-complete-guide.html">UTM: راهنمای کامل</a></li>
+    
+  </ul>
+</div>
+
+
+
             <div class="share-buttons">
                 <h3>اشتراک مقاله</h3>
-                <button onclick="share('telegram')" aria-label="تلگرام">تلگرام</button>
-                <button onclick="share('vk')" aria-label="VKontakte">VKontakte</button>
-            </div>
-
-            <!-- Комментарии -->
-            <div class="comments-section">
-                <h2>نظرات</h2>
-                <div class="comment-form">
-                    <h3>نظر خود را بنویسید</h3>
-                    <form id="commentForm">
-                        <div class="form-group">
-                            <label for="commentName">نام شما:</label>
-                            <input type="text" id="commentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="commentText">نظر شما:</label>
-                            <textarea id="commentText" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">ارسال</button>
-                    </form>
-                </div>
-                <div id="commentsList" class="comments-list">
-                    <!-- Комментарии будут загружены здесь -->
-                </div>
+                <button type="button" onclick="serpmonnShare('telegram')" aria-label="تلگرام">تلگرام</button>
+                <button type="button" onclick="serpmonnShare('vk')" aria-label="VKontakte">VKontakte</button>
             </div>
         </div>
 
@@ -751,127 +778,9 @@
     <!-- Кнопка наверх -->
     <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑ بالا">↑ بالا</button>
 
-    <!-- Внешние библиотеки -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    
-    <!-- JavaScript для статьи -->
-    <script>
-        // Функции для работы с комментариями
-        function saveComment(name, text) {
-            const comment = {
-                name: name,
-                text: text,
-                date: new Date().toLocaleString('fa')
-            };
-            
-            let comments = JSON.parse(localStorage.getItem('articleComments')) || [];
-            comments.push(comment);
-            localStorage.setItem('articleComments', JSON.stringify(comments));
-            
-            return comment;
-        }
-        
-        function loadComments() {
-            const comments = JSON.parse(localStorage.getItem('articleComments')) || [];
-            const commentsList = document.getElementById('commentsList');
-            
-            if (comments.length === 0) {
-                commentsList.innerHTML = '<div class="no-comments">هنوز نظری وجود ندارد. اولین باشید!</div>';
-                return;
-            }
-            
-            commentsList.innerHTML = comments.map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">${escapeHtml(comment.name)}</span>
-                        <span class="comment-date">${escapeHtml(comment.date)}</span>
-                    </div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Основные функции
-        function toggleFloatingToc() {
-            const floatingToc = document.querySelector('.floating-toc');
-            floatingToc.style.display = floatingToc.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        function share(network) {
-            const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent(document.title);
-            const shareUrls = {
-                telegram: `https://t.me/share/url?url=${url}&text=${title}`,
-                vk: `https://vk.com/share.php?url=${url}&title=${title}`
-            };
-            window.open(shareUrls[network], '_blank');
-        }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Загрузка комментариев
-            loadComments();
-            
-            // Обработка формы комментариев
-            document.getElementById('commentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nameInput = document.getElementById('commentName');
-                const textInput = document.getElementById('commentText');
-                
-                const name = nameInput.value.trim();
-                const text = textInput.value.trim();
-                
-                if (name && text) {
-                    saveComment(name, text);
-                    loadComments();
-                    
-                    // Очистка формы
-                    nameInput.value = '';
-                    textInput.value = '';
-                }
-            });
-            
-            // Анимация появления контента
-            const contentObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.article-content > *').forEach(el => contentObserver.observe(el));
-            
-            // Кнопка "Наверх"
-            window.addEventListener('scroll', () => {
-                const button = document.querySelector('.scroll-to-top');
-                button.classList.toggle('show', window.scrollY > 300);
-            });
-            
-            // Прогресс чтения
-            const progressBar = document.querySelector('.reading-progress-bar');
-            window.addEventListener('scroll', () => {
-                const windowHeight = window.innerHeight;
-                const documentHeight = document.documentElement.scrollHeight;
-                const scrollTop = window.scrollY;
-                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
-                progressBar.style.width = `${progress}%`;
-            });
-            
-            // Показывать плавающее оглавление на десктопах
-            if (window.innerWidth > 991) {
-                document.querySelector('.floating-toc').style.display = 'block';
-            }
-            
-        });
-    </script>
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
+
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
 

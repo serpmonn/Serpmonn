@@ -2,34 +2,31 @@
 <!DOCTYPE html>
 <html lang="de" dir="ltr">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="de">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     
-    
-    
+
     <title>IndexNow: Praktische Implementierung und Tipps</title>
     <meta name="description" content="Schnelle Suchmaschinen-Updates: Einrichtung, Changed-Only, häufige Fehler, Vergleich mit Sitemap-Ping und Implementierungs-Checkliste.">
     <meta name="keywords" content="IndexNow, SEO, Indexierung, Suchmaschinen, Bing, Yandex, Website-Updates">
-    
-    <!-- Open Graph -->
+
     <meta property="og:title" content="IndexNow: Praktische Implementierung und Tipps">
     <meta property="og:description" content="Einrichtung, Changed-Only-Modus, Fehler und Vergleich mit Sitemap-Ping.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/de/knowledge-base/articles/indexnow-practical-guide.html">
     <meta property="og:type" content="article">
-    
-    <!-- Twitter -->
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="IndexNow: Praktische Implementierung und Tipps">
     <meta name="twitter:description" content="Einrichtung, Changed-Only-Modus, Fehler und Vergleich mit Sitemap-Ping.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/de/knowledge-base/articles/indexnow-practical-guide.html" />
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -62,246 +59,119 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-
-    <style>
-      body { 
-        max-width: 800px; 
-        margin: 0 auto; 
-        padding: 16px; 
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-        background: #f5f5f5; 
-        line-height: 1.7; 
-      }
-      article { 
-        background: #fff; 
-        border-radius: 12px; 
-        padding: 40px; 
-        margin: 20px auto; 
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-        max-width: 800px; 
-      }
-      .article-header { 
-        text-align: center; 
-        margin-bottom: 30px; 
-        padding-bottom: 20px; 
-        border-bottom: 2px solid #e9ecef; 
-      }
-      .article-title { 
-        font-size: 2.2rem; 
-        color: #333; 
-        margin-bottom: 10px; 
-        font-weight: 700; 
-      }
-      .article-date { 
-        color: #6c757d; 
-        font-size: 1.05rem; 
-        font-weight: 500; 
-      }
-      .summary { 
-        background: #e8f5e8; 
-        border: 1px solid #c3e6c3; 
-        border-radius: 8px; 
-        padding: 16px; 
-        margin: 20px 0; 
-        color: #155724; 
-      }
-      .toc { 
-        background: #f8f9fa; 
-        border: 1px solid #e9ecef; 
-        border-radius: 8px; 
-        padding: 16px; 
-        margin: 20px 0; 
-      }
-      .toc a { 
-        text-decoration: none; 
-      }
-      h2 { 
-        margin-top: 28px; 
-        color: #dc3545;
-      }
-      .code { 
-        background: #f8f9fa; 
-        border: 1px solid #dee2e6; 
-        border-radius: 6px; 
-        padding: 12px; 
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; 
-        font-size: .95rem; 
-        overflow-x: auto; 
-        white-space: pre-wrap;
-      }
-      .note { 
-        background: #fff3cd; 
-        border: 1px solid #ffe08a; 
-        border-radius: 8px; 
-        padding: 12px; 
-        margin: 16px 0; 
-        color: #7a5b00; 
-      }
-      .faq { 
-        background: #f8f9fa; 
-        border: 1px solid #e9ecef; 
-        border-radius: 8px; 
-        padding: 16px; 
-      }
-      .faq h3 { 
-        margin: 0 0 10px; 
-      }
-      .muted { 
-        color:#6c757d; 
-      }
-      .breadcrumb { 
-        margin-bottom: 16px; 
-        padding: 8px 0; 
-      }
-      .breadcrumb a {
-        text-decoration: none;
-        color: #007bff;
-      }
-      .breadcrumb a:hover {
-        text-decoration: underline;
-      }
-      .cta-button { 
-        display: block; 
-        text-align: center; 
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
-        color: white; 
-        border: none; 
-        padding: 15px 30px; 
-        border-radius: 10px; 
-        font-size: 1.1rem; 
-        cursor: pointer; 
-        transition: transform 0.3s ease; 
-        margin: 30px 0; 
-        text-decoration: none; 
-      }
-      .cta-button:hover { 
-        transform: scale(1.02); 
-        text-decoration: none; 
-        color: #fff; 
-      }
-      .section-item {
-        margin-bottom: 10px;
-      }
-      .section-item-title {
-        font-weight: bold;
-      }
-      .social-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 24px;
-        flex-wrap: wrap;
-      }
-      .tg-btn, .vk-btn {
-        display: inline-block;
-        padding: 10px 20px;
-        border-radius: 25px;
-        color: #fff;
-        font-weight: 600;
-        text-decoration: none;
-        transition: transform .2s ease, box-shadow .2s ease;
-      }
-      .tg-btn {
-        background: #229ED9;
-      }
-      .vk-btn {
-        background: #2787F5;
-      }
-      .tg-btn:hover, .vk-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 14px rgba(0,0,0,.15);
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/indexnow-practical-guide.css">
 </head>
 <body>
-    <style>
-      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
-      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
-    </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Inhaltsverzeichnis</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Inhaltsverzeichnis">
+  <div class="floating-toc__head">
+    <h3>Inhaltsverzeichnis</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
     
-    <nav id="menuContainer" aria-label=""></nav>
+    <li><a href="#what">Was ist IndexNow</a></li>
     
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      
-        <a href="/de/">Home</a> →
-        <a href="/frontend/de/knowledge-base/knowledge-base.html">Knowledge base</a> →
-      
-      <span>IndexNow: Praktische Implementierung und Tipps</span>
+    <li><a href="#setup">Schlüsseleinrichtung und grundlegendes Ping</a></li>
+    
+    <li><a href="#changed">Changed-Only-Modus: wann und wie</a></li>
+    
+    <li><a href="#compare">IndexNow vs. Sitemap-Ping</a></li>
+    
+    <li><a href="#errors">Häufige Fehler</a></li>
+    
+    <li><a href="#faq">FAQ und Checkliste</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
+<nav id="menuContainer" aria-label=""></nav>
+
+<article class="article-container" tabindex="0">
+  <header class="article-header">
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-1897960"
+          data-ad-slot="1897960">
+      </ins>
+    </div>
+    <h1 class="article-title">IndexNow: Praktische Implementierung und Tipps</h1>
+    <div class="article-date">15. September 2025 • 5 Minuten Lesezeit</div>
+  </header>
+
+  <div class="article-content">
+    <div class="summary">
+      <strong>Warum lesen:</strong> wie Sie Suchmaschinen schnell Updates liefern, wann Sie Changed-Only verwenden sollten, wie sich IndexNow von Sitemap-Ping unterscheidet und wie Sie häufige Fehler vermeiden.
     </div>
 
-    <article>
-      <header class="article-header">
-        <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
-              style="display:inline-block;"
-              data-ad-client="ad-1897960" 
-              data-ad-slot="1897960">
-          </ins>
-        </div>
-        <h1 class="article-title">IndexNow: Praktische Implementierung und Tipps</h1>
-        <div class="article-date">15. September 2025 • 5 Minuten Lesezeit</div>
-      </header>
+    
+    <h2 id="what">1) Was ist IndexNow</h2>
 
-      <div class="summary">
-        <strong>Warum lesen:</strong> wie Sie Suchmaschinen schnell Updates liefern, wann Sie Changed-Only verwenden sollten, wie sich IndexNow von Sitemap-Ping unterscheidet und wie Sie häufige Fehler vermeiden.
-      </div>
+    
+    <p>IndexNow ist ein Protokoll, das es ermöglicht, Suchmaschinen sofort über URL-Änderungen (Erstellung, Aktualisierung, Löschung) zu benachrichtigen. Unterstützt von Bing, Yandex, Seznam und anderen Diensten. Der Vorteil ist minimale Indexierungsverzögerung und weniger Crawl-Rauschen.</p>
+    
 
-      <div class="toc">
-        <strong>Inhaltsverzeichnis</strong>
-        <ol>
-          
-          <li><a href="#what">Was ist IndexNow</a></li>
-          
-          <li><a href="#setup">Schlüsseleinrichtung und grundlegendes Ping</a></li>
-          
-          <li><a href="#changed">Changed-Only-Modus: wann und wie</a></li>
-          
-          <li><a href="#compare">IndexNow vs. Sitemap-Ping</a></li>
-          
-          <li><a href="#errors">Häufige Fehler</a></li>
-          
-          <li><a href="#faq">FAQ und Checkliste</a></li>
-          
-        </ol>
-      </div>
+    
 
+    
+
+    
+
+    
+
+    
+
+    
+    <h2 id="setup">2) Schlüsseleinrichtung und grundlegendes Ping</h2>
+
+    
+
+    
+    <ol>
       
-      <h2 id="what">1) Was ist IndexNow</h2>
+      <li>Generieren Sie einen Schlüssel (GUID) und platzieren Sie die Datei <code>YOUR_KEY.txt</code> im Stammverzeichnis der Website (<code>/.well-known/</code> oder Domain-Stamm) mit dem Schlüssel-String.</li>
       
+      <li>Pingen Sie den Endpunkt mit URL und Schlüssel an. Beispiel (einzelne URL):</li>
       
-      <p>IndexNow ist ein Protokoll, das es ermöglicht, Suchmaschinen sofort über URL-Änderungen (Erstellung, Aktualisierung, Löschung) zu benachrichtigen. Unterstützt von Bing, Yandex, Seznam und anderen Diensten. Der Vorteil ist minimale Indexierungsverzögerung und weniger Crawl-Rauschen.</p>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <h2 id="setup">2) Schlüsseleinrichtung und grundlegendes Ping</h2>
-      
-      
-      
-      
-      <ol>
-        
-        <li>Generieren Sie einen Schlüssel (GUID) und platzieren Sie die Datei <code>YOUR_KEY.txt</code> im Stammverzeichnis der Website (<code>/.well-known/</code> oder Domain-Stamm) mit dem Schlüssel-String.</li>
-        
-        <li>Pingen Sie den Endpunkt mit URL und Schlüssel an. Beispiel (einzelne URL):</li>
-        
-      </ol>
-      
-      
-      
-      <div class="code">POST https://api.indexnow.org/indexnow
+    </ol>
+    
+
+    
+    <div class="code">POST https://api.indexnow.org/indexnow
 Content-Type: application/json
 
 {
@@ -311,180 +181,195 @@ Content-Type: application/json
     "https://www.serpmonn.ru/frontend/knowledge-base/articles/utm-complete-guide.html"
   ]
 }</div>
+    
+
+    
+
+    
+    <div class="note">Für Batches geben Sie bis zu 10.000 URLs in einer Anfrage an oder verwenden Sie einen Datei-Feed mit einer Änderungsprotokolldatei.</div>
+    
+
+    
+
+    
+    <h2 id="changed">3) Changed-Only-Modus</h2>
+
+    
+    <p>Die Idee ist, nur Dateien anzupingen, die sich im letzten Commit/Deployment tatsächlich geändert haben. Dies reduziert Rauschen und Kontingentnutzung.</p>
+    
+
+    
+
+    
+
+    
       
-      
-      
-      
-      
-      <div class="note">Für Batches geben Sie bis zu 10.000 URLs in einer Anfrage an oder verwenden Sie einen Datei-Feed mit einer Änderungsprotokolldatei.</div>
-      
-      
-      
-      
-      
-      <h2 id="changed">3) Changed-Only-Modus</h2>
-      
-      
-      <p>Die Idee ist, nur Dateien anzupingen, die sich im letzten Commit/Deployment tatsächlich geändert haben. Dies reduziert Rauschen und Kontingentnutzung.</p>
-      
-      
-      
-      
-      
-      
-      
+      <ul>
         
-        <ul>
-          
-          <li>Holen Sie sich die Liste der geänderten Pfade aus VCS (git diff) oder Build-Artefakten.</li>
-          
-          <li>Filtern Sie nach öffentlichen Routen (ausschließen von <code>node_modules</code>, <code>.git</code>, private Ordner).</li>
-          
-          <li>Gruppieren Sie nach Domänen/Sprachen, um irrelevante URLs zu vermeiden.</li>
-          
-        </ul>
+        <li>Holen Sie sich die Liste der geänderten Pfade aus VCS (git diff) oder Build-Artefakten.</li>
         
-      
-      
-      
-      <div class="note">In der Produktion ist es nützlich, einen Fallback zu haben: Wenn Changed-Only leer ist (z.B. Hotfix für Konfigurationen), pingen Sie wichtige Sitemaps an.</div>
-      
-      
-      
-      
-      
-      <h2 id="compare">4) IndexNow vs. Sitemap-Ping</h2>
-      
-      
-      
-      
-      
-      
-      
-      
+        <li>Filtern Sie nach öffentlichen Routen (ausschließen von <code>node_modules</code>, <code>.git</code>, private Ordner).</li>
         
-        <ul>
-          
-          <li class="section-item">
-            <span class="section-item-title">Geschwindigkeit:</span> IndexNow liefert Updates schneller, wartet nicht auf Crawl-Zyklus; Sitemap-Ping signalisiert das Vorhandensein einer Sitemap, aber keine Änderungen an bestimmten URLs.
-          </li>
-          
-          <li class="section-item">
-            <span class="section-item-title">Rauschen:</span> IndexNow - gezielt auf geänderte URLs; Sitemap - Scan der gesamten Karte (teurer für Crawl-Budget).
-          </li>
-          
-          <li class="section-item">
-            <span class="section-item-title">Zuverlässigkeit:</span> Sitemaps bleiben die Grundlage; IndexNow ergänzt und beschleunigt. Es ist besser, beides zu verwenden.
-          </li>
-          
-        </ul>
+        <li>Gruppieren Sie nach Domänen/Sprachen, um irrelevante URLs zu vermeiden.</li>
         
+      </ul>
       
+    
+
+    
+    <div class="note">In der Produktion ist es nützlich, einen Fallback zu haben: Wenn Changed-Only leer ist (z.B. Hotfix für Konfigurationen), pingen Sie wichtige Sitemaps an.</div>
+    
+
+    
+
+    
+    <h2 id="compare">4) IndexNow vs. Sitemap-Ping</h2>
+
+    
+
+    
+
+    
+
+    
       
-      
-      
-      
-      
-      
-      <h2 id="errors">5) Häufige Fehler</h2>
-      
-      
-      
-      
-      
-      
-      
-      
+      <ul>
         
-        <ul>
-          
-          <li>Schlüssel nicht über öffentliche URL erreichbar oder stimmt nicht mit dem Parameter <code>key</code> überein.</li>
-          
-          <li>Pingen von privaten/404-Seiten, Parameter ohne Kanonisierung.</li>
-          
-          <li>Zu häufige Wiederholungen derselben URLs (Wiederholungen drosseln).</li>
-          
-          <li>Mehrsprachigkeit ignorieren (muss die entsprechende lokalisierte Version pingen).</li>
-          
-        </ul>
+        <li class="section-item">
+          <span class="section-item-title">Geschwindigkeit:</span> IndexNow liefert Updates schneller, wartet nicht auf Crawl-Zyklus; Sitemap-Ping signalisiert das Vorhandensein einer Sitemap, aber keine Änderungen an bestimmten URLs.
+        </li>
         
-      
-      
-      
-      
-      
-      
-      
-      <h2 id="faq">6) FAQ und Checkliste</h2>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <div class="faq">
+        <li class="section-item">
+          <span class="section-item-title">Rauschen:</span> IndexNow - gezielt auf geänderte URLs; Sitemap - Scan der gesamten Karte (teurer für Crawl-Budget).
+        </li>
         
-        <h3>Wie viele URLs auf einmal senden?</h3>
-        <p>Bis zu 10.000 in einem Batch - optimal nach Typ/Sprache gruppieren.</p>
+        <li class="section-item">
+          <span class="section-item-title">Zuverlässigkeit:</span> Sitemaps bleiben die Grundlage; IndexNow ergänzt und beschleunigt. Es ist besser, beides zu verwenden.
+        </li>
         
-        <h3>Sollten Sie Löschungen pingen?</h3>
-        <p>Ja - übergeben Sie URLs gelöschter Seiten, um die Deindexierung zu beschleunigen.</p>
-        
-        <h3>Wie bestätigen, dass es funktioniert?</h3>
-        <p>API-Antwortprotokolle (200/202), Crawl-Spitzen in Server-Protokollen, schnellere Erscheinung neuer URLs.</p>
-        
-        
-        
-        <h3></h3>
-        <ul>
-          
-          <li>Schlüssel platziert und über HTTPS zugänglich.</li>
-          
-          <li>Changed-Only-Pfade aus CI/CD sammeln.</li>
-          
-          <li>Deduplizierung und Drosselung von Wiederholungen.</li>
-          
-          <li>Fallback auf Sitemap-Ping bei leerem Batch.</li>
-          
-        </ul>
-        
-      </div>
+      </ul>
       
+    
+
+    
+
+    
+
+    
+    <h2 id="errors">5) Häufige Fehler</h2>
+
+    
+
+    
+
+    
+
+    
       
+      <ul>
+        
+        <li>Schlüssel nicht über öffentliche URL erreichbar oder stimmt nicht mit dem Parameter <code>key</code> überein.</li>
+        
+        <li>Pingen von privaten/404-Seiten, Parameter ohne Kanonisierung.</li>
+        
+        <li>Zu häufige Wiederholungen derselben URLs (Wiederholungen drosseln).</li>
+        
+        <li>Mehrsprachigkeit ignorieren (muss die entsprechende lokalisierte Version pingen).</li>
+        
+      </ul>
+      
+    
+
+    
+
+    
+
+    
+    <h2 id="faq">6) FAQ und Checkliste</h2>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="faq">
+      
+      <h3>Wie viele URLs auf einmal senden?</h3>
+      <p>Bis zu 10.000 in einem Batch - optimal nach Typ/Sprache gruppieren.</p>
+      
+      <h3>Sollten Sie Löschungen pingen?</h3>
+      <p>Ja - übergeben Sie URLs gelöschter Seiten, um die Deindexierung zu beschleunigen.</p>
+      
+      <h3>Wie bestätigen, dass es funktioniert?</h3>
+      <p>API-Antwortprotokolle (200/202), Crawl-Spitzen in Server-Protokollen, schnellere Erscheinung neuer URLs.</p>
       
 
       
-      <div class="note" style="margin-top: 30px;">
-        <strong>:</strong> IndexNow beschleunigt die Indexierung neuer und geänderter Seiten erheblich. In Kombination mit traditionellen Sitemaps ist es ein leistungsstarkes Werkzeug für SEO-Optimierung.
-      </div>
+      <h3></h3>
+      <ul>
+        
+        <li>Schlüssel platziert und über HTTPS zugänglich.</li>
+        
+        <li>Changed-Only-Pfade aus CI/CD sammeln.</li>
+        
+        <li>Deduplizierung und Drosselung von Wiederholungen.</li>
+        
+        <li>Fallback auf Sitemap-Ping bei leerem Batch.</li>
+        
+      </ul>
       
-
-      <!-- ИСПРАВЛЕНО: ссылка на инструмент SEO с учетом языка -->
-      <a href="/frontend/de/tools/seo/index.html" class="cta-button">📊 SEO prüfen</a>
-
-      <p class="muted">Aktualisiert: 15.09.2025 • Kategorie: SEO</p>
-    </article>
-
-    <div class="social-buttons">
-      <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Auf Telegram abonnieren</a>
-      <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Auf VK abonnieren</a>
     </div>
+    
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     
-    <!-- Скрипты -->
-<script>
-</script>
+
     
-    <!-- Скрипт для управления рекламным баннером -->
+    <div class="note">
+      <strong>:</strong> IndexNow beschleunigt die Indexierung neuer und geänderter Seiten erheblich. In Kombination mit traditionellen Sitemaps ist es ein leistungsstarkes Werkzeug für SEO-Optimierung.
+    </div>
+    
+
+    <a href="/frontend/de/tools/seo/index.html" class="cta-button">📊 SEO prüfen</a>
+
+    <p class="muted">Aktualisiert: 15.09.2025 • Kategorie: SEO</p>
+
+    
+    
+    
+
+<div class="related-articles">
+  <h3>Ähnliche Artikel</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/de/knowledge-base/articles/utm-complete-guide.html">UTM: Vollständige Anleitung</a></li>
+    
+    <li><a href="/frontend/de/knowledge-base/articles/web-development-guide.html">Wie man seine erste Website von Grund auf erstellt - Kompletter Anfängerleitfaden</a></li>
+    
+    <li><a href="/frontend/de/knowledge-base/articles/cookies-complete-guide.html">Was sind Cookies?: Vollständiger Leitfaden zur Verwaltung und Sicherheit</a></li>
+    
+  </ul>
+</div>
+
+
+  </div>
+
+  <div class="social-buttons">
+    <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Auf Telegram abonnieren</a>
+    <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Auf VK abonnieren</a>
+  </div>
+</article>
+
+<button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+<script defer src="/frontend/scripts/article-chrome.js"></script>
+
+<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
 
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">

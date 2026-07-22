@@ -1,34 +1,31 @@
 
 <!DOCTYPE html>
-<html lang="da" dir="ltr">  <!-- ИЗМЕНЕНО: lang → locale -->
+<html lang="da" dir="ltr">
   <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <meta http-equiv="Content-Language" content="da">  <!-- ИЗМЕНЕНО: lang → locale -->
+    <meta http-equiv="Content-Language" content="da">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     
-      <!-- ИЗМЕНЕНО: lang → locale -->
-    
+
     <title>Hvordan man korrekt beregner bilens afskrivning - Komplet guide</title>
     <meta name="description" content="Detaljeret guide til brug af afskrivningsberegneren. Lær hvordan du tager hensyn til alle faktorer og får nøjagtige resultater.">
-    
-    <!-- Open Graph -->
+
     <meta property="og:title" content="Hvordan man korrekt beregner bilens afskrivning - Komplet guide">
     <meta property="og:description" content="Detaljeret guide til brug af afskrivningsberegneren. Lær hvordan du tager hensyn til alle faktorer og får nøjagtige resultater.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/da/knowledge-base/articles/how-to-calculate-depreciation.html">
     <meta property="og:type" content="article">
-    
-    <!-- Twitter -->
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Hvordan man beregner bilens afskrivning">
     <meta name="twitter:description" content="Komplet guide til beregning af afskrivning under hensyntagen til alle faktorer">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/da/knowledge-base/articles/how-to-calculate-depreciation.html" />
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -61,78 +58,84 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    
-    <style>
-      /* ad top adaptive start */
-      /* ad top adaptive end */
-      
-      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f5f5f5; line-height: 1.7; }
-      .article-container { background: #fff; border-radius: 12px; padding: 40px; margin: 20px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-      .article-header { text-align: center; margin-bottom: 40px; padding-bottom: 30px; border-bottom: 2px solid #e9ecef; }
-      .article-title { font-size: 2.5rem; color: #333; margin-bottom: 15px; font-weight: 700; line-height: 1.2; }
-      .article-meta { color: #6c757d; font-size: 1.1rem; margin-bottom: 20px; }
-      .article-category { display: inline-block; padding: 8px 16px; background: #dc3545; color: #fff; border-radius: 20px; font-size: 0.9rem; font-weight: 500; }
-      .article-content { font-size: 1.1rem; color: #333; }
-      .article-content h2 { color: #dc3545; margin-top: 40px; margin-bottom: 20px; font-size: 1.8rem; font-weight: 600; }
-      .article-content h3 { color: #495057; margin-top: 30px; margin-bottom: 15px; font-size: 1.4rem; font-weight: 600; }
-      .article-content p { margin-bottom: 20px; }
-      .article-content ul, .article-content ol { margin-bottom: 20px; padding-left: 25px; }
-      .article-content li { margin-bottom: 10px; }
-      .highlight-box { background: #fdecea; border: 1px solid #f5c6cb; border-radius: 8px; padding: 20px; margin: 25px 0; color: #721c24; }
-      .highlight-box h4 { color: #721c24; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
-      .warning-box { background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 8px; padding: 20px; margin: 25px 0; border-left: 4px solid #ffc107; }
-      .warning-box h4 { color: #856404; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
-      .example-box { background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px; padding: 20px; margin: 25px 0; border-left: 4px solid #6c757d; }
-      .example-box h4 { color: #495057; margin-top: 0; margin-bottom: 15px; font-size: 1.2rem; }
-      .step-list { counter-reset: step-counter; list-style: none; padding: 0; }
-      .step-list li { counter-increment: step-counter; margin-bottom: 25px; padding: 20px; background: #f8f9fa; border-radius: 8px; border-left: 4px solid #dc3545; position: relative; }
-      .step-list li::before { content: counter(step-counter); position: absolute; left: -15px; top: 20px; background: #dc3545; color: #fff; width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.9rem; }
-
-      .faq-list { margin: 24px 0; display: flex; flex-direction: column; gap: 10px; }
-      .faq-item { background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 8px; padding: 12px 16px; }
-      .faq-item summary { cursor: pointer; font-weight: 600; }
-      .faq-item p { margin: 12px 0 4px; }
-
-      .social-subscribe { display: flex; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap; }
-      .tg-btn, .vk-btn { display: inline-block; padding: 10px 20px; border-radius: 25px; color: #fff; font-weight: 600; text-decoration: none; transition: transform .2s ease, box-shadow .2s ease; }
-      .tg-btn { background: #229ED9; }
-      .vk-btn { background: #2787F5; }
-      .tg-btn:hover, .vk-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 14px rgba(0,0,0,.15); }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/depreciation-guide.css">
   </head>
   <body>
-    <style>
-      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
-      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
-    </style>
     
-    <!-- ИЗМЕНЕНО: все lang → locale -->
+    
+    
+    
+    
+    
+    
+    
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Contents</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Contents">
+  <div class="floating-toc__head">
+    <h3>Contents</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
+    
+    <li><a href="#what-is">🎯 Hvad er bilafskrivning</a></li>
+    
+    <li><a href="#factors">📊 Vigtigste afskrivningsfaktorer</a></li>
+    
+    <li><a href="#calculator">🔧 Sådan bruges afskrivningsberegneren</a></li>
+    
+    <li><a href="#tips">💡 Tips til at reducere afskrivning</a></li>
+    
+    <li><a href="#accuracy">⚠️ Hvad påvirker beregningernes nøjagtighed</a></li>
+    
+    <li><a href="#recalc">📈 Hvornår man skal genberegne afskrivning</a></li>
+    
+    <li><a href="#links">🔗 Nyttige links</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
     <nav id="menuContainer" aria-label="Menu"></nav>
-    
-    <div class="article-container">
-      <div class="article-header">
+
+    <article class="article-container" tabindex="0">
+      <header class="article-header">
         <span class="article-category">Vejledning</span>
-        <script async src="https://ad.mail.ru/static/ads-async.js"></script>
         <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
+          <ins class="mrg-tag"
               style="display:inline-block;"
-              data-ad-client="ad-1897960" 
+              data-ad-client="ad-1897960"
               data-ad-slot="1897960">
           </ins>
         </div>
-<h1 class="article-title">Hvordan man korrekt beregner bilens afskrivning</h1>
+        <h1 class="article-title">Hvordan man korrekt beregner bilens afskrivning</h1>
         <div class="article-meta">19. august 2024 • 8 minutters læsning</div>
-      </div>
+      </header>
 
       <div class="article-content">
         <p>Korrekt beregning af bilens afskrivning er en vigtig færdighed for enhver fører. Det vil hjælpe dig med at træffe informerede beslutninger om køb, salg og vedligeholdelse af dit køretøj.</p>
 
-        <h2>🎯 Hvad er bilafskrivning</h2>
+        <h2 id="what-is">🎯 Hvad er bilafskrivning</h2>
         <p>Afskrivning er processen med gradvis værdiforringelse af en bil over tid. Den påvirkes af mange faktorer, som er vigtige at tage hensyn til i beregningerne.</p>
 
-        <h2>📊 Vigtigste afskrivningsfaktorer</h2>
+        <h2 id="factors">📊 Vigtigste afskrivningsfaktorer</h2>
         <ul>
           
           <li><strong>Kørte kilometer:</strong>  Jo flere kilometer bilen har kørt, jo større er slid</li>
@@ -147,8 +150,8 @@
           
         </ul>
 
-        <h2>🔧 Sådan bruges afskrivningsberegneren</h2>
-        
+        <h2 id="calculator">🔧 Sådan bruges afskrivningsberegneren</h2>
+
         <ol class="step-list">
           
           <li>
@@ -171,7 +174,6 @@
         <div class="example-box">
           <h4>📝 Beregningseksempel</h4>
           <p>
-            <!-- ИЗМЕНЕНО: все lang → locale -->
             <strong>Car:</strong> Toyota Camry 2018<br>
             <strong>Mileage:</strong> 150.000 km<br>
             <strong>Conditions:</strong> 70% by, 30% motorvej<br>
@@ -184,7 +186,7 @@
 
         
 
-        <h2>💡 Tips til at reducere afskrivning</h2>
+        <h2 id="tips">💡 Tips til at reducere afskrivning</h2>
         <ul>
           
           <li><strong>Regelmæssig vedligeholdelse:</strong>  Tidsmæssig udskiftning af olie og filtre</li>
@@ -204,7 +206,7 @@
           <p>Kontroller regelmæssigt din bils tilstand og følg en vedligeholdelseslog. Dette vil hjælpe med mere præcist at vurdere faktisk slid og planlægge reparationsomkostninger.</p>
         </div>
 
-        <h2>⚠️ Hvad påvirker beregningernes nøjagtighed</h2>
+        <h2 id="accuracy">⚠️ Hvad påvirker beregningernes nøjagtighed</h2>
         <ul>
           
           <li><strong>Markedsudsving:</strong>  Bilpriser kan ændre sig</li>
@@ -222,7 +224,7 @@
           <p>Beregneren giver et omtrentligt skøn. For præcis bilvurdering anbefales det at kontakte en professionel vurderingsmand eller specialiseret service.</p>
         </div>
 
-        <h2>📈 Hvornår man skal genberegne afskrivning</h2>
+        <h2 id="recalc">📈 Hvornår man skal genberegne afskrivning</h2>
         <ul>
           
           <li>Efter hver vedligeholdelse (for at justere tilstanden)</li>
@@ -237,31 +239,50 @@
 
         
 
-        <h2>🔗 Nyttige links</h2>
+        <h2 id="links">🔗 Nyttige links</h2>
         <ul>
           
-          <!-- ИЗМЕНЕНО: все lang → locale -->
           <li><a href="/frontend/tools/logistics/depreciation-calculator.html">Afskrivningsberegner</a> — our tool for calculations</li>
           
-          <!-- ИЗМЕНЕНО: все lang → locale -->
           <li><a href="/frontend/tools/logistics/fuel-calculator.html">Brændstofforbrugsberegner</a> — our tool for calculations</li>
           
         </ul>
 
         <p>Korrekt afskrivningsberegning vil hjælpe dig med at træffe informerede beslutninger og planlægge dit bilbudget. Brug vores beregner regelmæssigt for at følge ændringer i værdien af dit køretøj.</p>
+
+        
+        
+        
+
+<div class="related-articles">
+  <h3>Related articles</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/da/knowledge-base/articles/how-to-calculate-the-eco-footprint-of-products.html">Sådan beregnes produkters miljømærke - Komplet guide med regnemaskine</a></li>
+    
+    <li><a href="/frontend/da/knowledge-base/articles/utm-complete-guide.html">UTM: Komplet guide</a></li>
+    
+    <li><a href="/frontend/da/knowledge-base/articles/port-forwarding-guide.html">Portvideresendelse: Komplet Guide 2025</a></li>
+    
+  </ul>
+</div>
+
+
       </div>
 
       <div class="social-subscribe">
         <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Abonner på Telegram</a>
         <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Abonner på VK</a>
       </div>
-    </div>
+    </article>
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    
+    <button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
+
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-  
-
+    
+    
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="Luk reklame" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
@@ -276,8 +297,8 @@
   initMobileAnchorAd();
 </script>
 
-
+    
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 
-</body>
+  </body>
 </html>

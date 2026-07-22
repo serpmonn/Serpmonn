@@ -2,34 +2,31 @@
 <!DOCTYPE html>
 <html lang="hu" dir="ltr">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="hu">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     
-    
-    
+
     <title>IndexNow: Gyakorlati implementáció és tippek</title>
     <meta name="description" content="Gyors keresőmotor frissítések: beállítás, csak-módosított, gyakori hibák, összehasonlítás sitemap ping-gel és implementációs ellenőrzőlista.">
     <meta name="keywords" content="IndexNow, SEO, indexelés, keresőmotorok, Bing, Yandex, weboldal frissítések">
-    
-    <!-- Open Graph -->
+
     <meta property="og:title" content="IndexNow: Gyakorlati implementáció és tippek">
     <meta property="og:description" content="Beállítás, csak-módosított mód, hibák és összehasonlítás sitemap ping-gel.">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/hu/knowledge-base/articles/indexnow-practical-guide.html">
     <meta property="og:type" content="article">
-    
-    <!-- Twitter -->
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="IndexNow: Gyakorlati implementáció és tippek">
     <meta name="twitter:description" content="Beállítás, csak-módosított mód, hibák és összehasonlítás sitemap ping-gel.">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="https://serpmonn.ru/frontend/hu/knowledge-base/articles/indexnow-practical-guide.html" />
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -62,246 +59,119 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-
-    <style>
-      body { 
-        max-width: 800px; 
-        margin: 0 auto; 
-        padding: 16px; 
-        font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-        background: #f5f5f5; 
-        line-height: 1.7; 
-      }
-      article { 
-        background: #fff; 
-        border-radius: 12px; 
-        padding: 40px; 
-        margin: 20px auto; 
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-        max-width: 800px; 
-      }
-      .article-header { 
-        text-align: center; 
-        margin-bottom: 30px; 
-        padding-bottom: 20px; 
-        border-bottom: 2px solid #e9ecef; 
-      }
-      .article-title { 
-        font-size: 2.2rem; 
-        color: #333; 
-        margin-bottom: 10px; 
-        font-weight: 700; 
-      }
-      .article-date { 
-        color: #6c757d; 
-        font-size: 1.05rem; 
-        font-weight: 500; 
-      }
-      .summary { 
-        background: #e8f5e8; 
-        border: 1px solid #c3e6c3; 
-        border-radius: 8px; 
-        padding: 16px; 
-        margin: 20px 0; 
-        color: #155724; 
-      }
-      .toc { 
-        background: #f8f9fa; 
-        border: 1px solid #e9ecef; 
-        border-radius: 8px; 
-        padding: 16px; 
-        margin: 20px 0; 
-      }
-      .toc a { 
-        text-decoration: none; 
-      }
-      h2 { 
-        margin-top: 28px; 
-        color: #dc3545;
-      }
-      .code { 
-        background: #f8f9fa; 
-        border: 1px solid #dee2e6; 
-        border-radius: 6px; 
-        padding: 12px; 
-        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; 
-        font-size: .95rem; 
-        overflow-x: auto; 
-        white-space: pre-wrap;
-      }
-      .note { 
-        background: #fff3cd; 
-        border: 1px solid #ffe08a; 
-        border-radius: 8px; 
-        padding: 12px; 
-        margin: 16px 0; 
-        color: #7a5b00; 
-      }
-      .faq { 
-        background: #f8f9fa; 
-        border: 1px solid #e9ecef; 
-        border-radius: 8px; 
-        padding: 16px; 
-      }
-      .faq h3 { 
-        margin: 0 0 10px; 
-      }
-      .muted { 
-        color:#6c757d; 
-      }
-      .breadcrumb { 
-        margin-bottom: 16px; 
-        padding: 8px 0; 
-      }
-      .breadcrumb a {
-        text-decoration: none;
-        color: #007bff;
-      }
-      .breadcrumb a:hover {
-        text-decoration: underline;
-      }
-      .cta-button { 
-        display: block; 
-        text-align: center; 
-        background: linear-gradient(135deg, #28a745 0%, #20c997 100%); 
-        color: white; 
-        border: none; 
-        padding: 15px 30px; 
-        border-radius: 10px; 
-        font-size: 1.1rem; 
-        cursor: pointer; 
-        transition: transform 0.3s ease; 
-        margin: 30px 0; 
-        text-decoration: none; 
-      }
-      .cta-button:hover { 
-        transform: scale(1.02); 
-        text-decoration: none; 
-        color: #fff; 
-      }
-      .section-item {
-        margin-bottom: 10px;
-      }
-      .section-item-title {
-        font-weight: bold;
-      }
-      .social-buttons {
-        display: flex;
-        justify-content: center;
-        gap: 12px;
-        margin-top: 24px;
-        flex-wrap: wrap;
-      }
-      .tg-btn, .vk-btn {
-        display: inline-block;
-        padding: 10px 20px;
-        border-radius: 25px;
-        color: #fff;
-        font-weight: 600;
-        text-decoration: none;
-        transition: transform .2s ease, box-shadow .2s ease;
-      }
-      .tg-btn {
-        background: #229ED9;
-      }
-      .vk-btn {
-        background: #2787F5;
-      }
-      .tg-btn:hover, .vk-btn:hover {
-        transform: translateY(-1px);
-        box-shadow: 0 6px 14px rgba(0,0,0,.15);
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/indexnow-practical-guide.css">
 </head>
 <body>
-    <style>
-      .article-container, .news-container { max-width: 800px; margin-left: auto; margin-right: auto; }
-      .breadcrumb { max-width: 800px; margin-left: auto; margin-right: auto; padding-left: 12px; padding-right: 12px; }
-    </style>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Tartalomjegyzék</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Tartalomjegyzék">
+  <div class="floating-toc__head">
+    <h3>Tartalomjegyzék</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
     
-    <nav id="menuContainer" aria-label=""></nav>
+    <li><a href="#what">Mi az IndexNow</a></li>
     
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      
-        <a href="/hu/">Home</a> →
-        <a href="/frontend/hu/knowledge-base/knowledge-base.html">Knowledge base</a> →
-      
-      <span>IndexNow: Gyakorlati implementáció és tippek</span>
+    <li><a href="#setup">Kulcs beállítás és alapszintű ping</a></li>
+    
+    <li><a href="#changed">Csak-módosított mód: mikor és hogyan</a></li>
+    
+    <li><a href="#compare">IndexNow vs sitemap ping</a></li>
+    
+    <li><a href="#errors">Gyakori hibák</a></li>
+    
+    <li><a href="#faq">GYIK és ellenőrzőlista</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
+<nav id="menuContainer" aria-label=""></nav>
+
+<article class="article-container" tabindex="0">
+  <header class="article-header">
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-1897960"
+          data-ad-slot="1897960">
+      </ins>
+    </div>
+    <h1 class="article-title">IndexNow: Gyakorlati implementáció és tippek</h1>
+    <div class="article-date">2025. szeptember 15. • 5 perc olvasás</div>
+  </header>
+
+  <div class="article-content">
+    <div class="summary">
+      <strong>Miért érdemes elolvasni:</strong> hogyan szállítson gyorsan frissítéseket a keresőmotoroknak, mikor használja a csak-módosított módot, hogyan különbözik az IndexNow a sitemap ping-től és hogyan kerülje el a gyakori hibákat.
     </div>
 
-    <article>
-      <header class="article-header">
-        <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
-              style="display:inline-block;"
-              data-ad-client="ad-1897960" 
-              data-ad-slot="1897960">
-          </ins>
-        </div>
-        <h1 class="article-title">IndexNow: Gyakorlati implementáció és tippek</h1>
-        <div class="article-date">2025. szeptember 15. • 5 perc olvasás</div>
-      </header>
+    
+    <h2 id="what">1) Mi az IndexNow</h2>
 
-      <div class="summary">
-        <strong>Miért érdemes elolvasni:</strong> hogyan szállítson gyorsan frissítéseket a keresőmotoroknak, mikor használja a csak-módosított módot, hogyan különbözik az IndexNow a sitemap ping-től és hogyan kerülje el a gyakori hibákat.
-      </div>
+    
+    <p>Az IndexNow egy protokoll, amely lehetővé teszi, hogy azonnal értesítse a keresőmotorokat az URL változásokról (létrehozás, frissítés, törlés). Támogatja Bing, Yandex, Seznam és más szolgáltatások. Az előny a minimális indexelési késleltetés és kevesebb crawl zaj.</p>
+    
 
-      <div class="toc">
-        <strong>Tartalomjegyzék</strong>
-        <ol>
-          
-          <li><a href="#what">Mi az IndexNow</a></li>
-          
-          <li><a href="#setup">Kulcs beállítás és alapszintű ping</a></li>
-          
-          <li><a href="#changed">Csak-módosított mód: mikor és hogyan</a></li>
-          
-          <li><a href="#compare">IndexNow vs sitemap ping</a></li>
-          
-          <li><a href="#errors">Gyakori hibák</a></li>
-          
-          <li><a href="#faq">GYIK és ellenőrzőlista</a></li>
-          
-        </ol>
-      </div>
+    
 
+    
+
+    
+
+    
+
+    
+
+    
+    <h2 id="setup">2) Kulcs beállítás és alapszintű ping</h2>
+
+    
+
+    
+    <ol>
       
-      <h2 id="what">1) Mi az IndexNow</h2>
+      <li>Generáljon egy kulcsot (GUID) és helyezze el a <code>YOUR_KEY.txt</code> fájlt a webhely gyökerébe (<code>/.well-known/</code> vagy domain gyökér) a kulcs karakterlánccal.</li>
       
+      <li>Pingelje a végpontot az URL és a kulcs segítségével. Példa (egyetlen URL):</li>
       
-      <p>Az IndexNow egy protokoll, amely lehetővé teszi, hogy azonnal értesítse a keresőmotorokat az URL változásokról (létrehozás, frissítés, törlés). Támogatja Bing, Yandex, Seznam és más szolgáltatások. Az előny a minimális indexelési késleltetés és kevesebb crawl zaj.</p>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <h2 id="setup">2) Kulcs beállítás és alapszintű ping</h2>
-      
-      
-      
-      
-      <ol>
-        
-        <li>Generáljon egy kulcsot (GUID) és helyezze el a <code>YOUR_KEY.txt</code> fájlt a webhely gyökerébe (<code>/.well-known/</code> vagy domain gyökér) a kulcs karakterlánccal.</li>
-        
-        <li>Pingelje a végpontot az URL és a kulcs segítségével. Példa (egyetlen URL):</li>
-        
-      </ol>
-      
-      
-      
-      <div class="code">POST https://api.indexnow.org/indexnow
+    </ol>
+    
+
+    
+    <div class="code">POST https://api.indexnow.org/indexnow
 Content-Type: application/json
 
 {
@@ -311,180 +181,195 @@ Content-Type: application/json
     "https://www.serpmonn.ru/frontend/knowledge-base/articles/utm-complete-guide.html"
   ]
 }</div>
+    
+
+    
+
+    
+    <div class="note">Kötegek esetén adjon meg legfeljebb 10 000 URL-t egy kérésben, vagy használjon fájlfolyamot egy változásnapló fájl URL-jével.</div>
+    
+
+    
+
+    
+    <h2 id="changed">3) Csak-módosított mód</h2>
+
+    
+    <p>Az ötlet az, hogy csak azokat a fájlokat pingeljük, amelyek valóban megváltoztak az utolsó commit/üzembe helyezés során. Ez csökkenti a zajt és a kvóta használatot.</p>
+    
+
+    
+
+    
+
+    
       
-      
-      
-      
-      
-      <div class="note">Kötegek esetén adjon meg legfeljebb 10 000 URL-t egy kérésben, vagy használjon fájlfolyamot egy változásnapló fájl URL-jével.</div>
-      
-      
-      
-      
-      
-      <h2 id="changed">3) Csak-módosított mód</h2>
-      
-      
-      <p>Az ötlet az, hogy csak azokat a fájlokat pingeljük, amelyek valóban megváltoztak az utolsó commit/üzembe helyezés során. Ez csökkenti a zajt és a kvóta használatot.</p>
-      
-      
-      
-      
-      
-      
-      
+      <ul>
         
-        <ul>
-          
-          <li>Szerezze meg a módosított útvonalak listáját VCS-ből (git diff) vagy build összetevőkből.</li>
-          
-          <li>Szűrjön nyilvános útvonalak szerint (kivéve <code>node_modules</code>, <code>.git</code>, privát mappákat).</li>
-          
-          <li>Csoportosítson domain/nyelv szerint, hogy elkerülje az irreleváns URL-ek küldését.</li>
-          
-        </ul>
+        <li>Szerezze meg a módosított útvonalak listáját VCS-ből (git diff) vagy build összetevőkből.</li>
         
-      
-      
-      
-      <div class="note">Éles környezetben hasznos lehet egy tartalék: ha a csak-módosított üres (például konfigurációk gyorsjavítása), pingeljen fontos sitemapokat.</div>
-      
-      
-      
-      
-      
-      <h2 id="compare">4) IndexNow vs sitemap ping</h2>
-      
-      
-      
-      
-      
-      
-      
-      
+        <li>Szűrjön nyilvános útvonalak szerint (kivéve <code>node_modules</code>, <code>.git</code>, privát mappákat).</li>
         
-        <ul>
-          
-          <li class="section-item">
-            <span class="section-item-title">Sebesség:</span> Az IndexNow gyorsabban szállítja a frissítéseket, nem vár a crawl ciklusra; a sitemap ping jelzi a sitemap jelenlétét, de nem egy adott URL változását.
-          </li>
-          
-          <li class="section-item">
-            <span class="section-item-title">Zaj:</span> IndexNow - módosított URL-ekre irányul; sitemap - a teljes térkép beolvasása (drágább a crawl költségvetéshez).
-          </li>
-          
-          <li class="section-item">
-            <span class="section-item-title">Megbízhatóság:</span> A sitemap-ok maradnak az alap; az IndexNow kiegészíti és felgyorsítja. Jobb mindkettőt használni.
-          </li>
-          
-        </ul>
+        <li>Csoportosítson domain/nyelv szerint, hogy elkerülje az irreleváns URL-ek küldését.</li>
         
+      </ul>
       
+    
+
+    
+    <div class="note">Éles környezetben hasznos lehet egy tartalék: ha a csak-módosított üres (például konfigurációk gyorsjavítása), pingeljen fontos sitemapokat.</div>
+    
+
+    
+
+    
+    <h2 id="compare">4) IndexNow vs sitemap ping</h2>
+
+    
+
+    
+
+    
+
+    
       
-      
-      
-      
-      
-      
-      <h2 id="errors">5) Gyakori hibák</h2>
-      
-      
-      
-      
-      
-      
-      
-      
+      <ul>
         
-        <ul>
-          
-          <li>A kulcs nem elérhető nyilvános URL-en keresztül, vagy nem egyezik a <code>key</code> paraméterrel.</li>
-          
-          <li>Privát/404 oldalak pingelése, paraméterek kanonicalizáció nélkül.</li>
-          
-          <li>Túl gyakori ismétlődések ugyanazon URL-ek esetén (szabályozza az ismétlődéseket).</li>
-          
-          <li>A többnyelvűség figyelmen kívül hagyása (a megfelelő lokalizált verziót kell pingelni).</li>
-          
-        </ul>
+        <li class="section-item">
+          <span class="section-item-title">Sebesség:</span> Az IndexNow gyorsabban szállítja a frissítéseket, nem vár a crawl ciklusra; a sitemap ping jelzi a sitemap jelenlétét, de nem egy adott URL változását.
+        </li>
         
-      
-      
-      
-      
-      
-      
-      
-      <h2 id="faq">6) GYIK és ellenőrzőlista</h2>
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      
-      <div class="faq">
+        <li class="section-item">
+          <span class="section-item-title">Zaj:</span> IndexNow - módosított URL-ekre irányul; sitemap - a teljes térkép beolvasása (drágább a crawl költségvetéshez).
+        </li>
         
-        <h3>Hány URL-t küldjön egyszerre?</h3>
-        <p>Legfeljebb 10 000 egy kötegben - optimálisan csoportosítson típus/nyelv szerint.</p>
+        <li class="section-item">
+          <span class="section-item-title">Megbízhatóság:</span> A sitemap-ok maradnak az alap; az IndexNow kiegészíti és felgyorsítja. Jobb mindkettőt használni.
+        </li>
         
-        <h3>Kell-e pingelni a törléseket?</h3>
-        <p>Igen - adja át a törölt oldalak URL-jét a deindexálás felgyorsításához.</p>
-        
-        <h3>Hogyan erősítse meg, hogy működik?</h3>
-        <p>API válasz naplók (200/202), crawl csúcsok a szerver naplóiban, új URL-ek gyorsabb megjelenése.</p>
-        
-        
-        
-        <h3></h3>
-        <ul>
-          
-          <li>A kulcs el van helyezve és HTTPS-en keresztül elérhető.</li>
-          
-          <li>Csak-módosított útvonalak gyűjtése CI/CD-ből.</li>
-          
-          <li>Deduplikáció és ismétlődések szabályozása.</li>
-          
-          <li>Tartalék a sitemap ping-re üres köteg esetén.</li>
-          
-        </ul>
-        
-      </div>
+      </ul>
       
+    
+
+    
+
+    
+
+    
+    <h2 id="errors">5) Gyakori hibák</h2>
+
+    
+
+    
+
+    
+
+    
       
+      <ul>
+        
+        <li>A kulcs nem elérhető nyilvános URL-en keresztül, vagy nem egyezik a <code>key</code> paraméterrel.</li>
+        
+        <li>Privát/404 oldalak pingelése, paraméterek kanonicalizáció nélkül.</li>
+        
+        <li>Túl gyakori ismétlődések ugyanazon URL-ek esetén (szabályozza az ismétlődéseket).</li>
+        
+        <li>A többnyelvűség figyelmen kívül hagyása (a megfelelő lokalizált verziót kell pingelni).</li>
+        
+      </ul>
+      
+    
+
+    
+
+    
+
+    
+    <h2 id="faq">6) GYIK és ellenőrzőlista</h2>
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+    <div class="faq">
+      
+      <h3>Hány URL-t küldjön egyszerre?</h3>
+      <p>Legfeljebb 10 000 egy kötegben - optimálisan csoportosítson típus/nyelv szerint.</p>
+      
+      <h3>Kell-e pingelni a törléseket?</h3>
+      <p>Igen - adja át a törölt oldalak URL-jét a deindexálás felgyorsításához.</p>
+      
+      <h3>Hogyan erősítse meg, hogy működik?</h3>
+      <p>API válasz naplók (200/202), crawl csúcsok a szerver naplóiban, új URL-ek gyorsabb megjelenése.</p>
       
 
       
-      <div class="note" style="margin-top: 30px;">
-        <strong>:</strong> Az IndexNow jelentősen felgyorsítja az új és módosított oldalak indexelését. A hagyományos sitemap-okkal kombinálva hatékony eszköz az SEO optimalizáláshoz.
-      </div>
+      <h3></h3>
+      <ul>
+        
+        <li>A kulcs el van helyezve és HTTPS-en keresztül elérhető.</li>
+        
+        <li>Csak-módosított útvonalak gyűjtése CI/CD-ből.</li>
+        
+        <li>Deduplikáció és ismétlődések szabályozása.</li>
+        
+        <li>Tartalék a sitemap ping-re üres köteg esetén.</li>
+        
+      </ul>
       
-
-      <!-- ИСПРАВЛЕНО: ссылка на инструмент SEO с учетом языка -->
-      <a href="/frontend/hu/tools/seo/index.html" class="cta-button">📊 SEO ellenőrzés</a>
-
-      <p class="muted">Frissítve: 2025.09.15 • Kategória: SEO</p>
-    </article>
-
-    <div class="social-buttons">
-      <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Feliratkozás Telegramon</a>
-      <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Feliratkozás VK-n</a>
     </div>
+    
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     
-    <!-- Скрипты -->
-<script>
-</script>
+
     
-    <!-- Скрипт для управления рекламным баннером -->
+    <div class="note">
+      <strong>:</strong> Az IndexNow jelentősen felgyorsítja az új és módosított oldalak indexelését. A hagyományos sitemap-okkal kombinálva hatékony eszköz az SEO optimalizáláshoz.
+    </div>
+    
+
+    <a href="/frontend/hu/tools/seo/index.html" class="cta-button">📊 SEO ellenőrzés</a>
+
+    <p class="muted">Frissítve: 2025.09.15 • Kategória: SEO</p>
+
+    
+    
+    
+
+<div class="related-articles">
+  <h3>Kapcsolódó cikkek</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/hu/knowledge-base/articles/utm-complete-guide.html">UTM: Teljes útmutató</a></li>
+    
+    <li><a href="/frontend/hu/knowledge-base/articles/web-development-guide.html">Jak Stworzyć Pierwszą Stronę Internetową od Podstaw - Kompleksowy Przewodnik dla Początkujących</a></li>
+    
+    <li><a href="/frontend/hu/knowledge-base/articles/cookies-complete-guide.html">Mik a sütik?: Teljes útmutató kezeléshez és biztonsághoz</a></li>
+    
+  </ul>
+</div>
+
+
+  </div>
+
+  <div class="social-buttons">
+    <a class="tg-btn" href="https://t.me/serpmonn" target="_blank" rel="noopener">Feliratkozás Telegramon</a>
+    <a class="vk-btn" href="https://vk.com/serpmonn_site" target="_blank" rel="noopener">Feliratkozás VK-n</a>
+  </div>
+</article>
+
+<button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+<script defer src="/frontend/scripts/article-chrome.js"></script>
+
+<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
 
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">

@@ -1,6 +1,5 @@
 /* /frontend/styles/articles/cookies-guide.css */
 
-/* Основные стили статьи */
 body {
     max-width: 800px;
     margin: 0 auto;
@@ -8,23 +7,23 @@ body {
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     background: #f5f5f5;
     line-height: 1.7;
+    color: var(--article-text, #1f2937);
 }
 
 article {
-    background: #fff;
+    background: var(--article-card, #fff);
     border-radius: 12px;
     padding: 40px;
     margin: 20px auto;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     max-width: 800px;
 }
 
-/* Заголовок статьи */
 .article-header {
     text-align: center;
     margin-bottom: 40px;
     padding-bottom: 30px;
-    border-bottom: 2px solid #e9ecef;
+    border-bottom: 2px solid var(--article-border, #e9ecef);
 }
 
 .article-title {
@@ -44,33 +43,21 @@ article {
 .article-category {
     display: inline-block;
     padding: 8px 16px;
-    background: #28a745;
+    background: var(--article-accent, #e53935);
     color: #fff;
     border-radius: 20px;
     font-size: 0.9rem;
     font-weight: 500;
 }
 
-/* Контент статьи */
 .article-content {
     font-size: 1.15rem;
     color: #333;
     letter-spacing: 0.02em;
 }
 
-.article-content > * {
-    opacity: 0;
-    transform: translateY(20px);
-    transition: opacity 0.5s ease, transform 0.5s ease;
-}
-
-.article-content > .visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
 .article-content h2 {
-    color: #28a745;
+    color: var(--article-accent, #e53935);
     margin: 40px 0 20px;
     font-size: 1.8rem;
     font-weight: 600;
@@ -87,7 +74,8 @@ article {
     margin-bottom: 20px;
 }
 
-.article-content ul, .article-content ol {
+.article-content ul,
+.article-content ol {
     margin-bottom: 20px;
     padding-left: 25px;
 }
@@ -96,7 +84,6 @@ article {
     margin-bottom: 10px;
 }
 
-/* Таблицы для куки */
 .cookies-table {
     width: 100%;
     border-collapse: collapse;
@@ -107,7 +94,7 @@ article {
 }
 
 .cookies-table th {
-    background: #28a745;
+    background: var(--article-accent, #e53935);
     color: #fff;
     padding: 12px;
     text-align: left;
@@ -127,21 +114,19 @@ article {
     background: #f1f3f4;
 }
 
-/* Гайды по браузерам */
 .browser-guide {
     margin: 30px 0;
     padding: 20px;
-    background: #d4edda;
+    background: var(--article-accent-soft, #fdecea);
     border-radius: 8px;
-    border-left: 4px solid #28a745;
+    border-left: 4px solid var(--article-accent, #e53935);
 }
 
 .browser-guide h4 {
     margin-top: 0;
-    color: #155724;
+    color: var(--article-accent-dark, #c62828);
 }
 
-/* Предупреждения и советы */
 .privacy-warning {
     background: #fff3cd;
     border: 1px solid #ffeaa7;
@@ -172,7 +157,6 @@ article {
     font-size: 1.2rem;
 }
 
-/* Примеры кода */
 .code-example {
     background: #f8f9fa;
     border: 1px solid #dee2e6;
@@ -185,7 +169,6 @@ article {
     border-left: 4px solid #6c757d;
 }
 
-/* Списки с шагами */
 .step-list {
     counter-reset: step-counter;
     list-style: none;
@@ -198,7 +181,7 @@ article {
     padding: 20px;
     background: #f8f9fa;
     border-radius: 8px;
-    border-left: 4px solid #28a745;
+    border-left: 4px solid var(--article-accent, #e53935);
     position: relative;
 }
 
@@ -207,7 +190,7 @@ article {
     position: absolute;
     left: -15px;
     top: 20px;
-    background: #28a745;
+    background: var(--article-accent, #e53935);
     color: #fff;
     width: 30px;
     height: 30px;
@@ -219,7 +202,6 @@ article {
     font-size: 0.9rem;
 }
 
-/* Визуальные элементы */
 .visual-guide {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -234,14 +216,17 @@ article {
     background: #f8f9fa;
     border: 2px solid #e9ecef;
 }
-
-.visual-icon {
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-    color: #28a745;
+.visual-item > .tool-icon {
+    width: 48px;
+    height: 48px;
+    margin: 0 auto 12px;
+    color: var(--article-accent, #e53935);
+}
+.visual-item > .tool-icon svg {
+    width: 36px;
+    height: 36px;
 }
 
-/* Чеклисты */
 .checklist {
     list-style: none;
     padding: 0;
@@ -256,68 +241,24 @@ article {
 .checklist input[type="checkbox"] {
     margin-right: 10px;
     margin-top: 4px;
+    accent-color: var(--article-accent, #e53935);
 }
 
-/* Аналогии */
 .analogy-box {
-    background: #e7f3ff;
-    border: 1px solid #b3d9ff;
+    background: var(--article-accent-soft, #fdecea);
+    border: 1px solid #f5c6cb;
     border-radius: 8px;
     padding: 20px;
     margin: 25px 0;
-    border-left: 4px solid #007bff;
+    border-left: 4px solid var(--article-accent, #e53935);
 }
 
 .analogy-box h4 {
-    color: #004085;
+    color: var(--article-accent-dark, #c62828);
     margin: 0 0 15px;
     font-size: 1.2rem;
 }
 
-/* Оглавление */
-.table-of-contents {
-    margin-bottom: 30px;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-.table-of-contents h2 {
-    font-size: 1.5rem;
-    color: #333;
-    margin-bottom: 15px;
-}
-
-.table-of-contents ul {
-    list-style: none;
-    padding: 0;
-}
-
-.table-of-contents li {
-    margin-bottom: 10px;
-}
-
-.table-of-contents a {
-    color: #28a745;
-    text-decoration: none;
-}
-
-.table-of-contents a:hover {
-    text-decoration: underline;
-}
-
-.sticky-toc {
-    position: sticky;
-    top: 20px;
-    max-height: calc(100vh - 40px);
-    overflow-y: auto;
-}
-
-.sticky-toc h2 {
-    margin-top: 0;
-}
-
-/* Рекламные баннеры */
 .ad-top-banner {
     text-align: center;
     margin: 16px 0;
@@ -348,7 +289,6 @@ article {
     overflow: hidden;
 }
 
-/* Социальные кнопки */
 .social-subscribe {
     display: flex;
     justify-content: center;
@@ -357,14 +297,15 @@ article {
     flex-wrap: wrap;
 }
 
-.tg-btn, .vk-btn {
+.tg-btn,
+.vk-btn {
     display: inline-block;
     padding: 10px 20px;
     border-radius: 25px;
     color: #fff;
     font-weight: 600;
     text-decoration: none;
-    transition: transform .2s ease, box-shadow .2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .tg-btn {
@@ -375,246 +316,44 @@ article {
     background: linear-gradient(90deg, #2787F5, #1E6BC0);
 }
 
-.tg-btn:hover, .vk-btn:hover {
+.tg-btn:hover,
+.vk-btn:hover {
     transform: translateY(-1px);
-    box-shadow: 0 6px 14px rgba(0,0,0,.15);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.15);
 }
 
-/* Кнопки "Поделиться" */
 .share-buttons {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
     gap: 12px;
     margin-top: 30px;
-    flex-wrap: wrap;
 }
 
 .share-buttons h3 {
     width: 100%;
     text-align: center;
-    margin-bottom: 15px;
+    margin: 0 0 4px;
+    font-size: 1.1rem;
 }
 
 .share-buttons button {
-    background: linear-gradient(90deg, #28a745, #1e7e34);
+    background: var(--article-accent, #e53935);
     color: #fff;
     border: none;
     padding: 10px 20px;
     border-radius: 25px;
     font-size: 1rem;
     cursor: pointer;
-    transition: transform .2s ease, box-shadow .2s ease;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .share-buttons button:hover {
-    background: linear-gradient(90deg, #1e7e34, #155724);
+    background: var(--article-accent-dark, #c62828);
     transform: translateY(-2px);
 }
 
-/* Комментарии */
-.comments-section {
-    margin-top: 40px;
-    padding: 20px;
-    border-top: 2px solid #e9ecef;
-}
-
-.comment-form {
-    background: #f8f9fa;
-    padding: 20px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 600;
-    color: #333;
-}
-
-.form-group input, .form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #dee2e6;
-    border-radius: 4px;
-    font-family: inherit;
-    font-size: 1rem;
-}
-
-.form-group textarea {
-    min-height: 100px;
-    resize: vertical;
-}
-
-.submit-button {
-    background: #28a745;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: background-color 0.3s;
-}
-
-.submit-button:hover {
-    background: #218838;
-}
-
-.comments-list {
-    margin-top: 30px;
-}
-
-.comment {
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    margin-bottom: 15px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-
-.comment-header {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.comment-author {
-    font-weight: 600;
-    color: #333;
-}
-
-.comment-date {
-    color: #6c757d;
-    font-size: 0.9rem;
-}
-
-.comment-text {
-    color: #333;
-    line-height: 1.5;
-}
-
-.no-comments {
-    text-align: center;
-    color: #6c757d;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-}
-
-/* Прогресс чтения */
-.reading-progress {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 4px;
-    background: #e9ecef;
-    z-index: 10000;
-}
-
-.reading-progress-bar {
-    height: 100%;
-    background: #28a745;
-    width: 0%;
-    transition: width 0.3s ease;
-}
-
-/* Плавающее оглавление */
-.floating-toc {
-    position: fixed;
-    top: 50%;
-    right: 20px;
-    transform: translateY(-50%);
-    background: white;
-    border-radius: 8px;
-    padding: 15px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    max-width: 250px;
-    max-height: 70vh;
-    overflow-y: auto;
-    z-index: 999;
-    display: none;
-}
-
-.floating-toc h3 {
-    margin-top: 0;
-    font-size: 1.2rem;
-    color: #333;
-}
-
-.floating-toc ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.floating-toc li {
-    margin-bottom: 8px;
-}
-
-.floating-toc a {
-    color: #28a745;
-    text-decoration: none;
-    font-size: 0.9rem;
-}
-
-.floating-toc a:hover {
-    text-decoration: underline;
-}
-
-.toc-toggle {
-    position: fixed;
-    top: 100px;
-    right: 20px;
-    background: #28a745;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-}
-
-/* Кнопка "Наверх" */
-.scroll-to-top {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: #28a745;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 50px;
-    height: 50px;
-    font-size: 1.2rem;
-    cursor: pointer;
-    display: none;
-    z-index: 1000;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease;
-}
-
-.scroll-to-top:hover {
-    transform: scale(1.1);
-}
-
-.scroll-to-top.show {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Мобильная реклама */
 .mobile-anchor-ad {
     position: fixed;
     left: 0;
@@ -627,63 +366,44 @@ article {
     pointer-events: none;
 }
 
-/* Адаптивность */
-@media (max-width: 991px) {
-    .floating-toc {
-        display: none !important;
-    }
-    
-    .toc-toggle {
-        display: none !important;
-    }
-    
-    .article-title {
-        font-size: 2rem;
-    }
-    
-    article {
-        padding: 20px;
-        margin: 10px auto;
-    }
-    
-    .visual-guide {
-        grid-template-columns: 1fr;
-    }
-}
-
 @media (max-width: 768px) {
     body {
         padding: 8px;
     }
-    
+
+    article {
+        padding: 20px;
+        margin: 10px auto;
+    }
+
     .article-title {
         font-size: 1.8rem;
     }
-    
+
     .article-content h2 {
         font-size: 1.5rem;
     }
-    
+
     .article-content h3 {
         font-size: 1.2rem;
     }
-    
-    .table-of-contents {
-        position: static !important;
-        max-height: none;
+
+    .visual-guide {
+        grid-template-columns: 1fr;
     }
-    
+
     .share-buttons {
         flex-direction: column;
         align-items: center;
     }
-    
+
     .social-subscribe {
         flex-direction: column;
         align-items: center;
     }
-    
-    .tg-btn, .vk-btn {
+
+    .tg-btn,
+    .vk-btn {
         width: 100%;
         max-width: 300px;
         text-align: center;
@@ -694,21 +414,21 @@ article {
     .article-title {
         font-size: 1.5rem;
     }
-    
+
     .article-header {
         margin-bottom: 20px;
         padding-bottom: 20px;
     }
-    
+
     .cookies-table {
         font-size: 0.9rem;
     }
-    
+
     .cookies-table th,
     .cookies-table td {
         padding: 8px;
     }
-    
+
     .step-list li::before {
         left: -12px;
         width: 24px;

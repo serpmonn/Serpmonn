@@ -263,59 +263,68 @@
   <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/web-development-guide.css">
 </head>
 <body>
-    <div class="reading-progress">
-        <div class="reading-progress-bar"></div>
-    </div>
     
-    <button class="toc-toggle" onclick="toggleFloatingToc()">
-        <i class="fas fa-list"></i>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">목차</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="목차">
+  <div class="floating-toc__head">
+    <h3>목차</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
     </button>
+  </div>
+  <ul>
     
-    <div class="floating-toc">
-        <h3>목차</h3>
-        <ul>
-            
-            <li><a href="#section-goals">학습 내용</a></li>
-            
-            <li><a href="#section-tools">필요한 도구</a></li>
-            
-            <li><a href="#section-guide">단계별 가이드</a></li>
-            
-            <li><a href="#section-modern-tools">현대적 도구</a></li>
-            
-            <li><a href="#section-faq">자주 묻는 질문</a></li>
-            
-            <li><a href="#section-resources">유용한 자료</a></li>
-            
-        </ul>
-    </div>
+    <li><a href="#section-goals">학습 내용</a></li>
     
+    <li><a href="#section-tools">필요한 도구</a></li>
+    
+    <li><a href="#section-guide">단계별 가이드</a></li>
+    
+    <li><a href="#section-modern-tools">현대적 도구</a></li>
+    
+    <li><a href="#section-faq">자주 묻는 질문</a></li>
+    
+    <li><a href="#section-resources">유용한 자료</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
     <div id="menuContainer"></div>
+    
     <article class="article-container" tabindex="0">
         <header class="article-header">
             <span class="article-category">개발</span>
-            <div class="table-of-contents sticky-toc">
-                <h2>목차</h2>
-                <ul>
-                    
-                    <li><a href="#section-goals">학습 내용</a></li>
-                    
-                    <li><a href="#section-tools">필요한 도구</a></li>
-                    
-                    <li><a href="#section-guide">단계별 가이드</a></li>
-                    
-                    <li><a href="#section-modern-tools">현대적 도구</a></li>
-                    
-                    <li><a href="#section-faq">자주 묻는 질문</a></li>
-                    
-                    <li><a href="#section-resources">유용한 자료</a></li>
-                    
-                </ul>
-            </div>
             <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
             </div>
@@ -326,7 +335,7 @@
         <div class="article-content">
             <p>웹사이트 만들기는 초보자에게는 어려운 작업처럼 보일 수 있지만, 실제로는 모두가 접근할 수 있는 흥미로운 과정입니다. 이 가이드에서는 아이디어에서 작동하는 사이트까지의 전체 과정을 거칠 것입니다.</p>
 
-            <h2 id="section-goals">🎯 학습 내용</h2>
+            <h2 id="section-goals">학습 내용</h2>
             <ul>
                 
                 <li>HTML, CSS 및 JavaScript 기초</li>
@@ -339,47 +348,71 @@
                 
             </ul>
 
-            <h2 id="section-tools">📋 필요한 도구</h2>
+            <h2 id="section-tools">필요한 도구</h2>
             <div class="tech-grid">
                 
                 <div class="tech-card">
-                    <span class="tech-icon">💻</span>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-5 6 5 6"/><path d="M16 6l5 6-5 6"/></svg>
+</span>
+
                     <h4>텍스트 편집기</h4>
                     <p>VS Code, Sublime Text 또는 Notepad++</p>
                 </div>
                 
                 <div class="tech-card">
-                    <span class="tech-icon">🌐</span>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+</span>
+
                     <h4>브라우저</h4>
                     <p>Chrome, Firefox 또는 Safari</p>
                 </div>
                 
                 <div class="tech-card">
-                    <span class="tech-icon">📁</span>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+</span>
+
                     <h4>파일 관리자</h4>
                     <p>프로젝트 조직을 위해</p>
                 </div>
                 
             </div>
 
-            <h2 id="section-guide">🚀 단계별 가이드</h2>
+            <h2 id="section-guide">단계별 가이드</h2>
             
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-pencil-alt"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+</span>
+
                     <h3>계획</h3>
                     <p>목표와 사이트 구조를 정의하세요</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-code"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 6l-5 6 5 6"/><path d="M16 6l5 6-5 6"/></svg>
+</span>
+
                     <h3>개발</h3>
                     <p>HTML, CSS 및 JavaScript를 만드세요</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-rocket"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3c3 3 4 7 4 10l-4 4-4-4c0-3 1-7 4-10z"/><path d="M9 17l-2 4"/><path d="M15 17l2 4"/><circle cx="12" cy="10" r="1.5"/></svg>
+</span>
+
                     <h3>게시</h3>
                     <p>인터넷에 사이트를 게시하세요</p>
                 </div>
@@ -529,11 +562,11 @@ p {
             </ol>
 
             <div class="highlight-box">
-                <h4>💡 초보자를 위한 팁</h4>
+                <h4>초보자를 위한 팁</h4>
                 <p>즉시 복잡한 사이트를 만들려고 하지 마세요. 간단한 한 페이지 사이트로 시작해서 점차 새로운 기능을 추가하세요.</p>
             </div>
 
-            <h2 id="section-modern-tools">🔧 현대적 도구</h2>
+            <h2 id="section-modern-tools">현대적 도구</h2>
             <p>더 고급 개발을 위해 다음을 고려하세요:</p>
             <ul>
                 
@@ -548,42 +581,27 @@ p {
             </ul>
 
             <div class="warning-box">
-                <h4>⚠️ 기억할 중요한 점</h4>
+                <h4>️ 기억할 중요한 점</h4>
                 <p>웹 개발은 끊임없이 발전하고 있습니다. 새로운 기술을 배우고 산업 동향을 따라갈 준비를 하세요.</p>
             </div>
 
-            <h2 id="section-faq">❓ 자주 묻는 질문</h2>
+            <h2 id="section-faq">자주 묻는 질문</h2>
             
             
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    첫 웹사이트를 만드는 데 얼마나 걸리나요?
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>간단한 명함 사이트의 경우 몇 시간 또는 며칠이면 충분할 수 있습니다. 더 복잡한 프로젝트는 복잡성과 할애하는 시간에 따라 몇 주 또는 몇 달이 걸릴 수 있습니다.</p>
-                </div>
-            </div>
+            <details class="faq-item">
+                <summary>첫 웹사이트를 만드는 데 얼마나 걸리나요?</summary>
+                <p>간단한 명함 사이트의 경우 몇 시간 또는 며칠이면 충분할 수 있습니다. 더 복잡한 프로젝트는 복잡성과 할애하는 시간에 따라 몇 주 또는 몇 달이 걸릴 수 있습니다.</p>
+            </details>
             
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    웹 개발을 위해 수학을 알아야 하나요?
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>대부분의 웹 프로젝트에는 고급 수학이 필요하지 않습니다. 필요한 주요 기술은 논리적 사고와 문제 해결입니다.</p>
-                </div>
-            </div>
+            <details class="faq-item">
+                <summary>웹 개발을 위해 수학을 알아야 하나요?</summary>
+                <p>대부분의 웹 프로젝트에는 고급 수학이 필요하지 않습니다. 필요한 주요 기술은 논리적 사고와 문제 해결입니다.</p>
+            </details>
             
-            <div class="faq-item">
-                <div class="faq-question" onclick="toggleFaq(this)">
-                    먼저 어떤 프로그래밍 언어를 배우는 것이 가장 좋나요?
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-                <div class="faq-answer">
-                    <p>HTML과 CSS는 웹의 기초이며 먼저 배워야 합니다. 그런 다음 사이트에 상호작용성을 추가하는 JavaScript로 넘어가는 것이 좋습니다.</p>
-                </div>
-            </div>
+            <details class="faq-item">
+                <summary>먼저 어떤 프로그래밍 언어를 배우는 것이 가장 좋나요?</summary>
+                <p>HTML과 CSS는 웹의 기초이며 먼저 배워야 합니다. 그런 다음 사이트에 상호작용성을 추가하는 JavaScript로 넘어가는 것이 좋습니다.</p>
+            </details>
             
 
             <h3>자가 점검 목록</h3>
@@ -616,7 +634,7 @@ p {
                 
             </ul>
 
-            <h2 id="section-resources">📚 유용한 자료</h2>
+            <h2 id="section-resources">유용한 자료</h2>
             <ul>
                 
                 <li><a href="https://developer.mozilla.org/ko/" target="_blank" rel="noopener">MDN Web Docs (한국어)</a> — 훌륭한 문서</li>
@@ -631,31 +649,29 @@ p {
 
             <p>웹사이트 만들기는 많은 기쁨과 새로운 기회를 가져다 줄 수 있는 창의적인 과정입니다. 실험하고 실수로부터 배우는 것을 두려워하지 마세요!</p>
 
+            
+            
+            
+
+<div class="related-articles">
+  <h3>관련 기사</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/ko/knowledge-base/articles/cookies-complete-guide.html">쿠키란 무엇인가?: 완벽한 관리 및 보안 가이드</a></li>
+    
+    <li><a href="/frontend/ko/knowledge-base/articles/json-formatter-guide.html">JSON formatter: why you need it</a></li>
+    
+    <li><a href="/frontend/ko/knowledge-base/articles/web-tech-trends-2024.html">2025년 웹 기술 트렌드 — 개발자가 알아야 할 것</a></li>
+    
+  </ul>
+</div>
+
+
+
             <div class="share-buttons">
                 <h3>기사 공유</h3>
-                <button onclick="share('telegram')" aria-label="Telegram에서 공유">Telegram</button>
-                <button onclick="share('vk')" aria-label="VKontakte에서 공유">VKontakte</button>
-            </div>
-
-            <div class="comments-section">
-                <h2>댓글</h2>
-                <div class="comment-form">
-                    <h3>피드백을 남겨주세요</h3>
-                    <form id="commentForm">
-                        <div class="form-group">
-                            <label for="commentName">이름:</label>
-                            <input type="text" id="commentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="commentText">댓글:</label>
-                            <textarea id="commentText" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">제출</button>
-                    </form>
-                </div>
-                <div id="commentsList" class="comments-list">
-                    <!-- Комментарии будут загружены здесь -->
-                </div>
+                <button type="button" onclick="serpmonnShare('telegram')" aria-label="Telegram에서 공유">Telegram</button>
+                <button type="button" onclick="serpmonnShare('vk')" aria-label="VKontakte에서 공유">VKontakte</button>
             </div>
         </div>
 
@@ -668,143 +684,20 @@ p {
     <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="맨 위로 돌아가기">↑ 위로</button>
 
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    
-    <script>
-        // Локализованные строки для JavaScript
-        const localeTexts = {
-            noComments: "아직 댓글이 없습니다. 첫 번째가 되어보세요!",
-            commentSaved: "댓글이 성공적으로 저장되었습니다!",
-            error: "오류"
-        };
-        
-        // Функции для работы с комментариями
-        function saveComment(name, text) {
-            const comment = {
-                name: name,
-                text: text,
-                date: new Date().toLocaleString('ko')
-            };
-            
-            let comments = JSON.parse(localStorage.getItem('articleComments_ko')) || [];
-            comments.push(comment);
-            localStorage.setItem('articleComments_ko', JSON.stringify(comments));
-            
-            return comment;
-        }
-        
-        function loadComments() {
-            const comments = JSON.parse(localStorage.getItem('articleComments_ko')) || [];
-            const commentsList = document.getElementById('commentsList');
-            
-            if (comments.length === 0) {
-                commentsList.innerHTML = '<div class="no-comments">' + localeTexts.noComments + '</div>';
-                return;
-            }
-            
-            commentsList.innerHTML = comments.map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">${escapeHtml(comment.name)}</span>
-                        <span class="comment-date">${escapeHtml(comment.date)}</span>
-                    </div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Основные функции
-        function toggleFloatingToc() {
-            const floatingToc = document.querySelector('.floating-toc');
-            floatingToc.style.display = floatingToc.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        function share(network) {
-            const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent(document.title);
-            const shareUrls = {
-                telegram: `https://t.me/share/url?url=${url}&text=${title}`,
-                vk: `https://vk.com/share.php?url=${url}&title=${title}`
-            };
-            window.open(shareUrls[network], '_blank');
-        }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Загрузка комментариев
-            loadComments();
-            
-            // Обработка формы комментариев
-            document.getElementById('commentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nameInput = document.getElementById('commentName');
-                const textInput = document.getElementById('commentText');
-                
-                const name = nameInput.value.trim();
-                const text = textInput.value.trim();
-                
-                if (name && text) {
-                    saveComment(name, text);
-                    loadComments();
-                    
-                    // Очистка формы
-                    nameInput.value = '';
-                    textInput.value = '';
-                    
-                    // Показать сообщение об успехе
-                    alert(localeTexts.commentSaved);
-                }
-            });
-            
-            // Анимация появления контента
-            const contentObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.article-content > *').forEach(el => contentObserver.observe(el));
-            
-            // Кнопка "Наверх"
-            window.addEventListener('scroll', () => {
-                const button = document.querySelector('.scroll-to-top');
-                button.classList.toggle('show', window.scrollY > 300);
-            });
-            
-            // Прогресс чтения
-            const progressBar = document.querySelector('.reading-progress-bar');
-            window.addEventListener('scroll', () => {
-                const windowHeight = window.innerHeight;
-                const documentHeight = document.documentElement.scrollHeight;
-                const scrollTop = window.scrollY;
-                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
-                progressBar.style.width = `${progress}%`;
-            });
-            
-            // Показывать плавающее оглавление на десктопах
-            if (window.innerWidth > 991) {
-                document.querySelector('.floating-toc').style.display = 'block';
-            }
-            
-        });
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
 
-        // Функция для интерактивного редактора
+    <script>
+        const localeTexts = {
+            error: "Error"
+        };
+
         function runCode(button) {
             const editor = button.closest('.interactive-editor');
             const codeArea = editor.querySelector('.code-textarea');
             const previewArea = editor.querySelector('.preview-area');
-            
+
             try {
                 if (editor.classList.contains('html-editor')) {
-                    // Песочница: HTML из редактора не исполняется в родительской странице
                     previewArea.replaceChildren();
                     const frame = document.createElement('iframe');
                     frame.setAttribute('sandbox', '');
@@ -825,15 +718,6 @@ p {
             } catch (error) {
                 previewArea.textContent = `${localeTexts.error}: ${error.message}`;
             }
-        }
-        
-        // Функция для переключения FAQ
-        function toggleFaq(element) {
-            const answer = element.nextElementSibling;
-            answer.classList.toggle('show');
-            const icon = element.querySelector('i');
-            icon.classList.toggle('fa-chevron-down');
-            icon.classList.toggle('fa-chevron-up');
         }
     </script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>

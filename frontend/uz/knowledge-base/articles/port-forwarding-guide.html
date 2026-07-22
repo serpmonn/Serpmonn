@@ -32,7 +32,7 @@
       "description": "Oʻyinlar, serverlar va masofaviy kirish uchun port yoʻnaltirishni sozlash uchun bosqichma-bosqich qoʻllanma. Barcha mashhur routerlar uchun ko&#39;rsatmalar.",
       "image": "https://serpmonn.ru/frontend/images/Banner_Serpmonn.png",
       "datePublished": "2025-10-29",
-      "dateModified": "2026-07-16",
+      "dateModified": "2026-07-22",
       "inLanguage": "uz",
       "url": "https://serpmonn.ru/frontend/uz/knowledge-base/articles/port-forwarding-guide.html",
       "mainEntityOfPage": {
@@ -265,20 +265,27 @@
   <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="/frontend/styles/articles/port-forwarding.css">
 </head>
 <body>
-    <div class="reading-progress">
+    <div class="reading-progress" aria-hidden="true">
         <div class="reading-progress-bar"></div>
     </div>
-    
-    <button class="toc-toggle" onclick="toggleFloatingToc()">
-        <i class="fas fa-list"></i>
+
+    <button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+            <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+        </svg>
+        <span class="visually-hidden">Mundarija</span>
     </button>
-    
-    <div class="floating-toc">
-        <h3>Mundarija</h3>
+
+    <nav class="floating-toc" id="floatingToc" aria-label="Mundarija">
+        <div class="floating-toc__head">
+            <h3>Mundarija</h3>
+            <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+                <span aria-hidden="true">×</span>
+            </button>
+        </div>
         <ul>
             <li><a href="#section-what-is">Port yo&#39;naltirish nima</a></li>
             <li><a href="#section-why-need">Nega kerak</a></li>
@@ -291,27 +298,13 @@
             
             
         </ul>
-    </div>
-    
+    </nav>
+    <div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
     <div id="menuContainer"></div>
     <article class="article-container" tabindex="0">
         <header class="article-header">
             <span class="article-category">Tarmoq</span>
-            <div class="table-of-contents sticky-toc">
-                <h2>Mundarija</h2>
-                <ul>
-                    <li><a href="#section-what-is">Port yo&#39;naltirish nima</a></li>
-                    <li><a href="#section-why-need">Nega kerak</a></li>
-                    <li><a href="#section-preparation">Tayyorgarlik</a></li>
-                    <li><a href="#section-step-by-step">Bosqichma-bosqich ko&#39;rsatmalar</a></li>
-                    <li><a href="#section-routers">Router&#39;lar uchun ko&#39;rsatmalar</a></li>
-                    <li><a href="#section-verification">Ishlashni tekshirish</a></li>
-                    <li><a href="#section-troubleshooting">Muammolarni hal qilish</a></li>
-                    <li><a href="#section-security">Xavfsizlik</a></li>
-                    
-                    
-                </ul>
-            </div>
             <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
             </div>
@@ -327,17 +320,23 @@
             
             <div class="visual-guide">
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-globe"></i></div>
+                    <div class="visual-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+                    </div>
                     <h3>Internet</h3>
                     <p>Tashqi so&#39;rovlar router&#39;ingizga keladi</p>
                 </div>
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-router"></i></div>
+                    <div class="visual-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 16h16v3H4z"/><path d="M7 16V9"/><path d="M12 16V7"/><path d="M17 16V9"/><path d="M8 5c2-2 6-2 8 0"/></svg>
+                    </div>
                     <h3>Router</h3>
                     <p>So&#39;rovlarni kerakli qurilmaga yo&#39;naltiradi</p>
                 </div>
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-desktop"></i></div>
+                    <div class="visual-icon" aria-hidden="true">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8"/><path d="M12 16v4"/></svg>
+                    </div>
                     <h3>Sizning Qurilmangiz</h3>
                     <p>So&#39;rovlarni qabul qiladi va qayta ishlaydi</p>
                 </div>
@@ -924,31 +923,25 @@ nmap -p port TASHQI-IP</code></pre>
 
             
 
+            
+            <div class="related-articles">
+                <h3>Tegishli Maqolalar</h3>
+                <ul class="related-links">
+                    
+                    <li><a href="/frontend/uz/knowledge-base/articles/cookies-complete-guide.html">Cookie fayllari nima?: Boshqaruv va xavfsizlik uchun to&#39;liq qo&#39;llanma</a></li>
+                    
+                    <li><a href="/frontend/uz/knowledge-base/articles/web-development-guide.html">Birinchi Veb-saytingizni Qanday Yaratasiz</a></li>
+                    
+                    <li><a href="/frontend/uz/knowledge-base/articles/utm-complete-guide.html">UTM: Toʻliq qoʻllanma</a></li>
+                    
+                </ul>
+            </div>
+            
+
             <div class="share-buttons">
                 <h3>Maqolani ulashish</h3>
-                <button onclick="share('telegram')" aria-label="">Telegram</button>
-                <button onclick="share('vk')" aria-label="">VK</button>
-            </div>
-
-            <div class="comments-section">
-                <h2>Sharhlar</h2>
-                <div class="comment-form">
-                    <h3>Fikringizni qoldiring</h3>
-                    <form id="commentForm">
-                        <div class="form-group">
-                            <label for="commentName">Ismingiz:</label>
-                            <input type="text" id="commentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="commentText">Sharhingiz:</label>
-                            <textarea id="commentText" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">Yuborish</button>
-                    </form>
-                </div>
-                <div id="commentsList" class="comments-list">
-                    <!-- Комментарии будут загружены здесь -->
-                </div>
+                <button type="button" onclick="share('telegram')" aria-label="">Telegram</button>
+                <button type="button" onclick="share('vk')" aria-label="">VK</button>
             </div>
         </div>
 
@@ -958,58 +951,11 @@ nmap -p port TASHQI-IP</code></pre>
         </div>
     </article>
 
-    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="">↑ Yuqoriga</button>
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑ Yuqoriga">↑ Yuqoriga</button>
 
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    
+
     <script>
-        // Функции для работы с комментариями
-        function saveComment(name, text) {
-            const comment = {
-                name: name,
-                text: text,
-                date: new Date().toLocaleString('uz')
-            };
-            
-            let comments = JSON.parse(localStorage.getItem('articleComments_uz')) || [];
-            comments.push(comment);
-            localStorage.setItem('articleComments_uz', JSON.stringify(comments));
-            
-            return comment;
-        }
-        
-        function loadComments() {
-            const comments = JSON.parse(localStorage.getItem('articleComments_uz')) || [];
-            const commentsList = document.getElementById('commentsList');
-            
-            if (comments.length === 0) {
-                commentsList.innerHTML = '<div class="no-comments">Hali sharhlar yo&#39;q. Birinchi sharh qoldiruvchi bo&#39;ling!</div>';
-                return;
-            }
-            
-            commentsList.innerHTML = comments.map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">${escapeHtml(comment.name)}</span>
-                        <span class="comment-date">${escapeHtml(comment.date)}</span>
-                    </div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Основные функции
-        function toggleFloatingToc() {
-            const floatingToc = document.querySelector('.floating-toc');
-            floatingToc.style.display = floatingToc.style.display === 'block' ? 'none' : 'block';
-        }
-        
         function share(network) {
             const url = encodeURIComponent(window.location.href);
             const title = encodeURIComponent(document.title);
@@ -1017,66 +963,80 @@ nmap -p port TASHQI-IP</code></pre>
                 telegram: `https://t.me/share/url?url=${url}&text=${title}`,
                 vk: `https://vk.com/share.php?url=${url}&title=${title}`
             };
-            window.open(shareUrls[network], '_blank');
+            window.open(shareUrls[network], '_blank', 'noopener');
         }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Загрузка комментариев
-            loadComments();
-            
-            // Обработка формы комментариев
-            document.getElementById('commentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nameInput = document.getElementById('commentName');
-                const textInput = document.getElementById('commentText');
-                
-                const name = nameInput.value.trim();
-                const text = textInput.value.trim();
-                
-                if (name && text) {
-                    saveComment(name, text);
-                    loadComments();
-                    
-                    // Очистка формы
-                    nameInput.value = '';
-                    textInput.value = '';
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const toc = document.getElementById('floatingToc');
+            const tocToggle = document.getElementById('tocToggle');
+            const tocClose = document.getElementById('tocClose');
+            const tocBackdrop = document.getElementById('tocBackdrop');
+            const tocLinks = Array.from(toc.querySelectorAll('a[href^="#"]'));
+            const sections = tocLinks
+                .map((link) => document.querySelector(link.getAttribute('href')))
+                .filter(Boolean);
+
+            function isDesktop() {
+                return window.matchMedia('(min-width: 1100px)').matches;
+            }
+
+            function setTocOpen(open) {
+                document.body.classList.toggle('toc-open', open);
+                tocToggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+                tocBackdrop.hidden = !open || isDesktop();
+            }
+
+            function syncDesktopToc() {
+                if (isDesktop()) {
+                    setTocOpen(true);
+                    tocBackdrop.hidden = true;
+                } else {
+                    setTocOpen(false);
                 }
+            }
+
+            tocToggle.addEventListener('click', () => {
+                setTocOpen(!document.body.classList.contains('toc-open'));
             });
-            
-            // Анимация появления контента
+            tocClose.addEventListener('click', () => setTocOpen(false));
+            tocBackdrop.addEventListener('click', () => setTocOpen(false));
+            tocLinks.forEach((link) => {
+                link.addEventListener('click', () => {
+                    if (!isDesktop()) setTocOpen(false);
+                });
+            });
+
             const contentObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting) entry.target.classList.add('visible');
                 });
             }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.article-content > *').forEach(el => contentObserver.observe(el));
-            
-            // Кнопка "Наверх"
-            window.addEventListener('scroll', () => {
-                const button = document.querySelector('.scroll-to-top');
-                button.classList.toggle('show', window.scrollY > 300);
-            });
-            
-            // Прогресс чтения
+            document.querySelectorAll('.article-content > *').forEach((el) => contentObserver.observe(el));
+
             const progressBar = document.querySelector('.reading-progress-bar');
-            window.addEventListener('scroll', () => {
+            const scrollTopBtn = document.querySelector('.scroll-to-top');
+
+            function onScroll() {
                 const windowHeight = window.innerHeight;
                 const documentHeight = document.documentElement.scrollHeight;
                 const scrollTop = window.scrollY;
-                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
-                progressBar.style.width = `${progress}%`;
-            });
-            
-            // Показывать плавающее оглавление на десктопах
-            if (window.innerWidth > 991) {
-                document.querySelector('.floating-toc').style.display = 'block';
+                const denom = Math.max(documentHeight - windowHeight, 1);
+                progressBar.style.width = `${(scrollTop / denom) * 100}%`;
+                scrollTopBtn.classList.toggle('show', scrollTop > 300);
+
+                let current = sections[0];
+                for (const section of sections) {
+                    if (section.getBoundingClientRect().top <= 120) current = section;
+                }
+                tocLinks.forEach((link) => {
+                    link.classList.toggle('is-active', current && link.getAttribute('href') === `#${current.id}`);
+                });
             }
-            
+
+            window.addEventListener('scroll', onScroll, { passive: true });
+            window.addEventListener('resize', syncDesktopToc);
+            syncDesktopToc();
+            onScroll();
         });
     </script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
@@ -1084,7 +1044,7 @@ nmap -p port TASHQI-IP</code></pre>
 
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
-    <button type="button" aria-label="" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+    <button type="button" aria-label="✕" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
     <ins class="mrg-tag"
         style="display:inline-block;width:320px;height:50px"
         data-ad-client="ad-"

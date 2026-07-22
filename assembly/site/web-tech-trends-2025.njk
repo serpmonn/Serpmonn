@@ -14,6 +14,7 @@ eleventyComputed:
 <!DOCTYPE html>
 <html lang="{{ locale }}" dir="{{ dir }}">
   <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="{{ locale }}">
     <meta charset="UTF-8">
@@ -21,20 +22,17 @@ eleventyComputed:
     <title>{{ title }}</title>
     <meta name="description" content="{{ description }}">
     
-    <!-- Open Graph -->
     <meta property="og:title" content="{{ webTechTrends2025[locale].meta.ogTitle }}">
     <meta property="og:description" content="{{ webTechTrends2025[locale].meta.ogDescription }}">
     <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
     
-    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ webTechTrends2025[locale].meta.twitterTitle }}">
     <meta name="twitter:description" content="{{ webTechTrends2025[locale].meta.twitterDescription }}">
     <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -65,7 +63,6 @@ eleventyComputed:
     }
     </script>
 
-    <!-- JSON-LD: BreadcrumbList -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -81,38 +78,51 @@ eleventyComputed:
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <!-- Подключаем стили для статьи "Тренды веб-технологий 2025 года" -->
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/web-tech-trends-2025.css">
   </head>
   <body>
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      <a href="{{ site.baseUrl }}/">{{ webTechTrends2025[locale].breadcrumbs.home }}</a> → 
-      <a href="{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html">{{ webTechTrends2025[locale].breadcrumbs.news }}</a> → 
-      <span>{{ webTechTrends2025[locale].breadcrumbs.current }}</span>
-    </div>
+    {% set tocTitle = locale | articleTocTitle %}
+    {% set tocItems = [
+      { href: '#section-ai', label: webTechTrends2025[locale].sections.ai.title },
+      { href: '#section-wasm', label: webTechTrends2025[locale].sections.wasm.title },
+      { href: '#section-css', label: webTechTrends2025[locale].sections.css.title },
+      { href: '#section-js', label: webTechTrends2025[locale].sections.js.title },
+      { href: '#section-pwa', label: webTechTrends2025[locale].sections.pwa.title },
+      { href: '#section-web-standards', label: webTechTrends2025[locale].sections.webStandards.title },
+      { href: '#section-frameworks', label: webTechTrends2025[locale].sections.frameworks.title },
+      { href: '#section-security', label: webTechTrends2025[locale].sections.security.title },
+      { href: '#section-performance', label: webTechTrends2025[locale].sections.performance.title },
+      { href: '#section-ecology', label: webTechTrends2025[locale].sections.ecology.title },
+      { href: '#section-future', label: webTechTrends2025[locale].sections.future.title },
+      { href: '#section-recommendations', label: webTechTrends2025[locale].sections.recommendations.title },
+      { href: '#section-resources', label: webTechTrends2025[locale].sections.resources.title },
+      { href: '#section-conclusion', label: webTechTrends2025[locale].sections.conclusion.title }
+    ] %}
+    {% include "partials/article-floating-toc.njk" %}
+    {% from "partials/tool-icons.njk" import toolIcon %}
 
-    <div class="article-container">
-      <!-- Заголовок статьи -->
-      <div class="article-header">
+    <div id="menuContainer"></div>
+
+    <article class="article-container" tabindex="0">
+      <header class="article-header">
+        <span class="article-category">{{ webTechTrends2025[locale].article.category }}</span>
         <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
+          <ins class="mrg-tag"
               style="display:inline-block;"
-              data-ad-client="ad-{{ mailAds.slots.top.id }}" 
+              data-ad-client="ad-{{ mailAds.slots.top.id }}"
               data-ad-slot="{{ mailAds.slots.top.id }}">
           </ins>
         </div>
         <h1 class="article-title">{{ webTechTrends2025[locale].article.title }}</h1>
         <div class="article-meta">
-          <span>{{ webTechTrends2025[locale].article.date }}</span> • 
-          <span>{{ webTechTrends2025[locale].article.readTime }}</span> • 
-          <span class="article-category">{{ webTechTrends2025[locale].article.category }}</span>
+          <span>{{ webTechTrends2025[locale].article.date }}</span> •
+          <span>{{ webTechTrends2025[locale].article.readTime }}</span>
         </div>
-      </div>
+      </header>
 
-      <!-- Содержание статьи -->
       <div class="article-content">
         <p>{{ webTechTrends2025[locale].article.intro }}</p>
 
@@ -121,10 +131,10 @@ eleventyComputed:
           <p>{{ webTechTrends2025[locale].sections.whyImportant.description }}</p>
         </div>
 
-        <h2>{{ webTechTrends2025[locale].sections.ai.title }}</h2>
+        <h2 id="section-ai">{{ webTechTrends2025[locale].sections.ai.title }}</h2>
 
         <div class="trend-card">
-          <span class="trend-icon">🤖</span>
+          {{ toolIcon('spark', 'cat') }}
           <h4>{{ webTechTrends2025[locale].sections.ai.assistants.title }}</h4>
           <p>{{ webTechTrends2025[locale].sections.ai.assistants.description }}</p>
         </div>
@@ -141,10 +151,10 @@ eleventyComputed:
 <pre><code>{{ webTechTrends2025[locale].sections.ai.codeExample.code }}</code></pre>
         </div>
 
-        <h2>{{ webTechTrends2025[locale].sections.wasm.title }}</h2>
+        <h2 id="section-wasm">{{ webTechTrends2025[locale].sections.wasm.title }}</h2>
 
         <div class="trend-card">
-          <span class="trend-icon">⚡</span>
+          {{ toolIcon('bolt', 'cat') }}
           <h4>{{ webTechTrends2025[locale].sections.wasm.performance.title }}</h4>
           <p>{{ webTechTrends2025[locale].sections.wasm.performance.description }}</p>
         </div>
@@ -165,7 +175,7 @@ eleventyComputed:
           {% endfor %}
         </div>
 
-        <h2>{{ webTechTrends2025[locale].sections.css.title }}</h2>
+        <h2 id="section-css">{{ webTechTrends2025[locale].sections.css.title }}</h2>
 
         <h3>1. {{ webTechTrends2025[locale].sections.css.containerQueries.title }}</h3>
         <p>{{ webTechTrends2025[locale].sections.css.containerQueries.description }}</p>
@@ -181,10 +191,10 @@ eleventyComputed:
         <h3>3. {{ webTechTrends2025[locale].sections.css.houdini.title }}</h3>
         <p>{{ webTechTrends2025[locale].sections.css.houdini.description }}</p>
 
-        <h2>{{ webTechTrends2025[locale].sections.js.title }}</h2>
+        <h2 id="section-js">{{ webTechTrends2025[locale].sections.js.title }}</h2>
 
         <div class="trend-card">
-          <span class="trend-icon">🚀</span>
+          {{ toolIcon('rocket', 'cat') }}
           <h4>{{ webTechTrends2025[locale].sections.js.standards.title }}</h4>
           <p>{{ webTechTrends2025[locale].sections.js.standards.description }}</p>
         </div>
@@ -201,21 +211,21 @@ eleventyComputed:
 <pre><code>{{ webTechTrends2025[locale].sections.js.codeExample.code }}</code></pre>
         </div>
 
-        <h2>{{ webTechTrends2025[locale].sections.pwa.title }}</h2>
+        <h2 id="section-pwa">{{ webTechTrends2025[locale].sections.pwa.title }}</h2>
 
         <p>{{ webTechTrends2025[locale].sections.pwa.description }}</p>
 
         <div class="tech-grid">
           {% for tech in webTechTrends2025[locale].sections.pwa.technologies %}
           <div class="tech-card">
-            <span class="tech-icon">{{ tech.icon }}</span>
+            {{ toolIcon(tech.icon, 'cat') }}
             <div class="tech-name">{{ tech.name }}</div>
             <div class="tech-description">{{ tech.description }}</div>
           </div>
           {% endfor %}
         </div>
 
-        <h2>{{ webTechTrends2025[locale].sections.webStandards.title }}</h2>
+        <h2 id="section-web-standards">{{ webTechTrends2025[locale].sections.webStandards.title }}</h2>
 
         <h3>1. {{ webTechTrends2025[locale].sections.webStandards.components.title }}</h3>
         <p>{{ webTechTrends2025[locale].sections.webStandards.components.description }}</p>
@@ -232,7 +242,7 @@ eleventyComputed:
           {% endfor %}
         </ul>
 
-        <h2>{{ webTechTrends2025[locale].sections.frameworks.title }}</h2>
+        <h2 id="section-frameworks">{{ webTechTrends2025[locale].sections.frameworks.title }}</h2>
 
         <div class="table-container">
           <table>
@@ -255,7 +265,7 @@ eleventyComputed:
           </table>
         </div>
 
-        <h2>{{ webTechTrends2025[locale].sections.security.title }}</h2>
+        <h2 id="section-security">{{ webTechTrends2025[locale].sections.security.title }}</h2>
 
         <div class="warning-box">
           <h4>{{ webTechTrends2025[locale].sections.security.threats.title }}</h4>
@@ -273,7 +283,7 @@ eleventyComputed:
           {% endfor %}
         </ul>
 
-        <h2>{{ webTechTrends2025[locale].sections.performance.title }}</h2>
+        <h2 id="section-performance">{{ webTechTrends2025[locale].sections.performance.title }}</h2>
 
         <p>{{ webTechTrends2025[locale].sections.performance.intro }}</p>
 
@@ -289,7 +299,7 @@ eleventyComputed:
           {% endfor %}
         </ul>
 
-        <h2>{{ webTechTrends2025[locale].sections.ecology.title }}</h2>
+        <h2 id="section-ecology">{{ webTechTrends2025[locale].sections.ecology.title }}</h2>
 
         <p>{{ webTechTrends2025[locale].sections.ecology.intro }}</p>
 
@@ -299,7 +309,7 @@ eleventyComputed:
           {% endfor %}
         </ul>
 
-        <h2>{{ webTechTrends2025[locale].sections.future.title }}</h2>
+        <h2 id="section-future">{{ webTechTrends2025[locale].sections.future.title }}</h2>
 
         <h3>{{ webTechTrends2025[locale].sections.future.years }}:</h3>
         <ul>
@@ -308,7 +318,7 @@ eleventyComputed:
           {% endfor %}
         </ul>
 
-        <h2>{{ webTechTrends2025[locale].sections.recommendations.title }}</h2>
+        <h2 id="section-recommendations">{{ webTechTrends2025[locale].sections.recommendations.title }}</h2>
 
         <div class="highlight-box">
           <h4>{{ webTechTrends2025[locale].sections.recommendations.strategy.title }}</h4>
@@ -319,7 +329,7 @@ eleventyComputed:
           </ol>
         </div>
 
-        <h2>{{ webTechTrends2025[locale].sections.resources.title }}</h2>
+        <h2 id="section-resources">{{ webTechTrends2025[locale].sections.resources.title }}</h2>
 
         <h3>{{ webTechTrends2025[locale].sections.resources.docs.title }}:</h3>
         <ul>
@@ -335,27 +345,23 @@ eleventyComputed:
           {% endfor %}
         </ul>
 
-        <h2>{{ webTechTrends2025[locale].sections.conclusion.title }}</h2>
+        <h2 id="section-conclusion">{{ webTechTrends2025[locale].sections.conclusion.title }}</h2>
 
         <p>{{ webTechTrends2025[locale].sections.conclusion.paragraph1 }}</p>
         <p>{{ webTechTrends2025[locale].sections.conclusion.paragraph2 }}</p>
 
-        <div class="related-articles">
-          <h3>{{ webTechTrends2025[locale].sections.related.title }}</h3>
-          <ul class="related-links">
-            {% for article in webTechTrends2025[locale].sections.related.articles %}
-            <li><a href="{{ article.url }}">{{ article.title }}</a></li>
-            {% endfor %}
-          </ul>
-        </div>
+        {% set relatedTitle = locale | articleRelatedTitle %}
+        {% set relatedItems = 'web-tech-trends-2024' | articleRelated(locale) %}
+        {% include "partials/article-related.njk" %}
       </div>
-    </div>
+    </article>
 
-    <!-- Загрузка меню -->
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
-  {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
-{{ mobileAnchor(webTechTrends2025[locale].ads.closeAria) }}
-{% include "partials/ad-pool-init.njk" %}
-</body>
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+    {% include "partials/article-chrome-scripts.njk" %}
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+    {{ mobileAnchor(webTechTrends2025[locale].ads.closeAria) }}
+    {% include "partials/ad-pool-init.njk" %}
+  </body>
 </html>

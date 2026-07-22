@@ -2,6 +2,7 @@
 <!DOCTYPE html>
 <html lang="bn" dir="ltr">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="bn">
     <meta charset="UTF-8">
@@ -9,20 +10,17 @@
     <title>Serpmonn আপডেট — 17 আগস্ট 2025 — নতুন টুল এবং উন্নতি</title>
     <meta name="description" content="ড্রাইভারদের জন্য দরকারী টুল যোগ করা হয়েছে, অবচয় ক্যালকুলেটর উন্নত করা হয়েছে এবং বাগ ঠিক করা হয়েছে">
     
-    <!-- Open Graph -->
     <meta property="og:title" content="Serpmonn আপডেট — 17 আগস্ট 2025 — নতুন টুল এবং উন্নতি">
     <meta property="og:description" content="ড্রাইভারদের জন্য দরকারী টুল যোগ করা হয়েছে, অবচয় ক্যালকুলেটর উন্নত করা হয়েছে এবং বাগ ঠিক করা হয়েছে">
     <meta property="og:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="https://serpmonn.ru/frontend/bn/knowledge-base/articles/updates-august-17.html">
     <meta property="og:type" content="article">
     
-    <!-- Twitter Cards -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Serpmonn আপডেট — 17 আগস্ট 2025">
     <meta name="twitter:description" content="ড্রাইভারদের জন্য নতুন টুল এবং উন্নতি">
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -53,7 +51,6 @@
     }
     </script>
 
-    <!-- JSON-LD: BreadcrumbList -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -69,135 +66,184 @@
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <!-- Подключаем стили для статьи -->
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
     <link rel="stylesheet" href="/frontend/styles/articles/updates-august-17.css">
 </head>
 <body class="article-page">
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-      <a href="https://serpmonn.ru/">হোম</a> → 
-      <a href="https://serpmonn.ru/frontend/knowledge-base/knowledge-base.html">খবর</a> → 
-      <span>17 আগস্ট আপডেট</span>
-    </div>
+    
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
 
-    <article>
-      <!-- Заголовок новости -->
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Contents</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Contents">
+  <div class="floating-toc__head">
+    <h3>Contents</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
+    </button>
+  </div>
+  <ul>
+    
+    <li><a href="#section-summary">নতুন কি</a></li>
+    
+    <li><a href="#section-drivers">ড্রাইভারদের জন্য</a></li>
+    
+    <li><a href="#section-engineers">প্রকৌশলীদের জন্য</a></li>
+    
+    <li><a href="#section-platform">প্ল্যাটফর্মের নতুন বৈশিষ্ট্য</a></li>
+    
+    <li><a href="#section-performance">কর্মক্ষমতা উন্নতি</a></li>
+    
+    <li><a href="#section-bugfixes">বাগফিক্স</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+
+    <div id="menuContainer"></div>
+
+    <article class="article-container" tabindex="0">
       <header class="article-header">
         <div class="ad-top-banner ad-banner loading">
-          <ins class="mrg-tag" 
+          <ins class="mrg-tag"
               style="display:inline-block;"
-              data-ad-client="ad-1897960" 
+              data-ad-client="ad-1897960"
               data-ad-slot="1897960">
           </ins>
         </div>
-        <h1 class="article-title">🚀 Serpmonn আপডেট</h1>
+        <h1 class="article-title">Serpmonn আপডেট</h1>
         <div class="article-date">17 আগস্ট 2025</div>
       </header>
 
-      <!-- Краткое резюме -->
-      <div class="summary">
-        <h3>📋 নতুন কি</h3>
-        <p>ড্রাইভারদের জন্য দরকারী টুল যোগ করা হয়েছে, গাড়ি অবচয় ক্যালকুলেটর উন্নত করা হয়েছে, সমালোচনামূলক বাগ ঠিক করা হয়েছে এবং কর্মক্ষমতা অপ্টিমাইজ করা হয়েছে।</p>
-      </div>
-
-      <!-- Статистика обновления -->
-      <div class="stats-grid">
-        <div class="stat-card">
-          <div class="stat-number">3</div>
-          <div class="stat-label">নতুন টুল</div>
+      <div class="article-content">
+        <div class="summary" id="section-summary">
+          <h3>নতুন কি</h3>
+          <p>ড্রাইভারদের জন্য দরকারী টুল যোগ করা হয়েছে, গাড়ি অবচয় ক্যালকুলেটর উন্নত করা হয়েছে, সমালোচনামূলক বাগ ঠিক করা হয়েছে এবং কর্মক্ষমতা অপ্টিমাইজ করা হয়েছে।</p>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">15+</div>
-          <div class="stat-label">ঠিক করা বাগ</div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number">3</div>
+            <div class="stat-label">নতুন টুল</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">15+</div>
+            <div class="stat-label">ঠিক করা বাগ</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number">8</div>
+            <div class="stat-label">UX উন্নতি</div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-number">8</div>
-          <div class="stat-label">UX উন্নতি</div>
+
+        <div class="update-section">
+          <h3 id="section-drivers">ড্রাইভারদের জন্য</h3>
+          <ul class="feature-list">
+            
+            <li>অবচয় ক্যালকুলেটরে সহগগুলি আরও সঠিকভাবে বিবেচনা করা হয়েছে।</li>
+            
+            <li>মোবাইল ডিভাইসে ডেটা প্রদর্শন উন্নত করা হয়েছে।</li>
+            
+            <li>ব্যবহারের সুবিধার জন্য ইন্টারফেসে ছোটখাটো সংশোধন।</li>
+            
+          </ul>
         </div>
-      </div>
 
-      <!-- Раздел для водителей -->
-      <div class="update-section">
-        <h3>🚗 ড্রাইভারদের জন্য</h3>
-        <ul class="feature-list">
-          
-          <li>অবচয় ক্যালকুলেটরে সহগগুলি আরও সঠিকভাবে বিবেচনা করা হয়েছে।</li>
-          
-          <li>মোবাইল ডিভাইসে ডেটা প্রদর্শন উন্নত করা হয়েছে।</li>
-          
-          <li>ব্যবহারের সুবিধার জন্য ইন্টারফেসে ছোটখাটো সংশোধন।</li>
-          
-        </ul>
-      </div>
+        <div class="update-section">
+          <h3 id="section-engineers">প্রকৌশলীদের জন্য</h3>
+          <ul class="feature-list">
+            
+            <li>টুল এবং ইউনিট কনভার্টার সম্পর্কে উপাদান প্রস্তুত করা হয়েছে (শীঘ্রই)।</li>
+            
+            <li>গণনা প্যারামিটার এবং সীমা মান স্পষ্ট করা হয়েছে।</li>
+            
+          </ul>
+        </div>
 
-      <!-- Раздел для инженеров -->
-      <div class="update-section">
-        <h3>🔧 প্রকৌশলীদের জন্য</h3>
-        <ul class="feature-list">
-          
-          <li>টুল এবং ইউনিট কনভার্টার সম্পর্কে উপাদান প্রস্তুত করা হয়েছে (শীঘ্রই)।</li>
-          
-          <li>গণনা প্যারামিটার এবং সীমা মান স্পষ্ট করা হয়েছে।</li>
-          
-        </ul>
-      </div>
+        <div class="update-section">
+          <h3 id="section-platform">প্ল্যাটফর্মের নতুন বৈশিষ্ট্য</h3>
+          <ul class="feature-list">
+            
+            <li><strong>উন্নত সার্চ সিস্টেম:</strong> অটোকমপ্লিট এবং ফলাফল ফিল্টারিং সহ বুদ্ধিমান অনুসন্ধান যোগ করা হয়েছে।</li>
+            
+            <li><strong>ব্যক্তিগতকৃত সুপারিশ:</strong> অ্যালগরিদম এখন আপনার পছন্দ বিশ্লেষণ করে এবং প্রাসঙ্গিক টুল সুপারিশ করে।</li>
+            
+            <li><strong>মোবাইল অপ্টিমাইজেশন:</strong> সমস্ত টুল এখন রেসপনসিভ ডিজাইনের সাথে মোবাইল ডিভাইসে পুরোপুরি কাজ করে।</li>
+            
+            <li><strong>বিজ্ঞপ্তি সিস্টেম:</strong> আপনি আগ্রহী টুলগুলির জন্য নতুন বৈশিষ্ট্য এবং আপডেট সম্পর্কে বিজ্ঞপ্তি পান।</li>
+            
+          </ul>
+        </div>
 
-      <!-- Новые функции платформы -->
-      <div class="update-section">
-        <h3>🌟 প্ল্যাটফর্মের নতুন বৈশিষ্ট্য</h3>
-        <ul class="feature-list">
-          
-          <li><strong>উন্নত সার্চ সিস্টেম:</strong> অটোকমপ্লিট এবং ফলাফল ফিল্টারিং সহ বুদ্ধিমান অনুসন্ধান যোগ করা হয়েছে।</li>
-          
-          <li><strong>ব্যক্তিগতকৃত সুপারিশ:</strong> অ্যালগরিদম এখন আপনার পছন্দ বিশ্লেষণ করে এবং প্রাসঙ্গিক টুল সুপারিশ করে।</li>
-          
-          <li><strong>মোবাইল অপ্টিমাইজেশন:</strong> সমস্ত টুল এখন রেসপনসিভ ডিজাইনের সাথে মোবাইল ডিভাইসে পুরোপুরি কাজ করে।</li>
-          
-          <li><strong>বিজ্ঞপ্তি সিস্টেম:</strong> আপনি আগ্রহী টুলগুলির জন্য নতুন বৈশিষ্ট্য এবং আপডেট সম্পর্কে বিজ্ঞপ্তি পান।</li>
-          
-        </ul>
-      </div>
+        <div class="update-section">
+          <h3 id="section-performance">কর্মক্ষমতা উন্নতি</h3>
+          <ul class="feature-list">
+            
+            <li><strong>দ্রুত লোডিং:</strong> কোড অপ্টিমাইজেশন এবং ক্যাশিংয়ের ধন্যবাদ পৃষ্ঠা লোড করার সময় 40% হ্রাস করা হয়েছে।</li>
+            
+            <li><strong>অপ্টিমাইজড গণনা:</strong> গাণিতিক অপারেশন এখন 2 গুণ দ্রুত সঞ্চালিত হয়।</li>
+            
+            <li><strong>উন্নত স্থিতিশীলতা:</strong> উন্নত এক্সেপশন হ্যান্ডলিংয়ের ধন্যবাদ ত্রুটির সংখ্যা 60% কমেছে।</li>
+            
+          </ul>
+        </div>
 
-      <!-- Улучшения производительности -->
-      <div class="update-section">
-        <h3>⚡ কর্মক্ষমতা উন্নতি</h3>
-        <ul class="feature-list">
-          
-          <li><strong>দ্রুত লোডিং:</strong> কোড অপ্টিমাইজেশন এবং ক্যাশিংয়ের ধন্যবাদ পৃষ্ঠা লোড করার সময় 40% হ্রাস করা হয়েছে।</li>
-          
-          <li><strong>অপ্টিমাইজড গণনা:</strong> গাণিতিক অপারেশন এখন 2 গুণ দ্রুত সঞ্চালিত হয়।</li>
-          
-          <li><strong>উন্নত স্থিতিশীলতা:</strong> উন্নত এক্সেপশন হ্যান্ডলিংয়ের ধন্যবাদ ত্রুটির সংখ্যা 60% কমেছে।</li>
-          
-        </ul>
-      </div>
+        <div class="bug-fix">
+          <h4 id="section-bugfixes">বাগফিক্স</h4>
+          <ul class="feature-list">
+            
+            <li>খবরের কার্ডে লেআউট ত্রুটি ঠিক করা হয়েছে।</li>
+            
+            <li>বিভাগ সুইচারগুলির কাজের স্থিতিশীলতা বৃদ্ধি করা হয়েছে।</li>
+            
+          </ul>
+        </div>
 
-      <!-- Исправления ошибок -->
-      <div class="bug-fix">
-        <h4>🛠 বাগফিক্স</h4>
-        <ul class="feature-list">
-          
-          <li>খবরের কার্ডে লেআউট ত্রুটি ঠিক করা হয়েছে।</li>
-          
-          <li>বিভাগ সুইচারগুলির কাজের স্থিতিশীলতা বৃদ্ধি করা হয়েছে।</li>
-          
-        </ul>
-      </div>
+        <div class="social-share">
+          <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Fbn%2Fknowledge-base%2Farticles%2Fupdates-august-17.html" target="_blank" rel="noopener">VK-এ শেয়ার করুন</a>
+          <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Fbn%2Fknowledge-base%2Farticles%2Fupdates-august-17.html&text=Serpmonn%20%E0%A6%86%E0%A6%AA%E0%A6%A1%E0%A7%87%E0%A6%9F" target="_blank" rel="noopener">Telegram-এ শেয়ার করুন</a>
+        </div>
 
-      <!-- Поделиться -->
-      <div class="social-share">
-        <a class="share-btn vk" href="https://vk.com/share.php?url=https://serpmonn.ru%2Ffrontend%2Fbn%2Fknowledge-base%2Farticles%2Fupdates-august-17.html" target="_blank" rel="noopener">VK-এ শেয়ার করুন</a>
-        <a class="share-btn telegram" href="https://t.me/share/url?url=https://serpmonn.ru%2Ffrontend%2Fbn%2Fknowledge-base%2Farticles%2Fupdates-august-17.html&text=%F0%9F%9A%80%20Serpmonn%20%E0%A6%86%E0%A6%AA%E0%A6%A1%E0%A7%87%E0%A6%9F" target="_blank" rel="noopener">Telegram-এ শেয়ার করুন</a>
+        
+        
+        
+
+<div class="related-articles">
+  <h3>Related articles</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/bn/knowledge-base/articles/updates-aug-25-sep-15.html">Serpmonn আপডেট — ২৫ আগস্ট — ১৫ সেপ্টেম্বর ২০২৫</a></li>
+    
+    <li><a href="/frontend/bn/knowledge-base/articles/updates-sep15-2025-jul22-2026.html">Serpmonn Updates — September 15, 2025 — July 22, 2026</a></li>
+    
+    <li><a href="/frontend/bn/knowledge-base/articles/port-forwarding-guide.html">পোর্ট ফরওয়ার্ডিং: সম্পূর্ণ গাইড ২০২৫</a></li>
+    
+  </ul>
+</div>
+
+
       </div>
     </article>
 
-    <!-- Загрузка меню -->
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
 
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
 
+    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+    
+    
 <div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
   <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
     <button type="button" aria-label="বিজ্ঞাপন বন্ধ করুন" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
@@ -212,7 +258,7 @@
   initMobileAnchorAd();
 </script>
 
-
+    
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 
 </body>

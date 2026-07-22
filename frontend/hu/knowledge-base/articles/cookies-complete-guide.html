@@ -266,57 +266,64 @@
   <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
     
-    <!-- Стили для этой статьи -->
-    <link rel="stylesheet" href="/frontend/styles/articles/cookies-guide.css">
-    
-    <!-- Внешние библиотеки -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/cookies-guide.css">
     
     <!-- Скрипт меню -->
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>
-    <div class="reading-progress">
-        <div class="reading-progress-bar"></div>
-    </div>
     
-    <button class="toc-toggle" onclick="toggleFloatingToc()">
-        <i class="fas fa-list"></i>
+    
+    
+<div class="reading-progress" aria-hidden="true">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<button type="button" class="toc-toggle" id="tocToggle" aria-expanded="false" aria-controls="floatingToc">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/>
+  </svg>
+  <span class="visually-hidden">Tartalomjegyzék</span>
+</button>
+
+<nav class="floating-toc" id="floatingToc" aria-label="Tartalomjegyzék">
+  <div class="floating-toc__head">
+    <h3>Tartalomjegyzék</h3>
+    <button type="button" class="floating-toc__close" id="tocClose" aria-label="×">
+      <span aria-hidden="true">×</span>
     </button>
+  </div>
+  <ul>
     
-    <div class="floating-toc">
-        <h3>Tartalomjegyzék</h3>
-        <ul>
-            <li><a href="#section-what-is">Mik a sütik?</a></li>
-            <li><a href="#section-how-work">Hogyan működnek a sütik?</a></li>
-            <li><a href="#section-types">Süti fájlok típusai</a></li>
-            <li><a href="#section-why-clean">Miért tisztítsuk a sütiket?</a></li>
-            <li><a href="#section-how-clean">Hogyan tisztítsuk a sütiket</a></li>
-            <li><a href="#section-manage">Süti kezelés</a></li>
-            <li><a href="#section-security">Biztonság</a></li>
-            <li><a href="#section-faq">Gyakran ismételt kérdések</a></li>
-        </ul>
-    </div>
+    <li><a href="#section-what-is">Mik a sütik?</a></li>
     
+    <li><a href="#section-how-work">Hogyan működnek a sütik?</a></li>
+    
+    <li><a href="#section-types">Süti fájlok típusai</a></li>
+    
+    <li><a href="#section-why-clean">Miért tisztítsuk a sütiket?</a></li>
+    
+    <li><a href="#section-how-clean">Hogyan tisztítsuk a sütiket</a></li>
+    
+    <li><a href="#section-manage">Süti kezelés</a></li>
+    
+    <li><a href="#section-security">Biztonság</a></li>
+    
+    <li><a href="#section-faq">Gyakran ismételt kérdések</a></li>
+    
+  </ul>
+</nav>
+<div class="toc-backdrop" id="tocBackdrop" hidden></div>
+
+    
+
     <div id="menuContainer"></div>
     
     <article class="article-container" tabindex="0">
         <header class="article-header">
             <span class="article-category">Biztonság</span>
-            <div class="table-of-contents sticky-toc">
-                <h2>Tartalomjegyzék</h2>
-                <ul>
-                    <li><a href="#section-what-is">Mik a sütik?</a></li>
-                    <li><a href="#section-how-work">Hogyan működnek a sütik?</a></li>
-                    <li><a href="#section-types">Süti fájlok típusai</a></li>
-                    <li><a href="#section-why-clean">Miért tisztítsuk a sütiket?</a></li>
-                    <li><a href="#section-how-clean">Hogyan tisztítsuk a sütiket</a></li>
-                    <li><a href="#section-manage">Süti kezelés</a></li>
-                    <li><a href="#section-security">Biztonság</a></li>
-                    <li><a href="#section-faq">Gyakran ismételt kérdések</a></li>
-                </ul>
-            </div>
             <div class="ad-top-banner ad-banner loading">
                 <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
             </div>
@@ -328,30 +335,42 @@
             <p>Minden alkalommal, amikor meglátogat egy weboldalt, üdvözöl egy üzenet a sütik használatáról. De mik ezek valójában? Ebben az útmutatóban mindent elemezünk a süti fájlokról: az alapoktól a fejlett biztonsági beállításokig.</p>
 
             <!-- Что такое куки -->
-            <h2 id="section-what-is">🍪 Mik a süti fájlok?</h2>
+            <h2 id="section-what-is">Mik a süti fájlok?</h2>
             <p><strong>A sütik</strong> kis szöveges fájlok, amelyeket a weboldalak az eszközén tárolnak. Tartalmazzák az internetes tevékenységeiről szóló információkat, és segítenek a weboldalaknak, hogy "emlékezzenek" rád.</p>
             
             <div class="analogy-box">
-                <h4>💡 Egyszerű analógia</h4>
+                <h4>Egyszerű analógia</h4>
                 <p>Képzeld el, hogy a sütik egy névjegy, amit egy kávézóban hagysz. A következő látogatásodkor a pincér felismer, és emlékezni fog arra, melyik kávét részesíted előnyben.</p>
             </div>
 
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-user-circle"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+</span>
+
                     <h3>Azonosítás</h3>
                     <p>A weboldal felismer a későbbi látogatásokkor</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-shopping-cart"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.5 11h11l2-7H7"/></svg>
+</span>
+
                     <h3>Bevásárlókosár</h3>
                     <p>Termékeket ment, még ha el is hagyja a weboldalt</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-language"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a14 14 0 0 1 0 18"/><path d="M12 3a14 14 0 0 0 0 18"/></svg>
+</span>
+
                     <h3>Beállítások</h3>
                     <p>Emlékszik a nyelvre, pénznemre és egyéb preferenciákra</p>
                 </div>
@@ -359,7 +378,7 @@
             </div>
 
             <!-- Как работают куки -->
-            <h2 id="section-how-work">🔧 Hogyan működnek a sütik?</h2>
+            <h2 id="section-how-work">Hogyan működnek a sütik?</h2>
             
             <ol class="step-list">
                 
@@ -394,7 +413,7 @@
             </div>
 
             <!-- Типы куки -->
-            <h2 id="section-types">📊 Süti fájlok típusai</h2>
+            <h2 id="section-types">Süti fájlok típusai</h2>
             
             <table class="cookies-table">
                 <thead>
@@ -436,36 +455,48 @@
             </table>
 
             <div class="privacy-warning">
-                <h4>⚠️ Figyelem: Harmadik féltől származó sütik</h4>
+                <h4>️ Figyelem: Harmadik féltől származó sütik</h4>
                 <p>A harmadik féltől származó sütiket gyakran használják a tevékenység különböző weboldalakon történő nyomon követésére. A modern böngészők fokozatosan megszüntetik a támogatásukat az adatvédelem érdekében.</p>
             </div>
 
             <!-- Зачем чистить куки -->
-            <h2 id="section-why-clean">🧹 Miért kell tisztítani a sütiket?</h2>
+            <h2 id="section-why-clean">Miért kell tisztítani a sütiket?</h2>
 
             <div class="visual-guide">
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-shield-alt"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 4v5c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V7z"/></svg>
+</span>
+
                     <h3>Biztonság</h3>
                     <p>Védelem a munkamenet ellopása és a jogosulatlan hozzáférés ellen</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-user-secret"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>
+</span>
+
                     <h3>Adatvédelem</h3>
                     <p>Követési sütik és böngészési előzmények eltávolítása</p>
                 </div>
                 
                 <div class="visual-item">
-                    <div class="visual-icon"><i class="fas fa-broom"></i></div>
+                    
+<span class="tool-icon tool-icon--cat" aria-hidden="true">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 7a2 2 0 0 1 2-2h4l2 2h8a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+</span>
+
                     <h3>Hely felszabadítása</h3>
                     <p>A sütik helyet foglalnak az eszközén</p>
                 </div>
                 
             </div>
 
-            <h3>📋 Helyzetek, amikor tisztítani kell a sütiket:</h3>
+            <h3>Helyzetek, amikor tisztítani kell a sütiket:</h3>
             <ul>
                 
                 <li><strong>Bejelentkezési problémák</strong> weboldalakon</li>
@@ -481,11 +512,11 @@
             </ul>
 
             <!-- Как очистить куки -->
-            <h2 id="section-how-clean">🔧 Hogyan tisztítsuk meg a sütiket</h2>
+            <h2 id="section-how-clean">Hogyan tisztítsuk meg a sütiket</h2>
 
             
             <div class="browser-guide">
-                <h4>🌐 Google Chrome</h4>
+                <h4>Google Chrome</h4>
                 <ol>
                     
                     <li>Nyissa meg a <strong>Beállítások</strong> → <strong>Adatvédelem és biztonság</strong></li>
@@ -500,7 +531,7 @@
             </div>
             
             <div class="browser-guide">
-                <h4>🦊 Mozilla Firefox</h4>
+                <h4>Mozilla Firefox</h4>
                 <ol>
                     
                     <li>Lépjen a <strong>Beállítások</strong> → <strong>Adatvédelem és biztonság</strong></li>
@@ -531,11 +562,11 @@
             
 
             <div class="security-tip">
-                <h4>💡 Szakmai tanács</h4>
+                <h4>Szakmai tanács</h4>
                 <p>Használjon inkognitó/privát böngészési módot. Ebben a módban a sütik automatikusan törlődnek az ablak bezárása után.</p>
             </div>
 
-            <h3>⚡ Gyors tisztítás billentyűparancsokkal:</h3>
+            <h3>Gyors tisztítás billentyűparancsokkal:</h3>
             <ul>
                 
                 <li><strong>Ctrl+Shift+Delete</strong> (Windows/Linux) - megnyitja az előzménytisztító ablakot</li>
@@ -545,7 +576,7 @@
             </ul>
 
             <!-- Управление куки -->
-            <h2 id="section-manage">🎛️ Süti kezelés: Legjobb gyakorlatok</h2>
+            <h2 id="section-manage">️ Süti kezelés: Legjobb gyakorlatok</h2>
 
             <ol class="step-list">
                 
@@ -572,7 +603,7 @@
             </ol>
 
             <div class="security-tip">
-                <h4>🛡️ Bővítmények süti kezeléshez</h4>
+                <h4>️ Bővítmények süti kezeléshez</h4>
                 <ul>
                     
                     <li><strong>Cookie AutoDelete</strong> - automatikusan törli a zárt lapok sütijeit</li>
@@ -585,10 +616,10 @@
             </div>
 
             <!-- Безопасность -->
-            <h2 id="section-security">🔐 Süti biztonság</h2>
+            <h2 id="section-security">Süti biztonság</h2>
 
             <div class="privacy-warning">
-                <h4>🚨 Veszélyes támadástípusok</h4>
+                <h4>Veszélyes támadástípusok</h4>
                 <ul>
                     
                     <li><strong>Süti elfogása</strong> biztonságtalan hálózatokon keresztül</li>
@@ -600,7 +631,7 @@
                 </ul>
             </div>
 
-            <h3>🛡️ Védelmi intézkedések:</h3>
+            <h3>️ Védelmi intézkedések:</h3>
             
             <table class="cookies-table">
                 <thead>
@@ -635,7 +666,7 @@
                 </tbody>
             </table>
 
-            <h3>📋 Süti biztonsági ellenőrzőlista</h3>
+            <h3>Süti biztonsági ellenőrzőlista</h3>
             <ul class="checklist">
                 
                 <li>
@@ -666,7 +697,7 @@
             </ul>
 
             <!-- Частые вопросы -->
-            <h2 id="section-faq">❓ Gyakran ismételt kérdések</h2>
+            <h2 id="section-faq">Gyakran ismételt kérdések</h2>
 
             
             <div class="browser-guide">
@@ -696,7 +727,7 @@
             
 
             <!-- Выводы -->
-            <h3>🎯 Főbb következtetések:</h3>
+            <h3>Főbb következtetések:</h3>
             <ul>
                 
                 <li>A sütik szükségesek a kényelmes internetes munkához</li>
@@ -711,33 +742,29 @@
                 
             </ul>
 
-            <!-- Кнопки поделиться -->
+            
+            
+            
+
+<div class="related-articles">
+  <h3>Kapcsolódó cikkek</h3>
+  <ul class="related-links">
+    
+    <li><a href="/frontend/hu/knowledge-base/articles/port-forwarding-guide.html">Port Forwarding: Teljes útmutató 2025</a></li>
+    
+    <li><a href="/frontend/hu/knowledge-base/articles/web-development-guide.html">Jak Stworzyć Pierwszą Stronę Internetową od Podstaw - Kompleksowy Przewodnik dla Początkujących</a></li>
+    
+    <li><a href="/frontend/hu/knowledge-base/articles/utm-complete-guide.html">UTM: Teljes útmutató</a></li>
+    
+  </ul>
+</div>
+
+
+
             <div class="share-buttons">
                 <h3>Cikk megosztása</h3>
-                <button onclick="share('telegram')" aria-label="Telegram">Telegram</button>
-                <button onclick="share('vk')" aria-label="VKontakte">VKontakte</button>
-            </div>
-
-            <!-- Комментарии -->
-            <div class="comments-section">
-                <h2>Hozzászólások</h2>
-                <div class="comment-form">
-                    <h3>Hagyja visszajelzését</h3>
-                    <form id="commentForm">
-                        <div class="form-group">
-                            <label for="commentName">Az ön neve:</label>
-                            <input type="text" id="commentName" required>
-                        </div>
-                        <div class="form-group">
-                            <label for="commentText">Hozzászólása:</label>
-                            <textarea id="commentText" required></textarea>
-                        </div>
-                        <button type="submit" class="submit-button">Küldés</button>
-                    </form>
-                </div>
-                <div id="commentsList" class="comments-list">
-                    <!-- Комментарии будут загружены здесь -->
-                </div>
+                <button type="button" onclick="serpmonnShare('telegram')" aria-label="Telegram">Telegram</button>
+                <button type="button" onclick="serpmonnShare('vk')" aria-label="VKontakte">VKontakte</button>
             </div>
         </div>
 
@@ -751,127 +778,9 @@
     <!-- Кнопка наверх -->
     <button class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑ Tetejére">↑ Tetejére</button>
 
-    <!-- Внешние библиотеки -->
     <script defer src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
-    
-    <!-- JavaScript для статьи -->
-    <script>
-        // Функции для работы с комментариями
-        function saveComment(name, text) {
-            const comment = {
-                name: name,
-                text: text,
-                date: new Date().toLocaleString('hu')
-            };
-            
-            let comments = JSON.parse(localStorage.getItem('articleComments')) || [];
-            comments.push(comment);
-            localStorage.setItem('articleComments', JSON.stringify(comments));
-            
-            return comment;
-        }
-        
-        function loadComments() {
-            const comments = JSON.parse(localStorage.getItem('articleComments')) || [];
-            const commentsList = document.getElementById('commentsList');
-            
-            if (comments.length === 0) {
-                commentsList.innerHTML = '<div class="no-comments">Még nincsenek hozzászólások. Legyen Ön az első!</div>';
-                return;
-            }
-            
-            commentsList.innerHTML = comments.map(comment => `
-                <div class="comment">
-                    <div class="comment-header">
-                        <span class="comment-author">${escapeHtml(comment.name)}</span>
-                        <span class="comment-date">${escapeHtml(comment.date)}</span>
-                    </div>
-                    <div class="comment-text">${escapeHtml(comment.text)}</div>
-                </div>
-            `).join('');
-        }
-        
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
-        }
-        
-        // Основные функции
-        function toggleFloatingToc() {
-            const floatingToc = document.querySelector('.floating-toc');
-            floatingToc.style.display = floatingToc.style.display === 'block' ? 'none' : 'block';
-        }
-        
-        function share(network) {
-            const url = encodeURIComponent(window.location.href);
-            const title = encodeURIComponent(document.title);
-            const shareUrls = {
-                telegram: `https://t.me/share/url?url=${url}&text=${title}`,
-                vk: `https://vk.com/share.php?url=${url}&title=${title}`
-            };
-            window.open(shareUrls[network], '_blank');
-        }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Загрузка комментариев
-            loadComments();
-            
-            // Обработка формы комментариев
-            document.getElementById('commentForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const nameInput = document.getElementById('commentName');
-                const textInput = document.getElementById('commentText');
-                
-                const name = nameInput.value.trim();
-                const text = textInput.value.trim();
-                
-                if (name && text) {
-                    saveComment(name, text);
-                    loadComments();
-                    
-                    // Очистка формы
-                    nameInput.value = '';
-                    textInput.value = '';
-                }
-            });
-            
-            // Анимация появления контента
-            const contentObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
-            
-            document.querySelectorAll('.article-content > *').forEach(el => contentObserver.observe(el));
-            
-            // Кнопка "Наверх"
-            window.addEventListener('scroll', () => {
-                const button = document.querySelector('.scroll-to-top');
-                button.classList.toggle('show', window.scrollY > 300);
-            });
-            
-            // Прогресс чтения
-            const progressBar = document.querySelector('.reading-progress-bar');
-            window.addEventListener('scroll', () => {
-                const windowHeight = window.innerHeight;
-                const documentHeight = document.documentElement.scrollHeight;
-                const scrollTop = window.scrollY;
-                const progress = (scrollTop / (documentHeight - windowHeight)) * 100;
-                progressBar.style.width = `${progress}%`;
-            });
-            
-            // Показывать плавающее оглавление на десктопах
-            if (window.innerWidth > 991) {
-                document.querySelector('.floating-toc').style.display = 'block';
-            }
-            
-        });
-    </script>
+    <script defer src="/frontend/scripts/article-chrome.js"></script>
+
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
 

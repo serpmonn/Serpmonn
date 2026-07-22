@@ -14,6 +14,7 @@ eleventyComputed:
 <!DOCTYPE html>
 <html lang="{{ locale }}" dir="{{ dir }}">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="{{ locale }}">
     <title>{{ title }}</title>
@@ -21,20 +22,17 @@ eleventyComputed:
     <meta name="description" content="{{ description }}">
     <meta name="viewport" content="width=device-width, height=device-height, minimum-scale=0.5, initial-scale=1, maximum-scale=3, user-scalable=yes">
 
-    <!-- Open Graph -->
     <meta property="og:title" content="{{ utmCompleteGuide[locale].title }}">
     <meta property="og:description" content="{{ utmCompleteGuide[locale].ogDescription }}">
     <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
     <meta property="og:url" content="{{ canonical }}">
     <meta property="og:type" content="article">
-    
-    <!-- Twitter -->
+
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="{{ utmCompleteGuide[locale].title }}">
     <meta name="twitter:description" content="{{ utmCompleteGuide[locale].twitterDescription }}">
     <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
 
-    <!-- Structured Data: Article -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
@@ -67,10 +65,8 @@ eleventyComputed:
     }
     </script>
 
-    <!-- Каноническая ссылка -->
     <link rel="canonical" href="{{ canonical }}" />
 
-    <!-- Hreflang для всех языков -->
     {% for loc in locales %}
         {% if loc == 'ru' %}
             <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/utm-complete-guide.html" hreflang="{{ loc }}" />
@@ -81,148 +77,40 @@ eleventyComputed:
     <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/utm-complete-guide.html" hreflang="x-default" />
 
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-    
-    <!-- Стили -->
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-
-    <style>
-        body { 
-            max-width: 800px; 
-            margin: 0 auto; 
-            padding: 16px; 
-            font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; 
-            background: #f5f5f5; 
-            line-height: 1.7; 
-        }
-        article { 
-            background: #fff; 
-            border-radius: 12px; 
-            padding: 40px; 
-            margin: 20px auto; 
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1); 
-            max-width: 800px; 
-        }
-        .article-header { 
-            text-align: center; 
-            margin-bottom: 30px; 
-            padding-bottom: 20px; 
-            border-bottom: 2px solid #e9ecef; 
-        }
-        .article-title { 
-            font-size: 2.2rem; 
-            color: #333; 
-            margin-bottom: 10px; 
-            font-weight: 700; 
-        }
-        .article-date { 
-            color: #6c757d; 
-            font-size: 1.05rem; 
-            font-weight: 500; 
-        }
-        .summary { 
-            background: #e8f5e8; 
-            border: 1px solid #c3e6c3; 
-            border-radius: 8px; 
-            padding: 16px; 
-            margin: 20px 0; 
-            color: #155724; 
-        }
-        .toc { 
-            background: #f8f9fa; 
-            border: 1px solid #e9ecef; 
-            border-radius: 8px; 
-            padding: 16px; 
-            margin: 20px 0; 
-        }
-        .toc a { 
-            text-decoration: none; 
-        }
-        h2 { 
-            margin-top: 28px; 
-        }
-        .code { 
-            background: #f8f9fa; 
-            border: 1px solid #dee2e6; 
-            border-radius: 6px; 
-            padding: 12px; 
-            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace; 
-            font-size: .95rem; 
-            overflow-x: auto; 
-            white-space: pre-wrap; 
-        }
-        .note { 
-            background: #fff3cd; 
-            border: 1px solid #ffe08a; 
-            border-radius: 8px; 
-            padding: 12px; 
-            margin: 16px 0; 
-            color: #7a5b00; 
-        }
-        .faq { 
-            background: #f8f9fa; 
-            border: 1px solid #e9ecef; 
-            border-radius: 8px; 
-            padding: 16px; 
-        }
-        .faq h3 { 
-            margin: 0 0 10px; 
-        }
-        .btn { 
-            display:inline-block; 
-            padding:10px 16px; 
-            background:#dc3545; 
-            color:#fff; 
-            text-decoration:none; 
-            border-radius:8px; 
-            font-weight:600; 
-        }
-        .muted { 
-            color:#6c757d; 
-        }
-        .breadcrumb { 
-            margin-bottom: 16px; 
-            padding: 8px 0; 
-        }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/utm-complete-guide.css">
 </head>
 <body>
-    <div id="menuContainer"></div>
+{% set anchors = ['what', 'params', 'ga4', 'naming', 'platforms', 'examples', 'mistakes', 'faq'] %}
+{% set tocTitle = utmCompleteGuide[locale].tocTitle | default(locale | articleTocTitle, true) %}
+{% set tocItems = [] %}
+{% for item in utmCompleteGuide[locale].tocItems %}
+{% set _ = tocItems.push({ href: '#' + anchors[loop.index0], label: item }) %}
+{% endfor %}
+{% include "partials/article-floating-toc.njk" %}
 
-    <!-- Хлебные крошки -->
-    <div class="breadcrumb">
-        <a href="{{ site.baseUrl }}/{% if locale != 'ru' %}{{ locale }}/{% endif %}">{{ utmCompleteGuide[locale].breadcrumbHome }}</a> →
-        <a href="{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/knowledge-base/knowledge-base.html{% endif %}">{{ utmCompleteGuide[locale].breadcrumbNews }}</a> →
-        <span>{{ utmCompleteGuide[locale].breadcrumbCurrent }}</span>
-    </div>
+<div id="menuContainer"></div>
 
-    <article>
-        <header class="article-header">
-            <div class="ad-top-banner ad-banner loading">
-                <ins class="mrg-tag" 
-                    style="display:inline-block;"
-                    data-ad-client="ad-{{ mailAds.slots.top.id }}" 
-                    data-ad-slot="{{ mailAds.slots.top.id }}">
-                </ins>
-            </div>
-            <h1 class="article-title">{{ utmCompleteGuide[locale].articleTitle }}</h1>
-            <div class="article-date">{{ utmCompleteGuide[locale].articleDate }}</div>
-        </header>
+<article class="article-container" tabindex="0">
+    <header class="article-header">
+        <div class="ad-top-banner ad-banner loading">
+            <ins class="mrg-tag"
+                style="display:inline-block;"
+                data-ad-client="ad-{{ mailAds.slots.top.id }}"
+                data-ad-slot="{{ mailAds.slots.top.id }}">
+            </ins>
+        </div>
+        <h1 class="article-title">{{ utmCompleteGuide[locale].articleTitle }}</h1>
+        <div class="article-date">{{ utmCompleteGuide[locale].articleDate }}</div>
+    </header>
 
+    <div class="article-content">
         <div class="summary">
             <strong>{{ utmCompleteGuide[locale].summaryTitle }}</strong> {{ utmCompleteGuide[locale].summaryContent }}
-        </div>
-
-        <!-- TOC -->
-        <div class="toc">
-            <strong>{{ utmCompleteGuide[locale].tocTitle }}</strong>
-            <ol>{%- set anchors = ['what', 'params', 'ga4', 'naming', 'platforms', 'examples', 'mistakes', 'faq'] -%}
-                {%- for item in utmCompleteGuide[locale].tocItems -%}
-                <li><a href="#{{ anchors[loop.index0] }}">{{ item }}</a></li>
-                {%- endfor -%}
-            </ol>
         </div>
 
         <h2 id="what">{{ utmCompleteGuide[locale].section1Title }}</h2>
@@ -261,7 +149,7 @@ eleventyComputed:
 
         <h2 id="examples">{{ utmCompleteGuide[locale].section6Title }}</h2>
         <div class="code">{{ utmCompleteGuide[locale].section6Example1 }}</div>
-        <div class="code" style="margin-top:10px;">{{ utmCompleteGuide[locale].section6Example2 }}</div>
+        <div class="code">{{ utmCompleteGuide[locale].section6Example2 }}</div>
         <p>
             {{ utmCompleteGuide[locale].section6BuilderText }}
             <a class="btn" href="{{ site.baseUrl }}{% if locale != 'ru' %}/{{ locale }}{% endif %}/frontend/tools/marketing/utm-builder.html" target="_blank" rel="noopener">
@@ -282,7 +170,7 @@ eleventyComputed:
             <h3>{{ faq.question }}</h3>
             <p>{{ faq.answer | safe }}</p>
             {%- endfor -%}
-            
+
             <h3>{{ utmCompleteGuide[locale].checklistTitle }}</h3>
             <ul>
                 {%- for item in utmCompleteGuide[locale].checklistItems -%}
@@ -291,15 +179,22 @@ eleventyComputed:
             </ul>
         </div>
 
-        <p class="muted" style="margin-top:16px;">
+        <p class="muted">
             {{ utmCompleteGuide[locale].updated }} 15.09.2025 • {{ utmCompleteGuide[locale].category }}
         </p>
-    </article>
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+        {% set relatedTitle = locale | articleRelatedTitle %}
+        {% set relatedItems = 'utm-complete-guide' | articleRelated(locale) %}
+        {% include "partials/article-related.njk" %}
+    </div>
+</article>
+
+<button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+{% include "partials/article-chrome-scripts.njk" %}
+<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
-    {{ mobileAnchor(localesNews[locale].news.closeAd) }}
+{{ mobileAnchor(localesNews[locale].news.closeAd) }}
 {% include "partials/ad-pool-init.njk" %}
 </body>
 </html>

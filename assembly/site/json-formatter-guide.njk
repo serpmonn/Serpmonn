@@ -14,6 +14,7 @@ eleventyComputed:
 <!DOCTYPE html>
 <html lang="{{ locale }}" dir="{{ dir }}">
 <head>
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
     <meta http-equiv="Content-Language" content="{{ locale }}">
     <title>{{ title }}</title>
@@ -67,67 +68,37 @@ eleventyComputed:
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
-    <link rel="stylesheet" href="/frontend/styles/menu.css">
-    <style>
-      body { max-width: 800px; margin: 0 auto; padding: 16px; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; background: #f3f4f6; line-height: 1.7; color: #111827; }
-      article { background: #fff; border-radius: 16px; padding: 28px; margin: 16px auto; border: 1px solid #e5e7eb; box-shadow: 0 8px 28px rgba(15,23,42,.06); }
-      .article-header { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid #e5e7eb; }
-      .article-title { font-size: 1.7rem; margin: 0 0 8px; font-weight: 700; }
-      .article-date { color: #6b7280; font-size: 0.95rem; }
-      .summary { background: #fef2f2; border: 1px solid #fecaca; border-left: 4px solid #dc3545; border-radius: 12px; padding: 14px; margin: 16px 0; color: #7f1d1d; }
-      .toc { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; margin: 16px 0; }
-      .toc a { color: #dc3545; text-decoration: none; font-weight: 600; }
-      .toc a:hover { text-decoration: underline; }
-      h2 { margin-top: 28px; font-size: 1.2rem; }
-      .code, code { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 6px; padding: 2px 6px; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .92rem; }
-      .note { background: #fffbeb; border: 1px solid #fde68a; border-radius: 12px; padding: 12px; margin: 16px 0; color: #92400e; }
-      .faq { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 12px; padding: 14px; }
-      .faq h3 { margin: 12px 0 6px; font-size: 1rem; }
-      .faq h3:first-child { margin-top: 0; }
-      .article-cta {
-        display: inline-block;
-        padding: 10px 16px;
-        background: #dc3545;
-        color: #fff !important;
-        text-decoration: none !important;
-        border-radius: 8px;
-        font-weight: 600;
-      }
-      .article-cta:hover,
-      .article-cta:visited {
-        color: #fff !important;
-        background: #c82333;
-      }
-    </style>
+    <link rel="stylesheet" href="/frontend/styles/menu.css" media="print" onload="this.media='all'">
+    <link rel="stylesheet" href="/frontend/styles/articles/article-chrome.css">
+    <link rel="stylesheet" href="/frontend/styles/articles/json-formatter-guide.css">
 </head>
 <body>
-    <div id="menuContainer"></div>
+{% set anchors = ['what', 'why', 'modes', 'mistakes', 'howto', 'faq'] %}
+{% set tocTitle = jsonFormatterGuide[locale].tocTitle | default(locale | articleTocTitle, true) %}
+{% set tocItems = [] %}
+{% for item in jsonFormatterGuide[locale].tocItems %}
+{% set _ = tocItems.push({ href: '#' + anchors[loop.index0], label: item }) %}
+{% endfor %}
+{% include "partials/article-floating-toc.njk" %}
 
-    <article>
-        <header class="article-header">
-            <div class="ad-top-banner ad-banner loading">
-                <ins class="mrg-tag"
-                    style="display:inline-block;"
-                    data-ad-client="ad-{{ mailAds.slots.top.id }}"
-                    data-ad-slot="{{ mailAds.slots.top.id }}">
-                </ins>
-            </div>
-            <h1 class="article-title">{{ jsonFormatterGuide[locale].articleTitle }}</h1>
-            <div class="article-date">{{ jsonFormatterGuide[locale].articleDate }}</div>
-        </header>
+<div id="menuContainer"></div>
 
+<article class="article-container" tabindex="0">
+    <header class="article-header">
+        <div class="ad-top-banner ad-banner loading">
+            <ins class="mrg-tag"
+                style="display:inline-block;"
+                data-ad-client="ad-{{ mailAds.slots.top.id }}"
+                data-ad-slot="{{ mailAds.slots.top.id }}">
+            </ins>
+        </div>
+        <h1 class="article-title">{{ jsonFormatterGuide[locale].articleTitle }}</h1>
+        <div class="article-date">{{ jsonFormatterGuide[locale].articleDate }}</div>
+    </header>
+
+    <div class="article-content">
         <div class="summary">
             <strong>{{ jsonFormatterGuide[locale].summaryTitle }}</strong> {{ jsonFormatterGuide[locale].summaryContent }}
-        </div>
-
-        <div class="toc">
-            <strong>{{ jsonFormatterGuide[locale].tocTitle }}</strong>
-            <ol>
-              {%- set anchors = ['what', 'why', 'modes', 'mistakes', 'howto', 'faq'] -%}
-              {%- for item in jsonFormatterGuide[locale].tocItems -%}
-              <li><a href="#{{ anchors[loop.index0] }}">{{ item }}</a></li>
-              {%- endfor -%}
-            </ol>
         </div>
 
         <h2 id="what">{{ jsonFormatterGuide[locale].section1Title }}</h2>
@@ -175,10 +146,17 @@ eleventyComputed:
           <p>{{ item.answer | safe }}</p>
           {%- endfor -%}
         </div>
-    </article>
 
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
-    <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+        {% set relatedTitle = locale | articleRelatedTitle %}
+        {% set relatedItems = 'json-formatter-guide' | articleRelated(locale) %}
+        {% include "partials/article-related.njk" %}
+    </div>
+</article>
+
+<button type="button" class="scroll-to-top" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" aria-label="↑">↑</button>
+
+{% include "partials/article-chrome-scripts.njk" %}
+<script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
 {{ mobileAnchor(jsonFormatterGuide[locale].ads.closeAria) }}
 {% include "partials/ad-pool-init.njk" %}

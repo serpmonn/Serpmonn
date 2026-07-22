@@ -52,7 +52,9 @@
     Object.keys(settings).forEach(key => {                                                // Для каждой настройки
       const statusEl = document.querySelector(`[data-status="${key}"]`);                  // Находим элемент статуса
       if (statusEl) {
-        statusEl.textContent = savedSettings[key] ? '🟢' : '⚪';                          // Зеленый кружок если включено, белый если выключено
+        statusEl.textContent = '';
+        statusEl.classList.toggle('is-on', !!savedSettings[key]);
+        statusEl.classList.toggle('is-off', !savedSettings[key]);
       }
       const toggleEl = document.querySelector(`.a11y-toggle[data-setting="${key}"]`);     // Находим кнопку переключения
       if (toggleEl) {
