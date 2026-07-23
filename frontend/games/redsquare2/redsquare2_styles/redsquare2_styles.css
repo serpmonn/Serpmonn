@@ -154,3 +154,71 @@
                 color: white;                                             /* Белый цвет текста для заголовков */
             }
     }
+
+/* Оверлей таблицы лидеров (VK Mini App — без ухода со страницы) */
+.vk-mini-lb-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  background: rgba(15, 15, 16, 0.72);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+}
+.vk-mini-lb-overlay[hidden] {
+  display: none !important;
+}
+.vk-mini-lb-panel {
+  width: 100%;
+  max-width: 360px;
+  max-height: min(80vh, 520px);
+  overflow: auto;
+  background: #fff;
+  border-radius: 14px;
+  padding: 16px;
+  box-shadow: 0 12px 40px rgba(0,0,0,.28);
+  box-sizing: border-box;
+}
+.vk-mini-lb-panel h2 {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+  color: #111;
+}
+.vk-mini-lb-score {
+  margin: 0 0 10px;
+  font-weight: 700;
+  color: #e53935;
+}
+.vk-mini-lb-list {
+  margin: 0 0 12px;
+  padding-left: 1.2rem;
+  color: #1f2937;
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.vk-mini-lb-empty {
+  margin: 0 0 12px;
+  color: #6b7280;
+}
+.vk-mini-lb-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.vk-mini-lb-actions button {
+  flex: 1 1 120px;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #111 !important;
+  font-weight: 700;
+  cursor: pointer;
+}
+.vk-mini-lb-actions #vkMiniLbRestart {
+  background: #e53935;
+  border-color: #e53935;
+  color: #fff !important;
+}

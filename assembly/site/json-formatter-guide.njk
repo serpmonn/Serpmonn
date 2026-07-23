@@ -44,10 +44,10 @@ eleventyComputed:
       "dateModified": "2026-07-21",
       "inLanguage": "{{ locale }}",
       "url": "{{ canonical }}",
-      "author": { "@type": "Organization", "name": "Serpmonn", "url": "{{ site.baseUrl }}" },
+      "author": { "@type": "Organization", "name": "{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}", "url": "{{ site.baseUrl }}" },
       "publisher": {
         "@type": "Organization",
-        "name": "Serpmonn",
+        "name": "{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}",
         "url": "{{ site.baseUrl }}",
         "logo": { "@type": "ImageObject", "url": "{{ site.baseUrl }}/frontend/images/serpmonn.ico?v=3" }
       }

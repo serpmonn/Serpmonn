@@ -209,16 +209,106 @@
                 touchX = null;
             });
 
+            const isVkMiniEmbed =
+                /(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search) ||
+                /vk_app_id=\d+/.test(window.location.search) ||
+                document.documentElement.classList.contains('vk-mini-embed') ||
+                document.body?.classList?.contains('vk-mini-embed') ||
+                (window.self !== window.top);
+
+            const LEADERBOARD_URL = 'https://www.serpmonn.ru/backend/games/redsquare2/leaderboard';
+            const ADD_SCORE_URL = 'https://www.serpmonn.ru/add-score';
+
+            function ensureLeaderboardOverlay() {
+                let overlay = document.getElementById('vkMiniLeaderboardOverlay');
+                if (overlay) return overlay;
+
+                overlay = document.createElement('div');
+                overlay.id = 'vkMiniLeaderboardOverlay';
+                overlay.className = 'vk-mini-lb-overlay';
+                overlay.hidden = true;
+                overlay.innerHTML = `
+                  <div class="vk-mini-lb-panel" role="dialog" aria-modal="true" aria-labelledby="vkMiniLbTitle">
+                    <h2 id="vkMiniLbTitle">Таблица лидеров</h2>
+                    <p class="vk-mini-lb-score" id="vkMiniLbYourScore" hidden></p>
+                    <ol class="vk-mini-lb-list" id="vkMiniLbList"></ol>
+                    <p class="vk-mini-lb-empty" id="vkMiniLbEmpty" hidden>Пока нет результатов</p>
+                    <div class="vk-mini-lb-actions">
+                      <button type="button" id="vkMiniLbClose">Закрыть</button>
+                      <button type="button" id="vkMiniLbRestart">Играть снова</button>
+                    </div>
+                  </div>
+                `;
+                document.body.appendChild(overlay);
+
+                overlay.addEventListener('click', (e) => {
+                    if (e.target === overlay) hideLeaderboardOverlay();
+                });
+                overlay.querySelector('#vkMiniLbClose').addEventListener('click', hideLeaderboardOverlay);
+                overlay.querySelector('#vkMiniLbRestart').addEventListener('click', () => {
+                    hideLeaderboardOverlay();
+                    restartGame();
+                });
+                return overlay;
+            }
+
+            function hideLeaderboardOverlay() {
+                const overlay = document.getElementById('vkMiniLeaderboardOverlay');
+                if (overlay) overlay.hidden = true;
+            }
+
+            function showLeaderboardOverlay({ yourScore = null } = {}) {
+                const overlay = ensureLeaderboardOverlay();
+                const list = overlay.querySelector('#vkMiniLbList');
+                const empty = overlay.querySelector('#vkMiniLbEmpty');
+                const yourEl = overlay.querySelector('#vkMiniLbYourScore');
+                list.replaceChildren();
+                empty.hidden = true;
+
+                if (yourScore != null) {
+                    yourEl.hidden = false;
+                    yourEl.textContent = `Ваш результат: ${yourScore}`;
+                } else {
+                    yourEl.hidden = true;
+                    yourEl.textContent = '';
+                }
+
+                overlay.hidden = false;
+                list.textContent = 'Загрузка…';
+
+                fetch(LEADERBOARD_URL)
+                    .then((r) => r.json())
+                    .then((data) => {
+                        list.replaceChildren();
+                        const rows = Array.isArray(data) ? data : [];
+                        if (!rows.length) {
+                            empty.hidden = false;
+                            return;
+                        }
+                        rows.forEach((entry, i) => {
+                            const li = document.createElement('li');
+                            li.textContent = `${i + 1}. ${entry.nickname ?? '—'}: ${entry.score ?? 0}`;
+                            list.appendChild(li);
+                        });
+                    })
+                    .catch(() => {
+                        list.replaceChildren();
+                        empty.hidden = false;
+                        empty.textContent = 'Не удалось загрузить таблицу';
+                    });
+            }
+
             function updateLeaderboard() {
-                fetch('https://www.serpmonn.ru/backend/games/leaderboard')
+                const leaderboardDiv = document.getElementById('leaderboard');
+                if (!leaderboardDiv) return;
+                fetch(LEADERBOARD_URL)
                     .then(response => response.json())
                     .then(data => {
-                        const leaderboardDiv = document.getElementById('leaderboard');
                         leaderboardDiv.textContent = '';
                         const title = document.createElement('div');
                         title.textContent = 'Leaderboard:';
                         leaderboardDiv.appendChild(title);
-                        data.forEach((entry, i) => {
+                        (Array.isArray(data) ? data : []).forEach((entry, i) => {
                             const line = document.createElement('div');
                             line.textContent = `${i + 1}. ${entry.nickname}: ${entry.score}`;
                             leaderboardDiv.appendChild(line);
@@ -229,16 +319,23 @@
 		function endGame() {
 
 		    isPaused = true;                                                                            // Ставим игру на паузу, чтобы не было других действий в момент завершения игры
+            const finalScore = score;
 
-		    fetch('https://www.serpmonn.ru/add-score', {						                        // Отправляем результат игрока на сервер
+		    fetch(ADD_SCORE_URL, {						                        // Отправляем результат игрока на сервер
 		        method: 'POST',
 		        headers: {
 		            'Content-Type': 'application/json'
 		        },
-		        body: JSON.stringify({ nickname: player.nickname, score })
+		        body: JSON.stringify({ nickname: player.nickname, score: finalScore, gameId: 'redsquare2' })
 		    }).then(() => {
 
 		        updateLeaderboard();
+
+                // В VK Mini App нельзя уходить на score_table — остаёмся в iframe
+                if (isVkMiniEmbed) {
+                    showLeaderboardOverlay({ yourScore: finalScore });
+                    return;
+                }
 
 		        const goToScoreTable = () => {
 		            window.location.href = 'score_table.html';
@@ -246,7 +343,11 @@
 
 		        showGameFullscreenAd({ onClose: goToScoreTable });
 		        setTimeout(goToScoreTable, 10000);
-		    });
+		    }).catch(() => {
+                if (isVkMiniEmbed) {
+                    showLeaderboardOverlay({ yourScore: finalScore });
+                }
+            });
 		}
 
         function restartGame() {
@@ -309,21 +410,36 @@
 	            });
 	    });
 
-            document.getElementById('leaderboardBtn').addEventListener('click', function() {
+            document.getElementById('leaderboardBtn')?.addEventListener('click', function() {
+                if (isVkMiniEmbed) {
+                    showLeaderboardOverlay();
+                    return;
+                }
                 const url = window.i18n?.scoreTableUrl || '/frontend/games/redsquare2/score_table.html';
                 window.open(url, '_blank');
             });
 
-            document.getElementById('homeBtn').addEventListener('click', function() {
+            document.getElementById('homeBtn')?.addEventListener('click', function() {
+                const inMini =
+                    isVkMiniEmbed ||
+                    Boolean(window.__SPN_VK_MINI__) ||
+                    window.self !== window.top;
+                if (inMini) {
+                    try {
+                        window.parent.postMessage({ type: 'spn-vk-mini-close-viewer' }, window.location.origin);
+                    } catch (_) {}
+                    return;
+                }
                 window.location.href = 'https://www.serpmonn.ru';
             });
 
-            document.getElementById('pauseBtn').addEventListener('click', function() {
+            document.getElementById('pauseBtn')?.addEventListener('click', function() {
                 isPaused = !isPaused;
                 document.getElementById('pauseBtn').innerText = isPaused ? t('resume') : t('pause');
             });
 
-            document.getElementById('restartBtn').addEventListener('click', function() {
+            document.getElementById('restartBtn')?.addEventListener('click', function() {
+                hideLeaderboardOverlay();
                 restartGame();
             });
 

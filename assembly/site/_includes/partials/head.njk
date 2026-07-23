@@ -26,7 +26,7 @@
 <meta property="og:url" content="{{ currentUrl }}" />
 <meta property="og:type" content="website" />
 <meta property="og:locale" content="{{ locale | ogLocale }}" />
-<meta property="og:site_name" content="Serpmonn" />
+<meta property="og:site_name" content="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}" />
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="{{ twitterTitle }}">
 <meta name="twitter:description" content="{{ twitterDescription }}">
@@ -75,7 +75,7 @@
 {
   "@context": "https://schema.org",
   "@type": "Organization",
-  "name": "Serpmonn",
+  "name": "{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}",
   "url": "{{ site.baseUrl }}/",
   "logo": {
     "@type": "ImageObject",
@@ -89,7 +89,7 @@
 {
   "@context": "https://schema.org",
   "@type": "WebSite",
-  "name": "Serpmonn",
+  "name": "{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}",
   "url": "{{ site.baseUrl }}/",
   "potentialAction": {
     "@type": "SearchAction",

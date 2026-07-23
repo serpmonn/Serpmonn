@@ -1,7 +1,7 @@
 ---
 permalink: "/frontend/mini/miniapp.html"
 layout: "layouts/vk-mini.njk"
-title: "Serpmonn"
+title: "Серпмонн"
 ---
 
 <script>
@@ -12,26 +12,118 @@ title: "Serpmonn"
 <div class="vk-mini-shell">
   <div class="vk-mini-screens">
 
-    {# —— SEARCH —— #}
-    <section class="vk-mini-screen is-active vk-mini-search" data-screen="search" aria-label="{{ miniApp.nav.search }}">
-      <div class="vk-mini-brand">
-        <img src="/frontend/images/serpmonn.ico?v=3" alt="Serpmonn" width="56" height="56">
-        <h1>{{ miniApp.title }}</h1>
-        <p>{{ miniApp.search.hint }}</p>
-        <div class="vk-mini-auth" id="vk-mini-auth" data-state="guest">
-          <div class="vk-mini-auth__status" id="vk-mini-auth-status" hidden>
-            <img id="vk-mini-auth-photo" alt="" width="28" height="28" hidden>
-            <span id="vk-mini-auth-label">{{ miniApp.auth.loggedIn }}</span>
-          </div>
+    {# —— PROFILE —— #}
+    <section class="vk-mini-screen vk-mini-profile-screen" data-screen="profile" aria-label="{{ miniApp.nav.profile }}">
+      <div class="vk-mini-profile" id="vk-mini-auth" data-state="guest">
+        <div class="vk-mini-profile__avatar-wrap">
+          <img id="vk-mini-auth-photo" class="vk-mini-profile__avatar" src="/frontend/images/serpmonn.ico?v=3" alt="" width="72" height="72">
+        </div>
+        <h2 class="vk-mini-profile__name" id="vk-mini-profile-name">{{ miniApp.profile.guestName }}</h2>
+        <p class="vk-mini-profile__text" id="vk-mini-profile-text">{{ miniApp.profile.guestText }}</p>
+        <p class="vk-mini-profile__quota" id="vk-mini-auth-hint">{{ miniApp.profile.quotaGuest }}</p>
+        <div class="vk-mini-profile__actions">
           <button type="button" class="vk-mini-auth__login" id="vk-mini-auth-login">
             {{ miniApp.auth.login }}
           </button>
-          <p class="vk-mini-auth__hint" id="vk-mini-auth-hint">{{ miniApp.auth.guestQuota }}</p>
+          <button type="button" class="vk-mini-auth__logout" id="vk-mini-auth-logout" hidden>
+            {{ miniApp.profile.logout }}
+          </button>
+          <button type="button" class="vk-mini-auth__delete" id="vk-mini-auth-delete" hidden>
+            {{ miniApp.profile.deleteAccount }}
+          </button>
+        </div>
+
+        <div class="vk-mini-legal" id="vk-mini-legal">
+          <p class="vk-mini-legal__title">{{ miniApp.legal.linksTitle }}</p>
+          <div class="vk-mini-legal__links">
+            <button type="button" class="vk-mini-legal__link"
+              data-open-url="{{ miniApp.legal.privacyUrl }}"
+              data-open-title="{{ miniApp.legal.privacyTitle }}">
+              {{ miniApp.legal.privacyTitle }}
+            </button>
+            <button type="button" class="vk-mini-legal__link"
+              data-open-url="{{ miniApp.legal.offerUrl }}"
+              data-open-title="{{ miniApp.legal.offerTitle }}">
+              {{ miniApp.legal.offerTitle }}
+            </button>
+          </div>
+        </div>
+
+        <div class="vk-mini-auth-serp" id="vk-mini-auth-serp">
+          <div class="vk-mini-auth-serp__divider" aria-hidden="true">
+            <span>{{ miniApp.auth.orDivider }}</span>
+          </div>
+          <form class="vk-mini-auth-serp__form" id="vk-mini-serp-login-form" autocomplete="on">
+            <label class="vk-mini-auth-serp__label" for="vk-mini-serp-email">{{ miniApp.auth.emailLabel }}</label>
+            <input
+              class="vk-mini-auth-serp__input"
+              type="email"
+              id="vk-mini-serp-email"
+              name="email"
+              inputmode="email"
+              autocomplete="username"
+              placeholder="{{ miniApp.auth.emailPlaceholder }}"
+              required
+            >
+            <label class="vk-mini-auth-serp__label" for="vk-mini-serp-password">{{ miniApp.auth.passwordLabel }}</label>
+            <input
+              class="vk-mini-auth-serp__input"
+              type="password"
+              id="vk-mini-serp-password"
+              name="password"
+              autocomplete="current-password"
+              placeholder="{{ miniApp.auth.passwordPlaceholder }}"
+              minlength="6"
+              required
+            >
+            <p class="vk-mini-auth-serp__error" id="vk-mini-serp-login-error" hidden></p>
+            <button type="submit" class="vk-mini-auth-serp__submit" id="vk-mini-serp-login-submit">
+              {{ miniApp.auth.submitSerpmonn }}
+            </button>
+          </form>
+          <div class="vk-mini-auth-serp__links">
+            <button type="button" class="vk-mini-auth-serp__link" id="vk-mini-serp-register"
+              data-open-url="/frontend/register/register.html"
+              data-open-title="{{ miniApp.auth.registerLink }}">
+              {{ miniApp.auth.registerLink }}
+            </button>
+            <button type="button" class="vk-mini-auth-serp__link" id="vk-mini-serp-forgot"
+              data-open-url="/frontend/login/forgot/forgot.html"
+              data-open-title="{{ miniApp.auth.forgotLink }}">
+              {{ miniApp.auth.forgotLink }}
+            </button>
+          </div>
+        </div>
+
+        <span id="vk-mini-auth-status" hidden></span>
+        <span id="vk-mini-auth-label" hidden>{{ miniApp.auth.statusUser }}</span>
+      </div>
+    </section>
+
+    {# —— SEARCH —— #}
+    <section class="vk-mini-screen is-active vk-mini-search" data-screen="search" aria-label="{{ miniApp.nav.search }}">
+      <div class="news-block" id="news-block" style="display:none;">
+        <div class="news-block-header">
+          <div class="news-dot"></div>
+          <span class="news-block-title">{{ miniApp.news.feedTitle }}</span>
+        </div>
+
+        <div id="news-hero-wrap"></div>
+
+        <div class="feed-wrapper">
+          <button class="feed-arrow feed-arrow-left" aria-label="Назад" hidden>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+          </button>
+          <div class="news-feed" id="news-feed"></div>
+          <button class="feed-arrow feed-arrow-right" aria-label="Вперёд">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+          </button>
         </div>
       </div>
 
       <div class="search-card-wrapper">
         <div class="main-search-container">
+          <img src="/frontend/images/serpmonn.ico?v=3" alt="Серпмонн" class="logo" width="40" height="40">
           <form id="ai-search-form" class="search-form">
             <div class="search-form-body">
               <div class="search-form-row">
@@ -142,12 +234,16 @@ title: "Serpmonn"
       <p class="vk-mini-section-sub">{{ miniApp.news.subtitle }}</p>
       <div class="vk-mini-card-list">
         {% for article in localesNews.ru.news.articles %}
-          {% if ('serpmonn-install-guide' not in article.link)
-             and ('donate' not in article.link)
-             and ('/promo' not in article.link)
-             and ('promocode' not in article.link)
-             and ('snippet-limits' not in article.link)
-             and ('telegram' not in article.link) %}
+          {% set link = article.link or '' %}
+          {% set risky = ('serpmonn-install-guide' in link)
+             or ('donate' in link)
+             or ('/promo' in link)
+             or ('promocode' in link)
+             or ('snippet-limits' in link)
+             or ('telegram' in link)
+             or ('updates-' in link)
+             or ('updates_' in link) %}
+          {% if not risky %}
             <button type="button" class="vk-mini-card"
                     data-open-url="{{ article.link }}"
                     data-open-title="{{ article.title | escape }}">
@@ -202,6 +298,10 @@ title: "Serpmonn"
   </div>
 
   <nav class="vk-mini-nav" aria-label="Навигация мини-приложения">
+    <button type="button" data-screen="profile">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>
+      {{ miniApp.nav.profile }}
+    </button>
     <button type="button" data-screen="search" class="is-active">
       <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       {{ miniApp.nav.search }}
@@ -244,6 +344,27 @@ title: "Serpmonn"
         <p>{{ slide.text }}</p>
       </div>
     {% endfor %}
+    <div class="vk-mini-onboarding__consent" id="vk-mini-onboarding-consent">
+      <label class="vk-mini-onboarding__consent-label">
+        <input type="checkbox" id="vk-mini-consent-check">
+        <span>{{ miniApp.legal.consentLabel }}</span>
+      </label>
+      <div class="vk-mini-onboarding__consent-links">
+        <button type="button" class="vk-mini-legal__link"
+          data-open-url="{{ miniApp.legal.privacyUrl }}"
+          data-open-title="{{ miniApp.legal.privacyTitle }}">
+          {{ miniApp.legal.privacyTitle }}
+        </button>
+        <button type="button" class="vk-mini-legal__link"
+          data-open-url="{{ miniApp.legal.offerUrl }}"
+          data-open-title="{{ miniApp.legal.offerTitle }}">
+          {{ miniApp.legal.offerTitle }}
+        </button>
+      </div>
+      <p class="vk-mini-onboarding__consent-error" id="vk-mini-consent-error" hidden>
+        {{ miniApp.legal.consentRequired }}
+      </p>
+    </div>
     <div class="vk-mini-onboarding__actions">
       <button type="button" data-onboard-skip>{{ miniApp.onboarding.skip }}</button>
       <button type="button" class="is-primary" data-onboard-next>{{ miniApp.onboarding.next }}</button>
@@ -263,4 +384,4 @@ title: "Serpmonn"
 
 <script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js"></script>
 <script type="module" src="/frontend/scripts/scripts.js" defer></script>
-<script src="/frontend/scripts/mini/miniapp.js?v=11" defer></script>
+<script src="/frontend/scripts/mini/miniapp.js?v=19" defer></script>

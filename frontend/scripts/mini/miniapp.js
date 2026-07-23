@@ -145,6 +145,9 @@
     if (!doc || !doc.documentElement) return;
     doc.documentElement.classList.add('vk-mini-embed');
     if (doc.body) doc.body.classList.add('vk-mini-embed');
+    try {
+      doc.defaultView.__SPN_VK_MINI__ = true;
+    } catch (_) {}
 
     // Гарантируем mobile viewport внутри iframe
     let vp = doc.querySelector('meta[name="viewport"]');
@@ -157,6 +160,13 @@
       'content',
       'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover'
     );
+
+    // Рекламные скрипты/теги — вырезаем (п. правил каталога / без сторонней рекламы)
+    try {
+      doc.querySelectorAll(
+        'script[src*="ad.mail.ru"], script[src*="ads-async"], script[src*="yandex.ru/ads"], script[src*="an.yandex.ru"], .mrg-tag, ins.mrg-tag, #game-ad-overlay, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner'
+      ).forEach((el) => el.remove());
+    } catch (_) {}
 
     const style = doc.createElement('style');
     style.setAttribute('data-vk-mini-embed', '1');
@@ -189,7 +199,7 @@
       }
       #menuContainer, #menuButton, .menu-container, .cookie-consent, #cookie-consent,
       .donate-button, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner,
-      .mrg-tag, ins.mrg-tag, [id*="mail-ad"], [class*="mail-ad"],
+      .mrg-tag, ins.mrg-tag, [id*="mail-ad"], [class*="mail-ad"], #game-ad-overlay,
       a[href*="donate"], a[href*="/promo"], #installAppButton,
       .accessibility-widget, #a11y-widget { display:none !important; }
 
@@ -350,7 +360,9 @@
   }
 
   function initOpeners() {
-    ROOT.querySelectorAll('[data-open-url]').forEach((el) => {
+    document.querySelectorAll('[data-open-url]').forEach((el) => {
+      if (el.dataset.vkOpenBound) return;
+      el.dataset.vkOpenBound = '1';
       el.addEventListener('click', (e) => {
         e.preventDefault();
         openViewer(el.getAttribute('data-open-url'), el.getAttribute('data-open-title') || el.textContent.trim());
@@ -370,6 +382,12 @@
         closeViewer({ fromPopstate: true });
       }
     });
+    window.addEventListener('message', (event) => {
+      if (event.origin !== window.location.origin) return;
+      const data = event.data;
+      if (!data || data.type !== 'spn-vk-mini-close-viewer') return;
+      closeViewer();
+    });
   }
 
   function initOnboarding() {
@@ -385,8 +403,13 @@
     const btnNext = onboarding.querySelector('[data-onboard-next]');
     const btnSkip = onboarding.querySelector('[data-onboard-skip]');
     const panel = onboarding.querySelector('.vk-mini-onboarding__panel');
+    const consentCheck = document.getElementById('vk-mini-consent-check');
+    const consentError = document.getElementById('vk-mini-consent-error');
+    const legalCopy = (cfg.legal) || {};
     let idx = 0;
     let touchX = null;
+
+    const hasConsent = () => Boolean(consentCheck && consentCheck.checked);
 
     const render = () => {
       slides.forEach((s, i) => {
@@ -399,14 +422,27 @@
           ? (cfg.onboarding && cfg.onboarding.done) || 'Начать'
           : (cfg.onboarding && cfg.onboarding.next) || 'Далее';
       }
+      if (consentError) consentError.hidden = true;
     };
 
     const finish = () => {
+      if (!hasConsent()) {
+        if (consentError) {
+          consentError.hidden = false;
+          consentError.textContent = legalCopy.consentRequired || 'Чтобы продолжить, отметьте согласие';
+        }
+        if (consentCheck) consentCheck.focus();
+        // На последнем слайде, если согласие не дано
+        idx = slides.length - 1;
+        render();
+        return false;
+      }
       try {
         localStorage.setItem(storageKey, '1');
       } catch (_) {}
       onboarding.classList.remove('is-open');
       onboarding.setAttribute('aria-hidden', 'true');
+      return true;
     };
 
     const goNext = () => {
@@ -424,7 +460,18 @@
     };
 
     if (btnNext) btnNext.addEventListener('click', goNext);
-    if (btnSkip) btnSkip.addEventListener('click', finish);
+    if (btnSkip) {
+      btnSkip.addEventListener('click', () => {
+        idx = slides.length - 1;
+        render();
+        finish();
+      });
+    }
+    if (consentCheck) {
+      consentCheck.addEventListener('change', () => {
+        if (consentError) consentError.hidden = true;
+      });
+    }
 
     const swipeTarget = panel || onboarding;
     swipeTarget.addEventListener(
@@ -457,17 +504,23 @@
   const USER_KEY = 'spn_vk_mini_user';
   const authRoot = document.getElementById('vk-mini-auth');
   const authLoginBtn = document.getElementById('vk-mini-auth-login');
+  const authLogoutBtn = document.getElementById('vk-mini-auth-logout');
+  const authDeleteBtn = document.getElementById('vk-mini-auth-delete');
   const authStatus = document.getElementById('vk-mini-auth-status');
   const authLabel = document.getElementById('vk-mini-auth-label');
   const authPhoto = document.getElementById('vk-mini-auth-photo');
   const authHint = document.getElementById('vk-mini-auth-hint');
+  const profileName = document.getElementById('vk-mini-profile-name');
+  const profileText = document.getElementById('vk-mini-profile-text');
   const limitRoot = document.getElementById('vk-mini-limit');
   const limitTitle = document.getElementById('vk-mini-limit-title');
   const limitText = document.getElementById('vk-mini-limit-text');
   const limitActions = document.getElementById('vk-mini-limit-actions');
   const limitClose = document.getElementById('vk-mini-limit-close');
   const authCopy = (cfg.auth) || {};
+  const profileCopy = (cfg.profile) || {};
   const limitCopy = (cfg.limit) || {};
+  const DEFAULT_AVATAR = '/frontend/images/serpmonn.ico?v=3';
 
   function getStoredToken() {
     try {
@@ -502,29 +555,156 @@
     window.__SPN_VK_MINI_USER__ = user || null;
   }
 
+  function prettyAuthName(user) {
+    if (!user) return '';
+    const raw = String(user.username || user.name || '').trim();
+    // Не показываем технические vk_123456
+    if (!raw || /^vk_\d+$/i.test(raw)) {
+      return '';
+    }
+    return raw.split(/\s+/)[0];
+  }
+
+  function clearSession() {
+    try {
+      sessionStorage.removeItem(TOKEN_KEY);
+      sessionStorage.removeItem(USER_KEY);
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+    } catch (_) {}
+    window.__SPN_VK_MINI_TOKEN__ = '';
+    window.__SPN_VK_MINI_USER__ = null;
+  }
+
   function renderAuthUi(user) {
     if (!authRoot) return;
     const loggedIn = Boolean(user && (user.id || user.vkUserId));
     authRoot.dataset.state = loggedIn ? 'user' : 'guest';
 
-    if (authStatus) authStatus.hidden = !loggedIn;
+    if (authLoginBtn) authLoginBtn.hidden = loggedIn;
+    if (authLogoutBtn) authLogoutBtn.hidden = !loggedIn;
+    if (authDeleteBtn) authDeleteBtn.hidden = !loggedIn;
+
+    const serpBlock = document.getElementById('vk-mini-auth-serp');
+    if (serpBlock) serpBlock.hidden = loggedIn;
+
     if (authHint) {
+      authHint.hidden = false;
       authHint.textContent = loggedIn
-        ? (authCopy.userQuota || 'До 15 запросов в день')
-        : (authCopy.guestQuota || 'Гость · до 5 запросов в день');
+        ? (profileCopy.quotaUser || authCopy.userQuota || 'Лимит: 15 запросов в день')
+        : (profileCopy.quotaGuest || authCopy.guestQuota || 'Лимит: 5 запросов в день');
     }
-    if (loggedIn) {
-      if (authLabel) {
-        authLabel.textContent = user.username || authCopy.loggedIn || 'Вы вошли';
+
+    if (profileName) {
+      if (loggedIn) {
+        profileName.textContent =
+          prettyAuthName(user) || authCopy.loggedIn || profileCopy.guestName || 'Вы вошли';
+      } else {
+        profileName.textContent = profileCopy.guestName || 'Гость';
       }
-      if (authPhoto) {
-        if (user.photo) {
-          authPhoto.src = user.photo;
-          authPhoto.hidden = false;
-        } else {
-          authPhoto.hidden = true;
-        }
+    }
+
+    if (profileText) {
+      profileText.textContent = loggedIn
+        ? (profileCopy.userText || 'До 15 запросов к ИИ в день')
+        : (profileCopy.guestText || 'Войдите через VK или аккаунт Серпмонн, чтобы получить до 15 запросов в день');
+    }
+
+    if (authLabel) {
+      const first = prettyAuthName(user);
+      authLabel.textContent = loggedIn
+        ? (first
+            ? `${first} · ${authCopy.userQuota || '15 запросов в день'}`
+            : (authCopy.statusUser || 'Вы вошли · 15/день'))
+        : (authCopy.statusGuest || 'Гость · 5/день');
+    }
+
+    if (authPhoto) {
+      if (loggedIn && user.photo) {
+        authPhoto.src = user.photo;
+      } else {
+        authPhoto.src = DEFAULT_AVATAR;
       }
+      authPhoto.hidden = false;
+    }
+
+    if (authStatus) authStatus.hidden = true;
+  }
+
+  async function logoutFromVk() {
+    if (authLogoutBtn) {
+      authLogoutBtn.disabled = true;
+      authLogoutBtn.textContent = profileCopy.loggingOut || 'Выходим…';
+    }
+    try {
+      await fetch('/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (_) {}
+    clearSession();
+    renderAuthUi(null);
+    if (authLogoutBtn) {
+      authLogoutBtn.disabled = false;
+      authLogoutBtn.textContent = profileCopy.logout || 'Выйти';
+    }
+  }
+
+  async function deleteAccountFromMini() {
+    const confirmText =
+      profileCopy.deleteConfirm ||
+      'Удалить аккаунт Серпмонн и связанные данные? Это действие нельзя отменить.';
+    if (!window.confirm(confirmText)) return;
+
+    const token = getStoredToken();
+    if (authDeleteBtn) {
+      authDeleteBtn.disabled = true;
+      authDeleteBtn.textContent = profileCopy.deletingAccount || 'Удаляем…';
+    }
+    try {
+      const headers = { Accept: 'application/json' };
+      if (token) headers.Authorization = `Bearer ${token}`;
+      const resp = await fetch('/api/vk-mini-delete-account', {
+        method: 'POST',
+        credentials: 'include',
+        headers
+      });
+      const data = await resp.json().catch(() => ({}));
+      if (!resp.ok || !data.success) {
+        window.alert?.(profileCopy.deleteFailed || 'Не удалось удалить аккаунт. Попробуйте ещё раз');
+        return;
+      }
+      clearSession();
+      renderAuthUi(null);
+      window.alert?.(profileCopy.deleteOk || 'Аккаунт удалён');
+    } catch (_) {
+      window.alert?.(profileCopy.deleteFailed || 'Не удалось удалить аккаунт. Попробуйте ещё раз');
+    } finally {
+      if (authDeleteBtn) {
+        authDeleteBtn.disabled = false;
+        authDeleteBtn.textContent = profileCopy.deleteAccount || 'Удалить аккаунт';
+      }
+    }
+  }
+
+  async function enrichUserFromBridge(user) {
+    if (!user) return user;
+    if (user.photo && prettyAuthName(user)) return user;
+    const bridge = getVkBridge();
+    if (!bridge || typeof bridge.send !== 'function') return user;
+    try {
+      const info = await bridge.send('VKWebAppGetUserInfo');
+      if (!info) return user;
+      const name = [info.first_name, info.last_name].filter(Boolean).join(' ').trim();
+      const next = {
+        ...user,
+        username: prettyAuthName({ username: user.username }) ? user.username : (name || user.username),
+        photo: user.photo || info.photo_100 || info.photo_200 || null
+      };
+      persistSession(getStoredToken(), next);
+      return next;
+    } catch (_) {
+      return user;
     }
   }
 
@@ -589,6 +769,68 @@
     return { ok: resp.ok, data };
   }
 
+  function setSerpLoginError(message) {
+    const el = document.getElementById('vk-mini-serp-login-error');
+    if (!el) return;
+    if (message) {
+      el.hidden = false;
+      el.textContent = message;
+    } else {
+      el.hidden = true;
+      el.textContent = '';
+    }
+  }
+
+  async function loginWithSerpmonn({ email, password } = {}) {
+    const submitBtn = document.getElementById('vk-mini-serp-login-submit');
+    const emailInput = document.getElementById('vk-mini-serp-email');
+    const passwordInput = document.getElementById('vk-mini-serp-password');
+    const mail = String(email || emailInput?.value || '').trim();
+    const pass = String(password || passwordInput?.value || '');
+
+    setSerpLoginError('');
+
+    if (!mail || !pass || pass.length < 6) {
+      setSerpLoginError(authCopy.loginFailed || 'Не удалось войти. Проверьте email и пароль');
+      return false;
+    }
+
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = authCopy.loggingIn || 'Входим…';
+    }
+
+    try {
+      const resp = await fetch('/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({ email: mail, password: pass, vkMini: true })
+      });
+      const data = await resp.json().catch(() => null);
+      if (!resp.ok || !data?.success || !data?.token) {
+        setSerpLoginError(
+          (data && data.message) || authCopy.loginFailed || 'Не удалось войти. Проверьте email и пароль'
+        );
+        return false;
+      }
+
+      persistSession(data.token, data.user);
+      renderAuthUi(data.user);
+      if (passwordInput) passwordInput.value = '';
+      return true;
+    } catch (err) {
+      console.warn('serpmonn mini login failed', err);
+      setSerpLoginError(authCopy.loginFailed || 'Не удалось войти. Попробуйте ещё раз');
+      return false;
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = authCopy.submitSerpmonn || 'Войти';
+      }
+    }
+  }
+
   async function loginWithVk({ interactive } = { interactive: false }) {
     if (authLoginBtn && interactive) {
       authLoginBtn.disabled = true;
@@ -606,8 +848,10 @@
       if (launchParams.vk_user_id && launchParams.sign) {
         const first = await postMiniLogin({ launchParams });
         if (first.ok && first.data?.success && first.data.token) {
-          persistSession(first.data.token, first.data.user);
-          renderAuthUi(first.data.user);
+          let user = first.data.user;
+          persistSession(first.data.token, user);
+          user = await enrichUserFromBridge(user);
+          renderAuthUi(user);
           return true;
         }
       }
@@ -627,8 +871,10 @@
       });
 
       if (second.ok && second.data?.success && second.data.token) {
-        persistSession(second.data.token, second.data.user);
-        renderAuthUi(second.data.user);
+        let user = second.data.user;
+        persistSession(second.data.token, user);
+        user = await enrichUserFromBridge(user);
+        renderAuthUi(user);
         return true;
       }
 
@@ -684,6 +930,19 @@
         if (ok) closeLimit();
       });
       limitActions.appendChild(loginBtn);
+
+      const serpBtn = document.createElement('button');
+      serpBtn.type = 'button';
+      serpBtn.textContent = authCopy.loginSerpmonn || limitCopy.goProfile || 'Войти через Серпмонн';
+      serpBtn.addEventListener('click', () => {
+        closeLimit();
+        showScreen('profile');
+        const emailInput = document.getElementById('vk-mini-serp-email');
+        if (emailInput) {
+          try { emailInput.focus(); } catch (_) {}
+        }
+      });
+      limitActions.appendChild(serpBtn);
     }
 
     [
@@ -713,6 +972,7 @@
     if (cachedUser) {
       window.__SPN_VK_MINI_USER__ = cachedUser;
       renderAuthUi(cachedUser);
+      enrichUserFromBridge(cachedUser).then((u) => renderAuthUi(u));
     } else {
       renderAuthUi(null);
     }
@@ -720,6 +980,21 @@
     if (authLoginBtn) {
       authLoginBtn.addEventListener('click', () => loginWithVk({ interactive: true }));
     }
+    if (authLogoutBtn) {
+      authLogoutBtn.addEventListener('click', () => logoutFromVk());
+    }
+    if (authDeleteBtn) {
+      authDeleteBtn.addEventListener('click', () => deleteAccountFromMini());
+    }
+
+    const serpForm = document.getElementById('vk-mini-serp-login-form');
+    if (serpForm) {
+      serpForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        await loginWithSerpmonn();
+      });
+    }
+
     if (limitClose) {
       limitClose.addEventListener('click', closeLimit);
     }
@@ -769,6 +1044,20 @@
       }
 
       const href = a.getAttribute('href') || '';
+
+      // Лента новостей на экране поиска — открываем через VK Bridge
+      if (a.closest('#news-block') && isExternalUrl(href)) {
+        e.preventDefault();
+        e.stopPropagation();
+        const bridge = getVkBridge();
+        if (bridge && typeof bridge.send === 'function') {
+          bridge.send('VKWebAppOpenURL', { url: href }).catch(() => {
+            bridge.send('VKWebAppOpenLink', { url: href }).catch(() => {});
+          });
+        }
+        return;
+      }
+
       if (isExternalUrl(href)) {
         e.preventDefault();
         e.stopPropagation();

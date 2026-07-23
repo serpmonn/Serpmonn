@@ -4,7 +4,7 @@ import rateLimit from 'express-rate-limit';
 import paseto from 'paseto';
 import { query } from '../database/config.mjs';
 import { setAuthCookie } from '../auth/authCookie.mjs';
-import { vkMiniLoginHandler } from './vkMiniAuth.mjs';
+import { vkMiniLoginHandler, vkMiniDeleteAccountHandler } from './vkMiniAuth.mjs';
 
 const { V2 } = paseto;
 
@@ -24,6 +24,9 @@ const vkidLimiter = rateLimit({
 
 // POST /api/vk-mini-login — тихий/явный вход из VK Mini App
 router.post('/vk-mini-login', vkidLimiter, vkMiniLoginHandler);
+
+// POST /api/vk-mini-delete-account — удаление данных (п. 1.1.10)
+router.post('/vk-mini-delete-account', vkidLimiter, vkMiniDeleteAccountHandler);
 
 // POST /api/vkid-login
 router.post('/vkid-login', vkidLimiter, async (req, res, next) => {

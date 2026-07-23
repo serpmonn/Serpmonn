@@ -46,6 +46,17 @@ export { pushMailAdTag };
 
 export async function showGameFullscreenAd(options = {}) {
   try {
+    const isVkMini =
+      Boolean(window.__SPN_VK_MINI__) ||
+      document.documentElement.classList.contains('vk-mini-embed') ||
+      document.body?.classList?.contains('vk-mini-embed') ||
+      /(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search) ||
+      /vk_app_id=\d+/.test(window.location.search);
+    if (isVkMini) {
+      if (typeof options.onClose === 'function') options.onClose();
+      return;
+    }
+
     let ov = document.getElementById('game-ad-overlay');
     const yandexCfg = slotsData.slots.fullscreen?.yandex;
     const poolEnabled = slotsData.pool?.enabled !== false;

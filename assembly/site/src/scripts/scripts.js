@@ -358,7 +358,8 @@ function buildSharePayload() {
   lines.push(pageUrl);
 
   const shareText = lines.join('\n\n');
-  const shareTitle = query ? `Serpmonn: ${query}` : messages.shareTitleDefault;
+  const brandName = getCurrentLocale() === 'ru' ? 'Серпмонн' : 'Serpmonn';
+  const shareTitle = query ? `${brandName}: ${query}` : messages.shareTitleDefault;
 
   return {
     pageUrl,
@@ -417,7 +418,7 @@ async function shareViaVkMini(payload) {
   try {
     if (navigator.share) {
       await navigator.share({
-        title: payload.shareTitle || 'Serpmonn',
+        title: payload.shareTitle || (getCurrentLocale() === 'ru' ? 'Серпмонн' : 'Serpmonn'),
         text: payload.answerText || payload.query || '',
         url: link
       });

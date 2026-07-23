@@ -1,14 +1,21 @@
 <!doctype html>
-<html lang="ru">
+<html lang="ru" class="vk-mini-root">
   <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, height=device-height, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
     <meta name="theme-color" content="#ffffff">
     <title>{{ title or miniApp.title }}</title>
     <meta name="description" content="{{ miniApp.tagline }}">
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+    <style>
+      /* До загрузки CSS: не даём base.css открыть горизонтальный скролл */
+      html.vk-mini-root, html.vk-mini-root body {
+        width: 100% !important; max-width: 100% !important;
+        overflow-x: hidden !important; margin: 0 !important; padding: 0 !important;
+      }
+    </style>
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <link rel="stylesheet" href="/frontend/styles/mini/miniapp.css?v=10">
+    <link rel="stylesheet" href="/frontend/styles/mini/miniapp.css?v=19">
   </head>
   <body class="vk-mini-app" data-vk-mini="1">
     {{ content | safe }}

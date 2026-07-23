@@ -574,8 +574,15 @@ export async function getNewsForLocale(locale, topicFilter = null) {
   if (isStale) {
     // Обновляем кэш — один запрос на первую тему + остальные параллельно
     const results = await fetchAllTopics(safeLocale, topics);
-    localeCache.set(safeLocale, { items: results, updatedAt: Date.now() });
-    console.log(`[News] Кэш обновлён для локали "${safeLocale}": ${results.length} новостей`);
+    if (results.length > 0) {
+      localeCache.set(safeLocale, { items: results, updatedAt: Date.now() });
+      console.log(`[News] Кэш обновлён для локали "${safeLocale}": ${results.length} новостей`);
+    } else {
+      // Пустой ответ не кэшируем на час — иначе лента «мертвая» до TTL
+      const retryAt = Date.now() - CACHE_TTL_MS + 2 * 60 * 1000; // повторить через ~2 мин
+      localeCache.set(safeLocale, { items: cached?.items || [], updatedAt: retryAt });
+      console.warn(`[News] Пустой ответ для "${safeLocale}", повтор через ~2 мин`);
+    }
   }
 
   const items = localeCache.get(safeLocale).items;
@@ -612,8 +619,14 @@ async function fetchAllTopics(locale, topics) {
 
 async function fetchOneTopic(locale, topic) {
   try {
-    const data = await fetchSearxViaCurl(topic.query, 'news');
-    const raw = (data.results || []).slice(0, 6);
+    // categories=news у SearXNG часто пустой/падает — берём general
+    let data = await fetchSearxViaCurl(topic.query, 'general');
+    let raw = (data.results || []).slice(0, 6);
+
+    if (!raw.length) {
+      data = await fetchSearxViaCurl(topic.query, 'news');
+      raw = (data.results || []).slice(0, 6);
+    }
 
     return raw
       .filter(r => r.url && r.title)

@@ -32,4 +32,14 @@ export function clearAuthCookie(res) {
     domain: AUTH_COOKIE_DOMAIN
   });
   res.clearCookie(AUTH_COOKIE_NAME, BASE_COOKIE_OPTIONS);
+  // VK Mini App: cookie могла быть выставлена с SameSite=None
+  res.clearCookie(AUTH_COOKIE_NAME, {
+    ...BASE_COOKIE_OPTIONS,
+    domain: AUTH_COOKIE_DOMAIN,
+    sameSite: 'None'
+  });
+  res.clearCookie(AUTH_COOKIE_NAME, {
+    ...BASE_COOKIE_OPTIONS,
+    sameSite: 'None'
+  });
 }

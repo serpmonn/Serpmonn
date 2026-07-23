@@ -1,20 +1,25 @@
 /**
  * Авторизация VK Mini App → аккаунт Serpmonn (cookie + token).
- * Доверяем только:
- *  1) подписи launch params (VK_MINI_SECURE_KEY), или
- *  2) access_token через VK API users.get
+ * По п. 1.2.2 правил VK Mini Apps: валидируем подпись launch params (VK_MINI_SECURE_KEY).
+ * Дополнительно допускаем VKWebAppGetAuthToken → users.get.
  */
 import crypto from 'crypto';
 import { query } from '../database/config.mjs';
-import { setAuthCookie } from '../auth/authCookie.mjs';
+import { setAuthCookie, clearAuthCookie } from '../auth/authCookie.mjs';
 import paseto from 'paseto';
 
 const { V2 } = paseto;
 
 const PASETO_SECRET = process.env.SECRET_KEY;
 const VK_MINI_APP_ID = String(process.env.VK_MINI_APP_ID || '54486769');
-const VK_MINI_SECURE_KEY = process.env.VK_MINI_SECURE_KEY || '';
+const VK_MINI_SECURE_KEY = String(process.env.VK_MINI_SECURE_KEY || '').trim();
 const TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+
+if (!VK_MINI_SECURE_KEY) {
+  console.error(
+    '[vk-mini-auth] VK_MINI_SECURE_KEY не задан. Укажите защищённый ключ из кабинета VK (Разработка → Ключи доступа). Без него проверка sign (п. 1.2.2) невозможна.'
+  );
+}
 
 function toBase64Url(buf) {
   return Buffer.from(buf)
@@ -24,7 +29,13 @@ function toBase64Url(buf) {
     .replace(/=+$/g, '');
 }
 
-/** Проверка подписи launch params VK Mini Apps */
+function encodeLaunchValue(value) {
+  return encodeURIComponent(String(value ?? ''))
+    .replace(/%20/g, '+')
+    .replace(/[!'()*]/g, (c) => `%${c.charCodeAt(0).toString(16).toUpperCase()}`);
+}
+
+/** Проверка подписи launch params VK Mini Apps (п. 1.2.2) */
 export function verifyLaunchParams(params, secureKey = VK_MINI_SECURE_KEY) {
   if (!secureKey || !params || typeof params !== 'object') return false;
   const sign = String(params.sign || '');
@@ -33,20 +44,35 @@ export function verifyLaunchParams(params, secureKey = VK_MINI_SECURE_KEY) {
   const pairs = Object.keys(params)
     .filter((k) => k.startsWith('vk_'))
     .sort()
-    .map((k) => `${k}=${params[k]}`);
+    .map((k) => `${k}=${encodeLaunchValue(params[k])}`);
 
   const payload = pairs.join('&');
   const digest = crypto.createHmac('sha256', secureKey).update(payload).digest();
   const expected = toBase64Url(digest);
 
+  // Fallback без encode (на случай уже закодированных значений)
+  const pairsRaw = Object.keys(params)
+    .filter((k) => k.startsWith('vk_'))
+    .sort()
+    .map((k) => `${k}=${params[k]}`);
+  const expectedRaw = toBase64Url(
+    crypto.createHmac('sha256', secureKey).update(pairsRaw.join('&')).digest()
+  );
+
   try {
-    const a = Buffer.from(expected);
     const b = Buffer.from(sign);
-    if (a.length !== b.length) return false;
-    return crypto.timingSafeEqual(a, b);
+    for (const exp of [expected, expectedRaw]) {
+      const a = Buffer.from(exp);
+      if (a.length === b.length && crypto.timingSafeEqual(a, b)) return true;
+    }
+    return false;
   } catch {
     return false;
   }
+}
+
+export function isMiniSecureKeyConfigured() {
+  return Boolean(VK_MINI_SECURE_KEY);
 }
 
 async function fetchVkUserByAccessToken(accessToken) {
@@ -127,11 +153,10 @@ export async function issueSession(res, user, { vkUserId, name = null, email = n
     id: user.id,
     username: user.username || name || `vk_${vkUserId}`,
     email: user.email || email || null,
-    vkUserId: String(vkUserId)
+    vkUserId: vkUserId ? String(vkUserId) : undefined
   };
 
   const token = await V2.sign(payload, PASETO_SECRET);
-  // SameSite=None — cookie доступна в WebView/iframe VK Mini App
   setAuthCookie(res, token, TOKEN_TTL_MS, { sameSite: 'None' });
 
   return {
@@ -140,10 +165,25 @@ export async function issueSession(res, user, { vkUserId, name = null, email = n
       id: user.id,
       username: payload.username,
       email: payload.email,
-      vkUserId: payload.vkUserId,
+      vkUserId: payload.vkUserId || null,
       photo: photo || null
     }
   };
+}
+
+/** Cookie или Bearer (мини-приложение хранит token в storage) */
+export async function resolveMiniUser(req) {
+  if (!PASETO_SECRET) return null;
+  let token = req.cookies?.token || '';
+  const header = req.headers?.authorization || req.headers?.Authorization || '';
+  const m = String(header).match(/^Bearer\s+(.+)$/i);
+  if (m) token = m[1].trim();
+  if (!token) return null;
+  try {
+    return await V2.verify(token, PASETO_SECRET);
+  } catch {
+    return null;
+  }
 }
 
 /**
@@ -154,34 +194,45 @@ export async function vkMiniLoginHandler(req, res, next) {
   try {
     const { launchParams, accessToken } = req.body || {};
     let profile = null;
+    let signOk = false;
 
     if (launchParams && typeof launchParams === 'object') {
       const appId = String(launchParams.vk_app_id || '');
       if (appId && appId !== VK_MINI_APP_ID) {
         return res.status(403).json({ success: false, message: 'Unexpected vk_app_id' });
       }
-      if (VK_MINI_SECURE_KEY && verifyLaunchParams(launchParams)) {
-        const vkUserId = launchParams.vk_user_id;
-        if (!vkUserId) {
-          return res.status(400).json({ success: false, message: 'Missing vk_user_id' });
-        }
-        profile = { vkUserId: String(vkUserId), name: null, photo: null };
-      } else if (VK_MINI_SECURE_KEY) {
-        // Ключ задан, но подпись неверна — не доверяем params
+
+      if (!VK_MINI_SECURE_KEY) {
+        // Без ключа нельзя доверять sign — требуем accessToken
         if (!accessToken) {
+          return res.status(503).json({
+            success: false,
+            message: 'VK_MINI_SECURE_KEY not configured',
+            needSecureKey: true,
+            needToken: true
+          });
+        }
+      } else {
+        signOk = verifyLaunchParams(launchParams);
+        if (signOk && launchParams.vk_user_id) {
+          profile = { vkUserId: String(launchParams.vk_user_id), name: null, photo: null };
+        } else if (!accessToken) {
           return res.status(403).json({ success: false, message: 'Invalid launch sign' });
         }
-      } else if (!accessToken && launchParams.vk_user_id) {
-        // Без secure key нельзя доверять голым params
-        return res.status(400).json({
-          success: false,
-          message: 'accessToken required',
-          needToken: true
-        });
       }
     }
 
     if (!profile && accessToken) {
+      if (
+        VK_MINI_SECURE_KEY &&
+        launchParams &&
+        typeof launchParams === 'object' &&
+        launchParams.sign &&
+        !verifyLaunchParams(launchParams)
+      ) {
+        console.warn('vk-mini-login: launch sign invalid, continuing with accessToken');
+      }
+
       try {
         profile = await fetchVkUserByAccessToken(String(accessToken));
       } catch (e) {
@@ -207,6 +258,8 @@ export async function vkMiniLoginHandler(req, res, next) {
     return res.json({
       success: true,
       message: 'VK Mini login success',
+      signVerified: Boolean(signOk || (VK_MINI_SECURE_KEY && launchParams && verifyLaunchParams(launchParams))),
+      secureKeyConfigured: isMiniSecureKeyConfigured(),
       ...session
     });
   } catch (err) {
@@ -214,6 +267,43 @@ export async function vkMiniLoginHandler(req, res, next) {
     if (err.status === 500) {
       return res.status(500).json({ success: false, message: err.message });
     }
+    next(err);
+  }
+}
+
+/**
+ * POST /api/vk-mini-delete-account — удаление/анонимизация аккаунта (п. 1.1.10)
+ */
+export async function vkMiniDeleteAccountHandler(req, res, next) {
+  try {
+    const payload = await resolveMiniUser(req);
+    if (!payload?.id) {
+      return res.status(401).json({ success: false, message: 'Unauthorized' });
+    }
+
+    const userId = payload.id;
+    const short = String(userId).replace(/-/g, '').slice(0, 12);
+    const anonEmail = `deleted+${short}@invalid.local`;
+    const anonName = `deleted_${short}`;
+
+    await query(
+      `UPDATE users
+       SET username = ?,
+           email = ?,
+           password_hash = '',
+           vk_user_id = NULL,
+           confirmed = 0
+       WHERE id = ?`,
+      [anonName, anonEmail, userId]
+    );
+
+    clearAuthCookie(res);
+    return res.json({
+      success: true,
+      message: 'Account deleted'
+    });
+  } catch (err) {
+    console.error('vk-mini-delete-account error:', err);
     next(err);
   }
 }

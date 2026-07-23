@@ -281,6 +281,19 @@ restartButton.addEventListener('click', () => {
 });
 
 homeButton.addEventListener('click', () => {
+    const isVkMiniEmbed =
+        Boolean(window.__SPN_VK_MINI__) ||
+        /(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search) ||
+        /vk_app_id=\d+/.test(window.location.search) ||
+        document.documentElement.classList.contains('vk-mini-embed') ||
+        document.body?.classList?.contains('vk-mini-embed') ||
+        window.self !== window.top;
+    if (isVkMiniEmbed) {
+        try {
+            window.parent.postMessage({ type: 'spn-vk-mini-close-viewer' }, window.location.origin);
+        } catch (_) {}
+        return;
+    }
     window.location.href = 'https://www.serpmonn.ru';
 });
 

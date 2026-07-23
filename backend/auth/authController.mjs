@@ -341,9 +341,10 @@ export const confirmToken = async (req, res) => {
 };
 
 export const loginUser = async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, vkMini } = req.body || {};
+  const forMini = Boolean(vkMini);
   const { t } = getBackendMessages(req);
-  logAuthRequest(req, 'loginUser:start', { email: maskEmail(email) });
+  logAuthRequest(req, 'loginUser:start', { email: maskEmail(email), forMini });
 
   try {
     const results = await safeQuery(
@@ -357,6 +358,9 @@ export const loginUser = async (req, res) => {
     }
 
     const user = results[0];
+    if (!user.password_hash) {
+      return res.status(401).json({ message: t['auth.wrongCredentials'] });
+    }
     const isMatch = await compare(password, user.password_hash);
 
     if (!isMatch) {
@@ -366,7 +370,22 @@ export const loginUser = async (req, res) => {
     const payload = { id: user.id, username: user.username, email: user.email };
     const token = await V2.sign(payload, secretKey);
 
-    setAuthCookie(res, token, 24 * 60 * 60 * 1000);
+    // VK Mini App WebView: cookie только с SameSite=None
+    setAuthCookie(res, token, 24 * 60 * 60 * 1000, forMini ? { sameSite: 'None' } : {});
+
+    if (forMini) {
+      return res.json({
+        success: true,
+        message: t['auth.loginSuccess'],
+        token,
+        user: {
+          id: user.id,
+          username: user.username,
+          email: user.email || null,
+          photo: null
+        }
+      });
+    }
 
     return res.json({ message: t['auth.loginSuccess'] });
   } catch (error) {
