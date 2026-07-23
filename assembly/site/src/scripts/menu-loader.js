@@ -79,7 +79,79 @@ fetch(primaryMenuPath)
       document.body?.classList?.contains('vk-mini-embed');
 
     if (isVkMiniEmbed) {
+      document.documentElement.classList.add('vk-mini-embed');
       document.body.classList.add('vk-mini-embed');
+      if (!document.getElementById('vk-mini-embed-css')) {
+        const style = document.createElement('style');
+        style.id = 'vk-mini-embed-css';
+        style.textContent = `
+          html.vk-mini-embed {
+            width: 100% !important; max-width: 100% !important;
+            height: 100% !important; margin: 0 !important; padding: 0 !important;
+            overflow-x: hidden !important; overflow-y: scroll !important;
+            -webkit-overflow-scrolling: touch !important;
+            touch-action: pan-y manipulation !important;
+            -webkit-text-size-adjust: 100% !important;
+          }
+          body.vk-mini-embed {
+            width: 100% !important; max-width: 100% !important;
+            height: auto !important; min-height: 100% !important; max-height: none !important;
+            margin: 0 !important; padding: 0 0 28px !important;
+            overflow: visible !important;
+            touch-action: pan-y manipulation !important;
+          }
+          #menuContainer, #menuButton, .menu-container, .cookie-consent, #cookie-consent,
+          .donate-button, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner,
+          .mrg-tag, ins.mrg-tag, a[href*="donate"], a[href*="/promo"], #installAppButton {
+            display: none !important;
+          }
+          body.vk-mini-embed .page,
+          body.vk-mini-embed .container {
+            max-width: 100% !important; width: 100% !important;
+            margin: 0 auto !important; padding: 8px !important;
+            box-sizing: border-box !important;
+            overflow: visible !important; height: auto !important;
+          }
+          body.vk-mini-embed .wrap {
+            display: flex !important; flex-direction: column !important; gap: 10px !important;
+            overflow: visible !important; height: auto !important;
+          }
+          body.vk-mini-embed .wrap > .panel:last-child {
+            order: -1 !important; position: sticky !important; top: 0 !important;
+            z-index: 30 !important; background: #141416 !important;
+          }
+          body.vk-mini-embed .controls {
+            display: flex !important; flex-wrap: wrap !important; gap: 8px !important;
+            justify-content: center !important; visibility: visible !important; opacity: 1 !important;
+          }
+          body.vk-mini-embed .btn,
+          body.vk-mini-embed #btnStart,
+          body.vk-mini-embed #btnReset,
+          body.vk-mini-embed #btnPause,
+          body.vk-mini-embed #btnNewGame,
+          body.vk-mini-embed #restartBtn,
+          body.vk-mini-embed #pauseBtn {
+            display: inline-flex !important; visibility: visible !important; opacity: 1 !important;
+            min-height: 44px !important; align-items: center !important; justify-content: center !important;
+          }
+          body.vk-mini-embed header h1, body.vk-mini-embed h1 {
+            font-size: 1.25rem !important; line-height: 1.25 !important; margin: 0 0 6px !important;
+          }
+          body.vk-mini-embed .panel {
+            overflow: visible !important; height: auto !important;
+          }
+          body.vk-mini-embed canvas {
+            display: block !important; width: 100% !important; max-width: 100% !important;
+            max-height: 58vh !important; height: auto !important; margin: 0 auto !important;
+            touch-action: pan-y manipulation !important;
+          }
+          body.vk-mini-embed .game-board {
+            width: min(100%, 320px) !important; height: auto !important; aspect-ratio: 1 / 1 !important;
+            max-width: 100% !important; box-sizing: border-box !important;
+          }
+        `;
+        document.head.appendChild(style);
+      }
       // cookies / donate / install не трогаем — просто не грузим меню
       return;
     }

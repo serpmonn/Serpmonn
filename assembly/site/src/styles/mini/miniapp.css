@@ -143,22 +143,44 @@ body.vk-mini-app {
 }
 
 .vk-mini-search .search-form {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+  display: block;
   width: 100%;
   flex: 1 1 auto;
   min-width: 0;
 }
 
+.vk-mini-search .search-form-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.vk-mini-search .search-form-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  min-width: 0;
+}
+
+.vk-mini-search .search-input-wrapper {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+}
+
 .vk-mini-search .search-form input[type="search"] {
   flex: 1 1 auto;
   min-width: 0;
-  width: auto;
+  width: 100%;
   height: 48px;
   margin: 0;
-  padding: 0 14px;
-  font-size: 16px; /* iOS: без автозума */
+  padding: 0 44px 0 44px;
+  font-size: 16px;
   color: #111;
   background: #fff;
   border: 1px solid #d1d5db;
@@ -166,9 +188,16 @@ body.vk-mini-app {
   box-sizing: border-box;
 }
 
-.vk-mini-search .search-form input[type="search"]::placeholder {
-  color: #9ca3af;
-  opacity: 1;
+.vk-mini-search .attach-btn,
+.vk-mini-search .voice-btn {
+  color: #4b5563 !important;
+  background: transparent !important;
+  border: 0 !important;
+  z-index: 2;
+}
+
+.vk-mini-search .attach-btn.has-file {
+  color: var(--vk-mini-red) !important;
 }
 
 .vk-mini-search .search-btn {
@@ -177,7 +206,22 @@ body.vk-mini-app {
   min-width: 52px;
   height: 48px;
   margin: 0;
-  color: #fff;
+  color: #111;
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+}
+
+.vk-mini-search .search-attachment-preview {
+  max-width: 100%;
+}
+
+.vk-mini-search .search-attachment-chip {
+  color: #1f2937;
+}
+
+.vk-mini-search .search-attachment-remove {
+  color: #1f2937 !important;
+  background: transparent !important;
 }
 
 /* Карточки и светлые кнопки: base.css задаёт button{color:#fff} */
@@ -191,11 +235,6 @@ body.vk-mini-app {
 
 .vk-mini-card span {
   color: #6b7280;
-}
-
-.vk-mini-viewer__back {
-  color: #1f2937 !important;
-  background: #f3f4f6;
 }
 
 .vk-mini-onboarding__actions button {
@@ -266,25 +305,38 @@ body.vk-mini-app {
 .vk-mini-viewer {
   position: fixed;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  height: 100dvh;
   background: #fff;
   z-index: 60;
   display: none;
   flex-direction: column;
-  max-width: 720px;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
+  overscroll-behavior: none;
+  overscroll-behavior-x: none;
+  touch-action: manipulation;
 }
 
 .vk-mini-viewer.is-open {
   display: flex;
 }
 
+.vk-mini-viewer.is-game {
+  background: #0f0f10;
+}
+
 .vk-mini-viewer__bar {
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-bottom: 1px solid var(--vk-mini-border);
   background: #fff;
+  flex: 0 0 auto;
+  min-height: 44px;
+  box-sizing: border-box;
 }
 
 .vk-mini-viewer__back {
@@ -294,6 +346,7 @@ body.vk-mini-app {
   padding: 8px 12px;
   font-weight: 600;
   cursor: pointer;
+  color: #1f2937 !important;
 }
 
 .vk-mini-viewer__title {
@@ -303,13 +356,26 @@ body.vk-mini-app {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  color: #1f2937;
 }
 
 .vk-mini-viewer iframe {
-  flex: 1;
+  flex: 1 1 0%;
+  min-height: 0;
   width: 100%;
+  height: 100%;
   border: 0;
   background: #fff;
+  overscroll-behavior: contain;
+  /* Без этого в WebView iframe часто остаётся ~150px */
+  display: block;
+  /* Прокрутка контента игры — внутри документа iframe */
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.vk-mini-viewer.is-game iframe {
+  background: #0f0f10;
 }
 
 /* Onboarding */
@@ -334,6 +400,73 @@ body.vk-mini-app {
   border-radius: 18px 18px 0 0;
   padding: 22px 18px calc(18px + var(--vk-mini-safe-bottom));
   box-shadow: 0 -8px 30px rgba(0,0,0,.18);
+  touch-action: pan-y;
+  user-select: none;
+}
+
+/* Результаты AI: источники / медиа — не разъезжаются на узком экране */
+.vk-mini-app .ai-result-container,
+.vk-mini-app .ai-result-content,
+.vk-mini-app .search-card-wrapper {
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.vk-mini-app .ai-sources-bar {
+  flex-direction: column;
+  align-items: stretch;
+  gap: 8px;
+}
+
+.vk-mini-app .ai-sources-chips {
+  max-width: 100%;
+  overflow-x: auto;
+  flex-wrap: nowrap;
+  padding-bottom: 2px;
+  -webkit-overflow-scrolling: touch;
+}
+
+.vk-mini-app .ai-sources-toggle {
+  margin-left: 0;
+  align-self: flex-start;
+  color: #374151 !important;
+  background: #f3f4f6 !important;
+  border: 1px solid #e5e7eb !important;
+}
+
+.vk-mini-app .ai-sources-list {
+  max-width: 100%;
+}
+
+.vk-mini-app .source-item {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.vk-mini-app .source-url {
+  flex: 0 1 auto;
+  flex-shrink: 1;
+  min-width: 0;
+  max-width: 42%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.vk-mini-app .source-title {
+  flex: 1 1 auto;
+}
+
+.vk-mini-app .ai-image-results,
+.vk-mini-app .ai-video-results {
+  max-width: 100%;
+}
+
+.vk-mini-app .ai-image-grid,
+.vk-mini-app .ai-video-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .vk-mini-onboarding__dots {
@@ -386,6 +519,139 @@ body.vk-mini-app {
   background: var(--vk-mini-red);
   border-color: var(--vk-mini-red);
   color: #fff;
+}
+
+/* Auth chip */
+.vk-mini-auth {
+  margin: 14px auto 0;
+  max-width: 20rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.vk-mini-auth__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #1e3a5f;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.vk-mini-auth__status img {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.vk-mini-auth__login {
+  border: 0;
+  border-radius: 10px;
+  padding: 10px 16px;
+  font-weight: 700;
+  cursor: pointer;
+  background: #2787f5;
+  color: #fff;
+  font-size: 0.95rem;
+}
+
+.vk-mini-auth__login:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.vk-mini-auth[data-state="user"] .vk-mini-auth__login {
+  display: none;
+}
+
+.vk-mini-auth[data-state="guest"] .vk-mini-auth__status {
+  display: none;
+}
+
+.vk-mini-auth__hint {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--vk-mini-muted);
+}
+
+/* Soft limit wall */
+.vk-mini-limit {
+  position: fixed;
+  inset: 0;
+  z-index: 120;
+  display: none;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.45);
+  padding: 16px;
+}
+
+.vk-mini-limit.is-open {
+  display: flex;
+}
+
+.vk-mini-limit__panel {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 16px 16px 12px 12px;
+  padding: 20px 18px 16px;
+  box-shadow: 0 -8px 32px rgba(0, 0, 0, 0.18);
+}
+
+.vk-mini-limit__panel h2 {
+  margin: 0 0 8px;
+  font-size: 1.15rem;
+}
+
+.vk-mini-limit__panel p {
+  margin: 0 0 16px;
+  color: var(--vk-mini-muted);
+  line-height: 1.45;
+  font-size: 0.95rem;
+}
+
+.vk-mini-limit__actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.vk-mini-limit__actions button {
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--vk-mini-border);
+  background: #f3f4f6;
+  color: #111;
+}
+
+.vk-mini-limit__actions .is-primary {
+  background: #2787f5;
+  border-color: #2787f5;
+  color: #fff;
+}
+
+.vk-mini-limit__actions .is-nav {
+  background: #fff;
+}
+
+.vk-mini-limit__close {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--vk-mini-muted);
+  padding: 10px;
+  cursor: pointer;
+  font-size: 0.9rem;
 }
 
 /* Hide site chrome leftovers if styles leak */

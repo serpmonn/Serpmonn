@@ -227,11 +227,21 @@ function renderResultBadges(data, messages) {
 }
 
 function syncSearchQueryToUrl(query) {
-  const nextUrl = buildSharePageUrl(query);
-  const currentUrl = `${window.location.pathname}${window.location.search}`;
-
-  if (nextUrl !== `${window.location.origin}${currentUrl}`) {
-    history.replaceState(null, '', nextUrl);
+  try {
+    const url = new URL(window.location.href);
+    if (query) {
+      url.searchParams.set('q', query);
+    } else {
+      url.searchParams.delete('q');
+    }
+    // Только same-origin: нельзя replaceState на vk.com с serpmonn.ru (ломает поиск в mini app)
+    const next = `${url.pathname}${url.search}${url.hash}`;
+    const current = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (next !== current) {
+      history.replaceState(null, '', next);
+    }
+  } catch (err) {
+    console.warn('syncSearchQueryToUrl failed', err);
   }
 }
 
@@ -371,6 +381,62 @@ async function copyTextToClipboard(text) {
   tmp.select();
   document.execCommand('copy');
   document.body.removeChild(tmp);
+}
+
+function getVkBridge() {
+  return window.vkBridge || window.bridge || null;
+}
+
+async function shareViaVkMini(payload) {
+  const appId = (window.__SPN_MINI_CFG__ && window.__SPN_MINI_CFG__.appId) || '54486769';
+  const link = `https://vk.com/app${appId}`;
+  const message = [payload.query && `Вопрос: ${payload.query}`, payload.answerText, link]
+    .filter(Boolean)
+    .join('\n\n')
+    .slice(0, 2800);
+
+  const bridge = getVkBridge();
+  if (bridge && typeof bridge.send === 'function') {
+    try {
+      await bridge.send('VKWebAppShare', { link });
+      showShareToast(getMessages().shared || 'Готово');
+      return true;
+    } catch (err) {
+      console.warn('VKWebAppShare failed', err);
+    }
+
+    try {
+      await bridge.send('VKWebAppShowWallPostBox', { message });
+      showShareToast(getMessages().shared || 'Готово');
+      return true;
+    } catch (err) {
+      console.warn('VKWebAppShowWallPostBox failed', err);
+    }
+  }
+
+  try {
+    if (navigator.share) {
+      await navigator.share({
+        title: payload.shareTitle || 'Serpmonn',
+        text: payload.answerText || payload.query || '',
+        url: link
+      });
+      showShareToast(getMessages().shared || 'Готово');
+      return true;
+    }
+  } catch (err) {
+    if (err && err.name === 'AbortError') return true;
+    console.warn('navigator.share failed', err);
+  }
+
+  try {
+    await copyTextToClipboard(message || link);
+    showShareToast(getMessages().copied || 'Ссылка скопирована');
+    return true;
+  } catch (err) {
+    console.warn('share clipboard failed', err);
+    return false;
+  }
 }
 
 // ======================================================================================================================
@@ -945,6 +1011,14 @@ async function requestAiSearch({ query, idempotencyKey, locale, useStream, attac
     headers.Accept = 'application/json';
   }
 
+  const miniToken =
+    window.__SPN_VK_MINI_TOKEN__ ||
+    (typeof window.spnVkMiniGetToken === 'function' ? window.spnVkMiniGetToken() : '') ||
+    '';
+  if (miniToken) {
+    headers.Authorization = `Bearer ${miniToken}`;
+  }
+
   const response = await fetch('/ai-search', {
     method: 'POST',
     headers,
@@ -1142,6 +1216,22 @@ function handleAiSearchStreamEvent(event, state) {
 // ПОКАЗАТЬ РЕЗУЛЬТАТ ОТВЕТА ИИ
 // ======================================================================================================================
 function showResult(data, options = {}) {
+  if (
+    data?.error &&
+    window.__SPN_VK_MINI__ &&
+    typeof window.spnVkMiniShowLimit === 'function' &&
+    (data.needAuth === true ||
+      data.limit != null ||
+      /лимит/i.test(String(data.error)) ||
+      /limit/i.test(String(data.error)))
+  ) {
+    window.spnVkMiniShowLimit({
+      error: data.error,
+      needAuth: data.needAuth === true,
+      limit: data.limit,
+      used: data.used
+    });
+  }
   const t = getMessages();
   const contentDiv = document.getElementById('ai-result-content');
   const container = document.getElementById('ai-result-container');
@@ -1353,7 +1443,7 @@ function setupActionButtons() {
   const shareBtn = document.querySelector('.ai-action-btn[data-ai-action="share"]');
   if (shareBtn && !shareBtn.dataset.initialized) {
     shareBtn.dataset.initialized = 'true';
-    shareBtn.addEventListener('click', () => {
+    shareBtn.addEventListener('click', async () => {
       const payload = buildSharePayload();
 
       if (!payload.answerText && !payload.query) {
@@ -1368,26 +1458,11 @@ function setupActionButtons() {
         window.location.hostname === 'vk.com' ||
         window.location.hostname.endsWith('.vk.com');
 
-      if (isVkMiniApp && window.vkBridge && typeof window.vkBridge.send === 'function') {
-        window.vkBridge
-          .send('VKWebAppShare', { link: payload.pageUrl })
-          .then(() => {
-            showShareToast(t.shared || t.copied || 'Готово');
-          })
-          .catch(err => {
-            console.warn('VKWebAppShare error, fallback to web modal:', err);
-            // В мини-приложении не открываем шаринг на другие площадки
-            if (window.__SPN_VK_MINI__ || /vk_app_id=\d+/.test(window.location.search)) {
-              showShareToast(t.shareFailed || t.copyFailed || 'Не удалось поделиться');
-              return;
-            }
-            openWebShareModal(payload);
-          });
-        return;
-      }
-
-      if (window.__SPN_VK_MINI__) {
-        showShareToast(t.shareFailed || 'Шаринг доступен во ВКонтакте');
+      if (isVkMiniApp) {
+        const ok = await shareViaVkMini(payload);
+        if (!ok) {
+          showShareToast(t.shareFailed || 'Не удалось поделиться');
+        }
         return;
       }
 
@@ -1582,7 +1657,8 @@ async function initPage() {
       }
 
       let idempotencyKey = null;
-      const useStream = getEnv() !== 'vk_mini';
+      // Стрим в VK WebView работает; JSON-only раньше оставляли из осторожности
+      const useStream = true;
 
       try {
         idempotencyKey = generateIdempotencyKey();
@@ -1607,7 +1683,12 @@ async function initPage() {
 
           if (!response.ok) {
             if (data?.error) {
-              showResult({ error: data.error });
+              showResult({
+                error: data.error,
+                needAuth: data.needAuth === true,
+                limit: data.limit,
+                used: data.used
+              });
             } else {
               throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }

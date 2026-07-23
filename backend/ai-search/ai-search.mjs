@@ -393,8 +393,18 @@ async function getAiAnswerFromLocalModels(query, webContext, options = {}) {
   throw new Error('Обе локальные модели Ollama недоступны');
 }
 
+function extractAuthToken(req) {
+  const cookieToken = req.cookies?.token;
+  if (cookieToken) return cookieToken;
+
+  const header = req.headers?.authorization || req.headers?.Authorization;
+  if (!header || typeof header !== 'string') return null;
+  const m = header.match(/^Bearer\s+(.+)$/i);
+  return m ? m[1].trim() : null;
+}
+
 async function attachUserIfToken(req, res, next) {
-  const token = req.cookies.token;
+  const token = extractAuthToken(req);
   if (!token) {
     req.user = null;
     return next();

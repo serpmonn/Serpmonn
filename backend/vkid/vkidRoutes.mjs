@@ -4,6 +4,7 @@ import rateLimit from 'express-rate-limit';
 import paseto from 'paseto';
 import { query } from '../database/config.mjs';
 import { setAuthCookie } from '../auth/authCookie.mjs';
+import { vkMiniLoginHandler } from './vkMiniAuth.mjs';
 
 const { V2 } = paseto;
 
@@ -20,6 +21,9 @@ const vkidLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false
 });
+
+// POST /api/vk-mini-login — тихий/явный вход из VK Mini App
+router.post('/vk-mini-login', vkidLimiter, vkMiniLoginHandler);
 
 // POST /api/vkid-login
 router.post('/vkid-login', vkidLimiter, async (req, res, next) => {

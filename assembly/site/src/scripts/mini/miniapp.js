@@ -16,10 +16,23 @@
   const screens = ROOT.querySelectorAll('.vk-mini-screen');
   const navBtns = ROOT.querySelectorAll('.vk-mini-nav [data-screen]');
   const viewer = document.getElementById('vk-mini-viewer');
-  const viewerFrame = document.getElementById('vk-mini-viewer-frame');
   const viewerTitle = document.getElementById('vk-mini-viewer-title');
   const viewerBack = document.getElementById('vk-mini-viewer-back');
   const onboarding = document.getElementById('vk-mini-onboarding');
+  let viewerFrame = document.getElementById('vk-mini-viewer-frame');
+  let viewerOpenUrl = '';
+  let viewerHistoryPushed = false;
+
+  function getVkBridge() {
+    return window.vkBridge || window.bridge || null;
+  }
+
+  function setVkSwipeHistory(enabled) {
+    const bridge = getVkBridge();
+    if (!bridge || typeof bridge.send !== 'function') return;
+    // history:false — отключает системный свайп «назад» в клиенте VK
+    bridge.send('VKWebAppSetSwipeSettings', { history: Boolean(enabled) }).catch(() => {});
+  }
 
   function isExternalUrl(href) {
     if (!href || href.startsWith('#') || href.startsWith('javascript:')) return false;
@@ -53,35 +66,242 @@
       btn.classList.toggle('is-active', btn.dataset.screen === name);
     });
     try {
-      history.replaceState(null, '', '#' + name);
+      const url = new URL(window.location.href);
+      url.hash = name;
+      history.replaceState(null, '', url.pathname + url.search + url.hash);
     } catch (_) {}
   }
 
-  function openViewer(href, title) {
-    if (!viewer || !viewerFrame) return;
-    viewerTitle.textContent = title || '';
-    viewerFrame.src = withMiniParam(href);
-    viewer.classList.add('is-open');
-    viewer.setAttribute('aria-hidden', 'false');
+  function bindViewerFrameLoad(frame) {
+    frame.addEventListener('load', () => {
+      try {
+        const href = frame.contentWindow && frame.contentWindow.location.href;
+        if (!href || href === 'about:blank') {
+          // Свайп «назад» внутри iframe → пустой экран: закрываем viewer
+          if (viewer && viewer.classList.contains('is-open')) {
+            closeViewer({ fromBlank: true });
+          }
+          return;
+        }
+        hardenIframeDocument(frame.contentDocument);
+      } catch (err) {
+        // cross-origin — ок
+        console.warn('vk-mini iframe harden failed', err);
+      }
+    });
   }
 
-  function closeViewer() {
-    if (!viewer || !viewerFrame) return;
+  function resetViewerFrame() {
+    if (!viewerFrame || !viewerFrame.parentNode) return viewerFrame;
+    const neo = document.createElement('iframe');
+    neo.id = 'vk-mini-viewer-frame';
+    neo.title = viewerFrame.title || 'Содержимое';
+    neo.setAttribute('referrerpolicy', 'same-origin');
+    viewerFrame.replaceWith(neo);
+    viewerFrame = neo;
+    bindViewerFrameLoad(viewerFrame);
+    return viewerFrame;
+  }
+
+  function isGameUrl(href) {
+    try {
+      const u = new URL(href, location.origin);
+      return /\/frontend\/(?:[a-z0-9-]+\/)?games\//i.test(u.pathname);
+    } catch {
+      return /\/games\//i.test(String(href || ''));
+    }
+  }
+
+  function openViewer(href, title) {
+    if (!viewer) return;
+    viewerTitle.textContent = title || '';
+    viewerOpenUrl = withMiniParam(href);
+    viewer.classList.toggle('is-game', isGameUrl(href));
+    resetViewerFrame();
+    viewerFrame.src = viewerOpenUrl;
+    viewer.classList.add('is-open');
+    viewer.setAttribute('aria-hidden', 'false');
+    setVkSwipeHistory(false);
+    // Не пушим history — свайп вправо иначе уходит на пустой экран
+    viewerHistoryPushed = false;
+  }
+
+  function closeViewer(opts) {
+    if (!viewer) return;
     viewer.classList.remove('is-open');
+    viewer.classList.remove('is-game');
     viewer.setAttribute('aria-hidden', 'true');
-    viewerFrame.src = 'about:blank';
+    viewerOpenUrl = '';
+    if (viewerFrame) {
+      try {
+        viewerFrame.removeAttribute('src');
+      } catch (_) {}
+    }
+    viewerHistoryPushed = false;
+    setVkSwipeHistory(true);
   }
 
   function hardenIframeDocument(doc) {
-    if (!doc || !doc.body) return;
-    doc.body.classList.add('vk-mini-embed');
+    if (!doc || !doc.documentElement) return;
+    doc.documentElement.classList.add('vk-mini-embed');
+    if (doc.body) doc.body.classList.add('vk-mini-embed');
+
+    // Гарантируем mobile viewport внутри iframe
+    let vp = doc.querySelector('meta[name="viewport"]');
+    if (!vp) {
+      vp = doc.createElement('meta');
+      vp.setAttribute('name', 'viewport');
+      doc.head.appendChild(vp);
+    }
+    vp.setAttribute(
+      'content',
+      'width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover'
+    );
 
     const style = doc.createElement('style');
+    style.setAttribute('data-vk-mini-embed', '1');
     style.textContent = `
-      #menuContainer, #menuButton, .cookie-consent, #cookie-consent,
-      .donate-button, .ad-leaderboard, .mobile-anchor-ad,
-      a[href*="donate"], a[href*="/promo"], #installAppButton { display:none !important; }
+      /* Прокрутка внутри iframe: html скроллит, body растёт по контенту */
+      html.vk-mini-embed {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: hidden !important;
+        overflow-y: scroll !important;
+        -webkit-overflow-scrolling: touch !important;
+        overscroll-behavior-y: contain !important;
+        touch-action: pan-y manipulation !important;
+        -webkit-text-size-adjust: 100% !important;
+      }
+      body.vk-mini-embed {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        min-height: 100% !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0 0 28px !important;
+        overflow: visible !important;
+        touch-action: pan-y manipulation !important;
+        -webkit-text-size-adjust: 100% !important;
+      }
+      #menuContainer, #menuButton, .menu-container, .cookie-consent, #cookie-consent,
+      .donate-button, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner,
+      .mrg-tag, ins.mrg-tag, [id*="mail-ad"], [class*="mail-ad"],
+      a[href*="donate"], a[href*="/promo"], #installAppButton,
+      .accessibility-widget, #a11y-widget { display:none !important; }
+
+      /* Игры: одна колонка, без огромных полей */
+      body.vk-mini-embed .page,
+      body.vk-mini-embed .container,
+      body.vk-mini-embed .game-wrapper,
+      body.vk-mini-embed .main-content {
+        max-width: 100% !important;
+        width: 100% !important;
+        margin: 0 auto !important;
+        padding: 8px !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        height: auto !important;
+        max-height: none !important;
+      }
+      body.vk-mini-embed .wrap {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 10px !important;
+        width: 100% !important;
+        overflow: visible !important;
+        height: auto !important;
+      }
+      /* Панель со Старт/Заново — сверху, чтобы не уезжала под canvas */
+      body.vk-mini-embed .wrap > .panel:last-child {
+        order: -1 !important;
+        position: sticky !important;
+        top: 0 !important;
+        z-index: 30 !important;
+        background: #141416 !important;
+      }
+      /* Кнопки Старт/Заново/пауза обязаны быть видны (раньше их скрывали) */
+      body.vk-mini-embed .controls {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        justify-content: center !important;
+        margin: 8px 0 !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+      body.vk-mini-embed .btn,
+      body.vk-mini-embed button.btn,
+      body.vk-mini-embed #btnStart,
+      body.vk-mini-embed #btnReset,
+      body.vk-mini-embed #btnPause,
+      body.vk-mini-embed #btnNewGame,
+      body.vk-mini-embed #restartBtn,
+      body.vk-mini-embed #pauseBtn,
+      body.vk-mini-embed #leaderboardBtn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        min-height: 44px !important;
+        z-index: 5 !important;
+      }
+      body.vk-mini-embed header {
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+        margin: 4px 0 8px !important;
+      }
+      body.vk-mini-embed header h1,
+      body.vk-mini-embed h1 {
+        font-size: 1.25rem !important;
+        line-height: 1.25 !important;
+        margin: 0 0 6px !important;
+      }
+      body.vk-mini-embed .panel {
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+        overflow: visible !important;
+        height: auto !important;
+      }
+      body.vk-mini-embed canvas {
+        display: block !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 58vh !important;
+        height: auto !important;
+        margin: 0 auto !important;
+        /* pan-y — чтобы жест вниз листал страницу, а не «залипал» на canvas */
+        touch-action: pan-y manipulation !important;
+      }
+      body.vk-mini-embed .game-board,
+      body.vk-mini-embed .game-container,
+      body.vk-mini-embed .board {
+        max-width: 100% !important;
+        box-sizing: border-box !important;
+      }
+      body.vk-mini-embed .game-board {
+        width: min(100%, 320px) !important;
+        height: auto !important;
+        aspect-ratio: 1 / 1 !important;
+      }
+      body.vk-mini-embed .score-container {
+        gap: 10px !important;
+        flex-wrap: wrap !important;
+      }
+      body.vk-mini-embed .score,
+      body.vk-mini-embed .best {
+        min-width: 0 !important;
+        padding: 8px 12px !important;
+      }
     `;
+    // не дублировать при повторной загрузке
+    const old = doc.head.querySelector('style[data-vk-mini-embed]');
+    if (old) old.remove();
     doc.head.appendChild(style);
 
     doc.addEventListener(
@@ -97,6 +317,23 @@
       },
       true
     );
+
+    // Дать canvas-играм пересчитать размер после того, как iframe реально растянулся
+    try {
+      const win = doc.defaultView;
+      if (win) {
+        requestAnimationFrame(() => {
+          try {
+            win.dispatchEvent(new Event('resize'));
+          } catch (_) {}
+        });
+        setTimeout(() => {
+          try {
+            win.dispatchEvent(new Event('resize'));
+          } catch (_) {}
+        }, 120);
+      }
+    } catch (_) {}
   }
 
   function initNav() {
@@ -122,16 +359,17 @@
   }
 
   function initViewer() {
-    if (viewerBack) viewerBack.addEventListener('click', closeViewer);
-    if (viewerFrame) {
-      viewerFrame.addEventListener('load', () => {
-        try {
-          hardenIframeDocument(viewerFrame.contentDocument);
-        } catch (err) {
-          console.warn('vk-mini iframe harden failed', err);
-        }
-      });
+    if (viewerBack) {
+      viewerBack.addEventListener('click', () => closeViewer());
     }
+    if (viewerFrame) {
+      bindViewerFrameLoad(viewerFrame);
+    }
+    window.addEventListener('popstate', () => {
+      if (viewer && viewer.classList.contains('is-open')) {
+        closeViewer({ fromPopstate: true });
+      }
+    });
   }
 
   function initOnboarding() {
@@ -146,10 +384,14 @@
     const dots = onboarding.querySelectorAll('.vk-mini-onboarding__dots span');
     const btnNext = onboarding.querySelector('[data-onboard-next]');
     const btnSkip = onboarding.querySelector('[data-onboard-skip]');
+    const panel = onboarding.querySelector('.vk-mini-onboarding__panel');
     let idx = 0;
+    let touchX = null;
 
     const render = () => {
-      slides.forEach((s, i) => s.hidden = i !== idx);
+      slides.forEach((s, i) => {
+        s.hidden = i !== idx;
+      });
       dots.forEach((d, i) => d.classList.toggle('is-active', i === idx));
       if (btnNext) {
         const last = idx >= slides.length - 1;
@@ -167,24 +409,336 @@
       onboarding.setAttribute('aria-hidden', 'true');
     };
 
-    if (btnNext) {
-      btnNext.addEventListener('click', () => {
-        if (idx >= slides.length - 1) finish();
-        else {
-          idx += 1;
-          render();
-        }
-      });
-    }
+    const goNext = () => {
+      if (idx >= slides.length - 1) finish();
+      else {
+        idx += 1;
+        render();
+      }
+    };
+
+    const goPrev = () => {
+      if (idx <= 0) return;
+      idx -= 1;
+      render();
+    };
+
+    if (btnNext) btnNext.addEventListener('click', goNext);
     if (btnSkip) btnSkip.addEventListener('click', finish);
+
+    const swipeTarget = panel || onboarding;
+    swipeTarget.addEventListener(
+      'touchstart',
+      (e) => {
+        if (!e.touches || !e.touches[0]) return;
+        touchX = e.touches[0].clientX;
+      },
+      { passive: true }
+    );
+    swipeTarget.addEventListener(
+      'touchend',
+      (e) => {
+        if (touchX == null || !e.changedTouches || !e.changedTouches[0]) return;
+        const dx = e.changedTouches[0].clientX - touchX;
+        touchX = null;
+        if (Math.abs(dx) < 48) return;
+        if (dx < 0) goNext();
+        else goPrev();
+      },
+      { passive: true }
+    );
 
     render();
     onboarding.classList.add('is-open');
     onboarding.setAttribute('aria-hidden', 'false');
   }
 
+  const TOKEN_KEY = 'spn_vk_mini_token';
+  const USER_KEY = 'spn_vk_mini_user';
+  const authRoot = document.getElementById('vk-mini-auth');
+  const authLoginBtn = document.getElementById('vk-mini-auth-login');
+  const authStatus = document.getElementById('vk-mini-auth-status');
+  const authLabel = document.getElementById('vk-mini-auth-label');
+  const authPhoto = document.getElementById('vk-mini-auth-photo');
+  const authHint = document.getElementById('vk-mini-auth-hint');
+  const limitRoot = document.getElementById('vk-mini-limit');
+  const limitTitle = document.getElementById('vk-mini-limit-title');
+  const limitText = document.getElementById('vk-mini-limit-text');
+  const limitActions = document.getElementById('vk-mini-limit-actions');
+  const limitClose = document.getElementById('vk-mini-limit-close');
+  const authCopy = (cfg.auth) || {};
+  const limitCopy = (cfg.limit) || {};
+
+  function getStoredToken() {
+    try {
+      return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY) || '';
+    } catch {
+      return '';
+    }
+  }
+
+  function getStoredUser() {
+    try {
+      const raw = sessionStorage.getItem(USER_KEY) || localStorage.getItem(USER_KEY);
+      return raw ? JSON.parse(raw) : null;
+    } catch {
+      return null;
+    }
+  }
+
+  function persistSession(token, user) {
+    try {
+      if (token) {
+        sessionStorage.setItem(TOKEN_KEY, token);
+        localStorage.setItem(TOKEN_KEY, token);
+      }
+      if (user) {
+        const raw = JSON.stringify(user);
+        sessionStorage.setItem(USER_KEY, raw);
+        localStorage.setItem(USER_KEY, raw);
+      }
+    } catch (_) {}
+    window.__SPN_VK_MINI_TOKEN__ = token || '';
+    window.__SPN_VK_MINI_USER__ = user || null;
+  }
+
+  function renderAuthUi(user) {
+    if (!authRoot) return;
+    const loggedIn = Boolean(user && (user.id || user.vkUserId));
+    authRoot.dataset.state = loggedIn ? 'user' : 'guest';
+
+    if (authStatus) authStatus.hidden = !loggedIn;
+    if (authHint) {
+      authHint.textContent = loggedIn
+        ? (authCopy.userQuota || 'До 15 запросов в день')
+        : (authCopy.guestQuota || 'Гость · до 5 запросов в день');
+    }
+    if (loggedIn) {
+      if (authLabel) {
+        authLabel.textContent = user.username || authCopy.loggedIn || 'Вы вошли';
+      }
+      if (authPhoto) {
+        if (user.photo) {
+          authPhoto.src = user.photo;
+          authPhoto.hidden = false;
+        } else {
+          authPhoto.hidden = true;
+        }
+      }
+    }
+  }
+
+  function collectLaunchParams() {
+    const out = {};
+    try {
+      const search = new URLSearchParams(window.location.search);
+      search.forEach((v, k) => {
+        if (k.startsWith('vk_') || k === 'sign') out[k] = v;
+      });
+    } catch (_) {}
+
+    // VK часто кладёт параметры в hash: #vk_... или ? в hash
+    try {
+      const hash = (window.location.hash || '').replace(/^#/, '');
+      if (hash) {
+        const q = hash.includes('=') ? hash : '';
+        const sp = new URLSearchParams(q.startsWith('?') ? q.slice(1) : q);
+        sp.forEach((v, k) => {
+          if (k.startsWith('vk_') || k === 'sign') out[k] = v;
+        });
+      }
+    } catch (_) {}
+
+    return out;
+  }
+
+  async function getBridgeLaunchParams() {
+    const bridge = getVkBridge();
+    if (!bridge || typeof bridge.send !== 'function') return null;
+    try {
+      const data = await bridge.send('VKWebAppGetLaunchParams');
+      if (data && typeof data === 'object') return data;
+    } catch (_) {}
+    return null;
+  }
+
+  async function getVkAccessToken() {
+    const bridge = getVkBridge();
+    if (!bridge || typeof bridge.send !== 'function') return null;
+    const appId = Number(cfg.appId) || 54486769;
+    try {
+      const data = await bridge.send('VKWebAppGetAuthToken', {
+        app_id: appId,
+        scope: ''
+      });
+      return data && data.access_token ? data.access_token : null;
+    } catch (err) {
+      console.warn('VKWebAppGetAuthToken failed', err);
+      return null;
+    }
+  }
+
+  async function postMiniLogin(body) {
+    const resp = await fetch('/api/vk-mini-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify(body)
+    });
+    const data = await resp.json().catch(() => null);
+    return { ok: resp.ok, data };
+  }
+
+  async function loginWithVk({ interactive } = { interactive: false }) {
+    if (authLoginBtn && interactive) {
+      authLoginBtn.disabled = true;
+      authLoginBtn.textContent = authCopy.loggingIn || 'Входим…';
+    }
+
+    try {
+      let launchParams = collectLaunchParams();
+      const bridgeParams = await getBridgeLaunchParams();
+      if (bridgeParams) {
+        launchParams = { ...launchParams, ...bridgeParams };
+      }
+
+      // 1) Пробуем по launch params (если бэкенд примет подпись)
+      if (launchParams.vk_user_id && launchParams.sign) {
+        const first = await postMiniLogin({ launchParams });
+        if (first.ok && first.data?.success && first.data.token) {
+          persistSession(first.data.token, first.data.user);
+          renderAuthUi(first.data.user);
+          return true;
+        }
+      }
+
+      // 2) access_token через Bridge (основной путь)
+      const accessToken = await getVkAccessToken();
+      if (!accessToken) {
+        if (interactive) {
+          window.alert?.(authCopy.loginFailed || 'Не удалось войти. Попробуйте ещё раз');
+        }
+        return false;
+      }
+
+      const second = await postMiniLogin({
+        accessToken,
+        launchParams: Object.keys(launchParams).length ? launchParams : undefined
+      });
+
+      if (second.ok && second.data?.success && second.data.token) {
+        persistSession(second.data.token, second.data.user);
+        renderAuthUi(second.data.user);
+        return true;
+      }
+
+      if (interactive) {
+        window.alert?.(authCopy.loginFailed || 'Не удалось войти. Попробуйте ещё раз');
+      }
+      return false;
+    } catch (err) {
+      console.warn('vk mini login failed', err);
+      if (interactive) {
+        window.alert?.(authCopy.loginFailed || 'Не удалось войти. Попробуйте ещё раз');
+      }
+      return false;
+    } finally {
+      if (authLoginBtn) {
+        authLoginBtn.disabled = false;
+        authLoginBtn.textContent = authCopy.login || 'Войти через VK';
+      }
+    }
+  }
+
+  function closeLimit() {
+    if (!limitRoot) return;
+    limitRoot.classList.remove('is-open');
+    limitRoot.setAttribute('aria-hidden', 'true');
+  }
+
+  function showLimit(payload = {}) {
+    if (!limitRoot || !limitActions) return;
+    const needAuth = payload.needAuth === true || !getStoredUser();
+    const title = needAuth
+      ? (limitCopy.guestTitle || 'Лимит на сегодня закончился')
+      : (limitCopy.userTitle || 'Лимит на сегодня закончился');
+    const text = needAuth
+      ? (limitCopy.guestText || 'Войдите через VK — будет до 15 запросов в день.')
+      : (limitCopy.userText || 'Завтра снова будет до 15 запросов.');
+
+    if (limitTitle) limitTitle.textContent = title;
+    // Для мягкого экрана предпочитаем наш текст; API-error — fallback
+    if (limitText) {
+      limitText.textContent = text;
+    }
+
+    limitActions.innerHTML = '';
+
+    if (needAuth) {
+      const loginBtn = document.createElement('button');
+      loginBtn.type = 'button';
+      loginBtn.className = 'is-primary';
+      loginBtn.textContent = authCopy.login || 'Войти через VK';
+      loginBtn.addEventListener('click', async () => {
+        const ok = await loginWithVk({ interactive: true });
+        if (ok) closeLimit();
+      });
+      limitActions.appendChild(loginBtn);
+    }
+
+    [
+      ['news', limitCopy.goNews || 'Новости'],
+      ['tools', limitCopy.goTools || 'Инструменты'],
+      ['games', limitCopy.goGames || 'Игры']
+    ].forEach(([screen, label]) => {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'is-nav';
+      btn.textContent = label;
+      btn.addEventListener('click', () => {
+        closeLimit();
+        showScreen(screen);
+      });
+      limitActions.appendChild(btn);
+    });
+
+    limitRoot.classList.add('is-open');
+    limitRoot.setAttribute('aria-hidden', 'false');
+  }
+
+  function initAuth() {
+    const cachedUser = getStoredUser();
+    const cachedToken = getStoredToken();
+    if (cachedToken) window.__SPN_VK_MINI_TOKEN__ = cachedToken;
+    if (cachedUser) {
+      window.__SPN_VK_MINI_USER__ = cachedUser;
+      renderAuthUi(cachedUser);
+    } else {
+      renderAuthUi(null);
+    }
+
+    if (authLoginBtn) {
+      authLoginBtn.addEventListener('click', () => loginWithVk({ interactive: true }));
+    }
+    if (limitClose) {
+      limitClose.addEventListener('click', closeLimit);
+    }
+    if (limitRoot) {
+      limitRoot.addEventListener('click', (e) => {
+        if (e.target === limitRoot) closeLimit();
+      });
+    }
+
+    // Тихий вход: если уже есть токен — не дёргаем VK снова
+    if (cachedToken && cachedUser) return;
+
+    loginWithVk({ interactive: false }).then((ok) => {
+      if (!ok && !getStoredUser()) renderAuthUi(null);
+    });
+  }
+
   function initBridge() {
-    const bridge = window.vkBridge;
+    const bridge = getVkBridge();
     if (bridge && typeof bridge.send === 'function') {
       bridge.send('VKWebAppInit').catch(() => {});
     }
@@ -196,6 +750,24 @@
     (e) => {
       const a = e.target.closest && e.target.closest('a[href]');
       if (!a || a.closest('.vk-mini-viewer')) return;
+
+      // Картинки ответа: открываем через VK, без увода на сторонний сайт
+      if (a.classList.contains('ai-image-card')) {
+        e.preventDefault();
+        e.stopPropagation();
+        const urls = Array.from(document.querySelectorAll('.ai-image-card'))
+          .map((el) => el.getAttribute('href'))
+          .filter((u) => u && /^https?:/i.test(u));
+        const start = Math.max(0, urls.indexOf(a.getAttribute('href')));
+        const bridge = window.vkBridge || window.bridge;
+        if (bridge && urls.length) {
+          bridge
+            .send('VKWebAppShowImages', { images: urls, start_index: start })
+            .catch(() => {});
+        }
+        return;
+      }
+
       const href = a.getAttribute('href') || '';
       if (isExternalUrl(href)) {
         e.preventDefault();
@@ -210,7 +782,11 @@
   initOpeners();
   initViewer();
   initOnboarding();
+  initAuth();
 
   window.spnVkMiniOpen = openViewer;
   window.spnVkMiniClose = closeViewer;
+  window.spnVkMiniShowLimit = showLimit;
+  window.spnVkMiniLogin = () => loginWithVk({ interactive: true });
+  window.spnVkMiniGetToken = getStoredToken;
 })();

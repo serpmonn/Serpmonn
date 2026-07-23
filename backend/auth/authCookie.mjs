@@ -9,16 +9,20 @@ const BASE_COOKIE_OPTIONS = {
 
 export const AUTH_COOKIE_DOMAIN = '.serpmonn.ru';
 
-export function getAuthCookieOptions(maxAge) {
+export function getAuthCookieOptions(maxAge, overrides = {}) {
+  const sameSite = overrides.sameSite || BASE_COOKIE_OPTIONS.sameSite;
   return {
     ...BASE_COOKIE_OPTIONS,
     domain: AUTH_COOKIE_DOMAIN,
-    maxAge
+    maxAge,
+    ...overrides,
+    // SameSite=None требует Secure (уже true)
+    sameSite
   };
 }
 
-export function setAuthCookie(res, token, maxAge) {
-  res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions(maxAge));
+export function setAuthCookie(res, token, maxAge, overrides = {}) {
+  res.cookie(AUTH_COOKIE_NAME, token, getAuthCookieOptions(maxAge, overrides));
 }
 
 /** Clear domain and legacy host-only cookies. */
