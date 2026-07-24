@@ -10,7 +10,7 @@ permalink: "/frontend/app/index.html"
   <meta name="theme-color" content="#ffffff">
   <title>Серпмонн</title>
   <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-  <link rel="stylesheet" href="/frontend/app/app.css?v=23">
+  <link rel="stylesheet" href="/frontend/app/app.css?v=29">
   <script>
     window.__SPN_ANDROID_APP__ = true;
   </script>
@@ -113,26 +113,27 @@ permalink: "/frontend/app/index.html"
           <div class="spn-actions">
             <button type="button" class="spn-btn spn-btn--block" data-open="/frontend/auth/auth.html">Войти / регистрация</button>
           </div>
-          <div class="spn-more spn-more--guest">
-            <div class="spn-more__label">Ещё</div>
+          <details class="spn-more spn-more--guest">
+            <summary>Ещё</summary>
             <div class="spn-more__links">
               <button type="button" class="spn-textlink" data-open="/frontend/privacy-policy/privacy-policy.html">Политика</button>
               <button type="button" class="spn-textlink" data-open="/frontend/offer/offer.html">Соглашение</button>
               <button type="button" class="spn-textlink" data-open="/frontend/donate/donate.html">Поддержать</button>
               <button type="button" class="spn-textlink" data-open="/frontend/about-project/about-project.html">О проекте</button>
             </div>
-          </div>
+          </details>
         </div>
         <div id="profileUser" class="spn-profile spn-profile--embed" hidden>
-          <div class="spn-profile-bar">
+          <div class="spn-profile-bar" id="profileBar">
             <button type="button" id="profileBackBtn" class="spn-chipbtn spn-chipbtn--back" hidden>← Профиль</button>
             <div id="profileQuickLinks" class="spn-profile-bar__links">
               <button type="button" class="spn-chipbtn" data-profile-page="/frontend/findings/feed.html" data-title="Лента находок">Лента находок</button>
               <button type="button" class="spn-chipbtn" data-profile-page="/frontend/findings/inbox.html" data-title="Входящие">Входящие</button>
             </div>
+            <button type="button" id="profileLogoutBtn" class="spn-chipbtn spn-chipbtn--danger">Выйти</button>
           </div>
           <iframe id="profileEmbed" class="spn-profile-embed" title="Профиль" hidden></iframe>
-          <details class="spn-more spn-more--embed">
+          <details class="spn-more spn-more--embed" id="profileMore">
             <summary>Ещё</summary>
             <div class="spn-more__links">
               <button type="button" class="spn-textlink" data-open="/frontend/privacy-policy/privacy-policy.html">Политика</button>
@@ -152,6 +153,15 @@ permalink: "/frontend/app/index.html"
       <button type="button" class="spn-tab" data-tab="games">Игры</button>
       <button type="button" class="spn-tab" data-tab="profile">Профиль</button>
     </nav>
+
+    <!-- Полноценный экран (лента / входящие), не viewer-popup -->
+    <div id="profileFullscreen" class="spn-fullscreen" hidden aria-hidden="true">
+      <div class="spn-fullscreen__bar">
+        <button type="button" id="fullscreenBack" class="spn-chipbtn spn-chipbtn--back">← Профиль</button>
+        <div id="fullscreenTitle" class="spn-fullscreen__title">Серпмонн</div>
+      </div>
+      <iframe id="fullscreenFrame" class="spn-fullscreen__frame" title="Раздел"></iframe>
+    </div>
 
     <div id="viewer" class="spn-viewer" hidden aria-hidden="true">
       <div class="spn-viewer__bar">
@@ -176,6 +186,6 @@ permalink: "/frontend/app/index.html"
     <div id="spnToast" class="spn-toast" hidden></div>
   </div>
 
-  <script src="/frontend/app/app.js?v=23"></script>
+  <script src="/frontend/app/app.js?v=29"></script>
 </body>
 </html>

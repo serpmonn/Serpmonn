@@ -91,13 +91,46 @@ const VIEWER_HIDE_MENU_CSS = `
     pointer-events: none !important;
   }
 
-  /* Выход всегда на виду в конце первой вкладки */
-  .profile-panel-block--logout {
-    position: sticky !important;
-    bottom: 8px !important;
-    z-index: 4 !important;
-    padding: 8px 0 4px !important;
-    background: linear-gradient(transparent, #fff 30%) !important;
+  /* Выход — в шапке приложения, не внизу вкладки */
+  .profile-panel-block--logout,
+  #logoutButton {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  /* История баллов — прокрутка внутри попапа */
+  .points-history {
+    max-height: min(280px, 45vh) !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+  /* Лента / входящие на весь экран вкладки */
+  html, body {
+    height: 100% !important;
+    min-height: 100% !important;
+    background: #fff !important;
+  }
+  .page-wrapper {
+    min-height: 100% !important;
+    padding: 10px 12px 16px !important;
+    padding-top: 10px !important;
+    background: #fff !important;
+  }
+  .page-wrapper > .container {
+    max-width: none !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  .finding-inbox-card.card,
+  .card.finding-inbox-card {
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
   }
 `;
 
@@ -105,11 +138,31 @@ let viewerBootToken = 0;
 let viewerHistoryPushed = false;
 let closingViewerFromHistory = false;
 
+/** Инъекция в iframe: флаг приложения + блок ухода на main.html после logout */
+const ANDROID_BOOT_SCRIPT =
+  `<script>(function(){` +
+  `window.__SPN_ANDROID_APP__=true;` +
+  `document.documentElement.classList.add("android-app");` +
+  `try{var A=Location.prototype.assign;` +
+  `Location.prototype.assign=function(u){` +
+  `try{var s=String(u||"");` +
+  `if(/\\/main\\.html/i.test(s)||s==="/"||s==="/frontend/"){` +
+  `try{window.parent&&window.parent!==window&&window.parent.postMessage({type:"spn-app-logged-out"},"*");}catch(e){}` +
+  `return;}}catch(e){}` +
+  `return A.apply(this,arguments);};}catch(e){}` +
+  `})();</script>`;
+
 function isViewerOpen() {
   return Boolean(viewer && !viewer.hidden);
 }
 
 function openViewer(url, title) {
+  // Лента / входящие — только полноценный экран, не viewer-popup
+  if (/\/findings\/(feed|inbox)\.html/i.test(String(url || ''))) {
+    openFullscreenPage(url, title || 'Серпмонн');
+    showScreen('profile');
+    return;
+  }
   const href = withAppParam(url);
   viewerTitle.textContent = title || 'Серпмонн';
   viewer.hidden = false;
@@ -140,7 +193,7 @@ async function loadViewerHtml(href) {
     const early =
       `<base href="${baseHref}">` +
       `<style id="spn-android-app-css">${VIEWER_HIDE_MENU_CSS}</style>` +
-      `<script>window.__SPN_ANDROID_APP__=true;document.documentElement.classList.add("android-app");</script>`;
+      ANDROID_BOOT_SCRIPT;
     if (/<head[^>]*>/i.test(html)) {
       html = html.replace(/<head([^>]*)>/i, `<head$1>${early}`);
     } else {
@@ -159,7 +212,7 @@ async function loadViewerHtml(href) {
 
 function hardenViewerDoc(doc, opts = {}) {
   if (!doc || !doc.documentElement) return;
-  const navigate = opts.navigate || 'viewer'; // viewer | embed
+  const navigate = opts.navigate || 'viewer'; // viewer | embed | fullscreen
   try {
     doc.documentElement.classList.add('android-app');
     if (doc.body) doc.body.classList.add('android-app');
@@ -180,7 +233,9 @@ function hardenViewerDoc(doc, opts = {}) {
       mc.style.cssText = 'display:none!important';
     }
 
-    const bindKey = navigate === 'embed' ? 'spnAppEmbedNavBound' : 'spnAppNavBound';
+    const bindKey =
+      navigate === 'embed' ? 'spnAppEmbedNavBound' :
+      navigate === 'fullscreen' ? 'spnAppFsNavBound' : 'spnAppNavBound';
     if (!doc.documentElement.dataset[bindKey]) {
       doc.documentElement.dataset[bindKey] = '1';
       doc.addEventListener(
@@ -214,7 +269,7 @@ function hardenViewerDoc(doc, opts = {}) {
             }
             // После выхода / ссылок «на главную» не уводим из оболочки приложения
             if (/\/main\.html$/i.test(u.pathname) || u.pathname === '/' || u.pathname === '/frontend/') {
-              if (navigate === 'embed') {
+              if (navigate === 'embed' || navigate === 'fullscreen') {
                 try {
                   window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
                 } catch (_) {}
@@ -225,7 +280,11 @@ function hardenViewerDoc(doc, opts = {}) {
               showGuestProfile();
               return;
             }
-            if (navigate === 'embed' && profileEmbed) {
+            if (navigate === 'fullscreen' && fullscreenFrame) {
+              loadViewerHtmlInto(fullscreenFrame, next).catch(() => {
+                fullscreenFrame.src = next;
+              });
+            } else if (navigate === 'embed' && profileEmbed) {
               loadViewerHtmlInto(profileEmbed, next).catch(() => {
                 profileEmbed.src = next;
               });
@@ -309,6 +368,10 @@ try {
         closeFindingSaveModal();
         return;
       }
+      if (isFullscreenOpen()) {
+        closeProfileSubpage();
+        return;
+      }
       if (isViewerOpen()) {
         closeViewer({ fromHistory: true });
         return;
@@ -322,6 +385,9 @@ try {
 } catch (_) {}
 
 function showScreen(name) {
+  if (name !== 'profile' && isFullscreenOpen()) {
+    closeFullscreenPage();
+  }
   screens.forEach((s) => {
     const on = s.dataset.screen === name;
     s.hidden = !on;
@@ -336,8 +402,8 @@ function showScreen(name) {
   if (name === 'news' && !newsLoaded) loadNews();
   if ((name === 'tools' || name === 'games') && !catalogLoaded) loadCatalog();
   if (name === 'profile') {
-    if (profileSubpageOpen) closeProfileSubpage();
-    else refreshProfile();
+    if (profileSubpageOpen && !isFullscreenOpen()) closeProfileSubpage();
+    else if (!profileSubpageOpen) refreshProfile();
   }
 }
 
@@ -363,8 +429,21 @@ window.addEventListener('message', (ev) => {
   if (!ev || !ev.data) return;
   if (ev.data.type === 'spn-app-close-viewer') closeViewer();
   if (ev.data.type === 'spn-app-logged-out') {
+    try { clearProfileEmbed(); } catch (_) {}
     showGuestProfile();
     showScreen('profile');
+    if (isViewerOpen()) {
+      try {
+        viewerBootToken += 1;
+        viewer.hidden = true;
+        viewer.setAttribute('aria-hidden', 'true');
+        viewerFrame.classList.remove('is-booting');
+        try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
+        try { viewerFrame.removeAttribute('src'); } catch (_) {}
+        viewerHistoryPushed = false;
+        kbViewerOpen = false;
+      } catch (_) {}
+    }
   }
 });
 
@@ -1165,7 +1244,10 @@ const profileGuest = document.getElementById('profileGuest');
 const profileUser = document.getElementById('profileUser');
 const profileEmbed = document.getElementById('profileEmbed');
 const profileBackBtn = document.getElementById('profileBackBtn');
+const profileBar = document.getElementById('profileBar');
 const profileQuickLinks = document.getElementById('profileQuickLinks');
+const profileMore = document.getElementById('profileMore');
+const profileLogoutBtn = document.getElementById('profileLogoutBtn');
 const PROFILE_URL = '/frontend/profile/profile.html';
 let profileEmbedLoaded = false;
 let profileSubpageOpen = false;
@@ -1176,6 +1258,12 @@ function clearProfileEmbed() {
   if (profileUser) profileUser.classList.remove('is-subpage');
   if (profileBackBtn) profileBackBtn.hidden = true;
   if (profileQuickLinks) profileQuickLinks.hidden = false;
+  if (profileLogoutBtn) profileLogoutBtn.hidden = false;
+  if (profileMore) {
+    profileMore.hidden = false;
+    try { profileMore.open = false; } catch (_) {}
+  }
+  try { closeFullscreenPage(); } catch (_) {}
   if (!profileEmbed) return;
   profileEmbed.hidden = true;
   try { profileEmbed.removeAttribute('srcdoc'); } catch (_) {}
@@ -1187,32 +1275,85 @@ function setProfileSubpageUi(on, title) {
   if (profileUser) profileUser.classList.toggle('is-subpage', profileSubpageOpen);
   if (profileBackBtn) profileBackBtn.hidden = !profileSubpageOpen;
   if (profileQuickLinks) profileQuickLinks.hidden = profileSubpageOpen;
+  if (profileLogoutBtn) profileLogoutBtn.hidden = profileSubpageOpen;
+  if (profileMore) profileMore.hidden = profileSubpageOpen;
   if (profileSubpageOpen) {
     subtitleEl.textContent = title || 'Профиль';
   } else {
     subtitleEl.textContent = TITLES.profile || 'Профиль';
+    if (profileLogoutBtn) profileLogoutBtn.hidden = false;
   }
 }
 
 async function openProfileSubpage(url, title) {
-  if (!profileEmbed) return;
-  setProfileSubpageUi(true, title);
-  profileEmbed.hidden = false;
-  profileEmbed.classList.add('is-booting');
-  profileEmbedLoaded = true;
-  try {
-    await loadViewerHtmlInto(profileEmbed, withAppParam(url));
-  } catch (err) {
-    console.warn('profile subpage failed', err);
-    profileEmbed.removeAttribute('srcdoc');
-    profileEmbed.src = withAppParam(url);
-  }
+  openFullscreenPage(url, title || 'Серпмонн');
 }
 
 async function closeProfileSubpage() {
-  if (!profileSubpageOpen) return;
+  closeFullscreenPage();
+  if (profileUser && !profileUser.hidden) {
+    await loadProfileEmbed();
+  }
+}
+
+const profileFullscreen = document.getElementById('profileFullscreen');
+const fullscreenFrame = document.getElementById('fullscreenFrame');
+const fullscreenBack = document.getElementById('fullscreenBack');
+const fullscreenTitle = document.getElementById('fullscreenTitle');
+
+function isFullscreenOpen() {
+  return Boolean(profileFullscreen && !profileFullscreen.hidden);
+}
+
+async function openFullscreenPage(url, title) {
+  if (!profileFullscreen || !fullscreenFrame) return;
+  profileSubpageOpen = true;
+  setProfileSubpageUi(true, title);
+  fullscreenTitle.textContent = title || 'Серпмонн';
+  subtitleEl.textContent = title || 'Профиль';
+  profileFullscreen.hidden = false;
+  profileFullscreen.setAttribute('aria-hidden', 'false');
+  fullscreenFrame.classList.add('is-booting');
+  try {
+    await loadViewerHtmlInto(fullscreenFrame, withAppParam(url));
+  } catch (err) {
+    console.warn('fullscreen page failed', err);
+    try { fullscreenFrame.removeAttribute('srcdoc'); } catch (_) {}
+    fullscreenFrame.src = withAppParam(url);
+  }
+}
+
+function fullscreenFrameRemoveBoot() {
+  if (fullscreenFrame) fullscreenFrame.classList.remove('is-booting');
+}
+
+function closeFullscreenPage() {
+  profileSubpageOpen = false;
   setProfileSubpageUi(false);
-  await loadProfileEmbed();
+  if (!profileFullscreen) return;
+  profileFullscreen.hidden = true;
+  profileFullscreen.setAttribute('aria-hidden', 'true');
+  if (fullscreenFrame) {
+    fullscreenFrame.classList.remove('is-booting');
+    try { fullscreenFrame.removeAttribute('srcdoc'); } catch (_) {}
+    try { fullscreenFrame.removeAttribute('src'); } catch (_) {}
+  }
+}
+
+if (fullscreenFrame) {
+  fullscreenFrame.addEventListener('load', () => {
+    try {
+      const doc = fullscreenFrame.contentDocument;
+      if (doc) hardenViewerDoc(doc, { navigate: 'fullscreen' });
+    } catch (_) {}
+    fullscreenFrameRemoveBoot();
+  });
+}
+
+if (fullscreenBack) {
+  fullscreenBack.addEventListener('click', () => {
+    closeProfileSubpage();
+  });
 }
 
 async function loadProfileEmbed() {
@@ -1244,7 +1385,7 @@ async function loadViewerHtmlInto(frame, href) {
   const early =
     `<base href="${baseHref}">` +
     `<style id="spn-android-app-css">${VIEWER_HIDE_MENU_CSS}</style>` +
-    `<script>window.__SPN_ANDROID_APP__=true;document.documentElement.classList.add("android-app");</script>`;
+    ANDROID_BOOT_SCRIPT;
   if (/<head[^>]*>/i.test(html)) {
     html = html.replace(/<head([^>]*)>/i, `<head$1>${early}`);
   } else {
@@ -1328,6 +1469,13 @@ async function logoutFromApp() {
   refreshProfile();
 }
 
+if (profileLogoutBtn) {
+  profileLogoutBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    logoutFromApp();
+  });
+}
+
 // Выход из полного профиля (postMessage) или устаревший #logoutBtn
 document.addEventListener('click', (e) => {
   const logout = e.target.closest && e.target.closest('#logoutBtn');
@@ -1340,10 +1488,23 @@ document.addEventListener('click', (e) => {
 window.addEventListener('message', (ev) => {
   if (!ev || !ev.data) return;
   if (ev.data.type === 'spn-app-logged-out') {
-    // Не даём iframe'у «уехать» на main.html сайта — сразу гостевой профиль в приложении
+    try { clearProfileEmbed(); } catch (_) {}
     showGuestProfile();
     showScreen('profile');
-    try { closeViewer({ fromHistory: true }); } catch (_) {}
+    // Не вызываем closeViewer здесь повторно, если viewer закрыт —
+    // history.back() из closeViewer может увести WebView
+    if (isViewerOpen()) {
+      try {
+        viewerBootToken += 1;
+        viewer.hidden = true;
+        viewer.setAttribute('aria-hidden', 'true');
+        viewerFrame.classList.remove('is-booting');
+        try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
+        try { viewerFrame.removeAttribute('src'); } catch (_) {}
+        viewerHistoryPushed = false;
+        kbViewerOpen = false;
+      } catch (_) {}
+    }
   }
 });
 

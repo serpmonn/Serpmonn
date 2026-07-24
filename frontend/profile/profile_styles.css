@@ -386,7 +386,12 @@ p {
   left: 0;
   margin-top: 4px;
   min-width: 220px;
-  max-width: 280px;
+  max-width: min(280px, 70vw);
+  max-height: min(240px, 40vh);
+  overflow-x: hidden;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
   padding: 8px 10px;
   border-radius: 8px;
   background: #ffffff;
@@ -395,6 +400,12 @@ p {
   font-size: 12px;
   color: #4b5563;
   z-index: 20;               /* поверх карточки профиля */
+}
+
+html.android-app .points-history {
+  max-height: min(280px, 45vh);
+  right: 0;
+  left: auto;
 }
 
 .points-history-list {

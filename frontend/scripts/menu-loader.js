@@ -102,7 +102,11 @@ const ANDROID_EMBED_HIDE_CSS = `
   body.android-app #aiAccessBlock,
   body.android-app #openAiService,
   body.android-app a[href*="/tariffs/"],
-  body.android-app a[href*="ai.serpmonn.ru"] {
+  body.android-app a[href*="ai.serpmonn.ru"],
+  html.android-app .profile-panel-block--logout,
+  html.android-app #logoutButton,
+  body.android-app .profile-panel-block--logout,
+  body.android-app #logoutButton {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;

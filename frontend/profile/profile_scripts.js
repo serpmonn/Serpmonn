@@ -902,6 +902,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   async function logout() {
+    // RuStore / android embed: никогда не уходим на main.html сайта
+    const stayInApp =
+      Boolean(window.__SPN_ANDROID_APP__) ||
+      document.documentElement.classList.contains('android-app') ||
+      new URLSearchParams(window.location.search).get('app') === '1' ||
+      (typeof window.parent !== 'undefined' && window.parent !== window);
+
     try {
       const response = await fetch('/auth/logout', {
         method: 'POST',
@@ -915,23 +922,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Ошибка выхода:', error);
     } finally {
       localStorage.removeItem('serp_tools_recent');
-      // Если профиль во iframe (RuStore app) — только postMessage родителю, без main.html
-      try {
-        if (window.parent && window.parent !== window) {
-          window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
-          return;
-        }
-      } catch (_) {
+      if (stayInApp) {
         try {
-          window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
-          return;
-        } catch (__) {}
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
+          }
+        } catch (_) {}
+        return;
       }
-      const inApp =
-        Boolean(window.__SPN_ANDROID_APP__) ||
-        document.documentElement.classList.contains('android-app') ||
-        new URLSearchParams(window.location.search).get('app') === '1';
-      if (inApp) return;
       safeAssignLocation(getFrontendPath('main.html'));
     }
   }
@@ -1518,7 +1516,7 @@ document.addEventListener('DOMContentLoaded', async () => {
               body: JSON.stringify({ exchangeCode: body.exchangeCode })
             });
             setMessengerLinkModalOpen(false);
-            setGlobalMessage('Serpmonn Messenger привязан', 'success');
+            setGlobalMessage('Серпмонн мессенджер привязан', 'success');
             refreshMessengerLinkStatus();
             return;
           }

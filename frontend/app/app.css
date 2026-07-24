@@ -224,17 +224,25 @@ html, body {
 .spn-profile-bar {
   display: flex;
   gap: 8px;
-  padding: 10px 12px 8px;
+  padding: 8px 12px;
   background: var(--spn-surface);
   border-bottom: 1px solid var(--spn-border);
   flex-shrink: 0;
   align-items: center;
+  min-height: 48px;
+}
+.spn-profile-bar[hidden] {
+  display: none !important;
 }
 .spn-profile-bar__links {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
   min-width: 0;
+  flex: 1;
+}
+.spn-profile-bar__links[hidden] {
+  display: none !important;
 }
 .spn-chipbtn {
   appearance: none;
@@ -252,8 +260,25 @@ html, body {
   background: transparent;
   padding-left: 4px;
 }
+.spn-chipbtn--danger {
+  margin-left: auto;
+  flex-shrink: 0;
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
 .spn-profile--embed.is-subpage .spn-more--embed {
   display: none;
+}
+.spn-profile--embed.is-subpage #profileLogoutBtn {
+  display: none;
+}
+.spn-profile--embed.is-subpage .spn-profile-bar {
+  justify-content: flex-start;
+}
+.spn-profile--embed.is-subpage .spn-profile-embed {
+  flex: 1;
+  min-height: 0;
 }
 .spn-profile-embed {
   width: 100%;
@@ -273,49 +298,47 @@ html, body {
   background: var(--spn-surface);
   flex-shrink: 0;
 }
-/* overflow:hidden только когда открыт встроенный профиль, иначе гостю некуда раскрыть «Ещё» */
+/* overflow:hidden только для встроенного профиля; у гостя вкладка должна скроллиться */
 html.spn-profile-embed-mode .spn-main {
   padding-bottom: 0;
   overflow: hidden;
+}
+html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
+  overflow: auto;
+  -webkit-overflow-scrolling: touch;
 }
 .spn-more {
   margin-top: 18px;
 }
 .spn-more--guest {
   margin-top: 20px;
-  padding-top: 14px;
-  border-top: 1px solid var(--spn-border);
-}
-.spn-more__label {
-  color: var(--spn-muted);
-  font-size: 0.88rem;
-  font-weight: 600;
-  margin-bottom: 8px;
+  padding-top: 4px;
 }
 .spn-more > summary {
   cursor: pointer;
   list-style: none;
   color: var(--spn-muted);
-  font-size: 0.88rem;
+  font-size: 0.92rem;
   font-weight: 600;
-  padding: 6px 0;
+  padding: 12px 0;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
   user-select: none;
 }
 .spn-more > summary::-webkit-details-marker { display: none; }
 .spn-more > summary::after {
   content: " ▾";
   font-size: 0.75rem;
+  margin-left: 4px;
 }
 .spn-more[open] > summary::after { content: " ▴"; }
 .spn-more__links {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 12px;
-  padding: 4px 0 2px;
-}
-.spn-more--guest .spn-more__links {
-  gap: 14px;
+  gap: 4px;
+  padding: 0 0 10px;
 }
 .spn-textlink {
   appearance: none;
@@ -324,7 +347,7 @@ html.spn-profile-embed-mode .spn-main {
   color: var(--spn-muted);
   font-size: 0.92rem;
   line-height: 1.4;
-  padding: 4px 0;
+  padding: 10px 0;
   min-height: 44px;
   display: inline-flex;
   align-items: center;
@@ -672,6 +695,50 @@ html.spn-profile-embed-mode .spn-main {
   white-space: normal;
 }
 .spn-tab.is-active { color: var(--spn-accent); }
+
+/* Полноценный экран раздела (лента/входящие) — между шапкой и табами, не оверлей */
+.spn-fullscreen {
+  position: fixed;
+  top: calc(var(--spn-safe-t) + var(--spn-top));
+  left: 0;
+  right: 0;
+  bottom: calc(var(--spn-tabs) + var(--spn-safe-b));
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  overscroll-behavior-x: none;
+}
+.spn-fullscreen[hidden] { display: none !important; }
+.spn-fullscreen__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--spn-border);
+  background: #fff;
+  flex-shrink: 0;
+}
+.spn-fullscreen__title {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.spn-fullscreen__frame {
+  flex: 1;
+  width: 100%;
+  min-height: 0;
+  border: 0;
+  background: #fff;
+  display: block;
+}
+.spn-fullscreen__frame.is-booting {
+  opacity: 0;
+}
 
 .spn-viewer {
   position: fixed;
