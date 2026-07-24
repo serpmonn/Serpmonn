@@ -1,0 +1,26 @@
+{
+  "name": "serpmonn-android",
+  "version": "1.2.0",
+  "private": true,
+  "description": "Serpmonn Android app (RuStore)",
+  "scripts": {
+    "sync": "npx cap sync android",
+    "open": "npx cap open android",
+    "build:web": "node scripts/prepare-www.mjs",
+    "build:debug": "npm run build:web && npx cap sync android && cd android && ./gradlew assembleDebug",
+    "build:release": "npm run build:web && npx cap sync android && cd android && ./gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@capacitor/android": "^7.4.2",
+    "@capacitor/app": "^7.0.1",
+    "@capacitor/core": "^7.4.2",
+    "@capacitor/network": "^7.0.1",
+    "@capacitor/splash-screen": "^7.0.1",
+    "@capacitor/status-bar": "^7.0.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^7.4.2",
+    "esbuild": "^0.25.8"
+  },
+  "type": "module"
+}

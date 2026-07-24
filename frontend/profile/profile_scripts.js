@@ -902,6 +902,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Ошибка выхода:', error);
     } finally {
       localStorage.removeItem('serp_tools_recent');
+      // В Android app shell: не уходим на main.html — сообщаем родителю
+      try {
+        const inApp =
+          Boolean(window.__SPN_ANDROID_APP__) ||
+          (window.parent && window.parent !== window && window.parent.__SPN_ANDROID_APP__);
+        if (inApp && window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
+          return;
+        }
+      } catch (_) {}
       safeAssignLocation(getFrontendPath('main.html'));
     }
   }

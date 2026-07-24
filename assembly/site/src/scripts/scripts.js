@@ -9,9 +9,21 @@ import '/frontend/pwa/app.js';
 
 // scripts.js
 
-export function getEnv() {
-  const ua = navigator.userAgent || '';
+function isAndroidAppShell() {
+  try {
+    if (window.Capacitor && typeof window.Capacitor.isNativePlatform === 'function' && window.Capacitor.isNativePlatform()) {
+      return true;
+    }
+  } catch (_) {}
+  if (window.__SPN_ANDROID_APP__) return true;
+  if (document.documentElement?.classList?.contains('android-app')) return true;
+  if (document.body?.classList?.contains('android-app')) return true;
+  if (/(?:^|[?&])app=1(?:&|$)/.test(window.location.search || '')) return true;
+  const params = new URLSearchParams(window.location.search || '');
+  return params.get('env') === 'android';
+}
 
+export function getEnv() {
   const isStandalonePWA =
     window.matchMedia('(display-mode: standalone)').matches ||
     window.navigator.standalone === true;
@@ -30,6 +42,7 @@ export function getEnv() {
   ) {
     return 'vk_mini';
   }
+  if (envParam === 'android' || isAndroidAppShell()) return 'android_app';
   if (envParam === 'twa') return 'twa';
   if (isStandalonePWA) return 'pwa';
 
@@ -43,7 +56,29 @@ export function shouldShowCookieBanner() {
   if (document.body?.classList?.contains('vk-mini-app') || document.body?.classList?.contains('vk-mini-embed')) {
     return false;
   }
+  if (isAndroidAppShell() || getEnv() === 'android_app') return false;
   return getEnv() === 'web';
+}
+
+/** Маркер RuStore/Capacitor: без cookie-баннера и кнопки «Установить приложение». */
+export function markAndroidAppShell() {
+  if (!isAndroidAppShell() && getEnv() !== 'android_app') return;
+  window.__SPN_ANDROID_APP__ = true;
+  document.documentElement.classList.add('android-app');
+  if (document.body) document.body.classList.add('android-app');
+  if (!document.getElementById('spn-android-app-css')) {
+    const style = document.createElement('style');
+    style.id = 'spn-android-app-css';
+    style.textContent = `
+      html.android-app #cookie-consent,
+      html.android-app .cookie-consent,
+      body.android-app #cookie-consent,
+      body.android-app .cookie-consent,
+      html.android-app #installAppButton,
+      body.android-app #installAppButton { display: none !important; }
+    `;
+    (document.head || document.documentElement).appendChild(style);
+  }
 }
 
 function generateIdempotencyKey() {
@@ -1781,10 +1816,16 @@ async function initPage() {
     }
   }
 
+  markAndroidAppShell();
   setupEventListeners();
   loadPageData();
   initAdObserver();
   showCookieBanner();
 }
+
+// Как можно раньше — до DOMContentLoaded куки уже могут мигнуть
+try {
+  markAndroidAppShell();
+} catch (_) {}
 
 document.addEventListener('DOMContentLoaded', initPage);

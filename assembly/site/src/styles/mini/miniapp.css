@@ -642,6 +642,18 @@ body.vk-mini-app .ai-video-results {
   gap: 10px;
   display: flex;
   align-items: center;
+  background: #fff;
+  border: 1px solid var(--vk-mini-border, #e5e7eb);
+  border-radius: 14px;
+  /* нейтральная тень — без фиолетового focus из search.css */
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06) !important;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.vk-mini-search .main-search-container:focus-within {
+  border-color: #d1d5db !important;
+  box-shadow: 0 2px 10px rgba(15, 23, 42, 0.08) !important;
 }
 
 .vk-mini-search .main-search-container .logo {
@@ -694,13 +706,20 @@ body.vk-mini-app .ai-video-results {
   width: 100%;
   height: 48px;
   margin: 0;
-  padding: 0 44px 0 44px;
+  padding: 0 44px 0 46px;
   font-size: 16px;
   color: #111;
   background: #fff;
   border: 1px solid #d1d5db;
   border-radius: 12px;
   box-sizing: border-box;
+  box-shadow: none !important;
+}
+
+.vk-mini-search .search-form input[type="search"]:focus {
+  outline: none;
+  border-color: #9ca3af !important;
+  box-shadow: none !important;
 }
 
 .vk-mini-search .attach-btn,
@@ -709,6 +728,16 @@ body.vk-mini-app .ai-video-results {
   background: transparent !important;
   border: 0 !important;
   z-index: 2;
+}
+
+.vk-mini-search .attach-btn {
+  left: 8px !important; /* чуть правее края поля */
+}
+
+.vk-mini-search .attach-btn:hover,
+.vk-mini-search .attach-btn:focus-visible {
+  color: var(--vk-mini-red, #e53935) !important;
+  box-shadow: none !important;
 }
 
 .vk-mini-search .attach-btn.has-file {
@@ -820,7 +849,8 @@ body.vk-mini-app .ai-video-results {
   stroke-linejoin: round;
 }
 
-/* Viewer overlay */
+/* Viewer overlay — выше онбординга (80), чтобы политика/оферта
+   не открывались «под» окном согласия (замечание модерации VK). */
 .vk-mini-viewer {
   position: fixed;
   inset: 0;
@@ -828,7 +858,7 @@ body.vk-mini-app .ai-video-results {
   height: 100%;
   height: 100dvh;
   background: #fff;
-  z-index: 60;
+  z-index: 90;
   display: none;
   flex-direction: column;
   max-width: none;
@@ -1187,6 +1217,9 @@ body.vk-mini-app .mobile-anchor-ad {
 
 body.vk-mini-embed #menuContainer,
 body.vk-mini-embed #menuButton,
+body.vk-mini-embed .menu-container,
+body.vk-mini-embed .menu-activity-bell,
+body.vk-mini-embed #activityBellBtn,
 body.vk-mini-embed .cookie-consent,
 body.vk-mini-embed #cookie-consent,
 body.vk-mini-embed .donate-button,
@@ -1194,6 +1227,16 @@ body.vk-mini-embed a[href*="donate"],
 body.vk-mini-embed a[href*="promo"],
 body.vk-mini-embed #installAppButton,
 body.vk-mini-embed .ad-leaderboard,
-body.vk-mini-embed .mobile-anchor-ad {
+body.vk-mini-embed .mobile-anchor-ad,
+body.vk-mini-embed .social-subscribe,
+body.vk-mini-embed .tg-btn,
+body.vk-mini-embed .vk-btn,
+body.vk-mini-embed .social-share,
+body.vk-mini-embed .share-btn,
+body.vk-mini-embed .share-buttons,
+body.vk-mini-embed a[href*="t.me/serpmonn"],
+body.vk-mini-embed a[href*="vk.com/serpmonn_site"],
+body.vk-mini-embed a[href*="t.me/share"],
+body.vk-mini-embed a[href*="vk.com/share"] {
   display: none !important;
 }

@@ -48,6 +48,10 @@
   function withMiniParam(href) {
     try {
       const u = new URL(href, location.origin);
+      // Внешние URL оставляем абсолютными — иначе iframe уйдёт на /path нашего домена → 404
+      if (u.origin !== location.origin) {
+        return u.href;
+      }
       u.searchParams.set('vk_mini', '1');
       if (!u.searchParams.has('vk_app_id') && cfg.appId) {
         u.searchParams.set('vk_app_id', String(cfg.appId));
@@ -197,10 +201,14 @@
         touch-action: pan-y manipulation !important;
         -webkit-text-size-adjust: 100% !important;
       }
-      #menuContainer, #menuButton, .menu-container, .cookie-consent, #cookie-consent,
+      #menuContainer, #menuButton, .menu-container, .menu-activity-bell, #activityBellBtn,
+      .cookie-consent, #cookie-consent,
       .donate-button, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner,
       .mrg-tag, ins.mrg-tag, [id*="mail-ad"], [class*="mail-ad"], #game-ad-overlay,
       a[href*="donate"], a[href*="/promo"], #installAppButton,
+      .social-subscribe, .tg-btn, .vk-btn, .social-share, .share-btn, .share-buttons,
+      a[href*="t.me/serpmonn"], a[href*="vk.com/serpmonn_site"],
+      a[href*="t.me/share"], a[href*="vk.com/share"],
       .accessibility-widget, #a11y-widget { display:none !important; }
 
       /* Игры: одна колонка, без огромных полей */
@@ -320,10 +328,34 @@
         const a = e.target.closest && e.target.closest('a[href]');
         if (!a) return;
         const href = a.getAttribute('href') || '';
+        if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
+
         if (isExternalUrl(href) || /donate|promo|telegram|t\.me|max\.ru|ok\.ru/i.test(href)) {
           e.preventDefault();
           e.stopPropagation();
+          return;
         }
+
+        // Same-origin навигация внутри viewer — всегда с vk_mini=1,
+        // иначе tool-страница грузит полное меню (колокольчик) и выглядит как «сайт».
+        try {
+          const u = new URL(href, location.origin);
+          if (u.origin !== location.origin) return;
+
+          const target = (a.getAttribute('target') || '').toLowerCase();
+          const needsMiniParam = !u.searchParams.has('vk_mini');
+          const leavesFrame = target === '_blank' || target === '_parent' || target === '_top';
+
+          if (needsMiniParam || leavesFrame) {
+            e.preventDefault();
+            e.stopPropagation();
+            u.searchParams.set('vk_mini', '1');
+            if (!u.searchParams.has('vk_app_id') && cfg.appId) {
+              u.searchParams.set('vk_app_id', String(cfg.appId));
+            }
+            doc.defaultView.location.assign(u.pathname + u.search + u.hash);
+          }
+        } catch (_) {}
       },
       true
     );
@@ -576,17 +608,19 @@
     window.__SPN_VK_MINI_USER__ = null;
   }
 
-  function renderAuthUi(user) {
+  function renderAuthUi(user, opts = {}) {
     if (!authRoot) return;
     const loggedIn = Boolean(user && (user.id || user.vkUserId));
-    authRoot.dataset.state = loggedIn ? 'user' : 'guest';
+    const linking = Boolean(opts.linking);
+    authRoot.dataset.state = loggedIn ? 'user' : (linking ? 'linking' : 'guest');
 
-    if (authLoginBtn) authLoginBtn.hidden = loggedIn;
-    if (authLogoutBtn) authLogoutBtn.hidden = !loggedIn;
+    // П. 1.2.2: без кнопок email / VK ID / «Выйти» — сессия = VK user
+    if (authLoginBtn) authLoginBtn.hidden = true;
+    if (authLogoutBtn) authLogoutBtn.hidden = true;
     if (authDeleteBtn) authDeleteBtn.hidden = !loggedIn;
 
     const serpBlock = document.getElementById('vk-mini-auth-serp');
-    if (serpBlock) serpBlock.hidden = loggedIn;
+    if (serpBlock) serpBlock.hidden = true;
 
     if (authHint) {
       authHint.hidden = false;
@@ -600,14 +634,19 @@
         profileName.textContent =
           prettyAuthName(user) || authCopy.loggedIn || profileCopy.guestName || 'Вы вошли';
       } else {
-        profileName.textContent = profileCopy.guestName || 'Гость';
+        profileName.textContent = linking
+          ? (profileCopy.linking || 'Подключаем аккаунт VK…')
+          : (profileCopy.guestName || 'Гость');
       }
     }
 
     if (profileText) {
       profileText.textContent = loggedIn
         ? (profileCopy.userText || 'До 15 запросов к ИИ в день')
-        : (profileCopy.guestText || 'Войдите через VK или аккаунт Серпмонн, чтобы получить до 15 запросов в день');
+        : linking
+          ? (profileCopy.linking || 'Подключаем аккаунт VK…')
+          : (profileCopy.guestText ||
+            'Вход выполняется автоматически через ВКонтакте — до 15 запросов в день после авторизации');
     }
 
     if (authLabel) {
@@ -769,74 +808,11 @@
     return { ok: resp.ok, data };
   }
 
-  function setSerpLoginError(message) {
-    const el = document.getElementById('vk-mini-serp-login-error');
-    if (!el) return;
-    if (message) {
-      el.hidden = false;
-      el.textContent = message;
-    } else {
-      el.hidden = true;
-      el.textContent = '';
-    }
-  }
-
-  async function loginWithSerpmonn({ email, password } = {}) {
-    const submitBtn = document.getElementById('vk-mini-serp-login-submit');
-    const emailInput = document.getElementById('vk-mini-serp-email');
-    const passwordInput = document.getElementById('vk-mini-serp-password');
-    const mail = String(email || emailInput?.value || '').trim();
-    const pass = String(password || passwordInput?.value || '');
-
-    setSerpLoginError('');
-
-    if (!mail || !pass || pass.length < 6) {
-      setSerpLoginError(authCopy.loginFailed || 'Не удалось войти. Проверьте email и пароль');
-      return false;
-    }
-
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      submitBtn.textContent = authCopy.loggingIn || 'Входим…';
-    }
-
-    try {
-      const resp = await fetch('/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify({ email: mail, password: pass, vkMini: true })
-      });
-      const data = await resp.json().catch(() => null);
-      if (!resp.ok || !data?.success || !data?.token) {
-        setSerpLoginError(
-          (data && data.message) || authCopy.loginFailed || 'Не удалось войти. Проверьте email и пароль'
-        );
-        return false;
-      }
-
-      persistSession(data.token, data.user);
-      renderAuthUi(data.user);
-      if (passwordInput) passwordInput.value = '';
-      return true;
-    } catch (err) {
-      console.warn('serpmonn mini login failed', err);
-      setSerpLoginError(authCopy.loginFailed || 'Не удалось войти. Попробуйте ещё раз');
-      return false;
-    } finally {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = authCopy.submitSerpmonn || 'Войти';
-      }
-    }
-  }
-
+  /**
+   * Бесшовный вход по п. 1.2.2: vk_user_id + sign из launch params.
+   * Без форм email/телефона и без кнопки «Войти через VK ID».
+   */
   async function loginWithVk({ interactive } = { interactive: false }) {
-    if (authLoginBtn && interactive) {
-      authLoginBtn.disabled = true;
-      authLoginBtn.textContent = authCopy.loggingIn || 'Входим…';
-    }
-
     try {
       let launchParams = collectLaunchParams();
       const bridgeParams = await getBridgeLaunchParams();
@@ -844,7 +820,7 @@
         launchParams = { ...launchParams, ...bridgeParams };
       }
 
-      // 1) Пробуем по launch params (если бэкенд примет подпись)
+      // 1) Основной путь: launch params + проверка sign на сервере
       if (launchParams.vk_user_id && launchParams.sign) {
         const first = await postMiniLogin({ launchParams });
         if (first.ok && first.data?.success && first.data.token) {
@@ -856,11 +832,14 @@
         }
       }
 
-      // 2) access_token через Bridge (основной путь)
+      // 2) Тихий fallback: VKWebAppGetAuthToken (без UI «войти»)
       const accessToken = await getVkAccessToken();
       if (!accessToken) {
         if (interactive) {
-          window.alert?.(authCopy.loginFailed || 'Не удалось войти. Попробуйте ещё раз');
+          window.alert?.(
+            authCopy.loginFailed ||
+              'Не удалось войти автоматически. Откройте мини-приложение снова из ВКонтакте'
+          );
         }
         return false;
       }
@@ -879,20 +858,21 @@
       }
 
       if (interactive) {
-        window.alert?.(authCopy.loginFailed || 'Не удалось войти. Попробуйте ещё раз');
+        window.alert?.(
+          authCopy.loginFailed ||
+            'Не удалось войти автоматически. Откройте мини-приложение снова из ВКонтакте'
+        );
       }
       return false;
     } catch (err) {
       console.warn('vk mini login failed', err);
       if (interactive) {
-        window.alert?.(authCopy.loginFailed || 'Не удалось войти. Попробуйте ещё раз');
+        window.alert?.(
+          authCopy.loginFailed ||
+            'Не удалось войти автоматически. Откройте мини-приложение снова из ВКонтакте'
+        );
       }
       return false;
-    } finally {
-      if (authLoginBtn) {
-        authLoginBtn.disabled = false;
-        authLoginBtn.textContent = authCopy.login || 'Войти через VK';
-      }
     }
   }
 
@@ -909,7 +889,8 @@
       ? (limitCopy.guestTitle || 'Лимит на сегодня закончился')
       : (limitCopy.userTitle || 'Лимит на сегодня закончился');
     const text = needAuth
-      ? (limitCopy.guestText || 'Войдите через VK — будет до 15 запросов в день.')
+      ? (limitCopy.guestText ||
+        'Для большего лимита нужна сессия VK. Откройте мини-приложение снова — вход выполнится автоматически.')
       : (limitCopy.userText || 'Завтра снова будет до 15 запросов.');
 
     if (limitTitle) limitTitle.textContent = title;
@@ -921,28 +902,21 @@
     limitActions.innerHTML = '';
 
     if (needAuth) {
-      const loginBtn = document.createElement('button');
-      loginBtn.type = 'button';
-      loginBtn.className = 'is-primary';
-      loginBtn.textContent = authCopy.login || 'Войти через VK';
-      loginBtn.addEventListener('click', async () => {
-        const ok = await loginWithVk({ interactive: true });
+      const retryBtn = document.createElement('button');
+      retryBtn.type = 'button';
+      retryBtn.className = 'is-primary';
+      retryBtn.textContent = limitCopy.retryAuth || authCopy.login || 'Повторить вход';
+      retryBtn.addEventListener('click', async () => {
+        retryBtn.disabled = true;
+        retryBtn.textContent = authCopy.loggingIn || 'Входим…';
+        const ok = await loginWithVk({ interactive: false });
         if (ok) closeLimit();
-      });
-      limitActions.appendChild(loginBtn);
-
-      const serpBtn = document.createElement('button');
-      serpBtn.type = 'button';
-      serpBtn.textContent = authCopy.loginSerpmonn || limitCopy.goProfile || 'Войти через Серпмонн';
-      serpBtn.addEventListener('click', () => {
-        closeLimit();
-        showScreen('profile');
-        const emailInput = document.getElementById('vk-mini-serp-email');
-        if (emailInput) {
-          try { emailInput.focus(); } catch (_) {}
+        else {
+          retryBtn.disabled = false;
+          retryBtn.textContent = limitCopy.retryAuth || authCopy.login || 'Повторить вход';
         }
       });
-      limitActions.appendChild(serpBtn);
+      limitActions.appendChild(retryBtn);
     }
 
     [
@@ -974,25 +948,11 @@
       renderAuthUi(cachedUser);
       enrichUserFromBridge(cachedUser).then((u) => renderAuthUi(u));
     } else {
-      renderAuthUi(null);
+      renderAuthUi(null, { linking: true });
     }
 
-    if (authLoginBtn) {
-      authLoginBtn.addEventListener('click', () => loginWithVk({ interactive: true }));
-    }
-    if (authLogoutBtn) {
-      authLogoutBtn.addEventListener('click', () => logoutFromVk());
-    }
     if (authDeleteBtn) {
       authDeleteBtn.addEventListener('click', () => deleteAccountFromMini());
-    }
-
-    const serpForm = document.getElementById('vk-mini-serp-login-form');
-    if (serpForm) {
-      serpForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        await loginWithSerpmonn();
-      });
     }
 
     if (limitClose) {
@@ -1004,11 +964,12 @@
       });
     }
 
-    // Тихий вход: если уже есть токен — не дёргаем VK снова
-    if (cachedToken && cachedUser) return;
-
+    // Тихий вход по launch params (п. 1.2.2). С кэшем тоже обновляем сессию.
     loginWithVk({ interactive: false }).then((ok) => {
-      if (!ok && !getStoredUser()) renderAuthUi(null);
+      if (!ok && !getStoredUser()) {
+        // Не пугаем модератора/пользователя «сессия сломана» — остаёмся гостем с обычным текстом
+        renderAuthUi(null);
+      }
     });
   }
 
@@ -1026,35 +987,45 @@
       const a = e.target.closest && e.target.closest('a[href]');
       if (!a || a.closest('.vk-mini-viewer')) return;
 
-      // Картинки ответа: открываем через VK, без увода на сторонний сайт
+      // Картинки ответа — внутри viewer (как новости/источники)
       if (a.classList.contains('ai-image-card')) {
         e.preventDefault();
         e.stopPropagation();
-        const urls = Array.from(document.querySelectorAll('.ai-image-card'))
-          .map((el) => el.getAttribute('href'))
-          .filter((u) => u && /^https?:/i.test(u));
-        const start = Math.max(0, urls.indexOf(a.getAttribute('href')));
-        const bridge = window.vkBridge || window.bridge;
-        if (bridge && urls.length) {
-          bridge
-            .send('VKWebAppShowImages', { images: urls, start_index: start })
-            .catch(() => {});
-        }
+        const imgHref = a.getAttribute('href') || '';
+        const imgTitle =
+          (a.querySelector('.ai-image-title')?.textContent || '').trim() ||
+          (a.getAttribute('title') || '').trim() ||
+          'Картинка';
+        if (imgHref) openViewer(imgHref, imgTitle);
         return;
       }
 
       const href = a.getAttribute('href') || '';
+      if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
 
-      // Лента новостей на экране поиска — открываем через VK Bridge
-      if (a.closest('#news-block') && isExternalUrl(href)) {
+      const linkTitle =
+        (a.querySelector('.combo-hero-headline, .card-headline, .source-title, .ai-video-title, .ai-image-title')?.textContent || '')
+          .trim() ||
+        (a.getAttribute('title') || '').trim() ||
+        (a.textContent || '').trim().slice(0, 80);
+
+      // Новости на вкладке поиска — внутри mini viewer (как в Android-приложении)
+      if (a.closest('#news-block')) {
         e.preventDefault();
         e.stopPropagation();
-        const bridge = getVkBridge();
-        if (bridge && typeof bridge.send === 'function') {
-          bridge.send('VKWebAppOpenURL', { url: href }).catch(() => {
-            bridge.send('VKWebAppOpenLink', { url: href }).catch(() => {});
-          });
-        }
+        openViewer(href, linkTitle || 'Новость');
+        return;
+      }
+
+      // Источники и видео ответа ИИ — тоже во viewer, без увода наружу
+      if (
+        a.classList.contains('ai-source-chip') ||
+        a.classList.contains('source-item') ||
+        a.classList.contains('ai-video-card')
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+        openViewer(href, linkTitle || 'Источник');
         return;
       }
 
