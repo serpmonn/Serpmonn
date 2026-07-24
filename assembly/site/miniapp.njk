@@ -22,11 +22,9 @@ title: "Серпмонн"
         <p class="vk-mini-profile__text" id="vk-mini-profile-text">{{ miniApp.profile.guestText }}</p>
         <p class="vk-mini-profile__quota" id="vk-mini-auth-hint">{{ miniApp.profile.quotaGuest }}</p>
         <div class="vk-mini-profile__actions">
-          <button type="button" class="vk-mini-auth__login" id="vk-mini-auth-login">
+          {# Вход бесшовный по launch params (п. 1.2.2) — без email/VK ID и без «Выйти» #}
+          <button type="button" class="vk-mini-auth__login" id="vk-mini-auth-login" hidden>
             {{ miniApp.auth.login }}
-          </button>
-          <button type="button" class="vk-mini-auth__logout" id="vk-mini-auth-logout" hidden>
-            {{ miniApp.profile.logout }}
           </button>
           <button type="button" class="vk-mini-auth__delete" id="vk-mini-auth-delete" hidden>
             {{ miniApp.profile.deleteAccount }}
@@ -45,52 +43,6 @@ title: "Серпмонн"
               data-open-url="{{ miniApp.legal.offerUrl }}"
               data-open-title="{{ miniApp.legal.offerTitle }}">
               {{ miniApp.legal.offerTitle }}
-            </button>
-          </div>
-        </div>
-
-        <div class="vk-mini-auth-serp" id="vk-mini-auth-serp">
-          <div class="vk-mini-auth-serp__divider" aria-hidden="true">
-            <span>{{ miniApp.auth.orDivider }}</span>
-          </div>
-          <form class="vk-mini-auth-serp__form" id="vk-mini-serp-login-form" autocomplete="on">
-            <label class="vk-mini-auth-serp__label" for="vk-mini-serp-email">{{ miniApp.auth.emailLabel }}</label>
-            <input
-              class="vk-mini-auth-serp__input"
-              type="email"
-              id="vk-mini-serp-email"
-              name="email"
-              inputmode="email"
-              autocomplete="username"
-              placeholder="{{ miniApp.auth.emailPlaceholder }}"
-              required
-            >
-            <label class="vk-mini-auth-serp__label" for="vk-mini-serp-password">{{ miniApp.auth.passwordLabel }}</label>
-            <input
-              class="vk-mini-auth-serp__input"
-              type="password"
-              id="vk-mini-serp-password"
-              name="password"
-              autocomplete="current-password"
-              placeholder="{{ miniApp.auth.passwordPlaceholder }}"
-              minlength="6"
-              required
-            >
-            <p class="vk-mini-auth-serp__error" id="vk-mini-serp-login-error" hidden></p>
-            <button type="submit" class="vk-mini-auth-serp__submit" id="vk-mini-serp-login-submit">
-              {{ miniApp.auth.submitSerpmonn }}
-            </button>
-          </form>
-          <div class="vk-mini-auth-serp__links">
-            <button type="button" class="vk-mini-auth-serp__link" id="vk-mini-serp-register"
-              data-open-url="/frontend/register/register.html"
-              data-open-title="{{ miniApp.auth.registerLink }}">
-              {{ miniApp.auth.registerLink }}
-            </button>
-            <button type="button" class="vk-mini-auth-serp__link" id="vk-mini-serp-forgot"
-              data-open-url="/frontend/login/forgot/forgot.html"
-              data-open-title="{{ miniApp.auth.forgotLink }}">
-              {{ miniApp.auth.forgotLink }}
             </button>
           </div>
         </div>
@@ -384,4 +336,4 @@ title: "Серпмонн"
 
 <script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js"></script>
 <script type="module" src="/frontend/scripts/scripts.js" defer></script>
-<script src="/frontend/scripts/mini/miniapp.js?v=19" defer></script>
+<script src="/frontend/scripts/mini/miniapp.js?v=30" defer></script>

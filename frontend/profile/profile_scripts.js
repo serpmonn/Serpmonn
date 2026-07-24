@@ -685,7 +685,15 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       planHintEl.textContent = '';
       planHintEl.hidden = true;
-      if (currentPlan === 'pro') {
+      const inAndroidApp =
+        Boolean(window.__SPN_ANDROID_APP__) ||
+        (window.parent && window.parent !== window && window.parent.__SPN_ANDROID_APP__);
+      if (inAndroidApp) {
+        planHintEl.hidden = false;
+        planHintEl.textContent =
+          'Денежная покупка Pro в приложении временно недоступна. Можно обменять баллы на дни Pro ниже; оформить тариф за деньги — на сайте serpmonn.ru.';
+        if (managePlanButton) managePlanButton.hidden = true;
+      } else if (currentPlan === 'pro') {
         planHintEl.hidden = false;
         planHintEl.append(
           t('profile.proHintPrefix'),
@@ -695,7 +703,12 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
 
       if (aiAccessBlock && aiAccessHint) {
-        if (currentPlan === 'pro') {
+        const inAndroidApp =
+          Boolean(window.__SPN_ANDROID_APP__) ||
+          (window.parent && window.parent !== window && window.parent.__SPN_ANDROID_APP__);
+        if (inAndroidApp) {
+          aiAccessBlock.style.display = 'none';
+        } else if (currentPlan === 'pro') {
           aiAccessBlock.style.display = 'block';
           aiAccessHint.textContent = t('profile.aiHint');
         } else {
@@ -902,6 +915,23 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Ошибка выхода:', error);
     } finally {
       localStorage.removeItem('serp_tools_recent');
+      // Если профиль во iframe (RuStore app) — только postMessage родителю, без main.html
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
+          return;
+        }
+      } catch (_) {
+        try {
+          window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
+          return;
+        } catch (__) {}
+      }
+      const inApp =
+        Boolean(window.__SPN_ANDROID_APP__) ||
+        document.documentElement.classList.contains('android-app') ||
+        new URLSearchParams(window.location.search).get('app') === '1';
+      if (inApp) return;
       safeAssignLocation(getFrontendPath('main.html'));
     }
   }
@@ -1072,6 +1102,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   });
 
   managePlanButton.addEventListener('click', () => {
+    const inApp =
+      Boolean(window.__SPN_ANDROID_APP__) ||
+      (window.parent && window.parent !== window && window.parent.__SPN_ANDROID_APP__);
+    if (inApp) return;
     safeAssignLocation(getFrontendPath('tariffs/tariffs.html'));
   });
 
@@ -1145,6 +1179,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (openAiServiceBtn) {
     openAiServiceBtn.addEventListener('click', () => {
+      const inApp =
+        Boolean(window.__SPN_ANDROID_APP__) ||
+        (window.parent && window.parent !== window && window.parent.__SPN_ANDROID_APP__);
+      if (inApp) return;
       window.location.href = 'https://ai.serpmonn.ru';
     });
   }

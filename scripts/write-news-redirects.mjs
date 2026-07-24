@@ -6,9 +6,22 @@
 import fs from 'fs';
 import path from 'path';
 
-const FRONTEND = '/var/www/serpmonn.ru/frontend';
+const DEPLOY_TARGETS = {
+  prod: '/var/www/serpmonn.ru/frontend',
+  dev: '/var/www/serpmonn-dev/frontend'
+};
+
+const deployTargetKey = String(process.env.DEPLOY_TARGET || 'prod').trim().toLowerCase();
+const FRONTEND =
+  process.env.DEPLOY_FRONTEND ||
+  DEPLOY_TARGETS[deployTargetKey] ||
+  DEPLOY_TARGETS.prod;
+
+const ROOT =
+  FRONTEND.endsWith('/frontend') ? FRONTEND.slice(0, -'/frontend'.length) : path.dirname(FRONTEND);
+
 const LOCALES = JSON.parse(
-  fs.readFileSync('/var/www/serpmonn.ru/assembly/site/_data/locales.json', 'utf8')
+  fs.readFileSync(path.join(ROOT, 'assembly/site/_data/locales.json'), 'utf8')
 ).filter((loc) => loc !== 'ru');
 
 function redirectHtml(target) {
@@ -58,6 +71,7 @@ function migrateLocale(prefix) {
   }
 }
 
+console.log(`write-news-redirects → ${FRONTEND} (DEPLOY_TARGET=${deployTargetKey})`);
 migrateLocale('');
 for (const locale of LOCALES) {
   migrateLocale(locale);

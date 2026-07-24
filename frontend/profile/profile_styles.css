@@ -1409,6 +1409,27 @@ button {
   transition: background 0.15s ease, color 0.15s ease;
 }
 
+/* Android-приложение: все 4 вкладки без горизонтального скролла */
+html.android-app .profile-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  overflow: hidden;
+  gap: 2px;
+  margin: 0;
+}
+
+html.android-app .profile-tabs__btn {
+  flex: none;
+  width: auto;
+  min-width: 0;
+  padding: 8px 2px;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: normal;
+  text-align: center;
+  border-radius: 8px;
+}
+
 .profile-tabs__btn:hover {
   color: #111827;
   background: #f3f4f6;

@@ -152,7 +152,7 @@ eleventyComputed:
         <div class="code">{{ utmCompleteGuide[locale].section6Example2 }}</div>
         <p>
             {{ utmCompleteGuide[locale].section6BuilderText }}
-            <a class="btn" href="{{ site.baseUrl }}{% if locale != 'ru' %}/{{ locale }}{% endif %}/frontend/tools/marketing/utm-builder.html" target="_blank" rel="noopener">
+            <a class="btn" href="{% if locale == 'ru' %}/frontend/tools/marketing/utm-builder.html{% else %}/frontend/{{ locale }}/tools/marketing/utm-builder.html{% endif %}">
                 {{ utmCompleteGuide[locale].section6BuilderButton }}
             </a>
         </p>

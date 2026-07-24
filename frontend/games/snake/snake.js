@@ -293,15 +293,21 @@
     (function() {
         let startX = 0, startY = 0;
         
-        // Запоминаем начальную точку касания
+        // Запоминаем начальную точку касания (не passive — блокируем скролл страницы)
         canvas.addEventListener('touchstart', (e) => {
+            e.preventDefault();
             const touch = e.touches[0];
             startX = touch.clientX;
             startY = touch.clientY;
-        }, { passive: true });
+        }, { passive: false });
+
+        canvas.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+        }, { passive: false });
         
         // Определяем направление свайпа
         canvas.addEventListener('touchend', (e) => {
+            e.preventDefault();
             const touch = e.changedTouches[0];
             const deltaX = touch.clientX - startX;
             const deltaY = touch.clientY - startY;
@@ -319,7 +325,7 @@
             
             // Сбрасываем начальные координаты
             startX = startY = 0;
-        }, { passive: true });
+        }, { passive: false });
     })();
 
     // Обработчики кнопок мобильного управления

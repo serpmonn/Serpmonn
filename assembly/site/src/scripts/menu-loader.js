@@ -22,6 +22,117 @@ import { initFindingsModals, openActivityModal } from '/frontend/scripts/finding
   }
 })();
 
+
+function parentFlag(name) {
+  try {
+    return Boolean(window.parent && window.parent !== window && window.parent[name]);
+  } catch (_) {
+    return false;
+  }
+}
+
+function isCapacitorNative() {
+  try {
+    return (
+      Boolean(window.Capacitor) &&
+      typeof window.Capacitor.isNativePlatform === 'function' &&
+      window.Capacitor.isNativePlatform()
+    );
+  } catch (_) {
+    return false;
+  }
+}
+
+function detectAndroidAppEmbed() {
+  return (
+    Boolean(window.__SPN_ANDROID_APP__) ||
+    parentFlag('__SPN_ANDROID_APP__') ||
+    isCapacitorNative() ||
+    /(?:^|[?&])app=1(?:&|$)/.test(window.location.search || '') ||
+    document.documentElement?.classList?.contains('android-app') ||
+    document.body?.classList?.contains('android-app')
+  );
+}
+
+const ANDROID_EMBED_HIDE_CSS = `
+  html.android-app #menuCorner, html.android-app #menuContainer, html.android-app #menuButton,
+  html.android-app .menu-corner, html.android-app .menu-container, html.android-app .menu-button,
+  html.android-app .menu-activity-bell, html.android-app #activityBellBtn,
+  html.android-app #cookie-consent, html.android-app .cookie-consent, html.android-app #installAppButton,
+  html.android-app .mobile-anchor-ad, html.android-app .ad-leaderboard, html.android-app .ad-container, html.android-app .ad-top-banner,
+  html.android-app .kb-subscribe__link[href*="rss.xml"],
+  html.android-app .kb-subscribe__link[href*="t.me"],
+  html.android-app a[href*="t.me"],
+  html.android-app a.tg-btn, html.android-app .tg-btn,
+  html.android-app a.share-btn.telegram, html.android-app .share-btn.telegram,
+  html.android-app button[onclick*="telegram"], html.android-app button[onclick*="Telegram"],
+  html.android-app .rss-btn, html.android-app .rss-section,
+  html.android-app #kb-sn-tg, html.android-app #kb-sn-max, html.android-app #kb-sn-ok,
+  body.android-app #menuCorner, body.android-app #menuContainer, body.android-app #menuButton,
+  body.android-app .menu-corner, body.android-app .menu-container, body.android-app .menu-button,
+  body.android-app .menu-activity-bell, body.android-app #activityBellBtn,
+  body.android-app #cookie-consent, body.android-app .cookie-consent, body.android-app #installAppButton,
+  body.android-app .mobile-anchor-ad, body.android-app .ad-leaderboard, body.android-app .ad-container, body.android-app .ad-top-banner,
+  body.android-app .kb-subscribe__link[href*="rss.xml"],
+  body.android-app .kb-subscribe__link[href*="t.me"],
+  body.android-app a[href*="t.me"],
+  body.android-app a.tg-btn, body.android-app .tg-btn,
+  body.android-app a.share-btn.telegram, body.android-app .share-btn.telegram,
+  body.android-app button[onclick*="telegram"], body.android-app button[onclick*="Telegram"],
+  body.android-app .rss-btn, body.android-app .rss-section,
+  body.android-app #kb-sn-tg, body.android-app #kb-sn-max, body.android-app #kb-sn-ok {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+  html.android-app, body.android-app {
+    overscroll-behavior-x: none !important;
+  }
+  /* RuStore: без денежной покупки Pro и без входа на ai.serpmonn.ru; обмен баллов на дни оставляем */
+  html.android-app #managePlanButton,
+  html.android-app #buy-pro-btn,
+  html.android-app .cta-row,
+  html.android-app #aiAccessBlock,
+  html.android-app #openAiService,
+  html.android-app a[href*="/tariffs/"],
+  html.android-app a[href*="ai.serpmonn.ru"],
+  body.android-app #managePlanButton,
+  body.android-app #buy-pro-btn,
+  body.android-app .cta-row,
+  body.android-app #aiAccessBlock,
+  body.android-app #openAiService,
+  body.android-app a[href*="/tariffs/"],
+  body.android-app a[href*="ai.serpmonn.ru"] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+`;
+
+function applyAndroidAppEmbed() {
+  window.__SPN_ANDROID_APP__ = true;
+  document.documentElement.classList.add('android-app');
+  if (document.body) document.body.classList.add('android-app');
+  if (!document.getElementById('spn-android-app-css')) {
+    const style = document.createElement('style');
+    style.id = 'spn-android-app-css';
+    style.textContent = ANDROID_EMBED_HIDE_CSS;
+    (document.head || document.documentElement).appendChild(style);
+  }
+  try {
+    const mc = document.getElementById('menuContainer');
+    if (mc) {
+      mc.innerHTML = '';
+      mc.setAttribute('hidden', '');
+      mc.style.cssText = 'display:none!important';
+    }
+  } catch (_) {}
+}
+
+// RuStore / Capacitor: не грузим меню и колокольчик
+if (detectAndroidAppEmbed()) {
+  applyAndroidAppEmbed();
+} else {
 // Загружаем меню ПЕРВЫМ делом (с учётом языка)
 const spnLang = (localStorage.getItem('spn_lang') || (document.documentElement.lang || 'ru')).toLowerCase();
 const langToDir = {
@@ -71,14 +182,28 @@ fetch(primaryMenuPath)
   })
   .then(html => {
     // VK Mini App / embed: не подключаем полное меню сайта
+    let parentIsMini = false;
+    try {
+      parentIsMini = Boolean(window.parent && window.parent !== window && window.parent.__SPN_VK_MINI__);
+    } catch (_) {
+      parentIsMini = false;
+    }
     const isVkMiniEmbed =
       Boolean(window.__SPN_VK_MINI__) ||
+      parentIsMini ||
       /(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search) ||
       /vk_app_id=\d+/.test(window.location.search) ||
       document.body?.classList?.contains('vk-mini-app') ||
       document.body?.classList?.contains('vk-mini-embed');
 
+    // Late guard (на случай если detect на старте промахнулся)
+    if (detectAndroidAppEmbed()) {
+      applyAndroidAppEmbed();
+      return;
+    }
+
     if (isVkMiniEmbed) {
+      window.__SPN_VK_MINI__ = true;
       document.documentElement.classList.add('vk-mini-embed');
       document.body.classList.add('vk-mini-embed');
       if (!document.getElementById('vk-mini-embed-css')) {
@@ -100,9 +225,14 @@ fetch(primaryMenuPath)
             overflow: visible !important;
             touch-action: pan-y manipulation !important;
           }
-          #menuContainer, #menuButton, .menu-container, .cookie-consent, #cookie-consent,
+          #menuContainer, #menuButton, .menu-container, .menu-activity-bell, #activityBellBtn,
+          .cookie-consent, #cookie-consent,
           .donate-button, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner,
-          .mrg-tag, ins.mrg-tag, a[href*="donate"], a[href*="/promo"], #installAppButton {
+          .mrg-tag, ins.mrg-tag, a[href*="donate"], a[href*="/promo"], #installAppButton,
+          .social-subscribe, .tg-btn, .vk-btn, .social-share, .share-btn, .share-buttons,
+          .vk-mini-hide,
+          a[href*="t.me/serpmonn"], a[href*="vk.com/serpmonn_site"],
+          a[href*="t.me/share"], a[href*="vk.com/share"] {
             display: none !important;
           }
           body.vk-mini-embed .page,
@@ -113,17 +243,27 @@ fetch(primaryMenuPath)
             overflow: visible !important; height: auto !important;
           }
           body.vk-mini-embed .wrap {
-            display: flex !important; flex-direction: column !important; gap: 10px !important;
+            display: flex !important; flex-direction: column !important; gap: 6px !important;
             overflow: visible !important; height: auto !important;
           }
           body.vk-mini-embed .wrap > .panel:last-child {
-            order: -1 !important; position: sticky !important; top: 0 !important;
+            order: -1 !important; position: static !important;
             z-index: 30 !important; background: #141416 !important;
+            padding: 6px 8px !important; flex: 0 0 auto !important;
+            display: grid !important; grid-template-columns: repeat(4, 1fr) !important;
+            gap: 4px !important; align-items: stretch !important;
           }
-          body.vk-mini-embed .controls {
-            display: flex !important; flex-wrap: wrap !important; gap: 8px !important;
-            justify-content: center !important; visibility: visible !important; opacity: 1 !important;
+          body.vk-mini-embed .wrap > .panel:last-child > h2 { display: none !important; }
+          body.vk-mini-embed .wrap > .panel:last-child > .stats { display: contents !important; }
+          body.vk-mini-embed .wrap > .panel:last-child > div:not(.stats):not(.controls) {
+            grid-column: 1 / -1 !important; margin: 0 !important;
+            display: flex !important; gap: 6px !important; justify-content: center !important;
           }
+          body.vk-mini-embed .stat {
+            padding: 4px !important; font-size: 0.7rem !important; line-height: 1.2 !important;
+          }
+          body.vk-mini-embed .stat b { font-size: 0.85rem !important; }
+          body.vk-mini-embed .controls { display: none !important; }
           body.vk-mini-embed .btn,
           body.vk-mini-embed #btnStart,
           body.vk-mini-embed #btnReset,
@@ -132,18 +272,55 @@ fetch(primaryMenuPath)
           body.vk-mini-embed #restartBtn,
           body.vk-mini-embed #pauseBtn {
             display: inline-flex !important; visibility: visible !important; opacity: 1 !important;
-            min-height: 44px !important; align-items: center !important; justify-content: center !important;
+            min-height: 36px !important; padding: 6px 10px !important;
+            align-items: center !important; justify-content: center !important;
           }
+          body.vk-mini-embed header { margin: 2px 0 4px !important; gap: 6px !important; }
+          body.vk-mini-embed header img { width: 22px !important; height: 22px !important; }
           body.vk-mini-embed header h1, body.vk-mini-embed h1 {
-            font-size: 1.25rem !important; line-height: 1.25 !important; margin: 0 0 6px !important;
+            font-size: 1.1rem !important; line-height: 1.2 !important; margin: 0 !important;
+          }
+          body.vk-mini-embed .hint { display: none !important; }
+          html.vk-mini-embed:has(.game-board),
+          body.vk-mini-embed:has(.game-board) {
+            background: #faf8ef !important; color: #776e65 !important;
+          }
+          body.vk-mini-embed:has(.game-board) h1,
+          body.vk-mini-embed:has(.game-board) header h1 {
+            color: #3d3a36 !important; font-weight: 700 !important;
+          }
+          html.vk-mini-embed:has(canvas),
+          body.vk-mini-embed:has(canvas) {
+            overflow: hidden !important; height: 100% !important; max-height: 100% !important;
+            overscroll-behavior: none !important; touch-action: manipulation !important;
+            display: flex !important; flex-direction: column !important;
+          }
+          body.vk-mini-embed:has(canvas) {
+            min-height: 0 !important; padding-bottom: 4px !important;
+          }
+          body.vk-mini-embed:has(canvas) .page {
+            display: flex !important; flex-direction: column !important;
+            flex: 1 1 auto !important; min-height: 0 !important; overflow: hidden !important;
+            padding: 4px 6px !important;
+          }
+          body.vk-mini-embed:has(canvas) .wrap {
+            flex: 1 1 auto !important; min-height: 0 !important; overflow: hidden !important; gap: 4px !important;
           }
           body.vk-mini-embed .panel {
             overflow: visible !important; height: auto !important;
           }
+          body.vk-mini-embed:has(canvas) .wrap > .panel:first-child {
+            flex: 1 1 auto !important; min-height: 0 !important; overflow: hidden !important;
+            padding: 4px !important; display: flex !important; flex-direction: column !important;
+            align-items: center !important; justify-content: center !important;
+          }
           body.vk-mini-embed canvas {
-            display: block !important; width: 100% !important; max-width: 100% !important;
-            max-height: 58vh !important; height: auto !important; margin: 0 auto !important;
-            touch-action: pan-y manipulation !important;
+            display: block !important;
+            width: min(100%, calc(100dvh - 110px)) !important;
+            max-width: 100% !important;
+            max-height: calc(100dvh - 110px) !important;
+            height: auto !important; aspect-ratio: 1 / 1 !important;
+            margin: 0 auto !important; touch-action: none !important;
           }
           body.vk-mini-embed .game-board {
             width: min(100%, 320px) !important; height: auto !important; aspect-ratio: 1 / 1 !important;
@@ -151,6 +328,18 @@ fetch(primaryMenuPath)
           }
         `;
         document.head.appendChild(style);
+        if (document.querySelector('canvas') && !document.documentElement.dataset.vkMiniCanvasTouch) {
+          document.documentElement.dataset.vkMiniCanvasTouch = '1';
+          document.addEventListener(
+            'touchmove',
+            (e) => {
+              if (e.target && e.target.closest && e.target.closest('canvas')) {
+                e.preventDefault();
+              }
+            },
+            { passive: false, capture: true }
+          );
+        }
       }
       // cookies / donate / install не трогаем — просто не грузим меню
       return;
@@ -498,3 +687,5 @@ fetch(primaryMenuPath)
     }, 100);
   })
   .catch(err => console.error('Ошибка загрузки меню:', err));
+}
+

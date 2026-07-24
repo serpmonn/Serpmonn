@@ -5,12 +5,26 @@ const path = require('path');
 console.log('🔧 Умный скрипт синхронизации локалей запущен...');
 
 const DIST_PATH = path.join(__dirname, 'dist/frontend');
-const TARGET_PATH = '/var/www/serpmonn.ru/frontend';
 const LOCALES_FILE = path.join(__dirname, 'site/_data/locales.json');
+
+const DEPLOY_TARGETS = {
+  prod: '/var/www/serpmonn.ru/frontend',
+  dev: '/var/www/serpmonn-dev/frontend'
+};
+
+const deployTargetKey = String(process.env.DEPLOY_TARGET || 'prod').trim().toLowerCase();
+const TARGET_PATH =
+  process.env.DEPLOY_FRONTEND ||
+  DEPLOY_TARGETS[deployTargetKey] ||
+  DEPLOY_TARGETS.prod;
+
+if (!DEPLOY_TARGETS[deployTargetKey] && !process.env.DEPLOY_FRONTEND) {
+  console.log(`⚠️  Неизвестный DEPLOY_TARGET="${deployTargetKey}", используем prod`);
+}
 
 console.log('📁 Пути:');
 console.log('   Источник (новое):', DIST_PATH);
-console.log('   Цель (рабочий сайт):', TARGET_PATH);
+console.log('   Цель (DEPLOY_TARGET=' + (process.env.DEPLOY_FRONTEND ? 'custom' : deployTargetKey) + '):', TARGET_PATH);
 console.log('   Файл локалей:', LOCALES_FILE);
 
 // Загружаем локали из JSON файла

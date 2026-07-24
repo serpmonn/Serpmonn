@@ -126,12 +126,29 @@ export async function upsertVkUser({ vkUserId, email = null, name = null }) {
   }
 
   if (!user) {
-    const username = name ? String(name).slice(0, 64) : `vk_${id}`;
-    const safeEmail = email || '';
-    await query(
-      'INSERT INTO users (id, username, email, vk_user_id, confirmed, password_hash) VALUES (UUID(), ?, ?, ?, ?, ?)',
-      [username, safeEmail, id, true, '']
-    );
+    // username тоже часто UNIQUE — имя VK может совпасть у разных людей
+    const baseName = name ? String(name).trim().slice(0, 48) : '';
+    const username = baseName ? `${baseName}`.slice(0, 64) : `vk_${id}`;
+    // email UNIQUE: пустая строка '' можно вставить только один раз → ломает вход второму VK-юзеру
+    const safeEmail = email && String(email).trim()
+      ? String(email).trim()
+      : `vk_${id}@vk-mini.serpmonn.local`;
+    try {
+      await query(
+        'INSERT INTO users (id, username, email, vk_user_id, confirmed, password_hash) VALUES (UUID(), ?, ?, ?, ?, ?)',
+        [username, safeEmail, id, true, '']
+      );
+    } catch (err) {
+      // коллизия username — повторяем с суффиксом vk_id
+      if (err && (err.code === 'ER_DUP_ENTRY' || /Duplicate entry/i.test(String(err.message || '')))) {
+        await query(
+          'INSERT INTO users (id, username, email, vk_user_id, confirmed, password_hash) VALUES (UUID(), ?, ?, ?, ?, ?)',
+          [`vk_${id}`, safeEmail, id, true, '']
+        );
+      } else {
+        throw err;
+      }
+    }
     const rows = await query(
       'SELECT id, username, email FROM users WHERE vk_user_id = ?',
       [id]
