@@ -1187,6 +1187,48 @@ a:visited {
   padding: 8px 12px 12px;
 }
 
+/* RuStore / android-app: лента и входящие как страница, не overlay */
+.finding-panel-modal--inline {
+  position: static !important;
+  inset: auto !important;
+  display: block !important;
+  z-index: auto !important;
+  width: 100%;
+  height: auto;
+  background: transparent;
+  align-items: stretch;
+  justify-content: flex-start;
+}
+.finding-panel-modal--inline .ai-share-backdrop {
+  display: none !important;
+}
+.finding-panel-modal--inline .finding-panel-close,
+.finding-panel-modal--inline .ai-share-close,
+.finding-panel-modal--inline .finding-activity-close {
+  display: none !important;
+}
+.finding-panel-modal--inline .finding-panel-dialog,
+.finding-panel-modal--inline .ai-share-dialog {
+  position: static !important;
+  width: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  transform: none !important;
+  opacity: 1 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  overflow: visible !important;
+}
+.finding-panel-modal--inline .finding-panel-body {
+  max-height: none !important;
+  overflow: visible !important;
+  flex: none !important;
+}
+
 @media (min-width: 769px) {
   .finding-panel-modal .finding-view-dialog {
     width: min(860px, 90vw);

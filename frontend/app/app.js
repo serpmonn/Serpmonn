@@ -62,7 +62,7 @@ const VIEWER_HIDE_MENU_CSS = `
     display: grid !important;
     grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
     overflow: hidden !important;
-    gap: 2px !important;
+    gap: 4px !important;
     margin: 0 !important;
     padding: 2px 0 4px !important;
   }
@@ -71,7 +71,7 @@ const VIEWER_HIDE_MENU_CSS = `
     width: auto !important;
     min-width: 0 !important;
     max-width: none !important;
-    padding: 8px 2px !important;
+    padding: 8px 4px !important;
     font-size: 11px !important;
     line-height: 1.2 !important;
     white-space: normal !important;
@@ -105,24 +105,24 @@ const VIEWER_HIDE_MENU_CSS = `
     -webkit-overflow-scrolling: touch !important;
     overscroll-behavior: contain !important;
   }
-  /* Лента / входящие на весь экран вкладки */
+  /* Лента / входящие / профиль — единые отступы внутри белой рамки, без «попапа» */
   html, body {
     height: 100% !important;
     min-height: 100% !important;
-    background: #fff !important;
+    background: #f7f7f8 !important;
   }
   .page-wrapper {
     min-height: 100% !important;
-    padding: 10px 12px 16px !important;
-    padding-top: 10px !important;
-    background: #fff !important;
+    padding: 12px 14px 20px !important;
+    background: #f7f7f8 !important;
   }
   .page-wrapper > .container {
     max-width: none !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 0 !important;
+    padding: 14px 14px 16px !important;
   }
+  /* Лента/входящие: без лишней «карточки» поверх контейнера, отступы уже у .container */
   .finding-inbox-card.card,
   .card.finding-inbox-card {
     box-shadow: none !important;
@@ -131,6 +131,67 @@ const VIEWER_HIDE_MENU_CSS = `
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
+  }
+  /* Заголовок уже в шапке приложения / «← Профиль» */
+  #findings-feed-title,
+  #findings-inbox-title,
+  .finding-inbox-card > h1 {
+    display: none !important;
+  }
+  #findings-feed-hint:empty,
+  #findings-inbox-hint:empty {
+    display: none !important;
+  }
+  /* Панель ленты/входящих — inline в #findings-*-list, не fixed overlay */
+  .finding-panel-modal--inline {
+    position: static !important;
+    inset: auto !important;
+    display: block !important;
+    z-index: auto !important;
+    width: 100% !important;
+    height: auto !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    background: transparent !important;
+  }
+  .finding-panel-modal--inline .ai-share-backdrop {
+    display: none !important;
+  }
+  .finding-panel-modal--inline .finding-panel-close,
+  .finding-panel-modal--inline .ai-share-close,
+  .finding-panel-modal--inline .finding-activity-close {
+    display: none !important;
+  }
+  .finding-panel-modal--inline .finding-panel-dialog,
+  .finding-panel-modal--inline .ai-share-dialog {
+    position: static !important;
+    width: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    margin: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    overflow: visible !important;
+  }
+  .finding-panel-modal--inline .finding-feed-toolbar,
+  .finding-panel-modal--inline .finding-activity-toolbar,
+  .finding-panel-modal--inline .finding-activity-header {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+  .finding-panel-modal--inline .finding-panel-title,
+  .finding-panel-modal--inline .finding-activity-title {
+    padding-right: 0 !important;
+  }
+  .finding-panel-modal--inline .finding-panel-body {
+    max-height: none !important;
+    overflow: visible !important;
+    flex: none !important;
   }
 `;
 
@@ -157,10 +218,10 @@ function isViewerOpen() {
 }
 
 function openViewer(url, title) {
-  // Лента / входящие — только полноценный экран, не viewer-popup
+  // Лента / входящие — только в подложке профиля, не viewer-popup
   if (/\/findings\/(feed|inbox)\.html/i.test(String(url || ''))) {
-    openFullscreenPage(url, title || 'Серпмонн');
     showScreen('profile');
+    openProfileSubpage(url, title || 'Серпмонн');
     return;
   }
   const href = withAppParam(url);
@@ -1277,20 +1338,48 @@ function setProfileSubpageUi(on, title) {
   if (profileQuickLinks) profileQuickLinks.hidden = profileSubpageOpen;
   if (profileLogoutBtn) profileLogoutBtn.hidden = profileSubpageOpen;
   if (profileMore) profileMore.hidden = profileSubpageOpen;
+  if (profileBar) profileBar.hidden = false;
   if (profileSubpageOpen) {
     subtitleEl.textContent = title || 'Профиль';
   } else {
     subtitleEl.textContent = TITLES.profile || 'Профиль';
     if (profileLogoutBtn) profileLogoutBtn.hidden = false;
+    if (profileQuickLinks) profileQuickLinks.hidden = false;
   }
 }
 
 async function openProfileSubpage(url, title) {
-  openFullscreenPage(url, title || 'Серпмонн');
+  if (!profileEmbed) return;
+  // Прямо в подложке профиля (iframe), без отдельного fullscreen/viewer
+  try { closeFullscreenPage(); } catch (_) {}
+  if (isViewerOpen()) {
+    try {
+      viewerBootToken += 1;
+      viewer.hidden = true;
+      viewer.setAttribute('aria-hidden', 'true');
+      viewerFrame.classList.remove('is-booting');
+      try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
+      try { viewerFrame.removeAttribute('src'); } catch (_) {}
+      viewerHistoryPushed = false;
+    } catch (_) {}
+  }
+  setProfileSubpageUi(true, title);
+  profileEmbed.hidden = false;
+  profileEmbed.classList.add('is-booting');
+  profileEmbedLoaded = true;
+  try {
+    await loadViewerHtmlInto(profileEmbed, withAppParam(url));
+  } catch (err) {
+    console.warn('profile subpage failed', err);
+    try { profileEmbed.removeAttribute('srcdoc'); } catch (_) {}
+    profileEmbed.src = withAppParam(url);
+  }
 }
 
 async function closeProfileSubpage() {
-  closeFullscreenPage();
+  if (!profileSubpageOpen && !isFullscreenOpen()) return;
+  try { closeFullscreenPage(); } catch (_) {}
+  setProfileSubpageUi(false);
   if (profileUser && !profileUser.hidden) {
     await loadProfileEmbed();
   }

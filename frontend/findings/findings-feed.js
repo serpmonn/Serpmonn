@@ -1,6 +1,6 @@
 import { generateCombinedBackground } from '../scripts/backgroundGenerator.js';
 import { loadT, getFindingT } from '/frontend/scripts/findings-client.js';
-import { openFeedModal, initFindingsModals } from '/frontend/scripts/findings-modals.js';
+import { openFeedModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=31';
 
 async function renderFeedPage() {
   generateCombinedBackground();

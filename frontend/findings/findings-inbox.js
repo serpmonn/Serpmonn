@@ -4,7 +4,7 @@ import {
   loadT,
   getFindingT,
 } from '/frontend/scripts/findings-client.js';
-import { openActivityModal, initFindingsModals } from '/frontend/scripts/findings-modals.js';
+import { openActivityModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=31';
 
 async function renderInboxPage() {
   generateCombinedBackground();

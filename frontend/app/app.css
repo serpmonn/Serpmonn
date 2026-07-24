@@ -24,12 +24,15 @@ html, body {
 }
 
 .spn-app {
+  height: 100dvh;
+  max-height: 100dvh;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
   padding-top: var(--spn-safe-t);
   padding-bottom: calc(var(--spn-tabs) + var(--spn-safe-b));
   overscroll-behavior-x: none;
+  overflow: hidden;
 }
 
 .spn-top {
@@ -52,12 +55,16 @@ html, body {
 
 .spn-main {
   flex: 1;
+  min-height: 0;
   padding: 12px 14px 18px;
   overflow: auto;
   -webkit-overflow-scrolling: touch;
 }
 
 .spn-screen[hidden] { display: none !important; }
+.spn-screen:not([hidden]) {
+  min-height: 0;
+}
 
 .spn-h2 {
   margin: 0 0 12px;
@@ -217,9 +224,11 @@ html, body {
 .spn-profile--embed {
   display: flex;
   flex-direction: column;
+  flex: 1;
+  min-height: 0;
   margin: -12px -14px -18px;
-  height: calc(100dvh - var(--spn-top) - var(--spn-tabs) - var(--spn-safe-t) - var(--spn-safe-b));
-  min-height: 320px;
+  /* Высота от flex-цепочки .spn-app → .spn-main → screen, не жёсткий calc */
+  height: 100%;
 }
 .spn-profile-bar {
   display: flex;
@@ -273,8 +282,8 @@ html, body {
 .spn-profile--embed.is-subpage #profileLogoutBtn {
   display: none;
 }
-.spn-profile--embed.is-subpage .spn-profile-bar {
-  justify-content: flex-start;
+.spn-profile--embed.is-subpage .spn-profile-bar__links {
+  display: none !important;
 }
 .spn-profile--embed.is-subpage .spn-profile-embed {
   flex: 1;
@@ -282,11 +291,12 @@ html, body {
 }
 .spn-profile-embed {
   width: 100%;
-  flex: 1;
+  flex: 1 1 auto;
   min-height: 0;
   border: 0;
   background: #fff;
   display: block;
+  align-self: stretch;
 }
 .spn-profile-embed.is-booting {
   opacity: 0;
@@ -302,6 +312,20 @@ html, body {
 html.spn-profile-embed-mode .spn-main {
   padding-bottom: 0;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+html.spn-profile-embed-mode .spn-screen[data-screen="profile"] {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+html.spn-profile-embed-mode #profileUser.spn-profile--embed {
+  flex: 1;
+  min-height: 0;
+  height: auto;
 }
 html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   overflow: auto;
