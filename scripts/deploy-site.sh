@@ -40,6 +40,7 @@ export DEPLOY_TARGET="$TARGET"
 
 echo "==> site deploy: $TARGET (branch=$branch, root=$ROOT)"
 cd "$ROOT/assembly"
+node ../scripts/build-ad-info-partners.mjs || true
 npm run build
 node ../scripts/count-stats.mjs || true
 node deploy-locales.js

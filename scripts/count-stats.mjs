@@ -237,10 +237,9 @@ function collectAdInfoKeys() {
 }
 
 async function countNetworkPartners() {
-  const keys = new Set([
-    ...(await collectPerfluenceKeys()),
-    ...collectAdInfoKeys(),
-  ]);
+  // Источник истины — динамический partnersList «О рекламе» (Perfluence + Admitad).
+  // Отдельно Perfluence не суммируем, иначе двойной счёт.
+  const keys = collectAdInfoKeys();
   return keys.size;
 }
 
