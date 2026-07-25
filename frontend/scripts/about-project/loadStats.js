@@ -21,5 +21,6 @@ document.addEventListener('DOMContentLoaded', function () {
     loadCount('page-count.json', 'page-count');
     loadCount('tools-count.json', 'tools-count');
     loadCount('games-count.json', 'games-count');
-    loadCount('partners-count.json', 'partners-count', 'total');
+    loadCount('partners-count.json', 'direct-partners-count', 'directPartners');
+    loadCount('partners-count.json', 'network-partners-count', 'networkPartners');
 });

@@ -44,6 +44,8 @@ eleventyComputed:
   menu_logistics: "{{ menuTranslations[locale].logistics }}"
   menu_ecology: "{{ menuTranslations[locale].ecology }}"
   menu_partners: "{{ menuTranslations[locale].partners }}"
+  menu_partners_ads_group: "{{ menuTranslations[locale].partners_ads_group or menuTranslations['en'].partners_ads_group or 'Partner programs (ads)' }}"
+  menu_partners_direct_group: "{{ menuTranslations[locale].partners_direct_group or menuTranslations['en'].partners_direct_group or 'Direct partners' }}"
   menu_privacy_policy: "{{ menuTranslations[locale].privacy_policy }}"
   menu_ad_info: "{{ menuTranslations[locale].ad_info }}"
   menu_about_project: "{{ menuTranslations[locale].about_project }}"
@@ -242,7 +244,7 @@ eleventyComputed:
             {{ menu_mobile_apps }}
         </a>
         <div class="submenu-container" id="mobileAppsSubmenu">
-            <a href="/frontend/downloads/Serpmonn-1.2.apk" download="Serpmonn-1.2.apk" class="menu-item">
+            <a href="/frontend/downloads/Serpmonn_beta.apk" download="Serpmonn_beta.apk" class="menu-item">
                 {{ toolIcon('apk') }}
                 {{ menu_android_apk }}
             </a>
@@ -463,6 +465,7 @@ eleventyComputed:
     </a>
 
     <div class="submenu-container" id="partnersSubmenu">
+        <div class="submenu-group-label" role="presentation">{{ menu_partners_ads_group }}</div>
         <a href="https://dorinebeaumont.com/g/8m5m8022me7c9ceea344fa1399d1cb1c93ef76c8/?erid=2bL9aMPo2e49hMef4pezfyxYhp" target="_blank">
             <img src="/frontend/images/cdek.svg" alt="CDEK" class="icon">
             CDEK
@@ -477,7 +480,7 @@ eleventyComputed:
         </a>
         <a href="https://aflink.ru/g/18vhi6r5cv7c9ceea34479deb39b46/?erid=5jtCeReNwxHpfQTFuc3CS5J" target="_blank">
             <img src="/frontend/images/joom.ico" alt="Joom" class="icon">
-            Joom 
+            Joom
         </a>
         <a href="https://www.admitad.com/affiliate-publishers/?ref=2noim3jtxb" target="_blank">
             <img src="/frontend/images/admitad.ico" alt="Admitad" class="icon">
@@ -487,6 +490,11 @@ eleventyComputed:
             <img src="/frontend/images/reg-ru.ico" alt="REG.RU" class="icon">
             REG.RU
         </a>
+        <a href="https://zallj.com/g/gfhc91n9bb7c9ceea3441d81d40fc4ce65fa65ae/" target="_blank">
+            <img src="/frontend/images/Wayrates.png" alt="Wayrates" class="icon">
+            Wayrates
+        </a>
+        <div class="submenu-group-label" role="presentation">{{ menu_partners_direct_group }}</div>
         <a href="https://adventure36.ru" target="_blank">
             <img src="/frontend/images/Adventure36.ico" alt="Adventure36" class="icon">
             Adventure36
@@ -498,10 +506,6 @@ eleventyComputed:
         <a href="https://onehouseboat.ru" target="_blank">
             <img src="/frontend/images/OneHouseBoat.ico" alt="OneHouseBoat" class="icon">
             OneHouseBoat
-        </a>
-        <a href="https://zallj.com/g/gfhc91n9bb7c9ceea3441d81d40fc4ce65fa65ae/" target="_blank">
-            <img src="/frontend/images/Wayrates.png" alt="Wayrates" class="icon">
-            Wayrates
         </a>
     </div>
 
