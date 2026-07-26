@@ -256,7 +256,8 @@ function applyToLocales(gamesData, partnerGames, missing) {
       position: String(idx + 1),
       name: g.name,
       ...(g.image ? { image: g.image } : {}),
-      description: g.description,
+      // API/legal описания только на русском — на остальных локалях не тащим кириллицу
+      description: locale === 'ru' ? g.description : '',
       link: g.link,
       external: true,
       buttonText: locale === 'ru' ? g.buttonTextRu || playBtn : playBtn,
