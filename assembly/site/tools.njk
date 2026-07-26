@@ -382,19 +382,23 @@ eleventyComputed:
         <div class="category-section category-partners" role="region" aria-labelledby="partners-tools-title">
             <h2 class="category-title visually-hidden" id="partners-tools-title">{{ tools[locale].categories.partners.title }}</h2>
             <div class="tools-grid" aria-live="polite">
-                <div class="card" style="--i: 12;">
+                <div class="card card--partner" style="--i: 12;">
                     <span class="badge partner">{{ tools[locale].partnerBadge }}</span>
-                    <h2>{{ tools[locale].partnerTools.aiAvatar.title }}</h2>
-                    <p>{{ tools[locale].partnerTools.aiAvatar.description }}</p>
-                    {% if tools[locale].partnerTools.aiAvatar.adLabel %}
-                    <p class="ad-label">{{ tools[locale].partnerTools.aiAvatar.adLabel }}</p>
-                    {% endif %}
-                    <a href="{{ tools[locale].partnerTools.aiAvatar.url }}"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].partnerTools.aiAvatar.title }}">
-                        {{ tools[locale].partnerTools.aiAvatar.buttonText }}
-                    </a>
+                    <div class="card-body">
+                        <h2>{{ tools[locale].partnerTools.aiAvatar.title }}</h2>
+                        <p>{{ tools[locale].partnerTools.aiAvatar.description }}</p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="{{ tools[locale].partnerTools.aiAvatar.url }}"
+                           target="_blank"
+                           rel="noopener noreferrer"
+                           aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].partnerTools.aiAvatar.title }}">
+                            {{ tools[locale].partnerTools.aiAvatar.buttonText }}
+                        </a>
+                        {% if tools[locale].partnerTools.aiAvatar.adLabel %}
+                        <p class="ad-label">{{ tools[locale].partnerTools.aiAvatar.adLabel }}</p>
+                        {% endif %}
+                    </div>
                     <button class="favorite-btn"
                             data-tool-href="{{ tools[locale].partnerTools.aiAvatar.url }}"
                             data-tool-name="{{ tools[locale].partnerTools.aiAvatar.title }}"
