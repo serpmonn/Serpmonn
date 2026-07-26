@@ -34,7 +34,8 @@
 .menu-activity-bell {
   position: fixed;
   top: max(10px, env(safe-area-inset-top, 0px) + 8px);
-  right: calc(max(10px, env(safe-area-inset-right, 0px) + 8px) + 40px + 6px);
+  /* слева от Sn: реальная ширина кнопки (~padding 10px + «Sn» 24px) ≈ 3.5rem, плюс зазор */
+  right: calc(max(10px, env(safe-area-inset-right, 0px) + 8px) + 3.5rem + 8px);
   z-index: 9999; /* ниже открытого меню (10002), чтобы не перекрывать пункты */
   display: inline-flex;
   align-items: center;
@@ -53,7 +54,7 @@
 
 [dir="rtl"] .menu-activity-bell {
   right: auto !important;
-  left: calc(max(10px, env(safe-area-inset-left, 0px) + 8px) + 40px + 6px);
+  left: calc(max(10px, env(safe-area-inset-left, 0px) + 8px) + 3.5rem + 8px);
 }
 
 .menu-activity-bell:hover {
@@ -896,12 +897,17 @@
 
   .menu-activity-bell {
     top: max(14px, env(safe-area-inset-top, 0px) + 10px);
-    right: calc(max(10px, env(safe-area-inset-right, 0px) + 6px) + 40px + 5px);
+    /* на мобилке Sn = 40px */
+    right: calc(max(10px, env(safe-area-inset-right, 0px) + 6px) + 40px + 8px);
   }
 
   [dir="rtl"] .menu-activity-bell {
     right: auto !important;
-    left: calc(max(10px, env(safe-area-inset-left, 0px) + 6px) + 40px + 5px);
+    left: calc(max(10px, env(safe-area-inset-left, 0px) + 6px) + 40px + 8px);
+  }
+
+  .menu-chrome__lang {
+    max-width: min(9rem, calc(100% - 40px));
   }
 
   .menu-activity-bell {
@@ -936,7 +942,7 @@
 
 @media (max-width: 600px) {
     .menu-container {
-        max-width: 85%;
+        max-width: min(85%, 18rem);
         max-height: 80vh;
         overflow-y: auto;
         overflow-x: hidden;
@@ -997,7 +1003,7 @@
 /* Дополнительные стили для очень маленьких экранов */
 @media (max-width: 480px) {
     .menu-container {
-        max-width: 90%;
+        max-width: min(90%, 17rem);
         max-height: 75vh;
         padding: 6px;
     }
