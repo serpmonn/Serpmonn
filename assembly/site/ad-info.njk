@@ -92,25 +92,27 @@ eleventyComputed:
                         <div class="partners-grid">
                             {% for partner in partnersInCategory %}
                                 <div class="partner" data-partner="{{ partner.key }}">
-                                    {% if partner.data.adLabel is defined and partner.data.adLabel %}
-                                        <p class="ad-label">{{ partner.data.adLabel | safe }}</p>
-                                    {% endif %}
-                                    
-                                    <p><strong>{{ partner.data.name }}</strong> — 
-                                        {% if partner.data.detailedDescription is defined and partner.data.detailedDescription %}
-                                            {{ partner.data.detailedDescription | safe }}
-                                        {% elseif partner.data.shortDescription is defined and partner.data.shortDescription %}
-                                            {{ partner.data.shortDescription }}
+                                    <div class="partner-body">
+                                        <p><strong>{{ partner.data.name }}</strong> —
+                                            {% if partner.data.detailedDescription is defined and partner.data.detailedDescription %}
+                                                {{ partner.data.detailedDescription | safe }}
+                                            {% elseif partner.data.shortDescription is defined and partner.data.shortDescription %}
+                                                {{ partner.data.shortDescription }}
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="partner-footer">
+                                        {% if partner.data.url is defined and partner.data.url %}
+                                            <a href="{{ partner.data.url }}" class="donate-button" target="_blank" rel="noopener">
+                                                {{ partner.data.buttonText }}
+                                            </a>
+                                        {% else %}
+                                            <button class="donate-button" disabled>{{ partner.data.buttonText }}</button>
                                         {% endif %}
-                                    </p>
-                                    
-                                    {% if partner.data.url is defined and partner.data.url %}
-                                        <a href="{{ partner.data.url }}" class="donate-button" target="_blank" rel="noopener">
-                                            {{ partner.data.buttonText }}
-                                        </a>
-                                    {% else %}
-                                        <button class="donate-button" disabled>{{ partner.data.buttonText }}</button>
-                                    {% endif %}
+                                        {% if partner.data.adLabel is defined and partner.data.adLabel %}
+                                            <p class="ad-label">{{ partner.data.adLabel | safe }}</p>
+                                        {% endif %}
+                                    </div>
                                 </div>
                             {% endfor %}
                         </div>
@@ -121,25 +123,27 @@ eleventyComputed:
                 <div class="partners-grid">
                     {% for partnerKey, partner in adInfo[locale].adInfo.partnersList %}
                         <div class="partner" data-partner="{{ partnerKey }}">
-                            {% if partner.adLabel is defined and partner.adLabel %}
-                                <p class="ad-label">{{ partner.adLabel | safe }}</p>
-                            {% endif %}
-                            
-                            <p><strong>{{ partner.name }}</strong> — 
-                                {% if partner.detailedDescription is defined and partner.detailedDescription %}
-                                    {{ partner.detailedDescription | safe }}
-                                {% elseif partner.shortDescription is defined and partner.shortDescription %}
-                                    {{ partner.shortDescription }}
+                            <div class="partner-body">
+                                <p><strong>{{ partner.name }}</strong> —
+                                    {% if partner.detailedDescription is defined and partner.detailedDescription %}
+                                        {{ partner.detailedDescription | safe }}
+                                    {% elseif partner.shortDescription is defined and partner.shortDescription %}
+                                        {{ partner.shortDescription }}
+                                    {% endif %}
+                                </p>
+                            </div>
+                            <div class="partner-footer">
+                                {% if partner.url is defined and partner.url %}
+                                    <a href="{{ partner.url }}" class="donate-button" target="_blank" rel="noopener">
+                                        {{ partner.buttonText }}
+                                    </a>
+                                {% else %}
+                                    <button class="donate-button" disabled>{{ partner.buttonText }}</button>
                                 {% endif %}
-                            </p>
-                            
-                            {% if partner.url is defined and partner.url %}
-                                <a href="{{ partner.url }}" class="donate-button" target="_blank" rel="noopener">
-                                    {{ partner.buttonText }}
-                                </a>
-                            {% else %}
-                                <button class="donate-button" disabled>{{ partner.buttonText }}</button>
-                            {% endif %}
+                                {% if partner.adLabel is defined and partner.adLabel %}
+                                    <p class="ad-label">{{ partner.adLabel | safe }}</p>
+                                {% endif %}
+                            </div>
                         </div>
                     {% endfor %}
                 </div>

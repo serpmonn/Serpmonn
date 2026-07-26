@@ -4,7 +4,8 @@
   "scripts": {
     "build": "npm run validate:i18n --prefix .. && npm run clean && eleventy",
     "build:ad-info": "node ../scripts/build-ad-info-partners.mjs",
-    "deploy": "npm run build:ad-info && npm run build && node ../scripts/count-stats.mjs && node deploy-locales.js && node ../scripts/write-news-redirects.mjs",
+    "build:admitad-games": "node ../scripts/sync-admitad-games.mjs",
+    "deploy": "npm run build:ad-info && npm run build:admitad-games && npm run build && node ../scripts/count-stats.mjs && node deploy-locales.js && node ../scripts/write-news-redirects.mjs",
     "deploy:dev": "DEPLOY_TARGET=dev npm run deploy",
     "deploy:prod": "DEPLOY_TARGET=prod npm run deploy",
     "assemble": "node deploy-locales.js",

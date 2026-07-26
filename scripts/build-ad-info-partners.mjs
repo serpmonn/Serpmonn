@@ -1,8 +1,9 @@
 // build-ad-info-partners.mjs
 // Собирает partnersList для «О рекламе» динамически:
 //   1) Perfluence API (или кэш промокодов)
-//   2) Admitad API (подключённые офферы) + ручной admitadLegal.json (ИНН/adLabel)
-//      URL с erid дополнительно подтягиваются из меню/игр/outRoutes
+//   2) Admitad API (только подключённые офферы) + ручной admitadLegal.json (ИНН/adLabel)
+//      placements (меню/игры/outRoutes) только обогащают URL с erid
+//      исключение: рефералка сети Admitad из legal
 // Пишет partnersList во все локали adInfo.json (оболочка страницы остаётся).
 
 import fs from 'fs';
@@ -527,51 +528,45 @@ function buildAdmitadPartners(campaigns, placements, legal) {
     if (placement) markCovered(placement.name, legalEntry.slug);
   }
 
-  // Размещения на сайте с legal, которых ещё нет (рефералка Admitad / только меню)
-  for (const p of placements) {
-    const legalEntry = resolveAdmitadLegal(p, legal);
-    const host = hostOf(p.url);
-    const hasInn = Boolean(extractInn(legalEntry?.adLabel || ''));
-    if (!hasInn && host !== 'admitad.com') continue;
-
-    const name = p.name || legalEntry?.name || host;
-    if (coveredNames.has(compactName(name))) continue;
-    if (legalEntry?.name && coveredNames.has(compactName(legalEntry.name))) continue;
-    if (legalEntry?.slug && coveredSlugs.has(String(legalEntry.slug).toLowerCase())) continue;
-
-    const erid = extractEridFromUrl(p.url) || legalEntry?.erid;
-    const key =
-      host === 'admitad.com'
-        ? 'adm:admitad'
-        : legalEntry?.slug
-          ? `admslug:${legalEntry.slug}`
-          : erid
-            ? `erid:${erid}`
-            : `adm:${slugify(name)}`;
+  // forcePublish из legal (партнёрские tools и т.п., не обязательно connected campaign)
+  const forceSeen = new Set();
+  const forceEntries = [
+    ...Object.values(legal.byErid || {}),
+    ...Object.values(legal.byName || {}),
+  ];
+  for (const entry of forceEntries) {
+    if (!entry?.forcePublish) continue;
+    const slug = entry.slug || compactName(entry.name || '');
+    if (!slug || forceSeen.has(slug)) continue;
+    forceSeen.add(slug);
+    const key = entry.slug ? `admslug:${entry.slug}` : `adm:force:${slug}`;
     if (byKey.has(key)) continue;
-
-    const adLabel =
-      legalEntry?.adLabel ||
-      (host === 'admitad.com' ? 'Реклама. ООО «Адмитад», ИНН:7723486057' : normalizeAdLabel('', erid));
-
+    const hasInn = Boolean(extractInn(entry.adLabel || ''));
+    if (!hasInn) {
+      missingLegal.push({
+        admitadId: null,
+        name: entry.name || slug,
+        rawName: entry.name || slug,
+        siteUrl: entry.url || '',
+        hint: 'forcePublish: добавьте ИНН в admitadLegal.json adLabel',
+      });
+      console.warn(`[ad-info] forcePublish без ИНН (пропуск): ${entry.name || slug}`);
+      continue;
+    }
     byKey.set(key, {
-      name,
-      shortDescription: legalEntry?.shortDescription || p.description?.slice(0, 120) || 'Партнёрская программа (Admitad)',
-      detailedDescription:
-        legalEntry?.detailedDescription ||
-        p.description ||
-        'Рекламное предложение через партнёрскую сеть Admitad.',
-      adLabel,
-      url: p.url || legalEntry?.url,
-      category: legalEntry?.category || p.category || 'services',
-      buttonText: p.buttonText || legalEntry?.buttonTextRu || `Перейти: ${name}`,
+      name: entry.name,
+      shortDescription: entry.shortDescription || 'Партнёрский инструмент (Admitad)',
+      detailedDescription: entry.detailedDescription || '',
+      adLabel: entry.adLabel,
+      url: entry.url,
+      category: entry.category || 'services',
+      buttonText: entry.buttonTextRu || `Перейти: ${entry.name}`,
       source: 'admitad',
       _key: key,
     });
-    markCovered(name, legalEntry?.slug);
   }
 
-  // Сеть Admitad из legal, если ещё нет
+  // Сеть Admitad из legal (исключение: не кампания API, а рефералка сети)
   for (const entry of Object.values(legal.byErid)) {
     const host = hostOf(entry.url || '');
     if (host !== 'admitad.com') continue;
@@ -685,17 +680,17 @@ async function main() {
   const placements = collectAdmitadPlacements();
 
   let campaigns = [];
-  let admitadSource = 'placements+admitadLegal';
+  let admitadSource = 'none';
   try {
     const token = await fetchAdmitadAccessToken();
     if (token) {
       const websiteId = await resolveAdmitadWebsiteId(token);
       campaigns = await fetchAdmitadConnectedCampaigns(token, websiteId);
-      admitadSource = 'api+admitadLegal+placements';
+      admitadSource = 'api+admitadLegal (placements=url_enrichment)';
     }
   } catch (err) {
-    console.warn(`[ad-info] Admitad API: ${err.message} — fallback на placements`);
-    admitadSource = 'placements+admitadLegal (api_failed)';
+    console.warn(`[ad-info] Admitad API: ${err.message} — без Admitad-карточек (кроме сети)`);
+    admitadSource = 'api_failed (network_only)';
   }
 
   const perfMap = buildPerfluencePartners(perfItems);

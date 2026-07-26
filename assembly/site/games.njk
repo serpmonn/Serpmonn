@@ -154,39 +154,51 @@ eleventyComputed:
                 <div class="grid" role="grid" aria-label="{{ platform.ariaLabel }}">
                     {% if platform.games and platform.games | length %}
                       {% for game in platform.games %}
-                    <div class="card" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
+                    <div class="card{% if game.external %} card--partner{% endif %}" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
                         <meta itemprop="position" content="{{ game.position }}">
-                        <h2>
-                            {% if platform.key == 'web' and not game.external %}
-                            <span class="game-logo-inline game-logo-inline--svg">{{ webGameIcon(game.link, 'cat') }}</span>
-                            {% elif game.image %}
-                            <img class="game-logo-inline" src="{{ game.image }}" alt="{{ game.name }}" loading="lazy" itemprop="image">
-                            {% else %}
-                            <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon('games', 'cat') }}</span>
-                            {% endif %}
-                            <span itemprop="name">{{ game.name }}</span>
-                        </h2>
-                        <p itemprop="description">{{ game.description }}</p>
+                        <div class="card-body">
+                            <h2>
+                                {% if platform.key == 'web' and not game.external %}
+                                <span class="game-logo-inline game-logo-inline--svg">{{ webGameIcon(game.link, 'cat') }}</span>
+                                {% elif game.image %}
+                                <img class="game-logo-inline" src="{{ game.image }}" alt="{{ game.name }}" loading="lazy" itemprop="image">
+                                {% else %}
+                                <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon('games', 'cat') }}</span>
+                                {% endif %}
+                                <span itemprop="name">{{ game.name }}</span>
+                            </h2>
+                            <p itemprop="description">{{ game.description }}</p>
+                        </div>
 
-                        {% if game.external or game.badges %}
-                        <div class="platform-badges">
-                            {% if game.external %}
-                            <span class="badge partner">{{ localesGames[locale].games.partnerBadge | default('Партнёр') }}</span>
+                        <div class="card-footer">
+                            {% if game.external or game.badges %}
+                            <div class="platform-badges">
+                                {% if game.external %}
+                                <span class="badge partner">{{ localesGames[locale].games.partnerBadge | default('Партнёр') }}</span>
+                                {% endif %}
+                                {% if game.badges %}
+                                {% for badge in game.badges %}
+                                <span class="badge {{ badge.type }}">{{ badge.name }}</span>
+                                {% endfor %}
+                                {% endif %}
+                            </div>
+                            {% elif group.key == 'partners' %}
+                            <div class="platform-badges platform-badges--spacer" aria-hidden="true"></div>
                             {% endif %}
-                            {% if game.badges %}
-                            {% for badge in game.badges %}
-                            <span class="badge {{ badge.type }}">{{ badge.name }}</span>
-                            {% endfor %}
+
+                            <a class="btn"
+                               href="{{ game.link }}"
+                               {% if game.external %}target="_blank" rel="noopener"{% endif %}
+                               itemprop="url">
+                                {{ game.buttonText }}
+                            </a>
+
+                            {% if game.external and game.adLabel %}
+                            <p class="ad-label">{{ game.adLabel }}</p>
+                            {% elif game.external %}
+                            <p class="ad-label ad-label--spacer" aria-hidden="true">&nbsp;</p>
                             {% endif %}
                         </div>
-                        {% endif %}
-
-                        <a class="btn"
-                           href="{{ game.link }}"
-                           {% if game.external %}target="_blank" rel="noopener"{% endif %}
-                           itemprop="url">
-                            {{ game.buttonText }}
-                        </a>
                     </div>
                       {% endfor %}
                     {% elif platform.placeholders and platform.placeholders | length %}

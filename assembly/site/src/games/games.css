@@ -103,13 +103,30 @@ h1 {
     display: flex; 
     flex-direction: column; 
     gap: 12px; 
-    min-height: 160px; 
+    min-height: 220px;
+    height: 100%;
     cursor: pointer; 
 }
 
 .card:hover, .card:focus-visible { 
     transform: translateY(-3px); 
     box-shadow: var(--shadow-lg); 
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+.card-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: auto;
+    flex-shrink: 0;
 }
 
 .card h2 { 
@@ -121,17 +138,25 @@ h1 {
     gap: 8px; 
 }
 
-.card p { 
+.card-body p { 
     margin: 0; 
     color: #666; 
     line-height: 1.55; 
-    flex-grow: 1; 
+}
+
+.card-body p::first-letter {
+    text-transform: uppercase;
 }
 
 .platform-badges {
     display: flex;
     flex-wrap: wrap;
     gap: 6px;
+    min-height: 22px;
+}
+
+.platform-badges--spacer {
+    visibility: hidden;
 }
 
 .badge {
@@ -161,6 +186,7 @@ h1 {
     transition: all var(--transition); 
     text-align: center; 
     align-self: flex-start; 
+    width: auto;
 }
 
 .card a.btn:hover { 
@@ -262,5 +288,18 @@ h1 {
 @media (max-width: 768px) { 
     .page { padding: 15px; } 
     h1 { font-size: 1.8rem; margin: 12px 0 8px; } 
-    .card { padding: 16px; min-height: 140px; } 
+    .card { padding: 16px; min-height: 200px; } 
+}
+
+.card .ad-label {
+  margin: 0;
+  min-height: 2.6em;
+  font-size: 9px;
+  line-height: 1.3;
+  color: #666;
+  opacity: 0.8;
+}
+
+.card .ad-label--spacer {
+  visibility: hidden;
 }
