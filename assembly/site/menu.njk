@@ -35,6 +35,8 @@ eleventyComputed:
   menu_promo_codes: "{{ menuTranslations[locale].promo_codes }}"
   menu_tools: "{{ menuTranslations[locale].tools }}"
   menu_all_tools: "{{ menuTranslations[locale].all_tools }}"
+  menu_serpmonn_tools: "{{ menuTranslations[locale].serpmonn_tools }}"
+  menu_partner_tools: "{{ menuTranslations[locale].partner_tools }}"
   menu_marketing: "{{ menuTranslations[locale].marketing }}"
   menu_security: "{{ menuTranslations[locale].security }}"
   menu_development: "{{ menuTranslations[locale].development }}"
@@ -283,7 +285,14 @@ eleventyComputed:
         data-route="tools-all">
             {{ toolIcon('all', 'cat') }} {{ menu_all_tools }}
         </a>
-        
+
+        {# —— Инструменты Serpmonn → категории —— #}
+        <a href="#" class="menu-item" data-submenu="serpmonnToolsSubmenu">
+            {{ toolIcon('all', 'cat') }}
+            {{ menu_serpmonn_tools }}
+        </a>
+        <div class="submenu-container" id="serpmonnToolsSubmenu">
+
         <!-- Маркетинг -->
         <a href="#" class="menu-item" data-submenu="marketingToolsSubmenu">
             {{ toolIcon('marketing', 'cat') }} {{ menu_marketing }}
@@ -325,10 +334,6 @@ eleventyComputed:
             {{ toolIcon('design', 'cat') }} {{ menu_design }}
         </a>
         <div class="submenu-container" id="designToolsSubmenu">
-            <a href="https://lsuix.com/g/1j6fe2t8jz7c9ceea34457480734a9/?erid=2bL9aMPo2e49hMef4rqxsMZZ36"
-               class="tool-link" target="_blank" rel="noopener noreferrer">
-                {{ toolIcon('user') }} {{ tool_ai_avatar }}
-            </a>
             <a href="{% if locale == 'ru' %}/frontend/tools/design/color-palettes.html{% else %}/frontend/{{ locale }}/tools/design/color-palettes.html{% endif %}">
                 {{ toolIcon('palette') }} Цветовые палитры
             </a>
@@ -367,6 +372,19 @@ eleventyComputed:
         <div class="submenu-container" id="ecologyToolsSubmenu">
             <a href="{% if locale == 'ru' %}/frontend/tools/ecology/product-footprint-calculator.html{% else %}/frontend/{{ locale }}/tools/ecology/product-footprint-calculator.html{% endif %}">
                 {{ toolIcon('globe') }} Экологический след продуктов
+            </a>
+        </div>
+        </div>
+
+        {# —— Инструменты партнёров —— #}
+        <a href="#" class="menu-item" data-submenu="partnerToolsSubmenu">
+            {{ toolIcon('partners', 'cat') }}
+            {{ menu_partner_tools }}
+        </a>
+        <div class="submenu-container" id="partnerToolsSubmenu">
+            <a href="https://lsuix.com/g/1j6fe2t8jz7c9ceea34457480734a9/?erid=2bL9aMPo2e49hMef4rqxsMZZ36"
+               class="tool-link" target="_blank" rel="noopener noreferrer">
+                {{ toolIcon('user') }} {{ tool_ai_avatar }}
             </a>
         </div>
     </div>

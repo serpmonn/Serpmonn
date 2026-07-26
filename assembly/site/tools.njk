@@ -95,6 +95,19 @@ eleventyComputed:
         <h1>{{ tools[locale].page.title }}</h1>
         <p class="subtitle">{{ tools[locale].page.subtitle }}</p>
 
+        <!-- Фильтр: свои / партнёры -->
+        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="{{ tools[locale].groups.serpmonn }} / {{ tools[locale].groups.partners }}">
+            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                {{ tools[locale].filters.allGroups }}
+            </button>
+            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                {{ tools[locale].filters.serpmonn }}
+            </button>
+            <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                {{ tools[locale].filters.partners }}
+            </button>
+        </div>
+
         <!-- Панель фильтров -->
         <div class="filter-bar" id="tools-filter-bar"
              data-dynamic-meta-all="{{ tools[locale].filters.dynamicMetaAll }}"
@@ -132,6 +145,10 @@ eleventyComputed:
                 </div>
             </div>
         </div>
+
+        <!-- Инструменты Serpmonn -->
+        <section class="tools-group" data-group="serpmonn">
+        <h2 class="group-title">{{ tools[locale].groups.serpmonn }}</h2>
 
         <!-- Категория: Маркетинг и аналитика -->
         <div class="category-section category-marketing" role="region" aria-labelledby="marketing-title">
@@ -357,6 +374,36 @@ eleventyComputed:
                 </div>
             </div>
         </div>
+        </section>
+
+        <!-- Инструменты партнёров -->
+        <section class="tools-group" data-group="partners">
+        <h2 class="group-title">{{ tools[locale].groups.partners }}</h2>
+        <div class="category-section category-partners" role="region" aria-labelledby="partners-tools-title">
+            <h2 class="category-title visually-hidden" id="partners-tools-title">{{ tools[locale].categories.partners.title }}</h2>
+            <div class="tools-grid" aria-live="polite">
+                <div class="card" style="--i: 12;">
+                    <span class="badge partner">{{ tools[locale].partnerBadge }}</span>
+                    <h2>{{ tools[locale].partnerTools.aiAvatar.title }}</h2>
+                    <p>{{ tools[locale].partnerTools.aiAvatar.description }}</p>
+                    <a href="{{ tools[locale].partnerTools.aiAvatar.url }}"
+                       target="_blank"
+                       rel="noopener noreferrer"
+                       aria-label="{{ tools[locale].aria.openTool }}: {{ tools[locale].partnerTools.aiAvatar.title }}">
+                        {{ tools[locale].partnerTools.aiAvatar.buttonText }}
+                    </a>
+                    <button class="favorite-btn"
+                            data-tool-href="{{ tools[locale].partnerTools.aiAvatar.url }}"
+                            data-tool-name="{{ tools[locale].partnerTools.aiAvatar.title }}"
+                            aria-label="{{ tools[locale].aria.addToFavorites }}: {{ tools[locale].partnerTools.aiAvatar.title }}">
+                        <span class="favorite-icon" aria-hidden="true">
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m12 3 2.4 5.5L20 10l-4.5 3.8L17 20l-5-3-5 3 1.5-6.2L4 10l5.6-1.5z"/></svg>
+                        </span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        </section>
 
         <!-- Информация о развитии -->
         <div class="stats">

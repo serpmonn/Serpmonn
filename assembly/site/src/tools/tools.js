@@ -16,6 +16,9 @@ document.addEventListener('DOMContentLoaded', () => {                           
   const cards = document.querySelectorAll('.category-section .card');                                                                            // Все карточки инструментов
   const filterMessage = document.querySelector('.filter-message');                                                             // Сообщение при отсутствии результатов
   const menuContainer = document.getElementById('menuContainer');                                                              // Контейнер меню
+  const groupFilterButtons = document.querySelectorAll('.tools-group-filters .filter-btn');
+  const toolGroups = document.querySelectorAll('.tools-group');
+  let activeGroup = 'all';
 
   // Функция debounce - ограничение частоты вызова функции
   function debounce(func, wait) {                                                                                              // func - функция для выполнения, wait - время задержки
@@ -173,7 +176,18 @@ document.addEventListener('DOMContentLoaded', () => {                           
 
   // Основная функция фильтрации и сортировки инструментов
   function filterTools(searchTerm = '', category = '', sortByFavorites = false) {                                              // Параметры фильтрации и сортировки
-    const filteredCards = filterCards(searchTerm, category);                                                                   // Фильтрация карточек
+    toolGroups.forEach((group) => {
+      const key = group.dataset.group;
+      const showGroup = activeGroup === 'all' || activeGroup === key;
+      group.hidden = !showGroup;
+      group.style.display = showGroup ? '' : 'none';
+    });
+
+    const filteredCards = filterCards(searchTerm, category).filter((card) => {
+      const group = card.closest('.tools-group');
+      if (!group) return true;
+      return activeGroup === 'all' || group.dataset.group === activeGroup;
+    });
     const sortedCards = sortCards(filteredCards, sortByFavorites);                                                             // Сортировка отфильтрованных карточек
 
     cards.forEach(card => {                                                                                                    // Обработка каждой карточки
@@ -183,6 +197,12 @@ document.addEventListener('DOMContentLoaded', () => {                           
       }
     });
 
+    // Скрыть пустые category-section внутри видимых групп
+    document.querySelectorAll('.tools-group .category-section').forEach((section) => {
+      const visible = section.querySelectorAll('.card:not([style*="display: none"])').length;
+      section.style.display = visible ? '' : 'none';
+    });
+
     const activeCount = document.querySelectorAll('.card:not(.tool-placeholder):not([style*="display: none"])').length;        // Подсчет видимых активных инструментов
     toolsCountElement.textContent = activeCount;                                                                               // Обновление счетчика
     filterMessage.classList.toggle('hidden', activeCount > 0);                                                                 // Показ/скрытие сообщения "не найдено"
@@ -190,6 +210,23 @@ document.addEventListener('DOMContentLoaded', () => {                           
     // Обновление мета-описания для SEO
     updateMetaDescription(category);
   }
+
+  groupFilterButtons.forEach((btn) => {
+    btn.addEventListener('click', () => {
+      activeGroup = btn.dataset.filter || 'all';
+      groupFilterButtons.forEach((b) => {
+        const on = b === btn;
+        b.classList.toggle('active', on);
+        b.setAttribute('aria-selected', on ? 'true' : 'false');
+      });
+      filterCache.clear();
+      filterTools(
+        searchInput.value.replace(/[<>]/g, '').toLowerCase().trim(),
+        categorySelect.value,
+        sortFavoritesButton.classList.contains('active')
+      );
+    });
+  });
 
   // Инициализация фильтрации из параметров URL
   const urlParams = new URLSearchParams(window.location.search);                                                               // Получение параметров из URL
