@@ -1,7 +1,21 @@
+export function closeSettingsPanel() {
+    const settingsButton = document.getElementById('settingsButton');
+    const settingsPanel = document.getElementById('settingsPanel');
+    if (!settingsPanel || !settingsPanel.classList.contains('active')) return;
+
+    settingsPanel.classList.remove('active');
+    settingsPanel.setAttribute('aria-hidden', 'true');
+    if (settingsButton) {
+        settingsButton.setAttribute('aria-expanded', 'false');
+    }
+}
+
 export function closeMenu() {
     const menuButton = document.getElementById('menuButton');
     const menuContainer = document.getElementById('menuContainer');
     if (!menuContainer || !menuContainer.classList.contains('active')) return;
+
+    closeSettingsPanel();
 
     menuContainer.classList.remove('active');
     menuContainer.setAttribute('aria-hidden', 'true');
@@ -19,6 +33,21 @@ export function closeMenu() {
             parent.setAttribute('aria-hidden', 'true');
         }
     });
+}
+
+export function toggleSettingsPanel(event) {
+    const settingsButton = document.getElementById('settingsButton');
+    const settingsPanel = document.getElementById('settingsPanel');
+    if (!settingsPanel || !settingsButton) return;
+
+    if (settingsPanel.classList.contains('active')) {
+        closeSettingsPanel();
+    } else {
+        // ⚙ живёт внутри открытого меню — меню не закрываем
+        settingsPanel.classList.add('active');
+        settingsPanel.setAttribute('aria-hidden', 'false');
+        settingsButton.setAttribute('aria-expanded', 'true');
+    }
 }
 
 export function toggleMenu(event) {
@@ -136,6 +165,14 @@ export function initMenu() {
         });
     }
 
+    const settingsButton = document.getElementById('settingsButton');
+    if (settingsButton) {
+        settingsButton.addEventListener('click', (e) => {
+            e.stopPropagation();
+            toggleSettingsPanel(e);
+        });
+    }
+
     document.querySelectorAll('.menu-item[data-submenu]').forEach(item => {
         item.addEventListener('click', (e) => {
             e.preventDefault();
@@ -176,13 +213,24 @@ export function initMenu() {
         }
     });
 
-    // Закрытие меню при клике вне его области
+    // Закрытие меню / настроек при клике вне их области
     document.addEventListener('click', (e) => {
         const menuContainer = document.getElementById('menuContainer');
         const menuCorner = document.getElementById('menuCorner');
+        const settingsPanel = document.getElementById('settingsPanel');
+        const settingsButton = document.getElementById('settingsButton');
+        const inCorner = menuCorner && menuCorner.contains(e.target);
+        const inMenu = menuContainer && menuContainer.contains(e.target);
+        const inSettings = settingsPanel && settingsPanel.contains(e.target);
+        const onSettingsBtn = settingsButton && settingsButton.contains(e.target);
+
+        if (settingsPanel && settingsPanel.classList.contains('active')) {
+            if (!inSettings && !onSettingsBtn) {
+                closeSettingsPanel();
+            }
+        }
+
         if (menuContainer && menuContainer.classList.contains('active')) {
-            const inMenu = menuContainer.contains(e.target);
-            const inCorner = menuCorner && menuCorner.contains(e.target);
             if (!inMenu && !inCorner) {
                 closeMenu();
             }

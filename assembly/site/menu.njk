@@ -75,17 +75,19 @@ eleventyComputed:
 <link rel="stylesheet" href="/frontend/styles/menu.css">
 <link rel="stylesheet" href="/frontend/styles/pwa.css">
 
+{% from "partials/tool-icons.njk" import toolIcon, webGameIcon %}
+
 <!-- Кнопки меню и активности -->
+<button type="button" class="menu-activity-bell" id="activityBellBtn" hidden
+        aria-label="{{ menu_findings_activity or 'Activity' }}">
+  <svg class="menu-activity-bell__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+    <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
+  </svg>
+  <span class="menu-activity-bell__badge" id="activityBellBadge" hidden aria-hidden="true"></span>
+</button>
 <div class="menu-corner" id="menuCorner">
-  <button type="button" class="menu-activity-bell" id="activityBellBtn" hidden
-          aria-label="{{ menu_findings_activity or 'Activity' }}">
-    <svg class="menu-activity-bell__icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-      <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
-      <path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-    </svg>
-    <span class="menu-activity-bell__badge" id="activityBellBadge" hidden aria-hidden="true"></span>
-  </button>
-  <button class="menu-button" id="menuButton" 
+  <button class="menu-button" id="menuButton"
         aria-controls="menuContainer"
         aria-haspopup="menu"
         aria-expanded="false">
@@ -95,14 +97,6 @@ eleventyComputed:
 
 <!-- Основной контейнер меню -->
 <div class="menu-container" id="menuContainer">
-    {% from "partials/tool-icons.njk" import toolIcon, webGameIcon %}
-
-    <!-- ========== СЕЛЕКТОР ЯЗЫКА ========== -->
-    <div class="menu-item lang-selector-item lang-selector-container" id="languageSelectorContainer">
-        {{ toolIcon('lang', 'cat') }}
-        <select class="lang-selector" id="langSelect"></select>
-    </div>
-
     <!-- ========== ГЛАВНАЯ ========== -->
     <a href="{% if locale == 'ru' %}/frontend/main.html{% else %}/frontend/{{ locale }}/index.html{% endif %}"
     class="menu-item"
@@ -534,47 +528,47 @@ eleventyComputed:
         {{ menu_support_project }}
     </a>
 
-    <!-- ========== НАСТРОЙКИ ========== -->
-    <a href="#" class="menu-item" data-submenu="settingsSubmenu" 
-       aria-expanded="false" aria-haspopup="true">
+    <!-- Служебный низ: язык + доступность -->
+    <div class="menu-chrome" id="menuChrome">
+      <div class="menu-chrome__lang lang-selector-item lang-selector-container" id="languageSelectorContainer">
+        {{ toolIcon('lang', 'cat') }}
+        <select class="lang-selector" id="langSelect" aria-label="{{ menu_language }}"></select>
+      </div>
+
+      <button type="button" class="menu-settings-btn" id="settingsButton"
+            aria-controls="settingsPanel"
+            aria-haspopup="dialog"
+            aria-expanded="false"
+            aria-label="{{ menu_accessibility }}">
         {{ toolIcon('settings', 'cat') }}
-        {{ menu_settings }}
-    </a>
-    
-    <!-- Подменю настроек -->
-    <div class="submenu-container" id="settingsSubmenu" aria-hidden="true">
-        <a href="#" class="menu-item" data-submenu="a11ySubmenu" 
-           aria-expanded="false" aria-haspopup="true">
-            {{ toolIcon('a11y', 'cat') }}
-            {{ menu_accessibility }}
-        </a>
-        
-        <div class="submenu-container" id="a11ySubmenu" aria-hidden="true">
-            <a href="#" class="a11y-toggle" data-setting="large-text" 
-               role="switch" aria-checked="false">
-                {{ toolIcon('textsize', 'cat') }}
-                {{ menu_large_font }}
-                <span class="a11y-status is-off" data-status="large-text"></span>
-            </a>
-            <a href="#" class="a11y-toggle" data-setting="high-contrast" 
-               role="switch" aria-checked="false">
-                {{ toolIcon('contrast', 'cat') }}
-                {{ menu_high_contrast }}
-                <span class="a11y-status is-off" data-status="high-contrast"></span>
-            </a>
-            <a href="#" class="a11y-toggle" data-setting="underline-links" 
-               role="switch" aria-checked="false">
-                {{ toolIcon('underline', 'cat') }}
-                {{ menu_underline_links }}
-                <span class="a11y-status is-off" data-status="underline-links"></span>
-            </a>
-            <a href="#" class="a11y-toggle" data-setting="reduce-motion" 
-               role="switch" aria-checked="false">
-                {{ toolIcon('motion', 'cat') }}
-                {{ menu_reduce_animation }}
-                <span class="a11y-status is-off" data-status="reduce-motion"></span>
-            </a>
-        </div>
+      </button>
+
+      <div class="menu-settings-panel" id="settingsPanel" aria-hidden="true" role="dialog" aria-label="{{ menu_accessibility }}">
+          <a href="#" class="a11y-toggle" data-setting="large-text"
+             role="switch" aria-checked="false">
+              {{ toolIcon('textsize', 'cat') }}
+              {{ menu_large_font }}
+              <span class="a11y-status is-off" data-status="large-text"></span>
+          </a>
+          <a href="#" class="a11y-toggle" data-setting="high-contrast"
+             role="switch" aria-checked="false">
+              {{ toolIcon('contrast', 'cat') }}
+              {{ menu_high_contrast }}
+              <span class="a11y-status is-off" data-status="high-contrast"></span>
+          </a>
+          <a href="#" class="a11y-toggle" data-setting="underline-links"
+             role="switch" aria-checked="false">
+              {{ toolIcon('underline', 'cat') }}
+              {{ menu_underline_links }}
+              <span class="a11y-status is-off" data-status="underline-links"></span>
+          </a>
+          <a href="#" class="a11y-toggle" data-setting="reduce-motion"
+             role="switch" aria-checked="false">
+              {{ toolIcon('motion', 'cat') }}
+              {{ menu_reduce_animation }}
+              <span class="a11y-status is-off" data-status="reduce-motion"></span>
+          </a>
+      </div>
     </div>
 </div>
 

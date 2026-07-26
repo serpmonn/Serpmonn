@@ -57,6 +57,8 @@ function detectAndroidAppEmbed() {
 const ANDROID_EMBED_HIDE_CSS = `
   html.android-app #menuCorner, html.android-app #menuContainer, html.android-app #menuButton,
   html.android-app .menu-corner, html.android-app .menu-container, html.android-app .menu-button,
+  html.android-app .menu-settings-btn, html.android-app #settingsButton,
+  html.android-app .menu-settings-panel, html.android-app #settingsPanel,
   html.android-app .menu-activity-bell, html.android-app #activityBellBtn,
   html.android-app #cookie-consent, html.android-app .cookie-consent, html.android-app #installAppButton,
   html.android-app .mobile-anchor-ad, html.android-app .ad-leaderboard, html.android-app .ad-container, html.android-app .ad-top-banner,
@@ -70,6 +72,8 @@ const ANDROID_EMBED_HIDE_CSS = `
   html.android-app #kb-sn-tg, html.android-app #kb-sn-max, html.android-app #kb-sn-ok,
   body.android-app #menuCorner, body.android-app #menuContainer, body.android-app #menuButton,
   body.android-app .menu-corner, body.android-app .menu-container, body.android-app .menu-button,
+  body.android-app .menu-settings-btn, body.android-app #settingsButton,
+  body.android-app .menu-settings-panel, body.android-app #settingsPanel,
   body.android-app .menu-activity-bell, body.android-app #activityBellBtn,
   body.android-app #cookie-consent, body.android-app .cookie-consent, body.android-app #installAppButton,
   body.android-app .mobile-anchor-ad, body.android-app .ad-leaderboard, body.android-app .ad-container, body.android-app .ad-top-banner,
@@ -87,25 +91,6 @@ const ANDROID_EMBED_HIDE_CSS = `
   }
   html.android-app, body.android-app {
     overscroll-behavior-x: none !important;
-  }
-  /* RuStore: без денежной покупки Pro и без входа на ai.serpmonn.ru; обмен баллов на дни оставляем */
-  html.android-app #managePlanButton,
-  html.android-app #buy-pro-btn,
-  html.android-app .cta-row,
-  html.android-app #aiAccessBlock,
-  html.android-app #openAiService,
-  html.android-app a[href*="/tariffs/"],
-  html.android-app a[href*="ai.serpmonn.ru"],
-  body.android-app #managePlanButton,
-  body.android-app #buy-pro-btn,
-  body.android-app .cta-row,
-  body.android-app #aiAccessBlock,
-  body.android-app #openAiService,
-  body.android-app a[href*="/tariffs/"],
-  body.android-app a[href*="ai.serpmonn.ru"] {
-    display: none !important;
-    visibility: hidden !important;
-    pointer-events: none !important;
   }
 `;
 
@@ -226,6 +211,7 @@ fetch(primaryMenuPath)
             touch-action: pan-y manipulation !important;
           }
           #menuContainer, #menuButton, .menu-container, .menu-activity-bell, #activityBellBtn,
+          .menu-settings-btn, #settingsButton, .menu-settings-panel, #settingsPanel,
           .cookie-consent, #cookie-consent,
           .donate-button, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner,
           .mrg-tag, ins.mrg-tag, a[href*="donate"], a[href*="/promo"], #installAppButton,
