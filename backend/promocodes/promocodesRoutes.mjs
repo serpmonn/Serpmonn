@@ -47,7 +47,8 @@ async function loadPromocodesFromAPI() {
 }
 
 function filterPromocodes(filters = {}) {
-  let filtered = [...promocodesCache.data];
+  // Промокоды: только офферы с кодом (безкодовые — в «Полезное»)
+  let filtered = promocodesCache.data.filter(p => Boolean(String(p.promocode || '').trim()));
 
   if (filters.search) {
     const q = filters.search.toLowerCase();
@@ -106,7 +107,8 @@ function filterPromocodes(filters = {}) {
 }
 
 function getPromocodesStats() {
-  return computePromocodesStats(promocodesCache.data, promocodesCache.lastUpdate || new Date());
+  const withCodes = promocodesCache.data.filter(p => Boolean(String(p.promocode || '').trim()));
+  return computePromocodesStats(withCodes, promocodesCache.lastUpdate || new Date());
 }
 
 router.get('/', promocodesLimiter, async (req, res) => {

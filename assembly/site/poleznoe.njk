@@ -1,0 +1,107 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/poleznoe/poleznoe.html{% else %}/frontend/{{ locale }}/poleznoe/poleznoe.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  title: "{{ poleznoe[locale].meta.title }}"
+  description: "{{ poleznoe[locale].meta.description }}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/poleznoe/poleznoe.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/poleznoe/poleznoe.html{% endif %}"
+---
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="website">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="{{ title }}">
+    <meta name="twitter:description" content="{{ description }}">
+    <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+    <link rel="canonical" href="{{ canonical }}">
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/poleznoe/poleznoe.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/poleznoe/poleznoe.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/poleznoe/poleznoe.html" hreflang="x-default" />
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/poleznoe/poleznoe.css">
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    {% from "partials/tool-icons.njk" import toolIcon %}
+    {% set t = poleznoe[locale] %}
+    <div id="menuContainer" class="loading"></div>
+
+    <main class="poleznoe">
+        <h1>{{ t.hub.title }}</h1>
+        <p class="poleznoe__subtitle">{{ t.hub.subtitle }}</p>
+
+        <div class="poleznoe__grid">
+            {% for job in poleznoeJobs.jobs %}
+            {% set label = t.jobs[job.key] %}
+            {% set primary = job.offers[0] %}
+            <article class="poleznoe-card"{% if primary and primary.url %} data-href="{{ primary.url }}"{% endif %}>
+                <span class="poleznoe-card__icon" aria-hidden="true">{{ toolIcon(job.icon) }}</span>
+                <h2 class="poleznoe-card__title">{{ label.title if label else job.key }}</h2>
+                {% if label and label.lead %}
+                <p class="poleznoe-card__desc">{{ label.lead }}</p>
+                {% endif %}
+                <div class="poleznoe-card__partners">
+                    {% for offer in job.offers %}
+                    <div class="poleznoe-partner{% if not loop.first %} poleznoe-partner--more{% endif %}">
+                        {% if loop.first %}
+                        <a class="poleznoe-btn"
+                           href="{{ offer.url }}"
+                           target="_blank"
+                           rel="noopener noreferrer">{{ offer.cta }}</a>
+                        {% else %}
+                        <a class="poleznoe-link"
+                           href="{{ offer.url }}"
+                           target="_blank"
+                           rel="noopener noreferrer">{{ offer.cta }}</a>
+                        {% endif %}
+                        {% if offer.adLabel %}
+                        <p class="ad-label">{{ offer.adLabel }}</p>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </main>
+    <script>
+      document.querySelectorAll('.poleznoe-card[data-href]').forEach((card) => {
+        card.addEventListener('click', (event) => {
+          if (event.target.closest('a, button')) return;
+          const href = card.getAttribute('data-href');
+          if (!href) return;
+          window.open(href, '_blank', 'noopener,noreferrer');
+        });
+        card.addEventListener('keydown', (event) => {
+          if (event.key !== 'Enter' && event.key !== ' ') return;
+          if (event.target !== card) return;
+          event.preventDefault();
+          const href = card.getAttribute('data-href');
+          if (href) window.open(href, '_blank', 'noopener,noreferrer');
+        });
+        card.setAttribute('tabindex', '0');
+        card.setAttribute('role', 'link');
+      });
+    </script>
+</body>
+</html>

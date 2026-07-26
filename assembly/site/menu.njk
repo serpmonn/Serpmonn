@@ -33,6 +33,7 @@ eleventyComputed:
   menu_install_guide: "{{ menuTranslations[locale].install_guide }}"
   menu_mobile_apps: "{{ menuTranslations[locale].mobile_apps }}"
   menu_promo_codes: "{{ menuTranslations[locale].promo_codes }}"
+  menu_useful: "{{ menuTranslations[locale].useful or menuTranslations['en'].useful or 'Useful' }}"
   menu_tools: "{{ menuTranslations[locale].tools }}"
   menu_all_tools: "{{ menuTranslations[locale].all_tools }}"
   menu_serpmonn_tools: "{{ menuTranslations[locale].serpmonn_tools }}"
@@ -262,6 +263,15 @@ eleventyComputed:
     data-route="promo">
         {{ toolIcon('promo', 'cat') }}
         {{ menu_promo_codes }}
+    </a>
+
+    <!-- ========== ПОЛЕЗНОЕ ========== -->
+    <a href="{% if locale == 'ru' %}/frontend/poleznoe/poleznoe.html{% else %}/frontend/{{ locale }}/poleznoe/poleznoe.html{% endif %}"
+    class="menu-item"
+    id="useful-btn"
+    data-route="poleznoe">
+        {{ toolIcon('useful', 'cat') }}
+        {{ menu_useful }}
     </a>
 
     <!-- ========== РАЗДЕЛ ИНСТРУМЕНТОВ ========== -->

@@ -1,0 +1,98 @@
+{# Expects: locale, dir, title, description, canonical, scenarioKey #}
+{% set t = poleznoe[locale] %}
+{% set s = t.scenarios[scenarioKey] %}
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title }}</title>
+    <meta name="description" content="{{ description }}">
+    <meta property="og:title" content="{{ title }}">
+    <meta property="og:description" content="{{ description }}">
+    <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+    <meta property="og:url" content="{{ canonical }}">
+    <meta property="og:type" content="website">
+    <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+    <link rel="canonical" href="{{ canonical }}">
+    {% for loc in locales %}
+        {% if loc == 'ru' %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/poleznoe/{{ scenarioKey }}.html" hreflang="{{ loc }}" />
+        {% else %}
+            <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/poleznoe/{{ scenarioKey }}.html" hreflang="{{ loc }}" />
+        {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/poleznoe/{{ scenarioKey }}.html" hreflang="x-default" />
+    <link rel="stylesheet" href="/frontend/styles/base.css">
+    <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/poleznoe/poleznoe.css">
+    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+    <div id="menuContainer" class="loading"></div>
+
+    <main class="poleznoe poleznoe--scenario">
+        <p class="poleznoe__crumb">
+            <a href="{% if locale == 'ru' %}/frontend/poleznoe/poleznoe.html{% else %}/frontend/{{ locale }}/poleznoe/poleznoe.html{% endif %}">{{ t.backHub }}</a>
+        </p>
+
+        <h1>{{ s.title }}</h1>
+        <p class="poleznoe__lead">{{ s.lead }}</p>
+
+        {% if scenarioKey == 'buy' %}
+        <div class="poleznoe-actions">
+            <a class="poleznoe-btn"
+               href="{% if locale == 'ru' %}/frontend/{{ s.promoPath }}{% else %}/frontend/{{ locale }}/{{ s.promoPath }}{% endif %}">
+                {{ s.promoCta }}
+            </a>
+        </div>
+
+        {% if s.partners and (s.partners | length) %}
+        <h2 class="poleznoe__section-title">{{ s.partnersTitle }}</h2>
+        <div class="poleznoe-actions poleznoe-actions--stack">
+            {% for p in s.partners %}
+            <div class="poleznoe-partner">
+                <a class="poleznoe-btn poleznoe-btn--secondary"
+                   href="{{ p.url }}"
+                   target="_blank"
+                   rel="noopener noreferrer">{{ p.cta }}</a>
+                {% if p.adLabel %}
+                <p class="ad-label">{{ p.adLabel }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% else %}
+        <div class="poleznoe-actions">
+            <a class="poleznoe-btn"
+               href="{{ s.url }}"
+               target="_blank"
+               rel="noopener noreferrer">{{ s.cta }}</a>
+            {% if s.adLabel %}
+            <p class="ad-label">{{ s.adLabel }}</p>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {% if s.related and (s.related | length) %}
+        <section class="poleznoe-related" aria-label="{{ s.relatedTitle }}">
+            <h2>{{ s.relatedTitle }}</h2>
+            <ul>
+                {% for item in s.related %}
+                <li>
+                    <a href="{% if locale == 'ru' %}/frontend/{{ item.path }}{% else %}/frontend/{{ locale }}/{{ item.path }}{% endif %}">
+                        {{ item.label }}
+                    </a>
+                </li>
+                {% endfor %}
+            </ul>
+        </section>
+        {% endif %}
+
+        <p class="poleznoe__back">
+            <a href="{% if locale == 'ru' %}/frontend/poleznoe/poleznoe.html{% else %}/frontend/{{ locale }}/poleznoe/poleznoe.html{% endif %}">← {{ t.back }}</a>
+        </p>
+    </main>
+</body>
+</html>

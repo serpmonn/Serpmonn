@@ -1,0 +1,14 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/poleznoe/domain.html{% else %}/frontend/{{ locale }}/poleznoe/domain.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  title: "{{ poleznoe[locale].scenarios.domain.title }} | Serpmonn"
+  description: "{{ poleznoe[locale].scenarios.domain.lead }}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/poleznoe/domain.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/poleznoe/domain.html{% endif %}"
+scenarioKey: domain
+---
+{% include "partials/poleznoe-scenario.njk" %}

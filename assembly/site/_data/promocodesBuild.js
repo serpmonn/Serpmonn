@@ -28,22 +28,53 @@ function enrichCard(promo, mod) {
   };
 }
 
+function hasPromoCode(promo) {
+  return Boolean(String(promo?.promocode || '').trim());
+}
+
+function filterToPromoCodesOnly(built) {
+  const originalCards = built.cards || [];
+  const cards = originalCards.filter(hasPromoCode);
+  const data = (built.data || []).filter(hasPromoCode);
+  const schemaOffers = (built.schemaOffers || []).filter((_, i) => hasPromoCode(originalCards[i] || {}));
+  const categories = [...new Set(cards.map(c => c.category).filter(Boolean))];
+  const stats = {
+    ...(built.stats || {}),
+    total: cards.length,
+    active: cards.length,
+    totalPromocodes: cards.length,
+    activePromocodes: cards.length
+  };
+
+  return {
+    ...built,
+    cards,
+    data,
+    schemaOffers,
+    categories,
+    stats
+  };
+}
+
 module.exports = async function promocodesBuild() {
   try {
     const mod = await import(path.join(__dirname, '../../../backend/promocodes/normalizePromocodes.mjs'));
     const built = await mod.preparePromocodesBuildData();
-    const enriched = {
+    // Keep FULL cache (incl. no-code) for «Полезное»; page gets codes-only.
+    const enrichedFull = {
       ...built,
       cards: built.cards.map(card => enrichCard(card, mod))
     };
-    fs.writeFileSync(CACHE_PATH, JSON.stringify(enriched));
-    console.log(`[PROMO SSR] ${enriched.stats.total} promos, ${enriched.cards.length} SSR cards`);
-    return enriched;
+    fs.writeFileSync(CACHE_PATH, JSON.stringify(enrichedFull));
+    const forPage = filterToPromoCodesOnly(enrichedFull);
+    console.log(`[PROMO SSR] cache=${enrichedFull.cards.length} all, page=${forPage.cards.length} with codes`);
+    return forPage;
   } catch (error) {
     console.warn('[PROMO SSR] Build fetch failed:', error.message);
     if (fs.existsSync(CACHE_PATH)) {
       console.warn('[PROMO SSR] Using cached promocodesBuild.cache.json');
-      return JSON.parse(fs.readFileSync(CACHE_PATH, 'utf8'));
+      const cached = JSON.parse(fs.readFileSync(CACHE_PATH, 'utf8'));
+      return filterToPromoCodesOnly(cached);
     }
     return EMPTY_BUILD;
   }
