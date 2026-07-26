@@ -202,6 +202,7 @@
         -webkit-text-size-adjust: 100% !important;
       }
       #menuContainer, #menuButton, .menu-container, .menu-activity-bell, #activityBellBtn,
+      .menu-settings-btn, #settingsButton, .menu-settings-panel, #settingsPanel,
       .cookie-consent, #cookie-consent,
       .donate-button, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner,
       .mrg-tag, ins.mrg-tag, [id*="mail-ad"], [class*="mail-ad"], #game-ad-overlay,
