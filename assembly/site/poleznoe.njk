@@ -40,6 +40,7 @@ eleventyComputed:
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/poleznoe/poleznoe.css">
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    {% include "partials/metrika-main.njk" %}
 </head>
 <body>
     {% from "partials/tool-icons.njk" import toolIcon %}
@@ -54,7 +55,7 @@ eleventyComputed:
             {% for job in poleznoeJobs.jobs %}
             {% set label = t.jobs[job.key] %}
             {% set primary = job.offers[0] %}
-            <article class="poleznoe-card"{% if primary and primary.url %} data-href="{{ primary.url }}"{% endif %}>
+            <article class="poleznoe-card" data-job="{{ job.key }}"{% if primary and primary.url %} data-href="{{ primary.url }}"{% endif %}>
                 <span class="poleznoe-card__icon" aria-hidden="true">{{ toolIcon(job.icon) }}</span>
                 <h2 class="poleznoe-card__title">{{ label.title if label else job.key }}</h2>
                 {% if label and label.lead %}
@@ -67,12 +68,14 @@ eleventyComputed:
                         <a class="poleznoe-btn"
                            href="{{ offer.url }}"
                            target="_blank"
-                           rel="noopener noreferrer">{{ offer.cta }}</a>
+                           rel="noopener noreferrer"
+                           data-offer-id="{{ offer.id }}">{{ offer.cta }}</a>
                         {% else %}
                         <a class="poleznoe-link"
                            href="{{ offer.url }}"
                            target="_blank"
-                           rel="noopener noreferrer">{{ offer.cta }}</a>
+                           rel="noopener noreferrer"
+                           data-offer-id="{{ offer.id }}">{{ offer.cta }}</a>
                         {% endif %}
                         {% if offer.adLabel %}
                         <p class="ad-label">{{ offer.adLabel }}</p>
@@ -85,23 +88,45 @@ eleventyComputed:
         </div>
     </main>
     <script>
-      document.querySelectorAll('.poleznoe-card[data-href]').forEach((card) => {
-        card.addEventListener('click', (event) => {
-          if (event.target.closest('a, button')) return;
-          const href = card.getAttribute('data-href');
-          if (!href) return;
-          window.open(href, '_blank', 'noopener,noreferrer');
+      (function () {
+        var COUNTER = 98158791;
+        function goal(name, params) {
+          if (typeof ym === 'undefined') return;
+          try { ym(COUNTER, 'reachGoal', name, params || {}); } catch (e) {}
+        }
+        function offerParams(card, link) {
+          return {
+            job: card && card.getAttribute('data-job') || '',
+            offer_id: link && link.getAttribute('data-offer-id') || '',
+            href: (link && link.href) || (card && card.getAttribute('data-href')) || ''
+          };
+        }
+        document.querySelectorAll('.poleznoe-card a[href]').forEach(function (link) {
+          link.addEventListener('click', function () {
+            goal('poleznoe_offer_click', offerParams(link.closest('.poleznoe-card'), link));
+          });
         });
-        card.addEventListener('keydown', (event) => {
-          if (event.key !== 'Enter' && event.key !== ' ') return;
-          if (event.target !== card) return;
-          event.preventDefault();
-          const href = card.getAttribute('data-href');
-          if (href) window.open(href, '_blank', 'noopener,noreferrer');
+        document.querySelectorAll('.poleznoe-card[data-href]').forEach(function (card) {
+          card.addEventListener('click', function (event) {
+            if (event.target.closest('a, button')) return;
+            var href = card.getAttribute('data-href');
+            if (!href) return;
+            goal('poleznoe_offer_click', offerParams(card, null));
+            window.open(href, '_blank', 'noopener,noreferrer');
+          });
+          card.addEventListener('keydown', function (event) {
+            if (event.key !== 'Enter' && event.key !== ' ') return;
+            if (event.target !== card) return;
+            event.preventDefault();
+            var href = card.getAttribute('data-href');
+            if (!href) return;
+            goal('poleznoe_offer_click', offerParams(card, null));
+            window.open(href, '_blank', 'noopener,noreferrer');
+          });
+          card.setAttribute('tabindex', '0');
+          card.setAttribute('role', 'link');
         });
-        card.setAttribute('tabindex', '0');
-        card.setAttribute('role', 'link');
-      });
+      })();
     </script>
 </body>
 </html>

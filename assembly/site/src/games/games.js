@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const platformTitle = card.closest('.platform-block')?.querySelector('.platform-title')?.textContent.trim() || '';
 
             if (window.ym) {
-                window.ym(104905836, 'reachGoal', 'game_click', {
+                window.ym(98158791, 'reachGoal', 'game_click', {
                     game_name: gameName,
                     game_category: groupTitle,
                     game_platform: platformTitle

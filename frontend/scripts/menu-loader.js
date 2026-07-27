@@ -646,22 +646,12 @@ fetch(primaryMenuPath)
     });
 
     // ========== ЗАГРУЖАЕМ СКРИПТ СЕЛЕКТОРА ЯЗЫКА ==========
+    // Shared script lives only under /frontend/scripts (locale copies are cleaned on deploy)
     const script = document.createElement('script');
-
-    const scriptPath = resolvedDir ?
-      `/frontend/${resolvedDir}/scripts/language-selector.js` :
-      '/frontend/scripts/language-selector.js';
-
-    script.src = scriptPath;
+    script.src = '/frontend/scripts/language-selector.js';
     script.onerror = (e) => {
       console.error('❌ Ошибка загрузки скрипта селектора:', e);
-      if (resolvedDir) {
-        const fallbackScript = document.createElement('script');
-        fallbackScript.src = '/frontend/scripts/language-selector.js';
-        document.body.appendChild(fallbackScript);
-      }
     };
-
     document.body.appendChild(script);
     // ========== КОНЕЦ ЗАГРУЗКИ СКРИПТА ==========
 
