@@ -354,6 +354,8 @@ function setMessengerAppModeUi(on) {
 function openMessengerDeepLink(url) {
   const href = String(url || '').trim();
   if (!href) return false;
+
+  // Capacitor App.openUrl (если есть) — не трогает текущий WebView
   try {
     const CapApp = window.Capacitor?.Plugins?.App;
     if (CapApp && typeof CapApp.openUrl === 'function') {
@@ -361,8 +363,40 @@ function openMessengerDeepLink(url) {
       return true;
     }
   } catch (_) {}
+
+  // AppLauncher (отдельный плагин)
   try {
-    window.location.href = href;
+    const Launcher = window.Capacitor?.Plugins?.AppLauncher;
+    if (Launcher && typeof Launcher.openUrl === 'function') {
+      Launcher.openUrl({ url: href });
+      return true;
+    }
+  } catch (_) {}
+
+  // Главное: НЕ делать location.href на serpmonn:// —
+  // WebView уходит со страницы входа и «возвращается» назад.
+  try {
+    const iframe = document.createElement('iframe');
+    iframe.setAttribute('aria-hidden', 'true');
+    iframe.style.cssText = 'display:none;width:0;height:0;border:0;position:absolute';
+    iframe.src = href;
+    document.body.appendChild(iframe);
+    setTimeout(() => {
+      try { iframe.remove(); } catch (_) {}
+    }, 2500);
+  } catch (_) {}
+
+  try {
+    const a = document.createElement('a');
+    a.href = href;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      try { a.remove(); } catch (_) {}
+    }, 500);
     return true;
   } catch (_) {
     return false;
