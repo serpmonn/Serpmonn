@@ -315,6 +315,9 @@ function initVkIdOneTap() {
 let messengerPollTimer = null;
 let messengerChallengeId = null;
 let messengerDeepLink = null;
+let messengerPrefetchQr = null;
+let messengerPrefetchCode = null;
+let messengerPollingStarted = false;
 
 function setMessengerModalOpen(open) {
   const modal = document.getElementById('messengerLoginModal');
@@ -327,7 +330,11 @@ function setMessengerModalOpen(open) {
     }
     messengerChallengeId = null;
     messengerDeepLink = null;
+    messengerPrefetchQr = null;
+    messengerPrefetchCode = null;
+    messengerPollingStarted = false;
     modal.classList.remove('messenger-modal--app');
+    syncMessengerOpenButton(null);
   }
 }
 
@@ -352,82 +359,88 @@ function setMessengerAppModeUi(on) {
 }
 
 /**
- * Android intent:// для custom scheme без загрузки в WebView.
- * iframe/src=serpmonn:// на MIUI периодически роняет процесс (диалог «отправить отчёт»).
+ * Открытие deep link в мессенджер.
+ *
+ * В Capacitor Android Bridge.launchIntent() для non-http делает
+ * startActivity(ACTION_VIEW, uri). Это срабатывает для serpmonn://,
+ * но НЕ для intent:// (нужен Intent.parseUri — Cap так не делает).
+ *
+ * Важно: вызывать в том же синхронном стеке, что и tap пользователя.
+ * После await fetch WebView/MIUI часто глотает программный open.
  */
-function toAndroidIntentUrl(deepLink, packageName) {
-  let u;
-  try {
-    u = new URL(deepLink);
-  } catch (_) {
-    return null;
-  }
-  if (u.protocol !== 'serpmonn:') return null;
-  // serpmonn://web-login?data=... → host=web-login, search=?data=...
-  const path = u.pathname && u.pathname !== '/' ? u.pathname : '';
-  let intent = `intent://${u.host}${path}${u.search}#Intent;scheme=serpmonn`;
-  if (packageName) intent += `;package=${packageName}`;
-  intent += ';end';
-  return intent;
-}
-
-function clickHiddenAnchor(href) {
-  const a = document.createElement('a');
-  a.href = href;
-  a.rel = 'noopener noreferrer';
-  a.style.display = 'none';
-  document.body.appendChild(a);
-  a.click();
-  setTimeout(() => {
-    try { a.remove(); } catch (_) {}
-  }, 500);
-  return true;
-}
-
-async function openMessengerDeepLink(url) {
+function openMessengerDeepLinkSync(url) {
   const href = String(url || '').trim();
   if (!href) return false;
 
-  // Capacitor App.openUrl — в сборке RuStore 1.2 на Android обычно нет.
-  try {
-    const CapApp = window.Capacitor?.Plugins?.App;
-    if (CapApp && typeof CapApp.openUrl === 'function') {
-      await CapApp.openUrl({ url: href });
+  const inCap = Boolean(
+    window.Capacitor?.isNativePlatform?.() || window.__SPN_ANDROID_APP__
+  );
+
+  if (inCap) {
+    try {
+      // Cap WebViewClient → launchIntent → startActivity(VIEW, serpmonn://…)
+      (window.top || window).location.assign(href);
       return true;
+    } catch (e) {
+      console.warn('location.assign deep link failed:', e);
     }
-  } catch (e) {
-    console.warn('Cap App.openUrl failed:', e);
   }
 
-  // AppLauncher — в APK 1.2 тоже нет; оставляем на будущие сборки.
   try {
-    const Launcher = window.Capacitor?.Plugins?.AppLauncher;
-    if (Launcher && typeof Launcher.openUrl === 'function') {
-      await Launcher.openUrl({ url: href });
-      return true;
-    }
-  } catch (e) {
-    console.warn('AppLauncher.openUrl failed:', e);
-  }
-
-  const platform = window.Capacitor?.getPlatform?.();
-  const isAndroid =
-    platform === 'android' ||
-    (/Android/i.test(navigator.userAgent) && Boolean(window.Capacitor));
-
-  if (isAndroid) {
-    // Не используем iframe с serpmonn:// — краш WebView на части Xiaomi/MIUI.
-    // intent:// отдаёт системе, WebView не пытается «открыть» неизвестную схему.
-    const intentUrl = toAndroidIntentUrl(href, null);
-    if (intentUrl) return clickHiddenAnchor(intentUrl);
-  }
-
-  // Вне Android-оболочки: обычная ссылка (браузер сам резолвит схему).
-  // Не трогаем location.href внутри Capacitor — иначе уходим со страницы auth.
-  try {
-    return clickHiddenAnchor(href);
+    const a = document.createElement('a');
+    a.href = href;
+    a.rel = 'noopener noreferrer';
+    a.style.display = 'none';
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => {
+      try { a.remove(); } catch (_) {}
+    }, 500);
+    return true;
   } catch (_) {
     return false;
+  }
+}
+
+async function openMessengerDeepLink(url) {
+  return openMessengerDeepLinkSync(url);
+}
+
+function syncMessengerOpenButton(deepLink) {
+  const openBtn = document.getElementById('messengerOpenAppBtn');
+  if (!openBtn) return;
+  const href = String(deepLink || '').trim();
+  if (!href) {
+    openBtn.hidden = true;
+    if (openBtn.tagName === 'A') openBtn.removeAttribute('href');
+    return;
+  }
+  openBtn.hidden = false;
+  // Настоящий <a href="serpmonn://…"> — жест пользователя → Cap launchIntent.
+  if (openBtn.tagName === 'A') {
+    openBtn.setAttribute('href', href);
+  }
+}
+
+async function prefetchMessengerChallenge() {
+  if (!isAndroidAppShell()) return;
+  if (messengerDeepLink && messengerChallengeId) return;
+  try {
+    const resp = await fetch('/api/messenger-auth/challenge', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: '{}'
+    });
+    const data = await resp.json().catch(() => ({}));
+    if (!resp.ok || !data?.success) return;
+    messengerChallengeId = data.challengeId;
+    messengerDeepLink = data.deepLink || null;
+    messengerPrefetchQr = data.qrPayload || null;
+    messengerPrefetchCode = data.shortCode || null;
+    syncMessengerOpenButton(messengerDeepLink);
+  } catch (e) {
+    console.warn('messenger challenge prefetch failed:', e);
   }
 }
 
@@ -505,12 +518,58 @@ function startMessengerPolling(challengeId) {
   }, 1500);
 }
 
-async function startMessengerLogin() {
+function beginMessengerSessionUi({ shortCode, qrPayload, openNow }) {
+  const codeEl = document.getElementById('messengerShortCode');
+  if (codeEl) codeEl.textContent = shortCode || messengerPrefetchCode || '————';
+
+  setMessengerModalOpen(true);
+  syncMessengerOpenButton(messengerDeepLink);
+
+  if (messengerChallengeId && !messengerPollingStarted) {
+    messengerPollingStarted = true;
+    startMessengerPolling(messengerChallengeId);
+  }
+
+  if (openNow && messengerDeepLink) {
+    const opened = openMessengerDeepLinkSync(messengerDeepLink);
+    setMessengerStatus(
+      opened
+        ? 'Подтвердите вход в мессенджере… Если не открылся — нажмите «Открыть мессенджер»'
+        : 'Нажмите «Открыть мессенджер» или введите код в приложении вручную'
+    );
+  } else if (isAndroidAppShell()) {
+    setMessengerStatus('Нажмите «Открыть мессенджер», затем подтвердите вход');
+  }
+
+  if (!isAndroidAppShell() && qrPayload) {
+    renderMessengerQr(qrPayload).catch((qrErr) => {
+      console.error('messenger QR render error:', qrErr);
+      setMessengerStatus('QR не загрузился — используйте код ниже');
+    });
+  }
+}
+
+async function startMessengerLogin(ev) {
   const btn = document.getElementById('messengerLoginBtn');
   if (btn) btn.disabled = true;
   const inApp = isAndroidAppShell();
   setMessengerAppModeUi(inApp);
-  setMessengerStatus(inApp ? 'Открываем мессенджер…' : 'Ожидаем подтверждение…');
+
+  // Если challenge уже prefetch — открываем синхронно в стеке клика (до await).
+  if (inApp && messengerDeepLink && messengerChallengeId) {
+    beginMessengerSessionUi({
+      shortCode: messengerPrefetchCode,
+      qrPayload: messengerPrefetchQr,
+      openNow: true
+    });
+    if (btn) btn.disabled = false;
+    // Фоном обновим challenge на следующий раз
+    messengerDeepLink = messengerDeepLink; // keep current for this session
+    prefetchNextChallengeAfterOpen();
+    return;
+  }
+
+  setMessengerStatus(inApp ? 'Готовим вход…' : 'Ожидаем подтверждение…');
 
   try {
     const resp = await fetch('/api/messenger-auth/challenge', {
@@ -527,28 +586,18 @@ async function startMessengerLogin() {
 
     messengerChallengeId = data.challengeId;
     messengerDeepLink = data.deepLink || null;
-    const codeEl = document.getElementById('messengerShortCode');
-    if (codeEl) codeEl.textContent = data.shortCode || '————';
+    messengerPrefetchCode = data.shortCode || null;
+    messengerPrefetchQr = data.qrPayload || null;
+    messengerPollingStarted = false;
 
-    setMessengerModalOpen(true);
-    startMessengerPolling(data.challengeId);
-
+    // После await авто-open часто блокируется — в app просим жест на кнопке-ссылке.
+    beginMessengerSessionUi({
+      shortCode: data.shortCode,
+      qrPayload: data.qrPayload,
+      openNow: false
+    });
     if (inApp) {
-      const opened = await openMessengerDeepLink(messengerDeepLink);
-      if (opened) {
-        setMessengerStatus('Подтвердите вход в мессенджере…');
-      } else {
-        setMessengerStatus(
-          'Не удалось открыть мессенджер. Установите Серпмонн Мессенджер или введите код там вручную'
-        );
-      }
-    } else {
-      try {
-        await renderMessengerQr(data.qrPayload);
-      } catch (qrErr) {
-        console.error('messenger QR render error:', qrErr);
-        setMessengerStatus('QR не загрузился — используйте код ниже');
-      }
+      setMessengerStatus('Нажмите «Открыть мессенджер», затем подтвердите вход');
     }
   } catch (e) {
     console.error('messenger login start error:', e);
@@ -558,32 +607,45 @@ async function startMessengerLogin() {
   }
 }
 
+function prefetchNextChallengeAfterOpen() {
+  // После успешного старта сессии не сбрасываем текущий deep link.
+  // Новый prefetch — только когда модалку закроют.
+}
+
 function initMessengerLogin() {
+  if (isAndroidAppShell()) {
+    prefetchMessengerChallenge();
+  }
+
   const btn = document.getElementById('messengerLoginBtn');
   if (btn) {
-    btn.addEventListener('click', () => {
-      startMessengerLogin();
+    btn.addEventListener('click', (ev) => {
+      startMessengerLogin(ev);
     });
   }
 
   const openBtn = document.getElementById('messengerOpenAppBtn');
   if (openBtn) {
-    openBtn.addEventListener('click', async () => {
+    openBtn.addEventListener('click', (ev) => {
       if (!messengerDeepLink) {
+        ev.preventDefault();
         setMessengerStatus('Ссылка недоступна — закройте окно и попробуйте снова');
         return;
       }
-      const opened = await openMessengerDeepLink(messengerDeepLink);
-      setMessengerStatus(
-        opened
-          ? 'Подтвердите вход в мессенджере…'
-          : 'Не удалось открыть мессенджер. Установите его или введите код вручную'
-      );
+      // Для <a href="serpmonn://…"> не preventDefault — Cap перехватит навигацию.
+      if (openBtn.tagName !== 'A') {
+        ev.preventDefault();
+        openMessengerDeepLinkSync(messengerDeepLink);
+      }
+      setMessengerStatus('Подтвердите вход в мессенджере…');
     });
   }
 
   document.querySelectorAll('[data-messenger-close]').forEach((el) => {
-    el.addEventListener('click', () => setMessengerModalOpen(false));
+    el.addEventListener('click', () => {
+      setMessengerModalOpen(false);
+      if (isAndroidAppShell()) prefetchMessengerChallenge();
+    });
   });
 
   document.addEventListener('keydown', (e) => {
