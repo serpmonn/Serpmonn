@@ -223,12 +223,31 @@
     <link rel="alternate" href="https://serpmonn.ru/frontend/auth/auth.html" hreflang="x-default" />
 
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <link rel="stylesheet" href="/frontend/auth/auth_styles.css">
+    <link rel="stylesheet" href="/frontend/auth/auth_styles.css?v=40">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <script>
+      (function () {
+        try {
+          var q = new URLSearchParams(location.search);
+          if (q.get('app') === '1' || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
+            document.documentElement.classList.add('auth-app-shell');
+          }
+        } catch (e) {}
+      })();
+    </script>
 </head>
 <body>
+    <script>
+      if (document.documentElement.classList.contains('auth-app-shell')) {
+        document.body.classList.add('auth-app-shell');
+      }
+    </script>
+    <header class="auth-app-bar" id="authAppBar" hidden>
+      <button type="button" class="auth-app-back" id="authAppBack" aria-label="Tilbage til login">← Tilbage til login</button>
+    </header>
+
     <div class="container auth-container">
-        <h2>Log ind på Serpmonn</h2>
+        <h2 class="auth-page-title">Log ind på Serpmonn</h2>
 
         <div id="authFormsView">
             <div id="VkIdSdkOneTap" class="vk-auth-widget" aria-label="Fortsæt med VK ID"></div>
@@ -297,15 +316,18 @@
         <div class="messenger-modal__backdrop" data-messenger-close></div>
         <div class="messenger-modal__card" role="dialog" aria-modal="true" aria-labelledby="messengerLoginTitle">
             <h3 id="messengerLoginTitle">Sign in with Serpmonn Messenger</h3>
-            <p class="messenger-modal__hint">Scan the QR code in the messenger</p>
+            <p class="messenger-modal__hint" id="messengerLoginHint">Scan the QR code in the messenger</p>
             <canvas id="messengerQrCanvas" width="220" height="220" aria-label="QR"></canvas>
+            <a id="messengerOpenAppBtn" class="submit-btn messenger-open-app-btn" hidden href="#" role="button">
+                Open messenger
+            </a>
             <p class="messenger-modal__code">Code: <strong id="messengerShortCode">————</strong></p>
             <p id="messengerLoginStatus" class="messenger-modal__status">Waiting for confirmation…</p>
             <button type="button" class="submit-btn secondary-btn" data-messenger-close>Cancel</button>
         </div>
     </div>
 
-    <script type="module" src="/frontend/auth/auth_scripts.js" defer></script>
+    <script type="module" src="/frontend/auth/auth_scripts.js?v=42" defer></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>
