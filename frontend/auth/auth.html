@@ -223,18 +223,37 @@
     <link rel="alternate" href="https://serpmonn.ru/frontend/auth/auth.html" hreflang="x-default" />
 
     <link rel="stylesheet" href="/frontend/styles/styles.css">
-    <link rel="stylesheet" href="/frontend/auth/auth_styles.css">
+    <link rel="stylesheet" href="/frontend/auth/auth_styles.css?v=40">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <script>
+      (function () {
+        try {
+          var q = new URLSearchParams(location.search);
+          if (q.get('app') === '1' || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
+            document.documentElement.classList.add('auth-app-shell');
+          }
+        } catch (e) {}
+      })();
+    </script>
 </head>
 <body>
+    <script>
+      if (document.documentElement.classList.contains('auth-app-shell')) {
+        document.body.classList.add('auth-app-shell');
+      }
+    </script>
+    <header class="auth-app-bar" id="authAppBar" hidden>
+      <button type="button" class="auth-app-back" id="authAppBack" aria-label="Назад">← Назад</button>
+    </header>
+
     <div class="container auth-container">
-        <h2>Войти в Серпмонн</h2>
+        <h2 class="auth-page-title">Войти в Серпмонн</h2>
 
         <div id="authFormsView">
             <div id="VkIdSdkOneTap" class="vk-auth-widget" aria-label="Войти через VK ID"></div>
 
             <button type="button" id="messengerLoginBtn" class="messenger-login-btn">
-                Войти через Серпмонн Messenger
+                Войти через Серпмонн Мессенджер
             </button>
 
             <p class="auth-divider"><span>или</span></p>
@@ -296,16 +315,19 @@
     <div id="messengerLoginModal" class="messenger-modal" hidden>
         <div class="messenger-modal__backdrop" data-messenger-close></div>
         <div class="messenger-modal__card" role="dialog" aria-modal="true" aria-labelledby="messengerLoginTitle">
-            <h3 id="messengerLoginTitle">Вход через Серпмонн Messenger</h3>
-            <p class="messenger-modal__hint">Отсканируйте QR в мессенджере</p>
+            <h3 id="messengerLoginTitle">Вход через Серпмонн Мессенджер</h3>
+            <p class="messenger-modal__hint" id="messengerLoginHint">Отсканируйте QR в мессенджере</p>
             <canvas id="messengerQrCanvas" width="220" height="220" aria-label="QR"></canvas>
+            <button type="button" id="messengerOpenAppBtn" class="submit-btn messenger-open-app-btn" hidden>
+                Открыть мессенджер
+            </button>
             <p class="messenger-modal__code">Код: <strong id="messengerShortCode">————</strong></p>
             <p id="messengerLoginStatus" class="messenger-modal__status">Ожидаем подтверждение…</p>
             <button type="button" class="submit-btn secondary-btn" data-messenger-close>Отмена</button>
         </div>
     </div>
 
-    <script type="module" src="/frontend/auth/auth_scripts.js" defer></script>
+    <script type="module" src="/frontend/auth/auth_scripts.js?v=39" defer></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

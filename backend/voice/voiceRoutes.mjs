@@ -47,12 +47,9 @@ router.post('/stt', async (req, res) => {
     // Копия байт: снимает type-confusion (JSON/object vs Buffer) для CodeQL и рантайма
     const audioBuffer = Buffer.from(req.body);
 
-    console.log(`[STT] Получено ${audioBuffer.length} байт WebM`);
-
     let wavBuffer;
     try {
       wavBuffer = await convertWebmToWav(audioBuffer);
-      console.log(`[STT] Конвертировано в ${wavBuffer.length} байт WAV`);
     } catch (convError) {
       console.error('[STT] Ошибка конвертации:', convError.message);
       return res.status(500).json({ error: 'Ошибка обработки аудио' });
@@ -74,7 +71,10 @@ router.post('/stt', async (req, res) => {
     );
 
     const text = (whisperResp.data?.text || '').trim();
-    console.log(`[STT] Распознано (${whisperResp.data?.language || 'auto'}, ${whisperResp.data?.duration || '?'}s): "${text}"`);
+    console.log(
+      `[STT] ${audioBuffer.length}B WebM → ${wavBuffer.length}B WAV | ` +
+      `${whisperResp.data?.language || 'auto'} ${whisperResp.data?.duration || '?'}s | "${text}"`
+    );
 
     res.json({ text });
   } catch (error) {

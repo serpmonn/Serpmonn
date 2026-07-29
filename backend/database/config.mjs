@@ -1,21 +1,21 @@
-import dotenv from 'dotenv';                                                                                                     // Импортируем dotenv для работы с переменными окружения                                                                                                 // Импортируем resolve для создания абсолютных путей
-dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });                                                                    // Загружаем переменные окружения из выбранного пути
+import dotenv from 'dotenv';
+dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
 
 import mysql from 'mysql2';
 
-const pool = mysql.createPool({													                                                 // Создаём пул подключений к базе данных
-        host: process.env.DB_HOST,												                                                 // Хост базы данных, загружается из переменных окружения
-        user: process.env.DB_USER,												                                                 // Пользователь для подключения
-        password: process.env.DB_PASSWORD,											                                             // Пароль для подключения
-        database: process.env.DB_NAME,												                                             // Название базы данных
-        port: process.env.DB_PORT || 3306,											                                             // Порт подключения, если не задан в .env, используется 3306
+const pool = mysql.createPool({
+        host: process.env.DB_HOST,
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        port: process.env.DB_PORT || 3306,
     });
 
-export const query = (sql, values) => {												                                             // Функция для выполнения SQL-запросов
+export const query = (sql, values) => {
     return new Promise((resolve, reject) => {
         pool.execute(sql, values, (err, results) => {
             if (err) {
-                console.error('Ошибка при выполнении запроса:', err);								                             // Логирование ошибки
+                console.error('Ошибка при выполнении запроса:', err);
                 reject(err);
             } else {
                 resolve(results);
@@ -23,3 +23,20 @@ export const query = (sql, values) => {												                             
         });
     });
 };
+
+/** Promise-обёртка над pool.getConnection для транзакций */
+export const getConnection = () =>
+  new Promise((resolve, reject) => {
+    pool.getConnection((err, connection) => {
+      if (err) reject(err);
+      else resolve(connection);
+    });
+  });
+
+export const connQuery = (connection, sql, values = []) =>
+  new Promise((resolve, reject) => {
+    connection.execute(sql, values, (err, results) => {
+      if (err) reject(err);
+      else resolve(results);
+    });
+  });

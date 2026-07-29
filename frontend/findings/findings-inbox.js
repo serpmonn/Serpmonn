@@ -7,7 +7,7 @@ import {
 import { openActivityModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=31';
 
 async function renderInboxPage() {
-  generateCombinedBackground();
+  if (!window.__SPN_ANDROID_APP__) generateCombinedBackground();
   await loadT();
   const t = (key, vars) => getFindingT(`finding.${key}`, vars);
 

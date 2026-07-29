@@ -7,6 +7,7 @@ import crypto from 'crypto';
 import { query } from '../database/config.mjs';
 import { setAuthCookie, clearAuthCookie } from '../auth/authCookie.mjs';
 import paseto from 'paseto';
+import { awardSocialRegistrationBonuses } from '../points/pointsService.js';
 
 const { V2 } = paseto;
 
@@ -154,6 +155,11 @@ export async function upsertVkUser({ vkUserId, email = null, name = null }) {
       [id]
     );
     user = rows[0];
+    try {
+      await awardSocialRegistrationBonuses(user.id, 'vk-mini');
+    } catch (ptsErr) {
+      console.error('vk-mini points award error:', ptsErr);
+    }
   }
 
   return user;

@@ -11,13 +11,20 @@ const execFileAsync = promisify(execFile);
  * Обход проблемы ECONNRESET / UND_ERR_CONNECT_TIMEOUT в Undici
  * при запросах к локальному SearXNG (127.0.0.1:80).
  * Здесь повторяем ровно тот запрос, который стабильно работает через curl.
+ *
+ * @param {string} query
+ * @param {string} category
+ * @param {{ language?: string, engines?: string }} [opts]
  */
-async function fetchSearxViaCurl(query, category) {
-  const url =
+async function fetchSearxViaCurl(query, category, opts = {}) {
+  const { language, engines } = opts;
+  let url =
     `http://127.0.0.1/search` +
     `?q=${encodeURIComponent(query)}` +
     `&categories=${encodeURIComponent(category)}` +
     `&format=json`;
+  if (language) url += `&language=${encodeURIComponent(language)}`;
+  if (engines) url += `&engines=${encodeURIComponent(engines)}`;
 
   try {
     const { stdout, stderr } = await execFileAsync('curl', [

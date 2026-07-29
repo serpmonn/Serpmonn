@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#ffffff">
   <title>Серпмонн</title>
   <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-  <link rel="stylesheet" href="/frontend/app/app.css?v=30">
+  <link rel="stylesheet" href="/frontend/app/app.css?v=34">
   <script>
     window.__SPN_ANDROID_APP__ = true;
   </script>
@@ -106,7 +106,7 @@
       <section class="spn-screen" data-screen="profile" aria-label="Профиль" hidden>
         <div id="profileGuest" class="spn-profile">
           <h2 class="spn-h2">Профиль</h2>
-          <p class="spn-muted">Войдите через аккаунт Серпмонн, чтобы открыть план, баллы, находки и настройки.</p>
+          <p class="spn-muted">Войдите через аккаунт Серпмонн, чтобы открыть почту, входящие, находки, план и настройки.</p>
           <div class="spn-actions">
             <button type="button" class="spn-btn spn-btn--block" data-open="/frontend/auth/auth.html">Войти / регистрация</button>
           </div>
@@ -126,6 +126,7 @@
             <div id="profileQuickLinks" class="spn-profile-bar__links">
               <button type="button" class="spn-chipbtn" data-profile-page="/frontend/findings/feed.html" data-title="Лента находок">Лента находок</button>
               <button type="button" class="spn-chipbtn" data-profile-page="/frontend/findings/inbox.html" data-title="Входящие">Входящие</button>
+              <button type="button" class="spn-chipbtn" data-service="mail">Почта</button>
             </div>
             <button type="button" id="profileLogoutBtn" class="spn-chipbtn spn-chipbtn--danger">Выйти</button>
           </div>
@@ -181,8 +182,42 @@
     </div>
 
     <div id="spnToast" class="spn-toast" hidden></div>
+
+    <!-- Онбординг -->
+    <div id="spnOnboarding" class="spn-onboard" aria-hidden="true" hidden>
+      <div class="spn-onboard__panel" role="dialog" aria-modal="true" aria-label="Добро пожаловать">
+        <div class="spn-onboard__dots" id="spnOnboardDots" aria-hidden="true"></div>
+        <div id="spnOnboardSlides">
+          <div class="spn-onboard__slide" data-slide="0">
+            <h2>Добро пожаловать в Серпмонн</h2>
+            <p>Умный поиск с ИИ, новости, инструменты и игры — в одном приложении.</p>
+          </div>
+          <div class="spn-onboard__slide" data-slide="1" hidden>
+            <h2>Почта и сообщения</h2>
+            <p>После входа в профиле доступны почта @onnmail, входящие и лента находок.</p>
+          </div>
+          <div class="spn-onboard__slide" data-slide="2" hidden>
+            <h2>Как пользоваться</h2>
+            <p>Нижнее меню: Поиск, Новости, Инструменты, Игры и Профиль.</p>
+          </div>
+        </div>
+        <div class="spn-onboard__actions">
+          <button type="button" id="spnOnboardSkip" class="spn-btn spn-btn--ghost">Пропустить</button>
+          <button type="button" id="spnOnboardNext" class="spn-btn">Далее</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Нет сети -->
+    <div id="spnOffline" class="spn-offline" aria-hidden="true" hidden>
+      <div class="spn-offline__card" role="status">
+        <h2>Нет сети</h2>
+        <p>Проверьте подключение к интернету и попробуйте снова.</p>
+        <button type="button" id="spnOfflineRetry" class="spn-btn">Повторить</button>
+      </div>
+    </div>
   </div>
 
-  <script src="/frontend/app/app.js?v=30"></script>
+  <script src="/frontend/app/app.js?v=39"></script>
 </body>
 </html>

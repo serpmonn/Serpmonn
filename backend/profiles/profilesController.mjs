@@ -19,10 +19,21 @@ const secretKey = process.env.SECRET_KEY;                                       
 const getUserProfile = async (req, res) => {                                                                                     // Определяем функцию для получения профиля
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');                                                    // Устанавливаем заголовки для отключения кэширования
     try {                                                                                                                        // Начинаем блок обработки ошибок
-        const { email } = req.user;                                                                                              // Извлекаем email из объекта пользователя в запросе
-        console.log('Email пользователя из токена (getUserProfile):', email);                                                    // Логируем email пользователя для отладки
-        const queryText = 'SELECT username, email, confirmed, mailbox_created FROM users WHERE email = ?';                       // Определяем SQL-запрос для получения данных пользователя
-        const result = await query(queryText, [email]);                                                                          // Выполняем запрос к БД с email
+        const { email, id: userId } = req.user || {};
+        console.log('Email пользователя из токена (getUserProfile):', email);
+        let result = [];
+        if (userId) {
+            result = await query(
+                'SELECT username, email, confirmed, mailbox_created FROM users WHERE id = ? LIMIT 1',
+                [userId]
+            );
+        }
+        if ((!result || result.length === 0) && email) {
+            result = await query(
+                'SELECT username, email, confirmed, mailbox_created FROM users WHERE email = ? LIMIT 1',
+                [email]
+            );
+        }
         console.log('Результат запроса к БД (getUserProfile):', result);                                                         // Логируем результат запроса для отладки
 
         if (!result || result.length === 0) {                                                                                    // Проверяем, получены ли данные пользователя
@@ -50,17 +61,20 @@ const getMonthKey = () => new Date().toISOString().slice(0, 7);                 
 const getUserInfo = async (req, res) => {                                                                                        // Определяем функцию для получения информации
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');                                                    // Устанавливаем заголовки для отключения кэширования
     try {                                                                                                                        // Начинаем блок обработки ошибок
-        const { email } = req.user;                                                                                              // Извлекаем email из объекта пользователя в запросе
-        console.log('Email пользователя из токена (getUserInfo):', email);                                                       // Логируем email пользователя для отладки
+        const { email, id: userId } = req.user || {};
+        console.log('Email пользователя из токена (getUserInfo):', email, 'id:', userId);
 
-        // 1. читаем юзера с полями тарифа
-        const queryText = `
+        const selectCols = `
         SELECT id, username, email, confirmed, mailbox_created, avatar_updated_at, plan, pro_until, created_at
         FROM users
-        WHERE email = ?
-        LIMIT 1
         `;
-        const result = await query(queryText, [email]);
+        let result = [];
+        if (userId) {
+            result = await query(`${selectCols} WHERE id = ? LIMIT 1`, [userId]);
+        }
+        if ((!result || result.length === 0) && email) {
+            result = await query(`${selectCols} WHERE email = ? LIMIT 1`, [email]);
+        }
         console.log('Результат запроса к БД (getUserInfo):', result);
 
         if (!result || result.length === 0) {
@@ -139,10 +153,10 @@ const getUserInfo = async (req, res) => {                                       
 
 // Контроллер для обновления профиля пользователя
 const updateUserProfile = async (req, res) => {                                                                                  // Определяем функцию для обновления профиля
-    const { email: oldEmail, username: oldUsername } = req.user;                                                                 // Извлекаем старый email и username из токена
+    const { email: oldEmail, username: oldUsername, id: userId } = req.user || {};
     const { username, email } = req.body;                                                                                        // Извлекаем новые username и email из тела запроса
     console.log('Полученные данные:', req.body);                                                                                 // Логируем тело запроса для отладки
-    console.log('Email пользователя из токена:', email);                                                                         // Логируем email из токена для отладки
+    console.log('Email пользователя из токена:', oldEmail);
     console.log('Username пользователя из токена:', oldUsername);                                                                // Логируем username из токена для отладки
 
     if (!email || !username) {                                                                                                   // Проверяем, предоставлены ли email и username
@@ -150,13 +164,26 @@ const updateUserProfile = async (req, res) => {                                 
     }                                                                                                                      
 
     try {                                                                                                                        // Начинаем блок обработки ошибок
-        const queryText = 'UPDATE users SET username = ?, email = ? WHERE email = ?';                                            // Определяем SQL-запрос для обновления данных
-        const result = await query(queryText, [username, email, oldEmail]);                                                      // Выполняем запрос к БД для обновления
+        let result;
+        if (userId) {
+            result = await query(
+                'UPDATE users SET username = ?, email = ? WHERE id = ?',
+                [username, email, userId]
+            );
+        } else {
+            result = await query(
+                'UPDATE users SET username = ?, email = ? WHERE email = ?',
+                [username, email, oldEmail]
+            );
+        }
         console.log('Результат обновления:', result);                                                                            // Логируем результат обновления для отладки
 
         if (oldEmail !== email || oldUsername !== username) {                                                                    // Проверяем, изменились ли email или username
             clearAuthCookie(res);
-            const newToken = await V2.sign({ username, email }, secretKey);
+            const newToken = await V2.sign(
+                { id: userId, username, email },
+                secretKey
+            );
             setAuthCookie(res, newToken, 24 * 60 * 60 * 1000);
             return res.json({ message: 'Профиль обновлен, новый токен создан', token: newToken });                               // Возвращаем ответ с новым токеном
         }                                                                                                                      

@@ -221,6 +221,13 @@ html, body {
   color: var(--spn-fg);
   margin-top: 12px;
 }
+/* hidden не должен перебиваться display:flex у .spn-profile--embed */
+#profileGuest[hidden],
+#profileUser[hidden],
+.spn-profile[hidden],
+.spn-profile--embed[hidden] {
+  display: none !important;
+}
 .spn-profile--embed {
   display: flex;
   flex-direction: column;
@@ -802,4 +809,85 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
 .spn-viewer__frame.is-booting {
   opacity: 0;
   pointer-events: none;
+}
+
+/* Сервисы на главном экране — убраны (неудобно для пользователя) */
+
+/* Онбординг */
+.spn-onboard {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  background: rgba(20, 20, 20, 0.45);
+  padding: 16px;
+}
+.spn-onboard[hidden] { display: none !important; }
+.spn-onboard__panel {
+  width: 100%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 18px 18px 14px 14px;
+  padding: 20px 16px calc(16px + var(--spn-safe-b));
+  box-shadow: 0 -8px 28px rgba(0,0,0,.18);
+}
+.spn-onboard__dots {
+  display: flex;
+  gap: 6px;
+  justify-content: center;
+  margin-bottom: 12px;
+}
+.spn-onboard__dots span {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #d0d0d4;
+}
+.spn-onboard__dots span.is-active { background: var(--spn-accent); }
+.spn-onboard__slide h2 {
+  margin: 0 0 8px;
+  font-size: 1.2rem;
+  text-align: center;
+}
+.spn-onboard__slide p {
+  margin: 0 0 16px;
+  color: var(--spn-muted);
+  text-align: center;
+  line-height: 1.45;
+  font-size: 0.95rem;
+}
+.spn-onboard__actions {
+  display: flex;
+  gap: 8px;
+}
+.spn-onboard__actions .spn-btn { flex: 1; }
+
+/* Офлайн */
+.spn-offline {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(247, 247, 248, 0.96);
+  padding: 24px;
+}
+.spn-offline[hidden] { display: none !important; }
+.spn-offline__card {
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid var(--spn-border);
+  border-radius: 16px;
+  padding: 22px 18px;
+}
+.spn-offline__card h2 { margin: 0 0 8px; font-size: 1.2rem; }
+.spn-offline__card p {
+  margin: 0 0 16px;
+  color: var(--spn-muted);
+  line-height: 1.45;
 }

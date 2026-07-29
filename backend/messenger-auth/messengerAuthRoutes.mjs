@@ -17,6 +17,7 @@ import {
     randomShortCode,
     toMysqlDateTime
 } from './messengerAuthCrypto.mjs';
+import { awardSocialRegistrationBonuses } from '../points/pointsService.js';
 
 const { V2 } = paseto;
 const router = express.Router();
@@ -230,7 +231,13 @@ async function findOrCreateUserFromMessenger({ messengerUserId, signPubHex, disp
         'SELECT id, username, email, messenger_user_id, messenger_sign_pub FROM users WHERE messenger_user_id = ? LIMIT 1',
         [messengerUserId]
     );
-    return rows[0];
+    const created = rows[0];
+    try {
+        await awardSocialRegistrationBonuses(created.id, 'messenger');
+    } catch (ptsErr) {
+        console.error('messenger-auth points award error:', ptsErr);
+    }
+    return created;
 }
 
 async function issueExchangeCode(challengeId, userId) {

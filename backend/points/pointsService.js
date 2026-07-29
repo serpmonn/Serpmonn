@@ -31,3 +31,27 @@ export async function awardPoints(userId, delta, type = 'manual', meta = null) {
     [userId, delta, type, meta ? JSON.stringify(meta) : null]
   );
 }
+
+/**
+ * Стартовые баллы для соц. регистрации (VK / Messenger / Mini).
+ * Эквивалент email: +50 signup + +200 confirm (аккаунт сразу confirmed).
+ * Идемпотентно через registration_points_awarded.
+ */
+export async function awardSocialRegistrationBonuses(userId, via = 'social') {
+  if (!userId) return false;
+
+  const rows = await query(
+    'SELECT registration_points_awarded FROM users WHERE id = ? LIMIT 1',
+    [userId]
+  );
+  if (!rows?.length) return false;
+  if (rows[0].registration_points_awarded) return false;
+
+  await awardPoints(userId, 50, 'registration_signup', { via });
+  await awardPoints(userId, 200, 'registration', { via });
+  await query(
+    'UPDATE users SET registration_points_awarded = 1 WHERE id = ?',
+    [userId]
+  );
+  return true;
+}

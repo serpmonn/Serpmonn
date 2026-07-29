@@ -110,27 +110,87 @@ const VIEWER_HIDE_MENU_CSS = `
     height: 100% !important;
     min-height: 100% !important;
     background: #f7f7f8 !important;
+    /* Android WebView: жёлто-оранжевые квадраты при тапе */
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  /* Брендовый canvas (#f47059) в оболочке выглядит как оранжевые пятна/квадраты */
+  #serpmonn-bg-canvas {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
   }
   .page-wrapper {
     min-height: 100% !important;
-    padding: 12px 14px 20px !important;
+    padding: 8px 10px 16px !important;
     background: #f7f7f8 !important;
+    box-shadow: none !important;
+    border: none !important;
   }
-  .page-wrapper > .container {
+  .page-wrapper > .container,
+  .page-wrapper .container {
     max-width: none !important;
     width: 100% !important;
     margin: 0 !important;
-    padding: 14px 14px 16px !important;
+    margin-bottom: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    border-radius: 0 !important;
+    animation: none !important;
   }
-  /* Лента/входящие: без лишней «карточки» поверх контейнера, отступы уже у .container */
+  /* Лента/входящие: без лишней «карточки» поверх контейнера */
   .finding-inbox-card.card,
-  .card.finding-inbox-card {
+  .card.finding-inbox-card,
+  section.card {
     box-shadow: none !important;
     border: none !important;
     border-radius: 0 !important;
     margin: 0 !important;
     padding: 0 !important;
     background: transparent !important;
+    outline: none !important;
+  }
+  /* Карточки ленты/входящих — без оранжевой подсветки тапа/фокуса */
+  * {
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  .finding-list-card,
+  .finding-inbox-item,
+  .finding-activity-event,
+  .finding-list-card--clickable,
+  .finding-feed-tab,
+  .finding-activity-tab,
+  button,
+  a {
+    -webkit-tap-highlight-color: transparent !important;
+    outline: none !important;
+  }
+  .finding-list-card,
+  .finding-inbox-item,
+  .finding-activity-event {
+    background: #fff !important;
+    background-clip: padding-box !important;
+    border: 1px solid #e5e7eb !important;
+    box-shadow: none !important;
+  }
+  .finding-list-card:focus,
+  .finding-list-card:focus-visible,
+  .finding-list-card:active,
+  .finding-list-card:hover,
+  .finding-inbox-item:focus,
+  .finding-inbox-item:focus-visible,
+  .finding-inbox-item:active,
+  .finding-inbox-item:hover {
+    outline: none !important;
+    box-shadow: none !important;
+    border-color: #e5e7eb !important;
+  }
+  .finding-list-card--unread,
+  .finding-inbox-item--unread {
+    border-color: #e5e7eb !important;
+    background: #fff !important;
   }
   /* Заголовок уже в шапке приложения / «← Профиль» */
   #findings-feed-title,
@@ -217,6 +277,22 @@ function isViewerOpen() {
   return Boolean(viewer && !viewer.hidden);
 }
 
+function openAppAuth(title = 'Вход') {
+  const returnTo = encodeURIComponent('/frontend/app/index.html?app=1&tab=profile');
+  const authUrl = `/frontend/auth/auth.html?app=1&return=${returnTo}`;
+  // В оболочке приложения — всегда полный переход (не viewer: иначе 2× «Назад»)
+  try {
+    if (
+      window.__SPN_ANDROID_APP__ ||
+      window.Capacitor?.isNativePlatform?.()
+    ) {
+      window.location.assign(authUrl);
+      return;
+    }
+  } catch (_) {}
+  openViewer(authUrl, title);
+}
+
 function openViewer(url, title) {
   // Лента / входящие — только в подложке профиля, не viewer-popup
   if (/\/findings\/(feed|inbox)\.html/i.test(String(url || ''))) {
@@ -233,6 +309,14 @@ function openViewer(url, title) {
       history.pushState({ spnViewer: 1 }, '');
       viewerHistoryPushed = true;
     } catch (_) {}
+  }
+  // VK ID / OAuth не работают в srcdoc (домен about:srcdoc ≠ serpmonn.ru)
+  if (/\/auth\/|vkid|oauth|\/mail\//i.test(String(url || ''))) {
+    const token = ++viewerBootToken;
+    viewerFrame.classList.add('is-booting');
+    try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
+    viewerFrame.src = href;
+    return;
   }
   loadViewerHtml(href);
 }
@@ -483,12 +567,24 @@ document.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-open]');
   if (!btn) return;
   e.preventDefault();
-  openViewer(btn.getAttribute('data-open'), btn.textContent.trim());
+  const href = btn.getAttribute('data-open') || '';
+  if (/\/auth\//i.test(href)) {
+    openAppAuth(btn.textContent.trim() || 'Вход');
+    return;
+  }
+  openViewer(href, btn.textContent.trim());
 });
 
 window.addEventListener('message', (ev) => {
   if (!ev || !ev.data) return;
   if (ev.data.type === 'spn-app-close-viewer') closeViewer();
+  if (ev.data.type === 'spn-app-auth-ok') {
+    try { closeViewer(); } catch (_) {}
+    showScreen('profile');
+    refreshProfile();
+    toast('Вы вошли');
+    return;
+  }
   if (ev.data.type === 'spn-app-logged-out') {
     try { clearProfileEmbed(); } catch (_) {}
     showGuestProfile();
@@ -640,7 +736,7 @@ async function saveFindingPrivate() {
   const auth = await fetch('/auth/protected', { credentials: 'include' });
   if (!auth.ok) {
     closeFindingSaveModal();
-    openViewer('/frontend/auth/auth.html', 'Вход');
+    openAppAuth('Вход');
     return;
   }
   const snapshot = {
@@ -726,7 +822,7 @@ function setupSearchActionButtons() {
       }
       const auth = await fetch('/auth/protected', { credentials: 'include' });
       if (!auth.ok) {
-        openViewer('/frontend/auth/auth.html', 'Вход');
+        openAppAuth('Вход');
         return;
       }
       openFindingSaveModal();
@@ -1475,10 +1571,16 @@ async function loadViewerHtmlInto(frame, href) {
     `<base href="${baseHref}">` +
     `<style id="spn-android-app-css">${VIEWER_HIDE_MENU_CSS}</style>` +
     ANDROID_BOOT_SCRIPT;
+  const late = `<style id="spn-android-app-css-late">${VIEWER_HIDE_MENU_CSS}</style>`;
   if (/<head[^>]*>/i.test(html)) {
     html = html.replace(/<head([^>]*)>/i, `<head$1>${early}`);
   } else {
     html = `<!DOCTYPE html><html class="android-app"><head>${early}</head><body class="android-app">${html}</body></html>`;
+  }
+  if (/<\/body>/i.test(html)) {
+    html = html.replace(/<\/body>/i, `${late}</body>`);
+  } else {
+    html += late;
   }
   try { frame.removeAttribute('src'); } catch (_) {}
   frame.srcdoc = html;
@@ -1528,10 +1630,24 @@ document.addEventListener('click', (e) => {
 });
 
 function showGuestProfile() {
+  try { closeFullscreenPage(); } catch (_) {}
+  profileSubpageOpen = false;
   profileGuest.hidden = false;
   profileUser.hidden = true;
+  if (profileUser) profileUser.classList.remove('is-subpage');
+  if (profileBar) profileBar.hidden = false;
+  if (profileBackBtn) profileBackBtn.hidden = true;
+  if (profileQuickLinks) profileQuickLinks.hidden = false;
+  if (profileLogoutBtn) profileLogoutBtn.hidden = false;
+  if (profileMore) {
+    profileMore.hidden = false;
+    try { profileMore.open = false; } catch (_) {}
+  }
   clearProfileEmbed();
   syncProfileEmbedMode();
+  if (subtitleEl && document.documentElement.classList.contains('spn-profile-tab')) {
+    subtitleEl.textContent = TITLES.profile || 'Профиль';
+  }
 }
 
 function syncProfileEmbedMode() {
@@ -1602,10 +1718,264 @@ document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') refreshProfile();
 });
 
+/* —— VK ID: полный OAuth-редирект в WebView (без LOGIN_SUCCESS на auth) —— */
+function parseVkIdCallbackParams() {
+  const hash = (location.hash || '').replace(/^#/, '');
+  const hashParams = new URLSearchParams(hash);
+  const queryParams = new URLSearchParams(location.search);
+  let code = hashParams.get('code') || queryParams.get('code');
+  let deviceId = hashParams.get('device_id') || queryParams.get('device_id');
+  const payloadStr = hashParams.get('payload') || queryParams.get('payload');
+  if (payloadStr && (!code || !deviceId)) {
+    for (const raw of [payloadStr, (() => { try { return decodeURIComponent(payloadStr); } catch { return null; } })()]) {
+      if (!raw) continue;
+      try {
+        const p = JSON.parse(raw);
+        code = code || p.code || null;
+        deviceId = deviceId || p.device_id || p.deviceId || null;
+        break;
+      } catch (_) {}
+    }
+  }
+  if (code && deviceId) return { code, deviceId };
+  return null;
+}
+
+function clearAuthReturnUrl(toProfile) {
+  try {
+    const u = new URL(location.href);
+    u.hash = '';
+    ['code', 'device_id', 'state', 'type', 'payload', 'error', 'error_description'].forEach((k) => {
+      u.searchParams.delete(k);
+    });
+    u.searchParams.set('app', '1');
+    if (toProfile) u.searchParams.set('tab', 'profile');
+    else u.searchParams.delete('tab');
+    history.replaceState({}, '', u.pathname + '?' + u.searchParams.toString());
+  } catch (_) {}
+}
+
+function loadVkIdSdk() {
+  if (window.VKIDSDK) return Promise.resolve(window.VKIDSDK);
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://unpkg.com/@vkid/sdk@2.6.1/dist-sdk/umd/index.js';
+    s.async = true;
+    s.onload = () => resolve(window.VKIDSDK);
+    s.onerror = () => reject(new Error('VKID SDK load failed'));
+    document.head.appendChild(s);
+  });
+}
+
+async function completeVkIdFromRedirect() {
+  const params = parseVkIdCallbackParams();
+  if (!params) return false;
+  // Сразу чистим URL, чтобы не зациклиться при reload
+  clearAuthReturnUrl(true);
+  try {
+    const VKID = await loadVkIdSdk();
+    if (!VKID?.Auth?.exchangeCode) throw new Error('no exchangeCode');
+    VKID.Config.init({
+      app: 54486564,
+      redirectUrl: 'https://serpmonn.ru/frontend/app/index.html?app=1',
+      responseMode: VKID.ConfigResponseMode.Callback,
+      source: VKID.ConfigSource.LOWCODE,
+      scope: 'vkid.personal_info email',
+    });
+    const tokens = await VKID.Auth.exchangeCode(params.code, params.deviceId);
+    const userInfo = await VKID.Auth.userInfo(tokens.access_token);
+    const vkUserId = userInfo.user?.id || userInfo.user?.user_id;
+    const email = userInfo.user?.email ?? null;
+    const name = userInfo.user?.first_name ?? null;
+    if (!vkUserId) throw new Error('no vkUserId');
+    const resp = await fetch('/api/vkid-login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ vkUserId, email, name }),
+    });
+    const data = await resp.json().catch(() => null);
+    if (data?.success) return true;
+    throw new Error('vkid-login failed');
+  } catch (err) {
+    console.error('VKID app redirect login failed:', err);
+    // Код мог уже быть обменян на странице auth (LOGIN_SUCCESS) — проверим сессию
+    try {
+      const res = await fetch('/auth/protected', { credentials: 'include' });
+      return res.ok;
+    } catch (_) {
+      return false;
+    }
+  }
+}
+
 /* —— Boot —— */
 loadCatalog();
 showScreen('search');
 
-// Deep-link ?tab=
-const tab = new URLSearchParams(location.search).get('tab');
-if (tab && TITLES[tab]) showScreen(tab);
+(async function bootAppShell() {
+  let wentToProfile = false;
+  let toastLogin = false;
+  const hadVkCallback = Boolean(parseVkIdCallbackParams());
+
+  try {
+    const vkOk = await completeVkIdFromRedirect();
+    if (vkOk) {
+      wentToProfile = true;
+      toastLogin = true;
+    } else if (hadVkCallback) {
+      toast('Не удалось войти через VK. Попробуйте ещё раз');
+    }
+  } catch (_) {
+    if (hadVkCallback) toast('Не удалось войти через VK. Попробуйте ещё раз');
+  }
+
+  try {
+    if (sessionStorage.getItem('spn_app_post_auth') === '1') {
+      sessionStorage.removeItem('spn_app_post_auth');
+      wentToProfile = true;
+      toastLogin = true;
+    }
+  } catch (_) {}
+
+  const tab = new URLSearchParams(location.search).get('tab');
+  if (wentToProfile || tab === 'profile') {
+    showScreen('profile');
+    try { await refreshProfile(); } catch (_) {}
+    if (toastLogin) toast('Вы вошли');
+  } else if (tab && TITLES[tab]) {
+    showScreen(tab);
+  }
+})();
+
+/* —— Сервисы: почта / входящие / лента —— */
+async function isLoggedIn() {
+  try {
+    const res = await fetch('/auth/protected', { credentials: 'include' });
+    return res.ok;
+  } catch (_) {
+    return false;
+  }
+}
+
+async function openAppService(kind) {
+  const loggedIn = await isLoggedIn();
+  if (!loggedIn) {
+    openAppAuth('Вход');
+    return;
+  }
+  if (kind === 'mail') {
+    const mailUrl = catalog?.links?.mail || '/mail/';
+    openViewer(mailUrl, 'Почта');
+    return;
+  }
+  if (kind === 'inbox') {
+    showScreen('profile');
+    openProfileSubpage(
+      catalog?.links?.findingsInbox || '/frontend/findings/inbox.html',
+      'Входящие'
+    );
+    return;
+  }
+  if (kind === 'feed') {
+    showScreen('profile');
+    openProfileSubpage(
+      catalog?.links?.findingsFeed || '/frontend/findings/feed.html',
+      'Лента находок'
+    );
+  }
+}
+
+document.addEventListener('click', (e) => {
+  const btn = e.target.closest('[data-service]');
+  if (!btn) return;
+  e.preventDefault();
+  openAppService(btn.getAttribute('data-service'));
+});
+
+/* —— Онбординг —— */
+const ONBOARD_KEY = 'spn_android_onboarded_v1';
+const onboardRoot = document.getElementById('spnOnboarding');
+const onboardSlides = Array.from(document.querySelectorAll('#spnOnboardSlides .spn-onboard__slide'));
+const onboardDots = document.getElementById('spnOnboardDots');
+const onboardNext = document.getElementById('spnOnboardNext');
+const onboardSkip = document.getElementById('spnOnboardSkip');
+let onboardIndex = 0;
+
+function finishOnboarding() {
+  try { localStorage.setItem(ONBOARD_KEY, '1'); } catch (_) {}
+  if (onboardRoot) {
+    onboardRoot.hidden = true;
+    onboardRoot.setAttribute('aria-hidden', 'true');
+  }
+}
+
+function renderOnboarding() {
+  onboardSlides.forEach((slide, i) => {
+    slide.hidden = i !== onboardIndex;
+  });
+  if (onboardDots) {
+    onboardDots.innerHTML = '';
+    onboardSlides.forEach((_, i) => {
+      const dot = document.createElement('span');
+      if (i === onboardIndex) dot.className = 'is-active';
+      onboardDots.appendChild(dot);
+    });
+  }
+  if (onboardNext) {
+    onboardNext.textContent = onboardIndex >= onboardSlides.length - 1 ? 'Начать' : 'Далее';
+  }
+}
+
+function openOnboarding() {
+  if (!onboardRoot || !onboardSlides.length) return;
+  let done = false;
+  try { done = localStorage.getItem(ONBOARD_KEY) === '1'; } catch (_) {}
+  if (done) return;
+  onboardIndex = 0;
+  renderOnboarding();
+  onboardRoot.hidden = false;
+  onboardRoot.setAttribute('aria-hidden', 'false');
+}
+
+onboardNext?.addEventListener('click', () => {
+  if (onboardIndex >= onboardSlides.length - 1) {
+    finishOnboarding();
+    return;
+  }
+  onboardIndex += 1;
+  renderOnboarding();
+});
+onboardSkip?.addEventListener('click', finishOnboarding);
+openOnboarding();
+
+/* —— Офлайн —— */
+const offlineRoot = document.getElementById('spnOffline');
+const offlineRetry = document.getElementById('spnOfflineRetry');
+
+function setOfflineVisible(show) {
+  if (!offlineRoot) return;
+  offlineRoot.hidden = !show;
+  offlineRoot.setAttribute('aria-hidden', show ? 'false' : 'true');
+}
+
+function syncOfflineState() {
+  setOfflineVisible(!navigator.onLine);
+}
+
+offlineRetry?.addEventListener('click', () => {
+  if (!navigator.onLine) {
+    toast('Сети всё ещё нет');
+    return;
+  }
+  setOfflineVisible(false);
+  loadCatalog();
+  newsLoaded = false;
+  try { loadNews(); } catch (_) {}
+  refreshProfile();
+  toast('Подключение восстановлено');
+});
+
+window.addEventListener('online', syncOfflineState);
+window.addEventListener('offline', syncOfflineState);
+syncOfflineState();

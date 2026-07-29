@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Кабинет рекламодателя — Serpmonn</title>
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/partners/partners.css">
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+  <div id="menuContainer" class="loading"></div>
+  <main class="partners partners--cabinet">
+    <header class="partners-header">
+      <div class="partners-header__meta">
+        <p class="partners-eyebrow">Кабинет</p>
+        <h1>Рекламодатель</h1>
+        <p class="partners__lead" id="who">…</p>
+      </div>
+      <div class="partners-actions partners-actions--header">
+        <div class="partners-balance-chip" id="balanceChip" title="Баланс для оплаты конверсий">
+          <span class="partners-balance-chip__label">Баланс</span>
+          <strong id="walletBalance">—</strong>
+        </div>
+        <button type="button" class="partners-btn" id="openTopupBtn">Пополнить</button>
+        <button type="button" class="partners-btn partners-btn--ghost" id="logoutBtn">Выйти</button>
+      </div>
+    </header>
+
+    <div class="partners-drawer" id="topupDrawer" hidden>
+      <div class="partners-drawer__backdrop" id="topupBackdrop"></div>
+      <aside class="partners-drawer__panel" role="dialog" aria-labelledby="topupTitle">
+        <div class="partners-drawer__head">
+          <h2 id="topupTitle">Пополнение баланса</h2>
+          <button type="button" class="partners-btn partners-btn--ghost" id="closeTopupBtn" aria-label="Закрыть">Закрыть</button>
+        </div>
+        <p class="partners-panel__hint" id="topupHint">С конверсии списывается сумма паблишеру + 10% комиссии сети. Админ подтвердит заявку вручную (ЮKassa позже).</p>
+        <form id="topupForm" class="partners-wallet__form">
+          <label>Сумма (₽)
+            <input name="amount" type="number" min="100" step="1" required placeholder="5000">
+          </label>
+          <button type="submit">Отправить заявку</button>
+        </form>
+        <p class="partners-msg" id="topupMsg" hidden></p>
+        <h3 class="partners-drawer__sub">Заявки</h3>
+        <div id="topupsList"></div>
+      </aside>
+    </div>
+
+    <div class="partners-kpis" id="kpis" hidden></div>
+
+    <section class="partners-panel" id="offerFormSection">
+      <div class="partners-panel__head">
+        <h2 id="offerFormTitle">Новый оффер</h2>
+        <p class="partners-panel__hint" id="offerFormHint">После отправки оффер попадёт на модерацию</p>
+      </div>
+      <form id="offerForm" class="partners-card partners-card--flush">
+        <input type="hidden" name="editId" id="editOfferId" value="">
+        <div class="partners-form-grid">
+          <label>Тип
+            <select name="type" id="offerType">
+              <option value="promo">Промокод</option>
+              <option value="cpa">CPA-ссылка</option>
+            </select>
+          </label>
+          <label>Название
+            <input name="title" required maxlength="255" placeholder="Краткое название оффера">
+          </label>
+          <label id="promoWrap">Промокод
+            <input name="promocode" maxlength="128" placeholder="SALE20">
+          </label>
+          <label class="partners-span-2">Landing URL
+            <input name="landingUrl" type="url" required placeholder="https://">
+          </label>
+          <label>ERID <span class="partners-optional">(необязательно)</span>
+            <input name="erid" maxlength="128" placeholder="Токен из ОРД">
+          </label>
+          <label>Комиссия / ставка
+            <input name="commissionText" maxlength="512" placeholder="например 500 ₽ / заявка">
+          </label>
+          <label class="partners-span-2">Условия
+            <textarea name="conditions" rows="3" placeholder="Что должен знать паблишер"></textarea>
+          </label>
+        </div>
+        <div class="partners-actions">
+          <button type="submit" id="offerSubmitBtn">Отправить на модерацию</button>
+          <button type="button" class="partners-btn partners-btn--ghost" id="cancelEditBtn" hidden>Отменить редактирование</button>
+        </div>
+        <p class="partners-msg" id="formMsg" hidden></p>
+      </form>
+    </section>
+
+    <section class="partners-panel">
+      <div class="partners-panel__head">
+        <h2>Мои офферы</h2>
+      </div>
+      <div id="offers"></div>
+    </section>
+
+    <section class="partners-panel">
+      <div class="partners-panel__head">
+        <h2>Как считаются конверсии</h2>
+      </div>
+      <ol class="partners-steps">
+        <li>Паблишер ставит у себя ссылку вида <code>/go/…?p=…</code>.</li>
+        <li>При клике человек уходит на ваш лендинг уже с параметром <code>click_id</code> в URL — сохраните его (cookie / CRM / скрытое поле формы).</li>
+        <li>Когда клиент купил или оставил заявку, ваш сайт или CRM один раз вызывает ссылку ниже и подставляет этот <code>click_id</code>.</li>
+      </ol>
+      <p class="partners-panel__hint" style="margin:12px 0 8px">Ссылка postback (скопируйте и отдайте разработчику / CRM):</p>
+      <div class="partners-code-row">
+        <code class="partners-mono" id="postbackUrl"></code>
+        <button type="button" class="partners-btn partners-btn--ghost" id="copyPostbackBtn">Копировать</button>
+      </div>
+      <p class="partners-panel__hint" style="margin-top:10px">
+        Пример:
+        <span class="partners-mono" id="postbackExample"></span>
+      </p>
+      <p class="partners-panel__hint">Без этого вызова в статистике будут только клики. Отдельный API вам писать не нужно — достаточно обычного HTTP-запроса на эту ссылку.</p>
+    </section>
+
+    <section class="partners-panel">
+      <div class="partners-panel__head">
+        <h2>Статистика</h2>
+      </div>
+      <div id="stats"></div>
+    </section>
+  </main>
+  <script src="/frontend/partners/advertiser.js" defer></script>
+</body>
+</html>

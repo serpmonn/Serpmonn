@@ -1204,6 +1204,73 @@ body.vk-mini-app .ai-video-results {
   font-size: 0.9rem;
 }
 
+/* In-app dialog (вместо window.alert / confirm) */
+.vk-mini-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 140;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  background: rgba(15, 23, 42, 0.45);
+  padding: 16px;
+}
+
+.vk-mini-dialog.is-open {
+  display: flex;
+}
+
+.vk-mini-dialog__panel {
+  width: 100%;
+  max-width: 400px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px 18px 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.vk-mini-dialog__panel h2 {
+  margin: 0 0 8px;
+  font-size: 1.1rem;
+  color: #111;
+}
+
+.vk-mini-dialog__panel p {
+  margin: 0 0 18px;
+  color: var(--vk-mini-muted);
+  line-height: 1.45;
+  font-size: 0.95rem;
+  white-space: pre-wrap;
+}
+
+.vk-mini-dialog__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.vk-mini-dialog__actions button {
+  flex: 1;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid var(--vk-mini-border);
+  background: #f3f4f6;
+  color: #111;
+}
+
+.vk-mini-dialog__actions .is-primary {
+  background: #2787f5;
+  border-color: #2787f5;
+  color: #fff;
+}
+
+.vk-mini-dialog__actions .is-danger {
+  background: var(--vk-mini-red);
+  border-color: var(--vk-mini-red);
+  color: #fff;
+}
+
 /* Hide site chrome leftovers if styles leak */
 body.vk-mini-app #menuContainer,
 body.vk-mini-app #menuButton,

@@ -13,6 +13,19 @@ import {
   deleteEmployee,
   createStaffMailbox
 } from './adminController.mjs';
+import {
+  listPartnerModeration,
+  approvePartnerOffer,
+  rejectPartnerOffer
+} from './partnerModerationController.mjs';
+import {
+  listPartnerTopups,
+  confirmPartnerTopup,
+  cancelPartnerTopup,
+  listPartnerPayouts,
+  payPartnerPayout,
+  rejectPartnerPayout
+} from './partnerFinanceAdmin.mjs';
 
 const router = Router();
 
@@ -34,5 +47,18 @@ router.delete('/employees/:id', verifyAdmin, deleteEmployee);
 
 // Почтовые ящики @serpmonn.ru
 router.post('/mailbox', verifyAdmin, createStaffMailbox);
+
+// Модерация партнёрских офферов
+router.get('/partners/moderation', verifyAdmin, listPartnerModeration);
+router.post('/partners/offers/:id/approve', verifyAdmin, approvePartnerOffer);
+router.post('/partners/offers/:id/reject', verifyAdmin, rejectPartnerOffer);
+
+// Финансы партнёров
+router.get('/partners/topups', verifyAdmin, listPartnerTopups);
+router.post('/partners/topups/:id/confirm', verifyAdmin, confirmPartnerTopup);
+router.post('/partners/topups/:id/cancel', verifyAdmin, cancelPartnerTopup);
+router.get('/partners/payouts', verifyAdmin, listPartnerPayouts);
+router.post('/partners/payouts/:id/pay', verifyAdmin, payPartnerPayout);
+router.post('/partners/payouts/:id/reject', verifyAdmin, rejectPartnerPayout);
 
 export default router;

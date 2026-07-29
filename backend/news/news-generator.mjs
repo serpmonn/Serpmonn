@@ -598,19 +598,171 @@ export function getCacheUpdatedAt(locale) {
   return localeCache.get(safeLocale)?.updatedAt ?? null;
 }
 
+/** Сбрасывает кэш локали (или всех, если locale не задан). */
+export function invalidateLocaleCache(locale = null) {
+  if (!locale) {
+    localeCache.clear();
+    return;
+  }
+  const safeLocale = LOCALE_TOPICS[locale] ? locale : locale;
+  localeCache.delete(safeLocale);
+}
+
+// ─── Фильтры качества / языка ────────────────────────────────────────────────
+
+const ITEMS_PER_TOPIC = 4;
+const FETCH_CANDIDATES = 15;
+
+/** locale → скрипт письма для отсева чужих языков */
+const LOCALE_SCRIPT = {
+  ar: 'arabic', fa: 'arabic', ur: 'arabic', ps: 'arabic', sd: 'arabic', ug: 'arabic',
+  he: 'hebrew', yi: 'hebrew',
+  ja: 'cjk', ko: 'cjk', 'zh-cn': 'cjk', zh: 'cjk',
+  th: 'thai',
+  bn: 'bengali', hi: 'devanagari', mr: 'devanagari', ne: 'devanagari',
+  hy: 'armenian', ka: 'georgian', el: 'greek',
+  ru: 'cyrillic', be: 'cyrillic', bg: 'cyrillic', mk: 'cyrillic', sr: 'cyrillic',
+  uk: 'cyrillic', kk: 'cyrillic', ky: 'cyrillic', uz: 'cyrillic', mn: 'cyrillic',
+};
+
+const SCRIPT_RE = {
+  arabic:      /\p{Script=Arabic}/u,
+  hebrew:      /\p{Script=Hebrew}/u,
+  cjk:         /[\p{Script=Han}\p{Script=Hiragana}\p{Script=Katakana}\p{Script=Hangul}]/u,
+  thai:        /\p{Script=Thai}/u,
+  bengali:     /\p{Script=Bengali}/u,
+  devanagari:  /\p{Script=Devanagari}/u,
+  armenian:    /\p{Script=Armenian}/u,
+  georgian:    /\p{Script=Georgian}/u,
+  greek:       /\p{Script=Greek}/u,
+  cyrillic:    /\p{Script=Cyrillic}/u,
+  latin:       /\p{Script=Latin}/u,
+};
+
+/** Типичные заголовки рубрик/агрегаторов, а не конкретных новостей */
+const SECTION_TITLE_RE = new RegExp([
+  'последние новости',
+  'последние события',
+  'лента новостей',
+  'все последние',
+  'свежие новости',
+  'актуальные новости',
+  'главные новости сегодня',
+  'новости\\s+(мира|россии|политики|спорта|технологии|науки|экономики|космоса|про\\s+космос|дня)',
+  '^новости(?:\\s|:)[\\s\\S]{0,80}$',
+  'google\\s*новости',
+  'google\\s*news',
+  'latest news(\\s+today)?$',
+  'breaking news(\\s+today)?$',
+  'world news(\\s+today)?$',
+  'top stories',
+  'nachrichten\\s+(heute|welt)?$',
+  'actualités\\s+(du jour|mondiales)?$',
+  'noticias\\s+(de\\s+hoy|del\\s+mundo)?$',
+].join('|'), 'iu');
+
+/** Пути рубрик/разделов — не статьи */
+const SECTION_PATH_RE = /\/(rubric|rubrics|lenta|topics?|tags?|category|categories)\b/i;
+
+function searxLanguage(locale) {
+  const map = {
+    'ru': 'ru-RU', 'en': 'en-US', 'de': 'de-DE', 'fr': 'fr-FR',
+    'es': 'es-ES', 'es-419': 'es-MX', 'pt': 'pt-PT', 'pt-br': 'pt-BR',
+    'zh-cn': 'zh-CN', 'ja': 'ja-JP', 'ko': 'ko-KR', 'ar': 'ar-SA',
+    'he': 'he-IL', 'tr': 'tr-TR', 'pl': 'pl-PL', 'uk': 'uk-UA',
+    'it': 'it-IT', 'nl': 'nl-NL', 'sv': 'sv-SE', 'fi': 'fi-FI',
+    'cs': 'cs-CZ', 'ro': 'ro-RO', 'hu': 'hu-HU', 'el': 'el-GR',
+    'th': 'th-TH', 'vi': 'vi-VN', 'id': 'id-ID', 'ms': 'ms-MY',
+  };
+  return map[locale] || locale;
+}
+
+function matchesLocaleLanguage(text, locale) {
+  const letters = (text || '').replace(/[^\p{L}]/gu, '');
+  if (letters.length < 10) return true; // слишком коротко — не судим
+  const script = LOCALE_SCRIPT[locale] || 'latin';
+  const re = SCRIPT_RE[script] || SCRIPT_RE.latin;
+  let hit = 0;
+  for (const ch of letters) {
+    if (re.test(ch)) hit++;
+  }
+  return hit / letters.length >= 0.55;
+}
+
+function looksLikeArticleUrl(url) {
+  try {
+    const path = new URL(url).pathname;
+    if (/\/20\d{2}([\/\-_]|$)/.test(path)) return true;
+    if (/\d{5,}/.test(path)) return true;
+    if (/[\/\-_](news|article|story|novosti|post)[\/\-].+/i.test(path)) return true;
+    const segs = path.split('/').filter(Boolean);
+    // slug статьи: несколько сегментов и последний длинный
+    if (segs.length >= 2 && segs[segs.length - 1].length >= 20) return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+function isSectionOrAggregator(url, title) {
+  const t = (title || '').trim();
+  if (!t) return true;
+
+  try {
+    const u = new URL(url);
+    const host = u.hostname.replace(/^www\./, '');
+    const path = u.pathname.replace(/\/+$/, '') || '/';
+
+    if (/^(news\.google\.com|news\.yandex\.[a-z.]+)$/i.test(host)) return true;
+    if (path === '/') return true;
+    if (SECTION_PATH_RE.test(path)) return true;
+
+    const segs = path.split('/').filter(Boolean);
+    // /world/, /news/ — один сегмент без цифр
+    if (segs.length === 1 && !/\d/.test(segs[0]) && segs[0].length < 24) return true;
+  } catch {
+    return true;
+  }
+
+  if (SECTION_TITLE_RE.test(t)) return true;
+  // «В мире - последние новости сегодня - РИА Новости»
+  if (/\s[-—–]\s*(последние|свежие|latest|breaking)/iu.test(t)) return true;
+  // «… — Lenta.ru / РИА Новости» без конкретики события + короткий путь уже отсечён выше
+  if (/\s[-—–]\s*(lenta\.ru|риа новости|рамблер|рбк)\s*$/iu.test(t) && t.length < 70) return true;
+
+  return false;
+}
+
+function isQualityNewsItem(result, locale) {
+  const title = (result.title || '').trim();
+  const url = result.url || '';
+  if (!title || !url) return false;
+  if (title.length < 28) return false; // слишком общее / рубрика
+  if (!matchesLocaleLanguage(title, locale)) return false;
+  if (isSectionOrAggregator(url, title)) return false;
+  // предпочитаем явные статьи; допускаем прочее, если заголовок выглядит как новость
+  if (looksLikeArticleUrl(url)) return true;
+  // без URL-статьи: заголовок должен быть «событийным», не названием раздела
+  return title.length >= 40 && !/новости\s*$/i.test(title);
+}
+
 // ─── Внутренние функции ──────────────────────────────────────────────────────
 
 async function fetchAllTopics(locale, topics) {
   const results = [];
+  const seenUrls = new Set();
 
-  // Параллельно запрашиваем все темы (SearXNG держит параллельные запросы нормально)
   const settled = await Promise.allSettled(
     topics.map(topic => fetchOneTopic(locale, topic))
   );
 
   for (const outcome of settled) {
-    if (outcome.status === 'fulfilled' && outcome.value.length) {
-      results.push(...outcome.value);
+    if (outcome.status !== 'fulfilled' || !outcome.value.length) continue;
+    for (const item of outcome.value) {
+      const key = item.url.replace(/#.*$/, '').replace(/\/+$/, '');
+      if (seenUrls.has(key)) continue;
+      seenUrls.add(key);
+      results.push(item);
     }
   }
 
@@ -619,26 +771,32 @@ async function fetchAllTopics(locale, topics) {
 
 async function fetchOneTopic(locale, topic) {
   try {
-    // categories=news у SearXNG часто пустой/падает — берём general
-    let data = await fetchSearxViaCurl(topic.query, 'general');
-    let raw = (data.results || []).slice(0, 6);
+    const lang = searxLanguage(locale);
+    // bing news даёт реальные заголовки; general часто возвращает только рубрики
+    let data = await fetchSearxViaCurl(topic.query, 'news', {
+      language: lang,
+      engines: 'bing news',
+    });
+    let raw = data.results || [];
 
-    if (!raw.length) {
-      data = await fetchSearxViaCurl(topic.query, 'news');
-      raw = (data.results || []).slice(0, 6);
+    if (raw.length < 3) {
+      const fallback = await fetchSearxViaCurl(topic.query, 'general', { language: lang });
+      raw = [...raw, ...(fallback.results || [])];
     }
 
     return raw
-      .filter(r => r.url && r.title)
+      .slice(0, FETCH_CANDIDATES)
+      .filter(r => isQualityNewsItem(r, locale))
+      .slice(0, ITEMS_PER_TOPIC)
       .map(r => ({
-        id:        `${locale}-${topic.key}-${encodeURIComponent(r.url).slice(0, 40)}`,
-        topicKey:  topic.key,
-        topicLabel:topic.label,
-        title:     r.title,
-        snippet:   r.content || r.summary || '',
-        url:       r.url,
-        img:       r.img_src || null,
-        source:    safeHostname(r.url),
+        id:         `${locale}-${topic.key}-${encodeURIComponent(r.url).slice(0, 40)}`,
+        topicKey:   topic.key,
+        topicLabel: topic.label,
+        title:      r.title.trim(),
+        snippet:    r.content || r.summary || '',
+        url:        r.url,
+        img:        r.img_src || null,
+        source:     safeHostname(r.url),
         publishedAt: r.publishedDate || null,
       }));
   } catch (e) {

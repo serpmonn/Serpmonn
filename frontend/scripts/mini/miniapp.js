@@ -12,6 +12,7 @@
 
   const cfg = window.__SPN_MINI_CFG__ || {};
   const storageKey = (cfg.onboarding && cfg.onboarding.storageKey) || 'spn_vk_mini_onboarded_v1';
+  const dialogCopy = cfg.dialog || {};
 
   const screens = ROOT.querySelectorAll('.vk-mini-screen');
   const navBtns = ROOT.querySelectorAll('.vk-mini-nav [data-screen]');
@@ -19,9 +20,103 @@
   const viewerTitle = document.getElementById('vk-mini-viewer-title');
   const viewerBack = document.getElementById('vk-mini-viewer-back');
   const onboarding = document.getElementById('vk-mini-onboarding');
+  const dialogRoot = document.getElementById('vk-mini-dialog');
+  const dialogTitle = document.getElementById('vk-mini-dialog-title');
+  const dialogText = document.getElementById('vk-mini-dialog-text');
+  const dialogActions = document.getElementById('vk-mini-dialog-actions');
   let viewerFrame = document.getElementById('vk-mini-viewer-frame');
   let viewerOpenUrl = '';
   let viewerHistoryPushed = false;
+  let dialogResolver = null;
+
+  function closeMiniDialog(result) {
+    if (dialogRoot) {
+      dialogRoot.classList.remove('is-open');
+      dialogRoot.setAttribute('aria-hidden', 'true');
+    }
+    if (dialogActions) dialogActions.innerHTML = '';
+    const resolve = dialogResolver;
+    dialogResolver = null;
+    if (resolve) resolve(result);
+  }
+
+  /**
+   * Собственный диалог вместо window.alert / window.confirm (требования модерации VK).
+   * @returns {Promise<boolean>}
+   */
+  function showMiniDialog(opts = {}) {
+    const {
+      title = dialogCopy.title || 'Сообщение',
+      message = '',
+      okLabel = dialogCopy.ok || 'Понятно',
+      cancelLabel = null,
+      danger = false
+    } = opts;
+
+    if (!dialogRoot || !dialogText || !dialogActions) {
+      return Promise.resolve(Boolean(cancelLabel ? false : true));
+    }
+
+    if (dialogResolver) closeMiniDialog(false);
+
+    return new Promise((resolve) => {
+      dialogResolver = resolve;
+      if (dialogTitle) dialogTitle.textContent = title;
+      dialogText.textContent = message || '';
+      dialogActions.innerHTML = '';
+
+      if (cancelLabel) {
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.textContent = cancelLabel;
+        cancelBtn.addEventListener('click', () => closeMiniDialog(false));
+        dialogActions.appendChild(cancelBtn);
+      }
+
+      const okBtn = document.createElement('button');
+      okBtn.type = 'button';
+      okBtn.textContent = okLabel;
+      okBtn.className = danger ? 'is-danger' : 'is-primary';
+      okBtn.addEventListener('click', () => closeMiniDialog(true));
+      dialogActions.appendChild(okBtn);
+
+      dialogRoot.classList.add('is-open');
+      dialogRoot.setAttribute('aria-hidden', 'false');
+      okBtn.focus();
+    });
+  }
+
+  function showMiniAlert(message, title) {
+    return showMiniDialog({
+      title: title || dialogCopy.title || 'Сообщение',
+      message: String(message == null ? '' : message),
+      okLabel: dialogCopy.ok || 'Понятно'
+    }).then(() => undefined);
+  }
+
+  function showMiniConfirm(message, opts = {}) {
+    return showMiniDialog({
+      title: opts.title || dialogCopy.title || 'Сообщение',
+      message: String(message == null ? '' : message),
+      okLabel: opts.okLabel || dialogCopy.confirm || 'Подтвердить',
+      cancelLabel: opts.cancelLabel || dialogCopy.cancel || 'Отмена',
+      danger: Boolean(opts.danger)
+    });
+  }
+
+  // Перехват браузерных диалогов на уровне мини-приложения
+  window.alert = function (message) {
+    showMiniAlert(message);
+  };
+  window.confirm = function () {
+    // sync API недоступен для кастомного UI — безопасный отказ
+    console.warn('[vk-mini] window.confirm заблокирован; используйте showMiniConfirm');
+    return false;
+  };
+  window.prompt = function () {
+    console.warn('[vk-mini] window.prompt заблокирован');
+    return null;
+  };
 
   function getVkBridge() {
     return window.vkBridge || window.bridge || null;
@@ -365,6 +460,30 @@
     try {
       const win = doc.defaultView;
       if (win) {
+        // Без браузерных alert/confirm/prompt внутри инструментов и игр
+        win.alert = function (message) {
+          try {
+            window.postMessage(
+              { type: 'spn-vk-mini-alert', message: String(message == null ? '' : message) },
+              location.origin
+            );
+          } catch (_) {
+            showMiniAlert(message);
+          }
+        };
+        win.confirm = function (message) {
+          try {
+            window.postMessage(
+              { type: 'spn-vk-mini-alert', message: String(message == null ? '' : message) },
+              location.origin
+            );
+          } catch (_) {}
+          return false;
+        };
+        win.prompt = function () {
+          return null;
+        };
+
         requestAnimationFrame(() => {
           try {
             win.dispatchEvent(new Event('resize'));
@@ -694,7 +813,11 @@
     const confirmText =
       profileCopy.deleteConfirm ||
       'Удалить аккаунт Серпмонн и связанные данные? Это действие нельзя отменить.';
-    if (!window.confirm(confirmText)) return;
+    const ok = await showMiniConfirm(confirmText, {
+      okLabel: profileCopy.deleteConfirmAction || 'Удалить',
+      danger: true
+    });
+    if (!ok) return;
 
     const token = getStoredToken();
     if (authDeleteBtn) {
@@ -711,14 +834,14 @@
       });
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok || !data.success) {
-        window.alert?.(profileCopy.deleteFailed || 'Не удалось удалить аккаунт. Попробуйте ещё раз');
+        await showMiniAlert(profileCopy.deleteFailed || 'Не удалось удалить аккаунт. Попробуйте ещё раз');
         return;
       }
       clearSession();
       renderAuthUi(null);
-      window.alert?.(profileCopy.deleteOk || 'Аккаунт удалён');
+      await showMiniAlert(profileCopy.deleteOk || 'Аккаунт удалён');
     } catch (_) {
-      window.alert?.(profileCopy.deleteFailed || 'Не удалось удалить аккаунт. Попробуйте ещё раз');
+      await showMiniAlert(profileCopy.deleteFailed || 'Не удалось удалить аккаунт. Попробуйте ещё раз');
     } finally {
       if (authDeleteBtn) {
         authDeleteBtn.disabled = false;
@@ -837,7 +960,7 @@
       const accessToken = await getVkAccessToken();
       if (!accessToken) {
         if (interactive) {
-          window.alert?.(
+          await showMiniAlert(
             authCopy.loginFailed ||
               'Не удалось войти автоматически. Откройте мини-приложение снова из ВКонтакте'
           );
@@ -859,7 +982,7 @@
       }
 
       if (interactive) {
-        window.alert?.(
+        await showMiniAlert(
           authCopy.loginFailed ||
             'Не удалось войти автоматически. Откройте мини-приложение снова из ВКонтакте'
         );
@@ -868,7 +991,7 @@
     } catch (err) {
       console.warn('vk mini login failed', err);
       if (interactive) {
-        window.alert?.(
+        await showMiniAlert(
           authCopy.loginFailed ||
             'Не удалось войти автоматически. Откройте мини-приложение снова из ВКонтакте'
         );
@@ -1045,9 +1168,24 @@
   initOnboarding();
   initAuth();
 
+  window.addEventListener('message', (event) => {
+    if (event.origin !== location.origin) return;
+    const data = event.data;
+    if (!data || data.type !== 'spn-vk-mini-alert') return;
+    showMiniAlert(data.message || '');
+  });
+
+  if (dialogRoot) {
+    dialogRoot.addEventListener('click', (e) => {
+      if (e.target === dialogRoot) closeMiniDialog(false);
+    });
+  }
+
   window.spnVkMiniOpen = openViewer;
   window.spnVkMiniClose = closeViewer;
   window.spnVkMiniShowLimit = showLimit;
+  window.spnVkMiniAlert = showMiniAlert;
+  window.spnVkMiniConfirm = showMiniConfirm;
   window.spnVkMiniLogin = () => loginWithVk({ interactive: true });
   window.spnVkMiniGetToken = getStoredToken;
 })();

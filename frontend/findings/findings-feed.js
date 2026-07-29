@@ -3,7 +3,7 @@ import { loadT, getFindingT } from '/frontend/scripts/findings-client.js';
 import { openFeedModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=31';
 
 async function renderFeedPage() {
-  generateCombinedBackground();
+  if (!window.__SPN_ANDROID_APP__) generateCombinedBackground();
   await loadT();
   const t = (key, vars) => getFindingT(`finding.${key}`, vars);
 

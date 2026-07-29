@@ -403,6 +403,16 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 
   function handleUnauthorized() {
+    const inApp =
+      Boolean(window.__SPN_ANDROID_APP__) ||
+      document.documentElement.classList.contains('android-app') ||
+      new URLSearchParams(window.location.search).get('app') === '1';
+    if (inApp && window.parent && window.parent !== window) {
+      try {
+        window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
+      } catch (_) {}
+      return;
+    }
     redirectToAuth({ tab: 'login' });
   }
 
@@ -739,8 +749,8 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
 
-      const balance = typeof data?.balance === 'number' ? data.balance : 0;
-      pointsBalanceEl.textContent = balance;
+      const balance = Number(data?.balance);
+      pointsBalanceEl.textContent = Number.isFinite(balance) ? balance : 0;
     } catch (error) {
       console.error('Ошибка загрузки баллов:', error);
       pointsBalanceEl.textContent = '—';

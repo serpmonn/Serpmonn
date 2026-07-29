@@ -75,9 +75,7 @@ export async function refreshLocale(req, res) {
   }
 
   const locale = req.query.locale || 'en';
-  // Вызываем принудительное обновление — передаём устаревший кэш
-  // (просто сбрасываем запись, следующий GET перезаполнит)
-  const { localeCache } = await import('./news-generator.mjs').then(m => m);
-  // localeCache недоступен снаружи — просто сообщаем
-  res.json({ ok: true, message: `Кэш для "${locale}" будет обновлён при следующем запросе` });
+  const { invalidateLocaleCache } = await import('./news-generator.mjs');
+  invalidateLocaleCache(locale);
+  res.json({ ok: true, message: `Кэш для "${locale}" сброшен` });
 }

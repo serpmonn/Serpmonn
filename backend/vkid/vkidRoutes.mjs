@@ -5,6 +5,7 @@ import paseto from 'paseto';
 import { query } from '../database/config.mjs';
 import { setAuthCookie } from '../auth/authCookie.mjs';
 import { vkMiniLoginHandler, vkMiniDeleteAccountHandler } from './vkMiniAuth.mjs';
+import { awardSocialRegistrationBonuses } from '../points/pointsService.js';
 
 const { V2 } = paseto;
 
@@ -71,8 +72,12 @@ router.post('/vkid-login', vkidLimiter, async (req, res, next) => {
     // 3. Если вообще никого не нашли — создаём нового пользователя
     if (!user) {
       const username = `vk_${vkUserId}`;
-      const safeEmail = email || '';
-      const fakePasswordHash = ''; // или 'VKID' / 'social' / что-то осмысленное
+      // email UNIQUE: пустая строка ломает второго пользователя без email
+      const safeEmail =
+        email && String(email).trim()
+          ? String(email).trim()
+          : `vk_${vkUserId}@users.serpmonn.ru`;
+      const fakePasswordHash = '';
 
       await query(
         'INSERT INTO users (id, username, email, vk_user_id, confirmed, password_hash) VALUES (UUID(), ?, ?, ?, ?, ?)',
@@ -84,6 +89,11 @@ router.post('/vkid-login', vkidLimiter, async (req, res, next) => {
         [vkUserId]
       );
       user = rows[0];
+      try {
+        await awardSocialRegistrationBonuses(user.id, 'vkid');
+      } catch (ptsErr) {
+        console.error('vkid-login points award error:', ptsErr);
+      }
     }
 
     const payload = {
