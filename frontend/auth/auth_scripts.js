@@ -351,53 +351,81 @@ function setMessengerAppModeUi(on) {
   if (openBtn) openBtn.hidden = !on;
 }
 
-function openMessengerDeepLink(url) {
+/**
+ * Android intent:// для custom scheme без загрузки в WebView.
+ * iframe/src=serpmonn:// на MIUI периодически роняет процесс (диалог «отправить отчёт»).
+ */
+function toAndroidIntentUrl(deepLink, packageName) {
+  let u;
+  try {
+    u = new URL(deepLink);
+  } catch (_) {
+    return null;
+  }
+  if (u.protocol !== 'serpmonn:') return null;
+  // serpmonn://web-login?data=... → host=web-login, search=?data=...
+  const path = u.pathname && u.pathname !== '/' ? u.pathname : '';
+  let intent = `intent://${u.host}${path}${u.search}#Intent;scheme=serpmonn`;
+  if (packageName) intent += `;package=${packageName}`;
+  intent += ';end';
+  return intent;
+}
+
+function clickHiddenAnchor(href) {
+  const a = document.createElement('a');
+  a.href = href;
+  a.rel = 'noopener noreferrer';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    try { a.remove(); } catch (_) {}
+  }, 500);
+  return true;
+}
+
+async function openMessengerDeepLink(url) {
   const href = String(url || '').trim();
   if (!href) return false;
 
-  // Capacitor App.openUrl (если есть) — не трогает текущий WebView
+  // Capacitor App.openUrl — в сборке RuStore 1.2 на Android обычно нет.
   try {
     const CapApp = window.Capacitor?.Plugins?.App;
     if (CapApp && typeof CapApp.openUrl === 'function') {
-      CapApp.openUrl({ url: href });
+      await CapApp.openUrl({ url: href });
       return true;
     }
-  } catch (_) {}
+  } catch (e) {
+    console.warn('Cap App.openUrl failed:', e);
+  }
 
-  // AppLauncher (отдельный плагин)
+  // AppLauncher — в APK 1.2 тоже нет; оставляем на будущие сборки.
   try {
     const Launcher = window.Capacitor?.Plugins?.AppLauncher;
     if (Launcher && typeof Launcher.openUrl === 'function') {
-      Launcher.openUrl({ url: href });
+      await Launcher.openUrl({ url: href });
       return true;
     }
-  } catch (_) {}
+  } catch (e) {
+    console.warn('AppLauncher.openUrl failed:', e);
+  }
 
-  // Главное: НЕ делать location.href на serpmonn:// —
-  // WebView уходит со страницы входа и «возвращается» назад.
-  try {
-    const iframe = document.createElement('iframe');
-    iframe.setAttribute('aria-hidden', 'true');
-    iframe.style.cssText = 'display:none;width:0;height:0;border:0;position:absolute';
-    iframe.src = href;
-    document.body.appendChild(iframe);
-    setTimeout(() => {
-      try { iframe.remove(); } catch (_) {}
-    }, 2500);
-  } catch (_) {}
+  const platform = window.Capacitor?.getPlatform?.();
+  const isAndroid =
+    platform === 'android' ||
+    (/Android/i.test(navigator.userAgent) && Boolean(window.Capacitor));
 
+  if (isAndroid) {
+    // Не используем iframe с serpmonn:// — краш WebView на части Xiaomi/MIUI.
+    // intent:// отдаёт системе, WebView не пытается «открыть» неизвестную схему.
+    const intentUrl = toAndroidIntentUrl(href, null);
+    if (intentUrl) return clickHiddenAnchor(intentUrl);
+  }
+
+  // Вне Android-оболочки: обычная ссылка (браузер сам резолвит схему).
+  // Не трогаем location.href внутри Capacitor — иначе уходим со страницы auth.
   try {
-    const a = document.createElement('a');
-    a.href = href;
-    a.target = '_blank';
-    a.rel = 'noopener noreferrer';
-    a.style.display = 'none';
-    document.body.appendChild(a);
-    a.click();
-    setTimeout(() => {
-      try { a.remove(); } catch (_) {}
-    }, 500);
-    return true;
+    return clickHiddenAnchor(href);
   } catch (_) {
     return false;
   }
@@ -506,7 +534,7 @@ async function startMessengerLogin() {
     startMessengerPolling(data.challengeId);
 
     if (inApp) {
-      const opened = openMessengerDeepLink(messengerDeepLink);
+      const opened = await openMessengerDeepLink(messengerDeepLink);
       if (opened) {
         setMessengerStatus('Подтвердите вход в мессенджере…');
       } else {
@@ -540,12 +568,12 @@ function initMessengerLogin() {
 
   const openBtn = document.getElementById('messengerOpenAppBtn');
   if (openBtn) {
-    openBtn.addEventListener('click', () => {
+    openBtn.addEventListener('click', async () => {
       if (!messengerDeepLink) {
         setMessengerStatus('Ссылка недоступна — закройте окно и попробуйте снова');
         return;
       }
-      const opened = openMessengerDeepLink(messengerDeepLink);
+      const opened = await openMessengerDeepLink(messengerDeepLink);
       setMessengerStatus(
         opened
           ? 'Подтвердите вход в мессенджере…'

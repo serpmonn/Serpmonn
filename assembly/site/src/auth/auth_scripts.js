@@ -16,12 +16,68 @@ const urlParams = new URLSearchParams(window.location.search);
 const referralUsername = urlParams.get('ref') || null;
 const initialTab = urlParams.get('tab') === 'register' ? 'register' : 'login';
 const safeReturnPath = sanitizeReturnPath(urlParams.get('return'));
+const appMode = urlParams.get('app') === '1' || Boolean(window.__SPN_ANDROID_APP__);
+const APP_AFTER_AUTH = '/frontend/app/index.html?app=1&tab=profile';
+
+function isAndroidAppShell() {
+  try {
+    if (window.__SPN_ANDROID_APP__) return true;
+    if (appMode) return true;
+    if (window.parent && window.parent !== window && window.parent.__SPN_ANDROID_APP__) return true;
+    if (window.Capacitor?.isNativePlatform?.()) return true;
+  } catch (_) {}
+  return false;
+}
+
+function markAndroidPostAuth() {
+  try {
+    sessionStorage.setItem('spn_app_post_auth', '1');
+  } catch (_) {}
+}
+
+function notifyAndroidAppAuthOk() {
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'spn-app-auth-ok' }, '*');
+      return true;
+    }
+  } catch (_) {}
+  return false;
+}
+
+function withProfileTab(path) {
+  const base = typeof path === 'string' && path.startsWith('/frontend/') ? path : APP_AFTER_AUTH;
+  try {
+    const u = new URL(base, 'https://serpmonn.ru');
+    if (/\/frontend\/app\/index\.html$/i.test(u.pathname)) {
+      u.searchParams.set('app', '1');
+      u.searchParams.set('tab', 'profile');
+      return u.pathname + u.search;
+    }
+  } catch (_) {}
+  return APP_AFTER_AUTH;
+}
 
 function authRedirectTarget() {
+  if (isAndroidAppShell()) {
+    // В iframe viewer — закрываем viewer у родителя, не уходим на сайт
+    if (notifyAndroidAppAuthOk()) {
+      return APP_AFTER_AUTH;
+    }
+    return withProfileTab(sanitizeReturnPath(urlParams.get('return')) || APP_AFTER_AUTH);
+  }
   return safeReturnPath || getFrontendPath('profile/profile.html');
 }
 
 function safeNavigate(url) {
+  if (isAndroidAppShell()) {
+    // iframe внутри app viewer — родитель закроет экран входа
+    if (notifyAndroidAppAuthOk()) return;
+    // полный WebView приложения — всегда на вкладку профиля
+    markAndroidPostAuth();
+    safeAssignLocation(withProfileTab(url));
+    return;
+  }
   safeAssignLocation(url);
 }
 
@@ -178,7 +234,10 @@ function initVkIdOneTap() {
 
     VKID.Config.init({
       app: 54486564,
-      redirectUrl: 'https://serpmonn.ru/',
+      // Для приложения — возврат в оболочку, не на главную сайта
+      redirectUrl: isAndroidAppShell()
+        ? 'https://serpmonn.ru/frontend/app/index.html?app=1'
+        : 'https://serpmonn.ru/',
       responseMode: VKID.ConfigResponseMode.Callback,
       source: VKID.ConfigSource.LOWCODE,
       scope: 'vkid.personal_info email'
@@ -255,6 +314,7 @@ function initVkIdOneTap() {
 
 let messengerPollTimer = null;
 let messengerChallengeId = null;
+let messengerDeepLink = null;
 
 function setMessengerModalOpen(open) {
   const modal = document.getElementById('messengerLoginModal');
@@ -266,12 +326,109 @@ function setMessengerModalOpen(open) {
       messengerPollTimer = null;
     }
     messengerChallengeId = null;
+    messengerDeepLink = null;
+    modal.classList.remove('messenger-modal--app');
   }
 }
 
 function setMessengerStatus(text) {
   const el = document.getElementById('messengerLoginStatus');
   if (el) el.textContent = text;
+}
+
+function setMessengerAppModeUi(on) {
+  const modal = document.getElementById('messengerLoginModal');
+  const hint = document.getElementById('messengerLoginHint');
+  const canvas = document.getElementById('messengerQrCanvas');
+  const openBtn = document.getElementById('messengerOpenAppBtn');
+  if (modal) modal.classList.toggle('messenger-modal--app', Boolean(on));
+  if (hint) {
+    hint.textContent = on
+      ? 'Подтвердите вход в Серпмонн Мессенджере'
+      : 'Отсканируйте QR в мессенджере';
+  }
+  if (canvas) canvas.hidden = Boolean(on);
+  if (openBtn) openBtn.hidden = !on;
+}
+
+/**
+ * Android intent:// для custom scheme без загрузки в WebView.
+ * iframe/src=serpmonn:// на MIUI периодически роняет процесс (диалог «отправить отчёт»).
+ */
+function toAndroidIntentUrl(deepLink, packageName) {
+  let u;
+  try {
+    u = new URL(deepLink);
+  } catch (_) {
+    return null;
+  }
+  if (u.protocol !== 'serpmonn:') return null;
+  // serpmonn://web-login?data=... → host=web-login, search=?data=...
+  const path = u.pathname && u.pathname !== '/' ? u.pathname : '';
+  let intent = `intent://${u.host}${path}${u.search}#Intent;scheme=serpmonn`;
+  if (packageName) intent += `;package=${packageName}`;
+  intent += ';end';
+  return intent;
+}
+
+function clickHiddenAnchor(href) {
+  const a = document.createElement('a');
+  a.href = href;
+  a.rel = 'noopener noreferrer';
+  a.style.display = 'none';
+  document.body.appendChild(a);
+  a.click();
+  setTimeout(() => {
+    try { a.remove(); } catch (_) {}
+  }, 500);
+  return true;
+}
+
+async function openMessengerDeepLink(url) {
+  const href = String(url || '').trim();
+  if (!href) return false;
+
+  // Capacitor App.openUrl — в сборке RuStore 1.2 на Android обычно нет.
+  try {
+    const CapApp = window.Capacitor?.Plugins?.App;
+    if (CapApp && typeof CapApp.openUrl === 'function') {
+      await CapApp.openUrl({ url: href });
+      return true;
+    }
+  } catch (e) {
+    console.warn('Cap App.openUrl failed:', e);
+  }
+
+  // AppLauncher — в APK 1.2 тоже нет; оставляем на будущие сборки.
+  try {
+    const Launcher = window.Capacitor?.Plugins?.AppLauncher;
+    if (Launcher && typeof Launcher.openUrl === 'function') {
+      await Launcher.openUrl({ url: href });
+      return true;
+    }
+  } catch (e) {
+    console.warn('AppLauncher.openUrl failed:', e);
+  }
+
+  const platform = window.Capacitor?.getPlatform?.();
+  const isAndroid =
+    platform === 'android' ||
+    (/Android/i.test(navigator.userAgent) && Boolean(window.Capacitor));
+
+  if (isAndroid) {
+    // Не используем iframe с serpmonn:// — краш WebView на части Xiaomi/MIUI.
+    // intent:// отдаёт системе, WebView не пытается «открыть» неизвестную схему.
+    const intentUrl = toAndroidIntentUrl(href, null);
+    if (intentUrl) return clickHiddenAnchor(intentUrl);
+  }
+
+  // Вне Android-оболочки: обычная ссылка (браузер сам резолвит схему).
+  // Не трогаем location.href внутри Capacitor — иначе уходим со страницы auth.
+  try {
+    return clickHiddenAnchor(href);
+  } catch (_) {
+    return false;
+  }
 }
 
 async function loadQrCodeLib() {
@@ -351,7 +508,9 @@ function startMessengerPolling(challengeId) {
 async function startMessengerLogin() {
   const btn = document.getElementById('messengerLoginBtn');
   if (btn) btn.disabled = true;
-  setMessengerStatus('Ожидаем подтверждение…');
+  const inApp = isAndroidAppShell();
+  setMessengerAppModeUi(inApp);
+  setMessengerStatus(inApp ? 'Открываем мессенджер…' : 'Ожидаем подтверждение…');
 
   try {
     const resp = await fetch('/api/messenger-auth/challenge', {
@@ -367,16 +526,29 @@ async function startMessengerLogin() {
     }
 
     messengerChallengeId = data.challengeId;
+    messengerDeepLink = data.deepLink || null;
     const codeEl = document.getElementById('messengerShortCode');
     if (codeEl) codeEl.textContent = data.shortCode || '————';
 
     setMessengerModalOpen(true);
     startMessengerPolling(data.challengeId);
-    try {
-      await renderMessengerQr(data.qrPayload);
-    } catch (qrErr) {
-      console.error('messenger QR render error:', qrErr);
-      setMessengerStatus('QR не загрузился — используйте код ниже');
+
+    if (inApp) {
+      const opened = await openMessengerDeepLink(messengerDeepLink);
+      if (opened) {
+        setMessengerStatus('Подтвердите вход в мессенджере…');
+      } else {
+        setMessengerStatus(
+          'Не удалось открыть мессенджер. Установите Серпмонн Мессенджер или введите код там вручную'
+        );
+      }
+    } else {
+      try {
+        await renderMessengerQr(data.qrPayload);
+      } catch (qrErr) {
+        console.error('messenger QR render error:', qrErr);
+        setMessengerStatus('QR не загрузился — используйте код ниже');
+      }
     }
   } catch (e) {
     console.error('messenger login start error:', e);
@@ -394,6 +566,22 @@ function initMessengerLogin() {
     });
   }
 
+  const openBtn = document.getElementById('messengerOpenAppBtn');
+  if (openBtn) {
+    openBtn.addEventListener('click', async () => {
+      if (!messengerDeepLink) {
+        setMessengerStatus('Ссылка недоступна — закройте окно и попробуйте снова');
+        return;
+      }
+      const opened = await openMessengerDeepLink(messengerDeepLink);
+      setMessengerStatus(
+        opened
+          ? 'Подтвердите вход в мессенджере…'
+          : 'Не удалось открыть мессенджер. Установите его или введите код вручную'
+      );
+    });
+  }
+
   document.querySelectorAll('[data-messenger-close]').forEach((el) => {
     el.addEventListener('click', () => setMessengerModalOpen(false));
   });
@@ -403,8 +591,55 @@ function initMessengerLogin() {
   });
 }
 
+function initAuthAppShell() {
+  if (!isAndroidAppShell()) return;
+  document.documentElement.classList.add('auth-app-shell');
+  document.body.classList.add('auth-app-shell');
+
+  // Во viewer/iframe шапка родителя уже даёт «Назад» — свою не показываем
+  let embedded = false;
+  try {
+    embedded = Boolean(window.parent && window.parent !== window);
+  } catch (_) {
+    embedded = true;
+  }
+  if (embedded) {
+    document.body.classList.add('auth-app-shell--embedded');
+    const bar = document.getElementById('authAppBar');
+    if (bar) bar.hidden = true;
+    return;
+  }
+
+  const bar = document.getElementById('authAppBar');
+  if (bar) bar.hidden = false;
+
+  const back = document.getElementById('authAppBack');
+  if (back) {
+    back.addEventListener('click', () => {
+      try {
+        if (window.history.length > 1) {
+          window.history.back();
+          return;
+        }
+      } catch (_) {}
+      safeAssignLocation('/frontend/app/index.html?app=1');
+    });
+  }
+
+  document.querySelectorAll('.auth-forgot a[href*="forgot"]').forEach((a) => {
+    try {
+      const u = new URL(a.getAttribute('href'), location.origin);
+      u.searchParams.set('app', '1');
+      a.setAttribute('href', u.pathname + u.search);
+    } catch (_) {}
+  });
+}
+
 function bootAuthPage() {
-  generateCombinedBackground();
+  initAuthAppShell();
+  if (!isAndroidAppShell()) {
+    generateCombinedBackground();
+  }
   activateTab(initialTab);
   initVkIdOneTap();
   initMessengerLogin();
