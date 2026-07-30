@@ -17,7 +17,8 @@ const RELATED_MAP = {
   'updates-aug-25-sep-15': ['updates-sep15-2025-jul22-2026', 'updates-august-17', 'port-forwarding-guide'],
   'updates-sep15-2025-jul22-2026': ['updates-aug-25-sep-15', 'updates-august-17', 'port-forwarding-guide'],
   'port-forwarding-guide': ['cookies-complete-guide', 'web-development-guide', 'serpmonn-install-guide'],
-  'serpmonn-install-guide': ['cookies-complete-guide', 'port-forwarding-guide', 'updates-sep15-2025-jul22-2026']
+  'serpmonn-install-guide': ['cookies-complete-guide', 'port-forwarding-guide', 'updates-sep15-2025-jul22-2026'],
+  'training-and-nutrition-guide': ['how-to-calculate-the-eco-footprint-of-products', 'utm-complete-guide', 'serpmonn-install-guide']
 };
 
 const RELATED_TITLE = {
@@ -112,7 +113,8 @@ function buildTitleIndex() {
     'updates-august-17': 'updatesAugust17.json',
     'updates-aug-25-sep-15': 'updatesAug25Sep15.json',
     'updates-sep15-2025-jul22-2026': 'updatesSep15Jul22.json',
-    'serpmonn-install-guide': 'serpmonnInstallGuide.json'
+    'serpmonn-install-guide': 'serpmonnInstallGuide.json',
+    'training-and-nutrition-guide': 'trainingAndNutritionGuide.json'
   };
 
   const titles = {};
