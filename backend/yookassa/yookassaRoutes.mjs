@@ -4,6 +4,7 @@ import YooKassa from './yookassaClient.mjs';
 import { query } from '../database/config.mjs';
 import verifyToken from '../auth/verifyToken.mjs';
 import { getRequestIp, isYooKassaIp } from './yookassaWebhookAuth.mjs';
+import { confirmPartnerTopupFromPayment } from '../partners/partnerYookassa.mjs';
 
 const router = express.Router();
 
@@ -112,7 +113,15 @@ router.post('/api/yookassa/webhook', async (req, res) => {
       return res.sendStatus(200);
     }
 
-    if (payment.metadata?.type && payment.metadata.type !== 'serpmonn_pro') {
+    const metaType = payment.metadata?.type;
+
+    // Партнёрские пополнения сети (тот же магазин / тот же URL уведомлений)
+    if (metaType === 'partner_topup') {
+      await confirmPartnerTopupFromPayment(payment);
+      return res.sendStatus(200);
+    }
+
+    if (metaType && metaType !== 'serpmonn_pro') {
       // чужие типы (agent_subscription и т.п.) — не наш webhook
       return res.sendStatus(200);
     }

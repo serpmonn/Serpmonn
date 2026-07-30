@@ -4,10 +4,24 @@ import {
   setOfferStatus
 } from '../partners/partnerModel.mjs';
 
+function isRussiaCountry(country) {
+  const s = String(country || 'RU').trim().toUpperCase();
+  return !s || s === 'RU' || s === 'RUS' || s === 'RUSSIA' || s === 'РФ';
+}
+
+function missingEridForRu(offer) {
+  return isRussiaCountry(offer?.country) && !String(offer?.erid || '').trim();
+}
+
 export async function listPartnerModeration(_req, res) {
   try {
     const offers = await listModerationOffers();
-    return res.json({ offers });
+    const withFlags = (offers || []).map((o) => ({
+      ...o,
+      eridRequired: isRussiaCountry(o.country),
+      eridMissing: missingEridForRu(o)
+    }));
+    return res.json({ offers: withFlags });
   } catch (err) {
     console.error('[admin] partners moderation list', err);
     return res.status(500).json({ message: 'Ошибка загрузки очереди' });
@@ -24,6 +38,14 @@ export async function approvePartnerOffer(req, res) {
     if (!offer) return res.status(404).json({ message: 'Оффер не найден' });
     if (offer.status !== 'moderation') {
       return res.status(409).json({ message: 'Оффер не в очереди модерации' });
+    }
+    if (missingEridForRu(offer) && !req.body?.confirmMissingErid) {
+      return res.status(409).json({
+        message:
+          'Оффер для России без ERID. Для маркировки рекламы (ОРД) токен нужен. Одобрить всё равно?',
+        code: 'MISSING_ERID',
+        requireConfirm: true
+      });
     }
     await setOfferStatus(id, 'published');
     return res.json({ offer: await findOfferById(id) });

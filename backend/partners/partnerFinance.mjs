@@ -10,6 +10,25 @@ export const MIN_PAYOUT_AMOUNT = (() => {
   return Number.isFinite(n) && n > 0 ? n : 1000;
 })();
 
+/** Дефолтный холд начислений паблишеру (дней), если в оффере не задано */
+export const CONVERSION_HOLD_DAYS = (() => {
+  const n = Number(process.env.PARTNER_CONVERSION_HOLD_DAYS);
+  return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 7;
+})();
+
+/** Максимум дней холда на оффер */
+export const MAX_HOLD_DAYS = (() => {
+  const n = Number(process.env.PARTNER_MAX_HOLD_DAYS);
+  return Number.isFinite(n) && n >= 0 ? Math.floor(n) : 180;
+})();
+
+export function clampHoldDays(raw, fallback = CONVERSION_HOLD_DAYS) {
+  if (raw == null || raw === '') return fallback;
+  const n = Math.floor(Number(raw));
+  if (!Number.isFinite(n)) return fallback;
+  return Math.min(MAX_HOLD_DAYS, Math.max(0, n));
+}
+
 let financeTablesReady = false;
 
 async function columnExists(table, column) {
@@ -98,7 +117,9 @@ export async function ensureFinanceTables() {
     ['partner_conversions', 'publisher_amount', 'DECIMAL(12,2) NULL'],
     ['partner_conversions', 'fee_amount', 'DECIMAL(12,2) NULL'],
     ['partner_conversions', 'advertiser_charge', 'DECIMAL(12,2) NULL'],
-    ['partner_conversions', 'settlement_status', "VARCHAR(32) NOT NULL DEFAULT 'pending'"]
+    ['partner_conversions', 'settlement_status', "VARCHAR(32) NOT NULL DEFAULT 'pending'"],
+    ['partner_conversions', 'available_at', 'DATETIME(3) NULL'],
+    ['partner_payouts', 'provider_payout_id', 'VARCHAR(128) NULL']
   ];
   for (const [table, col, def] of alters) {
     if (!(await columnExists(table, col))) {
@@ -202,18 +223,30 @@ export async function getNetworkWallet() {
 }
 
 /**
- * Settle conversion: charge advertiser amount*1.1, credit publisher amount, credit network fee.
- * Returns { settled, reason?, publisherAmount, feeAmount, advertiserCharge }
+ * Settle conversion: charge advertiser amount*1.1, credit publisher (on hold N days), credit network fee.
+ * Only RUB (or empty) is settled; other currencies are recorded as failed_currency.
  */
 export async function settleConversion({
   conversionId,
   advertiserId,
   publisherId,
   publisherAmount,
-  currency = 'RUB'
+  currency = 'RUB',
+  holdDays
 }) {
   await ensureFinanceTables();
+  const days = clampHoldDays(holdDays, CONVERSION_HOLD_DAYS);
   const amounts = calcFee(publisherAmount);
+  const cur = String(currency || 'RUB').toUpperCase();
+  if (cur !== 'RUB') {
+    await query(
+      `UPDATE partner_conversions SET
+        publisher_amount = ?, fee_amount = ?, advertiser_charge = ?, settlement_status = 'failed'
+       WHERE id = ?`,
+      [amounts.publisherAmount, amounts.feeAmount, amounts.advertiserCharge, conversionId]
+    );
+    return { settled: false, reason: 'currency_not_supported', currency: cur, ...amounts };
+  }
   if (!advertiserId || !publisherId || !(amounts.publisherAmount > 0)) {
     await query(
       `UPDATE partner_conversions SET
@@ -227,6 +260,16 @@ export async function settleConversion({
   const conn = await getConnection();
   try {
     await connQuery(conn, 'START TRANSACTION');
+    const existing = await connQuery(
+      conn,
+      `SELECT settlement_status FROM partner_conversions WHERE id = ? FOR UPDATE`,
+      [conversionId]
+    );
+    if (existing[0] && ['held', 'settled', 'reversed'].includes(existing[0].settlement_status)) {
+      await connQuery(conn, 'ROLLBACK');
+      return { settled: false, reason: 'already_settled', ...amounts };
+    }
+
     const advWallet = await ensureUserWalletTx(conn, advertiserId);
     const pubWallet = await ensureUserWalletTx(conn, publisherId);
     const netWallet = await ensureNetworkWalletTx(conn);
@@ -244,27 +287,46 @@ export async function settleConversion({
 
     await applyDelta(conn, advWallet, -amounts.advertiserCharge, 'conversion_advertiser', {
       conversionId,
-      meta: { currency }
+      meta: { currency: cur }
     });
     await applyDelta(conn, pubWallet, amounts.publisherAmount, 'conversion_publisher', {
       conversionId,
-      meta: { currency }
+      meta: { currency: cur }
     });
+    // холд: available = balance - hold
+    const nextHold = round2(Number(pubWallet.hold) + amounts.publisherAmount);
+    await connQuery(conn, `UPDATE partner_wallets SET hold = ? WHERE id = ?`, [nextHold, pubWallet.id]);
+    pubWallet.hold = nextHold;
+
     await applyDelta(conn, netWallet, amounts.feeAmount, 'conversion_fee', {
       conversionId,
-      meta: { currency, rate: PARTNER_FEE_RATE }
+      meta: { currency: cur, rate: PARTNER_FEE_RATE }
     });
 
+    const status = days > 0 ? 'held' : 'settled';
     await connQuery(
       conn,
       `UPDATE partner_conversions SET
-        publisher_amount = ?, fee_amount = ?, advertiser_charge = ?, settlement_status = 'settled'
+        publisher_amount = ?, fee_amount = ?, advertiser_charge = ?,
+        settlement_status = ?, available_at = DATE_ADD(CURRENT_TIMESTAMP(3), INTERVAL ? DAY)
        WHERE id = ?`,
-      [amounts.publisherAmount, amounts.feeAmount, amounts.advertiserCharge, conversionId]
+      [
+        amounts.publisherAmount,
+        amounts.feeAmount,
+        amounts.advertiserCharge,
+        status,
+        days,
+        conversionId
+      ]
     );
 
+    if (status === 'settled') {
+      const releasedHold = round2(Math.max(0, Number(pubWallet.hold) - amounts.publisherAmount));
+      await connQuery(conn, `UPDATE partner_wallets SET hold = ? WHERE id = ?`, [releasedHold, pubWallet.id]);
+    }
+
     await connQuery(conn, 'COMMIT');
-    return { settled: true, ...amounts };
+    return { settled: true, holdDays: days, status, ...amounts };
   } catch (err) {
     try { await connQuery(conn, 'ROLLBACK'); } catch { /* ignore */ }
     throw err;
@@ -273,15 +335,141 @@ export async function settleConversion({
   }
 }
 
-export async function createTopup({ advertiserId, amount }) {
+/** Снять холд с конверсий, у которых available_at наступил */
+export async function releaseHeldConversions() {
+  await ensureFinanceTables();
+  const rows = await query(
+    `SELECT id, publisher_id, publisher_amount FROM partner_conversions
+     WHERE settlement_status = 'held' AND available_at IS NOT NULL AND available_at <= CURRENT_TIMESTAMP(3)
+     ORDER BY id ASC LIMIT 100`
+  );
+  let released = 0;
+  for (const row of rows) {
+    const conn = await getConnection();
+    try {
+      await connQuery(conn, 'START TRANSACTION');
+      const locked = await connQuery(
+        conn,
+        `SELECT * FROM partner_conversions WHERE id = ? FOR UPDATE`,
+        [row.id]
+      );
+      const conv = locked[0];
+      if (!conv || conv.settlement_status !== 'held') {
+        await connQuery(conn, 'ROLLBACK');
+        continue;
+      }
+      const w = await ensureUserWalletTx(conn, conv.publisher_id);
+      const amt = round2(Number(conv.publisher_amount || 0));
+      const nextHold = round2(Math.max(0, Number(w.hold) - amt));
+      await connQuery(conn, `UPDATE partner_wallets SET hold = ? WHERE id = ?`, [nextHold, w.id]);
+      await connQuery(
+        conn,
+        `UPDATE partner_conversions SET settlement_status = 'settled' WHERE id = ?`,
+        [conv.id]
+      );
+      await connQuery(
+        conn,
+        `INSERT INTO partner_ledger (wallet_id, type, amount, balance_after, conversion_id, meta)
+         VALUES (?, 'adjust', 0, ?, ?, ?)`,
+        [w.id, Number(w.balance), conv.id, JSON.stringify({ release_hold: amt })]
+      );
+      await connQuery(conn, 'COMMIT');
+      released += 1;
+    } catch (err) {
+      try { await connQuery(conn, 'ROLLBACK'); } catch { /* ignore */ }
+      console.error('[partners] release hold', row.id, err.message);
+    } finally {
+      conn.release();
+    }
+  }
+  return released;
+}
+
+/** Сторно при отказе / chargeback */
+export async function reverseConversion(conversionId, reason = 'reversed') {
+  await ensureFinanceTables();
+  const conn = await getConnection();
+  try {
+    await connQuery(conn, 'START TRANSACTION');
+    const rows = await connQuery(
+      conn,
+      `SELECT v.*, o.owner_id AS advertiser_id
+       FROM partner_conversions v
+       JOIN partner_offers o ON o.id = v.offer_id
+       WHERE v.id = ? FOR UPDATE`,
+      [conversionId]
+    );
+    const conv = rows[0];
+    if (!conv || !['held', 'settled'].includes(conv.settlement_status)) {
+      await connQuery(conn, 'ROLLBACK');
+      return { ok: false, message: 'Нечего сторнировать' };
+    }
+    const pubAmt = round2(Number(conv.publisher_amount || 0));
+    const feeAmt = round2(Number(conv.fee_amount || 0));
+    const charge = round2(Number(conv.advertiser_charge || pubAmt + feeAmt));
+
+    const advWallet = await ensureUserWalletTx(conn, conv.advertiser_id);
+    const pubWallet = await ensureUserWalletTx(conn, conv.publisher_id);
+    const netWallet = await ensureNetworkWalletTx(conn);
+
+    await applyDelta(conn, advWallet, charge, 'adjust', {
+      conversionId,
+      meta: { reverse: true, reason }
+    });
+    await applyDelta(conn, pubWallet, -pubAmt, 'adjust', {
+      conversionId,
+      meta: { reverse: true, reason }
+    });
+    if (conv.settlement_status === 'held') {
+      const nextHold = round2(Math.max(0, Number(pubWallet.hold) - pubAmt));
+      await connQuery(conn, `UPDATE partner_wallets SET hold = ? WHERE id = ?`, [nextHold, pubWallet.id]);
+    }
+    await applyDelta(conn, netWallet, -feeAmt, 'adjust', {
+      conversionId,
+      meta: { reverse: true, reason }
+    });
+    await connQuery(
+      conn,
+      `UPDATE partner_conversions SET settlement_status = 'reversed', status = ? WHERE id = ?`,
+      [reason.slice(0, 32), conversionId]
+    );
+    await connQuery(conn, 'COMMIT');
+    return { ok: true };
+  } catch (err) {
+    try { await connQuery(conn, 'ROLLBACK'); } catch { /* ignore */ }
+    throw err;
+  } finally {
+    conn.release();
+  }
+}
+
+export async function createTopup({ advertiserId, amount, provider = 'manual' }) {
   await ensureFinanceTables();
   const amt = round2(amount);
   if (!(amt > 0)) throw Object.assign(new Error('Сумма должна быть > 0'), { status: 400 });
+  const prov = provider === 'yookassa' ? 'yookassa' : 'manual';
   const result = await query(
-    `INSERT INTO partner_topups (advertiser_id, amount, status, provider) VALUES (?, ?, 'pending', 'manual')`,
-    [advertiserId, amt]
+    `INSERT INTO partner_topups (advertiser_id, amount, status, provider) VALUES (?, ?, 'pending', ?)`,
+    [advertiserId, amt, prov]
   );
   return result.insertId;
+}
+
+export async function attachTopupPaymentId(topupId, paymentId) {
+  await ensureFinanceTables();
+  await query(`UPDATE partner_topups SET provider_payment_id = ? WHERE id = ?`, [
+    String(paymentId).slice(0, 128),
+    topupId
+  ]);
+}
+
+export async function findTopupByPaymentId(paymentId) {
+  await ensureFinanceTables();
+  const rows = await query(
+    `SELECT * FROM partner_topups WHERE provider_payment_id = ? LIMIT 1`,
+    [String(paymentId)]
+  );
+  return rows[0] || null;
 }
 
 export async function listTopupsForAdvertiser(advertiserId) {
@@ -303,7 +491,7 @@ export async function listPendingTopups() {
   );
 }
 
-export async function confirmTopup(topupId) {
+export async function confirmTopup(topupId, { expectedAmount } = {}) {
   await ensureFinanceTables();
   const conn = await getConnection();
   try {
@@ -317,6 +505,14 @@ export async function confirmTopup(topupId) {
     if (topup.status !== 'pending') {
       await connQuery(conn, 'ROLLBACK');
       return { ok: false, message: 'Уже обработано' };
+    }
+    if (
+      expectedAmount != null &&
+      Number.isFinite(expectedAmount) &&
+      Math.abs(Number(topup.amount) - Number(expectedAmount)) > 0.009
+    ) {
+      await connQuery(conn, 'ROLLBACK');
+      return { ok: false, message: 'Сумма платежа не совпадает' };
     }
     const wallet = await ensureUserWalletTx(conn, topup.advertiser_id);
     await applyDelta(conn, wallet, Number(topup.amount), 'topup', { topupId: topup.id });
@@ -342,6 +538,20 @@ export async function cancelTopup(topupId) {
     [topupId]
   );
   return result.affectedRows > 0;
+}
+
+export async function findPayoutById(id) {
+  await ensureFinanceTables();
+  const rows = await query(`SELECT * FROM partner_payouts WHERE id = ? LIMIT 1`, [id]);
+  return rows[0] || null;
+}
+
+export async function setPayoutProviderId(payoutId, providerId) {
+  await ensureFinanceTables();
+  await query(`UPDATE partner_payouts SET provider_payout_id = ? WHERE id = ?`, [
+    String(providerId).slice(0, 128),
+    payoutId
+  ]);
 }
 
 export async function createPayout({ publisherId, amount, method, requisites }) {

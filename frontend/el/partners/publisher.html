@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Кабинет паблишера — Серпмонн</title>
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/partners/partners.css">
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body data-i18n-page-title="pub.title">
+  <div id="menuContainer" class="loading"></div>
+  <main class="partners partners--cabinet">
+    <header class="partners-header">
+      <div class="partners-header__meta">
+        <p class="partners-eyebrow" data-i18n="cabinet.eyebrow">Кабинет</p>
+        <h1 data-i18n="pub.h1">Паблишер</h1>
+        <p class="partners__lead" id="who">…</p>
+      </div>
+      <div class="partners-actions partners-actions--header">
+        <div class="partners-balance-chip" id="balanceChip" data-i18n-title="pub.balanceTitle" title="Доступно к выводу">
+          <span class="partners-balance-chip__label" data-i18n="cabinet.balance">Баланс</span>
+          <strong id="walletBalance">—</strong>
+        </div>
+        <button type="button" class="partners-btn" id="openPayoutBtn" data-i18n="cabinet.payout">Вывести</button>
+        <a class="partners-btn partners-btn--ghost partners-header-help" id="cabinetHelpLink" href="/frontend/partners/help.html" data-i18n="help.short">Помощь</a>
+        <button type="button" class="partners-btn partners-btn--ghost" id="logoutBtn" data-i18n="cabinet.logout">Выйти</button>
+      </div>
+    </header>
+
+    <div class="partners-drawer" id="payoutDrawer" hidden>
+      <div class="partners-drawer__backdrop" id="payoutBackdrop"></div>
+      <aside class="partners-drawer__panel" role="dialog" aria-labelledby="payoutTitle">
+        <div class="partners-drawer__head">
+          <h2 id="payoutTitle" data-i18n="payout.title">Вывод средств</h2>
+          <button type="button" class="partners-btn partners-btn--ghost" id="closePayoutBtn" data-i18n="cabinet.close" data-i18n-aria="cabinet.close" aria-label="Закрыть">Закрыть</button>
+        </div>
+        <p class="partners-drawer__hint" id="walletHold"></p>
+        <form id="payoutForm" class="partners-wallet__form">
+          <label>
+            <span data-i18n="payout.amount">Сумма вывода (₽)</span>
+            <input class="partners-drawer__amount" name="amount" type="number" min="1" step="1" required>
+          </label>
+          <label><span data-i18n="payout.method">Способ</span>
+            <select name="method">
+              <option value="sbp" data-i18n="payout.sbp">СБП</option>
+              <option value="card" data-i18n="payout.card">Карта</option>
+              <option value="other" data-i18n="payout.other">Другое</option>
+            </select>
+          </label>
+          <label><span data-i18n="payout.requisites">Реквизиты</span>
+            <input name="requisites" required maxlength="512"
+              data-i18n-placeholder="payout.requisitesPh"
+              placeholder='СБП: {"phone":"79001234567","bank_id":"..."} или номер карты'>
+          </label>
+          <button type="submit" data-i18n="payout.submit">Отправить заявку</button>
+        </form>
+        <p class="partners-msg" id="payoutMsg" hidden></p>
+        <h3 class="partners-drawer__sub" data-i18n="payout.list">Заявки</h3>
+        <div id="payoutsList"></div>
+      </aside>
+    </div>
+
+    <nav class="partners-section-tabs" role="tablist" aria-label="Sections">
+      <button type="button" class="partners-section-tab is-active" role="tab" aria-selected="true" data-section="catalog" data-i18n="tab.catalog">Каталог</button>
+      <button type="button" class="partners-section-tab" role="tab" aria-selected="false" data-section="money" data-i18n="tab.money">Деньги</button>
+      <button type="button" class="partners-section-tab" role="tab" aria-selected="false" data-section="stats" data-i18n="tab.stats">Статистика</button>
+    </nav>
+
+    <div class="partners-section is-active" data-section-panel="catalog">
+      <section class="partners-panel">
+        <div class="partners-panel__head">
+          <h2 data-i18n="catalog.h2">Каталог офферов</h2>
+          <p class="partners-panel__hint" data-i18n="catalog.hint" data-i18n-html="1">Ставьте tracked-ссылку на своей площадке. Клики без <code>?p=</code> не принимаются.</p>
+        </div>
+        <div id="offers"></div>
+      </section>
+    </div>
+
+    <div class="partners-section" data-section-panel="money" hidden>
+      <section class="partners-panel">
+        <div class="partners-panel__head">
+          <h2 data-i18n="tab.money">Деньги</h2>
+          <p class="partners-panel__hint" data-i18n="money.pubHint">Доступный баланс можно вывести. Часть средств может быть в холде после конверсий.</p>
+        </div>
+        <p class="partners-panel__hint" id="moneyHoldHint"></p>
+        <div class="partners-actions">
+          <button type="button" class="partners-btn" id="moneyPayoutBtn" data-i18n="money.openPayout">Вывести средства</button>
+        </div>
+      </section>
+    </div>
+
+    <div class="partners-section" data-section-panel="stats" hidden>
+      <section class="partners-panel">
+        <div class="partners-panel__head">
+          <h2 data-i18n="stats.h2">Статистика</h2>
+        </div>
+        <div id="stats"></div>
+      </section>
+    </div>
+  </main>
+  <script src="/frontend/partners/partners-i18n-data.js"></script>
+  <script src="/frontend/partners/partners-i18n.js"></script>
+  <script src="/frontend/partners/publisher.js" defer></script>
+</body>
+</html>

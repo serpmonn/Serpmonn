@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Партнёрская сеть — Serpmonn</title>
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/partners/partners.css">
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+  <div id="menuContainer" class="loading"></div>
+  <main class="partners">
+    <p class="partners-eyebrow">Партнёры</p>
+    <h1>Партнёрская сеть Serpmonn</h1>
+    <p class="partners__lead" style="margin-bottom:8px">Для рекламодателей — размещение офферов. Для владельцев площадок — партнёрские ссылки и статистика.</p>
+
+    <div class="partners-tabs">
+      <button type="button" class="partners-tab is-active" data-tab="login">Вход</button>
+      <button type="button" class="partners-tab" data-tab="register">Регистрация</button>
+    </div>
+
+    <form id="loginForm" class="partners-card">
+      <label>Email <input name="email" type="email" required autocomplete="username"></label>
+      <label>Пароль <input name="password" type="password" required autocomplete="current-password"></label>
+      <button type="submit">Войти</button>
+      <p class="partners-msg" id="loginMsg" hidden></p>
+    </form>
+
+    <form id="registerForm" class="partners-card" hidden>
+      <label>Email <input name="email" type="email" required autocomplete="username"></label>
+      <label>Пароль (мин. 8) <input name="password" type="password" required minlength="8" autocomplete="new-password"></label>
+      <label>Роль
+        <select name="role" required>
+          <option value="advertiser">Рекламодатель</option>
+          <option value="publisher">Паблишер</option>
+        </select>
+      </label>
+      <label>Компания <span class="partners-optional">(необязательно)</span>
+        <input name="company" type="text" maxlength="255" placeholder="Название компании или бренда">
+      </label>
+      <label>Контакты <span class="partners-optional">(необязательно)</span>
+        <input name="contacts" type="text" maxlength="512" placeholder="Telegram / телефон">
+      </label>
+      <button type="submit">Зарегистрироваться</button>
+      <p class="partners-msg" id="registerMsg" hidden></p>
+    </form>
+  </main>
+  <script src="/frontend/partners/partners-auth.js" defer></script>
+</body>
+</html>

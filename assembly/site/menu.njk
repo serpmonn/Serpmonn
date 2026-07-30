@@ -480,27 +480,14 @@ eleventyComputed:
         {{ menu_privacy_policy }}
     </a>
 
-    <!-- ========== РАЗДЕЛ ПАРТНЁРОВ ========== -->
-    <a href="#" class="menu-item" data-submenu="partnersSubmenu">
-        {{ toolIcon('partners', 'cat') }}
+    <!-- ========== СТАТЬ ПАРТНЁРОМ (сеть) ========== -->
+    <a href="{% if locale == 'ru' %}/frontend/partners/index.html{% else %}/frontend/{{ locale }}/partners/index.html{% endif %}"
+    class="menu-item"
+    id="become-partner-btn"
+    data-route="partners">
+        {{ toolIcon('handshake', 'cat') }}
         {{ menu_partners }}
     </a>
-
-    <div class="submenu-container" id="partnersSubmenu">
-        <div class="submenu-group-label" role="presentation">{{ menu_partners_direct_group }}</div>
-        <a href="https://adventure36.ru" target="_blank">
-            <img src="/frontend/images/Adventure36.ico" alt="Adventure36" class="icon">
-            Adventure36
-        </a>
-        <a href="https://vrnhoney.ru" target="_blank">
-            <img src="/frontend/images/VRNHoney.ico" alt="VRNHoney" class="icon">
-            VRNHoney
-        </a>
-        <a href="https://onehouseboat.ru" target="_blank">
-            <img src="/frontend/images/OneHouseBoat.ico" alt="OneHouseBoat" class="icon">
-            OneHouseBoat
-        </a>
-    </div>
 
     <!-- ========== ИНФОРМАЦИЯ О РЕКЛАМЕ ========== -->
     <a href="{% if locale == 'ru' %}/frontend/ad-info/ad-info.html{% else %}/frontend/{{ locale }}/ad-info/ad-info.html{% endif %}"

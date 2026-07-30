@@ -14,6 +14,7 @@ import {
   findClickByClickId,
   insertConversion,
   findConversionById,
+  findActiveConversionByClickId,
   statsForAdvertiser,
   statsForPublisher,
   ensurePartnerTables
@@ -29,14 +30,32 @@ import {
 import {
   PARTNER_FEE_RATE,
   MIN_PAYOUT_AMOUNT,
+  CONVERSION_HOLD_DAYS,
+  MAX_HOLD_DAYS,
+  clampHoldDays,
   getWalletForUser,
-  getNetworkWallet,
   settleConversion,
+  reverseConversion,
+  releaseHeldConversions,
   createTopup,
   listTopupsForAdvertiser,
   createPayout,
   listPayoutsForPublisher
 } from './partnerFinance.mjs';
+import {
+  createYookassaTopup,
+  handlePartnerYookassaWebhook,
+  partnerYookassaInfo,
+  yookassaPaymentsEnabled,
+  syncPendingYookassaTopupsForAdvertiser
+} from './partnerYookassa.mjs';
+
+import {
+  notifyTopupCreated,
+  notifyPayoutRequested,
+  notifyOfferModeration,
+  getTopupRequisites
+} from './partnerNotify.mjs';
 
 const router = Router();
 
@@ -52,11 +71,29 @@ function publicUser(u) {
   };
 }
 
+function normalizeCountry(raw) {
+  const s = String(raw || 'RU').trim().toUpperCase();
+  if (!s || s === 'RU' || s === 'RUS' || s === 'RUSSIA' || s === 'РФ') return 'RU';
+  if (s === 'OTHER' || s === 'INTL' || s === 'WORLD') return 'OTHER';
+  return s.slice(0, 64);
+}
+
+function isRussiaCountry(country) {
+  return normalizeCountry(country) === 'RU';
+}
+
 function normalizeOfferBody(body) {
   const type = body.type === 'cpa' ? 'cpa' : 'promo';
   const title = String(body.title || '').trim().slice(0, 255);
   const landingUrl = String(body.landingUrl || body.landing_url || '').trim().slice(0, 1024);
   const promocode = body.promocode != null ? String(body.promocode).trim().slice(0, 128) : '';
+  const country = normalizeCountry(body.country || body.country_code || 'RU');
+  let erid = body.erid != null ? String(body.erid).trim().slice(0, 128) : '';
+  if (!isRussiaCountry(country)) erid = '';
+  const holdDays = clampHoldDays(
+    body.holdDays != null ? body.holdDays : body.hold_days,
+    CONVERSION_HOLD_DAYS
+  );
   return {
     type,
     title,
@@ -65,10 +102,11 @@ function normalizeOfferBody(body) {
     imageUrl: body.imageUrl || body.image_url || null,
     conditions: body.conditions || null,
     category: body.category || null,
-    country: body.country || null,
-    erid: body.erid || null,
+    country,
+    erid: erid || null,
     validUntil: body.validUntil || body.valid_until || null,
-    commissionText: body.commissionText || body.commission_text || null
+    commissionText: body.commissionText || body.commission_text || null,
+    holdDays
   };
 }
 
@@ -81,6 +119,9 @@ function validateOffer(data) {
     return 'Некорректный landingUrl';
   }
   if (data.type === 'promo' && !data.promocode) return 'Для promo нужен promocode';
+  if (isRussiaCountry(data.country) && !data.erid) {
+    return 'Для офферов в России нужен ERID (токен маркировки из ОРД)';
+  }
   return null;
 }
 
@@ -170,11 +211,19 @@ router.get('/auth/me', verifyPartnerToken, async (req, res) => {
 router.get('/wallet', verifyPartnerToken, async (req, res) => {
   try {
     await ensurePartnerTables();
+    await releaseHeldConversions().catch(() => {});
+    if (req.partner.role === 'advertiser' || req.partner.role === 'admin') {
+      await syncPendingYookassaTopupsForAdvertiser(req.partner.id).catch(() => {});
+    }
     const wallet = await getWalletForUser(req.partner.id);
     return res.json({
       wallet: walletPublic(wallet),
       feeRate: PARTNER_FEE_RATE,
-      minPayout: MIN_PAYOUT_AMOUNT
+      minPayout: MIN_PAYOUT_AMOUNT,
+      holdDays: CONVERSION_HOLD_DAYS,
+      maxHoldDays: MAX_HOLD_DAYS,
+      topupRequisites: getTopupRequisites() || null,
+      yookassa: partnerYookassaInfo()
     });
   } catch (err) {
     console.error('[partners] wallet', err);
@@ -189,8 +238,40 @@ router.post(
   async (req, res) => {
     try {
       const amount = Number(req.body.amount);
-      const id = await createTopup({ advertiserId: req.partner.id, amount });
-      return res.status(201).json({ id, status: 'pending' });
+      const provider = String(req.body.provider || 'yookassa').toLowerCase();
+      if (provider === 'yookassa' || (provider !== 'manual' && yookassaPaymentsEnabled())) {
+        if (!yookassaPaymentsEnabled()) {
+          return res.status(503).json({ message: 'ЮKassa не настроена — создайте ручную заявку (provider: manual)' });
+        }
+        const result = await createYookassaTopup({ advertiserId: req.partner.id, amount });
+        setImmediate(() => {
+          notifyTopupCreated({
+            topupId: result.topupId,
+            amount,
+            advertiserEmail: req.partner.email,
+            company: req.partner.company,
+            provider: 'yookassa'
+          }).catch(() => {});
+        });
+        return res.status(201).json({
+          id: result.topupId,
+          status: 'pending',
+          provider: 'yookassa',
+          paymentId: result.paymentId,
+          confirmationUrl: result.confirmationUrl
+        });
+      }
+      const id = await createTopup({ advertiserId: req.partner.id, amount, provider: 'manual' });
+      setImmediate(() => {
+        notifyTopupCreated({
+          topupId: id,
+          amount,
+          advertiserEmail: req.partner.email,
+          company: req.partner.company,
+          provider: 'manual'
+        }).catch(() => {});
+      });
+      return res.status(201).json({ id, status: 'pending', provider: 'manual' });
     } catch (err) {
       return res.status(err.status || 500).json({ message: err.message || 'Ошибка' });
     }
@@ -202,6 +283,7 @@ router.get(
   verifyPartnerToken,
   requireRole('advertiser', 'admin'),
   async (req, res) => {
+    await syncPendingYookassaTopupsForAdvertiser(req.partner.id).catch(() => {});
     const topups = await listTopupsForAdvertiser(req.partner.id);
     return res.json({ topups });
   }
@@ -218,6 +300,15 @@ router.post(
         amount: Number(req.body.amount),
         method: req.body.method,
         requisites: req.body.requisites
+      });
+      setImmediate(() => {
+        notifyPayoutRequested({
+          payoutId: id,
+          amount: Number(req.body.amount),
+          publisherEmail: req.partner.email,
+          method: req.body.method,
+          requisites: req.body.requisites
+        }).catch(() => {});
       });
       return res.status(201).json({ id, status: 'requested' });
     } catch (err) {
@@ -262,6 +353,14 @@ router.post(
       status: 'moderation'
     });
     const offer = await findOfferById(created.id);
+    setImmediate(() => {
+      notifyOfferModeration({
+        offer,
+        advertiserEmail: req.partner.email,
+        company: req.partner.company,
+        isUpdate: false
+      }).catch(() => {});
+    });
     return res.status(201).json({ offer });
   }
 );
@@ -281,10 +380,17 @@ router.put(
     if (err) return res.status(400).json({ message: err });
     await updateOffer(id, req.partner.id, data);
     const offer = await findOfferById(id);
+    setImmediate(() => {
+      notifyOfferModeration({
+        offer,
+        advertiserEmail: req.partner.email,
+        company: req.partner.company,
+        isUpdate: true
+      }).catch(() => {});
+    });
     return res.json({ offer });
   }
 );
-
 
 router.post(
   '/advertiser/offers/:id/unpublish',
@@ -343,6 +449,16 @@ router.get(
 
 // ——— Postback (public) ———
 
+const REJECT_STATUSES = new Set([
+  'rejected',
+  'cancelled',
+  'canceled',
+  'declined',
+  'reverse',
+  'reversed',
+  'chargeback'
+]);
+
 router.all('/postback', async (req, res) => {
   try {
     await ensurePartnerTables();
@@ -353,7 +469,27 @@ router.all('/postback', async (req, res) => {
     if (!click) return res.status(404).json({ message: 'click not found' });
     const amount = src.amount != null && src.amount !== '' ? Number(src.amount) : null;
     const currency = String(src.currency || 'RUB').slice(0, 8);
-    const status = String(src.status || 'confirmed').slice(0, 32);
+    const status = String(src.status || 'confirmed').slice(0, 32).toLowerCase();
+
+    if (REJECT_STATUSES.has(status)) {
+      const active = await findActiveConversionByClickId(clickId);
+      if (!active) {
+        return res.json({ ok: true, reversed: false, message: 'нет активной конверсии' });
+      }
+      const rev = await reverseConversion(active.id, status);
+      return res.json({ ok: true, reversed: rev.ok, conversionId: active.id, settlement: rev });
+    }
+
+    const existing = await findActiveConversionByClickId(clickId);
+    if (existing && status === 'confirmed') {
+      return res.json({
+        ok: true,
+        id: existing.id,
+        settlement: { settled: true, reason: 'already_settled', status: existing.settlement_status },
+        feeRate: PARTNER_FEE_RATE
+      });
+    }
+
     const id = await insertConversion({
       clickId,
       offerId: click.offer_id,
@@ -372,7 +508,8 @@ router.all('/postback', async (req, res) => {
         advertiserId: offer?.owner_id,
         publisherId: click.publisher_id,
         publisherAmount: amount,
-        currency
+        currency,
+        holdDays: offer?.hold_days
       });
       if (!settlement.settled && settlement.reason === 'insufficient_funds') {
         const conv = await findConversionById(id);
@@ -392,5 +529,7 @@ router.all('/postback', async (req, res) => {
     return res.status(500).json({ message: 'postback error' });
   }
 });
+
+router.post('/yookassa/webhook', handlePartnerYookassaWebhook);
 
 export default router;

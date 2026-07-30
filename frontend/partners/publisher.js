@@ -1,7 +1,53 @@
 (function () {
+  const I = window.PartnersI18n;
+  if (I) I.apply();
+  const t = (key, vars) => (I ? I.t(key, vars) : key);
+  const authUrl = () => (I ? I.authUrl() : '/frontend/partners/index.html');
+  const helpEl = document.getElementById('cabinetHelpLink');
+  if (helpEl && I) helpEl.href = I.helpUrl('publisher');
+
   const who = document.getElementById('who');
   const offersEl = document.getElementById('offers');
   const statsEl = document.getElementById('stats');
+
+  function emptyState(text, ctaLabel, ctaAction) {
+    const actionAttr = ctaAction ? ` data-empty-action="${ctaAction}"` : '';
+    const btn = ctaLabel
+      ? `<button type="button" class="partners-btn partners-btn--sm js-empty-cta"${actionAttr}>${ctaLabel}</button>`
+      : '';
+    return `<div class="partners-empty"><p>${text}</p>${btn}</div>`;
+  }
+
+  function formatWhen(iso) {
+    if (!iso) return '—';
+    const d = new Date(iso);
+    if (Number.isNaN(d.getTime())) return String(iso);
+    return d.toLocaleString('ru-RU', {
+      timeZone: 'Europe/Moscow',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  function showSection(name) {
+    document.querySelectorAll('.partners-section-tab').forEach((btn) => {
+      const on = btn.getAttribute('data-section') === name;
+      btn.classList.toggle('is-active', on);
+      btn.setAttribute('aria-selected', on ? 'true' : 'false');
+    });
+    document.querySelectorAll('[data-section-panel]').forEach((panel) => {
+      const on = panel.getAttribute('data-section-panel') === name;
+      panel.hidden = !on;
+      panel.classList.toggle('is-active', on);
+    });
+  }
+
+  document.querySelectorAll('.partners-section-tab').forEach((btn) => {
+    btn.addEventListener('click', () => showSection(btn.getAttribute('data-section')));
+  });
 
   async function api(path, opts = {}) {
     const res = await fetch('/api/partners' + path, {
@@ -10,7 +56,7 @@
       ...opts
     });
     if (res.status === 401) {
-      location.href = '/frontend/partners/index.html';
+      location.href = authUrl();
       throw new Error('auth');
     }
     const data = await res.json().catch(() => ({}));
@@ -28,13 +74,14 @@
 
   document.getElementById('logoutBtn').addEventListener('click', async () => {
     await api('/auth/logout', { method: 'POST', body: '{}' });
-    location.href = '/frontend/partners/index.html';
+    location.href = authUrl();
   });
 
   const payoutDrawer = document.getElementById('payoutDrawer');
   function openPayout() { payoutDrawer.hidden = false; }
   function closePayout() { payoutDrawer.hidden = true; }
   document.getElementById('openPayoutBtn').addEventListener('click', openPayout);
+  document.getElementById('moneyPayoutBtn')?.addEventListener('click', openPayout);
   document.getElementById('closePayoutBtn').addEventListener('click', closePayout);
   document.getElementById('payoutBackdrop').addEventListener('click', closePayout);
   document.addEventListener('keydown', (e) => {
@@ -42,25 +89,34 @@
   });
 
   async function loadWallet() {
-    const { wallet, minPayout } = await api('/wallet');
+    const { wallet, minPayout, holdDays } = await api('/wallet');
     document.getElementById('walletBalance').textContent =
       `${Number(wallet.available).toLocaleString('ru-RU')} ₽`;
-    const holdHint = wallet.hold > 0
-      ? `В холде (заявки): ${Number(wallet.hold).toLocaleString('ru-RU')} ₽. `
-      : '';
-    document.getElementById('walletHold').textContent =
-      `${holdHint}Минимум вывода: ${Number(minPayout).toLocaleString('ru-RU')} ₽`;
+    const parts = [];
+    if (wallet.hold > 0) {
+      parts.push(t('payout.hold', {
+        n: Number(wallet.hold).toLocaleString('ru-RU'),
+        days: holdDays ?? 7
+      }));
+    } else if (holdDays > 0) {
+      parts.push(t('payout.holdDaysDefault', { days: holdDays }));
+    }
+    parts.push(t('payout.min', { n: Number(minPayout).toLocaleString('ru-RU') }));
+    const holdText = parts.join('. ');
+    document.getElementById('walletHold').textContent = holdText;
+    const moneyHint = document.getElementById('moneyHoldHint');
+    if (moneyHint) moneyHint.textContent = holdText;
     const amountInput = document.querySelector('#payoutForm [name=amount]');
     if (amountInput) amountInput.min = String(minPayout || 1000);
 
     const { payouts } = await api('/publisher/payouts');
     const list = document.getElementById('payoutsList');
     if (!payouts.length) {
-      list.innerHTML = '<p class="partners-panel__hint">Заявок пока нет</p>';
+      list.innerHTML = `<p class="partners-drawer__hint">${t('payout.empty')}</p>`;
       return;
     }
     list.innerHTML = `<div class="partners-table-wrap"><table class="partners-table"><thead><tr>
-      <th>ID</th><th>Сумма</th><th>Статус</th>
+      <th>${t('th.id')}</th><th>${t('th.amount')}</th><th>${t('th.status')}</th>
     </tr></thead><tbody>${payouts.map((p) => `<tr>
       <td>${p.id}</td><td>${p.amount}</td><td>${escapeHtml(p.status)}</td>
     </tr>`).join('')}</tbody></table></div>`;
@@ -81,7 +137,7 @@
       });
       msg.hidden = false;
       msg.classList.add('is-ok');
-      msg.textContent = 'Заявка на вывод создана';
+      msg.textContent = t('payout.created');
       e.target.reset();
       await loadWallet();
     } catch (err) {
@@ -94,7 +150,7 @@
   async function load() {
     const me = await api('/auth/me');
     if (me.user.role !== 'publisher' && me.user.role !== 'admin') {
-      location.href = '/frontend/partners/index.html';
+      location.href = authUrl();
       return;
     }
     who.textContent = `${me.user.email} · код ${me.user.publisherCode || '—'}`;
@@ -102,10 +158,10 @@
 
     const { offers } = await api('/publisher/offers');
     if (!offers.length) {
-      offersEl.innerHTML = '<p class="partners-empty">Пока нет опубликованных офферов</p>';
+      offersEl.innerHTML = emptyState(t('catalog.empty'), null, null);
     } else {
       offersEl.innerHTML = `<div class="partners-table-wrap"><table class="partners-table"><thead><tr>
-        <th>Оффер</th><th>Тип</th><th>Комиссия</th><th>Ваша ссылка</th>
+        <th>${t('stats.offer')}</th><th>${t('th.type')}</th><th>${t('catalog.commission')}</th><th>${t('catalog.hold')}</th><th>${t('catalog.yourLink')}</th>
       </tr></thead><tbody>${offers.map((o) => {
         const path = o.trackPath || o.trackUrl || '';
         const trackUrl = path.startsWith('http') ? path : `${location.origin}${path}`;
@@ -116,10 +172,11 @@
         </td>
         <td>${o.type}</td>
         <td>${escapeHtml(o.commission_text || '—')}</td>
+        <td>${escapeHtml(String(o.hold_days != null ? o.hold_days : '—'))}</td>
         <td>
-          <div class="partners-mono">${escapeHtml(trackUrl)}</div>
-          <div class="partners-actions">
-            <button type="button" class="partners-btn partners-btn--ghost copy-btn" data-url="${escapeHtml(trackUrl)}">Копировать</button>
+          <div class="partners-link-row">
+            <div class="partners-mono partners-link-row__url">${escapeHtml(trackUrl)}</div>
+            <button type="button" class="partners-btn partners-btn--ghost partners-btn--sm copy-btn" data-url="${escapeHtml(trackUrl)}">${t('catalog.copy')}</button>
           </div>
         </td>
       </tr>`;
@@ -128,9 +185,10 @@
         btn.addEventListener('click', async () => {
           try {
             await navigator.clipboard.writeText(btn.getAttribute('data-url'));
-            btn.textContent = 'Скопировано';
+            btn.textContent = t('catalog.copied');
+            setTimeout(() => { btn.textContent = t('catalog.copy'); }, 1500);
           } catch {
-            btn.textContent = 'Не удалось';
+            btn.textContent = t('postback.copyFail');
           }
         });
       });
@@ -138,14 +196,19 @@
 
     const { stats } = await api('/publisher/stats');
     if (!stats.length) {
-      statsEl.innerHTML = '<p class="partners-empty">Статистика появится после кликов</p>';
+      statsEl.innerHTML = emptyState(t('stats.emptyPub'), t('stats.emptyPubCta'), 'goto-catalog');
+      statsEl.querySelectorAll('.js-empty-cta').forEach((btn) => {
+        btn.addEventListener('click', () => showSection('catalog'));
+      });
     } else {
       statsEl.innerHTML = `<div class="partners-table-wrap"><table class="partners-table"><thead><tr>
-        <th>Оффер</th><th>Клики</th><th>Конверсии</th><th>Сумма</th>
+        <th>${t('stats.offer')}</th><th>${t('stats.clicks')}</th><th>${t('stats.conversions')}</th><th>${t('stats.amount')}</th><th>${t('stats.held')}</th><th>${t('stats.lastAt')}</th>
       </tr></thead><tbody>${stats.map((s) => `<tr>
         <td><div class="partners-offer-title">${escapeHtml(s.title)}</div>
           <span class="partners-mono">${escapeHtml(s.public_id)}</span></td>
         <td>${s.clicks}</td><td>${s.conversions}</td><td>${s.amount}</td>
+        <td>${s.held || 0}</td>
+        <td class="partners-mono">${formatWhen(s.last_at)}</td>
       </tr>`).join('')}</tbody></table></div>`;
     }
   }

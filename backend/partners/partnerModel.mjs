@@ -1,6 +1,6 @@
 import { query } from '../database/config.mjs';
 import crypto from 'crypto';
-import { ensureFinanceTables } from './partnerFinance.mjs';
+import { ensureFinanceTables, releaseHeldConversions } from './partnerFinance.mjs';
 
 let tablesReady = false;
 
@@ -42,6 +42,7 @@ export async function ensurePartnerTables() {
       erid VARCHAR(128) NULL,
       valid_until DATE NULL,
       commission_text VARCHAR(512) NULL,
+      hold_days SMALLINT UNSIGNED NOT NULL DEFAULT 7,
       status ENUM('draft','moderation','published','rejected') NOT NULL DEFAULT 'draft',
       reject_reason VARCHAR(512) NULL,
       created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
@@ -53,6 +54,18 @@ export async function ensurePartnerTables() {
       CONSTRAINT fk_partner_offer_owner FOREIGN KEY (owner_id) REFERENCES partner_users(id) ON DELETE CASCADE
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
   `);
+
+  {
+    const cols = await query(
+      `SELECT COUNT(*) AS c FROM information_schema.COLUMNS
+       WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'partner_offers' AND COLUMN_NAME = 'hold_days'`
+    );
+    if (!Number(cols[0]?.c || 0)) {
+      await query(
+        `ALTER TABLE partner_offers ADD COLUMN hold_days SMALLINT UNSIGNED NOT NULL DEFAULT 7 AFTER commission_text`
+      );
+    }
+  }
 
   await query(`
     CREATE TABLE IF NOT EXISTS partner_clicks (
@@ -189,8 +202,8 @@ export async function insertOffer(data) {
   const result = await query(
     `INSERT INTO partner_offers
       (owner_id, public_id, type, title, promocode, landing_url, image_url, conditions,
-       category, country, erid, valid_until, commission_text, status)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+       category, country, erid, valid_until, commission_text, hold_days, status)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       data.ownerId,
       publicId,
@@ -205,6 +218,7 @@ export async function insertOffer(data) {
       data.erid || null,
       data.validUntil || null,
       data.commissionText || null,
+      data.holdDays != null ? data.holdDays : 7,
       data.status || 'moderation'
     ]
   );
@@ -216,7 +230,7 @@ export async function updateOffer(id, ownerId, data) {
   await query(
     `UPDATE partner_offers SET
       type = ?, title = ?, promocode = ?, landing_url = ?, image_url = ?, conditions = ?,
-      category = ?, country = ?, erid = ?, valid_until = ?, commission_text = ?,
+      category = ?, country = ?, erid = ?, valid_until = ?, commission_text = ?, hold_days = ?,
       status = 'moderation', reject_reason = NULL
      WHERE id = ? AND owner_id = ?`,
     [
@@ -231,6 +245,7 @@ export async function updateOffer(id, ownerId, data) {
       data.erid || null,
       data.validUntil || null,
       data.commissionText || null,
+      data.holdDays != null ? data.holdDays : 7,
       id,
       ownerId
     ]
@@ -296,8 +311,21 @@ export async function findConversionById(id) {
   return rows[0] || null;
 }
 
+/** Активная (held/settled) конверсия по click_id — для идемпотентности и сторно */
+export async function findActiveConversionByClickId(clickId) {
+  await ensurePartnerTables();
+  const rows = await query(
+    `SELECT * FROM partner_conversions
+     WHERE click_id = ? AND settlement_status IN ('held','settled')
+     ORDER BY id DESC LIMIT 1`,
+    [clickId]
+  );
+  return rows[0] || null;
+}
+
 export async function statsForAdvertiser(ownerId) {
   await ensurePartnerTables();
+  await releaseHeldConversions().catch(() => {});
   const clicks = await query(
     `SELECT o.id AS offer_id, o.public_id, o.title, COUNT(c.id) AS clicks
      FROM partner_offers o
@@ -308,7 +336,14 @@ export async function statsForAdvertiser(ownerId) {
     [ownerId]
   );
   const conversions = await query(
-    `SELECT o.id AS offer_id, COUNT(v.id) AS conversions, COALESCE(SUM(v.amount),0) AS amount
+    `SELECT o.id AS offer_id,
+            COUNT(v.id) AS conversions,
+            COALESCE(SUM(v.amount),0) AS amount,
+            COALESCE(SUM(v.advertiser_charge),0) AS charged,
+            SUM(CASE WHEN v.settlement_status = 'settled' THEN 1 ELSE 0 END) AS settled_count,
+            SUM(CASE WHEN v.settlement_status = 'held' THEN 1 ELSE 0 END) AS held_count,
+            SUM(CASE WHEN v.settlement_status = 'failed' THEN 1 ELSE 0 END) AS failed_count,
+            SUM(CASE WHEN v.settlement_status = 'reversed' THEN 1 ELSE 0 END) AS reversed_count
      FROM partner_offers o
      LEFT JOIN partner_conversions v ON v.offer_id = o.id
      WHERE o.owner_id = ?
@@ -316,17 +351,27 @@ export async function statsForAdvertiser(ownerId) {
     [ownerId]
   );
   const byOffer = Object.fromEntries(conversions.map((r) => [r.offer_id, r]));
-  return clicks.map((r) => ({
-    ...r,
-    conversions: Number(byOffer[r.offer_id]?.conversions || 0),
-    amount: Number(byOffer[r.offer_id]?.amount || 0)
-  }));
+  return clicks.map((r) => {
+    const x = byOffer[r.offer_id] || {};
+    return {
+      ...r,
+      conversions: Number(x.conversions || 0),
+      amount: Number(x.amount || 0),
+      charged: Number(x.charged || 0),
+      settled: Number(x.settled_count || 0),
+      held: Number(x.held_count || 0),
+      failed: Number(x.failed_count || 0),
+      reversed: Number(x.reversed_count || 0)
+    };
+  });
 }
 
 export async function statsForPublisher(publisherId) {
   await ensurePartnerTables();
+  await releaseHeldConversions().catch(() => {});
   const clicks = await query(
-    `SELECT o.public_id, o.title, o.type, COUNT(c.id) AS clicks
+    `SELECT o.public_id, o.title, o.type, COUNT(c.id) AS clicks,
+            MAX(c.created_at) AS last_click_at
      FROM partner_clicks c
      JOIN partner_offers o ON o.id = c.offer_id
      WHERE c.publisher_id = ?
@@ -335,7 +380,12 @@ export async function statsForPublisher(publisherId) {
     [publisherId]
   );
   const conversions = await query(
-    `SELECT o.public_id, COUNT(v.id) AS conversions, COALESCE(SUM(v.amount),0) AS amount
+    `SELECT o.public_id,
+            COUNT(v.id) AS conversions,
+            COALESCE(SUM(v.amount),0) AS amount,
+            SUM(CASE WHEN v.settlement_status IN ('settled','held') THEN 1 ELSE 0 END) AS ok_count,
+            SUM(CASE WHEN v.settlement_status = 'held' THEN 1 ELSE 0 END) AS held_count,
+            MAX(v.created_at) AS last_conversion_at
      FROM partner_conversions v
      JOIN partner_offers o ON o.id = v.offer_id
      WHERE v.publisher_id = ?
@@ -343,9 +393,17 @@ export async function statsForPublisher(publisherId) {
     [publisherId]
   );
   const byPid = Object.fromEntries(conversions.map((r) => [r.public_id, r]));
-  return clicks.map((r) => ({
-    ...r,
-    conversions: Number(byPid[r.public_id]?.conversions || 0),
-    amount: Number(byPid[r.public_id]?.amount || 0)
-  }));
+  return clicks.map((r) => {
+    const x = byPid[r.public_id] || {};
+    const tClick = r.last_click_at ? new Date(r.last_click_at).getTime() : 0;
+    const tConv = x.last_conversion_at ? new Date(x.last_conversion_at).getTime() : 0;
+    const lastAt = tConv >= tClick ? x.last_conversion_at || r.last_click_at : r.last_click_at;
+    return {
+      ...r,
+      conversions: Number(x.conversions || 0),
+      amount: Number(x.amount || 0),
+      held: Number(x.held_count || 0),
+      last_at: lastAt || null
+    };
+  });
 }

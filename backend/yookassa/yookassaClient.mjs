@@ -49,6 +49,19 @@ export class YooKassa {
   }
 
   /**
+   * Выплаты (нужен отдельный шлюз выплат, не shop приёма платежей).
+   * @param {object} payload
+   * @param {string} [idempotenceKey]
+   */
+  createPayout(payload, idempotenceKey) {
+    return this.#request('POST', 'payouts', payload, idempotenceKey);
+  }
+
+  getPayout(payoutId, idempotenceKey) {
+    return this.#request('GET', `payouts/${payoutId}`, null, idempotenceKey);
+  }
+
+  /**
    * @param {string} paymentId
    * @param {string} [idempotenceKey]
    */

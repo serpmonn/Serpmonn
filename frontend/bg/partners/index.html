@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Партнёрская сеть — Серпмонн</title>
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/partners/partners.css">
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body data-i18n-page-title="auth.title">
+  <div id="menuContainer" class="loading"></div>
+  <main class="partners partners--auth">
+    <div class="partners-auth">
+      <div class="partners-auth__main">
+        <p class="partners-eyebrow" data-i18n="auth.eyebrow">Партнёры</p>
+        <h1 data-i18n="auth.h1">Партнёрская сеть Серпмонн</h1>
+        <p class="partners__lead" data-i18n="auth.lead">Для рекламодателей — размещение офферов. Для владельцев площадок — партнёрские ссылки и статистика.</p>
+
+        <div class="partners-auth-card">
+          <div class="partners-tabs">
+            <button type="button" class="partners-tab is-active" data-tab="login" data-i18n="auth.tabLogin">Вход</button>
+            <button type="button" class="partners-tab" data-tab="register" data-i18n="auth.tabRegister">Регистрация</button>
+          </div>
+
+          <form id="loginForm" class="partners-card partners-card--flush">
+            <label>
+              <span data-i18n="auth.email">Email</span>
+              <input name="email" type="email" required autocomplete="username">
+              <span class="partners-field-error" data-for="email" hidden></span>
+            </label>
+            <label>
+              <span data-i18n="auth.password">Пароль</span>
+              <div class="partners-password">
+                <input name="password" type="password" required autocomplete="current-password">
+                <button type="button" class="partners-password-toggle" data-i18n-aria="auth.showPassword" aria-label="Показать пароль" aria-pressed="false">
+                  <svg class="partners-password-toggle__eye" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 5c-5 0-9.3 3.1-11 7 1.7 3.9 6 7 11 7s9.3-3.1 11-7c-1.7-3.9-6-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
+                  <svg class="partners-password-toggle__eye-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3.3 2.2 2.2 3.3l3.1 3.1C3.4 8 1.8 9.8 1 12c1.7 3.9 6 7 11 7 1.7 0 3.3-.4 4.7-1l2.9 2.9 1.1-1.1L3.3 2.2zM12 17c-3.9 0-7.2-2.2-8.8-5 .7-1.4 1.9-2.8 3.4-3.7l1.7 1.7A5 5 0 0 0 12 17zm0-10c3.9 0 7.2 2.2 8.8 5-.5 1-1.3 2-2.2 2.8l1.5 1.5c1.3-1.1 2.3-2.5 2.9-4.3-1.7-3.9-6-7-11-7-1.2 0-2.3.2-3.4.5l1.5 1.5c.6-.2 1.2-.3 1.9-.3z"/></svg>
+                </button>
+              </div>
+              <span class="partners-field-error" data-for="password" hidden></span>
+            </label>
+            <button type="submit" data-i18n="auth.loginBtn">Войти</button>
+            <p class="partners-msg" id="loginMsg" hidden></p>
+          </form>
+
+          <form id="registerForm" class="partners-card partners-card--flush" hidden>
+            <label>
+              <span data-i18n="auth.email">Email</span>
+              <input name="email" type="email" required autocomplete="username">
+              <span class="partners-field-error" data-for="email" hidden></span>
+            </label>
+            <label>
+              <span data-i18n="auth.passwordMin">Пароль (мин. 8)</span>
+              <div class="partners-password">
+                <input name="password" type="password" required minlength="8" autocomplete="new-password">
+                <button type="button" class="partners-password-toggle" data-i18n-aria="auth.showPassword" aria-label="Показать пароль" aria-pressed="false">
+                  <svg class="partners-password-toggle__eye" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 5c-5 0-9.3 3.1-11 7 1.7 3.9 6 7 11 7s9.3-3.1 11-7c-1.7-3.9-6-7-11-7zm0 12a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z"/></svg>
+                  <svg class="partners-password-toggle__eye-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3.3 2.2 2.2 3.3l3.1 3.1C3.4 8 1.8 9.8 1 12c1.7 3.9 6 7 11 7 1.7 0 3.3-.4 4.7-1l2.9 2.9 1.1-1.1L3.3 2.2zM12 17c-3.9 0-7.2-2.2-8.8-5 .7-1.4 1.9-2.8 3.4-3.7l1.7 1.7A5 5 0 0 0 12 17zm0-10c3.9 0 7.2 2.2 8.8 5-.5 1-1.3 2-2.2 2.8l1.5 1.5c1.3-1.1 2.3-2.5 2.9-4.3-1.7-3.9-6-7-11-7-1.2 0-2.3.2-3.4.5l1.5 1.5c.6-.2 1.2-.3 1.9-.3z"/></svg>
+                </button>
+              </div>
+              <span class="partners-field-error" data-for="password" hidden></span>
+            </label>
+
+            <fieldset class="partners-role-fieldset">
+              <legend data-i18n="auth.role">Роль</legend>
+              <input type="hidden" name="role" id="regRole" value="advertiser">
+              <div class="partners-role-cards" role="radiogroup" aria-label="Role">
+                <button type="button" class="partners-role-card is-active" data-role="advertiser" aria-pressed="true">
+                  <strong data-i18n="auth.roleAdvertiser">Рекламодатель</strong>
+                  <span data-i18n="auth.roleAdvertiserDesc">Размещаю офферы и плачу за конверсии</span>
+                </button>
+                <button type="button" class="partners-role-card" data-role="publisher" aria-pressed="false">
+                  <strong data-i18n="auth.rolePublisher">Паблишер</strong>
+                  <span data-i18n="auth.rolePublisherDesc">Ставлю ссылки на площадке и зарабатываю</span>
+                </button>
+              </div>
+            </fieldset>
+
+            <label><span data-i18n="auth.company">Компания</span> <span class="partners-optional" data-i18n="auth.optional">(необязательно)</span>
+              <input name="company" type="text" maxlength="255" data-i18n-placeholder="auth.companyPh" placeholder="Название компании или бренда">
+            </label>
+            <label><span data-i18n="auth.contacts">Контакты</span> <span class="partners-optional" data-i18n="auth.optional">(необязательно)</span>
+              <input name="contacts" type="text" maxlength="512" data-i18n-placeholder="auth.contactsPh" placeholder="Telegram / телефон">
+            </label>
+            <button type="submit" data-i18n="auth.registerBtn">Зарегистрироваться</button>
+            <p class="partners-msg" id="registerMsg" hidden></p>
+          </form>
+        </div>
+      </div>
+
+      <aside class="partners-auth__aside" aria-label="About">
+        <h2 class="partners-auth__aside-title" data-i18n="auth.whyTitle">Зачем это</h2>
+        <ul class="partners-auth__why">
+          <li data-i18n="auth.why1">Можно разместить предложение или поставить ссылку на своём сайте.</li>
+          <li data-i18n="auth.why2">Деньги идут за реальные заявки и продажи, а не просто за показы.</li>
+        </ul>
+        <p class="partners-auth-help">
+          <a id="authHelpLink" class="partners-auth-help-btn" href="/frontend/partners/help.html" data-i18n-title="help.linkTitle" title="Краткая документация для рекламодателей и паблишеров">
+            <span class="partners-auth-help-btn__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><path d="M8 7h8M8 11h6"/></svg>
+            </span>
+            <span class="partners-auth-help-btn__text">
+              <strong data-i18n="help.link">Справка</strong>
+              <span data-i18n="help.linkHint">как работать в сети</span>
+            </span>
+          </a>
+        </p>
+      </aside>
+    </div>
+  </main>
+  <script src="/frontend/partners/partners-i18n-data.js"></script>
+  <script src="/frontend/partners/partners-i18n.js"></script>
+  <script src="/frontend/partners/partners-auth.js" defer></script>
+</body>
+</html>

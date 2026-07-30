@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Кабинет паблишера — Serpmonn</title>
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/partners/partners.css">
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body>
+  <div id="menuContainer" class="loading"></div>
+  <main class="partners partners--cabinet">
+    <header class="partners-header">
+      <div class="partners-header__meta">
+        <p class="partners-eyebrow">Кабинет</p>
+        <h1>Паблишер</h1>
+        <p class="partners__lead" id="who">…</p>
+      </div>
+      <div class="partners-actions partners-actions--header">
+        <div class="partners-balance-chip" id="balanceChip" title="Доступно к выводу">
+          <span class="partners-balance-chip__label">Баланс</span>
+          <strong id="walletBalance">—</strong>
+        </div>
+        <button type="button" class="partners-btn" id="openPayoutBtn">Вывести</button>
+        <button type="button" class="partners-btn partners-btn--ghost" id="logoutBtn">Выйти</button>
+      </div>
+    </header>
+
+    <div class="partners-drawer" id="payoutDrawer" hidden>
+      <div class="partners-drawer__backdrop" id="payoutBackdrop"></div>
+      <aside class="partners-drawer__panel" role="dialog" aria-labelledby="payoutTitle">
+        <div class="partners-drawer__head">
+          <h2 id="payoutTitle">Вывод средств</h2>
+          <button type="button" class="partners-btn partners-btn--ghost" id="closePayoutBtn" aria-label="Закрыть">Закрыть</button>
+        </div>
+        <p class="partners-panel__hint" id="walletHold"></p>
+        <form id="payoutForm" class="partners-wallet__form">
+          <label>Сумма вывода (₽)
+            <input name="amount" type="number" min="1" step="1" required>
+          </label>
+          <label>Способ
+            <select name="method">
+              <option value="sbp">СБП</option>
+              <option value="card">Карта</option>
+              <option value="other">Другое</option>
+            </select>
+          </label>
+          <label>Реквизиты
+            <input name="requisites" required maxlength="512" placeholder="Телефон СБП / номер карты">
+          </label>
+          <button type="submit">Отправить заявку</button>
+        </form>
+        <p class="partners-msg" id="payoutMsg" hidden></p>
+        <h3 class="partners-drawer__sub">Заявки</h3>
+        <div id="payoutsList"></div>
+      </aside>
+    </div>
+
+    <section class="partners-panel">
+      <div class="partners-panel__head">
+        <h2>Каталог офферов</h2>
+        <p class="partners-panel__hint">Ставьте tracked-ссылку на своей площадке. Клики без <code>?p=</code> не принимаются.</p>
+      </div>
+      <div id="offers"></div>
+    </section>
+
+    <section class="partners-panel">
+      <div class="partners-panel__head">
+        <h2>Статистика</h2>
+      </div>
+      <div id="stats"></div>
+    </section>
+  </main>
+  <script src="/frontend/partners/publisher.js" defer></script>
+</body>
+</html>

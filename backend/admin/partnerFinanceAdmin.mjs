@@ -9,6 +9,8 @@ import {
   PARTNER_FEE_RATE
 } from '../partners/partnerFinance.mjs';
 import { ensurePartnerTables } from '../partners/partnerModel.mjs';
+import { query } from '../database/config.mjs';
+import { notifyTopupPaid } from '../partners/partnerNotify.mjs';
 
 export async function listPartnerTopups(_req, res) {
   try {
@@ -25,8 +27,20 @@ export async function confirmPartnerTopup(req, res) {
   try {
     await ensurePartnerTables();
     const id = Number(req.params.id);
+    const rows = await query(`SELECT provider, status FROM partner_topups WHERE id = ? LIMIT 1`, [id]);
+    const row = rows[0];
+    if (!row) return res.status(404).json({ message: 'Не найдено' });
+    if (row.provider === 'yookassa' && !req.body?.forceManual) {
+      return res.status(409).json({
+        message:
+          'ЮKassa зачисляет баланс сама после оплаты. Ручное подтверждение не нужно (forceManual — только если webhook не сработал).'
+      });
+    }
     const result = await confirmTopup(id);
     if (!result.ok) return res.status(409).json({ message: result.message });
+    setImmediate(() => {
+      notifyTopupPaid({ topupId: id }).catch(() => {});
+    });
     return res.json({ ok: true });
   } catch (err) {
     console.error('[admin] confirm topup', err);

@@ -58,6 +58,10 @@ export function partnerGoRoutes(app) {
       if (!target.searchParams.has('subid')) {
         target.searchParams.set('subid', clickId);
       }
+      const erid = String(offer.erid || '').trim();
+      if (erid && !target.searchParams.has('erid')) {
+        target.searchParams.set('erid', erid);
+      }
 
       res.setHeader('Cache-Control', 'no-store');
       return res.redirect(302, target.toString());

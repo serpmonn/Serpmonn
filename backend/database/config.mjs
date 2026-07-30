@@ -35,7 +35,13 @@ export const getConnection = () =>
 
 export const connQuery = (connection, sql, values = []) =>
   new Promise((resolve, reject) => {
-    connection.execute(sql, values, (err, results) => {
+    const text = String(sql || '').trim();
+    // mysql2 prepare() не умеет START TRANSACTION / COMMIT / ROLLBACK
+    const isTxControl = /^(START\s+TRANSACTION|BEGIN|COMMIT|ROLLBACK)\b/i.test(text);
+    const run = isTxControl
+      ? connection.query.bind(connection)
+      : connection.execute.bind(connection);
+    run(sql, values, (err, results) => {
       if (err) reject(err);
       else resolve(results);
     });

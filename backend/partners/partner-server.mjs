@@ -16,6 +16,7 @@ import cors from 'cors';
 import partnersRoutes from './partnersRoutes.mjs';
 import { partnerGoRoutes } from './partnerGoRoutes.mjs';
 import { ensurePartnerTables } from './partnerModel.mjs';
+import { releaseHeldConversions } from './partnerFinance.mjs';
 
 const app = express();
 app.set('trust proxy', 1);
@@ -48,7 +49,9 @@ app.use(limiter);
 app.use((req, res, next) => {
   const mutating = ['POST', 'PUT', 'DELETE', 'PATCH'];
   if (!mutating.includes(req.method)) return next();
-  if (req.path.startsWith('/api/partners/postback') || req.path.startsWith('/go')) {
+  if (req.path.startsWith('/api/partners/postback') ||
+      req.path.startsWith('/api/partners/yookassa/webhook') ||
+      req.path.startsWith('/go')) {
     return next();
   }
   const ct = req.headers['content-type'] || '';
@@ -82,6 +85,11 @@ if (process.env.NODE_ENV !== 'test') {
       app.listen(PORT, () => {
         console.log(`[partner-server] на порту ${PORT}`);
       });
+      setInterval(() => {
+        releaseHeldConversions().catch((err) => {
+          console.warn('[partner-server] release hold', err.message);
+        });
+      }, 15 * 60 * 1000);
     })
     .catch((err) => {
       console.error('[partner-server] tables failed', err);

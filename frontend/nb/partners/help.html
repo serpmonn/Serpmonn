@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="nb">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Документация — Партнёрская сеть Серпмонн</title>
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/partners/partners.css">
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body data-i18n-page-title="help.title">
+  <div id="menuContainer" class="loading"></div>
+  <main class="partners partners--help">
+    <header class="partners-help-hero">
+      <div>
+        <p class="partners-eyebrow" data-i18n="help.eyebrow">Помощь</p>
+        <h1 data-i18n="help.h1">Документация партнёрской сети</h1>
+        <p class="partners__lead" data-i18n="help.lead">Краткие инструкции для рекламодателей и паблишеров: офферы, ссылки, конверсии и модерация.</p>
+      </div>
+      <div class="partners-actions">
+        <a class="partners-btn" id="helpToAuth" href="/frontend/partners/index.html" data-i18n="help.toAuth">Вход / регистрация</a>
+      </div>
+    </header>
+
+    <div class="partners-help">
+      <nav class="partners-help-nav" aria-label="Help">
+        <a href="#advertiser" data-help-nav="advertiser" data-i18n="help.navAdv">Для рекламодателя</a>
+        <a href="#publisher" data-help-nav="publisher" data-i18n="help.navPub">Для паблишера</a>
+        <a href="#tracking" data-help-nav="tracking" data-i18n="help.navTrack">Клики и конверсии</a>
+        <a href="#moderation" data-help-nav="moderation" data-i18n="help.navMod">Модерация</a>
+      </nav>
+
+      <div class="partners-help-content">
+        <section class="partners-panel" id="advertiser">
+          <div class="partners-panel__head">
+            <h2 data-i18n="help.adv.h2">Для рекламодателя</h2>
+          </div>
+          <div class="partners-help-body" data-i18n="help.adv.body" data-i18n-html="1">
+            <p>Вы размещаете офферы и платите за подтверждённые конверсии. Паблишеры берут ваши предложения и ставят ссылки на своих площадках.</p>
+            <ol>
+              <li>Зарегистрируйтесь с ролью «Рекламодатель» и войдите в кабинет.</li>
+              <li>Пополните баланс во вкладке «Деньги» (заявка или оплата).</li>
+              <li>Создайте оффер: промокод или CPA-ссылка, лендинг, условия, ставка.</li>
+              <li>Для России укажите ERID (токен маркировки из ОРД).</li>
+              <li>Отправьте оффер на модерацию. После публикации он появится у паблишеров.</li>
+              <li>Настройте передачу конверсий (см. раздел ниже) — иначе в статистике будут только клики.</li>
+            </ol>
+            <p>С конверсии списывается ставка паблишеру плюс комиссия сети (обычно 10%).</p>
+          </div>
+        </section>
+
+        <section class="partners-panel" id="publisher">
+          <div class="partners-panel__head">
+            <h2 data-i18n="help.pub.h2">Для паблишера</h2>
+          </div>
+          <div class="partners-help-body" data-i18n="help.pub.body" data-i18n-html="1">
+            <p>Вы берёте опубликованные офферы и размещаете свою tracked-ссылку. Оплата идёт за конверсии, которые подтвердил рекламодатель.</p>
+            <ol>
+              <li>Зарегистрируйтесь с ролью «Паблишер» — вам выдадут код площадки.</li>
+              <li>В каталоге скопируйте ссылку вида <code>/go/…?p=ваш_код</code>.</li>
+              <li>Ставьте её на сайте или в рассылке. Клики без <code>?p=</code> не учитываются.</li>
+              <li>Статистика и доступный баланс — в кабинете. Часть начислений может быть в холде несколько дней.</li>
+              <li>Вывод — заявкой из кабинета; выплата подтверждается сетью.</li>
+            </ol>
+          </div>
+        </section>
+
+        <section class="partners-panel" id="tracking">
+          <div class="partners-panel__head">
+            <h2 data-i18n="help.track.h2">Клики и конверсии</h2>
+          </div>
+          <div class="partners-help-body" data-i18n="help.track.body" data-i18n-html="1">
+            <p><strong>Клик.</strong> Пользователь переходит по ссылке паблишера. Мы фиксируем клик и уводим на лендинг рекламодателя с параметром <code>click_id</code> в URL.</p>
+            <p><strong>Конверсия.</strong> Когда клиент купил или оставил заявку, сайт или CRM рекламодателя один раз вызывает postback и подставляет этот <code>click_id</code> и сумму.</p>
+            <p>Шаблон ссылки есть в кабинете рекламодателя во вкладке «Передача конверсий». Пример:</p>
+            <p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p>
+            <p>Без postback в отчётах останутся только клики. Отдельный API писать не нужно — достаточно обычного HTTP-запроса.</p>
+          </div>
+        </section>
+
+        <section class="partners-panel" id="moderation">
+          <div class="partners-panel__head">
+            <h2 data-i18n="help.mod.h2">Модерация</h2>
+          </div>
+          <div class="partners-help-body" data-i18n="help.mod.body" data-i18n-html="1">
+            <p>Новые и изменённые офферы проходят проверку сетью перед публикацией.</p>
+            <ul>
+              <li>Проверяются лендинг, условия, корректность ставки и (для РФ) наличие ERID.</li>
+              <li>Статусы в кабинете: на модерации, опубликован, отклонён, черновик.</li>
+              <li>При отклонении смотрите причину в списке офферов, исправьте и отправьте снова.</li>
+              <li>Снятие с публикации возвращает оффер в черновик — паблишеры его больше не видят.</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+  <script src="/frontend/partners/partners-i18n-data.js"></script>
+  <script src="/frontend/partners/partners-i18n.js"></script>
+  <script src="/frontend/partners/partners-help.js" defer></script>
+</body>
+</html>

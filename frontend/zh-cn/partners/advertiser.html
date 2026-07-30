@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Кабинет рекламодателя — Серпмонн</title>
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/partners/partners.css">
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</head>
+<body data-i18n-page-title="adv.title">
+  <div id="menuContainer" class="loading"></div>
+  <main class="partners partners--cabinet">
+    <header class="partners-header">
+      <div class="partners-header__meta">
+        <p class="partners-eyebrow" data-i18n="cabinet.eyebrow">Кабинет</p>
+        <h1 data-i18n="adv.h1">Рекламодатель</h1>
+        <p class="partners__lead" id="who">…</p>
+      </div>
+      <div class="partners-actions partners-actions--header">
+        <div class="partners-balance-chip" id="balanceChip" data-i18n-title="adv.balanceTitle" title="Баланс для оплаты конверсий">
+          <span class="partners-balance-chip__label" data-i18n="cabinet.balance">Баланс</span>
+          <strong id="walletBalance">—</strong>
+        </div>
+        <button type="button" class="partners-btn" id="openTopupBtn" data-i18n="cabinet.topup">Пополнить</button>
+        <a class="partners-btn partners-btn--ghost partners-header-help" id="cabinetHelpLink" href="/frontend/partners/help.html" data-i18n="help.short">Помощь</a>
+        <button type="button" class="partners-btn partners-btn--ghost" id="logoutBtn" data-i18n="cabinet.logout">Выйти</button>
+      </div>
+    </header>
+
+    <div class="partners-drawer" id="topupDrawer" hidden>
+      <div class="partners-drawer__backdrop" id="topupBackdrop"></div>
+      <aside class="partners-drawer__panel" role="dialog" aria-labelledby="topupTitle">
+        <div class="partners-drawer__head">
+          <h2 id="topupTitle" data-i18n="topup.title">Пополнение баланса</h2>
+          <button type="button" class="partners-btn partners-btn--ghost" id="closeTopupBtn" data-i18n="cabinet.close" data-i18n-aria="cabinet.close" aria-label="Закрыть">Закрыть</button>
+        </div>
+        <p class="partners-drawer__hint" data-i18n="topup.drawerHint">Укажите сумму. После оплаты баланс обновится автоматически или после подтверждения.</p>
+        <form id="topupForm" class="partners-wallet__form">
+          <label>
+            <span data-i18n="topup.amount">Сумма (₽)</span>
+            <input class="partners-drawer__amount" name="amount" type="number" min="100" step="1" required placeholder="5000">
+          </label>
+          <button type="submit" id="topupSubmitBtn" data-i18n="topup.submitYk">Оплатить через ЮKassa</button>
+        </form>
+        <p class="partners-msg" id="topupMsg" hidden></p>
+      </aside>
+    </div>
+
+    <nav class="partners-section-tabs" role="tablist" aria-label="Sections">
+      <button type="button" class="partners-section-tab is-active" role="tab" aria-selected="true" data-section="offers" data-i18n="tab.offers">Офферы</button>
+      <button type="button" class="partners-section-tab" role="tab" aria-selected="false" data-section="money" data-i18n="tab.money">Деньги</button>
+      <button type="button" class="partners-section-tab" role="tab" aria-selected="false" data-section="stats" data-i18n="tab.stats">Статистика</button>
+      <button type="button" class="partners-section-tab" role="tab" aria-selected="false" data-section="postback" data-i18n="tab.postback">Передача конверсий</button>
+    </nav>
+
+    <div class="partners-section is-active" data-section-panel="offers">
+      <section class="partners-panel" id="offerFormSection">
+        <div class="partners-panel__head">
+          <h2 id="offerFormTitle" data-i18n="offer.new">Новый оффер</h2>
+          <p class="partners-panel__hint" id="offerFormHint" data-i18n="offer.hint">После отправки оффер попадёт на модерацию</p>
+        </div>
+        <form id="offerForm" class="partners-card partners-card--flush">
+          <input type="hidden" name="editId" id="editOfferId" value="">
+          <div class="partners-form-grid">
+            <label><span data-i18n="offer.type">Тип</span>
+              <select name="type" id="offerType">
+                <option value="promo" data-i18n="offer.promo">Промокод</option>
+                <option value="cpa" data-i18n="offer.cpa">CPA-ссылка</option>
+              </select>
+            </label>
+            <label><span data-i18n="offer.name">Название</span>
+              <input name="title" required maxlength="255" data-i18n-placeholder="offer.namePh" placeholder="Краткое название оффера">
+            </label>
+            <label id="promoWrap"><span data-i18n="offer.promo">Промокод</span>
+              <input name="promocode" maxlength="128" placeholder="SALE20">
+            </label>
+            <label class="partners-span-2"><span data-i18n="offer.landing">Landing URL</span>
+              <input name="landingUrl" type="url" required placeholder="https://">
+            </label>
+            <div class="partners-country-erid partners-span-2">
+              <label class="partners-country-erid__country">
+                <span data-i18n="offer.country">Страна</span>
+                <select name="country" id="offerCountry">
+                  <option value="RU" data-i18n="offer.countryRu" selected>Россия</option>
+                  <option value="OTHER" data-i18n="offer.countryOther">Другая страна</option>
+                </select>
+              </label>
+              <label class="partners-country-erid__erid" id="eridWrap">
+                <span data-i18n="offer.erid">ERID</span>
+                <span class="partners-optional" id="eridOptional" hidden data-i18n="auth.optional">(необязательно)</span>
+                <input name="erid" id="offerErid" maxlength="128" data-i18n-placeholder="offer.eridPh" placeholder="Токен из ОРД" required>
+              </label>
+              <p class="partners-panel__hint partners-country-erid__hint" id="eridHint" data-i18n="offer.eridHintRu">Для России нужен токен маркировки рекламы (ОРД).</p>
+            </div>
+            <label><span data-i18n="offer.commission">Комиссия / ставка</span>
+              <input name="commissionText" maxlength="512" data-i18n-placeholder="offer.commissionPh" placeholder="например 500 ₽ / заявка">
+            </label>
+            <label class="partners-span-2"><span data-i18n="offer.conditions">Условия</span>
+              <textarea name="conditions" rows="3" data-i18n-placeholder="offer.conditionsPh" placeholder="Что должен знать паблишер"></textarea>
+            </label>
+          </div>
+          <div class="partners-actions">
+            <button type="submit" id="offerSubmitBtn" data-i18n="offer.submit">Отправить на модерацию</button>
+            <button type="button" class="partners-btn partners-btn--ghost" id="cancelEditBtn" data-i18n="offer.cancelEdit" hidden>Отменить редактирование</button>
+          </div>
+          <p class="partners-msg" id="formMsg" hidden></p>
+        </form>
+      </section>
+
+      <section class="partners-panel">
+        <div class="partners-panel__head">
+          <h2 data-i18n="offer.mine">Мои офферы</h2>
+        </div>
+        <div id="offers"></div>
+      </section>
+    </div>
+
+    <div class="partners-section" data-section-panel="money" hidden>
+      <section class="partners-panel">
+        <div class="partners-panel__head">
+          <h2 data-i18n="tab.money">Деньги</h2>
+          <p class="partners-panel__hint" id="moneyFeeHint" data-i18n="money.advHint">Баланс списывается за конверсии (ставка паблишеру + комиссия сети).</p>
+        </div>
+        <div class="partners-money-summary">
+          <div class="partners-money-summary__balance">
+            <span class="partners-balance-chip__label" data-i18n="cabinet.balance">Баланс</span>
+            <strong id="moneyBalance">—</strong>
+          </div>
+          <button type="button" class="partners-btn" id="moneyTopupBtn" data-i18n="money.openTopup">Пополнить баланс</button>
+        </div>
+      </section>
+      <section class="partners-panel">
+        <div class="partners-panel__head">
+          <h2 data-i18n="topup.list">Заявки на пополнение</h2>
+        </div>
+        <div id="topupsList"></div>
+      </section>
+    </div>
+
+    <div class="partners-section" data-section-panel="stats" hidden>
+      <div class="partners-kpis" id="kpis" hidden></div>
+      <section class="partners-panel">
+        <div class="partners-panel__head">
+          <h2 data-i18n="stats.h2">Статистика</h2>
+        </div>
+        <div id="stats"></div>
+      </section>
+    </div>
+
+    <div class="partners-section" data-section-panel="postback" hidden>
+      <section class="partners-panel">
+        <div class="partners-panel__head">
+          <h2 data-i18n="postback.h2">Как считаются конверсии</h2>
+        </div>
+        <ol class="partners-steps">
+          <li data-i18n="postback.step1" data-i18n-html="1">Паблишер ставит у себя ссылку вида <code>/go/…?p=…</code>.</li>
+          <li data-i18n="postback.step2" data-i18n-html="1">При клике человек уходит на ваш лендинг уже с параметром <code>click_id</code> в URL — сохраните его (cookie / CRM / скрытое поле формы).</li>
+          <li data-i18n="postback.step3" data-i18n-html="1">Когда клиент купил или оставил заявку, ваш сайт или CRM один раз вызывает ссылку ниже и подставляет этот <code>click_id</code>.</li>
+        </ol>
+        <p class="partners-panel__hint" style="margin:12px 0 8px" data-i18n="postback.linkHint">Ссылка для передачи конверсий (скопируйте и отдайте разработчику / CRM):</p>
+        <div class="partners-code-row">
+          <code class="partners-mono" id="postbackUrl"></code>
+          <button type="button" class="partners-btn partners-btn--ghost" id="copyPostbackBtn" data-i18n="postback.copy">Копировать</button>
+        </div>
+        <p class="partners-panel__hint" style="margin-top:10px">
+          <span data-i18n="postback.example">Пример:</span>
+          <span class="partners-mono" id="postbackExample"></span>
+        </p>
+        <p class="partners-panel__hint" id="postbackRejectHint"></p>
+        <p class="partners-panel__hint" data-i18n="postback.note">Без этого вызова в статистике будут только клики. Отдельный API вам писать не нужно — достаточно обычного HTTP-запроса на эту ссылку.</p>
+      </section>
+    </div>
+  </main>
+  <script src="/frontend/partners/partners-i18n-data.js"></script>
+  <script src="/frontend/partners/partners-i18n.js"></script>
+  <script src="/frontend/partners/advertiser.js" defer></script>
+</body>
+</html>
