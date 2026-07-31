@@ -4,8 +4,15 @@ import paseto from 'paseto';
 
 import { getBackendMessages } from '../utils/i18n.mjs';
 import { query as dbQuery } from '../database/config.mjs';
-import { fetchSearxViaCurl } from '../utils/fetchSearxViaCurl.js';
+import { fetchSearxViaCurl, fetchSearxAutocompleteViaCurl } from '../utils/fetchSearxViaCurl.js';
 import { saveAiSearchFeedback } from './ai-feedback.model.mjs';
+import {
+  WEB_GUEST_DAILY_LIMIT,
+  WEB_USER_DAILY_LIMIT,
+  WEB_PRO_MONTHLY_LIMIT,
+  checkAndIncrementWebUsage,
+  checkAndIncrementWebProMonthly,
+} from './web-usage-store.mjs';
 
 dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
 
@@ -18,6 +25,22 @@ const SEARXNG_URL = process.env.SEARXNG_URL || 'http://serpmonn.ru';
 const PRO_MONTHLY_LIMIT = 2000;
 const GUEST_DAILY_LIMIT = 5;
 const USER_DAILY_LIMIT = 15;
+
+const WEB_RESULT_LIMIT = 15;
+const WEB_CATEGORIES = new Set([
+  'general',
+  'images',
+  'videos',
+  'news',
+  'map',
+  'music',
+  'it',
+  'science',
+  'files',
+  'social media',
+]);
+const WEB_TIME_RANGES = new Set(['day', 'week', 'month', 'year']);
+const WEB_SAFESEARCH = new Set([0, 1, 2]);
 
 const usageStore = new Map();
 const idempotencyStore = new Map();
@@ -42,6 +65,39 @@ function extractHostname(url) {
   } catch {
     return '';
   }
+}
+
+/** OpenAIRE и др. иногда отдают UTF-8 как Latin-1 («Ð°Ð±…»). */
+function fixUtf8Mojibake(text) {
+  const s = String(text || '');
+  if (!/[ÐÑÃÂ]/.test(s)) return s;
+  // continuation 0xA0 часто уже сплющен в обычный пробел
+  const restored = s
+    .replace(/\u00d0 /g, '\u00d0\u00a0')
+    .replace(/\u00d1 /g, '\u00d1\u00a0');
+  try {
+    const fixed = Buffer.from(restored, 'latin1')
+      .toString('utf8')
+      .replace(/\uFFFD/g, '');
+    const cyr = (t) => (t.match(/[а-яА-ЯёЁ]/g) || []).length;
+    const junk = (t) => (t.match(/[ÐÑÃÂ]/g) || []).length;
+    if (cyr(fixed) >= 2 && junk(fixed) < junk(s)) return fixed;
+    if (/[а-яА-ЯёЁ]/.test(fixed) && !/[ÐÑ]/.test(fixed)) return fixed;
+  } catch {
+    /* keep original */
+  }
+  return s;
+}
+
+function stripHtmlTags(text) {
+  return String(text || '')
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function cleanWebText(text) {
+  return fixUtf8Mojibake(stripHtmlTags(text));
 }
 
 function normalizeAiAnswer(answer, t) {
@@ -1115,6 +1171,261 @@ router.post(
       }
 
       return res.status(500).json({ error: t.internalError });
+    }
+  }
+);
+
+async function enforceWebSearchLimit(req, identity, t) {
+  if (identity.type === 'user') {
+    const userId = req.user.id;
+    const planInfo = await getUserPlan(userId);
+    const now = new Date();
+    const isProActive =
+      planInfo.plan === 'pro' &&
+      planInfo.proUntil &&
+      new Date(planInfo.proUntil) > now;
+
+    if (isProActive) {
+      const usage = await checkAndIncrementWebProMonthly(userId);
+      if (!usage.ok) {
+        return {
+          ok: false,
+          status: 403,
+          payload: {
+            error: t.proLimit,
+            limit: usage.limit,
+            used: usage.used,
+          },
+        };
+      }
+      return { ok: true, plan: 'pro', usage };
+    }
+  }
+
+  const usage = checkAndIncrementWebUsage(identity);
+  if (!usage.ok) {
+    const isGuest = identity.type === 'guest';
+    return {
+      ok: false,
+      status: 403,
+      payload: {
+        error: isGuest ? t.guestLimit : t.freeLimit,
+        needAuth: isGuest,
+        limit: usage.limit,
+        used: usage.used,
+      },
+    };
+  }
+
+  return { ok: true, usage };
+}
+
+function normalizeWebSearchResults(category, query, data, t) {
+  const raw = Array.isArray(data?.results) ? data.results : [];
+
+  if (category === 'images') {
+    return raw
+      .slice(0, WEB_RESULT_LIMIT)
+      .map((item) => ({
+        title: cleanWebText(item.title || t.imageFallbackTitle?.replace('{query}', query) || query),
+        url: item.url || '',
+        content: cleanWebText(item.content || item.summary || ''),
+        thumbnail: item.thumbnail || item.img_src || '',
+        imageUrl: item.img_src || item.url || '',
+        engine: item.engine || '',
+        hostname: extractHostname(item.url || ''),
+      }))
+      .filter((item) => item.imageUrl || item.url);
+  }
+
+  if (category === 'videos') {
+    return raw
+      .slice(0, WEB_RESULT_LIMIT)
+      .map((item) => ({
+        title: cleanWebText(item.title || t.videoFallbackTitle?.replace('{query}', query) || query),
+        url: item.url || '',
+        content: cleanWebText(item.content || item.summary || ''),
+        thumbnail: item.thumbnail || item.img_src || '',
+        duration: item.duration || '',
+        engine: item.engine || '',
+        hostname: extractHostname(item.url || ''),
+      }))
+      .filter((item) => item.url);
+  }
+
+  return raw
+    .slice(0, WEB_RESULT_LIMIT)
+    .map((item) => {
+      const lat = item.latitude != null ? Number(item.latitude) : NaN;
+      const lon = item.longitude != null ? Number(item.longitude) : NaN;
+      return {
+        title: cleanWebText(item.title || ''),
+        url: item.url || '',
+        content: cleanWebText(item.content || item.summary || item.address || ''),
+        thumbnail: item.thumbnail || item.img_src || '',
+        publishedDate: item.publishedDate || item.pubdate || '',
+        engine: item.engine || '',
+        hostname: extractHostname(item.url || ''),
+        duration: item.duration || '',
+        latitude: Number.isFinite(lat) ? lat : null,
+        longitude: Number.isFinite(lon) ? lon : null,
+        osm: item.osm || null,
+        boundingbox: Array.isArray(item.boundingbox) ? item.boundingbox : null,
+      };
+    })
+    .filter((item) => item.url || (item.latitude != null && item.longitude != null));
+}
+
+function localeToSearxLanguage(locale) {
+  const raw = String(locale || '').trim().toLowerCase().replace(/_/g, '-');
+  if (!raw || raw === 'auto') return undefined;
+  // SearXNG accepts BCP47-ish tags; map our locale ids
+  const map = {
+    'zh-cn': 'zh-CN',
+    'pt-br': 'pt-BR',
+    'pt-pt': 'pt-PT',
+    'es-419': 'es',
+    'ku-arab': 'ku',
+  };
+  return map[raw] || raw;
+}
+
+function normalizeWebSearchExtras(data) {
+  const answers = (Array.isArray(data?.answers) ? data.answers : [])
+    .slice(0, 3)
+    .map((item) => {
+      if (typeof item === 'string') {
+        return { answer: item.trim(), url: '', engine: '' };
+      }
+      return {
+        answer: String(item?.answer || item?.content || '').trim(),
+        url: String(item?.url || '').trim(),
+        engine: String(item?.engine || '').trim(),
+      };
+    })
+    .filter((item) => item.answer);
+
+  const suggestions = (Array.isArray(data?.suggestions) ? data.suggestions : [])
+    .map((item) => String(item || '').trim())
+    .filter(Boolean)
+    .slice(0, 8);
+
+  const corrections = (Array.isArray(data?.corrections) ? data.corrections : [])
+    .map((item) => String(item || '').trim())
+    .filter(Boolean)
+    .slice(0, 3);
+
+  const infoboxes = (Array.isArray(data?.infoboxes) ? data.infoboxes : [])
+    .slice(0, 2)
+    .map((item) => {
+      const attributes = Array.isArray(item?.attributes)
+        ? item.attributes
+            .slice(0, 8)
+            .map((attr) => ({
+              label: String(attr?.label || attr?.key || '').trim(),
+              value: String(attr?.value || attr?.content || '').trim(),
+            }))
+            .filter((attr) => attr.label && attr.value)
+        : [];
+      const urls = Array.isArray(item?.urls)
+        ? item.urls
+            .slice(0, 6)
+            .map((u) => ({
+              title: String(u?.title || u?.url || '').trim(),
+              url: String(u?.url || '').trim(),
+            }))
+            .filter((u) => u.url)
+        : [];
+      return {
+        title: String(item?.infobox || item?.title || '').trim(),
+        content: String(item?.content || '').trim(),
+        url: String(item?.id || item?.url || '').trim(),
+        imageUrl: String(item?.img_src || item?.thumbnail || '').trim(),
+        engine: String(item?.engine || '').trim(),
+        attributes,
+        urls,
+      };
+    })
+    .filter((item) => item.title || item.content);
+
+  return { answers, suggestions, corrections, infoboxes };
+}
+
+router.post(
+  '/web-search',
+  attachUserIfToken,
+  async (req, res) => {
+    const { locale, t } = getBackendMessages(req);
+    const reqStart = process.hrtime.bigint();
+
+    try {
+      const q = String(req.body?.q || '').trim();
+      const categoryRaw = String(req.body?.category || 'general').trim().toLowerCase();
+      const category = WEB_CATEGORIES.has(categoryRaw) ? categoryRaw : 'general';
+
+      if (!q) {
+        return res.status(400).json({ error: t.queryEmpty });
+      }
+
+      const identity = getUserIdentity(req);
+      const limitCheck = await enforceWebSearchLimit(req, identity, t);
+      if (!limitCheck.ok) {
+        return res.status(limitCheck.status).json(limitCheck.payload);
+      }
+
+      const language = localeToSearxLanguage(req.body?.locale || locale);
+      const timeRangeRaw = String(req.body?.timeRange || req.body?.time_range || '').trim().toLowerCase();
+      const timeRange = WEB_TIME_RANGES.has(timeRangeRaw) ? timeRangeRaw : '';
+      const safesearchRaw = Number(req.body?.safesearch);
+      const safesearch = WEB_SAFESEARCH.has(safesearchRaw) ? safesearchRaw : 2;
+
+      const data = await fetchSearxViaCurl(q, category, {
+        ...(language ? { language } : {}),
+        ...(timeRange ? { timeRange } : {}),
+        safesearch,
+      });
+      const results = normalizeWebSearchResults(category, q, data, t);
+      const extras = normalizeWebSearchExtras(data);
+      const totalMs = Number(process.hrtime.bigint() - reqStart) / 1e6;
+
+      console.log(
+        `/web-search | category=${category} | lang=${language || 'auto'}` +
+          ` | time=${timeRange || 'any'} | safe=${safesearch}` +
+          ` | results=${results.length}` +
+          ` | answers=${extras.answers.length} | infoboxes=${extras.infoboxes.length}` +
+          ` | suggestions=${extras.suggestions.length} | corrections=${extras.corrections.length}` +
+          ` | total=${totalMs.toFixed(0)}ms`
+      );
+
+      return res.json({
+        q,
+        category,
+        timeRange: timeRange || null,
+        safesearch,
+        results,
+        ...extras,
+        timings: { total_ms: totalMs },
+      });
+    } catch (error) {
+      console.error('💥 Ошибка в /web-search:', error.message);
+      return res.status(500).json({ error: t.internalError || t.networkError || 'Search error' });
+    }
+  }
+);
+
+router.get(
+  '/web-autocomplete',
+  async (req, res) => {
+    try {
+      const q = String(req.query?.q || '').trim();
+      if (q.length < 2) {
+        return res.json({ q, suggestions: [] });
+      }
+      const suggestions = await fetchSearxAutocompleteViaCurl(q);
+      return res.json({ q, suggestions });
+    } catch (error) {
+      console.error('💥 Ошибка в /web-autocomplete:', error.message);
+      return res.json({ q: String(req.query?.q || ''), suggestions: [] });
     }
   }
 );

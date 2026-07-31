@@ -11,6 +11,12 @@ dotenv.config({ path: envPath });                                               
 import { query } from '../database/config.mjs';
 import { buildAvatarUrl } from './avatarService.mjs';                                                                                  // Импортируем функцию для выполнения запросов к БД
 import { setAuthCookie, clearAuthCookie } from '../auth/authCookie.mjs';
+import {
+    peekWebDailyUsedForUser,
+    getWebMonthlyUsedForUser,
+    WEB_USER_DAILY_LIMIT,
+    WEB_PRO_MONTHLY_LIMIT,
+} from '../ai-search/web-usage-store.mjs';
 import paseto from 'paseto';                                                                                                     // Импортируем библиотеку paseto для работы с токенами
 const { V2 } = paseto;                                                                                                           // Извлекаем модуль V2 из paseto
 const secretKey = process.env.SECRET_KEY;                                                                                        // Получаем секретный ключ из переменной окружения
@@ -91,6 +97,7 @@ const getUserInfo = async (req, res) => {                                       
 
         // 2. считаем usage для Pro (если активен)
         let proUsage = null;
+        let webProUsage = null;
         if (isProActive) {
         const monthKey = getMonthKey();
         const usageRows = await query(
@@ -101,10 +108,10 @@ const getUserInfo = async (req, res) => {                                       
 
         // Базовый лимит за "условный месяц"
         const BASE_MONTHLY_LIMIT = 2000;
+        const BASE_WEB_MONTHLY_LIMIT = WEB_PRO_MONTHLY_LIMIT;
         const BASE_DAYS = 30;
 
         // Считаем, сколько дней Pro ещё активно (минимум 1)
-        const now = new Date();
         const proUntil = new Date(user.pro_until);
         const msPerDay = 24 * 60 * 60 * 1000;
         const diffDaysRaw = (proUntil - now) / msPerDay;
@@ -113,11 +120,20 @@ const getUserInfo = async (req, res) => {                                       
         // Лимит пропорционально дням
         const perDayLimit = BASE_MONTHLY_LIMIT / BASE_DAYS;
         const limit = Math.round(perDayLimit * diffDays);
+        const webLimit = Math.round((BASE_WEB_MONTHLY_LIMIT / BASE_DAYS) * diffDays);
 
         proUsage = {
             used,
             limit,
             remaining: Math.max(0, limit - used),
+            month_key: monthKey
+        };
+
+        const webUsed = await getWebMonthlyUsedForUser(user.id);
+        webProUsage = {
+            used: webUsed,
+            limit: webLimit,
+            remaining: Math.max(0, webLimit - webUsed),
             month_key: monthKey
         };
         }
@@ -128,6 +144,13 @@ const getUserInfo = async (req, res) => {                                       
         used: null,
         remaining: null
         };
+
+        const webFreeDaily = {
+        limit: WEB_USER_DAILY_LIMIT,
+        used: peekWebDailyUsedForUser(user.id),
+        remaining: null
+        };
+        webFreeDaily.remaining = Math.max(0, webFreeDaily.limit - (webFreeDaily.used || 0));
 
         res.json({
         id: user.id, 
@@ -142,7 +165,9 @@ const getUserInfo = async (req, res) => {                                       
         is_pro_active: isProActive,
         quotas: {
             free_daily: freeDaily,
-            pro_monthly: proUsage
+            pro_monthly: proUsage,
+            web_free_daily: webFreeDaily,
+            web_pro_monthly: webProUsage
         }
         });
     } catch (err) {                                                                                                              // Обрабатываем возможные ошибки

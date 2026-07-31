@@ -225,7 +225,10 @@
   <div class="main-search-container">
     <img src="/frontend/images/serpmonn.ico?v=3" alt="Serpmonn" class="logo" title="Serpmonn">
 
-    <form id="ai-search-form" class="search-form">
+    <form id="ai-search-form" class="search-form" data-search-mode="ai"
+      data-placeholder-ai="שאלו את ה-AI כל דבר..."
+      data-placeholder-results="Search the web..."
+      data-empty-results="Nothing found for this query.">
       <div class="search-form-body">
         <div class="search-form-row">
           <div class="search-input-wrapper">
@@ -273,28 +276,53 @@
             <line x1="8" y1="23" x2="16" y2="23"/>
           </svg>
         </button>
+        <div id="search-autocomplete" class="search-autocomplete" hidden role="listbox" aria-label="Suggestions"></div>
           </div>
 
-          <button 
-            type="submit" 
-            aria-label="שלח שאילתת AI"
-            class="search-btn"
-            title="שלח שאילתה ל-Serpmonn AI"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" 
-                stroke="#ff4d4d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="7" y1="17" x2="17" y2="7" />
-              <polyline points="7 7 17 7 17 17" />
-            </svg>
-          </button>
+          <div class="search-mode-toggle" role="group" aria-label="Search mode">
+            <button type="button" class="search-mode-btn is-active" data-search-mode="ai" aria-pressed="true" title="AI"><span class="search-mode-label">AI</span></button>
+            <button type="button" class="search-mode-btn" data-search-mode="results" aria-pressed="false" title="Results"><span class="search-mode-label">Results</span></button>
+          </div>
         </div>
 
         <div id="search-attachment-preview" class="search-attachment-preview" hidden></div>
+        <div id="results-filters" class="results-filters" hidden>
+          <label class="results-filter">
+            <span class="results-filter-label">Time</span>
+            <select id="results-time-range" class="results-filter-select" aria-label="Time">
+              <option value="">Any time</option>
+              <option value="day">Day</option>
+              <option value="week">Week</option>
+              <option value="month">Month</option>
+              <option value="year">Year</option>
+            </select>
+          </label>
+          <label class="results-filter">
+            <span class="results-filter-label">Safe search</span>
+            <select id="results-safe-search" class="results-filter-select" aria-label="Safe search">
+              <option value="0">No filter</option>
+              <option value="1">Hide adult</option>
+              <option value="2" selected>Safe only</option>
+            </select>
+          </label>
+        </div>
       </div>
     </form>
   </div>
 
   <div id="ai-result-container" class="ai-result-container" style="display: none;">
+    <div id="results-tabs" class="results-tabs" hidden>
+      <button type="button" class="results-tab is-active" data-results-category="general">General</button>
+      <button type="button" class="results-tab" data-results-category="images">Images</button>
+      <button type="button" class="results-tab" data-results-category="videos">Videos</button>
+      <button type="button" class="results-tab" data-results-category="news">News</button>
+      <button type="button" class="results-tab" data-results-category="map">Map</button>
+      <button type="button" class="results-tab" data-results-category="music">Music</button>
+      <button type="button" class="results-tab" data-results-category="it">IT</button>
+      <button type="button" class="results-tab" data-results-category="science">Science</button>
+      <button type="button" class="results-tab" data-results-category="files">Files</button>
+      <button type="button" class="results-tab" data-results-category="social media">Social</button>
+    </div>
     <div id="ai-result-content" class="ai-result-content"></div>
 
     <div class="ai-result-footer is-pending">

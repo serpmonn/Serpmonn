@@ -22,11 +22,35 @@ eleventyComputed:
   privacyLink: "{{ i18n[locale].cookie.privacyLink }}"
   privacyLinkText: "{{ i18n[locale].cookie.privacyLinkText }}"
   searchPlaceholder: "{{ i18n[locale].searchPlaceholder }}"
+  searchPlaceholderResults: "{{ i18n[locale].searchPlaceholderResults }}"
   searchInputTitle: "{{ i18n[locale].searchInputTitle }}"
   voiceInputLabel: "{{ i18n[locale].voiceInputLabel }}"
   voiceInputTitle: "{{ i18n[locale].voiceInputTitle }}"
   submitLabel: "{{ i18n[locale].submitLabel }}"
   submitTitle: "{{ i18n[locale].submitTitle }}"
+  modeAiLabel: "{{ i18n[locale].modeAiLabel }}"
+  modeResultsLabel: "{{ i18n[locale].modeResultsLabel }}"
+  tabGeneralLabel: "{{ i18n[locale].tabGeneralLabel }}"
+  tabImagesLabel: "{{ i18n[locale].tabImagesLabel }}"
+  tabVideosLabel: "{{ i18n[locale].tabVideosLabel }}"
+  tabNewsLabel: "{{ i18n[locale].tabNewsLabel }}"
+  tabMapLabel: "{{ i18n[locale].tabMapLabel }}"
+  tabMusicLabel: "{{ i18n[locale].tabMusicLabel }}"
+  tabItLabel: "{{ i18n[locale].tabItLabel }}"
+  tabScienceLabel: "{{ i18n[locale].tabScienceLabel }}"
+  tabFilesLabel: "{{ i18n[locale].tabFilesLabel }}"
+  tabSocialLabel: "{{ i18n[locale].tabSocialLabel }}"
+  timeRangeLabel: "{{ i18n[locale].timeRangeLabel }}"
+  timeRangeAnyLabel: "{{ i18n[locale].timeRangeAnyLabel }}"
+  timeRangeDayLabel: "{{ i18n[locale].timeRangeDayLabel }}"
+  timeRangeWeekLabel: "{{ i18n[locale].timeRangeWeekLabel }}"
+  timeRangeMonthLabel: "{{ i18n[locale].timeRangeMonthLabel }}"
+  timeRangeYearLabel: "{{ i18n[locale].timeRangeYearLabel }}"
+  safeSearchLabel: "{{ i18n[locale].safeSearchLabel }}"
+  safeSearchOffLabel: "{{ i18n[locale].safeSearchOffLabel }}"
+  safeSearchModerateLabel: "{{ i18n[locale].safeSearchModerateLabel }}"
+  safeSearchStrictLabel: "{{ i18n[locale].safeSearchStrictLabel }}"
+  resultsEmptyLabel: "{{ i18n[locale].resultsEmptyLabel }}"
   copyAnswerLabel: "{{ i18n[locale].copyAnswerLabel }}"
   shareAnswerLabel: "{{ i18n[locale].shareAnswerLabel }}"
   likeLabel: "{{ i18n[locale].likeLabel }}"
@@ -45,7 +69,10 @@ eleventyComputed:
   <div class="main-search-container">
     <img src="/frontend/images/serpmonn.ico?v=3" alt="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}" class="logo" title="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}">
 
-    <form id="ai-search-form" class="search-form">
+    <form id="ai-search-form" class="search-form" data-search-mode="ai"
+      data-placeholder-ai="{{ searchPlaceholder }}"
+      data-placeholder-results="{{ searchPlaceholderResults }}"
+      data-empty-results="{{ resultsEmptyLabel }}">
       <div class="search-form-body">
         <div class="search-form-row">
           <div class="search-input-wrapper">
@@ -93,28 +120,53 @@ eleventyComputed:
             <line x1="8" y1="23" x2="16" y2="23"/>
           </svg>
         </button>
+        <div id="search-autocomplete" class="search-autocomplete" hidden role="listbox" aria-label="{% if locale == 'ru' %}Подсказки{% else %}Suggestions{% endif %}"></div>
           </div>
 
-          <button 
-            type="submit" 
-            aria-label="{{ submitLabel }}"
-            class="search-btn"
-            title="{{ submitTitle }}"
-          >
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" 
-                stroke="#ff4d4d" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="7" y1="17" x2="17" y2="7" />
-              <polyline points="7 7 17 7 17 17" />
-            </svg>
-          </button>
+          <div class="search-mode-toggle" role="group" aria-label="{% if locale == 'ru' %}Режим поиска{% else %}Search mode{% endif %}">
+            <button type="button" class="search-mode-btn is-active" data-search-mode="ai" aria-pressed="true" title="{{ modeAiLabel }}"><span class="search-mode-label">{{ modeAiLabel }}</span></button>
+            <button type="button" class="search-mode-btn" data-search-mode="results" aria-pressed="false" title="{{ modeResultsLabel }}"><span class="search-mode-label">{{ modeResultsLabel }}</span></button>
+          </div>
         </div>
 
         <div id="search-attachment-preview" class="search-attachment-preview" hidden></div>
+        <div id="results-filters" class="results-filters" hidden>
+          <label class="results-filter">
+            <span class="results-filter-label">{{ timeRangeLabel }}</span>
+            <select id="results-time-range" class="results-filter-select" aria-label="{{ timeRangeLabel }}">
+              <option value="">{{ timeRangeAnyLabel }}</option>
+              <option value="day">{{ timeRangeDayLabel }}</option>
+              <option value="week">{{ timeRangeWeekLabel }}</option>
+              <option value="month">{{ timeRangeMonthLabel }}</option>
+              <option value="year">{{ timeRangeYearLabel }}</option>
+            </select>
+          </label>
+          <label class="results-filter">
+            <span class="results-filter-label">{{ safeSearchLabel }}</span>
+            <select id="results-safe-search" class="results-filter-select" aria-label="{{ safeSearchLabel }}">
+              <option value="0">{{ safeSearchOffLabel }}</option>
+              <option value="1">{{ safeSearchModerateLabel }}</option>
+              <option value="2" selected>{{ safeSearchStrictLabel }}</option>
+            </select>
+          </label>
+        </div>
       </div>
     </form>
   </div>
 
   <div id="ai-result-container" class="ai-result-container" style="display: none;">
+    <div id="results-tabs" class="results-tabs" hidden>
+      <button type="button" class="results-tab is-active" data-results-category="general">{{ tabGeneralLabel }}</button>
+      <button type="button" class="results-tab" data-results-category="images">{{ tabImagesLabel }}</button>
+      <button type="button" class="results-tab" data-results-category="videos">{{ tabVideosLabel }}</button>
+      <button type="button" class="results-tab" data-results-category="news">{{ tabNewsLabel }}</button>
+      <button type="button" class="results-tab" data-results-category="map">{{ tabMapLabel }}</button>
+      <button type="button" class="results-tab" data-results-category="music">{{ tabMusicLabel }}</button>
+      <button type="button" class="results-tab" data-results-category="it">{{ tabItLabel }}</button>
+      <button type="button" class="results-tab" data-results-category="science">{{ tabScienceLabel }}</button>
+      <button type="button" class="results-tab" data-results-category="files">{{ tabFilesLabel }}</button>
+      <button type="button" class="results-tab" data-results-category="social media">{{ tabSocialLabel }}</button>
+    </div>
     <div id="ai-result-content" class="ai-result-content"></div>
 
     <div class="ai-result-footer is-pending">

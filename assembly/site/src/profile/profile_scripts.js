@@ -79,6 +79,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const planQuotaCounterEl = document.getElementById('planQuotaCounter');
   const planQuotaBarFillEl = document.getElementById('planQuotaBarFill');
   const planQuotaHintEl = document.getElementById('planQuotaHint');
+  const webQuotaCounterEl = document.getElementById('webQuotaCounter');
+  const webQuotaBarFillEl = document.getElementById('webQuotaBarFill');
+  const webQuotaHintEl = document.getElementById('webQuotaHint');
   const planHintEl = document.getElementById('planHint');
 
   const aiAccessBlock = document.getElementById('aiAccessBlock');
@@ -392,14 +395,50 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
-  function updatePlanQuotaBar(used, limit) {
+  function updatePlanQuotaBar(used, limit, fillEl = planQuotaBarFillEl) {
+    if (!fillEl) return;
     if (!limit || limit <= 0) {
-      planQuotaBarFillEl.style.width = '0%';
+      fillEl.style.width = '0%';
       return;
     }
     const percent = Math.min(100, Math.round((used / limit) * 100));
-    planQuotaBarFillEl.style.width = percent + '%';
-    planQuotaBarFillEl.dataset.percent = percent;
+    fillEl.style.width = percent + '%';
+    fillEl.dataset.percent = percent;
+  }
+
+  function renderWebQuota(currentPlan, quotas) {
+    if (!webQuotaCounterEl || !webQuotaBarFillEl || !webQuotaHintEl) return;
+
+    if (currentPlan === 'pro' && quotas && quotas.web_pro_monthly) {
+      const q = quotas.web_pro_monthly;
+      webQuotaCounterEl.textContent = `${q.remaining}`;
+      webQuotaHintEl.textContent =
+        q.used === 0
+          ? t('profile.webProQuotaUnused')
+          : t('profile.webProQuotaUsed', { used: q.used });
+      webQuotaHintEl.hidden = false;
+      webQuotaCounterEl.title = '';
+      updatePlanQuotaBar(q.used, q.limit, webQuotaBarFillEl);
+    } else if (currentPlan === 'free' && quotas && quotas.web_free_daily) {
+      const q = quotas.web_free_daily;
+      webQuotaCounterEl.textContent = `${q.used ?? 0} / ${q.limit}`;
+      webQuotaHintEl.textContent = '';
+      webQuotaHintEl.hidden = true;
+      webQuotaCounterEl.title = t('profile.freeQuotaHint');
+      updatePlanQuotaBar(q.used ?? 0, q.limit, webQuotaBarFillEl);
+    } else if (currentPlan === 'pro') {
+      webQuotaCounterEl.textContent = '—';
+      webQuotaHintEl.textContent = t('profile.proQuotaUnavailable');
+      webQuotaHintEl.hidden = false;
+      webQuotaCounterEl.title = '';
+      updatePlanQuotaBar(0, 100, webQuotaBarFillEl);
+    } else {
+      webQuotaCounterEl.textContent = '0 / 120';
+      webQuotaHintEl.textContent = '';
+      webQuotaHintEl.hidden = true;
+      webQuotaCounterEl.title = t('profile.webFreeQuotaDefault');
+      updatePlanQuotaBar(0, 120, webQuotaBarFillEl);
+    }
   }
 
   function handleUnauthorized() {
@@ -682,6 +721,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           updatePlanQuotaBar(0, 15);
         }
       }
+
+      renderWebQuota(currentPlan, data.quotas);
 
       planHintEl.textContent = '';
       planHintEl.hidden = true;

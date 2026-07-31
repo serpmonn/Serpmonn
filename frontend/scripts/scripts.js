@@ -72,6 +72,69 @@ function getQueryFromUrl() {
   return (new URLSearchParams(window.location.search).get('q') || '').trim();
 }
 
+function getModeFromUrl() {
+  const mode = (new URLSearchParams(window.location.search).get('mode') || '').trim().toLowerCase();
+  return mode === 'results' || mode === 'web' ? 'results' : mode === 'ai' ? 'ai' : null;
+}
+
+const SEARCH_MODE_STORAGE_KEY = 'serpmonn_search_mode';
+const RESULTS_TIME_RANGE_KEY = 'serpmonn_results_time_range';
+const RESULTS_SAFESEARCH_KEY = 'serpmonn_results_safesearch';
+
+function getStoredSearchMode() {
+  try {
+    const mode = localStorage.getItem(SEARCH_MODE_STORAGE_KEY);
+    return mode === 'results' ? 'results' : mode === 'ai' ? 'ai' : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function storeSearchMode(mode) {
+  try {
+    localStorage.setItem(SEARCH_MODE_STORAGE_KEY, mode === 'results' ? 'results' : 'ai');
+  } catch (_) {
+    /* ignore */
+  }
+}
+
+function getResultsTimeRange() {
+  const select = document.getElementById('results-time-range');
+  if (select) {
+    const v = select.value;
+    return ['day', 'week', 'month', 'year'].includes(v) ? v : '';
+  }
+  try {
+    const stored = localStorage.getItem(RESULTS_TIME_RANGE_KEY) || '';
+    return ['day', 'week', 'month', 'year'].includes(stored) ? stored : '';
+  } catch (_) {
+    return '';
+  }
+}
+
+function getResultsSafesearch() {
+  const select = document.getElementById('results-safe-search');
+  if (select) {
+    const n = Number(select.value);
+    return [0, 1, 2].includes(n) ? n : 2;
+  }
+  try {
+    const n = Number(localStorage.getItem(RESULTS_SAFESEARCH_KEY));
+    return [0, 1, 2].includes(n) ? n : 2;
+  } catch (_) {
+    return 2;
+  }
+}
+
+function persistResultsFilters() {
+  try {
+    localStorage.setItem(RESULTS_TIME_RANGE_KEY, getResultsTimeRange());
+    localStorage.setItem(RESULTS_SAFESEARCH_KEY, String(getResultsSafesearch()));
+  } catch (_) {
+    /* ignore */
+  }
+}
+
 function buildSharePageUrl(query) {
   // В VK Mini App делимся ссылкой на приложение, а не на полный сайт
   if (
@@ -226,13 +289,18 @@ function renderResultBadges(data, messages) {
   return html;
 }
 
-function syncSearchQueryToUrl(query) {
+function syncSearchQueryToUrl(query, mode = getSearchMode()) {
   try {
     const url = new URL(window.location.href);
     if (query) {
       url.searchParams.set('q', query);
     } else {
       url.searchParams.delete('q');
+    }
+    if (mode === 'results') {
+      url.searchParams.set('mode', 'results');
+    } else {
+      url.searchParams.delete('mode');
     }
     // Только same-origin: нельзя replaceState на vk.com с serpmonn.ru (ломает поиск в mini app)
     const next = `${url.pathname}${url.search}${url.hash}`;
@@ -651,8 +719,10 @@ function initVoiceInput() {
 // МАРКДАУН РЕНДЕРЕР ДЛЯ КРАСИВОГО ФОРМАТИРОВАНИЯ ОТВЕТОВ ИИ
 // ======================================================================================================================
 function safeHttpUrl(url, fallback = '#') {
+  const raw = String(url || '').trim();
+  if (!raw) return fallback;
   try {
-    const parsed = new URL(String(url || ''), window.location.origin);
+    const parsed = new URL(raw, window.location.origin);
     if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
       return parsed.href;
     }
@@ -849,6 +919,14 @@ function showLoading() {
   const contentDiv = document.getElementById('ai-result-content');
   if (!contentDiv) return;
 
+  const form = document.getElementById('ai-search-form');
+  const tabs = document.getElementById('results-tabs');
+  const container = document.getElementById('ai-result-container');
+  if (getSearchMode(form) !== 'results') {
+    if (tabs) tabs.hidden = true;
+    if (container) container.classList.remove('is-results-mode');
+  }
+
   contentDiv.innerHTML = `
     <div class="ai-loading">
       <div class="loading-dots">
@@ -937,6 +1015,10 @@ function renderAnswerHtml(answer, isEmpty) {
 }
 
 function showMediaLoading(type) {
+  if (getSearchMode() === 'results') {
+    hideMediaResults(type);
+    return;
+  }
   const container = document.getElementById(`ai-${type}-results`);
   if (!container) return;
 
@@ -1060,6 +1142,11 @@ function createStreamState() {
 }
 
 function flushPendingMedia(state) {
+  if (getSearchMode() === 'results') {
+    hideMediaResults('images');
+    hideMediaResults('videos');
+    return;
+  }
   if (!state.imagesShown && state.pendingImages !== null) {
     if (state.pendingImages.length > 0) {
       showImageResults({ images: state.pendingImages });
@@ -1239,6 +1326,13 @@ function showResult(data, options = {}) {
   const shouldScroll = options.scroll !== false;
   let html = '';
 
+  const form = document.getElementById('ai-search-form');
+  const tabs = document.getElementById('results-tabs');
+  if (getSearchMode(form) !== 'results') {
+    if (tabs) tabs.hidden = true;
+    if (container) container.classList.remove('is-results-mode');
+  }
+
   if (data.error) {
     html = `
       <div class="ai-error">
@@ -1300,6 +1394,14 @@ function showImageResults(data) {
   const container = document.getElementById('ai-image-results');
   if (!container) return;
 
+  // Блоки «Фото/Видео по запросу» только для режима ИИ
+  if (getSearchMode() === 'results') {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    lastShareContext.images = [];
+    return;
+  }
+
   if (data.error || !Array.isArray(data.images) || data.images.length === 0) {
     container.style.display = 'none';
     container.innerHTML = '';
@@ -1346,6 +1448,13 @@ function showVideoResults(data) {
   const t = getMessages();
   const container = document.getElementById('ai-video-results');
   if (!container) return;
+
+  if (getSearchMode() === 'results') {
+    container.style.display = 'none';
+    container.innerHTML = '';
+    lastShareContext.videos = [];
+    return;
+  }
 
   if (data.error || !Array.isArray(data.videos) || data.videos.length === 0) {
     container.style.display = 'none';
@@ -1581,6 +1690,637 @@ function initAdObserver() {
   initAdSlotObserver();
 }
 
+
+// ======================================================================================================================
+// РЕЖИМ «ВЫДАЧА» (классический поиск)
+// ======================================================================================================================
+let currentResultsCategory = 'general';
+let resultsQuery = '';
+
+function getSearchMode(form = document.getElementById('ai-search-form')) {
+  return form?.dataset.searchMode === 'results' ? 'results' : 'ai';
+}
+
+function setSearchMode(mode) {
+  const form = document.getElementById('ai-search-form');
+  if (!form) return;
+  const next = mode === 'results' ? 'results' : 'ai';
+  form.dataset.searchMode = next;
+  form.classList.toggle('is-results-mode', next === 'results');
+  storeSearchMode(next);
+  syncSearchQueryToUrl(
+    form.querySelector('input[name="q"]')?.value?.trim() || getQueryFromUrl() || '',
+    next
+  );
+
+  form.querySelectorAll('.search-mode-btn').forEach((btn) => {
+    const active = btn.dataset.searchMode === next;
+    btn.classList.toggle('is-active', active);
+    btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+  });
+
+  const tabs = document.getElementById('results-tabs');
+  const filters = document.getElementById('results-filters');
+  const footer = document.querySelector('.ai-result-footer');
+  const container = document.getElementById('ai-result-container');
+  const searchInput = form.querySelector('input[name="q"]');
+  const messages = getMessages();
+
+  if (container) {
+    container.classList.toggle('is-results-mode', next === 'results');
+  }
+
+  if (filters) {
+    filters.hidden = next !== 'results';
+  }
+
+  if (next === 'results') {
+    // Вкладки только после выдачи результатов — не показываем заранее
+    if (footer) footer.style.display = 'none';
+    if (searchInput) {
+      searchInput.placeholder =
+        form.dataset.placeholderResults ||
+        messages.askResults ||
+        messages.askAnything ||
+        '';
+      // Без скрепки показываем запрос с начала строки
+      requestAnimationFrame(() => {
+        searchInput.scrollLeft = 0;
+      });
+    }
+    hideMediaResults('images');
+    hideMediaResults('videos');
+  } else {
+    if (tabs) tabs.hidden = true;
+    if (footer) footer.style.display = '';
+    hideAutocomplete();
+    if (searchInput) {
+      searchInput.placeholder =
+        form.dataset.placeholderAi ||
+        messages.askAnything ||
+        '';
+    }
+  }
+}
+
+function setActiveResultsTab(category) {
+  currentResultsCategory = category;
+  document.querySelectorAll('.results-tab').forEach((tab) => {
+    tab.classList.toggle('is-active', tab.dataset.resultsCategory === category);
+  });
+}
+
+function getSourceFaviconForResults(hostname) {
+  return getSourceFaviconUrl(hostname, 32);
+}
+
+async function requestWebSearch({ query, category, locale, timeRange, safesearch }) {
+  const response = await fetch('/web-search', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Accept: 'application/json'
+    },
+    credentials: 'same-origin',
+    body: JSON.stringify({
+      q: query,
+      category: category || 'general',
+      locale: locale || getCurrentLocale(),
+      timeRange: timeRange || getResultsTimeRange() || undefined,
+      safesearch:
+        safesearch !== undefined ? safesearch : getResultsSafesearch()
+    })
+  });
+
+  let data = null;
+  try {
+    data = await response.json();
+  } catch (_) {
+    data = null;
+  }
+
+  return { response, data };
+}
+
+function formatResultsPublishedDate(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  const date = new Date(raw);
+  if (Number.isNaN(date.getTime())) return raw;
+  try {
+    return new Intl.DateTimeFormat(getCurrentLocale() || 'ru', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    }).format(date);
+  } catch (_) {
+    return raw;
+  }
+}
+
+function buildResultsExtrasHtml({
+  answers = [],
+  suggestions = [],
+  corrections = [],
+  infoboxes = [],
+  messages = {}
+}) {
+  const parts = [];
+
+  if (Array.isArray(corrections) && corrections.length) {
+    const label = escapeHtml(messages.resultsDidYouMean || 'Did you mean:');
+    const chips = corrections
+      .map(
+        (text) =>
+          `<button type="button" class="results-correction-btn" data-results-query="${escapeHtml(text)}">${escapeHtml(text)}</button>`
+      )
+      .join('');
+    parts.push(
+      `<div class="results-corrections"><span class="results-corrections-label">${label}</span> ${chips}</div>`
+    );
+  }
+
+  if (Array.isArray(answers) && answers.length) {
+    const blocks = answers
+      .map((item) => {
+        const answer = escapeHtml(item.answer || '');
+        const href = safeHttpUrl(item.url || '', '');
+        const engine = escapeHtml(item.engine || '');
+        const link = href
+          ? `<a class="results-answer-link" href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(messages.resultsAnswerSource || 'Source')}</a>`
+          : '';
+        return `
+          <div class="results-answer">
+            <div class="results-answer-text">${answer}</div>
+            <div class="results-answer-meta">
+              ${engine ? `<span>${engine}</span>` : ''}
+              ${link}
+            </div>
+          </div>`;
+      })
+      .join('');
+    parts.push(`<div class="results-answers">${blocks}</div>`);
+  }
+
+  if (Array.isArray(infoboxes) && infoboxes.length) {
+    const boxes = infoboxes
+      .map((box) => {
+        const title = escapeHtml(box.title || '');
+        const content = escapeHtml(box.content || '');
+        const href = escapeHtml(safeHttpUrl(box.url || '#', '#'));
+        const img = escapeHtml(safeHttpUrl(box.imageUrl || '', ''));
+        const attrs = Array.isArray(box.attributes)
+          ? box.attributes
+              .map(
+                (attr) =>
+                  `<div class="results-infobox-attr"><span>${escapeHtml(attr.label)}</span><span>${escapeHtml(attr.value)}</span></div>`
+              )
+              .join('')
+          : '';
+        const urls = Array.isArray(box.urls)
+          ? `<div class="results-infobox-urls">${box.urls
+              .map((u) => {
+                const uHref = escapeHtml(safeHttpUrl(u.url || '#', '#'));
+                return `<a href="${uHref}" target="_blank" rel="noopener">${escapeHtml(u.title || u.url)}</a>`;
+              })
+              .join('')}</div>`
+          : '';
+        return `
+          <aside class="results-infobox">
+            ${img ? `<div class="results-infobox-media"><img src="${img}" alt="" loading="lazy"></div>` : ''}
+            <div class="results-infobox-body">
+              <a class="results-infobox-title" href="${href}" target="_blank" rel="noopener">${title}</a>
+              ${content ? `<p class="results-infobox-content">${content}</p>` : ''}
+              ${attrs ? `<div class="results-infobox-attrs">${attrs}</div>` : ''}
+              ${urls}
+            </div>
+          </aside>`;
+      })
+      .join('');
+    parts.push(`<div class="results-infoboxes">${boxes}</div>`);
+  }
+
+  if (Array.isArray(suggestions) && suggestions.length) {
+    const label = escapeHtml(messages.resultsSuggestions || 'Related searches');
+    const chips = suggestions
+      .map(
+        (text) =>
+          `<button type="button" class="results-suggestion-btn" data-results-query="${escapeHtml(text)}">${escapeHtml(text)}</button>`
+      )
+      .join('');
+    parts.push(
+      `<div class="results-suggestions"><div class="results-suggestions-label">${label}</div><div class="results-suggestions-list">${chips}</div></div>`
+    );
+  }
+
+  return parts.join('');
+}
+
+function buildOsmEmbedUrl(lat, lon) {
+  const latitude = Number(lat);
+  const longitude = Number(lon);
+  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return '';
+  const d = 0.08;
+  const bbox = [
+    longitude - d,
+    latitude - d,
+    longitude + d,
+    latitude + d
+  ].join('%2C');
+  return `https://www.openstreetmap.org/export/embed.html?bbox=${bbox}&layer=mapnik&marker=${latitude}%2C${longitude}`;
+}
+
+function buildResultsMediaGridHtml(items, { showDuration = false, videoLayout = false } = {}) {
+  const cards = items
+    .map((item) => {
+      const title = escapeHtml(item.title || '');
+      const href = escapeHtml(safeHttpUrl(item.url || item.imageUrl || '#', '#'));
+      const thumb = escapeHtml(safeHttpUrl(item.thumbnail || item.imageUrl || '', ''));
+      const host = escapeHtml(item.hostname || getSourceHostname(item.url || ''));
+      const engine = escapeHtml(item.engine || '');
+      const duration = escapeHtml(item.duration || '');
+      const sourceBits = [host, engine].filter(Boolean).join(' · ');
+      const durationBadge =
+        showDuration && duration
+          ? `<span class="results-media-duration">${duration}</span>`
+          : '';
+      const img = thumb
+        ? `<div class="results-media-thumb"><img src="${thumb}" alt="${title}" loading="lazy" decoding="async">${durationBadge}</div>`
+        : videoLayout
+          ? `<div class="results-media-thumb results-media-thumb--empty" aria-hidden="true">${durationBadge}</div>`
+          : '';
+      return `
+        <a class="results-media-card${videoLayout ? ' is-video' : ''}" href="${href}" target="_blank" rel="noopener">
+          ${img}
+          <div class="results-media-meta">
+            <div class="results-media-title">${title}</div>
+            <div class="results-media-source">${sourceBits}</div>
+          </div>
+        </a>`;
+    })
+    .join('');
+  return `<div class="results-media-grid${videoLayout ? ' is-video-grid' : ''}">${cards}</div>`;
+}
+
+function buildResultsMapHtml(items) {
+  const cards = items
+    .map((item) => {
+      const title = escapeHtml(item.title || item.url || '');
+      const href = escapeHtml(safeHttpUrl(item.url || '#', '#'));
+      const content = escapeHtml(item.content || '');
+      const embed = buildOsmEmbedUrl(item.latitude, item.longitude);
+      const coords =
+        item.latitude != null && item.longitude != null
+          ? `${Number(item.latitude).toFixed(5)}, ${Number(item.longitude).toFixed(5)}`
+          : '';
+      return `
+        <article class="results-map-card">
+          ${
+            embed
+              ? `<iframe class="results-map-embed" src="${escapeHtml(embed)}" loading="lazy" title="${title}" referrerpolicy="no-referrer-when-downgrade"></iframe>`
+              : ''
+          }
+          <div class="results-map-body">
+            <a class="results-map-title" href="${href}" target="_blank" rel="noopener">${title}</a>
+            ${coords ? `<div class="results-map-coords">${escapeHtml(coords)}</div>` : ''}
+            ${content ? `<p class="results-map-content">${content}</p>` : ''}
+          </div>
+        </article>`;
+    })
+    .join('');
+  return `<div class="results-map-list">${cards}</div>`;
+}
+
+function buildResultsNewsHtml(items) {
+  const list = items
+    .map((item) => {
+      const title = escapeHtml(item.title || item.url || '');
+      const href = escapeHtml(safeHttpUrl(item.url || '#', '#'));
+      const host = item.hostname || getSourceHostname(item.url || '');
+      const favicon = escapeHtml(getSourceFaviconForResults(host));
+      const snippet = escapeHtml(item.content || '');
+      const published = formatResultsPublishedDate(item.publishedDate || '');
+      const thumb = escapeHtml(safeHttpUrl(item.thumbnail || '', ''));
+      return `
+        <a class="results-news-card" href="${href}" target="_blank" rel="noopener">
+          ${thumb ? `<div class="results-news-thumb"><img src="${thumb}" alt="" loading="lazy"></div>` : ''}
+          <div class="results-news-body">
+            <div class="results-news-meta">
+              <img class="results-favicon" src="${favicon}" alt="" width="14" height="14" loading="lazy">
+              <span class="results-host">${escapeHtml(host)}</span>
+              ${published ? `<time class="results-news-date">${escapeHtml(published)}</time>` : ''}
+            </div>
+            <div class="results-news-title">${title}</div>
+            ${snippet ? `<p class="results-news-snippet">${snippet}</p>` : ''}
+          </div>
+        </a>`;
+    })
+    .join('');
+  return `<div class="results-news-list">${list}</div>`;
+}
+
+function buildResultsGeneralHtml(items) {
+  const list = items
+    .map((item) => {
+      const title = escapeHtml(item.title || item.url || '');
+      const href = escapeHtml(safeHttpUrl(item.url || '#', '#'));
+      const host = item.hostname || getSourceHostname(item.url || '');
+      const favicon = escapeHtml(getSourceFaviconForResults(host));
+      const snippet = escapeHtml(item.content || '');
+      const published = formatResultsPublishedDate(item.publishedDate || '');
+      const engine = String(item.engine || '').trim();
+      const metaBits = [host, published, engine].filter(Boolean).join(' · ');
+      const thumb = escapeHtml(safeHttpUrl(item.thumbnail || '', ''));
+      return `
+        <a class="results-card${thumb ? ' has-thumb' : ''}" href="${href}" target="_blank" rel="noopener">
+          ${thumb ? `<div class="results-card-thumb"><img src="${thumb}" alt="" loading="lazy"></div>` : ''}
+          <div class="results-card-body">
+            <div class="results-card-top">
+              <img class="results-favicon" src="${favicon}" alt="" width="16" height="16" loading="lazy">
+              <span class="results-host">${escapeHtml(metaBits || host)}</span>
+            </div>
+            <div class="results-title">${title}</div>
+            ${snippet ? `<p class="results-snippet">${snippet}</p>` : ''}
+          </div>
+        </a>`;
+    })
+    .join('');
+  return `<div class="results-list">${list}</div>`;
+}
+
+function hideAutocomplete() {
+  const box = document.getElementById('search-autocomplete');
+  if (!box) return;
+  box.hidden = true;
+  box.innerHTML = '';
+}
+
+function renderAutocomplete(suggestions) {
+  const box = document.getElementById('search-autocomplete');
+  if (!box) return;
+  const items = Array.isArray(suggestions) ? suggestions.filter(Boolean).slice(0, 8) : [];
+  if (!items.length) {
+    hideAutocomplete();
+    return;
+  }
+  box.hidden = false;
+  box.innerHTML = items
+    .map(
+      (text, index) =>
+        `<button type="button" class="search-autocomplete-item" data-ac-index="${index}" data-results-query="${escapeHtml(text)}">${escapeHtml(text)}</button>`
+    )
+    .join('');
+}
+
+function initResultsFilters() {
+  const timeSelect = document.getElementById('results-time-range');
+  const safeSelect = document.getElementById('results-safe-search');
+  if (timeSelect) {
+    timeSelect.value = getResultsTimeRange();
+    timeSelect.addEventListener('change', () => {
+      persistResultsFilters();
+      const q = (resultsQuery || document.querySelector('#ai-search-form input[name="q"]')?.value || '').trim();
+      if (q && getSearchMode() === 'results') {
+        document.getElementById('ai-search-form')?.requestSubmit();
+      }
+    });
+  }
+  if (safeSelect) {
+    safeSelect.value = String(getResultsSafesearch());
+    safeSelect.addEventListener('change', () => {
+      persistResultsFilters();
+      const q = (resultsQuery || document.querySelector('#ai-search-form input[name="q"]')?.value || '').trim();
+      if (q && getSearchMode() === 'results') {
+        document.getElementById('ai-search-form')?.requestSubmit();
+      }
+    });
+  }
+}
+
+function initAutocomplete(searchInput, searchForm, { isSubmittingRef, setSubmitLoading, runSearch }) {
+  const box = document.getElementById('search-autocomplete');
+  if (!searchInput || !box) return;
+
+  let timer = null;
+  let seq = 0;
+
+  const schedule = () => {
+    if (getSearchMode(searchForm) !== 'results') {
+      hideAutocomplete();
+      return;
+    }
+    const q = searchInput.value.trim();
+    if (q.length < 2) {
+      hideAutocomplete();
+      return;
+    }
+    clearTimeout(timer);
+    timer = setTimeout(async () => {
+      const my = ++seq;
+      try {
+        const res = await fetch(`/web-autocomplete?q=${encodeURIComponent(q)}`, {
+          headers: { Accept: 'application/json' },
+          credentials: 'same-origin'
+        });
+        const data = await res.json().catch(() => null);
+        if (my !== seq) return;
+        if (document.activeElement !== searchInput) return;
+        renderAutocomplete(data?.suggestions || []);
+      } catch (_) {
+        if (my === seq) hideAutocomplete();
+      }
+    }, 220);
+  };
+
+  searchInput.addEventListener('input', schedule);
+  searchInput.addEventListener('focus', schedule);
+  searchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideAutocomplete();
+  });
+  document.addEventListener('click', (e) => {
+    if (e.target?.closest?.('#search-autocomplete') || e.target === searchInput) return;
+    hideAutocomplete();
+  });
+  box.addEventListener('click', async (e) => {
+    const btn = e.target?.closest?.('[data-results-query]');
+    if (!btn) return;
+    const nextQuery = String(btn.dataset.resultsQuery || '').trim();
+    if (!nextQuery || isSubmittingRef()) return;
+    hideAutocomplete();
+    searchInput.value = nextQuery;
+    searchInput.scrollLeft = 0;
+    await runSearch(nextQuery);
+  });
+}
+
+function renderResultsMode({
+  category,
+  results,
+  answers,
+  suggestions,
+  corrections,
+  infoboxes,
+  error,
+  emptyText
+}) {
+  const contentDiv = document.getElementById('ai-result-content');
+  const container = document.getElementById('ai-result-container');
+  const tabs = document.getElementById('results-tabs');
+  const footer = document.querySelector('.ai-result-footer');
+  const messages = getMessages();
+  const form = document.getElementById('ai-search-form');
+
+  if (!contentDiv || !container) return;
+
+  // Вкладки категорий SearXNG — только в режиме Выдача
+  if (getSearchMode(form) !== 'results') {
+    if (tabs) tabs.hidden = true;
+    container.classList.remove('is-results-mode');
+    return;
+  }
+
+  container.style.display = 'block';
+  container.classList.add('is-results-mode');
+  if (tabs) tabs.hidden = false;
+  if (footer) footer.style.display = 'none';
+  setResultActionsVisible(false);
+  hideMediaResults('images');
+  hideMediaResults('videos');
+  setActiveResultsTab(category || 'general');
+
+  if (error) {
+    contentDiv.innerHTML = `<div class="results-error">${escapeHtml(error)}</div>`;
+    return;
+  }
+
+  const items = Array.isArray(results) ? results : [];
+  const extrasHtml = buildResultsExtrasHtml({
+    answers,
+    suggestions,
+    corrections,
+    infoboxes,
+    messages
+  });
+
+  if (!items.length) {
+    const empty =
+      emptyText ||
+      messages.resultsEmpty ||
+      document.getElementById('ai-search-form')?.dataset.emptyResults ||
+      'Nothing found.';
+    contentDiv.innerHTML = extrasHtml
+      ? `${extrasHtml}<div class="results-empty">${escapeHtml(empty)}</div>`
+      : `<div class="results-empty">${escapeHtml(empty)}</div>`;
+    return;
+  }
+
+  let mainHtml = '';
+  if (category === 'images') {
+    mainHtml = buildResultsMediaGridHtml(items, { showDuration: false });
+  } else if (category === 'videos') {
+    mainHtml = buildResultsMediaGridHtml(items, { showDuration: true, videoLayout: true });
+  } else if (category === 'map') {
+    mainHtml = buildResultsMapHtml(items);
+  } else if (category === 'news') {
+    mainHtml = buildResultsNewsHtml(items);
+  } else {
+    mainHtml = buildResultsGeneralHtml(items);
+  }
+
+  // Suggestions after results feel more natural; corrections/answers/infobox above
+  const topExtras = buildResultsExtrasHtml({
+    answers,
+    corrections,
+    infoboxes,
+    suggestions: [],
+    messages
+  });
+  const bottomExtras = buildResultsExtrasHtml({
+    suggestions,
+    messages
+  });
+
+  contentDiv.innerHTML = `${topExtras}${mainHtml}${bottomExtras}`;
+  bindResultsThumbFallbacks(contentDiv);
+}
+
+/** Скрывает пустые/битые превью в Выдаче (вместо серых болванок). */
+function bindResultsThumbFallbacks(root) {
+  if (!root) return;
+  const imgs = root.querySelectorAll(
+    '.results-card-thumb img, .results-news-thumb img, .results-media-thumb img, .results-infobox-media img'
+  );
+  imgs.forEach((img) => {
+    const hideBrokenThumb = () => {
+      const wrap = img.closest(
+        '.results-card-thumb, .results-news-thumb, .results-media-thumb, .results-infobox-media'
+      );
+      const card = img.closest(
+        '.results-card, .results-news-card, .results-media-card, .results-infobox'
+      );
+      // В сетке картинок карточка без превью бесполезна
+      if (
+        card &&
+        card.classList.contains('results-media-card') &&
+        !card.classList.contains('is-video')
+      ) {
+        card.remove();
+        return;
+      }
+      if (wrap) wrap.remove();
+      if (card) card.classList.remove('has-thumb');
+    };
+
+    if (img.complete && img.naturalWidth === 0) {
+      hideBrokenThumb();
+      return;
+    }
+    img.addEventListener('error', hideBrokenThumb, { once: true });
+  });
+}
+
+async function runResultsSearch(query, category = currentResultsCategory) {
+  const messages = getMessages();
+  const form = document.getElementById('ai-search-form');
+  resultsQuery = query;
+  setActiveResultsTab(category);
+  showLoading();
+
+  const container = document.getElementById('ai-result-container');
+  if (container) container.style.display = 'block';
+
+  const { response, data } = await requestWebSearch({
+    query,
+    category,
+    locale: getCurrentLocale()
+  });
+
+  if (!response.ok) {
+    renderResultsMode({
+      category,
+      results: [],
+      error:
+        data?.error ||
+        messages.resultsNetworkError ||
+        messages.networkError
+    });
+    return;
+  }
+
+  renderResultsMode({
+    category: data?.category || category,
+    results: Array.isArray(data?.results) ? data.results : [],
+    answers: Array.isArray(data?.answers) ? data.answers : [],
+    suggestions: Array.isArray(data?.suggestions) ? data.suggestions : [],
+    corrections: Array.isArray(data?.corrections) ? data.corrections : [],
+    infoboxes: Array.isArray(data?.infoboxes) ? data.infoboxes : [],
+    emptyText:
+      form?.dataset.emptyResults ||
+      messages.resultsEmpty
+  });
+}
+
+
 // ======================================================================================================================
 // ИНИЦИАЛИЗАЦИЯ СТРАНИЦЫ
 // ======================================================================================================================
@@ -1597,7 +2337,8 @@ async function initPage() {
 
   function setupEventListeners() {
     const searchForm = document.getElementById('ai-search-form');
-    const submitBtn = searchForm?.querySelector('button[type="submit"]');
+    const modeToggle = searchForm?.querySelector('.search-mode-toggle');
+    const modeButtons = searchForm ? Array.from(searchForm.querySelectorAll('.search-mode-btn')) : [];
     const searchInput = searchForm?.querySelector('input[name="q"]');
 
     if (!searchForm) {
@@ -1607,6 +2348,108 @@ async function initPage() {
 
     let isSubmitting = false;
     let currentIdempotencyKey = null;
+
+    function setSubmitLoading(loading) {
+      if (modeToggle) modeToggle.classList.toggle('is-loading', loading);
+      modeButtons.forEach((btn) => {
+        btn.disabled = loading;
+      });
+    }
+
+    setSearchMode(getModeFromUrl() || getStoredSearchMode() || getSearchMode(searchForm));
+    initResultsFilters();
+
+    const isSubmittingRef = () => isSubmitting;
+    initAutocomplete(searchInput, searchForm, {
+      isSubmittingRef,
+      setSubmitLoading,
+      runSearch: async (query) => {
+        if (!query || isSubmitting) return;
+        isSubmitting = true;
+        setSubmitLoading(true);
+        try {
+          setSearchMode('results');
+          syncSearchQueryToUrl(query, 'results');
+          await runResultsSearch(query, currentResultsCategory || 'general');
+        } finally {
+          isSubmitting = false;
+          setSubmitLoading(false);
+        }
+      }
+    });
+
+    modeButtons.forEach((btn) => {
+      btn.addEventListener('click', () => {
+        if (isSubmitting) return;
+        const mode = btn.dataset.searchMode === 'results' ? 'results' : 'ai';
+        setSearchMode(mode);
+        const query = searchInput?.value.trim();
+        if (!query) {
+          searchInput?.focus();
+          return;
+        }
+        searchForm.requestSubmit();
+      });
+    });
+
+    searchInput?.addEventListener('keydown', (e) => {
+      if (e.key !== 'Enter') return;
+      e.preventDefault();
+      if (isSubmitting) return;
+      if (!searchInput.value.trim()) return;
+      searchForm.requestSubmit();
+    });
+
+    document.querySelectorAll('.results-tab').forEach((tab) => {
+      tab.addEventListener('click', async () => {
+        if (getSearchMode(searchForm) !== 'results') return;
+        const category = tab.dataset.resultsCategory || 'general';
+        const query = (resultsQuery || searchInput?.value || '').trim();
+        if (!query || isSubmitting) return;
+        isSubmitting = true;
+        setSubmitLoading(true);
+        try {
+          await runResultsSearch(query, category);
+        } catch (error) {
+          console.error('[Results] tab error:', error);
+          renderResultsMode({
+            category,
+            results: [],
+            error: getMessages().resultsNetworkError || getMessages().networkError
+          });
+        } finally {
+          isSubmitting = false;
+          setSubmitLoading(false);
+        }
+      });
+    });
+
+    document.getElementById('ai-result-content')?.addEventListener('click', async (e) => {
+      const btn = e.target?.closest?.('[data-results-query]');
+      if (!btn || getSearchMode(searchForm) !== 'results') return;
+      const nextQuery = String(btn.dataset.resultsQuery || '').trim();
+      if (!nextQuery || isSubmitting) return;
+      if (searchInput) {
+        searchInput.value = nextQuery;
+        searchInput.scrollLeft = 0;
+      }
+      syncSearchQueryToUrl(nextQuery);
+      isSubmitting = true;
+      setSubmitLoading(true);
+      try {
+        await runResultsSearch(nextQuery, currentResultsCategory || 'general');
+      } catch (error) {
+        console.error('[Results] suggestion error:', error);
+        renderResultsMode({
+          category: currentResultsCategory || 'general',
+          results: [],
+          error: getMessages().resultsNetworkError || getMessages().networkError
+        });
+      } finally {
+        isSubmitting = false;
+        setSubmitLoading(false);
+      }
+    });
 
     searchForm.addEventListener('submit', async e => {
       e.preventDefault();
@@ -1630,10 +2473,29 @@ async function initPage() {
       syncSearchQueryToUrl(query);
 
       isSubmitting = true;
+      setSubmitLoading(true);
 
-      if (submitBtn) {
-        submitBtn.disabled = true;
-        submitBtn.classList.add('is-loading');
+      if (getSearchMode(searchForm) === 'results') {
+        try {
+          await runResultsSearch(query, currentResultsCategory || 'general');
+        } catch (error) {
+          console.error('[Results] ❌ Ошибка при запросе к /web-search:', error);
+          renderResultsMode({
+            category: currentResultsCategory || 'general',
+            results: [],
+            error: getMessages().resultsNetworkError || getMessages().networkError
+          });
+        } finally {
+          isSubmitting = false;
+          setSubmitLoading(false);
+          if (searchInput) {
+            searchInput.placeholder =
+              searchForm.dataset.placeholderResults ||
+              getMessages().askResults ||
+              getMessages().askAnything;
+          }
+        }
+        return;
       }
 
       showLoading();
@@ -1642,6 +2504,11 @@ async function initPage() {
       if (container) {
         container.style.display = 'block';
       }
+
+      const resultsTabs = document.getElementById('results-tabs');
+      if (resultsTabs) resultsTabs.hidden = true;
+      const resultsFooter = document.querySelector('.ai-result-footer');
+      if (resultsFooter) resultsFooter.style.display = '';
 
       showImageResults({ images: [] });
       showVideoResults({ videos: [] });
@@ -1658,7 +2525,6 @@ async function initPage() {
       }
 
       let idempotencyKey = null;
-      // Стрим в VK WebView работает; JSON-only раньше оставляли из осторожности
       const useStream = true;
 
       try {
@@ -1746,17 +2612,16 @@ async function initPage() {
         showVideoResults({ videos: [] });
       } finally {
         if (searchInput) {
-          searchInput.placeholder = getMessages().askAnything;
+          searchInput.placeholder =
+            searchForm.dataset.placeholderAi ||
+            getMessages().askAnything;
         }
 
         const finishedKey = idempotencyKey;
         if (currentIdempotencyKey === finishedKey || currentIdempotencyKey === null) {
           isSubmitting = false;
           currentIdempotencyKey = null;
-          if (submitBtn) {
-            submitBtn.disabled = false;
-            submitBtn.classList.remove('is-loading');
-          }
+          setSubmitLoading(false);
         }
       }
     });

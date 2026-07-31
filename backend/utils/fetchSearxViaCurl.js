@@ -14,10 +14,10 @@ const execFileAsync = promisify(execFile);
  *
  * @param {string} query
  * @param {string} category
- * @param {{ language?: string, engines?: string }} [opts]
+ * @param {{ language?: string, engines?: string, timeRange?: string, safesearch?: number|string }} [opts]
  */
 async function fetchSearxViaCurl(query, category, opts = {}) {
-  const { language, engines } = opts;
+  const { language, engines, timeRange, safesearch } = opts;
   let url =
     `http://127.0.0.1/search` +
     `?q=${encodeURIComponent(query)}` +
@@ -25,17 +25,21 @@ async function fetchSearxViaCurl(query, category, opts = {}) {
     `&format=json`;
   if (language) url += `&language=${encodeURIComponent(language)}`;
   if (engines) url += `&engines=${encodeURIComponent(engines)}`;
+  if (timeRange) url += `&time_range=${encodeURIComponent(timeRange)}`;
+  if (safesearch !== undefined && safesearch !== null && safesearch !== '') {
+    url += `&safesearch=${encodeURIComponent(String(safesearch))}`;
+  }
 
   try {
     const { stdout, stderr } = await execFileAsync('curl', [
-      '-sS',                        // тихий режим, но показывать ошибки curl
-      '-f',                         // HTTP 4xx/5xx => ошибка выхода
+      '-sS',
+      '-f',
       '-H', 'Host: serpmonn.ru',
-      '--max-time', '15',           // максимум 15 секунд на запрос
-      '--connect-timeout', '2',     // до 2 секунд на установление соединения
+      '--max-time', '15',
+      '--connect-timeout', '2',
       url
     ], {
-      maxBuffer: 10 * 1024 * 1024  // 10 МБ — крупные JSON от SearXNG (images)
+      maxBuffer: 10 * 1024 * 1024
     });
 
     if (stderr?.trim()) {
@@ -81,4 +85,48 @@ async function fetchSearxViaCurl(query, category, opts = {}) {
   }
 }
 
-export { fetchSearxViaCurl };
+/**
+ * Подсказки SearXNG (duckduckgo autocomplete и т.п.).
+ * @param {string} query
+ * @returns {Promise<string[]>}
+ */
+async function fetchSearxAutocompleteViaCurl(query) {
+  const q = String(query || '').trim();
+  if (!q || q.length < 2) return [];
+
+  const url = `http://127.0.0.1/autocompleter?q=${encodeURIComponent(q)}`;
+
+  try {
+    const { stdout } = await execFileAsync('curl', [
+      '-sS',
+      '-f',
+      '-H', 'Host: serpmonn.ru',
+      '--max-time', '4',
+      '--connect-timeout', '2',
+      url
+    ], {
+      maxBuffer: 1 * 1024 * 1024
+    });
+
+    if (!stdout) return [];
+
+    const data = JSON.parse(stdout);
+    // Typical: ["query", ["s1","s2",...]] or just ["s1","s2"]
+    if (Array.isArray(data)) {
+      if (data.length >= 2 && Array.isArray(data[1])) {
+        return data[1].map((s) => String(s || '').trim()).filter(Boolean).slice(0, 8);
+      }
+      return data
+        .filter((item) => typeof item === 'string')
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .slice(0, 8);
+    }
+    return [];
+  } catch (err) {
+    console.warn('[SearXNG] autocomplete error:', err.message);
+    return [];
+  }
+}
+
+export { fetchSearxViaCurl, fetchSearxAutocompleteViaCurl };
