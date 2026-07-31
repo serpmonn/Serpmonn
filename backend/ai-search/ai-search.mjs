@@ -78,14 +78,20 @@ function extractHostname(url) {
 function fixUtf8Mojibake(text) {
   const s = String(text || '');
   if (!/[ÐÑÃÂ]/.test(s)) return s;
-  // continuation 0xA0 часто уже сплющен в обычный пробел
+  // Continuation-байты иногда сплющены в обычный пробел:
+  //   D0 A0 = «р»; D1 85 = «х» (раньше ошибочно ставили D1 A0 → «Ѡ»).
   const restored = s
     .replace(/\u00d0 /g, '\u00d0\u00a0')
-    .replace(/\u00d1 /g, '\u00d1\u00a0');
+    .replace(/\u00d1 /g, '\u00d1\u0085');
   try {
-    const fixed = Buffer.from(restored, 'latin1')
+    let fixed = Buffer.from(restored, 'latin1')
       .toString('utf8')
       .replace(/\uFFFD/g, '');
+    // Пробел после «х» часто съеден вместе с битым байтом («ударныхиспытаний»).
+    fixed = fixed.replace(
+      /(ных|ских|чных|жных|вших|ящих|ших|чих)(?=[а-яёА-ЯЁ])/g,
+      '$1 '
+    );
     const cyr = (t) => (t.match(/[а-яА-ЯёЁ]/g) || []).length;
     const junk = (t) => (t.match(/[ÐÑÃÂ]/g) || []).length;
     if (cyr(fixed) >= 2 && junk(fixed) < junk(s)) return fixed;
@@ -104,7 +110,8 @@ function stripHtmlTags(text) {
 }
 
 function cleanWebText(text) {
-  return fixUtf8Mojibake(stripHtmlTags(text));
+  // Сначала mojibake: \s в stripHtmlTags схлопывает U+0085/U+00A0 (байты «х»/«р»).
+  return stripHtmlTags(fixUtf8Mojibake(text));
 }
 
 function normalizeAiAnswer(answer, t) {

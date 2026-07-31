@@ -56,8 +56,8 @@ eleventyComputed:
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
 
     <!-- Стили -->
-    <link rel="preload" href="/frontend/promo-codes-and-discounts/promokody-skidki.css?v=28" as="style" onload="this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/frontend/promo-codes-and-discounts/promokody-skidki.css?v=28"></noscript>
+    <link rel="preload" href="/frontend/promo-codes-and-discounts/promokody-skidki.css?v=40" as="style" onload="this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/frontend/promo-codes-and-discounts/promokody-skidki.css?v=40"></noscript>
     <link rel="preload" href="/frontend/styles/accessibility.css" as="style" onload="this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/frontend/styles/accessibility.css"></noscript>
 
@@ -119,7 +119,7 @@ eleventyComputed:
     <noscript><div><img src="https://top-fwz1.mail.ru/counter?id=3552905;js=na" style="position:absolute;left:-9999px;" alt="Top.Mail.Ru" /></div></noscript>
     <!-- /Top.Mail.Ru counter -->
     
-    <script type="module" src="/frontend/promo-codes-and-discounts/promokody-skidki.js?v=45" defer></script>
+    <script type="module" src="/frontend/promo-codes-and-discounts/promokody-skidki.js?v=47" defer></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
@@ -199,6 +199,31 @@ eleventyComputed:
             </div>
         </section>
 
+        <section class="bonus" aria-labelledby="bonus-title">
+            <div class="bonus-inner">
+                <div class="bonus-copy">
+                    <h2 id="bonus-title">{{ localesPromocodes[locale].promoCodes.bonusTitle }}</h2>
+                    <p class="bonus-lead">{{ localesPromocodes[locale].promoCodes.bonusText }}</p>
+                </div>
+                <p class="social-proof-count" id="subscribersCount" data-count-template="{{ localesPromocodes[locale].promoCodes.socialProofCount }}" aria-live="polite">
+                    {{ localesPromocodes[locale].promoCodes.socialProofCount | replace('{count}', '…') }}
+                </p>
+                <form action="/subscribe" method="post" aria-label="{{ localesPromocodes[locale].promoCodes.bonusTitle }}">
+                    <input
+                        type="email"
+                        name="email"
+                        class="bonus-email"
+                        placeholder="{{ localesPromocodes[locale].promoCodes.emailPlaceholder }}"
+                        data-placeholder-desktop="{{ localesPromocodes[locale].promoCodes.emailPlaceholder }}"
+                        data-placeholder-mobile="{{ localesPromocodes[locale].promoCodes.bonusEmailPlaceholderMobile | default(localesPromocodes[locale].promoCodes.bonusTitle) }}"
+                        required
+                        aria-label="{{ localesPromocodes[locale].promoCodes.emailPlaceholder }}"
+                    >
+                    <button type="submit" class="submit-btn">{{ localesPromocodes[locale].promoCodes.subscribeButton }}</button>
+                </form>
+            </div>
+        </section>
+
         <div id="loadingSpinner" class="loading" style="display: none;">
             <div class="spinner"></div>
             <p>{{ localesPromocodes[locale].promoCodes.loading }}</p>
@@ -220,25 +245,6 @@ eleventyComputed:
                 <summary lang="{{ locale }}">{{ localesPromocodes[locale].promoCodes.faq2Question }}</summary>
                 <p>{{ localesPromocodes[locale].promoCodes.faq2Answer | safe }}</p>
             </details>
-        </section>
-
-        <section class="bonus" aria-labelledby="bonus-title">
-            <h2 id="bonus-title">{{ localesPromocodes[locale].promoCodes.bonusTitle }}</h2>
-            <p>{{ localesPromocodes[locale].promoCodes.bonusText }}</p>
-
-            <div class="social-proof" aria-live="polite">
-                <span class="social-proof-count" id="subscribersCount" data-count-template="{{ localesPromocodes[locale].promoCodes.socialProofCount }}">
-                    {{ localesPromocodes[locale].promoCodes.socialProofCount | replace('{count}', '3 000') }}
-                </span>
-                <span class="social-proof-note">
-                    {{ localesPromocodes[locale].promoCodes.socialProofNote }}
-                </span>
-            </div>
-
-            <form action="/subscribe" method="post" aria-label="{{ localesPromocodes[locale].promoCodes.bonusTitle }}">
-                <input type="email" name="email" placeholder="{{ localesPromocodes[locale].promoCodes.emailPlaceholder }}" required aria-label="{{ localesPromocodes[locale].promoCodes.emailPlaceholder }}">
-                <button type="submit" class="submit-btn">{{ localesPromocodes[locale].promoCodes.subscribeButton }}</button>
-            </form>
         </section>
     </main>
     

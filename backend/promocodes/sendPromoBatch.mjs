@@ -4,52 +4,192 @@ import { query } from '../database/config.mjs';
 import { sendPromoEmail } from '../utils/mailer.mjs';
 import { filterPromocodes, loadPromocodesFromAPI } from '../promocodes/promocodesRoutes.mjs';
 
-// 1. Загружаем .env так же, как в других файлах
 dotenv.config({
   path: process.env.NODE_ENV === 'production'
     ? '/var/www/serpmonn.ru/backend/.env'
     : resolve(process.cwd(), 'backend/.env')
 });
 
-// 2. Выборка промокодов для письма (без is_top и country)
-function getPromoSelectionForEmail(limit = 8) {
-  // Берём только активные
-  let promos = filterPromocodes({ status: 'active' });
+const DIGEST_LIMIT = 6;
+const HIT_COUNT = 2;
+const PROMO_PAGE_URL =
+  'https://serpmonn.ru/frontend/promo-codes-and-discounts/promokody-skidki.html';
 
-  // Оставляем только записи с реальным промокодом
-  promos = promos.filter(p => !!p.promocode);
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
 
-  // Простейшая сортировка по сроку действия:
-  // сначала с датой (ближайшие дедлайны), потом без даты
-  promos.sort((a, b) => {
-    const aDate = a.valid_until ? new Date(a.valid_until) : null;
-    const bDate = b.valid_until ? new Date(b.valid_until) : null;
+function promoKey(p) {
+  return String(p.id || `${p.promocode}|${p.title}`);
+}
 
-    if (aDate && !bDate) return -1;
-    if (!aDate && bDate) return 1;
-    if (aDate && bDate) return aDate - bDate;
-    return 0;
-  });
+function formatDiscount(p) {
+  if (p.discount_percent) return `${p.discount_percent}%`;
+  if (p.discount_amount) return `${p.discount_amount} ₽`;
+  return 'Специальное предложение';
+}
 
-  return promos.slice(0, limit);
+function formatValidUntil(p) {
+  if (!p.valid_until) return '';
+  return `Действует до: ${new Date(p.valid_until).toLocaleDateString('ru-RU')}`;
+}
+
+function shortDescription(p) {
+  return p.bonus_description || p.description || '';
+}
+
+/** Топ по скидке (хиты) + остальное по ближайшему сроку. */
+function getPromoSelectionForEmail(limit = DIGEST_LIMIT) {
+  let promos = filterPromocodes({ status: 'active' }).filter((p) => !!p.promocode);
+  if (!promos.length) return [];
+
+  const byDiscount = [...promos].sort(
+    (a, b) => (Number(b.discount_percent) || 0) - (Number(a.discount_percent) || 0)
+  );
+  const hits = byDiscount.slice(0, Math.min(HIT_COUNT, limit));
+  const hitKeys = new Set(hits.map(promoKey));
+
+  const rest = promos
+    .filter((p) => !hitKeys.has(promoKey(p)))
+    .sort((a, b) => {
+      const aDate = a.valid_until ? new Date(a.valid_until) : null;
+      const bDate = b.valid_until ? new Date(b.valid_until) : null;
+      if (aDate && !bDate) return -1;
+      if (!aDate && bDate) return 1;
+      if (aDate && bDate) return aDate - bDate;
+      return 0;
+    });
+
+  return [...hits, ...rest].slice(0, limit);
+}
+
+function buildSubject(promos) {
+  const maxPct = Math.max(0, ...promos.map((p) => Number(p.discount_percent) || 0));
+  if (maxPct >= 10) return `Скидки до ${maxPct}%: подборка Serpmonn`;
+  return 'Свежие промокоды: подборка Serpmonn';
+}
+
+function renderPromoRowHtml(p, { hit = false } = {}) {
+  const title = escapeHtml(p.title);
+  const discount = escapeHtml(formatDiscount(p));
+  const valid = escapeHtml(formatValidUntil(p));
+  const shortText = escapeHtml(shortDescription(p));
+  const code = escapeHtml(p.promocode);
+  const url = p.landing_url ? escapeHtml(p.landing_url) : '';
+
+  const titleSize = hit ? '18px' : '15px';
+  const pad = hit ? '16px 14px' : '12px 10px';
+  const bg = hit ? '#fff5f5' : '#ffffff';
+  const border = hit ? '1px solid #f5c2c7' : '1px solid #eee';
+
+  return `
+    <tr>
+      <td style="padding:8px 0;">
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background:${bg};border:${border};border-radius:8px;">
+          <tr>
+            <td style="padding:${pad};">
+              ${hit ? '<div style="font-size:11px;color:#dc3545;font-weight:bold;letter-spacing:0.04em;margin-bottom:6px;">ХИТ</div>' : ''}
+              <div style="font-size:${titleSize};font-weight:bold;color:#222;line-height:1.3;">${title}</div>
+              <div style="margin-top:6px;font-size:15px;font-weight:bold;color:#111;">${discount}</div>
+              ${shortText ? `<div style="margin-top:6px;color:#555;font-size:13px;line-height:1.4;">${shortText}</div>` : ''}
+              ${code ? `
+                <div style="margin-top:10px;">
+                  <div style="font-size:12px;color:#666;margin-bottom:4px;">Промокод:</div>
+                  <span style="display:inline-block;padding:8px 12px;border-radius:6px;border:1px dashed #dc3545;font-weight:bold;font-size:${hit ? '18px' : '15px'};letter-spacing:1px;color:#dc3545;font-family:'Courier New',monospace;background:#fff;">
+                    ${code}
+                  </span>
+                </div>
+              ` : ''}
+              ${valid ? `<div style="margin-top:8px;color:#777;font-size:12px;">${valid}</div>` : ''}
+              ${url ? `
+                <table cellpadding="0" cellspacing="0" border="0" style="margin-top:12px;">
+                  <tr>
+                    <td bgcolor="#dc3545" style="border-radius:6px;">
+                      <a href="${url}" style="display:inline-block;padding:10px 16px;color:#ffffff;text-decoration:none;font-size:14px;font-weight:bold;">
+                        Забрать скидку
+                      </a>
+                    </td>
+                  </tr>
+                </table>
+              ` : ''}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+  `;
+}
+
+function buildPromoHtmlBlock(promos) {
+  const hits = promos.slice(0, HIT_COUNT);
+  const rest = promos.slice(HIT_COUNT);
+
+  const hitsHtml = hits.map((p) => renderPromoRowHtml(p, { hit: true })).join('');
+  const restHtml = rest.map((p) => renderPromoRowHtml(p, { hit: false })).join('');
+
+  return `
+    <table width="100%" cellpadding="0" cellspacing="0" border="0">
+      ${hitsHtml}
+      ${restHtml}
+      <tr>
+        <td style="padding:20px 0 8px 0;text-align:center;">
+          <table cellpadding="0" cellspacing="0" border="0" align="center">
+            <tr>
+              <td bgcolor="#111111" style="border-radius:8px;">
+                <a href="${PROMO_PAGE_URL}" style="display:inline-block;padding:12px 22px;color:#ffffff;text-decoration:none;font-size:15px;font-weight:bold;">
+                  Все промокоды на сайте
+                </a>
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+  `;
+}
+
+function buildPromoText(promos) {
+  const lines = promos
+    .map((p, i) => {
+      const tag = i < HIT_COUNT ? ' [хит]' : '';
+      return `${i + 1})${tag} ${p.title}
+${formatDiscount(p)}
+${shortDescription(p) ? `${shortDescription(p)}\n` : ''}Код: ${p.promocode}
+${formatValidUntil(p)}
+${p.landing_url ? `Ссылка: ${p.landing_url}` : ''}`.trim();
+    })
+    .join('\n\n');
+
+  return `${lines}
+
+Полный список: ${PROMO_PAGE_URL}`.trim();
 }
 
 async function main() {
-  // 3. Берём всех активных подписчиков
-  const subs = await query(
-    `SELECT email
-     FROM subscriptions
-     WHERE is_active = 1`
-  );
+  const testEmail = String(process.env.PROMO_TEST_EMAIL || '').trim();
 
-  console.log(`Найдено активных подписчиков: ${subs.length}`);
+  let subs;
+  if (testEmail) {
+    subs = [{ email: testEmail }];
+    console.log(`ТЕСТ-режим: только ${testEmail}`);
+  } else {
+    subs = await query(
+      `SELECT email
+       FROM subscriptions
+       WHERE is_active = 1`
+    );
+    console.log(`Найдено активных подписчиков: ${subs.length}`);
+  }
 
   if (!subs.length) {
     console.log('Нет активных подписчиков — рассылку пропускаем.');
     return;
   }
 
-  // 4. Принудительно загружаем промокоды перед выборкой
   console.log('Принудительная загрузка промокодов для рассылки...');
   const loaded = await loadPromocodesFromAPI();
 
@@ -58,8 +198,7 @@ async function main() {
     return;
   }
 
-  // 5. Берём промокоды для дайджеста
-  const promos = getPromoSelectionForEmail(8);
+  const promos = getPromoSelectionForEmail(DIGEST_LIMIT);
 
   console.log('Промокодов в кэше:', filterPromocodes({}).length);
   console.log('Промокодов в дайджесте:', promos.length);
@@ -69,96 +208,11 @@ async function main() {
     return;
   }
 
-  // 6. Собираем текстовую версию
-const promoLinesText = promos.map((p, i) => {
-  const discount = p.discount_percent
-    ? `${p.discount_percent}%`
-    : (p.discount_amount ? `${p.discount_amount} ₽` : 'Специальное предложение');
+  const subject = buildSubject(promos);
+  const promoText = buildPromoText(promos);
+  const promoHtmlBlock = buildPromoHtmlBlock(promos);
 
-  const valid = p.valid_until
-    ? `Действует до: ${new Date(p.valid_until).toLocaleDateString('ru-RU')}`
-    : '';
-
-  const shortText = p.bonus_description
-    ? p.bonus_description
-    : (p.description || '');
-
-  return `${i + 1}) ${p.title}
-${discount}
-${shortText ? `${shortText}\n` : ''}Код: ${p.promocode}
-${valid}
-${p.landing_url ? `Ссылка: ${p.landing_url}` : ''}`;
-}).join('\n\n');
-
-const promoText = `
-${promoLinesText}
-
-Полный список промокодов и акций смотрите на Serpmonn.
-`.trim();
-
-  // 7. HTML‑версия (таблица, с выделением промокода)
-const promoLinesHtml = promos.map((p, i) => {
-  const discount = p.discount_percent
-    ? `${p.discount_percent}%`
-    : (p.discount_amount ? `${p.discount_amount} ₽` : 'Специальное предложение');
-
-  const valid = p.valid_until
-    ? `Действует до: ${new Date(p.valid_until).toLocaleDateString('ru-RU')}`
-    : '';
-
-  const shortText = p.bonus_description
-    ? p.bonus_description
-    : (p.description || '');
-
-  return `
-    <tr>
-      <td style="padding: 12px 0; border-bottom: 1px solid #eee;">
-        <strong style="font-size:16px;">${i + 1}) ${p.title}</strong><br />
-        <span style="color:#111;">${discount}</span><br />
-        ${shortText ? `
-          <div style="margin:4px 0 4px 0;color:#444;font-size:13px;line-height:1.4;">
-            ${shortText}
-          </div>
-        ` : ''}
-        ${p.promocode ? `
-          <div style="margin:6px 0 4px 0;">
-              <span style="font-size:12px;color:#555;">Промокод (выделите и скопируйте):</span><br />
-              <span style="
-              display:inline-block;
-              margin-top:2px;
-              padding:6px 10px;
-              border-radius:4px;
-              border:1px dashed #dc3545;
-              font-weight:bold;
-              font-size:16px;
-              letter-spacing:1px;
-              color:#dc3545;
-              font-family: 'Courier New', monospace;
-              ">
-              ${p.promocode}
-              </span>
-          </div>
-        ` : ''}
-        ${valid ? `<span style="color:#666;font-size:12px;">${valid}</span><br />` : ''}
-        ${p.landing_url ? `<a href="${p.landing_url}" style="color:#dc3545;">Активировать промокод</a>` : ''}
-      </td>
-    </tr>
-  `;
-}).join('');
-
-  const promoHtmlBlock = `
-  <table style="width:100%; border-collapse:collapse;">
-    ${promoLinesHtml}
-  </table>
-  <p style="margin-top:16px;">
-    Больше промокодов и акций — на странице
-    <a href="https://serpmonn.ru/frontend/promo-codes-and-discounts/promokody-skidki.html" style="color:#dc3545;">
-      «Промокоды и скидки»
-    </a>.
-  </p>
-`;
-
-  // 8. Рассылка по подписчикам
+  console.log('Тема письма:', subject);
   console.log(`Отправляем рассылку ${subs.length} подписчикам...`);
 
   for (const row of subs) {
@@ -167,17 +221,18 @@ const promoLinesHtml = promos.map((p, i) => {
 
     console.log('⏩ Письмо на:', email);
 
-    await sendPromoEmail(email, promoText, unsubscribeLink, promoHtmlBlock);
+    await sendPromoEmail(email, promoText, unsubscribeLink, promoHtmlBlock, {
+      subject,
+      headerTitle: 'Подборка промокодов'
+    });
 
-    // Лёгкий троттлинг, чтобы не заспамить SMTP
-    await new Promise(r => setTimeout(r, 500));
+    await new Promise((r) => setTimeout(r, 500));
   }
 
   console.log('🎉 Рассылка завершена.');
 }
 
-// 9. Запуск
-main().catch(err => {
+main().catch((err) => {
   console.error('Фатальная ошибка рассылки:', err);
   process.exit(1);
 });

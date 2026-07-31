@@ -128,42 +128,64 @@ export async function sendConfirmationEmail(to, confirmLink) {
   }
 }
 
-export async function sendPromoEmail(to, promoText, unsubscribeLink, promoHtmlBlock) {
+export async function sendPromoEmail(to, promoText, unsubscribeLink, promoHtmlBlock, options = {}) {
   console.log(`🎁 Promo email for: ${to}`);
+
+  const subject = options.subject || 'Свежие промокоды: подборка Serpmonn';
+  const headerTitle = options.headerTitle || 'Подборка промокодов';
 
   const mailOptions = {
     from: '"Serpmonn" <noreply@serpmonn.ru>',
     to,
-    subject: 'Промокоды от Serpmonn',
+    subject,
     text: `${promoText}\n\nЕсли вы больше не хотите получать такие письма, отпишитесь по ссылке: ${unsubscribeLink}`,
     html: `
-            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-
-              <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 8px 0 16px 0;">
+            <div style="font-family: Arial, Helvetica, sans-serif; background:#f7f7f7; padding:16px 0;">
+              <table width="100%" cellpadding="0" cellspacing="0" border="0">
                 <tr>
-                  <td style="width: 1%; padding-right: 8px; vertical-align: middle;">
-                    <img
-                      src="https://serpmonn.ru/frontend/images/Serpmonn-192x192.png"
-                      alt="Serpmonn"
-                      style="width: 40px; height: 40px; border-radius: 50%; display: block;"
-                    />
-                  </td>
-                  <td style="vertical-align: middle;">
-                    <span style="font-size: 18px; font-weight: bold; color: #dc3545;">
-                      Промокоды от Serpmonn
-                    </span>
+                  <td align="center">
+                    <table width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:10px;overflow:hidden;">
+                      <tr>
+                        <td style="padding:18px 20px 8px 20px;">
+                          <table width="100%" cellpadding="0" cellspacing="0" border="0">
+                            <tr>
+                              <td style="width:1%;padding-right:10px;vertical-align:middle;">
+                                <img
+                                  src="https://serpmonn.ru/frontend/images/Serpmonn-192x192.png"
+                                  alt="Serpmonn"
+                                  width="40"
+                                  height="40"
+                                  style="width:40px;height:40px;border-radius:50%;display:block;border:0;"
+                                />
+                              </td>
+                              <td style="vertical-align:middle;">
+                                <div style="font-size:18px;font-weight:bold;color:#dc3545;line-height:1.3;">
+                                  ${headerTitle}
+                                </div>
+                                <div style="font-size:12px;color:#888;margin-top:2px;">Serpmonn</div>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:8px 20px 8px 20px;">
+                          ${promoHtmlBlock}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:8px 20px 20px 20px;">
+                          <hr style="margin:8px 0 16px 0;border:none;border-top:1px solid #eee;" />
+                          <p style="font-size:12px;color:#777;margin:0;line-height:1.5;">
+                            Если вы больше не хотите получать такие письма, вы можете
+                            <a href="${unsubscribeLink}" style="color:#dc3545;">отписаться от рассылки</a>.
+                          </p>
+                        </td>
+                      </tr>
+                    </table>
                   </td>
                 </tr>
               </table>
-
-              ${promoHtmlBlock}
-
-              <hr style="margin: 24px 0; border: none; border-top: 1px solid #eee;" />
-
-              <p style="font-size: 12px; color: #777;">
-                Если вы больше не хотите получать такие письма, вы можете
-                <a href="${unsubscribeLink}" style="color: #dc3545;">отписаться от рассылки</a>.
-              </p>
             </div>
           `
   };

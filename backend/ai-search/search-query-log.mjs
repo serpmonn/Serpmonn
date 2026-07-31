@@ -6,17 +6,6 @@ let tablesReady = false;
 const QUERY_MAX = 300;
 const RAW_TTL_DAYS = 30;
 
-async function ensureColumn(sql) {
-  try {
-    await query(sql);
-  } catch (err) {
-    // Duplicate column name — already migrated
-    if (err?.code !== 'ER_DUP_FIELDNAME' && err?.errno !== 1060) {
-      throw err;
-    }
-  }
-}
-
 export async function ensureSearchQueryLogTable() {
   if (tablesReady) return;
 
@@ -47,16 +36,39 @@ export async function ensureSearchQueryLogTable() {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
   `);
 
-  // Migrate older installs
-  await ensureColumn(`ALTER TABLE search_query_log ADD COLUMN anon_id VARCHAR(64) NULL AFTER guest_key`);
-  await ensureColumn(`ALTER TABLE search_query_log ADD COLUMN client ENUM('web', 'android', 'vk') NULL AFTER anon_id`);
-  await ensureColumn(`ALTER TABLE search_query_log ADD COLUMN device ENUM('mobile', 'desktop') NULL AFTER client`);
-  try {
+  // Older installs: add columns/indexes only if missing (avoid noisy ER_DUP_* in query()).
+  const colRows = await query(`
+    SELECT COLUMN_NAME AS name
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'search_query_log'
+      AND COLUMN_NAME IN ('anon_id', 'client', 'device')
+  `);
+  const cols = new Set(colRows.map((r) => r.name));
+  if (!cols.has('anon_id')) {
+    await query(`ALTER TABLE search_query_log ADD COLUMN anon_id VARCHAR(64) NULL AFTER guest_key`);
+  }
+  if (!cols.has('client')) {
+    await query(`ALTER TABLE search_query_log ADD COLUMN client ENUM('web', 'android', 'vk') NULL AFTER anon_id`);
+  }
+  if (!cols.has('device')) {
+    await query(`ALTER TABLE search_query_log ADD COLUMN device ENUM('mobile', 'desktop') NULL AFTER client`);
+  }
+
+  const idxRows = await query(`
+    SELECT DISTINCT INDEX_NAME AS name
+    FROM information_schema.STATISTICS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'search_query_log'
+      AND INDEX_NAME IN ('idx_sql_anon', 'idx_sql_client')
+  `);
+  const idxs = new Set(idxRows.map((r) => r.name));
+  if (!idxs.has('idx_sql_anon')) {
     await query(`ALTER TABLE search_query_log ADD INDEX idx_sql_anon (anon_id, created_at)`);
-  } catch (_) {}
-  try {
+  }
+  if (!idxs.has('idx_sql_client')) {
     await query(`ALTER TABLE search_query_log ADD INDEX idx_sql_client (client, created_at)`);
-  } catch (_) {}
+  }
 
   tablesReady = true;
 }

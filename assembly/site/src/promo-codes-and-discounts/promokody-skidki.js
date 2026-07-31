@@ -1320,6 +1320,22 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Failed to fetch subscribers count', err);
     }
   }
+
+  const bonusEmail = document.querySelector('.bonus-email');
+  if (bonusEmail) {
+    const syncBonusPlaceholder = () => {
+      const mobile = window.matchMedia('(max-width: 767px)').matches;
+      const next = mobile
+        ? bonusEmail.dataset.placeholderMobile
+        : bonusEmail.dataset.placeholderDesktop;
+      if (next) {
+        bonusEmail.placeholder = next;
+        bonusEmail.setAttribute('aria-label', next);
+      }
+    };
+    syncBonusPlaceholder();
+    window.matchMedia('(max-width: 767px)').addEventListener('change', syncBonusPlaceholder);
+  }
 });
 
 function toggleDetails(button) {
