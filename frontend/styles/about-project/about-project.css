@@ -33,36 +33,39 @@ nav ul li a {
     margin: 20px;
 }
 
-section {
+/* Scoped — bare section/p/h*/a were breaking the activity modal (avatars, layout) */
+.about-section section {
     padding: 20px;
     margin-bottom: 20px;
 }
 
-h1, h2 {
+.about-section h1,
+.about-section h2 {
     font-size: 24px;
     color: #000;
 }
 
-p {
+.about-section p {
     font-size: 16px;
     color: #777;
 }
 
-a {
+.about-section a {
     color: inherit;                                                /* Наследуем цвет ссылки от родительского элемента */
     text-decoration: none;
 }
 
-a:hover {
+.about-section a:hover {
     color: #999;                                                 /* Цвет ссылки при наведении */
     text-decoration: underline;                                    /* Подчеркивание ссылки при наведении */
 }
 
-a:active, a:visited {
+.about-section a:active,
+.about-section a:visited {
     color: #f47059;                                              /* Цвет для активных и посещенных ссылок */
 }
 
-section:not(:last-child) {                                         /* Разделение между секциями */
+.about-section section:not(:last-child) {                          /* Разделение между секциями */
     border-bottom: 2px solid #ddd;
     padding-bottom: 20px;
     margin-bottom: 20px;
@@ -207,17 +210,17 @@ footer a:hover {
     }
 }
 
-h1 {
+.about-section h1 {
     font-size: 28px;
     line-height: 1.25;
 }
 
-h2 {
+.about-section h2 {
     font-size: 22px;
     line-height: 1.3;
 }
 
-p {
+.about-section p {
     font-size: 18px;
     line-height: 1.7;
     color: #333;
@@ -229,9 +232,9 @@ p {
 }
 
 @media (max-width: 768px) {
-    h1 { font-size: 24px; }
-    h2 { font-size: 20px; }
-    p { font-size: 16px; }
+    .about-section h1 { font-size: 24px; }
+    .about-section h2 { font-size: 20px; }
+    .about-section p { font-size: 16px; }
 }
 
 /* Техническая информация */

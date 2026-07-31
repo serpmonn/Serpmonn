@@ -7,6 +7,68 @@ import { initFindingsSave } from './findings-client.js';
 import { escapeHtml } from './finding-content-render.js';
 import '/frontend/pwa/app.js';
 
+const SPN_ANON_COOKIE = 'spn_anon_id';
+const SPN_ANON_MAX_AGE = 60 * 60 * 24 * 400;
+
+function spnReadCookie(name) {
+  try {
+    const m = document.cookie.match(new RegExp(`(?:^|; )${name}=([^;]*)`));
+    return m ? decodeURIComponent(m[1]) : '';
+  } catch (_) {
+    return '';
+  }
+}
+
+function spnWriteCookie(name, value, maxAgeSec) {
+  try {
+    const secure = location.protocol === 'https:' ? '; Secure' : '';
+    document.cookie = `${name}=${encodeURIComponent(value)}; Path=/; Max-Age=${maxAgeSec}; SameSite=Lax${secure}`;
+  } catch (_) {}
+}
+
+function spnEnsureAnonId() {
+  let id = spnReadCookie(SPN_ANON_COOKIE);
+  if (!id || id.length < 8 || id.length > 64) {
+    id = (typeof crypto !== 'undefined' && crypto.randomUUID)
+      ? crypto.randomUUID()
+      : `a${Date.now().toString(36)}${Math.random().toString(36).slice(2, 10)}`;
+    spnWriteCookie(SPN_ANON_COOKIE, id, SPN_ANON_MAX_AGE);
+  }
+  return id;
+}
+
+function getSearchAnalyticsHeaders() {
+  let client = 'web';
+  try {
+    if (window.__SPN_VK_MINI__ || document.documentElement?.classList?.contains('vk-mini-embed')) {
+      client = 'vk';
+    } else if (
+      window.__SPN_ANDROID_APP__ ||
+      document.documentElement?.classList?.contains('android-app') ||
+      /(?:^|[?&])app=1(?:&|$)/.test(location.search || '')
+    ) {
+      client = 'android';
+    }
+  } catch (_) {}
+
+  let device = 'desktop';
+  try {
+    if (window.matchMedia?.('(pointer: coarse)').matches || window.matchMedia?.('(max-width: 768px)').matches) {
+      device = 'mobile';
+    } else if (/Android|iPhone|iPad|iPod|Mobile/i.test(navigator.userAgent || '')) {
+      device = 'mobile';
+    }
+  } catch (_) {}
+
+  const headers = {
+    'X-Spn-Client': client,
+    'X-Spn-Device': device,
+    'X-Anon-Id': spnEnsureAnonId(),
+  };
+  if (client === 'vk') headers['X-Client'] = 'vk-agent';
+  return headers;
+}
+
 // scripts.js
 
 export function getEnv() {
@@ -1085,7 +1147,8 @@ async function requestAiSearch({ query, idempotencyKey, locale, useStream, attac
   const headers = {
     'Content-Type': 'application/json',
     'X-Idempotency-Key': idempotencyKey,
-    'X-User-Lang': locale
+    'X-User-Lang': locale,
+    ...getSearchAnalyticsHeaders(),
   };
 
   if (useStream) {
@@ -1779,7 +1842,8 @@ async function requestWebSearch({ query, category, locale, timeRange, safesearch
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Accept: 'application/json'
+      Accept: 'application/json',
+      ...getSearchAnalyticsHeaders(),
     },
     credentials: 'same-origin',
     body: JSON.stringify({

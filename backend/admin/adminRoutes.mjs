@@ -26,6 +26,10 @@ import {
   payPartnerPayout,
   rejectPartnerPayout
 } from './partnerFinanceAdmin.mjs';
+import {
+  getSearchInsightsHandler,
+  exportSearchInsightsCsv,
+} from './searchInsightsController.mjs';
 
 const router = Router();
 
@@ -60,5 +64,9 @@ router.post('/partners/topups/:id/cancel', verifyAdmin, cancelPartnerTopup);
 router.get('/partners/payouts', verifyAdmin, listPartnerPayouts);
 router.post('/partners/payouts/:id/pay', verifyAdmin, payPartnerPayout);
 router.post('/partners/payouts/:id/reject', verifyAdmin, rejectPartnerPayout);
+
+// Лог поисковых запросов (спрос)
+router.get('/search-insights', verifyAdmin, getSearchInsightsHandler);
+router.get('/search-insights.csv', verifyAdmin, exportSearchInsightsCsv);
 
 export default router;

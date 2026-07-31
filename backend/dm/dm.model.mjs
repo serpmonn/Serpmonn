@@ -1,5 +1,6 @@
 import { query } from '../database/config.mjs';
 import { ensureFindingsTables, getUserIdByUsername } from '../findings/findings.model.mjs';
+import { buildAvatarUrl } from '../profiles/avatarService.mjs';
 
 let dmTablesReady = false;
 let migrationDone = false;
@@ -167,6 +168,7 @@ export async function listConversationsForUser(userId, limit = 50) {
     `SELECT c.id AS conversation_id, c.updated_at,
             CASE WHEN c.user_a = ? THEN ub.username ELSE ua.username END AS peer_username,
             CASE WHEN c.user_a = ? THEN c.user_b ELSE c.user_a END AS peer_id,
+            CASE WHEN c.user_a = ? THEN ub.avatar_updated_at ELSE ua.avatar_updated_at END AS peer_avatar_updated_at,
             (
               SELECT COUNT(*)
               FROM dm_messages um
@@ -216,12 +218,13 @@ export async function listConversationsForUser(userId, limit = 50) {
      WHERE c.user_a = ? OR c.user_b = ?
      ORDER BY c.updated_at DESC
      LIMIT ${lim}`,
-    [userId, userId, userId, userId, userId]
+    [userId, userId, userId, userId, userId, userId]
   );
 
   return rows.map((row) => ({
     peerUsername: row.peer_username,
     peerId: row.peer_id,
+    peerAvatarUrl: buildAvatarUrl(row.peer_id, row.peer_avatar_updated_at),
     unreadCount: row.unread_count || 0,
     updatedAt: row.last_at || row.updated_at,
     lastMessage: {

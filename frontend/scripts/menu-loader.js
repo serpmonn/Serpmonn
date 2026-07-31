@@ -333,6 +333,25 @@ fetch(primaryMenuPath)
 
     document.body.insertAdjacentHTML('afterbegin', html);
 
+    // <link> из menu.html надёжнее грузить из <head> (на standalone-страницах без styles.css)
+    try {
+      document.querySelectorAll('body > link[rel="stylesheet"]').forEach((link) => {
+        const href = link.getAttribute('href') || '';
+        if (!href) return;
+        const already = Array.from(document.head.querySelectorAll('link[rel="stylesheet"]')).some((l) => {
+          const h = l.getAttribute('href') || '';
+          return h === href || h.split('?')[0] === href.split('?')[0];
+        });
+        if (already) {
+          link.remove();
+          return;
+        }
+        document.head.appendChild(link);
+      });
+    } catch (e) {
+      console.warn('menu stylesheet hoist error', e);
+    }
+
     // Модифицируем ссылки в меню под текущий язык
     try {
       const currentLang = spnLang;

@@ -108,6 +108,13 @@ export function renderDmDialogCard(conv, t, index = 0) {
     unread > 0
       ? `<span class="finding-dm-dialog-item__badge">${unread > 99 ? '99+' : unread}</span>`
       : '';
+  const letter = dialogAvatarLetter(conv.peerUsername);
+  const avatarUrl = typeof conv.peerAvatarUrl === 'string' && conv.peerAvatarUrl.startsWith('/uploads/avatars/')
+    ? conv.peerAvatarUrl
+    : '';
+  const avatarInner = avatarUrl
+    ? `<img src="${escapeHtml(avatarUrl)}" alt="" width="40" height="40" loading="lazy" decoding="async" onerror="this.remove()">`
+    : escapeHtml(letter);
 
   return `
     <article
@@ -115,7 +122,7 @@ export function renderDmDialogCard(conv, t, index = 0) {
       style="--inbox-delay:${index * 40}ms"
       data-inbox-username="${escapeHtml(conv.peerUsername)}"
     >
-      <div class="finding-dm-dialog-item__avatar" aria-hidden="true">${escapeHtml(dialogAvatarLetter(conv.peerUsername))}</div>
+      <div class="finding-dm-dialog-item__avatar" aria-hidden="true">${avatarInner}</div>
       <div class="finding-dm-dialog-item__body">
         <div class="finding-dm-dialog-item__top">
           <span class="finding-dm-dialog-item__name">@${escapeHtml(conv.peerUsername)}</span>

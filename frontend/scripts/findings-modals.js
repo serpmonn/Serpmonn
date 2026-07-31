@@ -41,13 +41,6 @@ function tk(key, vars) {
   return getFindingT(`finding.${key}`, vars);
 }
 
-function isAndroidAppShell() {
-  try {
-    if (window.__SPN_ANDROID_APP__) return true;
-  } catch (_) {}
-  return Boolean(document.documentElement?.classList?.contains('android-app'));
-}
-
 function openPanel(modal) {
   if (!modal) return;
   modalStackZ += 1;
@@ -59,50 +52,8 @@ function openPanel(modal) {
   modal.querySelector('.finding-panel-dialog, .ai-share-dialog, .finding-save-dialog')?.focus();
 }
 
-/** RuStore: лента/входящие — в странице подложки, не fixed-модалка поверх */
-function mountPanelInline(modal, host) {
-  if (!modal || !host) return;
-  modal.classList.add('finding-panel-modal--inline');
-  modal.setAttribute('role', 'region');
-  modal.removeAttribute('aria-modal');
-  const backdrop = modal.querySelector('.ai-share-backdrop');
-  if (backdrop) {
-    backdrop.hidden = true;
-    backdrop.style.display = 'none';
-  }
-  modal.querySelectorAll('.finding-panel-close, .ai-share-close, .finding-activity-close').forEach((el) => {
-    el.hidden = true;
-  });
-  if (modal.parentElement !== host) {
-    host.innerHTML = '';
-    host.appendChild(modal);
-  }
-  modal.style.display = 'block';
-  modal.style.position = 'static';
-  modal.style.zIndex = '1';
-  requestAnimationFrame(() => {
-    modal.setAttribute('data-open', 'true');
-  });
-  try {
-    modal.querySelector('.finding-panel-dialog, .ai-share-dialog')?.focus?.({ preventScroll: true });
-  } catch (_) {}
-}
-
-function presentPanel(modal, inlineHostId) {
-  if (isAndroidAppShell() && inlineHostId) {
-    const host = document.getElementById(inlineHostId);
-    if (host) {
-      mountPanelInline(modal, host);
-      return;
-    }
-  }
-  openPanel(modal);
-}
-
 function closePanel(modal) {
   if (!modal) return;
-  // Inline-панель в подложке приложения нельзя «закрыть» — иначе лента/входящие пустеют
-  if (modal.classList.contains('finding-panel-modal--inline')) return;
   modal.removeAttribute('data-open');
   setTimeout(() => {
     modal.style.display = 'none';
@@ -586,7 +537,7 @@ export async function openActivityModal(tab = 'inbox') {
     inboxState.newDialogOpen = false;
   }
   const modal = ensureActivityModal();
-  presentPanel(modal, 'findings-inbox-list');
+  openPanel(modal);
   await loadActivityInto(modal);
 }
 
@@ -1590,7 +1541,7 @@ export async function openFeedModal() {
   feedState.q = '';
   feedState.offset = 0;
   const modal = ensureFeedModal();
-  presentPanel(modal, 'findings-feed-list');
+  openPanel(modal);
   await loadFeedInto(modal, { reset: true });
 }
 

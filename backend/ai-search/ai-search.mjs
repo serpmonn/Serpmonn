@@ -7,6 +7,13 @@ import { query as dbQuery } from '../database/config.mjs';
 import { fetchSearxViaCurl, fetchSearxAutocompleteViaCurl } from '../utils/fetchSearxViaCurl.js';
 import { saveAiSearchFeedback } from './ai-feedback.model.mjs';
 import {
+  logSearchQuerySafe,
+  hashGuestKey,
+  normalizeAnonId,
+  detectClientFromRequest,
+  detectDeviceFromRequest,
+} from './search-query-log.mjs';
+import {
   WEB_GUEST_DAILY_LIMIT,
   WEB_USER_DAILY_LIMIT,
   WEB_PRO_MONTHLY_LIMIT,
@@ -496,6 +503,41 @@ function getUserIdentity(req) {
   }
 
   return { id: `guest:${req.ip}`, type: 'guest' };
+}
+
+function searchLogIdentity(req, identity) {
+  const anonId = normalizeAnonId(req.headers['x-anon-id']);
+  const client = detectClientFromRequest(req);
+  const device = detectDeviceFromRequest(req);
+
+  if (identity?.type === 'user' && req.user?.id != null) {
+    return {
+      identityType: 'user',
+      userId: String(req.user.id),
+      guestKey: null,
+      anonId,
+      client,
+      device,
+    };
+  }
+  const raw = identity?.id || `guest:${req.ip || 'unknown'}`;
+  const isVk = String(raw).startsWith('vk-user:') || client === 'vk';
+  return {
+    identityType: isVk ? 'vk' : 'guest',
+    userId: null,
+    // Prefer sticky anon cookie over IP hash
+    guestKey: anonId ? hashGuestKey(`anon:${anonId}`) : hashGuestKey(raw),
+    anonId,
+    client,
+    device,
+  };
+}
+
+function trackSearchQuery(req, identity, fields) {
+  logSearchQuerySafe({
+    ...fields,
+    ...searchLogIdentity(req, identity),
+  });
 }
 
 function checkAndIncrementUsage(identity) {
@@ -1035,6 +1077,23 @@ async function handleStreamingSearch(req, res, ctx) {
 
   console.log('/ai-search | stream | total=' + totalMs.toFixed(0) + 'ms | ok');
 
+  const resultCount = [
+    responsePayload.answer ? 1 : 0,
+    Array.isArray(responsePayload.images) ? responsePayload.images.length : 0,
+    Array.isArray(responsePayload.videos) ? responsePayload.videos.length : 0,
+    Array.isArray(responsePayload.sources) ? responsePayload.sources.length : 0,
+  ].reduce((a, b) => a + b, 0);
+  const streamStatus =
+    responsePayload.answerEmpty || !responsePayload.answer ? 'empty' : 'ok';
+  trackSearchQuery(req, identity, {
+    mode: 'ai',
+    queryText: q,
+    locale: getBackendMessages(req).locale || 'ru',
+    status: streamStatus,
+    resultCount,
+    latencyMs: totalMs,
+  });
+
   if (idempotencyKey) {
     const cacheKey = `${identity.id}:${idempotencyKey}`;
     idempotencyStore.set(cacheKey, {
@@ -1089,6 +1148,14 @@ router.post(
 
       const limitCheck = await enforceLogicalSearchLimit(req, identity, t);
       if (!limitCheck.ok) {
+        trackSearchQuery(req, identity, {
+          mode: 'ai',
+          queryText: q,
+          locale,
+          status: 'limit',
+          resultCount: 0,
+          latencyMs: Number(process.hrtime.bigint() - reqStart) / 1e6,
+        });
         return res.status(limitCheck.status).json(limitCheck.payload);
       }
 
@@ -1106,6 +1173,7 @@ router.post(
           identity,
           reqStart,
           attachment,
+          locale,
         });
       }
 
@@ -1129,6 +1197,14 @@ router.post(
       );
 
       if (wantText && textFailure && !responsePayload.answer) {
+        trackSearchQuery(req, identity, {
+          mode: 'ai',
+          queryText: q,
+          locale,
+          status: 'error',
+          resultCount: 0,
+          latencyMs: Number(process.hrtime.bigint() - reqStart) / 1e6,
+        });
         return res.status(textFailure.reason.status || 502).json({
           error: textFailure.reason.message || t.aiUnavailable,
           images: Array.isArray(responsePayload.images) ? responsePayload.images : [],
@@ -1152,6 +1228,21 @@ router.post(
 
       console.log('/ai-search | total=' + totalMs.toFixed(0) + 'ms | ok');
 
+      const resultCount = [
+        responsePayload.answer ? 1 : 0,
+        Array.isArray(responsePayload.images) ? responsePayload.images.length : 0,
+        Array.isArray(responsePayload.videos) ? responsePayload.videos.length : 0,
+        Array.isArray(responsePayload.sources) ? responsePayload.sources.length : 0,
+      ].reduce((a, b) => a + b, 0);
+      trackSearchQuery(req, identity, {
+        mode: 'ai',
+        queryText: q,
+        locale,
+        status: responsePayload.answerEmpty || !responsePayload.answer ? 'empty' : 'ok',
+        resultCount,
+        latencyMs: totalMs,
+      });
+
       if (idempotencyKey) {
         const cacheKey = `${identity.id}:${idempotencyKey}`;
         idempotencyStore.set(cacheKey, {
@@ -1163,6 +1254,19 @@ router.post(
       return res.json(responsePayload);
     } catch (error) {
       console.error('💥 Ошибка в /ai-search:', error.message);
+
+      try {
+        const q = (req.body?.q || '').trim();
+        if (q) {
+          trackSearchQuery(req, getUserIdentity(req), {
+            mode: 'ai',
+            queryText: q,
+            locale: getBackendMessages(req).locale || 'ru',
+            status: 'error',
+            resultCount: 0,
+          });
+        }
+      } catch (_) {}
 
       if (error?.isPublic) {
         return res.status(error.status || 400).json({
@@ -1370,6 +1474,15 @@ router.post(
       const identity = getUserIdentity(req);
       const limitCheck = await enforceWebSearchLimit(req, identity, t);
       if (!limitCheck.ok) {
+        trackSearchQuery(req, identity, {
+          mode: 'web',
+          queryText: q,
+          category,
+          locale,
+          status: 'limit',
+          resultCount: 0,
+          latencyMs: Number(process.hrtime.bigint() - reqStart) / 1e6,
+        });
         return res.status(limitCheck.status).json(limitCheck.payload);
       }
 
@@ -1397,6 +1510,16 @@ router.post(
           ` | total=${totalMs.toFixed(0)}ms`
       );
 
+      trackSearchQuery(req, identity, {
+        mode: 'web',
+        queryText: q,
+        category,
+        locale,
+        status: results.length === 0 ? 'empty' : 'ok',
+        resultCount: results.length,
+        latencyMs: totalMs,
+      });
+
       return res.json({
         q,
         category,
@@ -1408,6 +1531,19 @@ router.post(
       });
     } catch (error) {
       console.error('💥 Ошибка в /web-search:', error.message);
+      try {
+        const q = String(req.body?.q || '').trim();
+        if (q) {
+          trackSearchQuery(req, getUserIdentity(req), {
+            mode: 'web',
+            queryText: q,
+            category: String(req.body?.category || 'general').slice(0, 32),
+            locale: getBackendMessages(req).locale || 'ru',
+            status: 'error',
+            resultCount: 0,
+          });
+        }
+      } catch (_) {}
       return res.status(500).json({ error: t.internalError || t.networkError || 'Search error' });
     }
   }
