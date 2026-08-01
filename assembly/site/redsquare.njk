@@ -87,6 +87,8 @@ eleventyComputed:
              data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
     </div>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
+  {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+  {{ mobileAnchor(localesNews[locale].news.closeAd) }}
 {% include "partials/ad-pool-init.njk" %}
 </body>
 </html>

@@ -46,12 +46,12 @@
             {% if promo.conditions %}
             <p class="details-conditions"><strong>{{ 'promo.conditions' | promoTr(locale) }}</strong> {{ promo.conditions | escape }}</p>
             {% endif %}
+            <p class="country">{{ 'promo.countryPrefix' | promoTr(locale) }} {{ countryKey | promoTr(locale) | escape }}</p>
+            <p class="expiry{% if promo.isExpired %} expired{% endif %}">
+                {{ 'promo.validUntil' | promoTr(locale) }} {{ expiryRaw | formatPromoDate(locale) | escape }}
+                {% if promo.isExpired %} {{ 'promo.expired' | promoTr(locale) }}{% endif %}
+            </p>
         </div>
-        <p class="country">{{ 'promo.countryPrefix' | promoTr(locale) }} {{ countryKey | promoTr(locale) | escape }}</p>
-        <p class="expiry{% if promo.isExpired %} expired{% endif %}">
-            {{ 'promo.validUntil' | promoTr(locale) }} {{ expiryRaw | formatPromoDate(locale) | escape }}
-            {% if promo.isExpired %} {{ 'promo.expired' | promoTr(locale) }}{% endif %}
-        </p>
     </div>
     <div class="promo-card-footer">
         {% if promo.landing_url %}

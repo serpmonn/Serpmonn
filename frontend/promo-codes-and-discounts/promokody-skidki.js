@@ -1,7 +1,7 @@
 import { getPageT } from '/frontend/scripts/i18n-loader.js';
 import { applyMailAdAttrs, pushMailAdTag } from '/frontend/scripts/mail-ads-config.js';
 import { ensureMailAdsScript } from '/frontend/scripts/mail-ads-loader.js';
-import { runVkFallbackForIns } from '/frontend/scripts/ad-pool.js';
+import { isYandexPrimary, runVkFallbackForIns } from '/frontend/scripts/ad-pool.js';
 
 const API_CONFIG = {
     baseUrl: '/api/promocodes',
@@ -911,17 +911,18 @@ function createPromoCard(promo, isTopOffer = false) {
       condP.append(strong, document.createTextNode(' ' + String(promo.conditions)));
       detailsDiv.appendChild(condP);
     }
-    content.appendChild(detailsDiv);
 
     const countryP = document.createElement('p');
     countryP.className = 'country';
     countryP.textContent = `${t('promo.countryPrefix')} ${getCountryLabel(promo.country || 'Россия')}`;
-    content.appendChild(countryP);
+    detailsDiv.appendChild(countryP);
 
     const expiryP = document.createElement('p');
     expiryP.className = `expiry${isExpired ? ' expired' : ''}`;
     expiryP.textContent = `${t('promo.validUntil')} ${formatDate(expiryDate)}${isExpired ? ` ${t('promo.expired')}` : ''}`;
-    content.appendChild(expiryP);
+    detailsDiv.appendChild(expiryP);
+
+    content.appendChild(detailsDiv);
 
     const footer = document.createElement('div');
     footer.className = 'promo-card-footer';
@@ -1396,11 +1397,14 @@ function initPromoAdContainer(container) {
     container.classList.add('ad-loading');
     container.style.display = '';
 
-    ensureMailAdsScript();
-    pushMailAdTag();
-    setTimeout(pushMailAdTag, 1500);
-    setTimeout(pushMailAdTag, 3000);
-    setTimeout(pushMailAdTag, 5000);
+    const yandexFirst = isYandexPrimary();
+    if (!yandexFirst) {
+        ensureMailAdsScript();
+        pushMailAdTag();
+        setTimeout(pushMailAdTag, 1500);
+        setTimeout(pushMailAdTag, 3000);
+        setTimeout(pushMailAdTag, 5000);
+    }
 
     const ins = container.querySelector('ins.mrg-tag');
     if (ins) {
@@ -1456,23 +1460,23 @@ function collapseAdIfNoFill(container, timeoutMs) {
     try {
         const t = timeoutMs || 1500;
         setTimeout(() => {
-            if (!container) return;
-            const ins = container.querySelector('ins.mrg-tag');
-            const hasContent = ins && (
-                ins.querySelector('iframe') ||
-                ins.innerHTML.trim().length > 0 ||
-                ins.offsetHeight > 10
+            if (!container || container.__adFillResolved) return;
+            const hasContent = !!(
+                container.querySelector('iframe') ||
+                container.querySelector('.yandex-rtb-slot iframe') ||
+                container.querySelector('.yandex-rtb-slot')?.childElementCount ||
+                (container.querySelector('ins.mrg-tag')?.offsetHeight > 10)
             );
             if (hasContent) {
                 container.classList.add('ad-loaded');
                 container.classList.remove('ad-loading', 'is-collapsed');
+                container.style.minHeight = '';
             } else {
                 container.remove();
             }
         }, t);
     } catch (error) {
         logError('Ошибка проверки рекламы', error);
-        container.remove();
     }
 }
 

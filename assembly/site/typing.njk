@@ -10,28 +10,36 @@ eleventyComputed:
 ---
 
 <!DOCTYPE html>
-<html lang="{{ locale }}" dir="{{ dir }}" data-theme="dark">
+<html lang="{{ locale }}" dir="{{ dir }}">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{{ title }}</title>
+  <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css">
+  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
   <script async src="https://ad.mail.ru/static/ads-async.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
-    :root {
+    .typing-game {
+      color: var(--text);
+      font-family: var(--font-body);
       --bg: #0e0f11; --surface: #16181c; --surface2: #1e2027;
       --border: #2a2d36; --text: #e8e9ec; --muted: #7b7e8a; --faint: #3a3d48;
       --primary: #f0c040; --success: #6daa45; --error: #e05555;
       --font-mono: 'Share Tech Mono', monospace; --font-body: 'Inter', sans-serif;
       --radius: 0.75rem; --transition: 150ms cubic-bezier(0.16,1,0.3,1);
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    .typing-game *, .typing-game *::before, .typing-game *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { -webkit-font-smoothing: antialiased; }
-    body {
-      min-height: 100dvh; background: var(--bg); color: var(--text);
-      font-family: var(--font-body);
+    body.typing-page {
+      min-height: 100dvh; background: #0e0f11;
       display: flex; flex-direction: column; align-items: center;
       justify-content: center; padding: 1.5rem 1rem; gap: 1.25rem;
     }
@@ -163,7 +171,10 @@ eleventyComputed:
     .history-chip.top { border-color: var(--primary); color: var(--primary); }
   </style>
 </head>
-<body>
+<body class="typing-page">
+  <div id="menuContainer"></div>
+
+<div class="typing-game">
 
 <div class="ad-top-banner" style="width:100%;max-width:640px;text-align:center;margin:0 auto 12px;">
   <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
@@ -479,6 +490,9 @@ document.querySelectorAll('.tab').forEach(btn => {
 
 initTest();
 </script>
+</div>
+  {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+  {{ mobileAnchor(localesNews[locale].news.closeAd) }}
 {% include "partials/ad-pool-init.njk" %}
 </body>
 </html>

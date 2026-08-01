@@ -1,6 +1,6 @@
 import { ensureMailAdsScript } from './mail-ads-loader.js';
 import { pushMailAdTag } from './mail-ads-config.js';
-import { runVkFallbackForIns } from './ad-pool.js';
+import { isYandexPrimary, runVkFallbackForIns } from './ad-pool.js';
 
 export function initMobileAnchorAd(options = {}) {
   const anchorId = options.id || 'mobile-anchor-ad';
@@ -12,6 +12,16 @@ export function initMobileAnchorAd(options = {}) {
 
   const anchor = document.getElementById(anchorId);
   if (!anchor) {
+    return;
+  }
+
+  const ins = anchor.querySelector('ins.mrg-tag');
+
+  // Floor Ad is managed by Yandex UI — skip the sticky Mail bar wait path.
+  if (isYandexPrimary()) {
+    if (ins) {
+      runVkFallbackForIns(ins, { slotKey: 'mobileAnchor' });
+    }
     return;
   }
 
@@ -43,7 +53,6 @@ export function initMobileAnchorAd(options = {}) {
   ensureMailAdsScript();
   pushMailAdTag();
 
-  const ins = anchor.querySelector('ins.mrg-tag');
   if (ins) {
     runVkFallbackForIns(ins, { slotKey: 'mobileAnchor' });
   }

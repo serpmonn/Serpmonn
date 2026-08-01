@@ -1,16 +1,25 @@
 
 <!DOCTYPE html>
-<html lang="be" dir="ltr" data-theme="dark">
+<html lang="be" dir="ltr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Fat Rat — Serpmonn Games</title>
+  <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
+  <link rel="stylesheet" href="/frontend/styles/styles.css">
+  <link rel="stylesheet" href="/frontend/styles/base.css">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css">
+  <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
   <script async src="https://ad.mail.ru/static/ads-async.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    :root {
+    .rat-game {
+      color: var(--text);
+      font-family: var(--font-body);
       --bg: #0e0f11;
       --surface: #16181c;
       --surface2: #1e2027;
@@ -27,13 +36,11 @@
       --font-mono: 'Share Tech Mono', monospace;
       --font-body: 'Inter', sans-serif;
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    .rat-game *, .rat-game *::before, .rat-game *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { -webkit-font-smoothing: antialiased; }
-    body {
+    body.rat-page {
       min-height: 100dvh;
-      background: var(--bg);
-      color: var(--text);
-      font-family: var(--font-body);
+      background: #0e0f11;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -136,7 +143,10 @@
     }
   </style>
 </head>
-<body>
+<body class="rat-page">
+  <div id="menuContainer"></div>
+
+<div class="rat-game">
 
 <div class="ad-top-banner" style="width:100%;max-width:420px;text-align:center;margin:0 auto 12px;">
   <ins class="mrg-tag" style="display:inline-block;" data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
@@ -565,6 +575,23 @@ document.getElementById('startBtn').addEventListener('click', startGame);
 init();
 render();
 </script>
+</div>
+  
+  
+<div id="mobile-anchor-ad" class="mobile-anchor-ad" style="position:fixed;left:0;right:0;bottom:0;display:none;justify-content:center;z-index:2147483000;padding-bottom:env(safe-area-inset-bottom);pointer-events:none;">
+  <div style="pointer-events:auto;background:rgba(255,255,255,.98);box-shadow:0 -2px 10px rgba(0,0,0,.15);border-radius:8px 8px 0 0;padding:6px 10px;display:flex;gap:8px;align-items:center;">
+    <button type="button" aria-label="Закрыць рэкламу" onclick="(function(a){ a.style.display='none'; localStorage.setItem('anchor_closed','1');})(document.getElementById('mobile-anchor-ad'))" style="background:none;border:0;font-size:16px;line-height:1;cursor:pointer">✕</button>
+    <ins class="mrg-tag"
+        style="display:inline-block;width:320px;height:50px"
+        data-ad-client="ad-"
+        data-ad-slot=""></ins>
+  </div>
+</div>
+<script type="module">
+  import { initMobileAnchorAd } from '/frontend/scripts/mobile-anchor-ad.js';
+  initMobileAnchorAd();
+</script>
+
 
 <script type="module" src="/frontend/scripts/ad-slot-init.js"></script>
 

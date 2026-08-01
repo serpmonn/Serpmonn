@@ -5,6 +5,9 @@ import { ensureYandexAdsScript, onYandexReady } from './yandex-ads-loader.js';
 const POOL_ENABLED = slotsData.pool?.enabled !== false;
 const FALLBACK_MS = slotsData.pool?.fallbackTimeoutMs ?? 2500;
 const MOBILE_MAX_WIDTH = slotsData.pool?.mobileMaxWidth ?? 768;
+const POOL_PRIMARY = String(slotsData.pool?.primary || 'vk').toLowerCase() === 'yandex'
+  ? 'yandex'
+  : 'vk';
 
 let yandexBannerSeq = 0;
 let yandexFloorRequested = false;
@@ -13,14 +16,63 @@ function isMobileViewport() {
   return (window.innerWidth || document.documentElement.clientWidth) <= MOBILE_MAX_WIDTH;
 }
 
+export function isYandexPrimary() {
+  return POOL_PRIMARY === 'yandex';
+}
+
+function renderYandexForSlot(slotKey, ins, container) {
+  if (slotKey === 'top' || slotKey === 'promoInfeed') {
+    hideElement(ins);
+    if (container?.classList?.contains('promo-ad-inline')) {
+      container.classList.remove('is-collapsed');
+      container.classList.add('ad-loading');
+      const slot = container.querySelector('.promo-ad-inline__slot');
+      if (slot) {
+        slot.style.cssText = '';
+      }
+      container.style.cssText = '';
+      container.style.display = 'block';
+    }
+    const mount = container?.querySelector?.('.promo-ad-inline__slot') || container;
+    if (renderYandexBanner(slotKey, mount, container)) {
+      watchAdContainerFill(container, 10000);
+      return true;
+    }
+    hideElement(container);
+    return false;
+  }
+
+  if (slotKey === 'mobileAnchor') {
+    hideElement(ins.closest('#mobile-anchor-ad') || container);
+    renderYandexFloorAd();
+    return true;
+  }
+
+  hideElement(container);
+  return false;
+}
+
 export function hasAdFill(element) {
   if (!element) {
     return false;
   }
 
+  const yandexSlot = element.querySelector('.yandex-rtb-slot, [id^="yandex_rtb_"]');
+  if (yandexSlot) {
+    if (
+      yandexSlot.querySelector('iframe') ||
+      yandexSlot.querySelector('img') ||
+      yandexSlot.childElementCount > 0 ||
+      yandexSlot.offsetHeight > 20
+    ) {
+      return true;
+    }
+  }
+
   return !!(
     element.querySelector('iframe') ||
     element.querySelector('img[src*="yandex"]') ||
+    element.querySelector('img[src*="yabs"]') ||
     element.offsetHeight > 50
   );
 }
@@ -95,30 +147,36 @@ function markAdContainerLoaded(container) {
   if (container.classList.contains('promo-ad-inline')) {
     const slot = container.querySelector('.promo-ad-inline__slot');
     if (slot) {
-      slot.style.position = '';
-      slot.style.left = '';
-      slot.style.width = '';
-      slot.style.height = '';
+      slot.style.cssText = '';
     }
     container.classList.remove('ad-loading', 'is-collapsed');
     container.classList.add('ad-loaded');
+    container.style.cssText = '';
+    container.style.display = 'block';
   }
 }
 
-function watchAdContainerFill(container, timeoutMs = 6500) {
-  if (!container) {
+function watchAdContainerFill(container, timeoutMs = 10000) {
+  if (!container || container.__adFillWatching) {
     return;
   }
+  container.__adFillWatching = true;
 
   const started = Date.now();
 
   const tick = () => {
+    if (container.__adFillResolved) {
+      return;
+    }
+
     if (hasAdFill(container)) {
+      container.__adFillResolved = true;
       markAdContainerLoaded(container);
       return;
     }
 
     if (Date.now() - started >= timeoutMs) {
+      container.__adFillResolved = true;
       hideElement(container);
       return;
     }
@@ -129,7 +187,19 @@ function watchAdContainerFill(container, timeoutMs = 6500) {
   tick();
 }
 
-export function renderYandexBanner(slotKey, container) {
+function resolveAdContainer(container, ok) {
+  if (!container || container.__adFillResolved) {
+    return;
+  }
+  container.__adFillResolved = true;
+  if (ok) {
+    markAdContainerLoaded(container);
+  } else {
+    hideElement(container);
+  }
+}
+
+export function renderYandexBanner(slotKey, container, fillRoot = null) {
   const cfg = slotsData.slots[slotKey]?.yandex;
   if (!cfg?.blockId || !container) {
     return false;
@@ -139,7 +209,9 @@ export function renderYandexBanner(slotKey, container) {
     return false;
   }
 
-  const renderToId = `yandex_rtb_${cfg.blockId.replace(/-/g, '_')}_${++yandexBannerSeq}`;
+  const resolvedRoot = fillRoot || container;
+  const pageNumber = ++yandexBannerSeq;
+  const renderToId = `yandex_rtb_${cfg.blockId.replace(/-/g, '_')}_${pageNumber}`;
   const target = document.createElement('div');
   target.id = renderToId;
   target.className = 'yandex-rtb-slot';
@@ -150,9 +222,13 @@ export function renderYandexBanner(slotKey, container) {
     try {
       window.Ya.Context.AdvManager.render({
         blockId: cfg.blockId,
-        renderTo: renderToId
+        renderTo: renderToId,
+        pageNumber,
+        onRender: () => resolveAdContainer(resolvedRoot, true)
       });
-    } catch (_) {}
+    } catch (_) {
+      resolveAdContainer(resolvedRoot, false);
+    }
   });
 
   return true;
@@ -271,6 +347,12 @@ export async function runVkFallbackForIns(ins, options = {}) {
     return;
   }
 
+  // Yandex first: skip VK wait so the user is not held ~2.5s on empty Mail slots.
+  if (POOL_PRIMARY === 'yandex') {
+    renderYandexForSlot(slotKey, ins, container);
+    return;
+  }
+
   ensureMailAdsScript();
   const filled = await waitForFill(ins, options.timeoutMs ?? FALLBACK_MS);
 
@@ -279,23 +361,7 @@ export async function runVkFallbackForIns(ins, options = {}) {
     return;
   }
 
-  if (slotKey === 'top' || slotKey === 'promoInfeed') {
-    hideElement(ins);
-    if (renderYandexBanner(slotKey, container)) {
-      watchAdContainerFill(container, 5000);
-    } else {
-      hideElement(container);
-    }
-    return;
-  }
-
-  if (slotKey === 'mobileAnchor') {
-    hideElement(ins.closest('#mobile-anchor-ad'));
-    renderYandexFloorAd();
-    return;
-  }
-
-  hideElement(container);
+  renderYandexForSlot(slotKey, ins, container);
 }
 
 export function initAdSlotObserver() {
@@ -322,4 +388,4 @@ export function initAdSlotObserver() {
   observer.observe(document.documentElement, { childList: true, subtree: true });
 }
 
-export { slotsData as AD_POOL_SLOTS, POOL_ENABLED };
+export { slotsData as AD_POOL_SLOTS, POOL_ENABLED, POOL_PRIMARY };

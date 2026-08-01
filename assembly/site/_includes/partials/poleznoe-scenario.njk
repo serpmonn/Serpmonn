@@ -25,11 +25,19 @@
     <link rel="alternate" href="{{ site.baseUrl }}/frontend/poleznoe/{{ scenarioKey }}.html" hreflang="x-default" />
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/poleznoe/poleznoe.css">
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
 <body>
     <div id="menuContainer" class="loading"></div>
+
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-{{ mailAds.slots.top.id }}"
+          data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
+    </div>
 
     <main class="poleznoe poleznoe--scenario">
         <p class="poleznoe__crumb">
@@ -94,5 +102,8 @@
             <a href="{% if locale == 'ru' %}/frontend/poleznoe/poleznoe.html{% else %}/frontend/{{ locale }}/poleznoe/poleznoe.html{% endif %}">← {{ t.back }}</a>
         </p>
     </main>
+    {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+    {{ mobileAnchor(localesNews[locale].news.closeAd) }}
+{% include "partials/ad-pool-init.njk" %}
 </body>
 </html>

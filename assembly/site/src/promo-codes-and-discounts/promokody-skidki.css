@@ -466,6 +466,18 @@ body {
     font-size: 14px;
 }
 
+.details-content .country {
+    margin: 8px 0 2px;
+    font-size: 13px;
+    color: #555;
+}
+
+.details-content .expiry {
+    font-size: 13px;
+    color: #666;
+    margin: 2px 0 0;
+}
+
 .country {
     margin: 4px 0 2px;        /* было стандартное p, обычно ~16px снизу */
     font-size: 13px;
@@ -790,8 +802,11 @@ footer p {
     color: #333;
 }
 
+/* Реклама в сетке: высоту ряда задают только .promo-card.
+   Слот абсолютно внутри — контент РСЯ не участвует в track sizing. */
 .promo-ad-inline {
     display: none;
+    position: relative;
     width: 100%;
     box-sizing: border-box;
     text-align: center;
@@ -801,40 +816,47 @@ footer p {
     border: 1px solid #ddd;
     border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
-    min-height: 0;
+    min-height: 240px; /* как .promo-card, не больше контента офферов */
+    max-height: none;
     overflow: hidden;
+    align-self: stretch;
+    min-width: 0;
 }
 
-/* Грузим off-screen — пустая ячейка в сетке не видна */
-.promo-ad-inline.ad-loading {
-    display: block;
-    height: 0;
-    min-height: 0;
-    max-height: 0;
-    padding: 0;
-    margin: 0;
-    border: 0;
-    box-shadow: none;
-    background: transparent;
-    overflow: visible;
-    opacity: 0;
-    pointer-events: none;
-}
-
-.promo-ad-inline.ad-loading .promo-ad-inline__slot {
-    position: absolute;
-    left: -9999px;
-    top: 0;
-    width: 300px;
-    height: 300px;
-    overflow: hidden;
-}
-
+.promo-ad-inline.ad-loading,
 .promo-ad-inline.ad-loaded {
     display: block;
     opacity: 1;
     pointer-events: auto;
+    height: auto;
+    min-height: 240px;
+    max-height: none;
     padding: 10px 12px;
+    margin: 0;
+    border: 1px solid #ddd;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.08);
+    background: #f8f8f8;
+    overflow: hidden;
+    align-self: stretch;
+}
+
+.promo-ad-inline.ad-loading .promo-ad-inline__slot,
+.promo-ad-inline.ad-loaded .promo-ad-inline__slot,
+.promo-ad-inline__slot {
+    position: absolute;
+    left: 10px;
+    right: 10px;
+    top: 10px;
+    bottom: 10px;
+    width: auto;
+    height: auto;
+    min-height: 0;
+    max-height: none;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
 }
 
 .promo-ad-inline.is-collapsed {
@@ -846,27 +868,27 @@ footer p {
     box-shadow: none;
 }
 
-.promo-ad-inline__slot {
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
-}
-
 .promo-ad-inline .mrg-tag,
 .promo-ad-inline .yandex-rtb-slot {
     display: block;
     width: 100%;
-    max-width: 300px;
-    margin: 0 auto;
+    max-width: 100%;
+    max-height: 100%;
+    height: 100%;
     min-height: 0;
+    margin: 0 auto;
+    overflow: hidden;
+    opacity: 1;
+    visibility: visible;
 }
 
 .promo-ad-inline .mrg-tag iframe,
 .promo-ad-inline .yandex-rtb-slot iframe {
     margin: 0 auto;
     max-width: 100%;
+    max-height: 100%;
+    opacity: 1;
+    visibility: visible;
 }
 
 .icon-refresh::before {
@@ -974,9 +996,9 @@ footer p {
     font-size: 0.8rem;
     line-height: 1.4;
     margin-top: 8px;
-    padding: 8px 10px;
-    background: #f9f9f9;
-    border-radius: 6px;
+    padding: 8px 0;
+    background: transparent;
+    border-radius: 0;
 }
 
 .details-description {
@@ -1112,24 +1134,32 @@ footer p {
         grid-column: 1 / -1;
     }
 
-    .promo-ad-inline.ad-loaded {
+    .promo-ad-inline.ad-loaded,
+    .promo-ad-inline.ad-loading {
         padding: 8px 10px;
+        min-height: 90px;
+    }
+
+    .promo-ad-inline.ad-loaded .promo-ad-inline__slot,
+    .promo-ad-inline.ad-loading .promo-ad-inline__slot {
+        left: 8px;
+        right: 8px;
+        top: 8px;
+        bottom: 8px;
     }
 
     .promo-ad-inline.ad-loaded .mrg-tag,
     .promo-ad-inline.ad-loaded .yandex-rtb-slot {
         width: 100% !important;
         max-width: 100% !important;
-        min-height: 50px;
-        max-height: 90px;
-        aspect-ratio: 320 / 50;
+        min-height: 0;
+        max-height: 100%;
+        height: 100%;
+        aspect-ratio: auto;
     }
 
     .promo-ad-inline.ad-loaded .promo-ad-inline__slot {
-        position: static;
-        left: auto;
-        width: 100%;
-        height: auto;
+        position: absolute;
     }
     .top-offer::before {
         right: 4px;
@@ -1203,43 +1233,47 @@ footer p {
 }
 
 @media (min-width: 768px) {
-    .promo-ad-inline.ad-loaded {
+    .promo-ad-inline.ad-loaded,
+    .promo-ad-inline.ad-loading {
+        position: relative;
         min-height: 240px;
+        max-height: none;
         padding: 10px 12px;
-        display: flex;
-        flex-direction: column;
+        display: block;
         align-self: stretch;
+        overflow: hidden;
     }
 
-    .promo-ad-inline.ad-loaded .promo-ad-inline__slot {
-        position: static;
-        left: auto;
-        width: 100%;
+    .promo-ad-inline.ad-loaded .promo-ad-inline__slot,
+    .promo-ad-inline.ad-loading .promo-ad-inline__slot {
+        position: absolute;
+        left: 10px;
+        right: 10px;
+        top: 10px;
+        bottom: 10px;
+        width: auto;
         height: auto;
-        min-height: 218px;
+        min-height: 0;
+        overflow: hidden;
     }
 
     .promo-ad-inline.ad-loaded .mrg-tag,
     .promo-ad-inline.ad-loaded .yandex-rtb-slot {
         width: 100% !important;
         max-width: none !important;
-        min-height: 218px;
-        max-height: none;
+        min-height: 0;
+        max-height: 100%;
         height: 100%;
         aspect-ratio: auto;
         margin: 0;
-    }
-
-    .promo-ad-inline.ad-loaded .mrg-tag {
-        min-height: 300px;
+        overflow: hidden;
     }
 
     .promo-ad-inline.ad-loaded .mrg-tag iframe,
     .promo-ad-inline.ad-loaded .yandex-rtb-slot iframe {
         width: 100% !important;
         max-width: 100% !important;
-        min-height: 218px;
-        margin: 0;
+        max-height: 100%;
     }
 }
 

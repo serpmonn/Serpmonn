@@ -1,6 +1,6 @@
 import slotsData from './mail-ad-slots.json' with { type: 'json' };
 import { ensureMailAdsScript, pushMailAdTag } from './mail-ads-loader.js';
-import { renderYandexFullscreen, waitForFill } from './ad-pool.js';
+import { isYandexPrimary, renderYandexFullscreen, waitForFill } from './ad-pool.js';
 
 const SLOT_IDS = Object.fromEntries(
   Object.entries(slotsData.slots).map(([key, slot]) => [key, slot.id])
@@ -60,6 +60,16 @@ export async function showGameFullscreenAd(options = {}) {
     let ov = document.getElementById('game-ad-overlay');
     const yandexCfg = slotsData.slots.fullscreen?.yandex;
     const poolEnabled = slotsData.pool?.enabled !== false;
+
+    if (isYandexPrimary() && poolEnabled && yandexCfg?.blockId) {
+      if (renderYandexFullscreen({ onClose: options.onClose })) {
+        return;
+      }
+      if (typeof options.onClose === 'function') {
+        options.onClose();
+      }
+      return;
+    }
 
     if (!ov) {
       ov = document.createElement('div');

@@ -38,6 +38,7 @@ eleventyComputed:
     <link rel="alternate" href="{{ site.baseUrl }}/frontend/poleznoe/poleznoe.html" hreflang="x-default" />
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/poleznoe/poleznoe.css">
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     {% include "partials/metrika-main.njk" %}
@@ -46,6 +47,13 @@ eleventyComputed:
     {% from "partials/tool-icons.njk" import toolIcon %}
     {% set t = poleznoe[locale] %}
     <div id="menuContainer" class="loading"></div>
+
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-{{ mailAds.slots.top.id }}"
+          data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
+    </div>
 
     <main class="poleznoe">
         <h1>{{ t.hub.title }}</h1>
@@ -128,5 +136,8 @@ eleventyComputed:
         });
       })();
     </script>
+    {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
+    {{ mobileAnchor(localesNews[locale].news.closeAd) }}
+{% include "partials/ad-pool-init.njk" %}
 </body>
 </html>
