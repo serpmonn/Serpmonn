@@ -173,16 +173,31 @@ header h1 {
 .n8 { color: #95a5a6 } /* Серый для 8 */
 
 /* Адаптивность для мобильных устройств */
-@media (max-width: 960px) { 
+@media (max-width: 960px) {
+    .page {
+        padding: 12px;
+    }
+    .panel {
+        padding: 8px;
+    }
     .wrap {
         grid-template-columns: 1fr; /* Одна колонка на мобильных */
     }
     .board {
-        grid-template-columns: repeat(10, 32px); /* Уменьшенные клетки */
-        grid-template-rows: repeat(10, 32px);    /* Уменьшенные клетки */
+        /* Влезает в экран с небольшим зазором по бокам */
+        width: min(340px, calc(100vw - 32px));
+        aspect-ratio: 1;
+        margin: 0 auto;
+        gap: 4px;
+        grid-template-columns: repeat(10, minmax(0, 1fr));
+        grid-template-rows: repeat(10, minmax(0, 1fr));
+        padding: 8px 0;
+        transform: none;
     }
     .cell {
-        width: 32px;         /* Уменьшенная ширина */
-        height: 32px;        /* Уменьшенная высота */
+        width: auto;
+        height: auto;
+        min-width: 0;
+        min-height: 0;
     }
 }

@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 5,
   "note": "Yandex RSYA primary while VK publisher is unavailable. Set pool.primary to \"vk\" to restore VK-first + Yandex fallback.",
   "pool": {
     "enabled": true,
@@ -8,9 +8,10 @@
     "mobileMaxWidth": 768
   },
   "cabinetGuide": {
-    "minimumBlocks": 4,
+    "minimumBlocks": 5,
     "formats": {
-      "top": "Adaptive horizontal banner — page headers, tools, articles.",
+      "top": "Adaptive horizontal banner — desktop page headers, tools, articles.",
+      "topMobile": "Top Ad sticky — 320x100 on mobile instead of in-page top banner.",
       "promoInfeed": "Adaptive rectangle for promo catalog cards — 300x250 area, in-feed.",
       "mobileAnchor": "Floor / bottom banner — 320x50. Yandex uses floorAd on fallback.",
       "fullscreen": "Fullscreen interstitial for game overlays. Yandex fallback is mobile-only."
@@ -20,9 +21,19 @@
     "top": {
       "id": "1897960",
       "label": "Adaptive banner",
-      "usage": "top banners, in-content, onnmail",
+      "usage": "top banners, in-content, onnmail (desktop); mobile uses topMobile",
       "yandex": {
         "blockId": "R-A-19576747-1"
+      }
+    },
+    "topMobile": {
+      "label": "Mobile Top Ad 320x100",
+      "usage": "sticky top on mobile (type topAd); replaces in-page top banner",
+      "yandex": {
+        "blockId": "R-A-19576747-5",
+        "type": "topAd",
+        "platform": "touch",
+        "mobileOnly": true
       }
     },
     "promoInfeed": {

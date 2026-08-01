@@ -1,7 +1,7 @@
 import { getPageT } from '/frontend/scripts/i18n-loader.js';
 import { applyMailAdAttrs, pushMailAdTag } from '/frontend/scripts/mail-ads-config.js';
 import { ensureMailAdsScript } from '/frontend/scripts/mail-ads-loader.js';
-import { isYandexPrimary, runVkFallbackForIns } from '/frontend/scripts/ad-pool.js';
+import { hasAdFill, isYandexPrimary, runVkFallbackForIns } from '/frontend/scripts/ad-pool.js?v=53';
 
 const API_CONFIG = {
     baseUrl: '/api/promocodes',
@@ -1461,17 +1461,13 @@ function collapseAdIfNoFill(container, timeoutMs) {
         const t = timeoutMs || 1500;
         setTimeout(() => {
             if (!container || container.__adFillResolved) return;
-            const hasContent = !!(
-                container.querySelector('iframe') ||
-                container.querySelector('.yandex-rtb-slot iframe') ||
-                container.querySelector('.yandex-rtb-slot')?.childElementCount ||
-                (container.querySelector('ins.mrg-tag')?.offsetHeight > 10)
-            );
-            if (hasContent) {
+            if (hasAdFill(container)) {
+                container.__adFillResolved = true;
                 container.classList.add('ad-loaded');
                 container.classList.remove('ad-loading', 'is-collapsed');
                 container.style.minHeight = '';
             } else {
+                container.__adFillResolved = true;
                 container.remove();
             }
         }, t);

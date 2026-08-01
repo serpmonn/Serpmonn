@@ -11,9 +11,18 @@ const POOL_PRIMARY = String(slotsData.pool?.primary || 'vk').toLowerCase() === '
 
 let yandexBannerSeq = 0;
 let yandexFloorRequested = false;
+let yandexTopAdRequested = false;
 
 function isMobileViewport() {
   return (window.innerWidth || document.documentElement.clientWidth) <= MOBILE_MAX_WIDTH;
+}
+
+function documentHasTopSlotIns() {
+  const topId = slotsData.slots.top?.id;
+  if (!topId) {
+    return false;
+  }
+  return Boolean(document.querySelector(`ins.mrg-tag[data-ad-slot="${topId}"]`));
 }
 
 export function isYandexPrimary() {
@@ -21,6 +30,13 @@ export function isYandexPrimary() {
 }
 
 function renderYandexForSlot(slotKey, ins, container) {
+  // Mobile Top Ad is sticky overlay (official type:topAd) — hide in-page top placeholders
+  if (slotKey === 'top' && isMobileViewport()) {
+    hideElement(ins);
+    hideElement(container);
+    return renderYandexTopAd();
+  }
+
   if (slotKey === 'top' || slotKey === 'promoInfeed') {
     hideElement(ins);
     if (container?.classList?.contains('promo-ad-inline')) {
@@ -52,29 +68,66 @@ function renderYandexForSlot(slotKey, ins, container) {
   return false;
 }
 
+function isEmptyYandexStub(slot) {
+  if (!slot) {
+    return true;
+  }
+  const html = (slot.innerHTML || '').trim();
+  if (!html) {
+    return true;
+  }
+  // Unfilled CSR: tiny markup, no creative shell
+  if (
+    html.length < 150 &&
+    !slot.querySelector('iframe, img, a, style, [data-container], yatag')
+  ) {
+    return true;
+  }
+  return false;
+}
+
+function rootHasRealCreative(root) {
+  if (!root?.querySelector) {
+    return false;
+  }
+
+  if (root.querySelector('iframe, video, canvas, object, embed')) {
+    return true;
+  }
+  if (root.querySelector('img[src]')) {
+    return true;
+  }
+  if (root.querySelector('a[href]:not([href=""]):not([href="#"])')) {
+    return true;
+  }
+  if (root.querySelector('[data-container="outer"], yatag')) {
+    return true;
+  }
+
+  const html = root.innerHTML || '';
+  if (html.length > 400 && root.querySelector('style')) {
+    return true;
+  }
+
+  const text = (root.innerText || '').replace(/\s+/g, ' ').trim();
+  return text.length >= 20;
+}
+
 export function hasAdFill(element) {
   if (!element) {
     return false;
   }
 
-  const yandexSlot = element.querySelector('.yandex-rtb-slot, [id^="yandex_rtb_"]');
+  const yandexSlot = element.querySelector?.('.yandex-rtb-slot, [id^="yandex_rtb_"]');
   if (yandexSlot) {
-    if (
-      yandexSlot.querySelector('iframe') ||
-      yandexSlot.querySelector('img') ||
-      yandexSlot.childElementCount > 0 ||
-      yandexSlot.offsetHeight > 20
-    ) {
-      return true;
+    if (isEmptyYandexStub(yandexSlot)) {
+      return false;
     }
+    return rootHasRealCreative(yandexSlot) || (yandexSlot.innerHTML || '').length > 200;
   }
 
-  return !!(
-    element.querySelector('iframe') ||
-    element.querySelector('img[src*="yandex"]') ||
-    element.querySelector('img[src*="yabs"]') ||
-    element.offsetHeight > 50
-  );
+  // VK / Mail — never treat CSS min-height as fill
+  return rootHasRealCreative(element);
 }
 
 export function getSlotKeyFromIns(ins) {
@@ -169,15 +222,30 @@ function watchAdContainerFill(container, timeoutMs = 10000) {
       return;
     }
 
+    if (container.__yandexRendered) {
+      resolveAdContainer(container, true);
+      return;
+    }
+
     if (hasAdFill(container)) {
-      container.__adFillResolved = true;
-      markAdContainerLoaded(container);
+      resolveAdContainer(container, true);
       return;
     }
 
     if (Date.now() - started >= timeoutMs) {
-      container.__adFillResolved = true;
-      hideElement(container);
+      if (container.__yandexRendered) {
+        resolveAdContainer(container, true);
+        return;
+      }
+      // Promo infeed: never drop a card that already looks painted; only clear empty stubs
+      if (container.classList?.contains('promo-ad-inline')) {
+        const slot = container.querySelector('.yandex-rtb-slot, [id^="yandex_rtb_"]');
+        if (!isEmptyYandexStub(slot)) {
+          resolveAdContainer(container, true);
+          return;
+        }
+      }
+      resolveAdContainer(container, false);
       return;
     }
 
@@ -220,14 +288,33 @@ export function renderYandexBanner(slotKey, container, fillRoot = null) {
   ensureYandexAdsScript();
   onYandexReady(() => {
     try {
-      window.Ya.Context.AdvManager.render({
-        blockId: cfg.blockId,
-        renderTo: renderToId,
-        pageNumber,
-        onRender: () => resolveAdContainer(resolvedRoot, true)
-      });
+      // Official RSЯ API:
+      // - onRender → ad was drawn — KEEP (do not second-guess via DOM heuristics)
+      // - 2nd callback → no fill — REMOVE
+      window.Ya.Context.AdvManager.render(
+        {
+          blockId: cfg.blockId,
+          renderTo: renderToId,
+          pageNumber,
+          onRender: () => {
+            resolvedRoot.__yandexRendered = true;
+            resolveAdContainer(resolvedRoot, true);
+          }
+        },
+        () => {
+          // no-fill can race ahead of onRender — wait briefly so a real render wins
+          setTimeout(() => {
+            if (resolvedRoot.__yandexRendered || resolvedRoot.__adFillResolved) {
+              return;
+            }
+            resolveAdContainer(resolvedRoot, false);
+          }, 750);
+        }
+      );
     } catch (_) {
-      resolveAdContainer(resolvedRoot, false);
+      if (!resolvedRoot.__yandexRendered) {
+        resolveAdContainer(resolvedRoot, false);
+      }
     }
   });
 
@@ -236,7 +323,14 @@ export function renderYandexBanner(slotKey, container, fillRoot = null) {
 
 export function renderYandexFloorAd() {
   const cfg = slotsData.slots.mobileAnchor?.yandex;
-  if (!cfg?.blockId || yandexFloorRequested || !isMobileViewport()) {
+  // Yandex forbids Top Ad + Floor Ad on the same page — prefer Top Ad when top slot exists
+  if (
+    !cfg?.blockId ||
+    yandexFloorRequested ||
+    yandexTopAdRequested ||
+    !isMobileViewport() ||
+    documentHasTopSlotIns()
+  ) {
     return false;
   }
 
@@ -248,6 +342,32 @@ export function renderYandexFloorAd() {
         blockId: cfg.blockId,
         type: cfg.type || 'floorAd',
         platform: cfg.platform || 'touch'
+      });
+    } catch (_) {}
+  });
+
+  return true;
+}
+
+export function renderYandexTopAd() {
+  const cfg = slotsData.slots.topMobile?.yandex;
+  if (
+    !cfg?.blockId ||
+    yandexTopAdRequested ||
+    yandexFloorRequested ||
+    !isMobileViewport()
+  ) {
+    return false;
+  }
+
+  yandexTopAdRequested = true;
+  ensureYandexAdsScript();
+  onYandexReady(() => {
+    try {
+      // Official Top Ad snippet: blockId + type only (no renderTo / platform)
+      window.Ya.Context.AdvManager.render({
+        blockId: cfg.blockId,
+        type: cfg.type || 'topAd'
       });
     } catch (_) {}
   });

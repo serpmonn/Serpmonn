@@ -28,24 +28,17 @@
 .ad-banner:not(.loading):not(.hidden) .mrg-tag {
   height: auto;
   opacity: 1;
-  aspect-ratio: 970 / 250;
-}
-@keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
 }
 @media (max-width: 1199px) {
   .ad-banner.ad-loaded .mrg-tag,
   .ad-banner:not(.loading):not(.hidden) .mrg-tag {
     max-width: 728px;
-    aspect-ratio: 728 / 90;
   }
 }
 @media (max-width: 768px) {
   .ad-banner.ad-loaded .mrg-tag,
   .ad-banner:not(.loading):not(.hidden) .mrg-tag {
     max-width: 320px;
-    aspect-ratio: 320 / 50;
   }
 }
 .ad-banner.hidden {
@@ -71,17 +64,7 @@
 }
 /* ad adaptive end */
 
-#menuContainer.loading::before {
-  content: '';
-  display: block;
-  height: 50px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: skeleton-loading 1.5s infinite;
-}
-
-html, body {
-  width: 100%;
+html {
   overflow-x: hidden;
 }
 body {
@@ -91,6 +74,7 @@ body {
   font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
   background: #f5f5f5;
   min-height: 100vh;
+  overflow: visible;
 }
 .page {
   max-width: 1200px;

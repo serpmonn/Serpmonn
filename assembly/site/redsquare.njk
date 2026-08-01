@@ -32,6 +32,7 @@ eleventyComputed:
     <link rel="canonical" href="{{ canonical }}">
     <link rel="icon" href="/frontend/images/SquareEscape.ico" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/games/redsquare/redsquare_styles/redsquare_styles.css">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <script>
@@ -63,11 +64,13 @@ eleventyComputed:
         </div>
     </div>
     <div class="score" id="score">{{ gameRedsquareTranslations[locale].gameRedsquare.scorePrefix }}0</div>
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-{{ mailAds.slots.top.id }}"
+          data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
+    </div>
     <div class="game-area">
-        <div class="ad-container" style="margin: 10px 0; text-align: center;">
-            <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
-                 data-ad-client="ad-{{ mailAds.slots.mobileAnchor.id }}" data-ad-slot="{{ mailAds.slots.mobileAnchor.id }}"></ins>
-        </div>
         <div class="player" id="player"></div>
         <div class="obstacle" style="top: 20%; left: 20%;"></div>
         <div class="obstacle" style="top: 80%; left: 80%;"></div>
@@ -82,10 +85,6 @@ eleventyComputed:
     <button class="restart" id="restart">{{ gameRedsquareTranslations[locale].gameRedsquare.restart }}</button>
     <button class="home" id="home">{{ gameRedsquareTranslations[locale].gameRedsquare.home }}</button>
     <button id="pauseBtn">{{ gameRedsquareTranslations[locale].gameRedsquare.pause }}</button>
-    <div class="ad-container" style="margin: 20px 0; text-align: center;">
-        <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
-             data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
-    </div>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
   {{ mobileAnchor(localesNews[locale].news.closeAd) }}

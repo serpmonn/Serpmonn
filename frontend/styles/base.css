@@ -5,29 +5,41 @@
 }
 
 html, body {				  		      /* Общие стили для html и body */
-	height: 100%;                         /* Устанавливаем 100% высоты для body и html */
 	width: 100%;                          /* Устанавливаем 100% ширины для body и html */
 	font-family: Arial, sans-serif;       /* Основной шрифт на странице */
 	display: flex;                        /* Используем flexbox для основного контейнера */
 	flex-direction: column;               /* Элементы внутри будут расположены по вертикали */
 	justify-content: flex-start;          /* Все элементы выравниваются по верхнему краю */
 	align-items: stretch;                 /* Элементы растягиваются по ширине */
-	overflow-x: hidden;                   /* Отключаем горизонтальную прокрутку */
 }
 
-body::-webkit-scrollbar {		  		  /* Стили для прокрутки */
+/* One vertical scroller: only html. (If overflow-x ≠ visible on body, overflow-y:visible
+   computes to auto — classic double scrollbar with height:100% on both.) */
+html {
+	height: 100%;
+	overflow-x: hidden;
+	overflow-y: auto;
+	scrollbar-gutter: stable;
+}
+body {
+	min-height: 100%;
+	height: auto;
+	overflow: visible;
+}
+
+html::-webkit-scrollbar {		  		  /* Стили для прокрутки */
 	width: 8px;                           /* Устанавливаем ширину полосы прокрутки */
 }
 
-body::-webkit-scrollbar-track {
+html::-webkit-scrollbar-track {
 	background-color: #f1f1f1;            /* Цвет фона полосы прокрутки */
 }
 
-body::-webkit-scrollbar-thumb {
+html::-webkit-scrollbar-thumb {
 	background-color: #888;               /* Цвет самой полосы прокрутки */
 }
 
-body::-webkit-scrollbar-thumb:hover {
+html::-webkit-scrollbar-thumb:hover {
 	background-color: #555;               /* Цвет полосы прокрутки при наведении */
 }
 
@@ -161,8 +173,9 @@ input:focus, textarea:focus, select:focus { /* Стили для фокуса н
         outline: none;
 }
 
-/* Стабильный желобок полосы прокрутки, чтобы контент не прилипал к скроллу */
-html, body { scrollbar-gutter: stable; overflow-y: auto; }
+/* Стабильный желобок полосы прокрутки (html — единственный вертикальный скролл) */
+html { scrollbar-gutter: stable; overflow-y: auto; }
+body { overflow: visible; }
 
 /* Отключаем ограничение ширины у body во всех статьях */
 body { max-width: none !important; margin: 0 !important; }
@@ -185,14 +198,16 @@ body { max-width: none !important; margin: 0 !important; }
 /* Гарантируем, что контейнеры статей не выходят за экран */
 .article-container, .news-container { width: 100%; box-sizing: border-box; }
 
-/* Разрешаем горизонтальную прокрутку на случай редких переполнений */
-html, body { overflow-x: auto !important; }
+/* Редкие горизонтальные переполнения — только html, иначе снова двойной скролл */
+html { overflow-x: auto !important; }
 
 
 @media (max-width: 640px) {
-  html,
-  body {
+  html {
     max-width: 100%;
     overflow-x: hidden !important;
+  }
+  body {
+    max-width: 100%;
   }
 }
