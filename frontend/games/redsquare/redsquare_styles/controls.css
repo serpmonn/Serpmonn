@@ -65,23 +65,44 @@
     cursor: pointer;
     color: #fff;
     min-height: 42px;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.action-start {
+/* Явные hover/focus/active — иначе button:hover (#f0f0f0) залипает на таче */
+.action-start,
+.action-start:hover,
+.action-start:focus,
+.action-start:active {
     background: var(--rs-accent);
     border-color: #ff9b88;
+    color: #fff;
 }
 
-.action-pause {
+.action-pause,
+.action-pause:hover,
+.action-pause:focus,
+.action-pause:active {
     background: var(--rs-warn);
     color: #1a1408;
 }
 
-.action-restart {
+.action-restart,
+.action-restart:hover,
+.action-restart:focus,
+.action-restart:active {
     background: var(--rs-ok);
+    color: #fff;
 }
 
-.action-sound {
+.action-sound,
+.action-sound:hover,
+.action-sound:focus,
+.action-sound:active,
+.action-home,
+.action-home:hover,
+.action-home:focus,
+.action-home:active {
     background: transparent;
     color: var(--rs-text);
     border-color: var(--rs-panel-edge);
@@ -89,12 +110,6 @@
 
 .action-sound[aria-pressed="false"] {
     color: var(--rs-muted);
-}
-
-.action-home {
-    background: transparent;
-    color: var(--rs-text);
-    border-color: var(--rs-panel-edge);
 }
 
 @media (min-width: 901px) {

@@ -19,61 +19,147 @@
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
     <link rel="canonical" href="https://serpmonn.ru/frontend/da/games/redsquare2/redsquare2.html"/>
     <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css?v=17">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script>
     window.i18n = {
       scorePrefix: "Punkte: ",
-      missedPrefix: "Fehler: ",
+      missedPrefix: "Misses: ",
       pause: "Pause",
       resume: "Weiter",
       bannedNicknameAlert: "Nickname enthält verbotene Wörter. Bitte wähle einen anderen.",
-      scoreTableUrl: "/frontend/da/games/redsquare2/score_table.html"
+      scoreTableUrl: "/frontend/da/games/redsquare2/score_table.html",
+      levelLabel: "Level",
+      scoreLabel: "Score",
+      missesLabel: "Misses",
+      soundOn: "Sound",
+      soundOff: "Muted",
+      pauseOverlay: "Paused",
+      gameOverTitle: "Game over",
+      modalYourScore: "Your score:",
+      modalOk: "OK",
+      home: "Home",
+      lbTitle: "Leaderboard",
+      lbYourScore: "Your score:",
+      lbEmpty: "No results yet",
+      lbClose: "Close",
+      lbRestart: "Play again",
+      lbLoadFail: "Failed to load leaderboard"
     };
     </script>
-    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=3" defer></script>
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=16" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js?v=4" defer></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <script>
+    /* Закрытие инструкции без module/defer — в VK WebView модуль может опоздать */
+    window.__rs2DismissInstruction = function (e) {
+      if (e) {
+        try { e.preventDefault(); } catch (_) {}
+        try { e.stopPropagation(); } catch (_) {}
+      }
+      var overlay = document.getElementById('instructionOverlay');
+      if (!overlay || overlay.classList.contains('is-hidden')) return false;
+      overlay.classList.add('is-hidden');
+      overlay.hidden = true;
+      overlay.style.cssText = 'display:none!important;pointer-events:none!important';
+      overlay.setAttribute('aria-hidden', 'true');
+      var form = document.getElementById('nicknameForm');
+      if (form) form.hidden = false;
+      try { window.dispatchEvent(new Event('resize')); } catch (_) {}
+      return false;
+    };
+    </script>
 </head>
-<body>
+<body class="rs2-page">
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
             <h2 class="instruction-title">Wie spielt man Fallende blaue Quadrate?</h2>
             <ul class="instruction-list">
                 <li><strong>Steuerung:</strong> Nutze Pfeiltasten oder Touch, um das rote Quadrat zu bewegen</li>
-                <li><strong>Ziel:</strong> Weiche fallenden Objekten aus</li>
-                <li><strong>Punkte:</strong> 1 Punkt pro ausgewichenem Objekt</li>
-                <li><strong>Fehler:</strong> Trifft ein Objekt dich, zählt es als Fehler</li>
-                <li><strong>Spielende:</strong> Das Spiel endet nach 10 Kollisionen</li>
+                <li><strong>Ziel:</strong> Catch falling shapes with the platform at the bottom</li>
+                <li><strong>Punkte:</strong> You get 1 point for each shape you catch</li>
+                <li><strong>Fehler:</strong> If a shape hits the floor, it counts as a miss</li>
+                <li><strong>Spielende:</strong> The game ends after 10 misses</li>
                 <li><strong>Bestenliste:</strong> Nach dem Spiel siehst du deine Ergebnisse in der Bestenliste</li>
                 <li><strong>Pause:</strong> Nutze die Pause-Taste zum Anhalten</li>
             </ul>
-            <button class="instruction-button" id="understandBtn">Verstanden, los geht&#39;s!</button>
+            <button type="button" class="instruction-button" id="understandBtn"
+                onclick="return window.__rs2DismissInstruction(event)"
+                ontouchend="return window.__rs2DismissInstruction(event)">Verstanden, los geht&#39;s!</button>
+        </div>
+    </div>
+    <script>
+    (function () {
+      var overlay = document.getElementById('instructionOverlay');
+      var btn = document.getElementById('understandBtn');
+      if (btn) {
+        btn.addEventListener('click', window.__rs2DismissInstruction, true);
+        btn.addEventListener('touchend', window.__rs2DismissInstruction, { capture: true, passive: false });
+      }
+      if (overlay) {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) window.__rs2DismissInstruction(e);
+        }, true);
+      }
+    })();
+    </script>
+
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-1897960"
+          data-ad-slot="1897960"></ins>
+    </div>
+
+    <div class="game-shell">
+        <header class="game-hud" aria-live="polite">
+            <div class="hud-block">
+                <span class="hud-label">Score</span>
+                <span class="hud-value" id="scoreValue">0</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Level</span>
+                <span class="hud-value" id="levelValue">1</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Misses</span>
+                <span class="hud-value" id="missesValue">0/10</span>
+            </div>
+            <div class="hud-block hud-nick">
+                <span class="hud-label">Gib deinen Namen ein</span>
+                <span class="hud-value" id="nickValue">—</span>
+            </div>
+        </header>
+
+        <div class="game-stage" id="gameStage">
+            <canvas id="gameCanvas"></canvas>
+            <div class="pause-overlay" id="pauseOverlay" hidden>
+                <span>Paused</span>
+            </div>
+        </div>
+
+        <div class="game-dock">
+            <form id="nicknameForm" class="nickname-panel" hidden>
+                <input type="text" id="nickname" maxlength="24" placeholder="Gib deinen Namen ein" required autocomplete="nickname">
+                <button type="submit" class="action-btn action-start">Spiel starten</button>
+            </form>
+            <div class="actions" id="gameActions">
+                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>Pause</button>
+                <button type="button" class="action-btn action-restart" id="restartBtn" hidden>Neu</button>
+                <button type="button" class="action-btn action-lb" id="leaderboardBtn">Bestenliste</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">Sound</button>
+                <button type="button" class="action-btn action-home" id="homeBtn">Home</button>
+            </div>
         </div>
     </div>
 
-    <div id="score">Punkte: 0</div>
-    <div id="missed">Fehler: 0</div>
-    <div class="button-container">
-        <button id="leaderboardBtn">Bestenliste</button>
-        <button id="pauseBtn">Pause</button>
-        <button id="restartBtn">Neu</button>
-    </div>
-    <form id="nicknameForm">
-        <input type="text" id="nickname" placeholder="Gib deinen Namen ein" required>
-        <button type="submit">Spiel starten</button>
-    </form>
-    <canvas id="gameCanvas"></canvas>
+    <div id="score" hidden>Punkte: 0</div>
+    <div id="missed" hidden>Misses: 0</div>
 
-    <div class="ad-container" style="margin: 10px 0; text-align: center;">
-        <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
-             data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
-    </div>
-
-    <div class="ad-container" style="margin: 20px 0; text-align: center;">
-        <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
-             data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
-    </div>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
   

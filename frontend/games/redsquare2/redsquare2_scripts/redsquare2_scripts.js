@@ -1,452 +1,640 @@
-        import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
-        import { showGameFullscreenAd } from '/frontend/scripts/mail-ads-config.js';
-        import { t, formatScore, formatMissed } from './i18n.js';
+import { showGameFullscreenAd } from '/frontend/scripts/mail-ads-config.js';
+import { t, formatScore, formatMissed } from './i18n.js';
 
-            const canvas = document.getElementById('gameCanvas');
-            const ctx = canvas.getContext('2d');
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+const MAX_MISSES = 10;
+const BASE_OBJECT_SPEED = 1.35;
+const SPEED_PER_LEVEL = 0.18;
+const MAX_OBJECT_SPEED = 4.8;
+const SPAWN_START_MS = 1100;
+const SPAWN_MIN_MS = 480;
+const SPAWN_STEP_MS = 45;
+const HIT_IFRAME_MS = 850;
+const PLAYER_SPEED = 5.2;
+const FRICTION = 0.88;
 
-            const player = {
-                x: canvas.width / 2 - 25,
-                y: canvas.height - 50,
-                width: 50,
-                height: 50,
-                color: 'red',
-                speed: 7,
-                dx: 0,
-                nickname: ''
-            };
+const stage = document.getElementById('gameStage');
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const scoreEl = document.getElementById('score');
+const missedEl = document.getElementById('missed');
+const scoreValueEl = document.getElementById('scoreValue');
+const levelValueEl = document.getElementById('levelValue');
+const missesValueEl = document.getElementById('missesValue');
+const nickValueEl = document.getElementById('nickValue');
+const pauseOverlay = document.getElementById('pauseOverlay');
+const nicknameForm = document.getElementById('nicknameForm');
+const pauseBtn = document.getElementById('pauseBtn');
+const restartBtn = document.getElementById('restartBtn');
+const leaderboardBtn = document.getElementById('leaderboardBtn');
+const soundBtn = document.getElementById('soundBtn');
+const homeBtn = document.getElementById('homeBtn');
 
-            const objects = [];
-            const objectSize = 20;
-            let objectSpeed = 2;
-            let score = 0;
-            let level = 1;
-            let missedObjects = 0;
-            let isPaused = false;
-            let friction = 0.9;
-            let lastTime = 0;
+const player = {
+    x: 0,
+    y: 0,
+    width: 44,
+    height: 44,
+    speed: PLAYER_SPEED,
+    dx: 0,
+    nickname: '',
+};
 
-            function drawPlayer() {
-                const playerColor = level % 2 === 0 ? 'green' : 'red'; // Меняем цвет на зелёный на чётных уровнях
-                ctx.fillStyle = playerColor;
-                ctx.fillRect(player.x, player.y, player.width, player.height);
+const objects = [];
+let objectSpeed = BASE_OBJECT_SPEED;
+let score = 0;
+let level = 1;
+let missedObjects = 0;
+let isPaused = false;
+let gameStarted = false;
+let loopRunning = false;
+let lastTime = 0;
+let gameInterval = null;
+let invincibleUntil = 0;
+let touchX = null;
+let soundEnabled = localStorage.getItem('rs2Sound') !== '0';
+let audioCtx = null;
+
+const isVkMiniEmbed =
+    Boolean(window.__SPN_VK_MINI__) ||
+    /(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search) ||
+    /vk_app_id=\d+/.test(window.location.search) ||
+    document.documentElement.classList.contains('vk-mini-embed') ||
+    document.body?.classList?.contains('vk-mini-embed') ||
+    window.self !== window.top;
+
+const LEADERBOARD_URL = '/backend/games/redsquare2/leaderboard';
+const ADD_SCORE_URL = '/add-score';
+const BANNED_WORDS_URL = '/proxy/bannedWords';
+
+const ensureAudio = () => {
+    if (!soundEnabled) return null;
+    if (!audioCtx) {
+        const AC = window.AudioContext || window.webkitAudioContext;
+        if (!AC) return null;
+        audioCtx = new AC();
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume().catch(() => {});
+    return audioCtx;
+};
+
+const beep = (freq = 440, dur = 0.08, type = 'square', gain = 0.04) => {
+    const ctxA = ensureAudio();
+    if (!ctxA) return;
+    const osc = ctxA.createOscillator();
+    const g = ctxA.createGain();
+    osc.type = type;
+    osc.frequency.value = freq;
+    g.gain.value = gain;
+    osc.connect(g);
+    g.connect(ctxA.destination);
+    const now = ctxA.currentTime;
+    g.gain.setValueAtTime(gain, now);
+    g.gain.exponentialRampToValueAtTime(0.001, now + dur);
+    osc.start(now);
+    osc.stop(now + dur);
+};
+
+const play = {
+    dodge: () => beep(620, 0.05, 'square', 0.03),
+    hit: () => beep(170, 0.16, 'sawtooth', 0.05),
+    level: () => { beep(480, 0.07); setTimeout(() => beep(720, 0.09), 80); },
+    lose: () => beep(110, 0.28, 'triangle', 0.05),
+};
+
+const setSoundUi = () => {
+    soundBtn.textContent = soundEnabled ? t('soundOn') : t('soundOff');
+    soundBtn.setAttribute('aria-pressed', soundEnabled ? 'true' : 'false');
+};
+
+const spawnIntervalMs = () =>
+    Math.max(SPAWN_MIN_MS, SPAWN_START_MS - (level - 1) * SPAWN_STEP_MS);
+
+const currentObjectSpeed = () =>
+    Math.min(MAX_OBJECT_SPEED, BASE_OBJECT_SPEED + (level - 1) * SPEED_PER_LEVEL);
+
+const resizeCanvas = () => {
+    const rect = stage.getBoundingClientRect();
+    const w = Math.max(1, Math.floor(rect.width));
+    const h = Math.max(1, Math.floor(rect.height));
+    const prevW = canvas.width || w;
+    const ratio = w / prevW;
+    canvas.width = w;
+    canvas.height = h;
+    player.width = Math.max(34, Math.round(w * 0.09));
+    player.height = player.width;
+    player.y = h - player.height - 10;
+    if (gameStarted) {
+        player.x = Math.min(Math.max(0, player.x * ratio), w - player.width);
+    } else {
+        player.x = w / 2 - player.width / 2;
+    }
+};
+
+const updateHud = () => {
+    scoreEl.textContent = formatScore(score);
+    missedEl.textContent = formatMissed(missedObjects);
+    scoreValueEl.textContent = String(score);
+    levelValueEl.textContent = String(level);
+    missesValueEl.textContent = `${missedObjects}/${MAX_MISSES}`;
+    nickValueEl.textContent = player.nickname || '—';
+};
+
+const isInvincible = () => Date.now() < invincibleUntil;
+
+const grantIframe = (ms = HIT_IFRAME_MS) => {
+    invincibleUntil = Date.now() + ms;
+};
+
+const drawPlayer = () => {
+    const color = level % 2 === 0 ? '#3dba7a' : '#f47059';
+    ctx.fillStyle = color;
+    ctx.strokeStyle = '#ffe0d8';
+    ctx.lineWidth = 2;
+    ctx.fillRect(player.x, player.y, player.width, player.height);
+    ctx.strokeRect(player.x + 0.5, player.y + 0.5, player.width - 1, player.height - 1);
+};
+
+const createObject = () => {
+    if (!gameStarted || isPaused) return;
+    const size = 18 + Math.random() * 34;
+    const x = Math.random() * Math.max(1, canvas.width - size);
+    const shapeTypes = ['square', 'circle', 'triangle', 'star'];
+    const shape = shapeTypes[Math.floor(Math.random() * shapeTypes.length)];
+    const dx = (Math.random() - 0.5) * 2.4;
+    objects.push({ x, y: -size, size, shape, dx });
+};
+
+const objectColorForLevel = () => {
+    if (level < 5) return '#5b8cff';
+    if (level < 10) return '#e0a24a';
+    return '#c084fc';
+};
+
+const drawObject = (obj) => {
+    ctx.beginPath();
+    ctx.fillStyle = objectColorForLevel();
+    switch (obj.shape) {
+        case 'square':
+            ctx.fillRect(obj.x, obj.y, obj.size, obj.size);
+            break;
+        case 'circle':
+            ctx.arc(obj.x + obj.size / 2, obj.y + obj.size / 2, obj.size / 2, 0, Math.PI * 2);
+            ctx.fill();
+            break;
+        case 'triangle':
+            ctx.moveTo(obj.x + obj.size / 2, obj.y);
+            ctx.lineTo(obj.x, obj.y + obj.size);
+            ctx.lineTo(obj.x + obj.size, obj.y + obj.size);
+            ctx.closePath();
+            ctx.fill();
+            break;
+        case 'star': {
+            const centerX = obj.x + obj.size / 2;
+            const centerY = obj.y + obj.size / 2;
+            const spikes = 5;
+            const outerRadius = obj.size / 2;
+            const innerRadius = obj.size / 4;
+            let rot = (Math.PI / 2) * 3;
+            const step = Math.PI / spikes;
+            ctx.moveTo(centerX, centerY - outerRadius);
+            for (let i = 0; i < spikes; i++) {
+                ctx.lineTo(centerX + Math.cos(rot) * outerRadius, centerY + Math.sin(rot) * outerRadius);
+                rot += step;
+                ctx.lineTo(centerX + Math.cos(rot) * innerRadius, centerY + Math.sin(rot) * innerRadius);
+                rot += step;
             }
+            ctx.closePath();
+            ctx.fill();
+            break;
+        }
+        default:
+            break;
+    }
+};
 
-            function createObject() {
-                const size = 20 + Math.random() * 40; // Случайный размер от 20 до 60 пикселей
-                const x = Math.random() * (canvas.width - size);
-                const shapeTypes = ['square', 'circle', 'triangle', 'star']; // Новый список форм
-                const shape = shapeTypes[Math.floor(Math.random() * shapeTypes.length)]; // Случайная форма
-                const dx = (Math.random() - 0.5) * 4; // Случайное отклонение по оси X
-                objects.push({ x, y: 0, size, shape, color: 'blue', dx });
+const maybeLevelUp = () => {
+    const nextLevel = Math.floor(score / 10) + 1;
+    if (nextLevel > level) {
+        level = nextLevel;
+        objectSpeed = currentObjectSpeed();
+        play.level();
+        restartSpawnTimer();
+        updateHud();
+    }
+};
+
+const updateObjects = (deltaTime) => {
+    const scale = deltaTime / 16;
+    for (let i = objects.length - 1; i >= 0; i--) {
+        const obj = objects[i];
+        obj.y += objectSpeed * scale;
+        obj.x += obj.dx * scale;
+        if (obj.x < 0) obj.x = 0;
+        if (obj.x + obj.size > canvas.width) obj.x = canvas.width - obj.size;
+
+        // Упал на пол — промах (не поймали)
+        if (obj.y + obj.size > canvas.height) {
+            objects.splice(i, 1);
+            missedObjects += 1;
+            play.hit();
+            updateHud();
+            if (missedObjects >= MAX_MISSES) {
+                endGame();
             }
-
-            // Цвет объектов в зависимости от уровня
-            function drawObject(obj) {
-                ctx.beginPath();
-                let objectColor;
-
-                // Динамические цвета для объектов
-                if (level < 5) {
-                    objectColor = 'blue';
-                } else if (level < 10) {
-                    objectColor = 'orange';
-                } else {
-                    objectColor = 'purple';
-                }
-
-                ctx.fillStyle = objectColor;
-
-                switch (obj.shape) {
-                    case 'square':
-                        ctx.fillRect(obj.x, obj.y, obj.size, obj.size);
-                        break;
-                    case 'circle':
-                        ctx.arc(obj.x + obj.size / 2, obj.y + obj.size / 2, obj.size / 2, 0, Math.PI * 2);
-                        ctx.fill();
-                        break;
-                    case 'triangle':
-                        ctx.moveTo(obj.x + obj.size / 2, obj.y); // Вершина
-                        ctx.lineTo(obj.x, obj.y + obj.size); // Левая сторона
-                        ctx.lineTo(obj.x + obj.size, obj.y + obj.size); // Правая сторона
-                        ctx.closePath();
-                        ctx.fill();
-                        break;
-                    case 'star': {
-                        const centerX = obj.x + obj.size / 2;
-                        const centerY = obj.y + obj.size / 2;
-                        const spikes = 5;
-                        const outerRadius = obj.size / 2;
-                        const innerRadius = obj.size / 4;
-                        let rot = (Math.PI / 2) * 3;
-                        let step = Math.PI / spikes;
-
-                        ctx.moveTo(centerX, centerY - outerRadius);
-                        for (let i = 0; i < spikes; i++) {
-                            ctx.lineTo(centerX + Math.cos(rot) * outerRadius, centerY + Math.sin(rot) * outerRadius);
-                            rot += step;
-                            ctx.lineTo(centerX + Math.cos(rot) * innerRadius, centerY + Math.sin(rot) * innerRadius);
-                            rot += step;
-                        }
-                        ctx.closePath();
-                        ctx.fill();
-                        break;
-                    }
-                    default:
-                        break;
-                }
-
-                ctx.fillStyle = 'black'; // Возвращаем цвет по умолчанию для других объектов
-            }
-
-            function updateObjects(deltaTime) {
-                objects.forEach(obj => {
-                    obj.y += objectSpeed * (deltaTime / 16); // Обновляем положение по оси Y
-            
-                    obj.x += obj.dx * (deltaTime / 16); // Обновляем положение по оси X с учетом отклонения
-            
-                    // Ограничиваем движение по оси X, чтобы объекты не выходили за границы экрана
-                    if (obj.x < 0) obj.x = 0;
-                    if (obj.x + obj.size > canvas.width) obj.x = canvas.width - obj.size;
-            
-                    if (obj.y + obj.size > canvas.height) {
-                        // Если объект достиг нижней границы экрана и не был задет игроком
-                        objects.splice(objects.indexOf(obj), 1);
-                        score++; // Увеличиваем очки за пропуск объекта
-                        document.getElementById('score').innerText = formatScore(score);
-                        if (score % 10 === 0) {
-                            level++;
-                            objectSpeed += 1; // Увеличиваем скорость падения объектов
-                        }
-                    }
-            
-                    if (
-                        obj.x < player.x + player.width &&
-                        obj.x + obj.size > player.x &&
-                        obj.y < player.y + player.height &&
-                        obj.y + obj.size > player.y
-                    ) {
-                        // Если объект касается игрока
-                        objects.splice(objects.indexOf(obj), 1);
-                        missedObjects++; // Увеличиваем счётчик пропусков при касании
-                        document.getElementById('missed').innerText = formatMissed(missedObjects);
-                        if (missedObjects >= 10) {
-                            endGame(); // Завершаем игру при достижении лимита пропусков
-                        }
-                    }
-                });
-            }
-
-            function drawObjects() {
-                objects.forEach(drawObject); // Добавлено: отрисовка каждого объекта
-            }
-
-            function clear() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-            }
-
-            function update(timestamp) {
-                    if (!lastTime) lastTime = timestamp;
-                    const deltaTime = timestamp - lastTime;
-                    lastTime = timestamp;
-
-                    if (!isPaused) {
-                        clear();
-                        drawPlayer();
-                        drawObjects();
-                        updateObjects(deltaTime);
-                        movePlayer(deltaTime);
-                    }
-                    requestAnimationFrame(update);
-                }
-
-            function movePlayer(deltaTime) {
-                    player.dx *= friction;
-                    player.x += player.dx * (deltaTime / 16); // Используем deltaTime для обновления позиции
-                    if (player.x < 0) player.x = 0;
-                    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
-                }
-
-            function keyDown(e) {
-                if (e.key === 'ArrowRight' || e.key === 'Right') {
-                    player.dx = player.speed;
-                } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
-                    player.dx = -player.speed;
-                }
-            }
-
-            function keyUp(e) {
-                if (e.key === 'ArrowRight' || e.key === 'Right' || e.key === 'ArrowLeft' || e.key === 'Left') {
-                    player.dx = 0;
-                }
-            }
-
-            document.addEventListener('keydown', keyDown);
-            document.addEventListener('keyup', keyUp);
-
-            // Touch controls
-            canvas.addEventListener('touchstart', handleTouchStart);
-            canvas.addEventListener('touchmove', handleTouchMove);
-
-            let touchX = null;
-
-            function handleTouchStart(e) {
-                touchX = e.touches[0].clientX;
-            }
-
-            function handleTouchMove(e) {
-                if (touchX !== null) {
-                    const newTouchX = e.touches[0].clientX;
-                    const dx = newTouchX - touchX;
-                    player.x += dx;
-                    touchX = newTouchX;
-                }
-            }
-
-            canvas.addEventListener('touchend', () => {
-                touchX = null;
-            });
-
-            const isVkMiniEmbed =
-                /(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search) ||
-                /vk_app_id=\d+/.test(window.location.search) ||
-                document.documentElement.classList.contains('vk-mini-embed') ||
-                document.body?.classList?.contains('vk-mini-embed') ||
-                (window.self !== window.top);
-
-            const LEADERBOARD_URL = 'https://serpmonn.ru/backend/games/redsquare2/leaderboard';
-            const ADD_SCORE_URL = 'https://serpmonn.ru/add-score';
-
-            function ensureLeaderboardOverlay() {
-                let overlay = document.getElementById('vkMiniLeaderboardOverlay');
-                if (overlay) return overlay;
-
-                overlay = document.createElement('div');
-                overlay.id = 'vkMiniLeaderboardOverlay';
-                overlay.className = 'vk-mini-lb-overlay';
-                overlay.hidden = true;
-                overlay.innerHTML = `
-                  <div class="vk-mini-lb-panel" role="dialog" aria-modal="true" aria-labelledby="vkMiniLbTitle">
-                    <h2 id="vkMiniLbTitle">Таблица лидеров</h2>
-                    <p class="vk-mini-lb-score" id="vkMiniLbYourScore" hidden></p>
-                    <ol class="vk-mini-lb-list" id="vkMiniLbList"></ol>
-                    <p class="vk-mini-lb-empty" id="vkMiniLbEmpty" hidden>Пока нет результатов</p>
-                    <div class="vk-mini-lb-actions">
-                      <button type="button" id="vkMiniLbClose">Закрыть</button>
-                      <button type="button" id="vkMiniLbRestart">Играть снова</button>
-                    </div>
-                  </div>
-                `;
-                document.body.appendChild(overlay);
-
-                overlay.addEventListener('click', (e) => {
-                    if (e.target === overlay) hideLeaderboardOverlay();
-                });
-                overlay.querySelector('#vkMiniLbClose').addEventListener('click', hideLeaderboardOverlay);
-                overlay.querySelector('#vkMiniLbRestart').addEventListener('click', () => {
-                    hideLeaderboardOverlay();
-                    restartGame();
-                });
-                return overlay;
-            }
-
-            function hideLeaderboardOverlay() {
-                const overlay = document.getElementById('vkMiniLeaderboardOverlay');
-                if (overlay) overlay.hidden = true;
-            }
-
-            function showLeaderboardOverlay({ yourScore = null } = {}) {
-                const overlay = ensureLeaderboardOverlay();
-                const list = overlay.querySelector('#vkMiniLbList');
-                const empty = overlay.querySelector('#vkMiniLbEmpty');
-                const yourEl = overlay.querySelector('#vkMiniLbYourScore');
-                list.replaceChildren();
-                empty.hidden = true;
-
-                if (yourScore != null) {
-                    yourEl.hidden = false;
-                    yourEl.textContent = `Ваш результат: ${yourScore}`;
-                } else {
-                    yourEl.hidden = true;
-                    yourEl.textContent = '';
-                }
-
-                overlay.hidden = false;
-                list.textContent = 'Загрузка…';
-
-                fetch(LEADERBOARD_URL)
-                    .then((r) => r.json())
-                    .then((data) => {
-                        list.replaceChildren();
-                        const rows = Array.isArray(data) ? data : [];
-                        if (!rows.length) {
-                            empty.hidden = false;
-                            return;
-                        }
-                        rows.forEach((entry, i) => {
-                            const li = document.createElement('li');
-                            li.textContent = `${i + 1}. ${entry.nickname ?? '—'}: ${entry.score ?? 0}`;
-                            list.appendChild(li);
-                        });
-                    })
-                    .catch(() => {
-                        list.replaceChildren();
-                        empty.hidden = false;
-                        empty.textContent = 'Не удалось загрузить таблицу';
-                    });
-            }
-
-            function updateLeaderboard() {
-                const leaderboardDiv = document.getElementById('leaderboard');
-                if (!leaderboardDiv) return;
-                fetch(LEADERBOARD_URL)
-                    .then(response => response.json())
-                    .then(data => {
-                        leaderboardDiv.textContent = '';
-                        const title = document.createElement('div');
-                        title.textContent = 'Leaderboard:';
-                        leaderboardDiv.appendChild(title);
-                        (Array.isArray(data) ? data : []).forEach((entry, i) => {
-                            const line = document.createElement('div');
-                            line.textContent = `${i + 1}. ${entry.nickname}: ${entry.score}`;
-                            leaderboardDiv.appendChild(line);
-                        });
-                    });
-            }
-
-		function endGame() {
-
-		    isPaused = true;                                                                            // Ставим игру на паузу, чтобы не было других действий в момент завершения игры
-            const finalScore = score;
-
-		    fetch(ADD_SCORE_URL, {						                        // Отправляем результат игрока на сервер
-		        method: 'POST',
-		        headers: {
-		            'Content-Type': 'application/json'
-		        },
-		        body: JSON.stringify({ nickname: player.nickname, score: finalScore, gameId: 'redsquare2' })
-		    }).then(() => {
-
-		        updateLeaderboard();
-
-                // В VK Mini App нельзя уходить на score_table — остаёмся в iframe
-                if (isVkMiniEmbed) {
-                    showLeaderboardOverlay({ yourScore: finalScore });
-                    return;
-                }
-
-		        const goToScoreTable = () => {
-		            window.location.href = 'score_table.html';
-		        };
-
-		        showGameFullscreenAd({ onClose: goToScoreTable });
-		        setTimeout(goToScoreTable, 10000);
-		    }).catch(() => {
-                if (isVkMiniEmbed) {
-                    showLeaderboardOverlay({ yourScore: finalScore });
-                }
-            });
-		}
-
-        function restartGame() {
-            score = 0;                                                                                      // Сброс игровых параметров
-            level = 1;
-            missedObjects = 0;
-            objectSpeed = 2;
-            objects.length = 0;                                                                             // Очистка массива объектов
-            player.x = canvas.width / 2 - 25;                                                               // Сброс позиции игрока
-            player.dx = 0;
-            isPaused = false;
-            document.getElementById('score').innerText = formatScore(score);
-            document.getElementById('missed').innerText = formatMissed(missedObjects);
-            document.getElementById('pauseBtn').innerText = t('pause');
-            if (gameInterval) clearInterval(gameInterval);                                                  // Перезапуск интервала создания объектов
-            gameInterval = setInterval(createObject, 1000);
+            continue;
         }
 
-           fetch('https://serpmonn.ru/proxy/bannedWords')
-            .then(response => response.json())
-            .then(data => {
+        const hit =
+            obj.x < player.x + player.width &&
+            obj.x + obj.size > player.x &&
+            obj.y < player.y + player.height &&
+            obj.y + obj.size > player.y;
 
-                function containsBannedWords(nickname) {                                                    // Функция для проверки никнейма на наличие запрещенных слов
-                    for (let item of data) {
-                        if (nickname.toLowerCase().includes(item.word)) {
-                            return true;
-                        }
-                    }
-                    return false;
-           	}
+        // Поймали фигуру — очко
+        if (hit) {
+            objects.splice(i, 1);
+            score += 1;
+            play.dodge();
+            updateHud();
+            maybeLevelUp();
+        }
+    }
+};
 
-           document.getElementById('nicknameForm').addEventListener('submit', function(e) {                 // Обработчик отправки формы никнейма
-                    e.preventDefault();
-                    const nickname = document.getElementById('nickname').value;
-                    if (containsBannedWords(nickname)) {
-                        alert(t('bannedNicknameAlert'));
-                    } else {
-                        player.nickname = nickname;
-                        document.getElementById('nicknameForm').style.display = 'none';
-                        setInterval(createObject, 1000);
-                        requestAnimationFrame(update);                                                      // Запуск функции обновления
-                    }
-                });
-           });
+const clear = () => {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+};
 
-           // Скрипт для закрытия инструкции
-        document.getElementById('understandBtn').addEventListener('click', function() {
-            document.getElementById('instructionOverlay').style.display = 'none';
-            // Показываем форму ввода имени после прочтения инструкции
-            document.getElementById('nicknameForm').style.display = 'block';
+const movePlayer = (deltaTime) => {
+    player.dx *= FRICTION;
+    if (Math.abs(player.dx) < 0.05) player.dx = 0;
+    player.x += player.dx * (deltaTime / 16);
+    if (player.x < 0) player.x = 0;
+    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+};
+
+const update = (timestamp) => {
+    if (!lastTime) lastTime = timestamp;
+    const deltaTime = Math.min(48, timestamp - lastTime);
+    lastTime = timestamp;
+
+    if (gameStarted && !isPaused) {
+        clear();
+        drawPlayer();
+        objects.forEach(drawObject);
+        updateObjects(deltaTime);
+        movePlayer(deltaTime);
+    } else if (gameStarted && isPaused) {
+        clear();
+        drawPlayer();
+        objects.forEach(drawObject);
+    }
+    requestAnimationFrame(update);
+};
+
+const keyDown = (e) => {
+    if (!gameStarted || isPaused) return;
+    if (e.key === 'ArrowRight' || e.key === 'Right') {
+        e.preventDefault();
+        player.dx = player.speed;
+    } else if (e.key === 'ArrowLeft' || e.key === 'Left') {
+        e.preventDefault();
+        player.dx = -player.speed;
+    } else if (e.key === ' ') {
+        e.preventDefault();
+        pauseBtn.click();
+    }
+};
+
+const keyUp = (e) => {
+    if (e.key === 'ArrowRight' || e.key === 'Right' || e.key === 'ArrowLeft' || e.key === 'Left') {
+        player.dx = 0;
+    }
+};
+
+document.addEventListener('keydown', keyDown);
+document.addEventListener('keyup', keyUp);
+
+canvas.addEventListener('touchstart', (e) => {
+    touchX = e.touches[0].clientX;
+}, { passive: true });
+
+canvas.addEventListener('touchmove', (e) => {
+    if (!gameStarted || isPaused || touchX === null) return;
+    e.preventDefault();
+    const newTouchX = e.touches[0].clientX;
+    player.x += newTouchX - touchX;
+    touchX = newTouchX;
+    if (player.x < 0) player.x = 0;
+    if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+}, { passive: false });
+
+canvas.addEventListener('touchend', () => { touchX = null; }, { passive: true });
+
+const restartSpawnTimer = () => {
+    if (gameInterval) clearInterval(gameInterval);
+    gameInterval = setInterval(createObject, spawnIntervalMs());
+};
+
+const ensureLeaderboardOverlay = () => {
+    let overlay = document.getElementById('vkMiniLeaderboardOverlay');
+    if (overlay) return overlay;
+
+    overlay = document.createElement('div');
+    overlay.id = 'vkMiniLeaderboardOverlay';
+    overlay.className = 'vk-mini-lb-overlay';
+    overlay.hidden = true;
+    overlay.innerHTML = `
+      <div class="vk-mini-lb-panel" role="dialog" aria-modal="true" aria-labelledby="vkMiniLbTitle">
+        <h2 id="vkMiniLbTitle">${t('lbTitle') || 'Таблица лидеров'}</h2>
+        <p class="vk-mini-lb-score" id="vkMiniLbYourScore" hidden></p>
+        <ol class="vk-mini-lb-list" id="vkMiniLbList"></ol>
+        <p class="vk-mini-lb-empty" id="vkMiniLbEmpty" hidden>${t('lbEmpty') || 'Пока нет результатов'}</p>
+        <div class="vk-mini-lb-actions">
+          <button type="button" id="vkMiniLbClose">${t('lbClose') || 'Закрыть'}</button>
+          <button type="button" id="vkMiniLbRestart">${t('lbRestart') || 'Играть снова'}</button>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+
+    overlay.addEventListener('click', (e) => {
+        if (e.target === overlay) hideLeaderboardOverlay();
+    });
+    overlay.querySelector('#vkMiniLbClose').addEventListener('click', hideLeaderboardOverlay);
+    overlay.querySelector('#vkMiniLbRestart').addEventListener('click', () => {
+        hideLeaderboardOverlay();
+        restartGame();
+    });
+    return overlay;
+};
+
+const hideLeaderboardOverlay = () => {
+    const overlay = document.getElementById('vkMiniLeaderboardOverlay');
+    if (overlay) overlay.hidden = true;
+};
+
+const showLeaderboardOverlay = ({ yourScore = null } = {}) => {
+    const overlay = ensureLeaderboardOverlay();
+    const list = overlay.querySelector('#vkMiniLbList');
+    const empty = overlay.querySelector('#vkMiniLbEmpty');
+    const yourEl = overlay.querySelector('#vkMiniLbYourScore');
+    const restartEl = overlay.querySelector('#vkMiniLbRestart');
+    list.replaceChildren();
+    empty.hidden = true;
+    empty.textContent = t('lbEmpty') || 'Пока нет результатов';
+
+    if (yourScore != null) {
+        yourEl.hidden = false;
+        yourEl.textContent = `${t('lbYourScore') || 'Ваш результат:'} ${yourScore}`;
+    } else {
+        yourEl.hidden = true;
+        yourEl.textContent = '';
+    }
+
+    // До старта игры «Играть снова» не показываем — только закрытие
+    if (restartEl) {
+        restartEl.hidden = !player.nickname;
+    }
+
+    overlay.hidden = false;
+    list.textContent = '…';
+
+    fetch(LEADERBOARD_URL)
+        .then((r) => r.json())
+        .then((data) => {
+            list.replaceChildren();
+            const rows = Array.isArray(data) ? data : [];
+            if (!rows.length) {
+                empty.hidden = false;
+                return;
+            }
+            rows.forEach((entry, i) => {
+                const li = document.createElement('li');
+                li.textContent = `${i + 1}. ${entry.nickname ?? '—'}: ${entry.score ?? 0}`;
+                list.appendChild(li);
+            });
+        })
+        .catch(() => {
+            list.replaceChildren();
+            empty.hidden = false;
+            empty.textContent = t('lbLoadFail') || 'Не удалось загрузить таблицу';
         });
-        
-        // Скрываем форму ввода имени до прочтения инструкции
-        document.getElementById('nicknameForm').style.display = 'none';
+};
 
-	   document.addEventListener('DOMContentLoaded', () => {
-	        generateCombinedBackground()
-	            .catch(error => {
-	                console.error('Задача завершена с ошибкой', error);
-	            });
-	    });
+const showResultModal = (finalScore, onOk) => {
+    const existing = document.querySelector('.rs2-modal');
+    if (existing) existing.remove();
+    const modal = document.createElement('div');
+    modal.className = 'rs2-modal';
+    modal.innerHTML = `
+      <div class="rs2-modal-content">
+        <h2>${t('gameOverTitle') || 'Игра окончена'}</h2>
+        <p>${t('modalYourScore') || 'Твои очки:'} ${finalScore}</p>
+        <button type="button" id="rs2OkBtn">${t('modalOk') || 'Окей'}</button>
+      </div>
+    `;
+    document.body.appendChild(modal);
+    modal.querySelector('#rs2OkBtn').addEventListener('click', () => {
+        modal.remove();
+        onOk();
+    });
+};
 
-            document.getElementById('leaderboardBtn')?.addEventListener('click', function() {
-                if (isVkMiniEmbed) {
-                    showLeaderboardOverlay();
-                    return;
-                }
-                const url = window.i18n?.scoreTableUrl || '/frontend/games/redsquare2/score_table.html';
-                window.open(url, '_blank');
-            });
+function endGame() {
+    isPaused = true;
+    gameStarted = false;
+    pauseOverlay.hidden = true;
+    if (gameInterval) clearInterval(gameInterval);
+    gameInterval = null;
+    play.lose();
+    const finalScore = score;
+    pauseBtn.hidden = true;
 
-            document.getElementById('homeBtn')?.addEventListener('click', function() {
-                const inMini =
-                    isVkMiniEmbed ||
-                    Boolean(window.__SPN_VK_MINI__) ||
-                    window.self !== window.top;
-                if (inMini) {
-                    try {
-                        window.parent.postMessage({ type: 'spn-vk-mini-close-viewer' }, window.location.origin);
-                    } catch (_) {}
-                    return;
-                }
-                window.location.href = 'https://serpmonn.ru';
-            });
+    const afterSubmit = () => {
+        showLeaderboardOverlay({ yourScore: finalScore });
+        if (!isVkMiniEmbed) {
+            // Реклама после просмотра результата — без ухода со страницы
+            setTimeout(() => showGameFullscreenAd(), 400);
+        }
+    };
 
-            document.getElementById('pauseBtn')?.addEventListener('click', function() {
-                isPaused = !isPaused;
-                document.getElementById('pauseBtn').innerText = isPaused ? t('resume') : t('pause');
-            });
+    fetch(ADD_SCORE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nickname: player.nickname, score: finalScore, gameId: 'redsquare2' }),
+    })
+        .then(() => afterSubmit())
+        .catch(() => afterSubmit());
+}
 
-            document.getElementById('restartBtn')?.addEventListener('click', function() {
-                hideLeaderboardOverlay();
-                restartGame();
-            });
+function restartGame() {
+    if (!player.nickname) {
+        nicknameForm.hidden = false;
+        return;
+    }
+    score = 0;
+    level = 1;
+    missedObjects = 0;
+    objectSpeed = BASE_OBJECT_SPEED;
+    objects.length = 0;
+    resizeCanvas();
+    player.x = canvas.width / 2 - player.width / 2;
+    player.dx = 0;
+    isPaused = false;
+    gameStarted = true;
+    invincibleUntil = 0;
+    pauseOverlay.hidden = true;
+    pauseBtn.hidden = false;
+    restartBtn.hidden = false;
+    pauseBtn.textContent = t('pause');
+    updateHud();
+    restartSpawnTimer();
+    ensureAudio();
+    if (!loopRunning) {
+        loopRunning = true;
+        lastTime = 0;
+        requestAnimationFrame(update);
+    }
+}
 
-            window.addEventListener('pageshow', () => {
-                requestAnimationFrame(() => {
-                    document.body.style.paddingBottom = 'env(safe-area-inset-bottom)';                      // Принудительное обновление макета
-                    document.body.offsetHeight;                                                             // Триггер обновления макета
-                });
-            });
+const startGameWithNickname = (nickname) => {
+    player.nickname = nickname;
+    nicknameForm.hidden = true;
+    updateHud();
+    restartGame();
+};
 
+fetch(BANNED_WORDS_URL)
+    .then((response) => response.json())
+    .then((data) => {
+        const containsBannedWords = (nickname) => {
+            for (const item of data) {
+                if (nickname.toLowerCase().includes(item.word)) return true;
+            }
+            return false;
+        };
+
+        nicknameForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nickname = document.getElementById('nickname').value.trim();
+            if (!nickname) return;
+            if (containsBannedWords(nickname)) {
+                alert(t('bannedNicknameAlert'));
+                return;
+            }
+            startGameWithNickname(nickname);
+        });
+    })
+    .catch(() => {
+        nicknameForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const nickname = document.getElementById('nickname').value.trim();
+            if (!nickname) return;
+            startGameWithNickname(nickname);
+        });
+    });
+
+const instructionOverlay = document.getElementById('instructionOverlay');
+const understandBtn = document.getElementById('understandBtn');
+
+const dismissInstruction = (e) => {
+    if (typeof window.__rs2DismissInstruction === 'function') {
+        window.__rs2DismissInstruction(e);
+    } else if (instructionOverlay && !instructionOverlay.classList.contains('is-hidden')) {
+        instructionOverlay.classList.add('is-hidden');
+        instructionOverlay.hidden = true;
+        instructionOverlay.style.cssText = 'display:none!important;pointer-events:none!important';
+        instructionOverlay.setAttribute('aria-hidden', 'true');
+        nicknameForm.hidden = false;
+    }
+    requestAnimationFrame(() => {
+        resizeCanvas();
+        try {
+            window.dispatchEvent(new Event('resize'));
+        } catch (_) {}
+    });
+};
+
+const lockVkArcadeLayout = () => {
+    if (!isVkMiniEmbed) return;
+    const html = document.documentElement;
+    const body = document.body;
+    html.classList.add('vk-mini-embed');
+    body.classList.add('vk-mini-embed');
+    window.__SPN_VK_MINI__ = true;
+    ['height', 'min-height', 'max-height'].forEach((prop) => {
+        html.style.setProperty(prop, '100%', 'important');
+        body.style.setProperty(prop, '100%', 'important');
+    });
+    html.style.setProperty('overflow', 'hidden', 'important');
+    body.style.setProperty('overflow', 'hidden', 'important');
+    body.style.setProperty('position', 'relative', 'important');
+    body.style.setProperty('touch-action', 'manipulation', 'important');
+};
+
+lockVkArcadeLayout();
+[50, 200, 600, 1200].forEach((ms) => setTimeout(lockVkArcadeLayout, ms));
+
+if (understandBtn) {
+    understandBtn.addEventListener('click', dismissInstruction, true);
+    understandBtn.addEventListener('touchend', dismissInstruction, { capture: true, passive: false });
+}
+if (instructionOverlay) {
+    instructionOverlay.addEventListener('click', (e) => {
+        if (e.target === instructionOverlay) dismissInstruction(e);
+    }, true);
+}
+
+leaderboardBtn.addEventListener('click', () => {
+    showLeaderboardOverlay();
+});
+
+homeBtn.addEventListener('click', () => {
+    if (isVkMiniEmbed) {
+        try {
+            window.parent.postMessage({ type: 'spn-vk-mini-close-viewer' }, window.location.origin);
+        } catch (_) {}
+        return;
+    }
+    window.location.href = '/frontend/games/games.html';
+});
+
+pauseBtn.addEventListener('click', () => {
+    if (!gameStarted) return;
+    isPaused = !isPaused;
+    pauseBtn.textContent = isPaused ? t('resume') : t('pause');
+    pauseOverlay.hidden = !isPaused;
+});
+
+restartBtn.addEventListener('click', () => {
+    hideLeaderboardOverlay();
+    restartGame();
+});
+
+soundBtn.addEventListener('click', () => {
+    soundEnabled = !soundEnabled;
+    localStorage.setItem('rs2Sound', soundEnabled ? '1' : '0');
+    setSoundUi();
+    if (soundEnabled) ensureAudio();
+});
+
+window.addEventListener('resize', () => {
+    resizeCanvas();
+    if (gameStarted) {
+        clear();
+        drawPlayer();
+        objects.forEach(drawObject);
+    }
+});
+
+if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(() => resizeCanvas()).observe(stage);
+}
+
+setSoundUi();
+resizeCanvas();
+updateHud();
+nicknameForm.hidden = true;
+pauseBtn.hidden = true;
+restartBtn.hidden = true;

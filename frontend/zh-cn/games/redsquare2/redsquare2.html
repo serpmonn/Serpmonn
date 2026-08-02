@@ -19,61 +19,147 @@
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
     <link rel="canonical" href="https://serpmonn.ru/frontend/zh-cn/games/redsquare2/redsquare2.html"/>
     <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css?v=17">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script>
     window.i18n = {
       scorePrefix: "分数：",
-      missedPrefix: "失误：",
+      missedPrefix: "Misses: ",
       pause: "暂停",
       resume: "继续",
       bannedNicknameAlert: "昵称包含禁用词，请换一个。",
-      scoreTableUrl: "/frontend/zh-cn/games/redsquare2/score_table.html"
+      scoreTableUrl: "/frontend/zh-cn/games/redsquare2/score_table.html",
+      levelLabel: "关卡",
+      scoreLabel: "分数",
+      missesLabel: "Misses",
+      soundOn: "声音",
+      soundOff: "静音",
+      pauseOverlay: "暂停",
+      gameOverTitle: "游戏结束",
+      modalYourScore: "你的分数：",
+      modalOk: "OK",
+      home: "主页",
+      lbTitle: "排行榜",
+      lbYourScore: "你的成绩：",
+      lbEmpty: "暂无成绩",
+      lbClose: "关闭",
+      lbRestart: "再玩",
+      lbLoadFail: "排行榜加载失败"
     };
     </script>
-    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=3" defer></script>
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=16" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js?v=4" defer></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <script>
+    /* Закрытие инструкции без module/defer — в VK WebView модуль может опоздать */
+    window.__rs2DismissInstruction = function (e) {
+      if (e) {
+        try { e.preventDefault(); } catch (_) {}
+        try { e.stopPropagation(); } catch (_) {}
+      }
+      var overlay = document.getElementById('instructionOverlay');
+      if (!overlay || overlay.classList.contains('is-hidden')) return false;
+      overlay.classList.add('is-hidden');
+      overlay.hidden = true;
+      overlay.style.cssText = 'display:none!important;pointer-events:none!important';
+      overlay.setAttribute('aria-hidden', 'true');
+      var form = document.getElementById('nicknameForm');
+      if (form) form.hidden = false;
+      try { window.dispatchEvent(new Event('resize')); } catch (_) {}
+      return false;
+    };
+    </script>
 </head>
-<body>
+<body class="rs2-page">
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
             <h2 class="instruction-title">如何玩坠落的蓝色方块？</h2>
             <ul class="instruction-list">
                 <li><strong>操作：</strong> 用方向键或触屏左右移动红色方块</li>
-                <li><strong>目标：</strong> 躲避坠落的物体</li>
-                <li><strong>得分：</strong> 每躲过一个物体得 1 分</li>
-                <li><strong>失误：</strong> 物体碰到你算失误</li>
-                <li><strong>结束：</strong> 碰撞 10 次后游戏结束</li>
+                <li><strong>目标：</strong> Catch falling shapes with the platform at the bottom</li>
+                <li><strong>得分：</strong> You get 1 point for each shape you catch</li>
+                <li><strong>失误：</strong> If a shape hits the floor, it counts as a miss</li>
+                <li><strong>结束：</strong> The game ends after 10 misses</li>
                 <li><strong>排行榜：</strong> 游戏结束后可查看排行榜</li>
                 <li><strong>暂停：</strong> 使用暂停按钮临时停止</li>
             </ul>
-            <button class="instruction-button" id="understandBtn">知道了，开始！</button>
+            <button type="button" class="instruction-button" id="understandBtn"
+                onclick="return window.__rs2DismissInstruction(event)"
+                ontouchend="return window.__rs2DismissInstruction(event)">知道了，开始！</button>
+        </div>
+    </div>
+    <script>
+    (function () {
+      var overlay = document.getElementById('instructionOverlay');
+      var btn = document.getElementById('understandBtn');
+      if (btn) {
+        btn.addEventListener('click', window.__rs2DismissInstruction, true);
+        btn.addEventListener('touchend', window.__rs2DismissInstruction, { capture: true, passive: false });
+      }
+      if (overlay) {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) window.__rs2DismissInstruction(e);
+        }, true);
+      }
+    })();
+    </script>
+
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-1897960"
+          data-ad-slot="1897960"></ins>
+    </div>
+
+    <div class="game-shell">
+        <header class="game-hud" aria-live="polite">
+            <div class="hud-block">
+                <span class="hud-label">分数</span>
+                <span class="hud-value" id="scoreValue">0</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">关卡</span>
+                <span class="hud-value" id="levelValue">1</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Misses</span>
+                <span class="hud-value" id="missesValue">0/10</span>
+            </div>
+            <div class="hud-block hud-nick">
+                <span class="hud-label">输入你的名字</span>
+                <span class="hud-value" id="nickValue">—</span>
+            </div>
+        </header>
+
+        <div class="game-stage" id="gameStage">
+            <canvas id="gameCanvas"></canvas>
+            <div class="pause-overlay" id="pauseOverlay" hidden>
+                <span>暂停</span>
+            </div>
+        </div>
+
+        <div class="game-dock">
+            <form id="nicknameForm" class="nickname-panel" hidden>
+                <input type="text" id="nickname" maxlength="24" placeholder="输入你的名字" required autocomplete="nickname">
+                <button type="submit" class="action-btn action-start">开始游戏</button>
+            </form>
+            <div class="actions" id="gameActions">
+                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>暂停</button>
+                <button type="button" class="action-btn action-restart" id="restartBtn" hidden>重来</button>
+                <button type="button" class="action-btn action-lb" id="leaderboardBtn">排行榜</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">声音</button>
+                <button type="button" class="action-btn action-home" id="homeBtn">主页</button>
+            </div>
         </div>
     </div>
 
-    <div id="score">分数：0</div>
-    <div id="missed">失误：0</div>
-    <div class="button-container">
-        <button id="leaderboardBtn">排行榜</button>
-        <button id="pauseBtn">暂停</button>
-        <button id="restartBtn">重来</button>
-    </div>
-    <form id="nicknameForm">
-        <input type="text" id="nickname" placeholder="输入你的名字" required>
-        <button type="submit">开始游戏</button>
-    </form>
-    <canvas id="gameCanvas"></canvas>
+    <div id="score" hidden>分数：0</div>
+    <div id="missed" hidden>Misses: 0</div>
 
-    <div class="ad-container" style="margin: 10px 0; text-align: center;">
-        <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
-             data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
-    </div>
-
-    <div class="ad-container" style="margin: 20px 0; text-align: center;">
-        <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
-             data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
-    </div>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
   

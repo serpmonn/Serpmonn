@@ -1,69 +1,89 @@
-/* Стили для инструкции */
 .instruction-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
+    /* absolute над .rs2-page: в VK iframe fixed часто без hit-target на 1-м кадре */
+    position: absolute;
+    inset: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.9);
+    background: rgba(8, 12, 18, 0.82);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    color: white;
-    font-family: Arial, sans-serif;
+    color: #f3f0ea;
+    font-family: "Outfit", "Segoe UI", sans-serif;
     text-align: center;
+    padding: 1rem;
+    box-sizing: border-box;
+    pointer-events: auto;
+    touch-action: manipulation;
+}
+
+.instruction-overlay[hidden],
+.instruction-overlay.is-hidden {
+    display: none !important;
+    pointer-events: none !important;
 }
 
 .instruction-content {
-    max-width: 90%;
+    max-width: min(460px, 92vw);
     max-height: 90vh;
     overflow-y: auto;
-    padding: 25px;
-    background-color: #222;
-    border-radius: 15px;
-    box-shadow: 0 0 25px rgba(0, 0, 0, 0.7);
+    -webkit-overflow-scrolling: touch;
+    padding: 1.35rem 1.25rem;
+    background: #1e2836;
+    border: 1px solid #35485f;
+    border-radius: 12px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+    color: #f3f0ea;
+    pointer-events: auto;
+    touch-action: pan-y manipulation;
 }
 
 .instruction-title {
-    color: #4CAF50;
-    margin-bottom: 20px;
-    font-size: 28px;
-}
-
-.instruction-button {
-    margin-top: 25px;
-    padding: 12px 30px;
-    background-color: #4CAF50;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 20px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.instruction-button:hover {
-    background-color: #45a049;
-    transform: scale(1.05);
+    margin: 0 0 0.75rem;
+    color: #f3f0ea;
+    font-size: clamp(1.15rem, 4vw, 1.45rem);
+    font-weight: 700;
 }
 
 .instruction-list {
     text-align: left;
-    margin: 25px 0;
-    line-height: 1.7;
-    font-size: 18px;
+    margin: 0.5rem 0 0.25rem;
+    padding-left: 1.1rem;
+    line-height: 1.55;
+    color: #c5d0de;
+    font-size: 0.95rem;
 }
 
 .instruction-list li {
-    margin-bottom: 15px;
+    margin: 0.4rem 0;
 }
 
-.controls-image {
-    max-width: 100%;
-    height: auto;
-    margin: 20px 0;
-    border-radius: 10px;
-    border: 2px solid #4CAF50;
+.instruction-button {
+    margin-top: 1rem;
+    padding: 0.7rem 1.25rem;
+    min-height: 44px;
+    background: #f47059;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
+    cursor: pointer;
+    pointer-events: auto;
+    touch-action: manipulation;
+    position: relative;
+    z-index: 2;
+}
+
+.instruction-button:hover {
+    background: #ff8f78;
+}
+
+[dir="rtl"] .instruction-list {
+    text-align: right;
+    padding-left: 0;
+    padding-right: 1.1rem;
 }

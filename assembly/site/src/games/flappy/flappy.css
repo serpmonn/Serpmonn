@@ -98,20 +98,30 @@ canvas {
     margin-top: 10px;        /* Отступ сверху */
 }
 
-/* Базовые стили кнопок */
-.btn { 
-    background: #162030;     /* Темный фон кнопки */
-    border: 1px solid #24344b; /* Граница кнопки */
-    color: #eee;             /* Цвет текста */
-    border-radius: 8px;      /* Скругленные углы */
-    padding: 8px 10px;       /* Внутренние отступы */
-    cursor: pointer;         /* Курсор-указатель */
+/* Базовые стили кнопок (явные :hover/:focus — против залипания button:hover из base.css) */
+.btn,
+.btn:hover,
+.btn:focus,
+.btn:focus-visible,
+.btn:active {
+    background: #162030;
+    border: 1px solid #24344b;
+    color: #eee;
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* Стили основной кнопки */
-.btn.primary { 
-    background: linear-gradient(90deg, #dc3545, #c82333); /* Градиентный фон */
-    border: none;            /* Убираем границу */
+.btn.primary,
+.btn.primary:hover,
+.btn.primary:focus,
+.btn.primary:focus-visible,
+.btn.primary:active {
+    background: linear-gradient(90deg, #dc3545, #c82333);
+    border: none;
+    color: #fff;
 }
 
 /* Стили подсказки */

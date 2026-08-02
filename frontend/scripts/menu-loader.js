@@ -92,6 +92,27 @@ const ANDROID_EMBED_HIDE_CSS = `
   html.android-app, body.android-app {
     overscroll-behavior-x: none !important;
   }
+  /* RuStore: режим «Выдача» в приложении ещё не подключён */
+  html.android-app .plan-quota--web,
+  body.android-app .plan-quota--web,
+  html.android-app #webQuotaCounter,
+  body.android-app #webQuotaCounter,
+  html.android-app #webQuotaBarFill,
+  body.android-app #webQuotaBarFill,
+  html.android-app #webQuotaHint,
+  body.android-app #webQuotaHint {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+  }
+  html.android-app .plan-quotas--dashboard,
+  body.android-app .plan-quotas--dashboard {
+    grid-template-columns: 1fr !important;
+  }
 `;
 
 function applyAndroidAppEmbed() {
@@ -335,10 +356,72 @@ fetch(primaryMenuPath)
             aspect-ratio: auto !important;
             touch-action: pan-y manipulation !important;
           }
+          /* Arcade-shell (redsquare/redsquare2): не ломать 100% iframe —
+             иначе fixed-инструкция на первом открытии без hit-target. */
+          html.vk-mini-embed:has(body.rs-page),
+          html.vk-mini-embed:has(body.rs2-page),
+          html.vk-mini-embed:has(.game-shell) {
+            height: 100% !important;
+            min-height: 100% !important;
+            max-height: 100% !important;
+            overflow: hidden !important;
+            touch-action: manipulation !important;
+          }
+          body.vk-mini-embed.rs-page,
+          body.vk-mini-embed.rs2-page,
+          body.vk-mini-embed:has(.game-shell) {
+            height: 100% !important;
+            min-height: 100% !important;
+            max-height: 100% !important;
+            overflow: hidden !important;
+            padding: 0.35rem 0.5rem env(safe-area-inset-bottom, 0) !important;
+            touch-action: manipulation !important;
+            box-sizing: border-box !important;
+            position: relative !important;
+          }
+          body.vk-mini-embed .game-shell {
+            width: 100% !important;
+            max-width: 100% !important;
+            flex: 1 1 auto !important;
+            min-height: 0 !important;
+            height: auto !important;
+            overflow: hidden !important;
+            padding: 0 !important;
+          }
+          body.vk-mini-embed .instruction-overlay {
+            position: absolute !important;
+            inset: 0 !important;
+            width: 100% !important;
+            height: 100% !important;
+            z-index: 2147483000 !important;
+            pointer-events: auto !important;
+            touch-action: manipulation !important;
+          }
+          body.vk-mini-embed .instruction-overlay[hidden],
+          body.vk-mini-embed .instruction-overlay.is-hidden {
+            display: none !important;
+            pointer-events: none !important;
+          }
+          body.vk-mini-embed .instruction-button,
+          body.vk-mini-embed #understandBtn {
+            pointer-events: auto !important;
+            touch-action: manipulation !important;
+            min-height: 44px !important;
+            position: relative !important;
+            z-index: 2 !important;
+          }
+          body.vk-mini-embed.rs2-page #gameCanvas,
+          body.vk-mini-embed .game-stage canvas {
+            max-height: none !important;
+            height: 100% !important;
+            width: 100% !important;
+            aspect-ratio: auto !important;
+            touch-action: none !important;
+          }
         `;
         document.head.appendChild(style);
         if (
-          document.querySelector('.game-board, .game-wrapper') &&
+          document.querySelector('.game-board, .game-wrapper, .game-shell, .rs-page, .rs2-page') &&
           !document.documentElement.dataset.vkMiniCanvasTouch
         ) {
           document.documentElement.dataset.vkMiniCanvasTouch = '1';

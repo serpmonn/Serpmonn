@@ -35,6 +35,7 @@ const corsOptions = {
   origin: [
     'https://serpmonn.ru',
     'https://www.serpmonn.ru',
+    'https://dev.serpmonn.ru',
     `http://localhost:${VITE_PORT}`,
     `http://127.0.0.1:${VITE_PORT}`,
     `http://localhost:${LEADERBOARD_PORT}`,

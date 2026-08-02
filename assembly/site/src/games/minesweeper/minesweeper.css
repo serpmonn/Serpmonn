@@ -138,20 +138,33 @@ header h1 {
     margin-top: 10px;        /* Отступ сверху */
 }
 
-/* Базовые стили кнопок */
-.btn { 
-    background: #16202a;     /* Темный фон кнопки */
-    border: 1px solid #243241; /* Граница кнопки */
-    color: #eee;             /* Цвет текста */
-    border-radius: 8px;      /* Скругленные углы */
-    padding: 8px 10px;       /* Внутренние отступы */
-    cursor: pointer;         /* Курсор-указатель */
+/* Базовые стили кнопок.
+   Явные :hover/:focus/:active — иначе глобальный button:hover (#f0f0f0)
+   из base.css «залипает» после тапа в Android WebView. */
+.btn,
+.btn:hover,
+.btn:focus,
+.btn:focus-visible,
+.btn:active {
+    background: #16202a;
+    border: 1px solid #243241;
+    color: #eee;
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 /* Стили основной кнопки */
-.btn.primary { 
-    background: linear-gradient(90deg, #dc3545, #c82333); /* Градиентный фон */
-    border: none;            /* Убираем границу */
+.btn.primary,
+.btn.primary:hover,
+.btn.primary:focus,
+.btn.primary:focus-visible,
+.btn.primary:active {
+    background: linear-gradient(90deg, #dc3545, #c82333);
+    border: none;
+    color: #fff;
 }
 
 /* Стили подсказки */

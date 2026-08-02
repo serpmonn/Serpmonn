@@ -22,6 +22,8 @@ const viewerBack = document.getElementById('viewerBack');
 let catalog = { tools: [], gamesOwn: [], gamesPartner: [], links: {} };
 let newsLoaded = false;
 let catalogLoaded = false;
+let viewerIsGame = false;
+let viewerGameTrapActive = false;
 
 function withAppParam(url) {
   try {
@@ -33,6 +35,15 @@ function withAppParam(url) {
     return u.href;
   } catch {
     return url;
+  }
+}
+
+function isGameUrl(href) {
+  try {
+    const u = new URL(href, location.origin);
+    return /\/frontend\/(?:[a-z0-9-]+\/)?games\//i.test(u.pathname);
+  } catch {
+    return /\/games\//i.test(String(href || ''));
   }
 }
 
@@ -56,6 +67,14 @@ const VIEWER_HIDE_MENU_CSS = `
   }
   html, body {
     overscroll-behavior-x: none !important;
+  }
+  /* Инструменты: доп. воздух внизу скролла (основной запас — padding у .spn-viewer) */
+  body.android-app.spn-tool,
+  body.android-app.fuel-calculator-page,
+  body.android-app.depreciation-calculator,
+  body.android-app.product-calculator {
+    padding-bottom: 28px !important;
+    box-sizing: border-box !important;
   }
   /* Все 4 вкладки профиля в одну строку без горизонтального скролла */
   .profile-tabs {
@@ -85,11 +104,26 @@ const VIEWER_HIDE_MENU_CSS = `
   #aiAccessBlock,
   #openAiService,
   a[href*="/tariffs/"],
-  a[href*="ai.serpmonn.ru"],
-  .plan-quota--web {
+  a[href*="ai.serpmonn.ru"] {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
+  }
+  /* Режим «Выдача» в RuStore-приложении ещё не подключён — шкалу квоты скрываем */
+  .plan-quota--web,
+  #webQuotaCounter,
+  #webQuotaBarFill,
+  #webQuotaHint {
+    display: none !important;
+    visibility: hidden !important;
+    height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+  }
+  .plan-quotas--dashboard {
+    grid-template-columns: 1fr !important;
   }
 
   /* Выход — в шапке приложения, не внизу вкладки */
@@ -113,6 +147,128 @@ const VIEWER_HIDE_MENU_CSS = `
     background: #f7f7f8 !important;
     /* Android WebView: жёлто-оранжевые квадраты при тапе */
     -webkit-tap-highlight-color: transparent !important;
+  }
+  /* Игры (кроме 2048): тёмный фон — иначе светлый текст на #f7f7f8 нечитаем */
+  html.android-app:has(.wrap),
+  html.android-app:has(.game-shell),
+  html.android-app:has(.typing-wrap),
+  html.android-app:has(.rat-game),
+  html.android-app:has(body.rs-page),
+  html.android-app:has(body.rs2-page),
+  html.android-app:has(body.rat-page),
+  body.android-app.rs-page,
+  body.android-app.rs2-page,
+  body.android-app.rat-page,
+  body.android-app:has(.wrap),
+  body.android-app:has(.game-shell),
+  body.android-app:has(.typing-wrap),
+  body.android-app:has(.rat-game) {
+    background: #0e1116 !important;
+    color: #e8eaed !important;
+  }
+  html.android-app:has(.wrap) h1,
+  html.android-app:has(.game-shell) h1,
+  html.android-app:has(.typing-wrap) h1,
+  html.android-app:has(.rat-game) h1,
+  body.android-app.rs-page h1,
+  body.android-app.rs2-page h1,
+  body.android-app.rat-page h1,
+  body.android-app:has(.wrap) h1,
+  body.android-app:has(.game-shell) h1 {
+    color: #f3f0ea !important;
+  }
+  /* 2048 — светлая тема как на сайте */
+  html.android-app:has(.game-board),
+  body.android-app:has(.game-board) {
+    background: #faf8ef !important;
+    color: #3d3a36 !important;
+  }
+  html.android-app:has(.game-board) h1,
+  body.android-app:has(.game-board) h1,
+  body.android-app:has(.game-board) header h1 {
+    color: #3d3a36 !important;
+  }
+  /* Тёмные игры: не давать button:hover (#f0f0f0) залипать после тапа */
+  html.android-app:has(.wrap) .btn,
+  html.android-app:has(.wrap) .btn:hover,
+  html.android-app:has(.wrap) .btn:focus,
+  html.android-app:has(.wrap) .btn:active,
+  html.android-app:has(.wrap) button.btn,
+  html.android-app:has(.wrap) button.btn:hover,
+  html.android-app:has(.wrap) button.btn:focus,
+  html.android-app:has(.wrap) button.btn:active,
+  body.android-app:has(.wrap) .btn,
+  body.android-app:has(.wrap) .btn:hover,
+  body.android-app:has(.wrap) .btn:focus,
+  body.android-app:has(.wrap) .btn:active {
+    background: #16202a !important;
+    border: 1px solid #243241 !important;
+    color: #eee !important;
+    outline: none !important;
+    -webkit-tap-highlight-color: transparent !important;
+  }
+  html.android-app:has(.wrap) .btn.primary,
+  html.android-app:has(.wrap) .btn.primary:hover,
+  html.android-app:has(.wrap) .btn.primary:focus,
+  html.android-app:has(.wrap) .btn.primary:active,
+  html.android-app:has(.wrap) .primary.btn,
+  html.android-app:has(.wrap) button.btn.primary,
+  html.android-app:has(.wrap) button.primary,
+  body.android-app:has(.wrap) .btn.primary,
+  body.android-app:has(.wrap) .btn.primary:hover,
+  body.android-app:has(.wrap) .btn.primary:focus,
+  body.android-app:has(.wrap) .btn.primary:active,
+  body.android-app:has(.wrap) button.primary {
+    background: linear-gradient(90deg, #dc3545, #c82333) !important;
+    border: none !important;
+    color: #fff !important;
+  }
+  /* redsquare / redsquare2 action buttons */
+  html.android-app:has(.game-shell) .action-start,
+  html.android-app:has(.game-shell) .action-start:hover,
+  html.android-app:has(.game-shell) .action-start:focus,
+  html.android-app:has(.game-shell) .action-start:active,
+  body.android-app:has(.game-shell) .action-start,
+  body.android-app:has(.game-shell) .action-start:hover,
+  body.android-app:has(.game-shell) .action-start:focus,
+  body.android-app:has(.game-shell) .action-start:active {
+    background: #f47059 !important;
+    border-color: #ff9b88 !important;
+    color: #fff !important;
+  }
+  html.android-app:has(.game-shell) .action-restart,
+  html.android-app:has(.game-shell) .action-restart:hover,
+  html.android-app:has(.game-shell) .action-restart:focus,
+  html.android-app:has(.game-shell) .action-restart:active,
+  body.android-app:has(.game-shell) .action-restart,
+  body.android-app:has(.game-shell) .action-restart:hover,
+  body.android-app:has(.game-shell) .action-restart:focus,
+  body.android-app:has(.game-shell) .action-restart:active {
+    background: #3dba7a !important;
+    color: #fff !important;
+  }
+  html.android-app:has(.game-shell) .action-pause,
+  html.android-app:has(.game-shell) .action-pause:hover,
+  html.android-app:has(.game-shell) .action-pause:focus,
+  html.android-app:has(.game-shell) .action-pause:active,
+  body.android-app:has(.game-shell) .action-pause,
+  body.android-app:has(.game-shell) .action-pause:hover,
+  body.android-app:has(.game-shell) .action-pause:focus,
+  body.android-app:has(.game-shell) .action-pause:active {
+    background: #e0a24a !important;
+    color: #1a1408 !important;
+  }
+  html.android-app:has(.game-shell) .action-sound,
+  html.android-app:has(.game-shell) .action-sound:hover,
+  html.android-app:has(.game-shell) .action-home,
+  html.android-app:has(.game-shell) .action-home:hover,
+  body.android-app:has(.game-shell) .action-sound,
+  body.android-app:has(.game-shell) .action-sound:hover,
+  body.android-app:has(.game-shell) .action-home,
+  body.android-app:has(.game-shell) .action-home:hover {
+    background: transparent !important;
+    color: #f3f0ea !important;
+    border-color: #35485f !important;
   }
   /* Брендовый canvas (#f47059) в оболочке выглядит как оранжевые пятна/квадраты */
   #serpmonn-bg-canvas {
@@ -274,8 +430,42 @@ const ANDROID_BOOT_SCRIPT =
   `return A.apply(this,arguments);};}catch(e){}` +
   `})();</script>`;
 
+/** В играх: свайп/history.back внутри не должен закрывать viewer */
+const ANDROID_GAME_LOCK_SCRIPT =
+  `<script>(function(){` +
+  `window.__SPN_ANDROID_APP__=true;` +
+  `window.__SPN_ANDROID_GAME__=true;` +
+  `document.documentElement.classList.add("android-app");` +
+  `try{` +
+  `var HP=History.prototype;` +
+  `HP.back=function(){};` +
+  `var _go=HP.go;` +
+  `HP.go=function(n){if(typeof n==="number"&&n<0)return;return _go.apply(this,arguments);};` +
+  `}catch(e){}` +
+  `window.addEventListener("spn:swipe-right",function(e){` +
+  `try{e.stopImmediatePropagation();}catch(_){}` +
+  `try{e.preventDefault();}catch(_){}` +
+  `},true);` +
+  `})();</script>`;
+
 function isViewerOpen() {
   return Boolean(viewer && !viewer.hidden);
+}
+
+function isGameViewerActive() {
+  return Boolean(
+    isViewerOpen() &&
+      (viewerIsGame || (viewer && viewer.classList.contains('is-game')))
+  );
+}
+
+function armGameHistoryTrap() {
+  try {
+    history.pushState({ spnViewerGame: 1 }, '');
+    viewerGameTrapActive = true;
+  } catch (_) {
+    viewerGameTrapActive = false;
+  }
 }
 
 function openAppAuth(title = 'Вход') {
@@ -302,10 +492,17 @@ function openViewer(url, title) {
     return;
   }
   const href = withAppParam(url);
+  viewerIsGame = isGameUrl(href);
+  const viewerIsGameLight = viewerIsGame && /\/2048\//i.test(href);
   viewerTitle.textContent = title || 'Серпмонн';
   viewer.hidden = false;
   viewer.setAttribute('aria-hidden', 'false');
-  if (!viewerHistoryPushed) {
+  viewer.classList.toggle('is-game', viewerIsGame);
+  viewer.classList.toggle('is-game-light', viewerIsGameLight);
+  if (viewerIsGame) {
+    // Ловушка в history: первый свайп/Back попадает сюда, а не закрывает игру
+    armGameHistoryTrap();
+  } else if (!viewerHistoryPushed) {
     try {
       history.pushState({ spnViewer: 1 }, '');
       viewerHistoryPushed = true;
@@ -336,10 +533,12 @@ async function loadViewerHtml(href) {
     if (token !== viewerBootToken) return;
 
     const baseHref = abs.origin + abs.pathname.replace(/[^/]*$/, '');
+    const gameLock = isGameUrl(href) ? ANDROID_GAME_LOCK_SCRIPT : '';
     const early =
       `<base href="${baseHref}">` +
       `<style id="spn-android-app-css">${VIEWER_HIDE_MENU_CSS}</style>` +
-      ANDROID_BOOT_SCRIPT;
+      ANDROID_BOOT_SCRIPT +
+      gameLock;
     if (/<head[^>]*>/i.test(html)) {
       html = html.replace(/<head([^>]*)>/i, `<head$1>${early}`);
     } else {
@@ -363,6 +562,28 @@ function hardenViewerDoc(doc, opts = {}) {
     doc.documentElement.classList.add('android-app');
     if (doc.body) doc.body.classList.add('android-app');
     try { doc.defaultView.__SPN_ANDROID_APP__ = true; } catch (_) {}
+    if (isGameViewerActive()) {
+      try { doc.defaultView.__SPN_ANDROID_GAME__ = true; } catch (_) {}
+      try {
+        const HP = doc.defaultView.History?.prototype;
+        if (HP && !doc.documentElement.dataset.spnGameHistLock) {
+          doc.documentElement.dataset.spnGameHistLock = '1';
+          HP.back = function () {};
+          const _go = HP.go.bind(doc.defaultView.history);
+          HP.go = function (n) {
+            if (typeof n === 'number' && n < 0) return;
+            return _go(n);
+          };
+          doc.defaultView.addEventListener(
+            'spn:swipe-right',
+            (e) => {
+              try { e.stopImmediatePropagation(); } catch (_) {}
+            },
+            true
+          );
+        }
+      } catch (_) {}
+    }
 
     let style = doc.getElementById('spn-android-app-css');
     if (!style) {
@@ -413,12 +634,17 @@ function hardenViewerDoc(doc, opts = {}) {
             if (/\/tariffs\//i.test(u.pathname)) {
               return;
             }
-            // Ссылки «на главную / к поиску» — вкладка поиска приложения (не выход)
+            // После выхода / ссылок «на главную» не уводим из оболочки приложения
             if (/\/main\.html$/i.test(u.pathname) || u.pathname === '/' || u.pathname === '/frontend/') {
+              if (navigate === 'embed' || navigate === 'fullscreen') {
+                try {
+                  window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
+                } catch (_) {}
+                return;
+              }
               try { closeViewer({ fromHistory: true }); } catch (_) {}
-              try { closeFullscreenPage(); } catch (_) {}
-              try { closeProfileSubpage(); } catch (_) {}
-              showScreen('search');
+              showScreen('profile');
+              showGuestProfile();
               return;
             }
             if (navigate === 'fullscreen' && fullscreenFrame) {
@@ -472,9 +698,14 @@ function setNewsChip(name, { openKb } = { openKb: true }) {
 
 function closeViewer(opts = {}) {
   const fromHistory = Boolean(opts.fromHistory);
+  const hadGameTrap = viewerGameTrapActive;
   viewerBootToken += 1;
   viewer.hidden = true;
   viewer.setAttribute('aria-hidden', 'true');
+  viewer.classList.remove('is-game');
+  viewer.classList.remove('is-game-light');
+  viewerIsGame = false;
+  viewerGameTrapActive = false;
   viewerFrame.classList.remove('is-booting');
   try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
   try { viewerFrame.removeAttribute('src'); } catch (_) {}
@@ -482,13 +713,13 @@ function closeViewer(opts = {}) {
     kbViewerOpen = false;
     setNewsChip('feed', { openKb: false });
   }
-  if (viewerHistoryPushed) {
+  if ((viewerHistoryPushed || hadGameTrap) && !fromHistory && !closingViewerFromHistory) {
     viewerHistoryPushed = false;
-    if (!fromHistory && !closingViewerFromHistory) {
-      closingViewerFromHistory = true;
-      try { history.back(); } catch (_) {}
-      closingViewerFromHistory = false;
-    }
+    closingViewerFromHistory = true;
+    try { history.back(); } catch (_) {}
+    closingViewerFromHistory = false;
+  } else {
+    viewerHistoryPushed = false;
   }
   // После auth/профиля во viewer — обновить состояние вкладки
   try { refreshProfile(); } catch (_) {}
@@ -496,6 +727,11 @@ function closeViewer(opts = {}) {
 
 window.addEventListener('popstate', () => {
   if (closingViewerFromHistory) return;
+  if (isGameViewerActive()) {
+    // Свайп/Back: не закрываем игру, возвращаем ловушку в стек
+    armGameHistoryTrap();
+    return;
+  }
   if (isViewerOpen()) {
     closeViewer({ fromHistory: true });
   }
@@ -513,6 +749,11 @@ try {
         closeProfileSubpage();
         return;
       }
+      if (isGameViewerActive()) {
+        // Свайп/системный Back на играх — только UI «Назад»
+        armGameHistoryTrap();
+        return;
+      }
       if (isViewerOpen()) {
         closeViewer({ fromHistory: true });
         return;
@@ -524,6 +765,50 @@ try {
     });
   }
 } catch (_) {}
+
+/* Блокируем edge-swipe «назад» по области viewer, пока открыта игра */
+(function bindGameEdgeSwipeLock() {
+  if (!viewer) return;
+  let startX = 0;
+  let startY = 0;
+  let tracking = false;
+
+  viewer.addEventListener(
+    'touchstart',
+    (e) => {
+      if (!isGameViewerActive()) return;
+      const t = e.changedTouches?.[0] || e.touches?.[0];
+      if (!t) return;
+      startX = t.clientX;
+      startY = t.clientY;
+      tracking = startX <= 40;
+    },
+    { passive: true, capture: true }
+  );
+
+  viewer.addEventListener(
+    'touchmove',
+    (e) => {
+      if (!tracking || !isGameViewerActive()) return;
+      const t = e.touches?.[0];
+      if (!t) return;
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      if (dx > 8 && Math.abs(dx) > Math.abs(dy)) {
+        try { e.preventDefault(); } catch (_) {}
+      }
+    },
+    { passive: false, capture: true }
+  );
+
+  viewer.addEventListener(
+    'touchend',
+    () => {
+      tracking = false;
+    },
+    { passive: true, capture: true }
+  );
+})();
 
 function showScreen(name) {
   if (name !== 'profile' && isFullscreenOpen()) {

@@ -100,27 +100,40 @@ header h1 {
     margin-top: 8px;         /* Отступ сверху */
 }
 
-/* Базовые стили кнопок */
-.btn { 
-    background: #1a1c20;     /* Темный фон кнопки */
-    border: 1px solid #2a2e33; /* Граница кнопки */
-    color: #eee;             /* Цвет текста */
-    border-radius: 8px;      /* Скругленные углы */
-    padding: 8px;            /* Внутренние отступы */
-    cursor: pointer;         /* Курсор-указатель */
-    user-select: none;       /* Запрет выделения текста */
-    text-align: center;      /* Выравнивание текста по центру */
+/* Базовые стили кнопок (явные :hover/:focus — против залипания button:hover из base.css) */
+.btn,
+.btn:hover,
+.btn:focus,
+.btn:focus-visible,
+.btn:active {
+    background: #1a1c20;
+    border: 1px solid #2a2e33;
+    color: #eee;
+    border-radius: 8px;
+    padding: 8px;
+    cursor: pointer;
+    user-select: none;
+    text-align: center;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* Эффект при нажатии на кнопку */
-.btn:active { 
-    transform: translateY(1px); /* Легкое смещение вниз */
+.btn:active {
+    transform: translateY(1px);
 }
 
-/* Стили основной кнопки */
-.primary { 
-    background: linear-gradient(90deg, #dc3545, #c82333); /* Градиентный фон */
-    border: none;            /* Убираем границу */
+.btn.primary,
+.btn.primary:hover,
+.btn.primary:focus,
+.btn.primary:focus-visible,
+.btn.primary:active,
+.primary,
+.primary:hover,
+.primary:focus,
+.primary:active {
+    background: linear-gradient(90deg, #dc3545, #c82333);
+    border: none;
+    color: #fff;
 }
 
 /* Стили игрового холста */

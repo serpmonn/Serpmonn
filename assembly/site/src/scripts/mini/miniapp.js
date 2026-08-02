@@ -306,7 +306,15 @@
       ).forEach((el) => el.remove());
     } catch (_) {}
 
-    const isGamePage = Boolean(doc.querySelector('.game-board, .game-wrapper'));
+    // Старые board-игры + новые arcade-shell (redsquare / redsquare2)
+    const isGamePage = Boolean(
+      doc.querySelector(
+        '.game-board, .game-wrapper, .game-shell, .rs-page, .rs2-page, #gameStage, #gameArea, #gameCanvas'
+      )
+    );
+    const isArcadeShell = Boolean(
+      doc.querySelector('body.rs-page, body.rs2-page, .game-shell, #gameStage, #gameArea')
+    );
 
     const style = doc.createElement('style');
     style.setAttribute('data-vk-mini-embed', '1');
@@ -340,6 +348,86 @@
         position: relative !important;
         touch-action: pan-y manipulation !important;
         -webkit-text-size-adjust: 100% !important;
+      }
+      /* Fullscreen arcade: заполняем iframe, иначе 100dvh + height:auto
+         ломают fixed-оверлей («Понятно» не кликается на первом открытии). */
+      html.vk-mini-embed:has(body.rs-page),
+      html.vk-mini-embed:has(body.rs2-page),
+      html.vk-mini-embed:has(.game-shell) {
+        height: 100% !important;
+        min-height: 100% !important;
+        max-height: 100% !important;
+        overflow: hidden !important;
+        touch-action: manipulation !important;
+      }
+      body.vk-mini-embed.rs-page,
+      body.vk-mini-embed.rs2-page,
+      body.vk-mini-embed:has(.game-shell) {
+        height: 100% !important;
+        min-height: 100% !important;
+        max-height: 100% !important;
+        overflow: hidden !important;
+        padding: 0.35rem 0.5rem env(safe-area-inset-bottom, 0) !important;
+        touch-action: manipulation !important;
+        box-sizing: border-box !important;
+      }
+      body.vk-mini-embed .game-shell {
+        width: 100% !important;
+        max-width: 100% !important;
+        height: auto !important;
+        max-height: none !important;
+        flex: 1 1 auto !important;
+        min-height: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+      }
+      body.vk-mini-embed .game-stage,
+      body.vk-mini-embed #gameStage,
+      body.vk-mini-embed #gameArea {
+        touch-action: none !important;
+      }
+      body.vk-mini-embed .instruction-overlay {
+        position: absolute !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        z-index: 2147483000 !important;
+        pointer-events: auto !important;
+        touch-action: manipulation !important;
+        box-sizing: border-box !important;
+      }
+      body.vk-mini-embed .instruction-overlay[hidden],
+      body.vk-mini-embed .instruction-overlay.is-hidden {
+        display: none !important;
+        pointer-events: none !important;
+      }
+      body.vk-mini-embed .instruction-content {
+        max-height: min(90vh, 100%) !important;
+        overflow-y: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        touch-action: pan-y manipulation !important;
+        pointer-events: auto !important;
+      }
+      body.vk-mini-embed .instruction-button,
+      body.vk-mini-embed #understandBtn {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        min-height: 44px !important;
+        position: relative !important;
+        z-index: 2147483001 !important;
+        pointer-events: auto !important;
+        touch-action: manipulation !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+      }
+      body.vk-mini-embed.rs2-page #gameCanvas,
+      body.vk-mini-embed.rs-page #gameCanvas,
+      body.vk-mini-embed .game-stage canvas {
+        max-height: none !important;
+        height: 100% !important;
+        width: 100% !important;
+        touch-action: none !important;
       }
       /* Калькуляторы / длинные страницы — явно не lock viewport */
       html.vk-mini-embed:has(body.fuel-calculator-page),
@@ -489,8 +577,33 @@
     doc.head.appendChild(style);
 
     // Жёстко сбросить lock скролла (base.css / старые embed-правила / реклама)
-    if (!isGamePage) {
+    // Arcade-shell наоборот: заполняем iframe (иначе инструкция без hit-target).
+    // menu-loader позже может снова поставить height:auto — повторяем lock.
+    const applyArcadeShellLock = () => {
       try {
+        doc.documentElement.style.setProperty('height', '100%', 'important');
+        doc.documentElement.style.setProperty('min-height', '100%', 'important');
+        doc.documentElement.style.setProperty('max-height', '100%', 'important');
+        doc.documentElement.style.setProperty('overflow', 'hidden', 'important');
+        if (doc.body) {
+          doc.body.style.setProperty('height', '100%', 'important');
+          doc.body.style.setProperty('min-height', '100%', 'important');
+          doc.body.style.setProperty('max-height', '100%', 'important');
+          doc.body.style.setProperty('overflow', 'hidden', 'important');
+          doc.body.style.setProperty('position', 'relative', 'important');
+          doc.body.style.setProperty('touch-action', 'manipulation', 'important');
+        }
+      } catch (_) {}
+    };
+    try {
+      if (isArcadeShell) {
+        applyArcadeShellLock();
+        [50, 200, 600, 1200].forEach((ms) => {
+          try {
+            doc.defaultView.setTimeout(applyArcadeShellLock, ms);
+          } catch (_) {}
+        });
+      } else if (!isGamePage) {
         doc.documentElement.style.setProperty('height', 'auto', 'important');
         doc.documentElement.style.setProperty('max-height', 'none', 'important');
         doc.documentElement.style.setProperty('overflow-x', 'hidden', 'important');
@@ -500,8 +613,8 @@
           doc.body.style.setProperty('max-height', 'none', 'important');
           doc.body.style.setProperty('overflow', 'visible', 'important');
         }
-      } catch (_) {}
-    }
+      }
+    } catch (_) {}
 
     // Related / CTA на статьи, которых нет в мини-приложении (install-guide, updates…)
     stripExcludedMiniArticleLinks(doc);

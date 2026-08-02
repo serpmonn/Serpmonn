@@ -19,61 +19,147 @@
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
     <link rel="canonical" href="https://serpmonn.ru/frontend/ja/games/redsquare2/redsquare2.html"/>
     <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css?v=17">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script>
     window.i18n = {
       scorePrefix: "スコア：",
-      missedPrefix: "ミス：",
+      missedPrefix: "Misses: ",
       pause: "一時停止",
       resume: "再開",
       bannedNicknameAlert: "ニックネームに禁止語が含まれています。別の名前を選んでください。",
-      scoreTableUrl: "/frontend/ja/games/redsquare2/score_table.html"
+      scoreTableUrl: "/frontend/ja/games/redsquare2/score_table.html",
+      levelLabel: "レベル",
+      scoreLabel: "スコア",
+      missesLabel: "Misses",
+      soundOn: "音",
+      soundOff: "ミュート",
+      pauseOverlay: "一時停止",
+      gameOverTitle: "ゲームオーバー",
+      modalYourScore: "スコア：",
+      modalOk: "OK",
+      home: "ホーム",
+      lbTitle: "リーダーボード",
+      lbYourScore: "あなたのスコア：",
+      lbEmpty: "まだ結果がありません",
+      lbClose: "閉じる",
+      lbRestart: "もう一度",
+      lbLoadFail: "読み込み失敗"
     };
     </script>
-    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=3" defer></script>
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=16" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js?v=4" defer></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <script>
+    /* Закрытие инструкции без module/defer — в VK WebView модуль может опоздать */
+    window.__rs2DismissInstruction = function (e) {
+      if (e) {
+        try { e.preventDefault(); } catch (_) {}
+        try { e.stopPropagation(); } catch (_) {}
+      }
+      var overlay = document.getElementById('instructionOverlay');
+      if (!overlay || overlay.classList.contains('is-hidden')) return false;
+      overlay.classList.add('is-hidden');
+      overlay.hidden = true;
+      overlay.style.cssText = 'display:none!important;pointer-events:none!important';
+      overlay.setAttribute('aria-hidden', 'true');
+      var form = document.getElementById('nicknameForm');
+      if (form) form.hidden = false;
+      try { window.dispatchEvent(new Event('resize')); } catch (_) {}
+      return false;
+    };
+    </script>
 </head>
-<body>
+<body class="rs2-page">
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
             <h2 class="instruction-title">落ちる青い四角の遊び方</h2>
             <ul class="instruction-list">
                 <li><strong>操作：</strong> 矢印キーまたはタッチで赤い四角を左右に移動</li>
-                <li><strong>目的：</strong> 落ちるオブジェクトを避ける</li>
-                <li><strong>得点：</strong> 避けるごとに 1 ポイント</li>
-                <li><strong>ミス：</strong> オブジェクトに当たるとミス</li>
-                <li><strong>終了：</strong> 10 回衝突でゲームオーバー</li>
+                <li><strong>目的：</strong> Catch falling shapes with the platform at the bottom</li>
+                <li><strong>得点：</strong> You get 1 point for each shape you catch</li>
+                <li><strong>ミス：</strong> If a shape hits the floor, it counts as a miss</li>
+                <li><strong>終了：</strong> The game ends after 10 misses</li>
                 <li><strong>ランキング：</strong> ゲーム後に結果を確認</li>
                 <li><strong>一時停止：</strong> 一時停止ボタンで止める</li>
             </ul>
-            <button class="instruction-button" id="understandBtn">了解、始めよう！</button>
+            <button type="button" class="instruction-button" id="understandBtn"
+                onclick="return window.__rs2DismissInstruction(event)"
+                ontouchend="return window.__rs2DismissInstruction(event)">了解、始めよう！</button>
+        </div>
+    </div>
+    <script>
+    (function () {
+      var overlay = document.getElementById('instructionOverlay');
+      var btn = document.getElementById('understandBtn');
+      if (btn) {
+        btn.addEventListener('click', window.__rs2DismissInstruction, true);
+        btn.addEventListener('touchend', window.__rs2DismissInstruction, { capture: true, passive: false });
+      }
+      if (overlay) {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) window.__rs2DismissInstruction(e);
+        }, true);
+      }
+    })();
+    </script>
+
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-1897960"
+          data-ad-slot="1897960"></ins>
+    </div>
+
+    <div class="game-shell">
+        <header class="game-hud" aria-live="polite">
+            <div class="hud-block">
+                <span class="hud-label">スコア</span>
+                <span class="hud-value" id="scoreValue">0</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">レベル</span>
+                <span class="hud-value" id="levelValue">1</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Misses</span>
+                <span class="hud-value" id="missesValue">0/10</span>
+            </div>
+            <div class="hud-block hud-nick">
+                <span class="hud-label">名前を入力</span>
+                <span class="hud-value" id="nickValue">—</span>
+            </div>
+        </header>
+
+        <div class="game-stage" id="gameStage">
+            <canvas id="gameCanvas"></canvas>
+            <div class="pause-overlay" id="pauseOverlay" hidden>
+                <span>一時停止</span>
+            </div>
+        </div>
+
+        <div class="game-dock">
+            <form id="nicknameForm" class="nickname-panel" hidden>
+                <input type="text" id="nickname" maxlength="24" placeholder="名前を入力" required autocomplete="nickname">
+                <button type="submit" class="action-btn action-start">ゲーム開始</button>
+            </form>
+            <div class="actions" id="gameActions">
+                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>一時停止</button>
+                <button type="button" class="action-btn action-restart" id="restartBtn" hidden>やり直し</button>
+                <button type="button" class="action-btn action-lb" id="leaderboardBtn">ランキング</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">音</button>
+                <button type="button" class="action-btn action-home" id="homeBtn">ホーム</button>
+            </div>
         </div>
     </div>
 
-    <div id="score">スコア：0</div>
-    <div id="missed">ミス：0</div>
-    <div class="button-container">
-        <button id="leaderboardBtn">ランキング</button>
-        <button id="pauseBtn">一時停止</button>
-        <button id="restartBtn">やり直し</button>
-    </div>
-    <form id="nicknameForm">
-        <input type="text" id="nickname" placeholder="名前を入力" required>
-        <button type="submit">ゲーム開始</button>
-    </form>
-    <canvas id="gameCanvas"></canvas>
+    <div id="score" hidden>スコア：0</div>
+    <div id="missed" hidden>Misses: 0</div>
 
-    <div class="ad-container" style="margin: 10px 0; text-align: center;">
-        <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
-             data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
-    </div>
-
-    <div class="ad-container" style="margin: 20px 0; text-align: center;">
-        <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
-             data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
-    </div>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
   

@@ -1,6 +1,8 @@
 /**
  * Password generator — Serpmonn tools shell parity.
  */
+import { buildToolUrl, canUseHistoryUrl, safeReplaceState } from './url-state.js';
+
 function t(path, fallback = '') {
   const parts = path.split('.');
   let cur = window.passwordGeneratorTranslations || {};
@@ -30,8 +32,12 @@ function rnd(max) {
   const limit = Math.floor(0x100000000 / max) * max;
   let x;
   const buf = new Uint32Array(1);
+  const cryptoObj = globalThis.crypto || globalThis.msCrypto;
+  if (!cryptoObj?.getRandomValues) {
+    return Math.floor(Math.random() * max);
+  }
   do {
-    crypto.getRandomValues(buf);
+    cryptoObj.getRandomValues(buf);
     x = buf[0];
   } while (x >= limit);
   return x % max;
@@ -54,14 +60,15 @@ function generate() {
     const pool = pools[rnd(pools.length)];
     out += pool[rnd(pool.length)];
   }
-  document.getElementById('out').textContent = out;
+  const outEl = document.getElementById('out');
+  if (outEl) outEl.textContent = out;
   syncUrl();
   return out;
 }
 
 async function copyPassword(btn) {
   const str = document.getElementById('out')?.textContent || '';
-  if (!str) {
+  if (!str || str === '—') {
     showError(t('page.alerts.noPassword', 'Сначала сгенерируйте пароль'));
     return;
   }
@@ -86,21 +93,25 @@ function resetForm() {
   document.getElementById('symbols').checked = false;
   document.getElementById('out').textContent = '';
   clearError();
-  history.replaceState(null, '', location.pathname);
+  if (canUseHistoryUrl()) {
+    safeReplaceState(location.pathname);
+  }
   generate();
 }
 
 function syncUrl() {
-  const url = new URL(location.href);
-  url.searchParams.set('len', document.getElementById('len').value || '16');
-  url.searchParams.set('lower', document.getElementById('lower').checked ? '1' : '0');
-  url.searchParams.set('upper', document.getElementById('upper').checked ? '1' : '0');
-  url.searchParams.set('digits', document.getElementById('digits').checked ? '1' : '0');
-  url.searchParams.set('symbols', document.getElementById('symbols').checked ? '1' : '0');
-  history.replaceState(null, '', url);
+  const url = buildToolUrl((next) => {
+    next.searchParams.set('len', document.getElementById('len').value || '16');
+    next.searchParams.set('lower', document.getElementById('lower').checked ? '1' : '0');
+    next.searchParams.set('upper', document.getElementById('upper').checked ? '1' : '0');
+    next.searchParams.set('digits', document.getElementById('digits').checked ? '1' : '0');
+    next.searchParams.set('symbols', document.getElementById('symbols').checked ? '1' : '0');
+  });
+  if (url) safeReplaceState(url);
 }
 
 function restoreFromUrl() {
+  if (!canUseHistoryUrl()) return;
   const p = new URLSearchParams(location.search);
   if (p.has('len')) document.getElementById('len').value = p.get('len');
   if (p.has('lower')) document.getElementById('lower').checked = p.get('lower') === '1';
@@ -111,8 +122,9 @@ function restoreFromUrl() {
 
 async function shareLink() {
   syncUrl();
+  const shareUrl = canUseHistoryUrl() ? location.href : (document.querySelector('link[rel="canonical"]')?.href || location.href);
   try {
-    await navigator.clipboard.writeText(location.href);
+    await navigator.clipboard.writeText(shareUrl);
     const btn = document.getElementById('btn-share');
     if (btn) {
       const prev = btn.textContent;
@@ -122,11 +134,28 @@ async function shareLink() {
   } catch {}
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-  restoreFromUrl();
-  generate();
-  document.getElementById('btn-generate')?.addEventListener('click', generate);
+function boot() {
+  document.getElementById('btn-generate')?.addEventListener('click', (e) => {
+    e.preventDefault();
+    generate();
+  });
   document.getElementById('btn-copy')?.addEventListener('click', (e) => copyPassword(e.currentTarget));
   document.getElementById('btn-reset')?.addEventListener('click', resetForm);
   document.getElementById('btn-share')?.addEventListener('click', shareLink);
-});
+
+  try {
+    restoreFromUrl();
+  } catch (_) {}
+  try {
+    generate();
+  } catch (_) {}
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
+
+// Inline/onclick fallback for WebView quirks
+window.__spnGeneratePassword = generate;

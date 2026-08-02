@@ -70,6 +70,19 @@
 
     // Поведение по умолчанию: назад/вперёд в истории
     window.addEventListener("spn:swipe-right", () => {
+      // RuStore/Android app + игры: свайп вправо не должен закрывать игру/viewer
+      try {
+        if (window.__SPN_ANDROID_APP__ || window.__SPN_ANDROID_GAME__) return;
+        if (document.documentElement.classList.contains("android-app")) return;
+        if (document.body?.classList?.contains("android-app")) return;
+        if (
+          document.querySelector(
+            ".game-shell, .game-board, .game-wrapper, .rs-page, .rs2-page, #gameStage, #gameArea, #gameCanvas, .wrap canvas, .typing-wrap, .rat-game"
+          )
+        ) {
+          return;
+        }
+      } catch (_) {}
       if (history.length > 1) history.back();
     });
     window.addEventListener("spn:swipe-left", () => {

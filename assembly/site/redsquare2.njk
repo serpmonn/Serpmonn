@@ -31,7 +31,11 @@ eleventyComputed:
     <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/RedSquare2.ico">
     <link rel="canonical" href="{{ canonical }}"/>
     <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css?v=17">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script>
     window.i18n = {
@@ -40,14 +44,49 @@ eleventyComputed:
       pause: {{ gameRedsquare2Translations[locale].gameRedsquare2.pause | dump | safe }},
       resume: {{ gameRedsquare2Translations[locale].gameRedsquare2.resume | dump | safe }},
       bannedNicknameAlert: {{ gameRedsquare2Translations[locale].gameRedsquare2.bannedNicknameAlert | dump | safe }},
-      scoreTableUrl: "{% if locale == 'ru' %}/frontend/games/redsquare2/score_table.html{% else %}/frontend/{{ locale }}/games/redsquare2/score_table.html{% endif %}"
+      scoreTableUrl: "{% if locale == 'ru' %}/frontend/games/redsquare2/score_table.html{% else %}/frontend/{{ locale }}/games/redsquare2/score_table.html{% endif %}",
+      levelLabel: {{ gameRedsquare2Translations[locale].gameRedsquare2.levelLabel | dump | safe }},
+      scoreLabel: {{ gameRedsquare2Translations[locale].gameRedsquare2.scoreLabel | dump | safe }},
+      missesLabel: {{ gameRedsquare2Translations[locale].gameRedsquare2.missesLabel | dump | safe }},
+      soundOn: {{ gameRedsquare2Translations[locale].gameRedsquare2.soundOn | dump | safe }},
+      soundOff: {{ gameRedsquare2Translations[locale].gameRedsquare2.soundOff | dump | safe }},
+      pauseOverlay: {{ gameRedsquare2Translations[locale].gameRedsquare2.pauseOverlay | dump | safe }},
+      gameOverTitle: {{ gameRedsquare2Translations[locale].gameRedsquare2.gameOverTitle | dump | safe }},
+      modalYourScore: {{ gameRedsquare2Translations[locale].gameRedsquare2.modalYourScore | dump | safe }},
+      modalOk: {{ gameRedsquare2Translations[locale].gameRedsquare2.modalOk | dump | safe }},
+      home: {{ gameRedsquare2Translations[locale].gameRedsquare2.home | dump | safe }},
+      lbTitle: {{ gameRedsquare2Translations[locale].gameRedsquare2.lbTitle | dump | safe }},
+      lbYourScore: {{ gameRedsquare2Translations[locale].gameRedsquare2.lbYourScore | dump | safe }},
+      lbEmpty: {{ gameRedsquare2Translations[locale].gameRedsquare2.lbEmpty | dump | safe }},
+      lbClose: {{ gameRedsquare2Translations[locale].gameRedsquare2.lbClose | dump | safe }},
+      lbRestart: {{ gameRedsquare2Translations[locale].gameRedsquare2.lbRestart | dump | safe }},
+      lbLoadFail: {{ gameRedsquare2Translations[locale].gameRedsquare2.lbLoadFail | dump | safe }}
     };
     </script>
-    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=3" defer></script>
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=16" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js?v=4" defer></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <script>
+    /* Закрытие инструкции без module/defer — в VK WebView модуль может опоздать */
+    window.__rs2DismissInstruction = function (e) {
+      if (e) {
+        try { e.preventDefault(); } catch (_) {}
+        try { e.stopPropagation(); } catch (_) {}
+      }
+      var overlay = document.getElementById('instructionOverlay');
+      if (!overlay || overlay.classList.contains('is-hidden')) return false;
+      overlay.classList.add('is-hidden');
+      overlay.hidden = true;
+      overlay.style.cssText = 'display:none!important;pointer-events:none!important';
+      overlay.setAttribute('aria-hidden', 'true');
+      var form = document.getElementById('nicknameForm');
+      if (form) form.hidden = false;
+      try { window.dispatchEvent(new Event('resize')); } catch (_) {}
+      return false;
+    };
+    </script>
 </head>
-<body>
+<body class="rs2-page">
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
             <h2 class="instruction-title">{{ gameRedsquare2Translations[locale].gameRedsquare2.instructionTitle }}</h2>
@@ -60,32 +99,79 @@ eleventyComputed:
                 <li><strong>{{ gameRedsquare2Translations[locale].gameRedsquare2.instLeaderboard }}</strong> {{ gameRedsquare2Translations[locale].gameRedsquare2.instLeaderboardText }}</li>
                 <li><strong>{{ gameRedsquare2Translations[locale].gameRedsquare2.instPause }}</strong> {{ gameRedsquare2Translations[locale].gameRedsquare2.instPauseText }}</li>
             </ul>
-            <button class="instruction-button" id="understandBtn">{{ gameRedsquare2Translations[locale].gameRedsquare2.understandBtn }}</button>
+            <button type="button" class="instruction-button" id="understandBtn"
+                onclick="return window.__rs2DismissInstruction(event)"
+                ontouchend="return window.__rs2DismissInstruction(event)">{{ gameRedsquare2Translations[locale].gameRedsquare2.understandBtn }}</button>
+        </div>
+    </div>
+    <script>
+    (function () {
+      var overlay = document.getElementById('instructionOverlay');
+      var btn = document.getElementById('understandBtn');
+      if (btn) {
+        btn.addEventListener('click', window.__rs2DismissInstruction, true);
+        btn.addEventListener('touchend', window.__rs2DismissInstruction, { capture: true, passive: false });
+      }
+      if (overlay) {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) window.__rs2DismissInstruction(e);
+        }, true);
+      }
+    })();
+    </script>
+
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-{{ mailAds.slots.top.id }}"
+          data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
+    </div>
+
+    <div class="game-shell">
+        <header class="game-hud" aria-live="polite">
+            <div class="hud-block">
+                <span class="hud-label">{{ gameRedsquare2Translations[locale].gameRedsquare2.scoreLabel }}</span>
+                <span class="hud-value" id="scoreValue">0</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">{{ gameRedsquare2Translations[locale].gameRedsquare2.levelLabel }}</span>
+                <span class="hud-value" id="levelValue">1</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">{{ gameRedsquare2Translations[locale].gameRedsquare2.missesLabel }}</span>
+                <span class="hud-value" id="missesValue">0/10</span>
+            </div>
+            <div class="hud-block hud-nick">
+                <span class="hud-label">{{ gameRedsquare2Translations[locale].gameRedsquare2.nicknamePlaceholder }}</span>
+                <span class="hud-value" id="nickValue">—</span>
+            </div>
+        </header>
+
+        <div class="game-stage" id="gameStage">
+            <canvas id="gameCanvas"></canvas>
+            <div class="pause-overlay" id="pauseOverlay" hidden>
+                <span>{{ gameRedsquare2Translations[locale].gameRedsquare2.pauseOverlay }}</span>
+            </div>
+        </div>
+
+        <div class="game-dock">
+            <form id="nicknameForm" class="nickname-panel" hidden>
+                <input type="text" id="nickname" maxlength="24" placeholder="{{ gameRedsquare2Translations[locale].gameRedsquare2.nicknamePlaceholder }}" required autocomplete="nickname">
+                <button type="submit" class="action-btn action-start">{{ gameRedsquare2Translations[locale].gameRedsquare2.nicknameSubmit }}</button>
+            </form>
+            <div class="actions" id="gameActions">
+                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>{{ gameRedsquare2Translations[locale].gameRedsquare2.pause }}</button>
+                <button type="button" class="action-btn action-restart" id="restartBtn" hidden>{{ gameRedsquare2Translations[locale].gameRedsquare2.restart }}</button>
+                <button type="button" class="action-btn action-lb" id="leaderboardBtn">{{ gameRedsquare2Translations[locale].gameRedsquare2.leaderboardBtn }}</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">{{ gameRedsquare2Translations[locale].gameRedsquare2.soundOn }}</button>
+                <button type="button" class="action-btn action-home" id="homeBtn">{{ gameRedsquare2Translations[locale].gameRedsquare2.home }}</button>
+            </div>
         </div>
     </div>
 
-    <div id="score">{{ gameRedsquare2Translations[locale].gameRedsquare2.scorePrefix }}0</div>
-    <div id="missed">{{ gameRedsquare2Translations[locale].gameRedsquare2.missedPrefix }}0</div>
-    <div class="button-container">
-        <button id="leaderboardBtn">{{ gameRedsquare2Translations[locale].gameRedsquare2.leaderboardBtn }}</button>
-        <button id="pauseBtn">{{ gameRedsquare2Translations[locale].gameRedsquare2.pause }}</button>
-        <button id="restartBtn">{{ gameRedsquare2Translations[locale].gameRedsquare2.restart }}</button>
-    </div>
-    <form id="nicknameForm">
-        <input type="text" id="nickname" placeholder="{{ gameRedsquare2Translations[locale].gameRedsquare2.nicknamePlaceholder }}" required>
-        <button type="submit">{{ gameRedsquare2Translations[locale].gameRedsquare2.nicknameSubmit }}</button>
-    </form>
-    <canvas id="gameCanvas"></canvas>
+    <div id="score" hidden>{{ gameRedsquare2Translations[locale].gameRedsquare2.scorePrefix }}0</div>
+    <div id="missed" hidden>{{ gameRedsquare2Translations[locale].gameRedsquare2.missedPrefix }}0</div>
 
-    <div class="ad-container" style="margin: 10px 0; text-align: center;">
-        <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
-             data-ad-client="ad-{{ mailAds.slots.mobileAnchor.id }}" data-ad-slot="{{ mailAds.slots.mobileAnchor.id }}"></ins>
-    </div>
-
-    <div class="ad-container" style="margin: 20px 0; text-align: center;">
-        <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
-             data-ad-client="ad-{{ mailAds.slots.top.id }}" data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
-    </div>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
   {{ mobileAnchor(localesNews[locale].news.closeAd) }}

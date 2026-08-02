@@ -19,61 +19,147 @@
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
     <link rel="canonical" href="https://serpmonn.ru/frontend/games/redsquare2/redsquare2.html"/>
     <link rel="icon" href="/frontend/images/RedSquare2.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/frontend/games/redsquare2/redsquare2_styles/redsquare2_styles.css?v=17">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script>
     window.i18n = {
       scorePrefix: "Очки: ",
-      missedPrefix: "Пропуски: ",
+      missedPrefix: "Промахи: ",
       pause: "Пауза",
       resume: "Продолжить",
       bannedNicknameAlert: "Никнейм содержит запрещенные слова. Пожалуйста, выберите другой никнейм.",
-      scoreTableUrl: "/frontend/games/redsquare2/score_table.html"
+      scoreTableUrl: "/frontend/games/redsquare2/score_table.html",
+      levelLabel: "Уровень",
+      scoreLabel: "Очки",
+      missesLabel: "Промахи",
+      soundOn: "Звук",
+      soundOff: "Без звука",
+      pauseOverlay: "Пауза",
+      gameOverTitle: "Игра окончена",
+      modalYourScore: "Твои очки:",
+      modalOk: "Окей",
+      home: "Домой",
+      lbTitle: "Таблица лидеров",
+      lbYourScore: "Ваш результат:",
+      lbEmpty: "Пока нет результатов",
+      lbClose: "Закрыть",
+      lbRestart: "Играть снова",
+      lbLoadFail: "Не удалось загрузить таблицу"
     };
     </script>
-    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=3" defer></script>
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=16" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js?v=4" defer></script>
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
+    <script>
+    /* Закрытие инструкции без module/defer — в VK WebView модуль может опоздать */
+    window.__rs2DismissInstruction = function (e) {
+      if (e) {
+        try { e.preventDefault(); } catch (_) {}
+        try { e.stopPropagation(); } catch (_) {}
+      }
+      var overlay = document.getElementById('instructionOverlay');
+      if (!overlay || overlay.classList.contains('is-hidden')) return false;
+      overlay.classList.add('is-hidden');
+      overlay.hidden = true;
+      overlay.style.cssText = 'display:none!important;pointer-events:none!important';
+      overlay.setAttribute('aria-hidden', 'true');
+      var form = document.getElementById('nicknameForm');
+      if (form) form.hidden = false;
+      try { window.dispatchEvent(new Event('resize')); } catch (_) {}
+      return false;
+    };
+    </script>
 </head>
-<body>
+<body class="rs2-page">
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
-            <h2 class="instruction-title">Как играть в &quot;Падающие синие квадраты&quot;?</h2>
+            <h2 class="instruction-title">Как играть в «Падающие фигуры»?</h2>
             <ul class="instruction-list">
                 <li><strong>Управление:</strong> Используйте стрелки или касание на сенсорном экране, чтобы перемещать красный квадрат влево и вправо</li>
-                <li><strong>Цель игры:</strong> Уворачиваться от падающих объектов</li>
-                <li><strong>Начисление очков:</strong> Вы получаете 1 очко за каждый пропущенный объект</li>
-                <li><strong>Пропуски:</strong> Если объект упадёт на Вас это считается как пропуск</li>
-                <li><strong>Конец игры:</strong> Игра заканчивается при столкновении с 10 объектами</li>
+                <li><strong>Цель игры:</strong> Ловить падающие фигуры платформой внизу</li>
+                <li><strong>Начисление очков:</strong> Вы получаете 1 очко за каждую пойманную фигуру</li>
+                <li><strong>Пропуски:</strong> Если фигура упала на пол — это промах</li>
+                <li><strong>Конец игры:</strong> Игра заканчивается после 10 промахов</li>
                 <li><strong>Таблица лидеров:</strong> После игры вы можете посмотреть свои результаты в таблице лидеров</li>
                 <li><strong>Пауза:</strong> Используйте кнопку &quot;Пауза&quot; для временной остановки игры</li>
             </ul>
-            <button class="instruction-button" id="understandBtn">Понятно, начинаем!</button>
+            <button type="button" class="instruction-button" id="understandBtn"
+                onclick="return window.__rs2DismissInstruction(event)"
+                ontouchend="return window.__rs2DismissInstruction(event)">Понятно, начинаем!</button>
+        </div>
+    </div>
+    <script>
+    (function () {
+      var overlay = document.getElementById('instructionOverlay');
+      var btn = document.getElementById('understandBtn');
+      if (btn) {
+        btn.addEventListener('click', window.__rs2DismissInstruction, true);
+        btn.addEventListener('touchend', window.__rs2DismissInstruction, { capture: true, passive: false });
+      }
+      if (overlay) {
+        overlay.addEventListener('click', function (e) {
+          if (e.target === overlay) window.__rs2DismissInstruction(e);
+        }, true);
+      }
+    })();
+    </script>
+
+    <div class="ad-top-banner ad-banner loading">
+      <ins class="mrg-tag"
+          style="display:inline-block;"
+          data-ad-client="ad-1897960"
+          data-ad-slot="1897960"></ins>
+    </div>
+
+    <div class="game-shell">
+        <header class="game-hud" aria-live="polite">
+            <div class="hud-block">
+                <span class="hud-label">Очки</span>
+                <span class="hud-value" id="scoreValue">0</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Уровень</span>
+                <span class="hud-value" id="levelValue">1</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Промахи</span>
+                <span class="hud-value" id="missesValue">0/10</span>
+            </div>
+            <div class="hud-block hud-nick">
+                <span class="hud-label">Введи своё Имя</span>
+                <span class="hud-value" id="nickValue">—</span>
+            </div>
+        </header>
+
+        <div class="game-stage" id="gameStage">
+            <canvas id="gameCanvas"></canvas>
+            <div class="pause-overlay" id="pauseOverlay" hidden>
+                <span>Пауза</span>
+            </div>
+        </div>
+
+        <div class="game-dock">
+            <form id="nicknameForm" class="nickname-panel" hidden>
+                <input type="text" id="nickname" maxlength="24" placeholder="Введи своё Имя" required autocomplete="nickname">
+                <button type="submit" class="action-btn action-start">Начать игру</button>
+            </form>
+            <div class="actions" id="gameActions">
+                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>Пауза</button>
+                <button type="button" class="action-btn action-restart" id="restartBtn" hidden>Заново</button>
+                <button type="button" class="action-btn action-lb" id="leaderboardBtn">Таблица лидеров</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">Звук</button>
+                <button type="button" class="action-btn action-home" id="homeBtn">Домой</button>
+            </div>
         </div>
     </div>
 
-    <div id="score">Очки: 0</div>
-    <div id="missed">Пропуски: 0</div>
-    <div class="button-container">
-        <button id="leaderboardBtn">Таблица лидеров</button>
-        <button id="pauseBtn">Пауза</button>
-        <button id="restartBtn">Заново</button>
-    </div>
-    <form id="nicknameForm">
-        <input type="text" id="nickname" placeholder="Введи своё Имя" required>
-        <button type="submit">Начать игру</button>
-    </form>
-    <canvas id="gameCanvas"></canvas>
+    <div id="score" hidden>Очки: 0</div>
+    <div id="missed" hidden>Промахи: 0</div>
 
-    <div class="ad-container" style="margin: 10px 0; text-align: center;">
-        <ins class="mrg-tag" style="display:inline-block;width:320px;height:50px" 
-             data-ad-client="ad-1898031" data-ad-slot="1898031"></ins>
-    </div>
-
-    <div class="ad-container" style="margin: 20px 0; text-align: center;">
-        <ins class="mrg-tag" style="display:inline-block;width:300px;height:250px" 
-             data-ad-client="ad-1897960" data-ad-slot="1897960"></ins>
-    </div>
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
   

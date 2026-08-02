@@ -9,6 +9,9 @@
   --spn-tabs: 58px;
   --spn-safe-b: env(safe-area-inset-bottom, 0px);
   --spn-safe-t: env(safe-area-inset-top, 0px);
+  /* 3-кнопочная панель Android часто даёт safe-area=0 — минимальный запас */
+  --spn-nav-fallback: 48px;
+  --spn-viewer-pad-b: max(var(--spn-safe-b), var(--spn-nav-fallback));
 }
 
 * { box-sizing: border-box; }
@@ -779,9 +782,51 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   flex-direction: column;
   background: #fff;
   padding-top: var(--spn-safe-t);
+  /* Не уезжать под системные клавиши Android */
+  padding-bottom: var(--spn-viewer-pad-b);
   overscroll-behavior-x: none;
 }
 .spn-viewer[hidden] { display: none !important; }
+.spn-viewer.is-game {
+  /* Игры: только реальный safe-area, без лишнего «поля» */
+  padding-bottom: var(--spn-safe-b);
+  background: #0e1116;
+  /* Режем горизонтальный edge-gesture «назад» */
+  touch-action: pan-y;
+  overscroll-behavior-x: none;
+}
+.spn-viewer.is-game .spn-viewer__frame {
+  touch-action: pan-y;
+  overscroll-behavior-x: none;
+}
+.spn-viewer.is-game .spn-viewer__bar {
+  background: #151820;
+  border-bottom-color: #2a3140;
+}
+.spn-viewer.is-game .spn-viewer__title {
+  color: #e8eaed;
+}
+.spn-viewer.is-game #viewerBack {
+  background: #1e2633;
+  border-color: #35485f;
+  color: #f3f0ea;
+}
+/* 2048 — светлая оболочка */
+.spn-viewer.is-game-light {
+  background: #faf8ef;
+}
+.spn-viewer.is-game-light .spn-viewer__bar {
+  background: #faf8ef;
+  border-bottom-color: #e0d8c8;
+}
+.spn-viewer.is-game-light .spn-viewer__title {
+  color: #3d3a36;
+}
+.spn-viewer.is-game-light #viewerBack {
+  background: #f3f0ea;
+  border-color: #d6cfc0;
+  color: #3d3a36;
+}
 .spn-viewer__bar {
   display: flex;
   align-items: center;
@@ -790,6 +835,7 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   padding: 6px 10px;
   border-bottom: 1px solid var(--spn-border);
   background: #fff;
+  flex-shrink: 0;
 }
 .spn-viewer__title {
   flex: 1;

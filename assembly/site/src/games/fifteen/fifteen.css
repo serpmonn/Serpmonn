@@ -143,27 +143,38 @@ header h1 {
     margin-bottom: 20px;     /* Отступ снизу */
 }
 
-/* Базовые стили кнопок */
-.btn { 
-    background: #16202a;     /* Темный фон кнопки */
-    border: 1px solid #243241; /* Граница кнопки */
-    color: #eee;             /* Цвет текста */
-    border-radius: 8px;      /* Скругленные углы */
-    padding: 8px 10px;       /* Внутренние отступы */
-    cursor: pointer;         /* Курсор-указатель */
-    transition: all 0.2s ease; /* Плавные анимации */
+/* Базовые стили кнопок (явные :hover/:focus — против залипания button:hover из base.css) */
+.btn,
+.btn:hover,
+.btn:focus,
+.btn:focus-visible,
+.btn:active {
+    background: #16202a;
+    border: 1px solid #243241;
+    color: #eee;
+    border-radius: 8px;
+    padding: 8px 10px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
-/* Стили основной кнопки */
-.btn.primary { 
-    background: linear-gradient(90deg, #dc3545, #c82333); /* Градиентный фон */
-    border: none;            /* Убираем границу */
+.btn.primary,
+.btn.primary:hover,
+.btn.primary:focus,
+.btn.primary:focus-visible,
+.btn.primary:active {
+    background: linear-gradient(90deg, #dc3545, #c82333);
+    border: none;
+    color: #fff;
 }
 
-/* Эффекты при наведении на кнопку */
-.btn:hover { 
-    transform: translateY(-1px); /* Легкий подъем */
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2); /* Тень */
+@media (hover: hover) and (pointer: fine) {
+    .btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    }
 }
 
 /* Стили сообщения о решении */

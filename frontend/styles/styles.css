@@ -79,8 +79,11 @@ button {				  				 /* Стили для кнопок */
 	cursor: pointer;                      /* Указатель при наведении */
 }
 
-button:hover {
-	background-color: #f0f0f0;            /* Цвет кнопки при наведении (светло-серый) */
+/* Только настоящий hover (мышь). На таче :hover «залипает» и кнопки игр белеют. */
+@media (hover: hover) and (pointer: fine) {
+	button:hover {
+		background-color: #f0f0f0;
+	}
 }
 
 img {					  				 /* Оформление для изображений */
