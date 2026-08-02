@@ -125,14 +125,14 @@ eleventyComputed:
     {% endif %}
 
     {% if section.note %}
-    <div class="note">{{ section.note }}</div>
+    <div class="note">{{ section.note | safe }}</div>
     {% endif %}
 
     {% if section.faqItems %}
     <div class="faq">
       {% for faq in section.faqItems %}
       <h3>{{ faq.question }}</h3>
-      <p>{{ faq.answer }}</p>
+      <p>{{ faq.answer | safe }}</p>
       {% endfor %}
     </div>
     {% endif %}
@@ -140,13 +140,16 @@ eleventyComputed:
 
     {% if article.content.conclusion %}
     <div class="note">
-      <strong>{{ article.common.conclusion }}:</strong> {{ article.content.conclusion }}
+      <strong>{{ article.common.conclusion }}:</strong> {{ article.content.conclusion | safe }}
     </div>
     {% endif %}
 
     <div class="install-cta-row">
       <a href="#" class="cta-button" id="installGuidePwaCta">{{ article.buttons.installHome }}</a>
-      <a href="/frontend/downloads/Serpmonn-1.2.apk" download="Serpmonn-1.2.apk" class="cta-button cta-button--secondary">{{ article.buttons.downloadApk }}</a>
+      <a href="/frontend/downloads/Serpmonn-1.2.1.apk" download="Serpmonn-1.2.1.apk" class="cta-button cta-button--secondary">{{ article.buttons.downloadApk }}</a>
+      {% if article.buttons.openRustore %}
+      <a href="https://www.rustore.ru/catalog/app/ru.serpmonn" target="_blank" rel="noopener" class="cta-button cta-button--rustore">{{ article.buttons.openRustore }}</a>
+      {% endif %}
     </div>
 
     {% set relatedTitle = locale | articleRelatedTitle %}

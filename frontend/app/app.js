@@ -85,7 +85,8 @@ const VIEWER_HIDE_MENU_CSS = `
   #aiAccessBlock,
   #openAiService,
   a[href*="/tariffs/"],
-  a[href*="ai.serpmonn.ru"] {
+  a[href*="ai.serpmonn.ru"],
+  .plan-quota--web {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;
@@ -412,17 +413,12 @@ function hardenViewerDoc(doc, opts = {}) {
             if (/\/tariffs\//i.test(u.pathname)) {
               return;
             }
-            // После выхода / ссылок «на главную» не уводим из оболочки приложения
+            // Ссылки «на главную / к поиску» — вкладка поиска приложения (не выход)
             if (/\/main\.html$/i.test(u.pathname) || u.pathname === '/' || u.pathname === '/frontend/') {
-              if (navigate === 'embed' || navigate === 'fullscreen') {
-                try {
-                  window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
-                } catch (_) {}
-                return;
-              }
               try { closeViewer({ fromHistory: true }); } catch (_) {}
-              showScreen('profile');
-              showGuestProfile();
+              try { closeFullscreenPage(); } catch (_) {}
+              try { closeProfileSubpage(); } catch (_) {}
+              showScreen('search');
               return;
             }
             if (navigate === 'fullscreen' && fullscreenFrame) {

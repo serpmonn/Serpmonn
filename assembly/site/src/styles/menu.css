@@ -384,6 +384,50 @@
     transform: translateX(3px);
 }
 
+/* Serpmonn Android: APK row + quiet RuStore link */
+.menu-android-app {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 2px 0;
+}
+
+.menu-android-app__apk {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0 !important;
+}
+
+.menu-android-app__rustore {
+    flex: 0 0 auto;
+    padding: 6px 8px !important;
+    margin: 0 4px 0 0 !important;
+    border-radius: 6px !important;
+    font-size: 0.75rem !important;
+    font-weight: 500 !important;
+    color: #6b7280 !important;
+    text-decoration: none !important;
+    white-space: nowrap;
+    transform: none !important;
+    background: transparent !important;
+}
+
+.menu-android-app__rustore:hover {
+    color: #0077ff !important;
+    background: #f3f4f6 !important;
+    transform: none !important;
+}
+
+@media (max-width: 420px) {
+    .menu-android-app {
+        flex-wrap: wrap;
+        align-items: stretch;
+    }
+    .menu-android-app__rustore {
+        margin: 0 0 4px 28px !important;
+    }
+}
+
 .menu-item[data-submenu] {
     position: relative;
     font-weight: bold;

@@ -16,13 +16,30 @@ function isVkMiniContext() {
   }
 }
 
+function isAndroidAppContext() {
+  try {
+    if (window.__SPN_ANDROID_APP__) return true;
+    if (document.documentElement?.classList?.contains('android-app')) return true;
+    if (document.body?.classList?.contains('android-app')) return true;
+    if (/(?:^|[?&])app=1(?:&|$)/.test(window.location.search)) return true;
+    if (window.parent && window.parent !== window && window.parent.__SPN_ANDROID_APP__) return true;
+    return false;
+  } catch {
+    return false;
+  }
+}
+
+function isNoSiteAdsContext() {
+  return isVkMiniContext() || isAndroidAppContext();
+}
+
 export function pushMailAdTag() {
-  if (isVkMiniContext()) return;
+  if (isNoSiteAdsContext()) return;
   (window.MRGtag = window.MRGtag || []).push({});
 }
 
 export function ensureMailAdsScript() {
-  if (isVkMiniContext()) {
+  if (isNoSiteAdsContext()) {
     window.__mailAdsRequested = true;
     return;
   }

@@ -29,6 +29,8 @@ eleventyComputed:
   menu_apps: "{{ menuTranslations[locale].apps }}"
   menu_download_app: "{{ menuTranslations[locale].download_app }}"
   menu_android_apk: "{{ menuTranslations[locale].android_apk }}"
+  menu_android_apk_btn: "{{ menuTranslations[locale].android_apk_btn or menuTranslations['en'].android_apk_btn or 'Download APK' }}"
+  menu_android_rustore_btn: "{{ menuTranslations[locale].android_rustore_btn or 'RuStore' }}"
   menu_messenger_app: "{{ menuTranslations[locale].messenger_app }}"
   menu_install_guide: "{{ menuTranslations[locale].install_guide }}"
   menu_mobile_apps: "{{ menuTranslations[locale].mobile_apps }}"
@@ -73,7 +75,7 @@ eleventyComputed:
 
 <!-- Стили (общие для всех локалей) -->
 <link rel="stylesheet" href="/frontend/styles/accessibility.css">
-<link rel="stylesheet" href="/frontend/styles/menu.css?v=findings2">
+<link rel="stylesheet" href="/frontend/styles/menu.css?v=rustore1">
 <link rel="stylesheet" href="/frontend/styles/pwa.css">
 
 {% from "partials/tool-icons.njk" import toolIcon, webGameIcon %}
@@ -241,10 +243,13 @@ eleventyComputed:
             {{ menu_mobile_apps }}
         </a>
         <div class="submenu-container" id="mobileAppsSubmenu">
-            <a href="/frontend/downloads/Serpmonn_beta.apk" download="Serpmonn_beta.apk" class="menu-item">
-                {{ toolIcon('apk') }}
-                {{ menu_android_apk }}
-            </a>
+            <div class="menu-android-app">
+                <a href="/frontend/downloads/Serpmonn-1.2.1.apk" download="Serpmonn-1.2.1.apk" class="menu-item menu-android-app__apk">
+                    {{ toolIcon('apk') }}
+                    {{ menu_android_apk }}
+                </a>
+                <a href="https://www.rustore.ru/catalog/app/ru.serpmonn" target="_blank" rel="noopener" class="menu-android-app__rustore">{{ menu_android_rustore_btn }}</a>
+            </div>
             <a href="https://serpmonn.ru/frontend/messenger.html" class="menu-item">
                 {{ toolIcon('chat') }}
                 {{ menu_messenger_app }}

@@ -13,11 +13,22 @@ function isVkMiniContext() {
   return false;
 }
 
+function isAndroidAppContext() {
+  try {
+    if (window.__SPN_ANDROID_APP__) return true;
+    if (document.documentElement?.classList?.contains('android-app')) return true;
+    if (document.body?.classList?.contains('android-app')) return true;
+    if (/(?:^|[?&])app=1(?:&|$)/.test(window.location.search)) return true;
+    if (window.parent && window.parent !== window && window.parent.__SPN_ANDROID_APP__) return true;
+  } catch (_) {}
+  return false;
+}
+
 export function initMobileAnchorAd(options = {}) {
   const anchorId = options.id || 'mobile-anchor-ad';
   const maxWidth = options.maxWidth ?? 768;
 
-  if (isVkMiniContext()) {
+  if (isVkMiniContext() || isAndroidAppContext()) {
     const anchor = document.getElementById(anchorId);
     if (anchor) anchor.style.display = 'none';
     return;

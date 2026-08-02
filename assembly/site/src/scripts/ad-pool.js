@@ -27,6 +27,22 @@ function isVkMiniContext() {
   return false;
 }
 
+/** RuStore / Capacitor shell — site sticky Top/Floor ads must not show */
+function isAndroidAppContext() {
+  try {
+    if (window.__SPN_ANDROID_APP__) return true;
+    if (document.documentElement?.classList?.contains('android-app')) return true;
+    if (document.body?.classList?.contains('android-app')) return true;
+    if (/(?:^|[?&])app=1(?:&|$)/.test(window.location.search)) return true;
+    if (window.parent && window.parent !== window && window.parent.__SPN_ANDROID_APP__) return true;
+  } catch (_) {}
+  return false;
+}
+
+function isNoSiteAdsContext() {
+  return isVkMiniContext() || isAndroidAppContext();
+}
+
 function isMobileViewport() {
   return (window.innerWidth || document.documentElement.clientWidth) <= MOBILE_MAX_WIDTH;
 }
@@ -336,7 +352,7 @@ export function renderYandexBanner(slotKey, container, fillRoot = null) {
 }
 
 export function renderYandexFloorAd() {
-  if (isVkMiniContext()) return false;
+  if (isNoSiteAdsContext()) return false;
   const cfg = slotsData.slots.mobileAnchor?.yandex;
   // Yandex forbids Top Ad + Floor Ad on the same page — prefer Top Ad when top slot exists
   if (
@@ -365,7 +381,7 @@ export function renderYandexFloorAd() {
 }
 
 export function renderYandexTopAd() {
-  if (isVkMiniContext()) return false;
+  if (isNoSiteAdsContext()) return false;
   const cfg = slotsData.slots.topMobile?.yandex;
   if (
     !cfg?.blockId ||
@@ -392,7 +408,7 @@ export function renderYandexTopAd() {
 }
 
 export function renderYandexFullscreen(options = {}) {
-  if (isVkMiniContext()) return false;
+  if (isNoSiteAdsContext()) return false;
   const cfg = slotsData.slots.fullscreen?.yandex;
   if (!cfg?.blockId) {
     return false;
@@ -468,7 +484,7 @@ export async function runVkFallbackForIns(ins, options = {}) {
     return;
   }
 
-  if (isVkMiniContext()) {
+  if (isNoSiteAdsContext()) {
     const container = getAdContainer(ins);
     hideElement(ins);
     hideElement(container);
@@ -509,7 +525,7 @@ export async function runVkFallbackForIns(ins, options = {}) {
 }
 
 export function initAdSlotObserver() {
-  if (isVkMiniContext()) {
+  if (isNoSiteAdsContext()) {
     document.querySelectorAll('ins.mrg-tag, .ad-top-banner, .mobile-anchor-ad, .ad-container').forEach((el) => {
       hideElement(el);
     });
