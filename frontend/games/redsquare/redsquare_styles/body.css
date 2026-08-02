@@ -1,20 +1,133 @@
-body {
+.rs-page {
+    --rs-bg: #12161c;
+    --rs-bg-2: #1a222d;
+    --rs-panel: #243041;
+    --rs-panel-edge: #35485f;
+    --rs-text: #f3f0ea;
+    --rs-muted: #9aabbf;
+    --rs-accent: #f47059;
+    --rs-accent-2: #ff8f78;
+    --rs-ok: #3dba7a;
+    --rs-warn: #e0a24a;
+    --rs-arena: #0e1319;
+    --rs-grid: rgba(255, 255, 255, 0.045);
+    --rs-font: "Outfit", "Segoe UI", sans-serif;
+
+    margin: 0;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
-    height: 100vh;
-    margin: 0;
-    background-color: #f0f0f0;
+    justify-content: flex-start;
+    gap: 0.6rem;
+    padding: 0.5rem 0.75rem 1rem;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    overflow-y: auto;
+    color: var(--rs-text);
+    font-family: var(--rs-font);
+    background:
+        radial-gradient(ellipse 80% 50% at 15% 0%, rgba(244, 112, 89, 0.22), transparent 55%),
+        radial-gradient(ellipse 70% 45% at 90% 10%, rgba(61, 140, 200, 0.18), transparent 50%),
+        linear-gradient(180deg, var(--rs-bg-2), var(--rs-bg));
+}
+
+.rs-page #serpmonn-bg-canvas {
+    display: none !important;
+}
+
+.game-shell {
+    width: min(560px, 100%);
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    flex: 0 0 auto;
+}
+
+.game-hud {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.4rem 0.5rem;
+    align-items: end;
+    padding: 0.55rem 0.65rem;
+    background: color-mix(in srgb, var(--rs-panel) 88%, transparent);
+    border: 1px solid var(--rs-panel-edge);
+    border-radius: 10px;
+}
+
+.hud-block {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+    min-width: 0;
+}
+
+.hud-label {
+    font-size: 0.68rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--rs-muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.hud-value {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.1;
+    color: var(--rs-text);
+}
+
+.hud-lives .hud-value {
+    color: var(--rs-accent);
+    letter-spacing: 0.08em;
+    font-size: 1rem;
+}
+
+.hud-progress {
+    grid-column: 1 / -1;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
     overflow: hidden;
 }
-.score {
+
+.hud-progress-bar {
+    height: 100%;
+    width: 0%;
+    border-radius: inherit;
+    background: linear-gradient(90deg, var(--rs-accent), var(--rs-accent-2));
+    transition: width 0.2s ease-out;
+}
+
+.hud-combo {
+    grid-column: 1 / -1;
+    justify-self: end;
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: var(--rs-warn);
+}
+
+#score {
     position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 24px;
-    font-weight: bold;
-    z-index: 10;
-    color: #000;
-    text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+}
+
+.rs-page .ad-top-banner {
+    width: min(560px, 100%);
+    flex: 0 0 auto;
+}
+
+@media (max-width: 480px) {
+    .game-hud {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .hud-value {
+        font-size: 1.05rem;
+    }
 }

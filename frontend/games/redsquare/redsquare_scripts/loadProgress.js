@@ -9,12 +9,12 @@ export const loadProgress = ({ player, gameArea, gameAreaRect, scoreDisplay, lev
         const score = gameState.score;
         speed = gameState.speed;
         level = gameState.level;
+        const lives = gameState.lives;
         updatePlayerPosition(player, gameAreaRect, playerXPercent, playerYPercent);
         scoreDisplay.textContent = formatScore(score);
-        createEnemies(levels[level - 1].enemies, { speed, gameArea, enemies });
-        return { playerXPercent, playerYPercent, score, speed, level };
-    } else {
-        createEnemies(levels[0].enemies, { speed, gameArea, enemies });
-        return { playerXPercent: 50, playerYPercent: 50, score: 0, speed: 3, level: 1 };
+        createEnemies(levels[Math.min(level, levels.length) - 1].enemies, { speed, gameArea, enemies });
+        return { playerXPercent, playerYPercent, score, speed, level, lives };
     }
+    createEnemies(levels[0].enemies, { speed, gameArea, enemies });
+    return { playerXPercent: 50, playerYPercent: 50, score: 0, speed: 3, level: 1, lives: 3 };
 };

@@ -19,8 +19,11 @@
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
     <link rel="canonical" href="https://serpmonn.ru/frontend/ko/games/redsquare/redsquare.html">
     <link rel="icon" href="/frontend/images/SquareEscape.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/frontend/games/redsquare/redsquare_styles/redsquare_styles.css">
-        <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <script>
@@ -31,13 +34,23 @@
       allLevelsComplete: "모든 레벨 클리어! 축하합니다!",
       modalYourScore: "내 점수:",
       modalBestResult: "최고 기록:",
-      modalOk: "확인"
+      modalOk: "확인",
+      levelLabel: "레벨",
+      bestLabel: "최고",
+      livesLabel: "목숨",
+      comboLabel: "콤보",
+      soundOn: "소리",
+      soundOff: "음소거",
+      pauseOverlay: "일시정지",
+      levelUp: "레벨",
+      gameOverTitle: "게임 오버",
+      restart: "다시"
     };
     </script>
     <script type="module" src="/frontend/games/redsquare/redsquare_scripts/redsquare_scripts.js" defer></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
-<body>
+<body class="rs-page">
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
             <h2>스퀘어 이스케이프 플레이 방법</h2>
@@ -47,32 +60,74 @@
                 <p>3. 금색 보너스로 추가 점수</p>
                 <p>4. 오래 살아남을수록 더 많은 점수</p>
                 <p>5. 일시정지 버튼(또는 스페이스)으로 휴식</p>
+                <p>6. 목숨 3개. 피격 후 짧은 무적. 보너스를 연속으로 먹으면 콤보.</p>
             </div>
-            <button class="instruction-button" id="understandBtn">확인</button>
+            <button class="instruction-button" id="understandBtn" type="button">확인</button>
         </div>
     </div>
-    <div class="score" id="score">점수: 0</div>
-        <div class="ad-top-banner ad-banner loading">
+
+    <div class="ad-top-banner ad-banner loading">
       <ins class="mrg-tag"
           style="display:inline-block;"
           data-ad-client="ad-1897960"
           data-ad-slot="1897960"></ins>
     </div>
-<div class="game-area">
-<div class="player" id="player"></div>
-        <div class="obstacle" style="top: 20%; left: 20%;"></div>
-        <div class="obstacle" style="top: 80%; left: 80%;"></div>
+
+    <div class="game-shell">
+        <header class="game-hud" aria-live="polite">
+            <div class="hud-block">
+                <span class="hud-label">점수</span>
+                <span class="hud-value" id="scoreValue">0</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">레벨</span>
+                <span class="hud-value" id="levelValue">1</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">최고</span>
+                <span class="hud-value" id="bestValue">0</span>
+            </div>
+            <div class="hud-block hud-lives">
+                <span class="hud-label">목숨</span>
+                <span class="hud-value" id="livesValue" aria-label="3">●●●</span>
+            </div>
+            <div class="hud-progress" title="레벨">
+                <div class="hud-progress-bar" id="progressBar"></div>
+            </div>
+            <div class="hud-combo" id="comboDisplay" hidden>
+                <span id="comboValue">×1</span>
+            </div>
+        </header>
+
+        <div class="game-area" id="gameArea">
+            <div class="player" id="player"></div>
+            <div class="obstacle" style="top: 20%; left: 20%;"></div>
+            <div class="obstacle" style="top: 80%; left: 80%;"></div>
+            <div class="pause-overlay" id="pauseOverlay" hidden>
+                <span>일시정지</span>
+            </div>
+            <div class="level-toast" id="levelToast" hidden></div>
+        </div>
+
+        <div class="game-dock">
+            <div class="controls" aria-label="D-pad">
+                <button type="button" class="button pad-up" id="up" aria-label="Up">↑</button>
+                <button type="button" class="button pad-left" id="left" aria-label="Left">←</button>
+                <button type="button" class="button pad-down" id="down" aria-label="Down">↓</button>
+                <button type="button" class="button pad-right" id="right" aria-label="Right">→</button>
+            </div>
+            <div class="actions">
+                <button type="button" class="action-btn action-start" id="start">게임 시작</button>
+                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>일시정지</button>
+                <button type="button" class="action-btn action-restart" id="restart" hidden>다시</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">소리</button>
+                <button type="button" class="action-btn action-home" id="home">홈</button>
+            </div>
+        </div>
     </div>
-    <div class="controls">
-        <div class="button" id="up">↑</div>
-        <div class="button" id="left">←</div>
-        <div class="button" id="down">↓</div>
-        <div class="button" id="right">→</div>
-    </div>
-    <button class="start" id="start">게임 시작</button>
-    <button class="restart" id="restart">다시</button>
-    <button class="home" id="home">홈</button>
-    <button id="pauseBtn">일시정지</button>
+
+    <div class="score" id="score" hidden>점수: 0</div>
+
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
   

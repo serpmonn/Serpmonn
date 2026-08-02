@@ -31,7 +31,10 @@ eleventyComputed:
     <meta name="twitter:image" content="{{ site.baseUrl }}/frontend/images/RedSquare2.ico">
     <link rel="canonical" href="{{ canonical }}">
     <link rel="icon" href="/frontend/images/SquareEscape.ico" type="image/x-icon">
-    <link rel="stylesheet" href="/frontend/games/redsquare/redsquare_styles/redsquare_styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/frontend/games/redsquare/redsquare_styles/redsquare_styles.css?v=2">
     <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
@@ -43,13 +46,23 @@ eleventyComputed:
       allLevelsComplete: {{ gameRedsquareTranslations[locale].gameRedsquare.allLevelsComplete | dump | safe }},
       modalYourScore: {{ gameRedsquareTranslations[locale].gameRedsquare.modalYourScore | dump | safe }},
       modalBestResult: {{ gameRedsquareTranslations[locale].gameRedsquare.modalBestResult | dump | safe }},
-      modalOk: {{ gameRedsquareTranslations[locale].gameRedsquare.modalOk | dump | safe }}
+      modalOk: {{ gameRedsquareTranslations[locale].gameRedsquare.modalOk | dump | safe }},
+      levelLabel: {{ gameRedsquareTranslations[locale].gameRedsquare.levelLabel | dump | safe }},
+      bestLabel: {{ gameRedsquareTranslations[locale].gameRedsquare.bestLabel | dump | safe }},
+      livesLabel: {{ gameRedsquareTranslations[locale].gameRedsquare.livesLabel | dump | safe }},
+      comboLabel: {{ gameRedsquareTranslations[locale].gameRedsquare.comboLabel | dump | safe }},
+      soundOn: {{ gameRedsquareTranslations[locale].gameRedsquare.soundOn | dump | safe }},
+      soundOff: {{ gameRedsquareTranslations[locale].gameRedsquare.soundOff | dump | safe }},
+      pauseOverlay: {{ gameRedsquareTranslations[locale].gameRedsquare.pauseOverlay | dump | safe }},
+      levelUp: {{ gameRedsquareTranslations[locale].gameRedsquare.levelUp | dump | safe }},
+      gameOverTitle: {{ gameRedsquareTranslations[locale].gameRedsquare.gameOverTitle | dump | safe }},
+      restart: {{ gameRedsquareTranslations[locale].gameRedsquare.restart | dump | safe }}
     };
     </script>
-    <script type="module" src="/frontend/games/redsquare/redsquare_scripts/redsquare_scripts.js" defer></script>
+    <script type="module" src="/frontend/games/redsquare/redsquare_scripts/redsquare_scripts.js?v=5" defer></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
-<body>
+<body class="rs-page">
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
             <h2>{{ gameRedsquareTranslations[locale].gameRedsquare.instructionTitle }}</h2>
@@ -59,32 +72,74 @@ eleventyComputed:
                 <p>{{ gameRedsquareTranslations[locale].gameRedsquare.inst3 }}</p>
                 <p>{{ gameRedsquareTranslations[locale].gameRedsquare.inst4 }}</p>
                 <p>{{ gameRedsquareTranslations[locale].gameRedsquare.inst5 }}</p>
+                <p>{{ gameRedsquareTranslations[locale].gameRedsquare.inst6 }}</p>
             </div>
-            <button class="instruction-button" id="understandBtn">{{ gameRedsquareTranslations[locale].gameRedsquare.understandBtn }}</button>
+            <button class="instruction-button" id="understandBtn" type="button">{{ gameRedsquareTranslations[locale].gameRedsquare.understandBtn }}</button>
         </div>
     </div>
-    <div class="score" id="score">{{ gameRedsquareTranslations[locale].gameRedsquare.scorePrefix }}0</div>
+
     <div class="ad-top-banner ad-banner loading">
       <ins class="mrg-tag"
           style="display:inline-block;"
           data-ad-client="ad-{{ mailAds.slots.top.id }}"
           data-ad-slot="{{ mailAds.slots.top.id }}"></ins>
     </div>
-    <div class="game-area">
-        <div class="player" id="player"></div>
-        <div class="obstacle" style="top: 20%; left: 20%;"></div>
-        <div class="obstacle" style="top: 80%; left: 80%;"></div>
+
+    <div class="game-shell">
+        <header class="game-hud" aria-live="polite">
+            <div class="hud-block">
+                <span class="hud-label">{{ gameRedsquareTranslations[locale].gameRedsquare.scoreLabel }}</span>
+                <span class="hud-value" id="scoreValue">0</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">{{ gameRedsquareTranslations[locale].gameRedsquare.levelLabel }}</span>
+                <span class="hud-value" id="levelValue">1</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">{{ gameRedsquareTranslations[locale].gameRedsquare.bestLabel }}</span>
+                <span class="hud-value" id="bestValue">0</span>
+            </div>
+            <div class="hud-block hud-lives">
+                <span class="hud-label">{{ gameRedsquareTranslations[locale].gameRedsquare.livesLabel }}</span>
+                <span class="hud-value" id="livesValue" aria-label="3">●●●</span>
+            </div>
+            <div class="hud-progress" title="{{ gameRedsquareTranslations[locale].gameRedsquare.levelLabel }}">
+                <div class="hud-progress-bar" id="progressBar"></div>
+            </div>
+            <div class="hud-combo" id="comboDisplay" hidden>
+                <span id="comboValue">×1</span>
+            </div>
+        </header>
+
+        <div class="game-area" id="gameArea">
+            <div class="player" id="player"></div>
+            <div class="obstacle" style="top: 20%; left: 20%;"></div>
+            <div class="obstacle" style="top: 80%; left: 80%;"></div>
+            <div class="pause-overlay" id="pauseOverlay" hidden>
+                <span>{{ gameRedsquareTranslations[locale].gameRedsquare.pauseOverlay }}</span>
+            </div>
+            <div class="level-toast" id="levelToast" hidden></div>
+        </div>
+
+        <div class="game-dock">
+            <div class="controls" aria-label="D-pad">
+                <button type="button" class="button pad-up" id="up" aria-label="Up">↑</button>
+                <button type="button" class="button pad-left" id="left" aria-label="Left">←</button>
+                <button type="button" class="button pad-down" id="down" aria-label="Down">↓</button>
+                <button type="button" class="button pad-right" id="right" aria-label="Right">→</button>
+            </div>
+            <div class="actions">
+                <button type="button" class="action-btn action-start" id="start">{{ gameRedsquareTranslations[locale].gameRedsquare.startGame }}</button>
+                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>{{ gameRedsquareTranslations[locale].gameRedsquare.pause }}</button>
+                <button type="button" class="action-btn action-restart" id="restart" hidden>{{ gameRedsquareTranslations[locale].gameRedsquare.restart }}</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">{{ gameRedsquareTranslations[locale].gameRedsquare.soundOn }}</button>
+                <button type="button" class="action-btn action-home" id="home">{{ gameRedsquareTranslations[locale].gameRedsquare.home }}</button>
+            </div>
+        </div>
     </div>
-    <div class="controls">
-        <div class="button" id="up">↑</div>
-        <div class="button" id="left">←</div>
-        <div class="button" id="down">↓</div>
-        <div class="button" id="right">→</div>
-    </div>
-    <button class="start" id="start">{{ gameRedsquareTranslations[locale].gameRedsquare.startGame }}</button>
-    <button class="restart" id="restart">{{ gameRedsquareTranslations[locale].gameRedsquare.restart }}</button>
-    <button class="home" id="home">{{ gameRedsquareTranslations[locale].gameRedsquare.home }}</button>
-    <button id="pauseBtn">{{ gameRedsquareTranslations[locale].gameRedsquare.pause }}</button>
+
+    <div class="score" id="score" hidden>{{ gameRedsquareTranslations[locale].gameRedsquare.scorePrefix }}0</div>
+
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   {% from "partials/mobile-anchor-ad.njk" import mobileAnchor %}
   {{ mobileAnchor(localesNews[locale].news.closeAd) }}

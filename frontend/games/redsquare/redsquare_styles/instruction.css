@@ -1,44 +1,64 @@
 .instruction-overlay {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.8);
+    inset: 0;
+    background: rgba(8, 12, 18, 0.82);
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    color: white;
-    font-family: Arial, sans-serif;
+    color: var(--rs-text, #f3f0ea);
+    font-family: var(--rs-font, "Outfit", sans-serif);
     text-align: center;
+    padding: 1rem;
+    box-sizing: border-box;
 }
+
 .instruction-content {
-    max-width: 80%;
-    padding: 20px;
-    background-color: #333;
-    border-radius: 10px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
-    color: #fff;
-    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+    max-width: min(440px, 92vw);
+    padding: 1.35rem 1.25rem;
+    background: #1e2836;
+    border: 1px solid #35485f;
+    border-radius: 12px;
+    color: #f3f0ea;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
 }
+
+.instruction-content h2 {
+    margin: 0 0 0.5rem;
+    font-size: clamp(1.15rem, 4vw, 1.45rem);
+    font-weight: 700;
+}
+
 .instruction-button {
-    margin-top: 20px;
-    padding: 10px 20px;
-    background-color: #4CAF50;
-    color: white;
+    margin-top: 0.75rem;
+    padding: 0.7rem 1.25rem;
+    background: #f47059;
+    color: #fff;
     border: none;
-    border-radius: 5px;
-    font-size: 18px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    font-family: inherit;
     cursor: pointer;
-    transition: background-color 0.3s;
 }
+
 .instruction-button:hover {
-    background-color: #45a049;
+    background: #ff8f78;
 }
+
 .instruction-list {
     text-align: left;
-    margin: 20px 0;
-    line-height: 1.6;
+    margin: 0.85rem 0 0.25rem;
+    line-height: 1.55;
+    color: #c5d0de;
+    font-size: 0.95rem;
+}
+
+.instruction-list p {
+    margin: 0.35rem 0;
+}
+
+[dir="rtl"] .instruction-list {
+    text-align: right;
 }

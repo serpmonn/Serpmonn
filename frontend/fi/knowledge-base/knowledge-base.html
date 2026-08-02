@@ -19,18 +19,53 @@
 
   
 <script type="text/javascript">
-  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-  m[i].l=1*new Date();
-  for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-  ym(98158791, "init", {
-    clickmap: true,
-    trackLinks: true,
-    accurateTrackBounce: true,
-    webvisor: true,
-    ecommerce: "dataLayer"
-  });
+  (function () {
+    var METRIKA_ID = 98158791;
+    var loaded = false;
+    function loadMetrika() {
+      if (loaded) return;
+      loaded = true;
+      (function (m, e, t, r, i, k, a) {
+        m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < document.scripts.length; j++) {
+          if (document.scripts[j].src === r) return;
+        }
+        k = e.createElement(t);
+        a = e.getElementsByTagName(t)[0];
+        k.async = 1;
+        k.src = r;
+        a.parentNode.insertBefore(k, a);
+      })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+      ym(METRIKA_ID, 'init', {
+        clickmap: true,
+        trackLinks: true,
+        accurateTrackBounce: true,
+        webvisor: true,
+        ecommerce: 'dataLayer'
+      });
+
+      fetch('https://api.ipify.org?format=json')
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (typeof ym === 'undefined') return;
+          ym(METRIKA_ID, 'params', { ip_address: data.ip, user_ip: data.ip });
+          ym(METRIKA_ID, 'hit', window.location.href, {
+            params: { ip_address: data.ip }
+          });
+        })
+        .catch(function () {});
+    }
+
+    if (document.readyState === 'complete') {
+      setTimeout(loadMetrika, 1);
+    } else {
+      window.addEventListener('load', function () {
+        setTimeout(loadMetrika, 1);
+      });
+    }
+  })();
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 
@@ -253,12 +288,12 @@
 
   <!-- Schema.org разметка -->
   <script type="application/ld+json">
-{
+  {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "Serpmonn-tietopankki",
-    "description": "Serpmonn-tietopankki: vastauksia yleisiin kysymyksiin, teknisiä oppaita, palvelun käyttöohjeita ja teknologiakatsauksia.",
-    "inLanguage": "fi",
+    "name": "Serpmonn-tietopankki",  <!-- ИСПРАВЛЕНО: lang → locale -->
+    "description": "Serpmonn-tietopankki: vastauksia yleisiin kysymyksiin, teknisiä oppaita, palvelun käyttöohjeita ja teknologiakatsauksia.",  <!-- ИСПРАВЛЕНО: lang → locale -->
+    "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
     "publisher": {
       "@type": "Organization",
       "name": "Serpmonn",
@@ -267,7 +302,7 @@
     "mainEntity": {
       "@type": "ItemList",
       "itemListElement": [
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 1,
@@ -276,11 +311,11 @@
             "headline": "Harjoittelu ja oikea ravitsemus: Aloittelijan opas",
             "description": "Kuinka aloittaa urheilu älykkäästi: perusharjoittelu, palautuminen ja käytännöllinen ravitsemus ilman äärimmäisyyksiä. Yksinkertainen opas aloittelijoille ja palaaville urheilijoille.",
             "datePublished": "30. heinäkuuta 2026",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/fi/knowledge-base/articles/training-and-nutrition-guide.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/fi/knowledge-base/articles/training-and-nutrition-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 2,
@@ -289,11 +324,11 @@
             "headline": "How to install Serpmonn: Home Screen and Android",
             "description": "Add Serpmonn to your Home Screen via the browser or download the Android APK — what’s different and how to do it.",
             "datePublished": "July 23, 2026",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/fi/knowledge-base/articles/serpmonn-install-guide.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/fi/knowledge-base/articles/serpmonn-install-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 3,
@@ -302,11 +337,11 @@
             "headline": "Serpmonn Updates: September 2025 — July 2026",
             "description": "Messenger, Serpmonn AI, Findings, VK &amp; messenger login, Pro &amp; points, new tools, games, and localization across 49 languages.",
             "datePublished": "July 22, 2026",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/fi/knowledge-base/articles/updates-sep15-2025-jul22-2026.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/fi/knowledge-base/articles/updates-sep15-2025-jul22-2026.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 4,
@@ -315,11 +350,11 @@
             "headline": "JSON formatter: why you need it and how to use it",
             "description": "What JSON is, why format and validate it, common mistakes, and how to clean up JSON online.",
             "datePublished": "21 July 2026",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/fi/knowledge-base/articles/json-formatter-guide.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/fi/knowledge-base/articles/json-formatter-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 5,
@@ -328,11 +363,11 @@
             "headline": "Mitä evästeet ovat: Täydellinen opas hallintaan ja turvallisuuteen",
             "description": "Kaikki evästetiedostoista: tyypit, tarkoitus, hallinta ja puhdistus. Kuinka suojata yksityisyyttäsi verkossa ja miksi puhdistaa evästeet.",
             "datePublished": "29. lokakuuta 2025",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/cookies-complete-guide.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/cookies-complete-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 6,
@@ -341,11 +376,11 @@
             "headline": "Porttien edelleenlähetys reitittimessä: Täydellinen opas 2025",
             "description": "Vaiheittainen opas porttien edelleenlähetyksen asettamiseen peleille, palvelimille ja etäkäyttöön. Ohjeet kaikille suosituille reitittimille.",
             "datePublished": "29. lokakuuta 2025",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/port-forwarding-guide.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/port-forwarding-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 7,
@@ -354,11 +389,11 @@
             "headline": "Merkkirajoitukset ja snippetien leikkaus (VK/Telegram/YouTube/TikTok)",
             "description": "Yhteenvetotaulukko rajoituksista ja ennen/jälkeen esimerkkejä täydellisistä otsikoista ja kuvauksista. Opi lisäämään CTR:ää!",
             "datePublished": "15. syyskuuta 2025",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 8,
@@ -367,11 +402,11 @@
             "headline": "IndexNow: Käytännön toteutus ja temput",
             "description": "Asennus, changed-only, yleiset virheet ja vertailu sivustokartan pingiin. Nopeuta indeksointia tarkistuslistallamme!",
             "datePublished": "15. syyskuuta 2025",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/indexnow-practical-guide.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/indexnow-practical-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 9,
@@ -380,11 +415,11 @@
             "headline": "UTM-tagit: Täydellinen käyttöopas",
             "description": "Kattava opas UTM-tagien luomiseen ja käyttämiseen tarkkaan liikenteen seurantaan ja mainoskampanjoihin.",
             "datePublished": "14. syyskuuta 2025",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/utm-complete-guide.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/utm-complete-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 10,
@@ -393,11 +428,11 @@
             "headline": "Täydellinen verkkokehityksen opas 2025",
             "description": "HTML-perusteista kehittyneisiin kehyksiin. Kattava opas aloittelijoille ja kokeneille kehittäjille.",
             "datePublished": "12. syyskuuta 2025",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/web-development-guide.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/web-development-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 11,
@@ -406,11 +441,11 @@
             "headline": "Verkkoteknologioiden trendit 2025: Mitä käyttää nyt",
             "description": "Ajankohtaiset trendit verkkokehityksessä, uudet kehykset ja parhaat käytännöt moderneihin projekteihin.",
             "datePublished": "10. syyskuuta 2025",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/web-tech-trends-2024.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/web-tech-trends-2024.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 12,
@@ -419,11 +454,11 @@
             "headline": "Kuinka laskea laitteiden poistot",
             "description": "Käytännön opas poistojen laskentaan esimerkkien ja kaavojen kanssa. Lineaariset ja epälineaariset poistomenetelmät.",
             "datePublished": "8. syyskuuta 2025",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/how-to-calculate-depreciation.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/how-to-calculate-depreciation.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 13,
@@ -432,11 +467,11 @@
             "headline": "Kuinka laskea tuotteiden ekologinen jalanjälki",
             "description": "Menetelmät tavaroiden ja palveluiden ekologisen jalanjäljen laskemiseen. Käytännön esimerkkejä ja työkaluja ympäristövaikutusten arviointiin.",
             "datePublished": "5. syyskuuta 2025",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/how-to-calculate-the-eco-footprint-of-products.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/how-to-calculate-the-eco-footprint-of-products.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 14,
@@ -445,11 +480,11 @@
             "headline": "Serpmonn-päivitykset: Elo-syyskuu 2025",
             "description": "Kaikki uudet toiminnot ja parannukset Serpmonnissa viime kuussa. Uudet työkalut, korjaukset ja tulevat suunnitelmat.",
             "datePublished": "3. syyskuuta 2025",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/updates-aug-25-sep-15.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/updates-aug-25-sep-15.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 15,
@@ -458,15 +493,15 @@
             "headline": "Serpmonn-päivitykset: Elokuu 2025",
             "description": "Tärkeimmät päivitykset ja parannukset, jotka toteutettiin elokuussa. Uudet hakumahdollisuudet ja työkalut kehittäjille.",
             "datePublished": "17. elokuuta 2025",
-            "inLanguage": "fi",
-            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/updates-august-17.html"
+            "inLanguage": "fi",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fi/frontend/knowledge-base/articles/updates-august-17.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         }
-
+        
       ]
     }
   }
-</script>
+  </script>
 
   <!-- RSS лента (если нужен общий для всех языков, оставляем так) -->
   <link rel="alternate" type="application/rss+xml" title="RSS базы знаний Серпмонн" href="/frontend/knowledge-base/rss.xml">

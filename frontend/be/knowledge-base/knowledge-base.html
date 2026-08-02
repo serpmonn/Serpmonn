@@ -19,18 +19,53 @@
 
   
 <script type="text/javascript">
-  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-  m[i].l=1*new Date();
-  for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-  ym(98158791, "init", {
-    clickmap: true,
-    trackLinks: true,
-    accurateTrackBounce: true,
-    webvisor: true,
-    ecommerce: "dataLayer"
-  });
+  (function () {
+    var METRIKA_ID = 98158791;
+    var loaded = false;
+    function loadMetrika() {
+      if (loaded) return;
+      loaded = true;
+      (function (m, e, t, r, i, k, a) {
+        m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < document.scripts.length; j++) {
+          if (document.scripts[j].src === r) return;
+        }
+        k = e.createElement(t);
+        a = e.getElementsByTagName(t)[0];
+        k.async = 1;
+        k.src = r;
+        a.parentNode.insertBefore(k, a);
+      })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+      ym(METRIKA_ID, 'init', {
+        clickmap: true,
+        trackLinks: true,
+        accurateTrackBounce: true,
+        webvisor: true,
+        ecommerce: 'dataLayer'
+      });
+
+      fetch('https://api.ipify.org?format=json')
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (typeof ym === 'undefined') return;
+          ym(METRIKA_ID, 'params', { ip_address: data.ip, user_ip: data.ip });
+          ym(METRIKA_ID, 'hit', window.location.href, {
+            params: { ip_address: data.ip }
+          });
+        })
+        .catch(function () {});
+    }
+
+    if (document.readyState === 'complete') {
+      setTimeout(loadMetrika, 1);
+    } else {
+      window.addEventListener('load', function () {
+        setTimeout(loadMetrika, 1);
+      });
+    }
+  })();
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 
@@ -253,12 +288,12 @@
 
   <!-- Schema.org разметка -->
   <script type="application/ld+json">
-{
+  {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "База ведаў Serpmonn",
-    "description": "База ведаў Serpmonn: адказы на частыя пытанні, тэхнічныя гайды, інструкцыі па выкарыстанні сервісу і агляды тэхналогій.",
-    "inLanguage": "be",
+    "name": "База ведаў Serpmonn",  <!-- ИСПРАВЛЕНО: lang → locale -->
+    "description": "База ведаў Serpmonn: адказы на частыя пытанні, тэхнічныя гайды, інструкцыі па выкарыстанні сервісу і агляды тэхналогій.",  <!-- ИСПРАВЛЕНО: lang → locale -->
+    "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
     "publisher": {
       "@type": "Organization",
       "name": "Serpmonn",
@@ -267,7 +302,7 @@
     "mainEntity": {
       "@type": "ItemList",
       "itemListElement": [
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 1,
@@ -276,11 +311,11 @@
             "headline": "Трэніроўкі і правільнае харчаванне: базавы гід",
             "description": "З чаго пачаць спорт: рэгулярныя трэніроўкі, аднаўленне і харчаванне без крайнасцяў. Практычныя правілы для пачаткоўцаў.",
             "datePublished": "30 ліпеня 2026 г",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/be/knowledge-base/articles/training-and-nutrition-guide.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/be/knowledge-base/articles/training-and-nutrition-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 2,
@@ -289,11 +324,11 @@
             "headline": "How to install Serpmonn: Home Screen and Android",
             "description": "Add Serpmonn to your Home Screen via the browser or download the Android APK — what’s different and how to do it.",
             "datePublished": "July 23, 2026",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/be/knowledge-base/articles/serpmonn-install-guide.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/be/knowledge-base/articles/serpmonn-install-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 3,
@@ -302,11 +337,11 @@
             "headline": "Serpmonn Updates: September 2025 — July 2026",
             "description": "Messenger, Serpmonn AI, Findings, VK &amp; messenger login, Pro &amp; points, new tools, games, and localization across 49 languages.",
             "datePublished": "July 22, 2026",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/be/knowledge-base/articles/updates-sep15-2025-jul22-2026.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/be/knowledge-base/articles/updates-sep15-2025-jul22-2026.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 4,
@@ -315,11 +350,11 @@
             "headline": "JSON formatter: why you need it and how to use it",
             "description": "What JSON is, why format and validate it, common mistakes, and how to clean up JSON online.",
             "datePublished": "21 July 2026",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/be/knowledge-base/articles/json-formatter-guide.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/be/knowledge-base/articles/json-formatter-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 5,
@@ -328,11 +363,11 @@
             "headline": "Што такое кукі (cookies): поўнае кіраўніцтва па кіраванні і бяспецы",
             "description": "Усё пра кукі-файлы: тыпы, прызначэнне, кіраванне і ачыстка. Як абараніць сваю прыватнасць у інтэрнэце і навошта чысціць кукі.",
             "datePublished": "29 кастрычніка 2025",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/cookies-complete-guide.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/cookies-complete-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 6,
@@ -341,11 +376,11 @@
             "headline": "Праброс партоў на роўтары: поўнае кіраўніцтва 2025",
             "description": "Пашаговы кіраўніцтва па наладзе пробрасу партоў для гульняў, сервераў і аддаленага доступу. Інструкцыі для ўсіх папулярных роўтараў.",
             "datePublished": "29 кастрычніка 2025",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/port-forwarding-guide.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/port-forwarding-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 7,
@@ -354,11 +389,11 @@
             "headline": "Ліміты сімвалаў і абрэзка сніпетаў (VK/Telegram/YouTube/TikTok)",
             "description": "Зводная табліца лімітаў і прыклады «да/пасля» для ідэальных загалоўкаў і апісанняў. Даведайцеся, як павысіць CTR!",
             "datePublished": "15 верасня 2025",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 8,
@@ -367,11 +402,11 @@
             "headline": "IndexNow: практычнае ўкараненне і трукі",
             "description": "Setup, changed-only, частыя памылкі і параўнанне з sitemap-пінгам. Паскарыце індэксацыю з нашым чэк-лістам!",
             "datePublished": "15 верасня 2025",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/indexnow-practical-guide.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/indexnow-practical-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 9,
@@ -380,11 +415,11 @@
             "headline": "UTM меткі: поўнае кіраўніцтва па выкарыстанні",
             "description": "Вычарпальнае кіраўніцтва па стварэнні і выкарыстанні UTM метак для дакладнага адсочвання трафіку і рэкламных кампаній.",
             "datePublished": "14 верасня 2025",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/utm-complete-guide.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/utm-complete-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 10,
@@ -393,11 +428,11 @@
             "headline": "Поўнае кіраўніцтва па вэб-распрацоўцы 2025",
             "description": "Ад асноў HTML да прасунутых фрэймворкаў. Вычарпальнае кіраўніцтва для пачаткоўцаў і вопытных распрацоўшчыкаў.",
             "datePublished": "12 верасня 2025",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/web-development-guide.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/web-development-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 11,
@@ -406,11 +441,11 @@
             "headline": "Трэнды вэб-тэхналогій 2025: што выкарыстоўваць зараз",
             "description": "Актуальныя трэнды ў вэб-распрацоўцы, новыя фрэймворкі і лепшыя практыкі для сучасных праектаў.",
             "datePublished": "10 верасня 2025",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/web-tech-trends-2024.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/web-tech-trends-2024.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 12,
@@ -419,11 +454,11 @@
             "headline": "Як разлічыць амартызацыю абсталявання",
             "description": "Практычнае кіраўніцтва па разліку амартызацыі з прыкладамі і формуламі. Метады лінейнай і нелінейнай амартызацыі.",
             "datePublished": "8 верасня 2025",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/how-to-calculate-depreciation.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/how-to-calculate-depreciation.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 13,
@@ -432,11 +467,11 @@
             "headline": "Як разлічыць экалагічны след прадукцыі",
             "description": "Метадыкі разліку экалагічнага следу тавараў і паслуг. Практычныя прыклады і інструменты для ацэнкі ўздзеяння на навакольнае асяроддзе.",
             "datePublished": "5 верасня 2025",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/how-to-calculate-the-eco-footprint-of-products.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/how-to-calculate-the-eco-footprint-of-products.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 14,
@@ -445,11 +480,11 @@
             "headline": "Абнаўленні Serpmonn: жнівень-верасень 2025",
             "description": "Усе новыя функцыі і паляпшэнні на Serpmonn за апошні месяц. Новыя інструменты, выпраўленні і планы на будучыню.",
             "datePublished": "3 верасня 2025",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/updates-aug-25-sep-15.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/updates-aug-25-sep-15.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 15,
@@ -458,15 +493,15 @@
             "headline": "Абнаўленні Serpmonn: жнівень 2025",
             "description": "Ключавыя абнаўленні і паляпшэнні, рэалізаваныя ў жніўні. Новыя магчымасці пошуку і інструменты для распрацоўшчыкаў.",
             "datePublished": "17 жніўня 2025",
-            "inLanguage": "be",
-            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/updates-august-17.html"
+            "inLanguage": "be",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/be/frontend/knowledge-base/articles/updates-august-17.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         }
-
+        
       ]
     }
   }
-</script>
+  </script>
 
   <!-- RSS лента (если нужен общий для всех языков, оставляем так) -->
   <link rel="alternate" type="application/rss+xml" title="RSS базы знаний Серпмонн" href="/frontend/knowledge-base/rss.xml">

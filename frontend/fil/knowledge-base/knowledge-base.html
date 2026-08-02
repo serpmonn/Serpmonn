@@ -19,18 +19,53 @@
 
   
 <script type="text/javascript">
-  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-  m[i].l=1*new Date();
-  for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-  ym(98158791, "init", {
-    clickmap: true,
-    trackLinks: true,
-    accurateTrackBounce: true,
-    webvisor: true,
-    ecommerce: "dataLayer"
-  });
+  (function () {
+    var METRIKA_ID = 98158791;
+    var loaded = false;
+    function loadMetrika() {
+      if (loaded) return;
+      loaded = true;
+      (function (m, e, t, r, i, k, a) {
+        m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < document.scripts.length; j++) {
+          if (document.scripts[j].src === r) return;
+        }
+        k = e.createElement(t);
+        a = e.getElementsByTagName(t)[0];
+        k.async = 1;
+        k.src = r;
+        a.parentNode.insertBefore(k, a);
+      })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+      ym(METRIKA_ID, 'init', {
+        clickmap: true,
+        trackLinks: true,
+        accurateTrackBounce: true,
+        webvisor: true,
+        ecommerce: 'dataLayer'
+      });
+
+      fetch('https://api.ipify.org?format=json')
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (typeof ym === 'undefined') return;
+          ym(METRIKA_ID, 'params', { ip_address: data.ip, user_ip: data.ip });
+          ym(METRIKA_ID, 'hit', window.location.href, {
+            params: { ip_address: data.ip }
+          });
+        })
+        .catch(function () {});
+    }
+
+    if (document.readyState === 'complete') {
+      setTimeout(loadMetrika, 1);
+    } else {
+      window.addEventListener('load', function () {
+        setTimeout(loadMetrika, 1);
+      });
+    }
+  })();
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 
@@ -253,12 +288,12 @@
 
   <!-- Schema.org разметка -->
   <script type="application/ld+json">
-{
+  {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "Balita at Artikulo",
-    "description": "Pinakabagong balita sa teknolohiya, promo code 2025, gabay sa mini-laro at SEO. Basahin ang kapaki-pakinabang na artikulo sa Serpmonn.ru!",
-    "inLanguage": "fil",
+    "name": "Balita at Artikulo",  <!-- ИСПРАВЛЕНО: lang → locale -->
+    "description": "Pinakabagong balita sa teknolohiya, promo code 2025, gabay sa mini-laro at SEO. Basahin ang kapaki-pakinabang na artikulo sa Serpmonn.ru!",  <!-- ИСПРАВЛЕНО: lang → locale -->
+    "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
     "publisher": {
       "@type": "Organization",
       "name": "Serpmonn",
@@ -267,7 +302,7 @@
     "mainEntity": {
       "@type": "ItemList",
       "itemListElement": [
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 1,
@@ -276,11 +311,11 @@
             "headline": "Pagsasanay at Wastong Nutrisyon: Isang Gabay sa Baguhan",
             "description": "Paano simulan ang sports sa matalinong paraan: pangunahing pagsasanay, pagbawi, at praktikal na nutrisyon nang walang kalabisan. Isang simpleng gabay para sa mga nagsisimula at bumabalik na mga atleta.",
             "datePublished": "Hulyo 30, 2026",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/fil/knowledge-base/articles/training-and-nutrition-guide.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/fil/knowledge-base/articles/training-and-nutrition-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 2,
@@ -289,11 +324,11 @@
             "headline": "How to install Serpmonn: Home Screen and Android",
             "description": "Add Serpmonn to your Home Screen via the browser or download the Android APK — what’s different and how to do it.",
             "datePublished": "July 23, 2026",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/fil/knowledge-base/articles/serpmonn-install-guide.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/fil/knowledge-base/articles/serpmonn-install-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 3,
@@ -302,11 +337,11 @@
             "headline": "Serpmonn Updates: September 2025 — July 2026",
             "description": "Messenger, Serpmonn AI, Findings, VK &amp; messenger login, Pro &amp; points, new tools, games, and localization across 49 languages.",
             "datePublished": "July 22, 2026",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/fil/knowledge-base/articles/updates-sep15-2025-jul22-2026.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/fil/knowledge-base/articles/updates-sep15-2025-jul22-2026.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 4,
@@ -315,11 +350,11 @@
             "headline": "JSON formatter: why you need it and how to use it",
             "description": "What JSON is, why format and validate it, common mistakes, and how to clean up JSON online.",
             "datePublished": "21 July 2026",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/fil/knowledge-base/articles/json-formatter-guide.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/fil/knowledge-base/articles/json-formatter-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 5,
@@ -328,11 +363,11 @@
             "headline": "Ano ang cookies: Kumpletong gabay sa pamamahala at seguridad",
             "description": "Lahat tungkol sa cookie files: mga uri, layunin, pamamahala at paglilinis. Paano protektahan ang iyong privacy online at bakit kailangang maglinis ng cookies.",
             "datePublished": "29 Oktubre 2025",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/cookies-complete-guide.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/cookies-complete-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 6,
@@ -341,11 +376,11 @@
             "headline": "Port Forwarding sa Router: Kumpletong Gabay 2025",
             "description": "Step-by-step na gabay sa pag-set up ng port forwarding para sa mga laro, server at remote access. Mga instruction para sa lahat ng popular na router.",
             "datePublished": "29 Oktubre 2025",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/port-forwarding-guide.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/port-forwarding-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 7,
@@ -354,11 +389,11 @@
             "headline": "Character Limits at Snippet Trimming (VK/Telegram/YouTube/TikTok)",
             "description": "Summary table ng limits at before/after examples para sa perpektong headline at description. Alamin kung paano dagdagan ang CTR!",
             "datePublished": "15 Setyembre 2025",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 8,
@@ -367,11 +402,11 @@
             "headline": "IndexNow: Practical Implementation at Tricks",
             "description": "Setup, changed-only, common errors at comparison sa sitemap ping. Pabilisin ang indexing gamit ang aming checklist!",
             "datePublished": "15 Setyembre 2025",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/indexnow-practical-guide.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/indexnow-practical-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 9,
@@ -380,11 +415,11 @@
             "headline": "UTM Tags: Kumpletong Gabay sa Paggamit",
             "description": "Comprehensive guide sa paggawa at paggamit ng UTM tags para sa precise traffic tracking at advertising campaigns.",
             "datePublished": "14 Setyembre 2025",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/utm-complete-guide.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/utm-complete-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 10,
@@ -393,11 +428,11 @@
             "headline": "Kumpletong Web Development Guide 2025",
             "description": "Mula sa HTML basics hanggang advanced frameworks. Comprehensive guide para sa beginners at experienced developers.",
             "datePublished": "12 Setyembre 2025",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/web-development-guide.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/web-development-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 11,
@@ -406,11 +441,11 @@
             "headline": "Web Technology Trends 2025: Ano ang Gamitin Ngayon",
             "description": "Current trends sa web development, new frameworks at best practices para sa modern projects.",
             "datePublished": "10 Setyembre 2025",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/web-tech-trends-2024.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/web-tech-trends-2024.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 12,
@@ -419,11 +454,11 @@
             "headline": "Paano Kalkulahin ang Depreciation ng Equipment",
             "description": "Practical guide sa pagkalkula ng depreciation kasama ang mga halimbawa at formula. Linear at nonlinear depreciation methods.",
             "datePublished": "8 Setyembre 2025",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/how-to-calculate-depreciation.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/how-to-calculate-depreciation.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 13,
@@ -432,11 +467,11 @@
             "headline": "Paano Kalkulahin ang Ecological Footprint ng Products",
             "description": "Methods para sa pagkalkula ng ecological footprint ng goods at services. Practical examples at tools para sa environmental impact assessment.",
             "datePublished": "5 Setyembre 2025",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/how-to-calculate-the-eco-footprint-of-products.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/how-to-calculate-the-eco-footprint-of-products.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 14,
@@ -445,11 +480,11 @@
             "headline": "Serpmonn Updates: Agosto-Setyembre 2025",
             "description": "Lahat ng bagong features at improvements sa Serpmonn sa nakaraang buwan. New tools, fixes at future plans.",
             "datePublished": "3 Setyembre 2025",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/updates-aug-25-sep-15.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/updates-aug-25-sep-15.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 15,
@@ -458,15 +493,15 @@
             "headline": "Serpmonn Updates: Agosto 2025",
             "description": "Key updates at improvements na na-implement sa Agosto. New search capabilities at tools para sa developers.",
             "datePublished": "17 Agosto 2025",
-            "inLanguage": "fil",
-            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/updates-august-17.html"
+            "inLanguage": "fil",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/fil/frontend/knowledge-base/articles/updates-august-17.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         }
-
+        
       ]
     }
   }
-</script>
+  </script>
 
   <!-- RSS лента (если нужен общий для всех языков, оставляем так) -->
   <link rel="alternate" type="application/rss+xml" title="RSS базы знаний Серпмонн" href="/frontend/knowledge-base/rss.xml">

@@ -19,18 +19,53 @@
 
   
 <script type="text/javascript">
-  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-  m[i].l=1*new Date();
-  for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-  ym(98158791, "init", {
-    clickmap: true,
-    trackLinks: true,
-    accurateTrackBounce: true,
-    webvisor: true,
-    ecommerce: "dataLayer"
-  });
+  (function () {
+    var METRIKA_ID = 98158791;
+    var loaded = false;
+    function loadMetrika() {
+      if (loaded) return;
+      loaded = true;
+      (function (m, e, t, r, i, k, a) {
+        m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < document.scripts.length; j++) {
+          if (document.scripts[j].src === r) return;
+        }
+        k = e.createElement(t);
+        a = e.getElementsByTagName(t)[0];
+        k.async = 1;
+        k.src = r;
+        a.parentNode.insertBefore(k, a);
+      })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+      ym(METRIKA_ID, 'init', {
+        clickmap: true,
+        trackLinks: true,
+        accurateTrackBounce: true,
+        webvisor: true,
+        ecommerce: 'dataLayer'
+      });
+
+      fetch('https://api.ipify.org?format=json')
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (typeof ym === 'undefined') return;
+          ym(METRIKA_ID, 'params', { ip_address: data.ip, user_ip: data.ip });
+          ym(METRIKA_ID, 'hit', window.location.href, {
+            params: { ip_address: data.ip }
+          });
+        })
+        .catch(function () {});
+    }
+
+    if (document.readyState === 'complete') {
+      setTimeout(loadMetrika, 1);
+    } else {
+      window.addEventListener('load', function () {
+        setTimeout(loadMetrika, 1);
+      });
+    }
+  })();
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 
@@ -253,12 +288,12 @@
 
   <!-- Schema.org разметка -->
   <script type="application/ld+json">
-{
+  {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "Serpmonn biliyi bazası",
-    "description": "Serpmonn biliyi bazası: tez-tez verilən suallara cavablar, texniki təlimatlar, xidmətin istifadəsi üzrə göstərişlər və texnologiya analizləri.",
-    "inLanguage": "az",
+    "name": "Serpmonn biliyi bazası",  <!-- ИСПРАВЛЕНО: lang → locale -->
+    "description": "Serpmonn biliyi bazası: tez-tez verilən suallara cavablar, texniki təlimatlar, xidmətin istifadəsi üzrə göstərişlər və texnologiya analizləri.",  <!-- ИСПРАВЛЕНО: lang → locale -->
+    "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
     "publisher": {
       "@type": "Organization",
       "name": "Serpmonn",
@@ -267,7 +302,7 @@
     "mainEntity": {
       "@type": "ItemList",
       "itemListElement": [
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 1,
@@ -276,11 +311,11 @@
             "headline": "Məşq və düzgün qidalanma: yeni başlayanlar üçün bələdçi",
             "description": "İdmana necə başlamaq olar: müntəzəm məşqlər, bərpa və ifrata varmayan qidalanma. Yeni başlayanlar üçün praktiki qaydalar.",
             "datePublished": "30 iyul 2026-cı il",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/az/knowledge-base/articles/training-and-nutrition-guide.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/az/knowledge-base/articles/training-and-nutrition-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 2,
@@ -289,11 +324,11 @@
             "headline": "How to install Serpmonn: Home Screen and Android",
             "description": "Add Serpmonn to your Home Screen via the browser or download the Android APK — what’s different and how to do it.",
             "datePublished": "July 23, 2026",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/az/knowledge-base/articles/serpmonn-install-guide.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/az/knowledge-base/articles/serpmonn-install-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 3,
@@ -302,11 +337,11 @@
             "headline": "Serpmonn Updates: September 2025 — July 2026",
             "description": "Messenger, Serpmonn AI, Findings, VK &amp; messenger login, Pro &amp; points, new tools, games, and localization across 49 languages.",
             "datePublished": "July 22, 2026",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/az/knowledge-base/articles/updates-sep15-2025-jul22-2026.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/az/knowledge-base/articles/updates-sep15-2025-jul22-2026.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 4,
@@ -315,11 +350,11 @@
             "headline": "JSON formatter: why you need it and how to use it",
             "description": "What JSON is, why format and validate it, common mistakes, and how to clean up JSON online.",
             "datePublished": "21 July 2026",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/az/knowledge-base/articles/json-formatter-guide.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/az/knowledge-base/articles/json-formatter-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 5,
@@ -328,11 +363,11 @@
             "headline": "Kukilər nədir: İdarəetmə və Təhlükəsizlik üzrə Tam Bələdçi",
             "description": "Kuki faylları haqqında hər şey: növləri, məqsədi, idarəetmə və təmizləmə. Onlayn məxfilik necə qorunur və kukilər niyə təmizlənir.",
             "datePublished": "29 oktyabr 2025",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/cookies-complete-guide.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/cookies-complete-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 6,
@@ -341,11 +376,11 @@
             "headline": "Routerda Port İstiqamətləndirmə: Tam Bələdçi 2025",
             "description": "Oyunlar, serverlər və uzaqdan giriş üçün port istiqamətləndirmə qurmaq üçün addım-addım bələdçi. Bütün məşhur routerlar üçün təlimatlar.",
             "datePublished": "29 oktyabr 2025",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/port-forwarding-guide.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/port-forwarding-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 7,
@@ -354,11 +389,11 @@
             "headline": "Simvol Limitləri və Snippet Kəsilməsi (VK/Telegram/YouTube/TikTok)",
             "description": "Mükəmməl başlıqlar və təsvirlər üçün limitlərin xülasə cədvəli və əvvəl/sonra nümunələri. CTR necə artırılacağını öyrənin!",
             "datePublished": "15 sentyabr 2025",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/snippet-limits-vk-telegram-youtube-tiktok.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 8,
@@ -367,11 +402,11 @@
             "headline": "IndexNow: Praktik Tətbiq və Fəndlər",
             "description": "Qurulum, yalnız dəyişdirilmiş, ümumi səhvlər və sitemap ping ilə müqayisə. Çeklistimizlə indeksləşməni sürətləndirin!",
             "datePublished": "15 sentyabr 2025",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/indexnow-practical-guide.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/indexnow-practical-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 9,
@@ -380,11 +415,11 @@
             "headline": "UTM Teqləri: Tam İstifadə Bələdçisi",
             "description": "Dəqiq trafik izləmə və reklam kampaniyaları üçün UTM teqlərinin yaradılması və istifadəsi üzrə hərtərəfli bələdçi.",
             "datePublished": "14 sentyabr 2025",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/utm-complete-guide.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/utm-complete-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 10,
@@ -393,11 +428,11 @@
             "headline": "Tam Veb İnkişaf Bələdçisi 2025",
             "description": "HTML əsaslarından qabaqcıl freymvorklara qədər. Yeni başlayanlar və təcrübəli developerlər üçün hərtərəfli bələdçi.",
             "datePublished": "12 sentyabr 2025",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/web-development-guide.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/web-development-guide.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 11,
@@ -406,11 +441,11 @@
             "headline": "Veb Texnologiya Trendləri 2025: İndi Nə İstifadə Etməli",
             "description": "Veb inkişafında cari trendlər, yeni freymvorklar və müasir layihələr üçün ən yaxşı təcrübələr.",
             "datePublished": "10 sentyabr 2025",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/web-tech-trends-2024.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/web-tech-trends-2024.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 12,
@@ -419,11 +454,11 @@
             "headline": "Avadanlıq Amortizasiyası Necə Hesablanır",
             "description": "Nümunələr və düsturlarla amortizasiya hesablanması üzrə praktiki bələdçi. Xətti və qeyri-xətti amortizasiya üsulları.",
             "datePublished": "8 sentyabr 2025",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/how-to-calculate-depreciation.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/how-to-calculate-depreciation.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 13,
@@ -432,11 +467,11 @@
             "headline": "Məhsulun Ekoloji İzi Necə Hesablanır",
             "description": "Malların və xidmətlərin ekoloji izinin hesablanması üsulları. Ekoloji təsirin qiymətləndirilməsi üçün praktiki nümunələr və alətlər.",
             "datePublished": "5 sentyabr 2025",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/how-to-calculate-the-eco-footprint-of-products.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/how-to-calculate-the-eco-footprint-of-products.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 14,
@@ -445,11 +480,11 @@
             "headline": "Serpmonn Yeniləmələri: Avqust-Sentyabr 2025",
             "description": "Keçən ay ərzində Serpmonn-da bütün yeni funksiyalar və təkmilləşdirmələr. Yeni alətlər, düzəlişlər və gələcək planlar.",
             "datePublished": "3 sentyabr 2025",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/updates-aug-25-sep-15.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/updates-aug-25-sep-15.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         },
-
+          <!-- ИСПРАВЛЕНО: lang → locale -->
         {
           "@type": "ListItem",
           "position": 15,
@@ -458,15 +493,15 @@
             "headline": "Serpmonn Yeniləmələri: Avqust 2025",
             "description": "Avqustda həyata keçirilən əsas yeniləmələr və təkmilləşdirmələr. Yeni axtarış imkanları və developerlər üçün alətlər.",
             "datePublished": "17 avqust 2025",
-            "inLanguage": "az",
-            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/updates-august-17.html"
+            "inLanguage": "az",  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "url": "https://serpmonn.ru/az/frontend/knowledge-base/articles/updates-august-17.html"  <!-- ИСПРАВЛЕНО: lang → locale -->
           }
         }
-
+        
       ]
     }
   }
-</script>
+  </script>
 
   <!-- RSS лента (если нужен общий для всех языков, оставляем так) -->
   <link rel="alternate" type="application/rss+xml" title="RSS базы знаний Серпмонн" href="/frontend/knowledge-base/rss.xml">

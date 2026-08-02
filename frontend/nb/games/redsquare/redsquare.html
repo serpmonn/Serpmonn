@@ -19,8 +19,11 @@
     <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/RedSquare2.ico">
     <link rel="canonical" href="https://serpmonn.ru/frontend/nb/games/redsquare/redsquare.html">
     <link rel="icon" href="/frontend/images/SquareEscape.ico" type="image/x-icon">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/frontend/games/redsquare/redsquare_styles/redsquare_styles.css">
-        <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
+    <link rel="stylesheet" href="/frontend/styles/ad-top-banner.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <script>
@@ -31,13 +34,23 @@
       allLevelsComplete: "Alle Level geschafft! Glückwunsch!",
       modalYourScore: "Deine Punkte:",
       modalBestResult: "Bestes Ergebnis:",
-      modalOk: "OK"
+      modalOk: "OK",
+      levelLabel: "Level",
+      bestLabel: "Best",
+      livesLabel: "Lives",
+      comboLabel: "Combo",
+      soundOn: "Sound",
+      soundOff: "Muted",
+      pauseOverlay: "Paused",
+      levelUp: "Level",
+      gameOverTitle: "Game over",
+      restart: "Neu"
     };
     </script>
     <script type="module" src="/frontend/games/redsquare/redsquare_scripts/redsquare_scripts.js" defer></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
-<body>
+<body class="rs-page">
     <div class="instruction-overlay" id="instructionOverlay">
         <div class="instruction-content">
             <h2>Wie spielt man Quadratische Flucht?</h2>
@@ -47,32 +60,74 @@
                 <p>3. Sammle goldene Boni für Extra-Punkte</p>
                 <p>4. Je länger du überlebst, desto mehr Punkte</p>
                 <p>5. Nutze die Pause-Taste (oder Leertaste) für eine Pause</p>
+                <p>6. You have 3 lives. After a hit you get a short invincibility window. Collect bonuses in a row for combo.</p>
             </div>
-            <button class="instruction-button" id="understandBtn">Verstanden!</button>
+            <button class="instruction-button" id="understandBtn" type="button">Verstanden!</button>
         </div>
     </div>
-    <div class="score" id="score">Punkte: 0</div>
-        <div class="ad-top-banner ad-banner loading">
+
+    <div class="ad-top-banner ad-banner loading">
       <ins class="mrg-tag"
           style="display:inline-block;"
           data-ad-client="ad-1897960"
           data-ad-slot="1897960"></ins>
     </div>
-<div class="game-area">
-<div class="player" id="player"></div>
-        <div class="obstacle" style="top: 20%; left: 20%;"></div>
-        <div class="obstacle" style="top: 80%; left: 80%;"></div>
+
+    <div class="game-shell">
+        <header class="game-hud" aria-live="polite">
+            <div class="hud-block">
+                <span class="hud-label">Score</span>
+                <span class="hud-value" id="scoreValue">0</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Level</span>
+                <span class="hud-value" id="levelValue">1</span>
+            </div>
+            <div class="hud-block">
+                <span class="hud-label">Best</span>
+                <span class="hud-value" id="bestValue">0</span>
+            </div>
+            <div class="hud-block hud-lives">
+                <span class="hud-label">Lives</span>
+                <span class="hud-value" id="livesValue" aria-label="3">●●●</span>
+            </div>
+            <div class="hud-progress" title="Level">
+                <div class="hud-progress-bar" id="progressBar"></div>
+            </div>
+            <div class="hud-combo" id="comboDisplay" hidden>
+                <span id="comboValue">×1</span>
+            </div>
+        </header>
+
+        <div class="game-area" id="gameArea">
+            <div class="player" id="player"></div>
+            <div class="obstacle" style="top: 20%; left: 20%;"></div>
+            <div class="obstacle" style="top: 80%; left: 80%;"></div>
+            <div class="pause-overlay" id="pauseOverlay" hidden>
+                <span>Paused</span>
+            </div>
+            <div class="level-toast" id="levelToast" hidden></div>
+        </div>
+
+        <div class="game-dock">
+            <div class="controls" aria-label="D-pad">
+                <button type="button" class="button pad-up" id="up" aria-label="Up">↑</button>
+                <button type="button" class="button pad-left" id="left" aria-label="Left">←</button>
+                <button type="button" class="button pad-down" id="down" aria-label="Down">↓</button>
+                <button type="button" class="button pad-right" id="right" aria-label="Right">→</button>
+            </div>
+            <div class="actions">
+                <button type="button" class="action-btn action-start" id="start">Spiel starten</button>
+                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>Pause</button>
+                <button type="button" class="action-btn action-restart" id="restart" hidden>Neu</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">Sound</button>
+                <button type="button" class="action-btn action-home" id="home">Start</button>
+            </div>
+        </div>
     </div>
-    <div class="controls">
-        <div class="button" id="up">↑</div>
-        <div class="button" id="left">←</div>
-        <div class="button" id="down">↓</div>
-        <div class="button" id="right">→</div>
-    </div>
-    <button class="start" id="start">Spiel starten</button>
-    <button class="restart" id="restart">Neu</button>
-    <button class="home" id="home">Start</button>
-    <button id="pauseBtn">Pause</button>
+
+    <div class="score" id="score" hidden>Punkte: 0</div>
+
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   
   

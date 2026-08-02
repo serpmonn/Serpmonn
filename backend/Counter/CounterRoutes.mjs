@@ -3,13 +3,15 @@ import { query } from '../database/config.mjs';                                 
 
 const router = Router();
 
-// Роут для получения количества пользователей
+// Роут для получения количества пользователей (сайт + партнёрка)
 router.get('/', async (req, res) => {
     try {
-        const [results] = await query('SELECT COUNT(*) AS count FROM users');
+        const [siteUsers] = await query('SELECT COUNT(*) AS count FROM users');
+        const [partnerUsers] = await query('SELECT COUNT(*) AS count FROM partner_users');
+        const count = Number(siteUsers?.count || 0) + Number(partnerUsers?.count || 0);
         res.json({
             success: true,
-            count: results.count,
+            count,
         });
     } catch (error) {
         console.error('Counter error:', error);

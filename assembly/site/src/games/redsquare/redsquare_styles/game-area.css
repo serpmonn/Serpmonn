@@ -1,45 +1,102 @@
-	.game-area {										/* Стили для игровой области */
-	    position: relative; 								/* Для размещения внутренних элементов относительно контейнера */
-	    width: 90vw; 									/* Задаём ширину игровой области относительно экрана */
-	    height: 90vw; 									/* Высота равна ширине */
-	    max-width: 500px; 									/* Ограничиваем максимальный размер */
-	    max-height: 500px; 									/* Ограничиваем максимальный размер */
-	    background-color: #fff; 								/* Белый фон */
-	    border: 2px solid #000; 								/* Чёрная рамка вокруг */
-	    overflow: hidden; 									/* Прячем всё, что выходит за пределы области */
-	}
+.game-area {
+    position: relative;
+    width: min(90vw, 500px, calc(100dvh - 16rem));
+    height: min(90vw, 500px, calc(100dvh - 16rem));
+    margin: 0 auto;
+    background:
+        linear-gradient(var(--rs-grid) 1px, transparent 1px),
+        linear-gradient(90deg, var(--rs-grid) 1px, transparent 1px),
+        radial-gradient(ellipse at center, #17202b 0%, var(--rs-arena) 70%);
+    background-size: 28px 28px, 28px 28px, auto;
+    border: 2px solid var(--rs-panel-edge);
+    border-radius: 12px;
+    overflow: hidden;
+    touch-action: none;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
 
-	.player {										/* Стили для игрока */
-	    position: absolute; 								/* Для размещения внутри игрового поля */
-	    width: 10%; 									/* Размер игрока — 10% от ширины области */
-	    height: 10%; 									/* Высота игрока такая же, как ширина */
-	    background-color: red; 								/* Красный цвет игрока */
-	    top: 50%; 										/* Центрируем игрока по вертикали */
-	    left: 50%; 										/* Центрируем игрока по горизонтали */
-	    transform: translate(-50%, -50%); 							/* Точное центрирование относительно центра */
-	}
+.player {
+    position: absolute;
+    width: 10%;
+    height: 10%;
+    background: linear-gradient(145deg, var(--rs-accent-2), var(--rs-accent));
+    border: 2px solid #ffe0d8;
+    border-radius: 5px;
+    top: 45%;
+    left: 45%;
+    z-index: 4;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.25);
+    will-change: left, top;
+}
 
-	.enemy {										/* Стили для врагов */
-	    position: absolute; 								/* Размещаем врагов внутри игрового поля */
-	    width: 10%; 									/* Размер врага — 10% ширины */
-	    height: 10%; 									/* Высота врага равна ширине */
-	    background-color: blue; 								/* Синий цвет для врага */
-	    animation: move 3s infinite linear; 						/* Анимация движения */
-	}
+.enemy {
+    position: absolute;
+    width: 10%;
+    height: 10%;
+    background: linear-gradient(145deg, #5b8cff, #2f5fd6);
+    border: 2px solid #d6e4ff;
+    border-radius: 4px;
+    animation: move 3s infinite linear;
+    z-index: 2;
+}
 
-	.obstacle {										/* Стили для препятствий */
-	    position: absolute; 								/* Препятствия размещаются внутри области */
-	    width: 10%; 									/* Размер препятствия — 10% ширины */
-	    height: 10%; 									/* Высота равна ширине */
-	    background-color: green; 								/* Зелёный цвет для препятствий */
-	}
+.obstacle {
+    position: absolute;
+    width: 10%;
+    height: 10%;
+    background: linear-gradient(145deg, #6b7585, #3e4654);
+    border: 2px solid #a8b2c2;
+    border-radius: 3px;
+    z-index: 1;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
+}
 
-	.score {										/* Счёт игрока */
-	    position: absolute; 								/* Фиксированное положение счёта */
-	    top: 10px; 										/* Отступ сверху */
-	    left: 10px; 									/* Отступ слева */
-	    font-size: 24px; 									/* Размер шрифта для удобства чтения */
-	    font-weight: bold; 									/* Жирный текст */
-	    z-index: 10; 									/* Приоритет выше игрового поля */
-	}
+.pause-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(8, 12, 18, 0.62);
+    color: var(--rs-text);
+    font-size: clamp(1.2rem, 5vw, 1.8rem);
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    z-index: 20;
+}
 
+.pause-overlay[hidden] {
+    display: none !important;
+}
+
+.level-toast {
+    position: absolute;
+    left: 50%;
+    top: 18%;
+    transform: translateX(-50%);
+    padding: 0.45rem 0.9rem;
+    background: color-mix(in srgb, var(--rs-panel) 92%, transparent);
+    border: 1px solid var(--rs-panel-edge);
+    border-radius: 8px;
+    font-weight: 700;
+    z-index: 21;
+    pointer-events: none;
+    animation: toastIn 0.35s ease-out;
+}
+
+.level-toast[hidden] {
+    display: none !important;
+}
+
+@keyframes toastIn {
+    from { opacity: 0; transform: translate(-50%, -8px); }
+    to { opacity: 1; transform: translate(-50%, 0); }
+}
+
+@media (max-width: 600px) {
+    .game-area {
+        width: min(92vw, calc(100dvh - 18rem));
+        height: min(92vw, calc(100dvh - 18rem));
+    }
+}

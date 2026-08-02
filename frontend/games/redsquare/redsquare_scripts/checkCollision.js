@@ -1,4 +1,5 @@
-export const checkCollision = (player, enemies, endGame) => {
+export const checkCollision = (player, enemies, onHit, { invincible = false } = {}) => {
+    if (invincible) return false;
     const playerRect = player.getBoundingClientRect();
     for (const enemy of enemies) {
         const enemyRect = enemy.getBoundingClientRect();
@@ -8,9 +9,8 @@ export const checkCollision = (player, enemies, endGame) => {
             playerRect.top < enemyRect.bottom &&
             playerRect.bottom > enemyRect.top
         ) {
-            player.classList.add('player-collision');
-            setTimeout(() => player.classList.remove('player-collision'), 1500);
-            endGame();
+            onHit();
+            return true;
         }
     }
     const obstacles = document.querySelectorAll('.obstacle');
@@ -22,9 +22,9 @@ export const checkCollision = (player, enemies, endGame) => {
             playerRect.top < obstacleRect.bottom &&
             playerRect.bottom > obstacleRect.top
         ) {
-            player.classList.add('player-collision');
-            setTimeout(() => player.classList.remove('player-collision'), 1500);
-            endGame();
+            onHit();
+            return true;
         }
     }
+    return false;
 };

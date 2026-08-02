@@ -230,11 +230,23 @@
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">
     <link rel="stylesheet" href="/frontend/styles/menu.css">
     <link rel="stylesheet" href="/frontend/styles/tools/fuel-calculator.css?v=4">
+    <script>
+      (function () {
+        try {
+          var mini =
+            /(?:^|[?&])vk_mini=1(?:&|$)/.test(location.search) ||
+            /vk_app_id=\d+/.test(location.search) ||
+            (window.parent && window.parent !== window && window.parent.__SPN_VK_MINI__);
+          if (!mini) return;
+          window.__SPN_VK_MINI__ = true;
+          document.documentElement.classList.add('vk-mini-embed');
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body class="fuel-calculator-page" data-currency="₽" data-liter="л">
     <div id="menuContainer"></div>
 
-    <script async src="https://ad.mail.ru/static/ads-async.js"></script>
     <div class="ad-top-banner" style="text-align:center;margin:16px 0;">
       <ins class="mrg-tag"
           style="display:inline-block;"
@@ -416,9 +428,9 @@
     <script>
       window.fuelCalculatorTranslations = {"meta":{"title":"Polttoainelaskuri — Serpmonn Logistiikka","description":"Polttoaineen kulutuksen, matkan kustannusten ja säästöjen laskenta","twitterDescription":"Polttoaineen kulutuslaskenta kuljettajille"},"breadcrumb":{"tools":"Työkalut","fuelCalculator":"Polttoainelaskuri"},"page":{"title":"⛽ Polttoainelaskuri","form":{"title":"Syötä matkan parametrit","distance":"Matka (km)","fuelConsumption":"Polttoaineen kulutus (l/100 km)","fuelPrice":"Polttoaineen hinta (₽/l)","fuelType":"Polttoainetyyppi","drivingStyle":"Ajotapa","roadConditions":"Tieolosuhteet","load":"Ajoneuvon kuorma","climate":"Sääolosuhteet","calculate":"Laske polttoaineen kulutus","optionalSummary":"More options"},"fuelTypes":{"petrol":"Bensiini AI-92","petrol95":"Bensiini AI-95","petrol98":"Bensiini AI-98","diesel":"Dieseliöljy","lpg":"Kaasu (propaani-butaani)","cng":"Kaasu (metaani)"},"drivingStyles":{"economical":"Taloudellinen","normal":"Normaali","sport":"Urheilullinen","aggressive":"Aggressiivinen"},"roadConditions":{"highway":"Valtatie","city":"Kaupunki","mixed":"Sekakäyttö","offroad":"Maanajo"},"loads":{"empty":"Tyhjä","light":"Kevyt kuorma","medium":"Keskiraskas kuorma","heavy":"Täysi kuorma"},"climates":{"normal":"Normaalit","hot":"Kuuma (+30°C ja yli)","cold":"Kylmä (-10°C ja alle)","rainy":"Sade/lumi"},"results":{"title":"Laskennan tulokset","totalFuel":"Polttoaineen kokonaiskulutus","totalCost":"Polttoaineen kustannus","costPerKm":"Kustannus 1 km:ltä","adjustedConsumption":"Säädetty kulutus"},"comparison":{"title":"Vertailu muihin ajotapoihin","drivingStyle":"Ajotapa","consumption":"Kulutus (l/100 km)","cost":"Kustannus (₽)","savings":"Säästöt/ylikulutus"},"fuelEfficiency":{"title":"🌱 Polttoainetehokkuus","tips":["Sujua kiihdyttäminen ja jarrutus säästää 10-15% polttoainetta","Optimaalisen 80-90 km/h nopeuden ylläpito valtatiellä","Oikea-aikainen vaihteiden vaihto (2000-2500 rpm)","Tarkista renkaiden paine 2 viikon välein","Poista ylimääräinen tavara takakontista"]},"advice":{"title":"💡 Hyödyllisiä vinkkejä","tips":["Käytä vakionopeudensäätöä tasaisilla tienosuuksilla","Sulje ikkunat suurilla nopeuksilla","Suunnittele reittisi liikenneruuhkien välttämiseksi","Huoltaa moottoria ja polttoainejärjestelmää säännöllisesti","Käytä laadukasta polttoainetta suositellulla oktaaniluvulla"]},"lead":"Estimate fuel use and trip cost — including driving style, road and load.","disclaimer":"Approximate fuel cost estimate, not a lab measurement.","formulaPlain":"Consumption ≈ base × style × road × load × climate × fuel type. Total: {fuel} L for {distance} km ≈ {cost}.","shareCopied":"Calculation link copied","exportNoResults":"Run a calculation first","exportFailed":"PDF export failed","actions":{"more":"More","reset":"Reset","share":"Share","pdf":"Export PDF","csv":"Export CSV"},"history":{"title":"Recent calculations","empty":"Empty so far"},"errors":{"fillRequired":"Fill distance, consumption and fuel price","positive":"Values must be greater than zero"}},"ads":{"closeAria":"Sulje mainos"}};
     </script>
-    <script type="module" src="/frontend/scripts/tools/fuel-calculator.js?v=2"></script>
+    <script type="module" src="/frontend/scripts/tools/fuel-calculator.js?v=3"></script>
     <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
-    <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js?v=3" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 
 
