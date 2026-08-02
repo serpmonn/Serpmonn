@@ -918,8 +918,9 @@ body.vk-mini-app .ai-video-results {
   overscroll-behavior: contain;
   /* Без этого в WebView iframe часто остаётся ~150px */
   display: block;
-  /* Прокрутка контента игры — внутри документа iframe */
-  overflow: auto;
+  /* Скролл длинных страниц (калькуляторы) — viewport iframe */
+  overflow: auto !important;
+  overflow-y: auto !important;
   -webkit-overflow-scrolling: touch;
 }
 

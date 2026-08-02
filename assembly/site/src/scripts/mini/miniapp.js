@@ -13,6 +13,43 @@
   const cfg = window.__SPN_MINI_CFG__ || {};
   const storageKey = (cfg.onboarding && cfg.onboarding.storageKey) || 'spn_vk_mini_onboarded_v1';
   const dialogCopy = cfg.dialog || {};
+  const excludedArticleSubstrings = (
+    (cfg.news && Array.isArray(cfg.news.excludeLinkSubstrings) && cfg.news.excludeLinkSubstrings) || [
+      'serpmonn-install-guide',
+      'donate',
+      'promo',
+      'promocode',
+      'snippet-limits',
+      'telegram',
+      'updates-',
+      'updates_',
+    ]
+  ).map((s) => String(s || '').toLowerCase()).filter(Boolean);
+
+  function isExcludedMiniArticleUrl(href) {
+    const s = String(href || '').toLowerCase();
+    if (!s) return false;
+    return excludedArticleSubstrings.some((part) => part && s.includes(part));
+  }
+
+  function stripExcludedMiniArticleLinks(doc) {
+    if (!doc) return;
+    try {
+      doc.querySelectorAll('a[href]').forEach((a) => {
+        const href = a.getAttribute('href') || '';
+        if (!isExcludedMiniArticleUrl(href)) return;
+        const li = a.closest('li');
+        if (li && a.closest('.related-articles, .related-links')) {
+          li.remove();
+          return;
+        }
+        a.remove();
+      });
+      doc.querySelectorAll('.related-articles').forEach((block) => {
+        if (!block.querySelector('a[href]')) block.remove();
+      });
+    } catch (_) {}
+  }
 
   const screens = ROOT.querySelectorAll('.vk-mini-screen');
   const navBtns = ROOT.querySelectorAll('.vk-mini-nav [data-screen]');
@@ -196,6 +233,8 @@
     neo.id = 'vk-mini-viewer-frame';
     neo.title = viewerFrame.title || 'Содержимое';
     neo.setAttribute('referrerpolicy', 'same-origin');
+    neo.setAttribute('scrolling', 'yes');
+    neo.style.overflow = 'auto';
     viewerFrame.replaceWith(neo);
     viewerFrame = neo;
     bindViewerFrameLoad(viewerFrame);
@@ -267,18 +306,23 @@
       ).forEach((el) => el.remove());
     } catch (_) {}
 
+    const isGamePage = Boolean(doc.querySelector('.game-board, .game-wrapper'));
+
     const style = doc.createElement('style');
     style.setAttribute('data-vk-mini-embed', '1');
     style.textContent = `
-      /* Прокрутка внутри iframe: html скроллит, body растёт по контенту */
+      /* ПК/WebView: height:100% на html часто убивает скролл в iframe.
+         Контент растёт, скроллит viewport iframe (и html overflow auto). */
       html.vk-mini-embed {
         width: 100% !important;
         max-width: 100% !important;
-        height: 100% !important;
+        height: auto !important;
+        min-height: 100% !important;
+        max-height: none !important;
         margin: 0 !important;
         padding: 0 !important;
         overflow-x: hidden !important;
-        overflow-y: scroll !important;
+        overflow-y: auto !important;
         -webkit-overflow-scrolling: touch !important;
         overscroll-behavior-y: contain !important;
         touch-action: pan-y manipulation !important;
@@ -288,13 +332,25 @@
         width: 100% !important;
         max-width: 100% !important;
         height: auto !important;
-        min-height: 100% !important;
+        min-height: auto !important;
         max-height: none !important;
         margin: 0 !important;
         padding: 0 0 28px !important;
         overflow: visible !important;
+        position: relative !important;
         touch-action: pan-y manipulation !important;
         -webkit-text-size-adjust: 100% !important;
+      }
+      /* Калькуляторы / длинные страницы — явно не lock viewport */
+      html.vk-mini-embed:has(body.fuel-calculator-page),
+      html.vk-mini-embed:has(body.depreciation-calculator),
+      html.vk-mini-embed:has(#fuelChart),
+      html.vk-mini-embed:has(#depreciationChart),
+      html.vk-mini-embed:has(#ecoChart) {
+        height: auto !important;
+        max-height: none !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
       }
       #menuContainer, #menuButton, .menu-container, .menu-activity-bell, #activityBellBtn,
       .menu-settings-btn, #settingsButton, .menu-settings-panel, #settingsPanel,
@@ -302,9 +358,12 @@
       .donate-button, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner,
       .mrg-tag, ins.mrg-tag, [id*="mail-ad"], [class*="mail-ad"], #game-ad-overlay,
       a[href*="donate"], a[href*="/promo"], #installAppButton,
-      .social-subscribe, .tg-btn, .vk-btn, .social-share, .share-btn, .share-buttons,
+      .social-subscribe, .tg-btn, .vk-btn, .social-share, a.share-btn, .share-buttons,
       a[href*="t.me/serpmonn"], a[href*="vk.com/serpmonn_site"],
       a[href*="t.me/share"], a[href*="vk.com/share"],
+      a[href*="serpmonn-install-guide"], a[href*="snippet-limits"],
+      a[href*="updates-"], a[href*="updates_"],
+      a[href*="donate"], a[href*="/promo"], a[href*="promocode"],
       .accessibility-widget, #a11y-widget { display:none !important; }
 
       /* Игры: одна колонка, без огромных полей */
@@ -382,14 +441,15 @@
         overflow: visible !important;
         height: auto !important;
       }
-      body.vk-mini-embed canvas {
+      /* Игры — не трогаем chart canvas калькуляторов (#depreciationChart и т.п.) */
+      body.vk-mini-embed:has(.game-board) canvas,
+      body.vk-mini-embed:has(.game-wrapper) canvas {
         display: block !important;
         width: 100% !important;
         max-width: 100% !important;
         max-height: 58vh !important;
         height: auto !important;
         margin: 0 auto !important;
-        /* pan-y — чтобы жест вниз листал страницу, а не «залипал» на canvas */
         touch-action: pan-y manipulation !important;
       }
       body.vk-mini-embed .game-board,
@@ -412,11 +472,39 @@
         min-width: 0 !important;
         padding: 8px 12px !important;
       }
+      body.vk-mini-embed #depreciationChart,
+      body.vk-mini-embed #fuelChart,
+      body.vk-mini-embed #ecoChart {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 280px !important;
+        height: auto !important;
+        aspect-ratio: auto !important;
+        touch-action: pan-y manipulation !important;
+      }
     `;
     // не дублировать при повторной загрузке
     const old = doc.head.querySelector('style[data-vk-mini-embed]');
     if (old) old.remove();
     doc.head.appendChild(style);
+
+    // Жёстко сбросить lock скролла (base.css / старые embed-правила / реклама)
+    if (!isGamePage) {
+      try {
+        doc.documentElement.style.setProperty('height', 'auto', 'important');
+        doc.documentElement.style.setProperty('max-height', 'none', 'important');
+        doc.documentElement.style.setProperty('overflow-x', 'hidden', 'important');
+        doc.documentElement.style.setProperty('overflow-y', 'auto', 'important');
+        if (doc.body) {
+          doc.body.style.setProperty('height', 'auto', 'important');
+          doc.body.style.setProperty('max-height', 'none', 'important');
+          doc.body.style.setProperty('overflow', 'visible', 'important');
+        }
+      } catch (_) {}
+    }
+
+    // Related / CTA на статьи, которых нет в мини-приложении (install-guide, updates…)
+    stripExcludedMiniArticleLinks(doc);
 
     doc.addEventListener(
       'click',
@@ -426,7 +514,11 @@
         const href = a.getAttribute('href') || '';
         if (!href || href.startsWith('#') || href.startsWith('javascript:')) return;
 
-        if (isExternalUrl(href) || /donate|promo|telegram|t\.me|max\.ru|ok\.ru/i.test(href)) {
+        if (
+          isExcludedMiniArticleUrl(href) ||
+          isExternalUrl(href) ||
+          /donate|promo|telegram|t\.me|max\.ru|ok\.ru/i.test(href)
+        ) {
           e.preventDefault();
           e.stopPropagation();
           return;

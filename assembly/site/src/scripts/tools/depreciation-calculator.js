@@ -544,6 +544,10 @@ function displayResults(currentValue, totalDepreciation, depreciationPercent, mo
   }
   const urlParams = new URLSearchParams();
   Object.entries(inputs).forEach(([key, value]) => { if (value) urlParams.set(key, value); });
+  const cur = new URLSearchParams(window.location.search);
+  ['vk_mini', 'vk_app_id'].forEach((key) => {
+    if (cur.has(key)) urlParams.set(key, cur.get(key));
+  });
   window.history.replaceState({}, '', `${window.location.pathname}?${urlParams}`);
   try { localStorage.setItem('lastDepreciation', JSON.stringify(inputs)); } catch {}
 

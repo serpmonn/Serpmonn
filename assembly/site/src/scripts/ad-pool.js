@@ -13,6 +13,20 @@ let yandexBannerSeq = 0;
 let yandexFloorRequested = false;
 let yandexTopAdRequested = false;
 
+function isVkMiniContext() {
+  try {
+    if (window.__SPN_VK_MINI__) return true;
+    if (document.documentElement?.classList?.contains('vk-mini-embed')) return true;
+    if (document.documentElement?.classList?.contains('vk-mini-root')) return true;
+    if (document.body?.classList?.contains('vk-mini-embed')) return true;
+    if (document.body?.classList?.contains('vk-mini-app')) return true;
+    if (/(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search)) return true;
+    if (/vk_app_id=\d+/.test(window.location.search)) return true;
+    if (window.parent && window.parent !== window && window.parent.__SPN_VK_MINI__) return true;
+  } catch (_) {}
+  return false;
+}
+
 function isMobileViewport() {
   return (window.innerWidth || document.documentElement.clientWidth) <= MOBILE_MAX_WIDTH;
 }
@@ -322,6 +336,7 @@ export function renderYandexBanner(slotKey, container, fillRoot = null) {
 }
 
 export function renderYandexFloorAd() {
+  if (isVkMiniContext()) return false;
   const cfg = slotsData.slots.mobileAnchor?.yandex;
   // Yandex forbids Top Ad + Floor Ad on the same page — prefer Top Ad when top slot exists
   if (
@@ -350,6 +365,7 @@ export function renderYandexFloorAd() {
 }
 
 export function renderYandexTopAd() {
+  if (isVkMiniContext()) return false;
   const cfg = slotsData.slots.topMobile?.yandex;
   if (
     !cfg?.blockId ||
@@ -376,6 +392,7 @@ export function renderYandexTopAd() {
 }
 
 export function renderYandexFullscreen(options = {}) {
+  if (isVkMiniContext()) return false;
   const cfg = slotsData.slots.fullscreen?.yandex;
   if (!cfg?.blockId) {
     return false;
@@ -451,6 +468,13 @@ export async function runVkFallbackForIns(ins, options = {}) {
     return;
   }
 
+  if (isVkMiniContext()) {
+    const container = getAdContainer(ins);
+    hideElement(ins);
+    hideElement(container);
+    return;
+  }
+
   ins.__adPoolHandled = true;
 
   const slotKey = options.slotKey || getSlotKeyFromIns(ins);
@@ -485,6 +509,13 @@ export async function runVkFallbackForIns(ins, options = {}) {
 }
 
 export function initAdSlotObserver() {
+  if (isVkMiniContext()) {
+    document.querySelectorAll('ins.mrg-tag, .ad-top-banner, .mobile-anchor-ad, .ad-container').forEach((el) => {
+      hideElement(el);
+    });
+    return;
+  }
+
   document.querySelectorAll('ins.mrg-tag').forEach((ins) => {
     runVkFallbackForIns(ins);
   });

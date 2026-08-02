@@ -197,17 +197,18 @@ fetch(primaryMenuPath)
         style.textContent = `
           html.vk-mini-embed {
             width: 100% !important; max-width: 100% !important;
-            height: 100% !important; margin: 0 !important; padding: 0 !important;
-            overflow-x: hidden !important; overflow-y: scroll !important;
+            height: auto !important; min-height: 100% !important; max-height: none !important;
+            margin: 0 !important; padding: 0 !important;
+            overflow-x: hidden !important; overflow-y: auto !important;
             -webkit-overflow-scrolling: touch !important;
             touch-action: pan-y manipulation !important;
             -webkit-text-size-adjust: 100% !important;
           }
           body.vk-mini-embed {
             width: 100% !important; max-width: 100% !important;
-            height: auto !important; min-height: 100% !important; max-height: none !important;
+            height: auto !important; min-height: auto !important; max-height: none !important;
             margin: 0 !important; padding: 0 0 28px !important;
-            overflow: visible !important;
+            overflow: visible !important; position: relative !important;
             touch-action: pan-y manipulation !important;
           }
           #menuContainer, #menuButton, .menu-container, .menu-activity-bell, #activityBellBtn,
@@ -215,10 +216,13 @@ fetch(primaryMenuPath)
           .cookie-consent, #cookie-consent,
           .donate-button, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner,
           .mrg-tag, ins.mrg-tag, a[href*="donate"], a[href*="/promo"], #installAppButton,
-          .social-subscribe, .tg-btn, .vk-btn, .social-share, .share-btn, .share-buttons,
+          .social-subscribe, .tg-btn, .vk-btn, .social-share, a.share-btn, .share-buttons,
           .vk-mini-hide,
           a[href*="t.me/serpmonn"], a[href*="vk.com/serpmonn_site"],
-          a[href*="t.me/share"], a[href*="vk.com/share"] {
+          a[href*="t.me/share"], a[href*="vk.com/share"],
+          a[href*="serpmonn-install-guide"], a[href*="snippet-limits"],
+          a[href*="updates-"], a[href*="updates_"],
+          a[href*="donate"], a[href*="/promo"], a[href*="promocode"] {
             display: none !important;
           }
           body.vk-mini-embed .page,
@@ -275,32 +279,40 @@ fetch(primaryMenuPath)
           body.vk-mini-embed:has(.game-board) header h1 {
             color: #3d3a36 !important; font-weight: 700 !important;
           }
-          html.vk-mini-embed:has(canvas),
-          body.vk-mini-embed:has(canvas) {
+          /* Игровой layout только для игр — НЕ для chart canvas в калькуляторах */
+          html.vk-mini-embed:has(.game-board),
+          html.vk-mini-embed:has(.game-wrapper),
+          body.vk-mini-embed:has(.game-board),
+          body.vk-mini-embed:has(.game-wrapper) {
             overflow: hidden !important; height: 100% !important; max-height: 100% !important;
             overscroll-behavior: none !important; touch-action: manipulation !important;
             display: flex !important; flex-direction: column !important;
           }
-          body.vk-mini-embed:has(canvas) {
+          body.vk-mini-embed:has(.game-board),
+          body.vk-mini-embed:has(.game-wrapper) {
             min-height: 0 !important; padding-bottom: 4px !important;
           }
-          body.vk-mini-embed:has(canvas) .page {
+          body.vk-mini-embed:has(.game-board) .page,
+          body.vk-mini-embed:has(.game-wrapper) .page {
             display: flex !important; flex-direction: column !important;
             flex: 1 1 auto !important; min-height: 0 !important; overflow: hidden !important;
             padding: 4px 6px !important;
           }
-          body.vk-mini-embed:has(canvas) .wrap {
+          body.vk-mini-embed:has(.game-board) .wrap,
+          body.vk-mini-embed:has(.game-wrapper) .wrap {
             flex: 1 1 auto !important; min-height: 0 !important; overflow: hidden !important; gap: 4px !important;
           }
           body.vk-mini-embed .panel {
             overflow: visible !important; height: auto !important;
           }
-          body.vk-mini-embed:has(canvas) .wrap > .panel:first-child {
+          body.vk-mini-embed:has(.game-board) .wrap > .panel:first-child,
+          body.vk-mini-embed:has(.game-wrapper) .wrap > .panel:first-child {
             flex: 1 1 auto !important; min-height: 0 !important; overflow: hidden !important;
             padding: 4px !important; display: flex !important; flex-direction: column !important;
             align-items: center !important; justify-content: center !important;
           }
-          body.vk-mini-embed canvas {
+          body.vk-mini-embed:has(.game-board) canvas,
+          body.vk-mini-embed:has(.game-wrapper) canvas {
             display: block !important;
             width: min(100%, calc(100dvh - 110px)) !important;
             max-width: 100% !important;
@@ -312,9 +324,23 @@ fetch(primaryMenuPath)
             width: min(100%, 320px) !important; height: auto !important; aspect-ratio: 1 / 1 !important;
             max-width: 100% !important; box-sizing: border-box !important;
           }
+          /* Графики в инструментах — обычная ширина, без игрового square layout */
+          body.vk-mini-embed #depreciationChart,
+          body.vk-mini-embed #fuelChart,
+          body.vk-mini-embed #ecoChart {
+            width: 100% !important;
+            max-width: 100% !important;
+            max-height: 280px !important;
+            height: auto !important;
+            aspect-ratio: auto !important;
+            touch-action: pan-y manipulation !important;
+          }
         `;
         document.head.appendChild(style);
-        if (document.querySelector('canvas') && !document.documentElement.dataset.vkMiniCanvasTouch) {
+        if (
+          document.querySelector('.game-board, .game-wrapper') &&
+          !document.documentElement.dataset.vkMiniCanvasTouch
+        ) {
           document.documentElement.dataset.vkMiniCanvasTouch = '1';
           document.addEventListener(
             'touchmove',
@@ -327,6 +353,32 @@ fetch(primaryMenuPath)
           );
         }
       }
+      // Статьи/ссылки, которых нет в списке VK Mini App (related внизу и т.п.)
+      try {
+        const excluded = [
+          'serpmonn-install-guide',
+          'donate',
+          'promo',
+          'promocode',
+          'snippet-limits',
+          'telegram',
+          'updates-',
+          'updates_',
+        ];
+        document.querySelectorAll('a[href]').forEach((a) => {
+          const href = String(a.getAttribute('href') || '').toLowerCase();
+          if (!excluded.some((part) => href.includes(part))) return;
+          const li = a.closest('li');
+          if (li && a.closest('.related-articles, .related-links')) {
+            li.remove();
+            return;
+          }
+          a.remove();
+        });
+        document.querySelectorAll('.related-articles').forEach((block) => {
+          if (!block.querySelector('a[href]')) block.remove();
+        });
+      } catch (_) {}
       // cookies / donate / install не трогаем — просто не грузим меню
       return;
     }

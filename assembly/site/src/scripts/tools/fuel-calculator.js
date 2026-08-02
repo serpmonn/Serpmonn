@@ -111,12 +111,21 @@ function compute(inputs) {
   return { adjustedConsumption, totalFuel, totalCost, costPerKm };
 }
 
+function preserveMiniParams(params) {
+  const current = new URLSearchParams(location.search);
+  ['vk_mini', 'vk_app_id'].forEach((key) => {
+    if (current.has(key)) params.set(key, current.get(key));
+  });
+  return params;
+}
+
 function syncUrl(inputs) {
   const params = new URLSearchParams();
   FIELD_IDS.forEach((id) => {
     const v = inputs[id];
     if (v !== undefined && v !== null && v !== '' && !Number.isNaN(v)) params.set(id, String(v));
   });
+  preserveMiniParams(params);
   const qs = params.toString();
   const next = qs ? `${location.pathname}?${qs}` : location.pathname;
   history.replaceState(null, '', next);
@@ -338,7 +347,9 @@ export function resetForm() {
   document.getElementById('results')?.classList.add('hidden');
   document.getElementById('comparison')?.classList.add('hidden');
   lastResult = null;
-  history.replaceState(null, '', location.pathname);
+  const params = preserveMiniParams(new URLSearchParams());
+  const qs = params.toString();
+  history.replaceState(null, '', qs ? `${location.pathname}?${qs}` : location.pathname);
 }
 
 export async function copyShareLink() {
