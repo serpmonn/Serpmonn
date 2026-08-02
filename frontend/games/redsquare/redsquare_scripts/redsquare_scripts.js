@@ -294,7 +294,7 @@ homeButton.addEventListener('click', () => {
         } catch (_) {}
         return;
     }
-    window.location.href = 'https://www.serpmonn.ru';
+    window.location.href = 'https://serpmonn.ru';
 });
 
 document.addEventListener('DOMContentLoaded', () => {

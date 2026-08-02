@@ -136,38 +136,67 @@
 <link rel="icon" type="image/png" sizes="16x16" href="/frontend/images/favicon-16x16.png?v=3">
 <link rel="apple-touch-icon" href="/frontend/images/serpmonn-192.png?v=3">
 <link rel="manifest" href="/frontend/pwa/manifest.json">
-<link rel="stylesheet" href="/frontend/styles/styles.css">
+<link rel="stylesheet" href="/frontend/styles/base.css?v=lcp2">
+<link rel="stylesheet" href="/frontend/styles/search.css?v=lcp2">
+<link rel="stylesheet" href="/frontend/styles/main.css?v=lcp2">
+<link rel="stylesheet" href="/frontend/styles/media.css?v=lcp2">
+<link rel="stylesheet" href="/frontend/styles/background.css?v=lcp2">
+<link rel="stylesheet" href="/frontend/styles/news.css?v=lcp2">
+<link rel="stylesheet" href="/frontend/styles/cookie.css?v=lcp2">
+<link rel="stylesheet" href="/frontend/styles/ad.css?v=lcp2">
+<link rel="stylesheet" href="/frontend/styles/menu.css?v=lcp2" media="print" onload="this.media='all'">
+<noscript>
+  <link rel="stylesheet" href="/frontend/styles/menu.css?v=lcp2">
+</noscript>
+<link rel="preload" as="image" href="/frontend/images/Serpmonn-96x96.png" fetchpriority="high">
 <script type="text/javascript">
-  (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};
-  m[i].l=1*new Date();
-  for (var j = 0; j < document.scripts.length; j++) {if (document.scripts[j].src === r) { return; }}
-  k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})
-  (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym");
-  ym(98158791, "init", {
-    clickmap:true,
-    trackLinks:true,
-    accurateTrackBounce:true,
-    webvisor:true,
-    ecommerce:"dataLayer"
-  });
-  window.addEventListener('load', function() {
-    fetch('https://api.ipify.org?format=json')
-      .then(response => response.json())
-      .then(data => {
-        if (typeof ym !== 'undefined') {
-          ym(98158791, 'params', {
-            ip_address: data.ip,
-            user_ip: data.ip
-          });
-          ym(98158791, 'hit', window.location.href, {
+  (function () {
+    var METRIKA_ID = 98158791;
+    var loaded = false;
+    function loadMetrika() {
+      if (loaded) return;
+      loaded = true;
+      (function (m, e, t, r, i, k, a) {
+        m[i] = m[i] || function () { (m[i].a = m[i].a || []).push(arguments); };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < document.scripts.length; j++) {
+          if (document.scripts[j].src === r) return;
+        }
+        k = e.createElement(t);
+        a = e.getElementsByTagName(t)[0];
+        k.async = 1;
+        k.src = r;
+        a.parentNode.insertBefore(k, a);
+      })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js', 'ym');
+
+      ym(METRIKA_ID, 'init', {
+        clickmap: true,
+        trackLinks: true,
+        accurateTrackBounce: true,
+        webvisor: true,
+        ecommerce: 'dataLayer'
+      });
+
+      fetch('https://api.ipify.org?format=json')
+        .then(function (response) { return response.json(); })
+        .then(function (data) {
+          if (typeof ym === 'undefined') return;
+          ym(METRIKA_ID, 'params', { ip_address: data.ip, user_ip: data.ip });
+          ym(METRIKA_ID, 'hit', window.location.href, {
             params: { ip_address: data.ip }
           });
-        }
-      })
-      .catch(error => {
-        console.error('Error getting IP:', error);
+        })
+        .catch(function () {});
+    }
+
+    if (document.readyState === 'complete') {
+      setTimeout(loadMetrika, 1);
+    } else {
+      window.addEventListener('load', function () {
+        setTimeout(loadMetrika, 1);
       });
-  });
+    }
+  })();
 </script>
 <noscript><div><img src="https://mc.yandex.ru/watch/98158791" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
 <script type="application/ld+json">
@@ -200,13 +229,19 @@
 
   </head>
   <body>
-    <div class="news-block" id="news-block" style="display:none;">
+    <div class="news-block news-block--pending" id="news-block">
   <div class="news-block-header">
     <div class="news-dot"></div>
     <span class="news-block-title">Ultime notizie</span>
   </div>
 
-  <div id="news-hero-wrap"></div>
+  <div id="news-hero-wrap" class="news-hero-wrap">
+    <div class="news-skeleton" aria-hidden="true">
+      <div class="news-skeleton__line news-skeleton__line--title"></div>
+      <div class="news-skeleton__line"></div>
+      <div class="news-skeleton__line news-skeleton__line--short"></div>
+    </div>
+  </div>
 
   <div class="feed-wrapper">
     <button class="feed-arrow feed-arrow-left" aria-label="Precedente" hidden>
@@ -219,11 +254,13 @@
   </div>
 </div>
 
+<div id="serpmonn-letters-slot" class="serpmonn-letters-slot" aria-hidden="true"></div>
+
     <main>
       
 <div class="search-card-wrapper">
   <div class="main-search-container">
-    <img src="/frontend/images/serpmonn.ico?v=3" alt="Serpmonn" class="logo" title="Serpmonn">
+    <img src="/frontend/images/Serpmonn-96x96.png" alt="Serpmonn" class="logo" title="Serpmonn" width="65" height="65" decoding="async" fetchpriority="high">
 
     <form id="ai-search-form" class="search-form" data-search-mode="ai"
       data-placeholder-ai="Chiedi qualsiasi cosa all&amp;#39;AI..."

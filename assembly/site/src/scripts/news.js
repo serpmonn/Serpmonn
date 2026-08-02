@@ -236,6 +236,12 @@ export async function loadNews() {
 
   if (!block || !heroWrap || !feed) return;
 
+  const finishEmpty = () => {
+    block.classList.remove('news-block--pending');
+    block.classList.add('news-block--empty');
+    block.style.display = 'none';
+  };
+
   try {
     const response = await fetch(buildNewsUrl(), {
       method: 'GET',
@@ -248,16 +254,21 @@ export async function loadNews() {
     const data  = await response.json();
     const items = Array.isArray(data?.news) ? data.news : [];
 
-    if (items.length === 0) return;
+    if (items.length === 0) {
+      finishEmpty();
+      return;
+    }
 
     heroWrap.innerHTML = buildHero(items[0]);
     feed.innerHTML     = items.slice(1).map(buildCard).join('');
 
+    block.classList.remove('news-block--pending', 'news-block--empty');
     block.style.display = '';
 
     initDragScroll(feed);
     initArrows(feed);
   } catch (err) {
     console.error('[News] Ошибка загрузки:', err);
+    finishEmpty();
   }
 }

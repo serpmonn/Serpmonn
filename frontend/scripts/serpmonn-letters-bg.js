@@ -9,16 +9,19 @@
     canvas.id = 'serpmonn-letters-bg';
 
     Object.assign(canvas.style, {
-      position: 'static', width: '100%', height: 'auto',
+      position: 'static', width: '100%', height: '100%',
       zIndex: '1', pointerEvents: 'none', display: 'block'
     });
 
     const bodyEl = document.body;
-
+    const slot = document.getElementById('serpmonn-letters-slot');
     const newsBlock   = document.querySelector('.news-block');
     const searchCard  = document.querySelector('.search-card');
 
-    if (newsBlock) {
+    // Prefer reserved slot (no layout shift). Fallback keeps old insert path.
+    if (slot) {
+      slot.appendChild(canvas);
+    } else if (newsBlock) {
       newsBlock.parentNode.insertBefore(canvas, newsBlock.nextSibling);
     } else if (searchCard) {
       searchCard.parentNode.insertBefore(canvas, searchCard);
@@ -42,8 +45,9 @@
 
     function resize(){
       width  = Math.floor(window.innerWidth);
-      // На смартфоне компактнее — меньше воздуха между новостями и строкой поиска
-      height = width <= 600 ? 64 : 120;
+      // Prefer reserved slot height so canvas matches pre-allocated space (CLS)
+      const slotH = slot ? Math.round(slot.getBoundingClientRect().height) : 0;
+      height = slotH > 0 ? slotH : (width <= 600 ? 64 : 120);
       canvas.width  = Math.floor(width  * dpr);
       canvas.height = Math.floor(height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);

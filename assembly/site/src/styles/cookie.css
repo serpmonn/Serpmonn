@@ -1,14 +1,18 @@
 .cookie-consent {                                                       /* Стили кук */
     display: none;                                                      /* Скрываем элемент по умолчанию */
-    position: fixed;                                                    /* Позиция */
+    position: fixed;                                                    /* Оверлей — не двигает контент (CLS) */
     bottom: 0;
     left: 0;
-    width: 100%;                                                        /* Ширина */
-    background-color: rgba(0, 0, 0, 0.7);                             /* Полупрозрачный черный фон */
+    right: 0;
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
     color: white;
     text-align: center;
     padding: 4px 8px;
-    z-index: 100;                                                       /* Сниженный z-index, но выше основного контента */
+    z-index: 2147483000;
+    box-sizing: border-box;
+    /* Isolate from layout of the document flow */
+    contain: layout style;
 }
 
 .cookie-consent p {

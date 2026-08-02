@@ -1,7 +1,7 @@
 export function loadLeaderboard() {
     // Загружаем данные с сервера и обновляем таблицу
     console.log('🔄 Загружаем таблицу лидеров...');
-    fetch('https://www.serpmonn.ru/backend/games/redsquare2/leaderboard')
+    fetch('https://serpmonn.ru/backend/games/redsquare2/leaderboard')
         .then(response => {
             console.log('📡 Ответ сервера:', response.status);
             return response.json();

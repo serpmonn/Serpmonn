@@ -1,10 +1,16 @@
-<div class="news-block" id="news-block" style="display:none;">
+<div class="news-block news-block--pending" id="news-block">
   <div class="news-block-header">
     <div class="news-dot"></div>
     <span class="news-block-title">{{ newsLabel }}</span>
   </div>
 
-  <div id="news-hero-wrap"></div>
+  <div id="news-hero-wrap" class="news-hero-wrap">
+    <div class="news-skeleton" aria-hidden="true">
+      <div class="news-skeleton__line news-skeleton__line--title"></div>
+      <div class="news-skeleton__line"></div>
+      <div class="news-skeleton__line news-skeleton__line--short"></div>
+    </div>
+  </div>
 
   <div class="feed-wrapper">
     <button class="feed-arrow feed-arrow-left" aria-label="{{ newsPrevLabel or 'Previous' }}" hidden>
@@ -16,3 +22,6 @@
     </button>
   </div>
 </div>
+
+{# Reserved height for letters canvas — avoids CLS when JS mounts it #}
+<div id="serpmonn-letters-slot" class="serpmonn-letters-slot" aria-hidden="true"></div>

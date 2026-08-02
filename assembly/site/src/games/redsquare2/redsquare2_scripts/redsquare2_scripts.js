@@ -216,8 +216,8 @@
                 document.body?.classList?.contains('vk-mini-embed') ||
                 (window.self !== window.top);
 
-            const LEADERBOARD_URL = 'https://www.serpmonn.ru/backend/games/redsquare2/leaderboard';
-            const ADD_SCORE_URL = 'https://www.serpmonn.ru/add-score';
+            const LEADERBOARD_URL = 'https://serpmonn.ru/backend/games/redsquare2/leaderboard';
+            const ADD_SCORE_URL = 'https://serpmonn.ru/add-score';
 
             function ensureLeaderboardOverlay() {
                 let overlay = document.getElementById('vkMiniLeaderboardOverlay');
@@ -366,7 +366,7 @@
             gameInterval = setInterval(createObject, 1000);
         }
 
-           fetch('https://www.serpmonn.ru/proxy/bannedWords')
+           fetch('https://serpmonn.ru/proxy/bannedWords')
             .then(response => response.json())
             .then(data => {
 
@@ -430,7 +430,7 @@
                     } catch (_) {}
                     return;
                 }
-                window.location.href = 'https://www.serpmonn.ru';
+                window.location.href = 'https://serpmonn.ru';
             });
 
             document.getElementById('pauseBtn')?.addEventListener('click', function() {

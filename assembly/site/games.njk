@@ -57,11 +57,8 @@ eleventyComputed:
     {% from "partials/tool-icons.njk" import toolIcon, webGameIcon %}
     <nav id="menuContainer" aria-label="{{ localesGames[locale].games.menuLabel }}"></nav>
    
-    <main class="page" itemscope itemtype="https://schema.org/ItemList">
-        <meta itemprop="name" content="{{ localesGames[locale].games.schemaName }}">
-        <meta itemprop="numberOfItems" content="{{ localesGames[locale].games.totalGames }}">
-        <meta itemprop="publisher" content="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}">
-       
+    {# ItemList только в JSON-LD выше: microdata publisher/itemListElement давали ошибки GSC #}
+    <main class="page">
         <h1>
             <img class="section-logo-inline" src="/frontend/images/Games.ico" alt="Serpmonn" loading="lazy">
             {{ localesGames[locale].games.mainTitle }}
@@ -96,8 +93,7 @@ eleventyComputed:
         </div>
 
 {% for group in localesGames[locale].games.groups %}
-        <section class="games-group" data-group="{{ group.key }}" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
-            <meta itemprop="position" content="{{ loop.index }}">
+        <section class="games-group" data-group="{{ group.key }}">
             <h2 class="group-title">
                 {% if group.key == 'serpmonn' %}
                 <span class="section-logo-inline">{{ toolIcon('games', 'cat') }}</span>
@@ -118,21 +114,20 @@ eleventyComputed:
                 <div class="grid" role="grid" aria-label="{{ platform.ariaLabel }}">
                     {% if platform.games and platform.games | length %}
                       {% for game in platform.games %}
-                    <div class="card{% if game.external %} card--partner{% endif %}" role="row" itemprop="item" itemscope itemtype="https://schema.org/Game">
-                        <meta itemprop="position" content="{{ game.position }}">
+                    <div class="card{% if game.external %} card--partner{% endif %}" role="row">
                         <div class="card-body">
                             <h2>
                                 {% if platform.key == 'web' and not game.external %}
                                 <span class="game-logo-inline game-logo-inline--svg">{{ webGameIcon(game.link, 'cat') }}</span>
                                 {% elif game.image %}
-                                <img class="game-logo-inline" src="{{ game.image }}" alt="{{ game.name }}" loading="lazy" itemprop="image">
+                                <img class="game-logo-inline" src="{{ game.image }}" alt="{{ game.name }}" loading="lazy">
                                 {% else %}
                                 <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon('games', 'cat') }}</span>
                                 {% endif %}
-                                <span itemprop="name">{{ game.name }}</span>
+                                <span>{{ game.name }}</span>
                             </h2>
                             {% if game.description %}
-                            <p itemprop="description">{{ game.description }}</p>
+                            <p>{{ game.description }}</p>
                             {% endif %}
                         </div>
 

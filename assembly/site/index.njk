@@ -7,6 +7,7 @@ permalink: "{% if locale == 'ru' %}/frontend/main.html{% else %}/frontend/{{ loc
 eleventyComputed:
   layout: "layouts/base.njk"
   adsEnabled: false
+  preloadLcpLogo: true
   title: "{{ i18n[locale].title }}"
   description: "{{ i18n[locale].description }}"
   keywords: "{{ i18n[locale].keywords }}"
@@ -67,7 +68,7 @@ eleventyComputed:
 
 <div class="search-card-wrapper">
   <div class="main-search-container">
-    <img src="/frontend/images/serpmonn.ico?v=3" alt="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}" class="logo" title="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}">
+    <img src="/frontend/images/Serpmonn-96x96.png" alt="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}" class="logo" title="{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}" width="65" height="65" decoding="async" fetchpriority="high">
 
     <form id="ai-search-form" class="search-form" data-search-mode="ai"
       data-placeholder-ai="{{ searchPlaceholder }}"

@@ -79,9 +79,9 @@ eleventyComputed:
       "@context": "https://schema.org",
       "@type": "BreadcrumbList",
       "itemListElement": [
-        {"@type": "ListItem", "position": 1, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.home }}", "item": "{{ site.baseUrl }}/"},
-        {"@type": "ListItem", "position": 2, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.news }}", "item": "{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html"},
-        {"@type": "ListItem", "position": 3, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.current }}"}
+        {"@type": "ListItem", "position": 1, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.home or 'Home' }}", "item": "{{ site.baseUrl }}/"},
+        {"@type": "ListItem", "position": 2, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.news or 'Knowledge Base' }}", "item": "{{ site.baseUrl }}/frontend/knowledge-base/knowledge-base.html"},
+        {"@type": "ListItem", "position": 3, "name": "{{ updatesAug25Sep15[locale].breadcrumbs.current or updatesAug25Sep15[locale].article.title }}"}
       ]
     }
     </script>
