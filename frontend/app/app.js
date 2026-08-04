@@ -1605,7 +1605,7 @@ async function loadNews() {
       const title = n.title || 'Новость';
       const snip = n.snippet || n.description || '';
       btn.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(snip)}</span>`;
-      const href = n.url || (Array.isArray(n.sources) && n.sources[0]) || '/frontend/news/news.html';
+      const href = n.url || (Array.isArray(n.sources) && n.sources[0]) || '/frontend/knowledge-base/knowledge-base.html';
       btn.addEventListener('click', () => openViewer(href, title));
       list.appendChild(btn);
     }

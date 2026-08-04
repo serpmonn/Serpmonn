@@ -43,7 +43,14 @@ function writeFileEnsured(filePath, content) {
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
-const EXCLUDE_DIRS = new Set(['scripts', 'styles', 'images', 'i18n', 'pwa']);
+// news/ — redirect stubs → knowledge-base (do not list in sitemaps)
+const EXCLUDE_DIRS = new Set(['scripts', 'styles', 'images', 'i18n', 'pwa', 'news']);
+
+/** login.html / register.html are soft+hard redirects to auth — skip in sitemaps */
+function isRedirectStubPath(filePath) {
+  const norm = filePath.replace(/\\/g, '/');
+  return /\/login\/login\.html$/i.test(norm) || /\/register\/register\.html$/i.test(norm);
+}
 
 function getAllHtmlFiles(rootDir) {
   const results = [];
@@ -61,7 +68,9 @@ function getAllHtmlFiles(rootDir) {
             scanDir(fullPath);
           }
         } else if (ent.isFile() && ent.name.toLowerCase().endsWith('.html')) {
-          results.push(fullPath);
+          if (!isRedirectStubPath(fullPath)) {
+            results.push(fullPath);
+          }
         }
       }
     } catch (err) {
