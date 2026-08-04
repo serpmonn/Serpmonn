@@ -12,10 +12,10 @@
 //   При каждом запуске daemon читает ключ оттуда → PeerID постоянный.
 //
 // Лимиты Circuit Relay v2 (MVP):
-//   - MaxReservations: 1024 (одновременные слоты)
-//   - MaxCircuits: 512 (одновременные проксируемые соединения)
-//   - BufferSize: 4096 байт — дефолт libp2p, не ограничиваем
-//   - Limit по трафику: не устанавливаем (nil)
+//   - База: relayv2.DefaultResources() (BufferSize=2048 и т.д.)
+//   - MaxReservations: 1024, MaxCircuits: 512
+//   - Limit: nil (без лимита байт/времени на circuit)
+//   Ловушки: Limit{Data:0} → Noise EOF; BufferSize:0 при WithResources → circuit hang.
 //
 // Транспорты (снаружи только 443):
 //   - TCP + QUIC-v1 на 127.0.0.1:4001 — локально, не в WAN
@@ -53,10 +53,15 @@ func main() {
 		"Path to Ed25519 private key file (base64-encoded)")
 	port := flag.Int("port", 4001, "Localhost TCP/UDP port (not exposed to WAN)")
 	port443 := flag.Int("port443", 443, "Public UDP port for QUIC/WebTransport")
-	wsPort := flag.Int("wsport", 4002, "Localhost WebSocket port (nginx proxies wss://<domain>/api/v1/sync)")
+	wsPort := flag.Int("wsport", 4002, "WebSocket port (nginx proxies wss://<domain>/api/v1/sync)")
+	wsBind := flag.String("wsbind", "127.0.0.1", "Bind for WebSocket (127.0.0.1 prod; 0.0.0.0 LAN A/B)")
 	extIP := flag.String("extip", "", "Public IP to announce when behind NAT (e.g. 188.235.13.20)")
 	domain := flag.String("domain", "relay.serpmonn.ru", "Public domain for WSS/QUIC announce (nginx on 443)")
 	flag.Parse()
+
+	if ip := net.ParseIP(*wsBind); ip == nil || ip.To4() == nil {
+		log.Fatalf("relay: invalid -wsbind value: %q (need IPv4)", *wsBind)
+	}
 
 	ctx, cancel := signal.NotifyContext(context.Background(),
 		os.Interrupt, syscall.SIGTERM)
@@ -82,8 +87,8 @@ func main() {
 			// Публичный QUIC/WebTransport на UDP/443
 			fmt.Sprintf("/ip4/0.0.0.0/udp/%d/quic-v1", *port443),
 			fmt.Sprintf("/ip4/0.0.0.0/udp/%d/quic-v1/webtransport", *port443),
-			// WS только localhost — снаружи через nginx TLS/443
-			fmt.Sprintf("/ip4/127.0.0.1/tcp/%d/ws", *wsPort),
+			// WS: default localhost (nginx); -wsbind 0.0.0.0 for temporary LAN A/B
+			fmt.Sprintf("/ip4/%s/tcp/%d/ws", *wsBind, *wsPort),
 		),
 		libp2p.DefaultTransports,
 		libp2p.DefaultSecurity,
@@ -115,18 +120,17 @@ func main() {
 	}
 	defer func() { _ = h.Close() }()
 
-	relayLimits := relayv2.Resources{
-		ReservationTTL:         time.Hour,
-		MaxReservations:        1024,
-		MaxCircuits:            512,
-		MaxReservationsPerPeer: 8,
-		MaxReservationsPerIP:   16,
-		MaxReservationsPerASN:  32,
-		Limit: &relayv2.RelayLimit{
-			Duration: 24 * time.Hour,
-			Data:     0,
-		},
-	}
+	// Start from defaults (esp. BufferSize=2048). WithResources replaces the
+	// whole struct — zero BufferSize hangs/breaks circuit copy.
+	relayLimits := relayv2.DefaultResources()
+	relayLimits.ReservationTTL = time.Hour
+	relayLimits.MaxReservations = 1024
+	relayLimits.MaxCircuits = 512
+	relayLimits.MaxReservationsPerPeer = 8
+	relayLimits.MaxReservationsPerIP = 16
+	relayLimits.MaxReservationsPerASN = 32
+	// nil = unlimited; Data:0 → io.LimitReader(0) → Noise EOF
+	relayLimits.Limit = nil
 
 	_, err = relayv2.New(h, relayv2.WithResources(relayLimits))
 	if err != nil {

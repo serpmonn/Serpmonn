@@ -39,18 +39,11 @@ func main() {
 	}
 	defer func() { _ = relayHost.Close() }()
 
-	_, err = relayv2.New(relayHost, relayv2.WithResources(relayv2.Resources{
-		ReservationTTL:         time.Hour,
-		MaxReservations:        1024,
-		MaxCircuits:            512,
-		MaxReservationsPerPeer: 8,
-		MaxReservationsPerIP:   16,
-		MaxReservationsPerASN:  32,
-		Limit: &relayv2.RelayLimit{
-			Duration: 24 * time.Hour,
-			Data:     0,
-		},
-	}))
+	rc := relayv2.DefaultResources()
+	rc.MaxReservations = 1024
+	rc.MaxCircuits = 512
+	rc.Limit = nil // Data:0 → Noise EOF; keep BufferSize from defaults
+	_, err = relayv2.New(relayHost, relayv2.WithResources(rc))
 	if err != nil {
 		log.Fatalf("relay v2: %v", err)
 	}

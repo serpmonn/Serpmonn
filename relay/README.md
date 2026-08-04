@@ -20,6 +20,16 @@
 
 nginx: только `location = /api/v1/sync`; остальное — JSON 404.
 
+Обязательно для circuit/Noise через nginx:
+
+```nginx
+proxy_buffering off;
+proxy_request_buffering off;
+```
+
+Иначе reservation может пройти, а `circuit-dial` оборвётся с
+`failed to negotiate security protocol: EOF`.
+
 ## Деплой
 
 ```bash
