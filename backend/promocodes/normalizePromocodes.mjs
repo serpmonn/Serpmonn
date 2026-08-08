@@ -299,7 +299,11 @@ export function flattenPerfluenceData(perfArray) {
 }
 
 export async function fetchPerfluenceRaw() {
-  const response = await fetch(`${PERFLUENCE_API_CONFIG.url}?key=${PERFLUENCE_API_CONFIG.key}`);
+  const key = process.env.PERFLUENCE_API_KEY || PERFLUENCE_API_CONFIG.key;
+  if (!key) {
+    throw new Error('PERFLUENCE_API_KEY is not set');
+  }
+  const response = await fetch(`${PERFLUENCE_API_CONFIG.url}?key=${key}`);
   if (!response.ok) {
     throw new Error(`HTTP ошибка! Статус: ${response.status}`);
   }

@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 
 const CACHE_PATH = path.join(__dirname, 'promocodesBuild.cache.json');
+const ROOT = path.join(__dirname, '../../..');
 const EMPTY_BUILD = {
   stats: { total: 0, active: 0, lastUpdateFormatted: '-' },
   categories: [],
@@ -10,6 +11,21 @@ const EMPTY_BUILD = {
   data: [],
   version: null
 };
+
+/** One shared build per process — avoids double fetch and race with poleznoeJobs. */
+let buildPromise = null;
+
+function loadEnv() {
+  try {
+    require(path.join(ROOT, 'node_modules/dotenv')).config({
+      path: path.join(ROOT, 'backend/.env')
+    });
+  } catch (_) {
+    try {
+      require('dotenv').config({ path: path.join(ROOT, 'backend/.env') });
+    } catch (__) {}
+  }
+}
 
 function enrichCard(promo, mod) {
   const title = mod.getPromoDisplayTitle(promo);
@@ -56,7 +72,8 @@ function filterToPromoCodesOnly(built) {
   };
 }
 
-module.exports = async function promocodesBuild() {
+async function runPromocodesBuild() {
+  loadEnv();
   try {
     const mod = await import(path.join(__dirname, '../../../backend/promocodes/normalizePromocodes.mjs'));
     const built = await mod.preparePromocodesBuildData();
@@ -78,4 +95,11 @@ module.exports = async function promocodesBuild() {
     }
     return EMPTY_BUILD;
   }
+}
+
+module.exports = async function promocodesBuild() {
+  if (!buildPromise) {
+    buildPromise = runPromocodesBuild();
+  }
+  return buildPromise;
 };

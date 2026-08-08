@@ -158,7 +158,10 @@ function collapseLearn(offers) {
   ];
 }
 
-module.exports = function poleznoeJobs() {
+module.exports = async function poleznoeJobs() {
+  // Wait for promocodesBuild so we read the freshly written full cache (incl. no-code).
+  await require('./promocodesBuild')();
+
   const jobs = Object.fromEntries(JOB_META.map(j => [j.key, { ...j, offers: [] }]));
 
   for (const key of Object.keys(ADMITAD)) {
@@ -166,7 +169,7 @@ module.exports = function poleznoeJobs() {
   }
 
   if (!fs.existsSync(CACHE_PATH)) {
-    return { jobs: JOB_META.map(j => jobs[j.key]), generatedAt: null };
+    return { jobs: JOB_META.map(j => jobs[j.key]), generatedAt: null, noCodeCount: 0 };
   }
 
   const cache = JSON.parse(fs.readFileSync(CACHE_PATH, 'utf8'));
