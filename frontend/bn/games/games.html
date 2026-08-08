@@ -294,27 +294,40 @@
             <img class="section-logo-inline" src="/frontend/images/Games.ico" alt="Serpmonn" loading="lazy">
             সব গেম
         </h1>
-        <!-- ФИЛЬТР: источник + платформа -->
-        <div class="filter-buttons" role="tablist" aria-label="Filter by source and platform">
-            <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                সব
+        <!-- ФИЛЬТР: источник + платформа (на мобильных — сворачивается) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="gamesFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
-            <button class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn Games
-            </button>
-            <button class="filter-btn" data-filter="partners" role="tab">
-                Partner Games
-            </button>
-            <span class="filter-sep" aria-hidden="true"></span>
-            <button class="filter-btn" data-filter="web" role="tab">
-                Web
-            </button>
-            <button class="filter-btn" data-filter="pc" role="tab">
-                PC
-            </button>
-            <button class="filter-btn" data-filter="mobile" role="tab">
-                Mobile
-            </button>
+        </div>
+        <div id="gamesFiltersContent" class="filters-content">
+            <div class="filter-buttons" role="tablist" aria-label="Filter by source and platform">
+                <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    সব
+                </button>
+                <button class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn Games
+                </button>
+                <button class="filter-btn" data-filter="partners" role="tab">
+                    Partner Games
+                </button>
+                <span class="filter-sep" aria-hidden="true"></span>
+                <button class="filter-btn" data-filter="web" role="tab">
+                    Web
+                </button>
+                <button class="filter-btn" data-filter="pc" role="tab">
+                    PC
+                </button>
+                <button class="filter-btn" data-filter="mobile" role="tab">
+                    Mobile
+                </button>
+            </div>
         </div>
        
         <!-- РЕКЛАМНЫЙ БАННЕР -->

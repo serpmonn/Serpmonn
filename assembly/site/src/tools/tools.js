@@ -76,7 +76,9 @@ document.addEventListener('DOMContentLoaded', () => {                           
     meta.content = metaCategoryTemplate.replace('{category}', categoryLabel);
   }
 
-  toolsCountElement.textContent = document.querySelectorAll('.card:not(.tool-placeholder)').length;                            // Подсчет активных инструментов (исключая заглушки)
+  if (toolsCountElement) {
+    toolsCountElement.textContent = document.querySelectorAll('.card:not(.tool-placeholder)').length;
+  }
 
   // Обработчик для кнопок избранного
   document.querySelectorAll('.favorite-btn').forEach(btn => {                                                                  // Перебор всех кнопок избранного
@@ -204,7 +206,7 @@ document.addEventListener('DOMContentLoaded', () => {                           
     });
 
     const activeCount = document.querySelectorAll('.card:not(.tool-placeholder):not([style*="display: none"])').length;        // Подсчет видимых активных инструментов
-    toolsCountElement.textContent = activeCount;                                                                               // Обновление счетчика
+    if (toolsCountElement) toolsCountElement.textContent = activeCount;
     filterMessage.classList.toggle('hidden', activeCount > 0);                                                                 // Показ/скрытие сообщения "не найдено"
 
     // Обновление мета-описания для SEO
@@ -265,4 +267,17 @@ document.addEventListener('DOMContentLoaded', () => {                           
     window.history.replaceState({}, '', window.location.pathname);                                                             // Очистка параметров URL
     filterTools('', '', false);                                                                                                // Сброс фильтрации
   });
+
+  // Сворачивание фильтров на мобильных (как на промокодах)
+  const toggleFiltersBtn = document.getElementById('toggleFilters');
+  const filtersContent = document.getElementById('toolsFiltersContent');
+  if (toggleFiltersBtn && filtersContent) {
+    const labelShow = toggleFiltersBtn.dataset.labelShow || 'Фильтры';
+    const labelHide = toggleFiltersBtn.dataset.labelHide || 'Скрыть';
+    toggleFiltersBtn.addEventListener('click', () => {
+      const isOpen = filtersContent.classList.toggle('is-open');
+      toggleFiltersBtn.setAttribute('aria-expanded', String(isOpen));
+      toggleFiltersBtn.textContent = isOpen ? labelHide : labelShow;
+    });
+  }
 });

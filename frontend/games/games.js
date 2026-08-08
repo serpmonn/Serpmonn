@@ -105,6 +105,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // === 5. Сворачивание фильтров на мобильных ===
+    const toggleFiltersBtn = document.getElementById('toggleFilters');
+    const filtersContent = document.getElementById('gamesFiltersContent');
+    if (toggleFiltersBtn && filtersContent) {
+        const labelShow = toggleFiltersBtn.dataset.labelShow || 'Фильтры';
+        const labelHide = toggleFiltersBtn.dataset.labelHide || 'Скрыть';
+        toggleFiltersBtn.addEventListener('click', () => {
+            const isOpen = filtersContent.classList.toggle('is-open');
+            toggleFiltersBtn.setAttribute('aria-expanded', String(isOpen));
+            toggleFiltersBtn.textContent = isOpen ? labelHide : labelShow;
+        });
+    }
+
     // === 6. Аналитика ===
     document.querySelectorAll('.card a.btn').forEach(btn => {
         btn.addEventListener('click', () => {

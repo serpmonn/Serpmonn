@@ -311,66 +311,61 @@
         <h1>Serpmonn اوزار</h1>
         <p class="subtitle">ڪم، بازاريات ۽ ترقي لاءِ مائڪرو اوزارن جو سيٽ</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn — اوزار / Partner — اوزار">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn — اوزار
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Partner — اوزار
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn — اوزار / Partner — اوزار">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn — اوزار
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Partner — اوزار
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="سڀني ڪيٽيگريز لاءِ Serpmonn اوزار: UTM ٺاهيندڙ، پاسورڊ، ڪيلڪيوليٽر ۽ وڌيڪ."
-             data-dynamic-meta-category="{category} لاءِ Serpmonn اوزار: UTM ٺاهيندڙ، پاسورڊ، ڪيلڪيوليٽر ۽ وڌيڪ.">
-            <input type="text" 
-                   placeholder="اوزار ڳولو..." 
-                   aria-label="اوزار ڳولو">
-            <select aria-label="ڪيٽگري مطابق فلٽر">
-                <option value="">سڀ ڪيٽگورين</option>
-                
-                    <option value="marketing">بازاريات</option>
-                
-                    <option value="security">حفاظت</option>
-                
-                    <option value="development">ترقي</option>
-                
-                    <option value="design">ڊيزائن</option>
-                
-                    <option value="engineering">انجنيئرنگ</option>
-                
-                    <option value="logistics">لواجسٽڪس</option>
-                
-                    <option value="ecology">ماحوليات</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="فلٽر صاف ڪريو">فلٽر صاف ڪريو</button>
-            <button id="clear-favorites" aria-label="منتخب صاف ڪريو">منتخب صاف ڪريو</button>
-            <button id="sort-favorites" aria-label="منتخب مٿي ڏيکاريو">منتخب مٿي</button>
-            <div class="filter-message hidden" role="alert">ڪوبه اوزار نہ مليو. پنھنجي ڳولا تبديل ڪرڻ جي ڪوشش ڪريو.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>اوزارن جي انگن اکرن</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">فعال اوزار</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">ڪيٽگورين</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">منصوبابندي</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="سڀني ڪيٽيگريز لاءِ Serpmonn اوزار: UTM ٺاهيندڙ، پاسورڊ، ڪيلڪيوليٽر ۽ وڌيڪ."
+                 data-dynamic-meta-category="{category} لاءِ Serpmonn اوزار: UTM ٺاهيندڙ، پاسورڊ، ڪيلڪيوليٽر ۽ وڌيڪ.">
+                <input type="text"
+                       placeholder="اوزار ڳولو..."
+                       aria-label="اوزار ڳولو">
+                <select aria-label="ڪيٽگري مطابق فلٽر">
+                    <option value="">سڀ ڪيٽگورين</option>
+                    
+                        <option value="marketing">بازاريات</option>
+                    
+                        <option value="security">حفاظت</option>
+                    
+                        <option value="development">ترقي</option>
+                    
+                        <option value="design">ڊيزائن</option>
+                    
+                        <option value="engineering">انجنيئرنگ</option>
+                    
+                        <option value="logistics">لواجسٽڪس</option>
+                    
+                        <option value="ecology">ماحوليات</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="فلٽر صاف ڪريو">فلٽر صاف ڪريو</button>
+                <button id="clear-favorites" aria-label="منتخب صاف ڪريو">منتخب صاف ڪريو</button>
+                <button id="sort-favorites" aria-label="منتخب مٿي ڏيکاريو">منتخب مٿي</button>
+                <div class="filter-message hidden" role="alert">ڪوبه اوزار نہ مليو. پنھنجي ڳولا تبديل ڪرڻ جي ڪوشش ڪريو.</div>
             </div>
         </div>
 

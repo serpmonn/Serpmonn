@@ -311,66 +311,61 @@
         <h1>Serpmonn 도구</h1>
         <p class="subtitle">작업, 마케팅 및 개발을 위한 마이크로 도구 세트</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn 도구 / 파트너 도구">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn 도구
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                파트너 도구
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="필터"
+                    data-label-hide="숨기기">
+                필터
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn 도구 / 파트너 도구">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn 도구
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    파트너 도구
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="모든 카테고리용 Serpmonn 도구: UTM 빌더, 비밀번호, 계산기 등."
-             data-dynamic-meta-category="{category}용 Serpmonn 도구: UTM 빌더, 비밀번호, 계산기 등.">
-            <input type="text" 
-                   placeholder="도구 검색..." 
-                   aria-label="도구 검색">
-            <select aria-label="카테고리별 필터">
-                <option value="">모든 카테고리</option>
-                
-                    <option value="marketing">마케팅</option>
-                
-                    <option value="security">보안</option>
-                
-                    <option value="development">개발</option>
-                
-                    <option value="design">디자인</option>
-                
-                    <option value="engineering">엔지니어링</option>
-                
-                    <option value="logistics">물류</option>
-                
-                    <option value="ecology">생태</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="필터 지우기">필터 지우기</button>
-            <button id="clear-favorites" aria-label="즐겨찾기 지우기">즐겨찾기 지우기</button>
-            <button id="sort-favorites" aria-label="즐겨찾기 상단에 표시">즐겨찾기 상단에</button>
-            <div class="filter-message hidden" role="alert">도구를 찾을 수 없습니다. 쿼리를 변경해 보세요.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>도구 통계</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">활성 도구</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">카테고리</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">계획됨</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="모든 카테고리용 Serpmonn 도구: UTM 빌더, 비밀번호, 계산기 등."
+                 data-dynamic-meta-category="{category}용 Serpmonn 도구: UTM 빌더, 비밀번호, 계산기 등.">
+                <input type="text"
+                       placeholder="도구 검색..."
+                       aria-label="도구 검색">
+                <select aria-label="카테고리별 필터">
+                    <option value="">모든 카테고리</option>
+                    
+                        <option value="marketing">마케팅</option>
+                    
+                        <option value="security">보안</option>
+                    
+                        <option value="development">개발</option>
+                    
+                        <option value="design">디자인</option>
+                    
+                        <option value="engineering">엔지니어링</option>
+                    
+                        <option value="logistics">물류</option>
+                    
+                        <option value="ecology">생태</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="필터 지우기">필터 지우기</button>
+                <button id="clear-favorites" aria-label="즐겨찾기 지우기">즐겨찾기 지우기</button>
+                <button id="sort-favorites" aria-label="즐겨찾기 상단에 표시">즐겨찾기 상단에</button>
+                <div class="filter-message hidden" role="alert">도구를 찾을 수 없습니다. 쿼리를 변경해 보세요.</div>
             </div>
         </div>
 

@@ -311,66 +311,61 @@
         <h1>Serpmonn ინსტრუმენტები</h1>
         <p class="subtitle">მიკრო-ინსტრუმენტების ნაკრები სამუშაოს, მარკეტინგისა და განვითარებისთვის</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn ინსტრუმენტები / Partner — ინსტრუმენტები">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn ინსტრუმენტები
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Partner — ინსტრუმენტები
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn ინსტრუმენტები / Partner — ინსტრუმენტები">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn ინსტრუმენტები
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Partner — ინსტრუმენტები
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Serpmonn ინსტრუმენტები ყველა კატეგორიისთვის: UTM გენერატორი, პაროლები, კალკულატორები და სხვა."
-             data-dynamic-meta-category="Serpmonn ინსტრუმენტები {category}-ისთვის: UTM გენერატორი, პაროლები, კალკულატორები და სხვა.">
-            <input type="text" 
-                   placeholder="მოძებნეთ ინსტრუმენტები..." 
-                   aria-label="ინსტრუმენტების ძიება">
-            <select aria-label="ფილტრაცია კატეგორიის მიხედვით">
-                <option value="">ყველა კატეგორია</option>
-                
-                    <option value="marketing">მარკეტინგი</option>
-                
-                    <option value="security">უსაფრთხოება</option>
-                
-                    <option value="development">განვითარება</option>
-                
-                    <option value="design">დიზაინი</option>
-                
-                    <option value="engineering">ინჟინერია</option>
-                
-                    <option value="logistics">ლოჯისტიკა</option>
-                
-                    <option value="ecology">ეკოლოგია</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="ფილტრების გასუფთავება">ფილტრების გასუფთავება</button>
-            <button id="clear-favorites" aria-label="რჩეულების გასუფთავება">რჩეულების გასუფთავება</button>
-            <button id="sort-favorites" aria-label="რჩეულების ზემოთ ჩვენება">რჩეულები ზემოთ</button>
-            <div class="filter-message hidden" role="alert">ინსტრუმენტები ვერ მოიძებნა. სცადეთ შეცვალოთ მოთხოვნა.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>ინსტრუმენტების სტატისტიკა</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">აქტიური ინსტრუმენტები</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">კატეგორიები</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">დაგეგმილი</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Serpmonn ინსტრუმენტები ყველა კატეგორიისთვის: UTM გენერატორი, პაროლები, კალკულატორები და სხვა."
+                 data-dynamic-meta-category="Serpmonn ინსტრუმენტები {category}-ისთვის: UTM გენერატორი, პაროლები, კალკულატორები და სხვა.">
+                <input type="text"
+                       placeholder="მოძებნეთ ინსტრუმენტები..."
+                       aria-label="ინსტრუმენტების ძიება">
+                <select aria-label="ფილტრაცია კატეგორიის მიხედვით">
+                    <option value="">ყველა კატეგორია</option>
+                    
+                        <option value="marketing">მარკეტინგი</option>
+                    
+                        <option value="security">უსაფრთხოება</option>
+                    
+                        <option value="development">განვითარება</option>
+                    
+                        <option value="design">დიზაინი</option>
+                    
+                        <option value="engineering">ინჟინერია</option>
+                    
+                        <option value="logistics">ლოჯისტიკა</option>
+                    
+                        <option value="ecology">ეკოლოგია</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="ფილტრების გასუფთავება">ფილტრების გასუფთავება</button>
+                <button id="clear-favorites" aria-label="რჩეულების გასუფთავება">რჩეულების გასუფთავება</button>
+                <button id="sort-favorites" aria-label="რჩეულების ზემოთ ჩვენება">რჩეულები ზემოთ</button>
+                <div class="filter-message hidden" role="alert">ინსტრუმენტები ვერ მოიძებნა. სცადეთ შეცვალოთ მოთხოვნა.</div>
             </div>
         </div>
 

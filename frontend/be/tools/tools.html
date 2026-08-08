@@ -311,66 +311,61 @@
         <h1>Інструменты Serpmonn</h1>
         <p class="subtitle">Набор мікра‑інструментаў для працы, маркетынгу і распрацоўкі</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Інструменты Serpmonn / Інструменты партнёраў">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Інструменты Serpmonn
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Інструменты партнёраў
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Фільтры"
+                    data-label-hide="Схаваць">
+                Фільтры
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Інструменты Serpmonn / Інструменты партнёраў">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Інструменты Serpmonn
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Інструменты партнёраў
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Інструменты Serpmonn для ўсіх катэгорый: UTM-генератар, паролі, калькулятары і інш."
-             data-dynamic-meta-category="Інструменты Serpmonn для {category}: UTM-генератар, паролі, калькулятары і інш.">
-            <input type="text" 
-                   placeholder="Пошук інструментаў..." 
-                   aria-label="Пошук інструментаў">
-            <select aria-label="Фільтр па катэгорыі">
-                <option value="">Усе катэгорыі</option>
-                
-                    <option value="marketing">Маркетынг</option>
-                
-                    <option value="security">Бяспека</option>
-                
-                    <option value="development">Распрацоўка</option>
-                
-                    <option value="design">Дызайн</option>
-                
-                    <option value="engineering">Інжынерыя</option>
-                
-                    <option value="logistics">Лагістыка</option>
-                
-                    <option value="ecology">Экалогія</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="Ачысціць фільтры">Ачысціць фільтры</button>
-            <button id="clear-favorites" aria-label="Ачысціць абранае">Ачысціць абранае</button>
-            <button id="sort-favorites" aria-label="Паказаць абранае зверху">Абранае зверху</button>
-            <div class="filter-message hidden" role="alert">Інструменты не знойдзены. Паспрабуйце змяніць запыт.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>Статыстыка інструментаў</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">Актыўных інструментаў</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">Катэгорый</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Плануецца</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Інструменты Serpmonn для ўсіх катэгорый: UTM-генератар, паролі, калькулятары і інш."
+                 data-dynamic-meta-category="Інструменты Serpmonn для {category}: UTM-генератар, паролі, калькулятары і інш.">
+                <input type="text"
+                       placeholder="Пошук інструментаў..."
+                       aria-label="Пошук інструментаў">
+                <select aria-label="Фільтр па катэгорыі">
+                    <option value="">Усе катэгорыі</option>
+                    
+                        <option value="marketing">Маркетынг</option>
+                    
+                        <option value="security">Бяспека</option>
+                    
+                        <option value="development">Распрацоўка</option>
+                    
+                        <option value="design">Дызайн</option>
+                    
+                        <option value="engineering">Інжынерыя</option>
+                    
+                        <option value="logistics">Лагістыка</option>
+                    
+                        <option value="ecology">Экалогія</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="Ачысціць фільтры">Ачысціць фільтры</button>
+                <button id="clear-favorites" aria-label="Ачысціць абранае">Ачысціць абранае</button>
+                <button id="sort-favorites" aria-label="Паказаць абранае зверху">Абранае зверху</button>
+                <div class="filter-message hidden" role="alert">Інструменты не знойдзены. Паспрабуйце змяніць запыт.</div>
             </div>
         </div>
 

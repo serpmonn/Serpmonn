@@ -311,66 +311,61 @@
         <h1>Serpmonn Työkalut</h1>
         <p class="subtitle">Kokoelma mikro‑työkaluja työhön, markkinointiin ja kehitykseen</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn-työkalut / Kumppanityökalut">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn-työkalut
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Kumppanityökalut
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn-työkalut / Kumppanityökalut">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn-työkalut
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Kumppanityökalut
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Serpmonn-työkalut kaikille kategorioille: UTM-generaattori, salasanat, laskurit ja muuta."
-             data-dynamic-meta-category="Serpmonn-työkalut kategorialle {category}: UTM-generaattori, salasanat, laskurit ja muuta.">
-            <input type="text" 
-                   placeholder="Etsi työkaluja..." 
-                   aria-label="Etsi työkaluja">
-            <select aria-label="Suodata kategorian mukaan">
-                <option value="">Kaikki kategoriat</option>
-                
-                    <option value="marketing">Markkinointi</option>
-                
-                    <option value="security">Turvallisuus</option>
-                
-                    <option value="development">Kehitys</option>
-                
-                    <option value="design">Design</option>
-                
-                    <option value="engineering">Insinööritoiminta</option>
-                
-                    <option value="logistics">Logistiikka</option>
-                
-                    <option value="ecology">Ekologia</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="Tyhjennä suodattimet">Tyhjennä suodattimet</button>
-            <button id="clear-favorites" aria-label="Tyhjennä suosikit">Tyhjennä suosikit</button>
-            <button id="sort-favorites" aria-label="Näytä suosikit ylhäällä">Suosikit ylhäällä</button>
-            <div class="filter-message hidden" role="alert">Työkaluja ei löytynyt. Kokeile muuttaa hakua.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>Työkalujen tilastot</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">Aktiivisia työkaluja</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">Kategorioita</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Suunniteltu</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Serpmonn-työkalut kaikille kategorioille: UTM-generaattori, salasanat, laskurit ja muuta."
+                 data-dynamic-meta-category="Serpmonn-työkalut kategorialle {category}: UTM-generaattori, salasanat, laskurit ja muuta.">
+                <input type="text"
+                       placeholder="Etsi työkaluja..."
+                       aria-label="Etsi työkaluja">
+                <select aria-label="Suodata kategorian mukaan">
+                    <option value="">Kaikki kategoriat</option>
+                    
+                        <option value="marketing">Markkinointi</option>
+                    
+                        <option value="security">Turvallisuus</option>
+                    
+                        <option value="development">Kehitys</option>
+                    
+                        <option value="design">Design</option>
+                    
+                        <option value="engineering">Insinööritoiminta</option>
+                    
+                        <option value="logistics">Logistiikka</option>
+                    
+                        <option value="ecology">Ekologia</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="Tyhjennä suodattimet">Tyhjennä suodattimet</button>
+                <button id="clear-favorites" aria-label="Tyhjennä suosikit">Tyhjennä suosikit</button>
+                <button id="sort-favorites" aria-label="Näytä suosikit ylhäällä">Suosikit ylhäällä</button>
+                <div class="filter-message hidden" role="alert">Työkaluja ei löytynyt. Kokeile muuttaa hakua.</div>
             </div>
         </div>
 

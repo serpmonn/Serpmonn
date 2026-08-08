@@ -83,54 +83,49 @@ eleventyComputed:
         <h1>{{ tools[locale].page.title }}</h1>
         <p class="subtitle">{{ tools[locale].page.subtitle }}</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="{{ tools[locale].groups.serpmonn }} / {{ tools[locale].groups.partners }}">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                {{ tools[locale].filters.allGroups }}
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                {{ tools[locale].filters.serpmonn }}
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                {{ tools[locale].filters.partners }}
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="{{ tools[locale].filters.toggleFilters }}"
+                    data-label-hide="{{ tools[locale].filters.hideFilters }}">
+                {{ tools[locale].filters.toggleFilters }}
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="{{ tools[locale].groups.serpmonn }} / {{ tools[locale].groups.partners }}">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    {{ tools[locale].filters.allGroups }}
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    {{ tools[locale].filters.serpmonn }}
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    {{ tools[locale].filters.partners }}
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="{{ tools[locale].filters.dynamicMetaAll }}"
-             data-dynamic-meta-category="{{ tools[locale].filters.dynamicMetaCategory }}">
-            <input type="text" 
-                   placeholder="{{ tools[locale].filters.searchPlaceholder }}" 
-                   aria-label="{{ tools[locale].aria.searchTools }}">
-            <select aria-label="{{ tools[locale].aria.filterCategory }}">
-                <option value="">{{ tools[locale].filters.allCategories }}</option>
-                {% for category in tools[locale].categoriesList %}
-                    <option value="{{ category.key }}">{{ category.name }}</option>
-                {% endfor %}
-            </select>
-            <button id="clear-filters" aria-label="{{ tools[locale].aria.clearFilters }}">{{ tools[locale].filters.clearFilters }}</button>
-            <button id="clear-favorites" aria-label="{{ tools[locale].aria.clearFavorites }}">{{ tools[locale].filters.clearFavorites }}</button>
-            <button id="sort-favorites" aria-label="{{ tools[locale].aria.showFavoritesTop }}">{{ tools[locale].filters.sortFavorites }}</button>
-            <div class="filter-message hidden" role="alert">{{ tools[locale].filters.noResults }}</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>{{ tools[locale].stats.title }}</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">{{ tools[locale].stats.activeTools }}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">{{ tools[locale].stats.categories }}</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">{{ tools[locale].stats.planned }}</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="{{ tools[locale].filters.dynamicMetaAll }}"
+                 data-dynamic-meta-category="{{ tools[locale].filters.dynamicMetaCategory }}">
+                <input type="text"
+                       placeholder="{{ tools[locale].filters.searchPlaceholder }}"
+                       aria-label="{{ tools[locale].aria.searchTools }}">
+                <select aria-label="{{ tools[locale].aria.filterCategory }}">
+                    <option value="">{{ tools[locale].filters.allCategories }}</option>
+                    {% for category in tools[locale].categoriesList %}
+                        <option value="{{ category.key }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+                <button id="clear-filters" aria-label="{{ tools[locale].aria.clearFilters }}">{{ tools[locale].filters.clearFilters }}</button>
+                <button id="clear-favorites" aria-label="{{ tools[locale].aria.clearFavorites }}">{{ tools[locale].filters.clearFavorites }}</button>
+                <button id="sort-favorites" aria-label="{{ tools[locale].aria.showFavoritesTop }}">{{ tools[locale].filters.sortFavorites }}</button>
+                <div class="filter-message hidden" role="alert">{{ tools[locale].filters.noResults }}</div>
             </div>
         </div>
 

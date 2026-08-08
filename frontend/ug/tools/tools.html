@@ -311,66 +311,61 @@
         <h1>Serpmonn قوراللىرى</h1>
         <p class="subtitle">ئىش، ماركېتىڭ ۋە تەرەققىيات ئۈچۈن مىكرو قوراللار توپلىمى</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn — قوراللار / Partner — قوراللار">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn — قوراللار
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Partner — قوراللار
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn — قوراللار / Partner — قوراللار">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn — قوراللار
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Partner — قوراللار
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="بارلىق تۈرلەر ئۈچۈن Serpmonn قوراللىرى: UTM قۇرغۇچ، پارول، ھېسابلاش قوراللىرى ۋە باشقىلار."
-             data-dynamic-meta-category="{category} ئۈچۈن Serpmonn قوراللىرى: UTM قۇرغۇچ، پارول، ھېسابلاش قوراللىرى ۋە باشقىلار.">
-            <input type="text" 
-                   placeholder="قوراللارنى ئىزدەش..." 
-                   aria-label="قوراللارنى ئىزدەش">
-            <select aria-label="تۈر بويىچە سۈزۈش">
-                <option value="">ھەممە تۈرلەر</option>
-                
-                    <option value="marketing">ماركېتىڭ</option>
-                
-                    <option value="security">بىخەتەرلىك</option>
-                
-                    <option value="development">تەرەققىيات</option>
-                
-                    <option value="design">دىزايىن</option>
-                
-                    <option value="engineering">ئىنژېنېرلىك</option>
-                
-                    <option value="logistics">لوجىستىكا</option>
-                
-                    <option value="ecology">ئېكولوگىيە</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="سۈزگۈچلەرنى تازىلاش">سۈزگۈچلەرنى تازىلاش</button>
-            <button id="clear-favorites" aria-label="تاللانغانلارنى تازىلاش">تاللانغانلارنى تازىلاش</button>
-            <button id="sort-favorites" aria-label="تاللانغانلارنى ئۈستىدە كۆرسەت">تاللانغانلار ئۈستىدە</button>
-            <div class="filter-message hidden" role="alert">ھېچقانداق قورال تېپىلمىدى. سورىنىڭىزنى ئۆزگەرتىشكە تىرىشىڭ.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>قوراللار ستاتىستىكىسى</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">ئاكتىپ قوراللار</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">تۈرلەر</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">پىلانلانغان</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="بارلىق تۈرلەر ئۈچۈن Serpmonn قوراللىرى: UTM قۇرغۇچ، پارول، ھېسابلاش قوراللىرى ۋە باشقىلار."
+                 data-dynamic-meta-category="{category} ئۈچۈن Serpmonn قوراللىرى: UTM قۇرغۇچ، پارول، ھېسابلاش قوراللىرى ۋە باشقىلار.">
+                <input type="text"
+                       placeholder="قوراللارنى ئىزدەش..."
+                       aria-label="قوراللارنى ئىزدەش">
+                <select aria-label="تۈر بويىچە سۈزۈش">
+                    <option value="">ھەممە تۈرلەر</option>
+                    
+                        <option value="marketing">ماركېتىڭ</option>
+                    
+                        <option value="security">بىخەتەرلىك</option>
+                    
+                        <option value="development">تەرەققىيات</option>
+                    
+                        <option value="design">دىزايىن</option>
+                    
+                        <option value="engineering">ئىنژېنېرلىك</option>
+                    
+                        <option value="logistics">لوجىستىكا</option>
+                    
+                        <option value="ecology">ئېكولوگىيە</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="سۈزگۈچلەرنى تازىلاش">سۈزگۈچلەرنى تازىلاش</button>
+                <button id="clear-favorites" aria-label="تاللانغانلارنى تازىلاش">تاللانغانلارنى تازىلاش</button>
+                <button id="sort-favorites" aria-label="تاللانغانلارنى ئۈستىدە كۆرسەت">تاللانغانلار ئۈستىدە</button>
+                <div class="filter-message hidden" role="alert">ھېچقانداق قورال تېپىلمىدى. سورىنىڭىزنى ئۆزگەرتىشكە تىرىشىڭ.</div>
             </div>
         </div>
 

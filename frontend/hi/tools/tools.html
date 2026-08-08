@@ -311,66 +311,61 @@
         <h1>Serpmonn उपकरण</h1>
         <p class="subtitle">काम, मार्केटिंग और विकास के लिए सूक्ष्म उपकरणों का एक सेट</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn टूल्स / पार्टनर टूल्स">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn टूल्स
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                पार्टनर टूल्स
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn टूल्स / पार्टनर टूल्स">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn टूल्स
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    पार्टनर टूल्स
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="सभी श्रेणियों के लिए Serpmonn टूल्स: UTM बिल्डर, पासवर्ड, कैलकुलेटर और अधिक।"
-             data-dynamic-meta-category="{category} के लिए Serpmonn टूल्स: UTM बिल्डर, पासवर्ड, कैलकुलेटर और अधिक।">
-            <input type="text" 
-                   placeholder="उपकरण खोजें..." 
-                   aria-label="उपकरण खोजें">
-            <select aria-label="श्रेणी द्वारा फ़िल्टर करें">
-                <option value="">सभी श्रेणियां</option>
-                
-                    <option value="marketing">मार्केटिंग</option>
-                
-                    <option value="security">सुरक्षा</option>
-                
-                    <option value="development">विकास</option>
-                
-                    <option value="design">डिजाइन</option>
-                
-                    <option value="engineering">इंजीनियरिंग</option>
-                
-                    <option value="logistics">लॉजिस्टिक्स</option>
-                
-                    <option value="ecology">पारिस्थितिकी</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="फ़िल्टर साफ करें">फ़िल्टर साफ करें</button>
-            <button id="clear-favorites" aria-label="पसंदीदा साफ करें">पसंदीदा साफ करें</button>
-            <button id="sort-favorites" aria-label="पसंदीदा शीर्ष पर दिखाएं">पसंदीदा शीर्ष पर</button>
-            <div class="filter-message hidden" role="alert">कोई उपकरण नहीं मिला। अपना क्वेरी बदलने का प्रयास करें।</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>उपकरण सांख्यिकी</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">सक्रिय उपकरण</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">श्रेणियां</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">नियोजित</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="सभी श्रेणियों के लिए Serpmonn टूल्स: UTM बिल्डर, पासवर्ड, कैलकुलेटर और अधिक।"
+                 data-dynamic-meta-category="{category} के लिए Serpmonn टूल्स: UTM बिल्डर, पासवर्ड, कैलकुलेटर और अधिक।">
+                <input type="text"
+                       placeholder="उपकरण खोजें..."
+                       aria-label="उपकरण खोजें">
+                <select aria-label="श्रेणी द्वारा फ़िल्टर करें">
+                    <option value="">सभी श्रेणियां</option>
+                    
+                        <option value="marketing">मार्केटिंग</option>
+                    
+                        <option value="security">सुरक्षा</option>
+                    
+                        <option value="development">विकास</option>
+                    
+                        <option value="design">डिजाइन</option>
+                    
+                        <option value="engineering">इंजीनियरिंग</option>
+                    
+                        <option value="logistics">लॉजिस्टिक्स</option>
+                    
+                        <option value="ecology">पारिस्थितिकी</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="फ़िल्टर साफ करें">फ़िल्टर साफ करें</button>
+                <button id="clear-favorites" aria-label="पसंदीदा साफ करें">पसंदीदा साफ करें</button>
+                <button id="sort-favorites" aria-label="पसंदीदा शीर्ष पर दिखाएं">पसंदीदा शीर्ष पर</button>
+                <div class="filter-message hidden" role="alert">कोई उपकरण नहीं मिला। अपना क्वेरी बदलने का प्रयास करें।</div>
             </div>
         </div>
 

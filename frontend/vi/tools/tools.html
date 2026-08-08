@@ -311,66 +311,61 @@
         <h1>Công cụ Serpmonn</h1>
         <p class="subtitle">Một bộ công cụ vi mô cho công việc, tiếp thị và phát triển</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Công cụ Serpmonn / Công cụ đối tác">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Công cụ Serpmonn
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Công cụ đối tác
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Công cụ Serpmonn / Công cụ đối tác">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Công cụ Serpmonn
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Công cụ đối tác
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Công cụ Serpmonn cho tất cả danh mục: trình tạo UTM, mật khẩu, máy tính và hơn thế nữa."
-             data-dynamic-meta-category="Công cụ Serpmonn cho {category}: trình tạo UTM, mật khẩu, máy tính và hơn thế nữa.">
-            <input type="text" 
-                   placeholder="Tìm kiếm công cụ..." 
-                   aria-label="Tìm kiếm công cụ">
-            <select aria-label="Lọc theo danh mục">
-                <option value="">Tất cả danh mục</option>
-                
-                    <option value="marketing">Tiếp thị</option>
-                
-                    <option value="security">Bảo mật</option>
-                
-                    <option value="development">Phát triển</option>
-                
-                    <option value="design">Thiết kế</option>
-                
-                    <option value="engineering">Kỹ thuật</option>
-                
-                    <option value="logistics">Hậu cần</option>
-                
-                    <option value="ecology">Sinh thái</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="Xóa bộ lọc">Xóa bộ lọc</button>
-            <button id="clear-favorites" aria-label="Xóa mục yêu thích">Xóa mục yêu thích</button>
-            <button id="sort-favorites" aria-label="Hiển thị mục yêu thích lên trên">Mục yêu thích lên trên</button>
-            <div class="filter-message hidden" role="alert">Không tìm thấy công cụ. Thử thay đổi truy vấn của bạn.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>Thống kê Công cụ</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">Công cụ hoạt động</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">Danh mục</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Đã lên kế hoạch</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Công cụ Serpmonn cho tất cả danh mục: trình tạo UTM, mật khẩu, máy tính và hơn thế nữa."
+                 data-dynamic-meta-category="Công cụ Serpmonn cho {category}: trình tạo UTM, mật khẩu, máy tính và hơn thế nữa.">
+                <input type="text"
+                       placeholder="Tìm kiếm công cụ..."
+                       aria-label="Tìm kiếm công cụ">
+                <select aria-label="Lọc theo danh mục">
+                    <option value="">Tất cả danh mục</option>
+                    
+                        <option value="marketing">Tiếp thị</option>
+                    
+                        <option value="security">Bảo mật</option>
+                    
+                        <option value="development">Phát triển</option>
+                    
+                        <option value="design">Thiết kế</option>
+                    
+                        <option value="engineering">Kỹ thuật</option>
+                    
+                        <option value="logistics">Hậu cần</option>
+                    
+                        <option value="ecology">Sinh thái</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="Xóa bộ lọc">Xóa bộ lọc</button>
+                <button id="clear-favorites" aria-label="Xóa mục yêu thích">Xóa mục yêu thích</button>
+                <button id="sort-favorites" aria-label="Hiển thị mục yêu thích lên trên">Mục yêu thích lên trên</button>
+                <div class="filter-message hidden" role="alert">Không tìm thấy công cụ. Thử thay đổi truy vấn của bạn.</div>
             </div>
         </div>
 

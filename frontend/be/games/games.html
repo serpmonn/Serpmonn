@@ -294,27 +294,40 @@
             <img class="section-logo-inline" src="/frontend/images/Games.ico" alt="Serpmonn" loading="lazy">
             Усе гульні
         </h1>
-        <!-- ФИЛЬТР: источник + платформа -->
-        <div class="filter-buttons" role="tablist" aria-label="Filter by source and platform">
-            <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                Усе
+        <!-- ФИЛЬТР: источник + платформа (на мобильных — сворачивается) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="gamesFiltersContent"
+                    data-label-show="Фільтры"
+                    data-label-hide="Схаваць">
+                Фільтры
             </button>
-            <button class="filter-btn" data-filter="serpmonn" role="tab">
-                Гульні Serpmonn
-            </button>
-            <button class="filter-btn" data-filter="partners" role="tab">
-                Гульні партнёраў
-            </button>
-            <span class="filter-sep" aria-hidden="true"></span>
-            <button class="filter-btn" data-filter="web" role="tab">
-                Вэб
-            </button>
-            <button class="filter-btn" data-filter="pc" role="tab">
-                ПК
-            </button>
-            <button class="filter-btn" data-filter="mobile" role="tab">
-                Мабільныя
-            </button>
+        </div>
+        <div id="gamesFiltersContent" class="filters-content">
+            <div class="filter-buttons" role="tablist" aria-label="Filter by source and platform">
+                <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    Усе
+                </button>
+                <button class="filter-btn" data-filter="serpmonn" role="tab">
+                    Гульні Serpmonn
+                </button>
+                <button class="filter-btn" data-filter="partners" role="tab">
+                    Гульні партнёраў
+                </button>
+                <span class="filter-sep" aria-hidden="true"></span>
+                <button class="filter-btn" data-filter="web" role="tab">
+                    Вэб
+                </button>
+                <button class="filter-btn" data-filter="pc" role="tab">
+                    ПК
+                </button>
+                <button class="filter-btn" data-filter="mobile" role="tab">
+                    Мабільныя
+                </button>
+            </div>
         </div>
        
         <!-- РЕКЛАМНЫЙ БАННЕР -->

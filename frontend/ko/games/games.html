@@ -294,27 +294,40 @@
             <img class="section-logo-inline" src="/frontend/images/Games.ico" alt="Serpmonn" loading="lazy">
             모든 게임
         </h1>
-        <!-- ФИЛЬТР: источник + платформа -->
-        <div class="filter-buttons" role="tablist" aria-label="Filter by source and platform">
-            <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                전체
+        <!-- ФИЛЬТР: источник + платформа (на мобильных — сворачивается) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="gamesFiltersContent"
+                    data-label-show="필터"
+                    data-label-hide="숨기기">
+                필터
             </button>
-            <button class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn 게임
-            </button>
-            <button class="filter-btn" data-filter="partners" role="tab">
-                파트너 게임
-            </button>
-            <span class="filter-sep" aria-hidden="true"></span>
-            <button class="filter-btn" data-filter="web" role="tab">
-                웹
-            </button>
-            <button class="filter-btn" data-filter="pc" role="tab">
-                PC
-            </button>
-            <button class="filter-btn" data-filter="mobile" role="tab">
-                모바일
-            </button>
+        </div>
+        <div id="gamesFiltersContent" class="filters-content">
+            <div class="filter-buttons" role="tablist" aria-label="Filter by source and platform">
+                <button class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    전체
+                </button>
+                <button class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn 게임
+                </button>
+                <button class="filter-btn" data-filter="partners" role="tab">
+                    파트너 게임
+                </button>
+                <span class="filter-sep" aria-hidden="true"></span>
+                <button class="filter-btn" data-filter="web" role="tab">
+                    웹
+                </button>
+                <button class="filter-btn" data-filter="pc" role="tab">
+                    PC
+                </button>
+                <button class="filter-btn" data-filter="mobile" role="tab">
+                    모바일
+                </button>
+            </div>
         </div>
        
         <!-- РЕКЛАМНЫЙ БАННЕР -->

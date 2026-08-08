@@ -311,66 +311,61 @@
         <h1>Serpmonn Verktøy</h1>
         <p class="subtitle">Et sett med mikro‑verktøy for arbeid, markedsføring og utvikling</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn-verktøy / Partnerverktøy">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn-verktøy
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Partnerverktøy
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn-verktøy / Partnerverktøy">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn-verktøy
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Partnerverktøy
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Serpmonn-verktøy for alle kategorier: UTM-generator, passord, kalkulatorer og mer."
-             data-dynamic-meta-category="Serpmonn-verktøy for {category}: UTM-generator, passord, kalkulatorer og mer.">
-            <input type="text" 
-                   placeholder="Søk etter verktøy..." 
-                   aria-label="Søk etter verktøy">
-            <select aria-label="Filtrer etter kategori">
-                <option value="">Alle kategorier</option>
-                
-                    <option value="marketing">Markedsføring</option>
-                
-                    <option value="security">Sikkerhet</option>
-                
-                    <option value="development">Utvikling</option>
-                
-                    <option value="design">Design</option>
-                
-                    <option value="engineering">Ingeniørfag</option>
-                
-                    <option value="logistics">Logistikk</option>
-                
-                    <option value="ecology">Økologi</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="Tøm filtre">Tøm filtre</button>
-            <button id="clear-favorites" aria-label="Tøm favoritter">Tøm favoritter</button>
-            <button id="sort-favorites" aria-label="Vis favoritter øverst">Favoritter øverst</button>
-            <div class="filter-message hidden" role="alert">Ingen verktøy funnet. Prøv å endre spørringen.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>Verktøystatistikk</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">Aktive verktøy</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">Kategorier</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Planlagt</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Serpmonn-verktøy for alle kategorier: UTM-generator, passord, kalkulatorer og mer."
+                 data-dynamic-meta-category="Serpmonn-verktøy for {category}: UTM-generator, passord, kalkulatorer og mer.">
+                <input type="text"
+                       placeholder="Søk etter verktøy..."
+                       aria-label="Søk etter verktøy">
+                <select aria-label="Filtrer etter kategori">
+                    <option value="">Alle kategorier</option>
+                    
+                        <option value="marketing">Markedsføring</option>
+                    
+                        <option value="security">Sikkerhet</option>
+                    
+                        <option value="development">Utvikling</option>
+                    
+                        <option value="design">Design</option>
+                    
+                        <option value="engineering">Ingeniørfag</option>
+                    
+                        <option value="logistics">Logistikk</option>
+                    
+                        <option value="ecology">Økologi</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="Tøm filtre">Tøm filtre</button>
+                <button id="clear-favorites" aria-label="Tøm favoritter">Tøm favoritter</button>
+                <button id="sort-favorites" aria-label="Vis favoritter øverst">Favoritter øverst</button>
+                <div class="filter-message hidden" role="alert">Ingen verktøy funnet. Prøv å endre spørringen.</div>
             </div>
         </div>
 

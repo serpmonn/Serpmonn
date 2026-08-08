@@ -311,66 +311,61 @@
         <h1>Serpmonn Vasitələri</h1>
         <p class="subtitle">İş, marketinq və inkişaf üçün mikro vasitələr dəsti</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn alətləri / Tərəfdaş alətləri">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn alətləri
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Tərəfdaş alətləri
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn alətləri / Tərəfdaş alətləri">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn alətləri
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Tərəfdaş alətləri
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Bütün kateqoriyalar üçün Serpmonn alətləri: UTM generatoru, parollar, kalkulyatorlar və s."
-             data-dynamic-meta-category="{category} üçün Serpmonn alətləri: UTM generatoru, parollar, kalkulyatorlar və s.">
-            <input type="text" 
-                   placeholder="Vasitələri axtar..." 
-                   aria-label="Vasitələri axtar">
-            <select aria-label="Kateqoriya üzrə filtr">
-                <option value="">Bütün kateqoriyalar</option>
-                
-                    <option value="marketing">Marketinq</option>
-                
-                    <option value="security">Təhlükəsizlik</option>
-                
-                    <option value="development">İnkişaf</option>
-                
-                    <option value="design">Dizayn</option>
-                
-                    <option value="engineering">Mühəndislik</option>
-                
-                    <option value="logistics">Logistika</option>
-                
-                    <option value="ecology">Ekologiya</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="Filtrləri təmizlə">Filtrləri təmizlə</button>
-            <button id="clear-favorites" aria-label="Sevimliləri təmizlə">Sevimliləri təmizlə</button>
-            <button id="sort-favorites" aria-label="Sevimliləri üstdə göstər">Sevimlilər üstdə</button>
-            <div class="filter-message hidden" role="alert">Vasitələr tapılmadı. Sorğunuzu dəyişdirməyə çalışın.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>Vasitələr Statistikası</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">Aktiv vasitələr</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">Kateqoriyalar</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Planlaşdırılır</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Bütün kateqoriyalar üçün Serpmonn alətləri: UTM generatoru, parollar, kalkulyatorlar və s."
+                 data-dynamic-meta-category="{category} üçün Serpmonn alətləri: UTM generatoru, parollar, kalkulyatorlar və s.">
+                <input type="text"
+                       placeholder="Vasitələri axtar..."
+                       aria-label="Vasitələri axtar">
+                <select aria-label="Kateqoriya üzrə filtr">
+                    <option value="">Bütün kateqoriyalar</option>
+                    
+                        <option value="marketing">Marketinq</option>
+                    
+                        <option value="security">Təhlükəsizlik</option>
+                    
+                        <option value="development">İnkişaf</option>
+                    
+                        <option value="design">Dizayn</option>
+                    
+                        <option value="engineering">Mühəndislik</option>
+                    
+                        <option value="logistics">Logistika</option>
+                    
+                        <option value="ecology">Ekologiya</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="Filtrləri təmizlə">Filtrləri təmizlə</button>
+                <button id="clear-favorites" aria-label="Sevimliləri təmizlə">Sevimliləri təmizlə</button>
+                <button id="sort-favorites" aria-label="Sevimliləri üstdə göstər">Sevimlilər üstdə</button>
+                <div class="filter-message hidden" role="alert">Vasitələr tapılmadı. Sorğunuzu dəyişdirməyə çalışın.</div>
             </div>
         </div>
 

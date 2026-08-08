@@ -311,66 +311,61 @@
         <h1>ابزارهای Serpmonn</h1>
         <p class="subtitle">مجموعه‌ای از ابزارهای میکرو برای کار، بازاریابی و توسعه</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="ابزارهای Serpmonn / ابزارهای شرکا">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                ابزارهای Serpmonn
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                ابزارهای شرکا
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="ابزارهای Serpmonn / ابزارهای شرکا">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    ابزارهای Serpmonn
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    ابزارهای شرکا
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="ابزارهای Serpmonn برای همه دسته‌ها: سازنده UTM، رمزها، ماشین‌حساب‌ها و بیشتر."
-             data-dynamic-meta-category="ابزارهای Serpmonn برای {category}: سازنده UTM، رمزها، ماشین‌حساب‌ها و بیشتر.">
-            <input type="text" 
-                   placeholder="جستجوی ابزارها..." 
-                   aria-label="جستجوی ابزارها">
-            <select aria-label="فیلتر بر اساس دسته‌بندی">
-                <option value="">همه دسته‌بندی‌ها</option>
-                
-                    <option value="marketing">بازاریابی</option>
-                
-                    <option value="security">امنیت</option>
-                
-                    <option value="development">توسعه</option>
-                
-                    <option value="design">طراحی</option>
-                
-                    <option value="engineering">مهندسی</option>
-                
-                    <option value="logistics">لجستیک</option>
-                
-                    <option value="ecology">اکولوژی</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="پاک کردن فیلترها">پاک کردن فیلترها</button>
-            <button id="clear-favorites" aria-label="پاک کردن موردهای دلخواه">پاک کردن موردهای دلخواه</button>
-            <button id="sort-favorites" aria-label="نمایش موردهای دلخواه بالا">موردهای دلخواه بالا</button>
-            <div class="filter-message hidden" role="alert">ابزاری یافت نشد. سعی کنید عبارت جستجو را تغییر دهید.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>آمار ابزارها</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">ابزارهای فعال</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">دسته‌بندی‌ها</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">برنامه‌ریزی شده</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="ابزارهای Serpmonn برای همه دسته‌ها: سازنده UTM، رمزها، ماشین‌حساب‌ها و بیشتر."
+                 data-dynamic-meta-category="ابزارهای Serpmonn برای {category}: سازنده UTM، رمزها، ماشین‌حساب‌ها و بیشتر.">
+                <input type="text"
+                       placeholder="جستجوی ابزارها..."
+                       aria-label="جستجوی ابزارها">
+                <select aria-label="فیلتر بر اساس دسته‌بندی">
+                    <option value="">همه دسته‌بندی‌ها</option>
+                    
+                        <option value="marketing">بازاریابی</option>
+                    
+                        <option value="security">امنیت</option>
+                    
+                        <option value="development">توسعه</option>
+                    
+                        <option value="design">طراحی</option>
+                    
+                        <option value="engineering">مهندسی</option>
+                    
+                        <option value="logistics">لجستیک</option>
+                    
+                        <option value="ecology">اکولوژی</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="پاک کردن فیلترها">پاک کردن فیلترها</button>
+                <button id="clear-favorites" aria-label="پاک کردن موردهای دلخواه">پاک کردن موردهای دلخواه</button>
+                <button id="sort-favorites" aria-label="نمایش موردهای دلخواه بالا">موردهای دلخواه بالا</button>
+                <div class="filter-message hidden" role="alert">ابزاری یافت نشد. سعی کنید عبارت جستجو را تغییر دهید.</div>
             </div>
         </div>
 

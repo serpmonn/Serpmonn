@@ -85,21 +85,46 @@ body {
 /* Улучшение для мобильных устройств */
 @media (max-width: 768px) {
   .page {
-    padding: 10px 15px;
+    padding: 8px 12px;
     width: 100%;
+    max-width: 100%;
     box-sizing: border-box;
+    overflow-x: hidden;
   }
   
   h1 {
-    font-size: 1.8rem;
-    margin: 15px 0;
-    line-height: 1.3;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin: 2px 0 6px;
+    line-height: 1.2;
+    max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   
   .subtitle {
-    font-size: 1rem;
-    margin-bottom: 25px;
-    line-height: 1.4;
+    display: none;
+  }
+
+  .ad-banner {
+    margin: 4px 0 8px;
+  }
+
+  .tools-group .group-title {
+    font-size: 1.15rem;
+    margin: 10px 0 6px;
+    padding-bottom: 4px;
+  }
+
+  .category-section {
+    margin-bottom: 18px;
+  }
+
+  .category-title {
+    font-size: 1.05rem;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
   }
 }
 
@@ -286,6 +311,33 @@ h1 {
   font-size: 0.9rem;
 }
 
+/* Сворачиваемые фильтры (паттерн как на промокодах) */
+.filters-toolbar {
+  display: none;
+  margin: 8px 0 6px;
+}
+
+.filter-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 38px;
+  padding: 8px 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #dc3545, #c82333);
+  color: #fff;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 8px rgba(220, 53, 69, 0.28);
+}
+
+.filters-content {
+  display: block;
+}
+
 /* Адаптация панели фильтров для мобильных */
 .filter-bar {
   display: flex;
@@ -321,9 +373,43 @@ h1 {
 }
 
 @media (max-width: 768px) {
+  .filters-toolbar {
+    display: block;
+    margin: 4px 0 8px;
+  }
+
+  .filter-toggle {
+    min-height: 36px;
+    padding: 7px 12px;
+  }
+
+  .filters-content {
+    display: none;
+    margin: 0 0 8px;
+    padding: 8px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  .filters-content.is-open {
+    display: block;
+  }
+
+  .tools-group-filters {
+    gap: 6px;
+    margin: 0 0 8px;
+  }
+
+  .tools-group-filters .filter-btn {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+  }
+
   .filter-bar {
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
+    margin-bottom: 0;
   }
   
   .filter-bar input,
@@ -331,32 +417,13 @@ h1 {
   .filter-bar button {
     width: 100%;
     min-width: auto;
-    padding: 14px 12px;
-    font-size: 1rem;
+    padding: 10px 12px;
+    font-size: 0.9rem;
     margin: 0;
   }
   
   .filter-bar button {
-    padding: 14px;
-  }
-  
-  .stats {
-    margin: 30px 0;
-    padding: 15px;
-  }
-  
-  .stats-grid {
-    grid-template-columns: repeat(3, 1fr);
-    gap: 15px;
-  }
-  
-  .stat-number {
-    font-size: 1.5rem;
-  }
-  
-  .category-title {
-    font-size: 1.3rem;
-    margin-bottom: 12px;
+    padding: 10px;
   }
   
   .card h2 {
@@ -519,6 +586,16 @@ h1 {
     justify-content: center;
   }
 }
+@media (min-width: 769px) {
+  .filters-toolbar {
+    display: none !important;
+  }
+
+  .filters-content {
+    display: block !important;
+  }
+}
+
 /* Группы: Serpmonn / партнёры */
 .tools-group-filters {
   display: flex;

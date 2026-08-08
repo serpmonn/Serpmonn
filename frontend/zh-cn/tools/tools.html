@@ -311,66 +311,61 @@
         <h1>Serpmonn 工具</h1>
         <p class="subtitle">一套用于工作、营销和开发的微工具</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn 工具 / 合作伙伴工具">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn 工具
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                合作伙伴工具
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn 工具 / 合作伙伴工具">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn 工具
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    合作伙伴工具
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Serpmonn 工具适用于所有类别：UTM 生成器、密码、计算器等。"
-             data-dynamic-meta-category="Serpmonn 工具适用于 {category}：UTM 生成器、密码、计算器等。">
-            <input type="text" 
-                   placeholder="搜索工具..." 
-                   aria-label="搜索工具">
-            <select aria-label="按类别筛选">
-                <option value="">所有类别</option>
-                
-                    <option value="marketing">营销</option>
-                
-                    <option value="security">安全</option>
-                
-                    <option value="development">开发</option>
-                
-                    <option value="design">设计</option>
-                
-                    <option value="engineering">工程</option>
-                
-                    <option value="logistics">物流</option>
-                
-                    <option value="ecology">生态</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="清除过滤器">清除过滤器</button>
-            <button id="clear-favorites" aria-label="清除收藏夹">清除收藏夹</button>
-            <button id="sort-favorites" aria-label="显示收藏置顶">收藏置顶</button>
-            <div class="filter-message hidden" role="alert">未找到工具。请尝试更改查询。</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>工具统计</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">活跃工具</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">类别</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">计划中</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Serpmonn 工具适用于所有类别：UTM 生成器、密码、计算器等。"
+                 data-dynamic-meta-category="Serpmonn 工具适用于 {category}：UTM 生成器、密码、计算器等。">
+                <input type="text"
+                       placeholder="搜索工具..."
+                       aria-label="搜索工具">
+                <select aria-label="按类别筛选">
+                    <option value="">所有类别</option>
+                    
+                        <option value="marketing">营销</option>
+                    
+                        <option value="security">安全</option>
+                    
+                        <option value="development">开发</option>
+                    
+                        <option value="design">设计</option>
+                    
+                        <option value="engineering">工程</option>
+                    
+                        <option value="logistics">物流</option>
+                    
+                        <option value="ecology">生态</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="清除过滤器">清除过滤器</button>
+                <button id="clear-favorites" aria-label="清除收藏夹">清除收藏夹</button>
+                <button id="sort-favorites" aria-label="显示收藏置顶">收藏置顶</button>
+                <div class="filter-message hidden" role="alert">未找到工具。请尝试更改查询。</div>
             </div>
         </div>
 

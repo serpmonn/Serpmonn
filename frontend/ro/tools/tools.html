@@ -311,66 +311,61 @@
         <h1>Instrumente Serpmonn</h1>
         <p class="subtitle">Un set de micro‑instrumente pentru muncă, marketing și dezvoltare</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Instrumente Serpmonn / Instrumente parteneri">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Instrumente Serpmonn
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Instrumente parteneri
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Instrumente Serpmonn / Instrumente parteneri">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Instrumente Serpmonn
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Instrumente parteneri
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Instrumente Serpmonn pentru toate categoriile: generator UTM, parole, calculatoare și altele."
-             data-dynamic-meta-category="Instrumente Serpmonn pentru {category}: generator UTM, parole, calculatoare și altele.">
-            <input type="text" 
-                   placeholder="Căutați instrumente..." 
-                   aria-label="Căutați instrumente">
-            <select aria-label="Filtrați după categorie">
-                <option value="">Toate categoriile</option>
-                
-                    <option value="marketing">Marketing</option>
-                
-                    <option value="security">Securitate</option>
-                
-                    <option value="development">Dezvoltare</option>
-                
-                    <option value="design">Design</option>
-                
-                    <option value="engineering">Inginerie</option>
-                
-                    <option value="logistics">Logistică</option>
-                
-                    <option value="ecology">Ecologie</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="Ștergeți filtrele">Ștergeți filtrele</button>
-            <button id="clear-favorites" aria-label="Ștergeți favoritele">Ștergeți favoritele</button>
-            <button id="sort-favorites" aria-label="Afișați favoritele în top">Favoritele în top</button>
-            <div class="filter-message hidden" role="alert">Nu s‑au găsit instrumente. Încercați să modificați interogarea.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>Statistici Instrumente</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">Instrumente active</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">Categorii</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Planificate</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Instrumente Serpmonn pentru toate categoriile: generator UTM, parole, calculatoare și altele."
+                 data-dynamic-meta-category="Instrumente Serpmonn pentru {category}: generator UTM, parole, calculatoare și altele.">
+                <input type="text"
+                       placeholder="Căutați instrumente..."
+                       aria-label="Căutați instrumente">
+                <select aria-label="Filtrați după categorie">
+                    <option value="">Toate categoriile</option>
+                    
+                        <option value="marketing">Marketing</option>
+                    
+                        <option value="security">Securitate</option>
+                    
+                        <option value="development">Dezvoltare</option>
+                    
+                        <option value="design">Design</option>
+                    
+                        <option value="engineering">Inginerie</option>
+                    
+                        <option value="logistics">Logistică</option>
+                    
+                        <option value="ecology">Ecologie</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="Ștergeți filtrele">Ștergeți filtrele</button>
+                <button id="clear-favorites" aria-label="Ștergeți favoritele">Ștergeți favoritele</button>
+                <button id="sort-favorites" aria-label="Afișați favoritele în top">Favoritele în top</button>
+                <div class="filter-message hidden" role="alert">Nu s‑au găsit instrumente. Încercați să modificați interogarea.</div>
             </div>
         </div>
 

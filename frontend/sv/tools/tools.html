@@ -311,66 +311,61 @@
         <h1>Serpmonn Verktyg</h1>
         <p class="subtitle">Ett set av mikro‑verktyg för arbete, marknadsföring och utveckling</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn-verktyg / Partnerverktyg">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn-verktyg
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Partnerverktyg
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn-verktyg / Partnerverktyg">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn-verktyg
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Partnerverktyg
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Serpmonn-verktyg för alla kategorier: UTM-generator, lösenord, kalkylatorer och mer."
-             data-dynamic-meta-category="Serpmonn-verktyg för {category}: UTM-generator, lösenord, kalkylatorer och mer.">
-            <input type="text" 
-                   placeholder="Sök verktyg..." 
-                   aria-label="Sök verktyg">
-            <select aria-label="Filtrera efter kategori">
-                <option value="">Alla kategorier</option>
-                
-                    <option value="marketing">Marknadsföring</option>
-                
-                    <option value="security">Säkerhet</option>
-                
-                    <option value="development">Utveckling</option>
-                
-                    <option value="design">Design</option>
-                
-                    <option value="engineering">Teknik</option>
-                
-                    <option value="logistics">Logistik</option>
-                
-                    <option value="ecology">Ekologi</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="Rensa filter">Rensa filter</button>
-            <button id="clear-favorites" aria-label="Rensa favoriter">Rensa favoriter</button>
-            <button id="sort-favorites" aria-label="Visa favoriter överst">Favoriter överst</button>
-            <div class="filter-message hidden" role="alert">Inga verktyg hittades. Försök att ändra din fråga.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>Verktygsstatistik</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">Aktiva verktyg</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">Kategorier</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Planerat</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Serpmonn-verktyg för alla kategorier: UTM-generator, lösenord, kalkylatorer och mer."
+                 data-dynamic-meta-category="Serpmonn-verktyg för {category}: UTM-generator, lösenord, kalkylatorer och mer.">
+                <input type="text"
+                       placeholder="Sök verktyg..."
+                       aria-label="Sök verktyg">
+                <select aria-label="Filtrera efter kategori">
+                    <option value="">Alla kategorier</option>
+                    
+                        <option value="marketing">Marknadsföring</option>
+                    
+                        <option value="security">Säkerhet</option>
+                    
+                        <option value="development">Utveckling</option>
+                    
+                        <option value="design">Design</option>
+                    
+                        <option value="engineering">Teknik</option>
+                    
+                        <option value="logistics">Logistik</option>
+                    
+                        <option value="ecology">Ekologi</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="Rensa filter">Rensa filter</button>
+                <button id="clear-favorites" aria-label="Rensa favoriter">Rensa favoriter</button>
+                <button id="sort-favorites" aria-label="Visa favoriter överst">Favoriter överst</button>
+                <div class="filter-message hidden" role="alert">Inga verktyg hittades. Försök att ändra din fråga.</div>
             </div>
         </div>
 

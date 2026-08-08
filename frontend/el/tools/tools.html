@@ -311,66 +311,61 @@
         <h1>Εργαλεία Serpmonn</h1>
         <p class="subtitle">Σετ μικρο‑εργαλείων για εργασία, μάρκετινγκ και ανάπτυξη</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Εργαλεία Serpmonn / Εργαλεία συνεργατών">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Εργαλεία Serpmonn
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Εργαλεία συνεργατών
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Εργαλεία Serpmonn / Εργαλεία συνεργατών">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Εργαλεία Serpmonn
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Εργαλεία συνεργατών
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Εργαλεία Serpmonn για όλες τις κατηγορίες: UTM builder, κωδικοί, αριθμομηχανές και άλλα."
-             data-dynamic-meta-category="Εργαλεία Serpmonn για {category}: UTM builder, κωδικοί, αριθμομηχανές και άλλα.">
-            <input type="text" 
-                   placeholder="Αναζήτηση εργαλείων..." 
-                   aria-label="Αναζήτηση εργαλείων">
-            <select aria-label="Φίλτρο ανά κατηγορία">
-                <option value="">Όλες οι κατηγορίες</option>
-                
-                    <option value="marketing">Μάρκετινγκ</option>
-                
-                    <option value="security">Ασφάλεια</option>
-                
-                    <option value="development">Ανάπτυξη</option>
-                
-                    <option value="design">Σχεδίαση</option>
-                
-                    <option value="engineering">Μηχανική</option>
-                
-                    <option value="logistics">Εφοδιαστική</option>
-                
-                    <option value="ecology">Οικολογία</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="Καθαρισμός φίλτρων">Καθαρισμός φίλτρων</button>
-            <button id="clear-favorites" aria-label="Καθαρισμός αγαπημένων">Καθαρισμός αγαπημένων</button>
-            <button id="sort-favorites" aria-label="Εμφάνιση αγαπημένων πάνω">Αγαπημένα πάνω</button>
-            <div class="filter-message hidden" role="alert">Δεν βρέθηκαν εργαλεία. Δοκιμάστε να αλλάξετε το ερώτημα.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>Στατιστικά Εργαλείων</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">Ενεργά εργαλεία</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">Κατηγορίες</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Σχεδιασμένα</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Εργαλεία Serpmonn για όλες τις κατηγορίες: UTM builder, κωδικοί, αριθμομηχανές και άλλα."
+                 data-dynamic-meta-category="Εργαλεία Serpmonn για {category}: UTM builder, κωδικοί, αριθμομηχανές και άλλα.">
+                <input type="text"
+                       placeholder="Αναζήτηση εργαλείων..."
+                       aria-label="Αναζήτηση εργαλείων">
+                <select aria-label="Φίλτρο ανά κατηγορία">
+                    <option value="">Όλες οι κατηγορίες</option>
+                    
+                        <option value="marketing">Μάρκετινγκ</option>
+                    
+                        <option value="security">Ασφάλεια</option>
+                    
+                        <option value="development">Ανάπτυξη</option>
+                    
+                        <option value="design">Σχεδίαση</option>
+                    
+                        <option value="engineering">Μηχανική</option>
+                    
+                        <option value="logistics">Εφοδιαστική</option>
+                    
+                        <option value="ecology">Οικολογία</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="Καθαρισμός φίλτρων">Καθαρισμός φίλτρων</button>
+                <button id="clear-favorites" aria-label="Καθαρισμός αγαπημένων">Καθαρισμός αγαπημένων</button>
+                <button id="sort-favorites" aria-label="Εμφάνιση αγαπημένων πάνω">Αγαπημένα πάνω</button>
+                <div class="filter-message hidden" role="alert">Δεν βρέθηκαν εργαλεία. Δοκιμάστε να αλλάξετε το ερώτημα.</div>
             </div>
         </div>
 

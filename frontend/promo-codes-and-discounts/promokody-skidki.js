@@ -177,69 +177,78 @@ let isLoadingMore = false;
 let hasMore = true;
 let observer;
 
-// ========== НОВЫЙ КОД: Защита от pull-to-refresh на мобильных устройствах ==========
+// ========== Защита от pull-to-refresh (без двойного скроллбара) ==========
 (function preventPullToRefresh() {
-    // Добавляем CSS защиту
+    // Важно: скроллит только html. overflow-y:auto + height:100% на html И body
+    // даёт классическую двойную полосу прокрутки (в т.ч. на ПК).
     const style = document.createElement('style');
     style.textContent = `
-        html, body {
+        html {
+            overscroll-behavior-y: contain;
+            overflow-x: hidden;
+            overflow-y: auto;
+            height: 100%;
+            scrollbar-gutter: auto;
+            background-color: #e6eef8;
+            background-image: linear-gradient(135deg, #e0f7fa, #e1bee7);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-attachment: fixed;
+        }
+        body {
             overscroll-behavior-y: contain;
             -webkit-overflow-scrolling: touch;
-            overflow-y: auto;
+            overflow: visible;
             position: relative;
-            height: 100%;
+            height: auto;
+            min-height: 100%;
+            background: transparent;
         }
-        
-        /* Для контейнера с промокодами */
+        @media (max-width: 768px) {
+            html { background-attachment: scroll; }
+        }
         #catalog {
             overscroll-behavior-y: contain;
         }
     `;
     document.head.appendChild(style);
-    
-    // Проверяем, что это мобильное устройство
+
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    
     if (!isMobile) return;
-    
+
     let touchStartY = 0;
     let touchStartX = 0;
     let isPullingDown = false;
-    
-    // Перехватываем touch-события
+
     document.addEventListener('touchstart', (e) => {
         touchStartY = e.touches[0].clientY;
         touchStartX = e.touches[0].clientX;
         isPullingDown = (window.scrollY === 0);
     }, { passive: true });
-    
+
     document.addEventListener('touchmove', (e) => {
         if (!isPullingDown) return;
-        
+
         const currentY = e.touches[0].clientY;
         const currentX = e.touches[0].clientX;
         const pullDistance = currentY - touchStartY;
         const horizontalDistance = Math.abs(currentX - touchStartX);
-        
-        // Если тянем вниз (pullDistance > 0) и страница вверху, и движение больше вертикальное чем горизонтальное
+
         if (pullDistance > 5 && window.scrollY <= 0 && horizontalDistance < pullDistance) {
-            e.preventDefault(); // Блокируем нативное обновление
+            e.preventDefault();
         }
     }, { passive: false });
-    
+
     document.addEventListener('touchend', () => {
         isPullingDown = false;
     });
-    
-    // Дополнительная защита для iOS Safari
+
     if (/iPad|iPhone|iPod/.test(navigator.userAgent)) {
-        document.body.style.overflow = 'hidden';
+        document.body.style.overflow = 'visible';
         document.documentElement.style.overflow = 'auto';
     }
-    
-    console.log('✅ Защита от pull-to-refresh активирована');
 })();
-// ========== КОНЕЦ НОВОГО КОДА ==========
+// ========== КОНЕЦ ==========
 
 function safeHttpUrl(u, fallback = '') {
     if (!u || typeof u !== 'string') return fallback;

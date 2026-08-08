@@ -311,66 +311,61 @@
         <h1>ئامرازەکانی Serpmonn</h1>
         <p class="subtitle">کۆمەڵێک ئامرازی ورد بۆ کار، بازرگانی و گەشەپێدان</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn — ئامرازەکان / Partner — ئامرازەکان">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn — ئامرازەکان
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Partner — ئامرازەکان
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn — ئامرازەکان / Partner — ئامرازەکان">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn — ئامرازەکان
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Partner — ئامرازەکان
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="ئامرازەکانی Serpmonn بۆ هەموو پۆلەکان: دروستکەری UTM، وشەی نهێنی، ژمێرەر و زیاتر."
-             data-dynamic-meta-category="ئامرازەکانی Serpmonn بۆ {category}: دروستکەری UTM، وشەی نهێنی، ژمێرەر و زیاتر.">
-            <input type="text" 
-                   placeholder="گەڕان بۆ ئامراز..." 
-                   aria-label="گەڕان بۆ ئامراز">
-            <select aria-label="پاڵێوراو بەپێی پۆل">
-                <option value="">هەموو پۆلەکان</option>
-                
-                    <option value="marketing">بازرگانی</option>
-                
-                    <option value="security">پاراستن</option>
-                
-                    <option value="development">گەشەپێدان</option>
-                
-                    <option value="design">دی자인</option>
-                
-                    <option value="engineering">ئەندازیاری</option>
-                
-                    <option value="logistics">لۆجستیك</option>
-                
-                    <option value="ecology">ژینگە</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="پاڵێوراوەکان پاک بکەوە">پاڵێوراوەکان پاک بکەوە</button>
-            <button id="clear-favorites" aria-label="دڵخوازەکان پاک بکەوە">دڵخوازەکان پاک بکەوە</button>
-            <button id="sort-favorites" aria-label="دڵخوازەکان لە سەرەوە پیشان بدە">دڵخوازەکان لە سەرەوە</button>
-            <div class="filter-message hidden" role="alert">هیچ ئامرازێک نەدۆزرایەوە. هەوڵ بدە داواکارییەکەت بگۆڕیت.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>ئامارەکانی ئامراز</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">ئامرازە چالاکەکان</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">پۆلەکان</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">پلانی دانراو</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="ئامرازەکانی Serpmonn بۆ هەموو پۆلەکان: دروستکەری UTM، وشەی نهێنی، ژمێرەر و زیاتر."
+                 data-dynamic-meta-category="ئامرازەکانی Serpmonn بۆ {category}: دروستکەری UTM، وشەی نهێنی، ژمێرەر و زیاتر.">
+                <input type="text"
+                       placeholder="گەڕان بۆ ئامراز..."
+                       aria-label="گەڕان بۆ ئامراز">
+                <select aria-label="پاڵێوراو بەپێی پۆل">
+                    <option value="">هەموو پۆلەکان</option>
+                    
+                        <option value="marketing">بازرگانی</option>
+                    
+                        <option value="security">پاراستن</option>
+                    
+                        <option value="development">گەشەپێدان</option>
+                    
+                        <option value="design">دی자인</option>
+                    
+                        <option value="engineering">ئەندازیاری</option>
+                    
+                        <option value="logistics">لۆجستیك</option>
+                    
+                        <option value="ecology">ژینگە</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="پاڵێوراوەکان پاک بکەوە">پاڵێوراوەکان پاک بکەوە</button>
+                <button id="clear-favorites" aria-label="دڵخوازەکان پاک بکەوە">دڵخوازەکان پاک بکەوە</button>
+                <button id="sort-favorites" aria-label="دڵخوازەکان لە سەرەوە پیشان بدە">دڵخوازەکان لە سەرەوە</button>
+                <div class="filter-message hidden" role="alert">هیچ ئامرازێک نەدۆزرایەوە. هەوڵ بدە داواکارییەکەت بگۆڕیت.</div>
             </div>
         </div>
 

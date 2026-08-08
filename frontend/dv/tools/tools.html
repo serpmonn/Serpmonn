@@ -311,66 +311,61 @@
         <h1>Serpmonn އޮންނަނީ އެޑްތައް</h1>
         <p class="subtitle">މައިކްރޯ-އޮންނަނީ އެޑް ސެޓް ކަމަށް، މާކެޓިންގ އަދި އިތުރުވުންތަކަށް</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn — ޓޫލްސް / Partner — ޓޫލްސް">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn — ޓޫލްސް
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Partner — ޓޫލްސް
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn — ޓޫލްސް / Partner — ޓޫލްސް">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn — ޓޫލްސް
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Partner — ޓޫލްސް
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="ހުރިހާ ކެޓެގަރީތަކަށް Serpmonn ޓޫލްސް: UTM ބިލްޑަރ، ޕާސްވޯޑްސް، ކެލްކުލޭޓަރސް އަދި އިތުރު."
-             data-dynamic-meta-category="{category} ގައި Serpmonn ޓޫލްސް: UTM ބިލްޑަރ، ޕާސްވޯޑްސް، ކެލްކުލޭޓަރސް އަދި އިތުރު.">
-            <input type="text" 
-                   placeholder="އޮންނަނީ އެޑްތައް ހޯދާ..." 
-                   aria-label="އޮންނަނީ އެޑްތައް ހޯދާ">
-            <select aria-label="ކެޓަގަރީ އަށް ފިލްޓަރ ކުރައްވާ">
-                <option value="">ހުރިހާ ކެޓަގަރީތައް</option>
-                
-                    <option value="marketing">މާކެޓިންގ</option>
-                
-                    <option value="security">ސިއްރަތް</option>
-                
-                    <option value="development">އިތުރުވުން</option>
-                
-                    <option value="design">ޑިޒައިން</option>
-                
-                    <option value="engineering">އިންޖިނިއަރިންގ</option>
-                
-                    <option value="logistics">ލޮޖިސްޓިކްސް</option>
-                
-                    <option value="ecology">އެކޮލޮޖީ</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="ފިލްޓަރތައް ސަފާ ކުރައްވާ">ފިލްޓަރތައް ސަފާ ކުރައްވާ</button>
-            <button id="clear-favorites" aria-label="ފެވަރިޓްތައް ސަފާ ކުރައްވާ">ފެވަރިޓްތައް ސަފާ ކުރައްވާ</button>
-            <button id="sort-favorites" aria-label="ފެވަރިޓްތައް މަތީގައި ދައްކަވާ">ފެވަރިޓްތައް މަތީގައި</button>
-            <div class="filter-message hidden" role="alert">އޮންނަނީ އެޑް ނުފެނުނު. ތިޔަބޭފުޅުންގ ޤައުމު ބަދަލުކުރުމަށް މަސައްކަތް ކުރާ.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>އޮންނަނީ އެޑް ސްޓެޓިސްޓިކްސް</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">އެކްޓިވް އޮންނަނީ އެޑްތައް</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">ކެޓަގަރީތައް</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">ޕްލޭންކުރެވުނު</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="ހުރިހާ ކެޓެގަރީތަކަށް Serpmonn ޓޫލްސް: UTM ބިލްޑަރ، ޕާސްވޯޑްސް، ކެލްކުލޭޓަރސް އަދި އިތުރު."
+                 data-dynamic-meta-category="{category} ގައި Serpmonn ޓޫލްސް: UTM ބިލްޑަރ، ޕާސްވޯޑްސް، ކެލްކުލޭޓަރސް އަދި އިތުރު.">
+                <input type="text"
+                       placeholder="އޮންނަނީ އެޑްތައް ހޯދާ..."
+                       aria-label="އޮންނަނީ އެޑްތައް ހޯދާ">
+                <select aria-label="ކެޓަގަރީ އަށް ފިލްޓަރ ކުރައްވާ">
+                    <option value="">ހުރިހާ ކެޓަގަރީތައް</option>
+                    
+                        <option value="marketing">މާކެޓިންގ</option>
+                    
+                        <option value="security">ސިއްރަތް</option>
+                    
+                        <option value="development">އިތުރުވުން</option>
+                    
+                        <option value="design">ޑިޒައިން</option>
+                    
+                        <option value="engineering">އިންޖިނިއަރިންގ</option>
+                    
+                        <option value="logistics">ލޮޖިސްޓިކްސް</option>
+                    
+                        <option value="ecology">އެކޮލޮޖީ</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="ފިލްޓަރތައް ސަފާ ކުރައްވާ">ފިލްޓަރތައް ސަފާ ކުރައްވާ</button>
+                <button id="clear-favorites" aria-label="ފެވަރިޓްތައް ސަފާ ކުރައްވާ">ފެވަރިޓްތައް ސަފާ ކުރައްވާ</button>
+                <button id="sort-favorites" aria-label="ފެވަރިޓްތައް މަތީގައި ދައްކަވާ">ފެވަރިޓްތައް މަތީގައި</button>
+                <div class="filter-message hidden" role="alert">އޮންނަނީ އެޑް ނުފެނުނު. ތިޔަބޭފުޅުންގ ޤައުމު ބަދަލުކުރުމަށް މަސައްކަތް ކުރާ.</div>
             </div>
         </div>
 

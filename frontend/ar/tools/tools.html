@@ -311,66 +311,61 @@
         <h1>أدوات Serpmonn</h1>
         <p class="subtitle">مجموعة من الأدوات الصغيرة للعمل، التسويق والتطوير</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="أدوات Serpmonn / أدوات الشركاء">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                أدوات Serpmonn
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                أدوات الشركاء
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="الفلاتر"
+                    data-label-hide="إخفاء">
+                الفلاتر
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="أدوات Serpmonn / أدوات الشركاء">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    أدوات Serpmonn
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    أدوات الشركاء
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="أدوات Serpmonn لجميع الفئات: منشئ UTM، كلمات المرور، الحاسبات والمزيد."
-             data-dynamic-meta-category="أدوات Serpmonn لـ {category}: منشئ UTM، كلمات المرور، الحاسبات والمزيد.">
-            <input type="text" 
-                   placeholder="بحث الأدوات..." 
-                   aria-label="بحث الأدوات">
-            <select aria-label="تصفية حسب الفئة">
-                <option value="">جميع الفئات</option>
-                
-                    <option value="marketing">تسويق</option>
-                
-                    <option value="security">أمان</option>
-                
-                    <option value="development">تطوير</option>
-                
-                    <option value="design">تصميم</option>
-                
-                    <option value="engineering">هندسة</option>
-                
-                    <option value="logistics">لوجستيات</option>
-                
-                    <option value="ecology">بيئة</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="مسح الفلاتر">مسح الفلاتر</button>
-            <button id="clear-favorites" aria-label="مسح المفضلة">مسح المفضلة</button>
-            <button id="sort-favorites" aria-label="عرض المفضلة في الأعلى">المفضلة في الأعلى</button>
-            <div class="filter-message hidden" role="alert">لم يتم العثور على أدوات. حاول تغيير الاستعلام.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>إحصائيات الأدوات</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">الأدوات النشطة</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">الفئات</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">مخطط لها</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="أدوات Serpmonn لجميع الفئات: منشئ UTM، كلمات المرور، الحاسبات والمزيد."
+                 data-dynamic-meta-category="أدوات Serpmonn لـ {category}: منشئ UTM، كلمات المرور، الحاسبات والمزيد.">
+                <input type="text"
+                       placeholder="بحث الأدوات..."
+                       aria-label="بحث الأدوات">
+                <select aria-label="تصفية حسب الفئة">
+                    <option value="">جميع الفئات</option>
+                    
+                        <option value="marketing">تسويق</option>
+                    
+                        <option value="security">أمان</option>
+                    
+                        <option value="development">تطوير</option>
+                    
+                        <option value="design">تصميم</option>
+                    
+                        <option value="engineering">هندسة</option>
+                    
+                        <option value="logistics">لوجستيات</option>
+                    
+                        <option value="ecology">بيئة</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="مسح الفلاتر">مسح الفلاتر</button>
+                <button id="clear-favorites" aria-label="مسح المفضلة">مسح المفضلة</button>
+                <button id="sort-favorites" aria-label="عرض المفضلة في الأعلى">المفضلة في الأعلى</button>
+                <div class="filter-message hidden" role="alert">لم يتم العثور على أدوات. حاول تغيير الاستعلام.</div>
             </div>
         </div>
 

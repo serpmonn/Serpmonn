@@ -311,66 +311,61 @@
         <h1>Nástroje Serpmonn</h1>
         <p class="subtitle">Sada mikro‑nástrojů pro práci, marketing a vývoj</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Nástroje Serpmonn / Partnerské nástroje">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Nástroje Serpmonn
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Partnerské nástroje
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Nástroje Serpmonn / Partnerské nástroje">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Nástroje Serpmonn
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Partnerské nástroje
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Nástroje Serpmonn pro všechny kategorie: UTM generátor, hesla, kalkulačky a další."
-             data-dynamic-meta-category="Nástroje Serpmonn pro {category}: UTM generátor, hesla, kalkulačky a další.">
-            <input type="text" 
-                   placeholder="Hledat nástroje..." 
-                   aria-label="Hledat nástroje">
-            <select aria-label="Filtr podle kategorie">
-                <option value="">Všechny kategorie</option>
-                
-                    <option value="marketing">Marketing</option>
-                
-                    <option value="security">Bezpečnost</option>
-                
-                    <option value="development">Vývoj</option>
-                
-                    <option value="design">Design</option>
-                
-                    <option value="engineering">Inženýrství</option>
-                
-                    <option value="logistics">Logistika</option>
-                
-                    <option value="ecology">Ekologie</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="Vymazat filtry">Vymazat filtry</button>
-            <button id="clear-favorites" aria-label="Vymazat oblíbené">Vymazat oblíbené</button>
-            <button id="sort-favorites" aria-label="Zobrazit oblíbené nahoře">Oblíbené nahoře</button>
-            <div class="filter-message hidden" role="alert">Nástroje nenalezeny. Zkuste změnit dotaz.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>Statistiky nástrojů</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">Aktivních nástrojů</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">Kategorií</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Plánováno</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Nástroje Serpmonn pro všechny kategorie: UTM generátor, hesla, kalkulačky a další."
+                 data-dynamic-meta-category="Nástroje Serpmonn pro {category}: UTM generátor, hesla, kalkulačky a další.">
+                <input type="text"
+                       placeholder="Hledat nástroje..."
+                       aria-label="Hledat nástroje">
+                <select aria-label="Filtr podle kategorie">
+                    <option value="">Všechny kategorie</option>
+                    
+                        <option value="marketing">Marketing</option>
+                    
+                        <option value="security">Bezpečnost</option>
+                    
+                        <option value="development">Vývoj</option>
+                    
+                        <option value="design">Design</option>
+                    
+                        <option value="engineering">Inženýrství</option>
+                    
+                        <option value="logistics">Logistika</option>
+                    
+                        <option value="ecology">Ekologie</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="Vymazat filtry">Vymazat filtry</button>
+                <button id="clear-favorites" aria-label="Vymazat oblíbené">Vymazat oblíbené</button>
+                <button id="sort-favorites" aria-label="Zobrazit oblíbené nahoře">Oblíbené nahoře</button>
+                <div class="filter-message hidden" role="alert">Nástroje nenalezeny. Zkuste změnit dotaz.</div>
             </div>
         </div>
 

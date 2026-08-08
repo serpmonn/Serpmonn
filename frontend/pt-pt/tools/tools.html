@@ -311,66 +311,61 @@
         <h1>Ferramentas Serpmonn</h1>
         <p class="subtitle">Um conjunto de micro‑ferramentas para trabalho, marketing e desenvolvimento</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Ferramentas Serpmonn / Ferramentas de parceiros">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Ferramentas Serpmonn
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Ferramentas de parceiros
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Ferramentas Serpmonn / Ferramentas de parceiros">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Ferramentas Serpmonn
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Ferramentas de parceiros
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Ferramentas Serpmonn para todas as categorias: gerador UTM, palavras-passe, calculadoras e mais."
-             data-dynamic-meta-category="Ferramentas Serpmonn para {category}: gerador UTM, palavras-passe, calculadoras e mais.">
-            <input type="text" 
-                   placeholder="Pesquisar ferramentas..." 
-                   aria-label="Pesquisar ferramentas">
-            <select aria-label="Filtrar por categoria">
-                <option value="">Todas as categorias</option>
-                
-                    <option value="marketing">Marketing</option>
-                
-                    <option value="security">Segurança</option>
-                
-                    <option value="development">Desenvolvimento</option>
-                
-                    <option value="design">Design</option>
-                
-                    <option value="engineering">Engenharia</option>
-                
-                    <option value="logistics">Logística</option>
-                
-                    <option value="ecology">Ecologia</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="Limpar filtros">Limpar filtros</button>
-            <button id="clear-favorites" aria-label="Limpar favoritos">Limpar favoritos</button>
-            <button id="sort-favorites" aria-label="Mostrar favoritos no topo">Favoritos no topo</button>
-            <div class="filter-message hidden" role="alert">Nenhuma ferramenta encontrada. Tente alterar sua consulta.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>Estatísticas de Ferramentas</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">Ferramentas ativas</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">Categorias</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Planejado</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Ferramentas Serpmonn para todas as categorias: gerador UTM, palavras-passe, calculadoras e mais."
+                 data-dynamic-meta-category="Ferramentas Serpmonn para {category}: gerador UTM, palavras-passe, calculadoras e mais.">
+                <input type="text"
+                       placeholder="Pesquisar ferramentas..."
+                       aria-label="Pesquisar ferramentas">
+                <select aria-label="Filtrar por categoria">
+                    <option value="">Todas as categorias</option>
+                    
+                        <option value="marketing">Marketing</option>
+                    
+                        <option value="security">Segurança</option>
+                    
+                        <option value="development">Desenvolvimento</option>
+                    
+                        <option value="design">Design</option>
+                    
+                        <option value="engineering">Engenharia</option>
+                    
+                        <option value="logistics">Logística</option>
+                    
+                        <option value="ecology">Ecologia</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="Limpar filtros">Limpar filtros</button>
+                <button id="clear-favorites" aria-label="Limpar favoritos">Limpar favoritos</button>
+                <button id="sort-favorites" aria-label="Mostrar favoritos no topo">Favoritos no topo</button>
+                <div class="filter-message hidden" role="alert">Nenhuma ferramenta encontrada. Tente alterar sua consulta.</div>
             </div>
         </div>
 

@@ -311,66 +311,61 @@
         <h1>เครื่องมือ Serpmonn</h1>
         <p class="subtitle">ชุดเครื่องมือขนาดเล็กสำหรับงาน การตลาดและการพัฒนา</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="เครื่องมือ Serpmonn / เครื่องมือพันธมิตร">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                เครื่องมือ Serpmonn
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                เครื่องมือพันธมิตร
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="เครื่องมือ Serpmonn / เครื่องมือพันธมิตร">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    เครื่องมือ Serpmonn
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    เครื่องมือพันธมิตร
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="เครื่องมือ Serpmonn สำหรับทุกหมวดหมู่: UTM builder รหัสผ่าน เครื่องคิดเลข และอื่นๆ"
-             data-dynamic-meta-category="เครื่องมือ Serpmonn สำหรับ {category}: UTM builder รหัสผ่าน เครื่องคิดเลข และอื่นๆ">
-            <input type="text" 
-                   placeholder="ค้นหาเครื่องมือ..." 
-                   aria-label="ค้นหาเครื่องมือ">
-            <select aria-label="กรองตามหมวดหมู่">
-                <option value="">ทุกหมวดหมู่</option>
-                
-                    <option value="marketing">การตลาด</option>
-                
-                    <option value="security">ความปลอดภัย</option>
-                
-                    <option value="development">การพัฒนา</option>
-                
-                    <option value="design">การออกแบบ</option>
-                
-                    <option value="engineering">วิศวกรรม</option>
-                
-                    <option value="logistics">โลจิสติกส์</option>
-                
-                    <option value="ecology">นิเวศวิทยา</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="ล้างตัวกรอง">ล้างตัวกรอง</button>
-            <button id="clear-favorites" aria-label="ล้างรายการโปรด">ล้างรายการโปรด</button>
-            <button id="sort-favorites" aria-label="แสดงรายการโปรดด้านบน">รายการโปรดด้านบน</button>
-            <div class="filter-message hidden" role="alert">ไม่พบเครื่องมือ ลองเปลี่ยนคำค้นหา</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>สถิติเครื่องมือ</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">เครื่องมือที่ใช้งาน</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">หมวดหมู่</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">วางแผน</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="เครื่องมือ Serpmonn สำหรับทุกหมวดหมู่: UTM builder รหัสผ่าน เครื่องคิดเลข และอื่นๆ"
+                 data-dynamic-meta-category="เครื่องมือ Serpmonn สำหรับ {category}: UTM builder รหัสผ่าน เครื่องคิดเลข และอื่นๆ">
+                <input type="text"
+                       placeholder="ค้นหาเครื่องมือ..."
+                       aria-label="ค้นหาเครื่องมือ">
+                <select aria-label="กรองตามหมวดหมู่">
+                    <option value="">ทุกหมวดหมู่</option>
+                    
+                        <option value="marketing">การตลาด</option>
+                    
+                        <option value="security">ความปลอดภัย</option>
+                    
+                        <option value="development">การพัฒนา</option>
+                    
+                        <option value="design">การออกแบบ</option>
+                    
+                        <option value="engineering">วิศวกรรม</option>
+                    
+                        <option value="logistics">โลจิสติกส์</option>
+                    
+                        <option value="ecology">นิเวศวิทยา</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="ล้างตัวกรอง">ล้างตัวกรอง</button>
+                <button id="clear-favorites" aria-label="ล้างรายการโปรด">ล้างรายการโปรด</button>
+                <button id="sort-favorites" aria-label="แสดงรายการโปรดด้านบน">รายการโปรดด้านบน</button>
+                <div class="filter-message hidden" role="alert">ไม่พบเครื่องมือ ลองเปลี่ยนคำค้นหา</div>
             </div>
         </div>
 

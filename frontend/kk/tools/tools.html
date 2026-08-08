@@ -311,66 +311,61 @@
         <h1>Serpmonn Құралдары</h1>
         <p class="subtitle">Жұмыс, маркетинг және дамыту үшін микро-құралдар жиынтығы</p>
 
-        <!-- Фильтр: свои / партнёры -->
-        <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn құралдары / Серіктес құралдар">
-            <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
-                All
-            </button>
-            <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
-                Serpmonn құралдары
-            </button>
-            <button type="button" class="filter-btn" data-filter="partners" role="tab">
-                Серіктес құралдар
+        <!-- Фильтры (на мобильных — сворачиваются) -->
+        <div class="filters-toolbar">
+            <button id="toggleFilters"
+                    class="filter-toggle"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="toolsFiltersContent"
+                    data-label-show="Filters"
+                    data-label-hide="Hide filters">
+                Filters
             </button>
         </div>
+        <div id="toolsFiltersContent" class="filters-content">
+            <!-- Фильтр: свои / партнёры -->
+            <div class="filter-buttons tools-group-filters" role="tablist" aria-label="Serpmonn құралдары / Серіктес құралдар">
+                <button type="button" class="filter-btn active" data-filter="all" aria-selected="true" role="tab">
+                    All
+                </button>
+                <button type="button" class="filter-btn" data-filter="serpmonn" role="tab">
+                    Serpmonn құралдары
+                </button>
+                <button type="button" class="filter-btn" data-filter="partners" role="tab">
+                    Серіктес құралдар
+                </button>
+            </div>
 
-        <!-- Панель фильтров -->
-        <div class="filter-bar" id="tools-filter-bar"
-             data-dynamic-meta-all="Барлық санаттарға арналған Serpmonn құралдары: UTM генераторы, құпия сөздер, калькуляторлар және т.б."
-             data-dynamic-meta-category="{category} үшін Serpmonn құралдары: UTM генераторы, құпия сөздер, калькуляторлар және т.б.">
-            <input type="text" 
-                   placeholder="Құралдарды іздеу..." 
-                   aria-label="Құралдарды іздеу">
-            <select aria-label="Санат бойынша сүзу">
-                <option value="">Барлық санаттар</option>
-                
-                    <option value="marketing">Маркетинг</option>
-                
-                    <option value="security">Қауіпсіздік</option>
-                
-                    <option value="development">Дамыту</option>
-                
-                    <option value="design">Дизайн</option>
-                
-                    <option value="engineering">Инженерия</option>
-                
-                    <option value="logistics">Логистика</option>
-                
-                    <option value="ecology">Экология</option>
-                
-            </select>
-            <button id="clear-filters" aria-label="Сүзгілерді тазалау">Сүзгілерді тазалау</button>
-            <button id="clear-favorites" aria-label="Таңдаулыларды тазалау">Таңдаулыларды тазалау</button>
-            <button id="sort-favorites" aria-label="Таңдаулыларды үстінде көрсету">Таңдаулыларды үстіне</button>
-            <div class="filter-message hidden" role="alert">Құралдар табылмады. Сұранысты өзгертуді сәлдеңіз.</div>
-        </div>
-
-        <!-- Статистика -->
-        <div class="stats">
-            <h3>Құралдар статистикасы</h3>
-            <div class="stats-grid" aria-live="polite">
-                <div class="stat-item">
-                    <div class="stat-number" id="tools-count">7</div>
-                    <div class="stat-label">Белсенді құралдар</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">7</div>
-                    <div class="stat-label">Санаттар</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">10+</div>
-                    <div class="stat-label">Жоспарланған</div>
-                </div>
+            <!-- Панель фильтров -->
+            <div class="filter-bar" id="tools-filter-bar"
+                 data-dynamic-meta-all="Барлық санаттарға арналған Serpmonn құралдары: UTM генераторы, құпия сөздер, калькуляторлар және т.б."
+                 data-dynamic-meta-category="{category} үшін Serpmonn құралдары: UTM генераторы, құпия сөздер, калькуляторлар және т.б.">
+                <input type="text"
+                       placeholder="Құралдарды іздеу..."
+                       aria-label="Құралдарды іздеу">
+                <select aria-label="Санат бойынша сүзу">
+                    <option value="">Барлық санаттар</option>
+                    
+                        <option value="marketing">Маркетинг</option>
+                    
+                        <option value="security">Қауіпсіздік</option>
+                    
+                        <option value="development">Дамыту</option>
+                    
+                        <option value="design">Дизайн</option>
+                    
+                        <option value="engineering">Инженерия</option>
+                    
+                        <option value="logistics">Логистика</option>
+                    
+                        <option value="ecology">Экология</option>
+                    
+                </select>
+                <button id="clear-filters" aria-label="Сүзгілерді тазалау">Сүзгілерді тазалау</button>
+                <button id="clear-favorites" aria-label="Таңдаулыларды тазалау">Таңдаулыларды тазалау</button>
+                <button id="sort-favorites" aria-label="Таңдаулыларды үстінде көрсету">Таңдаулыларды үстіне</button>
+                <div class="filter-message hidden" role="alert">Құралдар табылмады. Сұранысты өзгертуді сәлдеңіз.</div>
             </div>
         </div>
 
