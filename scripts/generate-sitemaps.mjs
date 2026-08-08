@@ -5,10 +5,11 @@ import path from 'path';
 const PROJECT_ROOT = process.cwd();
 const FRONTEND_DIR = path.join(PROJECT_ROOT, 'frontend');
 const OUTPUT_DIR = path.join(PROJECT_ROOT, 'sitemaps');
-const SITE_BASE = 'https://www.serpmonn.ru';
+// Canonical host (www → non-www 301)
+const SITE_BASE = (process.env.SITE_ORIGIN || 'https://serpmonn.ru').replace(/\/$/, '');
 
 // Явные исключения для папок, которые НЕ являются языковыми
-const EXCLUDE_LANG_DIRS = new Set(['ad-info']);
+const EXCLUDE_LANG_DIRS = new Set(['ad-info', 'app']);
 
 /**
  * Returns true if the entry name looks like a language code directory
@@ -43,32 +44,79 @@ function writeFileEnsured(filePath, content) {
   fs.writeFileSync(filePath, content, 'utf8');
 }
 
-// news/ — redirect stubs → knowledge-base (do not list in sitemaps)
-const EXCLUDE_DIRS = new Set(['scripts', 'styles', 'images', 'i18n', 'pwa', 'news']);
+// Folders never listed in sitemaps (crawl junk / redirects / assets)
+const EXCLUDE_DIRS = new Set([
+  'scripts',
+  'styles',
+  'images',
+  'i18n',
+  'pwa',
+  'news', // redirect stubs → knowledge-base
+  'login',
+  'register',
+  'profile',
+  'auth',
+  'downloads',
+  'admin',
+]);
 
-/** login.html / register.html are soft+hard redirects to auth — skip in sitemaps */
-function isRedirectStubPath(filePath) {
+/**
+ * Paths that should not compete for crawl budget in sitemaps.
+ * Each locale still keeps self-canonical on the live page — we only stop advertising junk URLs.
+ */
+function shouldExcludeFromSitemap(filePath) {
   const norm = filePath.replace(/\\/g, '/');
-  return /\/login\/login\.html$/i.test(norm) || /\/register\/register\.html$/i.test(norm);
+  const base = path.basename(norm).toLowerCase();
+
+  // Non-HTML assets never belong here (belt-and-suspenders)
+  if (/\.(apk|ico|png|jpe?g|gif|webp|svg|css|js|map|xml|json|txt|woff2?|ttf|eot)$/i.test(base)) {
+    return true;
+  }
+
+  // Auth / account flows
+  if (
+    /\/(login|register|profile|auth)\//i.test(norm) ||
+    /\/(login|register|auth)\.html$/i.test(norm) ||
+    /\/forgot\.html$/i.test(norm) ||
+    /\/reset\.html$/i.test(norm)
+  ) {
+    return true;
+  }
+
+  // Game index stubs (redirect → snake.html / 2048.html / …); keep locale landing index.html
+  if (/\/games\/[^/]+\/index\.html$/i.test(norm)) {
+    return true;
+  }
+
+  // Leaderboard / secondary game chrome
+  if (/score_table\.html$/i.test(norm)) {
+    return true;
+  }
+
+  // Soft redirects / utility shells
+  if (/\/menu\.html$/i.test(norm) || /\/404\.html$/i.test(norm)) {
+    return true;
+  }
+
+  return false;
 }
 
 function getAllHtmlFiles(rootDir) {
   const results = [];
-  
+
   function scanDir(dir) {
     try {
       const entries = fs.readdirSync(dir, { withFileTypes: true });
-      
+
       for (const ent of entries) {
         const fullPath = path.join(dir, ent.name);
-        
+
         if (ent.isDirectory()) {
-          // Пропускаем исключенные директории
           if (!EXCLUDE_DIRS.has(ent.name)) {
             scanDir(fullPath);
           }
         } else if (ent.isFile() && ent.name.toLowerCase().endsWith('.html')) {
-          if (!isRedirectStubPath(fullPath)) {
+          if (!shouldExcludeFromSitemap(fullPath)) {
             results.push(fullPath);
           }
         }
@@ -77,7 +125,7 @@ function getAllHtmlFiles(rootDir) {
       console.warn(`Cannot read directory ${dir}: ${err.message}`);
     }
   }
-  
+
   scanDir(rootDir);
   return results;
 }
@@ -189,7 +237,9 @@ async function generateSitemapForRU() {
         ruFiles.push(...getAllHtmlFiles(p));
       }
     } else if (ent.isFile() && ent.name.toLowerCase().endsWith('.html') && ent.name !== 'main.html') {
-      ruFiles.push(p);
+      if (!shouldExcludeFromSitemap(p)) {
+        ruFiles.push(p);
+      }
     }
   }
   
@@ -255,7 +305,9 @@ function generateHreflangSitemap(langs) {
             ruFiles.push(...getAllHtmlFiles(p));
           }
         } else if (ent.isFile() && ent.name.toLowerCase().endsWith('.html')) {
-          ruFiles.push(p);
+          if (!shouldExcludeFromSitemap(p)) {
+            ruFiles.push(p);
+          }
         }
       }
       
@@ -355,11 +407,14 @@ function generateIndex(langs) {
   parts.push('<?xml version="1.0" encoding="UTF-8"?>');
   parts.push('<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">');
   
-  // RU sitemap
+  // RU + app + other langs + hreflang
   parts.push(
     `  <sitemap>\n    <loc>${SITE_BASE}/sitemaps/sitemap-ru.xml</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>`
   );
-  
+  parts.push(
+    `  <sitemap>\n    <loc>${SITE_BASE}/sitemaps/sitemap-app.xml</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>`
+  );
+
   // Sitemaps для других языков
   for (const l of langs) {
     const loc = `${SITE_BASE}/sitemaps/sitemap-${l}.xml`;
@@ -367,7 +422,7 @@ function generateIndex(langs) {
       `  <sitemap>\n    <loc>${loc}</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>`
     );
   }
-  
+
   // Добавляем hreflang sitemap
   parts.push(
     `  <sitemap>\n    <loc>${SITE_BASE}/sitemaps/sitemap-hreflang.xml</loc>\n    <lastmod>${today}</lastmod>\n  </sitemap>`

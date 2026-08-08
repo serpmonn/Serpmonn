@@ -75,6 +75,17 @@ eleventyComputed:
     }
     </script>
 
+    <link rel="canonical" href="{{ canonical }}" />
+
+    {% for loc in locales %}
+    {% if loc == 'ru' %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/updates-august-17.html" hreflang="{{ loc }}" />
+    {% else %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/knowledge-base/articles/updates-august-17.html" hreflang="{{ loc }}" />
+    {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/updates-august-17.html" hreflang="x-default" />
+
     <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
     <link rel="stylesheet" href="/frontend/styles/base.css">
     <link rel="stylesheet" href="/frontend/styles/accessibility.css">

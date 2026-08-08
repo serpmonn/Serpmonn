@@ -37,6 +37,15 @@ eleventyComputed:
 
     <link rel="canonical" href="{{ canonical }}" />
 
+    {% for loc in locales %}
+    {% if loc == 'ru' %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/indexnow-practical-guide.html" hreflang="{{ loc }}" />
+    {% else %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/knowledge-base/articles/indexnow-practical-guide.html" hreflang="{{ loc }}" />
+    {% endif %}
+    {% endfor %}
+    <link rel="alternate" href="{{ site.baseUrl }}/frontend/knowledge-base/articles/indexnow-practical-guide.html" hreflang="x-default" />
+
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",

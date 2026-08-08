@@ -46,4 +46,6 @@ npm run build
 node ../scripts/count-stats.mjs || true
 node deploy-locales.js
 node ../scripts/write-news-redirects.mjs
+node ../scripts/fix-duplicate-canonicals.mjs
+node ../scripts/generate-sitemaps.mjs || true
 echo "==> done: DEPLOY_TARGET=$TARGET"

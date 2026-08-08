@@ -24,15 +24,24 @@ const LOCALES = JSON.parse(
   fs.readFileSync(path.join(ROOT, 'assembly/site/_data/locales.json'), 'utf8')
 ).filter((loc) => loc !== 'ru');
 
+const SITE_ORIGIN = (process.env.SITE_ORIGIN || 'https://serpmonn.ru').replace(/\/$/, '');
+
+function toAbsolute(targetPath) {
+  if (/^https?:\/\//i.test(targetPath)) return targetPath;
+  return `${SITE_ORIGIN}${targetPath.startsWith('/') ? '' : '/'}${targetPath}`;
+}
+
 function redirectHtml(target) {
-  const safe = target.replace(/"/g, '&quot;');
+  const abs = toAbsolute(target);
+  const safe = abs.replace(/"/g, '&quot;');
   return `<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
+  <meta name="robots" content="noindex, follow">
   <meta http-equiv="refresh" content="0;url=${safe}">
   <link rel="canonical" href="${safe}">
-  <script>location.replace(${JSON.stringify(target)});</script>
+  <script>location.replace(${JSON.stringify(abs)});</script>
   <title>Переадресация</title>
 </head>
 <body><p><a href="${safe}">Перейти в базу знаний</a></p></body>
