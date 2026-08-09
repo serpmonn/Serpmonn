@@ -1,4 +1,31 @@
-import { shouldShowCookieBanner } from './scripts.js';
+function shouldShowCookieBanner() {
+  if (window.__SPN_VK_MINI__) return false;
+  if (/(?:^|[?&])vk_mini=1(?:&|$)/.test(window.location.search)) return false;
+  if (/vk_app_id=\d+/.test(window.location.search)) return false;
+  if (document.body?.classList?.contains('vk-mini-app') || document.body?.classList?.contains('vk-mini-embed')) {
+    return false;
+  }
+  try {
+    if (window.__SPN_ANDROID_APP__) return false;
+    if (document.documentElement?.classList?.contains('android-app')) return false;
+    if (/(?:^|[?&])app=1(?:&|$)/.test(window.location.search || '')) return false;
+  } catch (_) {}
+  const params = new URLSearchParams(window.location.search);
+  const envParam = params.get('env') || '';
+  if (envParam === 'vk_mini' || envParam === 'twa') return false;
+  if (
+    params.has('vk_app_id') ||
+    window.location.hostname === 'vk.com' ||
+    window.location.hostname.endsWith('.vk.com')
+  ) {
+    return false;
+  }
+  const isStandalonePWA =
+    window.matchMedia('(display-mode: standalone)').matches ||
+    window.navigator.standalone === true;
+  if (isStandalonePWA) return false;
+  return true;
+}
 
 function setCookie(name, value, days) {
   const d = new Date();
@@ -21,7 +48,7 @@ function getCookie(name) {
 }
 
 export function showCookieBanner() {
-  if (!shouldShowCookieBanner()) return;                                                                                                                                                                      // только web (ПК + моб. браузер)
+  if (!shouldShowCookieBanner()) return;
 
   const cookieConsent = document.getElementById('cookie-consent');
   const acceptBtn = document.getElementById('accept-cookies');

@@ -70,6 +70,7 @@ const ANDROID_EMBED_HIDE_CSS = `
   html.android-app button[onclick*="telegram"], html.android-app button[onclick*="Telegram"],
   html.android-app .rss-btn, html.android-app .rss-section,
   html.android-app #kb-sn-tg, html.android-app #kb-sn-max, html.android-app #kb-sn-ok,
+  html.android-app .promo-intent-card,
   body.android-app #menuCorner, body.android-app #menuContainer, body.android-app #menuButton,
   body.android-app .menu-corner, body.android-app .menu-container, body.android-app .menu-button,
   body.android-app .menu-settings-btn, body.android-app #settingsButton,
@@ -84,7 +85,8 @@ const ANDROID_EMBED_HIDE_CSS = `
   body.android-app a.share-btn.telegram, body.android-app .share-btn.telegram,
   body.android-app button[onclick*="telegram"], body.android-app button[onclick*="Telegram"],
   body.android-app .rss-btn, body.android-app .rss-section,
-  body.android-app #kb-sn-tg, body.android-app #kb-sn-max, body.android-app #kb-sn-ok {
+  body.android-app #kb-sn-tg, body.android-app #kb-sn-max, body.android-app #kb-sn-ok,
+  body.android-app .promo-intent-card {
     display: none !important;
     visibility: hidden !important;
     pointer-events: none !important;

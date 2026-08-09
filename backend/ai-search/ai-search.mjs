@@ -540,6 +540,11 @@ function searchLogIdentity(req, identity) {
   };
 }
 
+/** safesearch=0 только для сайта; VK Mini / RuStore — строго. */
+function resolveAiSafesearch(req) {
+  return detectClientFromRequest(req) === 'web' ? 0 : 2;
+}
+
 function trackSearchQuery(req, identity, fields) {
   logSearchQuerySafe({
     ...fields,
@@ -693,9 +698,9 @@ async function enforceLogicalSearchLimit(req, identity, t) {
   return { ok: true };
 }
 
-async function webSearchWithSearxng(query, t) {
+async function webSearchWithSearxng(query, t, safesearch = 2) {
   try {
-    const data = await fetchSearxViaCurl(query, 'general');
+    const data = await fetchSearxViaCurl(query, 'general', { safesearch });
 
     const results = (data.results || [])
       .map((item) => ({
@@ -726,9 +731,9 @@ async function webSearchWithSearxng(query, t) {
   }
 }
 
-async function imageSearchWithSearxng(query, t) {
+async function imageSearchWithSearxng(query, t, safesearch = 2) {
   try {
-    const data = await fetchSearxViaCurl(query, 'images');
+    const data = await fetchSearxViaCurl(query, 'images', { safesearch });
 
     const images = (data.results || [])
       .slice(0, 6)
@@ -748,9 +753,9 @@ async function imageSearchWithSearxng(query, t) {
   }
 }
 
-async function videoSearchWithSearxng(query, t) {
+async function videoSearchWithSearxng(query, t, safesearch = 2) {
   try {
-    const data = await fetchSearxViaCurl(query, 'videos');
+    const data = await fetchSearxViaCurl(query, 'videos', { safesearch });
 
     const videos = (data.results || [])
       .slice(0, 6)
@@ -847,7 +852,7 @@ function createEmptyResponsePayload(q, mode) {
   };
 }
 
-async function runTextTask(q, t, responsePayload, emit, attachment = null) {
+async function runTextTask(q, t, responsePayload, emit, attachment = null, safesearch = 2) {
   const hasAttachment = Boolean(attachment?.text);
   const searchMode = hasAttachment ? resolveAttachmentSearchMode(q) : { fileOnly: false, reason: 'no_attachment' };
   const fileOnly = hasAttachment && searchMode.fileOnly;
@@ -861,7 +866,7 @@ async function runTextTask(q, t, responsePayload, emit, attachment = null) {
 
   if (!fileOnly) {
     const searxStart = process.hrtime.bigint();
-    const searxResult = await webSearchWithSearxng(q, t);
+    const searxResult = await webSearchWithSearxng(q, t, safesearch);
     webContext = searxResult.webContext;
     sources = searxResult.sources;
     const searxEnd = process.hrtime.bigint();
@@ -936,9 +941,9 @@ async function runTextTask(q, t, responsePayload, emit, attachment = null) {
   return { type: 'text', timings: textTimings };
 }
 
-async function runImagesTask(q, t, responsePayload, emit) {
+async function runImagesTask(q, t, responsePayload, emit, safesearch = 2) {
   const start = process.hrtime.bigint();
-  const images = await imageSearchWithSearxng(q, t);
+  const images = await imageSearchWithSearxng(q, t, safesearch);
   const end = process.hrtime.bigint();
   const imagesMs = Number(end - start) / 1e6;
 
@@ -955,9 +960,9 @@ async function runImagesTask(q, t, responsePayload, emit) {
   return { type: 'images', timings: { images_ms: imagesMs } };
 }
 
-async function runVideosTask(q, t, responsePayload, emit) {
+async function runVideosTask(q, t, responsePayload, emit, safesearch = 2) {
   const start = process.hrtime.bigint();
-  const videos = await videoSearchWithSearxng(q, t);
+  const videos = await videoSearchWithSearxng(q, t, safesearch);
   const end = process.hrtime.bigint();
   const videosMs = Number(end - start) / 1e6;
 
@@ -983,13 +988,14 @@ async function executeSearchTasks({
   responsePayload,
   emit,
   attachment = null,
+  safesearch = 2,
 }) {
   const tasks = [];
   const branchTimings = {};
 
   if (wantText) {
     tasks.push(
-      runTextTask(q, t, responsePayload, emit, attachment).then((result) => {
+      runTextTask(q, t, responsePayload, emit, attachment, safesearch).then((result) => {
         Object.assign(branchTimings, result.timings);
         return result;
       })
@@ -998,7 +1004,7 @@ async function executeSearchTasks({
 
   if (wantImages) {
     tasks.push(
-      runImagesTask(q, t, responsePayload, emit).then((result) => {
+      runImagesTask(q, t, responsePayload, emit, safesearch).then((result) => {
         Object.assign(branchTimings, result.timings);
         return result;
       })
@@ -1007,7 +1013,7 @@ async function executeSearchTasks({
 
   if (wantVideos) {
     tasks.push(
-      runVideosTask(q, t, responsePayload, emit).then((result) => {
+      runVideosTask(q, t, responsePayload, emit, safesearch).then((result) => {
         Object.assign(branchTimings, result.timings);
         return result;
       })
@@ -1065,6 +1071,7 @@ async function handleStreamingSearch(req, res, ctx) {
     responsePayload,
     emit,
     attachment,
+    safesearch: resolveAiSafesearch(req),
   });
 
   const reqEnd = process.hrtime.bigint();
@@ -1195,6 +1202,7 @@ router.post(
         responsePayload,
         emit: null,
         attachment,
+        safesearch: resolveAiSafesearch(req),
       });
 
       const textFailure = settled.find(

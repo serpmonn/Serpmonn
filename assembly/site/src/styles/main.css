@@ -267,8 +267,15 @@ a:visited {
 
 /* Контент ответа */
 
+/* Врезка промокодов под ответом, над источниками */
+.ai-result-content > .ai-answer + .promo-intent-card,
+.ai-result-content > .ai-empty-answer + .promo-intent-card,
+.ai-result-content > .ai-streaming-answer + .promo-intent-card {
+  margin-top: 10px;
+}
+
 .ai-result-content {
-  margin-top: 4px;
+  margin-top: 2px;
   font-size: 14px;
   line-height: 1.6;
   color: #111827;
@@ -409,7 +416,7 @@ a:visited {
   }
 }
 
-/* Базовый стиль круглых кнопок */
+/* Базовый стиль круглых кнопок — в тон переключателю ИИ/Выдача */
 .ai-action-btn,
 .feedback-btn {
   display: inline-flex;
@@ -418,19 +425,20 @@ a:visited {
   width: 34px;
   height: 34px;
   border-radius: 999px;
-  border: 1px solid rgba(220, 53, 69, 0.35); /* красный бордер */
-  background: linear-gradient(145deg, #111111, #1a1a1a); /* как search-btn */
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
   cursor: pointer;
   padding: 0;
-  transition: background 0.2s ease, transform 0.15s ease,
-              box-shadow 0.2s ease, border-color 0.2s ease;
+  transition: background 0.15s ease, transform 0.15s ease,
+              box-shadow 0.15s ease, border-color 0.15s ease;
 }
 
 /* Общий вид иконок */
 .ai-icon {
   width: 18px;
   height: 18px;
-  stroke: red;           /* красный цвет */
+  stroke: #b91c1c;
   fill: none;
   stroke-width: 1.8;
   stroke-linecap: round;
@@ -440,15 +448,17 @@ a:visited {
 /* Hover/Active эффекты */
 .ai-action-btn:hover,
 .feedback-btn:hover {
-  background: linear-gradient(145deg, #1a1a1a, #222222);
+  background: #fef2f2;
+  border-color: rgba(185, 28, 28, 0.35);
   transform: translateY(-1px) scale(1.03);
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .ai-action-btn:active,
 .feedback-btn:active {
   transform: translateY(0) scale(0.96);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  background: #f8fafc;
 }
 
 /* Дополнительный акцент для лайка/дизлайка */
@@ -508,9 +518,11 @@ a:visited {
 }
 
 .ai-source-chip-favicon {
-  width: 14px;
-  height: 14px;
+  width: 16px;
+  height: 16px;
   border-radius: 3px;
+  object-fit: contain;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 .ai-sources-toggle {
@@ -569,10 +581,11 @@ a:visited {
 }
 
 .source-favicon {
-  flex-shrink: 0;
   width: 16px;
   height: 16px;
-  border-radius: 4px;
+  object-fit: contain;
+  border-radius: 3px;
+  image-rendering: -webkit-optimize-contrast;
 }
 
 .source-title {

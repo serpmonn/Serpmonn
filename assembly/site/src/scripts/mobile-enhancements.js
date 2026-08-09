@@ -8,6 +8,26 @@
     return "ontouchstart" in window || navigator.maxTouchPoints > 0;
   }
 
+  /** Главная / поисковый лендинг — свайп «назад» здесь часто закрывает вкладку/PWA. */
+  function isMainSearchPage() {
+    try {
+      const path = String(location.pathname || "")
+        .replace(/\/+$/, "")
+        .toLowerCase() || "/";
+      if (path === "/" || path === "") return true;
+      // /frontend, /frontend/index.html, /frontend/main.html
+      // /frontend/en, /frontend/en/index.html, …
+      if (
+        /^\/frontend(?:\/[a-z]{2}(?:-[a-z0-9]+)?)?(?:\/(?:index|main)\.html)?$/.test(
+          path
+        )
+      ) {
+        return true;
+      }
+    } catch (_) {}
+    return false;
+  }
+
   // Хелпер виброотклика (если поддерживается)
   function haptic(ms) {
     try {
@@ -70,6 +90,8 @@
 
     // Поведение по умолчанию: назад/вперёд в истории
     window.addEventListener("spn:swipe-right", () => {
+      // На главной не уходим «назад» — легко случайно закрыть сайт/приложение
+      if (isMainSearchPage()) return;
       // RuStore/Android app + игры: свайп вправо не должен закрывать игру/viewer
       try {
         if (window.__SPN_ANDROID_APP__ || window.__SPN_ANDROID_GAME__) return;

@@ -134,6 +134,419 @@ function getQueryFromUrl() {
   return (new URLSearchParams(window.location.search).get('q') || '').trim();
 }
 
+const PROMO_INTENT_RE =
+  /промо\s*код(?:ы|а|ов)?|промокод(?:ы|а|ов)?|промик(?:и|а|ов)?|промо[\s\-]?акци(?:я|и|ю|ей)|купон(?:ы|а|ов)?|скидк(?:а|и|у|ой|е)(?:\s+на)?|код(?:ы)?\s+(?:на\s+)?скидк(?:у|и|а)|бонусн(?:ый|ые|ого|ых)\s+код(?:ы|а|ов)?|ваучер(?:ы|а|ов)?|к[еэ]шб[еэ]к(?:и|а|ов)?|promo\s*codes?|\bpromos?\b|coupons?|vouchers?|cashbacks?|bonus\s+codes?|\bdiscount\b/i;
+
+const PROMO_BRAND_STOP = new Set([
+  'что',
+  'как',
+  'где',
+  'это',
+  'для',
+  'или',
+  'про',
+  'the',
+  'and',
+  'for',
+  'www',
+  'http',
+  'https'
+]);
+
+let promoIntentRequestId = 0;
+
+function getActiveSearchQuery() {
+  return (
+    document.querySelector('#ai-search-form input[name="q"]')?.value.trim() ||
+    getQueryFromUrl() ||
+    ''
+  );
+}
+
+function getPromoCatalogLocale() {
+  try {
+    const m = String(window.location.pathname || '').match(
+      /^\/frontend\/([a-z]{2}(?:-[a-z0-9]+)?)(?:\/|$)/i
+    );
+    if (m && m[1]) {
+      const seg = m[1].toLowerCase();
+      const nonLocale = new Set([
+        'promo-codes-and-discounts', 'images', 'styles', 'scripts', 'games', 'tools',
+        'knowledge-base', 'about-project', 'ad-info', 'poleznoe', 'downloads', 'pwa',
+        'profile', 'auth', 'find', 'news', 'menu', 'partners', 'admin'
+      ]);
+      if (!nonLocale.has(seg)) return seg;
+    }
+  } catch (_) {}
+  return (getCurrentLocale() || 'ru').trim().toLowerCase() || 'ru';
+}
+
+function getPromoCatalogPath() {
+  const locale = getPromoCatalogLocale();
+  if (!locale || locale === 'ru') {
+    return '/frontend/promo-codes-and-discounts/promokody-skidki.html';
+  }
+  return `/frontend/${locale}/promo-codes-and-discounts/promokody-skidki.html`;
+}
+
+function extractPromoSearchTerm(query) {
+  const q = String(query || '').trim();
+  if (!q) return '';
+  const stripped = q.replace(PROMO_INTENT_RE, ' ').replace(/\s+/g, ' ').trim();
+  return stripped || q;
+}
+
+
+function canAttachPromoIntent() {
+  const env = getEnv();
+  if (env === 'vk_mini' || env === 'twa') return false;
+  try {
+    if (window.__SPN_ANDROID_APP__) return false;
+    if (document.documentElement?.classList?.contains('android-app')) return false;
+    if (document.body?.classList?.contains('android-app')) return false;
+    if (/(?:^|[?&])app=1(?:&|$)/.test(location.search || '')) return false;
+  } catch (_) {}
+  return true;
+}
+
+function detectPromoIntentKeyword(query) {
+  if (!canAttachPromoIntent()) return null;
+  const q = String(query || '').trim();
+  if (!q || !PROMO_INTENT_RE.test(q)) return null;
+  const search = extractPromoSearchTerm(q);
+  return { search, label: search, reason: 'keyword' };
+}
+
+function escapeRegExp(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function pickPromoBrandLabel(items, query) {
+  const q = String(query || '')
+    .toLowerCase()
+    .trim();
+  if (!q) return null;
+
+  let best = null;
+  for (const item of items) {
+    const title = String(item?.title || '').trim();
+    const t = title.toLowerCase();
+    if (!t.includes(q)) continue;
+
+    let score = 0;
+    if (t === q) score = 100;
+    else if (t.startsWith(`${q} `) || t.startsWith(`${q}/`) || t.startsWith(`${q}:`)) score = 90;
+    else if (new RegExp(`(?:^|[\\s\\-_/])${escapeRegExp(q)}(?:$|[\\s\\-_/])`, 'i').test(t)) score = 75;
+    else if (q.length >= 4) score = 50;
+    else continue;
+
+    if (!best || score > best.score) best = { title, score };
+  }
+
+  return best && best.score >= 50 ? best.title : null;
+}
+
+async function fetchPromoItemsForSearch(search) {
+  const q = String(search || '').trim();
+  if (!q) return [];
+  try {
+    const url = `/api/promocodes?search=${encodeURIComponent(q)}&status=active`;
+    const res = await fetch(url, {
+      credentials: 'same-origin',
+      headers: getSearchAnalyticsHeaders()
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const items = Array.isArray(data?.data) ? data.data : [];
+    return items
+      .filter((p) => Boolean(String(p?.promocode || '').trim()))
+      .map((p) => ({
+        title: String(p.title || '').trim(),
+        promocode: String(p.promocode || '').trim(),
+        description: String(p.description || p.subtitle || '').trim()
+      }));
+  } catch (_) {
+    return [];
+  }
+}
+
+async function resolvePromoIntent(query) {
+  if (!canAttachPromoIntent()) return null;
+
+  const q = String(query || '').trim();
+  if (!q) return null;
+
+  const keyword = detectPromoIntentKeyword(q);
+  let search = keyword ? keyword.search : q;
+
+  if (!keyword) {
+    const norm = q.toLowerCase();
+    if (q.length < 3 || q.length > 48) return null;
+    if (PROMO_BRAND_STOP.has(norm)) return null;
+    if (q.split(/\s+/).length > 4) return null;
+  }
+
+  const allItems = await fetchPromoItemsForSearch(search);
+  if (!allItems.length) {
+    // Без кодов врезку не показываем — в источниках всё равно будет страница промокодов
+    return null;
+  }
+
+  const items = allItems.slice(0, 6);
+  const moreCount = Math.max(0, allItems.length - items.length);
+  const label = keyword
+    ? keyword.label || search
+    : pickPromoBrandLabel(allItems, q) || items[0].title || search;
+
+  return {
+    search,
+    label,
+    reason: keyword ? 'keyword' : 'brand',
+    items,
+    moreCount
+  };
+}
+
+/** Один fetch на query: стрим + showResult не бьют API дважды. */
+const promoIntentCache = { query: '', promise: null, intent: undefined };
+
+function peekPromoIntent(query) {
+  const q = String(query || '').trim();
+  if (!q || promoIntentCache.query !== q) return undefined;
+  return promoIntentCache.intent;
+}
+
+function getPromoIntent(query) {
+  const q = String(query || '').trim();
+  if (!q) return Promise.resolve(null);
+  if (promoIntentCache.query === q && promoIntentCache.promise) {
+    return promoIntentCache.promise;
+  }
+  const promise = resolvePromoIntent(q).then((intent) => {
+    if (promoIntentCache.query === q) {
+      promoIntentCache.intent = intent;
+    }
+    return intent;
+  });
+  promoIntentCache.query = q;
+  promoIntentCache.promise = promise;
+  promoIntentCache.intent = undefined;
+  return promise;
+}
+
+
+function formatPromoBenefit(item, maxLen = 18) {
+  const raw = String(item?.title || item?.description || '')
+    .replace(/\s+/g, ' ')
+    .trim();
+  if (!raw) return '';
+  if (raw.length <= maxLen) return raw;
+  return `${raw.slice(0, maxLen - 1).trimEnd()}…`;
+}
+
+function formatPromoTooltip(item) {
+  const title = String(item?.title || '').trim();
+  const desc = String(item?.description || '').trim();
+  if (title && desc && desc !== title) return `${title} — ${desc}`;
+  return title || desc || '';
+}
+
+function parsePromoPipeVariants(raw, fallback) {
+  const parts = String(raw || '')
+    .split('|')
+    .map((s) => s.trim())
+    .filter(Boolean);
+  if (parts.length) return parts;
+  const fb = String(fallback || '').trim();
+  return fb ? [fb] : [];
+}
+
+function stablePickIndex(seed, len) {
+  if (!len || len <= 1) return 0;
+  let h = 2166136261;
+  const s = String(seed || '');
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) % len;
+}
+
+function formatPromoLabelTemplate(tpl, brand) {
+  const b = String(brand || '').trim() || 'Serpmonn';
+  return String(tpl || '')
+    .replaceAll('{brand}', b)
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Подпись врезки: стабильный вариант из списка по search. */
+function pickPromoIntentLabelText(intent, messages = getMessages()) {
+  const brand = String(intent?.label || intent?.search || '').trim();
+  const variants = parsePromoPipeVariants(
+    messages.promoIntentLabels,
+    messages.promoIntentLabel || 'Promocodes:'
+  );
+  if (!variants.length) return 'Promocodes:';
+  const tpl = variants[stablePickIndex(intent?.search || brand, variants.length)];
+  return formatPromoLabelTemplate(tpl, brand);
+}
+
+function renderPromoIntentCard(intent) {
+  if (!intent) return '';
+  const messages = getMessages();
+  const labelText = pickPromoIntentLabelText(intent, messages);
+  const copyLabel = messages.promoIntentCopy || 'Copy';
+  const moreTpl = messages.promoIntentMore || 'more {n}';
+  const href = `${getPromoCatalogPath()}?search=${encodeURIComponent(intent.search)}`;
+  const items = Array.isArray(intent.items) ? intent.items : [];
+  const moreCount = Number(intent.moreCount) || 0;
+  const copyIcon = `<svg class="promo-intent-copy-icon" viewBox="0 0 24 24" width="12" height="12" aria-hidden="true"><rect x="9" y="9" width="13" height="13" rx="2" ry="2" fill="none" stroke="currentColor" stroke-width="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" fill="none" stroke="currentColor" stroke-width="2"/></svg>`;
+
+  if (!items.length) return '';
+
+  const codesHtml = items
+    .map((item) => {
+      const code = item.promocode || '';
+      if (!code) return '';
+      const tip = formatPromoTooltip(item) || copyLabel;
+      return `<span class="promo-intent-chip" data-promo-code="${escapeHtml(code)}" data-promo-tip="${escapeHtml(tip)}" title="${escapeHtml(tip)}" role="button" tabindex="0">
+        <code class="promo-intent-code">${escapeHtml(code)}</code>
+        <button type="button" class="promo-intent-copy" data-promo-code="${escapeHtml(code)}" title="${escapeHtml(copyLabel)}" aria-label="${escapeHtml(copyLabel)}: ${escapeHtml(code)}">${copyIcon}</button>
+      </span>`;
+    })
+    .filter(Boolean)
+    .join('');
+
+  // Всегда «ещё» на месте после кодов (с числом, если есть скрытые)
+  const moreLabel =
+    moreCount > 0
+      ? moreTpl.replaceAll('{n}', String(moreCount))
+      : moreTpl.replaceAll('{n}', '').replace(/\s+/g, ' ').trim() || 'ещё';
+  const moreHtml = `<a class="promo-intent-more" href="${escapeHtml(href)}">${escapeHtml(moreLabel)}</a>`;
+
+  return `
+    <aside class="promo-intent-card" role="complementary" data-promo-intent="${escapeHtml(intent.reason || '')}">
+      <div class="promo-intent-row">
+        <span class="promo-intent-label">${escapeHtml(labelText)}</span>
+        <span class="promo-intent-codes">${codesHtml}${moreHtml}</span>
+      </div>
+    </aside>`;
+}
+
+function bindPromoIntentCardActions(root = document) {
+  const card = root.querySelector?.('.promo-intent-card') || document.querySelector('.promo-intent-card');
+  if (!card || card.dataset.copyBound === '1') return;
+  card.dataset.copyBound = '1';
+  const messages = getMessages();
+  const copyLabel = messages.promoIntentCopy || 'Copy';
+  const copiedLabel = messages.promoIntentCopied || 'Copied';
+
+  const copyCode = async (code, triggerEl) => {
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+      const chip = triggerEl?.closest?.('.promo-intent-chip');
+      const btn = chip?.querySelector?.('.promo-intent-copy') || triggerEl;
+      const tip = String(chip?.getAttribute?.('title') || chip?.dataset?.promoTip || '').trim();
+      if (btn?.classList?.contains('promo-intent-copy')) {
+        btn.classList.add('is-copied');
+        const prevTitle = btn.title;
+        btn.title = copiedLabel;
+        setTimeout(() => {
+          btn.classList.remove('is-copied');
+          btn.title = prevTitle || copyLabel;
+        }, 1200);
+      }
+      // На таче нет hover-tooltip — описание показываем в тосте
+      let toastText = copiedLabel;
+      if (tip && tip !== copyLabel && tip !== copiedLabel) {
+        const short = tip.length > 72 ? `${tip.slice(0, 71).trimEnd()}…` : tip;
+        toastText = (messages.promoIntentCopiedDetail || '{copied}: {detail}')
+          .replaceAll('{copied}', copiedLabel)
+          .replaceAll('{detail}', short);
+      }
+      showShareToast(toastText);
+    } catch (_) {
+      /* ignore */
+    }
+  };
+
+  card.addEventListener('click', (e) => {
+    if (e.target?.closest?.('a')) return;
+    const target = e.target?.closest?.('[data-promo-code]');
+    if (!target || !card.contains(target)) return;
+    e.preventDefault();
+    copyCode(String(target.dataset.promoCode || '').trim(), target);
+  });
+
+  card.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter' && e.key !== ' ') return;
+    const target = e.target?.closest?.('.promo-intent-chip[data-promo-code]');
+    if (!target || !card.contains(target)) return;
+    e.preventDefault();
+    copyCode(String(target.dataset.promoCode || '').trim(), target);
+  });
+}
+
+function mountPromoIntentCard(intent) {
+  const contentDiv = document.getElementById('ai-result-content');
+  if (!contentDiv || !intent) return;
+  if (contentDiv.querySelector('.promo-intent-card')) return;
+  const html = renderPromoIntentCard(intent);
+  const sources = contentDiv.querySelector('.ai-sources');
+  if (sources) {
+    sources.insertAdjacentHTML('beforebegin', html);
+  } else {
+    const answer = contentDiv.querySelector(
+      '.ai-answer, .ai-empty-answer, .ai-streaming-answer, .results-general, .results-media-grid, .results-news-list, .results-map'
+    );
+    if (answer) {
+      // После последнего блока выдачи / ответа
+      const block =
+        contentDiv.querySelector('.results-list, .results-media-grid, .results-news-list') ||
+        answer;
+      block.insertAdjacentHTML('afterend', html);
+    } else {
+      contentDiv.insertAdjacentHTML('beforeend', html);
+    }
+  }
+  bindPromoIntentCardActions(contentDiv);
+}
+
+async function maybeShowPromoIntent(query) {
+  const reqId = ++promoIntentRequestId;
+  const intent = await getPromoIntent(query);
+  if (reqId !== promoIntentRequestId) return;
+  if (intent) {
+    ensurePromoResultsCard(intent);
+    mountPromoIntentCard(intent);
+  }
+}
+
+/** Старт параллельно с ИИ/Выдачей — врезка готова раньше ответа. */
+function prefetchPromoIntent(query) {
+  if (!canAttachPromoIntent()) return;
+  const q = String(query || '').trim();
+  if (!q) return;
+  getPromoIntent(q).then((intent) => {
+    if (!intent) return;
+    const contentDiv = document.getElementById('ai-result-content');
+    if (!contentDiv) return;
+    // Когда уже есть ответ/стрим/выдача — докидываем результат + врезку кодов
+    if (
+      contentDiv.querySelector('.ai-streaming-answer') ||
+      contentDiv.querySelector('.ai-answer, .ai-empty-answer') ||
+      contentDiv.querySelector('.results-card, .results-list, .results-media-grid, .results-empty')
+    ) {
+      ensurePromoResultsCard(intent);
+      if (!contentDiv.querySelector('.promo-intent-card')) {
+        mountPromoIntentCard(intent);
+      }
+    }
+  });
+}
+
 function getModeFromUrl() {
   const mode = (new URLSearchParams(window.location.search).get('mode') || '').trim().toLowerCase();
   return mode === 'results' || mode === 'web' ? 'results' : mode === 'ai' ? 'ai' : null;
@@ -842,9 +1255,19 @@ function getSourceHostname(link) {
   }
 }
 
-function getSourceFaviconUrl(hostname, size = 32) {
+function getSourceFaviconUrl(hostname, size = 64) {
   if (!hostname) return '';
-  return `https://www.google.com/s2/favicons?domain=${hostname}&sz=${size}`;
+  const host = String(hostname).replace(/^www\./, '').toLowerCase();
+  // Свой значок для Serpmonn
+  if (host === 'serpmonn.ru' || host.endsWith('.serpmonn.ru')) {
+    // Берём 32/192 и даём браузеру даунскейл — так резче, чем 16px
+    return size >= 48
+      ? '/frontend/images/serpmonn-192.png?v=3'
+      : '/frontend/images/favicon-32x32.png?v=3';
+  }
+  // Google s2: запрашиваем крупнее (64), иначе на ретине мыло
+  const sz = size <= 16 ? 32 : size <= 32 ? 64 : 128;
+  return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=${sz}`;
 }
 
 function normalizeSourceItems(items) {
@@ -884,6 +1307,88 @@ function buildSourceHostnameCounts(sources) {
   return counts;
 }
 
+
+function getPromoCatalogPublicOrigin() {
+  // Канонический прод-домен: даже на dev.serpmonn.ru источник ведёт на serpmonn.ru
+  return 'https://serpmonn.ru';
+}
+
+function buildPromoCatalogSource(intent, messages = getMessages()) {
+  if (!intent) return null;
+  const search = String(intent.search || '').trim();
+  // getPromoCatalogPath() уже учитывает текущую локаль (ru / en / …)
+  // Источник — просто страница каталога, без ?search= фильтра
+  const path = getPromoCatalogPath();
+  const href = `${getPromoCatalogPublicOrigin()}${path}`;
+  const brand = intent.label || search || 'Serpmonn';
+  const titleVariants = parsePromoPipeVariants(
+    messages.promoIntentSourceTitles,
+    messages.promoIntentSourceTitle || 'Serpmonn promocodes: {brand}'
+  );
+  const titleTpl =
+    titleVariants[stablePickIndex(search || brand, titleVariants.length)] ||
+    'Serpmonn promocodes: {brand}';
+  const title = formatPromoLabelTemplate(titleTpl, brand);
+  return { link: href, url: href, title };
+}
+
+function resolvePromoAttachIntent(query) {
+  if (!canAttachPromoIntent()) return null;
+  return peekPromoIntent(query) || detectPromoIntentKeyword(query);
+}
+
+/** Страница промокодов — всегда первый источник при promo-intent. */
+function withPromoSourceFirst(sources, query, messages = getMessages()) {
+  const intent = resolvePromoAttachIntent(query);
+  if (!intent) {
+    return Array.isArray(sources) ? sources : [];
+  }
+
+  const promoSrc = buildPromoCatalogSource(
+    typeof intent.search === 'string'
+      ? intent
+      : { search: intent.search, label: intent.label },
+    messages
+  );
+  if (!promoSrc) return Array.isArray(sources) ? sources : [];
+
+  const list = Array.isArray(sources) ? sources.slice() : [];
+  const filtered = list.filter((src) => {
+    const link = String(src?.link || src?.url || '');
+    return !/promo-codes-and-discounts|promokody-skidki/i.test(link);
+  });
+  return [promoSrc, ...filtered];
+}
+
+/** Тот же каталог промокодов — первый результат в режиме Выдача. */
+function buildPromoCatalogResultItem(intent, messages = getMessages()) {
+  const promoSrc = buildPromoCatalogSource(intent, messages);
+  if (!promoSrc) return null;
+  return {
+    title: promoSrc.title,
+    url: promoSrc.link,
+    link: promoSrc.link,
+    content: messages.promoIntentText || 'Current codes on Serpmonn',
+    hostname: 'serpmonn.ru',
+    engine: 'Serpmonn'
+  };
+}
+
+function withPromoResultFirst(items, query, messages = getMessages()) {
+  const intent = resolvePromoAttachIntent(query);
+  if (!intent) return Array.isArray(items) ? items : [];
+
+  const promoItem = buildPromoCatalogResultItem(intent, messages);
+  if (!promoItem) return Array.isArray(items) ? items : [];
+
+  const list = Array.isArray(items) ? items.slice() : [];
+  const filtered = list.filter((item) => {
+    const link = String(item?.url || item?.link || '');
+    return !/promo-codes-and-discounts|promokody-skidki/i.test(link);
+  });
+  return [promoItem, ...filtered];
+}
+
 function renderSourcesBlock(items, messages) {
   const sources = normalizeSourceItems(items);
   if (!sources.length) return '';
@@ -895,7 +1400,7 @@ function renderSourcesBlock(items, messages) {
   const chips = chipSources
     .map((src) => {
       const hostname = src.hostname || getSourceHostname(src.link);
-      const favicon = getSourceFaviconUrl(hostname, 32);
+      const favicon = getSourceFaviconUrl(hostname, 64);
       const count = hostnameCounts.get(hostname || src.link) || 1;
       const chipTitle =
         count > 1 ? `${hostname} (${count})` : src.title || hostname;
@@ -903,7 +1408,7 @@ function renderSourcesBlock(items, messages) {
 
       return `
         <a href="${escapeHtml(href)}" target="_blank" rel="noopener" class="ai-source-chip" title="${escapeHtml(chipTitle)}">
-          <img src="${escapeHtml(favicon)}" class="ai-source-chip-favicon" alt="" width="14" height="14" loading="lazy">
+          <img src="${escapeHtml(favicon)}" class="ai-source-chip-favicon" alt="" width="16" height="16" loading="lazy">
         </a>
       `;
     })
@@ -912,7 +1417,7 @@ function renderSourcesBlock(items, messages) {
   const listItems = sources
     .map((src) => {
       const hostname = getSourceHostname(src.link);
-      const favicon = getSourceFaviconUrl(hostname, 16);
+      const favicon = getSourceFaviconUrl(hostname, 32);
       const href = safeHttpUrl(src.link, '#');
       return `
         <a href="${escapeHtml(href)}" target="_blank" rel="noopener" class="source-item">
@@ -1248,10 +1753,17 @@ function showStreamingTextStart(data, options = {}) {
   const container = document.getElementById('ai-result-container');
   if (!contentDiv) return;
 
-  let html = renderResultBadges(data, messages);
-
+  const query = getActiveSearchQuery();
+  let html = '';
+  html += renderResultBadges(data, messages);
   html += '<div class="ai-streaming-answer" aria-live="polite"></div>';
   contentDiv.innerHTML = html;
+  // Под стримящимся ответом (не сверху)
+  if (peekPromoIntent(query)) {
+    mountPromoIntentCard(peekPromoIntent(query));
+  } else {
+    maybeShowPromoIntent(query);
+  }
 
   if (container) {
     container.style.display = 'block';
@@ -1396,6 +1908,9 @@ function showResult(data, options = {}) {
     if (container) container.classList.remove('is-results-mode');
   }
 
+  const query = getActiveSearchQuery();
+  const promoIntent = !data.error ? peekPromoIntent(query) : null;
+
   if (data.error) {
     html = `
       <div class="ai-error">
@@ -1413,29 +1928,40 @@ function showResult(data, options = {}) {
 
     html += renderAnswerHtml(resolved.text, resolved.isEmpty);
 
+    // Под ответом, над источниками
+    if (promoIntent) {
+      html += renderPromoIntentCard(promoIntent);
+    }
+
+    const sourcesForRender = withPromoSourceFirst(data.sources || [], query, t);
+    const hasPromoSource = Boolean(promoIntent || detectPromoIntentKeyword(query));
     if (
-      data.usedWebSearch &&
       !resolved.isEmpty &&
-      Array.isArray(data.sources) &&
-      data.sources.length > 0
+      sourcesForRender.length > 0 &&
+      (data.usedWebSearch || hasPromoSource)
     ) {
-      html += renderSourcesBlock(data.sources, t);
+      html += renderSourcesBlock(sourcesForRender, t);
     }
   }
 
   contentDiv.innerHTML = html;
   setupSourcesToggle(contentDiv);
+  bindPromoIntentCardActions(contentDiv);
   setResultActionsVisible(!data.error);
+  if (!data.error && !promoIntent) {
+    maybeShowPromoIntent(query);
+  }
 
   if (!data.error) {
     const resolved = resolveAnswerForDisplay(data);
     const searchInput = document.querySelector('#ai-search-form input[name="q"]');
+    const sourcesForShare = withPromoSourceFirst(data.sources || [], query, t);
     setShareContext(
       searchInput?.value.trim() || getQueryFromUrl(),
       resolved.text,
       resolved.isEmpty,
-      data.usedWebSearch === true,
-      { sources: data.sources || [] }
+      data.usedWebSearch === true || sourcesForShare.length > 0,
+      { sources: sourcesForShare }
     );
   }
 
@@ -2083,19 +2609,17 @@ function buildResultsNewsHtml(items) {
   return `<div class="results-news-list">${list}</div>`;
 }
 
-function buildResultsGeneralHtml(items) {
-  const list = items
-    .map((item) => {
-      const title = escapeHtml(item.title || item.url || '');
-      const href = escapeHtml(safeHttpUrl(item.url || '#', '#'));
-      const host = item.hostname || getSourceHostname(item.url || '');
-      const favicon = escapeHtml(getSourceFaviconForResults(host));
-      const snippet = escapeHtml(item.content || '');
-      const published = formatResultsPublishedDate(item.publishedDate || '');
-      const engine = String(item.engine || '').trim();
-      const metaBits = [host, published, engine].filter(Boolean).join(' · ');
-      const thumb = escapeHtml(safeHttpUrl(item.thumbnail || '', ''));
-      return `
+function buildResultsGeneralCardHtml(item) {
+  const title = escapeHtml(item.title || item.url || '');
+  const href = escapeHtml(safeHttpUrl(item.url || '#', '#'));
+  const host = item.hostname || getSourceHostname(item.url || '');
+  const favicon = escapeHtml(getSourceFaviconForResults(host));
+  const snippet = escapeHtml(item.content || '');
+  const published = formatResultsPublishedDate(item.publishedDate || '');
+  const engine = String(item.engine || '').trim();
+  const metaBits = [host, published, engine].filter(Boolean).join(' · ');
+  const thumb = escapeHtml(safeHttpUrl(item.thumbnail || '', ''));
+  return `
         <a class="results-card${thumb ? ' has-thumb' : ''}" href="${href}" target="_blank" rel="noopener">
           ${thumb ? `<div class="results-card-thumb"><img src="${thumb}" alt="" loading="lazy"></div>` : ''}
           <div class="results-card-body">
@@ -2107,9 +2631,50 @@ function buildResultsGeneralHtml(items) {
             ${snippet ? `<p class="results-snippet">${snippet}</p>` : ''}
           </div>
         </a>`;
-    })
-    .join('');
+}
+
+function buildResultsGeneralHtml(items) {
+  const list = (Array.isArray(items) ? items : []).map(buildResultsGeneralCardHtml).join('');
   return `<div class="results-list">${list}</div>`;
+}
+
+/** Если intent пришёл позже выдачи — докидываем карточку каталога первым результатом. */
+function ensurePromoResultsCard(intent) {
+  if (!intent || !canAttachPromoIntent()) return;
+  const form = document.getElementById('ai-search-form');
+  if (getSearchMode(form) !== 'results') return;
+  if (['images', 'videos', 'map', 'news'].includes(currentResultsCategory)) return;
+
+  const contentDiv = document.getElementById('ai-result-content');
+  if (!contentDiv) return;
+
+  const promoItem = buildPromoCatalogResultItem(intent);
+  if (!promoItem) return;
+
+  const isPromoHref = (href) =>
+    /promo-codes-and-discounts|promokody-skidki/i.test(String(href || ''));
+
+  let list = contentDiv.querySelector('.results-list');
+  if (list) {
+    const first = list.querySelector('.results-card');
+    if (first && isPromoHref(first.getAttribute('href'))) return;
+    list.querySelectorAll('.results-card').forEach((card) => {
+      if (isPromoHref(card.getAttribute('href'))) card.remove();
+    });
+    list.insertAdjacentHTML('afterbegin', buildResultsGeneralCardHtml(promoItem));
+    return;
+  }
+
+  // Пустая выдача: вместо/перед empty показываем хотя бы наш результат
+  const empty = contentDiv.querySelector('.results-empty');
+  if (empty) empty.remove();
+  const cardWrap = `<div class="results-list">${buildResultsGeneralCardHtml(promoItem)}</div>`;
+  const promoStrip = contentDiv.querySelector('.promo-intent-card');
+  if (promoStrip) {
+    promoStrip.insertAdjacentHTML('beforebegin', cardWrap);
+  } else {
+    contentDiv.insertAdjacentHTML('beforeend', cardWrap);
+  }
 }
 
 function hideAutocomplete() {
@@ -2252,12 +2817,26 @@ function renderResultsMode({
   hideMediaResults('videos');
   setActiveResultsTab(category || 'general');
 
+  const query = getActiveSearchQuery();
+  const promoIntent = peekPromoIntent(query);
+  const promoHtml = promoIntent ? renderPromoIntentCard(promoIntent) : '';
+  if (!promoIntent) {
+    maybeShowPromoIntent(query);
+  }
+
   if (error) {
-    contentDiv.innerHTML = `<div class="results-error">${escapeHtml(error)}</div>`;
+    contentDiv.innerHTML = `<div class="results-error">${escapeHtml(error)}</div>${promoHtml}`;
+    bindPromoIntentCardActions(contentDiv);
     return;
   }
 
-  const items = Array.isArray(results) ? results : [];
+  const rawItems = Array.isArray(results) ? results : [];
+  // В general (и при пустой выдаче) — тот же первый результат, что и источник ИИ
+  const usePromoFirstResult =
+    category !== 'images' && category !== 'videos' && category !== 'map' && category !== 'news';
+  const items = usePromoFirstResult
+    ? withPromoResultFirst(rawItems, query, messages)
+    : rawItems;
   const extrasHtml = buildResultsExtrasHtml({
     answers,
     suggestions,
@@ -2266,15 +2845,16 @@ function renderResultsMode({
     messages
   });
 
-  if (!items.length) {
+  if (!rawItems.length && !(usePromoFirstResult && items.length)) {
     const empty =
       emptyText ||
       messages.resultsEmpty ||
       document.getElementById('ai-search-form')?.dataset.emptyResults ||
       'Nothing found.';
     contentDiv.innerHTML = extrasHtml
-      ? `${extrasHtml}<div class="results-empty">${escapeHtml(empty)}</div>`
-      : `<div class="results-empty">${escapeHtml(empty)}</div>`;
+      ? `${extrasHtml}<div class="results-empty">${escapeHtml(empty)}</div>${promoHtml}`
+      : `<div class="results-empty">${escapeHtml(empty)}</div>${promoHtml}`;
+    bindPromoIntentCardActions(contentDiv);
     return;
   }
 
@@ -2304,7 +2884,8 @@ function renderResultsMode({
     messages
   });
 
-  contentDiv.innerHTML = `${topExtras}${mainHtml}${bottomExtras}`;
+  contentDiv.innerHTML = `${topExtras}${mainHtml}${promoHtml}${bottomExtras}`;
+  bindPromoIntentCardActions(contentDiv);
   bindResultsThumbFallbacks(contentDiv);
 }
 
@@ -2388,7 +2969,11 @@ async function runResultsSearch(query, category = currentResultsCategory) {
 // ======================================================================================================================
 // ИНИЦИАЛИЗАЦИЯ СТРАНИЦЫ
 // ======================================================================================================================
+let __spnPageInitialized = false;
+
 async function initPage() {
+  if (__spnPageInitialized) return;
+  __spnPageInitialized = true;
   await loadMessages();
 
   // Больше НЕ падаем если #news-container нет — он опционален
@@ -2538,6 +3123,7 @@ async function initPage() {
 
       isSubmitting = true;
       setSubmitLoading(true);
+      prefetchPromoIntent(query);
 
       if (getSearchMode(searchForm) === 'results') {
         try {

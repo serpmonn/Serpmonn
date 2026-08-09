@@ -1302,3 +1302,204 @@ body:has(.search-form.is-results-mode) #ai-video-results,
   font-size: 0.92rem;
   -webkit-line-clamp: 2;
 }
+
+/* Promo intent — коды в строку без чипов */
+.promo-intent-card {
+  margin: 10px 0 0;
+  padding: 8px 0 2px;
+  border: 0;
+  border-top: 1px solid #e5e7eb;
+  background: transparent;
+  text-align: left;
+}
+
+.promo-intent-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px 6px;
+}
+
+.promo-intent-label {
+  flex: 0 0 auto;
+  color: #0f172a;
+  font-size: 0.88rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.promo-intent-empty {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: #64748b;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.promo-intent-codes {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 2px 10px;
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.promo-intent-chip {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 2px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.promo-intent-chip:hover .promo-intent-code {
+  text-decoration: underline;
+}
+
+.promo-intent-code {
+  display: inline !important;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: #991b1b;
+  font-size: 0.84rem;
+  font-weight: 700;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  letter-spacing: 0.01em;
+  white-space: nowrap;
+}
+
+.promo-intent-more {
+  color: #64748b;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.promo-intent-more:hover {
+  color: #b91c1c;
+  text-decoration: underline;
+}
+
+.promo-intent-copy,
+.promo-intent-copy:hover,
+.promo-intent-copy:focus,
+.promo-intent-copy:active {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 18px;
+  height: 18px;
+  min-width: 18px;
+  min-height: 18px;
+  max-width: 18px;
+  max-height: 18px;
+  margin: 0;
+  padding: 0;
+  color: #94a3b8;
+  background: transparent;
+  background-color: transparent;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: none;
+  line-height: 1;
+  font-size: 0;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  transform: none;
+}
+
+.promo-intent-copy:hover,
+.promo-intent-copy:focus {
+  color: #b91c1c;
+  background: transparent;
+  background-color: transparent;
+}
+
+.promo-intent-copy.is-copied,
+.promo-intent-copy.is-copied:hover {
+  color: #16a34a;
+  background: transparent;
+  background-color: transparent;
+}
+
+.promo-intent-copy-icon {
+  display: block;
+}
+
+@media (max-width: 640px) {
+  .promo-intent-card {
+    margin-top: 8px;
+    padding: 6px 0 1px;
+  }
+
+  .promo-intent-row {
+    flex-wrap: nowrap;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .promo-intent-label {
+    font-size: 0.74rem;
+    line-height: 1.2;
+    max-width: 38%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .promo-intent-codes {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    overflow-y: hidden;
+    gap: 2px 8px;
+    padding-bottom: 2px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    overscroll-behavior-x: contain;
+  }
+
+  .promo-intent-codes::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .promo-intent-codes::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+  }
+
+  .promo-intent-code {
+    font-size: 0.74rem;
+  }
+
+  .promo-intent-more {
+    font-size: 0.7rem;
+  }
+
+  .promo-intent-copy,
+  .promo-intent-copy:hover,
+  .promo-intent-copy:focus,
+  .promo-intent-copy:active {
+    width: 16px;
+    height: 16px;
+    min-width: 16px;
+    min-height: 16px;
+    max-width: 16px;
+    max-height: 16px;
+  }
+
+  .promo-intent-copy-icon {
+    width: 11px;
+    height: 11px;
+  }
+}
