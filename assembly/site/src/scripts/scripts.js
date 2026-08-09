@@ -137,6 +137,16 @@ function getQueryFromUrl() {
 const PROMO_INTENT_RE =
   /промо\s*код(?:ы|а|ов)?|промокод(?:ы|а|ов)?|промик(?:и|а|ов)?|промо[\s\-]?акци(?:я|и|ю|ей)|купон(?:ы|а|ов)?|скидк(?:а|и|у|ой|е)(?:\s+на)?|код(?:ы)?\s+(?:на\s+)?скидк(?:у|и|а)|бонусн(?:ый|ые|ого|ых)\s+код(?:ы|а|ов)?|ваучер(?:ы|а|ов)?|к[еэ]шб[еэ]к(?:и|а|ов)?|promo\s*codes?|\bpromos?\b|coupons?|vouchers?|cashbacks?|bonus\s+codes?|\bdiscount\b/i;
 
+/** Эвристика 18+-запроса: блюр превью картинок/видео до явного «Показать». */
+const ADULT_QUERY_RE =
+  /(?:^|[^a-zа-яё0-9])(?:18\+|nsfw|xxx|porn|porno|pornography|hentai|onlyfans|xvideos|pornhub|xnxx|xhamster|brazzers|redtube|youporn|stripchat|chaturbate|camsoda|nude|nudes|naked|erotic|erotica|adult\s*video|sex\s*tape|milf|anal|blowjob|handjob|cumshot|lesbian\s*sex|gay\s*porn)(?:[^a-zа-яё0-9]|$)|(?:^|[^a-zа-яё0-9])(?:порн(?:о|уха|ухи)?|эроти(?:ка|к|ческий|ческие)?|хентай|онлифанс|интим(?:ные|ный|а)?|секс(?:уальн(?:ый|ая|ое|ые))?|голы(?:е|й|ая|х)|стриптиз|эскорт|милф|фетиш|бдсм|bdsm)(?:[^a-zа-яё0-9]|$)/i;
+
+function isAdultQuery(query) {
+  const q = String(query || '').trim();
+  if (q.length < 3) return false;
+  return ADULT_QUERY_RE.test(q);
+}
+
 const PROMO_BRAND_STOP = new Set([
   'что',
   'как',
@@ -2022,15 +2032,19 @@ function showImageResults(data) {
     })
     .join('');
 
+  const gridHtml = `<div class="ai-image-grid">${itemsHtml}</div>`;
+  const bodyHtml = isAdultQuery(getActiveSearchQuery())
+    ? wrapMediaNsfwHtml(gridHtml)
+    : gridHtml;
+
   container.innerHTML = `
     <div class="ai-image-header">
       <span>${t.imagesHeader}</span>
     </div>
-    <div class="ai-image-grid">
-      ${itemsHtml}
-    </div>
+    ${bodyHtml}
   `;
   container.style.display = 'block';
+  bindMediaNsfwReveal(container);
 }
 
 function showVideoResults(data) {
@@ -2078,15 +2092,19 @@ function showVideoResults(data) {
     })
     .join('');
 
+  const gridHtml = `<div class="ai-video-grid">${itemsHtml}</div>`;
+  const bodyHtml = isAdultQuery(getActiveSearchQuery())
+    ? wrapMediaNsfwHtml(gridHtml)
+    : gridHtml;
+
   container.innerHTML = `
     <div class="ai-video-header">
       <span>${t.videosHeader}</span>
     </div>
-    <div class="ai-video-grid">
-      ${itemsHtml}
-    </div>
+    ${bodyHtml}
   `;
   container.style.display = 'block';
+  bindMediaNsfwReveal(container);
 }
 
 function showShareToast(message) {
@@ -2435,17 +2453,13 @@ function buildResultsExtrasHtml({
       .map((item) => {
         const answer = escapeHtml(item.answer || '');
         const href = safeHttpUrl(item.url || '', '');
-        const engine = escapeHtml(item.engine || '');
         const link = href
           ? `<a class="results-answer-link" href="${escapeHtml(href)}" target="_blank" rel="noopener">${escapeHtml(messages.resultsAnswerSource || 'Source')}</a>`
           : '';
         return `
           <div class="results-answer">
             <div class="results-answer-text">${answer}</div>
-            <div class="results-answer-meta">
-              ${engine ? `<span>${engine}</span>` : ''}
-              ${link}
-            </div>
+            ${link ? `<div class="results-answer-meta">${link}</div>` : ''}
           </div>`;
       })
       .join('');
@@ -2506,6 +2520,34 @@ function buildResultsExtrasHtml({
   return parts.join('');
 }
 
+function wrapMediaNsfwHtml(innerHtml, messages = getMessages()) {
+  if (!innerHtml) return '';
+  const badge = messages.mediaNsfwBadge || '18+';
+  return `<div class="media-nsfw is-blurred" data-nsfw-blur>
+    <span class="media-nsfw-badge" aria-hidden="true">${escapeHtml(badge)}</span>
+    <div class="media-nsfw-content">${innerHtml}</div>
+  </div>`;
+}
+
+function bindMediaNsfwReveal(root = document) {
+  const scope = root?.querySelectorAll ? root : document;
+  scope.querySelectorAll('[data-nsfw-blur].is-blurred').forEach((wrap) => {
+    if (wrap.dataset.nsfwBound === '1') return;
+    wrap.dataset.nsfwBound = '1';
+    wrap.addEventListener(
+      'click',
+      (e) => {
+        if (!wrap.classList.contains('is-blurred')) return;
+        e.preventDefault();
+        e.stopPropagation();
+        wrap.classList.remove('is-blurred');
+        wrap.querySelector('.media-nsfw-badge')?.remove();
+      },
+      true
+    );
+  });
+}
+
 function buildOsmEmbedUrl(lat, lon) {
   const latitude = Number(lat);
   const longitude = Number(lon);
@@ -2527,9 +2569,8 @@ function buildResultsMediaGridHtml(items, { showDuration = false, videoLayout = 
       const href = escapeHtml(safeHttpUrl(item.url || item.imageUrl || '#', '#'));
       const thumb = escapeHtml(safeHttpUrl(item.thumbnail || item.imageUrl || '', ''));
       const host = escapeHtml(item.hostname || getSourceHostname(item.url || ''));
-      const engine = escapeHtml(item.engine || '');
       const duration = escapeHtml(item.duration || '');
-      const sourceBits = [host, engine].filter(Boolean).join(' · ');
+      const sourceBits = host;
       const durationBadge =
         showDuration && duration
           ? `<span class="results-media-duration">${duration}</span>`
@@ -2549,7 +2590,8 @@ function buildResultsMediaGridHtml(items, { showDuration = false, videoLayout = 
         </a>`;
     })
     .join('');
-  return `<div class="results-media-grid${videoLayout ? ' is-video-grid' : ''}">${cards}</div>`;
+  const grid = `<div class="results-media-grid${videoLayout ? ' is-video-grid' : ''}">${cards}</div>`;
+  return isAdultQuery(getActiveSearchQuery()) ? wrapMediaNsfwHtml(grid) : grid;
 }
 
 function buildResultsMapHtml(items) {
@@ -2616,8 +2658,7 @@ function buildResultsGeneralCardHtml(item) {
   const favicon = escapeHtml(getSourceFaviconForResults(host));
   const snippet = escapeHtml(item.content || '');
   const published = formatResultsPublishedDate(item.publishedDate || '');
-  const engine = String(item.engine || '').trim();
-  const metaBits = [host, published, engine].filter(Boolean).join(' · ');
+  const metaBits = [host, published].filter(Boolean).join(' · ');
   const thumb = escapeHtml(safeHttpUrl(item.thumbnail || '', ''));
   return `
         <a class="results-card${thumb ? ' has-thumb' : ''}" href="${href}" target="_blank" rel="noopener">
@@ -2886,6 +2927,7 @@ function renderResultsMode({
 
   contentDiv.innerHTML = `${topExtras}${mainHtml}${promoHtml}${bottomExtras}`;
   bindPromoIntentCardActions(contentDiv);
+  bindMediaNsfwReveal(contentDiv);
   bindResultsThumbFallbacks(contentDiv);
 }
 

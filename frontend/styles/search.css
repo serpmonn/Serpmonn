@@ -1503,3 +1503,48 @@ body:has(.search-form.is-results-mode) #ai-video-results,
     height: 11px;
   }
 }
+
+/* NSFW blur for image/video grids (query heuristic) */
+.media-nsfw {
+  position: relative;
+}
+
+.media-nsfw-badge {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 2;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: rgba(15, 23, 42, 0.72);
+  color: #fff;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+  pointer-events: none;
+}
+
+.media-nsfw:not(.is-blurred) .media-nsfw-badge {
+  display: none;
+}
+
+.media-nsfw.is-blurred .media-nsfw-content {
+  position: relative;
+  cursor: pointer;
+}
+
+.media-nsfw.is-blurred .ai-image-thumb img,
+.media-nsfw.is-blurred .ai-video-thumb img,
+.media-nsfw.is-blurred .results-media-thumb img {
+  filter: blur(18px);
+  transform: scale(1.06);
+  transition: filter 0.2s ease, transform 0.2s ease;
+}
+
+.media-nsfw:not(.is-blurred) .ai-image-thumb img,
+.media-nsfw:not(.is-blurred) .ai-video-thumb img,
+.media-nsfw:not(.is-blurred) .results-media-thumb img {
+  filter: none;
+  transform: none;
+}
