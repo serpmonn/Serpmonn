@@ -60,9 +60,9 @@ eleventyComputed:
   {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    "name": "{{ localesNews[locale].news.heroTitle }}",  <!-- ИСПРАВЛЕНО: lang → locale -->
-    "description": "{{ localesNews[locale].news.metaDescription }}",  <!-- ИСПРАВЛЕНО: lang → locale -->
-    "inLanguage": "{{ locale }}",  <!-- ИСПРАВЛЕНО: lang → locale -->
+    "name": "{{ localesNews[locale].news.heroTitle }}",
+    "description": "{{ localesNews[locale].news.metaDescription }}",
+    "inLanguage": "{{ locale }}",
     "publisher": {
       "@type": "Organization",
       "name": "{% if locale == 'ru' %}Серпмонн{% else %}Serpmonn{% endif %}",
@@ -71,7 +71,7 @@ eleventyComputed:
     "mainEntity": {
       "@type": "ItemList",
       "itemListElement": [
-        {% for article in localesNews[locale].news.articles %}  <!-- ИСПРАВЛЕНО: lang → locale -->
+        {% for article in localesNews[locale].news.articles %}
         {
           "@type": "ListItem",
           "position": {{ loop.index }},
@@ -80,8 +80,8 @@ eleventyComputed:
             "headline": "{{ article.title }}",
             "description": "{{ article.excerpt }}",
             "datePublished": "{{ article.date }}",
-            "inLanguage": "{{ locale }}",  <!-- ИСПРАВЛЕНО: lang → locale -->
-            "url": "{% if locale == 'ru' %}{{ site.baseUrl }}{{ article.link }}{% else %}{{ site.baseUrl }}/{{ locale }}{{ article.link }}{% endif %}"  <!-- ИСПРАВЛЕНО: lang → locale -->
+            "inLanguage": "{{ locale }}",
+            "url": "{% if locale == 'ru' %}{{ site.baseUrl }}{{ article.link }}{% else %}{{ site.baseUrl }}/{{ locale }}{{ article.link }}{% endif %}"
           }
         }{% if not loop.last %},{% endif %}
         {% endfor %}
