@@ -5,11 +5,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Serpmonn Messenger — децентрализованный мессенджер</title>
 <meta name="description" content="Serpmonn Messenger — децентрализованный P2P-мессенджер с end-to-end шифрованием для Android. Никто не имеет доступа к вашим сообщениям. Пре-альфа.">
+<link rel="canonical" href="https://serpmonn.ru/frontend/messenger.html">
+<link rel="alternate" hreflang="ru" href="https://serpmonn.ru/frontend/messenger.html">
+<link rel="alternate" hreflang="en" href="https://serpmonn.ru/frontend/en/messenger.html">
+<link rel="alternate" hreflang="x-default" href="https://serpmonn.ru/frontend/messenger.html">
 <meta property="og:title" content="Serpmonn Messenger — пре-альфа">
 <meta property="og:description" content="Децентрализованный P2P-мессенджер с E2E-шифрованием. Никто не имеет доступа к переписке.">
 <meta property="og:image" content="https://serpmonn.ru/apple-touch-icon.png">
+<meta property="og:url" content="https://serpmonn.ru/frontend/messenger.html">
 <link rel="icon" href="/favicon.ico">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/frontend/styles/menu.css?v=messenger1">
+<link rel="stylesheet" href="/frontend/styles/accessibility.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@300..700&display=swap" rel="stylesheet">
@@ -97,7 +104,7 @@ nav{
 }
 .nav-inner{
   max-width:var(--content-default);margin:0 auto;
-  padding:0 var(--space-6);display:flex;align-items:center;justify-content:space-between;
+  padding:0 5.5rem 0 var(--space-6);display:flex;align-items:center;justify-content:space-between;
 }
 .nav-logo{
   display:flex;align-items:center;gap:var(--space-3);
@@ -108,10 +115,6 @@ nav{
   background:linear-gradient(90deg,var(--color-primary) 0%,#ff8080 100%);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
 }
-.nav-back{
-  font-size:var(--text-xs);color:var(--color-text-muted);display:flex;align-items:center;gap:var(--space-2);
-}
-.nav-back:hover{color:var(--color-text);}
 .nav-right{display:flex;align-items:center;gap:var(--space-4);}
 .theme-toggle{
   width:36px;height:36px;border-radius:var(--radius-full);
@@ -364,10 +367,6 @@ footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
       <span>Serpmonn Messenger</span>
     </a>
     <div class="nav-right">
-      <a href="/" class="nav-back">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
-        serpmonn.ru
-      </a>
       <button class="theme-toggle" data-theme-toggle aria-label="Сменить тему">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
       </button>
@@ -570,5 +569,6 @@ footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
   if(t)t.addEventListener('click',function(){d=d==='dark'?'light':'dark';r.setAttribute('data-theme',d);si(d);});
 })();
 </script>
+<script type="module" src="/frontend/scripts/menu-loader.js"></script>
 </body>
 </html>
