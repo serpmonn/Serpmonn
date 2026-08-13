@@ -1125,32 +1125,32 @@ function fixPromo() {
   if (!pack) return;
   const map = {
     'pt-br': {
-      title: 'Cupons e Descontos 2026 no Brasil | Serpmonn.ru',
+      title: 'Cupons e Descontos 2026 no Brasil | Serpmonn',
       description:
         'Cupons e descontos atuais 2026 de parceiros Serpmonn no Brasil: jogos, gadgets, serviços e mais.',
     },
     'pt-pt': {
-      title: 'Códigos Promocionais e Descontos 2026 em Portugal | Serpmonn.ru',
+      title: 'Códigos Promocionais e Descontos 2026 em Portugal | Serpmonn',
       description:
         'Códigos promocionais e descontos atuais 2026 de parceiros Serpmonn em Portugal: jogos, gadgets, serviços e mais.',
     },
     es: {
-      title: 'Códigos promocionales y descuentos 2026 en España | Serpmonn.ru',
+      title: 'Códigos promocionales y descuentos 2026 en España | Serpmonn',
       description:
         'Códigos promocionales y descuentos actuales 2026 de socios Serpmonn en España: juegos, gadgets, servicios y más.',
     },
     'es-419': {
-      title: 'Cupones y descuentos 2026 en Latinoamérica | Serpmonn.ru',
+      title: 'Cupones y descuentos 2026 en Latinoamérica | Serpmonn',
       description:
         'Cupones y descuentos actuales 2026 de socios Serpmonn en Latinoamérica: juegos, gadgets, servicios y más.',
     },
     da: {
-      title: 'Rabatkoder og tilbud 2026 i Danmark | Serpmonn.ru',
+      title: 'Rabatkoder og tilbud 2026 i Danmark | Serpmonn',
       description:
         'Aktuelle rabatkoder og tilbud 2026 fra Serpmonn-partnere i Danmark: spil, gadgets, tjenester og mere.',
     },
     nb: {
-      title: 'Kampanjekoder og rabatter 2026 i Norge | Serpmonn.ru',
+      title: 'Kampanjekoder og rabatter 2026 i Norge | Serpmonn',
       description:
         'Aktuelle kampanjekoder og rabatter 2026 fra Serpmonn-partnere i Norge: spill, gadgets, tjenester og mer.',
     },

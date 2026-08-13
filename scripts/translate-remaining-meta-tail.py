@@ -342,10 +342,10 @@ def uniquify_pairs():
     path = DATA / 'adInfo.json'
     data = json.loads(path.read_text(encoding='utf-8'))
     AD = {
-        'pt-br': ('Sobre publicidade | Serpmonn.ru', 'Informações sobre anúncios e programas de parceiros no site serpmonn.ru'),
-        'pt-pt': ('Acerca de publicidade | Serpmonn.ru', 'Informação sobre anúncios e programas de parceiros no site serpmonn.ru'),
-        'es': ('Sobre la publicidad | Serpmonn.ru', 'Información sobre anuncios y programas de socios en serpmonn.ru'),
-        'es-419': ('Acerca de la publicidad | Serpmonn.ru', 'Información sobre anuncios y programas de socios en el sitio serpmonn.ru'),
+        'pt-br': ('Sobre publicidade | Serpmonn', 'Informações sobre anúncios e programas de parceiros no site serpmonn.ru'),
+        'pt-pt': ('Acerca de publicidade | Serpmonn', 'Informação sobre anúncios e programas de parceiros no site serpmonn.ru'),
+        'es': ('Sobre la publicidad | Serpmonn', 'Información sobre anuncios y programas de socios en serpmonn.ru'),
+        'es-419': ('Acerca de la publicidad | Serpmonn', 'Información sobre anuncios y programas de socios en el sitio serpmonn.ru'),
     }
     for loc, (title, desc) in AD.items():
         if loc not in data or 'adInfo' not in data[loc]:
