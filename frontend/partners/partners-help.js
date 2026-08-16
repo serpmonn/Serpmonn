@@ -17,7 +17,7 @@
 
   function idFromHash() {
     const h = (location.hash || '#advertiser').replace(/^#/, '');
-    return ['advertiser', 'publisher', 'tracking', 'moderation'].includes(h) ? h : 'advertiser';
+    return ['intro', 'advertiser', 'publisher', 'tracking', 'moderation'].includes(h) ? h : 'intro';
   }
 
   setActive(idFromHash());
