@@ -463,13 +463,32 @@ router.all('/postback', async (req, res) => {
   try {
     await ensurePartnerTables();
     const src = { ...req.query, ...req.body };
-    const clickId = String(src.click_id || src.clickId || '').trim();
+    const clickId = String(
+      src.click_id || src.clickId || src.subid || src.sub_id || ''
+    ).trim();
     if (!clickId) return res.status(400).json({ message: 'click_id required' });
     const click = await findClickByClickId(clickId);
-    if (!click) return res.status(404).json({ message: 'click not found' });
+    // 200 — чтобы Admitad «Протестировать» и ретраи сетей не считали URL мёртвым
+    if (!click) return res.json({ ok: false, message: 'click not found', click_id: clickId });
     const amount = src.amount != null && src.amount !== '' ? Number(src.amount) : null;
     const currency = String(src.currency || 'RUB').slice(0, 8);
-    const status = String(src.status || 'confirmed').slice(0, 32).toLowerCase();
+    // Admitad: payment_status = pending|approved|declined|...
+    const rawStatus = String(
+      src.status || src.payment_status || src.paymentStatus || 'confirmed'
+    )
+      .slice(0, 32)
+      .toLowerCase();
+    const ADMITAD_OK = new Set(['confirmed', 'approved', 'paid', 'оплачено', 'подтверждено']);
+    const ADMITAD_HOLD = new Set(['pending', 'new', 'created', 'ожидает', 'создано']);
+    const ADMITAD_BAD = new Set(['declined', 'rejected', 'cancelled', 'canceled', 'отклонено']);
+    let status = rawStatus;
+    if (ADMITAD_OK.has(rawStatus)) status = 'confirmed';
+    else if (ADMITAD_BAD.has(rawStatus)) status = 'rejected';
+    else if (ADMITAD_HOLD.has(rawStatus)) {
+      // ещё не подтверждено — не начисляем паблишеру
+      return res.json({ ok: true, ignored: true, reason: 'not_confirmed', payment_status: rawStatus });
+    }
+    // rejected / declined / cancelled уже в REJECT_STATUSES
 
     if (REJECT_STATUSES.has(status)) {
       const active = await findActiveConversionByClickId(clickId);
@@ -501,13 +520,21 @@ router.all('/postback', async (req, res) => {
     });
 
     let settlement = null;
-    if (status === 'confirmed' && Number.isFinite(amount) && amount > 0) {
-      const offer = await findOfferById(click.offer_id);
+    const offer = await findOfferById(click.offer_id);
+    // Fixed publisher payout on offer (bootstrap / Admitad wraps) beats raw postback amount
+    const fixedPayout = offer?.payout_amount != null ? Number(offer.payout_amount) : null;
+    const publisherAmount =
+      Number.isFinite(fixedPayout) && fixedPayout > 0
+        ? fixedPayout
+        : Number.isFinite(amount) && amount > 0
+          ? amount
+          : null;
+    if (status === 'confirmed' && publisherAmount != null && publisherAmount > 0) {
       settlement = await settleConversion({
         conversionId: id,
         advertiserId: offer?.owner_id,
         publisherId: click.publisher_id,
-        publisherAmount: amount,
+        publisherAmount,
         currency,
         holdDays: offer?.hold_days
       });
