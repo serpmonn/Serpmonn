@@ -582,6 +582,7 @@ eleventyComputed:
           return;
         }
 
+        try { sessionStorage.setItem('serpmonn_pro_checkout', String(Date.now())); } catch (e) {}
         window.location.href = data.confirmationUrl;
       } catch (err) {
         console.error('buy pro error', err);
