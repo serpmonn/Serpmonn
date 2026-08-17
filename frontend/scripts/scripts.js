@@ -5,6 +5,7 @@ import { generateCombinedBackground } from './backgroundGenerator.js';
 import { initAdSlotObserver } from './ad-pool.js';
 import { initFindingsSave } from './findings-client.js';
 import { escapeHtml } from './finding-content-render.js';
+import { buildAuthUrl, getFrontendPath } from './locale-paths.js';
 import '/frontend/pwa/app.js';
 
 const SPN_ANON_COOKIE = 'spn_anon_id';
@@ -1888,6 +1889,103 @@ function handleAiSearchStreamEvent(event, state) {
 // ======================================================================================================================
 // ПОКАЗАТЬ РЕЗУЛЬТАТ ОТВЕТА ИИ
 // ======================================================================================================================
+function isQuotaError(data) {
+  if (!data?.error) return false;
+  if (data.needAuth === true || data.limit != null) return true;
+  const e = String(data.error);
+  return /лимит/i.test(e) || /limit/i.test(e);
+}
+
+function quotaCtaHtml(data, t) {
+  if (window.__SPN_VK_MINI__) return '';
+  const inAndroid =
+    Boolean(window.__SPN_ANDROID_APP__) ||
+    document.documentElement.classList.contains('android-app');
+  if (data.needAuth) {
+    const href = buildAuthUrl({ tab: 'login' });
+    return `<a class="quota-card__cta" href="${escapeHtml(href)}">${escapeHtml(t.limitCtaLogin || 'Войти')}</a>`;
+  }
+  if (inAndroid) return '';
+  const isProMonthly =
+    /pro/i.test(String(data.error)) || Number(data.limit) >= 2000;
+  if (isProMonthly) return '';
+  const href = getFrontendPath('tariffs/tariffs.html');
+  return `<a class="quota-card__cta" href="${escapeHtml(href)}">${escapeHtml(t.limitCtaPro || 'Оформить Pro')}</a>`;
+}
+
+function quotaKind(data) {
+  if (data.needAuth) return 'guest';
+  if (/pro/i.test(String(data.error)) || Number(data.limit) >= 2000) return 'pro';
+  return 'free';
+}
+
+function quotaMeter(data, explicit) {
+  if (explicit === 'web' || explicit === 'ai') return explicit;
+  const limit = Number(data.limit);
+  if (limit === 40 || limit === 120 || limit === 16000) return 'web';
+  if (limit === 5 || limit === 15 || limit === 2000) return 'ai';
+  return getSearchMode() === 'results' ? 'web' : 'ai';
+}
+
+function quotaKickerText(data, t, meter) {
+  if (quotaKind(data) === 'pro') {
+    return t.limitKickerProMonth || 'Pro · этот месяц';
+  }
+  if (meter === 'web') {
+    return t.limitKickerWebToday || 'Выдача · сегодня';
+  }
+  return t.limitKickerAiToday || 'ИИ · сегодня';
+}
+
+function quotaUsageHtml(data, t) {
+  const used = Number(data.used);
+  const limit = Number(data.limit);
+  if (!Number.isFinite(limit) || limit <= 0) return '';
+  const safeUsed = Number.isFinite(used) ? Math.max(0, used) : limit;
+  const remaining = Math.max(0, limit - safeUsed);
+  const fillPct = Math.min(100, Math.round((safeUsed / limit) * 100));
+  const ofLabel = String(t.limitOf || 'из {limit}').replaceAll('{limit}', String(limit));
+  const remainingClass =
+    remaining === 0 ? 'quota-card__remaining is-empty' : 'quota-card__remaining';
+  return `
+      <div class="quota-card__usage">
+        <div class="quota-card__count">
+          <span class="${remainingClass}">${escapeHtml(String(remaining))}</span>
+          <span class="quota-card__of">${escapeHtml(ofLabel)}</span>
+        </div>
+        <div class="quota-card__bar" role="progressbar" aria-valuemin="0" aria-valuemax="${limit}" aria-valuenow="${safeUsed}" aria-valuetext="${escapeHtml(String(remaining))} ${escapeHtml(ofLabel)}">
+          <div class="quota-card__bar-fill" style="width: ${fillPct}%"></div>
+        </div>
+      </div>`;
+}
+
+function quotaNoticeHtml(data, t, options = {}) {
+  const kind = quotaKind(data);
+  const meter = quotaMeter(data, options.meter);
+  const kicker = quotaKickerText(data, t, meter);
+  const title =
+    kind === 'guest'
+      ? t.limitTitleGuest
+      : kind === 'pro'
+        ? t.limitTitlePro
+        : t.limitTitleFree;
+  const text =
+    kind === 'guest'
+      ? t.limitTextGuest
+      : kind === 'pro'
+        ? t.limitTextPro
+        : t.limitTextFree;
+  return `
+    <div class="quota-card">
+      <div class="quota-card__kicker"><span class="quota-card__dot"></span>${escapeHtml(kicker)}</div>
+      <div class="quota-card__title">${escapeHtml(title || data.error)}</div>
+      <p class="quota-card__text">${escapeHtml(text || data.error)}</p>
+      ${quotaUsageHtml(data, t)}
+      ${quotaCtaHtml(data, t)}
+    </div>
+  `;
+}
+
 function showResult(data, options = {}) {
   if (
     data?.error &&
@@ -1922,13 +2020,13 @@ function showResult(data, options = {}) {
   const promoIntent = !data.error ? peekPromoIntent(query) : null;
 
   if (data.error) {
-    html = `
+    html = isQuotaError(data)
+      ? quotaNoticeHtml(data, t, { meter: 'ai' })
+      : `
       <div class="ai-error">
         <div class="error-icon">⚠️</div>
         <div class="error-message">${escapeHtml(data.error)}</div>
-        <button class="retry-btn">
-          ${escapeHtml(t.retry)}
-        </button>
+        <button class="retry-btn">${escapeHtml(t.retry)}</button>
       </div>
     `;
   } else {
@@ -2831,7 +2929,8 @@ function renderResultsMode({
   corrections,
   infoboxes,
   error,
-  emptyText
+  emptyText,
+  quota
 }) {
   const contentDiv = document.getElementById('ai-result-content');
   const container = document.getElementById('ai-result-container');
@@ -2863,6 +2962,11 @@ function renderResultsMode({
   const promoHtml = promoIntent ? renderPromoIntentCard(promoIntent) : '';
   if (!promoIntent) {
     maybeShowPromoIntent(query);
+  }
+
+  if (quota && isQuotaError(quota)) {
+    contentDiv.innerHTML = quotaNoticeHtml(quota, messages, { meter: 'web' });
+    return;
   }
 
   if (error) {
@@ -2983,6 +3087,19 @@ async function runResultsSearch(query, category = currentResultsCategory) {
   });
 
   if (!response.ok) {
+    if (data && isQuotaError(data)) {
+      renderResultsMode({
+        category,
+        results: [],
+        quota: {
+          error: data.error,
+          needAuth: data.needAuth === true,
+          limit: data.limit,
+          used: data.used
+        }
+      });
+      return;
+    }
     renderResultsMode({
       category,
       results: [],
