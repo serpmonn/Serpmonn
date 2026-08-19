@@ -62,9 +62,16 @@ const isVkMiniEmbed =
     document.body?.classList?.contains('vk-mini-embed') ||
     window.self !== window.top;
 
-const LEADERBOARD_URL = '/backend/games/redsquare2/leaderboard';
 const ADD_SCORE_URL = '/add-score';
 const BANNED_WORDS_URL = '/proxy/bannedWords';
+
+function scoreTableUrl() {
+    return window.i18n?.scoreTableUrl || '/frontend/games/redsquare2/score_table.html';
+}
+
+function openScoreTable(hash = 'redsquare2') {
+    window.location.href = `${scoreTableUrl()}#${hash}`;
+}
 
 const ensureAudio = () => {
     if (!soundEnabled) return null;
@@ -336,93 +343,7 @@ const restartSpawnTimer = () => {
     gameInterval = setInterval(createObject, spawnIntervalMs());
 };
 
-const ensureLeaderboardOverlay = () => {
-    let overlay = document.getElementById('vkMiniLeaderboardOverlay');
-    if (overlay) return overlay;
-
-    overlay = document.createElement('div');
-    overlay.id = 'vkMiniLeaderboardOverlay';
-    overlay.className = 'vk-mini-lb-overlay';
-    overlay.hidden = true;
-    overlay.innerHTML = `
-      <div class="vk-mini-lb-panel" role="dialog" aria-modal="true" aria-labelledby="vkMiniLbTitle">
-        <h2 id="vkMiniLbTitle">${t('lbTitle') || 'Таблица лидеров'}</h2>
-        <p class="vk-mini-lb-score" id="vkMiniLbYourScore" hidden></p>
-        <ol class="vk-mini-lb-list" id="vkMiniLbList"></ol>
-        <p class="vk-mini-lb-empty" id="vkMiniLbEmpty" hidden>${t('lbEmpty') || 'Пока нет результатов'}</p>
-        <div class="vk-mini-lb-actions">
-          <button type="button" id="vkMiniLbClose">${t('lbClose') || 'Закрыть'}</button>
-          <button type="button" id="vkMiniLbRestart">${t('lbRestart') || 'Играть снова'}</button>
-        </div>
-      </div>
-    `;
-    document.body.appendChild(overlay);
-
-    overlay.addEventListener('click', (e) => {
-        if (e.target === overlay) hideLeaderboardOverlay();
-    });
-    overlay.querySelector('#vkMiniLbClose').addEventListener('click', hideLeaderboardOverlay);
-    overlay.querySelector('#vkMiniLbRestart').addEventListener('click', () => {
-        hideLeaderboardOverlay();
-        restartGame();
-    });
-    return overlay;
-};
-
-const hideLeaderboardOverlay = () => {
-    const overlay = document.getElementById('vkMiniLeaderboardOverlay');
-    if (overlay) overlay.hidden = true;
-};
-
-const showLeaderboardOverlay = ({ yourScore = null } = {}) => {
-    const overlay = ensureLeaderboardOverlay();
-    const list = overlay.querySelector('#vkMiniLbList');
-    const empty = overlay.querySelector('#vkMiniLbEmpty');
-    const yourEl = overlay.querySelector('#vkMiniLbYourScore');
-    const restartEl = overlay.querySelector('#vkMiniLbRestart');
-    list.replaceChildren();
-    empty.hidden = true;
-    empty.textContent = t('lbEmpty') || 'Пока нет результатов';
-
-    if (yourScore != null) {
-        yourEl.hidden = false;
-        yourEl.textContent = `${t('lbYourScore') || 'Ваш результат:'} ${yourScore}`;
-    } else {
-        yourEl.hidden = true;
-        yourEl.textContent = '';
-    }
-
-    // До старта игры «Играть снова» не показываем — только закрытие
-    if (restartEl) {
-        restartEl.hidden = !player.nickname;
-    }
-
-    overlay.hidden = false;
-    list.textContent = '…';
-
-    fetch(LEADERBOARD_URL)
-        .then((r) => r.json())
-        .then((data) => {
-            list.replaceChildren();
-            const rows = Array.isArray(data) ? data : [];
-            if (!rows.length) {
-                empty.hidden = false;
-                return;
-            }
-            rows.forEach((entry, i) => {
-                const li = document.createElement('li');
-                li.textContent = `${i + 1}. ${entry.nickname ?? '—'}: ${entry.score ?? 0}`;
-                list.appendChild(li);
-            });
-        })
-        .catch(() => {
-            list.replaceChildren();
-            empty.hidden = false;
-            empty.textContent = t('lbLoadFail') || 'Не удалось загрузить таблицу';
-        });
-};
-
-const showResultModal = (finalScore, onOk) => {
+const showResultModal = (finalScore) => {
     const existing = document.querySelector('.rs2-modal');
     if (existing) existing.remove();
     const modal = document.createElement('div');
@@ -431,13 +352,20 @@ const showResultModal = (finalScore, onOk) => {
       <div class="rs2-modal-content">
         <h2>${t('gameOverTitle') || 'Игра окончена'}</h2>
         <p>${t('modalYourScore') || 'Твои очки:'} ${finalScore}</p>
-        <button type="button" id="rs2OkBtn">${t('modalOk') || 'Окей'}</button>
+        <div class="rs2-modal-actions">
+          <button type="button" id="rs2LbBtn">${t('lbTitle') || 'Таблица лидеров'}</button>
+          <button type="button" id="rs2RestartBtn">${t('lbRestart') || 'Играть снова'}</button>
+        </div>
       </div>
     `;
     document.body.appendChild(modal);
-    modal.querySelector('#rs2OkBtn').addEventListener('click', () => {
+    modal.querySelector('#rs2LbBtn').addEventListener('click', () => {
         modal.remove();
-        onOk();
+        openScoreTable('redsquare2');
+    });
+    modal.querySelector('#rs2RestartBtn').addEventListener('click', () => {
+        modal.remove();
+        restartGame();
     });
 };
 
@@ -452,9 +380,8 @@ function endGame() {
     pauseBtn.hidden = true;
 
     const afterSubmit = () => {
-        showLeaderboardOverlay({ yourScore: finalScore });
+        showResultModal(finalScore);
         if (!isVkMiniEmbed) {
-            // Реклама после просмотра результата — без ухода со страницы
             setTimeout(() => showGameFullscreenAd(), 400);
         }
     };
@@ -587,7 +514,7 @@ if (instructionOverlay) {
 }
 
 leaderboardBtn.addEventListener('click', () => {
-    showLeaderboardOverlay();
+    openScoreTable('redsquare2');
 });
 
 homeBtn.addEventListener('click', () => {
@@ -608,7 +535,6 @@ pauseBtn.addEventListener('click', () => {
 });
 
 restartBtn.addEventListener('click', () => {
-    hideLeaderboardOverlay();
     restartGame();
 });
 

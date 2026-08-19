@@ -3,6 +3,11 @@ import { query } from '../database/config.mjs';
 let tablesReady = false;
 
 const MAX_SCORES_PER_GAME = 5000;
+const TIME_ASC_GAMES = new Set(['neli']);
+
+function leaderboardOrderClause(gid) {
+  return TIME_ASC_GAMES.has(gid) ? 'score ASC, id ASC' : 'score DESC, id DESC';
+}
 
 export function normalizeGameId(raw) {
   const base = String(raw || 'global')
@@ -40,11 +45,14 @@ export async function addLeaderboardScore({ nickname, score, gameId }) {
   const safeScore = Number.isFinite(Number(score))
     ? Math.max(0, Math.floor(Number(score)))
     : 0;
+  const cappedScore = TIME_ASC_GAMES.has(gid)
+    ? Math.min(Math.max(1, safeScore || 1), 86400)
+    : safeScore;
 
   await query(
     `INSERT INTO game_leaderboard_scores (game_id, nickname, score)
      VALUES (?, ?, ?)`,
-    [gid, safeNickname, safeScore]
+    [gid, safeNickname, cappedScore]
   );
 
   const rows = await query(
@@ -54,6 +62,7 @@ export async function addLeaderboardScore({ nickname, score, gameId }) {
   const cnt = Number(rows[0]?.cnt ?? 0);
 
   if (cnt > MAX_SCORES_PER_GAME) {
+    const order = leaderboardOrderClause(gid);
     await query(
       `DELETE FROM game_leaderboard_scores
        WHERE game_id = ?
@@ -61,7 +70,7 @@ export async function addLeaderboardScore({ nickname, score, gameId }) {
            SELECT id FROM (
              SELECT id FROM game_leaderboard_scores
              WHERE game_id = ?
-             ORDER BY score DESC, id DESC
+             ORDER BY ${order}
              LIMIT ${MAX_SCORES_PER_GAME}
            ) keep_ids
          )`,
@@ -69,7 +78,7 @@ export async function addLeaderboardScore({ nickname, score, gameId }) {
     );
   }
 
-  return { gameId: gid, nickname: safeNickname, score: safeScore };
+  return { gameId: gid, nickname: safeNickname, score: cappedScore };
 }
 
 export async function getLeaderboardPage({ gameId, page = 1, limit = 20 } = {}) {
@@ -80,11 +89,12 @@ export async function getLeaderboardPage({ gameId, page = 1, limit = 20 } = {}) 
   const safeLimit = Math.min(100, Math.max(1, parseInt(limit, 10) || 20));
   const offset = (safePage - 1) * safeLimit;
 
+  const order = leaderboardOrderClause(gid);
   const rows = await query(
     `SELECT nickname, score
      FROM game_leaderboard_scores
      WHERE game_id = ?
-     ORDER BY score DESC, id DESC
+     ORDER BY ${order}
      LIMIT ${safeLimit} OFFSET ${offset}`,
     [gid]
   );

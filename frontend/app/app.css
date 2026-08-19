@@ -146,8 +146,9 @@ html, body {
   border: 0;
   background: transparent;
   color: var(--spn-muted);
-  width: 36px;
-  height: 36px;
+  /* Яндекс мобильная рекомендация: кликабельные области не меньше */
+  width: 44px;
+  height: 44px;
   border-radius: 10px;
   display: inline-flex;
   align-items: center;
@@ -577,8 +578,9 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   position: absolute;
   top: 10px;
   right: 10px;
-  width: 36px;
-  height: 36px;
+  /* Яндекс мобильная рекомендация: размер тач-цели */
+  width: 44px;
+  height: 44px;
   border: none;
   border-radius: 10px;
   background: transparent;
@@ -727,6 +729,11 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   padding: 6px 2px;
   cursor: pointer;
   white-space: normal;
+}
+
+@media (max-width: 420px) {
+  /* На мобильных табы читаются хуже из‑за 0.62rem — поднимаем */
+  .spn-tab { font-size: 0.78rem; }
 }
 .spn-tab.is-active { color: var(--spn-accent); }
 

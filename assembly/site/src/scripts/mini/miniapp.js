@@ -302,19 +302,20 @@
     // Рекламные скрипты/теги — вырезаем (п. правил каталога / без сторонней рекламы)
     try {
       doc.querySelectorAll(
-        'script[src*="ad.mail.ru"], script[src*="ads-async"], script[src*="yandex.ru/ads"], script[src*="an.yandex.ru"], .mrg-tag, ins.mrg-tag, #game-ad-overlay, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner'
+        'script[src*="ad.mail.ru"], script[src*="ads-async"], script[src*="yandex.ru/ads"], script[src*="an.yandex.ru"], .mrg-tag, ins.mrg-tag, #game-ad-overlay, .ad-leaderboard, .mobile-anchor-ad, .ad-container, .ad-top-banner, #neli-ad-layer, .neli-ad-layer'
       ).forEach((el) => el.remove());
     } catch (_) {}
 
-    // Старые board-игры + новые arcade-shell (redsquare / redsquare2)
+    // Старые board-игры + arcade-shell (redsquare / redsquare2) + Neli canvas
     const isGamePage = Boolean(
       doc.querySelector(
-        '.game-board, .game-wrapper, .game-shell, .rs-page, .rs2-page, #gameStage, #gameArea, #gameCanvas'
+        '.game-board, .game-wrapper, .game-shell, .rs-page, .rs2-page, #gameStage, #gameArea, #gameCanvas, #app > #game'
       )
     );
     const isArcadeShell = Boolean(
       doc.querySelector('body.rs-page, body.rs2-page, .game-shell, #gameStage, #gameArea')
     );
+    const isNeliShell = Boolean(doc.querySelector('#app > #game'));
 
     const style = doc.createElement('style');
     style.setAttribute('data-vk-mini-embed', '1');
@@ -353,7 +354,8 @@
          ломают fixed-оверлей («Понятно» не кликается на первом открытии). */
       html.vk-mini-embed:has(body.rs-page),
       html.vk-mini-embed:has(body.rs2-page),
-      html.vk-mini-embed:has(.game-shell) {
+      html.vk-mini-embed:has(.game-shell),
+      html.vk-mini-embed:has(#app > #game) {
         height: 100% !important;
         min-height: 100% !important;
         max-height: 100% !important;
@@ -362,14 +364,33 @@
       }
       body.vk-mini-embed.rs-page,
       body.vk-mini-embed.rs2-page,
-      body.vk-mini-embed:has(.game-shell) {
+      body.vk-mini-embed:has(.game-shell),
+      body.vk-mini-embed:has(#app > #game) {
         height: 100% !important;
         min-height: 100% !important;
         max-height: 100% !important;
         overflow: hidden !important;
-        padding: 0.35rem 0.5rem env(safe-area-inset-bottom, 0) !important;
+        padding: 0 !important;
         touch-action: manipulation !important;
         box-sizing: border-box !important;
+      }
+      body.vk-mini-embed #app {
+        position: fixed !important;
+        inset: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow: hidden !important;
+      }
+      body.vk-mini-embed #app > #game {
+        display: block !important;
+        width: 100% !important;
+        height: 100% !important;
+        max-height: none !important;
+        touch-action: none !important;
+      }
+      body.vk-mini-embed #touch-ui {
+        pointer-events: auto !important;
+        z-index: 40 !important;
       }
       body.vk-mini-embed .game-shell {
         width: 100% !important;
@@ -494,8 +515,8 @@
         visibility: visible !important;
         opacity: 1 !important;
       }
-      body.vk-mini-embed .btn,
-      body.vk-mini-embed button.btn,
+      body.vk-mini-embed .btn:not([hidden]),
+      body.vk-mini-embed button.btn:not([hidden]),
       body.vk-mini-embed #btnStart,
       body.vk-mini-embed #btnReset,
       body.vk-mini-embed #btnPause,
@@ -521,6 +542,11 @@
         font-size: 1.25rem !important;
         line-height: 1.25 !important;
         margin: 0 0 6px !important;
+      }
+      html.vk-mini-embed:has(body.leaderboard-page),
+      body.vk-mini-embed.leaderboard-page {
+        background: #0c0f14 !important;
+        color: #e8edf4 !important;
       }
       body.vk-mini-embed .panel {
         width: 100% !important;
@@ -596,7 +622,7 @@
       } catch (_) {}
     };
     try {
-      if (isArcadeShell) {
+      if (isArcadeShell || isNeliShell) {
         applyArcadeShellLock();
         [50, 200, 600, 1200].forEach((ms) => {
           try {

@@ -1,35 +1,250 @@
+/* Shared leaderboard page — site, VK Mini App, Android WebView */
+:root {
+	--lb-bg: #eef1f5;
+	--lb-surface: #ffffff;
+	--lb-surface-2: #f7f9fc;
+	--lb-text: #141820;
+	--lb-muted: #5a6472;
+	--lb-border: rgba(20, 24, 32, 0.1);
+	--lb-accent: #3d7aef;
+	--lb-accent-soft: rgba(61, 122, 239, 0.12);
+	--lb-header-bg: #2a3342;
+	--lb-header-text: #f5f7fa;
+	--lb-row-hover: rgba(61, 122, 239, 0.06);
+	--lb-row-alt: rgba(20, 24, 32, 0.03);
+	--lb-rank-gold: #c9a227;
+	--lb-rank-silver: #8b95a5;
+	--lb-rank-bronze: #b87333;
+	--lb-shadow: 0 10px 28px rgba(15, 23, 42, 0.08);
+	--lb-radius: 14px;
+	--lb-font: system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+}
 
-		table {                                                         /* Стили для таблицы */
-		    border-collapse: collapse;                                  /* Убирает промежутки между ячейками */
-		    max-height: 90%;                                            /* Ограничение максимальной высоты таблицы */
-		    height: auto;                                               /* Автоматическая высота таблицы в зависимости от содержимого */
-		    max-width: 800px;                                           /* Ограничение максимальной ширины таблицы до 80% */
-		    margin: 10% auto;                                           /* Центрирует таблицу по горизонтали с отступом сверху 10% */
-		    overflow-y: scroll;                                         /* Включает вертикальную прокрутку, если содержимое превышает высоту */
-		    table-layout: fixed;                                        /* Устанавливает фиксированную ширину ячеек для равномерного отображения */
-		    display: table;                                             /* Определяет таблицу как табличный элемент */
-		}
+html.vk-mini-embed:has(body.leaderboard-page),
+html.android-app:has(body.leaderboard-page) {
+	background: var(--lb-bg) !important;
+}
 
-		th, td {                                                        /* Стили для ячеек таблицы */
-		    border: 1px solid #000;                                     /* Добавляет чёрную границу вокруг ячеек */
-		    padding: 8px;                                               /* Внутренние отступы внутри ячеек */
-		    text-align: left;                                           /* Выравнивает текст в ячейках по левому краю */
-		}
+html.vk-mini-embed:has(body.leaderboard-page),
+body.vk-mini-embed.leaderboard-page,
+body.android-app.leaderboard-page {
+	--lb-bg: #0c0f14;
+	--lb-surface: #161c26;
+	--lb-surface-2: #1c2430;
+	--lb-text: #e8edf4;
+	--lb-muted: #9aa7b8;
+	--lb-border: rgba(232, 237, 244, 0.1);
+	--lb-accent: #6ea3ff;
+	--lb-accent-soft: rgba(110, 163, 255, 0.14);
+	--lb-header-bg: #222b38;
+	--lb-header-text: #f0f4fa;
+	--lb-row-hover: rgba(110, 163, 255, 0.1);
+	--lb-row-alt: rgba(255, 255, 255, 0.03);
+	--lb-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+}
 
-		th {                                                            /* Стили для заголовков таблицы */
-		    background-color: #4CAF50;                                  /* Зелёный фон для заголовков таблицы */
-		    color: white;                                               /* Белый цвет текста в заголовках */
-		}
+body.leaderboard-page {
+	font-family: var(--lb-font);
+	background: var(--lb-bg);
+	color: var(--lb-text);
+	display: block;
+	min-height: 100%;
+	padding-bottom: 32px;
+}
 
-		/* Реклама не должна перекрывать фиксированную кнопку меню */
-		.ad-container {
-		    position: relative;
-		    z-index: 0;
-		}
+.ad-container {
+	position: relative;
+	z-index: 0;
+}
 
-		/* Верхний баннер — ниже зоны кнопки меню (fixed, top: 10px) */
-		.leaderboard-top-ad {
-		    margin: 56px auto 10px;
-		    text-align: center;
-		}
+.leaderboard-top-ad {
+	margin: 56px auto 10px;
+	text-align: center;
+}
 
+body.vk-mini-embed.leaderboard-page .leaderboard-top-ad,
+body.android-app.leaderboard-page .leaderboard-top-ad {
+	margin-top: 14px;
+}
+
+.leaderboard-page-title {
+	max-width: 980px;
+	margin: 0 auto 20px;
+	padding: 0 16px;
+	text-align: center;
+	font-size: clamp(1.35rem, 2.8vw, 1.85rem);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	color: var(--lb-text);
+}
+
+.leaderboard-grid {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 18px;
+	max-width: 980px;
+	margin: 0 auto 28px;
+	padding: 0 16px;
+}
+
+.leaderboard-board {
+	background: var(--lb-surface);
+	border: 1px solid var(--lb-border);
+	border-radius: var(--lb-radius);
+	box-shadow: var(--lb-shadow);
+	padding: 16px 14px 14px;
+	transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.leaderboard-board:target {
+	border-color: var(--lb-accent);
+	box-shadow: 0 0 0 2px var(--lb-accent-soft), var(--lb-shadow);
+}
+
+.leaderboard-board h2 {
+	margin: 0 0 12px;
+	padding-bottom: 10px;
+	border-bottom: 1px solid var(--lb-border);
+	font-size: 1.05rem;
+	font-weight: 700;
+	text-align: center;
+	color: var(--lb-text);
+}
+
+.leaderboard-board table {
+	width: 100%;
+	max-width: none;
+	margin: 0;
+	border-collapse: separate;
+	border-spacing: 0;
+	table-layout: fixed;
+	overflow: hidden;
+	border-radius: 10px;
+	border: 1px solid var(--lb-border);
+	background: var(--lb-surface-2);
+}
+
+.leaderboard-board thead {
+	display: table-header-group;
+}
+
+.leaderboard-board tbody {
+	display: table-row-group;
+}
+
+.leaderboard-board tr {
+	display: table-row;
+}
+
+.leaderboard-board th,
+.leaderboard-board td {
+	display: table-cell;
+	border: none;
+	border-bottom: 1px solid var(--lb-border);
+	padding: 10px 12px;
+	text-align: left;
+	vertical-align: middle;
+	font-size: 0.92rem;
+	line-height: 1.35;
+	color: var(--lb-text);
+}
+
+.leaderboard-board th {
+	background: var(--lb-header-bg);
+	color: var(--lb-header-text);
+	font-size: 0.78rem;
+	font-weight: 700;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+}
+
+.leaderboard-board tbody tr:last-child td {
+	border-bottom: none;
+}
+
+.leaderboard-board tbody tr:nth-child(even) {
+	background: var(--lb-row-alt);
+}
+
+.leaderboard-board tbody tr:hover {
+	background: var(--lb-row-hover);
+}
+
+.leaderboard-board td:first-child,
+.leaderboard-board th:first-child {
+	width: 3.2rem;
+	text-align: center;
+	font-variant-numeric: tabular-nums;
+}
+
+.leaderboard-board td:last-child,
+.leaderboard-board th:last-child {
+	width: 5.5rem;
+	text-align: right;
+	font-variant-numeric: tabular-nums;
+	font-weight: 600;
+}
+
+.leaderboard-board td:nth-child(2) {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.leaderboard-board tr.lb-rank-1 td:first-child {
+	color: var(--lb-rank-gold);
+	font-weight: 800;
+}
+
+.leaderboard-board tr.lb-rank-2 td:first-child {
+	color: var(--lb-rank-silver);
+	font-weight: 800;
+}
+
+.leaderboard-board tr.lb-rank-3 td:first-child {
+	color: var(--lb-rank-bronze);
+	font-weight: 800;
+}
+
+.leaderboard-board tr.lb-empty td,
+.leaderboard-board tr.lb-loading td,
+.leaderboard-board tr.lb-error td {
+	text-align: center;
+	color: var(--lb-muted);
+	font-weight: 500;
+	padding: 18px 12px;
+}
+
+.leaderboard-board tr.lb-error td {
+	color: #e07070;
+}
+
+html.vk-mini-embed body.leaderboard-page h1,
+html.vk-mini-embed body.leaderboard-page h2,
+body.vk-mini-embed.leaderboard-page h1,
+body.vk-mini-embed.leaderboard-page h2,
+body.android-app.leaderboard-page h1,
+body.android-app.leaderboard-page h2 {
+	color: var(--lb-text) !important;
+}
+
+@media (max-width: 720px) {
+	.leaderboard-grid {
+		grid-template-columns: 1fr;
+		gap: 14px;
+	}
+
+	.leaderboard-page-title {
+		margin-bottom: 14px;
+	}
+
+	.leaderboard-board {
+		padding: 14px 12px 12px;
+	}
+
+	.leaderboard-board th,
+	.leaderboard-board td {
+		padding: 9px 10px;
+		font-size: 0.88rem;
+	}
+}

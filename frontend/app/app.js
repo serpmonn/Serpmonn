@@ -140,6 +140,17 @@ const VIEWER_HIDE_MENU_CSS = `
     -webkit-overflow-scrolling: touch !important;
     overscroll-behavior: contain !important;
   }
+  /* Таблица лидеров — тёмная тема в WebView (как VK Mini App) */
+  html.android-app:has(body.leaderboard-page),
+  body.android-app.leaderboard-page {
+    background: #0c0f14 !important;
+    color: #e8edf4 !important;
+  }
+  body.android-app.leaderboard-page h1,
+  body.android-app.leaderboard-page h2 {
+    color: #e8edf4 !important;
+  }
+
   /* Лента / входящие / профиль — единые отступы внутри белой рамки, без «попапа» */
   html, body {
     height: 100% !important;
@@ -1617,7 +1628,7 @@ async function loadNews() {
 /* —— Catalog —— */
 async function loadCatalog() {
   try {
-    const res = await fetch('/frontend/app/catalog.json?v=1', { credentials: 'same-origin' });
+    const res = await fetch('/frontend/app/catalog.json?v=2', { credentials: 'same-origin' });
     catalog = await res.json();
     catalogLoaded = true;
   } catch (_) {
