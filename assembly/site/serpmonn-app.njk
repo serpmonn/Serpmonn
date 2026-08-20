@@ -1,0 +1,235 @@
+---
+pagination:
+  data: locales
+  size: 1
+  alias: locale
+permalink: "{% if locale == 'ru' %}/frontend/app/serpmonn-app.html{% else %}/frontend/{{ locale }}/app/serpmonn-app.html{% endif %}"
+eleventyComputed:
+  dir: "{% if rtlLocales.indexOf(locale) != -1 %}rtl{% else %}ltr{% endif %}"
+  title: "{{ serpmonnAppTranslations[locale].app.pageTitle }}"
+  description: "{{ serpmonnAppTranslations[locale].app.description }}"
+  canonical: "{% if locale == 'ru' %}{{ site.baseUrl }}/frontend/app/serpmonn-app.html{% else %}{{ site.baseUrl }}/frontend/{{ locale }}/app/serpmonn-app.html{% endif %}"
+  installGuideHref: "{% if locale == 'ru' %}/frontend/knowledge-base/articles/serpmonn-install-guide.html{% else %}/frontend/{{ locale }}/knowledge-base/articles/serpmonn-install-guide.html{% endif %}"
+---
+<!DOCTYPE html>
+<html lang="{{ locale }}" dir="{{ dir }}">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Language" content="{{ locale }}">
+  <title>{{ title }}</title>
+  <meta name="description" content="{{ description }}">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="{{ canonical }}">
+  <meta property="og:title" content="{{ serpmonnAppTranslations[locale].app.ogTitle }}">
+  <meta property="og:description" content="{{ serpmonnAppTranslations[locale].app.ogDescription }}">
+  <meta property="og:image" content="{{ site.baseUrl }}/frontend/images/Banner_Serpmonn.png">
+  <meta property="og:url" content="{{ canonical }}">
+  <meta property="og:type" content="website">
+  {% for loc in locales %}
+    {% if loc == 'ru' %}
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/app/serpmonn-app.html" hreflang="{{ loc }}" />
+    {% else %}
+      <link rel="alternate" href="{{ site.baseUrl }}/frontend/{{ loc }}/app/serpmonn-app.html" hreflang="{{ loc }}" />
+    {% endif %}
+  {% endfor %}
+  <link rel="alternate" href="{{ site.baseUrl }}/frontend/app/serpmonn-app.html" hreflang="x-default" />
+  <link rel="icon" href="/favicon.ico">
+  <link rel="stylesheet" href="/frontend/styles/accessibility.css">
+  <link rel="stylesheet" href="/frontend/styles/menu.css?v=app-landing2">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Source+Serif+4:opsz,wght@8..60,600;8..60,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3f5f8;
+      --bg-elev: #ffffff;
+      --text: #1a1f2a;
+      --muted: #5b6575;
+      --accent: #d92c2c;
+      --accent-hover: #b82424;
+      --line: rgba(26, 31, 42, 0.1);
+      --radius: 14px;
+      --font: "Manrope", system-ui, sans-serif;
+      --display: "Source Serif 4", Georgia, serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(1000px 520px at 8% -8%, rgba(217, 44, 44, 0.1), transparent 55%),
+        radial-gradient(800px 420px at 92% 0%, rgba(40, 90, 160, 0.06), transparent 50%),
+        linear-gradient(180deg, #fafbfc 0%, var(--bg) 45%, #eef1f5 100%);
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+    }
+    a { color: inherit; }
+    .wrap {
+      width: min(1080px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 5.5rem 0 4rem;
+    }
+    .hero {
+      display: grid;
+      gap: 1.5rem;
+      max-width: 40rem;
+      margin-bottom: 2.5rem;
+    }
+    .brand {
+      font-family: var(--display);
+      font-size: clamp(2.4rem, 6vw, 3.6rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+      margin: 0;
+    }
+    .lead {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.1rem;
+      max-width: 34rem;
+    }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1rem;
+      align-items: center;
+    }
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.9rem 1.35rem;
+      border-radius: 999px;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      color: var(--muted);
+      font-size: 0.95rem;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      font-weight: 600;
+    }
+    .btn-secondary:hover { color: var(--text); }
+    .meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    .features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.55rem 1.25rem;
+      margin: 0 0 2.5rem;
+      padding: 0;
+      list-style: none;
+    }
+    .features li {
+      font-weight: 600;
+      font-size: 0.98rem;
+      color: var(--text);
+    }
+    .features li:not(:last-child)::after {
+      content: "";
+    }
+    .shots {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1rem;
+    }
+    .shots figure {
+      margin: 0;
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(26, 31, 42, 0.08);
+    }
+    .shots img {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 9 / 16;
+      object-fit: cover;
+      object-position: top;
+    }
+    .shots figcaption {
+      padding: 0.65rem 0.8rem 0.85rem;
+      color: var(--muted);
+      font-size: 0.82rem;
+    }
+    .note {
+      margin-top: 2rem;
+      color: var(--muted);
+      font-size: 0.9rem;
+      max-width: 40rem;
+    }
+    .note a {
+      color: var(--text);
+      font-weight: 600;
+    }
+    @media (max-width: 800px) {
+      .shots { grid-template-columns: 1fr; max-width: 320px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .btn-primary { transition: none; }
+      .btn-primary:hover { transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero" aria-labelledby="app-title">
+      <h1 id="app-title" class="brand">Serpmonn</h1>
+      <p class="lead">{{ serpmonnAppTranslations[locale].app.lead }}</p>
+      <div class="cta-row">
+        <a class="btn-primary" id="cta-apk" href="/frontend/downloads/Serpmonn-1.2.1.apk" download="Serpmonn-1.2.1.apk">
+          {{ serpmonnAppTranslations[locale].app.ctaApk }}
+        </a>
+        <a class="btn-secondary" id="cta-rustore" href="https://www.rustore.ru/catalog/app/ru.serpmonn" target="_blank" rel="noopener">{{ serpmonnAppTranslations[locale].app.ctaRustore }}</a>
+      </div>
+      <p class="meta">{{ serpmonnAppTranslations[locale].app.meta }}</p>
+    </section>
+
+    <ul class="features" aria-label="{{ serpmonnAppTranslations[locale].app.featuresAria }}">
+      {% for item in serpmonnAppTranslations[locale].app.features %}
+      <li>{{ item }}</li>
+      {% endfor %}
+    </ul>
+
+    <section class="shots" aria-label="{{ serpmonnAppTranslations[locale].app.shotsAria }}">
+      <figure>
+        <img src="/frontend/downloads/rustore-screenshots/05-search.png" alt="{{ serpmonnAppTranslations[locale].app.altSearch }}" width="360" height="640" loading="eager">
+        <figcaption>{{ serpmonnAppTranslations[locale].app.capSearch }}</figcaption>
+      </figure>
+      <figure>
+        <img src="/frontend/downloads/rustore-screenshots/01-profile-feed.png" alt="{{ serpmonnAppTranslations[locale].app.altFeed }}" width="360" height="640" loading="lazy">
+        <figcaption>{{ serpmonnAppTranslations[locale].app.capFeed }}</figcaption>
+      </figure>
+      <figure>
+        <img src="/frontend/downloads/rustore-screenshots/03-games.png" alt="{{ serpmonnAppTranslations[locale].app.altGames }}" width="360" height="640" loading="lazy">
+        <figcaption>{{ serpmonnAppTranslations[locale].app.capGames }}</figcaption>
+      </figure>
+    </section>
+
+    <p class="note">
+      {{ serpmonnAppTranslations[locale].app.noteWarn }}
+      {{ serpmonnAppTranslations[locale].app.noteMore }}
+      <a href="{{ installGuideHref }}">{{ serpmonnAppTranslations[locale].app.noteGuide }}</a>.
+    </p>
+  </main>
+  <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+</body>
+</html>

@@ -243,13 +243,10 @@ eleventyComputed:
             {{ menu_mobile_apps }}
         </a>
         <div class="submenu-container" id="mobileAppsSubmenu">
-            <div class="menu-android-app">
-                <a href="/frontend/downloads/Serpmonn-1.2.1.apk" download="Serpmonn-1.2.1.apk" class="menu-item menu-android-app__apk">
-                    {{ toolIcon('apk') }}
-                    {{ menu_android_apk }}
-                </a>
-                <a href="https://www.rustore.ru/catalog/app/ru.serpmonn" target="_blank" rel="noopener" class="menu-android-app__rustore">{{ menu_android_rustore_btn }}</a>
-            </div>
+            <a href="{% if locale == 'ru' %}/frontend/app/serpmonn-app.html{% else %}/frontend/{{ locale }}/app/serpmonn-app.html{% endif %}" class="menu-item">
+                {{ toolIcon('apk') }}
+                {{ menu_android_apk }}
+            </a>
             <a href="https://serpmonn.ru/frontend/messenger.html" class="menu-item">
                 {{ toolIcon('chat') }}
                 {{ menu_messenger_app }}
