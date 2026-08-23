@@ -9,6 +9,7 @@
 | Frontend | `/var/www/serpmonn.ru/frontend` | `/var/www/serpmonn-dev/frontend` |
 | API auth/профиль | prod PM2 `auth-server` `:5000` | тот же `auth-server` `:5000` |
 | API поиск | пока тоже `:5000` (до выката) | `search-server` `:3500` (dev nginx) |
+| API agents/gateway | пока `:5000` (до выката) | `agents-server` `:3510` (dev nginx) |
 
 Старая ветка `develop` (v0.91) сохранена локально как `develop-legacy-v091`.
 

@@ -60,13 +60,18 @@ export function connectRoutes(app, authLimiter) {                               
     });
     app.use('/api', pointsRoutes);                                                                                               // Подключаем маршрут проверки баллов
     app.use('/api', withdrawalRoutes);                                                                                           // Подключаем маршрут обмена баллов на Pro
-    app.use('/api/agents', agentsRouter);                                                                                        // Подключаем маршруты агентов
-    app.use('/api/agents', subscriptionsRouter);                                                                                 // Подключаем маршруты подписок на агентов
-    app.use('/api/agents', logsRouter);                                                                                          // Подключаем маршруты логов агентов
-    // Gateway открыт для внешних клиентов, авторизация через Bearer-токен — cookies не используются, origin: '*' безопасен.
-    // codeql[js/cors-permissive-configuration]
-    app.use('/gateway', cors({ origin: '*', methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Authorization', 'Content-Type', 'X-Buyer-Token'] })); // Gateway открыт для внешних клиентов — авторизация через токен
-    app.use('/gateway', gatewayRouter);                                                                                          // Подключаем гетвей прокси агентов
+    // Агенты/gateway можно вынести в agents-server (AGENTS_PORT). SKIP_AGENTS=1 — не монтировать здесь.
+    if (process.env.SKIP_AGENTS === '1') {
+        console.log('[routes] SKIP_AGENTS=1 — /api/agents и /gateway на auth-server не монтируются');
+    } else {
+        app.use('/api/agents', agentsRouter);                                                                                    // Подключаем маршруты агентов
+        app.use('/api/agents', subscriptionsRouter);                                                                             // Подключаем маршруты подписок на агентов
+        app.use('/api/agents', logsRouter);                                                                                      // Подключаем маршруты логов агентов
+        // Gateway открыт для внешних клиентов, авторизация через Bearer-токен — cookies не используются, origin: '*' безопасен.
+        // codeql[js/cors-permissive-configuration]
+        app.use('/gateway', cors({ origin: '*', methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Authorization', 'Content-Type', 'X-Buyer-Token'] })); // Gateway открыт для внешних клиентов — авторизация через токен
+        app.use('/gateway', gatewayRouter);                                                                                      // Подключаем гетвей прокси агентов
+    }
     app.use('/', newsRoutes);                                                                                                    // Подключаем маршруты новостей (GET /news, GET /news/topics, POST /news/refresh)
     // Поиск можно вынести в search-server (AI_SEARCH_PORT). SKIP_AI_SEARCH=1 — не монтировать здесь.
     if (process.env.SKIP_AI_SEARCH === '1') {
