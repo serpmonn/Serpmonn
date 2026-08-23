@@ -68,7 +68,12 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/gateway', cors({ origin: '*', methods: ['GET', 'POST', 'OPTIONS'], allowedHeaders: ['Authorization', 'Content-Type', 'X-Buyer-Token'] })); // Gateway открыт для внешних клиентов — авторизация через токен
     app.use('/gateway', gatewayRouter);                                                                                          // Подключаем гетвей прокси агентов
     app.use('/', newsRoutes);                                                                                                    // Подключаем маршруты новостей (GET /news, GET /news/topics, POST /news/refresh)
-    app.use('/', aiSearchRouter);                                                                                                // Подключаем маршрут AI-поиска через SearxNG
+    // Поиск можно вынести в search-server (AI_SEARCH_PORT). SKIP_AI_SEARCH=1 — не монтировать здесь.
+    if (process.env.SKIP_AI_SEARCH === '1') {
+        console.log('[routes] SKIP_AI_SEARCH=1 — /ai-search и /web-search на auth-server не монтируются');
+    } else {
+        app.use('/', aiSearchRouter);                                                                                            // Подключаем маршрут AI-поиска через SearxNG
+    }
     app.use('/', i18nRoute);                                                                                                     // Подключаем маршрут переводов
     outRoutes(app);                                                                                                              // Подключаем партнёрские редиректы /out
 }

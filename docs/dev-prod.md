@@ -7,7 +7,8 @@
 | Код | `/var/www/serpmonn.ru` ветка `master` | `/var/www/serpmonn-dev` ветка `develop` |
 | Сайт | https://serpmonn.ru | https://dev.serpmonn.ru (Basic Auth) |
 | Frontend | `/var/www/serpmonn.ru/frontend` | `/var/www/serpmonn-dev/frontend` |
-| API (пока) | prod PM2 `:5000` | тот же prod API |
+| API auth/профиль | prod PM2 `auth-server` `:5000` | тот же `auth-server` `:5000` |
+| API поиск | пока тоже `:5000` (до выката) | `search-server` `:3500` (dev nginx) |
 
 Старая ветка `develop` (v0.91) сохранена локально как `develop-legacy-v091`.
 
