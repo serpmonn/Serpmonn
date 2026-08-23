@@ -30,6 +30,107 @@
   let defaultHoldDays = 7;
   let maxHoldDays = 180;
 
+  /** Цель Директа/Метрики: успешное пополнение баланса рекламодателя (ЮKassa paid). */
+  const YM_ID = 98158791;
+  const TOPUP_GOAL = 'partner_topup';
+  const TOPUP_CHECKOUT_KEY = 'serpmonn_partner_topup_checkout';
+  const TOPUP_DONE_KEY = 'serpmonn_partner_topup_done_ids';
+
+  function ensureMetrika() {
+    if (typeof window.ym === 'function' && window.__smYmInit) return;
+    window.__smYmInit = true;
+    const m = window;
+    m.ym =
+      m.ym ||
+      function () {
+        (m.ym.a = m.ym.a || []).push(arguments);
+      };
+    m.ym.l = 1 * new Date();
+    const src = 'https://mc.yandex.ru/metrika/tag.js';
+    if (![].some.call(document.scripts, (s) => s.src === src)) {
+      const k = document.createElement('script');
+      k.async = 1;
+      k.src = src;
+      const a = document.getElementsByTagName('script')[0];
+      if (a && a.parentNode) a.parentNode.insertBefore(k, a);
+      else document.head.appendChild(k);
+    }
+    m.ym(YM_ID, 'init', {
+      clickmap: true,
+      trackLinks: true,
+      accurateTrackBounce: true,
+      webvisor: true
+    });
+  }
+
+  function readTopupDone() {
+    try {
+      return JSON.parse(localStorage.getItem(TOPUP_DONE_KEY) || '[]');
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function markTopupDone(id) {
+    const key = String(id);
+    const done = readTopupDone();
+    if (done.indexOf(key) !== -1) return;
+    done.push(key);
+    try {
+      localStorage.setItem(TOPUP_DONE_KEY, JSON.stringify(done));
+    } catch (e) {}
+  }
+
+  function firePartnerTopupGoal(topupId, amount) {
+    const id = String(topupId || '');
+    if (!id || readTopupDone().indexOf(id) !== -1) return false;
+    const price = Number(amount);
+    ensureMetrika();
+    try {
+      const params = { currency: 'RUB' };
+      if (Number.isFinite(price) && price > 0) params.order_price = price;
+      window.ym(YM_ID, 'reachGoal', TOPUP_GOAL, params);
+    } catch (e) {}
+    markTopupDone(id);
+    try {
+      sessionStorage.removeItem(TOPUP_CHECKOUT_KEY);
+    } catch (e) {}
+    return true;
+  }
+
+  function saveTopupCheckout(topupId, amount) {
+    try {
+      sessionStorage.setItem(
+        TOPUP_CHECKOUT_KEY,
+        JSON.stringify({ topupId: Number(topupId), amount: Number(amount) })
+      );
+    } catch (e) {}
+  }
+
+  async function pollPartnerTopupGoal() {
+    let checkout = null;
+    try {
+      checkout = JSON.parse(sessionStorage.getItem(TOPUP_CHECKOUT_KEY) || 'null');
+    } catch (e) {
+      checkout = null;
+    }
+    if (!checkout || checkout.topupId == null) return;
+
+    const wantId = Number(checkout.topupId);
+    for (let i = 0; i < 12; i++) {
+      try {
+        const { topups } = await api('/advertiser/topups');
+        const row = (topups || []).find((item) => Number(item.id) === wantId);
+        if (row && row.status === 'paid') {
+          firePartnerTopupGoal(wantId, checkout.amount != null ? checkout.amount : row.amount);
+          await loadWallet();
+          return;
+        }
+      } catch (e) {}
+      await new Promise((r) => setTimeout(r, 2500));
+    }
+  }
+
   function isRussiaCountry(code) {
     const s = String(code || 'RU').trim().toUpperCase();
     return !s || s === 'RU' || s === 'RUS' || s === 'RUSSIA';
@@ -345,6 +446,10 @@
         body: JSON.stringify({ amount: Number(fd.get('amount')), provider: 'yookassa' })
       });
       if (data.confirmationUrl) {
+        const topupId = data.id != null ? data.id : data.topupId;
+        if (topupId != null) {
+          saveTopupCheckout(topupId, Number(fd.get('amount')));
+        }
         msg.hidden = false;
         msg.classList.add('is-ok');
         msg.textContent = t('topup.redirect');
@@ -397,6 +502,7 @@
 
     await loadWallet();
     renderKpis(offers, stats);
+    void pollPartnerTopupGoal();
 
     if (!offers.length) {
       offersEl.innerHTML = emptyState(t('offer.empty'), t('offer.emptyCta'), 'create-offer');

@@ -1,10 +1,21 @@
+/* Не форсируем height:100% на body — иначе flex сжимает слот «Серпмонн»
+   и другие блоки, когда появляется длинный ответ ИИ.
+   Скролл один — на html (см. base.css). */
 html, body {
   margin: 0;
   padding: 0;
-  height: 100%;
   width: 100%;
   font-family: Arial, sans-serif;
   box-sizing: border-box;
+}
+
+html {
+  height: 100%;
+}
+
+body {
+  min-height: 100%;
+  height: auto;
 }
 
 body::-webkit-scrollbar {

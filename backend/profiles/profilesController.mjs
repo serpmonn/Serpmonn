@@ -17,6 +17,10 @@ import {
     WEB_USER_DAILY_LIMIT,
     WEB_PRO_MONTHLY_LIMIT,
 } from '../ai-search/web-usage-store.mjs';
+import {
+    peekAiDailyUsedForUser,
+    AI_USER_DAILY_LIMIT,
+} from '../ai-search/ai-usage-store.mjs';
 import paseto from 'paseto';                                                                                                     // Импортируем библиотеку paseto для работы с токенами
 const { V2 } = paseto;                                                                                                           // Извлекаем модуль V2 из paseto
 const secretKey = process.env.SECRET_KEY;                                                                                        // Получаем секретный ключ из переменной окружения
@@ -138,19 +142,20 @@ const getUserInfo = async (req, res) => {                                       
         };
         }
 
-        // 3. бесплатный дневной лимит — как справочная инфа
+        // 3. бесплатный дневной лимит (ИИ + Выдача) — из MySQL
+        const aiDailyUsed = await peekAiDailyUsedForUser(user.id);
         const freeDaily = {
-        limit: 15,
-        used: null,
-        remaining: null
+        limit: AI_USER_DAILY_LIMIT,
+        used: aiDailyUsed,
+        remaining: Math.max(0, AI_USER_DAILY_LIMIT - aiDailyUsed)
         };
 
+        const webDailyUsed = await peekWebDailyUsedForUser(user.id);
         const webFreeDaily = {
         limit: WEB_USER_DAILY_LIMIT,
-        used: peekWebDailyUsedForUser(user.id),
-        remaining: null
+        used: webDailyUsed,
+        remaining: Math.max(0, WEB_USER_DAILY_LIMIT - webDailyUsed)
         };
-        webFreeDaily.remaining = Math.max(0, webFreeDaily.limit - (webFreeDaily.used || 0));
 
         res.json({
         id: user.id, 

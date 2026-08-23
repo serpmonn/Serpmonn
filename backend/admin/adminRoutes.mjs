@@ -30,6 +30,18 @@ import {
   getSearchInsightsHandler,
   exportSearchInsightsCsv,
 } from './searchInsightsController.mjs';
+import {
+  listMarketingQueue,
+  getMarketingItem,
+  createMarketingFromTemplate,
+  updateMarketingItem,
+  rejectMarketingItem,
+  publishMarketingItem,
+  listMarketingChannels,
+  listMarketingTemplates,
+  renderMarketingItem,
+  streamMarketingMedia
+} from './marketingAdmin.mjs';
 
 const router = Router();
 
@@ -68,5 +80,17 @@ router.post('/partners/payouts/:id/reject', verifyAdmin, rejectPartnerPayout);
 // Лог поисковых запросов (спрос)
 router.get('/search-insights', verifyAdmin, getSearchInsightsHandler);
 router.get('/search-insights.csv', verifyAdmin, exportSearchInsightsCsv);
+
+// Маркетинг: очередь публикаций и каналы
+router.get('/marketing/queue', verifyAdmin, listMarketingQueue);
+router.get('/marketing/queue/:id', verifyAdmin, getMarketingItem);
+router.post('/marketing/queue', verifyAdmin, createMarketingFromTemplate);
+router.put('/marketing/queue/:id', verifyAdmin, updateMarketingItem);
+router.post('/marketing/queue/:id/reject', verifyAdmin, rejectMarketingItem);
+router.post('/marketing/queue/:id/publish', verifyAdmin, publishMarketingItem);
+router.post('/marketing/queue/:id/render', verifyAdmin, renderMarketingItem);
+router.get('/marketing/queue/:id/media', verifyAdmin, streamMarketingMedia);
+router.get('/marketing/channels', verifyAdmin, listMarketingChannels);
+router.get('/marketing/templates', verifyAdmin, listMarketingTemplates);
 
 export default router;

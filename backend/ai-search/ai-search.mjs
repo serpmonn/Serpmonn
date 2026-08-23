@@ -14,12 +14,17 @@ import {
   detectDeviceFromRequest,
 } from './search-query-log.mjs';
 import {
-  WEB_GUEST_DAILY_LIMIT,
-  WEB_USER_DAILY_LIMIT,
-  WEB_PRO_MONTHLY_LIMIT,
   checkAndIncrementWebUsage,
   checkAndIncrementWebProMonthly,
 } from './web-usage-store.mjs';
+import {
+  AI_GUEST_DAILY_LIMIT,
+  AI_USER_DAILY_LIMIT,
+  checkAndIncrementAiUsage,
+  checkAndIncrementAiProMonthly,
+  getAiIdempotentResponse,
+  setAiIdempotentResponse,
+} from './ai-usage-store.mjs';
 
 dotenv.config({ path: '/var/www/serpmonn.ru/backend/.env' });
 
@@ -29,9 +34,8 @@ const { V2 } = paseto;
 const secretKey = process.env.SECRET_KEY;
 const SEARXNG_URL = process.env.SEARXNG_URL || 'http://serpmonn.ru';
 
-const PRO_MONTHLY_LIMIT = 2000;
-const GUEST_DAILY_LIMIT = 5;
-const USER_DAILY_LIMIT = 15;
+const GUEST_DAILY_LIMIT = AI_GUEST_DAILY_LIMIT;
+const USER_DAILY_LIMIT = AI_USER_DAILY_LIMIT;
 
 const WEB_RESULT_LIMIT = 15;
 const WEB_CATEGORIES = new Set([
@@ -49,22 +53,10 @@ const WEB_CATEGORIES = new Set([
 const WEB_TIME_RANGES = new Set(['day', 'week', 'month', 'year']);
 const WEB_SAFESEARCH = new Set([0, 1, 2]);
 
-const usageStore = new Map();
-const idempotencyStore = new Map();
-const IDEMPOTENCY_TTL_MS = 5 * 60 * 1000;
-
 const OLLAMA_URL = 'http://127.0.0.1:11434/api/chat';
 const OLLAMA_MAIN_MODEL = 'serpmonn-ai-search:latest';
 const OLLAMA_FAST_MODEL = 'serpmonn-ai-fast:latest';
 const ATTACHMENT_TEXT_MAX_CHARS = 32000;
-
-function getMonthKey() {
-  return new Date().toISOString().slice(0, 7);
-}
-
-function getTodayKey() {
-  return new Date().toISOString().slice(0, 10);
-}
 
 function extractHostname(url) {
   try {
@@ -112,6 +104,52 @@ function stripHtmlTags(text) {
 function cleanWebText(text) {
   // Сначала mojibake: \s в stripHtmlTags схлопывает U+0085/U+00A0 (байты «х»/«р»).
   return stripHtmlTags(fixUtf8Mojibake(text));
+}
+
+/** Нормализация URL для дедупа (без hash и хвостового /). */
+function normalizeResultUrl(url) {
+  const raw = String(url || '').trim();
+  if (!raw) return '';
+  try {
+    const u = new URL(raw);
+    u.hash = '';
+    if (u.pathname.length > 1 && u.pathname.endsWith('/')) {
+      u.pathname = u.pathname.slice(0, -1);
+    }
+    return u.href.toLowerCase();
+  } catch {
+    return raw.toLowerCase().replace(/\/+$/, '');
+  }
+}
+
+/** Сортировка по score SearXNG + дедуп по URL. */
+function rankAndDedupRawResults(raw) {
+  const list = Array.isArray(raw) ? [...raw] : [];
+  list.sort((a, b) => (Number(b?.score) || 0) - (Number(a?.score) || 0));
+  const seen = new Set();
+  const out = [];
+  for (const item of list) {
+    const key = normalizeResultUrl(item?.url || item?.img_src || '');
+    if (key) {
+      if (seen.has(key)) continue;
+      seen.add(key);
+    }
+    out.push(item);
+  }
+  return out;
+}
+
+const SEARX_HARD_FAIL_MARKERS = new Set([
+  'searxng-empty-response',
+  'searxng-json-parse-error',
+  'searxng-curl-error',
+]);
+
+function isSearxHardFailure(data) {
+  const engines = Array.isArray(data?.unresponsive_engines)
+    ? data.unresponsive_engines
+    : [];
+  return engines.some((e) => SEARX_HARD_FAIL_MARKERS.has(String(e)));
 }
 
 function normalizeAiAnswer(answer, t) {
@@ -552,21 +590,9 @@ function trackSearchQuery(req, identity, fields) {
   });
 }
 
-function checkAndIncrementUsage(identity) {
-  const today = getTodayKey();
-  const key = `${identity.id}:${today}`;
-  const entry = usageStore.get(key) || { requests: 0 };
-
+async function checkAndIncrementUsage(identity) {
   const limit = identity.type === 'guest' ? GUEST_DAILY_LIMIT : USER_DAILY_LIMIT;
-
-  if (entry.requests >= limit) {
-    return { ok: false, limit, used: entry.requests };
-  }
-
-  entry.requests += 1;
-  usageStore.set(key, entry);
-
-  return { ok: true, limit, used: entry.requests };
+  return checkAndIncrementAiUsage(identity, limit);
 }
 
 async function getUserPlan(userId) {
@@ -584,38 +610,12 @@ async function getUserPlan(userId) {
 }
 
 async function checkAndIncrementProMonthly(userId) {
-  const monthKey = getMonthKey();
-
-  const selectSql =
-    'SELECT requests FROM ai_usage_monthly WHERE user_id = ? AND month_key = ? LIMIT 1';
-  const rows = await dbQuery(selectSql, [userId, monthKey]);
-
-  let used = 0;
-
-  if (!rows || rows.length === 0) {
-    const insertSql =
-      'INSERT INTO ai_usage_monthly (user_id, month_key, requests) VALUES (?, ?, 1)';
-    await dbQuery(insertSql, [userId, monthKey]);
-    used = 1;
-  } else {
-    used = rows[0].requests;
-
-    if (used >= PRO_MONTHLY_LIMIT) {
-      return { ok: false, used, limit: PRO_MONTHLY_LIMIT };
-    }
-
-    const updateSql =
-      'UPDATE ai_usage_monthly SET requests = requests + 1 WHERE user_id = ? AND month_key = ?';
-    await dbQuery(updateSql, [userId, monthKey]);
-    used += 1;
-  }
-
-  return { ok: true, used, limit: PRO_MONTHLY_LIMIT };
+  return checkAndIncrementAiProMonthly(userId);
 }
 
 async function enforceLogicalSearchLimit(req, identity, t) {
   if (identity.type === 'guest') {
-    const usage = checkAndIncrementUsage(identity);
+    const usage = await checkAndIncrementUsage(identity);
 
     if (!usage.ok) {
       const isVkAgent = req.headers['x-client'] === 'vk-agent';
@@ -677,7 +677,7 @@ async function enforceLogicalSearchLimit(req, identity, t) {
       return { ok: true, usage: proUsage, plan: 'pro' };
     }
 
-    const usage = checkAndIncrementUsage(identity);
+    const usage = await checkAndIncrementUsage(identity);
 
     if (!usage.ok) {
       return {
@@ -702,12 +702,13 @@ async function webSearchWithSearxng(query, t, safesearch = 2) {
   try {
     const data = await fetchSearxViaCurl(query, 'general', { safesearch });
 
-    const results = (data.results || [])
+    const results = rankAndDedupRawResults(data.results || [])
       .map((item) => ({
-        title: item.title || '',
-        content: item.content || item.summary || '',
+        title: cleanWebText(item.title || ''),
+        content: cleanWebText(item.content || item.summary || ''),
         url: item.url || '',
       }))
+      .filter((r) => r.url && (r.title || r.content))
       .slice(0, 6);
 
     const webContext = results.length
@@ -735,16 +736,18 @@ async function imageSearchWithSearxng(query, t, safesearch = 2) {
   try {
     const data = await fetchSearxViaCurl(query, 'images', { safesearch });
 
-    const images = (data.results || [])
-      .slice(0, 6)
+    const images = rankAndDedupRawResults(data.results || [])
       .map((item) => ({
-        title: item.title || t.imageFallbackTitle.replace('{query}', query),
+        title: cleanWebText(
+          item.title || t.imageFallbackTitle.replace('{query}', query)
+        ),
         thumbnailUrl: item.img_src || item.thumbnail || '',
         imageUrl: item.img_src || item.url || '',
         sourceUrl: item.url || '',
         sourceName: extractHostname(item.url || ''),
       }))
-      .filter((img) => img.imageUrl);
+      .filter((img) => img.imageUrl)
+      .slice(0, 6);
 
     return images;
   } catch (e) {
@@ -757,17 +760,19 @@ async function videoSearchWithSearxng(query, t, safesearch = 2) {
   try {
     const data = await fetchSearxViaCurl(query, 'videos', { safesearch });
 
-    const videos = (data.results || [])
-      .slice(0, 6)
+    const videos = rankAndDedupRawResults(data.results || [])
       .map((item) => ({
-        title: item.title || t.videoFallbackTitle.replace('{query}', query),
+        title: cleanWebText(
+          item.title || t.videoFallbackTitle.replace('{query}', query)
+        ),
         thumbnailUrl: item.thumbnail || item.img_src || '',
         videoUrl: item.url || '',
         sourceUrl: item.url || '',
         sourceName: extractHostname(item.url || ''),
         duration: item.duration || '',
       }))
-      .filter((v) => v.videoUrl);
+      .filter((v) => v.videoUrl)
+      .slice(0, 6);
 
     return videos;
   } catch (e) {
@@ -1109,11 +1114,7 @@ async function handleStreamingSearch(req, res, ctx) {
   });
 
   if (idempotencyKey) {
-    const cacheKey = `${identity.id}:${idempotencyKey}`;
-    idempotencyStore.set(cacheKey, {
-      response: responsePayload,
-      createdAt: Date.now(),
-    });
+    await setAiIdempotentResponse(identity.id, idempotencyKey, responsePayload);
   }
 
   res.end();
@@ -1149,14 +1150,16 @@ router.post(
         null;
 
       if (idempotencyKey) {
-        const cacheKey = `${identity.id}:${idempotencyKey}`;
-        const cached = idempotencyStore.get(cacheKey);
+        const cachedResponse = await getAiIdempotentResponse(
+          identity.id,
+          idempotencyKey
+        );
 
-        if (cached && Date.now() - cached.createdAt < IDEMPOTENCY_TTL_MS) {
+        if (cachedResponse) {
           if (wantsStream(req)) {
-            return replayCachedStream(res, cached.response);
+            return replayCachedStream(res, cachedResponse);
           }
-          return res.json(cached.response);
+          return res.json(cachedResponse);
         }
       }
 
@@ -1259,11 +1262,7 @@ router.post(
       });
 
       if (idempotencyKey) {
-        const cacheKey = `${identity.id}:${idempotencyKey}`;
-        idempotencyStore.set(cacheKey, {
-          response: responsePayload,
-          createdAt: Date.now(),
-        });
+        await setAiIdempotentResponse(identity.id, idempotencyKey, responsePayload);
       }
 
       return res.json(responsePayload);
@@ -1321,7 +1320,7 @@ async function enforceWebSearchLimit(req, identity, t) {
     }
   }
 
-  const usage = checkAndIncrementWebUsage(identity);
+  const usage = await checkAndIncrementWebUsage(identity);
   if (!usage.ok) {
     const isGuest = identity.type === 'guest';
     return {
@@ -1340,11 +1339,12 @@ async function enforceWebSearchLimit(req, identity, t) {
 }
 
 function normalizeWebSearchResults(category, query, data, t) {
-  const raw = Array.isArray(data?.results) ? data.results : [];
+  const raw = rankAndDedupRawResults(
+    Array.isArray(data?.results) ? data.results : []
+  );
 
   if (category === 'images') {
     return raw
-      .slice(0, WEB_RESULT_LIMIT)
       .map((item) => ({
         title: cleanWebText(item.title || t.imageFallbackTitle?.replace('{query}', query) || query),
         url: item.url || '',
@@ -1354,12 +1354,12 @@ function normalizeWebSearchResults(category, query, data, t) {
         engine: item.engine || '',
         hostname: extractHostname(item.url || ''),
       }))
-      .filter((item) => item.imageUrl || item.url);
+      .filter((item) => item.imageUrl || item.url)
+      .slice(0, WEB_RESULT_LIMIT);
   }
 
   if (category === 'videos') {
     return raw
-      .slice(0, WEB_RESULT_LIMIT)
       .map((item) => ({
         title: cleanWebText(item.title || t.videoFallbackTitle?.replace('{query}', query) || query),
         url: item.url || '',
@@ -1369,11 +1369,11 @@ function normalizeWebSearchResults(category, query, data, t) {
         engine: item.engine || '',
         hostname: extractHostname(item.url || ''),
       }))
-      .filter((item) => item.url);
+      .filter((item) => item.url)
+      .slice(0, WEB_RESULT_LIMIT);
   }
 
   return raw
-    .slice(0, WEB_RESULT_LIMIT)
     .map((item) => {
       const lat = item.latitude != null ? Number(item.latitude) : NaN;
       const lon = item.longitude != null ? Number(item.longitude) : NaN;
@@ -1392,7 +1392,13 @@ function normalizeWebSearchResults(category, query, data, t) {
         boundingbox: Array.isArray(item.boundingbox) ? item.boundingbox : null,
       };
     })
-    .filter((item) => item.url || (item.latitude != null && item.longitude != null));
+    .filter((item) => {
+      if (item.latitude != null && item.longitude != null) return true;
+      if (!item.url) return false;
+      // Отсекаем пустые карточки без title/content
+      return Boolean(item.title || item.content);
+    })
+    .slice(0, WEB_RESULT_LIMIT);
 }
 
 function localeToSearxLanguage(locale) {
@@ -1414,10 +1420,10 @@ function normalizeWebSearchExtras(data) {
     .slice(0, 3)
     .map((item) => {
       if (typeof item === 'string') {
-        return { answer: item.trim(), url: '', engine: '' };
+        return { answer: cleanWebText(item), url: '', engine: '' };
       }
       return {
-        answer: String(item?.answer || item?.content || '').trim(),
+        answer: cleanWebText(item?.answer || item?.content || ''),
         url: String(item?.url || '').trim(),
         engine: String(item?.engine || '').trim(),
       };
@@ -1425,12 +1431,12 @@ function normalizeWebSearchExtras(data) {
     .filter((item) => item.answer);
 
   const suggestions = (Array.isArray(data?.suggestions) ? data.suggestions : [])
-    .map((item) => String(item || '').trim())
+    .map((item) => cleanWebText(item || ''))
     .filter(Boolean)
     .slice(0, 8);
 
   const corrections = (Array.isArray(data?.corrections) ? data.corrections : [])
-    .map((item) => String(item || '').trim())
+    .map((item) => cleanWebText(item || ''))
     .filter(Boolean)
     .slice(0, 3);
 
@@ -1441,8 +1447,8 @@ function normalizeWebSearchExtras(data) {
         ? item.attributes
             .slice(0, 8)
             .map((attr) => ({
-              label: String(attr?.label || attr?.key || '').trim(),
-              value: String(attr?.value || attr?.content || '').trim(),
+              label: cleanWebText(attr?.label || attr?.key || ''),
+              value: cleanWebText(attr?.value || attr?.content || ''),
             }))
             .filter((attr) => attr.label && attr.value)
         : [];
@@ -1450,14 +1456,14 @@ function normalizeWebSearchExtras(data) {
         ? item.urls
             .slice(0, 6)
             .map((u) => ({
-              title: String(u?.title || u?.url || '').trim(),
+              title: cleanWebText(u?.title || u?.url || ''),
               url: String(u?.url || '').trim(),
             }))
             .filter((u) => u.url)
         : [];
       return {
-        title: String(item?.infobox || item?.title || '').trim(),
-        content: String(item?.content || '').trim(),
+        title: cleanWebText(item?.infobox || item?.title || ''),
+        content: cleanWebText(item?.content || ''),
         url: String(item?.id || item?.url || '').trim(),
         imageUrl: String(item?.img_src || item?.thumbnail || '').trim(),
         engine: String(item?.engine || '').trim(),
@@ -1515,6 +1521,23 @@ router.post(
       const results = normalizeWebSearchResults(category, q, data, t);
       const extras = normalizeWebSearchExtras(data);
       const totalMs = Number(process.hrtime.bigint() - reqStart) / 1e6;
+
+      // Падение SearX (curl/parse/empty) не маскируем под «ничего не найдено»
+      if (isSearxHardFailure(data) && results.length === 0) {
+        trackSearchQuery(req, identity, {
+          mode: 'web',
+          queryText: q,
+          category,
+          locale,
+          status: 'error',
+          resultCount: 0,
+          latencyMs: totalMs,
+        });
+        return res.status(502).json({
+          error: t.resultsNetworkError || t.networkError || t.internalError,
+          searxDown: true,
+        });
+      }
 
       console.log(
         `/web-search | category=${category} | lang=${language || 'auto'}` +

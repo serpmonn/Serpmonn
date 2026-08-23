@@ -2475,6 +2475,27 @@ function setActiveResultsTab(category) {
   });
 }
 
+function bindResultsModeActions(root) {
+  if (!root) return;
+
+  root.querySelectorAll('.retry-btn').forEach((btn) => {
+    if (btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', () => {
+      document.getElementById('ai-search-form')?.requestSubmit();
+    });
+  });
+
+  root.querySelectorAll('[data-results-try-ai]').forEach((btn) => {
+    if (btn.dataset.bound === '1') return;
+    btn.dataset.bound = '1';
+    btn.addEventListener('click', () => {
+      setSearchMode('ai');
+      document.getElementById('ai-search-form')?.requestSubmit();
+    });
+  });
+}
+
 function getSourceFaviconForResults(hostname) {
   return getSourceFaviconUrl(hostname, 32);
 }
@@ -2970,8 +2991,13 @@ function renderResultsMode({
   }
 
   if (error) {
-    contentDiv.innerHTML = `<div class="results-error">${escapeHtml(error)}</div>${promoHtml}`;
+    contentDiv.innerHTML = `
+      <div class="results-error">
+        <div class="results-error-message">${escapeHtml(error)}</div>
+        <button type="button" class="retry-btn">${escapeHtml(messages.retry || 'Retry')}</button>
+      </div>${promoHtml}`;
     bindPromoIntentCardActions(contentDiv);
+    bindResultsModeActions(contentDiv);
     return;
   }
 
@@ -2996,10 +3022,20 @@ function renderResultsMode({
       messages.resultsEmpty ||
       document.getElementById('ai-search-form')?.dataset.emptyResults ||
       'Nothing found.';
+    const tryAiLabel =
+      messages.resultsTryAi ||
+      messages.modeAiLabel ||
+      'Ask AI';
+    const emptyActions = `
+      <div class="results-empty-actions">
+        <button type="button" class="retry-btn">${escapeHtml(messages.retry || 'Retry')}</button>
+        <button type="button" class="results-try-ai-btn" data-results-try-ai>${escapeHtml(tryAiLabel)}</button>
+      </div>`;
     contentDiv.innerHTML = extrasHtml
-      ? `${extrasHtml}<div class="results-empty">${escapeHtml(empty)}</div>${promoHtml}`
-      : `<div class="results-empty">${escapeHtml(empty)}</div>${promoHtml}`;
+      ? `${extrasHtml}<div class="results-empty">${escapeHtml(empty)}</div>${emptyActions}${promoHtml}`
+      : `<div class="results-empty">${escapeHtml(empty)}</div>${emptyActions}${promoHtml}`;
     bindPromoIntentCardActions(contentDiv);
+    bindResultsModeActions(contentDiv);
     return;
   }
 
@@ -3190,13 +3226,20 @@ async function initPage() {
       btn.addEventListener('click', () => {
         if (isSubmitting) return;
         const mode = btn.dataset.searchMode === 'results' ? 'results' : 'ai';
+        const prev = getSearchMode(searchForm);
         setSearchMode(mode);
         const query = searchInput?.value.trim();
         if (!query) {
           searchInput?.focus();
           return;
         }
-        searchForm.requestSubmit();
+        // Не жжём лимит при случайном тапе: повторный поиск только
+        // если режим реально сменился и уже есть показанный результат
+        const hasResult =
+          document.getElementById('ai-result-container')?.style.display === 'block';
+        if (mode !== prev && hasResult) {
+          searchForm.requestSubmit();
+        }
       });
     });
 

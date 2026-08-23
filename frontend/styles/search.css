@@ -418,17 +418,49 @@ a:hover {
     }
 
     .search-mode-toggle {
-        width: 50px;
-        height: 50px;
+        width: auto;
+        min-width: 108px;
+        height: 44px;
         border-radius: 10px;
+        display: flex;
+        align-items: stretch;
+    }
+
+    .search-mode-toggle::after {
+        display: none;
     }
 
     .search-mode-btn {
-        font-size: 0.64rem;
+        position: relative;
+        inset: auto;
+        clip-path: none !important;
+        flex: 1 1 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.78rem;
+        padding: 0 8px;
+        min-height: 44px;
     }
 
+    .search-mode-btn[data-search-mode='ai'],
+    .search-mode-btn[data-search-mode='results'] {
+        padding: 0 8px;
+    }
+
+    .search-mode-label {
+        transform: none;
+        translate: none;
+    }
+
+    .search-mode-btn[data-search-mode='ai'] .search-mode-label,
     .search-mode-btn[data-search-mode='results'] .search-mode-label {
-        font-size: 0.58rem;
+        translate: none;
+        font-size: inherit;
+    }
+
+    .search-mode-btn + .search-mode-btn {
+        border-left: 1px solid #e2e8f0;
     }
 
     .main-search-container .logo {
@@ -784,6 +816,48 @@ body:has(.search-form.is-results-mode) #ai-video-results,
   padding: 12px 0;
 }
 
+.results-error-message {
+  margin-bottom: 10px;
+}
+
+.results-empty-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 12px;
+}
+
+.results-error .retry-btn,
+.results-empty-actions .retry-btn,
+.results-try-ai-btn {
+  appearance: none;
+  border: 1px solid #d1d5db;
+  background: #fff;
+  color: #0f172a;
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.2;
+  padding: 8px 14px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.results-try-ai-btn {
+  border-color: #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+
+.results-error .retry-btn:hover,
+.results-empty-actions .retry-btn:hover {
+  background: #f8fafc;
+}
+
+.results-try-ai-btn:hover {
+  background: #fee2e2;
+}
+
 .results-corrections {
   display: flex;
   flex-wrap: wrap;
@@ -1067,6 +1141,11 @@ body:has(.search-form.is-results-mode) #ai-video-results,
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     margin-bottom: 10px;
+    position: sticky;
+    top: 0;
+    z-index: 6;
+    background: #fff;
+    padding-top: 2px;
   }
 
   .results-tabs::-webkit-scrollbar {

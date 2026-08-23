@@ -13,6 +13,7 @@
 	margin: 0 auto 20px;
 	padding-top: 20px;
 	box-sizing: border-box;
+	flex-shrink: 0;
 }
 
 /* Reserve space only while loading — avoids jump when news appear */
@@ -60,6 +61,8 @@
 .serpmonn-letters-slot {
 	width: 100%;
 	height: 120px;
+	min-height: 120px;
+	flex-shrink: 0;
 	overflow: hidden;
 	pointer-events: none;
 }
@@ -82,7 +85,10 @@
 	.news-block.news-block--pending {
 		min-height: 220px;
 	}
-	.serpmonn-letters-slot { height: 64px; }
+	.serpmonn-letters-slot {
+		height: 64px;
+		min-height: 64px;
+	}
 }
 @media (max-width: 480px) {
 	.news-block { width: 92%; }
