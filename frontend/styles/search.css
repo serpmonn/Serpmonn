@@ -417,52 +417,6 @@ a:hover {
         flex-shrink: 0;
     }
 
-    .search-mode-toggle {
-        width: auto;
-        min-width: 108px;
-        height: 44px;
-        border-radius: 10px;
-        display: flex;
-        align-items: stretch;
-    }
-
-    .search-mode-toggle::after {
-        display: none;
-    }
-
-    .search-mode-btn {
-        position: relative;
-        inset: auto;
-        clip-path: none !important;
-        flex: 1 1 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.78rem;
-        padding: 0 8px;
-        min-height: 44px;
-    }
-
-    .search-mode-btn[data-search-mode='ai'],
-    .search-mode-btn[data-search-mode='results'] {
-        padding: 0 8px;
-    }
-
-    .search-mode-label {
-        transform: none;
-        translate: none;
-    }
-
-    .search-mode-btn[data-search-mode='ai'] .search-mode-label,
-    .search-mode-btn[data-search-mode='results'] .search-mode-label {
-        translate: none;
-        font-size: inherit;
-    }
-
-    .search-mode-btn + .search-mode-btn {
-        border-left: 1px solid #e2e8f0;
-    }
-
     .main-search-container .logo {
         width: 46px;
         margin: 0;
@@ -532,8 +486,8 @@ a:hover {
   left: 50%;
   z-index: 2;
   width: 150%;
-  height: 1px;
-  background: #e2e8f0;
+  height: 2px;
+  background: #cbd5e1;
   transform: translate(-50%, -50%) rotate(-45deg);
   pointer-events: none;
 }
@@ -595,8 +549,10 @@ a:hover {
 }
 
 .search-mode-btn.is-active {
+  z-index: 3;
   background: #fef2f2;
   color: #b91c1c;
+  font-weight: 800;
 }
 
 .search-mode-btn:hover {
@@ -619,13 +575,26 @@ a:hover {
   opacity: 0.7;
 }
 
-.search-form.is-results-mode .attach-btn {
-  display: none;
+/* Мобилка: тот же диагональный переключатель, чуть компактнее */
+@media (max-width: 600px) {
+  .search-mode-toggle {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+  }
+
+  .search-mode-btn {
+    font-size: 0.64rem;
+  }
+
+  .search-mode-btn[data-search-mode='results'] .search-mode-label {
+    font-size: 0.58rem;
+  }
 }
 
-/* В Выдаче скрепки нет — запрос с начала строки */
-.search-form.is-results-mode .search-input-wrapper input[type="search"] {
-  padding-left: 16px;
+/* Скрепка нужна и в Выдаче: поиск по фото */
+.search-form.is-results-mode .attach-btn {
+  display: inline-flex;
 }
 
 /* ИИ-блоки фото/видео не показываем в режиме Выдача */

@@ -649,6 +649,21 @@ function buildSharePageUrl(query) {
 }
 
 const ATTACHMENT_MAX_BYTES = 100 * 1024;
+const ATTACHMENT_ALLOWED_EXT = new Set([
+  'txt', 'md', 'markdown', 'csv', 'tsv', 'json', 'log', 'xml', 'html', 'htm', 'yaml', 'yml'
+]);
+const ATTACHMENT_ACCEPT =
+  '.txt,.md,.markdown,.csv,.tsv,.json,.log,.xml,.html,.htm,.yaml,.yml,text/plain,text/markdown,text/csv,application/json,text/html,application/xml,text/xml';
+
+function isAllowedAttachmentFile(file) {
+  if (!file) return false;
+  const ext = String(file.name || '').split('.').pop()?.toLowerCase() || '';
+  if (ATTACHMENT_ALLOWED_EXT.has(ext)) return true;
+  const type = String(file.type || '').toLowerCase();
+  if (type.startsWith('text/')) return true;
+  if (type === 'application/json' || type === 'application/xml' || type === 'text/xml') return true;
+  return false;
+}
 
 let searchAttachment = null;
 
@@ -656,6 +671,8 @@ function initTxtAttachment() {
   const attachBtn = document.getElementById('attach-txt-btn');
   const fileInput = document.getElementById('attach-txt-input');
   if (!attachBtn || !fileInput) return;
+
+  fileInput.accept = ATTACHMENT_ACCEPT;
 
   const messages = getMessages();
   attachBtn.title = messages.attachFileTitle;
@@ -668,12 +685,7 @@ function initTxtAttachment() {
     fileInput.value = '';
     if (!file) return;
 
-    const isTxt =
-      /\.txt$/i.test(file.name) ||
-      file.type === 'text/plain' ||
-      file.type === '';
-
-    if (!isTxt) {
+    if (!isAllowedAttachmentFile(file)) {
       showShareToast(messages.attachmentInvalidType);
       return;
     }
@@ -3227,19 +3239,14 @@ async function initPage() {
         if (isSubmitting) return;
         const mode = btn.dataset.searchMode === 'results' ? 'results' : 'ai';
         const prev = getSearchMode(searchForm);
+        if (mode === prev) return;
         setSearchMode(mode);
         const query = searchInput?.value.trim();
         if (!query) {
           searchInput?.focus();
           return;
         }
-        // Не жжём лимит при случайном тапе: повторный поиск только
-        // если режим реально сменился и уже есть показанный результат
-        const hasResult =
-          document.getElementById('ai-result-container')?.style.display === 'block';
-        if (mode !== prev && hasResult) {
-          searchForm.requestSubmit();
-        }
+        searchForm.requestSubmit();
       });
     });
 

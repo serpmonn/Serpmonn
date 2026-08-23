@@ -13,6 +13,11 @@ import {
   renderShort,
   resolveMarketingMedia
 } from '../marketing/render-short.mjs';
+import { buildMarketingReport } from '../marketing/reports.mjs';
+import {
+  generateMarketingCopy,
+  marketingOllamaHealth
+} from '../marketing/generate-copy.mjs';
 import { createReadStream, constants as fsConstants } from 'fs';
 import { access, stat } from 'fs/promises';
 import { extname, join } from 'path';
@@ -90,12 +95,36 @@ export async function createMarketingFromTemplate(req, res) {
       channels: req.body?.channels
     });
 
+    const skipGenerate = req.body?.skipGenerate === true;
+    const userOverrideTitle = req.body?.title != null && String(req.body.title).trim();
+    const userOverrideBody = req.body?.body != null && String(req.body.body).trim();
+
+    let genMeta = { templateId };
+    if (!skipGenerate && !userOverrideTitle && !userOverrideBody) {
+      const gen = await generateMarketingCopy({
+        product: applied.product || tpl.product,
+        format: applied.format || tpl.format,
+        ctaUrl: applied.cta_url,
+        fallbackTitle: applied.title,
+        fallbackBody: applied.body
+      });
+      applied.title = gen.title;
+      applied.body = gen.body;
+      genMeta = {
+        templateId,
+        copyGenerated: gen.generated,
+        copyModel: gen.model,
+        copyGeneratedAt: new Date().toISOString(),
+        copyError: gen.error || null
+      };
+    }
+
     const needRender = Boolean(tpl.render) || applied.format === 'video';
     let item = await createQueueItem({
       ...applied,
       status: needRender ? 'rendering' : 'pending_review',
       created_by: adminWho(req) ? String(adminWho(req)) : null,
-      meta: { templateId }
+      meta: genMeta
     });
 
     if (needRender) {
@@ -105,7 +134,7 @@ export async function createMarketingFromTemplate(req, res) {
         console.error('[admin] marketing render', renderErr);
         item = await updateQueueItem(item.id, {
           status: 'failed',
-          meta: { templateId, renderError: renderErr.message }
+          meta: { ...genMeta, renderError: renderErr.message }
         });
         return res.status(500).json({
           message: `Рендер не удался: ${renderErr.message}`,
@@ -269,10 +298,89 @@ export async function publishMarketingItem(req, res) {
 export async function listMarketingChannels(_req, res) {
   try {
     const channels = await channelHealth();
-    return res.json({ channels, registry: listChannels() });
+    const ollama = await marketingOllamaHealth();
+    return res.json({
+      channels,
+      registry: listChannels(),
+      copyGenerator: ollama
+    });
   } catch (err) {
     console.error('[admin] marketing channels', err);
     return res.status(500).json({ message: 'Ошибка каналов' });
+  }
+}
+
+export async function regenerateMarketingCopy(req, res) {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id) || id <= 0) {
+      return res.status(400).json({ message: 'Некорректный id' });
+    }
+    let item = await getQueueItem(id);
+    if (!item) return res.status(404).json({ message: 'Не найдено' });
+    if (['publishing'].includes(item.status)) {
+      return res.status(409).json({ message: 'Сейчас публикуется — подожди' });
+    }
+
+    const gen = await generateMarketingCopy({
+      product: item.product,
+      format: item.format,
+      ctaUrl: item.cta_url,
+      fallbackTitle: item.title,
+      fallbackBody: item.body
+    });
+
+    if (!gen.generated) {
+      return res.status(503).json({
+        message: `Не удалось сгенерировать: ${gen.error || 'Ollama недоступна'}`,
+        item
+      });
+    }
+
+    const meta = {
+      ...(item.meta && typeof item.meta === 'object' ? item.meta : {}),
+      copyGenerated: true,
+      copyModel: gen.model,
+      copyGeneratedAt: new Date().toISOString(),
+      copyError: null
+    };
+
+    item = await updateQueueItem(id, {
+      title: gen.title,
+      body: gen.body,
+      status: item.status === 'published' || item.status === 'rejected'
+        ? 'pending_review'
+        : item.status === 'failed'
+          ? 'pending_review'
+          : item.status,
+      meta
+    });
+
+    const alsoRender = req.body?.render === true || item.format === 'video';
+    if (alsoRender && item.format === 'video') {
+      try {
+        const templateId = item.meta?.templateId;
+        const tpl = templateId
+          ? await loadTemplate(templateId)
+          : {
+              product: item.product,
+              source_image: 'assets/clips/neli-promo.png',
+              duration_sec: 12
+            };
+        item = await maybeRenderForItem(item, tpl);
+      } catch (renderErr) {
+        console.error('[admin] marketing regenerate+render', renderErr);
+        return res.status(500).json({
+          message: `Текст обновлён, рендер не удался: ${renderErr.message}`,
+          item
+        });
+      }
+    }
+
+    return res.json({ item, generated: true, model: gen.model });
+  } catch (err) {
+    console.error('[admin] marketing regenerate-copy', err);
+    return res.status(500).json({ message: err.message || 'Ошибка генерации' });
   }
 }
 
@@ -283,5 +391,16 @@ export async function listMarketingTemplates(_req, res) {
   } catch (err) {
     console.error('[admin] marketing templates', err);
     return res.status(500).json({ message: 'Ошибка шаблонов' });
+  }
+}
+
+export async function getMarketingReports(req, res) {
+  try {
+    const days = Number(req.query.days) || 30;
+    const report = await buildMarketingReport({ days });
+    return res.json(report);
+  } catch (err) {
+    console.error('[admin] marketing reports', err);
+    return res.status(500).json({ message: 'Ошибка отчёта' });
   }
 }

@@ -40,7 +40,9 @@ import {
   listMarketingChannels,
   listMarketingTemplates,
   renderMarketingItem,
-  streamMarketingMedia
+  streamMarketingMedia,
+  getMarketingReports,
+  regenerateMarketingCopy
 } from './marketingAdmin.mjs';
 
 const router = Router();
@@ -89,8 +91,10 @@ router.put('/marketing/queue/:id', verifyAdmin, updateMarketingItem);
 router.post('/marketing/queue/:id/reject', verifyAdmin, rejectMarketingItem);
 router.post('/marketing/queue/:id/publish', verifyAdmin, publishMarketingItem);
 router.post('/marketing/queue/:id/render', verifyAdmin, renderMarketingItem);
+router.post('/marketing/queue/:id/regenerate-copy', verifyAdmin, regenerateMarketingCopy);
 router.get('/marketing/queue/:id/media', verifyAdmin, streamMarketingMedia);
 router.get('/marketing/channels', verifyAdmin, listMarketingChannels);
 router.get('/marketing/templates', verifyAdmin, listMarketingTemplates);
+router.get('/marketing/reports', verifyAdmin, getMarketingReports);
 
 export default router;

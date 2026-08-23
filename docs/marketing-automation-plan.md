@@ -34,8 +34,8 @@
 └── Маркетинг
     ├── Очередь          ← главный экран
     ├── Каналы           ← подключение / статус
-    ├── Контент-план     ← продукты и расписание
-    └── Отчёты           ← трафик, конверсии, (позже) просмотры YouTube
+    ├── Отчёты           ← публикации, UTM (nginx), topups/партнёры
+    └── Контент-план     ← продукты и расписание (фаза 3 / cron)
 ```
 
 ### Очередь
@@ -129,6 +129,8 @@ draft → rendering (если видео) → pending_review → publishing → 
 │   ├── out/                # готовые mp4 (gitignore)
 │   ├── queue.mjs           # CRUD очереди
 │   ├── dispatcher.mjs      # publish по каналам
+│   ├── generate-copy.mjs   # тексты через Ollama
+│   ├── reports.mjs         # отчёты (публикации / UTM / topups)
 │   ├── render-short.mjs    # фаза 2
 │   └── cron.mjs            # контент-план по расписанию
 ├── backend/admin/
@@ -203,9 +205,11 @@ UTM пример: `?utm_source=youtube&utm_medium=shorts&utm_campaign=neli_w34`
 
 ### Фаза 3 — расширение
 
+- [x] Генерация текстов через Ollama (`generate-copy.mjs`, кнопка «Новый текст», авто при создании)
 - [ ] LinkedIn (EN, партнёрка)
 - [ ] Cron по контент-плану
-- [ ] Отчёты в админке (nginx, partner_users, topups, просмотры YouTube)
+- [x] Отчёты в админке (публикации + UTM из nginx + partner topups/users) — без Метрики/YouTube пока
+- [ ] Метрика API + просмотры YouTube в отчётах
 - [ ] Новые каналы только плагинами
 - [ ] Геймплей-клипы вместо статичного promo-кадра
 
