@@ -11,7 +11,39 @@ module.exports = {                                      // Экспорт кон
       max_memory_restart: '512M',                       // Перезапуск при превышении 512 МБ
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Формат времени в логах (MSK если сервер в Europe/Moscow)
       env: {
-        NODE_ENV: 'production'                          // Окружение процесса
+        NODE_ENV: 'production',                         // Окружение процесса
+        SKIP_AI_SEARCH: '1',                            // Поиск на search-server :3500
+        SKIP_AGENTS: '1'                                // Агенты/gateway на agents-server :3510
+      }
+    },
+
+    // AI/web-поиск (отдельный процесс, не блокирует auth)
+    {
+      name: 'search-server',
+      script: 'backend/search-server-boot.mjs',
+      interpreter: '/root/.nvm/versions/node/v22.22.0/bin/node',
+      exec_mode: 'fork',
+      instances: 1,
+      max_memory_restart: '512M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      env: {
+        NODE_ENV: 'production',
+        AI_SEARCH_PORT: '3500'
+      }
+    },
+
+    // Агенты + gateway (отдельный процесс)
+    {
+      name: 'agents-server',
+      script: 'backend/agents-server-boot.mjs',
+      interpreter: '/root/.nvm/versions/node/v22.22.0/bin/node',
+      exec_mode: 'fork',
+      instances: 1,
+      max_memory_restart: '512M',
+      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
+      env: {
+        NODE_ENV: 'production',
+        AGENTS_PORT: '3510'
       }
     },
 
