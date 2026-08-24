@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Постављам понуде и плаћам за конверзије",
+    "rolePublisherDesc": "Постављам линкове и зарађујем провизију",
+    "showPassword": "Прикажи",
+    "hidePassword": "Сакриј",
+    "whyTitle": "Зашто ово",
+    "why1": "Поставите понуду или ставите линк на свој сајт.",
+    "why2": "Плаћате или зарађујете за праве лидове и продаје — не само за приказе.",
+    "errEmail": "Унесите исправан имејл",
+    "errPassword": "Унесите лозинку",
+    "errPasswordMin": "Лозинка мора имати најмање 8 знакова"
+  },
+  "help": {
+    "title": "Docs — Партнерска мрежа Serpmonn",
+    "eyebrow": "Помоћ",
+    "h1": "Документација партнерске мреже",
+    "toAuth": "Пријава / Регистрација",
+    "link": "Помоћ",
+    "linkHint": "како мрежа ради",
+    "linkTitle": "Кратка документација за оглашиваче и паблишере",
+    "short": "Помоћ",
+    "navAdv": "За оглашиваче",
+    "navPub": "За паблишере",
+    "navTrack": "Кликови и конверзије",
+    "navMod": "Модерација",
+    "adv": {
+      "h2": "За оглашиваче",
+      "body": "<p>Оглашивачи постављају понуде и плаћају потврђене конверзије. Паблишери узимају понуде и стављају линкове на своје сајтове.</p><ol><li>Регистрација као Оглашивач и пријава у кабинет.</li><li>Допуна биланса у картици Новац (захтев или плаћање).</li><li>Креирање понуде: промо или CPA, лендинг, услови, стопа и холд (0–180 дана).</li><li>За Русију — ERID (токен обележавања ORD).</li><li>Слање на модерацију. После објаве понуда се појављује код паблишера.</li><li>Подешавање преноса конверзија (види испод) — иначе у статистици остају само кликови.</li></ol><p>Свака конверзија терети стопу паблишера плус накнаду мреже (обично 10%). Холд паблишера се поставља по понуди.</p>"
+    },
+    "pub": {
+      "h2": "За паблишере",
+      "body": "<p>Паблишери узимају објављене понуде и постављају пратећи линк. Исплата је за конверзије које је потврдио оглашивач.</p><ol><li>Регистрација као Паблишер — издаје се код сајта.</li><li>У каталогу копирајте линк облика <code>/go/…?p=code</code>. Колона холда показује после колико дана се откључава исплата.</li><li>Линк се ставља на сајт или у слања. Кликови без <code>?p=</code> се игноришу.</li><li>Статистика и доступан биланс су у кабинету.</li><li>Исплата се тражи из кабинета; плаћање потврђује мрежа.</li></ol>"
+    },
+    "track": {
+      "h2": "Кликови и конверзије",
+      "body": "<p><strong>Клик.</strong> Паблишер поставља линк облика <code>/go/…?p=code</code>. Корисник га прати: клик се бележи и прегледач се преусмерава на лендинг оглашивача са <code>click_id</code> у URL-у. Тај id треба сачувати (cookie, CRM или скривено поље форме).</p><p><strong>Конверзија.</strong> Када клијент купи или остави лид, сајт или CRM оглашивача једном позива postback са сачуваним <code>click_id</code> и износом.</p><p>Шаблон је у кабинету оглашивача под Пренос конверзија. Пример:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>За одбијање или chargeback: <code>status=rejected</code> са истим <code>click_id</code>.</p><p>Без postback-а у извештајима остају само кликови. Није потребан сопствени API — довољан је обичан HTTP захтев.</p>"
+    },
+    "mod": {
+      "h2": "Модерација",
+      "body": "<p>Нове и измењене понуде мрежа прегледа пре објаве.</p><ul><li>Проверавају се лендинг, услови, стопа и (за RU) ERID.</li><li>Статуси у кабинету: на модерацији, објављено, одбијено, нацрт.</li><li>При одбијању разлог је у листи понуда; после исправки понуда се шаље поново.</li><li>Скидање са објаве премешта понуду у нацрт — паблишери је више не виде.</li></ul>"
+    },
+    "navIntro": "О мрежи",
+    "intro": {
+      "h2": "Како мрежа ради",
+      "body": "<p>Партнерска мрежа Serpmonn повезује компаније и просторе са публиком у једном моделу постављања.</p><ul><li><strong>Оглашивач</strong> објављује понуду: предлог, услове и награду за завршену радњу.</li><li><strong>Паблишер</strong> промовише понуду партнерским линком на свом простору и добија плаћање за потврђене резултате.</li></ul><p>Исплате су за конверзије — када корисник прати линк и обави циљну радњу према условима понуде (лид, куповина итд.).</p><p>Паблишерима је потребан простор или канал са публиком: регистрација, избор понуда, постављање линка, затим статистика и исплате у кабинету.</p><p>Испод: упутства за кабинете, праћење и модерацију.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Понуде",
+    "money": "Новац",
+    "stats": "Статистика",
+    "catalog": "Каталог"
+  },
+  "money": {
+    "advHint": "Биланс се терети за конверзије (стопа паблишера + накнада мреже).",
+    "openTopup": "Допуни биланс",
+    "openPayout": "Исплати средства",
+    "advHintFee": "По конверзији: стопа паблишера + {fee}% мреже (×{mult}). Холд се поставља на свакој понуди (0–{max} дана)."
+  },
+  "topup": {
+    "drawerHint": "Унесите износ. Биланс се ажурира после плаћања или потврде.",
+    "requisitesTitle": "Банковни подаци ако плаћање картицом није доступно:",
+    "pendingId": "Захтев #{id} је направљен. Унесите овај број у сврху плаћања. Биланс се ажурира после потврде."
+  },
+  "payout": {
+    "holdDaysDefault": "Холд се поставља по понуди (подразумевано {days} дана, до 180)"
+  },
+  "offer": {
+    "country": "Држава",
+    "countryRu": "Русија",
+    "countryOther": "Друга држава",
+    "eridPh": "Токен из ORD",
+    "eridHintRu": "За Русију је потребан токен обележавања рекламе (ORD).",
+    "eridHintOther": "За ову државу ERID није потребан.",
+    "holdDays": "Холд, дани",
+    "holdDaysHint": "Дани колико исплата паблишеру остаје у холду (0–180). 0 = одмах доступно.",
+    "emptyCta": "Направи понуду"
+  },
+  "stats": {
+    "emptyAdvCta": "На понуде",
+    "emptyPubCta": "На каталог",
+    "lastAt": "Када"
+  },
+  "catalog": {
+    "emptyCta": "Копирај линк",
+    "hold": "Холд, дани"
+  },
+  "postback": {
+    "toHelp": "Како раде кликови и конверзије — у помоћи"
+  }
 }

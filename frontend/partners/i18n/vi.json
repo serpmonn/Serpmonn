@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Tôi đặt offer và trả tiền theo chuyển đổi",
+    "rolePublisherDesc": "Tôi đặt liên kết và nhận hoa hồng",
+    "showPassword": "Hiện",
+    "hidePassword": "Ẩn",
+    "whyTitle": "Tại sao dùng",
+    "why1": "Đặt offer hoặc gắn liên kết trên trang của bạn.",
+    "why2": "Bạn trả hoặc kiếm tiền từ lead và doanh số thật — không chỉ lượt xem.",
+    "errEmail": "Nhập email hợp lệ",
+    "errPassword": "Nhập mật khẩu",
+    "errPasswordMin": "Mật khẩu phải có ít nhất 8 ký tự"
+  },
+  "help": {
+    "title": "Tài liệu — Mạng đối tác Serpmonn",
+    "eyebrow": "Trợ giúp",
+    "h1": "Tài liệu mạng đối tác",
+    "toAuth": "Đăng nhập / Đăng ký",
+    "link": "Trợ giúp",
+    "linkHint": "cách mạng hoạt động",
+    "linkTitle": "Tài liệu ngắn cho nhà quảng cáo và publisher",
+    "short": "Trợ giúp",
+    "navAdv": "Cho nhà quảng cáo",
+    "navPub": "Cho publisher",
+    "navTrack": "Click và chuyển đổi",
+    "navMod": "Kiểm duyệt",
+    "adv": {
+      "h2": "Cho nhà quảng cáo",
+      "body": "<p>Nhà quảng cáo đặt offer và trả tiền cho chuyển đổi đã xác nhận. Publisher nhận offer và gắn liên kết trên trang của họ.</p><ol><li>Đăng ký với vai trò Nhà quảng cáo và đăng nhập vào tủ.</li><li>Nạp số dư trong tab Money (yêu cầu hoặc thanh toán).</li><li>Tạo offer: promo hoặc CPA, landing, điều khoản, mức thưởng và hold (0–180 ngày).</li><li>Đối với Nga — ERID (token đánh dấu ORD).</li><li>Gửi kiểm duyệt. Sau khi xuất bản, offer xuất hiện cho publisher.</li><li>Thiết lập báo cáo chuyển đổi (xem bên dưới) — nếu không, thống kê chỉ còn click.</li></ol><p>Mỗi chuyển đổi trừ mức thưởng publisher cộng phí mạng (thường 10%). Hold của publisher được đặt theo từng offer.</p>"
+    },
+    "pub": {
+      "h2": "Cho publisher",
+      "body": "<p>Publisher nhận offer đã xuất bản và đặt liên kết theo dõi. Thanh toán theo chuyển đổi được nhà quảng cáo xác nhận.</p><ol><li>Đăng ký với vai trò Publisher — được cấp mã trang.</li><li>Trong danh mục, sao chép liên kết dạng <code>/go/…?p=code</code>. Cột hold cho biết bao nhiêu ngày đến khi mở khóa thanh toán.</li><li>Đặt liên kết trên trang hoặc trong email. Click không có <code>?p=</code> bị bỏ qua.</li><li>Thống kê và số dư khả dụng nằm trong tủ.</li><li>Yêu cầu rút tiền từ tủ; thanh toán được mạng xác nhận.</li></ol>"
+    },
+    "track": {
+      "h2": "Click và chuyển đổi",
+      "body": "<p><strong>Click.</strong> Publisher đặt liên kết dạng <code>/go/…?p=code</code>. Người dùng nhấp: click được ghi nhận và trình duyệt chuyển đến landing của nhà quảng cáo với <code>click_id</code> trong URL. Id này phải được lưu (cookie, CRM hoặc trường form ẩn).</p><p><strong>Chuyển đổi.</strong> Khi khách mua hoặc để lại lead, trang hoặc CRM của nhà quảng cáo gọi postback một lần với <code>click_id</code> đã lưu và số tiền.</p><p>Mẫu nằm trong tủ nhà quảng cáo dưới Conversion reporting. Ví dụ:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Để từ chối hoặc chargeback: <code>status=rejected</code> với cùng <code>click_id</code>.</p><p>Không có postback thì báo cáo chỉ còn click. Không cần API tùy chỉnh — một yêu cầu HTTP thông thường là đủ.</p>"
+    },
+    "mod": {
+      "h2": "Kiểm duyệt",
+      "body": "<p>Offer mới và đã chỉnh sửa được mạng xem xét trước khi xuất bản.</p><ul><li>Kiểm tra landing, điều khoản, mức thưởng và (với RU) ERID.</li><li>Trạng thái trong tủ: đang kiểm duyệt, đã xuất bản, bị từ chối, bản nháp.</li><li>Khi từ chối, lý do hiện trong danh sách offer; sau khi sửa, gửi lại.</li><li>Gỡ xuất bản đưa offer về bản nháp — publisher không còn thấy.</li></ul>"
+    },
+    "navIntro": "Về mạng",
+    "intro": {
+      "h2": "Cách mạng hoạt động",
+      "body": "<p>Mạng đối tác Serpmonn kết nối công ty và các nền tảng có khán giả trong một mô hình đặt chỗ duy nhất.</p><ul><li><strong>Nhà quảng cáo</strong> xuất bản offer: đề xuất, điều khoản và phần thưởng cho hành động hoàn thành.</li><li><strong>Publisher</strong> quảng bá offer qua liên kết đối tác trên nền tảng của mình và được trả cho kết quả đã xác nhận.</li></ul><p>Thanh toán theo chuyển đổi — khi người dùng theo liên kết và hoàn thành hành động mục tiêu theo điều khoản offer (lead, mua hàng, v.v.).</p><p>Publisher cần nền tảng hoặc kênh có khán giả: đăng ký, chọn offer, đặt liên kết, rồi xem thống kê và nhận thanh toán trong tủ.</p><p>Bên dưới là hướng dẫn về tủ, theo dõi và kiểm duyệt.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Offer",
+    "money": "Tiền",
+    "stats": "Thống kê",
+    "catalog": "Danh mục"
+  },
+  "money": {
+    "advHint": "Số dư bị trừ theo chuyển đổi (mức thưởng publisher + phí mạng).",
+    "openTopup": "Nạp số dư",
+    "openPayout": "Rút tiền",
+    "advHintFee": "Mỗi chuyển đổi: mức thưởng publisher + {fee}% mạng (×{mult}). Hold đặt trên từng offer (0–{max} ngày)."
+  },
+  "topup": {
+    "drawerHint": "Nhập số tiền. Số dư cập nhật sau thanh toán hoặc xác nhận.",
+    "requisitesTitle": "Chi tiết ngân hàng nếu không thanh toán được bằng thẻ:",
+    "pendingId": "Đã tạo yêu cầu #{id}. Ghi số này vào nội dung thanh toán. Số dư cập nhật sau xác nhận."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold đặt theo từng offer (mặc định {days} ngày, tối đa 180)"
+  },
+  "offer": {
+    "country": "Quốc gia",
+    "countryRu": "Nga",
+    "countryOther": "Quốc gia khác",
+    "eridPh": "Token từ ORD",
+    "eridHintRu": "Đối với Nga cần token đánh dấu quảng cáo (ORD).",
+    "eridHintOther": "ERID không bắt buộc với quốc gia này.",
+    "holdDays": "Hold, ngày",
+    "holdDaysHint": "Số ngày thanh toán publisher bị hold (0–180). 0 = khả dụng ngay.",
+    "emptyCta": "Tạo offer"
+  },
+  "stats": {
+    "emptyAdvCta": "Đến offer",
+    "emptyPubCta": "Đến danh mục",
+    "lastAt": "Khi"
+  },
+  "catalog": {
+    "emptyCta": "Sao chép liên kết",
+    "hold": "Hold, ngày"
+  },
+  "postback": {
+    "toHelp": "Cách click và chuyển đổi hoạt động — trong trợ giúp"
+  }
 }

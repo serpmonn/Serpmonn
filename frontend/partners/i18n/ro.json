@@ -185,5 +185,98 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Plasez oferte și plătesc pentru conversii",
+    "rolePublisherDesc": "Plasez linkuri și câștig comision",
+    "showPassword": "Afișare",
+    "hidePassword": "Ascundere",
+    "whyTitle": "De ce asta",
+    "why1": "Plasați o ofertă sau puneți un link pe site-ul dvs.",
+    "why2": "Plătiți sau câștigați pentru lead-uri și vânzări reale — nu doar pentru vizualizări.",
+    "errEmail": "Introduceți un email valid",
+    "errPassword": "Introduceți parola",
+    "errPasswordMin": "Parola trebuie să aibă cel puțin 8 caractere",
+    "optional": "(opțional)"
+  },
+  "help": {
+    "title": "Docs — Rețeaua de parteneri Serpmonn",
+    "eyebrow": "Ajutor",
+    "h1": "Documentația rețelei de parteneri",
+    "toAuth": "Autentificare / Înregistrare",
+    "link": "Ajutor",
+    "linkHint": "cum funcționează rețeaua",
+    "linkTitle": "Documentație scurtă pentru advertiseri și publisheri",
+    "short": "Ajutor",
+    "navAdv": "Pentru advertiseri",
+    "navPub": "Pentru publisheri",
+    "navTrack": "Clickuri și conversii",
+    "navMod": "Moderare",
+    "adv": {
+      "h2": "Pentru advertiseri",
+      "body": "<p>Advertiserii plasează oferte și plătesc pentru conversii confirmate. Publisherii preiau oferte și pun linkuri pe site-urile lor.</p><ol><li>Înregistrare ca Advertiser și autentificare în panou.</li><li>Alimentare sold în fila Bani (cerere sau plată).</li><li>Creare ofertă: promo sau CPA, landing, condiții, tarif și hold (0–180 zile).</li><li>Pentru Rusia — un ERID (token de marcare ORD).</li><li>Trimitere la moderare. După publicare, oferta apare pentru publisheri.</li><li>Configurarea raportării conversiilor (vezi mai jos) — altfel în statistici rămân doar clickurile.</li></ol><p>Fiecare conversie debitează tariful publisher plus comisionul rețelei (de obicei 10%). Hold-ul publisherului este setat pe ofertă.</p>"
+    },
+    "pub": {
+      "h2": "Pentru publisheri",
+      "body": "<p>Publisherii preiau oferte publicate și plasează un link urmărit. Plata este pentru conversii confirmate de advertiser.</p><ol><li>Înregistrare ca Publisher — se emite un cod de site.</li><li>În catalog, copiați un link de tip <code>/go/…?p=code</code>. Coloana hold arată după câte zile se deblochează plata.</li><li>Linkul este plasat pe un site sau în mailuri. Clickurile fără <code>?p=</code> sunt ignorate.</li><li>Statisticile și soldul disponibil sunt în panou.</li><li>Retragerea se solicită din panou; plata este confirmată de rețea.</li></ol>"
+    },
+    "track": {
+      "h2": "Clickuri și conversii",
+      "body": "<p><strong>Click.</strong> Publisherul plasează un link de tip <code>/go/…?p=code</code>. Utilizatorul îl urmează: clickul este înregistrat și browserul este redirecționat către landing-ul advertiserului cu <code>click_id</code> în URL. Acest id trebuie stocat (cookie, CRM sau câmp ascuns din formular).</p><p><strong>Conversie.</strong> Când clientul cumpără sau lasă un lead, site-ul sau CRM-ul advertiserului apelează o dată postback-ul cu <code>click_id</code> stocat și suma.</p><p>Șablonul este în panoul advertiserului la Raportarea conversiilor. Exemplu:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Pentru respingere sau chargeback: <code>status=rejected</code> cu același <code>click_id</code>.</p><p>Fără postback, în rapoarte rămân doar clickurile. Nu este nevoie de API personalizat — un request HTTP normal este suficient.</p>"
+    },
+    "mod": {
+      "h2": "Moderare",
+      "body": "<p>Ofertele noi și editate sunt verificate de rețea înainte de publicare.</p><ul><li>Se verifică landing, condiții, tarif și (pentru RU) ERID.</li><li>Statusuri în panou: în moderare, publicat, respins, ciornă.</li><li>La respingere, motivul apare în lista de oferte; după corecții, oferta se retrimite.</li><li>Depublicarea mută oferta în ciornă — publisherii nu o mai văd.</li></ul>"
+    },
+    "navIntro": "Despre rețea",
+    "intro": {
+      "h2": "Cum funcționează rețeaua",
+      "body": "<p>Rețeaua de parteneri Serpmonn conectează companii și spații cu audiență într-un singur model de plasare.</p><ul><li><strong>Advertiser</strong> publică o ofertă: propunerea, condițiile și recompensa pentru o acțiune finalizată.</li><li><strong>Publisher</strong> promovează oferta printr-un link de partener pe spațiul său și este plătit pentru rezultate confirmate.</li></ul><p>Plățile sunt pentru conversii — când un utilizator urmează linkul și finalizează acțiunea țintă conform condițiilor ofertei (lead, cumpărare etc.).</p><p>Publisherii au nevoie de un spațiu sau canal cu audiență: înregistrare, alegerea ofertelor, plasarea linkului, apoi statistici și plăți în panou.</p><p>Mai jos: instrucțiuni pentru panouri, urmărire și moderare.</p>"
+    }
+  },
+  "cabinet": {
+    "eyebrow": "Panou"
+  },
+  "tab": {
+    "offers": "Oferte",
+    "money": "Bani",
+    "stats": "Statistici"
+  },
+  "money": {
+    "advHint": "Soldul se debitează pentru conversii (tarif publisher + comision rețea).",
+    "openTopup": "Alimentează soldul",
+    "openPayout": "Retrage fonduri",
+    "advHintFee": "Per conversie: tarif publisher + {fee}% rețea (×{mult}). Hold-ul este setat pe fiecare ofertă (0–{max} zile)."
+  },
+  "topup": {
+    "drawerHint": "Introduceți suma. Soldul se actualizează după plată sau confirmare.",
+    "requisitesTitle": "Date bancare dacă plata cu cardul nu este disponibilă:",
+    "pendingId": "Cererea #{id} a fost creată. Puneți acest număr în detaliile plății. Soldul se actualizează după confirmare."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold-ul este setat pe ofertă (implicit {days} zile, până la 180)"
+  },
+  "offer": {
+    "country": "Țară",
+    "countryRu": "Rusia",
+    "countryOther": "Altă țară",
+    "eridPh": "Token din ORD",
+    "eridHintRu": "Pentru Rusia este necesar un token de marcare publicitară (ORD).",
+    "eridHintOther": "ERID nu este necesar pentru această țară.",
+    "holdDays": "Hold, zile",
+    "holdDaysHint": "Zilele în care plata publisher rămâne în hold (0–180). 0 = disponibil imediat.",
+    "emptyCta": "Creează ofertă"
+  },
+  "stats": {
+    "emptyAdvCta": "La oferte",
+    "emptyPubCta": "La catalog",
+    "lastAt": "Când"
+  },
+  "catalog": {
+    "emptyCta": "Copiază linkul",
+    "hold": "Hold, zile"
+  },
+  "postback": {
+    "toHelp": "Cum funcționează clickurile și conversiile — în ajutor"
+  }
 }

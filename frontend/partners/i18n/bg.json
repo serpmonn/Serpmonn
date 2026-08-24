@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Публикувам оферти и плащам за конверсии",
+    "rolePublisherDesc": "Слагам връзки и печеля комисиона",
+    "showPassword": "Показване",
+    "hidePassword": "Скриване",
+    "whyTitle": "Защо е това",
+    "why1": "Публикувайте оферта или сложете връзка на сайта си.",
+    "why2": "Плащате или печелите за реални лийдове и продажби — не само за показвания.",
+    "errEmail": "Въведете валиден имейл",
+    "errPassword": "Въведете паролата",
+    "errPasswordMin": "Паролата трябва да е поне 8 символа"
+  },
+  "help": {
+    "title": "Docs — Партньорска мрежа Serpmonn",
+    "eyebrow": "Помощ",
+    "h1": "Документация на партньорската мрежа",
+    "toAuth": "Вход / Регистрация",
+    "link": "Помощ",
+    "linkHint": "как работи мрежата",
+    "linkTitle": "Кратка документация за рекламодатели и паблишъри",
+    "short": "Помощ",
+    "navAdv": "За рекламодатели",
+    "navPub": "За паблишъри",
+    "navTrack": "Кликове и конверсии",
+    "navMod": "Модерация",
+    "adv": {
+      "h2": "За рекламодатели",
+      "body": "<p>Рекламодателите публикуват оферти и плащат за потвърдени конверсии. Паблишърите вземат оферти и слагат връзки на сайтовете си.</p><ol><li>Регистрация като Рекламодател и вход в кабинета.</li><li>Зареждане на баланс в раздела Пари (заявка или плащане).</li><li>Създаване на оферта: промо или CPA, лендинг, условия, ставка и холд (0–180 дни).</li><li>За Русия — ERID (токен за маркиране ORD).</li><li>Изпращане за модерация. След публикуване офертата се появява при паблишърите.</li><li>Настройка на предаване на конверсии (виж по-долу) — иначе в статистиката остават само кликове.</li></ol><p>Всяка конверсия удържа ставката на паблишъра плюс таксата на мрежата (обикновено 10%). Холдът за паблишъра се задава по оферта.</p>"
+    },
+    "pub": {
+      "h2": "За паблишъри",
+      "body": "<p>Паблишърите вземат публикувани оферти и поставят проследяваща връзка. Изплащането е за конверсии, потвърдени от рекламодателя.</p><ol><li>Регистрация като Паблишър — издава се код на сайта.</li><li>В каталога копирайте връзка от вида <code>/go/…?p=code</code>. Колоната за холд показва след колко дни се отключва изплащането.</li><li>Връзката се поставя на сайт или в разпратки. Кликове без <code>?p=</code> се игнорират.</li><li>Статистиката и наличният баланс са в кабинета.</li><li>Тегленето се заявява от кабинета; плащането се потвърждава от мрежата.</li></ol>"
+    },
+    "track": {
+      "h2": "Кликове и конверсии",
+      "body": "<p><strong>Клик.</strong> Паблишърът поставя връзка от вида <code>/go/…?p=code</code>. Потребителят я следва: кликът се записва и браузърът се пренасочва към лендинга на рекламодателя с <code>click_id</code> в URL. Този id трябва да се запази (cookie, CRM или скрито поле на форма).</p><p><strong>Конверсия.</strong> Когато клиентът купи или остави лийд, сайтът или CRM на рекламодателя веднъж извиква postback със запазения <code>click_id</code> и сумата.</p><p>Шаблонът е в кабинета на рекламодателя под Предаване на конверсии. Пример:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>За отказ или chargeback: <code>status=rejected</code> със същия <code>click_id</code>.</p><p>Без postback в отчетите остават само кликове. Не е нужен собствен API — достатъчна е обикновена HTTP заявка.</p>"
+    },
+    "mod": {
+      "h2": "Модерация",
+      "body": "<p>Новите и редактираните оферти се преглеждат от мрежата преди публикуване.</p><ul><li>Проверяват се лендинг, условия, ставка и (за RU) ERID.</li><li>Статуси в кабинета: на модерация, публикувана, отхвърлена, чернова.</li><li>При отхвърляне причината е в списъка с оферти; след поправки офертата се изпраща отново.</li><li>Свалянето от публикация премества офертата в чернова — паблишърите вече не я виждат.</li></ul>"
+    },
+    "navIntro": "За мрежата",
+    "intro": {
+      "h2": "Как работи мрежата",
+      "body": "<p>Партньорската мрежа Serpmonn свързва компании и площадки с аудитория в един модел на публикуване.</p><ul><li><strong>Рекламодател</strong> публикува оферта: предложението, условията и възнаграждението за завършено действие.</li><li><strong>Паблишър</strong> промотира офертата чрез партньорска връзка на площадката си и получава заплащане за потвърдени резултати.</li></ul><p>Изплащанията са за конверсии — когато потребител последва връзката и изпълни целевото действие според условията на офертата (лийд, покупка и др.).</p><p>На паблишърите е нужна площадка или канал с аудитория: регистрация, избор на оферти, поставяне на връзка, след това статистика и изплащания в кабинета.</p><p>По-долу: инструкции за кабинети, проследяване и модерация.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Оферти",
+    "money": "Пари",
+    "stats": "Статистика",
+    "catalog": "Каталог"
+  },
+  "money": {
+    "advHint": "Балансът се удържа за конверсии (ставка на паблишъра + такса на мрежата).",
+    "openTopup": "Зареждане на баланс",
+    "openPayout": "Теглене на средства",
+    "advHintFee": "За конверсия: ставка на паблишъра + {fee}% мрежа (×{mult}). Холдът се задава във всяка оферта (0–{max} дни)."
+  },
+  "topup": {
+    "drawerHint": "Въведете сумата. Балансът се обновява след плащане или потвърждение.",
+    "requisitesTitle": "Банкови данни, ако плащането с карта е недостъпно:",
+    "pendingId": "Заявка #{id} е създадена. Посочете този номер в основанието на плащането. Балансът се обновява след потвърждение."
+  },
+  "payout": {
+    "holdDaysDefault": "Холдът се задава по оферта (по подразбиране {days} дни, до 180)"
+  },
+  "offer": {
+    "country": "Държава",
+    "countryRu": "Русия",
+    "countryOther": "Друга държава",
+    "eridPh": "Токен от ORD",
+    "eridHintRu": "За Русия е нужен токен за маркиране на реклама (ORD).",
+    "eridHintOther": "За тази държава ERID не е задължителен.",
+    "holdDays": "Холд, дни",
+    "holdDaysHint": "Дни, в които изплащането към паблишъра е в холд (0–180). 0 = налично веднага.",
+    "emptyCta": "Създаване на оферта"
+  },
+  "stats": {
+    "emptyAdvCta": "Към офертите",
+    "emptyPubCta": "Към каталога",
+    "lastAt": "Кога"
+  },
+  "catalog": {
+    "emptyCta": "Копиране на връзка",
+    "hold": "Холд, дни"
+  },
+  "postback": {
+    "toHelp": "Как работят кликовете и конверсиите — в помощта"
+  }
 }

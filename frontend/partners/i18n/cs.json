@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Umísťuji nabídky a platím za konverze",
+    "rolePublisherDesc": "Umísťuji odkazy a vydělávám provizi",
+    "showPassword": "Zobrazit",
+    "hidePassword": "Skrýt",
+    "whyTitle": "K čemu to je",
+    "why1": "Umístěte nabídku nebo dejte odkaz na svůj web.",
+    "why2": "Platíte nebo vyděláváte za skutečné leady a prodeje — ne jen za zobrazení.",
+    "errEmail": "Zadejte platný e-mail",
+    "errPassword": "Zadejte heslo",
+    "errPasswordMin": "Heslo musí mít alespoň 8 znaků"
+  },
+  "help": {
+    "title": "Docs — Partnerská síť Serpmonn",
+    "eyebrow": "Nápověda",
+    "h1": "Dokumentace partnerské sítě",
+    "toAuth": "Přihlášení / Registrace",
+    "link": "Nápověda",
+    "linkHint": "jak síť funguje",
+    "linkTitle": "Krátká dokumentace pro inzerenty a vydavatele",
+    "short": "Nápověda",
+    "navAdv": "Pro inzerenty",
+    "navPub": "Pro vydavatele",
+    "navTrack": "Kliky a konverze",
+    "navMod": "Moderace",
+    "adv": {
+      "h2": "Pro inzerenty",
+      "body": "<p>Inzerenti umísťují nabídky a platí za potvrzené konverze. Vydavatelé berou nabídky a dávají odkazy na své weby.</p><ol><li>Registrace jako Inzerent a přihlášení do kabinetu.</li><li>Dobití zůstatku na kartě Peníze (žádost nebo platba).</li><li>Vytvoření nabídky: promo nebo CPA, landing, podmínky, sazba a hold (0–180 dní).</li><li>Pro Rusko — ERID (token označení ORD).</li><li>Odeslání k moderaci. Po zveřejnění se nabídka objeví vydavatelům.</li><li>Nastavení reportování konverzí (viz níže) — jinak ve statistikách zůstanou jen kliky.</li></ol><p>Každá konverze strhne sazbu vydavatele plus poplatek sítě (obvykle 10 %). Hold vydavatele se nastavuje u nabídky.</p>"
+    },
+    "pub": {
+      "h2": "Pro vydavatele",
+      "body": "<p>Vydavatelé berou zveřejněné nabídky a umísťují sledovaný odkaz. Výplata je za konverze potvrzené inzerentem.</p><ol><li>Registrace jako Vydavatel — je vydán kód webu.</li><li>V katalogu zkopírujte odkaz typu <code>/go/…?p=code</code>. Sloupec hold ukazuje, po kolika dnech se výplata uvolní.</li><li>Odkaz se umístí na web nebo do mailingu. Kliky bez <code>?p=</code> se ignorují.</li><li>Statistiky a dostupný zůstatek jsou v kabinetu.</li><li>Výplata se žádá z kabinetu; platbu potvrzuje síť.</li></ol>"
+    },
+    "track": {
+      "h2": "Kliky a konverze",
+      "body": "<p><strong>Klik.</strong> Vydavatel umístí odkaz typu <code>/go/…?p=code</code>. Uživatel ho otevře: klik se zaznamená a prohlížeč se přesměruje na landing inzerenta s <code>click_id</code> v URL. Toto id je třeba uložit (cookie, CRM nebo skryté pole formuláře).</p><p><strong>Konverze.</strong> Když klient koupí nebo zanechá lead, web nebo CRM inzerenta jednou zavolá postback s uloženým <code>click_id</code> a částkou.</p><p>Šablona je v kabinetu inzerenta pod Reportováním konverzí. Příklad:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Pro zamítnutí nebo chargeback: <code>status=rejected</code> se stejným <code>click_id</code>.</p><p>Bez postbacku zůstanou v reportech jen kliky. Vlastní API není potřeba — stačí běžný HTTP požadavek.</p>"
+    },
+    "mod": {
+      "h2": "Moderace",
+      "body": "<p>Nové a upravené nabídky síť před zveřejněním kontroluje.</p><ul><li>Kontroluje se landing, podmínky, sazba a (pro RU) ERID.</li><li>Stavy v kabinetu: v moderaci, zveřejněno, zamítnuto, koncept.</li><li>Při zamítnutí je důvod v seznamu nabídek; po opravách se nabídka odešle znovu.</li><li>Zrušení zveřejnění převede nabídku do konceptu — vydavatelé ji už neuvidí.</li></ul>"
+    },
+    "navIntro": "O síti",
+    "intro": {
+      "h2": "Jak síť funguje",
+      "body": "<p>Partnerská síť Serpmonn propojuje firmy a plochy s publikem v jednom modelu umístění.</p><ul><li><strong>Inzerent</strong> zveřejní nabídku: návrh, podmínky a odměnu za dokončenou akci.</li><li><strong>Vydavatel</strong> propaguje nabídku partnerským odkazem na své ploše a je placen za potvrzené výsledky.</li></ul><p>Výplaty jsou za konverze — když uživatel sleduje odkaz a dokončí cílovou akci podle podmínek nabídky (lead, nákup atd.).</p><p>Vydavatelé potřebují plochu nebo kanál s publikem: registrace, výběr nabídek, umístění odkazu, poté statistiky a výplaty v kabinetu.</p><p>Níže: pokyny ke kabinetům, trackingu a moderaci.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Nabídky",
+    "money": "Peníze",
+    "stats": "Statistiky",
+    "catalog": "Katalog"
+  },
+  "money": {
+    "advHint": "Zůstatek se strhává za konverze (sazba vydavatele + poplatek sítě).",
+    "openTopup": "Dobít zůstatek",
+    "openPayout": "Vyplatit prostředky",
+    "advHintFee": "Za konverzi: sazba vydavatele + {fee}% sítě (×{mult}). Hold se nastavuje u každé nabídky (0–{max} dní)."
+  },
+  "topup": {
+    "drawerHint": "Zadejte částku. Zůstatek se aktualizuje po platbě nebo potvrzení.",
+    "requisitesTitle": "Bankovní údaje, pokud platba kartou není dostupná:",
+    "pendingId": "Žádost #{id} vytvořena. Uveďte toto číslo do účelu platby. Zůstatek se aktualizuje po potvrzení."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold se nastavuje u nabídky (výchozí {days} dní, až 180)"
+  },
+  "offer": {
+    "country": "Země",
+    "countryRu": "Rusko",
+    "countryOther": "Jiná země",
+    "eridPh": "Token z ORD",
+    "eridHintRu": "Pro Rusko je vyžadován token označení reklamy (ORD).",
+    "eridHintOther": "Pro tuto zemi ERID není vyžadován.",
+    "holdDays": "Hold, dny",
+    "holdDaysHint": "Počet dní, po které zůstává výplata vydavateli v holdu (0–180). 0 = ihned dostupná.",
+    "emptyCta": "Vytvořit nabídku"
+  },
+  "stats": {
+    "emptyAdvCta": "K nabídkám",
+    "emptyPubCta": "Ke katalogu",
+    "lastAt": "Kdy"
+  },
+  "catalog": {
+    "emptyCta": "Kopírovat odkaz",
+    "hold": "Hold, dny"
+  },
+  "postback": {
+    "toHelp": "Jak fungují kliky a konverze — v nápovědě"
+  }
 }

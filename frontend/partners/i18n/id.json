@@ -185,5 +185,98 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Saya menempatkan offer dan membayar konversi",
+    "rolePublisherDesc": "Saya memasang tautan dan mendapat komisi",
+    "showPassword": "Tampilkan",
+    "hidePassword": "Sembunyikan",
+    "whyTitle": "Mengapa ini",
+    "why1": "Tempatkan offer atau pasang tautan di situs Anda.",
+    "why2": "Anda membayar atau mendapat penghasilan dari lead dan penjualan nyata — bukan hanya tayangan.",
+    "errEmail": "Masukkan email yang valid",
+    "errPassword": "Masukkan kata sandi",
+    "errPasswordMin": "Kata sandi minimal 8 karakter"
+  },
+  "help": {
+    "title": "Dokumentasi — Jaringan mitra Serpmonn",
+    "eyebrow": "Bantuan",
+    "h1": "Dokumentasi jaringan mitra",
+    "toAuth": "Masuk / Daftar",
+    "link": "Bantuan",
+    "linkHint": "cara kerja jaringan",
+    "linkTitle": "Dokumentasi singkat untuk pengiklan dan publisher",
+    "short": "Bantuan",
+    "navAdv": "Untuk pengiklan",
+    "navPub": "Untuk publisher",
+    "navTrack": "Klik dan konversi",
+    "navMod": "Moderasi",
+    "adv": {
+      "h2": "Untuk pengiklan",
+      "body": "<p>Pengiklan menempatkan offer dan membayar konversi yang dikonfirmasi. Publisher mengambil offer dan memasang tautan di situs mereka.</p><ol><li>Registrasi sebagai Pengiklan dan masuk ke kabinet.</li><li>Isi saldo di tab Money (permintaan atau pembayaran).</li><li>Pembuatan offer: promo atau CPA, landing, ketentuan, tarif, dan hold (0–180 hari).</li><li>Untuk Rusia — ERID (token penandaan ORD).</li><li>Pengajuan untuk moderasi. Setelah dipublikasikan, offer muncul untuk publisher.</li><li>Pengaturan pelaporan konversi (lihat di bawah) — jika tidak, hanya klik yang tersisa di statistik.</li></ol><p>Setiap konversi memotong tarif publisher ditambah biaya jaringan (biasanya 10%). Hold publisher diatur per offer.</p>"
+    },
+    "pub": {
+      "h2": "Untuk publisher",
+      "body": "<p>Publisher mengambil offer yang dipublikasikan dan memasang tautan terlacak. Pembayaran untuk konversi yang dikonfirmasi pengiklan.</p><ol><li>Registrasi sebagai Publisher — kode situs diterbitkan.</li><li>Di katalog, salin tautan seperti <code>/go/…?p=code</code>. Kolom hold menunjukkan berapa hari hingga pembayaran terbuka.</li><li>Tautan dipasang di situs atau dalam surat. Klik tanpa <code>?p=</code> diabaikan.</li><li>Statistik dan saldo tersedia ada di kabinet.</li><li>Penarikan diminta dari kabinet; pembayaran dikonfirmasi jaringan.</li></ol>"
+    },
+    "track": {
+      "h2": "Klik dan konversi",
+      "body": "<p><strong>Klik.</strong> Publisher memasang tautan seperti <code>/go/…?p=code</code>. Pengguna mengikutinya: klik dicatat dan browser dialihkan ke landing pengiklan dengan <code>click_id</code> di URL. Id itu harus disimpan (cookie, CRM, atau bidang formulir tersembunyi).</p><p><strong>Konversi.</strong> Saat klien membeli atau meninggalkan lead, situs atau CRM pengiklan memanggil postback sekali dengan <code>click_id</code> tersimpan dan jumlah.</p><p>Templat ada di kabinet pengiklan di bawah Conversion reporting. Contoh:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Untuk penolakan atau chargeback: <code>status=rejected</code> dengan <code>click_id</code> yang sama.</p><p>Tanpa postback hanya klik yang tersisa di laporan. Tidak perlu API khusus — permintaan HTTP biasa sudah cukup.</p>"
+    },
+    "mod": {
+      "h2": "Moderasi",
+      "body": "<p>Offer baru dan yang diedit ditinjau jaringan sebelum dipublikasikan.</p><ul><li>Landing, ketentuan, tarif, dan (untuk RU) ERID diperiksa.</li><li>Status di kabinet: dalam moderasi, dipublikasikan, ditolak, draf.</li><li>Saat penolakan, alasan ditampilkan di daftar offer; setelah perbaikan, offer diajukan ulang.</li><li>Pembatalan publikasi memindahkan offer ke draf — publisher tidak lagi melihatnya.</li></ul>"
+    },
+    "navIntro": "Tentang jaringan",
+    "intro": {
+      "h2": "Cara kerja jaringan",
+      "body": "<p>Jaringan mitra Serpmonn menghubungkan perusahaan dan properti berpemilik audiens dalam satu model penempatan.</p><ul><li><strong>Pengiklan</strong> memublikasikan offer: proposisi, ketentuan, dan imbalan untuk tindakan yang selesai.</li><li><strong>Publisher</strong> mempromosikan offer lewat tautan mitra di propertinya dan dibayar untuk hasil yang dikonfirmasi.</li></ul><p>Pembayaran untuk konversi — saat pengguna mengikuti tautan dan menyelesaikan tindakan target sesuai ketentuan offer (lead, pembelian, dll.).</p><p>Publisher membutuhkan properti atau saluran dengan audiens: registrasi, pemilihan offer, pemasangan tautan, lalu statistik dan pembayaran di kabinet.</p><p>Di bawah ini adalah instruksi untuk kabinet, pelacakan, dan moderasi.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Offer",
+    "money": "Uang",
+    "stats": "Statistik",
+    "catalog": "Katalog"
+  },
+  "money": {
+    "advHint": "Saldo dipotong untuk konversi (tarif publisher + biaya jaringan).",
+    "openTopup": "Isi ulang saldo",
+    "openPayout": "Tarik dana",
+    "advHintFee": "Per konversi: tarif publisher + {fee}% jaringan (×{mult}). Hold diatur pada setiap offer (0–{max} hari)."
+  },
+  "topup": {
+    "drawerHint": "Masukkan jumlah. Saldo diperbarui setelah pembayaran atau konfirmasi.",
+    "requisitesTitle": "Detail bank jika pembayaran kartu tidak tersedia:",
+    "pendingId": "Permintaan #{id} dibuat. Cantumkan nomor ini di tujuan pembayaran. Saldo diperbarui setelah konfirmasi."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold diatur per offer (default {days} hari, hingga 180)"
+  },
+  "offer": {
+    "country": "Negara",
+    "countryRu": "Rusia",
+    "countryOther": "Negara lain",
+    "eridPh": "Token dari ORD",
+    "eridHintRu": "Untuk Rusia diperlukan token penandaan iklan (ORD).",
+    "eridHintOther": "ERID tidak diperlukan untuk negara ini.",
+    "holdDays": "Hold, hari",
+    "holdDaysHint": "Hari pembayaran publisher tetap dalam hold (0–180). 0 = tersedia segera.",
+    "emptyCta": "Buat offer"
+  },
+  "stats": {
+    "emptyAdvCta": "Ke offer",
+    "emptyPubCta": "Ke katalog",
+    "lastAt": "Kapan"
+  },
+  "catalog": {
+    "emptyCta": "Salin tautan",
+    "hold": "Hold, hari"
+  },
+  "th": {
+    "link": "Tautan"
+  },
+  "postback": {
+    "toHelp": "Cara kerja klik dan konversi — di bantuan"
+  }
 }

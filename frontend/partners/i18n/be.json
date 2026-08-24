@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Размяшчаю аферы і плачу за канверсіі",
+    "rolePublisherDesc": "Стаўлю спасылкі і зарабляю камісію",
+    "showPassword": "Паказаць",
+    "hidePassword": "Схаваць",
+    "whyTitle": "Навошта гэта",
+    "why1": "Размясціце аферу або пастаўце спасылку на сваім сайце.",
+    "why2": "Вы плаціце або зарабляеце за рэальныя заяўкі і продажы — не толькі за паказы.",
+    "errEmail": "Увядзіце карэктны email",
+    "errPassword": "Увядзіце пароль",
+    "errPasswordMin": "Пароль павінен мець не менш за 8 сімвалаў"
+  },
+  "help": {
+    "title": "Docs — Партнёрская сетка Serpmonn",
+    "eyebrow": "Дапамога",
+    "h1": "Дакументацыя партнёрскай сеткі",
+    "toAuth": "Уваход / Рэгістрацыя",
+    "link": "Дапамога",
+    "linkHint": "як працуе сетка",
+    "linkTitle": "Кароткая дакументацыя для рэкламадаўцаў і паблішэраў",
+    "short": "Дапамога",
+    "navAdv": "Для рэкламадаўцаў",
+    "navPub": "Для паблішэраў",
+    "navTrack": "Клікі і канверсіі",
+    "navMod": "Мадэрацыя",
+    "adv": {
+      "h2": "Для рэкламадаўцаў",
+      "body": "<p>Рэкламадаўцы размяшчаюць аферы і аплачваюць пацверджаныя канверсіі. Паблішэры бяруць аферы і ставяць спасылкі на сваіх пляцоўках.</p><ol><li>Рэгістрацыя як Рэкламадаўца і ўваход у кабінет.</li><li>Папаўненне балансу ва ўкладцы Грошы (заяўка або аплата).</li><li>Стварэнне аферы: прома або CPA, лендынг, умовы, стаўка і холд (0–180 дзён).</li><li>Для Расіі — ERID (токен маркіроўкі ORD).</li><li>Адпраўка на мадэрацыю. Пасля публікацыі афера з’яўляецца ў паблішэраў.</li><li>Налада перадачы канверсій (гл. ніжэй) — інакш у статыстыцы застануцца толькі клікі.</li></ol><p>З кожнай канверсіі спісваецца стаўка паблішэру плюс камісія сеткі (звычайна 10%). Холд паблішэру задаецца ў кожнай аферы.</p>"
+    },
+    "pub": {
+      "h2": "Для паблішэраў",
+      "body": "<p>Паблішэры бяруць апублікаваныя аферы і размяшчаюць трэкінг-спасылку. Выплата ідзе за канверсіі, пацверджаныя рэкламадаўцам.</p><ol><li>Рэгістрацыя як Паблішэр — выдаецца код пляцоўкі.</li><li>У каталогу капіруецца спасылка выгляду <code>/go/…?p=code</code>. У слупку холду паказана, праз колькі дзён налічэнне даступна да вываду.</li><li>Спасылка ставіцца на сайце або ў рассылцы. Клікі без <code>?p=</code> не ўлічваюцца.</li><li>Статыстыка і даступны баланс — у кабінеце.</li><li>Вывад — заяўкай з кабінета; выплату пацвярджае сетка.</li></ol>"
+    },
+    "track": {
+      "h2": "Клікі і канверсіі",
+      "body": "<p><strong>Клік.</strong> Паблішэр размяшчае спасылку выгляду <code>/go/…?p=code</code>. Карыстальнік пераходзіць па ёй: клік фіксуецца, выконваецца пераход на лендынг рэкламадаўцы з параметрам <code>click_id</code> у URL. Гэты ідэнтыфікатар трэба захаваць (cookie, CRM або схаванае поле формы).</p><p><strong>Канверсія.</strong> Калі кліент купіў або пакінуў заяўку, сайт або CRM рэкламадаўцы адзін раз выклікае postback і падстаўляе захаваны <code>click_id</code> і суму.</p><p>Шаблон спасылкі — у кабінеце рэкламадаўцы ва ўкладцы Перадача канверсій. Прыклад:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Для адмовы або сторна: <code>status=rejected</code> з тым жа <code>click_id</code>.</p><p>Без postback у справаздачах застаюцца толькі клікі. Асобны API не патрабуецца — дастаткова звычайнага HTTP-запыту.</p>"
+    },
+    "mod": {
+      "h2": "Мадэрацыя",
+      "body": "<p>Новыя і змененыя аферы праходзяць праверку сеткай перад публікацыяй.</p><ul><li>Правяраюцца лендынг, умовы, карэктнасць стаўкі і (для РФ) наяўнасць ERID.</li><li>Статусы ў кабінеце: на мадэрацыі, апублікавана, адхілена, чарнавік.</li><li>Пры адхіленні прычына паказваецца ў спісе афер; пасля выпраўлення афера адпраўляецца зноў.</li><li>Зняцце з публікацыі вяртае аферу ў чарнавік — паблішэры яе больш не бачаць.</li></ul>"
+    },
+    "navIntro": "Пра сетку",
+    "intro": {
+      "h2": "Як уладкавана сетка",
+      "body": "<p>Партнёрская сетка Serpmonn злучае кампаніі і пляцоўкі з аўдыторыяй у адной мадэлі размяшчэння.</p><ul><li><strong>Рэкламадаўца</strong> размяшчае аферу: прапанову, умовы і ўзнагароджанне за мэтавае дзеянне.</li><li><strong>Паблішэр</strong> прасоўвае аферу па партнёрскай спасылцы на сваёй пляцоўцы і атрымлівае аплату за пацверджаны вынік.</li></ul><p>Аплата налічваецца за канверсію — калі карыстальнік перайшоў па спасылцы і выканаў мэтавае дзеянне па ўмовах аферы (заяўка, купля і г.д.).</p><p>Для працы паблішэру патрэбна пляцоўка або канал з аўдыторыяй: рэгістрацыя, выбар афер, размяшчэнне спасылкі, статыстыка і выплаты ў кабінеце.</p><p>Ніжэй — інструкцыі па кабінетах, трэкінгу і мадэрацыі.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Аферы",
+    "money": "Грошы",
+    "stats": "Статыстыка",
+    "catalog": "Каталог"
+  },
+  "money": {
+    "advHint": "Баланс спісваецца за канверсіі (стаўка паблішэру + камісія сеткі).",
+    "openTopup": "Папоўніць баланс",
+    "openPayout": "Вывесці сродкі",
+    "advHintFee": "З канверсіі: стаўка паблішэру + {fee}% сеткі (×{mult}). Холд задаецца ў кожнай аферы (0–{max} дн.)."
+  },
+  "topup": {
+    "drawerHint": "Укажыце суму. Пасля аплаты баланс абновіцца аўтаматычна або пасля пацверджання.",
+    "requisitesTitle": "Рэквізіты для пераводу, калі аплата карткай недаступная:",
+    "pendingId": "Заяўка #{id} створана. Укажыце гэты нумар у прызначэнні плацяжу. Баланс паступіць пасля пацверджання."
+  },
+  "payout": {
+    "holdDaysDefault": "Тэрмін холду задаецца ў аферы (па змаўчанні {days} дн., да 180)"
+  },
+  "offer": {
+    "country": "Краіна",
+    "countryRu": "Расія",
+    "countryOther": "Іншая краіна",
+    "eridPh": "Токен з ORD",
+    "eridHintRu": "Для Расіі патрэбен токен маркіроўкі рэкламы (ORD).",
+    "eridHintOther": "Для гэтай краіны ERID не патрабуецца.",
+    "holdDays": "Холд, дзён",
+    "holdDaysHint": "Колькі дзён налічэнне паблішэру ў холдзе (0–180). 0 — адразу даступна.",
+    "emptyCta": "Стварыць аферу"
+  },
+  "stats": {
+    "emptyAdvCta": "Да афер",
+    "emptyPubCta": "Да каталога",
+    "lastAt": "Калі"
+  },
+  "catalog": {
+    "emptyCta": "Скапіяваць спасылку",
+    "hold": "Холд, дн."
+  },
+  "postback": {
+    "toHelp": "Як уладкаваны клікі і канверсіі — у даведцы"
+  }
 }

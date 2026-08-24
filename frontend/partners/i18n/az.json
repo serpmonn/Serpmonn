@@ -185,5 +185,99 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Təklif yerləşdirirəm və konversiyalara görə ödəyirəm",
+    "rolePublisherDesc": "Keçid yerləşdirirəm və komissiya qazanıram",
+    "showPassword": "Göstər",
+    "hidePassword": "Gizlət",
+    "whyTitle": "Niyə bu",
+    "why1": "Təklif yerləşdirin və ya saytınıza keçid qoyun.",
+    "why2": "Yalnız baxışlara deyil — real lead və satışlara görə ödəyir və ya qazanırsınız.",
+    "errEmail": "Düzgün email daxil edin",
+    "errPassword": "Şifrənizi daxil edin",
+    "errPasswordMin": "Şifrə ən azı 8 simvol olmalıdır",
+    "ok": "Oldu"
+  },
+  "help": {
+    "title": "Sənədlər — Serpmonn tərəfdaş şəbəkəsi",
+    "eyebrow": "Kömək",
+    "h1": "Tərəfdaş şəbəkəsinin sənədləri",
+    "toAuth": "Daxil ol / Qeydiyyat",
+    "link": "Kömək",
+    "linkHint": "şəbəkə necə işləyir",
+    "linkTitle": "Reklamverənlər və naşirlər üçün qısa sənədlər",
+    "short": "Kömək",
+    "navAdv": "Reklamverənlər üçün",
+    "navPub": "Naşirlər üçün",
+    "navTrack": "Kliklər və konversiyalar",
+    "navMod": "Moderasiya",
+    "adv": {
+      "h2": "Reklamverənlər üçün",
+      "body": "<p>Reklamverənlər təklif yerləşdirir və təsdiqlənmiş konversiyalara görə ödəyir. Naşirlər təklifləri götürür və saytlarına keçid qoyur.</p><ol><li>Reklamverən kimi qeydiyyat və kabinetə giriş.</li><li>Pul tabında balansın artırılması (sorğu və ya ödəniş).</li><li>Təklif yaratma: promo və ya CPA, landing, şərtlər, tarif və hold (0–180 gün).</li><li>Rusiya üçün — ERID (ORD nişanlama tokeni).</li><li>Moderasiyaya göndərmə. Dərcdən sonra təklif naşirlərə görünür.</li><li>Konversiya hesabatı ayarı (aşağıya baxın) — əks halda statistikada yalnız kliklər qalır.</li></ol><p>Hər konversiyada naşir tarifi üstəgəl şəbəkə haqqı (adətən 10%) tutulur. Naşir hold müddəti hər təklifdə təyin olunur.</p>"
+    },
+    "pub": {
+      "h2": "Naşirlər üçün",
+      "body": "<p>Naşirlər dərc olunmuş təklifləri götürür və izlənilən keçid yerləşdirir. Ödəniş reklamverən tərəfindən təsdiqlənmiş konversiyalara görədir.</p><ol><li>Naşir kimi qeydiyyat — sayt kodu verilir.</li><li>Kataloqda <code>/go/…?p=code</code> kimi keçid kopyalanır. Hold sütunu ödənişin neçə günə açılacağını göstərir.</li><li>Keçid sayta və ya göndərişlərə qoyulur. <code>?p=</code> olmayan kliklər nəzərə alınmır.</li><li>Statistika və mövcud balans kabinetdədir.</li><li>Çıxarış kabinetdən sorğu ilə edilir; ödəniş şəbəkə tərəfindən təsdiqlənir.</li></ol>"
+    },
+    "track": {
+      "h2": "Kliklər və konversiyalar",
+      "body": "<p><strong>Klik.</strong> Naşir <code>/go/…?p=code</code> kimi keçid yerləşdirir. İstifadəçi onu izləyir: klik qeydə alınır və brauzer URL-də <code>click_id</code> ilə reklamverən landing-ə yönləndirilir. Bu id saxlanılmalıdır (cookie, CRM və ya gizli forma sahəsi).</p><p><strong>Konversiya.</strong> Müşteri aldıqda və ya lead buraxdıqda, reklamverən saytı və ya CRM saxlanılmış <code>click_id</code> və məbləğlə postback-i bir dəfə çağırır.</p><p>Şablon reklamverən kabinetində Konversiya hesabatı altındadır. Nümunə:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Rədd və ya chargeback üçün: eyni <code>click_id</code> ilə <code>status=rejected</code>.</p><p>Postback olmadan hesabatlarda yalnız kliklər qalır. Xüsusi API lazım deyil — adi HTTP sorğusu kifayətdir.</p>"
+    },
+    "mod": {
+      "h2": "Moderasiya",
+      "body": "<p>Yeni və redaktə olunmuş təkliflər dərcdən əvvəl şəbəkə tərəfindən yoxlanılır.</p><ul><li>Landing, şərtlər, tarif və (RU üçün) ERID yoxlanılır.</li><li>Kabinetdəki statuslar: moderasiyada, dərc olunub, rədd edilib, qaralama.</li><li>Rədd edildikdə səbəb təklif siyahısında göstərilir; düzəlişlərdən sonra təklif yenidən göndərilir.</li><li>Dərcdən çıxarma təklifi qaralamaya keçirir — naşirlər onu artıq görmür.</li></ul>"
+    },
+    "navIntro": "Şəbəkə haqqında",
+    "intro": {
+      "h2": "Şəbəkə necə işləyir",
+      "body": "<p>Serpmonn tərəfdaş şəbəkəsi şirkətləri və auditoriyalı platformaları vahid yerləşdirmə modelində birləşdirir.</p><ul><li><strong>Reklamverən</strong> təklif dərc edir: təklif, şərtlər və tamamlanmış əməliyyat üçün mükafat.</li><li><strong>Naşir</strong> təklifi öz platformasındakı tərəfdaş keçidi ilə tanıtır və təsdiqlənmiş nəticələrə görə ödəniş alır.</li></ul><p>Ödənişlər konversiyalara görədir — istifadəçi keçidi izləyib təklif şərtlərinə uyğun hədəf əməliyyatı (lead, alış və s.) tamamladıqda.</p><p>Naşirlərin auditoriyalı platforması və ya kanalı olmalıdır: qeydiyyat, təklif seçimi, keçid yerləşdirmə, sonra kabinetdə statistika və ödənişlər.</p><p>Aşağıda kabinetlər, izləmə və moderasiya üçün təlimatlar var.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Təkliflər",
+    "money": "Pul",
+    "stats": "Statistika",
+    "catalog": "Kataloq"
+  },
+  "money": {
+    "advHint": "Balans konversiyalara görə tutulur (naşir tarifi + şəbəkə haqqı).",
+    "openTopup": "Balansı artır",
+    "openPayout": "Vəsait çıxar",
+    "advHintFee": "Hər konversiya: naşir tarifi + {fee}% şəbəkə (×{mult}). Hold hər təklifdə təyin olunur (0–{max} gün)."
+  },
+  "topup": {
+    "drawerHint": "Məbləği daxil edin. Balans ödəniş və ya təsdiqdən sonra yenilənir.",
+    "requisitesTitle": "Kart ödənişi mümkün deyilsə bank rekvizitləri:",
+    "pendingId": "Sorğu #{id} yaradıldı. Bu nömrəni ödəniş təyinatında göstərin. Balans təsdiqdən sonra yenilənir."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold hər təklifdə təyin olunur (standart {days} gün, maksimum 180)"
+  },
+  "offer": {
+    "country": "Ölkə",
+    "countryRu": "Rusiya",
+    "countryOther": "Digər ölkə",
+    "eridPh": "ORD-dan token",
+    "eridHintRu": "Rusiya üçün reklam nişanlama tokeni (ORD) tələb olunur.",
+    "eridHintOther": "Bu ölkə üçün ERID tələb olunmur.",
+    "holdDays": "Hold, gün",
+    "holdDaysHint": "Naşir ödənişinin hold-da qalacağı günlər (0–180). 0 = dərhal əlçatan.",
+    "emptyCta": "Təklif yarat"
+  },
+  "stats": {
+    "emptyAdvCta": "Təkliflərə get",
+    "emptyPubCta": "Kataloqa get",
+    "lastAt": "Nə vaxt"
+  },
+  "catalog": {
+    "emptyCta": "Keçidi kopyala",
+    "hold": "Hold, gün"
+  },
+  "th": {
+    "link": "Keçid"
+  },
+  "postback": {
+    "toHelp": "Klik və konversiyalar necə işləyir — köməkdə"
+  }
 }

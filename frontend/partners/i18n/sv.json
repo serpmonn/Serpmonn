@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Jag placerar erbjudanden och betalar för konverteringar",
+    "rolePublisherDesc": "Jag placerar länkar och tjänar provision",
+    "showPassword": "Visa",
+    "hidePassword": "Dölj",
+    "whyTitle": "Varför detta",
+    "why1": "Placera ett erbjudande eller sätt en länk på din webbplats.",
+    "why2": "Du betalar eller tjänar på riktiga leads och försäljningar — inte bara visningar.",
+    "errEmail": "Ange en giltig e-postadress",
+    "errPassword": "Ange ditt lösenord",
+    "errPasswordMin": "Lösenordet måste ha minst 8 tecken"
+  },
+  "help": {
+    "title": "Docs — Serpmonn-partnernätverk",
+    "eyebrow": "Hjälp",
+    "h1": "Dokumentation för partnernätverket",
+    "toAuth": "Logga in / Registrera dig",
+    "link": "Hjälp",
+    "linkHint": "så fungerar nätverket",
+    "linkTitle": "Korta docs för annonsörer och publishers",
+    "short": "Hjälp",
+    "navAdv": "För annonsörer",
+    "navPub": "För publishers",
+    "navTrack": "Klick och konverteringar",
+    "navMod": "Moderering",
+    "adv": {
+      "h2": "För annonsörer",
+      "body": "<p>Annonsörer placerar erbjudanden och betalar för bekräftade konverteringar. Publishers tar erbjudanden och sätter länkar på sina webbplatser.</p><ol><li>Registrering som Annonsör och inloggning till panelen.</li><li>Saldo­påfyllning under fliken Pengar (begäran eller betalning).</li><li>Skapa erbjudande: promo eller CPA, landing, villkor, sats och hold (0–180 dagar).</li><li>För Ryssland — en ERID (ORD-märkningstoken).</li><li>Inskick till moderering. Efter publicering syns erbjudandet för publishers.</li><li>Konfigurera konverteringsrapportering (se nedan) — annars återstår bara klick i statistiken.</li></ol><p>Varje konvertering debiterar publisher-satsen plus nätverksavgift (vanligtvis 10 %). Publisher-hold sätts per erbjudande.</p>"
+    },
+    "pub": {
+      "h2": "För publishers",
+      "body": "<p>Publishers tar publicerade erbjudanden och placerar en spårningslänk. Utbetalning sker för konverteringar bekräftade av annonsören.</p><ol><li>Registrering som Publisher — en webbplatskod utfärdas.</li><li>I katalogen kopierar du en länk som <code>/go/…?p=code</code>. Hold-kolumnen visar hur många dagar till utbetalning frigörs.</li><li>Länken placeras på en webbplats eller i utskick. Klick utan <code>?p=</code> ignoreras.</li><li>Statistik och tillgängligt saldo finns i panelen.</li><li>Uttag begärs från panelen; betalning bekräftas av nätverket.</li></ol>"
+    },
+    "track": {
+      "h2": "Klick och konverteringar",
+      "body": "<p><strong>Klick.</strong> Publishern placerar en länk som <code>/go/…?p=code</code>. Användaren följer den: klicket registreras och webbläsaren omdirigeras till annonsörens landing med <code>click_id</code> i URL:en. Detta id måste sparas (cookie, CRM eller dolt formulärfält).</p><p><strong>Konvertering.</strong> När kunden köper eller lämnar ett lead anropar annonsörens webbplats eller CRM postback en gång med lagrad <code>click_id</code> och beloppet.</p><p>Mallen finns i annonsörspanelen under Konverteringsrapportering. Exempel:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Vid avvisning eller chargeback: <code>status=rejected</code> med samma <code>click_id</code>.</p><p>Utan postback återstår bara klick i rapporterna. Ingen egen API behövs — en vanlig HTTP-förfrågan räcker.</p>"
+    },
+    "mod": {
+      "h2": "Moderering",
+      "body": "<p>Nya och redigerade erbjudanden granskas av nätverket före publicering.</p><ul><li>Landing, villkor, sats och (för RU) ERID kontrolleras.</li><li>Status i panelen: under moderering, publicerad, avvisad, utkast.</li><li>Vid avvisning visas orsaken i erbjudandelistan; efter rättelser skickas erbjudandet in igen.</li><li>Avpublicering flyttar erbjudandet till utkast — publishers ser det inte längre.</li></ul>"
+    },
+    "navIntro": "Om nätverket",
+    "intro": {
+      "h2": "Så fungerar nätverket",
+      "body": "<p>Serpmonn-partnernätverket kopplar samman företag och ytor med publik i en gemensam placeringsmodell.</p><ul><li><strong>Annonsör</strong> publicerar ett erbjudande: proposition, villkor och belöning för en slutförd åtgärd.</li><li><strong>Publisher</strong> marknadsför erbjudandet via en partnerlänk på sin yta och betalas för bekräftade resultat.</li></ul><p>Utbetalningar gäller konverteringar — när en användare följer länken och slutför målåtgärden enligt erbjudandevillkoren (lead, köp osv.).</p><p>Publishers behöver en yta eller kanal med publik: registrering, val av erbjudanden, länplacering, sedan statistik och utbetalningar i panelen.</p><p>Nedan: instruktioner för paneler, spårning och moderering.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Erbjudanden",
+    "money": "Pengar",
+    "stats": "Statistik",
+    "catalog": "Katalog"
+  },
+  "money": {
+    "advHint": "Saldo debiteras för konverteringar (publisher-sats + nätverksavgift).",
+    "openTopup": "Fyll på saldo",
+    "openPayout": "Ta ut medel",
+    "advHintFee": "Per konvertering: publisher-sats + {fee}% nätverk (×{mult}). Hold sätts på varje erbjudande (0–{max} dagar)."
+  },
+  "topup": {
+    "drawerHint": "Ange beloppet. Saldo uppdateras efter betalning eller bekräftelse.",
+    "requisitesTitle": "Bankuppgifter om kortbetalning inte är tillgänglig:",
+    "pendingId": "Begäran #{id} skapad. Ange detta nummer i betalningsändamålet. Saldo uppdateras efter bekräftelse."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold sätts per erbjudande (standard {days} dagar, upp till 180)"
+  },
+  "offer": {
+    "country": "Land",
+    "countryRu": "Ryssland",
+    "countryOther": "Annat land",
+    "eridPh": "Token från ORD",
+    "eridHintRu": "För Ryssland krävs en annonsmärkningstoken (ORD).",
+    "eridHintOther": "ERID krävs inte för detta land.",
+    "holdDays": "Hold, dagar",
+    "holdDaysHint": "Dagar som publisher-utbetalningen stannar på hold (0–180). 0 = tillgängligt direkt.",
+    "emptyCta": "Skapa erbjudande"
+  },
+  "stats": {
+    "emptyAdvCta": "Gå till erbjudanden",
+    "emptyPubCta": "Gå till katalog",
+    "lastAt": "När"
+  },
+  "catalog": {
+    "emptyCta": "Kopiera länk",
+    "hold": "Hold, dagar"
+  },
+  "postback": {
+    "toHelp": "Så fungerar klick och konverteringar — i hjälpen"
+  }
 }

@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "오퍼를 게재하고 전환에 대해 지불합니다",
+    "rolePublisherDesc": "링크를 배치하고 수수료를 받습니다",
+    "showPassword": "표시",
+    "hidePassword": "숨기기",
+    "whyTitle": "왜 필요한가",
+    "why1": "오퍼를 게재하거나 사이트에 링크를 배치하세요.",
+    "why2": "조회수가 아니라 실제 리드와 판매에 대해 지불하거나 수익을 얻습니다.",
+    "errEmail": "유효한 이메일을 입력하세요",
+    "errPassword": "비밀번호를 입력하세요",
+    "errPasswordMin": "비밀번호는 최소 8자여야 합니다"
+  },
+  "help": {
+    "title": "문서 — Serpmonn 파트너 네트워크",
+    "eyebrow": "도움말",
+    "h1": "파트너 네트워크 문서",
+    "toAuth": "로그인 / 회원가입",
+    "link": "도움말",
+    "linkHint": "네트워크 이용 방법",
+    "linkTitle": "광고주와 퍼블리셔를 위한 간단한 문서",
+    "short": "도움말",
+    "navAdv": "광고주용",
+    "navPub": "퍼블리셔용",
+    "navTrack": "클릭과 전환",
+    "navMod": "검수",
+    "adv": {
+      "h2": "광고주용",
+      "body": "<p>광고주는 오퍼를 게재하고 확정된 전환에 대해 지불합니다. 퍼블리셔는 오퍼를 선택해 사이트에 링크를 배치합니다.</p><ol><li>광고주로 등록하고 캐비닛에 로그인합니다.</li><li>자금 탭에서 잔액을 충전합니다(신청 또는 결제).</li><li>오퍼 생성: 프로모 또는 CPA, 랜딩, 조건, 단가, 홀드(0–180일).</li><li>러시아용 — ERID(ORD 마킹 토큰).</li><li>검수 제출. 게시 후 오퍼가 퍼블리셔에게 표시됩니다.</li><li>전환 보고 설정(아래 참조) — 설정하지 않으면 통계에 클릭만 남습니다.</li></ol><p>각 전환에서 퍼블리셔 단가에 네트워크 수수료(보통 10%)가 추가됩니다. 퍼블리셔 홀드는 오퍼별로 설정합니다.</p>"
+    },
+    "pub": {
+      "h2": "퍼블리셔용",
+      "body": "<p>퍼블리셔는 게시된 오퍼를 선택하고 트래킹 링크를 배치합니다. 광고주가 확정한 전환에 대해 지급됩니다.</p><ol><li>퍼블리셔로 등록 — 사이트 코드가 발급됩니다.</li><li>카탈로그에서 <code>/go/…?p=code</code> 형식의 링크를 복사합니다. 홀드 열은 출금 가능까지 남은 일수를 표시합니다.</li><li>링크를 사이트나 메일에 배치합니다. <code>?p=</code> 없는 클릭은 무시됩니다.</li><li>통계와 사용 가능 잔액은 캐비닛에 있습니다.</li><li>출금은 캐비닛에서 신청하며, 네트워크가 지급을 확정합니다.</li></ol>"
+    },
+    "track": {
+      "h2": "클릭과 전환",
+      "body": "<p><strong>클릭.</strong> 퍼블리셔가 <code>/go/…?p=code</code> 형식의 링크를 배치합니다. 사용자가 이동하면 클릭이 기록되고 브라우저는 URL에 <code>click_id</code>가 포함된 광고주 랜딩으로 리디렉션됩니다. 이 id는 저장해야 합니다(cookie, CRM 또는 숨겨진 폼 필드).</p><p><strong>전환.</strong> 고객이 구매하거나 리드를 남기면, 광고주 사이트 또는 CRM이 저장된 <code>click_id</code>와 금액으로 postback을 한 번 호출합니다.</p><p>템플릿은 광고주 캐비닛의 전환 보고에 있습니다. 예:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>거부 또는 차지백: 동일한 <code>click_id</code>로 <code>status=rejected</code>.</p><p>postback이 없으면 리포트에 클릭만 남습니다. 별도 API는 필요 없습니다 — 일반 HTTP 요청이면 충분합니다.</p>"
+    },
+    "mod": {
+      "h2": "검수",
+      "body": "<p>신규 및 수정된 오퍼는 게시 전에 네트워크 검수를 거칩니다.</p><ul><li>랜딩, 조건, 단가, (러시아용) ERID를 확인합니다.</li><li>캐비닛 상태: 검수 중, 게시됨, 거부됨, 초안.</li><li>거부 시 사유가 오퍼 목록에 표시되며, 수정 후 다시 제출합니다.</li><li>게시 해제는 오퍼를 초안으로 옮깁니다 — 퍼블리셔에게 더 이상 보이지 않습니다.</li></ul>"
+    },
+    "navIntro": "네트워크 소개",
+    "intro": {
+      "h2": "네트워크 작동 방식",
+      "body": "<p>Serpmonn 파트너 네트워크는 기업과 오디언스를 보유한 매체를 하나의 게재 모델로 연결합니다.</p><ul><li><strong>광고주</strong>는 오퍼를 게시합니다: 제안, 조건, 완료 행동에 대한 보상.</li><li><strong>퍼블리셔</strong>는 자신의 매체에서 파트너 링크로 오퍼를 홍보하고 확정된 결과에 대해 보상을 받습니다.</li></ul><p>지급은 전환에 대해 이루어집니다 — 사용자가 링크를 따라가 오퍼 조건에 맞는 목표 행동(리드, 구매 등)을 완료할 때입니다.</p><p>퍼블리셔에게는 오디언스가 있는 매체나 채널이 필요합니다: 등록, 오퍼 선택, 링크 배치, 이후 캐비닛에서 통계와 출금.</p><p>아래는 캐비닛, 트래킹, 검수에 대한 안내입니다.</p>"
+    }
+  },
+  "tab": {
+    "offers": "오퍼",
+    "money": "자금",
+    "stats": "통계",
+    "catalog": "카탈로그"
+  },
+  "money": {
+    "advHint": "잔액은 전환(퍼블리셔 단가 + 네트워크 수수료)에 대해 차감됩니다.",
+    "openTopup": "잔액 충전",
+    "openPayout": "자금 출금",
+    "advHintFee": "전환당: 퍼블리셔 단가 + 네트워크 {fee}% (×{mult}). 홀드는 각 오퍼에서 설정(0–{max}일)."
+  },
+  "topup": {
+    "drawerHint": "금액을 입력하세요. 결제 또는 확인 후 잔액이 업데이트됩니다.",
+    "requisitesTitle": "카드 결제를 사용할 수 없을 때의 계좌 정보:",
+    "pendingId": "신청 #{id}가 생성되었습니다. 이 번호를 입금 목적에 기재하세요. 확인 후 잔액이 업데이트됩니다."
+  },
+  "payout": {
+    "holdDaysDefault": "홀드는 오퍼별로 설정됩니다(기본 {days}일, 최대 180)"
+  },
+  "offer": {
+    "country": "국가",
+    "countryRu": "러시아",
+    "countryOther": "기타 국가",
+    "eridPh": "ORD의 토큰",
+    "eridHintRu": "러시아에는 광고 마킹 토큰(ORD)이 필요합니다.",
+    "eridHintOther": "이 국가에는 ERID가 필요하지 않습니다.",
+    "holdDays": "홀드, 일",
+    "holdDaysHint": "퍼블리셔 지급이 홀드되는 일수(0–180). 0 = 즉시 이용 가능.",
+    "emptyCta": "오퍼 만들기"
+  },
+  "stats": {
+    "emptyAdvCta": "오퍼로 이동",
+    "emptyPubCta": "카탈로그로 이동",
+    "lastAt": "일시"
+  },
+  "catalog": {
+    "emptyCta": "링크 복사",
+    "hold": "홀드, 일"
+  },
+  "postback": {
+    "toHelp": "클릭과 전환 작동 방식 — 도움말 참조"
+  }
 }

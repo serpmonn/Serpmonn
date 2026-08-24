@@ -185,5 +185,94 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Pubblico offerte e pago le conversioni",
+    "rolePublisherDesc": "Metto link e guadagno commissioni",
+    "showPassword": "Mostra",
+    "hidePassword": "Nascondi",
+    "whyTitle": "A cosa serve",
+    "why1": "Pubblica un’offerta o metti un link sul tuo sito.",
+    "why2": "Paghi o guadagni per lead e vendite reali — non solo per le visualizzazioni.",
+    "errEmail": "Inserisci un’email valida",
+    "errPassword": "Inserisci la password",
+    "errPasswordMin": "La password deve avere almeno 8 caratteri"
+  },
+  "help": {
+    "title": "Docs — Rete partner Serpmonn",
+    "eyebrow": "Aiuto",
+    "h1": "Documentazione della rete partner",
+    "toAuth": "Accedi / Registrati",
+    "link": "Aiuto",
+    "linkHint": "come funziona la rete",
+    "linkTitle": "Docs brevi per inserzionisti e publisher",
+    "short": "Aiuto",
+    "navAdv": "Per gli inserzionisti",
+    "navPub": "Per i publisher",
+    "navTrack": "Click e conversioni",
+    "navMod": "Moderazione",
+    "adv": {
+      "h2": "Per gli inserzionisti",
+      "body": "<p>Gli inserzionisti pubblicano offerte e pagano le conversioni confermate. I publisher prendono le offerte e mettono link sui loro siti.</p><ol><li>Registrazione come Inserzionista e accesso all’area.</li><li>Ricarica del saldo nella scheda Denaro (richiesta o pagamento).</li><li>Creazione dell’offerta: promo o CPA, landing, condizioni, tariffa e hold (0–180 giorni).</li><li>Per la Russia — un ERID (token di marcatura ORD).</li><li>Invio in moderazione. Dopo la pubblicazione l’offerta compare per i publisher.</li><li>Configurazione del reporting delle conversioni (vedi sotto) — altrimenti nelle stats restano solo i click.</li></ol><p>Ogni conversione addebita la tariffa publisher più la commissione di rete (di solito 10%). L’hold del publisher è impostato per offerta.</p>"
+    },
+    "pub": {
+      "h2": "Per i publisher",
+      "body": "<p>I publisher prendono le offerte pubblicate e collocano un link tracciato. Il pagamento è per le conversioni confermate dall’inserzionista.</p><ol><li>Registrazione come Publisher — viene assegnato un codice sito.</li><li>Nel catalogo copia un link come <code>/go/…?p=code</code>. La colonna hold indica dopo quanti giorni si sblocca il pagamento.</li><li>Il link va sul sito o nelle newsletter. I click senza <code>?p=</code> vengono ignorati.</li><li>Stats e saldo disponibile sono nell’area.</li><li>Il prelievo si richiede dall’area; il pagamento è confermato dalla rete.</li></ol>"
+    },
+    "track": {
+      "h2": "Click e conversioni",
+      "body": "<p><strong>Click.</strong> Il publisher colloca un link come <code>/go/…?p=code</code>. L’utente lo segue: il click viene registrato e il browser viene reindirizzato alla landing dell’inserzionista con <code>click_id</code> nell’URL. Quell’id va salvato (cookie, CRM o campo nascosto del form).</p><p><strong>Conversione.</strong> Quando il cliente compra o lascia un lead, il sito o CRM dell’inserzionista chiama una volta il postback con il <code>click_id</code> salvato e l’importo.</p><p>Il modello è nell’area inserzionista sotto Reporting conversioni. Esempio:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Per rifiuto o chargeback: <code>status=rejected</code> con lo stesso <code>click_id</code>.</p><p>Senza postback nei report restano solo i click. Non serve un’API personalizzata — basta una normale richiesta HTTP.</p>"
+    },
+    "mod": {
+      "h2": "Moderazione",
+      "body": "<p>Le offerte nuove e modificate vengono revisionate dalla rete prima della pubblicazione.</p><ul><li>Si controllano landing, condizioni, tariffa e (per RU) ERID.</li><li>Stati nell’area: in moderazione, pubblicato, rifiutato, bozza.</li><li>In caso di rifiuto il motivo compare nell’elenco offerte; dopo le correzioni si reinoltra.</li><li>Annullare la pubblicazione porta l’offerta in bozza — i publisher non la vedono più.</li></ul>"
+    },
+    "navIntro": "Sulla rete",
+    "intro": {
+      "h2": "Come funziona la rete",
+      "body": "<p>La rete partner Serpmonn collega aziende e spazi con audience in un unico modello di pubblicazione.</p><ul><li><strong>Inserzionista</strong> pubblica un’offerta: la proposta, le condizioni e il premio per un’azione completata.</li><li><strong>Publisher</strong> promuove l’offerta tramite un link partner sul proprio spazio e viene pagato per i risultati confermati.</li></ul><p>I pagamenti sono per conversioni — quando un utente segue il link e completa l’azione obiettivo secondo le condizioni dell’offerta (lead, acquisto, ecc.).</p><p>Ai publisher serve uno spazio o un canale con audience: registrazione, scelta delle offerte, collocazione del link, poi stats e pagamenti nell’area.</p><p>Di seguito: istruzioni su aree, tracking e moderazione.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Offerte",
+    "money": "Denaro",
+    "stats": "Statistiche",
+    "catalog": "Catalogo"
+  },
+  "money": {
+    "advHint": "Il saldo viene addebitato per le conversioni (tariffa publisher + commissione di rete).",
+    "openTopup": "Ricarica saldo",
+    "openPayout": "Preleva fondi",
+    "advHintFee": "Per conversione: tariffa publisher + {fee}% rete (×{mult}). L’hold è impostato su ogni offerta (0–{max} giorni)."
+  },
+  "topup": {
+    "drawerHint": "Inserisci l’importo. Il saldo si aggiorna dopo il pagamento o la conferma.",
+    "requisitesTitle": "Coordinate bancarie se il pagamento con carta non è disponibile:",
+    "pendingId": "Richiesta #{id} creata. Indica questo numero nella causale del pagamento. Il saldo si aggiorna dopo la conferma."
+  },
+  "payout": {
+    "holdDaysDefault": "L’hold è impostato per offerta (predefinito {days} giorni, fino a 180)"
+  },
+  "offer": {
+    "country": "Paese",
+    "countryOther": "Altro paese",
+    "eridPh": "Token da ORD",
+    "eridHintRu": "Per la Russia è richiesto un token di marcatura pubblicitaria (ORD).",
+    "eridHintOther": "L’ERID non è richiesto per questo paese.",
+    "holdDays": "Hold, giorni",
+    "holdDaysHint": "Giorni in cui il pagamento al publisher resta in hold (0–180). 0 = disponibile subito.",
+    "emptyCta": "Crea offerta"
+  },
+  "stats": {
+    "emptyAdvCta": "Vai alle offerte",
+    "emptyPubCta": "Vai al catalogo",
+    "lastAt": "Quando"
+  },
+  "catalog": {
+    "emptyCta": "Copia link",
+    "hold": "Hold, giorni"
+  },
+  "postback": {
+    "toHelp": "Come funzionano click e conversioni — nella guida"
+  }
 }

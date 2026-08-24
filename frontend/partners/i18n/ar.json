@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "أنشر العروض وأدفع مقابل التحويلات",
+    "rolePublisherDesc": "أضع الروابط وأربح عمولة",
+    "showPassword": "إظهار",
+    "hidePassword": "إخفاء",
+    "whyTitle": "لماذا هذا",
+    "why1": "انشر عرضًا أو ضع رابطًا على موقعك.",
+    "why2": "تدفع أو تربح مقابل العملاء المحتملين والمبيعات الحقيقية — وليس مجرد المشاهدات.",
+    "errEmail": "أدخل بريدًا إلكترونيًا صالحًا",
+    "errPassword": "أدخل كلمة المرور",
+    "errPasswordMin": "يجب أن تتكون كلمة المرور من 8 أحرف على الأقل"
+  },
+  "help": {
+    "title": "الوثائق — شبكة شركاء Serpmonn",
+    "eyebrow": "المساعدة",
+    "h1": "وثائق شبكة الشركاء",
+    "toAuth": "تسجيل الدخول / إنشاء حساب",
+    "link": "المساعدة",
+    "linkHint": "كيف تعمل الشبكة",
+    "linkTitle": "وثائق موجزة للمعلنين والناشرين",
+    "short": "المساعدة",
+    "navAdv": "للمعلنين",
+    "navPub": "للناشرين",
+    "navTrack": "النقرات والتحويلات",
+    "navMod": "الإشراف",
+    "adv": {
+      "h2": "للمعلنين",
+      "body": "<p>يضع المعلنون العروض ويدفعون مقابل التحويلات المؤكدة. يأخذ الناشرون العروض ويضعون الروابط على مواقعهم.</p><ol><li>التسجيل كمعلن وتسجيل الدخول إلى اللوحة.</li><li>شحن الرصيد في تبويب المال (طلب أو دفع).</li><li>إنشاء عرض: ترويجي أو CPA، صفحة هبوط، شروط، سعر وفترة احتجاز (0–180 يومًا).</li><li>لروسيا — ERID (رمز وسم ORD).</li><li>الإرسال للإشراف. بعد النشر يظهر العرض للناشرين.</li><li>إعداد إبلاغ التحويلات (انظر أدناه) — وإلا تبقى النقرات فقط في الإحصائيات.</li></ol><p>كل تحويل يخصم سعر الناشر زائد عمولة الشبكة (عادة 10%). فترة احتجاز الناشر تُحدد لكل عرض.</p>"
+    },
+    "pub": {
+      "h2": "للناشرين",
+      "body": "<p>يأخذ الناشرون العروض المنشورة ويضعون رابطًا متتبعًا. الدفع مقابل التحويلات التي يؤكدها المعلن.</p><ol><li>التسجيل كناشر — يُصدر رمز موقع.</li><li>في الكتالوج، انسخ رابطًا مثل <code>/go/…?p=code</code>. عمود الاحتجاز يوضح كم يومًا حتى يُفتح الدفع.</li><li>يُوضع الرابط على موقع أو في رسائل. النقرات بدون <code>?p=</code> تُتجاهل.</li><li>الإحصائيات والرصيد المتاح في اللوحة.</li><li>يُطلب السحب من اللوحة؛ تؤكد الشبكة الدفع.</li></ol>"
+    },
+    "track": {
+      "h2": "النقرات والتحويلات",
+      "body": "<p><strong>النقرة.</strong> يضع الناشر رابطًا مثل <code>/go/…?p=code</code>. يتبعه المستخدم: تُسجَّل النقرة ويُعاد توجيه المتصفح إلى صفحة هبوط المعلن مع <code>click_id</code> في URL. يجب تخزين ذلك المعرّف (cookie أو CRM أو حقل نموذج مخفي).</p><p><strong>التحويل.</strong> عندما يشتري العميل أو يترك طلبًا، يستدعي موقع المعلن أو CRM الـ postback مرة واحدة مع <code>click_id</code> المخزَّن والمبلغ.</p><p>القالب في لوحة المعلن تحت إبلاغ التحويلات. مثال:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>للرفض أو الاسترداد: <code>status=rejected</code> بنفس <code>click_id</code>.</p><p>بدون postback تبقى النقرات فقط في التقارير. لا يلزم API مخصص — طلب HTTP عادي يكفي.</p>"
+    },
+    "mod": {
+      "h2": "الإشراف",
+      "body": "<p>تُراجع العروض الجديدة والمعدَّلة من الشبكة قبل النشر.</p><ul><li>تُفحص صفحة الهبوط والشروط والسعر و(لروسيا) ERID.</li><li>الحالات في اللوحة: قيد الإشراف، منشور، مرفوض، مسودة.</li><li>عند الرفض يظهر السبب في قائمة العروض؛ بعد التصحيح يُعاد إرسال العرض.</li><li>إلغاء النشر ينقل العرض إلى مسودة — لم يعد الناشرون يرونه.</li></ul>"
+    },
+    "navIntro": "عن الشبكة",
+    "intro": {
+      "h2": "كيف تعمل الشبكة",
+      "body": "<p>تربط شبكة شركاء Serpmonn الشركات والمنصات ذات الجمهور في نموذج نشر واحد.</p><ul><li><strong>المعلن</strong> ينشر عرضًا: المقترح والشروط والمكافأة على الإجراء المكتمل.</li><li><strong>الناشر</strong> يروّج للعرض عبر رابط شريك على منصته ويُدفع له مقابل النتائج المؤكدة.</li></ul><p>المدفوعات مقابل التحويلات — عندما يتبع المستخدم الرابط ويكمل الإجراء المستهدف وفق شروط العرض (طلب، شراء، إلخ).</p><p>يحتاج الناشرون إلى منصة أو قناة بجمهور: التسجيل، اختيار العرض، وضع الرابط، ثم الإحصائيات والمدفوعات في اللوحة.</p><p>أدناه تعليمات للوحات والتتبع والإشراف.</p>"
+    }
+  },
+  "tab": {
+    "offers": "العروض",
+    "money": "المال",
+    "stats": "الإحصائيات",
+    "catalog": "الكتالوج"
+  },
+  "money": {
+    "advHint": "يُخصم الرصيد مقابل التحويلات (سعر الناشر + عمولة الشبكة).",
+    "openTopup": "شحن الرصيد",
+    "openPayout": "سحب الأموال",
+    "advHintFee": "لكل تحويل: سعر الناشر + {fee}% للشبكة (×{mult}). تُحدد فترة الاحتجاز لكل عرض (0–{max} يومًا)."
+  },
+  "topup": {
+    "drawerHint": "أدخل المبلغ. يتحدث الرصيد بعد الدفع أو التأكيد.",
+    "requisitesTitle": "التفاصيل البنكية إذا كان الدفع بالبطاقة غير متاح:",
+    "pendingId": "تم إنشاء الطلب #{id}. ضع هذا الرقم في غرض الدفع. يتحدث الرصيد بعد التأكيد."
+  },
+  "payout": {
+    "holdDaysDefault": "تُحدد فترة الاحتجاز لكل عرض (افتراضيًا {days} يومًا، حتى 180)"
+  },
+  "offer": {
+    "country": "البلد",
+    "countryRu": "روسيا",
+    "countryOther": "بلد آخر",
+    "eridPh": "رمز من ORD",
+    "eridHintRu": "لروسيا يلزم رمز وسم إعلاني (ORD).",
+    "eridHintOther": "ERID غير مطلوب لهذا البلد.",
+    "holdDays": "الاحتجاز، أيام",
+    "holdDaysHint": "أيام يبقى فيها دفع الناشر قيد الاحتجاز (0–180). 0 = متاح فورًا.",
+    "emptyCta": "إنشاء عرض"
+  },
+  "stats": {
+    "emptyAdvCta": "إلى العروض",
+    "emptyPubCta": "إلى الكتالوج",
+    "lastAt": "متى"
+  },
+  "catalog": {
+    "emptyCta": "نسخ الرابط",
+    "hold": "الاحتجاز، أيام"
+  },
+  "postback": {
+    "toHelp": "كيف تعمل النقرات والتحويلات — في المساعدة"
+  }
 }

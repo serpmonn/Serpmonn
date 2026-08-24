@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Saya menempatkan offer dan membayar penukaran",
+    "rolePublisherDesc": "Saya memasang pautan dan mendapat komisen",
+    "showPassword": "Tunjuk",
+    "hidePassword": "Sembunyi",
+    "whyTitle": "Mengapa ini",
+    "why1": "Tempatkan offer atau pasang pautan di tapak anda.",
+    "why2": "Anda membayar atau mendapat pendapatan daripada lead dan jualan sebenar — bukan sekadar tontonan.",
+    "errEmail": "Masukkan email yang sah",
+    "errPassword": "Masukkan kata laluan",
+    "errPasswordMin": "Kata laluan mestilah sekurang-kurangnya 8 aksara"
+  },
+  "help": {
+    "title": "Dokumentasi — Rangkaian rakan kongsi Serpmonn",
+    "eyebrow": "Bantuan",
+    "h1": "Dokumentasi rangkaian rakan kongsi",
+    "toAuth": "Log masuk / Daftar",
+    "link": "Bantuan",
+    "linkHint": "cara rangkaian berfungsi",
+    "linkTitle": "Dokumentasi ringkas untuk pengiklan dan publisher",
+    "short": "Bantuan",
+    "navAdv": "Untuk pengiklan",
+    "navPub": "Untuk publisher",
+    "navTrack": "Klik dan penukaran",
+    "navMod": "Moderasi",
+    "adv": {
+      "h2": "Untuk pengiklan",
+      "body": "<p>Pengiklan menempatkan offer dan membayar penukaran yang disahkan. Publisher mengambil offer dan memasang pautan di tapak mereka.</p><ol><li>Pendaftaran sebagai Pengiklan dan log masuk ke kabinet.</li><li>Tambah nilai baki dalam tab Money (permintaan atau pembayaran).</li><li>Penciptaan offer: promo atau CPA, landing, terma, kadar, dan hold (0–180 hari).</li><li>Untuk Rusia — ERID (token penandaan ORD).</li><li>Penyerahan untuk moderasi. Selepas diterbitkan, offer muncul untuk publisher.</li><li>Persediaan pelaporan penukaran (lihat di bawah) — jika tidak, hanya klik kekal dalam statistik.</li></ol><p>Setiap penukaran menolak kadar publisher ditambah yuran rangkaian (biasanya 10%). Hold publisher ditetapkan bagi setiap offer.</p>"
+    },
+    "pub": {
+      "h2": "Untuk publisher",
+      "body": "<p>Publisher mengambil offer yang diterbitkan dan memasang pautan terjejak. Bayaran adalah untuk penukaran yang disahkan pengiklan.</p><ol><li>Pendaftaran sebagai Publisher — kod tapak dikeluarkan.</li><li>Dalam katalog, salin pautan seperti <code>/go/…?p=code</code>. Lajur hold menunjukkan berapa hari sehingga pembayaran dibuka.</li><li>Pautan dipasang di tapak atau dalam mel. Klik tanpa <code>?p=</code> diabaikan.</li><li>Statistik dan baki tersedia berada dalam kabinet.</li><li>Pengeluaran diminta dari kabinet; bayaran disahkan rangkaian.</li></ol>"
+    },
+    "track": {
+      "h2": "Klik dan penukaran",
+      "body": "<p><strong>Klik.</strong> Publisher memasang pautan seperti <code>/go/…?p=code</code>. Pengguna mengikutinya: klik direkodkan dan pelayar dialihkan ke landing pengiklan dengan <code>click_id</code> dalam URL. Id itu mesti disimpan (cookie, CRM, atau medan borang tersembunyi).</p><p><strong>Penukaran.</strong> Apabila pelanggan membeli atau meninggalkan lead, tapak atau CRM pengiklan memanggil postback sekali dengan <code>click_id</code> tersimpan dan jumlah.</p><p>Templat berada dalam kabinet pengiklan di bawah Conversion reporting. Contoh:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Untuk penolakan atau chargeback: <code>status=rejected</code> dengan <code>click_id</code> yang sama.</p><p>Tanpa postback hanya klik kekal dalam laporan. Tiada API tersuai diperlukan — permintaan HTTP biasa sudah memadai.</p>"
+    },
+    "mod": {
+      "h2": "Moderasi",
+      "body": "<p>Offer baharu dan yang diedit disemak rangkaian sebelum diterbitkan.</p><ul><li>Landing, terma, kadar, dan (untuk RU) ERID diperiksa.</li><li>Status dalam kabinet: dalam moderasi, diterbitkan, ditolak, draf.</li><li>Apabila ditolak, sebab ditunjukkan dalam senarai offer; selepas pembetulan, offer dihantar semula.</li><li>Nyahterbit mengalihkan offer ke draf — publisher tidak lagi melihatnya.</li></ul>"
+    },
+    "navIntro": "Mengenai rangkaian",
+    "intro": {
+      "h2": "Cara rangkaian berfungsi",
+      "body": "<p>Rangkaian rakan kongsi Serpmonn menghubungkan syarikat dan platform milik penonton dalam satu model penempatan.</p><ul><li><strong>Pengiklan</strong> menerbitkan offer: cadangan, terma, dan ganjaran untuk tindakan yang selesai.</li><li><strong>Publisher</strong> mempromosikan offer melalui pautan rakan kongsi di platformnya dan dibayar untuk hasil yang disahkan.</li></ul><p>Bayaran adalah untuk penukaran — apabila pengguna mengikuti pautan dan menyelesaikan tindakan sasaran di bawah terma offer (lead, pembelian, dll.).</p><p>Publisher memerlukan platform atau saluran dengan penonton: pendaftaran, pemilihan offer, pemasangan pautan, kemudian statistik dan bayaran dalam kabinet.</p><p>Di bawah ialah arahan untuk kabinet, penjejakan, dan moderasi.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Offer",
+    "money": "Wang",
+    "stats": "Statistik",
+    "catalog": "Katalog"
+  },
+  "money": {
+    "advHint": "Baki ditolak untuk penukaran (kadar publisher + yuran rangkaian).",
+    "openTopup": "Tambah nilai baki",
+    "openPayout": "Keluarkan dana",
+    "advHintFee": "Setiap penukaran: kadar publisher + {fee}% rangkaian (×{mult}). Hold ditetapkan pada setiap offer (0–{max} hari)."
+  },
+  "topup": {
+    "drawerHint": "Masukkan jumlah. Baki dikemas kini selepas pembayaran atau pengesahan.",
+    "requisitesTitle": "Butiran bank jika pembayaran kad tidak tersedia:",
+    "pendingId": "Permintaan #{id} dicipta. Masukkan nombor ini dalam tujuan pembayaran. Baki dikemas kini selepas pengesahan."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold ditetapkan bagi setiap offer (lalai {days} hari, sehingga 180)"
+  },
+  "offer": {
+    "country": "Negara",
+    "countryRu": "Rusia",
+    "countryOther": "Negara lain",
+    "eridPh": "Token dari ORD",
+    "eridHintRu": "Untuk Rusia token penandaan iklan (ORD) diperlukan.",
+    "eridHintOther": "ERID tidak diperlukan untuk negara ini.",
+    "holdDays": "Hold, hari",
+    "holdDaysHint": "Hari bayaran publisher kekal dalam hold (0–180). 0 = tersedia serta-merta.",
+    "emptyCta": "Cipta offer"
+  },
+  "stats": {
+    "emptyAdvCta": "Ke offer",
+    "emptyPubCta": "Ke katalog",
+    "lastAt": "Bila"
+  },
+  "catalog": {
+    "emptyCta": "Salin pautan",
+    "hold": "Hold, hari"
+  },
+  "postback": {
+    "toHelp": "Cara klik dan penukaran berfungsi — dalam bantuan"
+  }
 }

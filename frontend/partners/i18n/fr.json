@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Je diffuse des offres et paie les conversions",
+    "rolePublisherDesc": "Je place des liens et gagne une commission",
+    "showPassword": "Afficher",
+    "hidePassword": "Masquer",
+    "whyTitle": "Pourquoi c’est utile",
+    "why1": "Diffusez une offre ou placez un lien sur votre site.",
+    "why2": "Vous payez ou gagnez pour de vrais leads et ventes — pas seulement des vues.",
+    "errEmail": "Saisissez un e-mail valide",
+    "errPassword": "Saisissez votre mot de passe",
+    "errPasswordMin": "Le mot de passe doit contenir au moins 8 caractères"
+  },
+  "help": {
+    "title": "Docs — Réseau partenaires Serpmonn",
+    "eyebrow": "Aide",
+    "h1": "Documentation du réseau partenaires",
+    "toAuth": "Connexion / Inscription",
+    "link": "Aide",
+    "linkHint": "fonctionnement du réseau",
+    "linkTitle": "Docs courts pour annonceurs et éditeurs",
+    "short": "Aide",
+    "navAdv": "Pour les annonceurs",
+    "navPub": "Pour les éditeurs",
+    "navTrack": "Clics et conversions",
+    "navMod": "Modération",
+    "adv": {
+      "h2": "Pour les annonceurs",
+      "body": "<p>Les annonceurs diffusent des offres et paient les conversions confirmées. Les éditeurs prennent les offres et placent des liens sur leurs sites.</p><ol><li>Inscription en tant qu’Annonceur et connexion à l’espace.</li><li>Rechargement du solde dans l’onglet Argent (demande ou paiement).</li><li>Création d’offre : promo ou CPA, landing, conditions, tarif et hold (0–180 jours).</li><li>Pour la Russie — un ERID (jeton de marquage ORD).</li><li>Soumission à la modération. Après publication, l’offre apparaît pour les éditeurs.</li><li>Configuration du reporting des conversions (voir ci-dessous) — sinon seules les clics restent dans les stats.</li></ol><p>Chaque conversion débite le tarif éditeur plus la commission du réseau (généralement 10 %). Le hold éditeur est défini par offre.</p>"
+    },
+    "pub": {
+      "h2": "Pour les éditeurs",
+      "body": "<p>Les éditeurs prennent les offres publiées et placent un lien suivi. Le paiement concerne les conversions confirmées par l’annonceur.</p><ol><li>Inscription en tant qu’Éditeur — un code de site est attribué.</li><li>Dans le catalogue, copiez un lien du type <code>/go/…?p=code</code>. La colonne hold indique le nombre de jours avant déblocage du paiement.</li><li>Le lien est placé sur un site ou dans des envois. Les clics sans <code>?p=</code> sont ignorés.</li><li>Stats et solde disponible sont dans l’espace.</li><li>Le retrait se demande depuis l’espace ; le paiement est confirmé par le réseau.</li></ol>"
+    },
+    "track": {
+      "h2": "Clics et conversions",
+      "body": "<p><strong>Clic.</strong> L’éditeur place un lien du type <code>/go/…?p=code</code>. L’utilisateur le suit : le clic est enregistré et le navigateur est redirigé vers la landing de l’annonceur avec <code>click_id</code> dans l’URL. Cet id doit être stocké (cookie, CRM ou champ de formulaire masqué).</p><p><strong>Conversion.</strong> Quand le client achète ou laisse un lead, le site ou le CRM de l’annonceur appelle une fois le postback avec le <code>click_id</code> stocké et le montant.</p><p>Le modèle est dans l’espace annonceur sous Reporting des conversions. Exemple :</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Pour un rejet ou un chargeback : <code>status=rejected</code> avec le même <code>click_id</code>.</p><p>Sans postback, seuls les clics restent dans les rapports. Aucune API personnalisée n’est requise — une requête HTTP normale suffit.</p>"
+    },
+    "mod": {
+      "h2": "Modération",
+      "body": "<p>Les offres nouvelles et modifiées sont examinées par le réseau avant publication.</p><ul><li>Landing, conditions, tarif et (pour RU) ERID sont vérifiés.</li><li>Statuts dans l’espace : en modération, publié, rejeté, brouillon.</li><li>En cas de rejet, le motif s’affiche dans la liste des offres ; après corrections, l’offre est renvoyée.</li><li>La dépublication passe l’offre en brouillon — les éditeurs ne la voient plus.</li></ul>"
+    },
+    "navIntro": "À propos du réseau",
+    "intro": {
+      "h2": "Fonctionnement du réseau",
+      "body": "<p>Le réseau partenaires Serpmonn relie entreprises et espaces avec audience dans un même modèle de diffusion.</p><ul><li><strong>Annonceur</strong> publie une offre : la proposition, les conditions et la récompense pour une action réalisée.</li><li><strong>Éditeur</strong> promeut l’offre via un lien partenaire sur son espace et est payé pour les résultats confirmés.</li></ul><p>Les paiements concernent les conversions — quand un utilisateur suit le lien et réalise l’action cible selon les conditions de l’offre (lead, achat, etc.).</p><p>Les éditeurs ont besoin d’un espace ou d’un canal avec audience : inscription, choix d’offres, placement du lien, puis stats et paiements dans l’espace.</p><p>Ci-dessous : instructions pour les espaces, le suivi et la modération.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Offres",
+    "money": "Argent",
+    "stats": "Statistiques",
+    "catalog": "Catalogue"
+  },
+  "money": {
+    "advHint": "Le solde est débité pour les conversions (tarif éditeur + commission réseau).",
+    "openTopup": "Recharger le solde",
+    "openPayout": "Retirer des fonds",
+    "advHintFee": "Par conversion : tarif éditeur + {fee}% réseau (×{mult}). Le hold est défini sur chaque offre (0–{max} jours)."
+  },
+  "topup": {
+    "drawerHint": "Indiquez le montant. Le solde est mis à jour après paiement ou confirmation.",
+    "requisitesTitle": "Coordonnées bancaires si le paiement par carte est indisponible :",
+    "pendingId": "Demande #{id} créée. Indiquez ce numéro dans le motif du paiement. Le solde sera crédité après confirmation."
+  },
+  "payout": {
+    "holdDaysDefault": "Le hold est défini par offre (défaut {days} jours, jusqu’à 180)"
+  },
+  "offer": {
+    "country": "Pays",
+    "countryRu": "Russie",
+    "countryOther": "Autre pays",
+    "eridPh": "Jeton ORD",
+    "eridHintRu": "Pour la Russie, un jeton de marquage publicitaire (ORD) est requis.",
+    "eridHintOther": "L’ERID n’est pas requis pour ce pays.",
+    "holdDays": "Hold, jours",
+    "holdDaysHint": "Jours pendant lesquels le paiement éditeur reste en hold (0–180). 0 = disponible immédiatement.",
+    "emptyCta": "Créer une offre"
+  },
+  "stats": {
+    "emptyAdvCta": "Aller aux offres",
+    "emptyPubCta": "Aller au catalogue",
+    "lastAt": "Quand"
+  },
+  "catalog": {
+    "emptyCta": "Copier le lien",
+    "hold": "Hold, jours"
+  },
+  "postback": {
+    "toHelp": "Fonctionnement des clics et conversions — dans l’aide"
+  }
 }

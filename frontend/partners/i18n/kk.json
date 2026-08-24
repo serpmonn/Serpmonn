@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Ұсыныс орналастырамын және конверсия үшін төлеймін",
+    "rolePublisherDesc": "Сілтеме қоямын және комиссия табамын",
+    "showPassword": "Көрсету",
+    "hidePassword": "Жасыру",
+    "whyTitle": "Не үшін бұл",
+    "why1": "Ұсыныс орналастырыңыз немесе сайтыңызға сілтеме қойыңыз.",
+    "why2": "Тек қаралымға емес — нақты lead пен сатылымға төлейсіз немесе табасыз.",
+    "errEmail": "Жарамды email енгізіңіз",
+    "errPassword": "Құпия сөзіңізді енгізіңіз",
+    "errPasswordMin": "Құпия сөз кемінде 8 таңба болуы керек"
+  },
+  "help": {
+    "title": "Құжаттама — Serpmonn серіктестік желісі",
+    "eyebrow": "Көмек",
+    "h1": "Серіктестік желі құжаттамасы",
+    "toAuth": "Кіру / Тіркелу",
+    "link": "Көмек",
+    "linkHint": "желі қалай жұмыс істейді",
+    "linkTitle": "Жарнама берушілер мен баспагерлерге арналған қысқа құжаттама",
+    "short": "Көмек",
+    "navAdv": "Жарнама берушілерге",
+    "navPub": "Баспагерлерге",
+    "navTrack": "Кликтер мен конверсиялар",
+    "navMod": "Модерация",
+    "adv": {
+      "h2": "Жарнама берушілерге",
+      "body": "<p>Жарнама берушілер ұсыныс орналастырады және расталған конверсия үшін төлейді. Баспагерлер ұсыныстарды алып, сайттарына сілтеме қояды.</p><ol><li>Жарнама беруші ретінде тіркелу және кабинетке кіру.</li><li>Ақша қойындысында балансты толтыру (өтінім немесе төлем).</li><li>Ұсыныс жасау: промо немесе CPA, landing, шарттар, ставка және hold (0–180 күн).</li><li>Ресей үшін — ERID (ORD белгілеу токені).</li><li>Модерацияға жіберу. Жарияланғаннан кейін ұсыныс баспагерлерге көрінеді.</li><li>Конверсия есебінің баптауы (төменде қараңыз) — әйтпесе статистикада тек кликтер қалады.</li></ol><p>Әр конверсияда баспагер ставкасы плюс желі комиссиясы (әдетте 10%) ұсталады. Баспагер hold мерзімі әр ұсыныста белгіленеді.</p>"
+    },
+    "pub": {
+      "h2": "Баспагерлерге",
+      "body": "<p>Баспагерлер жарияланған ұсыныстарды алып, бақыланатын сілтеме орналастырады. Төлем жарнама беруші растаған конверсия үшін.</p><ol><li>Баспагер ретінде тіркелу — сайт коды беріледі.</li><li>Каталогта <code>/go/…?p=code</code> сияқты сілтеме көшіріледі. Hold бағаны төлемнің қанша күннен кейін ашылатынын көрсетеді.</li><li>Сілтеме сайтқа немесе жіберілімдерге қойылады. <code>?p=</code> жоқ кликтер есепке алынбайды.</li><li>Статистика мен қолжетімді баланс кабинетте.</li><li>Шығару кабинеттен өтініммен; төлемді желі растайды.</li></ol>"
+    },
+    "track": {
+      "h2": "Кликтер мен конверсиялар",
+      "body": "<p><strong>Клик.</strong> Баспагер <code>/go/…?p=code</code> сияқты сілтеме орналастырады. Пайдаланушы оған өтеді: клик тіркеледі және браузер URL-де <code>click_id</code> бар жарнама беруші landing-іне бағытталады. Бұл id сақталуы керек (cookie, CRM немесе жасырын форма өрісі).</p><p><strong>Конверсия.</strong> Клиент сатып алғанда немесе lead қалдырғанда, жарнама беруші сайты немесе CRM сақталған <code>click_id</code> және сомамен postback-ті бір рет шақырады.</p><p>Үлгі жарнама беруші кабинетінде Конверсия есебі бөлімінде. Мысал:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Бас тарту немесе chargeback үшін: сол <code>click_id</code>мен <code>status=rejected</code>.</p><p>Postback болмаса есептерде тек кликтер қалады. Арнайы API қажет емес — қарапайым HTTP сұрауы жеткілікті.</p>"
+    },
+    "mod": {
+      "h2": "Модерация",
+      "body": "<p>Жаңа және өңделген ұсыныстар жариялаудан бұрын желі тексереді.</p><ul><li>Landing, шарттар, ставка және (RU үшін) ERID тексеріледі.</li><li>Кабинеттегі мәртебелер: модерацияда, жарияланған, қабылданбаған, нобай.</li><li>Қабылданбағанда себеп ұсыныстар тізімінде көрсетіледі; түзетулерден кейін ұсыныс қайта жіберіледі.</li><li>Жариялаудан алу ұсынысты нобайға ауыстырады — баспагерлер оны енді көрмейді.</li></ul>"
+    },
+    "navIntro": "Желі туралы",
+    "intro": {
+      "h2": "Желі қалай жұмыс істейді",
+      "body": "<p>Serpmonn серіктестік желісі компаниялар мен аудиториясы бар платформаларды бірыңғай орналастыру моделінде байланыстырады.</p><ul><li><strong>Жарнама беруші</strong> ұсыныс жариялайды: ұсыныс, шарттар және орындалған әрекет үшін сыйақы.</li><li><strong>Баспагер</strong> ұсынысты өз платформасындағы серіктес сілтеме арқылы насихаттайды және расталған нәтиже үшін төлем алады.</li></ul><p>Төлемдер конверсия үшін — пайдаланушы сілтемеге өтіп, ұсыныс шарттары бойынша мақсатты әрекетті (lead, сатып алу т.б.) аяқтағанда.</p><p>Баспагерге аудиториясы бар платформа немесе арна керек: тіркелу, ұсыныс таңдау, сілтеме орналастыру, содан кейін кабинетте статистика мен төлемдер.</p><p>Төменде кабинеттер, бақылау және модерация бойынша нұсқаулар.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Ұсыныстар",
+    "money": "Ақша",
+    "stats": "Статистика",
+    "catalog": "Каталог"
+  },
+  "money": {
+    "advHint": "Баланс конверсия үшін ұсталады (баспагер ставкасы + желі комиссиясы).",
+    "openTopup": "Балансты толтыру",
+    "openPayout": "Қаражатты шығару",
+    "advHintFee": "Әр конверсия: баспагер ставкасы + {fee}% желі (×{mult}). Hold әр ұсыныста белгіленеді (0–{max} күн)."
+  },
+  "topup": {
+    "drawerHint": "Соманы енгізіңіз. Баланс төлем немесе растаудан кейін жаңартылады.",
+    "requisitesTitle": "Карта төлемі қолжетімсіз болса банк деректемелері:",
+    "pendingId": "Өтінім #{id} жасалды. Осы нөмірді төлем мақсатына жазыңыз. Баланс растаудан кейін жаңартылады."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold әр ұсыныста белгіленеді (әдепкі {days} күн, 180-ге дейін)"
+  },
+  "offer": {
+    "country": "Ел",
+    "countryRu": "Ресей",
+    "countryOther": "Басқа ел",
+    "eridPh": "ORD-тан токен",
+    "eridHintRu": "Ресей үшін жарнама белгілеу токені (ORD) қажет.",
+    "eridHintOther": "Бұл ел үшін ERID қажет емес.",
+    "holdDays": "Hold, күн",
+    "holdDaysHint": "Баспагер төлемі hold-та қалатын күндер (0–180). 0 = бірден қолжетімді.",
+    "emptyCta": "Ұсыныс жасау"
+  },
+  "stats": {
+    "emptyAdvCta": "Ұсыныстарға өту",
+    "emptyPubCta": "Каталогқа өту",
+    "lastAt": "Қашан"
+  },
+  "catalog": {
+    "emptyCta": "Сілтемені көшіру",
+    "hold": "Hold, күн"
+  },
+  "postback": {
+    "toHelp": "Клик пен конверсия қалай жұмыс істейді — көмекте"
+  }
 }

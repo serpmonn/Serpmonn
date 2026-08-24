@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Publico ofertas e pago por conversões",
+    "rolePublisherDesc": "Coloco links e ganho comissão",
+    "showPassword": "Mostrar",
+    "hidePassword": "Ocultar",
+    "whyTitle": "Para que serve",
+    "why1": "Publique uma oferta ou coloque um link no seu site.",
+    "why2": "Você paga ou ganha por leads e vendas reais — não só por visualizações.",
+    "errEmail": "Informe um e-mail válido",
+    "errPassword": "Informe sua senha",
+    "errPasswordMin": "A senha deve ter pelo menos 8 caracteres"
+  },
+  "help": {
+    "title": "Docs — Rede de parceiros Serpmonn",
+    "eyebrow": "Ajuda",
+    "h1": "Documentação da rede de parceiros",
+    "toAuth": "Entrar / Cadastrar",
+    "link": "Ajuda",
+    "linkHint": "como a rede funciona",
+    "linkTitle": "Docs curtos para anunciantes e publishers",
+    "short": "Ajuda",
+    "navAdv": "Para anunciantes",
+    "navPub": "Para publishers",
+    "navTrack": "Cliques e conversões",
+    "navMod": "Moderação",
+    "adv": {
+      "h2": "Para anunciantes",
+      "body": "<p>Anunciantes publicam ofertas e pagam por conversões confirmadas. Publishers pegam ofertas e colocam links em seus sites.</p><ol><li>Cadastro como Anunciante e acesso ao painel.</li><li>Recarga de saldo na aba Dinheiro (solicitação ou pagamento).</li><li>Criação de oferta: promo ou CPA, landing, condições, taxa e hold (0–180 dias).</li><li>Para a Rússia — um ERID (token de marcação ORD).</li><li>Envio para moderação. Após a publicação, a oferta aparece para os publishers.</li><li>Configuração do reporte de conversões (veja abaixo) — caso contrário, só restam cliques nas estatísticas.</li></ol><p>Cada conversão debita a taxa do publisher mais a comissão da rede (geralmente 10%). O hold do publisher é definido por oferta.</p>"
+    },
+    "pub": {
+      "h2": "Para publishers",
+      "body": "<p>Publishers pegam ofertas publicadas e colocam um link rastreado. O pagamento é por conversões confirmadas pelo anunciante.</p><ol><li>Cadastro como Publisher — um código de site é emitido.</li><li>No catálogo, copie um link como <code>/go/…?p=code</code>. A coluna de hold mostra em quantos dias o pagamento é liberado.</li><li>O link é colocado em um site ou em envios. Cliques sem <code>?p=</code> são ignorados.</li><li>Estatísticas e saldo disponível ficam no painel.</li><li>O saque é solicitado pelo painel; o pagamento é confirmado pela rede.</li></ol>"
+    },
+    "track": {
+      "h2": "Cliques e conversões",
+      "body": "<p><strong>Clique.</strong> O publisher coloca um link como <code>/go/…?p=code</code>. O usuário o segue: o clique é registrado e o navegador é redirecionado ao landing do anunciante com <code>click_id</code> na URL. Esse id deve ser armazenado (cookie, CRM ou campo oculto do formulário).</p><p><strong>Conversão.</strong> Quando o cliente compra ou deixa um lead, o site ou CRM do anunciante chama uma vez o postback com o <code>click_id</code> armazenado e o valor.</p><p>O modelo está no painel do anunciante em Reporte de conversões. Exemplo:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Para rejeição ou chargeback: <code>status=rejected</code> com o mesmo <code>click_id</code>.</p><p>Sem postback, só restam cliques nos relatórios. Não é preciso API personalizada — uma requisição HTTP normal basta.</p>"
+    },
+    "mod": {
+      "h2": "Moderação",
+      "body": "<p>Ofertas novas e editadas são revisadas pela rede antes da publicação.</p><ul><li>Landing, condições, taxa e (para RU) ERID são verificados.</li><li>Status no painel: em moderação, publicado, rejeitado, rascunho.</li><li>Na rejeição, o motivo aparece na lista de ofertas; após correções, a oferta é reenviada.</li><li>Despublicar move a oferta para rascunho — publishers não a veem mais.</li></ul>"
+    },
+    "navIntro": "Sobre a rede",
+    "intro": {
+      "h2": "Como a rede funciona",
+      "body": "<p>A rede de parceiros Serpmonn conecta empresas e espaços com audiência em um único modelo de publicação.</p><ul><li><strong>Anunciante</strong> publica uma oferta: a proposta, as condições e a recompensa por uma ação concluída.</li><li><strong>Publisher</strong> promove a oferta por um link de parceiro no seu espaço e é pago por resultados confirmados.</li></ul><p>Os pagamentos são por conversões — quando um usuário segue o link e conclui a ação-alvo conforme as condições da oferta (lead, compra etc.).</p><p>Publishers precisam de um espaço ou canal com audiência: cadastro, escolha de ofertas, colocação do link, depois estatísticas e pagamentos no painel.</p><p>Abaixo: instruções sobre painéis, rastreamento e moderação.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Ofertas",
+    "money": "Dinheiro",
+    "stats": "Estatísticas",
+    "catalog": "Catálogo"
+  },
+  "money": {
+    "advHint": "O saldo é debitado por conversões (taxa do publisher + comissão da rede).",
+    "openTopup": "Recarregar saldo",
+    "openPayout": "Sacar fundos",
+    "advHintFee": "Por conversão: taxa do publisher + {fee}% da rede (×{mult}). O hold é definido em cada oferta (0–{max} dias)."
+  },
+  "topup": {
+    "drawerHint": "Informe o valor. O saldo atualiza após o pagamento ou a confirmação.",
+    "requisitesTitle": "Dados bancários se o pagamento com cartão estiver indisponível:",
+    "pendingId": "Solicitação #{id} criada. Coloque este número no motivo do pagamento. O saldo atualiza após a confirmação."
+  },
+  "payout": {
+    "holdDaysDefault": "O hold é definido por oferta (padrão {days} dias, até 180)"
+  },
+  "offer": {
+    "country": "País",
+    "countryRu": "Rússia",
+    "countryOther": "Outro país",
+    "eridPh": "Token do ORD",
+    "eridHintRu": "Para a Rússia é necessário um token de marcação publicitária (ORD).",
+    "eridHintOther": "O ERID não é obrigatório neste país.",
+    "holdDays": "Hold, dias",
+    "holdDaysHint": "Dias em que o pagamento ao publisher fica em hold (0–180). 0 = disponível imediatamente.",
+    "emptyCta": "Criar oferta"
+  },
+  "stats": {
+    "emptyAdvCta": "Ir para ofertas",
+    "emptyPubCta": "Ir para o catálogo",
+    "lastAt": "Quando"
+  },
+  "catalog": {
+    "emptyCta": "Copiar link",
+    "hold": "Hold, dias"
+  },
+  "postback": {
+    "toHelp": "Como funcionam cliques e conversões — na ajuda"
+  }
 }

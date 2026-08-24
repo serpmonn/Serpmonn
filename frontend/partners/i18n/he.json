@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "אני מפרסם הצעות ומשלם על המרות",
+    "rolePublisherDesc": "אני מציב קישורים ומרוויח עמלה",
+    "showPassword": "הצג",
+    "hidePassword": "הסתר",
+    "whyTitle": "למה זה",
+    "why1": "פרסמו הצעה או הציבו קישור באתר שלכם.",
+    "why2": "משלמים או מרוויחים על לידים ומכירות אמיתיים — לא רק על צפיות.",
+    "errEmail": "הזינו כתובת Email תקינה",
+    "errPassword": "הזינו את הסיסמה",
+    "errPasswordMin": "הסיסמה חייבת להיות באורך 8 תווים לפחות"
+  },
+  "help": {
+    "title": "תיעוד — רשת השותפים של Serpmonn",
+    "eyebrow": "עזרה",
+    "h1": "תיעוד רשת השותפים",
+    "toAuth": "התחברות / הרשמה",
+    "link": "עזרה",
+    "linkHint": "איך הרשת עובדת",
+    "linkTitle": "תיעוד קצר למפרסמים ולמוציאים לאור",
+    "short": "עזרה",
+    "navAdv": "למפרסמים",
+    "navPub": "למוציאים לאור",
+    "navTrack": "קליקים והמרות",
+    "navMod": "מודרציה",
+    "adv": {
+      "h2": "למפרסמים",
+      "body": "<p>מפרסמים מפרסמים הצעות ומשלמים על המרות מאושרות. מוציאים לאור לוקחים הצעות ומציבים קישורים באתרים שלהם.</p><ol><li>הרשמה כמפרסם והתחברות ללוח.</li><li>טעינת יתרה בלשונית הכסף (בקשה או תשלום).</li><li>יצירת הצעה: קוד קופון או CPA, דף נחיתה, תנאים, תעריף והולד (0–180 ימים).</li><li>לרוסיה — ERID (אסימון סימון ORD).</li><li>שליחה למודרציה. לאחר הפרסום ההצעה מופיעה למוציאים לאור.</li><li>הגדרת דיווח המרות (ראו למטה) — אחרת יישארו רק קליקים בסטטיסטיקה.</li></ol><p>כל המרה מחייבת את תעריף המוציא לאור בתוספת עמלת הרשת (בדרך כלל 10%). הולד המוציא לאור נקבע בכל הצעה.</p>"
+    },
+    "pub": {
+      "h2": "למוציאים לאור",
+      "body": "<p>מוציאים לאור לוקחים הצעות שפורסמו ומציבים קישור מעקב. התשלום הוא על המרות שאושרו על ידי המפרסם.</p><ol><li>הרשמה כמוציא לאור — מונפק קוד אתר.</li><li>בקטלוג, העתיקו קישור כמו <code>/go/…?p=code</code>. עמודת ההולד מציגה כמה ימים עד לפתיחת התשלום.</li><li>הקישור מוצב באתר או בדיוורים. קליקים ללא <code>?p=</code> מתעלמים מהם.</li><li>סטטיסטיקה ויתרה זמינה בלוח.</li><li>משיכה מתבקשת מהלוח; הרשת מאשרת את התשלום.</li></ol>"
+    },
+    "track": {
+      "h2": "קליקים והמרות",
+      "body": "<p><strong>קליק.</strong> המוציא לאור מציב קישור כמו <code>/go/…?p=code</code>. המשתמש עוקב אחריו: הקליק נרשם והדפדפן מופנה לדף הנחיתה של המפרסם עם <code>click_id</code> ב-URL. יש לשמור את המזהה (cookie, CRM או שדה טופס מוסתר).</p><p><strong>המרה.</strong> כשהלקוח קונה או משאיר ליד, האתר או ה-CRM של המפרסם קוראים ל-postback פעם אחת עם ה-<code>click_id</code> השמור והסכום.</p><p>התבנית בלוח המפרסם תחת דיווח המרות. דוגמה:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>לדחייה או צ'ארג'בק: <code>status=rejected</code> עם אותו <code>click_id</code>.</p><p>בלי postback יישארו רק קליקים בדוחות. אין צורך ב-API מותאם — בקשת HTTP רגילה מספיקה.</p>"
+    },
+    "mod": {
+      "h2": "מודרציה",
+      "body": "<p>הצעות חדשות וערוכות נבדקות על ידי הרשת לפני הפרסום.</p><ul><li>נבדקים דף הנחיתה, התנאים, התעריף ו-(לרוסיה) ERID.</li><li>סטטוסים בלוח: במודרציה, פורסם, נדחה, טיוטה.</li><li>בדחייה הסיבה מוצגת ברשימת ההצעות; לאחר תיקון ההצעה נשלחת שוב.</li><li>ביטול פרסום מעביר את ההצעה לטיוטה — מוציאים לאור כבר לא רואים אותה.</li></ul>"
+    },
+    "navIntro": "על הרשת",
+    "intro": {
+      "h2": "איך הרשת עובדת",
+      "body": "<p>רשת השותפים של Serpmonn מחברת חברות ונכסים עם קהל במודל פרסום אחד.</p><ul><li><strong>מפרסם</strong> מפרסם הצעה: ההצעה, התנאים והתגמול על פעולה שהושלמה.</li><li><strong>מוציא לאור</strong> מקדם את ההצעה באמצעות קישור שותף בנכס שלו ומקבל תשלום על תוצאות מאושרות.</li></ul><p>התשלומים הם על המרות — כאשר משתמש עוקב אחרי הקישור ומשלים את הפעולה היעד לפי תנאי ההצעה (ליד, רכישה וכו').</p><p>מוציאים לאור צריכים נכס או ערוץ עם קהל: הרשמה, בחירת הצעה, הצבת קישור, ואז סטטיסטיקה ותשלומים בלוח.</p><p>להלן הוראות ללוחות, מעקב ומודרציה.</p>"
+    }
+  },
+  "tab": {
+    "offers": "הצעות",
+    "money": "כסף",
+    "stats": "סטטיסטיקה",
+    "catalog": "קטלוג"
+  },
+  "money": {
+    "advHint": "היתרה מחויבת על המרות (תעריף המוציא לאור + עמלת הרשת).",
+    "openTopup": "טעינת יתרה",
+    "openPayout": "משיכת כספים",
+    "advHintFee": "לכל המרה: תעריף המוציא לאור + {fee}% לרשת (×{mult}). ההולד נקבע בכל הצעה (0–{max} ימים)."
+  },
+  "topup": {
+    "drawerHint": "הזינו את הסכום. היתרה תתעדכן לאחר תשלום או אישור.",
+    "requisitesTitle": "פרטי בנק אם תשלום בכרטיס אינו זמין:",
+    "pendingId": "בקשה #{id} נוצרה. ציינו מספר זה במטרת התשלום. היתרה תתעדכן לאחר אישור."
+  },
+  "payout": {
+    "holdDaysDefault": "ההולד נקבע בהצעה (ברירת מחדל {days} ימים, עד 180)"
+  },
+  "offer": {
+    "country": "מדינה",
+    "countryRu": "רוסיה",
+    "countryOther": "מדינה אחרת",
+    "eridPh": "אסימון מ-ORD",
+    "eridHintRu": "לרוסיה נדרש אסימון סימון פרסום (ORD).",
+    "eridHintOther": "ERID אינו נדרש למדינה זו.",
+    "holdDays": "הולד, ימים",
+    "holdDaysHint": "ימים שבהם תשלום המוציא לאור נשאר בהולד (0–180). 0 = זמין מיד.",
+    "emptyCta": "יצירת הצעה"
+  },
+  "stats": {
+    "emptyAdvCta": "להצעות",
+    "emptyPubCta": "לקטלוג",
+    "lastAt": "מתי"
+  },
+  "catalog": {
+    "emptyCta": "העתקת קישור",
+    "hold": "הולד, ימים"
+  },
+  "postback": {
+    "toHelp": "איך עובדים קליקים והמרות — בעזרה"
+  }
 }

@@ -185,5 +185,98 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Taklif joylashtiraman va konversiyalar uchun toʻlayman",
+    "rolePublisherDesc": "Havola qoʻyaman va komissiya ishlayman",
+    "showPassword": "Koʻrsatish",
+    "hidePassword": "Yashirish",
+    "whyTitle": "Nima uchun bu",
+    "why1": "Taklif joylashtiring yoki saytingizga havola qoʻying.",
+    "why2": "Faqat koʻrishlar emas — haqiqiy lead va sotuvlar uchun toʻlaysiz yoki ishlaysiz.",
+    "errEmail": "Toʻgʻri email kiriting",
+    "errPassword": "Parolingizni kiriting",
+    "errPasswordMin": "Parol kamida 8 belgidan iborat boʻlishi kerak"
+  },
+  "help": {
+    "title": "Hujjatlar — Serpmonn hamkorlik tarmogʻi",
+    "eyebrow": "Yordam",
+    "h1": "Hamkorlik tarmogʻi hujjatlari",
+    "toAuth": "Kirish / Roʻyxatdan oʻtish",
+    "link": "Yordam",
+    "linkHint": "tarmoq qanday ishlaydi",
+    "linkTitle": "Reklama beruvchilar va nashriyotchilar uchun qisqa hujjatlar",
+    "short": "Yordam",
+    "navAdv": "Reklama beruvchilar uchun",
+    "navPub": "Nashriyotchilar uchun",
+    "navTrack": "Kliklar va konversiyalar",
+    "navMod": "Moderatsiya",
+    "adv": {
+      "h2": "Reklama beruvchilar uchun",
+      "body": "<p>Reklama beruvchilar taklif joylashtiradi va tasdiqlangan konversiyalar uchun toʻlaydi. Nashriyotchilar takliflarni oladi va saytlariga havola qoʻyadi.</p><ol><li>Reklama beruvchi sifatida roʻyxatdan oʻtish va kabinetga kirish.</li><li>Pul yorligʻida balansni toʻldirish (soʻrov yoki toʻlov).</li><li>Taklif yaratish: promo yoki CPA, landing, shartlar, stavka va hold (0–180 kun).</li><li>Rossiya uchun — ERID (ORD belgilash tokeni).</li><li>Moderatsiyaga yuborish. Nashrdan keyin taklif nashriyotchilarga koʻrinadi.</li><li>Konversiya hisoboti sozlamasi (pastda qarang) — aks holda statistikada faqat kliklar qoladi.</li></ol><p>Har bir konversiyada nashriyotchi stavkasi plus tarmoq komissiyasi (odatda 10%) yechiladi. Nashriyotchi hold muddati har bir taklifda belgilanadi.</p>"
+    },
+    "pub": {
+      "h2": "Nashriyotchilar uchun",
+      "body": "<p>Nashriyotchilar nashr qilingan takliflarni oladi va kuzatiladigan havola joylashtiradi. Toʻlov reklama beruvchi tasdiqlagan konversiyalar uchun.</p><ol><li>Nashriyotchi sifatida roʻyxatdan oʻtish — sayt kodi beriladi.</li><li>Katalogda <code>/go/…?p=code</code> koʻrinishidagi havola nusxalanadi. Hold ustuni toʻlov necha kundan keyin ochilishini koʻrsatadi.</li><li>Havola saytga yoki xabarnomalarga qoʻyiladi. <code>?p=</code> boʻlmagan kliklar hisobga olinmaydi.</li><li>Statistika va mavjud balans kabinetda.</li><li>Yechib olish kabinetdan soʻrov bilan; toʻlov tarmoq tomonidan tasdiqlanadi.</li></ol>"
+    },
+    "track": {
+      "h2": "Kliklar va konversiyalar",
+      "body": "<p><strong>Klik.</strong> Nashriyotchi <code>/go/…?p=code</code> koʻrinishidagi havola joylashtiradi. Foydalanuvchi unga oʻtadi: klik qayd etiladi va brauzer URL’da <code>click_id</code> bilan reklama beruvchi landing’iga yoʻnaltiriladi. Bu id saqlanishi kerak (cookie, CRM yoki yashirin forma maydoni).</p><p><strong>Konversiya.</strong> Mijoz sotib olganda yoki lead qoldirganda, reklama beruvchi sayti yoki CRM saqlangan <code>click_id</code> va summa bilan postback’ni bir marta chaqiradi.</p><p>Shablon reklama beruvchi kabinetida Konversiya hisoboti ostida. Misol:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Rad etish yoki chargeback uchun: xuddi shu <code>click_id</code> bilan <code>status=rejected</code>.</p><p>Postback boʻlmasa hisobotlarda faqat kliklar qoladi. Maxsus API kerak emas — oddiy HTTP soʻrovi yetarli.</p>"
+    },
+    "mod": {
+      "h2": "Moderatsiya",
+      "body": "<p>Yangi va tahrirlangan takliflar nashrdan oldin tarmoq tomonidan tekshiriladi.</p><ul><li>Landing, shartlar, stavka va (RU uchun) ERID tekshiriladi.</li><li>Kabinetdagi holatlar: moderatsiyada, nashr qilingan, rad etilgan, qoralama.</li><li>Rad etilganda sabab takliflar roʻyxatida koʻrsatiladi; tuzatishlardan keyin taklif qayta yuboriladi.</li><li>Nashrdan olish taklifni qoralamaga oʻtkazadi — nashriyotchilar uni endi koʻrmaydi.</li></ul>"
+    },
+    "navIntro": "Tarmoq haqida",
+    "intro": {
+      "h2": "Tarmoq qanday ishlaydi",
+      "body": "<p>Serpmonn hamkorlik tarmogʻi kompaniyalar va auditoriyali platformalarni yagona joylash modelida bogʻlaydi.</p><ul><li><strong>Reklama beruvchi</strong> taklif nashr qiladi: taklif, shartlar va bajarilgan amal uchun mukofot.</li><li><strong>Nashriyotchi</strong> taklifni oʻz platformasidagi hamkor havolasi orqali targʻib qiladi va tasdiqlangan natijalar uchun toʻlov oladi.</li></ul><p>Toʻlovlar konversiyalar uchun — foydalanuvchi havolaga oʻtib taklif shartlariga koʻra maqsadli amalni (lead, xarid va hokazo) bajarganda.</p><p>Nashriyotchilarga auditoriyali platforma yoki kanal kerak: roʻyxatdan oʻtish, taklif tanlash, havola joylash, soʻng kabinetda statistika va toʻlovlar.</p><p>Pastda kabinetlar, kuzatuv va moderatsiya boʻyicha koʻrsatmalar.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Takliflar",
+    "money": "Pul",
+    "stats": "Statistika",
+    "catalog": "Katalog"
+  },
+  "money": {
+    "advHint": "Balans konversiyalar uchun yechiladi (nashriyotchi stavkasi + tarmoq komissiyasi).",
+    "openTopup": "Balansni toʻldirish",
+    "openPayout": "Mablagʻni yechib olish",
+    "advHintFee": "Har konversiya: nashriyotchi stavkasi + {fee}% tarmoq (×{mult}). Hold har bir taklifda belgilanadi (0–{max} kun)."
+  },
+  "topup": {
+    "drawerHint": "Summani kiriting. Balans toʻlov yoki tasdiqdan keyin yangilanadi.",
+    "requisitesTitle": "Karta toʻlovi mavjud boʻlmasa bank rekvizitlari:",
+    "pendingId": "Soʻrov #{id} yaratildi. Bu raqamni toʻlov maqsadiga yozing. Balans tasdiqdan keyin yangilanadi."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold har bir taklifda belgilanadi (standart {days} kun, 180 gacha)"
+  },
+  "offer": {
+    "country": "Mamlakat",
+    "countryRu": "Rossiya",
+    "countryOther": "Boshqa mamlakat",
+    "eridPh": "ORD’dan token",
+    "eridHintRu": "Rossiya uchun reklama belgilash tokeni (ORD) talab qilinadi.",
+    "eridHintOther": "Bu mamlakat uchun ERID talab qilinmaydi.",
+    "holdDays": "Hold, kun",
+    "holdDaysHint": "Nashriyotchi toʻlovi holdda qoladigan kunlar (0–180). 0 = darhol mavjud.",
+    "emptyCta": "Taklif yaratish"
+  },
+  "stats": {
+    "emptyAdvCta": "Takliflarga oʻtish",
+    "emptyPubCta": "Katalogga oʻtish",
+    "lastAt": "Qachon"
+  },
+  "catalog": {
+    "emptyCta": "Havolani nusxalash",
+    "hold": "Hold, kun"
+  },
+  "th": {
+    "status": "Holat"
+  },
+  "postback": {
+    "toHelp": "Klik va konversiyalar qanday ishlaydi — yordamda"
+  }
 }

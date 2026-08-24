@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Teklif yerleştirir ve dönüşümler için ödeme yaparım",
+    "rolePublisherDesc": "Bağlantı yerleştirir ve komisyon kazanırım",
+    "showPassword": "Göster",
+    "hidePassword": "Gizle",
+    "whyTitle": "Neden bu",
+    "why1": "Bir teklif yerleştirin veya sitenize bir bağlantı koyun.",
+    "why2": "Sadece görüntülenme değil — gerçek lead ve satışlar için ödersiniz veya kazanırsınız.",
+    "errEmail": "Geçerli bir email girin",
+    "errPassword": "Şifrenizi girin",
+    "errPasswordMin": "Şifre en az 8 karakter olmalıdır"
+  },
+  "help": {
+    "title": "Dokümantasyon — Serpmonn partner ağı",
+    "eyebrow": "Yardım",
+    "h1": "Partner ağı dokümantasyonu",
+    "toAuth": "Giriş / Kayıt",
+    "link": "Yardım",
+    "linkHint": "ağ nasıl çalışır",
+    "linkTitle": "Reklamverenler ve yayıncılar için kısa dokümantasyon",
+    "short": "Yardım",
+    "navAdv": "Reklamverenler için",
+    "navPub": "Yayıncılar için",
+    "navTrack": "Tıklamalar ve dönüşümler",
+    "navMod": "Moderasyon",
+    "adv": {
+      "h2": "Reklamverenler için",
+      "body": "<p>Reklamverenler teklif yerleştirir ve onaylanmış dönüşümler için ödeme yapar. Yayıncılar teklifleri alır ve sitelerine bağlantı koyar.</p><ol><li>Reklamveren olarak kayıt ve panele giriş.</li><li>Para sekmesinde bakiye yükleme (talep veya ödeme).</li><li>Teklif oluşturma: promo veya CPA, landing, koşullar, oran ve hold (0–180 gün).</li><li>Rusya için — bir ERID (ORD işaretleme tokeni).</li><li>Moderasyona gönderme. Yayınlandıktan sonra teklif yayıncılara görünür.</li><li>Dönüşüm bildirimi ayarı (aşağıya bakın) — aksi halde istatistikte yalnızca tıklamalar kalır.</li></ol><p>Her dönüşümde yayıncı oranı artı ağ ücreti (genellikle %10) tahsil edilir. Yayıncı hold süresi her teklifte belirlenir.</p>"
+    },
+    "pub": {
+      "h2": "Yayıncılar için",
+      "body": "<p>Yayıncılar yayımlanmış teklifleri alır ve izlenen bir bağlantı yerleştirir. Ödeme, reklamveren tarafından onaylanan dönüşümler içindir.</p><ol><li>Yayıncı olarak kayıt — bir site kodu verilir.</li><li>Katalogda <code>/go/…?p=code</code> gibi bir bağlantı kopyalanır. Hold sütunu ödemenin kaç gün sonra açılacağını gösterir.</li><li>Bağlantı siteye veya e-postalara konur. <code>?p=</code> olmayan tıklamalar yok sayılır.</li><li>İstatistikler ve kullanılabilir bakiye panelde.</li><li>Çekim panelden talep edilir; ödeme ağ tarafından onaylanır.</li></ol>"
+    },
+    "track": {
+      "h2": "Tıklamalar ve dönüşümler",
+      "body": "<p><strong>Tıklama.</strong> Yayıncı <code>/go/…?p=code</code> gibi bir bağlantı yerleştirir. Kullanıcı onu takip eder: tıklama kaydedilir ve tarayıcı URL’de <code>click_id</code> ile reklamveren landing’ine yönlendirilir. Bu kimlik saklanmalıdır (cookie, CRM veya gizli form alanı).</p><p><strong>Dönüşüm.</strong> Müşteri satın aldığında veya lead bıraktığında, reklamveren sitesi veya CRM saklanan <code>click_id</code> ve tutarla postback’i bir kez çağırır.</p><p>Şablon, reklamveren panelinde Dönüşüm bildirimi altındadır. Örnek:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Red veya chargeback için: aynı <code>click_id</code> ile <code>status=rejected</code>.</p><p>Postback olmadan raporlarda yalnızca tıklamalar kalır. Özel API gerekmez — normal bir HTTP isteği yeterlidir.</p>"
+    },
+    "mod": {
+      "h2": "Moderasyon",
+      "body": "<p>Yeni ve düzenlenen teklifler yayımlanmadan önce ağ tarafından incelenir.</p><ul><li>Landing, koşullar, oran ve (RU için) ERID kontrol edilir.</li><li>Paneldeki durumlar: moderasyonda, yayında, reddedildi, taslak.</li><li>Reddedildiğinde neden teklif listesinde gösterilir; düzeltmelerden sonra teklif yeniden gönderilir.</li><li>Yayından kaldırma teklifi taslağa taşır — yayıncılar artık görmez.</li></ul>"
+    },
+    "navIntro": "Ağ hakkında",
+    "intro": {
+      "h2": "Ağ nasıl çalışır",
+      "body": "<p>Serpmonn partner ağı, şirketleri ve kitlesi olan platformları tek bir yerleştirme modelinde birleştirir.</p><ul><li><strong>Reklamveren</strong> bir teklif yayımlar: teklif, koşullar ve tamamlanan işlem için ödül.</li><li><strong>Yayıncı</strong> teklifi kendi platformundaki partner bağlantısıyla tanıtır ve onaylanmış sonuçlar için ödeme alır.</li></ul><p>Ödemeler dönüşümler içindir — kullanıcı bağlantıyı takip edip teklif koşullarına göre hedef eylemi (lead, satın alma vb.) tamamladığında.</p><p>Yayıncıların kitlesi olan bir platform veya kanalı olmalıdır: kayıt, teklif seçimi, bağlantı yerleştirme, ardından panelde istatistik ve ödemeler.</p><p>Aşağıda paneller, takip ve moderasyon için talimatlar yer alır.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Teklifler",
+    "money": "Para",
+    "stats": "İstatistikler",
+    "catalog": "Katalog"
+  },
+  "money": {
+    "advHint": "Bakiye dönüşümler için tahsil edilir (yayıncı oranı + ağ ücreti).",
+    "openTopup": "Bakiye yükle",
+    "openPayout": "Para çek",
+    "advHintFee": "Dönüşüm başına: yayıncı oranı + %{fee} ağ (×{mult}). Hold her teklifte belirlenir (0–{max} gün)."
+  },
+  "topup": {
+    "drawerHint": "Tutarı girin. Bakiye ödeme veya onaydan sonra güncellenir.",
+    "requisitesTitle": "Kart ödemesi yoksa banka bilgileri:",
+    "pendingId": "Talep #{id} oluşturuldu. Bu numarayı ödeme açıklamasına yazın. Bakiye onaydan sonra güncellenir."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold her teklifte belirlenir (varsayılan {days} gün, en fazla 180)"
+  },
+  "offer": {
+    "country": "Ülke",
+    "countryRu": "Rusya",
+    "countryOther": "Diğer ülke",
+    "eridPh": "ORD’den token",
+    "eridHintRu": "Rusya için reklam işaretleme tokeni (ORD) zorunludur.",
+    "eridHintOther": "Bu ülke için ERID gerekli değildir.",
+    "holdDays": "Hold, gün",
+    "holdDaysHint": "Yayıncı ödemesinin hold’da kalacağı gün (0–180). 0 = hemen kullanılabilir.",
+    "emptyCta": "Teklif oluştur"
+  },
+  "stats": {
+    "emptyAdvCta": "Tekliflere git",
+    "emptyPubCta": "Kataloga git",
+    "lastAt": "Ne zaman"
+  },
+  "catalog": {
+    "emptyCta": "Bağlantıyı kopyala",
+    "hold": "Hold, gün"
+  },
+  "postback": {
+    "toHelp": "Tıklama ve dönüşümler nasıl çalışır — yardımda"
+  }
 }

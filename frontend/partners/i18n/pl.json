@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Publikuję oferty i płacę za konwersje",
+    "rolePublisherDesc": "Umieszczam linki i zarabiam prowizję",
+    "showPassword": "Pokaż",
+    "hidePassword": "Ukryj",
+    "whyTitle": "Po co to",
+    "why1": "Opublikuj ofertę lub umieść link na swojej stronie.",
+    "why2": "Płacisz lub zarabiasz za prawdziwe leady i sprzedaże — nie tylko za wyświetlenia.",
+    "errEmail": "Podaj prawidłowy e-mail",
+    "errPassword": "Wprowadź hasło",
+    "errPasswordMin": "Hasło musi mieć co najmniej 8 znaków"
+  },
+  "help": {
+    "title": "Docs — Sieć partnerska Serpmonn",
+    "eyebrow": "Pomoc",
+    "h1": "Dokumentacja sieci partnerskiej",
+    "toAuth": "Logowanie / Rejestracja",
+    "link": "Pomoc",
+    "linkHint": "jak działa sieć",
+    "linkTitle": "Krótka dokumentacja dla reklamodawców i wydawców",
+    "short": "Pomoc",
+    "navAdv": "Dla reklamodawców",
+    "navPub": "Dla wydawców",
+    "navTrack": "Kliknięcia i konwersje",
+    "navMod": "Moderacja",
+    "adv": {
+      "h2": "Dla reklamodawców",
+      "body": "<p>Reklamodawcy publikują oferty i płacą za potwierdzone konwersje. Wydawcy biorą oferty i umieszczają linki na swoich stronach.</p><ol><li>Rejestracja jako Reklamodawca i logowanie do panelu.</li><li>Doładowanie salda w zakładce Pieniądze (wniosek lub płatność).</li><li>Tworzenie oferty: promo lub CPA, landing, warunki, stawka i hold (0–180 dni).</li><li>Dla Rosji — ERID (token oznaczenia ORD).</li><li>Wysłanie do moderacji. Po publikacji oferta pojawia się u wydawców.</li><li>Konfiguracja raportowania konwersji (patrz poniżej) — inaczej w statystykach zostaną tylko kliknięcia.</li></ol><p>Każda konwersja obciąża stawkę wydawcy plus prowizję sieci (zwykle 10%). Hold wydawcy ustawia się per oferta.</p>"
+    },
+    "pub": {
+      "h2": "Dla wydawców",
+      "body": "<p>Wydawcy biorą opublikowane oferty i umieszczają link śledzący. Wypłata dotyczy konwersji potwierdzonych przez reklamodawcę.</p><ol><li>Rejestracja jako Wydawca — nadawany jest kod witryny.</li><li>W katalogu skopiuj link w postaci <code>/go/…?p=code</code>. Kolumna hold pokazuje, po ilu dniach wypłata zostanie odblokowana.</li><li>Link umieszcza się na stronie lub w mailingach. Kliknięcia bez <code>?p=</code> są ignorowane.</li><li>Statystyki i dostępne saldo są w panelu.</li><li>Wypłatę zgłasza się z panelu; płatność potwierdza sieć.</li></ol>"
+    },
+    "track": {
+      "h2": "Kliknięcia i konwersje",
+      "body": "<p><strong>Kliknięcie.</strong> Wydawca umieszcza link jak <code>/go/…?p=code</code>. Użytkownik go otwiera: kliknięcie jest zapisane, a przeglądarka przekierowywana na landing reklamodawcy z <code>click_id</code> w URL. Ten id trzeba zapisać (cookie, CRM lub ukryte pole formularza).</p><p><strong>Konwersja.</strong> Gdy klient kupi lub zostawi lead, strona lub CRM reklamodawcy raz wywołuje postback z zapisanym <code>click_id</code> i kwotą.</p><p>Szablon jest w panelu reklamodawcy w Raportowaniu konwersji. Przykład:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Dla odrzucenia lub chargeback: <code>status=rejected</code> z tym samym <code>click_id</code>.</p><p>Bez postback w raportach zostają tylko kliknięcia. Nie trzeba własnego API — wystarczy zwykłe żądanie HTTP.</p>"
+    },
+    "mod": {
+      "h2": "Moderacja",
+      "body": "<p>Nowe i edytowane oferty są sprawdzane przez sieć przed publikacją.</p><ul><li>Sprawdzane są landing, warunki, stawka i (dla RU) ERID.</li><li>Statusy w panelu: w moderacji, opublikowany, odrzucony, szkic.</li><li>Przy odrzuceniu powód widać na liście ofert; po poprawkach oferta jest wysyłana ponownie.</li><li>Cofnięcie publikacji przenosi ofertę do szkicu — wydawcy jej już nie widzą.</li></ul>"
+    },
+    "navIntro": "O sieci",
+    "intro": {
+      "h2": "Jak działa sieć",
+      "body": "<p>Sieć partnerska Serpmonn łączy firmy i powierzchnie z odbiorcami w jednym modelu publikacji.</p><ul><li><strong>Reklamodawca</strong> publikuje ofertę: propozycję, warunki i wynagrodzenie za wykonaną akcję.</li><li><strong>Wydawca</strong> promuje ofertę linkiem partnerskim na swojej powierzchni i otrzymuje zapłatę za potwierdzone wyniki.</li></ul><p>Wypłaty dotyczą konwersji — gdy użytkownik kliknie link i wykona akcję docelową zgodnie z warunkami oferty (lead, zakup itd.).</p><p>Wydawcom potrzebna jest powierzchnia lub kanał z odbiorcami: rejestracja, wybór ofert, umieszczenie linku, potem statystyki i wypłaty w panelu.</p><p>Poniżej: instrukcje dotyczące paneli, śledzenia i moderacji.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Oferty",
+    "money": "Pieniądze",
+    "stats": "Statystyki",
+    "catalog": "Katalog"
+  },
+  "money": {
+    "advHint": "Saldo jest obciążane za konwersje (stawka wydawcy + prowizja sieci).",
+    "openTopup": "Doładuj saldo",
+    "openPayout": "Wypłać środki",
+    "advHintFee": "Za konwersję: stawka wydawcy + {fee}% sieci (×{mult}). Hold ustawia się w każdej ofercie (0–{max} dni)."
+  },
+  "topup": {
+    "drawerHint": "Podaj kwotę. Saldo zaktualizuje się po płatności lub potwierdzeniu.",
+    "requisitesTitle": "Dane bankowe, jeśli płatność kartą jest niedostępna:",
+    "pendingId": "Wniosek #{id} utworzony. Podaj ten numer w tytule przelewu. Saldo zaktualizuje się po potwierdzeniu."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold ustawia się w ofercie (domyślnie {days} dni, do 180)"
+  },
+  "offer": {
+    "country": "Kraj",
+    "countryRu": "Rosja",
+    "countryOther": "Inny kraj",
+    "eridPh": "Token z ORD",
+    "eridHintRu": "Dla Rosji wymagany jest token oznaczenia reklamy (ORD).",
+    "eridHintOther": "Dla tego kraju ERID nie jest wymagany.",
+    "holdDays": "Hold, dni",
+    "holdDaysHint": "Liczba dni, przez które wypłata wydawcy jest w holdzie (0–180). 0 = dostępna od razu.",
+    "emptyCta": "Utwórz ofertę"
+  },
+  "stats": {
+    "emptyAdvCta": "Przejdź do ofert",
+    "emptyPubCta": "Przejdź do katalogu",
+    "lastAt": "Kiedy"
+  },
+  "catalog": {
+    "emptyCta": "Kopiuj link",
+    "hold": "Hold, dni"
+  },
+  "postback": {
+    "toHelp": "Jak działają kliknięcia i konwersje — w pomocy"
+  }
 }

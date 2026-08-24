@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "オファーを掲載し、コンバージョンに対して支払います",
+    "rolePublisherDesc": "リンクを設置してコミッションを獲得します",
+    "showPassword": "表示",
+    "hidePassword": "非表示",
+    "whyTitle": "このネットワークについて",
+    "why1": "オファーを掲載するか、サイトにリンクを設置できます。",
+    "why2": "表示だけでなく、実際のリードや売上に対して支払い・報酬が発生します。",
+    "errEmail": "有効なメールアドレスを入力してください",
+    "errPassword": "パスワードを入力してください",
+    "errPasswordMin": "パスワードは8文字以上である必要があります"
+  },
+  "help": {
+    "title": "ドキュメント — Serpmonnパートナーネットワーク",
+    "eyebrow": "ヘルプ",
+    "h1": "パートナーネットワークのドキュメント",
+    "toAuth": "ログイン / 新規登録",
+    "link": "ヘルプ",
+    "linkHint": "ネットワークの使い方",
+    "linkTitle": "広告主とパブリッシャー向けの簡易ドキュメント",
+    "short": "ヘルプ",
+    "navAdv": "広告主向け",
+    "navPub": "パブリッシャー向け",
+    "navTrack": "クリックとコンバージョン",
+    "navMod": "審査",
+    "adv": {
+      "h2": "広告主向け",
+      "body": "<p>広告主はオファーを掲載し、確定したコンバージョンに対して支払います。パブリッシャーはオファーを選び、自社サイトにリンクを設置します。</p><ol><li>広告主として登録し、キャビネットにログインします。</li><li>「お金」タブで残高をチャージします（申請または決済）。</li><li>オファー作成：プロモまたはCPA、ランディング、条件、単価、ホールド（0～180日）。</li><li>ロシア向け — ERID（ORDマーキングトークン）。</li><li>審査へ提出。公開後、オファーはパブリッシャーに表示されます。</li><li>コンバージョン報告の設定（下記参照）— 未設定の場合、統計にはクリックのみが残ります。</li></ol><p>各コンバージョンでは、パブリッシャー単価にネットワーク手数料（通常10%）が加算されます。パブリッシャーのホールドはオファーごとに設定します。</p>"
+    },
+    "pub": {
+      "h2": "パブリッシャー向け",
+      "body": "<p>パブリッシャーは公開済みオファーを選び、トラッキングリンクを設置します。広告主が確定したコンバージョンに対して報酬が支払われます。</p><ol><li>パブリッシャーとして登録 — サイトコードが発行されます。</li><li>カタログで <code>/go/…?p=code</code> 形式のリンクをコピーします。ホールド列は、出金可能になるまでの日数を示します。</li><li>リンクをサイトやメール配信に設置します。<code>?p=</code> のないクリックは無視されます。</li><li>統計と利用可能残高はキャビネットにあります。</li><li>出金はキャビネットから申請し、ネットワークが支払いを確定します。</li></ol>"
+    },
+    "track": {
+      "h2": "クリックとコンバージョン",
+      "body": "<p><strong>クリック。</strong> パブリッシャーは <code>/go/…?p=code</code> 形式のリンクを設置します。ユーザーが遷移するとクリックが記録され、ブラウザはURLに <code>click_id</code> を付けた広告主のランディングへリダイレクトされます。このidは保存する必要があります（cookie、CRM、または隠しフォームフィールド）。</p><p><strong>コンバージョン。</strong> クライアントが購入またはリードを残したら、広告主のサイトまたはCRMが、保存した <code>click_id</code> と金額付きでpostbackを1回呼び出します。</p><p>テンプレートは広告主キャビネットの「コンバージョン報告」にあります。例：</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>拒否またはチャージバックの場合：同じ <code>click_id</code> で <code>status=rejected</code>。</p><p>postbackがない場合、レポートにはクリックのみが残ります。独自APIは不要 — 通常のHTTPリクエストで十分です。</p>"
+    },
+    "mod": {
+      "h2": "審査",
+      "body": "<p>新規および編集されたオファーは、公開前にネットワークによる審査を受けます。</p><ul><li>ランディング、条件、単価、および（ロシア向け）ERIDを確認します。</li><li>キャビネットのステータス：審査中、公開済み、却下、下書き。</li><li>却下時は理由がオファー一覧に表示され、修正後に再提出します。</li><li>公開停止するとオファーは下書きになり — パブリッシャーには表示されなくなります。</li></ul>"
+    },
+    "navIntro": "ネットワークについて",
+    "intro": {
+      "h2": "ネットワークの仕組み",
+      "body": "<p>Serpmonnパートナーネットワークは、企業とオーディエンスを持つ媒体を、ひとつの掲載モデルでつなぎます。</p><ul><li><strong>広告主</strong>はオファーを公開します：提案内容、条件、完了アクションに対する報酬。</li><li><strong>パブリッシャー</strong>は自社媒体でパートナーリンク経由でオファーを宣伝し、確定した結果に対して報酬を受け取ります。</li></ul><p>報酬はコンバージョンに対して支払われます — ユーザーがリンクを辿り、オファー条件に沿った目標アクション（リード、購入など）を完了したときです。</p><p>パブリッシャーにはオーディエンスのある媒体やチャネルが必要です：登録、オファー選択、リンク設置、その後キャビネットで統計と出金。</p><p>以下はキャビネット、トラッキング、審査の手順です。</p>"
+    }
+  },
+  "tab": {
+    "offers": "オファー",
+    "money": "お金",
+    "stats": "統計",
+    "catalog": "カタログ"
+  },
+  "money": {
+    "advHint": "残高はコンバージョン（パブリッシャー単価 + ネットワーク手数料）に対して課金されます。",
+    "openTopup": "残高をチャージ",
+    "openPayout": "資金を出金",
+    "advHintFee": "コンバージョンごと: パブリッシャー単価 + ネットワーク {fee}%（×{mult}）。ホールドは各オファーで設定（0～{max}日）。"
+  },
+  "topup": {
+    "drawerHint": "金額を入力してください。支払いまたは確認後に残高が更新されます。",
+    "requisitesTitle": "カード決済が利用できない場合の銀行振込先：",
+    "pendingId": "申請 #{id} を作成しました。振込の用途にこの番号を記載してください。確認後に残高が更新されます。"
+  },
+  "payout": {
+    "holdDaysDefault": "ホールドはオファーごとに設定されます（デフォルト {days} 日、最大180）"
+  },
+  "offer": {
+    "country": "国",
+    "countryRu": "ロシア",
+    "countryOther": "その他の国",
+    "eridPh": "ORDのトークン",
+    "eridHintRu": "ロシア向けには広告マーキングトークン（ORD）が必要です。",
+    "eridHintOther": "この国ではERIDは不要です。",
+    "holdDays": "ホールド、日数",
+    "holdDaysHint": "パブリッシャーへの支払いがホールドされる日数（0～180）。0 = 即利用可能。",
+    "emptyCta": "オファーを作成"
+  },
+  "stats": {
+    "emptyAdvCta": "オファーへ",
+    "emptyPubCta": "カタログへ",
+    "lastAt": "日時"
+  },
+  "catalog": {
+    "emptyCta": "リンクをコピー",
+    "hold": "ホールド、日数"
+  },
+  "postback": {
+    "toHelp": "クリックとコンバージョンの仕組み — ヘルプを参照"
+  }
 }

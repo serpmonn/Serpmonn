@@ -185,5 +185,98 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Sijoitan tarjouksia ja maksan konversioista",
+    "rolePublisherDesc": "Sijoitan linkkejä ja ansaitsen provisiota",
+    "showPassword": "Näytä",
+    "hidePassword": "Piilota",
+    "whyTitle": "Miksi tämä",
+    "why1": "Sijoita tarjous tai laita linkki sivustollesi.",
+    "why2": "Maksat tai ansaitset oikeista liideistä ja myynneistä — et vain näyttökerroista.",
+    "errEmail": "Anna kelvollinen sähköposti",
+    "errPassword": "Anna salasanasi",
+    "errPasswordMin": "Salasanan on oltava vähintään 8 merkkiä"
+  },
+  "help": {
+    "title": "Docs — Serpmonn-kumppaniverkosto",
+    "eyebrow": "Ohje",
+    "h1": "Kumppaniverkoston dokumentaatio",
+    "toAuth": "Kirjaudu / Rekisteröidy",
+    "link": "Ohje",
+    "linkHint": "miten verkosto toimii",
+    "linkTitle": "Lyhyet ohjeet mainostajille ja julkaisijoille",
+    "short": "Ohje",
+    "navAdv": "Mainostajille",
+    "navPub": "Julkaisijoille",
+    "navTrack": "Klikkaukset ja konversiot",
+    "navMod": "Moderointi",
+    "adv": {
+      "h2": "Mainostajille",
+      "body": "<p>Mainostajat sijoittavat tarjouksia ja maksavat vahvistetuista konversioista. Julkaisijat ottavat tarjouksia ja laittavat linkkejä sivustoilleen.</p><ol><li>Rekisteröityminen Mainostajaksi ja kirjautuminen paneeliin.</li><li>Saldon täydennys Rahat-välilehdellä (pyyntö tai maksu).</li><li>Tarjouksen luonti: promo tai CPA, landing, ehdot, hinta ja hold (0–180 päivää).</li><li>Venäjälle — ERID (ORD-merkintätunnus).</li><li>Lähetys moderointiin. Julkaisun jälkeen tarjous näkyy julkaisijoille.</li><li>Konversioraportoinnin asetukset (katso alla) — muuten tilastoihin jäävät vain klikkaukset.</li></ol><p>Jokainen konversio veloittaa julkaisijan hinnan plus verkostomaksun (yleensä 10 %). Julkaisijan hold asetetaan tarjouksittain.</p>"
+    },
+    "pub": {
+      "h2": "Julkaisijoille",
+      "body": "<p>Julkaisijat ottavat julkaistuja tarjouksia ja sijoittavat seurantlinkin. Maksu on mainostajan vahvistamista konversioista.</p><ol><li>Rekisteröityminen Julkaisijaksi — sivustokoodi myönnetään.</li><li>Katalogissa kopioi linkki muodossa <code>/go/…?p=code</code>. Hold-sarake näyttää, monenko päivän kuluttua maksu vapautuu.</li><li>Linkki sijoitetaan sivustolle tai lähetyksiin. Klikkaukset ilman <code>?p=</code> ohitetaan.</li><li>Tilastot ja käytettävissä oleva saldo ovat paneelissa.</li><li>Nosto pyydetään paneelista; verkosto vahvistaa maksun.</li></ol>"
+    },
+    "track": {
+      "h2": "Klikkaukset ja konversiot",
+      "body": "<p><strong>Klikkaus.</strong> Julkaisija sijoittaa linkin muodossa <code>/go/…?p=code</code>. Käyttäjä seuraa sitä: klikkaus kirjataan ja selain ohjataan mainostajan landingille URL:ssa olevan <code>click_id</code>-parametrin kanssa. Tämä id on tallennettava (eväste, CRM tai piilotettu lomakekenttä).</p><p><strong>Konversio.</strong> Kun asiakas ostaa tai jättää liidin, mainostajan sivusto tai CRM kutsuu postbackia kerran tallennetulla <code>click_id</code>-arvolla ja summalla.</p><p>Malli on mainostajan paneelissa Kohdassa Konversioraportointi. Esimerkki:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Hylkäykseen tai chargebackiin: <code>status=rejected</code> samalla <code>click_id</code>-arvolla.</p><p>Ilman postbackia raporteihin jäävät vain klikkaukset. Omaa API:a ei tarvita — tavallinen HTTP-pyyntö riittää.</p>"
+    },
+    "mod": {
+      "h2": "Moderointi",
+      "body": "<p>Uudet ja muokatut tarjoukset tarkistaa verkosto ennen julkaisua.</p><ul><li>Landing, ehdot, hinta ja (RU:lle) ERID tarkistetaan.</li><li>Tilat paneelissa: moderoinnissa, julkaistu, hylätty, luonnos.</li><li>Hylkäyksessä syy näkyy tarjouslistassa; korjausten jälkeen tarjous lähetetään uudelleen.</li><li>Julkaisun poisto siirtää tarjouksen luonnokseksi — julkaisijat eivät enää näe sitä.</li></ul>"
+    },
+    "navIntro": "Verkostosta",
+    "intro": {
+      "h2": "Miten verkosto toimii",
+      "body": "<p>Serpmonn-kumppaniverkosto yhdistää yritykset ja yleisölliset alustat yhteen sijoittelumalliin.</p><ul><li><strong>Mainostaja</strong> julkaisee tarjouksen: ehdotuksen, ehdot ja palkkion suoritetusta toiminnosta.</li><li><strong>Julkaisija</strong> mainostaa tarjousta kumppanilinkin kautta alustallaan ja saa maksun vahvistetuista tuloksista.</li></ul><p>Maksut koskevat konversioita — kun käyttäjä seuraa linkkiä ja suorittaa kohdetoiminnon tarjouksen ehtojen mukaan (liidi, ostos jne.).</p><p>Julkaisijat tarvitsevat alustan tai kanavan, jolla on yleisö: rekisteröityminen, tarjousten valinta, linkin sijoittelu, sitten tilastot ja maksut paneelissa.</p><p>Alla: ohjeet paneeleihin, seurantaan ja moderointiin.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Tarjoukset",
+    "money": "Rahat",
+    "stats": "Tilastot",
+    "catalog": "Katalogi"
+  },
+  "money": {
+    "advHint": "Saldo veloitetaan konversioista (julkaisijan hinta + verkostomaksu).",
+    "openTopup": "Täydennä saldoa",
+    "openPayout": "Nosta varoja",
+    "advHintFee": "Konversiota kohti: julkaisijan hinta + {fee}% verkosto (×{mult}). Hold asetetaan jokaiselle tarjoukselle (0–{max} päivää)."
+  },
+  "topup": {
+    "drawerHint": "Anna summa. Saldo päivittyy maksun tai vahvistuksen jälkeen.",
+    "requisitesTitle": "Pankkitiedot, jos korttimaksu ei ole käytettävissä:",
+    "pendingId": "Pyyntö #{id} luotu. Laita tämä numero maksun viitteeksi. Saldo päivittyy vahvistuksen jälkeen."
+  },
+  "payout": {
+    "holdDaysDefault": "Hold asetetaan tarjouksittain (oletus {days} päivää, enintään 180)"
+  },
+  "offer": {
+    "country": "Maa",
+    "countryRu": "Venäjä",
+    "countryOther": "Muu maa",
+    "eridPh": "Token ORD:sta",
+    "eridHintRu": "Venäjälle vaaditaan mainosmerkintätunnus (ORD).",
+    "eridHintOther": "ERID ei ole pakollinen tälle maalle.",
+    "holdDays": "Hold, päivää",
+    "holdDaysHint": "Päivät, jotka julkaisijan maksu pysyy holdissa (0–180). 0 = heti käytettävissä.",
+    "emptyCta": "Luo tarjous"
+  },
+  "stats": {
+    "emptyAdvCta": "Tarjouksiin",
+    "emptyPubCta": "Katalogiin",
+    "lastAt": "Milloin"
+  },
+  "catalog": {
+    "emptyCta": "Kopioi linkki",
+    "hold": "Hold, pv"
+  },
+  "th": {
+    "status": "Tila"
+  },
+  "postback": {
+    "toHelp": "Miten klikkaukset ja konversiot toimivat — ohjeessa"
+  }
 }

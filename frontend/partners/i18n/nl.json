@@ -185,5 +185,96 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "Ik plaats offers en betaal voor conversies",
+    "rolePublisherDesc": "Ik plaats links en verdien commissie",
+    "showPassword": "Tonen",
+    "hidePassword": "Verbergen",
+    "whyTitle": "Waarom dit",
+    "why1": "Plaats een offer of zet een link op je site.",
+    "why2": "Je betaalt of verdient voor echte leads en verkopen — niet alleen voor views.",
+    "errEmail": "Voer een geldig e-mailadres in",
+    "errPassword": "Voer je wachtwoord in",
+    "errPasswordMin": "Wachtwoord moet minstens 8 tekens hebben"
+  },
+  "help": {
+    "title": "Docs — Serpmonn-partnernetwerk",
+    "eyebrow": "Hulp",
+    "h1": "Documentatie partnernetwerk",
+    "toAuth": "Inloggen / Registreren",
+    "link": "Hulp",
+    "linkHint": "hoe het netwerk werkt",
+    "linkTitle": "Korte docs voor adverteerders en publishers",
+    "short": "Hulp",
+    "navAdv": "Voor adverteerders",
+    "navPub": "Voor publishers",
+    "navTrack": "Klikken en conversies",
+    "navMod": "Moderatie",
+    "adv": {
+      "h2": "Voor adverteerders",
+      "body": "<p>Adverteerders plaatsen offers en betalen voor bevestigde conversies. Publishers nemen offers en zetten links op hun sites.</p><ol><li>Registratie als Adverteerder en inloggen in het paneel.</li><li>Saldo opwaarderen in het tabblad Geld (aanvraag of betaling).</li><li>Offer aanmaken: promo of CPA, landing, voorwaarden, tarief en hold (0–180 dagen).</li><li>Voor Rusland — een ERID (ORD-markeringstoken).</li><li>Indienen voor moderatie. Na publicatie verschijnt het offer voor publishers.</li><li>Conversierapportage instellen (zie hieronder) — anders blijven alleen klikken in de stats.</li></ol><p>Elke conversie boekt het publisher-tarief plus netwerkfee (meestal 10%). Publisher-hold wordt per offer ingesteld.</p>"
+    },
+    "pub": {
+      "h2": "Voor publishers",
+      "body": "<p>Publishers nemen gepubliceerde offers en plaatsen een trackinglink. Uitbetaling is voor conversies bevestigd door de adverteerder.</p><ol><li>Registratie als Publisher — er wordt een sitecode uitgegeven.</li><li>In de catalogus een link als <code>/go/…?p=code</code> kopiëren. De hold-kolom toont na hoeveel dagen de uitbetaling vrijkomt.</li><li>De link wordt op een site of in mailings geplaatst. Klikken zonder <code>?p=</code> worden genegeerd.</li><li>Stats en beschikbaar saldo staan in het paneel.</li><li>Opname wordt vanuit het paneel aangevraagd; betaling bevestigt het netwerk.</li></ol>"
+    },
+    "track": {
+      "h2": "Klikken en conversies",
+      "body": "<p><strong>Klik.</strong> De publisher plaatst een link als <code>/go/…?p=code</code>. De gebruiker volgt: de klik wordt vastgelegd en de browser wordt doorgestuurd naar de adverteerderslanding met <code>click_id</code> in de URL. Die id moet worden opgeslagen (cookie, CRM of verborgen formulierveld).</p><p><strong>Conversie.</strong> Wanneer de klant koopt of een lead achterlaat, roept de site of CRM van de adverteerder één keer de postback aan met de opgeslagen <code>click_id</code> en het bedrag.</p><p>Het sjabloon staat in het adverteerderspaneel onder Conversierapportage. Voorbeeld:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Voor afwijzing of chargeback: <code>status=rejected</code> met dezelfde <code>click_id</code>.</p><p>Zonder postback blijven alleen klikken in de rapporten. Geen eigen API nodig — een normale HTTP-aanvraag volstaat.</p>"
+    },
+    "mod": {
+      "h2": "Moderatie",
+      "body": "<p>Nieuwe en bewerkte offers worden door het netwerk beoordeeld vóór publicatie.</p><ul><li>Landing, voorwaarden, tarief en (voor RU) ERID worden gecontroleerd.</li><li>Status in het paneel: in moderatie, gepubliceerd, afgewezen, concept.</li><li>Bij afwijzing staat de reden in de offerlijst; na correcties opnieuw indienen.</li><li>Depubliceren zet het offer op concept — publishers zien het niet meer.</li></ul>"
+    },
+    "navIntro": "Over het netwerk",
+    "intro": {
+      "h2": "Hoe het netwerk werkt",
+      "body": "<p>Het Serpmonn-partnernetwerk verbindt bedrijven en bereikvlakken in één plaatsingsmodel.</p><ul><li><strong>Adverteerder</strong> publiceert een offer: de propositie, voorwaarden en beloning voor een voltooide actie.</li><li><strong>Publisher</strong> promoot het offer via een partnerlink op het eigen vlak en wordt betaald voor bevestigde resultaten.</li></ul><p>Uitbetalingen zijn voor conversies — wanneer een gebruiker de link volgt en de doelactie onder de offervoorwaarden voltooit (lead, aankoop, enz.).</p><p>Publishers hebben een vlak of kanaal met bereik nodig: registratie, offerkeuze, linkplaatsing, daarna stats en uitbetalingen in het paneel.</p><p>Hieronder: instructies voor panelen, tracking en moderatie.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Aanbiedingen",
+    "money": "Geld",
+    "stats": "Statistieken",
+    "catalog": "Catalogus"
+  },
+  "money": {
+    "advHint": "Saldo wordt afgeschreven voor conversies (publisher-tarief + netwerkfee).",
+    "openTopup": "Saldo opwaarderen",
+    "openPayout": "Geld opnemen",
+    "advHintFee": "Per conversie: publisher-tarief + {fee}% netwerk (×{mult}). Hold wordt per offer ingesteld (0–{max} dagen)."
+  },
+  "topup": {
+    "drawerHint": "Voer het bedrag in. Saldo wordt bijgewerkt na betaling of bevestiging.",
+    "requisitesTitle": "Bankgegevens als kaartbetaling niet beschikbaar is:",
+    "pendingId": "Aanvraag #{id} gemaakt. Zet dit nummer in de betalingsomschrijving. Saldo wordt bijgewerkt na bevestiging."
+  },
+  "payout": {
+    "requisites": "Gegevens",
+    "holdDaysDefault": "Hold wordt per offer ingesteld (standaard {days} dagen, tot 180)"
+  },
+  "offer": {
+    "country": "Land",
+    "countryRu": "Rusland",
+    "countryOther": "Ander land",
+    "eridPh": "Token uit ORD",
+    "eridHintRu": "Voor Rusland is een advertentiemarkeringstoken (ORD) vereist.",
+    "eridHintOther": "ERID is voor dit land niet vereist.",
+    "holdDays": "Hold, dagen",
+    "holdDaysHint": "Dagen dat de publisher-uitbetaling in hold blijft (0–180). 0 = direct beschikbaar.",
+    "emptyCta": "Offer maken"
+  },
+  "stats": {
+    "emptyAdvCta": "Naar offers",
+    "emptyPubCta": "Naar catalogus",
+    "lastAt": "Wanneer"
+  },
+  "catalog": {
+    "emptyCta": "Link kopiëren",
+    "hold": "Hold, dagen"
+  },
+  "postback": {
+    "toHelp": "Hoe klikken en conversies werken — in de help"
+  }
 }

@@ -185,5 +185,95 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "roleAdvertiserDesc": "我投放优惠并为转化付费",
+    "rolePublisherDesc": "我放置链接并赚取佣金",
+    "showPassword": "显示",
+    "hidePassword": "隐藏",
+    "whyTitle": "为什么使用",
+    "why1": "投放优惠，或在您的网站上放置链接。",
+    "why2": "您为真实线索和销售付费或赚钱 — 而不仅仅是展示。",
+    "errEmail": "请输入有效的邮箱",
+    "errPassword": "请输入密码",
+    "errPasswordMin": "密码至少需要 8 个字符"
+  },
+  "help": {
+    "title": "文档 — Serpmonn 合作伙伴网络",
+    "eyebrow": "帮助",
+    "h1": "合作伙伴网络文档",
+    "toAuth": "登录 / 注册",
+    "link": "帮助",
+    "linkHint": "网络如何运作",
+    "linkTitle": "面向广告主和发布商的简要文档",
+    "short": "帮助",
+    "navAdv": "面向广告主",
+    "navPub": "面向发布商",
+    "navTrack": "点击与转化",
+    "navMod": "审核",
+    "adv": {
+      "h2": "面向广告主",
+      "body": "<p>广告主投放优惠并为已确认的转化付费。发布商选取优惠并在其网站上放置链接。</p><ol><li>以广告主身份注册并登录后台。</li><li>在「资金」标签页充值余额（申请或支付）。</li><li>创建优惠：促销码或 CPA、落地页、条款、费率与冻结期（0–180 天）。</li><li>面向俄罗斯 — ERID（ORD 标记令牌）。</li><li>提交审核。发布后，优惠会出现在发布商端。</li><li>设置转化上报（见下文）— 否则统计中只会留下点击。</li></ol><p>每次转化扣除发布商费率加上网络费用（通常为 10%）。发布商冻结期按每个优惠单独设置。</p>"
+    },
+    "pub": {
+      "h2": "面向发布商",
+      "body": "<p>发布商选取已发布的优惠并放置跟踪链接。按广告主确认的转化结算。</p><ol><li>以发布商身份注册 — 将获得站点代码。</li><li>在目录中复制形如 <code>/go/…?p=code</code> 的链接。冻结列显示距可提现还有多少天。</li><li>将链接放在网站或邮件中。没有 <code>?p=</code> 的点击将被忽略。</li><li>统计与可用余额在后台中查看。</li><li>从后台申请提现；由网络确认打款。</li></ol>"
+    },
+    "track": {
+      "h2": "点击与转化",
+      "body": "<p><strong>点击。</strong> 发布商放置形如 <code>/go/…?p=code</code> 的链接。用户点击后：记录点击，并将浏览器重定向到带有 URL 中 <code>click_id</code> 的广告主落地页。必须保存该 id（cookie、CRM 或隐藏表单字段）。</p><p><strong>转化。</strong> 当客户购买或留下线索时，广告主网站或 CRM 使用已保存的 <code>click_id</code> 和金额调用一次 postback。</p><p>模板位于广告主后台的「转化上报」中。示例：</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>拒绝或退单：使用相同的 <code>click_id</code> 并设置 <code>status=rejected</code>。</p><p>没有 postback 时，报告中只会留下点击。无需自定义 API — 普通 HTTP 请求即可。</p>"
+    },
+    "mod": {
+      "h2": "审核",
+      "body": "<p>新建和编辑的优惠在发布前由网络审核。</p><ul><li>检查落地页、条款、费率，以及（针对俄罗斯）ERID。</li><li>后台状态：审核中、已发布、已拒绝、草稿。</li><li>拒绝时，原因显示在优惠列表中；修改后重新提交。</li><li>取消发布会将优惠移至草稿 — 发布商将不再看到它。</li></ul>"
+    },
+    "navIntro": "关于网络",
+    "intro": {
+      "h2": "网络如何运作",
+      "body": "<p>Serpmonn 合作伙伴网络以统一的投放模式连接公司与拥有受众的媒体资源。</p><ul><li><strong>广告主</strong>发布优惠：方案、条款以及完成目标行动的奖励。</li><li><strong>发布商</strong>通过合作伙伴链接在其媒体上推广优惠，并为已确认的结果获得报酬。</li></ul><p>结算按转化进行 — 即用户点击链接并按优惠条款完成目标行动（线索、购买等）时。</p><p>发布商需要有受众的媒体或渠道：注册、选择优惠、放置链接，然后在后台查看统计与提现。</p><p>以下是后台、跟踪与审核的说明。</p>"
+    }
+  },
+  "tab": {
+    "offers": "优惠",
+    "money": "资金",
+    "stats": "统计",
+    "catalog": "目录"
+  },
+  "money": {
+    "advHint": "余额按转化扣费（发布商费率 + 网络费用）。",
+    "openTopup": "充值余额",
+    "openPayout": "提取资金",
+    "advHintFee": "每次转化：发布商费率 + 网络 {fee}%（×{mult}）。冻结期在每个优惠中设置（0–{max} 天）。"
+  },
+  "topup": {
+    "drawerHint": "输入金额。支付或确认后余额将更新。",
+    "requisitesTitle": "若无法使用银行卡支付时的银行收款信息：",
+    "pendingId": "申请 #{id} 已创建。请在付款用途中填写此编号。确认后余额将更新。"
+  },
+  "payout": {
+    "holdDaysDefault": "冻结期按每个优惠设置（默认 {days} 天，最长 180）"
+  },
+  "offer": {
+    "country": "国家",
+    "countryRu": "俄罗斯",
+    "countryOther": "其他国家",
+    "eridPh": "来自 ORD 的令牌",
+    "eridHintRu": "面向俄罗斯需要广告标记令牌（ORD）。",
+    "eridHintOther": "该国家不需要 ERID。",
+    "holdDays": "冻结期，天",
+    "holdDaysHint": "发布商收益保持冻结的天数（0–180）。0 = 立即可用。",
+    "emptyCta": "创建优惠"
+  },
+  "stats": {
+    "emptyAdvCta": "前往优惠",
+    "emptyPubCta": "前往目录",
+    "lastAt": "时间"
+  },
+  "catalog": {
+    "emptyCta": "复制链接",
+    "hold": "冻结期，天"
+  },
+  "postback": {
+    "toHelp": "点击与转化如何运作 — 见帮助"
+  }
 }

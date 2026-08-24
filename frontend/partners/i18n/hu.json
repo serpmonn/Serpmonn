@@ -185,5 +185,97 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "email": "E-mail",
+    "roleAdvertiserDesc": "Ajánlatokat helyezek el és konverziókért fizetek",
+    "rolePublisherDesc": "Linkeket helyezek el és jutalékot keresek",
+    "showPassword": "Mutatás",
+    "hidePassword": "Elrejtés",
+    "whyTitle": "Miért ez",
+    "why1": "Helyezzen el ajánlatot, vagy tegyen linket a webhelyére.",
+    "why2": "Valós leadekért és eladásokért fizet vagy keres — nem csak megtekintésekért.",
+    "errEmail": "Adjon meg érvényes e-mailt",
+    "errPassword": "Adja meg a jelszavát",
+    "errPasswordMin": "A jelszónak legalább 8 karakternek kell lennie"
+  },
+  "help": {
+    "title": "Docs — Serpmonn partnerhálózat",
+    "eyebrow": "Súgó",
+    "h1": "Partnerhálózat dokumentációja",
+    "toAuth": "Bejelentkezés / Regisztráció",
+    "link": "Súgó",
+    "linkHint": "hogyan működik a hálózat",
+    "linkTitle": "Rövid dokumentáció hirdetőknek és kiadóknak",
+    "short": "Súgó",
+    "navAdv": "Hirdetőknek",
+    "navPub": "Kiadóknak",
+    "navTrack": "Kattintások és konverziók",
+    "navMod": "Moderáció",
+    "adv": {
+      "h2": "Hirdetőknek",
+      "body": "<p>A hirdetők ajánlatokat helyeznek el, és a megerősített konverziókért fizetnek. A kiadók átveszik az ajánlatokat, és linkeket helyeznek el a webhelyeiken.</p><ol><li>Regisztráció Hirdetőként és bejelentkezés a fiókba.</li><li>Egyenleg feltöltése a Pénz lapon (kérelem vagy fizetés).</li><li>Ajánlat létrehozása: promo vagy CPA, landing, feltételek, díj és hold (0–180 nap).</li><li>Oroszországhoz — ERID (ORD megjelölési token).</li><li>Beküldés moderációra. Közzététel után az ajánlat megjelenik a kiadóknak.</li><li>Konverziójelentés beállítása (lásd lent) — különben a statisztikában csak kattintások maradnak.</li></ol><p>Minden konverzió a kiadói díjat plusz a hálózati díjat (általában 10%) vonja le. A kiadói hold ajánlatonként van beállítva.</p>"
+    },
+    "pub": {
+      "h2": "Kiadóknak",
+      "body": "<p>A kiadók átveszik a közzétett ajánlatokat, és követett linket helyeznek el. A kifizetés a hirdető által megerősített konverziókért jár.</p><ol><li>Regisztráció Kiadóként — webhelykód kerül kiadásra.</li><li>A katalógusban másoljon egy <code>/go/…?p=code</code> típusú linket. A hold oszlop mutatja, hány nap múlva oldódik fel a kifizetés.</li><li>A link webhelyre vagy levelezésre kerül. A <code>?p=</code> nélküli kattintások figyelmen kívül maradnak.</li><li>A statisztika és a rendelkezésre álló egyenleg a fiókban van.</li><li>A kifizetést a fiókból kell kérni; a hálózat erősíti meg.</li></ol>"
+    },
+    "track": {
+      "h2": "Kattintások és konverziók",
+      "body": "<p><strong>Kattintás.</strong> A kiadó <code>/go/…?p=code</code> típusú linket helyez el. A felhasználó követi: a kattintás rögzül, és a böngésző a hirdető landingjére irányítódik a URL-ben lévő <code>click_id</code>-vel. Ezt az azonosítót tárolni kell (süti, CRM vagy rejtett űrlapmező).</p><p><strong>Konverzió.</strong> Amikor az ügyfél vásárol vagy leadet hagy, a hirdető webhelye vagy CRM-je egyszer meghívja a postbacket a tárolt <code>click_id</code>-vel és az összeggel.</p><p>A sablon a hirdetői fiókban a Konverziójelentés alatt van. Példa:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Elutasítás vagy chargeback esetén: <code>status=rejected</code> ugyanazzal a <code>click_id</code>-vel.</p><p>Postback nélkül a jelentésekben csak kattintások maradnak. Nincs szükség saját API-ra — egy szokásos HTTP-kérés elegendő.</p>"
+    },
+    "mod": {
+      "h2": "Moderáció",
+      "body": "<p>Az új és szerkesztett ajánlatokat a hálózat közzététel előtt ellenőrzi.</p><ul><li>A landing, feltételek, díj és (RU esetén) ERID ellenőrzésre kerül.</li><li>Állapotok a fiókban: moderáció alatt, közzétéve, elutasítva, piszkozat.</li><li>Elutasításkor az ok az ajánlatlistában látszik; javítás után az ajánlat újraküldhető.</li><li>A közzététel visszavonása piszkozatba teszi az ajánlatot — a kiadók már nem látják.</li></ul>"
+    },
+    "navIntro": "A hálózatról",
+    "intro": {
+      "h2": "Hogyan működik a hálózat",
+      "body": "<p>A Serpmonn partnerhálózat egyetlen elhelyezési modellben köti össze a cégeket és a közönséggel rendelkező felületeket.</p><ul><li><strong>Hirdető</strong> ajánlatot tesz közzé: az ajánlatot, a feltételeket és a jutalmat egy elvégzett műveletért.</li><li><strong>Kiadó</strong> partnerlinken keresztül népszerűsíti az ajánlatot a felületén, és a megerősített eredményekért kap fizetést.</li></ul><p>A kifizetések konverziókért járnak — amikor a felhasználó követi a linket, és az ajánlat feltételei szerint elvégzi a célműveletet (lead, vásárlás stb.).</p><p>A kiadóknak közönséggel rendelkező felületre vagy csatornára van szükségük: regisztráció, ajánlatválasztás, linkelhelyezés, majd statisztika és kifizetések a fiókban.</p><p>Alább: útmutató a fiókokhoz, követéshez és moderációhoz.</p>"
+    }
+  },
+  "tab": {
+    "offers": "Ajánlatok",
+    "money": "Pénz",
+    "stats": "Statisztika",
+    "catalog": "Katalógus"
+  },
+  "money": {
+    "advHint": "Az egyenleg konverziókért kerül terhelésre (kiadói díj + hálózati díj).",
+    "openTopup": "Egyenleg feltöltése",
+    "openPayout": "Pénz kifizetése",
+    "advHintFee": "Konverziónként: kiadói díj + {fee}% hálózat (×{mult}). A hold minden ajánlaton be van állítva (0–{max} nap)."
+  },
+  "topup": {
+    "drawerHint": "Adja meg az összeget. Az egyenleg fizetés vagy megerősítés után frissül.",
+    "requisitesTitle": "Banki adatok, ha a kártyás fizetés nem elérhető:",
+    "pendingId": "#{id} kérelem létrehozva. Ezt a számot írja a fizetés közleményébe. Az egyenleg megerősítés után frissül."
+  },
+  "payout": {
+    "holdDaysDefault": "A hold ajánlatonként van beállítva (alapértelmezett {days} nap, max. 180)"
+  },
+  "offer": {
+    "cpa": "CPA-link",
+    "country": "Ország",
+    "countryRu": "Oroszország",
+    "countryOther": "Más ország",
+    "eridPh": "Token az ORD-ból",
+    "eridHintRu": "Oroszországhoz reklámjelölő token (ORD) szükséges.",
+    "eridHintOther": "Ehhez az országhoz nem szükséges ERID.",
+    "holdDays": "Hold, nap",
+    "holdDaysHint": "Napok, amíg a kiadói kifizetés holdban marad (0–180). 0 = azonnal elérhető.",
+    "emptyCta": "Ajánlat létrehozása"
+  },
+  "stats": {
+    "emptyAdvCta": "Ajánlatokhoz",
+    "emptyPubCta": "Katalógushoz",
+    "lastAt": "Mikor"
+  },
+  "catalog": {
+    "emptyCta": "Link másolása",
+    "hold": "Hold, nap"
+  },
+  "postback": {
+    "toHelp": "Hogyan működnek a kattintások és konverziók — a súgóban"
+  }
 }

@@ -185,5 +185,122 @@
   "topup.pendingId": "Request #{id} created. Put this number in the payment purpose. Balance updates after confirmation.",
   "help.navIntro": "About the network",
   "help.intro.h2": "How the network works",
-  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>"
+  "help.intro.body": "<p>The Serpmonn partner network connects companies and audience-owned properties in a single placement model.</p><ul><li><strong>Advertiser</strong> publishes an offer: the proposition, terms, and reward for a completed action.</li><li><strong>Publisher</strong> promotes the offer via a partner link on their property and is paid for confirmed results.</li></ul><p>Payouts are for conversions — when a user follows the link and completes the target action under the offer terms (lead, purchase, etc.).</p><p>Publishers need a property or channel with an audience: registration, offer selection, link placement, then stats and payouts in the cabinet.</p><p>Below are instructions for cabinets, tracking, and moderation.</p>",
+  "auth": {
+    "h1": "Network ng mga kasosyo ng Serpmonn",
+    "passwordMin": "Password (hindi bababa sa 8)",
+    "roleAdvertiser": "Tagapag-anunsyo",
+    "rolePublisher": "Tagalathala",
+    "roleAdvertiserDesc": "Naglalagay ako ng alok at nagbabayad para sa conversion",
+    "rolePublisherDesc": "Naglalagay ako ng kawing at kumikita ng komisyon",
+    "showPassword": "Ipakita",
+    "hidePassword": "Itago",
+    "whyTitle": "Bakit ito",
+    "why1": "Maglagay ng offer o maglagay ng link sa iyong site.",
+    "why2": "Nagbabayad o kumikita ka para sa totoong lead at benta — hindi lang view.",
+    "errEmail": "Maglagay ng wastong email",
+    "errPassword": "Ilagay ang iyong password",
+    "errPasswordMin": "Ang password ay dapat hindi bababa sa 8 character",
+    "ok": "Sige",
+    "error": "May problema"
+  },
+  "help": {
+    "title": "Docs — Partner network ng Serpmonn",
+    "eyebrow": "Tulong",
+    "h1": "Dokumentasyon ng partner network",
+    "toAuth": "Mag-sign in / Mag-sign up",
+    "link": "Tulong",
+    "linkHint": "paano gumagana ang network",
+    "linkTitle": "Maikling docs para sa advertiser at publisher",
+    "short": "Tulong",
+    "navAdv": "Para sa advertiser",
+    "navPub": "Para sa publisher",
+    "navTrack": "Click at conversion",
+    "navMod": "Moderasyon",
+    "adv": {
+      "h2": "Para sa advertiser",
+      "body": "<p>Naglalagay ang advertiser ng offer at nagbabayad para sa kumpirmadong conversion. Kinukuha ng publisher ang offer at naglalagay ng link sa kanilang site.</p><ol><li>Pagpaparehistro bilang Advertiser at pag-sign in sa cabinet.</li><li>Pag-top up ng balance sa tab na Money (request o bayad).</li><li>Paglikha ng offer: promo o CPA, landing, terms, rate, at hold (0–180 araw).</li><li>Para sa Russia — isang ERID (ORD marking token).</li><li>Pagsumite para sa moderation. Pagkatapos ma-publish, lumilitaw ang offer sa mga publisher.</li><li>Setup ng conversion reporting (tingnan sa ibaba) — kung hindi, clicks lang ang mananatili sa stats.</li></ol><p>Bawat conversion ay sinisingil ang rate ng publisher kasama ang network fee (karaniwang 10%). Ang hold ng publisher ay itinakda sa bawat offer.</p>"
+    },
+    "pub": {
+      "h2": "Para sa publisher",
+      "body": "<p>Kinukuha ng publisher ang na-publish na offer at naglalagay ng tracked link. Ang payout ay para sa conversion na kinumpirma ng advertiser.</p><ol><li>Pagpaparehistro bilang Publisher — may ibinibigay na site code.</li><li>Sa catalog, kopyahin ang link tulad ng <code>/go/…?p=code</code>. Ipinapakita ng hold column kung ilang araw hanggang ma-unlock ang payout.</li><li>Inilalagay ang link sa site o sa mailing. Hindi isinasaalang-alang ang click na walang <code>?p=</code>.</li><li>Nasa cabinet ang stats at available balance.</li><li>Hiniling ang withdrawal mula sa cabinet; kinukumpirma ng network ang payout.</li></ol>"
+    },
+    "track": {
+      "h2": "Click at conversion",
+      "body": "<p><strong>Click.</strong> Naglalagay ang publisher ng link tulad ng <code>/go/…?p=code</code>. Sinusundan ito ng user: naitatala ang click at nire-redirect ang browser sa advertiser landing na may <code>click_id</code> sa URL. Dapat itago ang id na iyon (cookie, CRM, o hidden form field).</p><p><strong>Conversion.</strong> Kapag bumili ang client o nag-iwan ng lead, tinatawag ng advertiser site o CRM ang postback nang isang beses gamit ang naka-store na <code>click_id</code> at amount.</p><p>Nasa advertiser cabinet ang template sa ilalim ng Conversion reporting. Halimbawa:</p><p><code>/api/partners/postback?click_id=…&amp;amount=500&amp;status=confirmed</code></p><p>Para sa reject o chargeback: <code>status=rejected</code> na may parehong <code>click_id</code>.</p><p>Kung walang postback, clicks lang ang mananatili sa report. Hindi kailangan ng custom API — sapat na ang normal na HTTP request.</p>"
+    },
+    "mod": {
+      "h2": "Moderasyon",
+      "body": "<p>Sinusuri ng network ang bago at na-edit na offer bago i-publish.</p><ul><li>Sinusuri ang landing, terms, rate, at (para sa RU) ERID.</li><li>Status sa cabinet: in moderation, published, rejected, draft.</li><li>Kapag na-reject, ipinapakita ang dahilan sa listahan ng offer; pagkatapos ayusin, muling isinusumite ang offer.</li><li>Ang unpublishing ay inililipat ang offer sa draft — hindi na ito makikita ng mga publisher.</li></ul>"
+    },
+    "navIntro": "Tungkol sa network",
+    "intro": {
+      "h2": "Paano gumagana ang network",
+      "body": "<p>Ikinokonekta ng partner network ng Serpmonn ang mga kumpanya at property na may audience sa iisang modelo ng placement.</p><ul><li><strong>Advertiser</strong> ay nagpa-publish ng offer: ang proposition, terms, at gantimpala para sa nakumpletong aksyon.</li><li><strong>Publisher</strong> ay nagpo-promote ng offer sa pamamagitan ng partner link sa kanilang property at binabayaran para sa kumpirmadong resulta.</li></ul><p>Ang payout ay para sa conversion — kapag sinundan ng user ang link at nakumpleto ang target action ayon sa terms ng offer (lead, purchase, atbp.).</p><p>Kailangan ng publisher ng property o channel na may audience: pagpaparehistro, pagpili ng offer, paglalagay ng link, pagkatapos ay stats at payout sa cabinet.</p><p>Nasa ibaba ang mga instruksyon para sa cabinet, tracking, at moderation.</p>"
+    }
+  },
+  "pub": {
+    "title": "Cabinet ng publisher — Serpmonn",
+    "h1": "Tagalathala"
+  },
+  "adv": {
+    "h1": "Tagapag-anunsyo"
+  },
+  "cabinet": {
+    "topup": "Mag-top up",
+    "logout": "Mag-log out"
+  },
+  "tab": {
+    "offers": "Mga alok",
+    "money": "Pera",
+    "stats": "Istatistika",
+    "catalog": "Katalogo"
+  },
+  "money": {
+    "advHint": "Sinisingil ang balance para sa conversion (rate ng publisher + network fee).",
+    "openTopup": "I-top up ang balance",
+    "openPayout": "Mag-withdraw ng pondo",
+    "advHintFee": "Bawat conversion: rate ng publisher + {fee}% network (×{mult}). Itinatakda ang hold sa bawat offer (0–{max} araw)."
+  },
+  "topup": {
+    "drawerHint": "Ilagay ang amount. Ina-update ang balance pagkatapos ng bayad o kumpirmasyon.",
+    "requisitesTitle": "Mga detalye ng bangko kung hindi available ang bayad sa card:",
+    "pendingId": "Nagawa ang request #{id}. Ilagay ang numerong ito sa layunin ng bayad. Ina-update ang balance pagkatapos ng kumpirmasyon."
+  },
+  "payout": {
+    "card": "Kard",
+    "holdDaysDefault": "Itinatakda ang hold sa bawat offer (default {days} araw, hanggang 180)"
+  },
+  "offer": {
+    "promo": "Kodigo ng promo",
+    "country": "Bansa",
+    "countryRu": "Rusya",
+    "countryOther": "Ibang bansa",
+    "eridPh": "Token mula sa ORD",
+    "eridHintRu": "Para sa Russia, kailangan ang ad-marking token (ORD).",
+    "eridHintOther": "Hindi kailangan ang ERID para sa bansang ito.",
+    "holdDays": "Hold, araw",
+    "holdDaysHint": "Ilang araw mananatili sa hold ang payout ng publisher (0–180). 0 = agad available.",
+    "emptyCta": "Gumawa ng alok"
+  },
+  "status": {
+    "draft": "Burador"
+  },
+  "stats": {
+    "h2": "Istatistika",
+    "emptyAdvCta": "Pumunta sa mga alok",
+    "emptyPubCta": "Pumunta sa catalog",
+    "settlement": "Pag-aayos",
+    "lastAt": "Kailan"
+  },
+  "catalog": {
+    "emptyCta": "Kopyahin ang link",
+    "hold": "Hold, araw"
+  },
+  "th": {
+    "link": "Kawing"
+  },
+  "postback": {
+    "toHelp": "Paano gumagana ang click at conversion — sa tulong"
+  }
 }
