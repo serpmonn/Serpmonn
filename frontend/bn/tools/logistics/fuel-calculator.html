@@ -257,7 +257,7 @@
 
     <h1>⛽ জ্বালানী ক্যালকুলেটর</h1>
     
-    <p class="tool-lead">Estimate fuel use and trip cost — including driving style, road and load.</p>
+    <p class="tool-lead">জ্বালানি ব্যবহার ও ভ্রমণ খরচ অনুমান করুন — চালনার ধরন, রাস্তা ও বোঝাই সহ।</p>
     
 
     <div class="calculator-container">
@@ -282,18 +282,18 @@
       <div class="action-bar">
         <button type="button" class="calculate-btn" id="btn-calculate">জ্বালানী খরচ গণনা করুন</button>
         <details class="more-actions">
-          <summary>More</summary>
+          <summary>আরও</summary>
           <div class="more-actions__list">
-            <button type="button" class="reset-btn" id="btn-reset">Reset</button>
-            <button type="button" class="share-btn" id="btn-share">Share</button>
-            <button type="button" class="export-btn" id="btn-pdf">Export PDF</button>
-            <button type="button" class="csv-btn" id="btn-csv">Export CSV</button>
+            <button type="button" class="reset-btn" id="btn-reset">রিসেট</button>
+            <button type="button" class="share-btn" id="btn-share">শেয়ার</button>
+            <button type="button" class="export-btn" id="btn-pdf">PDF রপ্তানি</button>
+            <button type="button" class="csv-btn" id="btn-csv">CSV রপ্তানি</button>
           </div>
         </details>
       </div>
 
       <details class="optional-fields">
-        <summary>More options</summary>
+        <summary>আরও বিকল্প</summary>
         <div class="input-section">
           <div class="input-group">
             <label for="fuelType">জ্বালানীর ধরন</label>
@@ -351,7 +351,7 @@
           <div class="result-value" id="heroCostPerKm">—</div>
           <div class="result-label">প্রতি 1 কিমি খরচ</div>
         </div>
-        <p class="result-disclaimer">Approximate fuel cost estimate, not a lab measurement.</p>
+        <p class="result-disclaimer">জ্বালানি খরচের আনুমানিক হিসাব, ল্যাব পরিমাপ নয়।</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="totalFuel">—</div>
@@ -391,7 +391,7 @@
     </div>
 
     <div class="history" id="history">
-      <h3>Recent calculations</h3>
+      <h3>সাম্প্রতিক গণনা</h3>
       <div id="historyList"></div>
     </div>
 
@@ -426,7 +426,7 @@
     </div>
 
     <script>
-      window.fuelCalculatorTranslations = {"meta":{"title":"জ্বালানী ক্যালকুলেটর — Serpmonn লজিস্টিক্স","description":"জ্বালানী খরচ, ভ্রমণের খরচ এবং সঞ্চয়ের হিসাব","twitterDescription":"ড্রাইভারদের জন্য জ্বালানী খরচের হিসাব"},"breadcrumb":{"tools":"সরঞ্জাম","fuelCalculator":"জ্বালানী ক্যালকুলেটর"},"page":{"title":"⛽ জ্বালানী ক্যালকুলেটর","form":{"title":"ভ্রমণের পরামিতি লিখুন","distance":"দূরত্ব (কিমি)","fuelConsumption":"জ্বালানী খরচ (L/100 কিমি)","fuelPrice":"জ্বালানীর দাম (₽/L)","fuelType":"জ্বালানীর ধরন","drivingStyle":"ড্রাইভিং শৈলী","roadConditions":"রাস্তার অবস্থা","load":"গাড়ির লোড","climate":"জলবায়ু অবস্থা","calculate":"জ্বালানী খরচ গণনা করুন","optionalSummary":"More options"},"fuelTypes":{"petrol":"পেট্রোল AI-92","petrol95":"পেট্রোল AI-95","petrol98":"পেট্রোল AI-98","diesel":"ডিজেল জ্বালানী","lpg":"গ্যাস (প্রোপেন-বিউটেন)","cng":"গ্যাস (মিথেন)"},"drivingStyles":{"economical":"কর্তব্য","normal":"স্বাভাবিক","sport":"ক্রীড়া","aggressive":"আক্রমনাত্মক"},"roadConditions":{"highway":"হাইওয়ে","city":"শহর","mixed":"মিশ্র চক্র","offroad":"অফরোড"},"loads":{"empty":"খালি","light":"হালকা লোড","medium":"মাঝারি লোড","heavy":"পূর্ণ লোড"},"climates":{"normal":"স্বাভাবিক","hot":"গরম (+30°C এবং তার উপরে)","cold":"ঠান্ডা (-10°C এবং তার নিচে)","rainy":"বৃষ্টি/বরফ"},"results":{"title":"গণনার ফলাফল","totalFuel":"মোট জ্বালানী খরচ","totalCost":"জ্বালানীর খরচ","costPerKm":"প্রতি 1 কিমি খরচ","adjustedConsumption":"সংশোধিত খরচ"},"comparison":{"title":"অন্যান্য ড্রাইভিং শৈলীর সাথে তুলনা","drivingStyle":"ড্রাইভিং শৈলী","consumption":"খরচ (L/100 কিমি)","cost":"খরচ (₽)","savings":"সঞ্চয়/ব্যয় বৃদ্ধি"},"fuelEfficiency":{"title":"🌱 জ্বালানী দক্ষতা","tips":["মসৃণ ত্বরণ এবং ব্রেকিং 10-15% জ্বালানী সাশ্রয় করে","হাইওয়েতে 80-90 কিমি/ঘন্টা সর্বোত্তম গতি বজায় রাখা","সময়মতো গিয়ার পরিবর্তন (2000-2500 আরপিএম)","প্রতি 2 সপ্তাহে টায়ারের চাপ পরীক্ষা করুন","ট্রাঙ্ক থেকে অতিরিক্ত মাল সরান"]},"advice":{"title":"💡 দরকারী পরামর্শ","tips":["সমতল রাস্তার অংশে ক্রুজ কন্ট্রোল ব্যবহার করুন","উচ্চ গতিতে জানালা বন্ধ করুন","ট্রাফিক জ্যাম এড়াতে আপনার রুট পরিকল্পনা করুন","নিয়মিত ইঞ্জিন এবং জ্বালানী ব্যবস্থা রক্ষণাবেক্ষণ করুন","প্রস্তাবিত অকটেন সংখ্যা সহ মানসম্মত জ্বালানী ব্যবহার করুন"]},"lead":"Estimate fuel use and trip cost — including driving style, road and load.","disclaimer":"Approximate fuel cost estimate, not a lab measurement.","formulaPlain":"Consumption ≈ base × style × road × load × climate × fuel type. Total: {fuel} L for {distance} km ≈ {cost}.","shareCopied":"Calculation link copied","exportNoResults":"Run a calculation first","exportFailed":"PDF export failed","actions":{"more":"More","reset":"Reset","share":"Share","pdf":"Export PDF","csv":"Export CSV"},"history":{"title":"Recent calculations","empty":"Empty so far"},"errors":{"fillRequired":"Fill distance, consumption and fuel price","positive":"Values must be greater than zero"}},"ads":{"closeAria":"বিজ্ঞাপন বন্ধ করুন"}};
+      window.fuelCalculatorTranslations = {"meta":{"title":"জ্বালানী ক্যালকুলেটর — Serpmonn লজিস্টিক্স","description":"জ্বালানী খরচ, ভ্রমণের খরচ এবং সঞ্চয়ের হিসাব","twitterDescription":"ড্রাইভারদের জন্য জ্বালানী খরচের হিসাব"},"breadcrumb":{"tools":"সরঞ্জাম","fuelCalculator":"জ্বালানী ক্যালকুলেটর"},"page":{"title":"⛽ জ্বালানী ক্যালকুলেটর","form":{"title":"ভ্রমণের পরামিতি লিখুন","distance":"দূরত্ব (কিমি)","fuelConsumption":"জ্বালানী খরচ (L/100 কিমি)","fuelPrice":"জ্বালানীর দাম (₽/L)","fuelType":"জ্বালানীর ধরন","drivingStyle":"ড্রাইভিং শৈলী","roadConditions":"রাস্তার অবস্থা","load":"গাড়ির লোড","climate":"জলবায়ু অবস্থা","calculate":"জ্বালানী খরচ গণনা করুন","optionalSummary":"আরও বিকল্প"},"fuelTypes":{"petrol":"পেট্রোল AI-92","petrol95":"পেট্রোল AI-95","petrol98":"পেট্রোল AI-98","diesel":"ডিজেল জ্বালানী","lpg":"গ্যাস (প্রোপেন-বিউটেন)","cng":"গ্যাস (মিথেন)"},"drivingStyles":{"economical":"কর্তব্য","normal":"স্বাভাবিক","sport":"ক্রীড়া","aggressive":"আক্রমনাত্মক"},"roadConditions":{"highway":"হাইওয়ে","city":"শহর","mixed":"মিশ্র চক্র","offroad":"অফরোড"},"loads":{"empty":"খালি","light":"হালকা লোড","medium":"মাঝারি লোড","heavy":"পূর্ণ লোড"},"climates":{"normal":"স্বাভাবিক","hot":"গরম (+30°C এবং তার উপরে)","cold":"ঠান্ডা (-10°C এবং তার নিচে)","rainy":"বৃষ্টি/বরফ"},"results":{"title":"গণনার ফলাফল","totalFuel":"মোট জ্বালানী খরচ","totalCost":"জ্বালানীর খরচ","costPerKm":"প্রতি 1 কিমি খরচ","adjustedConsumption":"সংশোধিত খরচ"},"comparison":{"title":"অন্যান্য ড্রাইভিং শৈলীর সাথে তুলনা","drivingStyle":"ড্রাইভিং শৈলী","consumption":"খরচ (L/100 কিমি)","cost":"খরচ (₽)","savings":"সঞ্চয়/ব্যয় বৃদ্ধি"},"fuelEfficiency":{"title":"🌱 জ্বালানী দক্ষতা","tips":["মসৃণ ত্বরণ এবং ব্রেকিং 10-15% জ্বালানী সাশ্রয় করে","হাইওয়েতে 80-90 কিমি/ঘন্টা সর্বোত্তম গতি বজায় রাখা","সময়মতো গিয়ার পরিবর্তন (2000-2500 আরপিএম)","প্রতি 2 সপ্তাহে টায়ারের চাপ পরীক্ষা করুন","ট্রাঙ্ক থেকে অতিরিক্ত মাল সরান"]},"advice":{"title":"💡 দরকারী পরামর্শ","tips":["সমতল রাস্তার অংশে ক্রুজ কন্ট্রোল ব্যবহার করুন","উচ্চ গতিতে জানালা বন্ধ করুন","ট্রাফিক জ্যাম এড়াতে আপনার রুট পরিকল্পনা করুন","নিয়মিত ইঞ্জিন এবং জ্বালানী ব্যবস্থা রক্ষণাবেক্ষণ করুন","প্রস্তাবিত অকটেন সংখ্যা সহ মানসম্মত জ্বালানী ব্যবহার করুন"]},"lead":"জ্বালানি ব্যবহার ও ভ্রমণ খরচ অনুমান করুন — চালনার ধরন, রাস্তা ও বোঝাই সহ।","disclaimer":"জ্বালানি খরচের আনুমানিক হিসাব, ল্যাব পরিমাপ নয়।","formulaPlain":"ব্যবহার ≈ ভিত্তি × ধরন × রাস্তা × বোঝাই × জলবায়ু × জ্বালানির ধরন। মোট: {fuel} লি / {distance} কিমি ≈ {cost}।","shareCopied":"গণনার লিঙ্ক কপি হয়েছে","exportNoResults":"আগে একটি গণনা চালান","exportFailed":"PDF রপ্তানি ব্যর্থ","actions":{"more":"আরও","reset":"রিসেট","share":"শেয়ার","pdf":"PDF রপ্তানি","csv":"CSV রপ্তানি"},"history":{"title":"সাম্প্রতিক গণনা","empty":"এখনও খালি"},"errors":{"fillRequired":"দূরত্ব, খরচ ও জ্বালানির দাম পূরণ করুন","positive":"মান শূন্যের বেশি হতে হবে"}},"ads":{"closeAria":"বিজ্ঞাপন বন্ধ করুন"}};
     </script>
     <script type="module" src="/frontend/scripts/tools/fuel-calculator.js?v=3"></script>
     <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>

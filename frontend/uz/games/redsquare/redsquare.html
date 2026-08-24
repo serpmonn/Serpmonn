@@ -35,15 +35,15 @@
       modalYourScore: "Puanın:",
       modalBestResult: "En iyi sonuç:",
       modalOk: "Tamam",
-      levelLabel: "Level",
-      bestLabel: "Best",
-      livesLabel: "Lives",
-      comboLabel: "Combo",
-      soundOn: "Sound",
-      soundOff: "Muted",
-      pauseOverlay: "Paused",
-      levelUp: "Level",
-      gameOverTitle: "Game over",
+      levelLabel: "Daraja",
+      bestLabel: "Eng yaxshi",
+      livesLabel: "Jon",
+      comboLabel: "Kombo",
+      soundOn: "Ovoz",
+      soundOff: "Ovozsiz",
+      pauseOverlay: "Pauza",
+      levelUp: "Daraja",
+      gameOverTitle: "O‘yin tugadi",
       restart: "Yeniden"
     };
     </script>
@@ -60,7 +60,7 @@
                 <p>3. Ekstra puan için altın bonusları topla</p>
                 <p>4. Ne kadar uzun kalırsan o kadar çok puan</p>
                 <p>5. Mola için Duraklat düğmesini (veya boşluk) kullan</p>
-                <p>6. You have 3 lives. After a hit you get a short invincibility window. Collect bonuses in a row for combo.</p>
+                <p>6. Sizda 3 ta jon bor. Zarba keyin qisqa daxlsizlik oynasi bor. Kombo uchun bonuslarni ketma-ket yig‘ing.</p>
             </div>
             <button class="instruction-button" id="understandBtn" type="button">Anladım!</button>
         </div>
@@ -76,22 +76,22 @@
     <div class="game-shell">
         <header class="game-hud" aria-live="polite">
             <div class="hud-block">
-                <span class="hud-label">Score</span>
+                <span class="hud-label">Ball</span>
                 <span class="hud-value" id="scoreValue">0</span>
             </div>
             <div class="hud-block">
-                <span class="hud-label">Level</span>
+                <span class="hud-label">Daraja</span>
                 <span class="hud-value" id="levelValue">1</span>
             </div>
             <div class="hud-block">
-                <span class="hud-label">Best</span>
+                <span class="hud-label">Eng yaxshi</span>
                 <span class="hud-value" id="bestValue">0</span>
             </div>
             <div class="hud-block hud-lives">
-                <span class="hud-label">Lives</span>
+                <span class="hud-label">Jon</span>
                 <span class="hud-value" id="livesValue" aria-label="3">●●●</span>
             </div>
-            <div class="hud-progress" title="Level">
+            <div class="hud-progress" title="Daraja">
                 <div class="hud-progress-bar" id="progressBar"></div>
             </div>
             <div class="hud-combo" id="comboDisplay" hidden>
@@ -104,7 +104,7 @@
             <div class="obstacle" style="top: 20%; left: 20%;"></div>
             <div class="obstacle" style="top: 80%; left: 80%;"></div>
             <div class="pause-overlay" id="pauseOverlay" hidden>
-                <span>Paused</span>
+                <span>Pauza</span>
             </div>
             <div class="level-toast" id="levelToast" hidden></div>
         </div>
@@ -120,7 +120,7 @@
                 <button type="button" class="action-btn action-start" id="start">Başla</button>
                 <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>Duraklat</button>
                 <button type="button" class="action-btn action-restart" id="restart" hidden>Yeniden</button>
-                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">Sound</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">Ovoz</button>
                 <button type="button" class="action-btn action-home" id="home">Ana sayfa</button>
             </div>
         </div>

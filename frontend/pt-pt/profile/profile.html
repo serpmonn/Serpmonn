@@ -232,11 +232,11 @@
   <script type="module" src="/frontend/profile/profile_scripts.js" defer></script>
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
 </head>
-<body class="profile-page" data-findings-summary-tpl="{total} findings · {public} in feed" data-search-path="/frontend/pt-pt/index.html">
+<body class="profile-page" data-findings-summary-tpl="{total} achados · {public} no feed" data-search-path="/frontend/pt-pt/index.html">
 <div class="page-wrapper">
   <main class="container profile-shell" role="main">
 
-    <header class="profile-hero" aria-label="Profile">
+    <header class="profile-hero" aria-label="Perfil">
       <button type="button" class="profile-avatar" id="avatarButton" aria-haspopup="dialog">
         <img id="avatarImage" class="profile-avatar__img" alt="" hidden>
         <span id="avatarInitials">U</span>
@@ -274,10 +274,10 @@
     <div id="editProfileMount"></div>
 
     <nav class="profile-tabs" role="tablist" aria-label="Área de perfil — Serpmonn">
-      <button type="button" class="profile-tabs__btn profile-tabs__btn--active" role="tab" id="tab-btn-profile" data-profile-tab="profile" aria-selected="true" aria-controls="tab-profile">Profile</button>
-      <button type="button" class="profile-tabs__btn" role="tab" id="tab-btn-findings" data-profile-tab="findings" aria-selected="false" aria-controls="tab-findings">Findings</button>
-      <button type="button" class="profile-tabs__btn" role="tab" id="tab-btn-plan" data-profile-tab="plan" aria-selected="false" aria-controls="tab-plan">Plan &amp;amp; points</button>
-      <button type="button" class="profile-tabs__btn" role="tab" id="tab-btn-tools" data-profile-tab="tools" aria-selected="false" aria-controls="tab-tools">Tools</button>
+      <button type="button" class="profile-tabs__btn profile-tabs__btn--active" role="tab" id="tab-btn-profile" data-profile-tab="profile" aria-selected="true" aria-controls="tab-profile">Perfil</button>
+      <button type="button" class="profile-tabs__btn" role="tab" id="tab-btn-findings" data-profile-tab="findings" aria-selected="false" aria-controls="tab-findings">Achados</button>
+      <button type="button" class="profile-tabs__btn" role="tab" id="tab-btn-plan" data-profile-tab="plan" aria-selected="false" aria-controls="tab-plan">Plano e pontos</button>
+      <button type="button" class="profile-tabs__btn" role="tab" id="tab-btn-tools" data-profile-tab="tools" aria-selected="false" aria-controls="tab-tools">Ferramentas</button>
     </nav>
 
     <!-- Профиль -->
@@ -332,14 +332,14 @@
     <section id="tab-findings" class="profile-panel" role="tabpanel" data-profile-panel="findings" aria-labelledby="tab-btn-findings" hidden>
       <div class="profile-findings-toolbar">
         <div>
-          <h2 class="profile-panel__heading profile-panel__heading--inline">My findings</h2>
+          <h2 class="profile-panel__heading profile-panel__heading--inline">Minhas descobertas</h2>
           <p id="myFindingsSummary" class="profile-findings-summary"></p>
         </div>
-        <div class="profile-findings-filters" role="group" aria-label="My findings">
-          <button type="button" class="profile-filter-btn profile-filter-btn--active" data-findings-filter="all">All</button>
-          <button type="button" class="profile-filter-btn" data-findings-filter="private">Private</button>
-          <button type="button" class="profile-filter-btn" data-findings-filter="public">In feed</button>
-          <button type="button" class="profile-filter-btn" data-findings-filter="followers">Followers</button>
+        <div class="profile-findings-filters" role="group" aria-label="Minhas descobertas">
+          <button type="button" class="profile-filter-btn profile-filter-btn--active" data-findings-filter="all">Tudo</button>
+          <button type="button" class="profile-filter-btn" data-findings-filter="private">Privado</button>
+          <button type="button" class="profile-filter-btn" data-findings-filter="public">No feed</button>
+          <button type="button" class="profile-filter-btn" data-findings-filter="followers">Seguidores</button>
         </div>
       </div>
 
@@ -352,8 +352,8 @@
       </div>
 
       <p id="myFindingsEmpty" class="profile-empty-state" hidden>
-        <span>No saved findings yet</span>
-        <a href="/frontend/pt-pt/index.html" class="profile-empty-state__link">Go to search</a>
+        <span>Ainda não há descobertas guardadas</span>
+        <a href="/frontend/pt-pt/index.html" class="profile-empty-state__link">Ir para a pesquisa</a>
       </p>
     </section>
 
@@ -407,7 +407,7 @@
         </div>
 
         <details class="profile-details">
-          <summary class="profile-details__summary">Exchange points for Pro</summary>
+          <summary class="profile-details__summary">Trocar pontos por Pro</summary>
           <div class="profile-details__body">
             <p class="plan-hint">Troque pontos por dias de assinatura Pro. Agora: 500 pontos = 1 dia de Pro.</p>
             <div class="profile-inline-form">
@@ -422,7 +422,7 @@
         </details>
 
         <div class="profile-referral-compact">
-          <label for="referralLink" class="referral-label">Referral link</label>
+          <label for="referralLink" class="referral-label">Ligação de referência</label>
           <div class="profile-referral-row">
             <input id="referralLink" type="text" class="profile-input profile-input--readonly" readonly value="">
             <button id="copyReferralLink" type="button" class="profile-btn profile-btn--ghost profile-btn--sm" title="">

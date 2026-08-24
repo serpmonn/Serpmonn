@@ -28,27 +28,27 @@
     <script>
     window.i18n = {
       scorePrefix: "النقاط:",
-      missedPrefix: "Misses:",
+      missedPrefix: "މިސް:",
       pause: "إيقاف",
       resume: "متابعة",
       bannedNicknameAlert: "الاسم يحتوي على كلمات محظورة. اختر اسماً آخر.",
       scoreTableUrl: "/frontend/dv/games/redsquare2/score_table.html",
-      levelLabel: "Level",
-      scoreLabel: "Score",
-      missesLabel: "Misses",
-      soundOn: "Sound",
-      soundOff: "Muted",
-      pauseOverlay: "Paused",
-      gameOverTitle: "Game over",
-      modalYourScore: "Your score:",
-      modalOk: "OK",
-      home: "Home",
-      lbTitle: "Leaderboard",
-      lbYourScore: "Your score:",
-      lbEmpty: "No results yet",
-      lbClose: "Close",
-      lbRestart: "Play again",
-      lbLoadFail: "Failed to load leaderboard"
+      levelLabel: "ލެވެލް",
+      scoreLabel: "ސްކޯރ",
+      missesLabel: "މިސް",
+      soundOn: "އަޑު",
+      soundOff: "ނިއްވާ",
+      pauseOverlay: "ޕޯޒް",
+      gameOverTitle: "ގޭމް ނިމިއްޖެ",
+      modalYourScore: "ތިޔަ ސްކޯރ:",
+      modalOk: "ރަނގަޅު",
+      home: "ފުރަތަމަ",
+      lbTitle: "ލީޑަރބޯޑް",
+      lbYourScore: "ތިޔަ ނަތީޖާ:",
+      lbEmpty: "އަދި ނަތީޖާ ނެތް",
+      lbClose: "ބަންދުކުރޭ",
+      lbRestart: "އަލުން ކުޅުން",
+      lbLoadFail: "ލީޑަރބޯޑް ލޯޑް ނުކުރެވުނު"
     };
     </script>
     <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=16" defer></script>
@@ -80,10 +80,10 @@
             <h2 class="instruction-title">كيف تلعب المربعات الزرقاء الساقطة؟</h2>
             <ul class="instruction-list">
                 <li><strong>التحكم:</strong> استخدم الأسهم أو اللمس لتحريك المربع الأحمر</li>
-                <li><strong>الهدف:</strong> Catch falling shapes with the platform at the bottom</li>
-                <li><strong>النقاط:</strong> You get 1 point for each shape you catch</li>
-                <li><strong>الأخطاء:</strong> If a shape hits the floor, it counts as a miss</li>
-                <li><strong>نهاية اللعبة:</strong> The game ends after 10 misses</li>
+                <li><strong>الهدف:</strong> ވައްޓަން ސްކޭޕްތައް ތިރީގައިވާ ޕްލެޓްފޯމްއިން ހިފާ</li>
+                <li><strong>النقاط:</strong> ހިފާ ކޮންމެ ސްކޭޕަކަށް 1 ޕޮއިންޓް ލިބޭ</li>
+                <li><strong>الأخطاء:</strong> ސްކޭޕެއް ފިލާވަޅަށް ޖެހިއްޖެނަމަ، އެއީ މިސް</li>
+                <li><strong>نهاية اللعبة:</strong> 10 މިސް ފަހުން ގޭމް ނިމޭ</li>
                 <li><strong>لوحة المتصدرين:</strong> بعد اللعبة يمكنك رؤية نتائجك</li>
                 <li><strong>إيقاف:</strong> استخدم زر الإيقاف المؤقت</li>
             </ul>
@@ -118,15 +118,15 @@
     <div class="game-shell">
         <header class="game-hud" aria-live="polite">
             <div class="hud-block">
-                <span class="hud-label">Score</span>
+                <span class="hud-label">ސްކޯރ</span>
                 <span class="hud-value" id="scoreValue">0</span>
             </div>
             <div class="hud-block">
-                <span class="hud-label">Level</span>
+                <span class="hud-label">ލެވެލް</span>
                 <span class="hud-value" id="levelValue">1</span>
             </div>
             <div class="hud-block">
-                <span class="hud-label">Misses</span>
+                <span class="hud-label">މިސް</span>
                 <span class="hud-value" id="missesValue">0/10</span>
             </div>
             <div class="hud-block hud-nick">
@@ -138,7 +138,7 @@
         <div class="game-stage" id="gameStage">
             <canvas id="gameCanvas"></canvas>
             <div class="pause-overlay" id="pauseOverlay" hidden>
-                <span>Paused</span>
+                <span>ޕޯޒް</span>
             </div>
         </div>
 
@@ -151,14 +151,14 @@
                 <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>إيقاف</button>
                 <button type="button" class="action-btn action-restart" id="restartBtn" hidden>من جديد</button>
                 <button type="button" class="action-btn action-lb" id="leaderboardBtn">لوحة المتصدرين</button>
-                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">Sound</button>
-                <button type="button" class="action-btn action-home" id="homeBtn">Home</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">އަޑު</button>
+                <button type="button" class="action-btn action-home" id="homeBtn">ފުރަތަމަ</button>
             </div>
         </div>
     </div>
 
     <div id="score" hidden>النقاط:0</div>
-    <div id="missed" hidden>Misses:0</div>
+    <div id="missed" hidden>މިސް:0</div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   

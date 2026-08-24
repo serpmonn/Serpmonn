@@ -28,27 +28,27 @@
     <script>
     window.i18n = {
       scorePrefix: "Punkte:",
-      missedPrefix: "Misses:",
-      pause: "Pause",
+      missedPrefix: "Αστοχίες:",
+      pause: "Παύση",
       resume: "Weiter",
       bannedNicknameAlert: "Nickname enthält verbotene Wörter. Bitte wähle einen anderen.",
       scoreTableUrl: "/frontend/el/games/redsquare2/score_table.html",
-      levelLabel: "Level",
-      scoreLabel: "Score",
-      missesLabel: "Misses",
-      soundOn: "Sound",
-      soundOff: "Muted",
-      pauseOverlay: "Paused",
-      gameOverTitle: "Game over",
-      modalYourScore: "Your score:",
+      levelLabel: "Επίπεδο",
+      scoreLabel: "Σκορ",
+      missesLabel: "Αστοχίες",
+      soundOn: "Ήχος",
+      soundOff: "Σίγαση",
+      pauseOverlay: "Παύση",
+      gameOverTitle: "Τέλος παιχνιδιού",
+      modalYourScore: "Το σκορ σας:",
       modalOk: "OK",
-      home: "Home",
-      lbTitle: "Leaderboard",
-      lbYourScore: "Your score:",
-      lbEmpty: "No results yet",
-      lbClose: "Close",
-      lbRestart: "Play again",
-      lbLoadFail: "Failed to load leaderboard"
+      home: "Αρχική",
+      lbTitle: "Πίνακας βαθμολογίας",
+      lbYourScore: "Το σκορ σας:",
+      lbEmpty: "Δεν υπάρχουν ακόμα αποτελέσματα",
+      lbClose: "Κλείσιμο",
+      lbRestart: "Παίξτε ξανά",
+      lbLoadFail: "Αποτυχία φόρτωσης πίνακα βαθμολογίας"
     };
     </script>
     <script type="module" src="/frontend/games/redsquare2/redsquare2_scripts/redsquare2_scripts.js?v=16" defer></script>
@@ -80,12 +80,12 @@
             <h2 class="instruction-title">Wie spielt man Fallende blaue Quadrate?</h2>
             <ul class="instruction-list">
                 <li><strong>Steuerung:</strong> Nutze Pfeiltasten oder Touch, um das rote Quadrat zu bewegen</li>
-                <li><strong>Ziel:</strong> Catch falling shapes with the platform at the bottom</li>
-                <li><strong>Punkte:</strong> You get 1 point for each shape you catch</li>
-                <li><strong>Fehler:</strong> If a shape hits the floor, it counts as a miss</li>
-                <li><strong>Spielende:</strong> The game ends after 10 misses</li>
+                <li><strong>Ziel:</strong> Πιάστε τα σχήματα που πέφτουν με την πλατφόρμα στο κάτω μέρος</li>
+                <li><strong>Punkte:</strong> Παίρνετε 1 πόντο για κάθε σχήμα που πιάνετε</li>
+                <li><strong>Fehler:</strong> Αν ένα σχήμα χτυπήσει το πάτωμα, μετράει ως αστοχία</li>
+                <li><strong>Spielende:</strong> Το παιχνίδι τελειώνει μετά από 10 αστοχίες</li>
                 <li><strong>Bestenliste:</strong> Nach dem Spiel siehst du deine Ergebnisse in der Bestenliste</li>
-                <li><strong>Pause:</strong> Nutze die Pause-Taste zum Anhalten</li>
+                <li><strong>Παύση:</strong> Nutze die Pause-Taste zum Anhalten</li>
             </ul>
             <button type="button" class="instruction-button" id="understandBtn"
                 onclick="return window.__rs2DismissInstruction(event)"
@@ -118,15 +118,15 @@
     <div class="game-shell">
         <header class="game-hud" aria-live="polite">
             <div class="hud-block">
-                <span class="hud-label">Score</span>
+                <span class="hud-label">Σκορ</span>
                 <span class="hud-value" id="scoreValue">0</span>
             </div>
             <div class="hud-block">
-                <span class="hud-label">Level</span>
+                <span class="hud-label">Επίπεδο</span>
                 <span class="hud-value" id="levelValue">1</span>
             </div>
             <div class="hud-block">
-                <span class="hud-label">Misses</span>
+                <span class="hud-label">Αστοχίες</span>
                 <span class="hud-value" id="missesValue">0/10</span>
             </div>
             <div class="hud-block hud-nick">
@@ -138,7 +138,7 @@
         <div class="game-stage" id="gameStage">
             <canvas id="gameCanvas"></canvas>
             <div class="pause-overlay" id="pauseOverlay" hidden>
-                <span>Paused</span>
+                <span>Παύση</span>
             </div>
         </div>
 
@@ -148,17 +148,17 @@
                 <button type="submit" class="action-btn action-start">Spiel starten</button>
             </form>
             <div class="actions" id="gameActions">
-                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>Pause</button>
+                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>Παύση</button>
                 <button type="button" class="action-btn action-restart" id="restartBtn" hidden>Neu</button>
                 <button type="button" class="action-btn action-lb" id="leaderboardBtn">Bestenliste</button>
-                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">Sound</button>
-                <button type="button" class="action-btn action-home" id="homeBtn">Home</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">Ήχος</button>
+                <button type="button" class="action-btn action-home" id="homeBtn">Αρχική</button>
             </div>
         </div>
     </div>
 
     <div id="score" hidden>Punkte:0</div>
-    <div id="missed" hidden>Misses:0</div>
+    <div id="missed" hidden>Αστοχίες:0</div>
 
 <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
   

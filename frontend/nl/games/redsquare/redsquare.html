@@ -29,19 +29,19 @@
     <script>
     window.i18n = {
       scorePrefix: "Punkte:",
-      pause: "Pause",
+      pause: "Pauze",
       resume: "Weiter",
       allLevelsComplete: "Alle Level geschafft! Glückwunsch!",
       modalYourScore: "Deine Punkte:",
       modalBestResult: "Bestes Ergebnis:",
       modalOk: "OK",
       levelLabel: "Level",
-      bestLabel: "Best",
-      livesLabel: "Lives",
+      bestLabel: "Record",
+      livesLabel: "Levens",
       comboLabel: "Combo",
-      soundOn: "Sound",
-      soundOff: "Muted",
-      pauseOverlay: "Paused",
+      soundOn: "Geluid",
+      soundOff: "Gedempt",
+      pauseOverlay: "Gepauzeerd",
       levelUp: "Level",
       gameOverTitle: "Game over",
       restart: "Neu"
@@ -60,7 +60,7 @@
                 <p>3. Sammle goldene Boni für Extra-Punkte</p>
                 <p>4. Je länger du überlebst, desto mehr Punkte</p>
                 <p>5. Nutze die Pause-Taste (oder Leertaste) für eine Pause</p>
-                <p>6. You have 3 lives. After a hit you get a short invincibility window. Collect bonuses in a row for combo.</p>
+                <p>6. Je hebt 3 levens. Na een treffer krijg je korte onkwetsbaarheid. Verzamel bonuses achter elkaar voor combo.</p>
             </div>
             <button class="instruction-button" id="understandBtn" type="button">Verstanden!</button>
         </div>
@@ -84,11 +84,11 @@
                 <span class="hud-value" id="levelValue">1</span>
             </div>
             <div class="hud-block">
-                <span class="hud-label">Best</span>
+                <span class="hud-label">Record</span>
                 <span class="hud-value" id="bestValue">0</span>
             </div>
             <div class="hud-block hud-lives">
-                <span class="hud-label">Lives</span>
+                <span class="hud-label">Levens</span>
                 <span class="hud-value" id="livesValue" aria-label="3">●●●</span>
             </div>
             <div class="hud-progress" title="Level">
@@ -104,7 +104,7 @@
             <div class="obstacle" style="top: 20%; left: 20%;"></div>
             <div class="obstacle" style="top: 80%; left: 80%;"></div>
             <div class="pause-overlay" id="pauseOverlay" hidden>
-                <span>Paused</span>
+                <span>Gepauzeerd</span>
             </div>
             <div class="level-toast" id="levelToast" hidden></div>
         </div>
@@ -118,9 +118,9 @@
             </div>
             <div class="actions">
                 <button type="button" class="action-btn action-start" id="start">Spiel starten</button>
-                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>Pause</button>
+                <button type="button" class="action-btn action-pause" id="pauseBtn" hidden>Pauze</button>
                 <button type="button" class="action-btn action-restart" id="restart" hidden>Neu</button>
-                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">Sound</button>
+                <button type="button" class="action-btn action-sound" id="soundBtn" aria-pressed="true">Geluid</button>
                 <button type="button" class="action-btn action-home" id="home">Start</button>
             </div>
         </div>

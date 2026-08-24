@@ -257,7 +257,7 @@
 
     <h1>⛽ Yoqilgʻi Kalkulyatori</h1>
     
-    <p class="tool-lead">Estimate fuel use and trip cost — including driving style, road and load.</p>
+    <p class="tool-lead">Yoqilg‘i sarfi va safar xarajatini baholang — haydash uslubi, yo‘l va yuk bilan.</p>
     
 
     <div class="calculator-container">
@@ -282,18 +282,18 @@
       <div class="action-bar">
         <button type="button" class="calculate-btn" id="btn-calculate">Yoqilgʻi sarfini hisoblash</button>
         <details class="more-actions">
-          <summary>More</summary>
+          <summary>Yana</summary>
           <div class="more-actions__list">
-            <button type="button" class="reset-btn" id="btn-reset">Reset</button>
-            <button type="button" class="share-btn" id="btn-share">Share</button>
-            <button type="button" class="export-btn" id="btn-pdf">Export PDF</button>
-            <button type="button" class="csv-btn" id="btn-csv">Export CSV</button>
+            <button type="button" class="reset-btn" id="btn-reset">Qayta o‘rnatish</button>
+            <button type="button" class="share-btn" id="btn-share">Ulashish</button>
+            <button type="button" class="export-btn" id="btn-pdf">PDF eksport qilish</button>
+            <button type="button" class="csv-btn" id="btn-csv">CSV eksport qilish</button>
           </div>
         </details>
       </div>
 
       <details class="optional-fields">
-        <summary>More options</summary>
+        <summary>Qo‘shimcha parametrlar</summary>
         <div class="input-section">
           <div class="input-group">
             <label for="fuelType">Yoqilgʻi turi</label>
@@ -321,7 +321,7 @@
               <option value="highway">Shosse</option>
               <option value="city">Shahar</option>
               <option value="mixed" selected>Aralash davr</option>
-              <option value="offroad">Off-road</option>
+              <option value="offroad">Yo‘lsiz</option>
             </select>
           </div>
           <div class="input-group">
@@ -351,7 +351,7 @@
           <div class="result-value" id="heroCostPerKm">—</div>
           <div class="result-label">1 km narxi</div>
         </div>
-        <p class="result-disclaimer">Approximate fuel cost estimate, not a lab measurement.</p>
+        <p class="result-disclaimer">Taxminiy yoqilg‘i xarajati bahosi, laboratoriya o‘lchovi emas.</p>
         <div class="result-grid">
           <div class="result-item">
             <div class="result-value" id="totalFuel">—</div>
@@ -391,7 +391,7 @@
     </div>
 
     <div class="history" id="history">
-      <h3>Recent calculations</h3>
+      <h3>So‘nggi hisoblar</h3>
       <div id="historyList"></div>
     </div>
 
@@ -426,7 +426,7 @@
     </div>
 
     <script>
-      window.fuelCalculatorTranslations = {"meta":{"title":"Yoqilgʻi Kalkulyatori — Serpmonn Logistika","description":"Yoqilgʻi sarfi, sayohat narxi va tejashni hisoblash","twitterDescription":"Haydovchilar uchun yoqilgʻi sarfini hisoblash"},"breadcrumb":{"tools":"Vositalar","fuelCalculator":"Yoqilgʻi Kalkulyatori"},"page":{"title":"⛽ Yoqilgʻi Kalkulyatori","form":{"title":"Sayohat parametrlarini kiriting","distance":"Masofa","fuelConsumption":"Yoqilgʻi sarfi (L/100 km)","fuelPrice":"Yoqilgʻi narxi (₽/L)","fuelType":"Yoqilgʻi turi","drivingStyle":"Haydash uslubi","roadConditions":"Yoʻl sharoiti","load":"Avtomobil yuki","climate":"Iqlim sharoiti","calculate":"Yoqilgʻi sarfini hisoblash","optionalSummary":"More options"},"fuelTypes":{"petrol":"Benzin AI-92","petrol95":"Benzin AI-95","petrol98":"Benzin AI-98","diesel":"Dizel yoqilgʻisi","lpg":"Gaz (propan-butan)","cng":"Gaz (metan)"},"drivingStyles":{"economical":"Tejamkor","normal":"Oddiy","sport":"Sport","aggressive":"Agressiv"},"roadConditions":{"highway":"Shosse","city":"Shahar","mixed":"Aralash davr","offroad":"Off-road"},"loads":{"empty":"Boʻsh","light":"Yengil yuk","medium":"Oʻrta yuk","heavy":"Toʻliq yuk"},"climates":{"normal":"Oddiy","hot":"Issiq (+30°C va undan yuqori)","cold":"Sovuq (-10°C va undan past)","rainy":"Yomgʻir/qor"},"results":{"title":"Hisoblash natijalari","totalFuel":"Umumiy yoqilgʻi sarfi","totalCost":"Yoqilgʻi narxi","costPerKm":"1 km narxi","adjustedConsumption":"Tuzatilgan sarf"},"comparison":{"title":"Boshqa haydash uslublari bilan taqqoslash","drivingStyle":"Haydash uslubi","consumption":"Sarf (L/100 km)","cost":"Narx (₽)","savings":"Tejam/ortiqcha sarf"},"fuelEfficiency":{"title":"🌱 Yoqilgʻi samaradorligi","tips":["Silliq tezlashish va tormozlash yoqilgʻini 10-15% tejaydi","Shosseda optimal 80-90 km/soat tezlikni saqlash","Vaqtida vites oʻzgartirish (2000-2500 aylanish/min)","Har 2 haftada shinalar bosimini tekshirish","Bagajdan ortiqcha yukni olib tashlash"]},"advice":{"title":"💡 Foydali maslahatlar","tips":["Tekis yoʻl uchastkalarida kruiz nazoratidan foydalaning","Yuqori tezlikda derazalarni yoping","Trafik tirbandligidan qochish uchun marshrutingizni rejalashtiring","Dvigatel va yoqilgʻi tizimini muntazam ravishda texnik xizmat koʻrsating","Tavsiya etilgan oktan sonli sifatli yoqilgʻidan foydalaning"]},"lead":"Estimate fuel use and trip cost — including driving style, road and load.","disclaimer":"Approximate fuel cost estimate, not a lab measurement.","formulaPlain":"Consumption ≈ base × style × road × load × climate × fuel type. Total: {fuel} L for {distance} km ≈ {cost}.","shareCopied":"Calculation link copied","exportNoResults":"Run a calculation first","exportFailed":"PDF export failed","actions":{"more":"More","reset":"Reset","share":"Share","pdf":"Export PDF","csv":"Export CSV"},"history":{"title":"Recent calculations","empty":"Empty so far"},"errors":{"fillRequired":"Fill distance, consumption and fuel price","positive":"Values must be greater than zero"}},"ads":{"closeAria":"Reklamani yopish"}};
+      window.fuelCalculatorTranslations = {"meta":{"title":"Yoqilgʻi Kalkulyatori — Serpmonn Logistika","description":"Yoqilgʻi sarfi, sayohat narxi va tejashni hisoblash","twitterDescription":"Haydovchilar uchun yoqilgʻi sarfini hisoblash"},"breadcrumb":{"tools":"Vositalar","fuelCalculator":"Yoqilgʻi Kalkulyatori"},"page":{"title":"⛽ Yoqilgʻi Kalkulyatori","form":{"title":"Sayohat parametrlarini kiriting","distance":"Masofa","fuelConsumption":"Yoqilgʻi sarfi (L/100 km)","fuelPrice":"Yoqilgʻi narxi (₽/L)","fuelType":"Yoqilgʻi turi","drivingStyle":"Haydash uslubi","roadConditions":"Yoʻl sharoiti","load":"Avtomobil yuki","climate":"Iqlim sharoiti","calculate":"Yoqilgʻi sarfini hisoblash","optionalSummary":"Qo‘shimcha parametrlar"},"fuelTypes":{"petrol":"Benzin AI-92","petrol95":"Benzin AI-95","petrol98":"Benzin AI-98","diesel":"Dizel yoqilgʻisi","lpg":"Gaz (propan-butan)","cng":"Gaz (metan)"},"drivingStyles":{"economical":"Tejamkor","normal":"Oddiy","sport":"Sport","aggressive":"Agressiv"},"roadConditions":{"highway":"Shosse","city":"Shahar","mixed":"Aralash davr","offroad":"Yo‘lsiz"},"loads":{"empty":"Boʻsh","light":"Yengil yuk","medium":"Oʻrta yuk","heavy":"Toʻliq yuk"},"climates":{"normal":"Oddiy","hot":"Issiq (+30°C va undan yuqori)","cold":"Sovuq (-10°C va undan past)","rainy":"Yomgʻir/qor"},"results":{"title":"Hisoblash natijalari","totalFuel":"Umumiy yoqilgʻi sarfi","totalCost":"Yoqilgʻi narxi","costPerKm":"1 km narxi","adjustedConsumption":"Tuzatilgan sarf"},"comparison":{"title":"Boshqa haydash uslublari bilan taqqoslash","drivingStyle":"Haydash uslubi","consumption":"Sarf (L/100 km)","cost":"Narx (₽)","savings":"Tejam/ortiqcha sarf"},"fuelEfficiency":{"title":"🌱 Yoqilgʻi samaradorligi","tips":["Silliq tezlashish va tormozlash yoqilgʻini 10-15% tejaydi","Shosseda optimal 80-90 km/soat tezlikni saqlash","Vaqtida vites oʻzgartirish (2000-2500 aylanish/min)","Har 2 haftada shinalar bosimini tekshirish","Bagajdan ortiqcha yukni olib tashlash"]},"advice":{"title":"💡 Foydali maslahatlar","tips":["Tekis yoʻl uchastkalarida kruiz nazoratidan foydalaning","Yuqori tezlikda derazalarni yoping","Trafik tirbandligidan qochish uchun marshrutingizni rejalashtiring","Dvigatel va yoqilgʻi tizimini muntazam ravishda texnik xizmat koʻrsating","Tavsiya etilgan oktan sonli sifatli yoqilgʻidan foydalaning"]},"lead":"Yoqilg‘i sarfi va safar xarajatini baholang — haydash uslubi, yo‘l va yuk bilan.","disclaimer":"Taxminiy yoqilg‘i xarajati bahosi, laboratoriya o‘lchovi emas.","formulaPlain":"Sarf ≈ baza × uslub × yo‘l × yuk × iqlim × yoqilg‘i turi. Jami: {fuel} L / {distance} km ≈ {cost}.","shareCopied":"Hisoblash havolasi nusxalandi","exportNoResults":"Avval hisoblang","exportFailed":"PDF eksporti muvaffaqiyatsiz","actions":{"more":"Yana","reset":"Qayta o‘rnatish","share":"Ulashish","pdf":"PDF eksport qilish","csv":"CSV eksport qilish"},"history":{"title":"So‘nggi hisoblar","empty":"Hali bo‘sh"},"errors":{"fillRequired":"Masofa, sarf va yoqilg‘i narxini to‘ldiring","positive":"Qiymatlar noldan katta bo‘lishi kerak"}},"ads":{"closeAria":"Reklamani yopish"}};
     </script>
     <script type="module" src="/frontend/scripts/tools/fuel-calculator.js?v=3"></script>
     <script type="module" src="/frontend/scripts/tools/more-actions.js?v=1"></script>
