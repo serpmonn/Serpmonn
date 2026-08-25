@@ -7,6 +7,7 @@ import {
   storeReverseImage,
   removeReverseImage,
   reverseImageSearch,
+  archiveReverseImageForLog,
 } from '../reverse-image.mjs';
 import { attachUserIfToken, getUserIdentity, trackSearchQuery } from '../auth-identity.mjs';
 import { enforceWebSearchLimit } from '../limits.mjs';
@@ -38,6 +39,7 @@ function registerReverseImageRoutes(router) {
       const { locale, t } = getBackendMessages(req);
       const reqStart = process.hrtime.bigint();
       let storedPath = null;
+      let logImagePath = null;
 
       try {
         const file = req.file;
@@ -70,6 +72,9 @@ function registerReverseImageRoutes(router) {
         const stored = await storeReverseImage(file.buffer, file.mimetype);
         storedPath = stored.absPath;
 
+        const archived = await archiveReverseImageForLog(file.buffer, file.mimetype);
+        logImagePath = archived?.imagePath || null;
+
         const found = await reverseImageSearch({
           buffer: file.buffer,
           mime: file.mimetype,
@@ -101,6 +106,7 @@ function registerReverseImageRoutes(router) {
           status,
           resultCount: results.length,
           latencyMs: totalMs,
+          imagePath: logImagePath,
         });
 
         console.log(
@@ -137,6 +143,7 @@ function registerReverseImageRoutes(router) {
             locale,
             status: 'error',
             resultCount: 0,
+            imagePath: logImagePath,
           });
         } catch (_) {}
         const status = Number(error.status) || 500;

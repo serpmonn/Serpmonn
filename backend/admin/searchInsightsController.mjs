@@ -2,6 +2,11 @@ import {
   getSearchInsights,
   purgeOldSearchQueryLogs,
 } from '../ai-search/search-query-log.mjs';
+import { query } from '../database/config.mjs';
+import { resolveSearchLogImagePath } from '../ai-search/reverse-image.mjs';
+import { access, stat } from 'fs/promises';
+import { constants as fsConstants } from 'fs';
+import { extname } from 'path';
 
 function parseFilters(req) {
   const period = ['24h', '7d', '30d'].includes(req.query?.period)
@@ -91,4 +96,48 @@ function csvEscape(value) {
   const s = String(value ?? '');
   if (/[",\n]/.test(s)) return `"${s.replace(/"/g, '""')}"`;
   return s;
+}
+
+export async function streamSearchLogImage(req, res) {
+  try {
+    const id = Number(req.params.id);
+    if (!Number.isFinite(id) || id <= 0) {
+      return res.status(400).json({ error: 'Некорректный id' });
+    }
+
+    const rows = await query(
+      `SELECT image_path FROM search_query_log WHERE id = ? LIMIT 1`,
+      [id]
+    );
+    const imagePath = rows?.[0]?.image_path;
+    if (!imagePath) {
+      return res.status(404).json({ error: 'Нет изображения' });
+    }
+
+    const abs = resolveSearchLogImagePath(imagePath);
+    if (!abs) {
+      return res.status(400).json({ error: 'Некорректный путь' });
+    }
+
+    await access(abs, fsConstants.R_OK);
+    const st = await stat(abs);
+    const ext = extname(abs).toLowerCase();
+    const types = {
+      '.png': 'image/png',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+      '.webp': 'image/webp',
+      '.gif': 'image/gif',
+    };
+
+    res.setHeader('Content-Type', types[ext] || 'application/octet-stream');
+    res.setHeader('Content-Length', st.size);
+    res.setHeader('Cache-Control', 'private, max-age=3600');
+    return res.sendFile(abs);
+  } catch (err) {
+    console.error('[admin search-log-image]', err?.message || err);
+    if (!res.headersSent) {
+      return res.status(404).json({ error: 'Файл не найден' });
+    }
+  }
 }

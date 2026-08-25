@@ -42,7 +42,7 @@ export async function ensureSearchQueryLogTable() {
     FROM information_schema.COLUMNS
     WHERE TABLE_SCHEMA = DATABASE()
       AND TABLE_NAME = 'search_query_log'
-      AND COLUMN_NAME IN ('anon_id', 'client', 'device')
+      AND COLUMN_NAME IN ('anon_id', 'client', 'device', 'image_path')
   `);
   const cols = new Set(colRows.map((r) => r.name));
   if (!cols.has('anon_id')) {
@@ -53,6 +53,9 @@ export async function ensureSearchQueryLogTable() {
   }
   if (!cols.has('device')) {
     await query(`ALTER TABLE search_query_log ADD COLUMN device ENUM('mobile', 'desktop') NULL AFTER client`);
+  }
+  if (!cols.has('image_path')) {
+    await query(`ALTER TABLE search_query_log ADD COLUMN image_path VARCHAR(255) NULL AFTER query_norm`);
   }
 
   const idxRows = await query(`
@@ -141,12 +144,13 @@ export async function logSearchQuery(data) {
 
   const result = await query(
     `INSERT INTO search_query_log
-      (mode, query_text, query_norm, category, locale, identity_type, user_id, guest_key, anon_id, client, device, status, result_count, latency_ms)
-     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      (mode, query_text, query_norm, image_path, category, locale, identity_type, user_id, guest_key, anon_id, client, device, status, result_count, latency_ms)
+     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     [
       mode,
       queryText,
       normalizeSearchQuery(queryText),
+      data.imagePath ? String(data.imagePath).slice(0, 255) : null,
       data.category ? String(data.category).slice(0, 32) : null,
       String(data.locale || 'ru').slice(0, 16),
       ['user', 'guest', 'vk'].includes(data.identityType) ? data.identityType : 'guest',
@@ -268,7 +272,7 @@ export async function getSearchInsights({
       params
     ),
     query(
-      `SELECT id, mode, query_text, category, locale, identity_type, user_id, anon_id, client, device,
+      `SELECT id, mode, query_text, image_path, category, locale, identity_type, user_id, anon_id, client, device,
               status, result_count, latency_ms, created_at
        FROM search_query_log
        WHERE ${whereSql}
@@ -419,6 +423,9 @@ export async function getSearchInsights({
       id: r.id,
       mode: r.mode,
       query: r.query_text,
+      imagePath: r.image_path || null,
+      hasImage: Boolean(r.image_path),
+      isReverseImage: r.query_norm === '[reverse-image]' || Boolean(r.image_path),
       category: r.category,
       locale: r.locale,
       identityType: r.identity_type,
@@ -458,8 +465,10 @@ async function resolveUsernames(ids) {
 /** Best-effort purge of old raw rows (call from insights or a cron later). */
 export async function purgeOldSearchQueryLogs() {
   await ensureSearchQueryLogTable();
+  const { cleanupExpiredSearchLogImages } = await import('./reverse-image.mjs');
   await query(
     `DELETE FROM search_query_log WHERE created_at < (NOW() - INTERVAL ? DAY)`,
     [RAW_TTL_DAYS]
   );
+  await cleanupExpiredSearchLogImages().catch(() => {});
 }

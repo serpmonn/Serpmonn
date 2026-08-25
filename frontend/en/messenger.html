@@ -160,6 +160,12 @@ nav{
   display:flex;flex-direction:column;gap:var(--space-4);
   margin-bottom:var(--space-6);
 }
+.download-cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));
+  gap:var(--space-4);
+  max-width:880px;
+}
 .download-card{
   display:flex;flex-direction:column;
   background:var(--color-surface);
@@ -384,25 +390,41 @@ footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
     <span class="badge"><span class="badge-dot"></span>Pre-alpha · Field testing</span>
   </div>
   <h1 class="hero-title"><span class="accent">Decentralized</span><br>messenger</h1>
-  <p class="hero-desc">Serpmonn Messenger is a P2P messenger with end-to-end encryption for Android. Messages travel directly between devices. Nobody — not servers, not Serpmonn — can access your chats.</p>
+  <p class="hero-desc">Serpmonn Messenger is a P2P messenger with end-to-end encryption for Android and Windows. Messages travel directly between devices. Nobody — not servers, not Serpmonn — can access your chats.</p>
 
   <!-- DOWNLOAD -->
   <div class="download-block">
-    <div class="download-card recommended" style="max-width:420px">
-      <div class="download-card-header">
-        <span class="download-card-title">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
-          Universal APK
-        </span>
-        <span class="download-tag">Pre-alpha</span>
+    <div class="download-cards">
+      <div class="download-card recommended">
+        <div class="download-card-header">
+          <span class="download-card-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
+            Android · APK
+          </span>
+          <span class="download-tag">Pre-alpha</span>
+        </div>
+        <p class="download-card-desc">One file for <strong>phones</strong> (modern and older Android) and <strong>64-bit emulators</strong>.</p>
+        <a href="/frontend/downloads/app-debug.apk" class="download-btn primary" download>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download APK · ~144 MB
+        </a>
       </div>
-      <p class="download-card-desc">One file for <strong>phones</strong> (modern and older Android) and <strong>64-bit emulators</strong>. Separate architecture builds are no longer needed.</p>
-      <a href="/frontend/downloads/app-debug.apk" class="download-btn primary" download>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Download APK · ~144 MB
-      </a>
+      <div class="download-card recommended">
+        <div class="download-card-header">
+          <span class="download-card-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Windows · EXE
+          </span>
+          <span class="download-tag">Pre-alpha</span>
+        </div>
+        <p class="download-card-desc">Desktop build for <strong>Windows 10/11</strong>. No installer — run the file after download.</p>
+        <a href="/frontend/downloads/Serpmonn%20Messenger.exe" class="download-btn primary" download>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download EXE · ~40 MB
+        </a>
+      </div>
     </div>
-    <p class="download-hint">Before installing, allow installs from unknown sources in Android settings. Requires Android 8.0+.</p>
+    <p class="download-hint">Android: allow installs from unknown sources (Android 8.0+). Windows: if SmartScreen warns, choose More info → Run anyway.</p>
   </div>
 
   <a href="#roadmap" class="btn-secondary" style="align-self:flex-start">

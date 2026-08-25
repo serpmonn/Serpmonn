@@ -12,12 +12,15 @@ import { fetchSearxViaCurl } from '../utils/fetchSearxViaCurl.js';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(__dirname, '../..');
 const TMP_DIR = join(PROJECT_ROOT, 'frontend/tmp-reverse');
+const LOG_IMAGES_DIR = join(PROJECT_ROOT, 'backend/private/search-log-images');
 const PUBLIC_BASE = String(
   process.env.REVERSE_IMAGE_PUBLIC_BASE || 'https://serpmonn.ru/frontend/tmp-reverse'
 ).replace(/\/$/, '');
 
 const MAX_BYTES = Number(process.env.REVERSE_IMAGE_MAX_BYTES) || 2 * 1024 * 1024;
 const TTL_MS = Number(process.env.REVERSE_IMAGE_TTL_MS) || 15 * 60 * 1000;
+const LOG_IMAGE_TTL_MS =
+  Number(process.env.SEARCH_LOG_IMAGE_TTL_MS) || 30 * 24 * 60 * 60 * 1000;
 const TINEYE_API_KEY = String(process.env.TINEYE_API_KEY || '').trim();
 const TINEYE_API_USER = String(process.env.TINEYE_API_USER || '').trim();
 
@@ -102,6 +105,58 @@ export async function removeReverseImage(absPath) {
     await unlink(absPath);
   } catch {
     /* ignore */
+  }
+}
+
+async function ensureLogImagesDir() {
+  await mkdir(LOG_IMAGES_DIR, { recursive: true });
+}
+
+/** Архив для админки: хранится дольше, чем tmp-reverse. */
+export async function archiveReverseImageForLog(buffer, mime) {
+  if (!Buffer.isBuffer(buffer) || buffer.length === 0) return null;
+  const ext = MIME_EXT[String(mime || '').toLowerCase()];
+  if (!ext) return null;
+
+  await ensureLogImagesDir();
+  const fileName = `${Date.now()}-${randomUUID().slice(0, 8)}${ext}`;
+  const absPath = join(LOG_IMAGES_DIR, fileName);
+  await writeFile(absPath, buffer);
+  return {
+    absPath,
+    fileName,
+    imagePath: `search-log-images/${fileName}`,
+  };
+}
+
+export function resolveSearchLogImagePath(imagePath) {
+  const rel = String(imagePath || '').trim().replace(/^\/+/, '');
+  if (!rel || !rel.startsWith('search-log-images/')) return null;
+  const base = rel.slice('search-log-images/'.length);
+  if (!base || base.includes('..') || base.includes('\\') || base.includes('/')) return null;
+  return join(LOG_IMAGES_DIR, base);
+}
+
+/** Удаляет архивные превью старше TTL (best-effort). */
+export async function cleanupExpiredSearchLogImages() {
+  try {
+    await ensureLogImagesDir();
+    const names = await readdir(LOG_IMAGES_DIR);
+    const now = Date.now();
+    await Promise.all(
+      names.map(async (name) => {
+        if (name === '.gitkeep' || name === '.gitignore') return;
+        const abs = join(LOG_IMAGES_DIR, name);
+        try {
+          const st = await stat(abs);
+          if (now - st.mtimeMs > LOG_IMAGE_TTL_MS) await unlink(abs);
+        } catch {
+          /* ignore */
+        }
+      })
+    );
+  } catch (err) {
+    console.warn('[reverse-image] log-image cleanup', err.message);
   }
 }
 

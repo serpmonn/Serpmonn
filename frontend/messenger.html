@@ -160,6 +160,12 @@ nav{
   display:flex;flex-direction:column;gap:var(--space-4);
   margin-bottom:var(--space-6);
 }
+.download-cards{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(min(280px,100%),1fr));
+  gap:var(--space-4);
+  max-width:880px;
+}
 .download-card{
   display:flex;flex-direction:column;
   background:var(--color-surface);
@@ -384,25 +390,41 @@ footer{border-top:1px solid var(--color-divider);padding:var(--space-10) 0;}
     <span class="badge"><span class="badge-dot"></span>Пре-альфа · Полевое тестирование</span>
   </div>
   <h1 class="hero-title"><span class="accent">Децентрализованный</span><br>мессенджер</h1>
-  <p class="hero-desc">Serpmonn Messenger — P2P-мессенджер с end-to-end шифрованием для Android. Сообщения передаются напрямую между устройствами. Никто — ни серверы, ни Serpmonn — не имеет доступа к вашей переписке.</p>
+  <p class="hero-desc">Serpmonn Messenger — P2P-мессенджер с end-to-end шифрованием для Android и Windows. Сообщения передаются напрямую между устройствами. Никто — ни серверы, ни Serpmonn — не имеет доступа к вашей переписке.</p>
 
   <!-- DOWNLOAD -->
   <div class="download-block">
-    <div class="download-card recommended" style="max-width:420px">
-      <div class="download-card-header">
-        <span class="download-card-title">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
-          Универсальный APK
-        </span>
-        <span class="download-tag">Пре-альфа</span>
+    <div class="download-cards">
+      <div class="download-card recommended">
+        <div class="download-card-header">
+          <span class="download-card-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5" stroke-linecap="round"/></svg>
+            Android · APK
+          </span>
+          <span class="download-tag">Пре-альфа</span>
+        </div>
+        <p class="download-card-desc">Один файл для <strong>смартфонов</strong> (современных и старых Android) и <strong>64‑битных эмуляторов</strong>.</p>
+        <a href="/frontend/downloads/app-debug.apk" class="download-btn primary" download>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Скачать APK · ~144 МБ
+        </a>
       </div>
-      <p class="download-card-desc">Один файл для <strong>смартфонов</strong> (современных и старых Android) и <strong>64‑битных эмуляторов</strong>. Отдельные сборки под архитектуры больше не нужны.</p>
-      <a href="/frontend/downloads/app-debug.apk" class="download-btn primary" download>
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Скачать APK · ~144 МБ
-      </a>
+      <div class="download-card recommended">
+        <div class="download-card-header">
+          <span class="download-card-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+            Windows · EXE
+          </span>
+          <span class="download-tag">Пре-альфа</span>
+        </div>
+        <p class="download-card-desc">Настольная версия для <strong>Windows 10/11</strong>. Установщик не требуется — запускайте файл после скачивания.</p>
+        <a href="/frontend/downloads/Serpmonn%20Messenger.exe" class="download-btn primary" download>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Скачать EXE · ~40 МБ
+        </a>
+      </div>
     </div>
-    <p class="download-hint">Перед установкой разрешите установку из неизвестных источников в настройках Android. Требуется Android 8.0+.</p>
+    <p class="download-hint">Android: разрешите установку из неизвестных источников (Android 8.0+). Windows: при предупреждении SmartScreen нажмите «Подробнее» → «Выполнить в любом случае».</p>
   </div>
 
   <a href="#roadmap" class="btn-secondary" style="align-self:flex-start">

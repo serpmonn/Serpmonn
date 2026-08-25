@@ -29,6 +29,7 @@ import {
 import {
   getSearchInsightsHandler,
   exportSearchInsightsCsv,
+  streamSearchLogImage,
 } from './searchInsightsController.mjs';
 import {
   listMarketingQueue,
@@ -81,6 +82,7 @@ router.post('/partners/payouts/:id/reject', verifyAdmin, rejectPartnerPayout);
 
 // Лог поисковых запросов (спрос)
 router.get('/search-insights', verifyAdmin, getSearchInsightsHandler);
+router.get('/search-insights/image/:id', verifyAdmin, streamSearchLogImage);
 router.get('/search-insights.csv', verifyAdmin, exportSearchInsightsCsv);
 
 // Маркетинг: очередь публикаций и каналы
