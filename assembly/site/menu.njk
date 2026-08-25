@@ -170,19 +170,20 @@ eleventyComputed:
             <div class="submenu-container" id="serpmonn{{ platform.key | capitalize }}Submenu">
                 {% if platform.games and platform.games | length %}
                   {% for game in platform.games %}
-                <a href="{{ game.link }}"{% if game.external %} target="_blank" rel="noopener"{% endif %}>
-                    {% if platform.key == 'web' %}{{ webGameIcon(game.link) }}{% else %}{{ toolIcon('games') }}{% endif %}
+                <a href="{{ game.link }}"{% if game.download %} download{% if game.downloadName %}="{{ game.downloadName }}"{% endif %}{% endif %}{% if game.external %} target="_blank" rel="noopener"{% endif %}>
+                    {% if platform.key == 'web' %}{{ webGameIcon(game.link) }}{% elif game.download %}{{ toolIcon('apk') }}{% else %}{{ toolIcon('games') }}{% endif %}
                     {{ game.name }}
                 </a>
                   {% endfor %}
-                {% elif platform.placeholders and platform.placeholders | length %}
+                {% endif %}
+                {% if platform.placeholders and platform.placeholders | length %}
                   {% for ph in platform.placeholders %}
                 <a href="#" class="game-placeholder">
                     {{ toolIcon(platform.key) }}
                     {{ ph.name }} ({{ menu_soon }})
                 </a>
                   {% endfor %}
-                {% else %}
+                {% elif not (platform.games and platform.games | length) %}
                 <a href="#" class="game-placeholder">{{ toolIcon(platform.key) }} {{ menu_soon }}</a>
                 {% endif %}
             </div>

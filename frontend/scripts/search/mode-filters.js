@@ -2,17 +2,25 @@ import { getQueryFromUrl } from './env-analytics.js';
 
 function getModeFromUrl() {
   const mode = (new URLSearchParams(window.location.search).get('mode') || '').trim().toLowerCase();
-  return mode === 'results' || mode === 'web' ? 'results' : mode === 'ai' ? 'ai' : null;
+  if (mode === 'results' || mode === 'web') return 'results';
+  if (mode === 'ai' || mode === 'chat' || mode === 'assistant' || mode === 'image' || mode === 'img') {
+    return 'ai';
+  }
+  return null;
 }
 
 const SEARCH_MODE_STORAGE_KEY = 'serpmonn_search_mode';
 const RESULTS_TIME_RANGE_KEY = 'serpmonn_results_time_range';
 const RESULTS_SAFESEARCH_KEY = 'serpmonn_results_safesearch';
 
+function normalizeSearchMode(mode) {
+  if (mode === 'results' || mode === 'web') return 'results';
+  return 'ai';
+}
+
 function getStoredSearchMode() {
   try {
-    const mode = localStorage.getItem(SEARCH_MODE_STORAGE_KEY);
-    return mode === 'results' ? 'results' : mode === 'ai' ? 'ai' : null;
+    return normalizeSearchMode(localStorage.getItem(SEARCH_MODE_STORAGE_KEY));
   } catch (_) {
     return null;
   }
@@ -20,7 +28,7 @@ function getStoredSearchMode() {
 
 function storeSearchMode(mode) {
   try {
-    localStorage.setItem(SEARCH_MODE_STORAGE_KEY, mode === 'results' ? 'results' : 'ai');
+    localStorage.setItem(SEARCH_MODE_STORAGE_KEY, normalizeSearchMode(mode));
   } catch (_) {
     /* ignore */
   }
@@ -91,7 +99,7 @@ function buildSharePageUrl(query) {
 }
 
 function getSearchMode(form = document.getElementById('ai-search-form')) {
-  return form?.dataset.searchMode === 'results' ? 'results' : 'ai';
+  return normalizeSearchMode(form?.dataset.searchMode);
 }
 
 function syncSearchQueryToUrl(query, mode = getSearchMode()) {
@@ -102,10 +110,11 @@ function syncSearchQueryToUrl(query, mode = getSearchMode()) {
     } else {
       url.searchParams.delete('q');
     }
-    if (mode === 'results') {
-      url.searchParams.set('mode', 'results');
-    } else {
+    const m = normalizeSearchMode(mode);
+    if (m === 'ai') {
       url.searchParams.delete('mode');
+    } else {
+      url.searchParams.set('mode', m);
     }
     // Только same-origin: нельзя replaceState на vk.com с serpmonn.ru (ломает поиск в mini app)
     const next = `${url.pathname}${url.search}${url.hash}`;
@@ -125,6 +134,7 @@ export {
   RESULTS_SAFESEARCH_KEY,
   getStoredSearchMode,
   storeSearchMode,
+  normalizeSearchMode,
   getResultsTimeRange,
   getResultsSafesearch,
   persistResultsFilters,

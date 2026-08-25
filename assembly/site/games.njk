@@ -134,6 +134,8 @@ eleventyComputed:
                                 <span class="game-logo-inline game-logo-inline--svg">{{ webGameIcon(game.link, 'cat') }}</span>
                                 {% elif game.image %}
                                 <img class="game-logo-inline" src="{{ game.image }}" alt="{{ game.name }}" loading="lazy">
+                                {% elif game.download %}
+                                <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon('apk', 'cat') }}</span>
                                 {% else %}
                                 <span class="game-logo-inline game-logo-inline--svg">{{ toolIcon('games', 'cat') }}</span>
                                 {% endif %}
@@ -162,6 +164,7 @@ eleventyComputed:
 
                             <a class="btn"
                                href="{{ game.link }}"
+                               {% if game.download %}download{% if game.downloadName %}="{{ game.downloadName }}"{% endif %}{% endif %}
                                {% if game.external %}target="_blank" rel="noopener"{% endif %}
                                itemprop="url">
                                 {{ game.buttonText }}
@@ -175,7 +178,8 @@ eleventyComputed:
                         </div>
                     </div>
                       {% endfor %}
-                    {% elif platform.placeholders and platform.placeholders | length %}
+                    {% endif %}
+                    {% if platform.placeholders and platform.placeholders | length %}
                       {% for ph in platform.placeholders %}
                     <div class="card card--soon" role="row">
                         <h2>
@@ -185,7 +189,7 @@ eleventyComputed:
                         <p>{{ ph.description | default(localesGames[locale].games.soonLabel) }}</p>
                     </div>
                       {% endfor %}
-                    {% else %}
+                    {% elif not (platform.games and platform.games | length) %}
                     <p class="platform-empty">{{ localesGames[locale].games.emptyPlatform }}</p>
                     {% endif %}
                 </div>

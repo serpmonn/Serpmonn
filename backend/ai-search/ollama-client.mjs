@@ -98,8 +98,9 @@ function buildOllamaMessages(query, webContext, attachment = null, options = {})
   const hasWebHits = options.hasWebHits === true;
 
   let systemBase =
-    'You are Serpmonn search assistant. ' +
-    'Reply only in the same language as the user question. ' +
+    'You are Serpmonn AI search assistant (serpmonn.ru). ' +
+    `CRITICAL: Reply ONLY in ${inferUserLanguageName(query, options.locale)}. Do not switch languages. ` +
+    'Never claim you were made by Google, Gemma, Microsoft, OpenAI or others — you are Serpmonn AI. ' +
     'Reply in 1-2 short sentences. ' +
     'Use facts only, without introductions. ';
 
@@ -296,8 +297,8 @@ async function streamOllama(model, query, webContext, onToken, attachment = null
 }
 
 async function getAiAnswerFromLocalModels(query, webContext, options = {}) {
-  const { onToken, attachment = null, fileOnly = false, hasWebHits = false } = options;
-  const modelOptions = { fileOnly, hasWebHits };
+  const { onToken, attachment = null, fileOnly = false, hasWebHits = false, locale = 'ru' } = options;
+  const modelOptions = { fileOnly, hasWebHits, locale };
 
   try {
     if (onToken) {
@@ -371,6 +372,180 @@ async function warmupSearchModel() {
   }
 }
 
+const CHAT_HISTORY_MAX = 20;
+const CHAT_CONTENT_MAX = 4000;
+
+function inferUserLanguageName(text, locale) {
+  const t = String(text || '');
+  const cyr = (t.match(/[а-яёА-ЯЁ]/g) || []).length;
+  const lat = (t.match(/[a-zA-Z]/g) || []).length;
+  if (cyr >= 2 && cyr >= lat) return 'Russian';
+  if (lat >= 2 && lat > cyr) return 'English';
+  const loc = String(locale || 'ru').slice(0, 2).toLowerCase();
+  if (loc === 'ru') return 'Russian';
+  if (loc === 'en') return 'English';
+  return 'the same language as the user message';
+}
+
+function isAssistantIdentityQuestion(text) {
+  const t = String(text || '').trim();
+  if (!t || t.length > 200) return false;
+  return (
+    /^(?:а\s+)?(?:ну\s+)?(?:скажи|ответь)?\s*(?:мне\s+)?(?:пожалуйста\s+)?(?:кто\s+ты|кто\s+ты\s+такой|представься|как\s+тебя\s+зовут)\s*[?.!]*$/i.test(
+      t
+    ) ||
+    /кто\s+тебя\s+(?:сделал|создал|разработал|обучил|написал|выпустил)/i.test(t) ||
+    /(?:кто\s+разработчик|кто\s+твой\s+создатель|кто\s+вас\s+сделал)/i.test(t) ||
+    /^(?:who\s+are\s+you|what(?:'s|\s+is)\s+your\s+name)\s*[?.!]*$/i.test(t) ||
+    /who\s+(?:made|created|developed|built|trained)\s+you/i.test(t) ||
+    /(?:who\s+is\s+your\s+(?:creator|developer|maker)|which\s+company\s+(?:made|created)\s+you)/i.test(t)
+  );
+}
+
+function cannedIdentityAnswer(langName) {
+  const lang = String(langName || '').toLowerCase();
+  if (lang.startsWith('english')) {
+    return "I'm Serpmonn AI — the AI assistant of the Serpmonn service (serpmonn.ru).";
+  }
+  return 'Я Serpmonn AI — ИИ-ассистент сервиса Serpmonn. Меня предоставляет Serpmonn (serpmonn.ru).';
+}
+
+function buildChatSystemPrompt(langName) {
+  return (
+    'You are Serpmonn AI — the AI assistant of the Serpmonn service (serpmonn.ru). ' +
+    `CRITICAL: Reply ONLY in ${langName}. Do not switch languages. ` +
+    'IDENTITY (never break): Your only name is Serpmonn AI / Serpmonn. ' +
+    'Your only operator is Serpmonn. ' +
+    'NEVER say you were created, developed, trained, or released by Google, Gemma, Gemini, Microsoft, OpenAI, Meta, Anthropic, or any other company. ' +
+    'NEVER call yourself Gemma, Gemini, GPT, Copilot, Claude, Phi, or Llama. ' +
+    'If asked who you are: «Я Serpmonn AI — ИИ-ассистент сервиса Serpmonn.» (or the same in the user language). ' +
+    'If asked who made you: «Меня предоставляет сервис Serpmonn.» (or the same in the user language). ' +
+    'Be helpful, clear, and concise. ' +
+    'You can chat, explain, write, and brainstorm. ' +
+    'You cannot browse the live web in this mode — say so if the user needs current news or live data. ' +
+    'You cannot generate images in this chat mode — if the user asks to draw/generate an image, say they should ask with words like «нарисуй…».'
+  );
+}
+
+/** Soft rewrite when the base model leaks Google/Gemma identity. */
+function sanitizeAssistantIdentity(text) {
+  let out = String(text || '').trim();
+  if (!out) return out;
+
+  const hasForeignMaker =
+    /\b(?:google(?:\s+deepmind)?|gemma|gemini|openai|microsoft|anthropic|meta\s+ai|deepmind)\b/i.test(
+      out
+    );
+  if (!hasForeignMaker) return out;
+
+  const preferRu = /[а-яё]/i.test(out);
+  const ruSelf = 'Я Serpmonn AI — ИИ-ассистент сервиса Serpmonn.';
+  const enSelf = "I'm Serpmonn AI — the AI assistant of the Serpmonn service.";
+  const ruMade = 'Меня предоставляет сервис Serpmonn.';
+  const enMade = 'I am provided by the Serpmonn service.';
+
+  const identityAsk =
+    /(?:кто\s+(?:ты|тебя)|кто\s+разработ|кто\s+создал|who\s+(?:are|made|created|developed|built)\s+you|your\s+(?:creator|developer|maker)|разработал[аи]?|создал[аи]?|обучил[аи]?|developed|created|trained|built\s+by)/i.test(
+      out
+    ) ||
+    /(?:я\s+(?:был[аи]?\s+)?(?:разработан|создан|обучен)|i\s+(?:was\s+)?(?:developed|created|trained|built)|i(?:'m| am)\s+(?:a\s+)?(?:model|ai|assistant)|меня\s+(?:разработал|создал|обучал)|my\s+name\s+is|я\s+(?:—|-)\s*)/i.test(
+      out
+    );
+
+  // Short identity answers that mention foreign makers → replace wholesale.
+  if (identityAsk || out.length < 320) {
+    if (
+      /(?:разработан|создан|обучен|developed|created|trained|built|made|from|by|командой|компани)/i.test(
+        out
+      )
+    ) {
+      return preferRu ? ruMade : enMade;
+    }
+    if (/\b(?:gemma|gemini)\b/i.test(out) && /(?:я|i(?:'m| am)|ассистент|assistant|model)/i.test(out)) {
+      return preferRu ? ruSelf : enSelf;
+    }
+  }
+
+  out = out
+    .replace(/\bgoogle(?:\s+deepmind)?\b/gi, 'Serpmonn')
+    .replace(/\bgemma(?:\s*\d+(?:\.\d+)?)?\b/gi, 'Serpmonn AI')
+    .replace(/\bgemini\b/gi, 'Serpmonn AI')
+    .replace(/\bopenai\b/gi, 'Serpmonn')
+    .replace(/\banthropic\b/gi, 'Serpmonn');
+
+  // If after rewrite it still reads as a foreign-origin claim, fall back.
+  if (/\b(?:deepmind|gemma|gemini)\b/i.test(out)) {
+    return preferRu ? ruMade : enMade;
+  }
+
+  return out.trim();
+}
+
+function buildChatMessages(history, options = {}) {
+  const cleaned = [];
+  const list = Array.isArray(history) ? history : [];
+  for (const item of list.slice(-CHAT_HISTORY_MAX)) {
+    const role = item?.role === 'assistant' ? 'assistant' : item?.role === 'user' ? 'user' : null;
+    const content = String(item?.content || '').trim().slice(0, CHAT_CONTENT_MAX);
+    if (!role || !content) continue;
+    cleaned.push({ role, content });
+  }
+  if (!cleaned.length || cleaned[cleaned.length - 1].role !== 'user') {
+    return null;
+  }
+  const lastUser = cleaned[cleaned.length - 1].content;
+  const langName = inferUserLanguageName(lastUser, options.locale);
+  return [{ role: 'system', content: buildChatSystemPrompt(langName) }, ...cleaned];
+}
+
+async function callOllamaChat(messages) {
+  const list = Array.isArray(messages) ? messages : [];
+  const lastUser = [...list].reverse().find((m) => m?.role === 'user');
+  const lastUserText = String(lastUser?.content || '');
+  if (isAssistantIdentityQuestion(lastUserText)) {
+    const sys = list.find((m) => m?.role === 'system');
+    const langFromSys = /Reply ONLY in ([^.]+)\./i.exec(String(sys?.content || ''))?.[1];
+    const langName = langFromSys || inferUserLanguageName(lastUserText, 'ru');
+    return cannedIdentityAnswer(langName);
+  }
+
+  const body = {
+    model: OLLAMA_FAST_MODEL,
+    messages,
+    stream: false,
+    keep_alive: OLLAMA_KEEP_ALIVE,
+    options: {
+      temperature: 0.7,
+      num_predict: 512,
+      top_k: 40,
+      top_p: 0.9,
+      num_ctx: 4096,
+    },
+  };
+
+  const res = await fetch(OLLAMA_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body),
+  });
+
+  const raw = await res.text();
+  if (!res.ok) {
+    throw new Error(`Ollama HTTP ${res.status}`);
+  }
+
+  let data;
+  try {
+    data = JSON.parse(raw);
+  } catch {
+    throw new Error('Ollama JSON parse error');
+  }
+
+  const answer = data.message?.content || data.choices?.[0]?.message?.content || '';
+  if (!answer) throw new Error('Ollama empty content');
+  return sanitizeAssistantIdentity(answer.trim());
+}
+
 export {
   OLLAMA_URL,
   OLLAMA_MAIN_MODEL,
@@ -386,4 +561,6 @@ export {
   streamOllama,
   getAiAnswerFromLocalModels,
   warmupSearchModel,
+  buildChatMessages,
+  callOllamaChat,
 };

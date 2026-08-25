@@ -134,6 +134,7 @@ async function runTextTask(q, t, responsePayload, emit, attachment = null, safes
       attachment,
       fileOnly,
       hasWebHits: sources.length > 0,
+      locale: getBackendMessages(req).locale || 'ru',
       onToken: emit
         ? (chunk) => emit({ event: 'text_delta', chunk })
         : null,

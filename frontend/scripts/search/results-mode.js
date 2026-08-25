@@ -14,7 +14,8 @@ import {
   syncSearchQueryToUrl,
   getResultsTimeRange,
   getResultsSafesearch,
-  persistResultsFilters
+  persistResultsFilters,
+  normalizeSearchMode
 } from './mode-filters.js';
 import {
   peekPromoIntent,
@@ -36,9 +37,10 @@ import { isQuotaError, quotaNoticeHtml } from './quota-result.js';
 function setSearchMode(mode) {
   const form = document.getElementById('ai-search-form');
   if (!form) return;
-  const next = mode === 'results' ? 'results' : 'ai';
+  const next = normalizeSearchMode(mode);
   form.dataset.searchMode = next;
   form.classList.toggle('is-results-mode', next === 'results');
+  form.classList.remove('is-chat-mode', 'is-image-mode');
   storeSearchMode(next);
   syncSearchQueryToUrl(
     form.querySelector('input[name="q"]')?.value?.trim() || getQueryFromUrl() || '',
@@ -46,7 +48,7 @@ function setSearchMode(mode) {
   );
 
   form.querySelectorAll('.search-mode-btn').forEach((btn) => {
-    const active = btn.dataset.searchMode === next;
+    const active = normalizeSearchMode(btn.dataset.searchMode) === next;
     btn.classList.toggle('is-active', active);
     btn.setAttribute('aria-pressed', active ? 'true' : 'false');
   });
@@ -57,17 +59,22 @@ function setSearchMode(mode) {
   const container = document.getElementById('ai-result-container');
   const searchInput = form.querySelector('input[name="q"]');
   const messages = getMessages();
+  const resultContent = document.getElementById('ai-result-content');
 
   if (container) {
     container.classList.toggle('is-results-mode', next === 'results');
+    container.classList.remove('is-chat-mode', 'is-image-mode');
   }
 
   if (filters) {
     filters.hidden = next !== 'results';
   }
 
+  if (resultContent) {
+    resultContent.hidden = false;
+  }
+
   if (next === 'results') {
-    // Вкладки только после выдачи результатов — не показываем заранее
     if (footer) footer.style.display = 'none';
     if (searchInput) {
       searchInput.placeholder =
@@ -75,7 +82,6 @@ function setSearchMode(mode) {
         messages.askResults ||
         messages.askAnything ||
         '';
-      // Без скрепки показываем запрос с начала строки
       requestAnimationFrame(() => {
         searchInput.scrollLeft = 0;
       });

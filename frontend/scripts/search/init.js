@@ -13,7 +13,8 @@ import {
   getModeFromUrl,
   getStoredSearchMode,
   getSearchMode,
-  syncSearchQueryToUrl
+  syncSearchQueryToUrl,
+  normalizeSearchMode
 } from './mode-filters.js';
 import { prefetchPromoIntent } from './promo-intent.js';
 import {
@@ -31,12 +32,15 @@ import {
   consumeAiSearchStream,
   createStreamState,
   handleAiSearchStreamEvent,
-  showSearchTimings
+  showSearchTimings,
+  setResultActionsVisible
 } from './ai-search.js';
 import {
   showResult,
   showImageResults,
-  showVideoResults
+  showVideoResults,
+  isQuotaError,
+  quotaNoticeHtml
 } from './quota-result.js';
 import {
   setSearchMode,
@@ -45,6 +49,15 @@ import {
   runResultsSearch,
   renderResultsMode
 } from './results-mode.js';
+import {
+  getChatHistory,
+  resetChatHistory,
+  renderChatThread,
+  runAiChat,
+  runAiImage,
+  renderAiImageResult
+} from './ai-assist.js';
+import { detectAiIntent } from './ai-intent.js';
 
 function initAdObserver() {
   initAdSlotObserver();
@@ -109,7 +122,7 @@ async function initPage() {
     modeButtons.forEach((btn) => {
       btn.addEventListener('click', () => {
         if (isSubmitting) return;
-        const mode = btn.dataset.searchMode === 'results' ? 'results' : 'ai';
+        const mode = normalizeSearchMode(btn.dataset.searchMode);
         const prev = getSearchMode(searchForm);
         if (mode === prev) return;
         setSearchMode(mode);
@@ -230,7 +243,9 @@ async function initPage() {
       setSubmitLoading(true);
       prefetchPromoIntent(query);
 
-      if (getSearchMode(searchForm) === 'results') {
+      const activeMode = getSearchMode(searchForm);
+
+      if (activeMode === 'results') {
         try {
           await runResultsSearch(query, searchState.currentResultsCategory || 'general');
         } catch (error) {
@@ -253,14 +268,104 @@ async function initPage() {
         return;
       }
 
+      // Режим ИИ: картинка / чат / поиск — по intent
+      const intent = detectAiIntent(query, {
+        hasChatHistory: getChatHistory().length > 0
+      });
+      const contentDiv = document.getElementById('ai-result-content');
+      const container = document.getElementById('ai-result-container');
+      if (container) {
+        container.style.display = 'block';
+        container.dataset.aiIntent = intent;
+        container.classList.toggle('is-ai-image-intent', intent === 'image');
+        container.classList.toggle('is-ai-chat-intent', intent === 'chat');
+        container.classList.toggle('is-ai-search-intent', intent === 'search');
+      }
+      const resultsTabs = document.getElementById('results-tabs');
+      if (resultsTabs) resultsTabs.hidden = true;
+
+      // Чат и картинка: никогда не показываем галерею «найденных» фото/видео
+      if (intent === 'chat' || intent === 'image') {
+        hideMediaResults('images');
+        hideMediaResults('videos');
+      }
+
+      if (intent === 'chat') {
+        setResultActionsVisible(false);
+        const footer = document.querySelector('.ai-result-footer');
+        if (footer) footer.style.display = 'none';
+        try {
+          await runAiChat(query, {
+            onRender: (msgs, opts) => renderChatThread(contentDiv, msgs, opts)
+          });
+          if (searchInput) searchInput.value = '';
+        } catch (error) {
+          console.error('[AI] ❌ Ошибка при запросе к /ai-chat:', error);
+          if (error?.quota && isQuotaError(error.quota)) {
+            if (contentDiv) {
+              contentDiv.innerHTML = quotaNoticeHtml(error.quota, getMessages(), { meter: 'ai' });
+            }
+          } else if (contentDiv) {
+            renderChatThread(contentDiv, getChatHistory());
+            const err = document.createElement('p');
+            err.className = 'ai-chat-error';
+            err.textContent = error?.message || getMessages().networkError || '';
+            contentDiv.appendChild(err);
+          }
+        } finally {
+          hideMediaResults('images');
+          hideMediaResults('videos');
+          isSubmitting = false;
+          setSubmitLoading(false);
+          if (searchInput) {
+            searchInput.placeholder =
+              searchForm.dataset.placeholderAi || getMessages().askAnything;
+            searchInput.focus();
+          }
+        }
+        return;
+      }
+
+      if (intent === 'image') {
+        setResultActionsVisible(false);
+        const footer = document.querySelector('.ai-result-footer');
+        if (footer) footer.style.display = 'none';
+        const msgs = getMessages();
+        if (contentDiv) {
+          contentDiv.innerHTML = `<p class="ai-image-loading">${msgs.generatingImage || msgs.loading || '…'}</p>`;
+        }
+        try {
+          const data = await runAiImage(query);
+          renderAiImageResult(contentDiv, data);
+        } catch (error) {
+          console.error('[AI] ❌ Ошибка при запросе к /ai-image:', error);
+          if (error?.quota && isQuotaError(error.quota)) {
+            renderAiImageResult(contentDiv, error.quota);
+          } else if (contentDiv) {
+            contentDiv.innerHTML = `<p class="ai-image-error">${error?.message || msgs.networkError || ''}</p>`;
+          }
+        } finally {
+          hideMediaResults('images');
+          hideMediaResults('videos');
+          isSubmitting = false;
+          setSubmitLoading(false);
+          if (searchInput) {
+            searchInput.placeholder =
+              searchForm.dataset.placeholderAi || getMessages().askAnything;
+          }
+        }
+        return;
+      }
+
+      // Поиск с источниками — сбрасываем чат-контекст
+      resetChatHistory();
+
       showLoading();
 
-      const container = document.getElementById('ai-result-container');
       if (container) {
         container.style.display = 'block';
       }
 
-      const resultsTabs = document.getElementById('results-tabs');
       if (resultsTabs) resultsTabs.hidden = true;
       const resultsFooter = document.querySelector('.ai-result-footer');
       if (resultsFooter) resultsFooter.style.display = '';

@@ -9,6 +9,14 @@ import {
   checkAndIncrementAiUsage,
   checkAndIncrementAiProMonthly,
 } from './ai-usage-store.mjs';
+import {
+  IMAGE_GUEST_DAILY_LIMIT,
+  IMAGE_USER_DAILY_LIMIT,
+  checkAndIncrementImageUsage,
+  checkAndIncrementImageProMonthly,
+  refundImageUsage,
+  refundImageProMonthly,
+} from './ai-image-usage-store.mjs';
 
 const GUEST_DAILY_LIMIT = AI_GUEST_DAILY_LIMIT;
 const USER_DAILY_LIMIT = AI_USER_DAILY_LIMIT;
@@ -166,11 +174,79 @@ async function enforceWebSearchLimit(req, identity, t) {
   return { ok: true, usage };
 }
 
+async function enforceImageLimit(req, identity, t) {
+  if (identity.type === 'guest') {
+    const usage = await checkAndIncrementImageUsage(identity, IMAGE_GUEST_DAILY_LIMIT);
+    if (!usage.ok) {
+      return {
+        ok: false,
+        status: 403,
+        payload: {
+          error: t.guestLimit || t.imageLimit || 'Daily image limit reached',
+          needAuth: true,
+          limit: usage.limit,
+          used: usage.used,
+        },
+      };
+    }
+    return { ok: true, usage };
+  }
+
+  if (identity.type === 'user') {
+    const userId = req.user.id;
+    const planInfo = await getUserPlan(userId);
+    const now = new Date();
+    const isProActive =
+      planInfo.plan === 'pro' &&
+      planInfo.proUntil &&
+      new Date(planInfo.proUntil) > now;
+
+    if (isProActive) {
+      const proUsage = await checkAndIncrementImageProMonthly(userId);
+      if (!proUsage.ok) {
+        return {
+          ok: false,
+          status: 403,
+          payload: {
+            error: t.proLimit || t.imageLimit || 'Monthly image limit reached',
+            needAuth: false,
+            limit: proUsage.limit,
+            used: proUsage.used,
+          },
+        };
+      }
+      return { ok: true, usage: proUsage, plan: 'pro' };
+    }
+
+    const usage = await checkAndIncrementImageUsage(identity, IMAGE_USER_DAILY_LIMIT);
+    if (!usage.ok) {
+      return {
+        ok: false,
+        status: 403,
+        payload: {
+          error: t.freeLimit || t.imageLimit || 'Daily image limit reached',
+          needAuth: false,
+          limit: usage.limit,
+          used: usage.used,
+        },
+      };
+    }
+    return { ok: true, usage, plan: 'free' };
+  }
+
+  return { ok: true };
+}
+
 export {
   GUEST_DAILY_LIMIT,
   USER_DAILY_LIMIT,
+  IMAGE_GUEST_DAILY_LIMIT,
+  IMAGE_USER_DAILY_LIMIT,
   getUserPlan,
   checkAndIncrementUsage,
   enforceLogicalSearchLimit,
   enforceWebSearchLimit,
+  enforceImageLimit,
+  refundImageUsage,
+  refundImageProMonthly,
 };
