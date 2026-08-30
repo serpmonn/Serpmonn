@@ -261,11 +261,15 @@ function setLocale(next, { persist = true, reloadContent = true } = {}) {
   } catch (_) {}
   applyChromeI18n();
   if (reloadContent) {
+    try { clearViewerHtmlCache(); } catch (_) {}
     newsLoaded = false;
     if (document.querySelector('.spn-screen.is-active[data-screen="news"]')) {
       loadNews();
     }
-    if (catalogLoaded) renderCatalog();
+    if (catalogLoaded) {
+      renderCatalog();
+      scheduleViewerPrefetchFromCatalog();
+    }
     // Always invalidate profile iframe; reload immediately if user panel is open
     try {
       profileLocaleApplied = null;
@@ -910,6 +914,133 @@ function reloadAuthViewerForLocale() {
   openAppAuth(t('login'));
 }
 
+/** In-memory HTML cache for static viewer pages (games, KB, tools). */
+const viewerHtmlCache = new Map();
+const VIEWER_CACHE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+const VIEWER_CACHE_MAX = 48;
+let viewerPrefetchStarted = false;
+
+function viewerCacheKey(href) {
+  try {
+    const u = new URL(href, location.origin);
+    return u.pathname + u.search;
+  } catch (_) {
+    return String(href || '');
+  }
+}
+
+function isViewerCacheable(href) {
+  // Personalized / auth pages must always be fresh
+  return !/\/(auth|profile|mail|findings)\//i.test(String(href || ''));
+}
+
+function clearViewerHtmlCache() {
+  viewerHtmlCache.clear();
+  viewerPrefetchStarted = false;
+}
+
+function rememberViewerHtml(key, html) {
+  viewerHtmlCache.set(key, { html, at: Date.now() });
+  if (viewerHtmlCache.size <= VIEWER_CACHE_MAX) return;
+  let oldestKey = null;
+  let oldestAt = Infinity;
+  for (const [k, v] of viewerHtmlCache) {
+    if (v.at < oldestAt) {
+      oldestAt = v.at;
+      oldestKey = k;
+    }
+  }
+  if (oldestKey) viewerHtmlCache.delete(oldestKey);
+}
+
+async function fetchViewerRawHtml(href) {
+  const key = viewerCacheKey(href);
+  if (isViewerCacheable(href)) {
+    const hit = viewerHtmlCache.get(key);
+    if (hit && Date.now() - hit.at < VIEWER_CACHE_TTL_MS) return hit.html;
+  }
+  const abs = new URL(href, location.origin);
+  const res = await fetch(abs.pathname + abs.search, {
+    credentials: 'include',
+    cache: isViewerCacheable(href) ? 'force-cache' : 'no-cache',
+  });
+  if (!res.ok) throw new Error('viewer ' + res.status);
+  const html = await res.text();
+  if (isViewerCacheable(href)) rememberViewerHtml(key, html);
+  return html;
+}
+
+function wrapViewerHtml(href, html, { withGameLock = false } = {}) {
+  const abs = new URL(href, location.origin);
+  const baseHref = abs.origin + abs.pathname.replace(/[^/]*$/, '');
+  const gameLock = withGameLock && isGameUrl(href) ? ANDROID_GAME_LOCK_SCRIPT : '';
+  const early =
+    `<base href="${baseHref}">` +
+    `<style id="spn-android-app-css">${VIEWER_HIDE_MENU_CSS}</style>` +
+    ANDROID_BOOT_SCRIPT +
+    gameLock;
+  if (/<head[^>]*>/i.test(html)) {
+    return html.replace(/<head([^>]*)>/i, `<head$1>${early}`);
+  }
+  return `<!DOCTYPE html><html class="android-app"><head>${early}</head><body class="android-app">${html}</body></html>`;
+}
+
+function warmSharedViewerAssets() {
+  const assets = [
+    '/frontend/styles/styles.css',
+    '/frontend/styles/base.css',
+    '/frontend/styles/menu.css',
+    '/frontend/styles/accessibility.css',
+    '/frontend/scripts/backgroundGenerator.js',
+  ];
+  for (const href of assets) {
+    try {
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.as = href.endsWith('.js') ? 'script' : 'style';
+      link.href = href;
+      document.head.appendChild(link);
+    } catch (_) {}
+  }
+}
+
+async function prefetchViewerUrl(url) {
+  try {
+    const href = withAppParam(localizeFrontendPath(url));
+    if (!isViewerCacheable(href)) return;
+    await fetchViewerRawHtml(href);
+  } catch (_) {}
+}
+
+function scheduleViewerPrefetchFromCatalog() {
+  if (viewerPrefetchStarted || !catalogLoaded) return;
+  viewerPrefetchStarted = true;
+  const urls = [];
+  const kb = catalog?.links?.knowledgeBase || KB_URL;
+  if (kb) urls.push(kb);
+  for (const g of catalog.gamesOwn || []) {
+    if (g?.href) urls.push(g.href);
+  }
+  for (const tool of catalog.tools || []) {
+    if (tool?.href) urls.push(tool.href);
+  }
+  const run = () => {
+    warmSharedViewerAssets();
+    let i = 0;
+    const next = () => {
+      if (i >= urls.length) return;
+      const u = urls[i++];
+      prefetchViewerUrl(u).finally(() => setTimeout(next, 120));
+    };
+    next();
+  };
+  if (typeof requestIdleCallback === 'function') {
+    requestIdleCallback(run, { timeout: 3500 });
+  } else {
+    setTimeout(run, 900);
+  }
+}
+
 function openViewer(url, title) {
   const localizedUrl = localizeFrontendPath(url);
   // Лента / входящие — только в подложке профиля, не viewer-popup
@@ -950,28 +1081,9 @@ async function loadViewerHtml(href) {
   const token = ++viewerBootToken;
   viewerFrame.classList.add('is-booting');
   try {
-    const abs = new URL(href, location.origin);
-    const res = await fetch(abs.pathname + abs.search, {
-      credentials: 'include',
-      cache: 'no-cache',
-    });
-    if (!res.ok) throw new Error('viewer ' + res.status);
-    let html = await res.text();
+    const raw = await fetchViewerRawHtml(href);
     if (token !== viewerBootToken) return;
-
-    const baseHref = abs.origin + abs.pathname.replace(/[^/]*$/, '');
-    const gameLock = isGameUrl(href) ? ANDROID_GAME_LOCK_SCRIPT : '';
-    const early =
-      `<base href="${baseHref}">` +
-      `<style id="spn-android-app-css">${VIEWER_HIDE_MENU_CSS}</style>` +
-      ANDROID_BOOT_SCRIPT +
-      gameLock;
-    if (/<head[^>]*>/i.test(html)) {
-      html = html.replace(/<head([^>]*)>/i, `<head$1>${early}`);
-    } else {
-      html = `<!DOCTYPE html><html class="android-app"><head>${early}</head><body class="android-app">${html}</body></html>`;
-    }
-
+    const html = wrapViewerHtml(href, raw, { withGameLock: true });
     try { viewerFrame.removeAttribute('src'); } catch (_) {}
     viewerFrame.srcdoc = html;
   } catch (err) {
@@ -2117,6 +2229,7 @@ async function loadCatalog() {
     catalog = { tools: [], gamesOwn: [], gamesPartner: [] };
   }
   renderCatalog();
+  scheduleViewerPrefetchFromCatalog();
 }
 
 function catalogToolLabel(item) {
@@ -2390,24 +2503,8 @@ async function loadProfileEmbed() {
 
 /** Загрузка HTML во iframe (как viewer), без открытия #viewer */
 async function loadViewerHtmlInto(frame, href) {
-  const abs = new URL(href, location.origin);
-  const res = await fetch(abs.pathname + abs.search, {
-    credentials: 'include',
-    cache: 'no-cache',
-  });
-  if (!res.ok) throw new Error('embed ' + res.status);
-  let html = await res.text();
-  const baseHref = abs.origin + abs.pathname.replace(/[^/]*$/, '');
-  const early =
-    `<base href="${baseHref}">` +
-    `<style id="spn-android-app-css">${VIEWER_HIDE_MENU_CSS}</style>` +
-    ANDROID_BOOT_SCRIPT;
+  let html = wrapViewerHtml(href, await fetchViewerRawHtml(href), { withGameLock: false });
   const late = `<style id="spn-android-app-css-late">${VIEWER_HIDE_MENU_CSS}</style>`;
-  if (/<head[^>]*>/i.test(html)) {
-    html = html.replace(/<head([^>]*)>/i, `<head$1>${early}`);
-  } else {
-    html = `<!DOCTYPE html><html class="android-app"><head>${early}</head><body class="android-app">${html}</body></html>`;
-  }
   if (/<\/body>/i.test(html)) {
     html = html.replace(/<\/body>/i, `${late}</body>`);
   } else {
