@@ -3,6 +3,8 @@
  * Pair with backend allowlist CSRF middleware (X-CSRF-Token).
  */
 
+import { apiUrl } from './app-api.js';
+
 let cachedToken = '';
 let cachedAt = 0;
 const TTL_MS = 10 * 60 * 1000;
@@ -13,7 +15,7 @@ export async function getCsrfToken({ force = false } = {}) {
     return cachedToken;
   }
 
-  const res = await fetch('/csrf-token', { credentials: 'include' });
+  const res = await fetch(apiUrl('/csrf-token'), { credentials: 'include' });
   if (!res.ok) {
     throw new Error('csrf_token_failed');
   }

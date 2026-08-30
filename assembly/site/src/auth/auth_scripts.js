@@ -1,8 +1,30 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
-import { getFrontendPath, sanitizeReturnPath, safeAssignLocation } from '../scripts/locale-paths.js';
+import { getFrontendPath, sanitizeReturnPath, safeAssignLocation, getCurrentLocale } from '../scripts/locale-paths.js';
 import { getPageT } from '../scripts/i18n-loader.js';
 
 const t = await getPageT('auth');
+
+/** VK OneTap button language (defaults to RUS in SDK if omitted). */
+function resolveVkIdLang(VKID) {
+  const raw = (document.documentElement.lang || getCurrentLocale() || 'ru').trim().toLowerCase();
+  const loc = raw.split('-')[0];
+  const L = VKID.Languages || {};
+  const map = {
+    ru: L.RUS,
+    uk: L.UKR,
+    en: L.ENG,
+    es: L.SPA,
+    de: L.GERMAN,
+    pl: L.POL,
+    fr: L.FRA,
+    uz: L.UZB,
+    tr: L.TURKEY,
+    kk: L.KAZ,
+    be: L.BEL,
+  };
+  if (map[loc] !== undefined && map[loc] !== null) return map[loc];
+  return loc === 'ru' ? (L.RUS ?? 0) : (L.ENG ?? 3);
+}
 
 function escapeHtml(str) {
   return String(str || '')
@@ -92,6 +114,16 @@ function showMessage(text, type = 'error') {
   messageEl.style.color = type === 'success' ? 'green' : type === 'info' ? '#333' : 'red';
 }
 
+async function readJsonResponse(response) {
+  const text = await response.text();
+  if (!text) return {};
+  try {
+    return JSON.parse(text);
+  } catch {
+    return null;
+  }
+}
+
 function activateTab(tab) {
   document.querySelectorAll('.auth-tab').forEach((btn) => {
     const isActive = btn.dataset.tab === tab;
@@ -146,8 +178,11 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
       credentials: 'include'
     });
 
-    const text = await response.text();
-    const data = text ? JSON.parse(text) : {};
+    const data = await readJsonResponse(response);
+    if (data === null) {
+      showMessage(t('login.connectionError'));
+      return;
+    }
 
     if (!response.ok) {
       if (response.status === 429) {
@@ -194,8 +229,11 @@ document.getElementById('registerForm').addEventListener('submit', async (event)
       })
     });
 
-    const text = await response.text();
-    const data = text ? JSON.parse(text) : {};
+    const data = await readJsonResponse(response);
+    if (data === null) {
+      showMessage(t('register.serverError'));
+      return;
+    }
 
     if (!response.ok) {
       if (response.status === 429) {
@@ -249,6 +287,7 @@ function initVkIdOneTap() {
       .render({
         container,
         showAlternativeLogin: true,
+        lang: resolveVkIdLang(VKID),
         styles: {
           borderRadius: 8,
           width: 280,

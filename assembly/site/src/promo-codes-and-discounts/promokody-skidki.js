@@ -1123,6 +1123,13 @@ function copyToClipboard(promo, btn) {
     const onSuccess = async () => {
         showToast(t('promo.codeCopied'), 'success');
 
+        if (window.ym) {
+            window.ym(98158791, 'reachGoal', 'promo_code_copy', {
+                promocode: text,
+                promo_id: promo.id || null
+            });
+        }
+
         if (btn) {
             const originalText = btn.textContent;
             btn.textContent = t('promo.copied');

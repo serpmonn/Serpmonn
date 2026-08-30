@@ -88,7 +88,7 @@ function createEmptyResponsePayload(q, mode) {
   };
 }
 
-async function runTextTask(q, t, responsePayload, emit, attachment = null, safesearch = 2) {
+async function runTextTask(q, t, responsePayload, emit, attachment = null, safesearch = 2, locale = 'ru') {
   const hasAttachment = Boolean(attachment?.text);
   const searchMode = hasAttachment ? resolveAttachmentSearchMode(q) : { fileOnly: false, reason: 'no_attachment' };
   const fileOnly = hasAttachment && searchMode.fileOnly;
@@ -134,12 +134,13 @@ async function runTextTask(q, t, responsePayload, emit, attachment = null, safes
       attachment,
       fileOnly,
       hasWebHits: sources.length > 0,
-      locale: getBackendMessages(req).locale || 'ru',
+      locale: locale || 'ru',
       onToken: emit
         ? (chunk) => emit({ event: 'text_delta', chunk })
         : null,
     });
   } catch (e) {
+    console.error('[AI] runTextTask model failure:', e?.message || e);
     const publicError = new Error(t.aiUnavailable);
     publicError.isPublic = true;
     publicError.status = 502;
@@ -226,13 +227,14 @@ async function executeSearchTasks({
   emit,
   attachment = null,
   safesearch = 2,
+  locale = 'ru',
 }) {
   const tasks = [];
   const branchTimings = {};
 
   if (wantText) {
     tasks.push(
-      runTextTask(q, t, responsePayload, emit, attachment, safesearch).then((result) => {
+      runTextTask(q, t, responsePayload, emit, attachment, safesearch, locale).then((result) => {
         Object.assign(branchTimings, result.timings);
         return result;
       })
@@ -291,6 +293,7 @@ async function handleStreamingSearch(req, res, ctx) {
     identity,
     reqStart,
     attachment,
+    locale = 'ru',
   } = ctx;
 
   startNdjsonResponse(res);
@@ -309,6 +312,7 @@ async function handleStreamingSearch(req, res, ctx) {
     emit,
     attachment,
     safesearch: resolveAiSafesearch(req),
+    locale,
   });
 
   const reqEnd = process.hrtime.bigint();

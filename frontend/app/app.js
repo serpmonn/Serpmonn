@@ -2,17 +2,432 @@ window.__SPN_ANDROID_APP__ = true;
 document.documentElement.classList.add('android-app');
 document.body?.classList.add('android-app');
 
-const TITLES = {
-  search: 'Поиск',
-  news: 'Новости',
-  tools: 'Инструменты',
-  games: 'Игры',
-  profile: 'Профиль',
+const SPN_APP_ORIGIN = 'https://serpmonn.ru';
+function spnApiUrl(path) {
+  const p = String(path || '');
+  if (/^https?:\/\//i.test(p)) return p;
+  return new URL(p, SPN_APP_ORIGIN).href;
+}
+function spnFetch(path, options) {
+  return fetch(spnApiUrl(path), options);
+}
+
+const SPN_LOCALE_KEY = 'spn-app-locale';
+const I18N = {
+  ru: {
+    brand: 'Серпмонн',
+    search: 'Поиск',
+    news: 'Новости',
+    tools: 'Инструменты',
+    games: 'Игры',
+    profile: 'Профиль',
+    askPlaceholder: 'Задайте вопрос…',
+    find: 'Найти',
+    attachLabel: 'Прикрепить .txt',
+    attachTitle: 'Прикрепить текстовый файл',
+    voiceLabel: 'Голосовой ввод',
+    voiceTitle: 'Голосовой ввод',
+    voiceRecording: 'Идёт запись… нажмите микрофон ещё раз, чтобы остановить',
+    images: 'Картинки',
+    videos: 'Видео',
+    sources: 'Источники',
+    newsSection: 'Раздел новостей',
+    feed: 'Лента',
+    kb: 'База знаний',
+    newsEmpty: 'Пока нет новостей.',
+    profileGuestTitle: 'Профиль',
+    profileGuestText: 'Войдите через аккаунт Серпмонн, чтобы открыть план, баллы, находки и настройки.',
+    loginRegister: 'Войти / регистрация',
+    more: 'Ещё',
+    policy: 'Политика',
+    offer: 'Соглашение',
+    donate: 'Поддержать',
+    about: 'О проекте',
+    backProfile: '← Профиль',
+    findingsFeed: 'Лента находок',
+    findingsInbox: 'Входящие',
+    logout: 'Выйти',
+    sections: 'Разделы',
+    section: 'Раздел',
+    content: 'Контент',
+    back: 'Назад',
+    saveFinding: 'Сохранить находку',
+    saveFindingHint: 'Находка появится в профиле во вкладке «Находки».',
+    toProfile: 'В профиль',
+    cancel: 'Отмена',
+    copyAnswer: 'Копировать ответ',
+    shareAnswer: 'Поделиться ответом',
+    likeAnswer: 'Ответ помог',
+    dislikeAnswer: 'Ответ не помог',
+    searching: 'Ищем ответ…',
+    generating: 'Генерируем ответ…',
+    emptyAnswer: 'Пустой ответ. Попробуйте другой запрос.',
+    searchFailed: 'Не удалось выполнить поиск.',
+    model: 'Модель',
+    loading: 'Загрузка…',
+    loadError: 'Ошибка загрузки',
+    newsItem: 'Новость',
+    video: 'Видео',
+    login: 'Вход',
+    loggedIn: 'Вы вошли',
+    noAnswerSave: 'Нет ответа для сохранения',
+    findingSaved: 'Находка сохранена',
+    findingSaveFail: 'Не удалось сохранить',
+    noCopy: 'Нет текста для копирования',
+    copied: 'Скопировано',
+    copyFail: 'Не удалось скопировать',
+    noText: 'Нет текста',
+    shareCopied: 'Текст скопирован для отправки',
+    shareFail: 'Не удалось поделиться',
+    shareQuery: 'Запрос',
+    fileQuery: 'Что в этом файле?',
+    recognizing: 'Распознаём речь…',
+    speaking: 'Говорите…',
+    voiceError: 'Ошибка распознавания речи',
+    recordError: 'Ошибка записи',
+    favOn: 'В избранном профиля',
+    favOff: 'Убрано из избранного',
+    langGroup: 'Язык',
+  },
+  en: {
+    brand: 'Serpmonn',
+    search: 'Search',
+    news: 'News',
+    tools: 'Tools',
+    games: 'Games',
+    profile: 'Profile',
+    askPlaceholder: 'Ask a question…',
+    find: 'Search',
+    attachLabel: 'Attach .txt',
+    attachTitle: 'Attach a text file',
+    voiceLabel: 'Voice input',
+    voiceTitle: 'Voice input',
+    voiceRecording: 'Recording… tap the mic again to stop',
+    images: 'Images',
+    videos: 'Videos',
+    sources: 'Sources',
+    newsSection: 'News section',
+    feed: 'Feed',
+    kb: 'Knowledge base',
+    newsEmpty: 'No news yet.',
+    profileGuestTitle: 'Profile',
+    profileGuestText: 'Sign in with your Serpmonn account to open plan, points, findings and settings.',
+    loginRegister: 'Sign in / register',
+    more: 'More',
+    policy: 'Privacy',
+    offer: 'Terms',
+    donate: 'Support',
+    about: 'About',
+    backProfile: '← Profile',
+    findingsFeed: 'Findings feed',
+    findingsInbox: 'Inbox',
+    logout: 'Log out',
+    sections: 'Sections',
+    section: 'Section',
+    content: 'Content',
+    back: 'Back',
+    saveFinding: 'Save finding',
+    saveFindingHint: 'The finding will appear in your profile under Findings.',
+    toProfile: 'To profile',
+    cancel: 'Cancel',
+    copyAnswer: 'Copy answer',
+    shareAnswer: 'Share answer',
+    likeAnswer: 'Helpful',
+    dislikeAnswer: 'Not helpful',
+    searching: 'Searching…',
+    generating: 'Generating answer…',
+    emptyAnswer: 'Empty answer. Try another query.',
+    searchFailed: 'Search failed.',
+    model: 'Model',
+    loading: 'Loading…',
+    loadError: 'Failed to load',
+    newsItem: 'News',
+    video: 'Video',
+    login: 'Sign in',
+    loggedIn: 'Signed in',
+    noAnswerSave: 'Nothing to save',
+    findingSaved: 'Finding saved',
+    findingSaveFail: 'Could not save',
+    noCopy: 'Nothing to copy',
+    copied: 'Copied',
+    copyFail: 'Could not copy',
+    noText: 'No text',
+    shareCopied: 'Copied for sharing',
+    shareFail: 'Could not share',
+    shareQuery: 'Query',
+    fileQuery: 'What is in this file?',
+    recognizing: 'Recognizing speech…',
+    speaking: 'Speak…',
+    voiceError: 'Speech recognition error',
+    recordError: 'Recording error',
+    favOn: 'Saved to profile favorites',
+    favOff: 'Removed from favorites',
+    langGroup: 'Language',
+  },
 };
+
+function resolveInitialLocale() {
+  try {
+    if (window.__SPN_APP_LOCALE__ === 'en' || window.__SPN_APP_LOCALE__ === 'ru') {
+      return window.__SPN_APP_LOCALE__;
+    }
+    const q = new URLSearchParams(location.search).get('lang');
+    if (q === 'en' || q === 'ru') return q;
+    const saved = localStorage.getItem(SPN_LOCALE_KEY);
+    if (saved === 'en' || saved === 'ru') return saved;
+    const nav = String(navigator.language || '').toLowerCase();
+    return nav.startsWith('en') ? 'en' : 'ru';
+  } catch (_) {
+    return 'ru';
+  }
+}
+
+let appLocale = resolveInitialLocale();
+
+function getLocale() {
+  return appLocale === 'en' ? 'en' : 'ru';
+}
+
+function t(key) {
+  const pack = I18N[getLocale()] || I18N.ru;
+  return pack[key] || I18N.ru[key] || key;
+}
+
+function getTitles() {
+  return {
+    search: t('search'),
+    news: t('news'),
+    tools: t('tools'),
+    games: t('games'),
+    profile: t('profile'),
+  };
+}
+
+/** Map /frontend/... <-> /frontend/en/... for app content paths. */
+function localizeFrontendPath(input) {
+  if (!input) return input;
+  let raw = String(input);
+  let hash = '';
+  let search = '';
+  try {
+    const u = new URL(raw, location.origin);
+    if (u.origin === location.origin) {
+      raw = u.pathname;
+      search = u.search || '';
+      hash = u.hash || '';
+    }
+  } catch (_) {}
+
+  let path = raw;
+  if (!path.startsWith('/frontend/')) {
+    return input;
+  }
+  // Keep the app shell itself on the RU path (single shell).
+  if (/^\/frontend\/app(\/|$)/i.test(path)) {
+    return path + search + hash;
+  }
+
+  const isEnPath = /^\/frontend\/en(\/|$)/i.test(path);
+  if (getLocale() === 'en') {
+    if (!isEnPath) path = path.replace(/^\/frontend\//i, '/frontend/en/');
+  } else if (isEnPath) {
+    path = path.replace(/^\/frontend\/en\//i, '/frontend/');
+  }
+  return path + search + hash;
+}
+
+function withLocalizedAppParam(url) {
+  return withAppParam(localizeFrontendPath(url));
+}
+
+function setLocale(next, { persist = true, reloadContent = true } = {}) {
+  const loc = next === 'en' ? 'en' : 'ru';
+  if (loc === appLocale && document.documentElement.lang === loc) {
+    applyChromeI18n();
+    return;
+  }
+  appLocale = loc;
+  window.__SPN_APP_LOCALE__ = loc;
+  document.documentElement.lang = loc;
+  if (persist) {
+    try { localStorage.setItem(SPN_LOCALE_KEY, loc); } catch (_) {}
+    // Profile / site i18n read this key (not spn-app-locale)
+    try { localStorage.setItem('spn_lang', loc); } catch (_) {}
+  }
+  try {
+    const u = new URL(location.href);
+    u.searchParams.set('lang', loc);
+    history.replaceState(null, '', u.pathname + u.search + u.hash);
+  } catch (_) {}
+  applyChromeI18n();
+  if (reloadContent) {
+    newsLoaded = false;
+    if (document.querySelector('.spn-screen.is-active[data-screen="news"]')) {
+      loadNews();
+    }
+    if (catalogLoaded) renderCatalog();
+    // Always invalidate profile iframe; reload immediately if user panel is open
+    try {
+      profileLocaleApplied = null;
+      profileEmbedLoaded = false;
+      if (typeof reloadProfileForLocale === 'function') {
+        reloadProfileForLocale({ force: true });
+      }
+    } catch (err) {
+      console.warn('profile locale reload failed', err);
+    }
+    try {
+      if (typeof reloadAuthViewerForLocale === 'function') {
+        reloadAuthViewerForLocale();
+      }
+    } catch (_) {}
+  }
+}
+
+function applyChromeI18n() {
+  const titles = getTitles();
+  const titleEl = document.getElementById('spnTitle');
+  if (titleEl) titleEl.textContent = t('brand');
+  document.title = t('brand');
+
+  const activeTab = document.querySelector('.spn-tab.is-active')?.dataset?.tab;
+  if (subtitleEl && !(typeof profileSubpageOpen !== 'undefined' && profileSubpageOpen && activeTab === 'profile')) {
+    subtitleEl.textContent = titles[activeTab] || titles.search;
+  }
+
+  tabs.forEach((tab) => {
+    const name = tab.dataset.tab;
+    if (titles[name]) tab.textContent = titles[name];
+  });
+
+  screens.forEach((s) => {
+    const name = s.dataset.screen;
+    if (titles[name]) s.setAttribute('aria-label', titles[name]);
+  });
+
+  const searchInputEl = document.getElementById('searchInput');
+  if (searchInputEl && !searchInputEl.dataset.voiceBusy) {
+    searchInputEl.placeholder = t('askPlaceholder');
+  }
+  const findBtn = document.querySelector('#searchForm .spn-btn');
+  if (findBtn) findBtn.textContent = t('find');
+
+  const attachBtn = document.getElementById('attachBtn');
+  if (attachBtn) {
+    attachBtn.setAttribute('aria-label', t('attachLabel'));
+    attachBtn.title = t('attachTitle');
+  }
+  const voiceBtn = document.getElementById('voiceBtn');
+  if (voiceBtn) {
+    voiceBtn.setAttribute('aria-label', t('voiceLabel'));
+    voiceBtn.title = t('voiceTitle');
+  }
+  const voiceStatus = document.getElementById('voiceStatus');
+  if (voiceStatus && voiceStatus.hidden) voiceStatus.textContent = t('voiceRecording');
+
+  const imgTitle = document.querySelector('#searchImages .spn-media__title');
+  if (imgTitle) imgTitle.textContent = t('images');
+  const vidTitle = document.querySelector('#searchVideos .spn-media__title');
+  if (vidTitle) vidTitle.textContent = t('videos');
+  const sourcesSummary = document.getElementById('searchSourcesSummary');
+  if (sourcesSummary && !sourcesSummary.dataset.count) {
+    sourcesSummary.textContent = t('sources');
+  }
+
+  const newsChipsWrap = document.querySelector('.spn-chips[aria-label]');
+  if (newsChipsWrap) newsChipsWrap.setAttribute('aria-label', t('newsSection'));
+  document.querySelectorAll('[data-news-chip]').forEach((chip) => {
+    if (chip.dataset.newsChip === 'feed') chip.textContent = t('feed');
+    if (chip.dataset.newsChip === 'kb') chip.textContent = t('kb');
+  });
+  const newsEmpty = document.getElementById('newsEmpty');
+  if (newsEmpty) newsEmpty.textContent = t('newsEmpty');
+
+  const guestH2 = document.querySelector('#profileGuest .spn-h2');
+  if (guestH2) guestH2.textContent = t('profileGuestTitle');
+  const guestP = document.querySelector('#profileGuest > .spn-muted');
+  if (guestP) guestP.textContent = t('profileGuestText');
+  const loginBtn = document.querySelector('#profileGuest [data-open*="auth"]');
+  if (loginBtn) loginBtn.textContent = t('loginRegister');
+
+  document.querySelectorAll('.spn-more > summary').forEach((el) => { el.textContent = t('more'); });
+  document.querySelectorAll('[data-open*="privacy-policy"]').forEach((el) => { el.textContent = t('policy'); });
+  document.querySelectorAll('[data-open*="offer"]').forEach((el) => { el.textContent = t('offer'); });
+  document.querySelectorAll('[data-open*="donate"]').forEach((el) => { el.textContent = t('donate'); });
+  document.querySelectorAll('[data-open*="about-project"]').forEach((el) => { el.textContent = t('about'); });
+
+  const profileBackBtn = document.getElementById('profileBackBtn');
+  if (profileBackBtn) profileBackBtn.textContent = t('backProfile');
+  const fullscreenBack = document.getElementById('fullscreenBack');
+  if (fullscreenBack) fullscreenBack.textContent = t('backProfile');
+  const logoutBtn = document.getElementById('profileLogoutBtn');
+  if (logoutBtn) logoutBtn.textContent = t('logout');
+
+  document.querySelectorAll('[data-profile-page]').forEach((btn) => {
+    const page = btn.getAttribute('data-profile-page') || '';
+    if (/feed\.html/i.test(page)) {
+      btn.textContent = t('findingsFeed');
+      btn.setAttribute('data-title', t('findingsFeed'));
+    } else if (/inbox\.html/i.test(page)) {
+      btn.textContent = t('findingsInbox');
+      btn.setAttribute('data-title', t('findingsInbox'));
+    }
+  });
+
+  const tabsNav = document.querySelector('.spn-tabs');
+  if (tabsNav) tabsNav.setAttribute('aria-label', t('sections'));
+  const viewerBackBtn = document.getElementById('viewerBack');
+  if (viewerBackBtn) viewerBackBtn.textContent = t('back');
+  const viewerFrameEl = document.getElementById('viewerFrame');
+  if (viewerFrameEl) viewerFrameEl.title = t('content');
+  const fullscreenFrameEl = document.getElementById('fullscreenFrame');
+  if (fullscreenFrameEl) fullscreenFrameEl.title = t('section');
+  const profileEmbedEl = document.getElementById('profileEmbed');
+  if (profileEmbedEl) profileEmbedEl.title = t('profile');
+
+  const findingTitle = document.getElementById('findingSaveTitle');
+  if (findingTitle) findingTitle.textContent = t('saveFinding');
+  const findingHint = document.querySelector('#findingSaveModal .spn-muted');
+  if (findingHint) findingHint.textContent = t('saveFindingHint');
+  const savePrivate = document.querySelector('[data-finding-action="save-private"]');
+  if (savePrivate) savePrivate.textContent = t('toProfile');
+  document.querySelectorAll('#findingSaveModal [data-finding-close].spn-btn').forEach((el) => {
+    el.textContent = t('cancel');
+  });
+
+  document.querySelectorAll('#searchActions [data-ai-action]').forEach((btn) => {
+    const action = btn.getAttribute('data-ai-action');
+    const map = {
+      copy: 'copyAnswer',
+      share: 'shareAnswer',
+      'save-finding': 'saveFinding',
+      like: 'likeAnswer',
+      dislike: 'dislikeAnswer',
+    };
+    const k = map[action];
+    if (!k) return;
+    btn.title = t(k);
+    btn.setAttribute('aria-label', t(k));
+  });
+
+  document.querySelectorAll('.spn-lang__btn').forEach((btn) => {
+    const on = btn.getAttribute('data-lang') === getLocale();
+    btn.classList.toggle('is-active', on);
+    btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+  const langGroup = document.querySelector('.spn-lang');
+  if (langGroup) langGroup.setAttribute('aria-label', t('langGroup'));
+}
 
 const subtitleEl = document.getElementById('spnSubtitle');
 const screens = Array.from(document.querySelectorAll('.spn-screen'));
 const tabs = Array.from(document.querySelectorAll('.spn-tab'));
+/** @deprecated use getTitles() — kept for older call sites during migration */
+const TITLES = new Proxy({}, {
+  get(_t, prop) {
+    return getTitles()[prop];
+  },
+});
 
 const viewer = document.getElementById('viewer');
 const viewerFrame = document.getElementById('viewerFrame');
@@ -479,33 +894,34 @@ function armGameHistoryTrap() {
   }
 }
 
-function openAppAuth(title = 'Вход') {
-  const returnTo = encodeURIComponent('/frontend/app/index.html?app=1&tab=profile');
-  const authUrl = `/frontend/auth/auth.html?app=1&return=${returnTo}`;
-  // В оболочке приложения — всегда полный переход (не viewer: иначе 2× «Назад»)
-  try {
-    if (
-      window.__SPN_ANDROID_APP__ ||
-      window.Capacitor?.isNativePlatform?.()
-    ) {
-      window.location.assign(authUrl);
-      return;
-    }
-  } catch (_) {}
-  openViewer(authUrl, title);
+function openAppAuth(title) {
+  const returnTo = encodeURIComponent(`/frontend/app/index.html?app=1&tab=profile&lang=${getLocale()}`);
+  const authUrl = withLocalizedAppParam(`/frontend/auth/auth.html?app=1&return=${returnTo}`);
+  // Stay inside app shell so the header RU/EN switcher remains visible.
+  // Auth uses iframe src= (not srcdoc) for VK ID / OAuth.
+  openViewer(authUrl, title || t('login'));
+}
+
+function reloadAuthViewerForLocale() {
+  if (!viewer || viewer.hidden || !viewerFrame) return;
+  let href = '';
+  try { href = String(viewerFrame.getAttribute('src') || viewerFrame.src || ''); } catch (_) {}
+  if (!/\/auth\//i.test(href)) return;
+  openAppAuth(t('login'));
 }
 
 function openViewer(url, title) {
+  const localizedUrl = localizeFrontendPath(url);
   // Лента / входящие — только в подложке профиля, не viewer-popup
-  if (/\/findings\/(feed|inbox)\.html/i.test(String(url || ''))) {
+  if (/\/findings\/(feed|inbox)\.html/i.test(String(localizedUrl || ''))) {
     showScreen('profile');
-    openProfileSubpage(url, title || 'Серпмонн');
+    openProfileSubpage(localizedUrl, title || t('brand'));
     return;
   }
-  const href = withAppParam(url);
+  const href = withAppParam(localizedUrl);
   viewerIsGame = isGameUrl(href);
   const viewerIsGameLight = viewerIsGame && /\/2048\//i.test(href);
-  viewerTitle.textContent = title || 'Серпмонн';
+  viewerTitle.textContent = title || t('brand');
   viewer.hidden = false;
   viewer.setAttribute('aria-hidden', 'false');
   viewer.classList.toggle('is-game', viewerIsGame);
@@ -520,7 +936,7 @@ function openViewer(url, title) {
     } catch (_) {}
   }
   // VK ID / OAuth не работают в srcdoc (домен about:srcdoc ≠ serpmonn.ru)
-  if (/\/auth\/|vkid|oauth|\/mail\//i.test(String(url || ''))) {
+  if (/\/auth\/|vkid|oauth|\/mail\//i.test(String(localizedUrl || ''))) {
     const token = ++viewerBootToken;
     viewerFrame.classList.add('is-booting');
     try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
@@ -640,13 +1056,13 @@ function hardenViewerDoc(doc, opts = {}) {
             e.preventDefault();
             e.stopPropagation();
             u.searchParams.set('app', '1');
-            const next = u.pathname + u.search + u.hash;
+            const next = withAppParam(localizeFrontendPath(u.pathname + u.search + u.hash));
             // Покупки Pro в приложении отключены
             if (/\/tariffs\//i.test(u.pathname)) {
               return;
             }
             // После выхода / ссылок «на главную» не уводим из оболочки приложения
-            if (/\/main\.html$/i.test(u.pathname) || u.pathname === '/' || u.pathname === '/frontend/') {
+            if (/\/main\.html$/i.test(u.pathname) || u.pathname === '/' || u.pathname === '/frontend/' || /^\/frontend\/en\/?$/i.test(u.pathname)) {
               if (navigate === 'embed' || navigate === 'fullscreen') {
                 try {
                   window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
@@ -690,6 +1106,9 @@ function onViewerLoad() {
 viewerFrame.addEventListener('load', onViewerLoad);
 
 const KB_URL = '/frontend/knowledge-base/knowledge-base.html';
+function kbUrl() {
+  return localizeFrontendPath(KB_URL);
+}
 const newsChips = Array.from(document.querySelectorAll('[data-news-chip]'));
 let newsChip = 'feed';
 let kbViewerOpen = false;
@@ -703,7 +1122,7 @@ function setNewsChip(name, { openKb } = { openKb: true }) {
   });
   if (newsChip === 'kb' && openKb) {
     kbViewerOpen = true;
-    openViewer(KB_URL, 'База знаний');
+    openViewer(kbUrl(), t('kb'));
   }
 }
 
@@ -748,6 +1167,26 @@ window.addEventListener('popstate', () => {
   }
 });
 
+function profileEmbedEditOpen() {
+  try {
+    if (!profileEmbed || profileEmbed.hidden) return false;
+    const doc = profileEmbed.contentDocument;
+    return Boolean(doc?.getElementById('profileForm'));
+  } catch (_) {
+    return false;
+  }
+}
+
+function cancelProfileEmbedEdit() {
+  try {
+    if (!profileEmbedEditOpen()) return false;
+    profileEmbed.contentWindow?.dispatchEvent(new Event('spn:cancel-profile-edit'));
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 try {
   const CapApp = window.Capacitor?.Plugins?.App;
   if (CapApp && typeof CapApp.addListener === 'function') {
@@ -767,6 +1206,9 @@ try {
       }
       if (isViewerOpen()) {
         closeViewer({ fromHistory: true });
+        return;
+      }
+      if (cancelProfileEmbedEdit()) {
         return;
       }
       if (profileSubpageOpen) {
@@ -840,7 +1282,14 @@ function showScreen(name) {
   if ((name === 'tools' || name === 'games') && !catalogLoaded) loadCatalog();
   if (name === 'profile') {
     if (profileSubpageOpen && !isFullscreenOpen()) closeProfileSubpage();
-    else if (!profileSubpageOpen) refreshProfile();
+    else if (!profileSubpageOpen) {
+      if (profileUser && !profileUser.hidden && profileLocaleApplied !== getLocale()) {
+        profileEmbedLoaded = false;
+        loadProfileEmbed();
+      } else {
+        refreshProfile();
+      }
+    }
   }
 }
 
@@ -861,7 +1310,7 @@ document.addEventListener('click', (e) => {
   e.preventDefault();
   const href = btn.getAttribute('data-open') || '';
   if (/\/auth\//i.test(href)) {
-    openAppAuth(btn.textContent.trim() || 'Вход');
+    openAppAuth(btn.textContent.trim() || t('login'));
     return;
   }
   openViewer(href, btn.textContent.trim());
@@ -874,7 +1323,14 @@ window.addEventListener('message', (ev) => {
     try { closeViewer(); } catch (_) {}
     showScreen('profile');
     refreshProfile();
-    toast('Вы вошли');
+    toast(t('loggedIn'));
+    return;
+  }
+  if (ev.data.type === 'spn-app-need-auth') {
+    try { clearProfileEmbed(); } catch (_) {}
+    showGuestProfile();
+    showScreen('profile');
+    openAppAuth(t('login'));
     return;
   }
   if (ev.data.type === 'spn-app-logged-out') {
@@ -932,6 +1388,28 @@ function uuid() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2);
 }
 
+/** Клиент android → бэкенд ставит safesearch=2 для ИИ (на сайте = 0). */
+function getAppSearchHeaders(extra = {}) {
+  let anonId = '';
+  try {
+    const m = document.cookie.match(/(?:^|; )spn_anon_id=([^;]*)/);
+    anonId = m ? decodeURIComponent(m[1]) : '';
+  } catch (_) {}
+  if (!anonId || anonId.length < 8) {
+    anonId = uuid();
+    try {
+      const secure = location.protocol === 'https:' ? '; Secure' : '';
+      document.cookie = `spn_anon_id=${encodeURIComponent(anonId)}; Path=/; Max-Age=${60 * 60 * 24 * 400}; SameSite=Lax${secure}`;
+    } catch (_) {}
+  }
+  return {
+    'X-Spn-Client': 'android',
+    'X-Spn-Device': 'mobile',
+    'X-Anon-Id': anonId,
+    ...extra,
+  };
+}
+
 function showToast(msg) {
   if (!spnToast) {
     searchStatus.hidden = false;
@@ -964,7 +1442,7 @@ function setLastSearch(partial) {
 
 async function getCsrfHeaders(extra = {}) {
   if (!csrfCached) {
-    const res = await fetch('/csrf-token', { credentials: 'include' });
+    const res = await spnFetch('/csrf-token', { credentials: 'include' });
     if (!res.ok) throw new Error('csrf');
     const data = await res.json();
     csrfCached = String(data?.csrfToken || '');
@@ -1022,13 +1500,13 @@ function closeFindingSaveModal() {
 async function saveFindingPrivate() {
   const ctx = lastSearchContext;
   if (!ctx.answer) {
-    showToast('Нет ответа для сохранения');
+    showToast(t('noAnswerSave'));
     return;
   }
-  const auth = await fetch('/auth/protected', { credentials: 'include' });
+  const auth = await spnFetch('/auth/protected', { credentials: 'include' });
   if (!auth.ok) {
     closeFindingSaveModal();
-    openAppAuth('Вход');
+    openAppAuth(t('login'));
     return;
   }
   const snapshot = {
@@ -1048,7 +1526,7 @@ async function saveFindingPrivate() {
       headers: await getCsrfHeaders({ 'Content-Type': 'application/json' }),
       body: JSON.stringify({
         query: ctx.query || '',
-        locale: 'ru',
+        locale: getLocale(),
         visibility: 'private',
         snapshot,
       }),
@@ -1056,9 +1534,9 @@ async function saveFindingPrivate() {
     if (!res.ok) throw new Error('save');
     closeFindingSaveModal();
     profileEmbedLoaded = false;
-    showToast('Находка сохранена');
+    showToast(t('findingSaved'));
   } catch (_) {
-    showToast('Не удалось сохранить');
+    showToast(t('findingSaveFail'));
   }
 }
 
@@ -1075,46 +1553,46 @@ function setupSearchActionButtons() {
 
     if (action === 'copy') {
       if (!answer) {
-        showToast('Нет текста для копирования');
+        showToast(t('noCopy'));
         return;
       }
       try {
         await navigator.clipboard.writeText(answer);
-        showToast('Скопировано');
+        showToast(t('copied'));
       } catch (_) {
-        showToast('Не удалось скопировать');
+        showToast(t('copyFail'));
       }
       return;
     }
 
     if (action === 'share') {
       if (!answer && !query) {
-        showToast('Нет текста');
+        showToast(t('noText'));
         return;
       }
-      const shareText = [query && `Запрос: ${query}`, answer, 'https://serpmonn.ru'].filter(Boolean).join('\n\n');
+      const shareText = [query && `${t('shareQuery')}: ${query}`, answer, 'https://serpmonn.ru'].filter(Boolean).join('\n\n');
       try {
         if (navigator.share) {
-          await navigator.share({ title: query ? `Серпмонн: ${query}` : 'Серпмонн', text: shareText });
+          await navigator.share({ title: query ? `${t('brand')}: ${query}` : t('brand'), text: shareText });
         } else {
           await navigator.clipboard.writeText(shareText);
-          showToast('Текст скопирован для отправки');
+          showToast(t('shareCopied'));
         }
       } catch (err) {
         if (err && err.name === 'AbortError') return;
-        showToast('Не удалось поделиться');
+        showToast(t('shareFail'));
       }
       return;
     }
 
     if (action === 'save-finding') {
       if (!answer) {
-        showToast('Нет ответа для сохранения');
+        showToast(t('noAnswerSave'));
         return;
       }
-      const auth = await fetch('/auth/protected', { credentials: 'include' });
+      const auth = await spnFetch('/auth/protected', { credentials: 'include' });
       if (!auth.ok) {
-        openAppAuth('Вход');
+        openAppAuth(t('login'));
         return;
       }
       openFindingSaveModal();
@@ -1131,13 +1609,16 @@ function setupSearchActionButtons() {
         await fetch('/ai-search/feedback', {
           method: 'POST',
           credentials: 'include',
-          headers: { 'Content-Type': 'application/json', 'X-User-Lang': 'ru' },
+          headers: getAppSearchHeaders({
+            'Content-Type': 'application/json',
+            'X-User-Lang': getLocale(),
+          }),
           body: JSON.stringify({
             rating: action,
             query,
             answer,
             usedWebSearch: true,
-            locale: 'ru',
+            locale: getLocale(),
           }),
         });
       } catch (_) {
@@ -1228,7 +1709,7 @@ function resetVoiceUi(placeholder) {
 
 async function sendAudioForRecognition(audioBlob, mimeType) {
   try {
-    searchInput.placeholder = 'Распознаём речь…';
+    searchInput.placeholder = t('recognizing');
     const response = await fetch('/voice/stt', {
       method: 'POST',
       headers: { 'Content-Type': mimeType },
@@ -1241,18 +1722,18 @@ async function sendAudioForRecognition(audioBlob, mimeType) {
     const data = await response.json();
     const text = (data.text || '').trim();
     if (!text) {
-      toast('Речь не распознана');
-      searchInput.placeholder = 'Задайте вопрос…';
+      toast(getLocale() === 'en' ? 'Speech not recognized' : 'Речь не распознана');
+      searchInput.placeholder = t('askPlaceholder');
       return;
     }
     searchInput.value = text;
-    searchInput.placeholder = 'Задайте вопрос…';
+    searchInput.placeholder = t('askPlaceholder');
     searchStatus.hidden = true;
     await new Promise((r) => setTimeout(r, 400));
     searchForm.requestSubmit();
   } catch (err) {
-    toast(err?.message || 'Ошибка распознавания речи');
-    searchInput.placeholder = 'Задайте вопрос…';
+    toast(err?.message || t('voiceError'));
+    searchInput.placeholder = t('askPlaceholder');
   }
 }
 
@@ -1289,7 +1770,7 @@ voiceBtn?.addEventListener('click', async () => {
     };
 
     mediaRecorder.onstop = async () => {
-      resetVoiceUi('Задайте вопрос…');
+      resetVoiceUi(t('askPlaceholder'));
       stream.getTracks().forEach((t) => t.stop());
       if (!audioChunks.length) {
         toast('Пустая запись');
@@ -1300,8 +1781,8 @@ voiceBtn?.addEventListener('click', async () => {
     };
 
     mediaRecorder.onerror = () => {
-      toast('Ошибка записи');
-      resetVoiceUi('Задайте вопрос…');
+      toast(t('recordError'));
+      resetVoiceUi(t('askPlaceholder'));
       stream.getTracks().forEach((t) => t.stop());
     };
 
@@ -1310,7 +1791,7 @@ voiceBtn?.addEventListener('click', async () => {
     voiceBtn.classList.add('is-listening');
     voiceStatus.hidden = false;
     searchInput.value = '';
-    searchInput.placeholder = 'Говорите…';
+    searchInput.placeholder = t('speaking');
 
     const autoStop = setTimeout(() => {
       if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
@@ -1326,7 +1807,7 @@ voiceBtn?.addEventListener('click', async () => {
       msg = 'Микрофон занят';
     }
     toast(msg);
-    resetVoiceUi('Задайте вопрос…');
+    resetVoiceUi(t('askPlaceholder'));
   }
 });
 
@@ -1366,7 +1847,8 @@ function renderSources(sources) {
     searchSources.open = false;
     return;
   }
-  searchSourcesSummary.textContent = `Источники (${items.length})`;
+  searchSourcesSummary.dataset.count = String(items.length);
+  searchSourcesSummary.textContent = `${t('sources')} (${items.length})`;
   for (const s of items) {
     const li = document.createElement('li');
     const btn = document.createElement('button');
@@ -1424,7 +1906,7 @@ function renderVideos(videos) {
     const thumb = safeHttpUrl(video.thumbnailUrl);
     const openUrl = safeHttpUrl(video.videoUrl || video.sourceUrl);
     if (!openUrl && !thumb) continue;
-    const title = (video.title || video.sourceName || 'Видео').trim();
+    const title = (video.title || video.sourceName || t('video')).trim();
     const duration = video.duration ? String(video.duration) : '';
     const btn = document.createElement('button');
     btn.type = 'button';
@@ -1447,13 +1929,13 @@ searchForm.addEventListener('submit', async (e) => {
   const q = (searchInput.value || '').trim();
   if (!q && !searchAttachment?.text) return;
   if (!q && searchAttachment?.text) {
-    searchInput.value = 'Что в этом файле?';
+    searchInput.value = t('fileQuery');
   }
   const query = (searchInput.value || '').trim();
   if (!query) return;
 
   searchStatus.hidden = false;
-  searchStatus.textContent = 'Ищем ответ…';
+  searchStatus.textContent = t('searching');
   searchAnswer.hidden = true;
   searchAnswer.textContent = '';
   searchMeta.hidden = true;
@@ -1466,7 +1948,7 @@ searchForm.addEventListener('submit', async (e) => {
     q: query,
     include: { text: true, images: true, videos: true },
     mode: 'full',
-    lang: 'ru',
+    lang: getLocale(),
     stream: true,
   };
   if (searchAttachment?.text) {
@@ -1478,12 +1960,12 @@ searchForm.addEventListener('submit', async (e) => {
     const res = await fetch('/ai-search', {
       method: 'POST',
       credentials: 'include',
-      headers: {
+      headers: getAppSearchHeaders({
         'Content-Type': 'application/json',
         Accept: 'application/x-ndjson',
         'X-Idempotency-Key': uuid(),
-        'X-User-Lang': 'ru',
-      },
+        'X-User-Lang': getLocale(),
+      }),
       body: JSON.stringify(body),
     });
 
@@ -1515,7 +1997,7 @@ searchForm.addEventListener('submit', async (e) => {
           // Backend NDJSON uses `event` (site scripts.js); keep `type` as fallback.
           const kind = ev.event || ev.type;
           if (kind === 'status' && ev.phase === 'generating') {
-            searchStatus.textContent = 'Генерируем ответ…';
+            searchStatus.textContent = t('generating');
           } else if (kind === 'text_start' && Array.isArray(ev.sources)) {
             sources = ev.sources;
             renderSources(sources);
@@ -1549,7 +2031,7 @@ searchForm.addEventListener('submit', async (e) => {
           } else if (kind === 'done') {
             if (model || ev.model) {
               searchMeta.hidden = false;
-              searchMeta.textContent = `Модель: ${model || ev.model}`;
+              searchMeta.textContent = `${t('model')}: ${model || ev.model}`;
             }
             if (answer) {
               setLastSearch({ answer, sources });
@@ -1561,7 +2043,7 @@ searchForm.addEventListener('submit', async (e) => {
       searchStatus.hidden = true;
       if (!answer) {
         searchStatus.hidden = false;
-        searchStatus.textContent = 'Пустой ответ. Попробуйте другой запрос.';
+        searchStatus.textContent = t('emptyAnswer');
       } else {
         setLastSearch({ answer, sources });
         showSearchActions();
@@ -1572,9 +2054,9 @@ searchForm.addEventListener('submit', async (e) => {
     const data = await res.json();
     searchStatus.hidden = true;
     searchAnswer.hidden = false;
-    searchAnswer.textContent = data.answer || 'Пустой ответ.';
+    searchAnswer.textContent = data.answer || t('emptyAnswer');
     searchMeta.hidden = false;
-    searchMeta.textContent = data.model ? `Модель: ${data.model}` : '';
+    searchMeta.textContent = data.model ? `${t('model')}: ${data.model}` : '';
     renderSources(data.sources || []);
     renderImages(data.images || []);
     renderVideos(data.videos || []);
@@ -1587,7 +2069,7 @@ searchForm.addEventListener('submit', async (e) => {
     if (data.answer) showSearchActions();
   } catch (err) {
     searchStatus.hidden = false;
-    searchStatus.textContent = err?.message || 'Не удалось выполнить поиск.';
+    searchStatus.textContent = err?.message || t('searchFailed');
     hideSearchActions();
   }
 });
@@ -1596,9 +2078,9 @@ searchForm.addEventListener('submit', async (e) => {
 async function loadNews() {
   const list = document.getElementById('newsList');
   const empty = document.getElementById('newsEmpty');
-  list.innerHTML = '<p class="spn-muted">Загрузка…</p>';
+  list.innerHTML = `<p class="spn-muted">${t('loading')}</p>`;
   try {
-    const res = await fetch('/news?locale=ru&limit=20', { credentials: 'include' });
+    const res = await fetch(`/news?locale=${encodeURIComponent(getLocale())}&limit=20`, { credentials: 'include' });
     if (!res.ok) throw new Error('news ' + res.status);
     const data = await res.json();
     const items = data.news || [];
@@ -1613,22 +2095,22 @@ async function loadNews() {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = 'spn-item';
-      const title = n.title || 'Новость';
+      const title = n.title || t('newsItem');
       const snip = n.snippet || n.description || '';
       btn.innerHTML = `<strong>${escapeHtml(title)}</strong><span>${escapeHtml(snip)}</span>`;
-      const href = n.url || (Array.isArray(n.sources) && n.sources[0]) || '/frontend/knowledge-base/knowledge-base.html';
+      const href = n.url || (Array.isArray(n.sources) && n.sources[0]) || kbUrl();
       btn.addEventListener('click', () => openViewer(href, title));
       list.appendChild(btn);
     }
   } catch (err) {
-    list.innerHTML = `<p class="spn-error">${escapeHtml(err?.message || 'Ошибка загрузки')}</p>`;
+    list.innerHTML = `<p class="spn-error">${escapeHtml(err?.message || t('loadError'))}</p>`;
   }
 }
 
 /* —— Catalog —— */
 async function loadCatalog() {
   try {
-    const res = await fetch('/frontend/app/catalog.json?v=2', { credentials: 'same-origin' });
+    const res = await fetch('/frontend/app/catalog.json?v=3', { credentials: 'same-origin' });
     catalog = await res.json();
     catalogLoaded = true;
   } catch (_) {
@@ -1637,33 +2119,54 @@ async function loadCatalog() {
   renderCatalog();
 }
 
+function catalogToolLabel(item) {
+  if (getLocale() === 'en') {
+    return {
+      title: item.titleEn || item.title || '',
+      description: item.descriptionEn || item.description || '',
+    };
+  }
+  return {
+    title: item.title || '',
+    description: item.description || '',
+  };
+}
+
+function catalogGameLabel(item) {
+  if (getLocale() === 'en') {
+    return item.nameEn || item.name || '';
+  }
+  return item.name || '';
+}
+
 function renderCatalog() {
   const toolsList = document.getElementById('toolsList');
   const ownList = document.getElementById('gamesOwnList');
   toolsList.innerHTML = '';
   ownList.innerHTML = '';
 
-  for (const t of catalog.tools || []) {
+  for (const tool of catalog.tools || []) {
+    const label = catalogToolLabel(tool);
     const wrap = document.createElement('div');
     wrap.className = 'spn-toolcard';
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'spn-cardbtn';
-    b.innerHTML = `<strong>${escapeHtml(t.title)}</strong><span>${escapeHtml(t.description || '')}</span>`;
-    b.addEventListener('click', () => openViewer(t.href, t.title));
+    b.innerHTML = `<strong>${escapeHtml(label.title)}</strong><span>${escapeHtml(label.description)}</span>`;
+    b.addEventListener('click', () => openViewer(tool.href, label.title));
     const fav = document.createElement('button');
     fav.type = 'button';
-    fav.className = 'spn-favbtn' + (isToolFavorite(t.href) ? ' is-on' : '');
-    fav.setAttribute('aria-label', 'В избранное: ' + (t.title || ''));
-    fav.setAttribute('aria-pressed', isToolFavorite(t.href) ? 'true' : 'false');
+    fav.className = 'spn-favbtn' + (isToolFavorite(tool.href) ? ' is-on' : '');
+    fav.setAttribute('aria-label', (getLocale() === 'en' ? 'Favorite: ' : 'В избранное: ') + (label.title || ''));
+    fav.setAttribute('aria-pressed', isToolFavorite(tool.href) ? 'true' : 'false');
     fav.innerHTML = STAR_SVG;
     fav.addEventListener('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      const on = toggleToolFavorite(t.href);
+      const on = toggleToolFavorite(tool.href);
       fav.classList.toggle('is-on', on);
       fav.setAttribute('aria-pressed', on ? 'true' : 'false');
-      showToast(on ? 'В избранном профиля' : 'Убрано из избранного');
+      showToast(on ? t('favOn') : t('favOff'));
     });
     wrap.appendChild(b);
     wrap.appendChild(fav);
@@ -1671,11 +2174,12 @@ function renderCatalog() {
   }
 
   for (const g of catalog.gamesOwn || []) {
+    const name = catalogGameLabel(g);
     const b = document.createElement('button');
     b.type = 'button';
     b.className = 'spn-cardbtn';
-    b.innerHTML = `<strong>${escapeHtml(g.name)}</strong>`;
-    b.addEventListener('click', () => openViewer(g.href, g.name));
+    b.innerHTML = `<strong>${escapeHtml(name)}</strong>`;
+    b.addEventListener('click', () => openViewer(g.href, name));
     ownList.appendChild(b);
   }
 }
@@ -1698,8 +2202,33 @@ const profileQuickLinks = document.getElementById('profileQuickLinks');
 const profileMore = document.getElementById('profileMore');
 const profileLogoutBtn = document.getElementById('profileLogoutBtn');
 const PROFILE_URL = '/frontend/profile/profile.html';
+function profileUrl() {
+  const path = localizeFrontendPath(PROFILE_URL);
+  try {
+    const u = new URL(path, location.origin);
+    u.searchParams.set('lang', getLocale());
+    u.searchParams.set('_spn_lang', getLocale());
+    return u.pathname + u.search;
+  } catch (_) {
+    return path;
+  }
+}
 let profileEmbedLoaded = false;
 let profileSubpageOpen = false;
+/** Locale last successfully loaded into the profile iframe */
+let profileLocaleApplied = null;
+
+function reloadProfileForLocale({ force = false } = {}) {
+  if (!profileEmbed || !profileUser || profileUser.hidden) return;
+  if (!force && profileLocaleApplied === getLocale() && profileEmbedLoaded) return;
+  try {
+    if (profileSubpageOpen) closeProfileSubpage();
+  } catch (_) {}
+  const onProfile = document.querySelector('.spn-screen.is-active[data-screen="profile"]');
+  if (force || onProfile) {
+    loadProfileEmbed();
+  }
+}
 
 function clearProfileEmbed() {
   profileEmbedLoaded = false;
@@ -1728,7 +2257,7 @@ function setProfileSubpageUi(on, title) {
   if (profileMore) profileMore.hidden = profileSubpageOpen;
   if (profileBar) profileBar.hidden = false;
   if (profileSubpageOpen) {
-    subtitleEl.textContent = title || 'Профиль';
+    subtitleEl.textContent = title || t('profile');
   } else {
     subtitleEl.textContent = TITLES.profile || 'Профиль';
     if (profileLogoutBtn) profileLogoutBtn.hidden = false;
@@ -1738,6 +2267,7 @@ function setProfileSubpageUi(on, title) {
 
 async function openProfileSubpage(url, title) {
   if (!profileEmbed) return;
+  url = localizeFrontendPath(url);
   // Прямо в подложке профиля (iframe), без отдельного fullscreen/viewer
   try { closeFullscreenPage(); } catch (_) {}
   if (isViewerOpen()) {
@@ -1784,10 +2314,11 @@ function isFullscreenOpen() {
 
 async function openFullscreenPage(url, title) {
   if (!profileFullscreen || !fullscreenFrame) return;
+  url = localizeFrontendPath(url);
   profileSubpageOpen = true;
   setProfileSubpageUi(true, title);
-  fullscreenTitle.textContent = title || 'Серпмонн';
-  subtitleEl.textContent = title || 'Профиль';
+  fullscreenTitle.textContent = title || t('brand');
+  subtitleEl.textContent = title || t('profile');
   profileFullscreen.hidden = false;
   profileFullscreen.setAttribute('aria-hidden', 'false');
   fullscreenFrame.classList.add('is-booting');
@@ -1838,14 +2369,22 @@ async function loadProfileEmbed() {
   setProfileSubpageUi(false);
   profileEmbed.hidden = false;
   profileEmbed.classList.add('is-booting');
+  // Hard reset — Capacitor WebView sometimes keeps stale srcdoc
+  try { profileEmbed.removeAttribute('srcdoc'); } catch (_) {}
+  try { profileEmbed.removeAttribute('src'); } catch (_) {}
+  try { profileEmbed.src = 'about:blank'; } catch (_) {}
+  await new Promise((r) => setTimeout(r, 30));
+  const href = withAppParam(profileUrl());
   try {
-    await loadViewerHtmlInto(profileEmbed, withAppParam(PROFILE_URL));
+    await loadViewerHtmlInto(profileEmbed, href);
     profileEmbedLoaded = true;
+    profileLocaleApplied = getLocale();
   } catch (err) {
     console.warn('profile embed failed', err);
-    profileEmbed.removeAttribute('srcdoc');
-    profileEmbed.src = withAppParam(PROFILE_URL);
+    try { profileEmbed.removeAttribute('srcdoc'); } catch (_) {}
+    profileEmbed.src = href;
     profileEmbedLoaded = true;
+    profileLocaleApplied = getLocale();
   }
 }
 
@@ -1890,7 +2429,7 @@ if (profileEmbed) {
 
 async function refreshProfile() {
   try {
-    const res = await fetch('/auth/protected', { credentials: 'include' });
+    const res = await spnFetch('/auth/protected', { credentials: 'include' });
     if (!res.ok) throw new Error('guest');
     await res.json();
     profileGuest.hidden = true;
@@ -1956,7 +2495,7 @@ async function logoutFromApp() {
     try {
       Object.assign(headers, await getCsrfHeaders());
     } catch (_) {}
-    await fetch('/auth/logout', {
+    await spnFetch('/auth/logout', {
       method: 'POST',
       credentials: 'include',
       headers,
@@ -2069,7 +2608,7 @@ async function completeVkIdFromRedirect() {
     if (!VKID?.Auth?.exchangeCode) throw new Error('no exchangeCode');
     VKID.Config.init({
       app: 54486564,
-      redirectUrl: 'https://serpmonn.ru/frontend/app/index.html?app=1',
+      redirectUrl: `https://serpmonn.ru/frontend/app/index.html?app=1&lang=${getLocale()}`,
       responseMode: VKID.ConfigResponseMode.Callback,
       source: VKID.ConfigSource.LOWCODE,
       scope: 'vkid.personal_info email',
@@ -2080,7 +2619,7 @@ async function completeVkIdFromRedirect() {
     const email = userInfo.user?.email ?? null;
     const name = userInfo.user?.first_name ?? null;
     if (!vkUserId) throw new Error('no vkUserId');
-    const resp = await fetch('/api/vkid-login', {
+    const resp = await spnFetch('/api/vkid-login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -2093,7 +2632,7 @@ async function completeVkIdFromRedirect() {
     console.error('VKID app redirect login failed:', err);
     // Код мог уже быть обменян на странице auth (LOGIN_SUCCESS) — проверим сессию
     try {
-      const res = await fetch('/auth/protected', { credentials: 'include' });
+      const res = await spnFetch('/auth/protected', { credentials: 'include' });
       return res.ok;
     } catch (_) {
       return false;
@@ -2143,7 +2682,7 @@ showScreen('search');
 /* —— Сервисы: почта / входящие / лента —— */
 async function isLoggedIn() {
   try {
-    const res = await fetch('/auth/protected', { credentials: 'include' });
+    const res = await spnFetch('/auth/protected', { credentials: 'include' });
     return res.ok;
   } catch (_) {
     return false;
@@ -2153,7 +2692,7 @@ async function isLoggedIn() {
 async function openAppService(kind) {
   const loggedIn = await isLoggedIn();
   if (!loggedIn) {
-    openAppAuth('Вход');
+    openAppAuth(t('login'));
     return;
   }
   if (kind === 'mail') {
@@ -2271,3 +2810,17 @@ offlineRetry?.addEventListener('click', () => {
 window.addEventListener('online', syncOfflineState);
 window.addEventListener('offline', syncOfflineState);
 syncOfflineState();
+
+/* —— EN/RU switcher —— */
+document.querySelectorAll('.spn-lang__btn').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    const next = btn.getAttribute('data-lang');
+    if (next !== 'en' && next !== 'ru') return;
+    setLocale(next);
+  });
+});
+// Keep profile/site i18n key in sync with app locale
+try {
+  localStorage.setItem('spn_lang', getLocale());
+} catch (_) {}
+applyChromeI18n();

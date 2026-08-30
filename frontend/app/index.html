@@ -7,9 +7,23 @@
   <meta name="theme-color" content="#ffffff">
   <title>Серпмонн</title>
   <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-  <link rel="stylesheet" href="/frontend/app/app.css?v=30">
+  <link rel="stylesheet" href="/frontend/app/app.css?v=34">
   <script>
     window.__SPN_ANDROID_APP__ = true;
+    (function () {
+      try {
+        var q = new URLSearchParams(location.search).get('lang');
+        var saved = localStorage.getItem('spn-app-locale');
+        var nav = (navigator.language || '').toLowerCase();
+        var loc = (q === 'en' || q === 'ru') ? q
+          : (saved === 'en' || saved === 'ru') ? saved
+          : (nav.indexOf('en') === 0 ? 'en' : 'ru');
+        document.documentElement.lang = loc;
+        window.__SPN_APP_LOCALE__ = loc;
+      } catch (_) {
+        window.__SPN_APP_LOCALE__ = 'ru';
+      }
+    })();
   </script>
 </head>
 <body class="android-app">
@@ -19,6 +33,10 @@
       <div class="spn-top-text">
         <strong id="spnTitle">Серпмонн</strong>
         <span id="spnSubtitle">Поиск</span>
+      </div>
+      <div class="spn-lang" role="group" aria-label="Language">
+        <button type="button" class="spn-lang__btn" data-lang="ru" aria-pressed="true">RU</button>
+        <button type="button" class="spn-lang__btn" data-lang="en" aria-pressed="false">EN</button>
       </div>
     </header>
 
@@ -183,6 +201,6 @@
     <div id="spnToast" class="spn-toast" hidden></div>
   </div>
 
-  <script src="/frontend/app/app.js?v=30"></script>
+  <script src="/frontend/app/app.js?v=38"></script>
 </body>
 </html>

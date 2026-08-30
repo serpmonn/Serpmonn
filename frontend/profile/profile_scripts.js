@@ -18,6 +18,7 @@ import {
   isFavoriteHref
 } from '../scripts/tool-favorites.js';
 import { csrfHeaders } from '../scripts/csrf.js';
+import { appFetch } from '../scripts/app-api.js';
 
 function escapeHtmlAttr(str) {
   return String(str || '')
@@ -94,6 +95,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const createOnnmailButton = document.getElementById('createOnnmailButton');
   const loginOnnmailButton = document.getElementById('loginOnnmailButton');
   const logoutButton = document.getElementById('logoutButton');
+  const deleteAccountButton = document.getElementById('deleteAccountButton');
   const managePlanButton = document.getElementById('managePlanButton');
 
   const favoriteContainer = document.getElementById('favoriteTools');
@@ -335,7 +337,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const formData = new FormData();
       formData.append('avatar', file);
 
-      const response = await fetch('/profile/avatar', {
+      const response = await appFetch('/profile/avatar', {
         method: 'POST',
         headers: await csrfHeaders(),
         credentials: 'include',
@@ -370,7 +372,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     setAvatarModalStatus(t('profile.avatarDeleting'));
 
     try {
-      const response = await fetch('/profile/avatar', {
+      const response = await appFetch('/profile/avatar', {
         method: 'DELETE',
         headers: await csrfHeaders(),
         credentials: 'include'
@@ -427,7 +429,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       webQuotaCounterEl.title = t('profile.freeQuotaHint');
       updatePlanQuotaBar(q.used ?? 0, q.limit, webQuotaBarFillEl);
     } else if (currentPlan === 'pro') {
-      webQuotaCounterEl.textContent = '—';
+      webQuotaCounterEl.textContent = '';
       webQuotaHintEl.textContent = t('profile.proQuotaUnavailable');
       webQuotaHintEl.hidden = false;
       webQuotaCounterEl.title = '';
@@ -441,9 +443,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  function isAndroidAppContext() {
+    try {
+      if (window.__SPN_ANDROID_APP__) return true;
+      if (document.documentElement.classList.contains('android-app')) return true;
+      if (new URLSearchParams(window.location.search).get('app') === '1') return true;
+      if (window.parent && window.parent !== window) return true;
+    } catch (_) {}
+    return false;
+  }
+
   function handleUnauthorized() {
+    if (isAndroidAppContext()) {
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'spn-app-need-auth', tab: 'login' }, '*');
+          return;
+        }
+      } catch (_) {}
+      redirectToAuth({
+        tab: 'login',
+        returnPath: '/frontend/app/index.html?app=1&tab=profile'
+      });
+      return;
+    }
     redirectToAuth({ tab: 'login' });
   }
+
+  function cancelProfileEdit() {
+    if (!isEditOpen) return false;
+    isEditOpen = false;
+    renderEditForm();
+    return true;
+  }
+
+  window.addEventListener('spn:cancel-profile-edit', () => {
+    cancelProfileEdit();
+  });
 
   async function safeJson(response) {
     try {
@@ -556,29 +592,35 @@ document.addEventListener('DOMContentLoaded', async () => {
       event.preventDefault();
       setGlobalMessage('');
 
+      const currentUsername =
+        usernameField.textContent && usernameField.textContent !== t('profile.noName')
+          ? usernameField.textContent.trim()
+          : '';
+      const currentEmail =
+        emailField.textContent && emailField.textContent !== '—'
+          ? emailField.textContent.trim()
+          : '';
+
       const newUsername = newUsernameInput.value.trim();
       const newEmail = newEmailInput.value.trim();
 
       newUsernameError.textContent = '';
       newEmailError.textContent = '';
 
-      const payload = {};
-      if (newUsername && newUsername !== usernameField.textContent) {
-        payload.username = newUsername;
-      }
-      if (newEmail && newEmail !== emailField.textContent) {
-        payload.email = newEmail;
-      }
-
-      if (!Object.keys(payload).length) {
+      if (newUsername === currentUsername && newEmail === currentEmail) {
         setGlobalMessage(t('profile.noChanges'), 'error');
         return;
       }
 
-      if (payload.email && !payload.email.includes('@')) {
+      if (newEmail && !newEmail.includes('@')) {
         newEmailError.textContent = t('profile.invalidEmail');
         return;
       }
+
+      const payload = {
+        username: newUsername || currentUsername,
+        email: newEmail || currentEmail
+      };
 
       await updateProfile(payload);
     });
@@ -600,7 +642,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function getProfile() {
     try {
-      const response = await fetch('/profile/info', {
+      const response = await appFetch('/profile/info', {
         method: 'GET',
         credentials: 'include'
       });
@@ -708,7 +750,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         updatePlanQuotaBar(q.used ?? 0, q.limit);
       } else {
         if (currentPlan === 'pro') {
-          planQuotaCounterEl.textContent = '—';
+          planQuotaCounterEl.textContent = '';
           planQuotaHintEl.textContent = t('profile.proQuotaUnavailable');
           planQuotaHintEl.hidden = false;
           planQuotaCounterEl.title = '';
@@ -730,9 +772,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         Boolean(window.__SPN_ANDROID_APP__) ||
         (window.parent && window.parent !== window && window.parent.__SPN_ANDROID_APP__);
       if (inAndroidApp) {
+        // Не предлагаем оплату на сайте — Google Play запрещает обход Billing для цифровых фич.
         planHintEl.hidden = false;
         planHintEl.textContent =
-          'Денежная покупка Pro в приложении временно недоступна. Можно обменять баллы на дни Pro ниже; оформить тариф за деньги — на сайте serpmonn.ru.';
+          'Оплата Pro в приложении недоступна. Можно обменять баллы на дни Pro ниже.';
         if (managePlanButton) managePlanButton.hidden = true;
       } else if (currentPlan === 'pro') {
         planHintEl.hidden = false;
@@ -767,7 +810,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     if (!pointsBalanceEl) return;
 
     try {
-      const response = await fetch('/api/me/points', {
+      const response = await appFetch('/api/me/points', {
         method: 'GET',
         credentials: 'include'
       });
@@ -776,7 +819,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (!response.ok) {
         console.error('Не удалось загрузить баллы', response.status, data);
-        pointsBalanceEl.textContent = '—';
+        pointsBalanceEl.textContent = '';
         return;
       }
 
@@ -784,7 +827,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       pointsBalanceEl.textContent = balance;
     } catch (error) {
       console.error('Ошибка загрузки баллов:', error);
-      pointsBalanceEl.textContent = '—';
+      pointsBalanceEl.textContent = '';
     }
   }
 
@@ -841,7 +884,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function loadPointsHistory() {
     try {
-      const response = await fetch('/api/me/points/history', {
+      const response = await appFetch('/api/me/points/history', {
         method: 'GET',
         credentials: 'include'
       });
@@ -883,7 +926,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function checkCreateMailboxStatus() {
     try {
-      const response = await fetch('/profile/get', {
+      const response = await appFetch('/profile/get', {
         method: 'GET',
         credentials: 'include'
       });
@@ -905,7 +948,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   async function updateProfile(payload) {
     try {
-      const response = await fetch('/profile/update', {
+      const response = await appFetch('/profile/update', {
         method: 'POST',
         headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
         credentials: 'include',
@@ -951,7 +994,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       (typeof window.parent !== 'undefined' && window.parent !== window);
 
     try {
-      const response = await fetch('/auth/logout', {
+      const response = await appFetch('/auth/logout', {
         method: 'POST',
         headers: await csrfHeaders(),
         credentials: 'include'
@@ -972,6 +1015,54 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
       }
       safeAssignLocation(getFrontendPath('main.html'));
+    }
+  }
+
+  async function deleteAccount() {
+    const ok = window.confirm(t('profile.deleteAccountConfirm'));
+    if (!ok) return;
+
+    if (deleteAccountButton) {
+      deleteAccountButton.disabled = true;
+      deleteAccountButton.textContent = t('profile.deleteAccountPending');
+    }
+
+    try {
+      const response = await appFetch('/profile/delete-account', {
+        method: 'POST',
+        headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
+        credentials: 'include',
+        body: '{}'
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        setGlobalMessage(data?.message || t('profile.deleteAccountFailed'), 'error');
+        return;
+      }
+      setGlobalMessage(data?.message || t('profile.deleteAccountSuccess'), 'success');
+      localStorage.removeItem('serp_tools_recent');
+      const stayInApp =
+        Boolean(window.__SPN_ANDROID_APP__) ||
+        document.documentElement.classList.contains('android-app') ||
+        new URLSearchParams(window.location.search).get('app') === '1' ||
+        (typeof window.parent !== 'undefined' && window.parent !== window);
+      if (stayInApp) {
+        try {
+          if (window.parent && window.parent !== window) {
+            window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
+          }
+        } catch (_) {}
+        return;
+      }
+      safeAssignLocation(getFrontendPath('main.html'));
+    } catch (error) {
+      console.error('Ошибка удаления аккаунта:', error);
+      setGlobalMessage(t('profile.deleteAccountFailed'), 'error');
+    } finally {
+      if (deleteAccountButton) {
+        deleteAccountButton.disabled = false;
+        deleteAccountButton.textContent = t('profile.deleteAccount');
+      }
     }
   }
 
@@ -1005,7 +1096,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (!ok) return;
 
       try {
-        const response = await fetch('/api/me/points/withdraw/pro', {
+        const response = await appFetch('/api/me/points/withdraw/pro', {
           method: 'POST',
           headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
           credentials: 'include',
@@ -1139,6 +1230,13 @@ document.addEventListener('DOMContentLoaded', async () => {
   logoutButton.addEventListener('click', () => {
     logout();
   });
+
+  if (deleteAccountButton) {
+    deleteAccountButton.textContent = t('profile.deleteAccount');
+    deleteAccountButton.addEventListener('click', () => {
+      deleteAccount();
+    });
+  }
 
   managePlanButton.addEventListener('click', () => {
     const inApp =
@@ -1488,7 +1586,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   async function refreshMessengerLinkStatus() {
     if (!messengerLinkStatus) return;
     try {
-      const resp = await fetch('/api/messenger-auth/me', { credentials: 'include' });
+      const resp = await appFetch('/api/messenger-auth/me', { credentials: 'include' });
       const data = await resp.json().catch(() => ({}));
       if (!resp.ok) {
         setMessengerLinkUi({ linked: null, statusText: 'Не удалось проверить привязку' });
@@ -1512,7 +1610,7 @@ document.addEventListener('DOMContentLoaded', async () => {
     const statusEl = document.getElementById('messengerLinkModalStatus');
     if (statusEl) statusEl.textContent = 'Ожидаем подтверждение…';
     try {
-      const resp = await fetch('/api/messenger-auth/link-challenge', {
+      const resp = await appFetch('/api/messenger-auth/link-challenge', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -1550,7 +1648,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           if (body.status === 'approved' && body.exchangeCode) {
             clearInterval(messengerLinkPollTimer);
             messengerLinkPollTimer = null;
-            await fetch('/api/messenger-auth/exchange', {
+            await appFetch('/api/messenger-auth/exchange', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               credentials: 'include',
@@ -1582,7 +1680,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (messengerUnlinkButton) {
     messengerUnlinkButton.addEventListener('click', async () => {
       try {
-        const resp = await fetch('/api/messenger-auth/unlink', {
+        const resp = await appFetch('/api/messenger-auth/unlink', {
           method: 'POST',
           credentials: 'include'
         });

@@ -1,14 +1,20 @@
 /**
  * Private storage for GigaChat-generated images (not under /frontend).
+ * Files are kept permanently by default (AI_IMAGE_TTL_MS=0). Set a positive ms to re-enable cleanup.
  */
 import { randomUUID } from 'crypto';
 import { mkdir, writeFile, unlink, readdir, stat } from 'fs/promises';
-import { join, dirname, extname } from 'path';
+import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const STORE_DIR = join(__dirname, '../private/ai-generated');
-const TTL_MS = Number(process.env.AI_IMAGE_TTL_MS) || 7 * 24 * 60 * 60 * 1000;
+/** 0 / negative / unset-with-explicit-0 → never auto-delete. Legacy default was 7 days. */
+const TTL_RAW = process.env.AI_IMAGE_TTL_MS;
+const TTL_MS =
+  TTL_RAW === undefined || TTL_RAW === ''
+    ? 0
+    : Number(TTL_RAW);
 
 const EXT_BY_MIME = {
   'image/jpeg': '.jpg',
@@ -21,7 +27,12 @@ async function ensureDir() {
   await mkdir(STORE_DIR, { recursive: true });
 }
 
+export function getAiGeneratedStoreDir() {
+  return STORE_DIR;
+}
+
 export async function cleanupExpiredAiImages() {
+  if (!Number.isFinite(TTL_MS) || TTL_MS <= 0) return;
   try {
     await ensureDir();
     const names = await readdir(STORE_DIR);
@@ -54,7 +65,7 @@ export async function storeAiGeneratedImage(buffer, contentType) {
   }
 
   await ensureDir();
-  if (Math.random() < 0.1) cleanupExpiredAiImages().catch(() => {});
+  if (TTL_MS > 0 && Math.random() < 0.1) cleanupExpiredAiImages().catch(() => {});
 
   const ext = EXT_BY_MIME[String(contentType || '').toLowerCase()] || '.jpg';
   const id = randomUUID();

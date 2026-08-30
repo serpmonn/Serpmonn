@@ -441,9 +441,43 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   }
 
+  function isAndroidAppContext() {
+    try {
+      if (window.__SPN_ANDROID_APP__) return true;
+      if (document.documentElement.classList.contains('android-app')) return true;
+      if (new URLSearchParams(window.location.search).get('app') === '1') return true;
+      if (window.parent && window.parent !== window) return true;
+    } catch (_) {}
+    return false;
+  }
+
   function handleUnauthorized() {
+    if (isAndroidAppContext()) {
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'spn-app-need-auth', tab: 'login' }, '*');
+          return;
+        }
+      } catch (_) {}
+      redirectToAuth({
+        tab: 'login',
+        returnPath: '/frontend/app/index.html?app=1&tab=profile'
+      });
+      return;
+    }
     redirectToAuth({ tab: 'login' });
   }
+
+  function cancelProfileEdit() {
+    if (!isEditOpen) return false;
+    isEditOpen = false;
+    renderEditForm();
+    return true;
+  }
+
+  window.addEventListener('spn:cancel-profile-edit', () => {
+    cancelProfileEdit();
+  });
 
   async function safeJson(response) {
     try {
@@ -556,29 +590,35 @@ document.addEventListener('DOMContentLoaded', async () => {
       event.preventDefault();
       setGlobalMessage('');
 
+      const currentUsername =
+        usernameField.textContent && usernameField.textContent !== t('profile.noName')
+          ? usernameField.textContent.trim()
+          : '';
+      const currentEmail =
+        emailField.textContent && emailField.textContent !== '—'
+          ? emailField.textContent.trim()
+          : '';
+
       const newUsername = newUsernameInput.value.trim();
       const newEmail = newEmailInput.value.trim();
 
       newUsernameError.textContent = '';
       newEmailError.textContent = '';
 
-      const payload = {};
-      if (newUsername && newUsername !== usernameField.textContent) {
-        payload.username = newUsername;
-      }
-      if (newEmail && newEmail !== emailField.textContent) {
-        payload.email = newEmail;
-      }
-
-      if (!Object.keys(payload).length) {
+      if (newUsername === currentUsername && newEmail === currentEmail) {
         setGlobalMessage(t('profile.noChanges'), 'error');
         return;
       }
 
-      if (payload.email && !payload.email.includes('@')) {
+      if (newEmail && !newEmail.includes('@')) {
         newEmailError.textContent = t('profile.invalidEmail');
         return;
       }
+
+      const payload = {
+        username: newUsername || currentUsername,
+        email: newEmail || currentEmail
+      };
 
       await updateProfile(payload);
     });
@@ -730,9 +770,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         Boolean(window.__SPN_ANDROID_APP__) ||
         (window.parent && window.parent !== window && window.parent.__SPN_ANDROID_APP__);
       if (inAndroidApp) {
+        // Не предлагаем оплату на сайте — Google Play запрещает обход Billing для цифровых фич.
         planHintEl.hidden = false;
         planHintEl.textContent =
-          'Денежная покупка Pro в приложении временно недоступна. Можно обменять баллы на дни Pro ниже; оформить тариф за деньги — на сайте serpmonn.ru.';
+          'Оплата Pro в приложении недоступна. Можно обменять баллы на дни Pro ниже.';
         if (managePlanButton) managePlanButton.hidden = true;
       } else if (currentPlan === 'pro') {
         planHintEl.hidden = false;

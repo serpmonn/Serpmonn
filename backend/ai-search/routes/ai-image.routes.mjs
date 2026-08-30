@@ -5,6 +5,7 @@ import { extname } from 'path';
 import { getBackendMessages } from '../../utils/i18n.mjs';
 import { generateImageWithGigaChat } from '../gigachat-client.mjs';
 import { storeAiGeneratedImage, resolveAiGeneratedPath } from '../ai-image-store.mjs';
+import { insertAiGeneratedImage } from '../ai-generated-images-store.mjs';
 import {
   attachUserIfToken,
   getUserIdentity,
@@ -44,6 +45,25 @@ function registerAiImageRoutes(router) {
       const generated = await generateImageWithGigaChat(prompt);
       const stored = await storeAiGeneratedImage(generated.buffer, generated.contentType);
       const latencyMs = Number(process.hrtime.bigint() - reqStart) / 1e6;
+
+      const userId =
+        identity?.type === 'user' && req.user?.id != null ? String(req.user.id) : null;
+      try {
+        await insertAiGeneratedImage({
+          id: stored.id,
+          fileName: stored.fileName,
+          contentType: generated.contentType,
+          bytes: generated.buffer.length,
+          prompt,
+          caption: generated.caption || '',
+          userId,
+          identityKey: identity?.id || '',
+          locale,
+          visibility: 'admin',
+        });
+      } catch (metaErr) {
+        console.warn('[ai-image] metadata insert failed:', metaErr.message);
+      }
 
       trackSearchQuery(req, identity, {
         mode: 'ai',

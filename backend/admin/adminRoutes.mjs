@@ -45,6 +45,11 @@ import {
   getMarketingReports,
   regenerateMarketingCopy
 } from './marketingAdmin.mjs';
+import {
+  listAiImagesAdmin,
+  streamAiImageAdmin,
+  deleteAiImageAdmin,
+} from './aiImagesAdmin.mjs';
 
 const router = Router();
 
@@ -98,5 +103,10 @@ router.get('/marketing/queue/:id/media', verifyAdmin, streamMarketingMedia);
 router.get('/marketing/channels', verifyAdmin, listMarketingChannels);
 router.get('/marketing/templates', verifyAdmin, listMarketingTemplates);
 router.get('/marketing/reports', verifyAdmin, getMarketingReports);
+
+// AI-сгенерированные картинки
+router.get('/ai-images', verifyAdmin, listAiImagesAdmin);
+router.get('/ai-images/:id/file', verifyAdmin, streamAiImageAdmin);
+router.delete('/ai-images/:id', verifyAdmin, deleteAiImageAdmin);
 
 export default router;

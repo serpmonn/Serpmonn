@@ -106,6 +106,7 @@ function registerAiSearchRoutes(router) {
           emit: null,
           attachment,
           safesearch: resolveAiSafesearch(req),
+          locale,
         });
 
         const textFailure = settled.find(

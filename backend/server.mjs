@@ -185,7 +185,7 @@ app.get('/csrf-token', (req, res) => {                                          
 
 // CSRF только на cookie-auth мутаторах (opt-in). Webhooks, /improve, login, voice — без токена.
 const CSRF_REQUIRED = [
-    /^\/profile\/(update|avatar)$/,
+    /^\/profile\/(update|avatar|delete-account)$/,
     /^\/auth\/logout$/,
     /^\/api\/yookassa\/create$/,
     /^\/api\/me\//,

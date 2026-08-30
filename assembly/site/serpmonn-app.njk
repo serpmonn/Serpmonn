@@ -180,6 +180,84 @@ eleventyComputed:
       color: var(--text);
       font-weight: 600;
     }
+    .zbt {
+      margin-top: 2.75rem;
+      padding: 1.35rem 1.4rem 1.45rem;
+      max-width: 40rem;
+      background: var(--bg-elev);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 24px rgba(26, 31, 42, 0.06);
+    }
+    .zbt h2 {
+      margin: 0 0 0.65rem;
+      font-family: var(--display);
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+    .zbt p {
+      margin: 0 0 0.75rem;
+      color: var(--muted);
+      font-size: 0.98rem;
+    }
+    .zbt .steps {
+      margin: 0 0 1rem;
+      padding-left: 1.15rem;
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+    .zbt .steps li { margin: 0.25rem 0; }
+    .zbt .cta-row { margin-bottom: 0.65rem; }
+    .zbt .meta { margin: 0.75rem 0 0; }
+    .zbt-form {
+      display: grid;
+      gap: 0.65rem;
+      margin: 0 0 0.85rem;
+    }
+    .zbt-form label {
+      font-weight: 600;
+      font-size: 0.92rem;
+    }
+    .zbt-form input[type="email"] {
+      width: 100%;
+      max-width: 28rem;
+      padding: 0.75rem 0.9rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      font: inherit;
+      background: #fff;
+      color: var(--text);
+    }
+    .zbt-form input[type="email"]:focus {
+      outline: 2px solid rgba(217, 44, 44, 0.35);
+      outline-offset: 1px;
+    }
+    .zbt-form .btn-primary {
+      justify-self: start;
+      cursor: pointer;
+      font: inherit;
+    }
+    .zbt-form .form-error {
+      margin: 0;
+      color: var(--accent);
+      font-size: 0.88rem;
+      display: none;
+    }
+    .zbt-form .form-error.is-visible { display: block; }
+    .zbt-form .form-ok {
+      margin: 0;
+      color: #1f7a3f;
+      font-size: 0.88rem;
+      display: none;
+    }
+    .zbt-form .form-ok.is-visible { display: block; }
+    .zbt-form .btn-primary:disabled {
+      opacity: 0.65;
+      cursor: wait;
+      transform: none;
+    }
     @media (max-width: 800px) {
       .shots { grid-template-columns: 1fr; max-width: 320px; }
     }
@@ -224,12 +302,80 @@ eleventyComputed:
       </figure>
     </section>
 
-    <p class="note">
-      {{ serpmonnAppTranslations[locale].app.noteWarn }}
-      {{ serpmonnAppTranslations[locale].app.noteMore }}
-      <a href="{{ installGuideHref }}">{{ serpmonnAppTranslations[locale].app.noteGuide }}</a>.
-    </p>
+    <section class="zbt" aria-labelledby="zbt-title">
+      <h2 id="zbt-title">{{ serpmonnAppTranslations[locale].app.zbtTitle }}</h2>
+      <p>{{ serpmonnAppTranslations[locale].app.zbtLead }}</p>
+      <ol class="steps">
+        <li>{{ serpmonnAppTranslations[locale].app.zbtStep1 }}</li>
+        <li>{{ serpmonnAppTranslations[locale].app.zbtStep2 }}</li>
+        <li>{{ serpmonnAppTranslations[locale].app.zbtStep3 }}</li>
+      </ol>
+      <form class="zbt-form" id="zbt-apply-form" novalidate>
+        <label for="zbt-email">{{ serpmonnAppTranslations[locale].app.zbtLabel }}</label>
+        <input id="zbt-email" name="email" type="email" required autocomplete="email" placeholder="name@example.com" inputmode="email">
+        <p class="form-error" id="zbt-form-error" role="alert"></p>
+        <p class="form-ok" id="zbt-form-ok" role="status"></p>
+        <button class="btn-primary" type="submit" id="zbt-submit">{{ serpmonnAppTranslations[locale].app.zbtCta }}</button>
+      </form>
+      <p class="meta">{{ serpmonnAppTranslations[locale].app.zbtMeta }}</p>
+      <p class="meta" style="margin-top:0.45rem">
+        {{ serpmonnAppTranslations[locale].app.zbtAlready }}
+        <a class="btn-secondary" id="cta-play-zbt" href="https://play.google.com/apps/testing/ru.serpmonn" target="_blank" rel="noopener">{{ serpmonnAppTranslations[locale].app.zbtConfirm }}</a>
+      </p>
+    </section>
   </main>
+  {% include "partials/metrika-main.njk" %}
+  <script src="/frontend/scripts/direct-conversion-goals.js?v=1" defer></script>
   <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
+  <script>
+    (function () {
+      var form = document.getElementById('zbt-apply-form');
+      var input = document.getElementById('zbt-email');
+      var err = document.getElementById('zbt-form-error');
+      var ok = document.getElementById('zbt-form-ok');
+      var btn = document.getElementById('zbt-submit');
+      if (!form || !input) return;
+      var errInvalid = {{ serpmonnAppTranslations[locale].app.zbtError | dump | safe }};
+      var errNetwork = {{ serpmonnAppTranslations[locale].app.zbtNetworkError | dump | safe }};
+
+      function showError(msg) {
+        if (ok) { ok.textContent = ''; ok.classList.remove('is-visible'); }
+        if (err) { err.textContent = msg || errInvalid; err.classList.add('is-visible'); }
+      }
+      function showOk(msg) {
+        if (err) { err.textContent = ''; err.classList.remove('is-visible'); }
+        if (ok) { ok.textContent = msg; ok.classList.add('is-visible'); }
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        var email = (input.value || '').trim();
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          showError(errInvalid);
+          input.focus();
+          return;
+        }
+        if (btn) btn.disabled = true;
+        try {
+          var res = await fetch('/api/play-testers/apply', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+            body: JSON.stringify({ email: email, source: 'serpmonn-app' })
+          });
+          var data = await res.json().catch(function () { return {}; });
+          if (!res.ok || !data.success) {
+            showError(data.message || errNetwork);
+            return;
+          }
+          showOk(data.message || '');
+          form.reset();
+        } catch (ex) {
+          showError(errNetwork);
+        } finally {
+          if (btn) btn.disabled = false;
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

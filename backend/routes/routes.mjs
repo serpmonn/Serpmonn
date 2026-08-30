@@ -10,6 +10,7 @@ import subscribersCountRouter from '../subscriber/subscribersCountRoutes.mjs';  
 import { analyticsRouter } from '../analyticsRouter.mjs';                                                                        // Аналитика (stub в CI, если backend/analytics в .gitignore)
 import promocodesRoutes from '../promocodes/promocodesRoutes.mjs';                                                               // Импорт маршрутов промокодов и акций
 import improveRoutes from '../improve/improve.mjs';                                                                              // Импорт маршрута предложки
+import playTestersRoutes from '../play-testers/playTesters.routes.mjs';                                                          // Заявки на закрытое тестирование Play
 import pointsRoutes from '../points/pointsRoutes.mjs';                                                                           // Импорт маршрута баллов
 import withdrawalRoutes from '../points/withdrawalRoutes.mjs';                                                                   // Импорт маршрута обмена баллов на Pro
 import verifyToken from '../auth/verifyToken.mjs';                                                                               // Импорт маршрута верификации токена
@@ -40,6 +41,7 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/', unsubscribeRouter);                                                                                             // Подключаем маршруты отписки от рассылки промокодов
     app.use('/api', subscribersCountRouter);                                                                                     // Подключаем маршрут количества подписчиков на промокоды
     app.use('/improve', improveRoutes);                                                                                          // Подключаем маршрут предложки
+    app.use('/api/play-testers', playTestersRoutes);                                                                             // Заявки на закрытое тестирование Google Play
     app.use('/api', vkidRoutes);                                                                                                 // Подключаем маршрут авторизации VK ID
     app.use('/api', messengerAuthRoutes);                                                                                        // Вход через Serpmonn Messenger (публичные + точечный verifyToken)
     app.use('/voice', voiceRoutes);                                                                                              // Подключаем маршруты голосового ввода (STT/TTS)

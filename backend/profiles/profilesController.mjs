@@ -184,16 +184,20 @@ const getUserInfo = async (req, res) => {                                       
 // Контроллер для обновления профиля пользователя
 const updateUserProfile = async (req, res) => {                                                                                  // Определяем функцию для обновления профиля
     const { email: oldEmail, username: oldUsername, id: userId } = req.user || {};
-    const { username, email } = req.body;                                                                                        // Извлекаем новые username и email из тела запроса
-    console.log('Полученные данные:', req.body);                                                                                 // Логируем тело запроса для отладки
-    console.log('Email пользователя из токена:', oldEmail);
-    console.log('Username пользователя из токена:', oldUsername);                                                                // Логируем username из токена для отладки
+    const bodyUsername = typeof req.body?.username === 'string' ? req.body.username.trim() : '';
+    const bodyEmail = typeof req.body?.email === 'string' ? req.body.email.trim() : '';
+    const username = bodyUsername || oldUsername || '';
+    const email = bodyEmail || oldEmail || '';
 
-    if (!email || !username) {                                                                                                   // Проверяем, предоставлены ли email и username
-        return res.status(400).json({ message: 'Email и username обязательны' });                                                // Возвращаем ошибку, если данные отсутствуют
-    }                                                                                                                      
+    if (!email || !username) {
+        return res.status(400).json({ message: 'Email и username обязательны' });
+    }
 
-    try {                                                                                                                        // Начинаем блок обработки ошибок
+    if (bodyUsername === oldUsername && bodyEmail === oldEmail) {
+        return res.json({ message: 'Профиль обновлен успешно' });
+    }
+
+    try {
         let result;
         if (userId) {
             result = await query(
@@ -206,9 +210,8 @@ const updateUserProfile = async (req, res) => {                                 
                 [username, email, oldEmail]
             );
         }
-        console.log('Результат обновления:', result);                                                                            // Логируем результат обновления для отладки
 
-        if (oldEmail !== email || oldUsername !== username) {                                                                    // Проверяем, изменились ли email или username
+        if (oldEmail !== email || oldUsername !== username) {
             clearAuthCookie(res);
             const newToken = await V2.sign(
                 { id: userId, username, email },
@@ -225,4 +228,40 @@ const updateUserProfile = async (req, res) => {                                 
     }                                                                                                                      
 };
 
-export { getUserProfile, getUserInfo, updateUserProfile };                                                                       // Экспортируем функции контроллеров
+/** Анонимизация аккаунта (как VK Mini) + сброс сессии. */
+const deleteUserAccount = async (req, res) => {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    try {
+        const userId = req.user?.id;
+        if (!userId) {
+            return res.status(401).json({ message: 'Недействительный токен или ошибка авторизации' });
+        }
+
+        const short = String(userId).replace(/-/g, '').slice(0, 12);
+        const anonEmail = `deleted+${short}@invalid.local`;
+        const anonName = `deleted_${short}`;
+
+        const result = await query(
+            `UPDATE users
+             SET username = ?,
+                 email = ?,
+                 password_hash = '',
+                 vk_user_id = NULL,
+                 confirmed = 0
+             WHERE id = ?`,
+            [anonName, anonEmail, userId]
+        );
+
+        if (!result?.affectedRows) {
+            return res.status(404).json({ message: 'Пользователь не найден' });
+        }
+
+        clearAuthCookie(res);
+        return res.json({ success: true, message: 'Аккаунт удалён' });
+    } catch (err) {
+        console.error('Ошибка при удалении аккаунта:', err);
+        return res.status(500).json({ message: 'Не удалось удалить аккаунт' });
+    }
+};
+
+export { getUserProfile, getUserInfo, updateUserProfile, deleteUserAccount };
