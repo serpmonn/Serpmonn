@@ -31,6 +31,7 @@ const corsOptions = {                                                           
     origin: [                                                                                                                    // Указываем разрешенные источники (домены) для доступа к API
         'https://serpmonn.ru',                                                                                                   // Разрешаем основной домен serpmonn.ru
         'https://www.serpmonn.ru',                                                                                               // Разрешаем домен с www префиксом
+        'https://dev.serpmonn.ru',                                                                                               // Dev-стенд / Serpmonn Dev APK
         `http://localhost:${VITE_PORT}`,                                                                                         // Разрешаем локальный Vite dev сервер (порт из .env)
         `http://127.0.0.1:${VITE_PORT}`,                                                                                         // Разрешаем альтернативный адрес Vite dev сервера
         `http://localhost:${AUTH_PORT}`,                                                                                         // Разрешаем доступ с того же домена (auth сервер, порт из .env)
@@ -190,7 +191,8 @@ const CSRF_REQUIRED = [
     /^\/api\/yookassa\/create$/,
     /^\/api\/me\//,
     /^\/api\/findings(\/|$)/,
-    /^\/api\/dm(\/|$)/
+    /^\/api\/dm(\/|$)/,
+    /^\/api\/push(\/|$)/
 ];
 
 const AGENTS_CSRF_EXEMPT_IDS = new Set([

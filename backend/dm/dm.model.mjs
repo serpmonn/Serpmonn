@@ -51,6 +51,17 @@ export async function ensureDmTables() {
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
   `);
 
+  const colRows = await query(`
+    SELECT COLUMN_NAME AS name
+    FROM information_schema.COLUMNS
+    WHERE TABLE_SCHEMA = DATABASE()
+      AND TABLE_NAME = 'dm_messages'
+      AND COLUMN_NAME = 'image_url'
+  `);
+  if (!colRows.length) {
+    await query('ALTER TABLE dm_messages ADD COLUMN image_url VARCHAR(255) NULL AFTER finding_id');
+  }
+
   dmTablesReady = true;
   await migrateFindingSharesToDm();
 }
@@ -109,19 +120,20 @@ export async function getOrCreateConversation(userId1, userId2) {
   return result.insertId;
 }
 
-export async function insertDmMessage({ senderId, recipientId, body, findingId }) {
+export async function insertDmMessage({ senderId, recipientId, body, findingId, imageUrl }) {
   await ensureDmTables();
   const trimmedBody = body ? String(body).trim().slice(0, 2000) : null;
-  if (!trimmedBody && !findingId) {
+  const trimmedImage = imageUrl ? String(imageUrl).trim() : null;
+  if (!trimmedBody && !findingId && !trimmedImage) {
     throw new Error('empty_message');
   }
   if (senderId === recipientId) throw new Error('self_message');
 
   const conversationId = await getOrCreateConversation(senderId, recipientId);
   const result = await query(
-    `INSERT INTO dm_messages (conversation_id, sender_id, body, finding_id)
-     VALUES (?, ?, ?, ?)`,
-    [conversationId, senderId, trimmedBody || null, findingId || null]
+    `INSERT INTO dm_messages (conversation_id, sender_id, body, finding_id, image_url)
+     VALUES (?, ?, ?, ?, ?)`,
+    [conversationId, senderId, trimmedBody || null, findingId || null, trimmedImage]
   );
   await query(
     'UPDATE dm_conversations SET updated_at = CURRENT_TIMESTAMP WHERE id = ?',
@@ -211,7 +223,14 @@ export async function listConversationsForUser(userId, limit = 50) {
               WHERE m.conversation_id = c.id
               ORDER BY m.created_at DESC
               LIMIT 1
-            ) AS last_has_finding
+            ) AS last_has_finding,
+            (
+              SELECT m.image_url IS NOT NULL AND m.image_url != ''
+              FROM dm_messages m
+              WHERE m.conversation_id = c.id
+              ORDER BY m.created_at DESC
+              LIMIT 1
+            ) AS last_has_photo
      FROM dm_conversations c
      JOIN users ua ON ua.id = c.user_a
      JOIN users ub ON ub.id = c.user_b
@@ -231,6 +250,7 @@ export async function listConversationsForUser(userId, limit = 50) {
       body: row.last_body || null,
       findingQuery: row.last_finding_query || null,
       hasFinding: !!row.last_has_finding,
+      hasPhoto: !!row.last_has_photo,
       isMine: row.last_sender_id === userId,
       createdAt: row.last_at,
     },
@@ -252,7 +272,7 @@ export async function listMessagesWithPeer(userId, peerUsername, limit = 100) {
   const conversationId = convRows[0].id;
   const lim = clampLimit(limit, 100, 200);
   const rows = await query(
-    `SELECT m.id, m.body, m.finding_id, m.legacy_share_id, m.read_at, m.created_at, m.sender_id,
+    `SELECT m.id, m.body, m.finding_id, m.image_url, m.legacy_share_id, m.read_at, m.created_at, m.sender_id,
             u.username AS sender_username,
             f.public_id AS finding_public_id,
             f.query_text AS finding_query
@@ -273,6 +293,7 @@ export async function listMessagesWithPeer(userId, peerUsername, limit = 100) {
       senderUsername: row.sender_username,
       isMine: row.sender_id === userId,
       body: row.body,
+      imageUrl: row.image_url || null,
       finding:
         row.finding_id && row.finding_public_id
           ? { publicId: row.finding_public_id, query: row.finding_query }

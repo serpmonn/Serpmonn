@@ -1,7 +1,7 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
 import { getFrontendPath, sanitizeReturnPath, safeAssignLocation, getCurrentLocale } from '../scripts/locale-paths.js';
 import { getPageT } from '../scripts/i18n-loader.js';
-import { appFetch } from '../scripts/app-api.js';
+import { appFetch } from '../scripts/app-api.js?v=2';
 
 const t = await getPageT('auth');
 
@@ -280,10 +280,10 @@ function initVkIdOneTap() {
 
     VKID.Config.init({
       app: 54486564,
-      // Для приложения — возврат в оболочку, не на главную сайта
+      // Для приложения — возврат в оболочку текущего стенда
       redirectUrl: isAndroidAppShell()
-        ? 'https://serpmonn.ru/frontend/app/index.html?app=1'
-        : 'https://serpmonn.ru/',
+        ? `${location.origin}/frontend/app/index.html?app=1`
+        : `${location.origin}/`,
       responseMode: VKID.ConfigResponseMode.Callback,
       source: VKID.ConfigSource.LOWCODE,
       scope: 'vkid.personal_info email'

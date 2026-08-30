@@ -26,6 +26,7 @@ import cors from 'cors';                                                        
 import newsRoutes from '../news/newsRoutes.mjs';                                                                                 // Импорт маршрутов новостей
 import findingsRoutes from '../findings/findings.routes.mjs';                                                                   // Находки AI-поиска
 import dmRoutes from '../dm/dm.routes.mjs';                                                                                     // Личные сообщения
+import pushRoutes from '../push/push.routes.mjs';                                                                               // Web Push подписки
 
 export function connectRoutes(app, authLimiter) {                                                                                // Функция централизованного подключения всех маршрутов приложения
     app.use(yookassaRouter);                                                                                                     // Подключаем маршруты платёжной системы YooKassa
@@ -47,6 +48,7 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/voice', voiceRoutes);                                                                                              // Подключаем маршруты голосового ввода (STT/TTS)
     app.use('/api', findingsRoutes);                                                                                             // Находки: публичный GET + auth на отдельных роутах
     app.use('/api', dmRoutes);                                                                                                   // Личные сообщения (DM)
+    app.use('/api', pushRoutes);                                                                                                 // Web Push: VAPID + подписка
     app.use('/api', (req, res, next) => {                                                                                        // verifyToken — пропускаем /api/admin (обрабатывается admin-server)
         if (req.path.startsWith('/admin')) return next('route');
         // Agents: marketplace / webhook / inbound event / agent log — не cookie-сессия

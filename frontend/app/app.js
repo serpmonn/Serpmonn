@@ -3,9 +3,17 @@ document.documentElement.classList.add('android-app');
 document.body?.classList.add('android-app');
 
 const SPN_APP_ORIGIN = 'https://serpmonn.ru';
+function isSerpmonnHost(hostname) {
+  const h = String(hostname || '').toLowerCase();
+  return h === 'serpmonn.ru' || h === 'www.serpmonn.ru' || h === 'dev.serpmonn.ru' || h.endsWith('.serpmonn.ru');
+}
 function spnApiUrl(path) {
   const p = String(path || '');
   if (/^https?:\/\//i.test(p)) return p;
+  // On prod/dev host use same-origin so Dev APK auth/API isn't blocked by CORS
+  try {
+    if (isSerpmonnHost(location.hostname)) return p;
+  } catch (_) {}
   return new URL(p, SPN_APP_ORIGIN).href;
 }
 function spnFetch(path, options) {
@@ -35,17 +43,43 @@ const I18N = {
     feed: 'Лента',
     kb: 'База знаний',
     newsEmpty: 'Пока нет новостей.',
+    kbEmpty: 'Пока нет статей.',
     profileGuestTitle: 'Профиль',
-    profileGuestText: 'Войдите через аккаунт Серпмонн, чтобы открыть план, баллы, находки и настройки.',
+    profileGuestText: 'Войдите через аккаунт Серпмонн, чтобы открыть план, баллы и находки.',
     loginRegister: 'Войти / регистрация',
     more: 'Ещё',
     policy: 'Политика',
     offer: 'Соглашение',
-    donate: 'Поддержать',
+    donate: 'Поддержать проект',
+    help: 'Помощь',
+    helpBack: '← Настройки',
+    helpIntro: 'Вопросы по аккаунту, приложению и сервису. Ответ придёт на указанный email.',
+    helpFormTitle: 'Написать в поддержку',
+    helpTopic: 'Тема',
+    helpTopicBug: 'Ошибка / не работает',
+    helpTopicAccount: 'Аккаунт / вход',
+    helpTopicApp: 'Приложение',
+    helpTopicOther: 'Другое',
+    helpEmail: 'Email для ответа',
+    helpMessage: 'Сообщение',
+    helpMessagePh: 'Опишите проблему…',
+    helpSend: 'Отправить',
+    helpSending: 'Отправляем…',
+    helpSent: 'Сообщение отправлено. Ответ придёт на указанный email.',
+    helpSendFail: 'Не удалось отправить. Напишите на support@serpmonn.ru',
+    helpFaqQ1: 'Как войти в аккаунт?',
+    helpFaqA1: 'Откройте вкладку «Профиль» и нажмите «Войти / регистрация». Можно через Серпмонн Мессенджер, VK ID или email.',
+    helpFaqQ2: 'Не открывается инструмент или игра',
+    helpFaqA2: 'Проверьте интернет и обновите экран. Если не помогло — опишите, что именно не грузится, в форме ниже.',
+    helpFaqQ3: 'Где база знаний и новости?',
+    helpFaqA3: 'Вкладка «Новости»: лента и база знаний. Статьи открываются из списка.',
+    helpFaqQ4: 'Это не донат?',
+    helpFaqA4: 'Нет. «Помощь» — обращение в поддержку. «Поддержать проект» — добровольный донат.',
     about: 'О проекте',
     backProfile: '← Профиль',
     findingsFeed: 'Лента находок',
-    findingsInbox: 'Входящие',
+    findingsInbox: 'Сообщения',
+    messages: 'Сообщения',
     logout: 'Выйти',
     sections: 'Разделы',
     section: 'Раздел',
@@ -88,6 +122,9 @@ const I18N = {
     favOn: 'В избранном профиля',
     favOff: 'Убрано из избранного',
     langGroup: 'Язык',
+    settingsTitle: 'Настройки',
+    languageLabel: 'Язык',
+    settingsBack: '← Назад',
   },
   en: {
     brand: 'Serpmonn',
@@ -110,17 +147,43 @@ const I18N = {
     feed: 'Feed',
     kb: 'Knowledge base',
     newsEmpty: 'No news yet.',
+    kbEmpty: 'No articles yet.',
     profileGuestTitle: 'Profile',
-    profileGuestText: 'Sign in with your Serpmonn account to open plan, points, findings and settings.',
+    profileGuestText: 'Sign in with your Serpmonn account to open plan, points and findings.',
     loginRegister: 'Sign in / register',
     more: 'More',
     policy: 'Privacy',
     offer: 'Terms',
-    donate: 'Support',
+    donate: 'Support the project',
+    help: 'Help',
+    helpBack: '← Settings',
+    helpIntro: 'Questions about your account, the app, or the service. A reply will be sent to the email provided.',
+    helpFormTitle: 'Contact support',
+    helpTopic: 'Topic',
+    helpTopicBug: 'Bug / something broken',
+    helpTopicAccount: 'Account / sign-in',
+    helpTopicApp: 'App',
+    helpTopicOther: 'Other',
+    helpEmail: 'Reply email',
+    helpMessage: 'Message',
+    helpMessagePh: 'Describe the issue…',
+    helpSend: 'Send',
+    helpSending: 'Sending…',
+    helpSent: 'Message sent. A reply will be sent to the email provided.',
+    helpSendFail: 'Couldn’t send. Email support@serpmonn.ru',
+    helpFaqQ1: 'How do I sign in?',
+    helpFaqA1: 'Open the Profile tab and tap Sign in / register. You can use Serpmonn Messenger, VK ID, or email.',
+    helpFaqQ2: 'A tool or game won’t open',
+    helpFaqA2: 'Check your connection and refresh. If it still fails, describe what doesn’t load in the form below.',
+    helpFaqQ3: 'Where are the knowledge base and news?',
+    helpFaqA3: 'News tab: feed and knowledge base. Articles open from the list.',
+    helpFaqQ4: 'Is this a donation?',
+    helpFaqA4: 'No. Help is customer support. “Support the project” is an optional donation.',
     about: 'About',
     backProfile: '← Profile',
     findingsFeed: 'Findings feed',
-    findingsInbox: 'Inbox',
+    findingsInbox: 'Messages',
+    messages: 'Messages',
     logout: 'Log out',
     sections: 'Sections',
     section: 'Section',
@@ -163,6 +226,9 @@ const I18N = {
     favOn: 'Saved to profile favorites',
     favOff: 'Removed from favorites',
     langGroup: 'Language',
+    settingsTitle: 'Settings',
+    languageLabel: 'Language',
+    settingsBack: '← Back',
   },
 };
 
@@ -195,7 +261,9 @@ function t(key) {
 
 function getTitles() {
   return {
+    feed: t('findingsFeed'),
     search: t('search'),
+    inbox: t('findingsInbox'),
     news: t('news'),
     tools: t('tools'),
     games: t('games'),
@@ -263,8 +331,12 @@ function setLocale(next, { persist = true, reloadContent = true } = {}) {
   if (reloadContent) {
     try { clearViewerHtmlCache(); } catch (_) {}
     newsLoaded = false;
+    kbItemsCache = null;
+    kbListLocale = null;
+    kbIndexPromise = null;
     if (document.querySelector('.spn-screen.is-active[data-screen="news"]')) {
-      loadNews();
+      if (newsChip === 'kb') loadKbList();
+      else loadNews();
     }
     if (catalogLoaded) {
       renderCatalog();
@@ -290,18 +362,14 @@ function setLocale(next, { persist = true, reloadContent = true } = {}) {
 
 function applyChromeI18n() {
   const titles = getTitles();
-  const titleEl = document.getElementById('spnTitle');
-  if (titleEl) titleEl.textContent = t('brand');
   document.title = t('brand');
-
-  const activeTab = document.querySelector('.spn-tab.is-active')?.dataset?.tab;
-  if (subtitleEl && !(typeof profileSubpageOpen !== 'undefined' && profileSubpageOpen && activeTab === 'profile')) {
-    subtitleEl.textContent = titles[activeTab] || titles.search;
-  }
 
   tabs.forEach((tab) => {
     const name = tab.dataset.tab;
-    if (titles[name]) tab.textContent = titles[name];
+    if (titles[name]) {
+      tab.setAttribute('aria-label', titles[name]);
+      tab.title = titles[name];
+    }
   });
 
   screens.forEach((s) => {
@@ -346,42 +414,105 @@ function applyChromeI18n() {
   });
   const newsEmpty = document.getElementById('newsEmpty');
   if (newsEmpty) newsEmpty.textContent = t('newsEmpty');
+  const kbEmpty = document.getElementById('kbEmpty');
+  if (kbEmpty) kbEmpty.textContent = t('kbEmpty');
 
-  const guestH2 = document.querySelector('#profileGuest .spn-h2');
+  const guestH2 = document.getElementById('profileScreenTitle');
   if (guestH2) guestH2.textContent = t('profileGuestTitle');
   const guestP = document.querySelector('#profileGuest > .spn-muted');
   if (guestP) guestP.textContent = t('profileGuestText');
   const loginBtn = document.querySelector('#profileGuest [data-open*="auth"]');
   if (loginBtn) loginBtn.textContent = t('loginRegister');
 
-  document.querySelectorAll('.spn-more > summary').forEach((el) => { el.textContent = t('more'); });
+  const settingsTitleEl = document.getElementById('settingsPanelTitle');
+  if (settingsTitleEl) settingsTitleEl.textContent = t('settingsTitle');
+  const settingsLangLabel = document.getElementById('settingsLangLabel');
+  if (settingsLangLabel) settingsLangLabel.textContent = t('languageLabel');
+  const settingsOpenBtn = document.getElementById('settingsOpenBtn');
+  if (settingsOpenBtn) {
+    settingsOpenBtn.setAttribute('aria-label', t('settingsTitle'));
+    settingsOpenBtn.title = t('settingsTitle');
+  }
+  const settingsBackBtn = document.getElementById('settingsBackBtn');
+  if (settingsBackBtn) settingsBackBtn.textContent = t('settingsBack');
+
   document.querySelectorAll('[data-open*="privacy-policy"]').forEach((el) => { el.textContent = t('policy'); });
   document.querySelectorAll('[data-open*="offer"]').forEach((el) => { el.textContent = t('offer'); });
   document.querySelectorAll('[data-open*="donate"]').forEach((el) => { el.textContent = t('donate'); });
   document.querySelectorAll('[data-open*="about-project"]').forEach((el) => { el.textContent = t('about'); });
+  const helpOpenBtn = document.getElementById('helpOpenBtn');
+  if (helpOpenBtn) helpOpenBtn.textContent = t('help');
+  const helpPanelTitle = document.getElementById('helpPanelTitle');
+  if (helpPanelTitle) helpPanelTitle.textContent = t('help');
+  const helpBackBtn = document.getElementById('helpBackBtn');
+  if (helpBackBtn) helpBackBtn.textContent = t('helpBack');
+  const helpIntro = document.getElementById('helpIntro');
+  if (helpIntro) helpIntro.textContent = t('helpIntro');
+  const helpFormTitle = document.getElementById('helpFormTitle');
+  if (helpFormTitle) helpFormTitle.textContent = t('helpFormTitle');
+  const helpTopicLabel = document.querySelector('label[for="helpTopic"]');
+  if (helpTopicLabel) helpTopicLabel.textContent = t('helpTopic');
+  const helpEmailLabel = document.querySelector('label[for="helpEmail"]');
+  if (helpEmailLabel) helpEmailLabel.textContent = t('helpEmail');
+  const helpMessageLabel = document.querySelector('label[for="helpMessage"]');
+  if (helpMessageLabel) helpMessageLabel.textContent = t('helpMessage');
+  const helpMessage = document.getElementById('helpMessage');
+  if (helpMessage) helpMessage.placeholder = t('helpMessagePh');
+  const helpSubmitBtn = document.getElementById('helpSubmitBtn');
+  if (helpSubmitBtn && !helpSubmitBtn.disabled) helpSubmitBtn.textContent = t('helpSend');
+  const helpTopic = document.getElementById('helpTopic');
+  if (helpTopic) {
+    const opts = {
+      bug: t('helpTopicBug'),
+      account: t('helpTopicAccount'),
+      app: t('helpTopicApp'),
+      other: t('helpTopicOther'),
+    };
+    [...helpTopic.options].forEach((o) => {
+      if (opts[o.value]) o.textContent = opts[o.value];
+    });
+  }
+  const faqMap = {
+    q1: 'helpFaqQ1', a1: 'helpFaqA1',
+    q2: 'helpFaqQ2', a2: 'helpFaqA2',
+    q3: 'helpFaqQ3', a3: 'helpFaqA3',
+    q4: 'helpFaqQ4', a4: 'helpFaqA4',
+  };
+  document.querySelectorAll('[data-help-faq]').forEach((el) => {
+    const key = faqMap[el.getAttribute('data-help-faq')];
+    if (key) el.textContent = t(key);
+  });
 
   const profileBackBtn = document.getElementById('profileBackBtn');
   if (profileBackBtn) profileBackBtn.textContent = t('backProfile');
   const fullscreenBack = document.getElementById('fullscreenBack');
   if (fullscreenBack) fullscreenBack.textContent = t('backProfile');
-  const logoutBtn = document.getElementById('profileLogoutBtn');
+  const logoutBtn = document.getElementById('settingsLogoutBtn');
   if (logoutBtn) logoutBtn.textContent = t('logout');
-
-  document.querySelectorAll('[data-profile-page]').forEach((btn) => {
-    const page = btn.getAttribute('data-profile-page') || '';
-    if (/feed\.html/i.test(page)) {
-      btn.textContent = t('findingsFeed');
-      btn.setAttribute('data-title', t('findingsFeed'));
-    } else if (/inbox\.html/i.test(page)) {
-      btn.textContent = t('findingsInbox');
-      btn.setAttribute('data-title', t('findingsInbox'));
-    }
-  });
 
   const tabsNav = document.querySelector('.spn-tabs');
   if (tabsNav) tabsNav.setAttribute('aria-label', t('sections'));
+  const tabLabelKeys = {
+    feed: 'findingsFeed',
+    search: 'search',
+    inbox: 'findingsInbox',
+    news: 'news',
+    tools: 'tools',
+    games: 'games',
+    profile: 'profile',
+  };
+  document.querySelectorAll('.spn-tab').forEach((tab) => {
+    const key = tabLabelKeys[tab.dataset.tab];
+    if (!key) return;
+    const label = t(key);
+    tab.setAttribute('aria-label', label);
+    tab.title = label;
+  });
   const viewerBackBtn = document.getElementById('viewerBack');
-  if (viewerBackBtn) viewerBackBtn.textContent = t('back');
+  if (viewerBackBtn) {
+    viewerBackBtn.setAttribute('aria-label', t('back'));
+    viewerBackBtn.title = t('back');
+  }
   const viewerFrameEl = document.getElementById('viewerFrame');
   if (viewerFrameEl) viewerFrameEl.title = t('content');
   const fullscreenFrameEl = document.getElementById('fullscreenFrame');
@@ -419,11 +550,11 @@ function applyChromeI18n() {
     btn.classList.toggle('is-active', on);
     btn.setAttribute('aria-pressed', on ? 'true' : 'false');
   });
-  const langGroup = document.querySelector('.spn-lang');
-  if (langGroup) langGroup.setAttribute('aria-label', t('langGroup'));
+  document.querySelectorAll('.spn-lang').forEach((langGroup) => {
+    langGroup.setAttribute('aria-label', t('langGroup'));
+  });
 }
 
-const subtitleEl = document.getElementById('spnSubtitle');
 const screens = Array.from(document.querySelectorAll('.spn-screen'));
 const tabs = Array.from(document.querySelectorAll('.spn-tab'));
 /** @deprecated use getTitles() — kept for older call sites during migration */
@@ -840,6 +971,147 @@ const VIEWER_HIDE_MENU_CSS = `
     overflow: visible !important;
     flex: none !important;
   }
+  /* Лента в приложении: без дублирующего заголовка модалки */
+  .finding-panel-modal--inline#finding-feed-modal .finding-panel-title {
+    display: none !important;
+  }
+  /* Сообщения: только диалоги, без вкладки уведомлений */
+  .finding-activity--messages-only [data-activity-tabs] {
+    display: none !important;
+  }
+  .finding-activity--messages-only [data-activity-panel="notifications"] {
+    display: none !important;
+  }
+  .finding-activity--messages-only [data-activity-intro] {
+    display: none !important;
+  }
+`;
+
+/** Только страница сообщений — не инжектить в профиль и остальные iframe */
+const INBOX_APP_CSS = `
+  html:has(#finding-activity-modal.finding-panel-modal--inline),
+  body:has(#finding-activity-modal.finding-panel-modal--inline) {
+    height: 100% !important;
+    overflow: hidden !important;
+  }
+  body:has(#finding-activity-modal.finding-panel-modal--inline) .page-wrapper {
+    height: 100% !important;
+    min-height: 100% !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  body:has(#finding-activity-modal.finding-panel-modal--inline) .page-wrapper > .container,
+  body:has(#finding-activity-modal.finding-panel-modal--inline) .finding-inbox-card,
+  body:has(#finding-activity-modal.finding-panel-modal--inline) #findings-inbox-list {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .finding-panel-modal--inline#finding-activity-modal {
+    flex: 1 1 auto !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .finding-panel-modal--inline#finding-activity-modal .finding-activity-dialog {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    overflow: hidden !important;
+  }
+  .finding-panel-modal--inline#finding-activity-modal .finding-activity-header,
+  .finding-panel-modal--inline#finding-activity-modal .finding-activity-toolbar,
+  .finding-panel-modal--inline#finding-activity-modal .finding-dm-new-toolbar {
+    flex-shrink: 0 !important;
+  }
+  .finding-panel-modal--inline#finding-activity-modal .finding-dm-panel {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  .finding-panel-modal--inline#finding-activity-modal .finding-dm-body,
+  .finding-panel-modal--inline#finding-activity-modal .finding-panel-body.finding-dm-body {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    overflow-y: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .finding-panel-modal--inline#finding-activity-modal .finding-dm-thread {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose-wrap,
+  .finding-panel-modal--inline#finding-activity-modal [data-inbox-compose-wrap] {
+    flex-shrink: 0 !important;
+    margin-top: auto !important;
+    padding: 8px 10px 10px !important;
+    background: #fff !important;
+    border-top: 1px solid #e5e7eb !important;
+  }
+  .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    border-top: none !important;
+  }
+  .finding-dm-photo {
+    display: block;
+    margin: 0 0 6px;
+    border-radius: 10px;
+    overflow: hidden;
+    line-height: 0;
+  }
+  .finding-dm-photo img {
+    display: block;
+    width: 100%;
+    max-width: 240px;
+    max-height: 240px;
+    object-fit: cover;
+  }
+  .finding-dm-compose__pending-thumb {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    object-fit: cover;
+  }
+  .finding-dm-compose__attach-wrap {
+    position: relative;
+    flex-shrink: 0;
+  }
+  .finding-dm-attach-menu {
+    position: absolute;
+    left: 0;
+    bottom: calc(100% + 6px);
+    z-index: 4;
+    min-width: 168px;
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.12);
+  }
+  .finding-dm-attach-menu__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #111827;
+    font-size: 14px;
+    text-align: left;
+    cursor: pointer;
+  }
 `;
 
 let viewerBootToken = 0;
@@ -898,11 +1170,13 @@ function armGameHistoryTrap() {
   }
 }
 
-function openAppAuth(title) {
-  const returnTo = encodeURIComponent(`/frontend/app/index.html?app=1&tab=profile&lang=${getLocale()}`);
+function openAppAuth(title, opts = {}) {
+  const returnTab = opts.returnTab || 'profile';
+  const returnTo = encodeURIComponent(
+    `/frontend/app/index.html?app=1&tab=${encodeURIComponent(returnTab)}&lang=${getLocale()}`
+  );
   const authUrl = withLocalizedAppParam(`/frontend/auth/auth.html?app=1&return=${returnTo}`);
-  // Stay inside app shell so the header RU/EN switcher remains visible.
-  // Auth uses iframe src= (not srcdoc) for VK ID / OAuth.
+  // Stay inside app shell (profile / viewer), not a full site navigation.
   openViewer(authUrl, title || t('login'));
 }
 
@@ -970,13 +1244,110 @@ async function fetchViewerRawHtml(href) {
   return html;
 }
 
+function isKnowledgeBaseUrl(href) {
+  return /\/knowledge-base\//i.test(String(href || ''));
+}
+
+function isToolUrl(href) {
+  return /\/tools\//i.test(String(href || ''));
+}
+
+/** Shared chrome strip for KB / tools / games inside the app viewer (site pages untouched). */
+function stripViewerSiteChrome(html) {
+  let out = String(html || '');
+  out = out.replace(/<script\b[^>]*>[\s\S]*?(?:mc\.yandex|metrika|ym\s*\()[\s\S]*?<\/script>/gi, '');
+  out = out.replace(/<noscript\b[^>]*>[\s\S]*?(?:mc\.yandex|metrika)[\s\S]*?<\/noscript>/gi, '');
+  out = out.replace(/<link\b[^>]*href=["'][^"']*styles\/(?:styles|menu|accessibility|ad-top-banner)\.css[^"']*["'][^>]*>/gi, '');
+  out = out.replace(/<script\b[^>]*src=["'][^"']*(?:backgroundGenerator|mobile-enhancements|menu-loader|menu\.js|knowledge-base\.js|ad-slot-init|mobile-anchor-ad)[^"']*["'][^>]*>\s*<\/script>/gi, '');
+  out = out.replace(/<script\b[^>]*src=["']https?:\/\/ad\.mail\.ru[^"']*["'][^>]*>\s*<\/script>/gi, '');
+  // Game interstitial ad helpers (Mail.ru) — not needed in the app shell
+  out = out.replace(/<script\b[^>]*src=["'][^"']*-ads\.js[^"']*["'][^>]*>\s*<\/script>/gi, '');
+  // Only inline modules (no src=) that boot the mobile anchor ad
+  out = out.replace(/<script\b(?![^>]*\bsrc=)[^>]*type=["']module["'][^>]*>[\s\S]*?mobile-anchor-ad\.js[\s\S]*?<\/script>/gi, '');
+  out = out.replace(/<link\b[^>]*hreflang=["'][^"']+["'][^>]*>/gi, '');
+  out = out.replace(/<div\b[^>]*id=["']menuContainer["'][^>]*>[\s\S]*?<\/div>/gi, '');
+  out = out.replace(/<div\b[^>]*class=["'][^"']*ad-top-banner[^"']*["'][^>]*>[\s\S]*?<\/div>/gi, '');
+  out = out.replace(/<div\b[^>]*id=["']mobile-anchor-ad["'][^>]*>[\s\S]*?<\/div>/gi, '');
+  return out;
+}
+
+/** Strip heavy site chrome from KB pages so the viewer boots faster. */
+function slimKnowledgeBaseHtml(html) {
+  let out = stripViewerSiteChrome(html);
+  const lean =
+    '<style id="spn-kb-lean">' +
+    'html,body{margin:0;padding:0;background:#f7f7f8;color:#1a1a1a;font:16px/1.55 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}' +
+    'img,video,iframe{max-width:100%;height:auto}' +
+    '.container,.news-container,.article-container,.content-wrapper{max-width:720px;margin:0 auto;padding:12px 16px 32px}' +
+    'h1,h2,h3{line-height:1.25}' +
+    'a{color:#0b57d0}' +
+    '</style>';
+  if (/<\/head>/i.test(out)) {
+    out = out.replace(/<\/head>/i, `${lean}</head>`);
+  } else {
+    out = lean + out;
+  }
+  return out;
+}
+
+/** Strip heavy site chrome from tool pages; keep tools-shell / tool-specific CSS. */
+function slimToolHtml(html) {
+  let out = stripViewerSiteChrome(html);
+  // Prefer dedicated shell over the 150KB site bundle (already removed above).
+  if (!/styles\/tools\/tools-shell\.css/i.test(out) && !/styles\/tools\/(?:fuel|depreciation|product-footprint)/i.test(out)) {
+    out = out.replace(
+      /<\/head>/i,
+      '<link rel="stylesheet" href="/frontend/styles/tools/tools-shell.css?v=3"></head>'
+    );
+  }
+  const lean =
+    '<style id="spn-tool-lean">' +
+    'html,body{margin:0;padding:0;background:#f7f7f8;color:#1a1a1a}' +
+    'body.spn-tool,body.android-app.spn-tool{padding-bottom:28px!important;box-sizing:border-box!important}' +
+    '</style>';
+  if (/<\/head>/i.test(out)) {
+    out = out.replace(/<\/head>/i, `${lean}</head>`);
+  } else {
+    out = lean + out;
+  }
+  return out;
+}
+
+/** Strip heavy site chrome from games; keep game CSS/JS only. */
+function slimGameHtml(html) {
+  let out = stripViewerSiteChrome(html);
+  const lean =
+    '<style id="spn-game-lean">' +
+    'html,body{margin:0;padding:0;box-sizing:border-box}' +
+    '*,*::before,*::after{box-sizing:border-box}' +
+    '</style>';
+  if (/<\/head>/i.test(out)) {
+    out = out.replace(/<\/head>/i, `${lean}</head>`);
+  } else {
+    out = lean + out;
+  }
+  return out;
+}
+
+function appCssForHref(href) {
+  const extra = /\/findings\/inbox\.html/i.test(String(href || '')) ? INBOX_APP_CSS : '';
+  return VIEWER_HIDE_MENU_CSS + extra;
+}
+
 function wrapViewerHtml(href, html, { withGameLock = false } = {}) {
+  if (isKnowledgeBaseUrl(href)) {
+    html = slimKnowledgeBaseHtml(html);
+  } else if (isToolUrl(href)) {
+    html = slimToolHtml(html);
+  } else if (isGameUrl(href)) {
+    html = slimGameHtml(html);
+  }
   const abs = new URL(href, location.origin);
   const baseHref = abs.origin + abs.pathname.replace(/[^/]*$/, '');
   const gameLock = withGameLock && isGameUrl(href) ? ANDROID_GAME_LOCK_SCRIPT : '';
   const early =
     `<base href="${baseHref}">` +
-    `<style id="spn-android-app-css">${VIEWER_HIDE_MENU_CSS}</style>` +
+    `<style id="spn-android-app-css">${appCssForHref(href)}</style>` +
     ANDROID_BOOT_SCRIPT +
     gameLock;
   if (/<head[^>]*>/i.test(html)) {
@@ -987,17 +1358,15 @@ function wrapViewerHtml(href, html, { withGameLock = false } = {}) {
 
 function warmSharedViewerAssets() {
   const assets = [
-    '/frontend/styles/styles.css',
     '/frontend/styles/base.css',
-    '/frontend/styles/menu.css',
-    '/frontend/styles/accessibility.css',
-    '/frontend/scripts/backgroundGenerator.js',
+    '/frontend/styles/tools/tools-shell.css?v=3',
+    '/frontend/styles/tools/new-tools.css?v=2',
   ];
   for (const href of assets) {
     try {
       const link = document.createElement('link');
       link.rel = 'prefetch';
-      link.as = href.endsWith('.js') ? 'script' : 'style';
+      link.as = 'style';
       link.href = href;
       document.head.appendChild(link);
     } catch (_) {}
@@ -1018,14 +1387,15 @@ function scheduleViewerPrefetchFromCatalog() {
   const urls = [];
   const kb = catalog?.links?.knowledgeBase || KB_URL;
   if (kb) urls.push(kb);
-  for (const g of catalog.gamesOwn || []) {
-    if (g?.href) urls.push(g.href);
-  }
   for (const tool of catalog.tools || []) {
     if (tool?.href) urls.push(tool.href);
   }
+  for (const g of catalog.gamesOwn || []) {
+    if (g?.href) urls.push(g.href);
+  }
   const run = () => {
     warmSharedViewerAssets();
+    try { ensureKbIndex(); } catch (_) {}
     let i = 0;
     const next = () => {
       if (i >= urls.length) return;
@@ -1043,10 +1413,13 @@ function scheduleViewerPrefetchFromCatalog() {
 
 function openViewer(url, title) {
   const localizedUrl = localizeFrontendPath(url);
-  // Лента / входящие — только в подложке профиля, не viewer-popup
-  if (/\/findings\/(feed|inbox)\.html/i.test(String(localizedUrl || ''))) {
-    showScreen('profile');
-    openProfileSubpage(localizedUrl, title || t('brand'));
+  // Лента / сообщения — отдельные вкладки приложения
+  if (/\/findings\/feed\.html/i.test(String(localizedUrl || ''))) {
+    activateServiceTab('feed');
+    return;
+  }
+  if (/\/findings\/inbox\.html/i.test(String(localizedUrl || ''))) {
+    activateServiceTab('inbox');
     return;
   }
   const href = withAppParam(localizedUrl);
@@ -1130,7 +1503,9 @@ function hardenViewerDoc(doc, opts = {}) {
       style.id = 'spn-android-app-css';
       (doc.head || doc.documentElement).appendChild(style);
     }
-    style.textContent = VIEWER_HIDE_MENU_CSS;
+    let pageHref = '';
+    try { pageHref = String(doc.defaultView?.location?.href || ''); } catch (_) {}
+    style.textContent = appCssForHref(pageHref);
 
     const mc = doc.getElementById('menuContainer');
     if (mc) {
@@ -1223,18 +1598,92 @@ function kbUrl() {
 }
 const newsChips = Array.from(document.querySelectorAll('[data-news-chip]'));
 let newsChip = 'feed';
-let kbViewerOpen = false;
+let kbItemsCache = null;
+let kbListLocale = null;
+let kbIndexPromise = null;
 
-function setNewsChip(name, { openKb } = { openKb: true }) {
+function setNewsChip(name) {
   newsChip = name === 'kb' ? 'kb' : 'feed';
   newsChips.forEach((chip) => {
     const on = chip.dataset.newsChip === newsChip;
     chip.classList.toggle('is-active', on);
     chip.setAttribute('aria-selected', on ? 'true' : 'false');
   });
-  if (newsChip === 'kb' && openKb) {
-    kbViewerOpen = true;
-    openViewer(kbUrl(), t('kb'));
+  const feedPanel = document.getElementById('newsFeed');
+  const kbPanel = document.getElementById('kbPanel');
+  if (feedPanel) feedPanel.hidden = newsChip !== 'feed';
+  if (kbPanel) kbPanel.hidden = newsChip !== 'kb';
+  if (newsChip === 'kb') loadKbList();
+}
+
+function parseKbItemsFromHtml(raw) {
+  const doc = new DOMParser().parseFromString(raw, 'text/html');
+  const items = [];
+  doc.querySelectorAll('.news-card').forEach((card) => {
+    const title = card.querySelector('.news-card-title')?.textContent?.trim() || '';
+    const excerpt = card.querySelector('.news-card-excerpt')?.textContent?.trim() || '';
+    const category = card.querySelector('.news-card-category')?.textContent?.trim() || '';
+    const date = card.querySelector('.news-card-date')?.textContent?.trim() || '';
+    const href = card.querySelector('a.news-card-link')?.getAttribute('href') || '';
+    if (title && href) items.push({ title, excerpt, category, date, href });
+  });
+  return items;
+}
+
+async function ensureKbIndex() {
+  if (kbItemsCache && kbListLocale === getLocale()) return kbItemsCache;
+  if (kbIndexPromise) return kbIndexPromise;
+  kbIndexPromise = (async () => {
+    const raw = await fetchViewerRawHtml(withAppParam(kbUrl()));
+    kbItemsCache = parseKbItemsFromHtml(raw);
+    kbListLocale = getLocale();
+    return kbItemsCache;
+  })().finally(() => {
+    kbIndexPromise = null;
+  });
+  return kbIndexPromise;
+}
+
+function renderKbItems(items) {
+  const list = document.getElementById('kbList');
+  const empty = document.getElementById('kbEmpty');
+  if (!list) return;
+  list.innerHTML = '';
+  if (!items.length) {
+    if (empty) empty.hidden = false;
+    return;
+  }
+  if (empty) empty.hidden = true;
+  for (const n of items) {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'spn-item';
+    const meta = [n.category, n.date].filter(Boolean).join(' · ');
+    const snip = n.excerpt || meta;
+    btn.innerHTML =
+      `<strong>${escapeHtml(n.title)}</strong>` +
+      (snip ? `<span>${escapeHtml(snip)}</span>` : '') +
+      (meta && n.excerpt ? `<span class="spn-item__meta">${escapeHtml(meta)}</span>` : '');
+    btn.addEventListener('click', () => openViewer(n.href, n.title));
+    list.appendChild(btn);
+  }
+}
+
+async function loadKbList() {
+  const list = document.getElementById('kbList');
+  const empty = document.getElementById('kbEmpty');
+  if (!list) return;
+  if (kbItemsCache && kbListLocale === getLocale()) {
+    renderKbItems(kbItemsCache);
+    return;
+  }
+  list.innerHTML = `<p class="spn-muted">${t('loading')}</p>`;
+  if (empty) empty.hidden = true;
+  try {
+    const items = await ensureKbIndex();
+    renderKbItems(items || []);
+  } catch (err) {
+    list.innerHTML = `<p class="spn-error">${escapeHtml(err?.message || t('loadError'))}</p>`;
   }
 }
 
@@ -1251,10 +1700,6 @@ function closeViewer(opts = {}) {
   viewerFrame.classList.remove('is-booting');
   try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
   try { viewerFrame.removeAttribute('src'); } catch (_) {}
-  if (kbViewerOpen) {
-    kbViewerOpen = false;
-    setNewsChip('feed', { openKb: false });
-  }
   if ((viewerHistoryPushed || hadGameTrap) && !fromHistory && !closingViewerFromHistory) {
     viewerHistoryPushed = false;
     closingViewerFromHistory = true;
@@ -1309,6 +1754,9 @@ try {
       }
       if (isFullscreenOpen()) {
         closeProfileSubpage();
+        if (activeAppTab === 'feed' || activeAppTab === 'inbox') {
+          showScreen('profile');
+        }
         return;
       }
       if (isGameViewerActive()) {
@@ -1375,21 +1823,43 @@ try {
   );
 })();
 
-function showScreen(name) {
-  if (name !== 'profile' && isFullscreenOpen()) {
-    closeFullscreenPage();
-  }
+let serviceTabSeq = 0;
+let activeAppTab = 'profile';
+
+function applyMainScreen(name) {
   screens.forEach((s) => {
     const on = s.dataset.screen === name;
     s.hidden = !on;
     s.classList.toggle('is-active', on);
   });
   tabs.forEach((t) => t.classList.toggle('is-active', t.dataset.tab === name));
-  if (name !== 'profile' || !profileSubpageOpen) {
-    subtitleEl.textContent = TITLES[name] || '';
-  }
   document.documentElement.classList.toggle('spn-profile-tab', name === 'profile');
   syncProfileEmbedMode();
+  activeAppTab = name;
+}
+
+function showScreen(name) {
+  // Любое переключение вкладки отменяет отложенное открытие ленты/сообщений
+  serviceTabSeq += 1;
+
+  if (name === 'feed' || name === 'inbox') {
+    activateServiceTab(name);
+    return;
+  }
+
+  if (isFullscreenOpen()) {
+    closeFullscreenPage();
+  }
+  // При смене основных вкладок закрываем viewer (auth / статья), иначе экран «залипает»
+  if (isViewerOpen()) {
+    try { closeViewer({ fromHistory: true }); } catch (_) {}
+  }
+  if (name !== 'profile') {
+    try { closeSettingsPanel(); } catch (_) {}
+  }
+
+  applyMainScreen(name);
+
   if (name === 'news' && !newsLoaded) loadNews();
   if ((name === 'tools' || name === 'games') && !catalogLoaded) loadCatalog();
   if (name === 'profile') {
@@ -1405,6 +1875,53 @@ function showScreen(name) {
   }
 }
 
+async function activateServiceTab(name) {
+  const kind = name === 'inbox' ? 'inbox' : 'feed';
+  const seq = ++serviceTabSeq;
+
+  tabs.forEach((t) => t.classList.toggle('is-active', t.dataset.tab === kind));
+  document.documentElement.classList.remove('spn-profile-tab');
+  syncProfileEmbedMode();
+  try { closeSettingsPanel(); } catch (_) {}
+  if (isViewerOpen()) {
+    try { closeViewer({ fromHistory: true }); } catch (_) {}
+  }
+
+  const loggedIn = await isLoggedIn();
+  if (seq !== serviceTabSeq) return;
+
+  if (!loggedIn) {
+    // Без сессии — на профиль с кнопкой входа, без принудительного экрана auth
+    applyMainScreen('profile');
+    if (isFullscreenOpen()) closeFullscreenPage();
+    try { refreshProfile(); } catch (_) {}
+    return;
+  }
+
+  if (!catalogLoaded) {
+    try { await loadCatalog(); } catch (_) {}
+  }
+  if (seq !== serviceTabSeq) return;
+
+  activeAppTab = kind;
+  if (kind === 'inbox') {
+    await openFullscreenPage(
+      catalog?.links?.findingsInbox || '/frontend/findings/inbox.html',
+      t('findingsInbox'),
+      { hideBar: true }
+    );
+  } else {
+    await openFullscreenPage(
+      catalog?.links?.findingsFeed || '/frontend/findings/feed.html',
+      t('findingsFeed'),
+      { hideBar: true }
+    );
+  }
+  if (seq !== serviceTabSeq) {
+    try { closeFullscreenPage(); } catch (_) {}
+  }
+}
+
 tabs.forEach((t) => t.addEventListener('click', () => showScreen(t.dataset.tab)));
 viewerBack.addEventListener('click', closeViewer);
 
@@ -1412,7 +1929,7 @@ newsChips.forEach((chip) => {
   chip.addEventListener('click', () => {
     const next = chip.dataset.newsChip;
     if (next === 'kb') setNewsChip('kb');
-    else setNewsChip('feed', { openKb: false });
+    else setNewsChip('feed');
   });
 });
 
@@ -1421,6 +1938,7 @@ document.addEventListener('click', (e) => {
   if (!btn) return;
   e.preventDefault();
   const href = btn.getAttribute('data-open') || '';
+  try { closeSettingsPanel(); } catch (_) {}
   if (/\/auth\//i.test(href)) {
     openAppAuth(btn.textContent.trim() || t('login'));
     return;
@@ -1441,8 +1959,8 @@ window.addEventListener('message', (ev) => {
   if (ev.data.type === 'spn-app-need-auth') {
     try { clearProfileEmbed(); } catch (_) {}
     showGuestProfile();
-    showScreen('profile');
-    openAppAuth(t('login'));
+    // Не открываем auth поверх поиска/новостей и не уводим с текущей вкладки:
+    // гость видит кнопку «Войти» на профиле, когда сам туда зайдёт.
     return;
   }
   if (ev.data.type === 'spn-app-logged-out') {
@@ -1458,7 +1976,6 @@ window.addEventListener('message', (ev) => {
         try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
         try { viewerFrame.removeAttribute('src'); } catch (_) {}
         viewerHistoryPushed = false;
-        kbViewerOpen = false;
       } catch (_) {}
     }
   }
@@ -2222,7 +2739,7 @@ async function loadNews() {
 /* —— Catalog —— */
 async function loadCatalog() {
   try {
-    const res = await fetch('/frontend/app/catalog.json?v=3', { credentials: 'same-origin' });
+    const res = await fetch('/frontend/app/catalog.json?v=4', { credentials: 'same-origin' });
     catalog = await res.json();
     catalogLoaded = true;
   } catch (_) {
@@ -2311,9 +2828,8 @@ const profileUser = document.getElementById('profileUser');
 const profileEmbed = document.getElementById('profileEmbed');
 const profileBackBtn = document.getElementById('profileBackBtn');
 const profileBar = document.getElementById('profileBar');
-const profileQuickLinks = document.getElementById('profileQuickLinks');
-const profileMore = document.getElementById('profileMore');
-const profileLogoutBtn = document.getElementById('profileLogoutBtn');
+const settingsLogoutBtn = document.getElementById('settingsLogoutBtn');
+const settingsLogoutWrap = document.getElementById('settingsLogoutWrap');
 const PROFILE_URL = '/frontend/profile/profile.html';
 function profileUrl() {
   const path = localizeFrontendPath(PROFILE_URL);
@@ -2348,14 +2864,7 @@ function clearProfileEmbed() {
   profileSubpageOpen = false;
   if (profileUser) profileUser.classList.remove('is-subpage');
   if (profileBackBtn) profileBackBtn.hidden = true;
-  if (profileQuickLinks) profileQuickLinks.hidden = false;
-  if (profileLogoutBtn) profileLogoutBtn.hidden = false;
-  if (profileMore) {
-    profileMore.hidden = false;
-    try { profileMore.open = false; } catch (_) {}
-  }
-  try { closeFullscreenPage(); } catch (_) {}
-  if (!profileEmbed) return;
+  if (profileBar) profileBar.hidden = true;
   profileEmbed.hidden = true;
   try { profileEmbed.removeAttribute('srcdoc'); } catch (_) {}
   try { profileEmbed.removeAttribute('src'); } catch (_) {}
@@ -2365,17 +2874,12 @@ function setProfileSubpageUi(on, title) {
   profileSubpageOpen = Boolean(on);
   if (profileUser) profileUser.classList.toggle('is-subpage', profileSubpageOpen);
   if (profileBackBtn) profileBackBtn.hidden = !profileSubpageOpen;
-  if (profileQuickLinks) profileQuickLinks.hidden = profileSubpageOpen;
-  if (profileLogoutBtn) profileLogoutBtn.hidden = profileSubpageOpen;
-  if (profileMore) profileMore.hidden = profileSubpageOpen;
-  if (profileBar) profileBar.hidden = false;
-  if (profileSubpageOpen) {
-    subtitleEl.textContent = title || t('profile');
-  } else {
-    subtitleEl.textContent = TITLES.profile || 'Профиль';
-    if (profileLogoutBtn) profileLogoutBtn.hidden = false;
-    if (profileQuickLinks) profileQuickLinks.hidden = false;
-  }
+  if (profileBar) profileBar.hidden = !profileSubpageOpen;
+}
+
+function syncSettingsLogoutVisibility() {
+  const loggedIn = Boolean(profileUser && !profileUser.hidden);
+  if (settingsLogoutWrap) settingsLogoutWrap.hidden = !loggedIn;
 }
 
 async function openProfileSubpage(url, title) {
@@ -2425,13 +2929,26 @@ function isFullscreenOpen() {
   return Boolean(profileFullscreen && !profileFullscreen.hidden);
 }
 
-async function openFullscreenPage(url, title) {
+async function openFullscreenPage(url, title, opts = {}) {
   if (!profileFullscreen || !fullscreenFrame) return;
   url = localizeFrontendPath(url);
   profileSubpageOpen = true;
-  setProfileSubpageUi(true, title);
+  // Для вкладок ленты/сообщений шапка профиля не нужна — контент как отдельный раздел
+  const hideBar = Boolean(opts.hideBar);
+  if (!hideBar) setProfileSubpageUi(true, title);
+  else {
+    profileSubpageOpen = true;
+    if (profileBar) profileBar.hidden = true;
+  }
   fullscreenTitle.textContent = title || t('brand');
-  subtitleEl.textContent = title || t('profile');
+  if (fullscreenBack) {
+    const activeTab = tabs.find((x) => x.classList.contains('is-active'));
+    const tabName = activeTab?.dataset?.tab || '';
+    fullscreenBack.textContent = (tabName === 'feed' || tabName === 'inbox')
+      ? (`← ${t('back')}`)
+      : t('backProfile');
+  }
+  profileFullscreen.classList.toggle('spn-fullscreen--nobar', hideBar);
   profileFullscreen.hidden = false;
   profileFullscreen.setAttribute('aria-hidden', 'false');
   fullscreenFrame.classList.add('is-booting');
@@ -2452,6 +2969,7 @@ function closeFullscreenPage() {
   profileSubpageOpen = false;
   setProfileSubpageUi(false);
   if (!profileFullscreen) return;
+  profileFullscreen.classList.remove('spn-fullscreen--nobar');
   profileFullscreen.hidden = true;
   profileFullscreen.setAttribute('aria-hidden', 'true');
   if (fullscreenFrame) {
@@ -2474,37 +2992,112 @@ if (fullscreenFrame) {
 if (fullscreenBack) {
   fullscreenBack.addEventListener('click', () => {
     closeProfileSubpage();
+    const active = tabs.find((x) => x.classList.contains('is-active'));
+    if (active && (active.dataset.tab === 'feed' || active.dataset.tab === 'inbox')) {
+      showScreen('profile');
+    }
   });
 }
 
-async function loadProfileEmbed() {
+function finishProfileEmbedBoot() {
   if (!profileEmbed) return;
+  if (profileEmbed._spnBootWatch) {
+    clearTimeout(profileEmbed._spnBootWatch);
+    profileEmbed._spnBootWatch = 0;
+  }
+  profileEmbed.classList.remove('is-booting');
+  const loadingEl = document.getElementById('profileLoading');
+  if (loadingEl) loadingEl.hidden = true;
+  syncProfileEmbedMode();
+}
+
+function profileEmbedLooksAlive() {
+  if (!profileEmbed || profileEmbed.hidden) return false;
+  try {
+    const doc = profileEmbed.contentDocument;
+    if (!doc || !doc.body) return false;
+    const text = String(doc.body.innerText || '').replace(/\s+/g, ' ').trim();
+    // nginx auth / пустая страница / about:blank
+    if (text.length < 8) return false;
+    if (/^401|Unauthorized|Authentication required/i.test(text)) return false;
+    return true;
+  } catch (_) {
+    // cross-origin — считаем, что навигация пошла (src=), доверяем load
+    return Boolean(profileEmbed.src && !/about:blank/i.test(profileEmbed.src));
+  }
+}
+
+async function loadProfileEmbed() {
+  if (!profileEmbed) return false;
+  const loadingEl = document.getElementById('profileLoading');
   setProfileSubpageUi(false);
-  profileEmbed.hidden = false;
+  if (loadingEl) loadingEl.hidden = false;
+  // Гостя не трогаем, пока iframe реально не живой
+  if (profileUser) profileUser.hidden = true;
+  profileEmbed.hidden = true;
   profileEmbed.classList.add('is-booting');
-  // Hard reset — Capacitor WebView sometimes keeps stale srcdoc
+  profileEmbedLoaded = false;
+  syncProfileEmbedMode();
+
   try { profileEmbed.removeAttribute('srcdoc'); } catch (_) {}
   try { profileEmbed.removeAttribute('src'); } catch (_) {}
-  try { profileEmbed.src = 'about:blank'; } catch (_) {}
-  await new Promise((r) => setTimeout(r, 30));
+
   const href = withAppParam(profileUrl());
-  try {
-    await loadViewerHtmlInto(profileEmbed, href);
-    profileEmbedLoaded = true;
-    profileLocaleApplied = getLocale();
-  } catch (err) {
-    console.warn('profile embed failed', err);
-    try { profileEmbed.removeAttribute('srcdoc'); } catch (_) {}
-    profileEmbed.src = href;
-    profileEmbedLoaded = true;
-    profileLocaleApplied = getLocale();
+
+  const ok = await new Promise((resolve) => {
+    let settled = false;
+    const done = (value) => {
+      if (settled) return;
+      settled = true;
+      try { profileEmbed.removeEventListener('load', onLoad); } catch (_) {}
+      if (profileEmbed._spnBootWatch) {
+        clearTimeout(profileEmbed._spnBootWatch);
+        profileEmbed._spnBootWatch = 0;
+      }
+      resolve(value);
+    };
+    const onLoad = () => {
+      // Дать скриптам профиля кадр на отрисовку
+      setTimeout(() => done(profileEmbedLooksAlive()), 120);
+    };
+    profileEmbed.addEventListener('load', onLoad);
+    if (profileEmbed._spnBootWatch) clearTimeout(profileEmbed._spnBootWatch);
+    profileEmbed._spnBootWatch = setTimeout(() => done(profileEmbedLooksAlive()), 10000);
+    // iframe может грузиться и будучи в hidden-родителе; UI гостя остаётся на экране
+    try {
+      profileEmbed.hidden = false;
+      profileEmbed.src = href;
+    } catch (err) {
+      console.warn('profile embed src failed', err);
+      done(false);
+    }
+  });
+
+  if (!ok) {
+    console.warn('profile embed empty/failed, stay guest');
+    showGuestProfile();
+    return false;
   }
+
+  profileEmbedLoaded = true;
+  profileLocaleApplied = getLocale();
+  if (profileGuest) profileGuest.hidden = true;
+  if (profileUser) profileUser.hidden = false;
+  profileEmbed.hidden = false;
+  finishProfileEmbedBoot();
+  try {
+    const doc = profileEmbed.contentDocument;
+    if (doc) hardenViewerDoc(doc, { navigate: 'embed' });
+  } catch (_) {}
+  syncSettingsLogoutVisibility();
+  syncProfileEmbedMode();
+  return true;
 }
 
 /** Загрузка HTML во iframe (как viewer), без открытия #viewer */
 async function loadViewerHtmlInto(frame, href) {
   let html = wrapViewerHtml(href, await fetchViewerRawHtml(href), { withGameLock: false });
-  const late = `<style id="spn-android-app-css-late">${VIEWER_HIDE_MENU_CSS}</style>`;
+  const late = `<style id="spn-android-app-css-late">${appCssForHref(href)}</style>`;
   if (/<\/body>/i.test(html)) {
     html = html.replace(/<\/body>/i, `${late}</body>`);
   } else {
@@ -2514,27 +3107,32 @@ async function loadViewerHtmlInto(frame, href) {
   frame.srcdoc = html;
 }
 
-if (profileEmbed) {
-  profileEmbed.addEventListener('load', () => {
-    try {
-      const doc = profileEmbed.contentDocument;
-      if (doc) hardenViewerDoc(doc, { navigate: 'embed' });
-    } catch (_) {}
-    profileEmbed.classList.remove('is-booting');
-  });
-}
-
 async function refreshProfile() {
+  const loadingEl = document.getElementById('profileLoading');
   try {
-    const res = await spnFetch('/auth/protected', { credentials: 'include' });
+    const ctrl = typeof AbortController !== 'undefined' ? new AbortController() : null;
+    const timer = ctrl ? setTimeout(() => ctrl.abort(), 8000) : null;
+    let res;
+    try {
+      res = await spnFetch('/auth/protected', {
+        credentials: 'include',
+        ...(ctrl ? { signal: ctrl.signal } : {}),
+      });
+    } finally {
+      if (timer) clearTimeout(timer);
+    }
     if (!res.ok) throw new Error('guest');
     await res.json();
-    profileGuest.hidden = true;
-    profileUser.hidden = false;
-    syncProfileEmbedMode();
-    // Полный профиль прямо во вкладке (не сбрасываем открытую ленту/входящие)
+    if (loadingEl) loadingEl.hidden = false;
+    syncSettingsLogoutVisibility();
     if (!profileEmbedLoaded) {
-      await loadProfileEmbed();
+      const ok = await loadProfileEmbed();
+      if (!ok) return;
+    } else {
+      if (profileGuest) profileGuest.hidden = true;
+      if (profileUser) profileUser.hidden = false;
+      syncSettingsLogoutVisibility();
+      syncProfileEmbedMode();
     }
   } catch (_) {
     showGuestProfile();
@@ -2547,63 +3145,67 @@ if (profileBackBtn) {
   });
 }
 
-document.addEventListener('click', (e) => {
-  const btn = e.target.closest('[data-profile-page]');
-  if (!btn) return;
-  e.preventDefault();
-  const url = btn.getAttribute('data-profile-page');
-  if (!url) return;
-  const title = btn.getAttribute('data-title') || btn.textContent.trim();
-  openProfileSubpage(url, title);
-});
-
 function showGuestProfile() {
   try { closeFullscreenPage(); } catch (_) {}
   profileSubpageOpen = false;
   profileGuest.hidden = false;
   profileUser.hidden = true;
+  const loadingEl = document.getElementById('profileLoading');
+  if (loadingEl) loadingEl.hidden = true;
   if (profileUser) profileUser.classList.remove('is-subpage');
-  if (profileBar) profileBar.hidden = false;
+  if (profileBar) profileBar.hidden = true;
   if (profileBackBtn) profileBackBtn.hidden = true;
-  if (profileQuickLinks) profileQuickLinks.hidden = false;
-  if (profileLogoutBtn) profileLogoutBtn.hidden = false;
-  if (profileMore) {
-    profileMore.hidden = false;
-    try { profileMore.open = false; } catch (_) {}
-  }
   clearProfileEmbed();
   syncProfileEmbedMode();
-  if (subtitleEl && document.documentElement.classList.contains('spn-profile-tab')) {
-    subtitleEl.textContent = TITLES.profile || 'Профиль';
-  }
+  syncSettingsLogoutVisibility();
 }
 
 function syncProfileEmbedMode() {
   const onProfile = document.documentElement.classList.contains('spn-profile-tab');
-  const embedOn = Boolean(profileUser && !profileUser.hidden);
-  document.documentElement.classList.toggle('spn-profile-embed-mode', onProfile && embedOn);
+  const embedReady = Boolean(
+    profileUser &&
+    !profileUser.hidden &&
+    profileEmbed &&
+    !profileEmbed.hidden &&
+    profileEmbedLoaded &&
+    !profileEmbed.classList.contains('is-booting')
+  );
+  document.documentElement.classList.toggle('spn-profile-embed-mode', onProfile && embedReady);
 }
 
 async function logoutFromApp() {
+  try { closeSettingsPanel(); } catch (_) {}
   showGuestProfile();
   showScreen('profile');
+  let ok = false;
   try {
+    csrfCached = '';
     const headers = { 'Content-Type': 'application/json' };
     try {
       Object.assign(headers, await getCsrfHeaders());
     } catch (_) {}
-    await spnFetch('/auth/logout', {
+    const res = await spnFetch('/auth/logout', {
       method: 'POST',
       credentials: 'include',
       headers,
       body: '{}',
     });
+    ok = res.ok;
   } catch (_) {}
-  refreshProfile();
+  // Даже при сбое CSRF/сети не возвращаем «залогинен» из stale-сессии
+  if (!ok) {
+    try { document.cookie = 'token=; Max-Age=0; path=/; domain=.serpmonn.ru'; } catch (_) {}
+    try { document.cookie = 'token=; Max-Age=0; path=/'; } catch (_) {}
+  }
+  try { await refreshProfile(); } catch (_) {}
+  if (profileUser && !profileUser.hidden) {
+    // refresh всё ещё видит сессию — принудительно гость
+    showGuestProfile();
+  }
 }
 
-if (profileLogoutBtn) {
-  profileLogoutBtn.addEventListener('click', (e) => {
+if (settingsLogoutBtn) {
+  settingsLogoutBtn.addEventListener('click', (e) => {
     e.preventDefault();
     logoutFromApp();
   });
@@ -2635,15 +3237,17 @@ window.addEventListener('message', (ev) => {
         try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
         try { viewerFrame.removeAttribute('src'); } catch (_) {}
         viewerHistoryPushed = false;
-        kbViewerOpen = false;
       } catch (_) {}
     }
   }
 });
 
-// После входа на полном экране auth — обновляем вкладку профиля
+// После возврата в приложение обновляем профиль только на его вкладке
 document.addEventListener('visibilitychange', () => {
-  if (document.visibilityState === 'visible') refreshProfile();
+  if (document.visibilityState !== 'visible') return;
+  if (activeAppTab === 'profile' || document.documentElement.classList.contains('spn-profile-tab')) {
+    refreshProfile();
+  }
 });
 
 /* —— VK ID: полный OAuth-редирект в WebView (без LOGIN_SUCCESS на auth) —— */
@@ -2705,7 +3309,7 @@ async function completeVkIdFromRedirect() {
     if (!VKID?.Auth?.exchangeCode) throw new Error('no exchangeCode');
     VKID.Config.init({
       app: 54486564,
-      redirectUrl: `https://serpmonn.ru/frontend/app/index.html?app=1&lang=${getLocale()}`,
+      redirectUrl: `${location.origin}/frontend/app/index.html?app=1&lang=${getLocale()}`,
       responseMode: VKID.ConfigResponseMode.Callback,
       source: VKID.ConfigSource.LOWCODE,
       scope: 'vkid.personal_info email',
@@ -2739,11 +3343,14 @@ async function completeVkIdFromRedirect() {
 
 /* —— Boot —— */
 loadCatalog();
-showScreen('search');
+// Сразу гостевой UI — без пустого белого профиля, пока идёт /auth/protected
+try { showGuestProfile(); } catch (_) {}
+showScreen('profile');
 
 (async function bootAppShell() {
   let wentToProfile = false;
   let toastLogin = false;
+  let postAuthTab = '';
   const hadVkCallback = Boolean(parseVkIdCallbackParams());
 
   try {
@@ -2767,11 +3374,20 @@ showScreen('search');
   } catch (_) {}
 
   const tab = new URLSearchParams(location.search).get('tab');
-  if (wentToProfile || tab === 'profile') {
+  // После входа можно вернуться на ленту/сообщения, иначе — профиль
+  if (tab === 'feed' || tab === 'inbox') {
+    postAuthTab = tab;
+  }
+  if (wentToProfile && !postAuthTab) {
     showScreen('profile');
     try { await refreshProfile(); } catch (_) {}
-    if (toastLogin) toast('Вы вошли');
-  } else if (tab && TITLES[tab]) {
+    if (toastLogin) toast(t('loggedIn'));
+  } else if (postAuthTab) {
+    showScreen(postAuthTab);
+    if (toastLogin) toast(t('loggedIn'));
+  } else if (tab === 'profile') {
+    showScreen('profile');
+  } else if (tab && getTitles()[tab]) {
     showScreen(tab);
   }
 })();
@@ -2787,30 +3403,22 @@ async function isLoggedIn() {
 }
 
 async function openAppService(kind) {
-  const loggedIn = await isLoggedIn();
-  if (!loggedIn) {
-    openAppAuth(t('login'));
-    return;
-  }
   if (kind === 'mail') {
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+      openAppAuth(t('login'));
+      return;
+    }
     const mailUrl = catalog?.links?.mail || '/mail/';
     openViewer(mailUrl, 'Почта');
     return;
   }
   if (kind === 'inbox') {
-    showScreen('profile');
-    openProfileSubpage(
-      catalog?.links?.findingsInbox || '/frontend/findings/inbox.html',
-      'Входящие'
-    );
+    await activateServiceTab('inbox');
     return;
   }
   if (kind === 'feed') {
-    showScreen('profile');
-    openProfileSubpage(
-      catalog?.links?.findingsFeed || '/frontend/findings/feed.html',
-      'Лента находок'
-    );
+    await activateServiceTab('feed');
   }
 }
 
@@ -2908,7 +3516,145 @@ window.addEventListener('online', syncOfflineState);
 window.addEventListener('offline', syncOfflineState);
 syncOfflineState();
 
-/* —— EN/RU switcher —— */
+/* —— Settings panel + EN/RU —— */
+const settingsPanel = document.getElementById('settingsPanel');
+const settingsOpenBtn = document.getElementById('settingsOpenBtn');
+const settingsBackBtn = document.getElementById('settingsBackBtn');
+const helpPanel = document.getElementById('helpPanel');
+const helpOpenBtn = document.getElementById('helpOpenBtn');
+const helpBackBtn = document.getElementById('helpBackBtn');
+const helpForm = document.getElementById('helpForm');
+
+function isSettingsOpen() {
+  return Boolean(settingsPanel && !settingsPanel.hidden);
+}
+
+function isHelpOpen() {
+  return Boolean(helpPanel && !helpPanel.hidden);
+}
+
+function openSettingsPanel() {
+  if (!settingsPanel) return;
+  try { closeHelpPanel({ keepSettings: true }); } catch (_) {}
+  settingsPanel.hidden = false;
+  settingsPanel.setAttribute('aria-hidden', 'false');
+}
+
+function closeSettingsPanel() {
+  try { closeHelpPanel(); } catch (_) {}
+  if (!settingsPanel || settingsPanel.hidden) return;
+  settingsPanel.hidden = true;
+  settingsPanel.setAttribute('aria-hidden', 'true');
+}
+
+function openHelpPanel() {
+  if (!helpPanel) return;
+  if (settingsPanel) {
+    settingsPanel.hidden = true;
+    settingsPanel.setAttribute('aria-hidden', 'true');
+  }
+  helpPanel.hidden = false;
+  helpPanel.setAttribute('aria-hidden', 'false');
+}
+
+function closeHelpPanel(opts = {}) {
+  if (!helpPanel || helpPanel.hidden) return;
+  helpPanel.hidden = true;
+  helpPanel.setAttribute('aria-hidden', 'true');
+  if (opts.keepSettings) return;
+  if (opts.backToSettings && settingsPanel) {
+    settingsPanel.hidden = false;
+    settingsPanel.setAttribute('aria-hidden', 'false');
+  }
+}
+
+if (settingsOpenBtn) {
+  settingsOpenBtn.addEventListener('click', () => openSettingsPanel());
+}
+if (settingsBackBtn) {
+  settingsBackBtn.addEventListener('click', () => closeSettingsPanel());
+}
+if (helpOpenBtn) {
+  helpOpenBtn.addEventListener('click', () => openHelpPanel());
+}
+if (helpBackBtn) {
+  helpBackBtn.addEventListener('click', () => closeHelpPanel({ backToSettings: true }));
+}
+
+if (helpForm) {
+  helpForm.addEventListener('submit', async (ev) => {
+    ev.preventDefault();
+    const topicEl = document.getElementById('helpTopic');
+    const emailEl = document.getElementById('helpEmail');
+    const messageEl = document.getElementById('helpMessage');
+    const statusEl = document.getElementById('helpFormStatus');
+    const submitBtn = document.getElementById('helpSubmitBtn');
+    const topic = topicEl?.value || 'other';
+    const email = String(emailEl?.value || '').trim();
+    const description = String(messageEl?.value || '').trim();
+    if (description.length < 10 || !email) return;
+
+    const categoryByTopic = {
+      bug: 'bug',
+      account: 'other',
+      app: 'bug',
+      other: 'other',
+    };
+    const titleByTopic = {
+      bug: t('helpTopicBug'),
+      account: t('helpTopicAccount'),
+      app: t('helpTopicApp'),
+      other: t('helpTopicOther'),
+    };
+    const category = categoryByTopic[topic] || 'other';
+    const title = `${titleByTopic[topic] || t('help')} — app`;
+
+    if (statusEl) {
+      statusEl.hidden = false;
+      statusEl.classList.remove('is-error', 'is-ok');
+      statusEl.textContent = t('helpSending');
+    }
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = t('helpSending');
+    }
+    try {
+      const res = await spnFetch('/improve', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify({
+          email,
+          category,
+          title,
+          description,
+          priority: topic === 'bug' ? 'high' : 'medium',
+          language: getLocale(),
+          page: 'app-help',
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.success) throw new Error(data.message || 'fail');
+      if (statusEl) {
+        statusEl.classList.add('is-ok');
+        statusEl.textContent = t('helpSent');
+      }
+      helpForm.reset();
+      try { toast(t('helpSent')); } catch (_) {}
+    } catch (err) {
+      if (statusEl) {
+        statusEl.classList.add('is-error');
+        statusEl.textContent = t('helpSendFail');
+      }
+    } finally {
+      if (submitBtn) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = t('helpSend');
+      }
+    }
+  });
+}
+
 document.querySelectorAll('.spn-lang__btn').forEach((btn) => {
   btn.addEventListener('click', () => {
     const next = btn.getAttribute('data-lang');

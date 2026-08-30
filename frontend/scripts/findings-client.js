@@ -71,6 +71,17 @@ async function apiPost(path, body) {
   return { ok: res.ok, status: res.status, data };
 }
 
+async function apiPostForm(path, formData) {
+  const res = await fetch(path, {
+    method: 'POST',
+    headers: await csrfHeaders(),
+    credentials: 'include',
+    body: formData,
+  });
+  const data = await res.json().catch(() => ({}));
+  return { ok: res.ok, status: res.status, data };
+}
+
 async function apiGet(path) {
   const res = await fetch(path, { credentials: 'include' });
   const data = await res.json().catch(() => ({}));
@@ -323,4 +334,4 @@ export async function initFindingsSave(getContext) {
   });
 }
 
-export { apiGet, apiPost, apiDelete, apiPatch };
+export { apiGet, apiPost, apiPostForm, apiDelete, apiPatch };

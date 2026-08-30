@@ -135,6 +135,19 @@ export const DM_ATTACH_FINDING_ICON = `
     <line x1="19" y1="19" x2="21.2" y2="21.2"/>
   </svg>`;
 
+/** Скрепка — меню «находка / фото» */
+export const DM_ATTACH_ICON = `
+  <svg class="finding-dm-attach-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+  </svg>`;
+
+export const DM_ATTACH_PHOTO_ICON = `
+  <svg class="finding-dm-attach-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <rect x="3" y="5" width="18" height="14" rx="2"/>
+    <circle cx="8.5" cy="10" r="1.5"/>
+    <path d="M21 16l-5-5-4 4-2-2-5 5"/>
+  </svg>`;
+
 /** Стрелка вправо — не самолётик Telegram */
 export const DM_SEND_ICON = `
   <svg class="finding-dm-send-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">

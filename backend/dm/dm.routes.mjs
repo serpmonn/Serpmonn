@@ -1,4 +1,5 @@
 import express from 'express';
+import multer from 'multer';
 import verifyToken from '../auth/verifyToken.mjs';
 import { getUserIdByEmail, getFindingByPublicId } from '../findings/findings.model.mjs';
 import {
@@ -8,8 +9,30 @@ import {
   insertDmMessage,
   markConversationReadWithPeer,
 } from './dm.model.mjs';
+import {
+  getMaxDmPhotoBytes,
+  isAllowedDmPhotoMime,
+  processAndSaveDmPhoto,
+} from './dm-photo.mjs';
 
 const router = express.Router();
+
+const dmPhotoUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: getMaxDmPhotoBytes(), files: 1 },
+});
+
+function optionalDmPhoto(req, res, next) {
+  const contentType = String(req.headers['content-type'] || '');
+  if (!contentType.includes('multipart/form-data')) return next();
+  dmPhotoUpload.single('photo')(req, res, (err) => {
+    if (!err) return next();
+    if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
+      return res.status(413).json({ error: 'photo_too_large' });
+    }
+    return res.status(400).json({ error: 'photo_upload_failed' });
+  });
+}
 
 async function resolveDbUserId(req) {
   if (!req.user?.email) return null;
@@ -59,7 +82,7 @@ router.get('/dm/conversations/:username/messages', verifyToken, async (req, res)
   }
 });
 
-router.post('/dm/conversations/:username/messages', verifyToken, async (req, res) => {
+router.post('/dm/conversations/:username/messages', verifyToken, optionalDmPhoto, async (req, res) => {
   try {
     const userId = await resolveDbUserId(req);
     if (!userId) return res.status(401).json({ error: 'unauthorized' });
@@ -87,20 +110,43 @@ router.post('/dm/conversations/:username/messages', verifyToken, async (req, res
       findingId = finding.id;
     }
 
-    if (!body && !findingId) return res.status(400).json({ error: 'empty_message' });
+    let imageUrl = null;
+    if (req.file) {
+      if (!isAllowedDmPhotoMime(req.file.mimetype)) {
+        return res.status(400).json({ error: 'invalid_photo_type' });
+      }
+      imageUrl = await processAndSaveDmPhoto(userId, req.file.buffer);
+    }
+
+    if (!body && !findingId && !imageUrl) return res.status(400).json({ error: 'empty_message' });
 
     const { messageId } = await insertDmMessage({
       senderId: userId,
       recipientId: recipient.id,
       body,
       findingId,
+      imageUrl,
     });
+
+    const senderUsername = (await getUserIdByEmail(req.user.email))?.username || '';
+    import('../push/web-push-send.mjs')
+      .then(({ notifyRecipientOfDm }) =>
+        notifyRecipientOfDm({
+          recipientId: recipient.id,
+          senderUsername,
+          body,
+          hasPhoto: Boolean(imageUrl),
+          hasFinding: Boolean(findingId),
+        })
+      )
+      .catch((err) => console.error('[dm] push', err?.message || err));
 
     res.status(201).json({
       messageId,
       peerUsername: recipient.username,
       body: body || null,
       findingPublicId: findingPublicId || null,
+      imageUrl,
     });
   } catch (err) {
     if (err.message === 'empty_message') {

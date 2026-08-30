@@ -1,6 +1,7 @@
 import {
   apiGet,
   apiPost,
+  apiPostForm,
   apiPatch,
   buildFindingViewUrl,
   buildAuthUrl,
@@ -31,7 +32,15 @@ let onInboxRead = null;
 let onNotificationsRead = null;
 
 const feedState = { mode: 'all', q: '', offset: 0, items: [], hasMore: false };
-const inboxState = { view: 'dialogs', username: null, conversations: [], messages: [], pendingFinding: null, newDialogOpen: false };
+const inboxState = { view: 'dialogs', username: null, conversations: [], messages: [], pendingFinding: null, pendingPhoto: null, newDialogOpen: false };
+
+function revokePendingPhoto() {
+  const previewUrl = inboxState.pendingPhoto?.previewUrl;
+  if (previewUrl && previewUrl.startsWith('blob:')) {
+    try { URL.revokeObjectURL(previewUrl); } catch { /* ignore */ }
+  }
+  inboxState.pendingPhoto = null;
+}
 const activityState = { tab: 'inbox', unreadDm: 0, unreadNotifications: 0 };
 let shareSendContext = null;
 let shareMenuContext = null;
@@ -41,8 +50,37 @@ function tk(key, vars) {
   return getFindingT(`finding.${key}`, vars);
 }
 
-function openPanel(modal) {
+function isAppShell() {
+  try {
+    return Boolean(window.__SPN_ANDROID_APP__);
+  } catch {
+    return false;
+  }
+}
+
+function openPanel(modal, opts = {}) {
   if (!modal) return;
+
+  if (isAppShell() && opts.inlineHost) {
+    const host = typeof opts.inlineHost === 'string'
+      ? document.querySelector(opts.inlineHost)
+      : opts.inlineHost;
+    if (host) {
+      modal.classList.add('finding-panel-modal--inline');
+      if (!host.contains(modal)) {
+        host.innerHTML = '';
+        host.appendChild(modal);
+      }
+      modal.style.display = 'block';
+      modal.style.zIndex = '';
+      requestAnimationFrame(() => {
+        modal.setAttribute('data-open', 'true');
+      });
+      return;
+    }
+  }
+
+  modal.classList.remove('finding-panel-modal--inline');
   modalStackZ += 1;
   modal.style.zIndex = String(modalStackZ);
   modal.style.display = 'flex';
@@ -240,7 +278,7 @@ function ensureActivityModal() {
       </div>
       <section class="finding-activity-panel finding-dm-panel" data-activity-panel="inbox">
         <div class="finding-panel-body finding-dm-body" data-inbox-list aria-live="polite"></div>
-        <div data-inbox-compose-wrap hidden></div>
+        <div class="finding-dm-compose-wrap" data-inbox-compose-wrap hidden></div>
       </section>
       <section class="finding-activity-panel" data-activity-panel="notifications" hidden>
         <div class="finding-panel-body" data-notifications-list aria-live="polite"></div>
@@ -256,6 +294,7 @@ function ensureActivityModal() {
     inboxState.view = 'dialogs';
     inboxState.username = null;
     inboxState.pendingFinding = null;
+    revokePendingPhoto();
     inboxState.newDialogOpen = false;
     loadActivityInto(modal);
   });
@@ -268,6 +307,7 @@ function ensureActivityModal() {
       inboxState.view = 'dialogs';
       inboxState.username = null;
       inboxState.pendingFinding = null;
+      revokePendingPhoto();
       inboxState.newDialogOpen = false;
       loadActivityInto(modal);
     });
@@ -300,6 +340,7 @@ async function updateActivityTabBadges(modal) {
 }
 
 function setActivityPanels(modal) {
+  const messagesOnly = modal.classList.contains('finding-activity--messages-only');
   const inThread = activityState.tab === 'inbox' && inboxState.view === 'thread';
   const inInboxDialogs = activityState.tab === 'inbox' && inboxState.view === 'dialogs';
   const tabsEl = modal.querySelector('[data-activity-tabs]');
@@ -308,11 +349,13 @@ function setActivityPanels(modal) {
   const backBtn = modal.querySelector('[data-inbox-back]');
   const writeBtn = modal.querySelector('[data-inbox-new-open]');
 
-  if (tabsEl) tabsEl.hidden = inThread;
+  modal.classList.toggle('finding-activity--thread', inThread);
+
+  if (tabsEl) tabsEl.hidden = inThread || messagesOnly;
 
   if (activityTitleEl) {
     activityTitleEl.hidden = inThread;
-    activityTitleEl.textContent = tk('activityTitle');
+    activityTitleEl.textContent = messagesOnly ? tk('inboxTitle') : tk('activityTitle');
   }
 
   if (threadTitleEl) {
@@ -351,6 +394,7 @@ function updateActivityIntro(modal) {
   const introEl = modal?.querySelector('[data-activity-intro]');
   if (!introEl) return;
 
+  const messagesOnly = modal.classList.contains('finding-activity--messages-only');
   const inThread = activityState.tab === 'inbox' && inboxState.view === 'thread';
   let seen = false;
   try {
@@ -359,7 +403,7 @@ function updateActivityIntro(modal) {
     seen = true;
   }
 
-  introEl.hidden = seen || inThread;
+  introEl.hidden = seen || inThread || messagesOnly || isAppShell();
   const textEl = introEl.querySelector('[data-activity-intro-text]');
   if (textEl) textEl.textContent = tk('activityIntro');
 }
@@ -525,19 +569,24 @@ async function loadActivityInto(modal) {
   }
 }
 
-export async function openActivityModal(tab = 'inbox') {
+export async function openActivityModal(tab = 'inbox', opts = {}) {
   await loadT();
-  activityState.tab = tab === 'notifications' ? 'notifications' : 'inbox';
+  const messagesOnly = Boolean(opts.messagesOnly) || (isAppShell() && tab !== 'notifications');
+  activityState.tab = (!messagesOnly && tab === 'notifications') ? 'notifications' : 'inbox';
   if (activityState.tab === 'inbox') {
     inboxState.view = 'dialogs';
     inboxState.username = null;
     inboxState.conversations = [];
     inboxState.messages = [];
     inboxState.pendingFinding = null;
+    revokePendingPhoto();
     inboxState.newDialogOpen = false;
   }
   const modal = ensureActivityModal();
-  openPanel(modal);
+  modal.classList.toggle('finding-activity--messages-only', messagesOnly);
+  openPanel(modal, {
+    inlineHost: isAppShell() ? '#findings-inbox-list' : null,
+  });
   await loadActivityInto(modal);
 }
 
@@ -1141,10 +1190,15 @@ function setInboxComposeVisible(modal, visible) {
   if (!wrap) return;
   wrap.hidden = !visible;
   if (visible) {
-    wrap.innerHTML = renderChatComposeBar((key, vars) => tk(key, vars), inboxState.pendingFinding);
+    wrap.innerHTML = renderChatComposeBar(
+      (key, vars) => tk(key, vars),
+      inboxState.pendingFinding,
+      inboxState.pendingPhoto
+    );
     wrap.dataset.boundUsername = '';
   } else {
     inboxState.pendingFinding = null;
+    revokePendingPhoto();
   }
 }
 
@@ -1225,7 +1279,27 @@ function bindChatThread(modal, username) {
   if (!wrap || wrap.dataset.boundUsername === username) return;
   wrap.dataset.boundUsername = username;
 
+  const attachWrap = wrap.querySelector('.finding-dm-compose__attach-wrap');
+  const attachToggle = wrap.querySelector('[data-inbox-compose-attach-toggle]');
+  const attachMenu = wrap.querySelector('[data-inbox-compose-attach-menu]');
+  const photoInput = wrap.querySelector('[data-inbox-compose-photo-input]');
+
+  const closeAttachMenu = () => {
+    if (!attachMenu || attachMenu.hidden) return;
+    attachMenu.hidden = true;
+    attachToggle?.setAttribute('aria-expanded', 'false');
+  };
+
+  attachToggle?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (!attachMenu) return;
+    const nextHidden = !attachMenu.hidden;
+    attachMenu.hidden = nextHidden;
+    attachToggle.setAttribute('aria-expanded', nextHidden ? 'false' : 'true');
+  });
+
   wrap.querySelector('[data-inbox-compose-attach]')?.addEventListener('click', () => {
+    closeAttachMenu();
     openDmFindingPicker((finding) => {
       inboxState.pendingFinding = finding;
       setInboxComposeVisible(modal, true);
@@ -1234,8 +1308,42 @@ function bindChatThread(modal, username) {
     });
   });
 
+  wrap.querySelector('[data-inbox-compose-photo]')?.addEventListener('click', () => {
+    closeAttachMenu();
+    photoInput?.click();
+  });
+
+  photoInput?.addEventListener('change', () => {
+    const file = photoInput.files?.[0];
+    photoInput.value = '';
+    if (!file) return;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (file.type && !allowed.includes(file.type) && !file.type.startsWith('image/')) {
+      showToast(t('dmPhotoInvalid'));
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      showToast(t('dmPhotoTooLarge'));
+      return;
+    }
+    revokePendingPhoto();
+    inboxState.pendingPhoto = {
+      file,
+      previewUrl: URL.createObjectURL(file),
+    };
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
+    modal.querySelector('[data-inbox-compose-input]')?.focus();
+  });
+
   wrap.querySelector('[data-inbox-compose-clear]')?.addEventListener('click', () => {
     inboxState.pendingFinding = null;
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
+  });
+
+  wrap.querySelector('[data-inbox-compose-clear-photo]')?.addEventListener('click', () => {
+    revokePendingPhoto();
     setInboxComposeVisible(modal, true);
     bindChatThread(modal, username);
   });
@@ -1244,29 +1352,40 @@ function bindChatThread(modal, username) {
     event.preventDefault();
     const body = String(input?.value || '').trim();
     const findingPublicId = inboxState.pendingFinding?.publicId || '';
-    if (!body && !findingPublicId) return;
+    const photoFile = inboxState.pendingPhoto?.file || null;
+    if (!body && !findingPublicId && !photoFile) return;
 
     const sendBtn = composeForm.querySelector('[data-inbox-compose-send]');
     if (sendBtn) sendBtn.disabled = true;
 
-    const payload = {};
-    if (body) payload.body = body;
-    if (findingPublicId) payload.findingPublicId = findingPublicId;
-
-    const { ok, status } = await apiPost(
-      `/api/dm/conversations/${encodeURIComponent(username)}/messages`,
-      payload
-    );
+    const path = `/api/dm/conversations/${encodeURIComponent(username)}/messages`;
+    let result;
+    if (photoFile) {
+      const formData = new FormData();
+      if (body) formData.append('body', body);
+      if (findingPublicId) formData.append('findingPublicId', findingPublicId);
+      formData.append('photo', photoFile);
+      result = await apiPostForm(path, formData);
+    } else {
+      const payload = {};
+      if (body) payload.body = body;
+      if (findingPublicId) payload.findingPublicId = findingPublicId;
+      result = await apiPost(path, payload);
+    }
 
     if (sendBtn) sendBtn.disabled = false;
-    if (status === 401) return authRedirect();
-    if (!ok) {
-      showToast(t('dmSendFailed'));
+    if (result.status === 401) return authRedirect();
+    if (!result.ok) {
+      const err = result.data?.error;
+      if (err === 'photo_too_large') showToast(t('dmPhotoTooLarge'));
+      else if (err === 'invalid_photo_type') showToast(t('dmPhotoInvalid'));
+      else showToast(t('dmSendFailed'));
       return;
     }
 
     if (input) input.value = '';
     inboxState.pendingFinding = null;
+    revokePendingPhoto();
     setInboxComposeVisible(modal, true);
     await loadInboxInto(modal);
     bindChatThread(modal, username);
@@ -1541,12 +1660,14 @@ export async function openFeedModal() {
   feedState.q = '';
   feedState.offset = 0;
   const modal = ensureFeedModal();
-  openPanel(modal);
+  openPanel(modal, {
+    inlineHost: isAppShell() ? '#findings-feed-list' : null,
+  });
   await loadFeedInto(modal, { reset: true });
 }
 
 export async function openInboxModal() {
-  await openActivityModal('inbox');
+  await openActivityModal('inbox', { messagesOnly: true });
 }
 
 export async function openFindingModal(publicId, options = {}) {

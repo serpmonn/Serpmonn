@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#ffffff">
   <title>Серпмонн</title>
   <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-  <link rel="stylesheet" href="/frontend/app/app.css?v=34">
+  <link rel="stylesheet" href="/frontend/app/app.css?v=61">
   <script>
     window.__SPN_ANDROID_APP__ = true;
     (function () {
@@ -28,20 +28,8 @@
 </head>
 <body class="android-app">
   <div id="app" class="spn-app">
-    <header class="spn-top">
-      <img class="spn-logo" src="/frontend/images/serpmonn-192.png" width="32" height="32" alt="">
-      <div class="spn-top-text">
-        <strong id="spnTitle">Серпмонн</strong>
-        <span id="spnSubtitle">Поиск</span>
-      </div>
-      <div class="spn-lang" role="group" aria-label="Language">
-        <button type="button" class="spn-lang__btn" data-lang="ru" aria-pressed="true">RU</button>
-        <button type="button" class="spn-lang__btn" data-lang="en" aria-pressed="false">EN</button>
-      </div>
-    </header>
-
     <main class="spn-main">
-      <section class="spn-screen is-active" data-screen="search" aria-label="Поиск">
+      <section class="spn-screen" data-screen="search" aria-label="Поиск" hidden>
         <form id="searchForm" class="spn-search">
           <div class="spn-search__field">
             <input id="searchInput" type="search" name="q" placeholder="Задайте вопрос…" autocomplete="off" enterkeyhint="search">
@@ -111,6 +99,10 @@
           <div id="newsList" class="spn-list"></div>
           <p id="newsEmpty" class="spn-muted" hidden>Пока нет новостей.</p>
         </div>
+        <div id="kbPanel" data-news-panel="kb" hidden>
+          <div id="kbList" class="spn-list"></div>
+          <p id="kbEmpty" class="spn-muted" hidden>Пока нет статей.</p>
+        </div>
       </section>
 
       <section class="spn-screen" data-screen="tools" aria-label="Инструменты" hidden>
@@ -121,52 +113,147 @@
         <div id="gamesOwnList" class="spn-cards"></div>
       </section>
 
-      <section class="spn-screen" data-screen="profile" aria-label="Профиль" hidden>
+      <section class="spn-screen is-active" data-screen="profile" aria-label="Профиль">
+        <div class="spn-profile-head">
+          <h2 class="spn-h2" id="profileScreenTitle">Профиль</h2>
+          <button type="button" id="settingsOpenBtn" class="spn-iconbtn spn-iconbtn--gear" aria-label="Настройки" title="Настройки">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+        </div>
         <div id="profileGuest" class="spn-profile">
-          <h2 class="spn-h2">Профиль</h2>
-          <p class="spn-muted">Войдите через аккаунт Серпмонн, чтобы открыть план, баллы, находки и настройки.</p>
+          <p class="spn-muted">Войдите через аккаунт Серпмонн, чтобы открыть план, баллы и находки.</p>
           <div class="spn-actions">
             <button type="button" class="spn-btn spn-btn--block" data-open="/frontend/auth/auth.html">Войти / регистрация</button>
           </div>
-          <details class="spn-more spn-more--guest">
-            <summary>Ещё</summary>
-            <div class="spn-more__links">
-              <button type="button" class="spn-textlink" data-open="/frontend/privacy-policy/privacy-policy.html">Политика</button>
-              <button type="button" class="spn-textlink" data-open="/frontend/offer/offer.html">Соглашение</button>
-              <button type="button" class="spn-textlink" data-open="/frontend/donate/donate.html">Поддержать</button>
-              <button type="button" class="spn-textlink" data-open="/frontend/about-project/about-project.html">О проекте</button>
-            </div>
-          </details>
         </div>
+        <p id="profileLoading" class="spn-muted spn-profile-loading" hidden>Загрузка профиля…</p>
         <div id="profileUser" class="spn-profile spn-profile--embed" hidden>
-          <div class="spn-profile-bar" id="profileBar">
+          <div class="spn-profile-bar" id="profileBar" hidden>
             <button type="button" id="profileBackBtn" class="spn-chipbtn spn-chipbtn--back" hidden>← Профиль</button>
-            <div id="profileQuickLinks" class="spn-profile-bar__links">
-              <button type="button" class="spn-chipbtn" data-profile-page="/frontend/findings/feed.html" data-title="Лента находок">Лента находок</button>
-              <button type="button" class="spn-chipbtn" data-profile-page="/frontend/findings/inbox.html" data-title="Входящие">Входящие</button>
-            </div>
-            <button type="button" id="profileLogoutBtn" class="spn-chipbtn spn-chipbtn--danger">Выйти</button>
           </div>
           <iframe id="profileEmbed" class="spn-profile-embed" title="Профиль" hidden></iframe>
-          <details class="spn-more spn-more--embed" id="profileMore">
-            <summary>Ещё</summary>
-            <div class="spn-more__links">
-              <button type="button" class="spn-textlink" data-open="/frontend/privacy-policy/privacy-policy.html">Политика</button>
-              <button type="button" class="spn-textlink" data-open="/frontend/offer/offer.html">Соглашение</button>
-              <button type="button" class="spn-textlink" data-open="/frontend/donate/donate.html">Поддержать</button>
-              <button type="button" class="spn-textlink" data-open="/frontend/about-project/about-project.html">О проекте</button>
-            </div>
-          </details>
         </div>
       </section>
     </main>
 
+    <div id="settingsPanel" class="spn-settings-panel" hidden aria-hidden="true">
+      <div class="spn-settings-panel__bar">
+        <button type="button" id="settingsBackBtn" class="spn-chipbtn spn-chipbtn--back">← Назад</button>
+        <div id="settingsPanelTitle" class="spn-settings-panel__title">Настройки</div>
+      </div>
+      <div class="spn-settings-panel__body">
+        <div class="spn-settings__row">
+          <span class="spn-settings__label" id="settingsLangLabel">Язык</span>
+          <div class="spn-lang" role="group" aria-label="Язык">
+            <button type="button" class="spn-lang__btn" data-lang="ru" aria-pressed="true">RU</button>
+            <button type="button" class="spn-lang__btn" data-lang="en" aria-pressed="false">EN</button>
+          </div>
+        </div>
+        <div class="spn-settings__links">
+          <button type="button" class="spn-textlink" id="helpOpenBtn" data-help-open>Помощь</button>
+          <button type="button" class="spn-textlink" data-open="/frontend/donate/donate.html">Поддержать проект</button>
+          <button type="button" class="spn-textlink" data-open="/frontend/privacy-policy/privacy-policy.html">Политика</button>
+          <button type="button" class="spn-textlink" data-open="/frontend/offer/offer.html">Соглашение</button>
+          <button type="button" class="spn-textlink" data-open="/frontend/about-project/about-project.html">О проекте</button>
+        </div>
+        <div class="spn-settings__footer" id="settingsLogoutWrap" hidden>
+          <button type="button" id="settingsLogoutBtn" class="spn-btn spn-btn--block spn-btn--danger">Выйти</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="helpPanel" class="spn-settings-panel spn-help-panel" hidden aria-hidden="true">
+      <div class="spn-settings-panel__bar">
+        <button type="button" id="helpBackBtn" class="spn-chipbtn spn-chipbtn--back">← Настройки</button>
+        <div id="helpPanelTitle" class="spn-settings-panel__title">Помощь</div>
+      </div>
+      <div class="spn-settings-panel__body spn-help-panel__body">
+        <p id="helpIntro" class="spn-muted spn-help-intro">Вопросы по аккаунту, приложению и сервису. Ответ придёт на указанный email.</p>
+
+        <div class="spn-help-faq" id="helpFaq">
+          <details class="spn-help-faq__item">
+            <summary data-help-faq="q1">Как войти в аккаунт?</summary>
+            <p data-help-faq="a1">Откройте вкладку «Профиль» и нажмите «Войти / регистрация». Можно через Серпмонн Мессенджер, VK ID или email.</p>
+          </details>
+          <details class="spn-help-faq__item">
+            <summary data-help-faq="q2">Не открывается инструмент или игра</summary>
+            <p data-help-faq="a2">Проверьте интернет и обновите экран. Если не помогло — опишите, что именно не грузится, в форме ниже.</p>
+          </details>
+          <details class="spn-help-faq__item">
+            <summary data-help-faq="q3">Где база знаний и новости?</summary>
+            <p data-help-faq="a3">Вкладка «Новости»: лента и база знаний. Статьи открываются из списка без тяжёлой страницы сайта.</p>
+          </details>
+          <details class="spn-help-faq__item">
+            <summary data-help-faq="q4">Это не донат?</summary>
+            <p data-help-faq="a4">Нет. «Помощь» — обращение в поддержку. «Поддержать проект» в настройках — добровольный донат.</p>
+          </details>
+        </div>
+
+        <h3 id="helpFormTitle" class="spn-help-form__title">Написать в поддержку</h3>
+        <form id="helpForm" class="spn-help-form">
+          <label class="spn-help-form__label" for="helpTopic">Тема</label>
+          <select id="helpTopic" class="spn-help-form__control" required>
+            <option value="bug">Ошибка / не работает</option>
+            <option value="account">Аккаунт / вход</option>
+            <option value="app">Приложение</option>
+            <option value="other">Другое</option>
+          </select>
+
+          <label class="spn-help-form__label" for="helpEmail">Email для ответа</label>
+          <input id="helpEmail" class="spn-help-form__control" type="email" autocomplete="email" placeholder="you@example.com" required>
+
+          <label class="spn-help-form__label" for="helpMessage">Сообщение</label>
+          <textarea id="helpMessage" class="spn-help-form__control spn-help-form__textarea" rows="5" minlength="10" maxlength="2000" required placeholder="Опишите проблему…"></textarea>
+
+          <button type="submit" class="spn-btn spn-btn--block" id="helpSubmitBtn">Отправить</button>
+          <p id="helpFormStatus" class="spn-muted spn-help-form__status" role="status" hidden></p>
+        </form>
+
+        <p class="spn-help-mail">
+          <a id="helpMailLink" href="mailto:support@serpmonn.ru">support@serpmonn.ru</a>
+        </p>
+      </div>
+    </div>
+
     <nav class="spn-tabs" aria-label="Разделы">
-      <button type="button" class="spn-tab is-active" data-tab="search">Поиск</button>
-      <button type="button" class="spn-tab" data-tab="news">Новости</button>
-      <button type="button" class="spn-tab" data-tab="tools">Инструменты</button>
-      <button type="button" class="spn-tab" data-tab="games">Игры</button>
-      <button type="button" class="spn-tab" data-tab="profile">Профиль</button>
+      <button type="button" class="spn-tab" data-tab="feed" aria-label="Лента находок" title="Лента находок">
+        <span class="spn-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h12"/><path d="M4 18h8"/><circle cx="19" cy="17" r="2.5"/><path d="M19 12.5V14"/></svg>
+        </span>
+      </button>
+      <button type="button" class="spn-tab" data-tab="search" aria-label="Поиск" title="Поиск">
+        <span class="spn-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m19.5 19.5-4-4"/><text x="10.5" y="13.2" text-anchor="middle" fill="currentColor" stroke="none" font-size="6.5" font-family="system-ui,Segoe UI,Arial,sans-serif" font-weight="700">AI</text></svg>
+        </span>
+      </button>
+      <button type="button" class="spn-tab" data-tab="inbox" aria-label="Сообщения" title="Сообщения">
+        <span class="spn-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </span>
+      </button>
+      <button type="button" class="spn-tab" data-tab="news" aria-label="Новости" title="Новости">
+        <span class="spn-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5h12a2 2 0 0 1 2 2v12H6a2 2 0 0 1-2-2V5z"/><path d="M18 7h1a2 2 0 0 1 2 2v8a3 3 0 0 1-3 3h-1"/><path d="M8 9h6"/><path d="M8 13h6"/><path d="M8 17h4"/></svg>
+        </span>
+      </button>
+      <button type="button" class="spn-tab" data-tab="tools" aria-label="Инструменты" title="Инструменты">
+        <span class="spn-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.1-3.1a5 5 0 0 1-7.1 7.1l-1.6-1.6"/><path d="m10.5 10.5-7 7a1.5 1.5 0 0 0 2.1 2.1l7-7"/></svg>
+        </span>
+      </button>
+      <button type="button" class="spn-tab" data-tab="games" aria-label="Игры" title="Игры">
+        <span class="spn-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="8" width="18" height="10" rx="3"/><path d="M8 13h2"/><path d="M9 12v2"/><circle cx="15" cy="12" r="1"/><circle cx="17.5" cy="14" r="1"/></svg>
+        </span>
+      </button>
+      <button type="button" class="spn-tab is-active" data-tab="profile" aria-label="Профиль" title="Профиль">
+        <span class="spn-tab__icon" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 20a8 8 0 0 1 16 0"/></svg>
+        </span>
+      </button>
     </nav>
 
     <!-- Полноценный экран (лента / входящие), не viewer-popup -->
@@ -180,7 +267,11 @@
 
     <div id="viewer" class="spn-viewer" hidden aria-hidden="true">
       <div class="spn-viewer__bar">
-        <button type="button" id="viewerBack" class="spn-btn spn-btn--ghost">Назад</button>
+        <button type="button" id="viewerBack" class="spn-iconbtn spn-viewer__back" aria-label="Назад" title="Назад">
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 18l-6-6 6-6"/>
+          </svg>
+        </button>
         <div id="viewerTitle" class="spn-viewer__title">Серпмонн</div>
       </div>
       <iframe id="viewerFrame" class="spn-viewer__frame" title="Контент"></iframe>
@@ -201,6 +292,6 @@
     <div id="spnToast" class="spn-toast" hidden></div>
   </div>
 
-  <script src="/frontend/app/app.js?v=40"></script>
+  <script src="/frontend/app/app.js?v=63"></script>
 </body>
 </html>

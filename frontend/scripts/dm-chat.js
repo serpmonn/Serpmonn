@@ -1,6 +1,6 @@
 import { escapeHtml } from './finding-content-render.js';
 import { formatFindingDate } from './finding-list-card.js';
-import { DM_ATTACH_FINDING_ICON, DM_SEND_ICON } from './finding-icons.js';
+import { DM_ATTACH_FINDING_ICON, DM_ATTACH_ICON, DM_ATTACH_PHOTO_ICON, DM_SEND_ICON } from './finding-icons.js';
 
 export function renderActivityEmpty(kind, t) {
   const configs = {
@@ -76,6 +76,7 @@ export function formatDialogPreview(conv, t) {
   if (last.hasFinding && last.findingQuery) {
     return t('dmFindingPreview', { query: last.findingQuery });
   }
+  if (last.hasPhoto) return t('dmPhotoPreview');
   return t('dmMessageOnly');
 }
 
@@ -136,6 +137,10 @@ export function renderDmDialogCard(conv, t, index = 0) {
     </article>`;
 }
 
+function isSafeDmPhotoUrl(url) {
+  return typeof url === 'string' && /^\/uploads\/dm\/[A-Za-z0-9._-]+\.webp$/.test(url);
+}
+
 export function renderChatMessage(msg, t) {
   const mineCls = msg.isMine ? ' finding-dm-bubble--mine' : ' finding-dm-bubble--theirs';
   const bodyHtml = msg.body
@@ -147,10 +152,16 @@ export function renderChatMessage(msg, t) {
         <span class="finding-dm-attachment__query">${escapeHtml(msg.finding.query)}</span>
       </button>`
     : '';
+  const photoHtml = isSafeDmPhotoUrl(msg.imageUrl)
+    ? `<a class="finding-dm-photo" href="${escapeHtml(msg.imageUrl)}" target="_blank" rel="noopener noreferrer">
+        <img src="${escapeHtml(msg.imageUrl)}" alt="${escapeHtml(t('dmPhotoAttachment'))}" loading="lazy" decoding="async">
+      </a>`
+    : '';
 
   return `
     <div class="finding-dm-bubble${mineCls}" data-message-id="${msg.id}">
       ${bodyHtml}
+      ${photoHtml}
       ${findingHtml}
       <time class="finding-dm-bubble__time">${escapeHtml(formatFindingDate(msg.createdAt))}</time>
     </div>`;
@@ -163,26 +174,54 @@ export function renderChatThread(messages, t) {
   return `<div class="finding-dm-thread">${messages.map((msg) => renderChatMessage(msg, t)).join('')}</div>`;
 }
 
-export function renderChatComposeBar(t, pendingFinding = null) {
-  const pendingHtml = pendingFinding
+export function renderChatComposeBar(t, pendingFinding = null, pendingPhoto = null) {
+  const pendingFindingHtml = pendingFinding
     ? `<div class="finding-dm-compose__pending">
         <span class="finding-dm-compose__pending-label">${escapeHtml(t('dmFindingAttachment'))}</span>
         <span class="finding-dm-compose__pending-query">${escapeHtml(pendingFinding.query)}</span>
         <button type="button" class="finding-dm-compose__pending-clear" data-inbox-compose-clear aria-label="${escapeHtml(t('cancelLabel'))}">×</button>
       </div>`
     : '';
+  const pendingPhotoHtml = pendingPhoto?.previewUrl
+    ? `<div class="finding-dm-compose__pending finding-dm-compose__pending--photo">
+        <img class="finding-dm-compose__pending-thumb" src="${escapeHtml(pendingPhoto.previewUrl)}" alt="">
+        <span class="finding-dm-compose__pending-label">${escapeHtml(t('dmPhotoAttachment'))}</span>
+        <button type="button" class="finding-dm-compose__pending-clear" data-inbox-compose-clear-photo aria-label="${escapeHtml(t('cancelLabel'))}">×</button>
+      </div>`
+    : '';
 
   return `
     <form class="finding-dm-compose" data-inbox-compose>
-      ${pendingHtml}
+      ${pendingFindingHtml}
+      ${pendingPhotoHtml}
       <div class="finding-dm-compose__row">
-        <button
-          type="button"
-          class="finding-dm-compose__attach"
-          data-inbox-compose-attach
-          title="${escapeHtml(t('dmAttachFinding'))}"
-          aria-label="${escapeHtml(t('dmAttachFinding'))}"
-        >${DM_ATTACH_FINDING_ICON}</button>
+        <div class="finding-dm-compose__attach-wrap">
+          <button
+            type="button"
+            class="finding-dm-compose__attach"
+            data-inbox-compose-attach-toggle
+            title="${escapeHtml(t('dmAttach'))}"
+            aria-label="${escapeHtml(t('dmAttach'))}"
+            aria-haspopup="menu"
+            aria-expanded="false"
+          >${DM_ATTACH_ICON}</button>
+          <div class="finding-dm-attach-menu" data-inbox-compose-attach-menu hidden role="menu">
+            <button type="button" class="finding-dm-attach-menu__item" data-inbox-compose-attach role="menuitem">
+              ${DM_ATTACH_FINDING_ICON}
+              <span>${escapeHtml(t('dmAttachFindingShort'))}</span>
+            </button>
+            <button type="button" class="finding-dm-attach-menu__item" data-inbox-compose-photo role="menuitem">
+              ${DM_ATTACH_PHOTO_ICON}
+              <span>${escapeHtml(t('dmAttachPhotoShort'))}</span>
+            </button>
+          </div>
+          <input
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/*"
+            hidden
+            data-inbox-compose-photo-input
+          >
+        </div>
         <textarea
           class="finding-dm-compose__input"
           data-inbox-compose-input

@@ -4,7 +4,7 @@ import {
   loadT,
   getFindingT,
 } from '/frontend/scripts/findings-client.js';
-import { openActivityModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=31';
+import { openInboxModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=33';
 
 async function renderInboxPage() {
   if (!window.__SPN_ANDROID_APP__) generateCombinedBackground();
@@ -17,13 +17,13 @@ async function renderInboxPage() {
 
   if (titleEl) titleEl.textContent = t('inboxTitle');
   document.title = `${t('inboxTitle')} — Serpmonn`;
-  if (hintEl) hintEl.textContent = t('inboxHint');
+  if (hintEl) hintEl.textContent = '';
 
   await initFindingsModals();
   if (listEl) {
     listEl.innerHTML = `<p class="plan-hint">${t('inboxLoading')}</p>`;
   }
-  openActivityModal('inbox');
+  openInboxModal();
 }
 
 document.addEventListener('DOMContentLoaded', renderInboxPage);

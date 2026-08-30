@@ -5,8 +5,8 @@
   --spn-muted: #6b6b6b;
   --spn-accent: #c62828;
   --spn-border: #e6e6e8;
-  --spn-top: 52px;
-  --spn-tabs: 58px;
+  --spn-top: 0px;
+  --spn-tabs: 52px;
   --spn-safe-b: env(safe-area-inset-bottom, 0px);
   --spn-safe-t: env(safe-area-inset-top, 0px);
   /* 3-кнопочная панель Android часто даёт safe-area=0 — минимальный запас */
@@ -38,32 +38,7 @@ html, body {
   overflow: hidden;
 }
 
-.spn-top {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  min-height: var(--spn-top);
-  padding: 8px 14px;
-  background: var(--spn-surface);
-  border-bottom: 1px solid var(--spn-border);
-}
-
-.spn-logo { border-radius: 8px; flex-shrink: 0; }
-.spn-top-text {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
-  flex: 1;
-  min-width: 0;
-}
-.spn-top-text strong { font-size: 1rem; }
-.spn-top-text span { font-size: 0.78rem; color: var(--spn-muted); }
-
 .spn-lang {
-  margin-left: auto;
   display: inline-flex;
   flex-shrink: 0;
   border: 1px solid var(--spn-border);
@@ -91,6 +66,184 @@ html, body {
 }
 .spn-lang__btn + .spn-lang__btn {
   border-left: 1px solid var(--spn-border);
+}
+
+.spn-settings__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 36px;
+}
+.spn-settings__label {
+  font-size: 0.9rem;
+  color: var(--spn-fg);
+}
+
+.spn-profile-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 0 0 8px;
+  flex-shrink: 0;
+}
+.spn-profile-head .spn-h2 {
+  margin: 0;
+}
+.spn-iconbtn--gear {
+  flex-shrink: 0;
+  color: var(--spn-muted);
+}
+.spn-iconbtn--gear:hover,
+.spn-iconbtn--gear:focus-visible {
+  color: var(--spn-fg);
+}
+
+.spn-settings-panel {
+  position: fixed;
+  top: var(--spn-safe-t);
+  left: 0;
+  right: 0;
+  bottom: calc(var(--spn-tabs) + var(--spn-safe-b));
+  z-index: 28;
+  display: flex;
+  flex-direction: column;
+  background: var(--spn-bg);
+}
+.spn-settings-panel[hidden] { display: none !important; }
+.spn-settings-panel__bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 6px 10px;
+  border-bottom: 1px solid var(--spn-border);
+  background: var(--spn-surface);
+  flex-shrink: 0;
+}
+.spn-settings-panel__title {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 700;
+}
+.spn-settings-panel__body {
+  padding: 16px 14px;
+  background: var(--spn-surface);
+  border-bottom: 1px solid var(--spn-border);
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+}
+.spn-settings__links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid var(--spn-border);
+}
+.spn-settings__footer {
+  margin-top: auto;
+  padding-top: 24px;
+}
+.spn-btn--danger {
+  border: 1px solid #fecaca;
+  background: #fef2f2;
+  color: #b91c1c;
+}
+.spn-btn--danger:active {
+  background: #fee2e2;
+}
+
+.spn-help-panel__body {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border-bottom: 0;
+}
+.spn-help-intro {
+  margin: 0 0 14px;
+  line-height: 1.4;
+}
+.spn-help-faq {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+.spn-help-faq__item {
+  border: 1px solid var(--spn-border);
+  border-radius: 12px;
+  background: #fff;
+  padding: 0 12px;
+}
+.spn-help-faq__item summary {
+  cursor: pointer;
+  list-style: none;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 12px 0;
+}
+.spn-help-faq__item summary::-webkit-details-marker { display: none; }
+.spn-help-faq__item p {
+  margin: 0 0 12px;
+  color: var(--spn-muted);
+  font-size: 0.88rem;
+  line-height: 1.4;
+}
+.spn-help-form__title {
+  margin: 0 0 10px;
+  font-size: 1rem;
+}
+.spn-help-form__label {
+  display: block;
+  margin: 0 0 6px;
+  font-size: 0.85rem;
+  color: var(--spn-muted);
+}
+.spn-help-form__control {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 0 0 12px;
+  padding: 11px 12px;
+  border: 1px solid var(--spn-border);
+  border-radius: 12px;
+  background: #fff;
+  color: inherit;
+  font: inherit;
+}
+.spn-help-form__textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+.spn-help-form__status {
+  margin: 10px 0 0;
+}
+.spn-help-form__status.is-error { color: #b00020; }
+.spn-help-form__status.is-ok { color: #1b7f3a; }
+.spn-help-mail {
+  margin: 16px 0 4px;
+  font-size: 0.88rem;
+}
+.spn-help-mail a {
+  color: var(--spn-accent);
+  text-decoration: none;
+}
+
+.spn-profile-links {
+  margin-top: 18px;
+}
+.spn-profile-links--bar {
+  margin: 0;
+  padding: 10px 12px;
+  border-top: 1px solid var(--spn-border);
+  background: var(--spn-surface);
+  flex-shrink: 0;
 }
 
 .spn-main {
@@ -319,21 +472,8 @@ html, body {
   background: transparent;
   padding-left: 4px;
 }
-.spn-chipbtn--danger {
-  margin-left: auto;
-  flex-shrink: 0;
-  border-color: #fecaca;
-  background: #fef2f2;
-  color: #b91c1c;
-}
-.spn-profile--embed.is-subpage .spn-more--embed {
+.spn-profile--embed.is-subpage .spn-profile-links--bar {
   display: none;
-}
-.spn-profile--embed.is-subpage #profileLogoutBtn {
-  display: none;
-}
-.spn-profile--embed.is-subpage .spn-profile-bar__links {
-  display: none !important;
 }
 .spn-profile--embed.is-subpage .spn-profile-embed {
   flex: 1;
@@ -348,8 +488,10 @@ html, body {
   display: block;
   align-self: stretch;
 }
+/* Не прячем iframe opacity:0 — в WebView load/srcdoc часто не снимает is-booting → белый экран */
 .spn-profile-embed.is-booting {
-  opacity: 0;
+  opacity: 1;
+  background: var(--spn-bg);
 }
 .spn-more--embed {
   margin: 0;
@@ -358,7 +500,13 @@ html, body {
   background: var(--spn-surface);
   flex-shrink: 0;
 }
-/* overflow:hidden только для встроенного профиля; у гостя вкладка должна скроллиться */
+.spn-profile-loading {
+  padding: 24px 16px;
+  text-align: center;
+}
+.spn-profile-loading[hidden] {
+  display: none !important;
+}
 html.spn-profile-embed-mode .spn-main {
   padding-bottom: 0;
   overflow: hidden;
@@ -372,6 +520,9 @@ html.spn-profile-embed-mode .spn-screen[data-screen="profile"] {
   flex-direction: column;
   height: 100%;
 }
+html.spn-profile-embed-mode .spn-profile-head {
+  flex-shrink: 0;
+}
 html.spn-profile-embed-mode #profileUser.spn-profile--embed {
   flex: 1;
   min-height: 0;
@@ -380,6 +531,21 @@ html.spn-profile-embed-mode #profileUser.spn-profile--embed {
 html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
+}
+html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profile"] {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+#profileGuest {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 8px 0 24px;
+  flex: 1;
+}
+#profileGuest .spn-actions {
+  margin-top: 4px;
 }
 .spn-more {
   margin-top: 18px;
@@ -606,6 +772,13 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   font-size: 0.88rem;
   line-height: 1.35;
 }
+.spn-item__meta {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  color: var(--spn-muted);
+  opacity: 0.9;
+}
 
 .spn-toolcard {
   position: relative;
@@ -750,10 +923,10 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   bottom: 0;
   z-index: 30;
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 2px;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0;
   min-height: var(--spn-tabs);
-  padding: 6px 4px calc(6px + var(--spn-safe-b));
+  padding: 4px 2px calc(4px + var(--spn-safe-b));
   background: var(--spn-surface);
   border-top: 1px solid var(--spn-border);
 }
@@ -762,24 +935,40 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   border: 0;
   background: transparent;
   color: var(--spn-muted);
-  font-size: 0.62rem;
-  font-weight: 600;
-  line-height: 1.15;
-  padding: 6px 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 2px;
   cursor: pointer;
-  white-space: normal;
+  border-radius: 12px;
+  min-width: 0;
+}
+.spn-tab__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  color: inherit;
+}
+.spn-tab__icon svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  stroke: currentColor;
+  stroke-width: 2.15;
+}
+.spn-tab.is-active {
+  color: #e53935;
+}
+.spn-tab.is-active .spn-tab__icon {
+  color: #e53935;
 }
 
-@media (max-width: 420px) {
-  /* На мобильных табы читаются хуже из‑за 0.62rem — поднимаем */
-  .spn-tab { font-size: 0.78rem; }
-}
-.spn-tab.is-active { color: var(--spn-accent); }
-
-/* Полноценный экран раздела (лента/входящие) — между шапкой и табами, не оверлей */
+/* Полноценный экран раздела (лента/входящие) — над табами */
 .spn-fullscreen {
   position: fixed;
-  top: calc(var(--spn-safe-t) + var(--spn-top));
+  top: var(--spn-safe-t);
   left: 0;
   right: 0;
   bottom: calc(var(--spn-tabs) + var(--spn-safe-b));
@@ -789,7 +978,12 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   background: #fff;
   overscroll-behavior-x: none;
 }
-.spn-fullscreen[hidden] { display: none !important; }
+.spn-fullscreen[hidden] {
+  display: none !important;
+}
+.spn-fullscreen--nobar .spn-fullscreen__bar {
+  display: none !important;
+}
 .spn-fullscreen__bar {
   display: flex;
   align-items: center;
@@ -822,8 +1016,7 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
 
 .spn-viewer {
   position: fixed;
-  /* Keep app header (RU/EN) visible; games go full-bleed via .is-game */
-  top: calc(var(--spn-safe-t) + var(--spn-top));
+  top: var(--spn-safe-t);
   left: 0;
   right: 0;
   bottom: 0;
@@ -859,9 +1052,12 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   color: #e8eaed;
 }
 .spn-viewer.is-game #viewerBack {
-  background: #1e2633;
-  border-color: #35485f;
   color: #f3f0ea;
+  background: transparent;
+}
+.spn-viewer.is-game #viewerBack:hover,
+.spn-viewer.is-game #viewerBack:focus-visible {
+  background: rgba(255, 255, 255, 0.08);
 }
 /* 2048 — светлая оболочка */
 .spn-viewer.is-game-light {
@@ -875,24 +1071,37 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-main {
   color: #3d3a36;
 }
 .spn-viewer.is-game-light #viewerBack {
-  background: #f3f0ea;
-  border-color: #d6cfc0;
   color: #3d3a36;
+  background: transparent;
+}
+.spn-viewer.is-game-light #viewerBack:hover,
+.spn-viewer.is-game-light #viewerBack:focus-visible {
+  background: rgba(61, 58, 54, 0.08);
 }
 .spn-viewer__bar {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 4px;
   min-height: 48px;
-  padding: 6px 10px;
+  padding: 4px 10px 4px 4px;
   border-bottom: 1px solid var(--spn-border);
   background: #fff;
   flex-shrink: 0;
 }
+.spn-viewer__back {
+  flex-shrink: 0;
+  margin: 0;
+  color: var(--spn-fg);
+}
+.spn-viewer__back svg {
+  display: block;
+}
 .spn-viewer__title {
   flex: 1;
-  font-size: 0.9rem;
+  min-width: 0;
+  font-size: 0.95rem;
   font-weight: 600;
+  line-height: 1.2;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
