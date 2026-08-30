@@ -225,7 +225,7 @@ export function renderChatComposeBar(t, pendingFinding = null, pendingPhoto = nu
         <textarea
           class="finding-dm-compose__input"
           data-inbox-compose-input
-          rows="2"
+          rows="1"
           maxlength="2000"
           placeholder="${escapeHtml(t('dmWritePlaceholder'))}"
           aria-label="${escapeHtml(t('dmWritePlaceholder'))}"

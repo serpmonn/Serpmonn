@@ -3,8 +3,23 @@ import {
   apiGet,
   loadT,
   getFindingT,
-} from '/frontend/scripts/findings-client.js';
-import { openInboxModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=33';
+} from '/frontend/scripts/findings-client.js?v=39';
+import { openInboxModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=39';
+
+function pendingInboxPeer() {
+  try {
+    if (window.__SPN_OPEN_DM__) return String(window.__SPN_OPEN_DM__).replace(/^@+/, '');
+    const own = new URLSearchParams(location.search).get('dm');
+    if (own) return own.replace(/^@+/, '');
+    if (window.parent && window.parent !== window) {
+      const parentDm = new URLSearchParams(window.parent.location.search).get('dm');
+      if (parentDm) return parentDm.replace(/^@+/, '');
+    }
+  } catch {
+    /* ignore */
+  }
+  return '';
+}
 
 async function renderInboxPage() {
   if (!window.__SPN_ANDROID_APP__) generateCombinedBackground();
@@ -23,7 +38,7 @@ async function renderInboxPage() {
   if (listEl) {
     listEl.innerHTML = `<p class="plan-hint">${t('inboxLoading')}</p>`;
   }
-  openInboxModal();
+  await openInboxModal({ openUsername: pendingInboxPeer() });
 }
 
 document.addEventListener('DOMContentLoaded', renderInboxPage);

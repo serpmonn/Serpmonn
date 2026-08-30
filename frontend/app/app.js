@@ -125,6 +125,12 @@ const I18N = {
     settingsTitle: 'Настройки',
     languageLabel: 'Язык',
     settingsBack: '← Назад',
+    pushLabel: 'Уведомления',
+    pushEnable: 'Включить',
+    pushOn: 'Включены',
+    pushDenied: 'Разрешите уведомления в настройках телефона',
+    pushNeedLogin: 'Сначала войдите в аккаунт',
+    pushFailed: 'Не удалось включить уведомления',
   },
   en: {
     brand: 'Serpmonn',
@@ -229,6 +235,12 @@ const I18N = {
     settingsTitle: 'Settings',
     languageLabel: 'Language',
     settingsBack: '← Back',
+    pushLabel: 'Notifications',
+    pushEnable: 'Enable',
+    pushOn: 'On',
+    pushDenied: 'Allow notifications in phone settings',
+    pushNeedLogin: 'Sign in first',
+    pushFailed: 'Could not enable notifications',
   },
 };
 
@@ -435,6 +447,9 @@ function applyChromeI18n() {
   }
   const settingsBackBtn = document.getElementById('settingsBackBtn');
   if (settingsBackBtn) settingsBackBtn.textContent = t('settingsBack');
+  const pushLabel = document.getElementById('spnPushLabel');
+  if (pushLabel) pushLabel.textContent = t('pushLabel');
+  try { syncPushSettingsUi(); } catch (_) {}
 
   document.querySelectorAll('[data-open*="privacy-policy"]').forEach((el) => { el.textContent = t('policy'); });
   document.querySelectorAll('[data-open*="offer"]').forEach((el) => { el.textContent = t('offer'); });
@@ -508,6 +523,7 @@ function applyChromeI18n() {
     tab.setAttribute('aria-label', label);
     tab.title = label;
   });
+  try { applyAppTabBadgeAria(); } catch (_) {}
   const viewerBackBtn = document.getElementById('viewerBack');
   if (viewerBackBtn) {
     viewerBackBtn.setAttribute('aria-label', t('back'));
@@ -557,6 +573,149 @@ function applyChromeI18n() {
 
 const screens = Array.from(document.querySelectorAll('.spn-screen'));
 const tabs = Array.from(document.querySelectorAll('.spn-tab'));
+
+const appUnread = { inbox: 0, feed: 0 };
+
+function formatTabBadgeCount(n) {
+  const count = Number(n) || 0;
+  if (count <= 0) return '';
+  return count > 99 ? '99+' : String(count);
+}
+
+function applyAppTabBadgeAria() {
+  ['inbox', 'feed'].forEach((name) => {
+    const tab = document.querySelector(`.spn-tab[data-tab="${name}"]`);
+    if (!tab) return;
+    const base = tab.getAttribute('title') || tab.getAttribute('aria-label') || '';
+    const count = appUnread[name] || 0;
+    tab.setAttribute('aria-label', count > 0 ? `${base} (${count})` : base);
+  });
+}
+
+function setTabBadge(tabName, count) {
+  const n = Number(count) || 0;
+  if (tabName === 'inbox' || tabName === 'feed') appUnread[tabName] = n;
+  const el = document.querySelector(`[data-tab-badge="${tabName}"]`);
+  if (!el) return;
+  const label = formatTabBadgeCount(n);
+  if (!label) {
+    el.hidden = true;
+    el.textContent = '';
+  } else {
+    el.hidden = false;
+    el.textContent = label;
+  }
+  applyAppTabBadgeAria();
+}
+
+async function refreshAppTabBadges() {
+  try {
+    const [dmRes, feedRes] = await Promise.all([
+      spnFetch(`/api/dm/unread-count?_=${Date.now()}`, {
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' },
+      }),
+      spnFetch(`/api/findings/notifications/unread-count?_=${Date.now()}`, {
+        credentials: 'include',
+        cache: 'no-store',
+        headers: { 'Cache-Control': 'no-cache', Pragma: 'no-cache' },
+      }),
+    ]);
+    if (dmRes.status === 401 || feedRes.status === 401) {
+      setTabBadge('inbox', 0);
+      setTabBadge('feed', 0);
+      return;
+    }
+    const prevDm = appUnread.inbox || 0;
+    const dm = dmRes.ok ? Number((await dmRes.json())?.count) || 0 : 0;
+    const feed = feedRes.ok ? Number((await feedRes.json())?.count) || 0 : 0;
+    setTabBadge('inbox', dm);
+    setTabBadge('feed', feed);
+    if (dm !== prevDm || (dm > 0 && isInboxFullscreenOpen())) {
+      try {
+        const frame = document.getElementById('fullscreenFrame');
+        frame?.contentWindow?.postMessage({ type: 'spn-inbox-refresh' }, '*');
+      } catch (_) {}
+    }
+  } catch (_) {
+    /* ignore */
+  }
+}
+
+window.addEventListener('message', (event) => {
+  const data = event.data;
+  if (!data || data.type !== 'spn-app-unread') return;
+  if (typeof data.dm === 'number') setTabBadge('inbox', data.dm);
+  if (typeof data.feed === 'number') setTabBadge('feed', data.feed);
+});
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') refreshAppTabBadges();
+});
+setInterval(refreshAppTabBadges, 8000);
+refreshAppTabBadges();
+
+let inboxLive = { view: 'dialogs', username: null };
+window.addEventListener('message', (event) => {
+  if (!event.data || event.data.type !== 'spn-inbox-state') return;
+  inboxLive.view = event.data.view || 'dialogs';
+  inboxLive.username = event.data.username || null;
+});
+
+function isInboxFullscreenOpen() {
+  const fs = document.getElementById('profileFullscreen');
+  const tab = document.querySelector('.spn-tab[data-tab="inbox"]');
+  return Boolean(fs && !fs.hidden && tab?.classList.contains('is-active'));
+}
+
+async function pollInboxLiveFromParent() {
+  if (!isInboxFullscreenOpen()) return;
+  const frame = document.getElementById('fullscreenFrame');
+  const win = frame?.contentWindow;
+  if (!win) return;
+  const bust = Date.now();
+  const headers = { 'Cache-Control': 'no-cache, no-store', Pragma: 'no-cache' };
+  try {
+    if (inboxLive.view === 'thread' && inboxLive.username) {
+      const res = await spnFetch(
+        `/api/dm/conversations/${encodeURIComponent(inboxLive.username)}/messages?_=${bust}`,
+        { credentials: 'include', cache: 'reload', headers }
+      );
+      if (!res.ok) {
+        win.postMessage({ type: 'spn-inbox-refresh' }, '*');
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      win.postMessage({
+        type: 'spn-inbox-messages',
+        username: inboxLive.username,
+        messages: data.messages || [],
+      }, '*');
+    } else {
+      const res = await spnFetch(`/api/dm/conversations?_=${bust}`, {
+        credentials: 'include',
+        cache: 'reload',
+        headers,
+      });
+      if (!res.ok) {
+        win.postMessage({ type: 'spn-inbox-refresh' }, '*');
+        return;
+      }
+      const data = await res.json().catch(() => ({}));
+      win.postMessage({
+        type: 'spn-inbox-conversations',
+        conversations: data.conversations || [],
+      }, '*');
+    }
+  } catch (_) {
+    try { win.postMessage({ type: 'spn-inbox-refresh' }, '*'); } catch (__) {}
+  }
+}
+setInterval(pollInboxLiveFromParent, 2000);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') pollInboxLiveFromParent();
+});
 /** @deprecated use getTitles() — kept for older call sites during migration */
 const TITLES = new Proxy({}, {
   get(_t, prop) {
@@ -1061,6 +1220,48 @@ const INBOX_APP_CSS = `
     padding-top: 0 !important;
     border-top: none !important;
   }
+  .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose__row {
+    align-items: center !important;
+  }
+  .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose__input {
+    min-height: 44px !important;
+    max-height: 120px !important;
+    box-sizing: border-box !important;
+    padding: 11px 12px !important;
+    line-height: 20px !important;
+    resize: none !important;
+    overflow-y: auto !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+  }
+  .finding-dm-bubble {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    max-width: 88% !important;
+    padding: 10px 12px !important;
+    border-radius: 14px !important;
+    background: #eceff3 !important;
+    color: #111827 !important;
+    align-self: flex-start !important;
+  }
+  .finding-dm-bubble--mine {
+    align-self: flex-end !important;
+    background: #fee2e2 !important;
+    border: 1px solid rgba(220, 53, 69, 0.18) !important;
+  }
+  .finding-dm-bubble__text {
+    display: block !important;
+    margin: 0 0 6px !important;
+    color: #111827 !important;
+    font-size: 14px !important;
+    line-height: 1.45 !important;
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+  }
+  .finding-dm-dialog-item__preview {
+    color: #374151 !important;
+  }
   .finding-dm-photo {
     display: block;
     margin: 0 0 6px;
@@ -1234,9 +1435,14 @@ async function fetchViewerRawHtml(href) {
     if (hit && Date.now() - hit.at < VIEWER_CACHE_TTL_MS) return hit.html;
   }
   const abs = new URL(href, location.origin);
-  const res = await fetch(abs.pathname + abs.search, {
+  const cacheable = isViewerCacheable(href);
+  let path = abs.pathname + abs.search;
+  if (!cacheable) {
+    path += (abs.search ? '&' : '?') + '_=' + Date.now();
+  }
+  const res = await fetch(path, {
     credentials: 'include',
-    cache: isViewerCacheable(href) ? 'force-cache' : 'no-cache',
+    cache: cacheable ? 'force-cache' : 'reload',
   });
   if (!res.ok) throw new Error('viewer ' + res.status);
   const html = await res.text();
@@ -1345,10 +1551,19 @@ function wrapViewerHtml(href, html, { withGameLock = false } = {}) {
   const abs = new URL(href, location.origin);
   const baseHref = abs.origin + abs.pathname.replace(/[^/]*$/, '');
   const gameLock = withGameLock && isGameUrl(href) ? ANDROID_GAME_LOCK_SCRIPT : '';
+  const openDm = String(abs.searchParams.get('dm') || '')
+    .trim()
+    .replace(/^@+/, '')
+    .replace(/[^\p{L}\p{N}._-]/gu, '')
+    .slice(0, 64);
+  const dmScript = openDm
+    ? `<script>window.__SPN_OPEN_DM__=${JSON.stringify(openDm)};</script>`
+    : '';
   const early =
     `<base href="${baseHref}">` +
     `<style id="spn-android-app-css">${appCssForHref(href)}</style>` +
     ANDROID_BOOT_SCRIPT +
+    dmScript +
     gameLock;
   if (/<head[^>]*>/i.test(html)) {
     return html.replace(/<head([^>]*)>/i, `<head$1>${early}`);
@@ -1905,18 +2120,38 @@ async function activateServiceTab(name) {
 
   activeAppTab = kind;
   if (kind === 'inbox') {
+    let inboxHref = catalog?.links?.findingsInbox || '/frontend/findings/inbox.html';
+    const dmPeer = pendingInboxPeer();
+    if (dmPeer) {
+      try {
+        const u = new URL(inboxHref, location.origin);
+        u.searchParams.set('dm', dmPeer);
+        inboxHref = u.pathname + u.search;
+      } catch (_) {}
+    }
     await openFullscreenPage(
-      catalog?.links?.findingsInbox || '/frontend/findings/inbox.html',
+      inboxHref,
       t('findingsInbox'),
       { hideBar: true }
     );
   } else {
+    try {
+      const headers = await getCsrfHeaders({ 'Content-Type': 'application/json' });
+      await spnFetch('/api/findings/notifications/read-all', {
+        method: 'POST',
+        credentials: 'include',
+        headers,
+        body: '{}',
+      });
+      setTabBadge('feed', 0);
+    } catch (_) {}
     await openFullscreenPage(
       catalog?.links?.findingsFeed || '/frontend/findings/feed.html',
       t('findingsFeed'),
       { hideBar: true }
     );
   }
+  try { refreshAppTabBadges(); } catch (_) {}
   if (seq !== serviceTabSeq) {
     try { closeFullscreenPage(); } catch (_) {}
   }
@@ -3123,14 +3358,17 @@ async function refreshProfile() {
     }
     if (!res.ok) throw new Error('guest');
     await res.json();
-    if (loadingEl) loadingEl.hidden = false;
     syncSettingsLogoutVisibility();
     if (!profileEmbedLoaded) {
+      if (loadingEl) loadingEl.hidden = false;
       const ok = await loadProfileEmbed();
       if (!ok) return;
     } else {
+      if (loadingEl) loadingEl.hidden = true;
       if (profileGuest) profileGuest.hidden = true;
       if (profileUser) profileUser.hidden = false;
+      if (profileEmbed) profileEmbed.hidden = false;
+      finishProfileEmbedBoot();
       syncSettingsLogoutVisibility();
       syncProfileEmbedMode();
     }
@@ -3158,6 +3396,8 @@ function showGuestProfile() {
   clearProfileEmbed();
   syncProfileEmbedMode();
   syncSettingsLogoutVisibility();
+  setTabBadge('inbox', 0);
+  setTabBadge('feed', 0);
 }
 
 function syncProfileEmbedMode() {
@@ -3377,6 +3617,8 @@ showScreen('profile');
   // После входа можно вернуться на ленту/сообщения, иначе — профиль
   if (tab === 'feed' || tab === 'inbox') {
     postAuthTab = tab;
+  } else if (pendingInboxPeer()) {
+    postAuthTab = 'inbox';
   }
   if (wentToProfile && !postAuthTab) {
     showScreen('profile');
@@ -3390,6 +3632,14 @@ showScreen('profile');
   } else if (tab && getTitles()[tab]) {
     showScreen(tab);
   }
+
+  try {
+    if (await isLoggedIn()) await syncPushAfterLogin();
+    else syncPushSettingsUi();
+  } catch (_) {
+    try { syncPushSettingsUi(); } catch (__) {}
+  }
+  try { refreshAppTabBadges(); } catch (_) {}
 })();
 
 /* —— Сервисы: почта / входящие / лента —— */
@@ -3400,6 +3650,100 @@ async function isLoggedIn() {
   } catch (_) {
     return false;
   }
+}
+
+function pendingInboxPeer() {
+  try {
+    return String(new URLSearchParams(location.search).get('dm') || '')
+      .trim()
+      .replace(/^@+/, '')
+      .replace(/[^\p{L}\p{N}._-]/gu, '')
+      .slice(0, 64);
+  } catch (_) {
+    return '';
+  }
+}
+
+const PUSH_PREF_KEY = 'spn_push_pref';
+
+function pushPrefOn() {
+  try {
+    return localStorage.getItem(PUSH_PREF_KEY) !== 'off';
+  } catch (_) {
+    return true;
+  }
+}
+
+function setPushPref(on) {
+  try {
+    localStorage.setItem(PUSH_PREF_KEY, on ? 'on' : 'off');
+  } catch (_) {}
+}
+
+function setPushSwitch(on, disabled) {
+  const btn = document.getElementById('spnPushEnableBtn');
+  if (!btn) return;
+  btn.hidden = false;
+  btn.disabled = Boolean(disabled);
+  btn.setAttribute('aria-checked', on ? 'true' : 'false');
+}
+
+function syncPushSettingsUi() {
+  const hint = document.getElementById('spnPushHint');
+  const api = window.spnPush;
+  const liveOn = Boolean(api?.isOn?.());
+  const denied = api?.permission?.() === 'denied';
+  const on = liveOn || (pushPrefOn() && !denied);
+  setPushSwitch(on, false);
+  if (hint) {
+    if (denied && !liveOn) {
+      hint.hidden = false;
+      hint.textContent = t('pushDenied');
+    } else {
+      hint.hidden = true;
+      hint.textContent = '';
+    }
+  }
+}
+
+async function syncPushAfterLogin() {
+  try {
+    if (!window.spnPush) return;
+    if (pushPrefOn()) {
+      await window.spnPush.enable();
+    }
+  } catch (_) {}
+  syncPushSettingsUi();
+}
+
+const spnPushEnableBtn = document.getElementById('spnPushEnableBtn');
+if (spnPushEnableBtn) {
+  spnPushEnableBtn.addEventListener('click', async () => {
+    const wantOn = spnPushEnableBtn.getAttribute('aria-checked') !== 'true';
+    setPushPref(wantOn);
+    try {
+      const loggedIn = await isLoggedIn();
+      if (!loggedIn) {
+        syncPushSettingsUi();
+        toast(t('pushNeedLogin'));
+        openAppAuth(t('login'));
+        return;
+      }
+      if (!wantOn) {
+        await window.spnPush?.disable?.();
+        syncPushSettingsUi();
+        return;
+      }
+      setPushSwitch(true, true);
+      const result = await window.spnPush?.enable();
+      if (result?.ok) toast(t('pushOn'));
+      else if (result?.reason === 'denied') toast(t('pushDenied'));
+      else toast(t('pushFailed'));
+    } catch (_) {
+      toast(t('pushFailed'));
+    }
+    syncPushSettingsUi();
+  });
 }
 
 async function openAppService(kind) {

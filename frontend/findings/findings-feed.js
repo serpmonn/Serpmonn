@@ -1,6 +1,6 @@
 import { generateCombinedBackground } from '../scripts/backgroundGenerator.js';
 import { loadT, getFindingT } from '/frontend/scripts/findings-client.js';
-import { openFeedModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=31';
+import { openFeedModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=39';
 
 async function renderFeedPage() {
   if (!window.__SPN_ANDROID_APP__) generateCombinedBackground();
@@ -13,7 +13,7 @@ async function renderFeedPage() {
 
   if (titleEl) titleEl.textContent = t('feedTitle');
   document.title = `${t('feedTitle')} — Serpmonn`;
-  if (hintEl) hintEl.textContent = t('feedHint');
+  if (hintEl) hintEl.textContent = window.__SPN_ANDROID_APP__ ? '' : t('feedHint');
 
   await initFindingsModals();
   if (listEl) {

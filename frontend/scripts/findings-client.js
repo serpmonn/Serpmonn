@@ -1,6 +1,7 @@
 import { getPageT } from './i18n-loader.js';
 import { flyFindingToMenu } from './finding-fly-animation.js';
-import { csrfHeaders } from './csrf.js';
+import { csrfHeaders } from './csrf.js?v=3';
+import { apiUrl } from './app-api.js?v=3';
 
 let t = (key, vars = {}) => key;
 
@@ -60,53 +61,92 @@ export function buildFindingSnapshot(ctx) {
   };
 }
 
+function isCsrfFailure(status, data) {
+  return status === 403 && /csrf/i.test(String(data?.message || data?.error || ''));
+}
+
 async function apiPost(path, body) {
-  const res = await fetch(path, {
-    method: 'POST',
-    headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
-    credentials: 'include',
-    body: JSON.stringify(body),
-  });
-  const data = await res.json().catch(() => ({}));
-  return { ok: res.ok, status: res.status, data };
+  const send = async (force = false) => {
+    const res = await fetch(apiUrl(path), {
+      method: 'POST',
+      headers: await csrfHeaders({ 'Content-Type': 'application/json' }, { force }),
+      credentials: 'include',
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  };
+  let result = await send(false);
+  if (isCsrfFailure(result.status, result.data)) result = await send(true);
+  return result;
 }
 
 async function apiPostForm(path, formData) {
-  const res = await fetch(path, {
-    method: 'POST',
-    headers: await csrfHeaders(),
-    credentials: 'include',
-    body: formData,
-  });
-  const data = await res.json().catch(() => ({}));
-  return { ok: res.ok, status: res.status, data };
+  const send = async (force = false) => {
+    const res = await fetch(apiUrl(path), {
+      method: 'POST',
+      headers: await csrfHeaders({}, { force }),
+      credentials: 'include',
+      body: formData,
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  };
+  let result = await send(false);
+  if (isCsrfFailure(result.status, result.data)) result = await send(true);
+  return result;
 }
 
 async function apiGet(path) {
-  const res = await fetch(path, { credentials: 'include' });
+  const url = apiUrl(path);
+  const headers = {
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    Pragma: 'no-cache',
+  };
+  const fetchOnce = (extra) => {
+    const q = `_=${Date.now()}${extra ? `&r=${extra}` : ''}`;
+    const href = `${url}${String(url).includes('?') ? '&' : '?'}${q}`;
+    return fetch(href, {
+      credentials: 'include',
+      cache: 'reload',
+      headers,
+    });
+  };
+  let res = await fetchOnce('');
+  if (res.status === 304) res = await fetchOnce(String(Math.random()).slice(2));
   const data = await res.json().catch(() => ({}));
   return { ok: res.ok, status: res.status, data };
 }
 
 async function apiDelete(path) {
-  const res = await fetch(path, {
-    method: 'DELETE',
-    headers: await csrfHeaders(),
-    credentials: 'include',
-  });
-  const data = await res.json().catch(() => ({}));
-  return { ok: res.ok, status: res.status, data };
+  const send = async (force = false) => {
+    const res = await fetch(apiUrl(path), {
+      method: 'DELETE',
+      headers: await csrfHeaders({}, { force }),
+      credentials: 'include',
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  };
+  let result = await send(false);
+  if (isCsrfFailure(result.status, result.data)) result = await send(true);
+  return result;
 }
 
 async function apiPatch(path, body) {
-  const res = await fetch(path, {
-    method: 'PATCH',
-    headers: await csrfHeaders({ 'Content-Type': 'application/json' }),
-    credentials: 'include',
-    body: JSON.stringify(body),
-  });
-  const data = await res.json().catch(() => ({}));
-  return { ok: res.ok, status: res.status, data };
+  const send = async (force = false) => {
+    const res = await fetch(apiUrl(path), {
+      method: 'PATCH',
+      headers: await csrfHeaders({ 'Content-Type': 'application/json' }, { force }),
+      credentials: 'include',
+      body: JSON.stringify(body),
+    });
+    const data = await res.json().catch(() => ({}));
+    return { ok: res.ok, status: res.status, data };
+  };
+  let result = await send(false);
+  if (isCsrfFailure(result.status, result.data)) result = await send(true);
+  return result;
 }
 
 function getSaveModal() {

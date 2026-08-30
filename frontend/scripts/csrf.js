@@ -3,7 +3,7 @@
  * Pair with backend allowlist CSRF middleware (X-CSRF-Token).
  */
 
-import { apiUrl } from './app-api.js';
+import { apiUrl } from './app-api.js?v=3';
 
 let cachedToken = '';
 let cachedAt = 0;
@@ -28,8 +28,8 @@ export async function getCsrfToken({ force = false } = {}) {
   return cachedToken;
 }
 
-export async function csrfHeaders(extra = {}) {
-  const token = await getCsrfToken();
+export async function csrfHeaders(extra = {}, { force = false } = {}) {
+  const token = await getCsrfToken({ force });
   return {
     ...extra,
     'X-CSRF-Token': token

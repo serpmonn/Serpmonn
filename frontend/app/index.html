@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#ffffff">
   <title>Серпмонн</title>
   <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-  <link rel="stylesheet" href="/frontend/app/app.css?v=61">
+  <link rel="stylesheet" href="/frontend/app/app.css?v=66">
   <script>
     window.__SPN_ANDROID_APP__ = true;
     (function () {
@@ -152,6 +152,13 @@
             <button type="button" class="spn-lang__btn" data-lang="en" aria-pressed="false">EN</button>
           </div>
         </div>
+        <div class="spn-settings__row" id="spnPushRow">
+          <span class="spn-settings__label" id="spnPushLabel">Уведомления</span>
+          <button type="button" class="spn-switch" id="spnPushEnableBtn" role="switch" aria-checked="false" aria-labelledby="spnPushLabel">
+            <span class="spn-switch__knob" aria-hidden="true"></span>
+          </button>
+        </div>
+        <p class="spn-muted" id="spnPushHint" hidden></p>
         <div class="spn-settings__links">
           <button type="button" class="spn-textlink" id="helpOpenBtn" data-help-open>Помощь</button>
           <button type="button" class="spn-textlink" data-open="/frontend/donate/donate.html">Поддержать проект</button>
@@ -223,6 +230,7 @@
         <span class="spn-tab__icon" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16"/><path d="M4 12h12"/><path d="M4 18h8"/><circle cx="19" cy="17" r="2.5"/><path d="M19 12.5V14"/></svg>
         </span>
+        <span class="spn-tab__badge" data-tab-badge="feed" hidden></span>
       </button>
       <button type="button" class="spn-tab" data-tab="search" aria-label="Поиск" title="Поиск">
         <span class="spn-tab__icon" aria-hidden="true">
@@ -233,6 +241,7 @@
         <span class="spn-tab__icon" aria-hidden="true">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </span>
+        <span class="spn-tab__badge" data-tab-badge="inbox" hidden></span>
       </button>
       <button type="button" class="spn-tab" data-tab="news" aria-label="Новости" title="Новости">
         <span class="spn-tab__icon" aria-hidden="true">
@@ -290,8 +299,10 @@
     </div>
 
     <div id="spnToast" class="spn-toast" hidden></div>
+    <div class="spn-sys-nav" aria-hidden="true"></div>
   </div>
 
-  <script src="/frontend/app/app.js?v=63"></script>
+  <script src="/frontend/app/push-client.js?v=3"></script>
+  <script src="/frontend/app/app.js?v=72"></script>
 </body>
 </html>

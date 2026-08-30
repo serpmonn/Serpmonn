@@ -9,7 +9,7 @@ import {
   getFindingT,
   showToast,
   copyTextToClipboard,
-} from './findings-client.js';
+} from './findings-client.js?v=39';
 import {
   escapeHtml,
   renderFindingContent,
@@ -22,7 +22,7 @@ import {
   renderDmFindingPickerList,
   renderNotificationItem,
   renderActivityEmpty,
-} from './dm-chat.js';
+} from './dm-chat.js?v=36';
 import { applyShareIconButton, updateLikeControl, updateCommentControl, applyCopyIconButton, applySaveIconButton, renderViewsControl, FINDING_COPY_ICON, FINDING_SHARE_ICON, FINDING_LIKE_ICON } from './finding-icons.js';
 import { closeMenu } from './menu.js';
 
@@ -42,6 +42,7 @@ function revokePendingPhoto() {
   inboxState.pendingPhoto = null;
 }
 const activityState = { tab: 'inbox', unreadDm: 0, unreadNotifications: 0 };
+let threadPollTimer = 0;
 let shareSendContext = null;
 let shareMenuContext = null;
 let modalStackZ = 100000;
@@ -291,12 +292,14 @@ function ensureActivityModal() {
   bindActivityIntro(modal);
 
   modal.querySelector('[data-inbox-back]')?.addEventListener('click', () => {
+    stopThreadPoll();
     inboxState.view = 'dialogs';
     inboxState.username = null;
     inboxState.pendingFinding = null;
     revokePendingPhoto();
     inboxState.newDialogOpen = false;
     loadActivityInto(modal);
+    notifyAppInboxState();
   });
 
   modal.querySelectorAll('[data-activity-tab]').forEach((tab) => {
@@ -309,7 +312,9 @@ function ensureActivityModal() {
       inboxState.pendingFinding = null;
       revokePendingPhoto();
       inboxState.newDialogOpen = false;
+      stopThreadPoll();
       loadActivityInto(modal);
+      notifyAppInboxState();
     });
   });
 
@@ -337,6 +342,7 @@ async function updateActivityTabBadges(modal) {
   activityState.unreadDm = dmResp.ok ? Number(dmResp.data?.count) || 0 : 0;
   activityState.unreadNotifications = notifResp.ok ? Number(notifResp.data?.count) || 0 : 0;
   if (modal) localizeActivityTabs(modal);
+  notifyAppUnread();
 }
 
 function setActivityPanels(modal) {
@@ -477,6 +483,7 @@ async function startInboxThread(modal, username) {
   inboxState.view = 'thread';
   inboxState.username = peer;
 
+  notifyAppInboxState();
   const input = modal.querySelector('[data-inbox-new-input]');
   const suggest = modal.querySelector('[data-inbox-new-suggest]');
   if (input) input.value = '';
@@ -588,6 +595,10 @@ export async function openActivityModal(tab = 'inbox', opts = {}) {
     inlineHost: isAppShell() ? '#findings-inbox-list' : null,
   });
   await loadActivityInto(modal);
+  const openUsername = normalizeDmUsername(opts.openUsername || opts.username || '');
+  if (openUsername && activityState.tab === 'inbox') {
+    await startInboxThread(modal, openUsername);
+  }
 }
 
 function ensureInboxModal() {
@@ -1348,6 +1359,17 @@ function bindChatThread(modal, username) {
     bindChatThread(modal, username);
   });
 
+  const COMPOSE_MIN_H = 44;
+  const COMPOSE_MAX_H = 120;
+  const fitComposeInput = (el) => {
+    if (!el) return;
+    el.style.height = `${COMPOSE_MIN_H}px`;
+    const next = Math.min(COMPOSE_MAX_H, Math.max(COMPOSE_MIN_H, el.scrollHeight));
+    el.style.height = `${next}px`;
+  };
+  input?.addEventListener('input', () => fitComposeInput(input));
+  fitComposeInput(input);
+
   composeForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
     const body = String(input?.value || '').trim();
@@ -1383,7 +1405,10 @@ function bindChatThread(modal, username) {
       return;
     }
 
-    if (input) input.value = '';
+    if (input) {
+      input.value = '';
+      fitComposeInput(input);
+    }
     inboxState.pendingFinding = null;
     revokePendingPhoto();
     setInboxComposeVisible(modal, true);
@@ -1391,6 +1416,149 @@ function bindChatThread(modal, username) {
     bindChatThread(modal, username);
     onInboxRead?.();
   });
+}
+
+function notifyAppUnread() {
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'spn-app-unread',
+        dm: Number(activityState.unreadDm) || 0,
+        feed: Number(activityState.unreadNotifications) || 0,
+      }, '*');
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+function stopThreadPoll() {
+  if (threadPollTimer) {
+    clearInterval(threadPollTimer);
+    threadPollTimer = 0;
+  }
+}
+
+function messagesFingerprint(messages) {
+  if (!messages?.length) return '0';
+  const last = messages[messages.length - 1];
+  return `${messages.length}:${last.id}`;
+}
+
+function isInboxNearBottom(modal) {
+  const listEl = modal?.querySelector('[data-inbox-list]');
+  if (!listEl) return true;
+  return listEl.scrollHeight - listEl.scrollTop - listEl.clientHeight < 96;
+}
+
+function scrollInboxToLatest(modal) {
+  const listEl = modal?.querySelector('[data-inbox-list]');
+  if (!listEl) return;
+  const go = () => {
+    listEl.scrollTop = listEl.scrollHeight;
+    const thread = listEl.querySelector('.finding-dm-thread');
+    if (thread) thread.scrollTop = thread.scrollHeight;
+  };
+  go();
+  requestAnimationFrame(go);
+  setTimeout(go, 50);
+}
+
+function notifyAppInboxState() {
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'spn-inbox-state',
+        view: inboxState.view || 'dialogs',
+        username: inboxState.username || null,
+      }, '*');
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+function applyThreadMessages(modal, username, messages) {
+  if (inboxState.view !== 'thread' || inboxState.username !== username) return;
+  const list = messages || [];
+  if (messagesFingerprint(list) === messagesFingerprint(inboxState.messages)) return;
+  const lastIncoming = list.length && !list[list.length - 1].isMine;
+  const stickToBottom = isInboxNearBottom(modal) || lastIncoming;
+  inboxState.messages = list;
+  const listEl = modal.querySelector('[data-inbox-list]');
+  if (!listEl) return;
+  listEl.innerHTML = renderChatThread(list, (key, vars) => tk(key, vars));
+  bindChatThread(modal, username);
+  if (stickToBottom) scrollInboxToLatest(modal);
+  onInboxRead?.();
+  void updateActivityTabBadges(modal);
+}
+
+async function pollThreadMessages(modal, username) {
+  if (inboxState.view !== 'thread' || inboxState.username !== username) {
+    stopThreadPoll();
+    return;
+  }
+  const { ok, data } = await apiGet(
+    `/api/dm/conversations/${encodeURIComponent(username)}/messages`
+  );
+  if (!ok || inboxState.view !== 'thread' || inboxState.username !== username) return;
+  applyThreadMessages(modal, username, data.messages || []);
+}
+
+function startInboxLiveUpdates(modal) {
+  stopThreadPoll();
+  if (!modal) return;
+  const tick = () => {
+    if (inboxState.view === 'thread' && inboxState.username) {
+      void pollThreadMessages(modal, inboxState.username);
+    } else if (inboxState.view === 'dialogs' && activityState.tab === 'inbox') {
+      void pollDialogList(modal);
+    }
+  };
+  threadPollTimer = setInterval(tick, 2000);
+  tick();
+}
+
+function conversationsFingerprint(conversations) {
+  return (conversations || [])
+    .map((c) => `${c.peerUsername}:${c.unreadCount}:${c.updatedAt || ''}:${c.lastMessage?.body || ''}:${c.lastMessage?.hasPhoto ? 1 : 0}`)
+    .join('|');
+}
+
+function bindDialogList(modal, conversations) {
+  const listEl = modal.querySelector('[data-inbox-list]');
+  const t = (key, vars) => tk(key, vars);
+  if (!listEl) return;
+  if (!conversations.length) {
+    listEl.innerHTML = renderActivityEmpty('inbox', t);
+    bindActivityEmptyActions(modal, listEl);
+    updateNewDialogToolbar(modal);
+    return;
+  }
+  listEl.innerHTML = `<div class="finding-dm-dialog-list">${conversations
+    .map((conv, index) => renderDmDialogCard(conv, t, index))
+    .join('')}</div>`;
+  listEl.querySelectorAll('[data-inbox-username]').forEach((el) => {
+    el.addEventListener('click', () => {
+      startInboxThread(modal, el.dataset.inboxUsername);
+    });
+    el.style.cursor = 'pointer';
+  });
+  updateNewDialogToolbar(modal);
+}
+
+async function pollDialogList(modal) {
+  if (inboxState.view !== 'dialogs' || activityState.tab !== 'inbox') return;
+  const { ok, data } = await apiGet('/api/dm/conversations');
+  if (!ok || inboxState.view !== 'dialogs') return;
+  const conversations = data.conversations || [];
+  if (conversationsFingerprint(conversations) === conversationsFingerprint(inboxState.conversations)) {
+    return;
+  }
+  inboxState.conversations = conversations;
+  bindDialogList(modal, conversations);
+  await updateActivityTabBadges(modal);
 }
 
 async function loadInboxInto(modal) {
@@ -1419,10 +1587,16 @@ async function loadInboxInto(modal) {
       setInboxComposeVisible(modal, false);
       return;
     }
-    if (!ok) {
+    if (!ok && status !== 304) {
       inboxState.view = 'dialogs';
       inboxState.username = null;
+      notifyAppInboxState();
       return loadActivityInto(modal);
+    }
+    if (!ok) {
+      startInboxLiveUpdates(modal);
+      notifyAppInboxState();
+      return;
     }
 
     const messages = data.messages || [];
@@ -1431,12 +1605,13 @@ async function loadInboxInto(modal) {
     bindChatThread(modal, inboxState.username);
     onInboxRead?.();
     await updateActivityTabBadges(modal);
-
-    const thread = listEl.querySelector('.finding-dm-thread');
-    if (thread) thread.scrollTop = thread.scrollHeight;
+    startInboxLiveUpdates(modal);
+    notifyAppInboxState();
+    scrollInboxToLatest(modal);
     return;
   }
 
+  stopThreadPoll();
   setInboxComposeVisible(modal, false);
   const composeForm = modal.querySelector('[data-inbox-compose]');
   if (composeForm) composeForm.dataset.boundUsername = '';
@@ -1456,26 +1631,9 @@ async function loadInboxInto(modal) {
 
   const conversations = data.conversations || [];
   inboxState.conversations = conversations;
-
-  if (!conversations.length) {
-    listEl.innerHTML = renderActivityEmpty('inbox', t);
-    bindActivityEmptyActions(modal, listEl);
-    updateNewDialogToolbar(modal);
-    return;
-  }
-
-  listEl.innerHTML = `<div class="finding-dm-dialog-list">${conversations
-    .map((conv, index) => renderDmDialogCard(conv, t, index))
-    .join('')}</div>`;
-
-  listEl.querySelectorAll('[data-inbox-username]').forEach((el) => {
-    el.addEventListener('click', () => {
-      startInboxThread(modal, el.dataset.inboxUsername);
-    });
-    el.style.cursor = 'pointer';
-  });
-
-  updateNewDialogToolbar(modal);
+  bindDialogList(modal, conversations);
+  startInboxLiveUpdates(modal);
+  notifyAppInboxState();
 }
 
 async function loadFeedInto(modal, { reset = true } = {}) {
@@ -1666,8 +1824,8 @@ export async function openFeedModal() {
   await loadFeedInto(modal, { reset: true });
 }
 
-export async function openInboxModal() {
-  await openActivityModal('inbox', { messagesOnly: true });
+export async function openInboxModal(opts = {}) {
+  await openActivityModal('inbox', { messagesOnly: true, ...opts });
 }
 
 export async function openFindingModal(publicId, options = {}) {
@@ -1769,6 +1927,47 @@ export async function initFindingsModals(options = {}) {
   ensureViewModal();
   ensureFeedModal();
   ensureAuthorModal();
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return;
+    const modal = document.getElementById('finding-activity-modal');
+    if (!modal) return;
+    if (inboxState.view === 'thread' && inboxState.username) {
+      void pollThreadMessages(modal, inboxState.username);
+    } else if (inboxState.view === 'dialogs' && activityState.tab === 'inbox') {
+      void pollDialogList(modal);
+    }
+  });
+
+  window.addEventListener('message', (event) => {
+    const type = event.data?.type;
+    if (type !== 'spn-inbox-refresh' && type !== 'spn-inbox-messages' && type !== 'spn-inbox-conversations') {
+      return;
+    }
+    const modal = document.getElementById('finding-activity-modal');
+    if (!modal) return;
+    if (type === 'spn-inbox-messages') {
+      const username = String(event.data.username || '');
+      if (username) applyThreadMessages(modal, username, event.data.messages || []);
+      return;
+    }
+    if (type === 'spn-inbox-conversations') {
+      if (inboxState.view !== 'dialogs') return;
+      const conversations = event.data.conversations || [];
+      if (conversationsFingerprint(conversations) === conversationsFingerprint(inboxState.conversations)) {
+        return;
+      }
+      inboxState.conversations = conversations;
+      bindDialogList(modal, conversations);
+      void updateActivityTabBadges(modal);
+      return;
+    }
+    if (inboxState.view === 'thread' && inboxState.username) {
+      void pollThreadMessages(modal, inboxState.username);
+    } else if (activityState.tab === 'inbox') {
+      void pollDialogList(modal);
+    }
+  });
 
   document.addEventListener('click', (event) => {
     const feedTrigger = event.target.closest('[data-finding-open-feed]');

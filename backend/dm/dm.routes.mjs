@@ -17,6 +17,27 @@ import {
 
 const router = express.Router();
 
+function noStore(res) {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
+  res.set('Surrogate-Control', 'no-store');
+}
+
+router.use((req, res, next) => {
+  delete req.headers['if-none-match'];
+  delete req.headers['if-modified-since'];
+  Object.defineProperty(req, 'fresh', { configurable: true, get: () => false });
+  noStore(res);
+  const origJson = res.json.bind(res);
+  res.json = (body) => {
+    res.removeHeader('ETag');
+    noStore(res);
+    return origJson(body);
+  };
+  next();
+});
+
 const dmPhotoUpload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: getMaxDmPhotoBytes(), files: 1 },

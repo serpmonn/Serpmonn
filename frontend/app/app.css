@@ -9,14 +9,22 @@
   --spn-tabs: 52px;
   --spn-safe-b: env(safe-area-inset-bottom, 0px);
   --spn-safe-t: env(safe-area-inset-top, 0px);
-  /* 3-кнопочная панель Android часто даёт safe-area=0 — минимальный запас */
+  /* 3-кнопочная панель Android (~48dp); WebView часто отдаёт safe-area=0 */
   --spn-nav-fallback: 48px;
+  --spn-sys-nav: max(var(--spn-safe-b), var(--spn-nav-fallback));
+  --spn-sys-nav-bg: #2a2a2a;
   --spn-viewer-pad-b: max(var(--spn-safe-b), var(--spn-nav-fallback));
 }
 
 * { box-sizing: border-box; }
 
-html, body {
+html {
+  margin: 0;
+  min-height: 100%;
+  background: var(--spn-sys-nav-bg);
+}
+
+body {
   margin: 0;
   min-height: 100%;
   background: var(--spn-bg);
@@ -33,9 +41,22 @@ html, body {
   display: flex;
   flex-direction: column;
   padding-top: var(--spn-safe-t);
-  padding-bottom: calc(var(--spn-tabs) + var(--spn-safe-b));
+  padding-bottom: calc(var(--spn-tabs) + var(--spn-sys-nav));
   overscroll-behavior-x: none;
   overflow: hidden;
+  background: var(--spn-bg);
+}
+
+/* Системные кнопки «назад / домой / приложения» — тёмная подложка */
+.spn-sys-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: var(--spn-sys-nav);
+  background: var(--spn-sys-nav-bg);
+  z-index: 40;
+  pointer-events: none;
 }
 
 .spn-lang {
@@ -79,6 +100,43 @@ html, body {
   font-size: 0.9rem;
   color: var(--spn-fg);
 }
+#spnPushHint {
+  margin: 0 0 10px;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+.spn-switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 48px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: #d4d4d8;
+  cursor: pointer;
+}
+.spn-switch[aria-checked="true"] {
+  background: #16a34a;
+}
+.spn-switch:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.spn-switch__knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  transition: transform 0.16s ease;
+}
+.spn-switch[aria-checked="true"] .spn-switch__knob {
+  transform: translateX(20px);
+}
 
 .spn-profile-head {
   display: flex;
@@ -105,7 +163,7 @@ html, body {
   top: var(--spn-safe-t);
   left: 0;
   right: 0;
-  bottom: calc(var(--spn-tabs) + var(--spn-safe-b));
+  bottom: calc(var(--spn-tabs) + var(--spn-sys-nav));
   z-index: 28;
   display: flex;
   flex-direction: column;
@@ -882,7 +940,7 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
 .spn-toast {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--spn-tabs) + var(--spn-safe-b) + 16px);
+  bottom: calc(var(--spn-tabs) + var(--spn-sys-nav) + 16px);
   transform: translateX(-50%);
   z-index: 60;
   max-width: min(90vw, 360px);
@@ -925,9 +983,9 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0;
-  min-height: var(--spn-tabs);
-  padding: 4px 2px calc(4px + var(--spn-safe-b));
-  background: var(--spn-surface);
+  min-height: calc(var(--spn-tabs) + var(--spn-sys-nav));
+  padding: 4px 2px var(--spn-sys-nav);
+  background: linear-gradient(var(--spn-sys-nav-bg), var(--spn-sys-nav-bg)) left bottom / 100% var(--spn-sys-nav) no-repeat, var(--spn-surface);
   border-top: 1px solid var(--spn-border);
 }
 .spn-tab {
@@ -942,6 +1000,7 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   cursor: pointer;
   border-radius: 12px;
   min-width: 0;
+  position: relative;
 }
 .spn-tab__icon {
   display: flex;
@@ -950,6 +1009,27 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   width: 26px;
   height: 26px;
   color: inherit;
+}
+.spn-tab__badge {
+  position: absolute;
+  top: 2px;
+  left: 50%;
+  margin-left: 4px;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #e53935;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 15px;
+  text-align: center;
+  pointer-events: none;
+  box-shadow: 0 0 0 1.5px var(--spn-surface);
+}
+.spn-tab__badge[hidden] {
+  display: none !important;
 }
 .spn-tab__icon svg {
   display: block;
@@ -971,7 +1051,7 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   top: var(--spn-safe-t);
   left: 0;
   right: 0;
-  bottom: calc(var(--spn-tabs) + var(--spn-safe-b));
+  bottom: calc(var(--spn-tabs) + var(--spn-sys-nav));
   z-index: 25;
   display: flex;
   flex-direction: column;
