@@ -198,7 +198,16 @@ const updateUserProfile = async (req, res) => {                                 
     }
 
     try {
-        let result;
+      if (userId) {
+        const [taken] = await query(
+          'SELECT id FROM users WHERE username = ? AND id != ? LIMIT 1',
+          [username, userId]
+        );
+        if (taken?.id) {
+          return res.status(400).json({ message: 'Это имя уже занято' });
+        }
+      }
+      let result;
         if (userId) {
             result = await query(
                 'UPDATE users SET username = ?, email = ? WHERE id = ?',

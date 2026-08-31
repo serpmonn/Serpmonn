@@ -9,7 +9,7 @@ import {
   getFindingT,
   showToast,
   copyTextToClipboard,
-} from './findings-client.js?v=39';
+} from './findings-client.js?v=41';
 import {
   escapeHtml,
   renderFindingContent,
@@ -22,7 +22,7 @@ import {
   renderDmFindingPickerList,
   renderNotificationItem,
   renderActivityEmpty,
-} from './dm-chat.js?v=36';
+} from './dm-chat.js?v=37';
 import { applyShareIconButton, updateLikeControl, updateCommentControl, applyCopyIconButton, applySaveIconButton, renderViewsControl, FINDING_COPY_ICON, FINDING_SHARE_ICON, FINDING_LIKE_ICON } from './finding-icons.js';
 import { closeMenu } from './menu.js';
 
@@ -32,7 +32,25 @@ let onInboxRead = null;
 let onNotificationsRead = null;
 
 const feedState = { mode: 'all', q: '', offset: 0, items: [], hasMore: false };
-const inboxState = { view: 'dialogs', username: null, conversations: [], messages: [], pendingFinding: null, pendingPhoto: null, newDialogOpen: false };
+const inboxState = { view: 'dialogs', username: null, peerId: null, conversations: [], messages: [], pendingFinding: null, pendingPhoto: null, newDialogOpen: false };
+
+function dmPeerKey() {
+  return inboxState.peerId || inboxState.username || '';
+}
+
+function sameThreadPeer(peer) {
+  const key = String(peer || '');
+  if (!key) return false;
+  return key === String(inboxState.peerId || '') || key === String(inboxState.username || '');
+}
+
+function isNestedAppIframe() {
+  try {
+    return isAppShell() && window.parent && window.parent !== window;
+  } catch {
+    return false;
+  }
+}
 
 function revokePendingPhoto() {
   const previewUrl = inboxState.pendingPhoto?.previewUrl;
@@ -66,13 +84,13 @@ function openPanel(modal, opts = {}) {
     const host = typeof opts.inlineHost === 'string'
       ? document.querySelector(opts.inlineHost)
       : opts.inlineHost;
-    if (host) {
+      if (host) {
       modal.classList.add('finding-panel-modal--inline');
       if (!host.contains(modal)) {
         host.innerHTML = '';
         host.appendChild(modal);
       }
-      modal.style.display = 'block';
+      modal.style.display = 'flex';
       modal.style.zIndex = '';
       requestAnimationFrame(() => {
         modal.setAttribute('data-open', 'true');
@@ -295,6 +313,7 @@ function ensureActivityModal() {
     stopThreadPoll();
     inboxState.view = 'dialogs';
     inboxState.username = null;
+    inboxState.peerId = null;
     inboxState.pendingFinding = null;
     revokePendingPhoto();
     inboxState.newDialogOpen = false;
@@ -309,6 +328,7 @@ function ensureActivityModal() {
       activityState.tab = nextTab;
       inboxState.view = 'dialogs';
       inboxState.username = null;
+    inboxState.peerId = null;
       inboxState.pendingFinding = null;
       revokePendingPhoto();
       inboxState.newDialogOpen = false;
@@ -467,12 +487,25 @@ function updateNewDialogToolbar(modal) {
   if (cancel) cancel.textContent = t('cancelLabel');
 }
 
-async function startInboxThread(modal, username) {
+async function startInboxThread(modal, username, extra = {}) {
   const peer = normalizeDmUsername(username);
-  if (!peer) return;
+  const peerId = String(extra.peerId || '').trim();
+  const keys = [...new Set([peerId, peer].filter(Boolean))];
+  if (!keys.length) return;
 
-  const { ok, status } = await apiGet(`/api/dm/conversations/${encodeURIComponent(peer)}/messages`);
-  if (status === 401) return authRedirect();
+  let ok = false;
+  let status = 0;
+  let data = {};
+  for (const key of keys) {
+    const result = await apiGet(`/api/dm/conversations/${encodeURIComponent(key)}/messages`);
+    status = result.status;
+    if (status === 401) return authRedirect();
+    if (result.ok) {
+      ok = true;
+      data = result.data || {};
+      break;
+    }
+  }
   if (!ok) {
     if (status === 404) showToast(tk('userNotFound'));
     else showToast(tk('loadFailed'));
@@ -481,7 +514,8 @@ async function startInboxThread(modal, username) {
 
   inboxState.newDialogOpen = false;
   inboxState.view = 'thread';
-  inboxState.username = peer;
+  inboxState.username = data?.peerUsername || peer;
+  inboxState.peerId = data?.peerId || peerId || '';
 
   notifyAppInboxState();
   const input = modal.querySelector('[data-inbox-new-input]');
@@ -556,11 +590,11 @@ function bindNewDialogToolbar(modal) {
       suggest.innerHTML = users
         .map(
           (user) =>
-            `<li><button type="button" class="finding-dm-new-suggest__item" data-inbox-new-pick="${escapeHtml(user.username)}">@${escapeHtml(user.username)}</button></li>`
+            `<li><button type="button" class="finding-dm-new-suggest__item" data-inbox-new-pick="${escapeHtml(user.username)}" data-inbox-new-pick-id="${escapeHtml(user.id || '')}">@${escapeHtml(user.username)}</button></li>`
         )
         .join('');
       suggest.querySelectorAll('[data-inbox-new-pick]').forEach((btn) => {
-        btn.addEventListener('click', () => startInboxThread(modal, btn.dataset.inboxNewPick));
+        btn.addEventListener('click', () => startInboxThread(modal, btn.dataset.inboxNewPick, { peerId: btn.dataset.inboxNewPickId }));
       });
     }, 250);
   });
@@ -583,6 +617,7 @@ export async function openActivityModal(tab = 'inbox', opts = {}) {
   if (activityState.tab === 'inbox') {
     inboxState.view = 'dialogs';
     inboxState.username = null;
+    inboxState.peerId = null;
     inboxState.conversations = [];
     inboxState.messages = [];
     inboxState.pendingFinding = null;
@@ -595,9 +630,10 @@ export async function openActivityModal(tab = 'inbox', opts = {}) {
     inlineHost: isAppShell() ? '#findings-inbox-list' : null,
   });
   await loadActivityInto(modal);
+  const openPeerId = String(opts.openPeerId || '').trim();
   const openUsername = normalizeDmUsername(opts.openUsername || opts.username || '');
-  if (openUsername && activityState.tab === 'inbox') {
-    await startInboxThread(modal, openUsername);
+  if ((openPeerId || openUsername) && activityState.tab === 'inbox') {
+    await startInboxThread(modal, openUsername, { peerId: openPeerId });
   }
 }
 
@@ -1380,7 +1416,7 @@ function bindChatThread(modal, username) {
     const sendBtn = composeForm.querySelector('[data-inbox-compose-send]');
     if (sendBtn) sendBtn.disabled = true;
 
-    const path = `/api/dm/conversations/${encodeURIComponent(username)}/messages`;
+    const path = `/api/dm/conversations/${encodeURIComponent(dmPeerKey() || username)}/messages`;
     let result;
     if (photoFile) {
       const formData = new FormData();
@@ -1471,6 +1507,7 @@ function notifyAppInboxState() {
         type: 'spn-inbox-state',
         view: inboxState.view || 'dialogs',
         username: inboxState.username || null,
+        peerId: inboxState.peerId || null,
       }, '*');
     }
   } catch {
@@ -1478,8 +1515,8 @@ function notifyAppInboxState() {
   }
 }
 
-function applyThreadMessages(modal, username, messages) {
-  if (inboxState.view !== 'thread' || inboxState.username !== username) return;
+function applyThreadMessages(modal, peer, messages) {
+  if (inboxState.view !== 'thread' || !sameThreadPeer(peer)) return;
   const list = messages || [];
   if (messagesFingerprint(list) === messagesFingerprint(inboxState.messages)) return;
   const lastIncoming = list.length && !list[list.length - 1].isMine;
@@ -1488,41 +1525,50 @@ function applyThreadMessages(modal, username, messages) {
   const listEl = modal.querySelector('[data-inbox-list]');
   if (!listEl) return;
   listEl.innerHTML = renderChatThread(list, (key, vars) => tk(key, vars));
-  bindChatThread(modal, username);
+  bindChatThread(modal, dmPeerKey());
   if (stickToBottom) scrollInboxToLatest(modal);
   onInboxRead?.();
   void updateActivityTabBadges(modal);
 }
 
-async function pollThreadMessages(modal, username) {
-  if (inboxState.view !== 'thread' || inboxState.username !== username) {
+async function pollThreadMessages(modal, peer) {
+  const key = dmPeerKey();
+  if (inboxState.view !== 'thread' || !key || (peer && !sameThreadPeer(peer))) {
     stopThreadPoll();
     return;
   }
   const { ok, data } = await apiGet(
-    `/api/dm/conversations/${encodeURIComponent(username)}/messages`
+    `/api/dm/conversations/${encodeURIComponent(key)}/messages`
   );
-  if (!ok || inboxState.view !== 'thread' || inboxState.username !== username) return;
-  applyThreadMessages(modal, username, data.messages || []);
+  if (!ok || inboxState.view !== 'thread' || key !== dmPeerKey()) return;
+  if (data?.peerId) inboxState.peerId = data.peerId;
+  if (data?.peerUsername) inboxState.username = data.peerUsername;
+  applyThreadMessages(modal, key, data.messages || []);
 }
 
 function startInboxLiveUpdates(modal) {
   stopThreadPoll();
   if (!modal) return;
+  notifyAppInboxState();
+  if (isNestedAppIframe()) return;
   const tick = () => {
-    if (inboxState.view === 'thread' && inboxState.username) {
-      void pollThreadMessages(modal, inboxState.username);
+    if (inboxState.view === 'thread' && dmPeerKey()) {
+      void pollThreadMessages(modal, dmPeerKey());
     } else if (inboxState.view === 'dialogs' && activityState.tab === 'inbox') {
       void pollDialogList(modal);
     }
   };
-  threadPollTimer = setInterval(tick, 2000);
+  threadPollTimer = setInterval(tick, 5000);
   tick();
+}
+
+export function stopInboxLiveUpdates() {
+  stopThreadPoll();
 }
 
 function conversationsFingerprint(conversations) {
   return (conversations || [])
-    .map((c) => `${c.peerUsername}:${c.unreadCount}:${c.updatedAt || ''}:${c.lastMessage?.body || ''}:${c.lastMessage?.hasPhoto ? 1 : 0}`)
+    .map((c) => `${c.peerId || c.peerUsername}:${c.unreadCount}:${c.updatedAt || ''}:${c.lastMessage?.body || ''}:${c.lastMessage?.hasPhoto ? 1 : 0}`)
     .join('|');
 }
 
@@ -1540,8 +1586,12 @@ function bindDialogList(modal, conversations) {
     .map((conv, index) => renderDmDialogCard(conv, t, index))
     .join('')}</div>`;
   listEl.querySelectorAll('[data-inbox-username]').forEach((el) => {
-    el.addEventListener('click', () => {
-      startInboxThread(modal, el.dataset.inboxUsername);
+    el.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      startInboxThread(modal, el.dataset.inboxUsername, {
+        peerId: el.getAttribute('data-inbox-peer-id') || el.dataset.inboxPeerId,
+      });
     });
     el.style.cursor = 'pointer';
   });
@@ -1569,7 +1619,7 @@ async function loadInboxInto(modal) {
 
   setActivityPanels(modal);
 
-  if (inboxState.view === 'thread' && inboxState.username) {
+  if (inboxState.view === 'thread' && dmPeerKey()) {
     setInboxComposeVisible(modal, true);
 
     listEl.classList.add('findings-inbox-list--loading');
@@ -1577,7 +1627,7 @@ async function loadInboxInto(modal) {
     listEl.innerHTML = renderInboxSkeleton(2);
 
     const { ok, status, data } = await apiGet(
-      `/api/dm/conversations/${encodeURIComponent(inboxState.username)}/messages`
+      `/api/dm/conversations/${encodeURIComponent(dmPeerKey())}/messages`
     );
     listEl.classList.remove('findings-inbox-list--loading');
     listEl.setAttribute('aria-busy', 'false');
@@ -1590,6 +1640,7 @@ async function loadInboxInto(modal) {
     if (!ok && status !== 304) {
       inboxState.view = 'dialogs';
       inboxState.username = null;
+    inboxState.peerId = null;
       notifyAppInboxState();
       return loadActivityInto(modal);
     }
@@ -1600,9 +1651,11 @@ async function loadInboxInto(modal) {
     }
 
     const messages = data.messages || [];
+    if (data?.peerId) inboxState.peerId = data.peerId;
+    if (data?.peerUsername) inboxState.username = data.peerUsername;
     inboxState.messages = messages;
     listEl.innerHTML = renderChatThread(messages, t);
-    bindChatThread(modal, inboxState.username);
+    bindChatThread(modal, dmPeerKey());
     onInboxRead?.();
     await updateActivityTabBadges(modal);
     startInboxLiveUpdates(modal);
@@ -1932,8 +1985,8 @@ export async function initFindingsModals(options = {}) {
     if (document.visibilityState !== 'visible') return;
     const modal = document.getElementById('finding-activity-modal');
     if (!modal) return;
-    if (inboxState.view === 'thread' && inboxState.username) {
-      void pollThreadMessages(modal, inboxState.username);
+    if (inboxState.view === 'thread' && dmPeerKey()) {
+      void pollThreadMessages(modal, dmPeerKey());
     } else if (inboxState.view === 'dialogs' && activityState.tab === 'inbox') {
       void pollDialogList(modal);
     }
@@ -1947,8 +2000,8 @@ export async function initFindingsModals(options = {}) {
     const modal = document.getElementById('finding-activity-modal');
     if (!modal) return;
     if (type === 'spn-inbox-messages') {
-      const username = String(event.data.username || '');
-      if (username) applyThreadMessages(modal, username, event.data.messages || []);
+      const peer = String(event.data.peerId || event.data.username || '');
+      if (peer) applyThreadMessages(modal, peer, event.data.messages || []);
       return;
     }
     if (type === 'spn-inbox-conversations') {
@@ -1962,8 +2015,8 @@ export async function initFindingsModals(options = {}) {
       void updateActivityTabBadges(modal);
       return;
     }
-    if (inboxState.view === 'thread' && inboxState.username) {
-      void pollThreadMessages(modal, inboxState.username);
+    if (inboxState.view === 'thread' && dmPeerKey()) {
+      void pollThreadMessages(modal, dmPeerKey());
     } else if (activityState.tab === 'inbox') {
       void pollDialogList(modal);
     }

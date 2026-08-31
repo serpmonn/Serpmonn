@@ -129,7 +129,9 @@ export async function upsertVkUser({ vkUserId, email = null, name = null }) {
   if (!user) {
     // username тоже часто UNIQUE — имя VK может совпасть у разных людей
     const baseName = name ? String(name).trim().slice(0, 48) : '';
-    const username = baseName ? `${baseName}`.slice(0, 64) : `vk_${id}`;
+    let username = baseName ? `${baseName}`.slice(0, 64) : `vk_${id}`;
+    const taken = await query('SELECT id FROM users WHERE username = ? LIMIT 1', [username]);
+    if (taken.length) username = `vk_${id}`;
     // email UNIQUE: пустая строка '' можно вставить только один раз → ломает вход второму VK-юзеру
     const safeEmail = email && String(email).trim()
       ? String(email).trim()

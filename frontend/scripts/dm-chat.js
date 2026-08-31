@@ -122,6 +122,7 @@ export function renderDmDialogCard(conv, t, index = 0) {
       class="finding-dm-dialog-item${unreadCls} finding-inbox-item--enter"
       style="--inbox-delay:${index * 40}ms"
       data-inbox-username="${escapeHtml(conv.peerUsername)}"
+      data-inbox-peer-id="${escapeHtml(conv.peerId || '')}"
     >
       <div class="finding-dm-dialog-item__avatar" aria-hidden="true">${avatarInner}</div>
       <div class="finding-dm-dialog-item__body">

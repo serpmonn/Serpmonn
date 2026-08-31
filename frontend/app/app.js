@@ -19,6 +19,19 @@ function spnApiUrl(path) {
 function spnFetch(path, options) {
   return fetch(spnApiUrl(path), options);
 }
+function spnFetchNoCache(path, options = {}) {
+  const url = spnApiUrl(path);
+  const href = `${url}${String(url).includes('?') ? '&' : '?'}_=${Date.now()}`;
+  return fetch(href, {
+    ...options,
+    cache: 'reload',
+    headers: {
+      'Cache-Control': 'no-cache, no-store',
+      Pragma: 'no-cache',
+      ...(options.headers || {}),
+    },
+  });
+}
 
 const SPN_LOCALE_KEY = 'spn-app-locale';
 const I18N = {
@@ -670,6 +683,11 @@ function isInboxFullscreenOpen() {
 }
 
 async function pollInboxLiveFromParent() {
+  if (document.getElementById('finding-activity-modal') &&
+      document.getElementById('spnInboxHost') &&
+      !document.getElementById('spnInboxHost').hidden) {
+    return;
+  }
   if (!isInboxFullscreenOpen()) return;
   const frame = document.getElementById('fullscreenFrame');
   const win = frame?.contentWindow;
@@ -682,10 +700,7 @@ async function pollInboxLiveFromParent() {
         `/api/dm/conversations/${encodeURIComponent(inboxLive.username)}/messages?_=${bust}`,
         { credentials: 'include', cache: 'reload', headers }
       );
-      if (!res.ok) {
-        win.postMessage({ type: 'spn-inbox-refresh' }, '*');
-        return;
-      }
+      if (!res.ok) return;
       const data = await res.json().catch(() => ({}));
       win.postMessage({
         type: 'spn-inbox-messages',
@@ -698,10 +713,7 @@ async function pollInboxLiveFromParent() {
         cache: 'reload',
         headers,
       });
-      if (!res.ok) {
-        win.postMessage({ type: 'spn-inbox-refresh' }, '*');
-        return;
-      }
+      if (!res.ok) return;
       const data = await res.json().catch(() => ({}));
       win.postMessage({
         type: 'spn-inbox-conversations',
@@ -709,10 +721,10 @@ async function pollInboxLiveFromParent() {
       }, '*');
     }
   } catch (_) {
-    try { win.postMessage({ type: 'spn-inbox-refresh' }, '*'); } catch (__) {}
+    /* 429/сеть — не дёргать iframe повторным запросом */
   }
 }
-setInterval(pollInboxLiveFromParent, 2000);
+setInterval(pollInboxLiveFromParent, 5000);
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') pollInboxLiveFromParent();
 });
@@ -1151,6 +1163,46 @@ const INBOX_APP_CSS = `
   html:has(#finding-activity-modal.finding-panel-modal--inline),
   body:has(#finding-activity-modal.finding-panel-modal--inline) {
     height: 100% !important;
+    overflow: hidden !important;
+    background: #fff !important;
+  }
+  .finding-panel-modal--inline {
+    position: static !important;
+    inset: auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    z-index: auto !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    background: #fff !important;
+  }
+  .finding-panel-modal--inline .ai-share-backdrop {
+    display: none !important;
+  }
+  .finding-panel-modal--inline .finding-panel-close,
+  .finding-panel-modal--inline .ai-share-close,
+  .finding-panel-modal--inline .finding-activity-close {
+    display: none !important;
+  }
+  .finding-panel-modal--inline .finding-panel-dialog,
+  .finding-panel-modal--inline .ai-share-dialog,
+  .finding-panel-modal--inline .finding-activity-dialog {
+    position: static !important;
+    width: 100% !important;
+    max-width: none !important;
+    max-height: none !important;
+    height: 100% !important;
+    margin: 0 !important;
+    border: none !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    background: #fff !important;
     overflow: hidden !important;
   }
   body:has(#finding-activity-modal.finding-panel-modal--inline) .page-wrapper {
@@ -2120,20 +2172,7 @@ async function activateServiceTab(name) {
 
   activeAppTab = kind;
   if (kind === 'inbox') {
-    let inboxHref = catalog?.links?.findingsInbox || '/frontend/findings/inbox.html';
-    const dmPeer = pendingInboxPeer();
-    if (dmPeer) {
-      try {
-        const u = new URL(inboxHref, location.origin);
-        u.searchParams.set('dm', dmPeer);
-        inboxHref = u.pathname + u.search;
-      } catch (_) {}
-    }
-    await openFullscreenPage(
-      inboxHref,
-      t('findingsInbox'),
-      { hideBar: true }
-    );
+    await openInboxInShell();
   } else {
     try {
       const headers = await getCsrfHeaders({ 'Content-Type': 'application/json' });
@@ -2171,8 +2210,10 @@ newsChips.forEach((chip) => {
 document.addEventListener('click', (e) => {
   const btn = e.target.closest('[data-open]');
   if (!btn) return;
+  const href = String(btn.getAttribute('data-open') || '').trim();
+  // Модалки сайта ставят data-open="true" — это не URL для viewer
+  if (!href || href === 'true' || href === 'false') return;
   e.preventDefault();
-  const href = btn.getAttribute('data-open') || '';
   try { closeSettingsPanel(); } catch (_) {}
   if (/\/auth\//i.test(href)) {
     openAppAuth(btn.textContent.trim() || t('login'));
@@ -2367,7 +2408,7 @@ async function saveFindingPrivate() {
     showToast(t('noAnswerSave'));
     return;
   }
-  const auth = await spnFetch('/auth/protected', { credentials: 'include' });
+  const auth = await spnFetchNoCache('/auth/protected', { credentials: 'include' });
   if (!auth.ok) {
     closeFindingSaveModal();
     openAppAuth(t('login'));
@@ -2454,7 +2495,7 @@ function setupSearchActionButtons() {
         showToast(t('noAnswerSave'));
         return;
       }
-      const auth = await spnFetch('/auth/protected', { credentials: 'include' });
+      const auth = await spnFetchNoCache('/auth/protected', { credentials: 'include' });
       if (!auth.ok) {
         openAppAuth(t('login'));
         return;
@@ -3164,8 +3205,63 @@ function isFullscreenOpen() {
   return Boolean(profileFullscreen && !profileFullscreen.hidden);
 }
 
+function hideInboxHost() {
+  const host = document.getElementById('spnInboxHost');
+  if (host) host.hidden = true;
+  if (profileFullscreen) profileFullscreen.classList.remove('spn-fullscreen--inbox');
+  if (fullscreenFrame) fullscreenFrame.hidden = false;
+  try {
+    import('/frontend/scripts/findings-modals.js?v=42').then((mod) => {
+      try { mod.stopInboxLiveUpdates?.(); } catch (_) {}
+    });
+  } catch (_) {}
+}
+
+function ensureInboxShellStyles() {
+  if (!document.getElementById('spn-site-css-for-inbox')) {
+    const link = document.createElement('link');
+    link.id = 'spn-site-css-for-inbox';
+    link.rel = 'stylesheet';
+    link.href = '/frontend/styles/styles.css?v=dm-compose-h1';
+    document.head.appendChild(link);
+  }
+  if (!document.getElementById('spn-inbox-shell-css')) {
+    const style = document.createElement('style');
+    style.id = 'spn-inbox-shell-css';
+    style.textContent = INBOX_APP_CSS;
+    document.head.appendChild(style);
+  }
+}
+
+async function openInboxInShell() {
+  if (!profileFullscreen) return;
+  ensureInboxShellStyles();
+  profileSubpageOpen = true;
+  if (profileBar) profileBar.hidden = true;
+  profileFullscreen.classList.add('spn-fullscreen--nobar', 'spn-fullscreen--inbox');
+  profileFullscreen.hidden = false;
+  profileFullscreen.setAttribute('aria-hidden', 'false');
+  if (fullscreenFrame) {
+    fullscreenFrame.hidden = true;
+    fullscreenFrame.classList.remove('is-booting');
+    try { fullscreenFrame.removeAttribute('srcdoc'); } catch (_) {}
+    try { fullscreenFrame.removeAttribute('src'); } catch (_) {}
+  }
+  const host = document.getElementById('spnInboxHost');
+  if (host) host.hidden = false;
+  const mod = await import('/frontend/scripts/findings-modals.js?v=42');
+  await mod.initFindingsModals({
+    onInboxRead: () => { try { refreshAppTabBadges(); } catch (_) {} },
+  });
+  await mod.openInboxModal({
+    openUsername: pendingInboxPeer(),
+    openPeerId: String(new URLSearchParams(location.search).get('dmId') || '').trim(),
+  });
+}
+
 async function openFullscreenPage(url, title, opts = {}) {
   if (!profileFullscreen || !fullscreenFrame) return;
+  hideInboxHost();
   url = localizeFrontendPath(url);
   profileSubpageOpen = true;
   // Для вкладок ленты/сообщений шапка профиля не нужна — контент как отдельный раздел
@@ -3203,11 +3299,13 @@ function fullscreenFrameRemoveBoot() {
 function closeFullscreenPage() {
   profileSubpageOpen = false;
   setProfileSubpageUi(false);
+  hideInboxHost();
   if (!profileFullscreen) return;
   profileFullscreen.classList.remove('spn-fullscreen--nobar');
   profileFullscreen.hidden = true;
   profileFullscreen.setAttribute('aria-hidden', 'true');
   if (fullscreenFrame) {
+    fullscreenFrame.hidden = false;
     fullscreenFrame.classList.remove('is-booting');
     try { fullscreenFrame.removeAttribute('srcdoc'); } catch (_) {}
     try { fullscreenFrame.removeAttribute('src'); } catch (_) {}
@@ -3349,7 +3447,7 @@ async function refreshProfile() {
     const timer = ctrl ? setTimeout(() => ctrl.abort(), 8000) : null;
     let res;
     try {
-      res = await spnFetch('/auth/protected', {
+      res = await spnFetchNoCache('/auth/protected', {
         credentials: 'include',
         ...(ctrl ? { signal: ctrl.signal } : {}),
       });
@@ -3573,7 +3671,7 @@ async function completeVkIdFromRedirect() {
     console.error('VKID app redirect login failed:', err);
     // Код мог уже быть обменян на странице auth (LOGIN_SUCCESS) — проверим сессию
     try {
-      const res = await spnFetch('/auth/protected', { credentials: 'include' });
+      const res = await spnFetchNoCache('/auth/protected', { credentials: 'include' });
       return res.ok;
     } catch (_) {
       return false;
@@ -3645,7 +3743,7 @@ showScreen('profile');
 /* —— Сервисы: почта / входящие / лента —— */
 async function isLoggedIn() {
   try {
-    const res = await spnFetch('/auth/protected', { credentials: 'include' });
+    const res = await spnFetchNoCache('/auth/protected', { credentials: 'include' });
     return res.ok;
   } catch (_) {
     return false;

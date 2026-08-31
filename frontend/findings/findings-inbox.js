@@ -3,17 +3,31 @@ import {
   apiGet,
   loadT,
   getFindingT,
-} from '/frontend/scripts/findings-client.js?v=39';
-import { openInboxModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=39';
+} from '/frontend/scripts/findings-client.js?v=40';
+import { openInboxModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=42';
 
 function pendingInboxPeer() {
   try {
     if (window.__SPN_OPEN_DM__) return String(window.__SPN_OPEN_DM__).replace(/^@+/, '');
-    const own = new URLSearchParams(location.search).get('dm');
-    if (own) return own.replace(/^@+/, '');
+    const own = new URLSearchParams(location.search);
+    const dm = own.get('dm');
+    if (dm) return dm.replace(/^@+/, '');
     if (window.parent && window.parent !== window) {
       const parentDm = new URLSearchParams(window.parent.location.search).get('dm');
       if (parentDm) return parentDm.replace(/^@+/, '');
+    }
+  } catch {
+    /* ignore */
+  }
+  return '';
+}
+
+function pendingInboxPeerId() {
+  try {
+    const own = new URLSearchParams(location.search).get('dmId');
+    if (own) return own.trim();
+    if (window.parent && window.parent !== window) {
+      return String(new URLSearchParams(window.parent.location.search).get('dmId') || '').trim();
     }
   } catch {
     /* ignore */
@@ -38,7 +52,10 @@ async function renderInboxPage() {
   if (listEl) {
     listEl.innerHTML = `<p class="plan-hint">${t('inboxLoading')}</p>`;
   }
-  await openInboxModal({ openUsername: pendingInboxPeer() });
+  await openInboxModal({
+    openUsername: pendingInboxPeer(),
+    openPeerId: pendingInboxPeerId(),
+  });
 }
 
 document.addEventListener('DOMContentLoaded', renderInboxPage);

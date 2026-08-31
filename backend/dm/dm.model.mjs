@@ -1,5 +1,10 @@
 import { query } from '../database/config.mjs';
-import { ensureFindingsTables, getUserIdByUsername } from '../findings/findings.model.mjs';
+import {
+  ensureFindingsTables,
+  getUserById,
+  getUserIdByUsername,
+  listUsersByUsername,
+} from '../findings/findings.model.mjs';
 import { buildAvatarUrl } from '../profiles/avatarService.mjs';
 
 let dmTablesReady = false;
@@ -13,6 +18,26 @@ function clampLimit(limit, fallback = 50, max = 100) {
 
 function canonicalPair(userId1, userId2) {
   return userId1 < userId2 ? [userId1, userId2] : [userId2, userId1];
+}
+
+export async function resolveDmPeer(viewerId, raw) {
+  const key = String(raw || '').trim().replace(/^@+/, '');
+  if (!key) return null;
+  const byId = await getUserById(key);
+  if (byId) return byId;
+  const rows = await listUsersByUsername(key);
+  if (!rows.length) return getUserIdByUsername(key);
+  if (rows.length === 1 || !viewerId) return rows[0];
+  for (const row of rows) {
+    if (row.id === viewerId) continue;
+    const [userA, userB] = canonicalPair(viewerId, row.id);
+    const conv = await query(
+      'SELECT id FROM dm_conversations WHERE user_a = ? AND user_b = ? LIMIT 1',
+      [userA, userB]
+    );
+    if (conv.length) return row;
+  }
+  return rows.find((row) => row.id !== viewerId) || rows[0];
 }
 
 export async function ensureDmTables() {
@@ -257,9 +282,9 @@ export async function listConversationsForUser(userId, limit = 50) {
   }));
 }
 
-export async function listMessagesWithPeer(userId, peerUsername, limit = 100) {
+export async function listMessagesWithPeer(userId, peerKey, limit = 100) {
   await ensureDmTables();
-  const peer = await getUserIdByUsername(peerUsername);
+  const peer = await resolveDmPeer(userId, peerKey);
   if (!peer) return null;
 
   const [userA, userB] = canonicalPair(userId, peer.id);
@@ -267,7 +292,9 @@ export async function listMessagesWithPeer(userId, peerUsername, limit = 100) {
     'SELECT id FROM dm_conversations WHERE user_a = ? AND user_b = ? LIMIT 1',
     [userA, userB]
   );
-  if (!convRows.length) return { peerUsername: peer.username, messages: [] };
+  if (!convRows.length) {
+    return { peerUsername: peer.username, peerId: peer.id, messages: [] };
+  }
 
   const conversationId = convRows[0].id;
   const lim = clampLimit(limit, 100, 200);
@@ -280,13 +307,15 @@ export async function listMessagesWithPeer(userId, peerUsername, limit = 100) {
      JOIN users u ON u.id = m.sender_id
      LEFT JOIN findings f ON f.id = m.finding_id
      WHERE m.conversation_id = ?
-     ORDER BY m.created_at ASC
+     ORDER BY m.created_at DESC, m.id DESC
      LIMIT ${lim}`,
     [conversationId]
   );
+  rows.reverse();
 
   return {
     peerUsername: peer.username,
+    peerId: peer.id,
     messages: rows.map((row) => ({
       id: row.id,
       legacyShareId: row.legacy_share_id,
@@ -304,9 +333,9 @@ export async function listMessagesWithPeer(userId, peerUsername, limit = 100) {
   };
 }
 
-export async function markConversationReadWithPeer(userId, peerUsername) {
+export async function markConversationReadWithPeer(userId, peerKey) {
   await ensureDmTables();
-  const peer = await getUserIdByUsername(peerUsername);
+  const peer = await resolveDmPeer(userId, peerKey);
   if (!peer) return false;
 
   const [userA, userB] = canonicalPair(userId, peer.id);

@@ -128,17 +128,34 @@ export function generatePublicId() {
   return `fnd_${crypto.randomBytes(8).toString('base64url')}`;
 }
 
+export const USER_UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function getUserIdByEmail(email) {
   const rows = await query('SELECT id, username FROM users WHERE email = ? LIMIT 1', [email]);
   return rows[0] || null;
 }
 
+export async function getUserById(id) {
+  const key = String(id || '').trim();
+  if (!key || key.length > 64) return null;
+  const rows = await query('SELECT id, username FROM users WHERE id = ? LIMIT 1', [key]);
+  return rows[0] || null;
+}
+
 export async function getUserIdByUsername(username) {
   const rows = await query(
-    'SELECT id, username FROM users WHERE username = ? LIMIT 1',
-    [username.trim()]
+    'SELECT id, username FROM users WHERE username = ? ORDER BY created_at ASC LIMIT 1',
+    [String(username || '').trim()]
   );
   return rows[0] || null;
+}
+
+export async function listUsersByUsername(username) {
+  return query(
+    'SELECT id, username FROM users WHERE username = ? ORDER BY created_at ASC',
+    [String(username || '').trim()]
+  );
 }
 
 export async function searchUsersByUsername(prefix, limit = 8) {

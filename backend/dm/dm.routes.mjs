@@ -8,6 +8,7 @@ import {
   listMessagesWithPeer,
   insertDmMessage,
   markConversationReadWithPeer,
+  resolveDmPeer,
 } from './dm.model.mjs';
 import {
   getMaxDmPhotoBytes,
@@ -85,17 +86,17 @@ router.get('/dm/conversations', verifyToken, async (req, res) => {
   }
 });
 
-router.get('/dm/conversations/:username/messages', verifyToken, async (req, res) => {
+router.get('/dm/conversations/:peer/messages', verifyToken, async (req, res) => {
   try {
     const userId = await resolveDbUserId(req);
     if (!userId) return res.status(401).json({ error: 'unauthorized' });
-    const peerUsername = String(req.params.username || '').trim();
-    if (!peerUsername) return res.status(400).json({ error: 'username_required' });
+    const peerKey = String(req.params.peer || '').trim();
+    if (!peerKey) return res.status(400).json({ error: 'username_required' });
 
-    const thread = await listMessagesWithPeer(userId, peerUsername);
+    const thread = await listMessagesWithPeer(userId, peerKey);
     if (!thread) return res.status(404).json({ error: 'user_not_found' });
 
-    await markConversationReadWithPeer(userId, peerUsername);
+    await markConversationReadWithPeer(userId, peerKey);
     res.json(thread);
   } catch (err) {
     console.error('[dm] messages', err);
@@ -103,19 +104,18 @@ router.get('/dm/conversations/:username/messages', verifyToken, async (req, res)
   }
 });
 
-router.post('/dm/conversations/:username/messages', verifyToken, optionalDmPhoto, async (req, res) => {
+router.post('/dm/conversations/:peer/messages', verifyToken, optionalDmPhoto, async (req, res) => {
   try {
     const userId = await resolveDbUserId(req);
     if (!userId) return res.status(401).json({ error: 'unauthorized' });
 
-    const peerUsername = String(req.params.username || '').trim();
+    const peerKey = String(req.params.peer || '').trim();
     const body = String(req.body?.body || '').trim();
     const findingPublicId = String(req.body?.findingPublicId || '').trim();
 
-    if (!peerUsername) return res.status(400).json({ error: 'username_required' });
+    if (!peerKey) return res.status(400).json({ error: 'username_required' });
 
-    const { getUserIdByUsername } = await import('../findings/findings.model.mjs');
-    const recipient = await getUserIdByUsername(peerUsername);
+    const recipient = await resolveDmPeer(userId, peerKey);
     if (!recipient) return res.status(404).json({ error: 'user_not_found' });
     if (recipient.id === userId) return res.status(400).json({ error: 'self_message' });
 
@@ -165,6 +165,7 @@ router.post('/dm/conversations/:username/messages', verifyToken, optionalDmPhoto
     res.status(201).json({
       messageId,
       peerUsername: recipient.username,
+      peerId: recipient.id,
       body: body || null,
       findingPublicId: findingPublicId || null,
       imageUrl,
@@ -178,13 +179,13 @@ router.post('/dm/conversations/:username/messages', verifyToken, optionalDmPhoto
   }
 });
 
-router.post('/dm/conversations/:username/read', verifyToken, async (req, res) => {
+router.post('/dm/conversations/:peer/read', verifyToken, async (req, res) => {
   try {
     const userId = await resolveDbUserId(req);
     if (!userId) return res.status(401).json({ error: 'unauthorized' });
-    const peerUsername = String(req.params.username || '').trim();
-    if (!peerUsername) return res.status(400).json({ error: 'username_required' });
-    await markConversationReadWithPeer(userId, peerUsername);
+    const peerKey = String(req.params.peer || '').trim();
+    if (!peerKey) return res.status(400).json({ error: 'username_required' });
+    await markConversationReadWithPeer(userId, peerKey);
     res.json({ ok: true });
   } catch (err) {
     console.error('[dm] mark read', err);

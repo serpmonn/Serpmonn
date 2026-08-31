@@ -1,6 +1,6 @@
 import { generateCombinedBackground } from '../scripts/backgroundGenerator.js';
 import { loadT, getFindingT } from '/frontend/scripts/findings-client.js';
-import { openFeedModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=39';
+import { openFeedModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=42';
 
 async function renderFeedPage() {
   if (!window.__SPN_ANDROID_APP__) generateCombinedBackground();

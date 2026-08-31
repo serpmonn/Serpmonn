@@ -132,6 +132,12 @@ router.post(
 router.post('/logout', authWriteLimiter, logoutUser);
 
 router.get('/protected', verifyToken, (req, res) => {
+  delete req.headers['if-none-match'];
+  delete req.headers['if-modified-since'];
+  Object.defineProperty(req, 'fresh', { configurable: true, get: () => false });
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+  res.set('Pragma', 'no-cache');
+  res.set('Expires', '0');
   res.json({ message: 'Вы получили доступ к защищённому маршруту', user: req.user });
 });
 

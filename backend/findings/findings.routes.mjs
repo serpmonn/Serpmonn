@@ -267,7 +267,7 @@ router.get('/findings/users/lookup', verifyToken, async (req, res) => {
     const q = String(req.query.username || req.query.q || '').trim();
     if (q.length < 2) return res.json({ users: [] });
     const users = await searchUsersByUsername(q, 8);
-    res.json({ users: users.map((u) => ({ username: u.username })) });
+    res.json({ users: users.map((u) => ({ id: u.id, username: u.username })) });
   } catch (err) {
     console.error('[findings] user lookup', err);
     res.status(500).json({ error: 'internal_error' });

@@ -17,6 +17,7 @@ import rateLimit from 'express-rate-limit';                                     
 import helmet from 'helmet';                                                                                                     // Импортируем Helmet для установки защитных HTTP-заголовков
 import { doubleCsrf } from 'csrf-csrf';                                                                                          // Импортируем CSRF middleware для защиты от межсайтовых запросов
 import { connectRoutes } from './routes/routes.mjs';                                                                             // Импортируем функцию централизованного подключения маршрутов
+import { ensureUniqueUsernames } from './auth/ensureUniqueUsernames.mjs';
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);                                                                                                       // Доверяем первому прокси (например, Nginx) для корректного IP
@@ -141,9 +142,20 @@ app.use(express.urlencoded({                                                    
 
 const apiLimiter = rateLimit({                                                                                                   // Глобальный лимитер запросов (защита от DoS/брютфорса)
     windowMs: 15 * 60 * 1000,                                                                                                    // Окно времени - 15 минут в миллисекундах
-    max: 300,                                                                                                                    // Максимум 300 запросов за 15 минут от одного IP
+    max: 600,                                                                                                                    // Максимум 600 запросов за 15 минут от одного IP
     standardHeaders: true,                                                                                                       // Возвращать стандартные заголовки лимита (RateLimit-*)
-    legacyHeaders: false                                                                                                         // Не использовать устаревшие заголовки (X-RateLimit-*)
+    legacyHeaders: false,                                                                                                        // Не использовать устаревшие заголовки (X-RateLimit-*)
+    skip: (req) => {                                                                                                             // Проверки сессии и опрос чата не должны ронять вход в приложении
+        if (req.method !== 'GET' && req.method !== 'HEAD') return false;
+        const p = String(req.originalUrl || req.path || '').split('?')[0];
+        return p === '/auth/protected'
+            || p.endsWith('/auth/protected')
+            || p === '/csrf-token'
+            || p.endsWith('/csrf-token')
+            || p.startsWith('/api/dm/')
+            || p === '/api/findings/notifications/unread-count'
+            || p === '/api/messenger-auth/me';
+    }
 });
 app.use(apiLimiter);                                                                                                             // Применяем глобальный лимитер ко всем маршрутам
 
@@ -242,9 +254,13 @@ app.use((err, req, res, next) => {                                              
 const PORT = process.env.AUTH_PORT;                                                                                              // Получаем порт основного сервера из переменной окружения
 
 if (process.env.NODE_ENV !== 'test') {                                                                                           // Не запускаем сервер автоматически в тестовой среде
-    app.listen(PORT, () => {                                                                                                     // Запускаем сервер на указанном порту
-        console.log(`Сервер работает на порту ${PORT}`);                                                                         // Логируем успешный запуск сервера
-    });
+    ensureUniqueUsernames()
+        .catch((err) => console.error('[users] unique usernames', err?.message || err))
+        .finally(() => {
+            app.listen(PORT, () => {                                                                                             // Запускаем сервер на указанном порту
+                console.log(`Сервер работает на порту ${PORT}`);                                                                 // Логируем успешный запуск сервера
+            });
+        });
 }
 
 export default app;                                                                                                              // Экспортируем Express-приложение для тестов и повторного использования
