@@ -12,6 +12,8 @@
   /* 3-кнопочная панель Android (~48dp); WebView часто отдаёт safe-area=0 */
   --spn-nav-fallback: 48px;
   --spn-sys-nav: max(var(--spn-safe-b), var(--spn-nav-fallback));
+  /* Отступ контента над системной панелью (JS: syncSystemNavChrome) */
+  --spn-app-nav-pad: max(var(--spn-safe-b), var(--spn-nav-fallback));
   --spn-sys-nav-bg: #2a2a2a;
   --spn-viewer-pad-b: max(var(--spn-safe-b), var(--spn-nav-fallback));
 }
@@ -21,7 +23,7 @@
 html {
   margin: 0;
   min-height: 100%;
-  background: var(--spn-sys-nav-bg);
+  background: var(--spn-bg);
 }
 
 body {
@@ -41,13 +43,13 @@ body {
   display: flex;
   flex-direction: column;
   padding-top: var(--spn-safe-t);
-  padding-bottom: calc(var(--spn-tabs) + var(--spn-sys-nav));
+  padding-bottom: calc(var(--spn-tabs) + var(--spn-app-nav-pad));
   overscroll-behavior-x: none;
   overflow: hidden;
   background: var(--spn-bg);
 }
 
-/* Системные кнопки «назад / домой / приложения» — тёмная подложка */
+/* Тёмная полоса под системными кнопками Android (светлые иконки ◁ ○ ▢) */
 .spn-sys-nav {
   position: fixed;
   left: 0;
@@ -55,8 +57,16 @@ body {
   bottom: 0;
   height: var(--spn-sys-nav);
   background: var(--spn-sys-nav-bg);
-  z-index: 40;
+  z-index: 29;
   pointer-events: none;
+}
+html.spn-cap-native .spn-sys-nav {
+  display: block !important;
+  height: var(--spn-app-nav-pad);
+  background: #2a2a2a;
+}
+html.spn-cap-native {
+  background: var(--spn-bg);
 }
 
 .spn-lang {
@@ -163,7 +173,7 @@ body {
   top: var(--spn-safe-t);
   left: 0;
   right: 0;
-  bottom: calc(var(--spn-tabs) + var(--spn-sys-nav));
+  bottom: calc(var(--spn-tabs) + var(--spn-app-nav-pad));
   z-index: 28;
   display: flex;
   flex-direction: column;
@@ -940,7 +950,7 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
 .spn-toast {
   position: fixed;
   left: 50%;
-  bottom: calc(var(--spn-tabs) + var(--spn-sys-nav) + 16px);
+  bottom: calc(var(--spn-tabs) + var(--spn-app-nav-pad) + 16px);
   transform: translateX(-50%);
   z-index: 60;
   max-width: min(90vw, 360px);
@@ -983,10 +993,21 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0;
-  min-height: calc(var(--spn-tabs) + var(--spn-sys-nav));
-  padding: 4px 2px var(--spn-sys-nav);
-  background: linear-gradient(var(--spn-sys-nav-bg), var(--spn-sys-nav-bg)) left bottom / 100% var(--spn-sys-nav) no-repeat, var(--spn-surface);
+  min-height: calc(var(--spn-tabs) + var(--spn-app-nav-pad));
+  padding: 4px 2px var(--spn-app-nav-pad);
+  background: linear-gradient(var(--spn-sys-nav-bg), var(--spn-sys-nav-bg)) left bottom / 100% var(--spn-app-nav-pad) no-repeat, var(--spn-surface);
   border-top: 1px solid var(--spn-border);
+}
+html.spn-cap-native .spn-tabs {
+  /* Таб-бар над тёмной полосой — не заливать белым зону системных кнопок */
+  bottom: var(--spn-app-nav-pad);
+  min-height: var(--spn-tabs);
+  padding: 4px 2px 4px;
+  background: var(--spn-surface);
+  align-content: start;
+}
+html.spn-cap-native .spn-tab {
+  align-self: start;
 }
 .spn-tab {
   appearance: none;
@@ -1051,7 +1072,7 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   top: var(--spn-safe-t);
   left: 0;
   right: 0;
-  bottom: calc(var(--spn-tabs) + var(--spn-sys-nav));
+  bottom: calc(var(--spn-tabs) + var(--spn-app-nav-pad));
   z-index: 25;
   display: flex;
   flex-direction: column;
@@ -1091,7 +1112,20 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   display: block;
 }
 .spn-fullscreen__frame.is-booting {
-  opacity: 0;
+  opacity: 1;
+  background: var(--spn-bg);
+}
+.spn-fullscreen__status {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 5;
+  background: #fff;
+}
+.spn-fullscreen:not(.spn-fullscreen--nobar) .spn-fullscreen__status {
+  top: 48px;
 }
 .spn-inbox-host {
   flex: 1;
@@ -1110,6 +1144,23 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   display: flex;
   flex-direction: column;
   overflow: hidden;
+}
+.spn-service-status {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px 16px;
+  text-align: center;
+  color: var(--spn-muted);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+.spn-service-status[hidden] {
+  display: none !important;
+}
+.spn-service-status--error {
+  color: #b42318;
 }
 .spn-fullscreen--inbox .spn-fullscreen__frame {
   display: none !important;
@@ -1257,9 +1308,10 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   background: #fff;
   overscroll-behavior-x: none;
 }
+/* Не прячем iframe opacity:0 — в WebView load/src часто не снимает is-booting → белый экран (auth) */
 .spn-viewer__frame.is-booting {
-  opacity: 0;
-  pointer-events: none;
+  opacity: 1;
+  background: var(--spn-bg);
 }
 
 /* Сервисы на главном экране — убраны (неудобно для пользователя) */

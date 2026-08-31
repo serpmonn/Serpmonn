@@ -724,6 +724,10 @@ function initAuthAppShell() {
 
   const back = document.getElementById('authAppBack');
   if (back) {
+    const loc = (document.documentElement.lang || 'ru').toLowerCase();
+    const backLabel = loc.startsWith('en') ? 'Back' : 'Назад';
+    back.setAttribute('aria-label', backLabel);
+    back.title = backLabel;
     back.addEventListener('click', () => {
       try {
         if (window.history.length > 1) {

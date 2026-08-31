@@ -1,0 +1,32 @@
+{
+  "name": "serpmonn-android",
+  "version": "1.2.2-dev",
+  "private": true,
+  "description": "Serpmonn Dev Capacitor shell (ru.serpmonn.dev → dev.serpmonn.ru)",
+  "scripts": {
+    "icons": "node scripts/apply-launcher-icons.mjs",
+    "build:web": "node scripts/prepare-www.mjs",
+    "sync": "npm run build:web && npx cap sync android",
+    "build:debug": "npm run sync && cd android && ./gradlew assembleDebug",
+    "build:release": "npm run sync && cd android && ./gradlew assembleRelease",
+    "build:bundle": "npm run sync && cd android && ./gradlew bundleRelease",
+    "publish:dev": "bash scripts/publish-dev-apk.sh",
+    "open:android": "npx cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "7.6.8",
+    "@capacitor/app": "7.1.2",
+    "@capacitor/app-launcher": "7.0.4",
+    "@capacitor/core": "7.6.8",
+    "@capacitor/network": "7.0.4",
+    "@capacitor/splash-screen": "7.0.5",
+    "@capacitor/status-bar": "7.0.6"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "7.6.8",
+    "esbuild": "0.25.12"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

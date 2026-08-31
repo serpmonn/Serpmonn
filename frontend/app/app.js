@@ -113,6 +113,8 @@ const I18N = {
     model: 'Модель',
     loading: 'Загрузка…',
     loadError: 'Ошибка загрузки',
+    inboxLoading: 'Загрузка…',
+    loadFailed: 'Не удалось загрузить. Потяните вниз или откройте вкладку ещё раз.',
     newsItem: 'Новость',
     video: 'Видео',
     login: 'Вход',
@@ -223,6 +225,8 @@ const I18N = {
     model: 'Model',
     loading: 'Loading…',
     loadError: 'Failed to load',
+    inboxLoading: 'Loading…',
+    loadFailed: 'Could not load. Pull to refresh or open the tab again.',
     newsItem: 'News',
     video: 'Video',
     login: 'Sign in',
@@ -1365,9 +1369,196 @@ const INBOX_APP_CSS = `
     text-align: left;
     cursor: pointer;
   }
+  .finding-activity--messages-only [data-activity-tabs],
+  .finding-activity--messages-only [data-activity-panel="notifications"],
+  .finding-activity--messages-only [data-activity-intro] {
+    display: none !important;
+  }
+  #spnInboxHost,
+  #spnInboxHost #findings-inbox-list {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  #spnInboxHost .finding-panel-modal--inline#finding-activity-modal {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+  }
 `;
 
-let viewerBootToken = 0;
+const FINDINGS_MODALS_URL = '/frontend/scripts/findings-modals.js?v=43';
+
+function isCapacitorNativeShell() {
+  try {
+    if (window.Capacitor?.isNativePlatform?.()) return true;
+  } catch (_) {}
+  return Boolean(window.__SPN_ANDROID_APP__) && /\bwv\b/i.test(navigator.userAgent || '');
+}
+
+function measureBottomInset() {
+  let inset = 0;
+  try {
+    const vv = window.visualViewport;
+    if (vv) {
+      const gap = window.innerHeight - vv.height - (vv.offsetTop || 0);
+      if (gap > 0 && gap < 160) inset = Math.max(inset, Math.round(gap));
+    }
+  } catch (_) {}
+  try {
+    const probe = document.createElement('div');
+    probe.style.cssText =
+      'position:fixed;left:0;bottom:0;height:0;padding-bottom:env(safe-area-inset-bottom,0px);visibility:hidden;pointer-events:none';
+    document.documentElement.appendChild(probe);
+    inset = Math.max(inset, probe.offsetHeight || 0);
+    probe.remove();
+  } catch (_) {}
+  return inset;
+}
+
+/** ~48dp navigation bar height in CSS px (Android 3-button nav). */
+function androidNavBarFallbackPx() {
+  try {
+    const probe = document.createElement('div');
+    probe.style.cssText = 'position:fixed;visibility:hidden;height:48px;width:0;pointer-events:none';
+    document.documentElement.appendChild(probe);
+    const h = Math.round(probe.getBoundingClientRect().height);
+    probe.remove();
+    if (h >= 24 && h <= 80) return h;
+  } catch (_) {}
+  return 48;
+}
+
+/**
+ * Bottom pad for tab bar above Android system nav keys.
+ * Old APK: WebView under nav bar → need ~48px.
+ * New APK (decorFits + injection): __SPN_DECOR_FITS_NAV=1 → 0 extra pad.
+ */
+function resolveNativeNavPad() {
+  if (window.__SPN_DECOR_FITS_NAV === 1) return 0;
+  if (typeof window.__SPN_NAV_INSET_PX === 'number' && window.__SPN_NAV_INSET_PX > 0) {
+    return Math.round(window.__SPN_NAV_INSET_PX);
+  }
+  const measured = measureBottomInset();
+  if (measured >= 20) return measured;
+  if (/Android/i.test(navigator.userAgent || '')) return androidNavBarFallbackPx();
+  return measured;
+}
+
+function syncSystemNavChrome() {
+  const root = document.documentElement;
+  const nativeShell = isCapacitorNativeShell();
+
+  root.classList.toggle('spn-cap-native', nativeShell);
+
+  if (nativeShell) {
+    const pad = resolveNativeNavPad();
+    root.style.setProperty('--spn-nav-fallback', '0px');
+    root.style.setProperty('--spn-app-nav-pad', `${pad}px`);
+    root.style.setProperty('--spn-viewer-pad-b', `${pad}px`);
+    root.style.setProperty('--spn-sys-nav', `${pad}px`);
+    root.style.setProperty('--spn-sys-nav-bg', '#2a2a2a');
+    return;
+  }
+
+  const inset = measureBottomInset();
+  const pad = inset > 0 ? inset : 48;
+  root.style.setProperty('--spn-sys-nav', `${pad}px`);
+  root.style.setProperty('--spn-nav-fallback', inset > 0 ? '0px' : '48px');
+  root.style.setProperty('--spn-app-nav-pad', `${pad}px`);
+  root.style.setProperty('--spn-viewer-pad-b', `${pad}px`);
+}
+
+try { window.syncSystemNavChrome = syncSystemNavChrome; } catch (_) {}
+
+function loadStylesheet(href, id = '') {
+  if (id) {
+    const hit = document.getElementById(id);
+    if (hit) {
+      if (hit.sheet || hit.href) return Promise.resolve();
+      return new Promise((resolve) => {
+        hit.addEventListener('load', () => resolve(), { once: true });
+        hit.addEventListener('error', () => resolve(), { once: true });
+      });
+    }
+  }
+  return new Promise((resolve) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    if (id) link.id = id;
+    link.onload = () => resolve();
+    link.onerror = () => resolve();
+    document.head.appendChild(link);
+  });
+}
+
+let inboxStylesReady = null;
+
+function isFindingsFeedUrl(href) {
+  return /\/findings\/feed\.html/i.test(String(href || ''));
+}
+
+function serviceStatusEl(kind) {
+  if (kind === 'inbox') return document.getElementById('spnInboxStatus');
+  if (kind === 'feed') return document.getElementById('spnFeedStatus');
+  return null;
+}
+
+function showServiceStatus(kind, message, { error = false } = {}) {
+  const el = serviceStatusEl(kind);
+  if (!el) return;
+  el.textContent = message || '';
+  el.hidden = !message;
+  el.classList.toggle('spn-service-status--error', Boolean(error));
+}
+
+function hideServiceStatus(kind) {
+  showServiceStatus(kind, '');
+}
+
+function scheduleFeedShellHealthCheck(frame) {
+  window.setTimeout(() => {
+    if (!profileFullscreen || profileFullscreen.hidden || !frame || frame.hidden) return;
+    try {
+      const doc = frame.contentDocument;
+      if (!doc) return;
+      const modalList = doc.getElementById('finding-feed-modal-list');
+      const host = doc.getElementById('findings-feed-list');
+      const stuckHint = Boolean(host?.querySelector('.plan-hint'));
+      const hasCards = Boolean(modalList?.querySelector('.finding-list-card, .finding-inbox-item'));
+      if (stuckHint && !hasCards) {
+        frame.hidden = true;
+        showServiceStatus('feed', t('loadFailed'), { error: true });
+      }
+    } catch (_) {}
+  }, 6000);
+}
+
+function loadFrameDirect(frame, href, { timeoutMs = 15000 } = {}) {
+  if (!frame) return Promise.reject(new Error('no frame'));
+  return new Promise((resolve, reject) => {
+    let done = false;
+    const finish = (fn, arg) => {
+      if (done) return;
+      done = true;
+      clearTimeout(timer);
+      frame.removeEventListener('load', onLoad);
+      frame.removeEventListener('error', onError);
+      fn(arg);
+    };
+    const onLoad = () => finish(resolve);
+    const onError = () => finish(reject, new Error('frame load error'));
+    const timer = setTimeout(() => finish(reject, new Error('frame load timeout')), timeoutMs);
+    frame.addEventListener('load', onLoad);
+    frame.addEventListener('error', onError);
+    try { frame.removeAttribute('srcdoc'); } catch (_) {}
+    frame.src = href;
+  });
+}
+
 let viewerHistoryPushed = false;
 let closingViewerFromHistory = false;
 
@@ -1429,11 +1620,23 @@ function openAppAuth(title, opts = {}) {
     `/frontend/app/index.html?app=1&tab=${encodeURIComponent(returnTab)}&lang=${getLocale()}`
   );
   const authUrl = withLocalizedAppParam(`/frontend/auth/auth.html?app=1&return=${returnTo}`);
-  // Stay inside app shell (profile / viewer), not a full site navigation.
-  openViewer(authUrl, title || t('login'));
+  // Полная навигация WebView — iframe #viewer в Android WebView часто не грузит auth/OAuth.
+  try { closeViewer({ fromHistory: true }); } catch (_) {}
+  try { closeFullscreenPage(); } catch (_) {}
+  try { closeSettingsPanel(); } catch (_) {}
+  try {
+    location.assign(authUrl);
+  } catch (err) {
+    console.warn('openAppAuth assign failed, fallback viewer', err);
+    openViewer(authUrl, title || t('login'));
+  }
 }
 
 function reloadAuthViewerForLocale() {
+  if (/\/auth\/auth\.html/i.test(location.pathname)) {
+    openAppAuth(t('login'));
+    return;
+  }
   if (!viewer || viewer.hidden || !viewerFrame) return;
   let href = '';
   try { href = String(viewerFrame.getAttribute('src') || viewerFrame.src || ''); } catch (_) {}
@@ -1710,8 +1913,19 @@ function openViewer(url, title) {
   if (/\/auth\/|vkid|oauth|\/mail\//i.test(String(localizedUrl || ''))) {
     const token = ++viewerBootToken;
     viewerFrame.classList.add('is-booting');
-    try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
-    viewerFrame.src = href;
+    scheduleViewerBootWatch(token);
+    loadFrameDirect(viewerFrame, href).then(() => {
+      if (token !== viewerBootToken) return;
+      try {
+        const doc = viewerFrame.contentDocument;
+        if (doc) hardenViewerDoc(doc);
+      } catch (_) {}
+      finishViewerBoot();
+    }).catch((err) => {
+      if (token !== viewerBootToken) return;
+      console.warn('viewer auth direct load', err);
+      finishViewerBoot();
+    });
     return;
   }
   loadViewerHtml(href);
@@ -1720,6 +1934,7 @@ function openViewer(url, title) {
 async function loadViewerHtml(href) {
   const token = ++viewerBootToken;
   viewerFrame.classList.add('is-booting');
+  scheduleViewerBootWatch(token);
   try {
     const raw = await fetchViewerRawHtml(href);
     if (token !== viewerBootToken) return;
@@ -1849,15 +2064,49 @@ function hardenViewerDoc(doc, opts = {}) {
   }
 }
 
+function finishViewerBoot() {
+  if (!viewerFrame) return;
+  if (viewerFrame._spnBootWatch) {
+    clearTimeout(viewerFrame._spnBootWatch);
+    viewerFrame._spnBootWatch = 0;
+  }
+  viewerFrame.classList.remove('is-booting');
+}
+
+function viewerFrameLooksAlive() {
+  if (!viewerFrame || viewer.hidden) return false;
+  try {
+    const doc = viewerFrame.contentDocument;
+    if (!doc || !doc.body) return false;
+    const text = String(doc.body.innerText || '').replace(/\s+/g, ' ').trim();
+    if (text.length < 8) return false;
+    if (/^401|Unauthorized|Authentication required/i.test(text)) return false;
+    return true;
+  } catch (_) {
+    return Boolean(viewerFrame.src && !/about:blank/i.test(viewerFrame.src));
+  }
+}
+
+function scheduleViewerBootWatch(token) {
+  if (!viewerFrame) return;
+  if (viewerFrame._spnBootWatch) clearTimeout(viewerFrame._spnBootWatch);
+  viewerFrame._spnBootWatch = setTimeout(() => {
+    if (token !== viewerBootToken) return;
+    finishViewerBoot();
+  }, 10000);
+}
+
 function onViewerLoad() {
   try {
     const doc = viewerFrame.contentDocument;
     if (doc) hardenViewerDoc(doc);
   } catch (_) {}
-  viewerFrame.classList.remove('is-booting');
+  setTimeout(() => {
+    if (viewerFrameLooksAlive() || viewerFrame?.src) finishViewerBoot();
+  }, 80);
 }
 
-viewerFrame.addEventListener('load', onViewerLoad);
+if (viewerFrame) viewerFrame.addEventListener('load', onViewerLoad);
 
 const KB_URL = '/frontend/knowledge-base/knowledge-base.html';
 function kbUrl() {
@@ -1964,7 +2213,7 @@ function closeViewer(opts = {}) {
   viewer.classList.remove('is-game-light');
   viewerIsGame = false;
   viewerGameTrapActive = false;
-  viewerFrame.classList.remove('is-booting');
+  finishViewerBoot();
   try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
   try { viewerFrame.removeAttribute('src'); } catch (_) {}
   if ((viewerHistoryPushed || hadGameTrap) && !fromHistory && !closingViewerFromHistory) {
@@ -2187,7 +2436,7 @@ async function activateServiceTab(name) {
     await openFullscreenPage(
       catalog?.links?.findingsFeed || '/frontend/findings/feed.html',
       t('findingsFeed'),
-      { hideBar: true }
+      { hideBar: true, directSrc: true }
     );
   }
   try { refreshAppTabBadges(); } catch (_) {}
@@ -2248,7 +2497,7 @@ window.addEventListener('message', (ev) => {
         viewerBootToken += 1;
         viewer.hidden = true;
         viewer.setAttribute('aria-hidden', 'true');
-        viewerFrame.classList.remove('is-booting');
+        finishViewerBoot();
         try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
         try { viewerFrame.removeAttribute('src'); } catch (_) {}
         viewerHistoryPushed = false;
@@ -3168,7 +3417,7 @@ async function openProfileSubpage(url, title) {
       viewerBootToken += 1;
       viewer.hidden = true;
       viewer.setAttribute('aria-hidden', 'true');
-      viewerFrame.classList.remove('is-booting');
+      finishViewerBoot();
       try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
       try { viewerFrame.removeAttribute('src'); } catch (_) {}
       viewerHistoryPushed = false;
@@ -3208,34 +3457,37 @@ function isFullscreenOpen() {
 function hideInboxHost() {
   const host = document.getElementById('spnInboxHost');
   if (host) host.hidden = true;
+  hideServiceStatus('inbox');
   if (profileFullscreen) profileFullscreen.classList.remove('spn-fullscreen--inbox');
   if (fullscreenFrame) fullscreenFrame.hidden = false;
   try {
-    import('/frontend/scripts/findings-modals.js?v=42').then((mod) => {
+    import(FINDINGS_MODALS_URL).then((mod) => {
       try { mod.stopInboxLiveUpdates?.(); } catch (_) {}
     });
   } catch (_) {}
 }
 
 function ensureInboxShellStyles() {
-  if (!document.getElementById('spn-site-css-for-inbox')) {
-    const link = document.createElement('link');
-    link.id = 'spn-site-css-for-inbox';
-    link.rel = 'stylesheet';
-    link.href = '/frontend/styles/styles.css?v=dm-compose-h1';
-    document.head.appendChild(link);
+  if (!inboxStylesReady) {
+    inboxStylesReady = (async () => {
+      if (!document.getElementById('spn-inbox-shell-css')) {
+        const style = document.createElement('style');
+        style.id = 'spn-inbox-shell-css';
+        style.textContent = INBOX_APP_CSS;
+        document.head.appendChild(style);
+      }
+      await Promise.all([
+        loadStylesheet('/frontend/styles/styles.css?v=dm-compose-h2', 'spn-site-css-for-inbox'),
+        loadStylesheet('/frontend/profile/profile_styles.css?v=app-inbox', 'spn-profile-css-for-inbox'),
+        loadStylesheet('/frontend/find/find-view.css?v=app-inbox', 'spn-findview-css-for-inbox'),
+      ]);
+    })();
   }
-  if (!document.getElementById('spn-inbox-shell-css')) {
-    const style = document.createElement('style');
-    style.id = 'spn-inbox-shell-css';
-    style.textContent = INBOX_APP_CSS;
-    document.head.appendChild(style);
-  }
+  return inboxStylesReady;
 }
 
 async function openInboxInShell() {
   if (!profileFullscreen) return;
-  ensureInboxShellStyles();
   profileSubpageOpen = true;
   if (profileBar) profileBar.hidden = true;
   profileFullscreen.classList.add('spn-fullscreen--nobar', 'spn-fullscreen--inbox');
@@ -3247,16 +3499,25 @@ async function openInboxInShell() {
     try { fullscreenFrame.removeAttribute('srcdoc'); } catch (_) {}
     try { fullscreenFrame.removeAttribute('src'); } catch (_) {}
   }
+  hideServiceStatus('feed');
   const host = document.getElementById('spnInboxHost');
   if (host) host.hidden = false;
-  const mod = await import('/frontend/scripts/findings-modals.js?v=42');
-  await mod.initFindingsModals({
-    onInboxRead: () => { try { refreshAppTabBadges(); } catch (_) {} },
-  });
-  await mod.openInboxModal({
-    openUsername: pendingInboxPeer(),
-    openPeerId: String(new URLSearchParams(location.search).get('dmId') || '').trim(),
-  });
+  showServiceStatus('inbox', t('inboxLoading') || 'Загрузка…');
+  try {
+    await ensureInboxShellStyles();
+    const mod = await import(FINDINGS_MODALS_URL);
+    await mod.initFindingsModals({
+      onInboxRead: () => { try { refreshAppTabBadges(); } catch (_) {} },
+    });
+    hideServiceStatus('inbox');
+    await mod.openInboxModal({
+      openUsername: pendingInboxPeer(),
+      openPeerId: String(new URLSearchParams(location.search).get('dmId') || '').trim(),
+    });
+  } catch (err) {
+    console.warn('inbox shell failed', err);
+    showServiceStatus('inbox', t('loadFailed') || 'Не удалось загрузить сообщения. Потяните вниз или откройте вкладку ещё раз.', { error: true });
+  }
 }
 
 async function openFullscreenPage(url, title, opts = {}) {
@@ -3264,7 +3525,6 @@ async function openFullscreenPage(url, title, opts = {}) {
   hideInboxHost();
   url = localizeFrontendPath(url);
   profileSubpageOpen = true;
-  // Для вкладок ленты/сообщений шапка профиля не нужна — контент как отдельный раздел
   const hideBar = Boolean(opts.hideBar);
   if (!hideBar) setProfileSubpageUi(true, title);
   else {
@@ -3282,13 +3542,35 @@ async function openFullscreenPage(url, title, opts = {}) {
   profileFullscreen.classList.toggle('spn-fullscreen--nobar', hideBar);
   profileFullscreen.hidden = false;
   profileFullscreen.setAttribute('aria-hidden', 'false');
+  fullscreenFrame.hidden = false;
+  hideServiceStatus('feed');
   fullscreenFrame.classList.add('is-booting');
+
+  const href = withAppParam(url);
+  const useDirectSrc = Boolean(opts.directSrc) || isFindingsFeedUrl(href);
+
   try {
-    await loadViewerHtmlInto(fullscreenFrame, withAppParam(url));
+    if (useDirectSrc) {
+      await loadFrameDirect(fullscreenFrame, href);
+      try {
+        const doc = fullscreenFrame.contentDocument;
+        if (doc) hardenViewerDoc(doc, { navigate: 'fullscreen' });
+      } catch (_) {}
+      fullscreenFrameRemoveBoot();
+      if (isFindingsFeedUrl(href)) scheduleFeedShellHealthCheck(fullscreenFrame);
+      return;
+    }
+    await loadViewerHtmlInto(fullscreenFrame, href);
   } catch (err) {
     console.warn('fullscreen page failed', err);
+    fullscreenFrameRemoveBoot();
+    if (useDirectSrc) {
+      try { fullscreenFrame.hidden = true; } catch (_) {}
+      showServiceStatus('feed', t('loadFailed'), { error: true });
+      return;
+    }
     try { fullscreenFrame.removeAttribute('srcdoc'); } catch (_) {}
-    fullscreenFrame.src = withAppParam(url);
+    fullscreenFrame.src = href;
   }
 }
 
@@ -3306,10 +3588,11 @@ function closeFullscreenPage() {
   profileFullscreen.setAttribute('aria-hidden', 'true');
   if (fullscreenFrame) {
     fullscreenFrame.hidden = false;
-    fullscreenFrame.classList.remove('is-booting');
     try { fullscreenFrame.removeAttribute('srcdoc'); } catch (_) {}
     try { fullscreenFrame.removeAttribute('src'); } catch (_) {}
   }
+  hideServiceStatus('feed');
+  hideServiceStatus('inbox');
 }
 
 if (fullscreenFrame) {
@@ -3318,6 +3601,8 @@ if (fullscreenFrame) {
       const doc = fullscreenFrame.contentDocument;
       if (doc) hardenViewerDoc(doc, { navigate: 'fullscreen' });
     } catch (_) {}
+    hideServiceStatus('feed');
+    if (fullscreenFrame) fullscreenFrame.hidden = false;
     fullscreenFrameRemoveBoot();
   });
 }
@@ -3571,7 +3856,7 @@ window.addEventListener('message', (ev) => {
         viewerBootToken += 1;
         viewer.hidden = true;
         viewer.setAttribute('aria-hidden', 'true');
-        viewerFrame.classList.remove('is-booting');
+        finishViewerBoot();
         try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
         try { viewerFrame.removeAttribute('src'); } catch (_) {}
         viewerHistoryPushed = false;
@@ -3680,6 +3965,16 @@ async function completeVkIdFromRedirect() {
 }
 
 /* —— Boot —— */
+syncSystemNavChrome();
+try {
+  window.visualViewport?.addEventListener('resize', syncSystemNavChrome);
+  window.addEventListener('orientationchange', () => setTimeout(syncSystemNavChrome, 120));
+  window.addEventListener('resize', syncSystemNavChrome);
+} catch (_) {}
+try {
+  window.addEventListener('capacitorDidBecomeActive', syncSystemNavChrome);
+} catch (_) {}
+
 loadCatalog();
 // Сразу гостевой UI — без пустого белого профиля, пока идёт /auth/protected
 try { showGuestProfile(); } catch (_) {}
@@ -3766,9 +4061,9 @@ const PUSH_PREF_KEY = 'spn_push_pref';
 
 function pushPrefOn() {
   try {
-    return localStorage.getItem(PUSH_PREF_KEY) !== 'off';
+    return localStorage.getItem(PUSH_PREF_KEY) === 'on';
   } catch (_) {
-    return true;
+    return false;
   }
 }
 
@@ -3789,12 +4084,16 @@ function setPushSwitch(on, disabled) {
 function syncPushSettingsUi() {
   const hint = document.getElementById('spnPushHint');
   const api = window.spnPush;
+  const unsupported = !api?.canUse?.();
   const liveOn = Boolean(api?.isOn?.());
-  const denied = api?.permission?.() === 'denied';
-  const on = liveOn || (pushPrefOn() && !denied);
-  setPushSwitch(on, false);
+  const perm = api?.permission?.() || 'default';
+  const denied = perm === 'denied';
+  setPushSwitch(liveOn, unsupported);
   if (hint) {
-    if (denied && !liveOn) {
+    if (unsupported) {
+      hint.hidden = false;
+      hint.textContent = t('pushFailed');
+    } else if (denied && !liveOn) {
       hint.hidden = false;
       hint.textContent = t('pushDenied');
     } else {
@@ -3818,22 +4117,30 @@ const spnPushEnableBtn = document.getElementById('spnPushEnableBtn');
 if (spnPushEnableBtn) {
   spnPushEnableBtn.addEventListener('click', async () => {
     const wantOn = spnPushEnableBtn.getAttribute('aria-checked') !== 'true';
-    setPushPref(wantOn);
-    try {
-      const loggedIn = await isLoggedIn();
-      if (!loggedIn) {
-        syncPushSettingsUi();
+    const api = window.spnPush;
+    if (!api?.canUse?.()) {
+      syncPushSettingsUi();
+      toast(t('pushFailed'));
+      return;
+    }
+    const loggedIn = await isLoggedIn();
+    if (!loggedIn) {
+      if (wantOn) {
         toast(t('pushNeedLogin'));
         openAppAuth(t('login'));
-        return;
       }
+      syncPushSettingsUi();
+      return;
+    }
+    setPushPref(wantOn);
+    try {
       if (!wantOn) {
-        await window.spnPush?.disable?.();
+        await api.disable?.();
         syncPushSettingsUi();
         return;
       }
       setPushSwitch(true, true);
-      const result = await window.spnPush?.enable();
+      const result = await api.enable();
       if (result?.ok) toast(t('pushOn'));
       else if (result?.reason === 'denied') toast(t('pushDenied'));
       else toast(t('pushFailed'));
