@@ -81,10 +81,17 @@ export async function ensureDmTables() {
     FROM information_schema.COLUMNS
     WHERE TABLE_SCHEMA = DATABASE()
       AND TABLE_NAME = 'dm_messages'
-      AND COLUMN_NAME = 'image_url'
+      AND COLUMN_NAME IN ('image_url', 'audio_url', 'audio_duration_sec')
   `);
-  if (!colRows.length) {
+  const existingCols = new Set(colRows.map((row) => row.name));
+  if (!existingCols.has('image_url')) {
     await query('ALTER TABLE dm_messages ADD COLUMN image_url VARCHAR(255) NULL AFTER finding_id');
+  }
+  if (!existingCols.has('audio_url')) {
+    await query('ALTER TABLE dm_messages ADD COLUMN audio_url VARCHAR(255) NULL AFTER image_url');
+  }
+  if (!existingCols.has('audio_duration_sec')) {
+    await query('ALTER TABLE dm_messages ADD COLUMN audio_duration_sec SMALLINT UNSIGNED NULL AFTER audio_url');
   }
 
   dmTablesReady = true;
@@ -145,20 +152,41 @@ export async function getOrCreateConversation(userId1, userId2) {
   return result.insertId;
 }
 
-export async function insertDmMessage({ senderId, recipientId, body, findingId, imageUrl }) {
+export async function insertDmMessage({
+  senderId,
+  recipientId,
+  body,
+  findingId,
+  imageUrl,
+  audioUrl,
+  audioDurationSec,
+}) {
   await ensureDmTables();
   const trimmedBody = body ? String(body).trim().slice(0, 2000) : null;
   const trimmedImage = imageUrl ? String(imageUrl).trim() : null;
-  if (!trimmedBody && !findingId && !trimmedImage) {
+  const trimmedAudio = audioUrl ? String(audioUrl).trim() : null;
+  let duration = Number(audioDurationSec);
+  if (!Number.isFinite(duration) || duration < 0) duration = null;
+  else duration = Math.min(600, Math.round(duration));
+  if (!trimmedBody && !findingId && !trimmedImage && !trimmedAudio) {
     throw new Error('empty_message');
   }
   if (senderId === recipientId) throw new Error('self_message');
 
   const conversationId = await getOrCreateConversation(senderId, recipientId);
   const result = await query(
-    `INSERT INTO dm_messages (conversation_id, sender_id, body, finding_id, image_url)
-     VALUES (?, ?, ?, ?, ?)`,
-    [conversationId, senderId, trimmedBody || null, findingId || null, trimmedImage]
+    `INSERT INTO dm_messages
+       (conversation_id, sender_id, body, finding_id, image_url, audio_url, audio_duration_sec)
+     VALUES (?, ?, ?, ?, ?, ?, ?)`,
+    [
+      conversationId,
+      senderId,
+      trimmedBody || null,
+      findingId || null,
+      trimmedImage,
+      trimmedAudio,
+      trimmedAudio ? duration : null,
+    ]
   );
   await query(
     'UPDATE dm_conversations SET updated_at = CURRENT_TIMESTAMP WHERE id = ?',
@@ -255,7 +283,14 @@ export async function listConversationsForUser(userId, limit = 50) {
               WHERE m.conversation_id = c.id
               ORDER BY m.created_at DESC
               LIMIT 1
-            ) AS last_has_photo
+            ) AS last_has_photo,
+            (
+              SELECT m.audio_url IS NOT NULL AND m.audio_url != ''
+              FROM dm_messages m
+              WHERE m.conversation_id = c.id
+              ORDER BY m.created_at DESC
+              LIMIT 1
+            ) AS last_has_audio
      FROM dm_conversations c
      JOIN users ua ON ua.id = c.user_a
      JOIN users ub ON ub.id = c.user_b
@@ -276,6 +311,7 @@ export async function listConversationsForUser(userId, limit = 50) {
       findingQuery: row.last_finding_query || null,
       hasFinding: !!row.last_has_finding,
       hasPhoto: !!row.last_has_photo,
+      hasAudio: !!row.last_has_audio,
       isMine: row.last_sender_id === userId,
       createdAt: row.last_at,
     },
@@ -293,13 +329,19 @@ export async function listMessagesWithPeer(userId, peerKey, limit = 100) {
     [userA, userB]
   );
   if (!convRows.length) {
-    return { peerUsername: peer.username, peerId: peer.id, messages: [] };
+    return {
+      peerUsername: peer.username,
+      peerId: peer.id,
+      peerAvatarUrl: buildAvatarUrl(peer.id, peer.avatar_updated_at),
+      messages: [],
+    };
   }
 
   const conversationId = convRows[0].id;
   const lim = clampLimit(limit, 100, 200);
   const rows = await query(
-    `SELECT m.id, m.body, m.finding_id, m.image_url, m.legacy_share_id, m.read_at, m.created_at, m.sender_id,
+    `SELECT m.id, m.body, m.finding_id, m.image_url, m.audio_url, m.audio_duration_sec,
+            m.legacy_share_id, m.read_at, m.created_at, m.sender_id,
             u.username AS sender_username,
             f.public_id AS finding_public_id,
             f.query_text AS finding_query
@@ -316,6 +358,7 @@ export async function listMessagesWithPeer(userId, peerKey, limit = 100) {
   return {
     peerUsername: peer.username,
     peerId: peer.id,
+    peerAvatarUrl: buildAvatarUrl(peer.id, peer.avatar_updated_at),
     messages: rows.map((row) => ({
       id: row.id,
       legacyShareId: row.legacy_share_id,
@@ -323,6 +366,8 @@ export async function listMessagesWithPeer(userId, peerKey, limit = 100) {
       isMine: row.sender_id === userId,
       body: row.body,
       imageUrl: row.image_url || null,
+      audioUrl: row.audio_url || null,
+      audioDurationSec: row.audio_duration_sec != null ? Number(row.audio_duration_sec) : null,
       finding:
         row.finding_id && row.finding_public_id
           ? { publicId: row.finding_public_id, query: row.finding_query }

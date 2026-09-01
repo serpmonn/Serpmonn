@@ -43,27 +43,28 @@ body {
   display: flex;
   flex-direction: column;
   padding-top: var(--spn-safe-t);
-  padding-bottom: calc(var(--spn-tabs) + var(--spn-app-nav-pad));
+  padding-bottom: calc(var(--spn-tabs) + var(--spn-app-nav-pad) + var(--spn-keyboard-inset, 0px));
   overscroll-behavior-x: none;
   overflow: hidden;
   background: var(--spn-bg);
 }
 
 /* Тёмная полоса под системными кнопками Android (светлые иконки ◁ ○ ▢) */
-.spn-sys-nav {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: var(--spn-sys-nav);
-  background: var(--spn-sys-nav-bg);
-  z-index: 29;
-  pointer-events: none;
-}
 html.spn-cap-native .spn-sys-nav {
   display: block !important;
   height: var(--spn-app-nav-pad);
   background: #2a2a2a;
+  bottom: var(--spn-keyboard-inset, 0px);
+}
+.spn-sys-nav {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: var(--spn-keyboard-inset, 0px);
+  height: var(--spn-sys-nav);
+  background: var(--spn-sys-nav-bg);
+  z-index: 29;
+  pointer-events: none;
 }
 html.spn-cap-native {
   background: var(--spn-bg);
@@ -988,7 +989,7 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   position: fixed;
   left: 0;
   right: 0;
-  bottom: 0;
+  bottom: var(--spn-keyboard-inset, 0px);
   z-index: 30;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
@@ -999,8 +1000,8 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   border-top: 1px solid var(--spn-border);
 }
 html.spn-cap-native .spn-tabs {
-  /* Таб-бар над тёмной полосой — не заливать белым зону системных кнопок */
-  bottom: var(--spn-app-nav-pad);
+  /* Над системной полосой + над клавиатурой (visualViewport) */
+  bottom: calc(var(--spn-app-nav-pad) + var(--spn-keyboard-inset, 0px));
   min-height: var(--spn-tabs);
   padding: 4px 2px 4px;
   background: var(--spn-surface);
@@ -1134,8 +1135,13 @@ html.spn-cap-native .spn-tab {
   flex-direction: column;
   overflow: hidden;
   background: #fff;
+  padding: 0 8px;
+  box-sizing: border-box;
 }
 .spn-inbox-host[hidden] {
+  display: none !important;
+}
+#spnInboxHost[hidden] {
   display: none !important;
 }
 .spn-inbox-host #findings-inbox-list {
@@ -1167,6 +1173,17 @@ html.spn-cap-native .spn-tab {
 }
 .spn-fullscreen--inbox {
   background: #fff;
+}
+/* Как на остальных вкладках приложения (~8px по бокам) */
+.spn-fullscreen--inbox .finding-activity-dialog,
+.spn-fullscreen--inbox .finding-panel-dialog {
+  padding-left: 8px !important;
+  padding-right: 8px !important;
+  box-sizing: border-box !important;
+}
+.spn-fullscreen--inbox .finding-dm-dialog-item {
+  padding-left: 4px;
+  padding-right: 4px;
 }
 .spn-fullscreen--inbox .finding-panel-modal--inline {
   position: static !important;
@@ -1204,7 +1221,8 @@ html.spn-cap-native .spn-tab {
   box-shadow: none !important;
   transform: none !important;
   opacity: 1 !important;
-  padding: 0 !important;
+  padding: 0 8px !important;
+  box-sizing: border-box !important;
   background: #fff !important;
   overflow: hidden !important;
 }

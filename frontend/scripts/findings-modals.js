@@ -22,7 +22,8 @@ import {
   renderDmFindingPickerList,
   renderNotificationItem,
   renderActivityEmpty,
-} from './dm-chat.js?v=37';
+  downloadDmMedia,
+} from './dm-chat.js?v=44';
 import { applyShareIconButton, updateLikeControl, updateCommentControl, applyCopyIconButton, applySaveIconButton, renderViewsControl, FINDING_COPY_ICON, FINDING_SHARE_ICON, FINDING_LIKE_ICON } from './finding-icons.js';
 import { closeMenu } from './menu.js';
 
@@ -32,7 +33,19 @@ let onInboxRead = null;
 let onNotificationsRead = null;
 
 const feedState = { mode: 'all', q: '', offset: 0, items: [], hasMore: false };
-const inboxState = { view: 'dialogs', username: null, peerId: null, conversations: [], messages: [], pendingFinding: null, pendingPhoto: null, newDialogOpen: false };
+const inboxState = {
+  view: 'dialogs',
+  username: null,
+  peerId: null,
+  peerAvatarUrl: null,
+  conversations: [],
+  messages: [],
+  pendingFinding: null,
+  pendingPhoto: null,
+  pendingAudio: null,
+  newDialogOpen: false,
+  voiceRecording: null,
+};
 
 function dmPeerKey() {
   return inboxState.peerId || inboxState.username || '';
@@ -58,6 +71,47 @@ function revokePendingPhoto() {
     try { URL.revokeObjectURL(previewUrl); } catch { /* ignore */ }
   }
   inboxState.pendingPhoto = null;
+}
+
+function revokePendingAudio() {
+  inboxState.pendingAudio = null;
+}
+
+function probeAudioFileDuration(file) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const audio = new Audio();
+    audio.preload = 'metadata';
+    audio.onloadedmetadata = () => {
+      const duration = Number(audio.duration);
+      try { URL.revokeObjectURL(url); } catch { /* ignore */ }
+      resolve(Number.isFinite(duration) && duration > 0 ? Math.round(duration) : 0);
+    };
+    audio.onerror = () => {
+      try { URL.revokeObjectURL(url); } catch { /* ignore */ }
+      resolve(0);
+    };
+    audio.src = url;
+  });
+}
+
+function stopVoiceRecording({ discard = false } = {}) {
+  const rec = inboxState.voiceRecording;
+  if (!rec) return;
+  try {
+    if (rec.timerId) clearInterval(rec.timerId);
+  } catch { /* ignore */ }
+  rec.discard = discard;
+  try {
+    if (rec.mediaRecorder && rec.mediaRecorder.state !== 'inactive') {
+      rec.mediaRecorder.stop();
+      return;
+    }
+  } catch { /* ignore */ }
+  try {
+    rec.stream?.getTracks?.().forEach((track) => track.stop());
+  } catch { /* ignore */ }
+  inboxState.voiceRecording = null;
 }
 const activityState = { tab: 'inbox', unreadDm: 0, unreadNotifications: 0 };
 let threadPollTimer = 0;
@@ -90,6 +144,7 @@ function openPanel(modal, opts = {}) {
         host.innerHTML = '';
         host.appendChild(modal);
       }
+      modal.style.removeProperty('display');
       modal.style.display = 'flex';
       modal.style.zIndex = '';
       requestAnimationFrame(() => {
@@ -102,6 +157,7 @@ function openPanel(modal, opts = {}) {
   modal.classList.remove('finding-panel-modal--inline');
   modalStackZ += 1;
   modal.style.zIndex = String(modalStackZ);
+  modal.style.removeProperty('display');
   modal.style.display = 'flex';
   requestAnimationFrame(() => {
     modal.setAttribute('data-open', 'true');
@@ -253,6 +309,10 @@ function ensureActivityModal() {
     modal.remove();
     modal = null;
   }
+  if (modal && !modal.querySelector('[data-inbox-peer-avatar]')) {
+    modal.remove();
+    modal = null;
+  }
   if (modal) return modal;
 
   modal = document.createElement('div');
@@ -266,7 +326,10 @@ function ensureActivityModal() {
     <div class="ai-share-dialog finding-panel-dialog finding-inbox-dialog finding-activity-dialog" tabindex="-1">
       <header class="finding-activity-header">
         <div class="finding-activity-header__main">
-          <button type="button" class="finding-activity-back" data-inbox-back hidden aria-label=""></button>
+          <button type="button" class="finding-activity-back" data-inbox-back hidden aria-label="">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <span class="finding-activity-peer-avatar" data-inbox-peer-avatar hidden aria-hidden="true"></span>
           <h2 class="finding-panel-title finding-activity-title" data-activity-title></h2>
           <h2 class="finding-panel-title finding-activity-thread-title" data-inbox-thread-title hidden></h2>
         </div>
@@ -314,6 +377,7 @@ function ensureActivityModal() {
     inboxState.view = 'dialogs';
     inboxState.username = null;
     inboxState.peerId = null;
+    inboxState.peerAvatarUrl = null;
     inboxState.pendingFinding = null;
     revokePendingPhoto();
     inboxState.newDialogOpen = false;
@@ -328,7 +392,8 @@ function ensureActivityModal() {
       activityState.tab = nextTab;
       inboxState.view = 'dialogs';
       inboxState.username = null;
-    inboxState.peerId = null;
+      inboxState.peerId = null;
+      inboxState.peerAvatarUrl = null;
       inboxState.pendingFinding = null;
       revokePendingPhoto();
       inboxState.newDialogOpen = false;
@@ -373,6 +438,7 @@ function setActivityPanels(modal) {
   const activityTitleEl = modal.querySelector('[data-activity-title]');
   const threadTitleEl = modal.querySelector('[data-inbox-thread-title]');
   const backBtn = modal.querySelector('[data-inbox-back]');
+  const peerAvatarEl = modal.querySelector('[data-inbox-peer-avatar]');
   const writeBtn = modal.querySelector('[data-inbox-new-open]');
 
   modal.classList.toggle('finding-activity--thread', inThread);
@@ -387,7 +453,7 @@ function setActivityPanels(modal) {
   if (threadTitleEl) {
     threadTitleEl.hidden = !inThread;
     if (inThread && inboxState.username) {
-      threadTitleEl.textContent = tk('byUser', { user: inboxState.username });
+      threadTitleEl.textContent = `@${inboxState.username}`;
     }
   }
 
@@ -395,6 +461,25 @@ function setActivityPanels(modal) {
     backBtn.hidden = !inThread;
     backBtn.setAttribute('aria-label', tk('inboxBack'));
     backBtn.title = tk('inboxBack');
+    if (inThread && !backBtn.querySelector('svg')) {
+      backBtn.innerHTML =
+        '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>';
+    }
+  }
+
+  if (peerAvatarEl) {
+    peerAvatarEl.hidden = !inThread;
+    if (inThread) {
+      const letter = String(inboxState.username || '?').replace(/^@/, '').charAt(0).toUpperCase() || '?';
+      const url = typeof inboxState.peerAvatarUrl === 'string' && inboxState.peerAvatarUrl.startsWith('/uploads/avatars/')
+        ? inboxState.peerAvatarUrl
+        : '';
+      peerAvatarEl.innerHTML = url
+        ? `<img src="${url.replace(/"/g, '&quot;')}" alt="" width="32" height="32" loading="lazy" decoding="async" data-fallback="${letter}" onerror="this.onerror=null;this.replaceWith(document.createTextNode(this.dataset.fallback||'?'));">`
+        : letter;
+    } else {
+      peerAvatarEl.innerHTML = '';
+    }
   }
 
   if (writeBtn) {
@@ -516,6 +601,10 @@ async function startInboxThread(modal, username, extra = {}) {
   inboxState.view = 'thread';
   inboxState.username = data?.peerUsername || peer;
   inboxState.peerId = data?.peerId || peerId || '';
+  inboxState.peerAvatarUrl = data?.peerAvatarUrl
+    || extra.peerAvatarUrl
+    || inboxState.peerAvatarUrl
+    || null;
 
   notifyAppInboxState();
   const input = modal.querySelector('[data-inbox-new-input]');
@@ -618,6 +707,7 @@ export async function openActivityModal(tab = 'inbox', opts = {}) {
     inboxState.view = 'dialogs';
     inboxState.username = null;
     inboxState.peerId = null;
+    inboxState.peerAvatarUrl = null;
     inboxState.conversations = [];
     inboxState.messages = [];
     inboxState.pendingFinding = null;
@@ -704,6 +794,28 @@ function ensureFeedModal() {
   });
 
   return modal;
+}
+
+async function syncFeedGuestTabs(modal) {
+  if (!modal) return;
+  const followingTab = modal.querySelector('[data-feed-mode="following"]');
+  if (!followingTab) return;
+  let loggedIn = false;
+  try {
+    const auth = await apiGet('/auth/protected');
+    loggedIn = Boolean(auth?.ok);
+  } catch (_) {
+    loggedIn = false;
+  }
+  followingTab.hidden = !loggedIn;
+  if (!loggedIn && feedState.mode === 'following') {
+    feedState.mode = 'all';
+    modal.querySelectorAll('.finding-feed-tab').forEach((t) => {
+      t.classList.toggle('finding-feed-tab--active', t.dataset.feedMode === 'all');
+    });
+  }
+  const tabsWrap = modal.querySelector('.finding-feed-tabs');
+  if (tabsWrap) tabsWrap.classList.toggle('finding-feed-tabs--guest', !loggedIn);
 }
 
 function ensureNotificationsModal() {
@@ -1020,6 +1132,7 @@ function ensureShareSendModal() {
     closePanel(modal);
     const toastKey = ctx.replyToUsername ? 'replySent' : 'shareSent';
     showToast(tk(toastKey, { username: data?.toUsername || toUsername }));
+    notifyAppSound('send');
     ctx.onComplete?.({ ok: true, publicId });
     shareSendContext = null;
   });
@@ -1240,12 +1353,18 @@ function setInboxComposeVisible(modal, visible) {
     wrap.innerHTML = renderChatComposeBar(
       (key, vars) => tk(key, vars),
       inboxState.pendingFinding,
-      inboxState.pendingPhoto
+      inboxState.pendingPhoto,
+      inboxState.pendingAudio,
+      inboxState.voiceRecording
+        ? { active: true, elapsedSec: inboxState.voiceRecording.elapsedSec || 0 }
+        : null
     );
     wrap.dataset.boundUsername = '';
   } else {
     inboxState.pendingFinding = null;
     revokePendingPhoto();
+    revokePendingAudio();
+    stopVoiceRecording({ discard: true });
   }
 }
 
@@ -1308,7 +1427,32 @@ async function openDmFindingPicker(onSelect) {
   });
 }
 
+function ensureMediaDownloadHandlers(modal) {
+  if (!modal || modal.dataset.mediaDownloadBound) return;
+  modal.dataset.mediaDownloadBound = '1';
+  modal.addEventListener('click', async (event) => {
+    const btn = event.target.closest('[data-action="download-media"]');
+    if (!btn) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const url = btn.getAttribute('data-media-url') || '';
+    const name = btn.getAttribute('data-media-name') || 'download';
+    if (!url) return;
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.classList.add('is-busy');
+    try {
+      const ok = await downloadDmMedia(url, name);
+      if (!ok) showToast(tk('dmDownloadFailed'));
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('is-busy');
+    }
+  });
+}
+
 function bindChatThread(modal, username) {
+  ensureMediaDownloadHandlers(modal);
   const listEl = modal.querySelector('[data-inbox-list]');
   const wrap = modal.querySelector('[data-inbox-compose-wrap]');
   const composeForm = modal.querySelector('[data-inbox-compose]');
@@ -1330,11 +1474,146 @@ function bindChatThread(modal, username) {
   const attachToggle = wrap.querySelector('[data-inbox-compose-attach-toggle]');
   const attachMenu = wrap.querySelector('[data-inbox-compose-attach-menu]');
   const photoInput = wrap.querySelector('[data-inbox-compose-photo-input]');
+  const audioInput = wrap.querySelector('[data-inbox-compose-audio-input]');
+  const voiceBtn = wrap.querySelector('[data-inbox-compose-voice]');
 
   const closeAttachMenu = () => {
     if (!attachMenu || attachMenu.hidden) return;
     attachMenu.hidden = true;
     attachToggle?.setAttribute('aria-expanded', 'false');
+  };
+
+  const refreshCompose = () => {
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
+  };
+
+  const sendVoiceBlob = async (blob, mimeType, durationSec) => {
+    if (!blob || !blob.size) return;
+    const sendBtn = modal.querySelector('[data-inbox-compose-send]');
+    if (sendBtn) sendBtn.disabled = true;
+    const formData = new FormData();
+    const ext = mimeType.includes('ogg') ? 'ogg' : mimeType.includes('mp4') ? 'm4a' : 'webm';
+    formData.append('audio', blob, `voice.${ext}`);
+    formData.append('audioDurationSec', String(Math.max(1, Math.round(durationSec || 1))));
+    const path = `/api/dm/conversations/${encodeURIComponent(dmPeerKey() || username)}/messages`;
+    const result = await apiPostForm(path, formData);
+    if (sendBtn) sendBtn.disabled = false;
+    if (result.status === 401) return authRedirect();
+    if (!result.ok) {
+      const err = result.data?.error;
+      if (err === 'audio_too_large' || err === 'file_too_large') showToast(t('dmAudioTooLarge'));
+      else if (err === 'invalid_audio_type') showToast(t('dmAudioInvalid'));
+      else showToast(t('dmSendFailed'));
+      notifyAppSound('error');
+      return;
+    }
+    await loadInboxInto(modal);
+    bindChatThread(modal, username);
+    onInboxRead?.();
+    notifyAppSound('send');
+  };
+
+  const startVoiceRecording = async () => {
+    if (inboxState.voiceRecording?.active) return;
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+      showToast(t('dmAudioUnsupported'));
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          channelCount: 1,
+        },
+      });
+      // Android WebView: getUserMedia often hides system nav — ask native shell to restore
+      try {
+        if (typeof window.spnRestoreAndroidNav === 'function') {
+          window.spnRestoreAndroidNav();
+        } else if (typeof window.SpnAndroid?.restoreSystemBars === 'function') {
+          window.SpnAndroid.restoreSystemBars();
+        }
+      } catch { /* ignore */ }
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')
+          ? 'audio/ogg;codecs=opus'
+          : MediaRecorder.isTypeSupported('audio/webm')
+            ? 'audio/webm'
+            : '';
+      const mediaRecorder = mimeType
+        ? new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 48000 })
+        : new MediaRecorder(stream);
+      const chunks = [];
+      const startedAt = Date.now();
+      const state = {
+        active: true,
+        discard: false,
+        mediaRecorder,
+        stream,
+        chunks,
+        startedAt,
+        elapsedSec: 0,
+        timerId: 0,
+        mimeType: mediaRecorder.mimeType || mimeType || 'audio/webm',
+      };
+      inboxState.voiceRecording = state;
+
+      mediaRecorder.addEventListener('dataavailable', (event) => {
+        if (event.data?.size) chunks.push(event.data);
+      });
+      mediaRecorder.addEventListener('stop', async () => {
+        try {
+          stream.getTracks().forEach((track) => track.stop());
+        } catch { /* ignore */ }
+        const discard = Boolean(state.discard);
+        const durationSec = Math.max(1, Math.round((Date.now() - startedAt) / 1000));
+        inboxState.voiceRecording = null;
+        refreshCompose();
+        if (discard || !chunks.length) return;
+        const blob = new Blob(chunks, { type: state.mimeType || 'audio/webm' });
+        if (blob.size < 200) {
+          showToast(t('dmAudioTooShort'));
+          return;
+        }
+        if (blob.size > 2 * 1024 * 1024) {
+          showToast(t('dmAudioTooLarge'));
+          return;
+        }
+        await sendVoiceBlob(blob, state.mimeType || 'audio/webm', durationSec);
+      });
+
+      mediaRecorder.start(250);
+      notifyAppSound('record');
+      state.timerId = setInterval(() => {
+        if (!inboxState.voiceRecording) return;
+        const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+        inboxState.voiceRecording.elapsedSec = elapsed;
+        const timeEl = modal.querySelector('[data-inbox-compose-recording-time]');
+        if (timeEl) {
+          const m = Math.floor(elapsed / 60);
+          const s = elapsed % 60;
+          timeEl.textContent = `${m}:${String(s).padStart(2, '0')}`;
+        }
+        if (elapsed >= 120) {
+          stopVoiceRecording({ discard: false });
+        }
+      }, 250);
+      refreshCompose();
+    } catch (err) {
+      console.error('[dm] voice record', err);
+      const name = String(err?.name || '');
+      const msg = String(err?.message || '');
+      if (name === 'NotAllowedError' || /permission|denied|not allowed/i.test(msg)) {
+        showToast(t('dmAudioPermission'));
+      } else if (name === 'NotFoundError') {
+        showToast(t('dmAudioUnsupported'));
+      } else {
+        showToast(t('dmAudioPermission'));
+      }
+    }
   };
 
   attachToggle?.addEventListener('click', (event) => {
@@ -1360,6 +1639,11 @@ function bindChatThread(modal, username) {
     photoInput?.click();
   });
 
+  wrap.querySelector('[data-inbox-compose-audio-file]')?.addEventListener('click', () => {
+    closeAttachMenu();
+    audioInput?.click();
+  });
+
   photoInput?.addEventListener('change', () => {
     const file = photoInput.files?.[0];
     photoInput.value = '';
@@ -1374,13 +1658,56 @@ function bindChatThread(modal, username) {
       return;
     }
     revokePendingPhoto();
+    revokePendingAudio();
     inboxState.pendingPhoto = {
       file,
+      name: file.name || 'photo.jpg',
       previewUrl: URL.createObjectURL(file),
     };
     setInboxComposeVisible(modal, true);
     bindChatThread(modal, username);
     modal.querySelector('[data-inbox-compose-input]')?.focus();
+  });
+
+  audioInput?.addEventListener('change', async () => {
+    const file = audioInput.files?.[0];
+    audioInput.value = '';
+    if (!file) return;
+    const allowed = [
+      'audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg', 'audio/wav', 'audio/x-wav',
+    ];
+    const mime = String(file.type || '').toLowerCase();
+    const baseMime = mime.split(';')[0].trim();
+    if (mime && !allowed.includes(mime) && !allowed.includes(baseMime) && !mime.startsWith('audio/')) {
+      showToast(t('dmAudioInvalid'));
+      return;
+    }
+    if (file.size > 2 * 1024 * 1024) {
+      showToast(t('dmAudioTooLarge'));
+      return;
+    }
+    revokePendingPhoto();
+    revokePendingAudio();
+    let durationSec = 0;
+    try {
+      durationSec = await probeAudioFileDuration(file);
+    } catch { /* ignore */ }
+    inboxState.pendingAudio = { file, name: file.name || t('dmAudioFileAttachment'), durationSec };
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
+    modal.querySelector('[data-inbox-compose-input]')?.focus();
+  });
+
+  wrap.querySelector('[data-inbox-compose-clear-photo]')?.addEventListener('click', () => {
+    revokePendingPhoto();
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
+  });
+
+  wrap.querySelector('[data-inbox-compose-clear-audio]')?.addEventListener('click', () => {
+    revokePendingAudio();
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
   });
 
   wrap.querySelector('[data-inbox-compose-clear]')?.addEventListener('click', () => {
@@ -1389,10 +1716,19 @@ function bindChatThread(modal, username) {
     bindChatThread(modal, username);
   });
 
-  wrap.querySelector('[data-inbox-compose-clear-photo]')?.addEventListener('click', () => {
-    revokePendingPhoto();
-    setInboxComposeVisible(modal, true);
-    bindChatThread(modal, username);
+  voiceBtn?.addEventListener('click', () => {
+    closeAttachMenu();
+    if (inboxState.voiceRecording?.active) {
+      stopVoiceRecording({ discard: false });
+      return;
+    }
+    revokePendingAudio();
+    startVoiceRecording();
+  });
+
+  wrap.querySelector('[data-inbox-compose-voice-cancel]')?.addEventListener('click', () => {
+    stopVoiceRecording({ discard: true });
+    refreshCompose();
   });
 
   const COMPOSE_MIN_H = 44;
@@ -1408,21 +1744,30 @@ function bindChatThread(modal, username) {
 
   composeForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (inboxState.voiceRecording?.active) return;
     const body = String(input?.value || '').trim();
     const findingPublicId = inboxState.pendingFinding?.publicId || '';
     const photoFile = inboxState.pendingPhoto?.file || null;
-    if (!body && !findingPublicId && !photoFile) return;
+    const audioFile = inboxState.pendingAudio?.file || null;
+    if (!body && !findingPublicId && !photoFile && !audioFile) return;
 
     const sendBtn = composeForm.querySelector('[data-inbox-compose-send]');
     if (sendBtn) sendBtn.disabled = true;
 
     const path = `/api/dm/conversations/${encodeURIComponent(dmPeerKey() || username)}/messages`;
     let result;
-    if (photoFile) {
+    if (photoFile || audioFile) {
       const formData = new FormData();
       if (body) formData.append('body', body);
       if (findingPublicId) formData.append('findingPublicId', findingPublicId);
-      formData.append('photo', photoFile);
+      if (photoFile) formData.append('photo', photoFile);
+      if (audioFile) {
+        formData.append('audio', audioFile);
+        const durationSec = Number(inboxState.pendingAudio?.durationSec) || 0;
+        if (durationSec > 0) {
+          formData.append('audioDurationSec', String(Math.min(120, durationSec)));
+        }
+      }
       result = await apiPostForm(path, formData);
     } else {
       const payload = {};
@@ -1435,9 +1780,10 @@ function bindChatThread(modal, username) {
     if (result.status === 401) return authRedirect();
     if (!result.ok) {
       const err = result.data?.error;
-      if (err === 'photo_too_large') showToast(t('dmPhotoTooLarge'));
+      if (err === 'photo_too_large' || err === 'file_too_large') showToast(t('dmPhotoTooLarge'));
       else if (err === 'invalid_photo_type') showToast(t('dmPhotoInvalid'));
       else showToast(t('dmSendFailed'));
+      notifyAppSound('error');
       return;
     }
 
@@ -1447,11 +1793,25 @@ function bindChatThread(modal, username) {
     }
     inboxState.pendingFinding = null;
     revokePendingPhoto();
+    revokePendingAudio();
     setInboxComposeVisible(modal, true);
     await loadInboxInto(modal);
     bindChatThread(modal, username);
     onInboxRead?.();
+    notifyAppSound('send');
   });
+}
+
+function notifyAppSound(sound) {
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'spn-app-sound', sound }, '*');
+    } else {
+      window.spnSound?.play(sound);
+    }
+  } catch {
+    /* ignore */
+  }
 }
 
 function notifyAppUnread() {
@@ -1478,7 +1838,11 @@ function stopThreadPoll() {
 function messagesFingerprint(messages) {
   if (!messages?.length) return '0';
   const last = messages[messages.length - 1];
-  return `${messages.length}:${last.id}`;
+  const readSig = messages
+    .filter((m) => m.isMine)
+    .map((m) => `${m.id}:${m.readAt || ''}`)
+    .join(',');
+  return `${messages.length}:${last.id}:${readSig}`;
 }
 
 function isInboxNearBottom(modal) {
@@ -1589,8 +1953,11 @@ function bindDialogList(modal, conversations) {
     el.addEventListener('click', (event) => {
       event.preventDefault();
       event.stopPropagation();
+      const avatar = el.getAttribute('data-inbox-avatar') || '';
+      if (avatar) inboxState.peerAvatarUrl = avatar;
       startInboxThread(modal, el.dataset.inboxUsername, {
         peerId: el.getAttribute('data-inbox-peer-id') || el.dataset.inboxPeerId,
+        peerAvatarUrl: avatar || null,
       });
     });
     el.style.cursor = 'pointer';
@@ -1653,6 +2020,7 @@ async function loadInboxInto(modal) {
     const messages = data.messages || [];
     if (data?.peerId) inboxState.peerId = data.peerId;
     if (data?.peerUsername) inboxState.username = data.peerUsername;
+    if (data?.peerAvatarUrl) inboxState.peerAvatarUrl = data.peerAvatarUrl;
     inboxState.messages = messages;
     listEl.innerHTML = renderChatThread(messages, t);
     bindChatThread(modal, dmPeerKey());
@@ -1661,6 +2029,7 @@ async function loadInboxInto(modal) {
     startInboxLiveUpdates(modal);
     notifyAppInboxState();
     scrollInboxToLatest(modal);
+    setActivityPanels(modal);
     return;
   }
 
@@ -1696,10 +2065,12 @@ async function loadFeedInto(modal, { reset = true } = {}) {
   const loadMoreBtn = modal.querySelector('#finding-feed-load-more');
   const searchEl = modal.querySelector('#finding-feed-search');
 
+  await syncFeedGuestTabs(modal);
+
   if (titleEl) titleEl.textContent = tk('feedTitle');
   if (hintEl) {
     hintEl.textContent = feedState.mode === 'following' ? tk('feedHintFollowing') : tk('feedHint');
-    hintEl.hidden = false;
+    hintEl.hidden = isAppShell() || false;
   }
   modal.querySelectorAll('.finding-feed-tab').forEach((tab) => {
     tab.textContent = tab.dataset.feedMode === 'following' ? tk('feedTabFollowing') : tk('feedTabAll');
@@ -1874,6 +2245,7 @@ export async function openFeedModal() {
   openPanel(modal, {
     inlineHost: isAppShell() ? '#findings-feed-list' : null,
   });
+  await syncFeedGuestTabs(modal);
   await loadFeedInto(modal, { reset: true });
 }
 
@@ -1883,6 +2255,13 @@ export async function openInboxModal(opts = {}) {
 
 export async function openFindingModal(publicId, options = {}) {
   if (!publicId || !String(publicId).startsWith('fnd_')) return;
+
+  if (isNestedAppIframe()) {
+    try {
+      window.parent.postMessage({ type: 'spn-app-open-finding', publicId, options }, '*');
+      return;
+    } catch (_) {}
+  }
 
   const { replyToUsername = null, openShareForm = false } = options;
 

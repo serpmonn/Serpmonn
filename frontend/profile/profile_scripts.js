@@ -213,10 +213,23 @@ document.addEventListener('DOMContentLoaded', async () => {
     return source ? source[0].toUpperCase() : 'U';
   }
 
-  /* ==== АВАТАР: МОДАЛЬНОЕ ОКНО ==== */
+  /* ==== АВАТАР: МОДАЛЬНОЕ ОКНО + КРОП МИНИАТЮРЫ ==== */
+
+  let avatarCropState = null;
+
+  function destroyAvatarCrop() {
+    if (avatarCropState?.objectUrl) {
+      try { URL.revokeObjectURL(avatarCropState.objectUrl); } catch (_) {}
+    }
+    avatarCropState = null;
+  }
 
   function getOrCreateAvatarModal() {
     let overlay = document.getElementById('avatar-modal-overlay');
+    if (overlay && !overlay.querySelector('#avatarCropStage')) {
+      overlay.remove();
+      overlay = null;
+    }
     if (overlay) return overlay;
 
     overlay = document.createElement('div');
@@ -230,15 +243,25 @@ document.addEventListener('DOMContentLoaded', async () => {
       <div class="avatar-modal__dialog">
         <button type="button" class="avatar-modal__close" aria-label="${t('profile.avatarClose')}">&times;</button>
         <h2 class="avatar-modal__title">${t('profile.avatarModalTitle')}</h2>
-        <p class="avatar-modal__hint">${t('profile.avatarModalHint')}</p>
+        <p class="avatar-modal__hint" id="avatarModalHint">${t('profile.avatarModalHint')}</p>
         <div class="avatar-modal__preview" id="avatarModalPreview">
           <span id="avatarModalInitials">U</span>
           <img id="avatarModalImage" alt="" hidden>
+        </div>
+        <div class="avatar-modal__crop" id="avatarCropStage" hidden>
+          <div class="avatar-modal__crop-viewport" id="avatarCropViewport">
+            <img id="avatarCropImage" alt="" draggable="false">
+          </div>
+          <label class="avatar-modal__crop-zoom-label" for="avatarCropZoom">${t('profile.avatarCropZoom') || 'Масштаб'}</label>
+          <input type="range" id="avatarCropZoom" class="avatar-modal__crop-zoom" min="100" max="300" value="100" step="1">
+          <p class="avatar-modal__crop-hint">${t('profile.avatarCropHint') || 'Перетащите фото и выберите область миниатюры'}</p>
         </div>
         <p class="avatar-modal__status" id="avatarModalStatus" aria-live="polite"></p>
         <div class="avatar-modal__actions">
           <input type="file" id="avatarFileInput" class="avatar-modal__file-input" accept="image/jpeg,image/png,image/webp">
           <button type="button" class="secondary-button" id="avatarChooseBtn">${t('profile.avatarChoose')}</button>
+          <button type="button" class="primary-button" id="avatarCropSaveBtn" hidden>${t('profile.avatarCropSave') || 'Сохранить миниатюру'}</button>
+          <button type="button" class="secondary-button" id="avatarCropCancelBtn" hidden>${t('profile.avatarCropCancel') || 'Отмена'}</button>
           <button type="button" class="secondary-button avatar-modal__delete" id="avatarDeleteBtn" hidden>${t('profile.avatarDelete')}</button>
         </div>
       </div>
@@ -256,17 +279,195 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     const fileInput = overlay.querySelector('#avatarFileInput');
     const chooseBtn = overlay.querySelector('#avatarChooseBtn');
+    const cropSaveBtn = overlay.querySelector('#avatarCropSaveBtn');
+    const cropCancelBtn = overlay.querySelector('#avatarCropCancelBtn');
+    const zoomEl = overlay.querySelector('#avatarCropZoom');
+    const viewport = overlay.querySelector('#avatarCropViewport');
+    const cropImg = overlay.querySelector('#avatarCropImage');
 
     chooseBtn.addEventListener('click', () => fileInput.click());
     fileInput.addEventListener('change', () => {
       const file = fileInput.files?.[0];
-      if (file) uploadAvatarFile(file);
+      if (file) openAvatarCrop(file);
       fileInput.value = '';
     });
+    cropSaveBtn.addEventListener('click', saveAvatarCrop);
+    cropCancelBtn.addEventListener('click', cancelAvatarCrop);
+    zoomEl.addEventListener('input', () => {
+      if (!avatarCropState) return;
+      avatarCropState.scale = Number(zoomEl.value) / 100;
+      applyAvatarCropTransform();
+    });
+
+    const onPointerDown = (e) => {
+      if (!avatarCropState) return;
+      avatarCropState.dragging = true;
+      avatarCropState.px = e.clientX ?? e.touches?.[0]?.clientX;
+      avatarCropState.py = e.clientY ?? e.touches?.[0]?.clientY;
+      avatarCropState.startOx = avatarCropState.ox;
+      avatarCropState.startOy = avatarCropState.oy;
+      try { viewport.setPointerCapture?.(e.pointerId); } catch (_) {}
+    };
+    const onPointerMove = (e) => {
+      if (!avatarCropState?.dragging) return;
+      const x = e.clientX ?? e.touches?.[0]?.clientX;
+      const y = e.clientY ?? e.touches?.[0]?.clientY;
+      if (x == null || y == null) return;
+      avatarCropState.ox = avatarCropState.startOx + (x - avatarCropState.px);
+      avatarCropState.oy = avatarCropState.startOy + (y - avatarCropState.py);
+      clampAvatarCrop();
+      applyAvatarCropTransform();
+    };
+    const onPointerUp = () => {
+      if (avatarCropState) avatarCropState.dragging = false;
+    };
+    viewport.addEventListener('pointerdown', onPointerDown);
+    viewport.addEventListener('pointermove', onPointerMove);
+    viewport.addEventListener('pointerup', onPointerUp);
+    viewport.addEventListener('pointercancel', onPointerUp);
+    viewport.addEventListener('touchstart', onPointerDown, { passive: true });
+    viewport.addEventListener('touchmove', (e) => { e.preventDefault(); onPointerMove(e); }, { passive: false });
+    viewport.addEventListener('touchend', onPointerUp);
 
     overlay.querySelector('#avatarDeleteBtn').addEventListener('click', deleteAvatar);
 
     return overlay;
+  }
+
+  function setAvatarCropMode(on) {
+    const overlay = document.getElementById('avatar-modal-overlay');
+    if (!overlay) return;
+    overlay.querySelector('#avatarModalPreview').hidden = on;
+    overlay.querySelector('#avatarCropStage').hidden = !on;
+    overlay.querySelector('#avatarChooseBtn').hidden = on;
+    overlay.querySelector('#avatarCropSaveBtn').hidden = !on;
+    overlay.querySelector('#avatarCropCancelBtn').hidden = !on;
+    const deleteBtn = overlay.querySelector('#avatarDeleteBtn');
+    if (deleteBtn) deleteBtn.hidden = on || !currentAvatarUrl;
+    const hint = overlay.querySelector('#avatarModalHint');
+    if (hint) {
+      hint.textContent = on
+        ? (t('profile.avatarCropHint') || 'Перетащите фото и выберите область миниатюры')
+        : t('profile.avatarModalHint');
+    }
+  }
+
+  function applyAvatarCropTransform() {
+    const img = document.getElementById('avatarCropImage');
+    if (!img || !avatarCropState) return;
+    const { scale, ox, oy, baseW, baseH } = avatarCropState;
+    img.style.width = `${baseW * scale}px`;
+    img.style.height = `${baseH * scale}px`;
+    img.style.transform = `translate(${ox}px, ${oy}px)`;
+  }
+
+  function clampAvatarCrop() {
+    if (!avatarCropState) return;
+    const vp = 200;
+    const w = avatarCropState.baseW * avatarCropState.scale;
+    const h = avatarCropState.baseH * avatarCropState.scale;
+    const minX = vp - w;
+    const minY = vp - h;
+    avatarCropState.ox = Math.min(0, Math.max(minX, avatarCropState.ox));
+    avatarCropState.oy = Math.min(0, Math.max(minY, avatarCropState.oy));
+  }
+
+  function openAvatarCrop(file) {
+    const maxBytes = 2 * 1024 * 1024;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!allowed.includes(file.type)) {
+      setAvatarModalStatus(t('profile.avatarInvalidType'), true);
+      return;
+    }
+    if (file.size > maxBytes) {
+      setAvatarModalStatus(t('profile.avatarTooLarge'), true);
+      return;
+    }
+
+    destroyAvatarCrop();
+    const objectUrl = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      const vp = 200;
+      const cover = Math.max(vp / img.naturalWidth, vp / img.naturalHeight);
+      const baseW = img.naturalWidth * cover;
+      const baseH = img.naturalHeight * cover;
+      avatarCropState = {
+        objectUrl,
+        naturalW: img.naturalWidth,
+        naturalH: img.naturalHeight,
+        baseW,
+        baseH,
+        scale: 1,
+        ox: (vp - baseW) / 2,
+        oy: (vp - baseH) / 2,
+        dragging: false,
+        sourceType: file.type || 'image/jpeg',
+      };
+      const cropImg = document.getElementById('avatarCropImage');
+      const zoomEl = document.getElementById('avatarCropZoom');
+      if (cropImg) {
+        cropImg.src = objectUrl;
+        cropImg.alt = t('profile.avatarImageAlt');
+      }
+      if (zoomEl) zoomEl.value = '100';
+      clampAvatarCrop();
+      applyAvatarCropTransform();
+      setAvatarCropMode(true);
+      setAvatarModalStatus('');
+    };
+    img.onerror = () => {
+      destroyAvatarCrop();
+      setAvatarModalStatus(t('profile.avatarUploadFailed'), true);
+    };
+    img.src = objectUrl;
+  }
+
+  function cancelAvatarCrop() {
+    destroyAvatarCrop();
+    setAvatarCropMode(false);
+    updateAvatarModalPreview();
+    setAvatarModalStatus('');
+  }
+
+  async function saveAvatarCrop() {
+    if (!avatarCropState) return;
+    const vp = 200;
+    const out = 256;
+    const canvas = document.createElement('canvas');
+    canvas.width = out;
+    canvas.height = out;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const img = new Image();
+    img.src = avatarCropState.objectUrl;
+    await new Promise((resolve, reject) => {
+      if (img.complete) resolve();
+      else {
+        img.onload = resolve;
+        img.onerror = reject;
+      }
+    });
+
+    const scale = (avatarCropState.baseW * avatarCropState.scale) / avatarCropState.naturalW;
+    const sx = -avatarCropState.ox / scale;
+    const sy = -avatarCropState.oy / scale;
+    const sw = vp / scale;
+    const sh = vp / scale;
+    ctx.drawImage(img, sx, sy, sw, sh, 0, 0, out, out);
+
+    const blob = await new Promise((resolve) => {
+      canvas.toBlob(resolve, 'image/jpeg', 0.92);
+    });
+    if (!blob) {
+      setAvatarModalStatus(t('profile.avatarUploadFailed'), true);
+      return;
+    }
+    const file = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
+    destroyAvatarCrop();
+    setAvatarCropMode(false);
+    await uploadAvatarFile(file);
   }
 
   function updateAvatarModalPreview() {
@@ -283,13 +484,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       previewImg.alt = currentDisplayName || currentDisplayEmail || t('profile.avatarImageAlt');
       previewImg.hidden = false;
       previewInitials.hidden = true;
-      deleteBtn.hidden = false;
+      if (deleteBtn) {
+        const cropping = overlay.querySelector('#avatarCropStage') && !overlay.querySelector('#avatarCropStage').hidden;
+        deleteBtn.hidden = Boolean(cropping);
+      }
     } else {
       previewImg.removeAttribute('src');
       previewImg.hidden = true;
       previewInitials.hidden = false;
       previewInitials.textContent = initials;
-      deleteBtn.hidden = true;
+      if (deleteBtn) deleteBtn.hidden = true;
     }
   }
 
@@ -302,6 +506,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function openAvatarModal() {
     const overlay = getOrCreateAvatarModal();
+    destroyAvatarCrop();
+    setAvatarCropMode(false);
     setAvatarModalStatus('');
     updateAvatarModalPreview();
     overlay.classList.add('visible');
@@ -310,6 +516,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   function closeAvatarModal() {
     const overlay = document.getElementById('avatar-modal-overlay');
+    destroyAvatarCrop();
+    setAvatarCropMode(false);
     if (overlay) overlay.classList.remove('visible');
     setAvatarModalStatus('');
   }

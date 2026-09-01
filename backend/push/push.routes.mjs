@@ -1,8 +1,14 @@
 import express from 'express';
 import verifyToken from '../auth/verifyToken.mjs';
 import { getUserIdByEmail } from '../findings/findings.model.mjs';
-import { upsertPushSubscription, deletePushSubscriptionByEndpoint } from './push.model.mjs';
+import {
+  upsertPushSubscription,
+  deletePushSubscriptionByEndpoint,
+  upsertFcmToken,
+  deleteFcmTokenForUser,
+} from './push.model.mjs';
 import { getVapidPublicKey, isWebPushConfigured } from './web-push-send.mjs';
+import { isFcmConfigured } from './fcm-send.mjs';
 
 const router = express.Router();
 
@@ -27,11 +33,58 @@ async function resolveDbUserId(req) {
   return row?.id || null;
 }
 
+router.get('/push/status', (req, res) => {
+  res.json({
+    webPush: isWebPushConfigured(),
+    fcm: isFcmConfigured(),
+  });
+});
+
 router.get('/push/vapid-public-key', (req, res) => {
   if (!isWebPushConfigured()) {
     return res.status(503).json({ error: 'push_not_configured' });
   }
   res.json({ publicKey: getVapidPublicKey() });
+});
+
+function isValidFcmToken(value) {
+  const token = String(value || '').trim();
+  return token.length >= 32 && token.length <= 512 && /^[\w\-:.]+$/i.test(token);
+}
+
+router.post('/push/fcm/register', verifyToken, async (req, res) => {
+  try {
+    const userId = await resolveDbUserId(req);
+    if (!userId) return res.status(401).json({ error: 'unauthorized' });
+    if (!isFcmConfigured()) return res.status(503).json({ error: 'fcm_not_configured' });
+
+    const token = String(req.body?.token || '').trim();
+    const platform = String(req.body?.platform || 'android').trim().slice(0, 32) || 'android';
+    if (!isValidFcmToken(token)) {
+      return res.status(400).json({ error: 'invalid_token' });
+    }
+
+    const userAgent = String(req.get('user-agent') || '').slice(0, 255);
+    await upsertFcmToken({ userId, token, platform, userAgent });
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[push] fcm register', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
+});
+
+router.delete('/push/fcm/register', verifyToken, async (req, res) => {
+  try {
+    const userId = await resolveDbUserId(req);
+    if (!userId) return res.status(401).json({ error: 'unauthorized' });
+    const token = String(req.body?.token || '').trim();
+    if (!isValidFcmToken(token)) return res.status(400).json({ error: 'invalid_token' });
+    await deleteFcmTokenForUser(userId, token);
+    res.json({ ok: true });
+  } catch (err) {
+    console.error('[push] fcm unregister', err);
+    res.status(500).json({ error: 'internal_error' });
+  }
 });
 
 router.post('/push/subscribe', verifyToken, async (req, res) => {

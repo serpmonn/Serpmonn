@@ -148,6 +148,33 @@ export const DM_ATTACH_PHOTO_ICON = `
     <path d="M21 16l-5-5-4 4-2-2-5 5"/>
   </svg>`;
 
+export const DM_ATTACH_AUDIO_ICON = `
+  <svg class="finding-dm-attach-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <path d="M9 18V5l10-2v13"/>
+    <circle cx="7" cy="18" r="3"/>
+    <circle cx="17" cy="16" r="3"/>
+  </svg>`;
+
+export const DM_DOWNLOAD_ICON = `
+  <svg class="finding-dm-download-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <path d="M12 3v12"/>
+    <path d="m7 10 5 5 5-5"/>
+    <path d="M5 21h14"/>
+  </svg>`;
+
+export const DM_MIC_ICON = `
+  <svg class="finding-dm-mic-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+    <rect x="9" y="2" width="6" height="12" rx="3"/>
+    <path d="M5 11a7 7 0 0 0 14 0"/>
+    <line x1="12" y1="18" x2="12" y2="22"/>
+    <line x1="8" y1="22" x2="16" y2="22"/>
+  </svg>`;
+
+export const DM_MIC_STOP_ICON = `
+  <svg class="finding-dm-mic-icon" width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+    <rect x="6" y="6" width="12" height="12" rx="2"/>
+  </svg>`;
+
 /** Стрелка вправо — не самолётик Telegram */
 export const DM_SEND_ICON = `
   <svg class="finding-dm-send-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">

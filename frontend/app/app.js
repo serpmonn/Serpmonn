@@ -1,4 +1,5 @@
 window.__SPN_ANDROID_APP__ = true;
+window.__SPN_APP_JS_OK__ = 1;
 document.documentElement.classList.add('android-app');
 document.body?.classList.add('android-app');
 
@@ -146,6 +147,7 @@ const I18N = {
     pushDenied: 'Разрешите уведомления в настройках телефона',
     pushNeedLogin: 'Сначала войдите в аккаунт',
     pushFailed: 'Не удалось включить уведомления',
+    soundLabel: 'Звуки',
   },
   en: {
     brand: 'Serpmonn',
@@ -258,6 +260,7 @@ const I18N = {
     pushDenied: 'Allow notifications in phone settings',
     pushNeedLogin: 'Sign in first',
     pushFailed: 'Could not enable notifications',
+    soundLabel: 'Sounds',
   },
 };
 
@@ -466,7 +469,10 @@ function applyChromeI18n() {
   if (settingsBackBtn) settingsBackBtn.textContent = t('settingsBack');
   const pushLabel = document.getElementById('spnPushLabel');
   if (pushLabel) pushLabel.textContent = t('pushLabel');
+  const soundLabel = document.getElementById('spnSoundLabel');
+  if (soundLabel) soundLabel.textContent = t('soundLabel');
   try { syncPushSettingsUi(); } catch (_) {}
+  try { syncSoundSettingsUi(); } catch (_) {}
 
   document.querySelectorAll('[data-open*="privacy-policy"]').forEach((el) => { el.textContent = t('policy'); });
   document.querySelectorAll('[data-open*="offer"]').forEach((el) => { el.textContent = t('offer'); });
@@ -592,6 +598,17 @@ const screens = Array.from(document.querySelectorAll('.spn-screen'));
 const tabs = Array.from(document.querySelectorAll('.spn-tab'));
 
 const appUnread = { inbox: 0, feed: 0 };
+let appBadgesPrimed = false;
+let tabSoundEnabled = false;
+
+function spnPlay(name) {
+  try { window.spnSound?.play(name); } catch (_) {}
+}
+
+function playTabSwitch(name) {
+  if (!tabSoundEnabled) return;
+  spnPlay('tap');
+}
 
 function formatTabBadgeCount(n) {
   const count = Number(n) || 0;
@@ -611,7 +628,11 @@ function applyAppTabBadgeAria() {
 
 function setTabBadge(tabName, count) {
   const n = Number(count) || 0;
+  const prev = (tabName === 'inbox' || tabName === 'feed') ? (appUnread[tabName] || 0) : 0;
   if (tabName === 'inbox' || tabName === 'feed') appUnread[tabName] = n;
+  if (appBadgesPrimed && (tabName === 'inbox' || tabName === 'feed') && n > prev && n > 0) {
+    spnPlay('notify');
+  }
   const el = document.querySelector(`[data-tab-badge="${tabName}"]`);
   if (!el) return;
   const label = formatTabBadgeCount(n);
@@ -649,6 +670,7 @@ async function refreshAppTabBadges() {
     const feed = feedRes.ok ? Number((await feedRes.json())?.count) || 0 : 0;
     setTabBadge('inbox', dm);
     setTabBadge('feed', feed);
+    appBadgesPrimed = true;
     if (dm !== prevDm || (dm > 0 && isInboxFullscreenOpen())) {
       try {
         const frame = document.getElementById('fullscreenFrame');
@@ -749,6 +771,7 @@ let newsLoaded = false;
 let catalogLoaded = false;
 let viewerIsGame = false;
 let viewerGameTrapActive = false;
+let viewerBootToken = 0;
 
 function withAppParam(url) {
   try {
@@ -761,6 +784,32 @@ function withAppParam(url) {
   } catch {
     return url;
   }
+}
+
+function isExternalViewerHref(href) {
+  try {
+    return new URL(href, location.origin).origin !== location.origin;
+  } catch {
+    return false;
+  }
+}
+
+function openViewerFrameDirect(frame, href, { navigate = 'viewer' } = {}) {
+  const token = ++viewerBootToken;
+  if (frame) frame.classList.add('is-booting');
+  scheduleViewerBootWatch(token);
+  return loadFrameDirect(frame, href).then(() => {
+    if (token !== viewerBootToken) return;
+    try {
+      const doc = frame?.contentDocument;
+      if (doc) hardenViewerDoc(doc, { navigate });
+    } catch (_) {}
+    finishViewerBoot();
+  }).catch((err) => {
+    if (token !== viewerBootToken) return;
+    console.warn('viewer direct load failed', href, err);
+    throw err;
+  });
 }
 
 function isGameUrl(href) {
@@ -1164,13 +1213,15 @@ const VIEWER_HIDE_MENU_CSS = `
 
 /** Только страница сообщений — не инжектить в профиль и остальные iframe */
 const INBOX_APP_CSS = `
-  html:has(#finding-activity-modal.finding-panel-modal--inline),
-  body:has(#finding-activity-modal.finding-panel-modal--inline) {
+  /* Только пока host реально открыт — иначе :has держит overflow и «залипает» UI */
+  html:has(#spnInboxHost:not([hidden]) #finding-activity-modal.finding-panel-modal--inline),
+  body:has(#spnInboxHost:not([hidden]) #finding-activity-modal.finding-panel-modal--inline) {
     height: 100% !important;
     overflow: hidden !important;
     background: #fff !important;
   }
-  .finding-panel-modal--inline {
+  /* Стили inline только внутри host; не трогаем модалку после ухода со вкладки */
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline {
     position: static !important;
     inset: auto !important;
     display: flex !important;
@@ -1183,17 +1234,17 @@ const INBOX_APP_CSS = `
     justify-content: flex-start !important;
     background: #fff !important;
   }
-  .finding-panel-modal--inline .ai-share-backdrop {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline .ai-share-backdrop {
     display: none !important;
   }
-  .finding-panel-modal--inline .finding-panel-close,
-  .finding-panel-modal--inline .ai-share-close,
-  .finding-panel-modal--inline .finding-activity-close {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline .finding-panel-close,
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline .ai-share-close,
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline .finding-activity-close {
     display: none !important;
   }
-  .finding-panel-modal--inline .finding-panel-dialog,
-  .finding-panel-modal--inline .ai-share-dialog,
-  .finding-panel-modal--inline .finding-activity-dialog {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline .finding-panel-dialog,
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline .ai-share-dialog,
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline .finding-activity-dialog {
     position: static !important;
     width: 100% !important;
     max-width: none !important;
@@ -1205,34 +1256,35 @@ const INBOX_APP_CSS = `
     box-shadow: none !important;
     transform: none !important;
     opacity: 1 !important;
-    padding: 0 !important;
+    padding: 0 8px !important;
     background: #fff !important;
     overflow: hidden !important;
+    box-sizing: border-box !important;
   }
-  body:has(#finding-activity-modal.finding-panel-modal--inline) .page-wrapper {
+  body:has(#spnInboxHost:not([hidden]) #finding-activity-modal.finding-panel-modal--inline) .page-wrapper {
     height: 100% !important;
     min-height: 100% !important;
     padding: 0 !important;
     display: flex !important;
     flex-direction: column !important;
   }
-  body:has(#finding-activity-modal.finding-panel-modal--inline) .page-wrapper > .container,
-  body:has(#finding-activity-modal.finding-panel-modal--inline) .finding-inbox-card,
-  body:has(#finding-activity-modal.finding-panel-modal--inline) #findings-inbox-list {
+  body:has(#spnInboxHost:not([hidden]) #finding-activity-modal.finding-panel-modal--inline) .page-wrapper > .container,
+  body:has(#spnInboxHost:not([hidden]) #finding-activity-modal.finding-panel-modal--inline) .finding-inbox-card,
+  #spnInboxHost:not([hidden]) #findings-inbox-list {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     height: auto !important;
     display: flex !important;
     flex-direction: column !important;
   }
-  .finding-panel-modal--inline#finding-activity-modal {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal {
     flex: 1 1 auto !important;
     height: 100% !important;
     min-height: 0 !important;
     display: flex !important;
     flex-direction: column !important;
   }
-  .finding-panel-modal--inline#finding-activity-modal .finding-activity-dialog {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-activity-dialog {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     height: 100% !important;
@@ -1240,46 +1292,49 @@ const INBOX_APP_CSS = `
     display: flex !important;
     flex-direction: column !important;
     overflow: hidden !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    box-sizing: border-box !important;
   }
-  .finding-panel-modal--inline#finding-activity-modal .finding-activity-header,
-  .finding-panel-modal--inline#finding-activity-modal .finding-activity-toolbar,
-  .finding-panel-modal--inline#finding-activity-modal .finding-dm-new-toolbar {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-activity-header,
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-activity-toolbar,
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-dm-new-toolbar {
     flex-shrink: 0 !important;
   }
-  .finding-panel-modal--inline#finding-activity-modal .finding-dm-panel {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-dm-panel {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     display: flex !important;
     flex-direction: column !important;
   }
-  .finding-panel-modal--inline#finding-activity-modal .finding-dm-body,
-  .finding-panel-modal--inline#finding-activity-modal .finding-panel-body.finding-dm-body {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-dm-body,
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-panel-body.finding-dm-body {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     overflow-y: auto !important;
     -webkit-overflow-scrolling: touch !important;
   }
-  .finding-panel-modal--inline#finding-activity-modal .finding-dm-thread {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-dm-thread {
     max-height: none !important;
     overflow: visible !important;
   }
-  .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose-wrap,
-  .finding-panel-modal--inline#finding-activity-modal [data-inbox-compose-wrap] {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose-wrap,
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal [data-inbox-compose-wrap] {
     flex-shrink: 0 !important;
     margin-top: auto !important;
-    padding: 8px 10px 10px !important;
+    padding: 8px 0 8px !important;
     background: #fff !important;
     border-top: 1px solid #e5e7eb !important;
   }
-  .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose {
     margin-top: 0 !important;
     padding-top: 0 !important;
     border-top: none !important;
   }
-  .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose__row {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose__row {
     align-items: center !important;
   }
-  .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose__input {
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal .finding-dm-compose__input {
     min-height: 44px !important;
     max-height: 120px !important;
     box-sizing: border-box !important;
@@ -1321,16 +1376,162 @@ const INBOX_APP_CSS = `
   .finding-dm-photo {
     display: block;
     margin: 0 0 6px;
-    border-radius: 10px;
-    overflow: hidden;
     line-height: 0;
   }
-  .finding-dm-photo img {
+  .finding-dm-photo__frame {
+    position: relative;
+    display: inline-block;
+    max-width: 240px;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f3f4f6;
+  }
+  .finding-dm-photo img,
+  .finding-dm-photo__frame > img {
     display: block;
     width: 100%;
     max-width: 240px;
     max-height: 240px;
-    object-fit: cover;
+    object-fit: contain;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+  .finding-dm-media__download {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    z-index: 2;
+    width: 30px;
+    height: 30px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: none;
+    border-radius: 8px;
+    background: rgba(17, 24, 39, 0.68);
+    color: #fff;
+    cursor: pointer;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  }
+  .finding-dm-media__download:disabled {
+    opacity: 0.55;
+  }
+  .finding-dm-compose__pending-frame {
+    position: relative;
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #f3f4f6;
+  }
+  .finding-dm-compose__pending-frame .finding-dm-media__download {
+    right: 3px;
+    bottom: 3px;
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+  }
+  .finding-dm-audio {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 168px;
+    max-width: 260px;
+  }
+  .finding-dm-audio__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .finding-dm-audio__toolbar .finding-dm-media__download {
+    position: static;
+    flex-shrink: 0;
+    width: 28px;
+    height: 28px;
+    box-shadow: none;
+  }
+  .finding-dm-audio__player {
+    display: block;
+    flex: 1;
+    min-width: 0;
+    height: 32px;
+    margin: 0;
+  }
+  .finding-dm-audio__meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    min-height: 14px;
+  }
+  .finding-dm-audio__duration {
+    font-size: 11px;
+    line-height: 1.2;
+    color: #6b7280;
+    font-variant-numeric: tabular-nums;
+  }
+  .finding-dm-audio__duration--empty {
+    visibility: hidden;
+  }
+  .finding-dm-bubble--voice {
+    padding: 6px 10px 5px !important;
+  }
+  .finding-dm-bubble--voice .finding-dm-audio {
+    margin: 0;
+  }
+  .finding-dm-bubble__time--inline {
+    display: inline;
+    margin: 0;
+    font-size: 11px;
+    line-height: 1.2;
+    white-space: nowrap;
+  }
+  .finding-dm-bubble__time--sent {
+    color: #9ca3af !important;
+  }
+  .finding-dm-bubble__time--read {
+    color: #dc2626 !important;
+  }
+  .finding-dm-bubble__footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 4px;
+  }
+  .finding-dm-audio__meta-right {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto;
+  }
+  .finding-dm-compose__mic {
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    background: #fff;
+    color: #374151;
+  }
+  .finding-dm-compose__mic.is-recording {
+    border-color: #fecaca;
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+  .finding-dm-compose__recording {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    border-radius: 10px;
+    background: #fff1f2;
+    border: 1px solid #fecaca;
   }
   .finding-dm-compose__pending-thumb {
     flex-shrink: 0;
@@ -1369,27 +1570,95 @@ const INBOX_APP_CSS = `
     text-align: left;
     cursor: pointer;
   }
+  #spnInboxHost:not([hidden]) .finding-activity-peer-avatar {
+    display: inline-flex !important;
+    width: 32px !important;
+    height: 32px !important;
+    border-radius: 10px !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: #e5e7eb !important;
+    color: #4b5563 !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+  }
+  #spnInboxHost:not([hidden]) .finding-activity-peer-avatar[hidden] {
+    display: none !important;
+  }
+  #spnInboxHost:not([hidden]) .finding-activity-peer-avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block !important;
+  }
+  #spnInboxHost:not([hidden]) .finding-activity-back {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 36px !important;
+    height: 36px !important;
+    margin-right: 4px !important;
+    border: 1px solid #e5e7eb !important;
+    border-radius: 10px !important;
+    background: #fff !important;
+    color: #111827 !important;
+    flex-shrink: 0 !important;
+  }
+  #spnInboxHost:not([hidden]) .finding-activity-back[hidden] {
+    display: none !important;
+  }
+  #spnInboxHost:not([hidden]) .finding-activity-back svg {
+    display: block !important;
+  }
+  .finding-feed-tabs--guest [data-feed-mode="following"] {
+    display: none !important;
+  }
   .finding-activity--messages-only [data-activity-tabs],
   .finding-activity--messages-only [data-activity-panel="notifications"],
   .finding-activity--messages-only [data-activity-intro] {
     display: none !important;
   }
-  #spnInboxHost,
-  #spnInboxHost #findings-inbox-list {
+  /* Боковые отступы как на остальных вкладках */
+  #spnInboxHost:not([hidden]) {
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    box-sizing: border-box !important;
+  }
+  /* Важно: ID+flex !important иначе перебивает [hidden] и сообщения «залипают» поверх других вкладок */
+  #spnInboxHost:not([hidden]),
+  #spnInboxHost:not([hidden]) #findings-inbox-list {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     height: 100% !important;
     display: flex !important;
     flex-direction: column !important;
   }
-  #spnInboxHost .finding-panel-modal--inline#finding-activity-modal {
+  #spnInboxHost[hidden],
+  #spnInboxHost[hidden] #findings-inbox-list {
+    display: none !important;
+  }
+  #spnInboxHost:not([hidden]) .finding-panel-modal--inline#finding-activity-modal {
     flex: 1 1 auto !important;
     min-height: 0 !important;
     height: 100% !important;
   }
 `;
 
-const FINDINGS_MODALS_URL = '/frontend/scripts/findings-modals.js?v=43';
+const FINDINGS_MODALS_URL = '/frontend/scripts/findings-modals.js?v=58';
+
+let findingsUiReady = null;
+function ensureFindingsUiInApp() {
+  if (!findingsUiReady) {
+    findingsUiReady = Promise.all([
+      loadStylesheet('/frontend/find/find-view.css?v=app-feed', 'spn-findview-css-feed'),
+      loadStylesheet('/frontend/profile/profile_styles.css?v=app-feed', 'spn-profile-css-feed'),
+      import(FINDINGS_MODALS_URL),
+    ]).then(([, , mod]) => mod);
+  }
+  return findingsUiReady;
+}
 
 function isCapacitorNativeShell() {
   try {
@@ -1431,20 +1700,61 @@ function androidNavBarFallbackPx() {
   return 48;
 }
 
+function readSafeAreaBottomPx() {
+  return sanitizeNavInsetPx(measureBottomInset());
+}
+
+/** True only when WebView layout actually shrinks above the system nav bar. */
+function decorActuallyFitsNav() {
+  if (window.__SPN_DECOR_FITS_NAV !== 1) return false;
+  try {
+    const shrink = window.screen.height - window.innerHeight;
+    if (shrink >= 24) return true;
+  } catch (_) {}
+  return false;
+}
+
 /**
  * Bottom pad for tab bar above Android system nav keys.
- * Old APK: WebView under nav bar → need ~48px.
- * New APK (decorFits + injection): __SPN_DECOR_FITS_NAV=1 → 0 extra pad.
+ * Do NOT trust __SPN_DECOR_FITS_NAV alone — Capacitor WebView often still draws edge-to-edge.
  */
+let lastKnownNavInsetPx = 48;
+
+function sanitizeNavInsetPx(raw) {
+  const n = Number(raw);
+  // Real 3-button nav is ~40–64px. Larger values are usually IME/combined junk.
+  if (!Number.isFinite(n) || n < 24 || n > 72) return 0;
+  return Math.round(n);
+}
+
 function resolveNativeNavPad() {
-  if (window.__SPN_DECOR_FITS_NAV === 1) return 0;
-  if (typeof window.__SPN_NAV_INSET_PX === 'number' && window.__SPN_NAV_INSET_PX > 0) {
-    return Math.round(window.__SPN_NAV_INSET_PX);
+  const sane = sanitizeNavInsetPx(window.__SPN_NAV_INSET_PX);
+  if (sane) lastKnownNavInsetPx = sane;
+
+  const reserve = sane || readSafeAreaBottomPx() || lastKnownNavInsetPx || androidNavBarFallbackPx();
+
+  if (isImeLikelyOpen()) {
+    return Math.min(56, Math.max(40, reserve));
   }
-  const measured = measureBottomInset();
-  if (measured >= 20) return measured;
-  if (/Android/i.test(navigator.userAgent || '')) return androidNavBarFallbackPx();
-  return measured;
+
+  if (decorActuallyFitsNav()) return 0;
+
+  return reserve;
+}
+
+function isImeLikelyOpen() {
+  try {
+    const ae = document.activeElement;
+    if (!ae) return false;
+    const tag = ae.tagName || '';
+    if (!/^(INPUT|TEXTAREA|SELECT)$/i.test(tag)) return false;
+    if (ae.type === 'button' || ae.type === 'submit' || ae.type === 'checkbox' || ae.type === 'radio') {
+      return false;
+    }
+    return true;
+  } catch (_) {
+    return false;
+  }
 }
 
 function syncSystemNavChrome() {
@@ -1452,6 +1762,7 @@ function syncSystemNavChrome() {
   const nativeShell = isCapacitorNativeShell();
 
   root.classList.toggle('spn-cap-native', nativeShell);
+  root.classList.toggle('spn-ime-open', isImeLikelyOpen());
 
   if (nativeShell) {
     const pad = resolveNativeNavPad();
@@ -1460,18 +1771,48 @@ function syncSystemNavChrome() {
     root.style.setProperty('--spn-viewer-pad-b', `${pad}px`);
     root.style.setProperty('--spn-sys-nav', `${pad}px`);
     root.style.setProperty('--spn-sys-nav-bg', '#2a2a2a');
-    return;
+  } else {
+    const inset = measureBottomInset();
+    const pad = inset > 0 ? inset : 48;
+    root.style.setProperty('--spn-sys-nav', `${pad}px`);
+    root.style.setProperty('--spn-nav-fallback', inset > 0 ? '0px' : '48px');
+    root.style.setProperty('--spn-app-nav-pad', `${pad}px`);
+    root.style.setProperty('--spn-viewer-pad-b', `${pad}px`);
   }
-
-  const inset = measureBottomInset();
-  const pad = inset > 0 ? inset : 48;
-  root.style.setProperty('--spn-sys-nav', `${pad}px`);
-  root.style.setProperty('--spn-nav-fallback', inset > 0 ? '0px' : '48px');
-  root.style.setProperty('--spn-app-nav-pad', `${pad}px`);
-  root.style.setProperty('--spn-viewer-pad-b', `${pad}px`);
+  syncKeyboardInset();
 }
 
+/** Extra lift only if layout viewport did NOT shrink with the keyboard. */
+function syncKeyboardInset() {
+  const root = document.documentElement;
+  try {
+    const vv = window.visualViewport;
+    if (!vv) {
+      root.style.setProperty('--spn-keyboard-inset', '0px');
+      return;
+    }
+    const covered = Math.max(0, Math.round(window.innerHeight - vv.height - vv.offsetTop));
+    // If adjustResize already shrank innerHeight, covered is ~0 — don't double-offset.
+    const kb = covered >= 120 ? covered : 0;
+    root.style.setProperty('--spn-keyboard-inset', `${kb}px`);
+  } catch (_) {
+    root.style.setProperty('--spn-keyboard-inset', '0px');
+  }
+}
+try { window.syncKeyboardInset = syncKeyboardInset; } catch (_) {}
+
 try { window.syncSystemNavChrome = syncSystemNavChrome; } catch (_) {}
+
+/** Ask Android shell once to restore system nav after getUserMedia. */
+function spnRestoreAndroidNav() {
+  try {
+    if (typeof window.SpnAndroid?.restoreSystemBars === 'function') {
+      window.SpnAndroid.restoreSystemBars();
+    }
+  } catch (_) {}
+  try { syncSystemNavChrome(); } catch (_) {}
+}
+try { window.spnRestoreAndroidNav = spnRestoreAndroidNav; } catch (_) {}
 
 function loadStylesheet(href, id = '') {
   if (id) {
@@ -1539,6 +1880,8 @@ function scheduleFeedShellHealthCheck(frame) {
 
 function loadFrameDirect(frame, href, { timeoutMs = 15000 } = {}) {
   if (!frame) return Promise.reject(new Error('no frame'));
+  let abs = String(href || '');
+  try { abs = new URL(href, location.href).href; } catch (_) {}
   return new Promise((resolve, reject) => {
     let done = false;
     const finish = (fn, arg) => {
@@ -1549,13 +1892,21 @@ function loadFrameDirect(frame, href, { timeoutMs = 15000 } = {}) {
       frame.removeEventListener('error', onError);
       fn(arg);
     };
-    const onLoad = () => finish(resolve);
+    const onLoad = () => {
+      let cur = '';
+      try { cur = String(frame.contentWindow?.location?.href || ''); } catch (_) {
+        cur = String(frame.src || '');
+      }
+      // about:blank/srcdoc fire before the real navigation — ignore them
+      if (!cur || /about:(blank|srcdoc)/i.test(cur)) return;
+      finish(resolve);
+    };
     const onError = () => finish(reject, new Error('frame load error'));
     const timer = setTimeout(() => finish(reject, new Error('frame load timeout')), timeoutMs);
     frame.addEventListener('load', onLoad);
     frame.addEventListener('error', onError);
     try { frame.removeAttribute('srcdoc'); } catch (_) {}
-    frame.src = href;
+    frame.src = abs;
   });
 }
 
@@ -1683,25 +2034,78 @@ function rememberViewerHtml(key, html) {
   if (oldestKey) viewerHtmlCache.delete(oldestKey);
 }
 
+function isViewerHtmlUsable(html) {
+  const text = String(html || '');
+  if (text.length < 200) return false;
+  if (/^\s*<html[^>]*>\s*<head[^>]*>\s*<title>\s*401/i.test(text)) return false;
+  if (/Authentication required|401 Unauthorized|<title>[^<]*401/i.test(text)) return false;
+  if (!/<body[\s>]/i.test(text) && !/<html[\s>]/i.test(text)) return false;
+  return true;
+}
+
+/** Soft timeout — do NOT AbortController.abort(): that wedges WebView networking on Android. */
+function fetchWithTimeout(resource, options = {}, ms = 12000) {
+  return Promise.race([
+    fetch(resource, options),
+    new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('viewer fetch timeout')), ms);
+    }),
+  ]);
+}
+
+function nativeFetchText(absUrl) {
+  try {
+    if (!window.SpnAndroid || typeof SpnAndroid.fetchText !== 'function') return null;
+    const out = SpnAndroid.fetchText(String(absUrl));
+    if (typeof out !== 'string' || !out || out.startsWith('ERR:')) {
+      if (out && out.startsWith('ERR:')) console.warn('native viewer fetch', out);
+      return null;
+    }
+    return out;
+  } catch (err) {
+    console.warn('native viewer fetch', err);
+    return null;
+  }
+}
+
 async function fetchViewerRawHtml(href) {
   const key = viewerCacheKey(href);
   if (isViewerCacheable(href)) {
     const hit = viewerHtmlCache.get(key);
-    if (hit && Date.now() - hit.at < VIEWER_CACHE_TTL_MS) return hit.html;
+    if (hit && Date.now() - hit.at < VIEWER_CACHE_TTL_MS && isViewerHtmlUsable(hit.html)) {
+      return hit.html;
+    }
+    if (hit && !isViewerHtmlUsable(hit.html)) viewerHtmlCache.delete(key);
   }
   const abs = new URL(href, location.origin);
-  const cacheable = isViewerCacheable(href);
-  let path = abs.pathname + abs.search;
-  if (!cacheable) {
-    path += (abs.search ? '&' : '?') + '_=' + Date.now();
+  if (abs.origin !== location.origin) {
+    throw new Error('viewer external url');
   }
-  const res = await fetch(path, {
-    credentials: 'include',
-    cache: cacheable ? 'force-cache' : 'reload',
-  });
-  if (!res.ok) throw new Error('viewer ' + res.status);
-  const html = await res.text();
-  if (isViewerCacheable(href)) rememberViewerHtml(key, html);
+  const cacheable = isViewerCacheable(href);
+  abs.searchParams.set('_', String(Date.now()));
+  // Prefer web fetch (after Capacitor HTML-proxy bypass). Native is a fallback only.
+  let html = null;
+  try {
+    const path = abs.pathname + abs.search;
+    const res = await fetchWithTimeout(path, {
+      credentials: 'include',
+      cache: 'no-store',
+      // Avoid Accept:text/html so Capacitor's HTML proxy path is not used if still active
+      headers: { Accept: 'application/octet-stream,*/*' },
+    }, 12000);
+    if (!res.ok) throw new Error('viewer ' + res.status);
+    html = await res.text();
+  } catch (webErr) {
+    console.warn('web viewer fetch', webErr);
+    try {
+      html = nativeFetchText(abs.href);
+    } catch (err) {
+      console.warn('native viewer fetch', err);
+    }
+  }
+  if (html == null) throw new Error('viewer fetch failed');
+  if (!isViewerHtmlUsable(html)) throw new Error('viewer unusable html');
+  if (cacheable) rememberViewerHtml(key, html);
   return html;
 }
 
@@ -1854,30 +2258,15 @@ async function prefetchViewerUrl(url) {
 function scheduleViewerPrefetchFromCatalog() {
   if (viewerPrefetchStarted || !catalogLoaded) return;
   viewerPrefetchStarted = true;
-  const urls = [];
-  const kb = catalog?.links?.knowledgeBase || KB_URL;
-  if (kb) urls.push(kb);
-  for (const tool of catalog.tools || []) {
-    if (tool?.href) urls.push(tool.href);
-  }
-  for (const g of catalog.gamesOwn || []) {
-    if (g?.href) urls.push(g.href);
-  }
+  // Only warm CSS. Do not prefetch HTML / KB index here — Capacitior proxy
+  // stalls when many fetches run during startup, and openViewer then gets a white screen.
   const run = () => {
     warmSharedViewerAssets();
-    try { ensureKbIndex(); } catch (_) {}
-    let i = 0;
-    const next = () => {
-      if (i >= urls.length) return;
-      const u = urls[i++];
-      prefetchViewerUrl(u).finally(() => setTimeout(next, 120));
-    };
-    next();
   };
   if (typeof requestIdleCallback === 'function') {
-    requestIdleCallback(run, { timeout: 3500 });
+    requestIdleCallback(run, { timeout: 4000 });
   } else {
-    setTimeout(run, 900);
+    setTimeout(run, 1200);
   }
 }
 
@@ -1909,20 +2298,22 @@ function openViewer(url, title) {
       viewerHistoryPushed = true;
     } catch (_) {}
   }
+  // External news / partner links — srcdoc fetch would hit our nginx path and 404.
+  if (isExternalViewerHref(href)) {
+    openViewerFrameDirect(viewerFrame, href, { navigate: 'viewer' }).catch(() => {
+      try { viewerFrame.removeAttribute('src'); } catch (_) {}
+      viewerFrame.srcdoc =
+        '<!doctype html><html><body style="font:16px/1.4 system-ui;padding:24px;background:#f7f7f8;color:#222">' +
+        '<p>Не удалось открыть ссылку.</p>' +
+        '<p style="color:#666;font-size:14px">Проверьте интернет и попробуйте ещё раз.</p>' +
+        '</body></html>';
+      finishViewerBoot();
+    });
+    return;
+  }
   // VK ID / OAuth не работают в srcdoc (домен about:srcdoc ≠ serpmonn.ru)
   if (/\/auth\/|vkid|oauth|\/mail\//i.test(String(localizedUrl || ''))) {
-    const token = ++viewerBootToken;
-    viewerFrame.classList.add('is-booting');
-    scheduleViewerBootWatch(token);
-    loadFrameDirect(viewerFrame, href).then(() => {
-      if (token !== viewerBootToken) return;
-      try {
-        const doc = viewerFrame.contentDocument;
-        if (doc) hardenViewerDoc(doc);
-      } catch (_) {}
-      finishViewerBoot();
-    }).catch((err) => {
-      if (token !== viewerBootToken) return;
+    openViewerFrameDirect(viewerFrame, href, { navigate: 'viewer' }).catch((err) => {
       console.warn('viewer auth direct load', err);
       finishViewerBoot();
     });
@@ -1935,6 +2326,7 @@ async function loadViewerHtml(href) {
   const token = ++viewerBootToken;
   viewerFrame.classList.add('is-booting');
   scheduleViewerBootWatch(token);
+  // srcdoc only: Capacitor WebView cancels iframe.src to the remote host.
   try {
     const raw = await fetchViewerRawHtml(href);
     if (token !== viewerBootToken) return;
@@ -1942,10 +2334,22 @@ async function loadViewerHtml(href) {
     try { viewerFrame.removeAttribute('src'); } catch (_) {}
     viewerFrame.srcdoc = html;
   } catch (err) {
-    console.warn('viewer srcdoc failed, fallback src', err);
+    console.warn('viewer srcdoc failed', err);
     if (token !== viewerBootToken) return;
-    try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
-    viewerFrame.src = href;
+    try {
+      await openViewerFrameDirect(viewerFrame, href, { navigate: 'viewer' });
+      return;
+    } catch (directErr) {
+      console.warn('viewer srcdoc+direct failed', directErr);
+    }
+    if (token !== viewerBootToken) return;
+    try { viewerFrame.removeAttribute('src'); } catch (_) {}
+    viewerFrame.srcdoc =
+      '<!doctype html><html><body style="font:16px/1.4 system-ui;padding:24px;background:#f7f7f8;color:#222">' +
+      '<p>Не удалось загрузить страницу.</p>' +
+      '<p style="color:#666;font-size:14px">Закройте и откройте ещё раз.</p>' +
+      '</body></html>';
+    finishViewerBoot();
   }
 }
 
@@ -2101,9 +2505,9 @@ function onViewerLoad() {
     const doc = viewerFrame.contentDocument;
     if (doc) hardenViewerDoc(doc);
   } catch (_) {}
-  setTimeout(() => {
-    if (viewerFrameLooksAlive() || viewerFrame?.src) finishViewerBoot();
-  }, 80);
+  // Always clear boot overlay after load — games often have <8 chars of text
+  // so viewerFrameLooksAlive() stays false and the UI looked "stuck loading".
+  setTimeout(() => finishViewerBoot(), 80);
 }
 
 if (viewerFrame) viewerFrame.addEventListener('load', onViewerLoad);
@@ -2359,6 +2763,7 @@ function showScreen(name) {
   serviceTabSeq += 1;
 
   if (name === 'feed' || name === 'inbox') {
+    playTabSwitch(name);
     activateServiceTab(name);
     return;
   }
@@ -2374,6 +2779,7 @@ function showScreen(name) {
     try { closeSettingsPanel(); } catch (_) {}
   }
 
+  playTabSwitch(name);
   applyMainScreen(name);
 
   if (name === 'news' && !newsLoaded) loadNews();
@@ -2406,8 +2812,8 @@ async function activateServiceTab(name) {
   const loggedIn = await isLoggedIn();
   if (seq !== serviceTabSeq) return;
 
-  if (!loggedIn) {
-    // Без сессии — на профиль с кнопкой входа, без принудительного экрана auth
+  if (!loggedIn && kind === 'inbox') {
+    // Сообщения только для авторизованных; лента доступна гостю
     applyMainScreen('profile');
     if (isFullscreenOpen()) closeFullscreenPage();
     try { refreshProfile(); } catch (_) {}
@@ -2423,16 +2829,18 @@ async function activateServiceTab(name) {
   if (kind === 'inbox') {
     await openInboxInShell();
   } else {
-    try {
-      const headers = await getCsrfHeaders({ 'Content-Type': 'application/json' });
-      await spnFetch('/api/findings/notifications/read-all', {
-        method: 'POST',
-        credentials: 'include',
-        headers,
-        body: '{}',
-      });
-      setTabBadge('feed', 0);
-    } catch (_) {}
+    if (loggedIn) {
+      try {
+        const headers = await getCsrfHeaders({ 'Content-Type': 'application/json' });
+        await spnFetch('/api/findings/notifications/read-all', {
+          method: 'POST',
+          credentials: 'include',
+          headers,
+          body: '{}',
+        });
+        setTabBadge('feed', 0);
+      } catch (_) {}
+    }
     await openFullscreenPage(
       catalog?.links?.findingsFeed || '/frontend/findings/feed.html',
       t('findingsFeed'),
@@ -2474,11 +2882,29 @@ document.addEventListener('click', (e) => {
 window.addEventListener('message', (ev) => {
   if (!ev || !ev.data) return;
   if (ev.data.type === 'spn-app-close-viewer') closeViewer();
+  if (ev.data.type === 'spn-app-sound') {
+    spnPlay(ev.data.sound || 'tap');
+    return;
+  }
+  if (ev.data.type === 'spn-app-open-finding') {
+    const publicId = String(ev.data.publicId || '');
+    if (!publicId.startsWith('fnd_')) return;
+    ensureFindingsUiInApp()
+      .then((mod) => {
+        if (typeof mod.initFindingsModals === 'function') {
+          return mod.initFindingsModals().then(() => mod);
+        }
+        return mod;
+      })
+      .then((mod) => mod.openFindingModal(publicId, ev.data.options || {}))
+      .catch((err) => console.warn('spn-app-open-finding', err));
+    return;
+  }
   if (ev.data.type === 'spn-app-auth-ok') {
     try { closeViewer(); } catch (_) {}
     showScreen('profile');
     refreshProfile();
-    toast(t('loggedIn'));
+    toast(t('loggedIn'), 'success');
     return;
   }
   if (ev.data.type === 'spn-app-need-auth') {
@@ -2509,6 +2935,24 @@ window.addEventListener('message', (ev) => {
 /* —— Search —— */
 const searchForm = document.getElementById('searchForm');
 const searchInput = document.getElementById('searchInput');
+if (searchInput) {
+  const resyncChrome = () => {
+    try { syncSystemNavChrome(); } catch (_) {}
+    try { spnRestoreAndroidNav(); } catch (_) {}
+  };
+  searchInput.addEventListener('focus', () => {
+    resyncChrome();
+    // Second pass after IME / WebView resize settles
+    setTimeout(resyncChrome, 50);
+    setTimeout(resyncChrome, 300);
+  });
+  searchInput.addEventListener('focusout', () => {
+    setTimeout(() => {
+      try { syncSystemNavChrome(); } catch (_) {}
+      try { spnRestoreAndroidNav(); } catch (_) {}
+    }, 280);
+  });
+}
 const searchStatus = document.getElementById('searchStatus');
 const searchAnswer = document.getElementById('searchAnswer');
 const searchActions = document.getElementById('searchActions');
@@ -2576,8 +3020,10 @@ function showToast(msg) {
   toastTimer = setTimeout(() => { spnToast.hidden = true; }, 2200);
 }
 
-function toast(msg) {
+function toast(msg, kind) {
   showToast(msg);
+  if (kind === 'success') spnPlay('success');
+  else if (kind === 'error') spnPlay('error');
 }
 
 function hideSearchActions() {
@@ -2886,7 +3332,7 @@ async function sendAudioForRecognition(audioBlob, mimeType) {
     await new Promise((r) => setTimeout(r, 400));
     searchForm.requestSubmit();
   } catch (err) {
-    toast(err?.message || t('voiceError'));
+    toast(err?.message || t('voiceError'), 'error');
     searchInput.placeholder = t('askPlaceholder');
   }
 }
@@ -2910,6 +3356,7 @@ voiceBtn?.addEventListener('click', async () => {
         autoGainControl: true,
       },
     });
+    try { spnRestoreAndroidNav(); } catch (_) {}
     const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
       ? 'audio/webm;codecs=opus'
       : MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')
@@ -2935,13 +3382,14 @@ voiceBtn?.addEventListener('click', async () => {
     };
 
     mediaRecorder.onerror = () => {
-      toast(t('recordError'));
+      toast(t('recordError'), 'error');
       resetVoiceUi(t('askPlaceholder'));
       stream.getTracks().forEach((t) => t.stop());
     };
 
     mediaRecorder.start();
     isRecording = true;
+    spnPlay('record');
     voiceBtn.classList.add('is-listening');
     voiceStatus.hidden = false;
     searchInput.value = '';
@@ -2960,7 +3408,7 @@ voiceBtn?.addEventListener('click', async () => {
     } else if (error?.name === 'NotReadableError') {
       msg = 'Микрофон занят';
     }
-    toast(msg);
+    toast(msg, 'error');
     resetVoiceUi(t('askPlaceholder'));
   }
 });
@@ -3087,6 +3535,11 @@ searchForm.addEventListener('submit', async (e) => {
   }
   const query = (searchInput.value || '').trim();
   if (!query) return;
+
+  // Soft keyboard dismiss often leaves Android system nav hidden on WebView.
+  try { searchInput.blur(); } catch (_) {}
+  try { spnRestoreAndroidNav(); } catch (_) {}
+  setTimeout(() => { try { spnRestoreAndroidNav(); } catch (_) {} }, 350);
 
   searchStatus.hidden = false;
   searchStatus.textContent = t('searching');
@@ -3460,6 +3913,13 @@ function hideInboxHost() {
   hideServiceStatus('inbox');
   if (profileFullscreen) profileFullscreen.classList.remove('spn-fullscreen--inbox');
   if (fullscreenFrame) fullscreenFrame.hidden = false;
+  // Снимаем inline-режим: иначе CSS display:flex !important держит модалку поверх других вкладок
+  const modal = document.getElementById('finding-activity-modal');
+  if (modal) {
+    modal.removeAttribute('data-open');
+    modal.classList.remove('finding-panel-modal--inline');
+    modal.style.setProperty('display', 'none', 'important');
+  }
   try {
     import(FINDINGS_MODALS_URL).then((mod) => {
       try { mod.stopInboxLiveUpdates?.(); } catch (_) {}
@@ -3470,15 +3930,16 @@ function hideInboxHost() {
 function ensureInboxShellStyles() {
   if (!inboxStylesReady) {
     inboxStylesReady = (async () => {
-      if (!document.getElementById('spn-inbox-shell-css')) {
-        const style = document.createElement('style');
+      let style = document.getElementById('spn-inbox-shell-css');
+      if (!style) {
+        style = document.createElement('style');
         style.id = 'spn-inbox-shell-css';
-        style.textContent = INBOX_APP_CSS;
         document.head.appendChild(style);
       }
+      style.textContent = INBOX_APP_CSS;
       await Promise.all([
-        loadStylesheet('/frontend/styles/styles.css?v=dm-compose-h2', 'spn-site-css-for-inbox'),
-        loadStylesheet('/frontend/profile/profile_styles.css?v=app-inbox', 'spn-profile-css-for-inbox'),
+        loadStylesheet('/frontend/styles/styles.css?v=dm-media2', 'spn-site-css-for-inbox'),
+        loadStylesheet('/frontend/profile/profile_styles.css?v=avatar-crop', 'spn-profile-css-for-inbox'),
         loadStylesheet('/frontend/find/find-view.css?v=app-inbox', 'spn-findview-css-for-inbox'),
       ]);
     })();
@@ -3502,18 +3963,32 @@ async function openInboxInShell() {
   hideServiceStatus('feed');
   const host = document.getElementById('spnInboxHost');
   if (host) host.hidden = false;
+  // Сброс принудительного display:none после ухода с вкладки
+  const existingModal = document.getElementById('finding-activity-modal');
+  if (existingModal) {
+    existingModal.style.removeProperty('display');
+  }
   showServiceStatus('inbox', t('inboxLoading') || 'Загрузка…');
   try {
     await ensureInboxShellStyles();
+    if (activeAppTab !== 'inbox') return;
     const mod = await import(FINDINGS_MODALS_URL);
+    if (activeAppTab !== 'inbox') return;
     await mod.initFindingsModals({
       onInboxRead: () => { try { refreshAppTabBadges(); } catch (_) {} },
     });
+    if (activeAppTab !== 'inbox') {
+      hideInboxHost();
+      return;
+    }
     hideServiceStatus('inbox');
     await mod.openInboxModal({
       openUsername: pendingInboxPeer(),
       openPeerId: String(new URLSearchParams(location.search).get('dmId') || '').trim(),
     });
+    if (activeAppTab !== 'inbox') {
+      hideInboxHost();
+    }
   } catch (err) {
     console.warn('inbox shell failed', err);
     showServiceStatus('inbox', t('loadFailed') || 'Не удалось загрузить сообщения. Потяните вниз или откройте вкладку ещё раз.', { error: true });
@@ -3714,15 +4189,32 @@ async function loadProfileEmbed() {
 
 /** Загрузка HTML во iframe (как viewer), без открытия #viewer */
 async function loadViewerHtmlInto(frame, href) {
-  let html = wrapViewerHtml(href, await fetchViewerRawHtml(href), { withGameLock: false });
-  const late = `<style id="spn-android-app-css-late">${appCssForHref(href)}</style>`;
-  if (/<\/body>/i.test(html)) {
-    html = html.replace(/<\/body>/i, `${late}</body>`);
-  } else {
-    html += late;
+  const navigate =
+    frame === fullscreenFrame ? 'fullscreen' :
+    frame === profileEmbed ? 'embed' : 'viewer';
+  try {
+    let html = wrapViewerHtml(href, await fetchViewerRawHtml(href), { withGameLock: false });
+    const late = `<style id="spn-android-app-css-late">${appCssForHref(href)}</style>`;
+    if (/<\/body>/i.test(html)) {
+      html = html.replace(/<\/body>/i, `${late}</body>`);
+    } else {
+      html += late;
+    }
+    try { frame.removeAttribute('src'); } catch (_) {}
+    frame.srcdoc = html;
+    return;
+  } catch (err) {
+    console.warn('embed srcdoc failed, direct fallback', err);
   }
-  try { frame.removeAttribute('src'); } catch (_) {}
-  frame.srcdoc = html;
+  try {
+    await loadFrameDirect(frame, href);
+    try {
+      const doc = frame.contentDocument;
+      if (doc) hardenViewerDoc(doc, { navigate });
+    } catch (_) {}
+  } catch (err2) {
+    console.warn('embed direct failed', err2);
+  }
 }
 
 async function refreshProfile() {
@@ -3967,9 +4459,19 @@ async function completeVkIdFromRedirect() {
 /* —— Boot —— */
 syncSystemNavChrome();
 try {
-  window.visualViewport?.addEventListener('resize', syncSystemNavChrome);
-  window.addEventListener('orientationchange', () => setTimeout(syncSystemNavChrome, 120));
-  window.addEventListener('resize', syncSystemNavChrome);
+  const vv = window.visualViewport;
+  if (vv) {
+    vv.addEventListener('resize', syncKeyboardInset);
+    vv.addEventListener('scroll', syncKeyboardInset);
+  }
+  window.addEventListener('resize', () => {
+    syncSystemNavChrome();
+    syncKeyboardInset();
+  });
+  window.addEventListener('orientationchange', () => setTimeout(() => {
+    syncSystemNavChrome();
+    syncKeyboardInset();
+  }, 120));
 } catch (_) {}
 try {
   window.addEventListener('capacitorDidBecomeActive', syncSystemNavChrome);
@@ -3992,10 +4494,10 @@ showScreen('profile');
       wentToProfile = true;
       toastLogin = true;
     } else if (hadVkCallback) {
-      toast('Не удалось войти через VK. Попробуйте ещё раз');
+      toast('Не удалось войти через VK. Попробуйте ещё раз', 'error');
     }
   } catch (_) {
-    if (hadVkCallback) toast('Не удалось войти через VK. Попробуйте ещё раз');
+    if (hadVkCallback) toast('Не удалось войти через VK. Попробуйте ещё раз', 'error');
   }
 
   try {
@@ -4016,10 +4518,10 @@ showScreen('profile');
   if (wentToProfile && !postAuthTab) {
     showScreen('profile');
     try { await refreshProfile(); } catch (_) {}
-    if (toastLogin) toast(t('loggedIn'));
+    if (toastLogin) toast(t('loggedIn'), 'success');
   } else if (postAuthTab) {
     showScreen(postAuthTab);
-    if (toastLogin) toast(t('loggedIn'));
+    if (toastLogin) toast(t('loggedIn'), 'success');
   } else if (tab === 'profile') {
     showScreen('profile');
   } else if (tab && getTitles()[tab]) {
@@ -4032,7 +4534,9 @@ showScreen('profile');
   } catch (_) {
     try { syncPushSettingsUi(); } catch (__) {}
   }
+  try { syncSoundSettingsUi(); } catch (_) {}
   try { refreshAppTabBadges(); } catch (_) {}
+  tabSoundEnabled = true;
 })();
 
 /* —— Сервисы: почта / входящие / лента —— */
@@ -4113,6 +4617,10 @@ async function syncPushAfterLogin() {
   syncPushSettingsUi();
 }
 
+window.syncPushSettingsUi = syncPushSettingsUi;
+window.showScreen = showScreen;
+window.openInboxInShell = openInboxInShell;
+
 const spnPushEnableBtn = document.getElementById('spnPushEnableBtn');
 if (spnPushEnableBtn) {
   spnPushEnableBtn.addEventListener('click', async () => {
@@ -4120,7 +4628,7 @@ if (spnPushEnableBtn) {
     const api = window.spnPush;
     if (!api?.canUse?.()) {
       syncPushSettingsUi();
-      toast(t('pushFailed'));
+      toast(t('pushFailed'), 'error');
       return;
     }
     const loggedIn = await isLoggedIn();
@@ -4132,22 +4640,54 @@ if (spnPushEnableBtn) {
       syncPushSettingsUi();
       return;
     }
-    setPushPref(wantOn);
     try {
       if (!wantOn) {
+        setPushPref(false);
         await api.disable?.();
         syncPushSettingsUi();
         return;
       }
       setPushSwitch(true, true);
       const result = await api.enable();
-      if (result?.ok) toast(t('pushOn'));
-      else if (result?.reason === 'denied') toast(t('pushDenied'));
-      else toast(t('pushFailed'));
+      if (result?.ok) {
+        setPushPref(true);
+        toast(t('pushOn'));
+      } else {
+        setPushPref(false);
+        if (result?.reason === 'denied') toast(t('pushDenied'));
+        else toast(t('pushFailed'), 'error');
+      }
     } catch (_) {
-      toast(t('pushFailed'));
+      setPushPref(false);
+      toast(t('pushFailed'), 'error');
     }
     syncPushSettingsUi();
+  });
+}
+
+function setSoundSwitch(on) {
+  const btn = document.getElementById('spnSoundEnableBtn');
+  if (!btn) return;
+  btn.setAttribute('aria-checked', on ? 'true' : 'false');
+}
+
+function syncSoundSettingsUi() {
+  const on = window.spnSound?.isEnabled?.() !== false;
+  setSoundSwitch(on);
+}
+
+const spnSoundEnableBtn = document.getElementById('spnSoundEnableBtn');
+if (spnSoundEnableBtn) {
+  spnSoundEnableBtn.addEventListener('click', () => {
+    const wantOn = spnSoundEnableBtn.getAttribute('aria-checked') !== 'true';
+    try { window.spnSound?.setEnabled(wantOn); } catch (_) {}
+    setSoundSwitch(wantOn);
+    if (wantOn) {
+      try {
+        window.spnSound?.unlock();
+        window.spnSound?.preview();
+      } catch (_) {}
+    }
   });
 }
 
@@ -4258,7 +4798,7 @@ offlineRetry?.addEventListener('click', () => {
   newsLoaded = false;
   try { loadNews(); } catch (_) {}
   refreshProfile();
-  toast('Подключение восстановлено');
+  toast('Подключение восстановлено', 'success');
 });
 
 window.addEventListener('online', syncOfflineState);
@@ -4389,7 +4929,7 @@ if (helpForm) {
         statusEl.textContent = t('helpSent');
       }
       helpForm.reset();
-      try { toast(t('helpSent')); } catch (_) {}
+      try { toast(t('helpSent'), 'success'); } catch (_) {}
     } catch (err) {
       if (statusEl) {
         statusEl.classList.add('is-error');

@@ -132,34 +132,35 @@ p.success {                                                                     
     margin-bottom: 0;                                                                                     /* Убираем отступ снизу, т.к. уже есть у контейнера */
 }
 
-/* КНОПКА ПЕРЕКЛЮЧЕНИЯ ВИДИМОСТИ ПАРОЛЯ (ИСПРАВЛЕННОЕ ВЕРТИКАЛЬНОЕ ВЫРАВНИВАНИЕ) */
-#togglePassword {                                                                                         /* Стили для кнопки переключения видимости пароля */
-    position: absolute;                                                                                   /* Абсолютное позиционирование относительно родительского контейнера */
-    right: 8px;                                                                                           /* Позиционирование справа с отступом 8px от края */
-    top: 50%;                                                                                             /* Позиционирование по вертикали по центру (50% от высоты родителя) */
-    transform: translateY(-50%);                                                                          /* Корректировка позиционирования - смещение на половину собственной высоты для точного центрирования */
-    background: none;                                                                                     /* Прозрачный фон */
-    border: none;                                                                                         /* Без границы */
-    font-size: 20px;                                                                                      /* Размер иконки глаза 20px */
-    cursor: pointer;                                                                                      /* Курсор-указатель при наведении */
-    color: #888;                                                                                          /* Серый цвет иконки */
-    transition: all 0.2s ease;                                                                            /* Плавный переход всех свойств длительностью 0.2 секунды */
-    width: 32px;                                                                                          /* Фиксированная ширина кнопки 32px */
-    height: 32px;                                                                                         /* Фиксированная высота кнопки 32px */
-    display: flex;                                                                                        /* Включаем flexbox для центрирования содержимого */
-    align-items: center;                                                                                  /* Выравнивание содержимого по вертикали по центру */
-    justify-content: center;                                                                              /* Выравнивание содержимого по горизонтали по центру */
-    border-radius: 4px;                                                                                   /* Закругление углов кнопки 4px */
-    z-index: 2;                                                                                           /* Уровень z-index 2 для отображения поверх поля ввода */
-    line-height: 1;                                                                                       /* Высота строки 1 для точного вертикального выравнивания */
-    margin: 0;                                                                                            /* Убираем все внешние отступы */
-    padding: 0;                                                                                           /* Убираем все внутренние отступы */
+/* КНОПКА ПЕРЕКЛЮЧЕНИЯ ВИДИМОСТИ ПАРОЛЯ */
+#togglePassword,
+.password-container .toggle-password {
+    position: absolute;
+    right: 8px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    font-size: 20px;
+    cursor: pointer;
+    color: #888;
+    transition: all 0.2s ease;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    z-index: 2;
+    line-height: 1;
+    margin: 0;
+    padding: 0;
 }
 
-/* СОСТОЯНИЕ НАВЕДЕНИЯ ДЛЯ КНОПКИ ГЛАЗА */
-#togglePassword:hover {                                                                                   /* Стили для кнопки глаза при наведении курсора */
-    color: #333;                                                                                          /* Более темный серый цвет при наведении */
-    background-color: rgba(0, 0, 0, 0.05);                                                               /* Легкий полупрозрачный фон при наведении */
+#togglePassword:hover,
+.password-container .toggle-password:hover {
+    color: #333;
+    background-color: rgba(0, 0, 0, 0.05);
 }
 
 /* СОСТОЯНИЕ АКТИВАЦИИ ДЛЯ КНОПКИ ГЛАЗА */

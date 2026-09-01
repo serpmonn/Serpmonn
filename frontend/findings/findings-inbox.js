@@ -4,7 +4,7 @@ import {
   loadT,
   getFindingT,
 } from '/frontend/scripts/findings-client.js?v=40';
-import { openInboxModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=42';
+import { openInboxModal, initFindingsModals } from '/frontend/scripts/findings-modals.js?v=48';
 
 function pendingInboxPeer() {
   try {

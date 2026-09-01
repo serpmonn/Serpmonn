@@ -25,10 +25,11 @@ function ensureVapid() {
   vapidReady = true;
 }
 
-export function buildDmPushPayload({ senderUsername, body, hasPhoto, hasFinding }) {
+export function buildDmPushPayload({ senderUsername, body, hasPhoto, hasAudio, hasFinding }) {
   const from = String(senderUsername || '').trim().replace(/^@+/, '');
   const text = String(body || '').trim();
   let preview = text.slice(0, 140);
+  if (!preview && hasAudio) preview = 'Голосовое сообщение';
   if (!preview && hasPhoto) preview = 'Фото';
   if (!preview && hasFinding) preview = 'Находка';
   if (!preview) preview = 'Новое сообщение';
@@ -82,16 +83,3 @@ export async function sendWebPushToUser(userId, payload) {
   return { sent };
 }
 
-export async function notifyRecipientOfDm({
-  recipientId,
-  senderUsername,
-  body,
-  hasPhoto,
-  hasFinding,
-}) {
-  if (!recipientId) return { sent: 0 };
-  return sendWebPushToUser(
-    recipientId,
-    buildDmPushPayload({ senderUsername, body, hasPhoto, hasFinding })
-  );
-}

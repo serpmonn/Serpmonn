@@ -120,14 +120,43 @@
   background: #fff5f5;
 }
 
+.password-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.password-container input {
+  margin-bottom: 0;
+  padding-right: 44px;
+}
+
 .password-container .toggle-password {
   position: absolute;
-  right: 10px;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
   font-size: 18px;
-  padding: 4px;
+  line-height: 1;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #888;
+  border-radius: 4px;
+  z-index: 2;
+}
+
+.password-container .toggle-password:hover {
+  color: #333;
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
 .messenger-login-btn {
@@ -347,6 +376,15 @@ body.auth-app-shell input {
   border-color: #e6e6e8;
   background: #fff;
   margin-bottom: 14px;
+}
+
+/* Отступ у контейнера, не у input — иначе глазик смещается вниз */
+body.auth-app-shell .password-container {
+  margin-bottom: 14px;
+}
+
+body.auth-app-shell .password-container input {
+  margin-bottom: 0;
 }
 
 body.auth-app-shell input:focus {

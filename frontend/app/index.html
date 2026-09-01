@@ -2,14 +2,20 @@
 <html lang="ru" class="android-app">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
   <meta name="color-scheme" content="light">
   <meta name="theme-color" content="#ffffff">
   <title>Серпмонн</title>
   <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-  <link rel="stylesheet" href="/frontend/app/app.css?v=76">
+  <link rel="stylesheet" href="/frontend/app/app.css?v=82">
+  <!-- Scripts in head+defer: end-of-body tags were sometimes missing in WebView HTML. -->
+  <script src="/frontend/app/push-client.js?v=3" defer></script>
+  <script src="/frontend/app/push-native.js?v=4" defer></script>
+  <script src="/frontend/app/spn-sound.js?v=2" defer></script>
+  <script src="/frontend/app/app.js?v=119" defer></script>
   <script>
     window.__SPN_ANDROID_APP__ = true;
+    // __SPN_DECOR_FITS_NAV is set by the APK when decor actually insets the WebView.
     (function () {
       try {
         var q = new URLSearchParams(location.search).get('lang');
@@ -23,6 +29,19 @@
       } catch (_) {
         window.__SPN_APP_LOCALE__ = 'ru';
       }
+      // Rescue only if HTML arrived without any app.js tag (WebView truncation).
+      function rescueAppJs() {
+        if (window.__SPN_APP_JS_OK__) return;
+        if (document.querySelector('script[src*="/frontend/app/app.js"]')) return;
+        var s = document.createElement('script');
+        s.src = '/frontend/app/app.js?v=117&rescue=1';
+        s.setAttribute('data-spn-app-rescue', '1');
+        (document.head || document.documentElement).appendChild(s);
+      }
+      document.addEventListener('DOMContentLoaded', function () {
+        setTimeout(rescueAppJs, 0);
+        setTimeout(rescueAppJs, 1200);
+      });
     })();
   </script>
 </head>
@@ -159,6 +178,12 @@
           </button>
         </div>
         <p class="spn-muted" id="spnPushHint" hidden></p>
+        <div class="spn-settings__row" id="spnSoundRow">
+          <span class="spn-settings__label" id="spnSoundLabel">Звуки</span>
+          <button type="button" class="spn-switch" id="spnSoundEnableBtn" role="switch" aria-checked="true" aria-labelledby="spnSoundLabel">
+            <span class="spn-switch__knob" aria-hidden="true"></span>
+          </button>
+        </div>
         <div class="spn-settings__links">
           <button type="button" class="spn-textlink" id="helpOpenBtn" data-help-open>Помощь</button>
           <button type="button" class="spn-textlink" data-open="/frontend/donate/donate.html">Поддержать проект</button>
@@ -306,8 +331,5 @@
     <div id="spnToast" class="spn-toast" hidden></div>
     <div class="spn-sys-nav" aria-hidden="true"></div>
   </div>
-
-  <script src="/frontend/app/push-client.js?v=3"></script>
-  <script src="/frontend/app/app.js?v=84"></script>
 </body>
 </html>

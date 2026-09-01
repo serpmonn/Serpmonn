@@ -139,13 +139,16 @@ export async function getUserIdByEmail(email) {
 export async function getUserById(id) {
   const key = String(id || '').trim();
   if (!key || key.length > 64) return null;
-  const rows = await query('SELECT id, username FROM users WHERE id = ? LIMIT 1', [key]);
+  const rows = await query(
+    'SELECT id, username, avatar_updated_at FROM users WHERE id = ? LIMIT 1',
+    [key]
+  );
   return rows[0] || null;
 }
 
 export async function getUserIdByUsername(username) {
   const rows = await query(
-    'SELECT id, username FROM users WHERE username = ? ORDER BY created_at ASC LIMIT 1',
+    'SELECT id, username, avatar_updated_at FROM users WHERE username = ? ORDER BY created_at ASC LIMIT 1',
     [String(username || '').trim()]
   );
   return rows[0] || null;
@@ -153,7 +156,7 @@ export async function getUserIdByUsername(username) {
 
 export async function listUsersByUsername(username) {
   return query(
-    'SELECT id, username FROM users WHERE username = ? ORDER BY created_at ASC',
+    'SELECT id, username, avatar_updated_at FROM users WHERE username = ? ORDER BY created_at ASC',
     [String(username || '').trim()]
   );
 }

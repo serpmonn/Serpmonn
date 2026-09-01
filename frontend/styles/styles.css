@@ -4960,6 +4960,32 @@ a:visited {
   text-overflow: ellipsis;
 }
 
+.finding-activity-peer-avatar {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: linear-gradient(145deg, #f3f4f6, #e5e7eb);
+  color: #6b7280;
+  font-size: 13px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.finding-activity-peer-avatar[hidden] {
+  display: none !important;
+}
+
+.finding-activity-peer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
 .finding-activity-back {
   flex-shrink: 0;
   width: 36px;
@@ -4977,6 +5003,15 @@ a:visited {
   cursor: pointer;
   -webkit-appearance: none;
   appearance: none;
+}
+
+.finding-activity-back svg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.finding-activity-back[hidden] {
+  display: none !important;
 }
 
 .finding-activity-back:hover {
@@ -5470,6 +5505,36 @@ a:visited {
   color: #9ca3af;
 }
 
+.finding-dm-bubble__time--inline {
+  display: inline;
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.finding-dm-bubble__time--sent {
+  color: #9ca3af;
+}
+
+.finding-dm-bubble__time--read {
+  color: #dc2626;
+}
+
+.finding-dm-bubble__footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+
+.finding-dm-audio__meta-right {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: auto;
+}
+
 .finding-dm-attachment {
   display: block;
   width: 100%;
@@ -5504,17 +5569,152 @@ a:visited {
 .finding-dm-photo {
   display: block;
   margin: 0 0 6px;
-  border-radius: 10px;
-  overflow: hidden;
   line-height: 0;
 }
 
-.finding-dm-photo img {
+.finding-dm-photo__frame {
+  position: relative;
+  display: inline-block;
+  max-width: 240px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f3f4f6;
+}
+
+.finding-dm-photo img,
+.finding-dm-photo__frame > img {
   display: block;
   width: 100%;
   max-width: 240px;
   max-height: 240px;
-  object-fit: cover;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.finding-dm-media__download {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+  z-index: 2;
+  width: 30px;
+  height: 30px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: none;
+  border-radius: 8px;
+  background: rgba(17, 24, 39, 0.68);
+  color: #fff;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+}
+
+.finding-dm-media__download:hover {
+  background: rgba(17, 24, 39, 0.82);
+}
+
+.finding-dm-media__download:active,
+.finding-dm-media__download.is-busy {
+  background: rgba(185, 28, 28, 0.88);
+}
+
+.finding-dm-media__download:disabled {
+  opacity: 0.55;
+  cursor: wait;
+}
+
+.finding-dm-download-icon {
+  display: block;
+}
+
+.finding-dm-compose__pending--photo {
+  align-items: center;
+}
+
+.finding-dm-compose__pending-frame {
+  width: 56px;
+  height: 56px;
+  flex-shrink: 0;
+}
+
+.finding-dm-compose__pending-frame .finding-dm-compose__pending-thumb {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+}
+
+.finding-dm-compose__pending-frame .finding-dm-media__download {
+  right: 3px;
+  bottom: 3px;
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+}
+
+.finding-dm-compose__pending-frame .finding-dm-download-icon {
+  width: 12px;
+  height: 12px;
+}
+
+.finding-dm-audio {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 168px;
+  max-width: 260px;
+}
+
+.finding-dm-audio__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.finding-dm-audio__toolbar .finding-dm-media__download {
+  position: static;
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  box-shadow: none;
+}
+
+.finding-dm-audio__player {
+  display: block;
+  flex: 1;
+  min-width: 0;
+  height: 32px;
+  margin: 0;
+}
+
+.finding-dm-audio__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: 14px;
+}
+
+.finding-dm-audio__duration {
+  font-size: 11px;
+  line-height: 1.2;
+  color: #6b7280;
+  font-variant-numeric: tabular-nums;
+}
+
+.finding-dm-audio__duration--empty {
+  visibility: hidden;
+}
+
+.finding-dm-bubble--voice {
+  padding: 6px 10px 5px;
+}
+
+.finding-dm-bubble--voice .finding-dm-audio {
+  margin: 0;
 }
 
 .finding-dm-compose {
@@ -5563,7 +5763,8 @@ a:visited {
   width: 36px;
   height: 36px;
   border-radius: 8px;
-  object-fit: cover;
+  object-fit: contain;
+  background: #f3f4f6;
 }
 
 .finding-dm-compose__pending-clear {
@@ -5670,6 +5871,88 @@ a:visited {
   font-family: inherit;
   -webkit-appearance: none;
   appearance: none;
+}
+
+.finding-dm-compose__mic {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  transition: border-color 0.15s ease, color 0.15s ease, background 0.15s ease;
+}
+
+.finding-dm-compose__mic:hover {
+  border-color: rgba(220, 53, 69, 0.4);
+  color: #b91c1c;
+  background: rgba(254, 242, 242, 0.5);
+}
+
+.finding-dm-compose__mic.is-recording {
+  border-color: #fecaca;
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.finding-dm-compose__mic svg {
+  display: block;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+
+.finding-dm-compose__recording {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  background: #fff1f2;
+  border: 1px solid #fecaca;
+}
+
+.finding-dm-compose__recording-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #dc2626;
+  animation: finding-dm-rec-pulse 1s ease-in-out infinite;
+}
+
+@keyframes finding-dm-rec-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
+.finding-dm-compose__recording-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #991b1b;
+}
+
+.finding-dm-compose__recording-time {
+  margin-left: auto;
+  font-variant-numeric: tabular-nums;
+  font-size: 13px;
+  color: #7f1d1d;
+}
+
+.finding-dm-compose__recording-cancel {
+  border: none;
+  background: transparent;
+  color: #b91c1c;
+  font-size: 13px;
+  cursor: pointer;
+  padding: 4px 6px;
 }
 
 .finding-dm-compose__send {

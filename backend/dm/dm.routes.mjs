@@ -15,6 +15,11 @@ import {
   isAllowedDmPhotoMime,
   processAndSaveDmPhoto,
 } from './dm-photo.mjs';
+import {
+  getMaxDmAudioBytes,
+  isAllowedDmAudioMime,
+  processAndSaveDmAudio,
+} from './dm-audio.mjs';
 
 const router = express.Router();
 
@@ -39,20 +44,24 @@ router.use((req, res, next) => {
   next();
 });
 
-const dmPhotoUpload = multer({
+const maxUploadBytes = Math.max(getMaxDmPhotoBytes(), getMaxDmAudioBytes());
+const dmMediaUpload = multer({
   storage: multer.memoryStorage(),
-  limits: { fileSize: getMaxDmPhotoBytes(), files: 1 },
+  limits: { fileSize: maxUploadBytes, files: 2 },
 });
 
-function optionalDmPhoto(req, res, next) {
+function optionalDmMedia(req, res, next) {
   const contentType = String(req.headers['content-type'] || '');
   if (!contentType.includes('multipart/form-data')) return next();
-  dmPhotoUpload.single('photo')(req, res, (err) => {
+  dmMediaUpload.fields([
+    { name: 'photo', maxCount: 1 },
+    { name: 'audio', maxCount: 1 },
+  ])(req, res, (err) => {
     if (!err) return next();
     if (err instanceof multer.MulterError && err.code === 'LIMIT_FILE_SIZE') {
-      return res.status(413).json({ error: 'photo_too_large' });
+      return res.status(413).json({ error: 'file_too_large' });
     }
-    return res.status(400).json({ error: 'photo_upload_failed' });
+    return res.status(400).json({ error: 'media_upload_failed' });
   });
 }
 
@@ -104,7 +113,7 @@ router.get('/dm/conversations/:peer/messages', verifyToken, async (req, res) => 
   }
 });
 
-router.post('/dm/conversations/:peer/messages', verifyToken, optionalDmPhoto, async (req, res) => {
+router.post('/dm/conversations/:peer/messages', verifyToken, optionalDmMedia, async (req, res) => {
   try {
     const userId = await resolveDbUserId(req);
     if (!userId) return res.status(401).json({ error: 'unauthorized' });
@@ -112,6 +121,7 @@ router.post('/dm/conversations/:peer/messages', verifyToken, optionalDmPhoto, as
     const peerKey = String(req.params.peer || '').trim();
     const body = String(req.body?.body || '').trim();
     const findingPublicId = String(req.body?.findingPublicId || '').trim();
+    const audioDurationRaw = req.body?.audioDurationSec;
 
     if (!peerKey) return res.status(400).json({ error: 'username_required' });
 
@@ -131,15 +141,39 @@ router.post('/dm/conversations/:peer/messages', verifyToken, optionalDmPhoto, as
       findingId = finding.id;
     }
 
+    const photoFile = req.files?.photo?.[0] || null;
+    const audioFile = req.files?.audio?.[0] || null;
+    // legacy: single('photo') style if somehow still present
+    const legacyPhoto = !photoFile && req.file?.fieldname === 'photo' ? req.file : null;
+    const photo = photoFile || legacyPhoto;
+
     let imageUrl = null;
-    if (req.file) {
-      if (!isAllowedDmPhotoMime(req.file.mimetype)) {
+    if (photo) {
+      if (!isAllowedDmPhotoMime(photo.mimetype)) {
         return res.status(400).json({ error: 'invalid_photo_type' });
       }
-      imageUrl = await processAndSaveDmPhoto(userId, req.file.buffer);
+      imageUrl = await processAndSaveDmPhoto(userId, photo.buffer);
     }
 
-    if (!body && !findingId && !imageUrl) return res.status(400).json({ error: 'empty_message' });
+    let audioUrl = null;
+    let audioDurationSec = null;
+    if (audioFile) {
+      if (!isAllowedDmAudioMime(audioFile.mimetype)) {
+        return res.status(400).json({ error: 'invalid_audio_type' });
+      }
+      if (audioFile.size > getMaxDmAudioBytes()) {
+        return res.status(413).json({ error: 'audio_too_large' });
+      }
+      audioUrl = await processAndSaveDmAudio(userId, audioFile.buffer, audioFile.mimetype);
+      const parsedDuration = Number(audioDurationRaw);
+      if (Number.isFinite(parsedDuration) && parsedDuration > 0) {
+        audioDurationSec = Math.min(120, Math.round(parsedDuration));
+      }
+    }
+
+    if (!body && !findingId && !imageUrl && !audioUrl) {
+      return res.status(400).json({ error: 'empty_message' });
+    }
 
     const { messageId } = await insertDmMessage({
       senderId: userId,
@@ -147,16 +181,19 @@ router.post('/dm/conversations/:peer/messages', verifyToken, optionalDmPhoto, as
       body,
       findingId,
       imageUrl,
+      audioUrl,
+      audioDurationSec,
     });
 
     const senderUsername = (await getUserIdByEmail(req.user.email))?.username || '';
-    import('../push/web-push-send.mjs')
+    import('../push/send-push.mjs')
       .then(({ notifyRecipientOfDm }) =>
         notifyRecipientOfDm({
           recipientId: recipient.id,
           senderUsername,
           body,
           hasPhoto: Boolean(imageUrl),
+          hasAudio: Boolean(audioUrl),
           hasFinding: Boolean(findingId),
         })
       )
@@ -169,10 +206,15 @@ router.post('/dm/conversations/:peer/messages', verifyToken, optionalDmPhoto, as
       body: body || null,
       findingPublicId: findingPublicId || null,
       imageUrl,
+      audioUrl,
+      audioDurationSec,
     });
   } catch (err) {
     if (err.message === 'empty_message') {
       return res.status(400).json({ error: 'empty_message' });
+    }
+    if (err.message === 'audio_too_large') {
+      return res.status(413).json({ error: 'audio_too_large' });
     }
     console.error('[dm] send', err);
     res.status(500).json({ error: 'internal_error' });
