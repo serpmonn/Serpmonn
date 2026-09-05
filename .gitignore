@@ -47,6 +47,19 @@ google-services*.json
 !google-services.json.example
 !**/google-services.json.example
 
+# Backend secrets (Firebase service accounts и прочие ключи) — только на сервере
+backend/secrets/**
+!backend/secrets/.gitignore
+
+# Приватные ключи / подпись (публичный public.key можно трекать)
+backend/config/keys/private.key
+**/keystore.properties
+!**/keystore.properties.example
+*.jks
+*.keystore
+*.p12
+*.pem
+
 # Локальные бэкапы и Android build-артефакты — не в публичный репозиторий
 backups/
 android-app/**/build/
