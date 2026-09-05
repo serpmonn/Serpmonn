@@ -3539,7 +3539,10 @@ a:visited {
 }
 
 /* Скрыть устаревшие элементы выбора языка в меню, если остались */
-[data-lang] { display: none !important; }
+/* Hide legacy menu language chips only — not app settings .spn-lang__btn[data-lang] */
+.menu [data-lang],
+.menu-container [data-lang],
+.lang-switcher [data-lang] { display: none !important; }
 [data-submenu="langSubmenu"],
 #langSubmenu { display: none !important; }
 

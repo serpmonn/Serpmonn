@@ -23,7 +23,7 @@ import {
   renderNotificationItem,
   renderActivityEmpty,
   downloadDmMedia,
-} from './dm-chat.js?v=44';
+} from './dm-chat.js?v=45';
 import { applyShareIconButton, updateLikeControl, updateCommentControl, applyCopyIconButton, applySaveIconButton, renderViewsControl, FINDING_COPY_ICON, FINDING_SHARE_ICON, FINDING_LIKE_ICON } from './finding-icons.js';
 import { closeMenu } from './menu.js';
 
@@ -1578,7 +1578,7 @@ function bindChatThread(modal, username) {
           showToast(t('dmAudioTooShort'));
           return;
         }
-        if (blob.size > 2 * 1024 * 1024) {
+        if (blob.size > 16 * 1024 * 1024) {
           showToast(t('dmAudioTooLarge'));
           return;
         }
@@ -1682,7 +1682,7 @@ function bindChatThread(modal, username) {
       showToast(t('dmAudioInvalid'));
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
+    if (file.size > 16 * 1024 * 1024) {
       showToast(t('dmAudioTooLarge'));
       return;
     }
@@ -1780,8 +1780,11 @@ function bindChatThread(modal, username) {
     if (result.status === 401) return authRedirect();
     if (!result.ok) {
       const err = result.data?.error;
-      if (err === 'photo_too_large' || err === 'file_too_large') showToast(t('dmPhotoTooLarge'));
+      if (err === 'photo_too_large') showToast(t('dmPhotoTooLarge'));
+      else if (err === 'audio_too_large' || (err === 'file_too_large' && audioFile)) showToast(t('dmAudioTooLarge'));
+      else if (err === 'file_too_large') showToast(t('dmPhotoTooLarge'));
       else if (err === 'invalid_photo_type') showToast(t('dmPhotoInvalid'));
+      else if (err === 'invalid_audio_type') showToast(t('dmAudioInvalid'));
       else showToast(t('dmSendFailed'));
       notifyAppSound('error');
       return;

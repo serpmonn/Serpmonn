@@ -409,7 +409,7 @@ export async function exportToPDF() {
       doc.text(String(text), 14, y);
       y += 8;
     };
-    line(tPage('page.title', 'Fuel calculator').replace(/[^\x00-\x7F]/g, '') || 'Fuel calculator');
+    line(tPage('page.title', 'Fuel calculator').replace(/[^\x20-\x7E]/g, '') || 'Fuel calculator');
     line(`Distance: ${inputs.distance} km`);
     line(`Base consumption: ${inputs.fuelConsumption} L/100km`);
     line(`Price: ${inputs.fuelPrice}`);
