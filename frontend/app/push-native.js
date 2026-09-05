@@ -85,6 +85,18 @@
     return { 'X-CSRF-Token': token };
   }
 
+  function resolvePushApp() {
+    try {
+      const appId = String(global.Capacitor?.getConfig?.()?.appId || '').toLowerCase();
+      if (appId === 'ru.serpmonn.dev') return 'dev';
+      if (appId === 'ru.serpmonn') return 'prod';
+    } catch (_) {}
+    try {
+      if (/(?:^|\.)dev\.serpmonn\.ru$/i.test(String(global.location?.hostname || ''))) return 'dev';
+    } catch (_) {}
+    return 'prod';
+  }
+
   async function postToken(token) {
     const headers = await csrfHeader();
     headers['Content-Type'] = 'application/json';
@@ -95,6 +107,7 @@
       body: JSON.stringify({
         token,
         platform: global.Capacitor?.getPlatform?.() || 'android',
+        app: resolvePushApp(),
       }),
     });
     if (!res.ok) throw new Error('fcm_register_failed');
@@ -108,7 +121,7 @@
       method: 'DELETE',
       credentials: 'include',
       headers,
-      body: JSON.stringify({ token }),
+      body: JSON.stringify({ token, app: resolvePushApp() }),
     }).catch(() => {});
   }
 

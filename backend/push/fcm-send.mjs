@@ -4,10 +4,12 @@ import { GoogleAuth } from 'google-auth-library';
 import {
   deleteFcmTokenByHash,
   listFcmTokensForUser,
+  normalizePushApp,
 } from './push.model.mjs';
 
 const FCM_SCOPE = 'https://www.googleapis.com/auth/firebase.messaging';
 const GOOGLE_NO_PROXY = 'oauth2.googleapis.com,fcm.googleapis.com,googleapis.com,.googleapis.com';
+const PUSH_APPS = ['prod', 'dev'];
 
 function withoutOutboundProxy(fn) {
   const proxyKeys = [
@@ -43,7 +45,32 @@ function tokenHash(token) {
   return createHash('sha256').update(String(token || ''), 'utf8').digest('hex');
 }
 
-function loadServiceAccount() {
+function readJsonFile(path) {
+  if (!path || !existsSync(path)) return null;
+  try {
+    return JSON.parse(readFileSync(path, 'utf8'));
+  } catch (err) {
+    console.error('[fcm] failed to read service account', path, err?.message || err);
+    return null;
+  }
+}
+
+function loadServiceAccountForApp(app) {
+  const pushApp = normalizePushApp(app);
+
+  if (pushApp === 'dev') {
+    const inline = String(process.env.FIREBASE_DEV_SERVICE_ACCOUNT_JSON || '').trim();
+    if (inline) {
+      try {
+        return JSON.parse(inline);
+      } catch {
+        console.error('[fcm] invalid FIREBASE_DEV_SERVICE_ACCOUNT_JSON, trying path fallback');
+      }
+    }
+    const path = String(process.env.FIREBASE_DEV_SERVICE_ACCOUNT_PATH || '').trim();
+    return readJsonFile(path);
+  }
+
   const inline = String(process.env.FIREBASE_SERVICE_ACCOUNT_JSON || '').trim();
   if (inline) {
     try {
@@ -53,17 +80,23 @@ function loadServiceAccount() {
     }
   }
   const path = String(process.env.FIREBASE_SERVICE_ACCOUNT_PATH || '').trim();
-  if (!path || !existsSync(path)) return null;
-  try {
-    return JSON.parse(readFileSync(path, 'utf8'));
-  } catch (err) {
-    console.error('[fcm] failed to read service account', err?.message || err);
-    return null;
-  }
+  return readJsonFile(path);
 }
 
 export function isFcmConfigured() {
-  return Boolean(loadServiceAccount());
+  return PUSH_APPS.some((app) => Boolean(loadServiceAccountForApp(app)));
+}
+
+export function isFcmConfiguredForApp(app) {
+  return Boolean(loadServiceAccountForApp(app));
+}
+
+export function getFcmStatus() {
+  return {
+    fcm: isFcmConfigured(),
+    fcmProd: isFcmConfiguredForApp('prod'),
+    fcmDev: isFcmConfiguredForApp('dev'),
+  };
 }
 
 let sendQueue = Promise.resolve();
@@ -87,8 +120,11 @@ async function getAccessToken(creds) {
   });
 }
 
-function absoluteAppUrl(path) {
-  const base = String(process.env.PUSH_APP_ORIGIN || 'https://dev.serpmonn.ru').replace(/\/+$/, '');
+function absoluteAppUrl(path, app = 'prod') {
+  const pushApp = normalizePushApp(app);
+  const prodOrigin = String(process.env.PUSH_APP_ORIGIN || 'https://serpmonn.ru').replace(/\/+$/, '');
+  const devOrigin = String(process.env.PUSH_DEV_APP_ORIGIN || 'https://dev.serpmonn.ru').replace(/\/+$/, '');
+  const base = pushApp === 'dev' ? devOrigin : prodOrigin;
   const raw = String(path || '/frontend/app/index.html?app=1&tab=inbox');
   if (/^https?:\/\//i.test(raw)) return raw;
   return `${base}${raw.startsWith('/') ? raw : `/${raw}`}`;
@@ -160,22 +196,69 @@ function isInvalidToken(result) {
 
 export async function warmUpFcm() {
   if (!isFcmConfigured()) return false;
-  try {
-    const creds = loadServiceAccount();
-    await getAccessToken(creds);
-    return true;
-  } catch (err) {
-    console.error('[fcm] warm-up failed', err?.message || err);
-    return false;
+  let ok = false;
+  for (const app of PUSH_APPS) {
+    const creds = loadServiceAccountForApp(app);
+    if (!creds) continue;
+    try {
+      await getAccessToken(creds);
+      ok = true;
+    } catch (err) {
+      console.error(`[fcm] warm-up failed (${app})`, err?.message || err);
+    }
   }
+  return ok;
+}
+
+async function sendTokensWithCreds(userId, rows, creds, msgPayloadBase) {
+  const projectId = String(creds?.project_id || '').trim();
+  if (!projectId || !rows.length) return 0;
+
+  let sent = 0;
+  let accessToken;
+  try {
+    accessToken = await getAccessToken(creds);
+  } catch (err) {
+    console.error('[fcm] auth failed', userId, projectId, err?.message || err);
+    return 0;
+  }
+
+  for (const row of rows) {
+    const msgPayload = {
+      ...msgPayloadBase,
+      url: absoluteAppUrl(msgPayloadBase.urlPath, row.app),
+    };
+    let result = await sendOneToken(accessToken, projectId, row.token, msgPayload);
+
+    if (!result.ok && (result.code === 'UNAUTHENTICATED' || result.status === 401)) {
+      try {
+        accessToken = await getAccessToken(creds);
+        result = await sendOneToken(accessToken, projectId, row.token, msgPayload);
+      } catch (err) {
+        console.error('[fcm] auth retry failed', userId, err?.message || err);
+        break;
+      }
+    }
+
+    if (result.ok) {
+      sent += 1;
+      continue;
+    }
+
+    if (isInvalidToken(result)) {
+      await deleteFcmTokenByHash(tokenHash(row.token)).catch(() => {});
+      console.warn('[fcm] removed invalid token for', userId, result.fcmErrorCode || result.code);
+      continue;
+    }
+
+    console.error('[fcm] send failed', userId, result.code, result.message);
+  }
+
+  return sent;
 }
 
 export async function sendFcmToUser(userId, payload) {
   if (!userId || !isFcmConfigured()) return { sent: 0 };
-
-  const creds = loadServiceAccount();
-  const projectId = String(creds?.project_id || '').trim();
-  if (!projectId) return { sent: 0 };
 
   const rows = await listFcmTokensForUser(userId);
   if (!rows.length) return { sent: 0 };
@@ -183,46 +266,27 @@ export async function sendFcmToUser(userId, payload) {
   const title = String(payload?.title || 'Serpmonn');
   const body = String(payload?.body || 'Новое сообщение');
   const tag = String(payload?.tag || 'dm');
-  const url = absoluteAppUrl(payload?.url);
+  const urlPath = payload?.url;
   const type = String(payload?.type || 'dm');
-  const msgPayload = { title, body, tag, url, type };
+  const msgPayloadBase = { title, body, tag, urlPath, type };
 
   return withFcmLock(async () => {
-    let sent = 0;
-    let accessToken;
-
-    try {
-      accessToken = await getAccessToken(creds);
-    } catch (err) {
-      console.error('[fcm] auth failed', userId, err?.message || err);
-      return { sent: 0 };
+    const byApp = { prod: [], dev: [] };
+    for (const row of rows) {
+      const app = normalizePushApp(row.app);
+      byApp[app].push({ ...row, app });
     }
 
-    for (const row of rows) {
-      let result = await sendOneToken(accessToken, projectId, row.token, msgPayload);
-
-      if (!result.ok && (result.code === 'UNAUTHENTICATED' || result.status === 401)) {
-        try {
-          accessToken = await getAccessToken(creds);
-          result = await sendOneToken(accessToken, projectId, row.token, msgPayload);
-        } catch (err) {
-          console.error('[fcm] auth retry failed', userId, err?.message || err);
-          break;
-        }
-      }
-
-      if (result.ok) {
-        sent += 1;
+    let sent = 0;
+    for (const app of PUSH_APPS) {
+      const group = byApp[app];
+      if (!group.length) continue;
+      const creds = loadServiceAccountForApp(app);
+      if (!creds) {
+        console.warn(`[fcm] no service account for app=${app}, skip ${group.length} tokens`);
         continue;
       }
-
-      if (isInvalidToken(result)) {
-        await deleteFcmTokenByHash(tokenHash(row.token)).catch(() => {});
-        console.warn('[fcm] removed invalid token for', userId, result.fcmErrorCode || result.code);
-        continue;
-      }
-
-      console.error('[fcm] send failed', userId, result.code, result.message);
+      sent += await sendTokensWithCreds(userId, group, creds, msgPayloadBase);
     }
 
     if (sent === 0 && rows.length) {
