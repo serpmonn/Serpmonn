@@ -17,7 +17,6 @@ import rateLimit from 'express-rate-limit';                                     
 import helmet from 'helmet';                                                                                                     // Импортируем Helmet для установки защитных HTTP-заголовков
 import { doubleCsrf } from 'csrf-csrf';                                                                                          // Импортируем CSRF middleware для защиты от межсайтовых запросов
 import { connectRoutes } from './routes/routes.mjs';                                                                             // Импортируем функцию централизованного подключения маршрутов
-import { ensureUniqueUsernames } from './auth/ensureUniqueUsernames.mjs';
 
 const app = express();                                                                                                           // Создаем экземпляр Express приложения
 app.set('trust proxy', 1);                                                                                                       // Доверяем первому прокси (например, Nginx) для корректного IP
@@ -254,13 +253,9 @@ app.use((err, req, res, next) => {                                              
 const PORT = process.env.AUTH_PORT;                                                                                              // Получаем порт основного сервера из переменной окружения
 
 if (process.env.NODE_ENV !== 'test') {                                                                                           // Не запускаем сервер автоматически в тестовой среде
-    ensureUniqueUsernames()
-        .catch((err) => console.error('[users] unique usernames', err?.message || err))
-        .finally(() => {
-            app.listen(PORT, () => {                                                                                             // Запускаем сервер на указанном порту
-                console.log(`Сервер работает на порту ${PORT}`);                                                                 // Логируем успешный запуск сервера
-            });
-        });
+    app.listen(PORT, () => {                                                                                                     // Запускаем сервер на указанном порту
+        console.log(`Сервер работает на порту ${PORT}`);                                                                         // Логируем успешный запуск сервера
+    });
 }
 
 export default app;                                                                                                              // Экспортируем Express-приложение для тестов и повторного использования

@@ -692,9 +692,9 @@ function matchesLocaleLanguage(text, locale) {
 function looksLikeArticleUrl(url) {
   try {
     const path = new URL(url).pathname;
-    if (/\/20\d{2}([\/\-_]|$)/.test(path)) return true;
+    if (/\/20\d{2}([/_-]|$)/.test(path)) return true;
     if (/\d{5,}/.test(path)) return true;
-    if (/[\/\-_](news|article|story|novosti|post)[\/\-].+/i.test(path)) return true;
+    if (/[/_-](news|article|story|novosti|post)[/-].+/i.test(path)) return true;
     const segs = path.split('/').filter(Boolean);
     // slug статьи: несколько сегментов и последний длинный
     if (segs.length >= 2 && segs[segs.length - 1].length >= 20) return true;

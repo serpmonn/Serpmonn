@@ -603,7 +603,6 @@ async function startMessengerLogin(ev) {
     });
     if (btn) btn.disabled = false;
     // Фоном обновим challenge на следующий раз
-    messengerDeepLink = messengerDeepLink; // keep current for this session
     prefetchNextChallengeAfterOpen();
     return;
   }

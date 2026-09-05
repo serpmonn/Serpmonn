@@ -1,4 +1,10 @@
-import { query } from '../database/config.mjs';
+/**
+ * Одноразовая миграция: заполнить пустые username, переименовать дубликаты,
+ * добавить UNIQUE INDEX uq_users_username.
+ *
+ * Запуск: node backend/database/migrations/ensure-unique-usernames.mjs
+ */
+import { query } from '../config.mjs';
 
 function shortId(id) {
   return String(id || '').replace(/-/g, '').slice(0, 8);
@@ -20,7 +26,18 @@ async function uniqueName(base, id) {
   return candidate;
 }
 
-export async function ensureUniqueUsernames() {
+async function indexExists() {
+  const rows = await query(
+    `SELECT COUNT(*) AS cnt
+     FROM information_schema.STATISTICS
+     WHERE TABLE_SCHEMA = DATABASE()
+       AND TABLE_NAME = 'users'
+       AND INDEX_NAME = 'uq_users_username'`
+  );
+  return rows[0]?.cnt > 0;
+}
+
+async function migrate() {
   const blanks = await query(
     `SELECT id FROM users WHERE username IS NULL OR username = ''`
   );
@@ -50,12 +67,16 @@ export async function ensureUniqueUsernames() {
     }
   }
 
-  try {
-    await query('ALTER TABLE users ADD UNIQUE INDEX uq_users_username (username)');
-    console.log('[users] unique index uq_users_username ready');
-  } catch (err) {
-    if (err?.code !== 'ER_DUP_KEYNAME' && err?.errno !== 1061) {
-      console.error('[users] unique index', err?.message || err);
-    }
+  if (await indexExists()) {
+    console.log('uq_users_username already exists — skip');
+    return;
   }
+
+  await query('ALTER TABLE users ADD UNIQUE INDEX uq_users_username (username)');
+  console.log('[users] unique index uq_users_username created');
 }
+
+migrate().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
