@@ -4,14 +4,15 @@ import android.Manifest;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.webkit.JavascriptInterface;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -21,12 +22,14 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.core.view.WindowInsetsControllerCompat;
 import com.getcapacitor.Bridge;
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.BridgeWebViewClient;
 import com.google.firebase.messaging.FirebaseMessaging;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
 public class MainActivity extends BridgeActivity {
+    private static final String TAG = "SpnPush";
     private static final int NAV_BAR_COLOR = 0xFF2A2A2A;
     private static final int REQ_POST_NOTIFICATIONS = 9102;
     private final Handler uiHandler = new Handler(Looper.getMainLooper());
@@ -40,9 +43,36 @@ public class MainActivity extends BridgeActivity {
         applySystemBars();
         attachNavInsetPublisher();
         Bridge bridge = getBridge();
-        if (bridge != null && bridge.getWebView() != null) {
-            attachJsBridge(bridge.getWebView());
-        }
+        if (bridge == null || bridge.getWebView() == null) return;
+
+        // Capacitor proxies allowNavigation hosts via Java HttpURLConnection.
+        // On some devices (MIUI) that path deadlocks and breaks fetch()/XHR —
+        // including /csrf-token and /api/push/fcm/register. Let Chromium talk
+        // to serpmonn hosts directly (same fix as android-app-dev).
+        bridge.getWebView().setWebViewClient(new BridgeWebViewClient(bridge) {
+            @Override
+            public android.webkit.WebResourceResponse shouldInterceptRequest(
+                    WebView view, WebResourceRequest request) {
+                if (request != null && request.getUrl() != null) {
+                    String host = request.getUrl().getHost();
+                    String path = request.getUrl().getPath();
+                    boolean capacitorHttp =
+                            path != null && path.startsWith("/_capacitor_http_interceptor_");
+                    if (!capacitorHttp && host != null) {
+                        String h = host.toLowerCase();
+                        if (h.equals("serpmonn.ru")
+                                || h.equals("www.serpmonn.ru")
+                                || h.equals("dev.serpmonn.ru")
+                                || h.endsWith(".serpmonn.ru")) {
+                            return null;
+                        }
+                    }
+                }
+                return super.shouldInterceptRequest(view, request);
+            }
+        });
+
+        attachJsBridge(bridge.getWebView());
     }
 
     @Override
@@ -124,17 +154,21 @@ public class MainActivity extends BridgeActivity {
                                     task -> {
                                         if (task.isSuccessful() && task.getResult() != null) {
                                             out.set(task.getResult());
+                                            Log.i(TAG, "FCM token ok, len=" + task.getResult().length());
                                         } else {
                                             Exception err = task.getException();
                                             String msg = err != null ? err.getMessage() : "token_failed";
+                                            Log.e(TAG, "FCM getToken failed", err);
                                             out.set("ERR:" + (msg != null ? msg : "token_failed"));
                                         }
                                         latch.countDown();
                                     });
                     if (!latch.await(25, TimeUnit.SECONDS)) {
+                        Log.e(TAG, "FCM getToken timeout");
                         return "ERR:timeout";
                     }
                 } catch (Exception e) {
+                    Log.e(TAG, "FCM getToken exception", e);
                     String msg = e.getMessage();
                     return "ERR:" + e.getClass().getSimpleName()
                             + (msg != null ? (":" + msg) : "");
