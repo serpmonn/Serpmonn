@@ -1,6 +1,7 @@
 import {
   apiGet,
   apiPost,
+  apiPostForm,
   apiPatch,
   buildFindingViewUrl,
   buildAuthUrl,
@@ -8,7 +9,7 @@ import {
   getFindingT,
   showToast,
   copyTextToClipboard,
-} from './findings-client.js';
+} from './findings-client.js?v=41';
 import {
   escapeHtml,
   renderFindingContent,
@@ -21,7 +22,8 @@ import {
   renderDmFindingPickerList,
   renderNotificationItem,
   renderActivityEmpty,
-} from './dm-chat.js';
+  downloadDmMedia,
+} from './dm-chat.js?v=45';
 import { applyShareIconButton, updateLikeControl, updateCommentControl, applyCopyIconButton, applySaveIconButton, renderViewsControl, FINDING_COPY_ICON, FINDING_SHARE_ICON, FINDING_LIKE_ICON } from './finding-icons.js';
 import { closeMenu } from './menu.js';
 
@@ -31,8 +33,88 @@ let onInboxRead = null;
 let onNotificationsRead = null;
 
 const feedState = { mode: 'all', q: '', offset: 0, items: [], hasMore: false };
-const inboxState = { view: 'dialogs', username: null, conversations: [], messages: [], pendingFinding: null, newDialogOpen: false };
+const inboxState = {
+  view: 'dialogs',
+  username: null,
+  peerId: null,
+  peerAvatarUrl: null,
+  conversations: [],
+  messages: [],
+  pendingFinding: null,
+  pendingPhoto: null,
+  pendingAudio: null,
+  newDialogOpen: false,
+  voiceRecording: null,
+};
+
+function dmPeerKey() {
+  return inboxState.peerId || inboxState.username || '';
+}
+
+function sameThreadPeer(peer) {
+  const key = String(peer || '');
+  if (!key) return false;
+  return key === String(inboxState.peerId || '') || key === String(inboxState.username || '');
+}
+
+function isNestedAppIframe() {
+  try {
+    return isAppShell() && window.parent && window.parent !== window;
+  } catch {
+    return false;
+  }
+}
+
+function revokePendingPhoto() {
+  const previewUrl = inboxState.pendingPhoto?.previewUrl;
+  if (previewUrl && previewUrl.startsWith('blob:')) {
+    try { URL.revokeObjectURL(previewUrl); } catch { /* ignore */ }
+  }
+  inboxState.pendingPhoto = null;
+}
+
+function revokePendingAudio() {
+  inboxState.pendingAudio = null;
+}
+
+function probeAudioFileDuration(file) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const audio = new Audio();
+    audio.preload = 'metadata';
+    audio.onloadedmetadata = () => {
+      const duration = Number(audio.duration);
+      try { URL.revokeObjectURL(url); } catch { /* ignore */ }
+      resolve(Number.isFinite(duration) && duration > 0 ? Math.round(duration) : 0);
+    };
+    audio.onerror = () => {
+      try { URL.revokeObjectURL(url); } catch { /* ignore */ }
+      resolve(0);
+    };
+    audio.src = url;
+  });
+}
+
+function stopVoiceRecording({ discard = false } = {}) {
+  const rec = inboxState.voiceRecording;
+  if (!rec) return;
+  try {
+    if (rec.timerId) clearInterval(rec.timerId);
+  } catch { /* ignore */ }
+  rec.discard = discard;
+  try {
+    if (rec.mediaRecorder && rec.mediaRecorder.state !== 'inactive') {
+      rec.mediaRecorder.stop();
+      return;
+    }
+  } catch { /* ignore */ }
+  try {
+    rec.stream?.getTracks?.().forEach((track) => track.stop());
+  } catch { /* ignore */ }
+  inboxState.voiceRecording = null;
+}
 const activityState = { tab: 'inbox', unreadDm: 0, unreadNotifications: 0 };
+let threadPollTimer = 0;
 let shareSendContext = null;
 let shareMenuContext = null;
 let modalStackZ = 100000;
@@ -41,10 +123,41 @@ function tk(key, vars) {
   return getFindingT(`finding.${key}`, vars);
 }
 
-function openPanel(modal) {
+function isAppShell() {
+  try {
+    return Boolean(window.__SPN_ANDROID_APP__);
+  } catch {
+    return false;
+  }
+}
+
+function openPanel(modal, opts = {}) {
   if (!modal) return;
+
+  if (isAppShell() && opts.inlineHost) {
+    const host = typeof opts.inlineHost === 'string'
+      ? document.querySelector(opts.inlineHost)
+      : opts.inlineHost;
+      if (host) {
+      modal.classList.add('finding-panel-modal--inline');
+      if (!host.contains(modal)) {
+        host.innerHTML = '';
+        host.appendChild(modal);
+      }
+      modal.style.removeProperty('display');
+      modal.style.display = 'flex';
+      modal.style.zIndex = '';
+      requestAnimationFrame(() => {
+        modal.setAttribute('data-open', 'true');
+      });
+      return;
+    }
+  }
+
+  modal.classList.remove('finding-panel-modal--inline');
   modalStackZ += 1;
   modal.style.zIndex = String(modalStackZ);
+  modal.style.removeProperty('display');
   modal.style.display = 'flex';
   requestAnimationFrame(() => {
     modal.setAttribute('data-open', 'true');
@@ -196,6 +309,10 @@ function ensureActivityModal() {
     modal.remove();
     modal = null;
   }
+  if (modal && !modal.querySelector('[data-inbox-peer-avatar]')) {
+    modal.remove();
+    modal = null;
+  }
   if (modal) return modal;
 
   modal = document.createElement('div');
@@ -209,7 +326,10 @@ function ensureActivityModal() {
     <div class="ai-share-dialog finding-panel-dialog finding-inbox-dialog finding-activity-dialog" tabindex="-1">
       <header class="finding-activity-header">
         <div class="finding-activity-header__main">
-          <button type="button" class="finding-activity-back" data-inbox-back hidden aria-label=""></button>
+          <button type="button" class="finding-activity-back" data-inbox-back hidden aria-label="">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <span class="finding-activity-peer-avatar" data-inbox-peer-avatar hidden aria-hidden="true"></span>
           <h2 class="finding-panel-title finding-activity-title" data-activity-title></h2>
           <h2 class="finding-panel-title finding-activity-thread-title" data-inbox-thread-title hidden></h2>
         </div>
@@ -240,7 +360,7 @@ function ensureActivityModal() {
       </div>
       <section class="finding-activity-panel finding-dm-panel" data-activity-panel="inbox">
         <div class="finding-panel-body finding-dm-body" data-inbox-list aria-live="polite"></div>
-        <div data-inbox-compose-wrap hidden></div>
+        <div class="finding-dm-compose-wrap" data-inbox-compose-wrap hidden></div>
       </section>
       <section class="finding-activity-panel" data-activity-panel="notifications" hidden>
         <div class="finding-panel-body" data-notifications-list aria-live="polite"></div>
@@ -253,11 +373,16 @@ function ensureActivityModal() {
   bindActivityIntro(modal);
 
   modal.querySelector('[data-inbox-back]')?.addEventListener('click', () => {
+    stopThreadPoll();
     inboxState.view = 'dialogs';
     inboxState.username = null;
+    inboxState.peerId = null;
+    inboxState.peerAvatarUrl = null;
     inboxState.pendingFinding = null;
+    revokePendingPhoto();
     inboxState.newDialogOpen = false;
     loadActivityInto(modal);
+    notifyAppInboxState();
   });
 
   modal.querySelectorAll('[data-activity-tab]').forEach((tab) => {
@@ -267,9 +392,14 @@ function ensureActivityModal() {
       activityState.tab = nextTab;
       inboxState.view = 'dialogs';
       inboxState.username = null;
+      inboxState.peerId = null;
+      inboxState.peerAvatarUrl = null;
       inboxState.pendingFinding = null;
+      revokePendingPhoto();
       inboxState.newDialogOpen = false;
+      stopThreadPoll();
       loadActivityInto(modal);
+      notifyAppInboxState();
     });
   });
 
@@ -297,28 +427,33 @@ async function updateActivityTabBadges(modal) {
   activityState.unreadDm = dmResp.ok ? Number(dmResp.data?.count) || 0 : 0;
   activityState.unreadNotifications = notifResp.ok ? Number(notifResp.data?.count) || 0 : 0;
   if (modal) localizeActivityTabs(modal);
+  notifyAppUnread();
 }
 
 function setActivityPanels(modal) {
+  const messagesOnly = modal.classList.contains('finding-activity--messages-only');
   const inThread = activityState.tab === 'inbox' && inboxState.view === 'thread';
   const inInboxDialogs = activityState.tab === 'inbox' && inboxState.view === 'dialogs';
   const tabsEl = modal.querySelector('[data-activity-tabs]');
   const activityTitleEl = modal.querySelector('[data-activity-title]');
   const threadTitleEl = modal.querySelector('[data-inbox-thread-title]');
   const backBtn = modal.querySelector('[data-inbox-back]');
+  const peerAvatarEl = modal.querySelector('[data-inbox-peer-avatar]');
   const writeBtn = modal.querySelector('[data-inbox-new-open]');
 
-  if (tabsEl) tabsEl.hidden = inThread;
+  modal.classList.toggle('finding-activity--thread', inThread);
+
+  if (tabsEl) tabsEl.hidden = inThread || messagesOnly;
 
   if (activityTitleEl) {
     activityTitleEl.hidden = inThread;
-    activityTitleEl.textContent = tk('activityTitle');
+    activityTitleEl.textContent = messagesOnly ? tk('inboxTitle') : tk('activityTitle');
   }
 
   if (threadTitleEl) {
     threadTitleEl.hidden = !inThread;
     if (inThread && inboxState.username) {
-      threadTitleEl.textContent = tk('byUser', { user: inboxState.username });
+      threadTitleEl.textContent = `@${inboxState.username}`;
     }
   }
 
@@ -326,6 +461,25 @@ function setActivityPanels(modal) {
     backBtn.hidden = !inThread;
     backBtn.setAttribute('aria-label', tk('inboxBack'));
     backBtn.title = tk('inboxBack');
+    if (inThread && !backBtn.querySelector('svg')) {
+      backBtn.innerHTML =
+        '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>';
+    }
+  }
+
+  if (peerAvatarEl) {
+    peerAvatarEl.hidden = !inThread;
+    if (inThread) {
+      const letter = String(inboxState.username || '?').replace(/^@/, '').charAt(0).toUpperCase() || '?';
+      const url = typeof inboxState.peerAvatarUrl === 'string' && inboxState.peerAvatarUrl.startsWith('/uploads/avatars/')
+        ? inboxState.peerAvatarUrl
+        : '';
+      peerAvatarEl.innerHTML = url
+        ? `<img src="${url.replace(/"/g, '&quot;')}" alt="" width="32" height="32" loading="lazy" decoding="async" data-fallback="${letter}" onerror="this.onerror=null;this.replaceWith(document.createTextNode(this.dataset.fallback||'?'));">`
+        : letter;
+    } else {
+      peerAvatarEl.innerHTML = '';
+    }
   }
 
   if (writeBtn) {
@@ -351,6 +505,7 @@ function updateActivityIntro(modal) {
   const introEl = modal?.querySelector('[data-activity-intro]');
   if (!introEl) return;
 
+  const messagesOnly = modal.classList.contains('finding-activity--messages-only');
   const inThread = activityState.tab === 'inbox' && inboxState.view === 'thread';
   let seen = false;
   try {
@@ -359,7 +514,7 @@ function updateActivityIntro(modal) {
     seen = true;
   }
 
-  introEl.hidden = seen || inThread;
+  introEl.hidden = seen || inThread || messagesOnly || isAppShell();
   const textEl = introEl.querySelector('[data-activity-intro-text]');
   if (textEl) textEl.textContent = tk('activityIntro');
 }
@@ -417,12 +572,25 @@ function updateNewDialogToolbar(modal) {
   if (cancel) cancel.textContent = t('cancelLabel');
 }
 
-async function startInboxThread(modal, username) {
+async function startInboxThread(modal, username, extra = {}) {
   const peer = normalizeDmUsername(username);
-  if (!peer) return;
+  const peerId = String(extra.peerId || '').trim();
+  const keys = [...new Set([peerId, peer].filter(Boolean))];
+  if (!keys.length) return;
 
-  const { ok, status } = await apiGet(`/api/dm/conversations/${encodeURIComponent(peer)}/messages`);
-  if (status === 401) return authRedirect();
+  let ok = false;
+  let status = 0;
+  let data = {};
+  for (const key of keys) {
+    const result = await apiGet(`/api/dm/conversations/${encodeURIComponent(key)}/messages`);
+    status = result.status;
+    if (status === 401) return authRedirect();
+    if (result.ok) {
+      ok = true;
+      data = result.data || {};
+      break;
+    }
+  }
   if (!ok) {
     if (status === 404) showToast(tk('userNotFound'));
     else showToast(tk('loadFailed'));
@@ -431,8 +599,14 @@ async function startInboxThread(modal, username) {
 
   inboxState.newDialogOpen = false;
   inboxState.view = 'thread';
-  inboxState.username = peer;
+  inboxState.username = data?.peerUsername || peer;
+  inboxState.peerId = data?.peerId || peerId || '';
+  inboxState.peerAvatarUrl = data?.peerAvatarUrl
+    || extra.peerAvatarUrl
+    || inboxState.peerAvatarUrl
+    || null;
 
+  notifyAppInboxState();
   const input = modal.querySelector('[data-inbox-new-input]');
   const suggest = modal.querySelector('[data-inbox-new-suggest]');
   if (input) input.value = '';
@@ -505,11 +679,11 @@ function bindNewDialogToolbar(modal) {
       suggest.innerHTML = users
         .map(
           (user) =>
-            `<li><button type="button" class="finding-dm-new-suggest__item" data-inbox-new-pick="${escapeHtml(user.username)}">@${escapeHtml(user.username)}</button></li>`
+            `<li><button type="button" class="finding-dm-new-suggest__item" data-inbox-new-pick="${escapeHtml(user.username)}" data-inbox-new-pick-id="${escapeHtml(user.id || '')}">@${escapeHtml(user.username)}</button></li>`
         )
         .join('');
       suggest.querySelectorAll('[data-inbox-new-pick]').forEach((btn) => {
-        btn.addEventListener('click', () => startInboxThread(modal, btn.dataset.inboxNewPick));
+        btn.addEventListener('click', () => startInboxThread(modal, btn.dataset.inboxNewPick, { peerId: btn.dataset.inboxNewPickId }));
       });
     }, 250);
   });
@@ -525,20 +699,32 @@ async function loadActivityInto(modal) {
   }
 }
 
-export async function openActivityModal(tab = 'inbox') {
+export async function openActivityModal(tab = 'inbox', opts = {}) {
   await loadT();
-  activityState.tab = tab === 'notifications' ? 'notifications' : 'inbox';
+  const messagesOnly = Boolean(opts.messagesOnly) || (isAppShell() && tab !== 'notifications');
+  activityState.tab = (!messagesOnly && tab === 'notifications') ? 'notifications' : 'inbox';
   if (activityState.tab === 'inbox') {
     inboxState.view = 'dialogs';
     inboxState.username = null;
+    inboxState.peerId = null;
+    inboxState.peerAvatarUrl = null;
     inboxState.conversations = [];
     inboxState.messages = [];
     inboxState.pendingFinding = null;
+    revokePendingPhoto();
     inboxState.newDialogOpen = false;
   }
   const modal = ensureActivityModal();
-  openPanel(modal);
+  modal.classList.toggle('finding-activity--messages-only', messagesOnly);
+  openPanel(modal, {
+    inlineHost: isAppShell() ? '#findings-inbox-list' : null,
+  });
   await loadActivityInto(modal);
+  const openPeerId = String(opts.openPeerId || '').trim();
+  const openUsername = normalizeDmUsername(opts.openUsername || opts.username || '');
+  if ((openPeerId || openUsername) && activityState.tab === 'inbox') {
+    await startInboxThread(modal, openUsername, { peerId: openPeerId });
+  }
 }
 
 function ensureInboxModal() {
@@ -608,6 +794,28 @@ function ensureFeedModal() {
   });
 
   return modal;
+}
+
+async function syncFeedGuestTabs(modal) {
+  if (!modal) return;
+  const followingTab = modal.querySelector('[data-feed-mode="following"]');
+  if (!followingTab) return;
+  let loggedIn = false;
+  try {
+    const auth = await apiGet('/auth/protected');
+    loggedIn = Boolean(auth?.ok);
+  } catch (_) {
+    loggedIn = false;
+  }
+  followingTab.hidden = !loggedIn;
+  if (!loggedIn && feedState.mode === 'following') {
+    feedState.mode = 'all';
+    modal.querySelectorAll('.finding-feed-tab').forEach((t) => {
+      t.classList.toggle('finding-feed-tab--active', t.dataset.feedMode === 'all');
+    });
+  }
+  const tabsWrap = modal.querySelector('.finding-feed-tabs');
+  if (tabsWrap) tabsWrap.classList.toggle('finding-feed-tabs--guest', !loggedIn);
 }
 
 function ensureNotificationsModal() {
@@ -924,6 +1132,7 @@ function ensureShareSendModal() {
     closePanel(modal);
     const toastKey = ctx.replyToUsername ? 'replySent' : 'shareSent';
     showToast(tk(toastKey, { username: data?.toUsername || toUsername }));
+    notifyAppSound('send');
     ctx.onComplete?.({ ok: true, publicId });
     shareSendContext = null;
   });
@@ -1141,10 +1350,21 @@ function setInboxComposeVisible(modal, visible) {
   if (!wrap) return;
   wrap.hidden = !visible;
   if (visible) {
-    wrap.innerHTML = renderChatComposeBar((key, vars) => tk(key, vars), inboxState.pendingFinding);
+    wrap.innerHTML = renderChatComposeBar(
+      (key, vars) => tk(key, vars),
+      inboxState.pendingFinding,
+      inboxState.pendingPhoto,
+      inboxState.pendingAudio,
+      inboxState.voiceRecording
+        ? { active: true, elapsedSec: inboxState.voiceRecording.elapsedSec || 0 }
+        : null
+    );
     wrap.dataset.boundUsername = '';
   } else {
     inboxState.pendingFinding = null;
+    revokePendingPhoto();
+    revokePendingAudio();
+    stopVoiceRecording({ discard: true });
   }
 }
 
@@ -1207,7 +1427,32 @@ async function openDmFindingPicker(onSelect) {
   });
 }
 
+function ensureMediaDownloadHandlers(modal) {
+  if (!modal || modal.dataset.mediaDownloadBound) return;
+  modal.dataset.mediaDownloadBound = '1';
+  modal.addEventListener('click', async (event) => {
+    const btn = event.target.closest('[data-action="download-media"]');
+    if (!btn) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const url = btn.getAttribute('data-media-url') || '';
+    const name = btn.getAttribute('data-media-name') || 'download';
+    if (!url) return;
+    if (btn.disabled) return;
+    btn.disabled = true;
+    btn.classList.add('is-busy');
+    try {
+      const ok = await downloadDmMedia(url, name);
+      if (!ok) showToast(tk('dmDownloadFailed'));
+    } finally {
+      btn.disabled = false;
+      btn.classList.remove('is-busy');
+    }
+  });
+}
+
 function bindChatThread(modal, username) {
+  ensureMediaDownloadHandlers(modal);
   const listEl = modal.querySelector('[data-inbox-list]');
   const wrap = modal.querySelector('[data-inbox-compose-wrap]');
   const composeForm = modal.querySelector('[data-inbox-compose]');
@@ -1225,7 +1470,162 @@ function bindChatThread(modal, username) {
   if (!wrap || wrap.dataset.boundUsername === username) return;
   wrap.dataset.boundUsername = username;
 
+  const attachWrap = wrap.querySelector('.finding-dm-compose__attach-wrap');
+  const attachToggle = wrap.querySelector('[data-inbox-compose-attach-toggle]');
+  const attachMenu = wrap.querySelector('[data-inbox-compose-attach-menu]');
+  const photoInput = wrap.querySelector('[data-inbox-compose-photo-input]');
+  const audioInput = wrap.querySelector('[data-inbox-compose-audio-input]');
+  const voiceBtn = wrap.querySelector('[data-inbox-compose-voice]');
+
+  const closeAttachMenu = () => {
+    if (!attachMenu || attachMenu.hidden) return;
+    attachMenu.hidden = true;
+    attachToggle?.setAttribute('aria-expanded', 'false');
+  };
+
+  const refreshCompose = () => {
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
+  };
+
+  const sendVoiceBlob = async (blob, mimeType, durationSec) => {
+    if (!blob || !blob.size) return;
+    const sendBtn = modal.querySelector('[data-inbox-compose-send]');
+    if (sendBtn) sendBtn.disabled = true;
+    const formData = new FormData();
+    const ext = mimeType.includes('ogg') ? 'ogg' : mimeType.includes('mp4') ? 'm4a' : 'webm';
+    formData.append('audio', blob, `voice.${ext}`);
+    formData.append('audioDurationSec', String(Math.max(1, Math.round(durationSec || 1))));
+    const path = `/api/dm/conversations/${encodeURIComponent(dmPeerKey() || username)}/messages`;
+    const result = await apiPostForm(path, formData);
+    if (sendBtn) sendBtn.disabled = false;
+    if (result.status === 401) return authRedirect();
+    if (!result.ok) {
+      const err = result.data?.error;
+      if (err === 'audio_too_large' || err === 'file_too_large') showToast(t('dmAudioTooLarge'));
+      else if (err === 'invalid_audio_type') showToast(t('dmAudioInvalid'));
+      else showToast(t('dmSendFailed'));
+      notifyAppSound('error');
+      return;
+    }
+    await loadInboxInto(modal);
+    bindChatThread(modal, username);
+    onInboxRead?.();
+    notifyAppSound('send');
+  };
+
+  const startVoiceRecording = async () => {
+    if (inboxState.voiceRecording?.active) return;
+    if (!navigator.mediaDevices?.getUserMedia || !window.MediaRecorder) {
+      showToast(t('dmAudioUnsupported'));
+      return;
+    }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: {
+          echoCancellation: true,
+          noiseSuppression: true,
+          channelCount: 1,
+        },
+      });
+      // Android WebView: getUserMedia often hides system nav — ask native shell to restore
+      try {
+        if (typeof window.spnRestoreAndroidNav === 'function') {
+          window.spnRestoreAndroidNav();
+        } else if (typeof window.SpnAndroid?.restoreSystemBars === 'function') {
+          window.SpnAndroid.restoreSystemBars();
+        }
+      } catch { /* ignore */ }
+      const mimeType = MediaRecorder.isTypeSupported('audio/webm;codecs=opus')
+        ? 'audio/webm;codecs=opus'
+        : MediaRecorder.isTypeSupported('audio/ogg;codecs=opus')
+          ? 'audio/ogg;codecs=opus'
+          : MediaRecorder.isTypeSupported('audio/webm')
+            ? 'audio/webm'
+            : '';
+      const mediaRecorder = mimeType
+        ? new MediaRecorder(stream, { mimeType, audioBitsPerSecond: 48000 })
+        : new MediaRecorder(stream);
+      const chunks = [];
+      const startedAt = Date.now();
+      const state = {
+        active: true,
+        discard: false,
+        mediaRecorder,
+        stream,
+        chunks,
+        startedAt,
+        elapsedSec: 0,
+        timerId: 0,
+        mimeType: mediaRecorder.mimeType || mimeType || 'audio/webm',
+      };
+      inboxState.voiceRecording = state;
+
+      mediaRecorder.addEventListener('dataavailable', (event) => {
+        if (event.data?.size) chunks.push(event.data);
+      });
+      mediaRecorder.addEventListener('stop', async () => {
+        try {
+          stream.getTracks().forEach((track) => track.stop());
+        } catch { /* ignore */ }
+        const discard = Boolean(state.discard);
+        const durationSec = Math.max(1, Math.round((Date.now() - startedAt) / 1000));
+        inboxState.voiceRecording = null;
+        refreshCompose();
+        if (discard || !chunks.length) return;
+        const blob = new Blob(chunks, { type: state.mimeType || 'audio/webm' });
+        if (blob.size < 200) {
+          showToast(t('dmAudioTooShort'));
+          return;
+        }
+        if (blob.size > 16 * 1024 * 1024) {
+          showToast(t('dmAudioTooLarge'));
+          return;
+        }
+        await sendVoiceBlob(blob, state.mimeType || 'audio/webm', durationSec);
+      });
+
+      mediaRecorder.start(250);
+      notifyAppSound('record');
+      state.timerId = setInterval(() => {
+        if (!inboxState.voiceRecording) return;
+        const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+        inboxState.voiceRecording.elapsedSec = elapsed;
+        const timeEl = modal.querySelector('[data-inbox-compose-recording-time]');
+        if (timeEl) {
+          const m = Math.floor(elapsed / 60);
+          const s = elapsed % 60;
+          timeEl.textContent = `${m}:${String(s).padStart(2, '0')}`;
+        }
+        if (elapsed >= 120) {
+          stopVoiceRecording({ discard: false });
+        }
+      }, 250);
+      refreshCompose();
+    } catch (err) {
+      console.error('[dm] voice record', err);
+      const name = String(err?.name || '');
+      const msg = String(err?.message || '');
+      if (name === 'NotAllowedError' || /permission|denied|not allowed/i.test(msg)) {
+        showToast(t('dmAudioPermission'));
+      } else if (name === 'NotFoundError') {
+        showToast(t('dmAudioUnsupported'));
+      } else {
+        showToast(t('dmAudioPermission'));
+      }
+    }
+  };
+
+  attachToggle?.addEventListener('click', (event) => {
+    event.stopPropagation();
+    if (!attachMenu) return;
+    const nextHidden = !attachMenu.hidden;
+    attachMenu.hidden = nextHidden;
+    attachToggle.setAttribute('aria-expanded', nextHidden ? 'false' : 'true');
+  });
+
   wrap.querySelector('[data-inbox-compose-attach]')?.addEventListener('click', () => {
+    closeAttachMenu();
     openDmFindingPicker((finding) => {
       inboxState.pendingFinding = finding;
       setInboxComposeVisible(modal, true);
@@ -1234,44 +1634,351 @@ function bindChatThread(modal, username) {
     });
   });
 
+  wrap.querySelector('[data-inbox-compose-photo]')?.addEventListener('click', () => {
+    closeAttachMenu();
+    photoInput?.click();
+  });
+
+  wrap.querySelector('[data-inbox-compose-audio-file]')?.addEventListener('click', () => {
+    closeAttachMenu();
+    audioInput?.click();
+  });
+
+  photoInput?.addEventListener('change', () => {
+    const file = photoInput.files?.[0];
+    photoInput.value = '';
+    if (!file) return;
+    const allowed = ['image/jpeg', 'image/png', 'image/webp'];
+    if (file.type && !allowed.includes(file.type) && !file.type.startsWith('image/')) {
+      showToast(t('dmPhotoInvalid'));
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      showToast(t('dmPhotoTooLarge'));
+      return;
+    }
+    revokePendingPhoto();
+    revokePendingAudio();
+    inboxState.pendingPhoto = {
+      file,
+      name: file.name || 'photo.jpg',
+      previewUrl: URL.createObjectURL(file),
+    };
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
+    modal.querySelector('[data-inbox-compose-input]')?.focus();
+  });
+
+  audioInput?.addEventListener('change', async () => {
+    const file = audioInput.files?.[0];
+    audioInput.value = '';
+    if (!file) return;
+    const allowed = [
+      'audio/webm', 'audio/ogg', 'audio/mp4', 'audio/mpeg', 'audio/wav', 'audio/x-wav',
+    ];
+    const mime = String(file.type || '').toLowerCase();
+    const baseMime = mime.split(';')[0].trim();
+    if (mime && !allowed.includes(mime) && !allowed.includes(baseMime) && !mime.startsWith('audio/')) {
+      showToast(t('dmAudioInvalid'));
+      return;
+    }
+    if (file.size > 16 * 1024 * 1024) {
+      showToast(t('dmAudioTooLarge'));
+      return;
+    }
+    revokePendingPhoto();
+    revokePendingAudio();
+    let durationSec = 0;
+    try {
+      durationSec = await probeAudioFileDuration(file);
+    } catch { /* ignore */ }
+    inboxState.pendingAudio = { file, name: file.name || t('dmAudioFileAttachment'), durationSec };
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
+    modal.querySelector('[data-inbox-compose-input]')?.focus();
+  });
+
+  wrap.querySelector('[data-inbox-compose-clear-photo]')?.addEventListener('click', () => {
+    revokePendingPhoto();
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
+  });
+
+  wrap.querySelector('[data-inbox-compose-clear-audio]')?.addEventListener('click', () => {
+    revokePendingAudio();
+    setInboxComposeVisible(modal, true);
+    bindChatThread(modal, username);
+  });
+
   wrap.querySelector('[data-inbox-compose-clear]')?.addEventListener('click', () => {
     inboxState.pendingFinding = null;
     setInboxComposeVisible(modal, true);
     bindChatThread(modal, username);
   });
 
+  voiceBtn?.addEventListener('click', () => {
+    closeAttachMenu();
+    if (inboxState.voiceRecording?.active) {
+      stopVoiceRecording({ discard: false });
+      return;
+    }
+    revokePendingAudio();
+    startVoiceRecording();
+  });
+
+  wrap.querySelector('[data-inbox-compose-voice-cancel]')?.addEventListener('click', () => {
+    stopVoiceRecording({ discard: true });
+    refreshCompose();
+  });
+
+  const COMPOSE_MIN_H = 44;
+  const COMPOSE_MAX_H = 120;
+  const fitComposeInput = (el) => {
+    if (!el) return;
+    el.style.height = `${COMPOSE_MIN_H}px`;
+    const next = Math.min(COMPOSE_MAX_H, Math.max(COMPOSE_MIN_H, el.scrollHeight));
+    el.style.height = `${next}px`;
+  };
+  input?.addEventListener('input', () => fitComposeInput(input));
+  fitComposeInput(input);
+
   composeForm?.addEventListener('submit', async (event) => {
     event.preventDefault();
+    if (inboxState.voiceRecording?.active) return;
     const body = String(input?.value || '').trim();
     const findingPublicId = inboxState.pendingFinding?.publicId || '';
-    if (!body && !findingPublicId) return;
+    const photoFile = inboxState.pendingPhoto?.file || null;
+    const audioFile = inboxState.pendingAudio?.file || null;
+    if (!body && !findingPublicId && !photoFile && !audioFile) return;
 
     const sendBtn = composeForm.querySelector('[data-inbox-compose-send]');
     if (sendBtn) sendBtn.disabled = true;
 
-    const payload = {};
-    if (body) payload.body = body;
-    if (findingPublicId) payload.findingPublicId = findingPublicId;
-
-    const { ok, status } = await apiPost(
-      `/api/dm/conversations/${encodeURIComponent(username)}/messages`,
-      payload
-    );
+    const path = `/api/dm/conversations/${encodeURIComponent(dmPeerKey() || username)}/messages`;
+    let result;
+    if (photoFile || audioFile) {
+      const formData = new FormData();
+      if (body) formData.append('body', body);
+      if (findingPublicId) formData.append('findingPublicId', findingPublicId);
+      if (photoFile) formData.append('photo', photoFile);
+      if (audioFile) {
+        formData.append('audio', audioFile);
+        const durationSec = Number(inboxState.pendingAudio?.durationSec) || 0;
+        if (durationSec > 0) {
+          formData.append('audioDurationSec', String(Math.min(120, durationSec)));
+        }
+      }
+      result = await apiPostForm(path, formData);
+    } else {
+      const payload = {};
+      if (body) payload.body = body;
+      if (findingPublicId) payload.findingPublicId = findingPublicId;
+      result = await apiPost(path, payload);
+    }
 
     if (sendBtn) sendBtn.disabled = false;
-    if (status === 401) return authRedirect();
-    if (!ok) {
-      showToast(t('dmSendFailed'));
+    if (result.status === 401) return authRedirect();
+    if (!result.ok) {
+      const err = result.data?.error;
+      if (err === 'photo_too_large') showToast(t('dmPhotoTooLarge'));
+      else if (err === 'audio_too_large' || (err === 'file_too_large' && audioFile)) showToast(t('dmAudioTooLarge'));
+      else if (err === 'file_too_large') showToast(t('dmPhotoTooLarge'));
+      else if (err === 'invalid_photo_type') showToast(t('dmPhotoInvalid'));
+      else if (err === 'invalid_audio_type') showToast(t('dmAudioInvalid'));
+      else showToast(t('dmSendFailed'));
+      notifyAppSound('error');
       return;
     }
 
-    if (input) input.value = '';
+    if (input) {
+      input.value = '';
+      fitComposeInput(input);
+    }
     inboxState.pendingFinding = null;
+    revokePendingPhoto();
+    revokePendingAudio();
     setInboxComposeVisible(modal, true);
     await loadInboxInto(modal);
     bindChatThread(modal, username);
     onInboxRead?.();
+    notifyAppSound('send');
   });
+}
+
+function notifyAppSound(sound) {
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'spn-app-sound', sound }, '*');
+    } else {
+      window.spnSound?.play(sound);
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+function notifyAppUnread() {
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'spn-app-unread',
+        dm: Number(activityState.unreadDm) || 0,
+        feed: Number(activityState.unreadNotifications) || 0,
+      }, '*');
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+function stopThreadPoll() {
+  if (threadPollTimer) {
+    clearInterval(threadPollTimer);
+    threadPollTimer = 0;
+  }
+}
+
+function messagesFingerprint(messages) {
+  if (!messages?.length) return '0';
+  const last = messages[messages.length - 1];
+  const readSig = messages
+    .filter((m) => m.isMine)
+    .map((m) => `${m.id}:${m.readAt || ''}`)
+    .join(',');
+  return `${messages.length}:${last.id}:${readSig}`;
+}
+
+function isInboxNearBottom(modal) {
+  const listEl = modal?.querySelector('[data-inbox-list]');
+  if (!listEl) return true;
+  return listEl.scrollHeight - listEl.scrollTop - listEl.clientHeight < 96;
+}
+
+function scrollInboxToLatest(modal) {
+  const listEl = modal?.querySelector('[data-inbox-list]');
+  if (!listEl) return;
+  const go = () => {
+    listEl.scrollTop = listEl.scrollHeight;
+    const thread = listEl.querySelector('.finding-dm-thread');
+    if (thread) thread.scrollTop = thread.scrollHeight;
+  };
+  go();
+  requestAnimationFrame(go);
+  setTimeout(go, 50);
+}
+
+function notifyAppInboxState() {
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'spn-inbox-state',
+        view: inboxState.view || 'dialogs',
+        username: inboxState.username || null,
+        peerId: inboxState.peerId || null,
+      }, '*');
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
+function applyThreadMessages(modal, peer, messages) {
+  if (inboxState.view !== 'thread' || !sameThreadPeer(peer)) return;
+  const list = messages || [];
+  if (messagesFingerprint(list) === messagesFingerprint(inboxState.messages)) return;
+  const lastIncoming = list.length && !list[list.length - 1].isMine;
+  const stickToBottom = isInboxNearBottom(modal) || lastIncoming;
+  inboxState.messages = list;
+  const listEl = modal.querySelector('[data-inbox-list]');
+  if (!listEl) return;
+  listEl.innerHTML = renderChatThread(list, (key, vars) => tk(key, vars));
+  bindChatThread(modal, dmPeerKey());
+  if (stickToBottom) scrollInboxToLatest(modal);
+  onInboxRead?.();
+  void updateActivityTabBadges(modal);
+}
+
+async function pollThreadMessages(modal, peer) {
+  const key = dmPeerKey();
+  if (inboxState.view !== 'thread' || !key || (peer && !sameThreadPeer(peer))) {
+    stopThreadPoll();
+    return;
+  }
+  const { ok, data } = await apiGet(
+    `/api/dm/conversations/${encodeURIComponent(key)}/messages`
+  );
+  if (!ok || inboxState.view !== 'thread' || key !== dmPeerKey()) return;
+  if (data?.peerId) inboxState.peerId = data.peerId;
+  if (data?.peerUsername) inboxState.username = data.peerUsername;
+  applyThreadMessages(modal, key, data.messages || []);
+}
+
+function startInboxLiveUpdates(modal) {
+  stopThreadPoll();
+  if (!modal) return;
+  notifyAppInboxState();
+  if (isNestedAppIframe()) return;
+  const tick = () => {
+    if (inboxState.view === 'thread' && dmPeerKey()) {
+      void pollThreadMessages(modal, dmPeerKey());
+    } else if (inboxState.view === 'dialogs' && activityState.tab === 'inbox') {
+      void pollDialogList(modal);
+    }
+  };
+  threadPollTimer = setInterval(tick, 5000);
+  tick();
+}
+
+export function stopInboxLiveUpdates() {
+  stopThreadPoll();
+}
+
+function conversationsFingerprint(conversations) {
+  return (conversations || [])
+    .map((c) => `${c.peerId || c.peerUsername}:${c.unreadCount}:${c.updatedAt || ''}:${c.lastMessage?.body || ''}:${c.lastMessage?.hasPhoto ? 1 : 0}`)
+    .join('|');
+}
+
+function bindDialogList(modal, conversations) {
+  const listEl = modal.querySelector('[data-inbox-list]');
+  const t = (key, vars) => tk(key, vars);
+  if (!listEl) return;
+  if (!conversations.length) {
+    listEl.innerHTML = renderActivityEmpty('inbox', t);
+    bindActivityEmptyActions(modal, listEl);
+    updateNewDialogToolbar(modal);
+    return;
+  }
+  listEl.innerHTML = `<div class="finding-dm-dialog-list">${conversations
+    .map((conv, index) => renderDmDialogCard(conv, t, index))
+    .join('')}</div>`;
+  listEl.querySelectorAll('[data-inbox-username]').forEach((el) => {
+    el.addEventListener('click', (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const avatar = el.getAttribute('data-inbox-avatar') || '';
+      if (avatar) inboxState.peerAvatarUrl = avatar;
+      startInboxThread(modal, el.dataset.inboxUsername, {
+        peerId: el.getAttribute('data-inbox-peer-id') || el.dataset.inboxPeerId,
+        peerAvatarUrl: avatar || null,
+      });
+    });
+    el.style.cursor = 'pointer';
+  });
+  updateNewDialogToolbar(modal);
+}
+
+async function pollDialogList(modal) {
+  if (inboxState.view !== 'dialogs' || activityState.tab !== 'inbox') return;
+  const { ok, data } = await apiGet('/api/dm/conversations');
+  if (!ok || inboxState.view !== 'dialogs') return;
+  const conversations = data.conversations || [];
+  if (conversationsFingerprint(conversations) === conversationsFingerprint(inboxState.conversations)) {
+    return;
+  }
+  inboxState.conversations = conversations;
+  bindDialogList(modal, conversations);
+  await updateActivityTabBadges(modal);
 }
 
 async function loadInboxInto(modal) {
@@ -1282,7 +1989,7 @@ async function loadInboxInto(modal) {
 
   setActivityPanels(modal);
 
-  if (inboxState.view === 'thread' && inboxState.username) {
+  if (inboxState.view === 'thread' && dmPeerKey()) {
     setInboxComposeVisible(modal, true);
 
     listEl.classList.add('findings-inbox-list--loading');
@@ -1290,7 +1997,7 @@ async function loadInboxInto(modal) {
     listEl.innerHTML = renderInboxSkeleton(2);
 
     const { ok, status, data } = await apiGet(
-      `/api/dm/conversations/${encodeURIComponent(inboxState.username)}/messages`
+      `/api/dm/conversations/${encodeURIComponent(dmPeerKey())}/messages`
     );
     listEl.classList.remove('findings-inbox-list--loading');
     listEl.setAttribute('aria-busy', 'false');
@@ -1300,24 +2007,36 @@ async function loadInboxInto(modal) {
       setInboxComposeVisible(modal, false);
       return;
     }
-    if (!ok) {
+    if (!ok && status !== 304) {
       inboxState.view = 'dialogs';
       inboxState.username = null;
+    inboxState.peerId = null;
+      notifyAppInboxState();
       return loadActivityInto(modal);
+    }
+    if (!ok) {
+      startInboxLiveUpdates(modal);
+      notifyAppInboxState();
+      return;
     }
 
     const messages = data.messages || [];
+    if (data?.peerId) inboxState.peerId = data.peerId;
+    if (data?.peerUsername) inboxState.username = data.peerUsername;
+    if (data?.peerAvatarUrl) inboxState.peerAvatarUrl = data.peerAvatarUrl;
     inboxState.messages = messages;
     listEl.innerHTML = renderChatThread(messages, t);
-    bindChatThread(modal, inboxState.username);
+    bindChatThread(modal, dmPeerKey());
     onInboxRead?.();
     await updateActivityTabBadges(modal);
-
-    const thread = listEl.querySelector('.finding-dm-thread');
-    if (thread) thread.scrollTop = thread.scrollHeight;
+    startInboxLiveUpdates(modal);
+    notifyAppInboxState();
+    scrollInboxToLatest(modal);
+    setActivityPanels(modal);
     return;
   }
 
+  stopThreadPoll();
   setInboxComposeVisible(modal, false);
   const composeForm = modal.querySelector('[data-inbox-compose]');
   if (composeForm) composeForm.dataset.boundUsername = '';
@@ -1337,26 +2056,9 @@ async function loadInboxInto(modal) {
 
   const conversations = data.conversations || [];
   inboxState.conversations = conversations;
-
-  if (!conversations.length) {
-    listEl.innerHTML = renderActivityEmpty('inbox', t);
-    bindActivityEmptyActions(modal, listEl);
-    updateNewDialogToolbar(modal);
-    return;
-  }
-
-  listEl.innerHTML = `<div class="finding-dm-dialog-list">${conversations
-    .map((conv, index) => renderDmDialogCard(conv, t, index))
-    .join('')}</div>`;
-
-  listEl.querySelectorAll('[data-inbox-username]').forEach((el) => {
-    el.addEventListener('click', () => {
-      startInboxThread(modal, el.dataset.inboxUsername);
-    });
-    el.style.cursor = 'pointer';
-  });
-
-  updateNewDialogToolbar(modal);
+  bindDialogList(modal, conversations);
+  startInboxLiveUpdates(modal);
+  notifyAppInboxState();
 }
 
 async function loadFeedInto(modal, { reset = true } = {}) {
@@ -1366,10 +2068,12 @@ async function loadFeedInto(modal, { reset = true } = {}) {
   const loadMoreBtn = modal.querySelector('#finding-feed-load-more');
   const searchEl = modal.querySelector('#finding-feed-search');
 
+  await syncFeedGuestTabs(modal);
+
   if (titleEl) titleEl.textContent = tk('feedTitle');
   if (hintEl) {
     hintEl.textContent = feedState.mode === 'following' ? tk('feedHintFollowing') : tk('feedHint');
-    hintEl.hidden = false;
+    hintEl.hidden = isAppShell() || false;
   }
   modal.querySelectorAll('.finding-feed-tab').forEach((tab) => {
     tab.textContent = tab.dataset.feedMode === 'following' ? tk('feedTabFollowing') : tk('feedTabAll');
@@ -1541,16 +2245,26 @@ export async function openFeedModal() {
   feedState.q = '';
   feedState.offset = 0;
   const modal = ensureFeedModal();
-  openPanel(modal);
+  openPanel(modal, {
+    inlineHost: isAppShell() ? '#findings-feed-list' : null,
+  });
+  await syncFeedGuestTabs(modal);
   await loadFeedInto(modal, { reset: true });
 }
 
-export async function openInboxModal() {
-  await openActivityModal('inbox');
+export async function openInboxModal(opts = {}) {
+  await openActivityModal('inbox', { messagesOnly: true, ...opts });
 }
 
 export async function openFindingModal(publicId, options = {}) {
   if (!publicId || !String(publicId).startsWith('fnd_')) return;
+
+  if (isNestedAppIframe()) {
+    try {
+      window.parent.postMessage({ type: 'spn-app-open-finding', publicId, options }, '*');
+      return;
+    } catch (_) {}
+  }
 
   const { replyToUsername = null, openShareForm = false } = options;
 
@@ -1648,6 +2362,47 @@ export async function initFindingsModals(options = {}) {
   ensureViewModal();
   ensureFeedModal();
   ensureAuthorModal();
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState !== 'visible') return;
+    const modal = document.getElementById('finding-activity-modal');
+    if (!modal) return;
+    if (inboxState.view === 'thread' && dmPeerKey()) {
+      void pollThreadMessages(modal, dmPeerKey());
+    } else if (inboxState.view === 'dialogs' && activityState.tab === 'inbox') {
+      void pollDialogList(modal);
+    }
+  });
+
+  window.addEventListener('message', (event) => {
+    const type = event.data?.type;
+    if (type !== 'spn-inbox-refresh' && type !== 'spn-inbox-messages' && type !== 'spn-inbox-conversations') {
+      return;
+    }
+    const modal = document.getElementById('finding-activity-modal');
+    if (!modal) return;
+    if (type === 'spn-inbox-messages') {
+      const peer = String(event.data.peerId || event.data.username || '');
+      if (peer) applyThreadMessages(modal, peer, event.data.messages || []);
+      return;
+    }
+    if (type === 'spn-inbox-conversations') {
+      if (inboxState.view !== 'dialogs') return;
+      const conversations = event.data.conversations || [];
+      if (conversationsFingerprint(conversations) === conversationsFingerprint(inboxState.conversations)) {
+        return;
+      }
+      inboxState.conversations = conversations;
+      bindDialogList(modal, conversations);
+      void updateActivityTabBadges(modal);
+      return;
+    }
+    if (inboxState.view === 'thread' && dmPeerKey()) {
+      void pollThreadMessages(modal, dmPeerKey());
+    } else if (activityState.tab === 'inbox') {
+      void pollDialogList(modal);
+    }
+  });
 
   document.addEventListener('click', (event) => {
     const feedTrigger = event.target.closest('[data-finding-open-feed]');

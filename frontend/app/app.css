@@ -91,6 +91,10 @@ html.spn-cap-native {
   background: transparent;
   cursor: pointer;
   line-height: 1;
+  /* Site styles.css hides bare [data-lang] for old menu — keep app switcher visible */
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
 }
 .spn-lang__btn.is-active {
   color: #fff;
@@ -106,6 +110,7 @@ html.spn-cap-native {
   justify-content: space-between;
   gap: 12px;
   min-height: 36px;
+  flex-wrap: nowrap;
 }
 .spn-settings__label {
   font-size: 0.9rem;
@@ -118,14 +123,29 @@ html.spn-cap-native {
 }
 .spn-switch {
   position: relative;
+  box-sizing: border-box;
+  display: inline-block;
+  flex: 0 0 auto;
   flex-shrink: 0;
+  align-self: center;
   width: 48px;
   height: 28px;
+  min-width: 48px;
+  min-height: 28px;
+  max-width: 48px;
+  max-height: 28px;
   padding: 0;
+  margin: 0;
   border: 0;
   border-radius: 999px;
   background: #d4d4d8;
   cursor: pointer;
+  -webkit-appearance: none;
+  appearance: none;
+  line-height: 0;
+  font-size: 0;
+  overflow: hidden;
+  vertical-align: middle;
 }
 .spn-switch[aria-checked="true"] {
   background: #16a34a;
@@ -140,6 +160,10 @@ html.spn-cap-native {
   left: 3px;
   width: 22px;
   height: 22px;
+  min-width: 22px;
+  min-height: 22px;
+  max-width: 22px;
+  max-height: 22px;
   border-radius: 50%;
   background: #fff;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);

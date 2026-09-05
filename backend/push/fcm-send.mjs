@@ -148,6 +148,8 @@ function buildMessage(token, payload) {
         channel_id: 'dm_messages',
         tag,
         sound: 'default',
+        icon: 'ic_stat_notification',
+        color: '#C62828',
       },
     },
   };

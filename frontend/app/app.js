@@ -1646,7 +1646,7 @@ const INBOX_APP_CSS = `
   }
 `;
 
-const FINDINGS_MODALS_URL = '/frontend/scripts/findings-modals.js?v=58';
+const FINDINGS_MODALS_URL = '/frontend/scripts/findings-modals.js?v=59';
 
 let findingsUiReady = null;
 function ensureFindingsUiInApp() {
@@ -1707,9 +1707,13 @@ function readSafeAreaBottomPx() {
 /** True only when WebView layout actually shrinks above the system nav bar. */
 function decorActuallyFitsNav() {
   if (window.__SPN_DECOR_FITS_NAV !== 1) return false;
+  // Native published 0 → trust layout (Samsung often sits on the shrink knife-edge).
+  const published = Number(window.__SPN_NAV_INSET_PX);
+  if (Number.isFinite(published) && published === 0) return true;
   try {
     const shrink = window.screen.height - window.innerHeight;
-    if (shrink >= 24) return true;
+    // Was 24; J4 flickers around that and briefly paints a double black strip.
+    if (shrink >= 16) return true;
   } catch (_) {}
   return false;
 }
@@ -4565,9 +4569,12 @@ const PUSH_PREF_KEY = 'spn_push_pref';
 
 function pushPrefOn() {
   try {
-    return localStorage.getItem(PUSH_PREF_KEY) === 'on';
+    const v = localStorage.getItem(PUSH_PREF_KEY);
+    // Default ON when unset — first launch / clean install.
+    if (v === null || v === '') return true;
+    return v === 'on';
   } catch (_) {
-    return false;
+    return true;
   }
 }
 
@@ -4611,6 +4618,8 @@ async function syncPushAfterLogin() {
   try {
     if (!window.spnPush) return;
     if (pushPrefOn()) {
+      // Persist default-on so UI stays consistent after first enable attempt.
+      if (localStorage.getItem(PUSH_PREF_KEY) === null) setPushPref(true);
       await window.spnPush.enable();
     }
   } catch (_) {}

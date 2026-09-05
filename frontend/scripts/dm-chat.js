@@ -1,6 +1,6 @@
 import { escapeHtml } from './finding-content-render.js';
 import { formatFindingDate } from './finding-list-card.js';
-import { DM_ATTACH_FINDING_ICON, DM_ATTACH_ICON, DM_ATTACH_PHOTO_ICON, DM_ATTACH_AUDIO_ICON, DM_DOWNLOAD_ICON, DM_MIC_ICON, DM_MIC_STOP_ICON, DM_SEND_ICON } from './finding-icons.js';
+import { DM_ATTACH_FINDING_ICON, DM_ATTACH_ICON, DM_ATTACH_PHOTO_ICON, DM_ATTACH_AUDIO_ICON, DM_DOWNLOAD_ICON, DM_MIC_ICON, DM_MIC_STOP_ICON, DM_SEND_ICON } from './finding-icons.js?v=dm-audio1';
 
 export function renderActivityEmpty(kind, t) {
   const configs = {
@@ -176,14 +176,6 @@ function mediaFileName(url, fallback = 'download') {
   return part && part.includes('.') ? part : fallback;
 }
 
-function isAndroidAppShell() {
-  try {
-    return Boolean(window.__SPN_ANDROID_APP__);
-  } catch (_) {
-    return false;
-  }
-}
-
 function blobToBase64(blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -205,11 +197,12 @@ export async function downloadDmMedia(url, filename) {
       const res = await fetch(rawUrl);
       const blob = await res.blob();
       if (window.SpnAndroid?.downloadBlobBase64) {
-        const b64 = await blobToBase64(blob);
-        const result = window.SpnAndroid.downloadBlobBase64(b64, name, blob.type || '');
-        return String(result || '').startsWith('OK');
+        try {
+          const b64 = await blobToBase64(blob);
+          const result = window.SpnAndroid.downloadBlobBase64(b64, name, blob.type || '');
+          if (String(result || '').startsWith('OK')) return true;
+        } catch (_) { /* fall through */ }
       }
-      if (isAndroidAppShell()) return false;
       const blobUrl = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = blobUrl;
@@ -235,11 +228,9 @@ export async function downloadDmMedia(url, filename) {
   if (window.SpnAndroid?.downloadFile) {
     try {
       const result = window.SpnAndroid.downloadFile(absUrl, name);
-      return String(result || '').startsWith('OK');
-    } catch (_) {}
+      if (String(result || '').startsWith('OK')) return true;
+    } catch (_) { /* fall through to fetch */ }
   }
-
-  if (isAndroidAppShell()) return false;
 
   try {
     const res = await fetch(absUrl, { credentials: 'include', cache: 'no-store' });

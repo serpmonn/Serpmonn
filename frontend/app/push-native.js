@@ -33,9 +33,12 @@
 
   function pushPrefOn() {
     try {
-      return global.localStorage.getItem(PREF_KEY) === 'on';
+      const v = global.localStorage.getItem(PREF_KEY);
+      // Default ON when unset — first launch should request push.
+      if (v === null || v === '') return true;
+      return v === 'on';
     } catch {
-      return false;
+      return true;
     }
   }
 

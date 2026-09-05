@@ -2,8 +2,8 @@ import fs from 'fs/promises';
 import path from 'path';
 import crypto from 'crypto';
 
-const DM_AUDIO_DIR = process.env.DM_AUDIO_DIR || '/var/www/serpmonn.ru/uploads/dm-audio';
-const MAX_BYTES = 2 * 1024 * 1024;
+const DM_AUDIO_DIR = process.env.DM_AUDIO_DIR || '/var/www/serpmonn-dev/uploads/dm-audio';
+const MAX_BYTES = 16 * 1024 * 1024;
 const MAX_DURATION_SEC = 120;
 
 const ALLOWED_MIME = new Set([
