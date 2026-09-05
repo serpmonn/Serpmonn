@@ -146,7 +146,7 @@ eleventyComputed:
     }
     .shots {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(5, minmax(0, 1fr));
       gap: 1rem;
     }
     .shots figure {
@@ -162,8 +162,9 @@ eleventyComputed:
       width: 100%;
       height: auto;
       aspect-ratio: 9 / 16;
-      object-fit: cover;
-      object-position: top;
+      object-fit: contain;
+      object-position: center;
+      background: #eef0f3;
     }
     .shots figcaption {
       padding: 0.65rem 0.8rem 0.85rem;
@@ -258,8 +259,11 @@ eleventyComputed:
       cursor: wait;
       transform: none;
     }
+    @media (max-width: 1100px) {
+      .shots { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
     @media (max-width: 800px) {
-      .shots { grid-template-columns: 1fr; max-width: 320px; }
+      .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); max-width: 420px; }
     }
     @media (prefers-reduced-motion: reduce) {
       .btn-primary { transition: none; }
@@ -273,7 +277,7 @@ eleventyComputed:
       <h1 id="app-title" class="brand">Serpmonn</h1>
       <p class="lead">{{ serpmonnAppTranslations[locale].app.lead }}</p>
       <div class="cta-row">
-        <a class="btn-primary" id="cta-apk" href="/frontend/downloads/Serpmonn-1.2.1.apk" download="Serpmonn-1.2.1.apk">
+        <a class="btn-primary" id="cta-apk" href="/frontend/downloads/Serpmonn-1.2.6.apk" download="Serpmonn-1.2.6.apk">
           {{ serpmonnAppTranslations[locale].app.ctaApk }}
         </a>
         <a class="btn-secondary" id="cta-rustore" href="https://www.rustore.ru/catalog/app/ru.serpmonn" target="_blank" rel="noopener">{{ serpmonnAppTranslations[locale].app.ctaRustore }}</a>
@@ -287,18 +291,26 @@ eleventyComputed:
       {% endfor %}
     </ul>
 
-    <section class="shots" aria-label="{{ serpmonnAppTranslations[locale].app.shotsAria }}">
+        <section class="shots" aria-label="{{ serpmonnAppTranslations[locale].app.shotsAria }}">
       <figure>
-        <img src="/frontend/downloads/rustore-screenshots/05-search.png" alt="{{ serpmonnAppTranslations[locale].app.altSearch }}" width="360" height="640" loading="eager">
+        <img src="/frontend/downloads/rustore-screenshots/05-search.png?v=128" alt="{{ serpmonnAppTranslations[locale].app.altSearch }}" width="360" height="640" loading="eager">
         <figcaption>{{ serpmonnAppTranslations[locale].app.capSearch }}</figcaption>
       </figure>
       <figure>
-        <img src="/frontend/downloads/rustore-screenshots/01-profile-feed.png" alt="{{ serpmonnAppTranslations[locale].app.altFeed }}" width="360" height="640" loading="lazy">
+        <img src="/frontend/downloads/rustore-screenshots/01-profile-feed.png?v=128" alt="{{ serpmonnAppTranslations[locale].app.altFeed }}" width="360" height="640" loading="lazy">
         <figcaption>{{ serpmonnAppTranslations[locale].app.capFeed }}</figcaption>
       </figure>
       <figure>
-        <img src="/frontend/downloads/rustore-screenshots/03-games.png" alt="{{ serpmonnAppTranslations[locale].app.altGames }}" width="360" height="640" loading="lazy">
+        <img src="/frontend/downloads/rustore-screenshots/04-tools.png?v=128" alt="{{ serpmonnAppTranslations[locale].app.altTools }}" width="360" height="640" loading="lazy">
+        <figcaption>{{ serpmonnAppTranslations[locale].app.capTools }}</figcaption>
+      </figure>
+      <figure>
+        <img src="/frontend/downloads/rustore-screenshots/03-games.png?v=128" alt="{{ serpmonnAppTranslations[locale].app.altGames }}" width="360" height="640" loading="lazy">
         <figcaption>{{ serpmonnAppTranslations[locale].app.capGames }}</figcaption>
+      </figure>
+      <figure>
+        <img src="/frontend/downloads/rustore-screenshots/06-profile.png?v=128" alt="{{ serpmonnAppTranslations[locale].app.altProfile }}" width="360" height="640" loading="lazy">
+        <figcaption>{{ serpmonnAppTranslations[locale].app.capProfile }}</figcaption>
       </figure>
     </section>
 
