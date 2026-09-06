@@ -1004,16 +1004,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       console.error('Ошибка выхода:', error);
     } finally {
       localStorage.removeItem('serp_tools_recent');
-      if (stayInApp) {
-        try {
-          if (window.parent && window.parent !== window) {
-            window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
-          }
-        } catch (_) {}
-        return;
-      }
-      safeAssignLocation(getFrontendPath('main.html'));
     }
+    if (stayInApp) {
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage({ type: 'spn-app-logged-out' }, '*');
+        }
+      } catch (_) {}
+      return;
+    }
+    safeAssignLocation(getFrontendPath('main.html'));
   }
 
   /* ==== ОБРАБОТЧИКИ UI ==== */

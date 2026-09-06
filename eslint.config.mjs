@@ -12,7 +12,13 @@ export default [
             'frontend/*/**',
             // Локальные venv / vendor, не попадают в git, но ломают lint на сервере
             '**/venv/**',
-            'backend/voice/whisper-server/**'
+            'backend/voice/whisper-server/**',
+            // Бэкапы и Android-артефакты (не исходники приложения)
+            'backups/**',
+            'android-app/**',
+            'android-app-dev/**',
+            'deploy/**',
+            '**/*.min.js'
         ]
     },
     js.configs.recommended,

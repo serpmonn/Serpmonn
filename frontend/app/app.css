@@ -9,11 +9,12 @@
   --spn-tabs: 52px;
   --spn-safe-b: env(safe-area-inset-bottom, 0px);
   --spn-safe-t: env(safe-area-inset-top, 0px);
-  /* 3-кнопочная панель Android (~48dp); WebView часто отдаёт safe-area=0 */
-  --spn-nav-fallback: 48px;
+  /* 3-кнопочная панель Android (~48dp); резерв только если soft-nav реально есть (JS) */
+  --spn-nav-fallback: 0px;
   --spn-sys-nav: max(var(--spn-safe-b), var(--spn-nav-fallback));
   /* Отступ контента над системной панелью (JS: syncSystemNavChrome) */
   --spn-app-nav-pad: max(var(--spn-safe-b), var(--spn-nav-fallback));
+  /* Резерв soft-nav: тёмный фон под светлые системные кнопки */
   --spn-sys-nav-bg: #2a2a2a;
   --spn-viewer-pad-b: max(var(--spn-safe-b), var(--spn-nav-fallback));
 }
@@ -49,11 +50,11 @@ body {
   background: var(--spn-bg);
 }
 
-/* Тёмная полоса под системными кнопками Android (светлые иконки ◁ ○ ▢) */
+/* Подложка под системные кнопки Android (цвет совпадает с фоном приложения) */
 html.spn-cap-native .spn-sys-nav {
   display: block !important;
   height: var(--spn-app-nav-pad);
-  background: #2a2a2a;
+  background: var(--spn-sys-nav-bg);
   bottom: var(--spn-keyboard-inset, 0px);
 }
 .spn-sys-nav {
@@ -1024,15 +1025,16 @@ html.spn-profile-tab:not(.spn-profile-embed-mode) .spn-screen[data-screen="profi
   border-top: 1px solid var(--spn-border);
 }
 html.spn-cap-native .spn-tabs {
-  /* Над системной полосой + над клавиатурой (visualViewport) */
+  /* Над soft-nav (pad>0) + над клавиатурой; при pad=0 таббар у нижнего края */
   bottom: calc(var(--spn-app-nav-pad) + var(--spn-keyboard-inset, 0px));
   min-height: var(--spn-tabs);
-  padding: 4px 2px 4px;
+  padding: 0 2px;
   background: var(--spn-surface);
-  align-content: start;
+  align-items: center;
+  align-content: center;
 }
 html.spn-cap-native .spn-tab {
-  align-self: start;
+  align-self: center;
 }
 .spn-tab {
   appearance: none;

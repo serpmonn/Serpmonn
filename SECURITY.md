@@ -2,20 +2,29 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 5.1.x   | :white_check_mark: |
-| 5.0.x   | :x:                |
-| 4.0.x   | :white_check_mark: |
-| < 4.0   | :x:                |
+| Version | Supported |
+| ------- | --------- |
+| `master` (production) | ✅ |
+| other branches | ❌ |
 
 ## Reporting a Vulnerability
 
-Use this section to tell people how to report a vulnerability.
+Please report security issues privately:
 
-Tell them where to go, how often they can expect to get an update on a
-reported vulnerability, what to expect if the vulnerability is accepted or
-declined, etc.
+- Email: sergei@serpmonn.ru
+- Or open a [private GitHub security advisory](https://github.com/serpmonn/Serpmonn/security/advisories/new)
+
+Do **not** open a public issue for vulnerabilities that could lead to account takeover, data exposure, or server compromise.
+
+We aim to acknowledge reports within 72 hours and share a remediation plan when confirmed.
+
+## Secrets and credentials
+
+Never commit:
+
+- `backend/.env` and other `*.env`
+- `google-services.json` / `google-services*.json` (use `google-services.json.example`)
+- Firebase / GCP service account JSON under `backend/secrets/`
+- Private keys, tokens, and APK signing credentials
+
+If a secret is leaked: rotate it in the provider console first, then remove it from the repository.
