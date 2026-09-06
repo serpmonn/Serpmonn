@@ -20,7 +20,9 @@ import android.os.SystemClock;
 import android.provider.MediaStore;
 import android.util.Base64;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.webkit.CookieManager;
@@ -29,9 +31,11 @@ import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.splashscreen.SplashScreen;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -41,6 +45,8 @@ import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.BridgeWebChromeClient;
 import com.getcapacitor.BridgeWebViewClient;
 import com.google.firebase.messaging.FirebaseMessaging;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -65,7 +71,10 @@ import javax.net.ssl.SSLParameters;
 
 public class MainActivity extends BridgeActivity {
   private static final String TAG = "SpnPush";
+  /** Soft-nav + status: тёмный фон, светлые системные иконки (читаемо на MIUI/Samsung). */
   private static final int NAV_BAR_COLOR = 0xFF2A2A2A;
+  private static final int STATUS_BAR_COLOR = 0xFF2A2A2A;
+  private static final int WINDOW_BG_COLOR = 0xFFF7F7F8;
   private static final int REQ_POST_NOTIFICATIONS = 9102;
   private static final int REQ_RECORD_AUDIO = 9103;
   private final Handler uiHandler = new Handler(Looper.getMainLooper());
@@ -73,12 +82,15 @@ public class MainActivity extends BridgeActivity {
   private volatile String pushPermOutcome = "denied";
   private volatile PermissionRequest pendingWebAudioRequest;
   private Runnable navWatchdog;
+  private View statusBarScrim;
   private boolean uiVisibilityHooked = false;
   private boolean insetsHooked = false;
   private boolean imeWasVisible = false;
 
   @Override
   public void onCreate(Bundle savedInstanceState) {
+    // Android 12+ system splash (Serpmonn icon) — must run before super.onCreate.
+    SplashScreen.installSplashScreen(this);
     super.onCreate(savedInstanceState);
     ensureDmNotificationChannel();
     // Keep layout resizing for the form, but we will force-show nav while IME is open.
@@ -126,6 +138,17 @@ public class MainActivity extends BridgeActivity {
           }
         }
         return super.shouldInterceptRequest(view, request);
+      }
+
+      // After redirect local www → serpmonn.ru, JS inset vars are wiped — republish.
+      @Override
+      public void onPageFinished(WebView view, String url) {
+        super.onPageFinished(view, url);
+        uiHandler.post(MainActivity.this::applySystemBars);
+        uiHandler.post(MainActivity.this::publishNavInsetsToWeb);
+        uiHandler.postDelayed(MainActivity.this::applySystemBars, 300);
+        uiHandler.postDelayed(MainActivity.this::publishNavInsetsToWeb, 400);
+        uiHandler.postDelayed(MainActivity.this::publishNavInsetsToWeb, 1200);
       }
     });
 
@@ -220,6 +243,27 @@ public class MainActivity extends BridgeActivity {
           // Keyboard focus can re-hide nav a moment later — one short follow-up.
           watchNavBarsBriefly(2500);
         });
+      }
+
+      /** Re-apply opaque dark status/nav colors (MIUI may reset them). */
+      @JavascriptInterface
+      public void applySystemChrome() {
+        uiHandler.post(MainActivity.this::applySystemBars);
+      }
+
+      /**
+       * Soft navigation-bar inset in CSS px. 0 = hardware keys / no on-screen nav
+       * (do not reserve bottom pad). Positive = reserve that many px above soft nav.
+       */
+      @JavascriptInterface
+      public int getNavInsetPx() {
+        return readNavInsetCssPx();
+      }
+
+      /** Ask native to re-push inset vars into the current page. */
+      @JavascriptInterface
+      public void refreshNavInsets() {
+        uiHandler.post(MainActivity.this::publishNavInsetsToWeb);
       }
 
       /**
@@ -706,15 +750,8 @@ public class MainActivity extends BridgeActivity {
     WindowCompat.setDecorFitsSystemWindows(window, true);
     View decor = window.getDecorView();
     clearImmersiveFlags(decor);
-    window.setNavigationBarColor(NAV_BAR_COLOR);
-    WindowInsetsControllerCompat controller =
-        WindowCompat.getInsetsController(window, decor);
-    if (controller != null) {
-      controller.setSystemBarsBehavior(
-          WindowInsetsControllerCompat.BEHAVIOR_DEFAULT);
-      controller.show(WindowInsetsCompat.Type.navigationBars());
-      controller.show(WindowInsetsCompat.Type.statusBars());
-    }
+    applyOpaqueSystemBarColors(window, decor);
+    ensureStatusBarScrim();
   }
 
   private void applySystemBars() {
@@ -722,10 +759,19 @@ public class MainActivity extends BridgeActivity {
     if (window == null) return;
     WindowCompat.setDecorFitsSystemWindows(window, true);
     window.clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
-    window.setNavigationBarColor(NAV_BAR_COLOR);
-    window.getDecorView().setBackgroundColor(NAV_BAR_COLOR);
+    window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+      window.clearFlags(
+          WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS
+              | WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+    }
+    window.getDecorView().setBackgroundColor(WINDOW_BG_COLOR);
     if (Build.VERSION.SDK_INT >= 29) {
       window.setNavigationBarContrastEnforced(false);
+      try {
+        window.setStatusBarContrastEnforced(true);
+      } catch (Throwable ignored) {
+      }
     }
     View decor = window.getDecorView();
     clearImmersiveFlags(decor);
@@ -742,12 +788,93 @@ public class MainActivity extends BridgeActivity {
         }
       });
     }
+    applyOpaqueSystemBarColors(window, decor);
+    ensureStatusBarScrim();
     forceShowNavigationBars();
+  }
+
+  /** Opaque dark bars + light icons. Android 15+ may ignore setStatusBarColor — scrim covers that. */
+  private void applyOpaqueSystemBarColors(Window window, View decor) {
+    window.setNavigationBarColor(NAV_BAR_COLOR);
+    window.setStatusBarColor(STATUS_BAR_COLOR);
+    // Clear LIGHT_STATUS_BAR so icons stay light on our dark scrim/bar.
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+      int flags = decor.getSystemUiVisibility();
+      flags &= ~View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR;
+      if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        flags &= ~View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR;
+      }
+      decor.setSystemUiVisibility(flags);
+    }
     WindowInsetsControllerCompat controller =
         WindowCompat.getInsetsController(window, decor);
     if (controller != null) {
+      controller.setSystemBarsBehavior(
+          WindowInsetsControllerCompat.BEHAVIOR_DEFAULT);
       controller.setAppearanceLightNavigationBars(false);
-      controller.setAppearanceLightStatusBars(true);
+      controller.setAppearanceLightStatusBars(false);
+      controller.show(WindowInsetsCompat.Type.navigationBars());
+      controller.show(WindowInsetsCompat.Type.statusBars());
+    }
+    applyMiuiLightStatusIcons();
+  }
+
+  /** MIUI: EXTRA_FLAG_STATUS_BAR_DARK_MODE = dark icons; clear it for light icons on dark bar. */
+  private void applyMiuiLightStatusIcons() {
+    try {
+      Class<?> layoutParamsClass =
+          Class.forName("android.view.MiuiWindowManager$LayoutParams");
+      Field field = layoutParamsClass.getField("EXTRA_FLAG_STATUS_BAR_DARK_MODE");
+      int darkModeFlag = field.getInt(layoutParamsClass);
+      Method setExtraFlags =
+          Window.class.getMethod("setExtraFlags", int.class, int.class);
+      setExtraFlags.invoke(getWindow(), 0, darkModeFlag);
+    } catch (Throwable ignored) {
+    }
+  }
+
+  /**
+   * Paint an opaque dark strip under the (often transparent on Android 15+/MIUI) status bar
+   * so time/battery stay readable with light system icons.
+   */
+  private void ensureStatusBarScrim() {
+    Window window = getWindow();
+    if (window == null) return;
+    View decorView = window.getDecorView();
+    if (!(decorView instanceof ViewGroup)) return;
+    ViewGroup decor = (ViewGroup) decorView;
+
+    int heightPx = 0;
+    WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(decor);
+    if (insets != null) {
+      heightPx = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+    }
+    if (heightPx <= 0) {
+      int resId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+      if (resId > 0) {
+        heightPx = getResources().getDimensionPixelSize(resId);
+      }
+    }
+    if (heightPx <= 0) {
+      heightPx = Math.round(24f * getResources().getDisplayMetrics().density);
+    }
+
+    if (statusBarScrim == null) {
+      statusBarScrim = new View(this);
+      statusBarScrim.setBackgroundColor(STATUS_BAR_COLOR);
+      statusBarScrim.setClickable(false);
+      statusBarScrim.setFocusable(false);
+      FrameLayout.LayoutParams lp =
+          new FrameLayout.LayoutParams(
+              ViewGroup.LayoutParams.MATCH_PARENT, heightPx);
+      lp.gravity = Gravity.TOP;
+      decor.addView(statusBarScrim, lp);
+    } else {
+      ViewGroup.LayoutParams lp = statusBarScrim.getLayoutParams();
+      lp.height = heightPx;
+      statusBarScrim.setLayoutParams(lp);
+      statusBarScrim.setBackgroundColor(STATUS_BAR_COLOR);
+      statusBarScrim.bringToFront();
     }
   }
 
@@ -766,31 +893,39 @@ public class MainActivity extends BridgeActivity {
         }
         imeWasVisible = imeVisible;
         publishNavInsetsToWeb();
+        ensureStatusBarScrim();
         return ViewCompat.onApplyWindowInsets(v, insets);
       });
     }
     decor.post(this::publishNavInsetsToWeb);
   }
 
-  /** Publish only a sane nav-bar inset to JS (ignore IME-sized junk). */
-  private void publishNavInsetsToWeb() {
+  /** Soft-nav bottom inset in CSS px (density-aware). 0 when no on-screen nav. */
+  private int readNavInsetCssPx() {
     View decor = getWindow().getDecorView();
     WindowInsetsCompat insets = ViewCompat.getRootWindowInsets(decor);
-    if (insets == null) return;
+    if (insets == null) return 0;
+    int navPx = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+    // Guard: while IME is open some OEMs report huge "nav" insets.
+    if (insets.isVisible(WindowInsetsCompat.Type.ime()) && navPx > 180) {
+      navPx = Math.round(48f * getResources().getDisplayMetrics().density);
+    } else if (navPx > 180) {
+      navPx = Math.round(48f * getResources().getDisplayMetrics().density);
+    }
+    // Convert device px → CSS px (WebView uses density-independent CSS pixels).
+    float density = getResources().getDisplayMetrics().density;
+    if (density <= 0f) density = 1f;
+    return Math.max(0, Math.round(navPx / density));
+  }
 
+  /** Publish only a sane nav-bar inset to JS (ignore IME-sized junk). */
+  private void publishNavInsetsToWeb() {
     Bridge bridge = getBridge();
     if (bridge == null) return;
     WebView webView = bridge.getWebView();
     if (webView == null) return;
 
-    int navPx = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
-    // Guard: while IME is open some OEMs report huge "nav" insets.
-    if (insets.isVisible(WindowInsetsCompat.Type.ime()) && navPx > 72) {
-      navPx = 48;
-    } else if (navPx > 72) {
-      navPx = 48;
-    }
-    final int publishPx = Math.max(0, navPx);
+    final int publishPx = readNavInsetCssPx();
     String js =
         "try{"
             + "window.__SPN_NAV_INSET_PX=" + publishPx + ";"

@@ -1704,46 +1704,54 @@ function readSafeAreaBottomPx() {
   return sanitizeNavInsetPx(measureBottomInset());
 }
 
-/** True only when WebView layout actually shrinks above the system nav bar. */
-function decorActuallyFitsNav() {
-  if (window.__SPN_DECOR_FITS_NAV !== 1) return false;
-  // Native published 0 → trust layout (Samsung often sits on the shrink knife-edge).
-  const published = Number(window.__SPN_NAV_INSET_PX);
-  if (Number.isFinite(published) && published === 0) return true;
-  try {
-    const shrink = window.screen.height - window.innerHeight;
-    // Was 24; J4 flickers around that and briefly paints a double black strip.
-    if (shrink >= 16) return true;
-  } catch (_) {}
-  return false;
-}
-
 /**
- * Bottom pad for tab bar above Android system nav keys.
- * Do NOT trust __SPN_DECOR_FITS_NAV alone — Capacitor WebView often still draws edge-to-edge.
+ * Bottom pad above Android soft-nav.
+ * Rule: soft-nav inset > 0 → reserve it; hardware keys / inset 0 → 0.
  */
-let lastKnownNavInsetPx = 48;
+let lastKnownNavInsetPx = 0;
 
 function sanitizeNavInsetPx(raw) {
   const n = Number(raw);
-  // Real 3-button nav is ~40–64px. Larger values are usually IME/combined junk.
+  // Real 3-button nav is ~40–64 CSS px. Larger values are usually IME/combined junk.
   if (!Number.isFinite(n) || n < 24 || n > 72) return 0;
   return Math.round(n);
 }
 
-function resolveNativeNavPad() {
-  const sane = sanitizeNavInsetPx(window.__SPN_NAV_INSET_PX);
-  if (sane) lastKnownNavInsetPx = sane;
+function pullNativeNavInset() {
+  try {
+    if (typeof window.SpnAndroid?.getNavInsetPx !== 'function') return false;
+    const n = Number(window.SpnAndroid.getNavInsetPx());
+    if (!Number.isFinite(n) || n < 0) return false;
+    window.__SPN_NAV_INSET_PX = n;
+    window.__SPN_DECOR_FITS_NAV = 1;
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
 
-  const reserve = sane || readSafeAreaBottomPx() || lastKnownNavInsetPx || androidNavBarFallbackPx();
+function resolveNativeNavPad() {
+  pullNativeNavInset();
+
+  const raw = Number(window.__SPN_NAV_INSET_PX);
+  const hasNative = Number.isFinite(raw);
+  const sane = hasNative ? sanitizeNavInsetPx(raw) : 0;
+  if (sane > 0) lastKnownNavInsetPx = sane;
 
   if (isImeLikelyOpen()) {
+    const reserve = sane || lastKnownNavInsetPx || androidNavBarFallbackPx();
     return Math.min(56, Math.max(40, reserve));
   }
 
-  if (decorActuallyFitsNav()) return 0;
+  // Native answered: soft-nav → its height; no soft-nav → 0.
+  if (hasNative) return sane;
 
-  return reserve;
+  // Native not ready yet — prefer last known soft-nav, else safe-area, else 0
+  // (never invent 48px: that breaks Samsung hardware keys).
+  if (lastKnownNavInsetPx >= 24) return lastKnownNavInsetPx;
+  const safe = readSafeAreaBottomPx();
+  if (safe > 0) return safe;
+  return 0;
 }
 
 function isImeLikelyOpen() {
@@ -1761,6 +1769,24 @@ function isImeLikelyOpen() {
   }
 }
 
+function syncNativeSystemBars() {
+  try {
+    if (typeof window.SpnAndroid?.applySystemChrome === 'function') {
+      window.SpnAndroid.applySystemChrome();
+    } else if (typeof window.SpnAndroid?.restoreSystemBars === 'function') {
+      window.SpnAndroid.restoreSystemBars();
+    }
+  } catch (_) {}
+  try {
+    const SB = window.Capacitor?.Plugins?.StatusBar;
+    if (!SB) return;
+    SB.setOverlaysWebView?.({ overlay: false });
+    SB.setBackgroundColor?.({ color: '#2a2a2a' });
+    // Capacitor: LIGHT = светлые иконки на тёмном фоне
+    SB.setStyle?.({ style: 'LIGHT' });
+  } catch (_) {}
+}
+
 function syncSystemNavChrome() {
   const root = document.documentElement;
   const nativeShell = isCapacitorNativeShell();
@@ -1774,7 +1800,8 @@ function syncSystemNavChrome() {
     root.style.setProperty('--spn-app-nav-pad', `${pad}px`);
     root.style.setProperty('--spn-viewer-pad-b', `${pad}px`);
     root.style.setProperty('--spn-sys-nav', `${pad}px`);
-    root.style.setProperty('--spn-sys-nav-bg', '#2a2a2a');
+    root.style.setProperty('--spn-sys-nav-bg', pad > 0 ? '#2a2a2a' : '#f7f7f8');
+    syncNativeSystemBars();
   } else {
     const inset = measureBottomInset();
     const pad = inset > 0 ? inset : 48;
@@ -4461,6 +4488,7 @@ async function completeVkIdFromRedirect() {
 }
 
 /* —— Boot —— */
+try { pullNativeNavInset(); } catch (_) {}
 syncSystemNavChrome();
 try {
   const vv = window.visualViewport;
@@ -4469,16 +4497,24 @@ try {
     vv.addEventListener('scroll', syncKeyboardInset);
   }
   window.addEventListener('resize', () => {
+    try { pullNativeNavInset(); } catch (_) {}
     syncSystemNavChrome();
     syncKeyboardInset();
   });
   window.addEventListener('orientationchange', () => setTimeout(() => {
+    try { pullNativeNavInset(); } catch (_) {}
     syncSystemNavChrome();
     syncKeyboardInset();
   }, 120));
+  // Re-pull after Capacitor → site redirect / late WebView settle
+  setTimeout(() => { try { pullNativeNavInset(); syncSystemNavChrome(); } catch (_) {} }, 300);
+  setTimeout(() => { try { pullNativeNavInset(); syncSystemNavChrome(); } catch (_) {} }, 1000);
 } catch (_) {}
 try {
-  window.addEventListener('capacitorDidBecomeActive', syncSystemNavChrome);
+  window.addEventListener('capacitorDidBecomeActive', () => {
+    try { pullNativeNavInset(); } catch (_) {}
+    syncSystemNavChrome();
+  });
 } catch (_) {}
 
 loadCatalog();
