@@ -4,7 +4,7 @@ import { SplashScreen } from '@capacitor/splash-screen';
 import { StatusBar, Style } from '@capacitor/status-bar';
 
 /** Entry inside the app WebView (not Chrome Custom Tabs). app=1 — без cookie-баннера сайта. */
-const APP_ENTRY = 'https://dev.serpmonn.ru/frontend/app/index.html?app=1&_spn=118';
+const APP_ENTRY = 'https://dev.serpmonn.ru/frontend/app/index.html?app=1&_spn=126';
 
 const shell = document.getElementById('shell');
 const offlineEl = document.getElementById('offline');
@@ -61,8 +61,8 @@ async function setupNative() {
     /* older plugin / browser */
   }
   try {
-    await StatusBar.setStyle({ style: Style.Dark });
-    await StatusBar.setBackgroundColor({ color: '#ffffff' });
+    await StatusBar.setStyle({ style: Style.Light });
+    await StatusBar.setBackgroundColor({ color: '#2a2a2a' });
   } catch {
     /* browser preview */
   }

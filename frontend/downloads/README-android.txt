@@ -1,10 +1,7 @@
 Android APK downloads
 =====================
 
-Current release: Serpmonn-1.2.1.apk
-
-Serpmonn_beta.apk — alias copy of the current release (Serpmonn-1.2.1.apk).
-Prefer the versioned filename for installs and links; the beta name is kept for
-legacy / bookmark compatibility.
+Prod release: Serpmonn-1.2.6.apk (+ Serpmonn-1.2.6.aab for stores)
+Dev shell:    Serpmonn-Dev.apk  (ru.serpmonn.dev → dev.serpmonn.ru, version 1.2.6-dev)
 
 Files live in this directory (served under /downloads/).
