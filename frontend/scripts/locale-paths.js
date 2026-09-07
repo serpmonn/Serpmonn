@@ -1,4 +1,4 @@
-import { isSafeFrontendPath, safeAssignLocation, safeSetHref } from './safe-frontend-nav.js';
+import { isSafeFrontendPath, safeAssignLocation, safeReplaceLocation, safeSetHref } from './safe-frontend-nav.js';
 
 const SITE_ORIGIN = 'https://serpmonn.ru';
 
@@ -71,4 +71,4 @@ export function redirectToAuth(options = {}) {
   safeAssignLocation(buildAuthUrl(options));
 }
 
-export { isSafeFrontendPath, safeAssignLocation, safeSetHref };
+export { isSafeFrontendPath, safeAssignLocation, safeReplaceLocation, safeSetHref };

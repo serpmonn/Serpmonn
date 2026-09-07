@@ -762,7 +762,7 @@ const TITLES = new Proxy({}, {
 });
 
 const viewer = document.getElementById('viewer');
-const viewerFrame = document.getElementById('viewerFrame');
+let viewerFrame = document.getElementById('viewerFrame');
 const viewerTitle = document.getElementById('viewerTitle');
 const viewerBack = document.getElementById('viewerBack');
 
@@ -1943,6 +1943,58 @@ function loadFrameDirect(frame, href, { timeoutMs = 15000 } = {}) {
 
 let viewerHistoryPushed = false;
 let closingViewerFromHistory = false;
+/** Вкладка под viewer — чтобы Back вернул на новости/инструменты, а не на профиль. */
+let viewerReturnTab = 'profile';
+
+function rememberViewerReturnTab() {
+  try {
+    const tab = String(activeAppTab || '').trim();
+    if (tab) viewerReturnTab = tab;
+  } catch (_) {
+    viewerReturnTab = 'profile';
+  }
+}
+
+function restoreViewerReturnTab() {
+  const tab = String(viewerReturnTab || '').trim();
+  if (!tab || tab === 'profile') return;
+  if (tab === activeAppTab) return;
+  try {
+    if (tab === 'feed' || tab === 'inbox') {
+      if (activeAppTab !== tab) showScreen(tab);
+      return;
+    }
+    if (tab === 'news' || tab === 'tools' || tab === 'games' || tab === 'search') {
+      applyMainScreen(tab);
+    }
+  } catch (_) {}
+}
+
+/**
+ * Пересоздаём iframe: иначе Back по WebView history возвращает предыдущий
+ * src (часто auth.html) → снова auth-ok → «Вы вошли» + профиль.
+ */
+function recycleViewerFrame() {
+  if (!viewerFrame || !viewerFrame.parentNode) return;
+  try {
+    viewerFrame.src = 'about:blank';
+  } catch (_) {}
+  try {
+    viewerFrame.removeAttribute('srcdoc');
+  } catch (_) {}
+  try {
+    viewerFrame.removeAttribute('src');
+  } catch (_) {}
+  const neu = viewerFrame.cloneNode(false);
+  neu.removeAttribute('src');
+  neu.removeAttribute('srcdoc');
+  try {
+    viewerFrame.parentNode.replaceChild(neu, viewerFrame);
+  } catch (_) {
+    return;
+  }
+  viewerFrame = neu;
+}
 
 /** Инъекция в iframe: флаг приложения + блок ухода на main.html после logout */
 const ANDROID_BOOT_SCRIPT =
@@ -1997,21 +2049,30 @@ function armGameHistoryTrap() {
 }
 
 function openAppAuth(title, opts = {}) {
+  void openAppAuthAsync(title, opts);
+}
+
+async function openAppAuthAsync(title, opts = {}) {
   const returnTab = opts.returnTab || 'profile';
   const returnTo = encodeURIComponent(
     `/frontend/app/index.html?app=1&tab=${encodeURIComponent(returnTab)}&lang=${getLocale()}`
   );
   const authUrl = withLocalizedAppParam(`/frontend/auth/auth.html?app=1&return=${returnTo}`);
-  // Полная навигация WebView — iframe #viewer в Android WebView часто не грузит auth/OAuth.
-  try { closeViewer({ fromHistory: true }); } catch (_) {}
   try { closeFullscreenPage(); } catch (_) {}
   try { closeSettingsPanel(); } catch (_) {}
+
+  // Уже в сессии — не открываем auth и не показываем «Вы вошли» повторно.
   try {
-    location.assign(authUrl);
-  } catch (err) {
-    console.warn('openAppAuth assign failed, fallback viewer', err);
-    openViewer(authUrl, title || t('login'));
-  }
+    if (await isLoggedIn()) {
+      showScreen(returnTab === 'feed' || returnTab === 'inbox' ? returnTab : 'profile');
+      try { await refreshProfile(); } catch (_) {}
+      return;
+    }
+  } catch (_) {}
+
+  // Auth во viewer: URL оболочки остаётся app/index.
+  try { closeViewer({ fromHistory: true }); } catch (_) {}
+  openViewer(authUrl, title || t('login'));
 }
 
 function reloadAuthViewerForLocale() {
@@ -2313,6 +2374,7 @@ function openViewer(url, title) {
     return;
   }
   const href = withAppParam(localizedUrl);
+  rememberViewerReturnTab();
   viewerIsGame = isGameUrl(href);
   const viewerIsGameLight = viewerIsGame && /\/2048\//i.test(href);
   viewerTitle.textContent = title || t('brand');
@@ -2465,7 +2527,7 @@ function hardenViewerDoc(doc, opts = {}) {
             if (/\/tariffs\//i.test(u.pathname)) {
               return;
             }
-            // После выхода / ссылок «на главную» не уводим из оболочки приложения
+            // «На главную» из статьи/инструмента — просто закрыть viewer, без сброса в профиль/гостя
             if (/\/main\.html$/i.test(u.pathname) || u.pathname === '/' || u.pathname === '/frontend/' || /^\/frontend\/en\/?$/i.test(u.pathname)) {
               if (navigate === 'embed' || navigate === 'fullscreen') {
                 try {
@@ -2474,8 +2536,6 @@ function hardenViewerDoc(doc, opts = {}) {
                 return;
               }
               try { closeViewer({ fromHistory: true }); } catch (_) {}
-              showScreen('profile');
-              showGuestProfile();
               return;
             }
             if (navigate === 'fullscreen' && fullscreenFrame) {
@@ -2640,7 +2700,8 @@ async function loadKbList() {
 
 function closeViewer(opts = {}) {
   const fromHistory = Boolean(opts.fromHistory);
-  const hadGameTrap = viewerGameTrapActive;
+  const toProfile = Boolean(opts.toProfile);
+  const hadPush = Boolean(viewerHistoryPushed || viewerGameTrapActive);
   viewerBootToken += 1;
   viewer.hidden = true;
   viewer.setAttribute('aria-hidden', 'true');
@@ -2648,19 +2709,21 @@ function closeViewer(opts = {}) {
   viewer.classList.remove('is-game-light');
   viewerIsGame = false;
   viewerGameTrapActive = false;
+  viewerHistoryPushed = false;
   finishViewerBoot();
-  try { viewerFrame.removeAttribute('srcdoc'); } catch (_) {}
-  try { viewerFrame.removeAttribute('src'); } catch (_) {}
-  if ((viewerHistoryPushed || hadGameTrap) && !fromHistory && !closingViewerFromHistory) {
-    viewerHistoryPushed = false;
+  // Сначала убиваем iframe (и его subframe history), потом popstate родителя
+  recycleViewerFrame();
+  if (hadPush && !fromHistory && !closingViewerFromHistory) {
     closingViewerFromHistory = true;
     try { history.back(); } catch (_) {}
     closingViewerFromHistory = false;
-  } else {
-    viewerHistoryPushed = false;
   }
-  // После auth/профиля во viewer — обновить состояние вкладки
-  try { refreshProfile(); } catch (_) {}
+  if (!toProfile) {
+    restoreViewerReturnTab();
+  }
+  if (toProfile || opts.refreshProfile || activeAppTab === 'profile') {
+    try { refreshProfile(); } catch (_) {}
+  }
 }
 
 window.addEventListener('popstate', () => {
@@ -2716,7 +2779,9 @@ try {
         return;
       }
       if (isViewerOpen()) {
-        closeViewer({ fromHistory: true });
+        // Сначала закрыть/пересоздать iframe, и только потом pop history —
+        // иначе Back возвращает auth.html в iframe → ложный «Вы вошли».
+        closeViewer();
         return;
       }
       if (cancelProfileEmbedEdit()) {
@@ -2912,7 +2977,10 @@ document.addEventListener('click', (e) => {
 
 window.addEventListener('message', (ev) => {
   if (!ev || !ev.data) return;
-  if (ev.data.type === 'spn-app-close-viewer') closeViewer();
+  if (ev.data.type === 'spn-app-close-viewer') {
+    try { closeViewer(); } catch (_) {}
+    return;
+  }
   if (ev.data.type === 'spn-app-sound') {
     spnPlay(ev.data.sound || 'tap');
     return;
@@ -2932,9 +3000,10 @@ window.addEventListener('message', (ev) => {
     return;
   }
   if (ev.data.type === 'spn-app-auth-ok') {
-    try { closeViewer(); } catch (_) {}
+    // Только свежий логин. «Уже в сессии» шлёт spn-app-close-viewer — без тоста.
+    try { closeViewer({ toProfile: true, refreshProfile: true }); } catch (_) {}
     showScreen('profile');
-    refreshProfile();
+    try { refreshProfile(); } catch (_) {}
     toast(t('loggedIn'), 'success');
     return;
   }
@@ -4369,6 +4438,12 @@ document.addEventListener('click', (e) => {
 window.addEventListener('message', (ev) => {
   if (!ev || !ev.data) return;
   if (ev.data.type === 'spn-app-logged-out') {
+    // Из статьи/инструмента «домой» тоже может прийти как logged-out (патч assign→main).
+    // Если открыт viewer — просто закрыть и вернуться на вкладку, не сбрасывать сессию в UI.
+    if (isViewerOpen()) {
+      try { closeViewer({ fromHistory: true }); } catch (_) {}
+      return;
+    }
     try { clearProfileEmbed(); } catch (_) {}
     showGuestProfile();
     showScreen('profile');
