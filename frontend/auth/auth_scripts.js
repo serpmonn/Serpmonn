@@ -1,5 +1,5 @@
 import { generateCombinedBackground } from '/frontend/scripts/backgroundGenerator.js';
-import { getFrontendPath, sanitizeReturnPath, safeAssignLocation, getCurrentLocale } from '../scripts/locale-paths.js';
+import { getFrontendPath, sanitizeReturnPath, safeAssignLocation, safeReplaceLocation, getCurrentLocale } from '../scripts/locale-paths.js';
 import { getPageT } from '../scripts/i18n-loader.js';
 import { appFetch } from '../scripts/app-api.js?v=2';
 
@@ -61,7 +61,18 @@ function markAndroidPostAuth() {
 function notifyAndroidAppAuthOk() {
   try {
     if (window.parent && window.parent !== window) {
-      window.parent.postMessage({ type: 'spn-app-auth-ok' }, '*');
+      window.parent.postMessage({ type: 'spn-app-auth-ok', fresh: true }, '*');
+      return true;
+    }
+  } catch (_) {}
+  return false;
+}
+
+/** Уже залогинены и попали на auth (Back/history) — тихо закрыть viewer, без «Вы вошли». */
+function notifyAndroidAppCloseViewer() {
+  try {
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({ type: 'spn-app-close-viewer' }, '*');
       return true;
     }
   } catch (_) {}
@@ -92,16 +103,74 @@ function authRedirectTarget() {
   return safeReturnPath || getFrontendPath('profile/profile.html');
 }
 
+function revealAuthAppUi() {
+  try {
+    document.documentElement.classList.remove('auth-app-boot');
+  } catch (_) {}
+}
+
+function hideAuthAppUi() {
+  try {
+    document.documentElement.classList.add('auth-app-boot');
+  } catch (_) {}
+}
+
+function isAuthEmbeddedInApp() {
+  try {
+    return Boolean(window.parent && window.parent !== window);
+  } catch (_) {
+    return true;
+  }
+}
+
 function safeNavigate(url) {
   if (isAndroidAppShell()) {
-    // iframe внутри app viewer — родитель закроет экран входа
+    // iframe внутри app viewer — родитель закроет экран входа, history WebView не трогаем
     if (notifyAndroidAppAuthOk()) return;
-    // полный WebView приложения — всегда на вкладку профиля
+    // полный WebView (deep link на auth.html): replace, без auth в стеке
     markAndroidPostAuth();
-    safeAssignLocation(withProfileTab(url));
+    safeReplaceLocation(withProfileTab(url));
     return;
   }
   safeAssignLocation(url);
+}
+
+/** Сразу уводим с формы после успеха — без паузы, из‑за которой мелькает логин. */
+function finishAuthSuccess() {
+  if (isAndroidAppShell()) {
+    hideAuthAppUi();
+    safeNavigate(authRedirectTarget());
+    return;
+  }
+  setTimeout(() => {
+    safeNavigate(authRedirectTarget());
+  }, 800);
+}
+
+/** Если сессия уже есть — закрываем auth без тоста «Вы вошли». */
+async function redirectIfAlreadyAuthedInApp() {
+  if (!isAndroidAppShell()) return false;
+  const embedded = isAuthEmbeddedInApp();
+  try {
+    const res = await appFetch('/auth/protected', {
+      credentials: 'include',
+      cache: 'no-store',
+    });
+    if (!res.ok) return false;
+    hideAuthAppUi();
+    if (embedded) {
+      // Не auth-ok: иначе Back на старый auth в history снова орёт «Вы вошли» и кидает на профиль
+      notifyAndroidAppCloseViewer();
+      return true;
+    }
+    markAndroidPostAuth();
+    safeReplaceLocation(
+      withProfileTab(sanitizeReturnPath(urlParams.get('return')) || APP_AFTER_AUTH)
+    );
+    return true;
+  } catch (_) {
+    return false;
+  }
 }
 
 const authFormsView = document.getElementById('authFormsView');
@@ -195,9 +264,7 @@ document.getElementById('loginForm').addEventListener('submit', async (event) =>
     }
 
     showMessage(data.message || t('auth.loginSuccess'), 'success');
-    setTimeout(() => {
-      safeNavigate(authRedirectTarget());
-    }, 800);
+    finishAuthSuccess();
   } catch (error) {
     console.error('Login error:', error);
     const hint = String(error?.message || '');
@@ -326,7 +393,7 @@ function initVkIdOneTap() {
 
           const data = await resp.json();
           if (data?.success) {
-            safeNavigate(authRedirectTarget());
+            finishAuthSuccess();
           } else {
             showMessage(t('login.error'));
           }
@@ -556,7 +623,7 @@ function startMessengerPolling(challengeId) {
         messengerPollTimer = null;
         setMessengerStatus('Подтверждено, входим…');
         await exchangeMessengerSession(data.exchangeCode);
-        safeNavigate(authRedirectTarget());
+        finishAuthSuccess();
       }
     } catch (e) {
       console.error('messenger status poll error:', e);
@@ -729,13 +796,8 @@ function initAuthAppShell() {
     back.setAttribute('aria-label', backLabel);
     back.title = backLabel;
     back.addEventListener('click', () => {
-      try {
-        if (window.history.length > 1) {
-          window.history.back();
-          return;
-        }
-      } catch (_) {}
-      safeAssignLocation('/frontend/app/index.html?app=1');
+      // Всегда replace в app: history.back() мог вернуть на старый auth или выкинуть из WebView.
+      safeReplaceLocation('/frontend/app/index.html?app=1');
     });
   }
 
@@ -748,7 +810,9 @@ function initAuthAppShell() {
   });
 }
 
-function bootAuthPage() {
+async function bootAuthPage() {
+  if (await redirectIfAlreadyAuthedInApp()) return;
+  revealAuthAppUi();
   initAuthAppShell();
   if (!isAndroidAppShell()) {
     generateCombinedBackground();
@@ -757,6 +821,17 @@ function bootAuthPage() {
   initVkIdOneTap();
   initMessengerLogin();
 }
+
+// bfcache: при возврате «назад» на auth сразу проверяем сессию без показа формы.
+window.addEventListener('pageshow', (ev) => {
+  if (!ev.persisted || !isAndroidAppShell()) return;
+  try {
+    document.documentElement.classList.add('auth-app-boot');
+  } catch (_) {}
+  redirectIfAlreadyAuthedInApp().then((redirected) => {
+    if (!redirected) revealAuthAppUi();
+  });
+});
 
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', bootAuthPage);

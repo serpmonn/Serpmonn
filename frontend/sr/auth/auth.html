@@ -229,12 +229,25 @@
       (function () {
         try {
           var q = new URLSearchParams(location.search);
-          if (q.get('app') === '1' || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform())) {
+          var appShell = q.get('app') === '1'
+            || (window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+          if (appShell) {
             document.documentElement.classList.add('auth-app-shell');
+            // Не рисуем форму, пока JS не подтвердит, что сессии нет (иначе Back → мелькание логина).
+            document.documentElement.classList.add('auth-app-boot');
           }
         } catch (e) {}
       })();
     </script>
+    <style>
+      html.auth-app-boot,
+      html.auth-app-boot body {
+        background: #0b0b0f !important;
+      }
+      html.auth-app-boot body > *:not(script) {
+        visibility: hidden !important;
+      }
+    </style>
 </head>
 <body>
     <script>
@@ -331,7 +344,7 @@
         </div>
     </div>
 
-    <script type="module" src="/frontend/auth/auth_scripts.js?v=42" defer></script>
+    <script type="module" src="/frontend/auth/auth_scripts.js?v=46" defer></script>
     <script type="module" src="/frontend/scripts/menu-loader.js" defer></script>
     <script src="/frontend/scripts/mobile-enhancements.js" defer></script>
 </body>

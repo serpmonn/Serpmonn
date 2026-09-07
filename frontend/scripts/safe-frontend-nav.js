@@ -13,9 +13,8 @@ export function isSafeFrontendPath(url) {
   return FRONTEND_PATH_RE.test(pathOnly);
 }
 
-/** Navigate only to same-site /frontend/... paths. */
-export function safeAssignLocation(url) {
-  if (!isSafeFrontendPath(url)) return;
+function rebuildSafeFrontendUrl(url) {
+  if (!isSafeFrontendPath(url)) return null;
   const pathOnly = url.split('?')[0].split('#')[0];
   const qs = url.includes('?') ? url.slice(url.indexOf('?')) : '';
   // Rebuild path from allowlisted charset segments (breaks residual taint).
@@ -23,8 +22,22 @@ export function safeAssignLocation(url) {
     .split('/')
     .map((seg) => (seg === '' ? '' : seg.replace(/[^a-zA-Z0-9._-]/g, '')))
     .join('/');
-  if (!isSafeFrontendPath(rebuilt)) return;
-  window.location.assign(rebuilt + qs);
+  if (!isSafeFrontendPath(rebuilt)) return null;
+  return rebuilt + qs;
+}
+
+/** Navigate only to same-site /frontend/... paths. */
+export function safeAssignLocation(url) {
+  const next = rebuildSafeFrontendUrl(url);
+  if (!next) return;
+  window.location.assign(next);
+}
+
+/** Same as assign, but replaces the current history entry (e.g. drop auth.html after login). */
+export function safeReplaceLocation(url) {
+  const next = rebuildSafeFrontendUrl(url);
+  if (!next) return;
+  window.location.replace(next);
 }
 
 /** Set <a href> only when path is safe frontend. */
