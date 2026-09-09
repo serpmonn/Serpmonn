@@ -49,7 +49,7 @@ export function connectRoutes(app, authLimiter) {                               
     app.use('/api', findingsRoutes);                                                                                             // Находки: публичный GET + auth на отдельных роутах
     app.use('/api', dmRoutes);                                                                                                   // Личные сообщения (DM)
     app.use('/api', pushRoutes);                                                                                                 // Web Push: VAPID + подписка
-    app.use('/api', (req, res, next) => {                                                                                        // verifyToken — пропускаем /api/admin (обрабатывается admin-server)
+    app.use('/api', (req, res, next) => {                                                                                        // verifyToken — отдельный префикс /api/admin обслуживается другим процессом
         if (req.path.startsWith('/admin')) return next('route');
         // Agents: marketplace / webhook / inbound event / agent log — не cookie-сессия
         if (
