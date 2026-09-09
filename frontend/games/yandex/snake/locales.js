@@ -4,8 +4,8 @@
 window.SERPMONN_LOCALES = {
   ru: {
     htmlLang: 'ru',
-    title: 'Змейка — Serpmonn',
-    heading: 'Змейка',
+    title: 'Змейка Serpmonn',
+    heading: 'Змейка Serpmonn',
     hint: 'Стрелки / WASD · Пробел или Esc — пауза · R — заново · На телефоне — свайпы',
     stats: 'Статистика',
     score: 'Счёт',
@@ -22,8 +22,8 @@ window.SERPMONN_LOCALES = {
   },
   en: {
     htmlLang: 'en',
-    title: 'Snake — Serpmonn',
-    heading: 'Snake',
+    title: 'Serpmonn Snake',
+    heading: 'Serpmonn Snake',
     hint: 'Arrows / WASD · Space or Esc — pause · R — restart · Mobile — swipes',
     stats: 'Stats',
     score: 'Score',

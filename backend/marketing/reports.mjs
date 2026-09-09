@@ -9,6 +9,7 @@ import { createGunzip } from 'zlib';
 import { join } from 'path';
 import { query } from '../database/config.mjs';
 import { ensureMarketingTables } from './queue.mjs';
+import { buildReachFeedback, ensureReachColumns } from './reach.mjs';
 
 const MONTHS = {
   Jan: 0,
@@ -241,6 +242,7 @@ async function publicationsReport(from, to) {
     `SELECT
        COUNT(*) AS created,
        SUM(status = 'published') AS published,
+       SUM(status = 'scheduled') AS scheduled,
        SUM(status = 'failed') AS failed,
        SUM(status = 'rejected') AS rejected,
        SUM(status = 'pending_review') AS pending_review
@@ -284,6 +286,7 @@ async function publicationsReport(from, to) {
     totals: {
       created: Number(t.created) || 0,
       published: Number(t.published) || 0,
+      scheduled: Number(t.scheduled) || 0,
       failed: Number(t.failed) || 0,
       rejected: Number(t.rejected) || 0,
       pending_review: Number(t.pending_review) || 0
@@ -386,10 +389,13 @@ export async function buildMarketingReport({ days } = {}) {
   const d = clampDays(days);
   const { from, to } = periodBounds(d);
 
-  const [publications, utm, business] = await Promise.all([
+  await ensureReachColumns();
+
+  const [publications, utm, business, reach] = await Promise.all([
     publicationsReport(from, to),
     scanUtmFromLogs(from, to),
-    businessReport(from, to)
+    businessReport(from, to),
+    buildReachFeedback(from, to)
   ]);
 
   return {
@@ -401,6 +407,7 @@ export async function buildMarketingReport({ days } = {}) {
     publications,
     utm,
     business,
+    reach,
     stubs: {
       metrika: 'Яндекс.Метрика API — позже (цели partner_topup / payment_success).',
       youtube: 'YouTube Analytics — позже (просмотры Shorts).'
