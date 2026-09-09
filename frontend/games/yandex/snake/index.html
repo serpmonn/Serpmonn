@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Змейка Serpmonn</title>
+  <meta name="description" content="Классическая змейка: собирай яблоки и ставь рекорд.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="snake.css">
+  <style>
+    .ad-top-banner, #menuContainer, .mobile-anchor-ad { display: none !important; }
+    .page { max-width: 960px; padding: 12px; box-sizing: border-box; }
+    @media (max-width: 800px) {
+      .wrap { grid-template-columns: 1fr; }
+      canvas#game { width: min(100%, 480px); height: auto; margin: 0 auto; display: block; }
+    }
+  </style>
+  <script src="/sdk.js"></script>
+  <script src="locales.js"></script>
+  <script src="yandex-bridge.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <img src="icon.png" width="28" height="28" alt="" style="border-radius:6px;">
+      <h1 data-i18n="heading">Змейка Serpmonn</h1>
+    </header>
+
+    <div class="wrap">
+      <div class="panel">
+        <canvas id="game" width="480" height="480" aria-label="Игровое поле"></canvas>
+        <div class="hint" data-i18n="hint">Стрелки / WASD · Пробел или Esc — пауза · R — заново · На телефоне — свайпы</div>
+      </div>
+
+      <div class="panel">
+        <h2 data-i18n="stats">Статистика</h2>
+        <div class="stats">
+          <div class="stat" data-i18n-score>Счёт<br><b id="score">0</b></div>
+          <div class="stat" data-i18n-best>Рекорд<br><b id="best">0</b></div>
+        </div>
+        <div class="stats">
+          <div class="stat" data-i18n-speed>Скорость<br><b id="speed">1x</b></div>
+          <div class="stat" data-i18n-field>Поле<br><b>24×24</b></div>
+        </div>
+        <div style="display:flex; gap:8px; justify-content:center; margin-top:8px; flex-wrap:wrap;">
+          <button class="btn primary" id="btnStart" data-i18n="start">Старт</button>
+          <button class="btn" id="btnPause" data-i18n="pause">Пауза</button>
+          <button class="btn" id="btnReset" data-i18n="reset">Заново</button>
+        </div>
+        <div class="controls" aria-label="Мобильное управление">
+          <div></div>
+          <button class="btn" data-dir="up">▲</button>
+          <div></div>
+          <button class="btn" data-dir="left">◀</button>
+          <button class="btn" data-dir="down">▼</button>
+          <button class="btn" data-dir="right">▶</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    window.i18n = {
+      gameOver: 'Игра окончена',
+      pressRToRestart: 'Нажмите R — заново'
+    };
+  </script>
+  <script src="snake.js" defer></script>
+</body>
+</html>

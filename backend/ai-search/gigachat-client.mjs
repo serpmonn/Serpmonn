@@ -152,7 +152,7 @@ export async function downloadGigaChatFile(fileId, token) {
  * @param {string} prompt
  * @returns {Promise<{ fileId: string, buffer: Buffer, contentType: string, caption: string, usage: object|null }>}
  */
-export async function generateImageWithGigaChat(prompt) {
+export async function generateImageWithGigaChat(prompt, { timeoutMs = 120_000 } = {}) {
   const text = ensureDrawPrompt(prompt);
   if (!text) {
     const err = new Error('Empty prompt');
@@ -175,7 +175,7 @@ export async function generateImageWithGigaChat(prompt) {
   const res = await httpsRequest(API_HOST, '/api/v1/chat/completions', {
     method: 'POST',
     port: API_PORT,
-    timeoutMs: 120_000,
+    timeoutMs,
     headers: {
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
@@ -215,4 +215,62 @@ export async function generateImageWithGigaChat(prompt) {
     caption: String(content).replace(/<img[^>]*>/gi, '').trim(),
     usage: data.usage || null,
   };
+}
+
+/**
+ * Текстовый chat completions (для маркетинговых постов).
+ * @returns {Promise<{ content: string, model: string, usage: object|null }>}
+ */
+export async function chatWithGigaChat(messages, { temperature = 0.7, timeoutMs = 60_000 } = {}) {
+  const token = await getGigaChatToken();
+  const payload = JSON.stringify({
+    model: MODEL,
+    messages,
+    temperature,
+    function_call: 'none'
+  });
+
+  const res = await httpsRequest(API_HOST, '/api/v1/chat/completions', {
+    method: 'POST',
+    port: API_PORT,
+    timeoutMs,
+    headers: {
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+      Accept: 'application/json',
+      'Content-Length': Buffer.byteLength(payload)
+    },
+    body: payload
+  });
+
+  let data = {};
+  try {
+    data = JSON.parse(res.buffer.toString('utf8'));
+  } catch {
+    /* ignore */
+  }
+
+  if (res.status < 200 || res.status >= 300) {
+    const msg = data.message || data.error || `GigaChat chat ${res.status}`;
+    const err = new Error(typeof msg === 'string' ? msg : JSON.stringify(msg));
+    err.status = res.status === 429 ? 429 : 502;
+    throw err;
+  }
+
+  const content = data?.choices?.[0]?.message?.content || '';
+  if (!String(content).trim()) {
+    const err = new Error('GigaChat empty content');
+    err.status = 502;
+    throw err;
+  }
+
+  return {
+    content: String(content),
+    model: `gigachat:${MODEL}`,
+    usage: data.usage || null
+  };
+}
+
+export function isGigaChatConfigured() {
+  return Boolean(String(process.env.GIGACHAT_CREDENTIALS || '').trim());
 }

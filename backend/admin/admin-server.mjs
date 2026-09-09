@@ -6,7 +6,7 @@ const envPath = isProduction
   ? '/var/www/serpmonn.ru/backend/.env'
   : resolve(process.cwd(), 'backend/.env');
 
-dotenv.config({ path: envPath });
+dotenv.config({ path: envPath, override: true });
 
 import express from 'express';
 import cookieParser from 'cookie-parser';
@@ -38,7 +38,7 @@ app.use(cors({
 
 const adminLimiter = rateLimit({
     windowMs: 15 * 60 * 1000,
-    max: 60,
+    max: 300,
     standardHeaders: true,
     legacyHeaders: false
 });

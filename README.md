@@ -194,7 +194,7 @@ Frontend: `findings-client.js`, `findings-modals.js`, `finding-list-card.js`. Ba
 <p align="center">
   <a href="https://serpmonn.ru/frontend/messenger.html"><strong>Страница мессенджера</strong></a>
   ·
-  <a href="https://serpmonn.ru/frontend/downloads/Serpmonn%20Messenger.apk"><strong>⬇ Скачать APK (бета)</strong></a>
+  <a href="https://serpmonn.ru/frontend/downloads/messenger/Serpmonn%20Messenger.apk"><strong>⬇ Скачать APK (бета)</strong></a>
 </p>
 
 > **⚠️ Бета.** Идёт тестирование на реальных устройствах. Возможны сбои. Требуется Android 8.0+. Личные и групповые чаты доступны в тестовой сборке.

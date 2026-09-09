@@ -38,12 +38,27 @@ import {
   updateMarketingItem,
   rejectMarketingItem,
   publishMarketingItem,
+  publishMarketingItemNow,
   listMarketingChannels,
   listMarketingTemplates,
   renderMarketingItem,
   streamMarketingMedia,
   getMarketingReports,
-  regenerateMarketingCopy
+  regenerateMarketingCopy,
+  listMarketingCampaigns,
+  createMarketingCampaign,
+  updateMarketingCampaign,
+  pauseMarketingCampaign,
+  deleteMarketingCampaign,
+  getMarketingDigest,
+  generateMarketingDigest,
+  publishMarketingDigestAll,
+  skipMarketingDigestItem,
+  deleteMarketingItem,
+  listMarketingPlatforms,
+  updateMarketingPlatform,
+  refreshMarketingReach,
+  setMarketingReach
 } from './marketingAdmin.mjs';
 import {
   listAiImagesAdmin,
@@ -90,13 +105,31 @@ router.get('/search-insights', verifyAdmin, getSearchInsightsHandler);
 router.get('/search-insights/image/:id', verifyAdmin, streamSearchLogImage);
 router.get('/search-insights.csv', verifyAdmin, exportSearchInsightsCsv);
 
-// Маркетинг: очередь публикаций и каналы
+// Маркетинг: дайджест, кампании, очередь, каналы
+router.get('/marketing/digest', verifyAdmin, getMarketingDigest);
+router.post('/marketing/digest/generate', verifyAdmin, generateMarketingDigest);
+router.post('/marketing/digest/publish-all', verifyAdmin, publishMarketingDigestAll);
+router.post('/marketing/digest/:id/skip', verifyAdmin, skipMarketingDigestItem);
+
+router.get('/marketing/campaigns', verifyAdmin, listMarketingCampaigns);
+router.post('/marketing/campaigns', verifyAdmin, createMarketingCampaign);
+router.put('/marketing/campaigns/:id', verifyAdmin, updateMarketingCampaign);
+router.post('/marketing/campaigns/:id/pause', verifyAdmin, pauseMarketingCampaign);
+router.delete('/marketing/campaigns/:id', verifyAdmin, deleteMarketingCampaign);
+
+router.get('/marketing/platforms', verifyAdmin, listMarketingPlatforms);
+router.put('/marketing/platforms/:id', verifyAdmin, updateMarketingPlatform);
+router.post('/marketing/reach/refresh', verifyAdmin, refreshMarketingReach);
+router.post('/marketing/reach', verifyAdmin, setMarketingReach);
+
 router.get('/marketing/queue', verifyAdmin, listMarketingQueue);
 router.get('/marketing/queue/:id', verifyAdmin, getMarketingItem);
 router.post('/marketing/queue', verifyAdmin, createMarketingFromTemplate);
 router.put('/marketing/queue/:id', verifyAdmin, updateMarketingItem);
+router.delete('/marketing/queue/:id', verifyAdmin, deleteMarketingItem);
 router.post('/marketing/queue/:id/reject', verifyAdmin, rejectMarketingItem);
 router.post('/marketing/queue/:id/publish', verifyAdmin, publishMarketingItem);
+router.post('/marketing/queue/:id/publish-now', verifyAdmin, publishMarketingItemNow);
 router.post('/marketing/queue/:id/render', verifyAdmin, renderMarketingItem);
 router.post('/marketing/queue/:id/regenerate-copy', verifyAdmin, regenerateMarketingCopy);
 router.get('/marketing/queue/:id/media', verifyAdmin, streamMarketingMedia);

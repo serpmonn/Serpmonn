@@ -1,9 +1,11 @@
 import * as manual from './manual.mjs';
 import * as youtube from './youtube.mjs';
-import * as vk from './vk.mjs';
+import { VK_CHANNELS } from './vk.mjs';
+import * as telegram from './telegram.mjs';
+import * as dzen from './dzen.mjs';
 
 /** Реестр каналов. Новый канал = import + запись сюда. */
-const CHANNELS = [manual, youtube, vk];
+const CHANNELS = [...VK_CHANNELS, telegram, dzen, youtube, manual];
 
 const byId = new Map(CHANNELS.map((c) => [c.id, c]));
 

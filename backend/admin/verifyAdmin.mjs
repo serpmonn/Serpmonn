@@ -6,7 +6,7 @@ const envPath = isProduction
   ? '/var/www/serpmonn.ru/backend/.env'
   : resolve(process.cwd(), 'backend/.env');
 
-dotenv.config({ path: envPath });
+dotenv.config({ path: envPath, override: true });
 
 import paseto from 'paseto';
 const { V4 } = paseto;
