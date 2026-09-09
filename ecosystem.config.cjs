@@ -47,18 +47,6 @@ module.exports = {                                      // Экспорт кон
       }
     },
 
-    // Admin panel (отдельный сервер админ-панели)
-    {
-      name: 'admin-server',                             // Процесс админ-панели
-      script: 'backend/admin/admin-server.mjs',         // Точка входа
-      instances: 1,                                     // Одна копия
-      max_memory_restart: '256M',                       // Лимит памяти
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
-      env: {
-        NODE_ENV: 'production'                          // Режим продакшена
-      }
-    },
-
     // News server (сервер новостей, RSS и т.п.)
     {
       name: 'news-server',                              // Имя процесса новостного сервиса
@@ -112,20 +100,6 @@ module.exports = {                                      // Экспорт кон
       log_date_format: 'YYYY-MM-DD HH:mm:ss Z',         // Таймстемпы в логах
       env: {
         NODE_ENV: 'production'
-      }
-    },
-
-    {
-      name: 'health-alert',                             // Письма при падении/восстановлении сервисов
-      script: 'backend/admin/healthAlert.mjs',
-      instances: 1,
-      max_memory_restart: '256M',
-      log_date_format: 'YYYY-MM-DD HH:mm:ss Z',
-      env: {
-        NODE_ENV: 'production',
-        HEALTH_ALERT_TO: 'serpmon@gmail.com,sergei@serpmonn.ru',
-        HEALTH_ALERT_INTERVAL_MS: '60000',
-        HEALTH_ALERT_FAIL_THRESHOLD: '2'
       }
     },
 
