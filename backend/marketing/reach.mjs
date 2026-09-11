@@ -85,39 +85,58 @@ export async function updateChannelLogReach(logId, reach) {
 }
 
 /**
- * Обновить охват по логам VK (views) и вернуть сводку.
+ * Обновить охват по логам VK (views) и YouTube (viewCount).
  * Ручные каналы не трогаем.
  */
 export async function refreshReachMetrics({ limit = 40 } = {}) {
   await ensureReachColumns();
+  const lim = Math.min(100, Math.max(1, Number(limit) || 40));
   const logs = await query(
     `SELECT id, channel_id, external_url, reach
      FROM marketing_channel_log
      WHERE status = 'ok'
-       AND channel_id LIKE 'vk%'
        AND external_url IS NOT NULL
        AND external_url <> ''
+       AND (channel_id LIKE 'vk%' OR channel_id = 'youtube')
      ORDER BY id DESC
-     LIMIT ${Math.min(100, Math.max(1, Number(limit) || 40))}`
+     LIMIT ${lim}`
   );
 
+  const { fetchYoutubeViewCount } = await import('./channels/youtube.mjs');
+
   const results = [];
+  let checkedVk = 0;
+  let checkedYt = 0;
   for (const log of logs || []) {
+    const isYt = String(log.channel_id) === 'youtube';
+    if (isYt) checkedYt += 1;
+    else checkedVk += 1;
     try {
-      const reach = await fetchVkPostReach(log.external_url);
+      const reach = isYt
+        ? await fetchYoutubeViewCount(log.external_url)
+        : await fetchVkPostReach(log.external_url);
       if (reach == null) {
-        results.push({ id: log.id, ok: false, error: 'no views' });
+        results.push({ id: log.id, channel: log.channel_id, ok: false, error: 'no views' });
         continue;
       }
       await updateChannelLogReach(log.id, reach);
-      results.push({ id: log.id, ok: true, reach });
+      results.push({ id: log.id, channel: log.channel_id, ok: true, reach });
     } catch (err) {
-      results.push({ id: log.id, ok: false, error: err.message || String(err) });
+      results.push({
+        id: log.id,
+        channel: log.channel_id,
+        ok: false,
+        error: err.message || String(err)
+      });
     }
   }
   return {
     checked: (logs || []).length,
+    checkedVk,
+    checkedYt,
     updated: results.filter((r) => r.ok).length,
+    updatedVk: results.filter((r) => r.ok && r.channel !== 'youtube').length,
+    updatedYt: results.filter((r) => r.ok && r.channel === 'youtube').length,
     results
   };
 }
@@ -202,7 +221,7 @@ export async function buildReachFeedback(from, to) {
 
   if (!reach.totalReach) {
     tips.push(
-      'Охвата пока нет в данных: нажми «Обновить охват VK» или введи reach вручную для Дзен/manual.'
+      'Охвата пока нет в данных: нажми «Обновить охват VK/YT» или введи reach вручную для Дзен/manual.'
     );
   } else {
     const top = reach.topChannels[0];

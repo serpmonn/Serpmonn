@@ -2,7 +2,8 @@
  * Адаптация master-креатива под каналы (нативные версии, не копипаст).
  */
 
-import { stripHashtags, withTrailingHashtags, pickHashtags } from './content-adapters.mjs';
+import { stripHashtags, withTrailingHashtags, pickHashtags, uniqueHashtags } from './content-adapters.mjs';
+import { sanitizeCompanyVoice } from './generate-copy.mjs';
 import { isVkChannelId } from './channels/vk.mjs';
 
 function withUtm(ctaUrl, channelId, digestDate) {
@@ -36,8 +37,8 @@ function firstHook(body, title) {
 
 /** @returns {Record<string, { title: string, body: string, cta_url: string, checklist?: string[] }>} */
 export function adaptContentForChannels(master, channelIds, { digestDate } = {}) {
-  const title = stripHashtags(master.title || '');
-  const bodyRaw = stripHashtags(master.body || '');
+  const title = sanitizeCompanyVoice(stripHashtags(master.title || ''));
+  const bodyRaw = sanitizeCompanyVoice(stripHashtags(master.body || ''));
   const baseCta = String(master.cta_url || '').trim();
   const out = {};
 
@@ -47,7 +48,9 @@ export function adaptContentForChannels(master, channelIds, { digestDate } = {})
 
     if (isVkChannelId(id)) {
       // Ссылку в body не дублируем: в VK она один раз добавится из cta_url при wall.post
-      const tags = master.meta?.hashtags || pickHashtags(`${digestDate || ''}-${title}-${id}`);
+      const tags = uniqueHashtags(
+        master.meta?.hashtags || pickHashtags(`${digestDate || ''}-${title}-${id}-${Date.now()}`)
+      );
       const body = withTrailingHashtags(bodyRaw, tags);
       out[id] = { title, body, cta_url: cta };
       continue;
@@ -94,6 +97,29 @@ export function adaptContentForChannels(master, channelIds, { digestDate } = {})
           'Добавь ссылку на Serpmonn в конце',
           'Опубликуй и вставь URL обратно в админку'
         ]
+      };
+      continue;
+    }
+
+    if (id === 'youtube') {
+      const hook = firstHook(bodyRaw, title);
+      const tags = uniqueHashtags([
+        ...(Array.isArray(master.meta?.hashtags) ? master.meta.hashtags : []),
+        '#Shorts',
+        '#Serpmonn'
+      ]).slice(0, 6);
+      const desc = [
+        sanitizeCompanyVoice(bodyRaw),
+        cta ? `Подробнее: ${cta}` : '',
+        tags.join(' ')
+      ]
+        .filter(Boolean)
+        .join('\n\n')
+        .slice(0, 4000);
+      out.youtube = {
+        title: sanitizeCompanyVoice(title || hook || 'Serpmonn').slice(0, 100),
+        body: desc,
+        cta_url: cta
       };
       continue;
     }

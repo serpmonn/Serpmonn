@@ -11,6 +11,8 @@ import { adaptContentForChannels, payloadForChannel } from './channel-adapt.mjs'
 import { resolvePublishChannels, ensurePlatformTables } from './platforms.mjs';
 import { publishQueueItem } from './dispatcher.mjs';
 import { getChannel } from './channels/index.mjs';
+import { isVkChannelId } from './channels/vk.mjs';
+import { renderShort, resolveMarketingMedia } from './render-short.mjs';
 import {
   createQueueItem,
   ensureMarketingTables,
@@ -73,6 +75,41 @@ function assignOnePlatformPerSlot(platforms, slotCount) {
     out.push(deck.shift());
   }
   return out;
+}
+
+/** Каналы только с video (YouTube Shorts и т.п.) — нужен mp4 через ffmpeg. */
+function channelNeedsVideo(channelId) {
+  const ch = getChannel(channelId);
+  const formats = ch?.formats || [];
+  return formats.includes('video') && !formats.includes('text');
+}
+
+/**
+ * Картинка → вертикальный Shorts mp4.
+ * @returns {Promise<{ media_path: string, format: string, renderMeta: object }>}
+ */
+async function renderVideoForSlot(content, channelId) {
+  const sourceAbs = content.media_path
+    ? resolveMarketingMedia(content.media_path)
+    : undefined;
+  const rendered = await renderShort({
+    product: content.product || 'promocodes',
+    title: content.title || 'Serpmonn',
+    subtitle: 'Serpmonn',
+    ctaUrl: content.cta_url || '',
+    sourceImage: sourceAbs || undefined,
+    durationSec: 12
+  });
+  return {
+    media_path: rendered.mediaPath,
+    format: 'video',
+    renderMeta: {
+      renderedAt: new Date().toISOString(),
+      durationSec: rendered.durationSec,
+      sourceStill: content.media_path || null,
+      renderChannel: channelId
+    }
+  };
 }
 
 function parsePublishAt(raw) {
@@ -217,15 +254,36 @@ export async function generateDigestForDate(digestDate, { force = false, useAi =
           continue;
         }
 
+        // VK — только текст. TG — фото. YouTube — still для ffmpeg Shorts.
+        const needsVideo = channelNeedsVideo(channelId);
+        const needsImage =
+          needsVideo ||
+          (!isVkChannelId(channelId) &&
+            (campaign.source === 'promocodes' ||
+              campaign.source === 'honey' ||
+              campaign.source === 'games' ||
+              Boolean(useAi)));
+
         const content = await buildContentForCampaign(campaign, {
           slot,
           digestDate: date,
-          useAi: Boolean(useAi) || campaign.source === 'promocodes' || campaign.source === 'honey',
-          withImage:
-            campaign.source === 'promocodes' || campaign.source === 'honey'
-              ? true
-              : Boolean(useAi)
+          useAi:
+            Boolean(useAi) ||
+            campaign.source === 'promocodes' ||
+            campaign.source === 'honey' ||
+            campaign.source === 'games',
+          withImage: needsImage
         });
+
+        if (needsVideo) {
+          const rendered = await renderVideoForSlot(content, channelId);
+          content.format = rendered.format;
+          content.media_path = rendered.media_path;
+          content.meta = {
+            ...(content.meta || {}),
+            ...rendered.renderMeta
+          };
+        }
 
         const adaptations = adaptContentForChannels(content, channels, {
           digestDate: date

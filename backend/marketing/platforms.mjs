@@ -69,7 +69,7 @@ export const PLATFORM_CATALOG = [
     defaultMode: 'auto',
     defaultEnabled: false,
     formats: ['video'],
-    notes: 'Включи после стабильного охвата VK/TG/Дзен'
+    notes: 'https://www.youtube.com/channel/UCVDkeUaVT3OmTcmwvdXO55Q'
   },
   {
     id: 'ok',

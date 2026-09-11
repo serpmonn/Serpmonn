@@ -68,9 +68,28 @@ const HONEY_FALLBACKS = [
   }
 ];
 
+const GAMES_FALLBACKS = [
+  {
+    title: 'Игры на Serpmonn',
+    body:
+      'Браузерные мини-игры собраны в одном разделе Serpmonn.\nЗапуск без установки — сразу в браузере.'
+  },
+  {
+    title: 'Досуг без скачивания',
+    body:
+      'В разделе игр Serpmonn доступны короткие браузерные игры.\nУдобно открыть и поиграть прямо на сайте.'
+  },
+  {
+    title: 'Мини-игры Serpmonn',
+    body:
+      'Подборка браузерных игр на Serpmonn — без приложений и лишних установок.\nРаздел игр всегда под рукой.'
+  }
+];
+
 const BRAND_FALLBACKS = {
   promocodes: PROMO_FALLBACKS[0],
   honey: HONEY_FALLBACKS[0],
+  games: GAMES_FALLBACKS[0],
   neli: {
     title: 'Neli на Serpmonn',
     body: 'Короткая браузерная игра Neli доступна без установки на Serpmonn.'
@@ -108,6 +127,19 @@ const PRODUCT_BRIEFS = {
       'Тема: натуральный мёд, польза, ассортимент, качество, доставка',
       'Не рекламировать Serpmonn и промокоды в этих постах',
       'CTA: https://vrnhoney.ru'
+    ]
+  },
+  games: {
+    name: 'Раздел игр Serpmonn',
+    lang: 'ru',
+    brandOnly: true,
+    brandName: 'Serpmonn',
+    facts: [
+      'Serpmonn — сервис с разделом браузерных мини-игр',
+      'Игры запускаются в браузере без установки приложений',
+      'Цель поста: привести на https://serpmonn.ru/games',
+      'Можно: Serpmonn, игры, мини-игры, браузер, досуг, без скачивания',
+      'ЗАПРЕЩЕНО: чужие игровые бренды, названия чужих игр (кроме общих слов), магазины приложений'
     ]
   },
   neli: {
@@ -158,8 +190,9 @@ function briefFor(product) {
 
 function fallbackFor(product, salt = '') {
   const key = String(product || '').toLowerCase();
-  if (key === 'promocodes' || key === 'honey') {
-    const pool = key === 'honey' ? HONEY_FALLBACKS : PROMO_FALLBACKS;
+  if (key === 'promocodes' || key === 'honey' || key === 'games') {
+    const pool =
+      key === 'honey' ? HONEY_FALLBACKS : key === 'games' ? GAMES_FALLBACKS : PROMO_FALLBACKS;
     let h = 0;
     const s = String(salt || Date.now());
     for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
@@ -168,12 +201,17 @@ function fallbackFor(product, salt = '') {
   return BRAND_FALLBACKS[key] || BRAND_FALLBACKS.default;
 }
 
-async function recentTitles(product, limit = 8) {
+async function recentTitles(product, { days = 14, limit = 40 } = {}) {
   try {
+    const lim = Math.min(60, Math.max(1, Number(limit) || 40));
+    const d = Math.min(30, Math.max(7, Number(days) || 14));
     const rows = await query(
       `SELECT title FROM marketing_queue
-       WHERE product = ? AND title IS NOT NULL AND title <> ''
-       ORDER BY id DESC LIMIT ${Math.min(20, Math.max(1, limit))}`,
+       WHERE product = ?
+         AND title IS NOT NULL AND title <> ''
+         AND created_at >= (NOW() - INTERVAL ${d} DAY)
+       ORDER BY id DESC
+       LIMIT ${lim}`,
       [String(product || '').slice(0, 64)]
     );
     return (rows || []).map((r) => String(r.title || '').trim()).filter(Boolean);
@@ -182,14 +220,47 @@ async function recentTitles(product, limit = 8) {
   }
 }
 
+function normalizeTitleKey(title) {
+  return String(title || '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}\s]+/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Похожесть заголовков: точное совпадение или сильное пересечение слов. */
+export function titlesTooSimilar(a, b) {
+  const na = normalizeTitleKey(a);
+  const nb = normalizeTitleKey(b);
+  if (!na || !nb) return false;
+  if (na === nb) return true;
+  if (na.includes(nb) || nb.includes(na)) {
+    const shorter = Math.min(na.length, nb.length);
+    const longer = Math.max(na.length, nb.length);
+    if (shorter >= 12 && shorter / longer >= 0.72) return true;
+  }
+  const wa = new Set(na.split(' ').filter((w) => w.length > 2));
+  const wb = new Set(nb.split(' ').filter((w) => w.length > 2));
+  if (wa.size < 2 || wb.size < 2) return false;
+  let inter = 0;
+  for (const w of wa) if (wb.has(w)) inter += 1;
+  const union = wa.size + wb.size - inter;
+  return union > 0 && inter / union >= 0.55;
+}
+
+function titleCollidesWithRecent(title, recent) {
+  return (recent || []).some((t) => titlesTooSimilar(title, t));
+}
+
 function buildPrompt({ product, format, ctaUrl, avoidTitles }) {
   const brief = briefFor(product);
   const isVideo = format === 'video';
   const isHoney = String(product || '').toLowerCase() === 'honey';
+  const isGames = String(product || '').toLowerCase() === 'games';
   const brand = brief.brandName || (isHoney ? 'VRNHoney' : 'Serpmonn');
   const avoid =
     avoidTitles?.length
-      ? `Не повторяй эти заголовки:\n- ${avoidTitles.join('\n- ')}`
+      ? `Не повторяй и не перефразируй близко эти заголовки за последние 2 недели:\n- ${avoidTitles.join('\n- ')}\nСделай другой угол и другие ключевые слова.`
       : 'Сделай свежий угол, без шаблонного звучания.';
 
   const brandRules = brief.brandOnly
@@ -200,7 +271,15 @@ function buildPrompt({ product, format, ctaUrl, avoidTitles }) {
 - НЕ упоминай Serpmonn, промокоды, скидочные агрегаторы
 - Можно: мёд, сорта, польза, качество, пасека, доставка, интернет-магазин
 `
-      : `
+      : isGames
+        ? `
+ЖЁСТКИЕ ПРАВИЛА (раздел игр Serpmonn):
+- Рекламируй ТОЛЬКО Serpmonn и раздел браузерных игр
+- Цель: привести на serpmonn.ru/games
+- ЗАПРЕЩЕНО: чужие игровые бренды, чужие названия игр, Steam/App Store/Google Play как CTA
+- Можно: браузерные игры, мини-игры, без установки, досуг, «в одном разделе»
+`
+        : `
 ЖЁСТКИЕ ПРАВИЛА (бренд-онли реклама):
 - Рекламируй ТОЛЬКО Serpmonn и его раздел промокодов
 - ЗАПРЕЩЕНО: любые названия магазинов, банков, сервисов, брендов партнёров
@@ -211,8 +290,10 @@ function buildPrompt({ product, format, ctaUrl, avoidTitles }) {
     : '';
 
   const hashtagHint = isHoney
-    ? 'обязательно #VRNHoney или #мёд; остальные про мёд/магазин; можно #vrnhoney; без Serpmonn'
-    : 'обязательно #Serpmonn; остальные на русском (тематика промокодов/скидок/Serpmonn); без чужих брендов';
+    ? 'обязательно #VRNHoney или #мёд; можно русские и английские (#honey #natural); без Serpmonn'
+    : isGames
+      ? 'обязательно #Serpmonn; можно русские и английские (#games #browsergames); без чужих брендов'
+      : 'обязательно #Serpmonn; можно русские и английские (#promo #deals #coupons); без чужих брендов магазинов';
 
   return `Ты корпоративный копирайтер. Пишешь посты от лица компании «${brand}» для VK.
 Верни ТОЛЬКО JSON без markdown: {"title":"...","body":"...","hashtags":["#..."]}
@@ -226,14 +307,15 @@ CTA URL хранится отдельно (можно не дублироват�
 ${brandRules}
 ГОЛОС И ТОН (обязательно):
 - Текст от лица компании, не от личного блога автора
-- Безличная или корпоративная форма: «в ассортименте», «предлагается», «можно выбрать», «доступно на сайте»; допустимо «мы» как компания
-- ЗАПРЕЩЕНО: «я», «мне», «мой/моя», «сегодня решил», «делюсь с вами» от первого лица человека
+- Строго безличная форма: «в ассортименте», «предлагается», «можно выбрать», «доступно на сайте», «в разделе собраны»
+- ЗАПРЕЩЕНО любое 1-е лицо: «я/мне/мой», «мы/нам/нас», «наш/наша/наше/нашем/наши», «сегодня решили», «делимся с вами»
+- Пиши «в разделе собраны», НЕ «в нашем разделе»
 - Без панибратского тона блогера («друзья», «ну что, погнали»)
 Ограничения:
 - Бренд: «${brand}»
 - Пиши обычный текст ТОЛЬКО по-русски. Английские слова в обычных фразах ЗАПРЕЩЕНЫ
 - На латинице допустимы только названия брендов и устоявшиеся термины (Serpmonn, VRNHoney, vrnhoney)
-- title: до ${isVideo ? 70 : 90} символов, без спама эмодзи
+- title: до ${isVideo ? 48 : 90} символов, без спама эмодзи; для видео — короткая цепкая фраза (не длинное предложение)
 - body: ${isVideo ? '1–3 коротких предложения, до 280 символов' : '2–5 коротких предложений/строк, до 500 символов'}
 - hashtags: массив из 3–5 штук; ${hashtagHint}
 - В body НЕ дублируй хештеги — только в поле hashtags
@@ -303,12 +385,69 @@ function stripUnauthorizedEnglish(text) {
     .trim();
 }
 
-/** Убираем личное «я/мне/мой» — корпоративный безличный тон. */
-function sanitizeCompanyVoice(text) {
+/** Граница слова для кириллицы (JS \\b с Unicode ненадёжен). */
+const WB = String.raw`(?<![\p{L}\p{N}_])`;
+const WE = String.raw`(?![\p{L}\p{N}_])`;
+
+/** Убираем 1-е лицо (я/мы/наш*) — строго безличный тон. */
+export function sanitizeCompanyVoice(text) {
   let t = String(text || '');
-  t = t.replace(/\b(я|меня|мне|мной|мою|мой|моя|моё|мое|мои|моих|моим|моими)\b/gi, '');
-  t = t.replace(/\b(лично я|сегодня (я )?решил[аи]?|делю(?:сь|сь) с вами)\b/gi, '');
-  return t.replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+  // частые конструкции целиком
+  t = t.replace(
+    new RegExp(`${WB}в\\s+наш(?:ем|ей|его|ему|им|ими|их|а|е|и)?\\s+разделе${WE}`, 'giu'),
+    'в разделе'
+  );
+  t = t.replace(
+    new RegExp(`${WB}наш(?:а|е|и|его|ей|ему|им|ими|их|ем)?\\s+раздел${WE}`, 'giu'),
+    'раздел'
+  );
+  t = t.replace(
+    new RegExp(`${WB}наш(?:а|е|и|его|ей|ему|им|ими|их|ем)?\\s+подборк[а-яё]*${WE}`, 'giu'),
+    'подборка'
+  );
+  t = t.replace(
+    new RegExp(`${WB}наш(?:а|е|и|его|ей|ему|им|ими|их|ем)?\\s+сервис${WE}`, 'giu'),
+    'сервис'
+  );
+  t = t.replace(
+    new RegExp(`${WB}наш(?:а|е|и|его|ей|ему|им|ими|их|ем)?\\s+сайт${WE}`, 'giu'),
+    'сайт'
+  );
+  t = t.replace(
+    new RegExp(
+      `${WB}(я|меня|мне|мной|мною|мою|мой|моя|моё|мое|мои|моих|моим|моими|моём|моем)${WE}`,
+      'giu'
+    ),
+    ''
+  );
+  t = t.replace(
+    new RegExp(
+      `${WB}(мы|нас|нам|нами|наш|наша|наше|нашего|нашей|нашему|нашим|нашими|наших|наши|нашем|нашём)${WE}`,
+      'giu'
+    ),
+    ''
+  );
+  t = t.replace(
+    new RegExp(
+      `${WB}(лично\\s+я|сегодня\\s+(мы\\s+|я\\s+)?решил[аи]?|дел(?:юсь|имся)\\s+с\\s+вами)${WE}`,
+      'giu'
+    ),
+    ''
+  );
+  // остатки глаголов 1 л. мн.ч.
+  t = t.replace(new RegExp(`${WB}предлагаем${WE}`, 'giu'), 'предлагается');
+  t = t.replace(new RegExp(`${WB}рекомендуем${WE}`, 'giu'), 'рекомендуется');
+  t = t.replace(new RegExp(`${WB}приглашаем${WE}`, 'giu'), 'можно перейти');
+  t = t.replace(new RegExp(`${WB}собрали${WE}`, 'giu'), 'собраны');
+  t = t
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/[ \t]+\n/g, '\n')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/^[,.\s]+/gm, '')
+    .trim();
+  // заглавная в начале предложений
+  t = t.replace(/(^|[.!?]\s+)(\p{Ll})/gu, (_, a, ch) => a + ch.toUpperCase());
+  return t;
 }
 
 function extractJson(text) {
@@ -374,7 +513,7 @@ function normalizeCopy(parsed, { product, format, fallbackTitle, fallbackBody, b
   if (!body) body = fallbackBody || fb.body;
   title = sanitizeCompanyVoice(title);
   body = sanitizeCompanyVoice(body);
-  const maxTitle = format === 'video' ? 90 : 120;
+  const maxTitle = format === 'video' ? 48 : 120;
   const maxBody = format === 'video' ? 400 : 800;
   if (title.length > maxTitle) title = title.slice(0, maxTitle - 1).trim() + '…';
   if (body.length > maxBody) body = body.slice(0, maxBody - 1).trim() + '…';
@@ -397,14 +536,12 @@ function normalizeHashtags(raw, product) {
     if (!t) continue;
     if (!t.startsWith('#')) t = `#${t}`;
     t = t.replace(/\s+/g, '');
+    // рус / англ буквы, цифры, _
     if (!/^#[\p{L}\p{N}_]{2,40}$/u.test(t)) continue;
     const core = t.slice(1);
-    if (isHoney) {
-      if (/serpmonn/i.test(core)) continue;
-      if (/[A-Za-z]/.test(core) && !/^(vrnhoney|vrnhoney)$/i.test(core)) continue;
-    } else if (/[A-Za-z]/.test(core) && !/^Serpmonn$/i.test(core)) {
-      continue;
-    }
+    if (isHoney && /serpmonn/i.test(core)) continue;
+    // чужие бренды-магазины не пускаем даже на EN
+    if (/perfluence|amazon|wildberries|ozon|aliexpress|steam/i.test(core)) continue;
     out.push(t);
   }
   const uniq = [];
@@ -416,7 +553,7 @@ function normalizeHashtags(raw, product) {
     uniq.push(t);
   }
   if (isHoney) {
-    if (!uniq.some((t) => /мёд|мед|vrnhoney/i.test(t))) uniq.unshift('#VRNHoney');
+    if (!uniq.some((t) => /мёд|мед|vrnhoney|honey/i.test(t))) uniq.unshift('#VRNHoney');
   } else if (!uniq.some((t) => /^#Serpmonn$/i.test(t))) {
     uniq.unshift('#Serpmonn');
   } else {
@@ -481,7 +618,7 @@ export async function generateMarketingCopy({
 } = {}) {
   const brief = briefFor(product);
   const fb = fallbackFor(product, salt || `${product}-${ctaUrl}-${(avoidTitles || []).join('|')}`);
-  const avoid = avoidTitles || (await recentTitles(product, 8));
+  const avoid = avoidTitles || (await recentTitles(product, { days: 14, limit: 40 }));
   const prompt = buildPrompt({
     product,
     format,
@@ -491,23 +628,35 @@ export async function generateMarketingCopy({
 
   const engines = [];
   if (isGigaChatConfigured()) {
-    engines.push({ name: 'gigachat', run: () => tryGigaChat(prompt) });
+    engines.push({ name: 'gigachat', run: (p) => tryGigaChat(p) });
   }
-  // Слабая модель — всегда после сильной
-  engines.push({ name: 'ollama', run: () => tryOllama(prompt) });
+  engines.push({ name: 'ollama', run: (p) => tryOllama(p) });
 
   let lastErr = null;
   for (const eng of engines) {
     try {
-      const { content, model } = await eng.run();
-      const parsed = extractJson(content);
-      const copy = normalizeCopy(parsed, {
-        product,
-        format,
-        fallbackTitle: fallbackTitle || fb.title,
-        fallbackBody: fallbackBody || fb.body,
-        brandOnly: brief.brandOnly
-      });
+      let promptNow = prompt;
+      let copy = null;
+      let model = null;
+      for (let attempt = 0; attempt < 2; attempt++) {
+        const out = await eng.run(promptNow);
+        model = out.model;
+        const parsed = extractJson(out.content);
+        copy = normalizeCopy(parsed, {
+          product,
+          format,
+          fallbackTitle: fallbackTitle || fb.title,
+          fallbackBody: fallbackBody || fb.body,
+          brandOnly: brief.brandOnly
+        });
+        if (!titleCollidesWithRecent(copy.title, avoid) || attempt === 1) break;
+        promptNow = buildPrompt({
+          product,
+          format,
+          ctaUrl,
+          avoidTitles: [...avoid, copy.title]
+        });
+      }
       return {
         title: copy.title,
         body: copy.body,
@@ -518,7 +667,10 @@ export async function generateMarketingCopy({
       };
     } catch (err) {
       lastErr = err;
-      console.warn('[marketing] generate-copy', eng.name, err.message);
+      console.warn('[marketing] copy', eng.name, err.message);
+      if (eng.name === 'gigachat') {
+        noteGigaChatFailure(err);
+      }
     }
   }
 
