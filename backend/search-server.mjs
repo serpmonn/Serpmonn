@@ -16,13 +16,15 @@ import helmet from 'helmet';
 import aiSearchRouter from './ai-search/ai-search.mjs';
 import voiceRoutes from './voice/voiceRoutes.mjs';
 
-const nodeEnv = process.env.NODE_ENV || 'development';
-const envPath =
-  nodeEnv === 'production'
+// database/config.mjs тянет prod .env с override:true — возвращаем env этого дерева
+const isDevTree = process.cwd().includes('serpmonn-dev');
+const envPath = isDevTree
+  ? resolve(process.cwd(), 'backend/.env')
+  : process.env.NODE_ENV === 'production'
     ? '/var/www/serpmonn.ru/backend/.env'
     : resolve(process.cwd(), 'backend/.env');
 
-dotenv.config({ path: envPath });
+dotenv.config({ path: envPath, override: true });
 
 const app = express();
 app.set('trust proxy', 1);
@@ -30,7 +32,7 @@ app.use(helmet());
 
 const AUTH_PORT = process.env.AUTH_PORT || 5000;
 const VITE_PORT = process.env.VITE_PORT || 5173;
-const SEARCH_PORT = Number(process.env.AI_SEARCH_PORT || 3500);
+const SEARCH_PORT = Number(process.env.AI_SEARCH_PORT || (isDevTree ? 3501 : 3500));
 
 app.use(
   cors({
