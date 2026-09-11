@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <title>Нэли Serpmonn</title>
+  <meta name="description" content="Хоррор-демо: расследование в Америке 90-х.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="neli.css">
+  <script src="/sdk.js"></script>
+  <script src="locales.js"></script>
+  <script src="yandex-bridge.js"></script>
+</head>
+<body>
+  <div id="app">
+    <canvas id="game" width="1280" height="720" aria-label="Game"></canvas>
+    <div id="go-fade" class="go-fade" hidden aria-hidden="true"></div>
+
+    <div id="hud" hidden>
+      <div id="hud-name"></div>
+      <div id="hud-hint" data-i18n="ui.hint">WASD / стрелки · Shift бег · E / клик · Esc пауза</div>
+      <div id="hud-creak" hidden><span data-i18n="ui.creak">Скрип:</span> <span id="creak-count">0</span>/3</div>
+      <div id="hud-escape" hidden>
+        <span class="escape-label" data-i18n="ui.escape">Бегите:</span>
+        <span id="escape-count" class="escape-num">15</span>
+      </div>
+      <ul id="hud-clues"></ul>
+      <button type="button" id="btn-pause" class="hud-pause" aria-label="Пауза">
+        <span class="hud-pause__key" aria-hidden="true">Esc</span>
+        <span class="hud-pause__menu" aria-hidden="true">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+        </span>
+      </button>
+    </div>
+
+    <div id="touch-ui" hidden>
+      <div id="stick" class="touch-stick">
+        <div id="stick-knob" class="touch-knob"></div>
+      </div>
+      <div class="touch-btns">
+        <button type="button" id="touch-sprint" class="touch-btn touch-btn-icon" aria-label="Бег">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z"/></svg>
+        </button>
+        <button type="button" id="touch-act" class="touch-btn touch-btn-act touch-btn-icon" aria-label="Действие">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 13V4.5a1.5 1.5 0 0 1 3 0V12"/><path d="M11 11.5v-2a1.5 1.5 0 0 1 3 0V12"/><path d="M14 10.5a1.5 1.5 0 0 1 3 0V12"/><path d="M17 11.5a1.5 1.5 0 0 1 3 0V16a6 6 0 0 1-6 6H9a4 4 0 0 1-4-4v-4.5a1.5 1.5 0 0 1 3 0V13"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="screen-title" class="panel">
+      <h1 data-i18n="ui.title">Нэли Serpmonn</h1>
+      <p class="lead" data-i18n="ui.lead">Демо · Америка, 90-е · хоррор с элементами расследования</p>
+      <div class="lang-switch" role="group">
+        <button type="button" class="lang-btn" data-lang="ru">RU</button>
+        <button type="button" class="lang-btn" data-lang="en">EN</button>
+      </div>
+      <label class="field">
+        <span data-i18n="ui.nameLabel">Имя героини</span>
+        <input id="name-input" type="text" maxlength="24" value="Нэли" autocomplete="off">
+      </label>
+      <button type="button" id="btn-start" class="btn" data-i18n="ui.start">Начать</button>
+      <button type="button" id="btn-continue" class="btn secondary" hidden data-i18n="ui.continue">Продолжить</button>
+      <p class="fine" data-i18n="ui.fine">Управление: WASD или стрелки + Shift (бег) + мышь. Esc — пауза.</p>
+    </div>
+
+    <div id="screen-dialogue" class="panel dialogue" hidden>
+      <img id="dlg-left" alt="" hidden>
+      <div class="dialogue-body">
+        <div id="dlg-speaker"></div>
+        <div id="dlg-text"></div>
+        <div id="dlg-choices" class="choices"></div>
+        <div id="dlg-continue" class="dlg-continue" hidden data-i18n="ui.tapContinue">Нажмите, чтобы продолжить</div>
+        <button type="button" id="dlg-next" class="btn" hidden data-i18n="ui.next">Далее</button>
+      </div>
+      <img id="dlg-right" alt="" hidden>
+    </div>
+
+    <div id="screen-msg" class="panel panel--gameover" hidden>
+      <h2 id="msg-title"></h2>
+      <p id="msg-text"></p>
+      <div class="msg-actions">
+        <button type="button" id="msg-ok" class="btn secondary" data-i18n="ui.ok">Ок</button>
+      </div>
+    </div>
+
+    <div id="menu-dim" hidden></div>
+    <div id="screen-menu" class="panel menu" hidden>
+      <h2 data-i18n="ui.pause">Пауза</h2>
+      <p class="menu-label" data-i18n="ui.quest">Задание</p>
+      <p id="menu-quest" class="menu-quest"></p>
+      <p class="menu-label" id="menu-clues-label" data-i18n="ui.clues" hidden>Улики</p>
+      <ul id="menu-clues" class="menu-clues"></ul>
+      <button type="button" id="menu-resume" class="btn" data-i18n="ui.resume">Продолжить</button>
+      <p class="menu-label" data-i18n="ui.language">Язык</p>
+      <div class="lang-switch" role="group">
+        <button type="button" class="lang-btn" data-lang="ru">RU</button>
+        <button type="button" class="lang-btn" data-lang="en">EN</button>
+      </div>
+      <button type="button" id="menu-quit" class="btn secondary" data-i18n="ui.toTitle">В начало</button>
+    </div>
+  </div>
+  <script src="i18n.js"></script>
+  <script src="neli-world.js"></script>
+  <script src="neli-sprites.js"></script>
+  <script src="neli.js"></script>
+</body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Монетки Serpmonn</title>
+  <meta name="description" content="Собирай монетки и уклоняйся от препятствий.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="coins.css">
+  <script src="/sdk.js"></script>
+  <script src="locales.js"></script>
+  <script src="yandex-bridge.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <img src="icon.png" width="28" height="28" alt="" class="logo">
+      <h1 data-i18n="heading">Монетки Serpmonn</h1>
+    </header>
+    <div class="wrap">
+      <div class="panel">
+        <canvas id="game" width="480" height="480" aria-label="Game"></canvas>
+        <div class="hint" data-i18n="hint">Стрелки / WASD / свайп — движение · R — заново</div>
+      </div>
+      <div class="panel">
+        <div class="stats">
+          <div class="stat" data-i18n-score>Монеты<br><b id="score">0</b></div>
+          <div class="stat" data-i18n-time>Время<br><b id="time">60</b></div>
+          <div class="stat" data-i18n-best>Рекорд<br><b id="best">0</b></div>
+        </div>
+        <div class="controls">
+          <button type="button" class="btn primary" id="btnStart" data-i18n="start">Старт</button>
+          <button type="button" class="btn" id="btnReset" data-i18n="reset">Заново</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="coins.js" defer></script>
+</body>
+</html>

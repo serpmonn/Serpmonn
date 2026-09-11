@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Скорость печати Serpmonn</title>
+  <meta name="description" content="Тест скорости печати: WPM, точность, режимы 15/30/60 сек и 25 слов.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="typing.css">
+  <script src="/sdk.js"></script>
+  <script src="locales.js"></script>
+  <script src="yandex-bridge.js"></script>
+</head>
+<body class="typing-page">
+  <div class="typing-game">
+    <div class="header">
+      <img src="icon.png" width="32" height="32" alt="" class="logo">
+      <h1 data-i18n="heading">Скорость печати Serpmonn</h1>
+    </div>
+
+    <div class="tabs" role="tablist" aria-label="Mode">
+      <button class="tab active" data-mode="15" role="tab" aria-selected="true" data-i18n="tab15">15 сек</button>
+      <button class="tab" data-mode="30" role="tab" aria-selected="false" data-i18n="tab30">30 сек</button>
+      <button class="tab" data-mode="60" role="tab" aria-selected="false" data-i18n="tab60">60 сек</button>
+      <button class="tab" data-mode="words" role="tab" aria-selected="false" data-i18n="tabWords">25 слов</button>
+    </div>
+
+    <div class="stats">
+      <div class="stat" data-i18n-wpm>
+        <div class="stat-label">WPM</div>
+        <div class="stat-value wpm" id="liveWpm">—</div>
+      </div>
+      <div class="stat" data-i18n-acc>
+        <div class="stat-label">Точность</div>
+        <div class="stat-value acc" id="liveAcc">—</div>
+      </div>
+      <div class="stat" data-i18n-timer>
+        <div class="stat-label">Время</div>
+        <div class="stat-value timer" id="liveTimer">—</div>
+      </div>
+      <div class="stat" data-i18n-best>
+        <div class="stat-label">Рекорд</div>
+        <div class="stat-value best" id="liveBest">—</div>
+      </div>
+    </div>
+
+    <div class="typing-wrap" id="typingWrap">
+      <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="words" id="wordsDisplay" aria-live="polite"></div>
+      <input type="text" id="hiddenInput" autocomplete="off" autocorrect="off"
+             autocapitalize="off" spellcheck="false" aria-label="Input">
+      <div class="click-hint" id="clickHint" data-i18n-html="clickHint">
+        <span class="kbd">клик</span> или <span class="kbd">Enter</span> чтобы начать &nbsp;·&nbsp; <span class="kbd">Esc</span> рестарт
+      </div>
+    </div>
+
+    <div class="result" id="resultPanel">
+      <div class="result-title" data-i18n="resultTitle">РЕЗУЛЬТАТ</div>
+      <div class="result-grid">
+        <div class="result-item" data-i18n-res-wpm>
+          <div class="result-label">WPM</div>
+          <div class="result-val" id="resWpm" style="color:var(--primary)">—</div>
+        </div>
+        <div class="result-item" data-i18n-res-acc>
+          <div class="result-label">Точность</div>
+          <div class="result-val" id="resAcc" style="color:var(--success)">—</div>
+        </div>
+        <div class="result-item" data-i18n-res-chars>
+          <div class="result-label">Символов</div>
+          <div class="result-val" id="resChars" style="color:var(--text)">—</div>
+        </div>
+        <div class="result-item" data-i18n-res-errors>
+          <div class="result-label">Ошибок</div>
+          <div class="result-val" id="resErrors" style="color:var(--error)">—</div>
+        </div>
+      </div>
+      <div class="new-record" id="newRecord" style="display:none">🏆 НОВЫЙ РЕКОРД!</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="retryBtn" data-i18n="retry">ЕЩЁ РАЗ</button>
+        <button class="btn btn-ghost" id="newTextBtn" data-i18n="newText">НОВЫЙ ТЕКСТ</button>
+      </div>
+    </div>
+
+    <div class="history" id="historyPanel" style="display:none">
+      <div class="history-title" data-i18n="historyTitle">Последние результаты</div>
+      <div class="history-list" id="historyList"></div>
+    </div>
+  </div>
+  <script src="typing.js" defer></script>
+</body>
+</html>

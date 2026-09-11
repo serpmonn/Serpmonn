@@ -7,6 +7,8 @@ import { applyTemplate, loadTemplate } from './templates.mjs';
 const DEFAULT_PROMO_CTA = 'https://serpmonn.ru/promo';
 const DEFAULT_HONEY_CTA = 'https://vrnhoney.ru';
 const DEFAULT_GAMES_CTA = 'https://serpmonn.ru/games';
+const DEFAULT_PARTNERS_CTA = 'https://serpmonn.ru/partners';
+const DEFAULT_NEON_CTA = 'https://serpmonn.ru/neon-runner';
 
 /** Хештеги: запасной пул — если модели мало / штамп. */
 const HASHTAG_POOL = [
@@ -67,6 +69,41 @@ const GAMES_HASHTAG_POOL = [
   '#freeGames'
 ];
 
+const PARTNERS_HASHTAG_POOL = [
+  '#Serpmonn',
+  '#партнёры',
+  '#партнёрскаясеть',
+  '#рекламодателям',
+  '#паблишерам',
+  '#офферы',
+  '#CPA',
+  '#affiliate',
+  '#партнёрка',
+  '#конверсии',
+  '#монетизация',
+  '#реклама',
+  '#partners',
+  '#affiliatemarketing',
+  '#publishers'
+];
+
+const NEON_HASHTAG_POOL = [
+  '#Serpmonn',
+  '#NeonRunner',
+  '#androidигры',
+  '#аркада',
+  '#раннер',
+  '#мобильныеигры',
+  '#APK',
+  '#бесплатныеигры',
+  '#endlessrunner',
+  '#neon',
+  '#игры',
+  '#android',
+  '#mobilegames',
+  '#indiegames'
+];
+
 /** @deprecated use pickHashtags — оставлен для совместимости импортов */
 const PROMO_HASHTAGS = HASHTAG_POOL.slice(0, 5);
 
@@ -96,6 +133,8 @@ function poolForProduct(product) {
   const p = String(product || '').toLowerCase();
   if (p === 'honey') return HONEY_HASHTAG_POOL;
   if (p === 'games') return GAMES_HASHTAG_POOL;
+  if (p === 'partners') return PARTNERS_HASHTAG_POOL;
+  if (p === 'neon_runner') return NEON_HASHTAG_POOL;
   return HASHTAG_POOL;
 }
 
@@ -386,6 +425,136 @@ export async function fromGames(campaign, { slot, digestDate, withImage = true }
 }
 
 /**
+ * Партнёрская сеть Serpmonn → https://serpmonn.ru/partners
+ */
+export async function fromPartners(campaign, { slot, digestDate, withImage = true } = {}) {
+  const cta = String(campaign.cta_url || '').trim() || DEFAULT_PARTNERS_CTA;
+
+  const gen = await generateMarketingCopy({
+    product: 'partners',
+    format: 'text',
+    ctaUrl: cta,
+    salt: `${digestDate || ''}-${slot || ''}-partners`
+  });
+
+  let media_path = null;
+  let imageMeta = null;
+  if (withImage) {
+    imageMeta = await generateMarketingImage({
+      product: 'partners',
+      title: gen.title
+    });
+    media_path = imageMeta.media_path || null;
+  }
+
+  let body = stripHashtags(gen.body);
+  if (cta && !body.includes('serpmonn.ru')) {
+    body = `${body}\n\n${cta}`;
+  }
+  const salt = `${digestDate || ''}-${slot || ''}-${gen.title || ''}-partners-${Date.now()}`;
+  const hashtags = resolveHashtags({
+    product: 'partners',
+    modelTags: gen.hashtags,
+    salt
+  });
+  body = withTrailingHashtags(body, hashtags);
+
+  return {
+    product: 'partners',
+    format: 'text',
+    title: stripHashtags(gen.title),
+    body,
+    cta_url: cta,
+    channels: campaign.channels || ['vk', 'telegram', 'youtube'],
+    media_path,
+    meta: {
+      campaignId: campaign.id,
+      campaignSlug: campaign.slug,
+      slot,
+      digestDate,
+      source: 'partners_brand',
+      brandOnly: true,
+      voice: 'company_impersonal',
+      hashtags,
+      hashtagsSource: Array.isArray(gen.hashtags) && gen.hashtags.length >= 3 ? gen.engine : 'pool',
+      copyGenerated: gen.generated,
+      copyModel: gen.model,
+      copyEngine: gen.engine,
+      copyError: gen.error || null,
+      imageEngine: imageMeta?.engine || null,
+      imageError: imageMeta?.error || null,
+      imageFileId: imageMeta?.fileId || null
+    }
+  };
+}
+
+/**
+ * Neon Runner (Android APK с Yandex РСЯ) → https://serpmonn.ru/neon-runner
+ */
+export async function fromNeonRunner(campaign, { slot, digestDate, withImage = true } = {}) {
+  const cta = String(campaign.cta_url || '').trim() || DEFAULT_NEON_CTA;
+
+  const gen = await generateMarketingCopy({
+    product: 'neon_runner',
+    format: 'text',
+    ctaUrl: cta,
+    salt: `${digestDate || ''}-${slot || ''}-neon`
+  });
+
+  let media_path = null;
+  let imageMeta = null;
+  if (withImage) {
+    imageMeta = await generateMarketingImage({
+      product: 'neon_runner',
+      title: gen.title
+    });
+    media_path = imageMeta.media_path || null;
+  }
+
+  let body = stripHashtags(gen.body);
+  if (cta && !body.includes('serpmonn.ru') && !body.includes('Neon')) {
+    body = `${body}\n\n${cta}`;
+  } else if (cta && !body.includes('serpmonn.ru')) {
+    body = `${body}\n\n${cta}`;
+  }
+  const salt = `${digestDate || ''}-${slot || ''}-${gen.title || ''}-neon-${Date.now()}`;
+  const hashtags = resolveHashtags({
+    product: 'neon_runner',
+    modelTags: gen.hashtags,
+    salt
+  });
+  body = withTrailingHashtags(body, hashtags);
+
+  return {
+    product: 'neon_runner',
+    format: 'text',
+    title: stripHashtags(gen.title),
+    body,
+    cta_url: cta,
+    channels: campaign.channels || ['vk', 'telegram', 'youtube'],
+    media_path,
+    meta: {
+      campaignId: campaign.id,
+      campaignSlug: campaign.slug,
+      slot,
+      digestDate,
+      source: 'neon_runner_apk',
+      brandOnly: true,
+      voice: 'company_impersonal',
+      hashtags,
+      hashtagsSource: Array.isArray(gen.hashtags) && gen.hashtags.length >= 3 ? gen.engine : 'pool',
+      copyGenerated: gen.generated,
+      copyModel: gen.model,
+      copyEngine: gen.engine,
+      copyError: gen.error || null,
+      imageEngine: imageMeta?.engine || null,
+      imageError: imageMeta?.error || null,
+      imageFileId: imageMeta?.fileId || null
+    }
+  };
+}
+
+/**
  * Контент из JSON-шаблона (+ опционально ИИ).
  */
 export async function fromTemplate(campaign, { slot, digestDate, useAi = true, withImage = false } = {}) {
@@ -468,6 +637,12 @@ export async function buildContentForCampaign(campaign, opts = {}) {
   }
   if (campaign.source === 'games') {
     return fromGames(campaign, opts);
+  }
+  if (campaign.source === 'partners') {
+    return fromPartners(campaign, opts);
+  }
+  if (campaign.source === 'neon_runner') {
+    return fromNeonRunner(campaign, opts);
   }
   return fromTemplate(campaign, opts);
 }

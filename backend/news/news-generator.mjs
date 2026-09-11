@@ -552,6 +552,8 @@ const LOCALE_TOPICS = {
 // locale → { items: [...], updatedAt: timestamp }
 const localeCache = new Map();
 const CACHE_TTL_MS = 60 * 60 * 1000; // 1 час
+/** In-flight refresh promises — dedupe concurrent stale hits */
+const refreshInFlight = new Map();
 
 // ─── Публичные хелперы ───────────────────────────────────────────────────────
 
@@ -559,20 +561,13 @@ export function getTopicsForLocale(locale) {
   return LOCALE_TOPICS[locale] ?? LOCALE_TOPICS['en'];
 }
 
-/**
- * Возвращает новости для локали.
- * Если кэш свежий — отдаёт мгновенно.
- * Если устарел или отсутствует — делает запрос в SearXNG и кэширует.
- */
-export async function getNewsForLocale(locale, topicFilter = null) {
-  const safeLocale = LOCALE_TOPICS[locale] ? locale : 'en';
-  const topics = LOCALE_TOPICS[safeLocale];
+async function refreshLocaleCache(safeLocale, topics) {
+  if (refreshInFlight.has(safeLocale)) {
+    return refreshInFlight.get(safeLocale);
+  }
 
-  const cached = localeCache.get(safeLocale);
-  const isStale = !cached || Date.now() - cached.updatedAt > CACHE_TTL_MS;
-
-  if (isStale) {
-    // Обновляем кэш — один запрос на первую тему + остальные параллельно
+  const job = (async () => {
+    const prev = localeCache.get(safeLocale);
     const results = await fetchAllTopics(safeLocale, topics);
     if (results.length > 0) {
       localeCache.set(safeLocale, { items: results, updatedAt: Date.now() });
@@ -580,12 +575,43 @@ export async function getNewsForLocale(locale, topicFilter = null) {
     } else {
       // Пустой ответ не кэшируем на час — иначе лента «мертвая» до TTL
       const retryAt = Date.now() - CACHE_TTL_MS + 2 * 60 * 1000; // повторить через ~2 мин
-      localeCache.set(safeLocale, { items: cached?.items || [], updatedAt: retryAt });
+      localeCache.set(safeLocale, { items: prev?.items || [], updatedAt: retryAt });
       console.warn(`[News] Пустой ответ для "${safeLocale}", повтор через ~2 мин`);
+    }
+  })().finally(() => {
+    refreshInFlight.delete(safeLocale);
+  });
+
+  refreshInFlight.set(safeLocale, job);
+  return job;
+}
+
+/**
+ * Возвращает новости для локали.
+ * Свежий кэш — мгновенно.
+ * Устаревший, но непустой — stale-while-revalidate (отдать сразу, обновить в фоне).
+ * Холодный старт без кэша — ждём SearXNG.
+ */
+export async function getNewsForLocale(locale, topicFilter = null) {
+  const safeLocale = LOCALE_TOPICS[locale] ? locale : 'en';
+  const topics = LOCALE_TOPICS[safeLocale];
+
+  const cached = localeCache.get(safeLocale);
+  const isStale = !cached || Date.now() - cached.updatedAt > CACHE_TTL_MS;
+  const hasItems = Boolean(cached?.items?.length);
+
+  if (isStale) {
+    if (hasItems) {
+      // Не блокируем ответ главной на SearXNG
+      refreshLocaleCache(safeLocale, topics).catch((e) => {
+        console.error(`[News] Фоновый refresh "${safeLocale}":`, e?.message || e);
+      });
+    } else {
+      await refreshLocaleCache(safeLocale, topics);
     }
   }
 
-  const items = localeCache.get(safeLocale).items;
+  const items = localeCache.get(safeLocale)?.items || [];
 
   if (topicFilter) {
     return items.filter(item => item.topicKey === topicFilter);

@@ -130,14 +130,14 @@
 <meta name="twitter:title" content="Серпмонн — мультимодальный ИИ‑поиск, картинки, видео и новости">
 <meta name="twitter:description" content="Серпмонн — мультимодальный ИИ‑поиск по тексту, картинкам и видео, а также новости, игры, промокоды и онлайн‑инструменты.">
 <meta name="twitter:image" content="https://serpmonn.ru/frontend/images/Banner_Serpmonn.png">
-<link rel="icon" href="/frontend/images/favicon.svg?v=3" type="image/svg+xml">
+<link rel="icon" href="/frontend/images/favicon.svg?v=6" type="image/svg+xml">
 <link rel="icon" href="/frontend/images/serpmonn.ico?v=3" type="image/x-icon">
-<link rel="icon" type="image/png" sizes="32x32" href="/frontend/images/favicon-32x32.png?v=3">
-<link rel="icon" type="image/png" sizes="16x16" href="/frontend/images/favicon-16x16.png?v=3">
-<link rel="apple-touch-icon" href="/frontend/images/serpmonn-192.png?v=3">
+<link rel="icon" type="image/png" sizes="32x32" href="/frontend/images/favicon-32x32.png?v=6">
+<link rel="icon" type="image/png" sizes="16x16" href="/frontend/images/favicon-16x16.png?v=6">
+<link rel="apple-touch-icon" href="/frontend/images/serpmonn-192.png?v=4">
 <link rel="manifest" href="/frontend/pwa/manifest.json">
 
-<link rel="preload" as="image" href="/frontend/images/Serpmonn-96x96.png" fetchpriority="high">
+<link rel="preload" as="image" href="/frontend/images/Serpmonn-96x96.png?v=3d2" fetchpriority="high">
 
 
 <link rel="stylesheet" href="/frontend/styles/base.css?v=lcp2">
@@ -145,13 +145,19 @@
 <link rel="stylesheet" href="/frontend/styles/main.css?v=promo41">
 <link rel="stylesheet" href="/frontend/styles/media.css?v=lcp2">
 <link rel="stylesheet" href="/frontend/styles/background.css?v=lcp2">
-<link rel="stylesheet" href="/frontend/styles/news.css?v=lcp3">
-<link rel="stylesheet" href="/frontend/styles/cookie.css?v=lcp2">
-<link rel="stylesheet" href="/frontend/styles/ad.css?v=lcp2">
+<link rel="stylesheet" href="/frontend/styles/news.css?v=lcp4" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="/frontend/styles/cookie.css?v=lcp3" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="/frontend/styles/ad.css?v=lcp3" media="print" onload="this.media='all'">
 <link rel="stylesheet" href="/frontend/styles/menu.css?v=lcp2" media="print" onload="this.media='all'">
 <noscript>
+  <link rel="stylesheet" href="/frontend/styles/news.css?v=lcp4">
+  <link rel="stylesheet" href="/frontend/styles/cookie.css?v=lcp3">
+  <link rel="stylesheet" href="/frontend/styles/ad.css?v=lcp3">
   <link rel="stylesheet" href="/frontend/styles/menu.css?v=lcp2">
 </noscript>
+<link rel="modulepreload" href="/frontend/scripts/scripts.js?v=split1">
+<link rel="modulepreload" href="/frontend/scripts/search/init.js">
+<link rel="modulepreload" href="/frontend/scripts/menu-loader.js?v=miniapp3">
 
 
 <script type="text/javascript">
@@ -213,7 +219,7 @@
   "url": "https://serpmonn.ru/",
   "logo": {
     "@type": "ImageObject",
-    "url": "https://serpmonn.ru/frontend/images/Serpmonn-96x96.png",
+    "url": "https://serpmonn.ru/frontend/images/Serpmonn-96x96.png?v=3d2",
     "width": 96,
     "height": 96
   }
@@ -267,7 +273,7 @@
       
 <div class="search-card-wrapper">
   <div class="main-search-container">
-    <img src="/frontend/images/Serpmonn-96x96.png" alt="Серпмонн" class="logo" title="Серпмонн" width="65" height="65" decoding="async" fetchpriority="high">
+    <img src="/frontend/images/Serpmonn-96x96.png?v=3d2" alt="Серпмонн" class="logo" title="Серпмонн" width="65" height="65" decoding="async" fetchpriority="high">
 
     <form id="ai-search-form" class="search-form" data-search-mode="ai"
       data-placeholder-ai="Спросите ИИ что угодно..."
@@ -491,12 +497,7 @@
   </div>
 </div>
 
-<script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js"></script>
-<script>
-  if (window.vkBridge) {
-    vkBridge.send('VKWebAppInit');
-  }
-</script>
+<script src="https://unpkg.com/@vkontakte/vk-bridge@2.6.0/dist/browser.min.js" defer onload="window.vkBridge&&vkBridge.send('VKWebAppInit')"></script>
 
     </main>
     <div id="cookie-consent" class="cookie-consent">
@@ -504,7 +505,7 @@
   <button id="accept-cookies" class="cookie-button">Принять</button>
   <button id="decline-cookies" class="cookie-button">Отклонить</button>
 </div>
-    <script type="module" src="/frontend/scripts/menu-loader.js?v=miniapp2" defer></script>
+    <script type="module" src="/frontend/scripts/menu-loader.js?v=miniapp3" defer></script>
 <script type="module" src="/frontend/scripts/scripts.js?v=split1" defer></script>
 <script type="module" src="/frontend/scripts/cookies.js?v=promo8" defer></script>
 <script src="/frontend/scripts/mobile-enhancements.js?v=promo35" defer></script>

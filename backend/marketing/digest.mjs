@@ -13,6 +13,7 @@ import { publishQueueItem } from './dispatcher.mjs';
 import { getChannel } from './channels/index.mjs';
 import { isVkChannelId } from './channels/vk.mjs';
 import { renderShort, resolveMarketingMedia } from './render-short.mjs';
+import { generateMarketingImage } from './generate-assets.mjs';
 import {
   createQueueItem,
   ensureMarketingTables,
@@ -84,20 +85,59 @@ function channelNeedsVideo(channelId) {
   return formats.includes('video') && !formats.includes('text');
 }
 
+function isImageMediaPath(p) {
+  return /\.(png|jpe?g|webp|gif)$/i.test(String(p || ''));
+}
+
 /**
- * Картинка → вертикальный Shorts mp4.
+ * Для Shorts нужно ≥2 разных still (если получится).
+ * @returns {Promise<string[]>} relative paths
+ */
+async function ensureVideoStills(content) {
+  const meta = content?.meta && typeof content.meta === 'object' ? content.meta : {};
+  const stills = [];
+  const push = (rel) => {
+    const r = String(rel || '').trim();
+    if (!r || stills.includes(r)) return;
+    if (resolveMarketingMedia(r)) stills.push(r);
+  };
+
+  if (Array.isArray(meta.sourceStills)) {
+    for (const s of meta.sourceStills) push(s);
+  }
+  push(meta.sourceStill);
+  if (isImageMediaPath(content?.media_path)) push(content.media_path);
+
+  while (stills.length < 2) {
+    const img = await generateMarketingImage({
+      product: content?.product || 'promocodes',
+      title: content?.title || 'Serpmonn',
+      variant: stills.length
+    });
+    if (!img.media_path) break;
+    const before = stills.length;
+    push(img.media_path);
+    if (stills.length === before) break;
+  }
+  return stills.slice(0, 2);
+}
+
+/**
+ * Картинки → вертикальный Shorts mp4 (xfade между 2 кадрами + круглое лого).
  * @returns {Promise<{ media_path: string, format: string, renderMeta: object }>}
  */
 async function renderVideoForSlot(content, channelId) {
-  const sourceAbs = content.media_path
-    ? resolveMarketingMedia(content.media_path)
-    : undefined;
+  const stillRels = await ensureVideoStills(content);
+  const sourceImages = stillRels
+    .map((rel) => resolveMarketingMedia(rel))
+    .filter(Boolean);
   const rendered = await renderShort({
     product: content.product || 'promocodes',
     title: content.title || 'Serpmonn',
     subtitle: 'Serpmonn',
     ctaUrl: content.cta_url || '',
-    sourceImage: sourceAbs || undefined,
+    sourceImages,
+    sourceImage: sourceImages[0],
     durationSec: 12
   });
   return {
@@ -106,7 +146,9 @@ async function renderVideoForSlot(content, channelId) {
     renderMeta: {
       renderedAt: new Date().toISOString(),
       durationSec: rendered.durationSec,
-      sourceStill: content.media_path || null,
+      sourceStill: stillRels[0] || content.media_path || null,
+      sourceStills: stillRels,
+      stillCount: rendered.stillCount,
       renderChannel: channelId
     }
   };
@@ -262,6 +304,8 @@ export async function generateDigestForDate(digestDate, { force = false, useAi =
             (campaign.source === 'promocodes' ||
               campaign.source === 'honey' ||
               campaign.source === 'games' ||
+              campaign.source === 'partners' ||
+              campaign.source === 'neon_runner' ||
               Boolean(useAi)));
 
         const content = await buildContentForCampaign(campaign, {
@@ -271,7 +315,9 @@ export async function generateDigestForDate(digestDate, { force = false, useAi =
             Boolean(useAi) ||
             campaign.source === 'promocodes' ||
             campaign.source === 'honey' ||
-            campaign.source === 'games',
+            campaign.source === 'games' ||
+            campaign.source === 'partners' ||
+            campaign.source === 'neon_runner',
           withImage: needsImage
         });
 

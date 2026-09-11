@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>2048 Serpmonn</title>
+  <meta name="description" content="Соединяй плитки и собери 2048.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="2048.css">
+  <script src="/sdk.js"></script>
+  <script src="locales.js"></script>
+  <script src="yandex-bridge.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <img src="icon.png" width="36" height="36" alt="" class="logo">
+      <h1 data-i18n="heading">2048 Serpmonn</h1>
+    </header>
+
+    <div class="score-row">
+      <div class="score-box"><span data-i18n="scoreLabel">Счёт</span><b id="score">0</b></div>
+      <div class="score-box"><span data-i18n="bestLabel">Лучший</span><b id="best">0</b></div>
+    </div>
+
+    <div class="game-board" id="board" aria-label="Игровое поле" tabindex="0"></div>
+
+    <div class="controls">
+      <button type="button" id="new-game" class="btn primary" data-i18n="newGame">Новая игра</button>
+      <button type="button" id="undo" class="btn" data-i18n="undo">Отменить</button>
+    </div>
+
+    <p class="hint" data-i18n="hint">Стрелки или WASD · свайпы на телефоне · Отменить — последний ход</p>
+  </div>
+
+  <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true">
+    <div class="overlay-card">
+      <h2 data-i18n="gameOver">Игра окончена</h2>
+      <p id="overlay-score"></p>
+      <button type="button" id="play-again" class="btn primary" data-i18n="playAgain">Ещё раз</button>
+    </div>
+  </div>
+
+  <script>
+    window.i18n = {
+      gameOver: 'Игра окончена',
+      yourScore: 'Ваш счёт: {score}',
+      playAgain: 'Ещё раз'
+    };
+  </script>
+  <script src="2048.js" defer></script>
+</body>
+</html>

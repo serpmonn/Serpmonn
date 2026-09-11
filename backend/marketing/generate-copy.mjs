@@ -86,13 +86,51 @@ const GAMES_FALLBACKS = [
   }
 ];
 
+const PARTNERS_FALLBACKS = [
+  {
+    title: 'Партнёрская сеть Serpmonn',
+    body:
+      'Рекламодатели размещают офферы, владельцы площадок ставят ссылки и получают оплату за заявки и продажи.\nПодключение — в партнёрской сети Serpmonn.'
+  },
+  {
+    title: 'Оплата за результат',
+    body:
+      'В партнёрской сети Serpmonn деньги идут за реальные заявки и продажи, а не только за показы.\nУдобно и рекламодателям, и паблишерам.'
+  },
+  {
+    title: 'Офферы и партнёрские ссылки',
+    body:
+      'Serpmonn объединяет рекламодателей и площадки в одной партнёрской сети.\nСтатистика и ссылки — в личном кабинете.'
+  }
+];
+
+const NEON_FALLBACKS = [
+  {
+    title: 'Neon Runner на Android',
+    body:
+      'Бесконечный неоновый раннер Neon Runner — аркада для Android.\nСкачать APK можно на serpmonn.ru/neon-runner.'
+  },
+  {
+    title: 'Аркада Neon Runner',
+    body:
+      'Neon Runner — мобильный endless runner с неоновым стилем.\nУстановка APK доступна на сайте Serpmonn.'
+  },
+  {
+    title: 'Скачать Neon Runner',
+    body:
+      'Короткие забеги в неоновом мире Neon Runner.\nAPK для Android — на serpmonn.ru/neon-runner.'
+  }
+];
+
 const BRAND_FALLBACKS = {
   promocodes: PROMO_FALLBACKS[0],
   honey: HONEY_FALLBACKS[0],
   games: GAMES_FALLBACKS[0],
+  partners: PARTNERS_FALLBACKS[0],
+  neon_runner: NEON_FALLBACKS[0],
   neli: {
     title: 'Neli на Serpmonn',
-    body: 'Короткая браузерная игра Neli доступна без установки на Serpmonn.'
+    body: 'Короткая браузерная игра Neli доступна в разделе игр Serpmonn — без установки.'
   },
   default: {
     title: 'Serpmonn',
@@ -137,30 +175,51 @@ const PRODUCT_BRIEFS = {
     facts: [
       'Serpmonn — сервис с разделом браузерных мини-игр',
       'Игры запускаются в браузере без установки приложений',
+      'Neli и другие игры — внутри раздела игр, не отдельные продукты рекламы',
       'Цель поста: привести на https://serpmonn.ru/games',
       'Можно: Serpmonn, игры, мини-игры, браузер, досуг, без скачивания',
       'ЗАПРЕЩЕНО: чужие игровые бренды, названия чужих игр (кроме общих слов), магазины приложений'
     ]
   },
-  neli: {
-    name: 'Neli',
+  partners: {
+    name: 'Партнёрская сеть Serpmonn',
     lang: 'ru',
-    brandOnly: false,
+    brandOnly: true,
     brandName: 'Serpmonn',
     facts: [
-      'Браузерная игра на Serpmonn',
-      'Без установки',
-      'Бренд: Serpmonn'
+      'Партнёрская сеть Serpmonn: рекламодатели размещают офферы, паблишеры ставят ссылки на площадках',
+      'Оплата за заявки и продажи (CPA), а не просто за показы',
+      'Есть вход и регистрация, роли: рекламодатель и паблишер',
+      'Цель поста: привести на https://serpmonn.ru/partners',
+      'В тексте и на кадре Shorts прикрепляй/показывай ссылку serpmonn.ru/partners',
+      'Можно: Serpmonn, партнёрская сеть, офферы, паблишеры, рекламодатели, конверсии, статистика',
+      'ЗАПРЕЩЕНО: чужие CPA-сети по имени, обещания «гарантированного дохода», конкретные суммы выплат'
     ]
   },
-  partners: {
-    name: 'Serpmonn Partners',
-    lang: 'en',
-    brandOnly: false,
+  neon_runner: {
+    name: 'Neon Runner — Android-игра',
+    lang: 'ru',
+    brandOnly: true,
     brandName: 'Serpmonn',
     facts: [
-      'Partner / affiliate network of Serpmonn',
-      'Landing: serpmonn.ru partners'
+      'Neon Runner — бесплатный endless runner / аркада для Android от Serpmonn',
+      'Скачивание APK: https://serpmonn.ru/neon-runner',
+      'В APK встроена реклама Yandex РСЯ (interstitial / rewarded)',
+      'Цель поста: привести к скачиванию APK Neon Runner',
+      'Можно: Neon Runner, Android, аркада, раннер, неон, Serpmonn, APK',
+      'ЗАПРЕЩЕНО: чужие игровые бренды, обещания «без рекламы», выдуманные рейтинги магазинов',
+      'Не путать с браузерными играми раздела serpmonn.ru/games — это отдельное Android-приложение'
+    ]
+  },
+  neli: {
+    name: 'Neli (игра в разделе Serpmonn)',
+    lang: 'ru',
+    brandOnly: true,
+    brandName: 'Serpmonn',
+    facts: [
+      'Neli — браузерная игра внутри раздела игр Serpmonn, не отдельный рекламный продукт',
+      'Без установки',
+      'CTA лучше вести на раздел игр: https://serpmonn.ru/games'
     ]
   },
   app: {
@@ -190,9 +249,23 @@ function briefFor(product) {
 
 function fallbackFor(product, salt = '') {
   const key = String(product || '').toLowerCase();
-  if (key === 'promocodes' || key === 'honey' || key === 'games') {
+  if (
+    key === 'promocodes' ||
+    key === 'honey' ||
+    key === 'games' ||
+    key === 'partners' ||
+    key === 'neon_runner'
+  ) {
     const pool =
-      key === 'honey' ? HONEY_FALLBACKS : key === 'games' ? GAMES_FALLBACKS : PROMO_FALLBACKS;
+      key === 'honey'
+        ? HONEY_FALLBACKS
+        : key === 'games'
+          ? GAMES_FALLBACKS
+          : key === 'partners'
+            ? PARTNERS_FALLBACKS
+            : key === 'neon_runner'
+              ? NEON_FALLBACKS
+              : PROMO_FALLBACKS;
     let h = 0;
     const s = String(salt || Date.now());
     for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;

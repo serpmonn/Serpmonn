@@ -42,4 +42,11 @@ app.use('/', newsRoutes);                                                       
 // Запуск сервера новостного API
 app.listen(port, () => {                                                                                                         // Запускаем сервер на порту из переменной окружения
     console.log(`Сервер запущен на http://localhost:${port}`);                                                                   // Логируем успешный запуск новостного сервера
+    // Прогрев популярных локалей, чтобы первая главная не ждала SearXNG
+    import('./news-generator.mjs').then(({ getNewsForLocale }) => {
+        Promise.allSettled([
+            getNewsForLocale('ru'),
+            getNewsForLocale('en'),
+        ]).then(() => console.log('[News] Warmup ru/en done'));
+    }).catch((e) => console.warn('[News] Warmup skip:', e?.message || e));
 });

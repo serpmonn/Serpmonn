@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Neon Runner — аркада для Android | Serpmonn</title>
+  <meta name="description" content="Neon Runner — бесконечный неоновый раннер для Android. Скриншоты, геймплей и скачивание APK на Serpmonn.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://serpmonn.ru/neon-runner">
+  <meta property="og:title" content="Neon Runner — Android">
+  <meta property="og:description" content="Неоновый endless runner для Android. Скачай APK на Serpmonn.">
+  <meta property="og:image" content="https://serpmonn.ru/frontend/downloads/neon-runner/icon-1024.png">
+  <meta property="og:url" content="https://serpmonn.ru/neon-runner">
+  <meta property="og:type" content="website">
+  <link rel="icon" href="/frontend/downloads/neon-runner/favicon.png" sizes="48x48">
+  <link rel="stylesheet" href="/frontend/styles/menu.css?v=neon-landing1">
+  <!-- fonts non-blocking: don't stall first paint on Google -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&family=Manrope:wght@500;700&display=swap" media="print" onload="this.media='all'">
+  <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Orbitron:wght@700;800&family=Manrope:wght@500;700&display=swap"></noscript>
+  <style>
+    :root {
+      --bg: #070b14;
+      --text: #eef3ff;
+      --muted: #9aa8c7;
+      --cyan: #3de7ff;
+      --magenta: #ff4fd8;
+      --line: rgba(61, 231, 255, 0.18);
+      --font: "Manrope", "Segoe UI", system-ui, sans-serif;
+      --display: "Orbitron", "Segoe UI", system-ui, sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: var(--text);
+      font-family: var(--font);
+      line-height: 1.5;
+      background:
+        radial-gradient(900px 520px at 12% -10%, rgba(61, 231, 255, 0.16), transparent 55%),
+        radial-gradient(700px 480px at 92% 8%, rgba(255, 79, 216, 0.12), transparent 50%),
+        linear-gradient(180deg, #0a1020 0%, var(--bg) 40%, #05070e 100%);
+    }
+    a { color: inherit; }
+    .page {
+      width: min(1100px, calc(100% - 2rem));
+      margin: 0 auto;
+      padding: 4.5rem 0 4rem;
+    }
+    .hero {
+      min-height: min(78vh, 720px);
+      display: grid;
+      align-content: end;
+      gap: 1.1rem;
+      padding: 2rem 0 2.5rem;
+      position: relative;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0 -8% auto;
+      height: 70%;
+      background:
+        url("/frontend/downloads/neon-runner/poster-ru.jpg") center/cover no-repeat;
+      opacity: 0.28;
+      filter: saturate(1.2) contrast(1.05);
+      mask-image: linear-gradient(180deg, #000 20%, transparent 95%);
+      -webkit-mask-image: linear-gradient(180deg, #000 20%, transparent 95%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .hero > * { position: relative; z-index: 1; }
+    .hero-icon {
+      width: 88px;
+      height: 88px;
+      border-radius: 22px;
+      box-shadow: 0 0 0 1px rgba(61,231,255,0.35), 0 12px 40px rgba(0,0,0,0.45);
+    }
+    .brand {
+      margin: 0;
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: clamp(2.4rem, 7vw, 4rem);
+      letter-spacing: 0.02em;
+      line-height: 1.05;
+      text-transform: uppercase;
+      background: linear-gradient(120deg, #fff 10%, var(--cyan) 55%, var(--magenta));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .lead {
+      margin: 0;
+      max-width: 34rem;
+      color: var(--muted);
+      font-size: 1.08rem;
+    }
+    .cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.85rem;
+      align-items: center;
+      margin-top: 0.35rem;
+    }
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0.95rem 1.4rem;
+      border-radius: 12px;
+      font-weight: 700;
+      text-decoration: none;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(120deg, var(--cyan), #7af0ff 40%, var(--magenta));
+      color: #071018;
+      box-shadow: 0 10px 30px rgba(61, 231, 255, 0.22);
+    }
+    .btn-primary:hover { transform: translateY(-2px); }
+    .btn-ghost {
+      border: 1px solid var(--line);
+      color: var(--text);
+      background: rgba(255,255,255,0.03);
+    }
+    .btn-ghost:hover { border-color: rgba(61,231,255,0.45); }
+    .meta {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+    section {
+      margin-top: 3.2rem;
+    }
+    .section-title {
+      margin: 0 0 0.45rem;
+      font-family: var(--display);
+      font-size: clamp(1.35rem, 3vw, 1.8rem);
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+    .section-note {
+      margin: 0 0 1.25rem;
+      color: var(--muted);
+      max-width: 40rem;
+    }
+    .shots {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 0.85rem;
+    }
+    .shots figure {
+      margin: 0;
+    }
+    .shots img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #0c1220;
+    }
+    .shots figcaption {
+      margin-top: 0.45rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .videos {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 1.1rem;
+    }
+    .video-card h3 {
+      margin: 0 0 0.65rem;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+    .video-card video {
+      width: 100%;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: #000;
+      aspect-ratio: 16 / 9;
+    }
+    .footer-cta {
+      margin-top: 3.5rem;
+      padding: 1.6rem 0 0;
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 0.85rem;
+    }
+    @media (max-width: 900px) {
+      .shots { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .videos { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 560px) {
+      .shots { grid-template-columns: 1fr; }
+      .hero-icon { width: 72px; height: 72px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .btn, .btn-primary:hover { transition: none; transform: none; }
+    }
+  </style>
+</head>
+<body>
+  <div id="menu-container"></div>
+  <main class="page">
+    <section class="hero" aria-labelledby="neon-title">
+      <img class="hero-icon" src="/frontend/downloads/neon-runner/icon-176.png" width="88" height="88" alt="Neon Runner" decoding="async">
+      <h1 id="neon-title" class="brand">Neon Runner</h1>
+      <p class="lead">Бесконечный неоновый раннер для Android. Уворачивайся от препятствий, держи темп, ставь рекорды.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/frontend/downloads/neon-runner/Neon-Runner-1.0.0.apk" download="Neon-Runner-1.0.0.apk">Скачать APK</a>
+        <a class="btn btn-ghost" href="#gameplay">Смотреть геймплей</a>
+      </div>
+      <p class="meta">Android · бесплатно · Serpmonn · версия 1.0.0</p>
+    </section>
+
+    <section aria-labelledby="shots-title">
+      <h2 id="shots-title" class="section-title">Скриншоты</h2>
+      <p class="section-note">Кадры из меню и забега — как выглядит игра на устройстве.</p>
+      <div class="shots">
+        <figure>
+          <img src="/frontend/downloads/neon-runner/rustore-phone/01-menu.jpg" alt="Главное меню Neon Runner" width="960" height="540" loading="eager">
+          <figcaption>Меню</figcaption>
+        </figure>
+        <figure>
+          <img src="/frontend/downloads/neon-runner/rustore-phone/02-gameplay.jpg" alt="Геймплей Neon Runner" width="960" height="540" loading="lazy">
+          <figcaption>Забег</figcaption>
+        </figure>
+        <figure>
+          <img src="/frontend/downloads/neon-runner/rustore-phone/03-obstacles.jpg" alt="Препятствия в Neon Runner" width="960" height="540" loading="lazy">
+          <figcaption>Препятствия</figcaption>
+        </figure>
+        <figure>
+          <img src="/frontend/downloads/neon-runner/rustore-phone/04-game-over.jpg" alt="Экран окончания игры Neon Runner" width="960" height="540" loading="lazy">
+          <figcaption>Финиш раунда</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="gameplay" aria-labelledby="videos-title">
+      <h2 id="videos-title" class="section-title">Геймплей</h2>
+      <p class="section-note">Видео геймплея на русском и английском.</p>
+      <div class="videos">
+        <div class="video-card">
+          <h3>Русский</h3>
+          <video controls playsinline preload="none" poster="/frontend/downloads/neon-runner/poster-ru.jpg">
+            <source src="/frontend/downloads/neon-runner/gameplay-ru.mp4" type="video/mp4">
+          </video>
+        </div>
+        <div class="video-card">
+          <h3>English</h3>
+          <video controls playsinline preload="none" poster="/frontend/downloads/neon-runner/poster-en.jpg">
+            <source src="/frontend/downloads/neon-runner/gameplay-en.mp4" type="video/mp4">
+          </video>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer-cta">
+      <p class="lead" style="max-width:28rem">Готов играть — скачай APK и установи на Android.</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="/frontend/downloads/neon-runner/Neon-Runner-1.0.0.apk" download="Neon-Runner-1.0.0.apk">Скачать Neon Runner</a>
+      </div>
+    </div>
+  </main>
+  <script src="/frontend/scripts/menu.js" defer></script>
+</body>
+</html>

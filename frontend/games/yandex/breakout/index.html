@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Арканоид Serpmonn</title>
+  <meta name="description" content="Отбивай мяч и разбивай блоки.">
+  <link rel="icon" href="icon.png" type="image/png">
+  <link rel="stylesheet" href="breakout.css">
+  <script src="/sdk.js"></script>
+  <script src="locales.js"></script>
+  <script src="yandex-bridge.js"></script>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <img src="icon.png" width="28" height="28" alt="" class="logo">
+      <h1 data-i18n="heading">Арканоид Serpmonn</h1>
+    </header>
+    <div class="wrap">
+      <div class="panel">
+        <canvas id="game" width="480" height="640" aria-label="Game"></canvas>
+        <div class="hint" data-i18n="hint">← → или A/D — платформа · Пробел — старт/пауза · R — заново</div>
+      </div>
+      <div class="panel">
+        <div class="stats">
+          <div class="stat" data-i18n-score>Счёт<br><b id="score">0</b></div>
+          <div class="stat" data-i18n-lives>Жизни<br><b id="lives">3</b></div>
+          <div class="stat" data-i18n-best>Рекорд<br><b id="best">0</b></div>
+        </div>
+        <div class="controls">
+          <button type="button" class="btn primary" id="btnStart" data-i18n="start">Старт</button>
+          <button type="button" class="btn" id="btnReset" data-i18n="reset">Заново</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <script src="breakout.js" defer></script>
+</body>
+</html>
